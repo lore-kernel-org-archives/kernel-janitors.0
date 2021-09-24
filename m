@@ -2,85 +2,300 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A3EC433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 20:14:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F94C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 20:48:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C68261050
-	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 20:14:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4588661241
+	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 20:48:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348377AbhIXUQQ (ORCPT
+        id S239842AbhIXUty (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 24 Sep 2021 16:16:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50042 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1347121AbhIXUQQ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 24 Sep 2021 16:16:16 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AD2AC61038;
-        Fri, 24 Sep 2021 20:14:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632514482;
-        bh=RfOq/uRmKEudceSfMEIFKjCXwyHbqJJ+oZLIM7/SLxo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nyTLVn3RvNUQmmx5v0g5UYdTSu0wV1A63CLEB41lwZnxBIESCumsq3c33TpW1hl7J
-         CcjrCwrYo8iM0B4Tuo175SGqACuk9W44yEdV6EvyKxsnheOO62jHuD/XXqf3XWXxvH
-         DLnYKVPShh9ojvtFvFDOn6I2MxpDu/xfSaEb+QIVeNBuuCtzSSvHOXQICzEd8kt6mk
-         7ypg0O5owk203/CSPezrLfw59aqIOFz9K2tjPrBgPiD6svldP80RngmrKQWegrT9WW
-         Ezq4J/gdSsd68FA6GgoJypI0pUA29UjghELapbd9FwHwLVvJJ2tO8JQFo6sOfo4fSx
-         4DACDrchEL27w==
-Date:   Fri, 24 Sep 2021 13:14:41 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Samuel Ortiz <sameo@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "John W. Linville" <linville@tuxdriver.com>,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] nfc: avoid potential race condition
-Message-ID: <20210924131441.6598ba3a@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-In-Reply-To: <47358bea-e761-b823-dfbd-cd8e0a2a69a6@canonical.com>
-References: <20210923065051.GA25122@kili>
-        <3760c70c-299c-89bf-5a4a-22e8d564ef92@canonical.com>
-        <20210923122220.GB2083@kadam>
-        <47358bea-e761-b823-dfbd-cd8e0a2a69a6@canonical.com>
+        Fri, 24 Sep 2021 16:49:54 -0400
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:36176 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237796AbhIXUtx (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 24 Sep 2021 16:49:53 -0400
+Received: from pop-os.home ([90.126.248.220])
+        by mwinf5d44 with ME
+        id xwoF250084m3Hzu03woFy5; Fri, 24 Sep 2021 22:48:16 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 24 Sep 2021 22:48:16 +0200
+X-ME-IP: 90.126.248.220
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     jejb@linux.ibm.com, martin.petersen@oracle.com,
+        sathya.prakash@broadcom.com, sreekanth.reddy@broadcom.com,
+        suganath-prabu.subramani@broadcom.com
+Cc:     MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2] scsi: mptlan: Remove usage of the deprecated "pci-dma-compat.h" API
+Date:   Fri, 24 Sep 2021 22:48:13 +0200
+Message-Id: <db5aa78d7d44b809ab83ba6fb4880d698517bfec.1623580326.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 24 Sep 2021 10:21:33 +0200 Krzysztof Kozlowski wrote:
-> On 23/09/2021 14:22, Dan Carpenter wrote:
-> > On Thu, Sep 23, 2021 at 09:26:51AM +0200, Krzysztof Kozlowski wrote:  
-> >> On 23/09/2021 08:50, Dan Carpenter wrote:  
->  [...]  
-> >>
-> >> I think the difference between this llcp_sock code and above transport,
-> >> is lack of writer to llcp_sock->local with whom you could race.
-> >>
-> >> Commits c0cfa2d8a788fcf4 and 6a2c0962105ae8ce causing the
-> >> multi-transport race show nicely assigns to vsk->transport when module
-> >> is unloaded.
-> >>
-> >> Here however there is no writer to llcp_sock->local, except bind and
-> >> connect and their error paths. The readers which you modify here, have
-> >> to happen after bind/connect. You cannot have getsockopt() or release()
-> >> before bind/connect, can you? Unless you mean here the bind error path,
-> >> where someone calls getsockopt() in the middle of bind()? Is it even
-> >> possible?
-> >>  
-> > 
-> > I don't know if this is a real issue either.
-> > 
-> > Racing with bind would be harmless.  The local pointer would be NULL and
-> > it would return harmlessly.  You would have to race with release and
-> > have a third trying to release local devices.  (Again that might be
-> > wild imagination.  It may not be possible).  
-> 
-> Indeed. The code looks reasonable, though, so even if race is not really
-> reproducible:
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In [1], Christoph Hellwig has proposed to remove the wrappers in
+include/linux/pci-dma-compat.h.
 
-Would you mind making a call if this is net (which will mean stable) or
-net-next material (without the Fixes tags) and reposting? Thanks! :)
+Some reasons why this API should be removed have been given by Julia
+Lawall in [2].
+
+Finally, Arnd Bergmann reminded that the documentation was updated 11 years
+ago to only describe the modern linux/dma-mapping.h interfaces and mark the
+old bus-specific ones as no longer recommended, see commit 216bf58f4092
+("Documentation: convert PCI-DMA-mapping.txt to use the generic DMA API").
+
+A coccinelle script has been used to perform the needed transformation
+Only relevant parts are given below.
+
+@@ @@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
+
+@@ @@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
++    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_dma_sync_single_for_device(e1, e2, e3, e4)
++    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
+
+[1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
+[2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v2: Change Subject to be more explicit
+    Keep only relevant part of the coccinelle script
+    Try to improve the commit message to give some reason of why this change is done
+    Add the scsi maintainers in the To: field as suggested in [3]
+
+[3]: https://lore.kernel.org/kernel-janitors/CAK8P3a2CBvw_GP372R+p8f4_pa82sMuQ5iHk4Nb2dJCzm_Fivw@mail.gmail.com/
+---
+ drivers/message/fusion/mptlan.c | 90 ++++++++++++++++++---------------
+ 1 file changed, 48 insertions(+), 42 deletions(-)
+
+diff --git a/drivers/message/fusion/mptlan.c b/drivers/message/fusion/mptlan.c
+index 3261cac762de..e62c90127cc2 100644
+--- a/drivers/message/fusion/mptlan.c
++++ b/drivers/message/fusion/mptlan.c
+@@ -516,9 +516,9 @@ mpt_lan_close(struct net_device *dev)
+ 		if (priv->RcvCtl[i].skb != NULL) {
+ /**/			dlprintk((KERN_INFO MYNAM "/lan_close: bucket %05x "
+ /**/				  "is still out\n", i));
+-			pci_unmap_single(mpt_dev->pcidev, priv->RcvCtl[i].dma,
+-					 priv->RcvCtl[i].len,
+-					 PCI_DMA_FROMDEVICE);
++			dma_unmap_single(&mpt_dev->pcidev->dev,
++					 priv->RcvCtl[i].dma,
++					 priv->RcvCtl[i].len, DMA_FROM_DEVICE);
+ 			dev_kfree_skb(priv->RcvCtl[i].skb);
+ 		}
+ 	}
+@@ -528,9 +528,9 @@ mpt_lan_close(struct net_device *dev)
+ 
+ 	for (i = 0; i < priv->tx_max_out; i++) {
+ 		if (priv->SendCtl[i].skb != NULL) {
+-			pci_unmap_single(mpt_dev->pcidev, priv->SendCtl[i].dma,
+-					 priv->SendCtl[i].len,
+-					 PCI_DMA_TODEVICE);
++			dma_unmap_single(&mpt_dev->pcidev->dev,
++					 priv->SendCtl[i].dma,
++					 priv->SendCtl[i].len, DMA_TO_DEVICE);
+ 			dev_kfree_skb(priv->SendCtl[i].skb);
+ 		}
+ 	}
+@@ -582,8 +582,8 @@ mpt_lan_send_turbo(struct net_device *dev, u32 tmsg)
+ 			__func__, sent));
+ 
+ 	priv->SendCtl[ctx].skb = NULL;
+-	pci_unmap_single(mpt_dev->pcidev, priv->SendCtl[ctx].dma,
+-			 priv->SendCtl[ctx].len, PCI_DMA_TODEVICE);
++	dma_unmap_single(&mpt_dev->pcidev->dev, priv->SendCtl[ctx].dma,
++			 priv->SendCtl[ctx].len, DMA_TO_DEVICE);
+ 	dev_kfree_skb_irq(sent);
+ 
+ 	spin_lock_irqsave(&priv->txfidx_lock, flags);
+@@ -648,8 +648,9 @@ mpt_lan_send_reply(struct net_device *dev, LANSendReply_t *pSendRep)
+ 				__func__, sent));
+ 
+ 		priv->SendCtl[ctx].skb = NULL;
+-		pci_unmap_single(mpt_dev->pcidev, priv->SendCtl[ctx].dma,
+-				 priv->SendCtl[ctx].len, PCI_DMA_TODEVICE);
++		dma_unmap_single(&mpt_dev->pcidev->dev,
++				 priv->SendCtl[ctx].dma,
++				 priv->SendCtl[ctx].len, DMA_TO_DEVICE);
+ 		dev_kfree_skb_irq(sent);
+ 
+ 		priv->mpt_txfidx[++priv->mpt_txfidx_tail] = ctx;
+@@ -720,8 +721,8 @@ mpt_lan_sdu_send (struct sk_buff *skb, struct net_device *dev)
+ 	skb_reset_mac_header(skb);
+ 	skb_pull(skb, 12);
+ 
+-        dma = pci_map_single(mpt_dev->pcidev, skb->data, skb->len,
+-			     PCI_DMA_TODEVICE);
++	dma = dma_map_single(&mpt_dev->pcidev->dev, skb->data, skb->len,
++			     DMA_TO_DEVICE);
+ 
+ 	priv->SendCtl[ctx].skb = skb;
+ 	priv->SendCtl[ctx].dma = dma;
+@@ -868,13 +869,17 @@ mpt_lan_receive_post_turbo(struct net_device *dev, u32 tmsg)
+ 			return -ENOMEM;
+ 		}
+ 
+-		pci_dma_sync_single_for_cpu(mpt_dev->pcidev, priv->RcvCtl[ctx].dma,
+-					    priv->RcvCtl[ctx].len, PCI_DMA_FROMDEVICE);
++		dma_sync_single_for_cpu(&mpt_dev->pcidev->dev,
++					priv->RcvCtl[ctx].dma,
++					priv->RcvCtl[ctx].len,
++					DMA_FROM_DEVICE);
+ 
+ 		skb_copy_from_linear_data(old_skb, skb_put(skb, len), len);
+ 
+-		pci_dma_sync_single_for_device(mpt_dev->pcidev, priv->RcvCtl[ctx].dma,
+-					       priv->RcvCtl[ctx].len, PCI_DMA_FROMDEVICE);
++		dma_sync_single_for_device(&mpt_dev->pcidev->dev,
++					   priv->RcvCtl[ctx].dma,
++					   priv->RcvCtl[ctx].len,
++					   DMA_FROM_DEVICE);
+ 		goto out;
+ 	}
+ 
+@@ -882,8 +887,8 @@ mpt_lan_receive_post_turbo(struct net_device *dev, u32 tmsg)
+ 
+ 	priv->RcvCtl[ctx].skb = NULL;
+ 
+-	pci_unmap_single(mpt_dev->pcidev, priv->RcvCtl[ctx].dma,
+-			 priv->RcvCtl[ctx].len, PCI_DMA_FROMDEVICE);
++	dma_unmap_single(&mpt_dev->pcidev->dev, priv->RcvCtl[ctx].dma,
++			 priv->RcvCtl[ctx].len, DMA_FROM_DEVICE);
+ 
+ out:
+ 	spin_lock_irqsave(&priv->rxfidx_lock, flags);
+@@ -927,8 +932,8 @@ mpt_lan_receive_post_free(struct net_device *dev,
+ //		dlprintk((KERN_INFO MYNAM "@rpr[2] TC + 3\n"));
+ 
+ 		priv->RcvCtl[ctx].skb = NULL;
+-		pci_unmap_single(mpt_dev->pcidev, priv->RcvCtl[ctx].dma,
+-				 priv->RcvCtl[ctx].len, PCI_DMA_FROMDEVICE);
++		dma_unmap_single(&mpt_dev->pcidev->dev, priv->RcvCtl[ctx].dma,
++				 priv->RcvCtl[ctx].len, DMA_FROM_DEVICE);
+ 		dev_kfree_skb_any(skb);
+ 
+ 		priv->mpt_rxfidx[++priv->mpt_rxfidx_tail] = ctx;
+@@ -1028,16 +1033,16 @@ mpt_lan_receive_post_reply(struct net_device *dev,
+ //					IOC_AND_NETDEV_NAMES_s_s(dev),
+ //					i, l));
+ 
+-			pci_dma_sync_single_for_cpu(mpt_dev->pcidev,
+-						    priv->RcvCtl[ctx].dma,
+-						    priv->RcvCtl[ctx].len,
+-						    PCI_DMA_FROMDEVICE);
++			dma_sync_single_for_cpu(&mpt_dev->pcidev->dev,
++						priv->RcvCtl[ctx].dma,
++						priv->RcvCtl[ctx].len,
++						DMA_FROM_DEVICE);
+ 			skb_copy_from_linear_data(old_skb, skb_put(skb, l), l);
+ 
+-			pci_dma_sync_single_for_device(mpt_dev->pcidev,
+-						       priv->RcvCtl[ctx].dma,
+-						       priv->RcvCtl[ctx].len,
+-						       PCI_DMA_FROMDEVICE);
++			dma_sync_single_for_device(&mpt_dev->pcidev->dev,
++						   priv->RcvCtl[ctx].dma,
++						   priv->RcvCtl[ctx].len,
++						   DMA_FROM_DEVICE);
+ 
+ 			priv->mpt_rxfidx[++priv->mpt_rxfidx_tail] = ctx;
+ 			szrem -= l;
+@@ -1056,17 +1061,17 @@ mpt_lan_receive_post_reply(struct net_device *dev,
+ 			return -ENOMEM;
+ 		}
+ 
+-		pci_dma_sync_single_for_cpu(mpt_dev->pcidev,
+-					    priv->RcvCtl[ctx].dma,
+-					    priv->RcvCtl[ctx].len,
+-					    PCI_DMA_FROMDEVICE);
++		dma_sync_single_for_cpu(&mpt_dev->pcidev->dev,
++					priv->RcvCtl[ctx].dma,
++					priv->RcvCtl[ctx].len,
++					DMA_FROM_DEVICE);
+ 
+ 		skb_copy_from_linear_data(old_skb, skb_put(skb, len), len);
+ 
+-		pci_dma_sync_single_for_device(mpt_dev->pcidev,
+-					       priv->RcvCtl[ctx].dma,
+-					       priv->RcvCtl[ctx].len,
+-					       PCI_DMA_FROMDEVICE);
++		dma_sync_single_for_device(&mpt_dev->pcidev->dev,
++					   priv->RcvCtl[ctx].dma,
++					   priv->RcvCtl[ctx].len,
++					   DMA_FROM_DEVICE);
+ 
+ 		spin_lock_irqsave(&priv->rxfidx_lock, flags);
+ 		priv->mpt_rxfidx[++priv->mpt_rxfidx_tail] = ctx;
+@@ -1077,8 +1082,8 @@ mpt_lan_receive_post_reply(struct net_device *dev,
+ 
+ 		priv->RcvCtl[ctx].skb = NULL;
+ 
+-		pci_unmap_single(mpt_dev->pcidev, priv->RcvCtl[ctx].dma,
+-				 priv->RcvCtl[ctx].len, PCI_DMA_FROMDEVICE);
++		dma_unmap_single(&mpt_dev->pcidev->dev, priv->RcvCtl[ctx].dma,
++				 priv->RcvCtl[ctx].len, DMA_FROM_DEVICE);
+ 		priv->RcvCtl[ctx].dma = 0;
+ 
+ 		priv->mpt_rxfidx[++priv->mpt_rxfidx_tail] = ctx;
+@@ -1199,10 +1204,10 @@ mpt_lan_post_receive_buckets(struct mpt_lan_priv *priv)
+ 
+ 			skb = priv->RcvCtl[ctx].skb;
+ 			if (skb && (priv->RcvCtl[ctx].len != len)) {
+-				pci_unmap_single(mpt_dev->pcidev,
++				dma_unmap_single(&mpt_dev->pcidev->dev,
+ 						 priv->RcvCtl[ctx].dma,
+ 						 priv->RcvCtl[ctx].len,
+-						 PCI_DMA_FROMDEVICE);
++						 DMA_FROM_DEVICE);
+ 				dev_kfree_skb(priv->RcvCtl[ctx].skb);
+ 				skb = priv->RcvCtl[ctx].skb = NULL;
+ 			}
+@@ -1218,8 +1223,9 @@ mpt_lan_post_receive_buckets(struct mpt_lan_priv *priv)
+ 					break;
+ 				}
+ 
+-				dma = pci_map_single(mpt_dev->pcidev, skb->data,
+-						     len, PCI_DMA_FROMDEVICE);
++				dma = dma_map_single(&mpt_dev->pcidev->dev,
++						     skb->data, len,
++						     DMA_FROM_DEVICE);
+ 
+ 				priv->RcvCtl[ctx].skb = skb;
+ 				priv->RcvCtl[ctx].dma = dma;
+-- 
+2.30.2
+
