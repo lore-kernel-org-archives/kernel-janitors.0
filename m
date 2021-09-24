@@ -2,300 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F94C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 20:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A97C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 22:22:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4588661241
-	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 20:48:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6079610D1
+	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 22:22:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239842AbhIXUty (ORCPT
+        id S243927AbhIXWX7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 24 Sep 2021 16:49:54 -0400
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:36176 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237796AbhIXUtx (ORCPT
+        Fri, 24 Sep 2021 18:23:59 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:58992
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230139AbhIXWX7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 24 Sep 2021 16:49:53 -0400
-Received: from pop-os.home ([90.126.248.220])
-        by mwinf5d44 with ME
-        id xwoF250084m3Hzu03woFy5; Fri, 24 Sep 2021 22:48:16 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 24 Sep 2021 22:48:16 +0200
-X-ME-IP: 90.126.248.220
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     jejb@linux.ibm.com, martin.petersen@oracle.com,
-        sathya.prakash@broadcom.com, sreekanth.reddy@broadcom.com,
-        suganath-prabu.subramani@broadcom.com
-Cc:     MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2] scsi: mptlan: Remove usage of the deprecated "pci-dma-compat.h" API
-Date:   Fri, 24 Sep 2021 22:48:13 +0200
-Message-Id: <db5aa78d7d44b809ab83ba6fb4880d698517bfec.1623580326.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Fri, 24 Sep 2021 18:23:59 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 35E4C4015E;
+        Fri, 24 Sep 2021 22:22:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1632522143;
+        bh=s7NAl5BrbFi3IzEIAE8SRfLu7xxGL8BY3hza4BKEYzk=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=DfJQdzMu6XeK/TGgo7xtYAzrUVSJZ9G5sA69oRVG/AmxS5tPIp4mjdREw+9WNP0YR
+         OB3T0JWR43ojE3i8IGaZhXjIcMicNep6J3nYuC5+aQpIYGY49x1J7MgIVdwjddKrlE
+         WVROohEfvbxqyLVyEXuFmphQ1PBih9vJrGzAaoVAGbf4mX5NC3STolhi4H6rJ3GU51
+         4H5SYdBXdXvonDOslnM0shUxH2PrN8dJEGy/a3pBzGIkzrm/MpZ6XPu97RQYS24gqG
+         Xo9U5DwIuWEP1uRXYWBl65fDUo0huuRCuEsWGePT/6E1VK+t7a1SKKibBESFBYXvE5
+         TSTu/P3YbqS0Q==
+From:   Colin King <colin.king@canonical.com>
+To:     Florian Tobias Schandinat <FlorianSchandinat@gmx.de>,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] video: fbdev: via: Fix spelling mistake "bellow" -> "below"
+Date:   Fri, 24 Sep 2021 23:22:22 +0100
+Message-Id: <20210924222222.141645-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In [1], Christoph Hellwig has proposed to remove the wrappers in
-include/linux/pci-dma-compat.h.
+From: Colin Ian King <colin.king@canonical.com>
 
-Some reasons why this API should be removed have been given by Julia
-Lawall in [2].
+There is a spelling mistake in a debug message. Fix it.
 
-Finally, Arnd Bergmann reminded that the documentation was updated 11 years
-ago to only describe the modern linux/dma-mapping.h interfaces and mark the
-old bus-specific ones as no longer recommended, see commit 216bf58f4092
-("Documentation: convert PCI-DMA-mapping.txt to use the generic DMA API").
-
-A coccinelle script has been used to perform the needed transformation
-Only relevant parts are given below.
-
-@@ @@
--    PCI_DMA_TODEVICE
-+    DMA_TO_DEVICE
-
-@@ @@
--    PCI_DMA_FROMDEVICE
-+    DMA_FROM_DEVICE
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_map_single(e1, e2, e3, e4)
-+    dma_map_single(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_unmap_single(e1, e2, e3, e4)
-+    dma_unmap_single(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
-+    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
-
-@@
-expression e1, e2, e3, e4;
-@@
--    pci_dma_sync_single_for_device(e1, e2, e3, e4)
-+    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
-
-[1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
-[2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-v2: Change Subject to be more explicit
-    Keep only relevant part of the coccinelle script
-    Try to improve the commit message to give some reason of why this change is done
-    Add the scsi maintainers in the To: field as suggested in [3]
+ drivers/video/fbdev/via/lcd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[3]: https://lore.kernel.org/kernel-janitors/CAK8P3a2CBvw_GP372R+p8f4_pa82sMuQ5iHk4Nb2dJCzm_Fivw@mail.gmail.com/
----
- drivers/message/fusion/mptlan.c | 90 ++++++++++++++++++---------------
- 1 file changed, 48 insertions(+), 42 deletions(-)
-
-diff --git a/drivers/message/fusion/mptlan.c b/drivers/message/fusion/mptlan.c
-index 3261cac762de..e62c90127cc2 100644
---- a/drivers/message/fusion/mptlan.c
-+++ b/drivers/message/fusion/mptlan.c
-@@ -516,9 +516,9 @@ mpt_lan_close(struct net_device *dev)
- 		if (priv->RcvCtl[i].skb != NULL) {
- /**/			dlprintk((KERN_INFO MYNAM "/lan_close: bucket %05x "
- /**/				  "is still out\n", i));
--			pci_unmap_single(mpt_dev->pcidev, priv->RcvCtl[i].dma,
--					 priv->RcvCtl[i].len,
--					 PCI_DMA_FROMDEVICE);
-+			dma_unmap_single(&mpt_dev->pcidev->dev,
-+					 priv->RcvCtl[i].dma,
-+					 priv->RcvCtl[i].len, DMA_FROM_DEVICE);
- 			dev_kfree_skb(priv->RcvCtl[i].skb);
- 		}
- 	}
-@@ -528,9 +528,9 @@ mpt_lan_close(struct net_device *dev)
- 
- 	for (i = 0; i < priv->tx_max_out; i++) {
- 		if (priv->SendCtl[i].skb != NULL) {
--			pci_unmap_single(mpt_dev->pcidev, priv->SendCtl[i].dma,
--					 priv->SendCtl[i].len,
--					 PCI_DMA_TODEVICE);
-+			dma_unmap_single(&mpt_dev->pcidev->dev,
-+					 priv->SendCtl[i].dma,
-+					 priv->SendCtl[i].len, DMA_TO_DEVICE);
- 			dev_kfree_skb(priv->SendCtl[i].skb);
- 		}
- 	}
-@@ -582,8 +582,8 @@ mpt_lan_send_turbo(struct net_device *dev, u32 tmsg)
- 			__func__, sent));
- 
- 	priv->SendCtl[ctx].skb = NULL;
--	pci_unmap_single(mpt_dev->pcidev, priv->SendCtl[ctx].dma,
--			 priv->SendCtl[ctx].len, PCI_DMA_TODEVICE);
-+	dma_unmap_single(&mpt_dev->pcidev->dev, priv->SendCtl[ctx].dma,
-+			 priv->SendCtl[ctx].len, DMA_TO_DEVICE);
- 	dev_kfree_skb_irq(sent);
- 
- 	spin_lock_irqsave(&priv->txfidx_lock, flags);
-@@ -648,8 +648,9 @@ mpt_lan_send_reply(struct net_device *dev, LANSendReply_t *pSendRep)
- 				__func__, sent));
- 
- 		priv->SendCtl[ctx].skb = NULL;
--		pci_unmap_single(mpt_dev->pcidev, priv->SendCtl[ctx].dma,
--				 priv->SendCtl[ctx].len, PCI_DMA_TODEVICE);
-+		dma_unmap_single(&mpt_dev->pcidev->dev,
-+				 priv->SendCtl[ctx].dma,
-+				 priv->SendCtl[ctx].len, DMA_TO_DEVICE);
- 		dev_kfree_skb_irq(sent);
- 
- 		priv->mpt_txfidx[++priv->mpt_txfidx_tail] = ctx;
-@@ -720,8 +721,8 @@ mpt_lan_sdu_send (struct sk_buff *skb, struct net_device *dev)
- 	skb_reset_mac_header(skb);
- 	skb_pull(skb, 12);
- 
--        dma = pci_map_single(mpt_dev->pcidev, skb->data, skb->len,
--			     PCI_DMA_TODEVICE);
-+	dma = dma_map_single(&mpt_dev->pcidev->dev, skb->data, skb->len,
-+			     DMA_TO_DEVICE);
- 
- 	priv->SendCtl[ctx].skb = skb;
- 	priv->SendCtl[ctx].dma = dma;
-@@ -868,13 +869,17 @@ mpt_lan_receive_post_turbo(struct net_device *dev, u32 tmsg)
- 			return -ENOMEM;
- 		}
- 
--		pci_dma_sync_single_for_cpu(mpt_dev->pcidev, priv->RcvCtl[ctx].dma,
--					    priv->RcvCtl[ctx].len, PCI_DMA_FROMDEVICE);
-+		dma_sync_single_for_cpu(&mpt_dev->pcidev->dev,
-+					priv->RcvCtl[ctx].dma,
-+					priv->RcvCtl[ctx].len,
-+					DMA_FROM_DEVICE);
- 
- 		skb_copy_from_linear_data(old_skb, skb_put(skb, len), len);
- 
--		pci_dma_sync_single_for_device(mpt_dev->pcidev, priv->RcvCtl[ctx].dma,
--					       priv->RcvCtl[ctx].len, PCI_DMA_FROMDEVICE);
-+		dma_sync_single_for_device(&mpt_dev->pcidev->dev,
-+					   priv->RcvCtl[ctx].dma,
-+					   priv->RcvCtl[ctx].len,
-+					   DMA_FROM_DEVICE);
- 		goto out;
- 	}
- 
-@@ -882,8 +887,8 @@ mpt_lan_receive_post_turbo(struct net_device *dev, u32 tmsg)
- 
- 	priv->RcvCtl[ctx].skb = NULL;
- 
--	pci_unmap_single(mpt_dev->pcidev, priv->RcvCtl[ctx].dma,
--			 priv->RcvCtl[ctx].len, PCI_DMA_FROMDEVICE);
-+	dma_unmap_single(&mpt_dev->pcidev->dev, priv->RcvCtl[ctx].dma,
-+			 priv->RcvCtl[ctx].len, DMA_FROM_DEVICE);
- 
- out:
- 	spin_lock_irqsave(&priv->rxfidx_lock, flags);
-@@ -927,8 +932,8 @@ mpt_lan_receive_post_free(struct net_device *dev,
- //		dlprintk((KERN_INFO MYNAM "@rpr[2] TC + 3\n"));
- 
- 		priv->RcvCtl[ctx].skb = NULL;
--		pci_unmap_single(mpt_dev->pcidev, priv->RcvCtl[ctx].dma,
--				 priv->RcvCtl[ctx].len, PCI_DMA_FROMDEVICE);
-+		dma_unmap_single(&mpt_dev->pcidev->dev, priv->RcvCtl[ctx].dma,
-+				 priv->RcvCtl[ctx].len, DMA_FROM_DEVICE);
- 		dev_kfree_skb_any(skb);
- 
- 		priv->mpt_rxfidx[++priv->mpt_rxfidx_tail] = ctx;
-@@ -1028,16 +1033,16 @@ mpt_lan_receive_post_reply(struct net_device *dev,
- //					IOC_AND_NETDEV_NAMES_s_s(dev),
- //					i, l));
- 
--			pci_dma_sync_single_for_cpu(mpt_dev->pcidev,
--						    priv->RcvCtl[ctx].dma,
--						    priv->RcvCtl[ctx].len,
--						    PCI_DMA_FROMDEVICE);
-+			dma_sync_single_for_cpu(&mpt_dev->pcidev->dev,
-+						priv->RcvCtl[ctx].dma,
-+						priv->RcvCtl[ctx].len,
-+						DMA_FROM_DEVICE);
- 			skb_copy_from_linear_data(old_skb, skb_put(skb, l), l);
- 
--			pci_dma_sync_single_for_device(mpt_dev->pcidev,
--						       priv->RcvCtl[ctx].dma,
--						       priv->RcvCtl[ctx].len,
--						       PCI_DMA_FROMDEVICE);
-+			dma_sync_single_for_device(&mpt_dev->pcidev->dev,
-+						   priv->RcvCtl[ctx].dma,
-+						   priv->RcvCtl[ctx].len,
-+						   DMA_FROM_DEVICE);
- 
- 			priv->mpt_rxfidx[++priv->mpt_rxfidx_tail] = ctx;
- 			szrem -= l;
-@@ -1056,17 +1061,17 @@ mpt_lan_receive_post_reply(struct net_device *dev,
- 			return -ENOMEM;
- 		}
- 
--		pci_dma_sync_single_for_cpu(mpt_dev->pcidev,
--					    priv->RcvCtl[ctx].dma,
--					    priv->RcvCtl[ctx].len,
--					    PCI_DMA_FROMDEVICE);
-+		dma_sync_single_for_cpu(&mpt_dev->pcidev->dev,
-+					priv->RcvCtl[ctx].dma,
-+					priv->RcvCtl[ctx].len,
-+					DMA_FROM_DEVICE);
- 
- 		skb_copy_from_linear_data(old_skb, skb_put(skb, len), len);
- 
--		pci_dma_sync_single_for_device(mpt_dev->pcidev,
--					       priv->RcvCtl[ctx].dma,
--					       priv->RcvCtl[ctx].len,
--					       PCI_DMA_FROMDEVICE);
-+		dma_sync_single_for_device(&mpt_dev->pcidev->dev,
-+					   priv->RcvCtl[ctx].dma,
-+					   priv->RcvCtl[ctx].len,
-+					   DMA_FROM_DEVICE);
- 
- 		spin_lock_irqsave(&priv->rxfidx_lock, flags);
- 		priv->mpt_rxfidx[++priv->mpt_rxfidx_tail] = ctx;
-@@ -1077,8 +1082,8 @@ mpt_lan_receive_post_reply(struct net_device *dev,
- 
- 		priv->RcvCtl[ctx].skb = NULL;
- 
--		pci_unmap_single(mpt_dev->pcidev, priv->RcvCtl[ctx].dma,
--				 priv->RcvCtl[ctx].len, PCI_DMA_FROMDEVICE);
-+		dma_unmap_single(&mpt_dev->pcidev->dev, priv->RcvCtl[ctx].dma,
-+				 priv->RcvCtl[ctx].len, DMA_FROM_DEVICE);
- 		priv->RcvCtl[ctx].dma = 0;
- 
- 		priv->mpt_rxfidx[++priv->mpt_rxfidx_tail] = ctx;
-@@ -1199,10 +1204,10 @@ mpt_lan_post_receive_buckets(struct mpt_lan_priv *priv)
- 
- 			skb = priv->RcvCtl[ctx].skb;
- 			if (skb && (priv->RcvCtl[ctx].len != len)) {
--				pci_unmap_single(mpt_dev->pcidev,
-+				dma_unmap_single(&mpt_dev->pcidev->dev,
- 						 priv->RcvCtl[ctx].dma,
- 						 priv->RcvCtl[ctx].len,
--						 PCI_DMA_FROMDEVICE);
-+						 DMA_FROM_DEVICE);
- 				dev_kfree_skb(priv->RcvCtl[ctx].skb);
- 				skb = priv->RcvCtl[ctx].skb = NULL;
- 			}
-@@ -1218,8 +1223,9 @@ mpt_lan_post_receive_buckets(struct mpt_lan_priv *priv)
- 					break;
- 				}
- 
--				dma = pci_map_single(mpt_dev->pcidev, skb->data,
--						     len, PCI_DMA_FROMDEVICE);
-+				dma = dma_map_single(&mpt_dev->pcidev->dev,
-+						     skb->data, len,
-+						     DMA_FROM_DEVICE);
- 
- 				priv->RcvCtl[ctx].skb = skb;
- 				priv->RcvCtl[ctx].dma = dma;
+diff --git a/drivers/video/fbdev/via/lcd.c b/drivers/video/fbdev/via/lcd.c
+index 088b962076b5..beec5c8d4d08 100644
+--- a/drivers/video/fbdev/via/lcd.c
++++ b/drivers/video/fbdev/via/lcd.c
+@@ -543,7 +543,7 @@ void viafb_lcd_set_mode(const struct fb_var_screeninfo *var, u16 cxres,
+ 	/* Get panel table Pointer */
+ 	panel_crt_table = viafb_get_best_mode(panel_hres, panel_vres, 60);
+ 	viafb_fill_var_timing_info(&panel_var, panel_crt_table);
+-	DEBUG_MSG(KERN_INFO "bellow viafb_lcd_set_mode!!\n");
++	DEBUG_MSG(KERN_INFO "below viafb_lcd_set_mode!!\n");
+ 	if (VT1636_LVDS == plvds_chip_info->lvds_chip_name)
+ 		viafb_init_lvds_vt1636(plvds_setting_info, plvds_chip_info);
+ 	clock = PICOS2KHZ(panel_crt_table->pixclock) * 1000;
 -- 
-2.30.2
+2.32.0
 
