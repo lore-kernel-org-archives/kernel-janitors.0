@@ -2,44 +2,43 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A222BC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Sep 2021 17:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EC3CC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Sep 2021 21:59:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8021F6108B
-	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Sep 2021 17:17:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EAAB60F5D
+	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Sep 2021 21:59:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229537AbhIYRTW (ORCPT
+        id S230044AbhIYWAr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 25 Sep 2021 13:19:22 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:42470
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229511AbhIYRTW (ORCPT
+        Sat, 25 Sep 2021 18:00:47 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:34556
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229997AbhIYWAr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 25 Sep 2021 13:19:22 -0400
+        Sat, 25 Sep 2021 18:00:47 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id BBAD640CE6;
-        Sat, 25 Sep 2021 17:17:43 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 91AA23F070;
+        Sat, 25 Sep 2021 21:59:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632590263;
-        bh=ziAcocGSVqGXW27YqpXhhwM0YAMQ6EikLPC0ewIk9tc=;
+        s=20210705; t=1632607148;
+        bh=X8bcr5IsgetMjo+uz2jNmTIyMflSWfgaoOmzS2irH7U=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=XfDqICqra0sQV9rnAxO73553HALDp4+lCfvExSa4mkmYtbojiAIavu/uVb4hD4JlH
-         hpFoR1eV9ToSn2izRf+W1OKku+0Yu8ym/0NJdSEf+op3u3azII8ZkMoWuqpNZVZiLG
-         p8KV9RokijZVRRXY39G0T6XQRs2j96xPD+mI6gHPAsD9jKVJYPdLqnywQTqNRp3nAg
-         cRFkuXGMupitsF/RvDKlbd4hljeblyhcecwQDpIbfqDhg2qAHpqZInYWbfef2orKTd
-         2ZZ1kBHq3TYkfN+Boi3m16xjXW3wHLiublc5wMTvkGrmJ7mn9QhiZJ6QxtAAitsGpb
-         VzMTUZIpd/B4g==
+        b=eXvfkiyt68V4JBa92l83AG/m0+VHiYqED7qIiVcRX4a+zW74yufVRCqzMVFP/CjyG
+         CSyuwHwLvJbXxN7r0HrWYg8ZYp9vlmysFcgBaBG78LN9pNr+Pmkrqtm7xjYKwUSi0D
+         VlZ7q5vfUUIeIuN4tfCuzKeuEix6JFbeOs2m+4Z6HfJsWO+aksRtp5hlh6MQCM5l09
+         0fvkBhyG/6Vo3wOvUJgPM5UtXk+kLEPR4FlDhVf7bBwDe6SyR81VgkieKzvrVIZqWf
+         8cT50xiIJMMSeLDBwE6zzwgve6OW+bVeGWX1QJRaf8riIVAKmlmwXO/mOuMc5P0pD+
+         GOXMaK9jENseQ==
 From:   Colin King <colin.king@canonical.com>
-To:     Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>
+To:     SeongJae Park <sj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/chrome: cros_ec: Fix spelling mistake "responsed" -> "response"
-Date:   Sat, 25 Sep 2021 18:17:43 +0100
-Message-Id: <20210925171743.173219-1-colin.king@canonical.com>
+Subject: [PATCH] mm/damon/core: nullify pointer ctx->kdamond with a NULL
+Date:   Sat, 25 Sep 2021 22:59:08 +0100
+Message-Id: <20210925215908.181226-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -50,35 +49,30 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There are spelling mistakes in dev_warn messages. Fix them.
+Currently a plain integer is being used to nullify the
+pointer ctx->kdamond. Use NULL instead. Cleans up sparse
+warning:
+
+mm/damon/core.c:317:40: warning: Using plain integer as NULL pointer
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/platform/chrome/cros_ec_lpc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ mm/damon/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
-index 1f7861944044..d6306d2a096f 100644
---- a/drivers/platform/chrome/cros_ec_lpc.c
-+++ b/drivers/platform/chrome/cros_ec_lpc.c
-@@ -156,7 +156,7 @@ static int cros_ec_pkt_xfer_lpc(struct cros_ec_device *ec,
- 	cros_ec_lpc_ops.write(EC_LPC_ADDR_HOST_CMD, 1, &sum);
- 
- 	if (ec_response_timed_out()) {
--		dev_warn(ec->dev, "EC responsed timed out\n");
-+		dev_warn(ec->dev, "EC response timed out\n");
- 		ret = -EIO;
- 		goto done;
+diff --git a/mm/damon/core.c b/mm/damon/core.c
+index 874558a790a0..c8665c80577a 100644
+--- a/mm/damon/core.c
++++ b/mm/damon/core.c
+@@ -314,7 +314,7 @@ static int __damon_start(struct damon_ctx *ctx)
+ 				nr_running_ctxs);
+ 		if (IS_ERR(ctx->kdamond)) {
+ 			err = PTR_ERR(ctx->kdamond);
+-			ctx->kdamond = 0;
++			ctx->kdamond = NULL;
+ 		}
  	}
-@@ -238,7 +238,7 @@ static int cros_ec_cmd_xfer_lpc(struct cros_ec_device *ec,
- 	cros_ec_lpc_ops.write(EC_LPC_ADDR_HOST_CMD, 1, &sum);
- 
- 	if (ec_response_timed_out()) {
--		dev_warn(ec->dev, "EC responsed timed out\n");
-+		dev_warn(ec->dev, "EC response timed out\n");
- 		ret = -EIO;
- 		goto done;
- 	}
+ 	mutex_unlock(&ctx->kdamond_lock);
 -- 
 2.32.0
 
