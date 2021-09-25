@@ -2,81 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2751BC433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 23:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C25C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Sep 2021 06:46:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0CD8261164
-	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Sep 2021 23:12:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E229D61260
+	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Sep 2021 06:46:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245016AbhIXXOS (ORCPT
+        id S1344294AbhIYGrf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 24 Sep 2021 19:14:18 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:36368
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230021AbhIXXOR (ORCPT
+        Sat, 25 Sep 2021 02:47:35 -0400
+Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:41994 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344431AbhIYGrb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 24 Sep 2021 19:14:17 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id CAB6540189;
-        Fri, 24 Sep 2021 23:12:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632525162;
-        bh=tN3HRU0OzmhV6dgn+LtnaYkAOlXirG8kC8RmA1sdV9Y=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=N9L52LHKq1rdOqh9YigHzUlVpJItzEVS5nvj7EoDu2CRT79tXWjXSaxFWyr/2Wwt3
-         TEziT8Lr/mWxgSY6oNk0t5hw/k2jMTUEWFpiD+AHp5+a7wb/w5CYPPXiRcEDaJGBjM
-         PXE7vcEAlbIP463nYQ5diD6lDiR1ZESaKMzni1wSZqJ5pe6JNPePKddYOVV84fSHR4
-         ++xyD0y3oxqM9U2U1+J2aOdSAY0PJ4ZpBhoG9CWInRLbKoGalFfk1nqvo6fuo3yRzo
-         b6C1Ue/bjfhEy1DefWEEriA07PhVe8GEnIbGVtIPVNyXVijyKrrR3dryJ4d+yMrN07
-         3/qII+187lHFQ==
-From:   Colin King <colin.king@canonical.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: meson: aiu: Fix spelling mistake "Unsupport" -> "Unsupported"
-Date:   Sat, 25 Sep 2021 00:12:42 +0100
-Message-Id: <20210924231242.144692-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        Sat, 25 Sep 2021 02:47:31 -0400
+Received: from pop-os.home ([90.126.248.220])
+        by mwinf5d51 with ME
+        id y6lt2500M4m3Hzu036luKY; Sat, 25 Sep 2021 08:45:55 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 25 Sep 2021 08:45:55 +0200
+X-ME-IP: 90.126.248.220
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     jejb@linux.ibm.com, martin.petersen@oracle.com,
+        sathya.prakash@broadcom.com, sreekanth.reddy@broadcom.com,
+        suganath-prabu.subramani@broadcom.com
+Cc:     MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/1] scsi: mptctl: Remove usage of the deprecated "pci-dma-compat.h" API
+Date:   Sat, 25 Sep 2021 08:45:51 +0200
+Message-Id: <cover.1632551759.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+This cover letter is only there to draw attention on the fact that I'm a bit
+unsure about the use of GFP_KERNEL in 'kbuf_alloc_2_sgl()'.
 
-There is a spelling mistake in a dev_err error message. Fix it.
+In all conversion that I've done, GFP_USER was never used. I don't fully
+understand the difference between GFP_USER and GFP_KERNEL.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/meson/aiu-encoder-spdif.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+So please review with care.
 
-diff --git a/sound/soc/meson/aiu-encoder-spdif.c b/sound/soc/meson/aiu-encoder-spdif.c
-index de850913975f..97da60db2c4d 100644
---- a/sound/soc/meson/aiu-encoder-spdif.c
-+++ b/sound/soc/meson/aiu-encoder-spdif.c
-@@ -113,7 +113,7 @@ static int aiu_encoder_spdif_hw_params(struct snd_pcm_substream *substream,
- 		val |= AIU_958_MISC_MODE_32BITS;
- 		break;
- 	default:
--		dev_err(dai->dev, "Unsupport physical width\n");
-+		dev_err(dai->dev, "Unsupported physical width\n");
- 		return -EINVAL;
- 	}
- 
+
+For the 3 other functions, I'm much more confident. I've put the explanation
+of why I think that GFP_KERNEL is safe in patch 1/1.
+Basically, these functions already call some functions that can sleep.
+
+
+Christophe JAILLET (1):
+  scsi: mptctl: switch from 'pci_' to 'dma_' API
+
+ drivers/message/fusion/mptctl.c | 82 ++++++++++++++++++++-------------
+ 1 file changed, 49 insertions(+), 33 deletions(-)
+
 -- 
-2.32.0
+2.30.2
 
