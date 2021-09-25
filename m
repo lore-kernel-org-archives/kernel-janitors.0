@@ -2,46 +2,46 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72AA6C433FE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Sep 2021 22:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5F13C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Sep 2021 22:22:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4569C61039
-	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Sep 2021 22:14:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1A8D61039
+	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Sep 2021 22:22:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230060AbhIYWOA (ORCPT
+        id S230120AbhIYWXx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 25 Sep 2021 18:14:00 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:33344
+        Sat, 25 Sep 2021 18:23:53 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:34398
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230024AbhIYWN6 (ORCPT
+        by vger.kernel.org with ESMTP id S230024AbhIYWXx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 25 Sep 2021 18:13:58 -0400
+        Sat, 25 Sep 2021 18:23:53 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 2E89C40CE2;
-        Sat, 25 Sep 2021 22:12:22 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id F2D914049E;
+        Sat, 25 Sep 2021 22:22:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632607942;
-        bh=5GJGeMUE1rwvKSTEVK8obPvzmMX2uPbl+sLWvpxmi/Y=;
+        s=20210705; t=1632608537;
+        bh=KqfzOAU9rH+MFeq0GoYgMDIMmLolH9PE7uCZ+3pFhB4=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=o4XySPeeDyWl8UU398FbX6sZORi8Iwe8Z326AxuuHOnrT5Y+Y60FQxN9UjaUo5REF
-         PQB+RALfQQwlBSs9LrS/H816hXRMgqvezkOn7p2JJY7FToR1nPKzukbCvvGXEscnWb
-         37+yBQTol2XTHhpUooVwce+IMzaBU5oetc6tt+7iEC5rYea39xzBcJwF9otwBeeg7d
-         l/bxY6ggW8dA4m9ax3F9hIhXLFHeQoc0z1K0iIxwzr36ENrsTt/IZXLj/OmwrJdyMp
-         t2TAo0Yf03dsAv/X9fn4RCvde3KAS7Wv8z9EdVy/vXsZXzccMe05nLcuLqtUUA66jQ
-         5dolgvk2MnX3w==
+        b=WBJHDA2COZIgumOa5LcS9hV6S6aafp95dVa/yF2z3vYirsEwGccP3VgwsbRgbFQ+O
+         6i/S8bAW0M65MmcIjNsSc/lxD3INNkWR8qYakDWSvJY9eeS7SMaGlW/QDKkUpZtfQH
+         1FHvy7Bc55we5rBGlnhJXQcJ27le4DrKROejRJe+f4Po6k+pdyTtTL5AB3r6Nxj8b9
+         cZkwgYKEpwK/IbfDn5M5TwhP4kckSHxJGIIutLonci/mddHGV+GDpdmu4RNXq8TvA9
+         GdivW6VZhmyIZnCChMFVo/sTRBUFPNBW23k3mmm6svpQNDPIIG1BIlSzh4Xz4yrbro
+         DweE0YHkSTLvw==
 From:   Colin King <colin.king@canonical.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To:     Jiri Kosina <jikos@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        linux-input@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/i915/gt: return NULL rather than a plain 0 integer
-Date:   Sat, 25 Sep 2021 23:12:21 +0100
-Message-Id: <20210925221221.181630-1-colin.king@canonical.com>
+Subject: [PATCH] HID: thrustmaster: Initialized pointer twi with NULL rather than 0
+Date:   Sat, 25 Sep 2021 23:22:16 +0100
+Message-Id: <20210925222216.182099-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -52,28 +52,26 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Function gen7_ctx_vma returns a pointer to struct i915_vma, so
-returning a plain 0 integer isn't good practice. Fix this by
-returning a NULL instead.
+Pointers should be initialized with NULL rather than 0. Fix this.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/i915/gt/intel_ring_submission.c | 2 +-
+ drivers/hid/hid-thrustmaster.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/gt/intel_ring_submission.c b/drivers/gpu/drm/i915/gt/intel_ring_submission.c
-index 2958e2fae380..3c65efcb7bed 100644
---- a/drivers/gpu/drm/i915/gt/intel_ring_submission.c
-+++ b/drivers/gpu/drm/i915/gt/intel_ring_submission.c
-@@ -1265,7 +1265,7 @@ static struct i915_vma *gen7_ctx_vma(struct intel_engine_cs *engine)
- 	int size, err;
+diff --git a/drivers/hid/hid-thrustmaster.c b/drivers/hid/hid-thrustmaster.c
+index d44550aa8805..aa874f075bf9 100644
+--- a/drivers/hid/hid-thrustmaster.c
++++ b/drivers/hid/hid-thrustmaster.c
+@@ -205,7 +205,7 @@ static void thrustmaster_model_handler(struct urb *urb)
+ 	struct tm_wheel *tm_wheel = hid_get_drvdata(hdev);
+ 	uint16_t model = 0;
+ 	int i, ret;
+-	const struct tm_wheel_info *twi = 0;
++	const struct tm_wheel_info *twi = NULL;
  
- 	if (GRAPHICS_VER(engine->i915) != 7 || engine->class != RENDER_CLASS)
--		return 0;
-+		return NULL;
- 
- 	err = gen7_ctx_switch_bb_setup(engine, NULL /* probe size */);
- 	if (err < 0)
+ 	if (urb->status) {
+ 		hid_err(hdev, "URB to get model id failed with error %d\n", urb->status);
 -- 
 2.32.0
 
