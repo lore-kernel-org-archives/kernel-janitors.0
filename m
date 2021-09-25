@@ -2,43 +2,46 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EC3CC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Sep 2021 21:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72AA6C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Sep 2021 22:14:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EAAB60F5D
-	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Sep 2021 21:59:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4569C61039
+	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Sep 2021 22:14:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230044AbhIYWAr (ORCPT
+        id S230060AbhIYWOA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 25 Sep 2021 18:00:47 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:34556
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229997AbhIYWAr (ORCPT
+        Sat, 25 Sep 2021 18:14:00 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:33344
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230024AbhIYWN6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 25 Sep 2021 18:00:47 -0400
+        Sat, 25 Sep 2021 18:13:58 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 91AA23F070;
-        Sat, 25 Sep 2021 21:59:08 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 2E89C40CE2;
+        Sat, 25 Sep 2021 22:12:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632607148;
-        bh=X8bcr5IsgetMjo+uz2jNmTIyMflSWfgaoOmzS2irH7U=;
+        s=20210705; t=1632607942;
+        bh=5GJGeMUE1rwvKSTEVK8obPvzmMX2uPbl+sLWvpxmi/Y=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=eXvfkiyt68V4JBa92l83AG/m0+VHiYqED7qIiVcRX4a+zW74yufVRCqzMVFP/CjyG
-         CSyuwHwLvJbXxN7r0HrWYg8ZYp9vlmysFcgBaBG78LN9pNr+Pmkrqtm7xjYKwUSi0D
-         VlZ7q5vfUUIeIuN4tfCuzKeuEix6JFbeOs2m+4Z6HfJsWO+aksRtp5hlh6MQCM5l09
-         0fvkBhyG/6Vo3wOvUJgPM5UtXk+kLEPR4FlDhVf7bBwDe6SyR81VgkieKzvrVIZqWf
-         8cT50xiIJMMSeLDBwE6zzwgve6OW+bVeGWX1QJRaf8riIVAKmlmwXO/mOuMc5P0pD+
-         GOXMaK9jENseQ==
+        b=o4XySPeeDyWl8UU398FbX6sZORi8Iwe8Z326AxuuHOnrT5Y+Y60FQxN9UjaUo5REF
+         PQB+RALfQQwlBSs9LrS/H816hXRMgqvezkOn7p2JJY7FToR1nPKzukbCvvGXEscnWb
+         37+yBQTol2XTHhpUooVwce+IMzaBU5oetc6tt+7iEC5rYea39xzBcJwF9otwBeeg7d
+         l/bxY6ggW8dA4m9ax3F9hIhXLFHeQoc0z1K0iIxwzr36ENrsTt/IZXLj/OmwrJdyMp
+         t2TAo0Yf03dsAv/X9fn4RCvde3KAS7Wv8z9EdVy/vXsZXzccMe05nLcuLqtUUA66jQ
+         5dolgvk2MnX3w==
 From:   Colin King <colin.king@canonical.com>
-To:     SeongJae Park <sj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mm/damon/core: nullify pointer ctx->kdamond with a NULL
-Date:   Sat, 25 Sep 2021 22:59:08 +0100
-Message-Id: <20210925215908.181226-1-colin.king@canonical.com>
+Subject: [PATCH] drm/i915/gt: return NULL rather than a plain 0 integer
+Date:   Sat, 25 Sep 2021 23:12:21 +0100
+Message-Id: <20210925221221.181630-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -49,30 +52,28 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Currently a plain integer is being used to nullify the
-pointer ctx->kdamond. Use NULL instead. Cleans up sparse
-warning:
-
-mm/damon/core.c:317:40: warning: Using plain integer as NULL pointer
+Function gen7_ctx_vma returns a pointer to struct i915_vma, so
+returning a plain 0 integer isn't good practice. Fix this by
+returning a NULL instead.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- mm/damon/core.c | 2 +-
+ drivers/gpu/drm/i915/gt/intel_ring_submission.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/damon/core.c b/mm/damon/core.c
-index 874558a790a0..c8665c80577a 100644
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -314,7 +314,7 @@ static int __damon_start(struct damon_ctx *ctx)
- 				nr_running_ctxs);
- 		if (IS_ERR(ctx->kdamond)) {
- 			err = PTR_ERR(ctx->kdamond);
--			ctx->kdamond = 0;
-+			ctx->kdamond = NULL;
- 		}
- 	}
- 	mutex_unlock(&ctx->kdamond_lock);
+diff --git a/drivers/gpu/drm/i915/gt/intel_ring_submission.c b/drivers/gpu/drm/i915/gt/intel_ring_submission.c
+index 2958e2fae380..3c65efcb7bed 100644
+--- a/drivers/gpu/drm/i915/gt/intel_ring_submission.c
++++ b/drivers/gpu/drm/i915/gt/intel_ring_submission.c
+@@ -1265,7 +1265,7 @@ static struct i915_vma *gen7_ctx_vma(struct intel_engine_cs *engine)
+ 	int size, err;
+ 
+ 	if (GRAPHICS_VER(engine->i915) != 7 || engine->class != RENDER_CLASS)
+-		return 0;
++		return NULL;
+ 
+ 	err = gen7_ctx_switch_bb_setup(engine, NULL /* probe size */);
+ 	if (err < 0)
 -- 
 2.32.0
 
