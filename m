@@ -2,37 +2,35 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B23C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 26 Sep 2021 06:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E215BC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 26 Sep 2021 07:17:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2399C60F9C
-	for <kernel-janitors@archiver.kernel.org>; Sun, 26 Sep 2021 06:55:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C245A6103D
+	for <kernel-janitors@archiver.kernel.org>; Sun, 26 Sep 2021 07:17:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231208AbhIZG5V (ORCPT
+        id S231187AbhIZHTA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 26 Sep 2021 02:57:21 -0400
-Received: from dvalin.narfation.org ([213.160.73.56]:43032 "EHLO
-        dvalin.narfation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231210AbhIZG5U (ORCPT
+        Sun, 26 Sep 2021 03:19:00 -0400
+Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:34282 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S231157AbhIZHTA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 26 Sep 2021 02:57:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
-        s=20121; t=1632639337;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=yWtEe8tQJN4o8o0EqZ9sup95CePFkupC9tPYt9r92NI=;
-        b=qLK5W6SUpk//TdNQIw9mmo2CYRa75wFIf7EvCXAATlTxxUvpP2NkRvgn8Ml/2Tz+lAeLDu
-        jB6ufRb1jz0Wtw5qAQ5ASKNY84r4jspAxnqU2MpS4jjSxrh3jYW1f2GBKUG6tVsDL53v7q
-        z5ZXgjUykczjKVOOoWy3uTlK01uzcIw=
-From:   Sven Eckelmann <sven@narfation.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Colin King <colin.king@canonical.com>,
-        Sven Eckelmann <sven@narfation.org>
-Subject: scripts/spelling.txt: Fix "mistake" version of "synchronization"
-Date:   Sun, 26 Sep 2021 08:55:29 +0200
-Message-Id: <20210926065529.6880-1-sven@narfation.org>
+        Sun, 26 Sep 2021 03:19:00 -0400
+Received: from pop-os.home ([90.126.248.220])
+        by mwinf5d82 with ME
+        id yXHM2500F4m3Hzu03XHM0b; Sun, 26 Sep 2021 09:17:23 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 26 Sep 2021 09:17:23 +0200
+X-ME-IP: 90.126.248.220
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     rui.zhang@intel.com, daniel.lezcano@linaro.org, amitk@kernel.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] thermal: intel_powerclamp: Use bitmap_zalloc/bitmap_free when applicable
+Date:   Sun, 26 Sep 2021 09:17:20 +0200
+Message-Id: <f7513027ae9242643b5ddb6ed48a3aeca1b0f2a8.1632640557.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -40,30 +38,49 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If both "mistake" version and "correction" version are the same, a warning
-message is created by checkpatch which is impossible to fix. But it was
-noticed that Colan Ian King created a commit e6c0a0889b80 ("ALSA: aloop:
-Fix spelling mistake "synchronization" -> "synchronization"") which
-suggests that this spelling mistake was fixed by replacing the word
-"synchronization" with itself. But the actual diff shows that the mistake
-in the code was "sychronization". It is rather likely that the "mistake"
-in spelling.txt should have been the latter.
+'cpu_clamping_mask' is a bitmap. So use 'bitmap_zalloc()' and
+'bitmap_free()' to simplify code, improve the semantic of the code and
+avoid some open-coded arithmetic in allocator arguments.
 
-Fixes: 2e74c9433ba8 ("scripts/spelling.txt: add more spellings to spelling.txt")
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-This was already reported last week in https://lore.kernel.org/all/1930750.yhyOXdeGKK@sven-l14/
+ drivers/thermal/intel/intel_powerclamp.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/scripts/spelling.txt b/scripts/spelling.txt
-index fd8f07317b8e1c572e1e0f6bb4f9e01dff96c17c..acf6ea71129921ad77a201d13761382ee032483e 100644
---- a/scripts/spelling.txt
-+++ b/scripts/spelling.txt
-@@ -1450,7 +1450,7 @@ syfs||sysfs
- symetric||symmetric
- synax||syntax
- synchonized||synchronized
--synchronization||synchronization
-+sychronization||synchronization
- synchronuously||synchronously
- syncronize||synchronize
- syncronized||synchronized
+diff --git a/drivers/thermal/intel/intel_powerclamp.c b/drivers/thermal/intel/intel_powerclamp.c
+index a5b58ea89cc6..9b68489a2356 100644
+--- a/drivers/thermal/intel/intel_powerclamp.c
++++ b/drivers/thermal/intel/intel_powerclamp.c
+@@ -705,10 +705,8 @@ static enum cpuhp_state hp_state;
+ static int __init powerclamp_init(void)
+ {
+ 	int retval;
+-	int bitmap_size;
+ 
+-	bitmap_size = BITS_TO_LONGS(num_possible_cpus()) * sizeof(long);
+-	cpu_clamping_mask = kzalloc(bitmap_size, GFP_KERNEL);
++	cpu_clamping_mask = bitmap_zalloc(num_possible_cpus(), GFP_KERNEL);
+ 	if (!cpu_clamping_mask)
+ 		return -ENOMEM;
+ 
+@@ -753,7 +751,7 @@ static int __init powerclamp_init(void)
+ exit_unregister:
+ 	cpuhp_remove_state_nocalls(hp_state);
+ exit_free:
+-	kfree(cpu_clamping_mask);
++	bitmap_free(cpu_clamping_mask);
+ 	return retval;
+ }
+ module_init(powerclamp_init);
+@@ -764,7 +762,7 @@ static void __exit powerclamp_exit(void)
+ 	cpuhp_remove_state_nocalls(hp_state);
+ 	free_percpu(worker_data);
+ 	thermal_cooling_device_unregister(cooling_dev);
+-	kfree(cpu_clamping_mask);
++	bitmap_free(cpu_clamping_mask);
+ 
+ 	cancel_delayed_work_sync(&poll_pkg_cstate_work);
+ 	debugfs_remove_recursive(debug_dir);
+-- 
+2.30.2
+
