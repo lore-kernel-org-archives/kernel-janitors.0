@@ -2,35 +2,36 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E34C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 26 Sep 2021 12:37:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35FF7C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 26 Sep 2021 13:07:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A13C660FC2
-	for <kernel-janitors@archiver.kernel.org>; Sun, 26 Sep 2021 12:37:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0891B61019
+	for <kernel-janitors@archiver.kernel.org>; Sun, 26 Sep 2021 13:07:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231410AbhIZMjJ (ORCPT
+        id S231604AbhIZNJB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 26 Sep 2021 08:39:09 -0400
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:19382 "EHLO
+        Sun, 26 Sep 2021 09:09:01 -0400
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:33411 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231393AbhIZMjI (ORCPT
+        with ESMTP id S231673AbhIZNJA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 26 Sep 2021 08:39:08 -0400
+        Sun, 26 Sep 2021 09:09:00 -0400
 Received: from pop-os.home ([90.126.248.220])
         by mwinf5d33 with ME
-        id ycdV250084m3Hzu03cdVkC; Sun, 26 Sep 2021 14:37:31 +0200
+        id yd7K2500H4m3Hzu03d7Lw8; Sun, 26 Sep 2021 15:07:22 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 26 Sep 2021 14:37:31 +0200
+X-ME-Date: Sun, 26 Sep 2021 15:07:22 +0200
 X-ME-IP: 90.126.248.220
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     nm@ti.com, kristo@kernel.org, ssantosh@kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+To:     thierry.reding@gmail.com, vdumpa@nvidia.com, joro@8bytes.org,
+        will@kernel.org, jonathanh@nvidia.com
+Cc:     linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] firmware: ti_sci: Use devm_bitmap_zalloc when applicable
-Date:   Sun, 26 Sep 2021 14:36:55 +0200
-Message-Id: <1bd77909ff75f62a2228a39db208c4c6d1b3e0e2.1632659746.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] iommu/tegra-smmu: Use devm_bitmap_zalloc when applicable
+Date:   Sun, 26 Sep 2021 15:07:18 +0200
+Message-Id: <2c0f4da80c3b5ef83299c651f69a563034c1c6cb.1632661557.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -38,37 +39,38 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'xfer_alloc_table' is a bitmap. So use 'devm_bitmap_zalloc()' to simplify
-code and improve the semantic of the code.
-
-While at it, remove a redundant 'bitmap_zero()' call.
+'smmu->asids' is a bitmap. So use 'devm_kzalloc()' to simplify code,
+improve the semantic of the code and avoid some open-coded arithmetic in
+allocator arguments.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/firmware/ti_sci.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/iommu/tegra-smmu.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-index 235c7e7869aa..a33eb884102f 100644
---- a/drivers/firmware/ti_sci.c
-+++ b/drivers/firmware/ti_sci.c
-@@ -3352,13 +3352,11 @@ static int ti_sci_probe(struct platform_device *pdev)
- 	if (!minfo->xfer_block)
- 		return -ENOMEM;
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index 0a281833f611..e900e3c46903 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -1079,7 +1079,6 @@ struct tegra_smmu *tegra_smmu_probe(struct device *dev,
+ 				    struct tegra_mc *mc)
+ {
+ 	struct tegra_smmu *smmu;
+-	size_t size;
+ 	u32 value;
+ 	int err;
  
--	minfo->xfer_alloc_table = devm_kcalloc(dev,
--					       BITS_TO_LONGS(desc->max_msgs),
--					       sizeof(unsigned long),
--					       GFP_KERNEL);
-+	minfo->xfer_alloc_table = devm_bitmap_zalloc(dev,
-+						     desc->max_msgs,
-+						     GFP_KERNEL);
- 	if (!minfo->xfer_alloc_table)
- 		return -ENOMEM;
--	bitmap_zero(minfo->xfer_alloc_table, desc->max_msgs);
+@@ -1097,9 +1096,7 @@ struct tegra_smmu *tegra_smmu_probe(struct device *dev,
+ 	 */
+ 	mc->smmu = smmu;
  
- 	/* Pre-initialize the buffer pointer to pre-allocated buffers */
- 	for (i = 0, xfer = minfo->xfer_block; i < desc->max_msgs; i++, xfer++) {
+-	size = BITS_TO_LONGS(soc->num_asids) * sizeof(long);
+-
+-	smmu->asids = devm_kzalloc(dev, size, GFP_KERNEL);
++	smmu->asids = devm_bitmap_zalloc(dev, soc->num_asids, GFP_KERNEL);
+ 	if (!smmu->asids)
+ 		return ERR_PTR(-ENOMEM);
+ 
 -- 
 2.30.2
 
