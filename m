@@ -2,103 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 011EEC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Sep 2021 13:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D60F4C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Sep 2021 14:26:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D04A261041
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Sep 2021 13:38:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B69FD610E8
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Sep 2021 14:26:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234464AbhI0Njz (ORCPT
+        id S234787AbhI0O1o (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Sep 2021 09:39:55 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:60332 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234359AbhI0Njy (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Sep 2021 09:39:54 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 18RDc74e004328;
-        Mon, 27 Sep 2021 08:38:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1632749887;
-        bh=DCKjXvBPcTFSaHvRzpi9LbszU5rTTnzEeL7qD7ID1K0=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=xlAAAl5m2wqfELe+3wvlHeFZ8Z4dbIS1BiUxEn1Lcgir6ubyB1NXYvwNGXguKC/sF
-         B9IqViEcjrDPGBbTb3lLMznIw7q0kEkQ7bgsEaRTW3/C84Nj4TPC3MMYV9dt/0i7ZX
-         1PQqGb9qky7+ekp3ViHH4f4fysSPebd/ZPdrYC8Q=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 18RDc7HC100275
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 27 Sep 2021 08:38:07 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Mon, 27
- Sep 2021 08:38:06 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Mon, 27 Sep 2021 08:38:07 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 18RDc7mR022309;
-        Mon, 27 Sep 2021 08:38:07 -0500
-Date:   Mon, 27 Sep 2021 08:38:07 -0500
-From:   Nishanth Menon <nm@ti.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-CC:     <kristo@kernel.org>, <ssantosh@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] firmware: ti_sci: Use devm_bitmap_zalloc when applicable
-Message-ID: <20210927133807.rtkfjkxxlwpdqcnf@scouring>
-References: <1bd77909ff75f62a2228a39db208c4c6d1b3e0e2.1632659746.git.christophe.jaillet@wanadoo.fr>
+        Mon, 27 Sep 2021 10:27:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36528 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234706AbhI0O1o (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 27 Sep 2021 10:27:44 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 131B7610A2;
+        Mon, 27 Sep 2021 14:26:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1632752766;
+        bh=4zbOOUtxrR7msPE48PHiPXzfw63aLKDTKDuaRxP+2oU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=vPBYw+GuINRrTLt22ZYAHpxTNP7FA5ARycV+ZzEa1EP79kpg4cVjoLL4/NWUrshlY
+         WCY3yM2nDl3S1C9vJQpCPjL6K0PKA2VXzi37K16/AY+dHfSw7cucSNOdlgZEGaXoOU
+         nsNZUkCy/YEoPFmxrh+pnKx+drfGMUsMDcRZAI5ra+XjtTgq9tpyM10KzNectkVOxh
+         y0kgceeLGunHKdpPnrBLbMSLolqb8UW+3X+RjIAZkygtPkCuyCblfkefuphc5oC8LO
+         Vcgb98S/l4zlPO+m3zLGxN60RI4ThYWK0XhiAZN/g/JapI61O7wctspgbgg8Znsbun
+         AnHWoIq+o7HZA==
+Date:   Mon, 27 Sep 2021 07:26:05 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Samuel Ortiz <sameo@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "John W. Linville" <linville@tuxdriver.com>,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] nfc: avoid potential race condition
+Message-ID: <20210927072605.45291daf@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+In-Reply-To: <81b648d2-0e20-e5ac-e2ff-a1b8b8ea83a8@canonical.com>
+References: <20210923065051.GA25122@kili>
+        <3760c70c-299c-89bf-5a4a-22e8d564ef92@canonical.com>
+        <20210923122220.GB2083@kadam>
+        <47358bea-e761-b823-dfbd-cd8e0a2a69a6@canonical.com>
+        <20210924131441.6598ba3a@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+        <81b648d2-0e20-e5ac-e2ff-a1b8b8ea83a8@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1bd77909ff75f62a2228a39db208c4c6d1b3e0e2.1632659746.git.christophe.jaillet@wanadoo.fr>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 14:36-20210926, Christophe JAILLET wrote:
-> 'xfer_alloc_table' is a bitmap. So use 'devm_bitmap_zalloc()' to simplify
-> code and improve the semantic of the code.
+On Mon, 27 Sep 2021 09:44:08 +0200 Krzysztof Kozlowski wrote:
+> On 24/09/2021 22:14, Jakub Kicinski wrote:
+> > On Fri, 24 Sep 2021 10:21:33 +0200 Krzysztof Kozlowski wrote:  
+> >> Indeed. The code looks reasonable, though, so even if race is not really
+> >> reproducible:
+> >>
+> >> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>  
+> > 
+> > Would you mind making a call if this is net (which will mean stable) or
+> > net-next material (without the Fixes tags) and reposting? Thanks! :)  
 > 
-> While at it, remove a redundant 'bitmap_zero()' call.
+> Hi Jakub,
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/firmware/ti_sci.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
+> Material is net-next. However I don't understand why it should be
+> without "Fixes" in such case?
 > 
-> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-> index 235c7e7869aa..a33eb884102f 100644
-> --- a/drivers/firmware/ti_sci.c
-> +++ b/drivers/firmware/ti_sci.c
-> @@ -3352,13 +3352,11 @@ static int ti_sci_probe(struct platform_device *pdev)
->  	if (!minfo->xfer_block)
->  		return -ENOMEM;
->  
-> -	minfo->xfer_alloc_table = devm_kcalloc(dev,
-> -					       BITS_TO_LONGS(desc->max_msgs),
-> -					       sizeof(unsigned long),
-> -					       GFP_KERNEL);
-> +	minfo->xfer_alloc_table = devm_bitmap_zalloc(dev,
-> +						     desc->max_msgs,
-> +						     GFP_KERNEL);
->  	if (!minfo->xfer_alloc_table)
->  		return -ENOMEM;
-> -	bitmap_zero(minfo->xfer_alloc_table, desc->max_msgs);
->  
->  	/* Pre-initialize the buffer pointer to pre-allocated buffers */
->  	for (i = 0, xfer = minfo->xfer_block; i < desc->max_msgs; i++, xfer++) {
-> -- 
-> 2.30.2
-> 
+> The material going to current release (RC, so I understood: net), should
+> fix only issues introduced in current merge window. Linus made it clear
+> several times.
 
-Reviewed-by: Nishanth Menon <nm@ti.com>
+Oh, really? I've never heard about this rule, would you be able to dig
+up references?
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+This strikes me as odd, most fixes we merge are for previous releases.
+In fact when I write -rc pull requests to Linus I break them down by
+current release vs previous - and he never complained.
+
+> The issue here was introduced long time ago, not in current merge
+> window, however it is still an issue to fix. It's still a bug which
+> should have a commit with "Fixes" for all the stable tress and
+> downstream distros relying on stable kernels. Also for some statistics
+> on LWN.
+
+Stable will not pull the commit from net-next, tho. Stable is more
+restrictive than rc (or at least so I think) so "we want it in stable,
+please merge it to net-next" does not compute with the preconceptions 
+I have.
