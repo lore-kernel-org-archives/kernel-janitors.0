@@ -2,141 +2,162 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51885C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Sep 2021 07:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87728C433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Sep 2021 08:16:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3030660EFF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Sep 2021 07:44:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71BCA6054F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Sep 2021 08:16:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233301AbhI0Hpw (ORCPT
+        id S233481AbhI0IS3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Sep 2021 03:45:52 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:56260
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233242AbhI0Hpv (ORCPT
+        Mon, 27 Sep 2021 04:18:29 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:53926 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233445AbhI0IS2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Sep 2021 03:45:51 -0400
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 236D740790
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Sep 2021 07:44:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632728653;
-        bh=htaLTDZZkgu7tl4XeHwMK8H3VrFMP4P87AMifpOoa/0=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=BVfvOXBPlyEo4aF8lxxzPi6CbIsEAufzfv5FkG6QzKI0V+EhuHY0XlKUQ+rr9J7V9
-         CNqYvMLgSsps9GMh7g8YiZVkU6X2+rSLI7p+pJEmNpOoBwOlDvDEGBRYhxiIeeje0B
-         ZcT8FHev2SMbsaqcPvDcvkDTwhZyC9/hVY9NoR2CdgwUCBjQBJCyVqgG1qgK/MuxXr
-         w//oVobSe897sj/J9bl4PvwIQWbMoR4mnbnAln8y7iaWsWoHG5pzev6dAabhwF1k7f
-         yODAqqy61+gT8T4H1xXdDB7fHHOJUq5u2cTQ3K7J9eUeHnBGim9HVaodbqd1Hkzfhj
-         VYsGtq84dLqbA==
-Received: by mail-lf1-f70.google.com with SMTP id s8-20020ac25c48000000b003faf62e104eso14970702lfp.22
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Sep 2021 00:44:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=htaLTDZZkgu7tl4XeHwMK8H3VrFMP4P87AMifpOoa/0=;
-        b=uk9fiA+rYDNMPo5WRENpRzeCRBH0eBV2bqLwSyNmE9XCRaKxarROJ69ZhQ/4w7knC0
-         OkRTinD+GEdnTwTwovFO3LrM9OXB+AX7RFlol/OPpVcDd2c9JKaYgBHux8tWy5keQWQB
-         AdClj2aaMNbgSee4VDA93s5Z70rE1uYQqxfrXfStRa958kzOOmUSFlXd3pzQ5oT0AXKC
-         MBdtheNqHyCp+OcYHlMdtH9+B931sNZgZiNgi9vgCBhuWqqQj3lXyzopnJ0jhZ/BeTLN
-         v4+ukfemdUri3VXb09kw5M1/M1RPRkyZ5HT7EdYbwhGvYaVPPFPrUukAEEIHKfDIhvuz
-         TKeg==
-X-Gm-Message-State: AOAM532dqZQ7/JoJXXTRAD5lUQR2mmA0nZ1g5Ngg56u8IuWZ54KrQxd8
-        FQgYRjucN29Nj6SxSjOR+LGE4xGfEnXLHUWuXZKH7QbrHZIG8ZTt/F7LRWkN2B9FXBXT5H1yL6h
-        xbhtdF4xQ93/y+nIuUpEUDgKcxvvS51+M92CfiD9zdfKQxg==
-X-Received: by 2002:a2e:3518:: with SMTP id z24mr27233372ljz.312.1632728649764;
-        Mon, 27 Sep 2021 00:44:09 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxsBPqk+42GRnHj24mRBSkSUyLsAH+OiaLvc6OiaoVfffDGAynSIIA12TyR3dhF6Ye2kYvS7g==
-X-Received: by 2002:a2e:3518:: with SMTP id z24mr27233357ljz.312.1632728649608;
-        Mon, 27 Sep 2021 00:44:09 -0700 (PDT)
-Received: from [192.168.0.20] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id e5sm1907825ljj.129.2021.09.27.00.44.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Sep 2021 00:44:09 -0700 (PDT)
-Subject: Re: [PATCH net] nfc: avoid potential race condition
-To:     Jakub Kicinski <kuba@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Samuel Ortiz <sameo@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "John W. Linville" <linville@tuxdriver.com>,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20210923065051.GA25122@kili>
- <3760c70c-299c-89bf-5a4a-22e8d564ef92@canonical.com>
- <20210923122220.GB2083@kadam>
- <47358bea-e761-b823-dfbd-cd8e0a2a69a6@canonical.com>
- <20210924131441.6598ba3a@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <81b648d2-0e20-e5ac-e2ff-a1b8b8ea83a8@canonical.com>
-Date:   Mon, 27 Sep 2021 09:44:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Mon, 27 Sep 2021 04:18:28 -0400
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 18R85GSH030426;
+        Mon, 27 Sep 2021 08:16:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : content-type : mime-version; s=corp-2021-07-09;
+ bh=9/QCf8HSeELtt5fDGHi57DGcXSbcu0V4BAQwD8XZiEI=;
+ b=CNlU88+I7FqtINnV4zPCThBWdpSHiUd24Glb0NtHEJXA/AGDZKKiGSkRhCHHx6lgmcgA
+ MAH4PkdeHBHQel3iYNsF6YAwc+2eeDKN7zRH5d4uij/1Db9F6R+8V2pWAMVnXkxayGFQ
+ veI5CXUzNXNBQDTIeIBdf1JmCcSNdL1nOa/ixvJ5i+bjrP+RjTXgGMdMURI+hKCrl3x1
+ qhdDeLkj4R+sgymwVDBgzS1hK+0xa3nNZP6odhwDH0gBoX2kEXqDtY2Y+fCURhUZNgxB
+ Vf68o8DnL1AVJ2x8KW2k9DFRz3WL1UgaUGDiPJw/NlGRBrOZ/eV0phnqQX2afOTKyuh/ mw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3baqvrafgh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 Sep 2021 08:16:45 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 18R89rQv159101;
+        Mon, 27 Sep 2021 08:16:43 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2106.outbound.protection.outlook.com [104.47.55.106])
+        by userp3030.oracle.com with ESMTP id 3b9rvtb59s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 Sep 2021 08:16:43 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=k3J0IZPdMm2jHO+G+LbNT3aTvHOLw4IgvM2ZfPSmC4wjCpPXKY3XAvi7WKTmn2rJW/pd3jmJLT39UPb8QqqZYv0VhToyFAarOOLZauAaHwy38Uy9yRlfnFwx0hkMou1LwCd/amS7W5bv5/JCNTGbW524iYPn556JG5+QCavW9WTQVUjj7IAo67P4GnNOfE17nH4GzoTHGRvmAAtpplsWOIhtT9Ezt/aNxiISfZBtGhZFVvPLISGCHqem9+h/kBGJSqy1QtbmeviTqasZYByOYnmuS7DFmN/PtDBtgeBHtubl2O/2OGL77O+vNVU9VsjpxeLOJQmjUb4hd6cIHJS+gQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
+ bh=9/QCf8HSeELtt5fDGHi57DGcXSbcu0V4BAQwD8XZiEI=;
+ b=jDLqyPlXYP2Fvb7gRFvYweaHmk11O8PqNAV+BTZDGwTmcx1PyaxI36VzXxBHkh6UH56JWvKeXNnU6laH0f/JaTJGUTyodI4TBEE8i0NaXPQO3xRWsf2ZoPVwXsaDs7XbhoKhB1mfMluyiPt4T9YReZ+8KMMsOquVaKwwGijBSiGDwFNfRT3Yzggq0J3mim57sfNbVrePNBeCvkKlO5JtDdLufSjGpMeUzr7RMwPW4B/vWeM3n+dozutaoWYI25R0+zDfhoVx8wCUaOVyol9DKfbuvfqV3hlUFGOKsgvWRnEPq5n2mB5mY9DEWcLNqQIzkA70gN7Yqw+rHdpU8u0ucg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9/QCf8HSeELtt5fDGHi57DGcXSbcu0V4BAQwD8XZiEI=;
+ b=dII8Ql9F5+aVuZRLZpLrEfWx+gWuzhAngfvhRB26STOv/L1Htv0H7RQ3opdBnRx64Yxb166qDwmqAbHcGih37HcbjjY7C8CK9kwghZIb90YOqtH4XgExdwHLlm6TIY3ttOUqry3lgAZDFEm7L5jbfHOShPkp8YtcjzE4ov4zsBk=
+Authentication-Results: gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=none action=none header.from=oracle.com;
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com (10.174.166.156) by
+ MWHPR1001MB2320.namprd10.prod.outlook.com (10.174.167.36) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4544.15; Mon, 27 Sep 2021 08:16:40 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::d409:11b5:5eb2:6be9]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::d409:11b5:5eb2:6be9%5]) with mapi id 15.20.4544.021; Mon, 27 Sep 2021
+ 08:16:40 +0000
+Date:   Mon, 27 Sep 2021 11:16:28 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/gma500: Fix error code in probe()
+Message-ID: <20210927081628.GA10186@kili>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: PR3P195CA0022.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:102:b6::27) To MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-In-Reply-To: <20210924131441.6598ba3a@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: from kili (62.8.83.99) by PR3P195CA0022.EURP195.PROD.OUTLOOK.COM (2603:10a6:102:b6::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.13 via Frontend Transport; Mon, 27 Sep 2021 08:16:38 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 17edfef4-d635-4f09-4ceb-08d9818f2259
+X-MS-TrafficTypeDiagnostic: MWHPR1001MB2320:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <MWHPR1001MB2320DCA5B9B765D4D7F8A7118EA79@MWHPR1001MB2320.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:792;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: nR2X/lOL0ybMIJ9I80SegwaXZ0uj71GcAWQl4EF4mjF4SqpccHJqwGpE2kKxRMGhvsae04hFf/9c+gg7jmY9gS7MX+rD+NFFe/avGqmFexfGgwXZ7lGbPSAOKsLtVmyZCxwqisIRy3qajku0sTNHSavOykHkH1xB/VzjR8OgFdxhDpUpvB9KIIGnApZzWPjtAaBgwwP5Iu3SJr2VTRpBfynGwjIGeavXObiXMHnCPPPmoFihaeIGHcTYv8CUoQJ2WauTCTTdaShuag8IzzrXAI1/7rOljjpxhHbPab/KhCv4FBwVGhz9CHDs7TtGROYOIqLXiYnrwkBV5ybpzvrOL9SSlNLr26cjztKlP0x1JOLOWF+RWeDp5dk6ngmcDvoYhWVH/MJV0RPRkQ9bIPh7yLprnRwpLUq9BCExnXkYbQIoim5F8Iq8/vL44qV+P4YzCOMrIy9HFwvzkZ4+F1QeoglYmIBt807CWrDhMYnD1vgCryjByyxD1ELyaUTqOPWN0x2R/NuowAE+6OZt/GseVGUk5JE2D/iDwkm2njHpqmc2jTSnIHmYRwCJ+d5+t2cUMRRsFfwzLgmxiPef9bQfOhGXjqU9MoDka0c0E+0AFgHDFCg1svJGdX70wnfnEio0YzVPAh1rl9v06WgcCuTkdzL5RAqPFZMEub+x5O4XhU6KnyOgbyOvcOFrc/4UNBACPBahwVrRoSotaojqjyviHw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(38350700002)(38100700002)(55016002)(9686003)(316002)(44832011)(4326008)(2906002)(86362001)(33716001)(956004)(54906003)(110136005)(5660300002)(6666004)(1076003)(4744005)(508600001)(83380400001)(9576002)(6496006)(186003)(33656002)(26005)(8936002)(66476007)(66556008)(66946007)(52116002)(8676002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Onv9WxT/Nmg+4QD0PWvT5+Mn300utAXvAVL+w4CxQmkDgARaacTHtMVQkZ8J?=
+ =?us-ascii?Q?JZZKsTJC08U/b+QnI1iWxXRhxqfhF4H/ugc0zfTOeVIr3ZA76DPW/Xwvnu6j?=
+ =?us-ascii?Q?Sxha1iceWq9NOcqGNtlPiWJoW4TP+eAc1Tmp9Sy5xxuLitr+SR70lT1OiAxy?=
+ =?us-ascii?Q?dqax2w1VtfUGMEFI7yD+JXd0+/epM2OQXd71aWEqan7O0P76am1gOsMGHPdY?=
+ =?us-ascii?Q?JUPlJ+WQMFZQsI3ZQ7YZyRQL9NOptn9UoOPlIeBa2oID7wmJPFYf9DqLgop8?=
+ =?us-ascii?Q?moJayxFWRujbaxM8fjV8tSbQZq4prSv1DZ3KG9NWvtqdGhd84OZrW8sXsMF6?=
+ =?us-ascii?Q?hLqtng0KAs3eBkGebSWXKDY35Vra65mSiX+ZfRsBeXMNf4Zm/aEPAePHq4it?=
+ =?us-ascii?Q?FrYdFfpkm75brdMUNKibHdC+QwMXhT7IpCQGAg4zWkIsZIyE6se7PpM+D0Xp?=
+ =?us-ascii?Q?3i5C8TECgpREFf01WN0lhW+TgAugmyrTdEPIqjYLNlUU8P5/QFF+lso260g0?=
+ =?us-ascii?Q?3WLF6OxJcHyTPTV5wQ4iWKkW8YmQLxRmjU3IQHyWlKPmyciBYK89xALONQYt?=
+ =?us-ascii?Q?vWu2jM7Qw0Sy6cwSZkADT2aNIAhFGykogyEos07tApaRTwMBjj2buVMr9Byt?=
+ =?us-ascii?Q?Zz9s2oDM1ufxnnvXDb5fHcporumtVuzywb2KL5zmoW8YDgbBufwtTAN0ZQyP?=
+ =?us-ascii?Q?DJZbSrvxj6GX/aBvw7eWOycwdLfkkPyKXXg4xdfwZBJ9i+vbLUVdvmh2orzb?=
+ =?us-ascii?Q?E4qou5e4kn+GLCrMTESpX9iRYtqN9yX7XhQLER4oUHYH3fRH21JW6rq59aKs?=
+ =?us-ascii?Q?kA9qQbbHiAnHjLUrJfSFI2nmd5y7nQnJtL/zIVifD+wyT7ghCXAKpWlMVS/P?=
+ =?us-ascii?Q?Nf0gWshkbo1qpNEgbk+JdK2ttSwbdigSJkawyH6TLwVP6lF0AMg3gj0a/97v?=
+ =?us-ascii?Q?r0J859E3U9Pcp/BFUbL/zYwKMQsj7TzhdRxi9LzFvqyuWcW+M7NMfAAJvkIu?=
+ =?us-ascii?Q?w0pPdHL6vnYAIAyTTqvekB5aOsviHC4xOt7LLlOVERB3Usc+sy/cpu3QFu1y?=
+ =?us-ascii?Q?oJZLTo2fVHg8A+epXVQ45sKO8XrEZDTGDvsjkys1w8BG70XdKeU78ystjlDf?=
+ =?us-ascii?Q?RXwLJ1uGRZ4T13Rr3++3dfOUAceQlx2ZdjQS7VAXxSwmQB1G1ZD4V6u4Dh9z?=
+ =?us-ascii?Q?JTerqdqzzElcgKzFTy92ydvHksrWQ02A54x9PDuZHY3PE4esQ99xItyUELuS?=
+ =?us-ascii?Q?woKAn3Zn8wSY0xqM7xcse2um40LNvbqIPy/ewSlwxT+ZGY2BDq/ttGXAKCy+?=
+ =?us-ascii?Q?aKnWC/xXVLrAH+WLWLI3GDRH?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17edfef4-d635-4f09-4ceb-08d9818f2259
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2021 08:16:40.7809
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: J4jr+1jRT2uBXHvgLm2ofarkJx1XxeQVRbzhvj8gmH0lNgxtPbjqbQu4nBNnJObwqM19FtY2aAqU6tQvexjlxuAd392d+9AjyWhh9rAOpdU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1001MB2320
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10119 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0 mlxscore=0
+ spamscore=0 suspectscore=0 adultscore=0 bulkscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2109230001
+ definitions=main-2109270056
+X-Proofpoint-GUID: TpDw7l04Dxm7QzHQDUlFX4BhsSybAjtx
+X-Proofpoint-ORIG-GUID: TpDw7l04Dxm7QzHQDUlFX4BhsSybAjtx
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 24/09/2021 22:14, Jakub Kicinski wrote:
-> On Fri, 24 Sep 2021 10:21:33 +0200 Krzysztof Kozlowski wrote:
->> On 23/09/2021 14:22, Dan Carpenter wrote:
->>> On Thu, Sep 23, 2021 at 09:26:51AM +0200, Krzysztof Kozlowski wrote:  
->>>> On 23/09/2021 08:50, Dan Carpenter wrote:  
->>  [...]  
->>>>
->>>> I think the difference between this llcp_sock code and above transport,
->>>> is lack of writer to llcp_sock->local with whom you could race.
->>>>
->>>> Commits c0cfa2d8a788fcf4 and 6a2c0962105ae8ce causing the
->>>> multi-transport race show nicely assigns to vsk->transport when module
->>>> is unloaded.
->>>>
->>>> Here however there is no writer to llcp_sock->local, except bind and
->>>> connect and their error paths. The readers which you modify here, have
->>>> to happen after bind/connect. You cannot have getsockopt() or release()
->>>> before bind/connect, can you? Unless you mean here the bind error path,
->>>> where someone calls getsockopt() in the middle of bind()? Is it even
->>>> possible?
->>>>  
->>>
->>> I don't know if this is a real issue either.
->>>
->>> Racing with bind would be harmless.  The local pointer would be NULL and
->>> it would return harmlessly.  You would have to race with release and
->>> have a third trying to release local devices.  (Again that might be
->>> wild imagination.  It may not be possible).  
->>
->> Indeed. The code looks reasonable, though, so even if race is not really
->> reproducible:
->>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> 
-> Would you mind making a call if this is net (which will mean stable) or
-> net-next material (without the Fixes tags) and reposting? Thanks! :)
+The error code is stored in "dev_priv", not "dev".  The "dev" pointer
+isn't initialized yet.
 
-Hi Jakub,
+Fixes: c2f17e60cbe1 ("drm/gma500: Embed struct drm_device in struct drm_psb_private")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/gpu/drm/gma500/psb_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Material is net-next. However I don't understand why it should be
-without "Fixes" in such case?
+diff --git a/drivers/gpu/drm/gma500/psb_drv.c b/drivers/gpu/drm/gma500/psb_drv.c
+index 3d036d2a3b29..7a10bb39ef0b 100644
+--- a/drivers/gpu/drm/gma500/psb_drv.c
++++ b/drivers/gpu/drm/gma500/psb_drv.c
+@@ -454,7 +454,7 @@ static int psb_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 
+ 	dev_priv = devm_drm_dev_alloc(&pdev->dev, &driver, struct drm_psb_private, dev);
+ 	if (IS_ERR(dev_priv))
+-		return PTR_ERR(dev);
++		return PTR_ERR(dev_priv);
+ 	dev = &dev_priv->dev;
+ 
+ 	pci_set_drvdata(pdev, dev);
+-- 
+2.20.1
 
-The material going to current release (RC, so I understood: net), should
-fix only issues introduced in current merge window. Linus made it clear
-several times.
-
-The issue here was introduced long time ago, not in current merge
-window, however it is still an issue to fix. It's still a bug which
-should have a commit with "Fixes" for all the stable tress and
-downstream distros relying on stable kernels. Also for some statistics
-on LWN.
-
-
-Best regards,
-Krzysztof
