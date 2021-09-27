@@ -2,50 +2,45 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC99C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Sep 2021 17:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0918C4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Sep 2021 17:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A49A6101A
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Sep 2021 17:47:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E78F610E8
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Sep 2021 17:47:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236709AbhI0RtD (ORCPT
+        id S236688AbhI0RtN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Sep 2021 13:49:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57888 "EHLO mail.kernel.org"
+        Mon, 27 Sep 2021 13:49:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237703AbhI0Rsv (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Sep 2021 13:48:51 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5E3D560F4F;
-        Mon, 27 Sep 2021 17:47:13 +0000 (UTC)
+        id S236615AbhI0Rs7 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 27 Sep 2021 13:48:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E648460FBF;
+        Mon, 27 Sep 2021 17:47:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632764833;
-        bh=vaAGDWdMM7DnyyWXxtxSddAQ5DUocd9iZv+90xzItsI=;
+        s=k20201202; t=1632764841;
+        bh=i6C1j/rVSaKCT6VZs7hNmd9rfXiX+ZOqCInscH6GliU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PiFQVEkTlYZsjWIqN83tvpAeQS66u7BaiLdsgKY23NVT37ltIo5A/J757P2ckRcXX
-         LAby4ZotutVpi4NN8g8T7JJupJPfdmbQRlQJMwukYoW3LsYvF7lWlwmMljrK914qym
-         lE3moP1tt0iBiich7SPzrlbeKgclai6zoN456Gq7/Ow1QJJe/CB9ihDPOArQJZAeWa
-         DE7aIz+zwTRqQatXZ7erRpkshQbFmDbj56SCyRFc5wUA1/boF0adClXp86FQOmbRtH
-         mnDhlauYAFfkrHwA91ENcqwbk2yZq+dL4RUnNcG0yLYwpq/eggvl3sL+Nl2gUwaz/0
-         9iwf+2T1zRDRA==
+        b=r8Yw6DrkQMNMNhrFVCWdQ65qa1RCnrKgcfptX/h+Im3mqomdgenGb0QWw+wzQ3yhY
+         pQKKEEC0rFogz1yPHog1X2HYowB6w+xEBSD06zRuUN/xKv9/XiIozNZNcNr85sHC6n
+         nuIGrLGYvmXYsXaWNcCE3tSreT7ivGQtfQr93jS9jz1WhnmSveFF8cAZclqTvAmXzd
+         f5MhYvk/4BrAiz10yL68i9+DQ9BMAW1TT7Q6xPA/YE7wHvydDoQICSdsPo/SG8QDz5
+         xYKu363L1BzMHFHeuVG0G0TDpXuTKbUpp0bu6Cs+Cgfx7vCD/PwicJbrdxmpFlmeaS
+         rzfN4o7Iroo3A==
 From:   Mark Brown <broonie@kernel.org>
-To:     linux-arm-kernel@lists.infradead.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        alsa-devel@alsa-project.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
+To:     Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
         Takashi Iwai <tiwai@suse.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Oder Chiou <oder_chiou@realtek.com>,
         Colin King <colin.king@canonical.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, Jaroslav Kysela <perex@perex.cz>
+        Jaroslav Kysela <perex@perex.cz>
 Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ASoC: meson: aiu: Fix spelling mistake "Unsupport" -> "Unsupported"
-Date:   Mon, 27 Sep 2021 18:45:27 +0100
-Message-Id: <163276442024.18200.9710161748366724709.b4-ty@kernel.org>
+Subject: Re: [PATCH] ASoC: codecs: Fix spelling mistake "Unsupport" -> "Unsupported"
+Date:   Mon, 27 Sep 2021 18:45:30 +0100
+Message-Id: <163276442024.18200.2988591432282232659.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210924231242.144692-1-colin.king@canonical.com>
-References: <20210924231242.144692-1-colin.king@canonical.com>
+In-Reply-To: <20210924231003.144502-1-colin.king@canonical.com>
+References: <20210924231003.144502-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -53,10 +48,10 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 25 Sep 2021 00:12:42 +0100, Colin King wrote:
+On Sat, 25 Sep 2021 00:10:03 +0100, Colin King wrote:
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> There is a spelling mistake in a dev_err error message. Fix it.
+> There are spelling mistakes in dev_err error messages. Fix them.
 > 
 > 
 
@@ -66,8 +61,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: meson: aiu: Fix spelling mistake "Unsupport" -> "Unsupported"
-      commit: 9929265f2a7b5fa15d460dbbaa7f388c303411da
+[1/1] ASoC: codecs: Fix spelling mistake "Unsupport" -> "Unsupported"
+      commit: a4db95b2824157bdf0394da429ea49280bfad6b9
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
