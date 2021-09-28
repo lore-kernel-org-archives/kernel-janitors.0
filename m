@@ -2,102 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32FA7C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Sep 2021 22:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 309C9C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Sep 2021 00:54:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B78C610A2
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Sep 2021 22:32:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 004D860187
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Sep 2021 00:54:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237944AbhI0WeU (ORCPT
+        id S238371AbhI1A4b (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Sep 2021 18:34:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58092 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237907AbhI0WeT (ORCPT
+        Mon, 27 Sep 2021 20:56:31 -0400
+Received: from mail-wr1-f51.google.com ([209.85.221.51]:41943 "EHLO
+        mail-wr1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229942AbhI1A4b (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Sep 2021 18:34:19 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CBF6C061740
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Sep 2021 15:32:40 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id z24so84964154lfu.13
-        for <kernel-janitors@vger.kernel.org>; Mon, 27 Sep 2021 15:32:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aZmS6rLgK39LtutF7yAa96lv04t7RDe75/Kx+aSiY2E=;
-        b=X6FX1tN9L59q05EXpGd4/f2lf4YcQ/iruEPmtTVrvi72cWYyC2tR+io4b2N4pWqI0E
-         TU04vV+aR009Wg+KsH3HiR04dIxiRNDcoEK2KceAYY9MA8Clynu7Mye8zGh0vuXtI6aA
-         8Cj8jRmReUUJuGK+T+FaJq/oTcQhsVIkLv9XrAplkstiW87A/mqW2BJ1rZHsQHtHPcYE
-         HpXz+3dQIaaVJL7BQdaZFHi46DfOckJAcRTgyYqiHVyfYEOgxSGlU9UTgLzMdyTnrS9d
-         1vGSDwDDyxAuZfCN4h4ouEfcwCU3J8fiOm1GE2AcVRMXPpR3Ob1ullwB79hnGDROEYCz
-         wcAA==
+        Mon, 27 Sep 2021 20:56:31 -0400
+Received: by mail-wr1-f51.google.com with SMTP id w29so54849231wra.8;
+        Mon, 27 Sep 2021 17:54:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aZmS6rLgK39LtutF7yAa96lv04t7RDe75/Kx+aSiY2E=;
-        b=JSWUPg3Atw9Flv8+2eaUZ7hFMOawyw6RLmJF/QWKFtzELwXt4yKIC6yACXODeYivB7
-         dkBOUbOyfy4mW/44H3wEDaphw6yGStP/AmbrjZZ7MjbYLL5SLJjDamFPXXeEycvYgzdV
-         MAfIFmBRDMlE56uMfpy/I0RZYVeFCxMWLlWz0vYuS5y74IgMBH4/FeWUxCoHHyFPEq1E
-         QuV7iTCr4/IAKcLstych51gS3v88ce+YuEHbyky5O1nMV2r3BxI+Auf57zt93CdTLZox
-         0juLMxdVbColzFwQPxWI8igKjX5p+bxSPpLtjCwaNVOBGwAjfViEunUuICggjNr9MhUJ
-         fWbw==
-X-Gm-Message-State: AOAM530XIFE3KGbzEkkYN8oGaH8n75MKrQmxcMAjRwq/f55q95yuI8mu
-        nFgVLn++QHeZXneH7rZ5il7unAn8i6ZNDLSm6SaTFg==
-X-Google-Smtp-Source: ABdhPJw6amc1LcHW1FQv1swccHY5vLgF6UhTt8kYXV8iC/5wcxE6mB/3V0jzQcB68Qw1TjUMsPEEulq2xNR1ujfC9Us=
-X-Received: by 2002:a05:6512:1515:: with SMTP id bq21mr2292117lfb.71.1632781958851;
- Mon, 27 Sep 2021 15:32:38 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=n2sXzJg2SsfZ8S0g5MG0HaM4hrj/bpFvf9vFQzLvc0c=;
+        b=l86AfC1ibMKeztbexCfDC77rPbyK2bLAvHzDXr+LGcAfQ6sqrC+gT2zoMCVoF/5WNW
+         0iO016vOQV9UBR9sopUKldg6W6Qx8ThJ1s00aj3s8m1NdfZsKhvDbDSboOC/yoXIxXRH
+         LO1fPg7gNzU2Elnx96CRqCZzeJstKnblsixHSxTgZPfxLHqz9Eec6pJNMqHTaDPv0+sn
+         LiJWpv5KtOqI4S4x9grapbl47/oPNwQsFgPXjBTTdytT8rgNQM8NXey3RuOdEQj8Lklx
+         tQl3TKVlIQDaAZC1OP2LG+WkuwQJCdabJyrIl+LwtXDOKWcEVdRNsguOb/bnLSOt9U6n
+         Otag==
+X-Gm-Message-State: AOAM530bGkmbRPCUjVWKm9+cFaTbQ6zYZ1ORXBZuyHJQ9MCp8eJngDJZ
+        sQlZjiukZ1bxpJnTZlgdTRE0RHweLeSSY3s2
+X-Google-Smtp-Source: ABdhPJwqkd5w1g7BZXopwb7Al1e5soWrw9CirT8+m0wKI1sd2xp4RmW6QW5X/6NfauELjq4AiwASKg==
+X-Received: by 2002:a05:6000:46:: with SMTP id k6mr3227667wrx.104.1632790491627;
+        Mon, 27 Sep 2021 17:54:51 -0700 (PDT)
+Received: from rocinante ([95.155.85.46])
+        by smtp.gmail.com with ESMTPSA id l25sm988037wmi.29.2021.09.27.17.54.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Sep 2021 17:54:50 -0700 (PDT)
+Date:   Tue, 28 Sep 2021 02:54:49 +0200
+From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     kishon@ti.com, tjoseph@cadence.com, lorenzo.pieralisi@arm.com,
+        robh@kernel.org, bhelgaas@google.com, linux-omap@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] PCI: j721e: Fix an error handling path in
+ 'j721e_pcie_probe()'
+Message-ID: <YVJn2SHvRcTO2tY5@rocinante>
+References: <db477b0cb444891a17c4bb424467667dc30d0bab.1624794264.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-References: <20210924225111.143112-1-colin.king@canonical.com>
-In-Reply-To: <20210924225111.143112-1-colin.king@canonical.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 28 Sep 2021 00:32:02 +0200
-Message-ID: <CAPDyKFq_eEP+HayXhGRSGWXVG9Gq0dq4DEnYG+qwjLktwnyvEw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-pci-o2micro: Fix spelling mistake "unsupport"
- -> "unsupported"
-To:     Colin King <colin.king@canonical.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <db477b0cb444891a17c4bb424467667dc30d0bab.1624794264.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 25 Sept 2021 at 00:51, Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in a pr_info message. Fix it. Also
-> put msi in capital letters.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hi Christophe,
 
-Applied for next, thanks!
+Thank you for sending the patch over!
 
-Kind regards
-Uffe
+Just a tiny nit-pick: there is no need to surround function names in single
+quotes in the subject and in the commit message.
 
+> If an error occurs after a successful 'cdns_pcie_init_phy()' call, it must
+> be undone by a 'cdns_pcie_disable_phy()' call, as already done above and
+> below.
 
+Here, in the above sentence, you could simply mention that this is needed
+for the device to be correctly powered down should there be an error, and
+reference to the "above" and "below" code.
+
+> Update the 'goto' to branch at the correct place of the error handling
+> path.
+> 
+> Fixes: 49e0efdce791 ("PCI: j721e: Add support to provide refclk to PCIe connector")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/mmc/host/sdhci-pci-o2micro.c | 2 +-
+>  drivers/pci/controller/cadence/pci-j721e.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
-> index 51d55a87aebe..f045c1ee4667 100644
-> --- a/drivers/mmc/host/sdhci-pci-o2micro.c
-> +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
-> @@ -489,7 +489,7 @@ static void sdhci_pci_o2_enable_msi(struct sdhci_pci_chip *chip,
->
->         ret = pci_find_capability(chip->pdev, PCI_CAP_ID_MSI);
->         if (!ret) {
-> -               pr_info("%s: unsupport msi, use INTx irq\n",
-> +               pr_info("%s: unsupported MSI, use INTx irq\n",
->                         mmc_hostname(host->mmc));
->                 return;
->         }
-> --
-> 2.32.0
->
+> 
+> diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
+> index 35e61048e133..8933db6ab1af 100644
+> --- a/drivers/pci/controller/cadence/pci-j721e.c
+> +++ b/drivers/pci/controller/cadence/pci-j721e.c
+> @@ -424,7 +424,7 @@ static int j721e_pcie_probe(struct platform_device *pdev)
+>  		ret = clk_prepare_enable(clk);
+>  		if (ret) {
+>  			dev_err(dev, "failed to enable pcie_refclk\n");
+> -			goto err_get_sync;
+> +			goto err_pcie_setup;
+>  		}
+>  		pcie->refclk = clk;
+
+Thank you!
+
+Reviewed-by: Krzysztof Wilczyński <kw@linux.com>
+
+	Krzysztof
