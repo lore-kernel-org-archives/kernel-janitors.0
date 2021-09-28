@@ -2,102 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 309C9C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Sep 2021 00:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E28A5C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Sep 2021 10:56:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 004D860187
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Sep 2021 00:54:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7D4361131
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Sep 2021 10:56:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238371AbhI1A4b (ORCPT
+        id S240337AbhI1K5w (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Sep 2021 20:56:31 -0400
-Received: from mail-wr1-f51.google.com ([209.85.221.51]:41943 "EHLO
-        mail-wr1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229942AbhI1A4b (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Sep 2021 20:56:31 -0400
-Received: by mail-wr1-f51.google.com with SMTP id w29so54849231wra.8;
-        Mon, 27 Sep 2021 17:54:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=n2sXzJg2SsfZ8S0g5MG0HaM4hrj/bpFvf9vFQzLvc0c=;
-        b=l86AfC1ibMKeztbexCfDC77rPbyK2bLAvHzDXr+LGcAfQ6sqrC+gT2zoMCVoF/5WNW
-         0iO016vOQV9UBR9sopUKldg6W6Qx8ThJ1s00aj3s8m1NdfZsKhvDbDSboOC/yoXIxXRH
-         LO1fPg7gNzU2Elnx96CRqCZzeJstKnblsixHSxTgZPfxLHqz9Eec6pJNMqHTaDPv0+sn
-         LiJWpv5KtOqI4S4x9grapbl47/oPNwQsFgPXjBTTdytT8rgNQM8NXey3RuOdEQj8Lklx
-         tQl3TKVlIQDaAZC1OP2LG+WkuwQJCdabJyrIl+LwtXDOKWcEVdRNsguOb/bnLSOt9U6n
-         Otag==
-X-Gm-Message-State: AOAM530bGkmbRPCUjVWKm9+cFaTbQ6zYZ1ORXBZuyHJQ9MCp8eJngDJZ
-        sQlZjiukZ1bxpJnTZlgdTRE0RHweLeSSY3s2
-X-Google-Smtp-Source: ABdhPJwqkd5w1g7BZXopwb7Al1e5soWrw9CirT8+m0wKI1sd2xp4RmW6QW5X/6NfauELjq4AiwASKg==
-X-Received: by 2002:a05:6000:46:: with SMTP id k6mr3227667wrx.104.1632790491627;
-        Mon, 27 Sep 2021 17:54:51 -0700 (PDT)
-Received: from rocinante ([95.155.85.46])
-        by smtp.gmail.com with ESMTPSA id l25sm988037wmi.29.2021.09.27.17.54.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Sep 2021 17:54:50 -0700 (PDT)
-Date:   Tue, 28 Sep 2021 02:54:49 +0200
-From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     kishon@ti.com, tjoseph@cadence.com, lorenzo.pieralisi@arm.com,
-        robh@kernel.org, bhelgaas@google.com, linux-omap@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] PCI: j721e: Fix an error handling path in
- 'j721e_pcie_probe()'
-Message-ID: <YVJn2SHvRcTO2tY5@rocinante>
-References: <db477b0cb444891a17c4bb424467667dc30d0bab.1624794264.git.christophe.jaillet@wanadoo.fr>
+        Tue, 28 Sep 2021 06:57:52 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:20761 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S240327AbhI1K5u (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 28 Sep 2021 06:57:50 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1632826571; h=Date: Message-Id: Cc: To: References:
+ In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
+ Content-Type: Sender; bh=BzIw2gqW3XboP6+x63I5TMHdKixIQoCk1euEID7NjiU=;
+ b=XyDXTYyjIyUlQQc1cpD6nvQ2kyJOpMOVomMOZvTc6ND4g6xysGl2CbZl+qaseNL3mcim63Uw
+ bHQg9S1OlJsA2A3kRuic1ehz5bwDiA4Idv8aADPz/jI73HBZnosjXWj7H6Z5ToPjqdlMmvRD
+ nB4ucEutdALGaRK8O5b+RQgA3qU=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n04.prod.us-west-2.postgun.com with SMTP id
+ 6152f4c0519bd8dcf01ceffe (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 28 Sep 2021 10:56:00
+ GMT
+Sender: kvalo=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id EAE19C43616; Tue, 28 Sep 2021 10:55:59 +0000 (UTC)
+Received: from tykki.adurom.net (tynnyri.adurom.net [51.15.11.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 11C50C4338F;
+        Tue, 28 Sep 2021 10:55:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 11C50C4338F
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <db477b0cb444891a17c4bb424467667dc30d0bab.1624794264.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ath11k: fix some sleeping in atomic bugs
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20210812070434.GE31863@kili>
+References: <20210812070434.GE31863@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Karthikeyan Periyasamy <periyasa@codeaurora.org>,
+        ath11k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-Id: <20210928105559.EAE19C43616@smtp.codeaurora.org>
+Date:   Tue, 28 Sep 2021 10:55:59 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Thank you for sending the patch over!
-
-Just a tiny nit-pick: there is no need to surround function names in single
-quotes in the subject and in the commit message.
-
-> If an error occurs after a successful 'cdns_pcie_init_phy()' call, it must
-> be undone by a 'cdns_pcie_disable_phy()' call, as already done above and
-> below.
-
-Here, in the above sentence, you could simply mention that this is needed
-for the device to be correctly powered down should there be an error, and
-reference to the "above" and "below" code.
-
-> Update the 'goto' to branch at the correct place of the error handling
-> path.
+> The ath11k_dbring_bufs_replenish() and ath11k_dbring_fill_bufs()
+> take a "gfp" parameter but they since they take spinlocks, the
+> allocations they do have to be atomic.  This causes a bug because
+> ath11k_dbring_buf_setup passes GFP_KERNEL for the gfp flags.
 > 
-> Fixes: 49e0efdce791 ("PCI: j721e: Add support to provide refclk to PCIe connector")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/pci/controller/cadence/pci-j721e.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> The fix is to use GFP_ATOMIC and remove the unused parameters.
 > 
-> diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
-> index 35e61048e133..8933db6ab1af 100644
-> --- a/drivers/pci/controller/cadence/pci-j721e.c
-> +++ b/drivers/pci/controller/cadence/pci-j721e.c
-> @@ -424,7 +424,7 @@ static int j721e_pcie_probe(struct platform_device *pdev)
->  		ret = clk_prepare_enable(clk);
->  		if (ret) {
->  			dev_err(dev, "failed to enable pcie_refclk\n");
-> -			goto err_get_sync;
-> +			goto err_pcie_setup;
->  		}
->  		pcie->refclk = clk;
+> Fixes: bd6478559e27 ("ath11k: Add direct buffer ring support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Thank you!
+Patch applied to ath-next branch of ath.git, thanks.
 
-Reviewed-by: Krzysztof Wilczyński <kw@linux.com>
+aadf7c81a077 ath11k: fix some sleeping in atomic bugs
 
-	Krzysztof
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20210812070434.GE31863@kili/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
