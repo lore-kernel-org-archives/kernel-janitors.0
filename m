@@ -2,47 +2,43 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E21BAC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Sep 2021 12:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2D0BC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Sep 2021 13:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B880161159
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Sep 2021 12:39:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FCCD60F39
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Sep 2021 13:07:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240643AbhI1Mkx (ORCPT
+        id S240780AbhI1NIy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Sep 2021 08:40:53 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:53818
+        Tue, 28 Sep 2021 09:08:54 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:56344
         "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240526AbhI1Mkw (ORCPT
+        by vger.kernel.org with ESMTP id S235776AbhI1NIx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Sep 2021 08:40:52 -0400
+        Tue, 28 Sep 2021 09:08:53 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id B2C0E4030D;
-        Tue, 28 Sep 2021 12:39:06 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 28D7C4061B;
+        Tue, 28 Sep 2021 13:07:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632832746;
-        bh=2DViiAQTdEoKI2fpopTtP6odKlo9WFvqVxYGHWPH0g4=;
+        s=20210705; t=1632834433;
+        bh=sGY7Qk4KcbrHyazPvJZjW+y6B7rLp37BeJ+kWs3fZ8M=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=mK8yiJZQs8b8HsY3AavAxHYNnvDECP6ov7lnytbU9Sv071sThnwfns6nwyGWGLwwD
-         /txRgug6pG/RoyiCdzpQgHu+ggvQ1KQPwuxZCsHcgIk32/ZCe0Fq8yalKnpGvPyJvV
-         9qzmBUEetfqaYvGh+GRZ1DG4IS4JJWVWz4Fk64TZbn/bmynf50Dpq8Nb2Zrss9KVrS
-         KDOHmGRvhQVSmvxWvn49y3xyZJBiKQ5TXYDUlt99uzR/QC2ThHYtxfacQLkXO1bymZ
-         cRr/gMjqFUzPi1mMg+C9HrkhGgcfrAdapFKTHxwcbscXWNZPwHQ1UtgZehZSkaKpZ/
-         kA/ekJG3u9aAw==
+        b=jcqI0MW/i6xhUVMiDhXqY8Betc1Q9w4wBhqzoXVN6b3Tz+YmdOa45FgIHhjPYi4Pe
+         XwlHkLZ8jhv5Ib0QpCqb4n1zaXWfwRGrxl6WS0qUD89CNyna1DIvZlc9SlCUduO9xp
+         z+kORrBH1ZH9dGhF6ScXQ88C0QyRKpTEbr2yAVhlh7oKtHB70Zd3Yx//BstaREMj11
+         h2wA8TEjMnql0JaKlbF6cfkrQ5h7OxiPyb3UQ54poNk8bbq+REFiM/xIAwMzpEQ43v
+         RcQY9eZJTKyj2KswVfyDpfnvbHELdjhjh66xf6BECH+Hh6SePhpmh05nVIxeGsT0OA
+         5+U8Vy3ONAt5g==
 From:   Colin King <colin.king@canonical.com>
-To:     Daniel Palmer <daniel@thingy.jp>,
-        Romain Perier <romain.perier@gmail.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Nobuhiro Iwamatsu <iwamatsu@nigauri.org>,
-        linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
+To:     Parshuram Thombare <pthombar@cadence.com>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] rtc: msc313: Fix unintentional sign extension issue on left shift of a u16
-Date:   Tue, 28 Sep 2021 13:39:06 +0100
-Message-Id: <20210928123906.988813-1-colin.king@canonical.com>
+Subject: [PATCH][next] spi: cadence: Fix spelling mistake "nunber" -> "number"
+Date:   Tue, 28 Sep 2021 14:07:12 +0100
+Message-Id: <20210928130712.990474-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -53,31 +49,26 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Shifting the u16 value returned by readw by 16 bits to the left
-will be promoted to a 32 bit signed int and then sign-extended
-to an unsigned long. If the top bit of the readw is set then
-the shifted value will be sign extended and the top 32 bits of
-the result will be set.
+There is a spelling mistake in a dev_err error message. Fix it.
 
-Fixes: be7d9c9161b9 ("rtc: Add support for the MSTAR MSC313 RTC")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/rtc/rtc-msc313.c | 2 +-
+ drivers/spi/spi-cadence-xspi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rtc/rtc-msc313.c b/drivers/rtc/rtc-msc313.c
-index 5f178d29cfd8..7430244ad867 100644
---- a/drivers/rtc/rtc-msc313.c
-+++ b/drivers/rtc/rtc-msc313.c
-@@ -53,7 +53,7 @@ static int msc313_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alarm)
- 	unsigned long seconds;
- 
- 	seconds = readw(priv->rtc_base + REG_RTC_MATCH_VAL_L)
--			| (readw(priv->rtc_base + REG_RTC_MATCH_VAL_H) << 16);
-+			| ((unsigned long)readw(priv->rtc_base + REG_RTC_MATCH_VAL_H) << 16);
- 
- 	rtc_time64_to_tm(seconds, &alarm->time);
- 
+diff --git a/drivers/spi/spi-cadence-xspi.c b/drivers/spi/spi-cadence-xspi.c
+index a2a94675292d..3401fcf49f4a 100644
+--- a/drivers/spi/spi-cadence-xspi.c
++++ b/drivers/spi/spi-cadence-xspi.c
+@@ -308,7 +308,7 @@ static int cdns_xspi_controller_init(struct cdns_xspi_dev *cdns_xspi)
+ 	hw_magic_num = FIELD_GET(CDNS_XSPI_MAGIC_NUM, ctrl_ver);
+ 	if (hw_magic_num != CDNS_XSPI_MAGIC_NUM_VALUE) {
+ 		dev_err(cdns_xspi->dev,
+-			"Incorrect XSPI magic nunber: %x, expected: %x\n",
++			"Incorrect XSPI magic number: %x, expected: %x\n",
+ 			hw_magic_num, CDNS_XSPI_MAGIC_NUM_VALUE);
+ 		return -EIO;
+ 	}
 -- 
 2.32.0
 
