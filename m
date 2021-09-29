@@ -2,45 +2,47 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E1E8C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Sep 2021 11:53:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31533C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Sep 2021 12:19:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7FBB6136A
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Sep 2021 11:53:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 063886140F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Sep 2021 12:19:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245521AbhI2Lzf (ORCPT
+        id S1343547AbhI2MUk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 29 Sep 2021 07:55:35 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:51086
+        Wed, 29 Sep 2021 08:20:40 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:52580
         "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244943AbhI2Lzf (ORCPT
+        by vger.kernel.org with ESMTP id S245563AbhI2MUk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 29 Sep 2021 07:55:35 -0400
+        Wed, 29 Sep 2021 08:20:40 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id CEB314060E;
-        Wed, 29 Sep 2021 11:53:52 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 6160C40184;
+        Wed, 29 Sep 2021 12:18:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632916432;
-        bh=SA3MOhUQB8LiGeG2R1qfgrcRYehbqo7vhZPQxaRL3OU=;
+        s=20210705; t=1632917938;
+        bh=Bhi6AHpfy+Ej7XA03LLA3tQ3s3CRWpWh6aY3VL7zg6I=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=jtY1PiModmvCpOJ9on9ATR8EYWn4f0xjXLFdHz/GnD5zjepReEYx9+6JuzHeXnTNN
-         aXgW3N/Da0O0NbUV1k/P3scgIjJytZfrTddN9sj5di67DIkmrRSfVTgHOFLN1FHcbE
-         BFYBe5S8o5QVsI72uG3akFb5Y4m+J3iNfyub/RXPu4fXsR5ECTmUGYpOOTvKzVSH6m
-         LQEhzoYzeQL/MOdI5Pmn75MUuNfG7rd+Sg0S/W9OjD2mRC9nPv3I9aiJB9kjBzqdKJ
-         wadzjsHAiAVLeT7/u7n1JE+FBdN4C8NMlRmumkooFn+1IDPv89R3Vs6sB++vGRFIh0
-         KsS0uqJDv1plw==
+        b=VFhT8s8l9BI3n5pbmMC9WNLBYSQ8vlH2EBQOf5Z4inyh3DmyXaTEgfqieq0KKCjxp
+         HQqVKwJgvhGhewcIyYqANQko+pBIsXUlj4yf5061PKjdIJZ02hESR8oWvMmg7qg7dM
+         iCHVmhKZRmcgaFENb+JaHrki7H5Iuc+VcmgqnUCadtF3wlK4nyCEBY1lbeGUGTxKcs
+         n60IQb+8b6H0urKz99HuzUwS4xBbZXxVwcuHc21hhBAz7BrM1bvBjg10HcitJhZFo8
+         dVab1JfknUC6IrTUjjk4DWkIDM4B80Sdsg07TK3ri5f0ND+2fF5KTfGgDC1EyWnqur
+         6jaBmlXOwW5Mw==
 From:   Colin King <colin.king@canonical.com>
 To:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
         David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Airlie <airlied@redhat.com>,
+        Lyude Paul <lyude@redhat.com>, linux-arm-msm@vger.kernel.org,
         dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][V2] drm/msm: Fix potential integer overflow on 32 bit multiply
-Date:   Wed, 29 Sep 2021 12:53:52 +0100
-Message-Id: <20210929115352.212849-1-colin.king@canonical.com>
+Subject: [PATCH] drm/msm: Fix null pointer dereference on pointer edp
+Date:   Wed, 29 Sep 2021 13:18:57 +0100
+Message-Id: <20210929121857.213922-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -51,134 +53,39 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-In the case where clock is 2147485 or greater the 32 bit multiplication
-by 1000 will cause an integer overflow. Fix this by making the constant
-1000 an unsigned long to ensure a long multiply occurs to avoid the
-overflow before assigning the result to the long result in variable
-requested.  Most probably a theoretical overflow issue, but worth fixing
-to clear up static analysis warnings.
+The initialization of pointer dev dereferences pointer edp before
+edp is null checked, so there is a potential null pointer deference
+issue. Fix this by only dereferencing edp after edp has been null
+checked.
 
-Addresses-Coverity: ("Unintentional integer overflow")
-Fixes: c8afe684c95c ("drm/msm: basic KMS driver for snapdragon")
-Fixes: 3e87599b68e7 ("drm/msm/mdp4: add LVDS panel support")
-Fixes: 937f941ca06f ("drm/msm/dp: Use qmp phy for DP PLL and PHY")
+Addresses-Coverity: ("Dereference before null check")
 Fixes: ab5b0107ccf3 ("drm/msm: Initial add eDP support in msm drm driver (v5)")
-Fixes: a3376e3ec81c ("drm/msm: convert to drm_bridge")
-
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-V2: Find and fix all unintentional integer overflows that match this
-    overflow pattern.
----
- drivers/gpu/drm/msm/disp/mdp4/mdp4_dtv_encoder.c    | 2 +-
- drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c   | 2 +-
- drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c | 2 +-
- drivers/gpu/drm/msm/dp/dp_ctrl.c                    | 4 ++--
- drivers/gpu/drm/msm/edp/edp_connector.c             | 2 +-
- drivers/gpu/drm/msm/hdmi/hdmi_bridge.c              | 2 +-
- drivers/gpu/drm/msm/hdmi/hdmi_connector.c           | 2 +-
- 7 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/msm/edp/edp_ctrl.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_dtv_encoder.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_dtv_encoder.c
-index 88645dbc3785..83140066441e 100644
---- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_dtv_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_dtv_encoder.c
-@@ -50,7 +50,7 @@ static void mdp4_dtv_encoder_mode_set(struct drm_encoder *encoder,
+diff --git a/drivers/gpu/drm/msm/edp/edp_ctrl.c b/drivers/gpu/drm/msm/edp/edp_ctrl.c
+index 4fb397ee7c84..fe1366b4c49f 100644
+--- a/drivers/gpu/drm/msm/edp/edp_ctrl.c
++++ b/drivers/gpu/drm/msm/edp/edp_ctrl.c
+@@ -1116,7 +1116,7 @@ void msm_edp_ctrl_power(struct edp_ctrl *ctrl, bool on)
+ int msm_edp_ctrl_init(struct msm_edp *edp)
+ {
+ 	struct edp_ctrl *ctrl = NULL;
+-	struct device *dev = &edp->pdev->dev;
++	struct device *dev;
+ 	int ret;
  
- 	DBG("set mode: " DRM_MODE_FMT, DRM_MODE_ARG(mode));
+ 	if (!edp) {
+@@ -1124,6 +1124,7 @@ int msm_edp_ctrl_init(struct msm_edp *edp)
+ 		return -EINVAL;
+ 	}
  
--	mdp4_dtv_encoder->pixclock = mode->clock * 1000;
-+	mdp4_dtv_encoder->pixclock = mode->clock * 1000U;
- 
- 	DBG("pixclock=%lu", mdp4_dtv_encoder->pixclock);
- 
-diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c
-index 10eb3e5b218e..d90dc0a39855 100644
---- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c
-@@ -225,7 +225,7 @@ static void mdp4_lcdc_encoder_mode_set(struct drm_encoder *encoder,
- 
- 	DBG("set mode: " DRM_MODE_FMT, DRM_MODE_ARG(mode));
- 
--	mdp4_lcdc_encoder->pixclock = mode->clock * 1000;
-+	mdp4_lcdc_encoder->pixclock = mode->clock * 1000U;
- 
- 	DBG("pixclock=%lu", mdp4_lcdc_encoder->pixclock);
- 
-diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c
-index 7288041dd86a..a965e7962a7f 100644
---- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c
-+++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c
-@@ -64,7 +64,7 @@ static int mdp4_lvds_connector_mode_valid(struct drm_connector *connector,
- 	struct drm_encoder *encoder = mdp4_lvds_connector->encoder;
- 	long actual, requested;
- 
--	requested = 1000 * mode->clock;
-+	requested = 1000U * mode->clock;
- 	actual = mdp4_lcdc_round_pixclk(encoder, requested);
- 
- 	DBG("requested=%ld, actual=%ld", requested, actual);
-diff --git a/drivers/gpu/drm/msm/dp/dp_ctrl.c b/drivers/gpu/drm/msm/dp/dp_ctrl.c
-index 62e75dc8afc6..6babeb79aeb0 100644
---- a/drivers/gpu/drm/msm/dp/dp_ctrl.c
-+++ b/drivers/gpu/drm/msm/dp/dp_ctrl.c
-@@ -1316,7 +1316,7 @@ static int dp_ctrl_enable_mainlink_clocks(struct dp_ctrl_private *ctrl)
- 	opts_dp->lanes = ctrl->link->link_params.num_lanes;
- 	opts_dp->link_rate = ctrl->link->link_params.rate / 100;
- 	dp_ctrl_set_clock_rate(ctrl, DP_CTRL_PM, "ctrl_link",
--					ctrl->link->link_params.rate * 1000);
-+					ctrl->link->link_params.rate * 1000U);
- 
- 	phy_configure(phy, &dp_io->phy_opts);
- 	phy_power_on(phy);
-@@ -1336,7 +1336,7 @@ static int dp_ctrl_enable_stream_clocks(struct dp_ctrl_private *ctrl)
- 	int ret = 0;
- 
- 	dp_ctrl_set_clock_rate(ctrl, DP_STREAM_PM, "stream_pixel",
--					ctrl->dp_ctrl.pixel_rate * 1000);
-+					ctrl->dp_ctrl.pixel_rate * 1000U);
- 
- 	ret = dp_power_clk_enable(ctrl->power, DP_STREAM_PM, true);
- 	if (ret)
-diff --git a/drivers/gpu/drm/msm/edp/edp_connector.c b/drivers/gpu/drm/msm/edp/edp_connector.c
-index 73cb5fd97a5a..837e7873141f 100644
---- a/drivers/gpu/drm/msm/edp/edp_connector.c
-+++ b/drivers/gpu/drm/msm/edp/edp_connector.c
-@@ -64,7 +64,7 @@ static int edp_connector_mode_valid(struct drm_connector *connector,
- 	struct msm_kms *kms = priv->kms;
- 	long actual, requested;
- 
--	requested = 1000 * mode->clock;
-+	requested = 1000L * mode->clock;
- 	actual = kms->funcs->round_pixclk(kms,
- 			requested, edp_connector->edp->encoder);
- 
-diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-index 6e380db9287b..e4c68a59772a 100644
---- a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-+++ b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-@@ -209,7 +209,7 @@ static void msm_hdmi_bridge_mode_set(struct drm_bridge *bridge,
- 
- 	mode = adjusted_mode;
- 
--	hdmi->pixclock = mode->clock * 1000;
-+	hdmi->pixclock = mode->clock * 1000U;
- 
- 	hstart = mode->htotal - mode->hsync_start;
- 	hend   = mode->htotal - mode->hsync_start + mode->hdisplay;
-diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_connector.c b/drivers/gpu/drm/msm/hdmi/hdmi_connector.c
-index 58707a1f3878..ce116a7b1bba 100644
---- a/drivers/gpu/drm/msm/hdmi/hdmi_connector.c
-+++ b/drivers/gpu/drm/msm/hdmi/hdmi_connector.c
-@@ -385,7 +385,7 @@ static int msm_hdmi_connector_mode_valid(struct drm_connector *connector,
- 	struct msm_kms *kms = priv->kms;
- 	long actual, requested;
- 
--	requested = 1000 * mode->clock;
-+	requested = 1000U * mode->clock;
- 	actual = kms->funcs->round_pixclk(kms,
- 			requested, hdmi_connector->hdmi->encoder);
- 
++	dev = &edp->pdev->dev;
+ 	ctrl = devm_kzalloc(dev, sizeof(*ctrl), GFP_KERNEL);
+ 	if (!ctrl)
+ 		return -ENOMEM;
 -- 
 2.32.0
 
