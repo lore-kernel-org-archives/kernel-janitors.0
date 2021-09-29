@@ -2,90 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31533C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Sep 2021 12:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D517C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Sep 2021 12:54:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 063886140F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Sep 2021 12:19:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A37A613A6
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Sep 2021 12:54:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343547AbhI2MUk (ORCPT
+        id S1343907AbhI2M4Q (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 29 Sep 2021 08:20:40 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:52580
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S245563AbhI2MUk (ORCPT
+        Wed, 29 Sep 2021 08:56:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49446 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1343839AbhI2M4P (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 29 Sep 2021 08:20:40 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 6160C40184;
-        Wed, 29 Sep 2021 12:18:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632917938;
-        bh=Bhi6AHpfy+Ej7XA03LLA3tQ3s3CRWpWh6aY3VL7zg6I=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=VFhT8s8l9BI3n5pbmMC9WNLBYSQ8vlH2EBQOf5Z4inyh3DmyXaTEgfqieq0KKCjxp
-         HQqVKwJgvhGhewcIyYqANQko+pBIsXUlj4yf5061PKjdIJZ02hESR8oWvMmg7qg7dM
-         iCHVmhKZRmcgaFENb+JaHrki7H5Iuc+VcmgqnUCadtF3wlK4nyCEBY1lbeGUGTxKcs
-         n60IQb+8b6H0urKz99HuzUwS4xBbZXxVwcuHc21hhBAz7BrM1bvBjg10HcitJhZFo8
-         dVab1JfknUC6IrTUjjk4DWkIDM4B80Sdsg07TK3ri5f0ND+2fF5KTfGgDC1EyWnqur
-         6jaBmlXOwW5Mw==
-From:   Colin King <colin.king@canonical.com>
-To:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Airlie <airlied@redhat.com>,
-        Lyude Paul <lyude@redhat.com>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/msm: Fix null pointer dereference on pointer edp
-Date:   Wed, 29 Sep 2021 13:18:57 +0100
-Message-Id: <20210929121857.213922-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        Wed, 29 Sep 2021 08:56:15 -0400
+Received: from mail-vk1-xa2d.google.com (mail-vk1-xa2d.google.com [IPv6:2607:f8b0:4864:20::a2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C34BFC06161C
+        for <kernel-janitors@vger.kernel.org>; Wed, 29 Sep 2021 05:54:34 -0700 (PDT)
+Received: by mail-vk1-xa2d.google.com with SMTP id f73so1089172vkf.6
+        for <kernel-janitors@vger.kernel.org>; Wed, 29 Sep 2021 05:54:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=0x0f.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=zfQ5dM+Ri1P9r/ui3gb3SorhujmtF4JU4NTdcKikmrY=;
+        b=Bsb7ycsZA74HsDPL09ZQAQzDgROsLRCu95Hc6OF0nBRCNlpFqOEl7hBm5n1R5n+GxS
+         DY57YA9QCGz0DcHNnzyH8eenAa47pYdR9FLLRm9K7+sO4Y14fI7RCyHBToxJaDIhz0cc
+         ozkSrY4d/0ZoSX99+wPd+DDkFDbf68V2vK3iI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=zfQ5dM+Ri1P9r/ui3gb3SorhujmtF4JU4NTdcKikmrY=;
+        b=XHVDXz3wWct7L6SjRAcqoGcz6W7yoi34gllsTnCDfUAnaLcUe+wmlq2/NO+bntA753
+         DoJbfz0nI0IpnB9nn9LvEnxnkr/xWbq6kohzbbdAFxKCXUY3HdpuLmlwAmxzljwjyS51
+         rMDfj8gC8D2cRV719ec13F/p3rjfjkpZgbPm1dvCZ4kVIm6GcxclIAwsRK/G2ZoqkkY7
+         W2Ho6/Obg4BfRaLqyEoxS0PHk2CUtXwtwujtJagWuY+n01nXuuq6dTDkm4wKGwLSUJSO
+         zUMB+xOwHKrmXaFmepHt5vEc5LPLvufWhpvrC4WtiFuss9gLl+3V8t5cFOcC7uLBhRHm
+         30Xw==
+X-Gm-Message-State: AOAM5315B4QHI6O2SAurKTi3xrgIXLnhHlAdFRifOAUjAQwnGd3EONjJ
+        4AbhGVta80rnNlAelMn0B+CUxkZmKVogjMmRPzXntw==
+X-Google-Smtp-Source: ABdhPJzASCAh1IQGYf0Z3+LmFUl4XjYjTnybbVYyzQweEYSBjlUQemy10vtzR3hPvQY3k1Ypz3X3t1Ghxi70+l2QGFs=
+X-Received: by 2002:a1f:f203:: with SMTP id q3mr8867332vkh.1.1632920073828;
+ Wed, 29 Sep 2021 05:54:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20210928123906.988813-1-colin.king@canonical.com>
+ <CAFr9PXnMXPmuaUnfr-VwaZDX1hY8ZDtp1+UxOau6DKpUP9FdzQ@mail.gmail.com> <CABgxDoLPTcRbZZgAdJ9+=9OG+a=F59x9SQ9HvQkVvGmkDjO6-A@mail.gmail.com>
+In-Reply-To: <CABgxDoLPTcRbZZgAdJ9+=9OG+a=F59x9SQ9HvQkVvGmkDjO6-A@mail.gmail.com>
+From:   Daniel Palmer <daniel@0x0f.com>
+Date:   Wed, 29 Sep 2021 21:56:36 +0900
+Message-ID: <CAFr9PXna7YsYnfdtu1jvJhkVSX0SiyixYr_bTsx3tDepeHqcMg@mail.gmail.com>
+Subject: Re: [PATCH][next] rtc: msc313: Fix unintentional sign extension issue
+ on left shift of a u16
+To:     Romain Perier <romain.perier@gmail.com>
+Cc:     Colin King <colin.king@canonical.com>,
+        Daniel Palmer <daniel@thingy.jp>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Nobuhiro Iwamatsu <iwamatsu@nigauri.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Romain,
 
-The initialization of pointer dev dereferences pointer edp before
-edp is null checked, so there is a potential null pointer deference
-issue. Fix this by only dereferencing edp after edp has been null
-checked.
+On Tue, 28 Sept 2021 at 22:55, Romain Perier <romain.perier@gmail.com> wrot=
+e:
+>
+> Hi,
+>
+> Le mar. 28 sept. 2021 =C3=A0 15:31, Daniel Palmer <daniel@0x0f.com> a =C3=
+=A9crit :
+> The crazy stuff being, I ran rtctest from selftests and rtc-range (1)
+> that tests a variety
+> of dates including 2038 and 2106 for example. Both tests passed :) (proba=
+bly
+> because *this case* specifically did not happen while running the test)
 
-Addresses-Coverity: ("Dereference before null check")
-Fixes: ab5b0107ccf3 ("drm/msm: Initial add eDP support in msm drm driver (v5)")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/msm/edp/edp_ctrl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I suspect it works because for reading the time because seconds is a
+u32 not unsigned long like the other functions.
+So if the high word of the register is read, is promoted to a wider
+type and sign extended it doesn't actually matter because it gets
+truncated to 32 bits so the sign extended part is gone.
 
-diff --git a/drivers/gpu/drm/msm/edp/edp_ctrl.c b/drivers/gpu/drm/msm/edp/edp_ctrl.c
-index 4fb397ee7c84..fe1366b4c49f 100644
---- a/drivers/gpu/drm/msm/edp/edp_ctrl.c
-+++ b/drivers/gpu/drm/msm/edp/edp_ctrl.c
-@@ -1116,7 +1116,7 @@ void msm_edp_ctrl_power(struct edp_ctrl *ctrl, bool on)
- int msm_edp_ctrl_init(struct msm_edp *edp)
- {
- 	struct edp_ctrl *ctrl = NULL;
--	struct device *dev = &edp->pdev->dev;
-+	struct device *dev;
- 	int ret;
- 
- 	if (!edp) {
-@@ -1124,6 +1124,7 @@ int msm_edp_ctrl_init(struct msm_edp *edp)
- 		return -EINVAL;
- 	}
- 
-+	dev = &edp->pdev->dev;
- 	ctrl = devm_kzalloc(dev, sizeof(*ctrl), GFP_KERNEL);
- 	if (!ctrl)
- 		return -ENOMEM;
--- 
-2.32.0
+Cheers,
 
+Daniel
