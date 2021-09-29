@@ -2,94 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D517C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Sep 2021 12:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 602CFC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Sep 2021 13:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A37A613A6
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Sep 2021 12:54:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47E626141B
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Sep 2021 13:27:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343907AbhI2M4Q (ORCPT
+        id S1344185AbhI2N3g (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 29 Sep 2021 08:56:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49446 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343839AbhI2M4P (ORCPT
+        Wed, 29 Sep 2021 09:29:36 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:56830
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229846AbhI2N3g (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 29 Sep 2021 08:56:15 -0400
-Received: from mail-vk1-xa2d.google.com (mail-vk1-xa2d.google.com [IPv6:2607:f8b0:4864:20::a2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C34BFC06161C
-        for <kernel-janitors@vger.kernel.org>; Wed, 29 Sep 2021 05:54:34 -0700 (PDT)
-Received: by mail-vk1-xa2d.google.com with SMTP id f73so1089172vkf.6
-        for <kernel-janitors@vger.kernel.org>; Wed, 29 Sep 2021 05:54:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=0x0f.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=zfQ5dM+Ri1P9r/ui3gb3SorhujmtF4JU4NTdcKikmrY=;
-        b=Bsb7ycsZA74HsDPL09ZQAQzDgROsLRCu95Hc6OF0nBRCNlpFqOEl7hBm5n1R5n+GxS
-         DY57YA9QCGz0DcHNnzyH8eenAa47pYdR9FLLRm9K7+sO4Y14fI7RCyHBToxJaDIhz0cc
-         ozkSrY4d/0ZoSX99+wPd+DDkFDbf68V2vK3iI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=zfQ5dM+Ri1P9r/ui3gb3SorhujmtF4JU4NTdcKikmrY=;
-        b=XHVDXz3wWct7L6SjRAcqoGcz6W7yoi34gllsTnCDfUAnaLcUe+wmlq2/NO+bntA753
-         DoJbfz0nI0IpnB9nn9LvEnxnkr/xWbq6kohzbbdAFxKCXUY3HdpuLmlwAmxzljwjyS51
-         rMDfj8gC8D2cRV719ec13F/p3rjfjkpZgbPm1dvCZ4kVIm6GcxclIAwsRK/G2ZoqkkY7
-         W2Ho6/Obg4BfRaLqyEoxS0PHk2CUtXwtwujtJagWuY+n01nXuuq6dTDkm4wKGwLSUJSO
-         zUMB+xOwHKrmXaFmepHt5vEc5LPLvufWhpvrC4WtiFuss9gLl+3V8t5cFOcC7uLBhRHm
-         30Xw==
-X-Gm-Message-State: AOAM5315B4QHI6O2SAurKTi3xrgIXLnhHlAdFRifOAUjAQwnGd3EONjJ
-        4AbhGVta80rnNlAelMn0B+CUxkZmKVogjMmRPzXntw==
-X-Google-Smtp-Source: ABdhPJzASCAh1IQGYf0Z3+LmFUl4XjYjTnybbVYyzQweEYSBjlUQemy10vtzR3hPvQY3k1Ypz3X3t1Ghxi70+l2QGFs=
-X-Received: by 2002:a1f:f203:: with SMTP id q3mr8867332vkh.1.1632920073828;
- Wed, 29 Sep 2021 05:54:33 -0700 (PDT)
+        Wed, 29 Sep 2021 09:29:36 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id EA6793F357;
+        Wed, 29 Sep 2021 13:27:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1632922074;
+        bh=llGQWjcAuooB5bvE5ZZK4xVEgoRsG+cLdfSPzcf9Lco=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=KHp+0TgtPX9mm1PDhojx0ukDwJXQWHrn/118jhwqu64i1ErJmQX1OHr/lPp30VFYK
+         K9WzbEU7P/1DEQQ6b4HFRRwu0+cVtjtb/LudGtVHrNfN3K5EH1KCsjhVjBe+Jig/Kv
+         gp0RAi1sKDY6n+Izb5JxU3zgpoVx+aL2KKXxck8Oo0t9PRfs033bazhPiB/rR6MlsR
+         ZNeEEGvi0RS95HquKV4H52n9wavIxIrqkwfOAwbN0H9uni6/S3xQNGsrkBSUGzDupE
+         WGc247BUTKrEQlUEwGjBKJ8S+IukWtJ+6nRd6mwKFwGdPZhyWvPJ30/ikHjBvJdqyp
+         ZAZptA0f2W3oQ==
+From:   Colin King <colin.king@canonical.com>
+To:     Sunil Goutham <sgoutham@marvell.com>,
+        Geetha sowjanya <gakula@marvell.com>,
+        Subbaraya Sundeep <sbhatta@marvell.com>,
+        hariprasad <hkelam@marvell.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] octeontx2-af: Remove redundant initialization of variable pin
+Date:   Wed, 29 Sep 2021 14:27:53 +0100
+Message-Id: <20210929132753.216068-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-References: <20210928123906.988813-1-colin.king@canonical.com>
- <CAFr9PXnMXPmuaUnfr-VwaZDX1hY8ZDtp1+UxOau6DKpUP9FdzQ@mail.gmail.com> <CABgxDoLPTcRbZZgAdJ9+=9OG+a=F59x9SQ9HvQkVvGmkDjO6-A@mail.gmail.com>
-In-Reply-To: <CABgxDoLPTcRbZZgAdJ9+=9OG+a=F59x9SQ9HvQkVvGmkDjO6-A@mail.gmail.com>
-From:   Daniel Palmer <daniel@0x0f.com>
-Date:   Wed, 29 Sep 2021 21:56:36 +0900
-Message-ID: <CAFr9PXna7YsYnfdtu1jvJhkVSX0SiyixYr_bTsx3tDepeHqcMg@mail.gmail.com>
-Subject: Re: [PATCH][next] rtc: msc313: Fix unintentional sign extension issue
- on left shift of a u16
-To:     Romain Perier <romain.perier@gmail.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        Daniel Palmer <daniel@thingy.jp>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Nobuhiro Iwamatsu <iwamatsu@nigauri.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Romain,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Tue, 28 Sept 2021 at 22:55, Romain Perier <romain.perier@gmail.com> wrot=
-e:
->
-> Hi,
->
-> Le mar. 28 sept. 2021 =C3=A0 15:31, Daniel Palmer <daniel@0x0f.com> a =C3=
-=A9crit :
-> The crazy stuff being, I ran rtctest from selftests and rtc-range (1)
-> that tests a variety
-> of dates including 2038 and 2106 for example. Both tests passed :) (proba=
-bly
-> because *this case* specifically did not happen while running the test)
+The variable pin is being initialized with a value that is never
+read, it is being updated later on in only one case of a switch
+statement.  The assignment is redundant and can be removed.
 
-I suspect it works because for reading the time because seconds is a
-u32 not unsigned long like the other functions.
-So if the high word of the register is read, is promoted to a wider
-type and sign extended it doesn't actually matter because it gets
-truncated to 32 bits so the sign extended part is gone.
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/marvell/octeontx2/nic/otx2_ptp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers,
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ptp.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ptp.c
+index 5e3056a89ee0..bc29ec834967 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ptp.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ptp.c
+@@ -194,7 +194,7 @@ static int otx2_ptp_enable(struct ptp_clock_info *ptp_info,
+ {
+ 	struct otx2_ptp *ptp = container_of(ptp_info, struct otx2_ptp,
+ 					    ptp_info);
+-	int pin = -1;
++	int pin;
+ 
+ 	if (!ptp->nic)
+ 		return -ENODEV;
+-- 
+2.32.0
 
-Daniel
