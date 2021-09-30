@@ -2,48 +2,34 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 602CFC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Sep 2021 13:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBDA5C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Sep 2021 08:12:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 47E626141B
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Sep 2021 13:27:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2DB061528
+	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Sep 2021 08:12:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344185AbhI2N3g (ORCPT
+        id S1349024AbhI3INr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 29 Sep 2021 09:29:36 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:56830
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229846AbhI2N3g (ORCPT
+        Thu, 30 Sep 2021 04:13:47 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:58544 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1348924AbhI3INq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 29 Sep 2021 09:29:36 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id EA6793F357;
-        Wed, 29 Sep 2021 13:27:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632922074;
-        bh=llGQWjcAuooB5bvE5ZZK4xVEgoRsG+cLdfSPzcf9Lco=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=KHp+0TgtPX9mm1PDhojx0ukDwJXQWHrn/118jhwqu64i1ErJmQX1OHr/lPp30VFYK
-         K9WzbEU7P/1DEQQ6b4HFRRwu0+cVtjtb/LudGtVHrNfN3K5EH1KCsjhVjBe+Jig/Kv
-         gp0RAi1sKDY6n+Izb5JxU3zgpoVx+aL2KKXxck8Oo0t9PRfs033bazhPiB/rR6MlsR
-         ZNeEEGvi0RS95HquKV4H52n9wavIxIrqkwfOAwbN0H9uni6/S3xQNGsrkBSUGzDupE
-         WGc247BUTKrEQlUEwGjBKJ8S+IukWtJ+6nRd6mwKFwGdPZhyWvPJ30/ikHjBvJdqyp
-         ZAZptA0f2W3oQ==
-From:   Colin King <colin.king@canonical.com>
-To:     Sunil Goutham <sgoutham@marvell.com>,
-        Geetha sowjanya <gakula@marvell.com>,
-        Subbaraya Sundeep <sbhatta@marvell.com>,
-        hariprasad <hkelam@marvell.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] octeontx2-af: Remove redundant initialization of variable pin
-Date:   Wed, 29 Sep 2021 14:27:53 +0100
-Message-Id: <20210929132753.216068-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        Thu, 30 Sep 2021 04:13:46 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 884551F44946
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     Benson Leung <bleung@chromium.org>,
+        Colin King <colin.king@canonical.com>,
+        Guenter Roeck <groeck@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] platform/chrome: cros_ec: Fix spelling mistake "responsed" -> "response"
+Date:   Thu, 30 Sep 2021 10:11:56 +0200
+Message-Id: <163298950474.3274399.2608436689330613144.b4-ty@collabora.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210925171743.173219-1-colin.king@canonical.com>
+References: <20210925171743.173219-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -51,31 +37,14 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sat, 25 Sep 2021 18:17:43 +0100, Colin King wrote:
+> There are spelling mistakes in dev_warn messages. Fix them.
 
-The variable pin is being initialized with a value that is never
-read, it is being updated later on in only one case of a switch
-statement.  The assignment is redundant and can be removed.
+Applied, thanks!
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/marvell/octeontx2/nic/otx2_ptp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[1/1] platform/chrome: cros_ec: Fix spelling mistake "responsed" -> "response"
+      commit: eb057514ccca92d44f37be057152c7d2791cdae0
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ptp.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ptp.c
-index 5e3056a89ee0..bc29ec834967 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ptp.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ptp.c
-@@ -194,7 +194,7 @@ static int otx2_ptp_enable(struct ptp_clock_info *ptp_info,
- {
- 	struct otx2_ptp *ptp = container_of(ptp_info, struct otx2_ptp,
- 					    ptp_info);
--	int pin = -1;
-+	int pin;
- 
- 	if (!ptp->nic)
- 		return -ENODEV;
+Best regards,
 -- 
-2.32.0
-
+Enric Balletbo i Serra <enric.balletbo@collabora.com>
