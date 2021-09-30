@@ -2,47 +2,47 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D5FC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Sep 2021 10:19:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC62CC433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Sep 2021 10:27:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 67033615E2
-	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Sep 2021 10:19:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3B2B61884
+	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Sep 2021 10:27:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349886AbhI3KV0 (ORCPT
+        id S1350003AbhI3K3d (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 30 Sep 2021 06:21:26 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:53094
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1349839AbhI3KVZ (ORCPT
+        Thu, 30 Sep 2021 06:29:33 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:40796
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1349993AbhI3K3c (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 30 Sep 2021 06:21:25 -0400
+        Thu, 30 Sep 2021 06:29:32 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 6D53040DD7;
-        Thu, 30 Sep 2021 10:19:41 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 8585F4199A;
+        Thu, 30 Sep 2021 10:27:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1632997181;
-        bh=3HqHjju1V6qHP4N5Fhu3jHizcZDAmcAuKPY+5zu5uUA=;
+        s=20210705; t=1632997668;
+        bh=M6sy7w+Nseo+km9zhs6Ryq7ai4W52YENoxc1GDWogd8=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=DFRDD/IITmkIue9vNoR3GTyvYtqoCl6x8xNqCh44bOrIaKBe5ViQ72pzhF6bTUzRX
-         QOQbRPbmQsAdXhHoAKdXcN9IX5FajlToixLg62JCJLkHn6MoQcuthfwpEd7yknMeZW
-         S7ouknTJ6ZkUf25UoKwzDButS2mUuLkbi02jvpT3lYNqiZXfzCOfhWOT02bFkPcE/b
-         sq48NTIIKEHq/0/96U8MR55YEeDWu69UiAAPI4PwdedbZnfF0LR1qLSfzIEiabLTle
-         VH3y2WHtIop8PjVnRD0Qu10XNDd0K7iEuofStKZzOxethnuJ91bdBGD/QknAKCERqX
-         l2TP0jwsOo0Jg==
+        b=Y30t1JdbogXU0K+bW1bTvWxv86GNTLURM7AED2LkZ/ttZYw9LhYMnHQj3JHgmXkhW
+         sRCjx5TjEc9egXxsVx0JmzEmckMXwjVV4c+eEG+eS/7JgPxs2Tbqt4nFbAyL3XKrWC
+         KLcKhshLfR5P6Rr9vO4/xb2SCXlFdSQX5ZE0sRc2lHXcIWIeZj1XL76wiG5J8yjFYf
+         ymGKmhVQ9QoEUgrPb8y0+maV7PIBRnBn1CPOTkwjmQcXWvI3W/QW+Z28BZUt4A2mLs
+         QJ5o+tqnL4tzhB0ZX4Q4Zyc7vSg3pNHmIOH06odwTc4RNwoYj7oJ9Rqx5whH1lNjTv
+         6u5G7YqrNz15w==
 From:   Colin King <colin.king@canonical.com>
 To:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
         Daniel Vetter <daniel@ffwll.ch>,
-        Nicholas Verne <nverne@chromium.org>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
+        Lingfeng Yang <lfy@google.com>,
+        Anthoine Bourgeois <anthoine.bourgeois@gmail.com>,
         dri-devel@lists.freedesktop.org,
         virtualization@lists.linux-foundation.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/virtio: fix potential integer overflow on shift of a int
-Date:   Thu, 30 Sep 2021 11:19:41 +0100
-Message-Id: <20210930101941.16546-1-colin.king@canonical.com>
+Subject: [PATCH][next] drm/virtio: fix another potential integer overflow on shift of a int
+Date:   Thu, 30 Sep 2021 11:27:48 +0100
+Message-Id: <20210930102748.16922-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -55,29 +55,30 @@ From: Colin Ian King <colin.king@canonical.com>
 
 The left shift of unsigned int 32 bit integer constant 1 is evaluated
 using 32 bit arithmetic and then assigned to a signed 64 bit integer.
-In the case where i is 32 or more this can lead to an overflow. Fix
-this by shifting the value 1ULL instead.
+In the case where value is 32 or more this can lead to an overflow
+(value can be in range 0..MAX_CAPSET_ID (63). Fix this by shifting
+the value 1ULL instead.
 
 Addresses-Coverity: ("Uninitentional integer overflow")
-Fixes: 8d6b006e1f51 ("drm/virtio: implement context init: handle VIRTGPU_CONTEXT_PARAM_POLL_RINGS_MASK")
+Fixes: 4fb530e5caf7 ("drm/virtio: implement context init: support init ioctl")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
  drivers/gpu/drm/virtio/virtgpu_ioctl.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-index 5618a1d5879c..b3b0557d72cf 100644
+index b3b0557d72cf..0007e423d885 100644
 --- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
 +++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-@@ -819,7 +819,7 @@ static int virtio_gpu_context_init_ioctl(struct drm_device *dev,
- 	if (vfpriv->ring_idx_mask) {
- 		valid_ring_mask = 0;
- 		for (i = 0; i < vfpriv->num_rings; i++)
--			valid_ring_mask |= 1 << i;
-+			valid_ring_mask |= 1ULL << i;
+@@ -774,7 +774,7 @@ static int virtio_gpu_context_init_ioctl(struct drm_device *dev,
+ 				goto out_unlock;
+ 			}
  
- 		if (~valid_ring_mask & vfpriv->ring_idx_mask) {
- 			ret = -EINVAL;
+-			if ((vgdev->capset_id_mask & (1 << value)) == 0) {
++			if ((vgdev->capset_id_mask & (1ULL << value)) == 0) {
+ 				ret = -EINVAL;
+ 				goto out_unlock;
+ 			}
 -- 
 2.32.0
 
