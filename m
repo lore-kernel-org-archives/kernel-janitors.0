@@ -2,86 +2,109 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05753C4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Oct 2021 11:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A05C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Oct 2021 11:07:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D638D617E1
-	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Oct 2021 11:01:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6258461A3A
+	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Oct 2021 11:07:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353752AbhJALDe (ORCPT
+        id S1353731AbhJALIu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 1 Oct 2021 07:03:34 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:44008
+        Fri, 1 Oct 2021 07:08:50 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:44220
         "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1353712AbhJALCw (ORCPT
+        by vger.kernel.org with ESMTP id S1353454AbhJALIt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 1 Oct 2021 07:02:52 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        Fri, 1 Oct 2021 07:08:49 -0400
+Received: from [10.172.193.212] (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id E430F41979;
-        Fri,  1 Oct 2021 11:01:06 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 6C30E4199E;
+        Fri,  1 Oct 2021 11:07:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633086066;
-        bh=dn4OGJN7yHitmsR+lQU1cTUP+QKK1iKnmxAV8VlJ3E4=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=B0bJbg34EwDnjlaPhWwcmqQPjpQfOWCJL/Rj23RKnP3CGG6aHsnYTwQXi0intnf+j
-         oz+XONCYLcWbXq3r0eqCeWdkb0qo+YgK9JeurUYiQChx7Rkxn0Of1/eKe0RIS6aV8V
-         +NH8/3LdkPkdjuFTPyCjGy/7tqbeNPH/AIVwTGi9Bee0NPO0pM0p5PWL7rizR1pKzZ
-         1TVQqrSsmFVhgb94K6PrQNX7CrBmy3YxbbFoHgepiU+VvjFWauQOUJbG6P9EnYw14l
-         okFVBzQ1nQHMJoUub95njDBo0XgEqXVYLF46jLTYJ3g5zzFbJywjYsZm/jsU8pq84L
-         SHRp+fuZC1s3w==
-From:   Colin King <colin.king@canonical.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        David Stevens <stevensd@chromium.org>, kvm@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] KVM: x86: Fix allocation sizeof argument
-Date:   Fri,  1 Oct 2021 12:01:06 +0100
-Message-Id: <20211001110106.15056-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        s=20210705; t=1633086423;
+        bh=MKQMNrTSMw8rMSA9wt8sZInaKcQhtrgdLt8Y5PCva+M=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=pI0I4TTo8596Mi+AGA//j25xo3txLmpXOKVAwJoCZusJxSxjyEb+m5DZ8uvFIqLRB
+         17Qbc0xIE3OFDfdYDtb+gdqEy0snRSjseYEQvBA2nNLx1RYyBoEyrFBLjln+5Mqf6n
+         kJRIF0yByasuj2cAGZqxkuB+GLqWUK108djbnu4HKVZzhILA9UBzkQ80JJ6S0kDxXa
+         kxf6QTn7KE/rWczv7IspF9eJfHFZEVrypiMkYnsi1uXCc1R/BHOkH7lyTYKSfUAWI7
+         ma7QgBqlj3gYjKyodCcUp9GlPq4+uNSw86FsaW+B1hQTsafcggK72q6ki2yf2tufkg
+         kxqzSE/JiEPrw==
+Message-ID: <0bce4268-cac5-4dee-451d-cfafb5efdb8b@canonical.com>
+Date:   Fri, 1 Oct 2021 12:07:03 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.1
+Subject: Re: [PATCH][next] ALSA: usb-audio: Fix sum of uninitialized variable
+ sample_accum
+Content-Language: en-US
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Alexander Tsoy <alexander@tsoy.me>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20211001104417.14291-1-colin.king@canonical.com>
+ <s5htui1hvgi.wl-tiwai@suse.de>
+From:   Colin Ian King <colin.king@canonical.com>
+In-Reply-To: <s5htui1hvgi.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 01/10/2021 11:48, Takashi Iwai wrote:
+> On Fri, 01 Oct 2021 12:44:17 +0200,
+> Colin King wrote:
+>>
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> Variable sample_accum is not being intialized and then has
+>> ep->sample_rem added to it, leading to a bogus value. One solution
+>> is to initialize it to zero at declaration time, but it is probably
+>> best to just assign it to ep->sample_rem on first use.
+>>
+>> Addresses-Coveriry: ("Uninitialized scalar variable")
+>> Fixes: f0bd62b64016 ("ALSA: usb-audio: Improve frames size computation")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> 
+> Thanks for the patch, but it's no right fix.  The Fixes tag points to
+> a wrong commit, it was d215f63d49da9a8803af3e81acd6cad743686573
+>      ALSA: usb-audio: Check available frames for the next packet size
+>    
+> And sample_accum has to be initialized from ep->sample_accum instead.
+> I'll post the proper fix.
 
-The allocation for *gfn_track should be for a slot->npages lot of
-short integers, however the current allocation is using sizeof(*gfn_track)
-and that is the size of a pointer, which is too large. Fix this by
-using sizeof(**gfn_track) instead.
+Thanks Takshi.
 
-Addresses-Coverity: ("Wrong sizeof argument")
-Fixes: 35b330bba6a7 ("KVM: x86: only allocate gfn_track when necessary")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/x86/kvm/mmu/page_track.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Colin
 
-diff --git a/arch/x86/kvm/mmu/page_track.c b/arch/x86/kvm/mmu/page_track.c
-index bb5d60bd4dbf..5b785a5f7dc9 100644
---- a/arch/x86/kvm/mmu/page_track.c
-+++ b/arch/x86/kvm/mmu/page_track.c
-@@ -92,7 +92,7 @@ int kvm_page_track_enable_mmu_write_tracking(struct kvm *kvm)
- 		slots = __kvm_memslots(kvm, i);
- 		kvm_for_each_memslot(slot, slots) {
- 			gfn_track = slot->arch.gfn_track + KVM_PAGE_TRACK_WRITE;
--			*gfn_track = kvcalloc(slot->npages, sizeof(*gfn_track),
-+			*gfn_track = kvcalloc(slot->npages, sizeof(**gfn_track),
- 					      GFP_KERNEL_ACCOUNT);
- 			if (*gfn_track == NULL) {
- 				mutex_unlock(&kvm->slots_arch_lock);
--- 
-2.32.0
+> 
+> 
+> Takashi
+> 
+> 
+>> ---
+>>   sound/usb/endpoint.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/sound/usb/endpoint.c b/sound/usb/endpoint.c
+>> index 42c0d2db8ba8..c6a33732db3f 100644
+>> --- a/sound/usb/endpoint.c
+>> +++ b/sound/usb/endpoint.c
+>> @@ -182,7 +182,7 @@ static int next_packet_size(struct snd_usb_endpoint *ep, unsigned int avail)
+>>   	if (ep->fill_max)
+>>   		return ep->maxframesize;
+>>   
+>> -	sample_accum += ep->sample_rem;
+>> +	sample_accum = ep->sample_rem;
+>>   	if (sample_accum >= ep->pps) {
+>>   		sample_accum -= ep->pps;
+>>   		ret = ep->packsize[1];
+>> -- 
+>> 2.32.0
+>>
 
