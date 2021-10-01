@@ -2,89 +2,57 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D54C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Oct 2021 01:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95349C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Oct 2021 06:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA9E46109E
-	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Oct 2021 01:01:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77E1A615A4
+	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Oct 2021 06:45:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350863AbhJABDe (ORCPT
+        id S1352312AbhJAGrU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 30 Sep 2021 21:03:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40042 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230208AbhJABDd (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 30 Sep 2021 21:03:33 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B165C06176A;
-        Thu, 30 Sep 2021 18:01:50 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id u18so32649404lfd.12;
-        Thu, 30 Sep 2021 18:01:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=D+yM4mb4R4ftDgNZNH/Nen5f0X3rBwJtyETtRdq6+8k=;
-        b=LWkYaOLcb/wX7NjIGEpBFWeQbXfBVDW06YfiUWGNOTDBEcYprWRQhMdSNGsYcVKRVo
-         dIySEcS6atp26YPs2C57d/KesUn76yRovpn6/Uddc85mNB8VpPp1r7zVBvCtq/nhci0S
-         HivDVLA9pt0yeYmr7uJsR62u1HAWeNZre1PH80BbC0pDVT3SnZ+73Sp1gTg/SvT+usph
-         0jeLmYD0WTEBiUodATk3d6rolko5xEArtdvYXgRGuxJXqwo+q1FjZezjDZB2feIS+dTo
-         RL3HYXeqm362IHod8hePP1V72a7mr9YNkllNdikLdBVh/l3/z0DAqaCHQHBxQ03nwRET
-         uMJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=D+yM4mb4R4ftDgNZNH/Nen5f0X3rBwJtyETtRdq6+8k=;
-        b=qVtWZ3mLv3oMs06IN3YcE2sH7Z3bJWUkVnXieWXxIkh9I7hHUnRLMnimmphk7WToT+
-         DcyDqjFJ4l2yYb7WhSkH6seCdeg0bbT+DzfbL1dNOnapaFutVw5nNkdpJlcevRqwWNfk
-         6m1CRDq1YL/9NvATaaTStA13bovpk2KWsrBinAsldJEvq/KvlI4stYYkFCxmQvA7PJZ1
-         LJ3rdZnNXTmavjEJCgep+jPr4NUdUa7X4R2KwocxTduXfXsakkNw0DzFQR0IRVjaFOhz
-         0smO7w08xjv6H4C1hMYiAFVWWEC9Tzs2kE8jUhNlVqfIdRgjS6IG1N7bjD+uyZKS8nFE
-         trAw==
-X-Gm-Message-State: AOAM531k+L0NxfZLrU3swZNiY940mjo4pjK9SqhhqGOsdyrnGlmFz/Xp
-        6GLSE0CjIseY2V2xZOTc+R8mrK+sqp/FsycXJFepwMKq
-X-Google-Smtp-Source: ABdhPJzwjb30UfsfswPAZwkzOkOELLG2leewCfDBZEgHey7tYsVQReVMadVCDDlsrpLcjqSIdE3+Z2THgn7Rp7eZamg=
-X-Received: by 2002:a05:6512:dd:: with SMTP id c29mr2297630lfp.601.1633050108366;
- Thu, 30 Sep 2021 18:01:48 -0700 (PDT)
+        Fri, 1 Oct 2021 02:47:20 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:55764 "EHLO deadmen.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231165AbhJAGrT (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 1 Oct 2021 02:47:19 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtp (Exim 4.92 #5 (Debian))
+        id 1mWCIL-0006lP-Ek; Fri, 01 Oct 2021 14:45:21 +0800
+Received: from herbert by gondobar with local (Exim 4.92)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1mWCIK-0003WR-0H; Fri, 01 Oct 2021 14:45:20 +0800
+Date:   Fri, 1 Oct 2021 14:45:20 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Zhou Wang <wangzhou1@hisilicon.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: hisilicon: Fix spelling mistake "COMSUMED" ->
+ "CONSUMED"
+Message-ID: <20211001064519.GC13451@gondor.apana.org.au>
+References: <20210920182838.17218-1-colin.king@canonical.com>
 MIME-Version: 1.0
-References: <20210930122456.GA10068@kili> <CAKYAXd_VNuyn7HAfnZjkxhGQUnwgCYXe3xTuOEE=P+h6kyQoSg@mail.gmail.com>
-In-Reply-To: <CAKYAXd_VNuyn7HAfnZjkxhGQUnwgCYXe3xTuOEE=P+h6kyQoSg@mail.gmail.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Thu, 30 Sep 2021 20:01:37 -0500
-Message-ID: <CAH2r5mvJS1G8Ay9AM4B99=HX5uGzhdefAsXtRYav0Y0RJJZWfg@mail.gmail.com>
-Subject: Re: [PATCH] ksmbd: missing check for NULL in convert_to_nt_pathname()
-To:     Namjae Jeon <linkinjeon@kernel.org>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Hyunchul Lee <hyc.lee@gmail.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Steve French <sfrench@samba.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210920182838.17218-1-colin.king@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Added the acked-bys and pushed to ksmbd-for-next
+On Mon, Sep 20, 2021 at 07:28:38PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a spelling mistake in a literal string. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/crypto/hisilicon/zip/zip_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, Sep 30, 2021 at 6:23 PM Namjae Jeon <linkinjeon@kernel.org> wrote:
->
-> 2021-09-30 21:24 GMT+09:00, Dan Carpenter <dan.carpenter@oracle.com>:
-> > The kmalloc() does not have a NULL check.  This code can be re-written
-> > slightly cleaner to just use the kstrdup().
-> >
-> > Fixes: 265fd1991c1d ("ksmbd: use LOOKUP_BENEATH to prevent the out of share
-> > access")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Namjae Jeon <linkinjeon@kernel.org>
->
-> Thanks for your patch!
-
-
-
+Patch applied.  Thanks.
 -- 
-Thanks,
-
-Steve
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
