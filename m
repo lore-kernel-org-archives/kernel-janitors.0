@@ -2,123 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8FECC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Oct 2021 18:34:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B53D3C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Oct 2021 19:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A543661A7D
-	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Oct 2021 18:34:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94A9061A02
+	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Oct 2021 19:34:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355766AbhJASgm (ORCPT
+        id S1355330AbhJATf5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 1 Oct 2021 14:36:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55420 "EHLO
+        Fri, 1 Oct 2021 15:35:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354947AbhJASgl (ORCPT
+        with ESMTP id S1353675AbhJATf4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 1 Oct 2021 14:36:41 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29A29C061775
-        for <kernel-janitors@vger.kernel.org>; Fri,  1 Oct 2021 11:34:57 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id x27so42249439lfu.5
-        for <kernel-janitors@vger.kernel.org>; Fri, 01 Oct 2021 11:34:57 -0700 (PDT)
+        Fri, 1 Oct 2021 15:35:56 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79D08C06177E
+        for <kernel-janitors@vger.kernel.org>; Fri,  1 Oct 2021 12:34:12 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id d13-20020a17090ad3cd00b0019e746f7bd4so10103579pjw.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 01 Oct 2021 12:34:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=h17+SHB1hF/idn3CZToPuuO5Jqa52mgDL9LaLqNP76k=;
-        b=XvZPJRVapHhXbnvxBH+dcTzSWQUb8QLF1Nvs1pcRhCxBeMs5Xcc3SYxz0PJk9MSVwB
-         RO++xnwZyTvuSnUUevpLJg3QzOphbUQYQMzIEN8ZdDC/pBg7emCqlUyytJKci3smdWEz
-         PGKQDIfcwTqn5uHKORxQ95mAv2mamNG7R4cbKDhOgNlMOni5vMR6VfkgZNz3f+w9r6LP
-         RM5PrO44K4PTReIsJatKfc6ou546JK1Y/09aVpYq2fo16JNjbJ30np/Do4fvwBpz7Nls
-         NnJBkqXWOyTByxBLP2U0JC6UhBtJUhfb9XBQKV7BuC/NtZW4K+K44hAwVBC/VzyF8UqV
-         abdg==
+        bh=ro8iOwfopNiXVIntVOBdNVbsFsfISEozcMLqc1AhTz8=;
+        b=PleXJeqNow371PmypOEyNQWu02xPu6HO2KS1KwBVvxHQd0Pvb0t6WQz7UB5e+JXI2g
+         qDVsw3k4YR0bMHnIIUQme/FiF7fPqwxaRC8IY9w8s7cC8Oyk44ZcuW6S1v8AVJ6uxKDx
+         x2yzGU2ouUD7NdRH4THACd2k7SSUFoaFvmj1XZBWZJ0k61UgbqbnQOWv3tzgbb6w4NJO
+         BW0b2E+o1w6XOzsZK3E121VnwpV+2sqAZYnNJ2Rg61R1zHeiRvbLRh3GaYI5XGI3mrln
+         6gqE2rlBA3My2etPuc8HXCxefoqPdCSEUx+9bXh2J9Aykaz81IUTt/uIgomu429lfn3+
+         K/ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=h17+SHB1hF/idn3CZToPuuO5Jqa52mgDL9LaLqNP76k=;
-        b=N8RUhto+qCqLqyxwigsaHRX/u+TkazCQnndC2DirpHxuetSr/GSFTfVZ50W8ZfJTcY
-         c8FqrkTtq1lci7k8vq7RaXlII+d+/b8ar+eHWlTy/zooTmsheUGVbhocUZbp5ZVVSPnu
-         xin4PVoxmvRKIFdV8IvMZZMO4hkfleA5OKTTqSXsJd+U+fwwR5blklBsvUEOsbT/pXCJ
-         TyGzBNlpD0JEmNvCkywjx7T9r2jWuGm0/wnhpM4kCVCkIYLiUsSiibNufb3BU0ZYkdPb
-         SZQlKQJKYvod6fTeXDfVV5NQ+f8lQfv3iGXazRw6SPzwvtvxNWPmOE4T8TFmqYA2/7WO
-         OVrQ==
-X-Gm-Message-State: AOAM530Luo5URsAlqc2rK5srFSSG5AsapPISSP08r3YywazHCjsjh3MB
-        8D6SutF3OzpD5aNMqVZDGMAfG28rlj+zb0ME
-X-Google-Smtp-Source: ABdhPJxAGb0vHrSPSZ+MiRYmStYTxz0nB8m1aCFfXoEXCgOVViaEkeSdPPdoKSd77/QxRlbcQSx0UQ==
-X-Received: by 2002:a2e:a370:: with SMTP id i16mr12844230ljn.35.1633113295365;
-        Fri, 01 Oct 2021 11:34:55 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id p14sm809515lfa.299.2021.10.01.11.34.54
+        bh=ro8iOwfopNiXVIntVOBdNVbsFsfISEozcMLqc1AhTz8=;
+        b=S0h+IOF8q8e7+ojvV/JwtMFutW37RS/jVA9fi7LPepi1is+IxvjBhilSB197KfFQn2
+         NSMP1Gsm0GJwzVgS03TlFmzVura8QkQefwKMYu6lGHi+cAAv/kZNrQhl9g3irf9fF5Gw
+         LEa8krkdeJ1bV4+M/gnGpobxgXxILu6PSAR59MmVaPeTVZaFnuQV+ijxwIGu9NPxEion
+         JtFttFd9Z1v1nb/tGV9NFiKVe0T8PtPz3UA6lon2Oi5Jxa2b2wZbAB1t5CmXnjg2zW+b
+         k+GcYXCVDceqxROvYLLdfEtMj25yWYjdVat71D2sg0rbTK5LRQH63q34M95Qv53Jw0F9
+         481w==
+X-Gm-Message-State: AOAM530NU+OfIsofnjW/CwRYbeJXmO4NfQVgOmTlugS7Gu+vstTVsAb7
+        GLuTf5l4zSnIlCf8AeP75dl6xVJYNLo+3hAh
+X-Google-Smtp-Source: ABdhPJwvmFV/6aaZ1fuPOyLCI4asHxlJmusDca5epowSQQq45pxYz9o5aUkpJYLJmBqwFNk3HT+DbA==
+X-Received: by 2002:a17:902:c409:b0:13c:a5e1:cafc with SMTP id k9-20020a170902c40900b0013ca5e1cafcmr10985061plk.52.1633116851555;
+        Fri, 01 Oct 2021 12:34:11 -0700 (PDT)
+Received: from ?IPv6:2600:380:4a74:fb92:622f:875a:688c:3102? ([2600:380:4a74:fb92:622f:875a:688c:3102])
+        by smtp.gmail.com with ESMTPSA id 26sm7996404pgx.72.2021.10.01.12.34.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Oct 2021 11:34:54 -0700 (PDT)
-Subject: Re: [PATCH] drm/msm: Fix null pointer dereference on pointer edp
-To:     Colin King <colin.king@canonical.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Airlie <airlied@redhat.com>,
-        Lyude Paul <lyude@redhat.com>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210929121857.213922-1-colin.king@canonical.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Message-ID: <c9a68b02-d9b6-e779-7659-2f92639e55b0@linaro.org>
-Date:   Fri, 1 Oct 2021 21:34:50 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Fri, 01 Oct 2021 12:34:11 -0700 (PDT)
+Subject: Re: [PATCH] pcd: fix error codes in pcd_init_unit()
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Tim Waugh <tim@cyberelk.net>, Christoph Hellwig <hch@lst.de>
+Cc:     linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20211001122623.GA2283@kili>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <dca58d05-67f0-c8e0-5619-42fff4224f50@kernel.dk>
+Date:   Fri, 1 Oct 2021 13:34:08 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210929121857.213922-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+In-Reply-To: <20211001122623.GA2283@kili>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 29/09/2021 15:18, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The initialization of pointer dev dereferences pointer edp before
-> edp is null checked, so there is a potential null pointer deference
-> issue. Fix this by only dereferencing edp after edp has been null
-> checked.
-> 
-> Addresses-Coverity: ("Dereference before null check")
-> Fixes: ab5b0107ccf3 ("drm/msm: Initial add eDP support in msm drm driver (v5)")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On 10/1/21 6:26 AM, Dan Carpenter wrote:
+> Return -ENODEV on these error paths instead of returning success.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-> ---
->   drivers/gpu/drm/msm/edp/edp_ctrl.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/edp/edp_ctrl.c b/drivers/gpu/drm/msm/edp/edp_ctrl.c
-> index 4fb397ee7c84..fe1366b4c49f 100644
-> --- a/drivers/gpu/drm/msm/edp/edp_ctrl.c
-> +++ b/drivers/gpu/drm/msm/edp/edp_ctrl.c
-> @@ -1116,7 +1116,7 @@ void msm_edp_ctrl_power(struct edp_ctrl *ctrl, bool on)
->   int msm_edp_ctrl_init(struct msm_edp *edp)
->   {
->   	struct edp_ctrl *ctrl = NULL;
-> -	struct device *dev = &edp->pdev->dev;
-> +	struct device *dev;
->   	int ret;
->   
->   	if (!edp) {
-> @@ -1124,6 +1124,7 @@ int msm_edp_ctrl_init(struct msm_edp *edp)
->   		return -EINVAL;
->   	}
->   
-> +	dev = &edp->pdev->dev;
->   	ctrl = devm_kzalloc(dev, sizeof(*ctrl), GFP_KERNEL);
->   	if (!ctrl)
->   		return -ENOMEM;
-> 
-
+Applied, thanks.
 
 -- 
-With best wishes
-Dmitry
+Jens Axboe
+
