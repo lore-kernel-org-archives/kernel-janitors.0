@@ -2,78 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB3FC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Oct 2021 10:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB6CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Oct 2021 10:48:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 945FC61A05
-	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Oct 2021 10:44:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EA3261A56
+	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Oct 2021 10:48:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353631AbhJAKqE (ORCPT
+        id S1353661AbhJAKuT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 1 Oct 2021 06:46:04 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:43326
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231237AbhJAKqD (ORCPT
+        Fri, 1 Oct 2021 06:50:19 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:41328 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231237AbhJAKuP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 1 Oct 2021 06:46:03 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 34FFF4030D;
-        Fri,  1 Oct 2021 10:44:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633085058;
-        bh=O34Y8o/c2Wg1erpZ/C1tknCRMa2cDe1ONW7Pxy5f7KE=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=FRbiFYtvNJVvHal744VlOkzNohq/kvTF9ENdDvKyoLLPVOR7Na50w7YQ3ZNG4Ir5D
-         Kf09w6RvoGJGWvGyvvnGUt282b825SeVUJVVqPhjQD0Q1OIgknkK1cjZ/gc8zSW+0D
-         l8eoeT9PUb+xx85OZyvrr4rzdPc+MV7oR3cXM3wKGqCA+mQTAABPbmSNbEEyve/PiT
-         NAxYwgPwZu8E98jSc6kZ/Q9trBs+cXFtVN/AbS7lq/NdPlHIg8LmqwskNCwPVB2DjI
-         2gHAN6I9QRBS13ySBLMYa30oIUlehbi9fMDL/DemmIru6W669Ei+mUn5kAozbc/KEG
-         JwtCugeT+lvCg==
-From:   Colin King <colin.king@canonical.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Alexander Tsoy <alexander@tsoy.me>, alsa-devel@alsa-project.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ALSA: usb-audio: Fix sum of uninitialized variable sample_accum
-Date:   Fri,  1 Oct 2021 11:44:17 +0100
-Message-Id: <20211001104417.14291-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Fri, 1 Oct 2021 06:50:15 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 994711FD61;
+        Fri,  1 Oct 2021 10:48:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1633085309; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NysnsI/e5faCEp+kLmLJ5w8n+/uCw/Z1o1IAQZbc4OY=;
+        b=IskfcKfihcAh9i9hI/07/freT+imtqyJ7RH7gfED0K/OnJ+XLayt59YNvovU06gwdyCzfO
+        bttW7vjH/qL7hNDzFx3Pj/V5fLPlugJcL8E1Vq2+6BSbYw+oyh08RgYyqHW5bFwgFBx4Vt
+        tH6tJIFMz59sg2BWuC92moylC88+EuM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1633085309;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NysnsI/e5faCEp+kLmLJ5w8n+/uCw/Z1o1IAQZbc4OY=;
+        b=EIGN09vbyN/Kvckj2OqhikWMi8PsU0BnfUEwZNWYbtn61aNmgtkMonPe/1EkyxWlFCxmPg
+        yJklWgEULlL4XpDg==
+Received: from alsa1.suse.de (alsa1.suse.de [10.160.4.42])
+        by relay2.suse.de (Postfix) with ESMTP id 70A2BA3B83;
+        Fri,  1 Oct 2021 10:48:29 +0000 (UTC)
+Date:   Fri, 01 Oct 2021 12:48:29 +0200
+Message-ID: <s5htui1hvgi.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Alexander Tsoy <alexander@tsoy.me>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] ALSA: usb-audio: Fix sum of uninitialized variable sample_accum
+In-Reply-To: <20211001104417.14291-1-colin.king@canonical.com>
+References: <20211001104417.14291-1-colin.king@canonical.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, 01 Oct 2021 12:44:17 +0200,
+Colin King wrote:
+> 
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Variable sample_accum is not being intialized and then has
+> ep->sample_rem added to it, leading to a bogus value. One solution
+> is to initialize it to zero at declaration time, but it is probably
+> best to just assign it to ep->sample_rem on first use.
+> 
+> Addresses-Coveriry: ("Uninitialized scalar variable")
+> Fixes: f0bd62b64016 ("ALSA: usb-audio: Improve frames size computation")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Variable sample_accum is not being intialized and then has
-ep->sample_rem added to it, leading to a bogus value. One solution
-is to initialize it to zero at declaration time, but it is probably
-best to just assign it to ep->sample_rem on first use.
+Thanks for the patch, but it's no right fix.  The Fixes tag points to
+a wrong commit, it was d215f63d49da9a8803af3e81acd6cad743686573
+    ALSA: usb-audio: Check available frames for the next packet size
+  
+And sample_accum has to be initialized from ep->sample_accum instead.
+I'll post the proper fix.
 
-Addresses-Coveriry: ("Uninitialized scalar variable")
-Fixes: f0bd62b64016 ("ALSA: usb-audio: Improve frames size computation")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/usb/endpoint.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/usb/endpoint.c b/sound/usb/endpoint.c
-index 42c0d2db8ba8..c6a33732db3f 100644
---- a/sound/usb/endpoint.c
-+++ b/sound/usb/endpoint.c
-@@ -182,7 +182,7 @@ static int next_packet_size(struct snd_usb_endpoint *ep, unsigned int avail)
- 	if (ep->fill_max)
- 		return ep->maxframesize;
- 
--	sample_accum += ep->sample_rem;
-+	sample_accum = ep->sample_rem;
- 	if (sample_accum >= ep->pps) {
- 		sample_accum -= ep->pps;
- 		ret = ep->packsize[1];
--- 
-2.32.0
+Takashi
 
+
+> ---
+>  sound/usb/endpoint.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/sound/usb/endpoint.c b/sound/usb/endpoint.c
+> index 42c0d2db8ba8..c6a33732db3f 100644
+> --- a/sound/usb/endpoint.c
+> +++ b/sound/usb/endpoint.c
+> @@ -182,7 +182,7 @@ static int next_packet_size(struct snd_usb_endpoint *ep, unsigned int avail)
+>  	if (ep->fill_max)
+>  		return ep->maxframesize;
+>  
+> -	sample_accum += ep->sample_rem;
+> +	sample_accum = ep->sample_rem;
+>  	if (sample_accum >= ep->pps) {
+>  		sample_accum -= ep->pps;
+>  		ret = ep->packsize[1];
+> -- 
+> 2.32.0
+> 
