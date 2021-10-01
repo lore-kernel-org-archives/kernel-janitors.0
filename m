@@ -2,57 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95349C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Oct 2021 06:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB3FC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Oct 2021 10:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77E1A615A4
-	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Oct 2021 06:45:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 945FC61A05
+	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Oct 2021 10:44:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352312AbhJAGrU (ORCPT
+        id S1353631AbhJAKqE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 1 Oct 2021 02:47:20 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:55764 "EHLO deadmen.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231165AbhJAGrT (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 1 Oct 2021 02:47:19 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtp (Exim 4.92 #5 (Debian))
-        id 1mWCIL-0006lP-Ek; Fri, 01 Oct 2021 14:45:21 +0800
-Received: from herbert by gondobar with local (Exim 4.92)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1mWCIK-0003WR-0H; Fri, 01 Oct 2021 14:45:20 +0800
-Date:   Fri, 1 Oct 2021 14:45:20 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Zhou Wang <wangzhou1@hisilicon.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: hisilicon: Fix spelling mistake "COMSUMED" ->
- "CONSUMED"
-Message-ID: <20211001064519.GC13451@gondor.apana.org.au>
-References: <20210920182838.17218-1-colin.king@canonical.com>
+        Fri, 1 Oct 2021 06:46:04 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:43326
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231237AbhJAKqD (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 1 Oct 2021 06:46:03 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 34FFF4030D;
+        Fri,  1 Oct 2021 10:44:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1633085058;
+        bh=O34Y8o/c2Wg1erpZ/C1tknCRMa2cDe1ONW7Pxy5f7KE=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=FRbiFYtvNJVvHal744VlOkzNohq/kvTF9ENdDvKyoLLPVOR7Na50w7YQ3ZNG4Ir5D
+         Kf09w6RvoGJGWvGyvvnGUt282b825SeVUJVVqPhjQD0Q1OIgknkK1cjZ/gc8zSW+0D
+         l8eoeT9PUb+xx85OZyvrr4rzdPc+MV7oR3cXM3wKGqCA+mQTAABPbmSNbEEyve/PiT
+         NAxYwgPwZu8E98jSc6kZ/Q9trBs+cXFtVN/AbS7lq/NdPlHIg8LmqwskNCwPVB2DjI
+         2gHAN6I9QRBS13ySBLMYa30oIUlehbi9fMDL/DemmIru6W669Ei+mUn5kAozbc/KEG
+         JwtCugeT+lvCg==
+From:   Colin King <colin.king@canonical.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Alexander Tsoy <alexander@tsoy.me>, alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ALSA: usb-audio: Fix sum of uninitialized variable sample_accum
+Date:   Fri,  1 Oct 2021 11:44:17 +0100
+Message-Id: <20211001104417.14291-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210920182838.17218-1-colin.king@canonical.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Sep 20, 2021 at 07:28:38PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a literal string. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/crypto/hisilicon/zip/zip_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+From: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.  Thanks.
+Variable sample_accum is not being intialized and then has
+ep->sample_rem added to it, leading to a bogus value. One solution
+is to initialize it to zero at declaration time, but it is probably
+best to just assign it to ep->sample_rem on first use.
+
+Addresses-Coveriry: ("Uninitialized scalar variable")
+Fixes: f0bd62b64016 ("ALSA: usb-audio: Improve frames size computation")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/usb/endpoint.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/usb/endpoint.c b/sound/usb/endpoint.c
+index 42c0d2db8ba8..c6a33732db3f 100644
+--- a/sound/usb/endpoint.c
++++ b/sound/usb/endpoint.c
+@@ -182,7 +182,7 @@ static int next_packet_size(struct snd_usb_endpoint *ep, unsigned int avail)
+ 	if (ep->fill_max)
+ 		return ep->maxframesize;
+ 
+-	sample_accum += ep->sample_rem;
++	sample_accum = ep->sample_rem;
+ 	if (sample_accum >= ep->pps) {
+ 		sample_accum -= ep->pps;
+ 		ret = ep->packsize[1];
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.32.0
+
