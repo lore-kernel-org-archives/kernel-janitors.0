@@ -2,215 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5720EC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat,  2 Oct 2021 07:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61154C4332F
+	for <kernel-janitors@archiver.kernel.org>; Sat,  2 Oct 2021 15:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38CEA61AED
-	for <kernel-janitors@archiver.kernel.org>; Sat,  2 Oct 2021 07:51:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3346061AFB
+	for <kernel-janitors@archiver.kernel.org>; Sat,  2 Oct 2021 15:35:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232605AbhJBHxH (ORCPT
+        id S233450AbhJBPhH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 2 Oct 2021 03:53:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44392 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232457AbhJBHxG (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 2 Oct 2021 03:53:06 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7538361AEB;
-        Sat,  2 Oct 2021 07:51:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633161081;
-        bh=sIvSK2EP7/bNxMt0lT3kxzdAfTGoeSBeihandePxDMQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cuYHoEfgKt/8PymKwrVtdRwsJzfOuwM0HUbS/NXUtK45abnWgrIGV+rH1kTw5ZQkO
-         TN69OYHpL3GxUgtS/ZqQdB1F/Z0kewWzCu/yD6jRL+92l843L6ykBSCjlOgGhNpkFl
-         p/4UDVxFuu53Kb5uOzDLcul7K5Ir0MjKWAbXPWO5boIzlHHS+pARssk7oZaT0Tn0Fu
-         cSw/7QGrWl5lAvUcl3G0yrqhS5oVRAsMJmxS7zsf1l5xPihpvFnKN0JONiuHguQ+b1
-         c7lVL2ILIYyomYp9fo30vcr5x1os6FN5OmES6HJRvS2z9NUt0kn0yZs8/XF6dP2nCM
-         jgvgN1Bsl7qzg==
-Date:   Sat, 2 Oct 2021 09:51:18 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     syniurge@gmail.com, nehal-bakulchandra.shah@amd.com,
-        shyam-sundar.s-k@amd.com, seth.heasley@intel.com,
-        nhorman@tuxdriver.com, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] i2c: switch from 'pci_' to 'dma_' API
-Message-ID: <YVgPdvwOGJrEqghZ@kunai>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        syniurge@gmail.com, nehal-bakulchandra.shah@amd.com,
-        shyam-sundar.s-k@amd.com, seth.heasley@intel.com,
-        nhorman@tuxdriver.com, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <fad542b558afc45496f7a7ba581593cd46e68f7c.1629660967.git.christophe.jaillet@wanadoo.fr>
+        Sat, 2 Oct 2021 11:37:07 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56830 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233537AbhJBPgy (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 2 Oct 2021 11:36:54 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 3C0661F43FC0
+Received: by earth.universe (Postfix, from userid 1000)
+        id F22923C0CA8; Sat,  2 Oct 2021 17:35:04 +0200 (CEST)
+Date:   Sat, 2 Oct 2021 17:35:04 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     Colin King <colin.king@canonical.com>,
+        patches@opensource.cirrus.com, linux-pm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] power: supply: wm831x_power: fix spelling mistake on
+ function name
+Message-ID: <20211002153504.244kdj7vkurcuzg7@earth.universe>
+References: <20211001120449.17914-1-colin.king@canonical.com>
+ <20211001132534.GJ9223@ediswmail.ad.cirrus.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="uXHfLlTznz6LvNSF"
+        protocol="application/pgp-signature"; boundary="pjryjpadlfjb4xau"
 Content-Disposition: inline
-In-Reply-To: <fad542b558afc45496f7a7ba581593cd46e68f7c.1629660967.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20211001132534.GJ9223@ediswmail.ad.cirrus.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
---uXHfLlTznz6LvNSF
+--pjryjpadlfjb4xau
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 22, 2021 at 09:38:12PM +0200, Christophe JAILLET wrote:
-> The wrappers in include/linux/pci-dma-compat.h should go away.
->=20
-> The patch has been generated with the coccinelle script below.
->=20
-> It has been hand modified to use 'dma_set_mask_and_coherent()' instead of
-> 'pci_set_dma_mask()/pci_set_consistent_dma_mask()' when applicable.
-> This is less verbose.
->=20
-> While at it a 'dev_err()' message has been slightly simplified.
->=20
-> It has been compile tested.
->=20
->=20
-> @@
-> @@
-> -    PCI_DMA_BIDIRECTIONAL
-> +    DMA_BIDIRECTIONAL
->=20
-> @@
-> @@
-> -    PCI_DMA_TODEVICE
-> +    DMA_TO_DEVICE
->=20
-> @@
-> @@
-> -    PCI_DMA_FROMDEVICE
-> +    DMA_FROM_DEVICE
->=20
-> @@
-> @@
-> -    PCI_DMA_NONE
-> +    DMA_NONE
->=20
-> @@
-> expression e1, e2, e3;
-> @@
-> -    pci_alloc_consistent(e1, e2, e3)
-> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
->=20
-> @@
-> expression e1, e2, e3;
-> @@
-> -    pci_zalloc_consistent(e1, e2, e3)
-> +    dma_alloc_coherent(&e1->dev, e2, e3, GFP_)
->=20
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_free_consistent(e1, e2, e3, e4)
-> +    dma_free_coherent(&e1->dev, e2, e3, e4)
->=20
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_map_single(e1, e2, e3, e4)
-> +    dma_map_single(&e1->dev, e2, e3, e4)
->=20
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_single(e1, e2, e3, e4)
-> +    dma_unmap_single(&e1->dev, e2, e3, e4)
->=20
-> @@
-> expression e1, e2, e3, e4, e5;
-> @@
-> -    pci_map_page(e1, e2, e3, e4, e5)
-> +    dma_map_page(&e1->dev, e2, e3, e4, e5)
->=20
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_page(e1, e2, e3, e4)
-> +    dma_unmap_page(&e1->dev, e2, e3, e4)
->=20
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_map_sg(e1, e2, e3, e4)
-> +    dma_map_sg(&e1->dev, e2, e3, e4)
->=20
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_unmap_sg(e1, e2, e3, e4)
-> +    dma_unmap_sg(&e1->dev, e2, e3, e4)
->=20
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_single_for_cpu(e1, e2, e3, e4)
-> +    dma_sync_single_for_cpu(&e1->dev, e2, e3, e4)
->=20
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_single_for_device(e1, e2, e3, e4)
-> +    dma_sync_single_for_device(&e1->dev, e2, e3, e4)
->=20
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_sg_for_cpu(e1, e2, e3, e4)
-> +    dma_sync_sg_for_cpu(&e1->dev, e2, e3, e4)
->=20
-> @@
-> expression e1, e2, e3, e4;
-> @@
-> -    pci_dma_sync_sg_for_device(e1, e2, e3, e4)
-> +    dma_sync_sg_for_device(&e1->dev, e2, e3, e4)
->=20
-> @@
-> expression e1, e2;
-> @@
-> -    pci_dma_mapping_error(e1, e2)
-> +    dma_mapping_error(&e1->dev, e2)
->=20
-> @@
-> expression e1, e2;
-> @@
-> -    pci_set_dma_mask(e1, e2)
-> +    dma_set_mask(&e1->dev, e2)
->=20
-> @@
-> expression e1, e2;
-> @@
-> -    pci_set_consistent_dma_mask(e1, e2)
-> +    dma_set_coherent_mask(&e1->dev, e2)
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Hi,
 
-Applied to for-next, thanks!
+On Fri, Oct 01, 2021 at 01:25:34PM +0000, Charles Keepax wrote:
+> On Fri, Oct 01, 2021 at 01:04:49PM +0100, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> >=20
+> > There is a spelling mistake in the name wm831x_battey_apply_config,
+> > fix it.
+> >=20
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > ---
+>=20
+> Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
+Thanks, queued.
 
---uXHfLlTznz6LvNSF
+-- Sebastian
+
+--pjryjpadlfjb4xau
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmFYD3YACgkQFA3kzBSg
-KbYu0Q/+PtIEYynAEiJoePONop4qyjpKf7cFhQ+JIZRHdWoOo4WMNQTMPHAtWEGB
-6GZHNfDB+v/P/LHGEbnDAzD0pfDwMTi8A9ad4MNGILUPeCGxvc6RQwz8OZOW/SuS
-8Tics4yhwDAmqlzLpo7i0xc8jPbaqkvGl+fOK++dTykPtXvRqZq+DbEteo6YAQtP
-v2KpTTEZ+cuQa0tJ/gx3HwbnlgiMHst9N8ttsbsvtP3+Bm1Q8BtpXwkDqGdfqS/b
-t0cj8P5qTYhIX0XR7+sepBpmAfO5YiO5kthv90SOrJKfUPWlsZxYzTsWg2TEUTKN
-2pG7G4KZH7Qmp1tuBTnd2I0S/aDDklzca5Mx1c4WQkTcoXtF8fP+bWVshAEgaZEh
-rUsSPkesnrxEDUS7bKvJtBZ1+zGr5pL9MPvVDvJ/aI5xcpVLFaojI2qHoSpi/nkc
-gkxMJvqXtbMyFlDPh3215Hthuhl14LwdfXQEV6PKbPhO4Mu8jOEA/z3FkQKwIlut
-Kw9OjDt1oX1Kbeq1m6T8VBoYscB+CLuZ3zd4YzDAd2v4IZeAPYLQdd9Ug0hN+xEA
-kHq9MFoHCS/3qNELjCVsHlQ+GwK/Mdjwe8RoG428iwmjFGe17eioWVgm3BXMGPD0
-etFhicXjZ8F2pwvWpIxNZmfy/dfBoVB1vZUSPQYhnIJxXaL4A/8=
-=PHaG
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmFYfCIACgkQ2O7X88g7
++pqFug//SCffn3nc+/n4Q7PPL99PrQXAlxTHIrSYatkXgJRSJIh831p3sYAxjbJz
+ilOrw7mmX6DDJMr/7JtnBOaGaOk/iFIiqt7Oim26cgikiL4OUDuo8jpqIWe8Inr0
+OefTzxlcjLadO6MnydBcmB3CGqTY8cLfvVXcEmFf3V2YY4d1fvttf7HGVi6N8mTJ
+Kuv9bKGEy5NfLoZgwopolSeVu1g8AQM//GrqVysmX6Z2+C6df5b9ik1agyekBCJl
+tOByOf7uigNP69KeeWHJliJyYrPsLHJRzj8OnS6wAaV6q0hc3p7EIc4YPhrBRQsD
+XMCy4wkAbOTX7HQ58ADL+BZjsmziwioj2Ea1o1OdWd9hhFz4EpuQBtevT1VNZ2Oe
+JHfm6H8b+V0JX6DAiV0M+Oa5ZjN0B4exnhKfnQQPeZt3pAsxJpi6GuDhHvsZiqAv
+tYUcBNwLi3du3b3rKZAiqlKVO9zkVnTqAhRsHJWjvdJYgRkZRPRP2uiy62hxvZYf
+Qc+qmcJICtoE1lQgpNpj0HGH6D+E6/wW/8Z+VnFQzB4FZ28rFTA9qmQ0Iyo4iCQP
+Yo2j3FZpQi40h5q97ak1WGuqjALTpbqkoHVPN0u/VM4z7f/JfEiqj56I0xo6laOL
+thf8NvK5ZRCm4RJAWOUViV1FbY5LRNIxkFP5gkaj/UK49Vq0Gic=
+=O7Ze
 -----END PGP SIGNATURE-----
 
---uXHfLlTznz6LvNSF--
+--pjryjpadlfjb4xau--
