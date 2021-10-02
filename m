@@ -2,87 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61154C4332F
-	for <kernel-janitors@archiver.kernel.org>; Sat,  2 Oct 2021 15:35:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9397C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat,  2 Oct 2021 16:07:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3346061AFB
-	for <kernel-janitors@archiver.kernel.org>; Sat,  2 Oct 2021 15:35:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87D8161A05
+	for <kernel-janitors@archiver.kernel.org>; Sat,  2 Oct 2021 16:07:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233450AbhJBPhH (ORCPT
+        id S233551AbhJBQJc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 2 Oct 2021 11:37:07 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:56830 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233537AbhJBPgy (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 2 Oct 2021 11:36:54 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 3C0661F43FC0
-Received: by earth.universe (Postfix, from userid 1000)
-        id F22923C0CA8; Sat,  2 Oct 2021 17:35:04 +0200 (CEST)
-Date:   Sat, 2 Oct 2021 17:35:04 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        patches@opensource.cirrus.com, linux-pm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: supply: wm831x_power: fix spelling mistake on
- function name
-Message-ID: <20211002153504.244kdj7vkurcuzg7@earth.universe>
-References: <20211001120449.17914-1-colin.king@canonical.com>
- <20211001132534.GJ9223@ediswmail.ad.cirrus.com>
+        Sat, 2 Oct 2021 12:09:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43064 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233451AbhJBQJb (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 2 Oct 2021 12:09:31 -0400
+Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6940B61A0A;
+        Sat,  2 Oct 2021 16:07:43 +0000 (UTC)
+Date:   Sat, 2 Oct 2021 17:11:40 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Billy Tsai <billy_tsai@aspeedtech.com>,
+        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] iio: adc: aspeed: Fix spelling mistake "battey"
+ -> "battery"
+Message-ID: <20211002171140.1af667ef@jic23-huawei>
+In-Reply-To: <20211001120018.17570-1-colin.king@canonical.com>
+References: <20211001120018.17570-1-colin.king@canonical.com>
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="pjryjpadlfjb4xau"
-Content-Disposition: inline
-In-Reply-To: <20211001132534.GJ9223@ediswmail.ad.cirrus.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Fri,  1 Oct 2021 13:00:18 +0100
+Colin King <colin.king@canonical.com> wrote:
 
---pjryjpadlfjb4xau
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a spelling mistake in a dev_warn message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hi Colin,
 
-Hi,
+Thanks and applied.
 
-On Fri, Oct 01, 2021 at 01:25:34PM +0000, Charles Keepax wrote:
-> On Fri, Oct 01, 2021 at 01:04:49PM +0100, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> >=20
-> > There is a spelling mistake in the name wm831x_battey_apply_config,
-> > fix it.
-> >=20
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
->=20
-> Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Jonathan
 
-Thanks, queued.
+> ---
+>  drivers/iio/adc/aspeed_adc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/adc/aspeed_adc.c b/drivers/iio/adc/aspeed_adc.c
+> index 3e9850a43372..a957cad1bfab 100644
+> --- a/drivers/iio/adc/aspeed_adc.c
+> +++ b/drivers/iio/adc/aspeed_adc.c
+> @@ -581,7 +581,7 @@ static int aspeed_adc_probe(struct platform_device *pdev)
+>  			}
+>  		} else
+>  			dev_warn(&pdev->dev,
+> -				 "Failed to enable battey-sensing mode\n");
+> +				 "Failed to enable battery-sensing mode\n");
+>  	}
+>  
+>  	ret = clk_prepare_enable(data->clk_scaler->clk);
 
--- Sebastian
-
---pjryjpadlfjb4xau
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmFYfCIACgkQ2O7X88g7
-+pqFug//SCffn3nc+/n4Q7PPL99PrQXAlxTHIrSYatkXgJRSJIh831p3sYAxjbJz
-ilOrw7mmX6DDJMr/7JtnBOaGaOk/iFIiqt7Oim26cgikiL4OUDuo8jpqIWe8Inr0
-OefTzxlcjLadO6MnydBcmB3CGqTY8cLfvVXcEmFf3V2YY4d1fvttf7HGVi6N8mTJ
-Kuv9bKGEy5NfLoZgwopolSeVu1g8AQM//GrqVysmX6Z2+C6df5b9ik1agyekBCJl
-tOByOf7uigNP69KeeWHJliJyYrPsLHJRzj8OnS6wAaV6q0hc3p7EIc4YPhrBRQsD
-XMCy4wkAbOTX7HQ58ADL+BZjsmziwioj2Ea1o1OdWd9hhFz4EpuQBtevT1VNZ2Oe
-JHfm6H8b+V0JX6DAiV0M+Oa5ZjN0B4exnhKfnQQPeZt3pAsxJpi6GuDhHvsZiqAv
-tYUcBNwLi3du3b3rKZAiqlKVO9zkVnTqAhRsHJWjvdJYgRkZRPRP2uiy62hxvZYf
-Qc+qmcJICtoE1lQgpNpj0HGH6D+E6/wW/8Z+VnFQzB4FZ28rFTA9qmQ0Iyo4iCQP
-Yo2j3FZpQi40h5q97ak1WGuqjALTpbqkoHVPN0u/VM4z7f/JfEiqj56I0xo6laOL
-thf8NvK5ZRCm4RJAWOUViV1FbY5LRNIxkFP5gkaj/UK49Vq0Gic=
-=O7Ze
------END PGP SIGNATURE-----
-
---pjryjpadlfjb4xau--
