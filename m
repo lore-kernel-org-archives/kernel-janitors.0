@@ -2,98 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90EE9C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Oct 2021 11:41:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE2D7C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Oct 2021 13:56:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 635EF6120E
-	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Oct 2021 11:41:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9E35619E9
+	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Oct 2021 13:56:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230135AbhJCLn2 (ORCPT
+        id S230220AbhJCN6D (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 3 Oct 2021 07:43:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59406 "EHLO
+        Sun, 3 Oct 2021 09:58:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbhJCLn2 (ORCPT
+        with ESMTP id S230050AbhJCN6C (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 3 Oct 2021 07:43:28 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AF75C0613EC;
-        Sun,  3 Oct 2021 04:41:41 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id d13-20020a17090ad3cd00b0019e746f7bd4so1893120pjw.0;
-        Sun, 03 Oct 2021 04:41:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/D8bXyu49DxBdYOqHuSui3s+tc6MfuSn1HC3CjVWP6g=;
-        b=l3/+qZ+lxn3ZuJlc69ANU1xZBUFyjznJ/dhb5dnFZVdSQ6HSE+KfbSegxcLYg5Hclx
-         yk+jTUbwXtdJ1i3Ta7MkC1dYj/VU422S7zXSRcLo47vfYzEWjmfB73PKT9C3TpDc6ule
-         Czeo7Ee0CSGlfe0ghoqVFLiQmUHG4S7UEySK5SDhF2eHoenmBw36f60g6468/0yY9RTx
-         wS2GbwToeD3CD4wtdyuoBnaDkPG33H5U/zNEVkll0EWIaRitIN3EHraSxCBbcH3KHtfd
-         7+E0ELX49iOjLVArhmmAAMLe7rqvDzS+L+E6KZCClR2wvU38LSby6Ht7kpKPtHI3AvM8
-         sX8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/D8bXyu49DxBdYOqHuSui3s+tc6MfuSn1HC3CjVWP6g=;
-        b=loUZZBcCgl8jY5tDfmWVMjYR8lMuN2fsNAA9YCnTN3Vj9L2LbwFFy6HrpInVhpa+PY
-         KH4lem35O5x/f8lORgKgEKXDh6byXuMe7vDnCpDPuid9qgO2ZhCAuopcZ6lIDxRefA++
-         unBzeWgzSzkmCPSE2Oi99AE5aFoyTFRNhSdtDYDD1NS9HLUKWi48cZJ2Ibt6Ftl6A1kr
-         Gekg61+gYZ0halMW8eAOcB1jDbEinBYXzDTGc3JFaeVd9eDN3Jsm4t+2tYE3YxW/7sDJ
-         CvSByhaf7UJeyrkoEXYX0z8L8plgLr5ALC0JKUeDZwa9Icb3ua7zBB9fHqF+pEb/mkfc
-         UuCw==
-X-Gm-Message-State: AOAM531H2LxmQXsIJaMad2Y+nurHcZtWosS2TQ0lM0Gdj+UEk/lTlHIn
-        DKF15stDIFQXX1t6KvS371s=
-X-Google-Smtp-Source: ABdhPJzEXo5XpNXHFNgCL+WuGLFf0o5O5/LmEBJzprQr6lzDPqEAs4lqCoAZYlQZi2cIIC1OjnsqKw==
-X-Received: by 2002:a17:90b:1d84:: with SMTP id pf4mr8614263pjb.107.1633261300673;
-        Sun, 03 Oct 2021 04:41:40 -0700 (PDT)
-Received: from ubuntu.localdomain ([171.224.177.7])
-        by smtp.gmail.com with ESMTPSA id d5sm10071574pjs.53.2021.10.03.04.41.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Oct 2021 04:41:40 -0700 (PDT)
-From:   Nghia Le <nghialm78@gmail.com>
-To:     mike.kravetz@oracle.com, akpm@linux-foundation.org,
-        nathan@kernel.org, ndesaulniers@google.com
-Cc:     Nghia Le <nghialm78@gmail.com>, linux-mm@kvack.org,
+        Sun, 3 Oct 2021 09:58:02 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFC65C0613EC;
+        Sun,  3 Oct 2021 06:56:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=bb6oxK0ETsJpDFUGrY5gmGOR2+a+l1AmXX+OJwTt1Po=; b=IlEMk0E8xa0+q0EqOi/61wBjvL
+        oO0sL4LnbuJs/3s8+zVMo9eb7sWoNz/WgmJ8zi+0QgEL/ssXHvzUT/K1BW1S8wst4XNJuxgQIN04M
+        fTIK2IgVon/pc6m9/66f1zo8GuuUspvoZxRofmmtQ3sOWyL4BV4moJCa5gcYN4e0riurJThPN5/e3
+        TPIfWkwzSHBt8FlMe63MLpP/UyUlfAZlv6ZTwCML4moKS0SVFl9Lp1VYNCZpH7vcC5/yq3wGtxWz8
+        sWPXbvDnDJZBOUYz/kHz8MUW6JVDYZeUHRqspkL2S9RJYryQ+oBmnzQpJ4n5miFTILDyKwNueslN3
+        dCCEwO5Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mX1xA-00G0Nj-AW; Sun, 03 Oct 2021 13:55:07 +0000
+Date:   Sun, 3 Oct 2021 14:54:56 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Nghia Le <nghialm78@gmail.com>
+Cc:     mike.kravetz@oracle.com, akpm@linux-foundation.org,
+        nathan@kernel.org, ndesaulniers@google.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
         lukas.bulwahn@gmail.com, kernel-janitors@vger.kernel.org
-Subject: [PATCH] mm/hugetlb.c: remove dead store in demote_size_show()
-Date:   Sun,  3 Oct 2021 18:41:13 +0700
-Message-Id: <20211003114113.109463-1-nghialm78@gmail.com>
-X-Mailer: git-send-email 2.25.1
+Subject: Re: [PATCH] mm/hugetlb.c: remove dead store in demote_size_show()
+Message-ID: <YVm2MHbhEU0b7HPM@casper.infradead.org>
+References: <20211003114113.109463-1-nghialm78@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211003114113.109463-1-nghialm78@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The command "make clang-analyzer" detected a dead store.
+On Sun, Oct 03, 2021 at 06:41:13PM +0700, Nghia Le wrote:
+>  {
+>  	struct hstate *h;
+> -	unsigned long demote_size;
+>  	int nid;
+>  
+>  	h = kobj_to_hstate(kobj, &nid);
+> -	demote_size = h->demote_order;
+>  
+>  	return sysfs_emit(buf, "%lukB\n",
+>  			(unsigned long)(PAGE_SIZE << h->demote_order) / SZ_1K);
 
-Remove demote_size and corresponding assignment in function
-demote_size_show() to fix dead store, as demote_size is never read.
+I'd suggest this function would look better written as:
 
-Signed-off-by: Nghia Le <nghialm78@gmail.com>
----
- mm/hugetlb.c | 2 --
- 1 file changed, 2 deletions(-)
+	int nid;
+	struct hstate *h = kobj_to_hstate(kobj, &nid);
+	unsigned long demote_size = (PAGE_SIZE << h->demote_order) / SZ_1K;
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 993efa70bce4..ef00e6ad0f6a 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -3706,11 +3706,9 @@ static ssize_t demote_size_show(struct kobject *kobj,
- 					struct kobj_attribute *attr, char *buf)
- {
- 	struct hstate *h;
--	unsigned long demote_size;
- 	int nid;
- 
- 	h = kobj_to_hstate(kobj, &nid);
--	demote_size = h->demote_order;
- 
- 	return sysfs_emit(buf, "%lukB\n",
- 			(unsigned long)(PAGE_SIZE << h->demote_order) / SZ_1K);
--- 
-2.25.1
-
+	return sysfs_emit(buf, "%lukB\n", demote_size);
