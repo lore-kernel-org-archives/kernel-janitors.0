@@ -2,76 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9397C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat,  2 Oct 2021 16:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90EE9C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Oct 2021 11:41:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87D8161A05
-	for <kernel-janitors@archiver.kernel.org>; Sat,  2 Oct 2021 16:07:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 635EF6120E
+	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Oct 2021 11:41:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233551AbhJBQJc (ORCPT
+        id S230135AbhJCLn2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 2 Oct 2021 12:09:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43064 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233451AbhJBQJb (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 2 Oct 2021 12:09:31 -0400
-Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6940B61A0A;
-        Sat,  2 Oct 2021 16:07:43 +0000 (UTC)
-Date:   Sat, 2 Oct 2021 17:11:40 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Billy Tsai <billy_tsai@aspeedtech.com>,
-        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] iio: adc: aspeed: Fix spelling mistake "battey"
- -> "battery"
-Message-ID: <20211002171140.1af667ef@jic23-huawei>
-In-Reply-To: <20211001120018.17570-1-colin.king@canonical.com>
-References: <20211001120018.17570-1-colin.king@canonical.com>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-pc-linux-gnu)
+        Sun, 3 Oct 2021 07:43:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59406 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229505AbhJCLn2 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 3 Oct 2021 07:43:28 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AF75C0613EC;
+        Sun,  3 Oct 2021 04:41:41 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id d13-20020a17090ad3cd00b0019e746f7bd4so1893120pjw.0;
+        Sun, 03 Oct 2021 04:41:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/D8bXyu49DxBdYOqHuSui3s+tc6MfuSn1HC3CjVWP6g=;
+        b=l3/+qZ+lxn3ZuJlc69ANU1xZBUFyjznJ/dhb5dnFZVdSQ6HSE+KfbSegxcLYg5Hclx
+         yk+jTUbwXtdJ1i3Ta7MkC1dYj/VU422S7zXSRcLo47vfYzEWjmfB73PKT9C3TpDc6ule
+         Czeo7Ee0CSGlfe0ghoqVFLiQmUHG4S7UEySK5SDhF2eHoenmBw36f60g6468/0yY9RTx
+         wS2GbwToeD3CD4wtdyuoBnaDkPG33H5U/zNEVkll0EWIaRitIN3EHraSxCBbcH3KHtfd
+         7+E0ELX49iOjLVArhmmAAMLe7rqvDzS+L+E6KZCClR2wvU38LSby6Ht7kpKPtHI3AvM8
+         sX8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/D8bXyu49DxBdYOqHuSui3s+tc6MfuSn1HC3CjVWP6g=;
+        b=loUZZBcCgl8jY5tDfmWVMjYR8lMuN2fsNAA9YCnTN3Vj9L2LbwFFy6HrpInVhpa+PY
+         KH4lem35O5x/f8lORgKgEKXDh6byXuMe7vDnCpDPuid9qgO2ZhCAuopcZ6lIDxRefA++
+         unBzeWgzSzkmCPSE2Oi99AE5aFoyTFRNhSdtDYDD1NS9HLUKWi48cZJ2Ibt6Ftl6A1kr
+         Gekg61+gYZ0halMW8eAOcB1jDbEinBYXzDTGc3JFaeVd9eDN3Jsm4t+2tYE3YxW/7sDJ
+         CvSByhaf7UJeyrkoEXYX0z8L8plgLr5ALC0JKUeDZwa9Icb3ua7zBB9fHqF+pEb/mkfc
+         UuCw==
+X-Gm-Message-State: AOAM531H2LxmQXsIJaMad2Y+nurHcZtWosS2TQ0lM0Gdj+UEk/lTlHIn
+        DKF15stDIFQXX1t6KvS371s=
+X-Google-Smtp-Source: ABdhPJzEXo5XpNXHFNgCL+WuGLFf0o5O5/LmEBJzprQr6lzDPqEAs4lqCoAZYlQZi2cIIC1OjnsqKw==
+X-Received: by 2002:a17:90b:1d84:: with SMTP id pf4mr8614263pjb.107.1633261300673;
+        Sun, 03 Oct 2021 04:41:40 -0700 (PDT)
+Received: from ubuntu.localdomain ([171.224.177.7])
+        by smtp.gmail.com with ESMTPSA id d5sm10071574pjs.53.2021.10.03.04.41.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Oct 2021 04:41:40 -0700 (PDT)
+From:   Nghia Le <nghialm78@gmail.com>
+To:     mike.kravetz@oracle.com, akpm@linux-foundation.org,
+        nathan@kernel.org, ndesaulniers@google.com
+Cc:     Nghia Le <nghialm78@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+        lukas.bulwahn@gmail.com, kernel-janitors@vger.kernel.org
+Subject: [PATCH] mm/hugetlb.c: remove dead store in demote_size_show()
+Date:   Sun,  3 Oct 2021 18:41:13 +0700
+Message-Id: <20211003114113.109463-1-nghialm78@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri,  1 Oct 2021 13:00:18 +0100
-Colin King <colin.king@canonical.com> wrote:
+The command "make clang-analyzer" detected a dead store.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a spelling mistake in a dev_warn message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Hi Colin,
+Remove demote_size and corresponding assignment in function
+demote_size_show() to fix dead store, as demote_size is never read.
 
-Thanks and applied.
+Signed-off-by: Nghia Le <nghialm78@gmail.com>
+---
+ mm/hugetlb.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Jonathan
-
-> ---
->  drivers/iio/adc/aspeed_adc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/aspeed_adc.c b/drivers/iio/adc/aspeed_adc.c
-> index 3e9850a43372..a957cad1bfab 100644
-> --- a/drivers/iio/adc/aspeed_adc.c
-> +++ b/drivers/iio/adc/aspeed_adc.c
-> @@ -581,7 +581,7 @@ static int aspeed_adc_probe(struct platform_device *pdev)
->  			}
->  		} else
->  			dev_warn(&pdev->dev,
-> -				 "Failed to enable battey-sensing mode\n");
-> +				 "Failed to enable battery-sensing mode\n");
->  	}
->  
->  	ret = clk_prepare_enable(data->clk_scaler->clk);
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 993efa70bce4..ef00e6ad0f6a 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -3706,11 +3706,9 @@ static ssize_t demote_size_show(struct kobject *kobj,
+ 					struct kobj_attribute *attr, char *buf)
+ {
+ 	struct hstate *h;
+-	unsigned long demote_size;
+ 	int nid;
+ 
+ 	h = kobj_to_hstate(kobj, &nid);
+-	demote_size = h->demote_order;
+ 
+ 	return sysfs_emit(buf, "%lukB\n",
+ 			(unsigned long)(PAGE_SIZE << h->demote_order) / SZ_1K);
+-- 
+2.25.1
 
