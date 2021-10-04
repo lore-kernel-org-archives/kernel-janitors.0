@@ -2,110 +2,173 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6C5C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Oct 2021 03:44:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A644DC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Oct 2021 06:19:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3041861166
-	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Oct 2021 03:44:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85E1761354
+	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Oct 2021 06:19:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232392AbhJDDqi (ORCPT
+        id S232685AbhJDGVC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 3 Oct 2021 23:46:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43714 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230295AbhJDDqi (ORCPT
+        Mon, 4 Oct 2021 02:21:02 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:46418 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232131AbhJDGVB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 3 Oct 2021 23:46:38 -0400
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC28EC0613EC;
-        Sun,  3 Oct 2021 20:44:49 -0700 (PDT)
-Received: by mail-pl1-x62c.google.com with SMTP id j4so8708065plx.4;
-        Sun, 03 Oct 2021 20:44:49 -0700 (PDT)
+        Mon, 4 Oct 2021 02:21:01 -0400
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1945hrkd018657;
+        Mon, 4 Oct 2021 06:19:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2021-07-09;
+ bh=h1taugnI7Zvj/9vULTtZg3fKaoqvwfC+P9rCyViONdQ=;
+ b=V1kSQTtZaEPsnL4dkan1KA9mOsVXr1koCR1dzlDLTLjPI5g5MdxYSbaDoTP/LUsu4edY
+ qS9KC+P+oKG0a8Da2OhabyTv3DhgP1c90PiPN4RagLtXkiL42/BcK7c921BFeY7T0jnp
+ WCboNtkxWl4fYkzdVo4ovQI2bfBrg7JJjkm6ItA7EFViGNmJAMBJuaKSfK4GLUIS1mwQ
+ ybym+cK+ej6T0EuwbJSj3Y0qTo5Uz5YLil/cFuov7PcIfnwfcJskn4abqg2cNOIyex0z
+ cbJjAlpL+QG74brwKL8feH09uHx73E39GgLg7idKLEws6b2eJCUjh6Apv3mJoeaCF+GI EQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3bf9m0224e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 04 Oct 2021 06:18:59 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 19469q6F006642;
+        Mon, 4 Oct 2021 06:18:58 GMT
+Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam07lp2048.outbound.protection.outlook.com [104.47.56.48])
+        by aserp3030.oracle.com with ESMTP id 3bev7r7cus-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 04 Oct 2021 06:18:58 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=j2XdpEeAJTRnXPZb++k6ygm/lkjs1ZJspRcvUgNKQMkI1tnRSDoF/lFPoOg0NIQoJXqMNBtiEGON1k2ZI16Iw+WJWCb/Ggmoiq8K5J22mEZ5ZeArm2eAEWLqLUbHcxakFSLxNXGGqzQDZZHrOqV07zMzHI41PunMYbZQWV4/g5+bNwXg99Uv5r9yn35IQm6O9P4QNv9uiPHyqYHYOOiTabhgG62SITMBWMxtK7+aprg1p+L1CmtD7mtVFWZxjnn5pTFi/1AZkjNOt1ActEC8D7h2rm1H5iaxGSHg1hqPCoe8ds5//kMFlems+ES8N4BJ3uaUb+DGjT2X/fy1SKgksA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=h1taugnI7Zvj/9vULTtZg3fKaoqvwfC+P9rCyViONdQ=;
+ b=UMwB5xi6v8TdJefHGVc9x1690GUurTfhGMPpIf2BSJTHWzsjfZ/20QJmajub7oFsGyPZmL6IDl89m+VJzvYwUFWHpVqhmyTWu1XXemh8fQl2uOsoXZtiX9MUOSwMqcL1stjE5Af/f7W0iIotH99Aj1PYRd5ycF0/7Yo4AEfTrvj/GInDifWSZaAU8diUMeLkbb2TdLY2Inhe+VMAMZ017y4d25+BWtmqM1yziFq/OlWhHzz7cpJCuxVTW8Na9LBHb3MYHCPqJPb14q2MvzW8zPC7ByQUgAp5DKheQUL2qTl/Rl3hIFbhrgQE9F7AYfucooYPh2M3H3tiYDwXJXgsbg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Niqrq0J1KTVYT0myMYXWMhyJmpkyp9spREFhBg+KqDI=;
-        b=Vs1GimwYyLGQzKtDuxp34o1WuR3R2HfwGe1WnKcDrrjDQIkOdowhDMdptbAWAMb2Am
-         gRkMS/48iwixZC6HIVkbP9VuQBPrlQp8LwHDCfmkGJ16EFAg7pIMfBw4kyUo4btI/Fll
-         06hOXB4QwW2uz6bZEDAtMt2h2KN6Itlw/Z7T3opv1zdJqjvYkzRz2C0PL8hcmLHdvLku
-         h4XzLh3wiZHlOt3OF0YI3xpESmtToKP7e4LSk9JA5A2BCXPwgwtNF9wP3X/Nbb3Cb8ee
-         ou/YFFSsIVk9k5761cPW0m2jjLosorbWMEwzlE7FGP1UFnbtXkM0AIWtRfaJXd5uknAO
-         O+tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Niqrq0J1KTVYT0myMYXWMhyJmpkyp9spREFhBg+KqDI=;
-        b=Wd0w3BjNVgdGZMS5kCB4ji6i0uDq3E0oFEnFTkSfBggqwcYzaAUTGEPiq3paZYjRak
-         Gvvc2oArr0/key64eT1bq9U8LQ2WIIDOgtqdmzttagAGtD9uXzLgQvaHCfFHwwsnIuxL
-         0YHmWNWLvkJJuQvJHU92NgW3bLKXitgBSvkZsLzLfMr2zlh75Vg3IfFhe4jL9l7Id3Qr
-         wX41Y3lshAf4vVr5ZR/VnOnYQbSNwU0UfZwIY9g3SuNP5zaLz1Zhg/gFOhNcsAuOyPDB
-         3DpHbvPa86IACF4hmA+IAwwrJP8kxQoYetKHE3NkNwD/AOf6M1ZAiVndTAPN4F8rY9oa
-         evig==
-X-Gm-Message-State: AOAM5302KLdrRs0VmHf2GRFt0LL3ET/uA9r5z2mfu+zP4M4rwLfP1g6G
-        A3Jyl/vl4o4ReJ1dG2q7SuY=
-X-Google-Smtp-Source: ABdhPJyJ+W71sIbsXYWswo225VxJjwNbbyU++d7qQlnxo2gMJ4FQ/hudHyr+TQLXaH2NsH0Dk3jrJA==
-X-Received: by 2002:a17:90a:9f91:: with SMTP id o17mr14594834pjp.225.1633319089223;
-        Sun, 03 Oct 2021 20:44:49 -0700 (PDT)
-Received: from ubuntu ([171.224.177.7])
-        by smtp.gmail.com with ESMTPSA id fh3sm13734240pjb.8.2021.10.03.20.44.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Oct 2021 20:44:48 -0700 (PDT)
-Date:   Mon, 4 Oct 2021 10:44:41 +0700
-From:   Nghia Le <nghialm78@gmail.com>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
-        nathan@kernel.org, ndesaulniers@google.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-        lukas.bulwahn@gmail.com, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mm/hugetlb.c: remove dead store in demote_size_show()
-Message-ID: <20211004034441.GA114074@ubuntu>
-References: <20211003114113.109463-1-nghialm78@gmail.com>
- <YVm2MHbhEU0b7HPM@casper.infradead.org>
- <ccee8f63-f5dd-6231-5625-a67ad3b80a6d@oracle.com>
-MIME-Version: 1.0
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h1taugnI7Zvj/9vULTtZg3fKaoqvwfC+P9rCyViONdQ=;
+ b=peLRGkJHofu4VFyX7uzDmG6WhE8bwYrGqMbOWJKukwQfgkauRkZ3bE7OVTKXphSM+ALN5YkjnwIHsW0oVyTSZXLo69uR5MojEh60d2R5XzMO1AQ7vUQXQOpTpaMi5BwVO3cPP78tVZxkLtdv12B8JoE9BGtOEK9wKuruzPGGyD8=
+Authentication-Results: linaro.org; dkim=none (message not signed)
+ header.d=none;linaro.org; dmarc=none action=none header.from=oracle.com;
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by MWHPR10MB1488.namprd10.prod.outlook.com
+ (2603:10b6:300:23::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.15; Mon, 4 Oct
+ 2021 06:18:56 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::d409:11b5:5eb2:6be9]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::d409:11b5:5eb2:6be9%5]) with mapi id 15.20.4566.022; Mon, 4 Oct 2021
+ 06:18:56 +0000
+Date:   Mon, 4 Oct 2021 09:18:35 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Rob Clark <robdclark@gmail.com>, Hai Li <hali@codeaurora.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 3/3] drm/msm/dsi: fix signedness bug in
+ msm_dsi_host_cmd_rx()
+Message-ID: <20211004061835.GQ2048@kadam>
+References: <20211001123617.GH2283@kili>
+ <a61cad95-d81d-6f6d-33d4-f5259d9814cb@linaro.org>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ccee8f63-f5dd-6231-5625-a67ad3b80a6d@oracle.com>
+In-Reply-To: <a61cad95-d81d-6f6d-33d4-f5259d9814cb@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: JNAP275CA0004.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:4c::9)
+ To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
+MIME-Version: 1.0
+Received: from kadam (62.8.83.99) by JNAP275CA0004.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:4c::9) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.15 via Frontend Transport; Mon, 4 Oct 2021 06:18:48 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8e13da91-e75b-472b-da50-08d986fed873
+X-MS-TrafficTypeDiagnostic: MWHPR10MB1488:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <MWHPR10MB148866BC3A47A77289306ADA8EAE9@MWHPR10MB1488.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: o99sXqLQqPSQxOPPr+6NSwdEtw3Knh97eZPpPmrq2EK7vDbLzesPKogkggPC1/CCAqxxu0nz0a/bshFmpi83S+WnVZWBHZ1OGHaimdZchzbMiI8YHdKIJJQmMyzYHR6ZSiy6zcQMW2MVN2TlzoEf/5azu2AhDr51kK2Eh21BQWvARn2US9w4S/5xJrk2TwSAMq+z47MnYYbUL8LiRRsDRhyhvgy/xieWXQy0Zyoj3oh8Zqv4b/eg4KKSaTr4EchBc4qjryMZvnaPveFis2QXQKFrD3Wy+WGzp1UBOLJFHqnt7SkGKzpohfaUtgP3nh9vn5KDbQ5NiqXbUSG7USTCFNlbRC4K7kOcbXr2pp/zos2rsUIjRfPPSXKZoMA2dSTU+UvGGC8xPgZVELOYiBbeA38Eq1VZm95l2TZCx7WdnC283J/NGHbRHmSdxIQDzLEr1w/ycjO10du7zveMPJIxXRw2ij98RqRYjd231BjZ7YQsqld/3R59/Nei59tSo/gIH2BmvUSXfnyTjIDAKno0/tcDqXYJHVdD6ljO2YGIhM9ePuL4QFCrsL1BUeffByVKA/zQaVtvfTC8c5VH53IpNTKwmqkknPO1i5UsKKnHOYgThzovFdvt1te6is213xlrHphjKloQeC5o28JlZoQWSGz0X4tDWhViTDVKJGsqWJf0f4dscgLbte38HAuFfbal
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(186003)(33716001)(6666004)(54906003)(55016002)(9576002)(4744005)(26005)(316002)(508600001)(86362001)(44832011)(9686003)(6496006)(38100700002)(38350700002)(52116002)(8936002)(66946007)(4326008)(7416002)(1076003)(66476007)(33656002)(66556008)(8676002)(956004)(2906002)(53546011)(6916009)(5660300002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?irE+PECB5zkLY12PYZV2SIO97g0ypxNi2JNUP8u1jJFChnNteA3PaGe+y0Iy?=
+ =?us-ascii?Q?qyVF97ORDeuenOeyYD+SpB4gMGOj021DnYVphvyzOC209QQFbFCx1iR+TN2c?=
+ =?us-ascii?Q?k1Y6UooeKUDCfJvrsImQSoWm1BOMQ534LZw6d9hYk09ld40NgOOfcIgf8BBK?=
+ =?us-ascii?Q?ihlJwERrGIZ6KnlOslzWc/yMLkw12Q/NWnQGKl00I0B9Nk/dzGv5cDAGq2mZ?=
+ =?us-ascii?Q?YRIVGWOGTDuNZrwqFsiJlBbqfPjBbflw7dZHnssd5J5MBKFXMWzQPGy//y66?=
+ =?us-ascii?Q?+3SPNj/pnCw6ZP+maxheKD0lngEoJNN0k1Ue9wxCLONaa06VWxphlGAMEEh0?=
+ =?us-ascii?Q?2KglaCy5bss1nL4ui+AxjgLZlkYjcRlmQbpOLjkO1Zoq1oBnC4xTCnqkGbZ2?=
+ =?us-ascii?Q?/9R3w+RxQL+vaM82HvzuYieIVIenyEHhlLLN3P0zLSGrI4ZwY3w4FWHWAAWs?=
+ =?us-ascii?Q?YxUj1N3AAlMNKNTWbvSv0CoNLec8q6Qi+dr12cjdTHqfbnjATICHboTPePl2?=
+ =?us-ascii?Q?ohyfoO+i9Q1BKNPsY0jf4D8bXscIXVbtkkf/TgJUOz52Y2wo1XLtF04c2Y6y?=
+ =?us-ascii?Q?bl5F8mborwT8LW/Xc/MBbZ5PvbSPnMKUvwI5PKpq73Fi05VP1myRFpOxwzf8?=
+ =?us-ascii?Q?t26f7uXHpoMP5kEZEGYmbXWIafMTQkGORbngSDyoOzQWPe5LNvKlx7qGpd69?=
+ =?us-ascii?Q?a3tvY+sRQyBVi8/w5ulT1F/4eoE5aWwEtXV0lqH3OfRyVKuaE15UFRoBgv9e?=
+ =?us-ascii?Q?vlMJR2/pLg8CSjHJNxs0SkjEknT0uagYGC7f5BwC9TvjcIvbZmhsfXpg62u2?=
+ =?us-ascii?Q?9QgO5p2uuhEydow55N/0YCARM72q9Cu5oJSkNbAbpQuqYl1EuhmhtmUyCi+F?=
+ =?us-ascii?Q?AVUofm+1z5B/i0GZyJkEhTZUho58lYit0BSdlhyl6Kt+KgQXIyme+s2nuRWw?=
+ =?us-ascii?Q?20SkKlz4YajbCYmsAkXFY5+HFLvSZXkf0Cvw1cWZDZHUkJTRfZ0IOyGhwDoz?=
+ =?us-ascii?Q?QuQIdb1JTlEZtLog1Rz48/z8eJiPyYUHhmVs3T2TtV1I/94As3c6auiFpEI3?=
+ =?us-ascii?Q?TARWAPuUeUY7OwHiGILr0B/8NHRaoLx29Q7hRe32XFPMxcFYmB8PWo/5s9hF?=
+ =?us-ascii?Q?MI8Jx8qU1JLzzLbCJ9EM1bfis4Sner0IY+JCsxJQJfJ0T8/nzobHRr4HJclW?=
+ =?us-ascii?Q?V2afFguCSiqabBi5j4KMw4FAvzhyKN0MsZZKQ7OUww/Mhih+3D27HfOqOLIA?=
+ =?us-ascii?Q?uWSH6HQOZAiUrFD7b4NxaP+ZPSFRKis92RUHEWSmV9V/aKmWFiihwd9mUv5h?=
+ =?us-ascii?Q?scKmNZpbZk3klnxX808nBmWW?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e13da91-e75b-472b-da50-08d986fed873
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2021 06:18:56.6798
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fBICX4y/s4ZVoHI6tTO63O3skHJetm7thx0NRbvpC5mJUkDezom5o4vy4jBfXLr6oWSwMsXd6jcTuSx70HacQiJEHidsKL0a6t0x2yu7w3c=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR10MB1488
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10126 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 adultscore=0
+ bulkscore=0 suspectscore=0 malwarescore=0 spamscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2109230001
+ definitions=main-2110040044
+X-Proofpoint-ORIG-GUID: f2Z6cjmfiWppu4UPaaR4_8DPBAo3OZI9
+X-Proofpoint-GUID: f2Z6cjmfiWppu4UPaaR4_8DPBAo3OZI9
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Oct 03, 2021 at 07:36:54PM -0700, Mike Kravetz wrote:
-> On 10/3/21 6:54 AM, Matthew Wilcox wrote:
-> > On Sun, Oct 03, 2021 at 06:41:13PM +0700, Nghia Le wrote:
-> >>  {
-> >>  	struct hstate *h;
-> >> -	unsigned long demote_size;
-> >>  	int nid;
-> >>  
-> >>  	h = kobj_to_hstate(kobj, &nid);
-> >> -	demote_size = h->demote_order;
-> >>  
-> >>  	return sysfs_emit(buf, "%lukB\n",
-> >>  			(unsigned long)(PAGE_SIZE << h->demote_order) / SZ_1K);
-> > 
-> > I'd suggest this function would look better written as:
-> > 
-> > 	int nid;
-> > 	struct hstate *h = kobj_to_hstate(kobj, &nid);
-> > 	unsigned long demote_size = (PAGE_SIZE << h->demote_order) / SZ_1K;
-> > 
-> > 	return sysfs_emit(buf, "%lukB\n", demote_size);
-> >
-Thanks Matthew for the clean code.
+On Sat, Oct 02, 2021 at 01:59:56AM +0300, Dmitry Baryshkov wrote:
+> On 01/10/2021 15:36, Dan Carpenter wrote:
+> > The "msg->tx_len" variable is type size_t so if dsi_cmds2buf_tx()
+> > returns a negative error code that it type promoted to a high positive
+> > value and treat as a success.  The second problem with this code is
+> > that it can return meaningless positive values on error.
 > 
-> Thank you Nghia Le for spotting this, and thank you Matthew for the
-> suggestion.
+> It looks to me that this piece of code is not fully correct at all.
+> dsi_cmds2bus_tx would return the size of DSI packet, not the size of the DSI
+> buffer.
 > 
-> This is still just in Andrew's tree and subject to modification before
-> the next merge window.  I am still expecting additional comments on the
-> series.
+> Could you please be more specific, which 'meaningless positive values' were
+> you receiving?
 > 
-> If another version of the series is needed, I will include Matthew's
-> suggestion.   If not, I will ask Andrew how he would prefer to fold in
-> the changes.
-> -- 
-> Mike Kravetz
-Thanks Mike, so we will wait further comments from Andrew and others.
+
+Sorry, I misread the code.  I thought it returned negatives or the
+number of bytes copied.  (This is from static analysis btw).  Anyway,
+returning only negatives is a much better way.
+
+I will fix this patch and resend.
+
+regards,
+dan carpenter
+
