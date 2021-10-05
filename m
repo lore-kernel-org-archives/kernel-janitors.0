@@ -2,88 +2,132 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4FBAC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 19:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9FAAC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 19:57:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C541A61371
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 19:51:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADE2461216
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 19:57:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235224AbhJETwx (ORCPT
+        id S235206AbhJET72 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Oct 2021 15:52:53 -0400
-Received: from mga05.intel.com ([192.55.52.43]:23709 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230333AbhJETwx (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Oct 2021 15:52:53 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10128"; a="312041786"
-X-IronPort-AV: E=Sophos;i="5.85,349,1624345200"; 
-   d="scan'208";a="312041786"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2021 12:27:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.85,349,1624345200"; 
-   d="scan'208";a="458176402"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.171])
-  by orsmga002.jf.intel.com with SMTP; 05 Oct 2021 12:26:56 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Tue, 05 Oct 2021 22:26:55 +0300
-Date:   Tue, 5 Oct 2021 22:26:55 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Imre Deak <imre.deak@intel.com>,
-        =?iso-8859-1?Q?Jos=E9?= Roberto de Souza 
-        <jose.souza@intel.com>, Matt Roper <matthew.d.roper@intel.com>,
-        Dave Airlie <airlied@redhat.com>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/i915/tc: Delete bogus NULL check in
- intel_ddi_encoder_destroy()
-Message-ID: <YVym/wi1xCuyntvY@intel.com>
-References: <20211004103737.GC25015@kili>
+        Tue, 5 Oct 2021 15:59:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37720 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232208AbhJET71 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 5 Oct 2021 15:59:27 -0400
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4773C061749;
+        Tue,  5 Oct 2021 12:57:36 -0700 (PDT)
+Received: from zn.tnic (p200300ec2f0d20002fd498dc90ccb948.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:2000:2fd4:98dc:90cc:b948])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C9A231EC01CE;
+        Tue,  5 Oct 2021 21:57:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1633463853;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=bSTD+YJ7AsMgF5Lwa6uxwybJxnQHhV2/XYQ6rwOH5yc=;
+        b=rrKYMYVox2JWv1DVP5Rou8wB5FYDmvzrSpgMDTvVFH58Djuvwl/9wWczLQsdK1CVmm6bAb
+        pBfjgPSTtSSfXvavCKW/Qw4KcyD99ltCxA4cYPDhliN+kONw2TdjmqU8cOilzM7vdKr/Yr
+        k2uHE1uim0D04TSSiGrgpM67VTjMon0=
+Date:   Tue, 5 Oct 2021 21:57:29 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Lubomir Rintel <lkundrak@v3.sk>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee.jones@linaro.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        platform-driver-x86@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/9] x86/Kconfig: remove reference to obsolete APB_TIMER
+ config
+Message-ID: <YVyuKanDJz5vaFfW@zn.tnic>
+References: <20210803113531.30720-1-lukas.bulwahn@gmail.com>
+ <20210803113531.30720-6-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211004103737.GC25015@kili>
-X-Patchwork-Hint: comment
+In-Reply-To: <20210803113531.30720-6-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Oct 04, 2021 at 01:37:37PM +0300, Dan Carpenter wrote:
-> The "digi_port" pointer can't be NULL and we have already dereferenced
-> it so checking for NULL is not necessary.  Delete the check.
+On Tue, Aug 03, 2021 at 01:35:27PM +0200, Lukas Bulwahn wrote:
+> Commit 1b79fc4f2bfd ("x86/apb_timer: Remove driver for deprecated
+> platform") removes the definition of the config APB_TIMER in
+> ./arch/x86/Kconfig, but misses to remove a reference to it in config
+> X86_INTEL_MID.
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Thanks. Applied to drm-intel-next.
-
+> Fortunately, ./scripts/checkkconfigsymbols.py warns:
+> 
+> APB_TIMER
+> Referencing files: arch/x86/Kconfig
+> 
+> Remove this reference to the obsolete config.
+> 
+> Fixes: 1b79fc4f2bfd ("x86/apb_timer: Remove driver for deprecated platform")
+> Suggested-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > ---
->  drivers/gpu/drm/i915/display/intel_ddi.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/display/intel_ddi.c b/drivers/gpu/drm/i915/display/intel_ddi.c
-> index 51d07e9af9f3..b9c6eb13804f 100644
-> --- a/drivers/gpu/drm/i915/display/intel_ddi.c
-> +++ b/drivers/gpu/drm/i915/display/intel_ddi.c
-> @@ -4025,8 +4025,7 @@ static void intel_ddi_encoder_destroy(struct drm_encoder *encoder)
->  	intel_display_power_flush_work(i915);
->  
->  	drm_encoder_cleanup(encoder);
-> -	if (dig_port)
-> -		kfree(dig_port->hdcp_port_data.streams);
-> +	kfree(dig_port->hdcp_port_data.streams);
->  	kfree(dig_port);
->  }
->  
-> -- 
-> 2.20.1
+>  arch/x86/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
+
+I've combined that and the previous one into a single patch since
+they're pretty trivial:
+
+---
+From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Tue, 3 Aug 2021 13:35:26 +0200
+Subject: [PATCH] x86/Kconfig: Remove references to obsolete Kconfig symbols
+
+Remove two symbols referenced in Kconfig which have been removed
+previously by:
+
+  ef3c67b6454b ("mfd: intel_msic: Remove driver for deprecated platform")
+  1b79fc4f2bfd ("x86/apb_timer: Remove driver for deprecated platform")
+
+Detected by scripts/checkkconfigsymbols.py.
+
+  [ bp: Merge into a single patch. ]
+
+Suggested-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Link: https://lkml.kernel.org/r/20210803113531.30720-5-lukas.bulwahn@gmail.com
+---
+ arch/x86/Kconfig | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 4e001bbbb425..b79e88ee6627 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -605,9 +605,7 @@ config X86_INTEL_MID
+ 	depends on X86_IO_APIC
+ 	select I2C
+ 	select DW_APB_TIMER
+-	select APB_TIMER
+ 	select INTEL_SCU_PCI
+-	select MFD_INTEL_MSIC
+ 	help
+ 	  Select to build a kernel capable of supporting Intel MID (Mobile
+ 	  Internet Device) platform systems which do not have the PCI legacy
+-- 
+2.29.2
+
 
 -- 
-Ville Syrjälä
-Intel
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
