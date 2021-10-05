@@ -2,161 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DD2FC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 19:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24ADCC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 20:33:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 292F26141B
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 19:59:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02F526142A
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 20:33:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235917AbhJEUA7 (ORCPT
+        id S236378AbhJEUfk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Oct 2021 16:00:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38132 "EHLO
+        Tue, 5 Oct 2021 16:35:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235224AbhJEUA6 (ORCPT
+        with ESMTP id S229805AbhJEUfj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Oct 2021 16:00:58 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76774C061749;
-        Tue,  5 Oct 2021 12:59:07 -0700 (PDT)
-Received: from zn.tnic (p200300ec2f0d20002fd498dc90ccb948.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:2000:2fd4:98dc:90cc:b948])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 06F001EC01CE;
-        Tue,  5 Oct 2021 21:59:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1633463946;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Qmxm7CefUtXt2Yw0nJkZhWFc7mEAr8RAL5qiQWAIgjQ=;
-        b=aSGhz2XdrluOcHf5GknU/TWBcN0flEOQjeJ+D5kPaeDbADVwbC6pk4PyY+J0GZzENG3k0s
-        VUsIEAaUAt5w+BYv27Ok+k01yDeAPUyxodBV6W2V2iCq0uh6vvHPe0onGuKhk3NqihuJ+k
-        mijk1z8p0enA8ynnnDH9I2eoKZMMZSw=
-Date:   Tue, 5 Oct 2021 21:59:06 +0200
-From:   Borislav Petkov <bp@alien8.de>
+        Tue, 5 Oct 2021 16:35:39 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90B6AC061749;
+        Tue,  5 Oct 2021 13:33:48 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id oa12-20020a17090b1bcc00b0019f715462a8so575604pjb.3;
+        Tue, 05 Oct 2021 13:33:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=cWnkiNHSwi55ZiD4L0VvG3TUUEbuFBF808HoHr4qCDs=;
+        b=lW/bsYb36msG5mDUrWNvMOAHzongZSZJiThoide+rKf1M57QIiYwFdSNrzgHHmnNAF
+         OGgNfXZR8DKpW54EcYU+bQo0MG0nrzxzgbldKaL0mQ+Hn/Lha3DsTnMe+rhhiVDdtZ55
+         qcdCQMzBj3nIxSQi1Pdh3PJl/v3YQC+U9CXUNlhSlcewOWXwR8lfhejCOsgex9h/HbYk
+         ZPhfkQakt79q66qJLgXK1ISLv5XLlWvWq/B6/+OXIx61niCHGipVMKpRMCi3XLh3yWsE
+         8euXn9QnC1heHppsiQWMGT7WrtXwFNQa1hPDVMx0Zs24pRtpZyv5T0ePilv2vTBziCxc
+         571w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=cWnkiNHSwi55ZiD4L0VvG3TUUEbuFBF808HoHr4qCDs=;
+        b=E/CxDif44ZxnD4EpdpzcWfMLvEZh8oyZf4EovhKA42f4to/szS/u55f6U2iEsdDes0
+         deQ0JJdcvWJpZgvqE1nWVpcEgMgMKVC+5ldxtDz+4GMk/gEShmY9lQFS429B1nYO+L9C
+         5UcK2oIbL2//U3uB8QNVOuGUja/hUDq4cCVf/7tCpeSfXxHg0L1mNbueMqg8prZ08SZX
+         /OXMf0IiQKSIvhr2TC+ALHHRcA7sbyeTcsdl78NMszYsEeaos8hM5m0nh5bWzqo9k+tL
+         zJq9KhpN2oGJX+MR7dcMuwGeRze8yNZH6UxoH0ltei90YLLwv/Uav7eD0Vxte6WyXPb0
+         7E8w==
+X-Gm-Message-State: AOAM533XYXw/ap9nNgdKLtdBXSjrnKiXinauaTikbAq6as0T7mTG8nqf
+        vKFHnv2XMNlOv6zkyU3dkas=
+X-Google-Smtp-Source: ABdhPJwPUJPyBu/rDVipbDnhmtYUuiMmS30qjgHig0GIDLYr4X8vlJ1/77KO6+9CIka/gR8frmf/Ow==
+X-Received: by 2002:a17:902:7fcd:b0:13e:8b24:b94 with SMTP id t13-20020a1709027fcd00b0013e8b240b94mr7103473plb.45.1633466027909;
+        Tue, 05 Oct 2021 13:33:47 -0700 (PDT)
+Received: from google.com ([2620:15c:202:201:d0a7:4716:8e1b:a15d])
+        by smtp.gmail.com with ESMTPSA id i13sm3193680pjh.0.2021.10.05.13.33.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Oct 2021 13:33:46 -0700 (PDT)
+Date:   Tue, 5 Oct 2021 13:33:43 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Lubomir Rintel <lkundrak@v3.sk>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee.jones@linaro.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Yu Chen <chenyu56@huawei.com>,
+        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Naga Sureshkumar Relli <nagasure@xilinx.com>,
+        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+        Deepak Saxena <dsaxena@plexity.net>,
+        Mirela Rabulea <mirela.rabulea@nxp.com>,
+        Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Wilken Gottwalt <wilken.gottwalt@posteo.net>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        platform-driver-x86@vger.kernel.org,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Mark Brown <broonie@kernel.org>,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 9/9] x86: ia32.h: adjust comment for endif of
- CONFIG_IA32_EMULATION
-Message-ID: <YVyuihupLwW3o0XR@zn.tnic>
-References: <20210803113531.30720-1-lukas.bulwahn@gmail.com>
- <20210803113531.30720-10-lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH v4 11/11] MAINTAINERS: rectify entry for CHIPONE ICN8318
+ I2C TOUCHSCREEN DRIVER
+Message-ID: <YVy2p/lmAtIFfaW6@google.com>
+References: <20211005075451.29691-1-lukas.bulwahn@gmail.com>
+ <20211005075451.29691-12-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210803113531.30720-10-lukas.bulwahn@gmail.com>
+In-Reply-To: <20211005075451.29691-12-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Aug 03, 2021 at 01:35:31PM +0200, Lukas Bulwahn wrote:
-> The content of the ia32 header is guarded by
-> "ifdef CONFIG_IA32_EMULATION". The comment on the corresponding endif
-> refers slightly mismatching to CONFIG_IA32_SUPPORT instead.
+On Tue, Oct 05, 2021 at 09:54:51AM +0200, Lukas Bulwahn wrote:
+> Commit 04647773d648 ("dt-bindings: input: Convert ChipOne ICN8318
+> binding to a schema") converts chipone_icn8318.txt to chipone,icn8318.yaml,
+> but missed to adjust its reference in MAINTAINERS.
 > 
-> Hence, ./scripts/checkkconfigsymbols.py warns:
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
+> a broken reference.
 > 
-> IA32_SUPPORT
-> Referencing files: arch/x86/include/asm/ia32.h
-> 
-> Adjust the comment on endif to the actual ifdef condition.
+> Repair this file reference in CHIPONE ICN8318 I2C TOUCHSCREEN DRIVER.
 > 
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  arch/x86/include/asm/ia32.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Merged the last 4 into a single patch because they're trivial:
-
----
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date: Tue, 5 Oct 2021 21:48:30 +0200
-Subject: [PATCH] x86: Fix misspelled Kconfig symbols
-
-Fix misspelled Kconfig symbols as detected by
-scripts/checkkconfigsymbols.py.
-
- [ bp: Combine into a single patch. ]
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/20210803113531.30720-7-lukas.bulwahn@gmail.com
----
- arch/x86/include/asm/ia32.h      | 2 +-
- arch/x86/include/asm/irq_stack.h | 2 +-
- arch/x86/include/asm/page_32.h   | 2 +-
- arch/x86/include/asm/uaccess.h   | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/include/asm/ia32.h b/arch/x86/include/asm/ia32.h
-index 2c5f7861d373..fada857f0a1e 100644
---- a/arch/x86/include/asm/ia32.h
-+++ b/arch/x86/include/asm/ia32.h
-@@ -68,6 +68,6 @@ extern void ia32_pick_mmap_layout(struct mm_struct *mm);
- 
- #endif
- 
--#endif /* !CONFIG_IA32_SUPPORT */
-+#endif /* CONFIG_IA32_EMULATION */
- 
- #endif /* _ASM_X86_IA32_H */
-diff --git a/arch/x86/include/asm/irq_stack.h b/arch/x86/include/asm/irq_stack.h
-index 562854c60808..8912492a78f1 100644
---- a/arch/x86/include/asm/irq_stack.h
-+++ b/arch/x86/include/asm/irq_stack.h
-@@ -58,7 +58,7 @@
-  *     the output constraints to make the compiler aware that R11 cannot be
-  *     reused after the asm() statement.
-  *
-- *     For builds with CONFIG_UNWIND_FRAME_POINTER ASM_CALL_CONSTRAINT is
-+ *     For builds with CONFIG_UNWINDER_FRAME_POINTER, ASM_CALL_CONSTRAINT is
-  *     required as well as this prevents certain creative GCC variants from
-  *     misplacing the ASM code.
-  *
-diff --git a/arch/x86/include/asm/page_32.h b/arch/x86/include/asm/page_32.h
-index 94dbd51df58f..b13f8488ac85 100644
---- a/arch/x86/include/asm/page_32.h
-+++ b/arch/x86/include/asm/page_32.h
-@@ -43,7 +43,7 @@ static inline void copy_page(void *to, void *from)
- {
- 	memcpy(to, from, PAGE_SIZE);
- }
--#endif	/* CONFIG_X86_3DNOW */
-+#endif	/* CONFIG_X86_USE_3DNOW */
- #endif	/* !__ASSEMBLY__ */
- 
- #endif /* _ASM_X86_PAGE_32_H */
-diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-index c9fa7be3df82..e7fc2c515e08 100644
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -411,7 +411,7 @@ do {									\
- 		     : [umem] "m" (__m(addr)),				\
- 		       [efault] "i" (-EFAULT), "0" (err))
- 
--#endif // CONFIG_CC_ASM_GOTO_OUTPUT
-+#endif // CONFIG_CC_HAS_ASM_GOTO_OUTPUT
- 
- /* FIXME: this hack is definitely wrong -AK */
- struct __large_struct { unsigned long buf[100]; };
--- 
-2.29.2
+Applied, thank you.
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Dmitry
