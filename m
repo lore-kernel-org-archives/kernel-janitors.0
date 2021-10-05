@@ -2,106 +2,97 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24ADCC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 20:33:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 160FCC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 20:52:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02F526142A
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 20:33:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBA386138F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 20:52:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236378AbhJEUfk (ORCPT
+        id S231439AbhJEUyp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Oct 2021 16:35:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46572 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229805AbhJEUfj (ORCPT
+        Tue, 5 Oct 2021 16:54:45 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:59951 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230019AbhJEUyo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Oct 2021 16:35:39 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90B6AC061749;
-        Tue,  5 Oct 2021 13:33:48 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id oa12-20020a17090b1bcc00b0019f715462a8so575604pjb.3;
-        Tue, 05 Oct 2021 13:33:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=cWnkiNHSwi55ZiD4L0VvG3TUUEbuFBF808HoHr4qCDs=;
-        b=lW/bsYb36msG5mDUrWNvMOAHzongZSZJiThoide+rKf1M57QIiYwFdSNrzgHHmnNAF
-         OGgNfXZR8DKpW54EcYU+bQo0MG0nrzxzgbldKaL0mQ+Hn/Lha3DsTnMe+rhhiVDdtZ55
-         qcdCQMzBj3nIxSQi1Pdh3PJl/v3YQC+U9CXUNlhSlcewOWXwR8lfhejCOsgex9h/HbYk
-         ZPhfkQakt79q66qJLgXK1ISLv5XLlWvWq/B6/+OXIx61niCHGipVMKpRMCi3XLh3yWsE
-         8euXn9QnC1heHppsiQWMGT7WrtXwFNQa1hPDVMx0Zs24pRtpZyv5T0ePilv2vTBziCxc
-         571w==
+        Tue, 5 Oct 2021 16:54:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1633467173;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZXo9Quk6Y4H0fsDPUHzerD1eOvkjUACN8PkdHlibKSQ=;
+        b=W3+4PwNkTwnFPejAjTpTBNXFZ2pSc5bUviKDbacwI5/6heuDRarIazUgHMXap4zJ2SUqXE
+        glbgYlSduV+rVlMDHqIKU/K2CiW9+8D48scF1eqr3eJvoxi6vZt1JD0JZUNeHC92rItom2
+        zDL9R4YmcX9VPbvb02+6oaT/DFQ2CYc=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-282-rQEX-C9AOqWyaTYNa2Ey8A-1; Tue, 05 Oct 2021 16:52:52 -0400
+X-MC-Unique: rQEX-C9AOqWyaTYNa2Ey8A-1
+Received: by mail-ed1-f70.google.com with SMTP id u23-20020a50a417000000b003db23c7e5e2so475771edb.8
+        for <kernel-janitors@vger.kernel.org>; Tue, 05 Oct 2021 13:52:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=cWnkiNHSwi55ZiD4L0VvG3TUUEbuFBF808HoHr4qCDs=;
-        b=E/CxDif44ZxnD4EpdpzcWfMLvEZh8oyZf4EovhKA42f4to/szS/u55f6U2iEsdDes0
-         deQ0JJdcvWJpZgvqE1nWVpcEgMgMKVC+5ldxtDz+4GMk/gEShmY9lQFS429B1nYO+L9C
-         5UcK2oIbL2//U3uB8QNVOuGUja/hUDq4cCVf/7tCpeSfXxHg0L1mNbueMqg8prZ08SZX
-         /OXMf0IiQKSIvhr2TC+ALHHRcA7sbyeTcsdl78NMszYsEeaos8hM5m0nh5bWzqo9k+tL
-         zJq9KhpN2oGJX+MR7dcMuwGeRze8yNZH6UxoH0ltei90YLLwv/Uav7eD0Vxte6WyXPb0
-         7E8w==
-X-Gm-Message-State: AOAM533XYXw/ap9nNgdKLtdBXSjrnKiXinauaTikbAq6as0T7mTG8nqf
-        vKFHnv2XMNlOv6zkyU3dkas=
-X-Google-Smtp-Source: ABdhPJwPUJPyBu/rDVipbDnhmtYUuiMmS30qjgHig0GIDLYr4X8vlJ1/77KO6+9CIka/gR8frmf/Ow==
-X-Received: by 2002:a17:902:7fcd:b0:13e:8b24:b94 with SMTP id t13-20020a1709027fcd00b0013e8b240b94mr7103473plb.45.1633466027909;
-        Tue, 05 Oct 2021 13:33:47 -0700 (PDT)
-Received: from google.com ([2620:15c:202:201:d0a7:4716:8e1b:a15d])
-        by smtp.gmail.com with ESMTPSA id i13sm3193680pjh.0.2021.10.05.13.33.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Oct 2021 13:33:46 -0700 (PDT)
-Date:   Tue, 5 Oct 2021 13:33:43 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Yu Chen <chenyu56@huawei.com>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Naga Sureshkumar Relli <nagasure@xilinx.com>,
-        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-        Deepak Saxena <dsaxena@plexity.net>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Wilken Gottwalt <wilken.gottwalt@posteo.net>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Mark Brown <broonie@kernel.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 11/11] MAINTAINERS: rectify entry for CHIPONE ICN8318
- I2C TOUCHSCREEN DRIVER
-Message-ID: <YVy2p/lmAtIFfaW6@google.com>
-References: <20211005075451.29691-1-lukas.bulwahn@gmail.com>
- <20211005075451.29691-12-lukas.bulwahn@gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=ZXo9Quk6Y4H0fsDPUHzerD1eOvkjUACN8PkdHlibKSQ=;
+        b=XvfHJ8VOyQXIK5GWf7WvZQMfMyU++/F7m9yoyTqK0w15hM91RoU5byFejdPhFGuEQl
+         jfUO8KKo1ZqfAD+Vi6xZKBzZVitbkTNyFrTlooRjOMvs/v7dLRDDmKPpF9RY7Ms72iIa
+         BtnEoJrwECLdypqz84skarfdnlTsIOkZ99O4/B3x2yL2DWFt1/2POVp3px8Rmw6PIb8b
+         6eiEbp407N9Lnt6GCW/A+Vx3Fm+uPojyxbK7DBCoUdF6LlsaaksUG1O6XkrfhzWqHY1o
+         B6PxgC3r3+9wVjS1j5forV7IpyaZ8ZlAFZKHsNFAj5RaZ7ZvCfAtFO/z7RZi+pgOZKff
+         H82w==
+X-Gm-Message-State: AOAM532TK8tAffAYn7TWc4QU9VKjF6VbrkzSIcWcHCx/Gunw/IpnVVKs
+        DLDI5UWl4sF+EbEaUnaxL6Zk4d3xoFm6SfxveL6uEPfLPlipiQVgks1y/gauoNecM9OEOUGTudh
+        urFZzLIkuRab7eV+2MaOLXVx+Q/KU
+X-Received: by 2002:a17:906:d182:: with SMTP id c2mr27048682ejz.47.1633467170983;
+        Tue, 05 Oct 2021 13:52:50 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzS04pr73Ai2y9+5IP0WTOsQuT9DuyYh0xBiqeTFvHj3RCq/Wp2hs521FyPkADYGpY/sYu0lg==
+X-Received: by 2002:a17:906:d182:: with SMTP id c2mr27048663ejz.47.1633467170772;
+        Tue, 05 Oct 2021 13:52:50 -0700 (PDT)
+Received: from ?IPV6:2001:b07:6468:f312:63a7:c72e:ea0e:6045? ([2001:b07:6468:f312:63a7:c72e:ea0e:6045])
+        by smtp.gmail.com with ESMTPSA id n6sm9243298eds.10.2021.10.05.13.52.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Oct 2021 13:52:50 -0700 (PDT)
+Message-ID: <54360564-57e4-60de-60be-13177448ebc5@redhat.com>
+Date:   Tue, 5 Oct 2021 22:52:48 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211005075451.29691-12-lukas.bulwahn@gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.0
+Subject: Re: [PATCH][next] KVM: x86: Fix allocation sizeof argument
+Content-Language: en-US
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Colin King <colin.king@canonical.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        David Stevens <stevensd@chromium.org>, kvm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20211001110106.15056-1-colin.king@canonical.com>
+ <YVxyNgyyxA7EnvJb@google.com>
+ <ebd506ba-05cc-99d7-ece5-34bd67fc2430@redhat.com>
+ <YVyRnV9cMLzazBx6@google.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+In-Reply-To: <YVyRnV9cMLzazBx6@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Oct 05, 2021 at 09:54:51AM +0200, Lukas Bulwahn wrote:
-> Commit 04647773d648 ("dt-bindings: input: Convert ChipOne ICN8318
-> binding to a schema") converts chipone_icn8318.txt to chipone,icn8318.yaml,
-> but missed to adjust its reference in MAINTAINERS.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
-> a broken reference.
-> 
-> Repair this file reference in CHIPONE ICN8318 I2C TOUCHSCREEN DRIVER.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+On 05/10/21 19:55, Sean Christopherson wrote:
+>   I wasn't suggesting a full revert,
+> rather a "drop and pretend it never got applied", with a plan to apply a new
+> version instead of fixing up the current code.
 
-Applied, thank you.
+Considering that there are issues in the rmaps as well, I'd rather fix 
+both the right way.
 
--- 
-Dmitry
+Paolo
+
