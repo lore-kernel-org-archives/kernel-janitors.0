@@ -2,187 +2,187 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8CCFC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 06:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56FD4C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 07:55:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C09A761528
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 06:01:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4068561350
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 07:55:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232094AbhJEGC4 (ORCPT
+        id S232761AbhJEH44 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Oct 2021 02:02:56 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:37436 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231688AbhJEGCz (ORCPT
+        Tue, 5 Oct 2021 03:56:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36084 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231816AbhJEH4z (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Oct 2021 02:02:55 -0400
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1954iu6d029416;
-        Tue, 5 Oct 2021 06:00:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : content-type : in-reply-to :
- mime-version; s=corp-2021-07-09;
- bh=v99/2YgSryIO89iCPZA/wQsanSH8JYjYrvIoY1HiiJo=;
- b=dnonGWrlosZ+6KdpHQeCIT5sS03hq5Cjy4JPMezEbvbaXiK94SMupIBVelmxMU3Ego38
- 2oFOLQO4MDBMOUGtG7H03FxYsCyw+F1B64zR5pnzPbnzyHK/klEGZ538Nn6hYjKk+KCB
- KnZAW0TvEW1X8TyHpsifT310dyMVwcXcytrcskC+/po1S/LtcKIQjSnivMQm7kyaP9o4
- zutoorGq9fM+smFiwfrXUmrnAuXWcxnJVCL8Gry4QMbTAhpHwNVC0R/ZdAFkVbrnJXyi
- plzeIjmxak3FTQ0z6mIxfz6Z+GtaZ9IACsYWXydG6vDHhhZzuRI5lLxfklVekKNIu/2p Pw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3bg42kmx8r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 05 Oct 2021 06:00:57 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1955scdU158240;
-        Tue, 5 Oct 2021 06:00:55 GMT
-Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1anam02lp2042.outbound.protection.outlook.com [104.47.57.42])
-        by userp3020.oracle.com with ESMTP id 3bf16sgevm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 05 Oct 2021 06:00:55 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZUBcgmQYXyhVqpWCps9eibakzwGI5juBc5+pQTfXm8exSOLYi08Tz7WSJFFijSoIhBpOPXw2uYdHD9qgAH3MIOgqzGf8TJnaxR5AQ78bR7ZC+BtE9BfWssbxR/R3cTT979uwz/8oRl7ek5vmeJjskoygkIDkI2fFJZhy8xdVTHiz5UhJ/gB1VCgRVVKOSZ6OcM0poqEScAviOEsTmKOujJOvFn5cfYOokvjuBL5lzjjLaomjdsU69JFuKWCF+ZEbROgzjnGtoAErEaMOvkd3Biah8gk3GQtUZ5opCFA6LNzvj3Er8Ptd2DDXPIdak1ka6uW3KeWpiivAFmJGTBwrMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v99/2YgSryIO89iCPZA/wQsanSH8JYjYrvIoY1HiiJo=;
- b=USL3TTqET+eMXkxzCEeRHBplMCxO0XuppAafM3s3auDOax50jADTEnLl03D/GL/32j3lH04QyeZJjyxqOmigbtlJs34yRSyJ1mZWlmT7ezfw2tjFyXKWdT8nJjDuy4ZiYVqF4Ym1LeyDRgT9OBH0woMvoHrfwVQRyR3VwyE0KN26y6BUYxTCAhk3B45Al1WFZIJuCC22jA0VzWoL9W/17zCTYmRZ73MLKKKwHYTpS4so5CzKaSOEhI9nAe7O47I/Fqa4L/KhkFVNbUU4IG6A4YSK7q4lIUVIn5wc2ZJ8zNsQy7xipOBR2VCTJVk9ptmLZmE6MIaJpodvIXLKyEE6rA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Tue, 5 Oct 2021 03:56:55 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E50FC061745;
+        Tue,  5 Oct 2021 00:55:05 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id v127so15583488wme.5;
+        Tue, 05 Oct 2021 00:55:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v99/2YgSryIO89iCPZA/wQsanSH8JYjYrvIoY1HiiJo=;
- b=GnZDcTsRJzd2KQFu2iQhRxxW6yeF2t3QbgZjx2yVmLCqNN6X40hj94puuNSy+NikaubbmklNOeiOGOlHZoagRhVSE+YJ4aVSa1SpFTsAtghjvjpmSMgLWBnjdWhkzCKulm8Sf8Nosf6X7Pv4S7W+rHByu7LHlgutmfW+wP62l8c=
-Authentication-Results: linaro.org; dkim=none (message not signed)
- header.d=none;linaro.org; dmarc=none action=none header.from=oracle.com;
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28) by MWHPR1001MB2127.namprd10.prod.outlook.com
- (2603:10b6:301:33::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.19; Tue, 5 Oct
- 2021 06:00:53 +0000
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::d409:11b5:5eb2:6be9]) by MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::d409:11b5:5eb2:6be9%5]) with mapi id 15.20.4566.022; Tue, 5 Oct 2021
- 06:00:53 +0000
-Date:   Tue, 5 Oct 2021 09:00:33 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Jordan Crouse <jordan@cosmicpenguin.net>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/disp: fix endian bug in debugfs code
-Message-ID: <20211005060033.GV2048@kadam>
-References: <20211004134721.GD11689@kili>
- <ab7f1f10-f366-40c1-436d-d7ebe15c7a9f@linaro.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ab7f1f10-f366-40c1-436d-d7ebe15c7a9f@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: JNAP275CA0030.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:4d::21)
- To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Sqv2+Fzsw4VFUqF5jcrK2fMBM5s+t6zGZIuN7AjliCs=;
+        b=ogtuapvWy4lmoaN8DT1LEABgdS8DJtRYDIkglwNLp9cCTu4oT+tCvnA9nX/VtR5XSb
+         XlSBu6v49nFhJUeCW/EDZ1ArnBeds3wTxFppidAoiFwl6Pr10G/a724jSIRab7N2zTA7
+         dkPnm/OPXs8xCMqNly84mXY1VH3sbMbSDaFmdDkz+HDVYhHZd+XhOCOlg28KAPZ2XzdK
+         YoqxyA/UX/9jiakQaXIv6BGBhRehY4kKnD3EA+MAFemnTUdPsGId21gC6HTL2R+cF3MV
+         adbYqphQHRTz4btRdsia+rAth8l9ePhK4M4+6cJ6irrSgOtm86oPAhvzANv0Zo3cdbZc
+         P5iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Sqv2+Fzsw4VFUqF5jcrK2fMBM5s+t6zGZIuN7AjliCs=;
+        b=7C1wR5+cC8SC0NbFz4mo5c2PlqYnvYgbj62e0kXqelqpDAU3xGMPXRhxj6d+cf9uyx
+         YDNLPGfrtTeTnbCCnjQcT7AFv3kVHDhk1OWbiAgkGGous02ZSdcPxFOYTeHR96xr2NLX
+         YPS2WzRUd3kwW5oCLWPJTEYOQNxuOJfwoZX8BHGRWc8gW9rSrgiJ+8Cr4YEPECrqIKId
+         FIFO95Pia6EvpG7ns0oO7I82m3uaD0Ec/rr4ezRwq5woO4RwewsVLVX9eAhnGrrxHlKs
+         mmlOgQZ9quYWCtlIewo/kuQ2yqFFo/pFXuKDn17lBZ9RUF8nmRpbl++Uf5JE8LkG3JCm
+         rSfw==
+X-Gm-Message-State: AOAM533YLesqa062Bs7QfNhzaGjwHaPunoLN6bSyhVJlAD+mg3ux4dGe
+        Um1Kge0I1ZjTe4V/+909x/0=
+X-Google-Smtp-Source: ABdhPJwWWpo0Ba68UuNQdV7lPLsV1bDi18sGhpZ74YCPZc08MwplH7Zn+I7iPXcj+tfM4qUXexwvmg==
+X-Received: by 2002:a7b:c303:: with SMTP id k3mr1862314wmj.44.1633420503708;
+        Tue, 05 Oct 2021 00:55:03 -0700 (PDT)
+Received: from localhost.localdomain (i59F67A83.versanet.de. [89.246.122.131])
+        by smtp.gmail.com with ESMTPSA id o1sm1176984wmq.26.2021.10.05.00.55.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Oct 2021 00:55:03 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Cc:     Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Yu Chen <chenyu56@huawei.com>,
+        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Naga Sureshkumar Relli <nagasure@xilinx.com>,
+        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+        Deepak Saxena <dsaxena@plexity.net>,
+        Mirela Rabulea <mirela.rabulea@nxp.com>,
+        Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Wilken Gottwalt <wilken.gottwalt@posteo.net>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Mark Brown <broonie@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH v4 00/11] Rectify file references for dt-bindings in MAINTAINERS
+Date:   Tue,  5 Oct 2021 09:54:40 +0200
+Message-Id: <20211005075451.29691-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Received: from kadam (62.8.83.99) by JNAP275CA0030.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:4d::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.15 via Frontend Transport; Tue, 5 Oct 2021 06:00:46 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 99e513a2-b873-4e8f-56b7-08d987c57d8c
-X-MS-TrafficTypeDiagnostic: MWHPR1001MB2127:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <MWHPR1001MB2127754BAD9F0B2C3CB021328EAF9@MWHPR1001MB2127.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:5236;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ifL0xG6fQXQH9adzxOEiHlmQ0G16/Wy3/ZSA1yj/NFYa4zfDuuzh8JoBP1OI4YyKf2AVHiaTyFhq2ft7fVU1PdfsVX/ugqTOTwM63KNjLqEVEYUyOa+jpRLdQyvL6hrdYilZvGfWMRQuzfidWgNjCGe1NRd3io2G0ou5vFLKspkPiX/tyr+owm750rgtzNfJ6hecJhbrdafPt9as3UZs5b+008X5o1BuJiXPEByi0Hf3JEcLbI3IL6zibxOa+EdwPjmOw9ryjItwutF1GFucI3dpzTPh/S584P1oDdUTG0f3KenbqIVY2Fasf34GO08NVNTi3fiq86jLAuRIlj+gK6bOU8nMilR95nstmuhPGoJt1FymSrCHs4f1HfBOhJG9QpmdYoV4o/1r0iyln+EyEIToV1q2DJqK80JAEZ3wPqSVTze0cWE9XCYHjmVQw9eEvLY8G/87C8n/Q2n4AzBS9DnkaaloGSVu1P9IEkltYOaArAaYs+FucsQ7zGZAQDsLsDsg3zuRD85c6OLbK8uVkfAT76wivvwI6kZbPbHeDp4r6Vkn7U/oubpK9dF54a0oPaGyx4vB/1Wk2MeBrVsWfaM/rEhiS6uLKW+Fq90tMPCGCfPbGoj1qU+QkW11h39weTmYnC0mG94LokCEDKUpTmRiQMsKp3Aih6QCs4wH0HqTVgarI0pZ/QX9qHLicYl1+tJTFGKWs9m7GZCy06Edfw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(9686003)(1076003)(956004)(38100700002)(86362001)(186003)(66556008)(55016002)(66476007)(4326008)(38350700002)(83380400001)(66946007)(8676002)(6916009)(6496006)(26005)(33656002)(7416002)(8936002)(508600001)(316002)(9576002)(6666004)(2906002)(44832011)(54906003)(52116002)(5660300002)(53546011)(33716001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?IKcFhWsgTdIdsdX6d6JLM8oKgnXscpqg8jshfOUIE9E72ebkR2X3Qv2c5k/p?=
- =?us-ascii?Q?O8RmeZOcthhxR7vRdhoh7NitdRgDPzj5+JsFzXIsJmQhl/rUuft6BZSXyPpI?=
- =?us-ascii?Q?uYSxmG28qjvq8C1AVy4b0J/gz7U1BXcOzgef9KYuLpsyp14NOj1QQ2G0THaZ?=
- =?us-ascii?Q?C5WHMi4bFhSzjXGYrGUWrAgecCfsvToq4PXuR/G6M73D6VD4LK88t9gQAW83?=
- =?us-ascii?Q?+skxOFYj2IhaJhjtagU3Z1fNu4+lIrgFzPNWOKO8Q1ufC6HNYBhpy30wnzME?=
- =?us-ascii?Q?fav0mQNjy4YsNJJXsk2Bh2tO8THI1x1WvTpd8rlkNeoyeSTcj2j+xd/H6o1x?=
- =?us-ascii?Q?NzBKBMnMGqLC/AQkr9UOwPbtbQKm3KlGa3ZjvTVVp7xM0HZonY5o+jPRls4Q?=
- =?us-ascii?Q?osYy0V7b9WGq9LSN7YqpXhZ/OwqiySZNH4XDL4UFFV5+hp0j8Z7PcMqaRGIl?=
- =?us-ascii?Q?Th2xbKWgj1RamuHdVdGVaBK6730tEXn0OQTefzfGSXMX8qi0gA5qJ/Q+qU8W?=
- =?us-ascii?Q?WF6Fx77/kZK0xQpPYNWewSaVp6pf91Iq9nlRlD8SrhbkknNGl4tWWsF7LCVo?=
- =?us-ascii?Q?IZj9g5Uf/+ht1reD2Apgnn0D8QUQfmQrMeAmufKKFOtb68Rmo9j2S6IMNcBG?=
- =?us-ascii?Q?mD9MnS+WSmscSdOkBmQpjyzDQWQTCn8hqAcamGYU4s34nf17MzrnP9c9WkNx?=
- =?us-ascii?Q?BcQLPyjkbj01LISlEjUDw+gTuoxxbRAuHkkPV2CYyzfqhBfXkmKCUMzOTUCt?=
- =?us-ascii?Q?Z4HuHu7aOOwdvuYdnRCMOtQPIdOe7bSWyEcZiVCOWzxZjR3t408zvhEQCQZ9?=
- =?us-ascii?Q?vsnBk6oXdgoUwRzirHhkYk96YjIadzs21Kdz7xwx97L3hKQwfYicsxb9GpoG?=
- =?us-ascii?Q?xMFjpC+dpFYOt7UbETpUkChaxHUMB+xNF2Pcw5WYHyBO/3mfoXv6etK6F7kR?=
- =?us-ascii?Q?K1+LzeclxaINqS+DXJDLNT4LneRFfU0lb2XbKlxYh9ELanqDxyvrl6c4Tr9q?=
- =?us-ascii?Q?sACG1SAgIMexmbmXCDf0pY+9s9zwdli46ibxrBKAS9yio7YgVmRdBLjlJ4vA?=
- =?us-ascii?Q?z+KBnn1pkYdd96RxaLFzdwgvFkNQm4OLipPnz+dMHum0vkmSFnjAcSTWQ7EC?=
- =?us-ascii?Q?HtNs7CCL/R+UyAmJtzYIKQbYaohofTOoHSjLABl965h0xDhhSQxaN1KC24I/?=
- =?us-ascii?Q?lTdc4G3iLcMxKYv+DBBPVMVTWjZVpSoi3qEc/vU0gzh9y8byraSJ1S5WcnhZ?=
- =?us-ascii?Q?CCV7HyH0fTd2PUJUs2FjJ22j7Rzr0x//pZOnN5nmbFCYbeIzC+eP76HRAM0i?=
- =?us-ascii?Q?4csrcN1lIHXLWc7NdxUuGowJ?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99e513a2-b873-4e8f-56b7-08d987c57d8c
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2021 06:00:53.6530
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TNY3kQwEfhWN4CUvlJmpqXRnTyL5dEZebQyuld93rxfOjncI8tKUP3V+E3UzJ3bV44c20IB4Jv8xBLhxI1f4drpGCjfDmJ4SqskEyc6IAcM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1001MB2127
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10127 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0
- phishscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2109230001 definitions=main-2110050032
-X-Proofpoint-GUID: zBBtJy3Kooc3fAW0gbNDQqH90mP5uuOB
-X-Proofpoint-ORIG-GUID: zBBtJy3Kooc3fAW0gbNDQqH90mP5uuOB
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Oct 05, 2021 at 02:31:12AM +0300, Dmitry Baryshkov wrote:
-> On 04/10/2021 16:47, Dan Carpenter wrote:
-> > The "vbif->features" is type unsigned long but the debugfs file
-> > is treating it as a u32 type.  This will work in little endian
-> > systems, but the correct thing is to change the debugfs to use
-> > an unsigned long.
-> > 
-> > Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > You might wonder why this code has so many casts.  It's required because
-> > this data is const.  Which is fine because the file is read only.
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Hi Rob,
 
-> > 
-> >   drivers/gpu/drm/msm/disp/dpu1/dpu_vbif.c | 4 ++--
-> >   1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_vbif.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_vbif.c
-> > index 21d20373eb8b..e645a886e3c6 100644
-> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_vbif.c
-> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_vbif.c
-> > @@ -305,8 +305,8 @@ void dpu_debugfs_vbif_init(struct dpu_kms *dpu_kms, struct dentry *debugfs_root)
-> >   		debugfs_vbif = debugfs_create_dir(vbif_name, entry);
-> > -		debugfs_create_u32("features", 0600, debugfs_vbif,
-> > -			(u32 *)&vbif->features);
-> > +		debugfs_create_ulong("features", 0600, debugfs_vbif,
-> > +				     (unsigned long *)&vbif->features);
-> 
-> As you are converting this to the ulong file, could you please also remove
-> the now-unnecessary type cast?
+here is a patch series that cleans up some file references for dt-bindings
+in MAINTAINERS. It applies cleanly on next-20211001.
 
-I wanted to remove all the casting but they are required because of the
-const.
+This is a v4 of the still relevant patches from the first submission
+of the patch series (see Links) send out 2021-03-15 and resent on 2021-04-19
+and on 2021-07-26.
 
-regards,
-dan carpenter
+It now further includes more clean-up, see patches 9 to 11.
+
+Could you pick this series for your devicetree bindings tree?
+
+No functional change, just cleaning up MAINTAINERS.
+
+If I do not get a response on if this patch series can travel through
+your dt-bindings tree to Linus, I will send the next attempt to Andrew Morton
+as set of trivial clean-up patches for him to pick.
+
+Lukas
+
+Link: https://lore.kernel.org/lkml/20210315160451.7469-1-lukas.bulwahn@gmail.com/
+Link: https://lore.kernel.org/lkml/20210419092609.3692-1-lukas.bulwahn@gmail.com/
+Link: https://lore.kernel.org/lkml/20210614112349.26108-1-lukas.bulwahn@gmail.com/
+Link: https://lore.kernel.org/all/20210726142943.27008-1-lukas.bulwahn@gmail.com/
+
+Adjustment from original to resend version:
+  - drop subsumed patches
+
+Adjustment to resend version:
+  - add Fixes-tags as requested by Nobuhiro Iwamatsu
+
+Adjustment from v2 to v3:
+  - add more clean-up for file references on dt-bindings
+
+Adjustment from v3 to v4:
+  - add more recent clean-up for file references on dt-bindings (patches
+    9 to 11)
+
+  - add tags from previous versions:
+
+  MAINTAINERS: rectify entry for ARM/TOSHIBA VISCONTI ARCHITECTURE
+
+    Acked-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+      collected from https://lore.kernel.org/all/OSBPR01MB298322B4D87B2BA2F24515AD926C9@OSBPR01MB2983.jpnprd01.prod.outlook.com/
+      collected from https://lore.kernel.org/all/20210419232800.cbcyjlyrqywkrqdt@toshiba.co.jp/
+    
+    Reviewed-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+      collected from https://lore.kernel.org/all/TYAPR01MB62520BAEC54CC5D235489D6C92E99@TYAPR01MB6252.jpnprd01.prod.outlook.com/
+
+
+  MAINTAINERS: rectify entry for FREESCALE IMX / MXC FEC DRIVER
+
+    Reviewed-by: Joakim Zhang <qiangqing.zhang@nxp.com>
+      collected from https://lore.kernel.org/all/DB8PR04MB679585B2A7F359F415591356E6E99@DB8PR04MB6795.eurprd04.prod.outlook.com/
+
+   
+  MAINTAINERS: rectify entry for ALLWINNER HARDWARE SPINLOCK SUPPORT
+
+    Reviewed-by: Wilken Gottwalt <wilken.gottwalt@posteo.net>
+      collected from https://lore.kernel.org/all/20210728070608.5f5b8d14@monster.powergraphx.local/
+
+
+  MAINTAINERS: rectify entries with documentation-file-ref check
+
+    Acked-by: Linus Walleij <linus.walleij@linaro.org>
+      collected from https://lore.kernel.org/all/CACRpkdYH=rQEK0sRU8DueUbvffe8DhKdH_nu7u4Pnk3MaBNmig@mail.gmail.com/
+
+    For the line which rectifies nxp,imx8-jpeg.yaml:
+    Reviewed-by: Mirela Rabulea <mirela.rabulea@nxp.com>
+      collected from https://lore.kernel.org/all/647389a9a4db416550bb4c44c9ef87b6f3091fac.camel@nxp.com/
+
+  MAINTAINERS: rectify entries to mtd-physmap.yaml
+
+    Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+      collected from https://lore.kernel.org/all/20210726172902.4ce8892f@xps13/  
+
+    Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+      collected from https://lore.kernel.org/all/CACRpkdb-3nesRvmwO8t-sQxxb1HAXe-GVL98MZnmisnf_0ji+A@mail.gmail.com/
+
+
+Lukas Bulwahn (11):
+  MAINTAINERS: rectify entry for ARM/TOSHIBA VISCONTI ARCHITECTURE
+  MAINTAINERS: rectify entry for HIKEY960 ONBOARD USB GPIO HUB DRIVER
+  MAINTAINERS: rectify entry for INTEL KEEM BAY DRM DRIVER
+  MAINTAINERS: rectify entries with documentation-file-ref check
+  MAINTAINERS: rectify entry for ALLWINNER HARDWARE SPINLOCK SUPPORT
+  MAINTAINERS: rectify entries to mtd-physmap.yaml
+  MAINTAINERS: rectify entry for ARM/ASPEED I2C DRIVER
+  MAINTAINERS: rectify entry for FREESCALE IMX / MXC FEC DRIVER
+  MAINTAINERS: rectify more entries with documentation-file-ref check
+  MAINTAINERS: rectify entry for SY8106A REGULATOR DRIVER
+  MAINTAINERS: rectify entry for CHIPONE ICN8318 I2C TOUCHSCREEN DRIVER
+
+ MAINTAINERS | 35 +++++++++++++++++------------------
+ 1 file changed, 17 insertions(+), 18 deletions(-)
+
+-- 
+2.26.2
 
