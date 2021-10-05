@@ -2,119 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C5EC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 07:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C634BC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 14:42:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF34161352
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 07:55:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD22061372
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 14:42:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230286AbhJEH5g (ORCPT
+        id S235075AbhJEOoI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Oct 2021 03:57:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36200 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233079AbhJEH5P (ORCPT
+        Tue, 5 Oct 2021 10:44:08 -0400
+Received: from mail-oi1-f177.google.com ([209.85.167.177]:43923 "EHLO
+        mail-oi1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233705AbhJEOoH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Oct 2021 03:57:15 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F019DC061745;
-        Tue,  5 Oct 2021 00:55:24 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id b136-20020a1c808e000000b0030d60716239so2117679wmd.4;
-        Tue, 05 Oct 2021 00:55:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=brZh1+Y4mHA/auO2EBCD5YPji97xxxj6RW4xNGX8ors=;
-        b=mHx5qfHOatJkPOCvAdiuUIX1yNyMWnYxBBEsHai7TBt1glMEyd+3b4gUUvkccC3n+U
-         QwfxDUQTWlId/CBwK46L+oRHCTxd9pHXARVsxC8YoHnKGK4l3Y1B99Rtfd9uf6jBTxpi
-         sUjAJhKdF0VOrVCOUvq2S5t2LKHChQLNGJpWXhIqh45n64zEQ4u/Bz5XAADhMgOzyvRe
-         Zgcvv1tI6+paPWAYnLA0KCKBg2kES2OnlCdt8AW5LBthfNuYbtO0/loRCHBbFpvBgtv2
-         7bSYnIuKnky9A1AfOF3niEIPTeeVBdRTFpzQZM+I8zwkLTz9Bxi0LndLIHx+zbZtn/mB
-         Ygaw==
+        Tue, 5 Oct 2021 10:44:07 -0400
+Received: by mail-oi1-f177.google.com with SMTP id o4so2583766oia.10;
+        Tue, 05 Oct 2021 07:42:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=brZh1+Y4mHA/auO2EBCD5YPji97xxxj6RW4xNGX8ors=;
-        b=fZBOBUm6mEdQ/I2x3S1bY7aXh5B6RAt83WkHbTOcsoOAe3KQmxwNu2AhN09MCvALiM
-         WW3yzyiQC3UzGiXXlPCU1KiP9RxIzcUB6spZYgbV3Plo4k8a9cz/mHwkkTLg7oLFj95o
-         Ey19q0MZRBT75wuvpXogdGqyzoXW7X2yVHLNU04EqdTmRCQ4ut+sXTMSGQzps6jMQHR7
-         TZISJjOJuaprEynwo48/HDl2ns6m/TJG6n/ojihr8lrq6FhkeiQZeVBI/riqz4opuCBT
-         ljRttuA3UviZlpHbG43G3HPX3JHMTIXSr6/5WHECfdDeqIhhf6vLWtisilnykIVMAJUl
-         m9kw==
-X-Gm-Message-State: AOAM533Ey8qhVQLhOMiI6M0xGlVboFLb6crLjMK6Ti6NkYc9qgPhTYQC
-        NoAvyJqIO0Rh7NdquN+7eBI=
-X-Google-Smtp-Source: ABdhPJwIv0XwXYQoKg4et/C8qG54noBHCTk4D91AKyiqBvwcooJpdbo1NTDJtrjAgBgB6qnQG+DyfQ==
-X-Received: by 2002:a05:600c:aca:: with SMTP id c10mr1821856wmr.174.1633420523465;
-        Tue, 05 Oct 2021 00:55:23 -0700 (PDT)
-Received: from localhost.localdomain (i59F67A83.versanet.de. [89.246.122.131])
-        by smtp.gmail.com with ESMTPSA id o1sm1176984wmq.26.2021.10.05.00.55.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Oct 2021 00:55:23 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc:     Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Yu Chen <chenyu56@huawei.com>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Naga Sureshkumar Relli <nagasure@xilinx.com>,
-        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-        Deepak Saxena <dsaxena@plexity.net>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Wilken Gottwalt <wilken.gottwalt@posteo.net>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Mark Brown <broonie@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH v4 07/11] MAINTAINERS: rectify entry for ARM/ASPEED I2C DRIVER
-Date:   Tue,  5 Oct 2021 09:54:47 +0200
-Message-Id: <20211005075451.29691-8-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20211005075451.29691-1-lukas.bulwahn@gmail.com>
-References: <20211005075451.29691-1-lukas.bulwahn@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eZwLpL3VR1cDxPTIuLWceDkViaFbLKix0Hx3TUG7elc=;
+        b=SU3ofwoQli/UBW8PwznNzXTHtUtlVI4P8/WZCpJpEqcK8RL01sekP7dwCQR+MDjHND
+         /KpyGNU3I99K4La/USw4iDmhCctIoSsEVdLraq5QhBeS8SwHv8f96yGAZZnuBXdUvQUH
+         +vlcuund9X/mgXJEGjDCdN5JufBizxDDuHkP5Ic2NOZR87VJJdo0QN02oBFoi59IjqSx
+         aBr6LLlGZ+awJO717qiEOcdWmlUk6m/vaiZrPKdXAQk84yHrAS7exsX4mGQ/CTA4Yygd
+         DD1Hrz1vJ3mM2PzdeUgFUnZryf+sa/THKDigJ9mkuVaOjm0zbUTXVne5HY6FFolUIa90
+         YkFg==
+X-Gm-Message-State: AOAM532ui/9KjAR90Tumk/5CGV7I4KSIobrsGDcdebbd7+h8e6ZTkENt
+        cH+RhUAzsivjmxAAgXIq2RoqRyz/Tt7M8FENxoI=
+X-Google-Smtp-Source: ABdhPJwBSQTruG4tXHdQMFKRNdq9o7SvD0P5bn3E9E1CZEYOchSGi2uTsPDGXPY9h9SA95cqB2Yd2ha3bikKX6rl05E=
+X-Received: by 2002:a05:6808:1816:: with SMTP id bh22mr2786784oib.69.1633444936747;
+ Tue, 05 Oct 2021 07:42:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <f7513027ae9242643b5ddb6ed48a3aeca1b0f2a8.1632640557.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <f7513027ae9242643b5ddb6ed48a3aeca1b0f2a8.1632640557.git.christophe.jaillet@wanadoo.fr>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 5 Oct 2021 16:42:05 +0200
+Message-ID: <CAJZ5v0hSRn2Au5phOHnoR3SMtA0B-H_tn+dskHSZEfHt1g9G_g@mail.gmail.com>
+Subject: Re: [PATCH] thermal: intel_powerclamp: Use bitmap_zalloc/bitmap_free
+ when applicable
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     "Zhang, Rui" <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 810e4441946c ("dt-bindings: aspeed-i2c: Convert txt to yaml format")
-converts i2c-aspeed.txt to aspeed,i2c.yaml, but missed to adjust its
-reference in MAINTAINERS.
+On Sun, Sep 26, 2021 at 9:17 AM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> 'cpu_clamping_mask' is a bitmap. So use 'bitmap_zalloc()' and
+> 'bitmap_free()' to simplify code, improve the semantic of the code and
+> avoid some open-coded arithmetic in allocator arguments.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/thermal/intel/intel_powerclamp.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/thermal/intel/intel_powerclamp.c b/drivers/thermal/intel/intel_powerclamp.c
+> index a5b58ea89cc6..9b68489a2356 100644
+> --- a/drivers/thermal/intel/intel_powerclamp.c
+> +++ b/drivers/thermal/intel/intel_powerclamp.c
+> @@ -705,10 +705,8 @@ static enum cpuhp_state hp_state;
+>  static int __init powerclamp_init(void)
+>  {
+>         int retval;
+> -       int bitmap_size;
+>
+> -       bitmap_size = BITS_TO_LONGS(num_possible_cpus()) * sizeof(long);
+> -       cpu_clamping_mask = kzalloc(bitmap_size, GFP_KERNEL);
+> +       cpu_clamping_mask = bitmap_zalloc(num_possible_cpus(), GFP_KERNEL);
+>         if (!cpu_clamping_mask)
+>                 return -ENOMEM;
+>
+> @@ -753,7 +751,7 @@ static int __init powerclamp_init(void)
+>  exit_unregister:
+>         cpuhp_remove_state_nocalls(hp_state);
+>  exit_free:
+> -       kfree(cpu_clamping_mask);
+> +       bitmap_free(cpu_clamping_mask);
+>         return retval;
+>  }
+>  module_init(powerclamp_init);
+> @@ -764,7 +762,7 @@ static void __exit powerclamp_exit(void)
+>         cpuhp_remove_state_nocalls(hp_state);
+>         free_percpu(worker_data);
+>         thermal_cooling_device_unregister(cooling_dev);
+> -       kfree(cpu_clamping_mask);
+> +       bitmap_free(cpu_clamping_mask);
+>
+>         cancel_delayed_work_sync(&poll_pkg_cstate_work);
+>         debugfs_remove_recursive(debug_dir);
+> --
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
-a broken reference.
-
-Rectify this file reference in ARM/ASPEED I2C DRIVER.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0650954f1570..1337ba843f26 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1762,7 +1762,7 @@ R:	Joel Stanley <joel@jms.id.au>
- L:	linux-i2c@vger.kernel.org
- L:	openbmc@lists.ozlabs.org (moderated for non-subscribers)
- S:	Maintained
--F:	Documentation/devicetree/bindings/i2c/i2c-aspeed.txt
-+F:	Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
- F:	Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2400-i2c-ic.txt
- F:	drivers/i2c/busses/i2c-aspeed.c
- F:	drivers/irqchip/irq-aspeed-i2c-ic.c
--- 
-2.26.2
-
+Applied as 5.16 material, thanks!
