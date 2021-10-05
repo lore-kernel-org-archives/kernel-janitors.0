@@ -2,44 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF747C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 15:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3326C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 15:37:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE8556115A
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 15:16:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94C5F60F9D
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Oct 2021 15:37:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235519AbhJEPSE (ORCPT
+        id S236030AbhJEPjn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Oct 2021 11:18:04 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:60900
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235709AbhJEPSD (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Oct 2021 11:18:03 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 9C8753FFEA;
-        Tue,  5 Oct 2021 15:16:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633446971;
-        bh=QvIq1h9e/NhyWPRySEGTralffxgGmERWgEP2mQB01KM=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=WQCsf16xlonqTKrvB6VvrnLWy3lGEt1zYlmSjqrfimyiIJ602hd1J4b0ZKRgS6qDQ
-         jkFEVgJNKJ4osEMI71osYYHSRCbXMHe4ZyVj9NLD4BElT5na+cUXSgjYoWO9PvkUMV
-         k6BOgCCDtFFVAST9Ej25fe+EWj/enZOzM2h7SUFfSUHXQhcRFQATnl1O4WlIodQ2BO
-         fG+J0BzxztbALuShndTtaY57SntV5nwZfEtgEJ3xV8XA6AbRSyfrQnHtMVwwl1/AAB
-         APV2XlXHgWLMGSadJ9irMSldQbuGISY8qE5mLJHUT1tUBFU4tVdolduxurZi1sMkxs
-         oKZKXcYg/6mgg==
-From:   Colin King <colin.king@canonical.com>
-To:     Corey Minyard <minyard@acm.org>,
-        openipmi-developer@lists.sourceforge.net
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ipmi: ipmb: Fix off-by-one size check on rcvlen
-Date:   Tue,  5 Oct 2021 16:16:11 +0100
-Message-Id: <20211005151611.305383-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        Tue, 5 Oct 2021 11:39:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43232 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235942AbhJEPjl (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 5 Oct 2021 11:39:41 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 69245610EA;
+        Tue,  5 Oct 2021 15:37:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633448270;
+        bh=s8dscrrIAsTmIuDm+tx17i82rsTJNNFZ/mXmMzrR8a8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=V422fjGQ5XIVBiW3hGv4wEyMh5NPtAi1+IcycV9rfcvPIrDaRz0y+qXjnMCD00TTT
+         u2sklFX6x9jdCrvu+6F/1j77FAraO7T5FVvbqmM7CtocIajF4ypxFUjXEPS/8SkjAx
+         ZdUbiwuU99pWVRZg5HAjp6KYpoEuAhAHmr2vJuQd5UIpxF2T6P+FDJBMj8njgfYVnr
+         V95Do6ZtHdk4ak1yaCUOhrTmQLH4zDbWb1hKJAlNtP9rYV1T3PsWnGRBlePU/JYnk/
+         CN8qIJTegt13fRsKQo7YEZY/6vuBLpe/OXhsThYQyAY4YlT4vUHWQTrznNkGlSo7fL
+         R6lar4nOFt6Tg==
+From:   Mark Brown <broonie@kernel.org>
+To:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Nishanth Menon <nm@ti.com>,
+        Naga Sureshkumar Relli <nagasure@xilinx.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Mirela Rabulea <mirela.rabulea@nxp.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+        linux-kernel@vger.kernel.org,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Wilken Gottwalt <wilken.gottwalt@posteo.net>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Tero Kristo <kristo@kernel.org>, Yu Chen <chenyu56@huawei.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Deepak Saxena <dsaxena@plexity.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        kernel-janitors@vger.kernel.org,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Subject: Re: (subset) [PATCH v4 00/11] Rectify file references for dt-bindings in MAINTAINERS
+Date:   Tue,  5 Oct 2021 16:37:40 +0100
+Message-Id: <163344802403.1141521.13995618381491807996.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20211005075451.29691-1-lukas.bulwahn@gmail.com>
+References: <20211005075451.29691-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -47,32 +65,40 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, 5 Oct 2021 09:54:40 +0200, Lukas Bulwahn wrote:
+> here is a patch series that cleans up some file references for dt-bindings
+> in MAINTAINERS. It applies cleanly on next-20211001.
+> 
+> This is a v4 of the still relevant patches from the first submission
+> of the patch series (see Links) send out 2021-03-15 and resent on 2021-04-19
+> and on 2021-07-26.
+> 
+> [...]
 
-There is an off-by-one bounds check on the rcvlen causing a potential
-out of bounds write on iidev->rcvmsg. Fix this by using the >= operator
-on the bounds check rather than the > operator.
+Applied to
 
-Addresses-Coverity: ("Out-of-bounds write")
-Fixes: 0ba0c3c5d1c1 ("ipmi:ipmb: Add initial support for IPMI over IPMB")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/char/ipmi/ipmi_ipmb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-diff --git a/drivers/char/ipmi/ipmi_ipmb.c b/drivers/char/ipmi/ipmi_ipmb.c
-index b10a1fd9c563..77ebec4ed28e 100644
---- a/drivers/char/ipmi/ipmi_ipmb.c
-+++ b/drivers/char/ipmi/ipmi_ipmb.c
-@@ -192,7 +192,7 @@ static int ipmi_ipmb_slave_cb(struct i2c_client *client,
- 		break;
- 
- 	case I2C_SLAVE_WRITE_RECEIVED:
--		if (iidev->rcvlen > sizeof(iidev->rcvmsg))
-+		if (iidev->rcvlen >= sizeof(iidev->rcvmsg))
- 			iidev->overrun = true;
- 		else
- 			iidev->rcvmsg[iidev->rcvlen++] = *val;
--- 
-2.32.0
+Thanks!
 
+[10/11] MAINTAINERS: rectify entry for SY8106A REGULATOR DRIVER
+        commit: beb76cb4eebf9ac4ff15312e33f97db621b46da7
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
