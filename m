@@ -2,74 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47270C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 08:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0F69C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 09:34:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A2FF60F5C
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 08:49:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 827CB61074
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 09:34:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237749AbhJFIvt (ORCPT
+        id S237826AbhJFJgT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 6 Oct 2021 04:51:49 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:52646
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237593AbhJFIvs (ORCPT
+        Wed, 6 Oct 2021 05:36:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53356 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229824AbhJFJgT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 6 Oct 2021 04:51:48 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id D7F523F226;
-        Wed,  6 Oct 2021 08:49:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633510195;
-        bh=h9EtN4sARs+pZ7j+bbOMdD16anrHHdUQKy002WSlXfY=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=sXs0o2dvxUe7dmE9q5ELqrVp2PkxLTtcBKflP3iuJN1qnOiw+OrEjXbxBa7tTlokv
-         E5iB5q6UfGHoH6fkO0qr+Wfqc2KQEJmNlCdRdVNfq8h7jKIXbHsP/V9Try154ZYa8F
-         +Phdx1hFLHiWGyLTUznHahYwJR0iR8P6VM9qh/IP/RgE9L4k3pVwZglL97jBhsHvbs
-         5aWE0nJVN56zJP+iU+7Xem97qjcCs4D7VPAphqvE9rQ5mWmoQqcF2NRy9RIxpZ+F7S
-         2oxhSGlStMmblVPwXy8y0YUbtOFYjG+4r4NCvWNJVoKPWq61BJxCGbyTI2+B55lYSU
-         qjMuxaHDYC0Wg==
-From:   Colin King <colin.king@canonical.com>
-To:     Ariel Elior <aelior@marvell.com>, GR-everest-linux-l2@marvell.com,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] qed: Fix spelling mistake "ctx_bsaed" -> "ctx_based"
-Date:   Wed,  6 Oct 2021 09:49:55 +0100
-Message-Id: <20211006084955.350530-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        Wed, 6 Oct 2021 05:36:19 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43F22C061749;
+        Wed,  6 Oct 2021 02:34:27 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id j8so6841292wro.7;
+        Wed, 06 Oct 2021 02:34:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=i03E/waTnML0dSPg5cF+6UnHJ83NBJcxKTyso1VDAUs=;
+        b=nHagkutTKcoF6y48vPoHmMe8GHnT495igwU7aipMeHm9D1HXs8KJrJS2JrdO/Oa1um
+         e50w8j0ccpipf6JwglmLJfVfcarPxrcBWWPiYaO1WNLVPWnrH1s2LBYaaMWNxrp2YXQW
+         IyNPzFFphtGNWFG3LgrKVfFl+NHHTsfVQsc7FEKjEgH7iaO8KUHQgTlEjj1K22jyViuu
+         ivEtU41oPUnu7soLmQ5NgQ8JF7NclHkCSYz91RCXeo52ZfM0KswIl+HvHnSwR6m5z0oa
+         BB87bXNv3bQv6r/jHstn7M0VgN7qQBPNVL3I4cHrO0nc6D4XvB8o/ptll7PHkaH3oU78
+         7S0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=i03E/waTnML0dSPg5cF+6UnHJ83NBJcxKTyso1VDAUs=;
+        b=3hRDTPsi9vrUvfZJ4PddiePXaU6CWBDt6xuekgy9vCCcC/Q4NfTYvWTAIsPoQdPhYm
+         1Y3raduz3vs2I4jiTT48WZJgl2nvu1r71bTAW8tk7A6t2WGftUsEMr7oMBdEqHSoaKjH
+         zd4nk70nls2MYKNjdkHyKWq+jmSVULKIDCPFXBrcgQDu6WkRFpf4/3amZP8XIkuqocml
+         oDgt6GmcXVHQK5pcu4zLqc/zR96+r5Y6Z6z2SlppcMV1SxbknBE1D+zekJ5wFN99KXVF
+         yu+t9tYk5QuJQf96dP7bMJks0QdxrOPNIQdCuk804k6fFfJVTOUs6hDEYGReb1Qe5njk
+         QOQg==
+X-Gm-Message-State: AOAM530E4yc8V9V3TUI+1ILJd2ZJtYXRcaENTxL3Kc59I+2rFsOIxGHD
+        Ce6Zj/SzYj3+m1d3XnsEOnw=
+X-Google-Smtp-Source: ABdhPJydPqaSBH7H0uNoRaCFS525dc7ctECN6YVxBa6JjZDQonN/MatD592KdWzBZmHK91OPVvJ+mw==
+X-Received: by 2002:a5d:664f:: with SMTP id f15mr27416198wrw.143.1633512865679;
+        Wed, 06 Oct 2021 02:34:25 -0700 (PDT)
+Received: from localhost.localdomain (i577BCBA0.versanet.de. [87.123.203.160])
+        by smtp.gmail.com with ESMTPSA id x10sm4725186wmk.42.2021.10.06.02.34.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Oct 2021 02:34:25 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] async_tx: correct reference to ASYNC_TX_ENABLE_CHANNEL_SWITCH
+Date:   Wed,  6 Oct 2021 11:34:16 +0200
+Message-Id: <20211006093416.4750-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Commit b802c8410ca9 ("async_tx: deprecate broken support for channel
+switching") in 2017 intended to "prevent async_tx from using an offload
+engine if the channel switching capability is enabled" by adding a
+suitable ifdef on the corresponding config.
 
-There is a spelling mistake in a DP_VERBOSE message. Fix it.
+The config for determining if  the channel switching capability is
+enabled is called CONFIG_ASYNC_TX_ENABLE_CHANNEL_SWITCH, however
+the ifdef falsely refers to CONFIG_ASYNC_TX_CHANNEL_SWITCH (note the
+missing "ENABLE").
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Correct the name of the config to the intended one.
+
+Fixes: b802c8410ca9 ("async_tx: deprecate broken support for channel switching")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/net/ethernet/qlogic/qed/qed_ll2.c | 2 +-
+ include/linux/async_tx.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.c b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-index 69ffa4eb842f..3fedcefc36d8 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-@@ -1654,7 +1654,7 @@ int qed_ll2_establish_connection(void *cxt, u8 connection_handle)
+diff --git a/include/linux/async_tx.h b/include/linux/async_tx.h
+index 5cc73d7e5b52..8c7b940d9912 100644
+--- a/include/linux/async_tx.h
++++ b/include/linux/async_tx.h
+@@ -74,7 +74,7 @@ struct async_submit_ctl {
+ 	void *scribble;
+ };
  
- 	DP_VERBOSE(p_hwfn,
- 		   QED_MSG_LL2,
--		   "Establishing ll2 queue. PF %d ctx_bsaed=%d abs qid=%d stats_id=%d\n",
-+		   "Establishing ll2 queue. PF %d ctx_based=%d abs qid=%d stats_id=%d\n",
- 		   p_hwfn->rel_pf_id,
- 		   p_ll2_conn->input.rx_conn_type, qid, stats_id);
+-#if defined(CONFIG_DMA_ENGINE) && !defined(CONFIG_ASYNC_TX_CHANNEL_SWITCH)
++#if defined(CONFIG_DMA_ENGINE) && !defined(CONFIG_ASYNC_TX_ENABLE_CHANNEL_SWITCH)
+ #define async_tx_issue_pending_all dma_issue_pending_all
  
+ /**
 -- 
-2.32.0
+2.26.2
 
