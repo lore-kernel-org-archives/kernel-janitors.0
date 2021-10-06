@@ -2,79 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C54ABC433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 10:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B55CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 10:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9089161152
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 10:04:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42246610C7
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 10:55:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237851AbhJFKGt (ORCPT
+        id S237984AbhJFK5Y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 6 Oct 2021 06:06:49 -0400
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:51247 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229874AbhJFKGt (ORCPT
+        Wed, 6 Oct 2021 06:57:24 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:56812
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231240AbhJFK5X (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 6 Oct 2021 06:06:49 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id D9F205C0598;
-        Wed,  6 Oct 2021 06:04:54 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Wed, 06 Oct 2021 06:04:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=DHdY0P
-        8t+NxfmohgFjnCgxIWqZvj1Cdhe7owPofDXRA=; b=eZa3tSBFRb2wcoQmhi0gnR
-        Ig28yEHInV5ap6/ZlCUXfSKhtunJqTw8I0LsIuu034hfo69wdlV3N9csG4H4Sy6g
-        1g/h+jrlSYA9Z8b4WKcX0Uq5Juy+a4wRHSb1aA1gWZ5z9RZp7O97rsb92R8ZPfWp
-        GxPasoIF6MOVrCISRiAqZ0OFqREFhYEgiqvfI5zw+s35QMxh+iarQQuEqlXhtHAC
-        4fDVVvcX5YFAQQuGI+jZ0f0FrYOGjDTvKMb4YTS1/BxkTkuirelX9xXG3pw3PNZy
-        3PDNssKwXz5nm1UWs9YaDNCqifqjZqlIgrIhJUkdbT40JdR+npIRm9u/AiaBFSoQ
-        ==
-X-ME-Sender: <xms:xnRdYbeTrLTMrpmNqdrfYaEbspfnPCMOpvElkSF5L2hU17uzTsjWjw>
-    <xme:xnRdYRNr2yCOQgk_jDDunjV2pqx2WFQ6BHuZ-Yuk8qYGewBipjN0uoreyKwiSqj2c
-    eLliE01vLTxCvw>
-X-ME-Received: <xmr:xnRdYUgBhEaKOjXiulcThXjnjVJl3N0feyMFy-MEIxJXWKQmWFf-NhrfipmunWOr5pOL34KXojj-6uxAhd3EhUISZ6TV4A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudeliedgvdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefkughoucfu
-    tghhihhmmhgvlhcuoehiughoshgthhesihguohhstghhrdhorhhgqeenucggtffrrghtth
-    gvrhhnpedtffekkeefudffveegueejffejhfetgfeuuefgvedtieehudeuueekhfduheel
-    teenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehiug
-    hoshgthhesihguohhstghhrdhorhhg
-X-ME-Proxy: <xmx:xnRdYc-nnoJUDjLErFS3gGd3_CSOiBKRSrpJdZxoNDdwFGYlDshqfg>
-    <xmx:xnRdYXsxaZmtzyAkLoMmtBrhWpjiJmm5gLiuxquF8nYKbRGo2oCIag>
-    <xmx:xnRdYbEviZyyeAX-F8tGH2BGCegXhDQcSalYn0NngO1FnvQOdPuFww>
-    <xmx:xnRdYRIuEaCpCSJ0TqNfrmlIdbEalOL9ek6J5ZBwZnpKQ5PJDRt8PQ>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 6 Oct 2021 06:04:54 -0400 (EDT)
-Date:   Wed, 6 Oct 2021 13:04:51 +0300
-From:   Ido Schimmel <idosch@idosch.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Jiri Pirko <jiri@nvidia.com>, Ido Schimmel <idosch@nvidia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] mlxsw: spectrum_buffers: silence uninitialized
- warning
-Message-ID: <YV10w28vbsenFRFU@shredder>
-References: <20211006073347.GB8404@kili>
+        Wed, 6 Oct 2021 06:57:23 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 16B823FFE5;
+        Wed,  6 Oct 2021 10:55:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1633517730;
+        bh=8iImzst3oOFXm9Ridza0PRSEBpaLF5YlJ5ZO5d+yCY0=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=eVGkOwC/tJzoy7QmH2ZnvQG/p4Wv1R6BDazR8DhPxXur8GhKxFh5IYb4bjUC6nTHE
+         l3PpoHoIgwufhajOGbxSBzmVT7YOGCCHV3LtqCfSkPqdZaa6JMjlWeptir81ksbg8q
+         7okq/Y0A3XbAUwgRIw3Le6GbuZmWfqSAtLQ1GKsvedYBqLMZS/MYLHcHoPrxyFc1eN
+         7s7SwDq19Z5rW5N78M5f24T2cxR5I31fsDPOubH/Q5L7i/kP5PoKgAnrkasTrVsX/j
+         AQvEjTtPTq5CZo40v/duepkPStREF9a87GcwwxGyu8U3wt5gXW4LxtSNMKOuYB2QmQ
+         MGleUrP35rXSg==
+From:   Colin King <colin.king@canonical.com>
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Anilkumar Kolli <akolli@codeaurora.org>,
+        Jouni Malinen <jouni@codeaurora.org>,
+        ath11k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ath11k: Remove redundant assignment to variable fw_size
+Date:   Wed,  6 Oct 2021 11:55:29 +0100
+Message-Id: <20211006105529.1011239-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211006073347.GB8404@kili>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Oct 06, 2021 at 10:33:47AM +0300, Dan Carpenter wrote:
-> Static checkers and runtime checkers such as KMSan will complain that
-> we do not initialize the last 6 bytes of "cb_priv".  The caller only
-> uses the first two bytes so it doesn't cause a runtime issue.  Still
-> worth fixing though.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Ido Schimmel <idosch@nvidia.com>
+Variable fw_size is being assigned a value that is never read and
+being re-assigned a new value in the next statement. The assignment
+is redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Fixes: 336e7b53c82f ("ath11k: clean up BDF download functions")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ath/ath11k/qmi.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ath11k/qmi.c b/drivers/net/wireless/ath/ath11k/qmi.c
+index 8c615bc788ca..fa73118de6db 100644
+--- a/drivers/net/wireless/ath/ath11k/qmi.c
++++ b/drivers/net/wireless/ath/ath11k/qmi.c
+@@ -2135,7 +2135,6 @@ static int ath11k_qmi_load_bdf_qmi(struct ath11k_base *ab)
+ 
+ 	ath11k_dbg(ab, ATH11K_DBG_QMI, "qmi bdf_type %d\n", bdf_type);
+ 
+-	fw_size = bd.len;
+ 	fw_size = min_t(u32, ab->hw_params.fw.board_size, bd.len);
+ 
+ 	ret = ath11k_qmi_load_file_target_mem(ab, bd.data, fw_size, bdf_type);
+-- 
+2.32.0
+
