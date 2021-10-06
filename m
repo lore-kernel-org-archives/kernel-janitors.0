@@ -2,112 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C25C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 16:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45306C4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 17:23:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1902D610E5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 16:55:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2785C610E6
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 17:23:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239424AbhJFQ5c (ORCPT
+        id S238245AbhJFRZp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 6 Oct 2021 12:57:32 -0400
-Received: from bues.ch ([80.190.117.144]:39456 "EHLO bues.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239417AbhJFQ5c (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 6 Oct 2021 12:57:32 -0400
-Received: by bues.ch with esmtpsa (Exim 4.92)
-        (envelope-from <m@bues.ch>)
-        id 1mY9Z0-0002Y7-VV; Wed, 06 Oct 2021 18:14:39 +0200
-Date:   Wed, 6 Oct 2021 18:13:58 +0200
-From:   Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] b43legacy: fix a lower bounds test
-Message-ID: <20211006181358.67a23e18@wiggum>
-In-Reply-To: <20211006073542.GD8404@kili>
-References: <20211006073542.GD8404@kili>
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        Wed, 6 Oct 2021 13:25:45 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:60478
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229835AbhJFRZo (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 6 Oct 2021 13:25:44 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id CE11D3FFE4;
+        Wed,  6 Oct 2021 17:23:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1633541030;
+        bh=MJeBRb5etdZcXTPQ8b0j2/km0oaalM1EtK76TFXxa+w=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=lp/3KZVs08cKssNF2KsDkim83QzobVTto7zJRqmjSopuQJMf35IzPuUrk0I/Tc7Nd
+         8h0KtwSDdyDs2bvO5kIQuDZfciBX95YI7/6KgczSNTi+9VeD//rvJmDOhtQPXirFSc
+         FNq0b2zmzwaxKDyWCHteFiqBWhVlHReLeXFOL3xWEJkFjGHG3ROgz1itrdGiC1afRt
+         PT35LUZ/9DDo5y2zDhPpqXzJfzDHtpiPD/qqnLqktqYYGuFm1Ksg0vrWDnF51gfSjs
+         6i6mnDAMMQXG6B2WTU++E9IG7IEU5h9f6qsoef7vUU05bBSch5POIP0aePxZGd8EAT
+         WcSwe+xrug/Gw==
+From:   Colin King <colin.king@canonical.com>
+To:     David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto : asymmetric_keys: Fix function description to match prototype
+Date:   Wed,  6 Oct 2021 18:23:50 +0100
+Message-Id: <20211006172350.1025091-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/goiVgRssi9A8ba=rcm/gfDw";
- protocol="application/pgp-signature"; micalg=pgp-sha512
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
---Sig_/goiVgRssi9A8ba=rcm/gfDw
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+From: Colin Ian King <colin.king@canonical.com>
 
-On Wed, 6 Oct 2021 10:35:42 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+The function arguments in the description does not match the prototype.
+Fix this by renaming trust_keys to trusted_keys.
 
-> The problem is that "channel" is an unsigned int, when it's less 5 the
-> value of "channel - 5" is not a negative number as one would expect but
-> is very high positive value instead.
->=20
-> This means that "start" becomes a very high positive value.  The result
-> of that is that we never enter the "for (i =3D start; i <=3D end; i++) {"
-> loop.  Instead of storing the result from b43legacy_radio_aci_detect()
-> it just uses zero.
->=20
-> Fixes: 75388acd0cd8 ("[B43LEGACY]: add mac80211-based driver for legacy B=
-CM43xx devices")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This fix is correct, but making dead code go live can sometimes expose
-> bugs which were previously hiding and is always carries a slight risk.
->=20
->  drivers/net/wireless/broadcom/b43legacy/radio.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/wireless/broadcom/b43legacy/radio.c b/drivers/ne=
-t/wireless/broadcom/b43legacy/radio.c
-> index 06891b4f837b..fdf78c10a05c 100644
-> --- a/drivers/net/wireless/broadcom/b43legacy/radio.c
-> +++ b/drivers/net/wireless/broadcom/b43legacy/radio.c
-> @@ -283,7 +283,7 @@ u8 b43legacy_radio_aci_scan(struct b43legacy_wldev *d=
-ev)
->  			    & 0x7FFF);
->  	b43legacy_set_all_gains(dev, 3, 8, 1);
-> =20
-> -	start =3D (channel - 5 > 0) ? channel - 5 : 1;
-> +	start =3D (channel > 5) ? channel - 5 : 1;
->  	end =3D (channel + 5 < 14) ? channel + 5 : 13;
-> =20
->  	for (i =3D start; i <=3D end; i++) {
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ crypto/asymmetric_keys/verify_pefile.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Nice finding.
+diff --git a/crypto/asymmetric_keys/verify_pefile.c b/crypto/asymmetric_keys/verify_pefile.c
+index 7553ab18db89..148cad70fe79 100644
+--- a/crypto/asymmetric_keys/verify_pefile.c
++++ b/crypto/asymmetric_keys/verify_pefile.c
+@@ -387,7 +387,7 @@ static int pefile_digest_pe(const void *pebuf, unsigned int pelen,
+  * verify_pefile_signature - Verify the signature on a PE binary image
+  * @pebuf: Buffer containing the PE binary image
+  * @pelen: Length of the binary image
+- * @trust_keys: Signing certificate(s) to use as starting points
++ * @trusted_keys: Signing certificate(s) to use as starting points
+  * @usage: The use to which the key is being put.
+  *
+  * Validate that the certificate chain inside the PKCS#7 message inside the PE
+-- 
+2.32.0
 
-Acked-by: Michael B=C3=BCsch <m@bues.ch>
-
-
---=20
-Michael
-
-https://bues.ch/
-
---Sig_/goiVgRssi9A8ba=rcm/gfDw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmFdy0YACgkQ9TK+HZCN
-iw5iWA//Qsq+DuoC10lMYoTH3WkopAMR9mKhwbe5FTZUUe0eWQM3r9a7uGKGKOX2
-LW47biXVl/9u0PiUulvLWklyV2Kg6QKCewOLmUHbZB7XBPW0PVf/67KRL3Y4Iz7p
-0nZhcOzkv00cyoQ5wIOBcjrrqwK9+u0BgK1VUDRWd8yblOyK8jPTaIEf6x0E1VPT
-1Ve7yeETJzioF8xeTCgBoY2SUUGAfZ91C/w5dtctfPkuW8RSHwqFH0553f9QICQS
-z9XDBvESlPY7GLzDSXv/TulyRPqK3K+jZA5zuiOlW5XJpXiOax1xdNyq/GwcGpV7
-a332WOmx4Q0Edc/183OUpx1xoIHFLQiMfs6kpmkvgoaqWdCdjzF7yTr9xXOcM3S7
-YSR3Be18aarCLhGR354xz+Wbvb69IIS7hEwK7lBZwD7u6Jd/KyLU+3k77D69gdzl
-y+33iLFxH1pWtsw/wGwZrPH1hl9LUE18s3S4vfKpJ4EqJ20+nIGIPgf2EPGhEaEW
-IUnA5es/jscNcYdCTvfffyeKRwyo1NZhJHBslqVqF6InC+MMilFHBZo+2ZA3Swey
-NBdDueAsTFF/XAdep9Y32U1l1aiXfUoVROXPFQtGnX1V7qP3Aucx1Kpt9ZPiqk4Y
-QI85MyfpA7WDWEYLjBP9APcX2uI29nTHrRsztGJxx+SDycGymWU=
-=mGEZ
------END PGP SIGNATURE-----
-
---Sig_/goiVgRssi9A8ba=rcm/gfDw--
