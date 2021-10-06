@@ -2,102 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0F69C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 09:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C54ABC433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 10:04:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 827CB61074
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 09:34:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9089161152
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 10:04:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237826AbhJFJgT (ORCPT
+        id S237851AbhJFKGt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 6 Oct 2021 05:36:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53356 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229824AbhJFJgT (ORCPT
+        Wed, 6 Oct 2021 06:06:49 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:51247 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229874AbhJFKGt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 6 Oct 2021 05:36:19 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43F22C061749;
-        Wed,  6 Oct 2021 02:34:27 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id j8so6841292wro.7;
-        Wed, 06 Oct 2021 02:34:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=i03E/waTnML0dSPg5cF+6UnHJ83NBJcxKTyso1VDAUs=;
-        b=nHagkutTKcoF6y48vPoHmMe8GHnT495igwU7aipMeHm9D1HXs8KJrJS2JrdO/Oa1um
-         e50w8j0ccpipf6JwglmLJfVfcarPxrcBWWPiYaO1WNLVPWnrH1s2LBYaaMWNxrp2YXQW
-         IyNPzFFphtGNWFG3LgrKVfFl+NHHTsfVQsc7FEKjEgH7iaO8KUHQgTlEjj1K22jyViuu
-         ivEtU41oPUnu7soLmQ5NgQ8JF7NclHkCSYz91RCXeo52ZfM0KswIl+HvHnSwR6m5z0oa
-         BB87bXNv3bQv6r/jHstn7M0VgN7qQBPNVL3I4cHrO0nc6D4XvB8o/ptll7PHkaH3oU78
-         7S0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=i03E/waTnML0dSPg5cF+6UnHJ83NBJcxKTyso1VDAUs=;
-        b=3hRDTPsi9vrUvfZJ4PddiePXaU6CWBDt6xuekgy9vCCcC/Q4NfTYvWTAIsPoQdPhYm
-         1Y3raduz3vs2I4jiTT48WZJgl2nvu1r71bTAW8tk7A6t2WGftUsEMr7oMBdEqHSoaKjH
-         zd4nk70nls2MYKNjdkHyKWq+jmSVULKIDCPFXBrcgQDu6WkRFpf4/3amZP8XIkuqocml
-         oDgt6GmcXVHQK5pcu4zLqc/zR96+r5Y6Z6z2SlppcMV1SxbknBE1D+zekJ5wFN99KXVF
-         yu+t9tYk5QuJQf96dP7bMJks0QdxrOPNIQdCuk804k6fFfJVTOUs6hDEYGReb1Qe5njk
-         QOQg==
-X-Gm-Message-State: AOAM530E4yc8V9V3TUI+1ILJd2ZJtYXRcaENTxL3Kc59I+2rFsOIxGHD
-        Ce6Zj/SzYj3+m1d3XnsEOnw=
-X-Google-Smtp-Source: ABdhPJydPqaSBH7H0uNoRaCFS525dc7ctECN6YVxBa6JjZDQonN/MatD592KdWzBZmHK91OPVvJ+mw==
-X-Received: by 2002:a5d:664f:: with SMTP id f15mr27416198wrw.143.1633512865679;
-        Wed, 06 Oct 2021 02:34:25 -0700 (PDT)
-Received: from localhost.localdomain (i577BCBA0.versanet.de. [87.123.203.160])
-        by smtp.gmail.com with ESMTPSA id x10sm4725186wmk.42.2021.10.06.02.34.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Oct 2021 02:34:25 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] async_tx: correct reference to ASYNC_TX_ENABLE_CHANNEL_SWITCH
-Date:   Wed,  6 Oct 2021 11:34:16 +0200
-Message-Id: <20211006093416.4750-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.26.2
+        Wed, 6 Oct 2021 06:06:49 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id D9F205C0598;
+        Wed,  6 Oct 2021 06:04:54 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Wed, 06 Oct 2021 06:04:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=DHdY0P
+        8t+NxfmohgFjnCgxIWqZvj1Cdhe7owPofDXRA=; b=eZa3tSBFRb2wcoQmhi0gnR
+        Ig28yEHInV5ap6/ZlCUXfSKhtunJqTw8I0LsIuu034hfo69wdlV3N9csG4H4Sy6g
+        1g/h+jrlSYA9Z8b4WKcX0Uq5Juy+a4wRHSb1aA1gWZ5z9RZp7O97rsb92R8ZPfWp
+        GxPasoIF6MOVrCISRiAqZ0OFqREFhYEgiqvfI5zw+s35QMxh+iarQQuEqlXhtHAC
+        4fDVVvcX5YFAQQuGI+jZ0f0FrYOGjDTvKMb4YTS1/BxkTkuirelX9xXG3pw3PNZy
+        3PDNssKwXz5nm1UWs9YaDNCqifqjZqlIgrIhJUkdbT40JdR+npIRm9u/AiaBFSoQ
+        ==
+X-ME-Sender: <xms:xnRdYbeTrLTMrpmNqdrfYaEbspfnPCMOpvElkSF5L2hU17uzTsjWjw>
+    <xme:xnRdYRNr2yCOQgk_jDDunjV2pqx2WFQ6BHuZ-Yuk8qYGewBipjN0uoreyKwiSqj2c
+    eLliE01vLTxCvw>
+X-ME-Received: <xmr:xnRdYUgBhEaKOjXiulcThXjnjVJl3N0feyMFy-MEIxJXWKQmWFf-NhrfipmunWOr5pOL34KXojj-6uxAhd3EhUISZ6TV4A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudeliedgvdduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefkughoucfu
+    tghhihhmmhgvlhcuoehiughoshgthhesihguohhstghhrdhorhhgqeenucggtffrrghtth
+    gvrhhnpedtffekkeefudffveegueejffejhfetgfeuuefgvedtieehudeuueekhfduheel
+    teenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehiug
+    hoshgthhesihguohhstghhrdhorhhg
+X-ME-Proxy: <xmx:xnRdYc-nnoJUDjLErFS3gGd3_CSOiBKRSrpJdZxoNDdwFGYlDshqfg>
+    <xmx:xnRdYXsxaZmtzyAkLoMmtBrhWpjiJmm5gLiuxquF8nYKbRGo2oCIag>
+    <xmx:xnRdYbEviZyyeAX-F8tGH2BGCegXhDQcSalYn0NngO1FnvQOdPuFww>
+    <xmx:xnRdYRIuEaCpCSJ0TqNfrmlIdbEalOL9ek6J5ZBwZnpKQ5PJDRt8PQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 6 Oct 2021 06:04:54 -0400 (EDT)
+Date:   Wed, 6 Oct 2021 13:04:51 +0300
+From:   Ido Schimmel <idosch@idosch.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Jiri Pirko <jiri@nvidia.com>, Ido Schimmel <idosch@nvidia.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] mlxsw: spectrum_buffers: silence uninitialized
+ warning
+Message-ID: <YV10w28vbsenFRFU@shredder>
+References: <20211006073347.GB8404@kili>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211006073347.GB8404@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit b802c8410ca9 ("async_tx: deprecate broken support for channel
-switching") in 2017 intended to "prevent async_tx from using an offload
-engine if the channel switching capability is enabled" by adding a
-suitable ifdef on the corresponding config.
+On Wed, Oct 06, 2021 at 10:33:47AM +0300, Dan Carpenter wrote:
+> Static checkers and runtime checkers such as KMSan will complain that
+> we do not initialize the last 6 bytes of "cb_priv".  The caller only
+> uses the first two bytes so it doesn't cause a runtime issue.  Still
+> worth fixing though.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-The config for determining if  the channel switching capability is
-enabled is called CONFIG_ASYNC_TX_ENABLE_CHANNEL_SWITCH, however
-the ifdef falsely refers to CONFIG_ASYNC_TX_CHANNEL_SWITCH (note the
-missing "ENABLE").
-
-Correct the name of the config to the intended one.
-
-Fixes: b802c8410ca9 ("async_tx: deprecate broken support for channel switching")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- include/linux/async_tx.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/async_tx.h b/include/linux/async_tx.h
-index 5cc73d7e5b52..8c7b940d9912 100644
---- a/include/linux/async_tx.h
-+++ b/include/linux/async_tx.h
-@@ -74,7 +74,7 @@ struct async_submit_ctl {
- 	void *scribble;
- };
- 
--#if defined(CONFIG_DMA_ENGINE) && !defined(CONFIG_ASYNC_TX_CHANNEL_SWITCH)
-+#if defined(CONFIG_DMA_ENGINE) && !defined(CONFIG_ASYNC_TX_ENABLE_CHANNEL_SWITCH)
- #define async_tx_issue_pending_all dma_issue_pending_all
- 
- /**
--- 
-2.26.2
-
+Reviewed-by: Ido Schimmel <idosch@nvidia.com>
