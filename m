@@ -2,99 +2,116 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29088C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 12:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 344C5C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 12:09:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C78D610A3
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 12:04:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A8D861154
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 12:09:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238371AbhJFMFx (ORCPT
+        id S238381AbhJFMLB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 6 Oct 2021 08:05:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60244 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231172AbhJFMFw (ORCPT
+        Wed, 6 Oct 2021 08:11:01 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:47166 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238371AbhJFMLA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 6 Oct 2021 08:05:52 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0D51C061749;
-        Wed,  6 Oct 2021 05:03:59 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id u18so8132966wrg.5;
-        Wed, 06 Oct 2021 05:03:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=e/aej7GbV3RNso2QLtyef0SKYF6ZtFllJDqUDN4OhOw=;
-        b=pjApfVmGa2U6cE/pKb0yScYS7aJhpSbaYToMzszxXiVVy2EDizgOZUD3J8Q5YsL+F5
-         9HUvXaMOkG5oPHBD1j/LYmlKuvwuayhCudKU8f9Q1Z2uxSNmnqhMNCI4Js7fELco8vCt
-         MLhss5+DO8Gqapjz5T1jPN3+VM8UjOLqlrqtZoW6fP/pDVFZDOPD8V8AStpscxfb3HFe
-         qGQur6Zv6FXEUF9UvuSDo0/fXeL0wUQP8Ngak97RI9QxOD6+MMISkC9EksmPDCCvVVAr
-         2kucbFm0pzLWHHrIRZCzPuUuL+h0eqlQJyU6LZgNWRJBJzVljGUITi1mbSgpv4OVtBup
-         HJ5A==
+        Wed, 6 Oct 2021 08:11:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1633522148;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jDEUDd9F1mbhCTF+9tuTd3gtq0vD73lOJfICp/hOhTQ=;
+        b=M3WEkrrJivVbGlYA5OBt8pGKOemIzN3unuJwQhVZ6SZV+VHUztdxxtOJ0wW7jAV0ywCNbv
+        9/jHii6WzSCE3PJBRs0MTeWMvYwhdsOg1NrZbcEv89V0KfnB9LneUsBtTPKnnWXDIaDCr1
+        fYV3qwZWiVoSYGqIEiqx/ScsITbs1Es=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-397-8wS8wvElOTCt19zCh3kLoQ-1; Wed, 06 Oct 2021 08:09:07 -0400
+X-MC-Unique: 8wS8wvElOTCt19zCh3kLoQ-1
+Received: by mail-wr1-f71.google.com with SMTP id d13-20020adf9b8d000000b00160a94c235aso1857942wrc.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 06 Oct 2021 05:09:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=e/aej7GbV3RNso2QLtyef0SKYF6ZtFllJDqUDN4OhOw=;
-        b=Gtr1QYNVVpfi+8bBLn5c1fj8VT76rMlhOPqoJwN0T1UM6UDUboLChBJL1h1ZK3LSS7
-         JLB/dI/VFyjmRZSiAG7P4RGFm5+sJf61DbRHnBw/6td/H97It/agc+zxq7amNXzelreS
-         44w/fZE9mTJPcK7yWORPMKr74wFLXK0vk7fhlAxxZU95Vc+f3uJr/KuOBL6i5qGeMDRz
-         gu5sAY/HsFGOGptdDhN05iFdXvwwXSxDLG5K5gpT9uWNAFuZEn5ct0fIzuSbgOfbI3mG
-         uqTskChvfl/pEB+v9cMIwS9iSec+GR5S/i+ptAXD9bQLtw8feXizKdke5f5FTJyUIe+i
-         PX/Q==
-X-Gm-Message-State: AOAM5318rS0+zgxstoy55rJRaKaXfI8m/taNk/sFr4i1x4T92ZEcsb9h
-        OitbZVFNnQ3QhYzcfm809tVXHY6KRy8=
-X-Google-Smtp-Source: ABdhPJx25D0gRSn90gByos6lL+f5LoTcfRdO2Q2woo7Eg/ad9i7u9KhZ3isEjsydfgyH0nxeaU9m6Q==
-X-Received: by 2002:adf:a550:: with SMTP id j16mr20811802wrb.384.1633521838318;
-        Wed, 06 Oct 2021 05:03:58 -0700 (PDT)
-Received: from localhost.localdomain (i577BCBA0.versanet.de. [87.123.203.160])
-        by smtp.gmail.com with ESMTPSA id a2sm7178336wru.82.2021.10.06.05.03.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Oct 2021 05:03:57 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=jDEUDd9F1mbhCTF+9tuTd3gtq0vD73lOJfICp/hOhTQ=;
+        b=hoAeyqFLx5bude0Gz4249y2aHIxiW/fSeJRkgL7yZkywRW7C55zDVUSJezK7OCAF17
+         N8w44Qhdj65W5XF5HP1L+OEHxAOcgQKX+OudFyJlmkVJIwSTM2TsGKCPANBjBQMaU9PU
+         JCMHJBUAdUe5uDFRvIkXo68SE9jFnSR+EQc6GmiqNo1LhS3ot1msDS7XBX3sLuiZpyXM
+         ieUfXiDqGLr1yJioS65FcZ89o4Uvwtinga3FHMfvCi3+FPKqllDRxUmOEfsNpFXmx/0q
+         XUbKTTHdZ6skJp8sPp17vgJ8UmoKQUiy+v9D+VTjmPc2CwUp6Da1r+YL76yriSUTAO/N
+         XvUg==
+X-Gm-Message-State: AOAM5327566nh3KMBVaK3aWuGn1VaYJMaG6kMTf3oJVtaoExHjio2CT4
+        SJvoZSezf4fCRf11Yq07k7ApsQh3fay+wQsxXg4RPMxw80e4WCXmJ1JaNoG/GKBZWeZHCq7C4Xa
+        oekoy3GAFrkyl06sfG46aJg9jONs5
+X-Received: by 2002:a1c:7910:: with SMTP id l16mr7955152wme.128.1633522146048;
+        Wed, 06 Oct 2021 05:09:06 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJx4TYB1Jy2IgydUW9bzfNSEGzwXaUBnXnryugqaajvIbJbmW6pSZbAoUR1gTE+cTlIL/XV4wA==
+X-Received: by 2002:a1c:7910:: with SMTP id l16mr7955111wme.128.1633522145736;
+        Wed, 06 Oct 2021 05:09:05 -0700 (PDT)
+Received: from [192.168.3.132] (p5b0c6529.dip0.t-ipconnect.de. [91.12.101.41])
+        by smtp.gmail.com with ESMTPSA id r19sm4680282wmp.43.2021.10.06.05.09.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Oct 2021 05:09:05 -0700 (PDT)
+Subject: Re: [PATCH] memory: remove unused CONFIG_MEM_BLOCK_SIZE
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Michal Hocko <mhocko@suse.com>,
         Dave Hansen <dave.hansen@linux.intel.com>, linux-mm@kvack.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] memory: remove unused CONFIG_MEM_BLOCK_SIZE
-Date:   Wed,  6 Oct 2021 14:03:54 +0200
-Message-Id: <20211006120354.7468-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.26.2
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20211006120354.7468-1-lukas.bulwahn@gmail.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Message-ID: <476ea5f7-53be-1a4e-c461-ff2e4a359bd0@redhat.com>
+Date:   Wed, 6 Oct 2021 14:09:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20211006120354.7468-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 3947be1969a9 ("[PATCH] memory hotplug: sysfs and add/remove
-functions") defines CONFIG_MEM_BLOCK_SIZE, but this has never been
-utilized anywhere.
+On 06.10.21 14:03, Lukas Bulwahn wrote:
+> Commit 3947be1969a9 ("[PATCH] memory hotplug: sysfs and add/remove
+> functions") defines CONFIG_MEM_BLOCK_SIZE, but this has never been
+> utilized anywhere.
+> 
+> It is a good practice to keep the CONFIG_* defines exclusively for the
+> Kbuild system. So, drop this unused definition.
+> 
+> This issue was noticed due to running ./scripts/checkkconfigsymbols.py.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>   include/linux/memory.h | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/include/linux/memory.h b/include/linux/memory.h
+> index c46ff374d48d..a216829df280 100644
+> --- a/include/linux/memory.h
+> +++ b/include/linux/memory.h
+> @@ -143,7 +143,6 @@ typedef int (*walk_memory_blocks_func_t)(struct memory_block *, void *);
+>   extern int walk_memory_blocks(unsigned long start, unsigned long size,
+>   			      void *arg, walk_memory_blocks_func_t func);
+>   extern int for_each_memory_block(void *arg, walk_memory_blocks_func_t func);
+> -#define CONFIG_MEM_BLOCK_SIZE	(PAGES_PER_SECTION<<PAGE_SHIFT)
+>   
+>   extern int memory_group_register_static(int nid, unsigned long max_pages);
+>   extern int memory_group_register_dynamic(int nid, unsigned long unit_pages);
+> 
 
-It is a good practice to keep the CONFIG_* defines exclusively for the
-Kbuild system. So, drop this unused definition.
 
-This issue was noticed due to running ./scripts/checkkconfigsymbols.py.
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- include/linux/memory.h | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/include/linux/memory.h b/include/linux/memory.h
-index c46ff374d48d..a216829df280 100644
---- a/include/linux/memory.h
-+++ b/include/linux/memory.h
-@@ -143,7 +143,6 @@ typedef int (*walk_memory_blocks_func_t)(struct memory_block *, void *);
- extern int walk_memory_blocks(unsigned long start, unsigned long size,
- 			      void *arg, walk_memory_blocks_func_t func);
- extern int for_each_memory_block(void *arg, walk_memory_blocks_func_t func);
--#define CONFIG_MEM_BLOCK_SIZE	(PAGES_PER_SECTION<<PAGE_SHIFT)
- 
- extern int memory_group_register_static(int nid, unsigned long max_pages);
- extern int memory_group_register_dynamic(int nid, unsigned long unit_pages);
 -- 
-2.26.2
+Thanks,
+
+David / dhildenb
 
