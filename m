@@ -2,45 +2,44 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 468DEC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 08:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47270C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 08:49:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A93B6103D
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 08:32:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A2FF60F5C
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 08:49:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237748AbhJFIeL (ORCPT
+        id S237749AbhJFIvt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 6 Oct 2021 04:34:11 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:51250
+        Wed, 6 Oct 2021 04:51:49 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:52646
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237551AbhJFIeL (ORCPT
+        by vger.kernel.org with ESMTP id S237593AbhJFIvs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 6 Oct 2021 04:34:11 -0400
+        Wed, 6 Oct 2021 04:51:48 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 2ACBA3F045;
-        Wed,  6 Oct 2021 08:32:18 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id D7F523F226;
+        Wed,  6 Oct 2021 08:49:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633509138;
-        bh=i7pqd94h/7qZqSjsnCqUp64WqQ62M3udKtVgH1QlXY0=;
+        s=20210705; t=1633510195;
+        bh=h9EtN4sARs+pZ7j+bbOMdD16anrHHdUQKy002WSlXfY=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=fIGo8D9Wb4Jk7Owrre+K9F6b7d8Zg67da3as0qK6DmFvoeQTgboIWbLvh3a+Owdrq
-         XQ0L2XFdeNcV7jJRshKfACKxnoEV5hlB2PlqTxJcPkOZfsvivT5QV/Bt7szVwaSeb+
-         /6g8cbSOfjLNQCDmRZP7gnjSULaF/SX5Dg+cNcSsX2W+2CYH8HVlWwzFAE3XLhyFsT
-         MGA6siYJP6QJNG+PTD2hNOdfn1kbkx2CfEKaE1xVAcID0EY5jbEuVyTAAzqnwNekSc
-         FbB0qWUYlsdTgzxG/TcVJWfnGHZcQZeazFoJfv4/viEcfeBBBXaaFxQV3N8x4Zz9Fz
-         7bsmBI6NgyIhA==
+        b=sXs0o2dvxUe7dmE9q5ELqrVp2PkxLTtcBKflP3iuJN1qnOiw+OrEjXbxBa7tTlokv
+         E5iB5q6UfGHoH6fkO0qr+Wfqc2KQEJmNlCdRdVNfq8h7jKIXbHsP/V9Try154ZYa8F
+         +Phdx1hFLHiWGyLTUznHahYwJR0iR8P6VM9qh/IP/RgE9L4k3pVwZglL97jBhsHvbs
+         5aWE0nJVN56zJP+iU+7Xem97qjcCs4D7VPAphqvE9rQ5mWmoQqcF2NRy9RIxpZ+F7S
+         2oxhSGlStMmblVPwXy8y0YUbtOFYjG+4r4NCvWNJVoKPWq61BJxCGbyTI2+B55lYSU
+         qjMuxaHDYC0Wg==
 From:   Colin King <colin.king@canonical.com>
-To:     Kalle Valo <kvalo@codeaurora.org>,
+To:     Ariel Elior <aelior@marvell.com>, GR-everest-linux-l2@marvell.com,
         "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, ath11k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ath11k: Fix spelling mistake "incompaitiblity" -> "incompatibility"
-Date:   Wed,  6 Oct 2021 09:32:17 +0100
-Message-Id: <20211006083217.349596-1-colin.king@canonical.com>
+Subject: [PATCH][next] qed: Fix spelling mistake "ctx_bsaed" -> "ctx_based"
+Date:   Wed,  6 Oct 2021 09:49:55 +0100
+Message-Id: <20211006084955.350530-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -51,26 +50,26 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in an ath11k_warn message. Fix it.
+There is a spelling mistake in a DP_VERBOSE message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/ath/ath11k/mac.c | 2 +-
+ drivers/net/ethernet/qlogic/qed/qed_ll2.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/ath11k/mac.c b/drivers/net/wireless/ath/ath11k/mac.c
-index 31f0cfba5bf5..89ab2fa7557c 100644
---- a/drivers/net/wireless/ath/ath11k/mac.c
-+++ b/drivers/net/wireless/ath/ath11k/mac.c
-@@ -7081,7 +7081,7 @@ ath11k_mac_op_set_bitrate_mask(struct ieee80211_hw *hw,
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.c b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+index 69ffa4eb842f..3fedcefc36d8 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+@@ -1654,7 +1654,7 @@ int qed_ll2_establish_connection(void *cxt, u8 connection_handle)
  
- 		if (!ath11k_mac_validate_vht_he_fixed_rate_settings(ar, band, mask))
- 			ath11k_warn(ar->ab,
--				    "could not update fixed rate settings to all peers due to mcs/nss incompaitiblity\n");
-+				    "could not update fixed rate settings to all peers due to mcs/nss incompatibility\n");
- 		nss = min_t(u32, ar->num_tx_chains,
- 			    max(max(ath11k_mac_max_ht_nss(ht_mcs_mask),
- 				    ath11k_mac_max_vht_nss(vht_mcs_mask)),
+ 	DP_VERBOSE(p_hwfn,
+ 		   QED_MSG_LL2,
+-		   "Establishing ll2 queue. PF %d ctx_bsaed=%d abs qid=%d stats_id=%d\n",
++		   "Establishing ll2 queue. PF %d ctx_based=%d abs qid=%d stats_id=%d\n",
+ 		   p_hwfn->rel_pf_id,
+ 		   p_ll2_conn->input.rx_conn_type, qid, stats_id);
+ 
 -- 
 2.32.0
 
