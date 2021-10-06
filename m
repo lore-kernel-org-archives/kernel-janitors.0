@@ -2,45 +2,43 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45306C4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 17:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E997CC433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 17:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2785C610E6
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 17:23:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA6B4610C8
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Oct 2021 17:28:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238245AbhJFRZp (ORCPT
+        id S231701AbhJFRa1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 6 Oct 2021 13:25:45 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:60478
+        Wed, 6 Oct 2021 13:30:27 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:60696
         "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229835AbhJFRZo (ORCPT
+        by vger.kernel.org with ESMTP id S229564AbhJFRaY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 6 Oct 2021 13:25:44 -0400
+        Wed, 6 Oct 2021 13:30:24 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id CE11D3FFE4;
-        Wed,  6 Oct 2021 17:23:50 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id E7DC83FFE4;
+        Wed,  6 Oct 2021 17:28:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633541030;
-        bh=MJeBRb5etdZcXTPQ8b0j2/km0oaalM1EtK76TFXxa+w=;
+        s=20210705; t=1633541311;
+        bh=pPk5dCPPW2RNEpebScPcrw2OoSwA7+zGEwKS8BQvN9I=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=lp/3KZVs08cKssNF2KsDkim83QzobVTto7zJRqmjSopuQJMf35IzPuUrk0I/Tc7Nd
-         8h0KtwSDdyDs2bvO5kIQuDZfciBX95YI7/6KgczSNTi+9VeD//rvJmDOhtQPXirFSc
-         FNq0b2zmzwaxKDyWCHteFiqBWhVlHReLeXFOL3xWEJkFjGHG3ROgz1itrdGiC1afRt
-         PT35LUZ/9DDo5y2zDhPpqXzJfzDHtpiPD/qqnLqktqYYGuFm1Ksg0vrWDnF51gfSjs
-         6i6mnDAMMQXG6B2WTU++E9IG7IEU5h9f6qsoef7vUU05bBSch5POIP0aePxZGd8EAT
-         WcSwe+xrug/Gw==
+        b=YWol+DExS1hl6PHDrTTgNS62HQKzz9IKOoNxRNWPT5XpoqCigHZ8U8rm5d0zww7Q5
+         3SDilFT6z0/Kw/EyFGtMAc/8hecB0NXNXcLZm9yWISOuh+2EwBwIDD3k6MUMsebQsA
+         F9nk28RYha/wbUbJ5lHlPBhVDCoKQnrqPZhMuijJ5+bM6PS9gkkw47TGV/jr3A8r4b
+         H30P/RK5zJiiiUikewGeFPbphDbYfZZNFVAXnXKjAZqtv8+ubGFcNPuajMBNc7TZu1
+         UAkOaopZPl+qQZaq/+Agd5PpYq+Qg5twVWti0xiL7rdD9D657IkN65Xo9zeiIbhpo5
+         GG4dfOR2QhEmQ==
 From:   Colin King <colin.king@canonical.com>
-To:     David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto : asymmetric_keys: Fix function description to match prototype
-Date:   Wed,  6 Oct 2021 18:23:50 +0100
-Message-Id: <20211006172350.1025091-1-colin.king@canonical.com>
+Subject: [PATCH] tracing: fix missing * in comment block
+Date:   Wed,  6 Oct 2021 18:28:30 +0100
+Message-Id: <20211006172830.1025336-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -51,27 +49,26 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The function arguments in the description does not match the prototype.
-Fix this by renaming trust_keys to trusted_keys.
+There is a missing * in a comment block, add it in.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- crypto/asymmetric_keys/verify_pefile.c | 2 +-
+ kernel/trace/trace_events_hist.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/crypto/asymmetric_keys/verify_pefile.c b/crypto/asymmetric_keys/verify_pefile.c
-index 7553ab18db89..148cad70fe79 100644
---- a/crypto/asymmetric_keys/verify_pefile.c
-+++ b/crypto/asymmetric_keys/verify_pefile.c
-@@ -387,7 +387,7 @@ static int pefile_digest_pe(const void *pebuf, unsigned int pelen,
-  * verify_pefile_signature - Verify the signature on a PE binary image
-  * @pebuf: Buffer containing the PE binary image
-  * @pelen: Length of the binary image
-- * @trust_keys: Signing certificate(s) to use as starting points
-+ * @trusted_keys: Signing certificate(s) to use as starting points
-  * @usage: The use to which the key is being put.
-  *
-  * Validate that the certificate chain inside the PKCS#7 message inside the PE
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index a6061a69aa84..f01e442716e2 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -2506,7 +2506,7 @@ find_synthetic_field_var(struct hist_trigger_data *target_hist_data,
+  * events.  However, for convenience, users are allowed to directly
+  * specify an event field in an action, which will be automatically
+  * converted into a variable on their behalf.
+-
++ *
+  * If a user specifies a field on an event that isn't the event the
+  * histogram currently being defined (the target event histogram), the
+  * only way that can be accomplished is if a new hist trigger is
 -- 
 2.32.0
 
