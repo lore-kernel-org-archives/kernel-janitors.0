@@ -2,192 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2D3C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 13:52:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03947C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 14:31:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3325A611EE
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 13:52:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CED12610C8
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 14:31:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241675AbhJGNyH (ORCPT
+        id S242088AbhJGOdH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Oct 2021 09:54:07 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:43588
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241611AbhJGNyG (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Oct 2021 09:54:06 -0400
-Received: from [10.172.193.212] (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 9B8D73F328;
-        Thu,  7 Oct 2021 13:52:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633614731;
-        bh=yj4ipj7TovnF2emyJEKur8J+OhgS19wKBi0gQQl0MR4=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=rj1B9+pdqZ303MIif3t8nBbcellnPb18yxUU7ROgpGbxYqaB+YRE1ujelp4WP/lJY
-         IvsX9eHUIW1h0m5EStO6T0RRNdEcbI54JOy6L8dX3JMloqFtXBo6xIzWtOrETFi6LT
-         AMbL2MRupy69qPdfihAW9tZYEcu5kEPbhGH0iaWw/YQOWql23AxaFq1NpOrxgrmsxJ
-         EMSkaMi4/6rAMMny0kOmBRnf1/FNt3BO+Uhmi8HFSbz7AVMMNwxz44vi3OzwFwklV9
-         Z5GiQSp4fVAIZsVD8WoCR5bqZ4BhEoesGiG7EpVRmlMKoqksqxWkv4Hsb8VVsSRfy4
-         meNV4XYUwFHtQ==
-Message-ID: <e4f44c10-7600-5c50-7cd8-2044014b2e0d@canonical.com>
-Date:   Thu, 7 Oct 2021 14:52:11 +0100
+        Thu, 7 Oct 2021 10:33:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44722 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233381AbhJGOdH (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 7 Oct 2021 10:33:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6D3E2610EA;
+        Thu,  7 Oct 2021 14:31:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633617073;
+        bh=VN63RB522o8WFY2Ey9405BvBXJdWFy4UFPRQ2hg36Ig=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=SoVky5XUMZsKen9HX7ymW9QmSloaYyq4Q4U2w4sa7YDxDZWRCEdxvgMHuaOXOg+NK
+         xnbaYmAT2977HqGJUhq/yb4rrYIxmO3Z9uB1d2ipjdKYaT43m6ojzYGlXFsNUVX9gk
+         d8gvfre0yRDb3QO+RN6oKN2exgo0vEtqQ6j3YOwljkq33M3DDWesAM7zF/Hyt22TiS
+         i5Nrlbv8UG2L6b/h63tlgZLWqHy1Gmw38XlFQ22xWEQFNwqC07Ftw0CJ5UqCiSM1MI
+         bEN9uHqWIfSeHGnAga32sYA212uPljZ/hIzSnYlUIqJNE/C4ltrgibNLQ3lAzyRoWA
+         s8avTIB4fKATQ==
+Received: by mail-ot1-f42.google.com with SMTP id v2-20020a05683018c200b0054e3acddd91so3209924ote.8;
+        Thu, 07 Oct 2021 07:31:13 -0700 (PDT)
+X-Gm-Message-State: AOAM5339G/3nDfu8HQlYHEuTkSwLejvt5vgv3F8dsn3dftHaotydZpOr
+        8dO5AKh6EspSby2swDrIVbloASjAMBV1d9/jF+A=
+X-Google-Smtp-Source: ABdhPJx9+OtS8s0Zlrpz2JV2zuvtULulfL7uYDLsTkKxgEkDIeKPkAnSu95wk6RUbALrfaoxXD7ny9OgEXtPNLiwgt8=
+X-Received: by 2002:a05:6830:17da:: with SMTP id p26mr3953027ota.116.1633617072833;
+ Thu, 07 Oct 2021 07:31:12 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.1.2
-Subject: Re: tracing: Create a sparse bitmask for pid filtering
-Content-Language: en-US
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-References: <221bc7ba-a475-1cb9-1bbe-730bb9c2d448@canonical.com>
- <20211007095115.5d26c558@gandalf.local.home>
-From:   Colin Ian King <colin.king@canonical.com>
-In-Reply-To: <20211007095115.5d26c558@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Received: by 2002:ac9:31e7:0:0:0:0:0 with HTTP; Thu, 7 Oct 2021 07:31:12 -0700 (PDT)
+In-Reply-To: <20211007133541.GC2048@kadam>
+References: <20211007114716.13123-1-colin.king@canonical.com>
+ <CAKYAXd_aOawm4MkBtkTxnLfeEk+F5VgrJHjyH8GSaeHjQbLtGQ@mail.gmail.com> <20211007133541.GC2048@kadam>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Thu, 7 Oct 2021 23:31:12 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd824PDidipzYR3ZqP0BkQqi2MXXQRhqZ_OUAO62AtdQXQ@mail.gmail.com>
+Message-ID: <CAKYAXd824PDidipzYR3ZqP0BkQqi2MXXQRhqZ_OUAO62AtdQXQ@mail.gmail.com>
+Subject: Re: [PATCH][next] cifsd: Fix a less than zero comparison with the
+ unsigned int nbytes
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Colin King <colin.king@canonical.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Steve French <sfrench@samba.org>,
+        Hyunchul Lee <hyc.lee@gmail.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        linux-cifs@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 07/10/2021 14:51, Steven Rostedt wrote:
-> On Thu, 7 Oct 2021 12:26:32 +0100
-> Colin Ian King <colin.king@canonical.com> wrote:
-> 
->> Hi,
->>
->> Static analysis on linux-next with Coverity has identified two issues
->> with reads of initialized pointers in the following commit:
->>
->> commit 8d6e90983ade25ec7925211ac31d9ccaf64b7edf
->> Author: Steven Rostedt (VMware) <rostedt@goodmis.org>
->> Date:   Thu Sep 23 22:20:57 2021 -0400
->>
->>       tracing: Create a sparse bitmask for pid filtering
->>
->> The analysis is as follows:
->>
->> 332 static void pid_list_refill_irq(struct irq_work *iwork)
->> 333 {
->>
->>      1. Condition 0 /* !!(!__builtin_types_compatible_p() &&
->> !__builtin_types_compatible_p()) */, taking false branch.
-> 
-> What does the above mean?
-> 
->>
->> 334        struct trace_pid_list *pid_list = container_of(iwork, struct
->> trace_pid_list,
->> 335                                                       refill_irqwork);
->>
->>      2. var_decl: Declaring variable upper without initializer.
-> 
-> Hmm, I think this is legit. I should have both upper and lower initialized
-> as NULL.
-> 
->>
->> 336        union upper_chunk *upper;
->> 337        union lower_chunk *lower;
->> 338        union upper_chunk **upper_next = &upper;
->> 339        union lower_chunk **lower_next = &lower;
->> 340        int upper_count;
->> 341        int lower_count;
->> 342        int ucnt = 0;
->> 343        int lcnt = 0;
->> 344
->> 345 again:
->> 346        raw_spin_lock(&pid_list->lock);
->> 347        upper_count = CHUNK_ALLOC - pid_list->free_upper_chunks;
->> 348        lower_count = CHUNK_ALLOC - pid_list->free_lower_chunks;
->> 349        raw_spin_unlock(&pid_list->lock);
->> 350
->>
->>      3. Condition upper_count <= 0, taking false branch.
-> 
-> What does the above mean?
-> 
->>
->> 351        if (upper_count <= 0 && lower_count <= 0)
->> 352                return;
->> 353
->>
->>      4. Condition upper_count-- > 0, taking true branch.
->>
->> 354        while (upper_count-- > 0) {
->> 355                union upper_chunk *chunk;
->> 356
->> 357                chunk = kzalloc(sizeof(*chunk), GFP_KERNEL);
->>
->>      5. Condition !chunk, taking true branch.
->> 358                if (!chunk)
->>      6. Breaking from loop.
->>
->> 359                        break;
->> 360                *upper_next = chunk;
->> 361                upper_next = &chunk->next;
->> 362                ucnt++;
->> 363        }
->> 364
->>
->>      7. Condition lower_count-- > 0, taking true branch.
->>
->> 365        while (lower_count-- > 0) {
->> 366                union lower_chunk *chunk;
->> 367
->> 368                chunk = kzalloc(sizeof(*chunk), GFP_KERNEL);
->>
->>      8. Condition !chunk, taking true branch.
->>
->> 369                if (!chunk)
->>
->>      9. Breaking from loop.
->>
->> 370                        break;
->> 371                *lower_next = chunk;
->> 372                lower_next = &chunk->next;
->> 373                lcnt++;
->> 374        }
->> 375
->> 376        raw_spin_lock(&pid_list->lock);
->>
->>       Uninitialized pointer read (UNINIT)
->>       10. uninit_use: Using uninitialized value upper.
-> 
-> Agreed.
-> 
->>
->> 377        if (upper) {
->> 378                *upper_next = pid_list->upper_list;
->> 379                pid_list->upper_list = upper;
->> 380                pid_list->free_upper_chunks += ucnt;
->> 381        }
->>
->>       Uninitialized pointer read (UNINIT)
->>       11. uninit_use: Using uninitialized value lower.
-> 
-> Agreed.
-> 
->>
->> 382        if (lower) {
->> 383                *lower_next = pid_list->lower_list;
->> 384                pid_list->lower_list = lower;
->> 385                pid_list->free_lower_chunks += lcnt;
->> 386        }
->> 387        raw_spin_unlock(&pid_list->lock);
->> 388
->>
->> Colin
-> 
-> So is this just a fancy way of saying that upper and lower were
-> uninitialized?
-
-Basically, yes. But it shows how the static analyzer determined this :-)
-
-> 
-> -- Steve
-> 
-
+2021-10-07 22:35 GMT+09:00, Dan Carpenter <dan.carpenter@oracle.com>:
+> On Thu, Oct 07, 2021 at 09:37:04PM +0900, Namjae Jeon wrote:
+>> 2021-10-07 20:47 GMT+09:00, Colin King <colin.king@canonical.com>:
+>> >
+>> > Fixes: e2f34481b24d ("cifsd: add server-side procedures for SMB3")
+>> I think that this alarm is caused by 	b66732021c64 (ksmbd: add
+>> validation in smb2_ioctl).
+>> Fixes tag may be not needed. Because b66732021c64 patch is not applied
+>> to Linus' tree yet ?
+>
+> If you are going to modify the commit to include this fix then that's
+> fine.  Otherise if you are going to apply this commit then the Fixes
+> tag is still required.
+>
+> The fixes tag saves time for backporters because they can automatically
+> rule out that this patch needs to be backported.  Or if they backport
+> commit b66732021c64 then they know they have to backport the fix as
+> well.
+>
+> Also the Fixes tag is used for other purposes besides backporting.
+> It helps review.  It's also an interesting metric to measure how long
+> between the bug is introduced and the fix is applied.
+Okay, Thanks for your detailed explanation:)
+>
+> regards,
+> dan carpenter
+>
+>
