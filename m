@@ -2,46 +2,43 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD4CC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 16:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25108C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 17:39:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD77A610E6
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 16:37:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 046E66121F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 17:39:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242700AbhJGQjS (ORCPT
+        id S243328AbhJGRln (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Oct 2021 12:39:18 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:59112
+        Thu, 7 Oct 2021 13:41:43 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:35518
         "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233594AbhJGQjS (ORCPT
+        by vger.kernel.org with ESMTP id S242882AbhJGRlm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Oct 2021 12:39:18 -0400
+        Thu, 7 Oct 2021 13:41:42 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id F02DB3FFF7;
-        Thu,  7 Oct 2021 16:37:22 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 1FF973F22C;
+        Thu,  7 Oct 2021 17:39:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633624643;
-        bh=E8Q4CQuRm8cbCNJqvryKYn2lWPwQIPy9ce6P0ED1Ws8=;
+        s=20210705; t=1633628383;
+        bh=AGmPEyKfrMO2SB0GuUzpEOSqBSptCQbYUMRwx/G05Wg=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=Hy1U6K3zAjrKLqZNPam6gGoBVJo6eDslidugbXsiih6oupaP+9q/zTnSoF5EZftJw
-         TvP+ooApQdno0VF9Kx87WqOH+VKDjCvjwd+pc6Ymc7FH9E3xYijco4dENPS7YRWZDL
-         LTUjwIEStJx7f+SwDq9yJlAmTWO9dqc+o52bHiiA3F0JmAkr67rl6aPURrFITL4EjO
-         qDPSBlsGXUd64N2ogb+lKivVXjgR+cGfu9IxKc/Pjjhgn9RnMjmcXSmfNX7jUrvyBG
-         pH+m58gYqRPnGl6+dzTVgNoNTTS2iTaubPgK/6Ygyu22vgIuZNPuWcW9JJnE9NPbZR
-         tYVWmlJHy6j2g==
+        b=PDcBRlwNR0KSI7F21Iul29r+ViC10Ua6ZyXlsT5HvH0BLFL3fYopja0pAHYHDLUJQ
+         xRyMa2BIYSVpQaAhTDarxTrDS52rCHwaXvm0McpIsRmtHL3Y3ikyaqha1LvL8EapoG
+         O39oj+Vz3yGirhMoxJGHNKYuNJqll5uCAP5KdT9+vnqEjf4g/I/4xF9EH7NOmuLfIA
+         lgE0dUqEEmRptGkNTticRSB6UevJGsGJFp7VUiEUeNB7gHL/q8MxCvQ/5USooMNIL9
+         5gGs/1dZ7BzzU/FhS37koLmo17bUjBZ24QwyH202qgaxrXDfIIQnyQIBdopkZnvF62
+         JW2g8VM5MlZ5A==
 From:   Colin King <colin.king@canonical.com>
-To:     Ping-Ke Shih <pkshih@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rtlwifi: rtl8192ee: Remove redundant initialization of variable version
-Date:   Thu,  7 Oct 2021 17:37:22 +0100
-Message-Id: <20211007163722.20165-1-colin.king@canonical.com>
+Subject: [PATCH] RDMA/iwpm: Remove redundant initialization of pointer err_str
+Date:   Thu,  7 Oct 2021 18:39:42 +0100
+Message-Id: <20211007173942.21933-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -52,29 +49,29 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable version is being initialized with a value that is
-never read, it is being updated afterwards in both branches of
-an if statement. The assignment is redundant and can be removed.
+The pointer err_str is being initialized with a value that is
+never read, it is being updated later on. The assignment is
+redundant and can be removed.
 
 Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8192ee/hw.c | 2 +-
+ drivers/infiniband/core/iwpm_util.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/hw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/hw.c
-index 88fa2e593fef..76189283104c 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/hw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/hw.c
-@@ -1430,7 +1430,7 @@ static enum version_8192e _rtl92ee_read_chip_version(struct ieee80211_hw *hw)
+diff --git a/drivers/infiniband/core/iwpm_util.c b/drivers/infiniband/core/iwpm_util.c
+index 54f4feb604d8..358a2db38d23 100644
+--- a/drivers/infiniband/core/iwpm_util.c
++++ b/drivers/infiniband/core/iwpm_util.c
+@@ -762,7 +762,7 @@ int iwpm_send_hello(u8 nl_client, int iwpm_pid, u16 abi_version)
  {
- 	struct rtl_priv *rtlpriv = rtl_priv(hw);
- 	struct rtl_phy *rtlphy = &rtlpriv->phy;
--	enum version_8192e version = VERSION_UNKNOWN;
-+	enum version_8192e version;
- 	u32 value32;
+ 	struct sk_buff *skb = NULL;
+ 	struct nlmsghdr *nlh;
+-	const char *err_str = "";
++	const char *err_str;
+ 	int ret = -EINVAL;
  
- 	rtlphy->rf_type = RF_2T2R;
+ 	skb = iwpm_create_nlmsg(RDMA_NL_IWPM_HELLO, &nlh, nl_client);
 -- 
 2.32.0
 
