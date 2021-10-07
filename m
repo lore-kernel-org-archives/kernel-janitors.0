@@ -2,81 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 979EEC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 12:06:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 383F8C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 12:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76D6761251
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 12:06:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B89F61075
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 12:37:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241188AbhJGMId (ORCPT
+        id S241436AbhJGMjB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Oct 2021 08:08:33 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:37478
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241185AbhJGMIc (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Oct 2021 08:08:32 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 2965F3FFF1;
-        Thu,  7 Oct 2021 12:06:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633608398;
-        bh=SYNiC1Bmjm6dMpjE54zivbQWUBIDEpK4EbYx3DBOl5A=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=p/aatMn3SIjGyQjdVCdkZ4nhYhC4IGKSagUfPukEyC6l/0v/Y0IE2Jbl9ZoQQgUvC
-         58G8vzG7iCDh/5exqkMslZHdTERoFzKyO3SKf1G9SwFYUWKsApHCVpJ8PtvORUHwvO
-         5dglzIyZ89oTsAyD34QQLY5FcAK+IckxirfL8bXlbTwE6gdNNlkDHcKqRw5DVDCdVF
-         xj6XJ2c/Sce+YqkevoJup5cRPjkG55trVfljqscJt0GWNt4/yq1fW+WYOHTp3A0Rtr
-         RkoG5hvv/sDDeWbhODKRD2qGZzVPvJI+39Zf3EUtnic/FoEnk5u6geCUaRHlByUBNi
-         P5M3G6daKGvVg==
-From:   Colin King <colin.king@canonical.com>
-To:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Xinhui.Pan@amd.com, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amd/display: Remove redundant initialization of variable result
-Date:   Thu,  7 Oct 2021 13:06:37 +0100
-Message-Id: <20211007120637.14459-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        Thu, 7 Oct 2021 08:39:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35110 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S241433AbhJGMi6 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 7 Oct 2021 08:38:58 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 000FF6137F;
+        Thu,  7 Oct 2021 12:37:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633610225;
+        bh=j7T30MWfBZ37KKV75705QjJRPWVEgJm1h5JiJ53Ih+k=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=DL22dAXI0oNlF+831yD2/MSR6JnjU09CpPQqlLUuPbTq888CBpQkLDypnbE/48hwB
+         v6zK/VIxdsms1NzFIIiC/2yYItk4KhoO0FqkZwGzP+eecC5c8JEUBnoHf201MWxNx8
+         ERVFs3Y3Q7jEGd+JNQ2e0gbkuqUS91u+8JawxfEkVhRbLp6Rnhj25QtL/h6FMn5jJE
+         qNnmx4fsG+4h+/SQPlTTRoBoFd1UjhK0O4Xe2QzkQIxltWZq+nQAxp40T8szhOu6Wg
+         3w4Wa6sdj8+KawAQrdHN53GwPJmFAIXLbs44v7IhSgzwd4Inns8KdZRbNSd0X3vybK
+         T0YbeCagyUKyg==
+Received: by mail-oi1-f178.google.com with SMTP id y207so5634839oia.11;
+        Thu, 07 Oct 2021 05:37:04 -0700 (PDT)
+X-Gm-Message-State: AOAM532c80usCWFEVx9Drq+8VWkE82iI4nWlkvs5moxiKLnKlruQTYXA
+        LiGLXcqs/+mEBMc7fvAo8W6ysFkGslxrkKzruFg=
+X-Google-Smtp-Source: ABdhPJxdYakXmOwXP80XIWRD6rzCBWj0KIXOR4XlvuA7IBP9I+OexJSlLCZz4t11+FqAJ48T+YXJvDvrJA2Dv7mReBE=
+X-Received: by 2002:aca:b5c3:: with SMTP id e186mr11725969oif.51.1633610224391;
+ Thu, 07 Oct 2021 05:37:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ac9:31e7:0:0:0:0:0 with HTTP; Thu, 7 Oct 2021 05:37:04 -0700 (PDT)
+In-Reply-To: <20211007114716.13123-1-colin.king@canonical.com>
+References: <20211007114716.13123-1-colin.king@canonical.com>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Thu, 7 Oct 2021 21:37:04 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_aOawm4MkBtkTxnLfeEk+F5VgrJHjyH8GSaeHjQbLtGQ@mail.gmail.com>
+Message-ID: <CAKYAXd_aOawm4MkBtkTxnLfeEk+F5VgrJHjyH8GSaeHjQbLtGQ@mail.gmail.com>
+Subject: Re: [PATCH][next] cifsd: Fix a less than zero comparison with the
+ unsigned int nbytes
+To:     Colin King <colin.king@canonical.com>
+Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Steve French <sfrench@samba.org>,
+        Hyunchul Lee <hyc.lee@gmail.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        linux-cifs@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+2021-10-07 20:47 GMT+09:00, Colin King <colin.king@canonical.com>:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Currently the check for nbytes < 0 is always false because nbytes
+> is an unsigned int and can never be less than zero.  Fix this by
+> using ret for the assignment and comparison and assigning nbytes
+> to ret later if the check is successful. The fix also passes the
+> error return in ret to the error handling path that caters for
+> various values of ret.
+>
+> Addresses-Coverity: ("Unsigned compared against 0")
+> Fixes: e2f34481b24d ("cifsd: add server-side procedures for SMB3")
+I think that this alarm is caused by 	b66732021c64 (ksmbd: add
+validation in smb2_ioctl).
+Fixes tag may be not needed. Because b66732021c64 patch is not applied
+to Linus' tree yet ?
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Namjae Jeon <linkinjeon@kernel.org>
 
-The variable result is being initialized with a value that is never
-read, it is being updated immediately afterwards in both branches
-of an if statement. The assignment is redundant and can be removed.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/amd/display/dc/core/dc_link_dpia.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_dpia.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_dpia.c
-index 6936b9d549e5..8387767ec1b3 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_link_dpia.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_dpia.c
-@@ -774,7 +774,7 @@ static enum link_training_result dpia_training_eq_phase(struct dc_link *link,
- 		struct link_training_settings *lt_settings,
- 		uint32_t hop)
- {
--	enum link_training_result result = LINK_TRAINING_EQ_FAIL_EQ;
-+	enum link_training_result result;
- 
- 	if (link->lttpr_mode == LTTPR_MODE_NON_TRANSPARENT)
- 		result = dpia_training_eq_non_transparent(link, lt_settings, hop);
--- 
-2.32.0
-
+Thanks!
