@@ -2,112 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C49F8C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 18:03:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DC1C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 23:27:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A833560FC3
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 18:03:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E12860FDC
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 23:27:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243457AbhJGSEy (ORCPT
+        id S233133AbhJGX3O (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Oct 2021 14:04:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51044 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243452AbhJGSEy (ORCPT
+        Thu, 7 Oct 2021 19:29:14 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:35486
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232772AbhJGX3O (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Oct 2021 14:04:54 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 650B0C061755;
-        Thu,  7 Oct 2021 11:03:00 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id t8so21809760wri.1;
-        Thu, 07 Oct 2021 11:03:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LzYgfKlvwHIBL3wW8fhtlH1KhCgihQqD0wQewNy3gTQ=;
-        b=CnrKfrCI/7b7P9niH6/3IP1Wt0eRn43RT4hn5SxwlYELYRR0SK5WKU/Vr/4eE2NQcv
-         Yg66RubvO6t+h58bUDi2pYnddx5mcj/CSK0pfE7DHvrb7yGY7Qhv/ZfWriK3aJqLFTg3
-         tAq/5wyD2bVUOe3NJNMdEP5hqzRwlSdreV3jtphDHyFNmrZEBU+M2Nhh+qmIEU2f8UHO
-         1VrYqfFkAbntzETc89XOlZd4C8rgPMX0beOiVqcuePDLJ2kAT5ax66nkwRbYc1Mrj1bq
-         wrfWIk9XqGS0KT08W9SaFguWb6nyttqseHLSsNtV3xtO8REQ8QIiT8KkOnOT6/8q6LhC
-         T7rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LzYgfKlvwHIBL3wW8fhtlH1KhCgihQqD0wQewNy3gTQ=;
-        b=PE5mnrDrHciKT2VxPe0McHqpprqk/ZavHsiZG/8XRH27Ngo2Wt6inPU+I8YWYJCgYJ
-         MVVrpHZv/qx3BBp6KxpN+Z5UAa3i+iNgFMrpU0yrFRoxw986eFb6/cAvJdUq+lbup5in
-         6FecLSseYhjQz6NUjUnoK9LGePFYG0KlOE5Htas65tqeFa9SaLu3VF6G9OCNOS2+HbS0
-         Y9llCk6NfsyxKlpWH+KeciBiZnfKxy2f38o7l3vQT5PYtULA/8B78gTTGsupv5AED4f/
-         eqnzGXkcwOg8X6BewMBT/phkdKwJSq/Xd2ijPtSOP+A/D1JzqFWJvE22FxEqI2KQFTqH
-         XJ1w==
-X-Gm-Message-State: AOAM530PFfezs8ofOXwb4Ww/JLQQKuXm0vN9vXwKr6+tst4Hjr5o8bV4
-        T+OLuEJu1DQLkoI4oI1ozco=
-X-Google-Smtp-Source: ABdhPJzLFQShRWgexENr9TAiLhixQbONosI4QunNbNjX2FeAqLNG3BVRbZG2LBnMAFnm0kRccGzhCw==
-X-Received: by 2002:a1c:f01a:: with SMTP id a26mr6084520wmb.150.1633629778982;
-        Thu, 07 Oct 2021 11:02:58 -0700 (PDT)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id g2sm67566wrb.20.2021.10.07.11.02.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Oct 2021 11:02:58 -0700 (PDT)
-Date:   Thu, 7 Oct 2021 20:02:57 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     vdumpa@nvidia.com, joro@8bytes.org, will@kernel.org,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] iommu/tegra-smmu: Use devm_bitmap_zalloc when applicable
-Message-ID: <YV82USMgonpRzoWd@orome.fritz.box>
-References: <2c0f4da80c3b5ef83299c651f69a563034c1c6cb.1632661557.git.christophe.jaillet@wanadoo.fr>
+        Thu, 7 Oct 2021 19:29:14 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id C536740002;
+        Thu,  7 Oct 2021 23:27:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1633649236;
+        bh=j4KLy0iTel4RMHz49o+7JlbnyzEJeIh5MAE0ooxd3Ac=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=BYzG2INYOspgbKrkTOmgu3MMdragjvqzBrzokptY9CEZsWOoqojZayhFYxsio3Vea
+         LvRZszGiUs9tnvybcT+cc6wr/coUM3QaW9PN10QjBguH16lCoWUIYKVO628kv0F7JM
+         b41qQE63BsJmrLC82hMemPtFBQwM/hlYXnFedyvGlptiziJ5HNoGaNK8bIn3TB5sph
+         GjKfzO08/tiz4J4Y36iqSj8LAQQ2NEnD7n7SeT4d83ccNVRZLjaGa1f2oiij6Bbx/h
+         DozposSMs8QwnU7W63Y+dgB1XI1V/Hba/9QduOdj3SLkZB92Pc5U79iGC0EUwxatdi
+         PzN0Oikd1fMOA==
+From:   Colin King <colin.king@canonical.com>
+To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] btrfs: Remove redundant assignment of variable ret
+Date:   Fri,  8 Oct 2021 00:27:16 +0100
+Message-Id: <20211007232716.30456-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="YJJooXTg9A0B1Lju"
-Content-Disposition: inline
-In-Reply-To: <2c0f4da80c3b5ef83299c651f69a563034c1c6cb.1632661557.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Mutt/2.1.3 (987dde4c) (2021-09-10)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---YJJooXTg9A0B1Lju
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The variable ret is being assigned a value that is never read, it is
+updated later on with a different value. The assignment is redundant and
+can be removed.
 
-On Sun, Sep 26, 2021 at 03:07:18PM +0200, Christophe JAILLET wrote:
-> 'smmu->asids' is a bitmap. So use 'devm_kzalloc()' to simplify code,
-> improve the semantic of the code and avoid some open-coded arithmetic in
-> allocator arguments.
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/iommu/tegra-smmu.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/btrfs/free-space-cache.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+diff --git a/fs/btrfs/free-space-cache.c b/fs/btrfs/free-space-cache.c
+index 8ea04582e34b..2a6d02971357 100644
+--- a/fs/btrfs/free-space-cache.c
++++ b/fs/btrfs/free-space-cache.c
+@@ -735,8 +735,6 @@ static int __load_free_space_cache(struct btrfs_root *root, struct inode *inode,
+ 		return 0;
+ 	}
+ 
+-	ret = -1;
+-
+ 	leaf = path->nodes[0];
+ 	header = btrfs_item_ptr(leaf, path->slots[0],
+ 				struct btrfs_free_space_header);
+-- 
+2.32.0
 
---YJJooXTg9A0B1Lju
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmFfNlEACgkQ3SOs138+
-s6Ex8g/9FzkP6Q72V90vFaRIUz/isfotGtkN2TgNhkMcQ1nfh8YNMPDVdFOS0tPN
-eTBbg2moh1JaDxrQ6V6SWNypCZYzoN4fzCYrLOmCa2mC7Yteq5m5zXlIqt9wMmdd
-i1UAVw0u57F/Nyw9dH0bQxDZYNAYJzrhq8FUIlZ3UroysSKF+ipjf07k8ANtovrj
-Wq0q+xm+vn6MJS5TElVeCd0fLQWJvUwq6lZ9YUtB44uszvhciCy04xeMJ4sLAvdA
-0VA3BjOHglRi4bEivpviSMMw5viABX1ZedM5lrxkAZDzcoPEu4cNuri77aaAwcge
-XSDX/jViJASF73nqt5AI3mhDa8RUbtgKBDFbWi7dgpVSF9JAPdNbeWQKR/lNWdos
-7vLch3cbR7Zc6AGerOld5s7XDLAN85ocp5CexAr1Wj3UgYGmjk5RuvXQH6aHJ5Zr
-RJ1AV5yzu8FY6CzvKGR6ywoJbmzZTAK5R+XrhyBSDO0IuIKLPByRH12vOnzS8bEX
-5aJYrih3ugVLCgOLMda/qsRiKjhHZOeZYlFMxuXKqxLXsdOXcu27VuQg2Vu9mb53
-wJdioW3oDctaL6La9upYSerpBxzOxjcP+0aSBMAu1hUqOIU5m+0ktn05xl06OyY0
-sZ22iw1pYgmE7WGTmq2rTHksIX2WP1PipyJNpuJF4Xh5df/QOVY=
-=EYc+
------END PGP SIGNATURE-----
-
---YJJooXTg9A0B1Lju--
