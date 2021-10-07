@@ -2,80 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D59C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 14:52:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64558C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 15:35:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E85F6109F
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 14:52:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4928D61248
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 15:35:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242207AbhJGOyr (ORCPT
+        id S230060AbhJGPhA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Oct 2021 10:54:47 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:49192 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242165AbhJGOym (ORCPT
+        Thu, 7 Oct 2021 11:37:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43150 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240520AbhJGPhA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Oct 2021 10:54:42 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1633618366; h=Date: Message-ID: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=viYmgYRwFaqRM+Qbx3Egqzt8j0aj4mHAUmADofZbvKE=;
- b=YJuyBHGMG7A3MXa+CJUgipe8ZIQvjAAilnCRLa9rjxBkHTNTop9Md95aNJHoPq/8F0Y4babY
- L9d/K61j84KwR6tR6yxS2YJHrXcooSYUuOepqCXUOhjKw4gv0FNcL5BNQIsuKAxYDsrZC/9F
- kqxPwKUiYC3OSn7lNrtXR67HJlU=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n06.prod.us-west-2.postgun.com with SMTP id
- 615f09b5ff0285fb0a08e9b3 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 07 Oct 2021 14:52:37
- GMT
-Sender: kvalo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 8429CC43460; Thu,  7 Oct 2021 14:52:37 +0000 (UTC)
-Received: from tykki.adurom.net (tynnyri.adurom.net [51.15.11.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 86014C4338F;
-        Thu,  7 Oct 2021 14:52:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 86014C4338F
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Thu, 7 Oct 2021 11:37:00 -0400
+Received: from mail-vk1-xa30.google.com (mail-vk1-xa30.google.com [IPv6:2607:f8b0:4864:20::a30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77C94C061570;
+        Thu,  7 Oct 2021 08:35:06 -0700 (PDT)
+Received: by mail-vk1-xa30.google.com with SMTP id f126so2888528vke.3;
+        Thu, 07 Oct 2021 08:35:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5WTwD94+ipaG7RqJCNvBFP/gG3VXHYRXybq3iqV1vuc=;
+        b=JBOE4EIayLAPajB661c2z4LOE+SKukrHAlI9kulPa4FWkp+Tt+evWFMU+mwneaHUzg
+         ZVHXnRTycZ/+oZWamQFwuVanHt9qRtBMswvQqE6rs+oXq7sfSrP0EUZzuG5DdckTWdjj
+         XCCxKAOXHYLoTvbNk79Tp7EC0Mou5AajxnLiG9E5XV3wrFiNugtqngrOsqj78h073cr8
+         708qU49wPuq8x0GCkliVMsunSVtfaGys6EPCfoLJcfnvqFd76nXIZtRJ1gzc1a/m1H9p
+         EoTKdhBqPjMrKOOoFzoPoqEJP9ZWKlSeybc0ITibKJ4OSs5mJA/ao5WrqYQY2OpSZtRx
+         vtzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5WTwD94+ipaG7RqJCNvBFP/gG3VXHYRXybq3iqV1vuc=;
+        b=X2f8d6HfpciWvygMxBIIGDEW9bp0lXVGYqzyaFRFUcthSlH1iV8NV2qUXi7vhFRDBQ
+         BS0s9MGhZ09UqFBZ3qLlrI4nBxqZlchmsbYMgIIe7Sz79Jm3G3asI7K+4csroETAF9fD
+         OOb3fXv+xTwqV2TBLde4NPzH6ip1WAUXkveYmJx3i2mvQ7PjldjRXco98T1fL2BMr+ZM
+         YphbmgUN2oh9+K8NEGPJEOCV6dRBj0REBKnnmqWNSO5zNSt0VUSMLW3I6ktE5vi54Wvp
+         y83YepqdM3fyPWZpDg6noEmVz61W3gPql7Ax1OylXVNbYUo9qdOvU4Y2jCExMT0qKWv1
+         dk4A==
+X-Gm-Message-State: AOAM530OGPqiHR43I8HGb3ykOwkhmTCgaA1qwpP6f+heDzAvMbPTcaFD
+        iAnfwrNTYuTtIgVy//PhmMp2rSMOXKJYhaNOm8Y=
+X-Google-Smtp-Source: ABdhPJyJkU1px/SqrNn9EgIlLEPMrUrHsbE2jjtiKp9ZcRfrdi8Y/zBG8aZjxC1QttkNWaqkjBvs3N0570liXgYFhF4=
+X-Received: by 2002:a1f:a9c4:: with SMTP id s187mr4383115vke.9.1633620905609;
+ Thu, 07 Oct 2021 08:35:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH][next] ath11k: Fix spelling mistake "incompaitiblity" ->
- "incompatibility"
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20211006083217.349596-1-colin.king@canonical.com>
-References: <20211006083217.349596-1-colin.king@canonical.com>
+References: <20211007111713.12207-1-colin.king@canonical.com>
+In-Reply-To: <20211007111713.12207-1-colin.king@canonical.com>
+From:   Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date:   Thu, 7 Oct 2021 08:34:54 -0700
+Message-ID: <CABBYNZKzVtyZ_qO8pvenSLFRdm9aumxD_-Src4VG3UHQa8y+1w@mail.gmail.com>
+Subject: Re: [PATCH][next] Bluetooth: use bitmap_empty to check if a bitmap
+ has any bits set
 To:     Colin King <colin.king@canonical.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, ath11k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <163361835071.17431.1471476207950050430.kvalo@codeaurora.org>
-Date:   Thu,  7 Oct 2021 14:52:37 +0000 (UTC)
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+Hi Colin,
 
-> There is a spelling mistake in an ath11k_warn message. Fix it.
-> 
+On Thu, Oct 7, 2021 at 4:17 AM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The check to see if any tasks are left checks if bitmap array is zero
+> rather than using the appropriate bitmap helper functions to check the
+> bits in the array. Fix this by using bitmap_empty on the bitmap.
+>
+> Addresses-Coverity: (" Array compared against 0")
+> Fixes: 912730b52552 ("Bluetooth: Fix wake up suspend_wait_q prematurely")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+> ---
+>  net/bluetooth/hci_request.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/net/bluetooth/hci_request.c b/net/bluetooth/hci_request.c
+> index 209f4fe17237..bad3b9c895ba 100644
+> --- a/net/bluetooth/hci_request.c
+> +++ b/net/bluetooth/hci_request.c
+> @@ -1108,7 +1108,7 @@ static void suspend_req_complete(struct hci_dev *hdev, u8 status, u16 opcode)
+>         clear_bit(SUSPEND_SET_ADV_FILTER, hdev->suspend_tasks);
+>
+>         /* Wake up only if there are no tasks left */
+> -       if (!hdev->suspend_tasks)
+> +       if (!bitmap_empty(hdev->suspend_tasks, __SUSPEND_NUM_TASKS))
+>                 wake_up(&hdev->suspend_wait_q);
+>  }
+>
+> --
+> 2.32.0
 
-Patch applied to ath-next branch of ath.git, thanks.
-
-567ec33a76c7 ath11k: Fix spelling mistake "incompaitiblity" -> "incompatibility"
+I was going to revert this change since it appears wake_up does
+actually check the wake condition there is no premature wake up after
+all.
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20211006083217.349596-1-colin.king@canonical.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Luiz Augusto von Dentz
