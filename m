@@ -2,44 +2,47 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 319C0C433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 23:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D32F3C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 23:41:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1CCBE60FD8
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 23:35:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFC2560C4B
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 23:41:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241345AbhJGXgw (ORCPT
+        id S236975AbhJGXnu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Oct 2021 19:36:52 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:59700
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239415AbhJGXgt (ORCPT
+        Thu, 7 Oct 2021 19:43:50 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:36202
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229778AbhJGXnt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Oct 2021 19:36:49 -0400
+        Thu, 7 Oct 2021 19:43:49 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 8ACC13FFE8;
-        Thu,  7 Oct 2021 23:34:52 +0000 (UTC)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id BEA443F226;
+        Thu,  7 Oct 2021 23:41:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633649692;
-        bh=RPQpln4G93Q7K4DTSU9GOAGrfF0KJBA8LQyljPm4gZk=;
+        s=20210705; t=1633650113;
+        bh=xcI8ZGeSFCk6ZEUuzxl7/qYwHZsqf/PSG6Ov6OHHj+c=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=cwOh0nomoH6as2C9XYWCWQl3dQh6kjl5PXbJCYOW+eXyVP8QFEDTYYesuEIH2PSAh
-         /kpSg5HQ8uPNeMQvSZqN1tjy66rHz3fxNRuouoir3t5NS75NMUuYjNf7AWa9VUzizt
-         CwJIxOtPJXOu8CDauB0etnUE/1XH1eu8n2Tq06xnIOHHkgkxNrNLQutiY5e1GcCiD1
-         5ShFmt6IqWfl6W1GQQBbBDrr8nvxkL32IqsW4jZQJjE+FBVWJgS4tRchWlBdl2cttJ
-         3+9O7qZ4VxN8nFjmtUVzbrzQ6+xhHISAaB4rGVg1Wnoc/uF9I2D/W3SFARlny/N05N
-         GxMbmhwOIrC/w==
+        b=BQiKBs9mshkGku5TLdxn8jGHo9Yi/4GPqHXGx1oRJUNuRW8z1ZcHZyP5tQZ86tRi6
+         TlQb5HDR9kPEYFEfEY6EZT7iAG1vMiZbd+1+YYwU/SWlTjkmquB9O+sjrwtfebBmJI
+         Ck5rfbED65Ls+eA5fWWPc752AmcyL2HNWLUCjH26DmqHKwpJxGtN9JrI1opsQUQcAx
+         W0nJ9Nn1HurvlZRVkQez9WPti919HJZQMgW5kBRDe+KwgS8znuVMjTbevPqmJAdJlA
+         uoXfVOeH1j4khNn+rVZiHJB6p6F5qhUoXeCmyN1CZtHdq8x54DB1vB4QPQFejn+hA8
+         9VDH23jU9oBBg==
 From:   Colin King <colin.king@canonical.com>
-To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        ocfs2-devel@oss.oracle.com
+To:     Jakub Kicinski <kubakici@wp.pl>, Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ocfs2/dlm: Remove redundant assignment of variable ret
-Date:   Fri,  8 Oct 2021 00:34:52 +0100
-Message-Id: <20211007233452.30815-1-colin.king@canonical.com>
+Subject: [PATCH] mt7601u: Remove redundant initialization of variable ret
+Date:   Fri,  8 Oct 2021 00:41:53 +0100
+Message-Id: <20211007234153.31222-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -50,28 +53,29 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable ret is being assigned a value that is never read, it is
-updated later on with a different value. The assignment is redundant and
-can be removed.
+The variable ret is being initialized with a value that is never read,
+it is assigned later on with a different value. The initialization is
+redundant and can be removed.
 
 Addresses-Coverity: ("Unused value")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/ocfs2/dlm/dlmrecovery.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/wireless/mediatek/mt7601u/dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ocfs2/dlm/dlmrecovery.c b/fs/ocfs2/dlm/dlmrecovery.c
-index e24e327524f8..52ad342fec3e 100644
---- a/fs/ocfs2/dlm/dlmrecovery.c
-+++ b/fs/ocfs2/dlm/dlmrecovery.c
-@@ -2698,7 +2698,6 @@ static int dlm_send_begin_reco_message(struct dlm_ctxt *dlm, u8 dead_node)
- 			continue;
- 		}
- retry:
--		ret = -EINVAL;
- 		mlog(0, "attempting to send begin reco msg to %d\n",
- 			  nodenum);
- 		ret = o2net_send_message(DLM_BEGIN_RECO_MSG, dlm->key,
+diff --git a/drivers/net/wireless/mediatek/mt7601u/dma.c b/drivers/net/wireless/mediatek/mt7601u/dma.c
+index ed78d2cb35e3..457147394edc 100644
+--- a/drivers/net/wireless/mediatek/mt7601u/dma.c
++++ b/drivers/net/wireless/mediatek/mt7601u/dma.c
+@@ -515,7 +515,7 @@ static int mt7601u_alloc_tx(struct mt7601u_dev *dev)
+ 
+ int mt7601u_dma_init(struct mt7601u_dev *dev)
+ {
+-	int ret = -ENOMEM;
++	int ret;
+ 
+ 	tasklet_setup(&dev->tx_tasklet, mt7601u_tx_tasklet);
+ 	tasklet_setup(&dev->rx_tasklet, mt7601u_rx_tasklet);
 -- 
 2.32.0
 
