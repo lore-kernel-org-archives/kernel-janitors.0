@@ -2,85 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62503C433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 08:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0E7C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 11:17:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 44BA361076
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 08:02:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C76C60F59
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 11:17:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240403AbhJGIEB (ORCPT
+        id S232781AbhJGLTL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Oct 2021 04:04:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56144 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233511AbhJGIEA (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Oct 2021 04:04:00 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6DD4C61053;
-        Thu,  7 Oct 2021 08:02:05 +0000 (UTC)
-Date:   Thu, 7 Oct 2021 09:02:02 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <nathan@kernel.org>, llvm@lists.linux.dev,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] elfcore: correct reference to CONFIG_UML
-Message-ID: <YV6pejGzLy5ppEpt@arm.com>
-References: <20211006082209.417-1-lukas.bulwahn@gmail.com>
- <CAKwvOd=X-ZFPraS2EL24ps1aKdT3bWhtASA0vUjXdzo655XGiQ@mail.gmail.com>
+        Thu, 7 Oct 2021 07:19:11 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:33504
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230087AbhJGLTJ (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 7 Oct 2021 07:19:09 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 303683FFE4;
+        Thu,  7 Oct 2021 11:17:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1633605434;
+        bh=avjKW1lulkmRLzQGJiNan2tRFayMsYMy4bdNSEG99Ds=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=GaMOJdxdCQFYwiz7lh3WZWOecf6ZSKndwxQKMwtsm16R4D4jqcCvmPjGX0jsqseVU
+         kW3R1FwLVxz7JMxgWXB4cY12aoAsATU4D1V3sIEykqtXBOUiWSbiH0Swo1R3VzMbyD
+         4CjoDRACB4g+if3xci9gNPS9K88sbxQzO5zrKiVyYf0OEAtuV8rq508/kzCP6U+ggy
+         bYxVpX16vfOZPPm7dc61cPy07LVKf/PHbmBLyKSweGMkhr7Zw4qQ536wzHG8Eo1zt6
+         ypMYa0tMA+h8F24FiKTkufrXVHLyoZ0nuYBc4ijC5B0RP7kg3PhKxfnlQSL29SfQD4
+         gsxHLeK2/EAkg==
+From:   Colin King <colin.king@canonical.com>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] Bluetooth: use bitmap_empty to check if a bitmap has any bits set
+Date:   Thu,  7 Oct 2021 12:17:13 +0100
+Message-Id: <20211007111713.12207-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKwvOd=X-ZFPraS2EL24ps1aKdT3bWhtASA0vUjXdzo655XGiQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Oct 6, 2021 at 1:22 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> Commit 6e7b64b9dd6d ("elfcore: fix building with clang") introduces
-> special handling for two architectures, ia64 and User Mode Linux.
-> However, the wrong name, i.e., CONFIG_UM, for the intended Kconfig symbol
-> for User-Mode Linux was used.
->
-> Although the directory for User Mode Linux is ./arch/um; the Kconfig
-> symbol for this architecture is called CONFIG_UML.
->
-> Luckily, ./scripts/checkkconfigsymbols.py warns on non-existing configs:
->
-> UM
-> Referencing files: include/linux/elfcore.h
-> Similar symbols: UML, NUMA
->
-> Correct the name of the config to the intended one.
->
-> Fixes: 6e7b64b9dd6d ("elfcore: fix building with clang")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> applies cleanly on next-20211005
->
-> Arnd, please ack.
-> Andrew, please pick this fix.
->
->  include/linux/elfcore.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/include/linux/elfcore.h b/include/linux/elfcore.h
-> index 2aaa15779d50..127716b58235 100644
-> --- a/include/linux/elfcore.h
-> +++ b/include/linux/elfcore.h
-> @@ -109,7 +109,7 @@ static inline int elf_core_copy_task_fpregs(struct task_struct *t, struct pt_reg
->  #endif
->  }
->
-> -#if defined(CONFIG_UM) || defined(CONFIG_IA64)
-> +#if defined(CONFIG_UML) || defined(CONFIG_IA64)
+From: Colin Ian King <colin.king@canonical.com>
 
-This fails to build with 'make ARCH=um SUBARCH=x86_64' since
-arch/x86/um/elfcore.c is only compiled for x86_32. You'd need another
-check on CONFIG_X86_32 (as per my patch ;)).
+The check to see if any tasks are left checks if bitmap array is zero
+rather than using the appropriate bitmap helper functions to check the
+bits in the array. Fix this by using bitmap_empty on the bitmap.
 
-Thanks.
+Addresses-Coverity: (" Array compared against 0")
+Fixes: 912730b52552 ("Bluetooth: Fix wake up suspend_wait_q prematurely")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/bluetooth/hci_request.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/net/bluetooth/hci_request.c b/net/bluetooth/hci_request.c
+index 209f4fe17237..bad3b9c895ba 100644
+--- a/net/bluetooth/hci_request.c
++++ b/net/bluetooth/hci_request.c
+@@ -1108,7 +1108,7 @@ static void suspend_req_complete(struct hci_dev *hdev, u8 status, u16 opcode)
+ 	clear_bit(SUSPEND_SET_ADV_FILTER, hdev->suspend_tasks);
+ 
+ 	/* Wake up only if there are no tasks left */
+-	if (!hdev->suspend_tasks)
++	if (!bitmap_empty(hdev->suspend_tasks, __SUSPEND_NUM_TASKS))
+ 		wake_up(&hdev->suspend_wait_q);
+ }
+ 
 -- 
-Catalin
+2.32.0
+
