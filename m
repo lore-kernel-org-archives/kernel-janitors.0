@@ -2,87 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03947C433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 14:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D59C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 14:52:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CED12610C8
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 14:31:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E85F6109F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Oct 2021 14:52:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242088AbhJGOdH (ORCPT
+        id S242207AbhJGOyr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Oct 2021 10:33:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44722 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233381AbhJGOdH (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Oct 2021 10:33:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6D3E2610EA;
-        Thu,  7 Oct 2021 14:31:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633617073;
-        bh=VN63RB522o8WFY2Ey9405BvBXJdWFy4UFPRQ2hg36Ig=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=SoVky5XUMZsKen9HX7ymW9QmSloaYyq4Q4U2w4sa7YDxDZWRCEdxvgMHuaOXOg+NK
-         xnbaYmAT2977HqGJUhq/yb4rrYIxmO3Z9uB1d2ipjdKYaT43m6ojzYGlXFsNUVX9gk
-         d8gvfre0yRDb3QO+RN6oKN2exgo0vEtqQ6j3YOwljkq33M3DDWesAM7zF/Hyt22TiS
-         i5Nrlbv8UG2L6b/h63tlgZLWqHy1Gmw38XlFQ22xWEQFNwqC07Ftw0CJ5UqCiSM1MI
-         bEN9uHqWIfSeHGnAga32sYA212uPljZ/hIzSnYlUIqJNE/C4ltrgibNLQ3lAzyRoWA
-         s8avTIB4fKATQ==
-Received: by mail-ot1-f42.google.com with SMTP id v2-20020a05683018c200b0054e3acddd91so3209924ote.8;
-        Thu, 07 Oct 2021 07:31:13 -0700 (PDT)
-X-Gm-Message-State: AOAM5339G/3nDfu8HQlYHEuTkSwLejvt5vgv3F8dsn3dftHaotydZpOr
-        8dO5AKh6EspSby2swDrIVbloASjAMBV1d9/jF+A=
-X-Google-Smtp-Source: ABdhPJx9+OtS8s0Zlrpz2JV2zuvtULulfL7uYDLsTkKxgEkDIeKPkAnSu95wk6RUbALrfaoxXD7ny9OgEXtPNLiwgt8=
-X-Received: by 2002:a05:6830:17da:: with SMTP id p26mr3953027ota.116.1633617072833;
- Thu, 07 Oct 2021 07:31:12 -0700 (PDT)
+        Thu, 7 Oct 2021 10:54:47 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:49192 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242165AbhJGOym (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 7 Oct 2021 10:54:42 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1633618366; h=Date: Message-ID: Cc: To: References:
+ In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
+ Content-Type: Sender; bh=viYmgYRwFaqRM+Qbx3Egqzt8j0aj4mHAUmADofZbvKE=;
+ b=YJuyBHGMG7A3MXa+CJUgipe8ZIQvjAAilnCRLa9rjxBkHTNTop9Md95aNJHoPq/8F0Y4babY
+ L9d/K61j84KwR6tR6yxS2YJHrXcooSYUuOepqCXUOhjKw4gv0FNcL5BNQIsuKAxYDsrZC/9F
+ kqxPwKUiYC3OSn7lNrtXR67HJlU=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n06.prod.us-west-2.postgun.com with SMTP id
+ 615f09b5ff0285fb0a08e9b3 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 07 Oct 2021 14:52:37
+ GMT
+Sender: kvalo=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 8429CC43460; Thu,  7 Oct 2021 14:52:37 +0000 (UTC)
+Received: from tykki.adurom.net (tynnyri.adurom.net [51.15.11.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 86014C4338F;
+        Thu,  7 Oct 2021 14:52:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 86014C4338F
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Received: by 2002:ac9:31e7:0:0:0:0:0 with HTTP; Thu, 7 Oct 2021 07:31:12 -0700 (PDT)
-In-Reply-To: <20211007133541.GC2048@kadam>
-References: <20211007114716.13123-1-colin.king@canonical.com>
- <CAKYAXd_aOawm4MkBtkTxnLfeEk+F5VgrJHjyH8GSaeHjQbLtGQ@mail.gmail.com> <20211007133541.GC2048@kadam>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Thu, 7 Oct 2021 23:31:12 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd824PDidipzYR3ZqP0BkQqi2MXXQRhqZ_OUAO62AtdQXQ@mail.gmail.com>
-Message-ID: <CAKYAXd824PDidipzYR3ZqP0BkQqi2MXXQRhqZ_OUAO62AtdQXQ@mail.gmail.com>
-Subject: Re: [PATCH][next] cifsd: Fix a less than zero comparison with the
- unsigned int nbytes
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Steve French <sfrench@samba.org>,
-        Hyunchul Lee <hyc.lee@gmail.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        linux-cifs@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH][next] ath11k: Fix spelling mistake "incompaitiblity" ->
+ "incompatibility"
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20211006083217.349596-1-colin.king@canonical.com>
+References: <20211006083217.349596-1-colin.king@canonical.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, ath11k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <163361835071.17431.1471476207950050430.kvalo@codeaurora.org>
+Date:   Thu,  7 Oct 2021 14:52:37 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-2021-10-07 22:35 GMT+09:00, Dan Carpenter <dan.carpenter@oracle.com>:
-> On Thu, Oct 07, 2021 at 09:37:04PM +0900, Namjae Jeon wrote:
->> 2021-10-07 20:47 GMT+09:00, Colin King <colin.king@canonical.com>:
->> >
->> > Fixes: e2f34481b24d ("cifsd: add server-side procedures for SMB3")
->> I think that this alarm is caused by 	b66732021c64 (ksmbd: add
->> validation in smb2_ioctl).
->> Fixes tag may be not needed. Because b66732021c64 patch is not applied
->> to Linus' tree yet ?
->
-> If you are going to modify the commit to include this fix then that's
-> fine.  Otherise if you are going to apply this commit then the Fixes
-> tag is still required.
->
-> The fixes tag saves time for backporters because they can automatically
-> rule out that this patch needs to be backported.  Or if they backport
-> commit b66732021c64 then they know they have to backport the fix as
-> well.
->
-> Also the Fixes tag is used for other purposes besides backporting.
-> It helps review.  It's also an interesting metric to measure how long
-> between the bug is introduced and the fix is applied.
-Okay, Thanks for your detailed explanation:)
->
-> regards,
-> dan carpenter
->
->
+Colin King <colin.king@canonical.com> wrote:
+
+> There is a spelling mistake in an ath11k_warn message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+
+Patch applied to ath-next branch of ath.git, thanks.
+
+567ec33a76c7 ath11k: Fix spelling mistake "incompaitiblity" -> "incompatibility"
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20211006083217.349596-1-colin.king@canonical.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
