@@ -2,99 +2,134 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3727C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Oct 2021 13:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D74AC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Oct 2021 15:15:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AAD4860FD8
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Oct 2021 13:57:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3327360F9C
+	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Oct 2021 15:15:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234008AbhJHN7p (ORCPT
+        id S242945AbhJHPRe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 8 Oct 2021 09:59:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39636 "EHLO
+        Fri, 8 Oct 2021 11:17:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbhJHN7o (ORCPT
+        with ESMTP id S242715AbhJHPRe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 8 Oct 2021 09:59:44 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 790B5C061570;
-        Fri,  8 Oct 2021 06:57:49 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0E506581;
-        Fri,  8 Oct 2021 15:57:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1633701467;
-        bh=rrj5/OHbxLCwvJLUfefaA4aV2n9ZiuZogKvLc2ZlskU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lDr+P/H+qzXpb621M3VAoo5Ufz7gBVIHJxiUUxZr7zYwHIwPidevXqUpoYSUbnKCF
-         9qNgcyBZK1/O9ogvSqsotvpMD6YL+B5URZcgCkQsx9ppQJ+Dni7y4A9fvR+WK+o6Oh
-         u4zh2GhdaV2Hx977r1j5ApCytqOR7y0OCkmbRRJs=
-Date:   Fri, 8 Oct 2021 16:57:36 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Ricardo Ribalda <ribalda@chromium.org>,
-        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] media: uvcvideo: Fix memory leak of object map on
- error exit path
-Message-ID: <YWBOUP98s0K3yVbc@pendragon.ideasonboard.com>
-References: <20210917114930.47261-1-colin.king@canonical.com>
+        Fri, 8 Oct 2021 11:17:34 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 904A7C061570;
+        Fri,  8 Oct 2021 08:15:38 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id r7so30806585wrc.10;
+        Fri, 08 Oct 2021 08:15:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=T7MGxfkmIu6hScMKkOk6yF8OXztAXQpl5GmJESEY5qk=;
+        b=kKlXRck94dKwpDv9Q3VWhmF7nfKwZ5VJYQKpk1hhg8qtPH3aJysWH7T2suuZ8NfXFJ
+         giuanddnj8r+JUDEPs15tPMQ7+iTqkIJoqhBA73KP9NQ32QLjgc4zgKBTyTP1am85O8M
+         VQcxB387+qgcQZJf2A3F1ScHRbiAK/0SkX3Ga4Mh/90rMs3bW43kREYdfr8wdtD0QbxG
+         bit6yPrVafWp/802qWytkWGY0DGYBBnF5VdlIDoRMbMvogHH29jBhHFhY22PcX7cKPYC
+         f4w2LAM7XIQhtvYbv8e5YWG2K3C0fQa8WUnvsv0/be+L5zECZ5GLB/E0IiUJON4wLKCi
+         k+fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=T7MGxfkmIu6hScMKkOk6yF8OXztAXQpl5GmJESEY5qk=;
+        b=iOc3D6yEY/n1fSxhaSAGbhmmETlIV7xlMJajnAIbrmmPfvoziWmB4yB6QLrKDxF8Kw
+         IuYj83LFVSkyIse78LnAi138BetWLx75BIv2YoEMD1PDruD+u26hnPWas92/Gk9CLF8x
+         GYCT2a4IMAgpdXSkuGcQgtcOpNiD6S50hCUkz39/+f1rcjADBdP0MsDUhN5P9oJA4xYP
+         IBsx9lua3VaFr3q+h3AsLkzYYpaUX3n+VPa5aME2WcFZUCUozvPos1qIcqgYkv8bQhn0
+         zRG5SieSSrUgV1CflIa7qKIHt3F9ja9nz1Bv104IQc9SgBEzT3Xoge0n2qNvIeQE2o8v
+         cYqg==
+X-Gm-Message-State: AOAM533fxug1ALvscs7wRxVLfjgpC7/H1xZz+0RRFr7nQqwMKRbkBvXp
+        QD8prMD8EkIDLqVuGSp2aY1kJMzLzd4=
+X-Google-Smtp-Source: ABdhPJw2mPZ7iIGxCYSLIRRzvDjAUDj7yUfLjQg9/i0ys9BPd5HwmME8GyYiizY6YhDzJfgq6K7ZMg==
+X-Received: by 2002:a05:600c:1c01:: with SMTP id j1mr3956324wms.1.1633706137003;
+        Fri, 08 Oct 2021 08:15:37 -0700 (PDT)
+Received: from debian64.daheim (p200300d5ff047000d63d7efffebde96e.dip0.t-ipconnect.de. [2003:d5:ff04:7000:d63d:7eff:febd:e96e])
+        by smtp.gmail.com with ESMTPSA id u5sm210928wmm.39.2021.10.08.08.15.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Oct 2021 08:15:36 -0700 (PDT)
+Received: from localhost.daheim ([127.0.0.1])
+        by debian64.daheim with esmtp (Exim 4.95)
+        (envelope-from <chunkeey@gmail.com>)
+        id 1mYpiO-0009Ks-SC;
+        Fri, 08 Oct 2021 17:15:35 +0200
+Subject: Re: [PATCH] carl9170: Fix error return -EAGAIN if not started
+To:     Colin Ian King <colin.king@canonical.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Christian Lamparter <chunkeey@googlemail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "John W . Linville" <linville@tuxdriver.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20211008001558.32416-1-colin.king@canonical.com>
+ <20211008055854.GE2048@kadam>
+ <382b719f-f14e-2963-284d-c0b38dedc4ae@canonical.com>
+From:   Christian Lamparter <chunkeey@gmail.com>
+Message-ID: <4e6efdf8-3c2e-68cd-5c23-b9809eceb331@gmail.com>
+Date:   Fri, 8 Oct 2021 17:15:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210917114930.47261-1-colin.king@canonical.com>
+In-Reply-To: <382b719f-f14e-2963-284d-c0b38dedc4ae@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Colin,
+Hello,
 
-Thank you for the patch.
-
-On Fri, Sep 17, 2021 at 12:49:30PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 08/10/2021 09:31, Colin Ian King wrote:
+> On 08/10/2021 06:58, Dan Carpenter wrote:
+>> On Fri, Oct 08, 2021 at 01:15:58AM +0100, Colin King wrote:
+>>> From: Colin Ian King <colin.king@canonical.com>
+>>>
+>>> There is an error return path where the error return is being
+>>> assigned to err rather than count and the error exit path does
+>>> not return -EAGAIN as expected. Fix this by setting the error
+>>> return to variable count as this is the value that is returned
+>>> at the end of the function.
+>>>
+>>> Addresses-Coverity: ("Unused value")
+>>> Fixes: 00c4da27a421 ("carl9170: firmware parser and debugfs code")
+>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>>> ---
+>>>   drivers/net/wireless/ath/carl9170/debug.c | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/net/wireless/ath/carl9170/debug.c b/drivers/net/wireless/ath/carl9170/debug.c
+>>> index bb40889d7c72..f163c6bdac8f 100644
+>>> --- a/drivers/net/wireless/ath/carl9170/debug.c
+>>> +++ b/drivers/net/wireless/ath/carl9170/debug.c
+>>> @@ -628,7 +628,7 @@ static ssize_t carl9170_debugfs_bug_write(struct ar9170 *ar, const char *buf,
+>>>       case 'R':
+>>>           if (!IS_STARTED(ar)) {
+>>> -            err = -EAGAIN;
+>>> +            count = -EAGAIN;
+>>>               goto out;
+>>
+>> This is ugly.  The bug wouldn't have happened with a direct return, it's
+>> only the goto out which causes it.  Better to replace all the error
+>> paths with direct returns.  There are two other direct returns so it's
+>> not like a new thing...
 > 
-> Currently when the allocation of map->name fails the error exit path
-> does not kfree the previously allocated object map. Fix this by
-> setting ret to -ENOMEM and taking the free_map exit error path to
-> ensure map is kfree'd.
-> 
-> Addresses-Coverity: ("Resource leak")
-> Fixes: 07adedb5c606 ("media: uvcvideo: Use control names from framework")
+> Yep, I agree it was ugly, I was trying to keep to the coding style and reduce the patch delta size. I can do a V2 if the maintainers deem it's a cleaner solution.
 
-That's not the right commit ID, it should be 70fa906d6fce.
+Hm? I don't think there's any need to stick to a particular
+coding style. This file hasn't been touched a lot since 2010.
+Things moved on and replacing the gotos with straight return
+is totally fine.
 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+(It has to pass the build checkers of course. However I don't
+think this will be a problem here...)
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-Mauro, could you add this in your tree for v5.16 ?
-
-> ---
->  drivers/media/usb/uvc/uvc_v4l2.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-> index f4e4aff8ddf7..711556d13d03 100644
-> --- a/drivers/media/usb/uvc/uvc_v4l2.c
-> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-> @@ -44,8 +44,10 @@ static int uvc_ioctl_ctrl_map(struct uvc_video_chain *chain,
->  	if (v4l2_ctrl_get_name(map->id) == NULL) {
->  		map->name = kmemdup(xmap->name, sizeof(xmap->name),
->  				    GFP_KERNEL);
-> -		if (!map->name)
-> -			return -ENOMEM;
-> +		if (!map->name) {
-> +			ret = -ENOMEM;
-> +			goto free_map;
-> +		}
->  	}
->  	memcpy(map->entity, xmap->entity, sizeof(map->entity));
->  	map->selector = xmap->selector;
-
--- 
-Regards,
-
-Laurent Pinchart
+Cheers,
+Christian
