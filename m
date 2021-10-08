@@ -2,86 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CB9C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Oct 2021 09:54:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3727C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Oct 2021 13:57:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F50A60F59
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Oct 2021 09:54:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAD4860FD8
+	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Oct 2021 13:57:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239045AbhJHJ4c (ORCPT
+        id S234008AbhJHN7p (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 8 Oct 2021 05:56:32 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:51074
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238321AbhJHJ4b (ORCPT
+        Fri, 8 Oct 2021 09:59:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39636 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229529AbhJHN7o (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 8 Oct 2021 05:56:31 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 56EFB40008;
-        Fri,  8 Oct 2021 09:54:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633686871;
-        bh=TuVTrdle0GA/hj731likpqii9Ao75WSiuD/GlabjbTI=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=g6Fx4ISKggvBOHcX7uB9bC9mN2rP9e5a7wkPU48MaqVKI1Fnfy8mY+o0cYPtpntzL
-         vUSL67MOgzuz8Y0ljrv2meRl2KB/BhnsGvb4zCtmD3lONj3WmjPUh0haHOfyteEHkO
-         YTiJBXTvaK+DFBV73JxoeXGdD1VGv4lyu4q6rYDRug0LHUmzNreRv1xARdNY9Rh5H0
-         jC1V4o7N7AJDrNvFB8suk2YDml4zT+PUhincACr/EN/YdhMFljHzClBjacAVG34+YK
-         7IYdkjuYzUUJTdRcKLuksRqq4gOQAS+Ub5kOF5ovbLBzL0801qHLTumG5SnT9ZGGcc
-         YAwUTHyEP1B6w==
-From:   Colin King <colin.king@canonical.com>
-To:     Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        linux-rockchip@lists.infradead.org, alsa-devel@alsa-project.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2][next] ASoC: rockchip: i2s-tdm: Fix error handling on i2s_tdm_prepare_enable_mclk failure
-Date:   Fri,  8 Oct 2021 10:54:30 +0100
-Message-Id: <20211008095430.62680-2-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20211008095430.62680-1-colin.king@canonical.com>
-References: <20211008095430.62680-1-colin.king@canonical.com>
+        Fri, 8 Oct 2021 09:59:44 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 790B5C061570;
+        Fri,  8 Oct 2021 06:57:49 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0E506581;
+        Fri,  8 Oct 2021 15:57:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1633701467;
+        bh=rrj5/OHbxLCwvJLUfefaA4aV2n9ZiuZogKvLc2ZlskU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lDr+P/H+qzXpb621M3VAoo5Ufz7gBVIHJxiUUxZr7zYwHIwPidevXqUpoYSUbnKCF
+         9qNgcyBZK1/O9ogvSqsotvpMD6YL+B5URZcgCkQsx9ppQJ+Dni7y4A9fvR+WK+o6Oh
+         u4zh2GhdaV2Hx977r1j5ApCytqOR7y0OCkmbRRJs=
+Date:   Fri, 8 Oct 2021 16:57:36 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Ricardo Ribalda <ribalda@chromium.org>,
+        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] media: uvcvideo: Fix memory leak of object map on
+ error exit path
+Message-ID: <YWBOUP98s0K3yVbc@pendragon.ideasonboard.com>
+References: <20210917114930.47261-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210917114930.47261-1-colin.king@canonical.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Colin,
 
-In the case where the call to i2s_tdm_prepare_enable_mclk fails the
-function returns before the error handling goto is executed. Fix this
-by removing the return do perform the intended error handling exit.
+Thank you for the patch.
 
-Fixes: 081068fd6414 ("ASoC: rockchip: add support for i2s-tdm controller")
-Addresses-Coverity: ("Structurally dead code")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/rockchip/rockchip_i2s_tdm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Fri, Sep 17, 2021 at 12:49:30PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently when the allocation of map->name fails the error exit path
+> does not kfree the previously allocated object map. Fix this by
+> setting ret to -ENOMEM and taking the free_map exit error path to
+> ensure map is kfree'd.
+> 
+> Addresses-Coverity: ("Resource leak")
+> Fixes: 07adedb5c606 ("media: uvcvideo: Use control names from framework")
 
-diff --git a/sound/soc/rockchip/rockchip_i2s_tdm.c b/sound/soc/rockchip/rockchip_i2s_tdm.c
-index cc5a2f9d3948..396277eaa417 100644
---- a/sound/soc/rockchip/rockchip_i2s_tdm.c
-+++ b/sound/soc/rockchip/rockchip_i2s_tdm.c
-@@ -1736,8 +1736,8 @@ static int rockchip_i2s_tdm_probe(struct platform_device *pdev)
- 
- 	ret = i2s_tdm_prepare_enable_mclk(i2s_tdm);
- 	if (ret) {
--		return dev_err_probe(i2s_tdm->dev, ret,
--				     "Failed to enable one or more mclks\n");
-+		ret = dev_err_probe(i2s_tdm->dev, ret,
-+				    "Failed to enable one or more mclks\n");
- 		goto err_disable_hclk;
- 	}
- 
+That's not the right commit ID, it should be 70fa906d6fce.
+
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+Mauro, could you add this in your tree for v5.16 ?
+
+> ---
+>  drivers/media/usb/uvc/uvc_v4l2.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+> index f4e4aff8ddf7..711556d13d03 100644
+> --- a/drivers/media/usb/uvc/uvc_v4l2.c
+> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+> @@ -44,8 +44,10 @@ static int uvc_ioctl_ctrl_map(struct uvc_video_chain *chain,
+>  	if (v4l2_ctrl_get_name(map->id) == NULL) {
+>  		map->name = kmemdup(xmap->name, sizeof(xmap->name),
+>  				    GFP_KERNEL);
+> -		if (!map->name)
+> -			return -ENOMEM;
+> +		if (!map->name) {
+> +			ret = -ENOMEM;
+> +			goto free_map;
+> +		}
+>  	}
+>  	memcpy(map->entity, xmap->entity, sizeof(map->entity));
+>  	map->selector = xmap->selector;
+
 -- 
-2.32.0
+Regards,
 
+Laurent Pinchart
