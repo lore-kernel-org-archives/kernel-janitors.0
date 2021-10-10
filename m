@@ -2,79 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD1A5C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Oct 2021 10:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B96DC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Oct 2021 11:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C5D9460F43
-	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Oct 2021 10:40:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37AA96109E
+	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Oct 2021 11:33:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231651AbhJJKmG (ORCPT
+        id S231815AbhJJLfU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 10 Oct 2021 06:42:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54412 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231612AbhJJKmF (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 10 Oct 2021 06:42:05 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 0C00860F55;
-        Sun, 10 Oct 2021 10:40:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633862407;
-        bh=95c8hvYZ/DE/geYzhsrvQV/bJYdcWDPVETGJnUjS60w=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=mEJH4eBHjFU/u8NdLjs4fKztOMwZficKC7yIB6u3n32fqhusTqTBJsYBtfvUcsAlu
-         08pYafn5qc8VeYFDddCDKcO+wnVtMkjIHCdX+ZKZ8oMmL6dFNy++gCxTdvaC6se6Os
-         l/V7J8xVMnMKZ1NagG6DL74kqxrwAuRf7AKkrJcoTTNSfSsaps2d3UqEXhBRSrRufq
-         +wSdlfWy/PuNBTO2tB+IIQvt3yLUYEzmbOt1PeHk0qQo5WBvNEVbrs0u0NDwDU1ynn
-         MeWduI/HQGDPbb49Pyi9JsMh+hPeIDTn47CDez1EDZI7UAQ/kdIck0VGkmuxKOMdS8
-         lw/H/mivE4AXA==
-Content-Type: text/plain; charset="utf-8"
+        Sun, 10 Oct 2021 07:35:20 -0400
+Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:35421 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S231482AbhJJLfT (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 10 Oct 2021 07:35:19 -0400
+Received: from pop-os.home ([90.126.248.220])
+        by mwinf5d73 with ME
+        id 4BZH2600A4m3Hzu03BZHvZ; Sun, 10 Oct 2021 13:33:20 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 10 Oct 2021 13:33:20 +0200
+X-ME-IP: 90.126.248.220
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     balbi@kernel.org, gregkh@linuxfoundation.org,
+        yangyingliang@huawei.com
+Cc:     linux-geode@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] USB: gadget: udc: Remove some dead code
+Date:   Sun, 10 Oct 2021 13:33:16 +0200
+Message-Id: <9a85b2353843b95e2d86acb3103967fd405a8536.1633865503.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] ethernet: Remove redundant 'flush_workqueue()' calls
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <163386240697.21532.13147664390209951167.git-patchwork-notify@kernel.org>
-Date:   Sun, 10 Oct 2021 10:40:06 +0000
-References: <3dadac919f6f4a991953965ddbb975f2586e6ecf.1633848953.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <3dadac919f6f4a991953965ddbb975f2586e6ecf.1633848953.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     thomas.lendacky@amd.com, davem@davemloft.net, kuba@kernel.org,
-        rmody@marvell.com, skalluru@marvell.com,
-        GR-Linux-NIC-Dev@marvell.com, dchickles@marvell.com,
-        sburla@marvell.com, fmanlunas@marvell.com,
-        ajit.khaparde@broadcom.com, sriharsha.basavapatna@broadcom.com,
-        somnath.kotur@broadcom.com, sgoutham@marvell.com,
-        lcherian@marvell.com, gakula@marvell.com, jerinj@marvell.com,
-        hkelam@marvell.com, sbhatta@marvell.com, tariqt@nvidia.com,
-        saeedm@nvidia.com, leon@kernel.org, aelior@marvell.com,
-        GR-everest-linux-l2@marvell.com, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+The 'drd_wq' workqueue_struct has never been used.
+It is only destroyed, but never created.
 
-This patch was applied to netdev/net-next.git (master)
-by David S. Miller <davem@davemloft.net>:
+It was introduced in commit 1b9f35adb0ff ("usb: gadget: udc: Add Synopsys
+UDC Platform driver")
 
-On Sun, 10 Oct 2021 09:01:32 +0200 you wrote:
-> 'destroy_workqueue()' already drains the queue before destroying it, so
-> there is no need to flush it explicitly.
-> 
-> Remove the redundant 'flush_workqueue()' calls.
-> 
-> This was generated with coccinelle:
-> 
-> [...]
+Remove the corresponding dead code and save some space from the 'udc'
+structure.
 
-Here is the summary with links:
-  - ethernet: Remove redundant 'flush_workqueue()' calls
-    https://git.kernel.org/netdev/net-next/c/b9c56ccb436d
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/usb/gadget/udc/amd5536udc.h    | 1 -
+ drivers/usb/gadget/udc/snps_udc_plat.c | 5 -----
+ 2 files changed, 6 deletions(-)
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+diff --git a/drivers/usb/gadget/udc/amd5536udc.h b/drivers/usb/gadget/udc/amd5536udc.h
+index 3296f3fcee48..055436016503 100644
+--- a/drivers/usb/gadget/udc/amd5536udc.h
++++ b/drivers/usb/gadget/udc/amd5536udc.h
+@@ -572,7 +572,6 @@ struct udc {
+ 	struct extcon_specific_cable_nb	extcon_nb;
+ 	struct notifier_block		nb;
+ 	struct delayed_work		drd_work;
+-	struct workqueue_struct		*drd_wq;
+ 	u32				conn_type;
+ };
+ 
+diff --git a/drivers/usb/gadget/udc/snps_udc_plat.c b/drivers/usb/gadget/udc/snps_udc_plat.c
+index 99805d60a7ab..8bbb89c80348 100644
+--- a/drivers/usb/gadget/udc/snps_udc_plat.c
++++ b/drivers/usb/gadget/udc/snps_udc_plat.c
+@@ -243,11 +243,6 @@ static int udc_plat_remove(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, NULL);
+ 
+-	if (dev->drd_wq) {
+-		flush_workqueue(dev->drd_wq);
+-		destroy_workqueue(dev->drd_wq);
+-	}
+-
+ 	phy_power_off(dev->udc_phy);
+ 	phy_exit(dev->udc_phy);
+ 	extcon_unregister_notifier(dev->edev, EXTCON_USB, &dev->nb);
+-- 
+2.30.2
 
