@@ -2,88 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B38C433FE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Oct 2021 08:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E37C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Oct 2021 10:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3330160F43
-	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Oct 2021 08:05:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 000EA60F9D
+	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Oct 2021 10:03:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231169AbhJJIHn (ORCPT
+        id S231381AbhJJKFm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 10 Oct 2021 04:07:43 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:52610 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230254AbhJJIHm (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 10 Oct 2021 04:07:42 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1633853144; h=Date: Message-ID: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=wy5oGgHXHFfW9iRMrwRZpKSh4hSbPBqGPKIz53A8Ibc=;
- b=sDKtQ4ZdU/GoUZ72EO/NAPFNmLC56VUbOMD/YLZuewR+VBtTxL28VL5eWQpe0eF0cKnu8Bwl
- x+9z5gldrgjJrMzhilnVQqDEd8kxpTwCTDIdr5oE22XhanItEERaNxHLcUw3jCYekRBAN5iI
- jcbEEV6d5GoUN2/NFpavfAuh4nM=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n07.prod.us-east-1.postgun.com with SMTP id
- 61629ec10605239689df30d3 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sun, 10 Oct 2021 08:05:21
- GMT
-Sender: kvalo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 1C484C43460; Sun, 10 Oct 2021 08:05:21 +0000 (UTC)
-Received: from tykki.adurom.net (tynnyri.adurom.net [51.15.11.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 08E66C4338F;
-        Sun, 10 Oct 2021 08:05:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 08E66C4338F
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Sun, 10 Oct 2021 06:05:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43456 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231192AbhJJKFl (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 10 Oct 2021 06:05:41 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A8C6660F92;
+        Sun, 10 Oct 2021 10:03:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633860223;
+        bh=o2SZAeyo0LTn4nX1V2bIT59RoNIlKcGwC6k2nikfsYk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JGaWf2+KSMSmxQ7sc1z5qhvWJuZ+k4GFZ8S+mUGBMGYi0K6gSRFhAnerstcjOog0C
+         Lw8BKKal6+hV6ZvK/5UqU4MoDuHi+onYA9uF+ld6tQxR++dDSbAIbKUm18ctSa+Yme
+         D64Y7oX/+nExZADKojyKZjaRIHZVsmEfMMC8qsJTrtoXACIkoGbReyJIfZAvecIH6j
+         kIc3ZsVxCYzICxYMeeoM/TZWjYESTjtYOjhWTHSJRR/HcDkxOjXLg5HvgPCJeQ74Oz
+         cUkLryaVN2lTDFIRe8ycyIM3dcp6RRxmHMh7UBJdVxMnZSZfwjTtz8kIl8r32R9Gum
+         K+yn8x87Xhuyw==
+Date:   Sun, 10 Oct 2021 13:03:39 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     thomas.lendacky@amd.com, davem@davemloft.net, kuba@kernel.org,
+        rmody@marvell.com, skalluru@marvell.com,
+        GR-Linux-NIC-Dev@marvell.com, dchickles@marvell.com,
+        sburla@marvell.com, fmanlunas@marvell.com,
+        ajit.khaparde@broadcom.com, sriharsha.basavapatna@broadcom.com,
+        somnath.kotur@broadcom.com, sgoutham@marvell.com,
+        lcherian@marvell.com, gakula@marvell.com, jerinj@marvell.com,
+        hkelam@marvell.com, sbhatta@marvell.com, tariqt@nvidia.com,
+        saeedm@nvidia.com, aelior@marvell.com,
+        GR-everest-linux-l2@marvell.com, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ethernet: Remove redundant 'flush_workqueue()' calls
+Message-ID: <YWK6e2+hDGS9xblC@unreal>
+References: <3dadac919f6f4a991953965ddbb975f2586e6ecf.1633848953.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] carl9170: Fix error return -EAGAIN if not started
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20211008001558.32416-1-colin.king@canonical.com>
-References: <20211008001558.32416-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Christian Lamparter <chunkeey@googlemail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "John W . Linville" <linville@tuxdriver.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <163385309381.29673.3202738033184548655.kvalo@codeaurora.org>
-Date:   Sun, 10 Oct 2021 08:05:21 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3dadac919f6f4a991953965ddbb975f2586e6ecf.1633848953.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
-
-> From: Colin Ian King <colin.king@canonical.com>
+On Sun, Oct 10, 2021 at 09:01:32AM +0200, Christophe JAILLET wrote:
+> 'destroy_workqueue()' already drains the queue before destroying it, so
+> there is no need to flush it explicitly.
 > 
-> There is an error return path where the error return is being
-> assigned to err rather than count and the error exit path does
-> not return -EAGAIN as expected. Fix this by setting the error
-> return to variable count as this is the value that is returned
-> at the end of the function.
+> Remove the redundant 'flush_workqueue()' calls.
 > 
-> Addresses-Coverity: ("Unused value")
-> Fixes: 00c4da27a421 ("carl9170: firmware parser and debugfs code")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> This was generated with coccinelle:
+> 
+> @@
+> expression E;
+> @@
+> - 	flush_workqueue(E);
+> 	destroy_workqueue(E);
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/net/ethernet/amd/xgbe/xgbe-drv.c                 | 2 --
+>  drivers/net/ethernet/brocade/bna/bnad.c                  | 1 -
+>  drivers/net/ethernet/cavium/liquidio/lio_core.c          | 1 -
+>  drivers/net/ethernet/emulex/benet/be_main.c              | 1 -
+>  drivers/net/ethernet/marvell/octeontx2/af/cgx.c          | 1 -
+>  drivers/net/ethernet/marvell/octeontx2/af/rvu.c          | 2 --
+>  drivers/net/ethernet/marvell/octeontx2/af/rvu_cgx.c      | 1 -
+>  drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c     | 1 -
+>  drivers/net/ethernet/mellanox/mlx4/cmd.c                 | 2 --
+>  drivers/net/ethernet/mellanox/mlx4/en_main.c             | 1 -
+>  drivers/net/ethernet/mellanox/mlx5/core/diag/fw_tracer.c | 1 -
+>  drivers/net/ethernet/qlogic/qed/qed_sriov.c              | 1 -
+>  12 files changed, 15 deletions(-)
+> 
 
-I assume there will be v2 so dropping this version.
-
-Patch set to Changes Requested.
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20211008001558.32416-1-colin.king@canonical.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Thanks,
+Reviewed-by: Leon Romanovsky <leonro@nvidia.com> #mlx*
