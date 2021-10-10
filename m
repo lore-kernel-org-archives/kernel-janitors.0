@@ -2,36 +2,40 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C16C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Oct 2021 13:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A1EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Oct 2021 14:00:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D268F60D43
-	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Oct 2021 13:21:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBF8961076
+	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Oct 2021 14:00:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232735AbhJJNXo (ORCPT
+        id S232571AbhJJOCT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 10 Oct 2021 09:23:44 -0400
-Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:58879 "EHLO
+        Sun, 10 Oct 2021 10:02:19 -0400
+Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:45271 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S232719AbhJJNXi (ORCPT
+        with ESMTP id S232814AbhJJOCS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 10 Oct 2021 09:23:38 -0400
+        Sun, 10 Oct 2021 10:02:18 -0400
 Received: from pop-os.home ([90.126.248.220])
         by mwinf5d78 with ME
-        id 4DMc2600C4m3Hzu03DMdYq; Sun, 10 Oct 2021 15:21:38 +0200
+        id 4E0F260064m3Hzu03E0Fup; Sun, 10 Oct 2021 16:00:18 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 10 Oct 2021 15:21:38 +0200
+X-ME-Date: Sun, 10 Oct 2021 16:00:18 +0200
 X-ME-IP: 90.126.248.220
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     linkinjeon@kernel.org, senozhatsky@chromium.org, sfrench@samba.org,
-        hyc.lee@gmail.com
-Cc:     linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+To:     l.stach@pengutronix.de, linux+etnaviv@armlinux.org.uk,
+        christian.gmeiner@gmail.com, airlied@linux.ie, daniel@ffwll.ch,
+        robdclark@gmail.com, sean@poorly.run, jyri.sarha@iki.fi,
+        tomba@kernel.org, linux-graphics-maintainer@vmware.com,
+        zackr@vmware.com, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org
+Cc:     etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] ksmbd: Remove redundant 'flush_workqueue()' calls
-Date:   Sun, 10 Oct 2021 15:21:35 +0200
-Message-Id: <bf5648ef0933536661e42cc73aa06722522d5862.1633872027.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] drm: Remove redundant 'flush_workqueue()' calls
+Date:   Sun, 10 Oct 2021 15:59:40 +0200
+Message-Id: <75e8ba40076ad707d47e3a3670e6b23c1b8b11bc.1633874223.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -54,34 +58,94 @@ expression E;
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- fs/ksmbd/ksmbd_work.c     | 1 -
- fs/ksmbd/transport_rdma.c | 1 -
- 2 files changed, 2 deletions(-)
+ drivers/gpu/drm/etnaviv/etnaviv_gpu.c | 1 -
+ drivers/gpu/drm/msm/dsi/dsi_host.c    | 1 -
+ drivers/gpu/drm/msm/edp/edp_ctrl.c    | 1 -
+ drivers/gpu/drm/msm/hdmi/hdmi.c       | 4 +---
+ drivers/gpu/drm/tilcdc/tilcdc_drv.c   | 4 +---
+ drivers/gpu/drm/vmwgfx/ttm_memory.c   | 1 -
+ 6 files changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/fs/ksmbd/ksmbd_work.c b/fs/ksmbd/ksmbd_work.c
-index fd58eb4809f6..14b9caebf7a4 100644
---- a/fs/ksmbd/ksmbd_work.c
-+++ b/fs/ksmbd/ksmbd_work.c
-@@ -69,7 +69,6 @@ int ksmbd_workqueue_init(void)
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+index 789acae37f55..06bde46df451 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+@@ -1733,7 +1733,6 @@ static void etnaviv_gpu_unbind(struct device *dev, struct device *master,
  
- void ksmbd_workqueue_destroy(void)
- {
--	flush_workqueue(ksmbd_wq);
- 	destroy_workqueue(ksmbd_wq);
- 	ksmbd_wq = NULL;
- }
-diff --git a/fs/ksmbd/transport_rdma.c b/fs/ksmbd/transport_rdma.c
-index 3a7fa23ba850..0fa7b9c17af3 100644
---- a/fs/ksmbd/transport_rdma.c
-+++ b/fs/ksmbd/transport_rdma.c
-@@ -2026,7 +2026,6 @@ int ksmbd_rdma_destroy(void)
- 	smb_direct_listener.cm_id = NULL;
+ 	DBG("%s", dev_name(gpu->dev));
  
- 	if (smb_direct_wq) {
--		flush_workqueue(smb_direct_wq);
- 		destroy_workqueue(smb_direct_wq);
- 		smb_direct_wq = NULL;
+-	flush_workqueue(gpu->wq);
+ 	destroy_workqueue(gpu->wq);
+ 
+ 	etnaviv_sched_fini(gpu);
+diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
+index c86b5090fae6..462ea65ebf89 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi_host.c
++++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+@@ -1925,7 +1925,6 @@ void msm_dsi_host_destroy(struct mipi_dsi_host *host)
+ 	DBG("");
+ 	dsi_tx_buf_free(msm_host);
+ 	if (msm_host->workqueue) {
+-		flush_workqueue(msm_host->workqueue);
+ 		destroy_workqueue(msm_host->workqueue);
+ 		msm_host->workqueue = NULL;
  	}
+diff --git a/drivers/gpu/drm/msm/edp/edp_ctrl.c b/drivers/gpu/drm/msm/edp/edp_ctrl.c
+index fe1366b4c49f..07129a6e5dbb 100644
+--- a/drivers/gpu/drm/msm/edp/edp_ctrl.c
++++ b/drivers/gpu/drm/msm/edp/edp_ctrl.c
+@@ -1190,7 +1190,6 @@ void msm_edp_ctrl_destroy(struct edp_ctrl *ctrl)
+ 		return;
+ 
+ 	if (ctrl->workqueue) {
+-		flush_workqueue(ctrl->workqueue);
+ 		destroy_workqueue(ctrl->workqueue);
+ 		ctrl->workqueue = NULL;
+ 	}
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.c b/drivers/gpu/drm/msm/hdmi/hdmi.c
+index 737453b6e596..5ba7c8f28419 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi.c
++++ b/drivers/gpu/drm/msm/hdmi/hdmi.c
+@@ -61,10 +61,8 @@ static void msm_hdmi_destroy(struct hdmi *hdmi)
+ 	 * at this point, hpd has been disabled,
+ 	 * after flush workq, it's safe to deinit hdcp
+ 	 */
+-	if (hdmi->workq) {
+-		flush_workqueue(hdmi->workq);
++	if (hdmi->workq)
+ 		destroy_workqueue(hdmi->workq);
+-	}
+ 	msm_hdmi_hdcp_destroy(hdmi);
+ 
+ 	if (hdmi->phy_dev) {
+diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
+index 6b03f89a98d4..3ddb7c710a3d 100644
+--- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
++++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
+@@ -186,10 +186,8 @@ static void tilcdc_fini(struct drm_device *dev)
+ 	if (priv->mmio)
+ 		iounmap(priv->mmio);
+ 
+-	if (priv->wq) {
+-		flush_workqueue(priv->wq);
++	if (priv->wq)
+ 		destroy_workqueue(priv->wq);
+-	}
+ 
+ 	dev->dev_private = NULL;
+ 
+diff --git a/drivers/gpu/drm/vmwgfx/ttm_memory.c b/drivers/gpu/drm/vmwgfx/ttm_memory.c
+index edd17c30d5a5..7f7fe35fc21d 100644
+--- a/drivers/gpu/drm/vmwgfx/ttm_memory.c
++++ b/drivers/gpu/drm/vmwgfx/ttm_memory.c
+@@ -468,7 +468,6 @@ void ttm_mem_global_release(struct ttm_mem_global *glob)
+ 	struct ttm_mem_zone *zone;
+ 	unsigned int i;
+ 
+-	flush_workqueue(glob->swap_queue);
+ 	destroy_workqueue(glob->swap_queue);
+ 	glob->swap_queue = NULL;
+ 	for (i = 0; i < glob->num_zones; ++i) {
 -- 
 2.30.2
 
