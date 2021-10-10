@@ -2,36 +2,36 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37713C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Oct 2021 14:08:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E348C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Oct 2021 14:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E87361058
-	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Oct 2021 14:08:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D852E61058
+	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Oct 2021 14:29:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232885AbhJJOKQ (ORCPT
+        id S232320AbhJJObb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 10 Oct 2021 10:10:16 -0400
-Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:20465 "EHLO
+        Sun, 10 Oct 2021 10:31:31 -0400
+Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:38227 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S232876AbhJJOKO (ORCPT
+        with ESMTP id S232087AbhJJOba (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 10 Oct 2021 10:10:14 -0400
+        Sun, 10 Oct 2021 10:31:30 -0400
 Received: from pop-os.home ([90.126.248.220])
         by mwinf5d78 with ME
-        id 4E8D2600A4m3Hzu03E8DVM; Sun, 10 Oct 2021 16:08:15 +0200
+        id 4EVW260074m3Hzu03EVWPz; Sun, 10 Oct 2021 16:29:31 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 10 Oct 2021 16:08:15 +0200
+X-ME-Date: Sun, 10 Oct 2021 16:29:31 +0200
 X-ME-IP: 90.126.248.220
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     dledford@redhat.com, jgg@ziepe.ca, bharat@chelsio.com,
-        yishaih@nvidia.com, bmt@zurich.ibm.com, leon@kernel.org
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     colyli@suse.de, kent.overstreet@gmail.com, agk@redhat.com,
+        snitzer@redhat.com, dm-devel@redhat.com
+Cc:     linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] RDMA: Remove redundant 'flush_workqueue()' calls
-Date:   Sun, 10 Oct 2021 16:08:10 +0200
-Message-Id: <ca7bac6e6c9c5cc8d04eec3944edb13de0e381a3.1633874776.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] dm: Remove redundant 'flush_workqueue()' calls
+Date:   Sun, 10 Oct 2021 16:29:28 +0200
+Message-Id: <65c7c385af7b3f825ace8803b1bc6b6403269813.1633876058.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -54,91 +54,51 @@ expression E;
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/infiniband/core/sa_query.c        | 1 -
- drivers/infiniband/hw/cxgb4/cm.c          | 1 -
- drivers/infiniband/hw/cxgb4/device.c      | 1 -
- drivers/infiniband/hw/mlx4/alias_GUID.c   | 4 +---
- drivers/infiniband/sw/siw/siw_cm.c        | 4 +---
- drivers/infiniband/ulp/ipoib/ipoib_main.c | 1 -
- 6 files changed, 2 insertions(+), 10 deletions(-)
+ drivers/md/bcache/writeback.c | 4 +---
+ drivers/md/dm-bufio.c         | 1 -
+ drivers/md/dm-zoned-target.c  | 1 -
+ 3 files changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/infiniband/core/sa_query.c b/drivers/infiniband/core/sa_query.c
-index a20b8108e160..4220a545387f 100644
---- a/drivers/infiniband/core/sa_query.c
-+++ b/drivers/infiniband/core/sa_query.c
-@@ -2261,7 +2261,6 @@ int ib_sa_init(void)
- void ib_sa_cleanup(void)
- {
- 	cancel_delayed_work(&ib_nl_timed_work);
--	flush_workqueue(ib_nl_wq);
- 	destroy_workqueue(ib_nl_wq);
- 	mcast_cleanup();
- 	ib_unregister_client(&sa_client);
-diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
-index 291471d12197..913f39ee4416 100644
---- a/drivers/infiniband/hw/cxgb4/cm.c
-+++ b/drivers/infiniband/hw/cxgb4/cm.c
-@@ -4464,6 +4464,5 @@ int __init c4iw_cm_init(void)
- void c4iw_cm_term(void)
- {
- 	WARN_ON(!list_empty(&timeout_list));
--	flush_workqueue(workq);
- 	destroy_workqueue(workq);
- }
-diff --git a/drivers/infiniband/hw/cxgb4/device.c b/drivers/infiniband/hw/cxgb4/device.c
-index 541dbcf22d0e..80970a1738f8 100644
---- a/drivers/infiniband/hw/cxgb4/device.c
-+++ b/drivers/infiniband/hw/cxgb4/device.c
-@@ -1562,7 +1562,6 @@ static void __exit c4iw_exit_module(void)
- 		kfree(ctx);
- 	}
- 	mutex_unlock(&dev_mutex);
--	flush_workqueue(reg_workq);
- 	destroy_workqueue(reg_workq);
- 	cxgb4_unregister_uld(CXGB4_ULD_RDMA);
- 	c4iw_cm_term();
-diff --git a/drivers/infiniband/hw/mlx4/alias_GUID.c b/drivers/infiniband/hw/mlx4/alias_GUID.c
-index 571d9c542024..e2e1f5daddc4 100644
---- a/drivers/infiniband/hw/mlx4/alias_GUID.c
-+++ b/drivers/infiniband/hw/mlx4/alias_GUID.c
-@@ -822,10 +822,8 @@ void mlx4_ib_destroy_alias_guid_service(struct mlx4_ib_dev *dev)
+diff --git a/drivers/md/bcache/writeback.c b/drivers/md/bcache/writeback.c
+index 8120da278161..dbb6cb8069d9 100644
+--- a/drivers/md/bcache/writeback.c
++++ b/drivers/md/bcache/writeback.c
+@@ -790,10 +790,8 @@ static int bch_writeback_thread(void *arg)
  		}
- 		spin_unlock_irqrestore(&sriov->alias_guid.ag_work_lock, flags);
  	}
--	for (i = 0 ; i < dev->num_ports; i++) {
--		flush_workqueue(dev->sriov.alias_guid.ports_guid[i].wq);
-+	for (i = 0 ; i < dev->num_ports; i++)
- 		destroy_workqueue(dev->sriov.alias_guid.ports_guid[i].wq);
--	}
- 	ib_sa_unregister_client(dev->sriov.alias_guid.sa_client);
- 	kfree(dev->sriov.alias_guid.sa_client);
- }
-diff --git a/drivers/infiniband/sw/siw/siw_cm.c b/drivers/infiniband/sw/siw/siw_cm.c
-index 7a5ed86ffc9f..7acdd3c3a599 100644
---- a/drivers/infiniband/sw/siw/siw_cm.c
-+++ b/drivers/infiniband/sw/siw/siw_cm.c
-@@ -1951,8 +1951,6 @@ int siw_cm_init(void)
  
- void siw_cm_exit(void)
- {
--	if (siw_cm_wq) {
--		flush_workqueue(siw_cm_wq);
-+	if (siw_cm_wq)
- 		destroy_workqueue(siw_cm_wq);
+-	if (dc->writeback_write_wq) {
+-		flush_workqueue(dc->writeback_write_wq);
++	if (dc->writeback_write_wq)
+ 		destroy_workqueue(dc->writeback_write_wq);
 -	}
- }
-diff --git a/drivers/infiniband/ulp/ipoib/ipoib_main.c b/drivers/infiniband/ulp/ipoib/ipoib_main.c
-index 0aa8629fdf62..9c9da5aa592a 100644
---- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
-@@ -1997,7 +1997,6 @@ static void ipoib_ndo_uninit(struct net_device *dev)
- 	if (priv->wq) {
- 		/* See ipoib_mcast_carrier_on_task() */
- 		WARN_ON(test_bit(IPOIB_FLAG_OPER_UP, &priv->flags));
--		flush_workqueue(priv->wq);
- 		destroy_workqueue(priv->wq);
- 		priv->wq = NULL;
- 	}
+ 	cached_dev_put(dc);
+ 	wait_for_kthread_stop();
+ 
+diff --git a/drivers/md/dm-bufio.c b/drivers/md/dm-bufio.c
+index 50f3e673729c..fc8f8e9f9e39 100644
+--- a/drivers/md/dm-bufio.c
++++ b/drivers/md/dm-bufio.c
+@@ -2082,7 +2082,6 @@ static void __exit dm_bufio_exit(void)
+ 	int bug = 0;
+ 
+ 	cancel_delayed_work_sync(&dm_bufio_cleanup_old_work);
+-	flush_workqueue(dm_bufio_wq);
+ 	destroy_workqueue(dm_bufio_wq);
+ 
+ 	if (dm_bufio_client_count) {
+diff --git a/drivers/md/dm-zoned-target.c b/drivers/md/dm-zoned-target.c
+index ae1bc48c0043..dfc822295c25 100644
+--- a/drivers/md/dm-zoned-target.c
++++ b/drivers/md/dm-zoned-target.c
+@@ -967,7 +967,6 @@ static void dmz_dtr(struct dm_target *ti)
+ 	struct dmz_target *dmz = ti->private;
+ 	int i;
+ 
+-	flush_workqueue(dmz->chunk_wq);
+ 	destroy_workqueue(dmz->chunk_wq);
+ 
+ 	for (i = 0; i < dmz->nr_ddevs; i++)
 -- 
 2.30.2
 
