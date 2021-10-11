@@ -2,127 +2,126 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 996C3C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Oct 2021 06:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35BD9C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Oct 2021 12:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F48560E90
-	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Oct 2021 06:46:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19F9460F92
+	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Oct 2021 12:19:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234310AbhJKGsS (ORCPT
+        id S236529AbhJKMVp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 11 Oct 2021 02:48:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50020 "EHLO
+        Mon, 11 Oct 2021 08:21:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234309AbhJKGsR (ORCPT
+        with ESMTP id S234762AbhJKMVo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 11 Oct 2021 02:48:17 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 481EDC06161C;
-        Sun, 10 Oct 2021 23:46:18 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id k7so52455777wrd.13;
-        Sun, 10 Oct 2021 23:46:18 -0700 (PDT)
+        Mon, 11 Oct 2021 08:21:44 -0400
+Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A38D2C061570;
+        Mon, 11 Oct 2021 05:19:44 -0700 (PDT)
+Received: by mail-ua1-x932.google.com with SMTP id h4so12406032uaw.1;
+        Mon, 11 Oct 2021 05:19:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=TQff7+i6dxs5PfhTnnbZH3nPeykRVJI64ISY+jsjutU=;
-        b=mjDXFQHAIw/wwgAjtRmtVmQ6bn4erS1B7RMWxb8Dxxze0unLCpbV5/Zwx/GVWpx70Y
-         aCr162B9sDBtKtM1NuIY+uvl3ojO1RCmVcd+uYUD7guKBPl3VeVnNIO6SxwQ/p1fasIb
-         W3westEMs4hyfRgHG/lEO7Y/ucGuCwqUXj257CswRskD9MxfK6OnnqVwNC97ks7zolXp
-         Gq8g6PiNKB6Tozy2IBWd+c6xqwyAQYfOFzpl02qROsiRr4hY5Ut4fPACAQ0AJ3Rd4Suo
-         wEedjHd8PCKlRpRMk0bV+AoBXv/OwUcZtvY0KfXbXpCQcWeTIMOrY0J0KCTx1uU4KH7b
-         nE8Q==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=GmDig8uR6zWhf7zrT1U+cYAgHxtWyD/idN3V+pqxfVE=;
+        b=UKRDw1MY9529cio6+Ud/0HXNC1CG9Em4E9iVWUVEuHPLRmniv6VpVhtIcYk2eDo8W5
+         sZ2p3tVf/pDmEpWzKV6OLBGzUHTBvQUwtGbwCAkzCcyc4ix2t+du4cQXDgJN4oi827E5
+         WftwthEpoSIoQXwxWcrVD/2YsVm1RYrsqkiHtBrVO4dSEcm15wPuHNG8C80u2u7SYtK9
+         jJcaCa3dU1gZ8bzgC1jHRpff/2bvLp2eNqqqd1oCW0OSdWSrvJJd5gOMUbM8VD+LYDiI
+         MzHOJzA/MfP5v7YKH0545v39rjyueOvV0Ben1oBh6HtQtxoQ4Lp6VUsivr661bgnKrKY
+         o8Sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=TQff7+i6dxs5PfhTnnbZH3nPeykRVJI64ISY+jsjutU=;
-        b=IG8r2k6fz0JXDW6JP2fHygxGkn/7zgIp6gSn469xAzmd6gdWNsXIWLZif4BFfPC7Hs
-         ApQNK04bnj2UaVzWXY2xBbeqFWQhyAk6UjkyJMERZKVjFiyksB52WIDkfwIWSF510Oh1
-         hfM+S7Jyx+5d7018Msvs2ZIvNvDYPLmDk+7i9yMGxbqLo7X82dxTjpV+kx9Mi+gt0Udq
-         qbK23dnrSWvPKVsEA+mVLB7H2Y8xTTASp8ZEvzyht68zE6O5+CuTPWLCTayJ2Ej5Luc0
-         wgD2O0fachHR9a/UbHjW04nEVa/VuGROMJZlA6HUCNRtS5lkNQZYErgXQbZcLOiFE1Qh
-         zVFw==
-X-Gm-Message-State: AOAM533K0tnDx/uezL8DZVZpHedf+g8s68LD/60uHNJjk1rYlya7ME75
-        Dvjo4V4CxJjvMZBvqFZPXtY=
-X-Google-Smtp-Source: ABdhPJykz3+LuwjtpFk2s8G5F0h2oMtTVZHXztmPuNLxOFIlxEzO2wuc1xiuQsB2yOSirVsEZ0uXQQ==
-X-Received: by 2002:adf:bb0a:: with SMTP id r10mr21706481wrg.23.1633934776835;
-        Sun, 10 Oct 2021 23:46:16 -0700 (PDT)
-Received: from localhost.localdomain (i577BCB28.versanet.de. [87.123.203.40])
-        by smtp.gmail.com with ESMTPSA id o23sm6915843wms.18.2021.10.10.23.46.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Oct 2021 23:46:16 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Sekhar Nori <nsekhar@ti.com>, Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH RESEND 1/1] arm: davinci: remove reference to obsolete BLK_DEV_PALMCHIP_BK3710
-Date:   Mon, 11 Oct 2021 08:36:24 +0200
-Message-Id: <20211011063624.12269-2-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20211011063624.12269-1-lukas.bulwahn@gmail.com>
-References: <20211011063624.12269-1-lukas.bulwahn@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=GmDig8uR6zWhf7zrT1U+cYAgHxtWyD/idN3V+pqxfVE=;
+        b=4Yc+BYFTK9q65nSHIovogE30CAZKAN/QuWQnvon5VfThY4Njc04KcraMueNNEK2rjI
+         wBfu9jdb7obf9rdVPPymnFRSzJABoHGssah8RhFfsnxWJrBXKnjS88mE/MJuwB03Jz6E
+         5UHaVtCAW4yGAd9IBlMJy1bGPYJosYahW80X/pSnrvx1UMVlEO7pApwymbK7CBhuWTPC
+         4SMiU/+sgmcOseOu9k3dvyCF3IlGjWTNe09Vp4N8ik1RqBiht1G84grIVC9FVpGuFGqJ
+         8FNl98crEMLjpu9P9aVzWAOj2sWAzp3U0D/5q9zolGAA9nd9p26oUYwk71N6wtz1pj1J
+         vSZw==
+X-Gm-Message-State: AOAM5319rZN3gXSGNp43qySWLw8xfX+C5YNDm9RkMWV9NqBFh8cCDfpz
+        ITFjhKFbYHHhfn/+wivl1FAcRGnmV94A7xgPIjY=
+X-Google-Smtp-Source: ABdhPJwuowsev0gau00Zx+r18LA5VdDlSrEUHqHB+mlJ6Cd4KwPc0ry6MBaEzvgjd0rJoW3AGvWjSAwRulhgnPYFBEk=
+X-Received: by 2002:a67:ca96:: with SMTP id a22mr9059095vsl.44.1633954783838;
+ Mon, 11 Oct 2021 05:19:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <bf5648ef0933536661e42cc73aa06722522d5862.1633872027.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <bf5648ef0933536661e42cc73aa06722522d5862.1633872027.git.christophe.jaillet@wanadoo.fr>
+From:   Hyunchul Lee <hyc.lee@gmail.com>
+Date:   Mon, 11 Oct 2021 21:19:32 +0900
+Message-ID: <CANFS6bY-BOKVzDSPSnKOJRxn8dkW+V+xKy0JR_WtfHoiJV4CxA@mail.gmail.com>
+Subject: Re: [PATCH] ksmbd: Remove redundant 'flush_workqueue()' calls
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Namjae Jeon <linkinjeon@kernel.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Steve French <sfrench@samba.org>,
+        linux-cifs <linux-cifs@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit b7fb14d3ac63 ("ide: remove the legacy ide driver") removes the
-definition of the config BLK_DEV_PALMCHIP_BK3710.
+Acked-by: Hyunchul Lee <hyc.lee@gmail.com>
 
-So, remove the obsolete references in the mach-davinci architecture.
+2021=EB=85=84 10=EC=9B=94 10=EC=9D=BC (=EC=9D=BC) =EC=98=A4=ED=9B=84 10:29,=
+ Christophe JAILLET
+<christophe.jaillet@wanadoo.fr>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> 'destroy_workqueue()' already drains the queue before destroying it, so
+> there is no need to flush it explicitly.
+>
+> Remove the redundant 'flush_workqueue()' calls.
+>
+> This was generated with coccinelle:
+>
+> @@
+> expression E;
+> @@
+> -       flush_workqueue(E);
+>         destroy_workqueue(E);
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  fs/ksmbd/ksmbd_work.c     | 1 -
+>  fs/ksmbd/transport_rdma.c | 1 -
+>  2 files changed, 2 deletions(-)
+>
+> diff --git a/fs/ksmbd/ksmbd_work.c b/fs/ksmbd/ksmbd_work.c
+> index fd58eb4809f6..14b9caebf7a4 100644
+> --- a/fs/ksmbd/ksmbd_work.c
+> +++ b/fs/ksmbd/ksmbd_work.c
+> @@ -69,7 +69,6 @@ int ksmbd_workqueue_init(void)
+>
+>  void ksmbd_workqueue_destroy(void)
+>  {
+> -       flush_workqueue(ksmbd_wq);
+>         destroy_workqueue(ksmbd_wq);
+>         ksmbd_wq =3D NULL;
+>  }
+> diff --git a/fs/ksmbd/transport_rdma.c b/fs/ksmbd/transport_rdma.c
+> index 3a7fa23ba850..0fa7b9c17af3 100644
+> --- a/fs/ksmbd/transport_rdma.c
+> +++ b/fs/ksmbd/transport_rdma.c
+> @@ -2026,7 +2026,6 @@ int ksmbd_rdma_destroy(void)
+>         smb_direct_listener.cm_id =3D NULL;
+>
+>         if (smb_direct_wq) {
+> -               flush_workqueue(smb_direct_wq);
+>                 destroy_workqueue(smb_direct_wq);
+>                 smb_direct_wq =3D NULL;
+>         }
+> --
+> 2.30.2
+>
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- arch/arm/mach-davinci/board-dm644x-evm.c  | 3 +--
- arch/arm/mach-davinci/board-dm646x-evm.c  | 3 +--
- arch/arm/mach-davinci/board-neuros-osd2.c | 3 +--
- 3 files changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
-index cce3a621eb20..df6dbb3f0faf 100644
---- a/arch/arm/mach-davinci/board-dm644x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm644x-evm.c
-@@ -834,8 +834,7 @@ static int davinci_phy_fixup(struct phy_device *phydev)
- 	return 0;
- }
- 
--#define HAS_ATA		(IS_ENABLED(CONFIG_BLK_DEV_PALMCHIP_BK3710) || \
--			 IS_ENABLED(CONFIG_PATA_BK3710))
-+#define HAS_ATA		IS_ENABLED(CONFIG_PATA_BK3710)
- 
- #define HAS_NOR		IS_ENABLED(CONFIG_MTD_PHYSMAP)
- 
-diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
-index ee91d81ebbfd..744ece6b6b9a 100644
---- a/arch/arm/mach-davinci/board-dm646x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm646x-evm.c
-@@ -151,8 +151,7 @@ static struct platform_device davinci_aemif_device = {
- 	.num_resources	= ARRAY_SIZE(davinci_aemif_resources),
- };
- 
--#define HAS_ATA		(IS_ENABLED(CONFIG_BLK_DEV_PALMCHIP_BK3710) || \
--			 IS_ENABLED(CONFIG_PATA_BK3710))
-+#define HAS_ATA		IS_ENABLED(CONFIG_PATA_BK3710)
- 
- #ifdef CONFIG_I2C
- /* CPLD Register 0 bits to control ATA */
-diff --git a/arch/arm/mach-davinci/board-neuros-osd2.c b/arch/arm/mach-davinci/board-neuros-osd2.c
-index b4843f68bb57..81c21fe5748a 100644
---- a/arch/arm/mach-davinci/board-neuros-osd2.c
-+++ b/arch/arm/mach-davinci/board-neuros-osd2.c
-@@ -164,8 +164,7 @@ static struct davinci_mmc_config davinci_ntosd2_mmc_config = {
- 	.wires		= 4,
- };
-
--#define HAS_ATA		(IS_ENABLED(CONFIG_BLK_DEV_PALMCHIP_BK3710) || \
--			 IS_ENABLED(CONFIG_PATA_BK3710))
-+#define HAS_ATA		IS_ENABLED(CONFIG_PATA_BK3710)
- 
- #define HAS_NAND	IS_ENABLED(CONFIG_MTD_NAND_DAVINCI)
- 
--- 
-2.26.2
-
+--=20
+Thanks,
+Hyunchul
