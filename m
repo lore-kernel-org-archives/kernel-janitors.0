@@ -2,77 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 653C7C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Oct 2021 13:03:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F0AC433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Oct 2021 13:16:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 46BB560F14
-	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Oct 2021 13:03:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5014760F23
+	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Oct 2021 13:16:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236758AbhJKNFf (ORCPT
+        id S235297AbhJKNSh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 11 Oct 2021 09:05:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43494 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232277AbhJKNFe (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 11 Oct 2021 09:05:34 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9B80160F21;
-        Mon, 11 Oct 2021 13:03:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633957415;
-        bh=xqc/dgS9Mue8lkjNkvFBMU9rsl1LMtxv2lgVVxxzjFY=;
-        h=References:From:To:Cc:Subject:Date:In-reply-to:From;
-        b=g0kuVmX6fE6IEYFgD+ms/Jf6o55G3zPkVjX1IdwegIHrAV/LSSlHhImx3tS13Oznb
-         ZCsd9HOqctG+ehhBY3fKcf0QwlcPQF6ykfRfL6sTD6RI5hWPTyyXjYzPbLhXu2U0My
-         HAKyCPX7F2L6ZZm8ZIoBEc1MJV2D1wGjZhmZRH/ZktrTJ9HygQHEizZ61rX8k1aFKL
-         PokGnwzLc9U2ckkOpJjZtuaJ+yZySHXJVnQ8w49Y7bx0crM2fGSzfFSnmPrnzYVFVP
-         40BWpUKAcKisgiwSPq1yWIWDABn7bOaDqRvWaCtDav+hD7m4Q5Gq+uG0azGc82PT4f
-         UFhWuoz6GTIow==
-References: <20211011123739.GC15188@kili>
-User-agent: mu4e 1.6.6; emacs 28.0.60
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Andrzej Pietrasiewicz <andrzej.p@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] usb: gadget: hid: fix error code in do_config()
-Date:   Mon, 11 Oct 2021 16:03:02 +0300
-In-reply-to: <20211011123739.GC15188@kili>
-Message-ID: <87lf2z3e8x.fsf@kernel.org>
+        Mon, 11 Oct 2021 09:18:37 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:38548
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235144AbhJKNSg (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 11 Oct 2021 09:18:36 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id A1E9B3FE74;
+        Mon, 11 Oct 2021 13:16:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1633958195;
+        bh=wW4bvzsFetfuCZAv7VsHtna8WYq4agNGYBzGaBuz88c=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=I9DAsOaLvXHx5K/S+7EeZNw5reVK9tO5kWqNKzhaEMO/3i/DXQvvaEDS8sDlu2Lr/
+         WkOE8T1hSbHJPTOcLjQRBNFs1hVScTWDOpic5hiJOcukBcbNoKZnKLMSgKMuaC5uaG
+         QR16PcZHS55MxtLmJ4zWGMdb079TZ4J9/QlgN5E4/7y5giXN1hlKoNCRSF7KVz5vaQ
+         xWoahxI8D6j06aZhBb6n8fweqa77FxYlFqAF1GqF4fUqNXSmazBWJLl6yqmSjBT/0l
+         FmLPy/YBt4E7YAxQQthgxrcoAN7tulm+mrvSe3HRdLbxz+1sOeUar1naAeg+wgu6l2
+         OppeZDaPgh3Hg==
+From:   Colin King <colin.king@canonical.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] coredump: Remove redundant initialization of variable core_waiters
+Date:   Mon, 11 Oct 2021 14:16:35 +0100
+Message-Id: <20211011131635.30852-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi,
+The variable core_waiters is being initialized with a value that is never
+read, it is being updated later on. The assignment is redundant and can
+be removed.
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/coredump.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Return an error code if usb_get_function() fails.  Don't return success.
->
-> Fixes: 4bc8a33f2407 ("usb: gadget: hid: convert to new interface of f_hid")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/usb/gadget/legacy/hid.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/usb/gadget/legacy/hid.c b/drivers/usb/gadget/legacy/hid.c
-> index 5b27d289443f..3912cc805f3a 100644
-> --- a/drivers/usb/gadget/legacy/hid.c
-> +++ b/drivers/usb/gadget/legacy/hid.c
-> @@ -99,8 +99,10 @@ static int do_config(struct usb_configuration *c)
->  
->  	list_for_each_entry(e, &hidg_func_list, node) {
->  		e->f = usb_get_function(e->fi);
-> -		if (IS_ERR(e->f))
-> +		if (IS_ERR(e->f)) {
-> +			status = PTR_ERR(e->f);
-
-nice catch! :-)
-
-Acked-by: Felipe Balbi <balbi@kernel.org>
-
+diff --git a/fs/coredump.c b/fs/coredump.c
+index a6b3c196cdef..2f79f8f7bd56 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -390,7 +390,7 @@ static int zap_threads(struct task_struct *tsk,
+ static int coredump_wait(int exit_code, struct core_state *core_state)
+ {
+ 	struct task_struct *tsk = current;
+-	int core_waiters = -EBUSY;
++	int core_waiters;
+ 
+ 	init_completion(&core_state->startup);
+ 	core_state->dumper.task = tsk;
 -- 
-balbi
+2.32.0
+
