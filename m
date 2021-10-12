@@ -2,49 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39141C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 10:39:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68772C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 12:15:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C066610A3
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 10:39:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C2A660EB4
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 12:15:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235961AbhJLKla (ORCPT
+        id S236326AbhJLMRO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 12 Oct 2021 06:41:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48146 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235881AbhJLKla (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 12 Oct 2021 06:41:30 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E82B661050;
-        Tue, 12 Oct 2021 10:39:26 +0000 (UTC)
-Date:   Tue, 12 Oct 2021 12:39:24 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] coredump: Remove redundant initialization of
- variable core_waiters
-Message-ID: <20211012103924.nem4ol3pxblcph3q@wittgenstein>
-References: <20211011131635.30852-1-colin.king@canonical.com>
+        Tue, 12 Oct 2021 08:17:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56584 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236196AbhJLMRN (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 12 Oct 2021 08:17:13 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AF24C061570;
+        Tue, 12 Oct 2021 05:15:12 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5C099E7;
+        Tue, 12 Oct 2021 14:15:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1634040909;
+        bh=CCt/RZJZYJQHKeq2CmDncjLPs5cyvDBLmABtgkNI134=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=TnPXteAtjSIshmqQL0gGqQvIq9jbrizAyqrG/h7iQTdB2Xo+Dqe1y2RgLuc5AN+5u
+         VBozScnDuTRBTPpIXSrZvD9SJHrBS1ezVZV5ygP5ovTqC6c8jBXt1AUnRXq6VXzYW3
+         7cerD3d37zIl7PxNhdgmOy89jSfurCabN0mskxq8=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20211011131635.30852-1-colin.king@canonical.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20211012082150.GA31086@kili>
+References: <20211012082150.GA31086@kili>
+Subject: Re: [PATCH] media: atomisp: fix uninitialized bug in gmin_get_pmic_id_and_addr()
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Aniket Bhattacharyea <aniketmail669@gmail.com>,
+        linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Date:   Tue, 12 Oct 2021 13:15:07 +0100
+Message-ID: <163404090731.2943484.13435330592523167555@Monstersaurus>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Oct 11, 2021 at 02:16:35PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable core_waiters is being initialized with a value that is never
-> read, it is being updated later on. The assignment is redundant and can
-> be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+Quoting Dan Carpenter (2021-10-12 09:21:50)
+> The "power" pointer is not initialized on the else path and that would
+> lead to an Oops.
+>=20
 
-Thanks!
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Yes, that looks like a good catch.
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+> Fixes: c30f4cb2d4c7 ("media: atomisp: Refactor PMIC detection to a separa=
+te function")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c b/=
+drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
+> index d8c9e31314b2..62dc06e22476 100644
+> --- a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
+> +++ b/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
+> @@ -481,7 +481,7 @@ static int atomisp_get_acpi_power(struct device *dev)
+> =20
+>  static u8 gmin_get_pmic_id_and_addr(struct device *dev)
+>  {
+> -       struct i2c_client *power;
+> +       struct i2c_client *power =3D NULL;
+>         static u8 pmic_i2c_addr;
+> =20
+>         if (pmic_id)
+> --=20
+> 2.20.1
+>
