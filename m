@@ -2,177 +2,190 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B97C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 15:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C45C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 16:04:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E62260C4A
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 15:12:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26BE360F23
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 16:04:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237186AbhJLPO5 (ORCPT
+        id S229733AbhJLQGu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 12 Oct 2021 11:14:57 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:38652 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229565AbhJLPO4 (ORCPT
+        Tue, 12 Oct 2021 12:06:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53330 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229495AbhJLQGt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 12 Oct 2021 11:14:56 -0400
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19CEfarM010972;
-        Tue, 12 Oct 2021 15:12:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : content-type :
- content-transfer-encoding : in-reply-to : mime-version; s=corp-2021-07-09;
- bh=YAxmKmUQqq1z9mrYRoMh6WH4Gjo/bH3SFQQoXE+byII=;
- b=VtUsgvxSvzrFCsZBPcLZd/4pbedrtJVk9ejEP3yeEvGMAERNXrIDD8ig6JlsX3CBQ+gg
- hFHHrn9t1SA0ml6wWrXIgKh/traWdbJJmrXW/tSBHvh3r947/A3HL+2jWKIZSuCKIRaB
- 4rv4ne7fwOb09JbJtV5xK8hU2wLSX3ElhaNarivEDWN0mqAop2nTpD1UCr4kUiTF8BXG
- pSJsXztA+Rb3jAfg+ojjXTUXZfBcRRCYOWNIVFmo3TFeKldRTlqKrByJTs6kU/EyVUP9
- fkFLJ/eu12KNSSMv5/MWmU1vqj1dBgS5Wvcp6QyR5ax07K5RQtZYXz8pyzkvvM1gDfNc Jg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3bmq29ry5d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Oct 2021 15:12:40 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 19CFAOKP110371;
-        Tue, 12 Oct 2021 15:12:39 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2174.outbound.protection.outlook.com [104.47.59.174])
-        by aserp3030.oracle.com with ESMTP id 3bkyxru8q0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Oct 2021 15:12:39 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KocL6Sns53BaMag0OsooDR3aMM8rVdYD7IAo8juakdmPJjJsUflLfsE5EX3hvkVsnZzSLaWU9KK8PGGe4cXgHjxZ8lCGlCcxrLQlRqhPC6qmo444H2zmtDtXVMni4Wa+DEPifc0KDSODEJNcHlDcxj9Cl9ISL/TAMph2iRAkSWxxqaYbiXYFJMJoSRaROZO0x0jLhD/PFV+O7groAhX/Rx2rANeeBruHktIH2+CmPSCtSzyBYyDNn8vsajHwRgZyOx6ykaeBZomctA7ufw8FJgJzUjzi2tomWTeCV7rxYzkLvxHa3LJhi910mibFmKbft0EGKd1XL5DRQODNO6VNOw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=afwuR/o9GcMBhBUVWXsp4KAOLuRotFW9HgspBHxWMLQ=;
- b=QYXjPGvdHPOySaozdUCr/HVTYpcf1DsdT1llF0XwGmVG/W4eJT6hfK3uid0cqwc6rglVUfx341bofI5ZuTd98mR3CLshfVKVc+x7GCShwYygnKesup3iXZL+r+kxOuCRSEF2qwW0J1+rObYlTG98+08KWrbvv+T6vijrVjboJcma66xV9/b9EBr7pNtD7+rYVXFpNlPAQKaptwR+cmd0FviAPxDXNeNTCh9oU37D6kKp6U1LBCvtlUrm0T4zBdGg7fb6weW6TG3thBrNv3VY2tJEC6q7ajfkQ982geg62IdBF/HhcakEMdO7wZPyKi2DkPa4QHunt/rLCkSFjNCcNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Tue, 12 Oct 2021 12:06:49 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCC04C061570;
+        Tue, 12 Oct 2021 09:04:47 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id i12so55720600wrb.7;
+        Tue, 12 Oct 2021 09:04:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=afwuR/o9GcMBhBUVWXsp4KAOLuRotFW9HgspBHxWMLQ=;
- b=qe2GUE0K0WOnEKDifvxwmwVbqUZYJ/AyY8pw9fcriN5eXj+v4PkzGZHrKhfBzfqlZBVA2/6PWD7By6AKVziVd+H5lCpgO7wsTVo2A1VJiIH885YnLm3EM70jsU2KPKtfdZVLjBGI9l7uRuA80CziCayWIgoG4iZDC7weA5N+umQ=
-Authentication-Results: linux.intel.com; dkim=none (message not signed)
- header.d=none;linux.intel.com; dmarc=none action=none header.from=oracle.com;
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28) by MW5PR10MB5808.namprd10.prod.outlook.com
- (2603:10b6:303:19b::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4587.20; Tue, 12 Oct
- 2021 15:12:37 +0000
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::d409:11b5:5eb2:6be9]) by MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::d409:11b5:5eb2:6be9%5]) with mapi id 15.20.4587.026; Tue, 12 Oct 2021
- 15:12:37 +0000
-Date:   Tue, 12 Oct 2021 18:12:18 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Thomas =?iso-8859-1?Q?Hellstr=F6m?= 
-        <thomas.hellstrom@linux.intel.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Matthew Auld <matthew.auld@intel.com>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/i915: Fix dereference of pointer backup before
- it is null checked
-Message-ID: <20211012151218.GF8429@kadam>
-References: <20211012132549.260089-1-colin.king@canonical.com>
- <c49654d9-7174-f6db-e64b-bec3ecde7b5c@linux.intel.com>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c49654d9-7174-f6db-e64b-bec3ecde7b5c@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: JN2P275CA0046.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:2::34)
- To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4jeJnaeAhRKE6aZq2/elR102N3wqinTxfM30b0/qV3k=;
+        b=GhfHUY7JhSAWCXb5np38aS0LUu/0YDs+OQ+lpKtKwef9mK+zdg3h6UNHL4bG/Rh4Ik
+         bC287UCf/bI1g5ctwCk2YRa8GdlBoPRWhedipmEUmlRNxAM+xE61UAxfchgrLhG3RLSH
+         3qcRwSjDs2dQhnotbdxsibXg8VI5htrPi2PQxpTFGOjFr+AcVWxdabA7/HN8xgfGl7/T
+         Yi0zZSAoD2XC16yoZIiStjeG7EjPjZBRgkfX3u+GCUBLx/Esv8gnRQ3WwK3o05zuaiP4
+         e7V6HQtMZ9OLPpQ02xeT8ifGNAXx21gCYuEDopf9VKwZpENydNyUm00xNiRiawKhU8jg
+         PuaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4jeJnaeAhRKE6aZq2/elR102N3wqinTxfM30b0/qV3k=;
+        b=ri+i7bv3lTIx1ej6Y6My0WVB3Y42Oe1W2jrN71GNmDy5YBsCegCJcu7QT+0Bkyw3DX
+         QVEay0KIYVO37OEpx4fPxQ9DIa9/H2GScDZXPEQ5Hu3mOMjkQgqyO5TxlOkXbvbQx2x5
+         ykCUHDB4KjMlCwXi3zINa0DJYDVOqWGyd25DQpimOkad/zb7x/vkmJsVEMAxf8LItphq
+         bJfMeXa1EeALITFNpcgNTRml74Z674MRDFehi59nixfcV2p71V9UEi2S24T7XEBDyhw7
+         YG0nFHkjxdnhiE8HTUlEYRJZMkA82QH6yVVCLbP9XjciDnCcmBitYB0QeFaN0x3+CPjL
+         rqAg==
+X-Gm-Message-State: AOAM530bvyJHEoRG9SIRfswUmA0oN1RAen11hlnDie97RrsvDrtW5OQk
+        5d1wL5HWsNMiCWUIG6kJ6l25QzUExDQ9QJEwHFs=
+X-Google-Smtp-Source: ABdhPJwhQTxK0/41CQve4MBdhQJ38btRpZXpz3nXdt/S2R1mzAE/EUACnsT9VH9fRn6Z3s/T2kaMWOh/ft1/95wFFDY=
+X-Received: by 2002:a1c:ac03:: with SMTP id v3mr6796873wme.127.1634054685955;
+ Tue, 12 Oct 2021 09:04:45 -0700 (PDT)
 MIME-Version: 1.0
-Received: from kadam (62.8.83.99) by JN2P275CA0046.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:2::34) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4587.21 via Frontend Transport; Tue, 12 Oct 2021 15:12:30 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a9698186-5dd2-4c61-3c62-08d98d92b96a
-X-MS-TrafficTypeDiagnostic: MW5PR10MB5808:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <MW5PR10MB5808F330D1B127FEEA6457958EB69@MW5PR10MB5808.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: QEAaldaAlN9pcOxC9ea7JDSYyQbdWfDee0V6GUpbKeYQqnj2r9klUgR3Q4NFGbtjURPCcR8k6wm7Eszdu5ctZ1vzPeGC6aMIq3IENzPu3jDSlDZjw3OMMZ72OSV2FGLM5ZxBK9aCbuC5oZ1BQVPl5jBesIXyar130ftM3tyFGZs8CJwsw+aumHrM+JCnM0lH4+9ysOzIlOoeMO15zfEcdnLXYrZq1K345HK9PIcS5wIyVjHhYNBxwcJWkqhV0G0T9VeiqF9TKR1vbuS9vWfIoMd4dR1aRNkiygQXpbQs5PgsxdLlB+Dwbk2aEiM9rYbqn37xbCUdf8lv2F1c8LvMbZplIHgWpfD4SeAZlcshUvlx+eiYDc0txotL4JH1wQJwH0a8Be+DHWFBd+1GFOv3ooq9Wh91syMTZZqKq4fh4Y5fAxG/6+lS4v6AIbvqDKP1JGKQmTXn5Bmh4RLJnzBvchMuvBrDP1oMn6gWbUyi4IWoIWb0Mc5T89HHhuDTXPYM8ihSAqEJOFCAnEj+h8BvI90PTHeUMh1+eCw6s+BfREV3uoK6UbSMZTlNB4lyEjydyOecm3puBCa9yh3ol3c4KQgc+JZq6Pht2gannFJ1TihENn7mit/uI0iLdXH3mCRIDCUGgiAtFEFtDKifqfmpfoNKIDC9k9d2pnTnRXloFlUhsZHn99muuTvV0o0sn4MAV55KdmK/xWoNj/8dNZ823g==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(86362001)(33656002)(66946007)(66556008)(33716001)(9576002)(52116002)(4744005)(508600001)(83380400001)(9686003)(55016002)(53546011)(1076003)(66574015)(956004)(6666004)(66476007)(186003)(4326008)(8936002)(26005)(6496006)(8676002)(5660300002)(7416002)(54906003)(2906002)(44832011)(38100700002)(38350700002)(6916009)(316002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?AGUB5G3UWS5e5Iw1tbZAyX7KjMypYWmgibhW9doarpFjSXvvRMriTvYTrE?=
- =?iso-8859-1?Q?w5ntB0Yi7Z8BuyAFCTQlH6DiEBNZk760dMqWCR5TRV2Om0vnpR1Tzp7K7O?=
- =?iso-8859-1?Q?1cqSNNOsP/2rlG5ias6/h6SYh6A6kIJKaE9sT+6zl0VgL1POkM+ZE6WLX1?=
- =?iso-8859-1?Q?NyXmRzCxzJTzWF7lxaTS6ZCReE3hoZGkNqVULafW/HmGivdMJ/7Ulgn5uN?=
- =?iso-8859-1?Q?vrT+Mkf9qaU7Lhsw6H1imqCVLElVVMPbaN5+rEUMWbq+NMRN5tPLbepYNB?=
- =?iso-8859-1?Q?OkiXtSUhgO9k+1gfmHw3TKdayZHwo/0WZMsV09pBCtrJdNL1smpZ+WhGgx?=
- =?iso-8859-1?Q?R6f0T8+Geuex7uNBGITZR7lnlNrhtwOAPD3XCe4PcjbsN+vrALa50WqONq?=
- =?iso-8859-1?Q?15TgbusV53BHnFkoWYwdvrLRheK8f6t4VMnWGCqOA3YYg0dwZmEtoJrPhR?=
- =?iso-8859-1?Q?myZb2V99HlR+fn6DeRCV5FdNvZxhxu6kl8BZy0r9Ltn+/LeGrcxQZdKv+P?=
- =?iso-8859-1?Q?wlTAPPl/HLmoKeiTm31cVrqWvAnox8HFY++EHrMMA/f3Y+QH/Uqm+HOTpH?=
- =?iso-8859-1?Q?zPySmuOJSZmBoHZyNtBlaOwT9Ht/zoaHhcqW27HmTTHQ//jzDOSUfR5OW9?=
- =?iso-8859-1?Q?GSGy1LiLrIr2gBOcBjSY6GMF3dH40Y757USiJB4D1sSAIEDX9eErKSfwtI?=
- =?iso-8859-1?Q?PEQGfkhOo1340/9RuN2CtZ2w1be9ZyjHvZCQBMc2VQkx7E36QazYgHZ1NA?=
- =?iso-8859-1?Q?JAV2REuU6vaxkBXTHIgtCBrDgz49USHz2FkxO30GSiqnCFsRyb5sabSqqG?=
- =?iso-8859-1?Q?GfFXBkgZZ0harzIxvfbYvPTMPqp10gfly/6HK7HJYBjjTByWqkSf/tNWAf?=
- =?iso-8859-1?Q?xsRwIsqQNPIh3OFHoshNIw69rnll1Vy0bJyVZrEu/mZHqV7WyaFbd/34PI?=
- =?iso-8859-1?Q?BQANfL5eyqoSIwjAjG9pQKreCkQQ6ucS8raOqJxSdO2838Pk3vQ3wSrwwu?=
- =?iso-8859-1?Q?F+CH4cjLPCAq1eHo41ZX4yBxEZPL0mTyo17BZRZ1c9qvo+097yDeq8lxQk?=
- =?iso-8859-1?Q?fYIdNyTi7uRIOvBBw65ul7N3UkGLFWNA4CU6/eumk2Q1zjBV+YbrVZBgKH?=
- =?iso-8859-1?Q?e1rVGOKXVDW5yrmNoICZFXIii9R9t4hFHK1QQDN0Lh8zNhpAK/FqRT5kXs?=
- =?iso-8859-1?Q?wdJALj7mwcV7Y78P4ROqFwc1ezE5gg/D2e6osSqxVcqCkezjo9Kq9ELWpw?=
- =?iso-8859-1?Q?/eaYEdOf745S7vj+GAzyqcRDdzk2d6mEkC+MGIR34ttJ1IaSOK+IJoYicD?=
- =?iso-8859-1?Q?/ALz2tQz/GXzSemayNS4gtAS7+2A322HTS91rOZ9I2f4WRF4M/Nn48liBl?=
- =?iso-8859-1?Q?LJAgRQu+Ty?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a9698186-5dd2-4c61-3c62-08d98d92b96a
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2021 15:12:37.2050
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EFkHbay6bmjbnKeZJkrXwHxePsz3PKtpeufa/0sFhQJ4J9fDJfEB5QMbbZ80WLhDpgnnF5gFO4x8gcGHsJynRDeKDWAky7Oo0r2sjFyyK7A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR10MB5808
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10135 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 suspectscore=0
- mlxlogscore=999 mlxscore=0 bulkscore=0 adultscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2109230001
- definitions=main-2110120085
-X-Proofpoint-ORIG-GUID: 8ITYZy3AUPlyLj8yqPfoLZRWgpqth-CX
-X-Proofpoint-GUID: 8ITYZy3AUPlyLj8yqPfoLZRWgpqth-CX
+References: <75e8ba40076ad707d47e3a3670e6b23c1b8b11bc.1633874223.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <75e8ba40076ad707d47e3a3670e6b23c1b8b11bc.1633874223.git.christophe.jaillet@wanadoo.fr>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Tue, 12 Oct 2021 09:09:23 -0700
+Message-ID: <CAF6AEGvUHmfa-A6awpPBU0yi0v47eDSZkGPyunpQwqR9WuaACQ@mail.gmail.com>
+Subject: Re: [Freedreno] [PATCH] drm: Remove redundant 'flush_workqueue()' calls
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Sean Paul <sean@poorly.run>,
+        jyri.sarha@iki.fi, tomba@kernel.org,
+        VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        Zack Rusin <zackr@vmware.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        The etnaviv authors <etnaviv@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Oct 12, 2021 at 04:47:24PM +0200, Thomas Hellström wrote:
-> Hi,
-> 
-> On 10/12/21 15:25, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > The assignment of pointer backup_bo dereferences pointer backup before
-> > backup is null checked, this could lead to a null pointer dereference
-> > issue. Fix this by only assigning backup_bo after backup has been null
-> > checked.
-> > 
-> > Addresses-Coverity: ("Dereference before null check")
-> > Fixes: c56ce9565374 ("drm/i915 Implement LMEM backup and restore for suspend / resume")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> There's not really a pointer dereference here, just pointer arithmetics, so
-> the code should be safe (but admittedly fragile), so to keep Coverity happy,
-> 
-> Reviewed-by: Thomas Hellström <thomas.hellstrom@linux.intel.com>
+On Sun, Oct 10, 2021 at 7:07 AM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> 'destroy_workqueue()' already drains the queue before destroying it, so
+> there is no need to flush it explicitly.
+>
+> Remove the redundant 'flush_workqueue()' calls.
+>
+> This was generated with coccinelle:
+>
+> @@
+> expression E;
+> @@
+> -       flush_workqueue(E);
+>         destroy_workqueue(E);
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Yeah.  I kind of feel like we shouldn't work around static checker bugs.
-But when we do then there shouldn't be a Fixes tag.
+For drm/msm:
 
-regards,
-dan carpenter
+Reviewed-by: Rob Clark <robdclark@gmail.com>
 
+> ---
+>  drivers/gpu/drm/etnaviv/etnaviv_gpu.c | 1 -
+>  drivers/gpu/drm/msm/dsi/dsi_host.c    | 1 -
+>  drivers/gpu/drm/msm/edp/edp_ctrl.c    | 1 -
+>  drivers/gpu/drm/msm/hdmi/hdmi.c       | 4 +---
+>  drivers/gpu/drm/tilcdc/tilcdc_drv.c   | 4 +---
+>  drivers/gpu/drm/vmwgfx/ttm_memory.c   | 1 -
+>  6 files changed, 2 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> index 789acae37f55..06bde46df451 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> @@ -1733,7 +1733,6 @@ static void etnaviv_gpu_unbind(struct device *dev, struct device *master,
+>
+>         DBG("%s", dev_name(gpu->dev));
+>
+> -       flush_workqueue(gpu->wq);
+>         destroy_workqueue(gpu->wq);
+>
+>         etnaviv_sched_fini(gpu);
+> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> index c86b5090fae6..462ea65ebf89 100644
+> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
+> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> @@ -1925,7 +1925,6 @@ void msm_dsi_host_destroy(struct mipi_dsi_host *host)
+>         DBG("");
+>         dsi_tx_buf_free(msm_host);
+>         if (msm_host->workqueue) {
+> -               flush_workqueue(msm_host->workqueue);
+>                 destroy_workqueue(msm_host->workqueue);
+>                 msm_host->workqueue = NULL;
+>         }
+> diff --git a/drivers/gpu/drm/msm/edp/edp_ctrl.c b/drivers/gpu/drm/msm/edp/edp_ctrl.c
+> index fe1366b4c49f..07129a6e5dbb 100644
+> --- a/drivers/gpu/drm/msm/edp/edp_ctrl.c
+> +++ b/drivers/gpu/drm/msm/edp/edp_ctrl.c
+> @@ -1190,7 +1190,6 @@ void msm_edp_ctrl_destroy(struct edp_ctrl *ctrl)
+>                 return;
+>
+>         if (ctrl->workqueue) {
+> -               flush_workqueue(ctrl->workqueue);
+>                 destroy_workqueue(ctrl->workqueue);
+>                 ctrl->workqueue = NULL;
+>         }
+> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.c b/drivers/gpu/drm/msm/hdmi/hdmi.c
+> index 737453b6e596..5ba7c8f28419 100644
+> --- a/drivers/gpu/drm/msm/hdmi/hdmi.c
+> +++ b/drivers/gpu/drm/msm/hdmi/hdmi.c
+> @@ -61,10 +61,8 @@ static void msm_hdmi_destroy(struct hdmi *hdmi)
+>          * at this point, hpd has been disabled,
+>          * after flush workq, it's safe to deinit hdcp
+>          */
+> -       if (hdmi->workq) {
+> -               flush_workqueue(hdmi->workq);
+> +       if (hdmi->workq)
+>                 destroy_workqueue(hdmi->workq);
+> -       }
+>         msm_hdmi_hdcp_destroy(hdmi);
+>
+>         if (hdmi->phy_dev) {
+> diff --git a/drivers/gpu/drm/tilcdc/tilcdc_drv.c b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
+> index 6b03f89a98d4..3ddb7c710a3d 100644
+> --- a/drivers/gpu/drm/tilcdc/tilcdc_drv.c
+> +++ b/drivers/gpu/drm/tilcdc/tilcdc_drv.c
+> @@ -186,10 +186,8 @@ static void tilcdc_fini(struct drm_device *dev)
+>         if (priv->mmio)
+>                 iounmap(priv->mmio);
+>
+> -       if (priv->wq) {
+> -               flush_workqueue(priv->wq);
+> +       if (priv->wq)
+>                 destroy_workqueue(priv->wq);
+> -       }
+>
+>         dev->dev_private = NULL;
+>
+> diff --git a/drivers/gpu/drm/vmwgfx/ttm_memory.c b/drivers/gpu/drm/vmwgfx/ttm_memory.c
+> index edd17c30d5a5..7f7fe35fc21d 100644
+> --- a/drivers/gpu/drm/vmwgfx/ttm_memory.c
+> +++ b/drivers/gpu/drm/vmwgfx/ttm_memory.c
+> @@ -468,7 +468,6 @@ void ttm_mem_global_release(struct ttm_mem_global *glob)
+>         struct ttm_mem_zone *zone;
+>         unsigned int i;
+>
+> -       flush_workqueue(glob->swap_queue);
+>         destroy_workqueue(glob->swap_queue);
+>         glob->swap_queue = NULL;
+>         for (i = 0; i < glob->num_zones; ++i) {
+> --
+> 2.30.2
+>
