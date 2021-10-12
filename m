@@ -2,80 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2886CC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 13:32:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 268B2C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 14:47:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0724860F3A
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 13:32:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 011226101D
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 14:47:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236880AbhJLNej (ORCPT
+        id S237285AbhJLOth (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 12 Oct 2021 09:34:39 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:33924
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236655AbhJLNej (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 12 Oct 2021 09:34:39 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 5DB313FFE2;
-        Tue, 12 Oct 2021 13:32:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1634045556;
-        bh=dKXMSStMoPxCZm0p9/uoqNBAaXNVf2iSmUkWehBtigY=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=QIjK1rg/hK1MvI48l18670bu0Ps4BFgRAkdAP2oTPfC/vS6XsYo1VRgNvWos6zAhk
-         luCBLGbFIDOX9+y2jZU+ycqVywMhrvfaOCRw/ZWjtVxqJOQMX824A0j0koPAnagAWZ
-         OC/uoDfRYTrWZCBmeGJNoLCqpWpEsj9xy0UUrFUKkgD7Ca3bDZAjbFhpTeiL0w8Z8M
-         wUMXDmAWgXw4HpUpKt9jBtXo/0jmu58NW7Cz5urUwrJap/ZgWF3EtIMlHQHaky9EYm
-         /JB3vLoDfZjcZ4Bp6NDEYUys7kmrPVD7YiV4MrvNv+3EcTULr8m+I3MS52h3HhF1ys
-         362t2VO1inoUg==
-From:   Colin King <colin.king@canonical.com>
-To:     Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Marc Zyngier <maz@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] PCI: apple: Remove redundant initialization of pointer port_pdev
-Date:   Tue, 12 Oct 2021 14:32:35 +0100
-Message-Id: <20211012133235.260534-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        Tue, 12 Oct 2021 10:49:37 -0400
+Received: from mga04.intel.com ([192.55.52.120]:17640 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236637AbhJLOtd (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 12 Oct 2021 10:49:33 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10135"; a="225943036"
+X-IronPort-AV: E=Sophos;i="5.85,367,1624345200"; 
+   d="scan'208";a="225943036"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2021 07:47:30 -0700
+X-IronPort-AV: E=Sophos;i="5.85,367,1624345200"; 
+   d="scan'208";a="625975427"
+Received: from pmnk-mobl1.gar.corp.intel.com (HELO [10.249.254.42]) ([10.249.254.42])
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2021 07:47:27 -0700
+Message-ID: <c49654d9-7174-f6db-e64b-bec3ecde7b5c@linux.intel.com>
+Date:   Tue, 12 Oct 2021 16:47:24 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.0
+Subject: Re: [PATCH][next] drm/i915: Fix dereference of pointer backup before
+ it is null checked
+Content-Language: en-US
+To:     Colin King <colin.king@canonical.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Matthew Auld <matthew.auld@intel.com>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20211012132549.260089-1-colin.king@canonical.com>
+From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m?= 
+        <thomas.hellstrom@linux.intel.com>
+In-Reply-To: <20211012132549.260089-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi,
 
-The pointer port_pdev is being initialized with a value that is never
-read, it is being updated later on. The assignment is redundant and
-can be removed.
+On 10/12/21 15:25, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The assignment of pointer backup_bo dereferences pointer backup before
+> backup is null checked, this could lead to a null pointer dereference
+> issue. Fix this by only assigning backup_bo after backup has been null
+> checked.
+>
+> Addresses-Coverity: ("Dereference before null check")
+> Fixes: c56ce9565374 ("drm/i915 Implement LMEM backup and restore for suspend / resume")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/pci/controller/pcie-apple.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+There's not really a pointer dereference here, just pointer arithmetics, 
+so the code should be safe (but admittedly fragile), so to keep Coverity 
+happy,
 
-diff --git a/drivers/pci/controller/pcie-apple.c b/drivers/pci/controller/pcie-apple.c
-index b4db7a065553..19fd2d38aaab 100644
---- a/drivers/pci/controller/pcie-apple.c
-+++ b/drivers/pci/controller/pcie-apple.c
-@@ -634,7 +634,7 @@ static struct apple_pcie_port *apple_pcie_get_port(struct pci_dev *pdev)
- {
- 	struct pci_config_window *cfg = pdev->sysdata;
- 	struct apple_pcie *pcie = cfg->priv;
--	struct pci_dev *port_pdev = pdev;
-+	struct pci_dev *port_pdev;
- 	struct apple_pcie_port *port;
- 
- 	/* Find the root port this device is on */
--- 
-2.32.0
+Reviewed-by: Thomas Hellström <thomas.hellstrom@linux.intel.com>
 
+
+
+> ---
+>   drivers/gpu/drm/i915/gem/i915_gem_ttm_pm.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_ttm_pm.c b/drivers/gpu/drm/i915/gem/i915_gem_ttm_pm.c
+> index 3b6d14b5c604..4ec6c557083a 100644
+> --- a/drivers/gpu/drm/i915/gem/i915_gem_ttm_pm.c
+> +++ b/drivers/gpu/drm/i915/gem/i915_gem_ttm_pm.c
+> @@ -149,7 +149,7 @@ static int i915_ttm_restore(struct i915_gem_apply_to_region *apply,
+>   	struct i915_gem_ttm_pm_apply *pm_apply =
+>   		container_of(apply, typeof(*pm_apply), base);
+>   	struct drm_i915_gem_object *backup = obj->ttm.backup;
+> -	struct ttm_buffer_object *backup_bo = i915_gem_to_ttm(backup);
+> +	struct ttm_buffer_object *backup_bo;
+>   	struct ttm_operation_ctx ctx = {};
+>   	int err;
+>   
+> @@ -163,6 +163,8 @@ static int i915_ttm_restore(struct i915_gem_apply_to_region *apply,
+>   	if (err)
+>   		return err;
+>   
+> +	backup_bo = i915_gem_to_ttm(backup);
+> +
+>   	/* Content may have been swapped. */
+>   	err = ttm_tt_populate(backup_bo->bdev, backup_bo->ttm, &ctx);
+>   	if (!err) {
