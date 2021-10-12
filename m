@@ -2,103 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F11F6C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 08:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73941C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 08:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4D4060E74
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 08:28:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BD9E60EE5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 08:29:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234937AbhJLIaY (ORCPT
+        id S235029AbhJLIbm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 12 Oct 2021 04:30:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32844 "EHLO
+        Tue, 12 Oct 2021 04:31:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234916AbhJLIaU (ORCPT
+        with ESMTP id S235005AbhJLIbk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 12 Oct 2021 04:30:20 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40C24C061570
-        for <kernel-janitors@vger.kernel.org>; Tue, 12 Oct 2021 01:28:19 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id c16so29599258lfb.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 12 Oct 2021 01:28:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=o1ZztMBYmzv83GFbNWWe68+g7TqpIa2kZ3wjuSu78d0=;
-        b=BqfpXeUHxs5pbtOBHZfthved0D8TnTF2GT7OeUk9T4s+eL32oB5UqlHNO66MQXlHZ5
-         /iQf4eIAD2p+G/D7rQSqLiiVs5vwRK7Jiywp4N7X0aXbNA/DbCY0lvLLHmXOMcjG20AS
-         yUxKhS8Ms6SvxpfdjWWCgwsJypCBH4HagStn41B/t6vK7XKknlKxhvb7sJq3/4uwI3cs
-         vppVJAxU/msJxwrbM7mzPeZsxGRlJrvRtWm3gGMky2SCC4yfpu/FaJNYVOiVRJYJV0L1
-         OatOiwCR1Kr7YPMdzFJTnuj/j6PswtrPirX0Mhj/0CKdokOKZIf1DaVYBNIgRDsda94S
-         Lo6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o1ZztMBYmzv83GFbNWWe68+g7TqpIa2kZ3wjuSu78d0=;
-        b=QZSH+9P7dZUFsGW58kt7SE6Gxy/LoR92cTx7GsHiQZg/cv4OpSAQ13wzjQcIPIKeb0
-         G5dA2cSmzKc3eutKoHH/z5wtpxxBcro2TudcqNz4WIXCv9tcp0qwLH719HZ1T2+bDrwp
-         ow0LjE+ENXnAzqB8lYsyYHxl5v354XxTY2PXxQaq/zyAr2yJ4am3Q5bUcXvDo03oMXMH
-         h2ZOb/0XojkJuOfhguwyc4zHCYrZoSZfnt7VyVXGCnGYXyr2++KFAC89eh+1PfulXnoD
-         ZJkwn4GzpglMGdTYp2CLmkhr4F+gy1BJ8jqydg6uihn6LYwbCZKtcJ542FrTkeZ5Ud+2
-         +iLg==
-X-Gm-Message-State: AOAM533e8+FtcnWviRx6vQ/IJJwHvwDC6buNcnreCoXyoRYUbwTKst+o
-        PjF6fzNXvyXq27wsLmVL5marOb5kPetJ16OmUSeb5Q==
-X-Google-Smtp-Source: ABdhPJzff+s2Y/ekd2c7B1Nj/HSGb9p+cQWpDYRXLwHUd/eY9EiSd1c+yfB88GH1pNji4N5J0D3VCtgUKX7rYBsV2p4=
-X-Received: by 2002:a05:6512:3084:: with SMTP id z4mr10969771lfd.167.1634027297659;
- Tue, 12 Oct 2021 01:28:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211011123912.GD15188@kili>
-In-Reply-To: <20211011123912.GD15188@kili>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 12 Oct 2021 10:27:41 +0200
-Message-ID: <CAPDyKFpCTph6pbn+8MhiVag5QjHewc23FLJebANQzmeALw0G=g@mail.gmail.com>
-Subject: Re: [PATCH] memstick: jmb38x_ms: use appropriate free function in jmb38x_ms_alloc_host()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Maxim Levitsky <maximlevitsky@gmail.com>,
-        Alex Dubov <oakad@yahoo.com>, Len Baker <len.baker@gmx.com>,
-        Tom Rix <trix@redhat.com>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
+        Tue, 12 Oct 2021 04:31:40 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 528FDC06161C
+        for <kernel-janitors@vger.kernel.org>; Tue, 12 Oct 2021 01:29:39 -0700 (PDT)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1maDAA-0004lW-0v; Tue, 12 Oct 2021 10:29:30 +0200
+Message-ID: <c71c6680e0930fd84f10e4fa13bd59e1f30c2db6.camel@pengutronix.de>
+Subject: Re: [PATCH] soc: imx: imx8m-blk-ctrl: off by one in
+ imx8m_blk_ctrl_xlate()
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Shawn Guo <shawnguo@kernel.org>
+Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
+Date:   Tue, 12 Oct 2021 10:29:27 +0200
+In-Reply-To: <20211011123638.GB15188@kili>
+References: <20211011123638.GB15188@kili>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 11 Oct 2021 at 14:39, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> The "msh" pointer is device managed, meaning that memstick_alloc_host()
-> calls device_initialize() on it.  That means that it can't be free
-> using kfree() but must instead be freed with memstick_free_host().
-> Otherwise it leads to a tiny memory leak of device resources.
->
-> Fixes: 60fdd931d577 ("memstick: add support for JMicron jmb38x MemoryStick host controller")
+Hi Dan,
+
+Am Montag, dem 11.10.2021 um 15:36 +0300 schrieb Dan Carpenter:
+> The > comparison should be >= to prevent reading one element beyond the
+> end of the array.  The onecell_data->domains[] array is allocated in
+> imx8m_blk_ctrl_probe() and it has "onecell_data->num_domains" elements.
+
+Thanks for the patch! I guess this was found via smatch? I should
+really make it a habit to use smatch on my submissions...
+
+> Fixes: 5b340e7813d4 ("soc: imx: add i.MX8M blk-ctrl driver")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied for next, thanks!
-
-Kind regards
-Uffe
-
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
 > ---
->  drivers/memstick/host/jmb38x_ms.c | 2 +-
+>  drivers/soc/imx/imx8m-blk-ctrl.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/memstick/host/jmb38x_ms.c b/drivers/memstick/host/jmb38x_ms.c
-> index a7a0f0caea15..21cb2a786058 100644
-> --- a/drivers/memstick/host/jmb38x_ms.c
-> +++ b/drivers/memstick/host/jmb38x_ms.c
-> @@ -882,7 +882,7 @@ static struct memstick_host *jmb38x_ms_alloc_host(struct jmb38x_ms *jm, int cnt)
->
->         iounmap(host->addr);
->  err_out_free:
-> -       kfree(msh);
-> +       memstick_free_host(msh);
->         return NULL;
->  }
->
-> --
-> 2.20.1
->
+> 
+> diff --git a/drivers/soc/imx/imx8m-blk-ctrl.c b/drivers/soc/imx/imx8m-blk-ctrl.c
+> index e172d295c441..519b3651d1d9 100644
+> --- a/drivers/soc/imx/imx8m-blk-ctrl.c
+> +++ b/drivers/soc/imx/imx8m-blk-ctrl.c
+> @@ -139,7 +139,7 @@ imx8m_blk_ctrl_xlate(struct of_phandle_args *args, void *data)
+>  	unsigned int index = args->args[0];
+>  
+>  	if (args->args_count != 1 ||
+> -	    index > onecell_data->num_domains)
+> +	    index >= onecell_data->num_domains)
+>  		return ERR_PTR(-EINVAL);
+>  
+>  	return onecell_data->domains[index];
+
+
