@@ -2,131 +2,135 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CFCFC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Oct 2021 13:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8B45C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 00:54:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0776A60273
-	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Oct 2021 13:30:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9284160EE2
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 00:54:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235540AbhJKNch (ORCPT
+        id S234383AbhJLA46 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 11 Oct 2021 09:32:37 -0400
-Received: from fanzine.igalia.com ([178.60.130.6]:54849 "EHLO
-        fanzine.igalia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235280AbhJKNce (ORCPT
+        Mon, 11 Oct 2021 20:56:58 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:54567 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231837AbhJLA46 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 11 Oct 2021 09:32:34 -0400
-X-Greylist: delayed 1819 seconds by postgrey-1.27 at vger.kernel.org; Mon, 11 Oct 2021 09:32:33 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com; s=20170329;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=PoKytWeTWU9o8A8VzF3YqI0Hh2P+ySoZTfaCGvR1j9E=;
-        b=iOBOmQCgQMMZz/Er7xMX0pCLOWQJwIoZvGT1WKNonAefGjm9XMmU6t0+6s4/BOubzNHVgMADUY8nMem8xkA6zhRgNDyYuP900kvzwrJb4GFGN0HZkRHb4Vw7GgD7sgaffyGqF3+kEpRzg/U9XXwZHct/SQ7qnIT5Qb6tFJf/lhgql8VDb3U6EQPD32cQabfIFHUqGeCSpXDJwXBtLFM9DiNIC4S67JKv1k+z9PzNm5H8jpuIt8zY58Ggo/9j9Ar7KxtQgfYnvDp1vL4IE7qK07LuuiIoJfHJJ8C2s3hLgYx4KgUrxsZtk92LS4fqmOaHdNxPHuDeTSpHN1n4COnjCg==;
-Received: from a95-92-181-29.cpe.netcabo.pt ([95.92.181.29] helo=mail.igalia.com)
-        by fanzine.igalia.com with esmtpsa 
-        (Cipher TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256) (Exim)
-        id 1mZuuQ-0005DT-JX; Mon, 11 Oct 2021 15:00:02 +0200
-Date:   Mon, 11 Oct 2021 13:59:08 +0100
-From:   Melissa Wen <mwen@igalia.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Emma Anholt <emma@anholt.net>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Iago Toral Quiroga <itoral@igalia.com>,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/v3d: fix copy_from_user() error codes
-Message-ID: <20211011125908.rqsaunju5weqmhbi@mail.igalia.com>
-References: <20211011123303.GA14314@kili>
+        Mon, 11 Oct 2021 20:56:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1634000096; x=1665536096;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=gUcuTyEJd+Bb2QEDVw2RN4NfIlIwMMfrVK4oNLacRtY=;
+  b=r3nGMdbr6KaW+AQGNR8ESn26mhkY3s7Cx29EFKF+m7jP0zZZAMsBmjVK
+   JF9z220IYePumw65sD8xdwEtW8/3e7DunCcYD4P3/gtOrmkeqyx1+NW3g
+   NeLcJoT3/edMZd3cLHetQXMzRtcVetDK+11uxsbObU7Fy0g5BVHJbTHQF
+   QXmMqxw4ang4z5xfi8AXv/LLD/J9ZLDte/ntLf/Dl4a0pil/Wx9Ih3VX6
+   fChhaDChhq33tF3yL3rfXxwKel9SQr8tXdjSjrNpjr+pGNE9yPsh7yj0d
+   cPktZu3r58r1M3WeapgU8+65TWpYazdkOjAm9Gi5Qqwh+zgIaoXyTgdlY
+   w==;
+X-IronPort-AV: E=Sophos;i="5.85,366,1624291200"; 
+   d="scan'208";a="182551773"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 12 Oct 2021 08:54:52 +0800
+IronPort-SDR: /GBGrJNc2UcLt82Kl0h8PjDAoA/pU2BZrqEYb2GP5kB+Y7BXoZm9H1evrQ877Aut9uuOg2E8iq
+ fae5bOPtXkNTECc+k6RUT7/JrpshEtTfOwf6CdbletvnanEXfeC10JiWE/62AvQyi/kwmPPu43
+ fDBrEOxxNL2FauTR0YlVQ2dtNCmLQ8X/moGG7G71yxXvSafFY8atHMMaUhirfjP7217IFnOOpP
+ oJZWIMrMAXyo+IgOb1fOvyHxy/Mlj/0G4IF24iXY8HqrjqFjHvYDVfAO2BmwTpezTTQ6Hxq1KA
+ E4tjnSI7CRCq9I1kovm6vcsN
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2021 17:30:41 -0700
+IronPort-SDR: yZKmxiFdq9JBD2zJkx5lAc2yfhk8XADbC1ygXP092Lhf7+5+qyfGMUHbpccIeQF9fvp5r3M4Qe
+ 96hPheHq2sUkbt4g30FRCn+/A34gzrvb80MGBplqyTBRZ9/ACQst2aCzH34K/TCx/1j4WHAVP+
+ L0rRtKh3EwO2+Jw1tp30om7A4UbmxDJhUb9GAbzEXQkyK6tgRIQ+OvMn4E/TmbU0Kkr+TovOVM
+ Cy3eiOn5+8NxREMjg/PDReR9aWq9UFt0FSTuY+N6gDT5obS4XndLBOiuTciv0sTaTB7/jZb1RY
+ wOg=
+WDCIronportException: Internal
+Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2021 17:54:53 -0700
+Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4HSxyh5qfgz1RvlT
+        for <kernel-janitors@vger.kernel.org>; Mon, 11 Oct 2021 17:54:52 -0700 (PDT)
+Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)"
+        header.d=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+        opensource.wdc.com; h=content-transfer-encoding:content-type
+        :in-reply-to:organization:from:references:to:content-language
+        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
+        1634000092; x=1636592093; bh=gUcuTyEJd+Bb2QEDVw2RN4NfIlIwMMfrVK4
+        oNLacRtY=; b=h2YfItqFZaDfj6bES59203t4l/ennzUKJo6mxKR5Wtq7oRFt+cH
+        ak3UVwZoIcUmlz1NcXN8a7KZ/JMqsgHWnoaWGbM5/iLpnzyo5JrUfKCFy+ippNS5
+        ONYYv0Tkz7UomPokaWFjzJmfQeWvJd2jqlsPaOFwnxKnLyiLE1sd60rlQr3hNfgT
+        BKUlon18UBC01l9O76nsCJ1nvbXfVdKI8uDOa/oTxhFSNnPZcodv0abPVutJDFW+
+        wEKT6TDPfnQXzdQQeF+9dttqw852be1CVfMgWjGzwK3C0x7PEZqHppvFYVJhxP7S
+        F3+K7EuGLyIf1q4vccdcsBkLRsrVbe0uSVA==
+X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
+Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
+        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 8s6IQmZOuilC for <kernel-janitors@vger.kernel.org>;
+        Mon, 11 Oct 2021 17:54:52 -0700 (PDT)
+Received: from [10.225.163.54] (unknown [10.225.163.54])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4HSxyg1n5Bz1RvTg;
+        Mon, 11 Oct 2021 17:54:51 -0700 (PDT)
+Message-ID: <9dc07497-050d-1562-70bc-68daa460da67@opensource.wdc.com>
+Date:   Tue, 12 Oct 2021 09:54:49 +0900
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="eyr67bt3k6i7edlt"
-Content-Disposition: inline
-In-Reply-To: <20211011123303.GA14314@kili>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.0
+Subject: Re: [PATCH] pata_legacy: fix a couple uninitialized variable bugs
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Tejun Heo <htejun@gmail.com>, Jeff Garzik <jeff@garzik.org>,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20211006073419.GC8404@kili>
+From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Organization: Western Digital Research
+In-Reply-To: <20211006073419.GC8404@kili>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
---eyr67bt3k6i7edlt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On 10/11, Dan Carpenter wrote:
-> The copy_to/from_user() function returns the number of bytes remaining
-> to be copied, but we want to return -EFAULT on error.
->=20
-> Fixes: e4165ae8304e ("drm/v3d: add multiple syncobjs support")
+On 10/6/21 16:34, Dan Carpenter wrote:
+> The last byte of "pad" is used without being initialized.
+> 
+> Fixes: 55dba3120fbc ("libata: update ->data_xfer hook for ATAPI")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  drivers/gpu/drm/v3d/v3d_gem.c | 13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
-> index 6a000d77c568..e47ae40a865a 100644
-> --- a/drivers/gpu/drm/v3d/v3d_gem.c
-> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
-> @@ -487,8 +487,8 @@ v3d_job_init(struct v3d_dev *v3d, struct drm_file *fi=
-le_priv,
->  			for (i =3D 0; i < se->in_sync_count; i++) {
->  				struct drm_v3d_sem in;
-> =20
-> -				ret =3D copy_from_user(&in, handle++, sizeof(in));
-> -				if (ret) {
-> +				if (copy_from_user(&in, handle++, sizeof(in))) {
-> +					ret =3D -EFAULT;
->  					DRM_DEBUG("Failed to copy wait dep handle.\n");
->  					goto fail_deps;
->  				}
-> @@ -609,8 +609,8 @@ v3d_get_multisync_post_deps(struct drm_file *file_pri=
-v,
->  	for (i =3D 0; i < count; i++) {
->  		struct drm_v3d_sem out;
-> =20
-> -		ret =3D copy_from_user(&out, post_deps++, sizeof(out));
-> -		if (ret) {
-> +		if (copy_from_user(&out, post_deps++, sizeof(out))) {
-> +			ret =3D -EFAULT;
->  			DRM_DEBUG("Failed to copy post dep handles\n");
->  			goto fail;
->  		}
-> @@ -646,9 +646,8 @@ v3d_get_multisync_submit_deps(struct drm_file *file_p=
-riv,
->  	struct v3d_submit_ext *se =3D data;
->  	int ret;
-> =20
-> -	ret =3D copy_from_user(&multisync, ext, sizeof(multisync));
-> -	if (ret)
-> -		return ret;
-> +	if (copy_from_user(&multisync, ext, sizeof(multisync)))
-> +		return -EFAULT;
-> =20
->  	if (multisync.pad)
->  		return -EINVAL;
-Hi Dan,
+>  drivers/ata/pata_legacy.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/ata/pata_legacy.c b/drivers/ata/pata_legacy.c
+> index c3e6592712c4..b53f0e09783d 100644
+> --- a/drivers/ata/pata_legacy.c
+> +++ b/drivers/ata/pata_legacy.c
+> @@ -352,7 +352,7 @@ static unsigned int pdc_data_xfer_vlb(struct ata_queued_cmd *qc,
+>  			iowrite32_rep(ap->ioaddr.data_addr, buf, buflen >> 2);
+>  
+>  		if (unlikely(slop)) {
+> -			__le32 pad;
+> +			__le32 pad = 0;
+>  			if (rw == READ) {
+>  				pad = cpu_to_le32(ioread32(ap->ioaddr.data_addr));
+>  				memcpy(buf + buflen - slop, &pad, slop);
+> @@ -742,7 +742,7 @@ static unsigned int vlb32_data_xfer(struct ata_queued_cmd *qc,
+>  			ioread32_rep(ap->ioaddr.data_addr, buf, buflen >> 2);
+>  
+>  		if (unlikely(slop)) {
+> -			__le32 pad;
+> +			__le32 pad = 0;
+>  			if (rw == WRITE) {
+>  				memcpy(&pad, buf + buflen - slop, slop);
+>  				iowrite32(le32_to_cpu(pad), ap->ioaddr.data_addr);
+> 
 
-Thanks for catching this.
+Applied to for-5.15-fixes. Thanks !
+(Note: I added a blank line after the pad declaration to follow kernel
+style).
 
-Reviewed-by: Melissa Wen <mwen@igalia.com>
-> --=20
-> 2.20.1
->=20
-
---eyr67bt3k6i7edlt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEd8WOo/JViG+Tu+XIwqF3j0dLehwFAmFkNRAACgkQwqF3j0dL
-ehy/8w/+NA5rtf+1hM9UHJtkm2sonSUdSnemnNvtHpbvA8N7x9J3xfATkFvmRuus
-Eax1lSMDJmamubhDeeOj0EwZXIWfUdTxMahFJrnjW1VMZw+mWmbwqPCP4S1/52za
-bH8fwjDzP+d4GOY9iVk+ILxw7VbZbPF+PLsoOmC8BTP8/mdo0afakvAf8xfa644J
-eQ1Z8Yk7V8wq5+rbHojW22lH1+xRsOZ64WlTiraLvHA5VR+WBwe/E8m8Bq5V3aga
-2TF9aD8Fw3x7EP86QqK4eVo30c9hdVNMPmrWF8jeGtyexxMFG7PphDiEr/A21IQZ
-crzhBgEH8N3AfdHQNENmY11rtMAzJ/g/dt36PzLvq7tYDGrTt5hs7F4GANgYXE3Q
-rke/rk/O4Z/p0NT5sDlkoJ5RXtoLFv+bf9eaVhgcTCJzR5Sjm6xQpqwbKdAEWrT6
-SMp3w46k/jN2+vAKuxayBsj65lLDK8kZGLx/bP82lF0Z/wusTsllsiTLnww4v/dj
-vZ/hedq/MXFzkb/C82gOmsMzT20LRo+aDJL1YWD5PPD540b0PZC+GEkkF3W7aQeZ
-DPyCD2PuCM53gsCdLc9OeV6SbbUPTprvktPK+nBYr5+6bPwCM/cQuYg7FPc9r02y
-UzI1PopTq+cQqYD+8LO0pJxuunwVm8+be8ofAgALN06J+lH6/WI=
-=JAyb
------END PGP SIGNATURE-----
-
---eyr67bt3k6i7edlt--
+-- 
+Damien Le Moal
+Western Digital Research
