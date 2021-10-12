@@ -2,85 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68772C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 12:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A8B2C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 13:25:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4C2A660EB4
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 12:15:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2689E60EB6
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 13:25:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236326AbhJLMRO (ORCPT
+        id S236677AbhJLN1y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 12 Oct 2021 08:17:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56584 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236196AbhJLMRN (ORCPT
+        Tue, 12 Oct 2021 09:27:54 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:33098
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236368AbhJLN1x (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 12 Oct 2021 08:17:13 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AF24C061570;
-        Tue, 12 Oct 2021 05:15:12 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5C099E7;
-        Tue, 12 Oct 2021 14:15:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1634040909;
-        bh=CCt/RZJZYJQHKeq2CmDncjLPs5cyvDBLmABtgkNI134=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=TnPXteAtjSIshmqQL0gGqQvIq9jbrizAyqrG/h7iQTdB2Xo+Dqe1y2RgLuc5AN+5u
-         VBozScnDuTRBTPpIXSrZvD9SJHrBS1ezVZV5ygP5ovTqC6c8jBXt1AUnRXq6VXzYW3
-         7cerD3d37zIl7PxNhdgmOy89jSfurCabN0mskxq8=
-Content-Type: text/plain; charset="utf-8"
+        Tue, 12 Oct 2021 09:27:53 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 2940E40047;
+        Tue, 12 Oct 2021 13:25:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1634045150;
+        bh=zKVkWhJrCNRs1YQq8kD1+rhAcBYYHc1UVm4VR83IhSI=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=Q6oKf1l4GDkPrJmo4hDWnxsi8yVM3/Rp8ckE2jwUqnsqWTuKUq+MXho/MgDob/1TL
+         /tlmZpQWjUACcstaUvckCGTc2OtlYrylIM4bRirEd6z9eK6mk+1kfKzQIo+RkaAFMe
+         P3o0+5tiH1uSrTDnvwmtcsyqI4+UJfDsB6QYmStNiEfyhURNwmOD4eAAqyK4Wzoz7Y
+         vycoFb6k5AgSSd8AtZijbEfQBhVLS2248pGovjDrie/NVtq75WMpAyCDG0spOLTI7L
+         mRsOF5HJvNWv16KqKjA/sUNls1++IdwLN97PuOxGdyB8TmxohDlGeCUNcvetdNwYvK
+         T6/qXBWOpJL+Q==
+From:   Colin King <colin.king@canonical.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= 
+        <thomas.hellstrom@linux.intel.com>,
+        Matthew Auld <matthew.auld@intel.com>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/i915: Fix dereference of pointer backup before it is null checked
+Date:   Tue, 12 Oct 2021 14:25:49 +0100
+Message-Id: <20211012132549.260089-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211012082150.GA31086@kili>
-References: <20211012082150.GA31086@kili>
-Subject: Re: [PATCH] media: atomisp: fix uninitialized bug in gmin_get_pmic_id_and_addr()
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Aniket Bhattacharyea <aniketmail669@gmail.com>,
-        linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-        kernel-janitors@vger.kernel.org
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Date:   Tue, 12 Oct 2021 13:15:07 +0100
-Message-ID: <163404090731.2943484.13435330592523167555@Monstersaurus>
-User-Agent: alot/0.9.1
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Quoting Dan Carpenter (2021-10-12 09:21:50)
-> The "power" pointer is not initialized on the else path and that would
-> lead to an Oops.
->=20
+From: Colin Ian King <colin.king@canonical.com>
 
-Yes, that looks like a good catch.
+The assignment of pointer backup_bo dereferences pointer backup before
+backup is null checked, this could lead to a null pointer dereference
+issue. Fix this by only assigning backup_bo after backup has been null
+checked.
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Addresses-Coverity: ("Dereference before null check")
+Fixes: c56ce9565374 ("drm/i915 Implement LMEM backup and restore for suspend / resume")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/gem/i915_gem_ttm_pm.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> Fixes: c30f4cb2d4c7 ("media: atomisp: Refactor PMIC detection to a separa=
-te function")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c b/=
-drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
-> index d8c9e31314b2..62dc06e22476 100644
-> --- a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
-> +++ b/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
-> @@ -481,7 +481,7 @@ static int atomisp_get_acpi_power(struct device *dev)
-> =20
->  static u8 gmin_get_pmic_id_and_addr(struct device *dev)
->  {
-> -       struct i2c_client *power;
-> +       struct i2c_client *power =3D NULL;
->         static u8 pmic_i2c_addr;
-> =20
->         if (pmic_id)
-> --=20
-> 2.20.1
->
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_ttm_pm.c b/drivers/gpu/drm/i915/gem/i915_gem_ttm_pm.c
+index 3b6d14b5c604..4ec6c557083a 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_ttm_pm.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_ttm_pm.c
+@@ -149,7 +149,7 @@ static int i915_ttm_restore(struct i915_gem_apply_to_region *apply,
+ 	struct i915_gem_ttm_pm_apply *pm_apply =
+ 		container_of(apply, typeof(*pm_apply), base);
+ 	struct drm_i915_gem_object *backup = obj->ttm.backup;
+-	struct ttm_buffer_object *backup_bo = i915_gem_to_ttm(backup);
++	struct ttm_buffer_object *backup_bo;
+ 	struct ttm_operation_ctx ctx = {};
+ 	int err;
+ 
+@@ -163,6 +163,8 @@ static int i915_ttm_restore(struct i915_gem_apply_to_region *apply,
+ 	if (err)
+ 		return err;
+ 
++	backup_bo = i915_gem_to_ttm(backup);
++
+ 	/* Content may have been swapped. */
+ 	err = ttm_tt_populate(backup_bo->bdev, backup_bo->ttm, &ctx);
+ 	if (!err) {
+-- 
+2.32.0
+
