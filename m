@@ -2,81 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21EC9C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 21:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C9AC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Oct 2021 00:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B53E60E90
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Oct 2021 21:10:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF69B60EB4
+	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Oct 2021 00:47:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233770AbhJLVMm convert rfc822-to-8bit (ORCPT
+        id S235240AbhJMAta (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 12 Oct 2021 17:12:42 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:30853 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233199AbhJLVMi (ORCPT
+        Tue, 12 Oct 2021 20:49:30 -0400
+Received: from mail-lf1-f43.google.com ([209.85.167.43]:38492 "EHLO
+        mail-lf1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231672AbhJMAta (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 12 Oct 2021 17:12:38 -0400
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-127-z6UcphpBN2u1BZkCwo7MKw-1; Tue, 12 Oct 2021 22:10:34 +0100
-X-MC-Unique: z6UcphpBN2u1BZkCwo7MKw-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.23; Tue, 12 Oct 2021 22:10:32 +0100
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.023; Tue, 12 Oct 2021 22:10:32 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Joe Perches' <joe@perches.com>,
-        LKML <linux-kernel@vger.kernel.org>
-CC:     kernel-janitors <kernel-janitors@vger.kernel.org>
-Subject: RE: Use of '%#02x' is almost always wrong
-Thread-Topic: Use of '%#02x' is almost always wrong
-Thread-Index: AQHXvfZAETUX8XTqNU6mI/eVjyEZpqvP3atg
-Date:   Tue, 12 Oct 2021 21:10:32 +0000
-Message-ID: <f41e216ed5074c55ad024e68a7dfaa3c@AcuMS.aculab.com>
-References: <b04a10ea9682c51764053c1be73d4b3be59d1e7f.camel@perches.com>
-In-Reply-To: <b04a10ea9682c51764053c1be73d4b3be59d1e7f.camel@perches.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 12 Oct 2021 20:49:30 -0400
+Received: by mail-lf1-f43.google.com with SMTP id x27so4142202lfu.5;
+        Tue, 12 Oct 2021 17:47:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=Cww5CWiG2lAFWq3mC6EgABYlReMWnDxQ5zuCkCa+u88=;
+        b=FwZDLBBaEBvmtprzN7FTfWsj0yM4kgLHQuF/lm/ICZQ6uXKYreg4WrbQtUFDfQOUwT
+         vdDZvEvaCoi0bOCV4d6INBLNjaUs+qwIZYwn1/RHJr6sKC425Ffk+Ye0Xe/MmTu+qen1
+         PGTjpF8LPF5MOwUrCJxdIYxz0RjrhUOK2aFHzk2hA7o/0228CPbOq6tbeq83pHoKKsz4
+         xCLhb2H8AK2oVCA4ezaVtKlSYtHWqeAFrZv3Mzd5Yx4jtq7o+9Umx8kHCLKzKBWPsac1
+         q1kmyBEZq701MKPlnwzycKv4mTc+o36BdQHBjsryskjJQ50qPN7o5CZ5RLekbYH1zce+
+         UTng==
+X-Gm-Message-State: AOAM530DZc1vVYePuspMzucxH0rPAHNXRoFk2/vUoVlgHgxOkgDPKi/y
+        pcRY8UO4onrIuznjZFvx726MmFGVQkxySA==
+X-Google-Smtp-Source: ABdhPJxi6cyFOhnS0+nQ29c5JpLuTebvtE8tsdP7MbBSWH6nLdmzDhus317WyPqpnAI/bDD+wVyGGQ==
+X-Received: by 2002:a05:6512:3d29:: with SMTP id d41mr25000318lfv.481.1634086046368;
+        Tue, 12 Oct 2021 17:47:26 -0700 (PDT)
+Received: from rocinante ([95.155.85.46])
+        by smtp.gmail.com with ESMTPSA id t22sm1268467ljj.61.2021.10.12.17.47.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Oct 2021 17:47:25 -0700 (PDT)
+Date:   Wed, 13 Oct 2021 02:47:24 +0200
+From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Marc Zyngier <maz@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] PCI: apple: Remove redundant initialization of
+ pointer port_pdev
+Message-ID: <YWYsnGt3+LRI2q4W@rocinante>
+References: <20211012133235.260534-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20211012133235.260534-1-colin.king@canonical.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Joe Perches
-> Sent: 10 October 2021 17:46
-> 
-> Perhaps too many developers do not know that using '%#<width>x'
-> in printf output _includes_ the 0x prefix in the output width.
-> 
-> So %#02x already has the width taken by the 0x prefix and will
-> always emit 3 or more output bytes.
-> 
-> sprintf(buf, "%#02x", 1) emits 0x1 (3 bytes of output)
-> sprintf(buf, "%#02x", 255) emits 0xff (4 bytes of output)
-> 
-> So presumably all the uses of %#02x in the kernel are not outputting
-> what is actually expected.  Perhaps all of these should use %#04x.
+Hi Colin!
 
-Doesn't help. The definition of "%#x" is completely broken.
-Basically 0 doesn't get the "0x" prefix, so "%#04x" outputs
-"0000" if the value is zero.
-So the correct replacement is (probably) "0x%02x".
+> The pointer port_pdev is being initialized with a value that is never
+> read, it is being updated later on. The assignment is redundant and
+> can be removed.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/pci/controller/pcie-apple.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-apple.c b/drivers/pci/controller/pcie-apple.c
+> index b4db7a065553..19fd2d38aaab 100644
+> --- a/drivers/pci/controller/pcie-apple.c
+> +++ b/drivers/pci/controller/pcie-apple.c
+> @@ -634,7 +634,7 @@ static struct apple_pcie_port *apple_pcie_get_port(struct pci_dev *pdev)
+>  {
+>  	struct pci_config_window *cfg = pdev->sysdata;
+>  	struct apple_pcie *pcie = cfg->priv;
+> -	struct pci_dev *port_pdev = pdev;
+> +	struct pci_dev *port_pdev;
 
-	David
+Thank you!
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+Reviewed-by: Krzysztof Wilczyński <kw@linux.com>
 
+	Krzysztof
