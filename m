@@ -2,90 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C9AC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Oct 2021 00:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1401DC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Oct 2021 05:48:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CF69B60EB4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Oct 2021 00:47:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D20CD60FDC
+	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Oct 2021 05:48:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235240AbhJMAta (ORCPT
+        id S237795AbhJMFun (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 12 Oct 2021 20:49:30 -0400
-Received: from mail-lf1-f43.google.com ([209.85.167.43]:38492 "EHLO
-        mail-lf1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231672AbhJMAta (ORCPT
+        Wed, 13 Oct 2021 01:50:43 -0400
+Received: from so254-9.mailgun.net ([198.61.254.9]:24842 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229991AbhJMFun (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 12 Oct 2021 20:49:30 -0400
-Received: by mail-lf1-f43.google.com with SMTP id x27so4142202lfu.5;
-        Tue, 12 Oct 2021 17:47:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=Cww5CWiG2lAFWq3mC6EgABYlReMWnDxQ5zuCkCa+u88=;
-        b=FwZDLBBaEBvmtprzN7FTfWsj0yM4kgLHQuF/lm/ICZQ6uXKYreg4WrbQtUFDfQOUwT
-         vdDZvEvaCoi0bOCV4d6INBLNjaUs+qwIZYwn1/RHJr6sKC425Ffk+Ye0Xe/MmTu+qen1
-         PGTjpF8LPF5MOwUrCJxdIYxz0RjrhUOK2aFHzk2hA7o/0228CPbOq6tbeq83pHoKKsz4
-         xCLhb2H8AK2oVCA4ezaVtKlSYtHWqeAFrZv3Mzd5Yx4jtq7o+9Umx8kHCLKzKBWPsac1
-         q1kmyBEZq701MKPlnwzycKv4mTc+o36BdQHBjsryskjJQ50qPN7o5CZ5RLekbYH1zce+
-         UTng==
-X-Gm-Message-State: AOAM530DZc1vVYePuspMzucxH0rPAHNXRoFk2/vUoVlgHgxOkgDPKi/y
-        pcRY8UO4onrIuznjZFvx726MmFGVQkxySA==
-X-Google-Smtp-Source: ABdhPJxi6cyFOhnS0+nQ29c5JpLuTebvtE8tsdP7MbBSWH6nLdmzDhus317WyPqpnAI/bDD+wVyGGQ==
-X-Received: by 2002:a05:6512:3d29:: with SMTP id d41mr25000318lfv.481.1634086046368;
-        Tue, 12 Oct 2021 17:47:26 -0700 (PDT)
-Received: from rocinante ([95.155.85.46])
-        by smtp.gmail.com with ESMTPSA id t22sm1268467ljj.61.2021.10.12.17.47.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Oct 2021 17:47:25 -0700 (PDT)
-Date:   Wed, 13 Oct 2021 02:47:24 +0200
-From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Marc Zyngier <maz@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] PCI: apple: Remove redundant initialization of
- pointer port_pdev
-Message-ID: <YWYsnGt3+LRI2q4W@rocinante>
-References: <20211012133235.260534-1-colin.king@canonical.com>
+        Wed, 13 Oct 2021 01:50:43 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1634104120; h=Date: Message-ID: Cc: To: References:
+ In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
+ Content-Type: Sender; bh=i5yafg4zRD6t3+PHLReH7vauRhqK9uR5ARjK8dp7Nnk=;
+ b=jjHcy6QqIxWczLnIHn6QDXxQsaw+Pp0W0rdjb2ArhRYkGDExxiLLhvZy1omvqk74khTZnxgp
+ 72S5Kz1nI9QoduBhAKKWdlhD96xzeLCnBpck5pWY5zzeqxV3+fiqMYmMbsHihYqUo7M2EZvb
+ /0TlmLzCLbLtcamxXVBgu6DOAyg=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n07.prod.us-west-2.postgun.com with SMTP id
+ 6166732fff0285fb0ad6e70d (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 13 Oct 2021 05:48:31
+ GMT
+Sender: kvalo=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 59493C4360D; Wed, 13 Oct 2021 05:48:31 +0000 (UTC)
+Received: from tykki.adurom.net (tynnyri.adurom.net [51.15.11.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7B780C43460;
+        Wed, 13 Oct 2021 05:48:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 7B780C43460
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211012133235.260534-1-colin.king@canonical.com>
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ath9k: fix an IS_ERR() vs NULL check
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20211011123533.GA15188@kili>
+References: <20211011123533.GA15188@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     ath9k-devel@qca.qualcomm.com,
+        Christian Lamparter <chunkeey@gmail.com>,
+        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <163410410736.12797.1530240555231219175.kvalo@codeaurora.org>
+Date:   Wed, 13 Oct 2021 05:48:31 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Colin!
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-> The pointer port_pdev is being initialized with a value that is never
-> read, it is being updated later on. The assignment is redundant and
-> can be removed.
+> The devm_kmemdup() function doesn't return error pointers, it returns
+> NULL on error.
 > 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/pci/controller/pcie-apple.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-apple.c b/drivers/pci/controller/pcie-apple.c
-> index b4db7a065553..19fd2d38aaab 100644
-> --- a/drivers/pci/controller/pcie-apple.c
-> +++ b/drivers/pci/controller/pcie-apple.c
-> @@ -634,7 +634,7 @@ static struct apple_pcie_port *apple_pcie_get_port(struct pci_dev *pdev)
->  {
->  	struct pci_config_window *cfg = pdev->sysdata;
->  	struct apple_pcie *pcie = cfg->priv;
-> -	struct pci_dev *port_pdev = pdev;
-> +	struct pci_dev *port_pdev;
+> Fixes: eb3a97a69be8 ("ath9k: fetch calibration data via nvmem subsystem")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Thank you!
+Patch applied to ath-next branch of ath.git, thanks.
 
-Reviewed-by: Krzysztof Wilczyński <kw@linux.com>
+57671351379b ath9k: fix an IS_ERR() vs NULL check
 
-	Krzysztof
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20211011123533.GA15188@kili/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
