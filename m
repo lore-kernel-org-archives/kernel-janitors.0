@@ -2,159 +2,115 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC1CC433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Oct 2021 20:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB2BC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Oct 2021 22:41:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6040660EB4
-	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Oct 2021 20:07:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BAF961130
+	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Oct 2021 22:41:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231639AbhJMUJd (ORCPT
+        id S231840AbhJMWnf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 13 Oct 2021 16:09:33 -0400
-Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:53819 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230312AbhJMUJc (ORCPT
+        Wed, 13 Oct 2021 18:43:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51394 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231709AbhJMWn0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 13 Oct 2021 16:09:32 -0400
-Received: from [192.168.1.18] ([92.140.161.106])
-        by smtp.orange.fr with ESMTPA
-        id akX7mo550TdRTakX8mpqgx; Wed, 13 Oct 2021 22:07:26 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Wed, 13 Oct 2021 22:07:26 +0200
-X-ME-IP: 92.140.161.106
-Subject: Re: [PATCH v3] iio: adc128s052: Simplify 'adc128_probe()'
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     lars@metafoo.de, ardeleanalex@gmail.com, andy.shevchenko@gmail.com,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <4fa7fcc59c40e27af0569138d656c698a53dbd44.1630002770.git.christophe.jaillet@wanadoo.fr>
- <20210829181612.0b366561@jic23-huawei>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <a9e71dfa-8ecc-aa0d-7e02-bcc6003ae896@wanadoo.fr>
-Date:   Wed, 13 Oct 2021 22:07:25 +0200
+        Wed, 13 Oct 2021 18:43:26 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02FA1C061746;
+        Wed, 13 Oct 2021 15:41:22 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id k7so13143522wrd.13;
+        Wed, 13 Oct 2021 15:41:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=sHa7mUQcHOXPtd83ipXEUE5aNuvEdNtFQHzuxVianM4=;
+        b=ZsOiV9UXctlmyCDtxU0V9dSXTqOm1H5EAcOBySQOL27UuG2JhfhqJxqxfWmJdjBun3
+         YRYyhSxSdIqYo82Ev82Q+wk4KvHxQPVdb4MrbMh/Rh7R62kq4VjRaQnPQJ+vUV7/227B
+         4R+GHCVaoHWXcrJq4KjsnpoFfntZqDHTBsE5SPb8dvaaJHgfXJYLHnc6o5QLoJVExuVo
+         iI01UCzPM+ht3vR9zqiiq+XBhsW3dbFBeCMbDHQ1ynvYmPh7+NmeT78zHll+naOC68lJ
+         8vsrE/reLqnFFt6zGviI9atZeI5SLLlWr+StfNS0aAbphmcSYW6JR8nLt7jeZ1wcs0Z5
+         rD3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=sHa7mUQcHOXPtd83ipXEUE5aNuvEdNtFQHzuxVianM4=;
+        b=UmuXqF/2UdzfiXVCABzyn6NRVB4+HafUQyybQ00PEN036RInGD3HsiJzWxf3mhaLWW
+         TlylY3q0NGoBXs9wxAZssaG8yIXb5KEj/BnhZpcAa7bdduA1dBz1q5CKNQu86gecnYpJ
+         eFizmb+quYfHwo/deD0eHmkjGlZkGkvqgdBLxLD3yQ0RBwjGR4RVoGOquMyIkPZhQDGT
+         DZoMqVooS6ZtyZ0znC8jIAb2ifC76j8drJYwGYoFhSXVlIBsbGsQ2YtfhbZwcazmGhm0
+         /i9tYFN8N6VhRD8uZc7Kmx6+r0N4dODqsenRBkuWgOw8VRYpnJ0oqwnhO/l01CGz2zYX
+         o0LQ==
+X-Gm-Message-State: AOAM533PdSGaYvgvpJX1GlFXgK0LkfPt32KEtll0rcdXR+a0YTWvnq0E
+        xvGdXYIrsbGGMSlMXgKdbO2XJlQq9cs=
+X-Google-Smtp-Source: ABdhPJwvVcg84aeYFhzB9lFcqYYWuT+A7VqvfveWNpzOGIK4hhJMe0U6ZM6DfK0ot6qnyHAQ1Yjx7Q==
+X-Received: by 2002:a5d:4d06:: with SMTP id z6mr2224720wrt.149.1634164880569;
+        Wed, 13 Oct 2021 15:41:20 -0700 (PDT)
+Received: from [192.168.0.14] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net. [86.13.91.161])
+        by smtp.gmail.com with ESMTPSA id v3sm776456wrg.23.2021.10.13.15.41.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Oct 2021 15:41:20 -0700 (PDT)
+Subject: Re: [PATCH] media: ipu3-cio2: fix error code in
+ cio2_bridge_connect_sensor()
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Yong Zhi <yong.zhi@intel.com>,
+        =?UTF-8?Q?Fabian_W=c3=bcthrich?= <me@fabwu.ch>
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Bingbu Cao <bingbu.cao@intel.com>,
+        Tianshu Qiu <tian.shu.qiu@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20211013075319.GA6010@kili>
+From:   Daniel Scally <djrscally@gmail.com>
+Message-ID: <e3880fc8-6189-ccca-e50b-d1bca27633dc@gmail.com>
+Date:   Wed, 13 Oct 2021 23:41:18 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20210829181612.0b366561@jic23-huawei>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20211013075319.GA6010@kili>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 29/08/2021 à 19:16, Jonathan Cameron a écrit :
-> On Thu, 26 Aug 2021 20:36:22 +0200
-> Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-> 
->> Turn 'adc128_probe()' into a full resource managed function to simplify the
->> code.
->>
->> This way, the .remove function can be removed.
->> Doing so, the only 'spi_get_drvdata()' call is removed and the
->> corresponding 'spi_set_drvdata()' can be removed as well.
->>
->> Suggested-by: Alexandru Ardelean <ardeleanalex@gmail.com>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> Reviewed-by: Alexandru Ardelean <ardeleanalex@gmail.com>
-> Looks good to me, but as mentioned this will need to wait for the
-> fix to go upstream.
-> 
-> Give me a poke if I seem to have lost it once that's true.
+Hi Dan
 
-Hi,
+On 13/10/2021 08:53, Dan Carpenter wrote:
+> Return -ENODEV if acpi_get_physical_device_location() fails.  Don't
+> return success.
+>
+> Fixes: 485aa3df0dff ("media: ipu3-cio2: Parse sensor orientation and rotation")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-looks like it's fine now. So this is a gentle reminder :)
-The fix is in -next (see [1])
 
-CJ
+Thanks for catching that.
 
-[1]: 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/drivers/iio/adc/ti-adc128s052.c
 
-> 
-> Thanks,
-> 
-> Jonathan
-> 
->> ---
->> Compile tested only.
->>
->> When reviewing, pay special attention to the 'spi_set_drvdata()' call
->> removal. I recently introduced a regression with a too aggressive cleanup
->> like that.
->>
->> This patch should be applied after
->> https://lore.kernel.org/linux-iio/f33069f0-601b-4bbb-3766-026f7a161912-39ZsbGIQGT5GWvitb5QawA@public.gmane.org/T/#meb792dcd6540f87d9ae041660ca4738a776e924a
->>
->> v1 --> v2: just garbage --> ignore
->> v1 --> v3: Simplify 'adc128_disable_regulator()'
->> ---
->>   drivers/iio/adc/ti-adc128s052.c | 26 +++++++++-----------------
->>   1 file changed, 9 insertions(+), 17 deletions(-)
->>
->> diff --git a/drivers/iio/adc/ti-adc128s052.c b/drivers/iio/adc/ti-adc128s052.c
->> index 3143f35a6509..ce0cfe40b219 100644
->> --- a/drivers/iio/adc/ti-adc128s052.c
->> +++ b/drivers/iio/adc/ti-adc128s052.c
->> @@ -132,6 +132,11 @@ static const struct iio_info adc128_info = {
->>   	.read_raw = adc128_read_raw,
->>   };
->>   
->> +static void adc128_disable_regulator(void *reg)
->> +{
->> +	regulator_disable(reg);
->> +}
->> +
->>   static int adc128_probe(struct spi_device *spi)
->>   {
->>   	struct iio_dev *indio_dev;
->> @@ -151,8 +156,6 @@ static int adc128_probe(struct spi_device *spi)
->>   	adc = iio_priv(indio_dev);
->>   	adc->spi = spi;
->>   
->> -	spi_set_drvdata(spi, indio_dev);
->> -
->>   	indio_dev->name = spi_get_device_id(spi)->name;
->>   	indio_dev->modes = INDIO_DIRECT_MODE;
->>   	indio_dev->info = &adc128_info;
->> @@ -167,23 +170,13 @@ static int adc128_probe(struct spi_device *spi)
->>   	ret = regulator_enable(adc->reg);
->>   	if (ret < 0)
->>   		return ret;
->> +	ret = devm_add_action_or_reset(&spi->dev, adc128_disable_regulator, adc->reg);
->> +	if (ret)
->> +		return ret;
->>   
->>   	mutex_init(&adc->lock);
->>   
->> -	ret = iio_device_register(indio_dev);
->> -
->> -	return ret;
->> -}
->> -
->> -static int adc128_remove(struct spi_device *spi)
->> -{
->> -	struct iio_dev *indio_dev = spi_get_drvdata(spi);
->> -	struct adc128 *adc = iio_priv(indio_dev);
->> -
->> -	iio_device_unregister(indio_dev);
->> -	regulator_disable(adc->reg);
->> -
->> -	return 0;
->> +	return devm_iio_device_register(&spi->dev, indio_dev);
->>   }
->>   
->>   static const struct of_device_id adc128_of_match[] = {
->> @@ -225,7 +218,6 @@ static struct spi_driver adc128_driver = {
->>   		.acpi_match_table = ACPI_PTR(adc128_acpi_match),
->>   	},
->>   	.probe = adc128_probe,
->> -	.remove = adc128_remove,
->>   	.id_table = adc128_id,
->>   };
->>   module_spi_driver(adc128_driver);
-> 
-> 
+Reviewed-by: Daniel Scally <djrscally@gmail.com>
 
+> ---
+>  drivers/media/pci/intel/ipu3/cio2-bridge.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/pci/intel/ipu3/cio2-bridge.c b/drivers/media/pci/intel/ipu3/cio2-bridge.c
+> index 67c467d3c81f..0b586b4e537e 100644
+> --- a/drivers/media/pci/intel/ipu3/cio2-bridge.c
+> +++ b/drivers/media/pci/intel/ipu3/cio2-bridge.c
+> @@ -238,8 +238,10 @@ static int cio2_bridge_connect_sensor(const struct cio2_sensor_config *cfg,
+>  			goto err_put_adev;
+>  
+>  		status = acpi_get_physical_device_location(adev->handle, &sensor->pld);
+> -		if (ACPI_FAILURE(status))
+> +		if (ACPI_FAILURE(status)) {
+> +			ret = -ENODEV;
+>  			goto err_put_adev;
+> +		}
+>  
+>  		if (sensor->ssdb.lanes > CIO2_MAX_LANES) {
+>  			dev_err(&adev->dev,
