@@ -2,36 +2,35 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 157D6C433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 18:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A698DC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 18:37:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 014C8611CA
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 18:26:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8595561056
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 18:37:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229707AbhJNS2Y (ORCPT
+        id S233155AbhJNSjK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Oct 2021 14:28:24 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:49584 "EHLO
+        Thu, 14 Oct 2021 14:39:10 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:59321 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229768AbhJNS2X (ORCPT
+        with ESMTP id S231459AbhJNSjK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Oct 2021 14:28:23 -0400
+        Thu, 14 Oct 2021 14:39:10 -0400
 Received: from pop-os.home ([92.140.161.106])
         by smtp.orange.fr with ESMTPA
-        id b5QlmBA9UBazob5QlmY6yg; Thu, 14 Oct 2021 20:26:17 +0200
+        id b5bCmBF2MBazob5bDmY8O8; Thu, 14 Oct 2021 20:37:04 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 14 Oct 2021 20:26:17 +0200
+X-ME-Date: Thu, 14 Oct 2021 20:37:04 +0200
 X-ME-IP: 92.140.161.106
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     h.morris@cascoda.com, alex.aring@gmail.com,
-        stefan@datenfreihafen.org, davem@davemloft.net, kuba@kernel.org
-Cc:     linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+To:     boris.ostrovsky@oracle.com, jgross@suse.com, sstabellini@kernel.org
+Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] ieee802154: Remove redundant 'flush_workqueue()' calls
-Date:   Thu, 14 Oct 2021 20:26:14 +0200
-Message-Id: <fedb57c4f6d4373e0d6888d13ad2de3a1d315d81.1634235880.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] xen/pvcalls-back: Remove redundant 'flush_workqueue()' calls
+Date:   Thu, 14 Oct 2021 20:37:01 +0200
+Message-Id: <2d6c2e031e4aa2acf2ac4e0bbbc17cfdcc8dbee2.1634236560.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -54,22 +53,20 @@ expression E;
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ieee802154/ca8210.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/xen/pvcalls-back.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/ieee802154/ca8210.c b/drivers/net/ieee802154/ca8210.c
-index 3a2824f24caa..ece6ff6049f6 100644
---- a/drivers/net/ieee802154/ca8210.c
-+++ b/drivers/net/ieee802154/ca8210.c
-@@ -2938,9 +2938,7 @@ static int ca8210_dev_com_init(struct ca8210_priv *priv)
-  */
- static void ca8210_dev_com_clear(struct ca8210_priv *priv)
- {
--	flush_workqueue(priv->mlme_workqueue);
- 	destroy_workqueue(priv->mlme_workqueue);
--	flush_workqueue(priv->irq_workqueue);
- 	destroy_workqueue(priv->irq_workqueue);
- }
+diff --git a/drivers/xen/pvcalls-back.c b/drivers/xen/pvcalls-back.c
+index b47fd8435061..d6f945fd4147 100644
+--- a/drivers/xen/pvcalls-back.c
++++ b/drivers/xen/pvcalls-back.c
+@@ -465,7 +465,6 @@ static int pvcalls_back_release_passive(struct xenbus_device *dev,
+ 		write_unlock_bh(&mappass->sock->sk->sk_callback_lock);
+ 	}
+ 	sock_release(mappass->sock);
+-	flush_workqueue(mappass->wq);
+ 	destroy_workqueue(mappass->wq);
+ 	kfree(mappass);
  
 -- 
 2.30.2
