@@ -2,80 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EEEEC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 15:32:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04399C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 18:08:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6630760E54
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 15:32:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA78061166
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 18:08:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232849AbhJNPfA (ORCPT
+        id S230386AbhJNSKD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Oct 2021 11:35:00 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:43736
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230345AbhJNPe7 (ORCPT
+        Thu, 14 Oct 2021 14:10:03 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:52882 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233875AbhJNSJ6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Oct 2021 11:34:59 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id C1C6B3FFE6;
-        Thu, 14 Oct 2021 15:32:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1634225573;
-        bh=BqmDJrHFqBHxoTqS4hIwgHXRVxQ1I+vJ59gvb2WD7a0=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=MkzfKoovTsEGdBHrbxWaw1qLu0OfDJMw3Ux96i+x6PK7LonLBNDuK7FRoegpbnBNq
-         TXDeUriYaZE7yiOEGSvo9MtKSxQ29r/bCIpjp+XudkP8kLVirfnNn18t38z4xZ8vWA
-         tO6cfdTv+bF/RgW4S+jKfvoH5Mcu8P1ZpwdFcN82Ry56bCgNxa3EgZQTEQCrtyjh3Y
-         FkWLBcg1gIxw2wDXcnM6mhx0TMmZbnNaoKCr8vQpwRd+l16i18gUCySAKQdj88CkKl
-         PT8of/7ylY6/qmnrDO89nE0JKXaeQBJsDIkfcZCrMzQe6cauagifEqOusLqpko4Esz
-         WEzNR2D0PuDzA==
-From:   Colin King <colin.king@canonical.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: dvb-frontends/stv0367: remove redundant variable ADCClk_Hz
-Date:   Thu, 14 Oct 2021 16:32:53 +0100
-Message-Id: <20211014153253.63527-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.32.0
+        Thu, 14 Oct 2021 14:09:58 -0400
+Received: from pop-os.home ([92.140.161.106])
+        by smtp.orange.fr with ESMTPA
+        id b58xmB1SVBazob58xmY4d7; Thu, 14 Oct 2021 20:07:52 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Thu, 14 Oct 2021 20:07:52 +0200
+X-ME-IP: 92.140.161.106
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     axboe@kernel.dk, liushixin2@huawei.com, bhelgaas@google.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] mtip32xx: Remove redundant 'flush_workqueue()' calls
+Date:   Thu, 14 Oct 2021 20:07:50 +0200
+Message-Id: <0fea349c808c6cfbf549b0e33701320c7860c8b7.1634234221.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+'destroy_workqueue()' already drains the queue before destroying it, so
+there is no need to flush it explicitly.
 
-Variable ADCClk_Hz is being initialised with a variable that is never read
-and then re-assigned immediately afterwards. Clean up the code by removing
-it and just returning the return value from the call to stv0367cab_get_mclk
+Remove the redundant 'flush_workqueue()' calls.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This was generated with coccinelle:
+
+@@
+expression E;
+@@
+- 	flush_workqueue(E);
+	destroy_workqueue(E);
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/dvb-frontends/stv0367.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/block/mtip32xx/mtip32xx.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/stv0367.c b/drivers/media/dvb-frontends/stv0367.c
-index 6c2b05fae1c5..95e376f23506 100644
---- a/drivers/media/dvb-frontends/stv0367.c
-+++ b/drivers/media/dvb-frontends/stv0367.c
-@@ -1797,11 +1797,7 @@ static u32 stv0367cab_get_mclk(struct dvb_frontend *fe, u32 ExtClk_Hz)
+diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
+index d0b40309f47e..c91b9010c1a6 100644
+--- a/drivers/block/mtip32xx/mtip32xx.c
++++ b/drivers/block/mtip32xx/mtip32xx.c
+@@ -4063,7 +4063,6 @@ static int mtip_pci_probe(struct pci_dev *pdev,
  
- static u32 stv0367cab_get_adc_freq(struct dvb_frontend *fe, u32 ExtClk_Hz)
- {
--	u32 ADCClk_Hz = ExtClk_Hz;
--
--	ADCClk_Hz = stv0367cab_get_mclk(fe, ExtClk_Hz);
--
--	return ADCClk_Hz;
-+	return stv0367cab_get_mclk(fe, ExtClk_Hz);
- }
+ msi_initialize_err:
+ 	if (dd->isr_workq) {
+-		flush_workqueue(dd->isr_workq);
+ 		destroy_workqueue(dd->isr_workq);
+ 		drop_cpu(dd->work[0].cpu_binding);
+ 		drop_cpu(dd->work[1].cpu_binding);
+@@ -4121,7 +4120,6 @@ static void mtip_pci_remove(struct pci_dev *pdev)
+ 	mtip_block_remove(dd);
  
- static enum stv0367cab_mod stv0367cab_SetQamSize(struct stv0367_state *state,
+ 	if (dd->isr_workq) {
+-		flush_workqueue(dd->isr_workq);
+ 		destroy_workqueue(dd->isr_workq);
+ 		drop_cpu(dd->work[0].cpu_binding);
+ 		drop_cpu(dd->work[1].cpu_binding);
 -- 
-2.32.0
+2.30.2
 
