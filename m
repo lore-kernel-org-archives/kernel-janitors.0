@@ -2,35 +2,37 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04399C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 18:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F6E5C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 18:12:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA78061166
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 18:08:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AA2761139
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 18:12:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230386AbhJNSKD (ORCPT
+        id S233809AbhJNSOs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Oct 2021 14:10:03 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:52882 "EHLO
+        Thu, 14 Oct 2021 14:14:48 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:55793 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233875AbhJNSJ6 (ORCPT
+        with ESMTP id S232483AbhJNSOs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Oct 2021 14:09:58 -0400
+        Thu, 14 Oct 2021 14:14:48 -0400
 Received: from pop-os.home ([92.140.161.106])
         by smtp.orange.fr with ESMTPA
-        id b58xmB1SVBazob58xmY4d7; Thu, 14 Oct 2021 20:07:52 +0200
+        id b5DZmB3dgBazob5DamY5G0; Thu, 14 Oct 2021 20:12:42 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 14 Oct 2021 20:07:52 +0200
+X-ME-Date: Thu, 14 Oct 2021 20:12:42 +0200
 X-ME-IP: 92.140.161.106
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     axboe@kernel.dk, liushixin2@huawei.com, bhelgaas@google.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     tiffany.lin@mediatek.com, andrew-ct.chen@mediatek.com,
+        mchehab@kernel.org, matthias.bgg@gmail.com
+Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] mtip32xx: Remove redundant 'flush_workqueue()' calls
-Date:   Thu, 14 Oct 2021 20:07:50 +0200
-Message-Id: <0fea349c808c6cfbf549b0e33701320c7860c8b7.1634234221.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] media: mtk-vcodec: Remove redundant 'flush_workqueue()' calls
+Date:   Thu, 14 Oct 2021 20:12:35 +0200
+Message-Id: <8b7137f1d15c64fc3bc8df27e55095dc8d1d80da.1634235066.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -53,29 +55,34 @@ expression E;
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/block/mtip32xx/mtip32xx.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_drv.c | 1 -
+ drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_drv.c | 1 -
+ 2 files changed, 2 deletions(-)
 
-diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
-index d0b40309f47e..c91b9010c1a6 100644
---- a/drivers/block/mtip32xx/mtip32xx.c
-+++ b/drivers/block/mtip32xx/mtip32xx.c
-@@ -4063,7 +4063,6 @@ static int mtip_pci_probe(struct pci_dev *pdev,
+diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_drv.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_drv.c
+index e6e6a8203eeb..68abb1422c40 100644
+--- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_drv.c
++++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_drv.c
+@@ -390,7 +390,6 @@ static int mtk_vcodec_dec_remove(struct platform_device *pdev)
+ {
+ 	struct mtk_vcodec_dev *dev = platform_get_drvdata(pdev);
  
- msi_initialize_err:
- 	if (dd->isr_workq) {
--		flush_workqueue(dd->isr_workq);
- 		destroy_workqueue(dd->isr_workq);
- 		drop_cpu(dd->work[0].cpu_binding);
- 		drop_cpu(dd->work[1].cpu_binding);
-@@ -4121,7 +4120,6 @@ static void mtip_pci_remove(struct pci_dev *pdev)
- 	mtip_block_remove(dd);
+-	flush_workqueue(dev->decode_workqueue);
+ 	destroy_workqueue(dev->decode_workqueue);
  
- 	if (dd->isr_workq) {
--		flush_workqueue(dd->isr_workq);
- 		destroy_workqueue(dd->isr_workq);
- 		drop_cpu(dd->work[0].cpu_binding);
- 		drop_cpu(dd->work[1].cpu_binding);
+ 	if (media_devnode_is_registered(dev->mdev_dec.devnode)) {
+diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_drv.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_drv.c
+index eed67394cf46..b576f44ce505 100644
+--- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_drv.c
++++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_drv.c
+@@ -461,7 +461,6 @@ static int mtk_vcodec_enc_remove(struct platform_device *pdev)
+ 	struct mtk_vcodec_dev *dev = platform_get_drvdata(pdev);
+ 
+ 	mtk_v4l2_debug_enter();
+-	flush_workqueue(dev->encode_workqueue);
+ 	destroy_workqueue(dev->encode_workqueue);
+ 	if (dev->m2m_dev_enc)
+ 		v4l2_m2m_release(dev->m2m_dev_enc);
 -- 
 2.30.2
 
