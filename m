@@ -2,99 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2624C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 12:44:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 513E2C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 15:12:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8AB21610F9
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 12:44:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 396DE610CB
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 15:12:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231518AbhJNMqq (ORCPT
+        id S233704AbhJNPOr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Oct 2021 08:46:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43998 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231519AbhJNMqp (ORCPT
+        Thu, 14 Oct 2021 11:14:47 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:41788
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232204AbhJNPOo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Oct 2021 08:46:45 -0400
-Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DD94C061570
-        for <kernel-janitors@vger.kernel.org>; Thu, 14 Oct 2021 05:44:41 -0700 (PDT)
-Received: by mail-ua1-x92f.google.com with SMTP id h4so11042440uaw.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 14 Oct 2021 05:44:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KkAsy1Q6KSueqlSbR+TpzKk0M7xOPwVa4poOJOTYfPw=;
-        b=dMRMiX87A56C+ulAtIE7p4XfoNW3bx1Nx42FRLB6Q2RCSI1wpopmripaKo4buTrb0I
-         /y2WL2bFthAKissNeJYWQs0A35CRkDzdumpUt8NI2hGBgsTflwD9EnM4YfYwJrrOWp6X
-         iH3N4NDk9FbjVxXCauSUvE0KwaTg7wYIeVoj6bOT35s3AFoSivj7xuNdFrFwyY2ph7B5
-         t38y6mnbFO/wR3HfhlnXeU5M8CQvvfUPHPjkyL5xX8kl87T4dYwv+4Q/CKQiZRacaYcU
-         IJl5DG+h+dWzl+DYBXyxT0ixYQzDGey/0nH3OfIdXpRNiEhthFjI5M6S2R8H5b8MpbVR
-         i/dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KkAsy1Q6KSueqlSbR+TpzKk0M7xOPwVa4poOJOTYfPw=;
-        b=S9b7i4yyI1R4NcFwtX72YGg+4Wjr9AvEQHp1nI0FhR10+ZHLQ3mKsxE+UWDn2PBjc9
-         jhRh2ixTgx+AqxRHSPTA0bOmXSN6nx0jXSnLdWCsnUpNVSkqIbL4DPUlshQUZ8FEnh0n
-         bL1sdpKFfazYJ0TLsJzgOE47PDmvB3tV13I2or7M/4k5Lovuxpub9wM1GJI6k3m/iNvg
-         jBMOTWW342ZWSqbALXcvZI5r4xontvFkW0NnNPIdpC4Bm2hfB29jWbhJUbmYigbkxUHd
-         67rogzrZCw/ELcjvDukTU41CeKvGEaCrXUQhlmfYFbPInJjUcNQyyBguRFWT4jKHe0JH
-         72gQ==
-X-Gm-Message-State: AOAM533kq69KA206Y3iRUF/g81icx/6OFy4WJUcXL/aCeNJw9kmSrSIq
-        X9Nkz2TLvQ92YGenzYw5xuo=
-X-Google-Smtp-Source: ABdhPJzHbX3veQcqqU98zgDbBELI0RUx+TOtehRdUKbZFXDL/CkIhp08eunJ5GnCkOVCFPCgzBTGkg==
-X-Received: by 2002:a67:c81a:: with SMTP id u26mr6848048vsk.27.1634215480432;
-        Thu, 14 Oct 2021 05:44:40 -0700 (PDT)
-Received: from linuxerio.localdomain ([186.32.194.42])
-        by smtp.gmail.com with ESMTPSA id z4sm1441844vsk.15.2021.10.14.05.44.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Oct 2021 05:44:40 -0700 (PDT)
-From:   Edmundo Carmona Antoranz <eantoranz@gmail.com>
-To:     qiangqing.zhang@nxp.com
-Cc:     kernel-janitors@vger.kernel.org,
-        Edmundo Carmona Antoranz <eantoranz@gmail.com>
-Subject: [RFC PATCH] net: stmmac: remove rtnl unlock/lock sequence from stmmac_resume
-Date:   Thu, 14 Oct 2021 06:44:17 -0600
-Message-Id: <20211014124417.199403-1-eantoranz@gmail.com>
-X-Mailer: git-send-email 2.33.0
+        Thu, 14 Oct 2021 11:14:44 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id D343C40013;
+        Thu, 14 Oct 2021 15:12:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1634224355;
+        bh=8xwz+QO6zjXKM+v74uWvYq9Z9yoCObRA1yTs9d8sDDI=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=ApQ2YrxAKDVLw42dD5cLUJ3/ymUYA/Y7ZptOas1LNaOWgxMXh1qDEITvpY0eU7WlS
+         2SGdIQYfus8IGaRdWFUfyhlHn/+Xd2HvugGL9+LRfho4n8FbW3tPmLM1QBv7ls39GG
+         nEp1cxxb+wZUw4xF9h6hQxX7LPXz4dviZFpsC61p9WpM35pefPReNm1yzsk6z1uEJk
+         ea/YTQShVC7qMMg58kxEib+Rw1SiXfXlaAHdVDDZ9wDPdVvjpNMh19N8BQEwahFmeQ
+         cU8q51UxPSZL3nXL0aYUo8qSsv97aFKhW0TAMjAMSk+e3NTTff3bxcEW/6r8fp+Q5L
+         Zi4nnnJaD5ekQ==
+From:   Colin King <colin.king@canonical.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: drivers: cx24113: remove redundant variable r
+Date:   Thu, 14 Oct 2021 16:12:35 +0100
+Message-Id: <20211014151235.62671-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-90702dcd19c ("net: stmmac: fix MAC not working when system resume back
-with WoL active") introduced a section of code in stmmac_resume that
-is protected with rtnl_lock/rtnl_unlock. However, the call to
-rtnl_unlock() is followed by an already existing call to rtnl_lock().
+From: Colin Ian King <colin.king@canonical.com>
 
-Instead of unlock/lock, allow the prexisting lock to continue.
+Variable r is being assigned values but it is never being
+used. The variable is redundant and can be removed.
 
-Signed-off-by: Edmundo Carmona Antoranz <eantoranz@gmail.com>
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/media/dvb-frontends/cx24113.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index eb3b7bf771d7..5e69380027af 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -7263,9 +7263,7 @@ int stmmac_resume(struct device *dev)
- 		if (device_may_wakeup(priv->device))
- 			phylink_speed_up(priv->phylink);
- 	}
--	rtnl_unlock();
+diff --git a/drivers/media/dvb-frontends/cx24113.c b/drivers/media/dvb-frontends/cx24113.c
+index 60a9f70275f7..dd55d314bf9a 100644
+--- a/drivers/media/dvb-frontends/cx24113.c
++++ b/drivers/media/dvb-frontends/cx24113.c
+@@ -378,7 +378,7 @@ static void cx24113_set_nfr(struct cx24113_state *state, u16 n, s32 f, u8 r)
  
--	rtnl_lock();
- 	mutex_lock(&priv->lock);
+ static int cx24113_set_frequency(struct cx24113_state *state, u32 frequency)
+ {
+-	u8 r = 1; /* or 2 */
++	u8 r;
+ 	u16 n = 6;
+ 	s32 f = 0;
  
- 	stmmac_reset_queues_param(priv);
 -- 
-2.33.0
-
-Is this a valid patch? Perhaps the lock is released in the middle
-on purpose but I would assume it was just an little oversight.
+2.32.0
 
