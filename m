@@ -2,38 +2,36 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28575C4167E
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 18:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 157D6C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 18:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 07515611B0
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 18:21:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 014C8611CA
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 18:26:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233922AbhJNSXy (ORCPT
+        id S229707AbhJNS2Y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Oct 2021 14:23:54 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:62829 "EHLO
+        Thu, 14 Oct 2021 14:28:24 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:49584 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233911AbhJNSXx (ORCPT
+        with ESMTP id S229768AbhJNS2X (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Oct 2021 14:23:53 -0400
+        Thu, 14 Oct 2021 14:28:23 -0400
 Received: from pop-os.home ([92.140.161.106])
         by smtp.orange.fr with ESMTPA
-        id b5MPmB7sXBazob5MPmY6R9; Thu, 14 Oct 2021 20:21:46 +0200
+        id b5QlmBA9UBazob5QlmY6yg; Thu, 14 Oct 2021 20:26:17 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 14 Oct 2021 20:21:46 +0200
+X-ME-Date: Thu, 14 Oct 2021 20:26:17 +0200
 X-ME-IP: 92.140.161.106
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     minghsiu.tsai@mediatek.com, houlong.wei@mediatek.com,
-        andrew-ct.chen@mediatek.com, tiffany.lin@mediatek.com,
-        mchehab@kernel.org, matthias.bgg@gmail.com
-Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+To:     h.morris@cascoda.com, alex.aring@gmail.com,
+        stefan@datenfreihafen.org, davem@davemloft.net, kuba@kernel.org
+Cc:     linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] media: mtk-vpu: Remove redundant 'flush_workqueue()' calls
-Date:   Thu, 14 Oct 2021 20:21:43 +0200
-Message-Id: <9788bdfee564000a1c4d68126d25570c7feb1055.1634235609.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] ieee802154: Remove redundant 'flush_workqueue()' calls
+Date:   Thu, 14 Oct 2021 20:26:14 +0200
+Message-Id: <fedb57c4f6d4373e0d6888d13ad2de3a1d315d81.1634235880.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -56,25 +54,23 @@ expression E;
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/platform/mtk-vpu/mtk_vpu.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/ieee802154/ca8210.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/media/platform/mtk-vpu/mtk_vpu.c b/drivers/media/platform/mtk-vpu/mtk_vpu.c
-index 7f1647da0ade..7bd715fc844d 100644
---- a/drivers/media/platform/mtk-vpu/mtk_vpu.c
-+++ b/drivers/media/platform/mtk-vpu/mtk_vpu.c
-@@ -964,10 +964,8 @@ static int mtk_vpu_remove(struct platform_device *pdev)
- #ifdef CONFIG_DEBUG_FS
- 	debugfs_remove(vpu_debugfs);
- #endif
--	if (vpu->wdt.wq) {
--		flush_workqueue(vpu->wdt.wq);
-+	if (vpu->wdt.wq)
- 		destroy_workqueue(vpu->wdt.wq);
--	}
- 	vpu_free_ext_mem(vpu, P_FW);
- 	vpu_free_ext_mem(vpu, D_FW);
- 	mutex_destroy(&vpu->vpu_mutex);
+diff --git a/drivers/net/ieee802154/ca8210.c b/drivers/net/ieee802154/ca8210.c
+index 3a2824f24caa..ece6ff6049f6 100644
+--- a/drivers/net/ieee802154/ca8210.c
++++ b/drivers/net/ieee802154/ca8210.c
+@@ -2938,9 +2938,7 @@ static int ca8210_dev_com_init(struct ca8210_priv *priv)
+  */
+ static void ca8210_dev_com_clear(struct ca8210_priv *priv)
+ {
+-	flush_workqueue(priv->mlme_workqueue);
+ 	destroy_workqueue(priv->mlme_workqueue);
+-	flush_workqueue(priv->irq_workqueue);
+ 	destroy_workqueue(priv->irq_workqueue);
+ }
+ 
 -- 
 2.30.2
 
