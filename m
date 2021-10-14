@@ -2,90 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E9FC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 11:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2624C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 12:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1D4061053
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 11:45:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AB21610F9
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 12:44:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231236AbhJNLra (ORCPT
+        id S231518AbhJNMqq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Oct 2021 07:47:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58722 "EHLO
+        Thu, 14 Oct 2021 08:46:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231177AbhJNLra (ORCPT
+        with ESMTP id S231519AbhJNMqp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Oct 2021 07:47:30 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7093FC061570;
-        Thu, 14 Oct 2021 04:45:25 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 04671268;
-        Thu, 14 Oct 2021 13:45:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1634211922;
-        bh=NI2yghy2CK+mNIPPcMsps/HtBL1jPLdPKXJdpTj0gME=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=d+hTpRv1NhXOK10IXrYWY2aw9P63m3nLAw/U/BVs9oFvQ7tSUrZUAwTdpToEppoJn
-         vIN/MdWC1nNIfEfiMWV+ujb3n6pqRT62lZTtT9qmuDehabZXUSLSaME134JfHqUE6p
-         C9kjiWOUdFkXDqqMtx4wwDyfYENSTxdRWU7s8cNs=
-Content-Type: text/plain; charset="utf-8"
+        Thu, 14 Oct 2021 08:46:45 -0400
+Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DD94C061570
+        for <kernel-janitors@vger.kernel.org>; Thu, 14 Oct 2021 05:44:41 -0700 (PDT)
+Received: by mail-ua1-x92f.google.com with SMTP id h4so11042440uaw.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 14 Oct 2021 05:44:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KkAsy1Q6KSueqlSbR+TpzKk0M7xOPwVa4poOJOTYfPw=;
+        b=dMRMiX87A56C+ulAtIE7p4XfoNW3bx1Nx42FRLB6Q2RCSI1wpopmripaKo4buTrb0I
+         /y2WL2bFthAKissNeJYWQs0A35CRkDzdumpUt8NI2hGBgsTflwD9EnM4YfYwJrrOWp6X
+         iH3N4NDk9FbjVxXCauSUvE0KwaTg7wYIeVoj6bOT35s3AFoSivj7xuNdFrFwyY2ph7B5
+         t38y6mnbFO/wR3HfhlnXeU5M8CQvvfUPHPjkyL5xX8kl87T4dYwv+4Q/CKQiZRacaYcU
+         IJl5DG+h+dWzl+DYBXyxT0ixYQzDGey/0nH3OfIdXpRNiEhthFjI5M6S2R8H5b8MpbVR
+         i/dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KkAsy1Q6KSueqlSbR+TpzKk0M7xOPwVa4poOJOTYfPw=;
+        b=S9b7i4yyI1R4NcFwtX72YGg+4Wjr9AvEQHp1nI0FhR10+ZHLQ3mKsxE+UWDn2PBjc9
+         jhRh2ixTgx+AqxRHSPTA0bOmXSN6nx0jXSnLdWCsnUpNVSkqIbL4DPUlshQUZ8FEnh0n
+         bL1sdpKFfazYJ0TLsJzgOE47PDmvB3tV13I2or7M/4k5Lovuxpub9wM1GJI6k3m/iNvg
+         jBMOTWW342ZWSqbALXcvZI5r4xontvFkW0NnNPIdpC4Bm2hfB29jWbhJUbmYigbkxUHd
+         67rogzrZCw/ELcjvDukTU41CeKvGEaCrXUQhlmfYFbPInJjUcNQyyBguRFWT4jKHe0JH
+         72gQ==
+X-Gm-Message-State: AOAM533kq69KA206Y3iRUF/g81icx/6OFy4WJUcXL/aCeNJw9kmSrSIq
+        X9Nkz2TLvQ92YGenzYw5xuo=
+X-Google-Smtp-Source: ABdhPJzHbX3veQcqqU98zgDbBELI0RUx+TOtehRdUKbZFXDL/CkIhp08eunJ5GnCkOVCFPCgzBTGkg==
+X-Received: by 2002:a67:c81a:: with SMTP id u26mr6848048vsk.27.1634215480432;
+        Thu, 14 Oct 2021 05:44:40 -0700 (PDT)
+Received: from linuxerio.localdomain ([186.32.194.42])
+        by smtp.gmail.com with ESMTPSA id z4sm1441844vsk.15.2021.10.14.05.44.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Oct 2021 05:44:40 -0700 (PDT)
+From:   Edmundo Carmona Antoranz <eantoranz@gmail.com>
+To:     qiangqing.zhang@nxp.com
+Cc:     kernel-janitors@vger.kernel.org,
+        Edmundo Carmona Antoranz <eantoranz@gmail.com>
+Subject: [RFC PATCH] net: stmmac: remove rtnl unlock/lock sequence from stmmac_resume
+Date:   Thu, 14 Oct 2021 06:44:17 -0600
+Message-Id: <20211014124417.199403-1-eantoranz@gmail.com>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211013075319.GA6010@kili>
-References: <20211013075319.GA6010@kili>
-Subject: Re: [PATCH] media: ipu3-cio2: fix error code in cio2_bridge_connect_sensor()
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Bingbu Cao <bingbu.cao@intel.com>,
-        Dan Scally <djrscally@gmail.com>,
-        Tianshu Qiu <tian.shu.qiu@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Fabian =?utf-8?q?W=C3=BCthrich?= <me@fabwu.ch>,
-        Yong Zhi <yong.zhi@intel.com>
-Date:   Thu, 14 Oct 2021 12:45:19 +0100
-Message-ID: <163421191963.3878617.4945041938867839263@Monstersaurus>
-User-Agent: alot/0.9.1
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Quoting Dan Carpenter (2021-10-13 08:53:19)
-> Return -ENODEV if acpi_get_physical_device_location() fails.  Don't
-> return success.
->=20
-> Fixes: 485aa3df0dff ("media: ipu3-cio2: Parse sensor orientation and rota=
-tion")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+90702dcd19c ("net: stmmac: fix MAC not working when system resume back
+with WoL active") introduced a section of code in stmmac_resume that
+is protected with rtnl_lock/rtnl_unlock. However, the call to
+rtnl_unlock() is followed by an already existing call to rtnl_lock().
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Instead of unlock/lock, allow the prexisting lock to continue.
 
-> ---
->  drivers/media/pci/intel/ipu3/cio2-bridge.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/media/pci/intel/ipu3/cio2-bridge.c b/drivers/media/p=
-ci/intel/ipu3/cio2-bridge.c
-> index 67c467d3c81f..0b586b4e537e 100644
-> --- a/drivers/media/pci/intel/ipu3/cio2-bridge.c
-> +++ b/drivers/media/pci/intel/ipu3/cio2-bridge.c
-> @@ -238,8 +238,10 @@ static int cio2_bridge_connect_sensor(const struct c=
-io2_sensor_config *cfg,
->                         goto err_put_adev;
-> =20
->                 status =3D acpi_get_physical_device_location(adev->handle=
-, &sensor->pld);
-> -               if (ACPI_FAILURE(status))
-> +               if (ACPI_FAILURE(status)) {
-> +                       ret =3D -ENODEV;
->                         goto err_put_adev;
-> +               }
-> =20
->                 if (sensor->ssdb.lanes > CIO2_MAX_LANES) {
->                         dev_err(&adev->dev,
-> --=20
-> 2.20.1
->
+Signed-off-by: Edmundo Carmona Antoranz <eantoranz@gmail.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index eb3b7bf771d7..5e69380027af 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -7263,9 +7263,7 @@ int stmmac_resume(struct device *dev)
+ 		if (device_may_wakeup(priv->device))
+ 			phylink_speed_up(priv->phylink);
+ 	}
+-	rtnl_unlock();
+ 
+-	rtnl_lock();
+ 	mutex_lock(&priv->lock);
+ 
+ 	stmmac_reset_queues_param(priv);
+-- 
+2.33.0
+
+Is this a valid patch? Perhaps the lock is released in the middle
+on purpose but I would assume it was just an little oversight.
+
