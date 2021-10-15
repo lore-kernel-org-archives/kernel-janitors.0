@@ -2,88 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2868C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 11:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F9F1C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 12:34:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C6363610E8
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 11:07:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3740360F36
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 12:34:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238278AbhJOLJL (ORCPT
+        id S235693AbhJOMhB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 15 Oct 2021 07:09:11 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:52170 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238259AbhJOLJK (ORCPT
+        Fri, 15 Oct 2021 08:37:01 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:50054
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235596AbhJOMg6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 15 Oct 2021 07:09:10 -0400
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6F71B2E3;
-        Fri, 15 Oct 2021 13:07:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1634296022;
-        bh=amkA06umxvSECXjb9aZ7y/nd9ttEC/OesNP1AwpyebI=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=OLWmeljTLC9pa83WPUuOn2inGemuxIEoLt2ja0YQkM4NFQDBdL5+ZBBsZyxV/y9lP
-         eBa7LQ9bcfRdW8jS2jrZBYvstKL+StzhZMvLUfNjDVXtRu/VNOyBwLa1N62LAw1b7P
-         dzjfOG1s9CT8hkftx52BVq6MgJBhJH4eLTmb73uA=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211014153253.63527-1-colin.king@canonical.com>
-References: <20211014153253.63527-1-colin.king@canonical.com>
-Subject: Re: [PATCH] media: dvb-frontends/stv0367: remove redundant variable ADCClk_Hz
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+        Fri, 15 Oct 2021 08:36:58 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 5AC5A3F10B;
+        Fri, 15 Oct 2021 12:34:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1634301287;
+        bh=O2/ljvaTb7ZvVN6KnRS0V+ry4x/Qg3DOm1K7QLfboYs=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=m2DmQgB4NcEWjr0VFVA8fv8gUbv27DIkCES0pbDdCs6L1tu2xRwasURsWVF2zAIYQ
+         m5oLzc8GeOFjwaAC8ivnox0x2gGcYs7Mqqc09qfFDieux4PVCHPVCWaunCuQDrr1eI
+         oaB3J+M5FKkj1Y6An9wIxk1L7Y8oJBVm0Hdc0XP0k3Ddgz1tZsFrxL34JtfvHUyqWM
+         RNuJg/WlhzqIIxYmPq1m6WkPO32zrVhh25NJgYX8mZeaACO8RlNFPYn6PQCyd9T5DP
+         otHTyqgvvOOjy4+bsIRHWkFoxFAL3rCfVxD0Y1dH/P5PfroVrEeH9aIQ6QZ1otpRpn
+         ieFDgPNg62g/g==
+From:   Colin King <colin.king@canonical.com>
+To:     Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Colin King <colin.king@canonical.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Date:   Fri, 15 Oct 2021 12:07:00 +0100
-Message-ID: <163429602007.4164224.1831603223744451959@Monstersaurus>
-User-Agent: alot/0.9.1
+Subject: [PATCH] dmaengine: Remove redundant initialization of variable err
+Date:   Fri, 15 Oct 2021 13:34:47 +0100
+Message-Id: <20211015123447.27560-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Quoting Colin King (2021-10-14 16:32:53)
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Variable ADCClk_Hz is being initialised with a variable that is never read
-> and then re-assigned immediately afterwards. Clean up the code by removing
-> it and just returning the return value from the call to stv0367cab_get_mc=
-lk
->=20
+From: Colin Ian King <colin.king@canonical.com>
 
-Indeed LGTM.
+The variable err is being initialized with a value that is never read, it
+is being updated later on. The assignment is redundant and can be removed
+and move the declaration into the local scope.
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/dma/dmaengine.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/media/dvb-frontends/stv0367.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
->=20
-> diff --git a/drivers/media/dvb-frontends/stv0367.c b/drivers/media/dvb-fr=
-ontends/stv0367.c
-> index 6c2b05fae1c5..95e376f23506 100644
-> --- a/drivers/media/dvb-frontends/stv0367.c
-> +++ b/drivers/media/dvb-frontends/stv0367.c
-> @@ -1797,11 +1797,7 @@ static u32 stv0367cab_get_mclk(struct dvb_frontend=
- *fe, u32 ExtClk_Hz)
-> =20
->  static u32 stv0367cab_get_adc_freq(struct dvb_frontend *fe, u32 ExtClk_H=
-z)
->  {
-> -       u32 ADCClk_Hz =3D ExtClk_Hz;
-> -
-> -       ADCClk_Hz =3D stv0367cab_get_mclk(fe, ExtClk_Hz);
-> -
-> -       return ADCClk_Hz;
-> +       return stv0367cab_get_mclk(fe, ExtClk_Hz);
->  }
-> =20
->  static enum stv0367cab_mod stv0367cab_SetQamSize(struct stv0367_state *s=
-tate,
-> --=20
-> 2.32.0
->
+diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+index af3ee288bc11..d9f7c097cfd6 100644
+--- a/drivers/dma/dmaengine.c
++++ b/drivers/dma/dmaengine.c
+@@ -695,13 +695,12 @@ static struct dma_chan *find_candidate(struct dma_device *device,
+  */
+ struct dma_chan *dma_get_slave_channel(struct dma_chan *chan)
+ {
+-	int err = -EBUSY;
+-
+ 	/* lock against __dma_request_channel */
+ 	mutex_lock(&dma_list_mutex);
+ 
+ 	if (chan->client_count == 0) {
+ 		struct dma_device *device = chan->device;
++		int err;
+ 
+ 		dma_cap_set(DMA_PRIVATE, device->cap_mask);
+ 		device->privatecnt++;
+-- 
+2.32.0
+
