@@ -2,47 +2,68 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93955C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 15:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77EECC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 17:23:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 75D9460FF2
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 15:45:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57B4160E97
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 17:23:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241020AbhJOPrj (ORCPT
+        id S242330AbhJORZY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 15 Oct 2021 11:47:39 -0400
-Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:55796
-        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241000AbhJOPri (ORCPT
+        Fri, 15 Oct 2021 13:25:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40188 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242342AbhJORZA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 15 Oct 2021 11:47:38 -0400
-Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 04C033FFE2;
-        Fri, 15 Oct 2021 15:45:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1634312731;
-        bh=q+4cmHqckaQN4b4ZCrwGPFRF8idW9plChE4guiMleiU=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=u6Lau5Vyk4CpnT8Xo+XbOROx3DyLrgYdbZ46qMf4VCTG3qrYt4Gvl/sPTxpRxsfS7
-         XIu0GCz7ff4u8ctbgDlJNIXpaKhPW0IYlMNUdyL0Kb2qqnP+5Y+JYuqJh4GDT1KcMi
-         cNFZLmJt8BpybXDSF7CEDZQmpgkC5c0FA48tLLJG7O1GlQrBwJgpzLjdE6qY5vPy8J
-         r7ix4AQqzLzYVH9VN+r2cRiCrvpBxZFVVjSuTVCBtsbLkHdqy8eJytuucWm1QkMa2n
-         hMRmTrj0f9ZBbxvchSklN202vkiBrPH64mEbq8yi8jTSrgCWbeUzpwFepxm5Cv2VVN
-         3Sgo8V9JXajnA==
-From:   Colin King <colin.king@canonical.com>
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] rtw89: Fix potential dereference of the null pointer sta
-Date:   Fri, 15 Oct 2021 16:45:30 +0100
-Message-Id: <20211015154530.34356-1-colin.king@canonical.com>
+        Fri, 15 Oct 2021 13:25:00 -0400
+Received: from mail-oi1-x22b.google.com (mail-oi1-x22b.google.com [IPv6:2607:f8b0:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D048C061781
+        for <kernel-janitors@vger.kernel.org>; Fri, 15 Oct 2021 10:22:24 -0700 (PDT)
+Received: by mail-oi1-x22b.google.com with SMTP id v77so9704905oie.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 15 Oct 2021 10:22:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=rzyEN2IKemEthFw0BhV4JmnKiL6LJx2wO9/bgd19Ox4=;
+        b=M493+FP1Xy2KglJSyE0b3mrxkEeDorK3QcDt8nbhgmASBjTYSH4ElUGss0AaxmLdMq
+         aSKRC1MxYuiOngTyM0o5zjs2fo2XVFAZOiAWWDwv3q+7niV1iOiuN+09r2k8gT0PMPHc
+         kHieRShGPo6MA1/AFtYVnU++oaorAI6NIM2g4vgO8rXi4eRGZai8dCQUc9qTmGoWwni9
+         AVOYtv1HR/iRoJ8U7aBmfidQA9VrCZzK7ANKrXdUmkmR8ZGMELU24+TuevtMOIJ5U9hF
+         /JmSeOAYjgiX/OdNaqVNbnAYZxqRouj1kqYtcGYG9rdKdds88ya69iuNg5VFh3jCxHaA
+         Dggw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=rzyEN2IKemEthFw0BhV4JmnKiL6LJx2wO9/bgd19Ox4=;
+        b=5dokJQtCAAu75fHBFWBrRhjSgk1ZpmFQltM0UsX1oDNXO6wtKqNTlsdGwqKdZJiYDN
+         NE9YVMHPkEj1f67W4g67UsSydb2TX8MMoEdc3GRthpILuS2Ty9z46EGkBS7mT677u82I
+         wejgowWVtIFjUH7bfnrl2YcPlNNMKeAkboRayErM9U0dVYL3/JWnNbDXIUlVCKpDJ4+p
+         wZhqilEJvu8j7PGDKJfeE1qM3gsDF3KAPpof70Ut3bZBvLPFAU9drgDqPp4w4pPNkf1e
+         gFgRB3ONXCTEGGUECPrSRbgXnT0IuMuPzWuKLL9FROVdMUHPkd5p5967OGkl/uMLNkUO
+         GR3g==
+X-Gm-Message-State: AOAM533sbdu5bQ1gT6/xHSCMf2gJVniyaA/gm7mfS2FXWHDW29ASHmp/
+        20r4M5R1W8i/0aXdCIVbR5OmElSTFKr3Pg==
+X-Google-Smtp-Source: ABdhPJz1rE34/rvD821RRnUmK8MzG4eBOu/mcVUiajrQWknwaD7hxsRnR2OCOahn7vdL+bbnp6zaZw==
+X-Received: by 2002:aca:bd02:: with SMTP id n2mr18572809oif.113.1634318543564;
+        Fri, 15 Oct 2021 10:22:23 -0700 (PDT)
+Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
+        by smtp.gmail.com with ESMTPSA id s206sm1289635oia.33.2021.10.15.10.22.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Oct 2021 10:22:23 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     mathieu.poirier@linaro.org, james.quinlan@broadcom.com,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        ohad@wizery.com
+Cc:     kernel-janitors@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH] remoteproc: Fix a memory leak in an error handling path in 'rproc_handle_vdev()'
+Date:   Fri, 15 Oct 2021 12:22:13 -0500
+Message-Id: <163431847249.251657.11309404044031278395.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.32.0
+In-Reply-To: <e6d0dad6620da4fdf847faa903f79b735d35f262.1630755377.git.christophe.jaillet@wanadoo.fr>
+References: <e6d0dad6620da4fdf847faa903f79b735d35f262.1630755377.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -50,42 +71,21 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sat, 4 Sep 2021 13:37:32 +0200, Christophe JAILLET wrote:
+> If 'copy_dma_range_map() fails, the memory allocated for 'rvdev' will leak.
+> Move the 'copy_dma_range_map()' call after the device registration so
+> that 'rproc_rvdev_release()' can be called to free some resources.
+> 
+> Also, branch to the error handling path if 'copy_dma_range_map()' instead
+> of a direct return to avoid some other leaks.
+> 
+> [...]
 
-The pointer rtwsta is dereferencing pointer sta before sta is
-being null checked, so there is a potential null pointer deference
-issue that may occur. Fix this by only assigning rtwsta after sta
-has been null checked. Add in a null pointer check on rtwsta before
-dereferencing it too.
+Applied, thanks!
 
-Fixes: e3ec7017f6a2 ("rtw89: add Realtek 802.11ax driver")
-Addresses-Coverity: ("Dereference before null check")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/wireless/realtek/rtw89/core.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+[1/1] remoteproc: Fix a memory leak in an error handling path in 'rproc_handle_vdev()'
+      commit: 0374a4ea7269645c46c3eb288526ea072fa19e79
 
-diff --git a/drivers/net/wireless/realtek/rtw89/core.c b/drivers/net/wireless/realtek/rtw89/core.c
-index 06fb6e5b1b37..26f52a25f545 100644
---- a/drivers/net/wireless/realtek/rtw89/core.c
-+++ b/drivers/net/wireless/realtek/rtw89/core.c
-@@ -1534,9 +1534,14 @@ static bool rtw89_core_txq_agg_wait(struct rtw89_dev *rtwdev,
- {
- 	struct rtw89_txq *rtwtxq = (struct rtw89_txq *)txq->drv_priv;
- 	struct ieee80211_sta *sta = txq->sta;
--	struct rtw89_sta *rtwsta = (struct rtw89_sta *)sta->drv_priv;
-+	struct rtw89_sta *rtwsta;
- 
--	if (!sta || rtwsta->max_agg_wait <= 0)
-+	if (!sta)
-+		return false;
-+	rtwsta = (struct rtw89_sta *)sta->drv_priv;
-+	if (!rtwsta)
-+		return false;
-+	if (rtwsta->max_agg_wait <= 0)
- 		return false;
- 
- 	if (rtwdev->stats.tx_tfc_lv <= RTW89_TFC_MID)
+Best regards,
 -- 
-2.32.0
-
+Bjorn Andersson <bjorn.andersson@linaro.org>
