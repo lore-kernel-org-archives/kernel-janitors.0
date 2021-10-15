@@ -2,85 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9609AC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 19:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F9ABC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 03:10:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7406060EBB
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Oct 2021 19:42:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C21461090
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 03:10:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232683AbhJNTou (ORCPT
+        id S232310AbhJODMf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Oct 2021 15:44:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49168 "EHLO mail.kernel.org"
+        Thu, 14 Oct 2021 23:12:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229926AbhJNTot (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Oct 2021 15:44:49 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AEC83604E9;
-        Thu, 14 Oct 2021 19:42:43 +0000 (UTC)
+        id S229526AbhJODMe (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 14 Oct 2021 23:12:34 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 18555611CC;
+        Fri, 15 Oct 2021 03:10:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634240564;
-        bh=iIBZIhtkSWMQj1WgKcPeCr6QjVpWAQIm6lxiwng6KCY=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=rgqbekksfExbJEHdzFLOFsKIqA8ZbZjDH6BNQZsGElAUs82NMm2bly1+roOhodLbl
-         w+3Zf7f0N56dYq38pi+kEIebY7iMdINqvD4iA8+HwVdYisDtSVk1Mr6GFFr/nyS3lA
-         1Xvus4nFp7wprCBRh8RrX6qiq64URaagwqhWHzDzyWgVsVw1NjhEG1KOw8C4Wnc21R
-         nFJUkQWExuMS3G1js3L1NDpy0nqoX2mkt/hDyrmVQlO5/C6vkKuIAD8Fv1QKa+xPTD
-         7p0qpjrp5uhGgNG8Dvwrpybwrd36G0iw5FuMgh41eJprELL+WBpKa0WYwWmjMRbiQ7
-         qMA3MjPPXMA5A==
-Date:   Thu, 14 Oct 2021 12:42:42 -0700 (PDT)
-From:   Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@sstabellini-ThinkPad-T480s
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-cc:     boris.ostrovsky@oracle.com, jgross@suse.com,
-        sstabellini@kernel.org, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] xen/pvcalls-back: Remove redundant 'flush_workqueue()'
- calls
-In-Reply-To: <2d6c2e031e4aa2acf2ac4e0bbbc17cfdcc8dbee2.1634236560.git.christophe.jaillet@wanadoo.fr>
-Message-ID: <alpine.DEB.2.21.2110141242320.9408@sstabellini-ThinkPad-T480s>
-References: <2d6c2e031e4aa2acf2ac4e0bbbc17cfdcc8dbee2.1634236560.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        s=k20201202; t=1634267428;
+        bh=kXgOJ8sBfwFLadg5Fg+80nI5My/aKal1KpkR8dG4Ymg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YfAcv55P3FDIh7z2OYlmAembI3fq9+KxD9DP8ju1N7cBDAdypgBhThZPqZppbyFir
+         Ci/MIwB8SjZ8HPUHbtsMzHJlZYhk9Y+w0mHK0xkLDh/rFVJDM0eqtvzzXS4PcMX4vL
+         NwntbMR7L6Kh/k1j5LqsnKC6xEQRR1rzqwTsw7/8uZ8ZzWPiB3TIsXcbCxqI5a6lAD
+         2AxhgwJ4Qt//l502YLBiimSehKPcXejNOGMfNlH0EDDAfJ/ER7V/kcsWPB/LeFiXFO
+         RIowAzjCzxaVJQdQJ+jkFdoKkAFQod+kRgCMrcfgUrvFwIi0n9bh2XaLM0Ovci/ji3
+         WKLtR61bv6wSQ==
+Date:   Fri, 15 Oct 2021 11:10:22 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Peng Fan <peng.fan@nxp.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] soc: imx: imx8m-blk-ctrl: off by one in
+ imx8m_blk_ctrl_xlate()
+Message-ID: <20211015031021.GC22881@dragon>
+References: <20211011123638.GB15188@kili>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211011123638.GB15188@kili>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 14 Oct 2021, Christophe JAILLET wrote:
-> 'destroy_workqueue()' already drains the queue before destroying it, so
-> there is no need to flush it explicitly.
+On Mon, Oct 11, 2021 at 03:36:38PM +0300, Dan Carpenter wrote:
+> The > comparison should be >= to prevent reading one element beyond the
+> end of the array.  The onecell_data->domains[] array is allocated in
+> imx8m_blk_ctrl_probe() and it has "onecell_data->num_domains" elements.
 > 
-> Remove the redundant 'flush_workqueue()' calls.
-> 
-> This was generated with coccinelle:
-> 
-> @@
-> expression E;
-> @@
-> - 	flush_workqueue(E);
-> 	destroy_workqueue(E);
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Fixes: 5b340e7813d4 ("soc: imx: add i.MX8M blk-ctrl driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Acked-by: Stefano Stabellini <sstabellini@kernel.org>
-
-
-> ---
->  drivers/xen/pvcalls-back.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/xen/pvcalls-back.c b/drivers/xen/pvcalls-back.c
-> index b47fd8435061..d6f945fd4147 100644
-> --- a/drivers/xen/pvcalls-back.c
-> +++ b/drivers/xen/pvcalls-back.c
-> @@ -465,7 +465,6 @@ static int pvcalls_back_release_passive(struct xenbus_device *dev,
->  		write_unlock_bh(&mappass->sock->sk->sk_callback_lock);
->  	}
->  	sock_release(mappass->sock);
-> -	flush_workqueue(mappass->wq);
->  	destroy_workqueue(mappass->wq);
->  	kfree(mappass);
->  
-> -- 
-> 2.30.2
-> 
+Applied, thanks!
