@@ -2,42 +2,46 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F9F1C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 12:34:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E14BC4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 15:21:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3740360F36
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 12:34:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D65561211
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 15:21:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235693AbhJOMhB (ORCPT
+        id S240948AbhJOPXW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 15 Oct 2021 08:37:01 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:50054
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235596AbhJOMg6 (ORCPT
+        Fri, 15 Oct 2021 11:23:22 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:54156
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232267AbhJOPXW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 15 Oct 2021 08:36:58 -0400
+        Fri, 15 Oct 2021 11:23:22 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 5AC5A3F10B;
-        Fri, 15 Oct 2021 12:34:47 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 292F23FFE2;
+        Fri, 15 Oct 2021 15:21:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1634301287;
-        bh=O2/ljvaTb7ZvVN6KnRS0V+ry4x/Qg3DOm1K7QLfboYs=;
+        s=20210705; t=1634311274;
+        bh=NwvPoa2VhDuRpmSjf2vzHYXMiqvdYBCWvFv62Vu1wJE=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=m2DmQgB4NcEWjr0VFVA8fv8gUbv27DIkCES0pbDdCs6L1tu2xRwasURsWVF2zAIYQ
-         m5oLzc8GeOFjwaAC8ivnox0x2gGcYs7Mqqc09qfFDieux4PVCHPVCWaunCuQDrr1eI
-         oaB3J+M5FKkj1Y6An9wIxk1L7Y8oJBVm0Hdc0XP0k3Ddgz1tZsFrxL34JtfvHUyqWM
-         RNuJg/WlhzqIIxYmPq1m6WkPO32zrVhh25NJgYX8mZeaACO8RlNFPYn6PQCyd9T5DP
-         otHTyqgvvOOjy4+bsIRHWkFoxFAL3rCfVxD0Y1dH/P5PfroVrEeH9aIQ6QZ1otpRpn
-         ieFDgPNg62g/g==
+        b=dNCpLuocZL5UVcoNz/WxHnpq4p7Ofb4aBRgcm2ary8rlqtcbCO4gfsOkG0Ww4Wvby
+         vitmT0iKgUFJnuQnre8khHE88fxc+l31Dut5giNXnHCXyZWNmhPp7QoCJhMvr8iKhs
+         dDlAiS8Wq0j1cLdp+xHjEylDwMGP4PYSSHFGNWfZNM9Ocu13DUWXKt8KzkIpqBQUDb
+         k/xoHtKwKtFGjuRvPmmzCQDwRO7no9QoF5egnnDmIbQDVivZkd3fOvlw3Z5OCoEBGO
+         pwIVPjwbqExJf3zsuNTudFxOHGacWECNlHtcwsmu5WnlwR5VrkQuUSwgkbY8TVrW98
+         O+EQeAeHENRMQ==
 From:   Colin King <colin.king@canonical.com>
-To:     Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dmaengine: Remove redundant initialization of variable err
-Date:   Fri, 15 Oct 2021 13:34:47 +0100
-Message-Id: <20211015123447.27560-1-colin.king@canonical.com>
+Subject: [PATCH][next] rtw89: Remove redundant check of ret after call to rtw89_mac_enable_bb_rf
+Date:   Fri, 15 Oct 2021 16:21:13 +0100
+Message-Id: <20211015152113.33179-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -48,35 +52,30 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable err is being initialized with a value that is never read, it
-is being updated later on. The assignment is redundant and can be removed
-and move the declaration into the local scope.
+The function rtw89_mac_enable_bb_rf is a void return type, so there is
+no return error code to ret, so the following check for an error in ret
+is redundant dead code and can be removed.
 
-Addresses-Coverity: ("Unused value")
+Addresses-Coverity: ("Logically dead code")
+Fixes: e3ec7017f6a2 ("rtw89: add Realtek 802.11ax driver")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/dma/dmaengine.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/wireless/realtek/rtw89/mac.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-index af3ee288bc11..d9f7c097cfd6 100644
---- a/drivers/dma/dmaengine.c
-+++ b/drivers/dma/dmaengine.c
-@@ -695,13 +695,12 @@ static struct dma_chan *find_candidate(struct dma_device *device,
-  */
- struct dma_chan *dma_get_slave_channel(struct dma_chan *chan)
- {
--	int err = -EBUSY;
--
- 	/* lock against __dma_request_channel */
- 	mutex_lock(&dma_list_mutex);
+diff --git a/drivers/net/wireless/realtek/rtw89/mac.c b/drivers/net/wireless/realtek/rtw89/mac.c
+index 0171a5a7b1de..69384c43c046 100644
+--- a/drivers/net/wireless/realtek/rtw89/mac.c
++++ b/drivers/net/wireless/realtek/rtw89/mac.c
+@@ -2656,8 +2656,6 @@ int rtw89_mac_init(struct rtw89_dev *rtwdev)
+ 		goto fail;
  
- 	if (chan->client_count == 0) {
- 		struct dma_device *device = chan->device;
-+		int err;
+ 	rtw89_mac_enable_bb_rf(rtwdev);
+-	if (ret)
+-		goto fail;
  
- 		dma_cap_set(DMA_PRIVATE, device->cap_mask);
- 		device->privatecnt++;
+ 	ret = rtw89_mac_sys_init(rtwdev);
+ 	if (ret)
 -- 
 2.32.0
 
