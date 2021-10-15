@@ -2,43 +2,46 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE475C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 10:42:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A3B1C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 10:50:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9864561053
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 10:42:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28D206044F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 10:50:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235067AbhJOKoI (ORCPT
+        id S238101AbhJOKwO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 15 Oct 2021 06:44:08 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:46696
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229690AbhJOKoH (ORCPT
+        Fri, 15 Oct 2021 06:52:14 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:41668
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229690AbhJOKwM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 15 Oct 2021 06:44:07 -0400
+        Fri, 15 Oct 2021 06:52:12 -0400
 Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 4D8183FFE6;
-        Fri, 15 Oct 2021 10:42:00 +0000 (UTC)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 10FA43F22D;
+        Fri, 15 Oct 2021 10:50:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1634294520;
-        bh=v7OdXv/RsyUKyO5vRptejlwsl38tWRiS52N/qECPZZ0=;
+        s=20210705; t=1634295005;
+        bh=X4YwiosBIxIOm7QIAfV/oUAM58MbArX1kagItuGPD/A=;
         h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
-        b=aa29kGmvgw8ZkuF7H9Hwb3eKR2RfhxAhdJcSTTi2Wue+Jx3Zpeo/9ti6/6iX6wJY7
-         y2F4G/be6OX0NUTTMhopoXe+PtxOORcXiDVz+ag2Azy7zPgTv/Opg4taYOYxqO67Uc
-         Z3P58yMeHeGV06iHQeCU+XrOWgSzAK+ftR4q9WEORMpTuV/HIdvVS+Wbo931zmE5J2
-         Jnf79GNKpYMsGqMLgPihacFy43xHirk6dH+t5qspCuxnh4HUs0DIt6G0cQq+YCxeck
-         ZfR/WHjqpO8qRWq7ko7GJHLIgRB5SvaMrgdQe9xSbEfGBvV0bpeNxWFAbMFD+/kxjs
-         RKcqZojYxi83A==
+        b=cyQR5Nu0KTe4743+qpozHm1TuFbgKrGIYGCDH/8HuXUpCaHAi3hhLLpc3XWv1wm0b
+         e9CXzE7xEMy/UP+EZdSdumFMCQ4FiO9hQZbxbvp5+5RD/4d+eNmLwLn2qE9BfWxysc
+         43DnhOZn2tt028Ve/2YPanHwhTrpTJ4hQuuLzxVaW2DaPMR/C/4F/wo9k7qR0A9tcQ
+         gUjrLxnOzWwa3Kgr9w8tER0qftLga73Py7UHcwagmpHGi9mJVTAjmQskEBqqkaeBTc
+         qQovsLRVgfvdM5VcNYBSUxqvsj9CFqLih95dqzE1hyJQYshZJnQoYMdGAPJjCKn7oz
+         NB2rKFpd+oX9Q==
 From:   Colin King <colin.king@canonical.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] lib/stackdepot: Fix spelling mistake and grammar in pr_err message
-Date:   Fri, 15 Oct 2021 11:41:59 +0100
-Message-Id: <20211015104159.11282-1-colin.king@canonical.com>
+Subject: [PATCH][next] rtw89: Fix two spelling mistakes in debug messages
+Date:   Fri, 15 Oct 2021 11:50:04 +0100
+Message-Id: <20211015105004.11817-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -49,27 +52,35 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake of the work allocation so fix this and
-re-phrase the message to make it easier to read.
+There are two spelling mistakes in rtw89_debug messages. Fix them.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- lib/stackdepot.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/realtek/rtw89/phy.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/lib/stackdepot.c b/lib/stackdepot.c
-index 8894a5171b25..8b6c41585203 100644
---- a/lib/stackdepot.c
-+++ b/lib/stackdepot.c
-@@ -186,7 +186,7 @@ __ref int stack_depot_init(void)
- 			for (i = 0; i < STACK_HASH_SIZE;  i++)
- 				stack_table[i] = NULL;
+diff --git a/drivers/net/wireless/realtek/rtw89/phy.c b/drivers/net/wireless/realtek/rtw89/phy.c
+index 53c36cc82c57..ab134856baac 100644
+--- a/drivers/net/wireless/realtek/rtw89/phy.c
++++ b/drivers/net/wireless/realtek/rtw89/phy.c
+@@ -1715,7 +1715,7 @@ static s32 rtw89_phy_multi_sta_cfo_calc(struct rtw89_dev *rtwdev)
+ 			target_cfo = clamp(cfo_avg, max_cfo_lb, min_cfo_ub);
  		} else {
--			pr_err("Stack Depot failed hash table allocationg, disabling\n");
-+			pr_err("Stack Depot hash table allocation failed, disabling\n");
- 			stack_depot_disable = true;
- 			mutex_unlock(&stack_depot_init_mutex);
- 			return -ENOMEM;
+ 			rtw89_debug(rtwdev, RTW89_DBG_CFO,
+-				    "No intersection of cfo torlence windows\n");
++				    "No intersection of cfo tolerance windows\n");
+ 			target_cfo = phy_div(cfo_khz_all, (s32)sta_cnt);
+ 		}
+ 		for (i = 0; i < CFO_TRACK_MAX_USER; i++)
+@@ -2749,7 +2749,7 @@ static void rtw89_phy_dig_dyn_pd_th(struct rtw89_dev *rtwdev, u8 rssi,
+ 			    dig->igi_rssi, final_rssi, under_region, val);
+ 	} else {
+ 		rtw89_debug(rtwdev, RTW89_DBG_DIG,
+-			    "Dynamic PD th dsiabled, Set PD_low_bd=0\n");
++			    "Dynamic PD th disabled, Set PD_low_bd=0\n");
+ 	}
+ 
+ 	rtw89_phy_write32_mask(rtwdev, R_SEG0R_PD, B_SEG0R_PD_LOWER_BOUND_MSK,
 -- 
 2.32.0
 
