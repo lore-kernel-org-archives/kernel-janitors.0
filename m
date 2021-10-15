@@ -2,73 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E40E6C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 10:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE475C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 10:42:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CEF8260F5D
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 10:10:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9864561053
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 10:42:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237763AbhJOKMO (ORCPT
+        id S235067AbhJOKoI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 15 Oct 2021 06:12:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42524 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231776AbhJOKMN (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 15 Oct 2021 06:12:13 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 3854860F5D;
-        Fri, 15 Oct 2021 10:10:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634292607;
-        bh=0MfS7M8bqmbo6Sa8T+anrOM8zgErxdkmqGBEWGlx3Bg=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=hNMFicw3CpcMLPWuRShyIjlkm5feBOZf6kE4hjgOBlxon/hzgi5rz4OiyAhsy4LIs
-         /pJwSEyHuC4qL8TbeZ42P4Es4F60slIjsSN9Wbjh44faDDvssamEhLQ1EwQnbbxC87
-         zP7ow4wU37rRHHlw/iJQOejJJmNTOitYuSu27hTHJVfGxqABUAZJ2LOIZynd1ed7lZ
-         X29CtjtsqFSNDUcSsKi+ZrBThnZ9axSq52N4/njfg9DbdNZ6uLwfkF8Roy7a6r/qbc
-         +4GG8zPK4mx76XUwn7MwUYMO00t8bJ+MFL6qLF+Vx0YoDMFtCUzt88dHHq1LtpfuW4
-         E6lQ9rzuuT80g==
-Content-Type: text/plain; charset="utf-8"
+        Fri, 15 Oct 2021 06:44:08 -0400
+Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:46696
+        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229690AbhJOKoH (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 15 Oct 2021 06:44:07 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 4D8183FFE6;
+        Fri, 15 Oct 2021 10:42:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1634294520;
+        bh=v7OdXv/RsyUKyO5vRptejlwsl38tWRiS52N/qECPZZ0=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=aa29kGmvgw8ZkuF7H9Hwb3eKR2RfhxAhdJcSTTi2Wue+Jx3Zpeo/9ti6/6iX6wJY7
+         y2F4G/be6OX0NUTTMhopoXe+PtxOORcXiDVz+ag2Azy7zPgTv/Opg4taYOYxqO67Uc
+         Z3P58yMeHeGV06iHQeCU+XrOWgSzAK+ftR4q9WEORMpTuV/HIdvVS+Wbo931zmE5J2
+         Jnf79GNKpYMsGqMLgPihacFy43xHirk6dH+t5qspCuxnh4HUs0DIt6G0cQq+YCxeck
+         ZfR/WHjqpO8qRWq7ko7GJHLIgRB5SvaMrgdQe9xSbEfGBvV0bpeNxWFAbMFD+/kxjs
+         RKcqZojYxi83A==
+From:   Colin King <colin.king@canonical.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] lib/stackdepot: Fix spelling mistake and grammar in pr_err message
+Date:   Fri, 15 Oct 2021 11:41:59 +0100
+Message-Id: <20211015104159.11282-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] xen-netback: Remove redundant initialization of variable err
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <163429260716.22961.1289715814535736615.git-patchwork-notify@kernel.org>
-Date:   Fri, 15 Oct 2021 10:10:07 +0000
-References: <20211013165142.135795-1-colin.king@canonical.com>
-In-Reply-To: <20211013165142.135795-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     wei.liu@kernel.org, paul@xen.org, davem@davemloft.net,
-        kuba@kernel.org, xen-devel@lists.xenproject.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+From: Colin Ian King <colin.king@canonical.com>
 
-This patch was applied to netdev/net-next.git (master)
-by David S. Miller <davem@davemloft.net>:
+There is a spelling mistake of the work allocation so fix this and
+re-phrase the message to make it easier to read.
 
-On Wed, 13 Oct 2021 17:51:42 +0100 you wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable err is being initialized with a value that is never read, it
-> is being updated immediately afterwards. The assignment is redundant and
-> can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> [...]
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ lib/stackdepot.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is the summary with links:
-  - xen-netback: Remove redundant initialization of variable err
-    https://git.kernel.org/netdev/net-next/c/bacc8daf97d4
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+diff --git a/lib/stackdepot.c b/lib/stackdepot.c
+index 8894a5171b25..8b6c41585203 100644
+--- a/lib/stackdepot.c
++++ b/lib/stackdepot.c
+@@ -186,7 +186,7 @@ __ref int stack_depot_init(void)
+ 			for (i = 0; i < STACK_HASH_SIZE;  i++)
+ 				stack_table[i] = NULL;
+ 		} else {
+-			pr_err("Stack Depot failed hash table allocationg, disabling\n");
++			pr_err("Stack Depot hash table allocation failed, disabling\n");
+ 			stack_depot_disable = true;
+ 			mutex_unlock(&stack_depot_init_mutex);
+ 			return -ENOMEM;
+-- 
+2.32.0
 
