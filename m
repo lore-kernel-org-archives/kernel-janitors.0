@@ -2,39 +2,36 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 186A7C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 16 Oct 2021 06:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E659C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 16 Oct 2021 08:40:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E835F611C3
-	for <kernel-janitors@archiver.kernel.org>; Sat, 16 Oct 2021 06:44:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4F8261261
+	for <kernel-janitors@archiver.kernel.org>; Sat, 16 Oct 2021 08:40:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239974AbhJPGqm (ORCPT
+        id S235032AbhJPImo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 16 Oct 2021 02:46:42 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:54659 "EHLO
+        Sat, 16 Oct 2021 04:42:44 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:53929 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235227AbhJPGqj (ORCPT
+        with ESMTP id S234493AbhJPImn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 16 Oct 2021 02:46:39 -0400
+        Sat, 16 Oct 2021 04:42:43 -0400
 Received: from pop-os.home ([92.140.161.106])
         by smtp.orange.fr with ESMTPA
-        id bdQjmA0MmniuxbdQjmKDjp; Sat, 16 Oct 2021 08:44:30 +0200
+        id bfF0max1HqYovbfF1mCK1f; Sat, 16 Oct 2021 10:40:33 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 16 Oct 2021 08:44:30 +0200
+X-ME-Date: Sat, 16 Oct 2021 10:40:33 +0200
 X-ME-IP: 92.140.161.106
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     ohad@wizery.com, bjorn.andersson@linaro.org,
-        mathieu.poirier@linaro.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, hongxing.zhu@nxp.com, peng.fan@nxp.com
-Cc:     linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+To:     maintainers@bluecherrydvr.com, anton@corp.bluecherry.net,
+        andrey.utkin@corp.bluecherry.net, mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] remoteproc: imx_rproc: Fix a resource leak in the remove function
-Date:   Sat, 16 Oct 2021 08:44:28 +0200
-Message-Id: <d28ca94a4031bd7297d47c2164e18885a5a6ec19.1634366546.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] media: tw5864: Simplify 'tw5864_finidev()'
+Date:   Sat, 16 Oct 2021 10:40:29 +0200
+Message-Id: <189d4fd72db8707cb495e3a29ab7a276e07f62a0.1634373552.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -42,33 +39,35 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'priv->workqueue' is destroyed in the error handling path of the probe but
-not in the remove function.
+Some resources are allocated with 'pci_request_regions()', so use
+'pci_release_regions()' to free them, instead of a verbose
+'release_mem_region()'.
 
-Add the missing call to release some resources.
+There is no point in calling 'devm_kfree()'. The corresponding resource is
+managed, so it will be fried automatically.
 
-Fixes: 2df7062002d0 ("remoteproc: imx_proc: enable virtio/mailbox")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-This patch is speculative. I'm not sure if the added function call is at
-the right place in the remove function.
-Review with care.
----
- drivers/remoteproc/imx_rproc.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/pci/tw5864/tw5864-core.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index ff8170dbbc3c..0a45bc0d3f73 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -804,6 +804,7 @@ static int imx_rproc_remove(struct platform_device *pdev)
- 	clk_disable_unprepare(priv->clk);
- 	rproc_del(rproc);
- 	imx_rproc_free_mbox(rproc);
-+	destroy_workqueue(priv->workqueue);
- 	rproc_free(rproc);
+diff --git a/drivers/media/pci/tw5864/tw5864-core.c b/drivers/media/pci/tw5864/tw5864-core.c
+index 23d3cae54a5d..fee3b7711901 100644
+--- a/drivers/media/pci/tw5864/tw5864-core.c
++++ b/drivers/media/pci/tw5864/tw5864-core.c
+@@ -333,11 +333,9 @@ static void tw5864_finidev(struct pci_dev *pci_dev)
  
- 	return 0;
+ 	/* release resources */
+ 	iounmap(dev->mmio);
+-	release_mem_region(pci_resource_start(pci_dev, 0),
+-			   pci_resource_len(pci_dev, 0));
++	pci_release_regions(pci_dev);
+ 
+ 	v4l2_device_unregister(&dev->v4l2_dev);
+-	devm_kfree(&pci_dev->dev, dev);
+ }
+ 
+ static struct pci_driver tw5864_pci_driver = {
 -- 
 2.30.2
 
