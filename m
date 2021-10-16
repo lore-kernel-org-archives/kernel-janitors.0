@@ -2,55 +2,53 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D8EC433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 19:14:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD887C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 16 Oct 2021 04:31:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0368610D2
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Oct 2021 19:14:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A917661211
+	for <kernel-janitors@archiver.kernel.org>; Sat, 16 Oct 2021 04:31:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242673AbhJOTRE (ORCPT
+        id S240440AbhJPEdf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 15 Oct 2021 15:17:04 -0400
-Received: from mslow1.mail.gandi.net ([217.70.178.240]:43377 "EHLO
-        mslow1.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233027AbhJOTRE (ORCPT
+        Sat, 16 Oct 2021 00:33:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47396 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239469AbhJPEde (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 15 Oct 2021 15:17:04 -0400
-Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id 3EB48CC6A9;
-        Fri, 15 Oct 2021 19:12:46 +0000 (UTC)
-Received: (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 85580FF804;
-        Fri, 15 Oct 2021 19:12:24 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] rtc: rv3032: fix error handling in rv3032_clkout_set_rate()
-Date:   Fri, 15 Oct 2021 21:12:19 +0200
-Message-Id: <163432513382.815620.16082619578546658825.b4-ty@bootlin.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20211012101028.GT2083@kadam>
-References: <20211012101028.GT2083@kadam>
+        Sat, 16 Oct 2021 00:33:34 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78CA8C061570;
+        Fri, 15 Oct 2021 21:31:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=p+p6uTIkzBB8tDKO/mqyeWKSA3
+        /pq2YOfPUko4iT6IlWoXJWlT9oX8zlieaQEMAJfjgjy3OFVGoYxRlLqXiXPPMZJB9fdTIdnz8LJ+N
+        VCNA5LZu0JDnLPg1LFMdF4XD7wJkh5cddsLWhn5Ib9QZFKNCvdjLtTlg243CBJkLKRsaati0WnFD1
+        QpSKrQN7LY8PenbHTD7+yN6t4NFJDNnk5UuLDDm/8RnZvMK0z/3Vl5/mIksmiXsxPeXoW+ZxnZBOq
+        +QIghsV9yfh01+YV6XRc1F4glFtfU/ZZORmTbvRjv4Wu9Z9xFWOf2aiM21tH/PFBfEBzCUyyfW56X
+        GxYdMVcA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mbbLo-009jEH-Go; Sat, 16 Oct 2021 04:31:16 +0000
+Date:   Fri, 15 Oct 2021 21:31:16 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     axboe@kernel.dk, liushixin2@huawei.com, bhelgaas@google.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mtip32xx: Remove redundant 'flush_workqueue()' calls
+Message-ID: <YWpVlNmPgdRRurcw@infradead.org>
+References: <0fea349c808c6cfbf549b0e33701320c7860c8b7.1634234221.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0fea349c808c6cfbf549b0e33701320c7860c8b7.1634234221.git.christophe.jaillet@wanadoo.fr>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 12 Oct 2021 13:10:28 +0300, Dan Carpenter wrote:
-> Do not call rv3032_exit_eerd() if the enter function fails but don't
-> forget to call the exit when the enter succeeds.
-> 
-> 
+Looks good,
 
-Applied, thanks!
-
-[1/1] rtc: rv3032: fix error handling in rv3032_clkout_set_rate()
-      commit: c3336b8ac6091df60a5c1049a8c685d0b947cc61
-
-Best regards,
--- 
-Alexandre Belloni <alexandre.belloni@bootlin.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
