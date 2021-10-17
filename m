@@ -2,91 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F7DC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 17 Oct 2021 07:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E344CC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 17 Oct 2021 11:33:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0869A61027
-	for <kernel-janitors@archiver.kernel.org>; Sun, 17 Oct 2021 07:31:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFDF661247
+	for <kernel-janitors@archiver.kernel.org>; Sun, 17 Oct 2021 11:33:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237264AbhJQHdf (ORCPT
+        id S245528AbhJQLfr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 17 Oct 2021 03:33:35 -0400
-Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:55692 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234390AbhJQHd3 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 17 Oct 2021 03:33:29 -0400
-Received: from pop-os.home ([92.140.161.106])
-        by smtp.orange.fr with ESMTPA
-        id c0dWmm9RWWUfjc0dWm9RJT; Sun, 17 Oct 2021 09:31:18 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 17 Oct 2021 09:31:18 +0200
-X-ME-IP: 92.140.161.106
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
-        tiwai@suse.com, srinivas.kandagatla@linaro.org,
-        yang.lee@linux.alibaba.com
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] ASoC: codecs: Fix WCD_MBHC_HPH_PA_EN usage
-Date:   Sun, 17 Oct 2021 09:31:12 +0200
-Message-Id: <988948f7f266aa00698704687537335b7e6a67b2.1634455711.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sun, 17 Oct 2021 07:35:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56296 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S245494AbhJQLfq (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 17 Oct 2021 07:35:46 -0400
+Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7370560F56;
+        Sun, 17 Oct 2021 11:33:35 +0000 (UTC)
+Date:   Sun, 17 Oct 2021 12:37:49 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Mihail Chindris <mihail.chindris@analog.com>,
+        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] iio: Fix uninitialized variable ret
+Message-ID: <20211017123749.5e6c3bde@jic23-huawei>
+In-Reply-To: <20211015153254.33783-1-colin.king@canonical.com>
+References: <20211015153254.33783-1-colin.king@canonical.com>
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'hphpa_on' is known to be false, so the if block at the end of the function
-is dead code.
+On Fri, 15 Oct 2021 16:32:54 +0100
+Colin King <colin.king@canonical.com> wrote:
 
-Turn it into a meaningful code by having 'hphpa_on' be static. Use is as a
-flip-flop variable.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> When !iio_buffer_space_available(rb) is true and signal_pending(current)
+> is false the end of the do-while loop is reached and the uninitialized
+> variable ret is zero checked. Fix this by initializing variable ret to
+> zero.
+> 
+> Addresses-Coverity: ("Uninitialized scalar variable")
+> Fixes: ffabbffd40f2 ("iio: Add output buffer support")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Fixes: 0e5c9e7ff899 ("ASoC: codecs: wcd: add multi button Headset detection support")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-The purpose of this patch is not to be correct (!) but to draw attention
-on several points:
-   - in 'wcd_mbhc_adc_hs_rem_irq()', the "if (hphpa_on)" path is dead code
-     because 'hphpa_on' is known to be false
-   - What is this magic number '3'?
-     All 'wcd_mbhc_read_field()' look for 0 or non-0
-   - a 'mutex_[un]lock()' in an IRQ handler looks spurious to me
+Looks like the correct fix to me. If anyone disagrees shout soon!
 
-Instead of this (likely broken) patch, it is likely that something is
-missing elsewhere. Maybe in 'wcd_mbhc_adc_hs_ins_irq()'.
-I also guess that 'hphpa_on' should be read for somewhere else.
----
- sound/soc/codecs/wcd-mbhc-v2.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Applied to the iio-togreg branch of iio.git and pushed out as testing for 0-day
+to poke at it.
 
-diff --git a/sound/soc/codecs/wcd-mbhc-v2.c b/sound/soc/codecs/wcd-mbhc-v2.c
-index 405128ccb4b0..783d8c35bc1b 100644
---- a/sound/soc/codecs/wcd-mbhc-v2.c
-+++ b/sound/soc/codecs/wcd-mbhc-v2.c
-@@ -1176,7 +1176,7 @@ static irqreturn_t wcd_mbhc_adc_hs_rem_irq(int irq, void *data)
- 	struct wcd_mbhc *mbhc = data;
- 	unsigned long timeout;
- 	int adc_threshold, output_mv, retry = 0;
--	bool hphpa_on = false;
-+	static bool hphpa_on = false;
- 
- 	mutex_lock(&mbhc->lock);
- 	timeout = jiffies + msecs_to_jiffies(WCD_FAKE_REMOVAL_MIN_PERIOD_MS);
-@@ -1212,6 +1212,9 @@ static irqreturn_t wcd_mbhc_adc_hs_rem_irq(int irq, void *data)
- 
- 	if (hphpa_on) {
- 		hphpa_on = false;
-+		wcd_mbhc_write_field(mbhc, WCD_MBHC_HPH_PA_EN, 0);
-+	} else {
-+		hphpa_on = true;
- 		wcd_mbhc_write_field(mbhc, WCD_MBHC_HPH_PA_EN, 3);
- 	}
- exit:
--- 
-2.30.2
+Jonathan
+
+> ---
+>  drivers/iio/industrialio-buffer.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/industrialio-buffer.c b/drivers/iio/industrialio-buffer.c
+> index b884d78657cb..c97fb8462395 100644
+> --- a/drivers/iio/industrialio-buffer.c
+> +++ b/drivers/iio/industrialio-buffer.c
+> @@ -179,7 +179,7 @@ static ssize_t iio_buffer_write(struct file *filp, const char __user *buf,
+>  	struct iio_buffer *rb = ib->buffer;
+>  	struct iio_dev *indio_dev = ib->indio_dev;
+>  	DEFINE_WAIT_FUNC(wait, woken_wake_function);
+> -	int ret;
+> +	int ret = 0;
+>  	size_t written;
+>  
+>  	if (!indio_dev->info)
 
