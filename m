@@ -2,54 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E12C4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Oct 2021 21:14:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C1B8C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Oct 2021 21:15:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 584106113E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Oct 2021 21:14:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D61361263
+	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Oct 2021 21:15:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232588AbhJRVRG (ORCPT
+        id S233828AbhJRVR3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 18 Oct 2021 17:17:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34402 "EHLO mail.kernel.org"
+        Mon, 18 Oct 2021 17:17:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229524AbhJRVRF (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 18 Oct 2021 17:17:05 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 802AD6112D;
-        Mon, 18 Oct 2021 21:14:53 +0000 (UTC)
+        id S232045AbhJRVR3 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 18 Oct 2021 17:17:29 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 84994610A2;
+        Mon, 18 Oct 2021 21:15:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634591693;
-        bh=EWaVbvXwPOfOJaJ7PODosMCA0CEx1uJeH4dhO1/nBAo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=HjAbFjoEzwcMFpkYfB9go++lcHB6GCAHM+Hqi9fuLfp0pNj3rgoGQVkmFmqg03ODE
-         95Adu0msWYYd/6ziLpBOACC3e2uJTPSho3A4nk6wL3ASwOuQoFhxgR0RIaS8d5GFiv
-         KTyNP1Vio8rqvReJTD7Oz/XJVoCl4JvcQs6l+DHDAxen6rc+iOW1frKATzGj51aGgL
-         qq/V1YovIi0fRD0Qw2k1WL4PjKBb3boCE/nRtDriDdGmRBgxP8rkDKHvKN47VFdyhg
-         qHd+qcOrWAFCzkwnmHvlrfFww8VAEsH8VG8NgqoTz5ikcJDWwFJSgESz9LPd84PgjW
-         9TV2w+G8UqKeg==
-Date:   Mon, 18 Oct 2021 14:14:52 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Stefan Schmidt <stefan@datenfreihafen.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     h.morris@cascoda.com, alex.aring@gmail.com, davem@davemloft.net,
-        linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
+        s=k20201202; t=1634591717;
+        bh=B2VOWNbfr2Ec8nOMEj4yZrlFiebEDRloREOoCsz+MBM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=P/SOS8oNbx190hgij7zPHhywjewzuVnQFrXbI3+r7Ut7K828momsf9S2lDeSAW8NU
+         vY+ATUzYSI9QuPWbH5ZGoTt4q4KpYiAXKmCcZLrzjobVtK27X6rcCv1ZpnFlC1bPW/
+         ghthD98JMYwCLufVkxDqwszPyRoBpviVFZypln3kc8wYo6xy4/WMyXizvQD+HY6CTG
+         tBfSolrrepu9+dtzuLWxTC2jgWeWaQldXNcPaINq7KEwAFpzEVnriPozAKHq6vjOjg
+         r+eS96Lvza/UDUTbTl1oNzEVhaNbhLd9Z9Q+b2Ha60fiLVBcDaZ/U+Dzs2wp6U+KfS
+         b7revybRkVRXw==
+Date:   Mon, 18 Oct 2021 23:15:12 +0200
+From:   Robert Richter <rric@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     jan.glauber@gmail.com, wsa@kernel.org, linux-i2c@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ieee802154: Remove redundant 'flush_workqueue()' calls
-Message-ID: <20211018141452.544931a7@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-In-Reply-To: <0a080522-a30b-8b78-86d2-66c1c1a5f604@datenfreihafen.org>
-References: <fedb57c4f6d4373e0d6888d13ad2de3a1d315d81.1634235880.git.christophe.jaillet@wanadoo.fr>
-        <0a080522-a30b-8b78-86d2-66c1c1a5f604@datenfreihafen.org>
+Subject: Re: [PATCH] i2c: thunderx: Fix some resource leak
+Message-ID: <YW3j4MF/y4T6Rtzp@rric.localdomain>
+References: <6657505309174d3ea6df14169d42b6df91298470.1634374036.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6657505309174d3ea6df14169d42b6df91298470.1634374036.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 16 Oct 2021 22:54:52 +0200 Stefan Schmidt wrote:
-> I have nothing else in my ieee802154 tree for net right now so it would 
-> be great if you could take it directly. 
+On 16.10.21 10:48:26, Christophe JAILLET wrote:
+> We need to undo a 'pci_request_regions()' call in the error handling path
+> of the probe function and in the remove function.
 
-Do you mean net or net-next? This looks like net-next material.
+Isn't that devm and thus not needed?
 
-Just to be sure, applying directly is not a problem.
+> 
+> Fixes: 22d40209de3b ("i2c: thunderx: Add i2c driver for ThunderX SOC")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/i2c/busses/i2c-thunderx-pcidrv.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-thunderx-pcidrv.c b/drivers/i2c/busses/i2c-thunderx-pcidrv.c
+> index 12c90aa0900e..2d37096a6968 100644
+> --- a/drivers/i2c/busses/i2c-thunderx-pcidrv.c
+> +++ b/drivers/i2c/busses/i2c-thunderx-pcidrv.c
+> @@ -177,8 +177,10 @@ static int thunder_i2c_probe_pci(struct pci_dev *pdev,
+>  		return ret;
+>  
+
+There is a pcim_enable_device() call before all that, so the regions
+should be removed on device release, see pcim_release().
+
+-Robert
+
+>  	i2c->twsi_base = pcim_iomap(pdev, 0, pci_resource_len(pdev, 0));
+> -	if (!i2c->twsi_base)
+> -		return -EINVAL;
+> +	if (!i2c->twsi_base) {
+> +		ret = -EINVAL;
+> +		goto err_release_regions;
+> +	}
+>  
+>  	thunder_i2c_clock_enable(dev, i2c);
+>  	ret = device_property_read_u32(dev, "clock-frequency", &i2c->twsi_freq);
+> @@ -231,6 +233,8 @@ static int thunder_i2c_probe_pci(struct pci_dev *pdev,
+>  
+>  error:
+>  	thunder_i2c_clock_disable(dev, i2c->clk);
+> +err_release_regions:
+> +	pci_release_regions(pdev);
+>  	return ret;
+>  }
+>  
+> @@ -241,6 +245,7 @@ static void thunder_i2c_remove_pci(struct pci_dev *pdev)
+>  	thunder_i2c_smbus_remove(i2c);
+>  	thunder_i2c_clock_disable(&pdev->dev, i2c->clk);
+>  	i2c_del_adapter(&i2c->adap);
+> +	pci_release_regions(pdev);
+>  }
+>  
+>  static const struct pci_device_id thunder_i2c_pci_id_table[] = {
+> -- 
+> 2.30.2
+> 
