@@ -2,87 +2,54 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B34DC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Oct 2021 19:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E12C4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Oct 2021 21:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2008861038
-	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Oct 2021 19:59:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 584106113E
+	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Oct 2021 21:14:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233582AbhJRUBR (ORCPT
+        id S232588AbhJRVRG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 18 Oct 2021 16:01:17 -0400
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:52918 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233058AbhJRUBQ (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 18 Oct 2021 16:01:16 -0400
-Received: from pop-os.home ([92.140.161.106])
-        by smtp.orange.fr with ESMTPA
-        id cYmjmZbOF1UGBcYmjmpGaS; Mon, 18 Oct 2021 21:59:03 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 18 Oct 2021 21:59:03 +0200
-X-ME-IP: 92.140.161.106
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com,
-        olteanv@gmail.com, davem@davemloft.net, kuba@kernel.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+        Mon, 18 Oct 2021 17:17:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34402 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229524AbhJRVRF (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 18 Oct 2021 17:17:05 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 802AD6112D;
+        Mon, 18 Oct 2021 21:14:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634591693;
+        bh=EWaVbvXwPOfOJaJ7PODosMCA0CEx1uJeH4dhO1/nBAo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=HjAbFjoEzwcMFpkYfB9go++lcHB6GCAHM+Hqi9fuLfp0pNj3rgoGQVkmFmqg03ODE
+         95Adu0msWYYd/6ziLpBOACC3e2uJTPSho3A4nk6wL3ASwOuQoFhxgR0RIaS8d5GFiv
+         KTyNP1Vio8rqvReJTD7Oz/XJVoCl4JvcQs6l+DHDAxen6rc+iOW1frKATzGj51aGgL
+         qq/V1YovIi0fRD0Qw2k1WL4PjKBb3boCE/nRtDriDdGmRBgxP8rkDKHvKN47VFdyhg
+         qHd+qcOrWAFCzkwnmHvlrfFww8VAEsH8VG8NgqoTz5ikcJDWwFJSgESz9LPd84PgjW
+         9TV2w+G8UqKeg==
+Date:   Mon, 18 Oct 2021 14:14:52 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Stefan Schmidt <stefan@datenfreihafen.org>,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] net: dsa: Fix an error handling path in 'dsa_switch_parse_ports_of()'
-Date:   Mon, 18 Oct 2021 21:59:00 +0200
-Message-Id: <15d5310d1d55ad51c1af80775865306d92432e03.1634587046.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+Cc:     h.morris@cascoda.com, alex.aring@gmail.com, davem@davemloft.net,
+        linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ieee802154: Remove redundant 'flush_workqueue()' calls
+Message-ID: <20211018141452.544931a7@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+In-Reply-To: <0a080522-a30b-8b78-86d2-66c1c1a5f604@datenfreihafen.org>
+References: <fedb57c4f6d4373e0d6888d13ad2de3a1d315d81.1634235880.git.christophe.jaillet@wanadoo.fr>
+        <0a080522-a30b-8b78-86d2-66c1c1a5f604@datenfreihafen.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If we return before the end of the 'for_each_child_of_node()' iterator, the
-reference taken on 'port' must be released.
+On Sat, 16 Oct 2021 22:54:52 +0200 Stefan Schmidt wrote:
+> I have nothing else in my ieee802154 tree for net right now so it would 
+> be great if you could take it directly. 
 
-Add the missing 'of_node_put()' calls.
+Do you mean net or net-next? This looks like net-next material.
 
-Fixes: 83c0afaec7b7 ("net: dsa: Add new binding implementation")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- net/dsa/dsa2.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/net/dsa/dsa2.c b/net/dsa/dsa2.c
-index 691d27498b24..6ffd2928d2a6 100644
---- a/net/dsa/dsa2.c
-+++ b/net/dsa/dsa2.c
-@@ -1367,12 +1367,15 @@ static int dsa_switch_parse_ports_of(struct dsa_switch *ds,
- 
- 	for_each_available_child_of_node(ports, port) {
- 		err = of_property_read_u32(port, "reg", &reg);
--		if (err)
-+		if (err) {
-+			of_node_put(port);
- 			goto out_put_node;
-+		}
- 
- 		if (reg >= ds->num_ports) {
- 			dev_err(ds->dev, "port %pOF index %u exceeds num_ports (%zu)\n",
- 				port, reg, ds->num_ports);
-+			of_node_put(port);
- 			err = -EINVAL;
- 			goto out_put_node;
- 		}
-@@ -1380,8 +1383,10 @@ static int dsa_switch_parse_ports_of(struct dsa_switch *ds,
- 		dp = dsa_to_port(ds, reg);
- 
- 		err = dsa_port_parse_of(dp, port);
--		if (err)
-+		if (err) {
-+			of_node_put(port);
- 			goto out_put_node;
-+		}
- 	}
- 
- out_put_node:
--- 
-2.30.2
-
+Just to be sure, applying directly is not a problem.
