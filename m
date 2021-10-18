@@ -2,51 +2,51 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA2BC433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Oct 2021 06:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 871EBC433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Oct 2021 11:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 942C26127C
-	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Oct 2021 06:41:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 731CF60EE5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Oct 2021 11:40:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230326AbhJRGnc (ORCPT
+        id S231336AbhJRLmP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 18 Oct 2021 02:43:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48628 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229708AbhJRGnc (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 18 Oct 2021 02:43:32 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B80A6610A6;
-        Mon, 18 Oct 2021 06:41:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634539281;
-        bh=r8XEynLedlIWszeP/mbPgfymrb5S0nlYbqhT0SweKEw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sFWblukFplM9dB5rMxU2tOgRVNWFx6irzLklFXr29XRxoox69/fsghoGa61S6DnUJ
-         /A1lsAslAyPwMZNXVFaQ6luYHOwvBK8AGfisRMzrV4QcminDr9xfuS1cb9IdxDX9T/
-         7xRKoTcty9rUIWOqKsdsO/yY3ejweIjoXrUBy4N+a3VcBnZ8qc07w1JoYYXD1Oui06
-         zwW2pZtMQZUT2FMTAE7c0IF3PxIYFIEBl7lnf/OM1b10rPXyWQWt0UzNHDNAEEejf1
-         +H0R/VpiaqVsEB9KDLCJLLh/XlU7RUGEstVgRcc2dccn9+7jcT0gCYy/Sf0XjvV1gV
-         1cxNN0uGd2xqA==
-Date:   Mon, 18 Oct 2021 12:11:17 +0530
-From:   Vinod Koul <vkoul@kernel.org>
+        Mon, 18 Oct 2021 07:42:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37058 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229644AbhJRLmP (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 18 Oct 2021 07:42:15 -0400
+Received: from theia.8bytes.org (8bytes.org [IPv6:2a01:238:4383:600:38bc:a715:4b6d:a889])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 043DDC06161C;
+        Mon, 18 Oct 2021 04:40:03 -0700 (PDT)
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id BC604694; Mon, 18 Oct 2021 13:40:00 +0200 (CEST)
+Date:   Mon, 18 Oct 2021 13:39:57 +0200
+From:   Joerg Roedel <joro@8bytes.org>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     gustavo.pimentel@synopsys.com, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: dw-edma: Remove an unused variable
-Message-ID: <YW0XDf18XjOs5IYR@matsya>
-References: <46e071be21fbc5ac5c35d4796a7e4249e94c3a77.1633847306.git.christophe.jaillet@wanadoo.fr>
+Cc:     thierry.reding@gmail.com, vdumpa@nvidia.com, will@kernel.org,
+        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iommu/tegra-smmu: Use devm_bitmap_zalloc when applicable
+Message-ID: <YW1dDaV8fRrQ1heP@8bytes.org>
+References: <2c0f4da80c3b5ef83299c651f69a563034c1c6cb.1632661557.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <46e071be21fbc5ac5c35d4796a7e4249e94c3a77.1633847306.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <2c0f4da80c3b5ef83299c651f69a563034c1c6cb.1632661557.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 10-10-21, 08:29, Christophe JAILLET wrote:
-> 'head' is unused, remove it.
+On Sun, Sep 26, 2021 at 03:07:18PM +0200, Christophe JAILLET wrote:
+> 'smmu->asids' is a bitmap. So use 'devm_kzalloc()' to simplify code,
+> improve the semantic of the code and avoid some open-coded arithmetic in
+> allocator arguments.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/iommu/tegra-smmu.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
 
-Applied, thanks
-
--- 
-~Vinod
+Applied, thanks.
