@@ -2,87 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CBF7C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Oct 2021 12:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47FFBC433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Oct 2021 12:42:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E97560FC3
-	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Oct 2021 12:31:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30A3160FC3
+	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Oct 2021 12:42:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231645AbhJRMeJ (ORCPT
+        id S231310AbhJRMon (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 18 Oct 2021 08:34:09 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:49144 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230399AbhJRMeH (ORCPT
+        Mon, 18 Oct 2021 08:44:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52100 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229833AbhJRMom (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 18 Oct 2021 08:34:07 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1634560316; h=Date: Message-ID: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=JR9U6T89OgvtMGdfLytY6B9PP5hNdlPtQz41jb6E9Zc=;
- b=sjL4xCCxlQzNt8+p7GTa6htu4Rg/VqE1/vhTdM6FDL/64bQUM8Dqgt7s/uaNwdSoTtElha2p
- +C7tIzdaBd95KLumuu3r4MX/jxSzLsXe4TCJSDJM68Si3Wu6e2//c1q6Xe0xc13AMzl6ZNpC
- ZbnIioe0FC8A4/kDRa6TQsPdkK0=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n02.prod.us-west-2.postgun.com with SMTP id
- 616d6933f3e5b80f1f0ed6d1 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 18 Oct 2021 12:31:47
- GMT
-Sender: kvalo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 70F44C43460; Mon, 18 Oct 2021 12:31:47 +0000 (UTC)
-Received: from tykki.adurom.net (tynnyri.adurom.net [51.15.11.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 055FCC4338F;
-        Mon, 18 Oct 2021 12:31:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 055FCC4338F
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Mon, 18 Oct 2021 08:44:42 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3883AC06161C;
+        Mon, 18 Oct 2021 05:42:31 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id r18so70777877edv.12;
+        Mon, 18 Oct 2021 05:42:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0iYdyokYod4LZcTae4ruCEjJ8TW63KspCJvOc18aEGY=;
+        b=DJ+DZZJWvqJ+4q6RDg1mfZwz48wraW0kyXocBAP5Nx8CsQ6SvSlzie5M0ATmxYMYSr
+         5ddXvb9oQ7nJ+07DAT9qVQYyvaO7dgKLdAVx4fy7ppmamL1CgoVOaOZc0ti4yMouxrAJ
+         JQGs3E/mH8IcXzjdPUDpLhBvHkhfC176YCvJC1m8rzQ4RBGQZ4iFPZOt+51iqBw92O3s
+         JUmlIijDEXLVS0HeA7vwNO/OW0QbFfJFYcRra9wpNb/3TcCNeHd8NCYn6gW1VlsG9OQ+
+         AmdYOWtDf9F7R5SV1V1BDTPXZ7Ftl3T195Gi5x4aCm+mz/4TDMThJ5D7xB++j582xUoy
+         KHPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0iYdyokYod4LZcTae4ruCEjJ8TW63KspCJvOc18aEGY=;
+        b=A/60TjxoqbB4tMedphHrVJkEXXYhgP0CxEb5Kyk2aP1pEmY7kNUqNRthW2pgzQ1Jce
+         bo4FlZeKVDOWxmCNMmmuCaUC6K/6Hv9DiWERohY040ek+cyBQr+Rd/dxPPURx981RMdY
+         x668YVyUPcgaLvvusW7xEh3BawbzrexZ7cDBGMpIJT9esSHB4gzDzLim9t4c20hBtyYB
+         RGOm4fTW63743hw6MOcy9+26GwbUNDgx0oM8Tx+leGmYjGdsu4Lny/uxyLOTAtTEeQrO
+         aCFxQyDtZKFUhYGhHhPYWHkf9kWBMa8n7Lq5cAFDcNL7LI9YS4NcG9hyk/6b9TIU4Z3A
+         14Ug==
+X-Gm-Message-State: AOAM533nQiuM+dnujrP+Ytdpx3qEBH7yuShjuEwv8Oel+PYGp0ec/c1D
+        2Z08NnluWkCiLQY1HIKqp9lYIpU5J0zgWGbKf6I=
+X-Google-Smtp-Source: ABdhPJx1Yr8Ty0BkPpsKqK9TDNUWSEsCZ86NgCSskCbZwziCccTqEDcX8aJvx4og7kLumF6keMezyg1srwlsiXGmd8U=
+X-Received: by 2002:a17:906:9888:: with SMTP id zc8mr30340887ejb.504.1634560946664;
+ Mon, 18 Oct 2021 05:42:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH][next] rtw89: Remove redundant check of ret after call to
- rtw89_mac_enable_bb_rf
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20211015152113.33179-1-colin.king@canonical.com>
-References: <20211015152113.33179-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <163456030329.5790.17899781504247161319.kvalo@codeaurora.org>
-Date:   Mon, 18 Oct 2021 12:31:47 +0000 (UTC)
+References: <75e8ba40076ad707d47e3a3670e6b23c1b8b11bc.1633874223.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <75e8ba40076ad707d47e3a3670e6b23c1b8b11bc.1633874223.git.christophe.jaillet@wanadoo.fr>
+From:   Christian Gmeiner <christian.gmeiner@gmail.com>
+Date:   Mon, 18 Oct 2021 14:42:15 +0200
+Message-ID: <CAH9NwWdC1pV6Uwe_2NkBZGeUb_ejFH-YVYdhx0wpmZbL8CnRoA@mail.gmail.com>
+Subject: Re: [PATCH] drm: Remove redundant 'flush_workqueue()' calls
+To:     christophe.jaillet@wanadoo.fr
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        jyri.sarha@iki.fi, tomba@kernel.org,
+        linux-graphics-maintainer@vmware.com, zackr@vmware.com,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        The etnaviv authors <etnaviv@lists.freedesktop.org>,
+        DRI mailing list <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+Am So., 10. Okt. 2021 um 16:08 Uhr schrieb Christophe JAILLET
+<christophe.jaillet@wanadoo.fr>:
+>
+> 'destroy_workqueue()' already drains the queue before destroying it, so
+> there is no need to flush it explicitly.
+>
+> Remove the redundant 'flush_workqueue()' calls.
+>
+> This was generated with coccinelle:
+>
+> @@
+> expression E;
+> @@
+> -       flush_workqueue(E);
+>         destroy_workqueue(E);
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The function rtw89_mac_enable_bb_rf is a void return type, so there is
-> no return error code to ret, so the following check for an error in ret
-> is redundant dead code and can be removed.
-> 
-> Addresses-Coverity: ("Logically dead code")
-> Fixes: e3ec7017f6a2 ("rtw89: add Realtek 802.11ax driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
-
-Patch applied to wireless-drivers-next.git, thanks.
-
-f7e7e440550b rtw89: Remove redundant check of ret after call to rtw89_mac_enable_bb_rf
+For drm/etnaviv:
+Reviewed-by: Christian Gmeiner <christian.gmeiner@gmail.com>
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20211015152113.33179-1-colin.king@canonical.com/
+greets
+--
+Christian Gmeiner, MSc
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+https://christian-gmeiner.info/privacypolicy
