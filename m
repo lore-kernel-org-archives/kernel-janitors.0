@@ -2,94 +2,125 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B075EC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Oct 2021 10:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0652EC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Oct 2021 11:37:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9065B60F12
-	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Oct 2021 10:35:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5FF061372
+	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Oct 2021 11:37:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235243AbhJSKiB (ORCPT
+        id S235421AbhJSLkB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 19 Oct 2021 06:38:01 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54436 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230123AbhJSKiA (ORCPT
+        Tue, 19 Oct 2021 07:40:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53128 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235442AbhJSLj5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 19 Oct 2021 06:38:00 -0400
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C798C12A;
-        Tue, 19 Oct 2021 12:35:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1634639746;
-        bh=9Tpvia3RfoFBFpRqSo0nFREy92K3E5F/poZy+MArklQ=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=kkDDZQWQBuoZoCm+6wvTOeDny9XhpfW/sTBsfWpNx7tXKPi2Lc4DhRiY0HLOcRZdn
-         VyxThaY17hkz/+ZwyQ85+qgNBrO/0TJkqiq5mEaxqBhRU6sfPkhtGGcoT9aE7o+vmb
-         Z/ZIx2gQnb1gbtcZJPvHA+8inuEMDjBP4pbTUevY=
-Content-Type: text/plain; charset="utf-8"
+        Tue, 19 Oct 2021 07:39:57 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACD6FC061770
+        for <kernel-janitors@vger.kernel.org>; Tue, 19 Oct 2021 04:37:32 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id x27so6773526lfu.5
+        for <kernel-janitors@vger.kernel.org>; Tue, 19 Oct 2021 04:37:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=D5PzwEBrOldlaIz/yoBnECaUyGI46VY83yvfxIz1ZF4=;
+        b=WXLTnuVzOfIvphbQT4ZFrAt0wNTFY+MOeJZN7s04aT4LzVae1rULH5dGy0LzUllzwz
+         2I4HFJQR5QtcmWPoKV+r+z10l5H05Rzls7CPnkijH4T6AEiHheOanmzBjxzEQ6qUxQME
+         k4oVD0v2jt2O4MWMDbs4klhoyOG7bMYoHh5YdkRVDZFUl9eE1b7WqwkPZqczaB2BDBB2
+         IFs/RI6e7oQxWn2EIZdL68Snl+58JXtiGJpflTE9bgI067dDWM1naY3dh1uRG/qfmZ5+
+         5Ji72Gr0JlOP1Ij/DTKFk+dzrGseMPb1EWaEFK4otMo4H4NaGZIaDuk/JgFMvPPmf7wu
+         kSWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=D5PzwEBrOldlaIz/yoBnECaUyGI46VY83yvfxIz1ZF4=;
+        b=vGbjMqf+wgHEWJ/OC5c9sJXB+G/esSoaxNeUzJDRmug+ACpvLkwm778ujw7yYWr259
+         N/d8IpXdzonWBmqTFE4YcoKay1FcbLCmLtDRCA7X3nQOcw1yz5upHAEg3rrqyhdD7rsU
+         kXUBQLvcAP/J9fZ0r7dFRPjQenhs8vUl9gq9LCQ2FFfifaamHRbXZePb3/Q71e0QqYF+
+         YicMMMe5XWDsSNI1YKsw36I5CPLW6tJhNX6JH1vB6infLCmp3MuVykLDJ8111rw2qFsF
+         hDwwHdKwtF6OZAWmdwAp8Lr3EoLcZtaIp/ATW+z4GehEdUpU4RkpLLNT7zotGgyV1uZ1
+         T0kA==
+X-Gm-Message-State: AOAM53174MQpeC5y5NxCYEhoB78xY7ibnhHqfosnlL2WC2OheD9mFk32
+        GQeG9sWSs4S1LZuz1VgORI2ojl2UouEZG14WPpzZdg==
+X-Google-Smtp-Source: ABdhPJxI1KBn0TsgDp3DyQqblAi01bephKSl6c86Z7+PTcABb14fvdzOS9EMLr3KRGaiG817ECkKj2j23M8q4eSma5I=
+X-Received: by 2002:ac2:4293:: with SMTP id m19mr5618302lfh.254.1634643451083;
+ Tue, 19 Oct 2021 04:37:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <189d4fd72db8707cb495e3a29ab7a276e07f62a0.1634373552.git.christophe.jaillet@wanadoo.fr>
-References: <189d4fd72db8707cb495e3a29ab7a276e07f62a0.1634373552.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] media: tw5864: Simplify 'tw5864_finidev()'
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        andrey.utkin@corp.bluecherry.net, anton@corp.bluecherry.net,
-        maintainers@bluecherrydvr.com, mchehab@kernel.org
-Date:   Tue, 19 Oct 2021 11:35:44 +0100
-Message-ID: <163463974453.1853916.7698473612617245785@Monstersaurus>
-User-Agent: alot/0.9.1
+References: <4aadb3c97835f7b80f00819c3d549e6130384e67.1634365151.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <4aadb3c97835f7b80f00819c3d549e6130384e67.1634365151.git.christophe.jaillet@wanadoo.fr>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 19 Oct 2021 13:36:54 +0200
+Message-ID: <CAPDyKFo-ahKB8naaBFBdrCy3f_a08s_2e9FnjwOqsDc1-gWYvg@mail.gmail.com>
+Subject: Re: [PATCH] mmc: mxs-mmc: disable regulator on error and in the
+ remove function
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>, Chris Ball <cjb@laptop.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Quoting Christophe JAILLET (2021-10-16 09:40:29)
-> Some resources are allocated with 'pci_request_regions()', so use
-> 'pci_release_regions()' to free them, instead of a verbose
-> 'release_mem_region()'.
-
-And the driver was even already using pci_release_regions() in
-tw5864_initdev(), so indeed this makes it more consistent too.
-
-I'm curious that tw5864_initdev() calls pci_enable_device() (and
-pci_disable_device in it's error path), while tw5864_finidev() doesn't.
-
-Would you like to submit a patch to fix that on top of this one? or should =
-I?
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-> There is no point in calling 'devm_kfree()'. The corresponding resource is
-> managed, so it will be fried automatically.
-
-Indeed.
-
+On Sat, 16 Oct 2021 at 08:21, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> The 'reg_vmmc' regulator is enabled in the probe. It is never disabled.
+> Neither in the error handling path of the probe nor in the remove
+> function.
+>
+> Register a devm_action to disable it when needed.
+>
+> Fixes: 4dc5a79f1350 ("mmc: mxs-mmc: enable regulator for mmc slot")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Applied for next, thanks!
+
+Kind regards
+Uffe
+
+
 > ---
->  drivers/media/pci/tw5864/tw5864-core.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->=20
-> diff --git a/drivers/media/pci/tw5864/tw5864-core.c b/drivers/media/pci/t=
-w5864/tw5864-core.c
-> index 23d3cae54a5d..fee3b7711901 100644
-> --- a/drivers/media/pci/tw5864/tw5864-core.c
-> +++ b/drivers/media/pci/tw5864/tw5864-core.c
-> @@ -333,11 +333,9 @@ static void tw5864_finidev(struct pci_dev *pci_dev)
-> =20
->         /* release resources */
->         iounmap(dev->mmio);
-> -       release_mem_region(pci_resource_start(pci_dev, 0),
-> -                          pci_resource_len(pci_dev, 0));
-> +       pci_release_regions(pci_dev);
-> =20
->         v4l2_device_unregister(&dev->v4l2_dev);
-> -       devm_kfree(&pci_dev->dev, dev);
->  }
-> =20
->  static struct pci_driver tw5864_pci_driver =3D {
-> --=20
+>  drivers/mmc/host/mxs-mmc.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
+> index 947581de7860..8c3655d3be96 100644
+> --- a/drivers/mmc/host/mxs-mmc.c
+> +++ b/drivers/mmc/host/mxs-mmc.c
+> @@ -552,6 +552,11 @@ static const struct of_device_id mxs_mmc_dt_ids[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, mxs_mmc_dt_ids);
+>
+> +static void mxs_mmc_regulator_disable(void *regulator)
+> +{
+> +       regulator_disable(regulator);
+> +}
+> +
+>  static int mxs_mmc_probe(struct platform_device *pdev)
+>  {
+>         struct device_node *np = pdev->dev.of_node;
+> @@ -591,6 +596,11 @@ static int mxs_mmc_probe(struct platform_device *pdev)
+>                                 "Failed to enable vmmc regulator: %d\n", ret);
+>                         goto out_mmc_free;
+>                 }
+> +
+> +               ret = devm_add_action_or_reset(&pdev->dev, mxs_mmc_regulator_disable,
+> +                                              reg_vmmc);
+> +               if (ret)
+> +                       goto out_mmc_free;
+>         }
+>
+>         ssp->clk = devm_clk_get(&pdev->dev, NULL);
+> --
 > 2.30.2
 >
