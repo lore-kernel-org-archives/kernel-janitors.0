@@ -2,145 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71706C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Oct 2021 13:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA76C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Oct 2021 17:29:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 557C461052
-	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Oct 2021 13:47:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E1E061355
+	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Oct 2021 17:29:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235804AbhJSNtb (ORCPT
+        id S232127AbhJSRbu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 19 Oct 2021 09:49:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55084 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235896AbhJSNta (ORCPT
+        Tue, 19 Oct 2021 13:31:50 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:50483 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234613AbhJSRbs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 19 Oct 2021 09:49:30 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8598EC061746
-        for <kernel-janitors@vger.kernel.org>; Tue, 19 Oct 2021 06:47:17 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id t2so47972243wrb.8
-        for <kernel-janitors@vger.kernel.org>; Tue, 19 Oct 2021 06:47:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zOpjjqWh4RKFubSe9AsWzWR8dfmnNsfnQYnDdU7OniM=;
-        b=VYJ9XI/xaWN9Yy6GOYJPd+BPtK62ZpNoVNKMH84MqJcJouT4goFsTy6DF278DFJ4+Q
-         6pTqNTzVrzQZ3/12/mW3uwTIKNBjpbPCsc5qaQz1r8rt/6SwWTUQz5jeeXXPStgmLZUn
-         yFwCja5WjwC7asT5yhnUroAsqG9hG/M21KmTbbkH5QsBVV5cMX1OMbkrfWqW477Y35Df
-         D6Gc01MBQ9I5ldgZfUkMxCtZ3ns6kXY+o3QFxX3lCuVk2+nU9xHaDUpgY210qnojBJtK
-         lWarIct7wDN/7FjphaBgFmC+qS6UfFjTiSMGn7gqQJFRe/3rVjZZ8sB3kneeD46pfbIr
-         6i2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zOpjjqWh4RKFubSe9AsWzWR8dfmnNsfnQYnDdU7OniM=;
-        b=pQwj31ytPQC2sTO6FyQUe3tUW2lIgRZeiE6iH8RYDMYqMuKGroJG7gN0FWGfug6T85
-         yH4Voz51pl84BC43bUGOQRVYbkgfb60w/UMtPMFLQleEaacUvgITTl29SVKzBUGBp8nt
-         2LZBu5cDZVaVreK2EjeXw33WazkKnky2VLUk21M3Y05z6zKOEDrivqCDGYAlN9JNK1XY
-         nmJjnML69TqNMExQa/pObA/BN6Qjwv61vP6FKO66wfM3ACLUNsSz9psHnmjMyWguX+yP
-         IcqJZRi2IUkZpDruZQKqJQrLJ3595TfVyE5/KEXBmdx3G3gwFdlzcVkCln5Zdu3vFiel
-         Rmhg==
-X-Gm-Message-State: AOAM530RHV5KLvYvrhxZPyCXIWhzqWgZg1Q6XehxgVzD3WMcmC7nF0Xi
-        9ovcKgMnUDaRJTJuDuQaQgP3GO6L6uHiFQ==
-X-Google-Smtp-Source: ABdhPJyKgSgSNsH0UdkObuwMPYZqgDLXJM5BiXzacKvhMe97dMMcbs9Ekgb0Mv2xOMRvvcUVzCnChQ==
-X-Received: by 2002:a05:6000:1541:: with SMTP id 1mr42935319wry.273.1634651235814;
-        Tue, 19 Oct 2021 06:47:15 -0700 (PDT)
-Received: from [192.168.86.34] (cpc86377-aztw32-2-0-cust226.18-1.cable.virginm.net. [92.233.226.227])
-        by smtp.googlemail.com with ESMTPSA id i188sm2360130wmi.5.2021.10.19.06.47.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Oct 2021 06:47:15 -0700 (PDT)
-Subject: Re: [PATCH] ASoC: codecs: Fix WCD_MBHC_HPH_PA_EN usage
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
-        tiwai@suse.com, yang.lee@linux.alibaba.com
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <988948f7f266aa00698704687537335b7e6a67b2.1634455711.git.christophe.jaillet@wanadoo.fr>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <3ff34912-19e6-4d52-e9da-0e78ceb1d2ff@linaro.org>
-Date:   Tue, 19 Oct 2021 14:47:14 +0100
+        Tue, 19 Oct 2021 13:31:48 -0400
+Received: from [192.168.1.18] ([92.140.161.106])
+        by smtp.orange.fr with ESMTPA
+        id csvdmJ16MPNphcsvem4kWR; Tue, 19 Oct 2021 19:29:34 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Tue, 19 Oct 2021 19:29:34 +0200
+X-ME-IP: 92.140.161.106
+Subject: Re: [PATCH] i2c: thunderx: Fix some resource leak
+To:     Robert Richter <rric@kernel.org>
+Cc:     jan.glauber@gmail.com, wsa@kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <6657505309174d3ea6df14169d42b6df91298470.1634374036.git.christophe.jaillet@wanadoo.fr>
+ <YW3j4MF/y4T6Rtzp@rric.localdomain>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <5a3eccff-f39d-29dc-976c-1de7b32e36c5@wanadoo.fr>
+Date:   Tue, 19 Oct 2021 19:29:33 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <988948f7f266aa00698704687537335b7e6a67b2.1634455711.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <YW3j4MF/y4T6Rtzp@rric.localdomain>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Le 18/10/2021 à 23:15, Robert Richter a écrit :
+> On 16.10.21 10:48:26, Christophe JAILLET wrote:
+>> We need to undo a 'pci_request_regions()' call in the error handling path
+>> of the probe function and in the remove function.
+> 
+> Isn't that devm and thus not needed?
 
+My bad, you are obviously right, sorry for the noise.
 
-On 17/10/2021 08:31, Christophe JAILLET wrote:
-> 'hphpa_on' is known to be false, so the if block at the end of the function
-> is dead code.
+I was aware that 'pcim_enable_device()' was turning automagically 
+'pci_alloc_irq_vectors()' into a managed function. But I wasn't for 
+'pci_request_regions()'. Now I'm :)
 
-Yes, this is a dead code we should remove it.
-
-This code was part of moisture detection logic which is not enabled in 
-upstream code yet.
-
-During Moisture detection if the PA is on then we switch it off and do 
-moisture measurements and at the end of the function we restore the 
-state of PA.
+CJ
 
 > 
-> Turn it into a meaningful code by having 'hphpa_on' be static. Use is as a
-> flip-flop variable.
-
-No, It does not.
-
-Have you even tested this patch in anyway?
-
+>>
+>> Fixes: 22d40209de3b ("i2c: thunderx: Add i2c driver for ThunderX SOC")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>   drivers/i2c/busses/i2c-thunderx-pcidrv.c | 9 +++++++--
+>>   1 file changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-thunderx-pcidrv.c b/drivers/i2c/busses/i2c-thunderx-pcidrv.c
+>> index 12c90aa0900e..2d37096a6968 100644
+>> --- a/drivers/i2c/busses/i2c-thunderx-pcidrv.c
+>> +++ b/drivers/i2c/busses/i2c-thunderx-pcidrv.c
+>> @@ -177,8 +177,10 @@ static int thunder_i2c_probe_pci(struct pci_dev *pdev,
+>>   		return ret;
+>>   
 > 
-> Fixes: 0e5c9e7ff899 ("ASoC: codecs: wcd: add multi button Headset detection support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> The purpose of this patch is not to be correct (!) but to draw attention
-> on several points:
->     - in 'wcd_mbhc_adc_hs_rem_irq()', the "if (hphpa_on)" path is dead code
->       because 'hphpa_on' is known to be false
->     - What is this magic number '3'?
->       All 'wcd_mbhc_read_field()' look for 0 or non-0
->     - a 'mutex_[un]lock()' in an IRQ handler looks spurious to me
+> There is a pcim_enable_device() call before all that, so the regions
+> should be removed on device release, see pcim_release().
 > 
-> Instead of this (likely broken) patch, it is likely that something is
-> missing elsewhere. Maybe in 'wcd_mbhc_adc_hs_ins_irq()'.
-> I also guess that 'hphpa_on' should be read for somewhere else.
-> ---
->   sound/soc/codecs/wcd-mbhc-v2.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
+> -Robert
 > 
-> diff --git a/sound/soc/codecs/wcd-mbhc-v2.c b/sound/soc/codecs/wcd-mbhc-v2.c
-> index 405128ccb4b0..783d8c35bc1b 100644
-> --- a/sound/soc/codecs/wcd-mbhc-v2.c
-> +++ b/sound/soc/codecs/wcd-mbhc-v2.c
-> @@ -1176,7 +1176,7 @@ static irqreturn_t wcd_mbhc_adc_hs_rem_irq(int irq, void *data)
->   	struct wcd_mbhc *mbhc = data;
->   	unsigned long timeout;
->   	int adc_threshold, output_mv, retry = 0;
-> -	bool hphpa_on = false;
-> +	static bool hphpa_on = false;
->   
->   	mutex_lock(&mbhc->lock);
->   	timeout = jiffies + msecs_to_jiffies(WCD_FAKE_REMOVAL_MIN_PERIOD_MS);
-> @@ -1212,6 +1212,9 @@ static irqreturn_t wcd_mbhc_adc_hs_rem_irq(int irq, void *data)
->   
->   	if (hphpa_on) {
->   		hphpa_on = false;
-> +		wcd_mbhc_write_field(mbhc, WCD_MBHC_HPH_PA_EN, 0);
-> +	} else {
-> +		hphpa_on = true;
->   		wcd_mbhc_write_field(mbhc, WCD_MBHC_HPH_PA_EN, 3);
+>>   	i2c->twsi_base = pcim_iomap(pdev, 0, pci_resource_len(pdev, 0));
+>> -	if (!i2c->twsi_base)
+>> -		return -EINVAL;
+>> +	if (!i2c->twsi_base) {
+>> +		ret = -EINVAL;
+>> +		goto err_release_regions;
+>> +	}
+>>   
+>>   	thunder_i2c_clock_enable(dev, i2c);
+>>   	ret = device_property_read_u32(dev, "clock-frequency", &i2c->twsi_freq);
+>> @@ -231,6 +233,8 @@ static int thunder_i2c_probe_pci(struct pci_dev *pdev,
+>>   
+>>   error:
+>>   	thunder_i2c_clock_disable(dev, i2c->clk);
+>> +err_release_regions:
+>> +	pci_release_regions(pdev);
+>>   	return ret;
+>>   }
+>>   
+>> @@ -241,6 +245,7 @@ static void thunder_i2c_remove_pci(struct pci_dev *pdev)
+>>   	thunder_i2c_smbus_remove(i2c);
+>>   	thunder_i2c_clock_disable(&pdev->dev, i2c->clk);
+>>   	i2c_del_adapter(&i2c->adap);
+>> +	pci_release_regions(pdev);
+>>   }
+>>   
+>>   static const struct pci_device_id thunder_i2c_pci_id_table[] = {
+>> -- 
+>> 2.30.2
+>>
+> 
 
-Just remove this dead code.
-
---srini
->   	}
->   exit:
-> 
