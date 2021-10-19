@@ -2,78 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A6EC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Oct 2021 07:18:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B075EC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Oct 2021 10:35:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64FBC60F8F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Oct 2021 07:18:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9065B60F12
+	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Oct 2021 10:35:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234381AbhJSHU7 (ORCPT
+        id S235243AbhJSKiB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 19 Oct 2021 03:20:59 -0400
-Received: from proxima.lasnet.de ([78.47.171.185]:44552 "EHLO
-        proxima.lasnet.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229695AbhJSHU7 (ORCPT
+        Tue, 19 Oct 2021 06:38:01 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:54436 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230123AbhJSKiA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 19 Oct 2021 03:20:59 -0400
-Received: from [IPv6:2003:e9:d74b:bb71:f660:f6a1:9bf9:60bf] (p200300e9d74bbb71f660f6a19bf960bf.dip0.t-ipconnect.de [IPv6:2003:e9:d74b:bb71:f660:f6a1:9bf9:60bf])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: stefan@datenfreihafen.org)
-        by proxima.lasnet.de (Postfix) with ESMTPSA id 4A7DAC050A;
-        Tue, 19 Oct 2021 09:18:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=datenfreihafen.org;
-        s=2021; t=1634627922;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=py9gkOp2xo053DN39ARED1V0IJZyIE4Yq2gOUzuNvas=;
-        b=Q4FIZJzFpjp2+tZvPEa0+jXnQ5UJEY0Um8MeF8Cb7+nZ6azi2qo1BZ/hmIT7kJRLMhuKq6
-        FhoQijjAv6kAgdf8HTmb0b6ctfO4Od82tPumF8hlcybsnbGToiUqAJpUXyopTiZyhTs70I
-        3dYgqZoCrVVEiOr3gqaOi3TboGHpIwzUJ+bZSZM3beGKx0XFfoY5CK7gU82bhcScZrSS5N
-        u1Vnwu/O1iefLxb4iCyUZoWhkCTvpLrFo+6/CvLg0xSH4F1Pb3/ODrEoCg+qCr2+xtPOu/
-        06URfzq+z3/3jgoQqoaPq+WcxhGI4o5SZGirXDVqjoUxsRXxSgooyEFcG9vqUA==
-Subject: Re: [PATCH] ieee802154: Remove redundant 'flush_workqueue()' calls
-To:     Jakub Kicinski <kuba@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     h.morris@cascoda.com, alex.aring@gmail.com, davem@davemloft.net,
-        linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <fedb57c4f6d4373e0d6888d13ad2de3a1d315d81.1634235880.git.christophe.jaillet@wanadoo.fr>
- <0a080522-a30b-8b78-86d2-66c1c1a5f604@datenfreihafen.org>
- <20211018141452.544931a7@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-From:   Stefan Schmidt <stefan@datenfreihafen.org>
-Message-ID: <9d1d9607-ffc8-1a01-075c-dccc54eb0373@datenfreihafen.org>
-Date:   Tue, 19 Oct 2021 09:18:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Tue, 19 Oct 2021 06:38:00 -0400
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C798C12A;
+        Tue, 19 Oct 2021 12:35:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1634639746;
+        bh=9Tpvia3RfoFBFpRqSo0nFREy92K3E5F/poZy+MArklQ=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=kkDDZQWQBuoZoCm+6wvTOeDny9XhpfW/sTBsfWpNx7tXKPi2Lc4DhRiY0HLOcRZdn
+         VyxThaY17hkz/+ZwyQ85+qgNBrO/0TJkqiq5mEaxqBhRU6sfPkhtGGcoT9aE7o+vmb
+         Z/ZIx2gQnb1gbtcZJPvHA+8inuEMDjBP4pbTUevY=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20211018141452.544931a7@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <189d4fd72db8707cb495e3a29ab7a276e07f62a0.1634373552.git.christophe.jaillet@wanadoo.fr>
+References: <189d4fd72db8707cb495e3a29ab7a276e07f62a0.1634373552.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] media: tw5864: Simplify 'tw5864_finidev()'
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        andrey.utkin@corp.bluecherry.net, anton@corp.bluecherry.net,
+        maintainers@bluecherrydvr.com, mchehab@kernel.org
+Date:   Tue, 19 Oct 2021 11:35:44 +0100
+Message-ID: <163463974453.1853916.7698473612617245785@Monstersaurus>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello Jakub.
+Quoting Christophe JAILLET (2021-10-16 09:40:29)
+> Some resources are allocated with 'pci_request_regions()', so use
+> 'pci_release_regions()' to free them, instead of a verbose
+> 'release_mem_region()'.
 
-On 18.10.21 23:14, Jakub Kicinski wrote:
-> On Sat, 16 Oct 2021 22:54:52 +0200 Stefan Schmidt wrote:
->> I have nothing else in my ieee802154 tree for net right now so it would
->> be great if you could take it directly.
-> 
-> Do you mean net or net-next? This looks like net-next material.
+And the driver was even already using pci_release_regions() in
+tw5864_initdev(), so indeed this makes it more consistent too.
 
-Yes, net-next, please.
+I'm curious that tw5864_initdev() calls pci_enable_device() (and
+pci_disable_device in it's error path), while tw5864_finidev() doesn't.
 
-> Just to be sure, applying directly is not a problem.
-> 
+Would you like to submit a patch to fix that on top of this one? or should =
+I?
 
-Thanks.
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-regards
-Stefan Schmidt
+> There is no point in calling 'devm_kfree()'. The corresponding resource is
+> managed, so it will be fried automatically.
 
+Indeed.
+
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/media/pci/tw5864/tw5864-core.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/media/pci/tw5864/tw5864-core.c b/drivers/media/pci/t=
+w5864/tw5864-core.c
+> index 23d3cae54a5d..fee3b7711901 100644
+> --- a/drivers/media/pci/tw5864/tw5864-core.c
+> +++ b/drivers/media/pci/tw5864/tw5864-core.c
+> @@ -333,11 +333,9 @@ static void tw5864_finidev(struct pci_dev *pci_dev)
+> =20
+>         /* release resources */
+>         iounmap(dev->mmio);
+> -       release_mem_region(pci_resource_start(pci_dev, 0),
+> -                          pci_resource_len(pci_dev, 0));
+> +       pci_release_regions(pci_dev);
+> =20
+>         v4l2_device_unregister(&dev->v4l2_dev);
+> -       devm_kfree(&pci_dev->dev, dev);
+>  }
+> =20
+>  static struct pci_driver tw5864_pci_driver =3D {
+> --=20
+> 2.30.2
+>
