@@ -2,42 +2,42 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82C6BC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Oct 2021 17:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C263AC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Oct 2021 17:47:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 652E160FE8
-	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Oct 2021 17:39:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A184C611BF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Oct 2021 17:47:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234764AbhJSRlU (ORCPT
+        id S234697AbhJSRtM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 19 Oct 2021 13:41:20 -0400
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:57189 "EHLO
+        Tue, 19 Oct 2021 13:49:12 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:53653 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234528AbhJSRlU (ORCPT
+        with ESMTP id S234643AbhJSRtL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 19 Oct 2021 13:41:20 -0400
+        Tue, 19 Oct 2021 13:49:11 -0400
 Received: from [192.168.1.18] ([92.140.161.106])
         by smtp.orange.fr with ESMTPA
-        id ct4qmJ5v2PNphct4qm4mlQ; Tue, 19 Oct 2021 19:39:06 +0200
+        id ctCRmJ9pTPNphctCSm4oEL; Tue, 19 Oct 2021 19:46:57 +0200
 X-ME-Helo: [192.168.1.18]
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Tue, 19 Oct 2021 19:39:06 +0200
+X-ME-Date: Tue, 19 Oct 2021 19:46:57 +0200
 X-ME-IP: 92.140.161.106
-Subject: Re: [PATCH] ASoC: codecs: Fix WCD_MBHC_HPH_PA_EN usage
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
-        tiwai@suse.com, yang.lee@linux.alibaba.com
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+Subject: Re: [PATCH] media: tw5864: Simplify 'tw5864_finidev()'
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        andrey.utkin@corp.bluecherry.net, anton@corp.bluecherry.net,
+        maintainers@bluecherrydvr.com, mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-References: <988948f7f266aa00698704687537335b7e6a67b2.1634455711.git.christophe.jaillet@wanadoo.fr>
- <3ff34912-19e6-4d52-e9da-0e78ceb1d2ff@linaro.org>
+References: <189d4fd72db8707cb495e3a29ab7a276e07f62a0.1634373552.git.christophe.jaillet@wanadoo.fr>
+ <163463974453.1853916.7698473612617245785@Monstersaurus>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <c01b6669-d0f7-aab5-3aca-02f19be8a319@wanadoo.fr>
-Date:   Tue, 19 Oct 2021 19:39:04 +0200
+Message-ID: <36d2d114-00be-f509-d6e0-424ef65af9b9@wanadoo.fr>
+Date:   Tue, 19 Oct 2021 19:46:55 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <3ff34912-19e6-4d52-e9da-0e78ceb1d2ff@linaro.org>
+In-Reply-To: <163463974453.1853916.7698473612617245785@Monstersaurus>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -45,98 +45,64 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 19/10/2021 à 15:47, Srinivas Kandagatla a écrit :
+Le 19/10/2021 à 12:35, Kieran Bingham a écrit :
+> Quoting Christophe JAILLET (2021-10-16 09:40:29)
+>> Some resources are allocated with 'pci_request_regions()', so use
+>> 'pci_release_regions()' to free them, instead of a verbose
+>> 'release_mem_region()'.
 > 
+> And the driver was even already using pci_release_regions() in
+> tw5864_initdev(), so indeed this makes it more consistent too.
 > 
-> On 17/10/2021 08:31, Christophe JAILLET wrote:
->> 'hphpa_on' is known to be false, so the if block at the end of the 
->> function
->> is dead code.
-> 
-> Yes, this is a dead code we should remove it.
+> I'm curious that tw5864_initdev() calls pci_enable_device() (and
+> pci_disable_device in it's error path), while tw5864_finidev() doesn't.
 
-Ok, thanks for the clarification.
-
-> 
-> This code was part of moisture detection logic which is not enabled in 
-> upstream code yet.
-
-If 'yet' is the important word of the sentence, maybe the best is to 
-leave the code as-is.
-If you prefer it to be removed, I can send a patch if it helps.
+I agree with you. I should have spotted it when I've looked at the probe 
+and remove functions :(
 
 > 
-> During Moisture detection if the PA is on then we switch it off and do 
-> moisture measurements and at the end of the function we restore the 
-> state of PA.
-> 
->>
->> Turn it into a meaningful code by having 'hphpa_on' be static. Use is 
->> as a
->> flip-flop variable.
-> 
-> No, It does not.
-> 
-> Have you even tested this patch in anyway?
+> Would you like to submit a patch to fix that on top of this one? or should I?
 
-No, as said below the ---, the purpose of this patch was not to be 
-correct (or tested). It was only to draw attention on odd things.
+Either way is fine for me.
+If it's fine for you to fix it, I leave it to you.
+
+A more invasive fix could be to switch to 'pcim_enable_device()' and 
+remove both 'pci_release_regions()' and 'pci_disable_device()' calls.
 
 CJ
 
-
-
 > 
->>
->> Fixes: 0e5c9e7ff899 ("ASoC: codecs: wcd: add multi button Headset 
->> detection support")
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+>> There is no point in calling 'devm_kfree()'. The corresponding resource is
+>> managed, so it will be fried automatically.
+> 
+> Indeed.
+> 
 >> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 >> ---
->> The purpose of this patch is not to be correct (!) but to draw attention
->> on several points:
->>     - in 'wcd_mbhc_adc_hs_rem_irq()', the "if (hphpa_on)" path is dead 
->> code
->>       because 'hphpa_on' is known to be false
->>     - What is this magic number '3'?
->>       All 'wcd_mbhc_read_field()' look for 0 or non-0
->>     - a 'mutex_[un]lock()' in an IRQ handler looks spurious to me
+>>   drivers/media/pci/tw5864/tw5864-core.c | 4 +---
+>>   1 file changed, 1 insertion(+), 3 deletions(-)
 >>
->> Instead of this (likely broken) patch, it is likely that something is
->> missing elsewhere. Maybe in 'wcd_mbhc_adc_hs_ins_irq()'.
->> I also guess that 'hphpa_on' should be read for somewhere else.
->> ---
->>   sound/soc/codecs/wcd-mbhc-v2.c | 5 ++++-
->>   1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/sound/soc/codecs/wcd-mbhc-v2.c 
->> b/sound/soc/codecs/wcd-mbhc-v2.c
->> index 405128ccb4b0..783d8c35bc1b 100644
->> --- a/sound/soc/codecs/wcd-mbhc-v2.c
->> +++ b/sound/soc/codecs/wcd-mbhc-v2.c
->> @@ -1176,7 +1176,7 @@ static irqreturn_t wcd_mbhc_adc_hs_rem_irq(int 
->> irq, void *data)
->>       struct wcd_mbhc *mbhc = data;
->>       unsigned long timeout;
->>       int adc_threshold, output_mv, retry = 0;
->> -    bool hphpa_on = false;
->> +    static bool hphpa_on = false;
->>       mutex_lock(&mbhc->lock);
->>       timeout = jiffies + 
->> msecs_to_jiffies(WCD_FAKE_REMOVAL_MIN_PERIOD_MS);
->> @@ -1212,6 +1212,9 @@ static irqreturn_t wcd_mbhc_adc_hs_rem_irq(int 
->> irq, void *data)
->>       if (hphpa_on) {
->>           hphpa_on = false;
->> +        wcd_mbhc_write_field(mbhc, WCD_MBHC_HPH_PA_EN, 0);
->> +    } else {
->> +        hphpa_on = true;
->>           wcd_mbhc_write_field(mbhc, WCD_MBHC_HPH_PA_EN, 3);
-> 
-> Just remove this dead code.
-> 
-> --srini
->>       }
->>   exit:
+>> diff --git a/drivers/media/pci/tw5864/tw5864-core.c b/drivers/media/pci/tw5864/tw5864-core.c
+>> index 23d3cae54a5d..fee3b7711901 100644
+>> --- a/drivers/media/pci/tw5864/tw5864-core.c
+>> +++ b/drivers/media/pci/tw5864/tw5864-core.c
+>> @@ -333,11 +333,9 @@ static void tw5864_finidev(struct pci_dev *pci_dev)
+>>   
+>>          /* release resources */
+>>          iounmap(dev->mmio);
+>> -       release_mem_region(pci_resource_start(pci_dev, 0),
+>> -                          pci_resource_len(pci_dev, 0));
+>> +       pci_release_regions(pci_dev);
+>>   
+>>          v4l2_device_unregister(&dev->v4l2_dev);
+>> -       devm_kfree(&pci_dev->dev, dev);
+>>   }
+>>   
+>>   static struct pci_driver tw5864_pci_driver = {
+>> -- 
+>> 2.30.2
 >>
 > 
 
