@@ -2,185 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9585C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Oct 2021 08:36:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC797C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Oct 2021 10:46:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C10F560F9F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Oct 2021 08:36:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 947F6611B0
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Oct 2021 10:46:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229677AbhJTIiZ (ORCPT
+        id S230091AbhJTKtL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Oct 2021 04:38:25 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:48131 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229555AbhJTIiZ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Oct 2021 04:38:25 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1634718971; h=Content-Type: MIME-Version: Message-ID:
- In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
- bh=/+DfA3JiwA8AUDKRRJpj2+ek7HU0RMo/25+SYks37DM=; b=TWQRIgyzfVhVTqLnfSqd15zgGjijG9GZMTBmFnMG8D/hzfr8Wh9J/bltDSskS5OkzADat51Q
- dpBUQBivFMLJH/b+IUrC5UcKNFMJPnxXQRELNXmVQNnKyzkOpWOSF30L4GWkaJbrSDUXPBGL
- riHEduj/zHZG6QvQijgVWvf2yWY=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n05.prod.us-west-2.postgun.com with SMTP id
- 616fd4f65ca800b6c127b655 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 20 Oct 2021 08:36:06
- GMT
-Sender: kvalo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 4F954C4360D; Wed, 20 Oct 2021 08:36:06 +0000 (UTC)
-Received: from tykki (tynnyri.adurom.net [51.15.11.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1B207C4338F;
-        Wed, 20 Oct 2021 08:36:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 1B207C4338F
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Pkshih <pkshih@realtek.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "linux-wireless\@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
-        "kernel-janitors\@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] rtw89: Fix potential dereference of the null pointer sta
-References: <20211015154530.34356-1-colin.king@canonical.com>
-        <9cc681c217a449519aee524b35e6b6bc@realtek.com>
-        <87pms2ttvi.fsf@codeaurora.org>
-        <abc2e3a274694d48aa468491df334349@realtek.com>
-Date:   Wed, 20 Oct 2021 11:36:00 +0300
-In-Reply-To: <abc2e3a274694d48aa468491df334349@realtek.com> (Pkshih's message
-        of "Tue, 19 Oct 2021 01:11:25 +0000")
-Message-ID: <87h7dcf5zj.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 20 Oct 2021 06:49:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56362 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229702AbhJTKtK (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 20 Oct 2021 06:49:10 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A603C06161C;
+        Wed, 20 Oct 2021 03:46:56 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id o24-20020a05600c511800b0030d9da600aeso9126558wms.4;
+        Wed, 20 Oct 2021 03:46:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=whR0ZNxEwCyi9xlkSBMhZ6NrngLCDrmcZY7NCoPKafI=;
+        b=KHlw1PTz/EehdeNVRNMFwWDJ7vt2hnQw25wlwHrN9gnP+ctgzou5509ivVB6IIdsal
+         B7WPtuo5hjdBQPV5lCny+/HsOO1JOOCPGVG5wa+OUmRooES/mLtk9SKOJjmiuQ1lOcXC
+         L99/inxTii8cG4TYDeDSUPotLcSyJgltHV6GTRJDVhJ/tTb/E7KcH2HyGnSI6hUXGN5Z
+         RG+8SoB/STv4fW6M/nFTwXkncDHsLCv4ikGtuTihNexU1m/Q/lrpNJlEisDhsvaEh5uW
+         NaayCWfojl0/QOKSjrZBnh9skENyIvD3bUhfWP/LhSUVrypNP7OWGFjlVu3zF/80wtfY
+         /UhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=whR0ZNxEwCyi9xlkSBMhZ6NrngLCDrmcZY7NCoPKafI=;
+        b=iW+W+0kfEybhH041VmjyjT/QfR8/1x1xP+AGzbEsrKnyA01hw/PFw1SVCVoTXBcZpU
+         B3QPMdpgJypUz7/U4yEatle0VW+ginRqd7E+jYDLp2dKWZibDIAihRTZcyjX4mFA/k2a
+         IqNMVzlBoyWdgD9ANrUnm3CDCMUmZIzxqBSFOiuMURAcODCLDWaezKy1TLFPbREx8Z2G
+         Xq9jsOqUI/8r7xTXTRyIeq8FBuVnuiE30w+c2Ggs1JmZnGjV1FDTAedpf6Gua9aL0PSi
+         IGOtpLkXWfn/5pnYi6Rj51G3C6Vwz/tqLwQX3lUjNnsPMQc3lq518rskbompf5GuWYig
+         5E0w==
+X-Gm-Message-State: AOAM532DP85gTvE+skLKTxHk5V6j8svGULOfXVQ1iUC8zdGq41gclyuG
+        bOLP8idljaqv+E7ENUSWm10=
+X-Google-Smtp-Source: ABdhPJwm+IrPO2y3xhTKkLSUO69xt4tsC/ZTGfrcTIjFDlthmuo3d7YIzc3kQ2pGtcqhrSLwM30n8Q==
+X-Received: by 2002:a1c:3b44:: with SMTP id i65mr12766620wma.161.1634726814812;
+        Wed, 20 Oct 2021 03:46:54 -0700 (PDT)
+Received: from localhost.localdomain (i5C74E127.versanet.de. [92.116.225.39])
+        by smtp.gmail.com with ESMTPSA id n68sm4599412wmn.13.2021.10.20.03.46.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Oct 2021 03:46:54 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        David Heidelberg <david@ixit.cz>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: rectify entry for PSTORE FILESYSTEM
+Date:   Wed, 20 Oct 2021 12:46:47 +0200
+Message-Id: <20211020104647.11556-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Pkshih <pkshih@realtek.com> writes:
+Commit 89a5bf0f22fd ("dt-bindings: reserved-memory: ramoops: Convert txt
+bindings to yaml") converts ramoops.txt to ramoops.yaml, but missed to
+adjust its reference in MAINTAINERS.
 
->> -----Original Message-----
->> From: kvalo=codeaurora.org@mg.codeaurora.org
->> <kvalo=codeaurora.org@mg.codeaurora.org> On
->> Behalf Of Kalle Valo
->> Sent: Monday, October 18, 2021 8:12 PM
->> To: Pkshih <pkshih@realtek.com>
->> Cc: Colin King <colin.king@canonical.com>; David S . Miller
->> <davem@davemloft.net>; Jakub
->> Kicinski <kuba@kernel.org>; linux-wireless@vger.kernel.org; netdev@vger.kernel.org;
->> kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
->> Subject: Re: [PATCH][next] rtw89: Fix potential dereference of the null pointer sta
->> 
->> Pkshih <pkshih@realtek.com> writes:
->> 
->> >> -----Original Message-----
->> >> From: Colin King <colin.king@canonical.com>
->> >> Sent: Friday, October 15, 2021 11:46 PM
->> >> To: Kalle Valo <kvalo@codeaurora.org>; David S . Miller <davem@davemloft.net>; Jakub Kicinski
->> >> <kuba@kernel.org>; Pkshih <pkshih@realtek.com>; linux-wireless@vger.kernel.org;
->> >> netdev@vger.kernel.org
->> >> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
->> >> Subject: [PATCH][next] rtw89: Fix potential dereference of the null pointer sta
->> >>
->> >> From: Colin Ian King <colin.king@canonical.com>
->> >>
->> >> The pointer rtwsta is dereferencing pointer sta before sta is
->> >> being null checked, so there is a potential null pointer deference
->> >> issue that may occur. Fix this by only assigning rtwsta after sta
->> >> has been null checked. Add in a null pointer check on rtwsta before
->> >> dereferencing it too.
->> >>
->> >> Fixes: e3ec7017f6a2 ("rtw89: add Realtek 802.11ax driver")
->> >> Addresses-Coverity: ("Dereference before null check")
->> >> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> >> ---
->> >>  drivers/net/wireless/realtek/rtw89/core.c | 9 +++++++--
->> >>  1 file changed, 7 insertions(+), 2 deletions(-)
->> >>
->> >> diff --git a/drivers/net/wireless/realtek/rtw89/core.c
->> >> b/drivers/net/wireless/realtek/rtw89/core.c
->> >> index 06fb6e5b1b37..26f52a25f545 100644
->> >> --- a/drivers/net/wireless/realtek/rtw89/core.c
->> >> +++ b/drivers/net/wireless/realtek/rtw89/core.c
->> >> @@ -1534,9 +1534,14 @@ static bool rtw89_core_txq_agg_wait(struct rtw89_dev *rtwdev,
->> >>  {
->> >>  	struct rtw89_txq *rtwtxq = (struct rtw89_txq *)txq->drv_priv;
->> >>  	struct ieee80211_sta *sta = txq->sta;
->> >> -	struct rtw89_sta *rtwsta = (struct rtw89_sta *)sta->drv_priv;
->> >
->> > 'sta->drv_priv' is only a pointer, we don't really dereference the
->> > data right here, so I think this is safe. More, compiler can optimize
->> > this instruction that reorder it to the place just right before using.
->> > So, it seems like a false alarm.
->> >
->> >> +	struct rtw89_sta *rtwsta;
->> >>
->> >> -	if (!sta || rtwsta->max_agg_wait <= 0)
->> >> +	if (!sta)
->> >> +		return false;
->> >> +	rtwsta = (struct rtw89_sta *)sta->drv_priv;
->> >> +	if (!rtwsta)
->> >> +		return false;
->> >> +	if (rtwsta->max_agg_wait <= 0)
->> >>  		return false;
->> >>
->> >>  	if (rtwdev->stats.tx_tfc_lv <= RTW89_TFC_MID)
->> >
->> > I check the size of object files before/after this patch, and
->> > the original one is smaller.
->> >
->> >    text    data     bss     dec     hex filename
->> >   16781    3392       1   20174    4ece core-0.o  // original
->> >   16819    3392       1   20212    4ef4 core-1.o  // after this patch
->> >
->> > Do you think it is worth to apply this patch?
->> 
->> I think that we should apply the patch. Even though the compiler _may_
->> reorder the code, it might choose not to do that.
->
-> Understand.
->
-> I have another way to fix this coverity warning, like:
->
-> @@ -1617,7 +1617,7 @@ static bool rtw89_core_txq_agg_wait(struct rtw89_dev *rtwdev,
->  {
->         struct rtw89_txq *rtwtxq = (struct rtw89_txq *)txq->drv_priv;
->         struct ieee80211_sta *sta = txq->sta;
-> -       struct rtw89_sta *rtwsta = (struct rtw89_sta *)sta->drv_priv;
-> +       struct rtw89_sta *rtwsta = sta ? (struct rtw89_sta *)sta->drv_priv : NULL;
->
->         if (!sta || rtwsta->max_agg_wait <= 0)
->                 return false;
->
-> Is this acceptable?
-> It has a little redundant checking of 'sta', but the code looks clean.
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
+a broken reference.
 
-I feel that Colin's fix is more readable, but this is just matter of
-taste. You can choose.
+Repair this file reference in PSTORE FILESYSTEM.
 
->> Another question is that can txq->sta really be null? I didn't check the
->> code, but if it should be always set when the null check is not needed.
->> 
->
-> It says
->
-> * struct ieee80211_txq - Software intermediate tx queue
-> * @sta: station table entry, %NULL for per-vif queue
->
-> So, we need to check if 'sta' is NULL.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on next-20211019
 
-Ok, thanks for checking (no pun intended) :)
+Please apply clean-up patch on top of commit above.
 
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1ad9cbe46b53..cb84a0d46a24 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15336,7 +15336,7 @@ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/pstore
+ F:	Documentation/admin-guide/ramoops.rst
+ F:	Documentation/admin-guide/pstore-blk.rst
+-F:	Documentation/devicetree/bindings/reserved-memory/ramoops.txt
++F:	Documentation/devicetree/bindings/reserved-memory/ramoops.yaml
+ F:	drivers/acpi/apei/erst.c
+ F:	drivers/firmware/efi/efi-pstore.c
+ F:	fs/pstore/
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+2.26.2
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
