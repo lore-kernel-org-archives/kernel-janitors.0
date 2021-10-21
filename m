@@ -2,120 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 614E6C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Oct 2021 08:48:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DAB0C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Oct 2021 17:41:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 466F461056
-	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Oct 2021 08:48:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9FCA611F2
+	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Oct 2021 17:41:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231342AbhJUIui (ORCPT
+        id S232180AbhJURn0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 21 Oct 2021 04:50:38 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:55549 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231133AbhJUIuh (ORCPT
+        Thu, 21 Oct 2021 13:43:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56698 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231976AbhJURnZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 21 Oct 2021 04:50:37 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1634806101; h=Content-Type: MIME-Version: Message-ID:
- In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
- bh=fGTORJsyflzni7NU7S3f+ketqwKwriawQfcTUKvSUSo=; b=GOW2HwA3+ck7TdunG7zz86OMf7Af4EsUMD+/0v5Bpwn0tj4Acxy2gspEExkwJeTw9vcsKUrn
- oGj4kLb2DjbvNEUX9h1lhiWqvvtOEWw80SCpWEegc4XHivfZHs3XFpuoBa/oYpVI3zKrvptJ
- PEJQbaitIyzwreM1SzU6jHln/3Q=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n04.prod.us-east-1.postgun.com with SMTP id
- 6171295559612e010090ef8e (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 21 Oct 2021 08:48:21
- GMT
-Sender: kvalo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 99081C4360D; Thu, 21 Oct 2021 08:48:20 +0000 (UTC)
-Received: from tykki (tynnyri.adurom.net [51.15.11.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BCF07C4338F;
-        Thu, 21 Oct 2021 08:48:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org BCF07C4338F
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Pkshih <pkshih@realtek.com>
-Cc:     Colin King <colin.king@canonical.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "linux-wireless\@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
-        "kernel-janitors\@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] rtw89: Fix potential dereference of the null pointer sta
-References: <20211015154530.34356-1-colin.king@canonical.com>
-        <9cc681c217a449519aee524b35e6b6bc@realtek.com>
-        <87pms2ttvi.fsf@codeaurora.org>
-        <abc2e3a274694d48aa468491df334349@realtek.com>
-        <87h7dcf5zj.fsf@codeaurora.org>
-        <35c096e5251f49c1abfbb51f761eab82@realtek.com>
-Date:   Thu, 21 Oct 2021 11:48:13 +0300
-In-Reply-To: <35c096e5251f49c1abfbb51f761eab82@realtek.com> (Pkshih's message
-        of "Thu, 21 Oct 2021 05:46:15 +0000")
-Message-ID: <87y26mepbm.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Thu, 21 Oct 2021 13:43:25 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0639EC0613B9
+        for <kernel-janitors@vger.kernel.org>; Thu, 21 Oct 2021 10:41:08 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id a15-20020a17090a688f00b001a132a1679bso3727689pjd.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 21 Oct 2021 10:41:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=wjkL1M46brws6JUD91gGE9nrGWZDkt+GYrNQD2kz+m8=;
+        b=ULa4ja1DxUaFql3k+NQDCw+GE2tpfakdVAljWPOrsJt+NBoKh2f0DItAwN+jUjcY9H
+         k7f7DrbEPoc5UN8pYBiaqYbke7pcEn1DMauH0T0Ozx+VmGDCkAMiHn0TQ2tG7UjBtrFx
+         9V+oMoju8QLX/0Suel9ZUv/MtxBB6vrcNFTZ3rvYi8y9DCcYK8m0fXSf4PTTFdn9lrGt
+         ZM06avbr5hktRf4yQhFqbmVrXIhYOHzZPfUVE3VP7rEgXftCZfEW6XFGMJKeR1eW9wkr
+         Xjomjtxng2cHkzCxpvZXN2U4WHjaamfIwDsIbKUD8xb4KruX4GVJxQI9PiBSnCS0Bb+R
+         4p7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=wjkL1M46brws6JUD91gGE9nrGWZDkt+GYrNQD2kz+m8=;
+        b=kLSSUoJffMnDFwHu7EmX+gN5lJ9nt3hqlXu2k9QtR9rXx6+TpVpnwYP6Q3cepWIimX
+         guwJYVmOHxwbjQqPjsyr4P9qPW4SoWiUn3xUn+iKMlH6EUhicd8y/WujV33XGwm1ljI3
+         XQxHsZF4oHfbULLRaUo2ux/Zxh4GrhpKlPbVpZYgwImXh/6ixss6jdM5xcZt74KCDN5U
+         joNwgsEz+o64/gq8EokPCVjK1/yBtqmk9hJ0niRmuBSWGYwZCA8q4aofOtjkrnQl7UN9
+         1seX3/r1ekAFb+WHqi0FAD5wY/Flohqb2KOgyW42erKgWU69Oksp2y4uUc/hwOZKjmFg
+         6OGg==
+X-Gm-Message-State: AOAM533drBhb80NKezMe+oVXhhvRGnQjxj/z0mskykd6tS9Ie03M3kOE
+        0iXYt0kJtCoPhDVuG4FM1kBcpg==
+X-Google-Smtp-Source: ABdhPJxGEHVTaXW2f3YMcR46zLfjucO2r8CQ5ZA6JjPFnpwZqgXAXBzuizFsKcn3wHuyk/O8urgm7Q==
+X-Received: by 2002:a17:902:c206:b0:13f:68f:675c with SMTP id 6-20020a170902c20600b0013f068f675cmr6666969pll.8.1634838068394;
+        Thu, 21 Oct 2021 10:41:08 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id s25sm6572669pfm.138.2021.10.21.10.41.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Oct 2021 10:41:06 -0700 (PDT)
+Date:   Thu, 21 Oct 2021 11:41:04 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, hongxing.zhu@nxp.com, peng.fan@nxp.com,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: imx_rproc: Fix a resource leak in the remove
+ function
+Message-ID: <20211021174104.GA3562838@p14s>
+References: <d28ca94a4031bd7297d47c2164e18885a5a6ec19.1634366546.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d28ca94a4031bd7297d47c2164e18885a5a6ec19.1634366546.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Pkshih <pkshih@realtek.com> writes:
+On Sat, Oct 16, 2021 at 08:44:28AM +0200, Christophe JAILLET wrote:
+> 'priv->workqueue' is destroyed in the error handling path of the probe but
+> not in the remove function.
+> 
+> Add the missing call to release some resources.
+> 
+> Fixes: 2df7062002d0 ("remoteproc: imx_proc: enable virtio/mailbox")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> This patch is speculative. I'm not sure if the added function call is at
+> the right place in the remove function.
+> Review with care.
+> ---
+>  drivers/remoteproc/imx_rproc.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index ff8170dbbc3c..0a45bc0d3f73 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -804,6 +804,7 @@ static int imx_rproc_remove(struct platform_device *pdev)
+>  	clk_disable_unprepare(priv->clk);
+>  	rproc_del(rproc);
+>  	imx_rproc_free_mbox(rproc);
+> +	destroy_workqueue(priv->workqueue);
 
->> >> > I check the size of object files before/after this patch, and
->> >> > the original one is smaller.
->> >> >
->> >> >    text    data     bss     dec     hex filename
->> >> >   16781    3392       1   20174    4ece core-0.o  // original
->> >> >   16819    3392       1   20212    4ef4 core-1.o  // after this patch
->> >> >
->> >> > Do you think it is worth to apply this patch?
->> >>
->> >> I think that we should apply the patch. Even though the compiler _may_
->> >> reorder the code, it might choose not to do that.
->> >
->> > Understand.
->> >
->> > I have another way to fix this coverity warning, like:
->> >
->> > @@ -1617,7 +1617,7 @@ static bool rtw89_core_txq_agg_wait(struct rtw89_dev *rtwdev,
->> >  {
->> >         struct rtw89_txq *rtwtxq = (struct rtw89_txq *)txq->drv_priv;
->> >         struct ieee80211_sta *sta = txq->sta;
->> > -       struct rtw89_sta *rtwsta = (struct rtw89_sta *)sta->drv_priv;
->> > +       struct rtw89_sta *rtwsta = sta ? (struct rtw89_sta *)sta->drv_priv : NULL;
->> >
->> >         if (!sta || rtwsta->max_agg_wait <= 0)
->> >                 return false;
->> >
->> > Is this acceptable?
->> > It has a little redundant checking of 'sta', but the code looks clean.
->> 
->> I feel that Colin's fix is more readable, but this is just matter of
->> taste. You can choose.
->
-> I would like my version. 
->
-> There are three similar warnings reported by smatch, so I will fix them by
-> myself. Please drop this patch.
+This seems to be the right thing to do. Peng - please review and test on your
+side.
 
-Ok, dropped.
+Thanks,
+Mathieu
 
-> But, still thank Colin to point out this issue.
-
-Indeed, thanks Colin. A good way to thank is to add Reported-by to the
-commit log.
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+>  	rproc_free(rproc);
+>  
+>  	return 0;
+> -- 
+> 2.30.2
+> 
