@@ -2,114 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9735CC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Oct 2021 08:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 446EAC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Oct 2021 09:36:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B6186101C
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Oct 2021 08:42:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CDBB610C8
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Oct 2021 09:36:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232249AbhJVIo4 (ORCPT
+        id S232465AbhJVJiX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Oct 2021 04:44:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60546 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231773AbhJVIo4 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Oct 2021 04:44:56 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7C7CC061764;
-        Fri, 22 Oct 2021 01:42:38 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id e19so215106edy.0;
-        Fri, 22 Oct 2021 01:42:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9rMHji8kgf+m1porXcns682MpUeRt4z96dt4L6ZyjLc=;
-        b=oXEuAQPtB1gYaPl9YoqjUDxFnNnue1Mr3NiQMDM7grJKT0/tF180plb6gb1WyBHxDb
-         eiboqeXZlG2jjZLA1uRzymppl5uzcDeocO1kbQFgnevlYOdAjpolhZxBjKXw8eEAaxwN
-         +tOYj7uTOd7CPFAHC/aj+q7QZ8XGXFDH25C3+AEyMQWC0Wz7KbMZtTHi5hBNjL6VqK2v
-         xS83oYpecRXh4RuSuezcBJMQJJx7OZmCJUUJe8bTQli7cI2ia+wqAqSOMF+qN/dUyGh+
-         Y+BjnHXyY09Pj40X2AUFZpoqer1Fyeczj8PuvKAdt2Lxs0jEdTkayBu1GH4A4pFRq1zy
-         4E/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9rMHji8kgf+m1porXcns682MpUeRt4z96dt4L6ZyjLc=;
-        b=bvqWIIqeDtnPSPAhpeEs0jOiDof29A8JJ9TbqWUVg0QUt3tY92abSFfGrdBmXqlUYB
-         CQhGP3UNswI9Rk2Y8xNbnv0xdZahOk/+cL1Hpwu4arsXEp+nmeQ8/W4qR8TRGx/kyzbl
-         41fZ3LR3nY0/Fi2tNeD89u0JKnlhiu9kpjlsuaMfyen1JuyKZgqx3fAltPIaJAaBwfWG
-         0C75rHerELXBHpo2aAQd/qSwVyGdhHnyIs9eVUB+iBSRmpY9Ll1tF7vZDB32BbPA3uwk
-         52YneTFy2FAq7KDw0ocl0yqtoryI+JwBmKK3/jQvRLwNzYriDk/yN523Quc0JdjX8uz0
-         CQZg==
-X-Gm-Message-State: AOAM530lgqBv196LSqIwCp4IUojj0yjFDYccNrOvUeHKrAL5aafeBGnw
-        SCMB5WM1i7XNQ9fy9v9gYitHpjTvtWRZfTj/Ny8=
-X-Google-Smtp-Source: ABdhPJy0bWXnnvLSXyQCDfQotX5wHGejlFHaw6dDhsx3Z37fh+OyTdfcnQxhJw4p0N10FFgFATsYPm8TPGkzd/PRtUI=
-X-Received: by 2002:a50:e188:: with SMTP id k8mr15802135edl.119.1634892157363;
- Fri, 22 Oct 2021 01:42:37 -0700 (PDT)
+        Fri, 22 Oct 2021 05:38:23 -0400
+Received: from foss.arm.com ([217.140.110.172]:52032 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229545AbhJVJiW (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 22 Oct 2021 05:38:22 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6E4B21063;
+        Fri, 22 Oct 2021 02:36:05 -0700 (PDT)
+Received: from e123427-lin.arm.com (unknown [10.57.54.218])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 37B303F70D;
+        Fri, 22 Oct 2021 02:36:03 -0700 (PDT)
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     bhelgaas@google.com,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        robh@kernel.org, kishon@ti.com, kw@linux.com, tjoseph@cadence.com
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-omap@vger.kernel.org
+Subject: Re: [PATCH] PCI: j721e: Fix an error handling path in 'j721e_pcie_probe()'
+Date:   Fri, 22 Oct 2021 10:35:58 +0100
+Message-Id: <163489533869.17392.2233519953795577688.b4-ty@arm.com>
+X-Mailer: git-send-email 2.31.0
+In-Reply-To: <db477b0cb444891a17c4bb424467667dc30d0bab.1624794264.git.christophe.jaillet@wanadoo.fr>
+References: <db477b0cb444891a17c4bb424467667dc30d0bab.1624794264.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-References: <20211022054740.25222-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20211022054740.25222-1-lukas.bulwahn@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 22 Oct 2021 11:41:41 +0300
-Message-ID: <CAHp75VePmGx-24XWocV9eUwh+uFw4seY83SyA7zG-pa-6T18_Q@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: drop obsolete file pattern in SDHCI DRIVER section
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Oct 22, 2021 at 8:49 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->
-> Commit 5c67aa59bd8f ("mmc: sdhci-pci: Remove dead code (struct
-> sdhci_pci_data et al)") removes ./include/linux/mmc/sdhci-pci-data.h;
-> so, there is no further file that matches 'include/linux/mmc/sdhci*'.
->
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
->
->   warning: no file matches    F:    include/linux/mmc/sdhci*
->
-> Drop this obsolete file pattern in SECURE DIGITAL HOST CONTROLLER
-> INTERFACE (SDHCI) DRIVER.
+On Sun, 27 Jun 2021 13:46:24 +0200, Christophe JAILLET wrote:
+> If an error occurs after a successful 'cdns_pcie_init_phy()' call, it must
+> be undone by a 'cdns_pcie_disable_phy()' call, as already done above and
+> below.
+> 
+> Update the 'goto' to branch at the correct place of the error handling
+> path.
+> 
+> [...]
 
-Thanks! I grepped by name but definitely haven't thought about wildcards.
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Applied to pci/cadence, thanks!
 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> applies cleanly on next-20211021
->
-> Ulf, please pick this minor non-urgent cleanup patch on top of the
-> commit above.
->
->  MAINTAINERS | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 44c590b762d1..c47ac3e938b7 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -17024,7 +17024,6 @@ M:      Adrian Hunter <adrian.hunter@intel.com>
->  L:     linux-mmc@vger.kernel.org
->  S:     Maintained
->  F:     drivers/mmc/host/sdhci*
-> -F:     include/linux/mmc/sdhci*
->
->  SECURE DIGITAL HOST CONTROLLER INTERFACE (SDHCI) MICROCHIP DRIVER
->  M:     Eugen Hristev <eugen.hristev@microchip.com>
-> --
-> 2.26.2
->
+[1/1] PCI: j721e: Fix an error handling path in 'j721e_pcie_probe()'
+      https://git.kernel.org/lpieralisi/pci/c/1faff614aa
 
-
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks,
+Lorenzo
