@@ -2,116 +2,204 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A64E8C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Oct 2021 11:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB59AC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Oct 2021 20:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8291D610CF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Oct 2021 11:56:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 930A261183
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Oct 2021 20:16:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231474AbhJVL6T (ORCPT
+        id S234253AbhJVUTH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Oct 2021 07:58:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47626 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229842AbhJVL6T (ORCPT
+        Fri, 22 Oct 2021 16:19:07 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:17672 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S234133AbhJVUTG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Oct 2021 07:58:19 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DEC8C061764
-        for <kernel-janitors@vger.kernel.org>; Fri, 22 Oct 2021 04:56:01 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id p21so2631477wmq.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 22 Oct 2021 04:56:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GfBU0GpSmy79GbH1anUO6sQjWFqwumWH7YxWakuinzc=;
-        b=tWFAlFo6sqxss1FMA0XqNpWM7eRhtkHwtdMZr7zjgIb9Kk1jFDMx8krC6Pb6mRQJaB
-         YVlYtaP1wZZWcAIaqOa3C8Og9j133Gm0PjCPtNTZycCwAwGHM4UIaSAzKegCraumHUGv
-         dpUQ8+yZex7bLvyKOSSG/AZ2J1OernkkHlGRiAcIkbd11zkrEMqmmdJ7L0aBsbQGht97
-         73yRbPa0l6tjQwWs5yRdKAsPp3i3/kVscHlz7wmqgWkqPNxcWSm1jbdCXHbO+CqRJEdB
-         u1ODdswp9XwhcF2Gg8cDf+JBaZJZXIMThDP9nPL1xI6qdhI5XPKP/sQuCqOZf39UcAKY
-         KHuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GfBU0GpSmy79GbH1anUO6sQjWFqwumWH7YxWakuinzc=;
-        b=rPc822nk3FN9jEpF6YUSq1GdUyFZVZpLiqv5mWqw+8CQbtbtu3OVmoIaafw6q8BZA1
-         cAdvU10iWoYrMSNg+mSZWIospvakwjrgbc4rCBtfFrXlXi/gf9hAdo5r2mD+ZdhUR0o1
-         3JrPFoCdzG74sLmYAihCqRcPQS3vHp78cCJcPQaYfhSAgMPBAOhi1YFat/uhyiN5SpzM
-         W4/lTRmZnctR0QXH6JOvZPnOkNzstKVZnagWZhat5sB4y5pOWWRowyiajmGU4XuRd80J
-         H+VRhRS6gM8UV01Uete0p0LHspLCSyGmS9LIwylMD/GV1C4kGztYBxF0TjnsbDZtCKqW
-         HyvQ==
-X-Gm-Message-State: AOAM531phpQbhnAz/eL10L7BBR0VO0L7OgU02HuZdYhxsZdH1YAkanow
-        Ml9Ycy+zCWXhJhGgkVwNL7hj6Yw615ueBCYrFzy4mA==
-X-Google-Smtp-Source: ABdhPJyje0rIg0VhIHC70ks2ose2WVfVFBCEjQcBhQxEnJNRdtAXMllSDvh8stJgNdMbceG5aDtLDTWNxC9gMg0twV0=
-X-Received: by 2002:a1c:7918:: with SMTP id l24mr13289169wme.137.1634903759923;
- Fri, 22 Oct 2021 04:55:59 -0700 (PDT)
+        Fri, 22 Oct 2021 16:19:06 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19MJa915001757;
+        Fri, 22 Oct 2021 16:16:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=fLxcPs/gVqZ3EB9hMDQP1ukHCaAJzVmw7T9hX1rclW4=;
+ b=ZR9FvGYEaEY96meqi64Lj25iooAI8Upij3lP+mVTA5WQ/rbSFeScO+0urPkz+pk2kQXZ
+ 2TR0ynNGzGnbn9WxlY1UEJC53C8nenExZl4jbv8/WLd0BtcsISeQbjuQgE5H/fm0gjMv
+ COFTB2kUgsN5s7gDDlm/njYzCBf5p4IOLgK1uYjskYGrTfKUhluegiygjaCSf+B9hHMA
+ aKUuQNCcWlB7hx5HGVpV+WP1VMVvgBr/MuhB+aCWeZDhkNb6ECwCf7ZqgfmoerXHkZi/
+ VUmcmyDIFufws5h/GA0v3YwwSpd1wnscyKjz9RLhP46FNQjFct01SdW0bxbfAL9H1hXG Ag== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3bv090vqk3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 22 Oct 2021 16:16:35 -0400
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 19MJd1Gi015407;
+        Fri, 22 Oct 2021 16:16:35 -0400
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3bv090vqjw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 22 Oct 2021 16:16:34 -0400
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 19MKDXTI025004;
+        Fri, 22 Oct 2021 20:16:34 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma04wdc.us.ibm.com with ESMTP id 3bqpcdae57-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 22 Oct 2021 20:16:34 +0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 19MKGXoT23986880
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 22 Oct 2021 20:16:33 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0CC58C6062;
+        Fri, 22 Oct 2021 20:16:33 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E555EC6059;
+        Fri, 22 Oct 2021 20:16:31 +0000 (GMT)
+Received: from oc6857751186.ibm.com (unknown [9.65.235.71])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri, 22 Oct 2021 20:16:31 +0000 (GMT)
+Subject: Re: [PATCH] soc: fsl: guts: Fix a resource leak in the error handling
+ path of 'fsl_guts_probe()'
+To:     Li Yang <leoyang.li@nxp.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     kernel-janitors@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <b12e8c5c5d6ab3061d9504de8fbaefcad6bbc385.1629321668.git.christophe.jaillet@wanadoo.fr>
+ <CADRPPNTHKuV9eernJS6ZV_+i-xtPXHQnS64GSx=ubwWE+nbLYw@mail.gmail.com>
+From:   Tyrel Datwyler <tyreld@linux.ibm.com>
+Message-ID: <20ecf373-75a4-97e5-baa4-24b8871da546@linux.ibm.com>
+Date:   Fri, 22 Oct 2021 13:16:30 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-References: <20211022061514.25946-1-lukas.bulwahn@gmail.com> <5c27a2ff-b7a2-99d8-bdc4-7f2b20092500@redhat.com>
-In-Reply-To: <5c27a2ff-b7a2-99d8-bdc4-7f2b20092500@redhat.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Fri, 22 Oct 2021 17:25:48 +0530
-Message-ID: <CAAhSdy0h38gOZ-7WKDN=SLBhC0pbRjXS19XyU9eu-PzUi3Xv7A@mail.gmail.com>
-Subject: Re: [PATCH] riscv: do not select non-existing config ANON_INODES
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Anup Patel <anup.patel@wdc.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        KVM General <kvm@vger.kernel.org>,
-        kvm-riscv@lists.infradead.org,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        kernel-janitors@vger.kernel.org,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CADRPPNTHKuV9eernJS6ZV_+i-xtPXHQnS64GSx=ubwWE+nbLYw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 4SkIfNjXn18qq5OWPBGKLyHa4-7xsXiC
+X-Proofpoint-GUID: 21GsyBi8kItp1nP8a2ioOYBPadBw0bqA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
+ definitions=2021-10-22_05,2021-10-22_01,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ mlxscore=0 lowpriorityscore=0 phishscore=0 priorityscore=1501
+ malwarescore=0 mlxlogscore=999 adultscore=0 bulkscore=0 clxscore=1011
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2109230001 definitions=main-2110220112
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Oct 22, 2021 at 3:24 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> On 22/10/21 08:15, Lukas Bulwahn wrote:
-> > Commit 99cdc6c18c2d ("RISC-V: Add initial skeletal KVM support") selects
-> > the config ANON_INODES in config KVM, but the config ANON_INODES is removed
-> > since commit 5dd50aaeb185 ("Make anon_inodes unconditional") in 2018.
-> >
-> > Hence, ./scripts/checkkconfigsymbols.py warns on non-existing symbols:
-> >
-> >    ANON_INODES
-> >    Referencing files: arch/riscv/kvm/Kconfig
-> >
-> > Remove selecting the non-existing config ANON_INODES.
-> >
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > ---
-> >   arch/riscv/kvm/Kconfig | 1 -
-> >   1 file changed, 1 deletion(-)
-> >
-> > diff --git a/arch/riscv/kvm/Kconfig b/arch/riscv/kvm/Kconfig
-> > index a712bb910cda..f5a342fa1b1d 100644
-> > --- a/arch/riscv/kvm/Kconfig
-> > +++ b/arch/riscv/kvm/Kconfig
-> > @@ -22,7 +22,6 @@ config KVM
-> >       depends on RISCV_SBI && MMU
-> >       select MMU_NOTIFIER
-> >       select PREEMPT_NOTIFIERS
-> > -     select ANON_INODES
-> >       select KVM_MMIO
-> >       select KVM_GENERIC_DIRTYLOG_READ_PROTECT
-> >       select HAVE_KVM_VCPU_ASYNC_IOCTL
-> >
->
-> Queued, thanks.
+On 10/21/21 5:26 PM, Li Yang wrote:
+> On Wed, Aug 18, 2021 at 4:23 PM Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+>>
+>> If an error occurs after 'of_find_node_by_path()', the reference taken for
+>> 'root' will never be released and some memory will leak.
+> 
+> Thanks for finding this.  This truly is a problem.
+> 
+>>
+>> Instead of adding an error handling path and modifying all the
+>> 'return -SOMETHING' into 'goto errorpath', use 'devm_add_action_or_reset()'
+>> to release the reference when needed.
+>>
+>> Simplify the remove function accordingly.
+>>
+>> As an extra benefit, the 'root' global variable can now be removed as well.
+>>
+>> Fixes: 3c0d64e867ed ("soc: fsl: guts: reuse machine name from device tree")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> Compile tested only
+>> ---
+>>  drivers/soc/fsl/guts.c | 16 ++++++++++++++--
+>>  1 file changed, 14 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
+>> index d5e9a5f2c087..4d9476c7b87c 100644
+>> --- a/drivers/soc/fsl/guts.c
+>> +++ b/drivers/soc/fsl/guts.c
+>> @@ -28,7 +28,6 @@ struct fsl_soc_die_attr {
+>>  static struct guts *guts;
+>>  static struct soc_device_attribute soc_dev_attr;
+>>  static struct soc_device *soc_dev;
+>> -static struct device_node *root;
+>>
+>>
+>>  /* SoC die attribute definition for QorIQ platform */
+>> @@ -136,14 +135,23 @@ static u32 fsl_guts_get_svr(void)
+>>         return svr;
+>>  }
+>>
+>> +static void fsl_guts_put_root(void *data)
+>> +{
+>> +       struct device_node *root = data;
+>> +
+>> +       of_node_put(root);
+>> +}
+>> +
+>>  static int fsl_guts_probe(struct platform_device *pdev)
+>>  {
+>>         struct device_node *np = pdev->dev.of_node;
+>>         struct device *dev = &pdev->dev;
+>> +       struct device_node *root;
+>>         struct resource *res;
+>>         const struct fsl_soc_die_attr *soc_die;
+>>         const char *machine;
+>>         u32 svr;
+>> +       int ret;
+>>
+>>         /* Initialize guts */
+>>         guts = devm_kzalloc(dev, sizeof(*guts), GFP_KERNEL);
+>> @@ -159,6 +167,10 @@ static int fsl_guts_probe(struct platform_device *pdev)
+>>
+>>         /* Register soc device */
+>>         root = of_find_node_by_path("/");
+>> +       ret = devm_add_action_or_reset(dev, fsl_guts_put_root, root);
+>> +       if (ret)
+>> +               return ret;
+> 
+> We probably only need to hold the reference when we do get "machine"
+> from the device tree, otherwise we can put it directly.
 
-Thanks Paolo for applying this directly.
+To be pedantic since you are using the a properties string value of the root
+node directly you need to hold the reference of that node for the lifetime of
+the device. Realistically, its not like the root node and its model/compatible
+properties are going to need to get modified at runtime so you could also argue
+that holding the reference is unnecessary.
 
-Regards,
-Anup
+> 
+> Or maybe we just maintain a local copy of string machine which means
+> we can release the reference right away?
 
->
-> Paolo
->
+Looks like that is the original behavior that commit 3c0d64e867ed changed.
+Although it looks like that behavior neglected to handle a memory allocation
+failure during the string copy. How much memory is really being saved by not
+keeping a local copy? Maybe revert 3c0d64e867ed and add the memory allocation check?
+
+-Tyrel
+
+> 
+>> +
+>>         if (of_property_read_string(root, "model", &machine))
+>>                 of_property_read_string_index(root, "compatible", 0, &machine);
+>>         if (machine)
+>> @@ -197,7 +209,7 @@ static int fsl_guts_probe(struct platform_device *pdev)
+>>  static int fsl_guts_remove(struct platform_device *dev)
+>>  {
+>>         soc_device_unregister(soc_dev);
+>> -       of_node_put(root);
+>> +
+>>         return 0;
+>>  }
+>>
+>> --
+>> 2.30.2
+>>
+
