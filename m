@@ -2,93 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC0BC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 23 Oct 2021 10:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4997DC433FE
+	for <kernel-janitors@archiver.kernel.org>; Sat, 23 Oct 2021 11:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9315C60FD9
-	for <kernel-janitors@archiver.kernel.org>; Sat, 23 Oct 2021 10:10:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25FC260FE8
+	for <kernel-janitors@archiver.kernel.org>; Sat, 23 Oct 2021 11:45:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230520AbhJWKNN (ORCPT
+        id S230361AbhJWLrl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 23 Oct 2021 06:13:13 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:53482 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230253AbhJWKNM (ORCPT
+        Sat, 23 Oct 2021 07:47:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51764 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229778AbhJWLrk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 23 Oct 2021 06:13:12 -0400
-Received: from pop-os.home ([92.140.161.106])
-        by smtp.orange.fr with ESMTPA
-        id eDzFmzdx8niuxeDzFmn8rc; Sat, 23 Oct 2021 12:10:52 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 23 Oct 2021 12:10:52 +0200
-X-ME-IP: 92.140.161.106
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     a.hajda@samsung.com, mchehab@kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] media: s5p-mfc: Use 'bitmap_zalloc()' when applicable
-Date:   Sat, 23 Oct 2021 12:10:48 +0200
-Message-Id: <065fd81346699cc8fda251d91227381f7e26740d.1634983722.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sat, 23 Oct 2021 07:47:40 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 945FAC061764;
+        Sat, 23 Oct 2021 04:45:20 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id d3so5345678wrh.8;
+        Sat, 23 Oct 2021 04:45:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8NbVhy/18KdPyyuiO5A3kcqrXSmZbFqQmCBwS7YiJMI=;
+        b=jyBw11KT5wfH8KJ3LtWt0wpRZR5B1weSusDqeMUhL5GR7zWCsFyMhqH1C2lrfEaUNa
+         AWkWO1trhxA6/WbqIKchLudTL5jtDDOaTDaIgdCM0ZXtHBPZYx8ERPMGqbdam1Zw5VpL
+         INrPIYoBq5S6gKLciK+acbNbYlAwB8HnKJtpdBEcZDgP5zakCGHPsmzkQIa+Y/NO/CyJ
+         qMi/84HlJwuwN0SmpH10WI280WBk4Vq1tI/1kG7o5zQlkjcC7jT4Mm2HJKqlMhRbMiCE
+         C4UOkprijN8iZvS2WHI4eoGFASTtSpQ/8TI+XxMf3BynU6zjbrH+VDly2h1r9Q66I8hi
+         p1+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8NbVhy/18KdPyyuiO5A3kcqrXSmZbFqQmCBwS7YiJMI=;
+        b=qNIXsUpf1ZlDoC1T5x9KuNj8A1BPKZcV1KrmOxDp5vqPsB6K8CMikeo3Ky+LfjN8mt
+         clcy/oO728QUeE8zqp00eW4r9PoiX7buMB02WikCT0gB2/FALTUlBa3mScq2X9MP2pcO
+         db6isRsGHWmEFtNAsl0NFDLDd0h66xZ7yWby2t1Z4bcVGCQWk6qDegf3fNuItXvJvkZh
+         /roXCeG3CQjRrJxp+pFfTgO87ke9OT9/eMXVRHurxpUTx1rHEPf/7Zb7iKHoMW/xHY0H
+         f7uR+zNy9KXF5WbqA/0cyTvyAaGSuVCWonIykYDgLwrRgDRrkkcEONRQ6p3z995gXvtq
+         7Leg==
+X-Gm-Message-State: AOAM5334j7tBbh2HL4blYMEO8rZa3ojvDkATxwcKVQWKQ9fEG2/1G6uH
+        F8P7UbOljwFIHA==
+X-Google-Smtp-Source: ABdhPJwu99HGkqbc5xQqT1RXKDkmPFr5MlmJVc2BR0UfWAO7GRDA1X4Rl7Wxknm/AAOGh7Goz9hNmg==
+X-Received: by 2002:a5d:508a:: with SMTP id a10mr7473269wrt.126.1634989519243;
+        Sat, 23 Oct 2021 04:45:19 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id s18sm8257265wrb.95.2021.10.23.04.45.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Oct 2021 04:45:18 -0700 (PDT)
+From:   Colin King <colin.i.king@googlemail.com>
+X-Google-Original-From: Colin King <colin.king@canonical.com>
+To:     "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Colin Ian King <colin.i.king@gmail.com>,
+        linux-parisc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] parisc: Fix spelling mistake "Plase" -> "Please"
+Date:   Sat, 23 Oct 2021 12:45:18 +0100
+Message-Id: <20211023114518.18600-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'mfc_dev->mem_bitmap' is a bitmap. So use 'bitmap_zalloc()' to simplify
-code and improve the semantic.
+From: Colin Ian King <colin.i.king@gmail.com>
 
-Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
-consistency.
+There is a spelling mistake in a pr_warning message. Fix it.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/media/platform/s5p-mfc/s5p_mfc.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ arch/parisc/kernel/sys_parisc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index fc85e4e2d020..f6732f031e96 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -1185,7 +1185,6 @@ static int s5p_mfc_configure_common_memory(struct s5p_mfc_dev *mfc_dev)
- {
- 	struct device *dev = &mfc_dev->plat_dev->dev;
- 	unsigned long mem_size = SZ_4M;
--	unsigned int bitmap_size;
- 
- 	if (IS_ENABLED(CONFIG_DMA_CMA) || exynos_is_iommu_available(dev))
- 		mem_size = SZ_8M;
-@@ -1193,16 +1192,14 @@ static int s5p_mfc_configure_common_memory(struct s5p_mfc_dev *mfc_dev)
- 	if (mfc_mem_size)
- 		mem_size = memparse(mfc_mem_size, NULL);
- 
--	bitmap_size = BITS_TO_LONGS(mem_size >> PAGE_SHIFT) * sizeof(long);
--
--	mfc_dev->mem_bitmap = kzalloc(bitmap_size, GFP_KERNEL);
-+	mfc_dev->mem_bitmap = bitmap_zalloc(mem_size >> PAGE_SHIFT, GFP_KERNEL);
- 	if (!mfc_dev->mem_bitmap)
- 		return -ENOMEM;
- 
- 	mfc_dev->mem_virt = dma_alloc_coherent(dev, mem_size,
- 					       &mfc_dev->mem_base, GFP_KERNEL);
- 	if (!mfc_dev->mem_virt) {
--		kfree(mfc_dev->mem_bitmap);
-+		bitmap_free(mfc_dev->mem_bitmap);
- 		dev_err(dev, "failed to preallocate %ld MiB for the firmware and context buffers\n",
- 			(mem_size / SZ_1M));
- 		return -ENOMEM;
-@@ -1241,7 +1238,7 @@ static void s5p_mfc_unconfigure_common_memory(struct s5p_mfc_dev *mfc_dev)
- 
- 	dma_free_coherent(dev, mfc_dev->mem_size, mfc_dev->mem_virt,
- 			  mfc_dev->mem_base);
--	kfree(mfc_dev->mem_bitmap);
-+	bitmap_free(mfc_dev->mem_bitmap);
- 	vb2_dma_contig_clear_max_seg_size(dev);
- }
- 
+diff --git a/arch/parisc/kernel/sys_parisc.c b/arch/parisc/kernel/sys_parisc.c
+index d11834377676..2b34294517a1 100644
+--- a/arch/parisc/kernel/sys_parisc.c
++++ b/arch/parisc/kernel/sys_parisc.c
+@@ -413,7 +413,7 @@ static int FIX_O_NONBLOCK(int flags)
+ 			!test_thread_flag(TIF_NONBLOCK_WARNING)) {
+ 		set_thread_flag(TIF_NONBLOCK_WARNING);
+ 		pr_warn("%s(%d) uses a deprecated O_NONBLOCK value."
+-			" Plase recompile with newer glibc.\n",
++			" Please recompile with newer glibc.\n",
+ 			current->comm, current->pid);
+ 	}
+ 	return flags & ~O_NONBLOCK_MASK_OUT;
 -- 
-2.30.2
+2.32.0
 
