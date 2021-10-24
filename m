@@ -2,36 +2,39 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F0EC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Oct 2021 06:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 686CAC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Oct 2021 11:52:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4497760F57
-	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Oct 2021 06:51:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DBEA6101C
+	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Oct 2021 11:52:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229861AbhJXGyB (ORCPT
+        id S231372AbhJXLzD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 24 Oct 2021 02:54:01 -0400
-Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:56097 "EHLO
+        Sun, 24 Oct 2021 07:55:03 -0400
+Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:57041 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229638AbhJXGyB (ORCPT
+        with ESMTP id S230227AbhJXLzC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 24 Oct 2021 02:54:01 -0400
+        Sun, 24 Oct 2021 07:55:02 -0400
 Received: from pop-os.home ([92.140.161.106])
         by smtp.orange.fr with ESMTPA
-        id eXM2m8BUn65jHeXM2m5OFT; Sun, 24 Oct 2021 08:51:39 +0200
+        id ec3Kms3YFLyIyec3KmZeWF; Sun, 24 Oct 2021 13:52:40 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 24 Oct 2021 08:51:39 +0200
+X-ME-Date: Sun, 24 Oct 2021 13:52:40 +0200
 X-ME-IP: 92.140.161.106
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     kishon@ti.com, lorenzo.pieralisi@arm.com, kw@linux.com,
-        bhelgaas@google.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     jeroendb@google.com, csully@google.com, awogbemila@google.com,
+        davem@davemloft.net, kuba@kernel.org, willemb@google.com,
+        bcf@google.com, gustavoars@kernel.org, edumazet@google.com,
+        jfraker@google.com, yangchun@google.com, xliutaox@google.com,
+        sagis@google.com, lrizzo@google.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] PCI: endpoint: Use 'bitmap_zalloc()' when applicable
-Date:   Sun, 24 Oct 2021 08:51:36 +0200
-Message-Id: <01eba3c86137eb348f8cce69f500222bd7c72c57.1635058203.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] gve: Fix a possible invalid memory access
+Date:   Sun, 24 Oct 2021 13:52:37 +0200
+Message-Id: <fb712f802228ab4319891983164bf45e90d529e7.1635076200.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -39,81 +42,38 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'mem->bitmap' is a bitmap. So use 'bitmap_zalloc()' to simplify code,
-improve the semantic and avoid some open-coded arithmetic in allocator
-arguments.
+It is spurious to allocate a bitmap for 'num_qpls' bits and record the
+size of this bitmap with another value.
 
-Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
-consistency.
+'qpl_map_size' is used in 'drivers/net/ethernet/google/gve/gve.h' with
+'find_[first|next]_zero_bit()'.
+So, it looks that memory after the allocated 'qpl_id_map' could be
+scanned.
 
-Finally, while at it, axe the useless 'bitmap' variable and use
-'mem->bitmap' directly.
+Remove the '* BITS_PER_BYTE' to have allocation and length be the same.
 
+Fixes: f5cedc84a30d ("gve: Add transmit and receive support")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/pci/endpoint/pci-epc-mem.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+This patch is completely speculative and un-tested!
+You'll be warned.
+---
+ drivers/net/ethernet/google/gve/gve_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/endpoint/pci-epc-mem.c b/drivers/pci/endpoint/pci-epc-mem.c
-index a97b56a6d2db..b15a264f19af 100644
---- a/drivers/pci/endpoint/pci-epc-mem.c
-+++ b/drivers/pci/endpoint/pci-epc-mem.c
-@@ -49,10 +49,8 @@ int pci_epc_multi_mem_init(struct pci_epc *epc,
- 			   unsigned int num_windows)
- {
- 	struct pci_epc_mem *mem = NULL;
--	unsigned long *bitmap = NULL;
- 	unsigned int page_shift;
- 	size_t page_size;
--	int bitmap_size;
- 	int pages;
- 	int ret;
- 	int i;
-@@ -72,7 +70,6 @@ int pci_epc_multi_mem_init(struct pci_epc *epc,
- 			page_size = PAGE_SIZE;
- 		page_shift = ilog2(page_size);
- 		pages = windows[i].size >> page_shift;
--		bitmap_size = BITS_TO_LONGS(pages) * sizeof(long);
- 
- 		mem = kzalloc(sizeof(*mem), GFP_KERNEL);
- 		if (!mem) {
-@@ -81,8 +78,8 @@ int pci_epc_multi_mem_init(struct pci_epc *epc,
- 			goto err_mem;
- 		}
- 
--		bitmap = kzalloc(bitmap_size, GFP_KERNEL);
--		if (!bitmap) {
-+		mem->bitmap = bitmap_zalloc(pages, GFP_KERNEL);
-+		if (!mem->bitmap) {
- 			ret = -ENOMEM;
- 			kfree(mem);
- 			i--;
-@@ -92,7 +89,6 @@ int pci_epc_multi_mem_init(struct pci_epc *epc,
- 		mem->window.phys_base = windows[i].phys_base;
- 		mem->window.size = windows[i].size;
- 		mem->window.page_size = page_size;
--		mem->bitmap = bitmap;
- 		mem->pages = pages;
- 		mutex_init(&mem->lock);
- 		epc->windows[i] = mem;
-@@ -106,7 +102,7 @@ int pci_epc_multi_mem_init(struct pci_epc *epc,
- err_mem:
- 	for (; i >= 0; i--) {
- 		mem = epc->windows[i];
--		kfree(mem->bitmap);
-+		bitmap_free(mem->bitmap);
- 		kfree(mem);
+diff --git a/drivers/net/ethernet/google/gve/gve_main.c b/drivers/net/ethernet/google/gve/gve_main.c
+index 7647cd05b1d2..19fe9e9b62f5 100644
+--- a/drivers/net/ethernet/google/gve/gve_main.c
++++ b/drivers/net/ethernet/google/gve/gve_main.c
+@@ -866,7 +866,7 @@ static int gve_alloc_qpls(struct gve_priv *priv)
  	}
- 	kfree(epc->windows);
-@@ -145,7 +141,7 @@ void pci_epc_mem_exit(struct pci_epc *epc)
  
- 	for (i = 0; i < epc->num_windows; i++) {
- 		mem = epc->windows[i];
--		kfree(mem->bitmap);
-+		bitmap_free(mem->bitmap);
- 		kfree(mem);
- 	}
- 	kfree(epc->windows);
+ 	priv->qpl_cfg.qpl_map_size = BITS_TO_LONGS(num_qpls) *
+-				     sizeof(unsigned long) * BITS_PER_BYTE;
++				     sizeof(unsigned long);
+ 	priv->qpl_cfg.qpl_id_map = kvcalloc(BITS_TO_LONGS(num_qpls),
+ 					    sizeof(unsigned long), GFP_KERNEL);
+ 	if (!priv->qpl_cfg.qpl_id_map) {
 -- 
 2.30.2
 
