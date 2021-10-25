@@ -2,97 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5230EC433FE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Oct 2021 19:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72002C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Oct 2021 06:31:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 332166101D
-	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Oct 2021 19:48:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ABA260EE3
+	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Oct 2021 06:31:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231992AbhJXTug (ORCPT
+        id S231215AbhJYGdc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 24 Oct 2021 15:50:36 -0400
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:61379 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231875AbhJXTuf (ORCPT
+        Mon, 25 Oct 2021 02:33:32 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:48869 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230369AbhJYGdb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 24 Oct 2021 15:50:35 -0400
-Received: from pop-os.home ([92.140.161.106])
-        by smtp.orange.fr with ESMTPA
-        id ejTWmbi84dmYbejTWmLmaJ; Sun, 24 Oct 2021 21:48:12 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 24 Oct 2021 21:48:12 +0200
-X-ME-IP: 92.140.161.106
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     james.smart@broadcom.com, ram.vegesna@broadcom.com,
-        jejb@linux.ibm.com, martin.petersen@oracle.com, dwagner@suse.de,
-        hare@suse.de
-Cc:     linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] scsi: elx: libefc_sli: Use 'bitmap_zalloc()' when applicable
-Date:   Sun, 24 Oct 2021 21:48:09 +0200
-Message-Id: <2a0a83949fb896a0a236dcca94dfdc8486d489f5.1635104793.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Mon, 25 Oct 2021 02:33:31 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 4419B5C0178;
+        Mon, 25 Oct 2021 02:31:09 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Mon, 25 Oct 2021 02:31:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=XH3xdt
+        bLhapmmW0JYmN5pD0fjj0gtqEc7lDkeWFuh3o=; b=Yu51eIJfHMCYnk01d/iAoa
+        724YShrQPbLtKdi0ukgyahPHDyYPYDQbjQ3r0wG9B90G/xYbi9KPIJ9i5Nf1ibWa
+        TfwCz4el+keN0w/cBANLpr2mUgW9lGEIdUVy7n0vGJAyo7U6FGRoNRXYL3hEa14D
+        h/T8JzCoi/9QsR5PL+j/gM9m64r4EhepbBQN6t/YZ3e6bA4iJAMg548HX98exKQU
+        fc6yiuhKxOh+gmzuhR2/VKplv9nPzDe/jx2c0qAUme4UsWtdXQXVOkOC62gpRFjB
+        3VbacqHY5xLUWqm7dns1kFpGbyzMV4w7ZMDbtCms8Q2OoaiU46pqbeDPbJ87wCoQ
+        ==
+X-ME-Sender: <xms:LE92YVQSafIH0CLsUelwfQoMv5h9cA3haHYo26u-1cMOhgL1Bcd4EQ>
+    <xme:LE92YexhmqJA_pNtmW4xMKR94ohD_aGolrCwLYtNaeD6X309abkEM0TYJgMRAEgtE
+    jt5VP8uFHsxTmk>
+X-ME-Received: <xmr:LE92Ya0RptTljgks0vgfx7dL3j2msyXHjZZKoppEr0xV53VYC-LJjJhc86_ZV0wAQhK_5x9v1qnmdW_UEqyBNevXI_o>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvdefgedguddtiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepkfguohcu
+    ufgthhhimhhmvghluceoihguohhstghhsehiughoshgthhdrohhrgheqnecuggftrfgrth
+    htvghrnheptdffkeekfeduffevgeeujeffjefhtefgueeugfevtdeiheduueeukefhudeh
+    leetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepih
+    guohhstghhsehiughoshgthhdrohhrgh
+X-ME-Proxy: <xmx:LE92YdBg9lQMX4kBB7KhwGQqilSHN2S6yUPXrrgou2F2Snp-MzZmdQ>
+    <xmx:LE92Yejc5WMoWthGNo6pbQ8mLbY9u7kzDdmWhAG3-9Adjs451nF_iw>
+    <xmx:LE92YRobHmQhzKGgCPDiaPq_xpgA4xSoOxXke1-6ddgFlnFti63BnQ>
+    <xmx:LU92YQb56BhiT645waIomlLOgFXtQUWOA88EJBnQAK38gVPEvoJ2IA>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 25 Oct 2021 02:31:07 -0400 (EDT)
+Date:   Mon, 25 Oct 2021 09:31:03 +0300
+From:   Ido Schimmel <idosch@idosch.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     jiri@nvidia.com, idosch@nvidia.com, davem@davemloft.net,
+        kuba@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mlxsw: spectrum: Use 'bitmap_zalloc()' when applicable
+Message-ID: <YXZPJxuPEDbPV5w7@shredder>
+References: <daae11381ba197d91702cb23c6c1120571cb0b87.1635103002.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <daae11381ba197d91702cb23c6c1120571cb0b87.1635103002.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'sli4->ext[i].use_map' is a bitmap. Use 'bitmap_zalloc()' to simplify code,
-improve the semantic and avoid some open-coded arithmetic in allocator
-arguments.
+On Sun, Oct 24, 2021 at 09:17:51PM +0200, Christophe JAILLET wrote:
+> Use 'bitmap_zalloc()' to simplify code, improve the semantic and avoid
+> some open-coded arithmetic in allocator arguments.
+> 
+> Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
+> consistency.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
-consistency.
+For net-next:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/scsi/elx/libefc_sli/sli4.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+Reviewed-by: Ido Schimmel <idosch@nvidia.com>
 
-diff --git a/drivers/scsi/elx/libefc_sli/sli4.c b/drivers/scsi/elx/libefc_sli/sli4.c
-index 6c6c04e1b74d..907d67aeac23 100644
---- a/drivers/scsi/elx/libefc_sli/sli4.c
-+++ b/drivers/scsi/elx/libefc_sli/sli4.c
-@@ -4145,7 +4145,7 @@ static int
- sli_get_read_config(struct sli4 *sli4)
- {
- 	struct sli4_rsp_read_config *conf = sli4->bmbx.virt;
--	u32 i, total, total_size;
-+	u32 i, total;
- 	u32 *base;
- 
- 	if (sli_cmd_read_config(sli4, sli4->bmbx.virt)) {
-@@ -4203,8 +4203,7 @@ sli_get_read_config(struct sli4 *sli4)
- 
- 	for (i = 0; i < SLI4_RSRC_MAX; i++) {
- 		total = sli4->ext[i].number * sli4->ext[i].size;
--		total_size = BITS_TO_LONGS(total) * sizeof(long);
--		sli4->ext[i].use_map = kzalloc(total_size, GFP_KERNEL);
-+		sli4->ext[i].use_map = bitmap_zalloc(total, GFP_KERNEL);
- 		if (!sli4->ext[i].use_map) {
- 			efc_log_err(sli4, "bitmap memory allocation failed %d\n",
- 				    i);
-@@ -4743,7 +4742,7 @@ sli_reset(struct sli4 *sli4)
- 	sli4->ext[0].base = NULL;
- 
- 	for (i = 0; i < SLI4_RSRC_MAX; i++) {
--		kfree(sli4->ext[i].use_map);
-+		bitmap_free(sli4->ext[i].use_map);
- 		sli4->ext[i].use_map = NULL;
- 		sli4->ext[i].base = NULL;
- 	}
-@@ -4784,7 +4783,7 @@ sli_teardown(struct sli4 *sli4)
- 	for (i = 0; i < SLI4_RSRC_MAX; i++) {
- 		sli4->ext[i].base = NULL;
- 
--		kfree(sli4->ext[i].use_map);
-+		bitmap_free(sli4->ext[i].use_map);
- 		sli4->ext[i].use_map = NULL;
- 	}
- 
--- 
-2.30.2
-
+Thanks
