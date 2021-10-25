@@ -2,71 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B41C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Oct 2021 14:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A4EBC4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Oct 2021 22:20:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7BF4C60ED4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Oct 2021 14:50:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DDA861039
+	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Oct 2021 22:20:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233567AbhJYOwv (ORCPT
+        id S233583AbhJYWXU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 25 Oct 2021 10:52:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45542 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233696AbhJYOwa (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 25 Oct 2021 10:52:30 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 904C061039;
-        Mon, 25 Oct 2021 14:50:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1635173407;
-        bh=jYOtjHPCtlfoXpNUGdU/aP/8EDMtH7R8Xiek4vi1dyw=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=CkJmjD57ca0DJl8Lj8eJSv4HJyR0V/5ourT87XirDfo6gcB23QrWgZ83O/HwjETMj
-         7pfppAFEx094lGzLntGInX6pt4MqVwgILWRyH8iU/LZoYEZECz29efzIoi6M/AfB9C
-         Swy6ixqAwBbKDUM/v1Bb5HKCsnCuPxfsEhYPDj1uSfoKqVPxZkBOekxo3A9FSjnXsZ
-         cQAkvD2/ZDTG/mjgTSy7MqBp//iRy6zOtVixFBt/S1aZvsV9lohoeSXmMpLimtvIma
-         Yk4V7ad2e8r5GLj6N5KjECDo5dF7gVMx3WmmcmskmMz8zICqbUIl8f6leQKjVjeF8t
-         +ddL/8iTYv1ug==
-Content-Type: text/plain; charset="utf-8"
+        Mon, 25 Oct 2021 18:23:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35772 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233618AbhJYWXN (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 25 Oct 2021 18:23:13 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 602D5C061745;
+        Mon, 25 Oct 2021 15:20:50 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id n36-20020a17090a5aa700b0019fa884ab85so542801pji.5;
+        Mon, 25 Oct 2021 15:20:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gY/CrtG64wJSVZcLWOWpwa2R2QUK2S+0RFYWuG+wKCg=;
+        b=JxfRcOOJUvz9MShRfjx7QNut1TTO5K+WAAp4bSEMJ6T8COF6VlwVe0PC33KxV1V+xj
+         QY/HTJIs6xceUgVDsGOIhqdtna0lZpn+vh22OeND20l0ZAUfVFduyYS8OZ6Hdn3U1oQh
+         W48S3zBie5el1etzqinYCyCisJ+OAloUABm5vGy6jySIBocYpaxyqVnXq0gwRVL/D15T
+         v2H4DeDdnbSd5BLF6pp0L53ebm63zvaJPX+3Yla9BTUtYPgK+3SB9xfqynf2YdLsEI3z
+         L8hUqG6fvrhRNWoq5K1PLNJv5P1dAKubAYVAX719F/JKiidSkdMAKeMB1GJe7GLC60b4
+         ZG0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gY/CrtG64wJSVZcLWOWpwa2R2QUK2S+0RFYWuG+wKCg=;
+        b=3iTfEGQ+drZAax7ojkwnOwMqgzu8PDscF/u2pZEJ5Na1ruyfDfpzHWKDhzASBiciKT
+         dN0slF5PZ5a1F7ZUyZ/1cNV3fSZcTAEOTPKlddmTEi/b0nDZQ5PXPExRv0ZqWfK8LFNA
+         kfeZiIVvOB+vwIQwxsRlZsgPK8LOQnzgR47IogfVDzos0f7kpChJQ+SPwXxPmcZIMtl2
+         8qDEZMk1J9u/IyXTPQ+Sop9/xcfDTTxhEO8Sp0pU8Ht18RTdiySKran1JZ22LR3e5scH
+         LlIgKlIQIILJpsGwHZEBzMnEldrrqF1iRl5rp2cRsCOKhMm0y9zRrjVSflFRrvp4u45J
+         UxgQ==
+X-Gm-Message-State: AOAM533rHli/s50OseGXopm42bYYlImwWjo1ZFRmV40IgBTOR/f7XAGP
+        d93GTxTxnIjfCl9OR5Fc2VE=
+X-Google-Smtp-Source: ABdhPJw1M+GSNXjH3WTbbujpz1f0+KQg7PDYTju1ODa6ZJ+SOgud71PYDVpiJXuy6a6LbJDeHwImcg==
+X-Received: by 2002:a17:90b:3148:: with SMTP id ip8mr23586012pjb.62.1635200449724;
+        Mon, 25 Oct 2021 15:20:49 -0700 (PDT)
+Received: from localhost.localdomain ([171.224.177.148])
+        by smtp.gmail.com with ESMTPSA id v19sm17500636pfu.179.2021.10.25.15.20.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Oct 2021 15:20:49 -0700 (PDT)
+From:   Nghia Le <nghialm78@gmail.com>
+To:     tytso@mit.edu, adilger.kernel@dilger.ca
+Cc:     Nghia Le <nghialm78@gmail.com>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lukas.bulwahn@gmail.com,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] ext4: remove useless resetting io_end_size in mpage_process_page()
+Date:   Tue, 26 Oct 2021 05:18:03 +0700
+Message-Id: <20211025221803.3326-1-nghialm78@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] mlxsw: spectrum: Use 'bitmap_zalloc()' when applicable
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <163517340755.13749.8331433462524363080.git-patchwork-notify@kernel.org>
-Date:   Mon, 25 Oct 2021 14:50:07 +0000
-References: <daae11381ba197d91702cb23c6c1120571cb0b87.1635103002.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <daae11381ba197d91702cb23c6c1120571cb0b87.1635103002.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     jiri@nvidia.com, idosch@nvidia.com, davem@davemloft.net,
-        kuba@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+The command "make clang-analyzer" detects dead stores in
+mpage_process_page() function.
 
-This patch was applied to netdev/net-next.git (master)
-by David S. Miller <davem@davemloft.net>:
+Do not reset io_end_size to 0 in the current paths, as the function
+exits on those paths without further using io_end_size.
 
-On Sun, 24 Oct 2021 21:17:51 +0200 you wrote:
-> Use 'bitmap_zalloc()' to simplify code, improve the semantic and avoid
-> some open-coded arithmetic in allocator arguments.
-> 
-> Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
-> consistency.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> [...]
+Signed-off-by: Nghia Le <nghialm78@gmail.com>
+---
+ fs/ext4/inode.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Here is the summary with links:
-  - mlxsw: spectrum: Use 'bitmap_zalloc()' when applicable
-    https://git.kernel.org/netdev/net-next/c/2c087dfcc9d5
-
-You are awesome, thank you!
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 0f06305167d5..03efed2ed1ea 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -2260,7 +2260,6 @@ static int mpage_process_page(struct mpage_da_data *mpd, struct page *page,
+ 			mpd->map.m_len = 0;
+ 			mpd->map.m_flags = 0;
+ 			io_end_vec->size += io_end_size;
+-			io_end_size = 0;
+ 
+ 			err = mpage_process_page_bufs(mpd, head, bh, lblk);
+ 			if (err > 0)
+@@ -2285,7 +2284,6 @@ static int mpage_process_page(struct mpage_da_data *mpd, struct page *page,
+ 	} while (lblk++, (bh = bh->b_this_page) != head);
+ 
+ 	io_end_vec->size += io_end_size;
+-	io_end_size = 0;
+ 	*map_bh = false;
+ out:
+ 	*m_lblk = lblk;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.25.1
 
