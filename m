@@ -2,102 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A4EBC4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Oct 2021 22:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4912DC433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Oct 2021 02:29:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4DDA861039
-	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Oct 2021 22:20:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2998060E75
+	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Oct 2021 02:29:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233583AbhJYWXU (ORCPT
+        id S234189AbhJZCcN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 25 Oct 2021 18:23:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35772 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233618AbhJYWXN (ORCPT
+        Mon, 25 Oct 2021 22:32:13 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29415 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234021AbhJZCcM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 25 Oct 2021 18:23:13 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 602D5C061745;
-        Mon, 25 Oct 2021 15:20:50 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id n36-20020a17090a5aa700b0019fa884ab85so542801pji.5;
-        Mon, 25 Oct 2021 15:20:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gY/CrtG64wJSVZcLWOWpwa2R2QUK2S+0RFYWuG+wKCg=;
-        b=JxfRcOOJUvz9MShRfjx7QNut1TTO5K+WAAp4bSEMJ6T8COF6VlwVe0PC33KxV1V+xj
-         QY/HTJIs6xceUgVDsGOIhqdtna0lZpn+vh22OeND20l0ZAUfVFduyYS8OZ6Hdn3U1oQh
-         W48S3zBie5el1etzqinYCyCisJ+OAloUABm5vGy6jySIBocYpaxyqVnXq0gwRVL/D15T
-         v2H4DeDdnbSd5BLF6pp0L53ebm63zvaJPX+3Yla9BTUtYPgK+3SB9xfqynf2YdLsEI3z
-         L8hUqG6fvrhRNWoq5K1PLNJv5P1dAKubAYVAX719F/JKiidSkdMAKeMB1GJe7GLC60b4
-         ZG0g==
+        Mon, 25 Oct 2021 22:32:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1635215389;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=bK/ePsOXvnwATuPJ538FYYy/I3va7wErG+x6S0m8LPc=;
+        b=Q36tLKepzd3J0S5Q+d4NHzg4le38tLEMEgU1YPTi9fQ8HlkDJ7u1Xo6ZnBoq3sxQMMD3H2
+        Gr59T568yDfb1XdolfVGx2Cl2/aDNxNa8NvOv0MH8AUkpcdi1SNc81Y179bEbZM9ZuEiAq
+        +PKH5xsk/QiOzscpEJy/vxRjf6S0//E=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-363-UK5ECvIrMI2j5DF80MI89w-1; Mon, 25 Oct 2021 22:29:48 -0400
+X-MC-Unique: UK5ECvIrMI2j5DF80MI89w-1
+Received: by mail-lj1-f197.google.com with SMTP id z21-20020a2e8e95000000b0021191daf2aaso31015ljk.10
+        for <kernel-janitors@vger.kernel.org>; Mon, 25 Oct 2021 19:29:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gY/CrtG64wJSVZcLWOWpwa2R2QUK2S+0RFYWuG+wKCg=;
-        b=3iTfEGQ+drZAax7ojkwnOwMqgzu8PDscF/u2pZEJ5Na1ruyfDfpzHWKDhzASBiciKT
-         dN0slF5PZ5a1F7ZUyZ/1cNV3fSZcTAEOTPKlddmTEi/b0nDZQ5PXPExRv0ZqWfK8LFNA
-         kfeZiIVvOB+vwIQwxsRlZsgPK8LOQnzgR47IogfVDzos0f7kpChJQ+SPwXxPmcZIMtl2
-         8qDEZMk1J9u/IyXTPQ+Sop9/xcfDTTxhEO8Sp0pU8Ht18RTdiySKran1JZ22LR3e5scH
-         LlIgKlIQIILJpsGwHZEBzMnEldrrqF1iRl5rp2cRsCOKhMm0y9zRrjVSflFRrvp4u45J
-         UxgQ==
-X-Gm-Message-State: AOAM533rHli/s50OseGXopm42bYYlImwWjo1ZFRmV40IgBTOR/f7XAGP
-        d93GTxTxnIjfCl9OR5Fc2VE=
-X-Google-Smtp-Source: ABdhPJw1M+GSNXjH3WTbbujpz1f0+KQg7PDYTju1ODa6ZJ+SOgud71PYDVpiJXuy6a6LbJDeHwImcg==
-X-Received: by 2002:a17:90b:3148:: with SMTP id ip8mr23586012pjb.62.1635200449724;
-        Mon, 25 Oct 2021 15:20:49 -0700 (PDT)
-Received: from localhost.localdomain ([171.224.177.148])
-        by smtp.gmail.com with ESMTPSA id v19sm17500636pfu.179.2021.10.25.15.20.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Oct 2021 15:20:49 -0700 (PDT)
-From:   Nghia Le <nghialm78@gmail.com>
-To:     tytso@mit.edu, adilger.kernel@dilger.ca
-Cc:     Nghia Le <nghialm78@gmail.com>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lukas.bulwahn@gmail.com,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] ext4: remove useless resetting io_end_size in mpage_process_page()
-Date:   Tue, 26 Oct 2021 05:18:03 +0700
-Message-Id: <20211025221803.3326-1-nghialm78@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bK/ePsOXvnwATuPJ538FYYy/I3va7wErG+x6S0m8LPc=;
+        b=SAfglP3yKWSBZY6l7Y8cgHkp6KcI1N7fnjkvbomNxDgLwLp6TdiIOiWOn5T94BpGPv
+         wszg8tlwGMjbomiujfXAlrhi7Am01rOofN0oK9T3IbvBgCxbVYemZkIxJDXqc84P3JL7
+         wGJozLQ2m5wS6lc3g43QmCGXNKCaFe2/u88jaPhb6MNYDRJ1qjfDWcjYJiFgUI7syJX9
+         PCfqC93duUF9bd2T/SBjwIfszfGUW2AdCPgm+wkNla5UgE7DE7XTQJscZ9r2LDwnCuYt
+         Zp/Z/KO58Ssl2Gygm6mkdxmAl6ZQwKTHbtrMJeOUjGSlA5cmaNMMUimNkEtbMh5MSwrW
+         ppNQ==
+X-Gm-Message-State: AOAM5332ig+Ru0QBl0NiCzyqP7+sOWMyxcEyYjCjj1nqIUWBTVZxoZby
+        R4b5gctfUrht1uOvNJBBlW7RPW0Rvy+tSF1cMmns46FU7ZXyFWy7+9Zq51vMQR5WPkQppuPAOcL
+        GZfYgbGxdO3Rz2CJI/fsxjT1qHp1JV8QKDdWsxeue5RZ5
+X-Received: by 2002:a2e:8846:: with SMTP id z6mr1572340ljj.277.1635215386598;
+        Mon, 25 Oct 2021 19:29:46 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJynH2p5Q/d3q8po75eyLScuoBHurmQzxoMQYZvDuVwpXkiyjRKbg3lG4lyNps31IP9RfRnyLeR+hJ3uxAAQOeI=
+X-Received: by 2002:a2e:8846:: with SMTP id z6mr1572308ljj.277.1635215386353;
+ Mon, 25 Oct 2021 19:29:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211025102240.22801-1-colin.i.king@gmail.com>
+In-Reply-To: <20211025102240.22801-1-colin.i.king@gmail.com>
+From:   Jason Wang <jasowang@redhat.com>
+Date:   Tue, 26 Oct 2021 10:29:35 +0800
+Message-ID: <CACGkMEv2UOaf0phkXYsV=L3fn3BCxXUj-Vx3o1MeYQhvY_B-wg@mail.gmail.com>
+Subject: Re: [PATCH][next] virtio_blk: Fix spelling mistake: "advertisted" -> "advertised"
+To:     Colin Ian King <colin.i.king@googlemail.com>
+Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The command "make clang-analyzer" detects dead stores in
-mpage_process_page() function.
+On Mon, Oct 25, 2021 at 6:22 PM Colin Ian King
+<colin.i.king@googlemail.com> wrote:
+>
+> There is a spelling mistake in a dev_err error message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
 
-Do not reset io_end_size to 0 in the current paths, as the function
-exits on those paths without further using io_end_size.
+Acked-by: Jason Wang <jasowang@redhat.com>
 
-Signed-off-by: Nghia Le <nghialm78@gmail.com>
----
- fs/ext4/inode.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 0f06305167d5..03efed2ed1ea 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -2260,7 +2260,6 @@ static int mpage_process_page(struct mpage_da_data *mpd, struct page *page,
- 			mpd->map.m_len = 0;
- 			mpd->map.m_flags = 0;
- 			io_end_vec->size += io_end_size;
--			io_end_size = 0;
- 
- 			err = mpage_process_page_bufs(mpd, head, bh, lblk);
- 			if (err > 0)
-@@ -2285,7 +2284,6 @@ static int mpage_process_page(struct mpage_da_data *mpd, struct page *page,
- 	} while (lblk++, (bh = bh->b_this_page) != head);
- 
- 	io_end_vec->size += io_end_size;
--	io_end_size = 0;
- 	*map_bh = false;
- out:
- 	*m_lblk = lblk;
--- 
-2.25.1
+>  drivers/block/virtio_blk.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+> index c336d9bb9105..9dd0099d2bd2 100644
+> --- a/drivers/block/virtio_blk.c
+> +++ b/drivers/block/virtio_blk.c
+> @@ -560,7 +560,7 @@ static int init_vq(struct virtio_blk *vblk)
+>         if (err)
+>                 num_vqs = 1;
+>         if (!err && !num_vqs) {
+> -               dev_err(&vdev->dev, "MQ advertisted but zero queues reported\n");
+> +               dev_err(&vdev->dev, "MQ advertised but zero queues reported\n");
+>                 return -EINVAL;
+>         }
+>
+> --
+> 2.32.0
+>
 
