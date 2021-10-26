@@ -2,115 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BEFBC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Oct 2021 14:29:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81E47C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Oct 2021 15:40:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16DF461106
-	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Oct 2021 14:29:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E6636109D
+	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Oct 2021 15:40:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236622AbhJZOcO (ORCPT
+        id S237002AbhJZPnH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 26 Oct 2021 10:32:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55386 "EHLO
+        Tue, 26 Oct 2021 11:43:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236637AbhJZOcA (ORCPT
+        with ESMTP id S236772AbhJZPnC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 26 Oct 2021 10:32:00 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3CEDC061745;
-        Tue, 26 Oct 2021 07:29:32 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id g205-20020a1c20d6000000b0032cc6bbd505so2749614wmg.5;
-        Tue, 26 Oct 2021 07:29:32 -0700 (PDT)
+        Tue, 26 Oct 2021 11:43:02 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04CE7C061745
+        for <kernel-janitors@vger.kernel.org>; Tue, 26 Oct 2021 08:40:38 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id s19so16596390ljj.11
+        for <kernel-janitors@vger.kernel.org>; Tue, 26 Oct 2021 08:40:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=RHa+Rgak7KYfG/GiuSya4DwIwWSin95Lmp23d+Ek348=;
-        b=gRQ6lVYFKlp6Z0xeJ7Hzq8kFxDXhHRAWN1qP/kdsZySvg4IxghT16L/+lNDXy9rMK4
-         CE4LUg/2kUSuerAUdVkOJ93caOgdYi/PJLzD0Rx02/VJ4p1QHZuqToUaPXlW44ra7st+
-         bfeqlsdYfoqUq7PkP9ybAoJp1Iw9Bi6RAGeqDVGnPHwq11bT9emw2LvuZ00qvCFQ8dkG
-         Wx8gaPX7SVsb6uXY3oSqreLj9xBVx1sUB1BWBGtlE3m7fZOSFpfccVBlF9jKaZRJECuw
-         EBGA8QaZXoeEJ70CflNR0I+YK9uw3UaylSfe8npxcgUrFZKYIb9I1Xt47Why+i188XG7
-         Tvzw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yuAeUf9uZkiKUJDSGobKdOnKcJ1uapOPXzgjXviYDro=;
+        b=muMlBrRY3/QCQrarET+Xe5M31Y3VLic0gR0j41gMQ8eAYF2HxZCDUd70WvE/Bjnei1
+         3trPRvzaln8YUcRy/jJuZHGB6oLaj8+pGuquEVE9DTSkynGZh7xu7wmSHE4+7HppLKC4
+         vCVkTDeOxXwWvOw8qLTsHnT17A8koWmSw+oMKXawstQD4FxN/Cz6elLurwvZr8bPPKP2
+         odkXmLs/l8g0ppbEwBN11TGIKFIzR3sHgzAiBL0nCGTSeuy4RI/HW5Hs3vKJcmbb3C9Q
+         gFONbN8eIhLX/VvQGoQnXN1ZalnTFHjt+eaLd7bzOA6cqN44tyLJ+vCdtfyK+TEyeYuh
+         W8sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RHa+Rgak7KYfG/GiuSya4DwIwWSin95Lmp23d+Ek348=;
-        b=JUixoyqhPxQX74l+9hfh/STv4QnuFeMLJEqr3fzdJd/5n5neqBykmgp9n2bbWwv2Ji
-         BFr+PURsP/uGC+XBBxUVX+T6OhELRO8Kohb+dO0k/RF58+msXJTSQPhfedNK+CL7Cj6U
-         xOEC6amGW6rRKLBouiZ5RG+W9zhTHad4Q4EIqs63+Rb+ylIywru8rMuzGURGvvciK38Q
-         LmbFitR3bbcWtge4J/+CiBxMUXOLLrhAncKHj4gpiVCqMUKwvbT2q1sRPzCm+vqzbjOB
-         cF/WDBSAUo1ikv1fD+gMvNXJvQgkrpFV/BmasjOgTykL8ltJC6NKMlbeXkqKbLdQmPaN
-         4xhA==
-X-Gm-Message-State: AOAM530CevyWXVlQ1Jk9etfqz9SMDGYxaushPwbQTEboVSleyx0pwrpC
-        2Sw/cNRZtxaHXzXoh1Dwgg4=
-X-Google-Smtp-Source: ABdhPJzsqYlI5jjmeDTdd2RH7OeBlPYYybYzSTYReYGnh0Gd3mIODs2JSHDui0TosxuLT4W6SyvPsQ==
-X-Received: by 2002:a05:600c:b41:: with SMTP id k1mr58259599wmr.4.1635258570950;
-        Tue, 26 Oct 2021 07:29:30 -0700 (PDT)
-Received: from localhost.localdomain (i5C74E3E5.versanet.de. [92.116.227.229])
-        by smtp.gmail.com with ESMTPSA id f18sm18745717wrg.3.2021.10.26.07.29.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Oct 2021 07:29:30 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Punit Agrawal <punit1.agrawal@toshiba.co.jp>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-        Wilken Gottwalt <wilken.gottwalt@posteo.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Yu Chen <chenyu56@huawei.com>, Sam Ravnborg <sam@ravnborg.org>,
-        Edmund Dea <edmund.j.dea@intel.com>,
-        kernel-janitors@vger.kernel.org, Joe Perches <joe@perches.com>,
-        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
-        linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH v5 4/4] MAINTAINERS: rectify entry for ALLWINNER HARDWARE SPINLOCK SUPPORT
-Date:   Tue, 26 Oct 2021 16:19:02 +0200
-Message-Id: <20211026141902.4865-5-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20211026141902.4865-1-lukas.bulwahn@gmail.com>
-References: <20211026141902.4865-1-lukas.bulwahn@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yuAeUf9uZkiKUJDSGobKdOnKcJ1uapOPXzgjXviYDro=;
+        b=Z0iubUcyn/LWPhpoEcgbq4azEUtSieVGqhmdu/7brgHGSnCbj+H+tG88OSUKI/tHB8
+         2dgOc6/n7VrYkjQpkAGXtyH6Zh0GNbZqHnME1D67iSTt6Jv/svOT4kPPSO36ue1TBgVi
+         OtAMLcKZAUAz+HViE8CkSmUI135+M7UVKy/F/0MXlXtz3vPc/uUkAfhpMo03wPLZMCd7
+         wW2ZISEez8j5ApwIX188d+AGJWBWcysABt0a7ljYkCSyj4KyFaLEikBFPF+5sfgzH43a
+         mEh34n3+MJzYvxMDykRk4A3RfAdWC9aAKWULeNaqm7hmtyhWg0NvcrD2VNxnzdeDASWl
+         YrUw==
+X-Gm-Message-State: AOAM533v9GB+5UuUdzW+NUd79nWAenLWsNTMY3pc6NKsuwl29e5Vlja5
+        hN37Llkqnp7W6QVwMXxbtm4w2AFXJt8N8qtF+75FTA==
+X-Google-Smtp-Source: ABdhPJwJxayy3+qErnJw+sJ9TklHlWV26/nGoMVeRjTBnpEsMJAPY+suHEdAsQ4L/4uK7Ul8VoW5H9CPVhbKCZWsnjk=
+X-Received: by 2002:a2e:874d:: with SMTP id q13mr27385797ljj.16.1635262836382;
+ Tue, 26 Oct 2021 08:40:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211022054740.25222-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20211022054740.25222-1-lukas.bulwahn@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 26 Oct 2021 17:39:59 +0200
+Message-ID: <CAPDyKFqt9a+WhoRiyyQWSsJugSqbzoWniba0xL=w_0Rw3Xn0hQ@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: drop obsolete file pattern in SDHCI DRIVER section
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-mmc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit f9e784dcb63f ("dt-bindings: hwlock: add sun6i_hwspinlock") adds
-Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml,
-but the related commit 3c881e05c814 ("hwspinlock: add sun6i hardware
-spinlock support") adds a file reference to allwinner,sun6i-hwspinlock.yaml
-instead.
+On Fri, 22 Oct 2021 at 07:47, Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> Commit 5c67aa59bd8f ("mmc: sdhci-pci: Remove dead code (struct
+> sdhci_pci_data et al)") removes ./include/linux/mmc/sdhci-pci-data.h;
+> so, there is no further file that matches 'include/linux/mmc/sdhci*'.
+>
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
+>
+>   warning: no file matches    F:    include/linux/mmc/sdhci*
+>
+> Drop this obsolete file pattern in SECURE DIGITAL HOST CONTROLLER
+> INTERFACE (SDHCI) DRIVER.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
+Applied for next, thanks!
 
-  warning: no file matches  F:  Documentation/devicetree/bindings/hwlock/allwinner,sun6i-hwspinlock.yaml
+Kind regards
+Uffe
 
-Rectify this file reference in ALLWINNER HARDWARE SPINLOCK SUPPORT.
 
-Reviewed-by: Wilken Gottwalt <wilken.gottwalt@posteo.net>
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 88cc726c36c0..aa88e9a0a747 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -761,7 +761,7 @@ F:	drivers/crypto/allwinner/
- ALLWINNER HARDWARE SPINLOCK SUPPORT
- M:	Wilken Gottwalt <wilken.gottwalt@posteo.net>
- S:	Maintained
--F:	Documentation/devicetree/bindings/hwlock/allwinner,sun6i-hwspinlock.yaml
-+F:	Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml
- F:	drivers/hwspinlock/sun6i_hwspinlock.c
- 
- ALLWINNER THERMAL DRIVER
--- 
-2.26.2
-
+> ---
+> applies cleanly on next-20211021
+>
+> Ulf, please pick this minor non-urgent cleanup patch on top of the
+> commit above.
+>
+>  MAINTAINERS | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 44c590b762d1..c47ac3e938b7 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -17024,7 +17024,6 @@ M:      Adrian Hunter <adrian.hunter@intel.com>
+>  L:     linux-mmc@vger.kernel.org
+>  S:     Maintained
+>  F:     drivers/mmc/host/sdhci*
+> -F:     include/linux/mmc/sdhci*
+>
+>  SECURE DIGITAL HOST CONTROLLER INTERFACE (SDHCI) MICROCHIP DRIVER
+>  M:     Eugen Hristev <eugen.hristev@microchip.com>
+> --
+> 2.26.2
+>
