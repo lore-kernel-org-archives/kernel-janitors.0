@@ -2,38 +2,38 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF75FC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:56:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9133C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8603260C40
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:56:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C07361040
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:57:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231151AbhJ1O6k (ORCPT
+        id S231316AbhJ1O7g (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Oct 2021 10:58:40 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:33537 "EHLO
+        Thu, 28 Oct 2021 10:59:36 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:39241 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231133AbhJ1O6k (ORCPT
+        with ESMTP id S230406AbhJ1O7g (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Oct 2021 10:58:40 -0400
+        Thu, 28 Oct 2021 10:59:36 -0400
 Received: from mail-wr1-f49.google.com ([209.85.221.49]) by
- mrelayeu.kundenserver.de (mreue011 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1Mz9lL-1mswmd0Cm3-00wBpl; Thu, 28 Oct 2021 16:56:12 +0200
-Received: by mail-wr1-f49.google.com with SMTP id p14so10658012wrd.10;
-        Thu, 28 Oct 2021 07:56:11 -0700 (PDT)
-X-Gm-Message-State: AOAM530zHgU/Vw5xnI07VQu5CNYWmyot/ZYrpzoRqofhbc+8/SuVZ5XG
-        SJT2o1dqBIhqgzIoKZ87YQ9HXhM2FwD1ONvWf7o=
-X-Google-Smtp-Source: ABdhPJwx9NcCmHJMSLM29R/SVHRZzG6w605oc3D2wfqxIx3V41SSM8/BC8wbtl7pPHOGIthLY2prb87n5I3vpE71OMU=
-X-Received: by 2002:a5d:47a3:: with SMTP id 3mr6338651wrb.336.1635432971649;
- Thu, 28 Oct 2021 07:56:11 -0700 (PDT)
+ mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MxUfn-1mrI4Y3qH3-00xpfR; Thu, 28 Oct 2021 16:57:07 +0200
+Received: by mail-wr1-f49.google.com with SMTP id k7so10658875wrd.13;
+        Thu, 28 Oct 2021 07:57:07 -0700 (PDT)
+X-Gm-Message-State: AOAM530wNYAkG1XaEVBtLjYZuUB1wIime9QTvn7wtHlcbBox1Jyulkvc
+        dlmg6n40AbUeRb/vAS3Y1BZ6xpeAAwhM5LpH0JA=
+X-Google-Smtp-Source: ABdhPJxP1grjJwE+eREFwm/g0od2WsyCmYOCzERrnEnwT7SMwPO/+TGcXtuVQVGPKCHOmgziQBHKU/CZ/dq+VUSxnJ4=
+X-Received: by 2002:adf:ab46:: with SMTP id r6mr6397722wrc.71.1635433027582;
+ Thu, 28 Oct 2021 07:57:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211028141938.3530-1-lukas.bulwahn@gmail.com> <20211028141938.3530-11-lukas.bulwahn@gmail.com>
-In-Reply-To: <20211028141938.3530-11-lukas.bulwahn@gmail.com>
+References: <20211028141938.3530-1-lukas.bulwahn@gmail.com> <20211028141938.3530-12-lukas.bulwahn@gmail.com>
+In-Reply-To: <20211028141938.3530-12-lukas.bulwahn@gmail.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 28 Oct 2021 16:55:55 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a3O0ZGmvaZkRnBCjqUG70+CpmitP2RebW44y=JCEd92Kw@mail.gmail.com>
-Message-ID: <CAK8P3a3O0ZGmvaZkRnBCjqUG70+CpmitP2RebW44y=JCEd92Kw@mail.gmail.com>
-Subject: Re: [PATCH 10/13] arm: nomadik: drop selecting obsolete CLKSRC_NOMADIK_MTU_SCHED_CLOCK
+Date:   Thu, 28 Oct 2021 16:56:51 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a0Nq9hLbGiPCQTjVTiGFPR9-tdhN8Tf06Q=cWTgMK78yw@mail.gmail.com>
+Message-ID: <CAK8P3a0Nq9hLbGiPCQTjVTiGFPR9-tdhN8Tf06Q=cWTgMK78yw@mail.gmail.com>
+Subject: Re: [PATCH 11/13] arm: npcm: drop selecting non-existing ARM_ERRATA_794072
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
 Cc:     Russell King <linux@armlinux.org.uk>,
         Shawn Guo <shawnguo@kernel.org>,
@@ -58,42 +58,41 @@ Cc:     Russell King <linux@armlinux.org.uk>,
         kernel-janitors@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:FOVKSMgYrX4xdntFWeLP8fgcAfyuwbT1pfSao+mxRVQHjC4oiZv
- 98iTMHUER3SBCnEBNtisi45oGy+tOjbNjUnQQ19owJMJC7XKH7an8UHgDunqmuWr5FPmhf9
- sZ+9LjlaGT3+TFEc8huFBdPItz+31Uh6UUe0IOwjSjfbbDEv7G38G98pWGEe3KrFVqidex7
- OP5zVNjMMZaqawB8dsMdA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:FrJN2Hl+xLc=:UP5kNEn6SFr2XgZ4WrHTf9
- lpIuiGIjDVOuOATaWy7gfiLQ46YYEjxemMSk0SI6jZvyLrbntls30WBQ5+IzEULIm5l2ZljXK
- vx0v4rMecW40fnibhjKiwY7CwaDLs5p/QT02WV/sZdLxn+LvX9+yqqRggzysWiL/dbthZefS0
- /Dbh/wPtKusXDj/5Y3czRMddtP6WItNh0icGJsDHqLWUcGbd5rLOTVwj3X67tdtc6xn6c+KXS
- w/gkQVbBOGqlvl5UpcPvo5C9gfR0K+TUJKvRV9dH1cOftYoHmlqVU72UW9Rg1r/ZIDP9nGFX6
- NCSlJ5Y0o9GH4CjBv52pRrfrwNW3M2TL2W/NpOK3ZG+FrrA7og3pqSMD8LoCN8FItPZvXCYVM
- XNCq7RClVaayye8v3RzSMDxzmTLjrhg5slTJXLAc5XhNg9kydg7zTlSQb31+TS7nHNpuxQuJM
- ybmezmXOsZ+BFgK707S4EJKLWp+5EDz1uF1hfcy07TuBpMtQj5gmLIUH5oP44AHRVior6MJOZ
- /lW6vjIot5I5y01k7B2Rnt0slvOiWOg+CI1gC/wS/CopDzMN5GpN4LiI9/STns9O35Uf09BU/
- 1/eKdU11+tRydtR55lfGGlRdMUaMIZCkJq6L0JOv1YcxTM6vMwTkUYf8nZ/SHfiIICtfysct+
- ou39kuAEzT6xzOgSiuRScGdqnB3/abqhYKnvVLkyFYm4QOzHN6jKEJx9LYTGRXBzfe/wpcwaU
- rC7ZnnBhIdm2Bpom+DLyhZ8lDyXzjCgqSAxONLBAp18bZL7Ai58TFjga+H/g3ATFlXV3SfWED
- d0BzcU056Dz0uvSvsKe6EFXkTwt9XsAACwGAcYpyjo3/nhKYmiaYby3yRKvPNDwvZQuBIm8K8
- JxH5B6yx1UPaIqNidpnGRqRtOc3Iody96pcB467XgGtf9qNqb4CHhRtJM5Zs4LqeyR96oRhkf
- PBguNa72vqw==
+X-Provags-ID: V03:K1:K69ee536+KosoO56BzVgfCa3QF1AsVV/vnYyNvM5vhpsARkvQxg
+ k8owT2eK6V/o8/EM0rnEisbkr8c4Sp9DEoZqg0ZJ9i329ZtdNw22plEHyF3bDPgCkx2yid/
+ 8PAD/bqP9O2h9/MG0Jw+lbBce8ywUqKGjhYYCd/EcfSo4CITF9wnQUgfkJ6ZU9Dmazan2yE
+ fqTXpjn2AaVAlJ734p57w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:EOdx6tYTdlg=:nITkJVxSExEAyoYC0WdiPb
+ kRSvUX9E1bKR1zypZqWFg/VS8zhz0MguJCFv5uTnIpRaCvfCXALwWFP7+GFMYl2QBMz7lJLVJ
+ hGyQ31z+NjG035ie9ToOkmsPpiUkkl2mXBDVmf5t5p/gdocCQfcnYukVI4LXxuFXrRIBvVgZF
+ IpKaq+M/I8kgMePyzKcnr1belG3R+9VIQDfkzN8nd2FOlU2Tm2i7kJRCyF8XGIiNUqpfRED0m
+ 1X4vJj6tLNg2IS5DZZK8zDaz5i3+ZlQeNgVleT+kD4NX7YoCEugx/5K/cKcc3oyzEQ0DhWWbb
+ 7kPnz1B2dprSXcqEG2yuyLa39k2PYpGybXFatPUgqBMFTuymNPIs1Ne17/NgoLvnjX1wztDkl
+ vsSAhExWozZErhSrGkHwF4OVtf7htTCR+btEsIquyfXkObFTHSTJ8zX4bM/5oCp4X5HgP1LRw
+ bTEpmRqIE9LfqTwXVTSZ2uKIXldfSyqlXvVhaW9vuWoRjMmHRjD/2X1//T3RHpw8PLpHDBxYW
+ vRUPM/idR03grgv5wcu0Jn06wl6fOSWhZ++2qMEDS2d4qTDK5PS50cSD8+aRKfKq+2klEJE8M
+ p+5QqFcVdBetN5yOpso0tSG4kPpF0MxcHwEEl/beMRjsAgu9rtuWrx4xxpxb5079605yMAy0B
+ 2CmaWBK8mW+nB49erbUmrdstXCXEVdEqQqPt5G5L143A8BLHbg0nY5m+4dnGqOTxm2QVIsfUh
+ 7Izuct8BtG5laCUz7fBhzy1TAVGxqph9b0ltFKkqJvuaTfHfLhzAGbz2X57EhDIChs9X+5Spj
+ pJ5MHd7VZYvLWHvDFEKncoBYqPkFANLuyJfOLgzjWOOdSOXyW6u4AJCzSH1fNmCYJKetAxP
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 On Thu, Oct 28, 2021 at 4:19 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 >
-> Commit 85b6fcadcf66 ("clocksource/drivers/ux500: Drop Ux500 custom
-> SCHED_CLOCK") removes a sched_clock workaround and its corresponding
-> config CLKSRC_NOMADIK_MTU_SCHED_CLOCK. Since then, selecting
-> CLKSRC_NOMADIK_MTU_SCHED_CLOCK in ./arch/arm/mach-nomadik/Kconfig has no
-> effect and ./scripts/checkkconfigsymbols.py warns:
+> There is no and never was a Kconfig for ARM_ERRATA_794072 in the kernel
+> tree. So, there is no need to select ARM_ERRATA_794072 in
+> ./arch/arm/mach-npcm/Kconfig.
 >
-> CLKSRC_NOMADIK_MTU_SCHED_CLOCK
-> Referencing files: arch/arm/mach-nomadik/Kconfig
+> Simply drop selecting the non-existing ARM_ERRATA_794072.
 >
-> Simply drop selecting the obsolete CLKSRC_NOMADIK_MTU_SCHED_CLOCK.
+> This issue was discovered with ./scripts/checkkconfigsymbols.py.
 >
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Could this be a typo? Maybe we need to enable a different errata workaround
+here, or maybe that code is actually needed and has to get sent.
+
+        Arnd
