@@ -2,130 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC4D1C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 16:44:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D28C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 18:23:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C26F3610CF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 16:44:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD32A600CD
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 18:23:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230225AbhJ1QrJ (ORCPT
+        id S230495AbhJ1SZv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Oct 2021 12:47:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34858 "EHLO
+        Thu, 28 Oct 2021 14:25:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229761AbhJ1QrI (ORCPT
+        with ESMTP id S229645AbhJ1SZu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Oct 2021 12:47:08 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4905C061570
-        for <kernel-janitors@vger.kernel.org>; Thu, 28 Oct 2021 09:44:41 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id f8so4819137plo.12
-        for <kernel-janitors@vger.kernel.org>; Thu, 28 Oct 2021 09:44:41 -0700 (PDT)
+        Thu, 28 Oct 2021 14:25:50 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31042C061570;
+        Thu, 28 Oct 2021 11:23:23 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id z11-20020a1c7e0b000000b0030db7b70b6bso10256646wmc.1;
+        Thu, 28 Oct 2021 11:23:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=jSIfnI7MQAHzmYbWsa55tC1HPw8ddYjjYO0zKn+HJ8s=;
-        b=ywUtE77eKqUVOePjgXz+r0KqYm7mtXBFy3cYHBMbed+RnvptTuh54lPXKIpoxULqoj
-         ii9zyeMF4Vev0ewU33J3USJnKWMjUGyV1iIS5a4YL8YRbauaaWih5XZFU0z1xasrwUcg
-         J/ogNZAqB+vRAD/JLE0eNxyDY9NWoKtyb03AfLDra0Asxw/49u0CfkNgz47gvVQNVCBZ
-         mJLdoroh3KQrBJEqZ6ewVTDo3TyqnvowgBgWh84EYofvYJhdtkn0unmZ0cPVJcirwOoX
-         SoeYo/F3NGSySBNA1bCqHqlrVWRJrnm7VIAodgGXqO1wKdmAo4C22piaxpbZHbG3Wh4y
-         SgcQ==
+        d=googlemail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nx0iv12nPNq0xv+S+M126wstpTLUx3VwSBHCsj93iwU=;
+        b=cVVai5T37au/0HZs46NwbzUiwpmDhAsc4UV7lhcyc2TMuY5+nvx02GsReblQ9aSdn5
+         Z2QL3q3xHmZ9zca4ABAQKolfzf4RdxXxvWKjR39melidS/pbYv0mRqRQVaeeiAfGVW14
+         acJe6L7nKdIQ68gF4iKumOv6x1S4fLw670xXm5pH9CQe1zTNwUABs1AFkGB6coiUhFx5
+         CVuAYtIaA0ZcqvdNQfqFXeG8ZZ82d0b6s/Tj5MxLf94B+DGwDSc8k5NZu12WaqTi8wu+
+         NZr+JKkN+Ro1C/xbkj9LzEP5r1f0feHCLr5FiSR+3583J78+OUwu0xzWQ9U8y/1brQwL
+         XcJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=jSIfnI7MQAHzmYbWsa55tC1HPw8ddYjjYO0zKn+HJ8s=;
-        b=3YzE9+Rb0xbkV8vIdcA5eGjJ3JW1Tqxb307qz8bNlFwZdRJnwB5Q5h5TU0WCtaEON1
-         Dix3NGLcgLHu1ZJA00LkDsBB1GtSTkUUoODwtLcP/+045Z+mgukTw5fV17fMwkeBxFsH
-         ufehgxc2JzqiWqjhNG9EWnFZ7va4VMXiKJZ7N7td4TBhare407juGHDoU9aYd8+h7fp8
-         8rG6emLAqLBDBrxXkTVuCHbLaQGTQgbuZaE6xJQkjHQfKiwMo2Wi+Vhjm5liLT35btsP
-         1Fr7pOZudfOIsEnbLATTgyFIcIGwff5Wa73YCujNSVhnutHjLbEyZeEkICCkhhnFOnO3
-         BjQw==
-X-Gm-Message-State: AOAM532YCEydTdMcAOUEaBT1HYI00SKakg3Bbgt5pfXcCDvRaUtcuTz1
-        ofAn+sGKb5MDuxPKT7JJw71phQ==
-X-Google-Smtp-Source: ABdhPJx82C63B35ZWB+HVNntHTa/NJT3Hk+DKgJOMXkel40VGwu1VgN5Lw975JF9hobnf6bT22adMw==
-X-Received: by 2002:a17:902:e789:b0:140:801:1262 with SMTP id cp9-20020a170902e78900b0014008011262mr4865442plb.42.1635439481231;
-        Thu, 28 Oct 2021 09:44:41 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id g17sm3349474pfc.193.2021.10.28.09.44.38
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nx0iv12nPNq0xv+S+M126wstpTLUx3VwSBHCsj93iwU=;
+        b=qgCnZqgUasVgddDTT4VLCXCccR+WY5/Qg0X46QOasI8OX7QuR37uPp0VEE62gFyodW
+         EIfTmSJQ8e8SD159UXXJlmgeQnNfMAtHxAwhRrow0kl+1qt7mXOi2R1q8JJjueuAHHwd
+         ILUYXHIKzSh1xQDFQksYuO9j+JL3SS6Mdx2xdQXiJWTq9ZnmoJ/7O9PO9SCqpA3fUAah
+         I5vNHk0fOdhZ0HGo32fTHLf/fTtkH8sb1EROGoNysgRCbv1zuiaMXPAr8tQDMZORao2G
+         6WIWn/UjE576uo6ySLgNiOkiq/Mi7WVK8OVGeYOzI3DfEmrSQ9rLD4tfmKAUr4tItKx2
+         OL7A==
+X-Gm-Message-State: AOAM531rn2zIV58vEIT1XoH52+usYVh7wFBv1lmfgplCeADNRlUZlGV9
+        uLxiUG1TASMOcA==
+X-Google-Smtp-Source: ABdhPJxQu8KerruMFTRcXfH32iZjyHSKgYfHc9rjZ6iGqPxrd/AxbQIu6PCk7Lz5hdYUD2pPq9AlOQ==
+X-Received: by 2002:a7b:c103:: with SMTP id w3mr14416613wmi.145.1635445401540;
+        Thu, 28 Oct 2021 11:23:21 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id 9sm6604158wmi.46.2021.10.28.11.23.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Oct 2021 09:44:39 -0700 (PDT)
-Date:   Thu, 28 Oct 2021 10:44:37 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Joe Perches <joe@perches.com>, suzuki.poulose@arm.com,
-        mike.leach@linaro.org, leo.yan@linaro.org,
-        alexander.shishkin@linux.intel.com, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@foss.st.com, coresight@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] coresight: Use devm_bitmap_zalloc when applicable
-Message-ID: <20211028164437.GA4045120@p14s>
-References: <e5fe23370794e2f5442e11e7f8455ddb06e4b10a.1635016943.git.christophe.jaillet@wanadoo.fr>
- <663d3820f118c37a81529b3362b95e09c8e75e9f.camel@perches.com>
- <bb913ce7-bae6-3b3e-180f-946786f7d300@wanadoo.fr>
+        Thu, 28 Oct 2021 11:23:21 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@googlemail.com>
+X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        linux-doc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] speakup: Fix typo in documentation "boo" -> "boot"
+Date:   Thu, 28 Oct 2021 19:23:19 +0100
+Message-Id: <20211028182319.613315-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <bb913ce7-bae6-3b3e-180f-946786f7d300@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Good day,
+There is a typo in the speakup documentation. Fix it.
 
-On Sat, Oct 23, 2021 at 10:09:14PM +0200, Christophe JAILLET wrote:
-> Le 23/10/2021 à 21:36, Joe Perches a écrit :
-> > On Sat, 2021-10-23 at 21:24 +0200, Christophe JAILLET wrote:
-> > > 'drvdata->chs.guaranteed' is a bitmap. So use 'devm_bitmap_kzalloc()' to
-> > > simplify code, improve the semantic and avoid some open-coded arithmetic
-> > > in allocator arguments.
-> > []
-> > > diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
-> > []
-> > > @@ -862,7 +862,6 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
-> > >   	struct stm_drvdata *drvdata;
-> > >   	struct resource *res = &adev->res;
-> > >   	struct resource ch_res;
-> > > -	size_t bitmap_size;
-> > >   	struct coresight_desc desc = { 0 };
-> > >   	desc.name = coresight_alloc_device_name(&stm_devs, dev);
-> > > @@ -904,9 +903,7 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
-> > >   	else
-> > >   		drvdata->numsp = stm_num_stimulus_port(drvdata);
-> > > -	bitmap_size = BITS_TO_LONGS(drvdata->numsp) * sizeof(long);
-> > > -
-> > > -	guaranteed = devm_kzalloc(dev, bitmap_size, GFP_KERNEL);
-> > > +	guaranteed = devm_bitmap_zalloc(dev, drvdata->numsp, GFP_KERNEL);
-> > >   	if (!guaranteed)
-> > >   		return -ENOMEM;
-> > >   	drvdata->chs.guaranteed = guaranteed;
-> > 
-> > guaranteed is also pretty useless
-> > 
-> 
-> I agree, but removing it would make the line with devm_bitmap_zalloc() 86
-> chars. This would not be consistent with the rest of the file and would
-> (IMHO) require splitting.
-> 
-> Let see if the maintainer prefer saving one additional line of code, or
-> keeping the logic in place.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ Documentation/admin-guide/spkguide.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I think we can get rid of @guaranteed and splitting is fine with me:
+diff --git a/Documentation/admin-guide/spkguide.txt b/Documentation/admin-guide/spkguide.txt
+index 977ab3f5a0a8..1265c1eab31c 100644
+--- a/Documentation/admin-guide/spkguide.txt
++++ b/Documentation/admin-guide/spkguide.txt
+@@ -543,7 +543,7 @@ As mentioned earlier, Speakup can either be completely compiled into the
+ kernel, with the exception of the help module, or it can be compiled as
+ a series of modules.   When compiled as modules, Speakup will only be
+ able to speak some of the bootup messages if your system administrator
+-has configured the system to load the modules at boo time. The modules
++has configured the system to load the modules at boot time. The modules
+ can  be loaded after the file systems have been checked and mounted, or
+ from an initrd.  There is a third possibility.  Speakup can be compiled
+ with some components built into the kernel, and others as modules.  As
+-- 
+2.32.0
 
-        drvdata->chs.guaranteed = devm_bitmap_zalloc(dev,
-                                                     drvdata->numsp,
-                                                     GFP_KERNEL);
-
-Thanks,
-Mathieu
-
-
-> 
-> CJ
-> 
