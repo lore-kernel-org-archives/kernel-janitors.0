@@ -2,38 +2,38 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00443C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:55:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF75FC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:56:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CCE4B61106
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:55:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8603260C40
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:56:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231360AbhJ1O6O (ORCPT
+        id S231151AbhJ1O6k (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Oct 2021 10:58:14 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:56153 "EHLO
+        Thu, 28 Oct 2021 10:58:40 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:33537 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231332AbhJ1O6N (ORCPT
+        with ESMTP id S231133AbhJ1O6k (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Oct 2021 10:58:13 -0400
-Received: from mail-wm1-f46.google.com ([209.85.128.46]) by
- mrelayeu.kundenserver.de (mreue010 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MMoKq-1mPgOb0rpM-00Im5d; Thu, 28 Oct 2021 16:55:45 +0200
-Received: by mail-wm1-f46.google.com with SMTP id b82-20020a1c8055000000b0032ccc728d63so5310001wmd.1;
-        Thu, 28 Oct 2021 07:55:45 -0700 (PDT)
-X-Gm-Message-State: AOAM532/N7g6S5pOl9rEuz5PmvUljnl/3zHmeseFtDFX8NxX3rsHoQt8
-        XUIXSKS3Eex1UI5utesIRq2D1HnJz+PFJxHa6d8=
-X-Google-Smtp-Source: ABdhPJyG4uqa4KI4PxkZID5NK7baIbLWZaHnCQ9DvZVpGK/tLF/blE/NbR3DQZF6k+qtTHAHzW4lFAsVA+2j3CeEgVo=
-X-Received: by 2002:a05:600c:1548:: with SMTP id f8mr5021740wmg.35.1635432944804;
- Thu, 28 Oct 2021 07:55:44 -0700 (PDT)
+        Thu, 28 Oct 2021 10:58:40 -0400
+Received: from mail-wr1-f49.google.com ([209.85.221.49]) by
+ mrelayeu.kundenserver.de (mreue011 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1Mz9lL-1mswmd0Cm3-00wBpl; Thu, 28 Oct 2021 16:56:12 +0200
+Received: by mail-wr1-f49.google.com with SMTP id p14so10658012wrd.10;
+        Thu, 28 Oct 2021 07:56:11 -0700 (PDT)
+X-Gm-Message-State: AOAM530zHgU/Vw5xnI07VQu5CNYWmyot/ZYrpzoRqofhbc+8/SuVZ5XG
+        SJT2o1dqBIhqgzIoKZ87YQ9HXhM2FwD1ONvWf7o=
+X-Google-Smtp-Source: ABdhPJwx9NcCmHJMSLM29R/SVHRZzG6w605oc3D2wfqxIx3V41SSM8/BC8wbtl7pPHOGIthLY2prb87n5I3vpE71OMU=
+X-Received: by 2002:a5d:47a3:: with SMTP id 3mr6338651wrb.336.1635432971649;
+ Thu, 28 Oct 2021 07:56:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211028141938.3530-1-lukas.bulwahn@gmail.com> <20211028141938.3530-10-lukas.bulwahn@gmail.com>
-In-Reply-To: <20211028141938.3530-10-lukas.bulwahn@gmail.com>
+References: <20211028141938.3530-1-lukas.bulwahn@gmail.com> <20211028141938.3530-11-lukas.bulwahn@gmail.com>
+In-Reply-To: <20211028141938.3530-11-lukas.bulwahn@gmail.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 28 Oct 2021 16:55:28 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a2J3Eufd_LL7qX=0bui_PwkN1WATqrrigia3f6Z8b1tpg@mail.gmail.com>
-Message-ID: <CAK8P3a2J3Eufd_LL7qX=0bui_PwkN1WATqrrigia3f6Z8b1tpg@mail.gmail.com>
-Subject: Re: [PATCH 09/13] arm: milbeaut: remove select of non-existing PINCTRL_MILBEAUT
+Date:   Thu, 28 Oct 2021 16:55:55 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3O0ZGmvaZkRnBCjqUG70+CpmitP2RebW44y=JCEd92Kw@mail.gmail.com>
+Message-ID: <CAK8P3a3O0ZGmvaZkRnBCjqUG70+CpmitP2RebW44y=JCEd92Kw@mail.gmail.com>
+Subject: Re: [PATCH 10/13] arm: nomadik: drop selecting obsolete CLKSRC_NOMADIK_MTU_SCHED_CLOCK
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
 Cc:     Russell King <linux@armlinux.org.uk>,
         Shawn Guo <shawnguo@kernel.org>,
@@ -56,62 +56,44 @@ Cc:     Russell King <linux@armlinux.org.uk>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         OpenBMC Maillist <openbmc@lists.ozlabs.org>,
         kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Takao Orito <orito.takao@socionext.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Sugaya Taichi <sugaya.taichi@socionext.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:Qp7oa9KsoebkpfHalbn+jCKWAFV+hFejtjblL4QOIJSBoV9mZ3+
- m+JZfRkBDNi9ENKr2Gr05eR3ddkBwH/UQP+5Oc79OUhiXJH+WlrT6N/KfMYXFhNPhbeKqB6
- ZMde5Bvekp/nsdkiOThQFbv+Fp2y4HkreERlLeCYDMpQko6h19/xTZiDkLwV18hoVBEUDr6
- 42jQ1HEQx6E2tl53nT3BQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ckdhxfsX8Bg=:LBleLPDK1gU7S73dqytxJP
- 55/edOrIuP0rLwNyiEN7MfQ9kiHec4jI4mR56kIAowmamTYvG2osZ5vqj9z4wGAnl3FqHIPj4
- EzGDZcEQPqhPfgPZfW4qTYDZuRyBYshyCiUkCzBMW8wF6NVASu+FhpR9ovSyIW9Bbv7IxiLps
- ivWbgtCWr/sA8//6Wlc5MCOly4mywOkSYiLgYFL1HfpzxyxQbQqnGAkz/dF4qTu45QHlb4aIF
- Bg0O+k9IgMipP2OFlazXonFUczKUes8KWgSWqj5SLUROO4AG8/tNYeOAEJLAbhx0mxbHsn18K
- dSSeN+YidARh/juUa4oTvK57EZCJ9zRxusmw6zgKfrYFDiFS9qNIH5S0SUoDoQ1xm/GTrzByH
- EetOPDRuWa0XFWprLf7N0Ou/hhkItOqLAwc7pHgSI+DeAYjl5aOwqs1QnGR4A/NT6j8MpCIju
- oQj7dC8cwoRj3RMRjD8Pu5MKvK2Frk8f6Txun/AhD1b07cI3Lj1SUav/rH1BLEJMLXjn7zYUq
- qGyBv4LpC1U+CcmG92+6LBUrc9kR9W19b/LQj6V5oQvgw8y8kuC6rv27rDe4pTpNbxp4Gn21j
- QCocsjmORPawwb0xMRalHCZTUHoj5MNw95fTIbBDcCowZU+6R+CzyU8o/q5r9+c4bcz6ZdaiB
- VyHw3mDAC3Qxp8ppP1pCTYrehDloVzbJGsyUiQwexMvPhiUPC6fMU2qPHb8fZKINiQIdZmWM5
- kCAqURjnoB/NSKVhw0TbLX5mJrYcMKkK5KYWgh7V9SdS8iNT2tZYKFbGdubc1FMFhlEBBoEjX
- V4wfgk+d9BXuuLkOezRlzoEbISNV9Sec/v9sTXunrTXcFW2aT57ZLdrfQpmjjgx2DTHk0tJ
+X-Provags-ID: V03:K1:FOVKSMgYrX4xdntFWeLP8fgcAfyuwbT1pfSao+mxRVQHjC4oiZv
+ 98iTMHUER3SBCnEBNtisi45oGy+tOjbNjUnQQ19owJMJC7XKH7an8UHgDunqmuWr5FPmhf9
+ sZ+9LjlaGT3+TFEc8huFBdPItz+31Uh6UUe0IOwjSjfbbDEv7G38G98pWGEe3KrFVqidex7
+ OP5zVNjMMZaqawB8dsMdA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:FrJN2Hl+xLc=:UP5kNEn6SFr2XgZ4WrHTf9
+ lpIuiGIjDVOuOATaWy7gfiLQ46YYEjxemMSk0SI6jZvyLrbntls30WBQ5+IzEULIm5l2ZljXK
+ vx0v4rMecW40fnibhjKiwY7CwaDLs5p/QT02WV/sZdLxn+LvX9+yqqRggzysWiL/dbthZefS0
+ /Dbh/wPtKusXDj/5Y3czRMddtP6WItNh0icGJsDHqLWUcGbd5rLOTVwj3X67tdtc6xn6c+KXS
+ w/gkQVbBOGqlvl5UpcPvo5C9gfR0K+TUJKvRV9dH1cOftYoHmlqVU72UW9Rg1r/ZIDP9nGFX6
+ NCSlJ5Y0o9GH4CjBv52pRrfrwNW3M2TL2W/NpOK3ZG+FrrA7og3pqSMD8LoCN8FItPZvXCYVM
+ XNCq7RClVaayye8v3RzSMDxzmTLjrhg5slTJXLAc5XhNg9kydg7zTlSQb31+TS7nHNpuxQuJM
+ ybmezmXOsZ+BFgK707S4EJKLWp+5EDz1uF1hfcy07TuBpMtQj5gmLIUH5oP44AHRVior6MJOZ
+ /lW6vjIot5I5y01k7B2Rnt0slvOiWOg+CI1gC/wS/CopDzMN5GpN4LiI9/STns9O35Uf09BU/
+ 1/eKdU11+tRydtR55lfGGlRdMUaMIZCkJq6L0JOv1YcxTM6vMwTkUYf8nZ/SHfiIICtfysct+
+ ou39kuAEzT6xzOgSiuRScGdqnB3/abqhYKnvVLkyFYm4QOzHN6jKEJx9LYTGRXBzfe/wpcwaU
+ rC7ZnnBhIdm2Bpom+DLyhZ8lDyXzjCgqSAxONLBAp18bZL7Ai58TFjga+H/g3ATFlXV3SfWED
+ d0BzcU056Dz0uvSvsKe6EFXkTwt9XsAACwGAcYpyjo3/nhKYmiaYby3yRKvPNDwvZQuBIm8K8
+ JxH5B6yx1UPaIqNidpnGRqRtOc3Iody96pcB467XgGtf9qNqb4CHhRtJM5Zs4LqeyR96oRhkf
+ PBguNa72vqw==
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 On Thu, Oct 28, 2021 at 4:19 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 >
-> The patch series "Add basic support for Socionext Milbeaut M10V SoC" (see
-> Link) introduced the config ARCH_MILBEAUT_M10V "Milbeaut SC2000/M10V
-> platform" in ./arch/arm/mach-milbeaut/ and intended to introduce timer,
-> clock, pinctrl and serial controller drivers.
+> Commit 85b6fcadcf66 ("clocksource/drivers/ux500: Drop Ux500 custom
+> SCHED_CLOCK") removes a sched_clock workaround and its corresponding
+> config CLKSRC_NOMADIK_MTU_SCHED_CLOCK. Since then, selecting
+> CLKSRC_NOMADIK_MTU_SCHED_CLOCK in ./arch/arm/mach-nomadik/Kconfig has no
+> effect and ./scripts/checkkconfigsymbols.py warns:
 >
-> However, during patch submission in March 2019, the introduction of the
-> milbeaut pinctrl driver was dropped from v2 to v3 of the patch series.
-> Since then, there was no further patch series to add this pinctrl driver
-> later on.
+> CLKSRC_NOMADIK_MTU_SCHED_CLOCK
+> Referencing files: arch/arm/mach-nomadik/Kconfig
 >
-> Hence, selecting PINCTRL_MILBEAUT in config is simply dangling and
-> referring to a non-existing config symbols.
-> Fortunately, ./scripts/checkkconfigsymbols.py warns:
->
-> PINCTRL_MILBEAUT
-> Referencing files: arch/arm/mach-milbeaut/Kconfig
->
-> Remove this select of the non-existing PINCTRL_MILBEAUT for now.
->
-> Link: https://lore.kernel.org/linux-arm-kernel/1551243056-10521-1-git-send-email-sugaya.taichi@socionext.com/
+> Simply drop selecting the obsolete CLKSRC_NOMADIK_MTU_SCHED_CLOCK.
 >
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-I would take that as an indication that there is no interest in supporting this
-platform upstream any more, the version we merged probably never worked
-without the rest of the drivers.
-
-I've added the original authors of the other drivers to Cc. Should we remove
-all of this?
-
-        Arnd
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
