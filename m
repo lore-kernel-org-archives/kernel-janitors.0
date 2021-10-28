@@ -2,58 +2,40 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5E5C433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D94C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:38:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D06961108
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:20:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A07A60F9B
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:38:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231340AbhJ1OXE (ORCPT
+        id S231316AbhJ1Oky (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Oct 2021 10:23:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57656 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231401AbhJ1OWv (ORCPT
+        Thu, 28 Oct 2021 10:40:54 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:52411 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231319AbhJ1Okx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Oct 2021 10:22:51 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FCE6C061243;
-        Thu, 28 Oct 2021 07:20:24 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id o14so10456127wra.12;
-        Thu, 28 Oct 2021 07:20:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Y0+Ewf3zoYKYSWZPJecgoccdfTSC37HrqNABHJ/zSx4=;
-        b=qQ1E19YcuVT5BdjCL+cmlKQONdyDux+CcDXoljj3sR/mw/MbHxYEUXfiB/v6dFUVKs
-         8wfkCTpArL5db/Y2QwkhAPh/a0UAVBIb5LYjUYjWMwY7DH4NcutzkEcbsyDkui6fDJvQ
-         yzbVHDh+EN3Pi+ifIu9haL5Vtn1wL1SoY2GMawHxP98gKS0h66oPLUL7b9eQaIPSa6RS
-         KjAhHWPi71XeN7bXQbSnavaIMdAPxAL7+VNnOuHhEoPcBEaRb4x50Sz3lQLmgaqfGqYN
-         jrOlLY7FCbPwkBw0OBBd5aUYiaSEQoBqeXESKvxAoJO/53291Pn7AJoE1ZCgD0pAVPA/
-         JvGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Y0+Ewf3zoYKYSWZPJecgoccdfTSC37HrqNABHJ/zSx4=;
-        b=YHkvORQIqfx46aolLgyCagjsYxB+4Bxo2Ach1k/1K0rSQORcS/7XC42jMPJZNOZCPT
-         v4KUrcubP0ohmu6b7zmQM6o71c4zBt346WYb1HdFw3Cy9Gz+Jb8AVPROpSoR8b5H10a2
-         zmlvau4EQfVYNtUbi31XMgVxK9Xixq+pfS1HCwsCq0jv2MKZLv2Bzlwu1zBjp8/NFUj+
-         dcVlJYi9ber8YQEqrUxJGIP15Y8Wml/M3OkFwQe6os2WXfiuR5XExIDd83f4q1np2wML
-         dvrqHzy76b5/QciXUtL/SBAyggRF+SfJ/Wjyhq2iQIWazq2j8FR6WHRPJVGDl6sjJ/Rs
-         WUTw==
-X-Gm-Message-State: AOAM532E3JPQVDrLVe/9jtrBzD+OckPPGrwSAwUdUsCBmA+1tUph+G2f
-        hg4fc5G/qwnhNNLHYYvSlpQ=
-X-Google-Smtp-Source: ABdhPJyQqCEoBp5Xz9+BZw2NcATVGQ8YNlBwKwxvu8ASJ7d5NPYrqSJPGxWZa2Pga/Uj2nf1pomHkQ==
-X-Received: by 2002:adf:e489:: with SMTP id i9mr6257310wrm.22.1635430822842;
-        Thu, 28 Oct 2021 07:20:22 -0700 (PDT)
-Received: from localhost.localdomain (i5C74E249.versanet.de. [92.116.226.73])
-        by smtp.gmail.com with ESMTPSA id m2sm6284546wml.15.2021.10.28.07.20.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Oct 2021 07:20:22 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Russell King <linux@armlinux.org.uk>,
+        Thu, 28 Oct 2021 10:40:53 -0400
+Received: from mail-wr1-f50.google.com ([209.85.221.50]) by
+ mrelayeu.kundenserver.de (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MA88C-1mUX1P080A-00BcYV; Thu, 28 Oct 2021 16:38:25 +0200
+Received: by mail-wr1-f50.google.com with SMTP id k7so10559064wrd.13;
+        Thu, 28 Oct 2021 07:38:24 -0700 (PDT)
+X-Gm-Message-State: AOAM533vvxQR5o1K9AjRyMkyFcjVZRiq2jFTPhjA14O8+1aGitlMlb0V
+        diAQGoNkoDwDozjELNwxDZjuOB1eBJB40DRA940=
+X-Google-Smtp-Source: ABdhPJwEbUzPqw6Qes7yfw3ZhWk6B9QYudD6+r+R+eUXO5VRnI6SKME4aCzk7a7O2pmBiO0ccl6r5d8I2rAIgWwZUKE=
+X-Received: by 2002:a5d:4692:: with SMTP id u18mr6346128wrq.428.1635431904641;
+ Thu, 28 Oct 2021 07:38:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <20211028141938.3530-1-lukas.bulwahn@gmail.com> <20211028141938.3530-2-lukas.bulwahn@gmail.com>
+In-Reply-To: <20211028141938.3530-2-lukas.bulwahn@gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 28 Oct 2021 16:38:08 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a2UmTj2imJWdeLHX0TTV36Hk-Xx5c3j8cPe+Gk33-3Tyw@mail.gmail.com>
+Message-ID: <CAK8P3a2UmTj2imJWdeLHX0TTV36Hk-Xx5c3j8cPe+Gk33-3Tyw@mail.gmail.com>
+Subject: Re: [PATCH 01/13] arm: debug: remove obsolete debug code for DEBUG_ZTE_ZX
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
@@ -71,60 +53,50 @@ To:     Russell King <linux@armlinux.org.uk>,
         Benjamin Fair <benjaminfair@google.com>,
         Dinh Nguyen <dinguyen@kernel.org>,
         Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH 13/13] arm: pgtable: refer to intended CONFIG_ARM_LPAE in comment
-Date:   Thu, 28 Oct 2021 16:19:38 +0200
-Message-Id: <20211028141938.3530-14-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20211028141938.3530-1-lukas.bulwahn@gmail.com>
-References: <20211028141938.3530-1-lukas.bulwahn@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:+vD+Y6ubku5brdTPb5fPvEtLJo4kBMb1i2zNycj4s7DNYnL05ZX
+ EMe9TPElIpVSx9nuQ0X0hpS9LmAeAiA/uEi7VzaXD0rcnOc3o//tRqrbeVL4zM+gu0DSrgU
+ 6nDl5kohOVpXUr2hsfQiRA8WyCBUa/MdlpnK6C6SUJX+/McR9XeME3z2noeix18MijVpjhx
+ 68rH8YZhQUt+ZcmL50cfg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:3/atB2SDEQg=:ge8U0HhAxX2zPKM0zKaSRr
+ XRGCPFJOACAhmHRnl+MGa/XDzuZdBXvIjPLwDR/bPtWXhgn/I+qfftRLl5d4fl/Y3yrLlHyT5
+ 0L6hBzi1JH8hqaZBHoetQZfkUAj+YMTP+AGwJfGMWA5PVqhW+d+Og+qHz7uTzCVoh/AQ0/zdK
+ WXSiLtSpuqwnkywgnWzy9ymwG7H0NdhmoZikk1FFKPwsjrVBN3z9Ob+epqOy52HGL1HXD4B5G
+ C3Awh/FRcVLz8KaZhvRsxG8/viFuSyBizny6FwldNYTfAwRCKzR8wxs9tzE7hbn7Jgvq6vpjb
+ v+mTEFEZS29wUJ3Iru5dFFFZjpomeLxRUpBj1T2RInIvDYFgnPEcKV5MuUdjDwFeNG71Rcfnx
+ dVqoyksuZXKlYHTo8OfCnZUPAf6/ga4Ras2KwxVsrOEomSl4qO574Heov0qPod+sCaC9woySK
+ BcXK5gwZEdMHVy9OtxiTpi1ihNtSYY9Xln6X2ZXVezgvWMB6th4KpRWS6X+4t/5j81llq410Y
+ zjcZH3uhdHiw/NxU19IGvobLRbNgcGgcsxR0EWrzdynDg8kfmN8sbAzxTBhjKZb3+YseQvVVz
+ kwhqOo2G+w1JPsV63TE1ThzVPCPdTWOaOj+t2X/WfMLVLDyVrSF14bdsE6QLS5YBNWkEWImvO
+ pEhW90IZ75Y/28dfabbfCenQv+gz9kr6U4Hwh7MNYugepkXr8SoqtNv4qrnZbxhYPysF5A486
+ iUUDvhdYEe5LOdlkJJJz1b/eJUgEjrotkLIyDbJgLJOl2iDZSIFmKwk3darHWMXv4UOS+tGHz
+ +pNzFkD8+Kv+sjBKLKfbELfqpxvqErpGLVJ5pfnGoQNOQN75o0=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 5615f69bc209 ("ARM: 9016/2: Initialize the mapping of KASan shadow
-memory") adds some nested ifdef's in ./arch/arm/mm/pgd.c, and follows the
-good practice to annotate the endif's with a comment to indicate the
-corresponding ifdef condition.
+On Thu, Oct 28, 2021 at 4:19 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> Commit 89d4f98ae90d ("ARM: remove zte zx platform") removes the config
+> DEBUG_ZTE_ZX. Hence, since then, the "ifdef CONFIG_DEBUG_ZTE_ZX" in
+> ./arch/arm/include/debug/pl01x.S is dead code.
+>
+> Fortunately, ./scripts/checkkconfigsymbols.py detects this and warns:
+>
+> DEBUG_ZTE_ZX
+> Referencing files: arch/arm/include/debug/pl01x.S
+>
+> So, remove the obsolete ifdef CONFIG_DEBUG_ZTE_ZX.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-One comment annotation refers to CONFIG_LPAE, whereas the config is
-actually called CONFIG_ARM_LPAE. That imprecision in a comment is probably
-tolerable for all human readers.
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
-However, the script ./scripts/checkkconfigsymbols.py, which checks the
-kernel tree for references to non-existing Kconfig symbols, identifies and
-reports that the reference to CONFIG_LPAE is invalid.
+I see another copy of these constants in drivers/tty/serial/amba-pl011.c,
+which we should probably clean up as well.
 
-The script ./scripts/checkkconfigsymbols.py has been quite useful to
-identify a number of bugs with Kconfig symbols and deserves to be executed
-and checked regularly.
-
-So, repair the comment to reduce the reports from this script and simplify
-to use this script, as new issues are easier to spot when the list of
-reports is shorter.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- arch/arm/mm/pgd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/mm/pgd.c b/arch/arm/mm/pgd.c
-index f8e9bc58a84f..bf2935f21c12 100644
---- a/arch/arm/mm/pgd.c
-+++ b/arch/arm/mm/pgd.c
-@@ -80,7 +80,7 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
- 	       * sizeof(pmd_t));
- 	clean_dcache_area(new_pmd, PTRS_PER_PMD * sizeof(pmd_t));
- #endif /* CONFIG_KASAN */
--#endif /* CONFIG_LPAE */
-+#endif /* CONFIG_ARM_LPAE */
- 
- 	if (!vectors_high()) {
- 		/*
--- 
-2.26.2
-
+          Arnd
