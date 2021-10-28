@@ -2,38 +2,38 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC07EC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00443C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:55:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D5DC60FC0
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:49:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCE4B61106
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:55:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231258AbhJ1Ovu (ORCPT
+        id S231360AbhJ1O6O (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Oct 2021 10:51:50 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:48221 "EHLO
+        Thu, 28 Oct 2021 10:58:14 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:56153 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231150AbhJ1Ovu (ORCPT
+        with ESMTP id S231332AbhJ1O6N (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Oct 2021 10:51:50 -0400
-Received: from mail-wr1-f47.google.com ([209.85.221.47]) by
- mrelayeu.kundenserver.de (mreue009 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MO9qz-1mIEAq3Trd-00OUlN; Thu, 28 Oct 2021 16:49:21 +0200
-Received: by mail-wr1-f47.google.com with SMTP id k7so10617755wrd.13;
-        Thu, 28 Oct 2021 07:49:21 -0700 (PDT)
-X-Gm-Message-State: AOAM530mOIWgIXfT3W0S5P0bF9zXVRQ54gyQr2UdG6/2bNI6Efy4J9yT
-        sHgMnNDlMzWOCR6FrI2ZVOr+bKQR4D7EM+kmwVI=
-X-Google-Smtp-Source: ABdhPJyZaPDPCoaDGyatBTS5bhSohWogOcSmV50vy7mFoGeznOuDlcMqq0iyn1grr0cj7qSdSBNBCx/C2MgWvgadgZU=
-X-Received: by 2002:adf:e292:: with SMTP id v18mr6094633wri.369.1635432561472;
- Thu, 28 Oct 2021 07:49:21 -0700 (PDT)
+        Thu, 28 Oct 2021 10:58:13 -0400
+Received: from mail-wm1-f46.google.com ([209.85.128.46]) by
+ mrelayeu.kundenserver.de (mreue010 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1MMoKq-1mPgOb0rpM-00Im5d; Thu, 28 Oct 2021 16:55:45 +0200
+Received: by mail-wm1-f46.google.com with SMTP id b82-20020a1c8055000000b0032ccc728d63so5310001wmd.1;
+        Thu, 28 Oct 2021 07:55:45 -0700 (PDT)
+X-Gm-Message-State: AOAM532/N7g6S5pOl9rEuz5PmvUljnl/3zHmeseFtDFX8NxX3rsHoQt8
+        XUIXSKS3Eex1UI5utesIRq2D1HnJz+PFJxHa6d8=
+X-Google-Smtp-Source: ABdhPJyG4uqa4KI4PxkZID5NK7baIbLWZaHnCQ9DvZVpGK/tLF/blE/NbR3DQZF6k+qtTHAHzW4lFAsVA+2j3CeEgVo=
+X-Received: by 2002:a05:600c:1548:: with SMTP id f8mr5021740wmg.35.1635432944804;
+ Thu, 28 Oct 2021 07:55:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211028141938.3530-1-lukas.bulwahn@gmail.com> <20211028141938.3530-9-lukas.bulwahn@gmail.com>
-In-Reply-To: <20211028141938.3530-9-lukas.bulwahn@gmail.com>
+References: <20211028141938.3530-1-lukas.bulwahn@gmail.com> <20211028141938.3530-10-lukas.bulwahn@gmail.com>
+In-Reply-To: <20211028141938.3530-10-lukas.bulwahn@gmail.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 28 Oct 2021 16:49:05 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a3ZBwDdgZfwLMPqfV=MrinyiZ0vYppt_2PLviAbHNKZhA@mail.gmail.com>
-Message-ID: <CAK8P3a3ZBwDdgZfwLMPqfV=MrinyiZ0vYppt_2PLviAbHNKZhA@mail.gmail.com>
-Subject: Re: [PATCH 08/13] arm: imx: rename DEBUG_IMX21_IMX27_UART to DEBUG_IMX27_UART
+Date:   Thu, 28 Oct 2021 16:55:28 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a2J3Eufd_LL7qX=0bui_PwkN1WATqrrigia3f6Z8b1tpg@mail.gmail.com>
+Message-ID: <CAK8P3a2J3Eufd_LL7qX=0bui_PwkN1WATqrrigia3f6Z8b1tpg@mail.gmail.com>
+Subject: Re: [PATCH 09/13] arm: milbeaut: remove select of non-existing PINCTRL_MILBEAUT
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
 Cc:     Russell King <linux@armlinux.org.uk>,
         Shawn Guo <shawnguo@kernel.org>,
@@ -56,44 +56,62 @@ Cc:     Russell King <linux@armlinux.org.uk>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         OpenBMC Maillist <openbmc@lists.ozlabs.org>,
         kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Takao Orito <orito.takao@socionext.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Sugaya Taichi <sugaya.taichi@socionext.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:H4FlXSogfU/bOumyrnnm96iBDKu58sU0fHPlZ17SC5MmnUKX4hQ
- Sva2FJjC+edcwEUINefzoxT0493Fb9gvi5DDK/0hwtw0Sw/oHZ3qABMR/wemAT23Z7E6HHy
- yO9XjPzxlIlgb3+hWY33kyGkAQ1osQNKnSGN+ZNyT7mKpFOSJkqqfU8Nn/5w/vesUjbnQEo
- UzVGrwz7iZt39tqXLNf4Q==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:2W9N701yH/s=:gX5F75ckFm2eUgdYHllV+/
- B26p8tl0dkPq+JAHCLKvArk64OtPwG212FLnwPtD0jV7at62gZpToQFSoscBLMr6xl6WSXque
- CP1KzKvqs/UzvQW/FtYThUhBUH19UKEfXvD+kSkT/T7fbukgf9JhRj83UvUKMOoFAm41pD08F
- y3avzFs90TFZgrXMG43mnGFar4MHN2G0Pru3f3OKR6ki466hsfs35Q/kPQ/Bu7M4g1vfQd8qg
- W+jIklqNj5T2cMmW/gPCYW77zlJsDSR6nLUjHFxJXGwoGZxH/BV86Rb/JtjvzvPNZ14HzU0ak
- g4jFaCNynr+pNKc1rw38MivVhvDZUniL+NklPa2iL4ubm8JO8Iqlx4GkgHDDLPhQ0UnU3JWhh
- mje5KkNIpgG7N23xtnfVIzjgtqpYP8zTnN71x+9vEcduMhRc1JB/eTpfPedCzSgBNFNy+m3YS
- 1dDcv993i+XLmqB14M15lyRRE3TyYOQa5Pz8cPrzaDx2akBgn++3wJRVjXCosxvPV9O99OOPW
- bKv+QaLakfeyDDX9aFsfMMmjbgRBhCfWGpFX4LPB0m010gNAXDk0iTyDbza9vH6I5sJISpJio
- H46gXmL3vvMtj0kLhUoYshfZ+8cMU21X3U9mZ7EiOVJ6n/wOk5up7/HCStYidbwHxszfab7zY
- +xobvmkEuHeMGwpFBqwFnFWaLUjGzClLb+GB8/FK6QAcmbkjYjJWNN2E8N7ewOzszhiRKByeB
- usAnCm5swhlTBhsllsY64NvPSc61bvur545NdiI6Wxu+p9sw8S/HH9muZuN275dyjkQF80WL5
- RQx/aBbGAHcW8llnPDH+y9Q5i0pG5sXhRr7Z4NC0jD2r51jq25pTcQPejOLZgP86D3r2/D2XF
- xCNcnhUEADxUUVFEY3dsJQZyGjmBtQ7jD2zCgbCIRf+Yq0+2vVGfIQcIrLFCdvKSN0ZqqeJox
- jnF5OQauYdg==
+X-Provags-ID: V03:K1:Qp7oa9KsoebkpfHalbn+jCKWAFV+hFejtjblL4QOIJSBoV9mZ3+
+ m+JZfRkBDNi9ENKr2Gr05eR3ddkBwH/UQP+5Oc79OUhiXJH+WlrT6N/KfMYXFhNPhbeKqB6
+ ZMde5Bvekp/nsdkiOThQFbv+Fp2y4HkreERlLeCYDMpQko6h19/xTZiDkLwV18hoVBEUDr6
+ 42jQ1HEQx6E2tl53nT3BQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ckdhxfsX8Bg=:LBleLPDK1gU7S73dqytxJP
+ 55/edOrIuP0rLwNyiEN7MfQ9kiHec4jI4mR56kIAowmamTYvG2osZ5vqj9z4wGAnl3FqHIPj4
+ EzGDZcEQPqhPfgPZfW4qTYDZuRyBYshyCiUkCzBMW8wF6NVASu+FhpR9ovSyIW9Bbv7IxiLps
+ ivWbgtCWr/sA8//6Wlc5MCOly4mywOkSYiLgYFL1HfpzxyxQbQqnGAkz/dF4qTu45QHlb4aIF
+ Bg0O+k9IgMipP2OFlazXonFUczKUes8KWgSWqj5SLUROO4AG8/tNYeOAEJLAbhx0mxbHsn18K
+ dSSeN+YidARh/juUa4oTvK57EZCJ9zRxusmw6zgKfrYFDiFS9qNIH5S0SUoDoQ1xm/GTrzByH
+ EetOPDRuWa0XFWprLf7N0Ou/hhkItOqLAwc7pHgSI+DeAYjl5aOwqs1QnGR4A/NT6j8MpCIju
+ oQj7dC8cwoRj3RMRjD8Pu5MKvK2Frk8f6Txun/AhD1b07cI3Lj1SUav/rH1BLEJMLXjn7zYUq
+ qGyBv4LpC1U+CcmG92+6LBUrc9kR9W19b/LQj6V5oQvgw8y8kuC6rv27rDe4pTpNbxp4Gn21j
+ QCocsjmORPawwb0xMRalHCZTUHoj5MNw95fTIbBDcCowZU+6R+CzyU8o/q5r9+c4bcz6ZdaiB
+ VyHw3mDAC3Qxp8ppP1pCTYrehDloVzbJGsyUiQwexMvPhiUPC6fMU2qPHb8fZKINiQIdZmWM5
+ kCAqURjnoB/NSKVhw0TbLX5mJrYcMKkK5KYWgh7V9SdS8iNT2tZYKFbGdubc1FMFhlEBBoEjX
+ V4wfgk+d9BXuuLkOezRlzoEbISNV9Sec/v9sTXunrTXcFW2aT57ZLdrfQpmjjgx2DTHk0tJ
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 On Thu, Oct 28, 2021 at 4:19 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 >
-> Since commit 4b563a066611 ("ARM: imx: Remove imx21 support"), the config
-> DEBUG_IMX21_IMX27_UART is really only debug support for IMX27.
+> The patch series "Add basic support for Socionext Milbeaut M10V SoC" (see
+> Link) introduced the config ARCH_MILBEAUT_M10V "Milbeaut SC2000/M10V
+> platform" in ./arch/arm/mach-milbeaut/ and intended to introduce timer,
+> clock, pinctrl and serial controller drivers.
 >
-> So, rename this option to DEBUG_IMX27_UART and adjust dependencies in
-> Kconfig and rename the definitions to IMX27 as further clean-up.
+> However, during patch submission in March 2019, the introduction of the
+> milbeaut pinctrl driver was dropped from v2 to v3 of the patch series.
+> Since then, there was no further patch series to add this pinctrl driver
+> later on.
 >
-> This issue was discovered with ./scripts/checkkconfigsymbols.py, which
-> reported that DEBUG_IMX21_IMX27_UART depends on the non-existing config
-> SOC_IMX21.
+> Hence, selecting PINCTRL_MILBEAUT in config is simply dangling and
+> referring to a non-existing config symbols.
+> Fortunately, ./scripts/checkkconfigsymbols.py warns:
+>
+> PINCTRL_MILBEAUT
+> Referencing files: arch/arm/mach-milbeaut/Kconfig
+>
+> Remove this select of the non-existing PINCTRL_MILBEAUT for now.
+>
+> Link: https://lore.kernel.org/linux-arm-kernel/1551243056-10521-1-git-send-email-sugaya.taichi@socionext.com/
 >
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
+I would take that as an indication that there is no interest in supporting this
+platform upstream any more, the version we merged probably never worked
+without the rest of the drivers.
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+I've added the original authors of the other drivers to Cc. Should we remove
+all of this?
+
+        Arnd
