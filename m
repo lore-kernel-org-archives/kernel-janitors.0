@@ -2,111 +2,130 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 716F3C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 15:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC4D1C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 16:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 536EF61073
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 15:36:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C26F3610CF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 16:44:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230183AbhJ1Pie (ORCPT
+        id S230225AbhJ1QrJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Oct 2021 11:38:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47336 "EHLO
+        Thu, 28 Oct 2021 12:47:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230126AbhJ1Pid (ORCPT
+        with ESMTP id S229761AbhJ1QrI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Oct 2021 11:38:33 -0400
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64878C061570;
-        Thu, 28 Oct 2021 08:36:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=obEVRh2SUyKsH6wuRZ+MmeBmZXXQKS44Jmrm2Q2wynI=; b=U/Fj/4zSFAfu3ihra5R0kzvttB
-        XGcVAR8aLmLHPrjVzDXTsP7lZZEKYxdFievSQRbR5RMKbt8Yu/ZRuc8yYbAUBEzr/7oTN79aMIKXK
-        rPEXXE09QDGjMZ1BM9zhfBnfKmg8nY00Zqzrm9m6lIDjIyymDCD0q0pwEEukI8ghiWm2zZy/HuIZT
-        boGw9j9RAMlBkz00H0+8QIGhaKxLDDPF2XJildRKicdgzYTY7PXIMkiix1AsCt8eMN4ajOM5gGuEI
-        JCbxWGa6C6y5Y2qPSHILdWzOXHAlaZaxtDy5TB7jIv/SkQFgurik7tg5FNImCmARI0g4Gu3MR5p9r
-        gDq03WsA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:55356)
-        by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1mg7RQ-0007ix-SD; Thu, 28 Oct 2021 16:35:44 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1mg7RM-0000Rz-JC; Thu, 28 Oct 2021 16:35:40 +0100
-Date:   Thu, 28 Oct 2021 16:35:40 +0100
-From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linusw@kernel.org>,
-        Imre Kaloz <kaloz@openwrt.org>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 04/13] arm: drop an obsolete ifdef with the removed
- config PCI_HOST_ITE8152
-Message-ID: <YXrDTMLBAy0Ftai/@shell.armlinux.org.uk>
-References: <20211028141938.3530-1-lukas.bulwahn@gmail.com>
- <20211028141938.3530-5-lukas.bulwahn@gmail.com>
- <CAK8P3a2LhGWer=GXMW_KT-8=nqBeS0xhu6si7Z57WAF0wE_TUA@mail.gmail.com>
+        Thu, 28 Oct 2021 12:47:08 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4905C061570
+        for <kernel-janitors@vger.kernel.org>; Thu, 28 Oct 2021 09:44:41 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id f8so4819137plo.12
+        for <kernel-janitors@vger.kernel.org>; Thu, 28 Oct 2021 09:44:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=jSIfnI7MQAHzmYbWsa55tC1HPw8ddYjjYO0zKn+HJ8s=;
+        b=ywUtE77eKqUVOePjgXz+r0KqYm7mtXBFy3cYHBMbed+RnvptTuh54lPXKIpoxULqoj
+         ii9zyeMF4Vev0ewU33J3USJnKWMjUGyV1iIS5a4YL8YRbauaaWih5XZFU0z1xasrwUcg
+         J/ogNZAqB+vRAD/JLE0eNxyDY9NWoKtyb03AfLDra0Asxw/49u0CfkNgz47gvVQNVCBZ
+         mJLdoroh3KQrBJEqZ6ewVTDo3TyqnvowgBgWh84EYofvYJhdtkn0unmZ0cPVJcirwOoX
+         SoeYo/F3NGSySBNA1bCqHqlrVWRJrnm7VIAodgGXqO1wKdmAo4C22piaxpbZHbG3Wh4y
+         SgcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=jSIfnI7MQAHzmYbWsa55tC1HPw8ddYjjYO0zKn+HJ8s=;
+        b=3YzE9+Rb0xbkV8vIdcA5eGjJ3JW1Tqxb307qz8bNlFwZdRJnwB5Q5h5TU0WCtaEON1
+         Dix3NGLcgLHu1ZJA00LkDsBB1GtSTkUUoODwtLcP/+045Z+mgukTw5fV17fMwkeBxFsH
+         ufehgxc2JzqiWqjhNG9EWnFZ7va4VMXiKJZ7N7td4TBhare407juGHDoU9aYd8+h7fp8
+         8rG6emLAqLBDBrxXkTVuCHbLaQGTQgbuZaE6xJQkjHQfKiwMo2Wi+Vhjm5liLT35btsP
+         1Fr7pOZudfOIsEnbLATTgyFIcIGwff5Wa73YCujNSVhnutHjLbEyZeEkICCkhhnFOnO3
+         BjQw==
+X-Gm-Message-State: AOAM532YCEydTdMcAOUEaBT1HYI00SKakg3Bbgt5pfXcCDvRaUtcuTz1
+        ofAn+sGKb5MDuxPKT7JJw71phQ==
+X-Google-Smtp-Source: ABdhPJx82C63B35ZWB+HVNntHTa/NJT3Hk+DKgJOMXkel40VGwu1VgN5Lw975JF9hobnf6bT22adMw==
+X-Received: by 2002:a17:902:e789:b0:140:801:1262 with SMTP id cp9-20020a170902e78900b0014008011262mr4865442plb.42.1635439481231;
+        Thu, 28 Oct 2021 09:44:41 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id g17sm3349474pfc.193.2021.10.28.09.44.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Oct 2021 09:44:39 -0700 (PDT)
+Date:   Thu, 28 Oct 2021 10:44:37 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Joe Perches <joe@perches.com>, suzuki.poulose@arm.com,
+        mike.leach@linaro.org, leo.yan@linaro.org,
+        alexander.shishkin@linux.intel.com, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@foss.st.com, coresight@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] coresight: Use devm_bitmap_zalloc when applicable
+Message-ID: <20211028164437.GA4045120@p14s>
+References: <e5fe23370794e2f5442e11e7f8455ddb06e4b10a.1635016943.git.christophe.jaillet@wanadoo.fr>
+ <663d3820f118c37a81529b3362b95e09c8e75e9f.camel@perches.com>
+ <bb913ce7-bae6-3b3e-180f-946786f7d300@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a2LhGWer=GXMW_KT-8=nqBeS0xhu6si7Z57WAF0wE_TUA@mail.gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bb913ce7-bae6-3b3e-180f-946786f7d300@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Oct 28, 2021 at 04:46:38PM +0200, Arnd Bergmann wrote:
-> On Thu, Oct 28, 2021 at 4:19 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> >
-> > Commit 6da5238fa384 ("ARM: 8993/1: remove it8152 PCI controller driver")
-> > removes the config PCI_HOST_ITE8152, but left a dangling obsolete ifndef
-> > in ./arch/arm/kernel/bios32.c.
-> >
-> > Hence, ./scripts/checkkconfigsymbols.py warns:
-> >
-> > PCI_HOST_ITE8152
-> > Referencing files: arch/arm/kernel/bios32.c
-> >
-> > Remove this obsolete ifndef.
-> >
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> 
-> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> I wonder if we should just remove this function and use the
-> (non-empty) default version instead.
-> 
-> 96c5590058d7 ("PCI: Pull PCI 'latency timer' setup up into the core")
-> introduced that generic version, and I suspect the arm version
-> was left out by mistake, but it's not clear from that patch.
+Good day,
 
-That was because PCI_HOST_ITE8152 needed something different from the
-"do nothing" default (setting the PCI latency timer to default to 64
-as the new generic code did.)
+On Sat, Oct 23, 2021 at 10:09:14PM +0200, Christophe JAILLET wrote:
+> Le 23/10/2021 à 21:36, Joe Perches a écrit :
+> > On Sat, 2021-10-23 at 21:24 +0200, Christophe JAILLET wrote:
+> > > 'drvdata->chs.guaranteed' is a bitmap. So use 'devm_bitmap_kzalloc()' to
+> > > simplify code, improve the semantic and avoid some open-coded arithmetic
+> > > in allocator arguments.
+> > []
+> > > diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
+> > []
+> > > @@ -862,7 +862,6 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
+> > >   	struct stm_drvdata *drvdata;
+> > >   	struct resource *res = &adev->res;
+> > >   	struct resource ch_res;
+> > > -	size_t bitmap_size;
+> > >   	struct coresight_desc desc = { 0 };
+> > >   	desc.name = coresight_alloc_device_name(&stm_devs, dev);
+> > > @@ -904,9 +903,7 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
+> > >   	else
+> > >   		drvdata->numsp = stm_num_stimulus_port(drvdata);
+> > > -	bitmap_size = BITS_TO_LONGS(drvdata->numsp) * sizeof(long);
+> > > -
+> > > -	guaranteed = devm_kzalloc(dev, bitmap_size, GFP_KERNEL);
+> > > +	guaranteed = devm_bitmap_zalloc(dev, drvdata->numsp, GFP_KERNEL);
+> > >   	if (!guaranteed)
+> > >   		return -ENOMEM;
+> > >   	drvdata->chs.guaranteed = guaranteed;
+> > 
+> > guaranteed is also pretty useless
+> > 
+> 
+> I agree, but removing it would make the line with devm_bitmap_zalloc() 86
+> chars. This would not be consistent with the rest of the file and would
+> (IMHO) require splitting.
+> 
+> Let see if the maintainer prefer saving one additional line of code, or
+> keeping the logic in place.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
+I think we can get rid of @guaranteed and splitting is fine with me:
+
+        drvdata->chs.guaranteed = devm_bitmap_zalloc(dev,
+                                                     drvdata->numsp,
+                                                     GFP_KERNEL);
+
+Thanks,
+Mathieu
+
+
+> 
+> CJ
+> 
