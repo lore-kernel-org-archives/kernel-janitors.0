@@ -2,38 +2,38 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A54C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7EBC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:59:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3CEF261040
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:58:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56E5B61040
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:59:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230451AbhJ1PA5 (ORCPT
+        id S231381AbhJ1PBf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Oct 2021 11:00:57 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:36715 "EHLO
+        Thu, 28 Oct 2021 11:01:35 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:52731 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231378AbhJ1PAx (ORCPT
+        with ESMTP id S231397AbhJ1PBb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Oct 2021 11:00:53 -0400
-Received: from mail-wm1-f48.google.com ([209.85.128.48]) by
- mrelayeu.kundenserver.de (mreue011 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MmDZI-1n6KsD2Dxo-00iFeg; Thu, 28 Oct 2021 16:58:25 +0200
-Received: by mail-wm1-f48.google.com with SMTP id j128-20020a1c2386000000b003301a98dd62so1315537wmj.5;
-        Thu, 28 Oct 2021 07:58:25 -0700 (PDT)
-X-Gm-Message-State: AOAM531D/Guk8zXFE3WjnJnk5BMtjQsnf5ISICTL/nREvA+tzdBQY70N
-        YOLXFwXqK2dAk7dPhLJsc0GOp/I037EFBsxLiQk=
-X-Google-Smtp-Source: ABdhPJyxtaNUvQd3ORnZZLVNyfjqzZs6I7zhKEo88W2DuaBpk6rVRMQ3tnGcCmQgFkwreY3eIJUseYuOL31zp8mKkaA=
-X-Received: by 2002:a05:600c:1548:: with SMTP id f8mr5036190wmg.35.1635433105169;
- Thu, 28 Oct 2021 07:58:25 -0700 (PDT)
+        Thu, 28 Oct 2021 11:01:31 -0400
+Received: from mail-wr1-f46.google.com ([209.85.221.46]) by
+ mrelayeu.kundenserver.de (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1Msqty-1mvQnW0MtU-00tAYh; Thu, 28 Oct 2021 16:59:02 +0200
+Received: by mail-wr1-f46.google.com with SMTP id d13so10704486wrf.11;
+        Thu, 28 Oct 2021 07:59:01 -0700 (PDT)
+X-Gm-Message-State: AOAM532SwI6udJz6WZLv67lJt5mtcN2AsgaRV25SarliJ1L/wZrQ6Yn4
+        ksVXtEIsZGBcXLDYMHlOJbRowBHAn9lhxY8I2o8=
+X-Google-Smtp-Source: ABdhPJw1mral72Qddmd3GHMk122V+V5lr3a2+Rc1twCjQmgIEQujpYyDHdDkNkrUj9xJwnLyI7GiYnIxws+p/FRx9Gw=
+X-Received: by 2002:a05:6000:18c7:: with SMTP id w7mr6244203wrq.411.1635433141663;
+ Thu, 28 Oct 2021 07:59:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211028141938.3530-1-lukas.bulwahn@gmail.com> <20211028141938.3530-13-lukas.bulwahn@gmail.com>
-In-Reply-To: <20211028141938.3530-13-lukas.bulwahn@gmail.com>
+References: <20211028141938.3530-1-lukas.bulwahn@gmail.com> <20211028141938.3530-14-lukas.bulwahn@gmail.com>
+In-Reply-To: <20211028141938.3530-14-lukas.bulwahn@gmail.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 28 Oct 2021 16:58:09 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a0qjnVZqdO7HV+gMGOQN4N9nR1KbsxCYuAwpbDWvK16Vw@mail.gmail.com>
-Message-ID: <CAK8P3a0qjnVZqdO7HV+gMGOQN4N9nR1KbsxCYuAwpbDWvK16Vw@mail.gmail.com>
-Subject: Re: [PATCH 12/13] arm: socfpga: always select PL310_ERRATA_753970
+Date:   Thu, 28 Oct 2021 16:58:45 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a33cMrabWU7i=cT7qVJui2--VkNr2rx2BmKX5qSyfpGpg@mail.gmail.com>
+Message-ID: <CAK8P3a33cMrabWU7i=cT7qVJui2--VkNr2rx2BmKX5qSyfpGpg@mail.gmail.com>
+Subject: Re: [PATCH 13/13] arm: pgtable: refer to intended CONFIG_ARM_LPAE in comment
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
 Cc:     Russell King <linux@armlinux.org.uk>,
         Shawn Guo <shawnguo@kernel.org>,
@@ -58,50 +58,52 @@ Cc:     Russell King <linux@armlinux.org.uk>,
         kernel-janitors@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:jFeUUn/MNplR5EQ0ly0VytYdKd0gQK4raT4lAR46rrqIHI8jC5P
- Zzpp3bi4VYBosBT/TszBUNvhLOwxyO8EnIEIhwOkxcYz37z6QFad+vC8ArcDOaM90E/jY0+
- SDk0r/aSOHmrPr9QtwqtJmMvcs6UiWnfSlPiz6Ax6n8pYLHEJl2qF0vL8BplUogVFoxzn8R
- 67ug5dGSwh5aU8UpAdUkA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:jK7m9r3kSrY=:tJkPEhyNHu3YLCN7Q1H7j3
- SCqJMTZQmdQRzFXpki7QvrpS2SMnsfTwJfjqs+4ZFcMi5LM8lCBfXyWf0JhuYFn8coFQprjQE
- Z3w/HGkSSzVFX28GPLKx2iuk1gxYfLFwNx8cYXUD4fZrDB0/n4Dg/4rg5y1QPnL9Ew0aF2sY2
- 3yRtyX6UbWnLKseyynoBEVlf+mgQxxYh9hvdCPBNUxCbA8nbskWXq7FmkhkNRmb3w4Xykf8L8
- MTIIOju0MOjr0XFR6LaznvSTflAkzfQ8vEQihxbpvq1AwEZ0MrENBSHRqF1pS2te7sW/7Mr7Q
- NA3qwPQMkerRwZSRJGQiqxl/v51BQ262JEuZ7OIWjNkJOdyS8o/3EIyjWarY2aCR+3uJ/KKZb
- 1ajFOXKKMS45v+M99YT009bNT6sWqlKISPFauOS592FTmWk6vDGL2le5lVEdqa8fKlz/bFEbm
- IgkHO59aI8zfnpTIfCV/mZ3Gcn4EVwuDDgaXk1TcQjpgAaneI+bSc0JKVaz2m4hsSNwnCoYqN
- lRx3jjlfX970E2abZyodUFg0BUxuturs+L/FFOuk5vudyLDMcJJQeDL59Y8rzvvstUE4hsmeT
- PQU+De+i8PZPeL8uGMKDfME01LsW1jggcbGYgoVQwAw+6va8xMB3yES3pA5U+vzERLiqASusV
- VuducWInS46slC1hPLvcW+jo21zgPkGtPMYPw9G/gzN2xX1Z3gZckungnFIwvpRuUTLyuV4fV
- bA8zQnJ3hvcq004KerIcwME2fg6TmA13SbhfIiWhpaXR+Aepz10Rv62c342Gm0uwACnPERbTW
- j0LF+FiRPshWeMP2awAhdsnlL2q15LUbVw7tNWRZY54AjwarQm3sHc9/xvvh8LAvjU9LBHkNw
- oH6Q7aNs0kRcNesEpm4JzoqKqzJNKCDp3t//YMj/31WrO4pKvfkwTnzESxfpq4FI3CEofvjZb
- sEjnMH0pMdQ==
+X-Provags-ID: V03:K1:2/+7UmnatUJXWnHAJa13tySNx5MdO+XhZAMXq6vAd/7Y+XG6D4u
+ ybcnF8mPiuEMkps4vtWF+fE4e7riUbjAUxLxCLMNAOhCxzfCCnMiabl6GKpdiSF19yoS1gb
+ QlsXCiwd1rrGda4NriR5rPI00DdfMXjr23MD5WR/122DAJN8K0Rj0lJgXyVK7wOyWKP0M8/
+ F7jjCGHx2oJ9nFVkESDZw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:zDzVpMcYESQ=:jOLa73LwPcVO+JcvBiJ8FS
+ cblIUIJM6ocecSP/RvJzcaP/Er2jA4kgOp+JKVzuAupJ/eh3fEhhpWFG3RuWxZ7tx/q2RpYxj
+ fhMMLMFDY3WGXps7O0qcVVVHBgeeq3EGt+CBIwrIs5AXPKAdJhVuffzMJzIcTYAyjOdGhSn2l
+ UjhI/0R1SB6JTE9McDOieSjBnk2mVcQg4Lp3ql8/Cf51KWIcGAdigqUguEW7U3V+aL5NYYzdL
+ wJ/aDHVK8d36Wn7qliFujTBC+rb3FeRwXJxGjM2/l9hyP7QYh3H1gTALqYQAVFdcHMZ1hK5oe
+ kXzGjfGVz+KbSeqJXzUEYEt2iawkZqER0m5AU/fAlPftdh+vIU8/qY5xapVTewFqKdGbyAiY3
+ IX6riq3mASjG3viQ03+hGrx+xLlxx6dlSU3bt3BMPzxj1SELQK69BE3XSo9E2zcW7566RURq3
+ z6b2pT8r34qkJAdRB0hCGCtR41m+aBbBX/7SQymJKxcV89plc6LeviHVdh2vLdjNQGT0g4v1G
+ L6KUN+xpteuYlQoX2tdRBH2c5pLmArYmoeqDdGB/VyMyzBadbOkw+bzXo91GjOmBEnEtZbzSl
+ 74jFv2Y4qTSycAPkYr6Z9Ji2jGbCvp6HJNzRGeOF+cGmGtynzCQ2H8xYWXJUkkenkji32ezqO
+ mEjzH8X/y0t4J4OZdjOFPw6NUXVSTdDHfUwQWYIQQfGyqKu10pURjnBFb95gQDMOQoTrCilmr
+ 920x3wOR9UDWQhOJy5CS91KutvkPWpZY1QrtOlL4USMdNkchlkLwY0eRQKaJMMpK5hoJ/WnDA
+ iZa8QGTp+XjftlU5NeN2GX4fXso/9zJOxQPWfbTiL2KmXSFF4V3D/gBKQ+qko2d+8MokzMSj5
+ I8jGEKBRW/e6SMn9zLbWVu47hEAB8o1IQJk3xjmpbxSkUR2f7d1ijlgLs1XqvZc+0zDLxFAKn
+ FqSXwLhXqzQ==
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 On Thu, Oct 28, 2021 at 4:19 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 >
-> Commit fbc125afdc50 ("ARM: socfpga: Turn on ARM errata for L2 cache") adds
-> some selects in ./arch/arm/mach-socfpga/Kconfig, with one select being
-> conditionally selected on the non-existing Kconfig symbol PL310.
+> Commit 5615f69bc209 ("ARM: 9016/2: Initialize the mapping of KASan shadow
+> memory") adds some nested ifdef's in ./arch/arm/mm/pgd.c, and follows the
+> good practice to annotate the endif's with a comment to indicate the
+> corresponding ifdef condition.
 >
-> Hence, ./scripts/checkkconfigsymbols.py warns:
+> One comment annotation refers to CONFIG_LPAE, whereas the config is
+> actually called CONFIG_ARM_LPAE. That imprecision in a comment is probably
+> tolerable for all human readers.
 >
-> PL310
-> Referencing files: arch/arm/mach-socfpga/Kconfig
+> However, the script ./scripts/checkkconfigsymbols.py, which checks the
+> kernel tree for references to non-existing Kconfig symbols, identifies and
+> reports that the reference to CONFIG_LPAE is invalid.
 >
-> Assuming that this errata should actually be selected for
-> ARCH_INTEL_SOCFPGA, simply select this config unconditionally.
+> The script ./scripts/checkkconfigsymbols.py has been quite useful to
+> identify a number of bugs with Kconfig symbols and deserves to be executed
+> and checked regularly.
+>
+> So, repair the comment to reduce the reports from this script and simplify
+> to use this script, as new issues are easier to spot when the list of
+> reports is shorter.
 >
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-I think it has to be
-
-       select PL310_ERRATA_753970 if CACHE_L2X0
-
-otherwise you get a Kconfig warning when building a kernel without the
-L2X0 driver.
-
-         Arnd
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
