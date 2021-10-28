@@ -2,39 +2,38 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1273DC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09801C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:42:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ECC7960F9B
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:39:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEA4160F9B
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:42:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231282AbhJ1OmH (ORCPT
+        id S230493AbhJ1Ooq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Oct 2021 10:42:07 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:42695 "EHLO
+        Thu, 28 Oct 2021 10:44:46 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:60579 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231249AbhJ1OmE (ORCPT
+        with ESMTP id S230265AbhJ1Ooq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Oct 2021 10:42:04 -0400
-Received: from mail-wr1-f44.google.com ([209.85.221.44]) by
- mrelayeu.kundenserver.de (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1McYP5-1nELWM3KUH-00d1Ud; Thu, 28 Oct 2021 16:39:35 +0200
-Received: by mail-wr1-f44.google.com with SMTP id e4so10597062wrc.7;
-        Thu, 28 Oct 2021 07:39:35 -0700 (PDT)
-X-Gm-Message-State: AOAM533Fmk/gHzgo4WG+rvoS55ej8i90ec6DYx+dkdkPxCxCVSJ4F5A2
-        4Z/XDdvymZM+ulMCAPdphUJvr2KeZI0MK1zyXa4=
-X-Google-Smtp-Source: ABdhPJywcxOpdNSzG6Dz7Wo0Mfr5ZcmBRbk8+ke27ZX22Ol8jLoYbLDirLsu+KPslnCjLkVgZLhdwSyWSSptfkSO3xA=
-X-Received: by 2002:a5d:4692:: with SMTP id u18mr6354304wrq.428.1635431975426;
- Thu, 28 Oct 2021 07:39:35 -0700 (PDT)
+        Thu, 28 Oct 2021 10:44:46 -0400
+Received: from mail-wm1-f46.google.com ([209.85.128.46]) by
+ mrelayeu.kundenserver.de (mreue106 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MpUlO-1n0oqb2zvA-00pqiF; Thu, 28 Oct 2021 16:42:17 +0200
+Received: by mail-wm1-f46.google.com with SMTP id b71so5280119wmd.0;
+        Thu, 28 Oct 2021 07:42:17 -0700 (PDT)
+X-Gm-Message-State: AOAM530hdB1UavH2d6Z6XLxjrMbnJZvQrT6UV7Y2BvCZg989E+N10JsK
+        3Wzb16ytB8eAM9IERImatZX+EeIplNghVQkYvLA=
+X-Google-Smtp-Source: ABdhPJx9cbVaNwx+3GHbcHnQXOpN9heQ4JmpWp0Hw9nZ+0Vz+KISvn385FCbSquLcG8jLThOtn8bEBSn4MBwQAn7pDA=
+X-Received: by 2002:a1c:1c1:: with SMTP id 184mr1292581wmb.1.1635432137333;
+ Thu, 28 Oct 2021 07:42:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211028141938.3530-1-lukas.bulwahn@gmail.com> <20211028141938.3530-3-lukas.bulwahn@gmail.com>
-In-Reply-To: <20211028141938.3530-3-lukas.bulwahn@gmail.com>
+References: <20211028141938.3530-1-lukas.bulwahn@gmail.com> <20211028141938.3530-4-lukas.bulwahn@gmail.com>
+In-Reply-To: <20211028141938.3530-4-lukas.bulwahn@gmail.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 28 Oct 2021 16:39:19 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a2raR70Xw3AT=BSojvqvua4WGeYrzasp+i7bnwTLVcxhg@mail.gmail.com>
-Message-ID: <CAK8P3a2raR70Xw3AT=BSojvqvua4WGeYrzasp+i7bnwTLVcxhg@mail.gmail.com>
-Subject: Re: [PATCH 02/13] arm: debug: reuse the config DEBUG_OMAP2UART{1,2}
- for OMAP{3,4,5}
+Date:   Thu, 28 Oct 2021 16:42:01 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3+-J6XbUmzWs7ATN7z53GomZSj6vq3n5R709=iL45RrA@mail.gmail.com>
+Message-ID: <CAK8P3a3+-J6XbUmzWs7ATN7z53GomZSj6vq3n5R709=iL45RrA@mail.gmail.com>
+Subject: Re: [PATCH 03/13] arm: Kconfig.debug: drop reference to removed ARCH_MSM
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
 Cc:     Russell King <linux@armlinux.org.uk>,
         Shawn Guo <shawnguo@kernel.org>,
@@ -59,41 +58,60 @@ Cc:     Russell King <linux@armlinux.org.uk>,
         kernel-janitors@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:O0+hG/032u5qnVL/LYERTy7yBBZqLM4cqY9KOXWXCEcfdFfJl6E
- 855AovJ4XK8jzqhG1qKTfAGNFQ0vEIb5MMeKO59Ed2zLeL5tLHGLPuqlPDxokxQrDGzPW+l
- 0HbmD+XJGE4GKsSMJJa/n/e4kQT+Btoth+AAva4DVFAbWd54TnigzHBqEMyxHdMBzX1Voj6
- eKXFx+S4O9eSg8zUSeoMA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:2/Tj9EHEsjQ=:5NqSNS2BxTu6Z/88fqYViy
- gcSPnND3qxNHoYANDG9nPtZ08It9M5vIXlgK+rc2Z64PQMHwaHiM3jnhcVplgbfGOEbxa8v47
- sHcn9vEmJ7uglduOkWK1as5AWIkZdTX864LTbMRUBhoLYIVEFu4UYdphKKRHZ8D98uRLR6kiR
- hQa3JrdcfaRkbtA3EbJrpVwg5XI557Jt7xeB0J9HTW7WtVLoSpo3Q3NoFc0qYlzNZGlwXxRnU
- tbg7xwudfbPhipC4U6voTcRot3ffVClhx1FZYtkBYGsmbk8i9ZBRyXkHtKkVaI592cVO35NNA
- 6+iOHBtx1vuBYYr/TJuDJlqE1iUCH9mMVPjbMmB+Gje1m+vVM/cbpVpc/CwXQeJd9OUBDlqyn
- ztX7c7Rxb6uoT7eaQziuPHFEfpCaRt1GkL6I38NR7fdFGfnzgEbjwzUvwIUzoh1XEmo1kCbYx
- rUgtYDiqQ1ukoEUfCFUliMUV0hN0rGn9ca2xjXJSYAjbflGwuK3+skrYfnILyrDckUyXtiLwa
- NAdDO6szXEQ4CjtvFVgXxDDPEc/PJmuT82YOwSBo97UapEsswaVbTvEOcKnRC2PSvNCoDgR/o
- QXQHNEjquSnmfgCSy1v9xXP+T25eg0ozXQAeO5QJYDMamAbcslcVIyK5glT8XbsmcpGvnwOaV
- 6ne4oR71dm8CDfduAV0Pxcg7ChhxeWXTk/emh+BdvAjUj2a77MrXYv1N//YxdCLNrXsLwgRBY
- vbV2oDYQRk4FqTVU0QXUkI13xj/LnxN79ponfwc4byhfF9Zqo1Thm0N4v9wZffY7faiwUyYXr
- H/QvGRyAdVDJKDgqHw++mFiQT/iZ/kld14KjvkiAo+vh23kajE=
+X-Provags-ID: V03:K1:wCBMx+HBENwdEVNanSmQ9zpMu8pE+lD9RbEYFLss8aQbl7kLZt6
+ a2wk9JodzAGTmpCdw7XQqFKBSjbKWWKtvXQmuMfWTBZUgAGMkl/OAqI/jKwEGUz9J8yLSAi
+ tYweqNWMrzWHDb6IChmphJJu6bIdy7kZg9aBy6Wc5a1Bqgz74mQ71b64riFnB17iLpmlWEq
+ KZQaheLfjKv5w3bjutYxw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Mgt+1CsVrGA=:5/F8zFWhHeHQlVaesv4adb
+ DxyvCbf0PRMcVwa8Ygyu80p/e5lmqgjNz2QkAkkTYm1Iv3a1v05l6NkvsRK188/+QB3mR66eK
+ KvEKly4aOLtokb2Qhb4yH428Ymde9mCq5WJTgma3wMuVNSc8pHYLBvc/tsD3KlerZ2DT3JiEV
+ I0tPQKLgsU7SnyuRjTNmzdaTwaC6i4rxZeQSMpUjW22BCmJunt4ZEIdWbM5DJYH04MaQppYnI
+ sfQ4uZaRPkjj6qhPERN1K0NwPGMVWv+zfif4l80DOH+mF61By449gpB5rBDcFP7FFR1niOH2t
+ 8w47gBRDqs8xQ96hBuapzcDzk+5K5yPCyA/P4F/WLakWUhXuxXuGwXyfo02dXLc+cVvuyy2rA
+ Q6aGczwxkBOfzP07QqvFA/i65uXN4yiHgvNNngkE/uIUayXcX92ev0VUs9X8jzW9LohWEzblq
+ xD5N1KIJFCaJl573/3NusfPiEqBzs1ARuWzfEpoG5fr4nq8dfnGuEOp+a6QRQCVXfjaGiq5lA
+ ICTU3At2QC9YUwxvju7LuJmgPp8gx8cx0Zj0YElzX3nsIn2ivMPgy8Y3NWtIEjBuNzTuSMKit
+ vHGThSzhZ3COJFBOIYmRNrMLJx4joyMc+WIPc/7dHmHHkhfFteOVouIu7c5ulIXDWD5YNxogq
+ TqynImbd6tCYJGvrTr7FibpIzZpZDKQyPK4be0DtiXbCEe6wWirHEUNqanETy37Z/CpcCDTt4
+ Cp5CG+oJVHgyiQpgt58VsTx3iGtLV53YqXtmPh05wYQkziS8MU1hKMtzxo9RdMrdbBhGA1z9a
+ 5aMEpYzXLFZ5EFU5umCzVYObWUMaPFUAL7gluxYp1dzIA4IFTE=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 On Thu, Oct 28, 2021 at 4:19 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 >
-> Commit d2b310b0234c ("ARM: debug: Use generic 8250 debug_ll for omap2 and
-> omap3/4/5 common uarts") adds address definitions of DEBUG_UART_PHYS for
-> OMAP2, OMAP3, OMAP4 and OMAP5 in ./arch/arm/Kconfig.debug.
+> Commit c0c89fafa289 ("ARM: Remove mach-msm and associated ARM architecture
+> code") removes the definition of the config ARCH_MSM. Since then, the
+> reference to ARCH_MSM in the dependencies of UNCOMPRESS_INCLUDE in
+> Kconfig.debug is dead.
 >
-> These definitions depend on DEBUG_OMAP{2,3,4,5}UART{1,2}; however, only
-> DEBUG_OMAP2UART{1,2} are defined in ./arch/arm/Kconfig.debug, and
-> DEBUG_OMAP{3,4,5}UART{1,2} are not defined. Hence, the script
-> ./scripts/checkkconfigsymbols.py warns here on non-existing symbols.
-> Simply reuse the config DEBUG_OMAP2UART{1,2}; there is no need to define
-> separate config symbols for OMAP{3,4,5}. So, just delete the dead
-> references to DEBUG_OMAP{3,4,5}UART{1,2}.
+> Fortunately, ./scripts/checkkconfigsymbols.py warns:
+>
+> ARCH_MSM
+> Referencing files: arch/arm/Kconfig.debug
+>
+> Drop the dependency on this removed config.
 >
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  arch/arm/Kconfig.debug | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+> index 83484564b1d9..87aa6e92ee6e 100644
+> --- a/arch/arm/Kconfig.debug
+> +++ b/arch/arm/Kconfig.debug
+> @@ -1886,7 +1886,7 @@ config DEBUG_UNCOMPRESS
+>
+>  config UNCOMPRESS_INCLUDE
+>         string
+> -       default "debug/uncompress.h" if ARCH_MULTIPLATFORM || ARCH_MSM || \
+> +       default "debug/uncompress.h" if ARCH_MULTIPLATFORM || \
+>                                         PLAT_SAMSUNG || ARM_SINGLE_ARMV7M
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+The PLAT_SAMSUNG reference is also misplaced here, I think you just want
+ARCH_S3C24XX instead, since the other samsung ones already require
+ARCH_MULTIPLATFORM.
+
+        Arnd
