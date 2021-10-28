@@ -2,38 +2,38 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7756AC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:48:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC07EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 58A4460C40
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:48:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D5DC60FC0
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:49:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231303AbhJ1Ou7 (ORCPT
+        id S231258AbhJ1Ovu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Oct 2021 10:50:59 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:41577 "EHLO
+        Thu, 28 Oct 2021 10:51:50 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:48221 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230258AbhJ1Ou6 (ORCPT
+        with ESMTP id S231150AbhJ1Ovu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Oct 2021 10:50:58 -0400
-Received: from mail-wm1-f51.google.com ([209.85.128.51]) by
- mrelayeu.kundenserver.de (mreue011 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MvazO-1myC7M13iQ-00sauL; Thu, 28 Oct 2021 16:48:30 +0200
-Received: by mail-wm1-f51.google.com with SMTP id 67-20020a1c1946000000b0030d4c90fa87so5292819wmz.2;
-        Thu, 28 Oct 2021 07:48:30 -0700 (PDT)
-X-Gm-Message-State: AOAM533IHk2CG9gLnGNwYXh9677jySanJxrSP1Ysgg5+esQBpkW5Hfsp
-        c63eB/KHdKHtIPnzhdKWhofNp9j1wH/8ZE670E4=
-X-Google-Smtp-Source: ABdhPJzL3MD7Ov/YpXP8VB2S/9zdo9mXJlPWHWLikatiPP2chN2QqBJfFmmZsDznohWi1xDRgcrL/A+XHkQgb3o6kX0=
-X-Received: by 2002:a05:600c:1912:: with SMTP id j18mr12838474wmq.173.1635432509957;
- Thu, 28 Oct 2021 07:48:29 -0700 (PDT)
+        Thu, 28 Oct 2021 10:51:50 -0400
+Received: from mail-wr1-f47.google.com ([209.85.221.47]) by
+ mrelayeu.kundenserver.de (mreue009 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1MO9qz-1mIEAq3Trd-00OUlN; Thu, 28 Oct 2021 16:49:21 +0200
+Received: by mail-wr1-f47.google.com with SMTP id k7so10617755wrd.13;
+        Thu, 28 Oct 2021 07:49:21 -0700 (PDT)
+X-Gm-Message-State: AOAM530mOIWgIXfT3W0S5P0bF9zXVRQ54gyQr2UdG6/2bNI6Efy4J9yT
+        sHgMnNDlMzWOCR6FrI2ZVOr+bKQR4D7EM+kmwVI=
+X-Google-Smtp-Source: ABdhPJyZaPDPCoaDGyatBTS5bhSohWogOcSmV50vy7mFoGeznOuDlcMqq0iyn1grr0cj7qSdSBNBCx/C2MgWvgadgZU=
+X-Received: by 2002:adf:e292:: with SMTP id v18mr6094633wri.369.1635432561472;
+ Thu, 28 Oct 2021 07:49:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211028141938.3530-1-lukas.bulwahn@gmail.com> <20211028141938.3530-8-lukas.bulwahn@gmail.com>
-In-Reply-To: <20211028141938.3530-8-lukas.bulwahn@gmail.com>
+References: <20211028141938.3530-1-lukas.bulwahn@gmail.com> <20211028141938.3530-9-lukas.bulwahn@gmail.com>
+In-Reply-To: <20211028141938.3530-9-lukas.bulwahn@gmail.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 28 Oct 2021 16:48:13 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1T1Q5YJEhd5sM03H7vmEWzBmJ_PR3cPsdn6y=nDpyd2w@mail.gmail.com>
-Message-ID: <CAK8P3a1T1Q5YJEhd5sM03H7vmEWzBmJ_PR3cPsdn6y=nDpyd2w@mail.gmail.com>
-Subject: Re: [PATCH 07/13] arm: imx: remove dead left-over from i.MX{27,31,35} removal
+Date:   Thu, 28 Oct 2021 16:49:05 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3ZBwDdgZfwLMPqfV=MrinyiZ0vYppt_2PLviAbHNKZhA@mail.gmail.com>
+Message-ID: <CAK8P3a3ZBwDdgZfwLMPqfV=MrinyiZ0vYppt_2PLviAbHNKZhA@mail.gmail.com>
+Subject: Re: [PATCH 08/13] arm: imx: rename DEBUG_IMX21_IMX27_UART to DEBUG_IMX27_UART
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
 Cc:     Russell King <linux@armlinux.org.uk>,
         Shawn Guo <shawnguo@kernel.org>,
@@ -58,46 +58,42 @@ Cc:     Russell King <linux@armlinux.org.uk>,
         kernel-janitors@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:i8E5+bBIjLQRy8bgdJbRy3fJUS7sO/fSgIeaqrTLXO2rTzHZg8u
- u4mFfVwgkOr06tu0OM83mjJdMwSMIr7p/ibRJnupR5dLiJNdzwwg4OW49FAob230BaSqdQP
- N6BWQsI2FXDfdqAMz+YlFFjHf8gydCBSzCKGYYyDL7WPubmQQWFVrI7UMCrND0ne6DXaXwB
- 3BuVBj5xzkbE6bNU9qzUw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:tlRF4qwqolg=:dRB+mGqCKOrecBndDfSWKy
- 2zbhrKKjnFgOY3lStyxle2n8VI3P9bRMKTxTUjA8uOUs80eztXg+E5kO5Gf3ID7nNUnjbxVZE
- w6gdgIDFZwt3EAK/gsGOhlapcuKYgA1rRMc6isZzusdwk1Ul7rM8eHc3dufNTtZP85N2iSjaL
- 2t5z2oNdw6GZfilg+fyK7qr599c5diAYNanUlm2DhToWNoN044RyzMx8xjzfv2Su6D8zlcHkC
- HEpaazd2X7xyabTCgp9RGzR8erfXVICYwLz8BYmAj+1lUpAacZ1DvALHGAiScpWYRSzuuPXjE
- BqWAvcfWRs4/regjErTUyipa5NIxXaJLhB+GBF/53aHqckSxPmicI4EmojtIQgD6KZdaR3akj
- TsmNJcPEnT04gx0UbeCOrXh4VvGMJx1n2f0b8pameUgYJ+iOeiaYJtwJpSjIDfIOKBQAzOJOJ
- yB7I2D0LlefprwSav4ugxnInSk3b7V9GeTVd02NfWurSSrFmB/plwK+Rv4lWnKJUVqhaPhNcT
- SPH6NC5PkZTAY9mNx5J3Mgtn2Xd58MIC1n+2BEKssufr0K06G6DKWGIwquNt5FpVwAbhFrRWE
- +X6vMmm3jzCcbTyzPu89NLAaWFwU7PBa8pLEd25IeY56naT2beIA+rFt1FA8X6ITxACD/ODwL
- pF5uq7lCsyvXgWngvkP38twJ+kBNcwQ72fpK34prifemSQByWO/jCG+Y94WUM0ASYBaQfmfHE
- u4EvD1rFvStPkhkC3wduZLyGvtwpKSLOjuE+wl/IakjzUl7InEMqo785pZw5Q5NVBcHVt0zlg
- Suk5+vTyAeew7a9pnyRNo19lALnjN6bO8DQo4lR+XJ4ZdAN2mE=
+X-Provags-ID: V03:K1:H4FlXSogfU/bOumyrnnm96iBDKu58sU0fHPlZ17SC5MmnUKX4hQ
+ Sva2FJjC+edcwEUINefzoxT0493Fb9gvi5DDK/0hwtw0Sw/oHZ3qABMR/wemAT23Z7E6HHy
+ yO9XjPzxlIlgb3+hWY33kyGkAQ1osQNKnSGN+ZNyT7mKpFOSJkqqfU8Nn/5w/vesUjbnQEo
+ UzVGrwz7iZt39tqXLNf4Q==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:2W9N701yH/s=:gX5F75ckFm2eUgdYHllV+/
+ B26p8tl0dkPq+JAHCLKvArk64OtPwG212FLnwPtD0jV7at62gZpToQFSoscBLMr6xl6WSXque
+ CP1KzKvqs/UzvQW/FtYThUhBUH19UKEfXvD+kSkT/T7fbukgf9JhRj83UvUKMOoFAm41pD08F
+ y3avzFs90TFZgrXMG43mnGFar4MHN2G0Pru3f3OKR6ki466hsfs35Q/kPQ/Bu7M4g1vfQd8qg
+ W+jIklqNj5T2cMmW/gPCYW77zlJsDSR6nLUjHFxJXGwoGZxH/BV86Rb/JtjvzvPNZ14HzU0ak
+ g4jFaCNynr+pNKc1rw38MivVhvDZUniL+NklPa2iL4ubm8JO8Iqlx4GkgHDDLPhQ0UnU3JWhh
+ mje5KkNIpgG7N23xtnfVIzjgtqpYP8zTnN71x+9vEcduMhRc1JB/eTpfPedCzSgBNFNy+m3YS
+ 1dDcv993i+XLmqB14M15lyRRE3TyYOQa5Pz8cPrzaDx2akBgn++3wJRVjXCosxvPV9O99OOPW
+ bKv+QaLakfeyDDX9aFsfMMmjbgRBhCfWGpFX4LPB0m010gNAXDk0iTyDbza9vH6I5sJISpJio
+ H46gXmL3vvMtj0kLhUoYshfZ+8cMU21X3U9mZ7EiOVJ6n/wOk5up7/HCStYidbwHxszfab7zY
+ +xobvmkEuHeMGwpFBqwFnFWaLUjGzClLb+GB8/FK6QAcmbkjYjJWNN2E8N7ewOzszhiRKByeB
+ usAnCm5swhlTBhsllsY64NvPSc61bvur545NdiI6Wxu+p9sw8S/HH9muZuN275dyjkQF80WL5
+ RQx/aBbGAHcW8llnPDH+y9Q5i0pG5sXhRr7Z4NC0jD2r51jq25pTcQPejOLZgP86D3r2/D2XF
+ xCNcnhUEADxUUVFEY3dsJQZyGjmBtQ7jD2zCgbCIRf+Yq0+2vVGfIQcIrLFCdvKSN0ZqqeJox
+ jnF5OQauYdg==
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 On Thu, Oct 28, 2021 at 4:19 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 >
-> The commits:
+> Since commit 4b563a066611 ("ARM: imx: Remove imx21 support"), the config
+> DEBUG_IMX21_IMX27_UART is really only debug support for IMX27.
 >
->   commit 879c0e5e0ac7 ("ARM: imx: Remove i.MX27 board files")
->   commit c93197b0041d ("ARM: imx: Remove i.MX31 board files")
->   commit e1324ece2af4 ("ARM: imx: Remove i.MX35 board files")
+> So, rename this option to DEBUG_IMX27_UART and adjust dependencies in
+> Kconfig and rename the definitions to IMX27 as further clean-up.
 >
-> remove the config MACH_MX27_3DS, MACH_MX31_3DS and MACH_MX35_3DS.
-> Commit a542fc18168c ("ARM: imx31: Remove remaining i.MX31 board code")
-> further removes arch/arm/mach-imx/3ds_debugboard.{c,h}. So, only some
-> dead left-over in Kconfig and Makefile remains.
->
-> Remove this remaining left-over.
->
-> This issue was identified with ./scripts/checkkconfigsymbols.py,
-> which warns on references to the non-existing configs
-> MACH_MX{27,31,35}_3DS in ./arch/arm/mach-imx/Kconfig.
+> This issue was discovered with ./scripts/checkkconfigsymbols.py, which
+> reported that DEBUG_IMX21_IMX27_UART depends on the non-existing config
+> SOC_IMX21.
 >
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+
 
 Reviewed-by: Arnd Bergmann <arnd@arndb.de>
