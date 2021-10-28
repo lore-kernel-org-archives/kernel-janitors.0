@@ -2,95 +2,165 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A17C433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 08:19:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 350E1C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 10:00:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70E2160FC0
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 08:19:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14E3B610D2
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 10:00:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229971AbhJ1IV1 (ORCPT
+        id S229946AbhJ1KDI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Oct 2021 04:21:27 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:50574 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229626AbhJ1IVW (ORCPT
+        Thu, 28 Oct 2021 06:03:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53972 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229788AbhJ1KDH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Oct 2021 04:21:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635409135;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=pXMrcpHehLRVHJk/nMeA6+QLvzVDo2cx25CECDi4i7A=;
-        b=JAJnUFjPqlv1tq/hh0E+TED8BpilQejxGHjiKBiysXigTdTJqeqCUCUBXaaf4kLzAfyQM6
-        Qc74S11k6+asX8ooLERRU/y4bdY/TkEGhd4QM7WSdOdq67b+N2Xw6Hy/ZxKv3eLgDFiH+1
-        C3JBAQrvzdZTRX/nliMScDC0A35q6qI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-34-i4Dnxkw1NDyC3baBbDAFUQ-1; Thu, 28 Oct 2021 04:18:51 -0400
-X-MC-Unique: i4Dnxkw1NDyC3baBbDAFUQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 497889F932;
-        Thu, 28 Oct 2021 08:18:50 +0000 (UTC)
-Received: from localhost (unknown [10.39.194.138])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E742B57CB9;
-        Thu, 28 Oct 2021 08:18:46 +0000 (UTC)
-Date:   Thu, 28 Oct 2021 09:18:46 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Colin Ian King <colin.i.king@googlemail.com>
-Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        virtualization@lists.linux-foundation.org,
-        linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] virtio_blk: Fix spelling mistake: "advertisted" ->
- "advertised"
-Message-ID: <YXpc5l6lzp+aBTaU@stefanha-x1.localdomain>
-References: <20211025102240.22801-1-colin.i.king@gmail.com>
+        Thu, 28 Oct 2021 06:03:07 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FE81C061570
+        for <kernel-janitors@vger.kernel.org>; Thu, 28 Oct 2021 03:00:40 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id u21so12358477lff.8
+        for <kernel-janitors@vger.kernel.org>; Thu, 28 Oct 2021 03:00:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zH77Pp44GzU2/mdoe346UbjhRK1B7c5cpEUdWokacgM=;
+        b=CleTm/dC2x8A9iZozB6/QHm7oBHfJUuBkh4xpX3f8zr+yQSuORhJjP/bLBZY1wS2Ph
+         yC0nWVbOvT/pxpdE/L3nzBfVDjAV0W6+6G/xD8oyPJXQ29SMcfhoT3QqxsbuKKVGIvAP
+         /aAPvPFn9U4RD+c7MdVW0d00rICXvVkJ5NkMueIZoqOzwTeyqTy5Vil2V9m1lp+ddGpO
+         1ESh2Yz6pxx5q1VmnLIx9Bx4wGiSvI5K9SLlz24CGSXNb1Dc03IVDSEMwOEjWZy0t5o+
+         b4NNZm2xMaRpBzYLljmzI9WEaA7l9LYH4cfAI0nOOpn3E+aWbgpAa4iDDCOCPOXSzzc3
+         YBNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zH77Pp44GzU2/mdoe346UbjhRK1B7c5cpEUdWokacgM=;
+        b=8KYMSK+Hu3MBC6r/IX/JBltvgJRx/c66nOS7KLyTlzfshAY8dskSawCakVIzjW194n
+         wJTv/uAXVeGx58Y96Uy4t9diLf8xu4sAcStWC3R19GbSHXlNo8GN1zT7b10quCaZADVO
+         gp/LzZBYWNuSjJ8ObMNI9GOffjqTuYnWuIClZ2Rjq8ATICkl3ZKccS18+HhVyMlxFjWp
+         PgCtuEyG/v8/hBOlUNOIZW1G8qXZQV2VB/TNG6NQUvhNwYD5tP0TRZpig8wU3ms3aCgD
+         /WYpbTeIPw5II0GhPyVE+Pj554k5fKX3QnqL3EX8Mqg54bCrehyzxmzr81Ygm9bUyhLY
+         45nw==
+X-Gm-Message-State: AOAM531A/5fNh1z85sWIaijrte7P2xaHjl+cjyoJjiwl4pCqu3gWPfbd
+        iOZtIQ3VjbcNGYfpkKD5n+ROcPEnoTuyA3c+SxnLcw==
+X-Google-Smtp-Source: ABdhPJxHt41HvAzrxD80dsEBaTWUS7K3FBjUXccCtdhuvFUrm7B+4xT6HIt0mETF6V9gmM+/Q+Hmyf0r2uDW3UvTtxY=
+X-Received: by 2002:ac2:4e8a:: with SMTP id o10mr3302231lfr.358.1635415238498;
+ Thu, 28 Oct 2021 03:00:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="U+u1ddsxMsOIkdhu"
-Content-Disposition: inline
-In-Reply-To: <20211025102240.22801-1-colin.i.king@gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+References: <20211027130812.426373-1-colin.i.king@gmail.com>
+In-Reply-To: <20211027130812.426373-1-colin.i.king@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 28 Oct 2021 12:00:01 +0200
+Message-ID: <CAPDyKFqXQwfJuU_PPrfeNwh51UkhtVFJzZ71_0R6kcVuSM3bWw@mail.gmail.com>
+Subject: Re: [PATCH][next] mmc: dw_mmc: exynos: Fix spelling mistake
+ "candiates" -> candidates
+To:     Colin Ian King <colin.i.king@googlemail.com>
+Cc:     Jaehoon Chung <jh80.chung@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
---U+u1ddsxMsOIkdhu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Oct 25, 2021 at 11:22:40AM +0100, Colin Ian King wrote:
-> There is a spelling mistake in a dev_err error message. Fix it.
->=20
+On Wed, 27 Oct 2021 at 15:08, Colin Ian King
+<colin.i.king@googlemail.com> wrote:
+>
+> There are several spelling mistakes in variable names and in a dev_warn
+> message. Fix these.
+>
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+
+Applied for next, thanks!
+
+Kind regards
+Uffe
+
+
 > ---
->  drivers/block/virtio_blk.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-
---U+u1ddsxMsOIkdhu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmF6XOUACgkQnKSrs4Gr
-c8j8vgf9GmyeRUXKxu9ABJAENCKSjxXLD6Vukn+lKvXAMvprvR+m82GgNwtX37u5
-ag8cYzpK3JKZ8pu2U9hmsbormnnXTPhwSv4Xu6rwSsmLK2kx1ZrVjmlh3/z4MA8T
-yoUsJQOpMsIjO6Y0R+t+/Hl/8bzxuH3d4mWWca4GTbIF2ZAvOxEgute1VVGcUr9L
-yiFT3Ym5HVxP7VaHrtXBCwjXl/taWhB+oTo4cToa4OPo6/ccnTaXtuJEn+ytGlTd
-ZBiPFVVGIpPNqasYkZeMcE8Jxxp/4+c5uDW89FVZ3l2NxKoX3TmaLHyfFDk0RqJY
-1tK8mop6eVQvpb7pkQwjikTXOG8/7g==
-=0jkP
------END PGP SIGNATURE-----
-
---U+u1ddsxMsOIkdhu--
-
+>  drivers/mmc/host/dw_mmc-exynos.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+> index 1f8a3c0ddfe1..c2dd29ef45c6 100644
+> --- a/drivers/mmc/host/dw_mmc-exynos.c
+> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+> @@ -442,14 +442,14 @@ static inline u8 dw_mci_exynos_move_next_clksmpl(struct dw_mci *host)
+>         return sample;
+>  }
+>
+> -static s8 dw_mci_exynos_get_best_clksmpl(u8 candiates)
+> +static s8 dw_mci_exynos_get_best_clksmpl(u8 candidates)
+>  {
+>         const u8 iter = 8;
+>         u8 __c;
+>         s8 i, loc = -1;
+>
+>         for (i = 0; i < iter; i++) {
+> -               __c = ror8(candiates, i);
+> +               __c = ror8(candidates, i);
+>                 if ((__c & 0xc7) == 0xc7) {
+>                         loc = i;
+>                         goto out;
+> @@ -457,7 +457,7 @@ static s8 dw_mci_exynos_get_best_clksmpl(u8 candiates)
+>         }
+>
+>         for (i = 0; i < iter; i++) {
+> -               __c = ror8(candiates, i);
+> +               __c = ror8(candidates, i);
+>                 if ((__c & 0x83) == 0x83) {
+>                         loc = i;
+>                         goto out;
+> @@ -466,11 +466,11 @@ static s8 dw_mci_exynos_get_best_clksmpl(u8 candiates)
+>
+>         /*
+>          * If there is no cadiates value, then it needs to return -EIO.
+> -        * If there are candiates values and don't find bset clk sample value,
+> -        * then use a first candiates clock sample value.
+> +        * If there are candidates values and don't find bset clk sample value,
+> +        * then use a first candidates clock sample value.
+>          */
+>         for (i = 0; i < iter; i++) {
+> -               __c = ror8(candiates, i);
+> +               __c = ror8(candidates, i);
+>                 if ((__c & 0x1) == 0x1) {
+>                         loc = i;
+>                         goto out;
+> @@ -485,7 +485,7 @@ static int dw_mci_exynos_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
+>         struct dw_mci *host = slot->host;
+>         struct dw_mci_exynos_priv_data *priv = host->priv;
+>         struct mmc_host *mmc = slot->mmc;
+> -       u8 start_smpl, smpl, candiates = 0;
+> +       u8 start_smpl, smpl, candidates = 0;
+>         s8 found;
+>         int ret = 0;
+>
+> @@ -496,18 +496,18 @@ static int dw_mci_exynos_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
+>                 smpl = dw_mci_exynos_move_next_clksmpl(host);
+>
+>                 if (!mmc_send_tuning(mmc, opcode, NULL))
+> -                       candiates |= (1 << smpl);
+> +                       candidates |= (1 << smpl);
+>
+>         } while (start_smpl != smpl);
+>
+> -       found = dw_mci_exynos_get_best_clksmpl(candiates);
+> +       found = dw_mci_exynos_get_best_clksmpl(candidates);
+>         if (found >= 0) {
+>                 dw_mci_exynos_set_clksmpl(host, found);
+>                 priv->tuned_sample = found;
+>         } else {
+>                 ret = -EIO;
+>                 dev_warn(&mmc->class_dev,
+> -                       "There is no candiates value about clksmpl!\n");
+> +                       "There is no candidates value about clksmpl!\n");
+>         }
+>
+>         return ret;
+> --
+> 2.32.0
+>
