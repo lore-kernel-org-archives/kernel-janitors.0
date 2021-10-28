@@ -2,224 +2,217 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF91CC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 11:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E3D8C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:19:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB46A610FF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 11:31:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5776061073
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Oct 2021 14:19:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230180AbhJ1LeV (ORCPT
+        id S230429AbhJ1OWT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Oct 2021 07:34:21 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:14823 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbhJ1LeV (ORCPT
+        Thu, 28 Oct 2021 10:22:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57534 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230305AbhJ1OWT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Oct 2021 07:34:21 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20211028113152epoutp042f564552d7c863618331daad2cfab63b~yLnk8ZD343253532535epoutp042
-        for <kernel-janitors@vger.kernel.org>; Thu, 28 Oct 2021 11:31:52 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20211028113152epoutp042f564552d7c863618331daad2cfab63b~yLnk8ZD343253532535epoutp042
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1635420712;
-        bh=qPKVtQyQQkGyv4J6n3UjORyRBa1GV5fSYB+lDWdWH5k=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=OHl2IbSpuaXPHter8CS2u72OYkpK+GLmNsUR86+v2a88HoBFaKwLqC6j6dkI/Z9md
-         U0ZymCN/HRiIKDnDVV10RDGV6rR0ZHb/SFYSckGrE+yEKtarqBo8Z8Ai75P8pp6gSw
-         cBwPSxnOGL63mgQdljClabYIvpLxW43BO+m+gsxo=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20211028113152epcas1p2a3b506539472c1df47cdc2dc2dd1a5ac~yLnkyzaA71580015800epcas1p2q;
-        Thu, 28 Oct 2021 11:31:52 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.38.233]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4Hg3LB2Zhpz4x9Q3; Thu, 28 Oct
-        2021 11:31:46 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8C.8E.09592.22A8A716; Thu, 28 Oct 2021 20:31:46 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20211028113145epcas1p1fc19a8a2beee5ba347c9cffed3f5784f~yLneK7daj0595105951epcas1p16;
-        Thu, 28 Oct 2021 11:31:45 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20211028113145epsmtrp20d676e36bdf69bb168a220efb0592a20~yLneS7pud1039910399epsmtrp2Y;
-        Thu, 28 Oct 2021 11:31:45 +0000 (GMT)
-X-AuditID: b6c32a37-2a5ff70000002578-dd-617a8a220806
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        66.70.08738.12A8A716; Thu, 28 Oct 2021 20:31:45 +0900 (KST)
-Received: from [10.113.113.235] (unknown [10.113.113.235]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20211028113145epsmtip1e067a91a5fb27c4c7988479d53a96720~yLnd8yVpt2523925239epsmtip1A;
-        Thu, 28 Oct 2021 11:31:45 +0000 (GMT)
-Subject: Re: [PATCH][next] mmc: dw_mmc: exynos: Fix spelling mistake
- "candiates" -> candidates
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Colin Ian King <colin.i.king@googlemail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Jaehoon Chung <jh80.chung@samsung.com>
-Message-ID: <e51c552a-0cab-10c0-1242-b69ea7707863@samsung.com>
-Date:   Thu, 28 Oct 2021 20:32:28 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
-        Thunderbird/78.13.0
+        Thu, 28 Oct 2021 10:22:19 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 081AFC061570;
+        Thu, 28 Oct 2021 07:19:52 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id v127so5949788wme.5;
+        Thu, 28 Oct 2021 07:19:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=w9dCLGXOlRDJmVPN1HJBPCtrX5Y3dq1CeosXfwTmTIE=;
+        b=MZZW77BM7jF65T9itFpM6n7U5dNOUA1+IJ2d8FO0oyqoTXflUpdwut867AadkBdvOf
+         MdACiu8DDmGMF+ElH9PG5i8Vech57XSQftI0CPVl/H/Lw/Vm1dOXi+WEMpTh9jUyQiki
+         4IGL04gs8riaamW4lCTxL2bq0QDsXJGQKdGw7lKFv4+GZlRw4q7G23uXPqU+6333/Jht
+         FAL+5sTiLuJhnGZUX+lOTCNtQeJwivdpuzCv9KhQTKrVTHEgBBCUCzuAh7vcvujktWcX
+         FFZ08vnnBqfrGGnGqgBZTDNN5sWGI3Xa1pIT5tRBF+AQbPK+usl8k/O8qrjp212PEG6D
+         MhLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=w9dCLGXOlRDJmVPN1HJBPCtrX5Y3dq1CeosXfwTmTIE=;
+        b=R0DJ6x2YdBfBZrJCo7kuYuJjSDpz0Kz36jHzHcI41bKnGA7T047Dhwh7oGkrYpWD7Y
+         Pclqm/s0sMjVAYqJsjJSj2aMys6kUKoQMIQuil35jSs7L8NBmS8y+PfzobWd7vSXCunb
+         5iI3hS9SOCg+DkMMEJQ7CGLtm2tX5tbJ7ZjC8t3cMviFyWKoSD01RBLC5BQawmCzc9fW
+         9FgyX7nO2AFs0RSu+oEvPUJvgSoAZrZ2vn6JRVL8rHhahHdPN5lznlcf8KtEcOV2tB4U
+         yL158bhPBGNNVY+sojSjhdiotZiXrHtiYKtqecncsna1f4DY3OAlz35mQiFYeSuoYNt0
+         YFCg==
+X-Gm-Message-State: AOAM532ghWgiW43L+qgOr6Pp6aJ2eqTT8NMuarJEVbUaQRH5RE7E30mi
+        qjQ51L0lX89mTAGKu2YCVfM=
+X-Google-Smtp-Source: ABdhPJzg6/fblA82QiNOpf6te3qmuIz0aMLwxzyCLkqjiM6kfgiHZAu7QfphRHWjzrEyKfVdfQhyfQ==
+X-Received: by 2002:a05:600c:2288:: with SMTP id 8mr13025376wmf.40.1635430790515;
+        Thu, 28 Oct 2021 07:19:50 -0700 (PDT)
+Received: from localhost.localdomain (i5C74E249.versanet.de. [92.116.226.73])
+        by smtp.gmail.com with ESMTPSA id m2sm6284546wml.15.2021.10.28.07.19.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Oct 2021 07:19:50 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Russell King <linux@armlinux.org.uk>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linus Walleij <linusw@kernel.org>,
+        Imre Kaloz <kaloz@openwrt.org>,
+        Krzysztof Halasa <khalasa@piap.pl>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH 00/13] Kconfig symbol clean-up on ./arch/arm{64}
+Date:   Thu, 28 Oct 2021 16:19:25 +0200
+Message-Id: <20211028141938.3530-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFqXQwfJuU_PPrfeNwh51UkhtVFJzZ71_0R6kcVuSM3bWw@mail.gmail.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFJsWRmVeSWpSXmKPExsWy7bCmrq5SV1WiwcIdihY7N/5gtdh6S9pi
-        49sfTBabHl9jtbi8aw6bxZH//YwWM87vY7I4vjbcgcNjVkMvm8fTCZPZPe5c28PmsXlJvcfn
-        TXIBrFHZNhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlA
-        hygplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVSC1JyCkwL9IoTc4tL89L18lJLrAwNDIxM
-        gQoTsjMWPfvJUtAvV/Frc3oD40fhLkZODgkBE4mpbz6xdTFycQgJ7GCU2P3jDpTziVHi+I4N
-        7BDOZ0aJ7/s2scG1nLzBApHYxSjRM3UPE4TznlHiyOQm1i5GDg5hgQSJ40e5QRpEBCIkPmxa
-        zgpSwyzwhFFia/tsdpAEm4COxPZvx5lAbF4BO4nVE36xgNgsAqoSu/79BLNFBSIl/p7cxQpR
-        IyhxcuYTsDinQKBE8+bpYL3MAuISt57Mh7LlJba/ncMMskxCoJdDoufrE3aIs10kvjxtZoKw
-        hSVeHd8CFZeS+PxuL9Rr1RK7ms9ANXcwStza1gTVYCyxf+lkJpDPmAU0Jdbv0ocIK0rs/D2X
-        EWIxn8S7rz1gz0sI8Ep0tAlBlKhIXHr9kglm1d0n/1khbA+Jo8dXME9gVJyF5LVZSN6ZheSd
-        WQiLFzCyrGIUSy0ozk1PLTYsMIbHdnJ+7iZGcCLVMt/BOO3tB71DjEwcjIcYJTiYlUR4L88r
-        TxTiTUmsrEotyo8vKs1JLT7EaAoM7InMUqLJ+cBUnlcSb2hiaWBiZmRsYmFoZqgkzvtZrjBR
-        SCA9sSQ1OzW1ILUIpo+Jg1OqgSnKcOrfnU0LqnprBTS7jn+6cpjrosey+wZ3lxR/i6nbcbBi
-        o7+rHrOhW5rojDcPHtvNP3pEzMknNMiu2tfj6oZ9+27vmfI17+kts1WeL38VJYkr+P9byKNY
-        wzf71cxDT+/eNRAqMz3Nr7i8d+68qxsKOStmnOn4cenbv3iWOM9LgjfDZf/MOlQqIPZwy6Ut
-        U68fmv1bqMh9rfQXo0WdW2+eWP/e51HiFx6Nh/Ktcysb1l27JXFILnvxgeIbQRlrXfNv6cY+
-        7ZhwvuJG1nY9eya7mVJaswU+1RdY7pbpNpwkl71tQWV236oz06Yq+eyfKmh5rEVUQm1dDPOZ
-        Dxe37AzPULO6l8odcFKOxTR62t0VSizFGYmGWsxFxYkAvm0FVC0EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSnK5iV1Wiwfb94hY7N/5gtdh6S9pi
-        49sfTBabHl9jtbi8aw6bxZH//YwWM87vY7I4vjbcgcNjVkMvm8fTCZPZPe5c28PmsXlJvcfn
-        TXIBrFFcNimpOZllqUX6dglcGYue/WQp6Jer+LU5vYHxo3AXIyeHhICJxNSTN1i6GLk4hAR2
-        MEos/7iDGSIhJfH56VS2LkYOIFtY4vDhYoiat4wSx5tb2UHiwgIJEsePcoOUiwhESLSdPMMK
-        UsMs8IRR4v6jT8wQDdcZJY5M7WEBqWIT0JHY/u04E4jNK2AnsXrCL7A4i4CqxK5/P8FsUYFI
-        iaYTW9kgagQlTs58AhbnFAiUaN48HayXWUBd4s+8S8wQtrjErSfzoeLyEtvfzmGewCg0C0n7
-        LCQts5C0zELSsoCRZRWjZGpBcW56brFhgVFearlecWJucWleul5yfu4mRnDkaGntYNyz6oPe
-        IUYmDsZDjBIczEoivJfnlScK8aYkVlalFuXHF5XmpBYfYpTmYFES573QdTJeSCA9sSQ1OzW1
-        ILUIJsvEwSnVwKR/cu3ppC/32YsMcqWqRc7q/rnN1Wlz7deWvBVshWZdk/zSRa/nKT3U3nP0
-        4qLNtswzBJf08i+bt7/k16HN15jv7uVa4rnna6R19wq3fO28fC85js1KVtOe1N2rq/+6p1xx
-        YXTHoY93wlVfyTDeafkTLq+gsmkde35t3mWJLbnxSs2rLu/csWoCh4fiNbXvt/Zu93TObop5
-        xFv/nrF2SkITMHqZK/i7diX+zVz8RqH1g17xQ6mA06t5Fvx6dsbyTtJO9SKfQon/MZwP6gpW
-        VCp7vPuak5akpzAnp03s1XdGn6XiscIX5l5+oz5JgDduveiMFc91u5nmCi8U63jFF6K7corT
-        AaeFAutX9q58qcRSnJFoqMVcVJwIAD4UfmYLAwAA
-X-CMS-MailID: 20211028113145epcas1p1fc19a8a2beee5ba347c9cffed3f5784f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20211028100054epcas1p2767c48b7e47f6147c590f8a3edfc6b85
-References: <20211027130812.426373-1-colin.i.king@gmail.com>
-        <CGME20211028100054epcas1p2767c48b7e47f6147c590f8a3edfc6b85@epcas1p2.samsung.com>
-        <CAPDyKFqXQwfJuU_PPrfeNwh51UkhtVFJzZ71_0R6kcVuSM3bWw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 10/28/21 7:00 PM, Ulf Hansson wrote:
-> On Wed, 27 Oct 2021 at 15:08, Colin Ian King
-> <colin.i.king@googlemail.com> wrote:
->>
->> There are several spelling mistakes in variable names and in a dev_warn
->> message. Fix these.
->>
->> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> 
-> Applied for next, thanks!
+Dear arm maintainers,
 
-Thanks for fixing them!
+The script ./scripts/checkkconfigsymbols.py warns on invalid references to
+Kconfig symbols (often: minor typos, name confusions or outdated references).
 
-Best Regards,
-Jaehoon Chung
+This is a patch series addressing the issues reported by
+./scripts/checkkconfigsymbols.py in the ./arch/arm{64}/ directories, quickly
+filtered down with:
 
-> 
-> Kind regards
-> Uffe
-> 
-> 
->> ---
->>  drivers/mmc/host/dw_mmc-exynos.c | 20 ++++++++++----------
->>  1 file changed, 10 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
->> index 1f8a3c0ddfe1..c2dd29ef45c6 100644
->> --- a/drivers/mmc/host/dw_mmc-exynos.c
->> +++ b/drivers/mmc/host/dw_mmc-exynos.c
->> @@ -442,14 +442,14 @@ static inline u8 dw_mci_exynos_move_next_clksmpl(struct dw_mci *host)
->>         return sample;
->>  }
->>
->> -static s8 dw_mci_exynos_get_best_clksmpl(u8 candiates)
->> +static s8 dw_mci_exynos_get_best_clksmpl(u8 candidates)
->>  {
->>         const u8 iter = 8;
->>         u8 __c;
->>         s8 i, loc = -1;
->>
->>         for (i = 0; i < iter; i++) {
->> -               __c = ror8(candiates, i);
->> +               __c = ror8(candidates, i);
->>                 if ((__c & 0xc7) == 0xc7) {
->>                         loc = i;
->>                         goto out;
->> @@ -457,7 +457,7 @@ static s8 dw_mci_exynos_get_best_clksmpl(u8 candiates)
->>         }
->>
->>         for (i = 0; i < iter; i++) {
->> -               __c = ror8(candiates, i);
->> +               __c = ror8(candidates, i);
->>                 if ((__c & 0x83) == 0x83) {
->>                         loc = i;
->>                         goto out;
->> @@ -466,11 +466,11 @@ static s8 dw_mci_exynos_get_best_clksmpl(u8 candiates)
->>
->>         /*
->>          * If there is no cadiates value, then it needs to return -EIO.
->> -        * If there are candiates values and don't find bset clk sample value,
->> -        * then use a first candiates clock sample value.
->> +        * If there are candidates values and don't find bset clk sample value,
->> +        * then use a first candidates clock sample value.
->>          */
->>         for (i = 0; i < iter; i++) {
->> -               __c = ror8(candiates, i);
->> +               __c = ror8(candidates, i);
->>                 if ((__c & 0x1) == 0x1) {
->>                         loc = i;
->>                         goto out;
->> @@ -485,7 +485,7 @@ static int dw_mci_exynos_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
->>         struct dw_mci *host = slot->host;
->>         struct dw_mci_exynos_priv_data *priv = host->priv;
->>         struct mmc_host *mmc = slot->mmc;
->> -       u8 start_smpl, smpl, candiates = 0;
->> +       u8 start_smpl, smpl, candidates = 0;
->>         s8 found;
->>         int ret = 0;
->>
->> @@ -496,18 +496,18 @@ static int dw_mci_exynos_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
->>                 smpl = dw_mci_exynos_move_next_clksmpl(host);
->>
->>                 if (!mmc_send_tuning(mmc, opcode, NULL))
->> -                       candiates |= (1 << smpl);
->> +                       candidates |= (1 << smpl);
->>
->>         } while (start_smpl != smpl);
->>
->> -       found = dw_mci_exynos_get_best_clksmpl(candiates);
->> +       found = dw_mci_exynos_get_best_clksmpl(candidates);
->>         if (found >= 0) {
->>                 dw_mci_exynos_set_clksmpl(host, found);
->>                 priv->tuned_sample = found;
->>         } else {
->>                 ret = -EIO;
->>                 dev_warn(&mmc->class_dev,
->> -                       "There is no candiates value about clksmpl!\n");
->> +                       "There is no candidates value about clksmpl!\n");
->>         }
->>
->>         return ret;
->> --
->> 2.32.0
->>
-> 
+  ./scripts/checkkconfigsymbols.py | grep "arch/arm" -B 1 -A 2
+
+without considering kernel configs, i.e., after removing arch/arm{64}/configs
+in the working tree. It addresses some issues I considered to be "true positives";
+so, issues that should be addressed and cleaned up.
+
+The patches on updating the comments might arguably be considered of lower value
+by itself, but as the other patches show, checkkconfigsymbols does detect some
+relevant issues in the kernel tree otherwise being unnoticed.
+So, it might be worth to clean up the kernel tree to have checkkconfigsymbols
+produce a rather short list of issues and then continuously follow and check
+what checkkconfigsymbols reports.
+
+Some work from checkkconfigsymbols on arch/arm/ is deferred; the other remaining
+issues that checkkconfigsymbols reports are (as far as I understand it now)
+"false positives", i.e., the tool misinterprets the actual content) or
+"intentional", e.g., they refer to historic configs for the purpose of
+documentation (e.g., in changelogs) or are in various kernel configs that are
+not continuously updated to match the current set of kernel configs. You can
+see below a grouped list of remaining reports.
+
+Each patch in this series can be discussed and applied individually if needed.
+They are sent in one patch series, as they all orginate from the investigation
+guided by the same tool and hence share similar topics and resolutions.
+
+Please pick this series of minor clean-up patches on ./arch/arm{64}/.
+It applies cleanly on next-20211027.
+
+Best regards,
+
+Lukas
+
+
+Remaining reports from ./scripts/checkkconfigsymbols.py pointing to files in
+./arch/arm{64}/ (excluding configs), grouped by the rationale why it is not
+addressed in this patch series:
+
+
+- Reference in historic comment:
+
+  ARM_NR_BANKS
+  Referencing files: arch/arm/mach-exynos/exynos.c
+
+  CPU
+  Referencing files: arch/arm/lib/backtrace.S, arch/arm/lib/csumpartialcopyuser.S,
+    arch/arm/mach-rpc/ecard-loader.S, arch/arm/mach-rpc/io-acorn.S, arch/arm/nwfpe/fpmodule.h
+
+  CPU_ARM92{0,2,5,6}_CPU_IDLE
+  Referencing files: arch/arm/mm/proc-arm92{0,2,5,6}.S
+
+  KVM_INDIRECT_VECTORS
+  Referencing files: arch/arm64/kvm/hyp/nvhe/host.S
+
+
+- Use of CONFIG_* environment variable beyond the definition in Kconfig scripts
+
+  AS_DMB_ISHLD
+  Referencing files: arch/arm64/include/asm/vdso/compat_barrier.h, arch/arm64/kernel/vdso32/Makefile
+
+  CC_HAS_K_CONSTRAINT
+  Referencing files: arch/arm64/Makefile, arch/arm64/include/asm/atomic_ll_sc.h
+
+  SHELL
+  Ignore CONFIG_SHELL. Default variable in Kbuild build system.
+
+
+- Parsing Mistake (Incomplete parsing heuristics) by checkkconfigsymbols.py:
+
+  ASC1, ASC2, SBC, UART
+  Referencing files: arch/arm/Kconfig.debug
+
+
+- Future work to send clean-up patches:
+
+  IRDA{_MODULE}
+  Referencing files: arch/arm/mach-pxa/balloon3.c, arch/arm/mach-pxa/palm27x.c,
+    arch/arm/mach-pxa/palm27x.h, arch/arm/mach-pxa/palmtc.c, include/linux/atalk.h,
+    include/linux/netdevice.h
+
+  PXA_FICP{_MODULE}
+  Referencing files: arch/arm/mach-pxa/spitz.c
+
+  DEBUG_LL_SER3
+  Referencing files: arch/arm/boot/compressed/head.S
+
+  already discussed in 2014: https://lore.kernel.org/all/1400055127.31197.1.camel@x220/
+
+
+Lukas Bulwahn (13):
+  arm: debug: remove obsolete debug code for DEBUG_ZTE_ZX
+  arm: debug: reuse the config DEBUG_OMAP2UART{1,2} for OMAP{3,4,5}
+  arm: Kconfig.debug: drop reference to removed ARCH_MSM
+  arm: drop an obsolete ifdef with the removed config PCI_HOST_ITE8152
+  arm: davinci: remove reference to obsolete BLK_DEV_PALMCHIP_BK3710
+  arm: ixp4xx: remove dead configs CPU_IXP43X and CPU_IXP46X
+  arm: imx: remove dead left-over from i.MX{27,31,35} removal
+  arm: imx: rename DEBUG_IMX21_IMX27_UART to DEBUG_IMX27_UART
+  arm: milbeaut: remove select of non-existing PINCTRL_MILBEAUT
+  arm: nomadik: drop selecting obsolete CLKSRC_NOMADIK_MTU_SCHED_CLOCK
+  arm: npcm: drop selecting non-existing ARM_ERRATA_794072
+  arm: socfpga: always select PL310_ERRATA_753970
+  arm: pgtable: refer to intended CONFIG_ARM_LPAE in comment
+
+ arch/arm/Kconfig.debug                    | 28 ++++++++++-------------
+ arch/arm/include/debug/imx-uart.h         | 18 +++++++--------
+ arch/arm/include/debug/pl01x.S            |  7 ------
+ arch/arm/kernel/bios32.c                  |  2 --
+ arch/arm/mach-davinci/board-dm644x-evm.c  |  3 +--
+ arch/arm/mach-davinci/board-dm646x-evm.c  |  3 +--
+ arch/arm/mach-davinci/board-neuros-osd2.c |  3 +--
+ arch/arm/mach-imx/Kconfig                 | 12 ----------
+ arch/arm/mach-imx/Makefile                |  2 --
+ arch/arm/mach-ixp4xx/Kconfig              | 13 -----------
+ arch/arm/mach-milbeaut/Kconfig            |  1 -
+ arch/arm/mach-nomadik/Kconfig             |  1 -
+ arch/arm/mach-npcm/Kconfig                |  1 -
+ arch/arm/mach-socfpga/Kconfig             |  2 +-
+ arch/arm/mm/pgd.c                         |  2 +-
+ 15 files changed, 26 insertions(+), 72 deletions(-)
+
+-- 
+2.26.2
 
