@@ -2,116 +2,114 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C2FC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 29 Oct 2021 06:36:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92BEFC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 29 Oct 2021 12:25:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E808E610D2
-	for <kernel-janitors@archiver.kernel.org>; Fri, 29 Oct 2021 06:36:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7328C610FD
+	for <kernel-janitors@archiver.kernel.org>; Fri, 29 Oct 2021 12:25:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232087AbhJ2Git (ORCPT
+        id S231573AbhJ2M2E (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 29 Oct 2021 02:38:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50956 "EHLO
+        Fri, 29 Oct 2021 08:28:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232024AbhJ2Gis (ORCPT
+        with ESMTP id S231519AbhJ2M2D (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 29 Oct 2021 02:38:48 -0400
-Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCE4AC061570;
-        Thu, 28 Oct 2021 23:36:20 -0700 (PDT)
-Received: by mail-qk1-x731.google.com with SMTP id y10so8350170qkp.9;
-        Thu, 28 Oct 2021 23:36:20 -0700 (PDT)
+        Fri, 29 Oct 2021 08:28:03 -0400
+Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C40CC061570;
+        Fri, 29 Oct 2021 05:25:35 -0700 (PDT)
+Received: by mail-qk1-x72a.google.com with SMTP id bk22so2360561qkb.6;
+        Fri, 29 Oct 2021 05:25:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LEILQQUesMLhwBV9VT8SbrMsd7pCCV240pHTJH2Qsog=;
-        b=QXSViklaM4teVWomsS6nozIFsVAusS+qiaF6O6FPcwppPbquWn9haZBHBXZHRPe9H9
-         CAfcJpRnxjo9Bo72NsgpeacT9Gs2yQKGGmq7Ghk7f8n4MiEInB/dfxccL/Hs8k6k7+vu
-         D6NxYtVzEX5+K7GpE5cJI4K6Hl1aQKeXN/Ug8=
+        d=gmail.com; s=20210112;
+        h=sender:date:from:to:cc:subject:message-id:reply-to:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=VG9TUuOVApoHapxovZ6uli91ugtXAJN9UYyzn6LgSaU=;
+        b=lsW8NKAEQKMDPA3gxlEvxroe1/RNKIIL40hm3Wm3R2K2cFoVNKzVeB95QYNdY9N9Qw
+         Fio3jdxZsA8Yzj/ruay1pi3OlK97oKFUjD3MJ5UDEqrONKFRgMU6mICTy+QFALbTN9+o
+         m2O2Hgm0cUJyqsIttkDtMY3y4bKmsxmCNhhw3t9qRmyqI/6UJ1oTboVHE9FWoV/oNusE
+         t5gYwLYNB/lrD8mymjh30k2ocabdLH63GYmkpMYna4qJoPc/SW3aWatB7lAs3+IBP7VP
+         GOLzDFN9D6EmKBYzS1h9djt2sl/DnqaNtMPdA4479elRWXtDAzJJW61/tAmxL0aNi1PZ
+         9yaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LEILQQUesMLhwBV9VT8SbrMsd7pCCV240pHTJH2Qsog=;
-        b=nR6EsyskmV/XCz1upN870MERZv5Geg9thy7TvoDqE0AKumkygM5O4Hr/l93TpNefle
-         aTybIQ8XyTHKDKyRzbVNEQDPvW/akiO5iOLZJ9rD17fQrEn3/YL8zmQm2OzQPU/ukesv
-         dkjciaHIUaCXXNeioZOgMzw6vUb7XDdXdyJqymoCtGG7hCf7nZ9BsJ0GcHHQ3KgC3+rf
-         ZpPe4ZzB+B1pGUYPCswMHAQh8Zsv5PGhO2yv81W8xgmzJYcYnLH3s45z0tAjMwguoiTg
-         6xf01NxeXtA64fkN++lBAoufzVcfLmaOJOUoEs+4jXxNXxIMX8v58ivYhvV8tZLLemFB
-         0a2w==
-X-Gm-Message-State: AOAM533f3n1UDZYylhBFdLwNNrGZbYIwm1tuPMaBV7Xvo5CCr70EIv6e
-        3nnTizQk0VKGwHdP48AtC8UnVpO7NiXlfB1Y2cM=
-X-Google-Smtp-Source: ABdhPJw+DYkn9qbJPDwLbtukPFCsVeNOpMOGwR9WpQvTJfSN3aB1GiBugZUngVxGSoZiaEgDJPquEP13D4o2XPpJ450=
-X-Received: by 2002:a05:620a:440f:: with SMTP id v15mr7337283qkp.381.1635489380025;
- Thu, 28 Oct 2021 23:36:20 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :reply-to:references:mime-version:content-disposition:in-reply-to;
+        bh=VG9TUuOVApoHapxovZ6uli91ugtXAJN9UYyzn6LgSaU=;
+        b=SyK2kEfCWxIoW2EChtCPjIOvqVZxEkIR4ru+0GKMCzYLB6uRD2LtHLlQ6MtqZqx5h0
+         WU9pcwnEDCNFXA4xVeIyhQPGh++DRpa/AIXulkN73l/7/GTZsrgj9O6wBNZDaK97VoOd
+         aDiUOGertJ690mKNay1q2uLXL8D6+J4RtuNnjqVMGF2cx/HFCl/jL7BcvKFWgxXSloJ9
+         RCCvsBCnOlIA9dBhrKwAlHX0pciVuZvQlKLuIzLzTRcbe3N9F+Z+uGG668jfNEhDn+7p
+         pwSx/uhvCzt6hmJbtrkpsd/fV9BAOeMJuGcB79FRlU3bP7qzpWbd8BlZCdHqmba1Xt7B
+         8SJg==
+X-Gm-Message-State: AOAM530CaUGyXB++3MNaXzeg4TkRa5NOq4LzO9Xf2KpeqljyhwPq1YG4
+        FAdV+CbAprnrS3RQlrZx1A==
+X-Google-Smtp-Source: ABdhPJxgHKfyVjwUHaWtg9tbyLdD9b2TT5/jOQN6+2BsmNP9xWjrdfNpls4O4m/cFJ+SnCVf6wsXzw==
+X-Received: by 2002:a37:9345:: with SMTP id v66mr8395650qkd.185.1635510334095;
+        Fri, 29 Oct 2021 05:25:34 -0700 (PDT)
+Received: from serve.minyard.net ([47.184.156.158])
+        by smtp.gmail.com with ESMTPSA id u189sm3710308qkh.14.2021.10.29.05.25.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Oct 2021 05:25:33 -0700 (PDT)
+Sender: Corey Minyard <tcminyard@gmail.com>
+Received: from minyard.net (unknown [IPv6:2001:470:b8f6:1b:7441:9fa8:649a:f004])
+        by serve.minyard.net (Postfix) with ESMTPSA id AA33D1800B4;
+        Fri, 29 Oct 2021 12:25:32 +0000 (UTC)
+Date:   Fri, 29 Oct 2021 07:25:31 -0500
+From:   Corey Minyard <minyard@acm.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     zweiss@equinix.com, andrew@aj.id.au,
+        openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ipmi: kcs_bmc: Fix a memory leak in the error handling
+ path of 'kcs_bmc_serio_add_device()'
+Message-ID: <20211029122531.GD4667@minyard.net>
+Reply-To: minyard@acm.org
+References: <ecbfa15e94e64f4b878ecab1541ea46c74807670.1631048724.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-References: <20211028141938.3530-1-lukas.bulwahn@gmail.com>
- <20211028141938.3530-12-lukas.bulwahn@gmail.com> <CAK8P3a0Nq9hLbGiPCQTjVTiGFPR9-tdhN8Tf06Q=cWTgMK78yw@mail.gmail.com>
-In-Reply-To: <CAK8P3a0Nq9hLbGiPCQTjVTiGFPR9-tdhN8Tf06Q=cWTgMK78yw@mail.gmail.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Fri, 29 Oct 2021 06:36:08 +0000
-Message-ID: <CACPK8XfiN5qziPHLU6J=bC34mcjz+ix7jjSX=xk9zsr7+vyTdw@mail.gmail.com>
-Subject: Re: [PATCH 11/13] arm: npcm: drop selecting non-existing ARM_ERRATA_794072
-To:     Arnd Bergmann <arnd@arndb.de>, Tomer Maimon <tmaimon77@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linusw@kernel.org>,
-        Imre Kaloz <kaloz@openwrt.org>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ecbfa15e94e64f4b878ecab1541ea46c74807670.1631048724.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 28 Oct 2021 at 14:57, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Thu, Oct 28, 2021 at 4:19 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> >
-> > There is no and never was a Kconfig for ARM_ERRATA_794072 in the kernel
-> > tree. So, there is no need to select ARM_ERRATA_794072 in
-> > ./arch/arm/mach-npcm/Kconfig.
-> >
-> > Simply drop selecting the non-existing ARM_ERRATA_794072.
-> >
-> > This issue was discovered with ./scripts/checkkconfigsymbols.py.
-> >
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > ---
->
-> Could this be a typo? Maybe we need to enable a different errata workaround
-> here, or maybe that code is actually needed and has to get sent.
+On Tue, Sep 07, 2021 at 11:06:32PM +0200, Christophe JAILLET wrote:
+> In the unlikely event where 'devm_kzalloc()' fails and 'kzalloc()'
+> succeeds, 'port' would be leaking.
+> 
+> Test each allocation separately to avoid the leak.
 
-Doing some searching, u-boot had a workaround for something called
-ARM_ERRATA_794072.
+Yeah, looks reasonable.  It's in my queue.
 
-https://github.com/u-boot/u-boot/commit/f71cbfe3ca5d2ad20159871700e8e248c8818ba8
+-corey
 
-Lore has the review history for that patch:
-
-https://lore.kernel.org/all/6be32e0b5b454ed7b609317266a8e798@BLUPR03MB358.namprd03.prod.outlook.com/
-
-It looks like it's the same workaround as ARM_ERRATA_742230, which the
-kernel does implement.
-
-It would be good to hear from the Nuvoton people, or an Arm person.
-
-Cheers,
-
-Joel
+> 
+> Fixes: 3a3d2f6a4c64 ("ipmi: kcs_bmc: Add serio adaptor")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/char/ipmi/kcs_bmc_serio.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/ipmi/kcs_bmc_serio.c b/drivers/char/ipmi/kcs_bmc_serio.c
+> index 7948cabde50b..7e2067628a6c 100644
+> --- a/drivers/char/ipmi/kcs_bmc_serio.c
+> +++ b/drivers/char/ipmi/kcs_bmc_serio.c
+> @@ -73,10 +73,12 @@ static int kcs_bmc_serio_add_device(struct kcs_bmc_device *kcs_bmc)
+>  	struct serio *port;
+>  
+>  	priv = devm_kzalloc(kcs_bmc->dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+>  
+>  	/* Use kzalloc() as the allocation is cleaned up with kfree() via serio_unregister_port() */
+>  	port = kzalloc(sizeof(*port), GFP_KERNEL);
+> -	if (!(priv && port))
+> +	if (!port)
+>  		return -ENOMEM;
+>  
+>  	port->id.type = SERIO_8042;
+> -- 
+> 2.30.2
+> 
