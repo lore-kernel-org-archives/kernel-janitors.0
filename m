@@ -2,160 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC140C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 29 Oct 2021 20:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 211E7C4332F
+	for <kernel-janitors@archiver.kernel.org>; Sat, 30 Oct 2021 03:54:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC3C86101E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 29 Oct 2021 20:07:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0282461166
+	for <kernel-janitors@archiver.kernel.org>; Sat, 30 Oct 2021 03:54:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230340AbhJ2UK0 (ORCPT
+        id S231669AbhJ3D4u (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 29 Oct 2021 16:10:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39908 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229458AbhJ2UKZ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 29 Oct 2021 16:10:25 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CA1DF603E5;
-        Fri, 29 Oct 2021 20:07:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1635538076;
-        bh=JWNtTtZlxxStPFFK9YVHU96GPvygUXlX9vi+gf6rdT0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fqhDha9Gy8xEL5TPhe5gn5OQSU07xsXUub+8fvEkKQQMHgnfou9nBUCfxq7luxlB4
-         Qi6hUHtyfemei9t8bVGFvRxiFek2KvDF+dF0wHJR8y9S/IdhyH7oKSATgYa9HYZqtK
-         A2cCCiWYlYktYN4yE7sAuJ+joFw4Jk/1P+Z46TeofuoXcEsu3vwIINoBEw6eoIE5Wq
-         u5VjiTF9lwpupE4rU9WXAxnIx8XfrtJwZEYc+7NCSjCRZ3FgRBDeqtqnBp4D8IQTmr
-         xT2d5WHGOnK+MwGbZAIFHovevQCJU5Y/3yVTbzFCqHYYn3NbAyBjtY/kSEzbJWHcAG
-         EbGeYE7g09Wyg==
-Date:   Fri, 29 Oct 2021 22:07:53 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
-        nsaenz@kernel.org, krzk@kernel.org, stefan.wahren@i2se.com,
-        nh6z@nh6z.net, eric@anholt.net, linux-i2c@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] i2c: bcm2835: Fix the error handling in
- 'bcm2835_i2c_probe()'
-Message-ID: <YXxUmXtXBR3Oy0C3@kunai>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
-        nsaenz@kernel.org, krzk@kernel.org, stefan.wahren@i2se.com,
-        nh6z@nh6z.net, eric@anholt.net, linux-i2c@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <338008c444af4785a07fb5a402b60225a4964ae9.1629484876.git.christophe.jaillet@wanadoo.fr>
+        Fri, 29 Oct 2021 23:56:50 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:26211 "EHLO
+        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231651AbhJ3D4t (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 29 Oct 2021 23:56:49 -0400
+Received: from dggeml709-chm.china.huawei.com (unknown [172.30.72.53])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Hh53k6Ljmz8txf;
+        Sat, 30 Oct 2021 11:52:50 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ dggeml709-chm.china.huawei.com (10.3.17.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2308.15; Sat, 30 Oct 2021 11:54:15 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC:     <linux-gpio@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] gpio: sim: fix missing unlock on error in gpio_sim_config_commit_item()
+Date:   Sat, 30 Oct 2021 04:07:57 +0000
+Message-ID: <20211030040757.2168399-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="vErO5tT5H1S1DPMw"
-Content-Disposition: inline
-In-Reply-To: <338008c444af4785a07fb5a402b60225a4964ae9.1629484876.git.christophe.jaillet@wanadoo.fr>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggeml709-chm.china.huawei.com (10.3.17.139)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Add the missing unlock before return from function
+gpio_sim_config_commit_item() in the error handling
+case.
 
---vErO5tT5H1S1DPMw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: b48f6b466e44 ("gpio: sim: new testing module")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/gpio/gpio-sim.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-On Fri, Aug 20, 2021 at 08:43:33PM +0200, Christophe JAILLET wrote:
-> Some resource should be released if an error occurs in
-> 'bcm2835_i2c_probe()'.
-> Add an error handling path and the needed 'clk_disable_unprepare()' and
-> 'clk_rate_exclusive_put()' calls.
->=20
-> While at it, rework the bottom of the function to use this newly added
-> error handling path and have an explicit and more standard "return 0;" at
-> the end of the normal path.
->=20
-> Fixes: bebff81fb8b9 ("i2c: bcm2835: Model Divider in CCF")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
+index d8bf84b604d9..e2113092f85b 100644
+--- a/drivers/gpio/gpio-sim.c
++++ b/drivers/gpio/gpio-sim.c
+@@ -789,8 +789,10 @@ static int gpio_sim_config_commit_item(struct config_item *item)
+ 						config->num_line_names);
+ 
+ 	fwnode = fwnode_create_software_node(properties, NULL);
+-	if (IS_ERR(fwnode))
++	if (IS_ERR(fwnode)) {
++		mutex_unlock(&config->lock);
+ 		return PTR_ERR(fwnode);
++	}
+ 
+ 	pdevinfo.name = "gpio-sim";
+ 	pdevinfo.fwnode = fwnode;
 
-Could someone from the BCM community kindly test/approve this change?
-
-> ---
->  drivers/i2c/busses/i2c-bcm2835.c | 18 ++++++++++++++----
->  1 file changed, 14 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/i2c/busses/i2c-bcm2835.c b/drivers/i2c/busses/i2c-bc=
-m2835.c
-> index 37443edbf754..a2f19b4c2402 100644
-> --- a/drivers/i2c/busses/i2c-bcm2835.c
-> +++ b/drivers/i2c/busses/i2c-bcm2835.c
-> @@ -449,13 +449,14 @@ static int bcm2835_i2c_probe(struct platform_device=
- *pdev)
->  	ret =3D clk_prepare_enable(i2c_dev->bus_clk);
->  	if (ret) {
->  		dev_err(&pdev->dev, "Couldn't prepare clock");
-> -		return ret;
-> +		goto err_put_exclusive_rate;
->  	}
-> =20
->  	irq =3D platform_get_resource(pdev, IORESOURCE_IRQ, 0);
->  	if (!irq) {
->  		dev_err(&pdev->dev, "No IRQ resource\n");
-> -		return -ENODEV;
-> +		ret =3D -ENODEV;
-> +		goto err_disable_unprepare_clk;
->  	}
->  	i2c_dev->irq =3D irq->start;
-> =20
-> @@ -463,7 +464,7 @@ static int bcm2835_i2c_probe(struct platform_device *=
-pdev)
->  			  dev_name(&pdev->dev), i2c_dev);
->  	if (ret) {
->  		dev_err(&pdev->dev, "Could not request IRQ\n");
-> -		return -ENODEV;
-> +		goto err_disable_unprepare_clk;
->  	}
-> =20
->  	adap =3D &i2c_dev->adapter;
-> @@ -481,7 +482,16 @@ static int bcm2835_i2c_probe(struct platform_device =
-*pdev)
-> =20
->  	ret =3D i2c_add_adapter(adap);
->  	if (ret)
-> -		free_irq(i2c_dev->irq, i2c_dev);
-> +		goto err_free_irq;
-> +
-> +	return 0;
-> +
-> +err_free_irq:
-> +	free_irq(i2c_dev->irq, i2c_dev);
-> +err_disable_unprepare_clk:
-> +	clk_disable_unprepare(i2c_dev->bus_clk);
-> +err_put_exclusive_rate:
-> +	clk_rate_exclusive_put(i2c_dev->bus_clk);
-> =20
->  	return ret;
->  }
-> --=20
-> 2.30.2
->=20
-
---vErO5tT5H1S1DPMw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmF8VJkACgkQFA3kzBSg
-KbaJ9Q//fa5saV/r7SzxO3K6INdB08qy4jv7WsqQcvKqjd+v6nkAkKVDFH8hxhPB
-prBzqeWlhaC1JrLZgptjkhFw6q2N1YFJ99OqGs0mJWi4PpNq9myxA7OjWKD64oPD
-sregXrpVzM5E79a9n7GbduJkt5PDHRmBqeZtXRrFyzbLYPVCh3leimqY5p20EMXI
-Z48PQvJgzbb5mlA3QCaL9pmZVjrnTk2WSAMCbTt80ufad72SNPvWFaqfWqdpANt6
-uYPSBkpGf1jqBo/XxS1GVhdRw2YAipvbOhgXYwjLECd+MAVttxYcOKwaowY766do
-Whe1JpunWvSbU4W4pH2hyiEElc2s5z8dttNGBbZwLJ9wqLnNSdTIGz9xLznjekoL
-afXl1kRQvPSkNOQqazn7rwIGpKwVwH64fPBbuaCQ5tnCXVU1THM/8U1yl+QQyJzG
-XlI/bP1CZbKkA4bd4BzGHCP3+RP2jrrpshyVjIV1uuu1stpNVdL/DV26reo3wgzf
-w2zs00f9WGlEj2iNBbYdqZN2cEh8KV/oWuwI52nmXgkAaLvsiRWaWKrfqikYaAZG
-SO3k06Xdg2Xf+wgHU1HBFHRhhIlCFBzr087FdR67aisx8xOrUP8iYs83VdETaJGe
-g28ReVnmVU1oafs5p5UMt0j09Wd+lA87k0RMQek/LuvYWS9t2pM=
-=fkVz
------END PGP SIGNATURE-----
-
---vErO5tT5H1S1DPMw--
