@@ -2,74 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A984DC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  1 Nov 2021 13:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 905C9C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  1 Nov 2021 13:49:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 91A0B60FE8
-	for <kernel-janitors@archiver.kernel.org>; Mon,  1 Nov 2021 13:49:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7148760F36
+	for <kernel-janitors@archiver.kernel.org>; Mon,  1 Nov 2021 13:49:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232268AbhKANvq (ORCPT
+        id S232360AbhKANvt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 1 Nov 2021 09:51:46 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:26218 "EHLO
+        Mon, 1 Nov 2021 09:51:49 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:26219 "EHLO
         szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231906AbhKANvb (ORCPT
+        with ESMTP id S231981AbhKANvh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 1 Nov 2021 09:51:31 -0400
-Received: from dggeml709-chm.china.huawei.com (unknown [172.30.72.53])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4HjZ8w3QvHz8v7Q;
-        Mon,  1 Nov 2021 21:47:28 +0800 (CST)
+        Mon, 1 Nov 2021 09:51:37 -0400
+Received: from dggeml709-chm.china.huawei.com (unknown [172.30.72.55])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4HjZ8x54YFz8v7T;
+        Mon,  1 Nov 2021 21:47:29 +0800 (CST)
 Received: from localhost.localdomain (10.175.102.38) by
  dggeml709-chm.china.huawei.com (10.3.17.139) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2308.15; Mon, 1 Nov 2021 21:48:55 +0800
+ 15.1.2308.15; Mon, 1 Nov 2021 21:48:56 +0800
 From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Peng Fan <peng.fan@nxp.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+To:     <weiyongjun1@huawei.com>, Wolfram Sang <wsa@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Tian Tao <tiantao6@hisilicon.com>,
+        Zhiqi Song <songzhiqi1@huawei.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Sudeep Holla <sudeep.holla@arm.com>
+CC:     <linux-i2c@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
         Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] mailbox: imx: Fix return value check in imx_mu_probe()
-Date:   Mon, 1 Nov 2021 14:02:34 +0000
-Message-ID: <20211101140234.777272-1-weiyongjun1@huawei.com>
+Subject: [PATCH -next] i2c: xgene-slimpro: Fix wrong pointer passed to PTR_ERR()
+Date:   Mon, 1 Nov 2021 14:02:35 +0000
+Message-ID: <20211101140235.777322-1-weiyongjun1@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
 X-Originating-IP: [10.175.102.38]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  dggeml709-chm.china.huawei.com (10.3.17.139)
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In case of error, the function devm_kzalloc() returns NULL
-pointer not ERR_PTR(). The IS_ERR() test in the return value
-check should be replaced with NULL test.
+PTR_ERR should access the value just tested by IS_ERR, otherwise
+the wrong error code will be returned.
 
-Fixes: 97961f78e8bc ("mailbox: imx: support i.MX8ULP S4 MU")
+Fixes: 7b6da7fe7bba ("mailbox: pcc: Use PCC mailbox channel pointer instead of standard")
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/mailbox/imx-mailbox.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-xgene-slimpro.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.c
-index ffe36a6bef9e..544de2db6453 100644
---- a/drivers/mailbox/imx-mailbox.c
-+++ b/drivers/mailbox/imx-mailbox.c
-@@ -563,8 +563,8 @@ static int imx_mu_probe(struct platform_device *pdev)
- 		size = sizeof(struct imx_sc_rpc_msg_max);
+diff --git a/drivers/i2c/busses/i2c-xgene-slimpro.c b/drivers/i2c/busses/i2c-xgene-slimpro.c
+index 1a19ebad60ad..63259b3ea5ab 100644
+--- a/drivers/i2c/busses/i2c-xgene-slimpro.c
++++ b/drivers/i2c/busses/i2c-xgene-slimpro.c
+@@ -487,7 +487,7 @@ static int xgene_slimpro_i2c_probe(struct platform_device *pdev)
+ 		pcc_chan = pcc_mbox_request_channel(cl, ctx->mbox_idx);
+ 		if (IS_ERR(pcc_chan)) {
+ 			dev_err(&pdev->dev, "PCC mailbox channel request failed\n");
+-			return PTR_ERR(ctx->pcc_chan);
++			return PTR_ERR(pcc_chan);
+ 		}
  
- 	priv->msg = devm_kzalloc(dev, size, GFP_KERNEL);
--	if (IS_ERR(priv->msg))
--		return PTR_ERR(priv->msg);
-+	if (!priv->msg)
-+		return -ENOMEM;
- 
- 	priv->clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(priv->clk)) {
+ 		ctx->pcc_chan = pcc_chan;
 
