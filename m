@@ -2,83 +2,121 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB83C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 18:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53EF6C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 19:06:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8263A61058
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 18:30:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DC5F60E90
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 19:06:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234768AbhKBSdL (ORCPT
+        id S230061AbhKBTIf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 2 Nov 2021 14:33:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60346 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235090AbhKBSdJ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 2 Nov 2021 14:33:09 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 03A6661050;
-        Tue,  2 Nov 2021 18:30:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1635877834;
-        bh=1yFmPUSLjQ6coZuPz6HKIjZgNys614LuubH4dIqXbWU=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=siESjPkSKl5UHDw6/omsoUlDt0CmvEesN3M5wkcOwGnfcf4wwWFFNnkN13oVZtiMc
-         QlagBst37O5BzgWx+qH0UdSGgmM8p5GMqlo7D4660ML+pAy9vG012pdci8tI/Wo39h
-         Z54Rr+JowHJ3JyOj7Exeb+Hjj3WIozlHoa0D1Sa4esMB/q3ObBQgeWteLgs/1Jpx8Y
-         wmZ1UWKqOraj9ZD81fb1Hr2SWZEbnPKrNHHVi/hv6vi084yrCGd91TZTxSxC0UZ/YA
-         Gn/1Ut6c1K8N9Yus/5sPonk1KXqZJ7boRreHh3dV9SvFjS8f7OAd/3nqRExsil0Km5
-         aFjwQ+nBNP7wA==
-From:   Mark Brown <broonie@kernel.org>
-To:     pierre-louis.bossart@linux.intel.com,
-        kuninori.morimoto.gx@renesas.com, tiwai@suse.com,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        perex@perex.cz, lgirdwood@gmail.com, mikhail_durnev@mentor.com,
-        joe@perches.com
-Cc:     kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <4c0e893cbfa21dc76c1ede0b6f4f8cff42209299.1634586167.git.christophe.jaillet@wanadoo.fr>
-References: <4c0e893cbfa21dc76c1ede0b6f4f8cff42209299.1634586167.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] ASoC: rsnd: Fix an error handling path in 'rsnd_node_count()'
-Message-Id: <163587783174.970357.16497711772885268572.b4-ty@kernel.org>
-Date:   Tue, 02 Nov 2021 18:30:31 +0000
+        Tue, 2 Nov 2021 15:08:35 -0400
+Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:60783 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229844AbhKBTIc (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 2 Nov 2021 15:08:32 -0400
+Received: from [192.168.1.18] ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id hz6XmmvCi3ptZhz6XmuddF; Tue, 02 Nov 2021 20:05:54 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Tue, 02 Nov 2021 20:05:54 +0100
+X-ME-IP: 86.243.171.122
+Subject: Re: [PATCH V2] dma: dw-edma-pcie: switch from 'pci_' to 'dma_' API
+To:     Qing Wang <wangqing@vivo.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kernel Janitors <kernel-janitors@vger.kernel.org>
+References: <1632800660-108761-1-git-send-email-wangqing@vivo.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <e30467d0-55e0-156c-4eba-2838c22fe030@wanadoo.fr>
+Date:   Tue, 2 Nov 2021 20:05:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <1632800660-108761-1-git-send-email-wangqing@vivo.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 18 Oct 2021 21:44:16 +0200, Christophe JAILLET wrote:
-> If we return before the end of the 'for_each_child_of_node()' iterator, the
-> reference taken on 'np' must be released.
+Hi,
+
+
+Le 28/09/2021 à 05:44, Qing Wang a écrit :
+> From: Wang Qing <wangqing@vivo.com>
 > 
-> Add the missing 'of_node_put()' call.
+> The wrappers in include/linux/pci-dma-compat.h should go away.
 > 
+> The patch has been generated with the coccinelle script below.
+> expression e1, e2;
+> @@
+> -    pci_set_dma_mask(e1, e2)
+> +    dma_set_mask(&e1->dev, e2)
+> 
+> @@
+> expression e1, e2;
+> @@
+> -    pci_set_consistent_dma_mask(e1, e2)
+> +    dma_set_coherent_mask(&e1->dev, e2)
+> 
+> While at it, some 'dma_set_mask()/dma_set_coherent_mask()' have been
+> updated to a much less verbose 'dma_set_mask_and_coherent()'.
+> 
+> Signed-off-by: Wang Qing <wangqing@vivo.com>
+> ---
+>   drivers/dma/dw-edma/dw-edma-pcie.c | 17 ++++-------------
+>   1 file changed, 4 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/dma/dw-edma/dw-edma-pcie.c b/drivers/dma/dw-edma/dw-edma-pcie.c
+> index 44f6e09..198f6cd
+> --- a/drivers/dma/dw-edma/dw-edma-pcie.c
+> +++ b/drivers/dma/dw-edma/dw-edma-pcie.c
+> @@ -186,27 +186,18 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
+>   	pci_set_master(pdev);
+>   
+>   	/* DMA configuration */
+> -	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
+> +	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+>   	if (!err) {
+if err = 0, so if no error...
+
+> -		err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
+> -		if (err) {
+> -			pci_err(pdev, "consistent DMA mask 64 set failed\n");
+> -			return err;
+> -		}
+> +		pci_err(pdev, "DMA mask 64 set failed\n");
+> +		return err;
+... we log an error, return success but don't perform the last steps of 
+the probe.
+
+>   	} else {
+>   		pci_err(pdev, "DMA mask 64 set failed\n");
+>   
+> -		err = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
+> +		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+>   		if (err) {
+>   			pci_err(pdev, "DMA mask 32 set failed\n");
+>   			return err;
+>   		}
+> -
+> -		err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
+> -		if (err) {
+> -			pci_err(pdev, "consistent DMA mask 32 set failed\n");
+> -			return err;
+> -		}
+>   	}
+>   
+>   	/* Data structure allocation */
 > 
 
-Applied to
+This patch is broken and should be reworked.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+It has been applied in ecb8c88bd31c.
 
-Thanks!
-
-[1/1] ASoC: rsnd: Fix an error handling path in 'rsnd_node_count()'
-      commit: 173632358fde7a567f28e07c4549b959ee857986
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+CJ
