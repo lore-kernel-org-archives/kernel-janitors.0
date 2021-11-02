@@ -2,240 +2,181 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3774EC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 08:33:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CE15C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 10:14:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 17A6C60F70
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 08:33:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65C3560524
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 10:14:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230384AbhKBIgU (ORCPT
+        id S229920AbhKBKR2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 2 Nov 2021 04:36:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45656 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbhKBIgU (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 2 Nov 2021 04:36:20 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45036C061714;
-        Tue,  2 Nov 2021 01:33:45 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id y26so41323781lfa.11;
-        Tue, 02 Nov 2021 01:33:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IIbhqQ166KuY0HqjYi0SoZGpqG4hrHANtgC7gv/B4qE=;
-        b=a2lkPtso9VSJtQKipU7sC99tkqQ0OotHLpbbtKDRwXJ8/FlMphMARe+W9ZykQ/EqH3
-         pvHw8SUBCv4OHNMaZVPzKzPC1o59GSm1kNgEgRnoZV+H4KScYM5uYgItIxW12WAHI3mF
-         76EUwcmQ50N7NyszRdSFLb/4FdJBYl1DLc5O9iibxGx4627nOnM82de4WQxiWoEZjCz7
-         Q6QOgt9k9XgpfbhM6zjqUws8v2TnrQ/I0gEL96L8OMKt0+l8pMu/SEAvy0+Bp9pLB6bq
-         U+pn1YjezcL0s09Ly4pL2H+UCIO5Edh1xlgoIN/+p+gopy66ZJkjKhLBIQgya9apGjAs
-         w5/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IIbhqQ166KuY0HqjYi0SoZGpqG4hrHANtgC7gv/B4qE=;
-        b=DtbE6Zu9r7ju6qRMn8aIo3g21Noptp0LxkBh5CUxTJu/xBt/ncf4UiQJtESDwEUZzg
-         H8j4yEblL3VPLSi4wUzTYIwIyTv+Ae8/4hwv6SZfuWy3izx6ZE6sz7NrG3rJZhpi5cqQ
-         oyOouCWtDedrXe+WrianF+ra6kfsBrdkAhJM02S1mSJTwIsOKG/aPZpu1OCJNk3WBN4w
-         xmQyw+jxA34BUe6fQXQXZ/yhnn+/WS/1ZA3dj3an/RjYUnUUkpzO/dum6yY+S2yr4Oaq
-         LYl/982vqXye3v+nxH1uY3VzhJFCsmJClj2NgsxVH7qDbRwvBr/ln7S/Y2qa5V4/sZRs
-         J4aw==
-X-Gm-Message-State: AOAM533/DwEYQdy1/pgUwHS5bIirsjEC65l0RW6vwonP5pykw1ZjZIMc
-        OFd+bEDEDLz2bbRcImzBXABfmzBrkS3rGGZvSQ==
-X-Google-Smtp-Source: ABdhPJzY1QYptzKxQ2dc9ZaB2dqJyb92U1gZE8xwtirNR1GtQGV0LjhT3+DOv5Tfb+KU1f7uH+LfjPc1eXAx/krB22A=
-X-Received: by 2002:a05:6512:3c9e:: with SMTP id h30mr2145698lfv.93.1635842023510;
- Tue, 02 Nov 2021 01:33:43 -0700 (PDT)
+        Tue, 2 Nov 2021 06:17:28 -0400
+Received: from mga02.intel.com ([134.134.136.20]:35556 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229577AbhKBKR0 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 2 Nov 2021 06:17:26 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10155"; a="218419421"
+X-IronPort-AV: E=Sophos;i="5.87,202,1631602800"; 
+   d="scan'208";a="218419421"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2021 03:11:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.87,202,1631602800"; 
+   d="scan'208";a="559949088"
+Received: from fmsmsx605.amr.corp.intel.com ([10.18.126.85])
+  by fmsmga004.fm.intel.com with ESMTP; 02 Nov 2021 03:11:17 -0700
+Received: from fmsmsx607.amr.corp.intel.com (10.18.126.87) by
+ fmsmsx605.amr.corp.intel.com (10.18.126.85) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2242.12; Tue, 2 Nov 2021 03:11:16 -0700
+Received: from fmsmsx604.amr.corp.intel.com (10.18.126.84) by
+ fmsmsx607.amr.corp.intel.com (10.18.126.87) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2242.12; Tue, 2 Nov 2021 03:11:16 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx604.amr.corp.intel.com (10.18.126.84) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2242.12 via Frontend Transport; Tue, 2 Nov 2021 03:11:16 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.41) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2242.12; Tue, 2 Nov 2021 03:11:16 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HwoXM/LmNqHtV6kcyE7XzPhb7Wbg0RxbIyAul1OG02d+XU5ER+7tqTxTngnBMtxg+Y5JO3e2ncoIXpKCN87I9dLJjTRGi88JF9ev1N96BBFJ5AIZKNfJ/fZSfv7PjGDRHOZ1wNXa/SfuN4/n6H6x9iQJoRZwp59gar8dtM6cSV7SymKoq5LufrDWfVAey1sLWDUICEveXRHmhvDoPmXK2jWSRus7IZKpEmb9P3rXWTxGUX0DYw4s/wTX4S/S8hORug8mIKWFBgumnQfBwVnR5FttFKuZVcuuKi+QNo+Ko5RFY7zCtgP+VpCemXWcLcwb7wVEQhQC2GYqN1g7e/ANew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CbW9vhZ6whI63lsednBwS/Rcz5d0Z4D5pBvIoFFoNuQ=;
+ b=PiKwgIVeB5VKp0HL2LHX3QuyVdtzPSRiNktfM08M3nihBPnj8k1CnIf7Uvw0G5Nh1iReoPE1uG6p9fRibY7GWHOKQNOAqBpo/pqP1oUf49m9rS7eup1fniueX74eiuR0jNDY5ypYVcUT1mYBlDIVVB0faiEDBzRZdJO+OABtBtQ3wIBpihB70jCDk54eOg3avp07YiUNFdRxQ/GBiG4+mFCPvkvGmbP/Hk5TznQmdA/QS1yuuwgifMPCRIBdS+DxwgTiQz4gfm121dq3B4zs9sd1362gPW4paxN/9+/qyAfBrdgd43+xAQ3jfpzYO8ffmg/G1zwt6Aab/p8+aB+3RQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.onmicrosoft.com;
+ s=selector2-intel-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CbW9vhZ6whI63lsednBwS/Rcz5d0Z4D5pBvIoFFoNuQ=;
+ b=W4qfag5Eh4BVkKzNnc/poKVXe+hvmpwj7iEnLkRu1OOrUcLX7FHpfAc9OTeaS0R3Us9ofn9Of2vi3aVYW8wiI2jzZ6vbpDD9jg0vphi+IYVeb6GseLC4uPn2AmejAfVtOhuq/NOdHO8nrULSaZFm1Lc1MTSulQq9TA92purgPcs=
+Received: from SN6PR11MB3055.namprd11.prod.outlook.com (2603:10b6:805:dc::18)
+ by SA0PR11MB4717.namprd11.prod.outlook.com (2603:10b6:806:9f::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4649.15; Tue, 2 Nov
+ 2021 10:11:15 +0000
+Received: from SN6PR11MB3055.namprd11.prod.outlook.com
+ ([fe80::a403:ed38:5a4d:c366]) by SN6PR11MB3055.namprd11.prod.outlook.com
+ ([fe80::a403:ed38:5a4d:c366%7]) with mapi id 15.20.4649.020; Tue, 2 Nov 2021
+ 10:11:15 +0000
+From:   "Alessandrelli, Daniele" <daniele.alessandrelli@intel.com>
+To:     "mgross@linux.intel.com" <mgross@linux.intel.com>,
+        "Khurana, Prabhjot" <prabhjot.khurana@intel.com>,
+        "weiyongjun1@huawei.com" <weiyongjun1@huawei.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>
+CC:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "hulkci@huawei.com" <hulkci@huawei.com>
+Subject: Re: [PATCH -next] crypto: keembay-ocs-ecc - Fix error return code in
+ kmb_ocs_ecc_probe()
+Thread-Topic: [PATCH -next] crypto: keembay-ocs-ecc - Fix error return code in
+ kmb_ocs_ecc_probe()
+Thread-Index: AQHXzydH/zukDrjlwEO1QAdgG4VUSKvwBZ+A
+Date:   Tue, 2 Nov 2021 10:11:15 +0000
+Message-ID: <399748982971320015c0af2ec69b6d7efd68727c.camel@intel.com>
+References: <20211101140233.777222-1-weiyongjun1@huawei.com>
+In-Reply-To: <20211101140233.777222-1-weiyongjun1@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.40.4 (3.40.4-2.fc34) 
+authentication-results: linux.intel.com; dkim=none (message not signed)
+ header.d=none;linux.intel.com; dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 5e5cc36b-2887-4ea9-96d0-08d99de91b0b
+x-ms-traffictypediagnostic: SA0PR11MB4717:
+x-microsoft-antispam-prvs: <SA0PR11MB47172E4DC672B412F2B32C03F28B9@SA0PR11MB4717.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: gsBlib6YC73BWYCCZQV3CNaIFbuCeo8yznLsRBfIp9+SqpL1BqFiSROldque3yZ1lsQJK2pUZkZaaTbm2kz7MVmS5l7SuF5De8KdZjR7DkpjmHsMJXJIxODeKJX2JQlRh3O5xVVAoQkaebvnXG1vihP/FuyI59zBIfMIB8JVZr1meRgvnuPsO+qmHzN2EEqJ0Gp8UGbQQmAy1hHvYBiF7Z2geWec9t8ScVONMA2odadmrpqNGc//e3zkkX+KUkl2lKhZ73FVrDpEHkk1zZHsHO7z7QxXIrWsyxV3rbASETyfG0dsBgMu3hNvUUN7kfzufmaJtEER0N2cBTiZTp7RUL2qKoKj1rxApXbr8YU8wHgbH9grLDAkF0xb3kUQenVt62pgraG0XxgEwNTEqSbRulqdZAqJSZd76fDskUWFVBen7s1Frys6sX7fxsuNlEhQ2mLB9uxr9zUqsTsRcq0sdipOziIOFEgcrG8SdkLAei6WqUVnyGh4EL/MhcIV+3/EzACme/r33kl0eBsUiIkpgy6AtTISfeQ7fpFCN9OQ0da/ClWlyYK1/EX+TgvoVw5fx4tgy676Bo729gR64kXRbuPnKmbnIjH0fwhFwIZWm3HDwMZX0TsGgwDrtUmKoAEhjb8aztzlt0AOx++/AcNHNhBHzJgXYWi4bvFS7wJLJ6mtjVPbG6MWOfOh66JQJUnK3MIC4iiwEZ6NpsOReeh4xQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR11MB3055.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(26005)(4744005)(66946007)(82960400001)(2906002)(91956017)(76116006)(508600001)(6486002)(8676002)(86362001)(36756003)(6512007)(316002)(2616005)(54906003)(186003)(5660300002)(71200400001)(6506007)(122000001)(38100700002)(66476007)(66556008)(66446008)(4326008)(64756008)(38070700005)(110136005)(8936002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?OGxTZExCYU9JZkh1bkNLS0RXOG4za1NPVVdvdHA3UDVCUWlnUy9McVozV1Jo?=
+ =?utf-8?B?SU5QNWVtMU1LOERZT1ZRaldWaWIvNkxBVzBjenUxNldJM0RiQWRSb3JQdkpJ?=
+ =?utf-8?B?Q0Z2RHRpNGYxSkR6YitkaUFFVE5BZ25SUFI2eHlHSXpKR1VOd1A3MHBUelZp?=
+ =?utf-8?B?cHdNcTBScENYZ0lWNzVDbzQyRkYxdnllRDQxUk9UT1d2a3paN1JmQ1FlUHkz?=
+ =?utf-8?B?eDIzYWx2bHpEUHplM1lyTkg0RnliRE1VTzNKSzhmWFZEVmhRbU5WZ1lqUXcy?=
+ =?utf-8?B?VFBwUzhLeFVsWjRjNDJnK0w3NUZHM1dJVDhjdk0yTEloNjJVWVg2MitMaFQv?=
+ =?utf-8?B?eTJHSFdCVEFlR2o2bndTMUJjajJGQWZVVFVsL1hpU2c4MkJScm1ndjFqcTdO?=
+ =?utf-8?B?SDRab0pzc2dIbWFMalF1Y3M4dnFPeC9ROVN0U3ZISFBFdXUxMmF0MDRSTDh1?=
+ =?utf-8?B?eFpHYThzSzVVL0tYZktNaTl4VjY5UEdwZHYwQkpVTEZIQ1JHU0hpMU5OS2wx?=
+ =?utf-8?B?MTF2UTJLRVhTS29SWCsrUnl5L3pvd2tNTUxaejd3bWg2UjBPakJBRi84eFp0?=
+ =?utf-8?B?SmpMNmdrVXViNXQxdkRZRmxNS2xsUkYrNDJPWmtUYXhBT2NKaEcwTjJLYXl0?=
+ =?utf-8?B?OTdlcjNudEFQVHNra0pDNUlFUWVhVGFabTVxS1plbUpEdUsyOUhEN1JPemU5?=
+ =?utf-8?B?L3V0dkQzWVAyZEdHa3FoZ05PelJSbmhnR1BzWHZ1ZVVkdFBGRGtla3ptbFo1?=
+ =?utf-8?B?WGxwNjcyWU52alFtWG96TytNT0Z0d3c3L3d2SkozcTk1d0Z4dy92eW1oUXRJ?=
+ =?utf-8?B?bHQ2WnplcVV4TGZZTjFFU3hqNW5xejVDNDd4aTdrM1NScDdaNFd6MkFQMlhu?=
+ =?utf-8?B?aThDdHpPSmpUT3JnbjRyV05mMWlTVTIxa0hNbUdvTDVKajhheEM0dGxNRjUz?=
+ =?utf-8?B?QVNSRFFEcnJxV29RUkhObUVkbVZJdTlsUjVzeDNaRUJjbVlMVEp3MXcwSjJ3?=
+ =?utf-8?B?Q1JCSEdjcGp6VkJYRFh1aUZ3SnJyWU1sU3c2YktMQVFJRWpKbWloc0R3MmxD?=
+ =?utf-8?B?Q3ZSRFQ5ekQrdjZIU2NNd3B2S01jQnAzcFc5ajJTWjVTS2FsSmtjb1ZKMVQz?=
+ =?utf-8?B?V2VtUWhXaTVWNmlnNjYxUlNjVGFZQ25GSVZFZFIvZlFLUDR3Q2gvZEg0Yi96?=
+ =?utf-8?B?UVJJdnpGbWtpOXZGSit5M2ttc3RMelBwSEdLRjRRdVJEazFEZ1NJSFNKaFBi?=
+ =?utf-8?B?aWZseWNaTWJaWXprS1dScmJzUzV3dlZYN2NvR1JMaVdRVFVLSllGNEorODRs?=
+ =?utf-8?B?ZG5jMnRVSGlpT1dNRE10Uy9EOTZMK21ydXdXclZVcXp3NEMxK0NOU0FwM0xh?=
+ =?utf-8?B?VmdmZEFGRXZxZVc3MHUwVjh2cWdaRXE5NmZDaUM1V1VkYjVMODFOQW8vSGFa?=
+ =?utf-8?B?dFQ3aW1sbE5Lb3RPUWh3Z3licmkxaC9mblloc0FYZXBuZ2h1MFRZc1VGbzdx?=
+ =?utf-8?B?YVZOYUJKVXhZelhFL0FmNWVFWGhjb1RLZUJiaXMxVUp1OWt6WDRBR0psS214?=
+ =?utf-8?B?bzNhSVp2WUhVU3hHR1lHV0JaUm9qZXprQmVoTWVDQTMzZEpYY053eTF6dHpQ?=
+ =?utf-8?B?TTJhWFJBWUV6TFhkazhSRkp0cXdWdXo0WHY4SWlrOHlDOVV4V2NMUVlaZjJy?=
+ =?utf-8?B?VXlpcVRmOThiVFBZaUdKY3hmVGJqM1BkMkZWUnR4N0pudzVaWEtLb0UwWnll?=
+ =?utf-8?B?SGFzY2pFbE50TUQrRXhncFo1T0QzbU41VGFEdXR4Z2JmRElld1ZwMGZFYUZn?=
+ =?utf-8?B?emZwWHVJUzF3cjNWUGxqOXdvT3U1WncybVdjcHhWdVh6eGpNS2Q0OVFrajA4?=
+ =?utf-8?B?ZUlMRGNMNGd2cnJiK3ZVVUlLa01EbzFib1RnazExcmJhYTMyRUtYdnVaWVE3?=
+ =?utf-8?B?MVBpWUUvczJwSVk0OU1NQ0kvaFc3VFBCRUJlWERsVnRCaFpxakZLOXk1ellM?=
+ =?utf-8?B?eXV5bGg2a0pPWGt4TjlOTnJRS2ZFUkVBUnF6UkdBWDBqaEY2aFdTUnRiVzNy?=
+ =?utf-8?B?UFd4MWJQS3dzTTF1RmtVNFBUUkNxeVlaTStXTnJHY213OXVjOUVrN3FxNkd1?=
+ =?utf-8?B?T0w2cnJJNmhxdVppK1Y0N09Yb0hFVEdUdW00SUV1V2hNNU1BSk5aM3NyaHor?=
+ =?utf-8?B?Q0RoSC9jRzhielcwREI0clFyc0ZTeHdEdlRkaExiaWNhQzZWU215RVhNcDF5?=
+ =?utf-8?Q?tUF44ZvmjOnM93Z3PKXeaeTJ9wxoWdQ7REdTOEde+w=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B5BFFAE9F0CB754687A4C657E2111C2F@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20211028141938.3530-1-lukas.bulwahn@gmail.com>
- <20211028141938.3530-12-lukas.bulwahn@gmail.com> <CAK8P3a0Nq9hLbGiPCQTjVTiGFPR9-tdhN8Tf06Q=cWTgMK78yw@mail.gmail.com>
- <CACPK8XfiN5qziPHLU6J=bC34mcjz+ix7jjSX=xk9zsr7+vyTdw@mail.gmail.com>
- <CAKXUXMyrhrM2o-OEW_qTTKjfKgxt-Z6Nt69geU80AoFnM1OuMA@mail.gmail.com> <CAKKbWA7OiU_pp33=EQoCTOeyd3Ecmm-dtTFeu1VB_Xcpt0gMvg@mail.gmail.com>
-In-Reply-To: <CAKKbWA7OiU_pp33=EQoCTOeyd3Ecmm-dtTFeu1VB_Xcpt0gMvg@mail.gmail.com>
-From:   Avi Fishman <avifishman70@gmail.com>
-Date:   Tue, 2 Nov 2021 10:33:32 +0200
-Message-ID: <CAKKbWA7rsdd3DpG1C-HuAms_sr3JjjNmchmBeA7Yh=rMr7tQTA@mail.gmail.com>
-Subject: Re: [PATCH 11/13] arm: npcm: drop selecting non-existing ARM_ERRATA_794072
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linusw@kernel.org>,
-        Imre Kaloz <kaloz@openwrt.org>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR11MB3055.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e5cc36b-2887-4ea9-96d0-08d99de91b0b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Nov 2021 10:11:15.2063
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tMTCLSIaOqCINX6MwnYMNGotD/XMXTuRQ1gE1L/uTcRRBnLYJc7nn2eIXTt0dS003J3ejACY8NpMq7ENI+HmJ565eYMsqXB2Hny6UL9Pkr0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4717
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Nov 2, 2021 at 10:22 AM Avi Fishman <avifishman70@gmail.com> wrote:
->
-> Hi,
->
-> At Nuvoton we implied this WA in the past, not because we encountered
-> a specific problem but since the errata says so and we saw this in
-> other patches like:
-> https://patchwork.kernel.org/project/linux-arm-kernel/patch/1396298072-13254-2-git-send-email-nitin.garg@freescale.com/
-> But we didn't upstream the arch/arm/mm/proc-v7.S
->
-> From the errata document.
-> "794072 A short loop including a DMB instruction might cause a denial
-> of service on
-> another processor which executes a CP15 broadcast operation
-> Status
-> Affects:
-> Fault Type:
-> Fault Status: Cortex-A9 MPCore.
-> Programmer Category B
-> Present in: All r1, r2, r3 and r4 revisions Open
-> Description
-> A processor which continuously executes a short loop containing a DMB
-> instruction might prevent a CP15
-> operation broadcast by another processor making further progress,
-> causing a denial of service.
-> Configurations affected
-> This erratum affects all Cortex-A9 MPCore processors with two or more
-> processors.
-> Conditions
-> The erratum requires the following conditions:
-> - Two or more processors are working in SMP mode (ACTLR.SMP=1)
-> - One of the processors continuously executes a short loop containing
-> at least one DMB instruction.
-> - Another processor executes a CP15 maintenance operation that is
-> broadcast. This requires that this
-> processor has enabled the broadcasting of CP15 operations (ACTLR.FW=1)
-> For the erratum to occur, the short loop containing the DMB
-> instruction must meet all of the following additional
-> conditions:
-> - No more than 10 instructions other than the DMB are executed between each DMB
-> - No non-conditional Load or Store, or conditional Load or Store which
-> pass the condition code check, are
-> executed between each DMB
-> When all the conditions for the erratum are met, the short loop
-> creates a continuous stream of DMB instructions.
-> This might cause a denial of service, by preventing the processor
-> executing the short loop from executing the
-> received broadcast CP15 operation. As a result, the processor that
-> originally executed the broadcast CP15
-> operation is stalled until the execution of the loop is interrupted.
-> Note that because the process issuing the CP15 broadcast operation
-> cannot complete operation, it cannot enter
-> any debug-mode, and cannot take any interrupt. If the processor
-> executing the short loop also cannot be
-> interrupted, for example if it has disabled its interrupts, or if no
-> interrupts are routed to this processor, this
-> erratum might cause a system livelock.
-> Implications
-> The erratum might create performance issues, or in the worst case it
-> might cause a system livelock if the
-> processor executing the DMB is in an infinite loop that cannot be interrupted.
-> Workaround
-> This erratum can be worked round by setting bit[4] of the undocumented
-> Diagnostic Control Register to 1. This
-> register is encoded as CP15 c15 0 c0 1.
-> This bit can be written in Secure state only, with the following
-> Read/Modify/Write code sequence:
-> MRC p15,0,rt,c15,c0,1
-> ORR rt,rt,#0x10
-> MCR p15,0,rt,c15,c0,1
-> When it is set, this bit causes the DMB instruction to be decoded and
-> executed like a DSB.
-> Using this software workaround is not expected to have any impact on
-> the overall performance of the processor
-> on a typical code base.
-> Other workarounds are also available for this erratum, to either
-> prevent or interrupt the continuous stream of
-> DMB instructions that causes the deadlock. For example:
-> - Inserting a non-conditional Load or Store instruction in the loop
-> between each DMB
-> - Inserting additional instructions in the loop, such as NOPs, to
-> avoid the processor seeing back to back
-> DMB instructions.
-> - Making the processor executing the short loop take regular interrupts."
->
-> Avi
->
-> On Tue, Nov 2, 2021 at 9:31 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> >
-> > On Fri, Oct 29, 2021 at 8:36 AM Joel Stanley <joel@jms.id.au> wrote:
-> > >
-> > > On Thu, 28 Oct 2021 at 14:57, Arnd Bergmann <arnd@arndb.de> wrote:
-> > > >
-> > > > On Thu, Oct 28, 2021 at 4:19 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> > > > >
-> > > > > There is no and never was a Kconfig for ARM_ERRATA_794072 in the kernel
-> > > > > tree. So, there is no need to select ARM_ERRATA_794072 in
-> > > > > ./arch/arm/mach-npcm/Kconfig.
-> > > > >
-> > > > > Simply drop selecting the non-existing ARM_ERRATA_794072.
-> > > > >
-> > > > > This issue was discovered with ./scripts/checkkconfigsymbols.py.
-> > > > >
-> > > > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > > > > ---
-> > > >
-> > > > Could this be a typo? Maybe we need to enable a different errata workaround
-> > > > here, or maybe that code is actually needed and has to get sent.
-> > >
-> > > Doing some searching, u-boot had a workaround for something called
-> > > ARM_ERRATA_794072.
-> > >
-> > > https://github.com/u-boot/u-boot/commit/f71cbfe3ca5d2ad20159871700e8e248c8818ba8
-> > >
-> > > Lore has the review history for that patch:
-> > >
-> > > https://lore.kernel.org/all/6be32e0b5b454ed7b609317266a8e798@BLUPR03MB358.namprd03.prod.outlook.com/
-> > >
-> > > It looks like it's the same workaround as ARM_ERRATA_742230, which the
-> > > kernel does implement.
-> > >
-> > > It would be good to hear from the Nuvoton people, or an Arm person.
-> > >
-> >
-> > I will happily update the patch to select ARM_ERRATA_742230 instead of
-> > the dead non-existing ARM_ERRATA_794072.
-> >
-> > In contrast to the current patch that basically only cleans up "dead
-> > config" and has no effective functional change, the new patch would
-> > change the behaviour. I cannot test this patch (beyond some basic
-> > compile test) on the hardware; so, we certainly need someone to have
-> > that hardware, knows how to test it or confirm otherwise that we
-> > should select the ARM_ERRATA_742230 fix for this hardware.
-
-Note that ARM_ERRATA_742230 is applied in code up-to CORTEX-A9 r2p2
-but while ARM_ERRATA_794072 exist also in CORTEX-A9 r4p1
-https://github.com/torvalds/linux/blob/322a3b843d7f475b857646ed8f95b40431d3ecd0/arch/arm/mm/proc-v7.S#L347
-> >
-> > The current patch should be subsumed by the new patch; the submission
-> > of the new patch is deferred until that person shows up. Let's see.
-> >
-> > Lukas
->
->
->
-> --
-> Regards,
-> Avi
-
-
-
--- 
-Regards,
-Avi
+SGkgV2VpLA0KDQpPbiBNb24sIDIwMjEtMTEtMDEgYXQgMTQ6MDIgKzAwMDAsIFdlaSBZb25nanVu
+IHdyb3RlOg0KPiBGaXggdG8gcmV0dXJuIG5lZ2F0aXZlIGVycm9yIGNvZGUgLUVOT01FTSBmcm9t
+IHRoZSBlcnJvciBoYW5kbGluZw0KPiBjYXNlIGluc3RlYWQgb2YgMCwgYXMgZG9uZSBlbHNld2hl
+cmUgaW4gdGhpcyBmdW5jdGlvbi4NCj4gDQo+IEZpeGVzOiBjOWY2MDhjMzgwMDkgKCJjcnlwdG86
+IGtlZW1iYXktb2NzLWVjYyAtIEFkZCBLZWVtIEJheSBPQ1MgRUNDIERyaXZlciIpDQo+IFJlcG9y
+dGVkLWJ5OiBIdWxrIFJvYm90IDxodWxrY2lAaHVhd2VpLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTog
+V2VpIFlvbmdqdW4gPHdlaXlvbmdqdW4xQGh1YXdlaS5jb20+DQo+IC0tLQ0KPiDCoGRyaXZlcnMv
+Y3J5cHRvL2tlZW1iYXkva2VlbWJheS1vY3MtZWNjLmMgfCAxICsNCj4gwqAxIGZpbGUgY2hhbmdl
+ZCwgMSBpbnNlcnRpb24oKykNCg0KUmV2aWV3ZWQtYnk6IERhbmllbGUgQWxlc3NhbmRyZWxsaSA8
+ZGFuaWVsZS5hbGVzc2FuZHJlbGxpQGludGVsLmNvbT4NCg0KVGhhbmtzIGZvciB0aGUgZml4IQ0K
+DQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jcnlwdG8va2VlbWJheS9rZWVtYmF5LW9jcy1l
+Y2MuYyBiL2RyaXZlcnMvY3J5cHRvL2tlZW1iYXkva2VlbWJheS1vY3MtZWNjLmMNCj4gaW5kZXgg
+Njc5ZTZhZTI5NWUwLi41ZDA3ODVkM2YxYjUgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvY3J5cHRv
+L2tlZW1iYXkva2VlbWJheS1vY3MtZWNjLmMNCj4gKysrIGIvZHJpdmVycy9jcnlwdG8va2VlbWJh
+eS9rZWVtYmF5LW9jcy1lY2MuYw0KPiBAQCAtOTMwLDYgKzkzMCw3IEBAIHN0YXRpYyBpbnQga21i
+X29jc19lY2NfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gwqDCoMKgwqDC
+oMKgwqDCoGVjY19kZXYtPmVuZ2luZSA9IGNyeXB0b19lbmdpbmVfYWxsb2NfaW5pdChkZXYsIDEp
+Ow0KPiDCoMKgwqDCoMKgwqDCoMKgaWYgKCFlY2NfZGV2LT5lbmdpbmUpIHsNCj4gwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBkZXZfZXJyKGRldiwgIkNvdWxkIG5vdCBhbGxvY2F0ZSBj
+cnlwdG8gZW5naW5lXG4iKTsNCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJjID0g
+LUVOT01FTTsNCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBnb3RvIGxpc3RfZGVs
+Ow0KPiDCoMKgwqDCoMKgwqDCoMKgfQ0KPiDCoA0KPiANCg0K
