@@ -2,64 +2,191 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51636C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  1 Nov 2021 19:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E14B2C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 06:38:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3443660041
-	for <kernel-janitors@archiver.kernel.org>; Mon,  1 Nov 2021 19:27:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7B4160EDF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 06:38:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232630AbhKATaC (ORCPT
+        id S229577AbhKBGk5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 1 Nov 2021 15:30:02 -0400
-Received: from smtprelay0009.hostedemail.com ([216.40.44.9]:43238 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231820AbhKATaB (ORCPT
+        Tue, 2 Nov 2021 02:40:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47100 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229497AbhKBGk4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 1 Nov 2021 15:30:01 -0400
-Received: from omf07.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id B4611100C1CFB;
-        Mon,  1 Nov 2021 19:27:26 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf07.hostedemail.com (Postfix) with ESMTPA id 97C85315D79;
-        Mon,  1 Nov 2021 19:27:25 +0000 (UTC)
-Message-ID: <b1d42de162c02f6027ab3ddd8c2d3fb0fd4cd220.camel@perches.com>
-Subject: Re: [PATCH] speakup: Fix typo in documentation "boo" -> "boot"
-From:   Joe Perches <joe@perches.com>
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Colin Ian King <colin.i.king@googlemail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 01 Nov 2021 12:27:24 -0700
-In-Reply-To: <87k0hr6bfx.fsf@meer.lwn.net>
-References: <20211028182319.613315-1-colin.i.king@gmail.com>
-         <20211028182451.baizgvczghh37zfl@begin> <87k0hr6bfx.fsf@meer.lwn.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.4-1 
+        Tue, 2 Nov 2021 02:40:56 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5358C061714;
+        Mon,  1 Nov 2021 23:38:21 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id c4so1591885wrd.9;
+        Mon, 01 Nov 2021 23:38:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2jT8pDp61cxxdq+1Y9Z8tKQBn7lQoXJDwBX8tFoB6Nc=;
+        b=intgKAHZdoCGHK4zPbNdwRzStRyx9vPQOP8AY+tkwZP4q1daAIoaK17BxZ4ntkkj3D
+         r96IIkA528o1GnKKrkbPtsdZ6R2pGDuiV3HiTWhMsojS6fALdOsnEP7lT11j4KNCneSf
+         Ct5WzHSa0FrZvQcoy85wRRYOBsqq+b4Tf+9/ZEds2mpRClIBw03lb++3sZm1bpBexfU1
+         OtjdTqLLaVPihFu8k8aVBeZxsfgE76UJ/04T4/Zxo3cI4aMevIMELDwmuCPj/pMBAQvN
+         Quc5qV3Cxj3h+V/3DSaoz+DX5zMBdDCjxq1ReJGG5qUVeFMfSdDrq+jPEGgbup7z3rGc
+         6//A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2jT8pDp61cxxdq+1Y9Z8tKQBn7lQoXJDwBX8tFoB6Nc=;
+        b=VdlOOfABLVOBPg/67B6mFJSvHHYpUUhy5GFnmNR3ZWkeJ8M5yq6mTYiQNy3vUgE8FO
+         3DcTooiDe6hoLhDaNFt5COkQ69PRfTVMHztgnXpZwVyoHwBQis3nD+lUSzYmUCZh9kLQ
+         H209g4hx6pnsCWwBtn8S6GxUwf/BI5L/s2+IEyg7A/oCYnl1nJocEut+CZtiMIX/UdUa
+         oPVfh9S51gznd3DGxY4/dBljg4fB59hgH6bznOmc3pIh2IVUSvNdKkwKYwRnv3K0S7kb
+         RTbqIRMCyB2simiCBZ2ZwXbkaGKtJOzSJagVr9/0lPoDQI5+K8AxETZUc6Q6fQ/FyDDh
+         XL5w==
+X-Gm-Message-State: AOAM531dDcd3w4a97askLE1wffA6zBqjrpFuu3YpfqV3NkXxPvMDrIHS
+        Q540o98ujJu4t5d5KOUDqyMAEhyOLJc=
+X-Google-Smtp-Source: ABdhPJy5ENn/ELbYTpSsT2Xncb5YA+MGxveY/xFy5tJ+wIe6qfvxXs8znmsx/mQfXcQioHK7Xq96SQ==
+X-Received: by 2002:a5d:58ed:: with SMTP id f13mr34534675wrd.373.1635835100441;
+        Mon, 01 Nov 2021 23:38:20 -0700 (PDT)
+Received: from localhost.elektrobit.com (eth1-fw1-nbg6.eb.noris.de. [213.95.148.172])
+        by smtp.gmail.com with ESMTPSA id l5sm1402196wms.16.2021.11.01.23.38.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Nov 2021 23:38:20 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Russell King <linux@armlinux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] arm: remove zte zx platform left-over
+Date:   Tue,  2 Nov 2021 07:38:10 +0100
+Message-Id: <20211102063810.932-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: u1ep7x4x71g8idx8z5ydgzohu83zruha
-X-Rspamd-Server: rspamout02
-X-Rspamd-Queue-Id: 97C85315D79
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX19eyUiIxaTyRbOTrnxTUjk51d558FEbxZ4=
-X-HE-Tag: 1635794845-741129
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 2021-11-01 at 11:19 -0600, Jonathan Corbet wrote:
-> Samuel Thibault <samuel.thibault@ens-lyon.org> writes:
-> > Colin Ian King, le jeu. 28 oct. 2021 19:23:19 +0100, a ecrit:
-> > > There is a typo in the speakup documentation. Fix it.
-> But ... we just got a kernel named "trick or treat" and now you want to
-> delete "boo time"? :)
+Commit 89d4f98ae90d ("ARM: remove zte zx platform") missed to remove some
+definitions for this platform's debug and serial, e.g., code dependent on
+the config DEBUG_ZTE_ZX.
 
-Maybe a few more for dia de los muertos.'
+Fortunately, ./scripts/checkkconfigsymbols.py detects this and warns:
 
-Documentation/devicetree/bindings/crypto/fsl-sec4.txt:      Value type: <boo>
-Documentation/devicetree/bindings/example-schema.yaml:      - enum: [baz, boo]
-Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt:    Value type: <boo>
-Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt:    Value type: <boo>
+DEBUG_ZTE_ZX
+Referencing files: arch/arm/include/debug/pl01x.S
 
+Further review by Arnd Bergmann identified even more dead code in the
+amba serial driver.
+
+Remove all this left-over from the zte zx platform.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+this is a new patch after the discussion around:
+
+https://lore.kernel.org/all/20211028141938.3530-2-lukas.bulwahn@gmail.com/
+
+ arch/arm/include/debug/pl01x.S  |  7 -------
+ drivers/tty/serial/amba-pl011.c | 37 ---------------------------------
+ include/linux/amba/bus.h        |  6 ------
+ 3 files changed, 50 deletions(-)
+
+diff --git a/arch/arm/include/debug/pl01x.S b/arch/arm/include/debug/pl01x.S
+index 0c7bfa4c10db..c7e02d0628bf 100644
+--- a/arch/arm/include/debug/pl01x.S
++++ b/arch/arm/include/debug/pl01x.S
+@@ -8,13 +8,6 @@
+ */
+ #include <linux/amba/serial.h>
+ 
+-#ifdef CONFIG_DEBUG_ZTE_ZX
+-#undef UART01x_DR
+-#undef UART01x_FR
+-#define UART01x_DR     0x04
+-#define UART01x_FR     0x14
+-#endif
+-
+ #ifdef CONFIG_DEBUG_UART_PHYS
+ 		.macro	addruart, rp, rv, tmp
+ 		ldr	\rp, =CONFIG_DEBUG_UART_PHYS
+diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
+index d361cd84ff8c..c9534e229166 100644
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -188,38 +188,6 @@ static struct vendor_data vendor_st = {
+ 	.get_fifosize		= get_fifosize_st,
+ };
+ 
+-static const u16 pl011_zte_offsets[REG_ARRAY_SIZE] = {
+-	[REG_DR] = ZX_UART011_DR,
+-	[REG_FR] = ZX_UART011_FR,
+-	[REG_LCRH_RX] = ZX_UART011_LCRH,
+-	[REG_LCRH_TX] = ZX_UART011_LCRH,
+-	[REG_IBRD] = ZX_UART011_IBRD,
+-	[REG_FBRD] = ZX_UART011_FBRD,
+-	[REG_CR] = ZX_UART011_CR,
+-	[REG_IFLS] = ZX_UART011_IFLS,
+-	[REG_IMSC] = ZX_UART011_IMSC,
+-	[REG_RIS] = ZX_UART011_RIS,
+-	[REG_MIS] = ZX_UART011_MIS,
+-	[REG_ICR] = ZX_UART011_ICR,
+-	[REG_DMACR] = ZX_UART011_DMACR,
+-};
+-
+-static unsigned int get_fifosize_zte(struct amba_device *dev)
+-{
+-	return 16;
+-}
+-
+-static struct vendor_data vendor_zte = {
+-	.reg_offset		= pl011_zte_offsets,
+-	.access_32b		= true,
+-	.ifls			= UART011_IFLS_RX4_8|UART011_IFLS_TX4_8,
+-	.fr_busy		= ZX_UART01x_FR_BUSY,
+-	.fr_dsr			= ZX_UART01x_FR_DSR,
+-	.fr_cts			= ZX_UART01x_FR_CTS,
+-	.fr_ri			= ZX_UART011_FR_RI,
+-	.get_fifosize		= get_fifosize_zte,
+-};
+-
+ /* Deals with DMA transactions */
+ 
+ struct pl011_sgbuf {
+@@ -2974,11 +2942,6 @@ static const struct amba_id pl011_ids[] = {
+ 		.mask	= 0x00ffffff,
+ 		.data	= &vendor_st,
+ 	},
+-	{
+-		.id	= AMBA_LINUX_ID(0x00, 0x1, 0xffe),
+-		.mask	= 0x00ffffff,
+-		.data	= &vendor_zte,
+-	},
+ 	{ 0, 0 },
+ };
+ 
+diff --git a/include/linux/amba/bus.h b/include/linux/amba/bus.h
+index edfcf7a14dcd..6c7f47846971 100644
+--- a/include/linux/amba/bus.h
++++ b/include/linux/amba/bus.h
+@@ -90,14 +90,8 @@ enum amba_vendor {
+ 	AMBA_VENDOR_ST = 0x80,
+ 	AMBA_VENDOR_QCOM = 0x51,
+ 	AMBA_VENDOR_LSI = 0xb6,
+-	AMBA_VENDOR_LINUX = 0xfe,	/* This value is not official */
+ };
+ 
+-/* This is used to generate pseudo-ID for AMBA device */
+-#define AMBA_LINUX_ID(conf, rev, part) \
+-	(((conf) & 0xff) << 24 | ((rev) & 0xf) << 20 | \
+-	AMBA_VENDOR_LINUX << 12 | ((part) & 0xfff))
+-
+ extern struct bus_type amba_bustype;
+ 
+ #define to_amba_device(d)	container_of(d, struct amba_device, dev)
+-- 
+2.26.2
 
