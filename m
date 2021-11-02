@@ -2,44 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A8B8C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 08:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DAFEC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 08:22:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3FC1160F70
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 08:11:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 566A861050
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 08:22:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230281AbhKBINn (ORCPT
+        id S230468AbhKBIZM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 2 Nov 2021 04:13:43 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:40745 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230321AbhKBINn (ORCPT
+        Tue, 2 Nov 2021 04:25:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42954 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229920AbhKBIY4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 2 Nov 2021 04:13:43 -0400
-Received: from mail-wr1-f42.google.com ([209.85.221.42]) by
- mrelayeu.kundenserver.de (mreue106 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1MwPjf-1mROWt3gHN-00sQyZ; Tue, 02 Nov 2021 09:11:06 +0100
-Received: by mail-wr1-f42.google.com with SMTP id u1so296263wru.13;
-        Tue, 02 Nov 2021 01:11:06 -0700 (PDT)
-X-Gm-Message-State: AOAM533r/joAuQe66f5/Perh50hk81aCKa92TWunQ2TMFp6Vvpp63Vts
-        3vItsi0cjba3zrgGW7OB7RucelPYZCPEHalDwB0=
-X-Google-Smtp-Source: ABdhPJyFtamfSUetI1AbUBIOvCYQczN1Nlzp9gFqyOAdgQNhP9d2hcmJSPJ8rKmPIqsxt4VD5S+rUEmHQuxxkKHrxEU=
-X-Received: by 2002:adf:efc6:: with SMTP id i6mr21099177wrp.428.1635840666461;
- Tue, 02 Nov 2021 01:11:06 -0700 (PDT)
+        Tue, 2 Nov 2021 04:24:56 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CF7CC061764;
+        Tue,  2 Nov 2021 01:22:16 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id p16so41399169lfa.2;
+        Tue, 02 Nov 2021 01:22:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ne7EPu6jTpGVLHdvimehHVoEG1G7OTA5OiY+BOnLe4A=;
+        b=PjUNJMcSRJ62akTQe/diEaqWuErpiYU8V09h41nU2mp9HKydnky/bk6OV2dQuyewS2
+         S9RuIpT48CK73n4qcfBiHUYtyhouUpWA0+J54GBgSj7yynd2vT4DW8fv4ahrzlsrT0E6
+         /lijxNB4x8IwycViFV+jzEaUZm/3pQxtQJf916W/qvzbddRwXkIOIm4OiMVLn/WIZ/DY
+         N5odBUKp0BxW4l3NBxeuLswtCe3PZ5pflo9kkmST1Cs2eJToB0wimMkmOPSuyQTpfxUg
+         oA9KmxcFF04RD5lgmyzKxuHhhF7bgKu7R5M+jFKRFH6KtY1r31FAMN4zM91jGi33Xl0z
+         BFsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ne7EPu6jTpGVLHdvimehHVoEG1G7OTA5OiY+BOnLe4A=;
+        b=1WFLEUF16Ai7gOsHSqGBy/gsqn3ghIsMr0ZOnaIyQMzg9FxHIhe/GSOd1pCRzhmSgJ
+         A+23GYFvan8gBDS5jMGfD9IUugvbtyd55BGw9cPC8s6wvoNjBOgly1YZi6qYDL4KJ5qB
+         8DOgy3ExtgsPVO+0qf7PFrRYyuFh0/foVVpOcgawrWUWmkdQVoYE3wJp8VXAou7y6Fij
+         C18AzTeiiD3s66uNIyQhbxAa4Z7gpyVIf76z+ra74UwRLQAVIPB6vnpoAduyjsUrZ/YW
+         XTO06qZkABY+0IYElKEy3MU1MLwv3SfHOKf8D8y8kvDLnE0QfzFoDG4n7651WAN7rT0K
+         yuGA==
+X-Gm-Message-State: AOAM530bR1n1ELHva8LRKZdm2qD3R2nDuDI6sqUjEMMMEJfcDN/jWaCE
+        ziucLvUbU1ZJOxFRTyuIwuCxZvllLnEL/04D0A==
+X-Google-Smtp-Source: ABdhPJz2sTRMCaO5nz6DI/gO9EPlcsOXPYF/+nvlvqLAyf4DhHKZV4nnIz1ld2TtCyuBcBxPgayITk4DR6CTKXKkKxk=
+X-Received: by 2002:a05:6512:3c9e:: with SMTP id h30mr2097037lfv.93.1635841334320;
+ Tue, 02 Nov 2021 01:22:14 -0700 (PDT)
 MIME-Version: 1.0
 References: <20211028141938.3530-1-lukas.bulwahn@gmail.com>
  <20211028141938.3530-12-lukas.bulwahn@gmail.com> <CAK8P3a0Nq9hLbGiPCQTjVTiGFPR9-tdhN8Tf06Q=cWTgMK78yw@mail.gmail.com>
  <CACPK8XfiN5qziPHLU6J=bC34mcjz+ix7jjSX=xk9zsr7+vyTdw@mail.gmail.com> <CAKXUXMyrhrM2o-OEW_qTTKjfKgxt-Z6Nt69geU80AoFnM1OuMA@mail.gmail.com>
 In-Reply-To: <CAKXUXMyrhrM2o-OEW_qTTKjfKgxt-Z6Nt69geU80AoFnM1OuMA@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 2 Nov 2021 09:10:50 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a2N3zNkGzXQD8Pbs-8pDL7mv6rneJop-C_p_+d7-_sNqA@mail.gmail.com>
-Message-ID: <CAK8P3a2N3zNkGzXQD8Pbs-8pDL7mv6rneJop-C_p_+d7-_sNqA@mail.gmail.com>
+From:   Avi Fishman <avifishman70@gmail.com>
+Date:   Tue, 2 Nov 2021 10:22:03 +0200
+Message-ID: <CAKKbWA7OiU_pp33=EQoCTOeyd3Ecmm-dtTFeu1VB_Xcpt0gMvg@mail.gmail.com>
 Subject: Re: [PATCH 11/13] arm: npcm: drop selecting non-existing ARM_ERRATA_794072
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
 Cc:     Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>,
         Tomer Maimon <tmaimon77@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
@@ -60,37 +80,131 @@ Cc:     Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>,
         kernel-janitors <kernel-janitors@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:42h7IqhsqzshYTqnIAaEPgcxnXwAftpVOTvW1+XrZM+OcAVffYw
- w8TmUnRnQyWR1Yc6rdfHDVhJJj63lfGNaMuF+LW+ha3zR9tgig3RBswoMWAqNRDe+Svv2QG
- 6QKde7/grD06goUhGpJOss8Om7eR5k8H5s7/YlM66+0GQkwpewST4o5U6Wz+T7ylEdkTlEO
- z91qlxh843Btd22w2xnQA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:JYr3zjFUXr0=:7bwhG4RYoOndC8Z24DQb0X
- nG1zVfiYAyZp2HYSXnAK8NVV40Q6J0hWMyYrrYU53PBJ8EFyBbG9cSuAnfyIBXtOI6JzBWZTC
- zx+zgOwxSLIZ39YQdBlEdTcWz4ZSvvCUtTXReSnOolTTKtjrq1EQYWwT/Oqxosy4L8bCH8Yo0
- qCwkq7VQaMEjdPDOXxw3MCCYq4ce50bBw4nDezP1a6Keji/827FcwTK4ggszPgVGJnNh6F7xx
- Puge+scI0FpYounpxGW9F1L0uS3kLsR13OTRt0L7TWpw5hgjoK3G3cnJ5mX8OM9BCCZJKv0me
- MpCDDqriD+yEAm7gD47AcrgjAiO0tHfJl7DCcuCDOyGyKk/Ut3XXSvT1kbZ+2S8ouSD2+YU5/
- mwV97tbgrnBrQ5UuV+TPdJko5skSft3EC9MBlXAxiwSU/dxEt7DV3Y/ZXfFfuwBkcrQtex1TL
- Ut5vs1WFaH1MTG+M5YEe5JTp/vCUXcXtf84OM/RHxEmoM7ZEdq49VuyHfjMJkBULpHXtDgbvZ
- eK9TvwYWVLlV6P92+MT7pFP18DBKjYwrorKM1WPNIYmlXVPUm4gCZzZExyOum1i5ulbJdhYFV
- v+zdI9aNlNja7Ujxcyv/NN66SsBvGI/5APdNfnFGlVn9z2Xz32S79kYvt15YnsW29qXrbqWdk
- ZV2SIGjf0MpAHmS4dcN/ODKpCaMebxwZ3Xm3e+8J4TvkzIStXP3+U3WtAJQNXGdhQXRHFK0J3
- 9kH+2gg44jcZzuu/P781DNlRrYvmHMvASnSzQ0GK3UdjBIhY0zJoN9vg5YtUbtsqn0DqsfnM2
- otUh2BsEIh3X8eOR2bC+bMSHeSgEcAKoyjjo9GvENMni2s/GAo=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Nov 2, 2021 at 8:31 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+Hi,
+
+At Nuvoton we implied this WA in the past, not because we encountered
+a specific problem but since the errata says so and we saw this in
+other patches like:
+https://patchwork.kernel.org/project/linux-arm-kernel/patch/1396298072-13254-2-git-send-email-nitin.garg@freescale.com/
+But we didn't upstream the arch/arm/mm/proc-v7.S
+
+From the errata document.
+"794072 A short loop including a DMB instruction might cause a denial
+of service on
+another processor which executes a CP15 broadcast operation
+Status
+Affects:
+Fault Type:
+Fault Status: Cortex-A9 MPCore.
+Programmer Category B
+Present in: All r1, r2, r3 and r4 revisions Open
+Description
+A processor which continuously executes a short loop containing a DMB
+instruction might prevent a CP15
+operation broadcast by another processor making further progress,
+causing a denial of service.
+Configurations affected
+This erratum affects all Cortex-A9 MPCore processors with two or more
+processors.
+Conditions
+The erratum requires the following conditions:
+- Two or more processors are working in SMP mode (ACTLR.SMP=1)
+- One of the processors continuously executes a short loop containing
+at least one DMB instruction.
+- Another processor executes a CP15 maintenance operation that is
+broadcast. This requires that this
+processor has enabled the broadcasting of CP15 operations (ACTLR.FW=1)
+For the erratum to occur, the short loop containing the DMB
+instruction must meet all of the following additional
+conditions:
+- No more than 10 instructions other than the DMB are executed between each DMB
+- No non-conditional Load or Store, or conditional Load or Store which
+pass the condition code check, are
+executed between each DMB
+When all the conditions for the erratum are met, the short loop
+creates a continuous stream of DMB instructions.
+This might cause a denial of service, by preventing the processor
+executing the short loop from executing the
+received broadcast CP15 operation. As a result, the processor that
+originally executed the broadcast CP15
+operation is stalled until the execution of the loop is interrupted.
+Note that because the process issuing the CP15 broadcast operation
+cannot complete operation, it cannot enter
+any debug-mode, and cannot take any interrupt. If the processor
+executing the short loop also cannot be
+interrupted, for example if it has disabled its interrupts, or if no
+interrupts are routed to this processor, this
+erratum might cause a system livelock.
+Implications
+The erratum might create performance issues, or in the worst case it
+might cause a system livelock if the
+processor executing the DMB is in an infinite loop that cannot be interrupted.
+Workaround
+This erratum can be worked round by setting bit[4] of the undocumented
+Diagnostic Control Register to 1. This
+register is encoded as CP15 c15 0 c0 1.
+This bit can be written in Secure state only, with the following
+Read/Modify/Write code sequence:
+MRC p15,0,rt,c15,c0,1
+ORR rt,rt,#0x10
+MCR p15,0,rt,c15,c0,1
+When it is set, this bit causes the DMB instruction to be decoded and
+executed like a DSB.
+Using this software workaround is not expected to have any impact on
+the overall performance of the processor
+on a typical code base.
+Other workarounds are also available for this erratum, to either
+prevent or interrupt the continuous stream of
+DMB instructions that causes the deadlock. For example:
+- Inserting a non-conditional Load or Store instruction in the loop
+between each DMB
+- Inserting additional instructions in the loop, such as NOPs, to
+avoid the processor seeing back to back
+DMB instructions.
+- Making the processor executing the short loop take regular interrupts."
+
+Avi
+
+On Tue, Nov 2, 2021 at 9:31 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
 > On Fri, Oct 29, 2021 at 8:36 AM Joel Stanley <joel@jms.id.au> wrote:
+> >
 > > On Thu, 28 Oct 2021 at 14:57, Arnd Bergmann <arnd@arndb.de> wrote:
+> > >
 > > > On Thu, Oct 28, 2021 at 4:19 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> > > >
+> > > > There is no and never was a Kconfig for ARM_ERRATA_794072 in the kernel
+> > > > tree. So, there is no need to select ARM_ERRATA_794072 in
+> > > > ./arch/arm/mach-npcm/Kconfig.
+> > > >
+> > > > Simply drop selecting the non-existing ARM_ERRATA_794072.
+> > > >
+> > > > This issue was discovered with ./scripts/checkkconfigsymbols.py.
+> > > >
+> > > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > > > ---
+> > >
+> > > Could this be a typo? Maybe we need to enable a different errata workaround
+> > > here, or maybe that code is actually needed and has to get sent.
+> >
+> > Doing some searching, u-boot had a workaround for something called
+> > ARM_ERRATA_794072.
+> >
+> > https://github.com/u-boot/u-boot/commit/f71cbfe3ca5d2ad20159871700e8e248c8818ba8
+> >
+> > Lore has the review history for that patch:
+> >
 > > https://lore.kernel.org/all/6be32e0b5b454ed7b609317266a8e798@BLUPR03MB358.namprd03.prod.outlook.com/
 > >
 > > It looks like it's the same workaround as ARM_ERRATA_742230, which the
 > > kernel does implement.
 > >
 > > It would be good to hear from the Nuvoton people, or an Arm person.
+> >
 >
 > I will happily update the patch to select ARM_ERRATA_742230 instead of
 > the dead non-existing ARM_ERRATA_794072.
@@ -104,8 +218,11 @@ On Tue, Nov 2, 2021 at 8:31 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 >
 > The current patch should be subsumed by the new patch; the submission
 > of the new patch is deferred until that person shows up. Let's see.
+>
+> Lukas
 
-I'd prefer to leave the broken Kconfig symbol in place as a reminder until it
-gets fixed properly then.
 
-       Arnd
+
+-- 
+Regards,
+Avi
