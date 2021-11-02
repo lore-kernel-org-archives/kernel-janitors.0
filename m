@@ -2,41 +2,44 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53EF6C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 19:06:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8140C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 19:43:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2DC5F60E90
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 19:06:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6E0560F56
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 19:43:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230061AbhKBTIf (ORCPT
+        id S230401AbhKBTp5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 2 Nov 2021 15:08:35 -0400
-Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:60783 "EHLO
+        Tue, 2 Nov 2021 15:45:57 -0400
+Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:51315 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229844AbhKBTIc (ORCPT
+        with ESMTP id S229881AbhKBTpy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 2 Nov 2021 15:08:32 -0400
+        Tue, 2 Nov 2021 15:45:54 -0400
 Received: from [192.168.1.18] ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id hz6XmmvCi3ptZhz6XmuddF; Tue, 02 Nov 2021 20:05:54 +0100
+        id hzgjmnFJ83ptZhzgjmuj88; Tue, 02 Nov 2021 20:43:18 +0100
 X-ME-Helo: [192.168.1.18]
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Tue, 02 Nov 2021 20:05:54 +0100
+X-ME-Date: Tue, 02 Nov 2021 20:43:18 +0100
 X-ME-IP: 86.243.171.122
-Subject: Re: [PATCH V2] dma: dw-edma-pcie: switch from 'pci_' to 'dma_' API
+Subject: Re: [PATCH V2] message: fusion: switch from 'pci_' to 'dma_' API
 To:     Qing Wang <wangqing@vivo.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+        Sathya Prakash <sathya.prakash@broadcom.com>,
+        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+        Suganath Prabu Subramani 
+        <suganath-prabu.subramani@broadcom.com>,
+        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Kernel Janitors <kernel-janitors@vger.kernel.org>
-References: <1632800660-108761-1-git-send-email-wangqing@vivo.com>
+References: <1632800532-108476-1-git-send-email-wangqing@vivo.com>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <e30467d0-55e0-156c-4eba-2838c22fe030@wanadoo.fr>
-Date:   Tue, 2 Nov 2021 20:05:53 +0100
+Message-ID: <ccc494e7-1d8b-36b9-c12b-1f418f525aa0@wanadoo.fr>
+Date:   Tue, 2 Nov 2021 20:43:17 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <1632800660-108761-1-git-send-email-wangqing@vivo.com>
+In-Reply-To: <1632800532-108476-1-git-send-email-wangqing@vivo.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: fr
 Content-Transfer-Encoding: 8bit
@@ -46,10 +49,7 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 Hi,
 
-
-Le 28/09/2021 à 05:44, Qing Wang a écrit :
-> From: Wang Qing <wangqing@vivo.com>
-> 
+Le 28/09/2021 à 05:42, Qing Wang a écrit :
 > The wrappers in include/linux/pci-dma-compat.h should go away.
 > 
 > The patch has been generated with the coccinelle script below.
@@ -67,56 +67,96 @@ Le 28/09/2021 à 05:44, Qing Wang a écrit :
 > While at it, some 'dma_set_mask()/dma_set_coherent_mask()' have been
 > updated to a much less verbose 'dma_set_mask_and_coherent()'.
 > 
-> Signed-off-by: Wang Qing <wangqing@vivo.com>
+> Signed-off-by: Qing Wang <wangqing@vivo.com>
 > ---
->   drivers/dma/dw-edma/dw-edma-pcie.c | 17 ++++-------------
->   1 file changed, 4 insertions(+), 13 deletions(-)
+>   drivers/message/fusion/mptbase.c | 31 +++++++++----------------------
+>   1 file changed, 9 insertions(+), 22 deletions(-)
 > 
-> diff --git a/drivers/dma/dw-edma/dw-edma-pcie.c b/drivers/dma/dw-edma/dw-edma-pcie.c
-> index 44f6e09..198f6cd
-> --- a/drivers/dma/dw-edma/dw-edma-pcie.c
-> +++ b/drivers/dma/dw-edma/dw-edma-pcie.c
-> @@ -186,27 +186,18 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
->   	pci_set_master(pdev);
->   
->   	/* DMA configuration */
-> -	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
-> +	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
->   	if (!err) {
-if err = 0, so if no error...
+> diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
+> index 7f7abc9..c255d8a
+> --- a/drivers/message/fusion/mptbase.c
+> +++ b/drivers/message/fusion/mptbase.c
+> @@ -1666,16 +1666,12 @@ mpt_mapresources(MPT_ADAPTER *ioc)
+>   		const uint64_t required_mask = dma_get_required_mask
+>   		    (&pdev->dev);
+>   		if (required_mask > DMA_BIT_MASK(32)
+> -			&& !pci_set_dma_mask(pdev, DMA_BIT_MASK(64))
+> -			&& !pci_set_consistent_dma_mask(pdev,
+> -						 DMA_BIT_MASK(64))) {
+> +			&& dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64))) {
 
-> -		err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
-> -		if (err) {
-> -			pci_err(pdev, "consistent DMA mask 64 set failed\n");
-> -			return err;
-> -		}
-> +		pci_err(pdev, "DMA mask 64 set failed\n");
-> +		return err;
-... we log an error, return success but don't perform the last steps of 
-the probe.
-
->   	} else {
->   		pci_err(pdev, "DMA mask 64 set failed\n");
->   
-> -		err = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
-> +		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
->   		if (err) {
->   			pci_err(pdev, "DMA mask 32 set failed\n");
->   			return err;
->   		}
-> -
-> -		err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32));
-> -		if (err) {
-> -			pci_err(pdev, "consistent DMA mask 32 set failed\n");
-> -			return err;
-> -		}
->   	}
->   
->   	/* Data structure allocation */
-> 
-
-This patch is broken and should be reworked.
-
-It has been applied in ecb8c88bd31c.
+The logic is reversed here. We used to have a !, but it is now missing.
 
 CJ
+
+>   			ioc->dma_mask = DMA_BIT_MASK(64);
+>   			dinitprintk(ioc, printk(MYIOC_s_INFO_FMT
+>   				": 64 BIT PCI BUS DMA ADDRESSING SUPPORTED\n",
+>   				ioc->name));
+> -		} else if (!pci_set_dma_mask(pdev, DMA_BIT_MASK(32))
+> -			&& !pci_set_consistent_dma_mask(pdev,
+> -						DMA_BIT_MASK(32))) {
+> +		} else if (!dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32))) {
+>   			ioc->dma_mask = DMA_BIT_MASK(32);
+>   			dinitprintk(ioc, printk(MYIOC_s_INFO_FMT
+>   				": 32 BIT PCI BUS DMA ADDRESSING SUPPORTED\n",
+> @@ -1686,9 +1682,7 @@ mpt_mapresources(MPT_ADAPTER *ioc)
+>   			goto out_pci_release_region;
+>   		}
+>   	} else {
+> -		if (!pci_set_dma_mask(pdev, DMA_BIT_MASK(32))
+> -			&& !pci_set_consistent_dma_mask(pdev,
+> -						DMA_BIT_MASK(32))) {
+> +		if (!dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32))) {
+>   			ioc->dma_mask = DMA_BIT_MASK(32);
+>   			dinitprintk(ioc, printk(MYIOC_s_INFO_FMT
+>   				": 32 BIT PCI BUS DMA ADDRESSING SUPPORTED\n",
+> @@ -4452,9 +4446,7 @@ PrimeIocFifos(MPT_ADAPTER *ioc)
+>   		 */
+>   		if (ioc->pcidev->device == MPI_MANUFACTPAGE_DEVID_SAS1078 &&
+>   		    ioc->dma_mask > DMA_BIT_MASK(35)) {
+> -			if (!pci_set_dma_mask(ioc->pcidev, DMA_BIT_MASK(32))
+> -			    && !pci_set_consistent_dma_mask(ioc->pcidev,
+> -			    DMA_BIT_MASK(32))) {
+> +			if (!dma_set_mask_and_coherent(&ioc->pcidev, DMA_BIT_MASK(32))) {
+>   				dma_mask = DMA_BIT_MASK(35);
+>   				d36memprintk(ioc, printk(MYIOC_s_DEBUG_FMT
+>   				    "setting 35 bit addressing for "
+> @@ -4462,10 +4454,7 @@ PrimeIocFifos(MPT_ADAPTER *ioc)
+>   				    ioc->name));
+>   			} else {
+>   				/*Reseting DMA mask to 64 bit*/
+> -				pci_set_dma_mask(ioc->pcidev,
+> -					DMA_BIT_MASK(64));
+> -				pci_set_consistent_dma_mask(ioc->pcidev,
+> -					DMA_BIT_MASK(64));
+> +				dma_set_mask_and_coherent(&ioc->pcidev, DMA_BIT_MASK(64));
+>   
+>   				printk(MYIOC_s_ERR_FMT
+>   				    "failed setting 35 bit addressing for "
+> @@ -4600,9 +4589,8 @@ PrimeIocFifos(MPT_ADAPTER *ioc)
+>   		alloc_dma += ioc->reply_sz;
+>   	}
+>   
+> -	if (dma_mask == DMA_BIT_MASK(35) && !pci_set_dma_mask(ioc->pcidev,
+> -	    ioc->dma_mask) && !pci_set_consistent_dma_mask(ioc->pcidev,
+> -	    ioc->dma_mask))
+> +	if (dma_mask == DMA_BIT_MASK(35) &&
+> +	    !dma_set_mask_and_coherent(&ioc->pcidev, ioc->dma_mask))
+>   		d36memprintk(ioc, printk(MYIOC_s_DEBUG_FMT
+>   		    "restoring 64 bit addressing\n", ioc->name));
+>   
+> @@ -4625,9 +4613,8 @@ PrimeIocFifos(MPT_ADAPTER *ioc)
+>   		ioc->sense_buf_pool = NULL;
+>   	}
+>   
+> -	if (dma_mask == DMA_BIT_MASK(35) && !pci_set_dma_mask(ioc->pcidev,
+> -	    DMA_BIT_MASK(64)) && !pci_set_consistent_dma_mask(ioc->pcidev,
+> -	    DMA_BIT_MASK(64)))
+> +	if (dma_mask == DMA_BIT_MASK(35) &&
+> +	    !dma_set_mask_and_coherent(&ioc->pcidev, DMA_BIT_MASK(64)))
+>   		d36memprintk(ioc, printk(MYIOC_s_DEBUG_FMT
+>   		    "restoring 64 bit addressing\n", ioc->name));
+>   
+> 
+
