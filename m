@@ -2,62 +2,45 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5007AC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 07:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A8B8C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 08:11:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 34DCA60F56
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 07:55:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FC1160F70
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 08:11:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229970AbhKBH5z (ORCPT
+        id S230281AbhKBINn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 2 Nov 2021 03:57:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36834 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229720AbhKBH5z (ORCPT
+        Tue, 2 Nov 2021 04:13:43 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:40745 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230321AbhKBINn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 2 Nov 2021 03:57:55 -0400
-Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF1C5C061714;
-        Tue,  2 Nov 2021 00:55:20 -0700 (PDT)
-Received: by mail-yb1-xb2a.google.com with SMTP id d204so50961190ybb.4;
-        Tue, 02 Nov 2021 00:55:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IYt4XdhIV9mCaGivgxKhV13JsWC7QyPYPD/Uf0f0VIs=;
-        b=hi+WlcUukqlLODfpjwW2VnRDHE+wHoBCu0sK/EMuhpL+IaT1POHTsscxNKlv74QBwj
-         tNLpz/ca1nZ/tivSKZGvUUtk22P4h61lKWrGLhjjevFOf7qfOdHUbpSeSgkOw7YSLxFg
-         hzdDcpHnvUVDY62fxsF7w+DzhZSgxmA0V8qx7PQIo2X+1o0kiyi8jq2PPuHSAWQVnQZt
-         bLfXJmkiWh3sg6fZbxvSTnNNs3LQ484HCKq3N2QQ4Zxtc/3d4tSd7U6IJbb3YUVQbCCa
-         MMe16MR2nUVK9xkT5V+qQg2bKNTCdfN0HMqXYFpEO5oWHLsa9zmeRSxNjNSeljAlkQh4
-         gMfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IYt4XdhIV9mCaGivgxKhV13JsWC7QyPYPD/Uf0f0VIs=;
-        b=DvvRJ4NwoOUJKt2jhrjI2HIfjYHQJK3kAfg04gTI2Q0dYuvzBRwkMlWZrpu/LGyK3c
-         fL5M/hzFJSEY7b7JGybD8ikcenL8qlJXYxOIJdHiKEkg4WRydudIoaz6u+19v9ZhWYEC
-         PsLCg3ThWQNuihwoeopKS0joYgpQ+bqJOoljvtq59iVz1UZI+KWgq5BBjZ9UEu5gihIW
-         fRriYtPhuCDaSMV/q8uhe9wZCAIxwyHqpv5+JUCsdiDJPSg8LznM2KbcdiBHiOSL4OJP
-         mDYB6H4QlfiVsUz99F0Rg9NmxAeJCAunRxqrm7lP1JsXAQE6n3BpzFQZsIHAtMsbPu+F
-         UdQQ==
-X-Gm-Message-State: AOAM531PW0yoHQjPt6q864uRtDWUVcU5t/Rh43iBh0AFkqAXnNwuNwuL
-        l/Z45NDrZ9Jbn4Bqosf5MTdMWwjjMEY7Pp8aHnk=
-X-Google-Smtp-Source: ABdhPJzK6cSMn+HDFhuBPyz0xbsXJXCQ7kZL8KTzlfKBDhHdacY3bQgOuecjIM+xrmFVCFk7Ozss13UuugxdEB6hZ8w=
-X-Received: by 2002:a25:a268:: with SMTP id b95mr36582994ybi.35.1635839719820;
- Tue, 02 Nov 2021 00:55:19 -0700 (PDT)
+        Tue, 2 Nov 2021 04:13:43 -0400
+Received: from mail-wr1-f42.google.com ([209.85.221.42]) by
+ mrelayeu.kundenserver.de (mreue106 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MwPjf-1mROWt3gHN-00sQyZ; Tue, 02 Nov 2021 09:11:06 +0100
+Received: by mail-wr1-f42.google.com with SMTP id u1so296263wru.13;
+        Tue, 02 Nov 2021 01:11:06 -0700 (PDT)
+X-Gm-Message-State: AOAM533r/joAuQe66f5/Perh50hk81aCKa92TWunQ2TMFp6Vvpp63Vts
+        3vItsi0cjba3zrgGW7OB7RucelPYZCPEHalDwB0=
+X-Google-Smtp-Source: ABdhPJyFtamfSUetI1AbUBIOvCYQczN1Nlzp9gFqyOAdgQNhP9d2hcmJSPJ8rKmPIqsxt4VD5S+rUEmHQuxxkKHrxEU=
+X-Received: by 2002:adf:efc6:: with SMTP id i6mr21099177wrp.428.1635840666461;
+ Tue, 02 Nov 2021 01:11:06 -0700 (PDT)
 MIME-Version: 1.0
 References: <20211028141938.3530-1-lukas.bulwahn@gmail.com>
- <20211028141938.3530-4-lukas.bulwahn@gmail.com> <CAK8P3a3+-J6XbUmzWs7ATN7z53GomZSj6vq3n5R709=iL45RrA@mail.gmail.com>
-In-Reply-To: <CAK8P3a3+-J6XbUmzWs7ATN7z53GomZSj6vq3n5R709=iL45RrA@mail.gmail.com>
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Tue, 2 Nov 2021 08:55:09 +0100
-Message-ID: <CAKXUXMwBsDY_onmEztvrfS6Q3k_0YH8gQGLm9zcM2Ge--kcG6A@mail.gmail.com>
-Subject: Re: [PATCH 03/13] arm: Kconfig.debug: drop reference to removed ARCH_MSM
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Russell King <linux@armlinux.org.uk>,
+ <20211028141938.3530-12-lukas.bulwahn@gmail.com> <CAK8P3a0Nq9hLbGiPCQTjVTiGFPR9-tdhN8Tf06Q=cWTgMK78yw@mail.gmail.com>
+ <CACPK8XfiN5qziPHLU6J=bC34mcjz+ix7jjSX=xk9zsr7+vyTdw@mail.gmail.com> <CAKXUXMyrhrM2o-OEW_qTTKjfKgxt-Z6Nt69geU80AoFnM1OuMA@mail.gmail.com>
+In-Reply-To: <CAKXUXMyrhrM2o-OEW_qTTKjfKgxt-Z6Nt69geU80AoFnM1OuMA@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 2 Nov 2021 09:10:50 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2N3zNkGzXQD8Pbs-8pDL7mv6rneJop-C_p_+d7-_sNqA@mail.gmail.com>
+Message-ID: <CAK8P3a2N3zNkGzXQD8Pbs-8pDL7mv6rneJop-C_p_+d7-_sNqA@mail.gmail.com>
+Subject: Re: [PATCH 11/13] arm: npcm: drop selecting non-existing ARM_ERRATA_794072
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
@@ -67,8 +50,6 @@ Cc:     Russell King <linux@armlinux.org.uk>,
         Linus Walleij <linusw@kernel.org>,
         Imre Kaloz <kaloz@openwrt.org>,
         Krzysztof Halasa <khalasa@piap.pl>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
         Tali Perry <tali.perry1@gmail.com>,
         Patrick Venture <venture@google.com>,
         Nancy Yuen <yuenn@google.com>,
@@ -79,51 +60,52 @@ Cc:     Russell King <linux@armlinux.org.uk>,
         kernel-janitors <kernel-janitors@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:42h7IqhsqzshYTqnIAaEPgcxnXwAftpVOTvW1+XrZM+OcAVffYw
+ w8TmUnRnQyWR1Yc6rdfHDVhJJj63lfGNaMuF+LW+ha3zR9tgig3RBswoMWAqNRDe+Svv2QG
+ 6QKde7/grD06goUhGpJOss8Om7eR5k8H5s7/YlM66+0GQkwpewST4o5U6Wz+T7ylEdkTlEO
+ z91qlxh843Btd22w2xnQA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:JYr3zjFUXr0=:7bwhG4RYoOndC8Z24DQb0X
+ nG1zVfiYAyZp2HYSXnAK8NVV40Q6J0hWMyYrrYU53PBJ8EFyBbG9cSuAnfyIBXtOI6JzBWZTC
+ zx+zgOwxSLIZ39YQdBlEdTcWz4ZSvvCUtTXReSnOolTTKtjrq1EQYWwT/Oqxosy4L8bCH8Yo0
+ qCwkq7VQaMEjdPDOXxw3MCCYq4ce50bBw4nDezP1a6Keji/827FcwTK4ggszPgVGJnNh6F7xx
+ Puge+scI0FpYounpxGW9F1L0uS3kLsR13OTRt0L7TWpw5hgjoK3G3cnJ5mX8OM9BCCZJKv0me
+ MpCDDqriD+yEAm7gD47AcrgjAiO0tHfJl7DCcuCDOyGyKk/Ut3XXSvT1kbZ+2S8ouSD2+YU5/
+ mwV97tbgrnBrQ5UuV+TPdJko5skSft3EC9MBlXAxiwSU/dxEt7DV3Y/ZXfFfuwBkcrQtex1TL
+ Ut5vs1WFaH1MTG+M5YEe5JTp/vCUXcXtf84OM/RHxEmoM7ZEdq49VuyHfjMJkBULpHXtDgbvZ
+ eK9TvwYWVLlV6P92+MT7pFP18DBKjYwrorKM1WPNIYmlXVPUm4gCZzZExyOum1i5ulbJdhYFV
+ v+zdI9aNlNja7Ujxcyv/NN66SsBvGI/5APdNfnFGlVn9z2Xz32S79kYvt15YnsW29qXrbqWdk
+ ZV2SIGjf0MpAHmS4dcN/ODKpCaMebxwZ3Xm3e+8J4TvkzIStXP3+U3WtAJQNXGdhQXRHFK0J3
+ 9kH+2gg44jcZzuu/P781DNlRrYvmHMvASnSzQ0GK3UdjBIhY0zJoN9vg5YtUbtsqn0DqsfnM2
+ otUh2BsEIh3X8eOR2bC+bMSHeSgEcAKoyjjo9GvENMni2s/GAo=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Oct 28, 2021 at 4:42 PM Arnd Bergmann <arnd@arndb.de> wrote:
+On Tue, Nov 2, 2021 at 8:31 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> On Fri, Oct 29, 2021 at 8:36 AM Joel Stanley <joel@jms.id.au> wrote:
+> > On Thu, 28 Oct 2021 at 14:57, Arnd Bergmann <arnd@arndb.de> wrote:
+> > > On Thu, Oct 28, 2021 at 4:19 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> > https://lore.kernel.org/all/6be32e0b5b454ed7b609317266a8e798@BLUPR03MB358.namprd03.prod.outlook.com/
+> >
+> > It looks like it's the same workaround as ARM_ERRATA_742230, which the
+> > kernel does implement.
+> >
+> > It would be good to hear from the Nuvoton people, or an Arm person.
 >
-> On Thu, Oct 28, 2021 at 4:19 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> >
-> > Commit c0c89fafa289 ("ARM: Remove mach-msm and associated ARM architecture
-> > code") removes the definition of the config ARCH_MSM. Since then, the
-> > reference to ARCH_MSM in the dependencies of UNCOMPRESS_INCLUDE in
-> > Kconfig.debug is dead.
-> >
-> > Fortunately, ./scripts/checkkconfigsymbols.py warns:
-> >
-> > ARCH_MSM
-> > Referencing files: arch/arm/Kconfig.debug
-> >
-> > Drop the dependency on this removed config.
-> >
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > ---
-> >  arch/arm/Kconfig.debug | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-> > index 83484564b1d9..87aa6e92ee6e 100644
-> > --- a/arch/arm/Kconfig.debug
-> > +++ b/arch/arm/Kconfig.debug
-> > @@ -1886,7 +1886,7 @@ config DEBUG_UNCOMPRESS
-> >
-> >  config UNCOMPRESS_INCLUDE
-> >         string
-> > -       default "debug/uncompress.h" if ARCH_MULTIPLATFORM || ARCH_MSM || \
-> > +       default "debug/uncompress.h" if ARCH_MULTIPLATFORM || \
-> >                                         PLAT_SAMSUNG || ARM_SINGLE_ARMV7M
+> I will happily update the patch to select ARM_ERRATA_742230 instead of
+> the dead non-existing ARM_ERRATA_794072.
 >
-> The PLAT_SAMSUNG reference is also misplaced here, I think you just want
-> ARCH_S3C24XX instead, since the other samsung ones already require
-> ARCH_MULTIPLATFORM.
+> In contrast to the current patch that basically only cleans up "dead
+> config" and has no effective functional change, the new patch would
+> change the behaviour. I cannot test this patch (beyond some basic
+> compile test) on the hardware; so, we certainly need someone to have
+> that hardware, knows how to test it or confirm otherwise that we
+> should select the ARM_ERRATA_742230 fix for this hardware.
 >
+> The current patch should be subsumed by the new patch; the submission
+> of the new patch is deferred until that person shows up. Let's see.
 
-Agree. I can clean up (or better stated: optimize) the dependencies
-further in such a way. But that config dependency optimization goes
-beyond just removing dead symbols and deserves to be its own patch.
-Patch will follow later this week.
+I'd prefer to leave the broken Kconfig symbol in place as a reminder until it
+gets fixed properly then.
 
-Lukas
+       Arnd
