@@ -2,161 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8140C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 19:43:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C61C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 23:16:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A6E0560F56
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 19:43:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D3F96109D
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 23:16:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230401AbhKBTp5 (ORCPT
+        id S231380AbhKBXS5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 2 Nov 2021 15:45:57 -0400
-Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:51315 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229881AbhKBTpy (ORCPT
+        Tue, 2 Nov 2021 19:18:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50428 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231379AbhKBXS4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 2 Nov 2021 15:45:54 -0400
-Received: from [192.168.1.18] ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id hzgjmnFJ83ptZhzgjmuj88; Tue, 02 Nov 2021 20:43:18 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Tue, 02 Nov 2021 20:43:18 +0100
-X-ME-IP: 86.243.171.122
-Subject: Re: [PATCH V2] message: fusion: switch from 'pci_' to 'dma_' API
-To:     Qing Wang <wangqing@vivo.com>,
-        Sathya Prakash <sathya.prakash@broadcom.com>,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-        Suganath Prabu Subramani 
-        <suganath-prabu.subramani@broadcom.com>,
-        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kernel Janitors <kernel-janitors@vger.kernel.org>
-References: <1632800532-108476-1-git-send-email-wangqing@vivo.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <ccc494e7-1d8b-36b9-c12b-1f418f525aa0@wanadoo.fr>
-Date:   Tue, 2 Nov 2021 20:43:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Tue, 2 Nov 2021 19:18:56 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 637CBC061714;
+        Tue,  2 Nov 2021 16:16:21 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id i5so860418wrb.2;
+        Tue, 02 Nov 2021 16:16:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=e6rjzzyUGSlERAuwJSH0XEKW/VN+PnGvJFm5FyzCoaY=;
+        b=SQhskytV8xOmkEZ4+m1uy2ll3kfcpHqeQ4A7fnLA24OIBAYNc2Kf+l6rdlTfJ2cUac
+         5GVjMRMfuMXH3dY+DjEK5HkIBzQSDDZDdK+DV+Yis8BLyNO/eNEZNylRucwy7rSfTZWu
+         7WaKLCFzm+6dfoTWY/2qStAKEnXVclHHHOgGcVceXj1sWGTO+qODkmLI5NwylK7T0ikD
+         Yelof2Ej02qQPskEWJFLga8VYKOuDQkETpy3NXz6yFAfSa+OgA/Q0aZe/QXcB4TP1+B4
+         NByYHUxKAW+bK8IbOMxrlF8ikmhu77eN+COBWE5Io2B0rU2e/x7muo3gdgfpP/HhpuSk
+         t7ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=e6rjzzyUGSlERAuwJSH0XEKW/VN+PnGvJFm5FyzCoaY=;
+        b=ePENgu0OD+Qv3ML/Jh/hZQ3r85cce99tnSpHlksijT6IzLo8u33LaQ7vdOKNzetE6c
+         hSC4OJP1udya1W0rSJY/In3STi53nbfKMffHI1bTQ5PG8JWDfjCd5wB0Z9VcJph2/yql
+         9kNtICHUiW2ygSIvKhbNUfl2sP8QTfGR0encjAEjs7ksO+oqoPMwfBF7WTWml8k8qJr5
+         zElv6901NS3a7AZQZrnQPz4GYhn2Rbm3JbVn7eeQncaWtYAgK1CiZQELdeQhi2qZeu+d
+         6WmOn6d/0qnxNcwvEnWvBzxDC0/UB0fic57l34+JNNhg37jGjFwXyUmMtwc1iDUsCS6O
+         ciZQ==
+X-Gm-Message-State: AOAM530+M3tMOfuyR4wPgbtWAJ4XcBZqaXhdEReB6P8jh0jbhujLFDPr
+        3QMGgqdOrMBFvA==
+X-Google-Smtp-Source: ABdhPJwgWQ+0bukxu84IxX9ucHGOlez2D67MBHn0KTjY4ZaQQR4vrEXDJe+QaCI+iqBw+g0bCbxwVA==
+X-Received: by 2002:a5d:508d:: with SMTP id a13mr7354426wrt.41.1635894980021;
+        Tue, 02 Nov 2021 16:16:20 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id r10sm323399wrl.92.2021.11.02.16.16.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Nov 2021 16:16:19 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@googlemail.com>
+X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mailmap: update email address for Colin King
+Date:   Tue,  2 Nov 2021 23:16:17 +0000
+Message-Id: <20211102231617.78569-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <1632800532-108476-1-git-send-email-wangqing@vivo.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
+Colin King has moved to Intel to update gmail and Canonical
+email addresses.
 
-Le 28/09/2021 à 05:42, Qing Wang a écrit :
-> The wrappers in include/linux/pci-dma-compat.h should go away.
-> 
-> The patch has been generated with the coccinelle script below.
-> expression e1, e2;
-> @@
-> -    pci_set_dma_mask(e1, e2)
-> +    dma_set_mask(&e1->dev, e2)
-> 
-> @@
-> expression e1, e2;
-> @@
-> -    pci_set_consistent_dma_mask(e1, e2)
-> +    dma_set_coherent_mask(&e1->dev, e2)
-> 
-> While at it, some 'dma_set_mask()/dma_set_coherent_mask()' have been
-> updated to a much less verbose 'dma_set_mask_and_coherent()'.
-> 
-> Signed-off-by: Qing Wang <wangqing@vivo.com>
-> ---
->   drivers/message/fusion/mptbase.c | 31 +++++++++----------------------
->   1 file changed, 9 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
-> index 7f7abc9..c255d8a
-> --- a/drivers/message/fusion/mptbase.c
-> +++ b/drivers/message/fusion/mptbase.c
-> @@ -1666,16 +1666,12 @@ mpt_mapresources(MPT_ADAPTER *ioc)
->   		const uint64_t required_mask = dma_get_required_mask
->   		    (&pdev->dev);
->   		if (required_mask > DMA_BIT_MASK(32)
-> -			&& !pci_set_dma_mask(pdev, DMA_BIT_MASK(64))
-> -			&& !pci_set_consistent_dma_mask(pdev,
-> -						 DMA_BIT_MASK(64))) {
-> +			&& dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64))) {
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ .mailmap | 2 ++
+ 1 file changed, 2 insertions(+)
 
-The logic is reversed here. We used to have a !, but it is now missing.
-
-CJ
-
->   			ioc->dma_mask = DMA_BIT_MASK(64);
->   			dinitprintk(ioc, printk(MYIOC_s_INFO_FMT
->   				": 64 BIT PCI BUS DMA ADDRESSING SUPPORTED\n",
->   				ioc->name));
-> -		} else if (!pci_set_dma_mask(pdev, DMA_BIT_MASK(32))
-> -			&& !pci_set_consistent_dma_mask(pdev,
-> -						DMA_BIT_MASK(32))) {
-> +		} else if (!dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32))) {
->   			ioc->dma_mask = DMA_BIT_MASK(32);
->   			dinitprintk(ioc, printk(MYIOC_s_INFO_FMT
->   				": 32 BIT PCI BUS DMA ADDRESSING SUPPORTED\n",
-> @@ -1686,9 +1682,7 @@ mpt_mapresources(MPT_ADAPTER *ioc)
->   			goto out_pci_release_region;
->   		}
->   	} else {
-> -		if (!pci_set_dma_mask(pdev, DMA_BIT_MASK(32))
-> -			&& !pci_set_consistent_dma_mask(pdev,
-> -						DMA_BIT_MASK(32))) {
-> +		if (!dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32))) {
->   			ioc->dma_mask = DMA_BIT_MASK(32);
->   			dinitprintk(ioc, printk(MYIOC_s_INFO_FMT
->   				": 32 BIT PCI BUS DMA ADDRESSING SUPPORTED\n",
-> @@ -4452,9 +4446,7 @@ PrimeIocFifos(MPT_ADAPTER *ioc)
->   		 */
->   		if (ioc->pcidev->device == MPI_MANUFACTPAGE_DEVID_SAS1078 &&
->   		    ioc->dma_mask > DMA_BIT_MASK(35)) {
-> -			if (!pci_set_dma_mask(ioc->pcidev, DMA_BIT_MASK(32))
-> -			    && !pci_set_consistent_dma_mask(ioc->pcidev,
-> -			    DMA_BIT_MASK(32))) {
-> +			if (!dma_set_mask_and_coherent(&ioc->pcidev, DMA_BIT_MASK(32))) {
->   				dma_mask = DMA_BIT_MASK(35);
->   				d36memprintk(ioc, printk(MYIOC_s_DEBUG_FMT
->   				    "setting 35 bit addressing for "
-> @@ -4462,10 +4454,7 @@ PrimeIocFifos(MPT_ADAPTER *ioc)
->   				    ioc->name));
->   			} else {
->   				/*Reseting DMA mask to 64 bit*/
-> -				pci_set_dma_mask(ioc->pcidev,
-> -					DMA_BIT_MASK(64));
-> -				pci_set_consistent_dma_mask(ioc->pcidev,
-> -					DMA_BIT_MASK(64));
-> +				dma_set_mask_and_coherent(&ioc->pcidev, DMA_BIT_MASK(64));
->   
->   				printk(MYIOC_s_ERR_FMT
->   				    "failed setting 35 bit addressing for "
-> @@ -4600,9 +4589,8 @@ PrimeIocFifos(MPT_ADAPTER *ioc)
->   		alloc_dma += ioc->reply_sz;
->   	}
->   
-> -	if (dma_mask == DMA_BIT_MASK(35) && !pci_set_dma_mask(ioc->pcidev,
-> -	    ioc->dma_mask) && !pci_set_consistent_dma_mask(ioc->pcidev,
-> -	    ioc->dma_mask))
-> +	if (dma_mask == DMA_BIT_MASK(35) &&
-> +	    !dma_set_mask_and_coherent(&ioc->pcidev, ioc->dma_mask))
->   		d36memprintk(ioc, printk(MYIOC_s_DEBUG_FMT
->   		    "restoring 64 bit addressing\n", ioc->name));
->   
-> @@ -4625,9 +4613,8 @@ PrimeIocFifos(MPT_ADAPTER *ioc)
->   		ioc->sense_buf_pool = NULL;
->   	}
->   
-> -	if (dma_mask == DMA_BIT_MASK(35) && !pci_set_dma_mask(ioc->pcidev,
-> -	    DMA_BIT_MASK(64)) && !pci_set_consistent_dma_mask(ioc->pcidev,
-> -	    DMA_BIT_MASK(64)))
-> +	if (dma_mask == DMA_BIT_MASK(35) &&
-> +	    !dma_set_mask_and_coherent(&ioc->pcidev, DMA_BIT_MASK(64)))
->   		d36memprintk(ioc, printk(MYIOC_s_DEBUG_FMT
->   		    "restoring 64 bit addressing\n", ioc->name));
->   
-> 
+diff --git a/.mailmap b/.mailmap
+index 9d4fc1fea665..14314e3c5d5e 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -73,6 +73,8 @@ Chris Chiu <chris.chiu@canonical.com> <chiu@endlessm.com>
+ Chris Chiu <chris.chiu@canonical.com> <chiu@endlessos.org>
+ Christophe Ricard <christophe.ricard@gmail.com>
+ Christoph Hellwig <hch@lst.de>
++Colin Ian King <colin.king@intel.com> <colin.king@canonical.com>
++Colin Ian King <colin.king@intel.com> <colin.i.king@gmail.com>
+ Corey Minyard <minyard@acm.org>
+ Damian Hobson-Garcia <dhobsong@igel.co.jp>
+ Daniel Borkmann <daniel@iogearbox.net> <danborkmann@googlemail.com>
+-- 
+2.32.0
 
