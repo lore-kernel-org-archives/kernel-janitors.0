@@ -2,122 +2,203 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDE8C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 12:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 972DEC43217
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 13:15:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9606F60F24
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 12:15:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AA9860E08
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 13:15:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229778AbhKBMRp (ORCPT
+        id S231425AbhKBNRo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 2 Nov 2021 08:17:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39210 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229530AbhKBMRp (ORCPT
+        Tue, 2 Nov 2021 09:17:44 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:11738 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229530AbhKBNRo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 2 Nov 2021 08:17:45 -0400
-Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47E3FC061714;
-        Tue,  2 Nov 2021 05:15:10 -0700 (PDT)
-Received: by mail-yb1-xb2f.google.com with SMTP id s3so19248391ybs.9;
-        Tue, 02 Nov 2021 05:15:10 -0700 (PDT)
+        Tue, 2 Nov 2021 09:17:44 -0400
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1A2BdXG1001204;
+        Tue, 2 Nov 2021 13:15:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2021-07-09;
+ bh=p1Hjh1KxvIxLUMyz4XCnuaijiM1fRwAKZTISkYoeX80=;
+ b=KJcK6Jl1TeRjI86YWlMZ/A1NC0A2ew2I+2TivSO7C6UgVSeqsnkJqVmYILH9YR6ah4q2
+ OAA+vXuyAIiuxMK0ImQcrkbjlxF5dnhpYFcPzbjM31iLMkEWXUrldstzfCEzvHWByybS
+ oD5qRaurUKpH3tuT7DKZiKCYUE4JgFo7rybgDKeX1kugqu3pLKeAYA1kEnJG5bjqAe/2
+ cuDKcjU6W5yN/RnHxdd5JGAAihjgEtnwcCUfQkU1azou/tqSgRNHr+3mDBs4RgZYznfZ
+ 7xamvPy5wqD+QDB2+t7Fc0JsznDoaQPIkPePoirxL8ADm0uBmxZpb67KQbyYVYpEtTF0 XA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3c290gy6bq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 02 Nov 2021 13:15:04 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1A2D6HNd065946;
+        Tue, 2 Nov 2021 13:15:00 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2043.outbound.protection.outlook.com [104.47.66.43])
+        by userp3020.oracle.com with ESMTP id 3c1khtfgr8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 02 Nov 2021 13:15:00 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=oUGUkA1z4/2EaHBy5WM3jxnbewG1UWpV4p+hE1VImFSvcdeLFyY7b64nPBcppLEUC0UTVLe1ExGEwPC8QnFnCBgbs3ttbZm4Dqa259FMHMfsYgQNLT1FDJENnxn/YH6rFKoqORaNzbkzFn17Oq2/WHBHxH4ljVxJ4pK++oRioVIMMWVCNo2oLb2fvO0ihQylrd5aeFigyeg5deRg38u7+Z4gGiOSJBalo4/oxVmzTZFoJWn4ubuZmorQmSFn1j5hSiJzaQbHP97eScHqRgMC8C0P+KSUMWybBmQaykOMhySi6GU6AhJ/hzFMEFvSMyfRvTkyWbik5A3y1IWS/X8AUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=p1Hjh1KxvIxLUMyz4XCnuaijiM1fRwAKZTISkYoeX80=;
+ b=oIgtkby/NxSFrxKWzdMVroOJl1IDdXP26Hu8VWCPsFRQnqhYW3Szw5CusOCcLtvO8e39cIbc8QELu+srmaLGv0FI9uMqLq+AoCdMMWQPuTIkal7V4lc+Zm4lCpmDMQVwPktS4xQZkT/t+eguXEDu2vxB43nLoFSGkuzYixCOku24uIWNC2UMVK/l4SwnvNfAbTK6cqtrK05/X2jlYliMc4wwYA094h1jbzngEwxHUniaWrx+1CvC1wgO+ZxbSQ3SDMGyt5gEeGeolpOlMLqGNv7sy6X7MtnOx84NcZdWCeDzfKM27x0+GGItZltfGiUmX/yN3pJzMMpt3icPedhVow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=H0Nynl9KYEos60TLF3kMyaTZRdbJ2IJWnWt8dmgsZ8o=;
-        b=Oy4e08YQ+S5kroIaoipFHcseTK3NpOCo+MSIUrjmGs+88S/D2FVe1zsab/MobPaAsJ
-         PQSblcw2EVBRG7rlaelIkp5D00fsyXAEz5c56YjBeOkuUcgFksHHayttv/PlUy02IcOw
-         4nYDu8pQY0a/1NAAIM0hgPWQF9DdZl0/SwbFRVd+BQBVuUxAasx1nyiEcz9r94hfjt4X
-         iSf84fPNvSvJrMBzzKbo04BZXEl5kI6YVUB2vTaEDy+Oc9rXn8V6WHlcLml1QSj6+70S
-         GCa4ByRWzS8yR6FfDveQEFkp41ZSXZByjoP+diuB7jYpeUlZhqJDZQrUwxjxKLSg3zQX
-         wD5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=H0Nynl9KYEos60TLF3kMyaTZRdbJ2IJWnWt8dmgsZ8o=;
-        b=P5INML07dtu9jeoy/aoQscXZf13gUFKThjXynMXFQhllUBkNwRPpCgPBLH4pF/MofN
-         jkTQZnJXzmjes2cKXLH9gd5WBIWGpUcatSoUWK48p5Wlm39DBW0JSGefo5+UdOgzTzW3
-         ipdM2I+KtEF1cOcDaRgX/GWVIZ/pBqorOAf3TJNrxokIqaR/A9zSWD1BGqmXjO60PVnn
-         UrHhVXTBWFDRHPDfO64d/FRCidlR6sj3wLKc6Y7TDefzDGikdUK/sysvfltev9lE8c1Z
-         dNTB6h2jjaRtfpwMVCPCsReD68lzhDx/zWvkoirnT6LmYlaUSt8nfH8YnXA5QpHkC1SX
-         FApA==
-X-Gm-Message-State: AOAM533cXMfkXe8LAUC55CjH5P+VVrZAUffU0jYfNGeVkPPYaWcNp7cb
-        5AS/WJj1Quiuf76DtWANVIrsFEakQ0RTWqOrk/8zLuBAqmc=
-X-Google-Smtp-Source: ABdhPJxLjg53nX46gv9ag9zyfyZJr3b9fP3tgKwpwWhIuIrPOLIV5FCJQF8aI+BgAh5o6cQY+rn/rGbzr6eUr7UoMbk=
-X-Received: by 2002:a25:71c3:: with SMTP id m186mr37252318ybc.434.1635855309301;
- Tue, 02 Nov 2021 05:15:09 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p1Hjh1KxvIxLUMyz4XCnuaijiM1fRwAKZTISkYoeX80=;
+ b=CppbD8rdBfuhCBx89C1nTc65xZotF7LyGw/pzOmeWNUSwt8Utd6iRXe/xgT3FdNqwlbuwqVIsj5kYN712bnFpt+REUiVXcFWv+Juq85ckdwlEwmvC38dnihg34e98dCN5PdY2Dz6v9Zx5f5nKFDndAGr709Dww5ort8rTutYt8M=
+Authentication-Results: realtek.com; dkim=none (message not signed)
+ header.d=none;realtek.com; dmarc=none action=none header.from=oracle.com;
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by MWHPR10MB1293.namprd10.prod.outlook.com
+ (2603:10b6:300:21::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4649.14; Tue, 2 Nov
+ 2021 13:14:58 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::d409:11b5:5eb2:6be9]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::d409:11b5:5eb2:6be9%5]) with mapi id 15.20.4649.020; Tue, 2 Nov 2021
+ 13:14:58 +0000
+Date:   Tue, 2 Nov 2021 16:14:37 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Pkshih <pkshih@realtek.com>
+Cc:     Colin King <colin.king@canonical.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][next] rtw89: Fix potential dereference of the null
+ pointer sta
+Message-ID: <20211102131437.GF2794@kadam>
+References: <20211015154530.34356-1-colin.king@canonical.com>
+ <9cc681c217a449519aee524b35e6b6bc@realtek.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9cc681c217a449519aee524b35e6b6bc@realtek.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: JNAP275CA0031.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:4d::7)
+ To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-References: <20211028141938.3530-1-lukas.bulwahn@gmail.com>
- <20211028141938.3530-12-lukas.bulwahn@gmail.com> <CAK8P3a0Nq9hLbGiPCQTjVTiGFPR9-tdhN8Tf06Q=cWTgMK78yw@mail.gmail.com>
- <CACPK8XfiN5qziPHLU6J=bC34mcjz+ix7jjSX=xk9zsr7+vyTdw@mail.gmail.com>
- <CAKXUXMyrhrM2o-OEW_qTTKjfKgxt-Z6Nt69geU80AoFnM1OuMA@mail.gmail.com> <CAK8P3a2N3zNkGzXQD8Pbs-8pDL7mv6rneJop-C_p_+d7-_sNqA@mail.gmail.com>
-In-Reply-To: <CAK8P3a2N3zNkGzXQD8Pbs-8pDL7mv6rneJop-C_p_+d7-_sNqA@mail.gmail.com>
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Tue, 2 Nov 2021 13:14:58 +0100
-Message-ID: <CAKXUXMzeTE11Qfces6sHLb7F_0sSSCOr91aivZmnqCS4cZM-VQ@mail.gmail.com>
-Subject: Re: [PATCH 11/13] arm: npcm: drop selecting non-existing ARM_ERRATA_794072
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Joel Stanley <joel@jms.id.au>, Tomer Maimon <tmaimon77@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linusw@kernel.org>,
-        Imre Kaloz <kaloz@openwrt.org>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Received: from kadam (62.8.83.22) by JNAP275CA0031.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:4d::7) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4649.17 via Frontend Transport; Tue, 2 Nov 2021 13:14:51 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7e84c056-8847-4eb5-bf5f-08d99e02c4a9
+X-MS-TrafficTypeDiagnostic: MWHPR10MB1293:
+X-Microsoft-Antispam-PRVS: <MWHPR10MB12936103411C36997FEA433B8E8B9@MWHPR10MB1293.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: wdtFkjlqyng/kt98ZTNu1RqvMlUDjkHuB03LO4MnWT8p+jSLUc7xrKul9RXxaKU3QafLo9B9NGfHe6YY8kKI8oGoub+YLAPo4ryMMP8T3h9IvDdTP+eZEc4TzO/aT52i4l7EjXDOX9SvZmBsOUspnrkKheYf5Edq4MLf3jvjUymgGiNvXivdm8Z/O6cQFwQRGMS/QnE0ARaQGAg9NZSgfpOF8c6bcNNB/gLrMQZpdU09nkwgljV/eYdBIctrh2mgn/G5i98/8+OYH+H5stHVfdZzOiB1kUlbZZ56deM6dCt7V1APghhmG3Q/keIQWw4AMoV8w9OBmszhwb8NOLpfPIpRgUSucLCIRl/y0f4H3pDtDAj8IgnSczO8Nuk5RC+KqRrDHtC7xVUGvLAfFSe1oOcyUN6j9Ty6HThSmazPNA1twCfT0hpInLPzRSqDNLiI3hQb9ben0tzO0GH5t0Nm7OXeRv881wJEh+D9qweKNwvfdmOPaR6eZlv13t1Nu4xc3ROtj3XeXrlhjcNleLZ/3O4awuHmm2sOaWRlIy1nKASfeo5rudyWSVQ2hNdBPAL9FDUBCidv0Almmq7bs5cCqALGokBb1LrfaX/04fipZFJGAjq77zAb77pOjB1VBzk4Z+X49YbGP010HGvp5VIke2nhJFOD1EDprw5mS7ABsCuHIhe9GzOg0/42UNM1UGY6Pl+pEZSNuc2O/ayycCo+CQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(83380400001)(53546011)(9576002)(5660300002)(6916009)(316002)(44832011)(26005)(2906002)(4326008)(1076003)(508600001)(66946007)(6496006)(33716001)(186003)(55016002)(9686003)(33656002)(38350700002)(38100700002)(956004)(8676002)(86362001)(52116002)(8936002)(54906003)(6666004)(66556008)(66476007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?pGFt3MucKYLE1Xw1yEK+Tt9KThbU1sVUKyhBUNnfq1pAKxisHJhBlC+PFf2W?=
+ =?us-ascii?Q?U4lQBVBmEMF307LGU9jkaBSwxxh2y+KdKYXswZBObZsiSfNEerinqi7K5Yy3?=
+ =?us-ascii?Q?30u9JS818pp0SOTN2zi7LQ+0+dVmbxPJQqK8LDRRcvglkIZ9hkBmaRIONpbA?=
+ =?us-ascii?Q?DMHn4mMVzRdBSnWt6v3tUC3VAPAAwFSFO0fcdIHbjsrSiDbeVYXx67ECPbGn?=
+ =?us-ascii?Q?y7dSHk9iJp4QozDOZWGix3s1VKePgCPk/Nxiwb2dYGY8rLSh4fOCnuJ7fRj6?=
+ =?us-ascii?Q?Z6XSCRBS2qfk7U7CgMloYva7XxOqYpGYVtZ3xfIEgikTIECD3lDuYHfxp0oY?=
+ =?us-ascii?Q?9r3q7eMectyq8cTufLuvTurXN5umEpd23AKgT68EQKbg6dOcDLXupj3F7Yts?=
+ =?us-ascii?Q?68hVNpchEAS8DmjGc8QEfuUwFqqFG8CNFOXkC9GWQkxo+9i9QJ9tMbbKoyr4?=
+ =?us-ascii?Q?eJ0/CBpgiRDqay0JI0ugAEeDY/uEf1Wja3TssaVoa0eEiNNxlbA2vDpKEVep?=
+ =?us-ascii?Q?PAMcFlNhcZbF+71TkphvfRwelbz0J7g8kxbohxb+Sd9u3NzlIWqC1i7aG49E?=
+ =?us-ascii?Q?PyseoYx1c8QX1iVE+XkTOqxm+UQiYlBVokX0WKL6gHfuv1aXVxZmAXBR/wzs?=
+ =?us-ascii?Q?HLsI9Chtd0iiz70nIp2Bd3HwNkz5xt4cad2gLt6rjJi8AWUUoznzgx1Pdcwb?=
+ =?us-ascii?Q?JoIeIX2RWzgySPOtLPO2RKo2yWmrpQKVxoVZE92pPpbf69sAUzf25dWzcgvM?=
+ =?us-ascii?Q?BWvFNIR6fYPc3f3bHM6vJYHJyrrtZ/dirH04l/aLBUt3FoVo7ScZkESqUVj6?=
+ =?us-ascii?Q?FxIyShv4Fq2SK+N2YpAaCpWwIQvJJkvvUFREo+Nxxd4dEO765J8hMcP8rm/3?=
+ =?us-ascii?Q?Plb+uQYSCrExAuajyT3MAL/AENZwU+bTBA1K1w3h1n5VogFB0y+V7rfjxCeN?=
+ =?us-ascii?Q?ejtV4YgJ7dbeMqPucCUIZ9UBmW16itNUIRbVd5Fve3ZMjtPewzpOvgIepRZR?=
+ =?us-ascii?Q?MWPtNLuoudb2H4ziKVClFWvBsMPlA5mS0nHuMJwU/1daNcsuxmgZkY3gL/Eu?=
+ =?us-ascii?Q?mKI7jrqomt8kfr8m1EEGAt1V6cr4qjNSOILi9G/y5RnAA0ItHwQdwIJ5xBME?=
+ =?us-ascii?Q?+T1jmYkFeDKu0dPSTVq62sZxCX6xQ9dwXQlsqFXX91Cp1uYOj78OkJYlUgWn?=
+ =?us-ascii?Q?RuQ64BB3OKxf/94gVnI3crDvAuFvTeUJrRy8iD+/bUC4QXAzB6ME9jDBfJkv?=
+ =?us-ascii?Q?826lsaYvZ76HDKaGJw+9/cyo0oDN3lO/0MDNx0AfyYI/hy+qFhjl9QmtWrwP?=
+ =?us-ascii?Q?Aey39Anv+heyI2fs81Ellz/9ZPodGayWh4iQSerhnP0O0aJAkroTl/ThJ2vK?=
+ =?us-ascii?Q?+2Rn56aVzSoj93ORc14CSyM2WU8LeJkxBNeq8ak49arnDHUZ+UFaRw1xYpyo?=
+ =?us-ascii?Q?dQ/kHW7xVXPmxE0q+M8TgTHOSsgm9cyEJZqL1Gsx/9mZgZcrgFSlCaLSVNpF?=
+ =?us-ascii?Q?0NXlmJbuNcWbyTRF0K0RZ/gINjNLGZ186+Tu8nP7iCVVtUEJds9vOjoo1THC?=
+ =?us-ascii?Q?Pakahw16NHCCiBUtLVkp1szs4ST/qICSQfLMw4ocqzq/3AQfiLWouXYsmP+Q?=
+ =?us-ascii?Q?gOExL9eyJCepGl/7lWH78OioRMBXBA5NKCFBWI4PgSDzX4vXibZy1bMlpFlI?=
+ =?us-ascii?Q?lkjOQA=3D=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e84c056-8847-4eb5-bf5f-08d99e02c4a9
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2021 13:14:58.1624
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6cdua+6liv1Aa7K1Z9zEOOBAn/skmVL2/bZtkPEUN8KMwi1o6zQTS255e/36uBZfqaqoh+R6H2i9LHgegYEdA7qnD33xczDSPOkMVIJAcxs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR10MB1293
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10155 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0 bulkscore=0
+ spamscore=0 adultscore=0 suspectscore=0 mlxlogscore=999 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
+ definitions=main-2111020078
+X-Proofpoint-GUID: qimgQJgpo6_vgn3B9A9vzJnTn5i56Eim
+X-Proofpoint-ORIG-GUID: qimgQJgpo6_vgn3B9A9vzJnTn5i56Eim
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Nov 2, 2021 at 9:11 AM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Tue, Nov 2, 2021 at 8:31 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> > On Fri, Oct 29, 2021 at 8:36 AM Joel Stanley <joel@jms.id.au> wrote:
-> > > On Thu, 28 Oct 2021 at 14:57, Arnd Bergmann <arnd@arndb.de> wrote:
-> > > > On Thu, Oct 28, 2021 at 4:19 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> > > https://lore.kernel.org/all/6be32e0b5b454ed7b609317266a8e798@BLUPR03MB358.namprd03.prod.outlook.com/
-> > >
-> > > It looks like it's the same workaround as ARM_ERRATA_742230, which the
-> > > kernel does implement.
-> > >
-> > > It would be good to hear from the Nuvoton people, or an Arm person.
-> >
-> > I will happily update the patch to select ARM_ERRATA_742230 instead of
-> > the dead non-existing ARM_ERRATA_794072.
-> >
-> > In contrast to the current patch that basically only cleans up "dead
-> > config" and has no effective functional change, the new patch would
-> > change the behaviour. I cannot test this patch (beyond some basic
-> > compile test) on the hardware; so, we certainly need someone to have
-> > that hardware, knows how to test it or confirm otherwise that we
-> > should select the ARM_ERRATA_742230 fix for this hardware.
-> >
-> > The current patch should be subsumed by the new patch; the submission
-> > of the new patch is deferred until that person shows up. Let's see.
->
-> I'd prefer to leave the broken Kconfig symbol in place as a reminder until it
-> gets fixed properly then.
->
+On Mon, Oct 18, 2021 at 03:35:28AM +0000, Pkshih wrote:
+> 
+> > -----Original Message-----
+> > From: Colin King <colin.king@canonical.com>
+> > Sent: Friday, October 15, 2021 11:46 PM
+> > To: Kalle Valo <kvalo@codeaurora.org>; David S . Miller <davem@davemloft.net>; Jakub Kicinski
+> > <kuba@kernel.org>; Pkshih <pkshih@realtek.com>; linux-wireless@vger.kernel.org;
+> > netdev@vger.kernel.org
+> > Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
+> > Subject: [PATCH][next] rtw89: Fix potential dereference of the null pointer sta
+> > 
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > The pointer rtwsta is dereferencing pointer sta before sta is
+> > being null checked, so there is a potential null pointer deference
+> > issue that may occur. Fix this by only assigning rtwsta after sta
+> > has been null checked. Add in a null pointer check on rtwsta before
+> > dereferencing it too.
+> > 
+> > Fixes: e3ec7017f6a2 ("rtw89: add Realtek 802.11ax driver")
+> > Addresses-Coverity: ("Dereference before null check")
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > ---
+> >  drivers/net/wireless/realtek/rtw89/core.c | 9 +++++++--
+> >  1 file changed, 7 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/net/wireless/realtek/rtw89/core.c
+> > b/drivers/net/wireless/realtek/rtw89/core.c
+> > index 06fb6e5b1b37..26f52a25f545 100644
+> > --- a/drivers/net/wireless/realtek/rtw89/core.c
+> > +++ b/drivers/net/wireless/realtek/rtw89/core.c
+> > @@ -1534,9 +1534,14 @@ static bool rtw89_core_txq_agg_wait(struct rtw89_dev *rtwdev,
+> >  {
+> >  	struct rtw89_txq *rtwtxq = (struct rtw89_txq *)txq->drv_priv;
+> >  	struct ieee80211_sta *sta = txq->sta;
+> > -	struct rtw89_sta *rtwsta = (struct rtw89_sta *)sta->drv_priv;
+> 
+> 'sta->drv_priv' is only a pointer, we don't really dereference the
+> data right here, so I think this is safe. More, compiler can optimize
+> this instruction that reorder it to the place just right before using.
+> So, it seems like a false alarm.
 
-Agree, this patch here should not be integrated. I rather expect that
-Avi or others at Nuvoton will provide a proper patch to act
-appropriately for the ARM_ERRATA_794072, or after proper analysis can
-determine that there is no change in the kernel required.
+The warning is about "sta" not "sta->priv".  It's not a false positive.
 
-Lukas
+I have heard discussions about compilers trying to work around these
+bugs by re-ordering the code.  Is that an option in GCC?  It's not
+something we should rely on, but I'm just curious if it exists in
+released versions.
+
+regards,
+dan carpenter
