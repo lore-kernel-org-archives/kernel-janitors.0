@@ -2,35 +2,35 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83CE8C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Nov 2021 21:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 987F9C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Nov 2021 21:31:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 623C160F58
-	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Nov 2021 21:24:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 704A8610EA
+	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Nov 2021 21:31:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230310AbhKCV11 (ORCPT
+        id S230287AbhKCVeQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 3 Nov 2021 17:27:27 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:51218 "EHLO
+        Wed, 3 Nov 2021 17:34:16 -0400
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:59715 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230210AbhKCV10 (ORCPT
+        with ESMTP id S229968AbhKCVeQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 3 Nov 2021 17:27:26 -0400
+        Wed, 3 Nov 2021 17:34:16 -0400
 Received: from pop-os.home ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id iNkVmLbELBazoiNkWmwzkt; Wed, 03 Nov 2021 22:24:48 +0100
+        id iNr7mLdh7BazoiNr7mx0f3; Wed, 03 Nov 2021 22:31:38 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Wed, 03 Nov 2021 22:24:48 +0100
+X-ME-Date: Wed, 03 Nov 2021 22:31:38 +0100
 X-ME-IP: 86.243.171.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     martin.petersen@oracle.com
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+To:     bcrl@kvack.org, viro@zeniv.linux.org.uk
+Cc:     linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] scsi: target: Save a few cycles in 'transport_lookup_[cmd|tmr]_lun()'
-Date:   Wed,  3 Nov 2021 22:24:46 +0100
-Message-Id: <e4a21bc607c39935cb98d4825cd63ba349820550.1635974637.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] aio: Save a few cycles in 'lookup_ioctx()'
+Date:   Wed,  3 Nov 2021 22:31:35 +0100
+Message-Id: <0c3fcdaec33bb12b2367860dfab7ed4224ea000c.1635974999.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -44,31 +44,22 @@ taken/released.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/target/target_core_device.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/aio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/target/target_core_device.c b/drivers/target/target_core_device.c
-index 44bb380e7390..bfd5d5606522 100644
---- a/drivers/target/target_core_device.c
-+++ b/drivers/target/target_core_device.c
-@@ -77,7 +77,7 @@ transport_lookup_cmd_lun(struct se_cmd *se_cmd)
- 
- 		se_lun = rcu_dereference(deve->se_lun);
- 
--		if (!percpu_ref_tryget_live(&se_lun->lun_ref)) {
-+		if (!percpu_ref_tryget_live_rcu(&se_lun->lun_ref)) {
- 			se_lun = NULL;
- 			goto out_unlock;
- 		}
-@@ -154,7 +154,7 @@ int transport_lookup_tmr_lun(struct se_cmd *se_cmd)
- 	if (deve) {
- 		se_lun = rcu_dereference(deve->se_lun);
- 
--		if (!percpu_ref_tryget_live(&se_lun->lun_ref)) {
-+		if (!percpu_ref_tryget_live_rcu(&se_lun->lun_ref)) {
- 			se_lun = NULL;
- 			goto out_unlock;
- 		}
+diff --git a/fs/aio.c b/fs/aio.c
+index 9c81cf611d65..d189ea13e10a 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1062,7 +1062,7 @@ static struct kioctx *lookup_ioctx(unsigned long ctx_id)
+ 	id = array_index_nospec(id, table->nr);
+ 	ctx = rcu_dereference(table->table[id]);
+ 	if (ctx && ctx->user_id == ctx_id) {
+-		if (percpu_ref_tryget_live(&ctx->users))
++		if (percpu_ref_tryget_live_rcu(&ctx->users))
+ 			ret = ctx;
+ 	}
+ out:
 -- 
 2.30.2
 
