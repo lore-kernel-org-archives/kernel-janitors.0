@@ -2,178 +2,119 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 577E5C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Nov 2021 10:52:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AD5CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Nov 2021 18:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D7C96103B
-	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Nov 2021 10:52:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E29B16109F
+	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Nov 2021 18:38:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230462AbhKCKyw (ORCPT
+        id S230198AbhKCSl2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 3 Nov 2021 06:54:52 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:6672 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230232AbhKCKyv (ORCPT
+        Wed, 3 Nov 2021 14:41:28 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:62521 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229772AbhKCSl2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 3 Nov 2021 06:54:51 -0400
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1A3AMCIx010685;
-        Wed, 3 Nov 2021 10:46:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : content-type :
- content-transfer-encoding : in-reply-to : mime-version; s=corp-2021-07-09;
- bh=umhmtnqEgrXxXuPsIAXxb+H6pd34OKuiybvfoXU2ayI=;
- b=gDku0v9DbVCSJN2PRu3RWnAtWzOjNh6g8x37V+MdrOxlVO2LwTZdTLHfx+kdSm1EvcQV
- 1BLa9zMJEr+73K9R9JUyv8qNCAKMCGttzPQqb/Q7wbxGRcbEGALdSkCIi+oVbQO8qf9t
- QItL63+Q5F6nUzmX9vjSXhCv85Gk/pkIR0f+2z/P7CbPaMeHbGN0gZOXLzTw+bouelbC
- LB8zK52sYo1iFUJgFUeKW2BkcXuwD2p8GecgDN7DzahI2OSQbMTD3tWghdG65VJB5xzI
- KUn84ss9PmS18sYTygtIkr1bi1sYqntv+oXOxt0YHL24NOWxGcCUC8EPg1EW0oiRSehJ MA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3c3n8p111c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 03 Nov 2021 10:46:26 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1A3Ajem4041121;
-        Wed, 3 Nov 2021 10:46:26 GMT
-Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam08lp2173.outbound.protection.outlook.com [104.47.73.173])
-        by aserp3030.oracle.com with ESMTP id 3c3pfxedw1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 03 Nov 2021 10:46:25 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZlI/uctvF/OXYOgYzDqQhBW7Aem1T1rrKKPgW4AqF4SiezlfLgInyQLVXmvepMNFvYwSs3Q9zbj/NpoMmxHm/y1NnfX4hJevsB26tj3Kvpc/HQGbwfQjKq2ye1jzHorc73PMMbZRoDkR1cNCD6uf9cNChiX2a6hdn7DSYjIfcZ+0sdkIBJxpu2TvidR2GZk/PCwknODeMa4Yi9LLF/fRWkFtT9ZQbtJW1HRe9XNKof5M260v6AiLk9L0JHBZaZ6B1IYYcK2RG+EaQ9L9e7Wx83b3z505sSf+C1aVzg6HOx7JUrRaba+ZAGiYA3W8ujKLLuksmliX5dMsoZkcGvb8Lw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UK3n/czdAlZNl832P6r3sW3bP6EOtHoz+MgwAK/Tmvg=;
- b=h84ZuXgIDJCItT9M8uuEMK/oTvATyM5yoE/b2+MAeVw7JMwJNVIcRuIZvk9WFbP71vVwenN5TOTsvRIBLtYj7lTDPOOqXkNOdbzjzpXAzA1KJxTIANxsqXJZUKfiUOB5c9TlryyNc8VkbtpB2HaE8U1LMYOMo+CpDVM2k3h+g1w+7bcLR8sl3IDVSxdy7J59Ukh+z9FMKZqdymBOdJZpmiArpJ84GgFcdKMpsSxTuL2o0709NO5xYnq2PdyUF9Y4bSU2K5MGUq57IKlbxczCBEB5T1+K3PVq3whFCnzurDrHUg/iCm2VbLRj1elWGsQGJwlN8/3HWDtBFZjumVmWiA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UK3n/czdAlZNl832P6r3sW3bP6EOtHoz+MgwAK/Tmvg=;
- b=s6+R4/DkkehKSiyc5R8w8jC4RROKw132vaeqvp4qKbg0moDz0+y3gcfnWHJU9fZS1tAa5SGvukrUG15X/pca/axY60ZM3i5LugdCflikpca0iuIGcSAUDE8p5Oo3/Gv/Y/nkQIzIC+pQEHokgmDsym1IsR1LD1dhMy82kwrSl78=
-Authentication-Results: wanadoo.fr; dkim=none (message not signed)
- header.d=none;wanadoo.fr; dmarc=none action=none header.from=oracle.com;
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28) by MWHPR10MB1824.namprd10.prod.outlook.com
- (2603:10b6:300:10a::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4649.15; Wed, 3 Nov
- 2021 10:46:23 +0000
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::d409:11b5:5eb2:6be9]) by MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::d409:11b5:5eb2:6be9%5]) with mapi id 15.20.4649.020; Wed, 3 Nov 2021
- 10:46:23 +0000
-Date:   Wed, 3 Nov 2021 13:46:05 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
-        tiwai@suse.com, yang.lee@linux.alibaba.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ASoC: codecs: Fix WCD_MBHC_HPH_PA_EN usage
-Message-ID: <20211103104605.GN2794@kadam>
-References: <988948f7f266aa00698704687537335b7e6a67b2.1634455711.git.christophe.jaillet@wanadoo.fr>
- <3ff34912-19e6-4d52-e9da-0e78ceb1d2ff@linaro.org>
- <c01b6669-d0f7-aab5-3aca-02f19be8a319@wanadoo.fr>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c01b6669-d0f7-aab5-3aca-02f19be8a319@wanadoo.fr>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: JNXP275CA0012.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:19::24)
- To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
+        Wed, 3 Nov 2021 14:41:28 -0400
+Received: from pop-os.home ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id iL9rmt2JpUGqliL9rmrujg; Wed, 03 Nov 2021 19:38:50 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Wed, 03 Nov 2021 19:38:50 +0100
+X-ME-IP: 86.243.171.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     mathieu.poirier@linaro.org, suzuki.poulose@arm.com,
+        mike.leach@linaro.org, leo.yan@linaro.org,
+        alexander.shishkin@linux.intel.com, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@foss.st.com
+Cc:     coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v1 1/4] char: xillybus: Remove usage of the deprecated 'pci-dma-compat.h' API
+Date:   Wed,  3 Nov 2021 19:38:45 +0100
+Message-ID: <e25aa2a804972c5d4f06c4c4e0511e11ff97a425.1630083668.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <cover.1630083668.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1630083668.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Received: from kadam (62.8.83.22) by JNXP275CA0012.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:19::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4649.17 via Frontend Transport; Wed, 3 Nov 2021 10:46:18 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 820637b8-17ae-462d-62df-08d99eb72da9
-X-MS-TrafficTypeDiagnostic: MWHPR10MB1824:
-X-Microsoft-Antispam-PRVS: <MWHPR10MB18244701BC239923080733358E8C9@MWHPR10MB1824.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Wu8l049prz5EiLf7O8ziG4utGsilmKHgOATq5ZTtQYlnw9HLZyAjd3ZXX2R+NeEk/Lq/Hyj12MMuwtH9otGF4lRhh5bEfjztfBMHFiL/8Zn3JGzWG0EzAL9cNPZKuo1Hi4CV9kr/RIPf18m6pXa04fI6uiffTe9LK8V3zSXz0wvneTpOyFOFidTRg1SERuR/SMTAkaJ0GU+zv/tSvgpix1Diwkkdrc9D5BbUruSHIASGZFdglL5BIENvUzGlD1sRi2bawlXDsvpgxnNVL54S7JpQl6SRQUXnmt33D2dhsY8Cwc3pVftFi4DDFOpdcdv4rOIH2YAL6wMZCRF6kZtafbXVFt3uMUXPU9LrG6TkcDJGu+vePfzXVqlTtWpLCJRNGgaNNR3nGNLAz1V0daViqtWPFQa5nEfEI32rNa8nn113ygKjo8D1e4BPUD7HQv9TYKBJ3YkHcQ8aMxrTjypiDnp41rCT9p+STqLXBO5zK8N2Ej1YF61t3EpdDijsg0+CG86+3dWDpdEh5+btuySRvHh5orSGqT2wlIwtKeMeFReGAq50BTodmIe8ce3MkPbL7FFxiAKQ1y/KnNGoGgNMG5mjf2a0p9w8qVRg1JJI9vmnxeE8DnMdkVF2VzEKQIo/BbY5qq1PR79ng6OQnSADDb2l38n4qHh9nBgkDHcujDGwLMPnhD/wwfEeJCZ+6Re4rEajvgpqDifMUMPSnrsFEQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(26005)(508600001)(9686003)(956004)(33716001)(186003)(83380400001)(316002)(38350700002)(9576002)(4326008)(5660300002)(55016002)(4744005)(8936002)(38100700002)(66946007)(86362001)(7416002)(66556008)(1076003)(66574015)(2906002)(66476007)(33656002)(6666004)(53546011)(52116002)(6916009)(44832011)(6496006)(8676002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?Q9yoWAN1/er9fVFuMjVXYM8S5o0zwBlIPtsqsOX09KnIETVaDTrvDmUyva?=
- =?iso-8859-1?Q?ATbIC13kR4KKzBdueNtQZjVolzV9CCrU59ao9XBtKfN13HgUuYUOxcI9Fe?=
- =?iso-8859-1?Q?RH7bMT9pO+CrfQj1VY3Zeh/LrxFyeMncBADuNBQQMVTxKFTNWAIBC4a2h8?=
- =?iso-8859-1?Q?sHp23w09R/kW1IIavuJZGkJjSydbyzrzhabshzwxkQpAPjx139k2L1VIuW?=
- =?iso-8859-1?Q?tX1vBJC1YtyjXCQeRBpW2YSXgRjMtiP05+Bh6VgJ07vE/n8/C5Ntdu0yw2?=
- =?iso-8859-1?Q?1S7YIzuyV6vbELbGxiuUYoSltm5Fh1//owq+biZQ/recZy662UM6MnrfV5?=
- =?iso-8859-1?Q?Il01KHV03xST/sIhThKVxQTHC3pu3XAgF0EnuagKd+yXG+5dWuga4KMcSA?=
- =?iso-8859-1?Q?/UG88ubHkLSbJ4c66crSmzRVUPyMwt3qa1WGhcwWz+VShgHe0nDnZM53qO?=
- =?iso-8859-1?Q?kUTwA3AIQjr6g9DHWtjTCRHpwtay3D6QZZMsiwvahxog2rF3Gx88g+4f8g?=
- =?iso-8859-1?Q?adqu5uuye2yoD3CL93mpMLWGsfr9ehVsSz39zPH8AffDp7ilETBib4UbVa?=
- =?iso-8859-1?Q?mxZo6J7gbv9lWhkZWtwKKq6iRDskrM0bDMaXth6FWD/WXQw/A2cZQHU2tI?=
- =?iso-8859-1?Q?NnmhlUcARfdA5V8qZRSdVXDIQAgsxu09YcO7iOEkDTR4oQOdJ2KVV07PAk?=
- =?iso-8859-1?Q?j3x0CWCrOXfqcaNV2jAhjbPOxY8E8UGZaQRhjQ1QmCd+6vNmBQnQp3LHA1?=
- =?iso-8859-1?Q?My1Q33Hsy0VXrhaJOlXonVi4kdMLrz7c2QOVtTzcLEhIj9OsumoWkanGry?=
- =?iso-8859-1?Q?9K5MbZYfiHRrRLf3JD3mNyMxjsd0VbAK8Rdh7/PL9QiFtAwq+NIsGuBRJ8?=
- =?iso-8859-1?Q?UrT4xU2XLeVRVJ6+KGHmKr/OtlBDqiqmhzCjnKxJ7JZgNyx7h9Q5FkhjjH?=
- =?iso-8859-1?Q?41ueiCMmnDhuL61ORccaXJGf7DRrCpfO0cM6lPc0SovbdbR5NhUCtoKFz9?=
- =?iso-8859-1?Q?u8rRqLHNIu96zHiH6s76ZJouYCT+e2zCj/vGPDmEWYJztqZRzdEG1GY4SE?=
- =?iso-8859-1?Q?XjGOatWEbeq/l6lWNKtNXZJjiM0QCaaS/Cjcy6josFUd7hnH1nkUDVHbk+?=
- =?iso-8859-1?Q?DIV74zjDyuBPvrPpUX+ORp9/Ez91WsTqkISyDJYegnkGjWOVOX5y4ZqOtR?=
- =?iso-8859-1?Q?L43/Obe59CrYWMfFeP3LqMloROLY6zL6q1qaDNIRTJlXpCeZJ5mZEzRABI?=
- =?iso-8859-1?Q?EatH8oKm0seXNB79ZaiqwCgmnfMWlNM8Gw+RoOYoeD/kWgsQ7ddzWM5lL1?=
- =?iso-8859-1?Q?XbAdDbU4ov65u2pjZVdTMRkFqGsuR3mxrX2lbJsrYNvcnwXSohlVWU94vh?=
- =?iso-8859-1?Q?kqp7+1PDOlx3YS4PWoJUuV7aF1S2qKSZz1MwthVQubM/2Vafw2gbhOWdQ8?=
- =?iso-8859-1?Q?HutLLh1UvvaUCWtuESy74UgW+fz3whYw0xAEZfVgF/uf88TTpXg2PhOu2i?=
- =?iso-8859-1?Q?zeZsfdkeTfwLyMLTNvoeGgYLTlkwveSeXrx0YQGRUIvDL41T2y2C2c//9k?=
- =?iso-8859-1?Q?1Mvg5yAU5sOn49emZ+4/w5qCVMByLc7o50HqwpsCCNYAT2vjC1hJi9+kLP?=
- =?iso-8859-1?Q?Usg5iGk/22oP3Ju7uQyJduFiVh5ZkJbhuxcl9+TRlSnm9x0vNQwHH5iZVQ?=
- =?iso-8859-1?Q?S9UvLTnmfvgJ2xts6BG1U9xZj1/5Lph9GHU+K4ObchgxzRVJftv1eXejLh?=
- =?iso-8859-1?Q?rchw=3D=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 820637b8-17ae-462d-62df-08d99eb72da9
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2021 10:46:23.3244
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gG19bG5/nVOLQTJEFR5uI5IDwvyOOzy+V4ZGYg3Hh3k4zysJumPdD2/cpcRtNNOnH/dkiXRgt1cfqauCtds7aXkqX+soqUUI5AoKlu1Jttk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR10MB1824
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10156 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 suspectscore=0
- malwarescore=0 bulkscore=0 spamscore=0 adultscore=0 mlxlogscore=999
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2111030061
-X-Proofpoint-ORIG-GUID: 4aIo4VcmqMhqApv8TORVDSrIG96forhw
-X-Proofpoint-GUID: 4aIo4VcmqMhqApv8TORVDSrIG96forhw
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
+Message-ID: <20211103183845.aIUUtat3FR6pH_U6fiMpMmQDeeDn7aTJYo6ureAeDJ0@z>
 
-On Tue, Oct 19, 2021 at 07:39:04PM +0200, Christophe JAILLET wrote:
-> Le 19/10/2021 à 15:47, Srinivas Kandagatla a écrit :
-> > 
-> > 
-> > On 17/10/2021 08:31, Christophe JAILLET wrote:
-> > > 'hphpa_on' is known to be false, so the if block at the end of the
-> > > function
-> > > is dead code.
-> > 
-> > Yes, this is a dead code we should remove it.
-> 
-> Ok, thanks for the clarification.
-> 
-> > 
-> > This code was part of moisture detection logic which is not enabled in
-> > upstream code yet.
-> 
-> If 'yet' is the important word of the sentence, maybe the best is to leave
-> the code as-is.
-> If you prefer it to be removed, I can send a patch if it helps.
+In [1], Christoph Hellwig has proposed to remove the wrappers in
+include/linux/pci-dma-compat.h.
 
-Just delete the dead code...  Never try to plan for the future, it's too
-unpredictable.
+Some reasons why this API should be removed have been given by Julia
+Lawall in [2].
 
-regards,
-dasn carpenter
+A coccinelle script has been used to perform the needed transformation
+Only relevant part are given below.
+
+'xilly_pci_direction()' has been hand modified to simplify it slightly.
+
+It has been compile tested.
+
+
+@@ @@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
+
+@@ @@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
+
+@@ @@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
+
+@@
+expression e1, e2;
+@@
+-    pci_set_dma_mask(e1, e2)
++    dma_set_mask(&e1->dev, e2)
+
+[1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
+[2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/char/xillybus/xillybus_pcie.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/char/xillybus/xillybus_pcie.c b/drivers/char/xillybus/xillybus_pcie.c
+index bdf1c366b4fc..be25bfdb0d9a 100644
+--- a/drivers/char/xillybus/xillybus_pcie.c
++++ b/drivers/char/xillybus/xillybus_pcie.c
+@@ -36,11 +36,10 @@ static int xilly_pci_direction(int direction)
+ {
+ 	switch (direction) {
+ 	case DMA_TO_DEVICE:
+-		return PCI_DMA_TODEVICE;
+ 	case DMA_FROM_DEVICE:
+-		return PCI_DMA_FROMDEVICE;
++		return direction;
+ 	default:
+-		return PCI_DMA_BIDIRECTIONAL;
++		return DMA_BIDIRECTIONAL;
+ 	}
+ }
+ 
+@@ -185,9 +184,9 @@ static int xilly_probe(struct pci_dev *pdev,
+ 	 * So go for the 64-bit mask only when failing is the other option.
+ 	 */
+ 
+-	if (!pci_set_dma_mask(pdev, DMA_BIT_MASK(32))) {
++	if (!dma_set_mask(&pdev->dev, DMA_BIT_MASK(32))) {
+ 		endpoint->dma_using_dac = 0;
+-	} else if (!pci_set_dma_mask(pdev, DMA_BIT_MASK(64))) {
++	} else if (!dma_set_mask(&pdev->dev, DMA_BIT_MASK(64))) {
+ 		endpoint->dma_using_dac = 1;
+ 	} else {
+ 		dev_err(endpoint->dev, "Failed to set DMA mask. Aborting.\n");
+-- 
+2.30.2
 
