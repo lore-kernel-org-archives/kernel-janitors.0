@@ -2,92 +2,186 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C61C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 23:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3A98C433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Nov 2021 00:36:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D3F96109D
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Nov 2021 23:16:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C67EC60F02
+	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Nov 2021 00:36:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231380AbhKBXS5 (ORCPT
+        id S232855AbhKCAjR convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 2 Nov 2021 19:18:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50428 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231379AbhKBXS4 (ORCPT
+        Tue, 2 Nov 2021 20:39:17 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:52358 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229804AbhKCAjR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 2 Nov 2021 19:18:56 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 637CBC061714;
-        Tue,  2 Nov 2021 16:16:21 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id i5so860418wrb.2;
-        Tue, 02 Nov 2021 16:16:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=e6rjzzyUGSlERAuwJSH0XEKW/VN+PnGvJFm5FyzCoaY=;
-        b=SQhskytV8xOmkEZ4+m1uy2ll3kfcpHqeQ4A7fnLA24OIBAYNc2Kf+l6rdlTfJ2cUac
-         5GVjMRMfuMXH3dY+DjEK5HkIBzQSDDZDdK+DV+Yis8BLyNO/eNEZNylRucwy7rSfTZWu
-         7WaKLCFzm+6dfoTWY/2qStAKEnXVclHHHOgGcVceXj1sWGTO+qODkmLI5NwylK7T0ikD
-         Yelof2Ej02qQPskEWJFLga8VYKOuDQkETpy3NXz6yFAfSa+OgA/Q0aZe/QXcB4TP1+B4
-         NByYHUxKAW+bK8IbOMxrlF8ikmhu77eN+COBWE5Io2B0rU2e/x7muo3gdgfpP/HhpuSk
-         t7ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=e6rjzzyUGSlERAuwJSH0XEKW/VN+PnGvJFm5FyzCoaY=;
-        b=ePENgu0OD+Qv3ML/Jh/hZQ3r85cce99tnSpHlksijT6IzLo8u33LaQ7vdOKNzetE6c
-         hSC4OJP1udya1W0rSJY/In3STi53nbfKMffHI1bTQ5PG8JWDfjCd5wB0Z9VcJph2/yql
-         9kNtICHUiW2ygSIvKhbNUfl2sP8QTfGR0encjAEjs7ksO+oqoPMwfBF7WTWml8k8qJr5
-         zElv6901NS3a7AZQZrnQPz4GYhn2Rbm3JbVn7eeQncaWtYAgK1CiZQELdeQhi2qZeu+d
-         6WmOn6d/0qnxNcwvEnWvBzxDC0/UB0fic57l34+JNNhg37jGjFwXyUmMtwc1iDUsCS6O
-         ciZQ==
-X-Gm-Message-State: AOAM530+M3tMOfuyR4wPgbtWAJ4XcBZqaXhdEReB6P8jh0jbhujLFDPr
-        3QMGgqdOrMBFvA==
-X-Google-Smtp-Source: ABdhPJwgWQ+0bukxu84IxX9ucHGOlez2D67MBHn0KTjY4ZaQQR4vrEXDJe+QaCI+iqBw+g0bCbxwVA==
-X-Received: by 2002:a5d:508d:: with SMTP id a13mr7354426wrt.41.1635894980021;
-        Tue, 02 Nov 2021 16:16:20 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id r10sm323399wrl.92.2021.11.02.16.16.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Nov 2021 16:16:19 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@googlemail.com>
-X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mailmap: update email address for Colin King
-Date:   Tue,  2 Nov 2021 23:16:17 +0000
-Message-Id: <20211102231617.78569-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.32.0
+        Tue, 2 Nov 2021 20:39:17 -0400
+Authenticated-By: 
+X-SpamFilter-By: ArmorX SpamTrap 5.73 with qID 1A30aI4D1002553, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36503.realtek.com.tw[172.21.6.25])
+        by rtits2.realtek.com.tw (8.15.2/2.71/5.88) with ESMTPS id 1A30aI4D1002553
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Wed, 3 Nov 2021 08:36:18 +0800
+Received: from RTEXMBS02.realtek.com.tw (172.21.6.95) by
+ RTEXH36503.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.15; Wed, 3 Nov 2021 08:36:18 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS02.realtek.com.tw (172.21.6.95) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.15; Wed, 3 Nov 2021 08:36:17 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::dc53:1026:298b:c584]) by
+ RTEXMBS04.realtek.com.tw ([fe80::dc53:1026:298b:c584%5]) with mapi id
+ 15.01.2308.015; Wed, 3 Nov 2021 08:36:17 +0800
+From:   Pkshih <pkshih@realtek.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+CC:     Colin King <colin.king@canonical.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH][next] rtw89: Fix potential dereference of the null pointer sta
+Thread-Topic: [PATCH][next] rtw89: Fix potential dereference of the null
+ pointer sta
+Thread-Index: AQHXwduziBNegQ3KtE6tzEeaYjpkJqvX/pCwgBfOyICAAT/CgA==
+Date:   Wed, 3 Nov 2021 00:36:17 +0000
+Message-ID: <c3de973999ea40cf967ffefe0ee56ed4@realtek.com>
+References: <20211015154530.34356-1-colin.king@canonical.com>
+ <9cc681c217a449519aee524b35e6b6bc@realtek.com> <20211102131437.GF2794@kadam>
+In-Reply-To: <20211102131437.GF2794@kadam>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.69.188]
+x-kse-serverinfo: RTEXMBS02.realtek.com.tw, 9
+x-kse-attachmentfiltering-interceptor-info: no applicable attachment filtering
+ rules found
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: =?us-ascii?Q?Clean,_bases:_2021/11/2_=3F=3F_10:50:00?=
+x-kse-bulkmessagesfiltering-scan-result: protection disabled
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-KSE-ServerInfo: RTEXH36503.realtek.com.tw, 9
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: protection disabled
+X-KSE-AntiSpam-Outbound-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 5.9.20, Database issued on: 11/03/2021 00:25:21
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 167068 [Nov 03 2021]
+X-KSE-AntiSpam-Info: Version: 5.9.20.0
+X-KSE-AntiSpam-Info: Envelope from: pkshih@realtek.com
+X-KSE-AntiSpam-Info: LuaCore: 465 465 eb31509370142567679dd183ac984a0cb2ee3296
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;realtek.com:7.1.1;127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 11/03/2021 00:28:00
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Colin King has moved to Intel to update gmail and Canonical
-email addresses.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- .mailmap | 2 ++
- 1 file changed, 2 insertions(+)
+> -----Original Message-----
+> From: Dan Carpenter <dan.carpenter@oracle.com>
+> Sent: Tuesday, November 2, 2021 9:15 PM
+> To: Pkshih <pkshih@realtek.com>
+> Cc: Colin King <colin.king@canonical.com>; Kalle Valo <kvalo@codeaurora.org>; David S . Miller
+> <davem@davemloft.net>; Jakub Kicinski <kuba@kernel.org>; linux-wireless@vger.kernel.org;
+> netdev@vger.kernel.org; kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH][next] rtw89: Fix potential dereference of the null pointer sta
+> 
+> On Mon, Oct 18, 2021 at 03:35:28AM +0000, Pkshih wrote:
+> >
+> > > -----Original Message-----
+> > > From: Colin King <colin.king@canonical.com>
+> > > Sent: Friday, October 15, 2021 11:46 PM
+> > > To: Kalle Valo <kvalo@codeaurora.org>; David S . Miller <davem@davemloft.net>; Jakub Kicinski
+> > > <kuba@kernel.org>; Pkshih <pkshih@realtek.com>; linux-wireless@vger.kernel.org;
+> > > netdev@vger.kernel.org
+> > > Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
+> > > Subject: [PATCH][next] rtw89: Fix potential dereference of the null pointer sta
+> > >
+> > > From: Colin Ian King <colin.king@canonical.com>
+> > >
+> > > The pointer rtwsta is dereferencing pointer sta before sta is
+> > > being null checked, so there is a potential null pointer deference
+> > > issue that may occur. Fix this by only assigning rtwsta after sta
+> > > has been null checked. Add in a null pointer check on rtwsta before
+> > > dereferencing it too.
+> > >
+> > > Fixes: e3ec7017f6a2 ("rtw89: add Realtek 802.11ax driver")
+> > > Addresses-Coverity: ("Dereference before null check")
+> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > > ---
+> > >  drivers/net/wireless/realtek/rtw89/core.c | 9 +++++++--
+> > >  1 file changed, 7 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/net/wireless/realtek/rtw89/core.c
+> > > b/drivers/net/wireless/realtek/rtw89/core.c
+> > > index 06fb6e5b1b37..26f52a25f545 100644
+> > > --- a/drivers/net/wireless/realtek/rtw89/core.c
+> > > +++ b/drivers/net/wireless/realtek/rtw89/core.c
+> > > @@ -1534,9 +1534,14 @@ static bool rtw89_core_txq_agg_wait(struct rtw89_dev *rtwdev,
+> > >  {
+> > >  	struct rtw89_txq *rtwtxq = (struct rtw89_txq *)txq->drv_priv;
+> > >  	struct ieee80211_sta *sta = txq->sta;
+> > > -	struct rtw89_sta *rtwsta = (struct rtw89_sta *)sta->drv_priv;
+> >
+> > 'sta->drv_priv' is only a pointer, we don't really dereference the
+> > data right here, so I think this is safe. More, compiler can optimize
+> > this instruction that reorder it to the place just right before using.
+> > So, it seems like a false alarm.
+> 
+> The warning is about "sta" not "sta->priv".  It's not a false positive.
+> 
+> I have heard discussions about compilers trying to work around these
+> bugs by re-ordering the code.  Is that an option in GCC?  It's not
+> something we should rely on, but I'm just curious if it exists in
+> released versions.
+> 
 
-diff --git a/.mailmap b/.mailmap
-index 9d4fc1fea665..14314e3c5d5e 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -73,6 +73,8 @@ Chris Chiu <chris.chiu@canonical.com> <chiu@endlessm.com>
- Chris Chiu <chris.chiu@canonical.com> <chiu@endlessos.org>
- Christophe Ricard <christophe.ricard@gmail.com>
- Christoph Hellwig <hch@lst.de>
-+Colin Ian King <colin.king@intel.com> <colin.king@canonical.com>
-+Colin Ian King <colin.king@intel.com> <colin.i.king@gmail.com>
- Corey Minyard <minyard@acm.org>
- Damian Hobson-Garcia <dhobsong@igel.co.jp>
- Daniel Borkmann <daniel@iogearbox.net> <danborkmann@googlemail.com>
--- 
-2.32.0
+I say GCC does "reorder" the code, because the object codes of following
+two codes are identical with default or -Os ccflags.
+If I misuse the term, please correct me.
+
+Code-1:
+	struct rtw89_sta *rtwsta = (struct rtw89_sta *)sta->drv_priv;
+
+	if (!sta)
+		return false;
+
+	if (rtwsta->max_agg_wait <= 0)
+		return false;
+
+Code-2:
+	struct rtw89_sta *rtwsta;
+
+	if (!sta)
+		return false;
+
+	rtwsta = (struct rtw89_sta *)sta->drv_priv;
+	if (rtwsta->max_agg_wait <= 0)
+		return false;
+
+
+The code-1 is the original code Coverity and smatch warn use-before-check.
+The code-2 can avoid this warning without doubt.
+
+To be clear, I have sent a patch to fix this.
+
+--
+Ping-Ke
 
