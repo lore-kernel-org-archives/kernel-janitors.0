@@ -2,186 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3A98C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Nov 2021 00:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A05C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Nov 2021 09:47:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C67EC60F02
-	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Nov 2021 00:36:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E72860720
+	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Nov 2021 09:47:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232855AbhKCAjR convert rfc822-to-8bit (ORCPT
+        id S231575AbhKCJuC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 2 Nov 2021 20:39:17 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:52358 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229804AbhKCAjR (ORCPT
+        Wed, 3 Nov 2021 05:50:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50336 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230097AbhKCJuB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 2 Nov 2021 20:39:17 -0400
-Authenticated-By: 
-X-SpamFilter-By: ArmorX SpamTrap 5.73 with qID 1A30aI4D1002553, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36503.realtek.com.tw[172.21.6.25])
-        by rtits2.realtek.com.tw (8.15.2/2.71/5.88) with ESMTPS id 1A30aI4D1002553
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Wed, 3 Nov 2021 08:36:18 +0800
-Received: from RTEXMBS02.realtek.com.tw (172.21.6.95) by
- RTEXH36503.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.15; Wed, 3 Nov 2021 08:36:18 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS02.realtek.com.tw (172.21.6.95) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.15; Wed, 3 Nov 2021 08:36:17 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::dc53:1026:298b:c584]) by
- RTEXMBS04.realtek.com.tw ([fe80::dc53:1026:298b:c584%5]) with mapi id
- 15.01.2308.015; Wed, 3 Nov 2021 08:36:17 +0800
-From:   Pkshih <pkshih@realtek.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     Colin King <colin.king@canonical.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        Wed, 3 Nov 2021 05:50:01 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A8AEC061714;
+        Wed,  3 Nov 2021 02:47:25 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id t30so2580706wra.10;
+        Wed, 03 Nov 2021 02:47:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Owuxu/u/a2bHMDCGZQeGYLoaD+hfbfqkKmW4rV72EDg=;
+        b=OHlMo4AEB3El1xuPYSeoUEOZ8QkjsQ/eUYqmmv/EZCjaM+yZQV4XNLGiayYmXQJ7dY
+         U0QThqegFN7ujzo5fqAxGE/k/fogrx2nWD1LNZL+RAMrvmeHC/0bHWuSYbtRkMhIjaMa
+         QvgD7ra+DMDY0qSLZr4MrQO6/S6YGWKK4TJWjhyxKvqvr56YQ2R1rHTXiVzhvgg/VGri
+         gE4nooMYMvUK5LbJJrD96RCVg0gXEgpZaBkHzcCnLdLlHad2/889nZHp6FlmY+59OZde
+         BSqOYVJ7o6jnbBctnRO7pFdjQobsu6XaCk07uVuh2FlmFjCrwPbriIlft+rmz2CJY2lV
+         +qDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Owuxu/u/a2bHMDCGZQeGYLoaD+hfbfqkKmW4rV72EDg=;
+        b=HphlRgUQ5viFhfDvOtNnt2kFjwBOSHG/DDZev5Wa1cL0egGN2DPWhkHMFWCXg+MBcc
+         evKRUZEavyB+3P2sebPtZoW45GrCiJgb3QAuCUiZVgokelGKohIrtZZFyujEDeyz7vp0
+         dPqZ++VQEaaF8CUKi0R5lHcynAwC2nXZlYR7SrP8P8nORwDTn+0uAxxGa10GkaRsBOaJ
+         m5EdCUC1O5/YgNGLdep7M2UFGrnxvlr++FbnqIGGhCPf3JQYSnI+myrAUYgZgfqNNd9Q
+         5MSLfNsqaWa3iKEuXM+6Ym3tLQYWi+1Q4Da90Ppfed+jhOD0PT0JwDD7YOLj6VWr1p11
+         b/Qg==
+X-Gm-Message-State: AOAM532bR27jeKBhiD6fpL6XmLwwIAlwARcDzRWPECeIbHABkqokDOBi
+        /O1Hc5nXfYj00uzutRM6YGc=
+X-Google-Smtp-Source: ABdhPJw6J4+VCHWxT1GPXHqXpGNOOBk0+iT4tUFqkeGI1hU7hTG0Xt73bJZaS6mBMLuFHyr5y1ED4Q==
+X-Received: by 2002:adf:fe4f:: with SMTP id m15mr25960360wrs.81.1635932843964;
+        Wed, 03 Nov 2021 02:47:23 -0700 (PDT)
+Received: from localhost.elektrobit.com (eth1-fw1-nbg6.eb.noris.de. [213.95.148.172])
+        by smtp.gmail.com with ESMTPSA id l7sm1779889wry.86.2021.11.03.02.47.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Nov 2021 02:47:23 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH][next] rtw89: Fix potential dereference of the null pointer sta
-Thread-Topic: [PATCH][next] rtw89: Fix potential dereference of the null
- pointer sta
-Thread-Index: AQHXwduziBNegQ3KtE6tzEeaYjpkJqvX/pCwgBfOyICAAT/CgA==
-Date:   Wed, 3 Nov 2021 00:36:17 +0000
-Message-ID: <c3de973999ea40cf967ffefe0ee56ed4@realtek.com>
-References: <20211015154530.34356-1-colin.king@canonical.com>
- <9cc681c217a449519aee524b35e6b6bc@realtek.com> <20211102131437.GF2794@kadam>
-In-Reply-To: <20211102131437.GF2794@kadam>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.69.188]
-x-kse-serverinfo: RTEXMBS02.realtek.com.tw, 9
-x-kse-attachmentfiltering-interceptor-info: no applicable attachment filtering
- rules found
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: =?us-ascii?Q?Clean,_bases:_2021/11/2_=3F=3F_10:50:00?=
-x-kse-bulkmessagesfiltering-scan-result: protection disabled
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Declan Murphy <declan.murphy@intel.com>,
+        linux-crypto@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: rectify entry for INTEL KEEM BAY OCS ECC CRYPTO DRIVER
+Date:   Wed,  3 Nov 2021 10:47:11 +0100
+Message-Id: <20211103094711.8844-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-X-KSE-ServerInfo: RTEXH36503.realtek.com.tw, 9
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: protection disabled
-X-KSE-AntiSpam-Outbound-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 5.9.20, Database issued on: 11/03/2021 00:25:21
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 167068 [Nov 03 2021]
-X-KSE-AntiSpam-Info: Version: 5.9.20.0
-X-KSE-AntiSpam-Info: Envelope from: pkshih@realtek.com
-X-KSE-AntiSpam-Info: LuaCore: 465 465 eb31509370142567679dd183ac984a0cb2ee3296
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;realtek.com:7.1.1;127.0.0.199:7.1.2
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 11/03/2021 00:28:00
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Commit c9f608c38009 ("crypto: keembay-ocs-ecc - Add Keem Bay OCS ECC
+Driver") only adds drivers/crypto/keembay/keembay-ocs-ecc.c, but adds a
+file entry drivers/crypto/keembay/ocs-ecc-curve-defs.h in MAINTAINERS.
 
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> Sent: Tuesday, November 2, 2021 9:15 PM
-> To: Pkshih <pkshih@realtek.com>
-> Cc: Colin King <colin.king@canonical.com>; Kalle Valo <kvalo@codeaurora.org>; David S . Miller
-> <davem@davemloft.net>; Jakub Kicinski <kuba@kernel.org>; linux-wireless@vger.kernel.org;
-> netdev@vger.kernel.org; kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH][next] rtw89: Fix potential dereference of the null pointer sta
-> 
-> On Mon, Oct 18, 2021 at 03:35:28AM +0000, Pkshih wrote:
-> >
-> > > -----Original Message-----
-> > > From: Colin King <colin.king@canonical.com>
-> > > Sent: Friday, October 15, 2021 11:46 PM
-> > > To: Kalle Valo <kvalo@codeaurora.org>; David S . Miller <davem@davemloft.net>; Jakub Kicinski
-> > > <kuba@kernel.org>; Pkshih <pkshih@realtek.com>; linux-wireless@vger.kernel.org;
-> > > netdev@vger.kernel.org
-> > > Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-> > > Subject: [PATCH][next] rtw89: Fix potential dereference of the null pointer sta
-> > >
-> > > From: Colin Ian King <colin.king@canonical.com>
-> > >
-> > > The pointer rtwsta is dereferencing pointer sta before sta is
-> > > being null checked, so there is a potential null pointer deference
-> > > issue that may occur. Fix this by only assigning rtwsta after sta
-> > > has been null checked. Add in a null pointer check on rtwsta before
-> > > dereferencing it too.
-> > >
-> > > Fixes: e3ec7017f6a2 ("rtw89: add Realtek 802.11ax driver")
-> > > Addresses-Coverity: ("Dereference before null check")
-> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > > ---
-> > >  drivers/net/wireless/realtek/rtw89/core.c | 9 +++++++--
-> > >  1 file changed, 7 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/net/wireless/realtek/rtw89/core.c
-> > > b/drivers/net/wireless/realtek/rtw89/core.c
-> > > index 06fb6e5b1b37..26f52a25f545 100644
-> > > --- a/drivers/net/wireless/realtek/rtw89/core.c
-> > > +++ b/drivers/net/wireless/realtek/rtw89/core.c
-> > > @@ -1534,9 +1534,14 @@ static bool rtw89_core_txq_agg_wait(struct rtw89_dev *rtwdev,
-> > >  {
-> > >  	struct rtw89_txq *rtwtxq = (struct rtw89_txq *)txq->drv_priv;
-> > >  	struct ieee80211_sta *sta = txq->sta;
-> > > -	struct rtw89_sta *rtwsta = (struct rtw89_sta *)sta->drv_priv;
-> >
-> > 'sta->drv_priv' is only a pointer, we don't really dereference the
-> > data right here, so I think this is safe. More, compiler can optimize
-> > this instruction that reorder it to the place just right before using.
-> > So, it seems like a false alarm.
-> 
-> The warning is about "sta" not "sta->priv".  It's not a false positive.
-> 
-> I have heard discussions about compilers trying to work around these
-> bugs by re-ordering the code.  Is that an option in GCC?  It's not
-> something we should rely on, but I'm just curious if it exists in
-> released versions.
-> 
+Hence, ./scripts/get_maintainer.pl --self-test=patterns warns:
 
-I say GCC does "reorder" the code, because the object codes of following
-two codes are identical with default or -Os ccflags.
-If I misuse the term, please correct me.
+  warning: no file matches  F:  drivers/crypto/keembay/ocs-ecc-curve-defs.h
 
-Code-1:
-	struct rtw89_sta *rtwsta = (struct rtw89_sta *)sta->drv_priv;
+Assuming that this header is obsolete and will not be included in the
+repository, remove the unneeded file entry from MAINTAINERS.
 
-	if (!sta)
-		return false;
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
-	if (rtwsta->max_agg_wait <= 0)
-		return false;
-
-Code-2:
-	struct rtw89_sta *rtwsta;
-
-	if (!sta)
-		return false;
-
-	rtwsta = (struct rtw89_sta *)sta->drv_priv;
-	if (rtwsta->max_agg_wait <= 0)
-		return false;
-
-
-The code-1 is the original code Coverity and smatch warn use-before-check.
-The code-2 can avoid this warning without doubt.
-
-To be clear, I have sent a patch to fix this.
-
---
-Ping-Ke
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ba9f6537abc3..1fb254aa12d1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9671,7 +9671,6 @@ F:	Documentation/devicetree/bindings/crypto/intel,keembay-ocs-ecc.yaml
+ F:	drivers/crypto/keembay/Kconfig
+ F:	drivers/crypto/keembay/Makefile
+ F:	drivers/crypto/keembay/keembay-ocs-ecc.c
+-F:	drivers/crypto/keembay/ocs-ecc-curve-defs.h
+ 
+ INTEL KEEM BAY OCS HCU CRYPTO DRIVER
+ M:	Daniele Alessandrelli <daniele.alessandrelli@intel.com>
+-- 
+2.26.2
 
