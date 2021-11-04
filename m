@@ -2,87 +2,144 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A74C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Nov 2021 22:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 626D5C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Nov 2021 01:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 855006103C
-	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Nov 2021 22:03:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36E9760F70
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Nov 2021 01:39:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230301AbhKCWGP (ORCPT
+        id S232896AbhKDBlu convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 3 Nov 2021 18:06:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49080 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229893AbhKCWGP (ORCPT
+        Wed, 3 Nov 2021 21:41:50 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:52367 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231489AbhKDBlu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 3 Nov 2021 18:06:15 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3344C061714;
-        Wed,  3 Nov 2021 15:03:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=XfqOcxMTNpce/H2cBChjbLc+Fz6a0SnCl4wsO4N8gnY=; b=l9KDMuDTY6G4Q8mwbSHvRaQUC2
-        x9bxYxR/3FGTLD3rIADdw/By9FKQUhsioU96mw/u4mWT5P0UFJVRj80k2tJ4tqfQcKpLN/dyHCuPh
-        zdg0pKopSL8ffZPqLNf2w9jlAP+B7aSsu0mrjkXbqRGiV51iEswNzmtj3UfBSyvSLW93cuNVPXVl4
-        gHV90gdVY1VEKlxDV13Nm5OZnVqtDrGJaaaUscj46xZbQu1IyoVGMHe0lAQuDWLfHJpeEQt4x46uP
-        8LFt7NOvYVtY50ixpzCeM0Kibam+0BoOv8ocZc+kmfdvoQHegXFbji4RjaxjdHFLu4RVGP8u+y1HQ
-        mSYb6Qew==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1miOKJ-005Ufv-2C; Wed, 03 Nov 2021 22:02:15 +0000
-Date:   Wed, 3 Nov 2021 22:01:47 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mm/mremap_pages: Save a few cycles in 'get_dev_pagemap()'
-Message-ID: <YYMGyx8Kpq/Nx4WL@casper.infradead.org>
-References: <b4a47154877853cc64be3a35dcfd594d40cc2bce.1635975283.git.christophe.jaillet@wanadoo.fr>
- <YYMCI2S03+azi7nK@casper.infradead.org>
- <5da6ef93-97c6-6165-8a73-eb1050589ba7@wanadoo.fr>
+        Wed, 3 Nov 2021 21:41:50 -0400
+Authenticated-By: 
+X-SpamFilter-By: ArmorX SpamTrap 5.73 with qID 1A41cj9H3009888, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36503.realtek.com.tw[172.21.6.25])
+        by rtits2.realtek.com.tw (8.15.2/2.71/5.88) with ESMTPS id 1A41cj9H3009888
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Thu, 4 Nov 2021 09:38:45 +0800
+Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
+ RTEXH36503.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.15; Thu, 4 Nov 2021 09:38:44 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.15; Thu, 4 Nov 2021 09:38:44 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::dc53:1026:298b:c584]) by
+ RTEXMBS04.realtek.com.tw ([fe80::dc53:1026:298b:c584%5]) with mapi id
+ 15.01.2308.015; Thu, 4 Nov 2021 09:38:44 +0800
+From:   Pkshih <pkshih@realtek.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+CC:     Colin King <colin.king@canonical.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH][next] rtw89: Fix potential dereference of the null pointer sta
+Thread-Topic: [PATCH][next] rtw89: Fix potential dereference of the null
+ pointer sta
+Thread-Index: AQHXwduziBNegQ3KtE6tzEeaYjpkJqvX/pCwgBfOyICAAT/CgIAAIjOAgAGF8cA=
+Date:   Thu, 4 Nov 2021 01:38:44 +0000
+Message-ID: <25510e071f6c46788bb3348251f9975b@realtek.com>
+References: <20211015154530.34356-1-colin.king@canonical.com>
+ <9cc681c217a449519aee524b35e6b6bc@realtek.com> <20211102131437.GF2794@kadam>
+ <c3de973999ea40cf967ffefe0ee56ed4@realtek.com> <20211103102128.GL2794@kadam>
+In-Reply-To: <20211103102128.GL2794@kadam>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.69.188]
+x-kse-serverinfo: RTEXMBS06.realtek.com.tw, 9
+x-kse-attachmentfiltering-interceptor-info: no applicable attachment filtering
+ rules found
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: =?us-ascii?Q?Clean,_bases:_2021/11/3_=3F=3F_11:29:00?=
+x-kse-bulkmessagesfiltering-scan-result: protection disabled
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5da6ef93-97c6-6165-8a73-eb1050589ba7@wanadoo.fr>
+X-KSE-ServerInfo: RTEXH36503.realtek.com.tw, 9
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: protection disabled
+X-KSE-AntiSpam-Outbound-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 5.9.20, Database issued on: 11/04/2021 01:15:49
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 167084 [Nov 03 2021]
+X-KSE-AntiSpam-Info: Version: 5.9.20.0
+X-KSE-AntiSpam-Info: Envelope from: pkshih@realtek.com
+X-KSE-AntiSpam-Info: LuaCore: 465 465 eb31509370142567679dd183ac984a0cb2ee3296
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;realtek.com:7.1.1;127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 11/04/2021 01:18:00
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Nov 03, 2021 at 10:54:09PM +0100, Christophe JAILLET wrote:
-> Le 03/11/2021 à 22:41, Matthew Wilcox a écrit :
-> > On Wed, Nov 03, 2021 at 10:35:34PM +0100, Christophe JAILLET wrote:
-> > > Use 'percpu_ref_tryget_live_rcu()' instead of 'percpu_ref_tryget_live()' to
-> > > save a few cycles when it is known that the rcu lock is already
-> > > taken/released.
-> > 
-> > If this is really important, we can add an __xa_load() which doesn't
-> > take the RCU read lock.
+
+> -----Original Message-----
+> From: Dan Carpenter <dan.carpenter@oracle.com>
+> Sent: Wednesday, November 3, 2021 6:21 PM
+> To: Pkshih <pkshih@realtek.com>
+> Cc: Colin King <colin.king@canonical.com>; Kalle Valo <kvalo@codeaurora.org>; David S . Miller
+> <davem@davemloft.net>; Jakub Kicinski <kuba@kernel.org>; linux-wireless@vger.kernel.org;
+> netdev@vger.kernel.org; kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH][next] rtw89: Fix potential dereference of the null pointer sta
 > 
-> There are a few:
->    rcu_read_lock();
->    mem = xa_load(...);
->    rcu_read_unlock();
-> patterns here and there.
-
-If that's all they are, then the rcu_read_lock() and unlock can be
-deleted.
-
-if they're actually
-
-	rcu_read_lock()
-	mem = xa_load(...);
-	try_get_ref(mem);
-	rcu_read_unlock();
-
-then of course they can't be.
-
-> I don't have any numbers of if saving some rcu_read_lock/rcu_read_unlock
-> would be useful in these cases.
+> On Wed, Nov 03, 2021 at 12:36:17AM +0000, Pkshih wrote:
 > 
-> The only numbers I have are in [1].
+> > > > > diff --git a/drivers/net/wireless/realtek/rtw89/core.c
+> > > > > b/drivers/net/wireless/realtek/rtw89/core.c
+> > > > > index 06fb6e5b1b37..26f52a25f545 100644
+> > > > > --- a/drivers/net/wireless/realtek/rtw89/core.c
+> > > > > +++ b/drivers/net/wireless/realtek/rtw89/core.c
+> > > > > @@ -1534,9 +1534,14 @@ static bool rtw89_core_txq_agg_wait(struct rtw89_dev *rtwdev,
+> > > > >  {
+> > > > >  	struct rtw89_txq *rtwtxq = (struct rtw89_txq *)txq->drv_priv;
+> > > > >  	struct ieee80211_sta *sta = txq->sta;
+> > > > > -	struct rtw89_sta *rtwsta = (struct rtw89_sta *)sta->drv_priv;
+> > > >
+> > > > 'sta->drv_priv' is only a pointer, we don't really dereference the
+> > > > data right here, so I think this is safe. More, compiler can optimize
+> > > > this instruction that reorder it to the place just right before using.
+> > > > So, it seems like a false alarm.
+> > >
+> > > The warning is about "sta" not "sta->priv".  It's not a false positive.
+> > >
+> > > I have heard discussions about compilers trying to work around these
+> > > bugs by re-ordering the code.  Is that an option in GCC?  It's not
+> > > something we should rely on, but I'm just curious if it exists in
+> > > released versions.
+> > >
+> >
+> > I say GCC does "reorder" the code, because the object codes of following
+> > two codes are identical with default or -Os ccflags.
 > 
-> [1]: https://lore.kernel.org/linux-kernel/cover.1634822969.git.asml.silence@gmail.com/
+> Huh...  That's cool.  GCC doesn't re-order it for me, but I'm on GCC 8
+> so maybe it will work when I get to a more modern version.
+> 
 
-It may not be worth hyperoptimising the slow path like this patch ...
+My GCC is 9.3.0. 
+But, I don't try other versions.
+
+--
+Ping-Ke
+
