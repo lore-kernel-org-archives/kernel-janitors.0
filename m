@@ -2,144 +2,114 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 626D5C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Nov 2021 01:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D45CDC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Nov 2021 06:03:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 36E9760F70
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Nov 2021 01:39:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A996260F90
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Nov 2021 06:03:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232896AbhKDBlu convert rfc822-to-8bit (ORCPT
+        id S230150AbhKDGGc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 3 Nov 2021 21:41:50 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:52367 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231489AbhKDBlu (ORCPT
+        Thu, 4 Nov 2021 02:06:32 -0400
+Received: from gandalf.ozlabs.org ([150.107.74.76]:35207 "EHLO
+        gandalf.ozlabs.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229912AbhKDGG2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 3 Nov 2021 21:41:50 -0400
-Authenticated-By: 
-X-SpamFilter-By: ArmorX SpamTrap 5.73 with qID 1A41cj9H3009888, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36503.realtek.com.tw[172.21.6.25])
-        by rtits2.realtek.com.tw (8.15.2/2.71/5.88) with ESMTPS id 1A41cj9H3009888
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 4 Nov 2021 09:38:45 +0800
-Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
- RTEXH36503.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.15; Thu, 4 Nov 2021 09:38:44 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.15; Thu, 4 Nov 2021 09:38:44 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::dc53:1026:298b:c584]) by
- RTEXMBS04.realtek.com.tw ([fe80::dc53:1026:298b:c584%5]) with mapi id
- 15.01.2308.015; Thu, 4 Nov 2021 09:38:44 +0800
-From:   Pkshih <pkshih@realtek.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     Colin King <colin.king@canonical.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH][next] rtw89: Fix potential dereference of the null pointer sta
-Thread-Topic: [PATCH][next] rtw89: Fix potential dereference of the null
- pointer sta
-Thread-Index: AQHXwduziBNegQ3KtE6tzEeaYjpkJqvX/pCwgBfOyICAAT/CgIAAIjOAgAGF8cA=
-Date:   Thu, 4 Nov 2021 01:38:44 +0000
-Message-ID: <25510e071f6c46788bb3348251f9975b@realtek.com>
-References: <20211015154530.34356-1-colin.king@canonical.com>
- <9cc681c217a449519aee524b35e6b6bc@realtek.com> <20211102131437.GF2794@kadam>
- <c3de973999ea40cf967ffefe0ee56ed4@realtek.com> <20211103102128.GL2794@kadam>
-In-Reply-To: <20211103102128.GL2794@kadam>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.69.188]
-x-kse-serverinfo: RTEXMBS06.realtek.com.tw, 9
-x-kse-attachmentfiltering-interceptor-info: no applicable attachment filtering
- rules found
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: =?us-ascii?Q?Clean,_bases:_2021/11/3_=3F=3F_11:29:00?=
-x-kse-bulkmessagesfiltering-scan-result: protection disabled
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 4 Nov 2021 02:06:28 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4HlCkX4GkPz4xcG;
+        Thu,  4 Nov 2021 17:03:47 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+        s=201909; t=1636005829;
+        bh=p/s4JP6PbvtWu7khsyF8vJ6QmABC6L59+cG94M8kDLc=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=EmbGkDhXHcKUm2lpYjR8DUXtGW9HMpO2NjVP3Q9G8oRoGvIfTQ6U1PfO0ey0OP0Xd
+         ny5VwgSYcgfRia/ufrmRTdJDeeljrp4voPBfH5YNZV09/GCFoP/KLGmUHW/H/HX7pb
+         v0YO1hbpvsqXajkmj4txxqkW9VKPyiUPR23rlm5U0qYNZfCKBs7yw4wG2u9aIH9xgF
+         Hxmo3FzPOgF0Jc18QSXTbexj0F0RJRdhXimP92F+gpmjBS04H/mbUGu4QtsGbEbMqC
+         4CAd7PFmlLbyoUpYGFDVfB+pRROSgHCIcrrwyQk8RkND8E4q/l4On9EiHHjLyX3XyJ
+         UDQrDE7+Ea4DA==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        leoyang.li@nxp.com, tyreld@linux.ibm.com
+Cc:     linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH 2/2] soc: fsl: guts: Add a missing memory allocation
+ failure check
+In-Reply-To: <4890990418ecbcfb8921efe8adb2019a03e5a1c1.1635969326.git.christophe.jaillet@wanadoo.fr>
+References: <1063e5a4738d897adcaffce2ab8e4e45f07998ff.1635969326.git.christophe.jaillet@wanadoo.fr>
+ <4890990418ecbcfb8921efe8adb2019a03e5a1c1.1635969326.git.christophe.jaillet@wanadoo.fr>
+Date:   Thu, 04 Nov 2021 17:03:47 +1100
+Message-ID: <874k8s8njw.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-X-KSE-ServerInfo: RTEXH36503.realtek.com.tw, 9
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: protection disabled
-X-KSE-AntiSpam-Outbound-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 5.9.20, Database issued on: 11/04/2021 01:15:49
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 167084 [Nov 03 2021]
-X-KSE-AntiSpam-Info: Version: 5.9.20.0
-X-KSE-AntiSpam-Info: Envelope from: pkshih@realtek.com
-X-KSE-AntiSpam-Info: LuaCore: 465 465 eb31509370142567679dd183ac984a0cb2ee3296
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;realtek.com:7.1.1;127.0.0.199:7.1.2
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 11/04/2021 01:18:00
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
+> If 'devm_kstrdup()' fails, we should return -ENOMEM.
+>
+> While at it, move the 'of_node_put()' call in the error handling path and
+> after the 'machine' has been copied.
+> Better safe than sorry.
+>
+> Suggested-by: Tyrel Datwyler <tyreld@linux.ibm.com>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Not sure of which Fixes tag to add. Should be a6fc3b698130, but since
+> another commit needs to be reverted for this patch to make sense, I'm
+> unsure of what to do. :(
+> So, none is given.
 
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> Sent: Wednesday, November 3, 2021 6:21 PM
-> To: Pkshih <pkshih@realtek.com>
-> Cc: Colin King <colin.king@canonical.com>; Kalle Valo <kvalo@codeaurora.org>; David S . Miller
-> <davem@davemloft.net>; Jakub Kicinski <kuba@kernel.org>; linux-wireless@vger.kernel.org;
-> netdev@vger.kernel.org; kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH][next] rtw89: Fix potential dereference of the null pointer sta
-> 
-> On Wed, Nov 03, 2021 at 12:36:17AM +0000, Pkshih wrote:
-> 
-> > > > > diff --git a/drivers/net/wireless/realtek/rtw89/core.c
-> > > > > b/drivers/net/wireless/realtek/rtw89/core.c
-> > > > > index 06fb6e5b1b37..26f52a25f545 100644
-> > > > > --- a/drivers/net/wireless/realtek/rtw89/core.c
-> > > > > +++ b/drivers/net/wireless/realtek/rtw89/core.c
-> > > > > @@ -1534,9 +1534,14 @@ static bool rtw89_core_txq_agg_wait(struct rtw89_dev *rtwdev,
-> > > > >  {
-> > > > >  	struct rtw89_txq *rtwtxq = (struct rtw89_txq *)txq->drv_priv;
-> > > > >  	struct ieee80211_sta *sta = txq->sta;
-> > > > > -	struct rtw89_sta *rtwsta = (struct rtw89_sta *)sta->drv_priv;
-> > > >
-> > > > 'sta->drv_priv' is only a pointer, we don't really dereference the
-> > > > data right here, so I think this is safe. More, compiler can optimize
-> > > > this instruction that reorder it to the place just right before using.
-> > > > So, it seems like a false alarm.
-> > >
-> > > The warning is about "sta" not "sta->priv".  It's not a false positive.
-> > >
-> > > I have heard discussions about compilers trying to work around these
-> > > bugs by re-ordering the code.  Is that an option in GCC?  It's not
-> > > something we should rely on, but I'm just curious if it exists in
-> > > released versions.
-> > >
-> >
-> > I say GCC does "reorder" the code, because the object codes of following
-> > two codes are identical with default or -Os ccflags.
-> 
-> Huh...  That's cool.  GCC doesn't re-order it for me, but I'm on GCC 8
-> so maybe it will work when I get to a more modern version.
-> 
+I think it's still correct to add:
 
-My GCC is 9.3.0. 
-But, I don't try other versions.
+  Fixes: a6fc3b698130 ("soc: fsl: add GUTS driver for QorIQ platforms")
 
---
-Ping-Ke
+That is where the bug was introduced, and adding the tag creates a link
+between the fix and the bug, which is what we want.
 
+The fact that it also requires the revert in order to apply is kind of
+orthogonal, it means an automated backport of this commit will probably
+fail, but that's OK it just means someone might have to do it manually.
+
+There is some use of "Depends-on:" to flag a commit that is depended on,
+but you can't use that in a patch submission because you don't know the
+SHA of the parent commit.
+
+Possibly whoever applies this can add a Depends-on: pointing to patch 1.
+
+cheers
+
+> ---
+>  drivers/soc/fsl/guts.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
+> index af7741eafc57..5ed2fc1c53a0 100644
+> --- a/drivers/soc/fsl/guts.c
+> +++ b/drivers/soc/fsl/guts.c
+> @@ -158,9 +158,14 @@ static int fsl_guts_probe(struct platform_device *pdev)
+>  	root = of_find_node_by_path("/");
+>  	if (of_property_read_string(root, "model", &machine))
+>  		of_property_read_string_index(root, "compatible", 0, &machine);
+> -	of_node_put(root);
+> -	if (machine)
+> +	if (machine) {
+>  		soc_dev_attr.machine = devm_kstrdup(dev, machine, GFP_KERNEL);
+> +		if (!soc_dev_attr.machine) {
+> +			of_node_put(root);
+> +			return -ENOMEM;
+> +		}
+> +	}
+> +	of_node_put(root);
+>  
+>  	svr = fsl_guts_get_svr();
+>  	soc_die = fsl_soc_die_match(svr, fsl_soc_die);
+> -- 
+> 2.30.2
