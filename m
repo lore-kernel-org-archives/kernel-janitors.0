@@ -2,75 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC03AC43219
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Nov 2021 08:50:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B921C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Nov 2021 16:42:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9FC656128B
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Nov 2021 08:50:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82B5D60ED7
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Nov 2021 16:42:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233892AbhKFIww (ORCPT
+        id S232740AbhKFQov (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 6 Nov 2021 04:52:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57470 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231772AbhKFIwu (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 6 Nov 2021 04:52:50 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 6AAEC60EDF;
-        Sat,  6 Nov 2021 08:50:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636188609;
-        bh=UoREJALDUitiFJSJLw40cwE8yAoVkZBcaTawCXauia8=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=UaUqGaSAdOojLfGzOfHpna75rPZefKqWGN4ZFmHCj2WFzC/UBKmD13LKNQcv+gWOH
-         FHd9ALKB/0yGqZ01AkvQxSGCEdePqODWp7Z9kt4gbl8Toa77Y+oGIUNQ2mUnblpd6T
-         m/fVifS4DsiWG7l2wqF+MWnONNDErX9RttbpX7KlcXkXRL0nTiHBPbWI6tLGHmAVw/
-         ESgqRVDnZEHfQHZ4o4YHxe4Kdq/h8cl6+Bfg1/X0xrE1+oNFKLpts+wzuV5U23f3n4
-         /PMWKhMIx8YYZv6Q6q7MM9jMUyWGVmULDmcQVpRsEn7/a2oDWT5HrW5wMXgq6AZWNQ
-         ACuVyNUHYYdgw==
-Content-Type: text/plain; charset="utf-8"
+        Sat, 6 Nov 2021 12:44:51 -0400
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:59414 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234593AbhKFQou (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 6 Nov 2021 12:44:50 -0400
+Received: from pop-os.home ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id jOlYmPHM52lVYjOlZmW5Cp; Sat, 06 Nov 2021 17:42:06 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sat, 06 Nov 2021 17:42:06 +0100
+X-ME-IP: 86.243.171.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
+        hao.wu@rubrik.com
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] tpm_tis: Fix an error handling path in 'tpm_tis_core_init()'
+Date:   Sat,  6 Nov 2021 17:42:04 +0100
+Message-Id: <7391611c2f2c5ca9fcea5b960fe6f7cac12121f4.1636216848.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] ipv6: remove useless assignment to newinet in
- tcp_v6_syn_recv_sock()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <163618860933.29185.1385452642605204393.git-patchwork-notify@kernel.org>
-Date:   Sat, 06 Nov 2021 08:50:09 +0000
-References: <20211104143740.32446-1-nghialm78@gmail.com>
-In-Reply-To: <20211104143740.32446-1-nghialm78@gmail.com>
-To:     Nghia Le <nghialm78@gmail.com>
-Cc:     edumazet@google.com, davem@davemloft.net, yoshfuji@linux-ipv6.org,
-        dsahern@kernel.org, kuba@kernel.org, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
-        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
-        kpsingh@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, lukas.bulwahn@gmail.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Commit 79ca6f74dae0 ("tpm: fix Atmel TPM crash caused by too frequent
+queries") has moved some code around without updating the error handling
+path.
 
-This patch was applied to bpf/bpf.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
+This is now pointless to 'goto out_err' when neither 'clk_enable()' nor
+'ioremap()' have been called yet.
 
-On Thu,  4 Nov 2021 21:37:40 +0700 you wrote:
-> The newinet value is initialized with inet_sk() in a block code to
-> handle sockets for the ETH_P_IP protocol. Along this code path,
-> newinet is never read. Thus, assignment to newinet is needless and
-> can be removed.
-> 
-> Signed-off-by: Nghia Le <nghialm78@gmail.com>
-> 
-> [...]
+Make a direct return instead to avoid undoing things that have not been
+done.
 
-Here is the summary with links:
-  - ipv6: remove useless assignment to newinet in tcp_v6_syn_recv_sock()
-    https://git.kernel.org/bpf/bpf/c/70bf363d7adb
+Fixes: 79ca6f74dae0 ("tpm: fix Atmel TPM crash caused by too frequent queries")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/char/tpm/tpm_tis_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You are awesome, thank you!
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index b2659a4c4016..e672d2dc8937 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -952,7 +952,7 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+ 
+ 	rc = tpm_tis_read32(priv, TPM_DID_VID(0), &vendor);
+ 	if (rc < 0)
+-		goto out_err;
++		return rc;
+ 
+ 	priv->manufacturer_id = vendor;
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.30.2
 
