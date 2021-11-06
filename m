@@ -2,87 +2,97 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 970A0C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Nov 2021 17:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75378C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Nov 2021 21:28:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6986D60F55
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Nov 2021 17:44:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58E8661139
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Nov 2021 21:28:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234696AbhKFRrj (ORCPT
+        id S235160AbhKFVbV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 6 Nov 2021 13:47:39 -0400
-Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:51094 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232412AbhKFRri (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 6 Nov 2021 13:47:38 -0400
-Received: from pop-os.home ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id jPkMmPfIJ2lVYjPkMmWPFM; Sat, 06 Nov 2021 18:44:56 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 06 Nov 2021 18:44:56 +0100
-X-ME-IP: 86.243.171.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        svarbanov@mm-sol.com, lorenzo.pieralisi@arm.com, robh@kernel.org,
-        kw@linux.com, bhelgaas@google.com, pmaliset@codeaurora.org,
-        swboyd@chromium.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] PCI: qcom: Fix an error handling path in 'qcom_pcie_probe()'
-Date:   Sat,  6 Nov 2021 18:44:52 +0100
-Message-Id: <4d03c636193f64907c8dacb17fa71ed05fd5f60c.1636220582.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sat, 6 Nov 2021 17:31:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57312 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235154AbhKFVbV (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 6 Nov 2021 17:31:21 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DC43861037;
+        Sat,  6 Nov 2021 21:28:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1636234119;
+        bh=OP4Wa+1ZQUXWnQpArSQsCS6ZDONWdHL3JC19tpFhe6o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BcRMbxFtdl40tG+X0jUbTelRUrVIlooaTmMEeN26xnQbuLY29i9m59UO/Oz2sYQQp
+         6slFSAC7TfbWkz0KS18a+9Ol4RTr6cTAS6uscJW9Zta0ZvvDROc/dI6jGyeHdmPIL4
+         0CVnqJtdb+LlppOcELgdAgr+CEIbywEH+V243sykFaXgzHRfT47LQ67hyuq9uNveWk
+         SWHVgQl5LqiM6cbMYLiuHIyt8GzfgGjhr9jJQVlQGRvwE7swdg0yX/JlwFSvSJztKT
+         h0m6Q0q2y+sJ863DR6JJoTW9gYddKj/XHnbceJviRJJ3ouP5PW0BtPatzN4fPWwMRe
+         kestQdIHS5ODw==
+Date:   Sat, 6 Nov 2021 22:28:30 +0100
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Jassi Brar <jaswinder.singh@linaro.org>,
+        Tian Tao <tiantao6@hisilicon.com>,
+        Zhiqi Song <songzhiqi1@huawei.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Sudeep Holla <sudeep.holla@arm.com>, linux-i2c@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next] i2c: xgene-slimpro: Fix wrong pointer passed to
+ PTR_ERR()
+Message-ID: <YYbzfoAwjyDve+49@kunai>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Tian Tao <tiantao6@hisilicon.com>,
+        Zhiqi Song <songzhiqi1@huawei.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Sudeep Holla <sudeep.holla@arm.com>, linux-i2c@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+References: <20211101140235.777322-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="eVMr30etY4TWRuqn"
+Content-Disposition: inline
+In-Reply-To: <20211101140235.777322-1-weiyongjun1@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If 'of_device_get_match_data()' fails, previous 'pm_runtime_get_sync()/
-pm_runtime_enable()' should be undone.
 
-To fix it, the easiest is to move this block of code before the memory
-allocations and the pm_runtime_xxx calls.
+--eVMr30etY4TWRuqn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: b89ff410253d ("PCI: qcom: Replace ops with struct pcie_cfg in pcie match data")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/pci/controller/dwc/pcie-qcom.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+On Mon, Nov 01, 2021 at 02:02:35PM +0000, Wei Yongjun wrote:
+> PTR_ERR should access the value just tested by IS_ERR, otherwise
+> the wrong error code will be returned.
+>=20
+> Fixes: 7b6da7fe7bba ("mailbox: pcc: Use PCC mailbox channel pointer inste=
+ad of standard")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index 1c3d1116bb60..baae67f71ba8 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -1534,6 +1534,12 @@ static int qcom_pcie_probe(struct platform_device *pdev)
- 	const struct qcom_pcie_cfg *pcie_cfg;
- 	int ret;
- 
-+	pcie_cfg = of_device_get_match_data(dev);
-+	if (!pcie_cfg || !pcie_cfg->ops) {
-+		dev_err(dev, "Invalid platform data\n");
-+		return -EINVAL;
-+	}
-+
- 	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
- 	if (!pcie)
- 		return -ENOMEM;
-@@ -1553,12 +1559,6 @@ static int qcom_pcie_probe(struct platform_device *pdev)
- 
- 	pcie->pci = pci;
- 
--	pcie_cfg = of_device_get_match_data(dev);
--	if (!pcie_cfg || !pcie_cfg->ops) {
--		dev_err(dev, "Invalid platform data\n");
--		return -EINVAL;
--	}
--
- 	pcie->ops = pcie_cfg->ops;
- 	pcie->pipe_clk_need_muxing = pcie_cfg->pipe_clk_need_muxing;
- 
--- 
-2.30.2
+Applied to for-current, thanks!
 
+
+--eVMr30etY4TWRuqn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmGG83oACgkQFA3kzBSg
+Kbb0Ow//aBmJXN5IIkbAiX+grjkJLXo7SLj7fl8R+NzwlboVXkVfnx/I9sy83W7J
+GXzN4wOGWBwbVZZuPqF6m2EVGKl5o+SSv6985mH8TXiwW/YsP6VdiQasoxvhCrMI
+e/MSgErr+1Jubbq8h4YPickEMnXMLdqAGnPfy4ZkxriMHxib1r1Z5iE/EoHB184t
+22WhEtKtMjtuMKRSFhzyFplVg5AUZienvu0tCFScyncGGPZVAyWOpJQP79e5reUm
+2xICafEYlBWVzfGOcyD7AkPUIBHkvxF5xfArSBd8hnJK1kWFoNKrQSl9afFOH5si
+HlXn2vxe/bDjlZKoHUnV7jNAxMulTlvanezIXKWlHNyUPgZBx5P4FFDv5tM0TGnN
+b4zdHCeBCts5B/8A6AQcNq8dyXLQIbVXKBNGPhstlCHEfl+QKYgeqLwfXu+grZ5J
+/wPOexBPik4iAhVFWMhCyoTK9293xjTG5oI6kmF2Me21V2B8VxBDILE8hITXRerk
+lSWpsDtTQAJnoGOA0wITsaEOSgmoedON/4knC4sjCSwr3y7UZNAsS3IiLbAn3rQB
+vE/4VwxfP9uG9AC6x7nRIgFuYEOH3wRQvz41fG8xm2MRL1FOwbyOMsc0eySc1xIO
+X9VoW2C5fCpzTFtc73iIqPHud6lR2myirrSBDaXdwbNRC15C/9w=
+=+fUl
+-----END PGP SIGNATURE-----
+
+--eVMr30etY4TWRuqn--
