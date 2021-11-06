@@ -2,36 +2,36 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B921C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Nov 2021 16:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F31EFC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Nov 2021 16:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 82B5D60ED7
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Nov 2021 16:42:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5D65603E7
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Nov 2021 16:53:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232740AbhKFQov (ORCPT
+        id S233978AbhKFQ4F (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 6 Nov 2021 12:44:51 -0400
-Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:59414 "EHLO
+        Sat, 6 Nov 2021 12:56:05 -0400
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:49466 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234593AbhKFQou (ORCPT
+        with ESMTP id S232907AbhKFQ4E (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 6 Nov 2021 12:44:50 -0400
+        Sat, 6 Nov 2021 12:56:04 -0400
 Received: from pop-os.home ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id jOlYmPHM52lVYjOlZmW5Cp; Sat, 06 Nov 2021 17:42:06 +0100
+        id jOwRmPLTp2lVYjOwSmW8kS; Sat, 06 Nov 2021 17:53:22 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 06 Nov 2021 17:42:06 +0100
+X-ME-Date: Sat, 06 Nov 2021 17:53:22 +0100
 X-ME-IP: 86.243.171.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
-        hao.wu@rubrik.com
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     dwmw2@infradead.org, baolu.lu@linux.intel.com, joro@8bytes.org,
+        will@kernel.org, kevin.tian@intel.com
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] tpm_tis: Fix an error handling path in 'tpm_tis_core_init()'
-Date:   Sat,  6 Nov 2021 17:42:04 +0100
-Message-Id: <7391611c2f2c5ca9fcea5b960fe6f7cac12121f4.1636216848.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] iommu/vt-d: Fix an unbalanced rcu_read_lock/rcu_read_unlock()
+Date:   Sat,  6 Nov 2021 17:53:18 +0100
+Message-Id: <40cc077ca5f543614eab2a10e84d29dd190273f6.1636217517.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -39,35 +39,44 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 79ca6f74dae0 ("tpm: fix Atmel TPM crash caused by too frequent
-queries") has moved some code around without updating the error handling
-path.
+If we return -EOPNOTSUPP, the rcu lock remains lock. This is spurious.
+Go through the end of the function instead. This way, the missing
+'rcu_read_unlock()' is called.
 
-This is now pointless to 'goto out_err' when neither 'clk_enable()' nor
-'ioremap()' have been called yet.
-
-Make a direct return instead to avoid undoing things that have not been
-done.
-
-Fixes: 79ca6f74dae0 ("tpm: fix Atmel TPM crash caused by too frequent queries")
+Fixes: 7afd7f6aa21a ("iommu/vt-d: Check FL and SL capability sanity in scalable mode")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/char/tpm/tpm_tis_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch is speculative, review with care.
+---
+ drivers/iommu/intel/cap_audit.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index b2659a4c4016..e672d2dc8937 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -952,7 +952,7 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+diff --git a/drivers/iommu/intel/cap_audit.c b/drivers/iommu/intel/cap_audit.c
+index b39d223926a4..71596fc62822 100644
+--- a/drivers/iommu/intel/cap_audit.c
++++ b/drivers/iommu/intel/cap_audit.c
+@@ -144,6 +144,7 @@ static int cap_audit_static(struct intel_iommu *iommu, enum cap_audit_type type)
+ {
+ 	struct dmar_drhd_unit *d;
+ 	struct intel_iommu *i;
++	int rc = 0;
  
- 	rc = tpm_tis_read32(priv, TPM_DID_VID(0), &vendor);
- 	if (rc < 0)
--		goto out_err;
-+		return rc;
+ 	rcu_read_lock();
+ 	if (list_empty(&dmar_drhd_units))
+@@ -169,11 +170,11 @@ static int cap_audit_static(struct intel_iommu *iommu, enum cap_audit_type type)
+ 	 */
+ 	if (intel_cap_smts_sanity() &&
+ 	    !intel_cap_flts_sanity() && !intel_cap_slts_sanity())
+-		return -EOPNOTSUPP;
++		rc = -EOPNOTSUPP;
  
- 	priv->manufacturer_id = vendor;
+ out:
+ 	rcu_read_unlock();
+-	return 0;
++	return rc;
+ }
  
+ int intel_cap_audit(enum cap_audit_type type, struct intel_iommu *iommu)
 -- 
 2.30.2
 
