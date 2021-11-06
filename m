@@ -2,39 +2,39 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D03FAC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Nov 2021 03:00:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC03AC43219
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Nov 2021 08:50:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B1A93611AE
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Nov 2021 03:00:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FC656128B
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Nov 2021 08:50:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233080AbhKFDCs (ORCPT
+        id S233892AbhKFIww (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 Nov 2021 23:02:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47106 "EHLO mail.kernel.org"
+        Sat, 6 Nov 2021 04:52:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229852AbhKFDCr (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 Nov 2021 23:02:47 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 3F99160EBB;
-        Sat,  6 Nov 2021 03:00:07 +0000 (UTC)
+        id S231772AbhKFIwu (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 6 Nov 2021 04:52:50 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 6AAEC60EDF;
+        Sat,  6 Nov 2021 08:50:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636167607;
-        bh=axACwuwSd8HnjHHPp8qZEz07q30ERonRNw6m+mDyUqM=;
+        s=k20201202; t=1636188609;
+        bh=UoREJALDUitiFJSJLw40cwE8yAoVkZBcaTawCXauia8=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=vP3/EdBGmDuM2kJ6cVZJ92VAYZTjkCDWGjWtBI+BX+d0g0q4DuJGv7cXpd8ynEnC8
-         lVu5RkxKM7wMEn2VMvtU1gemiTx1JB3TLB+dvD/gt8SixSRy3i7xnGk/QpMZ04+So1
-         /lp78NLYRj4ucFxMl25+JkVPFz0R8YQxxuP9d+6Z7V2E7xZxEWA4Qijv4x88oiLzVC
-         m2WCwA8XT3W9Z/CyA3Oub5thhFUgh2It5yx4IFolLilLSFvsdv/hmpUFS9V0eevV6P
-         a5vhcjItruMlDCTPx1HZV1u4yGsGbX5M0kAIVBwNk2wDrVxxLaDXGJTTiEw/NRKzBn
-         cC5ZF74N5XoRg==
+        b=UaUqGaSAdOojLfGzOfHpna75rPZefKqWGN4ZFmHCj2WFzC/UBKmD13LKNQcv+gWOH
+         FHd9ALKB/0yGqZ01AkvQxSGCEdePqODWp7Z9kt4gbl8Toa77Y+oGIUNQ2mUnblpd6T
+         m/fVifS4DsiWG7l2wqF+MWnONNDErX9RttbpX7KlcXkXRL0nTiHBPbWI6tLGHmAVw/
+         ESgqRVDnZEHfQHZ4o4YHxe4Kdq/h8cl6+Bfg1/X0xrE1+oNFKLpts+wzuV5U23f3n4
+         /PMWKhMIx8YYZv6Q6q7MM9jMUyWGVmULDmcQVpRsEn7/a2oDWT5HrW5wMXgq6AZWNQ
+         ACuVyNUHYYdgw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Subject: Re: [PATCH] ipv6: remove useless assignment to newinet in
  tcp_v6_syn_recv_sock()
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <163616760718.459.15604217607658404644.git-patchwork-notify@kernel.org>
-Date:   Sat, 06 Nov 2021 03:00:07 +0000
+Message-Id: <163618860933.29185.1385452642605204393.git-patchwork-notify@kernel.org>
+Date:   Sat, 06 Nov 2021 08:50:09 +0000
 References: <20211104143740.32446-1-nghialm78@gmail.com>
 In-Reply-To: <20211104143740.32446-1-nghialm78@gmail.com>
 To:     Nghia Le <nghialm78@gmail.com>
@@ -51,7 +51,7 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (master)
+This patch was applied to bpf/bpf.git (master)
 by Jakub Kicinski <kuba@kernel.org>:
 
 On Thu,  4 Nov 2021 21:37:40 +0700 you wrote:
@@ -66,7 +66,7 @@ On Thu,  4 Nov 2021 21:37:40 +0700 you wrote:
 
 Here is the summary with links:
   - ipv6: remove useless assignment to newinet in tcp_v6_syn_recv_sock()
-    https://git.kernel.org/netdev/net/c/70bf363d7adb
+    https://git.kernel.org/bpf/bpf/c/70bf363d7adb
 
 You are awesome, thank you!
 -- 
