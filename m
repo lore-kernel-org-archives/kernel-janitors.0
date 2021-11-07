@@ -2,134 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CDE0C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 18:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56256C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 19:57:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6471161288
-	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 18:18:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C9A660234
+	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 19:57:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235335AbhKGSRX (ORCPT
+        id S234731AbhKGT74 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 7 Nov 2021 13:17:23 -0500
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:55495 "EHLO
+        Sun, 7 Nov 2021 14:59:56 -0500
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:55639 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235051AbhKGSRX (ORCPT
+        with ESMTP id S231781AbhKGT7z (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 7 Nov 2021 13:17:23 -0500
-Received: from [192.168.1.18] ([86.243.171.122])
+        Sun, 7 Nov 2021 14:59:55 -0500
+Received: from pop-os.home ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id jmggmUEOWf6fnjmggmDhcI; Sun, 07 Nov 2021 19:14:39 +0100
-X-ME-Helo: [192.168.1.18]
+        id joHtmnpvfIEdljoHtmSmvS; Sun, 07 Nov 2021 20:57:11 +0100
+X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 07 Nov 2021 19:14:39 +0100
+X-ME-Date: Sun, 07 Nov 2021 20:57:11 +0100
 X-ME-IP: 86.243.171.122
-Subject: Re: [PATCH] nvdimm/pmem: Fix an error handling path in
- 'pmem_attach_disk()'
-From:   Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     dan.j.williams@intel.com, vishal.l.verma@intel.com,
-        dave.jiang@intel.com, nvdimm@lists.linux.dev,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <f1933a01d9cefe24970ee93d741babb8fe9c1b32.1636219557.git.christophe.jaillet@wanadoo.fr>
- <20211107171157.GC3538886@iweiny-DESK2.sc.intel.com>
- <050385c3-7707-76cb-c580-c64d43456462@wanadoo.fr>
- <22d5172f-2d13-0ce2-2029-9cf46f203792@wanadoo.fr>
-Message-ID: <d791466d-56db-7dc3-342b-73db0de48b68@wanadoo.fr>
-Date:   Sun, 7 Nov 2021 19:14:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     eric.piel@tremplin-utc.net, hdegoede@redhat.com,
+        markgross@kernel.org, dmitry.torokhov@gmail.com,
+        giedriuswork@gmail.com, dvhart@linux.intel.com,
+        akpm@linux-foundation.org, pavel@suse.cz
+Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] platform/x86: hp_accel: Fix an error handling path in 'lis3lv02d_probe()'
+Date:   Sun,  7 Nov 2021 20:57:07 +0100
+Message-Id: <5a4f218f8f16d2e3a7906b7ca3654ffa946895f8.1636314074.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <22d5172f-2d13-0ce2-2029-9cf46f203792@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+If 'led_classdev_register()' fails, some additional resources should be
+released.
 
+Add the missing 'i8042_remove_filter()' and 'lis3lv02d_remove_fs()' calls
+that are already in the remove function but are missing here.
 
-Le 07/11/2021 à 18:25, Marion & Christophe JAILLET a écrit :
-> 
-> 
-> Le 07/11/2021 à 18:20, Christophe JAILLET a écrit :
->> Le 07/11/2021 à 18:11, Ira Weiny a écrit :
->>> On Sat, Nov 06, 2021 at 06:27:11PM +0100, Christophe JAILLET wrote:
->>>> If 'devm_init_badblocks()' fails, a previous 'blk_alloc_disk()' call 
->>>> must
->>>> be undone.
->>>
->>> I think this is a problem...
->>>
->>>>
->>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>>> ---
->>>> This patch is speculative. Several fixes on error handling paths 
->>>> have been
->>>> done recently, but this one has been left as-is. There was maybe a good
->>>> reason that I have missed for that. So review with care!
->>>>
->>>> I've not been able to identify a Fixes tag that please me :(
->>>> ---
->>>>   drivers/nvdimm/pmem.c | 5 +++--
->>>>   1 file changed, 3 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
->>>> index fe7ece1534e1..c37a1e6750b3 100644
->>>> --- a/drivers/nvdimm/pmem.c
->>>> +++ b/drivers/nvdimm/pmem.c
->>>> @@ -490,8 +490,9 @@ static int pmem_attach_disk(struct device *dev,
->>>>       nvdimm_namespace_disk_name(ndns, disk->disk_name);
->>>>       set_capacity(disk, (pmem->size - pmem->pfn_pad - 
->>>> pmem->data_offset)
->>>>               / 512);
->>>> -    if (devm_init_badblocks(dev, &pmem->bb))
->>>> -        return -ENOMEM;
->>>> +    rc = devm_init_badblocks(dev, &pmem->bb);
->>>> +    if (rc)
->>>> +        goto out;
->>>
->>> But I don't see this 'out' label in the function currently?  Was that 
->>> part of
->>> your patch missing?
->>
->> Hi,
->> the patch is based on the latest linux-next.
->> See [1]. The 'out' label exists there and is already used.
->>
->> In fact, I run an own-made coccinelle script which tries to spot 
->> mix-up between return and goto.
->> In this case, we have a 'return -ENOMEM' after a 'goto out' which 
->> looks spurious. Hence, my patch.
->>
->> [1]:https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/nvdimm/pmem.c#n512 
->>
-> 
-> Lol, the #n512 above is in fact another place that should be updated as 
-> well. I missed it and only fixed #n494!
+Fixes: a4c724d0723b ("platform: hp_accel: add a i8042 filter to remove HPQ6000 data from kb bus stream")
+Fixes: 9e0c79782143 ("lis3lv02d: merge with leds hp disk")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/platform/x86/hp_accel.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-In fact, no, line 512 should be left as-is. The clean-up wilol be made 
-by 'pmem_release_disk()'.
+diff --git a/drivers/platform/x86/hp_accel.c b/drivers/platform/x86/hp_accel.c
+index b183967ecfb7..435a91fe2568 100644
+--- a/drivers/platform/x86/hp_accel.c
++++ b/drivers/platform/x86/hp_accel.c
+@@ -331,9 +331,11 @@ static int lis3lv02d_probe(struct platform_device *device)
+ 	INIT_WORK(&hpled_led.work, delayed_set_status_worker);
+ 	ret = led_classdev_register(NULL, &hpled_led.led_classdev);
+ 	if (ret) {
++		i8042_remove_filter(hp_accel_i8042_filter);
+ 		lis3lv02d_joystick_disable(&lis3_dev);
+ 		lis3lv02d_poweroff(&lis3_dev);
+ 		flush_work(&hpled_led.work);
++		lis3lv02d_remove_fs(&lis3_dev);
+ 		return ret;
+ 	}
+ 
+-- 
+2.30.2
 
-The patch attached at the very first mail of this thread looks good to me.
-
-CJ
-
-> 
-> CJ
-> 
->>
->> CJ
->>
->>>
->>> Ira
->>>
->>>>       nvdimm_badblocks_populate(nd_region, &pmem->bb, &bb_range);
->>>>       disk->bb = &pmem->bb;
->>>> -- 
->>>> 2.30.2
->>>>
->>>
->>
->>
-> 
