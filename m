@@ -2,65 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E15FC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 20:13:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB0FC4332F
+	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 20:33:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF22061361
-	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 20:13:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 079376137A
+	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 20:33:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231928AbhKGUP4 (ORCPT
+        id S234513AbhKGUgV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 7 Nov 2021 15:15:56 -0500
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:55584 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230083AbhKGUPz (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 7 Nov 2021 15:15:55 -0500
-Received: from pop-os.home ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id joXLmnycNIEdljoXMmSodT; Sun, 07 Nov 2021 21:13:11 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 07 Nov 2021 21:13:11 +0100
-X-ME-IP: 86.243.171.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     davem@davemloft.net, kuba@kernel.org, gsomlo@gmail.com,
-        joel@jms.id.au, caihuoqing@baidu.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] litex_liteeth: Fix a double free in the remove function
-Date:   Sun,  7 Nov 2021 21:13:07 +0100
-Message-Id: <25b34e3bea4da381228953e484e5c699796dafe8.1636315896.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sun, 7 Nov 2021 15:36:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52922 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233254AbhKGUgU (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 7 Nov 2021 15:36:20 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7DE016137D;
+        Sun,  7 Nov 2021 20:33:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1636317217;
+        bh=TipMEeXbLK71rqDUcKVBo/tOx+moJRr+RfW/8r72DaU=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=GRaC+dr35Xxuw3vS2yWcRXSF2SOySq3TBTibjAMxcN2YDdHMNq3GI6uiM2KiYN5tt
+         CAhvR4ltb+TOmYAQIoSD89qG6u/7BlNmibsNay8xbXD0VgtULxN4V2/SUCMe1IMxnw
+         /nR3ezMWnVjH6pU4xEmgTEgzqIiKN+WseF0HLU0zpi+ocnjxDVdpw4HLcwqhjlILHf
+         adlsORYvJRh+s3KFKzJ/UnU8y4mOBWHeSvI6tiCoVLS+xHBrhQ07ZlNWtj6AgXMYva
+         kxfY4UcWl+BKvpM7JNPfsrO7s6HxWp8A92ZRNZhjI1+ATbCFmqeQLMBQ95ZHspKfNG
+         9jAJN64kTYv5w==
+Received: by mail-ot1-f49.google.com with SMTP id v40-20020a056830092800b0055591caa9c6so22485255ott.4;
+        Sun, 07 Nov 2021 12:33:37 -0800 (PST)
+X-Gm-Message-State: AOAM532CHAtwUTVXN6n9njEPTz9m2z4DzFsBwBXjACKqANYL1FrvaMmi
+        qZ2dRykmQKZ44bua1oNsHanSvNrRkmqSwW/aUME=
+X-Google-Smtp-Source: ABdhPJwVshPPrt2lhJPMOMOUZjKHGN41W72uyeuko9xH1CyuG98J7HrQjaQ8Xvst12YH+EaVXaXnhckIpUVhavAhQMA=
+X-Received: by 2002:a9d:46a:: with SMTP id 97mr19692381otc.18.1636317216766;
+ Sun, 07 Nov 2021 12:33:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ac9:4448:0:0:0:0:0 with HTTP; Sun, 7 Nov 2021 12:33:36 -0800 (PST)
+In-Reply-To: <17d0c2af6d0a35c2951f0ac5c7a1dfea04df410f.1636298480.git.christophe.jaillet@wanadoo.fr>
+References: <17d0c2af6d0a35c2951f0ac5c7a1dfea04df410f.1636298480.git.christophe.jaillet@wanadoo.fr>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Mon, 8 Nov 2021 05:33:36 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9zhFB0cX4DVz-ZwpBzPHq+aN_-Mi-pYeo+EGxaDYd_LA@mail.gmail.com>
+Message-ID: <CAKYAXd9zhFB0cX4DVz-ZwpBzPHq+aN_-Mi-pYeo+EGxaDYd_LA@mail.gmail.com>
+Subject: Re: [PATCH] ksmbd: Fix an error handling path in 'smb2_sess_setup()'
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     senozhatsky@chromium.org, sfrench@samba.org, hyc.lee@gmail.com,
+        mmakassikis@freebox.fr, linux-cifs@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'netdev' is a managed resource allocated in the probe using
-'devm_alloc_etherdev()'.
-It must not be freed explicitly in the remove function.
+2021-11-08 0:22 GMT+09:00, Christophe JAILLET <christophe.jaillet@wanadoo.fr>:
+> All the error handling paths of 'smb2_sess_setup()' end to 'out_err'.
+>
+> All but the new error handling path added by the commit given in the Fixes
+> tag below.
+>
+> Fix this error handling path and branch to 'out_err' as well.
+>
+> Fixes: 0d994cd482ee ("ksmbd: add buffer validation in session setup")
+Cc: stable@vger.kernel.org # v5.15
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Namjae Jeon <linkinjeon@kernel.org>
 
-Fixes: ee7da21ac4c3 ("net: Add driver for LiteX's LiteETH network interface")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/ethernet/litex/litex_liteeth.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/litex/litex_liteeth.c b/drivers/net/ethernet/litex/litex_liteeth.c
-index 3d9385a4989b..24ed6e180c75 100644
---- a/drivers/net/ethernet/litex/litex_liteeth.c
-+++ b/drivers/net/ethernet/litex/litex_liteeth.c
-@@ -289,7 +289,6 @@ static int liteeth_remove(struct platform_device *pdev)
- 	struct net_device *netdev = platform_get_drvdata(pdev);
- 
- 	unregister_netdev(netdev);
--	free_netdev(netdev);
- 
- 	return 0;
- }
--- 
-2.30.2
-
+Thanks!
