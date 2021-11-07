@@ -2,85 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A91C433FE
-	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 17:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40853C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 17:12:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4C3826128B
-	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 17:04:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1428A6134F
+	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 17:12:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234597AbhKGRHV (ORCPT
+        id S234572AbhKGROl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 7 Nov 2021 12:07:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49540 "EHLO mail.kernel.org"
+        Sun, 7 Nov 2021 12:14:41 -0500
+Received: from mga04.intel.com ([192.55.52.120]:41072 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230486AbhKGRHU (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 7 Nov 2021 12:07:20 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 419BD6128B;
-        Sun,  7 Nov 2021 17:04:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636304677;
-        bh=hDYEyFC5WOZ4ixhuFP5RhKzJjSggOHETDf1BdhtkRmI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fs9Q02bEeG8BhHJwPbtI1cu9pNhfQOAmlbycSa2VrKny7hDWJTU6jof5LuGtEMP86
-         J/CpCe6FJELCDd2LiLi+V1xieXFpyVJ1Z9LWC7MTly5xPgbBr13ta7EHaFHvqTvv1O
-         eH8VyTxnybxaFFncdC4Jj2Is1Vj1s4eP/F2A/7PB5ieenZkphh8H2YwYHVFq8CbOyT
-         XWeHlSrZG8Q/Hei4yk+G6+7OXxm9f4Ht5xF4VnYo0Zl8Z9//MREEgIKLDdSaD+aKk2
-         XuoqtzEz+g5DpJkfH2ugfoxFMhzYbiOceTHDSRr21y5nLiPrFVAdAe1SNmuC/M/h8S
-         oZDx1vzkt8n+Q==
-Date:   Sun, 7 Nov 2021 19:04:35 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
+        id S229985AbhKGROl (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 7 Nov 2021 12:14:41 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10161"; a="230834401"
+X-IronPort-AV: E=Sophos;i="5.87,216,1631602800"; 
+   d="scan'208";a="230834401"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2021 09:11:58 -0800
+X-IronPort-AV: E=Sophos;i="5.87,216,1631602800"; 
+   d="scan'208";a="502693291"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2021 09:11:57 -0800
+Date:   Sun, 7 Nov 2021 09:11:57 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, hao.wu@rubrik.com,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] tpm_tis: Fix an error handling path in
- 'tpm_tis_core_init()'
-Message-ID: <YYgHI3vKzD2/b7R/@iki.fi>
-References: <7391611c2f2c5ca9fcea5b960fe6f7cac12121f4.1636216848.git.christophe.jaillet@wanadoo.fr>
+Cc:     dan.j.williams@intel.com, vishal.l.verma@intel.com,
+        dave.jiang@intel.com, nvdimm@lists.linux.dev,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] nvdimm/pmem: Fix an error handling path in
+ 'pmem_attach_disk()'
+Message-ID: <20211107171157.GC3538886@iweiny-DESK2.sc.intel.com>
+References: <f1933a01d9cefe24970ee93d741babb8fe9c1b32.1636219557.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7391611c2f2c5ca9fcea5b960fe6f7cac12121f4.1636216848.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <f1933a01d9cefe24970ee93d741babb8fe9c1b32.1636219557.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Nov 06, 2021 at 05:42:04PM +0100, Christophe JAILLET wrote:
-> Commit 79ca6f74dae0 ("tpm: fix Atmel TPM crash caused by too frequent
-> queries") has moved some code around without updating the error handling
-> path.
+On Sat, Nov 06, 2021 at 06:27:11PM +0100, Christophe JAILLET wrote:
+> If 'devm_init_badblocks()' fails, a previous 'blk_alloc_disk()' call must
+> be undone.
+
+I think this is a problem...
+
 > 
-> This is now pointless to 'goto out_err' when neither 'clk_enable()' nor
-> 'ioremap()' have been called yet.
-> 
-> Make a direct return instead to avoid undoing things that have not been
-> done.
-> 
-> Fixes: 79ca6f74dae0 ("tpm: fix Atmel TPM crash caused by too frequent queries")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/char/tpm/tpm_tis_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> This patch is speculative. Several fixes on error handling paths have been
+> done recently, but this one has been left as-is. There was maybe a good
+> reason that I have missed for that. So review with care!
 > 
-> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-> index b2659a4c4016..e672d2dc8937 100644
-> --- a/drivers/char/tpm/tpm_tis_core.c
-> +++ b/drivers/char/tpm/tpm_tis_core.c
-> @@ -952,7 +952,7 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
->  
->  	rc = tpm_tis_read32(priv, TPM_DID_VID(0), &vendor);
->  	if (rc < 0)
-> -		goto out_err;
-> +		return rc;
->  
->  	priv->manufacturer_id = vendor;
+> I've not been able to identify a Fixes tag that please me :(
+> ---
+>  drivers/nvdimm/pmem.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+> index fe7ece1534e1..c37a1e6750b3 100644
+> --- a/drivers/nvdimm/pmem.c
+> +++ b/drivers/nvdimm/pmem.c
+> @@ -490,8 +490,9 @@ static int pmem_attach_disk(struct device *dev,
+>  	nvdimm_namespace_disk_name(ndns, disk->disk_name);
+>  	set_capacity(disk, (pmem->size - pmem->pfn_pad - pmem->data_offset)
+>  			/ 512);
+> -	if (devm_init_badblocks(dev, &pmem->bb))
+> -		return -ENOMEM;
+> +	rc = devm_init_badblocks(dev, &pmem->bb);
+> +	if (rc)
+> +		goto out;
+
+But I don't see this 'out' label in the function currently?  Was that part of
+your patch missing?
+
+Ira
+
+>  	nvdimm_badblocks_populate(nd_region, &pmem->bb, &bb_range);
+>  	disk->bb = &pmem->bb;
 >  
 > -- 
 > 2.30.2
 > 
-
-Thank you.
-
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-/Jarkko
