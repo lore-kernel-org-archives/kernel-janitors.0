@@ -2,65 +2,70 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 090C4C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 21:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FEF9C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 22:00:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC59661284
-	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 21:16:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA28D614C8
+	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 22:00:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230412AbhKGVTX (ORCPT
+        id S235852AbhKGWCx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 7 Nov 2021 16:19:23 -0500
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:61576 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234994AbhKGVTW (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 7 Nov 2021 16:19:22 -0500
-Received: from pop-os.home ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id jpWnmO5VXwQZfjpWomDtl1; Sun, 07 Nov 2021 22:16:38 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 07 Nov 2021 22:16:38 +0100
-X-ME-IP: 86.243.171.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     thierry.reding@gmail.com, airlied@linux.ie, daniel@ffwll.ch
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/2] gpu: host1x: Fix a memory leak in 'host1x_remove()'
-Date:   Sun,  7 Nov 2021 22:16:36 +0100
-Message-Id: <f3dc9c70f3dca6462a98d595e276c9d00f607bc8.1636319710.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <05c1932b66048ebf6742705e2ab16eea852c46d9.1636319710.git.christophe.jaillet@wanadoo.fr>
-References: <05c1932b66048ebf6742705e2ab16eea852c46d9.1636319710.git.christophe.jaillet@wanadoo.fr>
+        Sun, 7 Nov 2021 17:02:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36882 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235210AbhKGWCv (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 7 Nov 2021 17:02:51 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id 2B1E761165;
+        Sun,  7 Nov 2021 22:00:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1636322407;
+        bh=941HGfFQOQJ4fRvMa7Kb8ACJvmAK41E0GU4IMZsgbNc=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=X2j+Zy9QkidqJWHiMCBUIzYqoT2X+X/WYcYf04JYcLB4q/PP6KlzK92DsDNJZW70o
+         4bq+2tSj2s0P8BPNiurx9h5mpGqwGwYF2JSvXLHgrsEY9tAmCTKLL7P5y5pgX1zQXQ
+         /c/oTH3ijk4HK9Dk8otWadftA4phkTcUWh+bG+Y8WecMBUONZ6LEkVHCGAuK7cQAVu
+         UN9Oq0WlR0Uv+EyAqSQ3LbiXy8TVgegpSizE/nEtFBxk5VLfQmRs9yaoz7uyXJn25a
+         P9RKCP39v4erV8R3/Q5/IJxADUrE/cC3Zs38KE30323CdAUkGB4s4vUr30dd8AgeXn
+         EwxLXx8HAsmuQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] litex_liteeth: Fix a double free in the remove function
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <163632240711.15866.10191810758157275927.git-patchwork-notify@kernel.org>
+Date:   Sun, 07 Nov 2021 22:00:07 +0000
+References: <25b34e3bea4da381228953e484e5c699796dafe8.1636315896.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <25b34e3bea4da381228953e484e5c699796dafe8.1636315896.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     davem@davemloft.net, kuba@kernel.org, gsomlo@gmail.com,
+        joel@jms.id.au, caihuoqing@baidu.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Add a missing 'host1x_channel_list_free()' call in the remove function,
-as already done in the error handling path of the probe function.
+Hello:
 
-Fixes: 8474b02531c4 ("gpu: host1x: Refactor channel allocation code")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/gpu/host1x/dev.c | 1 +
- 1 file changed, 1 insertion(+)
+This patch was applied to netdev/net.git (master)
+by David S. Miller <davem@davemloft.net>:
 
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index fa00e31ea2f9..6cc749f030ee 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -533,6 +533,7 @@ static int host1x_remove(struct platform_device *pdev)
- 	host1x_syncpt_deinit(host);
- 	reset_control_assert(host->rst);
- 	clk_disable_unprepare(host->clk);
-+	host1x_channel_list_free(&host->channel_list);
- 	host1x_iommu_exit(host);
- 	host1x_bo_cache_destroy(&host->cache);
- 
+On Sun,  7 Nov 2021 21:13:07 +0100 you wrote:
+> 'netdev' is a managed resource allocated in the probe using
+> 'devm_alloc_etherdev()'.
+> It must not be freed explicitly in the remove function.
+> 
+> Fixes: ee7da21ac4c3 ("net: Add driver for LiteX's LiteETH network interface")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> [...]
+
+Here is the summary with links:
+  - litex_liteeth: Fix a double free in the remove function
+    https://git.kernel.org/netdev/net/c/c45231a7668d
+
+You are awesome, thank you!
 -- 
-2.30.2
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
