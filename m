@@ -2,36 +2,36 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC072C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 10:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0BB2C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 15:23:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C4151613AC
-	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 10:04:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4ED161186
+	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 15:23:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231290AbhKGKHf (ORCPT
+        id S235617AbhKGPZp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 7 Nov 2021 05:07:35 -0500
-Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:52646 "EHLO
+        Sun, 7 Nov 2021 10:25:45 -0500
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:49567 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230219AbhKGKHe (ORCPT
+        with ESMTP id S229878AbhKGPZo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 7 Nov 2021 05:07:34 -0500
+        Sun, 7 Nov 2021 10:25:44 -0500
 Received: from pop-os.home ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id jf2ami9tyTdRTjf2bm7YIn; Sun, 07 Nov 2021 11:04:50 +0100
+        id jk0ZmSGDff6fnjk0ZmDN46; Sun, 07 Nov 2021 16:23:00 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 07 Nov 2021 11:04:50 +0100
+X-ME-Date: Sun, 07 Nov 2021 16:23:00 +0100
 X-ME-IP: 86.243.171.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     lorenzo.pieralisi@arm.com, robh@kernel.org, kw@linux.com,
-        bhelgaas@google.com, michal.simek@xilinx.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+To:     linkinjeon@kernel.org, senozhatsky@chromium.org, sfrench@samba.org,
+        hyc.lee@gmail.com, mmakassikis@freebox.fr
+Cc:     linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] PCI: xilinx-nwl: Simplify code and fix a memory leak
-Date:   Sun,  7 Nov 2021 11:04:43 +0100
-Message-Id: <5483f10a44b06aad55728576d489adfa16c3be91.1636279388.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] ksmbd: Fix an error handling path in 'smb2_sess_setup()'
+Date:   Sun,  7 Nov 2021 16:22:57 +0100
+Message-Id: <17d0c2af6d0a35c2951f0ac5c7a1dfea04df410f.1636298480.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -39,103 +39,36 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Allocate space for 'bitmap' in 'struct nwl_msi' at build time instead of
-dynamically allocating the memory at runtime.
+All the error handling paths of 'smb2_sess_setup()' end to 'out_err'.
 
-This simplifies code (especially error handling paths) and avoid some
-open-coded arithmetic in allocator arguments
+All but the new error handling path added by the commit given in the Fixes
+tag below.
 
-This also fixes a potential memory leak. The bitmap was never freed. It is
-now part of a managed resource.
+Fix this error handling path and branch to 'out_err' as well.
 
+Fixes: 0d994cd482ee ("ksmbd: add buffer validation in session setup")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/pci/controller/pcie-xilinx-nwl.c | 30 ++++++------------------
- 1 file changed, 7 insertions(+), 23 deletions(-)
+ fs/ksmbd/smb2pdu.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/controller/pcie-xilinx-nwl.c b/drivers/pci/controller/pcie-xilinx-nwl.c
-index a72b4f9a2b00..40d070e54ad2 100644
---- a/drivers/pci/controller/pcie-xilinx-nwl.c
-+++ b/drivers/pci/controller/pcie-xilinx-nwl.c
-@@ -146,7 +146,7 @@
+diff --git a/fs/ksmbd/smb2pdu.c b/fs/ksmbd/smb2pdu.c
+index ba68a27cabf8..bb0d1b155b34 100644
+--- a/fs/ksmbd/smb2pdu.c
++++ b/fs/ksmbd/smb2pdu.c
+@@ -1698,8 +1698,10 @@ int smb2_sess_setup(struct ksmbd_work *work)
+ 	negblob_off = le16_to_cpu(req->SecurityBufferOffset);
+ 	negblob_len = le16_to_cpu(req->SecurityBufferLength);
+ 	if (negblob_off < offsetof(struct smb2_sess_setup_req, Buffer) ||
+-	    negblob_len < offsetof(struct negotiate_message, NegotiateFlags))
+-		return -EINVAL;
++	    negblob_len < offsetof(struct negotiate_message, NegotiateFlags)) {
++		rc = -EINVAL;
++		goto out_err;
++	}
  
- struct nwl_msi {			/* MSI information */
- 	struct irq_domain *msi_domain;
--	unsigned long *bitmap;
-+	DECLARE_BITMAP(bitmap, INT_PCI_MSI_NR);
- 	struct irq_domain *dev_domain;
- 	struct mutex lock;		/* protect bitmap variable */
- 	int irq_msi0;
-@@ -335,12 +335,10 @@ static void nwl_pcie_leg_handler(struct irq_desc *desc)
- 
- static void nwl_pcie_handle_msi_irq(struct nwl_pcie *pcie, u32 status_reg)
- {
--	struct nwl_msi *msi;
-+	struct nwl_msi *msi = &pcie->msi;
- 	unsigned long status;
- 	u32 bit;
- 
--	msi = &pcie->msi;
--
- 	while ((status = nwl_bridge_readl(pcie, status_reg)) != 0) {
- 		for_each_set_bit(bit, &status, 32) {
- 			nwl_bridge_writel(pcie, 1 << bit, status_reg);
-@@ -560,30 +558,21 @@ static int nwl_pcie_enable_msi(struct nwl_pcie *pcie)
- 	struct nwl_msi *msi = &pcie->msi;
- 	unsigned long base;
- 	int ret;
--	int size = BITS_TO_LONGS(INT_PCI_MSI_NR) * sizeof(long);
- 
- 	mutex_init(&msi->lock);
- 
--	msi->bitmap = kzalloc(size, GFP_KERNEL);
--	if (!msi->bitmap)
--		return -ENOMEM;
--
- 	/* Get msi_1 IRQ number */
- 	msi->irq_msi1 = platform_get_irq_byname(pdev, "msi1");
--	if (msi->irq_msi1 < 0) {
--		ret = -EINVAL;
--		goto err;
--	}
-+	if (msi->irq_msi1 < 0)
-+		return -EINVAL;
- 
- 	irq_set_chained_handler_and_data(msi->irq_msi1,
- 					 nwl_pcie_msi_handler_high, pcie);
- 
- 	/* Get msi_0 IRQ number */
- 	msi->irq_msi0 = platform_get_irq_byname(pdev, "msi0");
--	if (msi->irq_msi0 < 0) {
--		ret = -EINVAL;
--		goto err;
--	}
-+	if (msi->irq_msi0 < 0)
-+		return -EINVAL;
- 
- 	irq_set_chained_handler_and_data(msi->irq_msi0,
- 					 nwl_pcie_msi_handler_low, pcie);
-@@ -592,8 +581,7 @@ static int nwl_pcie_enable_msi(struct nwl_pcie *pcie)
- 	ret = nwl_bridge_readl(pcie, I_MSII_CAPABILITIES) & MSII_PRESENT;
- 	if (!ret) {
- 		dev_err(dev, "MSI not present\n");
--		ret = -EIO;
--		goto err;
-+		return -EIO;
- 	}
- 
- 	/* Enable MSII */
-@@ -632,10 +620,6 @@ static int nwl_pcie_enable_msi(struct nwl_pcie *pcie)
- 	nwl_bridge_writel(pcie, MSGF_MSI_SR_LO_MASK, MSGF_MSI_MASK_LO);
- 
- 	return 0;
--err:
--	kfree(msi->bitmap);
--	msi->bitmap = NULL;
--	return ret;
- }
- 
- static int nwl_pcie_bridge_init(struct nwl_pcie *pcie)
+ 	negblob = (struct negotiate_message *)((char *)&req->hdr.ProtocolId +
+ 			negblob_off);
 -- 
 2.30.2
 
