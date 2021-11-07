@@ -2,139 +2,144 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A77C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Nov 2021 22:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D34C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 06:59:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 58E9B61051
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Nov 2021 22:01:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78C0B61425
+	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Nov 2021 06:59:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232588AbhKFWEU (ORCPT
+        id S234822AbhKGGza (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 6 Nov 2021 18:04:20 -0400
-Received: from mail-pf1-f171.google.com ([209.85.210.171]:36490 "EHLO
-        mail-pf1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229500AbhKFWET (ORCPT
+        Sun, 7 Nov 2021 01:55:30 -0500
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:62963 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234815AbhKGGz3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 6 Nov 2021 18:04:19 -0400
-Received: by mail-pf1-f171.google.com with SMTP id m26so12298795pff.3;
-        Sat, 06 Nov 2021 15:01:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=cdijwmbE+Gok2D35zYgws7Fn1ESkfBiSMTeCRhjYSyo=;
-        b=6Z7+b9Ob8mI2rUy7xwjnYYeWLzuCIJeKRH05sNzdnoliAM/2FUljpbHg137lzA1lgr
-         kxiGo7CHfRNrpXUcXs7MjZ7YdSDzK+3m7brdiqhhWlxv+GPoexK3H9+DWxlt2vjAIi/o
-         Abi1hay6GBXka5AOfA7AB4C9wlKxZLNZ+HRhjzOkEy5HeTetGA1gUs0cMFUVqfv/igIv
-         LCiC8dsgjOxAgLlZCYZgxx8k2k6q8E3FDRpK9GmFnV8StcjRUhyYDqh7K57v0Fu9G5aB
-         Af43yTOq9ZdcxY7+4/W/1zQ78BlqHBLmljj2LMO26QI3fGcVKQNyVeskhncfuU2L/boF
-         2uMw==
-X-Gm-Message-State: AOAM533w0cnfQ//fLjeF0OKa2T7CpCjf8kYBCQ2z2RKJ6li7yyzkAn9Y
-        sNo6188Lm+AQwjn7pFu4oMc=
-X-Google-Smtp-Source: ABdhPJz9muR0T7/dEWrrsLy+TeL8BzV3LacdWxPLr23AGZVhlOyKjoHnpbWgKNuHc9Iw6l2L6WtFrg==
-X-Received: by 2002:a62:3387:0:b0:44d:7ec:906a with SMTP id z129-20020a623387000000b0044d07ec906amr70369382pfz.69.1636236097442;
-        Sat, 06 Nov 2021 15:01:37 -0700 (PDT)
-Received: from rocinante ([95.155.85.46])
-        by smtp.gmail.com with ESMTPSA id y6sm11506784pfi.154.2021.11.06.15.01.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Nov 2021 15:01:37 -0700 (PDT)
-Date:   Sat, 6 Nov 2021 23:01:27 +0100
-From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+        Sun, 7 Nov 2021 01:55:29 -0500
+Received: from [192.168.1.18] ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id jc2mmiWjzUujjjc2nmXikG; Sun, 07 Nov 2021 07:52:46 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sun, 07 Nov 2021 07:52:46 +0100
+X-ME-IP: 86.243.171.122
+Subject: Re: [PATCH] PCI: endpoint: Use 'bitmap_zalloc()' when applicable
+To:     =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>
 Cc:     kishon@ti.com, lorenzo.pieralisi@arm.com, bhelgaas@google.com,
         linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] PCI: endpoint: Use 'bitmap_zalloc()' when applicable
-Message-ID: <YYb7NwlYcmsdw8AR@rocinante>
 References: <01eba3c86137eb348f8cce69f500222bd7c72c57.1635058203.git.christophe.jaillet@wanadoo.fr>
+ <YYb7NwlYcmsdw8AR@rocinante>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <8123c76f-3887-09ad-17ec-a160f63b9f86@wanadoo.fr>
+Date:   Sun, 7 Nov 2021 07:52:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <YYb7NwlYcmsdw8AR@rocinante>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <01eba3c86137eb348f8cce69f500222bd7c72c57.1635058203.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
-
-> 'mem->bitmap' is a bitmap. So use 'bitmap_zalloc()' to simplify code,
-> improve the semantic and avoid some open-coded arithmetic in allocator
-> arguments.
+Le 06/11/2021 à 23:01, Krzysztof Wilczyński a écrit :
+> Hi Christophe,
 > 
-> Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
-> consistency.
+>> 'mem->bitmap' is a bitmap. So use 'bitmap_zalloc()' to simplify code,
+>> improve the semantic and avoid some open-coded arithmetic in allocator
+>> arguments.
+>>
+>> Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
+>> consistency.
+> 
+> Thank you!
+> 
+>> Finally, while at it, axe the useless 'bitmap' variable and use
+>> 'mem->bitmap' directly.
+> 
+> Personally, I would keep the bitmap variable - this might be what Bjorn
+> would also prefer, as I believe he prefers not to store what is a "failed"
+> state of sorts in a target variable directly, if memory serves me right.
 
-Thank you!
+Hi,
 
-> Finally, while at it, axe the useless 'bitmap' variable and use
-> 'mem->bitmap' directly.
+mostly a mater of taste.
+On another similar patch I got the answer in [1] :).
 
-Personally, I would keep the bitmap variable - this might be what Bjorn
-would also prefer, as I believe he prefers not to store what is a "failed"
-state of sorts in a target variable directly, if memory serves me right.
+'mem' is kzalloc'ed, so in case of failure, here we are just replacing 
+NULL by NULL.
 
-[...]
-> @@ -49,10 +49,8 @@ int pci_epc_multi_mem_init(struct pci_epc *epc,
->  			   unsigned int num_windows)
->  {
->  	struct pci_epc_mem *mem = NULL;
-> -	unsigned long *bitmap = NULL;
->  	unsigned int page_shift;
->  	size_t page_size;
-> -	int bitmap_size;
->  	int pages;
->  	int ret;
->  	int i;
-> @@ -72,7 +70,6 @@ int pci_epc_multi_mem_init(struct pci_epc *epc,
->  			page_size = PAGE_SIZE;
->  		page_shift = ilog2(page_size);
->  		pages = windows[i].size >> page_shift;
-> -		bitmap_size = BITS_TO_LONGS(pages) * sizeof(long);
->  
->  		mem = kzalloc(sizeof(*mem), GFP_KERNEL);
->  		if (!mem) {
-> @@ -81,8 +78,8 @@ int pci_epc_multi_mem_init(struct pci_epc *epc,
->  			goto err_mem;
->  		}
->  
-> -		bitmap = kzalloc(bitmap_size, GFP_KERNEL);
-> -		if (!bitmap) {
-> +		mem->bitmap = bitmap_zalloc(pages, GFP_KERNEL);
-> +		if (!mem->bitmap) {
->  			ret = -ENOMEM;
->  			kfree(mem);
->  			i--;
-> @@ -92,7 +89,6 @@ int pci_epc_multi_mem_init(struct pci_epc *epc,
->  		mem->window.phys_base = windows[i].phys_base;
->  		mem->window.size = windows[i].size;
->  		mem->window.page_size = page_size;
-> -		mem->bitmap = bitmap;
->  		mem->pages = pages;
->  		mutex_init(&mem->lock);
->  		epc->windows[i] = mem;
-> @@ -106,7 +102,7 @@ int pci_epc_multi_mem_init(struct pci_epc *epc,
->  err_mem:
->  	for (; i >= 0; i--) {
->  		mem = epc->windows[i];
-> -		kfree(mem->bitmap);
-> +		bitmap_free(mem->bitmap);
->  		kfree(mem);
->  	}
->  	kfree(epc->windows);
-> @@ -145,7 +141,7 @@ void pci_epc_mem_exit(struct pci_epc *epc)
->  
->  	for (i = 0; i < epc->num_windows; i++) {
->  		mem = epc->windows[i];
-> -		kfree(mem->bitmap);
-> +		bitmap_free(mem->bitmap);
->  		kfree(mem);
->  	}
->  	kfree(epc->windows);
+Let me know the preferred style here and if I should send a V2.
 
-Thank you!
+CJ
 
-Reviewed-by: Krzysztof Wilczyński <kw@linux.com>
+[1]; https://lore.kernel.org/kernel-janitors/20211028164437.GA4045120@p14s/
 
-	Krzysztof
+> 
+> [...]
+>> @@ -49,10 +49,8 @@ int pci_epc_multi_mem_init(struct pci_epc *epc,
+>>   			   unsigned int num_windows)
+>>   {
+>>   	struct pci_epc_mem *mem = NULL;
+>> -	unsigned long *bitmap = NULL;
+>>   	unsigned int page_shift;
+>>   	size_t page_size;
+>> -	int bitmap_size;
+>>   	int pages;
+>>   	int ret;
+>>   	int i;
+>> @@ -72,7 +70,6 @@ int pci_epc_multi_mem_init(struct pci_epc *epc,
+>>   			page_size = PAGE_SIZE;
+>>   		page_shift = ilog2(page_size);
+>>   		pages = windows[i].size >> page_shift;
+>> -		bitmap_size = BITS_TO_LONGS(pages) * sizeof(long);
+>>   
+>>   		mem = kzalloc(sizeof(*mem), GFP_KERNEL);
+>>   		if (!mem) {
+>> @@ -81,8 +78,8 @@ int pci_epc_multi_mem_init(struct pci_epc *epc,
+>>   			goto err_mem;
+>>   		}
+>>   
+>> -		bitmap = kzalloc(bitmap_size, GFP_KERNEL);
+>> -		if (!bitmap) {
+>> +		mem->bitmap = bitmap_zalloc(pages, GFP_KERNEL);
+>> +		if (!mem->bitmap) {
+>>   			ret = -ENOMEM;
+>>   			kfree(mem);
+>>   			i--;
+>> @@ -92,7 +89,6 @@ int pci_epc_multi_mem_init(struct pci_epc *epc,
+>>   		mem->window.phys_base = windows[i].phys_base;
+>>   		mem->window.size = windows[i].size;
+>>   		mem->window.page_size = page_size;
+>> -		mem->bitmap = bitmap;
+>>   		mem->pages = pages;
+>>   		mutex_init(&mem->lock);
+>>   		epc->windows[i] = mem;
+>> @@ -106,7 +102,7 @@ int pci_epc_multi_mem_init(struct pci_epc *epc,
+>>   err_mem:
+>>   	for (; i >= 0; i--) {
+>>   		mem = epc->windows[i];
+>> -		kfree(mem->bitmap);
+>> +		bitmap_free(mem->bitmap);
+>>   		kfree(mem);
+>>   	}
+>>   	kfree(epc->windows);
+>> @@ -145,7 +141,7 @@ void pci_epc_mem_exit(struct pci_epc *epc)
+>>   
+>>   	for (i = 0; i < epc->num_windows; i++) {
+>>   		mem = epc->windows[i];
+>> -		kfree(mem->bitmap);
+>> +		bitmap_free(mem->bitmap);
+>>   		kfree(mem);
+>>   	}
+>>   	kfree(epc->windows);
+> 
+> Thank you!
+> 
+> Reviewed-by: Krzysztof Wilczyński <kw@linux.com>
+> 
+> 	Krzysztof
+> 
+
