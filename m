@@ -2,152 +2,118 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4AE9C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Nov 2021 06:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CE1C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Nov 2021 16:14:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB6796128B
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Nov 2021 06:37:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4664A6134F
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Nov 2021 16:14:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236997AbhKHGkV (ORCPT
+        id S238526AbhKHQRL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 8 Nov 2021 01:40:21 -0500
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:53024 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237733AbhKHGkR (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 8 Nov 2021 01:40:17 -0500
-Received: from [192.168.1.18] ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id jyHZmF8HponYgjyHZmBySq; Mon, 08 Nov 2021 07:37:32 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 08 Nov 2021 07:37:32 +0100
-X-ME-IP: 86.243.171.122
-Subject: Re: [PATCH] PCI: xilinx-nwl: Simplify code and fix a memory leak
-To:     =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>
-Cc:     lorenzo.pieralisi@arm.com, robh@kernel.org, bhelgaas@google.com,
-        michal.simek@xilinx.com, linux-arm-kernel@lists.infradead.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <5483f10a44b06aad55728576d489adfa16c3be91.1636279388.git.christophe.jaillet@wanadoo.fr>
- <YYhv9vZCw5r+PKzj@rocinante>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <4d0576fb-0232-b165-bdef-e8a4310c6d29@wanadoo.fr>
-Date:   Mon, 8 Nov 2021 07:37:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Mon, 8 Nov 2021 11:17:11 -0500
+Received: from mga09.intel.com ([134.134.136.24]:12416 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236038AbhKHQRL (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 8 Nov 2021 11:17:11 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10162"; a="232098289"
+X-IronPort-AV: E=Sophos;i="5.87,218,1631602800"; 
+   d="scan'208";a="232098289"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2021 08:14:17 -0800
+X-IronPort-AV: E=Sophos;i="5.87,218,1631602800"; 
+   d="scan'208";a="503082774"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2021 08:14:16 -0800
+Date:   Mon, 8 Nov 2021 08:14:16 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     dan.j.williams@intel.com, vishal.l.verma@intel.com,
+        dave.jiang@intel.com, nvdimm@lists.linux.dev,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] nvdimm/pmem: Fix an error handling path in
+ 'pmem_attach_disk()'
+Message-ID: <20211108161416.GD3538886@iweiny-DESK2.sc.intel.com>
+References: <f1933a01d9cefe24970ee93d741babb8fe9c1b32.1636219557.git.christophe.jaillet@wanadoo.fr>
+ <20211107171157.GC3538886@iweiny-DESK2.sc.intel.com>
+ <050385c3-7707-76cb-c580-c64d43456462@wanadoo.fr>
 MIME-Version: 1.0
-In-Reply-To: <YYhv9vZCw5r+PKzj@rocinante>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <050385c3-7707-76cb-c580-c64d43456462@wanadoo.fr>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 08/11/2021 √† 01:31, Krzysztof Wilczy≈Ñski a √©crit¬†:
-> Hi Christophe,
+On Sun, Nov 07, 2021 at 06:20:14PM +0100, Christophe JAILLET wrote:
+> Le 07/11/2021 ‡ 18:11, Ira Weiny a Ècrit†:
+> > On Sat, Nov 06, 2021 at 06:27:11PM +0100, Christophe JAILLET wrote:
+> > > If 'devm_init_badblocks()' fails, a previous 'blk_alloc_disk()' call must
+> > > be undone.
+> > 
+> > I think this is a problem...
+> > 
+> > > 
+> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > > ---
+> > > This patch is speculative. Several fixes on error handling paths have been
+> > > done recently, but this one has been left as-is. There was maybe a good
+> > > reason that I have missed for that. So review with care!
+> > > 
+> > > I've not been able to identify a Fixes tag that please me :(
+> > > ---
+> > >   drivers/nvdimm/pmem.c | 5 +++--
+> > >   1 file changed, 3 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+> > > index fe7ece1534e1..c37a1e6750b3 100644
+> > > --- a/drivers/nvdimm/pmem.c
+> > > +++ b/drivers/nvdimm/pmem.c
+> > > @@ -490,8 +490,9 @@ static int pmem_attach_disk(struct device *dev,
+> > >   	nvdimm_namespace_disk_name(ndns, disk->disk_name);
+> > >   	set_capacity(disk, (pmem->size - pmem->pfn_pad - pmem->data_offset)
+> > >   			/ 512);
+> > > -	if (devm_init_badblocks(dev, &pmem->bb))
+> > > -		return -ENOMEM;
+> > > +	rc = devm_init_badblocks(dev, &pmem->bb);
+> > > +	if (rc)
+> > > +		goto out;
+> > 
+> > But I don't see this 'out' label in the function currently?  Was that part of
+> > your patch missing?
 > 
->> Allocate space for 'bitmap' in 'struct nwl_msi' at build time instead of
->> dynamically allocating the memory at runtime.
->>
->> This simplifies code (especially error handling paths) and avoid some
->> open-coded arithmetic in allocator arguments
->>
->> This also fixes a potential memory leak. The bitmap was never freed. It is
->> now part of a managed resource.
-> 
-> Just to confirm - you mean potentially leaking when the driver would be
-> unloaded?  Not the error handling path, correct?
+> Hi,
+> the patch is based on the latest linux-next.
+> See [1]. The 'out' label exists there and is already used.
 
-Correct, the leak would happen on driver unload only.
-
-CJ
+Ah I see.  Sorry.
 
 > 
->> --- a/drivers/pci/controller/pcie-xilinx-nwl.c
->> +++ b/drivers/pci/controller/pcie-xilinx-nwl.c
->> @@ -146,7 +146,7 @@
->>   
->>   struct nwl_msi {			/* MSI information */
->>   	struct irq_domain *msi_domain;
->> -	unsigned long *bitmap;
->> +	DECLARE_BITMAP(bitmap, INT_PCI_MSI_NR);
->>   	struct irq_domain *dev_domain;
->>   	struct mutex lock;		/* protect bitmap variable */
->>   	int irq_msi0;
->> @@ -335,12 +335,10 @@ static void nwl_pcie_leg_handler(struct irq_desc *desc)
->>   
->>   static void nwl_pcie_handle_msi_irq(struct nwl_pcie *pcie, u32 status_reg)
->>   {
->> -	struct nwl_msi *msi;
->> +	struct nwl_msi *msi = &pcie->msi;
->>   	unsigned long status;
->>   	u32 bit;
->>   
->> -	msi = &pcie->msi;
->> -
->>   	while ((status = nwl_bridge_readl(pcie, status_reg)) != 0) {
->>   		for_each_set_bit(bit, &status, 32) {
->>   			nwl_bridge_writel(pcie, 1 << bit, status_reg);
->> @@ -560,30 +558,21 @@ static int nwl_pcie_enable_msi(struct nwl_pcie *pcie)
->>   	struct nwl_msi *msi = &pcie->msi;
->>   	unsigned long base;
->>   	int ret;
->> -	int size = BITS_TO_LONGS(INT_PCI_MSI_NR) * sizeof(long);
->>   
->>   	mutex_init(&msi->lock);
->>   
->> -	msi->bitmap = kzalloc(size, GFP_KERNEL);
->> -	if (!msi->bitmap)
->> -		return -ENOMEM;
->> -
->>   	/* Get msi_1 IRQ number */
->>   	msi->irq_msi1 = platform_get_irq_byname(pdev, "msi1");
->> -	if (msi->irq_msi1 < 0) {
->> -		ret = -EINVAL;
->> -		goto err;
->> -	}
->> +	if (msi->irq_msi1 < 0)
->> +		return -EINVAL;
->>   
->>   	irq_set_chained_handler_and_data(msi->irq_msi1,
->>   					 nwl_pcie_msi_handler_high, pcie);
->>   
->>   	/* Get msi_0 IRQ number */
->>   	msi->irq_msi0 = platform_get_irq_byname(pdev, "msi0");
->> -	if (msi->irq_msi0 < 0) {
->> -		ret = -EINVAL;
->> -		goto err;
->> -	}
->> +	if (msi->irq_msi0 < 0)
->> +		return -EINVAL;
->>   
->>   	irq_set_chained_handler_and_data(msi->irq_msi0,
->>   					 nwl_pcie_msi_handler_low, pcie);
->> @@ -592,8 +581,7 @@ static int nwl_pcie_enable_msi(struct nwl_pcie *pcie)
->>   	ret = nwl_bridge_readl(pcie, I_MSII_CAPABILITIES) & MSII_PRESENT;
->>   	if (!ret) {
->>   		dev_err(dev, "MSI not present\n");
->> -		ret = -EIO;
->> -		goto err;
->> +		return -EIO;
->>   	}
->>   
->>   	/* Enable MSII */
->> @@ -632,10 +620,6 @@ static int nwl_pcie_enable_msi(struct nwl_pcie *pcie)
->>   	nwl_bridge_writel(pcie, MSGF_MSI_SR_LO_MASK, MSGF_MSI_MASK_LO);
->>   
->>   	return 0;
->> -err:
->> -	kfree(msi->bitmap);
->> -	msi->bitmap = NULL;
->> -	return ret;
-> 
-> Thank you!
-> 
-> Reviewed-by: Krzysztof Wilczy≈Ñski <kw@linux.com>
-> 
-> 	Krzysztof
-> 
+> In fact, I run an own-made coccinelle script which tries to spot mix-up
+> between return and goto.
+> In this case, we have a 'return -ENOMEM' after a 'goto out' which looks
+> spurious.
+>
 
+Yes agreed.  I was looking at Linus' kernel not linux-next sorry.
+
+Sorry for the noise,
+Ira
+
+> Hence, my patch.
+> 
+> [1]:https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/nvdimm/pmem.c#n512
+> 
+> CJ
+> 
+> > 
+> > Ira
+> > 
+> > >   	nvdimm_badblocks_populate(nd_region, &pmem->bb, &bb_range);
+> > >   	disk->bb = &pmem->bb;
+> > > -- 
+> > > 2.30.2
+> > > 
+> > 
+> 
