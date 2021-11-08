@@ -2,80 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54780C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Nov 2021 21:29:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C983AC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Nov 2021 23:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 34F6561181
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Nov 2021 21:29:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A740A61175
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Nov 2021 23:30:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240308AbhKHVbp (ORCPT
+        id S240934AbhKHXdM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 8 Nov 2021 16:31:45 -0500
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:63375 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239237AbhKHVbo (ORCPT
+        Mon, 8 Nov 2021 18:33:12 -0500
+Received: from mail-ed1-f49.google.com ([209.85.208.49]:43536 "EHLO
+        mail-ed1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240747AbhKHXdJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 8 Nov 2021 16:31:44 -0500
-Received: from pop-os.home ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id kCCGmjvWff6fnkCCGmJNY2; Mon, 08 Nov 2021 22:28:59 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 08 Nov 2021 22:28:59 +0100
-X-ME-IP: 86.243.171.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     grygorii.strashko@ti.com, davem@davemloft.net, kuba@kernel.org,
-        shenyang39@huawei.com, vigneshr@ti.com
-Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] net: ethernet: ti: cpsw_ale: Fix access to un-initialized memory
-Date:   Mon,  8 Nov 2021 22:28:55 +0100
-Message-Id: <c709f0325a7244ff133e405d017d9efba3b200f6.1636406827.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Mon, 8 Nov 2021 18:33:09 -0500
+Received: by mail-ed1-f49.google.com with SMTP id w1so69562396edd.10;
+        Mon, 08 Nov 2021 15:30:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4c9jRVTiEOAT2G+TczrZz0JB2x25zxtUp6Iq9kweQdk=;
+        b=XmnaINPhvFwQe0hdIzoMH5JuVuPLEN3oN1qoAPQcfUzRnBMWr6wMiFVaSBr/BC2ovE
+         lgfnTR+RyXnfaivM1ppGPHTujCsU4TAWifwRQMj8r+gNNQj4sPOIdtq8eS6TSGl32ZLc
+         MG4Tguo5Kf1eRojD55/5mUwe1kDVFdgjynJSadhrBvNCSJs7xJOr0b10s2w18DdKISiU
+         OvHPtxY6+jCrDnXQJ6ord0pRRtggTC/NUHQxR1wGjbLu52XP6+QV1m21sthdAJXTG1y5
+         Z2zA2MW0F2BXMDB+ndXstJetld8YBVqvMo3FFMSQcS/ghesysvckOh7NeatW6EvQJKLE
+         rDlw==
+X-Gm-Message-State: AOAM533GKlr15oWE4+GXWVZZWOuivv06vHB89MrxptRiPNWNHDPKgkYI
+        ADsmm2lGbKUA2x2XMJE+7v8=
+X-Google-Smtp-Source: ABdhPJys8NT5dfq5Lddj/S7xPCmtxJrgTHYB2WWsp3uqzbIbw1reXNcrnC9CFA6c4kiJhWpEA+oZzg==
+X-Received: by 2002:a17:906:12d0:: with SMTP id l16mr3561291ejb.415.1636414223297;
+        Mon, 08 Nov 2021 15:30:23 -0800 (PST)
+Received: from rocinante ([95.155.85.46])
+        by smtp.gmail.com with ESMTPSA id hq37sm9073999ejc.116.2021.11.08.15.30.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Nov 2021 15:30:22 -0800 (PST)
+Date:   Tue, 9 Nov 2021 00:30:21 +0100
+From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>, nsaenz@kernel.org,
+        jim2101024@gmail.com, bcm-kernel-feedback-list@broadcom.com,
+        lorenzo.pieralisi@arm.com, robh@kernel.org, bhelgaas@google.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] PCI: brcmstb: Declare a bitmap as a bitmap, not as a
+ plain 'unsigned long'
+Message-ID: <YYmzDSjLgmx9bQQs@rocinante>
+References: <e6d9da2112aab2939d1507b90962d07bfd735b4c.1636273671.git.christophe.jaillet@wanadoo.fr>
+ <YYh+ldT5wU2s0sWY@rocinante>
+ <4d556ac3-b936-b99c-5a50-9add8607047d@gmail.com>
+ <4997ef3c-5867-7ce0-73a2-f4381cf0879b@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4997ef3c-5867-7ce0-73a2-f4381cf0879b@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-It is spurious to allocate a bitmap without initializing it.
-So, better safe than sorry, initialize it to 0 at least to have some known
-values.
+Hello,
 
-While at it, switch to the devm_bitmap_ API which is less verbose.
+[...]
+> > > Jim, Florian and Lorenzo - is this something that would be OK with you,
+> > > or you would rather keep things as they were?
+> > 
+> > I would be tempted to leave the code as-is, but if we do we are probably
+> > bound to seeing patches like Christophe's in the future to address the
+> 
+> Even if I don't find this report in the Coverity database, it should from
+> around April 2018.
+> So, if you have not already received several patches for that, I doubt that
+> you will receive many in the future.
+> 
+> 
+> My own feeling is that using a long (and not a long *) as a bitmap, and
+> accessing it with &long may look spurious to a reader.
+> That said, it works.
+> 
+> So, I let you decide if the patch is of any use. Should I need to tweak or
+> resend it, let me know.
 
-Fixes: 4b41d3436796 ("net: ethernet: ti: cpsw: allow untagged traffic on host port")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Maybe this patch is useless, because of some _add_vlan _del_vlan stuff that
-initialize things correctly before they are used, but it really looks
-spurious to me.
-IIUC, cpsw_rx_vlan_encap() (and the embedded cpsw_ale_get_vlan_p0_untag()
-could test any bit in the un-initialized bitmap)
+I would be pro taking it, not only to addresses the Coverity complaint, but
+also to align the code with other drivers a little bit more.  Only if
+the driver maintainers have no objection, that is.
 
-Just a guess, I've not tried to understand all the logic involved.
----
- drivers/net/ethernet/ti/cpsw_ale.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/cpsw_ale.c b/drivers/net/ethernet/ti/cpsw_ale.c
-index 0c75e0576ee1..1ef0aaef5c61 100644
---- a/drivers/net/ethernet/ti/cpsw_ale.c
-+++ b/drivers/net/ethernet/ti/cpsw_ale.c
-@@ -1299,10 +1299,8 @@ struct cpsw_ale *cpsw_ale_create(struct cpsw_ale_params *params)
- 	if (!ale)
- 		return ERR_PTR(-ENOMEM);
- 
--	ale->p0_untag_vid_mask =
--		devm_kmalloc_array(params->dev, BITS_TO_LONGS(VLAN_N_VID),
--				   sizeof(unsigned long),
--				   GFP_KERNEL);
-+	ale->p0_untag_vid_mask = devm_bitmap_zalloc(params->dev, VLAN_N_VID,
-+						    GFP_KERNEL);
- 	if (!ale->p0_untag_vid_mask)
- 		return ERR_PTR(-ENOMEM);
- 
--- 
-2.30.2
-
+	Krzysztof
