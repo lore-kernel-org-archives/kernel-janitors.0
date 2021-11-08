@@ -2,64 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5043C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Nov 2021 20:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE2AC4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Nov 2021 20:18:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 893E161360
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Nov 2021 20:15:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1EF961360
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Nov 2021 20:18:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238683AbhKHUSG (ORCPT
+        id S238728AbhKHUVG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 8 Nov 2021 15:18:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35372 "EHLO
+        Mon, 8 Nov 2021 15:21:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238614AbhKHUSB (ORCPT
+        with ESMTP id S238662AbhKHUVF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 8 Nov 2021 15:18:01 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8598DC061570;
-        Mon,  8 Nov 2021 12:15:16 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id r8so28920058wra.7;
-        Mon, 08 Nov 2021 12:15:16 -0800 (PST)
+        Mon, 8 Nov 2021 15:21:05 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 786A7C061570;
+        Mon,  8 Nov 2021 12:18:20 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id w29so17453459wra.12;
+        Mon, 08 Nov 2021 12:18:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=jbnUVXNpx41MFEBmV6cmVlmllMJldtnH48jc2+xBXes=;
-        b=gu8uqR5kM4ZMhT8ubH93GveON9D48ARdPRc5sffXMVd2zTMimxD9qvJK0Ag/9AS7UG
-         Ykt4ACReQnq/tQVUeMHOwjOiG0crPCEUcznhsMNubv92XMkSvv0pGEvtWyNCjGESwvsf
-         aW/NqqhzRqk+oUBMANFVLDew5pF+BLn5W8JoKg4CHOt4ltm4p/5WIbWqWOxj0zUGL38p
-         j717YEgMo73KtPteZZj6HA+AGnkejKInE78p6LTt8MZPgJq6Zve6UpBipPgsoZZHl6+N
-         n99epMwrNhXpBXIZ3PqVQw2mgW8LwGjdvSofyFyi25I2uDkSwYf0SdW4o6MMhQtXdDCc
-         qeHg==
+        bh=j0tzCILtYLjnkVMw5fV9YV7kZoveDNXNdYAPtQjDjAQ=;
+        b=K+HM8JZN9aItz4KVC/AvPZGGZ0Diii0j3X7ZYP+c5n1YFhusHiijkCF9jYJCc2sviB
+         OzQebppaGlOLbg4TnRF3lxekMTZ5MnZgB9Eq5VDQPnDYEH6RkopaphLkWz1tUgupdnct
+         uCI+twI+d1gRdqkQiG0movCBd32XnG4hIz1zVNKdaDxuAIG4SBRHwsBJtK/0j3DijQc+
+         Yf6SHEQklwIup5h4Phxg3XHmJQBnk56Ox1VSPSLjym1mLGRLg1b5tSdO9vL5Dc6q1AmY
+         ER4D18GIh+ThoUKCaZmf6NHUqMmpMZ5pJJN0fcdYqKX5bJZIEAJyiSEWGTQNu5qiBBrv
+         Xw8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=jbnUVXNpx41MFEBmV6cmVlmllMJldtnH48jc2+xBXes=;
-        b=f2YtnMNEDJVSgFoghjarY2LVxipqS44aiBaLCViLZjs1Ek6cKw+F+PjKx+WiuraEWF
-         OovCyYjHsu6VHHslsY2n/w+xDinebaO58he8dwadsO83tVE3/FvRE459WWAoPHaX3VzF
-         XIw77rtYdydAw/PsSRn/pqmMl8OElvLg02IP6WMtUijC6T23wYBIViCrSq4KK64zZPHT
-         O7mAnr2HlG6NXf3/8qjyyCM8xRmW2ctayUDSzdkxZTlKRJFJNQMX+5gRlNVaTGnL3GXO
-         J/31v1cMh5VyDBUAhSbdrDqOmJhv7TssQQNPFp9jTzLrxrw79rocb5rReq0YJFHh9/jl
-         obTQ==
-X-Gm-Message-State: AOAM5319yBwB8t68FrWq+iNOOvoTAwDuXRTCiAwz/SA9vtzRNkvohGOB
-        9o8tHNwcpJTBsg==
-X-Google-Smtp-Source: ABdhPJxHqPvmfEKhmG6A2lrY3TlcbdATo8YSPh9vxlLHO5ZL1OaSFMI0x624HAfdOxVu+zRWtfoFIg==
-X-Received: by 2002:a05:6000:15c8:: with SMTP id y8mr2248952wry.101.1636402515166;
-        Mon, 08 Nov 2021 12:15:15 -0800 (PST)
+        bh=j0tzCILtYLjnkVMw5fV9YV7kZoveDNXNdYAPtQjDjAQ=;
+        b=LGDkfD29Vg5QwGf/zt6c+0kNIExQ2fo5oVcEKFvYutueFd1v9iytI0y93HTyKYnP6s
+         oJdDDLzsWpfRzdC0IP3wtazRAHMYcp1wWTSbUFno7Yd4lSP9ZJ+AD7vNHrnx2qcENwVk
+         TXDz2G+byFqnpEa/lBxYEwXGx/xWMBF3sMC86PgHokeFDXTk2oMKT0XmywTEiqOqmYwd
+         YcyNGMSjuNfAjqn7Ww3RF1IJBYcZ6qYKx053vqrg+yzZ2tGISJlWXL44Lu/OyWloyhuA
+         JEpH8tSE4IrJRMWUSQEKwz6cORdRK3iSjRGfkTCdVaP561iGlxBnB3zG5w1KFK2caJU4
+         7NrA==
+X-Gm-Message-State: AOAM532846ALRXJprnBKWhYWtdhzKwx658uPIWwz7eCfmRj5NftPrOe/
+        njRNDOqe/2eLng==
+X-Google-Smtp-Source: ABdhPJzcTnCe0YEDx8RwNlWOrSJDmOYk/x4KD1BDzyGoVvop6ej0ZZTM+odIqcfL3wSOnq6RfnaXFw==
+X-Received: by 2002:adf:e991:: with SMTP id h17mr2262962wrm.40.1636402699089;
+        Mon, 08 Nov 2021 12:18:19 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id l11sm17484447wrp.61.2021.11.08.12.15.14
+        by smtp.gmail.com with ESMTPSA id c15sm17359871wrs.19.2021.11.08.12.18.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Nov 2021 12:15:14 -0800 (PST)
+        Mon, 08 Nov 2021 12:18:18 -0800 (PST)
 From:   Colin Ian King <colin.i.king@googlemail.com>
 X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>
+To:     "K . Y . Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, linux-hyperv@vger.kernel.org,
+        netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] tracing: Fix spelling mistake "aritmethic" -> "arithmetic"
-Date:   Mon,  8 Nov 2021 20:15:13 +0000
-Message-Id: <20211108201513.42876-1-colin.i.king@gmail.com>
+Subject: [PATCH] net: mana: Fix spelling mistake "calledd" -> "called"
+Date:   Mon,  8 Nov 2021 20:18:17 +0000
+Message-Id: <20211108201817.43121-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -68,26 +73,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in the tracing mini-HOWTO text. Fix it.
+There is a spelling mistake in a dev_info message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- kernel/trace/trace.c | 2 +-
+ drivers/net/ethernet/microsoft/mana/gdma_main.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index f9139dc1262c..b8e8f1962189 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -5623,7 +5623,7 @@ static const char readme_msg[] =
- 	"\t        - a numeric literal: e.g. ms_per_sec=1000,\n"
- 	"\t        - an arithmetic expression: e.g. time_secs=current_timestamp/1000\n"
- 	"\n"
--	"\t    hist trigger aritmethic expressions support addition(+), subtraction(-),\n"
-+	"\t    hist trigger arithmetic expressions support addition(+), subtraction(-),\n"
- 	"\t    multiplication(*) and division(/) operators. An operand can be either a\n"
- 	"\t    variable reference, field or numeric literal.\n"
- 	"\n"
+diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
+index c96ac81212f7..636dfef24a6c 100644
+--- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
++++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
+@@ -1424,7 +1424,7 @@ static void mana_gd_shutdown(struct pci_dev *pdev)
+ {
+ 	struct gdma_context *gc = pci_get_drvdata(pdev);
+ 
+-	dev_info(&pdev->dev, "Shutdown was calledd\n");
++	dev_info(&pdev->dev, "Shutdown was called\n");
+ 
+ 	mana_remove(&gc->mana, true);
+ 
 -- 
 2.32.0
 
