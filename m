@@ -2,123 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6594BC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Nov 2021 20:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5043C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Nov 2021 20:15:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 491C2619E2
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Nov 2021 20:09:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 893E161360
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Nov 2021 20:15:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238424AbhKHUMB (ORCPT
+        id S238683AbhKHUSG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 8 Nov 2021 15:12:01 -0500
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:56887 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238411AbhKHUMA (ORCPT
+        Mon, 8 Nov 2021 15:18:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35372 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238614AbhKHUSB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 8 Nov 2021 15:12:00 -0500
-Received: from [192.168.1.18] ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id kAx6mHJabOvR0kAx7mrfnM; Mon, 08 Nov 2021 21:09:14 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 08 Nov 2021 21:09:14 +0100
-X-ME-IP: 86.243.171.122
-Subject: Re: [PATCH] platform/x86: hp_accel: Fix an error handling path in
- 'lis3lv02d_probe()'
-To:     Mark Gross <markgross@kernel.org>
-Cc:     eric.piel@tremplin-utc.net, hdegoede@redhat.com,
-        dmitry.torokhov@gmail.com, giedriuswork@gmail.com,
-        dvhart@linux.intel.com, akpm@linux-foundation.org, pavel@suse.cz,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <5a4f218f8f16d2e3a7906b7ca3654ffa946895f8.1636314074.git.christophe.jaillet@wanadoo.fr>
- <20211108194814.GI61200@T470>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <21eabb3a-db41-6323-0ecd-f231029b75c5@wanadoo.fr>
-Date:   Mon, 8 Nov 2021 21:09:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Mon, 8 Nov 2021 15:18:01 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8598DC061570;
+        Mon,  8 Nov 2021 12:15:16 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id r8so28920058wra.7;
+        Mon, 08 Nov 2021 12:15:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jbnUVXNpx41MFEBmV6cmVlmllMJldtnH48jc2+xBXes=;
+        b=gu8uqR5kM4ZMhT8ubH93GveON9D48ARdPRc5sffXMVd2zTMimxD9qvJK0Ag/9AS7UG
+         Ykt4ACReQnq/tQVUeMHOwjOiG0crPCEUcznhsMNubv92XMkSvv0pGEvtWyNCjGESwvsf
+         aW/NqqhzRqk+oUBMANFVLDew5pF+BLn5W8JoKg4CHOt4ltm4p/5WIbWqWOxj0zUGL38p
+         j717YEgMo73KtPteZZj6HA+AGnkejKInE78p6LTt8MZPgJq6Zve6UpBipPgsoZZHl6+N
+         n99epMwrNhXpBXIZ3PqVQw2mgW8LwGjdvSofyFyi25I2uDkSwYf0SdW4o6MMhQtXdDCc
+         qeHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jbnUVXNpx41MFEBmV6cmVlmllMJldtnH48jc2+xBXes=;
+        b=f2YtnMNEDJVSgFoghjarY2LVxipqS44aiBaLCViLZjs1Ek6cKw+F+PjKx+WiuraEWF
+         OovCyYjHsu6VHHslsY2n/w+xDinebaO58he8dwadsO83tVE3/FvRE459WWAoPHaX3VzF
+         XIw77rtYdydAw/PsSRn/pqmMl8OElvLg02IP6WMtUijC6T23wYBIViCrSq4KK64zZPHT
+         O7mAnr2HlG6NXf3/8qjyyCM8xRmW2ctayUDSzdkxZTlKRJFJNQMX+5gRlNVaTGnL3GXO
+         J/31v1cMh5VyDBUAhSbdrDqOmJhv7TssQQNPFp9jTzLrxrw79rocb5rReq0YJFHh9/jl
+         obTQ==
+X-Gm-Message-State: AOAM5319yBwB8t68FrWq+iNOOvoTAwDuXRTCiAwz/SA9vtzRNkvohGOB
+        9o8tHNwcpJTBsg==
+X-Google-Smtp-Source: ABdhPJxHqPvmfEKhmG6A2lrY3TlcbdATo8YSPh9vxlLHO5ZL1OaSFMI0x624HAfdOxVu+zRWtfoFIg==
+X-Received: by 2002:a05:6000:15c8:: with SMTP id y8mr2248952wry.101.1636402515166;
+        Mon, 08 Nov 2021 12:15:15 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id l11sm17484447wrp.61.2021.11.08.12.15.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Nov 2021 12:15:14 -0800 (PST)
+From:   Colin Ian King <colin.i.king@googlemail.com>
+X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] tracing: Fix spelling mistake "aritmethic" -> "arithmetic"
+Date:   Mon,  8 Nov 2021 20:15:13 +0000
+Message-Id: <20211108201513.42876-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <20211108194814.GI61200@T470>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 08/11/2021 à 20:48, Mark Gross a écrit :
-> On Sun, Nov 07, 2021 at 08:57:07PM +0100, Christophe JAILLET wrote:
->> If 'led_classdev_register()' fails, some additional resources should be
->> released.
->>
->> Add the missing 'i8042_remove_filter()' and 'lis3lv02d_remove_fs()' calls
->> that are already in the remove function but are missing here.
->>
->> Fixes: a4c724d0723b ("platform: hp_accel: add a i8042 filter to remove HPQ6000 data from kb bus stream")
->> Fixes: 9e0c79782143 ("lis3lv02d: merge with leds hp disk")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   drivers/platform/x86/hp_accel.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/platform/x86/hp_accel.c b/drivers/platform/x86/hp_accel.c
->> index b183967ecfb7..435a91fe2568 100644
->> --- a/drivers/platform/x86/hp_accel.c
->> +++ b/drivers/platform/x86/hp_accel.c
->> @@ -331,9 +331,11 @@ static int lis3lv02d_probe(struct platform_device *device)
-> adding some lines of context:
-> 
-> 326         /* filter to remove HPQ6000 accelerometer data
-> 327          * from keyboard bus stream */
-> 328         if (strstr(dev_name(&device->dev), "HPQ6000"))
-> 329                 i8042_install_filter(hp_accel_i8042_filter);
-> 330
->>   	INIT_WORK(&hpled_led.work, delayed_set_status_worker);
->>   	ret = led_classdev_register(NULL, &hpled_led.led_classdev);
->>   	if (ret) {
->> +		i8042_remove_filter(hp_accel_i8042_filter);
-> This filter was added under a conditional.  Should it not be removed under a
-> similar conditional?
+There is a spelling mistake in the tracing mini-HOWTO text. Fix it.
 
-Agreed that it looks odd, but in the remove function, we already don't 
-have the conditional.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ kernel/trace/trace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Moreover, in, we have 'i8042_remove_filter()':
-	if (i8042_platform_filter != filter) {
-		ret = -EINVAL;
-		goto out;
-	}
-So, if 'i8042_install_filter(hp_accel_i8042_filter)' is not called, the 
-removal will be a no-op.
-
->>   		lis3lv02d_joystick_disable(&lis3_dev);
->>   		lis3lv02d_poweroff(&lis3_dev);
->>   		flush_work(&hpled_led.work);
->> +		lis3lv02d_remove_fs(&lis3_dev);
-> where was the fs ever added?
-
-In 'lis3lv02d_init_device()' (see [1]), like what is undone with 
-'lis3lv02d_joystick_disable()' and 'lis3lv02d_poweroff()'.
-
-'lis3lv02d_remove_fs()' is also already part of the remove function.
-
-I guess that having a 'lis3lv02d_uninit_device()' would be much more 
-cleaner.
-
-
-[1]: 
-https://elixir.bootlin.com/linux/v5.15.1/source/drivers/misc/lis3lv02d/lis3lv02d.c#L1188
-
-CJ
-> 
-> --mark
-> 
->>   		return ret;
->>   	}
->>   
->> -- 
->> 2.30.2
->>
-> 
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index f9139dc1262c..b8e8f1962189 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -5623,7 +5623,7 @@ static const char readme_msg[] =
+ 	"\t        - a numeric literal: e.g. ms_per_sec=1000,\n"
+ 	"\t        - an arithmetic expression: e.g. time_secs=current_timestamp/1000\n"
+ 	"\n"
+-	"\t    hist trigger aritmethic expressions support addition(+), subtraction(-),\n"
++	"\t    hist trigger arithmetic expressions support addition(+), subtraction(-),\n"
+ 	"\t    multiplication(*) and division(/) operators. An operand can be either a\n"
+ 	"\t    variable reference, field or numeric literal.\n"
+ 	"\n"
+-- 
+2.32.0
 
