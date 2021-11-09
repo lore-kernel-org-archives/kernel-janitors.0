@@ -2,154 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 116A8C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Nov 2021 21:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DAEFC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Nov 2021 23:00:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E43EC61156
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Nov 2021 21:30:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C689610D2
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Nov 2021 23:00:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237637AbhKIVdX (ORCPT
+        id S243595AbhKIXDX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 Nov 2021 16:33:23 -0500
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:50595 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245267AbhKIVdV (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 Nov 2021 16:33:21 -0500
-Received: from [192.168.1.18] ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id kYYqmHJaVIEdlkYYqmbLNx; Tue, 09 Nov 2021 22:22:53 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Tue, 09 Nov 2021 22:22:53 +0100
-X-ME-IP: 86.243.171.122
-Subject: Re: [PATCH 1/2] eni_vdpa: Fix an error handling path in
- 'eni_vdpa_probe()'
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, mst <mst@redhat.com>,
-        kernel-janitors@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        Wu Zongyong <wuzongyong@linux.alibaba.com>
-References: <f6b2d087ca3840604b4e711a208d35b5d6285cb4.1636301587.git.christophe.jaillet@wanadoo.fr>
- <CACGkMEvN0cgFQhJmLF3xDXHt_EyZ-TnfBM8CnpNwA9sKcwpzBg@mail.gmail.com>
- <393fb7b7-653b-eae6-16bd-5ffc7d600619@wanadoo.fr>
- <CACGkMEt3yA+fkFJxKfrXyui-rYVSk78=1AqrT0TYQqzcqTJVyg@mail.gmail.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <069ed3fb-ef99-ff36-136d-a0221ba85a96@wanadoo.fr>
-Date:   Tue, 9 Nov 2021 22:21:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Tue, 9 Nov 2021 18:03:23 -0500
+Received: from mga01.intel.com ([192.55.52.88]:12436 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S243355AbhKIXDK (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 9 Nov 2021 18:03:10 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10163"; a="256242498"
+X-IronPort-AV: E=Sophos;i="5.87,221,1631602800"; 
+   d="scan'208";a="256242498"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2021 15:00:24 -0800
+X-IronPort-AV: E=Sophos;i="5.87,221,1631602800"; 
+   d="scan'208";a="491848189"
+Received: from shanthyw-mobl1.amr.corp.intel.com (HELO intel.com) ([10.255.34.193])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2021 15:00:22 -0800
+Date:   Tue, 9 Nov 2021 18:00:20 -0500
+From:   Rodrigo Vivi <rodrigo.vivi@intel.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
+        intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>
+Subject: Re: [PATCH] drm/i915: pin: delete duplicate check in
+ intel_pin_and_fence_fb_obj()
+Message-ID: <YYr9hKKh0/OM2rLf@intel.com>
+References: <20211109114850.GB16587@kili>
 MIME-Version: 1.0
-In-Reply-To: <CACGkMEt3yA+fkFJxKfrXyui-rYVSk78=1AqrT0TYQqzcqTJVyg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211109114850.GB16587@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 09/11/2021 à 03:54, Jason Wang a écrit :
-> On Tue, Nov 9, 2021 at 3:32 AM Christophe JAILLET
-> <christophe.jaillet@wanadoo.fr> wrote:
->>
->> Le 08/11/2021 à 06:55, Jason Wang a écrit :
->>> On Mon, Nov 8, 2021 at 12:15 AM Christophe JAILLET
->>> <christophe.jaillet@wanadoo.fr> wrote:
->>>>
->>>> In the error handling path, a successful 'vp_legacy_probe()' should be
->>>> balanced by a corresponding 'vp_legacy_remove()' call, as already done in
->>>> the remove function.
->>>>
->>>> Add the missing call and update gotos accordingly.
->>>>
->>>> Fixes: e85087beedca ("eni_vdpa: add vDPA driver for Alibaba ENI")
->>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>>> ---
->>>>    drivers/vdpa/alibaba/eni_vdpa.c | 6 ++++--
->>>>    1 file changed, 4 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/vdpa/alibaba/eni_vdpa.c b/drivers/vdpa/alibaba/eni_vdpa.c
->>>> index 3f788794571a..12b3db6b4517 100644
->>>> --- a/drivers/vdpa/alibaba/eni_vdpa.c
->>>> +++ b/drivers/vdpa/alibaba/eni_vdpa.c
->>>> @@ -501,7 +501,7 @@ static int eni_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->>>>           if (!eni_vdpa->vring) {
->>>>                   ret = -ENOMEM;
->>>>                   ENI_ERR(pdev, "failed to allocate virtqueues\n");
->>>> -               goto err;
->>>> +               goto err_remove_vp_legacy;
->>>>           }
->>>>
->>>>           for (i = 0; i < eni_vdpa->queues; i++) {
->>>> @@ -513,11 +513,13 @@ static int eni_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->>>>           ret = vdpa_register_device(&eni_vdpa->vdpa, eni_vdpa->queues);
->>>>           if (ret) {
->>>>                   ENI_ERR(pdev, "failed to register to vdpa bus\n");
->>>> -               goto err;
->>>> +               goto err_remove_vp_legacy;
->>>>           }
->>>>
->>>>           return 0;
->>>>
->>>> +err_remove_vp_legacy:
->>>> +       vp_legacy_remove(&eni_vdpa->ldev);
->>>
->>> Won't vp_legacy_remove() be triggered by the put_devic() below?
->>
->> Hi, I'm sorry but i don't see how.
->>
->> My understanding is that:
->>     - on "put_device(&eni_vdpa->vdpa.dev);", the corresponding release
->> function will be called.
->>
->>     - This release function is the one recorded in the
->> '__vdpa_alloc_device()' function.
->>
->>     - So it should be 'vdpa_release_dev()'.
->>
->>     - This function, AFAIU, has no knowledge of 'vp_legacy_remove()' or
->> anything that could call it.
->>
->>
->> Unless I misread something or miss something obvious, I don't see how
->> 'vp_legacy_remove() would be called.
->>
->>
->> Could you elaborate?
+On Tue, Nov 09, 2021 at 02:48:50PM +0300, Dan Carpenter wrote:
+> The "ret" variable is checked on the previous line so we know it's
+> zero.  No need to check again.
 > 
-> I think the device should release the driver (see
-> device_release_driver()) during during its deleting.
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Hi, I still don't follow the logic and I don't understand how 
-'vp_legacy_remove()' will finely be called, but it is not that important.
+Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 
-If it's fine for you, it's fine for me :)
+and pushed.
+thanks for the patch
 
-CJ
-
+> ---
+>  drivers/gpu/drm/i915/display/intel_fb_pin.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
 > 
-> Thanks
+> diff --git a/drivers/gpu/drm/i915/display/intel_fb_pin.c b/drivers/gpu/drm/i915/display/intel_fb_pin.c
+> index 3f77f3013584..3b20f69e0240 100644
+> --- a/drivers/gpu/drm/i915/display/intel_fb_pin.c
+> +++ b/drivers/gpu/drm/i915/display/intel_fb_pin.c
+> @@ -142,13 +142,11 @@ intel_pin_and_fence_fb_obj(struct drm_framebuffer *fb,
+>  	if (ret)
+>  		goto err;
+>  
+> -	if (!ret) {
+> -		vma = i915_gem_object_pin_to_display_plane(obj, &ww, alignment,
+> -							   view, pinctl);
+> -		if (IS_ERR(vma)) {
+> -			ret = PTR_ERR(vma);
+> -			goto err_unpin;
+> -		}
+> +	vma = i915_gem_object_pin_to_display_plane(obj, &ww, alignment,
+> +						   view, pinctl);
+> +	if (IS_ERR(vma)) {
+> +		ret = PTR_ERR(vma);
+> +		goto err_unpin;
+>  	}
+>  
+>  	if (uses_fence && i915_vma_is_map_and_fenceable(vma)) {
+> -- 
+> 2.20.1
 > 
->>
->> CJ
->>
->>>
->>> Thanks
->>>
->>>>    err:
->>>>           put_device(&eni_vdpa->vdpa.dev);
->>>>           return ret;
->>>> --
->>>> 2.30.2
->>>>
->>>
->>>
->>
-> 
-> _______________________________________________
-> Virtualization mailing list
-> Virtualization@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/virtualization
-> 
-
