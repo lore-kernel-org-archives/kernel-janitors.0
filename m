@@ -2,122 +2,113 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC9AC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Nov 2021 02:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2275EC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Nov 2021 04:52:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9646F6120A
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Nov 2021 02:56:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09913610E9
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Nov 2021 04:52:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242095AbhKIC72 (ORCPT
+        id S242890AbhKIEzL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 8 Nov 2021 21:59:28 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:36685 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S242090AbhKIC70 (ORCPT
+        Mon, 8 Nov 2021 23:55:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39062 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242878AbhKIEzK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 8 Nov 2021 21:59:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1636426601;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=JHvu3XTSxpKAPKxPraFsC3ipd6AaaaqYJT0sjfs7xH0=;
-        b=iocWGQV1Ec+Mpj9nv4Tdc+wig229FRhTyuOazCwFU8PibDvm75IOpR1+KqChEu8thZrSmc
-        sFsnhvmGt56hWAGgKjLNmY8DkBnqNlvhrfjVGvvrSM9oy6maBHfZ6RO/38ppBU/wgnw/2f
-        5UNGj0Ye9BqHWdWNBi3uECTWH/AL0fg=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-157-lPp-OGhlNdWdSaDzFIWk_Q-1; Mon, 08 Nov 2021 21:56:40 -0500
-X-MC-Unique: lPp-OGhlNdWdSaDzFIWk_Q-1
-Received: by mail-lf1-f71.google.com with SMTP id h40-20020a0565123ca800b00402514d959fso6004848lfv.7
-        for <kernel-janitors@vger.kernel.org>; Mon, 08 Nov 2021 18:56:39 -0800 (PST)
+        Mon, 8 Nov 2021 23:55:10 -0500
+Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66893C061764
+        for <kernel-janitors@vger.kernel.org>; Mon,  8 Nov 2021 20:52:25 -0800 (PST)
+Received: by mail-oi1-x236.google.com with SMTP id n66so8005049oia.9
+        for <kernel-janitors@vger.kernel.org>; Mon, 08 Nov 2021 20:52:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fIi/8rMsntaI+OsdfCjYQbsx+2Ak2wriMzRfxygR1FA=;
+        b=YQj7Lj4xuXVPjaiPI91CCtrxG/QPQj2KuOiKL+6EOLjbFP+68Vxjn6VP2zgEb2WPng
+         gttNnAewxd5Q/UnXavsCgAkGKGIEbb33rE4NhkJJwqkxwFRhuPZCRsRcTBkyg1ci6l+p
+         44XDT98JjjfF2Fxepkrnx37rkhjKXElHvjzb/Gqhkszf6RfXX4y/0ob89EC2VrnNdSc/
+         1nm23L7eBmUcFVVMMs/v7wWh4CWub/fbwqoWPo2N+7amnOteVZmuDAnDE9qWXU/pgWKI
+         vyF86ekPDv40KLWl074BU5pae8QhuZ+dmVAIJewsWnmy1sT0cZ0QQfCqG1tw9GMURM91
+         aDzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=JHvu3XTSxpKAPKxPraFsC3ipd6AaaaqYJT0sjfs7xH0=;
-        b=F56HtpdImUWPy7HAzGlXXGg0NnxukbqMjFNuiWokY5R7X8zOe/SD+Uqcg2jqjWJRs9
-         Aeqb1vGJihySEdsUttm6eA9wl+FYF/Jxtt7i2BGKXZNbANqApGHR/jZrEZkexs2uXrxC
-         N4qC2NEB433nyqsyeHfj0o5jA8LQQ1t2CZ/MsQqyJ2C1aNHD+s+6z9JGyVg3kVsX6Q86
-         A3d1t3+ho9USvguKGWpxuM5Keo8WP/0hSCDooNfiGfzSpL0bLIHaYvnwFlBglGvb1G/C
-         ZuHNqj+CqRhbi/7VeA0LNCIoWtUvhxMrEy5oo6PORexiN7x9hluNhI8+RaZYSN3Sfdu4
-         IfNg==
-X-Gm-Message-State: AOAM530ZrwiyJQRwgjpSJ3g1WWbt8seYWGQdSwwpsMV/UEtUa5UwUZTc
-        25PyM1mOGUDRzLkA+x1bBBXYpBNiiBqMDa+R2JxLP9+1Pz+1fgg8cMnjI6wtbjHfgyekKkjl7AG
-        imPNRarE279cFEGbOEalvJJMq6iSLJawEnqVr5ZOErMRP
-X-Received: by 2002:a2e:89d4:: with SMTP id c20mr4053536ljk.107.1636426598683;
-        Mon, 08 Nov 2021 18:56:38 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwS0xouPIEbcfGrEIA1f9+MGc01Gw65/pL0zQKLFQYgTcVajy8bhK7Y9nb5RTP7yGFat3VCFBGMoT19gfnMt34=
-X-Received: by 2002:a2e:89d4:: with SMTP id c20mr4053522ljk.107.1636426598529;
- Mon, 08 Nov 2021 18:56:38 -0800 (PST)
+        bh=fIi/8rMsntaI+OsdfCjYQbsx+2Ak2wriMzRfxygR1FA=;
+        b=S3RFFxvncWfy/E63rEhJ4tPFCCcD3xri3u0HjkQAJEzp/U0KHIpKpXw5VOGunUQtuh
+         Hadkm8SRAoRx6t1kxQWCcgfvhTrYujQ3cF07a+1jbMA9PEGmm2mUh7glNWlBTySWp/iY
+         Lj4R0pRoXgiH7C8J2XqU/4VDTewAA5Jdf0gkS5zrfMY/ONDAbsVD6GNcAwuzIobAehoU
+         CjUgUJd/eM6CKgLl7Xlqunhcu8uoQVRC1LmOSbg9uo/fX5aN4iK7AgkBl6P7usqNeUKH
+         W41gNSf7s5bNZK39l9qHXqqGb0+fPt/8Va475eIWbVe3T6K24J3xxAfwpjRv801q4nKG
+         RqwA==
+X-Gm-Message-State: AOAM532Pi2+MkvnEnYlALyhLfeUajOhnCDJX2aq92ZC+W6Qi0FBifSnS
+        Kod6/RkYUhiqR1FQa0gc6lSBHQbKE9Y4+8VGupdszw==
+X-Google-Smtp-Source: ABdhPJw/PXJeyQlLBQdKl4Na77Zir0MpynV5/VfDEG0JbF81ciPHPaSAILPbfcUgMwRqhqiiszKinPesveK3xnr+A3A=
+X-Received: by 2002:aca:120f:: with SMTP id 15mr3151848ois.132.1636433544821;
+ Mon, 08 Nov 2021 20:52:24 -0800 (PST)
 MIME-Version: 1.0
-References: <f6b2d087ca3840604b4e711a208d35b5d6285cb4.1636301587.git.christophe.jaillet@wanadoo.fr>
- <02045bdcbbb25f79bae4827f66029cfcddc90381.1636301587.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <02045bdcbbb25f79bae4827f66029cfcddc90381.1636301587.git.christophe.jaillet@wanadoo.fr>
-From:   Jason Wang <jasowang@redhat.com>
-Date:   Tue, 9 Nov 2021 10:56:27 +0800
-Message-ID: <CACGkMEuimP8dcWrBk01P-bU-L-xPH=gN4=qAY_tAqnMHqpW+rA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] eni_vdpa: Simplify 'eni_vdpa_probe()'
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     mst <mst@redhat.com>, Wu Zongyong <wuzongyong@linux.alibaba.com>,
+References: <20211028141938.3530-1-lukas.bulwahn@gmail.com> <20211028141938.3530-14-lukas.bulwahn@gmail.com>
+In-Reply-To: <20211028141938.3530-14-lukas.bulwahn@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 9 Nov 2021 05:52:13 +0100
+Message-ID: <CACRpkdYm2Da3W63T4KTnFzESNBrgvZGZsVZYqFN_16NGfpWm2w@mail.gmail.com>
+Subject: Re: [PATCH 13/13] arm: pgtable: refer to intended CONFIG_ARM_LPAE in comment
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linus Walleij <linusw@kernel.org>,
+        Imre Kaloz <kaloz@openwrt.org>,
+        Krzysztof Halasa <khalasa@piap.pl>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
         Arnd Bergmann <arnd@arndb.de>,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
+        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Nov 8, 2021 at 12:15 AM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> When 'pcim_enable_device()' is used, some resources become automagically
-> managed.
-> There is no need to call 'pci_free_irq_vectors()' when the driver is
-> removed. The same will already be done by 'pcim_release()'.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Thu, Oct 28, 2021 at 4:20 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+> Commit 5615f69bc209 ("ARM: 9016/2: Initialize the mapping of KASan shadow
+> memory") adds some nested ifdef's in ./arch/arm/mm/pgd.c, and follows the
+> good practice to annotate the endif's with a comment to indicate the
+> corresponding ifdef condition.
+>
+> One comment annotation refers to CONFIG_LPAE, whereas the config is
+> actually called CONFIG_ARM_LPAE. That imprecision in a comment is probably
+> tolerable for all human readers.
+>
+> However, the script ./scripts/checkkconfigsymbols.py, which checks the
+> kernel tree for references to non-existing Kconfig symbols, identifies and
+> reports that the reference to CONFIG_LPAE is invalid.
+>
+> The script ./scripts/checkkconfigsymbols.py has been quite useful to
+> identify a number of bugs with Kconfig symbols and deserves to be executed
+> and checked regularly.
+>
+> So, repair the comment to reduce the reports from this script and simplify
+> to use this script, as new issues are easier to spot when the list of
+> reports is shorter.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-> ---
-> Leaving the 'pci_free_irq_vectors()' call is harmless.
-> ---
->  drivers/vdpa/alibaba/eni_vdpa.c | 12 ------------
->  1 file changed, 12 deletions(-)
->
-> diff --git a/drivers/vdpa/alibaba/eni_vdpa.c b/drivers/vdpa/alibaba/eni_vdpa.c
-> index 12b3db6b4517..3db686436628 100644
-> --- a/drivers/vdpa/alibaba/eni_vdpa.c
-> +++ b/drivers/vdpa/alibaba/eni_vdpa.c
-> @@ -450,11 +450,6 @@ static u16 eni_vdpa_get_num_queues(struct eni_vdpa *eni_vdpa)
->         return num;
->  }
->
-> -static void eni_vdpa_free_irq_vectors(void *data)
-> -{
-> -       pci_free_irq_vectors(data);
-> -}
-> -
->  static int eni_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  {
->         struct device *dev = &pdev->dev;
-> @@ -488,13 +483,6 @@ static int eni_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->         eni_vdpa->vdpa.dma_dev = &pdev->dev;
->         eni_vdpa->queues = eni_vdpa_get_num_queues(eni_vdpa);
->
-> -       ret = devm_add_action_or_reset(dev, eni_vdpa_free_irq_vectors, pdev);
-> -       if (ret) {
-> -               ENI_ERR(pdev,
-> -                       "failed for adding devres for freeing irq vectors\n");
-> -               goto err;
-> -       }
-> -
->         eni_vdpa->vring = devm_kcalloc(&pdev->dev, eni_vdpa->queues,
->                                       sizeof(*eni_vdpa->vring),
->                                       GFP_KERNEL);
-> --
-> 2.30.2
->
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
+Please put this patch into Russell's patch tracker!
+
+Yours,
+Linus Walleij
