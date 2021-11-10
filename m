@@ -2,105 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF505C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 19:36:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21EDAC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 20:34:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB9D7610A2
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 19:36:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC6986113D
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 20:34:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232548AbhKJTja (ORCPT
+        id S232974AbhKJUhX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 10 Nov 2021 14:39:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55738 "EHLO
+        Wed, 10 Nov 2021 15:37:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230388AbhKJTjZ (ORCPT
+        with ESMTP id S232240AbhKJUhW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 10 Nov 2021 14:39:25 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABC1DC061764;
-        Wed, 10 Nov 2021 11:36:37 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id u18so5891826wrg.5;
-        Wed, 10 Nov 2021 11:36:37 -0800 (PST)
+        Wed, 10 Nov 2021 15:37:22 -0500
+Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60726C061764
+        for <kernel-janitors@vger.kernel.org>; Wed, 10 Nov 2021 12:34:34 -0800 (PST)
+Received: by mail-qt1-x836.google.com with SMTP id o17so3368732qtk.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 10 Nov 2021 12:34:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6Z8SMunWQcnk6H7z0v7bcp6qKVk9GWG+Oiz8OpqEszI=;
-        b=oXIysTlNVbQRqVPcfuFaK+8pnGVtAvR/go8VDsPZbXbW5IRK582fEcwaxvWkrVUkts
-         6CvO/a6K4cVEdcVhI+g3uCdJEWfbM1jjpH3wn55zbMO85O1CaLALThPknDVyX6E/JYP8
-         +wDF9Z00irYxSgWcn0u5TTF//8gXbJLRv98DwMozzFwWUA9ZEHeZfo02lG9sYfTETJuA
-         QeG1Xi0dt8qbLwiFGl5x42+vjdhw9xt5Z7HDi9dzNhL83GQz/dg+um6DyVVPvNzlBgU/
-         CDJBufGmQrvh9auLzKZSXbU+qLVofPHj3Vpq0iyoUekogBz89p7xWmFEnFIwQ7//eadF
-         xh9A==
+        d=toxicpanda-com.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=8pLMo7yji4oTRxu0asWqEVTwXX803tqx41OgUyq4EXU=;
+        b=lxPv6rW1PqMzBhAzITif8LRyGNRr2rch8gSEPDAw/zg78VVvDrPt9E/E2uPaPoM/aK
+         KQZoh/BbUmWxoiSYjHllurBcaBsdrD/x12AMvtUEdfjaNq4nKuS6y4x9b8LCMshjus0z
+         jnhu/KZi1x26xyNO2P6+lTrBOdacA7/kH+jvMC0EozkPRkjXQSu1taj3r8eeKWoGEKlA
+         gIjmV9Y9BsekIG6GJdXa+LUiX/0xBl5uhXovNmfZbO0dJzB4FbCmVAgQu41DsPqolV0b
+         UvPz5jH0HGnGbnpEj9AAYn/IbVC3uxwoB9mOmtWjx/chZGQkfnx2c+PL2QiXPqVrA5wW
+         s8Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6Z8SMunWQcnk6H7z0v7bcp6qKVk9GWG+Oiz8OpqEszI=;
-        b=epre1jDr1rUcaMrNfo6HU+I5dn9FHJ5yfO7QLpb7+oq31xXzq/uTs0hentr30VmVYn
-         RF96O2FF0EWpiAGF0/ADdhdgyEYKlKiuYwJPIGJK1PCKMMsEXw9797jrGcStDQELy3wx
-         oiMhkERbZdYoikFviv+wIBb8zCc076VNG9WFmiBF3zFy329O6PYT1OIdlgttqE90QPyN
-         WHuK2i0TfH4FvWtQfOh7IZV/udw5vaCuLxYNj2pk5sD4hnVuDr+MTfMbROBBaeNFsJzU
-         huHPQx2r9HH3IX9UD+8HF0oTb44pHkhZieS2ouTz6bv3KJ/iUoK04HVWX320wDYQsihC
-         Yw9A==
-X-Gm-Message-State: AOAM532vp1wI0QDXkaXsKSWWt8AEL9tLaUbqoHd3sEMv9ZRPEH61ZocY
-        ZvuSgPrKJ1dqXQ==
-X-Google-Smtp-Source: ABdhPJyEPqNej1qS/wX6Ss4Bd6tM6SnB5Dz2gtv4liSwPZVQZWxIX1ItETpYJTswugwKLMv+oNRcZA==
-X-Received: by 2002:a5d:534b:: with SMTP id t11mr1807334wrv.75.1636572996346;
-        Wed, 10 Nov 2021 11:36:36 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id h204sm650777wmh.33.2021.11.10.11.36.35
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=8pLMo7yji4oTRxu0asWqEVTwXX803tqx41OgUyq4EXU=;
+        b=rvp11qFLN3eYKZaujOTXdRF9D1G54wVD2gZbx89WHjOqBWQpOD+OyRvWy0dnZWWoYW
+         FDAAYHK9qgOXs4jJ42POSpqMz5LRi/9AWHfRiA/ckYK7ToFipd3Cbc1OISDCygHiGpd6
+         1rnTESA1IK8p60hHT/3JhMc+1hBl+XtqZt5HS6N+ZraN6XSQwFFqMGT27f92BV/+4ZsO
+         NM3BI5/3qpM1a39X1DYOAZ9g7RdVS9Gm+/UdJkyO+XQpR+QovTFLGnB4LK8ljB08kjUy
+         VcdJ8ldluHcDxHO8SEKPgOOc/LxBVwfpqZncod5peir40Jfoy8J01exrzaTUeuN1jelr
+         EwOA==
+X-Gm-Message-State: AOAM531vAQFnCyk4pogSnX1VtSqetsIbCkOWbn9C48+W8dT27E0Ke7iR
+        brgnBw9xTSmCrq6cY7ZgFkByww==
+X-Google-Smtp-Source: ABdhPJw28ba0kyPFwpYXq5FsysZIz91rbsDRgNMw/eM3LOf18dXMnho+w2vzKfF3u6KPAITbUXCLXA==
+X-Received: by 2002:ac8:5812:: with SMTP id g18mr1977474qtg.392.1636576473463;
+        Wed, 10 Nov 2021 12:34:33 -0800 (PST)
+Received: from localhost (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
+        by smtp.gmail.com with ESMTPSA id u8sm506287qkp.21.2021.11.10.12.34.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Nov 2021 11:36:36 -0800 (PST)
-From:   Colin Ian King <colin.i.king@googlemail.com>
-X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
-To:     Emma Anholt <emma@anholt.net>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Melissa Wen <mwen@igalia.com>,
-        Iago Toral Quiroga <itoral@igalia.com>,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/v3d: pass null pointers using NULL
-Date:   Wed, 10 Nov 2021 19:36:35 +0000
-Message-Id: <20211110193635.312328-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.32.0
+        Wed, 10 Nov 2021 12:34:32 -0800 (PST)
+Date:   Wed, 10 Nov 2021 15:34:32 -0500
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     Colin Ian King <colin.i.king@googlemail.com>
+Cc:     Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+        Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] btrfs: make 1-bit bit-fields unsigned int
+Message-ID: <YYws2G9kgER/zeeg@localhost.localdomain>
+References: <20211110192008.311901-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211110192008.311901-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are a couple of calls that are passing null pointers as
-integer zeros rather than NULL. Fix this by using NULL instead.
+On Wed, Nov 10, 2021 at 07:20:08PM +0000, Colin Ian King wrote:
+> The bitfields have_csum and io_error are currently signed which is
+> not recommended as the representation is an implementation defined
+> behaviour. Fix this by making the bit-fields unsigned ints.
+> 
+> Fixes: 2c36395430b0 ("btrfs: scrub: remove the anonymous structure from scrub_page")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Fixes: 07c2a41658c4 ("drm/v3d: alloc and init job in one shot")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/drm/v3d/v3d_gem.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
-index e47ae40a865a..c7ed2e1cbab6 100644
---- a/drivers/gpu/drm/v3d/v3d_gem.c
-+++ b/drivers/gpu/drm/v3d/v3d_gem.c
-@@ -774,7 +774,7 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
- 
- 	if (args->flags & DRM_V3D_SUBMIT_CL_FLUSH_CACHE) {
- 		ret = v3d_job_init(v3d, file_priv, (void *)&clean_job, sizeof(*clean_job),
--				   v3d_job_free, 0, 0, V3D_CACHE_CLEAN);
-+				   v3d_job_free, 0, NULL, V3D_CACHE_CLEAN);
- 		if (ret)
- 			goto fail;
- 
-@@ -1007,7 +1007,7 @@ v3d_submit_csd_ioctl(struct drm_device *dev, void *data,
- 		goto fail;
- 
- 	ret = v3d_job_init(v3d, file_priv, (void *)&clean_job, sizeof(*clean_job),
--			   v3d_job_free, 0, 0, V3D_CACHE_CLEAN);
-+			   v3d_job_free, 0, NULL, V3D_CACHE_CLEAN);
- 	if (ret)
- 		goto fail;
- 
--- 
-2.32.0
+Thanks,
 
+Josef
