@@ -2,71 +2,68 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC06C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 22:53:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ECB3C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 23:25:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4900D611F2
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 22:53:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 030D660FDA
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 23:25:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233849AbhKJWzz (ORCPT
+        id S234180AbhKJX2b (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 10 Nov 2021 17:55:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44548 "EHLO
+        Wed, 10 Nov 2021 18:28:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233634AbhKJWzx (ORCPT
+        with ESMTP id S233964AbhKJX23 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 10 Nov 2021 17:55:53 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DACAC061766;
-        Wed, 10 Nov 2021 14:53:05 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id az33-20020a05600c602100b00333472fef04so5105995wmb.5;
-        Wed, 10 Nov 2021 14:53:04 -0800 (PST)
+        Wed, 10 Nov 2021 18:28:29 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64C75C061766;
+        Wed, 10 Nov 2021 15:25:41 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id i5so6757192wrb.2;
+        Wed, 10 Nov 2021 15:25:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=ol/nKO7r8NkQwHBDAbwV2ietksqRbkzg5QBtFCAI1hk=;
-        b=Kt6Ej8Qc3hpUQ6mZrEBCqrWHdGyM8Sf9o7XfyWkjOTWd6Bdp+WlWk/p7t5dyoDs9Dd
-         CpeSBYw/bB2/AXKS2WHj1M2yGNaSxDANMzGfhcf2mwgsVzSxHtBqUQ2VauUguw+6SHSo
-         tug9BumlLZvj9BX3L9ogZuYQIKlAju9X0n+uQMBsLc4snFZVN8/3ATfQ04GRFH8pNxPh
-         ZYBIGUSz3z7kExoBadilWOW0+jNR1MHDz0y5wya5VYehCn0sCmvnQFLTyv2yIdlUG1Io
-         fr5bPRn7wn5VOg0P8nzX7fZ736sdmdO/8AKWrXPNPd4nvRxdIBQ2PtfKL0z9nkjE6fw5
-         92nA==
+        bh=v/V7ixtvM0wJB1Jk1MWAaJATghrtxgTP4T3O07Mrdu8=;
+        b=LILZhyChTSUnQFuhxiecQFf7BFCwtIEeMMhAGYGeU3TiqOPt2MBkeFcD2biuRKK/s2
+         nmKapnBpB3NFuRxSWLC/OOtIZhF1jiUxgqTXeHPhD1IUTTxEBFvuyizRc8P/I8CoTZmJ
+         41FSIgvVFJelikXD8K2GXOGQ0QTnza5onqn2b3rc0uzFIPoYf2VfDePflmLgLl6/i7bz
+         3ikCGyCrQU4WnWwXBSnsD9kc3Od2H8TueEJAVgsphQl4ji5VIpxYz4PFqgrkNU9njHxq
+         F1eIvXU/h9ijIzRI0aA8Fev3QTv82aEAY6BFSRACuSZKaoZsU97vIpYtGW1JhvpXb1hh
+         mjNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=ol/nKO7r8NkQwHBDAbwV2ietksqRbkzg5QBtFCAI1hk=;
-        b=KJMvB5UheAoF2XR+AoSrBIMfjpBY3GUrj/hadH5FZvL6T0+s/+G+EYppSB+VOkn23n
-         Xn3LyGmUEGNaAwXpznGw3vp2zIAxm8tUxkFl2edemns8gIggaDpk6aGbNIK7Us2Zi6zn
-         StuPsVu1TVsEHYNIn7etBolVk9Ksl935uK71qQBv6BQziBDYfcRlIjdYpZVzhwTpSm8h
-         mDc6fxn0yeh6Zvd6CK6Ai1SPk/N8gu6meSFk01f1KPzlyy9rMuknFbyhTNdc9sbMNbmM
-         tJHBuuJEWRZStt6VVGg28jYcabdX5rf0dYXn48pw4Hp/oaOUFSW0HfPw8RvbxQtJnGrY
-         Dz4g==
-X-Gm-Message-State: AOAM5337q8MeisxwRnqOH1u5T9/i0+OmJI2rg7XGkrTRAvCJ1hrYiqgB
-        BEn8HJcv08DqqHXh6BGK00e51ogKFg==
-X-Google-Smtp-Source: ABdhPJxNnDHRcVK5veeRh2QQFTNmqTm7rbVEkM6YYYRZ096DcrlxQMaqRq7abozRbzbvR5vcRrExvA==
-X-Received: by 2002:a05:600c:354f:: with SMTP id i15mr3060605wmq.59.1636584783674;
-        Wed, 10 Nov 2021 14:53:03 -0800 (PST)
+        bh=v/V7ixtvM0wJB1Jk1MWAaJATghrtxgTP4T3O07Mrdu8=;
+        b=HjOYzIjAOthQIezFC9ECKxYbo4XAfUlGxBz/KZKkPynGHtKrS7THFMWfjWgbLdnLAZ
+         3zLC5YFNMOvn8Rt1rGux2OtqKm1qDcQSN6HWwnKcBo/UUcsuPjhSQ6sK6+SZbHn7a4nU
+         c+WMoJCEUouTYgJ/V6F3X5vFYAY5o5iE2WiFtOfAmxBBE3kUFQGI0s3lY/xBMAZ2bvzi
+         CwcTkov6XYrz9q61kwSWjWQSGHIxGYj2F25SgjSxs0qiD6L+IGBKo5v3E1VFi1Y40hd/
+         g22DjSAcYpUCd5q2BYoboH6nOgAvM/6/PvRBBp30DSh/w5r9p4PflbbYCkwmB6UoxoHN
+         Kt9g==
+X-Gm-Message-State: AOAM533tivCCB6lE9GouNCPk3bcje4c/bbnOvEar/Av0Txvwb3WztRQf
+        iextg8xpekG32w==
+X-Google-Smtp-Source: ABdhPJyn1HgNoM2PuLTIIsBKun1kehkVMuJbkmEmNTpqdSvwCz/414bbsmxAE/9bo0LnPKqrDbA0Gg==
+X-Received: by 2002:a5d:4107:: with SMTP id l7mr3355393wrp.209.1636586740056;
+        Wed, 10 Nov 2021 15:25:40 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id o8sm1129299wrm.67.2021.11.10.14.53.02
+        by smtp.gmail.com with ESMTPSA id l4sm1118662wrv.94.2021.11.10.15.25.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Nov 2021 14:53:03 -0800 (PST)
+        Wed, 10 Nov 2021 15:25:39 -0800 (PST)
 From:   Colin Ian King <colin.i.king@googlemail.com>
 X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
-To:     William Hubbs <w.d.hubbs@gmail.com>,
-        Chris Brannon <chris@the-brannons.com>,
-        Kirk Reiser <kirk@reisers.ca>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        speakup@linux-speakup.org
+To:     Paul Burton <paulburton@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] speakup: remove redundant assignment of variable i
-Date:   Wed, 10 Nov 2021 22:53:01 +0000
-Message-Id: <20211110225301.315573-1-colin.i.king@gmail.com>
+Subject: [PATCH] MIPS: generic/yamon-dt: fix uninitialized variable error
+Date:   Wed, 10 Nov 2021 23:25:38 +0000
+Message-Id: <20211110232538.1372250-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -74,56 +71,33 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-The variable i is being initialized a value that is never read, it is
-re-assigned later on in a for-loop.  The assignment is redundant and
-can be removed.
+In the case where fw_getenv returns an error when fetching values
+for ememsizea and memsize then variable phys_memsize is not assigned
+a variable and will be uninitialized on a zero check of phys_memsize.
+Fix this by initializing phys_memsize to zero.
 
+Cleans up cppcheck error:
+arch/mips/generic/yamon-dt.c:100:7: error: Uninitialized variable: phys_memsize [uninitvar]
+
+Fixes: f41d2430bbd6 ("MIPS: generic/yamon-dt: Support > 256MB of RAM")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/accessibility/speakup/speakup_acntpc.c | 2 +-
- drivers/accessibility/speakup/speakup_dtlk.c   | 2 +-
- drivers/accessibility/speakup/speakup_keypc.c  | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ arch/mips/generic/yamon-dt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/accessibility/speakup/speakup_acntpc.c b/drivers/accessibility/speakup/speakup_acntpc.c
-index c1ec087dca13..023172ca22ef 100644
---- a/drivers/accessibility/speakup/speakup_acntpc.c
-+++ b/drivers/accessibility/speakup/speakup_acntpc.c
-@@ -247,7 +247,7 @@ static void synth_flush(struct spk_synth *synth)
- static int synth_probe(struct spk_synth *synth)
+diff --git a/arch/mips/generic/yamon-dt.c b/arch/mips/generic/yamon-dt.c
+index a3aa22c77cad..a07a5edbcda7 100644
+--- a/arch/mips/generic/yamon-dt.c
++++ b/arch/mips/generic/yamon-dt.c
+@@ -75,7 +75,7 @@ static unsigned int __init gen_fdt_mem_array(
+ __init int yamon_dt_append_memory(void *fdt,
+ 				  const struct yamon_mem_region *regions)
  {
- 	unsigned int port_val = 0;
--	int i = 0;
-+	int i;
- 
- 	pr_info("Probing for %s.\n", synth->long_name);
- 	if (port_forced) {
-diff --git a/drivers/accessibility/speakup/speakup_dtlk.c b/drivers/accessibility/speakup/speakup_dtlk.c
-index 92838d3ae9eb..a9dd5c45d237 100644
---- a/drivers/accessibility/speakup/speakup_dtlk.c
-+++ b/drivers/accessibility/speakup/speakup_dtlk.c
-@@ -316,7 +316,7 @@ static struct synth_settings *synth_interrogate(struct spk_synth *synth)
- static int synth_probe(struct spk_synth *synth)
- {
- 	unsigned int port_val = 0;
--	int i = 0;
-+	int i;
- 	struct synth_settings *sp;
- 
- 	pr_info("Probing for DoubleTalk.\n");
-diff --git a/drivers/accessibility/speakup/speakup_keypc.c b/drivers/accessibility/speakup/speakup_keypc.c
-index 311f4aa0be22..1618be87bff1 100644
---- a/drivers/accessibility/speakup/speakup_keypc.c
-+++ b/drivers/accessibility/speakup/speakup_keypc.c
-@@ -254,7 +254,7 @@ static void synth_flush(struct spk_synth *synth)
- static int synth_probe(struct spk_synth *synth)
- {
- 	unsigned int port_val = 0;
--	int i = 0;
-+	int i;
- 
- 	pr_info("Probing for %s.\n", synth->long_name);
- 	if (port_forced) {
+-	unsigned long phys_memsize, memsize;
++	unsigned long phys_memsize = 0, memsize;
+ 	__be32 mem_array[2 * MAX_MEM_ARRAY_ENTRIES];
+ 	unsigned int mem_entries;
+ 	int i, err, mem_off;
 -- 
 2.32.0
 
