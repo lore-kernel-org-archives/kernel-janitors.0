@@ -2,62 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F4EC433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 14:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB9E0C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 14:40:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DFC0D611ED
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 14:35:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95C9F611ED
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 14:40:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232236AbhKJOh7 (ORCPT
+        id S232281AbhKJOnD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 10 Nov 2021 09:37:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39760 "EHLO mail.kernel.org"
+        Wed, 10 Nov 2021 09:43:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231969AbhKJOh6 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 10 Nov 2021 09:37:58 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B7E996112F;
-        Wed, 10 Nov 2021 14:35:10 +0000 (UTC)
+        id S232268AbhKJOm4 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 10 Nov 2021 09:42:56 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id 80CB261251;
+        Wed, 10 Nov 2021 14:40:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636554911;
-        bh=TOnxxz8GgNN2NO4MdQ81UlRwAWc6MK7a3d5+ZzVDMTs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pS3evkkxDoV1tl//K1t4Tvdpvka+XcBYVlg/xdThsrhpMPf8jxKysQ6fHWJ6LHL3J
-         CcL5hKYmqTRUvz7nKLT1Lpb3CBc3IU28iWUyPtauo9zPz966mzwhid4uuLuWoqN1rO
-         eLEAXlTbW37WULTAdC/Vm0kMIUTZby8rc0WxwDTvvrfAC/6bGXbEYrINytTe2jDFz5
-         tjwAG76ScdAPR+25Rt9Pbhyi8LHB6t7mJq2qNlH4db3eymS1oqODOf04jottD0p4SR
-         dCyDqb8TXDG8uj9vnGnTP6AcIhMHD15y6ZWe0BidDvXUFVeC75gyfKTmFZz7xldszv
-         gK/ebQoOlrxgw==
-Date:   Wed, 10 Nov 2021 16:35:07 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Saeed Mahameed <saeedm@nvidia.com>,
-        Maor Gottlieb <maorg@nvidia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Mark Bloch <mbloch@nvidia.com>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] net/mlx5: Lag, fix a potential Oops with
- mlx5_lag_create_definer()
-Message-ID: <YYvYm/8xQkqP1cbD@unreal>
-References: <20211110080706.GD5176@kili>
+        s=k20201202; t=1636555208;
+        bh=ClH1raJ1gNeWlCLe84QT8iMe+pEQxMf3C+dYT1zgwd0=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=LXZy18LKTX0FBQjKi8mqqTAuHMZq3fkFvrsGDLhLtSCZ9FPIwxq572jCFKb1e+dJw
+         oFEm29u1Rox7273GuxsS4ls7O3/LS/pLz25aXlS+yWRMLGxju2m5staZUrgFYZgdO4
+         3Lc01tMlbiCGH4P2b4ohmm4gjxp+FNfZZ5ogLN+5Fz0mo0Jb2EjRPwXbzIGNBY6XWS
+         jYEf10cTUuRTsMooIQrJhs0rgf3Q5TGjXZUzOCRMRi2fWxRR+ja1vEpLQSNgu3385c
+         8yUMMz5sC58Ui5zqyO8ujiSGeQbqxXwV/mO1ymfMytYaAYAMzyJRJLTVtgBhqH+dNK
+         i3r6Txl4FR+vQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211110080706.GD5176@kili>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: ethernet: ti: cpsw_ale: Fix access to un-initialized
+ memory
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <163655520846.19242.6691586585047743470.git-patchwork-notify@kernel.org>
+Date:   Wed, 10 Nov 2021 14:40:08 +0000
+References: <c709f0325a7244ff133e405d017d9efba3b200f6.1636406827.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <c709f0325a7244ff133e405d017d9efba3b200f6.1636406827.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     grygorii.strashko@ti.com, davem@davemloft.net, kuba@kernel.org,
+        shenyang39@huawei.com, vigneshr@ti.com, linux-omap@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Nov 10, 2021 at 11:07:06AM +0300, Dan Carpenter wrote:
-> There is a minus character missing from ERR_PTR(ENOMEM) so if this
-> allocation fails it will lead to an Oops in the caller.
-> 
-> Fixes: dc48516ec7d3 ("net/mlx5: Lag, add support to create definers for LAG")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/lag/port_sel.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+Hello:
 
-Thanks,
-Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
+This patch was applied to netdev/net.git (master)
+by David S. Miller <davem@davemloft.net>:
+
+On Mon,  8 Nov 2021 22:28:55 +0100 you wrote:
+> It is spurious to allocate a bitmap without initializing it.
+> So, better safe than sorry, initialize it to 0 at least to have some known
+> values.
+> 
+> While at it, switch to the devm_bitmap_ API which is less verbose.
+> 
+> Fixes: 4b41d3436796 ("net: ethernet: ti: cpsw: allow untagged traffic on host port")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> [...]
+
+Here is the summary with links:
+  - net: ethernet: ti: cpsw_ale: Fix access to un-initialized memory
+    https://git.kernel.org/netdev/net/c/7a166854b4e2
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
