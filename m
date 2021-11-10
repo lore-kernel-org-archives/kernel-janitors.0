@@ -2,70 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6248C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 03:20:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFAD1C4321E
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 07:15:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 855DB61105
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 03:20:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4CA86113D
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 07:15:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230171AbhKJDWz (ORCPT
+        id S229567AbhKJHSi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 Nov 2021 22:22:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48632 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230072AbhKJDWy (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 Nov 2021 22:22:54 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id 68BB6611F0;
-        Wed, 10 Nov 2021 03:20:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636514407;
-        bh=VpR44dTrkcaXLE8qdOsmP1iB+85GnjPx/0KzfMS41cg=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=cMYRhMsPz2kguXtytQY8EKyVXSBZdcv+gaHTVxIUPxFVUaYzLyE3NYlW/5Um1ej4f
-         sIMS5Zgs6hiDXegzoWqe9lNhk8wIey1QMZ3M7QdGv/emcN83Se93OPdhJJvJKU4hul
-         AMojr0QMih1Q3HCuh2fmaRQX5Ospgd61bSpe1Qp0UdcjZAqTTJuEDPQPhwI2oxnpq/
-         ZrBBiShOd1pXBdM7NciuYcdX82MR7lPf1l/qR9ii9SVAFT50MRB2TW4WEdvK2kwJqi
-         fMqSwFPTRcLkRij2ZYNsRiHlC9FOQRDMkmJsK0TyPbpoSD9zcVa1bCWyPK0keXBwBM
-         lLi9+h1w6bBTA==
-Content-Type: text/plain; charset="utf-8"
+        Wed, 10 Nov 2021 02:18:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55676 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229774AbhKJHSi (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 10 Nov 2021 02:18:38 -0500
+Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09C04C061766
+        for <kernel-janitors@vger.kernel.org>; Tue,  9 Nov 2021 23:15:51 -0800 (PST)
+Received: by mail-ot1-x332.google.com with SMTP id z2-20020a9d71c2000000b0055c6a7d08b8so2583826otj.5
+        for <kernel-janitors@vger.kernel.org>; Tue, 09 Nov 2021 23:15:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:user-agent:date:message-id
+         :subject:to:cc;
+        bh=VRWwS7SDUq5/u0qH+G+eAJsIAtMU46qnSif9RsXhd4E=;
+        b=YsBKj5LEICDTIGHcmEWeDCXKxIriw2YxwNBb8j81RUjEyRw5P1IYipbqLCyTnjSBSq
+         xLDxcqkDY6e+HCTZAxbtiTyibuLQ0ZrGlcPTXdOLyFrt/kGfpHuyWpMXZuBJY0+UGJRP
+         O7y6O3yNYcSv/3fXd+L4/HfEbb7BEMhRU/A+A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from
+         :user-agent:date:message-id:subject:to:cc;
+        bh=VRWwS7SDUq5/u0qH+G+eAJsIAtMU46qnSif9RsXhd4E=;
+        b=4dUWDiLoluUsZcKbptHVp84rW6+peNCbchJcWDHLWZp2BihPpR+7QMzPIFttdchtbO
+         CNz2ONKbROOvv69c0vB6pcX6tdx4bY4f+/UYOZ9z/vl2tFvzHP+s5tWzsOTLrGznrdOC
+         V0NLYDRF7fy/9nl3hBdE2bnqgvXg77lpmivkqA/uC3fqAQuUZ1I8SbkjNOxZA9xj4R3Z
+         MR+BEDisMPVdNd3Lm6RkwOOc7FK1mDohmh26R2OY4Atjln9r20Xc6Rfkw9FPhGeNRtKb
+         hMA37UmtlV3ebOgHC+xpcx7QLE4mvDBcaxiGE+vcK1z8V7kL7SCsjFclh06vKNZ+aIg7
+         6Hsw==
+X-Gm-Message-State: AOAM531GqlH+NsZm9srZ+IkYmIfC3oucrZhcIac3ogkTLwTuYW0dXK/C
+        98ehBzp2TI9nrYdlb0T5FuPphCl9CwwhTtDuKCWgXw==
+X-Google-Smtp-Source: ABdhPJxgCgtZP3pi/X0Y2M2umWbuDvR7EtcUTfJQgGJtJs8gpv2QSoWMUURg7Tjl3uIwoWiqKw5X5LbeHwYCGSrjXxo=
+X-Received: by 2002:a9d:7655:: with SMTP id o21mr11128835otl.126.1636528550416;
+ Tue, 09 Nov 2021 23:15:50 -0800 (PST)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 10 Nov 2021 07:15:50 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: mana: Fix spelling mistake "calledd" -> "called"
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <163651440735.9008.13490903689455825082.git-patchwork-notify@kernel.org>
-Date:   Wed, 10 Nov 2021 03:20:07 +0000
-References: <20211108201817.43121-1-colin.i.king@gmail.com>
-In-Reply-To: <20211108201817.43121-1-colin.i.king@gmail.com>
-To:     Colin Ian King <colin.i.king@googlemail.com>
-Cc:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
-        wei.liu@kernel.org, decui@microsoft.com, davem@davemloft.net,
-        kuba@kernel.org, linux-hyperv@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+In-Reply-To: <4d03c636193f64907c8dacb17fa71ed05fd5f60c.1636220582.git.christophe.jaillet@wanadoo.fr>
+References: <4d03c636193f64907c8dacb17fa71ed05fd5f60c.1636220582.git.christophe.jaillet@wanadoo.fr>
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.9.1
+Date:   Wed, 10 Nov 2021 07:15:49 +0000
+Message-ID: <CAE-0n53JEwvFT9k19GZ46GooqQpkb=_hMz6GJu_zuHxDwfbAxA@mail.gmail.com>
+Subject: Re: [PATCH] PCI: qcom: Fix an error handling path in 'qcom_pcie_probe()'
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        agross@kernel.org, bhelgaas@google.com, bjorn.andersson@linaro.org,
+        kw@linux.com, lorenzo.pieralisi@arm.com, pmaliset@codeaurora.org,
+        robh@kernel.org, svarbanov@mm-sol.com
+Cc:     linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon,  8 Nov 2021 20:18:17 +0000 you wrote:
-> There is a spelling mistake in a dev_info message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Quoting Christophe JAILLET (2021-11-06 10:44:52)
+> If 'of_device_get_match_data()' fails, previous 'pm_runtime_get_sync()/
+> pm_runtime_enable()' should be undone.
+>
+> To fix it, the easiest is to move this block of code before the memory
+> allocations and the pm_runtime_xxx calls.
+>
+> Fixes: b89ff410253d ("PCI: qcom: Replace ops with struct pcie_cfg in pcie match data")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/net/ethernet/microsoft/mana/gdma_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is the summary with links:
-  - net: mana: Fix spelling mistake "calledd" -> "called"
-    https://git.kernel.org/netdev/net/c/8f1bc38bbb51
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
