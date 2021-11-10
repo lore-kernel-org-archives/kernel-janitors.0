@@ -2,83 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C97C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 21:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D652C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 22:31:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 540B461264
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 21:11:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 182ED61186
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 22:31:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233343AbhKJVO2 (ORCPT
+        id S234111AbhKJWek (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 10 Nov 2021 16:14:28 -0500
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:63302 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233310AbhKJVO1 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 10 Nov 2021 16:14:27 -0500
-Received: from pop-os.home ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id kusZmABmuHQrlkusZmT8fA; Wed, 10 Nov 2021 22:11:36 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Wed, 10 Nov 2021 22:11:36 +0100
-X-ME-IP: 86.243.171.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     njavali@marvell.com, GR-QLogic-Storage-Upstream@marvell.com,
-        jejb@linux.ibm.com, martin.petersen@oracle.com,
-        gmalavali@marvell.com, hmadhani@marvell.com
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] scsi: qla2xxx: Fix memory leaks in the error handling path of 'qla2x00_mem_alloc()'
-Date:   Wed, 10 Nov 2021 22:11:34 +0100
-Message-Id: <cc2fe0148944cfac5e58339bf98e76fd5c3a54b8.1636578573.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Wed, 10 Nov 2021 17:34:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32786 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234180AbhKJWeh (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 10 Nov 2021 17:34:37 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C61636117A;
+        Wed, 10 Nov 2021 22:31:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1636583508;
+        bh=UwCljJlJEQxD0zk3IYhR6savwKvL1dc1xs7HcybGM4M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dR5lb2Qd90aQipnOKCJQi/LqDKVsbIHSttHXJ2NbPj4tk8FQsUcJfkqg8EMe9yPJi
+         8P0bDZWUpJvXBw3eDEh6DkTKSoHTqC15Of3jQlVgBnA+/59IIfEcrfniicRkoj8d33
+         pikFEZUqXgCeM/CRXkE2u5OxLEg6fldKx5QSlNut/tx4S9WsUYDH4E8+M9C/RN7PsU
+         5/lKWjxcWpVgIhVmMhYa0cWkkzu1rMFWEl/Gk1ZOtSFdaZeLjvwWroT8FSiE2HeRgD
+         biA0W6mI1MrfFpeIWiX4fYlhbMh8AWiUbLHI3vyLZrAjNyore1CYPArJa/HAVqeQ4P
+         kQQVcg2KvT9XQ==
+Date:   Wed, 10 Nov 2021 14:31:47 -0800
+From:   Mark Gross <markgross@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        Mark Gross <markgross@kernel.org>,
+        Michael Shych <michaelsh@nvidia.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] platform/mellanox: mlxreg-lc: fix error code in
+ mlxreg_lc_create_static_devices()
+Message-ID: <20211110223147.GA16388@T470>
+References: <20211110074346.GB5176@kili>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211110074346.GB5176@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In case of memory allocation failure, we should release many things and
-should not return directly.
+On Wed, Nov 10, 2021 at 10:43:46AM +0300, Dan Carpenter wrote:
+> This code should be using PTR_ERR() instead of IS_ERR().  And because
+> it's using the wrong "dev->client" pointer, the IS_ERR() check will be
+> false, meaning the function returns success.
+> 
+> Fixes: 62f9529b8d5c ("platform/mellanox: mlxreg-lc: Add initial support for Nvidia line card devices")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/platform/mellanox/mlxreg-lc.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/platform/mellanox/mlxreg-lc.c b/drivers/platform/mellanox/mlxreg-lc.c
+> index 0b7f58feb701..c897a2f15840 100644
+> --- a/drivers/platform/mellanox/mlxreg-lc.c
+> +++ b/drivers/platform/mellanox/mlxreg-lc.c
+> @@ -413,7 +413,7 @@ mlxreg_lc_create_static_devices(struct mlxreg_lc *mlxreg_lc, struct mlxreg_hotpl
+>  				int size)
+>  {
+>  	struct mlxreg_hotplug_device *dev = devs;
+> -	int i;
+> +	int i, ret;
+>  
+>  	/* Create static I2C device feeding by auxiliary or main power. */
+>  	for (i = 0; i < size; i++, dev++) {
+> @@ -423,6 +423,7 @@ mlxreg_lc_create_static_devices(struct mlxreg_lc *mlxreg_lc, struct mlxreg_hotpl
+>  				dev->brdinfo->type, dev->nr, dev->brdinfo->addr);
+>  
+>  			dev->adapter = NULL;
+> +			ret = PTR_ERR(dev->client);
+ret is only set on this error path.
+can we get to the return without setting ret?
 
-The tricky part here, is that some (kzalloc + dma_pool_alloc) resources
-are allocated and stored in 'unusable' and a 'good' list.
-The 'good' list is then freed and only the 'unusable' list remains
-allocated.
-So, only this 'unusable' list is then freed in the error handling path of
-the function.
+--mark
 
-So, instead of adding even more code in this already huge function, just
-'continue' (as already done if dma_pool_alloc() fails) instead of
-returning directly.
-
-After the 'for' loop, we will then branch to the correct place of the
-error handling path when another memory allocation will (likely) fail
-afterward.
-
-Fixes: 50b812755e97 ("scsi: qla2xxx: Fix DMA error when the DIF sg buffer crosses 4GB boundary")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Certainly not the best solution, but look 'safe' to me.
----
- drivers/scsi/qla2xxx/qla_os.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index abcd30917263..0722dd618b99 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -4151,7 +4151,7 @@ qla2x00_mem_alloc(struct qla_hw_data *ha, uint16_t req_len, uint16_t rsp_len,
- 					ql_dbg_pci(ql_dbg_init, ha->pdev,
- 					    0xe0ee, "%s: failed alloc dsd\n",
- 					    __func__);
--					return -ENOMEM;
-+					continue;
- 				}
- 				ha->dif_bundle_kallocs++;
- 
--- 
-2.30.2
-
+>  			goto fail_create_static_devices;
+>  		}
+>  	}
+> @@ -435,7 +436,7 @@ mlxreg_lc_create_static_devices(struct mlxreg_lc *mlxreg_lc, struct mlxreg_hotpl
+>  		i2c_unregister_device(dev->client);
+>  		dev->client = NULL;
+>  	}
+> -	return IS_ERR(dev->client);
+> +	return ret;
+>  }
+>  
+>  static void
+> -- 
+> 2.20.1
+> 
