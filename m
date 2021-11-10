@@ -2,86 +2,70 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DAEFC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Nov 2021 23:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6248C433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 03:20:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4C689610D2
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Nov 2021 23:00:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 855DB61105
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 03:20:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243595AbhKIXDX (ORCPT
+        id S230171AbhKJDWz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 Nov 2021 18:03:23 -0500
-Received: from mga01.intel.com ([192.55.52.88]:12436 "EHLO mga01.intel.com"
+        Tue, 9 Nov 2021 22:22:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243355AbhKIXDK (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 Nov 2021 18:03:10 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10163"; a="256242498"
-X-IronPort-AV: E=Sophos;i="5.87,221,1631602800"; 
-   d="scan'208";a="256242498"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2021 15:00:24 -0800
-X-IronPort-AV: E=Sophos;i="5.87,221,1631602800"; 
-   d="scan'208";a="491848189"
-Received: from shanthyw-mobl1.amr.corp.intel.com (HELO intel.com) ([10.255.34.193])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2021 15:00:22 -0800
-Date:   Tue, 9 Nov 2021 18:00:20 -0500
-From:   Rodrigo Vivi <rodrigo.vivi@intel.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        David Airlie <airlied@linux.ie>,
-        intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>
-Subject: Re: [PATCH] drm/i915: pin: delete duplicate check in
- intel_pin_and_fence_fb_obj()
-Message-ID: <YYr9hKKh0/OM2rLf@intel.com>
-References: <20211109114850.GB16587@kili>
+        id S230072AbhKJDWy (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 9 Nov 2021 22:22:54 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id 68BB6611F0;
+        Wed, 10 Nov 2021 03:20:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1636514407;
+        bh=VpR44dTrkcaXLE8qdOsmP1iB+85GnjPx/0KzfMS41cg=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=cMYRhMsPz2kguXtytQY8EKyVXSBZdcv+gaHTVxIUPxFVUaYzLyE3NYlW/5Um1ej4f
+         sIMS5Zgs6hiDXegzoWqe9lNhk8wIey1QMZ3M7QdGv/emcN83Se93OPdhJJvJKU4hul
+         AMojr0QMih1Q3HCuh2fmaRQX5Ospgd61bSpe1Qp0UdcjZAqTTJuEDPQPhwI2oxnpq/
+         ZrBBiShOd1pXBdM7NciuYcdX82MR7lPf1l/qR9ii9SVAFT50MRB2TW4WEdvK2kwJqi
+         fMqSwFPTRcLkRij2ZYNsRiHlC9FOQRDMkmJsK0TyPbpoSD9zcVa1bCWyPK0keXBwBM
+         lLi9+h1w6bBTA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211109114850.GB16587@kili>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: mana: Fix spelling mistake "calledd" -> "called"
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <163651440735.9008.13490903689455825082.git-patchwork-notify@kernel.org>
+Date:   Wed, 10 Nov 2021 03:20:07 +0000
+References: <20211108201817.43121-1-colin.i.king@gmail.com>
+In-Reply-To: <20211108201817.43121-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@googlemail.com>
+Cc:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        wei.liu@kernel.org, decui@microsoft.com, davem@davemloft.net,
+        kuba@kernel.org, linux-hyperv@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Nov 09, 2021 at 02:48:50PM +0300, Dan Carpenter wrote:
-> The "ret" variable is checked on the previous line so we know it's
-> zero.  No need to check again.
+Hello:
+
+This patch was applied to netdev/net.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon,  8 Nov 2021 20:18:17 +0000 you wrote:
+> There is a spelling mistake in a dev_info message. Fix it.
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-
-and pushed.
-thanks for the patch
-
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  drivers/gpu/drm/i915/display/intel_fb_pin.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/display/intel_fb_pin.c b/drivers/gpu/drm/i915/display/intel_fb_pin.c
-> index 3f77f3013584..3b20f69e0240 100644
-> --- a/drivers/gpu/drm/i915/display/intel_fb_pin.c
-> +++ b/drivers/gpu/drm/i915/display/intel_fb_pin.c
-> @@ -142,13 +142,11 @@ intel_pin_and_fence_fb_obj(struct drm_framebuffer *fb,
->  	if (ret)
->  		goto err;
->  
-> -	if (!ret) {
-> -		vma = i915_gem_object_pin_to_display_plane(obj, &ww, alignment,
-> -							   view, pinctl);
-> -		if (IS_ERR(vma)) {
-> -			ret = PTR_ERR(vma);
-> -			goto err_unpin;
-> -		}
-> +	vma = i915_gem_object_pin_to_display_plane(obj, &ww, alignment,
-> +						   view, pinctl);
-> +	if (IS_ERR(vma)) {
-> +		ret = PTR_ERR(vma);
-> +		goto err_unpin;
->  	}
->  
->  	if (uses_fence && i915_vma_is_map_and_fenceable(vma)) {
-> -- 
-> 2.20.1
-> 
+>  drivers/net/ethernet/microsoft/mana/gdma_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Here is the summary with links:
+  - net: mana: Fix spelling mistake "calledd" -> "called"
+    https://git.kernel.org/netdev/net/c/8f1bc38bbb51
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
