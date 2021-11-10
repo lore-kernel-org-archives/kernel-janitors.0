@@ -2,83 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21EDAC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 20:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C97C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 21:11:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC6986113D
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 20:34:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 540B461264
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 21:11:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232974AbhKJUhX (ORCPT
+        id S233343AbhKJVO2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 10 Nov 2021 15:37:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41030 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232240AbhKJUhW (ORCPT
+        Wed, 10 Nov 2021 16:14:28 -0500
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:63302 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233310AbhKJVO1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 10 Nov 2021 15:37:22 -0500
-Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60726C061764
-        for <kernel-janitors@vger.kernel.org>; Wed, 10 Nov 2021 12:34:34 -0800 (PST)
-Received: by mail-qt1-x836.google.com with SMTP id o17so3368732qtk.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 10 Nov 2021 12:34:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=8pLMo7yji4oTRxu0asWqEVTwXX803tqx41OgUyq4EXU=;
-        b=lxPv6rW1PqMzBhAzITif8LRyGNRr2rch8gSEPDAw/zg78VVvDrPt9E/E2uPaPoM/aK
-         KQZoh/BbUmWxoiSYjHllurBcaBsdrD/x12AMvtUEdfjaNq4nKuS6y4x9b8LCMshjus0z
-         jnhu/KZi1x26xyNO2P6+lTrBOdacA7/kH+jvMC0EozkPRkjXQSu1taj3r8eeKWoGEKlA
-         gIjmV9Y9BsekIG6GJdXa+LUiX/0xBl5uhXovNmfZbO0dJzB4FbCmVAgQu41DsPqolV0b
-         UvPz5jH0HGnGbnpEj9AAYn/IbVC3uxwoB9mOmtWjx/chZGQkfnx2c+PL2QiXPqVrA5wW
-         s8Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=8pLMo7yji4oTRxu0asWqEVTwXX803tqx41OgUyq4EXU=;
-        b=rvp11qFLN3eYKZaujOTXdRF9D1G54wVD2gZbx89WHjOqBWQpOD+OyRvWy0dnZWWoYW
-         FDAAYHK9qgOXs4jJ42POSpqMz5LRi/9AWHfRiA/ckYK7ToFipd3Cbc1OISDCygHiGpd6
-         1rnTESA1IK8p60hHT/3JhMc+1hBl+XtqZt5HS6N+ZraN6XSQwFFqMGT27f92BV/+4ZsO
-         NM3BI5/3qpM1a39X1DYOAZ9g7RdVS9Gm+/UdJkyO+XQpR+QovTFLGnB4LK8ljB08kjUy
-         VcdJ8ldluHcDxHO8SEKPgOOc/LxBVwfpqZncod5peir40Jfoy8J01exrzaTUeuN1jelr
-         EwOA==
-X-Gm-Message-State: AOAM531vAQFnCyk4pogSnX1VtSqetsIbCkOWbn9C48+W8dT27E0Ke7iR
-        brgnBw9xTSmCrq6cY7ZgFkByww==
-X-Google-Smtp-Source: ABdhPJw28ba0kyPFwpYXq5FsysZIz91rbsDRgNMw/eM3LOf18dXMnho+w2vzKfF3u6KPAITbUXCLXA==
-X-Received: by 2002:ac8:5812:: with SMTP id g18mr1977474qtg.392.1636576473463;
-        Wed, 10 Nov 2021 12:34:33 -0800 (PST)
-Received: from localhost (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
-        by smtp.gmail.com with ESMTPSA id u8sm506287qkp.21.2021.11.10.12.34.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Nov 2021 12:34:32 -0800 (PST)
-Date:   Wed, 10 Nov 2021 15:34:32 -0500
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Colin Ian King <colin.i.king@googlemail.com>
-Cc:     Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-        Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: make 1-bit bit-fields unsigned int
-Message-ID: <YYws2G9kgER/zeeg@localhost.localdomain>
-References: <20211110192008.311901-1-colin.i.king@gmail.com>
+        Wed, 10 Nov 2021 16:14:27 -0500
+Received: from pop-os.home ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id kusZmABmuHQrlkusZmT8fA; Wed, 10 Nov 2021 22:11:36 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Wed, 10 Nov 2021 22:11:36 +0100
+X-ME-IP: 86.243.171.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     njavali@marvell.com, GR-QLogic-Storage-Upstream@marvell.com,
+        jejb@linux.ibm.com, martin.petersen@oracle.com,
+        gmalavali@marvell.com, hmadhani@marvell.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] scsi: qla2xxx: Fix memory leaks in the error handling path of 'qla2x00_mem_alloc()'
+Date:   Wed, 10 Nov 2021 22:11:34 +0100
+Message-Id: <cc2fe0148944cfac5e58339bf98e76fd5c3a54b8.1636578573.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211110192008.311901-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Nov 10, 2021 at 07:20:08PM +0000, Colin Ian King wrote:
-> The bitfields have_csum and io_error are currently signed which is
-> not recommended as the representation is an implementation defined
-> behaviour. Fix this by making the bit-fields unsigned ints.
-> 
-> Fixes: 2c36395430b0 ("btrfs: scrub: remove the anonymous structure from scrub_page")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+In case of memory allocation failure, we should release many things and
+should not return directly.
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+The tricky part here, is that some (kzalloc + dma_pool_alloc) resources
+are allocated and stored in 'unusable' and a 'good' list.
+The 'good' list is then freed and only the 'unusable' list remains
+allocated.
+So, only this 'unusable' list is then freed in the error handling path of
+the function.
 
-Thanks,
+So, instead of adding even more code in this already huge function, just
+'continue' (as already done if dma_pool_alloc() fails) instead of
+returning directly.
 
-Josef
+After the 'for' loop, we will then branch to the correct place of the
+error handling path when another memory allocation will (likely) fail
+afterward.
+
+Fixes: 50b812755e97 ("scsi: qla2xxx: Fix DMA error when the DIF sg buffer crosses 4GB boundary")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Certainly not the best solution, but look 'safe' to me.
+---
+ drivers/scsi/qla2xxx/qla_os.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index abcd30917263..0722dd618b99 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -4151,7 +4151,7 @@ qla2x00_mem_alloc(struct qla_hw_data *ha, uint16_t req_len, uint16_t rsp_len,
+ 					ql_dbg_pci(ql_dbg_init, ha->pdev,
+ 					    0xe0ee, "%s: failed alloc dsd\n",
+ 					    __func__);
+-					return -ENOMEM;
++					continue;
+ 				}
+ 				ha->dif_bundle_kallocs++;
+ 
+-- 
+2.30.2
+
