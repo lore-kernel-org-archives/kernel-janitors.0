@@ -2,59 +2,59 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64444C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 08:27:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8A9C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 08:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 437D861076
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 08:27:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96612610CB
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Nov 2021 08:29:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229974AbhKJIaL (ORCPT
+        id S230311AbhKJIbx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 10 Nov 2021 03:30:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43348 "EHLO
+        Wed, 10 Nov 2021 03:31:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229653AbhKJIaL (ORCPT
+        with ESMTP id S230285AbhKJIbw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 10 Nov 2021 03:30:11 -0500
-Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE6A1C061764
-        for <kernel-janitors@vger.kernel.org>; Wed, 10 Nov 2021 00:27:23 -0800 (PST)
-Received: by mail-oi1-x232.google.com with SMTP id s139so3806810oie.13
-        for <kernel-janitors@vger.kernel.org>; Wed, 10 Nov 2021 00:27:23 -0800 (PST)
+        Wed, 10 Nov 2021 03:31:52 -0500
+Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE876C061766
+        for <kernel-janitors@vger.kernel.org>; Wed, 10 Nov 2021 00:29:05 -0800 (PST)
+Received: by mail-oi1-x229.google.com with SMTP id bk14so3874043oib.7
+        for <kernel-janitors@vger.kernel.org>; Wed, 10 Nov 2021 00:29:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=wjabyqMriLlEDs0oghOnUdNbhq1Wnfi0um3A6ApanhQ=;
-        b=HQOFMTYJ1V/jOeYgrLDR858/DdP3Vy1c/cct+8fLcNBkXEdEq4sc92loWTLjeuONPg
-         x47uvloqdX08ZQmEbi3QxrYFYH59xFKmkT2fTFowIYf2/12sp30shdW1IuBO1eBef6El
-         YdXTLEbzyYwM3jxajCkH3QibZLkAqs/6pisx3Z1MLcvfheLY1jQ61jeVD7bRjD7SZAD7
-         wtR1DJP0T4PDltZ2aR9tz0t00HGa4/OZkLoNUJr5r6vb134jJtJGd1jV3L/isudr8rv6
-         WM2rj8sdDkizTeDk9vcZTq+lARV6Y47ubXMpY0KSaPx2FYnLfmtlp1IciHLt5PksPAhc
-         bfjg==
+        bh=f7rHKPXF7IbvrxgZBgwaRfmurIG9HqN9DpJB72wC+bI=;
+        b=TuB7tlTlxNHJ06giSMcvKP5BOduliRU9Wes+BVl8jRlSWGR3FOyQqy+C6b/4/JF22I
+         xLP1ip3PpAsa5FPNqLzHoXDq9IQlGTO2CQ2v/acPdM3w5ZysyMIyMC8AarTjopkU7Eue
+         x7YjTocStBQ45qy16SWD2Fejhl16N3PrMRDNR6q/SGfIFm5vXWXHtaTjQ5F0Hjh8ABnS
+         +8TQFzoFcl2LmKr7Uue/nnd1fcfUVsR8DEkDxgnRBbruYHHHs+wh9PZ67QbtQKtMuIYQ
+         oehJVgH8VUG0UFomg/6EedRCxpDDMmrKiiY98mlS/mUv1HxTbnHm7lQ6JP/s/qxur8sb
+         B2xQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wjabyqMriLlEDs0oghOnUdNbhq1Wnfi0um3A6ApanhQ=;
-        b=jrq+kBqC8GQ7S6xPtjXhVg3DRbrLVH8OdbwdjhFoMaU9vPp0y+A1I5kWtJvn85cwTh
-         TEl8A97jtoqSYv9RN+p+Tpdfaii+Au+PDe5X7SvbaHdU1Kgw65CfGfNCEt6Cg5/Kuznh
-         ASQqQTOaT9caFrNgX4nAjwZcvl+LIethAqQYzk9dFyI1wY2VflrfLVOjk7U1C3GLBGL4
-         vLlqoMmCfGFqKTOqp8KCf5JDmlavKxmx8dR6GJFl8TbIqT15aOwETi/L3Wy8hzRjpcDH
-         D0mjVGhCIyFxG4uxrnEVWr+UkLcHUaYSjUmmYCY+c//bohsbXf9awP8/dIdULJarUMOI
-         oV8g==
-X-Gm-Message-State: AOAM531+faULrnu/fQTS1duG14PxISQjeZemZRm7UuoqKMXOcTtEeXlz
-        OE1pkls9jvSd0A3yDaXa7eRhv5akK/5uWm7+vzpYlw==
-X-Google-Smtp-Source: ABdhPJyH1LONHLtwhuZMcEBp+Yg0krY6vZeudqTwP0iP/LrQGnLZpNokAje6id0/RVcqCXpcn5QWiO0vgqMwvF5aEME=
-X-Received: by 2002:aca:120f:: with SMTP id 15mr11009740ois.132.1636532843343;
- Wed, 10 Nov 2021 00:27:23 -0800 (PST)
+        bh=f7rHKPXF7IbvrxgZBgwaRfmurIG9HqN9DpJB72wC+bI=;
+        b=K27eFrZK4PwcDIEqpeM/RacBdVxC/bVhMS1SEve+dN6XaM7X0soxohXuQrL0yLofYt
+         lBgulPo21EWlA0nUUrtf4blSVVLcnrMFemOVKOeCT2ADms3Yy3Ujw7l2rbE+XCIM8yqA
+         Pqjoh7pYrlLAFOjiR2pKvlpusU6XudHovrygAO70P548QAup1RfoepCr28gerwlIIo1q
+         ttlyv6PgAL3rBZ+RiAQJnLBVSiwSrwe9sL2YwLLotz84U67Wudt1We3vlU9JLVAEEeKj
+         MC7HlMQexKCyhCor2pzwCIfFz4UoM/k6QpgBDBb53QXPNT60GpkZrt+dbi+/iNJkXqQ5
+         ok5g==
+X-Gm-Message-State: AOAM532IkYqV0zScT9JinJtIfiQZcNmpF3HxeGl56rwAnb0PrLUNISFB
+        +vANh632I+QxrFJKstQm70JOE+xqqRkyK4I+MVKU7g==
+X-Google-Smtp-Source: ABdhPJyaEL5vlz5N6A4nMGJI6OOxAb6rO5+DSFGzls44RzkLp58y9QExK/RBI8PkIc3s+dGBR+D8Ys2jtTo0M+HHy4U=
+X-Received: by 2002:a54:4791:: with SMTP id o17mr11897170oic.114.1636532945359;
+ Wed, 10 Nov 2021 00:29:05 -0800 (PST)
 MIME-Version: 1.0
-References: <20211028141938.3530-1-lukas.bulwahn@gmail.com> <20211028141938.3530-7-lukas.bulwahn@gmail.com>
-In-Reply-To: <20211028141938.3530-7-lukas.bulwahn@gmail.com>
+References: <20211028141938.3530-1-lukas.bulwahn@gmail.com> <20211028141938.3530-11-lukas.bulwahn@gmail.com>
+In-Reply-To: <20211028141938.3530-11-lukas.bulwahn@gmail.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 10 Nov 2021 09:27:12 +0100
-Message-ID: <CACRpkdZa2Y3yUteqQp9br65dj248WpGfwpf-ZZ5=PXambiwEcw@mail.gmail.com>
-Subject: Re: [PATCH 06/13] arm: ixp4xx: remove dead configs CPU_IXP43X and CPU_IXP46X
+Date:   Wed, 10 Nov 2021 09:28:53 +0100
+Message-ID: <CACRpkdakmQinPTHfV7m_Zbwh78k12gf9if4b1xiyEEW004KDCg@mail.gmail.com>
+Subject: Re: [PATCH 10/13] arm: nomadik: drop selecting obsolete CLKSRC_NOMADIK_MTU_SCHED_CLOCK
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
 Cc:     Russell King <linux@armlinux.org.uk>,
         Shawn Guo <shawnguo@kernel.org>,
@@ -83,28 +83,20 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 On Thu, Oct 28, 2021 at 4:20 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 
-> Commit 73d04ca5f4ac ("ARM: ixp4xx: Delete Intel reference design
-> boardfiles") removes the definition of the configs MACH_IXDP465 and
-> MACH_KIXRP435, but misses to remove the configs CPU_IXP43X and CPU_IXP46X
-> that depend on those removed configs, and hence are dead now.
+> Commit 85b6fcadcf66 ("clocksource/drivers/ux500: Drop Ux500 custom
+> SCHED_CLOCK") removes a sched_clock workaround and its corresponding
+> config CLKSRC_NOMADIK_MTU_SCHED_CLOCK. Since then, selecting
+> CLKSRC_NOMADIK_MTU_SCHED_CLOCK in ./arch/arm/mach-nomadik/Kconfig has no
+> effect and ./scripts/checkkconfigsymbols.py warns:
 >
-> Fortunately, ./scripts/checkkconfigsymbols.py warns:
+> CLKSRC_NOMADIK_MTU_SCHED_CLOCK
+> Referencing files: arch/arm/mach-nomadik/Kconfig
 >
-> MACH_IXDP465
-> Referencing files: arch/arm/mach-ixp4xx/Kconfig
->
-> MACH_KIXRP435
-> Referencing files: arch/arm/mach-ixp4xx/Kconfig
->
-> Remove the dead configs CPU_IXP43X and CPU_IXP46X.
->
-> A further quick grep for the name of those two symbols did not show any
-> use of the two config symbols; so, there are no further clean-up activities
-> beyond this config removal needed.
+> Simply drop selecting the obsolete CLKSRC_NOMADIK_MTU_SCHED_CLOCK.
 >
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Patch applied to my IXP4xx tree!
+Patch applied to my Nomadik tree!
 
 Yours,
 Linus Walleij
