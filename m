@@ -2,127 +2,128 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD7CFC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Nov 2021 09:50:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C17C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Nov 2021 10:18:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 91F5261107
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Nov 2021 09:50:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8426861268
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Nov 2021 10:18:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232770AbhKKJw6 (ORCPT
+        id S232777AbhKKKVB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Nov 2021 04:52:58 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:53185 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232707AbhKKJw6 (ORCPT
+        Thu, 11 Nov 2021 05:21:01 -0500
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:50078 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230358AbhKKKU6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Nov 2021 04:52:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1636624209;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JafLzISzwmOzPN4jHok3ZWFkvUmYVSwTaJ2FlEhdEi4=;
-        b=My0was0GDQYR76YN6qAjmmRa0AbDqlkHrP7VVW8chys60A2J2R+8qkg0C3gCcefqXRG5TU
-        7MBMNtzaQL6L0FlCEopg9wZSFL4oQiAZjMlGbWY0rp7AVw3A43afixDtQtRz3ULOJvbZMV
-        dvKCYxdMi/rWpzLICTXs1ECiNZBhc6M=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-276-emb-04blP_-HkwJkX3FfxQ-1; Thu, 11 Nov 2021 04:50:05 -0500
-X-MC-Unique: emb-04blP_-HkwJkX3FfxQ-1
-Received: by mail-ed1-f70.google.com with SMTP id g3-20020a056402424300b003e2981e1edbso4999301edb.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 11 Nov 2021 01:50:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=JafLzISzwmOzPN4jHok3ZWFkvUmYVSwTaJ2FlEhdEi4=;
-        b=gIFuq3dAQVIOsZKs2B09z0gKn76SDuw6Zh7WlyF555e5SRaNevr6YIjzO2TwHEsE/Y
-         XnTJ6dckiR1tjIFSeFI8HYBaJXPMMnuI3tii2iPpGMGet8OI37MaxW+Y1jUv/K08RF/+
-         oTrUfy1mboFkftYNjCeAzhi/0w5oH8BOMt0X5BYgUprDX3bkRP0OZhm/O/RavQT6Ifpo
-         qKR1ZOZvOx79HtkMevaA3yPC/VN6w2JQhIaH6jSGkX3NXWIg9Nldcb91B5P4TngVw8M8
-         W7mcTeUMVh6ga9aZmUUHSdBru8o7NApOkbYLV6QXTGJenv36+Ry3S4fEUiXrnvD04J3H
-         Xy/g==
-X-Gm-Message-State: AOAM530tvT6V9KCrEAr4T2xMMoZDy/m+C78/JghmJRTQJUQTcfZ/9bNw
-        SI530pUo2badQbB6DRcfCLH8DplQdVx+VzLCXUtBaELEZWVX21ktzVS4XUh/NFIG5VeVjzstKDX
-        L+pcPWV1KcbT4tCtLat0ajeA62/Oq
-X-Received: by 2002:a05:6402:510b:: with SMTP id m11mr8276765edd.215.1636624204506;
-        Thu, 11 Nov 2021 01:50:04 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwQXQipOHgu56fK0wp8NB2xtImtn2zLX3VXCyWkmAAt4eX3rhUs8DnfV/kJZx6jHnPTnieDzg==
-X-Received: by 2002:a05:6402:510b:: with SMTP id m11mr8276733edd.215.1636624204285;
-        Thu, 11 Nov 2021 01:50:04 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c1e:bf00:1054:9d19:e0f0:8214? (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
-        by smtp.gmail.com with ESMTPSA id ee7sm1252316edb.1.2021.11.11.01.50.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Nov 2021 01:50:04 -0800 (PST)
-Message-ID: <c6130e0a-8c26-f6c8-acf1-351b41e8a2bc@redhat.com>
-Date:   Thu, 11 Nov 2021 10:50:03 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH] platform/x86: hp_accel: Fix an error handling path in
- 'lis3lv02d_probe()'
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        eric.piel@tremplin-utc.net, markgross@kernel.org,
-        dmitry.torokhov@gmail.com, giedriuswork@gmail.com,
-        dvhart@linux.intel.com, akpm@linux-foundation.org, pavel@suse.cz
-Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thu, 11 Nov 2021 05:20:58 -0500
+Received: from [192.168.1.18] ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id l79imowztS9NTl79im0QLJ; Thu, 11 Nov 2021 11:18:08 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Thu, 11 Nov 2021 11:18:08 +0100
+X-ME-IP: 86.243.171.122
+Subject: Re: [PATCH] scsi: qla2xxx: Fix memory leaks in the error handling
+ path of 'qla2x00_mem_alloc()'
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     njavali@marvell.com, GR-QLogic-Storage-Upstream@marvell.com,
+        jejb@linux.ibm.com, martin.petersen@oracle.com,
+        gmalavali@marvell.com, hmadhani@marvell.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-References: <5a4f218f8f16d2e3a7906b7ca3654ffa946895f8.1636314074.git.christophe.jaillet@wanadoo.fr>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <5a4f218f8f16d2e3a7906b7ca3654ffa946895f8.1636314074.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <cc2fe0148944cfac5e58339bf98e76fd5c3a54b8.1636578573.git.christophe.jaillet@wanadoo.fr>
+ <20211111091711.GO2001@kadam>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <3ebffac9-3be4-d9d0-1cb0-f2517c0f78c5@wanadoo.fr>
+Date:   Thu, 11 Nov 2021 11:18:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
+MIME-Version: 1.0
+In-Reply-To: <20211111091711.GO2001@kadam>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
-
-On 11/7/21 20:57, Christophe JAILLET wrote:
-> If 'led_classdev_register()' fails, some additional resources should be
-> released.
+Le 11/11/2021 à 10:17, Dan Carpenter a écrit :
+> On Wed, Nov 10, 2021 at 10:11:34PM +0100, Christophe JAILLET wrote:
+>> In case of memory allocation failure, we should release many things and
+>> should not return directly.
+>>
+>> The tricky part here, is that some (kzalloc + dma_pool_alloc) resources
+>> are allocated and stored in 'unusable' and a 'good' list.
+>> The 'good' list is then freed and only the 'unusable' list remains
+>> allocated.
+>> So, only this 'unusable' list is then freed in the error handling path of
+>> the function.
+>>
+>> So, instead of adding even more code in this already huge function, just
+>> 'continue' (as already done if dma_pool_alloc() fails) instead of
+>> returning directly.
+>>
+>> After the 'for' loop, we will then branch to the correct place of the
+>> error handling path when another memory allocation will (likely) fail
+>> afterward.
+>>
+>> Fixes: 50b812755e97 ("scsi: qla2xxx: Fix DMA error when the DIF sg buffer crosses 4GB boundary")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> Certainly not the best solution, but look 'safe' to me.
 > 
-> Add the missing 'i8042_remove_filter()' and 'lis3lv02d_remove_fs()' calls
-> that are already in the remove function but are missing here.
+> Your analysis seems correct, but this is deeply weird.
+I agree, deeply weird :)
+
+>  It sort of looks
+> like this was debug code that was committed accidentally.  Neither
+> the "good" list nor the "unusable" are used except to print some debug
+> info:
 > 
-> Fixes: a4c724d0723b ("platform: hp_accel: add a i8042 filter to remove HPQ6000 data from kb bus stream")
-> Fixes: 9e0c79782143 ("lis3lv02d: merge with leds hp disk")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Thanks, patch looks good to me:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-I will add this fix to my tree once 5.16-rc1 is out and
-I will include this fix in my first pdx86 fixes pull-req
-for 5.16.
-
-Regards,
-
-Hans
-
-> ---
->  drivers/platform/x86/hp_accel.c | 2 ++
->  1 file changed, 2 insertions(+)
+>                         ql_dbg_pci(ql_dbg_init, ha->pdev, 0x0024,
+>                             "%s: dif dma pool (good=%u unusable=%u)\n",
+>                             __func__, ha->pool.good.count,
+>                             ha->pool.unusable.count);
 > 
-> diff --git a/drivers/platform/x86/hp_accel.c b/drivers/platform/x86/hp_accel.c
-> index b183967ecfb7..435a91fe2568 100644
-> --- a/drivers/platform/x86/hp_accel.c
-> +++ b/drivers/platform/x86/hp_accel.c
-> @@ -331,9 +331,11 @@ static int lis3lv02d_probe(struct platform_device *device)
->  	INIT_WORK(&hpled_led.work, delayed_set_status_worker);
->  	ret = led_classdev_register(NULL, &hpled_led.led_classdev);
->  	if (ret) {
-> +		i8042_remove_filter(hp_accel_i8042_filter);
->  		lis3lv02d_joystick_disable(&lis3_dev);
->  		lis3lv02d_poweroff(&lis3_dev);
->  		flush_work(&hpled_led.work);
-> +		lis3lv02d_remove_fs(&lis3_dev);
->  		return ret;
->  	}
->  
+> The good list is freed immediately, and then there is a no-op free in
+> qla2x00_mem_free().
+I agree.
+
+> The unusable list is preserved until qla2x00_mem_free()
+> but not used anywhere.
+I agree.
+
+The logic in commit '50b812755e97' puzzled me a lot.
+I wonder why the 128 magic number in the for loop.
+
+My understanding is:
+    - try to allocate things at start-up
+    - check if this allocation crosses the 4G limit (see commit log)
+    - keep the "unusable" allocation allocated, so that this memory is 
+reserved (i.e. wasted) and won't be allocated later (see usage of the 
+dif_bundl_pool dma pool in [1])
+    - hope that tying 128 allocations is enough and that no "unusable 
+allocation" will be done at run-time.
+
+In other words, I tried to convinced myself that there was a real logic, 
+even if unperfect.
+
+
+Even if the above description is correct and if it works as expected in 
+RL, it real looks like an overkill!
+
+
+Now that I reread code around 'dif_local_dma_alloc' usage, I'm tempt to 
+agree with your feeling about debug code.
+
+CJ
+
+[1]: 
+https://elixir.bootlin.com/linux/v5.15.1/source/drivers/scsi/qla2xxx/qla_iocb.c#L1138
+
+> 
+> regards,
+> dan carpenter
+> 
 > 
 
