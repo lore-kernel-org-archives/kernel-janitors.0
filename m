@@ -2,128 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C17C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Nov 2021 10:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07860C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Nov 2021 10:31:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8426861268
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Nov 2021 10:18:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE6AE61267
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Nov 2021 10:31:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232777AbhKKKVB (ORCPT
+        id S232611AbhKKKe1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Nov 2021 05:21:01 -0500
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:50078 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230358AbhKKKU6 (ORCPT
+        Thu, 11 Nov 2021 05:34:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58764 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229668AbhKKKe0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Nov 2021 05:20:58 -0500
-Received: from [192.168.1.18] ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id l79imowztS9NTl79im0QLJ; Thu, 11 Nov 2021 11:18:08 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 11 Nov 2021 11:18:08 +0100
-X-ME-IP: 86.243.171.122
-Subject: Re: [PATCH] scsi: qla2xxx: Fix memory leaks in the error handling
- path of 'qla2x00_mem_alloc()'
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     njavali@marvell.com, GR-QLogic-Storage-Upstream@marvell.com,
-        jejb@linux.ibm.com, martin.petersen@oracle.com,
-        gmalavali@marvell.com, hmadhani@marvell.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <cc2fe0148944cfac5e58339bf98e76fd5c3a54b8.1636578573.git.christophe.jaillet@wanadoo.fr>
- <20211111091711.GO2001@kadam>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <3ebffac9-3be4-d9d0-1cb0-f2517c0f78c5@wanadoo.fr>
-Date:   Thu, 11 Nov 2021 11:18:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Thu, 11 Nov 2021 05:34:26 -0500
+Received: from mail-ua1-x929.google.com (mail-ua1-x929.google.com [IPv6:2607:f8b0:4864:20::929])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5430CC061766;
+        Thu, 11 Nov 2021 02:31:37 -0800 (PST)
+Received: by mail-ua1-x929.google.com with SMTP id az37so10791136uab.13;
+        Thu, 11 Nov 2021 02:31:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4enwRC8TuKI2GB0AGVlP6QNL8DbsgjOg0CrVYrlGOUA=;
+        b=ILoQYjHk7zJpnrivYmFTUEt3aohMdnm8X8NL/q2Juw27tzobMu2E/LxzuhtO0Dlhca
+         5huWCJWp7czN/DbK4uBcINTRnDvQWTlTZI1ASJgI5EEY+pIxvqZSHb3+qZi5KmjtA8MG
+         ZMA0HKeHp0zL6ZuAUmck9k8gUKnaHSwEFeaA83x2tQPpmHxOkqPGB0G1Ttj12WxCfVfy
+         nvW1zorlAMVbEEv3BUdCGSRINcvPSNBXRprTgXB6RBuK1ZJdSax5qVxs8GrXd/bQzjv2
+         3wOI3whOv99YhdkUT3KkqvUkKcRggjebYWBQUEyFLQDCCVryY65E7ZnFN7OSYS2dXJi+
+         JiuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4enwRC8TuKI2GB0AGVlP6QNL8DbsgjOg0CrVYrlGOUA=;
+        b=FoNMNovfdD5zCzRRtgbgocEAaMu09Zp22uMbz6ZVIe1MrIIsY6M9j1rhOTkIOR498h
+         ESLrt0/dN+1/OJstw+GhkwlRngJbyoBZOYkbLf3p7Wlu3F2EbmhmMiNCLFaxfNV/5bPU
+         2Pml+hWVKei6yW27tLQaq6qhkwGCjgHzVU9/p3Uvtj2QfPqEw1TKdC8IEca1BJqsSswb
+         WKxH/Tcqb2nYMtBAKWEmvZy/C8In8Ul5F/IV8Sptp0fP+tTtXkMlCmth4OUdmZbQxNL9
+         eNWn5oaO4xiZ8lhQ6scS/UqOeIjNwFzIvtui/lLAfeAi/yGFAOrXToGGzMYaQs80DKsg
+         IW3w==
+X-Gm-Message-State: AOAM532bdyEmr4yIkRFPgw9ajB2JGun9npbbWE25muw6TJye1xB5JxbI
+        MTZ3JwSkmfJUSwLXN855nJVR7jn7SKOQIy6yCxo=
+X-Google-Smtp-Source: ABdhPJxM7Zqn7XS994yvFxrEsUq21I4hiwrV6KG12OVBJxfJ0cNGQ9M/sygXzAFBkMtWcG07qPbROzjYFjjdf8z+nD4=
+X-Received: by 2002:a67:f516:: with SMTP id u22mr9305581vsn.47.1636626696452;
+ Thu, 11 Nov 2021 02:31:36 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20211111091711.GO2001@kadam>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20211111083954.6286-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20211111083954.6286-1-lukas.bulwahn@gmail.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Thu, 11 Nov 2021 07:31:25 -0300
+Message-ID: <CAOMZO5B4k=UvE5XTgbsjCfoo0h0Y7H+xN6mwh9Bnc2L82QYzwQ@mail.gmail.com>
+Subject: Re: [PATCH] iio: imx8qxp-adc: fix dependency to the intended ARCH_MXC config
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Cai Huoqing <caihuoqing@baidu.com>, linux-iio@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 11/11/2021 à 10:17, Dan Carpenter a écrit :
-> On Wed, Nov 10, 2021 at 10:11:34PM +0100, Christophe JAILLET wrote:
->> In case of memory allocation failure, we should release many things and
->> should not return directly.
->>
->> The tricky part here, is that some (kzalloc + dma_pool_alloc) resources
->> are allocated and stored in 'unusable' and a 'good' list.
->> The 'good' list is then freed and only the 'unusable' list remains
->> allocated.
->> So, only this 'unusable' list is then freed in the error handling path of
->> the function.
->>
->> So, instead of adding even more code in this already huge function, just
->> 'continue' (as already done if dma_pool_alloc() fails) instead of
->> returning directly.
->>
->> After the 'for' loop, we will then branch to the correct place of the
->> error handling path when another memory allocation will (likely) fail
->> afterward.
->>
->> Fixes: 50b812755e97 ("scsi: qla2xxx: Fix DMA error when the DIF sg buffer crosses 4GB boundary")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Certainly not the best solution, but look 'safe' to me.
-> 
-> Your analysis seems correct, but this is deeply weird.
-I agree, deeply weird :)
+Hi Lukas,
 
->  It sort of looks
-> like this was debug code that was committed accidentally.  Neither
-> the "good" list nor the "unusable" are used except to print some debug
-> info:
-> 
->                         ql_dbg_pci(ql_dbg_init, ha->pdev, 0x0024,
->                             "%s: dif dma pool (good=%u unusable=%u)\n",
->                             __func__, ha->pool.good.count,
->                             ha->pool.unusable.count);
-> 
-> The good list is freed immediately, and then there is a no-op free in
-> qla2x00_mem_free().
-I agree.
+On Thu, Nov 11, 2021 at 5:40 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> Commit 1e23dcaa1a9f ("iio: imx8qxp-adc: Add driver support for NXP IMX8QXP
+> ADC") adds the config IMX8QXP_ADC for this new driver, which depends on
+> the non-existing config ARCH_MXC_ARM64.
+>
+> Hence, ./scripts/checkkconfigsymbols.py warns:
+>
+>   ARCH_MXC_ARM64
+>   Referencing files: drivers/iio/adc/Kconfig
+>
+> Probably, the existing config ARCH_MXC is intended to be referred here.
+> So, repair the dependency to refer to that config.
+>
+> Fixes: 1e23dcaa1a9f ("iio: imx8qxp-adc: Add driver support for NXP IMX8QXP ADC")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-> The unusable list is preserved until qla2x00_mem_free()
-> but not used anywhere.
-I agree.
+This looks good.
 
-The logic in commit '50b812755e97' puzzled me a lot.
-I wonder why the 128 magic number in the for loop.
+The incorrect  ARCH_MXC_ARM64 symbol probably came when porting the
+driver from the NXP downstream kernel:
 
-My understanding is:
-    - try to allocate things at start-up
-    - check if this allocation crosses the 4G limit (see commit log)
-    - keep the "unusable" allocation allocated, so that this memory is 
-reserved (i.e. wasted) and won't be allocated later (see usage of the 
-dif_bundl_pool dma pool in [1])
-    - hope that tying 128 allocations is enough and that no "unusable 
-allocation" will be done at run-time.
-
-In other words, I tried to convinced myself that there was a real logic, 
-even if unperfect.
-
-
-Even if the above description is correct and if it works as expected in 
-RL, it real looks like an overkill!
-
-
-Now that I reread code around 'dif_local_dma_alloc' usage, I'm tempt to 
-agree with your feeling about debug code.
-
-CJ
-
-[1]: 
-https://elixir.bootlin.com/linux/v5.15.1/source/drivers/scsi/qla2xxx/qla_iocb.c#L1138
-
-> 
-> regards,
-> dan carpenter
-> 
-> 
-
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
