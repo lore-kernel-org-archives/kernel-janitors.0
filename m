@@ -2,94 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0555AC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Nov 2021 08:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3175EC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Nov 2021 08:40:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D60166162E
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Nov 2021 08:24:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14384611F2
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Nov 2021 08:40:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232112AbhKKI0w (ORCPT
+        id S232256AbhKKInB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Nov 2021 03:26:52 -0500
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:64240 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229861AbhKKI0v (ORCPT
+        Thu, 11 Nov 2021 03:43:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33420 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231675AbhKKIm5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Nov 2021 03:26:51 -0500
-Received: from [192.168.1.18] ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id l5NImT107Bazol5NImZYOT; Thu, 11 Nov 2021 09:24:01 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 11 Nov 2021 09:24:01 +0100
-X-ME-IP: 86.243.171.122
-Subject: Re: [PATCH] media: uvcvideo: Fix a memory leak in an error handling
- path of 'uvc_ioctl_ctrl_map()'
-To:     Ricardo Ribalda <ribalda@chromium.org>
-Cc:     laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
-        hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <95f3fd02313ff41d6808b8e1f20e0c582f46edc8.1636617903.git.christophe.jaillet@wanadoo.fr>
- <CANiDSCsWE+cr70hdNkqXKxj8EXdJ-bRtXqLDgiGhYVdHYTFHBQ@mail.gmail.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <cb095a2e-24e9-ff99-8ba1-7ddf6609f996@wanadoo.fr>
-Date:   Thu, 11 Nov 2021 09:24:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Thu, 11 Nov 2021 03:42:57 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54EB2C061766;
+        Thu, 11 Nov 2021 00:40:08 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id o4-20020a1c7504000000b0032cab7473caso5050559wmc.1;
+        Thu, 11 Nov 2021 00:40:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sro5Y/3s4g8TJZzu3tk5+VEVjcf6f41NnmBfPjhYcdQ=;
+        b=I+GUAZM4GQa/4pokPJE83280WPe1Ib6qb7ea9R6YJGxsLt+HiuJBSxV+ZI6Z81niYa
+         247nHD2EgHLxcwe8Jj+pAcn7EdmqrDKZ0B+YOsGed0QtrJbrtZNPHy25oiwFvemwgDdT
+         sKXH9IzplNPgL86vSgBb/4KGIey9wx9WLV6wIOz2oJpOZRusZNG0NWxkHdCp+97d3ypw
+         OAbJ+gSi+tWupmKmUJaIOlTU914g17F8YSAx340FLCWdu0gk6WtO+gz0+icI5CBJA0eT
+         Qt47Cdb/H73i38QWaybfNfkto++i4Ts7wToZWeSIqol4auS2Xdnvz0rgUVF9NlMwmZko
+         TM6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sro5Y/3s4g8TJZzu3tk5+VEVjcf6f41NnmBfPjhYcdQ=;
+        b=WwBDMloHf+VWvy7fy2nf0xI7IJt37bjLM2Q5P8Z1/cNnzRXczOG7TYONvXuaEMw/sk
+         LpbyHiVXJ+oln8uqVYzqXwr4AF5Ac/OjBE14Q+bo37BfadsMTSRJf3d5N8ivG6g1Xo0s
+         tlhMFjNygQWwSe0IYvpmksghUCYSkdO3FJBY96EeNDVwLV1hr0/ub6MUEQL7253Xwe+V
+         v3RZ/ORk5unc5/WfVynDfgW7VPUJ1PtnEWP6reVtcQijQtI67ugKrKcIlzZCDc1CdJWU
+         0f83/OBLAK9FTpR1ihHfAMcOTejaxU9mKwCYrhLA0IS0lA0WRjO9J/IEkPX9yFx0/1Z/
+         MVVA==
+X-Gm-Message-State: AOAM5317gktW8IldxL9cPkA01QwuRPcYfaaSm94za3GArcud8UCoEsWL
+        D91522OuH3kU7+IB/bR+J3s=
+X-Google-Smtp-Source: ABdhPJxlFBxkUkWwaD+Bzflmms6wZ+6KQGQE9buzNyHJKnNy+I9rjjQwPi4d/GIujAwierG/1xVCiA==
+X-Received: by 2002:a7b:ce01:: with SMTP id m1mr10982902wmc.187.1636620006925;
+        Thu, 11 Nov 2021 00:40:06 -0800 (PST)
+Received: from localhost.elektrobit.com (eth1-fw1-nbg6.eb.noris.de. [213.95.148.172])
+        by smtp.gmail.com with ESMTPSA id l5sm2731027wrs.59.2021.11.11.00.40.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Nov 2021 00:40:06 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Cai Huoqing <caihuoqing@baidu.com>,
+        Fabio Estevam <festevam@gmail.com>, linux-iio@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] iio: imx8qxp-adc: fix dependency to the intended ARCH_MXC config
+Date:   Thu, 11 Nov 2021 09:39:54 +0100
+Message-Id: <20211111083954.6286-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <CANiDSCsWE+cr70hdNkqXKxj8EXdJ-bRtXqLDgiGhYVdHYTFHBQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 11/11/2021 à 09:12, Ricardo Ribalda a écrit :
-> Hi Christophe
-> 
-> I believe this is a dup of:
-> https://lore.kernel.org/lkml/20210917114930.47261-1-colin.king@canonical.com/
+Commit 1e23dcaa1a9f ("iio: imx8qxp-adc: Add driver support for NXP IMX8QXP
+ADC") adds the config IMX8QXP_ADC for this new driver, which depends on
+the non-existing config ARCH_MXC_ARM64.
 
-Yes it is, and Colin's proposal is cleaner than mine.
+Hence, ./scripts/checkkconfigsymbols.py warns:
 
-Sorry for the noise.
+  ARCH_MXC_ARM64
+  Referencing files: drivers/iio/adc/Kconfig
 
-CJ
+Probably, the existing config ARCH_MXC is intended to be referred here.
+So, repair the dependency to refer to that config.
 
-> 
-> Thanks
-> 
-> On Thu, 11 Nov 2021 at 09:06, Christophe JAILLET
-> <christophe.jaillet@wanadoo.fr> wrote:
->>
->> If 'map->name' can't be allocated, 'map' must be released before returning.
->>
->> Fixes: 70fa906d6fce ("media: uvcvideo: Use control names from framework")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   drivers/media/usb/uvc/uvc_v4l2.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
->> index f4e4aff8ddf7..5aa76a9a6080 100644
->> --- a/drivers/media/usb/uvc/uvc_v4l2.c
->> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
->> @@ -44,8 +44,10 @@ static int uvc_ioctl_ctrl_map(struct uvc_video_chain *chain,
->>          if (v4l2_ctrl_get_name(map->id) == NULL) {
->>                  map->name = kmemdup(xmap->name, sizeof(xmap->name),
->>                                      GFP_KERNEL);
->> -               if (!map->name)
->> +               if (!map->name) {
->> +                       kfree(map);
->>                          return -ENOMEM;
->> +               }
->>          }
->>          memcpy(map->entity, xmap->entity, sizeof(map->entity));
->>          map->selector = xmap->selector;
->> --
->> 2.30.2
->>
-> 
-> 
+Fixes: 1e23dcaa1a9f ("iio: imx8qxp-adc: Add driver support for NXP IMX8QXP ADC")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ drivers/iio/adc/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index 8bf5b62a73f4..3363af15a43f 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -532,7 +532,7 @@ config IMX7D_ADC
+ 
+ config IMX8QXP_ADC
+ 	tristate "NXP IMX8QXP ADC driver"
+-	depends on ARCH_MXC_ARM64 || COMPILE_TEST
++	depends on ARCH_MXC || COMPILE_TEST
+ 	depends on HAS_IOMEM
+ 	help
+ 	  Say yes here to build support for IMX8QXP ADC.
+-- 
+2.26.2
 
