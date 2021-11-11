@@ -2,77 +2,70 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C61C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Nov 2021 11:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9542C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Nov 2021 13:17:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1FC9861107
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Nov 2021 11:31:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 895806120D
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Nov 2021 13:17:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232898AbhKKLdw (ORCPT
+        id S232701AbhKKNUp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Nov 2021 06:33:52 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:35938 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229668AbhKKLdv (ORCPT
+        Thu, 11 Nov 2021 08:20:45 -0500
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:49313 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232203AbhKKNUp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Nov 2021 06:33:51 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 929CF1FD4D;
-        Thu, 11 Nov 2021 11:31:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1636630261;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=bjaeloJ9wUcpcsCHeTCyUCqlq95FW12NoRjwY/1QH9A=;
-        b=DvQ3AOJxJ3K+t5VuulSugKwF+yIPSFyp4WfroZ/GU3U/0uAZ9DbEoiasrsEd8zJuEptp66
-        BtiK+ypyvHw1xtY66qd0oYNCZEncVdkw7g3tYpGKM1PjB5N1vraWVUr/2Hd3Vtk2MlLkTc
-        RpmPfAhF05pG0UK6owRugJ4SKrIC4Fs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1636630261;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=bjaeloJ9wUcpcsCHeTCyUCqlq95FW12NoRjwY/1QH9A=;
-        b=Ipi6RlLHLA/GgM130MD3yBs2vkA2lbmVRajMSsptibMppeSd6tmsjdueveNdFimgsGDEZx
-        n0YXlgqVmVbE3RAA==
-Received: from ds.suse.cz (ds.suse.cz [10.100.12.205])
-        by relay2.suse.de (Postfix) with ESMTP id 7E23BA3B87;
-        Thu, 11 Nov 2021 11:31:01 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id ECF14DA799; Thu, 11 Nov 2021 12:31:00 +0100 (CET)
-Date:   Thu, 11 Nov 2021 12:31:00 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Colin Ian King <colin.i.king@googlemail.com>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>,
-        linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: make 1-bit bit-fields unsigned int
-Message-ID: <20211111113100.GY28560@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz,
-        Colin Ian King <colin.i.king@googlemail.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>,
-        linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20211110192008.311901-1-colin.i.king@gmail.com>
+        Thu, 11 Nov 2021 08:20:45 -0500
+Received: from pop-os.home ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id l9xhmV6vzBazol9xhmbNf6; Thu, 11 Nov 2021 14:17:55 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Thu, 11 Nov 2021 14:17:55 +0100
+X-ME-IP: 86.243.171.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     tiffany.lin@mediatek.com, andrew-ct.chen@mediatek.com,
+        mchehab@kernel.org, matthias.bgg@gmail.com, acourbot@chromium.org,
+        yunfei.dong@mediatek.com, hverkuil-cisco@xs4all.nl,
+        tzungbi@google.com
+Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] media: mtk-vcodec: Fix an error handling path in 'asid_allocator_init()'
+Date:   Thu, 11 Nov 2021 14:17:51 +0100
+Message-Id: <86d3e2db237bc35eb55bd46ef07fa13a39bcdff8.1636636541.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211110192008.311901-1-colin.i.king@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Nov 10, 2021 at 07:20:08PM +0000, Colin Ian King wrote:
-> The bitfields have_csum and io_error are currently signed which is
-> not recommended as the representation is an implementation defined
-> behaviour. Fix this by making the bit-fields unsigned ints.
-> 
-> Fixes: 2c36395430b0 ("btrfs: scrub: remove the anonymous structure from scrub_page")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+In case of error the 'media_device_init()' call is not balanced by a
+corresponding 'media_device_cleanup()' call.
 
-Added to misc-next, thanks.
+Add it, when needed, as already done in the remove function.
+
+Fixes: 118add98f80e ("media: mtk-vcodec: vdec: add media device if using stateless api")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_drv.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_drv.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_drv.c
+index e6e6a8203eeb..8277c44209b5 100644
+--- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_drv.c
++++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_drv.c
+@@ -358,6 +358,8 @@ static int mtk_vcodec_probe(struct platform_device *pdev)
+ 	if (dev->vdec_pdata->uses_stateless_api)
+ 		v4l2_m2m_unregister_media_controller(dev->m2m_dev_dec);
+ err_reg_cont:
++	if (dev->vdec_pdata->uses_stateless_api)
++		media_device_cleanup(&dev->mdev_dec);
+ 	destroy_workqueue(dev->decode_workqueue);
+ err_event_workq:
+ 	v4l2_m2m_release(dev->m2m_dev_dec);
+-- 
+2.30.2
+
