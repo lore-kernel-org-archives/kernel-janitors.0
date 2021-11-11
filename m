@@ -2,127 +2,122 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACF4BC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Nov 2021 18:25:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14EFDC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Nov 2021 18:47:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8CBD861284
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Nov 2021 18:25:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1EE76134F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Nov 2021 18:47:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234437AbhKKS2U (ORCPT
+        id S234389AbhKKStz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Nov 2021 13:28:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54144 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234434AbhKKS2P (ORCPT
+        Thu, 11 Nov 2021 13:49:55 -0500
+Received: from fanzine2.igalia.com ([213.97.179.56]:50631 "EHLO
+        fanzine.igalia.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S233575AbhKKStw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Nov 2021 13:28:15 -0500
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F1A0C061766
-        for <kernel-janitors@vger.kernel.org>; Thu, 11 Nov 2021 10:25:25 -0800 (PST)
-Received: by mail-ed1-x52b.google.com with SMTP id w1so27692786edd.10
-        for <kernel-janitors@vger.kernel.org>; Thu, 11 Nov 2021 10:25:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=txXLZF+9GfwagVnL9c9/R4fXHlgcGjXwIQ9SEznOgw0=;
-        b=DsB69FvhZeAIbA18E5lHyHhIB+6y0QEHISA/MG0eDH6ZxBcMLGUWVQ73YJDeYYAuHw
-         e6V86fgWC1PkbhMVTYclUPfSFPLWwo492vk1iDlCsBGyKY/2zadSes9BDcjIiMh/01rd
-         LPCk0ucKKmeu6HPFTyXRbZ9bD/1Be5x3+UyrvsuuAv+XlPY+sXKphDeW2InKsrnoHSqe
-         XgUh6JVC7DlIInCuCaKz0thozytIvWre7vRcqx25k4CO7zYNJR7ZjncGFTzqMMPWHlEu
-         JQBbd/cULS7+E+9oGsIMEUZw5VX4IeNRzDW9pJqmZgopfUrOgBy6giZ0dNaaCDDd5gG5
-         MGug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=txXLZF+9GfwagVnL9c9/R4fXHlgcGjXwIQ9SEznOgw0=;
-        b=hE7TdKWBGDw9JnYpl5avZ+cX66KA0edgnvz4aN0Xv5w6WaXxtX07SikyHRPLxrMvmC
-         FqvHoVMdCZH3u+K75pM1LXrvtUdvk8GCMSlCszWfXu6PXjXYdwxZJOTBp7V7gjJUbsVK
-         8gbASTrOege8gYUCkR0gt5XGPlg0f95JHk3J+drSO8cL64LlUDxaHW8+oVY1SP+cfYA1
-         WfDFaQbi0075DNUPEaSNtBCm0RrUjNWo8pgHATXY2a43nzRL78BmskzTyWoijE0YvPSN
-         s5+Hc1fkHig1MJPMT3H39OE5qL9wfQBW2WXMzgbcqF3EmrtEwwi+wlQa4GP6gnV85joZ
-         lAYA==
-X-Gm-Message-State: AOAM533Qn+HHPytoKaXi7kavp35lZai/Qe4CuPXGsojvynEbkW8kp+P2
-        53b7C0SDNWxGpmmySJQ/Kg7fwci+E6uz6+Y1MO7Drw==
-X-Google-Smtp-Source: ABdhPJxFE9orYhB3+TLnpd1AnZFajEuUTnGFTtb8ntq5zjW336ZzFGuMzgIOFqm93IGf+xvcyleIp9lOGq1fKGp/DkU=
-X-Received: by 2002:a05:6402:280d:: with SMTP id h13mr12768202ede.346.1636655124051;
- Thu, 11 Nov 2021 10:25:24 -0800 (PST)
+        Thu, 11 Nov 2021 13:49:52 -0500
+X-Greylist: delayed 2208 seconds by postgrey-1.27 at vger.kernel.org; Thu, 11 Nov 2021 13:49:51 EST
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com; s=20170329;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=LJIW4lxDvBNuPZdFbOnJp2QLvNQr8PhdLSeOjMlDVjo=;
+        b=YoWJ3UULnfH3LiCnVUgPfEDIbU/2naxM2IjDgqUGgH7R/jaljjaxBVpTpJsqS71Gi5vxUx3iltiiFU6+3o18YGIQU05St1K8j9A6LzpFSMKEqEHlQ1vPm+dx6EVj1S2FAiVe6VFxgp/pVvXo1c+bJE62RfDZ6ComM43BE+yHzUgoHeYJ9GCxWCPwqZdlFRUSe94F7ETN7b7ugnRfEZ0xvmrCR0eiVgVvXeVbCQ2GXGSaZ568oa93a74IYAnSP4mI+AlKZsUypwaHTxoq7XFC+vrEQk8amEym/ggI72GSBZwXK9WTasVt6tMXNXivN0XxFn4UedUY8moWr460Dg2VwA==;
+Received: from [169.239.12.53] (helo=mail.igalia.com)
+        by fanzine.igalia.com with esmtpsa 
+        (Cipher TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256) (Exim)
+        id 1mlEWo-00034E-6p; Thu, 11 Nov 2021 19:10:26 +0100
+Date:   Thu, 11 Nov 2021 17:09:20 -0100
+From:   Melissa Wen <mwen@igalia.com>
+To:     Colin Ian King <colin.i.king@googlemail.com>
+Cc:     Emma Anholt <emma@anholt.net>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Iago Toral Quiroga <itoral@igalia.com>,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/v3d: pass null pointers using NULL
+Message-ID: <20211111180920.sbngpa4vqc2ptijs@mail.igalia.com>
+References: <20211110193635.312328-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-References: <a4b8454f560b70cedf0e4d06275787f08d576ee5.1635964610.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <a4b8454f560b70cedf0e4d06275787f08d576ee5.1635964610.git.christophe.jaillet@wanadoo.fr>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Thu, 11 Nov 2021 11:25:12 -0700
-Message-ID: <CANLsYkxQu1Prfg64qqWF7fRMp_rVXoL6PG1trWaX8bSNnaiY4g@mail.gmail.com>
-Subject: Re: [PATCH v2] coresight: Use devm_bitmap_zalloc when applicable
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Suzuki.Poulose@arm.com, mike.leach@linaro.org, leo.yan@linaro.org,
-        alexander.shishkin@linux.intel.com, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@foss.st.com, coresight@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="325a2qr3pmdrhiay"
+Content-Disposition: inline
+In-Reply-To: <20211110193635.312328-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
 
-On Wed, 3 Nov 2021 at 12:39, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> 'drvdata->chs.guaranteed' is a bitmap. So use 'devm_bitmap_kzalloc()' to
-> simplify code, improve the semantic and avoid some open-coded arithmetic
-> in allocator arguments.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+--325a2qr3pmdrhiay
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On 11/10, Colin Ian King wrote:
+> There are a couple of calls that are passing null pointers as
+> integer zeros rather than NULL. Fix this by using NULL instead.
+>=20
+> Fixes: 07c2a41658c4 ("drm/v3d: alloc and init job in one shot")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
-> v1 --> v2: remove the 'guaranteed' variable to be even less verbose
-> ---
->  drivers/hwtracing/coresight/coresight-stm.c | 10 +++-------
->  1 file changed, 3 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
-> index 58062a5a8238..bb14a3a8a921 100644
-> --- a/drivers/hwtracing/coresight/coresight-stm.c
-> +++ b/drivers/hwtracing/coresight/coresight-stm.c
-> @@ -856,13 +856,11 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
->  {
->         int ret;
->         void __iomem *base;
-> -       unsigned long *guaranteed;
->         struct device *dev = &adev->dev;
->         struct coresight_platform_data *pdata = NULL;
->         struct stm_drvdata *drvdata;
->         struct resource *res = &adev->res;
->         struct resource ch_res;
-> -       size_t bitmap_size;
->         struct coresight_desc desc = { 0 };
->
->         desc.name = coresight_alloc_device_name(&stm_devs, dev);
-> @@ -904,12 +902,10 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
->         else
->                 drvdata->numsp = stm_num_stimulus_port(drvdata);
->
-> -       bitmap_size = BITS_TO_LONGS(drvdata->numsp) * sizeof(long);
-> -
-> -       guaranteed = devm_kzalloc(dev, bitmap_size, GFP_KERNEL);
-> -       if (!guaranteed)
-> +       drvdata->chs.guaranteed = devm_bitmap_zalloc(dev, drvdata->numsp,
-> +                                                    GFP_KERNEL);
-> +       if (!drvdata->chs.guaranteed)
->                 return -ENOMEM;
-> -       drvdata->chs.guaranteed = guaranteed;
+>  drivers/gpu/drm/v3d/v3d_gem.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
+> index e47ae40a865a..c7ed2e1cbab6 100644
+> --- a/drivers/gpu/drm/v3d/v3d_gem.c
+> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
+> @@ -774,7 +774,7 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *dat=
+a,
+> =20
+>  	if (args->flags & DRM_V3D_SUBMIT_CL_FLUSH_CACHE) {
+>  		ret =3D v3d_job_init(v3d, file_priv, (void *)&clean_job, sizeof(*clean=
+_job),
+> -				   v3d_job_free, 0, 0, V3D_CACHE_CLEAN);
+> +				   v3d_job_free, 0, NULL, V3D_CACHE_CLEAN);
+>  		if (ret)
+>  			goto fail;
+> =20
+> @@ -1007,7 +1007,7 @@ v3d_submit_csd_ioctl(struct drm_device *dev, void *=
+data,
+>  		goto fail;
+> =20
+>  	ret =3D v3d_job_init(v3d, file_priv, (void *)&clean_job, sizeof(*clean_=
+job),
+> -			   v3d_job_free, 0, 0, V3D_CACHE_CLEAN);
+> +			   v3d_job_free, 0, NULL, V3D_CACHE_CLEAN);
+>  	if (ret)
+>  		goto fail;
 
-I will pick up this patch when -rc1 gets released.
+Hi Colin,
 
-Thanks,
-Mathieu
+This fix has been already done:
+https://cgit.freedesktop.org/drm/drm-misc/commit/?id=3D75ad021f21927311b8d4=
+54939eb248a50df92525
 
->
->         spin_lock_init(&drvdata->spinlock);
->
-> --
-> 2.30.2
->
+Thanks, anyway.
+
+Melissa
+> =20
+> --=20
+> 2.32.0
+>=20
+
+--325a2qr3pmdrhiay
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEd8WOo/JViG+Tu+XIwqF3j0dLehwFAmGNXEsACgkQwqF3j0dL
+ehwXUBAAo/tDFp8Fc7C1cDgMAUeGAJzpS1GJtU1NW1hPHWXVDhfN6hiTEwtePgkQ
+edppAzJib36jKl92E9sbpNlFVJdBxUEd123iSfeXWjSptxxqjwYgnHHbkh/X06JO
+yz/ps/qfumxJGtD36c139fFobd75AvDBcJF1OO+atV9myBOTaz0DClpukUyAh7k5
+dE3C7xCgDZg6W4KFWrm+z6F8IG0cHnJlHg/8cAJ5Y3RdsPLBVLdG3Q/5SUKQCqyu
+uhpLNh1TLE3FIz81jTmafAsGGJx3cnoVcLlR+gOYOkLcMWoAJcWL5wAXhIJauQkm
+2ga4vJaMAVBY+1Q7Ffb4XHEdZdt+6KGANfw3ubu26dpXmyhyWwSGwCasFU7aITi8
+v7MoiLWUY6T0CyepvaklWS0+qBCc1xPU7QMycb/nNePYQg5e6igo4MlCfo2V+R87
+5Gkmg4TFi3Ea3EIH+7tC4PbPH3UJW0J9L1XCY3KwjroNHla5rkRhULaDUGo2jrRC
+cLh8kcuVoyogKp3g5rmpMyrmyBLTJ5ApbvsT4PjfIy/Sxg6GFT6lcWSbl2Wbz5Pu
+QUfA080DZPDYZVAWo+vSNHr+AgtfLEnLbcJHexC12kuwpNzpAB5qk6Atynf4xbwU
+uZv0BLaGGUt6BzElqRyhst6ttRFNmUZ8M58kN2VTbbvAx0BnKcE=
+=9wCf
+-----END PGP SIGNATURE-----
+
+--325a2qr3pmdrhiay--
