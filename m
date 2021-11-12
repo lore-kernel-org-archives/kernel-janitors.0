@@ -2,78 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D6F3C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Nov 2021 14:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E37CEC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Nov 2021 16:15:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A2CF60F55
-	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Nov 2021 14:06:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAC7061029
+	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Nov 2021 16:15:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231131AbhKLOJh (ORCPT
+        id S235339AbhKLQSU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 12 Nov 2021 09:09:37 -0500
-Received: from mga05.intel.com ([192.55.52.43]:59226 "EHLO mga05.intel.com"
+        Fri, 12 Nov 2021 11:18:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235095AbhKLOJh (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 12 Nov 2021 09:09:37 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10165"; a="319340499"
-X-IronPort-AV: E=Sophos;i="5.87,229,1631602800"; 
-   d="scan'208";a="319340499"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2021 06:06:46 -0800
-X-IronPort-AV: E=Sophos;i="5.87,229,1631602800"; 
-   d="scan'208";a="504901034"
-Received: from sbacanu-mobl1.ger.corp.intel.com (HELO localhost) ([10.251.217.145])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2021 06:06:43 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Colin King <colin.king@canonical.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/i915: make array states static const
-In-Reply-To: <20210915112702.12783-1-colin.king@canonical.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20210915112702.12783-1-colin.king@canonical.com>
-Date:   Fri, 12 Nov 2021 16:06:41 +0200
-Message-ID: <87wnld31u6.fsf@intel.com>
+        id S233776AbhKLQSU (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 12 Nov 2021 11:18:20 -0500
+Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 811A760FBF;
+        Fri, 12 Nov 2021 16:15:27 +0000 (UTC)
+Date:   Fri, 12 Nov 2021 16:20:13 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Cai Huoqing <caihuoqing@baidu.com>, linux-iio@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iio: imx8qxp-adc: fix dependency to the intended
+ ARCH_MXC config
+Message-ID: <20211112162013.01f4f171@jic23-huawei>
+In-Reply-To: <CAOMZO5B4k=UvE5XTgbsjCfoo0h0Y7H+xN6mwh9Bnc2L82QYzwQ@mail.gmail.com>
+References: <20211111083954.6286-1-lukas.bulwahn@gmail.com>
+        <CAOMZO5B4k=UvE5XTgbsjCfoo0h0Y7H+xN6mwh9Bnc2L82QYzwQ@mail.gmail.com>
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 15 Sep 2021, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Don't populate the read-only array states on the stack but instead it
-> static. Also makes the object code smaller.
+On Thu, 11 Nov 2021 07:31:25 -0300
+Fabio Estevam <festevam@gmail.com> wrote:
 
-Finally pushed, sorry for the delay.
+> Hi Lukas,
+> 
+> On Thu, Nov 11, 2021 at 5:40 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> >
+> > Commit 1e23dcaa1a9f ("iio: imx8qxp-adc: Add driver support for NXP IMX8QXP
+> > ADC") adds the config IMX8QXP_ADC for this new driver, which depends on
+> > the non-existing config ARCH_MXC_ARM64.
+> >
+> > Hence, ./scripts/checkkconfigsymbols.py warns:
+> >
+> >   ARCH_MXC_ARM64
+> >   Referencing files: drivers/iio/adc/Kconfig
+> >
+> > Probably, the existing config ARCH_MXC is intended to be referred here.
+> > So, repair the dependency to refer to that config.
+> >
+> > Fixes: 1e23dcaa1a9f ("iio: imx8qxp-adc: Add driver support for NXP IMX8QXP ADC")
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>  
+> 
+> This looks good.
+> 
+> The incorrect  ARCH_MXC_ARM64 symbol probably came when porting the
+> driver from the NXP downstream kernel:
+> 
+> Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Applied to the fixes-togreg branch of iio.git
 
-BR,
-Jani.
+Thanks,
 
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/i915/display/intel_display_power.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/display/intel_display_power.c b/drivers/gpu/drm/i915/display/intel_display_power.c
-> index cce1a926fcc1..a60710348613 100644
-> --- a/drivers/gpu/drm/i915/display/intel_display_power.c
-> +++ b/drivers/gpu/drm/i915/display/intel_display_power.c
-> @@ -893,7 +893,7 @@ static u32
->  sanitize_target_dc_state(struct drm_i915_private *dev_priv,
->  			 u32 target_dc_state)
->  {
-> -	u32 states[] = {
-> +	static const u32 states[] = {
->  		DC_STATE_EN_UPTO_DC6,
->  		DC_STATE_EN_UPTO_DC5,
->  		DC_STATE_EN_DC3CO,
+Jonathan
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+
