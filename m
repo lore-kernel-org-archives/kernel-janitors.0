@@ -2,93 +2,97 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6836C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Nov 2021 07:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0DFC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Nov 2021 09:06:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A09C608FB
-	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Nov 2021 07:59:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A86460F26
+	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Nov 2021 09:06:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233441AbhKLIBz (ORCPT
+        id S234707AbhKLJJc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 12 Nov 2021 03:01:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36860 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231173AbhKLIBz (ORCPT
+        Fri, 12 Nov 2021 04:09:32 -0500
+Received: from out02.smtpout.orange.fr ([193.252.22.211]:58918 "EHLO
+        out.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234621AbhKLJJc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 12 Nov 2021 03:01:55 -0500
-Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD7A5C061766;
-        Thu, 11 Nov 2021 23:59:04 -0800 (PST)
-Received: by mail-oi1-x230.google.com with SMTP id t19so16580681oij.1;
-        Thu, 11 Nov 2021 23:59:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=K3BG6NxpY8NKeo+Tqcp86/JjXR0k4/0cRXbuFf9kpkw=;
-        b=T8eM0Ca8W3WasdquLqo3rqVZw/SxwkpBLztTbqHOvf3hoJth31paV+af8gJ2CROOf2
-         G4d1Y5dfk1NwdYVrpUCykO7Wk7sImX8qcjpPqQ3H5bOKsXFl9C35KzvZda6oqOmvyrq8
-         BADl/I9/XMh5ZhMRi2GTDg72LRhCquxzOYMjizmXNsDmrA46sc/UDFePylwvWG7U/KrP
-         CS2lJwzfgRyEGJ6yUVqW0L0BD/g2nTqSHIG3YcbBUTc6iY5gYwnvIljpfnbJ8HoVRbzv
-         SnL2Tg7G03W6Jyax/Txq9qLA+ui3hkkE1k5H5ccXJxSI+TI+YBqXUpLdEi1ScX/9d+p5
-         hjNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=K3BG6NxpY8NKeo+Tqcp86/JjXR0k4/0cRXbuFf9kpkw=;
-        b=oh9U6WB/etddYhwz2GJYh4szTj12t8AbuP/j/aUz2D+AzLJ6+TZLzjXcHmT9SAxwJO
-         9U5yd4BkRbmIvjhakKE8V87yJXeE+AIqS81l1vG66WiagC3WBsWsOTKnrQenIoCnjSfK
-         1ZH12Z3BqE1USOhGh32qWpYvi3mY2P9gCeAj4UfY529k+xk+0Z2kKfUyzr61rVZHIsoS
-         OCEGrb9mWw/ESW2avZEd/1dfnpkKl2wj2UomA+c7/oKRUw1TtPQUvJLdL8HxK+VfZKof
-         /vWibCe72sOhYSvj90qW7tY3hpE56V//sKOC1lVB4io3o0oZl9VB0knL5i80ApTaeibZ
-         K1TA==
-X-Gm-Message-State: AOAM5319IfgXXTF4HzrAbWhg5Mm4Tv9Rt11zsHEBArtNIIjiw4HCiuln
-        n1I6zbT1WxidAimWfBbbn0HhTefh6TamO8gEB+Kdn2TeJYw=
-X-Google-Smtp-Source: ABdhPJxgVzahm0dCklWl/h2IrGV7uB13NBpq1wp2AzbqiNNf1okVgAIr1d5sPfiSeXthsKDiIr+zNhlNoIy/kMmYnyE=
-X-Received: by 2002:a05:6808:2cc:: with SMTP id a12mr11640076oid.126.1636703944304;
- Thu, 11 Nov 2021 23:59:04 -0800 (PST)
+        Fri, 12 Nov 2021 04:09:32 -0500
+Received: from pop-os.home ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id lSOomwu8HwEZflSOomATNQ; Fri, 12 Nov 2021 09:59:08 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Fri, 12 Nov 2021 09:59:08 +0100
+X-ME-IP: 86.243.171.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     selvin.xavier@broadcom.com, dledford@redhat.com, jgg@ziepe.ca,
+        sriharsha.basavapatna@broadcom.com, eddie.wai@broadcom.com,
+        somnath.kotur@broadcom.com, leon@kernel.org
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] RDMA/bnxt_re: Scan the whole bitmap when checking if "disabling RCFW with pending cmd-bit"
+Date:   Fri, 12 Nov 2021 09:59:04 +0100
+Message-Id: <47ed717c3070a1d0f53e7b4c768a4fd11caf365d.1636707421.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Fri, 12 Nov 2021 08:58:51 +0100
-Message-ID: <CAKXUXMxBW0qM06i7TvFG+8HrwbR1eYR+9Ed648aZ95mtXiA7Tg@mail.gmail.com>
-Subject: Removal of config MACH_FSG and dead reference in LEDS_FSG
-To:     Linus Walleij <linusw@kernel.org>, Marc Zyngier <maz@kernel.org>,
-        Imre Kaloz <kaloz@openwrt.org>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dear Linus,
+The 'cmdq->cmdq_bitmap' bitmap is 'rcfw->cmdq_depth' bits long.
+The size stored in 'cmdq->bmap_size' is the size of the bitmap in bytes.
 
-Your commit b71377b3e1e0 ("ARM: ixp4xx: Delete the Freecom FSG-3
-boardfiles") removes the config MACH_FSG. Hence, the config LEDS_FSG
-and its corresponding driver leds-fsg.c is effectively not selectable.
-I do not know much about how with device trees we ensure that specific
-drivers are selected, or how Kconfig build dependencies are combined
-with device trees properly here. So, I do not know what the right
-patch is here.
+Remove this erroneous 'bmap_size' and use 'rcfw->cmdq_depth' directly in
+'bnxt_qplib_disable_rcfw_channel()'. Otherwise some error messages may
+be missing.
 
-Was it intended that this code is now made obsolete? Can this driver
-really be deleted?
+Other uses of 'cmdq_bitmap' already take into account 'rcfw->cmdq_depth'
+directly.
 
-Or does it require just some further adjustment to make the leds-fsg
-driver productive again?
+Fixes: 1ac5a4047975 ("RDMA/bnxt_re: Add bnxt_re RoCE driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/infiniband/hw/bnxt_re/qplib_rcfw.c | 6 ++----
+ drivers/infiniband/hw/bnxt_re/qplib_rcfw.h | 1 -
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
-This issue was identified with ./scripts/checkkconfigsymbols.py, which
-reports the following reference to an undefined config:
+diff --git a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
+index 3de854727460..19a0778d38a2 100644
+--- a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
+@@ -618,8 +618,6 @@ int bnxt_qplib_alloc_rcfw_channel(struct bnxt_qplib_res *res,
+ 	if (!cmdq->cmdq_bitmap)
+ 		goto fail;
+ 
+-	cmdq->bmap_size = bmap_size;
+-
+ 	/* Allocate one extra to hold the QP1 entries */
+ 	rcfw->qp_tbl_size = qp_tbl_sz + 1;
+ 	rcfw->qp_tbl = kcalloc(rcfw->qp_tbl_size, sizeof(struct bnxt_qplib_qp_node),
+@@ -667,8 +665,8 @@ void bnxt_qplib_disable_rcfw_channel(struct bnxt_qplib_rcfw *rcfw)
+ 	iounmap(cmdq->cmdq_mbox.reg.bar_reg);
+ 	iounmap(creq->creq_db.reg.bar_reg);
+ 
+-	indx = find_first_bit(cmdq->cmdq_bitmap, cmdq->bmap_size);
+-	if (indx != cmdq->bmap_size)
++	indx = find_first_bit(cmdq->cmdq_bitmap, rcfw->cmdq_depth);
++	if (indx != rcfw->cmdq_depth)
+ 		dev_err(&rcfw->pdev->dev,
+ 			"disabling RCFW with pending cmd-bit %lx\n", indx);
+ 
+diff --git a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.h b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.h
+index 82faa4e4cda8..0a3d8e7da3d4 100644
+--- a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.h
++++ b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.h
+@@ -152,7 +152,6 @@ struct bnxt_qplib_cmdq_ctx {
+ 	wait_queue_head_t		waitq;
+ 	unsigned long			flags;
+ 	unsigned long			*cmdq_bitmap;
+-	u32				bmap_size;
+ 	u32				seq_num;
+ };
+ 
+-- 
+2.30.2
 
-  MACH_FSG
-  Referencing files: drivers/leds/Kconfig
-
-I am happy to support creating a patch, once I understand what needs
-to be done in this case.
-
-
-Best regards,
-
-Lukas
