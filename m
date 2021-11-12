@@ -2,38 +2,39 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D59C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Nov 2021 16:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15427C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Nov 2021 16:39:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B2E961029
-	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Nov 2021 16:30:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFDFA601FC
+	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Nov 2021 16:39:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235434AbhKLQdO (ORCPT
+        id S235426AbhKLQma (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 12 Nov 2021 11:33:14 -0500
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:54432 "EHLO
+        Fri, 12 Nov 2021 11:42:30 -0500
+Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:61935 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235414AbhKLQdM (ORCPT
+        with ESMTP id S235371AbhKLQm3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 12 Nov 2021 11:33:12 -0500
+        Fri, 12 Nov 2021 11:42:29 -0500
 Received: from pop-os.home ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id lZRRmTge41UGBlZRRmGGbc; Fri, 12 Nov 2021 17:30:20 +0100
+        id lZaQmTkjd1UGBlZaQmGHpS; Fri, 12 Nov 2021 17:39:37 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Fri, 12 Nov 2021 17:30:20 +0100
+X-ME-Date: Fri, 12 Nov 2021 17:39:37 +0100
 X-ME-IP: 86.243.171.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     peter.chen@kernel.org, gregkh@linuxfoundation.org,
-        balbi@kernel.org, valentina.manea.m@gmail.com, shuah@kernel.org,
-        johan@kernel.org, zhengyongjun3@huawei.com, colin.king@intel.com,
-        trix@redhat.com
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+To:     anil.gurumurthy@qlogic.com, sudarsana.kalluru@qlogic.com,
+        jejb@linux.ibm.com, martin.petersen@oracle.com, satishkh@cisco.com,
+        sebaddel@cisco.com, kartilak@cisco.com, james.smart@broadcom.com,
+        dick.kennedy@broadcom.com, njavali@marvell.com,
+        mrangankar@marvell.com
+Cc:     GR-QLogic-Storage-Upstream@marvell.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] usb: Remove redundant 'flush_workqueue()' calls
-Date:   Fri, 12 Nov 2021 17:30:16 +0100
-Message-Id: <563123a8117d6cafae3f134e497587bd2b8bb7f4.1636734453.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] scsi: Remove redundant 'flush_workqueue()' calls
+Date:   Fri, 12 Nov 2021 17:39:33 +0100
+Message-Id: <feb3511c02b9df0848c9cac8af3daf87d9ea5821.1636734915.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -56,94 +57,83 @@ expression E;
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/usb/chipidea/otg.c           | 5 ++---
- drivers/usb/gadget/udc/mv_udc_core.c | 4 +---
- drivers/usb/host/u132-hcd.c          | 1 -
- drivers/usb/phy/phy-mv-usb.c         | 5 +----
- drivers/usb/usbip/usbip_event.c      | 1 -
- 5 files changed, 4 insertions(+), 12 deletions(-)
+ drivers/scsi/bfa/bfad_im.c    | 1 -
+ drivers/scsi/fnic/fnic_main.c | 4 +---
+ drivers/scsi/lpfc/lpfc_init.c | 1 -
+ drivers/scsi/qedi/qedi_main.c | 2 --
+ drivers/scsi/qla2xxx/qla_os.c | 1 -
+ 5 files changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/drivers/usb/chipidea/otg.c b/drivers/usb/chipidea/otg.c
-index 8dd59282827b..7b53274ef966 100644
---- a/drivers/usb/chipidea/otg.c
-+++ b/drivers/usb/chipidea/otg.c
-@@ -255,10 +255,9 @@ int ci_hdrc_otg_init(struct ci_hdrc *ci)
-  */
- void ci_hdrc_otg_destroy(struct ci_hdrc *ci)
+diff --git a/drivers/scsi/bfa/bfad_im.c b/drivers/scsi/bfa/bfad_im.c
+index 759d2bb1ecdd..b5c1729974ac 100644
+--- a/drivers/scsi/bfa/bfad_im.c
++++ b/drivers/scsi/bfa/bfad_im.c
+@@ -756,7 +756,6 @@ void
+ bfad_destroy_workq(struct bfad_im_s *im)
  {
--	if (ci->wq) {
--		flush_workqueue(ci->wq);
-+	if (ci->wq)
- 		destroy_workqueue(ci->wq);
--	}
-+
- 	/* Disable all OTG irq and clear status */
- 	hw_write_otgsc(ci, OTGSC_INT_EN_BITS | OTGSC_INT_STATUS_BITS,
- 						OTGSC_INT_STATUS_BITS);
-diff --git a/drivers/usb/gadget/udc/mv_udc_core.c b/drivers/usb/gadget/udc/mv_udc_core.c
-index 7f24ce400b59..b6d34dda028b 100644
---- a/drivers/usb/gadget/udc/mv_udc_core.c
-+++ b/drivers/usb/gadget/udc/mv_udc_core.c
-@@ -2084,10 +2084,8 @@ static int mv_udc_remove(struct platform_device *pdev)
- 
- 	usb_del_gadget_udc(&udc->gadget);
- 
--	if (udc->qwork) {
--		flush_workqueue(udc->qwork);
-+	if (udc->qwork)
- 		destroy_workqueue(udc->qwork);
--	}
- 
- 	/* free memory allocated in probe */
- 	dma_pool_destroy(udc->dtd_pool);
-diff --git a/drivers/usb/host/u132-hcd.c b/drivers/usb/host/u132-hcd.c
-index ae882d76612b..d879d6af5710 100644
---- a/drivers/usb/host/u132-hcd.c
-+++ b/drivers/usb/host/u132-hcd.c
-@@ -3211,7 +3211,6 @@ static void __exit u132_hcd_exit(void)
- 	platform_driver_unregister(&u132_platform_driver);
- 	printk(KERN_INFO "u132-hcd driver deregistered\n");
- 	wait_event(u132_hcd_wait, u132_instances == 0);
--	flush_workqueue(workqueue);
- 	destroy_workqueue(workqueue);
- }
- 
-diff --git a/drivers/usb/phy/phy-mv-usb.c b/drivers/usb/phy/phy-mv-usb.c
-index 576d925af77c..86503b7d695c 100644
---- a/drivers/usb/phy/phy-mv-usb.c
-+++ b/drivers/usb/phy/phy-mv-usb.c
-@@ -648,10 +648,8 @@ static int mv_otg_remove(struct platform_device *pdev)
+ 	if (im && im->drv_workq) {
+-		flush_workqueue(im->drv_workq);
+ 		destroy_workqueue(im->drv_workq);
+ 		im->drv_workq = NULL;
+ 	}
+diff --git a/drivers/scsi/fnic/fnic_main.c b/drivers/scsi/fnic/fnic_main.c
+index 44dbaa662d94..806aaf411d10 100644
+--- a/drivers/scsi/fnic/fnic_main.c
++++ b/drivers/scsi/fnic/fnic_main.c
+@@ -1145,10 +1145,8 @@ static void __exit fnic_cleanup_module(void)
  {
- 	struct mv_otg *mvotg = platform_get_drvdata(pdev);
- 
--	if (mvotg->qwork) {
--		flush_workqueue(mvotg->qwork);
-+	if (mvotg->qwork)
- 		destroy_workqueue(mvotg->qwork);
+ 	pci_unregister_driver(&fnic_driver);
+ 	destroy_workqueue(fnic_event_queue);
+-	if (fnic_fip_queue) {
+-		flush_workqueue(fnic_fip_queue);
++	if (fnic_fip_queue)
+ 		destroy_workqueue(fnic_fip_queue);
 -	}
- 
- 	mv_otg_disable(mvotg);
- 
-@@ -825,7 +823,6 @@ static int mv_otg_probe(struct platform_device *pdev)
- err_disable_clk:
- 	mv_otg_disable_internal(mvotg);
- err_destroy_workqueue:
--	flush_workqueue(mvotg->qwork);
- 	destroy_workqueue(mvotg->qwork);
- 
- 	return retval;
-diff --git a/drivers/usb/usbip/usbip_event.c b/drivers/usb/usbip/usbip_event.c
-index 086ca76dd053..26513540bcdb 100644
---- a/drivers/usb/usbip/usbip_event.c
-+++ b/drivers/usb/usbip/usbip_event.c
-@@ -137,7 +137,6 @@ int usbip_init_eh(void)
- 
- void usbip_finish_eh(void)
+ 	kmem_cache_destroy(fnic_sgl_cache[FNIC_SGL_CACHE_MAX]);
+ 	kmem_cache_destroy(fnic_sgl_cache[FNIC_SGL_CACHE_DFLT]);
+ 	kmem_cache_destroy(fnic_io_req_cache);
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index ba17a8f740a9..93decd6c7ab1 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -8529,7 +8529,6 @@ static void
+ lpfc_unset_driver_resource_phase2(struct lpfc_hba *phba)
  {
--	flush_workqueue(usbip_queue);
- 	destroy_workqueue(usbip_queue);
- 	usbip_queue = NULL;
- }
+ 	if (phba->wq) {
+-		flush_workqueue(phba->wq);
+ 		destroy_workqueue(phba->wq);
+ 		phba->wq = NULL;
+ 	}
+diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
+index 1dec814d8788..542dde3a1cfd 100644
+--- a/drivers/scsi/qedi/qedi_main.c
++++ b/drivers/scsi/qedi/qedi_main.c
+@@ -2422,13 +2422,11 @@ static void __qedi_remove(struct pci_dev *pdev, int mode)
+ 		iscsi_host_remove(qedi->shost);
+ 
+ 		if (qedi->tmf_thread) {
+-			flush_workqueue(qedi->tmf_thread);
+ 			destroy_workqueue(qedi->tmf_thread);
+ 			qedi->tmf_thread = NULL;
+ 		}
+ 
+ 		if (qedi->offload_thread) {
+-			flush_workqueue(qedi->offload_thread);
+ 			destroy_workqueue(qedi->offload_thread);
+ 			qedi->offload_thread = NULL;
+ 		}
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index abcd30917263..9f9d2f075bbe 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -3922,7 +3922,6 @@ qla2x00_free_device(scsi_qla_host_t *vha)
+ 
+ 	/* Flush the work queue and remove it */
+ 	if (ha->wq) {
+-		flush_workqueue(ha->wq);
+ 		destroy_workqueue(ha->wq);
+ 		ha->wq = NULL;
+ 	}
 -- 
 2.30.2
 
