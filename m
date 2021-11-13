@@ -2,83 +2,162 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D725C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Nov 2021 21:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A32C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 13 Nov 2021 12:25:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20AC461139
-	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Nov 2021 21:27:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D9C261077
+	for <kernel-janitors@archiver.kernel.org>; Sat, 13 Nov 2021 12:25:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235778AbhKLVa0 (ORCPT
+        id S233881AbhKMM2p (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 12 Nov 2021 16:30:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33218 "EHLO mail.kernel.org"
+        Sat, 13 Nov 2021 07:28:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235768AbhKLVaZ (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 12 Nov 2021 16:30:25 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 83F8960F51;
-        Fri, 12 Nov 2021 21:27:33 +0000 (UTC)
+        id S229699AbhKMM2o (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 13 Nov 2021 07:28:44 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5AE2A61075;
+        Sat, 13 Nov 2021 12:25:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636752454;
-        bh=Ecwkgb9e14C6Kune5wLkv+S7iKP60oFn4zyvFneEyQ0=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=O9WlAVYFLSiIb7njnNns+4Doo7GH3SvUfdVdtp19eck61kYCDRwtcqkAPg3hiQKmC
-         paa4cvvK9WdEnUkqd6FXe7T5TIvH4zKwKZVwdB8evaElSrJCubjKODE6iysQcofR32
-         ARRMJrAqoeRSThUaosXN8hDLGwuerEp43m+KZU6XEuv2ch6xh6xOyb4GC7wQsSO5/f
-         h+km3TPyGESimpViSN9XbNHqCfOqOFVXq5yOV6Hk2EJz/fx7SZPuyKBKxY24mmzs31
-         oi8tx9rZ1SflG3fE+sCfVJoKnQ38yOA0LqHP/X5+R3Thd7HxaEajAU4SHDhd9rSbd3
-         /y64BJvXcAksw==
-From:   Mark Brown <broonie@kernel.org>
-To:     Andy Gross <agross@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Vinod Koul <vkoul@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-In-Reply-To: <20211110073935.GA5176@kili>
-References: <20211110073935.GA5176@kili>
-Subject: Re: [PATCH] spi: spi-geni-qcom: fix error handling in spi_geni_grab_gpi_chan()
-Message-Id: <163675245327.742446.568186014319841579.b4-ty@kernel.org>
-Date:   Fri, 12 Nov 2021 21:27:33 +0000
+        s=k20201202; t=1636806352;
+        bh=ez+K7Q6nN+J4K14Z0eLFaOK3VUeeeFzaYOkRWOtmpLA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BxHIoKYCpbJqfGTsOTTlPnAtuoRcNOYyUazCOpGB3UY9D6wYSq/FEjIPjgBT3LXow
+         65kUu1EI9p8uY3RHTOASUFqNyVluQzB0qyqGlexN/S7kg98A/Sp09bAbjVAHKNqfFr
+         gI9nIlyW53diNXmtslHAKcbB0AbewFz0gT3Lkzv3mPivjEN0Q6jJndPggIxIigkpvz
+         j9bbW6Z5KIBXJ5QIGhrT8reDdjo8qFPKf8uzAtYjD/m6yBs6jZydYniNMuM4MwkbfQ
+         NKTfWd6f3S2kT5h94gGskBj8mxMpPR9vKGUulxDdN44u/xZswPmFCnJ4ouXIWtYCkq
+         1UzpyYMGc00Dg==
+Date:   Sat, 13 Nov 2021 20:25:44 +0800
+From:   Peter Chen <peter.chen@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     gregkh@linuxfoundation.org, balbi@kernel.org,
+        valentina.manea.m@gmail.com, shuah@kernel.org, johan@kernel.org,
+        zhengyongjun3@huawei.com, colin.king@intel.com, trix@redhat.com,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] usb: Remove redundant 'flush_workqueue()' calls
+Message-ID: <20211113122544.GA3972@Peter>
+References: <563123a8117d6cafae3f134e497587bd2b8bb7f4.1636734453.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <563123a8117d6cafae3f134e497587bd2b8bb7f4.1636734453.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 10 Nov 2021 10:39:35 +0300, Dan Carpenter wrote:
-> This code has several issues:
-> 1) It passes IS_ERR() to dev_err_probe() instead of PTR_ERR().
-> 2) It always prints an error message, even when it succeeds.
-> 3) The "if (ret < 0) {" conditions are never true.
-> 4) If requesting "mas->tx" fails then it sets "mas->rx" to NULL but the
->    intention was to set "mas->tx" to NULL.
+On 21-11-12 17:30:16, Christophe JAILLET wrote:
+> 'destroy_workqueue()' already drains the queue before destroying it, so
+> there is no need to flush it explicitly.
 > 
-> [...]
+> Remove the redundant 'flush_workqueue()' calls.
+> 
+> This was generated with coccinelle:
+> 
+> @@
+> expression E;
+> @@
+> - 	flush_workqueue(E);
+> 	destroy_workqueue(E);
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/usb/chipidea/otg.c           | 5 ++---
 
-Applied to
+Acked-by: Peter Chen <peter.chen@kernel.or> # for chipidea part
+>  drivers/usb/gadget/udc/mv_udc_core.c | 4 +---
+>  drivers/usb/host/u132-hcd.c          | 1 -
+>  drivers/usb/phy/phy-mv-usb.c         | 5 +----
+>  drivers/usb/usbip/usbip_event.c      | 1 -
+>  5 files changed, 4 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/usb/chipidea/otg.c b/drivers/usb/chipidea/otg.c
+> index 8dd59282827b..7b53274ef966 100644
+> --- a/drivers/usb/chipidea/otg.c
+> +++ b/drivers/usb/chipidea/otg.c
+> @@ -255,10 +255,9 @@ int ci_hdrc_otg_init(struct ci_hdrc *ci)
+>   */
+>  void ci_hdrc_otg_destroy(struct ci_hdrc *ci)
+>  {
+> -	if (ci->wq) {
+> -		flush_workqueue(ci->wq);
+> +	if (ci->wq)
+>  		destroy_workqueue(ci->wq);
+> -	}
+> +
+>  	/* Disable all OTG irq and clear status */
+>  	hw_write_otgsc(ci, OTGSC_INT_EN_BITS | OTGSC_INT_STATUS_BITS,
+>  						OTGSC_INT_STATUS_BITS);
+> diff --git a/drivers/usb/gadget/udc/mv_udc_core.c b/drivers/usb/gadget/udc/mv_udc_core.c
+> index 7f24ce400b59..b6d34dda028b 100644
+> --- a/drivers/usb/gadget/udc/mv_udc_core.c
+> +++ b/drivers/usb/gadget/udc/mv_udc_core.c
+> @@ -2084,10 +2084,8 @@ static int mv_udc_remove(struct platform_device *pdev)
+>  
+>  	usb_del_gadget_udc(&udc->gadget);
+>  
+> -	if (udc->qwork) {
+> -		flush_workqueue(udc->qwork);
+> +	if (udc->qwork)
+>  		destroy_workqueue(udc->qwork);
+> -	}
+>  
+>  	/* free memory allocated in probe */
+>  	dma_pool_destroy(udc->dtd_pool);
+> diff --git a/drivers/usb/host/u132-hcd.c b/drivers/usb/host/u132-hcd.c
+> index ae882d76612b..d879d6af5710 100644
+> --- a/drivers/usb/host/u132-hcd.c
+> +++ b/drivers/usb/host/u132-hcd.c
+> @@ -3211,7 +3211,6 @@ static void __exit u132_hcd_exit(void)
+>  	platform_driver_unregister(&u132_platform_driver);
+>  	printk(KERN_INFO "u132-hcd driver deregistered\n");
+>  	wait_event(u132_hcd_wait, u132_instances == 0);
+> -	flush_workqueue(workqueue);
+>  	destroy_workqueue(workqueue);
+>  }
+>  
+> diff --git a/drivers/usb/phy/phy-mv-usb.c b/drivers/usb/phy/phy-mv-usb.c
+> index 576d925af77c..86503b7d695c 100644
+> --- a/drivers/usb/phy/phy-mv-usb.c
+> +++ b/drivers/usb/phy/phy-mv-usb.c
+> @@ -648,10 +648,8 @@ static int mv_otg_remove(struct platform_device *pdev)
+>  {
+>  	struct mv_otg *mvotg = platform_get_drvdata(pdev);
+>  
+> -	if (mvotg->qwork) {
+> -		flush_workqueue(mvotg->qwork);
+> +	if (mvotg->qwork)
+>  		destroy_workqueue(mvotg->qwork);
+> -	}
+>  
+>  	mv_otg_disable(mvotg);
+>  
+> @@ -825,7 +823,6 @@ static int mv_otg_probe(struct platform_device *pdev)
+>  err_disable_clk:
+>  	mv_otg_disable_internal(mvotg);
+>  err_destroy_workqueue:
+> -	flush_workqueue(mvotg->qwork);
+>  	destroy_workqueue(mvotg->qwork);
+>  
+>  	return retval;
+> diff --git a/drivers/usb/usbip/usbip_event.c b/drivers/usb/usbip/usbip_event.c
+> index 086ca76dd053..26513540bcdb 100644
+> --- a/drivers/usb/usbip/usbip_event.c
+> +++ b/drivers/usb/usbip/usbip_event.c
+> @@ -137,7 +137,6 @@ int usbip_init_eh(void)
+>  
+>  void usbip_finish_eh(void)
+>  {
+> -	flush_workqueue(usbip_queue);
+>  	destroy_workqueue(usbip_queue);
+>  	usbip_queue = NULL;
+>  }
+> -- 
+> 2.30.2
+> 
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-linus
-
-Thanks!
-
-[1/1] spi: spi-geni-qcom: fix error handling in spi_geni_grab_gpi_chan()
-      commit: 6532582c353f4c83e3ccdd7255020ab852b90b0b
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+-- 
 
 Thanks,
-Mark
+Peter Chen
+
