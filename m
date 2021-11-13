@@ -2,162 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A32C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 13 Nov 2021 12:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1334C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 13 Nov 2021 12:45:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D9C261077
-	for <kernel-janitors@archiver.kernel.org>; Sat, 13 Nov 2021 12:25:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B750F6113B
+	for <kernel-janitors@archiver.kernel.org>; Sat, 13 Nov 2021 12:45:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233881AbhKMM2p (ORCPT
+        id S235755AbhKMMrz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 13 Nov 2021 07:28:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40566 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229699AbhKMM2o (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 13 Nov 2021 07:28:44 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5AE2A61075;
-        Sat, 13 Nov 2021 12:25:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636806352;
-        bh=ez+K7Q6nN+J4K14Z0eLFaOK3VUeeeFzaYOkRWOtmpLA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BxHIoKYCpbJqfGTsOTTlPnAtuoRcNOYyUazCOpGB3UY9D6wYSq/FEjIPjgBT3LXow
-         65kUu1EI9p8uY3RHTOASUFqNyVluQzB0qyqGlexN/S7kg98A/Sp09bAbjVAHKNqfFr
-         gI9nIlyW53diNXmtslHAKcbB0AbewFz0gT3Lkzv3mPivjEN0Q6jJndPggIxIigkpvz
-         j9bbW6Z5KIBXJ5QIGhrT8reDdjo8qFPKf8uzAtYjD/m6yBs6jZydYniNMuM4MwkbfQ
-         NKTfWd6f3S2kT5h94gGskBj8mxMpPR9vKGUulxDdN44u/xZswPmFCnJ4ouXIWtYCkq
-         1UzpyYMGc00Dg==
-Date:   Sat, 13 Nov 2021 20:25:44 +0800
-From:   Peter Chen <peter.chen@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     gregkh@linuxfoundation.org, balbi@kernel.org,
-        valentina.manea.m@gmail.com, shuah@kernel.org, johan@kernel.org,
-        zhengyongjun3@huawei.com, colin.king@intel.com, trix@redhat.com,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] usb: Remove redundant 'flush_workqueue()' calls
-Message-ID: <20211113122544.GA3972@Peter>
-References: <563123a8117d6cafae3f134e497587bd2b8bb7f4.1636734453.git.christophe.jaillet@wanadoo.fr>
+        Sat, 13 Nov 2021 07:47:55 -0500
+Received: from smtp-fw-80006.amazon.com ([99.78.197.217]:59404 "EHLO
+        smtp-fw-80006.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233906AbhKMMry (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 13 Nov 2021 07:47:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1636807502; x=1668343502;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Zy8wju8zow4/DtC36nApgBbjpJVmv6D+3kczCE/wpTM=;
+  b=Yk5oEsRDMcohettY6Pk2VVdlj8jn3kqoaDRKkXcYG4M/+neZsEqj/nTl
+   91FKpPc7hUHYra0HLbASFjWuMEv1IygwaxEbAXaWFKAhfo59+oQzLK0my
+   57w7g/2ht3C1D2izfQsPqTCbmuuvCNSY24Sq5bcvl604krstreQA9lVxG
+   8=;
+X-IronPort-AV: E=Sophos;i="5.87,232,1631577600"; 
+   d="scan'208";a="41222640"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO email-inbound-relay-iad-1e-90d70b14.us-east-1.amazon.com) ([10.25.36.214])
+  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP; 13 Nov 2021 12:44:48 +0000
+Received: from EX13D16EUB003.ant.amazon.com (iad12-ws-svc-p26-lb9-vlan3.iad.amazon.com [10.40.163.38])
+        by email-inbound-relay-iad-1e-90d70b14.us-east-1.amazon.com (Postfix) with ESMTPS id 95E7EC08F1;
+        Sat, 13 Nov 2021 12:44:45 +0000 (UTC)
+Received: from [192.168.30.21] (10.43.162.153) by EX13D16EUB003.ant.amazon.com
+ (10.43.166.99) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Sat, 13 Nov
+ 2021 12:44:39 +0000
+Message-ID: <d4a029e4-bb44-b066-598e-17bbd3ae8bed@amazon.com>
+Date:   Sat, 13 Nov 2021 14:44:30 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <563123a8117d6cafae3f134e497587bd2b8bb7f4.1636734453.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:91.0)
+ Gecko/20100101 Thunderbird/91.3.0
+Subject: Re: [PATCH] nitro_enclaves: Remove redundant 'flush_workqueue()'
+ calls
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <lexnv@amazon.com>, <alcioa@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kamal Mostafa <kamal@canonical.com>,
+        "Paolo Bonzini" <pbonzini@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "ne-devel-upstream@amazon.com" <ne-devel-upstream@amazon.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+References: <d57f5c7e362837a8dfcde0d726a76b56f114e619.1636736947.git.christophe.jaillet@wanadoo.fr>
+From:   "Paraschiv, Andra-Irina" <andraprs@amazon.com>
+In-Reply-To: <d57f5c7e362837a8dfcde0d726a76b56f114e619.1636736947.git.christophe.jaillet@wanadoo.fr>
+X-Originating-IP: [10.43.162.153]
+X-ClientProxiedBy: EX13D35UWC004.ant.amazon.com (10.43.162.180) To
+ EX13D16EUB003.ant.amazon.com (10.43.166.99)
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 21-11-12 17:30:16, Christophe JAILLET wrote:
-> 'destroy_workqueue()' already drains the queue before destroying it, so
-> there is no need to flush it explicitly.
-> 
-> Remove the redundant 'flush_workqueue()' calls.
-> 
-> This was generated with coccinelle:
-> 
-> @@
-> expression E;
-> @@
-> - 	flush_workqueue(E);
-> 	destroy_workqueue(E);
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/usb/chipidea/otg.c           | 5 ++---
-
-Acked-by: Peter Chen <peter.chen@kernel.or> # for chipidea part
->  drivers/usb/gadget/udc/mv_udc_core.c | 4 +---
->  drivers/usb/host/u132-hcd.c          | 1 -
->  drivers/usb/phy/phy-mv-usb.c         | 5 +----
->  drivers/usb/usbip/usbip_event.c      | 1 -
->  5 files changed, 4 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/usb/chipidea/otg.c b/drivers/usb/chipidea/otg.c
-> index 8dd59282827b..7b53274ef966 100644
-> --- a/drivers/usb/chipidea/otg.c
-> +++ b/drivers/usb/chipidea/otg.c
-> @@ -255,10 +255,9 @@ int ci_hdrc_otg_init(struct ci_hdrc *ci)
->   */
->  void ci_hdrc_otg_destroy(struct ci_hdrc *ci)
->  {
-> -	if (ci->wq) {
-> -		flush_workqueue(ci->wq);
-> +	if (ci->wq)
->  		destroy_workqueue(ci->wq);
-> -	}
-> +
->  	/* Disable all OTG irq and clear status */
->  	hw_write_otgsc(ci, OTGSC_INT_EN_BITS | OTGSC_INT_STATUS_BITS,
->  						OTGSC_INT_STATUS_BITS);
-> diff --git a/drivers/usb/gadget/udc/mv_udc_core.c b/drivers/usb/gadget/udc/mv_udc_core.c
-> index 7f24ce400b59..b6d34dda028b 100644
-> --- a/drivers/usb/gadget/udc/mv_udc_core.c
-> +++ b/drivers/usb/gadget/udc/mv_udc_core.c
-> @@ -2084,10 +2084,8 @@ static int mv_udc_remove(struct platform_device *pdev)
->  
->  	usb_del_gadget_udc(&udc->gadget);
->  
-> -	if (udc->qwork) {
-> -		flush_workqueue(udc->qwork);
-> +	if (udc->qwork)
->  		destroy_workqueue(udc->qwork);
-> -	}
->  
->  	/* free memory allocated in probe */
->  	dma_pool_destroy(udc->dtd_pool);
-> diff --git a/drivers/usb/host/u132-hcd.c b/drivers/usb/host/u132-hcd.c
-> index ae882d76612b..d879d6af5710 100644
-> --- a/drivers/usb/host/u132-hcd.c
-> +++ b/drivers/usb/host/u132-hcd.c
-> @@ -3211,7 +3211,6 @@ static void __exit u132_hcd_exit(void)
->  	platform_driver_unregister(&u132_platform_driver);
->  	printk(KERN_INFO "u132-hcd driver deregistered\n");
->  	wait_event(u132_hcd_wait, u132_instances == 0);
-> -	flush_workqueue(workqueue);
->  	destroy_workqueue(workqueue);
->  }
->  
-> diff --git a/drivers/usb/phy/phy-mv-usb.c b/drivers/usb/phy/phy-mv-usb.c
-> index 576d925af77c..86503b7d695c 100644
-> --- a/drivers/usb/phy/phy-mv-usb.c
-> +++ b/drivers/usb/phy/phy-mv-usb.c
-> @@ -648,10 +648,8 @@ static int mv_otg_remove(struct platform_device *pdev)
->  {
->  	struct mv_otg *mvotg = platform_get_drvdata(pdev);
->  
-> -	if (mvotg->qwork) {
-> -		flush_workqueue(mvotg->qwork);
-> +	if (mvotg->qwork)
->  		destroy_workqueue(mvotg->qwork);
-> -	}
->  
->  	mv_otg_disable(mvotg);
->  
-> @@ -825,7 +823,6 @@ static int mv_otg_probe(struct platform_device *pdev)
->  err_disable_clk:
->  	mv_otg_disable_internal(mvotg);
->  err_destroy_workqueue:
-> -	flush_workqueue(mvotg->qwork);
->  	destroy_workqueue(mvotg->qwork);
->  
->  	return retval;
-> diff --git a/drivers/usb/usbip/usbip_event.c b/drivers/usb/usbip/usbip_event.c
-> index 086ca76dd053..26513540bcdb 100644
-> --- a/drivers/usb/usbip/usbip_event.c
-> +++ b/drivers/usb/usbip/usbip_event.c
-> @@ -137,7 +137,6 @@ int usbip_init_eh(void)
->  
->  void usbip_finish_eh(void)
->  {
-> -	flush_workqueue(usbip_queue);
->  	destroy_workqueue(usbip_queue);
->  	usbip_queue = NULL;
->  }
-> -- 
-> 2.30.2
-> 
-
--- 
-
-Thanks,
-Peter Chen
+CgpPbiAxMi8xMS8yMDIxIDE5OjA5LCBDaHJpc3RvcGhlIEpBSUxMRVQgd3JvdGU6Cj4gCj4gJ2Rl
+c3Ryb3lfd29ya3F1ZXVlKCknIGFscmVhZHkgZHJhaW5zIHRoZSBxdWV1ZSBiZWZvcmUgZGVzdHJv
+eWluZyBpdCwgc28KPiB0aGVyZSBpcyBubyBuZWVkIHRvIGZsdXNoIGl0IGV4cGxpY2l0bHkuCj4g
+Cj4gUmVtb3ZlIHRoZSByZWR1bmRhbnQgJ2ZsdXNoX3dvcmtxdWV1ZSgpJyBjYWxscy4KPiAKPiBU
+aGlzIHdhcyBnZW5lcmF0ZWQgd2l0aCBjb2NjaW5lbGxlOgo+IAo+IEBACj4gZXhwcmVzc2lvbiBF
+Owo+IEBACj4gLSAgICAgICBmbHVzaF93b3JrcXVldWUoRSk7Cj4gICAgICAgICAgZGVzdHJveV93
+b3JrcXVldWUoRSk7Cj4gCj4gU2lnbmVkLW9mZi1ieTogQ2hyaXN0b3BoZSBKQUlMTEVUIDxjaHJp
+c3RvcGhlLmphaWxsZXRAd2FuYWRvby5mcj4KPiAtLS0KPiAgIGRyaXZlcnMvdmlydC9uaXRyb19l
+bmNsYXZlcy9uZV9wY2lfZGV2LmMgfCAxIC0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAxIGRlbGV0aW9u
+KC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdmlydC9uaXRyb19lbmNsYXZlcy9uZV9wY2lf
+ZGV2LmMgYi9kcml2ZXJzL3ZpcnQvbml0cm9fZW5jbGF2ZXMvbmVfcGNpX2Rldi5jCj4gaW5kZXgg
+NDBiNDllYzhlMzBiLi42YjgxZThmM2E1ZGMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy92aXJ0L25p
+dHJvX2VuY2xhdmVzL25lX3BjaV9kZXYuYwo+ICsrKyBiL2RyaXZlcnMvdmlydC9uaXRyb19lbmNs
+YXZlcy9uZV9wY2lfZGV2LmMKPiBAQCAtMzc2LDcgKzM3Niw2IEBAIHN0YXRpYyB2b2lkIG5lX3Rl
+YXJkb3duX21zaXgoc3RydWN0IHBjaV9kZXYgKnBkZXYpCj4gICAgICAgICAgZnJlZV9pcnEocGNp
+X2lycV92ZWN0b3IocGRldiwgTkVfVkVDX0VWRU5UKSwgbmVfcGNpX2Rldik7Cj4gCj4gICAgICAg
+ICAgZmx1c2hfd29yaygmbmVfcGNpX2Rldi0+bm90aWZ5X3dvcmspOwo+IC0gICAgICAgZmx1c2hf
+d29ya3F1ZXVlKG5lX3BjaV9kZXYtPmV2ZW50X3dxKTsKPiAgICAgICAgICBkZXN0cm95X3dvcmtx
+dWV1ZShuZV9wY2lfZGV2LT5ldmVudF93cSk7Cj4gCj4gICAgICAgICAgZnJlZV9pcnEocGNpX2ly
+cV92ZWN0b3IocGRldiwgTkVfVkVDX1JFUExZKSwgbmVfcGNpX2Rldik7Cj4gLS0KPiAyLjMwLjIK
+PiAKClRoYW5rIHlvdSBmb3IgdGhlIHBhdGNoLgoKUmV2aWV3ZWQtYnk6IEFuZHJhIFBhcmFzY2hp
+diA8YW5kcmFwcnNAYW1hem9uLmNvbT4KClRoYW5rcywKQW5kcmEKCgoKQW1hem9uIERldmVsb3Bt
+ZW50IENlbnRlciAoUm9tYW5pYSkgUy5SLkwuIHJlZ2lzdGVyZWQgb2ZmaWNlOiAyN0EgU2YuIExh
+emFyIFN0cmVldCwgVUJDNSwgZmxvb3IgMiwgSWFzaSwgSWFzaSBDb3VudHksIDcwMDA0NSwgUm9t
+YW5pYS4gUmVnaXN0ZXJlZCBpbiBSb21hbmlhLiBSZWdpc3RyYXRpb24gbnVtYmVyIEoyMi8yNjIx
+LzIwMDUuCg==
 
