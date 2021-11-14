@@ -2,95 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1334C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 13 Nov 2021 12:45:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 929F7C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 14 Nov 2021 04:24:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B750F6113B
-	for <kernel-janitors@archiver.kernel.org>; Sat, 13 Nov 2021 12:45:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A7D560FE7
+	for <kernel-janitors@archiver.kernel.org>; Sun, 14 Nov 2021 04:24:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235755AbhKMMrz (ORCPT
+        id S233139AbhKNE1P (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 13 Nov 2021 07:47:55 -0500
-Received: from smtp-fw-80006.amazon.com ([99.78.197.217]:59404 "EHLO
-        smtp-fw-80006.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233906AbhKMMry (ORCPT
+        Sat, 13 Nov 2021 23:27:15 -0500
+Received: from mail-ed1-f52.google.com ([209.85.208.52]:36802 "EHLO
+        mail-ed1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230441AbhKNE1O (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 13 Nov 2021 07:47:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1636807502; x=1668343502;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Zy8wju8zow4/DtC36nApgBbjpJVmv6D+3kczCE/wpTM=;
-  b=Yk5oEsRDMcohettY6Pk2VVdlj8jn3kqoaDRKkXcYG4M/+neZsEqj/nTl
-   91FKpPc7hUHYra0HLbASFjWuMEv1IygwaxEbAXaWFKAhfo59+oQzLK0my
-   57w7g/2ht3C1D2izfQsPqTCbmuuvCNSY24Sq5bcvl604krstreQA9lVxG
-   8=;
-X-IronPort-AV: E=Sophos;i="5.87,232,1631577600"; 
-   d="scan'208";a="41222640"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO email-inbound-relay-iad-1e-90d70b14.us-east-1.amazon.com) ([10.25.36.214])
-  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP; 13 Nov 2021 12:44:48 +0000
-Received: from EX13D16EUB003.ant.amazon.com (iad12-ws-svc-p26-lb9-vlan3.iad.amazon.com [10.40.163.38])
-        by email-inbound-relay-iad-1e-90d70b14.us-east-1.amazon.com (Postfix) with ESMTPS id 95E7EC08F1;
-        Sat, 13 Nov 2021 12:44:45 +0000 (UTC)
-Received: from [192.168.30.21] (10.43.162.153) by EX13D16EUB003.ant.amazon.com
- (10.43.166.99) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Sat, 13 Nov
- 2021 12:44:39 +0000
-Message-ID: <d4a029e4-bb44-b066-598e-17bbd3ae8bed@amazon.com>
-Date:   Sat, 13 Nov 2021 14:44:30 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:91.0)
- Gecko/20100101 Thunderbird/91.3.0
-Subject: Re: [PATCH] nitro_enclaves: Remove redundant 'flush_workqueue()'
- calls
-Content-Language: en-US
+        Sat, 13 Nov 2021 23:27:14 -0500
+Received: by mail-ed1-f52.google.com with SMTP id o8so55351901edc.3;
+        Sat, 13 Nov 2021 20:24:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=7rlmuPdMhnVMN0EKqqXPhzO5LaYq5KpGdQ9/F9AAtXk=;
+        b=rWIIQI0vG/Y+cmgaabdAov5JxhBqJGPQhIbzpqzvRznRiyqTm0em7vQA2NMSRapWNw
+         /8ssbLWxuSYahWJfAz8b8NsTbus3DMjOvo21PNnsLnLPJfxXldt3sapdymTgHT8LZfVa
+         CqFWqNdO46tMcGqmL0m/w5JNlRl57LvN78WMiAwvGHlu0LIfo6BrvRRYjmqyqhpJ9/mS
+         qebW2T9oU9whhCfEq1rGlX3rJzZRv90PU6euDAzSHhUuX0cR6wsgwM1CHG2wZreKgdbl
+         EDj6BoYD0VKAqtagN7vsseUPpnRamBuxAKocHzBpjrbpt5Iy0T9AtIwCP0htUCbPcifI
+         FKog==
+X-Gm-Message-State: AOAM530GbFCO/VOE3ENuqUljgVLyrfnW/OxAP31SSjhqV2P0mnFllFbF
+        Xkue6aozZuqMb1e7Bji8GYU=
+X-Google-Smtp-Source: ABdhPJxHbWT7hGwsTqiFFmicf/NGrbVWQCk+BHGG5FWyoaakDMeNU0yM7d/Ws4csvPpIcXr7q1UsVQ==
+X-Received: by 2002:a17:906:4c95:: with SMTP id q21mr36043847eju.485.1636863860300;
+        Sat, 13 Nov 2021 20:24:20 -0800 (PST)
+Received: from rocinante ([95.155.85.46])
+        by smtp.gmail.com with ESMTPSA id g21sm5495555edb.89.2021.11.13.20.24.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Nov 2021 20:24:19 -0800 (PST)
+Date:   Sun, 14 Nov 2021 05:24:18 +0100
+From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <lexnv@amazon.com>, <alcioa@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kamal Mostafa <kamal@canonical.com>,
-        "Paolo Bonzini" <pbonzini@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "ne-devel-upstream@amazon.com" <ne-devel-upstream@amazon.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-References: <d57f5c7e362837a8dfcde0d726a76b56f114e619.1636736947.git.christophe.jaillet@wanadoo.fr>
-From:   "Paraschiv, Andra-Irina" <andraprs@amazon.com>
-In-Reply-To: <d57f5c7e362837a8dfcde0d726a76b56f114e619.1636736947.git.christophe.jaillet@wanadoo.fr>
-X-Originating-IP: [10.43.162.153]
-X-ClientProxiedBy: EX13D35UWC004.ant.amazon.com (10.43.162.180) To
- EX13D16EUB003.ant.amazon.com (10.43.166.99)
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: base64
+Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] PCI/P2PDMA: Save a few cycles in 'pci_alloc_p2pmem()'
+Message-ID: <YZCPcusrcCIJvYdn@rocinante>
+References: <ab80164f4d5b32f9e6240aa4863c3a147ff9c89f.1635974126.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ab80164f4d5b32f9e6240aa4863c3a147ff9c89f.1635974126.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-CgpPbiAxMi8xMS8yMDIxIDE5OjA5LCBDaHJpc3RvcGhlIEpBSUxMRVQgd3JvdGU6Cj4gCj4gJ2Rl
-c3Ryb3lfd29ya3F1ZXVlKCknIGFscmVhZHkgZHJhaW5zIHRoZSBxdWV1ZSBiZWZvcmUgZGVzdHJv
-eWluZyBpdCwgc28KPiB0aGVyZSBpcyBubyBuZWVkIHRvIGZsdXNoIGl0IGV4cGxpY2l0bHkuCj4g
-Cj4gUmVtb3ZlIHRoZSByZWR1bmRhbnQgJ2ZsdXNoX3dvcmtxdWV1ZSgpJyBjYWxscy4KPiAKPiBU
-aGlzIHdhcyBnZW5lcmF0ZWQgd2l0aCBjb2NjaW5lbGxlOgo+IAo+IEBACj4gZXhwcmVzc2lvbiBF
-Owo+IEBACj4gLSAgICAgICBmbHVzaF93b3JrcXVldWUoRSk7Cj4gICAgICAgICAgZGVzdHJveV93
-b3JrcXVldWUoRSk7Cj4gCj4gU2lnbmVkLW9mZi1ieTogQ2hyaXN0b3BoZSBKQUlMTEVUIDxjaHJp
-c3RvcGhlLmphaWxsZXRAd2FuYWRvby5mcj4KPiAtLS0KPiAgIGRyaXZlcnMvdmlydC9uaXRyb19l
-bmNsYXZlcy9uZV9wY2lfZGV2LmMgfCAxIC0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAxIGRlbGV0aW9u
-KC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdmlydC9uaXRyb19lbmNsYXZlcy9uZV9wY2lf
-ZGV2LmMgYi9kcml2ZXJzL3ZpcnQvbml0cm9fZW5jbGF2ZXMvbmVfcGNpX2Rldi5jCj4gaW5kZXgg
-NDBiNDllYzhlMzBiLi42YjgxZThmM2E1ZGMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy92aXJ0L25p
-dHJvX2VuY2xhdmVzL25lX3BjaV9kZXYuYwo+ICsrKyBiL2RyaXZlcnMvdmlydC9uaXRyb19lbmNs
-YXZlcy9uZV9wY2lfZGV2LmMKPiBAQCAtMzc2LDcgKzM3Niw2IEBAIHN0YXRpYyB2b2lkIG5lX3Rl
-YXJkb3duX21zaXgoc3RydWN0IHBjaV9kZXYgKnBkZXYpCj4gICAgICAgICAgZnJlZV9pcnEocGNp
-X2lycV92ZWN0b3IocGRldiwgTkVfVkVDX0VWRU5UKSwgbmVfcGNpX2Rldik7Cj4gCj4gICAgICAg
-ICAgZmx1c2hfd29yaygmbmVfcGNpX2Rldi0+bm90aWZ5X3dvcmspOwo+IC0gICAgICAgZmx1c2hf
-d29ya3F1ZXVlKG5lX3BjaV9kZXYtPmV2ZW50X3dxKTsKPiAgICAgICAgICBkZXN0cm95X3dvcmtx
-dWV1ZShuZV9wY2lfZGV2LT5ldmVudF93cSk7Cj4gCj4gICAgICAgICAgZnJlZV9pcnEocGNpX2ly
-cV92ZWN0b3IocGRldiwgTkVfVkVDX1JFUExZKSwgbmVfcGNpX2Rldik7Cj4gLS0KPiAyLjMwLjIK
-PiAKClRoYW5rIHlvdSBmb3IgdGhlIHBhdGNoLgoKUmV2aWV3ZWQtYnk6IEFuZHJhIFBhcmFzY2hp
-diA8YW5kcmFwcnNAYW1hem9uLmNvbT4KClRoYW5rcywKQW5kcmEKCgoKQW1hem9uIERldmVsb3Bt
-ZW50IENlbnRlciAoUm9tYW5pYSkgUy5SLkwuIHJlZ2lzdGVyZWQgb2ZmaWNlOiAyN0EgU2YuIExh
-emFyIFN0cmVldCwgVUJDNSwgZmxvb3IgMiwgSWFzaSwgSWFzaSBDb3VudHksIDcwMDA0NSwgUm9t
-YW5pYS4gUmVnaXN0ZXJlZCBpbiBSb21hbmlhLiBSZWdpc3RyYXRpb24gbnVtYmVyIEoyMi8yNjIx
-LzIwMDUuCg==
+Hi Christophe,
 
+Thank you for another nice patch!
+
+> Use 'percpu_ref_tryget_live_rcu()' instead of 'percpu_ref_tryget_live()' to
+> save a few cycles when it is known that the rcu lock is already
+> taken/released.
+
+If possible, we should explain why are we using this new API, especially
+since percpu_ref_tryget_live_rcu() is a relatively new addition [1], so
+it's obvious that its users already manage the RCU lock accordingly, and
+that there is no need to hold the RCU read lock again (which can in turn
+lead to performance improvement), which is what the percpu_ref_tryget_live()
+does internally.
+
+What do you think?
+
+1. 3b13c168186c ("percpu_ref: percpu_ref_tryget_live() version holding RCU")
+
+>  	if (!ret)
+>  		goto out;
+>  
+> -	if (unlikely(!percpu_ref_tryget_live(ref))) {
+> +	if (unlikely(!percpu_ref_tryget_live_rcu(ref))) {
+>  		gen_pool_free(p2pdma->pool, (unsigned long) ret, size);
+>  		ret = NULL;
+>  		goto out;
+
+Thank you!
+
+Reviewed-by: Krzysztof Wilczyński <kw@linux.com>
+
+	Krzysztof
