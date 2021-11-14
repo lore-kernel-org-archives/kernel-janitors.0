@@ -2,90 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 929F7C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 14 Nov 2021 04:24:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99DE6C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 14 Nov 2021 16:16:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A7D560FE7
-	for <kernel-janitors@archiver.kernel.org>; Sun, 14 Nov 2021 04:24:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FB6D60FD7
+	for <kernel-janitors@archiver.kernel.org>; Sun, 14 Nov 2021 16:16:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233139AbhKNE1P (ORCPT
+        id S236073AbhKNQTJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 13 Nov 2021 23:27:15 -0500
-Received: from mail-ed1-f52.google.com ([209.85.208.52]:36802 "EHLO
-        mail-ed1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230441AbhKNE1O (ORCPT
+        Sun, 14 Nov 2021 11:19:09 -0500
+Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:65457 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235630AbhKNQTG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 13 Nov 2021 23:27:14 -0500
-Received: by mail-ed1-f52.google.com with SMTP id o8so55351901edc.3;
-        Sat, 13 Nov 2021 20:24:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=7rlmuPdMhnVMN0EKqqXPhzO5LaYq5KpGdQ9/F9AAtXk=;
-        b=rWIIQI0vG/Y+cmgaabdAov5JxhBqJGPQhIbzpqzvRznRiyqTm0em7vQA2NMSRapWNw
-         /8ssbLWxuSYahWJfAz8b8NsTbus3DMjOvo21PNnsLnLPJfxXldt3sapdymTgHT8LZfVa
-         CqFWqNdO46tMcGqmL0m/w5JNlRl57LvN78WMiAwvGHlu0LIfo6BrvRRYjmqyqhpJ9/mS
-         qebW2T9oU9whhCfEq1rGlX3rJzZRv90PU6euDAzSHhUuX0cR6wsgwM1CHG2wZreKgdbl
-         EDj6BoYD0VKAqtagN7vsseUPpnRamBuxAKocHzBpjrbpt5Iy0T9AtIwCP0htUCbPcifI
-         FKog==
-X-Gm-Message-State: AOAM530GbFCO/VOE3ENuqUljgVLyrfnW/OxAP31SSjhqV2P0mnFllFbF
-        Xkue6aozZuqMb1e7Bji8GYU=
-X-Google-Smtp-Source: ABdhPJxHbWT7hGwsTqiFFmicf/NGrbVWQCk+BHGG5FWyoaakDMeNU0yM7d/Ws4csvPpIcXr7q1UsVQ==
-X-Received: by 2002:a17:906:4c95:: with SMTP id q21mr36043847eju.485.1636863860300;
-        Sat, 13 Nov 2021 20:24:20 -0800 (PST)
-Received: from rocinante ([95.155.85.46])
-        by smtp.gmail.com with ESMTPSA id g21sm5495555edb.89.2021.11.13.20.24.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Nov 2021 20:24:19 -0800 (PST)
-Date:   Sun, 14 Nov 2021 05:24:18 +0100
-From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] PCI/P2PDMA: Save a few cycles in 'pci_alloc_p2pmem()'
-Message-ID: <YZCPcusrcCIJvYdn@rocinante>
-References: <ab80164f4d5b32f9e6240aa4863c3a147ff9c89f.1635974126.git.christophe.jaillet@wanadoo.fr>
+        Sun, 14 Nov 2021 11:19:06 -0500
+Received: from pop-os.home ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id mIAomJU7s3ptZmIApmabW3; Sun, 14 Nov 2021 17:16:09 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sun, 14 Nov 2021 17:16:09 +0100
+X-ME-IP: 86.243.171.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] sched/rt: Slightly optimize 'init_rt_rq()'
+Date:   Sun, 14 Nov 2021 17:16:05 +0100
+Message-Id: <c9b56712763de62c90b71907323a6b0e5b61b249.1636906450.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ab80164f4d5b32f9e6240aa4863c3a147ff9c89f.1635974126.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+'MAX_RT_PRIO' is 100. Instead of clearing bits in 'array->bitmap' one at a
+time, use 'bitmap_clear()' which will do the same but much faster
 
-Thank you for another nice patch!
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Not sure that this patch is really of any use, but it is the occasion for
+me to spot that there seems to be an off by one in the rt scheduler.
 
-> Use 'percpu_ref_tryget_live_rcu()' instead of 'percpu_ref_tryget_live()' to
-> save a few cycles when it is known that the rcu lock is already
-> taken/released.
+'array->bitmap' is MAX_RT_PRIO+1 long. (see [1])
+The last bit seems to be reserved as a sentinel.
 
-If possible, we should explain why are we using this new API, especially
-since percpu_ref_tryget_live_rcu() is a relatively new addition [1], so
-it's obvious that its users already manage the RCU lock accordingly, and
-that there is no need to hold the RCU read lock again (which can in turn
-lead to performance improvement), which is what the percpu_ref_tryget_live()
-does internally.
+Shouldn't this sentinel, in the code above, be set as:
+  __set_bit(MAX_RT_PRIO + 1, array->bitmap);
+?
 
-What do you think?
+I don't know if it is an issue or not, but it looks odd to me.
 
-1. 3b13c168186c ("percpu_ref: percpu_ref_tryget_live() version holding RCU")
+[1]: https://elixir.bootlin.com/linux/latest/source/kernel/sched/sched.h#L254
+---
+ kernel/sched/rt.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
->  	if (!ret)
->  		goto out;
->  
-> -	if (unlikely(!percpu_ref_tryget_live(ref))) {
-> +	if (unlikely(!percpu_ref_tryget_live_rcu(ref))) {
->  		gen_pool_free(p2pdma->pool, (unsigned long) ret, size);
->  		ret = NULL;
->  		goto out;
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index bb945f8faeca..fc2e9c5e874a 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -81,10 +81,9 @@ void init_rt_rq(struct rt_rq *rt_rq)
+ 	int i;
+ 
+ 	array = &rt_rq->active;
+-	for (i = 0; i < MAX_RT_PRIO; i++) {
++	for (i = 0; i < MAX_RT_PRIO; i++)
+ 		INIT_LIST_HEAD(array->queue + i);
+-		__clear_bit(i, array->bitmap);
+-	}
++	bitmap_clear(array->bitmap, 0, MAX_RT_PRIO);
+ 	/* delimiter for bitsearch: */
+ 	__set_bit(MAX_RT_PRIO, array->bitmap);
+ 
+-- 
+2.30.2
 
-Thank you!
-
-Reviewed-by: Krzysztof Wilczyński <kw@linux.com>
-
-	Krzysztof
