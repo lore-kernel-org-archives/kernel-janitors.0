@@ -2,71 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95453C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Nov 2021 14:10:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1715FC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Nov 2021 18:38:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7517463232
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Nov 2021 14:10:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F31326357E
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Nov 2021 18:38:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234794AbhKOONY (ORCPT
+        id S242463AbhKOSlg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 15 Nov 2021 09:13:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33466 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232072AbhKOONG (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 15 Nov 2021 09:13:06 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id 0ADBB6322D;
-        Mon, 15 Nov 2021 14:10:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636985409;
-        bh=SIs+iwklv8KfbyfcsPobIZu2x2aKdT3tn5NnV3mSFn4=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=QSuzW6b5ffmWFK6oCQMl0O0SLjurwpJFG8GxvAO2g9Sk2Rv0TQioBmBD4sRv/AJj5
-         b7D/RfbIrxEFoyJ4AzQpizyhRhcqF3pPlu66g4S1WM7CfOk1Rx6G3ID6YcEu6KlDa2
-         AKLbAn/ECR677rrfE50nCkryxroRvS3GuSbWGAD7w1Z/frl+CSK/aH3645kkkXfgYn
-         4Uk0kNAGciQOT1oT0IEyqXZoSpsnNEHBiV+7ehahmPMgC7AHq4+IlkUU7nH7+n6CwI
-         aRotyVbz0jH9xXuebLTnPYcsj5xucJ9QfUe8Ta3LV/wsRwqAd68yr7XkMcyrUjXVBv
-         caQBg3M38LjFQ==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 15 Nov 2021 13:41:36 -0500
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:51104 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242574AbhKOSis (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 15 Nov 2021 13:38:48 -0500
+Received: from [192.168.1.18] ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id mgpYmlwNfHQrlmgpYml2nB; Mon, 15 Nov 2021 19:35:50 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Mon, 15 Nov 2021 19:35:50 +0100
+X-ME-IP: 86.243.171.122
 Subject: Re: [PATCH] net: bridge: Slightly optimize 'find_portno()'
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <163698540899.13805.10527037556945584609.git-patchwork-notify@kernel.org>
-Date:   Mon, 15 Nov 2021 14:10:08 +0000
-References: <00c39d09c8df7ad0673bf2043f6566d6ef08b789.1636916479.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <00c39d09c8df7ad0673bf2043f6566d6ef08b789.1636916479.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
 Cc:     roopa@nvidia.com, nikolay@nvidia.com, davem@davemloft.net,
         kuba@kernel.org, bridge@lists.linux-foundation.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
+References: <00c39d09c8df7ad0673bf2043f6566d6ef08b789.1636916479.git.christophe.jaillet@wanadoo.fr>
+ <20211115123534.GD26989@kadam>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <b3c93506-7dc8-a5fe-6cfc-938fc88b9f07@wanadoo.fr>
+Date:   Mon, 15 Nov 2021 19:35:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
+MIME-Version: 1.0
+In-Reply-To: <20211115123534.GD26989@kadam>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (master)
-by David S. Miller <davem@davemloft.net>:
-
-On Sun, 14 Nov 2021 20:02:35 +0100 you wrote:
-> The 'inuse' bitmap is local to this function. So we can use the
-> non-atomic '__set_bit()' to save a few cycles.
+Le 15/11/2021 à 13:35, Dan Carpenter a écrit :
+> On Sun, Nov 14, 2021 at 08:02:35PM +0100, Christophe JAILLET wrote:
+>> The 'inuse' bitmap is local to this function. So we can use the
+>> non-atomic '__set_bit()' to save a few cycles.
+>>
+>> While at it, also remove some useless {}.
 > 
-> While at it, also remove some useless {}.
+> I like the {} and tend to add it in new code.  There isn't a rule about
+> this one way or the other.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> regards,
+> dan carpenter
 > 
-> [...]
+> 
+> 
 
-Here is the summary with links:
-  - net: bridge: Slightly optimize 'find_portno()'
-    https://git.kernel.org/netdev/net-next/c/cc0be1ad686f
+Hi Dan,
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+- checkpatch prefers the style without {}
+- Usually, greg k-h and Joe Perches give feed-back that extra {} should 
+be removed.
+- in https://www.kernel.org/doc/html/v5.13/process/coding-style.html, 
+after "Rationale: K&R":
+    "Do not unnecessarily use braces where a single statement will do."
 
 
+My own preference is to have {}. It is the standard used on another 
+project I work on (i.e. httpd) and it helps when you add some code (it 
+avoids unexpected behavior if you forget to add some missing {})
+
+My understanding is that on the HUGE code base of Linux, emphasis is put 
+on saving some lines of code, reducing the length of lines and avoiding 
+the need to read some extra char.
+I'm also fine with it.
+
+CJ
