@@ -2,181 +2,200 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6FF5C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Nov 2021 00:47:16 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0F6061A09
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Nov 2021 00:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A8C8C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Nov 2021 06:38:17 +0000 (UTC)
+X-Greylist: delayed 72 seconds by postgrey-1.37 at mail.kernel.org; Tue, 16 Nov 2021 06:38:17 UTC
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 0F7E16321A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=vger.kernel.org
+Received: from vger.kernel.org (unknown [23.128.96.18])
+	by mail.kernel.org (Postfix) with ESMTP id 0F7E16321A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Nov 2021 06:38:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344520AbhKPAuL (ORCPT
+        id S234237AbhKPGj4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 15 Nov 2021 19:50:11 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:49650 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357290AbhKPAqi (ORCPT
+        Tue, 16 Nov 2021 01:39:56 -0500
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:37068 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233322AbhKPGiC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 15 Nov 2021 19:46:38 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20211116004340euoutp020ec2a8d2e7468d955af45685720cb5d3~34CC0gdsA2774427744euoutp02Y;
-        Tue, 16 Nov 2021 00:43:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20211116004340euoutp020ec2a8d2e7468d955af45685720cb5d3~34CC0gdsA2774427744euoutp02Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1637023420;
-        bh=tV6lTCkc9xCBGV2iEJSnbSAuriHtArlsqSHlbj9E8F8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ETYnEfcB1HV8starCVraPnxBKBTe7fyJRmVSlcZTMl6FgyNIn8mQMWNMmnbCd1oH3
-         xdk+bXs4VZJqs7TXM3wVVn2wx8+n2d2fbFrC3ltm0T6sr5NlM9OzPNjRSlHkN/eb6y
-         lPG+VNOGRLz0VYQRf0E+e5GZ8kxR+5pSBxZFNJk4=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20211116004340eucas1p2a7d018bbbacd991ad182fb76dc4adfd0~34CCnlNpV1668316683eucas1p2L;
-        Tue, 16 Nov 2021 00:43:40 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 61.4F.09887.BBEF2916; Tue, 16
-        Nov 2021 00:43:40 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20211116004339eucas1p14e377393256e09c0e04e3da92ad0accb~34CCAm-Wd3240732407eucas1p1U;
-        Tue, 16 Nov 2021 00:43:39 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20211116004339eusmtrp199147209472a7b40ead911c5b0ce8095~34CCABtmp2942329423eusmtrp1a;
-        Tue, 16 Nov 2021 00:43:39 +0000 (GMT)
-X-AuditID: cbfec7f4-45bff7000000269f-a6-6192febb731e
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id A4.0B.09522.BBEF2916; Tue, 16
-        Nov 2021 00:43:39 +0000 (GMT)
-Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20211116004339eusmtip2dc7bb1d9f7a470358651eb5a55a7d1cb~34CBw-j-J2860528605eusmtip2O;
-        Tue, 16 Nov 2021 00:43:39 +0000 (GMT)
-From:   Lukasz Stelmach <l.stelmach@samsung.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
+        Tue, 16 Nov 2021 01:38:02 -0500
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AG4unuY029754;
+        Tue, 16 Nov 2021 06:34:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type :
+ content-transfer-encoding : in-reply-to : mime-version; s=corp-2021-07-09;
+ bh=7047HDWpyL9V/rVLgMhE6Wq70wr4IozQ57eXq517veE=;
+ b=lbTRBRzvTO4Ynn/Q1TkjsZ9lmf3S8dGeTLiAchT/uHDgbGHiCLm90x2MUt+VidaVauTg
+ 3TN+m22c8zJ1Lwcsloe5s6hiFpjMccJ3tiDrtSc7e76Yj+i9eTDvsiiTR2MxzYsC68rm
+ 7CEgeZLh4CNowVYM3f8RV6ciEP5oWav08S9OveVIZPZI9/Zth/sge47i18jG6coiIain
+ 4AAm5EOIjGzVREsJMvviCHvaX84s+wkshQZdUF5bABY/uN6yI92X4Mh8ngHAtfOwxe0H
+ qdKQoOk6nXOXPYUI2fdJo3oOnVIlrersYJDTonG9FzxL8VCHj9clkBUGHerEIdyELdqN TA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3cbhmnqjj3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 16 Nov 2021 06:34:56 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1AG6P1ob105975;
+        Tue, 16 Nov 2021 06:34:55 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2044.outbound.protection.outlook.com [104.47.66.44])
+        by userp3020.oracle.com with ESMTP id 3caq4s69pk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 16 Nov 2021 06:34:54 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ULVBWi/kgVTbDGLHc7H69wIHPGHtaOiW5yp1mztH/PGzyK1ep+iwwNVaglhrC6sCaHm/k+ioB9+pcvrFGf1OVCQJVTqEju6TT+78Ht66nNVjRbLwz0VN8YGWNTxg0qFeDw5k/jBk/4jZGnrydfpyb5q9jPivrKtKFQ1otqzNmhs06UlnHomJfQiNLcaOFhif3RjaKOXjADPnom3tGIAJUwkbUgrXsc9BKiEB/3t+QLFpKTevBxq9E/6ijEZRZsH7cMmEOfFgiCWnV11oDPEcAPksG7vbL1HCfKyIRe60vpk7RPLtipodoXNzq/Y08cpvmnq9iGl9Rd565cfXieqUng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7047HDWpyL9V/rVLgMhE6Wq70wr4IozQ57eXq517veE=;
+ b=DxFtI8eHxkPr7tn5Hy79uc1ZtFuxnO7D04OKsMpC3O9/mbg9frQkeonVv6t4Dej76I7zxe6iR2B/K0bsSvD6EQ0jgQd9fpXRM8nW/KHU5TVhWCQ3L7jFLQCxndfU/bSvpvLjuATmeoJUkzmIE5NnxfAZPESHlK4sUPL5G/GpGxiPPtYzQrxQE0Ms2HacCvgK3OCy19v3NUrb76+FTtI4q9+ZU4BL/O0mWjDqQYMpnjM4iGDmCJeFFdvO+9q96OOb7KZMh2iPWkXpnpv/jv7SgJQc4pj6Q5ts1wgC28c9JjrHtzBLHVgNIuK4BjoEFbvot5bPjrgBIREYPlWhq4XPSQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7047HDWpyL9V/rVLgMhE6Wq70wr4IozQ57eXq517veE=;
+ b=Y1NckBiDLLIAb3n06b6VrwLhus318my9HehcLDJLoZCK4AGRmuNdO8ifT22KOUbEBSwfPU01LDnA5iBaGeaCnHIUQ3DYaKTR9aKxT4NxhUGhftfM8CZDr4uvUAJjnonpnYCGnzoq1H7pDoLeSRQ35VcrDX3RbuvSKbdWGyRiSdU=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by CO1PR10MB4546.namprd10.prod.outlook.com
+ (2603:10b6:303:6e::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.19; Tue, 16 Nov
+ 2021 06:34:53 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::d409:11b5:5eb2:6be9]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::d409:11b5:5eb2:6be9%5]) with mapi id 15.20.4690.016; Tue, 16 Nov 2021
+ 06:34:53 +0000
+Date:   Tue, 16 Nov 2021 09:34:35 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Lukasz Stelmach <l.stelmach@samsung.com>
 Cc:     kernel-janitors@vger.kernel.org
 Subject: Re: [bug report] net: ax88796c: ASIX AX88796C SPI Ethernet Adapter
  Driver
-Date:   Tue, 16 Nov 2021 01:43:24 +0100
-In-Reply-To: <20211112123648.GA21129@kili> (Dan Carpenter's message of "Fri,
- 12 Nov 2021 15:36:48 +0300")
-Message-ID: <dleftj35nxhqvn.fsf%l.stelmach@samsung.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
-        protocol="application/pgp-signature"
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfyzUcRjH97n7nvsyp28XeaJfE1PKXTVCaEwr1TRr/bbUd/qEOUd3KGKu
-        zZpE6SgilkMquSRdrblsV51xXb/Jz9YiN6fmd2G65Xyvrf9ez/O83+/n+Wwfks3P4TiRseIk
-        LBHTIhcrG0KlnXnr2WSS0xurO5HvsKmI8H3c7RzECh373k2ETjSsDGcdtQk4iUWxKVgi3HbC
-        Jkb5u4ybWMs/a9SmydCMXQ6yJoHygv6xF5wcZEPyqTsI+u6/ZDHFJALtawXBFBMIrvZ2sP9Z
-        ygemEDOoQXBtfMRSGBBMTxnmw0jSihJAXd1hs8Ge2gAfL05zzcym1oCi5yUy8xJqP1TdHV+Q
-        E5QbaB4eMbetqTgo1RezzMyjfKBjuJBjZgfKD+YGx7hMfzG03hggmMh4uPH2x8IJQD0loXmw
-        1nLodpjQT3EZXgLGlkYLLwddQS5h3gtUJhTItzDeXASqm9MEo/GH3jezVgwHQ8e1Sjajt4PO
-        n4uZvXYgVxVZ2jzIvsBn1K6gvNJkSXGCPOMdxHAoNJ6vW0jkUxkw06cg8tHqkv9eU/Lfa0rm
-        U9nUOnjwTMi018PtimE2w4GgVI4QtxDnHnLEydL4aCzdLMZnBFI6XposjhZEJcQ3oPkvojO1
-        TD5FNcYxgQaxSKRBrvPmb/W175ATIU4QYxd7HhEhp/m8k3RqGpYkHJcki7BUg5xJwsWRZz8n
-        o/lUNJ2E4zBOxJJ/UxZp7SRjVe+K+uP5pKsPt1+uEo5WW33Obes5WN94AFqfRzx67503JKqy
-        fae+n4GHPBfJhz6U+vHyltrinf0huiTNpeRX51z93bOLu0Y5k2nHTg14n84zeGt9c+tCQtaq
-        2YPlcZLUgPCGMlDLu2O8KoMjD0U0RfWVZ/EutN9O8A+LuJ4l+PrleY+9w+GO/M0bv3zt/JiY
-        cjQ1rJLb2r9bviy9KKT3cvEcy3Hv7HbnVc6FuubStulAf9tLe9Jx2dW2kpyiFbZ7j+/Q9Idy
-        Z8MKa0Vqn/0B7ZHCX0GfsrjWwbHuBpMpQLE1c19KWr2H4YWia6jCK0zvoan/JJa1pNfQ+qX5
-        IlWzmwshjaE3ebAlUvovJgDvI50DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpikeLIzCtJLcpLzFFi42I5/e/4Pd3d/yYlGhxdKGLx+t90Foutt6Qd
-        mDw+Pr3F4vF5k1wAU5SeTVF+aUmqQkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpq
-        TmZZapG+XYJexrrvc9kLVgtVvDpW1cD4k6+LkZNDQsBEYt6Tr4xdjFwcQgJLGSV+/lgP5HAA
-        JaQkVs5Nh6gRlvhzrYsNouYpo8SZFXvYQWrYBPQk1q6NAKkREdCRuNz5gx3EZhZQllh0+wgj
-        iC0sECKxZOUnVhBbSEBT4sLRdjaQVhYBVYlDGyNBwpwC2RKrJncwg9i8AuYS115PASsXFbCU
-        +PPsIztEXFDi5MwnLBDjsyW+rn7OPIFRYBaS1CwkqVlAG5iBtq3fpQ8R1pZYtvA1M4RtK7Fu
-        3XuWBYysqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQIjYNuxn5t3MM579VHvECMTB+MhRhWg
-        zkcbVl9glGLJy89LVRLhZYmelCjEm5JYWZValB9fVJqTWnyI0RTos4nMUqLJ+cDYzCuJNzQz
-        MDU0MbM0MLU0M1YS5/Us6EgUEkhPLEnNTk0tSC2C6WPi4JRqYGJeZ/7YsW+yquUEK6Hg4Gc6
-        l1WDw+b+M3B723ArhZ+tbZ+GuuVRozqbxRezL7M6+J8/dWF53/LXO+yuRh+cufRh+J/Zy+uv
-        TBXgfFNh+vZMrFz5wenshROcxC3djIKtFf+cmcWyQ6VqHeMEtsgvyz5p/HxwKTzt5ATtXbu1
-        bu+Y1uqa9P6o6tOz/oxuAs1sq6LeWfcltR9Zf69M71Ty7tz7BVzf/+5K/pu998rD+tlVQlNN
-        N3/zrPdlcEldoZJ+OfbK92kFD9V2nLt9znDhkb0TJXgNYl9Omdqz8ACH5jKd9dqy7krJ8+sv
-        T/lY89b7kh73JbW5oq823jp/eVGZYNeB5flzn7ycUH7Vk6PGJ+6mEktxRqKhFnNRcSIAbL4H
-        gRUDAAA=
-X-CMS-MailID: 20211116004339eucas1p14e377393256e09c0e04e3da92ad0accb
-X-Msg-Generator: CA
-X-RootMTR: 20211116004339eucas1p14e377393256e09c0e04e3da92ad0accb
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20211116004339eucas1p14e377393256e09c0e04e3da92ad0accb
+Message-ID: <20211116063435.GG26989@kadam>
 References: <20211112123648.GA21129@kili>
-        <CGME20211116004339eucas1p14e377393256e09c0e04e3da92ad0accb@eucas1p1.samsung.com>
+ <CGME20211116004339eucas1p14e377393256e09c0e04e3da92ad0accb@eucas1p1.samsung.com>
+ <dleftj35nxhqvn.fsf%l.stelmach@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dleftj35nxhqvn.fsf%l.stelmach@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: JN2P275CA0029.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:2::17)
+ To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
+MIME-Version: 1.0
+Received: from kadam (102.222.70.114) by JN2P275CA0029.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:2::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.25 via Frontend Transport; Tue, 16 Nov 2021 06:34:50 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: aa8062e8-a749-44e5-3592-08d9a8cb324f
+X-MS-TrafficTypeDiagnostic: CO1PR10MB4546:
+X-Microsoft-Antispam-PRVS: <CO1PR10MB45466CA863441E27FCBF6D268E999@CO1PR10MB4546.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 1LiW9B/HRP3CaJgNgl077Gjvc80zVomShWkOoJxPWazkSiuVntbGaJxuErPJokCUUMu5024nQ7a4za0hRtmSRTUEl3p32jaU6M0wKN8aD5HX0ZU/0UZjhMgu4UFqfzMEtamei1G0o5204tLhAqHhlDKLq6W8UHYYJhSX2IZPX16y52Z3lI2RL65/WasyCPPXRs5R15/ybu7WDRJnhV3d5JJpghrYMm4lY7hOaY3gMVuMD0vb2i+mgrE6W849hZdvyNYpKz5kwLg7ytf0ceX72uy+FF7ixCO0LzSXa9235Wvp5pXR2RSo+RPLxKeUj6fMic5BqAzTdvGGlTmkHXVFbOCXxbn2ryUHBvXzUfp0QdNhMJ/AJ7XC677Q7UDkrCfqtgkzasOofuuspac13pDR96LIhfD+kn1MNg7Pij4S5Pzx5JeBrmxRp/uiHVaMCYKUj1Ic57MFsO0OQsdyiJH4YhOOFi3Wq3Bcfh/FK0aeEQz8vb2Rh7sXb54VNsaCZaoCXl2oFlv6DAr6uS2gFsLOo8zbFWpRZmrSridaj1EUnQqmT4nkYL0ZnhwLCb4lKiFp5vE2CI1dltAbgiBSEqNuf2al5rkz3vXKGQJhDKZLKOvMxCtonPMrJKIURAdKTJoQAyD2KdN/ICQ2Gpas/Hn4VxPNzCztBc0BEp0whMl29JJKVpiIcmZKjydZzlYHHv8CVz7YLwLCkkD5sSEj5p0fqw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(52116002)(6496006)(4001150100001)(8936002)(9686003)(8676002)(6666004)(55016002)(66476007)(66946007)(9576002)(38100700002)(956004)(66556008)(33656002)(38350700002)(186003)(86362001)(508600001)(44832011)(2906002)(1076003)(316002)(26005)(33716001)(83380400001)(5660300002)(66574015)(4326008)(6916009);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dTdxT1ZzSGwwbXRXL0NaL09IZk1wQ3lkTEY2aWJ3VytxamwwbGEwcjhMKyt5?=
+ =?utf-8?B?b1dCUWdjc3dDendEejZaaVVWODdXTERraTRua0JCSVB5RXozd05qcEhQMUF2?=
+ =?utf-8?B?c2t5bytPd2xmdHdCOGZzaGs4amprdml4bzVocFFET0N5WW1XOTNuTFpoWkNC?=
+ =?utf-8?B?c3BkTHNLcWlpU2VlaDM4VWgvL3ZtT0d5RUdzQXZDZW9Vc2hXaDhESm5nQkYy?=
+ =?utf-8?B?czU0WjFNYUp0c3hLVTRjSlljcFVzbFhScld0clBGNC9VaWZ2NUphMjF3Z2wv?=
+ =?utf-8?B?V3YvdHhpWmgrQk5VeHFPeVkxY0phMG9nNytXUi9DWmpHbHh5REd0TWIrcVlQ?=
+ =?utf-8?B?QUFuSFJpY0cweXRmdkFKQXZWVEIzS0FiUmQ3RFQ4TGhORmxNS0lJeDdvZ0pS?=
+ =?utf-8?B?Q0RrV2FBVHFiaEYxeWl4cUI1d016anJrLzhKT0t2RUlqVXBNM3FGU1JyTTdl?=
+ =?utf-8?B?cHhDL3pyV1Ewd3ZSYWdKWE5RUGRXYnZiS3UrU3N3VWxOTnVUMUpkSUxOMEhZ?=
+ =?utf-8?B?cG9vSzRXMW8rb2R5endRYmNnN2JhbUJFcTZEamU3NXo5NzdsZVNKeGVseGYy?=
+ =?utf-8?B?cnZIVG1Scnh6K1hEbFRUV3Z5YVFpcmp3YWhBd25RaHlJUVFYenl4QjRJRDVF?=
+ =?utf-8?B?eUZObFB4Qll6c0doL2VnSjM1TUU2MTBQSjFPUU5MNS9mODV0WGpVVFBQNElj?=
+ =?utf-8?B?WWN4MWFDdnpsNUc3bGR2bEFvaTROb2VoR3F5aDU4YVFsNWw1ZUFHaWN3ci8v?=
+ =?utf-8?B?S0gvSXY1aU5DSThEM1Q4eGJuVW9iRm5PYUF1bi9RL0lNWCtpTVlHKzRHaDRm?=
+ =?utf-8?B?eWZwMmhaNElucEx0UjZxMy84K2ROcGZjNXI4MkwvL0JUTEJqWnI3azhqMXIz?=
+ =?utf-8?B?V3hxUDZKK1dJVDN6V3FHb2ZkU2tKbnJ6T1UrK3ZkdFBCa09jbDZuL2RUOERZ?=
+ =?utf-8?B?Q3VKRHBnOFVFZjd6VEhFOWxLZS9nT1JyenFLY2JiSGx5S2NNSTV1VXhERUFp?=
+ =?utf-8?B?TXI3WFRHOHo4UzNZTTZhMFMyMHNrc3NFRlBJTm9mWFBocWI0b0NMMXVidkl5?=
+ =?utf-8?B?cW8wME9FeGM4Q1kzM29LQnV2TGo3NkQwSEpYSUpmNWU4aGdZWCtsTnlaclhl?=
+ =?utf-8?B?cWdDYU9Fc1BHNDYxL2hRSERMZ1hBUGdDNUI3QndSTDg3VGFUQUlQTkJpSnll?=
+ =?utf-8?B?ZmlEWVJDYmdSQkl1MUlPbTNuU2hqWU4vcGdpWW4wT0wxL1doRnF6N0xoYmY5?=
+ =?utf-8?B?Nkd1QkdyV3JMRHF6a09YNnozeVpTajNrRG1HTXhsV2pjbnpGOEhxRk5EWXJC?=
+ =?utf-8?B?Y3pPOVptekVobjhRbTNUbkNHQnFBTnRYcXdlSnVKQ0F1UlpxNXlpS3NCOHZP?=
+ =?utf-8?B?TWpwUFY5NGdMakVPL2Y3RVhBQ0tGTzNzSUR0YVdUWExadGNrbm1mblhYMGhS?=
+ =?utf-8?B?dUkwSE4xbkRJRUFSQmZXVTc0NzJDU2RWdnhxMXVJbUtIdlYxOTdBdmc1V1Rs?=
+ =?utf-8?B?RGs3ckQzNW1XZUxOaTZmRzlZTlYzQ3QwSFpSUzF0Mjc0WlhocE5iczBwN2ly?=
+ =?utf-8?B?dGdqTlk4U2MyR2xUZkM0SEt1N29sL2QxNm9lYVU1THlyQTcxNHR0eHlndy8y?=
+ =?utf-8?B?cy9WR3hDaFBWTTRzQVJTVE5KeWFJYWpzWXdneHlJMXVsS0F5ZkJRQmVrQTRJ?=
+ =?utf-8?B?cGtGcGd0cGwxV1BQSzRmMkhQeDFhdnlqWnFBSk1VL0thbVZKdE0vOFpjdUtp?=
+ =?utf-8?B?dHo3dDljbUhPMUpSK0g2R2I5Nmh0UnhxT2V2eDc0V2taRFhuaUVUK2lQYkxv?=
+ =?utf-8?B?bWZWS2l0REFHUDB2RHF4Yk5lb2dmSlpBWmw4WXhSZGNWRDRSRzdMaGlHOVd5?=
+ =?utf-8?B?d3hPbEltTUh3RDhTUFVreEZ4NytVT0huTXNKNFMyQ3I4VUFPeUYzZENrSk9V?=
+ =?utf-8?B?SHdGWHJHYmQwVmcra2oyQmxqMHJlTi9PMG5zNzlBeU85d2U3ZDB1VitHZDBr?=
+ =?utf-8?B?V1hGd1F4d1RUNVRmREVaajZZVmdvSHJPRmhleUdZSkoxMDlGNmhvdEhFZUJ6?=
+ =?utf-8?B?ci9ONXU2cDU4ME1jYXh2K2F3S21BU2diOEVDRFVCYjg0K0xKS1Z4c0lLNVZ0?=
+ =?utf-8?B?UTR2MEh2VVZWQjg5WXBJOHdJanJGdWZTZGhnUnZTOW5tSm9QOWc4YlpQNmlQ?=
+ =?utf-8?B?dnhsZVhKdVY2NUdNMkEreis0L0VEY2dhV0NkbUhjaWErb2FPbWliM0JtVWMv?=
+ =?utf-8?Q?Q8FwfXcl0Yk0gm2w+Q1PD4zHC6UxohAlncTTPQt3XQ=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa8062e8-a749-44e5-3592-08d9a8cb324f
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2021 06:34:53.0052
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /+Z2EZ4czggKocIK1CRWHJt8oJSgFQUenU6bd/DS4MMEOCIXnAMw1K+XgqW+cHTf/PUKZoXvGTwNee1pN1C8RrAEqj97DsQzC/3qHlMEf2w=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4546
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10169 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0 mlxscore=0
+ phishscore=0 bulkscore=0 mlxlogscore=977 adultscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
+ definitions=main-2111160034
+X-Proofpoint-ORIG-GUID: wAtA2bEh9hQQvzwMi1fcjy5GjU-j-q12
+X-Proofpoint-GUID: wAtA2bEh9hQQvzwMi1fcjy5GjU-j-q12
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+On Tue, Nov 16, 2021 at 01:43:24AM +0100, Lukasz Stelmach wrote:
+> It was <2021-11-12 pią 15:36>, when Dan Carpenter wrote:
+> > Hello Łukasz Stelmach,
+> >
+> > The patch a97c69ba4f30: "net: ax88796c: ASIX AX88796C SPI Ethernet
+> > Adapter Driver" from Oct 20, 2021, leads to the following Smatch
+> > static checker warning:
+> >
+> > 	drivers/net/ethernet/asix/ax88796c_main.c:391 ax88796c_start_xmit()
+> > 	warn: test_bit() takes a bit number
+> >
+> > drivers/net/ethernet/asix/ax88796c_main.c
+> >     382 static int
+> >     383 ax88796c_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+> >     384 {
+> >     385         struct ax88796c_device *ax_local = to_ax88796c_device(ndev);
+> >     386 
+> >     387         skb_queue_tail(&ax_local->tx_wait_q, skb);
+> >     388         if (skb_queue_len(&ax_local->tx_wait_q) > TX_QUEUE_HIGH_WATER)
+> >     389                 netif_stop_queue(ndev);
+> >     390 
+> > --> 391         set_bit(EVENT_TX, &ax_local->flags);
+> >
+> > EVENT_TX is BIT(1) so this ends up being a double BIT(BIT(1));.  Which
+> > is fine because it seems to be done consistently.  But probably it
+> > should be:
+> >
+> > #define EVENT_INTR		0
+> > #define EVENT_TX		1
+> > #define EVENT_SET_MULTI		2
+> >
+> 
+> Apparently this is a porting artifact. Originally these were defined as
+> {1,2,4}[1] so I changed that to BIT(x) without much
+> consideration. I am fixing it. Thanks for reporting.
 
-It was <2021-11-12 pi=C4=85 15:36>, when Dan Carpenter wrote:
-> Hello =C5=81ukasz Stelmach,
->
-> The patch a97c69ba4f30: "net: ax88796c: ASIX AX88796C SPI Ethernet
-> Adapter Driver" from Oct 20, 2021, leads to the following Smatch
-> static checker warning:
->
-> 	drivers/net/ethernet/asix/ax88796c_main.c:391 ax88796c_start_xmit()
-> 	warn: test_bit() takes a bit number
->
-> drivers/net/ethernet/asix/ax88796c_main.c
->     382 static int
->     383 ax88796c_start_xmit(struct sk_buff *skb, struct net_device *ndev)
->     384 {
->     385         struct ax88796c_device *ax_local =3D to_ax88796c_device(n=
-dev);
->     386=20
->     387         skb_queue_tail(&ax_local->tx_wait_q, skb);
->     388         if (skb_queue_len(&ax_local->tx_wait_q) > TX_QUEUE_HIGH_W=
-ATER)
->     389                 netif_stop_queue(ndev);
->     390=20
-> --> 391         set_bit(EVENT_TX, &ax_local->flags);
->
-> EVENT_TX is BIT(1) so this ends up being a double BIT(BIT(1));.  Which
-> is fine because it seems to be done consistently.  But probably it
-> should be:
->
-> #define EVENT_INTR		0
-> #define EVENT_TX		1
-> #define EVENT_SET_MULTI		2
->
+Changing it back to 1,2,4 will hide bug from the Smatch but the correct
+values are 0,1,2.
 
-Apparently this is a porting artifact. Originally these were defined as
-{1,2,4}[1] so I changed that to BIT(x) without much
-consideration. I am fixing it. Thanks for reporting.
+regards,
+dan carpenter
 
-
->     392         schedule_work(&ax_local->ax_work);
->     393=20
->     394         return NETDEV_TX_OK;
->     395 }
->
-> regards,
-> dan carpenter
->
->
-
-[1] https://lore.kernel.org/lkml/20200825170311.24886-1-l.stelmach@samsung.=
-com/
-=2D-=20
-=C5=81ukasz Stelmach
-Samsung R&D Institute Poland
-Samsung Electronics
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAmGS/qwACgkQsK4enJil
-gBAwlQf+NKmrYd0rPljNLpmUCGferW7iP2aiwgDNpbW+qg9HaOmFqNWGRsfJHS+o
-JnDzZSfovyKxAvEHKKGhz0y/ri84YJo0q0B7TjAnSUE9iTM1JNqlXK+QsZBs8nki
-CZy6ESk1DfRHF+5cLw0A6coAA4GSn21945wo6DUg0bVvRzmAZmZVDKaCxPdsYZFJ
-QtOBCq9kfQlpORx+DA0QzwFyhbNUD3UZgdsu6mgTNQ3X3vQUMaCuXBStArrwS13n
-rY3DdOMtka7leVq4zaNTA59435Nf5ThT8z7p0bFVbdgnpBI2zchLKBit/8qm2lFe
-5dPH87M+fOExeO87AKibv+OBdioWjQ==
-=CNWv
------END PGP SIGNATURE-----
---=-=-=--
