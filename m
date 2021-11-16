@@ -2,34 +2,35 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92BB9C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Nov 2021 21:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB24C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Nov 2021 21:51:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E22B61875
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Nov 2021 21:26:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2669C61B08
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Nov 2021 21:51:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230089AbhKPV3y (ORCPT
+        id S231213AbhKPVyi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 Nov 2021 16:29:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50938 "EHLO mail.kernel.org"
+        Tue, 16 Nov 2021 16:54:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229605AbhKPV3x (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 Nov 2021 16:29:53 -0500
+        id S229733AbhKPVyh (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 16 Nov 2021 16:54:37 -0500
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BCCA63217;
-        Tue, 16 Nov 2021 21:26:55 +0000 (UTC)
-Date:   Tue, 16 Nov 2021 16:26:53 -0500
+        by mail.kernel.org (Postfix) with ESMTPSA id 479EE6140A;
+        Tue, 16 Nov 2021 21:51:39 +0000 (UTC)
+Date:   Tue, 16 Nov 2021 16:51:37 -0500
 From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Colin Ian King <colin.i.king@googlemail.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing: Fix spelling mistake "aritmethic" ->
- "arithmetic"
-Message-ID: <20211116162653.6e0beb3d@gandalf.local.home>
-In-Reply-To: <20211108201513.42876-1-colin.i.king@gmail.com>
-References: <20211108201513.42876-1-colin.i.king@gmail.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] sched/rt: Slightly optimize 'init_rt_rq()'
+Message-ID: <20211116165137.35d06251@gandalf.local.home>
+In-Reply-To: <c9b56712763de62c90b71907323a6b0e5b61b249.1636906450.git.christophe.jaillet@wanadoo.fr>
+References: <c9b56712763de62c90b71907323a6b0e5b61b249.1636906450.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -38,34 +39,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon,  8 Nov 2021 20:15:13 +0000
-Colin Ian King <colin.i.king@googlemail.com> wrote:
+On Sun, 14 Nov 2021 17:16:05 +0100
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-> There is a spelling mistake in the tracing mini-HOWTO text. Fix it.
+> 'MAX_RT_PRIO' is 100. Instead of clearing bits in 'array->bitmap' one at a
+> time, use 'bitmap_clear()' which will do the same but much faster
 
-I'll apply this but it could be reverted if someone was using that line to
-know if hist triggers are supported. The README file is user space ABI, so
-changes need to be carefully done, even if it means keeping misspellings.
+I don't see this being an improvement as long as we need to keep the loop to
+do the initialization of the list head.
+
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Not sure that this patch is really of any use, but it is the occasion for
+> me to spot that there seems to be an off by one in the rt scheduler.
+> 
+> 'array->bitmap' is MAX_RT_PRIO+1 long. (see [1])
+> The last bit seems to be reserved as a sentinel.
+> 
+> Shouldn't this sentinel, in the code above, be set as:
+>   __set_bit(MAX_RT_PRIO + 1, array->bitmap);
+
+No.
+
+The first bit is zero. The last bit in the bitmask is MAX_RT_PRIO. The
+bitmask has MAX_RT_PRIO + 1 bits. Your __set_bit() above would be an off by
+one error in overwriting the size of the bitmask.
 
 -- Steve
-
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  kernel/trace/trace.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index f9139dc1262c..b8e8f1962189 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -5623,7 +5623,7 @@ static const char readme_msg[] =
->  	"\t        - a numeric literal: e.g. ms_per_sec=1000,\n"
->  	"\t        - an arithmetic expression: e.g. time_secs=current_timestamp/1000\n"
->  	"\n"
-> -	"\t    hist trigger aritmethic expressions support addition(+), subtraction(-),\n"
-> +	"\t    hist trigger arithmetic expressions support addition(+), subtraction(-),\n"
->  	"\t    multiplication(*) and division(/) operators. An operand can be either a\n"
->  	"\t    variable reference, field or numeric literal.\n"
->  	"\n"
-
