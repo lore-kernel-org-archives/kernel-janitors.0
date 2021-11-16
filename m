@@ -2,83 +2,139 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7616C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Nov 2021 16:43:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 054A9C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Nov 2021 17:57:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B339C613A3
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Nov 2021 16:43:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E144261AAA
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Nov 2021 17:57:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235390AbhKPQqr (ORCPT
+        id S239238AbhKPSA2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 Nov 2021 11:46:47 -0500
-Received: from mga12.intel.com ([192.55.52.136]:41103 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234541AbhKPQqq (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 Nov 2021 11:46:46 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10169"; a="213762809"
-X-IronPort-AV: E=Sophos;i="5.87,239,1631602800"; 
-   d="scan'208";a="213762809"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2021 08:42:59 -0800
-X-IronPort-AV: E=Sophos;i="5.87,239,1631602800"; 
-   d="scan'208";a="494525139"
-Received: from jons-linux-dev-box.fm.intel.com (HELO jons-linux-dev-box) ([10.1.27.20])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2021 08:42:59 -0800
-Date:   Tue, 16 Nov 2021 08:37:23 -0800
-From:   Matthew Brost <matthew.brost@intel.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Jason Ekstrand <jason@jlekstrand.net>,
-        Matthew Auld <matthew.auld@intel.com>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        Tue, 16 Nov 2021 13:00:28 -0500
+Received: from mail-dm6nam10on2083.outbound.protection.outlook.com ([40.107.93.83]:44512
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S239231AbhKPSA1 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 16 Nov 2021 13:00:27 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YtzDXE8KNNriWf94qaVKFWxx8RIO6izqMkV5lRsN/gBESxK/vV4nC8FNQs3SLRGOtKk13yvr3OXhLv1jZbpl8pyz023y7LoMazjOfLkQV+v2EnD8MAdRV1wmvVKYm0V2YS7GXBRUQJFyLJ8lKJKb7mgNaQ2TZWwldHM4SiD6TSnQyvM/dgoTmA1xaHQTBTPJEMNSFDeyARDqcjdGDz9b60KLchcLa5ppuj4UeEhT7sJ+ZMMBeJlSalyGU9u5JxCNKK4gKYINXXpvQwLluef0nr1BHmkbqP3rVyPknnkEHxf0cDjE9bVPtXhv8RvzuHjdg0nmbWUNrDFgXLGUVQWDew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wX5HRX+m5n6zQVVmkCoT8uNJCuFpi3Wnj2FJq/OJjlY=;
+ b=VTRYa7MOy4SNXabXqedejdmZ8CSnGtjD+4uVuOTHuJJP8YZk8T3SMJVwx4su7rRqfSpgwWTnO7w1LX4rbJH5fgwSfDVBX2+BFU8jSNBoiX+fkAZXU4ssyxHrZ26g/CbRCb7iD4+FtIs2o9uJsqXOKUdjLLOu0Z9bUUieGeWurK0TsxiJUEHuC3ZohVRLZDtV8ZSNNunSg7uIJt8h11A27nTJsNyAnJSffsKqUUxfPkUVf9af9SmNXxQ5r1oBiNXNTbaZGbEvl0UzRCzbBNf+Sq31jU0BOmhPL4G5qfQdCSGTCnsdWhQqyEN2ibDh3paxXAmRvcgaY+CSL+05jwgFPA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wX5HRX+m5n6zQVVmkCoT8uNJCuFpi3Wnj2FJq/OJjlY=;
+ b=DcNIv6NENK7cU93qoSzvP+iJY1CHsxP144fijJ/bg0UfukJTlYCXixeiYzelTEbHU3FizFuS7WrB5T3nB0e7QIbl71WBMR7XswaQT3Eznwx8sbcviRiywUQxdkkwKr16PF10CBH0FaxljTAlSZLztg+2doMqR+1uRw9aDVEvk9uHdvwWPXwDEvkXABlQ4/XZjsr/62bG8dixb4+Hlhg+JC9KwqCABi4aYZ7EPaCQpDHodPR04VZdfZxa7cymHrv+S1JBFxN7Lk8qvnNuDZGnrOLocoXxjVA5RoG4PpccqM83AdJ3Z/AN40HEVNSRxTNU7hCXQ+sCXiqdN/6F8tsnmQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BL0PR12MB5506.namprd12.prod.outlook.com (2603:10b6:208:1cb::22)
+ by BL1PR12MB5320.namprd12.prod.outlook.com (2603:10b6:208:314::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.19; Tue, 16 Nov
+ 2021 17:57:26 +0000
+Received: from BL0PR12MB5506.namprd12.prod.outlook.com
+ ([fe80::5897:83b2:a704:7909]) by BL0PR12MB5506.namprd12.prod.outlook.com
+ ([fe80::5897:83b2:a704:7909%7]) with mapi id 15.20.4690.027; Tue, 16 Nov 2021
+ 17:57:26 +0000
+Date:   Tue, 16 Nov 2021 13:57:24 -0400
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     selvin.xavier@broadcom.com, dledford@redhat.com,
+        sriharsha.basavapatna@broadcom.com, eddie.wai@broadcom.com,
+        somnath.kotur@broadcom.com, leon@kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/i915: Fix error pointer dereference in
- i915_gem_do_execbuffer()
-Message-ID: <20211116163723.GA14280@jons-linux-dev-box>
-References: <20211116114558.GA11936@kili>
-MIME-Version: 1.0
+Subject: Re: [PATCH] RDMA/bnxt_re: Scan the whole bitmap when checking if
+ "disabling RCFW with pending cmd-bit"
+Message-ID: <20211116175724.GC2661511@nvidia.com>
+References: <47ed717c3070a1d0f53e7b4c768a4fd11caf365d.1636707421.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211116114558.GA11936@kili>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <47ed717c3070a1d0f53e7b4c768a4fd11caf365d.1636707421.git.christophe.jaillet@wanadoo.fr>
+X-ClientProxiedBy: YT2PR01CA0030.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:38::35) To BL0PR12MB5506.namprd12.prod.outlook.com
+ (2603:10b6:208:1cb::22)
+MIME-Version: 1.0
+Received: from mlx.ziepe.ca (206.223.160.26) by YT2PR01CA0030.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:38::35) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.27 via Frontend Transport; Tue, 16 Nov 2021 17:57:26 +0000
+Received: from jgg by mlx with local (Exim 4.94)        (envelope-from <jgg@nvidia.com>)        id 1mn2hw-00BAPN-Ak; Tue, 16 Nov 2021 13:57:24 -0400
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0d4f7463-e99d-4e45-1b7f-08d9a92a8c83
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5320:
+X-Microsoft-Antispam-PRVS: <BL1PR12MB5320B5EE68984EA4ED3CF9ADC2999@BL1PR12MB5320.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4303;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: wdXqRtWDmf+lU3UkMir1GWcopu0V/0sD8Rk2lJ5E5E3hON6Ex21r2JCZHzrjtgi09+QT8n8AKh3j248Y5egkf1Nr22Cjp2euY/foNcr2R/Aff72DPeXmNxzPjOCnF0epo8phsQTtR1D8mqsgF7h3vQPAetsXID1l+Oi2F+p5z8JskGnwr4fNj3Xekgq9XMUG377V5fc7o0+wAaiaYudCLI/RiklQAsddmOTIxLRejXmQuIMgem7Z4cV95z+14gQ7lJTWWhVo25luAzlJrf7TVbTpguq9OmGeLX9yhheW+eD6Ry6MAEtLgHYuaXIMqL+ktZ49XCUgJhG9t1duQTmfb+clCOgmtaLp9ttzu86zrbJiEGx/fuCHdKZ61PWvIhAMdZHsNtT6R9N5bR8zE3XyUCTNe7GD9OjEL+7WXevbaC7i1bh5j6dHsnksuTeBR/ltkhsd4op1jL2Tr7D+yL8cHoZqfpWwmdpTlW8bLJcGqib4X7F03r7DnrSAqvyhUhO8ECvtjpR6rGbw274gKWlgmFcLzEi65Qf6BZBbyDwlm5byy7aobWxjMh+9tmQYXHeqBwMyM7yjCEQ1+OG07frYEkPJnhl0MO+0xeGRFQgQCvgYFTFOsPq7rF3nqDFmuE1wSLqwfZchemtHOgTb4Z2rXg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR12MB5506.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(66476007)(4744005)(8676002)(66946007)(66556008)(4326008)(86362001)(9786002)(9746002)(2616005)(186003)(38100700002)(6916009)(5660300002)(426003)(1076003)(8936002)(36756003)(26005)(508600001)(83380400001)(33656002)(7416002)(2906002)(316002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?hzgDS2c3fJAhxfnvpLmv25lAsGGxanbFhI+mslmQA9vnzF0k+uYDhHeC5Q43?=
+ =?us-ascii?Q?W8EzD/KYxwKZh9Q8XCGYPAmr/QF1DQ2INYhmaW3tyj0ZUIjlNXQONtls921F?=
+ =?us-ascii?Q?kC5jNHbMaguojENSY1LiD/2pbnrnHXy0LZUYJlHsRkhu8A/VYXFC/lqOpPUe?=
+ =?us-ascii?Q?ysmNd2oeOI8Ur8yNawxSufSvme2HopWT0gbiMiER5HGzMAMrU/M2haXrEc+v?=
+ =?us-ascii?Q?HBA9bsDwww1fHzdbxQstM7DHgT0KOK9kZpWtQDYzZQBang/MJIwLrMj5E9+t?=
+ =?us-ascii?Q?X6ToYfK6+gF3TOYrFIuzbzliW68lRdV6vZxFTLYzY9tSK2vn+huKKH0x7PnO?=
+ =?us-ascii?Q?zl6Wo9PGuJEpR4Fps4dwhyprfbTtpo0a3ZKX1VOG9SjTiTAxKP8/uJ5AShu6?=
+ =?us-ascii?Q?opFr/6VBA27VgFCLl75onL/f7VTr3Oir3bblAeGjErxtwS7i20AHSNsk0oPr?=
+ =?us-ascii?Q?pDkPc4uwxezvFZGhQ16udo5GHuk6XsLAW+4Og6ZXjIMiEi+vEq0Hm6FXsnXV?=
+ =?us-ascii?Q?oK1rLxE3hxPTJRBzVZGniba9lOj7ixdA4GbR+g3KafvqgHpdCual5ueH9JLn?=
+ =?us-ascii?Q?jlUbI7jVbvMY1qm9dKaG+Q4Zcwa8n5Bp3t6iKwpIXe1DSW4pDgaeUzc15cz6?=
+ =?us-ascii?Q?z5VR1PuB41z7hG9ns9nt7eMOVyj/6/I11Qnr4u0xQHGjPvIn7OGLyOfpXrkv?=
+ =?us-ascii?Q?HGnFvhBoQJdXcQQ+XRIBtp9S0QCi4zpw5KJM0H7LCgmdQl39WZRdOsAWab3e?=
+ =?us-ascii?Q?nDeyJsrk3CYyi/ptrnfm1x12eoUZsurwNKsm3bXKllTnuYJx2PxXL7cS6Dro?=
+ =?us-ascii?Q?RA+soHSuS5bq/EWzQ1KoKnUT4oFuTM9ftloVtdDbb83AvPwOLpiLSkhCAu1s?=
+ =?us-ascii?Q?4MBcKYmuV/JcgnHpi6ItL2b0g+eteyUO0vlbLqG4GCRSchx2Ak6EtnLyu1CO?=
+ =?us-ascii?Q?o5egdS9G/B/Ow6sQj0lyOCllWAVg04n0n4FUI+amYmQSkZKTSJ2pK2lcnB23?=
+ =?us-ascii?Q?e3sKjgOz6aaKN6RlCT1eYg2OZhdISR2OoARlkJskpTrbe1HY13iL2X2iAiZl?=
+ =?us-ascii?Q?1uKMQz1z1NlsdXnRFMkem2OC65VAd747N5daqpXtKJm3Ii8eMVrcVyzKYsRL?=
+ =?us-ascii?Q?aTHT5W/GSeTziqTsjj7xAbZd1Nmo1UMIYjP64sATTbLDgaXJZFFbLSLdpM2A?=
+ =?us-ascii?Q?GTmcSJmmJSDWDFJsAvjWi4Lav2OJM952rzuFgtNyHy4Dxrnn399nXSJhWlwj?=
+ =?us-ascii?Q?aDEDfcv3bCpQuGzwYVLMtSMiUvmK0llUvOTcqS4LWzyzJIJ/e92DuvesFtBA?=
+ =?us-ascii?Q?rx4JvarFrukHWMGkQI1xwzJffac26UbbPXIwRTN066/E3DjgUCPV2teIOie2?=
+ =?us-ascii?Q?I72kZdinLDdWDYLKGqBzu3MOlOyHZp1QE3eSLKhXfe63Sw9rElk/GTLaAGCi?=
+ =?us-ascii?Q?ycM6pJXJyyzolq0vv0Ab1Tun9qkyu+TzfDE2a/CIp1SsoZlUNHy9v5/Q4VDw?=
+ =?us-ascii?Q?x/FWV0KfVWVcbbKo47NzjB7x32Dbiw1bg/sJqyYn2Hk4aSZhoebZFPK6LSOB?=
+ =?us-ascii?Q?OKoWKrmNnWdZ5NDAHx8=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d4f7463-e99d-4e45-1b7f-08d9a92a8c83
+X-MS-Exchange-CrossTenant-AuthSource: BL0PR12MB5506.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2021 17:57:26.5836
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: H7W71JvYIKzMCVk0PVNusnv4wO9hckvrEje2UvMjPincTYFVvu88ZMh6wJpiDJms
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5320
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Nov 16, 2021 at 02:48:17PM +0300, Dan Carpenter wrote:
-> Originally "out_fence" was set using out_fence = sync_file_create() but
-> which returns NULL, but now it is set with out_fence = eb_requests_create()
-> which returns error pointers.  The error path needs to be modified to
-> avoid an Oops in the "goto err_request;" path.
+On Fri, Nov 12, 2021 at 09:59:04AM +0100, Christophe JAILLET wrote:
+> The 'cmdq->cmdq_bitmap' bitmap is 'rcfw->cmdq_depth' bits long.
+> The size stored in 'cmdq->bmap_size' is the size of the bitmap in bytes.
 > 
-> Fixes: 544460c33821 ("drm/i915: Multi-BB execbuf")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Thanks for the fix. LGTM. With that:
-Reviewed-by: Matthew Brost <matthew.brost@intel.com>
-
+> Remove this erroneous 'bmap_size' and use 'rcfw->cmdq_depth' directly in
+> 'bnxt_qplib_disable_rcfw_channel()'. Otherwise some error messages may
+> be missing.
+> 
+> Other uses of 'cmdq_bitmap' already take into account 'rcfw->cmdq_depth'
+> directly.
+> 
+> Fixes: 1ac5a4047975 ("RDMA/bnxt_re: Add bnxt_re RoCE driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Acked-by: Selvin Xavier <selvin.xavier@broadcom.com>
 > ---
->  drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c | 1 +
->  2 files changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c b/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
-> index 4d7da07442f2..9b24d9b5ade1 100644
-> --- a/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
-> +++ b/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
-> @@ -3277,6 +3277,7 @@ i915_gem_do_execbuffer(struct drm_device *dev,
->  	out_fence = eb_requests_create(&eb, in_fence, out_fence_fd);
->  	if (IS_ERR(out_fence)) {
->  		err = PTR_ERR(out_fence);
-> +		out_fence = NULL;
->  		if (eb.requests[0])
->  			goto err_request;
->  		else
-> -- 
-> 2.20.1
-> 
+>  drivers/infiniband/hw/bnxt_re/qplib_rcfw.c | 6 ++----
+>  drivers/infiniband/hw/bnxt_re/qplib_rcfw.h | 1 -
+>  2 files changed, 2 insertions(+), 5 deletions(-)
+
+Applied to for-next, thanks
+
+Jason
