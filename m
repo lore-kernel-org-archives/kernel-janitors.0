@@ -2,36 +2,36 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92955C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Nov 2021 21:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B0BC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Nov 2021 22:05:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72F30615E6
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Nov 2021 21:21:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20F6D619EA
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Nov 2021 22:05:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232221AbhKQVY0 (ORCPT
+        id S241049AbhKQWI1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 17 Nov 2021 16:24:26 -0500
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:52092 "EHLO
+        Wed, 17 Nov 2021 17:08:27 -0500
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:61365 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230368AbhKQVYZ (ORCPT
+        with ESMTP id S229935AbhKQWI1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 17 Nov 2021 16:24:25 -0500
+        Wed, 17 Nov 2021 17:08:27 -0500
 Received: from pop-os.home ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id nSMqmk6KTf6fnnSMrmnmUR; Wed, 17 Nov 2021 22:21:23 +0100
+        id nT3VmkJwwf6fnnT3Vmnq7e; Wed, 17 Nov 2021 23:05:27 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Wed, 17 Nov 2021 22:21:23 +0100
+X-ME-Date: Wed, 17 Nov 2021 23:05:27 +0100
 X-ME-IP: 86.243.171.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com,
-        davem@davemloft.net, kuba@kernel.org
-Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+To:     alexandre.belloni@bootlin.com, npitre@baylibre.com,
+        boris.brezillon@collabora.com
+Cc:     linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] ice: Slightly simply ice_find_free_recp_res_idx
-Date:   Wed, 17 Nov 2021 22:21:19 +0100
-Message-Id: <dc5cd04eed7dd3100f5860acaa995efa40ddecc8.1637183999.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] i3c/master: Fix a potentially infinite loop in 'hci_dat_v1_get_index()'
+Date:   Wed, 17 Nov 2021 23:05:23 +0100
+Message-Id: <0cdf3cb10293ead1acd271fdb8a70369c298c082.1637186628.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -39,38 +39,39 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The 'possible_idx' bitmap is set just after it is zeroed, so we can save
-the first step.
+The code in 'hci_dat_v1_get_index()' really looks like a hand coded version
+of 'for_each_set_bit()', except that a +1 is missing when searching for the
+next set bit.
 
-The 'free_idx' bitmap is used only at the end of the function as the
-result of a bitmap xor operation. So there is no need to explicitly
-zero it before.
+This really looks odd and it seems that it will loop until 'dat_w0_read()'
+returns the expected result.
 
-So, slightly simply the code and remove 2 useless 'bitmap_zero()' call
+So use 'for_each_set_bit()' instead. It is less verbose and should be more
+correct.
 
+Fixes: 9ad9a52cce28 ("i3c/master: introduce the mipi-i3c-hci driver")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-I don't think it will make any differences in RL. ICE_MAX_FV_WORDS is
-just 48 (bits), so 1 or 2 longs
+Speculative fix. Untested.
 ---
- drivers/net/ethernet/intel/ice/ice_switch.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/i3c/master/mipi-i3c-hci/dat_v1.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_switch.c b/drivers/net/ethernet/intel/ice/ice_switch.c
-index 793f4a9fc2cd..78bfb9fd318d 100644
---- a/drivers/net/ethernet/intel/ice/ice_switch.c
-+++ b/drivers/net/ethernet/intel/ice/ice_switch.c
-@@ -4071,10 +4071,8 @@ ice_find_free_recp_res_idx(struct ice_hw *hw, const unsigned long *profiles,
- 	DECLARE_BITMAP(used_idx, ICE_MAX_FV_WORDS);
- 	u16 bit;
+diff --git a/drivers/i3c/master/mipi-i3c-hci/dat_v1.c b/drivers/i3c/master/mipi-i3c-hci/dat_v1.c
+index 783e551a2c85..97bb49ff5b53 100644
+--- a/drivers/i3c/master/mipi-i3c-hci/dat_v1.c
++++ b/drivers/i3c/master/mipi-i3c-hci/dat_v1.c
+@@ -160,9 +160,7 @@ static int hci_dat_v1_get_index(struct i3c_hci *hci, u8 dev_addr)
+ 	unsigned int dat_idx;
+ 	u32 dat_w0;
  
--	bitmap_zero(possible_idx, ICE_MAX_FV_WORDS);
- 	bitmap_zero(recipes, ICE_MAX_NUM_RECIPES);
- 	bitmap_zero(used_idx, ICE_MAX_FV_WORDS);
--	bitmap_zero(free_idx, ICE_MAX_FV_WORDS);
- 
- 	bitmap_set(possible_idx, 0, ICE_MAX_FV_WORDS);
- 
+-	for (dat_idx = find_first_bit(hci->DAT_data, hci->DAT_entries);
+-	     dat_idx < hci->DAT_entries;
+-	     dat_idx = find_next_bit(hci->DAT_data, hci->DAT_entries, dat_idx)) {
++	for_each_set_bit(dat_idx, hci->DAT_data, hci->DAT_entries) {
+ 		dat_w0 = dat_w0_read(dat_idx);
+ 		if (FIELD_GET(DAT_0_DYNAMIC_ADDRESS, dat_w0) == dev_addr)
+ 			return dat_idx;
 -- 
 2.30.2
 
