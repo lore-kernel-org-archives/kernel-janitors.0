@@ -2,76 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B0BC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Nov 2021 22:05:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AFD2C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Nov 2021 04:30:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20F6D619EA
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Nov 2021 22:05:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF95561B39
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Nov 2021 04:30:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241049AbhKQWI1 (ORCPT
+        id S242976AbhKREdM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 17 Nov 2021 17:08:27 -0500
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:61365 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229935AbhKQWI1 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 17 Nov 2021 17:08:27 -0500
-Received: from pop-os.home ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id nT3VmkJwwf6fnnT3Vmnq7e; Wed, 17 Nov 2021 23:05:27 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Wed, 17 Nov 2021 23:05:27 +0100
-X-ME-IP: 86.243.171.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     alexandre.belloni@bootlin.com, npitre@baylibre.com,
-        boris.brezillon@collabora.com
-Cc:     linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] i3c/master: Fix a potentially infinite loop in 'hci_dat_v1_get_index()'
-Date:   Wed, 17 Nov 2021 23:05:23 +0100
-Message-Id: <0cdf3cb10293ead1acd271fdb8a70369c298c082.1637186628.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Wed, 17 Nov 2021 23:33:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39596 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S242970AbhKREdI (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 17 Nov 2021 23:33:08 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id 1B37961B39;
+        Thu, 18 Nov 2021 04:30:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1637209809;
+        bh=Q6aruKsAvqketa/YdneOPnOfNWgT2SjfECTiqEW6Cko=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=MQs1+VOXkO/6hu7fwF8kXY2C1Xesey1CSJEUFkKP34YsDXhQmgnp7cSAKMYXcooYs
+         akDxc4Gn8Tcjx9U2WKH0jXohW91ALWwaDJbLbIaPIA16CElyK1Lf+40jQGhAqcMorZ
+         SgRgUKTaggXMQ7Ma5thwVuF7nxp/peni0fzqYCp9YRq6XofdeIzABHkN9wO8LDmA4R
+         xFHWVjTCY9VeHEmTcORyY0r1pzPik3spJY2TSTuLx2nVBi7TWgqeXoKv0AUA46QEqO
+         sbf+GniAnZuYMvABp5MI1J9+koazKhLJOvqw1egcO+DnRBK5Yw1/1xKLYoMeXOcIgr
+         2P4zCNsNcaWOA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] octeontx2-af: debugfs: don't corrupt user memory
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <163720980903.29413.8714907245021841032.git-patchwork-notify@kernel.org>
+Date:   Thu, 18 Nov 2021 04:30:09 +0000
+References: <20211117073454.GD5237@kili>
+In-Reply-To: <20211117073454.GD5237@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     sgoutham@marvell.com, hkalra@marvell.com, lcherian@marvell.com,
+        gakula@marvell.com, jerinj@marvell.com, hkelam@marvell.com,
+        sbhatta@marvell.com, davem@davemloft.net, kuba@kernel.org,
+        bbudiredla@marvell.com, rsaladi2@marvell.com,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The code in 'hci_dat_v1_get_index()' really looks like a hand coded version
-of 'for_each_set_bit()', except that a +1 is missing when searching for the
-next set bit.
+Hello:
 
-This really looks odd and it seems that it will loop until 'dat_w0_read()'
-returns the expected result.
+This patch was applied to netdev/net.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
-So use 'for_each_set_bit()' instead. It is less verbose and should be more
-correct.
+On Wed, 17 Nov 2021 10:34:54 +0300 you wrote:
+> The user supplies the "count" value to say how big its read buffer is.
+> The rvu_dbg_lmtst_map_table_display() function does not take the "count"
+> into account but instead just copies the whole table, potentially
+> corrupting the user's data.
+> 
+> Introduce the "ret" variable to store how many bytes we can copy.  Also
+> I changed the type of "off" to size_t to make using min() simpler.
+> 
+> [...]
 
-Fixes: 9ad9a52cce28 ("i3c/master: introduce the mipi-i3c-hci driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Speculative fix. Untested.
----
- drivers/i3c/master/mipi-i3c-hci/dat_v1.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Here is the summary with links:
+  - [net] octeontx2-af: debugfs: don't corrupt user memory
+    https://git.kernel.org/netdev/net/c/a280ef90af01
 
-diff --git a/drivers/i3c/master/mipi-i3c-hci/dat_v1.c b/drivers/i3c/master/mipi-i3c-hci/dat_v1.c
-index 783e551a2c85..97bb49ff5b53 100644
---- a/drivers/i3c/master/mipi-i3c-hci/dat_v1.c
-+++ b/drivers/i3c/master/mipi-i3c-hci/dat_v1.c
-@@ -160,9 +160,7 @@ static int hci_dat_v1_get_index(struct i3c_hci *hci, u8 dev_addr)
- 	unsigned int dat_idx;
- 	u32 dat_w0;
- 
--	for (dat_idx = find_first_bit(hci->DAT_data, hci->DAT_entries);
--	     dat_idx < hci->DAT_entries;
--	     dat_idx = find_next_bit(hci->DAT_data, hci->DAT_entries, dat_idx)) {
-+	for_each_set_bit(dat_idx, hci->DAT_data, hci->DAT_entries) {
- 		dat_w0 = dat_w0_read(dat_idx);
- 		if (FIELD_GET(DAT_0_DYNAMIC_ADDRESS, dat_w0) == dev_addr)
- 			return dat_idx;
+You are awesome, thank you!
 -- 
-2.30.2
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
