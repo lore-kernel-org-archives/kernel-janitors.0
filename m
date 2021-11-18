@@ -2,91 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA6CC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Nov 2021 12:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C00A8C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Nov 2021 13:06:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 53E3561ABD
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Nov 2021 12:46:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADAAF61026
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Nov 2021 13:06:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344805AbhKRMtD (ORCPT
+        id S229721AbhKRNJT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 Nov 2021 07:49:03 -0500
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:47237 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1344816AbhKRMsu (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 Nov 2021 07:48:50 -0500
-Received: from [79.2.93.196] (port=41154 helo=[192.168.101.73])
-        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.94.2)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1mngnU-0003dY-VQ; Thu, 18 Nov 2021 13:45:49 +0100
-Subject: Re: [bug report] mfd: lp87565: Handle optional reset pin
+        Thu, 18 Nov 2021 08:09:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53952 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229898AbhKRNHj (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 18 Nov 2021 08:07:39 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 291D461026;
+        Thu, 18 Nov 2021 13:04:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1637240678;
+        bh=FX6L/sWvNE43wjd+TigeHsPb3cZQsArnu1HmaLjgDoc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Q5nlBNo/kABO7QmpMr0bG3vE5GIZRQ3UcU8gEX/1DP0smh16PIBcHgGu4FWXRhp9A
+         iszSPSEGV0S33/W49QDnZ/oDVf84rLU5CN785lAewcugQ7gUfUVV1oCZOVKQlvIUCG
+         vg7mDODzmHNOK4vcPntj9uzMr7OuJ1ouB7W01tx3L4v/GAwNIaCUa0ymttOIl3qgAa
+         T5VQLttggTKYpJ8iUfShykfUfg2NhwmZ62uV7SD85boJievdiQfJoM7sTJUnPv2niz
+         Bw8QU9x3R39hm8UV/V4UjM3XN1Xvv31JCbgzIqIc947lDS8q0EmkfmFFsfrbkQpsnG
+         w1e8u47ECPHzA==
+Date:   Thu, 18 Nov 2021 15:04:34 +0200
+From:   Leon Romanovsky <leon@kernel.org>
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, kernel-janitors@vger.kernel.org
-References: <20211117111701.GA23355@kili> <YZYQ9KtYvsP7RfzX@google.com>
- <20211118084731.GL27562@kadam> <YZYWS0N7nluXjfKA@google.com>
- <ca9ee8e3-b996-5703-ffe0-81ccab93b872@lucaceresoli.net>
- <20211118104056.GM27562@kadam>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <44df2169-0666-87db-16ff-270fffa10029@lucaceresoli.net>
-Date:   Thu, 18 Nov 2021 13:45:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+Cc:     Christian Benvenuti <benve@cisco.com>,
+        Upinder Malhi <umalhi@cisco.com>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] RDMA: clean up usnic_ib_alloc_pd()
+Message-ID: <YZZPYsPNrfSE5i34@unreal>
+References: <20211118113924.GH1147@kili>
 MIME-Version: 1.0
-In-Reply-To: <20211118104056.GM27562@kadam>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211118113924.GH1147@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
-
-On 18/11/21 11:40, Dan Carpenter wrote:
-> On Thu, Nov 18, 2021 at 10:22:52AM +0100, Luca Ceresoli wrote:
->>
->> As the author of the code to blame, I wrote this patch, but just needed
->> a little time to test it before sending:
->>
->>     lp87565->reset_gpio = devm_gpiod_get_optional(lp87565->dev, "reset",
->>                                                   GPIOD_OUT_LOW);
->>     if (IS_ERR(lp87565->reset_gpio))
->>         return dev_err_probe(lp87565->dev, PTR_ERR(lp87565->reset_gpio),
->>                              "Failed getting reset GPIO");
->>
->>     if (lp87565->reset_gpio) {
->>     ...
->>
->> I prefer to exit on any error as it would be either -EPROBE_DEFER of a
->> _real_ error (e.g. GPIO already in use). If there's no GPIO specified,
->> then devm_gpiod_get_optional() returns NULL and libgpio ignores NULL
->> pointers gracefully.
->>
->> Would that work?
+On Thu, Nov 18, 2021 at 02:39:24PM +0300, Dan Carpenter wrote:
+> Remove the unnecessary "umem_pd" variable.  And usnic_uiom_alloc_pd()
+> never returns NULL so remove the NULL check.
 > 
-> I generally prefer that as well, because to me optional means it's up to
-> the user not that it's up to the kernel.  But it depends on if the
-> system can boot without it etc...
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/infiniband/hw/usnic/usnic_ib_verbs.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
 > 
-> I guess in this case we know that no one was relying on the old behavior
-> because that would have crashed so returning errors is safe.
 
-I sent a patch using this approach. I hope it's OK, otherwise I can send
-a v2.
-
-Last but not least: thanks Dan for finding and reporting!
-
--- 
-Luca
+Thanks,
+Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
