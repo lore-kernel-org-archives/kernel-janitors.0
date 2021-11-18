@@ -2,183 +2,335 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED6BC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Nov 2021 11:23:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52CA2C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Nov 2021 11:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0616261A89
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Nov 2021 11:23:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30BBD60F26
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Nov 2021 11:34:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343856AbhKRL0Q (ORCPT
+        id S1343797AbhKRLhL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 Nov 2021 06:26:16 -0500
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:33148 "EHLO
+        Thu, 18 Nov 2021 06:37:11 -0500
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:20356 "EHLO
         mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1343675AbhKRLZq (ORCPT
+        by vger.kernel.org with ESMTP id S1343640AbhKRLhH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 Nov 2021 06:25:46 -0500
+        Thu, 18 Nov 2021 06:37:07 -0500
 Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AIB2BqD031723;
-        Thu, 18 Nov 2021 11:22:43 GMT
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AIB2Bus031723;
+        Thu, 18 Nov 2021 11:32:47 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : content-type : mime-version; s=corp-2021-07-09;
- bh=V5KGzWUWHgjyUj7nJdCweMmnHCW7ar3Cu0ajlToJueY=;
- b=0ACTgUAUx6Mne66IokOr/+zbnmybXvFsGnY3gAd28naLBrcAYu/WZk9I65HEX5qicfyo
- Bs3ZouM2kt19Ns7YHdKXkFhUsbndmgwT4yHzFzFz+nEPjyShPIAyhqYlomnwaGKC1yrT
- VPH14MA2n3Fmujy15ozb0ng6n92sxz7GaNDYBGF9LFbvSu5c7r4rUtb8vj0epJVPem2M
- JCkEYirj56DrTYoFE3nmE3yFVsfVij6YeU5PTozbfRIekbtRKx+7OrOhTl9RWVk4vwvj
- rMC5XnpPNltE3byQCfVvzdprZLbgw/9vuRTMon65nfTwbaXGZ+5o8mFvCx1lAmtX+BSf Fw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3cd2ajpdfp-1
+ bh=nhUTn6S1O8buFn5Xa3Dk47TjJg+nwkO5vlgzpPLJgSE=;
+ b=SuIVDFTjYL+9nS6Adl2VHU4NCEKf9lC54nWGFZiZq1ToWapQNth4YNmq5xZG6CZQ5FKx
+ mS8Z2N7QiNk+Mbbhfe/X2DRsI7QC1VkHDVB8IlWQnHa/JAmjhE6q+5+P+/DSme2ECHUd
+ faJL0JGyLQYCmxtpxG2pkZbeeYOUAzpc6VXMFMitZQEXyw3DtGFwlcP6tSYiLAmkHPXR
+ 0aIMssDQL2dTAwC7LUC9ht9yZso7iE5EEmE6Q1fyvlTrXARY8cSo+aNMmNjZ8+xfnWxC
+ Xr6qRxaceTTZRU/PRj89kVmZy4/+fu5LZQ2KTHTflejPTrRq4xjg/ozMD9p9Ej9UCbG3 Hg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3cd2ajpen4-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 18 Nov 2021 11:22:43 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1AIBB8ki101897;
-        Thu, 18 Nov 2021 11:22:41 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2175.outbound.protection.outlook.com [104.47.56.175])
-        by userp3020.oracle.com with ESMTP id 3caq4vug56-1
+        Thu, 18 Nov 2021 11:32:46 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1AIBV363033036;
+        Thu, 18 Nov 2021 11:32:45 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2105.outbound.protection.outlook.com [104.47.55.105])
+        by aserp3020.oracle.com with ESMTP id 3ca568edju-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 18 Nov 2021 11:22:41 +0000
+        Thu, 18 Nov 2021 11:32:45 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CQzOsvK0uigRJsdGSoh8Olb1jFqjFAqdY8yrEzAxGX1DF3OYK+K3XbRY7DikiQmjEjPpN9LVq4fHrdtqfzv+pmhAr8xjxziYTXY8hgSb9AggqsT+94jb7BIPGUb558qcw4e3+UhIHlVRGoMEO/u/9xb4i/6ik4BzB4krKTQ3hbz7Qn0Phf1Cx5YbM9FemFe3deIvhW3Fo8TfUa8KE9oVGOlIpT4uHhkbGf9z8fQuGDQH0tjrJM3MWdQ51LUKtssEBXHslgluo18JJVF8dXvgatWvOeLgODv7P9YQohELi7BXTtFvb35hGanKvc+XfCRSVbCp6rXujTb/mAXEg6JsAA==
+ b=Tk9YZ2jR2cLUm4Z/YZf4ZsemUeOSzKTiIwE+ylLVA7CTDNeiCm0alwzdQuopXZ8/cWamIqH15zOYvZ+p63GQWJu/GvAs6w2yw7vb+kAqPkKEJWCJVDPKjvxaXTkK+5l0Df5CtGV3tSIvgcjml1RXoGVUD4bvPgI29AHT9+JdDeBWdLl0Tn06CwhSzisqeQDB8SlwKfm4aHH0GOFk0GsWSGLiIWgO36Y2rKMfB/W+C80xcY11W7asSU9Jkpd3qqrVs/K6tnVEJiOSu+aIAztak0zlPDX8agO+pbGXMFlTVaNpZtYKISP1zV36hwmdDsFedfupPbezMR+2V07QBPv4Kw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V5KGzWUWHgjyUj7nJdCweMmnHCW7ar3Cu0ajlToJueY=;
- b=eCx1jPljEK6NWX6h5eicWTZ/y14yDqa42bfUu7c0SXzEVmP7Iw2Ldd5IIDasz/6GK+g8gqYzmrrCxZTxAGsntMxvKTJIOaCOWgWxKVIXsfWAe5Yvw9MPjXiXrVtPyrVZN6AcxCY8kIHwDuIYq+TogksWsGAWpkFCWogDiEUYyxxIhCTae+58YlmOdGUHxVmFhU/bEahdGKn1PafKoOzFlUN+SfeAsyNlrR3lCtAbNsyHwsNGWknKtjFek0jtaWiTh5gK0e1moPDEzelg9yjDyDDiGUlYdoZu7rFtfoW9pmuRC9Njy4fNagnypiGa5e1AoR15QEsP4iN8bL5VcNcmfw==
+ bh=nhUTn6S1O8buFn5Xa3Dk47TjJg+nwkO5vlgzpPLJgSE=;
+ b=i757mMafynh9yKKQoqJSp7Fd46si3k3N6mIDE/CVsaiK4siVxHIMoD0eM2jsKb0mEADAUi9KknpgK/hbIbKb1/RYkqn4NPjZiZtNwdZAyaVPljbLJSYZcbAaxENp41nthySvDBHf22ISDFg/TUZcQ60UNsHmYT7H7ATqILqzkyEghC7f4ooszjzXVC8JrmNUZLjOKWXTCZkA9An4ay28KP4xxzG3XPBAwknUL3jdSxp4vE/qJRnKZa3f1rtYs6bVA3BKPVl/y4BlOX9CMbQIy05Qj710iplobWCy/jZTehlUije8bCOm2O05daf6sOjAp9CxZ5dHfudpVKmrJMcBVg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V5KGzWUWHgjyUj7nJdCweMmnHCW7ar3Cu0ajlToJueY=;
- b=Suj2C4wQnKy+NZiwfbT/1O2/PFNeUUYgU2S9KNfCl3FtURZyh1R5YByZy1K5pt5sU6E4wGQIVrUIgp9atwNGewtJcV5mNFKDhTct32yoqCdlQAYymJhiQ8oOb7sOQ1dA+PhlRgLvsBAMZHmvfI4LBYSJk5Fh7iLg87a15M00vjs=
+ bh=nhUTn6S1O8buFn5Xa3Dk47TjJg+nwkO5vlgzpPLJgSE=;
+ b=AIzZyeTgx1isYANbm/he97jNVrS7Lxo8qAMSzsN8I9VASyB0S4+NydChcbXECX26TAEduA8/uZR+8NMU2WUeMfNOxIKw7z4q5ZhaKTErsBCRn5e2V97Wt1enSKOIYBoBq96cQnEhCNifCQ6J0btkAoIctjMl9nQkzn/+d20qzbM=
 Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28) by CO1PR10MB4402.namprd10.prod.outlook.com
- (2603:10b6:303:99::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.19; Thu, 18 Nov
- 2021 11:22:39 +0000
+ (2603:10b6:301:2d::28) by MWHPR10MB1949.namprd10.prod.outlook.com
+ (2603:10b6:300:10c::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.26; Thu, 18 Nov
+ 2021 11:32:43 +0000
 Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
  ([fe80::d409:11b5:5eb2:6be9]) by MWHPR1001MB2365.namprd10.prod.outlook.com
  ([fe80::d409:11b5:5eb2:6be9%5]) with mapi id 15.20.4690.016; Thu, 18 Nov 2021
- 11:22:39 +0000
-Date:   Thu, 18 Nov 2021 14:22:11 +0300
+ 11:32:42 +0000
+Date:   Thu, 18 Nov 2021 14:32:22 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Richard Cochran <richardcochran@gmail.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+To:     MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH net] ptp: ocp: Fix a couple NULL vs IS_ERR() checks
-Message-ID: <20211118112211.GF1147@kili>
+Subject: [PATCH] extcon: fix extcon_get_extcon_dev() error handling
+Message-ID: <20211118113026.GG1147@kili>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: ZR0P278CA0002.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:16::12) To MWHPR1001MB2365.namprd10.prod.outlook.com
+X-ClientProxiedBy: ZR0P278CA0014.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:16::24) To MWHPR1001MB2365.namprd10.prod.outlook.com
  (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-Received: from kili (102.222.70.114) by ZR0P278CA0002.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:16::12) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.22 via Frontend Transport; Thu, 18 Nov 2021 11:22:36 +0000
+Received: from kili (102.222.70.114) by ZR0P278CA0014.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:16::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.19 via Frontend Transport; Thu, 18 Nov 2021 11:32:32 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: dfad2c83-839b-4192-575e-08d9aa85bad0
-X-MS-TrafficTypeDiagnostic: CO1PR10MB4402:
-X-Microsoft-Antispam-PRVS: <CO1PR10MB44022C04DA9AAEE8630AC8D18E9B9@CO1PR10MB4402.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:345;
+X-MS-Office365-Filtering-Correlation-Id: 0b21c3c8-9732-4634-f5ca-08d9aa872295
+X-MS-TrafficTypeDiagnostic: MWHPR10MB1949:
+X-Microsoft-Antispam-PRVS: <MWHPR10MB19499C99034CC2FA4D8B0E048E9B9@MWHPR10MB1949.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:843;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 5vscRoYur5IiFEbFghxFHqdU9dN3bgmV2XOoHF2GuGS4edzo3W65g0L5S654z0Pyek+zJMP/MUqGvMV73TY98PwNZ+BwTgNOflWgzFnUbBur/1fjyUxksg23OzZKx4sJuxdaBI95dX2SqfNM6BYTF9JX08xC+GsUdGgsmebKuzh/2HT3+SpqUdF8XPoclbLhTpBzEH2yGI4CaCRfrEzNUD3iYjW7t5Q1fliy5mu7zHyFTmDQR01Vaqih/yqPN3T/tr/b6kmzqFDU+fGCUf6n0TNu7Es8UXgszaa/MCG2F9FMMJJbMCKnfCq8CpIoxa56XAUidKon2xz7saJh8XhI26yFMFjH1/rvW/5r/8PlZfd7esHa6GUCF2XAY0q/aq09zufCoGZGab2SoQKMecPm0Mz2s6HY13wEE08eBM+dC7MqXyXAJpTcMMXLvwoGN+/3f5CZnQZqPOC/4tQQ+VBIB/zlDH3hSQ4iq9ep4gFie21LV87/MgObNFNc8p9yUl3hCDCfyfOGrt0pGOTkSwDSMv1BtPkRTKKWSXcgRay8rgNBBd2bOt9wYx7mDwEWnPYg0pv5peCS2eNqMDDioyXmGvESqjrnTLDZDeJcWViILE+CuBFa6Zi7Z+odP8UlPRdUA5XWHM7vkxNR7Hj9kWkNhAHwpgPTkdrhmfEIWdHISczOTdm5mkpiq5wQ9+nHo3i/xJkVvuka2IreFOBpyHm7DA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(4326008)(8936002)(33716001)(1076003)(186003)(8676002)(508600001)(52116002)(44832011)(86362001)(316002)(6496006)(66556008)(66946007)(66476007)(38100700002)(956004)(55016002)(9686003)(5660300002)(4744005)(6666004)(33656002)(38350700002)(9576002)(83380400001)(110136005)(26005)(2906002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: WplJOR/UyQigLqVjxG6Braew2R5+yP0aSSfAlsGNDcfMSLjJo8C1MmxZgMgr9NKDWdw3NnDbSiKz1DSeEMENIxpaDyXkiim1OQAWpZhpbtfJfjWL6eYJWrkDBv5r3GRL5bguV/Bc+JqpQ+vOD6+s8UoK0EHALs+WtoKD2LU40DkEbyDGoxGhgZF/N7SrmLku0iRGe/UGNJOne6bZMZOI01EHS75qD1NmPNu+i83APqXy8iwI+6G6938qHPYGstjWfsmKLmekDADlo00sVqSQR3MDP5dmgJZ+p2Ua2jfTk9SSZpeIpzYRPzQz8gzqheTEmxjv/F099VOyPvwgEcSHsYBgO7m3bsPGgr3Vbl3+3TSMzL14z/izEeFSUZiVA3hf8NfCaFC82nTU82XUeToteuihnNal+Skad1SrhjTt1RKrin0jOc6XIuBmK3wJBrOMkYVBCTpiRAA2aiwRt6IcI5/tFB3pRR5Lgoa6OBQRzm2uTWeLiiby3oGhqdIPGc21rgZ5s1S8C2SXjbQFLtDi9P7RgmaxQFhy05HfYw9n4Q8l6bitnv1187djNe4QcFYXMlDiMSHt6KoF5wU2RRDu7DAsLCRa6jXAXIXrKvyzhMkDajwnUS00WgDnpaYbUuR0bt7oL7T5qAvdZVH17k+O2+zT5GguljxtX0erLFwewdcBcpg6ygh2eKZmHg/A8uOUR+2GnZ4pvDZHGLzlYiE6RA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(8936002)(2906002)(6666004)(6916009)(33716001)(4326008)(55016002)(54906003)(6496006)(186003)(7416002)(52116002)(5660300002)(33656002)(1076003)(83380400001)(316002)(86362001)(508600001)(956004)(9576002)(38350700002)(66556008)(66476007)(66946007)(38100700002)(26005)(9686003)(44832011)(8676002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?c3AkgMAtCkNJl556Cw6OYykAQxm7JxcRUCtcw0qh1coi17UBAJ3KZrpuQP/4?=
- =?us-ascii?Q?qRHuB0ad8BWXzuXowi8GzMXNmksSsmZyIoIo2P2pF0y/vDbp6u3VkZvGNy3n?=
- =?us-ascii?Q?+7xRVJ2FRS9eMhX9BgEnYEGgLvHFrHWg/jaYctj2WJP8zQVqz4H8pCakyXem?=
- =?us-ascii?Q?VcNLzCWeT4DBmakTIV4Tud5amVsoT79JPdg2KssLQ7u3ekjijkFo+OvoGeCb?=
- =?us-ascii?Q?TE8b5uilLQrDnsTCfdzUXDSzbKz/UIYNJkHwqKKJWNKQteFnVc7GNf5ISG4p?=
- =?us-ascii?Q?kQVygII5nWw8dwm8HZ7GXtYF88dq32qDXemsHIay+ZcHam3LENjwLyn+HZ6/?=
- =?us-ascii?Q?ZueOpxp/eYtHP46YbKuHcQK1Ao8krVolc7dpaiBUgvRdmCVcYj0GNGKm5JJm?=
- =?us-ascii?Q?A7sAiS7G1FPJi18e08zeYjgCPSNG42apLKK6ekG2bs4CGTstqUJrFOmNNJb5?=
- =?us-ascii?Q?VAP5Y33aNJPGx3M3BCY3gGGcvJsfjNSJUDOjAeLqmKoRY6kCYf4z9eSvyQJe?=
- =?us-ascii?Q?bIgYSuLWMxJxaFaCsssJTqL2alrV4snIVbmD6vV9VzvgxQTPNGmAFCCYCdTh?=
- =?us-ascii?Q?m/D8wmR/cEZCrNhacaFyHcjnKljiv1/lsQStoRaSc+URXVLK/WjftFdk5GDU?=
- =?us-ascii?Q?XK54ZOQJGAxemFGEfkDxpa/+yaoiI85wlC1+ktaXINlreZi6nJUY4yTc5WlV?=
- =?us-ascii?Q?/qn+Cy3PkoffRjb8dVv8r8XvenM13luAWwrsZAugqsKergZRE2KIZDsghI8S?=
- =?us-ascii?Q?HElzPETh0Ue1p0fCyNh89vJ8QNRD02mz4DVB38a39YH+vDf4Ds42tX96OM3G?=
- =?us-ascii?Q?7YGWEMExaCN63hzV7SygJ/A2zSiC/NJOAz3ry2SlajIoXVoUIKACpH+/lRjA?=
- =?us-ascii?Q?O8xKr+5YLdRYEXdGxAk1ORtH2vlqfpxTwF+RJtBnBjmZ9/h05+7FuflhLV4S?=
- =?us-ascii?Q?NQU41Pt7Fjp5D+3W1CWuFLFf/NOHuw9QXk8jJxyF6o5/oC/Z42OgMqSCjZBY?=
- =?us-ascii?Q?p1Cfo2dhmob8YwGBmcf64Oiyq952qEgIuYu+ZBlfgytfqWlYo9Gva7xurgIc?=
- =?us-ascii?Q?6FvN1v4jvpPcvnycir7NvGjM2TjfZtUHKNy4VHfVam90lo3muNYwFbRWyyHd?=
- =?us-ascii?Q?2z/J33YGt2vqqzCCEmvNk8I5qq05IZb9++KJTPPVHKaaXNOeQpEN3DD6ayKx?=
- =?us-ascii?Q?9YZU6KsDm7DXG65OYex0OT15Odo8LalJqDr2ioROguEBy3PyQ2LN0+XoKye6?=
- =?us-ascii?Q?/u45PJb0wgBybRqDEG4gxC1pgTtNsM/HDVOwbg4rfdeaOT5i45AKZr+uVNyZ?=
- =?us-ascii?Q?3w2VzqRPb6o3C/PxdEv7AT0518nKT0hlwY+cuA5iDan9u4N5Np6WGgvF+amy?=
- =?us-ascii?Q?pjGqoiULkaQCe4wKqsXzvQRVsD6p1MbjQj8gllESyiUXLZm6gmGaCwmDatQV?=
- =?us-ascii?Q?7yZM17L2g9pyqnbFC+1MVkj0UkachodA5XZ403+vI5YmJDmGzjyG31OOcFaT?=
- =?us-ascii?Q?i0DAP2C1QuvIaeg07wJS0MtnbLj3ETovGu9u97ivf7bmD2gwhkLtJi33y7Rj?=
- =?us-ascii?Q?2XHen6vlPw5PcbpSdw0bSjtTMUWvnsOVBqfdrG0qjYYZz4jtAZQYqeNjYs3X?=
- =?us-ascii?Q?eHiSCOSynpUyaIFBAhPodLbaUWXBdDADED8J3PfAhy7DtIw/r1u8A1VhcuIq?=
- =?us-ascii?Q?pxr6QrZdWTlA+sy0U4vqY6GppBA=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+dWMIB7P6PCyOu4TIr7AgXtmrCLY5O8befh/Y+PQpheLLHxF76M4d1MH/AFf?=
+ =?us-ascii?Q?3Bs9EA6Uhm5fGhWyAcBwPTNd0Q7UqsB+CpCzeBBEkiPhbfn/ikDsdPt1s0Vo?=
+ =?us-ascii?Q?IssScfwi6+YuJHID0Ox0Cnk25AxoUInueNsC0ngA6bOFpd/mI6l+eOeLhhsS?=
+ =?us-ascii?Q?/RyDAE7K6/iQ6POnqYu4NFO3mrxueQWY29Pn0dEOI3hekfcgTe3MAnd3XvaE?=
+ =?us-ascii?Q?Ut5tzAR5cN8SN7aZx5O33OOCdoeHY7/smHlSpSspk/wU7Zc8nUFq/lPSYEpi?=
+ =?us-ascii?Q?tyWz2aE9NRCTIUv+jtOnG/RSy+qfF0r6HPN8ClUZBfW7kT6lAvCJdCa2oCXd?=
+ =?us-ascii?Q?OI1yXlOKhvQIsOCad1ufZ+0xA8OaGC86O+V0Cwqys3pFLPsuYXRnZiWRQoOy?=
+ =?us-ascii?Q?009kcuirMEOLtc7Adu5JKdR2kNXJE7EU2ybGfX9f/YvgXTMQRbO/6XsDJckd?=
+ =?us-ascii?Q?C88OyGQArns3gvLM336kqEOEZ4PUaTDay3Ovk9JIVwshPLK6sycNfABrhpuH?=
+ =?us-ascii?Q?AM93oteWvW28lDPupNJK27NDLcWIvzhP/LIZfNAzCqbP0G9n73Zl0u5xGTK8?=
+ =?us-ascii?Q?H6uKzfkdqQ8PeQrewzN9IqLC150sBKTxGLEXXx/iMRlQNcqS1d9q9mF23pKf?=
+ =?us-ascii?Q?bt9mjGHDCl/piVWwudc2hBpERFnJKJ+dosgH0LDYdOLXpAo117QBh9Jaktej?=
+ =?us-ascii?Q?4S5mYz2VMoN+x0kyQmRM76nne1yswQO5nkHypzKOQE4VPv18vzUFGK9l+TSW?=
+ =?us-ascii?Q?+YKe7cbGcft9l9wASynRSUaGAFLUYIJ5UQOecAMld+cruhphLBTZ3d9KHdUa?=
+ =?us-ascii?Q?Y+Wt3m3r9V1kFVQuqf1wANS4em7/A+kQm+CablOLlyC1oRv3d9Zs0/p1T17D?=
+ =?us-ascii?Q?02R5SJcbXB2HE70V/gdTIkjCM0YZ1VAcUroJSg6a+yBagCENKx1uB21syQSe?=
+ =?us-ascii?Q?BgGHxhUYKHze5GzjKn2IFVV8QudfP/1sjYZGgEfdrJAGjHC8xQCCn5IL9TTu?=
+ =?us-ascii?Q?miA4K5eM18Yf0udHcsiRSGO+GCfQI1po1QhJWd8TLi/HN96OeQuY2vQ2T/DO?=
+ =?us-ascii?Q?qvBr7KJBNVNsuH3imlfvJDjAziAF+OX1o8KhxfLrCNNZ28KfocKOqg2zIt/G?=
+ =?us-ascii?Q?cSaChrayKS+iMZkOTZ9KnA+8iqlQjIl353gzpjOvCcYqLi92DAyM1WTe43oA?=
+ =?us-ascii?Q?TBIm1TDWU1vLDycFQCjapc63q0aDJKJ18jrdLVNr8iPmzdqlleAyXu7hJ3Lu?=
+ =?us-ascii?Q?SK9z9Ih44ONTrJfcPPXXKoj1o5BdxUe/zSSIfwJLnzslwJ/MBvchms8PWtL9?=
+ =?us-ascii?Q?t0myjp7IvUpvuOG3M79RsvjJB2tYfSiDq10AvIhBIO0vVu5x8UMxy9UzzE1H?=
+ =?us-ascii?Q?/+TfcZ5lM4hma7dvgUvmmscvG2mnbqR+o+iv6qz0n6cmoMp6xHLF2FiELjLi?=
+ =?us-ascii?Q?fZlczGg29GCHgfbYlzAc+xmHnGQ5c5OZ+iRc0Eg8H+IpA+l7cwbdU3+YqkSA?=
+ =?us-ascii?Q?w1kuE5o6hMBWqRTrYpTZR57vdE7YqOtHCeuXlhIyeiqjT/6dDJg6x8HQ7EiK?=
+ =?us-ascii?Q?+SnnrR82/CBufhDIesNGWsE3Ag7iJ7mtVL9EPs1s+LaowjLaeAXY7hj9MBOJ?=
+ =?us-ascii?Q?Gcg/umD4E3vbBRcsrLuCa0IB6F09t/6AmmlRaf7LhsWDHVV561NzUCrRwPkd?=
+ =?us-ascii?Q?efPrO19McT1gqjArGyym9K5rJWE=3D?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dfad2c83-839b-4192-575e-08d9aa85bad0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b21c3c8-9732-4634-f5ca-08d9aa872295
 X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2021 11:22:39.6481
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2021 11:32:42.8575
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ueJclR+C+ZZ004cIdLAVh8fUglPW/tdpRIxdI/4sLAUogCbWPE2olFoK2KSNOzrYYxokHivuv9FbPPNZV+hI7loyAAjcINEoMOIb3xnSlbc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4402
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1pZV/oBlNEfOTo6l31aqKJbBxEGDZ0XoQainqnAIi2qfbTOTBzGDXQLdOKtWDOj3gwqgNczWiB40Zu4/qdxv10/64ft0cf3nhmXgcExeo6Y=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR10MB1949
 X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10171 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0 mlxscore=0
- phishscore=0 bulkscore=0 mlxlogscore=999 adultscore=0 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0 mlxscore=0
+ spamscore=0 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
- definitions=main-2111180066
-X-Proofpoint-GUID: wMGY11KLAxluiD52qxAZ2pJxLQJyLcCE
-X-Proofpoint-ORIG-GUID: wMGY11KLAxluiD52qxAZ2pJxLQJyLcCE
+ definitions=main-2111180067
+X-Proofpoint-GUID: x1HW4TBj0hBVYk5MbQohNcLHhnWhpkVd
+X-Proofpoint-ORIG-GUID: x1HW4TBj0hBVYk5MbQohNcLHhnWhpkVd
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The ptp_ocp_get_mem() function does not return NULL, it returns error
-pointers.
+The extcon_get_extcon_dev() function returns error pointers on error
+and NULL when it's a -EPROBE_DEFER defer situation.  There are eight
+callers and only two of them handled this correctly.  In the other
+callers an error pointer return would lead to a crash.
 
-Fixes: 773bda964921 ("ptp: ocp: Expose various resources on the timecard.")
+What prevents crashes is that errors can only happen in the case of
+a bug in the caller or if CONFIG_EXTCON is disabled.  Six out of
+eight callers use the Kconfig to either depend on or select
+CONFIG_EXTCON.  Thus the real life impact of these bugs is tiny.
+
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/ptp/ptp_ocp.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+The two callers where the drivers can be built without CONFIG_EXTCON
+are TYPEC_FUSB302 and CHARGER_MAX8997.
 
-diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
-index 34f943c8c9fd..0f1b5a7d2a89 100644
---- a/drivers/ptp/ptp_ocp.c
-+++ b/drivers/ptp/ptp_ocp.c
-@@ -1304,10 +1304,11 @@ ptp_ocp_register_ext(struct ptp_ocp *bp, struct ocp_resource *r)
- 	if (!ext)
- 		return -ENOMEM;
+If we apply this patch, it might be a good idea to send it to -stable
+so that backported code that relies on handling error pointers does
+not break silently.
+
+ drivers/extcon/extcon.c                |  2 +-
+ drivers/power/supply/axp288_charger.c  | 17 ++++++++++-------
+ drivers/power/supply/charger-manager.c |  7 ++-----
+ drivers/power/supply/max8997_charger.c | 10 +++++-----
+ drivers/usb/dwc3/drd.c                 |  9 ++-------
+ drivers/usb/phy/phy-omap-otg.c         |  4 ++--
+ drivers/usb/typec/tcpm/fusb302.c       |  4 ++--
+ drivers/extcon/extcon-axp288.c         |  4 ++--
+ 8 files changed, 26 insertions(+), 31 deletions(-)
+
+diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
+index e7a9561a826d..a35e99928807 100644
+--- a/drivers/extcon/extcon.c
++++ b/drivers/extcon/extcon.c
+@@ -876,7 +876,7 @@ struct extcon_dev *extcon_get_extcon_dev(const char *extcon_name)
+ 		if (!strcmp(sd->name, extcon_name))
+ 			goto out;
+ 	}
+-	sd = NULL;
++	sd = ERR_PTR(-EPROBE_DEFER);
+ out:
+ 	mutex_unlock(&extcon_dev_list_lock);
+ 	return sd;
+diff --git a/drivers/power/supply/axp288_charger.c b/drivers/power/supply/axp288_charger.c
+index ec41f6cd3f93..4acfeb52a44e 100644
+--- a/drivers/power/supply/axp288_charger.c
++++ b/drivers/power/supply/axp288_charger.c
+@@ -848,17 +848,20 @@ static int axp288_charger_probe(struct platform_device *pdev)
+ 	info->regmap_irqc = axp20x->regmap_irqc;
  
--	err = -EINVAL;
- 	ext->mem = ptp_ocp_get_mem(bp, r);
--	if (!ext->mem)
-+	if (IS_ERR(ext->mem)) {
-+		err = PTR_ERR(ext->mem);
- 		goto out;
-+	}
+ 	info->cable.edev = extcon_get_extcon_dev(AXP288_EXTCON_DEV_NAME);
+-	if (info->cable.edev == NULL) {
+-		dev_dbg(dev, "%s is not ready, probe deferred\n",
+-			AXP288_EXTCON_DEV_NAME);
+-		return -EPROBE_DEFER;
++	if (IS_ERR(info->cable.edev)) {
++		dev_err_probe(dev, PTR_ERR(info->cable.edev),
++			      "extcon_get_extcon_dev(%s) failed\n",
++			      AXP288_EXTCON_DEV_NAME);
++		return PTR_ERR(info->cable.edev);
+ 	}
  
- 	ext->bp = bp;
- 	ext->info = r->extra;
-@@ -1371,8 +1372,8 @@ ptp_ocp_register_mem(struct ptp_ocp *bp, struct ocp_resource *r)
- 	void __iomem *mem;
+ 	if (acpi_dev_present(USB_HOST_EXTCON_HID, NULL, -1)) {
+ 		info->otg.cable = extcon_get_extcon_dev(USB_HOST_EXTCON_NAME);
+-		if (info->otg.cable == NULL) {
+-			dev_dbg(dev, "EXTCON_USB_HOST is not ready, probe deferred\n");
+-			return -EPROBE_DEFER;
++		if (IS_ERR(info->otg.cable)) {
++			dev_err_probe(dev, PTR_ERR(info->otg.cable),
++				      "extcon_get_extcon_dev(%s) failed\n",
++				      USB_HOST_EXTCON_NAME);
++			return PTR_ERR(info->otg.cable);
+ 		}
+ 		dev_info(dev, "Using " USB_HOST_EXTCON_HID " extcon for usb-id\n");
+ 	}
+diff --git a/drivers/power/supply/charger-manager.c b/drivers/power/supply/charger-manager.c
+index d67edb760c94..92db79400a6a 100644
+--- a/drivers/power/supply/charger-manager.c
++++ b/drivers/power/supply/charger-manager.c
+@@ -985,13 +985,10 @@ static int charger_extcon_init(struct charger_manager *cm,
+ 	cable->nb.notifier_call = charger_extcon_notifier;
  
- 	mem = ptp_ocp_get_mem(bp, r);
--	if (!mem)
--		return -EINVAL;
-+	if (IS_ERR(mem))
-+		return PTR_ERR(mem);
+ 	cable->extcon_dev = extcon_get_extcon_dev(cable->extcon_name);
+-	if (IS_ERR_OR_NULL(cable->extcon_dev)) {
++	if (IS_ERR(cable->extcon_dev)) {
+ 		pr_err("Cannot find extcon_dev for %s (cable: %s)\n",
+ 			cable->extcon_name, cable->name);
+-		if (cable->extcon_dev == NULL)
+-			return -EPROBE_DEFER;
+-		else
+-			return PTR_ERR(cable->extcon_dev);
++		return PTR_ERR(cable->extcon_dev);
+ 	}
  
- 	bp_assign_entry(bp, r, mem);
+ 	for (i = 0; i < ARRAY_SIZE(extcon_mapping); i++) {
+diff --git a/drivers/power/supply/max8997_charger.c b/drivers/power/supply/max8997_charger.c
+index 25207fe2aa68..634658adf313 100644
+--- a/drivers/power/supply/max8997_charger.c
++++ b/drivers/power/supply/max8997_charger.c
+@@ -248,13 +248,13 @@ static int max8997_battery_probe(struct platform_device *pdev)
+ 		dev_info(&pdev->dev, "couldn't get charger regulator\n");
+ 	}
+ 	charger->edev = extcon_get_extcon_dev("max8997-muic");
+-	if (IS_ERR_OR_NULL(charger->edev)) {
+-		if (!charger->edev)
+-			return -EPROBE_DEFER;
+-		dev_info(charger->dev, "couldn't get extcon device\n");
++	if (IS_ERR(charger->edev)) {
++		dev_err_probe(charger->dev, PTR_ERR(charger->edev),
++			      "couldn't get extcon device: max8997-muic\n");
++		return PTR_ERR(charger->edev);
+ 	}
  
+-	if (!IS_ERR(charger->reg) && !IS_ERR_OR_NULL(charger->edev)) {
++	if (!IS_ERR(charger->reg)) {
+ 		INIT_WORK(&charger->extcon_work, max8997_battery_extcon_evt_worker);
+ 		ret = devm_add_action(&pdev->dev, max8997_battery_extcon_evt_stop_work, charger);
+ 		if (ret) {
+diff --git a/drivers/usb/dwc3/drd.c b/drivers/usb/dwc3/drd.c
+index d7f76835137f..a490f79131c1 100644
+--- a/drivers/usb/dwc3/drd.c
++++ b/drivers/usb/dwc3/drd.c
+@@ -454,13 +454,8 @@ static struct extcon_dev *dwc3_get_extcon(struct dwc3 *dwc)
+ 	 * This device property is for kernel internal use only and
+ 	 * is expected to be set by the glue code.
+ 	 */
+-	if (device_property_read_string(dev, "linux,extcon-name", &name) == 0) {
+-		edev = extcon_get_extcon_dev(name);
+-		if (!edev)
+-			return ERR_PTR(-EPROBE_DEFER);
+-
+-		return edev;
+-	}
++	if (device_property_read_string(dev, "linux,extcon-name", &name) == 0)
++		return extcon_get_extcon_dev(name);
+ 
+ 	/*
+ 	 * Try to get an extcon device from the USB PHY controller's "port"
+diff --git a/drivers/usb/phy/phy-omap-otg.c b/drivers/usb/phy/phy-omap-otg.c
+index ee0863c6553e..6e6ef8c0bc7e 100644
+--- a/drivers/usb/phy/phy-omap-otg.c
++++ b/drivers/usb/phy/phy-omap-otg.c
+@@ -95,8 +95,8 @@ static int omap_otg_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 
+ 	extcon = extcon_get_extcon_dev(config->extcon);
+-	if (!extcon)
+-		return -EPROBE_DEFER;
++	if (IS_ERR(extcon))
++		return PTR_ERR(extcon);
+ 
+ 	otg_dev = devm_kzalloc(&pdev->dev, sizeof(*otg_dev), GFP_KERNEL);
+ 	if (!otg_dev)
+diff --git a/drivers/usb/typec/tcpm/fusb302.c b/drivers/usb/typec/tcpm/fusb302.c
+index 7a2a17866a82..8594b59bd527 100644
+--- a/drivers/usb/typec/tcpm/fusb302.c
++++ b/drivers/usb/typec/tcpm/fusb302.c
+@@ -1706,8 +1706,8 @@ static int fusb302_probe(struct i2c_client *client,
+ 	 */
+ 	if (device_property_read_string(dev, "linux,extcon-name", &name) == 0) {
+ 		chip->extcon = extcon_get_extcon_dev(name);
+-		if (!chip->extcon)
+-			return -EPROBE_DEFER;
++		if (IS_ERR(chip->extcon))
++			return PTR_ERR(chip->extcon);
+ 	}
+ 
+ 	chip->vbus = devm_regulator_get(chip->dev, "vbus");
+diff --git a/drivers/extcon/extcon-axp288.c b/drivers/extcon/extcon-axp288.c
+index 7c6d5857ff25..180be768c215 100644
+--- a/drivers/extcon/extcon-axp288.c
++++ b/drivers/extcon/extcon-axp288.c
+@@ -394,8 +394,8 @@ static int axp288_extcon_probe(struct platform_device *pdev)
+ 		if (adev) {
+ 			info->id_extcon = extcon_get_extcon_dev(acpi_dev_name(adev));
+ 			put_device(&adev->dev);
+-			if (!info->id_extcon)
+-				return -EPROBE_DEFER;
++			if (IS_ERR(info->id_extcon))
++				return PTR_ERR(info->id_extcon);
+ 
+ 			dev_info(dev, "controlling USB role\n");
+ 		} else {
 -- 
 2.20.1
 
