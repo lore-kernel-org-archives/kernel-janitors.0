@@ -2,65 +2,125 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3F9C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Nov 2021 19:37:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47404C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Nov 2021 22:45:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE92F61507
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Nov 2021 19:37:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D584611C7
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Nov 2021 22:45:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232627AbhKRTkZ (ORCPT
+        id S232634AbhKRWsz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 Nov 2021 14:40:25 -0500
-Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:53163 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232573AbhKRTkY (ORCPT
+        Thu, 18 Nov 2021 17:48:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45374 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232616AbhKRWsv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 Nov 2021 14:40:24 -0500
-Received: from pop-os.home ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id nnDgmyLViMxZunnDgmeMWx; Thu, 18 Nov 2021 20:37:23 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 18 Nov 2021 20:37:23 +0100
-X-ME-IP: 86.243.171.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     elder@kernel.org, davem@davemloft.net, kuba@kernel.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] net: ipa: Use 'for_each_clear_bit' when possible
-Date:   Thu, 18 Nov 2021 20:37:15 +0100
-Message-Id: <07566ce40d155d88b60c643fee2d030989037405.1637264172.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Thu, 18 Nov 2021 17:48:51 -0500
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B08E4C061748;
+        Thu, 18 Nov 2021 14:45:50 -0800 (PST)
+Received: by mail-yb1-xb31.google.com with SMTP id y68so22773686ybe.1;
+        Thu, 18 Nov 2021 14:45:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Drrxg0bait9D2hSu5Rb+lqByc8pviUXeN3/NBO2Mdw0=;
+        b=ALelaSYbC0JAGYqDK1XiIqBleMj2mT/SaxMSw+/uyDrnimujzZtPhY0VtYFsUEqaXg
+         mm/OIiSTamkgkCAyipQRGpRKcuZzigaaVhPUlGRailSg2QJTWJhHdCoeWjvLxS20SHRH
+         MnPT2HsDkPxXMJoHb8O/VXSjN9BcJtZ4sHdihnpPwUo9NaxD2nb+25F+DljhM4n3frHW
+         sYys5igeVfB3WFLjkCb44UuoqLV0cu7TknknwZWHXTD2UePVXD4orSxxEC8rNxyxNN/n
+         +Ck60VdaF8aV0NEHFVw7d0/Vu3c0omHgS4nnbRsF5PtuMivM7iiNFmlZhhvvfM0SS1QH
+         4Ayw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Drrxg0bait9D2hSu5Rb+lqByc8pviUXeN3/NBO2Mdw0=;
+        b=4G0vi80WlRtCVgdGjyiqRoX234L8zluXYk+LMGWK9XJ8RUm3thuL0QAt7VMfXjMGmU
+         V7M9vlriY/ss2ttnntQpJ8E2epqOUQNfDv4IjNsn2llMQY6UX9Iukh7Zf4G3nOUo+Efo
+         oKh3VoAnIY7kDwsBP3xdG7NhSosH3k18GfC0ujCIsvJz3Nuxx+vMZqmp9MtJ1CvfOGRg
+         HV6E2OC5gg9MmKPdBy9r4Q6X98QDdXvGrczywumMaIx2hdxn55fsiVVWKQvNMt/ZZ/fU
+         u+s8NK18Epm707TdFAw1dBVOlp1+6boKF6q+jRO8tMKVtuh8fAIGhky0Ccxcjj8ro1Tm
+         DVjw==
+X-Gm-Message-State: AOAM530JfH9SY3Z+eJDxK9maqYEtz+Dr6wrbVakByrF8A+z3XWonRmpY
+        NHt0yDZX6Uv8tTi/ZXiD7J3Z3fFrEdTd1zEYjOo=
+X-Google-Smtp-Source: ABdhPJz4F3+J1gbdCBhQ0sBG5pFrqOoaVWVM1MOWWO5ipi7oqJGxkL204p7x7LR7PkF1BEm0c3jhfkDCgRf8F3yERwU=
+X-Received: by 2002:a25:378c:: with SMTP id e134mr30130496yba.474.1637275549921;
+ Thu, 18 Nov 2021 14:45:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211118111314.GB1147@kili>
+In-Reply-To: <20211118111314.GB1147@kili>
+From:   Ben Skeggs <skeggsb@gmail.com>
+Date:   Fri, 19 Nov 2021 08:45:38 +1000
+Message-ID: <CACAvsv5jiOo+4hvO-G1ojAvrwZDALX7VfAV8-SHnzYak-3mFDA@mail.gmail.com>
+Subject: Re: [Nouveau] [PATCH] drm/nouveau/acr: fix a couple NULL vs IS_ERR() checks
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
+        ML nouveau <nouveau@lists.freedesktop.org>,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use 'for_each_clear_bit()' instead of hand writing it. It is much less
-version.
+On Thu, 18 Nov 2021 at 21:13, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> The nvkm_acr_lsfw_add() function never returns NULL.  It returns error
+> pointers on error.
+>
+> Fixes: 22dcda45a3d1 ("drm/nouveau/acr: implement new subdev to replace "secure boot"")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Ben Skeggs <bskeggs@redhat.com>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/ipa/ipa_mem.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/net/ipa/ipa_mem.c b/drivers/net/ipa/ipa_mem.c
-index 4337b0920d3d..1e9eae208e44 100644
---- a/drivers/net/ipa/ipa_mem.c
-+++ b/drivers/net/ipa/ipa_mem.c
-@@ -266,9 +266,7 @@ static bool ipa_mem_valid(struct ipa *ipa, const struct ipa_mem_data *mem_data)
- 	}
- 
- 	/* Now see if any required regions are not defined */
--	for (mem_id = find_first_zero_bit(regions, IPA_MEM_COUNT);
--	     mem_id < IPA_MEM_COUNT;
--	     mem_id = find_next_zero_bit(regions, IPA_MEM_COUNT, mem_id + 1)) {
-+	for_each_clear_bit(mem_id, regions, IPA_MEM_COUNT) {
- 		if (ipa_mem_id_required(ipa, mem_id))
- 			dev_err(dev, "required memory region %u missing\n",
- 				mem_id);
--- 
-2.30.2
-
+> ---
+>  drivers/gpu/drm/nouveau/nvkm/subdev/acr/gm200.c | 6 ++++--
+>  drivers/gpu/drm/nouveau/nvkm/subdev/acr/gp102.c | 6 ++++--
+>  2 files changed, 8 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/acr/gm200.c b/drivers/gpu/drm/nouveau/nvkm/subdev/acr/gm200.c
+> index cdb1ead26d84..82b4c8e1457c 100644
+> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/acr/gm200.c
+> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/acr/gm200.c
+> @@ -207,11 +207,13 @@ int
+>  gm200_acr_wpr_parse(struct nvkm_acr *acr)
+>  {
+>         const struct wpr_header *hdr = (void *)acr->wpr_fw->data;
+> +       struct nvkm_acr_lsfw *lsfw;
+>
+>         while (hdr->falcon_id != WPR_HEADER_V0_FALCON_ID_INVALID) {
+>                 wpr_header_dump(&acr->subdev, hdr);
+> -               if (!nvkm_acr_lsfw_add(NULL, acr, NULL, (hdr++)->falcon_id))
+> -                       return -ENOMEM;
+> +               lsfw = nvkm_acr_lsfw_add(NULL, acr, NULL, (hdr++)->falcon_id);
+> +               if (IS_ERR(lsfw))
+> +                       return PTR_ERR(lsfw);
+>         }
+>
+>         return 0;
+> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/acr/gp102.c b/drivers/gpu/drm/nouveau/nvkm/subdev/acr/gp102.c
+> index fb9132a39bb1..fd97a935a380 100644
+> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/acr/gp102.c
+> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/acr/gp102.c
+> @@ -161,11 +161,13 @@ int
+>  gp102_acr_wpr_parse(struct nvkm_acr *acr)
+>  {
+>         const struct wpr_header_v1 *hdr = (void *)acr->wpr_fw->data;
+> +       struct nvkm_acr_lsfw *lsfw;
+>
+>         while (hdr->falcon_id != WPR_HEADER_V1_FALCON_ID_INVALID) {
+>                 wpr_header_v1_dump(&acr->subdev, hdr);
+> -               if (!nvkm_acr_lsfw_add(NULL, acr, NULL, (hdr++)->falcon_id))
+> -                       return -ENOMEM;
+> +               lsfw = nvkm_acr_lsfw_add(NULL, acr, NULL, (hdr++)->falcon_id);
+> +               if (IS_ERR(lsfw))
+> +                       return PTR_ERR(lsfw);
+>         }
+>
+>         return 0;
+> --
+> 2.20.1
+>
