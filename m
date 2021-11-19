@@ -2,69 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14280C4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Nov 2021 11:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 160ADC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Nov 2021 13:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F337C61A8C
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Nov 2021 11:50:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEBB961A79
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Nov 2021 13:14:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234166AbhKSLxS (ORCPT
+        id S235406AbhKSNRw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 Nov 2021 06:53:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47162 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234088AbhKSLxR (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 19 Nov 2021 06:53:17 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id 4036861B43;
-        Fri, 19 Nov 2021 11:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637322616;
-        bh=gp97nb2RlJJlMvJCwaTKRcKGIP37BXkPGh57Fk+RSCY=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=KY8Jvn+J/I+7xJMUTnthiX9U7AnxXFarbcRAsw2xEqH/woTF8A9+ko+Ov0JZpbYWe
-         yCYckqciRzqN6NV5EYDA9J/CuXqC61D1FKsfiKCDxt0InaBqVX/mrhFjOjUG4F2TTr
-         MbJptm4usUVhi2Lt1QG+OfozbAutwc1m5M1vdzjJgAO/NbCQBpMezTYBVvz7S/rj1z
-         QFPJ5wISBR/8HisIYqU0CBhrZfT/rkVmRDFYN/Jwy5R7RYmCbYfmClnw7JeTQtgZ6y
-         bnGVuamSMcN8nkF9RR0nG4qR/wAig39aoHGfd9mB4EZQz0O6hA4pBOYdXt/wrotm1Z
-         NwziQXYx5yOLg==
-Content-Type: text/plain; charset="utf-8"
+        Fri, 19 Nov 2021 08:17:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42074 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231466AbhKSNRv (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 19 Nov 2021 08:17:51 -0500
+Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5DD4C06173E
+        for <kernel-janitors@vger.kernel.org>; Fri, 19 Nov 2021 05:14:49 -0800 (PST)
+Received: by mail-qk1-x734.google.com with SMTP id de30so10151118qkb.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 19 Nov 2021 05:14:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ieee.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=HR5QiUUsJAbHQWB9m5yaWF0hUgIrMOiOR5Z9Xwz9lnE=;
+        b=f2eOBTz6OPpcwmli2fs3JisF4biM86jGkiAejvgSXx9aQHdP76TKbunhALJKkVzcVv
+         0cmq9Fx5UU01xiVsjvCvH5rit5pIkrfK9+e+/L3kq1NCCG/8Rgd0TYCMVgSXBf9vgDz7
+         D2T/zelssMgju8bcMIb5O1PB6FVGhrKhlT/xI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=HR5QiUUsJAbHQWB9m5yaWF0hUgIrMOiOR5Z9Xwz9lnE=;
+        b=bymDSERWE2INy+eSzBF5dhSEOHt2lnMLEKe0vx+l6fiv8BkNCAeWZSw8AITfvigYqh
+         sVKKjiN/PWwwbCO9upPYWDW+34lRUGLkHxVWybzSW0K1nXQ0O7dgv/TZr6uXrp7yLQvM
+         j1C6KHJLxDXkIjDQCCLl9a1XGARLXJkJ+SMje6jZTOVnpLY/OzjZW6zuVPPVLj24DG4H
+         Xc3JAybr3Tun5PMOZlg21bXgOHdfMl/y2biUOR/r2LeGGNPj2vnSk3/e68aSsseYqvn3
+         83J6tGeJkKumJT1Zyhw+LCxXtwdam/GvnBntX+ARGrHQJWlSiKkdhoQpnI8FWyJanoYp
+         Matg==
+X-Gm-Message-State: AOAM533HO36711mFRX7fKPD8mY9P8FHlQU/54jVwPYZq5SFC/8MfttPZ
+        Oy6en3n2WpZO9Wgq6DpoRcp4kw==
+X-Google-Smtp-Source: ABdhPJwadsU8VaU3ROuC9an1iL0IlzAyf4YliYBtHhaAxXHmJCEKFp94Srij+FxPpAzpi/nTn7Ai7w==
+X-Received: by 2002:a37:8607:: with SMTP id i7mr28302102qkd.159.1637327689057;
+        Fri, 19 Nov 2021 05:14:49 -0800 (PST)
+Received: from [172.22.22.4] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
+        by smtp.googlemail.com with ESMTPSA id t15sm1542305qta.45.2021.11.19.05.14.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Nov 2021 05:14:48 -0800 (PST)
+Message-ID: <77cff7ec-0787-5a19-0db6-c7d9e34f7258@ieee.org>
+Date:   Fri, 19 Nov 2021 07:14:47 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.1
 Subject: Re: [PATCH] net: ipa: Use 'for_each_clear_bit' when possible
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <163732261623.10547.16818255966892357494.git-patchwork-notify@kernel.org>
-Date:   Fri, 19 Nov 2021 11:50:16 +0000
-References: <07566ce40d155d88b60c643fee2d030989037405.1637264172.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <07566ce40d155d88b60c643fee2d030989037405.1637264172.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     elder@kernel.org, davem@davemloft.net, kuba@kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        elder@kernel.org, davem@davemloft.net, kuba@kernel.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
+References: <07566ce40d155d88b60c643fee2d030989037405.1637264172.git.christophe.jaillet@wanadoo.fr>
+From:   Alex Elder <elder@ieee.org>
+In-Reply-To: <07566ce40d155d88b60c643fee2d030989037405.1637264172.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (master)
-by David S. Miller <davem@davemloft.net>:
-
-On Thu, 18 Nov 2021 20:37:15 +0100 you wrote:
+On 11/18/21 1:37 PM, Christophe JAILLET wrote:
 > Use 'for_each_clear_bit()' instead of hand writing it. It is much less
 > version.
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+I know this just got committed, but thanks, this
+is a good improvement.
+
+					-Alex
+
 > ---
->  drivers/net/ipa/ipa_mem.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-
-Here is the summary with links:
-  - net: ipa: Use 'for_each_clear_bit' when possible
-    https://git.kernel.org/netdev/net-next/c/a6366b13c165
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+>   drivers/net/ipa/ipa_mem.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/ipa/ipa_mem.c b/drivers/net/ipa/ipa_mem.c
+> index 4337b0920d3d..1e9eae208e44 100644
+> --- a/drivers/net/ipa/ipa_mem.c
+> +++ b/drivers/net/ipa/ipa_mem.c
+> @@ -266,9 +266,7 @@ static bool ipa_mem_valid(struct ipa *ipa, const struct ipa_mem_data *mem_data)
+>   	}
+>   
+>   	/* Now see if any required regions are not defined */
+> -	for (mem_id = find_first_zero_bit(regions, IPA_MEM_COUNT);
+> -	     mem_id < IPA_MEM_COUNT;
+> -	     mem_id = find_next_zero_bit(regions, IPA_MEM_COUNT, mem_id + 1)) {
+> +	for_each_clear_bit(mem_id, regions, IPA_MEM_COUNT) {
+>   		if (ipa_mem_id_required(ipa, mem_id))
+>   			dev_err(dev, "required memory region %u missing\n",
+>   				mem_id);
+> 
 
