@@ -2,93 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 498B9C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Nov 2021 11:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14280C4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Nov 2021 11:50:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2E921617E5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Nov 2021 11:01:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F337C61A8C
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Nov 2021 11:50:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234732AbhKSLEE (ORCPT
+        id S234166AbhKSLxS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 Nov 2021 06:04:04 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:37621 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232004AbhKSLED (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 19 Nov 2021 06:04:03 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 0407C5C00D4;
-        Fri, 19 Nov 2021 06:01:01 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 19 Nov 2021 06:01:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-type:content-transfer-encoding; s=fm1; bh=
-        aqV1j+PWhw1EcvbQXT1J3L/THztodbDSfacb7pAVugM=; b=ftbKAxf07PobC8tc
-        3xnTmS8A5B+lTLU5mM6sNe0Cl17dgo+Hfm8byyKLzo/D3VXtRpWUZlBtlN6+5qfB
-        J4jOlfRjj2JD6mUbSeUyVfg+8hhkDxL7yeoJFZGc0g6Dhp7HGYbf9t6YrERVO/Ad
-        TqRGbafDqh5BmIUuCvnHyVH5gB8UkBgdw43nl2BPk4GI3CW1cKMKCk0mgcfOBdjB
-        JOtD5/AVeBa2oxOPNVt+/SsvQRG84nWJChTt7suSCZOzfrDfXrWoRCVYOFpHg4j8
-        fw9dKu9zDIsGpYQBhro2Cr0Lm29hb+DFFxBYmm0Zx7uhB8Sche/0uNXeWe7YKlWn
-        8JYY+Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=aqV1j+PWhw1EcvbQXT1J3L/THztodbDSfacb7pAVu
-        gM=; b=H+4YAfIklh5jmWWnXafnjUsLSKbg8zIQ6nqM9avIZ5UkAj8TY3VrP5ytF
-        xYsa1YbPh/ZRzZRt0V9Kz9cScuC+duehuhZJO6WLvLjgq4ywoah2FGJGFsILV4mF
-        7QEzjMao7pgC3svRBzSFxZlMKCtXwwzlrIQqJTR8HBNndKlJFK29bRfgJ++21AUY
-        5u00wP5Hk0wAK7PvD8FCfbNszvC8c0H37PLwUjSBXOIfUIQR616EK8xrPnW5mX1R
-        96jhNdiGIiq1Y8qCa930xlOzvkaib6c4uKNvDffud72i6EUQcz++E+fYpeanR1bx
-        KgJzQOM/DjqiV8sA9Gyq3Tu5HrMtg==
-X-ME-Sender: <xms:7IOXYTk49j4kro134d7Of7BnHXnls_ilMt4e_L-OuRNdSPxr9Q_Nrw>
-    <xme:7IOXYW1C249-KZMTjIelZ0JsWVVlmHFBuPXyXNfNcy-8ZQaUhKI-OBsI_1MSWQENN
-    unxs3yhG3atuiMQVQc>
-X-ME-Received: <xmr:7IOXYZqO5ffRpQ5pE25xuLk1GXQXW2nJqykQpCU23Ev9mo4TwVI64sJEKq4UwSFZUhTCa1MsaR0aNf_6kN4PKsGEFcxHASdm1e6jd0_3OVc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvuddrfeekgddvvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgjfhggtgfgsehtkeertdertdejnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepjeeugfegkeffgfeuvedtvddufffhjeffjeejvddvudduteehhfefhfefgeei
-    keeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:7IOXYbl_txF_lipHZxwMYl3vuVcleg7hb0kA2rlX1MuoZCdXUhRlkQ>
-    <xmx:7IOXYR1csdC__J0iMFBBRpXe10cLUSPi3Xte1rlcON4tGV5KIAcGdg>
-    <xmx:7IOXYavi6MWKPRZlRoEz5smVrZ_vI6cxquVWMDCjK0ISsMleY8uk5g>
-    <xmx:7IOXYelB_ig3WITGQ5wJDq0Mtj9d2bGg3r69G3qXL02K80cDdOPY2w>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 19 Nov 2021 06:00:59 -0500 (EST)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Emma Anholt <emma@anholt.net>
-Cc:     Maxime Ripard <maxime@cerno.tech>, kernel-janitors@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
-        Maxime Ripard <mripard@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH] drm/vc4: fix error code in vc4_create_object()
-Date:   Fri, 19 Nov 2021 12:00:56 +0100
-Message-Id: <163731964127.830809.14126199659521737361.b4-ty@cerno.tech>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20211118111416.GC1147@kili>
-References: <20211118111416.GC1147@kili>
-MIME-Version: 1.0
+        Fri, 19 Nov 2021 06:53:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47162 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234088AbhKSLxR (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 19 Nov 2021 06:53:17 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id 4036861B43;
+        Fri, 19 Nov 2021 11:50:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1637322616;
+        bh=gp97nb2RlJJlMvJCwaTKRcKGIP37BXkPGh57Fk+RSCY=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=KY8Jvn+J/I+7xJMUTnthiX9U7AnxXFarbcRAsw2xEqH/woTF8A9+ko+Ov0JZpbYWe
+         yCYckqciRzqN6NV5EYDA9J/CuXqC61D1FKsfiKCDxt0InaBqVX/mrhFjOjUG4F2TTr
+         MbJptm4usUVhi2Lt1QG+OfozbAutwc1m5M1vdzjJgAO/NbCQBpMezTYBVvz7S/rj1z
+         QFPJ5wISBR/8HisIYqU0CBhrZfT/rkVmRDFYN/Jwy5R7RYmCbYfmClnw7JeTQtgZ6y
+         bnGVuamSMcN8nkF9RR0nG4qR/wAig39aoHGfd9mB4EZQz0O6hA4pBOYdXt/wrotm1Z
+         NwziQXYx5yOLg==
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: ipa: Use 'for_each_clear_bit' when possible
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <163732261623.10547.16818255966892357494.git-patchwork-notify@kernel.org>
+Date:   Fri, 19 Nov 2021 11:50:16 +0000
+References: <07566ce40d155d88b60c643fee2d030989037405.1637264172.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <07566ce40d155d88b60c643fee2d030989037405.1637264172.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     elder@kernel.org, davem@davemloft.net, kuba@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 18 Nov 2021 14:14:16 +0300, Dan Carpenter wrote:
-> The ->gem_create_object() functions are supposed to return NULL if there
-> is an error.  None of the callers expect error pointers so returing one
-> will lead to an Oops.  See drm_gem_vram_create(), for example.
-> 
-> 
+Hello:
 
-Applied to drm/drm-misc (drm-misc-fixes).
+This patch was applied to netdev/net-next.git (master)
+by David S. Miller <davem@davemloft.net>:
 
-Thanks!
-Maxime
+On Thu, 18 Nov 2021 20:37:15 +0100 you wrote:
+> Use 'for_each_clear_bit()' instead of hand writing it. It is much less
+> version.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/net/ipa/ipa_mem.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+
+Here is the summary with links:
+  - net: ipa: Use 'for_each_clear_bit' when possible
+    https://git.kernel.org/netdev/net-next/c/a6366b13c165
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
