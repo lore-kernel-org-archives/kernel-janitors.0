@@ -1,109 +1,115 @@
 Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AEE2C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Nov 2021 19:59:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66AE561A7D
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Nov 2021 19:59:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F8B9C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Nov 2021 23:16:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235208AbhKSUCc (ORCPT
+        id S235095AbhKSXTX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 Nov 2021 15:02:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50236 "EHLO
+        Fri, 19 Nov 2021 18:19:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236169AbhKSUCU (ORCPT
+        with ESMTP id S235003AbhKSXTX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 19 Nov 2021 15:02:20 -0500
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF37CC061574;
-        Fri, 19 Nov 2021 11:59:17 -0800 (PST)
-Received: by mail-lf1-x135.google.com with SMTP id b40so48302714lfv.10;
-        Fri, 19 Nov 2021 11:59:17 -0800 (PST)
+        Fri, 19 Nov 2021 18:19:23 -0500
+Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7987C06173E
+        for <kernel-janitors@vger.kernel.org>; Fri, 19 Nov 2021 15:16:20 -0800 (PST)
+Received: by mail-qt1-x82e.google.com with SMTP id o17so11020882qtk.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 19 Nov 2021 15:16:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=j3zFh+wRLO9Q64j8kSaIpaKz65+6JS9leQyBRevKpgM=;
-        b=S1VEMn/+oR1ioE/QuqMGamM5lhp7U4tPMF4ud0qpRYZ9QyPlNV3Hp77L1Y0ngcTIA+
-         J0pBC0+LfufY30qvOQy2RgW0kiha3mQ+jTSTNWnYfyisEYYzgaVpwwBCEqVyePlAzLmD
-         p9W/vKxvjLuqlvJ2MwSU+lKX/sUZfI+9PA/+pxIoTeCEC0rz4o/hTb3vrf0ugJp6NnnW
-         1hB+FFk/KByeW+g6dtm8tGtvqDZuYWeCPFYOHM3LIkE9mUF19HyZDPFkl30Au2YB1KqD
-         cN0Iqr9HBGzmznmGX356YMykbnbzGnB3EwEB8ST5G0yqWPhEVwDdjyrgg6Lnr4IKkHyj
-         g96w==
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :mime-version;
+        bh=fbwBJ/7tiZLlAuTyZOPjLj3If2zENx0mjR578iDfOxc=;
+        b=1LQa7aZRgvqMkeKew1B2mxBN5z+USyumxJWCWTLNOi1sJQY2TsOJjxcEJd426ke5wj
+         eaypq55uSRNBK5tpr9fL6ZtZ4QJiP326mmEITMpqmhSgmE1q20oJtey/YiahYF3Z55MJ
+         qEi5Eev3BylFxPt6YqhSWDfAHjox2p9UOISooubR4WdLLu/uSPzaDR50K9oF8D4Ey6kt
+         Rki0oJ4v8zjYG2qivZ/cnohgJHyGuE6NUggpvOpfQYR4yvNtXzBM57R6TH3v/fGbMKGl
+         dnPZFrmSzmFMevlxGCkNdmQ5Or7zR1Skm954alYGy28UF2+6nxgIuh9bXCtAR/lRMQt+
+         c69Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=j3zFh+wRLO9Q64j8kSaIpaKz65+6JS9leQyBRevKpgM=;
-        b=4y9OrPKLLAmW9zIiRFpe7BwFSG7zKcR5IAkh11VErap2dqVMDpkuv71rrzx2+Wt/y4
-         B4dX69I3VlI+962iy/r+uTqqxCKSsxG0HN76IWh7XFPvQp5DwvY2U2tWVByD0eacX15O
-         dAU9NFjnCnhybJohrQOkKKtLmUKgHK00MIysIPe3Op0JI/ibnK4/acUQ3merCgcq3lC1
-         LfqN1YtmuXcujwMM3WwlGEwWbQjr3zfA/OgjCKMxzuDg2gZYIBK9MK/4Snm0YdjQEqxy
-         ZuiXccouaLnQEYCE9MPOaFGdX6Mi9E2GN7uDjFZfZfkOfJ430cUzrQBW644jHv0q5LMP
-         XRpg==
-X-Gm-Message-State: AOAM530grQDPyQMibQMRgZCP8zQMaqYQFDTSfp9er6sH0/NsWl6g2MLU
-        TOWyS0ySIv7lg9zTcQVmy74=
-X-Google-Smtp-Source: ABdhPJwnUQFO4cSaradvKrTRPwnAK0i153LCDAJTFz53grS6CIS7KugtUTnb2dFfWGdEo7oDk51K8Q==
-X-Received: by 2002:a2e:aa14:: with SMTP id bf20mr28395243ljb.376.1637351955978;
-        Fri, 19 Nov 2021 11:59:15 -0800 (PST)
-Received: from [10.0.0.115] (91-153-170-164.elisa-laajakaista.fi. [91.153.170.164])
-        by smtp.gmail.com with ESMTPSA id l12sm77248lfk.212.2021.11.19.11.59.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Nov 2021 11:59:15 -0800 (PST)
-Message-ID: <3dcce108-dcd0-59f9-33cc-061ec0f1bbfe@gmail.com>
-Date:   Fri, 19 Nov 2021 21:59:41 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH] dmaengine: ti: edma: Use 'for_each_set_bit' when possible
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        vkoul@kernel.org
-Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:mime-version;
+        bh=fbwBJ/7tiZLlAuTyZOPjLj3If2zENx0mjR578iDfOxc=;
+        b=WGEqDZzEI+NkT8DWoVrEBvmrQGYRCFJRO73cfHncv6IbbpNpFpKHdKyWd5scU0sUki
+         HH3sHnJkpaE9qgYunfosyHvHxGmljv7+caFy4rAFmlt+nl8TS+PzedtpaNIJ6cf0EHUM
+         qxOq54ckLvhVvsFKiHo4jxBjhMglKoXxOFcwCkPa1C5JFS/CXUgwcyN6JDU8CsUl2/IV
+         coOzJHhTGZuiHy/+UohzsaUFnDnw7azdiJ2Dto/xLsGYpcN+QqfryUfbGjL2o1cSATIM
+         s7tmrToOYqN/BshqonkSdbdkVCu6we8DbfuQGzSowQq6GomWllpncqXHcKWShSj4iBF9
+         2vSw==
+X-Gm-Message-State: AOAM533eCKMlnGgXOiAl5KN43dHM2nSQYJAIJE+pBnZSJRE0iDUe1i59
+        d1mnofJc0L6dC674ZhhgRW6xEA==
+X-Google-Smtp-Source: ABdhPJxhHil83yjfhbXuAPxha0HpNEFVV+oaR1l3ki1U2O/b9xob0LbHwhNjMoyt6mKNRcxfExyA1w==
+X-Received: by 2002:a05:622a:391:: with SMTP id j17mr10615333qtx.228.1637363779886;
+        Fri, 19 Nov 2021 15:16:19 -0800 (PST)
+Received: from xanadu.home (modemcable108.170-21-96.mc.videotron.ca. [96.21.170.108])
+        by smtp.gmail.com with ESMTPSA id k85sm538099qke.134.2021.11.19.15.16.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Nov 2021 15:16:19 -0800 (PST)
+Date:   Fri, 19 Nov 2021 18:16:18 -0500 (EST)
+From:   Nicolas Pitre <npitre@baylibre.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+cc:     alexandre.belloni@bootlin.com, boris.brezillon@collabora.com,
+        linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-References: <47a7415d3aff8dfb66780bd6f80b085db4503bf7.1637263609.git.christophe.jaillet@wanadoo.fr>
-From:   =?UTF-8?Q?P=c3=a9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
-In-Reply-To: <47a7415d3aff8dfb66780bd6f80b085db4503bf7.1637263609.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] i3c/master: Fix a potentially infinite loop in
+ 'hci_dat_v1_get_index()'
+In-Reply-To: <0cdf3cb10293ead1acd271fdb8a70369c298c082.1637186628.git.christophe.jaillet@wanadoo.fr>
+Message-ID: <6s9184r-99rn-nr27-174s-r2nqn1o294n9@onlyvoer.pbz>
+References: <0cdf3cb10293ead1acd271fdb8a70369c298c082.1637186628.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Wed, 17 Nov 2021, Christophe JAILLET wrote:
 
-
-On 18/11/2021 21:28, Christophe JAILLET wrote:
-> Use 'for_each_set_bit()' instead of hand wrinting it. It is much less
-> version.
-
-Thanks for the patch!
-
-Acked-by: Peter Ujfalusi <peter.ujfalusi@gmail.com>
-
-
+> The code in 'hci_dat_v1_get_index()' really looks like a hand coded version
+> of 'for_each_set_bit()', except that a +1 is missing when searching for the
+> next set bit.
+> 
+> This really looks odd and it seems that it will loop until 'dat_w0_read()'
+> returns the expected result.
+> 
+> So use 'for_each_set_bit()' instead. It is less verbose and should be more
+> correct.
+> 
+> Fixes: 9ad9a52cce28 ("i3c/master: introduce the mipi-i3c-hci driver")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/dma/ti/edma.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/dma/ti/edma.c b/drivers/dma/ti/edma.c
-> index caa4050ecc02..08e47f44d325 100644
-> --- a/drivers/dma/ti/edma.c
-> +++ b/drivers/dma/ti/edma.c
-> @@ -1681,8 +1681,7 @@ static irqreturn_t dma_ccerr_handler(int irq, void *data)
->  
->  			dev_dbg(ecc->dev, "EMR%d 0x%08x\n", j, val);
->  			emr = val;
-> -			for (i = find_first_bit(&emr, 32); i < 32;
-> -			     i = find_next_bit(&emr, 32, i + 1)) {
-> +			for_each_set_bit(i, &emr, 32) {
->  				int k = (j << 5) + i;
->  
->  				/* Clear the corresponding EMR bits */
-> 
 
--- 
-Péter
+Acked-by: Nicolas Pitre <npitre@baylibre.com>
+
+> ---
+> Speculative fix. Untested.
+> ---
+>  drivers/i3c/master/mipi-i3c-hci/dat_v1.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/i3c/master/mipi-i3c-hci/dat_v1.c b/drivers/i3c/master/mipi-i3c-hci/dat_v1.c
+> index 783e551a2c85..97bb49ff5b53 100644
+> --- a/drivers/i3c/master/mipi-i3c-hci/dat_v1.c
+> +++ b/drivers/i3c/master/mipi-i3c-hci/dat_v1.c
+> @@ -160,9 +160,7 @@ static int hci_dat_v1_get_index(struct i3c_hci *hci, u8 dev_addr)
+>  	unsigned int dat_idx;
+>  	u32 dat_w0;
+>  
+> -	for (dat_idx = find_first_bit(hci->DAT_data, hci->DAT_entries);
+> -	     dat_idx < hci->DAT_entries;
+> -	     dat_idx = find_next_bit(hci->DAT_data, hci->DAT_entries, dat_idx)) {
+> +	for_each_set_bit(dat_idx, hci->DAT_data, hci->DAT_entries) {
+>  		dat_w0 = dat_w0_read(dat_idx);
+>  		if (FIELD_GET(DAT_0_DYNAMIC_ADDRESS, dat_w0) == dev_addr)
+>  			return dat_idx;
+> -- 
+> 2.30.2
+> 
+> 
+> -- 
+> linux-i3c mailing list
+> linux-i3c@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-i3c
+> 
