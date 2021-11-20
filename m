@@ -2,58 +2,58 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7E97C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 20 Nov 2021 04:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0DFBC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 20 Nov 2021 04:32:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236931AbhKTEb5 (ORCPT
+        id S235583AbhKTEfu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 Nov 2021 23:31:57 -0500
-Received: from helcar.hmeau.com ([216.24.177.18]:56904 "EHLO deadmen.hmeau.com"
+        Fri, 19 Nov 2021 23:35:50 -0500
+Received: from helcar.hmeau.com ([216.24.177.18]:56918 "EHLO deadmen.hmeau.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236949AbhKTEbx (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 19 Nov 2021 23:31:53 -0500
+        id S231508AbhKTEft (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 19 Nov 2021 23:35:49 -0500
 Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
         by deadmen.hmeau.com with esmtp (Exim 4.92 #5 (Debian))
-        id 1moHzc-0001JJ-5Q; Sat, 20 Nov 2021 12:28:48 +0800
+        id 1moI3L-0001L5-Vn; Sat, 20 Nov 2021 12:32:40 +0800
 Received: from herbert by gondobar with local (Exim 4.92)
         (envelope-from <herbert@gondor.apana.org.au>)
-        id 1moHzc-0006kO-2m; Sat, 20 Nov 2021 12:28:48 +0800
-Date:   Sat, 20 Nov 2021 12:28:48 +0800
+        id 1moI3J-0006oA-L3; Sat, 20 Nov 2021 12:32:37 +0800
+Date:   Sat, 20 Nov 2021 12:32:37 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Declan Murphy <declan.murphy@intel.com>,
-        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: rectify entry for INTEL KEEM BAY OCS ECC
- CRYPTO DRIVER
-Message-ID: <20211120042848.GF25752@gondor.apana.org.au>
-References: <20211103094711.8844-1-lukas.bulwahn@gmail.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     gilad@benyossef.com, davem@davemloft.net,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] crypto: ccree - remove redundant 'flush_workqueue()'
+ calls
+Message-ID: <20211120043237.GM25752@gondor.apana.org.au>
+References: <2a313cc6de53c492db10e29c6444d8e6f2529689.1636735696.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211103094711.8844-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <2a313cc6de53c492db10e29c6444d8e6f2529689.1636735696.git.christophe.jaillet@wanadoo.fr>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Nov 03, 2021 at 10:47:11AM +0100, Lukas Bulwahn wrote:
-> Commit c9f608c38009 ("crypto: keembay-ocs-ecc - Add Keem Bay OCS ECC
-> Driver") only adds drivers/crypto/keembay/keembay-ocs-ecc.c, but adds a
-> file entry drivers/crypto/keembay/ocs-ecc-curve-defs.h in MAINTAINERS.
+On Fri, Nov 12, 2021 at 05:49:23PM +0100, Christophe JAILLET wrote:
+> 'destroy_workqueue()' already drains the queue before destroying it, so
+> there is no need to flush it explicitly.
 > 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns warns:
+> Remove the redundant 'flush_workqueue()' calls.
 > 
->   warning: no file matches  F:  drivers/crypto/keembay/ocs-ecc-curve-defs.h
+> This was generated with coccinelle:
 > 
-> Assuming that this header is obsolete and will not be included in the
-> repository, remove the unneeded file entry from MAINTAINERS.
+> @@
+> expression E;
+> @@
+> - 	flush_workqueue(E);
+> 	destroy_workqueue(E);
 > 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  MAINTAINERS | 1 -
+>  drivers/crypto/ccree/cc_request_mgr.c | 1 -
 >  1 file changed, 1 deletion(-)
 
 Patch applied.  Thanks.
