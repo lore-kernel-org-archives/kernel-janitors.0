@@ -2,34 +2,33 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40665C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 21 Nov 2021 18:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 140E3C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 21 Nov 2021 19:13:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238587AbhKUSEN (ORCPT
+        id S238836AbhKUTQH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 21 Nov 2021 13:04:13 -0500
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:55911 "EHLO
+        Sun, 21 Nov 2021 14:16:07 -0500
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:63838 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238590AbhKUSEN (ORCPT
+        with ESMTP id S238805AbhKUTQE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 21 Nov 2021 13:04:13 -0500
+        Sun, 21 Nov 2021 14:16:04 -0500
 Received: from pop-os.home ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id or9EmhhgNdmYbor9EmGDZk; Sun, 21 Nov 2021 19:01:07 +0100
+        id osGlmoFqxPnAJosGlmBzhH; Sun, 21 Nov 2021 20:12:56 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 21 Nov 2021 19:01:07 +0100
+X-ME-Date: Sun, 21 Nov 2021 20:12:56 +0100
 X-ME-IP: 86.243.171.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     davem@davemloft.net, kuba@kernel.org, atenart@kernel.org,
-        alexanderduyck@fb.com, pabeni@redhat.com, weiwan@google.com,
-        lucien.xin@gmail.com
+To:     davem@davemloft.net, kuba@kernel.org, aelior@marvell.com,
+        GR-everest-linux-l2@marvell.com
 Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] net-sysfs: Slightly optimize 'xps_queue_show()'
-Date:   Sun, 21 Nov 2021 19:01:03 +0100
-Message-Id: <498b1a0a7a0cba019c9d95693cd489827168b79e.1637517554.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] qed: Use the bitmap API to simplify some functions
+Date:   Sun, 21 Nov 2021 20:12:54 +0100
+Message-Id: <5f585ae692e1045b9f12c483cdaf87ee5db9a716.1637521924.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -37,27 +36,91 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The 'mask' bitmap is local to this function. So the non-atomic
-'__set_bit()' can be used to save a few cycles.
+'cid_map' is a bitmap. So use 'bitmap_zalloc()' to simplify code,
+improve the semantic and avoid some open-coded arithmetic in allocator
+arguments.
+
+Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
+consistency.
+
+Also change some 'memset()' into 'bitmap_zero()' to keep consistency. This
+is also much less verbose.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- net/core/net-sysfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/qed/qed_cxt.c | 24 +++++------------------
+ 1 file changed, 5 insertions(+), 19 deletions(-)
 
-diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-index 9c01c642cf9e..3be3f4a6add3 100644
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -1452,7 +1452,7 @@ static ssize_t xps_queue_show(struct net_device *dev, unsigned int index,
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_cxt.c b/drivers/net/ethernet/qlogic/qed/qed_cxt.c
+index 452494f8c298..65e20693c549 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_cxt.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_cxt.c
+@@ -1036,12 +1036,12 @@ static void qed_cid_map_free(struct qed_hwfn *p_hwfn)
+ 	u32 type, vf;
  
- 		for (i = map->len; i--;) {
- 			if (map->queues[i] == index) {
--				set_bit(j, mask);
-+				__set_bit(j, mask);
- 				break;
- 			}
+ 	for (type = 0; type < MAX_CONN_TYPES; type++) {
+-		kfree(p_mngr->acquired[type].cid_map);
++		bitmap_free(p_mngr->acquired[type].cid_map);
+ 		p_mngr->acquired[type].max_count = 0;
+ 		p_mngr->acquired[type].start_cid = 0;
+ 
+ 		for (vf = 0; vf < MAX_NUM_VFS; vf++) {
+-			kfree(p_mngr->acquired_vf[type][vf].cid_map);
++			bitmap_free(p_mngr->acquired_vf[type][vf].cid_map);
+ 			p_mngr->acquired_vf[type][vf].max_count = 0;
+ 			p_mngr->acquired_vf[type][vf].start_cid = 0;
  		}
+@@ -1054,15 +1054,10 @@ qed_cid_map_alloc_single(struct qed_hwfn *p_hwfn,
+ 			 u32 cid_start,
+ 			 u32 cid_count, struct qed_cid_acquired_map *p_map)
+ {
+-	u32 size;
+-
+ 	if (!cid_count)
+ 		return 0;
+ 
+-	size = DIV_ROUND_UP(cid_count,
+-			    sizeof(unsigned long) * BITS_PER_BYTE) *
+-	       sizeof(unsigned long);
+-	p_map->cid_map = kzalloc(size, GFP_KERNEL);
++	p_map->cid_map = bitmap_zalloc(cid_count, GFP_KERNEL);
+ 	if (!p_map->cid_map)
+ 		return -ENOMEM;
+ 
+@@ -1216,7 +1211,6 @@ void qed_cxt_mngr_setup(struct qed_hwfn *p_hwfn)
+ 	struct qed_cid_acquired_map *p_map;
+ 	struct qed_conn_type_cfg *p_cfg;
+ 	int type;
+-	u32 len;
+ 
+ 	/* Reset acquired cids */
+ 	for (type = 0; type < MAX_CONN_TYPES; type++) {
+@@ -1225,11 +1219,7 @@ void qed_cxt_mngr_setup(struct qed_hwfn *p_hwfn)
+ 		p_cfg = &p_mngr->conn_cfg[type];
+ 		if (p_cfg->cid_count) {
+ 			p_map = &p_mngr->acquired[type];
+-			len = DIV_ROUND_UP(p_map->max_count,
+-					   sizeof(unsigned long) *
+-					   BITS_PER_BYTE) *
+-			      sizeof(unsigned long);
+-			memset(p_map->cid_map, 0, len);
++			bitmap_zero(p_map->cid_map, p_map->max_count);
+ 		}
+ 
+ 		if (!p_cfg->cids_per_vf)
+@@ -1237,11 +1227,7 @@ void qed_cxt_mngr_setup(struct qed_hwfn *p_hwfn)
+ 
+ 		for (vf = 0; vf < MAX_NUM_VFS; vf++) {
+ 			p_map = &p_mngr->acquired_vf[type][vf];
+-			len = DIV_ROUND_UP(p_map->max_count,
+-					   sizeof(unsigned long) *
+-					   BITS_PER_BYTE) *
+-			      sizeof(unsigned long);
+-			memset(p_map->cid_map, 0, len);
++			bitmap_zero(p_map->cid_map, p_map->max_count);
+ 		}
+ 	}
+ }
 -- 
 2.30.2
 
