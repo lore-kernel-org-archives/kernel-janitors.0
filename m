@@ -2,33 +2,34 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 140E3C433FE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 21 Nov 2021 19:13:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A19DC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 21 Nov 2021 21:56:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238836AbhKUTQH (ORCPT
+        id S231492AbhKUV7u (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 21 Nov 2021 14:16:07 -0500
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:63838 "EHLO
+        Sun, 21 Nov 2021 16:59:50 -0500
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:60097 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238805AbhKUTQE (ORCPT
+        with ESMTP id S231237AbhKUV7t (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 21 Nov 2021 14:16:04 -0500
+        Sun, 21 Nov 2021 16:59:49 -0500
 Received: from pop-os.home ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id osGlmoFqxPnAJosGlmBzhH; Sun, 21 Nov 2021 20:12:56 +0100
+        id oupFmUkCKE8xToupFmqrnz; Sun, 21 Nov 2021 22:56:42 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 21 Nov 2021 20:12:56 +0100
+X-ME-Date: Sun, 21 Nov 2021 22:56:42 +0100
 X-ME-IP: 86.243.171.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     davem@davemloft.net, kuba@kernel.org, aelior@marvell.com,
-        GR-everest-linux-l2@marvell.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+To:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        wei.liu@kernel.org, decui@microsoft.com, davem@davemloft.net,
+        kuba@kernel.org
+Cc:     linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] qed: Use the bitmap API to simplify some functions
-Date:   Sun, 21 Nov 2021 20:12:54 +0100
-Message-Id: <5f585ae692e1045b9f12c483cdaf87ee5db9a716.1637521924.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] hv_netvsc: Use bitmap_zalloc() when applicable
+Date:   Sun, 21 Nov 2021 22:56:39 +0100
+Message-Id: <534578d2296a1f4bd86c9bd4676e9d6b92eceb59.1637531723.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -36,91 +37,55 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'cid_map' is a bitmap. So use 'bitmap_zalloc()' to simplify code,
+'send_section_map' is a bitmap. So use 'bitmap_zalloc()' to simplify code,
 improve the semantic and avoid some open-coded arithmetic in allocator
 arguments.
 
 Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
 consistency.
 
-Also change some 'memset()' into 'bitmap_zero()' to keep consistency. This
-is also much less verbose.
+While at it, change an '== NULL' test into a '!'.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/qlogic/qed/qed_cxt.c | 24 +++++------------------
- 1 file changed, 5 insertions(+), 19 deletions(-)
+ drivers/net/hyperv/netvsc.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_cxt.c b/drivers/net/ethernet/qlogic/qed/qed_cxt.c
-index 452494f8c298..65e20693c549 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_cxt.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_cxt.c
-@@ -1036,12 +1036,12 @@ static void qed_cid_map_free(struct qed_hwfn *p_hwfn)
- 	u32 type, vf;
+diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
+index 396bc1c204e6..5086cd07d1ed 100644
+--- a/drivers/net/hyperv/netvsc.c
++++ b/drivers/net/hyperv/netvsc.c
+@@ -155,7 +155,7 @@ static void free_netvsc_device(struct rcu_head *head)
+ 	kfree(nvdev->extension);
+ 	vfree(nvdev->recv_buf);
+ 	vfree(nvdev->send_buf);
+-	kfree(nvdev->send_section_map);
++	bitmap_free(nvdev->send_section_map);
  
- 	for (type = 0; type < MAX_CONN_TYPES; type++) {
--		kfree(p_mngr->acquired[type].cid_map);
-+		bitmap_free(p_mngr->acquired[type].cid_map);
- 		p_mngr->acquired[type].max_count = 0;
- 		p_mngr->acquired[type].start_cid = 0;
+ 	for (i = 0; i < VRSS_CHANNEL_MAX; i++) {
+ 		xdp_rxq_info_unreg(&nvdev->chan_table[i].xdp_rxq);
+@@ -336,7 +336,6 @@ static int netvsc_init_buf(struct hv_device *device,
+ 	struct net_device *ndev = hv_get_drvdata(device);
+ 	struct nvsp_message *init_packet;
+ 	unsigned int buf_size;
+-	size_t map_words;
+ 	int i, ret = 0;
  
- 		for (vf = 0; vf < MAX_NUM_VFS; vf++) {
--			kfree(p_mngr->acquired_vf[type][vf].cid_map);
-+			bitmap_free(p_mngr->acquired_vf[type][vf].cid_map);
- 			p_mngr->acquired_vf[type][vf].max_count = 0;
- 			p_mngr->acquired_vf[type][vf].start_cid = 0;
- 		}
-@@ -1054,15 +1054,10 @@ qed_cid_map_alloc_single(struct qed_hwfn *p_hwfn,
- 			 u32 cid_start,
- 			 u32 cid_count, struct qed_cid_acquired_map *p_map)
- {
--	u32 size;
+ 	/* Get receive buffer area. */
+@@ -528,10 +527,9 @@ static int netvsc_init_buf(struct hv_device *device,
+ 		   net_device->send_section_size, net_device->send_section_cnt);
+ 
+ 	/* Setup state for managing the send buffer. */
+-	map_words = DIV_ROUND_UP(net_device->send_section_cnt, BITS_PER_LONG);
 -
- 	if (!cid_count)
- 		return 0;
- 
--	size = DIV_ROUND_UP(cid_count,
--			    sizeof(unsigned long) * BITS_PER_BYTE) *
--	       sizeof(unsigned long);
--	p_map->cid_map = kzalloc(size, GFP_KERNEL);
-+	p_map->cid_map = bitmap_zalloc(cid_count, GFP_KERNEL);
- 	if (!p_map->cid_map)
- 		return -ENOMEM;
- 
-@@ -1216,7 +1211,6 @@ void qed_cxt_mngr_setup(struct qed_hwfn *p_hwfn)
- 	struct qed_cid_acquired_map *p_map;
- 	struct qed_conn_type_cfg *p_cfg;
- 	int type;
--	u32 len;
- 
- 	/* Reset acquired cids */
- 	for (type = 0; type < MAX_CONN_TYPES; type++) {
-@@ -1225,11 +1219,7 @@ void qed_cxt_mngr_setup(struct qed_hwfn *p_hwfn)
- 		p_cfg = &p_mngr->conn_cfg[type];
- 		if (p_cfg->cid_count) {
- 			p_map = &p_mngr->acquired[type];
--			len = DIV_ROUND_UP(p_map->max_count,
--					   sizeof(unsigned long) *
--					   BITS_PER_BYTE) *
--			      sizeof(unsigned long);
--			memset(p_map->cid_map, 0, len);
-+			bitmap_zero(p_map->cid_map, p_map->max_count);
- 		}
- 
- 		if (!p_cfg->cids_per_vf)
-@@ -1237,11 +1227,7 @@ void qed_cxt_mngr_setup(struct qed_hwfn *p_hwfn)
- 
- 		for (vf = 0; vf < MAX_NUM_VFS; vf++) {
- 			p_map = &p_mngr->acquired_vf[type][vf];
--			len = DIV_ROUND_UP(p_map->max_count,
--					   sizeof(unsigned long) *
--					   BITS_PER_BYTE) *
--			      sizeof(unsigned long);
--			memset(p_map->cid_map, 0, len);
-+			bitmap_zero(p_map->cid_map, p_map->max_count);
- 		}
+-	net_device->send_section_map = kcalloc(map_words, sizeof(ulong), GFP_KERNEL);
+-	if (net_device->send_section_map == NULL) {
++	net_device->send_section_map = bitmap_zalloc(net_device->send_section_cnt,
++						     GFP_KERNEL);
++	if (!net_device->send_section_map) {
+ 		ret = -ENOMEM;
+ 		goto cleanup;
  	}
- }
 -- 
 2.30.2
 
