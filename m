@@ -2,75 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81417C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 21 Nov 2021 08:47:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66130C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 21 Nov 2021 15:32:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232384AbhKUIvA (ORCPT
+        id S238144AbhKUPfQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 21 Nov 2021 03:51:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54998 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229897AbhKUIvA (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 21 Nov 2021 03:51:00 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AEF77604E9;
-        Sun, 21 Nov 2021 08:47:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637484475;
-        bh=20XWGXDXt0xLnm20lfPVNEqqgyIOtI9+pXelANfkry8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cqkMtTwzSJSUSdW++3F9TFCRxJqtUNmtF4rMCJYgZ6NJdY+Bos7IeEGXmehFl5gRa
-         T8CIIhrykRUx5XeYRgrXjsqtKGNlqJpnrOupWWoNkaUTEfhZ+kHKIRxcK32pmhMDBi
-         Slh10npqFDvxesCZlLk6Hb4y44g12EMHJGM9cxBYc5kJ5H6nxCt/97nxSJGbX9OYAX
-         sznGFzhXkucARtetkTFNpN9tbF0+5Bgpo4uXbesHmdNokmwHD0HPpnL5xUQu+o2/yu
-         L25IbCIoSPL/fvgBJHJnbZjzID/9WflRyZ60oHVXaFiZi7bLMBMxItnMDJrNappD4K
-         AKGd+VcL4QhuA==
-Date:   Sun, 21 Nov 2021 16:47:47 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linusw@kernel.org>,
-        Imre Kaloz <kaloz@openwrt.org>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/13] arm: imx: rename DEBUG_IMX21_IMX27_UART to
- DEBUG_IMX27_UART
-Message-ID: <20211121084541.GL31998@dragon>
-References: <20211028141938.3530-1-lukas.bulwahn@gmail.com>
- <20211028141938.3530-9-lukas.bulwahn@gmail.com>
+        Sun, 21 Nov 2021 10:35:16 -0500
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:50233 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237989AbhKUPfO (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Sun, 21 Nov 2021 10:35:14 -0500
+Received: from pop-os.home ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id oop3mFNsgf6fnoop4mxGDI; Sun, 21 Nov 2021 16:32:08 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sun, 21 Nov 2021 16:32:08 +0100
+X-ME-IP: 86.243.171.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     santosh.shilimkar@oracle.com, davem@davemloft.net, kuba@kernel.org
+Cc:     netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] rds: Fix a typo in a comment
+Date:   Sun, 21 Nov 2021 16:32:04 +0100
+Message-Id: <006364d427b54c8796dd1a896b527cd09865bba1.1637508662.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211028141938.3530-9-lukas.bulwahn@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Oct 28, 2021 at 04:19:33PM +0200, Lukas Bulwahn wrote:
-> Since commit 4b563a066611 ("ARM: imx: Remove imx21 support"), the config
-> DEBUG_IMX21_IMX27_UART is really only debug support for IMX27.
-> 
-> So, rename this option to DEBUG_IMX27_UART and adjust dependencies in
-> Kconfig and rename the definitions to IMX27 as further clean-up.
-> 
-> This issue was discovered with ./scripts/checkkconfigsymbols.py, which
-> reported that DEBUG_IMX21_IMX27_UART depends on the non-existing config
-> SOC_IMX21.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+s/cold/could/
 
-Applied, thanks!
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ net/rds/send.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/rds/send.c b/net/rds/send.c
+index 53444397de66..0c5504068e3c 100644
+--- a/net/rds/send.c
++++ b/net/rds/send.c
+@@ -272,7 +272,7 @@ int rds_send_xmit(struct rds_conn_path *cp)
+ 
+ 			/* Unfortunately, the way Infiniband deals with
+ 			 * RDMA to a bad MR key is by moving the entire
+-			 * queue pair to error state. We cold possibly
++			 * queue pair to error state. We could possibly
+ 			 * recover from that, but right now we drop the
+ 			 * connection.
+ 			 * Therefore, we never retransmit messages with RDMA ops.
+-- 
+2.30.2
+
