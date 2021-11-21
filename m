@@ -2,32 +2,34 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE28DC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 21 Nov 2021 15:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CCAC433FE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 21 Nov 2021 17:41:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236367AbhKUQCZ (ORCPT
+        id S238482AbhKURok (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 21 Nov 2021 11:02:25 -0500
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:54682 "EHLO
+        Sun, 21 Nov 2021 12:44:40 -0500
+Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:57524 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231991AbhKUQCZ (ORCPT
+        with ESMTP id S238304AbhKURok (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 21 Nov 2021 11:02:25 -0500
+        Sun, 21 Nov 2021 12:44:40 -0500
 Received: from pop-os.home ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id opFKmFXqaf6fnopFKmxINg; Sun, 21 Nov 2021 16:59:18 +0100
+        id oqqJmhaLWdmYboqqKmGBih; Sun, 21 Nov 2021 18:41:33 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 21 Nov 2021 16:59:18 +0100
+X-ME-Date: Sun, 21 Nov 2021 18:41:33 +0100
 X-ME-IP: 86.243.171.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+To:     Felix.Kuehling@amd.com, alexander.deucher@amd.com,
+        christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@linux.ie,
+        daniel@ffwll.ch
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] mtd: gen_probe: Use bitmap_zalloc() when applicable
-Date:   Sun, 21 Nov 2021 16:59:12 +0100
-Message-Id: <a6fe58dffe553a3e79303777d3ba9c60d7613c5b.1637510255.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 1/2] drm/amdkfd: Use bitmap_zalloc() when applicable
+Date:   Sun, 21 Nov 2021 18:41:30 +0100
+Message-Id: <2343a4e6547a8436419308744ba8c433088922a5.1637516393.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -35,7 +37,7 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'chip_map' is a bitmap. So use 'bitmap_zalloc()' to simplify code,
+'doorbell_bitmap' is a bitmap. So use 'bitmap_zalloc()' to simplify code,
 improve the semantic and avoid some open-coded arithmetic in allocator
 arguments.
 
@@ -44,50 +46,33 @@ consistency.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/mtd/chips/gen_probe.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/amd/amdkfd/kfd_process.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mtd/chips/gen_probe.c b/drivers/mtd/chips/gen_probe.c
-index e5bd3c2bc3b2..4d4f97841016 100644
---- a/drivers/mtd/chips/gen_probe.c
-+++ b/drivers/mtd/chips/gen_probe.c
-@@ -61,8 +61,8 @@ static struct cfi_private *genprobe_ident_chips(struct map_info *map, struct chi
- 	struct cfi_private cfi;
- 	struct cfi_private *retcfi;
- 	unsigned long *chip_map;
--	int i, j, mapsize;
- 	int max_chips;
-+	int i, j;
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process.c b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+index f29b3932e3dc..172ee8763523 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+@@ -1011,7 +1011,7 @@ static void kfd_process_destroy_pdds(struct kfd_process *p)
+ 			free_pages((unsigned long)pdd->qpd.cwsr_kaddr,
+ 				get_order(KFD_CWSR_TBA_TMA_SIZE));
  
- 	memset(&cfi, 0, sizeof(cfi));
+-		kfree(pdd->qpd.doorbell_bitmap);
++		bitmap_free(pdd->qpd.doorbell_bitmap);
+ 		idr_destroy(&pdd->alloc_idr);
  
-@@ -111,8 +111,7 @@ static struct cfi_private *genprobe_ident_chips(struct map_info *map, struct chi
- 		max_chips = 1;
- 	}
+ 		kfd_free_process_doorbells(pdd->dev, pdd->doorbell_index);
+@@ -1434,9 +1434,8 @@ static int init_doorbell_bitmap(struct qcm_process_device *qpd,
+ 	if (!KFD_IS_SOC15(dev->device_info->asic_family))
+ 		return 0;
  
--	mapsize = sizeof(long) * DIV_ROUND_UP(max_chips, BITS_PER_LONG);
--	chip_map = kzalloc(mapsize, GFP_KERNEL);
-+	chip_map = bitmap_zalloc(max_chips, GFP_KERNEL);
- 	if (!chip_map) {
- 		kfree(cfi.cfiq);
- 		return NULL;
-@@ -139,7 +138,7 @@ static struct cfi_private *genprobe_ident_chips(struct map_info *map, struct chi
- 
- 	if (!retcfi) {
- 		kfree(cfi.cfiq);
--		kfree(chip_map);
-+		bitmap_free(chip_map);
- 		return NULL;
- 	}
- 
-@@ -157,7 +156,7 @@ static struct cfi_private *genprobe_ident_chips(struct map_info *map, struct chi
- 		}
- 	}
- 
--	kfree(chip_map);
-+	bitmap_free(chip_map);
- 	return retcfi;
- }
+-	qpd->doorbell_bitmap =
+-		kzalloc(DIV_ROUND_UP(KFD_MAX_NUM_OF_QUEUES_PER_PROCESS,
+-				     BITS_PER_BYTE), GFP_KERNEL);
++	qpd->doorbell_bitmap = bitmap_zalloc(KFD_MAX_NUM_OF_QUEUES_PER_PROCESS
++					     GFP_KERNEL);
+ 	if (!qpd->doorbell_bitmap)
+ 		return -ENOMEM;
  
 -- 
 2.30.2
