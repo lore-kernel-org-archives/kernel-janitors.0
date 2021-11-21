@@ -2,88 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57AF2C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 21 Nov 2021 23:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 145E0C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 21 Nov 2021 23:37:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232477AbhKUXHQ (ORCPT
+        id S230495AbhKUXk6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 21 Nov 2021 18:07:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38170 "EHLO
+        Sun, 21 Nov 2021 18:40:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230321AbhKUXHQ (ORCPT
+        with ESMTP id S229735AbhKUXk6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 21 Nov 2021 18:07:16 -0500
-Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DA40C061574
-        for <kernel-janitors@vger.kernel.org>; Sun, 21 Nov 2021 15:04:10 -0800 (PST)
-Received: by mail-ot1-x332.google.com with SMTP id x43-20020a056830246b00b00570d09d34ebso26182835otr.2
-        for <kernel-janitors@vger.kernel.org>; Sun, 21 Nov 2021 15:04:10 -0800 (PST)
+        Sun, 21 Nov 2021 18:40:58 -0500
+Received: from mail-ot1-x32b.google.com (mail-ot1-x32b.google.com [IPv6:2607:f8b0:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1EEDC061714
+        for <kernel-janitors@vger.kernel.org>; Sun, 21 Nov 2021 15:37:52 -0800 (PST)
+Received: by mail-ot1-x32b.google.com with SMTP id n104-20020a9d2071000000b005799790cf0bso5637426ota.5
+        for <kernel-janitors@vger.kernel.org>; Sun, 21 Nov 2021 15:37:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=IKUzxLRhbxmNcnwsOFKDQdF/Nr4S67ZStxmJXr/lOM0=;
-        b=zSoZ2TqVC2lf3rXicbt0O+mrUpC+dHa3Y5y9BHWx7Ozsd61qvo7E7h6E+ZWsZVIt3g
-         sAB3mKzhD3v/qyxa2UFPNHDn/Z6O7j+rSJqDvUk4na6B9evZ/h2GbCsmyQZXzyavR+vo
-         uruDWWRGbRXuYbjdovFC8H9XnZzNLSebSXyw8n4xggjeqN9D+xXMVhj+JTzaT74lnrLF
-         ChCP7/RS+7lwbojtgCfFKSAa7XmsDo4yfdkO8a3Eg3hujUDn1NXqkbM4XaipWcY/rjWa
-         n/h1DRcLNtxSF4W45IDam/Q+a4I4GakkyAJGQMSDTyJNFuQxA6A5AZJqYGcp8luoVB6x
-         v8zg==
+        bh=NyYOvvsaAIgLW7cvFAmLIlCUPt6c1jGipU6WKm7U5Ng=;
+        b=aR/Lj+d3qGsvzxgSXtWSGxaR3hG/WC6IcRuF5sSjaNO9oXXXAqbfqUUSm1kD4dQasO
+         wVw/KnUhc6eOHpUZaLxj4iIO9eJzmi+AdLCCzibIO+a91fb1C+/IejEs1UXAWlR4Jg7v
+         inmUq1C9uZfewOTX/S1Kw5km5m6jT38MNkRtyalvK+RXwTgh/kCCBhS8Ripno8JzF9/W
+         or0K/iHTUBG93oHWExuhPAnE2SqNpC+vfq8y4PWLaoMF5OyonX7R0oTMVzSxv21v+Hsi
+         bJrkur++dt2Ygwih2FvEgyX2iSH/tppzKclTehdMi2/oWYi3yvd5gi4zlSv5jlVQUJWX
+         Ae7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=IKUzxLRhbxmNcnwsOFKDQdF/Nr4S67ZStxmJXr/lOM0=;
-        b=7SWvHdp19LTbZbG/qRGwptBmAshV5s97PcI8oNmWPOFCYl/THf+3iX4iph674m30Qw
-         iHScd7xitka80rKqXh7eaJJ1WZu7Ouu+M0Jin3dgP65qc1njGP3zYUq7obXVS2SGou+f
-         16ZXlXcJE1yl44s9uJLacy9UBQfbH3HU+xvByBbbvOLujKl2dDCgOGxVR5D90UEerDld
-         2V/7g47RGXHiA9+WM5Yon7fMrD1sKmZogC0GGiug/Ow1Bl1kg7lhJNT/0IQiwfwLkQxW
-         G1hC/qirIrqaFaAjGu+ew9x30edOC53ZJwzo9zqvB+d4oim5hFUfkB4bugI89F0j+v1x
-         RLlQ==
-X-Gm-Message-State: AOAM5310cdh4v9gPQPgWby0u3Cd5DMNEJmF/rwuqrvf6EB8j6irJ26MH
-        KcqV/2BS5EomsRNz0s7dkW5XyFocZi9CcUuewF6kEA==
-X-Google-Smtp-Source: ABdhPJyJftrJGkaAE01C15jlXvMwwX+b0zacf33mq/QM8/O1wDwdW/TxpLreaxzKiJSOjfGrlzGJb4lnENCZH8brIsE=
-X-Received: by 2002:a9d:a42:: with SMTP id 60mr21329974otg.179.1637535849462;
- Sun, 21 Nov 2021 15:04:09 -0800 (PST)
+        bh=NyYOvvsaAIgLW7cvFAmLIlCUPt6c1jGipU6WKm7U5Ng=;
+        b=nsxGLwuBpfw/yqK2W/cuz6D4ZjeHdz9PcYeFVw5zL3+v8j8vb6/hYpRRz0qoZ+iTTo
+         G0CnpbYJoGTD8bIyQGLUYMGi9qMdna4WrYZWOwM5KWb7atctEZipAu6a83zoZbtLK+7f
+         33EgZcsvC7ApO6sxufYZifwmIN5CdwQa7j2La/5ZtE7wmD4DllRv0mmfqGI8UMlkBADj
+         7ENZTPpBuryOFbbvQHT6pYddjxFQMXOFXiT0PgnRj8SCw7kI3zB/ZCh6SIh1/ggGZhZ6
+         fA+d8kUuA2RsuIViIp8TWQrmY2+d6j8IG4qDk4hE0HUPPR2CDwTvHBMk8Tm75udu6nIO
+         eBeA==
+X-Gm-Message-State: AOAM533ozgSt39IrxH2nLT/EcjvPHVspnEoSwbfx9UiG+xQ8x2EAXzre
+        nhuBRlkA8Jbr+4jXoHcrQnz52TDpkqc4ZwTvxmZe4Q==
+X-Google-Smtp-Source: ABdhPJyqL0ofQJzAhskSuiogIcxhR3TLgaafImtSYOes3MSoY3O0dXFJ6HanC00mDsHa2VXyOiQ4qvRLvXgLlLDmi80=
+X-Received: by 2002:a9d:74d0:: with SMTP id a16mr20028716otl.237.1637537872291;
+ Sun, 21 Nov 2021 15:37:52 -0800 (PST)
 MIME-Version: 1.0
-References: <CAKXUXMxBW0qM06i7TvFG+8HrwbR1eYR+9Ed648aZ95mtXiA7Tg@mail.gmail.com>
-In-Reply-To: <CAKXUXMxBW0qM06i7TvFG+8HrwbR1eYR+9Ed648aZ95mtXiA7Tg@mail.gmail.com>
+References: <20211117072604.GC5237@kili>
+In-Reply-To: <20211117072604.GC5237@kili>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 22 Nov 2021 00:03:57 +0100
-Message-ID: <CACRpkdYfqrSOJYh9trvcioBAVXZRZsjhNEgxpCNFtpjJCPrMfg@mail.gmail.com>
-Subject: Re: Removal of config MACH_FSG and dead reference in LEDS_FSG
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Linus Walleij <linusw@kernel.org>, Marc Zyngier <maz@kernel.org>,
-        Imre Kaloz <kaloz@openwrt.org>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Mon, 22 Nov 2021 00:37:40 +0100
+Message-ID: <CACRpkdakVEfLBLZfyG1mc+kJtVOewDAV7wuZEVUq+6NSkLLHrw@mail.gmail.com>
+Subject: Re: [PATCH] clk: versatile: clk-icst: use after free on error path
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Nov 12, 2021 at 8:59 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+On Wed, Nov 17, 2021 at 8:26 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-> Your commit b71377b3e1e0 ("ARM: ixp4xx: Delete the Freecom FSG-3
-> boardfiles") removes the config MACH_FSG. Hence, the config LEDS_FSG
-> and its corresponding driver leds-fsg.c is effectively not selectable.
-> I do not know much about how with device trees we ensure that specific
-> drivers are selected, or how Kconfig build dependencies are combined
-> with device trees properly here. So, I do not know what the right
-> patch is here.
+> This frees "name" and then tries to display in as part of the error
+> message on the next line.  Swap the order.
 >
-> Was it intended that this code is now made obsolete? Can this driver
-> really be deleted?
+> Fixes: 1b2189f3aa50 ("clk: versatile: clk-icst: Ensure clock names are unique")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Oops no.
-
-> Or does it require just some further adjustment to make the leds-fsg
-> driver productive again?
-
-Yes. I'll look into it!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
