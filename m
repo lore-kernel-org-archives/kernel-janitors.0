@@ -2,41 +2,39 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C28CC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Nov 2021 19:10:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BACE2C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Nov 2021 19:30:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239671AbhKVTOE (ORCPT
+        id S239889AbhKVTdy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 Nov 2021 14:14:04 -0500
-Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:61696 "EHLO
+        Mon, 22 Nov 2021 14:33:54 -0500
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:51448 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235437AbhKVTOC (ORCPT
+        with ESMTP id S235535AbhKVTdu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 Nov 2021 14:14:02 -0500
+        Mon, 22 Nov 2021 14:33:50 -0500
 Received: from [192.168.1.18] ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id pEiKmh80URLGppEiKmZETn; Mon, 22 Nov 2021 20:10:54 +0100
+        id pF1UmhF3gRLGppF1UmZGpk; Mon, 22 Nov 2021 20:30:41 +0100
 X-ME-Helo: [192.168.1.18]
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 22 Nov 2021 20:10:54 +0100
+X-ME-Date: Mon, 22 Nov 2021 20:30:41 +0100
 X-ME-IP: 86.243.171.122
-Subject: Re: [PATCH] net-sysfs: Slightly optimize 'xps_queue_show()'
-To:     Xin Long <lucien.xin@gmail.com>
-Cc:     davem <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
-        atenart@kernel.org, Alexander Duyck <alexanderduyck@fb.com>,
-        Paolo Abeni <pabeni@redhat.com>, Wei Wang <weiwan@google.com>,
-        network dev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+Subject: Re: [PATCH] dmaengine: dw-edma: Fix (and simplify) the probe broken
+ since ecb8c88bd31c
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     gustavo.pimentel@synopsys.com, wangqing@vivo.com,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-References: <498b1a0a7a0cba019c9d95693cd489827168b79e.1637517554.git.christophe.jaillet@wanadoo.fr>
- <CADvbK_du8Oya986Ae9YJ+w5kkexE5S5mvAb+DWod-1_F85=sgA@mail.gmail.com>
+References: <935fbb40ae930c5fe87482a41dcb73abf2257973.1636492127.git.christophe.jaillet@wanadoo.fr>
+ <YZs/OeBJDMc4A4EC@matsya>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <27107a39-3073-4995-194d-5caa330d1313@wanadoo.fr>
-Date:   Mon, 22 Nov 2021 20:10:51 +0100
+Message-ID: <2cbd5202-6b0d-b5b3-62a0-8ade7bf0d199@wanadoo.fr>
+Date:   Mon, 22 Nov 2021 20:30:39 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <CADvbK_du8Oya986Ae9YJ+w5kkexE5S5mvAb+DWod-1_F85=sgA@mail.gmail.com>
+In-Reply-To: <YZs/OeBJDMc4A4EC@matsya>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -44,46 +42,47 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 22/11/2021 à 16:23, Xin Long a écrit :
-> On Sun, Nov 21, 2021 at 2:38 PM Christophe JAILLET
-> <christophe.jaillet@wanadoo.fr> wrote:
+Le 22/11/2021 à 07:56, Vinod Koul a écrit :
+> On 09-11-21, 22:09, Christophe JAILLET wrote:
+>> The commit in the Fixes: tag has changed the logic of the code and now it
+>> is likely that the probe will return an early success (0), even if not
+>> completely executed.
 >>
->> The 'mask' bitmap is local to this function. So the non-atomic
->> '__set_bit()' can be used to save a few cycles.
+>> This should lead to a crash or similar issue later on when the code
+>> accesses to some never allocated resources.
 >>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   net/core/net-sysfs.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
+>> Change the '!err' into a 'err' when checking if
+>> 'dma_set_mask_and_coherent()' has failed or not.
 >>
->> diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
->> index 9c01c642cf9e..3be3f4a6add3 100644
->> --- a/net/core/net-sysfs.c
->> +++ b/net/core/net-sysfs.c
->> @@ -1452,7 +1452,7 @@ static ssize_t xps_queue_show(struct net_device *dev, unsigned int index,
->>
->>                  for (i = map->len; i--;) {
->>                          if (map->queues[i] == index) {
->> -                               set_bit(j, mask);
->> +                               __set_bit(j, mask);
->>                                  break;
->>                          }
->>                  }
->> --
->> 2.30.2
->>
-> The similar optimization can seem to be done in br_vlan.c and br_if.c as well.
+>> While at it, simplify the code and remove the "can't success code" related
+>> to 32 DMA mask.
+>> As stated in [1], 'dma_set_mask_and_coherent(DMA_BIT_MASK(64))' can't fail
+>> if 'dev->dma_mask' is non-NULL. And if it is NULL, it would fail for the
+>> same reason when tried with DMA_BIT_MASK(32).
+> 
+> The patch title should describe the changes in the patch and not the
+> outcome! So I have taken the liberty to update this to:
+> dmaengine: dw-edma: Fix return value check for dma_set_mask_and_coherent()
 > 
 
 Hi,
 
-br_if.c should be fixed in cc0be1ad686f.
+In fact, this 'bad' patch title was a way for me to express my 
+frustration to someone who 'stole' someone else work:
+    - without letting him know about it
+    - without fixing his broken patch by himself when informed
+    - without taking into account others comments (Andy Shevchenko about 
+64 DMA mask)
 
-br_vlan.c was not spotted by my heuristic (a set of grep, while looking 
-at something else). So, thanks for your feedback.
+So, thanks for fixing it (and thanks to Wang Qing for pushing in the 
+right direction, even if a better communication would have been 
+appreciated :) )
 
-Feel free to propose a patch for it, it was not part of my todo list :)
 
-If you prefer, I can also send a patch. Let me know.
+If you could just confirmed the 64 DMA mask cleanup, it would be great 
+for me. I trust the one who stated that such code could be simplified 
+and I've tried to audit code to confirm it by myself.
+However, this pattern looks quite common in the kernel, so I'm still 
+unsure about it :( !
 
 CJ
