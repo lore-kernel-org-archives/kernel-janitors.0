@@ -2,60 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C92FCC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Nov 2021 08:52:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9602C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Nov 2021 14:30:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234704AbhKVIzq (ORCPT
+        id S239151AbhKVOdQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 Nov 2021 03:55:46 -0500
-Received: from mga14.intel.com ([192.55.52.115]:59390 "EHLO mga14.intel.com"
+        Mon, 22 Nov 2021 09:33:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238906AbhKVIzp (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 Nov 2021 03:55:45 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10175"; a="234983988"
-X-IronPort-AV: E=Sophos;i="5.87,254,1631602800"; 
-   d="scan'208";a="234983988"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2021 00:52:39 -0800
-X-IronPort-AV: E=Sophos;i="5.87,254,1631602800"; 
-   d="scan'208";a="739117842"
-Received: from djcarton-mobl.ger.corp.intel.com (HELO [10.252.21.92]) ([10.252.21.92])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2021 00:52:36 -0800
-Message-ID: <e0825c0c-1db1-7043-fdd7-9a7cc96d8db9@intel.com>
-Date:   Mon, 22 Nov 2021 08:52:34 +0000
+        id S233427AbhKVOdP (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 22 Nov 2021 09:33:15 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id 0CFB86023E;
+        Mon, 22 Nov 2021 14:30:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1637591409;
+        bh=E95nm6cC9IAgx/5PCrlDxOKFaUuN+sZSazURKswtohQ=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=oLtN/W3iVJjKmC1MmlJ0s8kXq5dG5Ft9UnPJgLE6UpxmPExOQeQhJSN+QFhsYNK2h
+         NTR5FOUxn5EgwR42luZ5baO2hKaQFdBzN8c/ECvLAY0QgJ+5DQPTyTfxsq5dCWY5Wp
+         r9AU3sW3x29R7xZWqDWtJqztTQotHCynCB6X1mxrdcuZUMdpMo8e3OnmyDslPkow1Y
+         TJB4hXkToc9S+41g7YsAthqRiPxiqNVBpSG75uRTZVoy5Fnf2g08d7gR82hSalmQiC
+         yA0vovrxNXzUQYIPpgi2excvtAAu9HUNj1WbEp6GNLQuulAnBdXzGQ+2OJriFAwmV5
+         bpxkZVycK5ESw==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id EE5AD609B9;
+        Mon, 22 Nov 2021 14:30:08 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH] drm/i915/ttm: Fix error code in
- i915_ttm_eviction_valuable()
-Content-Language: en-GB
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>
-Cc:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        =?UTF-8?Q?Thomas_Hellstr=c3=b6m?= 
-        <thomas.hellstrom@linux.intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>,
-        Jason Ekstrand <jason@jlekstrand.net>,
-        Oak Zeng <oak.zeng@intel.com>, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-References: <20211122061438.GA2492@kili>
-From:   Matthew Auld <matthew.auld@intel.com>
-In-Reply-To: <20211122061438.GA2492@kili>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] rds: Fix a typo in a comment
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <163759140897.30186.7474648207680376038.git-patchwork-notify@kernel.org>
+Date:   Mon, 22 Nov 2021 14:30:08 +0000
+References: <006364d427b54c8796dd1a896b527cd09865bba1.1637508662.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <006364d427b54c8796dd1a896b527cd09865bba1.1637508662.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     santosh.shilimkar@oracle.com, davem@davemloft.net, kuba@kernel.org,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 22/11/2021 07:41, Dan Carpenter wrote:
-> This function returns a bool type so returning -EBUSY is equivalent to
-> returning true.  It should return false instead.
+Hello:
+
+This patch was applied to netdev/net-next.git (master)
+by David S. Miller <davem@davemloft.net>:
+
+On Sun, 21 Nov 2021 16:32:04 +0100 you wrote:
+> s/cold/could/
 > 
-> Fixes: 7ae034590cea ("drm/i915/ttm: add tt shmem backend")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Matthew Auld <matthew.auld@intel.com>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  net/rds/send.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Here is the summary with links:
+  - rds: Fix a typo in a comment
+    https://git.kernel.org/netdev/net-next/c/db473c075f01
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
