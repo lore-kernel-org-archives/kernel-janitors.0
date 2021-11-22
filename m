@@ -2,77 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE60BC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Nov 2021 18:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C28CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Nov 2021 19:10:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240002AbhKVSmm (ORCPT
+        id S239671AbhKVTOE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 Nov 2021 13:42:42 -0500
-Received: from m43-7.mailgun.net ([69.72.43.7]:21238 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231714AbhKVSml (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 Nov 2021 13:42:41 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1637606374; h=Date: Message-ID: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=O1L2PBC9UE+igdpkZV5c4OaYh/9FnhP5P3hsf5K7Wb8=;
- b=Q/wND8NUj7HiGC7JJEZkzjPErdAPFjWfK/gaq5tpEtt5dzBNacxd+90tY6EqgQkDc6Z7Xp9F
- Wa3Uc7cecIdG0ND1qxQc8S/rxsWoqAc51vq9iHF3+DVaeqKaK0yooomAPQAcr9sYiMtBQQYD
- rooZEW3ESzJB15yhfVd8/n/JuNQ=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n03.prod.us-east-1.postgun.com with SMTP id
- 619be3e66bacc185a5ab6ee7 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 22 Nov 2021 18:39:34
- GMT
-Sender: kvalo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id A2A03C4360D; Mon, 22 Nov 2021 18:39:33 +0000 (UTC)
-Received: from tykki.adurom.net (tynnyri.adurom.net [51.15.11.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5380AC4338F;
-        Mon, 22 Nov 2021 18:39:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 5380AC4338F
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Mon, 22 Nov 2021 14:14:04 -0500
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:61696 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235437AbhKVTOC (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 22 Nov 2021 14:14:02 -0500
+Received: from [192.168.1.18] ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id pEiKmh80URLGppEiKmZETn; Mon, 22 Nov 2021 20:10:54 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Mon, 22 Nov 2021 20:10:54 +0100
+X-ME-IP: 86.243.171.122
+Subject: Re: [PATCH] net-sysfs: Slightly optimize 'xps_queue_show()'
+To:     Xin Long <lucien.xin@gmail.com>
+Cc:     davem <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+        atenart@kernel.org, Alexander Duyck <alexanderduyck@fb.com>,
+        Paolo Abeni <pabeni@redhat.com>, Wei Wang <weiwan@google.com>,
+        network dev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+References: <498b1a0a7a0cba019c9d95693cd489827168b79e.1637517554.git.christophe.jaillet@wanadoo.fr>
+ <CADvbK_du8Oya986Ae9YJ+w5kkexE5S5mvAb+DWod-1_F85=sgA@mail.gmail.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <27107a39-3073-4995-194d-5caa330d1313@wanadoo.fr>
+Date:   Mon, 22 Nov 2021 20:10:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] iwlwifi: Fix memory leaks in error handling path
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <1504cd7d842d13ddb8244e18004523128d5c9523.1636615284.git.christophe.jaillet@wanadoo.fr>
-References: <1504cd7d842d13ddb8244e18004523128d5c9523.1636615284.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     luciano.coelho@intel.com, davem@davemloft.net, kuba@kernel.org,
-        rdunlap@infradead.org, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <163760636938.7371.10106271212043349831.kvalo@codeaurora.org>
-Date:   Mon, 22 Nov 2021 18:39:33 +0000 (UTC)
+In-Reply-To: <CADvbK_du8Oya986Ae9YJ+w5kkexE5S5mvAb+DWod-1_F85=sgA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-
-> Should an error occur (invalid TLV len or memory allocation failure), the
-> memory already allocated in 'reduce_power_data' should be freed before
-> returning, otherwise it is leaking.
+Le 22/11/2021 à 16:23, Xin Long a écrit :
+> On Sun, Nov 21, 2021 at 2:38 PM Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+>>
+>> The 'mask' bitmap is local to this function. So the non-atomic
+>> '__set_bit()' can be used to save a few cycles.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>   net/core/net-sysfs.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
+>> index 9c01c642cf9e..3be3f4a6add3 100644
+>> --- a/net/core/net-sysfs.c
+>> +++ b/net/core/net-sysfs.c
+>> @@ -1452,7 +1452,7 @@ static ssize_t xps_queue_show(struct net_device *dev, unsigned int index,
+>>
+>>                  for (i = map->len; i--;) {
+>>                          if (map->queues[i] == index) {
+>> -                               set_bit(j, mask);
+>> +                               __set_bit(j, mask);
+>>                                  break;
+>>                          }
+>>                  }
+>> --
+>> 2.30.2
+>>
+> The similar optimization can seem to be done in br_vlan.c and br_if.c as well.
 > 
-> Fixes: 9dad325f9d57 ("iwlwifi: support loading the reduced power table from UEFI")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Patch applied to wireless-drivers.git, thanks.
+Hi,
 
-a571bc28326d iwlwifi: Fix memory leaks in error handling path
+br_if.c should be fixed in cc0be1ad686f.
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/1504cd7d842d13ddb8244e18004523128d5c9523.1636615284.git.christophe.jaillet@wanadoo.fr/
+br_vlan.c was not spotted by my heuristic (a set of grep, while looking 
+at something else). So, thanks for your feedback.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Feel free to propose a patch for it, it was not part of my todo list :)
 
+If you prefer, I can also send a patch. Let me know.
+
+CJ
