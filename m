@@ -2,141 +2,156 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEEE5C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Nov 2021 19:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7846C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Nov 2021 20:45:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237839AbhKWTjU (ORCPT
+        id S236330AbhKWUse (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 Nov 2021 14:39:20 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:30973 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236257AbhKWTjK (ORCPT
+        Tue, 23 Nov 2021 15:48:34 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:32262 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230429AbhKWUse (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 Nov 2021 14:39:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1637696160;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rZfv1IAB1L4OKPDv7Z7zl3z7pjV3ugHQdTctCyaDB7o=;
-        b=QwryxxP27AkmZ0u8hNazhVijs7Y63O7OG8tElYLU8XTZBFYMx5ELvNWL551TsgQWw2kuTP
-        ouGUG89dNVp5+6cjOxGACj3JjDODWHkh9fGvWJ1A9XAg6vV3r+TLlO3a1qeMbdNiwhQ1QL
-        E756sjRykyPSsCX2vtStEQ7yFNgOcrc=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-481-Luiw5rabO9e2gjcPSpEFJA-1; Tue, 23 Nov 2021 14:35:58 -0500
-X-MC-Unique: Luiw5rabO9e2gjcPSpEFJA-1
-Received: by mail-qk1-f200.google.com with SMTP id w2-20020a3794020000b02903b54f40b442so227767qkd.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 23 Nov 2021 11:35:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:organization:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=rZfv1IAB1L4OKPDv7Z7zl3z7pjV3ugHQdTctCyaDB7o=;
-        b=F8rDBMGqIYli/fqaoswHRBM9iOINmlCBEaCWr1hvpIOec/Ujlwh21EcPtBNQc83hJ/
-         CobZST1Uw1wyydp3NNInwNhhU9ztrY+QtdKbJSWFEXz6+jiuKjnECTByKd/rXahFv8qM
-         b93zo34A2OkEwiTC6avbsWW5SSH6HqVFTginkAWSunAKHtHD7Zg1KdZsj+NOBe6XgdIy
-         j3/4Viln1QQkXVSj7otU+lnP7mLtnj4DJ/pe/6V5ttp/IV2NrNIQi9dDjAkzqM6GBqNd
-         olZ7/EOcF//EfGYD16AhMuUHeAxT7ByAvdFPzjZbELyOfFfgMWk6iSHdI+lQ1hucei+2
-         OEvQ==
-X-Gm-Message-State: AOAM530BmBHi6440hNnwr4kZ1ewy5pBB0sgnoB2YILkmkvahp+AlkwIa
-        R9ARxBFq+HpBEmqlfa9hlbujqPsIoPloIXhQHtU1PO2iHZgpDZWWD9U05GDVH1c6zOv0nbH8dTq
-        MmWa35Pe+l7mLCFC92dBKC39WSm8s
-X-Received: by 2002:a05:622a:13c9:: with SMTP id p9mr9530982qtk.47.1637696158310;
-        Tue, 23 Nov 2021 11:35:58 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwd9aJm8SZb+wfUFsxDgSU42rVqDIpUUlYw//me57YbMeMFl74fEpjtGIzlLmPaOts6c7+/Mg==
-X-Received: by 2002:a05:622a:13c9:: with SMTP id p9mr9530939qtk.47.1637696158082;
-        Tue, 23 Nov 2021 11:35:58 -0800 (PST)
-Received: from [192.168.8.138] (pool-96-230-249-157.bstnma.fios.verizon.net. [96.230.249.157])
-        by smtp.gmail.com with ESMTPSA id m15sm6726097qkp.76.2021.11.23.11.35.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Nov 2021 11:35:57 -0800 (PST)
-Message-ID: <4dd933d333194ff8a676fcafdd5c9ef19f002c92.camel@redhat.com>
-Subject: Re: [PATCH] drm/nouveau/acr: fix a couple NULL vs IS_ERR() checks
-From:   Lyude Paul <lyude@redhat.com>
+        Tue, 23 Nov 2021 15:48:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1637700138;
+    s=strato-dkim-0002; d=hartkopp.net;
+    h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=vJxhfLbcral0UOweOEsyvR1QrhSyAJnoXf+Ogyf1Vao=;
+    b=bbxTuVrs5A11wSnNA10BNer2c0q2Xpr1Dw9f3V7+Glpi9HBbbZOZZLCRCoE26huja0
+    W5Xir2T/b4Hab/75B6VAdS9vWYjjbzHKvObrTaTptL4pDoD8JG8v61efpdtLWnKj9FQz
+    0OwtV+oDUs2bHPikgY4Feb60IeY83BuWItaQs7DENmKgo3Ar71+VNXrazX0nOXTge75r
+    ddKKIT+W5L2VwtgRWsO1pFkfdwt/cCjUzzr43TKVlWuJmso7I9nEDvuZdrnFfZ8Mkwop
+    6wwQGKiGv8xPyaUD+gLZrMYjKMBWiTiqS+2TtPiW9ZEMz5ueLLEGjZuSKyWMv1hoZ3jV
+    pqDw==
+Authentication-Results: strato.com;
+    dkim=none
+X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjG14FZxedJy6qgO1qCHSa1GLptZHusx3hdd0DIgVuBOfXW6v7w=="
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a00:6020:1cfa:f900::b82]
+    by smtp.strato.de (RZmta 47.34.6 AUTH)
+    with ESMTPSA id a04d59xANKgI6YC
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Tue, 23 Nov 2021 21:42:18 +0100 (CET)
+Subject: Re: [PATCH net-next] can: sja1000: fix use after free in
+ ems_pcmcia_add_card()
 To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Ben Skeggs <bskeggs@redhat.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Date:   Tue, 23 Nov 2021 14:35:55 -0500
-In-Reply-To: <20211118111314.GB1147@kili>
-References: <20211118111314.GB1147@kili>
-Organization: Red Hat Inc.
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.1 (3.42.1-1.fc35) 
+        Wolfgang Grandegger <wg@grandegger.com>
+Cc:     Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Leon Romanovsky <leon@kernel.org>, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20211122075614.GB6581@kili>
+From:   Oliver Hartkopp <socketcan@hartkopp.net>
+Message-ID: <72ed48e9-0659-78f9-1b31-be54b118ab76@hartkopp.net>
+Date:   Tue, 23 Nov 2021 21:42:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20211122075614.GB6581@kili>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Reviewed-by: Lyude Paul <lyude@redhat.com>
+Hello Dan,
 
-Will push this to drm-misc in a bit
-
-On Thu, 2021-11-18 at 14:13 +0300, Dan Carpenter wrote:
-> The nvkm_acr_lsfw_add() function never returns NULL.  It returns error
-> pointers on error.
+On 22.11.21 08:56, Dan Carpenter wrote:
+> In the original code if ems_pcmcia_check_chan() returned false then
+> it called free_sja1000dev(dev) but did not set the error code or jump
+> to the clean up code.  This frees "dev" and leads to a use after free.
 > 
-> Fixes: 22dcda45a3d1 ("drm/nouveau/acr: implement new subdev to replace
-> "secure boot"")
+> I flipped the ems_pcmcia_check_chan() check around to make the error
+> handling more consistent and readable.  That lets us pull the rest of
+> the code in one tab.
+> 
+> Fixes: fd734c6f25ae ("can/sja1000: add driver for EMS PCMCIA card")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+I do not think, that you are fixing something here.
+
+The loop
+
+for (i = 0; i < EMS_PCMCIA_MAX_CHAN; i++) { ...
+
+checks with
+
+if (ems_pcmcia_check_chan(priv))
+
+whether this channel is 'available' or not.
+
+As this hardware could come with only ONE channel it is just wrong to 
+tag a missing channel as error and finally kill the entire setup process 
+(including the potentially working channel we already initialized).
+
+So thanks for the patch but NACK ;-)
+
+Best regards,
+Oliver
+
+
 > ---
->  drivers/gpu/drm/nouveau/nvkm/subdev/acr/gm200.c | 6 ++++--
->  drivers/gpu/drm/nouveau/nvkm/subdev/acr/gp102.c | 6 ++++--
->  2 files changed, 8 insertions(+), 4 deletions(-)
+>   drivers/net/can/sja1000/ems_pcmcia.c | 44 +++++++++++++++-------------
+>   1 file changed, 23 insertions(+), 21 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/acr/gm200.c
-> b/drivers/gpu/drm/nouveau/nvkm/subdev/acr/gm200.c
-> index cdb1ead26d84..82b4c8e1457c 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/acr/gm200.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/acr/gm200.c
-> @@ -207,11 +207,13 @@ int
->  gm200_acr_wpr_parse(struct nvkm_acr *acr)
->  {
->         const struct wpr_header *hdr = (void *)acr->wpr_fw->data;
-> +       struct nvkm_acr_lsfw *lsfw;
->  
->         while (hdr->falcon_id != WPR_HEADER_V0_FALCON_ID_INVALID) {
->                 wpr_header_dump(&acr->subdev, hdr);
-> -               if (!nvkm_acr_lsfw_add(NULL, acr, NULL, (hdr++)->falcon_id))
-> -                       return -ENOMEM;
-> +               lsfw = nvkm_acr_lsfw_add(NULL, acr, NULL, (hdr++)-
-> >falcon_id);
-> +               if (IS_ERR(lsfw))
-> +                       return PTR_ERR(lsfw);
->         }
->  
->         return 0;
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/acr/gp102.c
-> b/drivers/gpu/drm/nouveau/nvkm/subdev/acr/gp102.c
-> index fb9132a39bb1..fd97a935a380 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/acr/gp102.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/acr/gp102.c
-> @@ -161,11 +161,13 @@ int
->  gp102_acr_wpr_parse(struct nvkm_acr *acr)
->  {
->         const struct wpr_header_v1 *hdr = (void *)acr->wpr_fw->data;
-> +       struct nvkm_acr_lsfw *lsfw;
->  
->         while (hdr->falcon_id != WPR_HEADER_V1_FALCON_ID_INVALID) {
->                 wpr_header_v1_dump(&acr->subdev, hdr);
-> -               if (!nvkm_acr_lsfw_add(NULL, acr, NULL, (hdr++)->falcon_id))
-> -                       return -ENOMEM;
-> +               lsfw = nvkm_acr_lsfw_add(NULL, acr, NULL, (hdr++)-
-> >falcon_id);
-> +               if (IS_ERR(lsfw))
-> +                       return PTR_ERR(lsfw);
->         }
->  
->         return 0;
-
--- 
-Cheers,
- Lyude Paul (she/her)
- Software Engineer at Red Hat
-
+> diff --git a/drivers/net/can/sja1000/ems_pcmcia.c b/drivers/net/can/sja1000/ems_pcmcia.c
+> index e21b169c14c0..271fe9444827 100644
+> --- a/drivers/net/can/sja1000/ems_pcmcia.c
+> +++ b/drivers/net/can/sja1000/ems_pcmcia.c
+> @@ -210,28 +210,30 @@ static int ems_pcmcia_add_card(struct pcmcia_device *pdev, unsigned long base)
+>   			(i * EMS_PCMCIA_CAN_CTRL_SIZE);
+>   
+>   		/* Check if channel is present */
+> -		if (ems_pcmcia_check_chan(priv)) {
+> -			priv->read_reg  = ems_pcmcia_read_reg;
+> -			priv->write_reg = ems_pcmcia_write_reg;
+> -			priv->can.clock.freq = EMS_PCMCIA_CAN_CLOCK;
+> -			priv->ocr = EMS_PCMCIA_OCR;
+> -			priv->cdr = EMS_PCMCIA_CDR;
+> -			priv->flags |= SJA1000_CUSTOM_IRQ_HANDLER;
+> -
+> -			/* Register SJA1000 device */
+> -			err = register_sja1000dev(dev);
+> -			if (err) {
+> -				free_sja1000dev(dev);
+> -				goto failure_cleanup;
+> -			}
+> -
+> -			card->channels++;
+> -
+> -			printk(KERN_INFO "%s: registered %s on channel "
+> -			       "#%d at 0x%p, irq %d\n", DRV_NAME, dev->name,
+> -			       i, priv->reg_base, dev->irq);
+> -		} else
+> +		if (!ems_pcmcia_check_chan(priv)) {
+> +			err = -EINVAL;
+>   			free_sja1000dev(dev);
+> +			goto failure_cleanup;
+> +		}
+> +		priv->read_reg  = ems_pcmcia_read_reg;
+> +		priv->write_reg = ems_pcmcia_write_reg;
+> +		priv->can.clock.freq = EMS_PCMCIA_CAN_CLOCK;
+> +		priv->ocr = EMS_PCMCIA_OCR;
+> +		priv->cdr = EMS_PCMCIA_CDR;
+> +		priv->flags |= SJA1000_CUSTOM_IRQ_HANDLER;
+> +
+> +		/* Register SJA1000 device */
+> +		err = register_sja1000dev(dev);
+> +		if (err) {
+> +			free_sja1000dev(dev);
+> +			goto failure_cleanup;
+> +		}
+> +
+> +		card->channels++;
+> +
+> +		printk(KERN_INFO "%s: registered %s on channel "
+> +		       "#%d at 0x%p, irq %d\n", DRV_NAME, dev->name,
+> +		       i, priv->reg_base, dev->irq);
+>   	}
+>   
+>   	err = request_irq(dev->irq, &ems_pcmcia_interrupt, IRQF_SHARED,
+> 
