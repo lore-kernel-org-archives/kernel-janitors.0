@@ -2,97 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88314C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Nov 2021 06:02:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B68C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Nov 2021 08:23:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233370AbhKWGFp (ORCPT
+        id S231828AbhKWI0S (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 Nov 2021 01:05:45 -0500
-Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:53446 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232963AbhKWGFo (ORCPT
+        Tue, 23 Nov 2021 03:26:18 -0500
+Received: from szxga02-in.huawei.com ([45.249.212.188]:15850 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229899AbhKWI0S (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 Nov 2021 01:05:44 -0500
-Received: from [192.168.1.18] ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id pOswmPY11soWhpOswmyxXs; Tue, 23 Nov 2021 07:02:35 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Tue, 23 Nov 2021 07:02:35 +0100
-X-ME-IP: 86.243.171.122
-Subject: Re: [PATCH 2/2] drm/amdkfd: Slighly optimize 'init_doorbell_bitmap()'
-To:     Felix Kuehling <felix.kuehling@amd.com>, alexander.deucher@amd.com,
-        christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@linux.ie,
-        daniel@ffwll.ch
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <2343a4e6547a8436419308744ba8c433088922a5.1637516393.git.christophe.jaillet@wanadoo.fr>
- <3e54737649cf94daabaa5b51db9f4c21d43124fe.1637516393.git.christophe.jaillet@wanadoo.fr>
- <283c0b53-ff4e-85f8-4738-2d477365f458@amd.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <306b774e-6ee7-c976-a303-f566f7ba626c@wanadoo.fr>
-Date:   Tue, 23 Nov 2021 07:02:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Tue, 23 Nov 2021 03:26:18 -0500
+Received: from dggeml709-chm.china.huawei.com (unknown [172.30.72.53])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Hyxw22vXHz9148;
+        Tue, 23 Nov 2021 16:22:42 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ dggeml709-chm.china.huawei.com (10.3.17.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2308.20; Tue, 23 Nov 2021 16:23:07 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Saeed Mahameed <saeedm@nvidia.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Dmytro Linkin <dlinkin@nvidia.com>,
+        Mark Bloch <mbloch@nvidia.com>,
+        Parav Pandit <parav@nvidia.com>, Huy Nguyen <huyn@nvidia.com>
+CC:     <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH net-next] net/mlx5: Fix error return code in esw_qos_create()
+Date:   Tue, 23 Nov 2021 08:36:16 +0000
+Message-ID: <20211123083616.2366704-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <283c0b53-ff4e-85f8-4738-2d477365f458@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggeml709-chm.china.huawei.com (10.3.17.139)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 22/11/2021 à 22:44, Felix Kuehling a écrit :
-> Am 2021-11-21 um 12:41 p.m. schrieb Christophe JAILLET:
->> The 'doorbell_bitmap' bitmap has just been allocated. So we can use the
->> non-atomic '__set_bit()' function to save a few cycles as no concurrent
->> access can happen.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> Thank you for the patches. I think the same sort of change (at least the
-> allocation/freeing part) could be applied to the queue_slot_bitmap in
-> kfd_process_queue_manager.c. Would you like to submit another revision
-> of this patch series that handles that as well?
+Fix to return a negative error code from the error handling
+case instead of 0, as done elsewhere in this function.
 
-I'll send a v2 which will fix the missing ',' spotted by the kernel test 
-robot and include kfd_process_queue_manager.c.
+Fixes: 85c5f7c9200e ("net/mlx5: E-switch, Create QoS on demand")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-All my patches are compile tested (otherwise it is said bellow the ---). 
-Looks like I missed this one :(.
-
-CJ
-
-> 
-> Either way, this series is
-> 
-> Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
-> 
-> 
->> ---
->> bitmap_set() could certainly also be use, but range checking would be
->> tricky.
->> ---
->>   drivers/gpu/drm/amd/amdkfd/kfd_process.c | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process.c b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
->> index 172ee8763523..2e9d341062c4 100644
->> --- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
->> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
->> @@ -1447,9 +1447,9 @@ static int init_doorbell_bitmap(struct qcm_process_device *qpd,
->>   
->>   	for (i = 0; i < KFD_MAX_NUM_OF_QUEUES_PER_PROCESS / 2; i++) {
->>   		if (i >= range_start && i <= range_end) {
->> -			set_bit(i, qpd->doorbell_bitmap);
->> -			set_bit(i + KFD_QUEUE_DOORBELL_MIRROR_OFFSET,
->> -				qpd->doorbell_bitmap);
->> +			__set_bit(i, qpd->doorbell_bitmap);
->> +			__set_bit(i + KFD_QUEUE_DOORBELL_MIRROR_OFFSET,
->> +				  qpd->doorbell_bitmap);
->>   		}
->>   	}
->>   
-> 
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c b/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c
+index ff0a07a91992..11e742d342ec 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c
+@@ -590,6 +590,7 @@ static int esw_qos_create(struct mlx5_eswitch *esw, struct netlink_ext_ack *exta
+ 		if (IS_ERR(esw->qos.group0)) {
+ 			esw_warn(dev, "E-Switch create rate group 0 failed (%ld)\n",
+ 				 PTR_ERR(esw->qos.group0));
++			err = PTR_ERR(esw->qos.group0);
+ 			goto err_group0;
+ 		}
+ 	}
 
