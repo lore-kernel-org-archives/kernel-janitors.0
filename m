@@ -2,51 +2,97 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00CE6C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Nov 2021 05:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88314C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Nov 2021 06:02:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231532AbhKWFPe (ORCPT
+        id S233370AbhKWGFp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 Nov 2021 00:15:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54960 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229468AbhKWFPe (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 Nov 2021 00:15:34 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 984C660187;
-        Tue, 23 Nov 2021 05:12:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637644346;
-        bh=IOi3LpYHRx+AqFlelm4zkAj9U2aMtP9t0FQcAPywn+8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tzR368KGl1G3gWucr/5fTG+kd4RDR9xLo2ES2QH912nA7iHqmBcT/6EfS7PWeYwRN
-         LSLjRDLQ+tr8wHy4WH7znt9+BKaxuGprIlj00m1rD0u53dTVKenKgVETSsmhEvbuaq
-         RuLmdjHTl6y/N5PCRTjbNcXLD4wpsjKX3249WPlUDmpFDarAfgoRLsglh1ey1UV9KK
-         xQuc3rtFixNgNSE/fRPgpdfVzCQVSQO8xAGwPnotEsbrm5nIILl1dLzKYmq7D0nKkT
-         qLl/RR6JL1m8uKB+jCsudRqK9ZFomOzvq796/Kdd2lIVqmxra983SF4kHdqgF26UyS
-         6hB5xDNJiTOqw==
-Date:   Tue, 23 Nov 2021 10:42:21 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        linux-phy@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] phy: HiSilicon: Fix copy and paste bug in error handling
-Message-ID: <YZx4NYCB7o9yYXkY@matsya>
-References: <20211117074843.GE5237@kili>
+        Tue, 23 Nov 2021 01:05:45 -0500
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:53446 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232963AbhKWGFo (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 23 Nov 2021 01:05:44 -0500
+Received: from [192.168.1.18] ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id pOswmPY11soWhpOswmyxXs; Tue, 23 Nov 2021 07:02:35 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Tue, 23 Nov 2021 07:02:35 +0100
+X-ME-IP: 86.243.171.122
+Subject: Re: [PATCH 2/2] drm/amdkfd: Slighly optimize 'init_doorbell_bitmap()'
+To:     Felix Kuehling <felix.kuehling@amd.com>, alexander.deucher@amd.com,
+        christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@linux.ie,
+        daniel@ffwll.ch
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <2343a4e6547a8436419308744ba8c433088922a5.1637516393.git.christophe.jaillet@wanadoo.fr>
+ <3e54737649cf94daabaa5b51db9f4c21d43124fe.1637516393.git.christophe.jaillet@wanadoo.fr>
+ <283c0b53-ff4e-85f8-4738-2d477365f458@amd.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <306b774e-6ee7-c976-a303-f566f7ba626c@wanadoo.fr>
+Date:   Tue, 23 Nov 2021 07:02:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211117074843.GE5237@kili>
+In-Reply-To: <283c0b53-ff4e-85f8-4738-2d477365f458@amd.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 17-11-21, 10:48, Dan Carpenter wrote:
-> This should check ">pmctrl" instead of "->sysctrl".  This bug could
-> potentially lead to a crash if we dereference the error pointer.
+Le 22/11/2021 à 22:44, Felix Kuehling a écrit :
+> Am 2021-11-21 um 12:41 p.m. schrieb Christophe JAILLET:
+>> The 'doorbell_bitmap' bitmap has just been allocated. So we can use the
+>> non-atomic '__set_bit()' function to save a few cycles as no concurrent
+>> access can happen.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> Thank you for the patches. I think the same sort of change (at least the
+> allocation/freeing part) could be applied to the queue_slot_bitmap in
+> kfd_process_queue_manager.c. Would you like to submit another revision
+> of this patch series that handles that as well?
 
-Applied, thanks
+I'll send a v2 which will fix the missing ',' spotted by the kernel test 
+robot and include kfd_process_queue_manager.c.
 
--- 
-~Vinod
+All my patches are compile tested (otherwise it is said bellow the ---). 
+Looks like I missed this one :(.
+
+CJ
+
+> 
+> Either way, this series is
+> 
+> Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
+> 
+> 
+>> ---
+>> bitmap_set() could certainly also be use, but range checking would be
+>> tricky.
+>> ---
+>>   drivers/gpu/drm/amd/amdkfd/kfd_process.c | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_process.c b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+>> index 172ee8763523..2e9d341062c4 100644
+>> --- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+>> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+>> @@ -1447,9 +1447,9 @@ static int init_doorbell_bitmap(struct qcm_process_device *qpd,
+>>   
+>>   	for (i = 0; i < KFD_MAX_NUM_OF_QUEUES_PER_PROCESS / 2; i++) {
+>>   		if (i >= range_start && i <= range_end) {
+>> -			set_bit(i, qpd->doorbell_bitmap);
+>> -			set_bit(i + KFD_QUEUE_DOORBELL_MIRROR_OFFSET,
+>> -				qpd->doorbell_bitmap);
+>> +			__set_bit(i, qpd->doorbell_bitmap);
+>> +			__set_bit(i + KFD_QUEUE_DOORBELL_MIRROR_OFFSET,
+>> +				  qpd->doorbell_bitmap);
+>>   		}
+>>   	}
+>>   
+> 
+
