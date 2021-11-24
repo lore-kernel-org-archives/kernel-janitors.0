@@ -2,105 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B52DFC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Nov 2021 17:02:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D696C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Nov 2021 17:08:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349404AbhKXRFm (ORCPT
+        id S1349726AbhKXRLP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Nov 2021 12:05:42 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:10344 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349427AbhKXRF3 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Nov 2021 12:05:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1637773321;
-    s=strato-dkim-0002; d=hartkopp.net;
-    h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=YsI+Uvcu2mVZnzCbUX/g3GOSJ+GVB0keq4LPcWcaHrc=;
-    b=lw7Y6IBSz+jeqjfo6igH/NgRAfaRw/UfuBI7modV3LcIJbF/B/ZW1JH/pNL7Haswxh
-    lzb67OT3Wc0aIM9R92Xl3uSn4vL8IpUnjo4VdH1bhZlathwAMlIs1FNosJCj11Y/5lEd
-    iYz/OUmVLXcg1nf6h/fwtTHsv/iOacmRwRWtVdrXxXnNRHdgnx/FOXBB+3qtmwP8Dy+a
-    /paUm2erq5xWPFMMPaE3iNscJFYv9H1SBX+7LtrmKGuI8DDg9feV2DnEMqdqs5jqmZpz
-    c6FiE72zt/0TrafSqBjQh4hFkeLaSg8mhrNARNRENLW9Pxmi1Cx0VZQZ1HEaFJpVbLsQ
-    0nyQ==
-Authentication-Results: strato.com;
-    dkim=none
-X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjG14FZxedJy6qgO1qCHSa1GLptZHusx3hdd0DIgVuBOfXW6v7w=="
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a00:6020:1cfa:f900::b82]
-    by smtp.strato.de (RZmta 47.34.10 AUTH)
-    with ESMTPSA id c09e88xAOH210PZ
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Wed, 24 Nov 2021 18:02:01 +0100 (CET)
-Subject: Re: [PATCH v3 net] can: sja1000: fix use after free in
- ems_pcmcia_add_card()
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Wolfgang Grandegger <wg@grandegger.com>
-Cc:     Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Leon Romanovsky <leon@kernel.org>,
-        Markus Plessing <plessing@ems-wuensche.com>,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <20211124145041.GB13656@kili>
-From:   Oliver Hartkopp <socketcan@hartkopp.net>
-Message-ID: <7a217190-1a4e-dfdd-65be-a751bf8403ff@hartkopp.net>
-Date:   Wed, 24 Nov 2021 18:01:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Wed, 24 Nov 2021 12:11:15 -0500
+Received: from m43-7.mailgun.net ([69.72.43.7]:50275 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1349541AbhKXRLC (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 24 Nov 2021 12:11:02 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1637773672; h=Date: Message-ID: Cc: To: References:
+ In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
+ Content-Type: Sender; bh=SsOaG4KKtTF23YA9l/Oy/286NVV7+qx2t9Mwy5ADN0k=;
+ b=CKKXrjSDTuGEmiUE9HLnDpQofU4kTrL/Tc8+SWteepExG5Svj/EARSKCMKdWm5O1s4NTvrf7
+ Hnf776V6WhBTt838vHw5hoIrajFYxBeQECAQ1vvGUUhf4olLNh+X51MpoUakoZRBA7BcsGix
+ ujhsvthLQxISnzgE6+OVVx0bLrs=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI5NDExNyIsICJrZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n07.prod.us-west-2.postgun.com with SMTP id
+ 619e71671abc6f02d0aea8c8 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 24 Nov 2021 17:07:51
+ GMT
+Sender: kvalo=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id BA340C43619; Wed, 24 Nov 2021 17:07:51 +0000 (UTC)
+Received: from tykki.adurom.net (tynnyri.adurom.net [51.15.11.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2F8F1C43616;
+        Wed, 24 Nov 2021 17:07:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 2F8F1C43616
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20211124145041.GB13656@kili>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ath11k: Fix spelling mistake "detetction" -> "detection"
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20211123090431.165103-1-colin.i.king@gmail.com>
+References: <20211123090431.165103-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@googlemail.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, ath11k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <163777366728.11557.16795024043918994213.kvalo@codeaurora.org>
+Date:   Wed, 24 Nov 2021 17:07:51 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Colin Ian King <colin.i.king@googlemail.com> wrote:
 
-
-On 24.11.21 15:50, Dan Carpenter wrote:
-> If the last channel is not available then "dev" is freed.  Fortunately,
-> we can just use "pdev->irq" instead.
+> There is a spelling mistake in an ath11k_warn message. Fix it.
 > 
-> Also we should check if at least one channel was set up.
-> 
-> Fixes: fd734c6f25ae ("can/sja1000: add driver for EMS PCMCIA card")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
-Tested-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Patch applied to ath-next branch of ath.git, thanks.
 
-Thanks Dan!
+c27506cc7733 ath11k: Fix spelling mistake "detetction" -> "detection"
 
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20211123090431.165103-1-colin.i.king@gmail.com/
 
-> ---
-> v3: add a check for if there is a channel.
-> v2: fix a bug in v1.  Only one channel is required but my patch returned
->      if any channel was unavailable.
-> 
->   drivers/net/can/sja1000/ems_pcmcia.c | 7 ++++++-
->   1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/can/sja1000/ems_pcmcia.c b/drivers/net/can/sja1000/ems_pcmcia.c
-> index e21b169c14c0..4642b6d4aaf7 100644
-> --- a/drivers/net/can/sja1000/ems_pcmcia.c
-> +++ b/drivers/net/can/sja1000/ems_pcmcia.c
-> @@ -234,7 +234,12 @@ static int ems_pcmcia_add_card(struct pcmcia_device *pdev, unsigned long base)
->   			free_sja1000dev(dev);
->   	}
->   
-> -	err = request_irq(dev->irq, &ems_pcmcia_interrupt, IRQF_SHARED,
-> +	if (!card->channels) {
-> +		err = -ENODEV;
-> +		goto failure_cleanup;
-> +	}
-> +
-> +	err = request_irq(pdev->irq, &ems_pcmcia_interrupt, IRQF_SHARED,
->   			  DRV_NAME, card);
->   	if (!err)
->   		return 0;
-> 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
