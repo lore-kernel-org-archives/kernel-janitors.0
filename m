@@ -2,61 +2,38 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E69C8C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Nov 2021 09:16:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD25C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Nov 2021 09:49:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353713AbhKYJTr (ORCPT
+        id S1354234AbhKYJwt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 25 Nov 2021 04:19:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46064 "EHLO
+        Thu, 25 Nov 2021 04:52:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351363AbhKYJRo (ORCPT
+        with ESMTP id S1348778AbhKYJut (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 25 Nov 2021 04:17:44 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7928AC06174A;
-        Thu, 25 Nov 2021 01:06:38 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id d24so10127204wra.0;
-        Thu, 25 Nov 2021 01:06:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jNNIPip2h8ygz6aWA8IjTUMOry53VnVtZZgUn1liZPY=;
-        b=pZlZ6TWgERRy02Vfa1iyfy41bVGcH8ZbLdkbRL1NTiwSz2XNURB3N/0aMae8pxllAv
-         6aVQly78QWPlr8rEtpNNd3EVX7G86WzrQJdcYnI3bQ+kmbiFN8JdAUCP8tKESWzwntIP
-         hdSWKxV5O7VbYQ8f65Qa20PYxipSLpQ3kaBFkZ24TgU89/0wizUz8lXPT6XN8WQz37vd
-         ZR8Of6w6Y/JSUD8eg8Mu1pE94V5J7+Howf7/iUZsjUrCIOsWDKCKkDUbkUKyDFEji3A5
-         ITD/ZVCftMMCUoP3qNAPXvOy0RFleTiuf6Fc3crfjqi8XQdNdTHLVPNfPt0a03rks6ID
-         QLpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jNNIPip2h8ygz6aWA8IjTUMOry53VnVtZZgUn1liZPY=;
-        b=aS87hCz7OdXUBLBShU92+7RPjx9EvZMtG7e1YO/B+PNaxd4p7WY5VhoMynXDeu56qy
-         7NZuGMAVWFNSho0xkekpWstSSJt0i+9NL/8cgdmfdSLYlZ9eLvH7EqFX6HOAPWJ+xsIb
-         52wnsI/2E7Q2SyeS+S0qvSCdhU5ZODNscySBGvR4n9QVF+BmIKrrroho3k/qNmKzJz55
-         xd3UlKD0ybzn4N6P/0ul3T1BrDLhiJmPGwhdDSqTW5aBl8DiXzfI1lZG6MicReb19tQR
-         VcHBPv4e/VsYhSTqtIyZMYN4rQcKRYzu48Q3RMZhGq2ycPnpdAWzd6kcLjF2etPGrJPp
-         Cejw==
-X-Gm-Message-State: AOAM533VYNpb1larPpHOwhENm8Sf+Edt29oS6mALkQqocp07em9mp80U
-        6LIplBJiB/dL6A==
-X-Google-Smtp-Source: ABdhPJz1Pq+uzntfyxuuBXLiuoJ9QTDopTRleeCuk2GruWk9dswY8VyWPNPKg5v2C03WkpPlOpnsIg==
-X-Received: by 2002:a5d:6e82:: with SMTP id k2mr4559901wrz.147.1637831197042;
-        Thu, 25 Nov 2021 01:06:37 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id o4sm2728594wry.80.2021.11.25.01.06.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Nov 2021 01:06:36 -0800 (PST)
-From:   Colin Ian King <colin.i.king@googlemail.com>
-X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] hugetlb: Fix spelling mistake "hierarichal" -> "hierarchical"
-Date:   Thu, 25 Nov 2021 09:06:35 +0000
-Message-Id: <20211125090635.23508-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.33.1
+        Thu, 25 Nov 2021 04:50:49 -0500
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [IPv6:2404:9400:2:0:216:3eff:fee2:21ea])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CE02C061746;
+        Thu, 25 Nov 2021 01:47:38 -0800 (PST)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4J0Cj45ZLFz4xcs;
+        Thu, 25 Nov 2021 20:47:36 +1100 (AEDT)
+From:   Michael Ellerman <patch-notifications@ellerman.id.au>
+To:     Julia Lawall <Julia.Lawall@lip6.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org
+In-Reply-To: <1448051604-25256-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1448051604-25256-1-git-send-email-Julia.Lawall@lip6.fr>
+Subject: Re: (subset) [PATCH 0/6] add missing of_node_put
+Message-Id: <163783295820.1228879.10682208282272545718.b4-ty@ellerman.id.au>
+Date:   Thu, 25 Nov 2021 20:35:58 +1100
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -64,31 +41,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a literal string and a comment. Fix them.
+On Fri, 20 Nov 2015 20:33:18 +0000, Julia Lawall wrote:
+> The various for_each device_node iterators performs an of_node_get on each
+> iteration, so a break out of the loop requires an of_node_put.
+> 
+> The complete semantic patch that fixes this problem is
+> (http://coccinelle.lip6.fr):
+> 
+> // <smpl>
+> @r@
+> local idexpression n;
+> expression e1,e2;
+> iterator name for_each_node_by_name, for_each_node_by_type,
+> for_each_compatible_node, for_each_matching_node,
+> for_each_matching_node_and_match, for_each_child_of_node,
+> for_each_available_child_of_node, for_each_node_with_property;
+> iterator i;
+> statement S;
+> expression list [n1] es;
+> @@
+> 
+> [...]
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- mm/hugetlb_cgroup.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Patch 5 applied to powerpc/next.
 
-diff --git a/mm/hugetlb_cgroup.c b/mm/hugetlb_cgroup.c
-index 9bdcf6560849..9eebe8df3c39 100644
---- a/mm/hugetlb_cgroup.c
-+++ b/mm/hugetlb_cgroup.c
-@@ -495,11 +495,11 @@ static int hugetlb_cgroup_read_numa_stat(struct seq_file *seq, void *dummy)
- 	 * The hierarchical total is pretty much the value recorded by the
- 	 * counter, so use that.
- 	 */
--	seq_printf(seq, "%stotal=%lu", legacy ? "hierarichal_" : "",
-+	seq_printf(seq, "%stotal=%lu", legacy ? "hierarchical_" : "",
- 		   page_counter_read(&h_cg->hugepage[idx]) * PAGE_SIZE);
- 
- 	/*
--	 * For each node, transverse the css tree to obtain the hierarichal
-+	 * For each node, transverse the css tree to obtain the hierarchical
- 	 * node usage.
- 	 */
- 	for_each_node_state(nid, N_MEMORY) {
--- 
-2.33.1
+[5/6] powerpc/btext: add missing of_node_put
+      https://git.kernel.org/powerpc/c/a1d2b210ffa52d60acabbf7b6af3ef7e1e69cda0
 
+cheers
