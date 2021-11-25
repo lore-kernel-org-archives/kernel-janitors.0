@@ -2,187 +2,154 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC003C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Nov 2021 23:58:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6EBAC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Nov 2021 00:29:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237727AbhKYACE (ORCPT
+        id S1346610AbhKYAcy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Nov 2021 19:02:04 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:52543 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236146AbhKYACD (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Nov 2021 19:02:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1637798333;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=sm4004y9B1V+tnHfPgzjYss0IWvCFu8ljdIxWHi+//4=;
-        b=BQ2S4p0jNnQXY/+rhlnHihedsSFcGHt9x/U/Y/davXY8TcvKaet2/ta+8QikDK8cHE/DVd
-        dLOXTj3GTNHlUD0ghN8ss37qvUKOHCIOvPLJHUVU8fFfltY52WpL9PO54WlkSOPvUr+XK/
-        0FoODR8TjspiXx95y2INHZgR2Ep3iT8=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-413-sJl0qLj7NYqAoSIofWrKnA-1; Wed, 24 Nov 2021 18:58:51 -0500
-X-MC-Unique: sJl0qLj7NYqAoSIofWrKnA-1
-Received: by mail-ed1-f72.google.com with SMTP id w18-20020a056402071200b003e61cbafdb4so3810483edx.4
-        for <kernel-janitors@vger.kernel.org>; Wed, 24 Nov 2021 15:58:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=sm4004y9B1V+tnHfPgzjYss0IWvCFu8ljdIxWHi+//4=;
-        b=b5AbKtFMMUiltHSNS22zoAgM0ACuweaEEbqlIcVkgO0iJicU42qjIBKOYhBTO0Nm2v
-         OVa/a2/e3PFkAyM3ukhMgAmCM5y7//Kgl53q1RCXgRf5rP7kOm/BBk8kOlegU9vVW/iC
-         og/5LZPmzk+PUr833GrOa9clDCdzg0H3jPQzOpuBbwig304KTbLW0snb9sls/eBdsX5L
-         KW1h/fPWTYB4aKgkdLmmUCd7SYGQcAQmzGcPOV/ar07fxr8xymLUH6laCeiZXj3IfSh9
-         UbRYen3NgO+SLKpM+ZxNq5W2uv7LFg1vqD+hu+Wgbt+VxXGZDv7FCfoaraqs09X306oW
-         thpg==
-X-Gm-Message-State: AOAM532LLzDQj2SEMsi82DRW18yJIKJMT0l2z1lLjSWWeFaE4/R5Pwhc
-        o+OqijuEiy1Gnk1jMk9La3fSEg/Qn95qopZGngcVA1I73IAfVMDOql51Xg8mBVk6HvHHXI6ndZh
-        JjmnI5m9XIeSn9QM8zDufhV9Vax0o
-X-Received: by 2002:a17:906:8c3:: with SMTP id o3mr26240452eje.10.1637798330717;
-        Wed, 24 Nov 2021 15:58:50 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJysCDZ92JnLx5p8B8EgDT3JbOAJxcL7cO996KXojwt2y2dxDKYm/THtO3luW2U+EJQ7p/PYcw==
-X-Received: by 2002:a17:906:8c3:: with SMTP id o3mr26240417eje.10.1637798330482;
-        Wed, 24 Nov 2021 15:58:50 -0800 (PST)
-Received: from redhat.com ([2a0e:1c80:14::66])
-        by smtp.gmail.com with ESMTPSA id hc16sm593664ejc.12.2021.11.24.15.58.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Nov 2021 15:58:49 -0800 (PST)
-Date:   Wed, 24 Nov 2021 18:58:43 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Jason Wang <jasowang@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        kernel-janitors@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        Wu Zongyong <wuzongyong@linux.alibaba.com>
-Subject: Re: [PATCH 1/2] eni_vdpa: Fix an error handling path in
- 'eni_vdpa_probe()'
-Message-ID: <20211124185834-mutt-send-email-mst@kernel.org>
-References: <f6b2d087ca3840604b4e711a208d35b5d6285cb4.1636301587.git.christophe.jaillet@wanadoo.fr>
- <CACGkMEvN0cgFQhJmLF3xDXHt_EyZ-TnfBM8CnpNwA9sKcwpzBg@mail.gmail.com>
- <393fb7b7-653b-eae6-16bd-5ffc7d600619@wanadoo.fr>
- <CACGkMEt3yA+fkFJxKfrXyui-rYVSk78=1AqrT0TYQqzcqTJVyg@mail.gmail.com>
- <069ed3fb-ef99-ff36-136d-a0221ba85a96@wanadoo.fr>
+        Wed, 24 Nov 2021 19:32:54 -0500
+Received: from mail-eopbgr80085.outbound.protection.outlook.com ([40.107.8.85]:38658
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S244652AbhKYAax (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 24 Nov 2021 19:30:53 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SFu3oc/Sjx5d0ToQ3NmcZse6JAf7SA4byLJ+c88LW8d2F1qLwD9QeDuJR7lEgLQbM8lVnXQFLDOcjgvYtQVD5hlgffsvBQ3pbaEM7feMDAdekFWyQq82gMh5FLBKYSkK9Itb70pFGO24KJtU0QFnHSFw0j2wYhBedbEdOH+rsR18R9/hBVv7MkT+iKGstsQfwdAAotThzEehgbiR2Sf3jVGMe8gx66AtYCOorabBbfW+FmWX9YywLbalYbBYzCMeaAbFV5A5wfQ9M9ZCptWpAHakxR1Fc95dq836HE+Gp17Mu9kI2bXlFkwVNqTaC1edE91zmhxhwrsImttXxgaFYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lwkIZ2fbszSJtQYnJpM93Za2kRUUXxcnPuDlJsN96O4=;
+ b=MZ45yr2AYl6dgJSrn3Nx6CW5ZPMORodpAY8oG8pZsUWlZjMxHA3Lhpacc2KFomRfXUaazo6c1Qqm3lSx6a6UQAl+LYNDDzgYmXT/6g4IfqWzQEqzCoIatb4jh+JWorS9/t75ydI4BCVbksQurfOdXBhQ1ZpxntQV0o+ebUyW8J1KxqaqoW1d/lKiouPrOc0u3yoyKfQ3UDKI6Hh5bzMYpeb2Cz5Nk/tM8PAfWVp7CuLvFgcRqQ96CAAztZ7mauNrTPj0YQykRicj2Y/Srd2hztqRWfgdg/xdT7s9q3JF1sqDm3I6Ed3preBp8nAkbBEAlDhjqjMyjk7UBeZZM2krPA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lwkIZ2fbszSJtQYnJpM93Za2kRUUXxcnPuDlJsN96O4=;
+ b=i+GSl2ivNwds0NN23X9dN/3WL+zH7GW8VhutWqP2RblXB94dMAZPpT0SX4FPS6qrpQBh/zJbGLgAb5P9hb7bEpw4G+4UNCychHVgf6v4NDJ1TVFugbbwD4b2RHT5qapgzzopS8Y4TCsBW4QWhHGYlTjpiGRCMRCTB9EBwJlpCJc=
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by DB9PR04MB8478.eurprd04.prod.outlook.com (2603:10a6:10:2c4::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.22; Thu, 25 Nov
+ 2021 00:27:40 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::82e:6ad2:dd1d:df43]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::82e:6ad2:dd1d:df43%9]) with mapi id 15.20.4713.027; Thu, 25 Nov 2021
+ 00:27:40 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>
+CC:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH] mailbox: imx: Fix an IS_ERR() vs NULL bug
+Thread-Topic: [PATCH] mailbox: imx: Fix an IS_ERR() vs NULL bug
+Thread-Index: AQHX4ULbPmzdSb+TpEijaM96T42qk6wTY+EA
+Date:   Thu, 25 Nov 2021 00:27:40 +0000
+Message-ID: <DU0PR04MB9417AC0DD29F7610DE794C0688629@DU0PR04MB9417.eurprd04.prod.outlook.com>
+References: <20211124145126.GC13656@kili>
+In-Reply-To: <20211124145126.GC13656@kili>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: d2778bdd-5c1d-41e5-2ce5-08d9afaa63eb
+x-ms-traffictypediagnostic: DB9PR04MB8478:
+x-microsoft-antispam-prvs: <DB9PR04MB84783F097D0183339F37F8E188629@DB9PR04MB8478.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:213;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: DBsuDaPB/yhBHCbHxqXESGCPw0IhfcZevXA0T1zI1ihGlHKO3caDZ8NBEK2BJmtqB2VPdjhJRwVQjcJu91lQLXPWuFRQxcuEr/59IKEPbM1mGXFer8gz3b1wyR8zhgABql46fWoc9k189Z0POYixwbh4I9PZB4JzVEQH66m2NhZNO+pZ/AwXgZHo3Vzds3EekJB+M51c7J/363pPHFhkYgBx25jeE+CdSHqQ2yf4pxXRfs1K7+8RMTUkrr0cb83eM29bEYJCC2FZR7ynuhh3aPYJiChEUUpQ9Sqo6kgSTXznlCXSpjnPs1Y4CPLIQuy7fGHzzWefE2LX2rd5XFD9saNmkJjzyPbBlhSpQ0i26YJgcTp4hbYfEkKhZpDR9TbabM4UdBg7E732XpnJz9Q3e/ofn/1BYWiC04AH2cyEVTiUuKzWJUNMswnfEvrHavoRHGzCBsBd1PP8kxxqmwOqcJ4gz4zTnEc9zYaBQUcrfLJ9/LYDUIvnaMGKm2bMELDqVJ+4oUY14WlSUjeVchF2f3Veyok5fyDSw72MiIFfsMW7DdxVi7m4EG53D+iZnL4CWbfBVoHP0fuiiSUFFgmn8TYAewxxuOf2hvfwPn6EEo//WnZ/YaJSlUxI/ddmUqYq/u9Ob+3jt1/Y9YdLAgUTc8khvsq2ZkLTB24bvmixN3ZNLtapzkHjFSFrfuLqwqGl0lkyQHq4JSYiPH0DjwzTVA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(33656002)(86362001)(8936002)(52536014)(66946007)(44832011)(76116006)(8676002)(4326008)(66476007)(316002)(66446008)(110136005)(2906002)(38070700005)(7696005)(64756008)(66556008)(186003)(15650500001)(26005)(38100700002)(5660300002)(4744005)(508600001)(55016003)(71200400001)(122000001)(9686003)(6506007)(54906003)(83380400001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?pdmUxXtdbgqjBFe2ywCrrtdSr693L+GB+LZWux0pAfDd6YRQQZPAZkW9iwxJ?=
+ =?us-ascii?Q?+L4Cih6OLT83KcCxtEqx4jqPhD/tw4BEUxSuy+GGbbOyyfMG8qnzwzmXPtfQ?=
+ =?us-ascii?Q?ds58pm2i34chpSXQcpDA0cPqr9A/yTHqizvRIdR8mAx/MLR4GHtUIg5qlQVH?=
+ =?us-ascii?Q?vyoG+NznokyJc06qeZgROFpqefdhKXfGD8n+F0M5/lztqsqPqR24CCxqE7Gw?=
+ =?us-ascii?Q?ZoQewNOxe4lfiffrxFdh9p3d6Wf3ZVlF/PzArJZA9h5xLphPuQFWWH6n8gSk?=
+ =?us-ascii?Q?rb6c5aR3Amc7pdMJj5Esvq3pUfGyyYNnVD+iVifWVMbjNI3dsnPuYcFhie9q?=
+ =?us-ascii?Q?oj8d7GWl2QFSeVVPXJD34ShG/dUsltzO2CVZZTNmEp4GSVfBJwLI/RvvpsKy?=
+ =?us-ascii?Q?gTGekgA7zRCV+pVwyhak2pNWHPAPR8o4oiwFj3JGyhCIcx9YJfj8Tyr/0Sc3?=
+ =?us-ascii?Q?a9t+ZrGDHPzXJbd9OdGYrfViqvQQjufbMKb06bn8Glv9JpxxMu44er9mugq/?=
+ =?us-ascii?Q?N8j46/vHm4BBVqnXmENBKFgdhM3cMkTde5SnlcQEryXCA9lC1GP+sRagScVz?=
+ =?us-ascii?Q?+/BVWjIpg/IaIu2LHe1pvjKzPmDAjdfsdU1eUrJJnX7f7Cz/Sk1I9EnTDUzk?=
+ =?us-ascii?Q?zdAA/oZJ5nreu4Qj0vKhqr+IwdJUCLELbVVtT6PV5lsBfAYD1mxUQGTD8eN5?=
+ =?us-ascii?Q?8ZLQWVMP1jV+J2VhIIe8iIEyeO0065YASwS9euQVebZnudc7Ve2FWhDgiOG/?=
+ =?us-ascii?Q?ws+LLQ/2dV5NgGO7pwN7LLWeS+BJYU8EBPeu8VOsmn5iSTNIaEfgnoTSwXeJ?=
+ =?us-ascii?Q?bsjnmVsMItaufI+0JprmvVGujH5PE6kb7JPyr1k0TlztsZIx9YdrHhP2GOWf?=
+ =?us-ascii?Q?FHF24dLPG4GgDCd+YBGzl8xBT2zJ1ypnS2A6cuLu6SfsE4LNCbw5JdukRuzy?=
+ =?us-ascii?Q?XtGIRb4NS107sx7CjK/7aQGYobjERVTSwWiCHgLghW6D38GZHI4Sl4oOnkfn?=
+ =?us-ascii?Q?neDlFkrey8L8tPSZUmeqtOBhKiLl/JtjHUTRhuic6UqFzmWT9PDQ48j8hO4I?=
+ =?us-ascii?Q?E6n4bpy2Q5Ta3pBb8sRsVPA3p2KpPtwG5ztyUrHok7/WMYbZT61ch8344TgV?=
+ =?us-ascii?Q?891YEGYIIJKFdNSo2DaD7CWfjFqc9v5+hS8doYiskJlR1SXBkKkinI6C7d9H?=
+ =?us-ascii?Q?E2xO/oDqMupYfaTL6lsxG1Hb+thlHbE0VYOciSwlNECC56h5OYRySM5BjX5i?=
+ =?us-ascii?Q?SmJz4B/mzTtlyrlrcZ3F7lQ5xsnYo089h81wuX4pEG4Jdde6wNli6f0D6Zj+?=
+ =?us-ascii?Q?h26o3zQFKX7jFlXTx7tQB6ZjtP/4v8mGuFV6eZcTrgphiDM/G3UDdfJpxa/w?=
+ =?us-ascii?Q?YoA/BjdjZFkUMNb58pWgQHb2qU618RGcC6DKdmLdERMD0EsbiPto7xoJjscw?=
+ =?us-ascii?Q?GdNV+U/QTNoLj1Pn9j5z+t4XuLWjgQeoVpFFwPvGfyWw/OWRjGxkeJj48v6d?=
+ =?us-ascii?Q?triIRP2OV1cfgF9D+i5XxhGoA9LJw/F3znQyAc6FOzE/wjYx8gPpYN10E4mU?=
+ =?us-ascii?Q?mrbC2kBpAuCleQXc+oqws2I1Hls1mIFb7+n5lHXOlBnSdKOffBebJw6Po9bP?=
+ =?us-ascii?Q?h5bghkJUOcZoh5DGihHK2lk=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <069ed3fb-ef99-ff36-136d-a0221ba85a96@wanadoo.fr>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2778bdd-5c1d-41e5-2ce5-08d9afaa63eb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Nov 2021 00:27:40.4069
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 8/ryocoXeDMQTXy8is1DH6ku+CScONN3bXqIm4x04KBLSWFuL6OJbk+XbpPlENzme+r4q0mA0FAajMa7GR081w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8478
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Nov 09, 2021 at 10:21:44PM +0100, Christophe JAILLET wrote:
-> Le 09/11/2021 à 03:54, Jason Wang a écrit :
-> > On Tue, Nov 9, 2021 at 3:32 AM Christophe JAILLET
-> > <christophe.jaillet@wanadoo.fr> wrote:
-> > > 
-> > > Le 08/11/2021 à 06:55, Jason Wang a écrit :
-> > > > On Mon, Nov 8, 2021 at 12:15 AM Christophe JAILLET
-> > > > <christophe.jaillet@wanadoo.fr> wrote:
-> > > > > 
-> > > > > In the error handling path, a successful 'vp_legacy_probe()' should be
-> > > > > balanced by a corresponding 'vp_legacy_remove()' call, as already done in
-> > > > > the remove function.
-> > > > > 
-> > > > > Add the missing call and update gotos accordingly.
-> > > > > 
-> > > > > Fixes: e85087beedca ("eni_vdpa: add vDPA driver for Alibaba ENI")
-> > > > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > > > > ---
-> > > > >    drivers/vdpa/alibaba/eni_vdpa.c | 6 ++++--
-> > > > >    1 file changed, 4 insertions(+), 2 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/vdpa/alibaba/eni_vdpa.c b/drivers/vdpa/alibaba/eni_vdpa.c
-> > > > > index 3f788794571a..12b3db6b4517 100644
-> > > > > --- a/drivers/vdpa/alibaba/eni_vdpa.c
-> > > > > +++ b/drivers/vdpa/alibaba/eni_vdpa.c
-> > > > > @@ -501,7 +501,7 @@ static int eni_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
-> > > > >           if (!eni_vdpa->vring) {
-> > > > >                   ret = -ENOMEM;
-> > > > >                   ENI_ERR(pdev, "failed to allocate virtqueues\n");
-> > > > > -               goto err;
-> > > > > +               goto err_remove_vp_legacy;
-> > > > >           }
-> > > > > 
-> > > > >           for (i = 0; i < eni_vdpa->queues; i++) {
-> > > > > @@ -513,11 +513,13 @@ static int eni_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
-> > > > >           ret = vdpa_register_device(&eni_vdpa->vdpa, eni_vdpa->queues);
-> > > > >           if (ret) {
-> > > > >                   ENI_ERR(pdev, "failed to register to vdpa bus\n");
-> > > > > -               goto err;
-> > > > > +               goto err_remove_vp_legacy;
-> > > > >           }
-> > > > > 
-> > > > >           return 0;
-> > > > > 
-> > > > > +err_remove_vp_legacy:
-> > > > > +       vp_legacy_remove(&eni_vdpa->ldev);
-> > > > 
-> > > > Won't vp_legacy_remove() be triggered by the put_devic() below?
-> > > 
-> > > Hi, I'm sorry but i don't see how.
-> > > 
-> > > My understanding is that:
-> > >     - on "put_device(&eni_vdpa->vdpa.dev);", the corresponding release
-> > > function will be called.
-> > > 
-> > >     - This release function is the one recorded in the
-> > > '__vdpa_alloc_device()' function.
-> > > 
-> > >     - So it should be 'vdpa_release_dev()'.
-> > > 
-> > >     - This function, AFAIU, has no knowledge of 'vp_legacy_remove()' or
-> > > anything that could call it.
-> > > 
-> > > 
-> > > Unless I misread something or miss something obvious, I don't see how
-> > > 'vp_legacy_remove() would be called.
-> > > 
-> > > 
-> > > Could you elaborate?
-> > 
-> > I think the device should release the driver (see
-> > device_release_driver()) during during its deleting.
-> 
-> Hi, I still don't follow the logic and I don't understand how
-> 'vp_legacy_remove()' will finely be called, but it is not that important.
-> 
-> If it's fine for you, it's fine for me :)
-> 
-> CJ
+> Subject: [PATCH] mailbox: imx: Fix an IS_ERR() vs NULL bug
+>=20
+> The devm_kzalloc() function does not return error pointers, it returns NU=
+LL on
+> failure.
+>=20
+> Fixes: 97961f78e8bc ("mailbox: imx: support i.MX8ULP S4 MU")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-So pls post just patch 2?
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
-> > 
-> > Thanks
-> > 
-> > > 
-> > > CJ
-> > > 
-> > > > 
-> > > > Thanks
-> > > > 
-> > > > >    err:
-> > > > >           put_device(&eni_vdpa->vdpa.dev);
-> > > > >           return ret;
-> > > > > --
-> > > > > 2.30.2
-> > > > > 
-> > > > 
-> > > > 
-> > > 
-> > 
-> > _______________________________________________
-> > Virtualization mailing list
-> > Virtualization@lists.linux-foundation.org
-> > https://lists.linuxfoundation.org/mailman/listinfo/virtualization
-> > 
+> ---
+>  drivers/mailbox/imx-mailbox.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.=
+c
+> index ffe36a6bef9e..544de2db6453 100644
+> --- a/drivers/mailbox/imx-mailbox.c
+> +++ b/drivers/mailbox/imx-mailbox.c
+> @@ -563,8 +563,8 @@ static int imx_mu_probe(struct platform_device
+> *pdev)
+>  		size =3D sizeof(struct imx_sc_rpc_msg_max);
+>=20
+>  	priv->msg =3D devm_kzalloc(dev, size, GFP_KERNEL);
+> -	if (IS_ERR(priv->msg))
+> -		return PTR_ERR(priv->msg);
+> +	if (!priv->msg)
+> +		return -ENOMEM;
+>=20
+>  	priv->clk =3D devm_clk_get(dev, NULL);
+>  	if (IS_ERR(priv->clk)) {
+> --
+> 2.20.1
 
