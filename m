@@ -2,93 +2,165 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE24AC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Nov 2021 01:13:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE3F1C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Nov 2021 06:36:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348293AbhKYBQQ (ORCPT
+        id S1347998AbhKYGjR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Nov 2021 20:16:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53202 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346695AbhKYBOP (ORCPT
+        Thu, 25 Nov 2021 01:39:17 -0500
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:58444 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1343909AbhKYGhQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Nov 2021 20:14:15 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C34BC0613A1;
-        Wed, 24 Nov 2021 16:29:35 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id r8so7605579wra.7;
-        Wed, 24 Nov 2021 16:29:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=cRnSRbzwvlHpqC/nnyQAXR+HDW69EqnOES3AQJQuO84=;
-        b=m3AVOkrGm+t4KptrgXCRyXfkgjx/CryFsPh8So0b3SqBB4goPrIxXN3a+Q2tpWJx9a
-         7qU14NdjAmhjagEPhd04dnLN7LnccblL0tQEpJTaf/eUEbNn+88kenffyFiJIQuzMLX+
-         ddh28/XhPdav4Hoo17/hdExjRzK/A8JBqvXhDpRXs4L5/jonQO+cl2P14XkDzsLVZI5p
-         UoNlacmJYjWn+VAHxcNETCfwpolaMfPoDyBlAS+TXTikD/brQmOsqzpsQsU4QYNYHEuM
-         JCsIv1hmcJSkyhzL3IavgSu846diXOp0pGPENuhYibeInrMbNF8xdgg0mL3A5S7bR9SJ
-         eyMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=cRnSRbzwvlHpqC/nnyQAXR+HDW69EqnOES3AQJQuO84=;
-        b=V5SxJQY2Dg6O7oscvZaiS8xtmouNNEryn7itlBegLRngy/WQ1gRnPBhex9plf93eRt
-         fHyogrbCjlraEkfbRWFvXwGqfMmcdDtR2z8PRAHAzAq7o07vbhslL5yEZapiceCCoN9F
-         9p8kqb34UOOD9yS5tKjDpEs0uygGwFksRXfWHxn9iA4fjGzxN10D+OpYzB9u80i5mVlM
-         Tsj2vW5pzukl2rnIsUzHmqbujHKjbOkr6PSWolHQ8YZxpMAu6nPcWhB/fD/9l2aB3pxQ
-         IJwjjW+FUxlkf8o++eEZS2SadkHQCt+RlUwArHJZqRBY7E8fYECZb//K4jzPy8r6LO86
-         K69A==
-X-Gm-Message-State: AOAM5308HwhzZdUv+3UekO00dze/5oJP73ht2BP7Sk0kbMc6zk15hhA+
-        /SWQgx/mQ9YiGallmcZX1tgD
-X-Google-Smtp-Source: ABdhPJwEf9q7K+8fM095savkdZMyhlDjrRobkjZESbedR0oEQCTGZYAd3VKwC0os4Ga4JWS4ZrlQwA==
-X-Received: by 2002:adf:fb4f:: with SMTP id c15mr1679508wrs.507.1637800173995;
-        Wed, 24 Nov 2021 16:29:33 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id f7sm7784377wmg.6.2021.11.24.16.29.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Nov 2021 16:29:33 -0800 (PST)
-From:   Colin Ian King <colin.i.king@googlemail.com>
-X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net: dsa: qca8k: Fix spelling mistake "Mismateched" -> "Mismatched"
-Date:   Thu, 25 Nov 2021 00:29:32 +0000
-Message-Id: <20211125002932.49217-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.33.1
+        Thu, 25 Nov 2021 01:37:16 -0500
+Received: from [192.168.1.18] ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id q8KZmqDf3S9NTq8KZmdcCj; Thu, 25 Nov 2021 07:34:04 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Thu, 25 Nov 2021 07:34:04 +0100
+X-ME-IP: 86.243.171.122
+Subject: Re: [PATCH 1/2] eni_vdpa: Fix an error handling path in
+ 'eni_vdpa_probe()'
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Jason Wang <jasowang@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        kernel-janitors@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        Wu Zongyong <wuzongyong@linux.alibaba.com>
+References: <f6b2d087ca3840604b4e711a208d35b5d6285cb4.1636301587.git.christophe.jaillet@wanadoo.fr>
+ <CACGkMEvN0cgFQhJmLF3xDXHt_EyZ-TnfBM8CnpNwA9sKcwpzBg@mail.gmail.com>
+ <393fb7b7-653b-eae6-16bd-5ffc7d600619@wanadoo.fr>
+ <CACGkMEt3yA+fkFJxKfrXyui-rYVSk78=1AqrT0TYQqzcqTJVyg@mail.gmail.com>
+ <069ed3fb-ef99-ff36-136d-a0221ba85a96@wanadoo.fr>
+ <20211124185834-mutt-send-email-mst@kernel.org>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <131b9250-f338-c931-39e6-ca3c1e3a9b66@wanadoo.fr>
+Date:   Thu, 25 Nov 2021 07:34:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20211124185834-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a netdev_err error message. Fix it.
+Le 25/11/2021 à 00:58, Michael S. Tsirkin a écrit :
+> On Tue, Nov 09, 2021 at 10:21:44PM +0100, Christophe JAILLET wrote:
+>> Le 09/11/2021 à 03:54, Jason Wang a écrit :
+>>> On Tue, Nov 9, 2021 at 3:32 AM Christophe JAILLET
+>>> <christophe.jaillet@wanadoo.fr> wrote:
+>>>>
+>>>> Le 08/11/2021 à 06:55, Jason Wang a écrit :
+>>>>> On Mon, Nov 8, 2021 at 12:15 AM Christophe JAILLET
+>>>>> <christophe.jaillet@wanadoo.fr> wrote:
+>>>>>>
+>>>>>> In the error handling path, a successful 'vp_legacy_probe()' should be
+>>>>>> balanced by a corresponding 'vp_legacy_remove()' call, as already done in
+>>>>>> the remove function.
+>>>>>>
+>>>>>> Add the missing call and update gotos accordingly.
+>>>>>>
+>>>>>> Fixes: e85087beedca ("eni_vdpa: add vDPA driver for Alibaba ENI")
+>>>>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>>>>>> ---
+>>>>>>     drivers/vdpa/alibaba/eni_vdpa.c | 6 ++++--
+>>>>>>     1 file changed, 4 insertions(+), 2 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/vdpa/alibaba/eni_vdpa.c b/drivers/vdpa/alibaba/eni_vdpa.c
+>>>>>> index 3f788794571a..12b3db6b4517 100644
+>>>>>> --- a/drivers/vdpa/alibaba/eni_vdpa.c
+>>>>>> +++ b/drivers/vdpa/alibaba/eni_vdpa.c
+>>>>>> @@ -501,7 +501,7 @@ static int eni_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>>>>>>            if (!eni_vdpa->vring) {
+>>>>>>                    ret = -ENOMEM;
+>>>>>>                    ENI_ERR(pdev, "failed to allocate virtqueues\n");
+>>>>>> -               goto err;
+>>>>>> +               goto err_remove_vp_legacy;
+>>>>>>            }
+>>>>>>
+>>>>>>            for (i = 0; i < eni_vdpa->queues; i++) {
+>>>>>> @@ -513,11 +513,13 @@ static int eni_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>>>>>>            ret = vdpa_register_device(&eni_vdpa->vdpa, eni_vdpa->queues);
+>>>>>>            if (ret) {
+>>>>>>                    ENI_ERR(pdev, "failed to register to vdpa bus\n");
+>>>>>> -               goto err;
+>>>>>> +               goto err_remove_vp_legacy;
+>>>>>>            }
+>>>>>>
+>>>>>>            return 0;
+>>>>>>
+>>>>>> +err_remove_vp_legacy:
+>>>>>> +       vp_legacy_remove(&eni_vdpa->ldev);
+>>>>>
+>>>>> Won't vp_legacy_remove() be triggered by the put_devic() below?
+>>>>
+>>>> Hi, I'm sorry but i don't see how.
+>>>>
+>>>> My understanding is that:
+>>>>      - on "put_device(&eni_vdpa->vdpa.dev);", the corresponding release
+>>>> function will be called.
+>>>>
+>>>>      - This release function is the one recorded in the
+>>>> '__vdpa_alloc_device()' function.
+>>>>
+>>>>      - So it should be 'vdpa_release_dev()'.
+>>>>
+>>>>      - This function, AFAIU, has no knowledge of 'vp_legacy_remove()' or
+>>>> anything that could call it.
+>>>>
+>>>>
+>>>> Unless I misread something or miss something obvious, I don't see how
+>>>> 'vp_legacy_remove() would be called.
+>>>>
+>>>>
+>>>> Could you elaborate?
+>>>
+>>> I think the device should release the driver (see
+>>> device_release_driver()) during during its deleting.
+>>
+>> Hi, I still don't follow the logic and I don't understand how
+>> 'vp_legacy_remove()' will finely be called, but it is not that important.
+>>
+>> If it's fine for you, it's fine for me :)
+>>
+>> CJ
+> 
+> So pls post just patch 2?
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/dsa/qca8k.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch 2/2 should apply cleanly with or without patch 1/2.
+Do I really need to send a v2 just for dropping the first patch? :/
 
-diff --git a/drivers/net/dsa/qca8k.c b/drivers/net/dsa/qca8k.c
-index 9e3825a7537d..55219f036741 100644
---- a/drivers/net/dsa/qca8k.c
-+++ b/drivers/net/dsa/qca8k.c
-@@ -2281,7 +2281,7 @@ qca8k_lag_setup_hash(struct dsa_switch *ds,
- 	if (unique_lag) {
- 		priv->lag_hash_mode = hash;
- 	} else if (priv->lag_hash_mode != hash) {
--		netdev_err(lag, "Error: Mismateched Hash Mode across different lag is not supported\n");
-+		netdev_err(lag, "Error: Mismatched Hash Mode across different lag is not supported\n");
- 		return -EOPNOTSUPP;
- 	}
- 
--- 
-2.33.1
+CJ
+
+> 
+>>>
+>>> Thanks
+>>>
+>>>>
+>>>> CJ
+>>>>
+>>>>>
+>>>>> Thanks
+>>>>>
+>>>>>>     err:
+>>>>>>            put_device(&eni_vdpa->vdpa.dev);
+>>>>>>            return ret;
+>>>>>> --
+>>>>>> 2.30.2
+>>>>>>
+>>>>>
+>>>>>
+>>>>
+>>>
+>>> _______________________________________________
+>>> Virtualization mailing list
+>>> Virtualization@lists.linux-foundation.org
+>>> https://lists.linuxfoundation.org/mailman/listinfo/virtualization
+>>>
+> 
+> 
 
