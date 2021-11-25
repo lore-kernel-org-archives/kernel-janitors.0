@@ -2,77 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC0FC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Nov 2021 20:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 393D2C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Nov 2021 20:44:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357046AbhKYUPS (ORCPT
+        id S245612AbhKYUro (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 25 Nov 2021 15:15:18 -0500
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:55628 "EHLO
+        Thu, 25 Nov 2021 15:47:44 -0500
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:63169 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357114AbhKYUNR (ORCPT
+        with ESMTP id S237353AbhKYUpn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 25 Nov 2021 15:13:17 -0500
-Received: from [192.168.1.18] ([86.243.171.122])
+        Thu, 25 Nov 2021 15:45:43 -0500
+Received: from pop-os.home ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id qL4EmblRQqYovqL4EmK9cw; Thu, 25 Nov 2021 21:10:03 +0100
-X-ME-Helo: [192.168.1.18]
+        id qLZdmbwfgqYovqLZdmKCfE; Thu, 25 Nov 2021 21:42:30 +0100
+X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 25 Nov 2021 21:10:03 +0100
+X-ME-Date: Thu, 25 Nov 2021 21:42:30 +0100
 X-ME-IP: 86.243.171.122
-Subject: Re: [PATCH] RDMA/mlx4: Use bitmap_alloc() when applicable
-To:     Joe Perches <joe@perches.com>, yishaih@nvidia.com,
-        selvin.xavier@broadcom.com, dledford@redhat.com, jgg@ziepe.ca
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <4c93b4e02f5d784ddfd3efd4af9e673b9117d641.1637869328.git.christophe.jaillet@wanadoo.fr>
- <ddef1847b4694071ae914eab93b0d2bd45fdf050.camel@perches.com>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <142324ab-7696-e43d-2368-a18abebe7b09@wanadoo.fr>
-Date:   Thu, 25 Nov 2021 21:10:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+To:     selvin.xavier@broadcom.com, dledford@redhat.com, jgg@ziepe.ca
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] RDMA/bnxt_re: Use bitmap_zalloc() when applicable
+Date:   Thu, 25 Nov 2021 21:42:28 +0100
+Message-Id: <5c029daf43b92fdc27926fe8a98084843437c498.1637872888.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <ddef1847b4694071ae914eab93b0d2bd45fdf050.camel@perches.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 25/11/2021 à 20:58, Joe Perches a écrit :
-> On Thu, 2021-11-25 at 20:42 +0100, Christophe JAILLET wrote:
->> Use 'bitmap_alloc()' to simplify code, improve the semantic and avoid some
->> open-coded arithmetic in allocator arguments.
->>
->> Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
->> consistency.
-> 
-> Thanks.
-> 
->> diff --git a/drivers/infiniband/hw/mlx4/main.c b/drivers/infiniband/hw/mlx4/main.c
-> []
->> @@ -2784,10 +2784,8 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
->>   		if (err)
->>   			goto err_counter;
->>   
->> -		ibdev->ib_uc_qpns_bitmap =
->> -			kmalloc_array(BITS_TO_LONGS(ibdev->steer_qpn_count),
->> -				      sizeof(long),
->> -				      GFP_KERNEL);
->> +		ibdev->ib_uc_qpns_bitmap = bitmap_alloc(ibdev->steer_qpn_count,
->> +							GFP_KERNEL);
-> 
-> I wonder if it'd be simpler/smaller to change this to bitmap_zalloc and
-> remove the bitmap_zero in the if below.
-> 
+Use 'bitmap_zalloc()' to simplify code, improve the semantic and avoid some
+open-coded arithmetic in allocator arguments.
 
-I asked myself the same question.
-It is easy to see that the bitmap is either cleared or set.
-So this is fine enough for me.
+Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
+consistency.
 
-Let see if a maintainer has a preference on it.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/infiniband/hw/bnxt_re/qplib_rcfw.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-CJ
+diff --git a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
+index 19a0778d38a2..061b2895dd9b 100644
+--- a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
+@@ -555,7 +555,7 @@ int bnxt_qplib_init_rcfw(struct bnxt_qplib_rcfw *rcfw,
+ 
+ void bnxt_qplib_free_rcfw_channel(struct bnxt_qplib_rcfw *rcfw)
+ {
+-	kfree(rcfw->cmdq.cmdq_bitmap);
++	bitmap_free(rcfw->cmdq.cmdq_bitmap);
+ 	kfree(rcfw->qp_tbl);
+ 	kfree(rcfw->crsqe_tbl);
+ 	bnxt_qplib_free_hwq(rcfw->res, &rcfw->cmdq.hwq);
+@@ -572,7 +572,6 @@ int bnxt_qplib_alloc_rcfw_channel(struct bnxt_qplib_res *res,
+ 	struct bnxt_qplib_sg_info sginfo = {};
+ 	struct bnxt_qplib_cmdq_ctx *cmdq;
+ 	struct bnxt_qplib_creq_ctx *creq;
+-	u32 bmap_size = 0;
+ 
+ 	rcfw->pdev = res->pdev;
+ 	cmdq = &rcfw->cmdq;
+@@ -613,8 +612,7 @@ int bnxt_qplib_alloc_rcfw_channel(struct bnxt_qplib_res *res,
+ 	if (!rcfw->crsqe_tbl)
+ 		goto fail;
+ 
+-	bmap_size = BITS_TO_LONGS(rcfw->cmdq_depth) * sizeof(unsigned long);
+-	cmdq->cmdq_bitmap = kzalloc(bmap_size, GFP_KERNEL);
++	cmdq->cmdq_bitmap = bitmap_zalloc(rcfw->cmdq_depth, GFP_KERNEL);
+ 	if (!cmdq->cmdq_bitmap)
+ 		goto fail;
+ 
+-- 
+2.30.2
 
