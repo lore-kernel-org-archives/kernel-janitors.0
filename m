@@ -2,70 +2,132 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD25C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Nov 2021 09:49:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70352C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Nov 2021 09:54:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354234AbhKYJwt (ORCPT
+        id S1354194AbhKYJ5Y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 25 Nov 2021 04:52:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53318 "EHLO
+        Thu, 25 Nov 2021 04:57:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348778AbhKYJut (ORCPT
+        with ESMTP id S1347793AbhKYJzY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 25 Nov 2021 04:50:49 -0500
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [IPv6:2404:9400:2:0:216:3eff:fee2:21ea])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CE02C061746;
-        Thu, 25 Nov 2021 01:47:38 -0800 (PST)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4J0Cj45ZLFz4xcs;
-        Thu, 25 Nov 2021 20:47:36 +1100 (AEDT)
-From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-To:     Julia Lawall <Julia.Lawall@lip6.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev@lists.ozlabs.org
-In-Reply-To: <1448051604-25256-1-git-send-email-Julia.Lawall@lip6.fr>
-References: <1448051604-25256-1-git-send-email-Julia.Lawall@lip6.fr>
-Subject: Re: (subset) [PATCH 0/6] add missing of_node_put
-Message-Id: <163783295820.1228879.10682208282272545718.b4-ty@ellerman.id.au>
-Date:   Thu, 25 Nov 2021 20:35:58 +1100
+        Thu, 25 Nov 2021 04:55:24 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16CFDC061756;
+        Thu, 25 Nov 2021 01:52:13 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id l16so10300443wrp.11;
+        Thu, 25 Nov 2021 01:52:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LubwOIycbs75WP/0QNBKRsHGq+GD5WppuGlmADCSChY=;
+        b=M49MUuzVEN2wten8Ow2ZJxr5fn8ozedMlUDS5Vhguf7tIXQSyT1uqTEDcvSjYcByLI
+         Q3gv3O5RNUO0frlPadFHGafDi5oWig+LRvD4DZgNN71igoJfB3Azr5DLhkAw+PZCYK+g
+         PbQlOhXAddLIFxc7m265nk8SRdVJUa9otaqqnWgiUTGD3+oBzBKjY2bkMxf+vyhLCru9
+         bMybH1rLnlwNkCqEbB0tcvlt0PCC2rgrP3YPmh68SnDp+lXVjZWW3bk8RUGZWOrXAQ0r
+         5557YqH+KvpIw95HPSt2O6ju9+PL/BkO7vGxIx/NCnlbsDXwMhFZJxRB63rT0qTr9br/
+         4SBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LubwOIycbs75WP/0QNBKRsHGq+GD5WppuGlmADCSChY=;
+        b=Vvadt0XAJ53Al3XJc0yNUyv5C8NfUnciYzfc4ejL8dvhDcPDXNQ11dbg7pxOBhMm28
+         YUfKsZuShbhNLzs+g7trmIT/MTFJ3lVVP+u0fDq3+DJjPLXiQixwbrVWJd/sDks9Kylm
+         XC0bRppEFMXSd5jGSlWxSsn/iOdn4Ct9n65vm86vC0ZQytyI3letQ7TKsXcp/fG4CM7E
+         ZcecGrC0YtPs7bIF8T9B4GpV5Bo01NT4PsKaEtxvWa2KT/TVm/JolTo/e4L0oJ4Mc1Pc
+         P7BU1WMkZ3RePSwfLn/YjUUJb30nz+8xdNuAqwUwJkACAUdo6RVX5e4DBG3/KMatfykS
+         LDxA==
+X-Gm-Message-State: AOAM531+j4GlLcAfg9v0V5LGIVMcO4KEAFObBAKWQQh6jSTZDwYvPec/
+        1dc38OeYIKt49VZB1vSv+g0=
+X-Google-Smtp-Source: ABdhPJz5zAa8xgSOacNbN1QEP4WUOE0mulQoH6wZbGntvCmTU1aJI3geojJMrx5vchJS3EnAJ8blsA==
+X-Received: by 2002:adf:cd09:: with SMTP id w9mr4919379wrm.619.1637833931579;
+        Thu, 25 Nov 2021 01:52:11 -0800 (PST)
+Received: from localhost.elektrobit.com (eth1-fw1-nbg6.eb.noris.de. [213.95.148.172])
+        by smtp.gmail.com with ESMTPSA id c1sm2310853wrt.14.2021.11.25.01.52.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Nov 2021 01:52:10 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH 0/2] Kconfig symbol clean-up for sound
+Date:   Thu, 25 Nov 2021 10:51:56 +0100
+Message-Id: <20211125095158.8394-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 20 Nov 2015 20:33:18 +0000, Julia Lawall wrote:
-> The various for_each device_node iterators performs an of_node_get on each
-> iteration, so a break out of the loop requires an of_node_put.
-> 
-> The complete semantic patch that fixes this problem is
-> (http://coccinelle.lip6.fr):
-> 
-> // <smpl>
-> @r@
-> local idexpression n;
-> expression e1,e2;
-> iterator name for_each_node_by_name, for_each_node_by_type,
-> for_each_compatible_node, for_each_matching_node,
-> for_each_matching_node_and_match, for_each_child_of_node,
-> for_each_available_child_of_node, for_each_node_with_property;
-> iterator i;
-> statement S;
-> expression list [n1] es;
-> @@
-> 
-> [...]
+Dear sound maintainers,
 
-Patch 5 applied to powerpc/next.
+The script ./scripts/checkkconfigsymbols.py warns on invalid references to
+Kconfig symbols (often, minor typos, name confusions or outdated references).
+This is a patch series addressing the issues reported by
+./scripts/checkkconfigsymbols.py in the ./sound/ directory for Kconfig files,
+quickly filtered down with:
 
-[5/6] powerpc/btext: add missing of_node_put
-      https://git.kernel.org/powerpc/c/a1d2b210ffa52d60acabbf7b6af3ef7e1e69cda0
+  ./scripts/checkkconfigsymbols.py | grep "sound.*Kconfig" -B 1
 
-cheers
+
+This patch series addresses:
+
+  SND_SOC_UNIPHIER_AIO_DMA
+  Referencing files: sound/soc/uniphier/Kconfig
+
+
+  SND_SOC_WCD937X
+  Referencing files: sound/soc/codecs/Kconfig
+
+
+This patch series does not address:
+
+  CLK_FIXED_FCH
+  Referencing files: sound/soc/amd/Kconfig, sound/soc/amd/acp/Kconfig
+
+  Rationale: config definition has been submitted, but is still pending for
+    inclusion through another tree.
+
+
+  SND_SOC_AC97_BUS_NEW
+  Referencing files: sound/soc/pxa/Kconfig
+
+  Rationale: waiting for response; the kernel developer has been informed here:
+    https://lore.kernel.org/all/CAKXUXMzqgyNGEnxAMQqZiXJYSK-X8uB-nxHWwPg41H6yS0GWNg@mail.gmail.com/
+
+
+Both patches in this series can be discussed and applied individually. They are
+sent in one patch series, as they orginate from the investigation guided by the
+same tool and hence share similar topics and resolutions.
+
+Please pick this series of minor clean-up patches. It applies cleanly on next-20211124.
+
+
+Best regards,
+
+Lukas
+
+
+Lukas Bulwahn (2):
+  ASoC: uniphier: drop selecting non-existing SND_SOC_UNIPHIER_AIO_DMA
+  ASoC: codecs: wcd938x: add SND_SOC_WCD938_SDW to codec list instead
+
+ sound/soc/codecs/Kconfig   | 3 +--
+ sound/soc/uniphier/Kconfig | 2 --
+ 2 files changed, 1 insertion(+), 4 deletions(-)
+
+-- 
+2.26.2
+
