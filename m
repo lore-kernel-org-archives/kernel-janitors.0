@@ -2,107 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD77C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Nov 2021 09:54:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 813B9C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Nov 2021 10:10:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354323AbhKYJ5j (ORCPT
+        id S1354476AbhKYKNk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 25 Nov 2021 04:57:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54378 "EHLO
+        Thu, 25 Nov 2021 05:13:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351403AbhKYJzh (ORCPT
+        with ESMTP id S1351669AbhKYKLi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 25 Nov 2021 04:55:37 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DC20C061758;
-        Thu, 25 Nov 2021 01:52:26 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id n33-20020a05600c502100b0032fb900951eso7812554wmr.4;
-        Thu, 25 Nov 2021 01:52:26 -0800 (PST)
+        Thu, 25 Nov 2021 05:11:38 -0500
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA8EFC061763
+        for <kernel-janitors@vger.kernel.org>; Thu, 25 Nov 2021 02:08:27 -0800 (PST)
+Received: by mail-pl1-x62e.google.com with SMTP id q17so4153461plr.11
+        for <kernel-janitors@vger.kernel.org>; Thu, 25 Nov 2021 02:08:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=CtPmrpYr9FiDpTXd3LZYhMSJMkf3FHjKgX90xdY/MZw=;
-        b=YBkfENrKTMYdi9hDB53l+uFIF16Y5kzRKjai/iYLc2I96/s1EbbQpiPsiPJWdr2JJr
-         cShpznljdZ9kxttFrsMDjUuD713GsmrHwU9YSvhNMmCaYFM/wQnWy68UvE86rUTuoOVN
-         Z8hLDEFyFBWbw6TVcW1VlRI7vyBq0Bq2qggYJhOUmVVqMbRGTdenTBYJUxY0OGVtMF2h
-         5UIgtg5ghYHiyimrBgRXLubqDbNmlFyC8MRfW5UjVTHd+ybLH1OU5D7FrFa6SwVkZN9f
-         eI/3Rr93o30kjnYZTBmSq9tAIRXaKdBCHeFDn6mAW9JzOr8IukAGy5rHY4Dc/q0F/Mgy
-         1KlA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Dpnu1/6yOkuuCH/ZN6WkNINuR/8m8h6zVVSJwYoqYq0=;
+        b=GDGjyl56MydM000AjpIcyCHg6ib0vb3fgxBUv2+ozwRpG3KpT6kZZ51krmIFnhkseI
+         x9mMd23ZLT27XqgC76hqEkmseCkvxxQDOd0SMo2yhmCQpzEAmqDnUVAOp4C5nN8dcrdi
+         oaAVZM/JycIvHAoUkf94SYuE+r6QDlfizgDRgCIYc5xQ+XEj1cfReEK1P6iak3G1q9kr
+         XjkK0cP6YMDaJbe50jK4ZotR8uNdE9/Ufzy2TZ+dgR/j5MJa6cdAeuOZweMPFwdoK5d0
+         fXPUK3jCDbE8ck6d8GbbRTmrkx1li1pr6c71Z0o/LWHZ91CSzQjNhCmQKHWV7INtGBeB
+         U2RQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=CtPmrpYr9FiDpTXd3LZYhMSJMkf3FHjKgX90xdY/MZw=;
-        b=5lD6EuP9E+9ioUD3t09GkAnBnYj7yb2f1VZEN7GBAc53gI7f69ucl5CHwYsWfeyyiD
-         x4D5NxKDdq7KR81ubopCha61FmYvpErtATXxS3p+g5jdQk/wUrOCci5+ZI2Jgf4FRmM1
-         79EhCx5Q+wMxb/Yt89t1oiO7BIqgke3spHwZNXSCf1A4aUU5RY7vFgJuyp9lCtzMYCQ8
-         lx2HYlaHNIecEdhQWouRJHbXuMdP9lYd6ejMrTVP4lM+8WGIvmn95hEfw//u/Xqd5E3+
-         jW0nBcv32PAUhFuchHHOOuhaLbxRkBn/x2+Ntr7UIQ/i4T9MCS5n49Cy3Ll7DWyes9Gb
-         oTog==
-X-Gm-Message-State: AOAM533Ln4Tan/g+oG8/BQqTDVog0/lk+8+vyhPrV9/9pMo8D/8G3ygc
-        RRzkE9R0NFoS3cc0hU1O9+0=
-X-Google-Smtp-Source: ABdhPJzNEFk8SIxr8fH/3pyKqDj4fbQ2NQd6f198nSEoiAOLdUwr6rkVWXEhhfB4xZQ0YHzNSfucFQ==
-X-Received: by 2002:a7b:c452:: with SMTP id l18mr5608253wmi.46.1637833945112;
-        Thu, 25 Nov 2021 01:52:25 -0800 (PST)
-Received: from localhost.elektrobit.com (eth1-fw1-nbg6.eb.noris.de. [213.95.148.172])
-        by smtp.gmail.com with ESMTPSA id c1sm2310853wrt.14.2021.11.25.01.52.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Nov 2021 01:52:24 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH 2/2] ASoC: codecs: wcd938x: add SND_SOC_WCD938_SDW to codec list instead
-Date:   Thu, 25 Nov 2021 10:51:58 +0100
-Message-Id: <20211125095158.8394-3-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20211125095158.8394-1-lukas.bulwahn@gmail.com>
-References: <20211125095158.8394-1-lukas.bulwahn@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Dpnu1/6yOkuuCH/ZN6WkNINuR/8m8h6zVVSJwYoqYq0=;
+        b=sRZSZTs8Se2Cu2Qdc48GudDtGBKDEX59U1q2K/QY/A39/0CM4XV/Pck2YlGVN1jwkn
+         k4iRbUepLwCMQlHinynPF1qRJKaqXBLvtyJhhm0SRFhqR3eWVQyt5EYZm46MDEK+yQlm
+         pluK1JmK1R2b1tCf1M4CdfVv1lzWCNZgYG7FIG2GejBbf95XYXQJOLMQGjbtA+rdQp18
+         Ib7zoj0B8DFRrdH0idplE+FnTLEw+17toyybGByDvCJZdP0L8YtLUdVm6eoCrUk3EUEp
+         MM0Px9iqdd7Ki5o4bS5tl9sB4yvTsXXcINWJtqJYakGeCKiaY6jMr7/FnOfkPCnxP4ua
+         Ft2Q==
+X-Gm-Message-State: AOAM532ymBaYd8zeKlAYUvHYonbNAljqtXXCHBadQcooNhwU6AwGQbnL
+        DJTLrxZGOXclGvtpZ/TTi3ZDsFfR6ykdPlYHDIgfRw==
+X-Google-Smtp-Source: ABdhPJz+NTXqZHw+mAr5aK8WO0aa5tYnZafpMCG8SxZ8nd297hrIXq/zBL7KVwlJS/KtNmoEyjg0bBr49xYaV3M9w18=
+X-Received: by 2002:a17:903:2004:b0:142:6344:2c08 with SMTP id
+ s4-20020a170903200400b0014263442c08mr27504855pla.51.1637834907420; Thu, 25
+ Nov 2021 02:08:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211124145219.GD13656@kili> <YZ9GYUrBvmCQaZtg@google.com>
+In-Reply-To: <YZ9GYUrBvmCQaZtg@google.com>
+From:   Robert Foss <robert.foss@linaro.org>
+Date:   Thu, 25 Nov 2021 11:08:16 +0100
+Message-ID: <CAG3jFytY6KB+u+nji5tse81AJkiE1gP+6d7XvooheQwjqvw6Rg@mail.gmail.com>
+Subject: Re: [PATCH] drm/bridge: anx7625: fix an error code in anx7625_register_audio()
+To:     Tzung-Bi Shih <tzungbi@google.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Xin Ji <xji@analogixsemi.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Pi-Hsun Shih <pihsun@chromium.org>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 045442228868 ("ASoC: codecs: wcd938x: add audio routing and
-Kconfig") adds SND_SOC_WCD937X, which does not exist, and
-SND_SOC_WCD938X, which seems not really to be the intended config to be
-selected, but only a supporting config symbol to the actual config
-SND_SOC_WCD938X_SDW for the codec.
+On Thu, 25 Nov 2021 at 09:16, Tzung-Bi Shih <tzungbi@google.com> wrote:
+>
+> On Wed, Nov 24, 2021 at 05:52:19PM +0300, Dan Carpenter wrote:
+> > This code accidentally returns IS_ERR(), which is 1, instead of
+> > propagating the negative error code.  The caller doesn't check for
+> > errors so it doesn't affect run time at all.
+> >
+> > Fixes: 566fef1226c1 ("drm/bridge: anx7625: add HDMI audio function")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> Reviewed-by: Tzung-Bi Shih <tzungbi@google.com>
 
-Add SND_SOC_WCD938_SDW to the list instead of SND_SOC_WCD93{7,8}X.
-
-The issue was identified with ./scripts/checkkconfigsymbols.py.
-
-Fixes: 045442228868 ("ASoC: codecs: wcd938x: add audio routing and Kconfig")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- sound/soc/codecs/Kconfig | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-index 3fe62df32238..b6d1827e7986 100644
---- a/sound/soc/codecs/Kconfig
-+++ b/sound/soc/codecs/Kconfig
-@@ -241,8 +241,7 @@ config SND_SOC_ALL_CODECS
- 	imply SND_SOC_UDA1380
- 	imply SND_SOC_WCD9335
- 	imply SND_SOC_WCD934X
--	imply SND_SOC_WCD937X
--	imply SND_SOC_WCD938X
-+	imply SND_SOC_WCD938X_SDW
- 	imply SND_SOC_LPASS_RX_MACRO
- 	imply SND_SOC_LPASS_TX_MACRO
- 	imply SND_SOC_WL1273
--- 
-2.26.2
-
+Applied to drm-misc-next.
