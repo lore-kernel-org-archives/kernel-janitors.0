@@ -2,63 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E59C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Nov 2021 22:39:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75AD9C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Nov 2021 22:59:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244415AbhKZWmP (ORCPT
+        id S231501AbhKZXCX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 Nov 2021 17:42:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57558 "EHLO
+        Fri, 26 Nov 2021 18:02:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244438AbhKZWkO (ORCPT
+        with ESMTP id S241928AbhKZXAW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 Nov 2021 17:40:14 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5740FC061574;
-        Fri, 26 Nov 2021 14:37:01 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id i5so21548030wrb.2;
-        Fri, 26 Nov 2021 14:37:01 -0800 (PST)
+        Fri, 26 Nov 2021 18:00:22 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5B77C06175E;
+        Fri, 26 Nov 2021 14:53:31 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id p27-20020a05600c1d9b00b0033bf8532855so7695712wms.3;
+        Fri, 26 Nov 2021 14:53:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=dpcy4LQHbJZ4KnLGyBkFJNHlZX/wwL3cJLnUQsB4iT8=;
-        b=nA8BR6tZL4dWGKsrb/dqLl1FcItkAlnllTZ74OZPDySGHlIshy/rTUnZVLnN11FCiP
-         WvOMIWNiTWgmT2QFvN39fVR0FAjgwTohde8Q8NFvP+nI7n2kBFU1fkJQ7y8+FZUIxzVP
-         0hcba5BL6Kj3JUhiuZzkvsIdR/RSCeFjorA5b/0PktodUxfuxhDX+CoXhrYrrdqauEEV
-         qbST3pnPPsrrBGajf1ykZFognlwz1oRZJO7qRLzLyJP5yFjInS31IkXvW3TJbPq9kyYC
-         frmdd1Eg4NxmKu6SprKy58PicnQS+fS0EP42CNb2FnvB/nB2c8agPknmjEZ1WO5EurKK
-         hoKQ==
+        bh=T3FV8iy9Zjp3vvRz4CguAsn6fxTAtVVJ0X26/BtHGfk=;
+        b=OyQa6U0qJnr5lI8DPNyFKOv3jacVjuQIl5erQC9UjkdHUeI2YV5ACTY8CWmxD2ssY0
+         440vm8aR7nGOktbR/6nq93aZBGvDhsrO2cY97mdCxAlI5B+9bSSHoRRyYpgl2L2aTVOC
+         +aKEHxjrKZaKQG53FQfVEuP6mjQaAQBmW8EL85itXLS1ErEpu+XtTYaa5PVtSfRu3YeU
+         sjnhCeq06BfRytxxPefOLAGt69Q4fy6JB0Crvd+tmMycleBEP8srrhbGaygLPpP/BeI6
+         8jv64n5pzqeH6FXFz1CMAiMUip/bdKNaSTB1oHpiqU59gavCSJLhIdNDLLgaGv9kF+r9
+         wHuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=dpcy4LQHbJZ4KnLGyBkFJNHlZX/wwL3cJLnUQsB4iT8=;
-        b=ikZwAeUDNyw+RCZGDjb/kjbux3pFrfwMt6p9GOjOMWTFHMjmSMnPdqMWfC4Z8Kt+fc
-         hKAhJzzXqEZY7/jgWVTg7ntmF57hOq8PGA+mIxM70X8MEsMCBkzK2otWLnCgS01mWJH+
-         C88XpCp8WSt+75DhsquzEOTPscpkviIPduzoRpbSsHkcCt+qbigvypUpR53BqJs2L3pT
-         Wi90NTk1vIV/nixz57fX4MjGvBgzGyWvrQ8jXHBGHhx21VUH6fliMpT2kWjoUCni5gPN
-         DZPwe+M+My2bukpLfQVip42moldedckW8dCdzaeXnUxhuRyp/g1XFOQW2W5kK03Up+Ed
-         wB0w==
-X-Gm-Message-State: AOAM532HstvEVbQkTcYBbeOhhzwE4lFF3iPWsMmAF7gkp9zzagH1/cJK
-        LIC1s3zSimxEIw==
-X-Google-Smtp-Source: ABdhPJz/nM05YK/QiL3oEoUkStF521T3WBtz5E7K8S6rk4LywrRw45w/ITcFRqvcZRoTn9FAhX6zZA==
-X-Received: by 2002:a05:6000:252:: with SMTP id m18mr17107910wrz.117.1637966219908;
-        Fri, 26 Nov 2021 14:36:59 -0800 (PST)
+        bh=T3FV8iy9Zjp3vvRz4CguAsn6fxTAtVVJ0X26/BtHGfk=;
+        b=DxVlYvsvnMsAvjXm4tMC+n5LD6yEGjf8UWpQGfPQWwA2A4hrMbrGbUewStbIKUIlR6
+         xHSZYF4k1TPRaxbPqZvK40NSQ1NxZfcyA9ST/Cd6VwgmEmJ4h9iR5Iq7hturq73o/eJm
+         C+GXE3AcyoJ9lRPEshanNlEmxpGsZoWZoFhcdpS/C72HlXHn+m0S6XJR0dvtqi4ju2Va
+         SJaIs8rRH+csDvXuiAySxVm6w7N718RIVg+rMDKq/GXnZXLnZGXylOkbf7y8YcR5tttD
+         /JprZt/ggSB+5++AKj+HwhGXq8nGDgLQQNb6txQHyXp9lhc/jjS77CWB8VudzzwnBBxQ
+         HF0w==
+X-Gm-Message-State: AOAM5309WX30InlueotIV3oUZtLPWbLsv1baba/XtgNaxH9lEgqQf26V
+        BHBc3fAYhukVsqx/VDfj2Q==
+X-Google-Smtp-Source: ABdhPJwS5uBB6FHcbY4s9TdyBfLmGioIhq0k48qrFDgvhUsC2Ve6qcYxi94GhQnFDrqvKIwwx/rz6w==
+X-Received: by 2002:a7b:cbd1:: with SMTP id n17mr18771519wmi.145.1637967210365;
+        Fri, 26 Nov 2021 14:53:30 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n2sm12061923wmi.36.2021.11.26.14.36.59
+        by smtp.gmail.com with ESMTPSA id s8sm6858874wro.19.2021.11.26.14.53.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Nov 2021 14:36:59 -0800 (PST)
+        Fri, 26 Nov 2021 14:53:30 -0800 (PST)
 From:   Colin Ian King <colin.i.king@googlemail.com>
 X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>
+To:     Michal Simek <monstr@monstr.eu>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/sev: clean up initialization of variables info and v
-Date:   Fri, 26 Nov 2021 22:36:58 +0000
-Message-Id: <20211126223658.1150141-1-colin.i.king@gmail.com>
+Subject: [PATCH] microblaze/mm/highmem: Remove redundant initialization of variable maxmem
+Date:   Fri, 26 Nov 2021 22:53:29 +0000
+Message-Id: <20211126225329.1150651-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -67,31 +66,28 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Currently variable info is being assigned twice, the second assignment
-is redundant. Clean up the code by making the assignments at declaration
-time and remove the latter two assignments.
+The variable maxmem is being initialized with a value that is never
+read, it is being updated later on. The assignment is redundant and
+can be removed.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- arch/x86/kernel/sev-shared.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ arch/microblaze/mm/init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/sev-shared.c b/arch/x86/kernel/sev-shared.c
-index ce987688bbc0..6083d6f658c8 100644
---- a/arch/x86/kernel/sev-shared.c
-+++ b/arch/x86/kernel/sev-shared.c
-@@ -104,10 +104,7 @@ static enum es_result verify_exception_info(struct ghcb *ghcb, struct es_em_ctxt
+diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
+index 952f35b335b2..f328d4549fad 100644
+--- a/arch/microblaze/mm/init.c
++++ b/arch/microblaze/mm/init.c
+@@ -144,7 +144,7 @@ int page_is_ram(unsigned long pfn)
+  */
+ static void mm_cmdline_setup(void)
+ {
+-	unsigned long maxmem = 0;
++	unsigned long maxmem;
+ 	char *p = cmd_line;
  
- 	if (ret == 1) {
- 		u64 info = ghcb->save.sw_exit_info_2;
--		unsigned long v;
--
--		info = ghcb->save.sw_exit_info_2;
--		v = info & SVM_EVTINJ_VEC_MASK;
-+		unsigned long v = info & SVM_EVTINJ_VEC_MASK;
- 
- 		/* Check if exception information from hypervisor is sane. */
- 		if ((info & SVM_EVTINJ_VALID) &&
+ 	/* Look for mem= option on command line */
 -- 
 2.33.1
 
