@@ -2,70 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEAAEC433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Nov 2021 03:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10591C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Nov 2021 05:26:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235958AbhKZDpX (ORCPT
+        id S1347800AbhKZF3y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 25 Nov 2021 22:45:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58534 "EHLO mail.kernel.org"
+        Fri, 26 Nov 2021 00:29:54 -0500
+Received: from mx.socionext.com ([202.248.49.38]:60758 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1344500AbhKZDnW (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 25 Nov 2021 22:43:22 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id 7439E61154;
-        Fri, 26 Nov 2021 03:40:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637898010;
-        bh=vSn12lrKMoFsWF+FQ3qew4aX7Ao+WycoJE6FAUoxlYU=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=H7vi5h+t34l8Jq1E//utdluzr1NlovYP1wnfe4/i5L04ANGxXJyU3XC4e3lV/6Jgx
-         KfjECt5bv8u28HmmvQ8BnDFCj/ugzBQL9mFpdnomqt5XgroMn78c7TY4CPhYWcfGE/
-         DL2nPYCxwXGaD7tlWYK5CQI+j+u9dE6h0rHz7YcqYGU0eIQAixhTm/nKKcZMf1UOr3
-         dJvIxNUSDSvsZK4C3Q/H0/QFck6RJCYfoWDR2h43FaV0BjGWgxMAuFJ5DbH9d/eTv2
-         9zMOGDOamA3c1xSkSqM+GSWfulLApQLCXcRrDvKgjgGkvnwTw8D3M6WkJ8xeLAWNPu
-         NBjONZzAbduDA==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 60E93609B9;
-        Fri, 26 Nov 2021 03:40:10 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        id S1345952AbhKZF1w (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 26 Nov 2021 00:27:52 -0500
+Received: from unknown (HELO kinkan2-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 26 Nov 2021 14:24:38 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by kinkan2-ex.css.socionext.com (Postfix) with ESMTP id CCEA7205C83D;
+        Fri, 26 Nov 2021 14:24:38 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Fri, 26 Nov 2021 14:24:38 +0900
+Received: from yuzu2.css.socionext.com (yuzu2 [172.31.9.57])
+        by kinkan2.css.socionext.com (Postfix) with ESMTP id 7DD7AB62E0;
+        Fri, 26 Nov 2021 14:24:38 +0900 (JST)
+Received: from [10.212.180.208] (unknown [10.212.180.208])
+        by yuzu2.css.socionext.com (Postfix) with ESMTP id C7F9010D17;
+        Fri, 26 Nov 2021 14:24:37 +0900 (JST)
+Subject: Re: [PATCH 1/2] ASoC: uniphier: drop selecting non-existing
+ SND_SOC_UNIPHIER_AIO_DMA
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20211125095158.8394-1-lukas.bulwahn@gmail.com>
+ <20211125095158.8394-2-lukas.bulwahn@gmail.com>
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Message-ID: <29c517c1-18d7-4b21-dff5-050d2e7ce992@socionext.com>
+Date:   Fri, 26 Nov 2021 14:24:36 +0900
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] net: dsa: qca8k: Fix spelling mistake "Mismateched" ->
- "Mismatched"
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <163789801039.11827.675546722857552340.git-patchwork-notify@kernel.org>
-Date:   Fri, 26 Nov 2021 03:40:10 +0000
-References: <20211125002932.49217-1-colin.i.king@gmail.com>
-In-Reply-To: <20211125002932.49217-1-colin.i.king@gmail.com>
-To:     Colin Ian King <colin.i.king@googlemail.com>
-Cc:     andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com,
-        olteanv@gmail.com, davem@davemloft.net, kuba@kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+In-Reply-To: <20211125095158.8394-2-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=iso-2022-jp; format=flowed; delsp=yes
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Hi,
 
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu, 25 Nov 2021 00:29:32 +0000 you wrote:
-> There is a spelling mistake in a netdev_err error message. Fix it.
+On 2021/11/25 18:51, Lukas Bulwahn wrote:
+> Commit f37fe2f9987b ("ASoC: uniphier: add support for UniPhier AIO common
+> driver") adds configs SND_SOC_UNIPHIER_{LD11,PXS2}, which select the
+> non-existing config SND_SOC_UNIPHIER_AIO_DMA.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/net/dsa/qca8k.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Hence, ./scripts/checkkconfigsymbols.py warns:
+> 
+>    SND_SOC_UNIPHIER_AIO_DMA
+>    Referencing files: sound/soc/uniphier/Kconfig
+> 
+> Probably, there is actually no further config intended to be selected
+> here. So, just drop selecting the non-existing config.
 
-Here is the summary with links:
-  - [next] net: dsa: qca8k: Fix spelling mistake "Mismateched" -> "Mismatched"
-    https://git.kernel.org/netdev/net-next/c/4636440f913b
+The feature corresponding to this config is inseparable in AIO driver.
+Probably unused definition remains in Kconfig, so it's ok to drop this config.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Thank you,
 
-
+---
+Best Regards
+Kunihiko Hayashi
