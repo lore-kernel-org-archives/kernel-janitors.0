@@ -2,66 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C056C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Nov 2021 08:17:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF663C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Nov 2021 08:38:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352990AbhKZIUW (ORCPT
+        id S1353051AbhKZIlO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 Nov 2021 03:20:22 -0500
-Received: from smtprelay0213.hostedemail.com ([216.40.44.213]:56532 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1359299AbhKZISW (ORCPT
+        Fri, 26 Nov 2021 03:41:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43388 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345642AbhKZIjO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 Nov 2021 03:18:22 -0500
-Received: from omf17.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 9666E180A25C8;
-        Fri, 26 Nov 2021 08:15:06 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf17.hostedemail.com (Postfix) with ESMTPA id 8825EE00036E;
-        Fri, 26 Nov 2021 08:15:02 +0000 (UTC)
-Message-ID: <aa7ad39528c768dfd3a33890cf7d14b59ba3a5fc.camel@perches.com>
-Subject: Re: [PATCH][next] hugetlb: Fix spelling mistake "hierarichal" ->
- "hierarchical"
-From:   Joe Perches <joe@perches.com>
-To:     Colin Ian King <colin.i.king@googlemail.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+        Fri, 26 Nov 2021 03:39:14 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CDD5C06175E;
+        Fri, 26 Nov 2021 00:27:55 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id p3-20020a05600c1d8300b003334fab53afso10112621wms.3;
+        Fri, 26 Nov 2021 00:27:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TFFGSEi0aI46OZC49VEkfyouqRBb+2dZlC1EqSh5l0w=;
+        b=Nh5wmHOIL6KT0awION/rlVICDnM945CPGZhOk/BzTwRYEj4atLUITAJgClakdPr4RE
+         K3AAsZIXpBTlHAa3Yg3svXMLM8C2FmnQ3v1fVihx+sThfV9YSw/EQMlR+4N0ePOqAxHa
+         BNiB+3iVHoO0oqd4vO7D8slMqmQb37YQQc0OJBiQSzlUDlg8me4AyH0UfAX5h675bfsM
+         h9x/7TRzLxqSGZqf7bNdPCwmzBziS0ZOifNwYB2fJVWza6b2QwNHCSdgrewPPbXlSAyC
+         Esp8AI6uRG/b1cqRxIS4aN0t1IQ9+ld124R3/aScA0PDyFBhIQoGpki6UMf2iEb17BM9
+         UO8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TFFGSEi0aI46OZC49VEkfyouqRBb+2dZlC1EqSh5l0w=;
+        b=TrAPVC96dMnftrhCQBt1puRFW5aaRV7Hn+aopfNI5XqghZFI1CN+2d9pNteVGWpJDT
+         Mwv69iVU+hUPR3dIvC/mgS2vOwGp+w7AQ6Y4AEHFZeeuH67bGBAZexBhWRWoBWqu9XAq
+         8ijN7tzgD8QgzzHEFmvXeNo4/uoZhMcs91BAQw71DKY1KC1PBfq0W4AoAkB8HP5deS44
+         WKFBMoFikSD6pTbbrnqEUgufoRENaC4XxJheTC1ZO3SLY+HSjBbQrLGdm2FtKGqZPBGR
+         W1DOwfnhjOqcfG1JefHj0V6+/ILaUCvOYEjbP1u1GyomEAq2SFSW9gkpiQsNufX0xroO
+         94hQ==
+X-Gm-Message-State: AOAM531/+xevvTy56uvtS7xKP6CzhOOjfNcppUPY/XK1EGTM2tRCwW9T
+        gAJaA3tCEy6PXA==
+X-Google-Smtp-Source: ABdhPJwf9rEkNqkL7bedTojk6VL+ew28c0wDt0PHxk014EfqPcavRhooRvdQKLbZJvi6kEimK1zSDA==
+X-Received: by 2002:a1c:1c1:: with SMTP id 184mr14032412wmb.1.1637915273615;
+        Fri, 26 Nov 2021 00:27:53 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id m17sm4744209wrz.22.2021.11.26.00.27.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Nov 2021 00:27:53 -0800 (PST)
+From:   Colin Ian King <colin.i.king@googlemail.com>
+X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
+To:     Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 26 Nov 2021 00:15:04 -0800
-In-Reply-To: <20211125090635.23508-1-colin.i.king@gmail.com>
-References: <20211125090635.23508-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.4-1 
+Subject: [PATCH][next] bfq: Fix spelling mistake "tenative" -> "tentative"
+Date:   Fri, 26 Nov 2021 08:27:52 +0000
+Message-Id: <20211126082752.554055-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: zduh9f8tp1nobnocxexjweddxcud9wtu
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: 8825EE00036E
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1+gfAvX6ESF28PxboOQwQbTRp4ragM60F4=
-X-HE-Tag: 1637914502-589088
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 2021-11-25 at 09:06 +0000, Colin Ian King wrote:
-> There is a spelling mistake in a literal string and a comment. Fix them.
-[]
-> diff --git a/mm/hugetlb_cgroup.c b/mm/hugetlb_cgroup.c
-[]
-> @@ -495,11 +495,11 @@ static int hugetlb_cgroup_read_numa_stat(struct seq_file *seq, void *dummy)
->  	 * The hierarchical total is pretty much the value recorded by the
->  	 * counter, so use that.
->  	 */
-> -	seq_printf(seq, "%stotal=%lu", legacy ? "hierarichal_" : "",
-> +	seq_printf(seq, "%stotal=%lu", legacy ? "hierarchical_" : "",
->  		   page_counter_read(&h_cg->hugepage[idx]) * PAGE_SIZE);
+There is a spelling mistake in a bfq_log_bfqq message. Fix it.
 
-Not sure this should be changed as seq output is nominally ABI.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ block/bfq-iosched.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  
->  	/*
-> -	 * For each node, transverse the css tree to obtain the hierarichal
-> +	 * For each node, transverse the css tree to obtain the hierarchical
-
-Fixing the comment typo is good.  Thanks.
-
+diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+index 85554b800970..db9eaec999b7 100644
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -2158,7 +2158,7 @@ static void bfq_check_waker(struct bfq_data *bfqd, struct bfq_queue *bfqq,
+ 		bfqq->waker_detection_started = now_ns;
+ 		bfq_bfqq_name(bfqq->tentative_waker_bfqq, waker_name,
+ 			      MAX_BFQQ_NAME_LENGTH);
+-		bfq_log_bfqq(bfqd, bfqq, "set tenative waker %s", waker_name);
++		bfq_log_bfqq(bfqd, bfqq, "set tentative waker %s", waker_name);
+ 	} else /* Same tentative waker queue detected again */
+ 		bfqq->num_waker_detections++;
+ 
+-- 
+2.33.1
 
