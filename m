@@ -2,75 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB06C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Nov 2021 21:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B12C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Nov 2021 22:14:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241645AbhKZVYE (ORCPT
+        id S244725AbhKZWRz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 Nov 2021 16:24:04 -0500
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:65511 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241670AbhKZVWA (ORCPT
+        Fri, 26 Nov 2021 17:17:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52304 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243454AbhKZWPz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 Nov 2021 16:22:00 -0500
-Received: from pop-os.home ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id qic7mXi0d1UGBqicGm0pwP; Fri, 26 Nov 2021 22:18:44 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Fri, 26 Nov 2021 22:18:44 +0100
-X-ME-IP: 86.243.171.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     john.garry@huawei.com, jejb@linux.ibm.com,
-        martin.petersen@oracle.com
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 3/3] scsi: hisi_sas: Use non-atomic bitmap functions when possible
-Date:   Fri, 26 Nov 2021 22:18:26 +0100
-Message-Id: <8ee33e463523db080e6a2c06f332e47abb69359b.1637961191.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <4afa3f71e66c941c660627c7f5b0223b51968ebb.1637961191.git.christophe.jaillet@wanadoo.fr>
-References: <4afa3f71e66c941c660627c7f5b0223b51968ebb.1637961191.git.christophe.jaillet@wanadoo.fr>
+        Fri, 26 Nov 2021 17:15:55 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 022DBC061746;
+        Fri, 26 Nov 2021 14:12:42 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id l16so21413316wrp.11;
+        Fri, 26 Nov 2021 14:12:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zYiadRhNNssRL10U2exdYiy/ZtbsaPvzaUpEf1LyXzQ=;
+        b=QlIRHwAHcq4D8jHGbjoR4a/M513JCgzzk+uQcp+D0ltqpbZueJswOxZvhyNmOCN1ay
+         5lNOzPRDpEgWgJOSEW7bMhcIU+5LppYAnn8pIPR1orU9bl/2C0sxtFXFv0cXRJmKiy83
+         rqK/LWcLGllh95tThLzK39fXcXWInZ2UVc9J1O/RhdMaD3+kAyfq2D3k39aa9k/bYVvc
+         mC2HvsashzzkW0cSgiqLYS7Srzzoo9cBM/kkn38Dj71davkk2aJHIB/HyQZyokBjV9UA
+         aZg8fBy1cH9ytEaOguJmcekzw1hTLFqu+9pqOGZy5VtXZt5JYQrVP9heznR84Fu89Nwd
+         kNRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zYiadRhNNssRL10U2exdYiy/ZtbsaPvzaUpEf1LyXzQ=;
+        b=wrHZrCJrrottb40dQTkv2mSk1th+o7IAKMi4JySYaPytmt7kvwGtEey+dOeMMWmC7f
+         HBfRTI7+/O7IP7gHRZDj7IkUrnGsC2Ow5pQONlThhm/hhWuTJoE9fqP+3iUDfV+Gl2zo
+         sZxHrNwixeUPDb4aVl+OsmZ6S8xjHohQi0sjc7YKP3JiRvBUQiyjdmehqvut0+iPZGAb
+         kRzEszyBbCiS+Vf3MrA+uGjyf4tlwlZ76L2cvG6OmWR548mJVcshzF4Dg2QvppuI4DfO
+         xVEZsV0Vzau64zA6tn6gqnUfufMZjn+x6fAMPgBBKAPLjUuovxqPG58rBLFVzDLbFsqr
+         40uA==
+X-Gm-Message-State: AOAM533MPlNKZh66MkZzvRW+KwTgyeosBTBD/Z76UbhRvZS72Kx5f5bk
+        2hhjRPgNZlTfam7kXqoJVN1H
+X-Google-Smtp-Source: ABdhPJyjwm80wgN80iNVkpbxs8y7KzhCYWHeboUV6F2q0r9e59FfKMxVK3MdSV+B8Ah5wWRcio37UA==
+X-Received: by 2002:adf:ee0c:: with SMTP id y12mr16766262wrn.82.1637964760617;
+        Fri, 26 Nov 2021 14:12:40 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id r15sm11884970wmh.13.2021.11.26.14.12.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Nov 2021 14:12:40 -0800 (PST)
+From:   Colin Ian King <colin.i.king@googlemail.com>
+X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        linux-clk@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: stm32mp1: remove redundant assignment to pointer data
+Date:   Fri, 26 Nov 2021 22:12:39 +0000
+Message-Id: <20211126221239.1100960-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-All uses of the 'hisi_hba->slot_index_tags' bitmap are protected with the
-'hisi_hba->lock' spinlock.
+The pointer data is being initialized with a value and a few lines
+later on being re-assigned the same value, so this re-assignment is
+redundant. Clean up the code and remove it.
 
-So prefer the non-atomic '__[set|clear]_bit()' functions to save a few
-cycles.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/clk-stm32mp1.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index d4f5d093bde4..889c36fa9309 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -158,7 +158,7 @@ static void hisi_sas_slot_index_clear(struct hisi_hba *hisi_hba, int slot_idx)
- {
- 	void *bitmap = hisi_hba->slot_index_tags;
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index 4bd1fe7d8af4..863274aa50e3 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -2253,8 +2253,6 @@ static int stm32_rcc_reset_init(struct device *dev, void __iomem *base,
+ 	const struct stm32_rcc_match_data *data = match->data;
+ 	struct stm32_reset_data *reset_data = NULL;
  
--	clear_bit(slot_idx, bitmap);
-+	__clear_bit(slot_idx, bitmap);
- }
- 
- static void hisi_sas_slot_index_free(struct hisi_hba *hisi_hba, int slot_idx)
-@@ -175,7 +175,7 @@ static void hisi_sas_slot_index_set(struct hisi_hba *hisi_hba, int slot_idx)
- {
- 	void *bitmap = hisi_hba->slot_index_tags;
- 
--	set_bit(slot_idx, bitmap);
-+	__set_bit(slot_idx, bitmap);
- }
- 
- static int hisi_sas_slot_index_alloc(struct hisi_hba *hisi_hba,
+-	data = match->data;
+-
+ 	reset_data = kzalloc(sizeof(*reset_data), GFP_KERNEL);
+ 	if (!reset_data)
+ 		return -ENOMEM;
 -- 
-2.30.2
+2.33.1
 
