@@ -2,90 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B43A1C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Nov 2021 23:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53CCEC433FE
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Nov 2021 11:48:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245356AbhKZXMK (ORCPT
+        id S1350516AbhK0Lv6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 Nov 2021 18:12:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35860 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245470AbhKZXKI (ORCPT
+        Sat, 27 Nov 2021 06:51:58 -0500
+Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:62138 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236133AbhK0Lt5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 Nov 2021 18:10:08 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42A8DC061759;
-        Fri, 26 Nov 2021 15:06:55 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id p18so9292295wmq.5;
-        Fri, 26 Nov 2021 15:06:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fpiGdrzOUvOueMAGHR97ttYfgicr+sSs1c6mjDMywB8=;
-        b=CP9wTYpVOcuuFcOJia67RjPX3q4Ls6/fmDl8uxxlpBtt4KdLw06I9BzNB/vSrFbyw6
-         O+OIiUGuYSJcwBQ64pu7wLfmOXkAUCMsPZXJvoF4fDukL+Hs/WRqBPZZYoWvFVomLz8w
-         nRxp6yEIC2D1q5Kx+zSbQVQCjlOBvx6NVVCOcG4R1cU8HN9CJqG+t9ja/t8gKkE1mc1F
-         50TT/yQhMWL+hGE3CYraJTDdXecNZRYg436WN2IgMLXa88UrgnmGkNeHQJSFQ0Px4O7X
-         BnMlsggf7EdUKrmFlp4eBcJ/tcfKUHjALHjsqjBel98QFr3/waYugXDdeimPJ6geIPvv
-         BYfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fpiGdrzOUvOueMAGHR97ttYfgicr+sSs1c6mjDMywB8=;
-        b=5nYyXV9gIHqUR5oLn/C9saB/d1vmC68j6xJSJhMa0lOUmeq6Cxal25Lg6n7KgW8ect
-         6A2x51iqc4fnUMOwBvVYpxcwhWjy5oAUpoqixnYX5lZOULI3iyK1FIRGxRt1GC4DmGYj
-         25xZKR0IA6Uq/R6w77wAcvHwEvMMWOjcU+LZ2R4b8QJ7fTtzRSRNPThVTzNpbgWihn19
-         OWtQ4eTF6owXIFkEc/B1qXyNc2vj8UEJTC3Xjwz71hPYU3ZGIbi3/61PvquIUiKFlUg2
-         v185faq101VWTl9s/j+pcSxn0FvgOh8IgfI/E/PrE0ews7+xsw0ffYfsUWuYEwTlma7W
-         gRGg==
-X-Gm-Message-State: AOAM532m3+Dgrj12Pji79ZbipsCOLqMlJmNmI15NZMnAoks/T2AgASkM
-        EvXpIo6VILPpnQs5hzTmDw==
-X-Google-Smtp-Source: ABdhPJxI8bFqnOhNhjUn+uieFffwFiGxfkKvLjMln4sA+q1Igj3acfmCK0mo27qEdNNLUIMWgYx21g==
-X-Received: by 2002:a7b:c763:: with SMTP id x3mr19186121wmk.31.1637968013914;
-        Fri, 26 Nov 2021 15:06:53 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id az4sm12279603wmb.20.2021.11.26.15.06.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Nov 2021 15:06:53 -0800 (PST)
-From:   Colin Ian King <colin.i.king@googlemail.com>
-X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] block: Remove redundant initialization of variable ret
-Date:   Fri, 26 Nov 2021 23:06:52 +0000
-Message-Id: <20211126230652.1175636-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.33.1
+        Sat, 27 Nov 2021 06:49:57 -0500
+Received: from pop-os.home ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id qwADm6yszOvR0qwADmtlCQ; Sat, 27 Nov 2021 12:46:42 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sat, 27 Nov 2021 12:46:42 +0100
+X-ME-IP: 86.243.171.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     manoj@linux.ibm.com, mrochs@linux.ibm.com, ukrishn@linux.ibm.com,
+        jejb@linux.ibm.com, martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 1/2] scsi: cxlflash: Use 'bitmap_set()' to simplify the code
+Date:   Sat, 27 Nov 2021 12:46:39 +0100
+Message-Id: <00ffdfddd892c40542db1012658a58934161fb58.1638013435.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable ret is being initialized with a value that is never
-read, it is being updated later on. The assignment is redundant and
-can be removed.
+The 'lun_alloc_map' bitmap is zalloc'ed, so initially all its bits are
+zeroed.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+So use 'bitmap_set()' which will only set bits in the given range. The
+upper bits are left unmodified. (i.e. zero)
+
+This simplifies a lot the logic when initializing this bitmap.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- block/bdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The mix-up of 'unsigned long', BITS_PER_LONG, 'u64' and ULL is puzzling.
+I guess that 'struct ba_lun_info' and its 'u64 *lun_alloc_map' should
+remain as is because the file is also used outside Linux.
 
-diff --git a/block/bdev.c b/block/bdev.c
-index 886a08a045a6..26eefa5de6ca 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -665,7 +665,7 @@ static void blkdev_flush_mapping(struct block_device *bdev)
- static int blkdev_get_whole(struct block_device *bdev, fmode_t mode)
+I also guess that on the system that uses this driver, u64 = unsigned long.
+
+Finally, this is only partially compile tested because I don't have the
+needed cross-compiling tool chain.
+---
+ drivers/scsi/cxlflash/vlun.c | 19 ++-----------------
+ 1 file changed, 2 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/scsi/cxlflash/vlun.c b/drivers/scsi/cxlflash/vlun.c
+index 01917b28cdb6..5600082145bc 100644
+--- a/drivers/scsi/cxlflash/vlun.c
++++ b/drivers/scsi/cxlflash/vlun.c
+@@ -59,9 +59,7 @@ static void marshal_clone_to_rele(struct dk_cxlflash_clone *clone,
+ static int ba_init(struct ba_lun *ba_lun)
  {
- 	struct gendisk *disk = bdev->bd_disk;
--	int ret = 0;
-+	int ret;
+ 	struct ba_lun_info *bali = NULL;
+-	int lun_size_au = 0, i = 0;
+-	int last_word_underflow = 0;
+-	u64 *lam;
++	int lun_size_au = 0;
  
- 	if (disk->fops->open) {
- 		ret = disk->fops->open(bdev, mode);
+ 	pr_debug("%s: Initializing LUN: lun_id=%016llx "
+ 		 "ba_lun->lsize=%lx ba_lun->au_size=%lX\n",
+@@ -100,20 +98,7 @@ static int ba_init(struct ba_lun *ba_lun)
+ 
+ 	/* Initialize the bit map size and set all bits to '1' */
+ 	bali->free_aun_cnt = lun_size_au;
+-
+-	for (i = 0; i < bali->lun_bmap_size; i++)
+-		bali->lun_alloc_map[i] = 0xFFFFFFFFFFFFFFFFULL;
+-
+-	/* If the last word not fully utilized, mark extra bits as allocated */
+-	last_word_underflow = (bali->lun_bmap_size * BITS_PER_LONG);
+-	last_word_underflow -= bali->free_aun_cnt;
+-	if (last_word_underflow > 0) {
+-		lam = &bali->lun_alloc_map[bali->lun_bmap_size - 1];
+-		for (i = (HIBIT - last_word_underflow + 1);
+-		     i < BITS_PER_LONG;
+-		     i++)
+-			clear_bit(i, (ulong *)lam);
+-	}
++	bitmap_set((ulong *)bali->lun_alloc_map, 0, bali->free_aun_cnt);
+ 
+ 	/* Initialize high elevator index, low/curr already at 0 from kzalloc */
+ 	bali->free_high_idx = bali->lun_bmap_size;
 -- 
-2.33.1
+2.30.2
 
