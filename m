@@ -2,62 +2,70 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9859CC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Nov 2021 16:10:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE34C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Nov 2021 17:05:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355688AbhK0QN0 (ORCPT
+        id S234049AbhK0RIj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 Nov 2021 11:13:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58472 "EHLO
+        Sat, 27 Nov 2021 12:08:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355581AbhK0QLY (ORCPT
+        with ESMTP id S234945AbhK0RGj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 Nov 2021 11:11:24 -0500
-Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3B7DC06175B
-        for <kernel-janitors@vger.kernel.org>; Sat, 27 Nov 2021 08:08:09 -0800 (PST)
-Received: by mail-il1-x129.google.com with SMTP id j21so12223396ila.5
-        for <kernel-janitors@vger.kernel.org>; Sat, 27 Nov 2021 08:08:09 -0800 (PST)
+        Sat, 27 Nov 2021 12:06:39 -0500
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32F81C061574;
+        Sat, 27 Nov 2021 09:03:23 -0800 (PST)
+Received: by mail-wr1-x42b.google.com with SMTP id i5so26004703wrb.2;
+        Sat, 27 Nov 2021 09:03:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=TFDhWEFT78dShTBpt1jDJLJmhPVNkWFwTNPna2oPguo=;
-        b=GK/pZ5QTqcJI2AxmD/RUUIKx9wmTTFRfN/aYljxGFwdgArDuR553KbgYli8X/J7s5i
-         +wNOvaftc/CrRwLhCAUj4ubCTN2BBVKoObvsSij2ix+N0SrJfumV9hhmjbTPYigXsSAr
-         VU4iEukug05xaVGCa8Ze+hOPy6on7KEGPqHJHenr0c9qSQ5PFMu7DHkQGAMHa4VrQiTd
-         p3NgWEBDtq19h3cZKry0rBlxkn5vZxlS1svJ2fnAOj+GHnFSslOSw7kZwX909VmX3Z6l
-         0gS+z8r+vdlNJ5D6IpW/qQSIlk8jz1WlSFhK1WTCA2ARxO1dY27C1Bfj13A0HgxwfWcq
-         px3Q==
+        d=googlemail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lS1zair4sK18hzWn/R6s0K/jIJB9uRS8Tf1yrPl4qUE=;
+        b=i6PYEDTEWBxh2uWbOmobmyDf4PFNUCGPjrhW4IBtFqgUj/wjnC942onOaGlorcKY3Q
+         FF2QQnidWU7dTumffSTNPt7Cu3p0SpLPkTQgCic6IKpxWCti61SG1eJ4jOUrUGrXzhmt
+         Pa424m0ujbzK7XmeCkkGp3PUoGsofw9xNatIUWVILZ/5XhlWJmNfZwaLBMgf6A6K30bo
+         c7BhLrEFZKKRvW56w9sgGpmkx3Cipa8EQ/yJaXVmX7OFOr7gSJILZb2H1DSgirxwri/P
+         fEUIGVLWQVHCuJD6lMu+Bh/IdWlifYk90Y8YFO5bHSEXpGTem0G6nGDiLNvai5ka6E6P
+         5XiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=TFDhWEFT78dShTBpt1jDJLJmhPVNkWFwTNPna2oPguo=;
-        b=VdT6qgX44gelY2Smjtafyx4N14EuMkMlhopLp36hSMTqfXgny1wpHb0pHFmhnICduo
-         7Hrf20snZcb4KbUA1kT0l8WQ/63xw+bhQGMqZSs9zQv0Idcr9FFFsn42cp3lMhm8JdBQ
-         sbjDqAQ+AetIlmeNUSikEGyE5j7wAIFNl9vdnaTAUrp2++7AXW47XVfJ28t2HAqlbIGW
-         +NzAS754ycPktOiH67SDXggkbkl4VItauWWGIrqPCuSwVHiMAP7f3aS/weFzqRZ52sij
-         FFtjGaHd18CuiSWKWC3gGkme+ZZSSaz8xYx7ljJZvSKvf2/TMY3CiCF1gXnHt8drAa60
-         iWVw==
-X-Gm-Message-State: AOAM531Na7jkCyRb/2LGozSQDqcglfyJZnBD8qKv0P5PJ43Cir70ShG9
-        N/d79ds1DjcDr/BW7k5BsIA0/g==
-X-Google-Smtp-Source: ABdhPJxTUvu/yog86X7sXAzysQZ0PRii7gNhy4t3Bzsc/U+kNjfBWOSEtkiCPuZjmyw37LRUBi6MEg==
-X-Received: by 2002:a05:6e02:1a8b:: with SMTP id k11mr28610456ilv.52.1638029289097;
-        Sat, 27 Nov 2021 08:08:09 -0800 (PST)
-Received: from [127.0.1.1] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id d12sm5749981ilg.85.2021.11.27.08.08.08
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lS1zair4sK18hzWn/R6s0K/jIJB9uRS8Tf1yrPl4qUE=;
+        b=B/pGMk3YOeV5NrFP1hiv9DdbGQ15NyWsuQe4rCn+75avA/Dk/f2Lzw6BEbRbpNbIeS
+         Ihxpu5XyNmF3qjwiEp1H0yhwoYZqHgbmOxlSdfZVSBMKqzTeXMVUMznL1wsVGIX9Hl+X
+         77Atx/i9NMP29PweRY9TFeX14PlrrZM6CR27Sb+r3xSjqeWtZTh5Vx0Lr9HPR8tC9ZVF
+         bHqDShH/QFtfd+WpXOCw1spyUrPtfMm2BI1SdpPOa3Qoz2mEdwYcpJplmzaJH5pfSs89
+         +0jUPZoejpSlqIObUVSLXuJFYrjJEf0L23PJc7JCRT4Y/O4RripCkN9sF3qQjheRTXlg
+         fyiA==
+X-Gm-Message-State: AOAM532iYutm5/cU255UhwRX0R4YwkAZTAv1nSscSUOLQqBGqagZw459
+        Y7qiP6fGueXhRg==
+X-Google-Smtp-Source: ABdhPJy+pishnTF0Jp3O1BLFoly/fFQfUlwkVKDWYJt8ktJqLJeucMMflxmOFNywu5S0QOwkVJHhZA==
+X-Received: by 2002:adf:fe81:: with SMTP id l1mr22456857wrr.522.1638032602333;
+        Sat, 27 Nov 2021 09:03:22 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id k187sm15177446wme.0.2021.11.27.09.03.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Nov 2021 08:08:08 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     linux-block@vger.kernel.org,
-        Colin Ian King <colin.i.king@googlemail.com>
+        Sat, 27 Nov 2021 09:03:22 -0800 (PST)
+From:   Colin Ian King <colin.i.king@googlemail.com>
+X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
+To:     Steve Wahl <steve.wahl@hpe.com>, Mike Travis <mike.travis@hpe.com>,
+        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
+        Russ Anderson <russ.anderson@hpe.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        platform-driver-x86@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20211126230652.1175636-1-colin.i.king@gmail.com>
-References: <20211126230652.1175636-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH] block: Remove redundant initialization of variable ret
-Message-Id: <163802928837.10246.12448995088826384297.b4-ty@kernel.dk>
-Date:   Sat, 27 Nov 2021 09:08:08 -0700
+Subject: [PATCH] x86/platform/uv: make const pointer dots a static const array
+Date:   Sat, 27 Nov 2021 17:03:20 +0000
+Message-Id: <20211127170320.77963-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -65,20 +73,28 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 26 Nov 2021 23:06:52 +0000, Colin Ian King wrote:
-> The variable ret is being initialized with a value that is never
-> read, it is being updated later on. The assignment is redundant and
-> can be removed.
-> 
-> 
+Don't populate the const array dots on the stack but make it static
+const and make the pointer an array to remove a dereference. Shrinks
+object code a few bytes too.
 
-Applied, thanks!
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ arch/x86/platform/uv/uv_nmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1/1] block: Remove redundant initialization of variable ret
-      commit: a77f46727daa3febf99663ab1a43c86cf3c2b957
-
-Best regards,
+diff --git a/arch/x86/platform/uv/uv_nmi.c b/arch/x86/platform/uv/uv_nmi.c
+index 1e9ff28bc2e0..2c69a0c30632 100644
+--- a/arch/x86/platform/uv/uv_nmi.c
++++ b/arch/x86/platform/uv/uv_nmi.c
+@@ -725,7 +725,7 @@ static void uv_nmi_dump_cpu_ip(int cpu, struct pt_regs *regs)
+  */
+ static void uv_nmi_dump_state_cpu(int cpu, struct pt_regs *regs)
+ {
+-	const char *dots = " ................................. ";
++	static const char dots[] = " ................................. ";
+ 
+ 	if (cpu == 0)
+ 		uv_nmi_dump_cpu_ip_hdr();
 -- 
-Jens Axboe
-
+2.33.1
 
