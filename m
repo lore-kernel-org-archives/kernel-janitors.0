@@ -2,90 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB0AC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Nov 2021 15:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9859CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Nov 2021 16:10:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346596AbhK0PY2 (ORCPT
+        id S1355688AbhK0QN0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 Nov 2021 10:24:28 -0500
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:62561 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343550AbhK0PW2 (ORCPT
+        Sat, 27 Nov 2021 11:13:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58472 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1355581AbhK0QLY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 Nov 2021 10:22:28 -0500
-Received: from pop-os.home ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id qzTnmWicnUujjqzTomVrmB; Sat, 27 Nov 2021 16:19:12 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 27 Nov 2021 16:19:12 +0100
-X-ME-IP: 86.243.171.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     kou.ishizaki@toshiba.co.jp, geoff@infradead.org,
-        davem@davemloft.net, kuba@kernel.org
-Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] net: spider_net: Use non-atomic bitmap API when applicable
-Date:   Sat, 27 Nov 2021 16:18:59 +0100
-Message-Id: <3de0792f5088f00d135c835df6c19e63ae95f5d2.1638026251.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sat, 27 Nov 2021 11:11:24 -0500
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3B7DC06175B
+        for <kernel-janitors@vger.kernel.org>; Sat, 27 Nov 2021 08:08:09 -0800 (PST)
+Received: by mail-il1-x129.google.com with SMTP id j21so12223396ila.5
+        for <kernel-janitors@vger.kernel.org>; Sat, 27 Nov 2021 08:08:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:in-reply-to:references:subject:message-id:date
+         :mime-version:content-transfer-encoding;
+        bh=TFDhWEFT78dShTBpt1jDJLJmhPVNkWFwTNPna2oPguo=;
+        b=GK/pZ5QTqcJI2AxmD/RUUIKx9wmTTFRfN/aYljxGFwdgArDuR553KbgYli8X/J7s5i
+         +wNOvaftc/CrRwLhCAUj4ubCTN2BBVKoObvsSij2ix+N0SrJfumV9hhmjbTPYigXsSAr
+         VU4iEukug05xaVGCa8Ze+hOPy6on7KEGPqHJHenr0c9qSQ5PFMu7DHkQGAMHa4VrQiTd
+         p3NgWEBDtq19h3cZKry0rBlxkn5vZxlS1svJ2fnAOj+GHnFSslOSw7kZwX909VmX3Z6l
+         0gS+z8r+vdlNJ5D6IpW/qQSIlk8jz1WlSFhK1WTCA2ARxO1dY27C1Bfj13A0HgxwfWcq
+         px3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=TFDhWEFT78dShTBpt1jDJLJmhPVNkWFwTNPna2oPguo=;
+        b=VdT6qgX44gelY2Smjtafyx4N14EuMkMlhopLp36hSMTqfXgny1wpHb0pHFmhnICduo
+         7Hrf20snZcb4KbUA1kT0l8WQ/63xw+bhQGMqZSs9zQv0Idcr9FFFsn42cp3lMhm8JdBQ
+         sbjDqAQ+AetIlmeNUSikEGyE5j7wAIFNl9vdnaTAUrp2++7AXW47XVfJ28t2HAqlbIGW
+         +NzAS754ycPktOiH67SDXggkbkl4VItauWWGIrqPCuSwVHiMAP7f3aS/weFzqRZ52sij
+         FFtjGaHd18CuiSWKWC3gGkme+ZZSSaz8xYx7ljJZvSKvf2/TMY3CiCF1gXnHt8drAa60
+         iWVw==
+X-Gm-Message-State: AOAM531Na7jkCyRb/2LGozSQDqcglfyJZnBD8qKv0P5PJ43Cir70ShG9
+        N/d79ds1DjcDr/BW7k5BsIA0/g==
+X-Google-Smtp-Source: ABdhPJxTUvu/yog86X7sXAzysQZ0PRii7gNhy4t3Bzsc/U+kNjfBWOSEtkiCPuZjmyw37LRUBi6MEg==
+X-Received: by 2002:a05:6e02:1a8b:: with SMTP id k11mr28610456ilv.52.1638029289097;
+        Sat, 27 Nov 2021 08:08:09 -0800 (PST)
+Received: from [127.0.1.1] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id d12sm5749981ilg.85.2021.11.27.08.08.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Nov 2021 08:08:08 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     linux-block@vger.kernel.org,
+        Colin Ian King <colin.i.king@googlemail.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20211126230652.1175636-1-colin.i.king@gmail.com>
+References: <20211126230652.1175636-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH] block: Remove redundant initialization of variable ret
+Message-Id: <163802928837.10246.12448995088826384297.b4-ty@kernel.dk>
+Date:   Sat, 27 Nov 2021 09:08:08 -0700
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-No concurrent access is possible when a bitmap is local to a function.
-So prefer the non-atomic functions to save a few cycles.
-   - replace a 'for' loop by an equivalent non-atomic 'bitmap_fill()' call
-   - use '__set_bit()'
+On Fri, 26 Nov 2021 23:06:52 +0000, Colin Ian King wrote:
+> The variable ret is being initialized with a value that is never
+> read, it is being updated later on. The assignment is redundant and
+> can be removed.
+> 
+> 
 
-While at it, clear the 'bitmask' bitmap only when needed.
+Applied, thanks!
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is *not* compile tested. I don't have the needed cross compiling
-tool chain.
----
- drivers/net/ethernet/toshiba/spider_net.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+[1/1] block: Remove redundant initialization of variable ret
+      commit: a77f46727daa3febf99663ab1a43c86cf3c2b957
 
-diff --git a/drivers/net/ethernet/toshiba/spider_net.c b/drivers/net/ethernet/toshiba/spider_net.c
-index f50f9a43d3ea..f47b8358669d 100644
---- a/drivers/net/ethernet/toshiba/spider_net.c
-+++ b/drivers/net/ethernet/toshiba/spider_net.c
-@@ -595,24 +595,24 @@ spider_net_set_multi(struct net_device *netdev)
- 	int i;
- 	u32 reg;
- 	struct spider_net_card *card = netdev_priv(netdev);
--	DECLARE_BITMAP(bitmask, SPIDER_NET_MULTICAST_HASHES) = {};
-+	DECLARE_BITMAP(bitmask, SPIDER_NET_MULTICAST_HASHES);
- 
- 	spider_net_set_promisc(card);
- 
- 	if (netdev->flags & IFF_ALLMULTI) {
--		for (i = 0; i < SPIDER_NET_MULTICAST_HASHES; i++) {
--			set_bit(i, bitmask);
--		}
-+		bitmap_fill(bitmask, SPIDER_NET_MULTICAST_HASHES);
- 		goto write_hash;
- 	}
- 
-+	bitmap_zero(bitmask, SPIDER_NET_MULTICAST_HASHES);
-+
- 	/* well, we know, what the broadcast hash value is: it's xfd
- 	hash = spider_net_get_multicast_hash(netdev, netdev->broadcast); */
--	set_bit(0xfd, bitmask);
-+	__set_bit(0xfd, bitmask);
- 
- 	netdev_for_each_mc_addr(ha, netdev) {
- 		hash = spider_net_get_multicast_hash(netdev, ha->addr);
--		set_bit(hash, bitmask);
-+		__set_bit(hash, bitmask);
- 	}
- 
- write_hash:
+Best regards,
 -- 
-2.30.2
+Jens Axboe
+
 
