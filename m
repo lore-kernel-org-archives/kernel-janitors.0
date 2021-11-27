@@ -2,92 +2,118 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D92C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Nov 2021 17:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F9AC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Nov 2021 19:25:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355663AbhK0Rfz (ORCPT
+        id S1349802AbhK0T2N (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 Nov 2021 12:35:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48136 "EHLO
+        Sat, 27 Nov 2021 14:28:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244168AbhK0Rdx (ORCPT
+        with ESMTP id S234644AbhK0T0M (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 Nov 2021 12:33:53 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13691C061748;
-        Sat, 27 Nov 2021 09:30:39 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id o13so26024653wrs.12;
-        Sat, 27 Nov 2021 09:30:39 -0800 (PST)
+        Sat, 27 Nov 2021 14:26:12 -0500
+Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D68FC06175F
+        for <kernel-janitors@vger.kernel.org>; Sat, 27 Nov 2021 11:21:40 -0800 (PST)
+Received: by mail-yb1-xb2d.google.com with SMTP id d10so29487053ybe.3
+        for <kernel-janitors@vger.kernel.org>; Sat, 27 Nov 2021 11:21:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7vBV1V0UwOB0nNvkc/KUfYZpNF52U4NJO9cyMKDODpE=;
-        b=QWHUbuAlIOQEn0y7gFC+0eFrDk9tSBGXiWs1HsXZeTBkQbsAk8wJqT9oIGBZg39I6j
-         8DhAxsjXzVq02exXN0Nx8ndumfZgOmvabejvQVVoQBjl5LrVpaof/t2G57HxrOmIh8do
-         WI0BX8dMxAItBgYKjfhy08xJY+BZwte4Mof6HAPo8yG2dOyHLE7ErLK3B5F4d2Mb7o87
-         sr6ubPeEg9gYxqCCUXMgkdZUZqOev24pvvDs5AymH8eBu+hilGjz7qoePoBl0xf5tY5k
-         FSFYsDJNHX3wfVLKnLrRrdHyVd+h9JnDXFR6iGgRzgB/YaU+fDXLPTQLQ8nK/yeUqKDv
-         nlWA==
+        d=atishpatra.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GPTEsVd8L/qgtedGXg8tCxgoVeCdwj/SNLHqkRKMp1Q=;
+        b=HRzdwNX78qudIyrJ0A89abuLwyl0Inc+DCkIbl2N8bFzCmhYH0nE2CK22QRmBwrncr
+         uGn0BL+EJjPv7iKBWAYifS9Rtyg55MffQXiypB6mVR7dX+KIwRpR2sZ6q9q6Aa0d14Yl
+         Pg748NC0LMggx/7lGaGG/avAi9B8u67S0ENIE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7vBV1V0UwOB0nNvkc/KUfYZpNF52U4NJO9cyMKDODpE=;
-        b=YAcOb+Rd+De4FysdFzvRkgZ+jVutxrBrvEoL/gxJhXnL+abjHj7CQSJXTDtOZKX6kL
-         NMjhOsD+qNkJRvNg/9BW576xfA/riaIkLvSF5drx8zZDbEdj7hh+hZjDEDCRSNIVc/Bl
-         YUlfEpIBB7c0d8FdAgA7kWIw7RUw79ICsIOGkv45TEzRwAz1SW2NSyyPTl0nhElLXa+q
-         lpNwyQhAIRGyB4HOoKjNu4G2dgwN66e+C1YogasEFC5R/bI4zhwbTCCPRNrDvYAcKL/e
-         6vBhEZRm1zCLauTMRmDYhEoqpNXesK613FAH3FMDHf1g/uwxVgYWeFBRObcWO5CS9d7P
-         dRTA==
-X-Gm-Message-State: AOAM533VhImYgEIUkv046YjuOSciQO8pBMOPoYz8FO8lUE9lc1Vf4yeC
-        6dNg6p/eOlVc9Mjs/v/dOvJe
-X-Google-Smtp-Source: ABdhPJyEdDnihheAH3e28L5SSP3KEtu9/TYjKyUoIqLxgE8YvQNuhRYBpHmJyF90lswN6LAqLhRqeQ==
-X-Received: by 2002:a05:6000:1787:: with SMTP id e7mr21937821wrg.433.1638034237666;
-        Sat, 27 Nov 2021 09:30:37 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id y6sm14227526wma.37.2021.11.27.09.30.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Nov 2021 09:30:37 -0800 (PST)
-From:   Colin Ian King <colin.i.king@googlemail.com>
-X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
-To:     Tero Kristo <kristo@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk/ti/adpll: Make const pointer error a static const array
-Date:   Sat, 27 Nov 2021 17:30:36 +0000
-Message-Id: <20211127173036.150535-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.33.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GPTEsVd8L/qgtedGXg8tCxgoVeCdwj/SNLHqkRKMp1Q=;
+        b=tDE0bRg1tQnJxzTIPiFYwPCuEvEpzXF2NlzaRxebTSTUIhk5zIksypeefHnevlT3MO
+         FZih4k/mbByPdl06SIcVPRvay+FKZTtvw6beoWYSO71NvZ0sPI9KPpSZ5X72LAZcDa8T
+         SU2D7Ijr68iw/Nm/mUWaYSayS/UXiB13xZXHGX+9mbUYyKVv1ElZFf+Lp4OzhLqoYyQ8
+         cuNYJdkidNuKDKc5rkZPeQ+0QdWHKb74B+Vx5YC8lYj/gYdmKsJh0jzSuVCqTrTAdEQo
+         eiik3BYt+Bvu3Rtzij8zCOXQMX+mXMU9P0/9jOxXy3QPRPQmXUcn1wBQ8Sf3jYpO2d+p
+         sMHw==
+X-Gm-Message-State: AOAM531DgtKstkjgJk5xcWx3hiInjDAAkPmDGas+CQbgqbWmq3vfihwT
+        R2bwkHCNEYPiQrOnU0e7xcuomgGKGpQu6a1GlJ1n
+X-Google-Smtp-Source: ABdhPJyo8tW8RoKqYEawGG4QSNv0yHwoeBOkEaHHs7riL9cwzAAM/pZ7pJPUcbyLeMq2fKRhngb3JkrY0DZRB/0O7V4=
+X-Received: by 2002:a25:748d:: with SMTP id p135mr25906993ybc.169.1638040899293;
+ Sat, 27 Nov 2021 11:21:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20211126223123.1125916-1-colin.i.king@gmail.com>
+In-Reply-To: <20211126223123.1125916-1-colin.i.king@gmail.com>
+From:   Atish Patra <atishp@atishpatra.org>
+Date:   Sat, 27 Nov 2021 11:21:28 -0800
+Message-ID: <CAOnJCU+QRiFYjDfDr=7v+k2Th6fTxNzec3z86x-y578+WzSSrw@mail.gmail.com>
+Subject: Re: [PATCH] riscv: perf_event: Remove redundant initialization of
+ variable ret
+To:     colin.i.king@googlemail.com
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-perf-users@vger.kernel.org,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        kernel-janitors@vger.kernel.org,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Make const pointer error a static const array, removes a dereference
-and shrinks object code a little.
+On Fri, Nov 26, 2021 at 2:31 PM Colin Ian King
+<colin.i.king@googlemail.com> wrote:
+>
+> The variable ret is being initialized with a value that is never
+> read, it is being updated later on. The assignment is redundant and
+> can be removed. Clean up the incorrectly indented following
+> declaration of variable code and move to the same line as the
+> declaration of variable ret.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  arch/riscv/kernel/perf_event.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/clk/ti/adpll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This file will be removed in favor of a platform driver that has more
+rich support for perf.
+https://lkml.org/lkml/2021/10/25/1427
 
-diff --git a/drivers/clk/ti/adpll.c b/drivers/clk/ti/adpll.c
-index b341cd990be7..962502ca7ff0 100644
---- a/drivers/clk/ti/adpll.c
-+++ b/drivers/clk/ti/adpll.c
-@@ -807,7 +807,7 @@ static int ti_adpll_init_registers(struct ti_adpll_data *d)
- 
- static int ti_adpll_init_inputs(struct ti_adpll_data *d)
- {
--	const char *error = "need at least %i inputs";
-+	static const char error[] = "need at least %i inputs";
- 	struct clk *clock;
- 	int nr_inputs;
- 
+> diff --git a/arch/riscv/kernel/perf_event.c b/arch/riscv/kernel/perf_event.c
+> index c835f0362d94..cf3e2ac9bbb2 100644
+> --- a/arch/riscv/kernel/perf_event.c
+> +++ b/arch/riscv/kernel/perf_event.c
+> @@ -156,8 +156,7 @@ static int riscv_map_cache_decode(u64 config, unsigned int *type,
+>  static int riscv_map_cache_event(u64 config)
+>  {
+>         unsigned int type, op, result;
+> -       int err = -ENOENT;
+> -               int code;
+> +       int err, code;
+>
+>         err = riscv_map_cache_decode(config, &type, &op, &result);
+>         if (!riscv_pmu->cache_events || err)
+> --
+> 2.33.1
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
+
+
+
 -- 
-2.33.1
-
+Regards,
+Atish
