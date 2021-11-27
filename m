@@ -2,69 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE34C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Nov 2021 17:05:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4328C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Nov 2021 17:24:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234049AbhK0RIj (ORCPT
+        id S235361AbhK0R1P (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 Nov 2021 12:08:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42180 "EHLO
+        Sat, 27 Nov 2021 12:27:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234945AbhK0RGj (ORCPT
+        with ESMTP id S235413AbhK0RZP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 Nov 2021 12:06:39 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32F81C061574;
-        Sat, 27 Nov 2021 09:03:23 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id i5so26004703wrb.2;
-        Sat, 27 Nov 2021 09:03:23 -0800 (PST)
+        Sat, 27 Nov 2021 12:25:15 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3785DC06175B;
+        Sat, 27 Nov 2021 09:21:07 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id d9so5171152wrw.4;
+        Sat, 27 Nov 2021 09:21:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=lS1zair4sK18hzWn/R6s0K/jIJB9uRS8Tf1yrPl4qUE=;
-        b=i6PYEDTEWBxh2uWbOmobmyDf4PFNUCGPjrhW4IBtFqgUj/wjnC942onOaGlorcKY3Q
-         FF2QQnidWU7dTumffSTNPt7Cu3p0SpLPkTQgCic6IKpxWCti61SG1eJ4jOUrUGrXzhmt
-         Pa424m0ujbzK7XmeCkkGp3PUoGsofw9xNatIUWVILZ/5XhlWJmNfZwaLBMgf6A6K30bo
-         c7BhLrEFZKKRvW56w9sgGpmkx3Cipa8EQ/yJaXVmX7OFOr7gSJILZb2H1DSgirxwri/P
-         fEUIGVLWQVHCuJD6lMu+Bh/IdWlifYk90Y8YFO5bHSEXpGTem0G6nGDiLNvai5ka6E6P
-         5XiQ==
+        bh=uY2tL9qhFrzI8JAAY9tCjldOg3akMXRLK2477GuQImA=;
+        b=H+NdGFnAvugCC8rNPmCbHvhKjbupanM/bZP25WuRkD4e8aY9HLoB8+6Bb8VZnlaa8A
+         qwZB5mUSVcfWjdmr4R+lyJw6CKsi+rxwi44GsugDSI3VvnaYp42arO6kWZpISg4riLIb
+         rRjYya0wjgqdvIsOPar9rdqgERtj/g+PLohKNs2D6Zf0uKt3ETgWMzG2abfu70H45GrC
+         p9wKtF0iJusVRxiisTJIw/HnEDmpls8WIwJZ5cg7ddYuBdAajWBfxGYXwoEm0zNsLgbc
+         dp1gJcqwbgCZOHqEaYRxcXfTodkrnrEh6xylg73nz1US6eXjDciv5Vmgk94XtnkbqefG
+         zYlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=lS1zair4sK18hzWn/R6s0K/jIJB9uRS8Tf1yrPl4qUE=;
-        b=B/pGMk3YOeV5NrFP1hiv9DdbGQ15NyWsuQe4rCn+75avA/Dk/f2Lzw6BEbRbpNbIeS
-         Ihxpu5XyNmF3qjwiEp1H0yhwoYZqHgbmOxlSdfZVSBMKqzTeXMVUMznL1wsVGIX9Hl+X
-         77Atx/i9NMP29PweRY9TFeX14PlrrZM6CR27Sb+r3xSjqeWtZTh5Vx0Lr9HPR8tC9ZVF
-         bHqDShH/QFtfd+WpXOCw1spyUrPtfMm2BI1SdpPOa3Qoz2mEdwYcpJplmzaJH5pfSs89
-         +0jUPZoejpSlqIObUVSLXuJFYrjJEf0L23PJc7JCRT4Y/O4RripCkN9sF3qQjheRTXlg
-         fyiA==
-X-Gm-Message-State: AOAM532iYutm5/cU255UhwRX0R4YwkAZTAv1nSscSUOLQqBGqagZw459
-        Y7qiP6fGueXhRg==
-X-Google-Smtp-Source: ABdhPJy+pishnTF0Jp3O1BLFoly/fFQfUlwkVKDWYJt8ktJqLJeucMMflxmOFNywu5S0QOwkVJHhZA==
-X-Received: by 2002:adf:fe81:: with SMTP id l1mr22456857wrr.522.1638032602333;
-        Sat, 27 Nov 2021 09:03:22 -0800 (PST)
+        bh=uY2tL9qhFrzI8JAAY9tCjldOg3akMXRLK2477GuQImA=;
+        b=fNaPiVn2XmqeSa+eHFMHJML7SriRtoxxq1irk1kdjbhysaC4/qRT71ldpfxJnLjxWR
+         hYqM17gi64+blc54ZyHavF+ZRvEJpZ66M4lnzN3TI6jIY3G9GwUc4MyEbucjlLCMn9qU
+         ToO5G1CNVETZEkXiuZYiRlEYn6oLNwXOlJ95LgwEgows4TCMP97H1SMRFvaXFMifSbPz
+         CyrPRg5e8OLTcHAi/v2A4P60OI6RNZ/2q1ZfSfPFlpN/SjZLlR6mZufhPspyVFa1h/Ni
+         iujbm47hL9ihHaN0vMaBio+0qoqPnHDXOqSM/tSQn6smRnxjnD7RLARfp0EXRnmYK/GM
+         yy2A==
+X-Gm-Message-State: AOAM532+zXKZABOnY93SA+vkdKPX3+eRPDQJFWqwrirs8eNgIGwXWOyg
+        OnNVUppcrXkoeA==
+X-Google-Smtp-Source: ABdhPJzCIXEHX9OSLEoedHwOkytNNervPV6S1X3Zig+KJ2ybnw6WLYz9rx8s4dr0p7t7Ujo/eCQTMQ==
+X-Received: by 2002:a5d:66cd:: with SMTP id k13mr21821581wrw.517.1638033665798;
+        Sat, 27 Nov 2021 09:21:05 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id k187sm15177446wme.0.2021.11.27.09.03.21
+        by smtp.gmail.com with ESMTPSA id l5sm15666441wms.16.2021.11.27.09.21.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Nov 2021 09:03:22 -0800 (PST)
+        Sat, 27 Nov 2021 09:21:05 -0800 (PST)
 From:   Colin Ian King <colin.i.king@googlemail.com>
 X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
-To:     Steve Wahl <steve.wahl@hpe.com>, Mike Travis <mike.travis@hpe.com>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        platform-driver-x86@vger.kernel.org
+To:     Ilya Dryomov <idryomov@gmail.com>,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        Jens Axboe <axboe@kernel.dk>, ceph-devel@vger.kernel.org,
+        linux-block@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/platform/uv: make const pointer dots a static const array
-Date:   Sat, 27 Nov 2021 17:03:20 +0000
-Message-Id: <20211127170320.77963-1-colin.i.king@gmail.com>
+Subject: [PATCH] rbd: make const pointer speaces a static const array
+Date:   Sat, 27 Nov 2021 17:21:04 +0000
+Message-Id: <20211127172104.102994-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -73,28 +67,29 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the const array dots on the stack but make it static
+Don't populate the const array spaces on the stack but make it static
 const and make the pointer an array to remove a dereference. Shrinks
-object code a few bytes too.
+object code a little too.  Also clean up intent, currently it is spaces
+and should be a tab.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- arch/x86/platform/uv/uv_nmi.c | 2 +-
+ drivers/block/rbd.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/platform/uv/uv_nmi.c b/arch/x86/platform/uv/uv_nmi.c
-index 1e9ff28bc2e0..2c69a0c30632 100644
---- a/arch/x86/platform/uv/uv_nmi.c
-+++ b/arch/x86/platform/uv/uv_nmi.c
-@@ -725,7 +725,7 @@ static void uv_nmi_dump_cpu_ip(int cpu, struct pt_regs *regs)
-  */
- static void uv_nmi_dump_state_cpu(int cpu, struct pt_regs *regs)
- {
--	const char *dots = " ................................. ";
-+	static const char dots[] = " ................................. ";
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 8f140da1efe3..de7ede6aa95a 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -6189,7 +6189,7 @@ static inline size_t next_token(const char **buf)
+         * These are the characters that produce nonzero for
+         * isspace() in the "C" and "POSIX" locales.
+         */
+-        const char *spaces = " \f\n\r\t\v";
++	static const char spaces[] = " \f\n\r\t\v";
  
- 	if (cpu == 0)
- 		uv_nmi_dump_cpu_ip_hdr();
+         *buf += strspn(*buf, spaces);	/* Find start of token */
+ 
 -- 
 2.33.1
 
