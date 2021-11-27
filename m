@@ -2,63 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4328C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Nov 2021 17:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E64C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Nov 2021 17:28:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235361AbhK0R1P (ORCPT
+        id S1346150AbhK0RbW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 Nov 2021 12:27:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46244 "EHLO
+        Sat, 27 Nov 2021 12:31:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235413AbhK0RZP (ORCPT
+        with ESMTP id S244168AbhK0R3V (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 Nov 2021 12:25:15 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3785DC06175B;
-        Sat, 27 Nov 2021 09:21:07 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id d9so5171152wrw.4;
-        Sat, 27 Nov 2021 09:21:07 -0800 (PST)
+        Sat, 27 Nov 2021 12:29:21 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C848C061746;
+        Sat, 27 Nov 2021 09:26:06 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id j3so26119876wrp.1;
+        Sat, 27 Nov 2021 09:26:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=uY2tL9qhFrzI8JAAY9tCjldOg3akMXRLK2477GuQImA=;
-        b=H+NdGFnAvugCC8rNPmCbHvhKjbupanM/bZP25WuRkD4e8aY9HLoB8+6Bb8VZnlaa8A
-         qwZB5mUSVcfWjdmr4R+lyJw6CKsi+rxwi44GsugDSI3VvnaYp42arO6kWZpISg4riLIb
-         rRjYya0wjgqdvIsOPar9rdqgERtj/g+PLohKNs2D6Zf0uKt3ETgWMzG2abfu70H45GrC
-         p9wKtF0iJusVRxiisTJIw/HnEDmpls8WIwJZ5cg7ddYuBdAajWBfxGYXwoEm0zNsLgbc
-         dp1gJcqwbgCZOHqEaYRxcXfTodkrnrEh6xylg73nz1US6eXjDciv5Vmgk94XtnkbqefG
-         zYlA==
+        bh=r/ozYoR08H/XXW9Gao2CC3lzOc6yYZ/UMoGZeifS3Ss=;
+        b=n1tLH6HOp5+n2CGCEA8o4LvlRsI+8OnwJlYyCxPPXsqtX+OFCEAj+38QewTDKd7+uw
+         RIMhKluImQqvOnQDjb/viZjNrQQpV+P0DGbBwPP7dWwP7w0YnvoBFp5xlKgfZEPIm2SK
+         6q+HmqVV35iNmEDkkqK8GbO4UIjSAr/BoiaDvoRjiWqngVoxd4GzD8Wbrzi0JSZEMq8O
+         uOy8JIA0QgFJlTKtBGJbpaN7KngHXb3Qf/UjcIWUbieSuNPeZ3yrho+BV7N3Gt+xG6eY
+         IZu/LwPqmoFViXgo1S2m0c5OTqFcruUGtjeJfRkyJ+UUjXgD+JTsqB0M+qUod34Xavh4
+         N2pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=uY2tL9qhFrzI8JAAY9tCjldOg3akMXRLK2477GuQImA=;
-        b=fNaPiVn2XmqeSa+eHFMHJML7SriRtoxxq1irk1kdjbhysaC4/qRT71ldpfxJnLjxWR
-         hYqM17gi64+blc54ZyHavF+ZRvEJpZ66M4lnzN3TI6jIY3G9GwUc4MyEbucjlLCMn9qU
-         ToO5G1CNVETZEkXiuZYiRlEYn6oLNwXOlJ95LgwEgows4TCMP97H1SMRFvaXFMifSbPz
-         CyrPRg5e8OLTcHAi/v2A4P60OI6RNZ/2q1ZfSfPFlpN/SjZLlR6mZufhPspyVFa1h/Ni
-         iujbm47hL9ihHaN0vMaBio+0qoqPnHDXOqSM/tSQn6smRnxjnD7RLARfp0EXRnmYK/GM
-         yy2A==
-X-Gm-Message-State: AOAM532+zXKZABOnY93SA+vkdKPX3+eRPDQJFWqwrirs8eNgIGwXWOyg
-        OnNVUppcrXkoeA==
-X-Google-Smtp-Source: ABdhPJzCIXEHX9OSLEoedHwOkytNNervPV6S1X3Zig+KJ2ybnw6WLYz9rx8s4dr0p7t7Ujo/eCQTMQ==
-X-Received: by 2002:a5d:66cd:: with SMTP id k13mr21821581wrw.517.1638033665798;
-        Sat, 27 Nov 2021 09:21:05 -0800 (PST)
+        bh=r/ozYoR08H/XXW9Gao2CC3lzOc6yYZ/UMoGZeifS3Ss=;
+        b=Z3GoVKG6D7j3YR+Vwwst+C7zLgMR6tV20y57MxD0f/jGJNdaaXp6DELpVBCh72uJlu
+         P339Adb/oufv+PdMVIcX00urcb1xirEPO1jh4s5q2i1IdyaH6nrh/TS6jQMzR0QoH6vX
+         9VgCgmgmB5h71JNMmo9Z4/d0W+ugU/U7Id9Tp1v70Nvf/h2aVCQcT+7j4TgJABFTSJqO
+         i/ek+f0e+Fd8P6tM6Z1g6zvY73DsDjoecDqJPtSr5axXRNXb6tDFHyQl5sjxQfHVuWpE
+         n8Wlp2EYfdEzJ/C+rvqhgFTc3yrI+eppqpYHFysH+8faZJtZacWXJ4MALjp+blwgNf3n
+         MuKA==
+X-Gm-Message-State: AOAM530J413w01JZ04x2wO3aL0x5XDVOI9bF4vST7HpZUu2+R6tdb8tL
+        eu2O85AFAGWdPA==
+X-Google-Smtp-Source: ABdhPJxzt++dlNdWq40q40ITInoJudc5jVmSXPUYFSSjX9Vw6WDE0SvpssXN0Qddhzy0k/aTpSB4lg==
+X-Received: by 2002:a05:6000:188c:: with SMTP id a12mr20961328wri.92.1638033965237;
+        Sat, 27 Nov 2021 09:26:05 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id l5sm15666441wms.16.2021.11.27.09.21.05
+        by smtp.gmail.com with ESMTPSA id w22sm2219198wmi.27.2021.11.27.09.26.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Nov 2021 09:21:05 -0800 (PST)
+        Sat, 27 Nov 2021 09:26:04 -0800 (PST)
 From:   Colin Ian King <colin.i.king@googlemail.com>
 X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
-To:     Ilya Dryomov <idryomov@gmail.com>,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        Jens Axboe <axboe@kernel.dk>, ceph-devel@vger.kernel.org,
-        linux-block@vger.kernel.org
+To:     Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rbd: make const pointer speaces a static const array
-Date:   Sat, 27 Nov 2021 17:21:04 +0000
-Message-Id: <20211127172104.102994-1-colin.i.king@gmail.com>
+Subject: [PATCH] tpm: make const pointer desc a static const array
+Date:   Sat, 27 Nov 2021 17:26:04 +0000
+Message-Id: <20211127172604.126322-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -67,29 +66,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the const array spaces on the stack but make it static
-const and make the pointer an array to remove a dereference. Shrinks
-object code a little too.  Also clean up intent, currently it is spaces
-and should be a tab.
+Make const pointer desc a static const array, removes a dereference
+and shrinks object code a few bytes.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/block/rbd.c | 2 +-
+ drivers/char/tpm/tpm_tis_core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 8f140da1efe3..de7ede6aa95a 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -6189,7 +6189,7 @@ static inline size_t next_token(const char **buf)
-         * These are the characters that produce nonzero for
-         * isspace() in the "C" and "POSIX" locales.
-         */
--        const char *spaces = " \f\n\r\t\v";
-+	static const char spaces[] = " \f\n\r\t\v";
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index b2659a4c4016..649b4229e76e 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -716,7 +716,7 @@ static irqreturn_t tis_int_handler(int dummy, void *dev_id)
  
-         *buf += strspn(*buf, spaces);	/* Find start of token */
- 
+ static int tpm_tis_gen_interrupt(struct tpm_chip *chip)
+ {
+-	const char *desc = "attempting to generate an interrupt";
++	static const char desc[] = "attempting to generate an interrupt";
+ 	u32 cap2;
+ 	cap_t cap;
+ 	int ret;
 -- 
 2.33.1
 
