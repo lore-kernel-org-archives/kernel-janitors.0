@@ -2,38 +2,36 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE172C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Nov 2021 13:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2566DC433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Nov 2021 13:33:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238067AbhK2NRN (ORCPT
+        id S242830AbhK2Ngj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 29 Nov 2021 08:17:13 -0500
-Received: from foss.arm.com ([217.140.110.172]:39010 "EHLO foss.arm.com"
+        Mon, 29 Nov 2021 08:36:39 -0500
+Received: from foss.arm.com ([217.140.110.172]:39516 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232071AbhK2NPN (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 29 Nov 2021 08:15:13 -0500
+        id S243004AbhK2Neh (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 29 Nov 2021 08:34:37 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 724A0150C;
-        Mon, 29 Nov 2021 05:11:55 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EF86D1042;
+        Mon, 29 Nov 2021 05:31:19 -0800 (PST)
 Received: from e123427-lin.arm.com (unknown [10.57.34.225])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 738B53F766;
-        Mon, 29 Nov 2021 05:11:52 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E9C6F3F766;
+        Mon, 29 Nov 2021 05:31:17 -0800 (PST)
 From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     nsaenz@kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        f.fainelli@gmail.com, robh@kernel.org, jim2101024@gmail.com,
-        kw@linux.com, Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        bhelgaas@google.com
+To:     kw@linux.com, bhelgaas@google.com, swboyd@chromium.org,
+        robh@kernel.org, svarbanov@mm-sol.com, agross@kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        pmaliset@codeaurora.org, bjorn.andersson@linaro.org
 Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org
-Subject: Re: [PATCH] PCI: brcmstb: Declare a bitmap as a bitmap, not as a plain 'unsigned long'
-Date:   Mon, 29 Nov 2021 13:11:45 +0000
-Message-Id: <163819142462.10670.2516167038486090067.b4-ty@arm.com>
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI: qcom: Fix an error handling path in 'qcom_pcie_probe()'
+Date:   Mon, 29 Nov 2021 13:30:55 +0000
+Message-Id: <163819262283.21004.1141413014119592076.b4-ty@arm.com>
 X-Mailer: git-send-email 2.31.0
-In-Reply-To: <e6d9da2112aab2939d1507b90962d07bfd735b4c.1636273671.git.christophe.jaillet@wanadoo.fr>
-References: <e6d9da2112aab2939d1507b90962d07bfd735b4c.1636273671.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <4d03c636193f64907c8dacb17fa71ed05fd5f60c.1636220582.git.christophe.jaillet@wanadoo.fr>
+References: <4d03c636193f64907c8dacb17fa71ed05fd5f60c.1636220582.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -41,19 +39,20 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 7 Nov 2021 09:32:58 +0100, Christophe JAILLET wrote:
-> The 'used' field of 'struct brcm_msi' is used as a bitmap. So it should
-> be declared as so (i.e. unsigned long *).
+On Sat, 6 Nov 2021 18:44:52 +0100, Christophe JAILLET wrote:
+> If 'of_device_get_match_data()' fails, previous 'pm_runtime_get_sync()/
+> pm_runtime_enable()' should be undone.
 > 
-> This fixes an harmless Coverity warning about array vs singleton usage.
+> To fix it, the easiest is to move this block of code before the memory
+> allocations and the pm_runtime_xxx calls.
 > 
-> This bitmap can be BRCM_INT_PCI_MSI_LEGACY_NR or BRCM_INT_PCI_MSI_NR long.
-> So, while at it, document it, should it help someone in the future.
+> 
+> [...]
 
-Applied to pci/brcmstb, thanks!
+Applied to pci/qcom, thanks!
 
-[1/1] PCI: brcmstb: Declare a bitmap as a bitmap, not as a plain 'unsigned long'
-      https://git.kernel.org/lpieralisi/pci/c/3e46790d16
+[1/1] PCI: qcom: Fix an error handling path in 'qcom_pcie_probe()'
+      https://git.kernel.org/lpieralisi/pci/c/4e0e90539b
 
 Thanks,
 Lorenzo
