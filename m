@@ -2,67 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1242DC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Nov 2021 21:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B60C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Nov 2021 23:06:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231657AbhK2V6u (ORCPT
+        id S237095AbhK2XJg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 29 Nov 2021 16:58:50 -0500
-Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:55378 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230349AbhK2V4t (ORCPT
+        Mon, 29 Nov 2021 18:09:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40426 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237121AbhK2XIl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 29 Nov 2021 16:56:49 -0500
-Received: from pop-os.home ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id roaWmkOaeRLGproaWmw5eq; Mon, 29 Nov 2021 22:53:29 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 29 Nov 2021 22:53:29 +0100
-X-ME-IP: 86.243.171.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     mw@semihalf.com, linux@armlinux.org.uk, davem@davemloft.net,
-        kuba@kernel.org, atenart@kernel.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] net: marvell: mvpp2: Fix the computation of shared CPUs
-Date:   Mon, 29 Nov 2021 22:53:27 +0100
-Message-Id: <1093499694f6b375617197eae87db2083a17aaf4.1638222729.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Mon, 29 Nov 2021 18:08:41 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B79A5C093B6C;
+        Mon, 29 Nov 2021 12:09:39 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 14106CE13F9;
+        Mon, 29 Nov 2021 20:09:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2C32C53FC7;
+        Mon, 29 Nov 2021 20:09:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638216576;
+        bh=HdIvwUw01pQG2zy2l1sOI1S6QWrIy1eeE7pkego8dWQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=OOQ+WfbCyIcoZPueiw2jpFttexN0cv+ShoJPQWx6anEaIT8gsipRD6Fgr82fRDwT1
+         T+VVCCGyPCnfc91RMiW0RfivfUlXnfKTcdn5GQQt6WZ9c57HqePs0uzS3Tc8/+XuCg
+         p3MYvNaVqm8DPgJ1m8LeOGQdM0U8MdOw/1dMqqNSsxCHSI+XBastAh078AUYHSLSPG
+         B3u5XtXN1cNt3TUIZTc0bsW8tliD77c3csYAZR4kjEiyV52jjtzHfKrE71Ymn7qPNY
+         kvWpNDARu0NrlL8XHgKfmtfT3iWJtV6UrBgS8LXMOcQ0z9w5Ss3RLjU/F8e2lRaEeV
+         zujpgeOvGqZOQ==
+Message-ID: <455f66b569d81606e05775c4ac04a4b16e4c1782.camel@kernel.org>
+Subject: Re: [PATCH] tpm: make const pointer desc a static const array
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Colin Ian King <colin.i.king@googlemail.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 29 Nov 2021 22:09:33 +0200
+In-Reply-To: <20211127172604.126322-1-colin.i.king@gmail.com>
+References: <20211127172604.126322-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.40.4-1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'bitmap_fill()' fills a bitmap one 'long' at a time.
-It is likely that an exact number of bits is expected.
+On Sat, 2021-11-27 at 17:26 +0000, Colin Ian King wrote:
+> Make const pointer desc a static const array, removes a dereference
+> and shrinks object code a few bytes.
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+> =C2=A0drivers/char/tpm/tpm_tis_core.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_c=
+ore.c
+> index b2659a4c4016..649b4229e76e 100644
+> --- a/drivers/char/tpm/tpm_tis_core.c
+> +++ b/drivers/char/tpm/tpm_tis_core.c
+> @@ -716,7 +716,7 @@ static irqreturn_t tis_int_handler(int dummy, void *d=
+ev_id)
+> =C2=A0
+> =C2=A0static int tpm_tis_gen_interrupt(struct tpm_chip *chip)
+> =C2=A0{
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0const char *desc =3D "attempti=
+ng to generate an interrupt";
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0static const char desc[] =3D "=
+attempting to generate an interrupt";
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 cap2;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0cap_t cap;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ret;
 
-Use 'bitmap_set()' instead in order not to set unexpected bits.
+I'd rather go for:
 
-Fixes: e531f76757eb ("net: mvpp2: handle cases where more CPUs are available than s/w threads")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Having extra bits set looks harmless to me, but would require some
-unneeded locking.
----
- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+#define TPM_TIS_GEN_INTERRUPT_DESC "attempting to generate an interrupt"
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-index a48e804c46f2..252e215a14f1 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -7454,7 +7454,7 @@ static int mvpp2_probe(struct platform_device *pdev)
- 
- 	shared = num_present_cpus() - priv->nthreads;
- 	if (shared > 0)
--		bitmap_fill(&priv->lock_map,
-+		bitmap_set(&priv->lock_map, 0,
- 			    min_t(int, shared, MVPP2_MAX_THREADS));
- 
- 	for (i = 0; i < MVPP2_MAX_THREADS; i++) {
--- 
-2.30.2
-
+/Jarkko
