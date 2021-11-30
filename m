@@ -2,119 +2,153 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1736C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 30 Nov 2021 16:30:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79467C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 30 Nov 2021 16:55:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243864AbhK3Qdt (ORCPT
+        id S243070AbhK3Q7K (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 30 Nov 2021 11:33:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56604 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243846AbhK3Qdr (ORCPT
+        Tue, 30 Nov 2021 11:59:10 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:43856 "EHLO
+        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238952AbhK3Q7J (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 30 Nov 2021 11:33:47 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F679C061574;
-        Tue, 30 Nov 2021 08:30:27 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id y12so89207439eda.12;
-        Tue, 30 Nov 2021 08:30:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=DsOmc2w83jCCkTXB0HfUYzD8fzPF4maqoG8bwemsFe0=;
-        b=lFtV6fWeCTpRcm2a4AhNpgWYrWDfsAzdKy4YtOAaANNrMnJV1NLNnh3wp7w9gerQ1Q
-         j5M3hm8t+QFiGcar3EcHCckfTmMi42KOd3p5KAQF3tu4czTS5vd738EWM3uUwqsLY8vd
-         OBlx42vvejYzVh8vESWOm5hnM2TvSa2CdvqQsADAfQXRb3/8/8vZmqMpL4Hr2q0biaNM
-         QOeXZjJvnEiWhmmzMOPNysLY8Apjp0FdsZQ6FoEShzVy8Xj+nwhH57Kc6S09NoV10tMW
-         TkTEu5TTu2lNfkSkSoILtELCmY49pSSwr4OgeaEA7MZmSjhn0TZX+uR0kwIPHNvoEb5o
-         J7Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
-         :subject:content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=DsOmc2w83jCCkTXB0HfUYzD8fzPF4maqoG8bwemsFe0=;
-        b=d+PXk6zRnUkaxNjWJFzSvIFlWLfqlwuhRSGaqQ7s+bw4zXScOQjh9GPXuPEQWdCRHg
-         Wl947hVd/sLbRMjGrosCiiqFkGRkcPR83Sjj3Ol9YsHvSM5INzgYowPPBBRmTfkHTU9V
-         cV4egkujbE0E3FSZoxkmVy1rH5hlC8vsxIFO8sHgsXSTbZBlEzVIKJSVO2V6MNjU9kqz
-         dhHG68nZYrgZFIko5n2Z+uREy751rk8+YwasjCIaWvaN7DowZhPTJ0vxTuMo0LDwDwL2
-         DwW2jLlV3ubjh7m+8ejD8F1QcbJjnt8w+uZQOZlE4qOYtb5btGzcY83jybmCY4CrUHL0
-         jOmw==
-X-Gm-Message-State: AOAM530exYQQgyyrhCyYnvIsMu6WhctmcNpa9kTDZuRD7RsmWi0UFNIm
-        E3XLvm5oA1ijfEHGeCdL9Zw=
-X-Google-Smtp-Source: ABdhPJzDajCFfIB/lSvWEvM3dafZmgJCtC0I/KBdzagN9LMhqmokukLs3ifBB7smg58lNBRAtoVh7w==
-X-Received: by 2002:a17:906:6a08:: with SMTP id qw8mr197371ejc.200.1638289826211;
-        Tue, 30 Nov 2021 08:30:26 -0800 (PST)
-Received: from ?IPV6:2001:b07:add:ec09:c399:bc87:7b6c:fb2a? ([2001:b07:add:ec09:c399:bc87:7b6c:fb2a])
-        by smtp.googlemail.com with ESMTPSA id sc7sm10677827ejc.50.2021.11.30.08.30.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Nov 2021 08:30:25 -0800 (PST)
-Sender: Paolo Bonzini <paolo.bonzini@gmail.com>
-Message-ID: <edcdcf27-384c-6dd9-ec91-4b0e45c8cade@redhat.com>
-Date:   Tue, 30 Nov 2021 17:30:12 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH] KVM: VMX: Set failure code in prepare_vmcs02()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Oliver Upton <oupton@google.com>
-Cc:     Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Krish Sadhukhan <krish.sadhukhan@oracle.com>,
-        Peter Shier <pshier@google.com>, kvm@vger.kernel.org,
+        Tue, 30 Nov 2021 11:59:09 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id C3785CE1A7B;
+        Tue, 30 Nov 2021 16:55:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1878C53FC7;
+        Tue, 30 Nov 2021 16:55:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638291347;
+        bh=YkEoSmWzjqSns21oDlublZ8L9PXWXYHB2QcWBlMNzQc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=D3J/uf1ROWLew2Ud89oM4CnMx3YUAJbaYk1e2af14OAxWNMsUiXO18jNO2D8FAJPr
+         3Ig2IaOMFVFvHUDb5WJ9ALqLYM3dl2hqdZBW+0rWwF5vmOY/rt9rUKm3rD8Pze1wSA
+         Luv4T7VRAeu9ouO5mCsffod5Cpr32G6aNWicZ+1zVCV+4DjZHkwBS/IWe0UhAwL8c3
+         FaMje8n9qHLad9UyMXY1uzarTRfhvWVT4iMoUWTLWEqW/XrTiUemyCjcg+kmH61bzx
+         HBKhwZX3K19/0rd69hi2CW97Pk/7rXTosbINVuGjW4X7P5C7imSS1R9XzmTNTTPNUF
+         TDCdis1BZZ+Nw==
+Date:   Tue, 30 Nov 2021 10:55:45 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     lorenzo.pieralisi@arm.com, robh@kernel.org, kw@linux.com,
+        bhelgaas@google.com, michal.simek@xilinx.com,
+        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20211130125337.GB24578@kili>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-In-Reply-To: <20211130125337.GB24578@kili>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] PCI: xilinx-nwl: Simplify code and fix a memory leak
+Message-ID: <20211130165545.GA2743072@bhelgaas>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5483f10a44b06aad55728576d489adfa16c3be91.1636279388.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 11/30/21 13:53, Dan Carpenter wrote:
-> The error paths in the prepare_vmcs02() function are supposed to set
-> *entry_failure_code but this path does not.  It leads to using an
-> uninitialized variable in the caller.
+On Sun, Nov 07, 2021 at 11:04:43AM +0100, Christophe JAILLET wrote:
+> Allocate space for 'bitmap' in 'struct nwl_msi' at build time instead of
+> dynamically allocating the memory at runtime.
+
+Definitely a good change.  To be pedantic, I don't think this converts
+the alloc to *build* time.  It converts it to probe-time, when
+nwl_pcie_probe() calls devm_pci_alloc_host_bridge().
+
+> This simplifies code (especially error handling paths) and avoid some
+> open-coded arithmetic in allocator arguments
 > 
-> Fixes: 71f7347025bf ("KVM: nVMX: Load GUEST_IA32_PERF_GLOBAL_CTRL MSR on VM-Entry")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> This also fixes a potential memory leak. The bitmap was never freed. It is
+> now part of a managed resource.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->   arch/x86/kvm/vmx/nested.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
+>  drivers/pci/controller/pcie-xilinx-nwl.c | 30 ++++++------------------
+>  1 file changed, 7 insertions(+), 23 deletions(-)
 > 
-> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> index 315fa456d368..f321300883f9 100644
-> --- a/arch/x86/kvm/vmx/nested.c
-> +++ b/arch/x86/kvm/vmx/nested.c
-> @@ -2594,8 +2594,10 @@ static int prepare_vmcs02(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
->   
->   	if ((vmcs12->vm_entry_controls & VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL) &&
->   	    WARN_ON_ONCE(kvm_set_msr(vcpu, MSR_CORE_PERF_GLOBAL_CTRL,
-> -				     vmcs12->guest_ia32_perf_global_ctrl)))
-> +				     vmcs12->guest_ia32_perf_global_ctrl))) {
-> +		*entry_failure_code = ENTRY_FAIL_DEFAULT;
->   		return -EINVAL;
-> +	}
->   
->   	kvm_rsp_write(vcpu, vmcs12->guest_rsp);
->   	kvm_rip_write(vcpu, vmcs12->guest_rip);
+> diff --git a/drivers/pci/controller/pcie-xilinx-nwl.c b/drivers/pci/controller/pcie-xilinx-nwl.c
+> index a72b4f9a2b00..40d070e54ad2 100644
+> --- a/drivers/pci/controller/pcie-xilinx-nwl.c
+> +++ b/drivers/pci/controller/pcie-xilinx-nwl.c
+> @@ -146,7 +146,7 @@
+>  
+>  struct nwl_msi {			/* MSI information */
+>  	struct irq_domain *msi_domain;
+> -	unsigned long *bitmap;
+> +	DECLARE_BITMAP(bitmap, INT_PCI_MSI_NR);
+>  	struct irq_domain *dev_domain;
+>  	struct mutex lock;		/* protect bitmap variable */
+>  	int irq_msi0;
+> @@ -335,12 +335,10 @@ static void nwl_pcie_leg_handler(struct irq_desc *desc)
+>  
+>  static void nwl_pcie_handle_msi_irq(struct nwl_pcie *pcie, u32 status_reg)
+>  {
+> -	struct nwl_msi *msi;
+> +	struct nwl_msi *msi = &pcie->msi;
+>  	unsigned long status;
+>  	u32 bit;
+>  
+> -	msi = &pcie->msi;
+> -
+>  	while ((status = nwl_bridge_readl(pcie, status_reg)) != 0) {
+>  		for_each_set_bit(bit, &status, 32) {
+>  			nwl_bridge_writel(pcie, 1 << bit, status_reg);
+> @@ -560,30 +558,21 @@ static int nwl_pcie_enable_msi(struct nwl_pcie *pcie)
+>  	struct nwl_msi *msi = &pcie->msi;
+>  	unsigned long base;
+>  	int ret;
+> -	int size = BITS_TO_LONGS(INT_PCI_MSI_NR) * sizeof(long);
+>  
+>  	mutex_init(&msi->lock);
+>  
+> -	msi->bitmap = kzalloc(size, GFP_KERNEL);
+> -	if (!msi->bitmap)
+> -		return -ENOMEM;
+> -
+>  	/* Get msi_1 IRQ number */
+>  	msi->irq_msi1 = platform_get_irq_byname(pdev, "msi1");
+> -	if (msi->irq_msi1 < 0) {
+> -		ret = -EINVAL;
+> -		goto err;
+> -	}
+> +	if (msi->irq_msi1 < 0)
+> +		return -EINVAL;
+>  
+>  	irq_set_chained_handler_and_data(msi->irq_msi1,
+>  					 nwl_pcie_msi_handler_high, pcie);
+>  
+>  	/* Get msi_0 IRQ number */
+>  	msi->irq_msi0 = platform_get_irq_byname(pdev, "msi0");
+> -	if (msi->irq_msi0 < 0) {
+> -		ret = -EINVAL;
+> -		goto err;
+> -	}
+> +	if (msi->irq_msi0 < 0)
+> +		return -EINVAL;
+>  
+>  	irq_set_chained_handler_and_data(msi->irq_msi0,
+>  					 nwl_pcie_msi_handler_low, pcie);
+> @@ -592,8 +581,7 @@ static int nwl_pcie_enable_msi(struct nwl_pcie *pcie)
+>  	ret = nwl_bridge_readl(pcie, I_MSII_CAPABILITIES) & MSII_PRESENT;
+>  	if (!ret) {
+>  		dev_err(dev, "MSI not present\n");
+> -		ret = -EIO;
+> -		goto err;
+> +		return -EIO;
+>  	}
+>  
+>  	/* Enable MSII */
+> @@ -632,10 +620,6 @@ static int nwl_pcie_enable_msi(struct nwl_pcie *pcie)
+>  	nwl_bridge_writel(pcie, MSGF_MSI_SR_LO_MASK, MSGF_MSI_MASK_LO);
+>  
+>  	return 0;
+> -err:
+> -	kfree(msi->bitmap);
+> -	msi->bitmap = NULL;
+> -	return ret;
+>  }
+>  
+>  static int nwl_pcie_bridge_init(struct nwl_pcie *pcie)
+> -- 
+> 2.30.2
 > 
-
-Yeah, I suppose that's the right thing to do (though it really shouldn't 
-happen because the value is checked earlier in 
-nested_vmx_check_guest_state).
-
-Queued, thanks.
-
-Paolo
