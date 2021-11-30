@@ -2,174 +2,260 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 193E4C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 30 Nov 2021 10:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B67FC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 30 Nov 2021 10:44:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235188AbhK3Kov (ORCPT
+        id S235794AbhK3Krj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 30 Nov 2021 05:44:51 -0500
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:41190 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235368AbhK3Koq (ORCPT
+        Tue, 30 Nov 2021 05:47:39 -0500
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:56948 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235656AbhK3Kri (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 30 Nov 2021 05:44:46 -0500
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AU9QROM028188;
-        Tue, 30 Nov 2021 10:41:04 GMT
+        Tue, 30 Nov 2021 05:47:38 -0500
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AU9h2ZI009060;
+        Tue, 30 Nov 2021 10:44:18 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : content-type : mime-version; s=corp-2021-07-09;
- bh=kgnVrAiAPrOq2JZydUTmN9p3HMj24HbJqgI6JeW/M7o=;
- b=P+wJBc3qIsu5ibScLyMz3Z0568c81dUgw28r4Ai+p/gmrwZFJO1WKv9CBrOtsC8PDu6/
- DK4PxGYNvtRFmpUZThrAcWQGcyoSPdhUmy7W0JHIlSLk0Jgb+JeSBRQT6DC2n7Kty4lL
- cnsTqNHFx79go5R/l9RSuWgUYGN+n0wAC3ZYjT/vkgnDthq6LP5xzIh9yudeYqIg/dit
- M2YYarFhU88LzL6OkTu887gocBYmjpVXxwYouTe+mmMHtBef7XXGAo0BsLkBcLicg8jJ
- 3uA7yBOhN0pdp7wfXRxIk2S6m6NJkVl8dD5jQBPi9kU/ccSkPfKbJi9xnvM5FfNxVOYU Og== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3cmu1wfuv7-1
+ bh=rPXssePZzaJUvgoh6zBOu7pAc+URriXe75q5e7uEiCY=;
+ b=XbtZEYs1nXJwe2DTN3wAo/MofAn1SNBpVXgnoev1fOy7kpBBEw9e9GvmK6YBUNwZY808
+ Xsk+7F79T1Pa+RC4mf6dCQIF0z5gIApMZWAfkW45tgzp8xSu7tUgQKlUt/SjJzJGMDKd
+ NjdEP1r13b7KSz29wzU7arabJl3Bb16IDHOAyQsbF11nizEOKqgh9+WQeZUGHLabnLOm
+ azaY0CEryBBi62eMYZ4VDEB0yQa2fvRif00ngFk6KMZaDDOQnrd2jDG7qo04muB21LBM
+ dWeIpXJd4l/lZIIKfpvI3FUWYI/KMklReiCibQISx0W6UB3O0yHodGfokdZfZVr92znM mA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3cmuc9r4q3-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Nov 2021 10:41:03 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1AUAVgVY190889;
-        Tue, 30 Nov 2021 10:41:00 GMT
-Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1anam02lp2046.outbound.protection.outlook.com [104.47.57.46])
-        by aserp3020.oracle.com with ESMTP id 3cnhvchj2w-1
+        Tue, 30 Nov 2021 10:44:14 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1AUAUKKa141082;
+        Tue, 30 Nov 2021 10:44:09 GMT
+Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1anam02lp2044.outbound.protection.outlook.com [104.47.57.44])
+        by userp3020.oracle.com with ESMTP id 3cke4pab14-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Nov 2021 10:41:00 +0000
+        Tue, 30 Nov 2021 10:44:08 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EqreSFtUxI0CNMTonG8P4ho65ZBKxccIYRGEbDf/VxRHPqP0ktbljxqEhejj17ZYc4O9+xDpTemDQeyLRO8rL1wjtGbDF0OSxhWo3pJoyxUYlt4nMkQHK5LrCqXM7s88kzomKsLAtwyboXAr0KETkBkLD6knhwuvAxLwQhopZLQ5WGgbTDj0f3U3NzY3XQ7I2cDs27mKJHYpUzvh+x3qFjJBHLzD5vhEsPQsXEgAyLuS2oEH/Rv3y5yIKWYaJ3fCf5DQlQ71Hha90SIX9Ex5RaffF71Wd9XLha6teyMpVUOsgXnaKhM4Uq0/Ldcvs7Bj7LIRz3mxMkGvxrVOZJNdhQ==
+ b=R/6hKSkvCPsJDtLQbHiLNk+eBn6TdaIl3q0vJCdIDvZYdZ3aXNI7yGarfgaWNyudkYOkzrH1SUo9DZ7m32v3Et7p7iez1mwKO7cm8YveabYLwkOOFf1dxrqO+Tdz88eGri3P0rpCX7EhDpDthJno/nN4oRtVWJxcnsawwqQCc7smhVExM0+cGHdzEn0ipxTTPIOrLnX6qM7S8L0knBeBbfXPROSJqaD1x37MvrgcWulbcJQjzO78B/le6tywfCM6rGSTsgiCC5jyQLA80J7aVEjhvfICVw0lQRUTJRb5iSjkDtmfjRJUjcM7aKhMfHh6k69Vzwg/7o6bGiPmW/LgMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kgnVrAiAPrOq2JZydUTmN9p3HMj24HbJqgI6JeW/M7o=;
- b=CSMiv9sT96lGs09AxdsO83zzkjS8DtIbj4N2RKICBGeqBWMszROK/ckNJGRwrUBfmqQyRiUOUEWo6zu3hbk6/8wmmgy8q1BkFQQmHC6pFnvzcdTFsYQAYFVt6slgAJHvb/HX2huzspYHESosLi9Y0f4eBmrL72KPLS6Fkzh7nAZm2X7LhsodDD+9m1gIo+RZgMAekzMv85pDanGaq1zYK38rbLblT2qMg29ouwAOLG9QYFY0NTCBgFWL2b/WjGhvi97nc4PtMQhzO+vTX08QAzTP9ymd8LfRseQEwTuhm6YSEdJR2e6Q7UErYo4QDoCTVRtEVHaghPRIkielPBR3Bw==
+ bh=rPXssePZzaJUvgoh6zBOu7pAc+URriXe75q5e7uEiCY=;
+ b=T0aT/leTfvuMSIN8HlDV3PRBH8hmY5nhXXbuh8e3xyEg2+mJA9wYf1cBODkXOf3tTaflEIkfjMQLap89JpzHAUZgVcvseYFoort8Ke7WviN+lxUMg9yAS/L6duAMMcQTGRJu1YFKZkWu36iLTIb2JfD4lieD2gO0V8Got0MUtar/SOXRTSIxRKEUQi1g+4xw8X4Xpq5acPJcq9meHSRM5KngPKvM4jKETcXa13HmFM7DLNKxq7o4bt/nf2h9RhoAqLEClJpkOaMNk8NnAoASfdFJXewWihTqvCSVlNJTqglj0coMMrMrSHG90QzQ8ztnvBNin1LsNzlzYEtYysrHwg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kgnVrAiAPrOq2JZydUTmN9p3HMj24HbJqgI6JeW/M7o=;
- b=X1eEeYsARkXmej0p3gJFIM3d0Nii3B5a0WiB5XQWW5SGdrYnMKhJ149WsMmFQ3fHQ1pl9qZlESitrW3Xy+DjZpQfmjqXqXfadOwCXaxf0mk3VwIWGwe5IQuU3ILjHAIKlw3A/rjFx/XVQ6E1FqaP6OgwuFT3YiUxBq9nM/Xu90U=
+ bh=rPXssePZzaJUvgoh6zBOu7pAc+URriXe75q5e7uEiCY=;
+ b=tcdMesvvYL2iQINN3Uec8hFAcwOG5+gCNFlBLGPdIjoIU/KEkon8M1j3Mafdxr0LP1hUcBJ7GBpjAI+umyijo1G2CXRY7ZrAvFTM94f4Sg+qz8kVIxb1AImMkP9bPnV0FlBQdO11Ef/EqJMt8g00oYxBjNcnjRGzdbVKvR2YFhw=
 Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
  (2603:10b6:301:2d::28) by MWHPR10MB1357.namprd10.prod.outlook.com
  (2603:10b6:300:21::14) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4734.23; Tue, 30 Nov
- 2021 10:40:59 +0000
+ 2021 10:44:07 +0000
 Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
  ([fe80::7194:c377:36cc:d9f0]) by MWHPR1001MB2365.namprd10.prod.outlook.com
  ([fe80::7194:c377:36cc:d9f0%6]) with mapi id 15.20.4734.024; Tue, 30 Nov 2021
- 10:40:59 +0000
-Date:   Tue, 30 Nov 2021 13:40:43 +0300
+ 10:44:07 +0000
+Date:   Tue, 30 Nov 2021 13:43:58 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Mark Fasheh <mark@fasheh.com>,
-        Wengang Wang <wen.gang.wang@oracle.com>
-Cc:     Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Sunil Mushran <sunil.mushran@oracle.com>,
-        ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] ocfs2: fix uninitialized variable in ocfs2_dio_wr_get_block()
-Message-ID: <20211130104043.GB5827@kili>
+To:     rsaladi2@marvell.com
+Cc:     kernel-janitors@vger.kernel.org
+Subject: [bug report] octeontx2-pf: Ntuple filters support for VF netdev
+Message-ID: <20211130104358.GF5827@kili>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: ZR0P278CA0127.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:40::6) To MWHPR1001MB2365.namprd10.prod.outlook.com
+X-ClientProxiedBy: ZR0P278CA0180.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:45::7) To MWHPR1001MB2365.namprd10.prod.outlook.com
  (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-Received: from kili (102.222.70.114) by ZR0P278CA0127.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:40::6) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4734.20 via Frontend Transport; Tue, 30 Nov 2021 10:40:52 +0000
+Received: from kili (102.222.70.114) by ZR0P278CA0180.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:45::7) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4734.20 via Frontend Transport; Tue, 30 Nov 2021 10:44:05 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3869521e-f45b-414b-4600-08d9b3ede576
+X-MS-Office365-Filtering-Correlation-Id: 739e8e45-7771-4fd9-5184-08d9b3ee55bb
 X-MS-TrafficTypeDiagnostic: MWHPR10MB1357:
-X-Microsoft-Antispam-PRVS: <MWHPR10MB1357AE97278FA10D073660AC8E679@MWHPR10MB1357.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:4714;
+X-Microsoft-Antispam-PRVS: <MWHPR10MB1357499E35204A732B8E867F8E679@MWHPR10MB1357.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: XhdqSxv/MYui6AGZMyM9K+5BPHPsTYeI0TU+fuyL3KEs9PXkkuZkDG9anig7rCjj/WxftzhneVeqHRsoqQIf+ruwFIsoNHScG3TfLfju579txRoRClO1NsfGnqqvIVjEwp64OIcf5Yh4oHJpsSg1jFqoUtRzTs7Wy/l5nOVfoAkH5qAXAMqvIffZHlIesEw0V/FCvNWAb6DzoBIXK/dsm2vOp77ync8trflZszqHihMvk9Zv/9asiN5HaH0Wfev3rPCqss6JPCrQF/w9K4hNYd8JBujKurThW0ThVHRCa0t0jUXhFtXID/1NywWc1h0fef3Vu/VxOgC9yr9J8KutAWRuF5IWxyNtu6Bu8GbIQb9+lfgJ2wwiqKGGSflbr/bDCePIhvWvxYYR5+dWdzXsN+Owl954PBjjRCxwTo1tPj3QhSY/citbj/PXS1tyVckHqpuFxKypCvT5aKeW/ZbuEJ9V+W2shyRlLmjaVw5HNGjgXkjfOWldVCUSWx8mmAi52TUOozw6aMmMSqEmD+fcUCWUEu+Y9RgC4HmZStvhY6/pi6+rorGWyoR6YA9y1almrSxF9aR70V7ZewuYTtYRS5aFyBHeJ5QwJU3jGwgnQ3wHAdSan47620Dh1hXV7NeHKyxzjh+Bcux73AQn1bdsflgLnTu0xZ46ziczrmXfFcxfJ31g3odOlhEV5KqdHvkublQNmYY3muLGkOtQEAeEyg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(2906002)(33716001)(110136005)(9576002)(316002)(66476007)(54906003)(8936002)(66946007)(44832011)(38100700002)(6666004)(83380400001)(38350700002)(956004)(9686003)(6636002)(26005)(6496006)(186003)(5660300002)(86362001)(33656002)(508600001)(1076003)(8676002)(52116002)(4326008)(66556008)(4744005)(55016003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: 3Z17R+NEqaqe+XvxzbAZewLTvaSr8s/HFSdMoaFfw0zVZBpmFtjF1E72WW6FcWJfKfOQg4yuqiX/jtTG8Yd4z+eqAhHidUl5bRpQpO2nGwp8QXRqW2h8I1b2AxK8nHRE7HyGA5a4ht5nSL7X0b88SsUTL+XcPEngWqI9FzVHXf7a8RiYFzcNNuWyrsvbgp9KhhV8yaGx7gEGENVBmwfmNtlJzMK6M4zCWA82AccZDXuD0eV7Ag3nDXixrqidyWgjaf1qe2gPHdtNNBpiLpWzlKJvZ5oHpxbCn0CriqHSiEJs2sdDx/6GhvdwQUpZ7f3mMXmRmQVPSZBYsgrtIFtlQzusQNJb80KzEh/vhGtCmnES/41XcbC/u0UL2uTIAa484xq/8Ia3WuckCu4Cf0qq806FIcGWutA4aiSWuMnOcnYS1c8NcEolDx0GdRnNFAf3t6qq2MfjrH3rJpZUtxtdBBfeE4DtfzFIfpSXOLB1VAKPbJm92a/VTwqoDjfLfffuRBsMWcO1IKHcIg7HNbpYgl9nzIIGHNd+P8/pZ7YFioT3YjqhzRRX7X+3kxNhZ/Dk8ier3qW0sv6J+dS1bKCedL2wcb7NtXn0ctYW/gW4jQ7D+aMTzxDVVP3XKgrSp56Wv4Pb4x+bQt+aorXGK10N37j8Mq6Lvh2w77Eeo800drSF4XlBuSQx1yBqNBqLLbnS0U7Byux0Mj/NqC4pUYRveg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(26005)(6496006)(186003)(5660300002)(86362001)(9686003)(6916009)(4326008)(52116002)(55016003)(66556008)(8676002)(33656002)(508600001)(1076003)(66476007)(66946007)(44832011)(8936002)(9576002)(2906002)(33716001)(316002)(956004)(83380400001)(38350700002)(38100700002)(6666004);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?73Rri0gtGoA9oZ1K47iFpQLY/08ajHOlfUYeuHc2SK2agCIA7nHHcPj8o7Bh?=
- =?us-ascii?Q?PiLZ17p+FZPBUb22Q0zLwhFTGdmVfNCXCBxSJVfFRzA1STjrrGrOpsjcnIH+?=
- =?us-ascii?Q?nmJcI+29kbArY2RnZFTH4mG6lAeAYm/2NOPPXt7JB3lGRngL712gxggibJl6?=
- =?us-ascii?Q?BoqAsxbi+PK82fU4T6tVg2Dy06Y5fujM/0BksfulOOio2lgl20EufoVf3DvA?=
- =?us-ascii?Q?5eb4A1kMoTD8GhKBS/mPRrgzMo7+k87t0cyL8gu3jUki0SZCURcaAWrrdlQm?=
- =?us-ascii?Q?2iJym3FTpiBbTNChpZXpl3pF6m6JKBjNvn84haN8RnWZ/jBjISzlxC+Pjx/1?=
- =?us-ascii?Q?5fnpphbzLAZgjELA/oC15aMiFTu+el7UaMOdZkaxDgmr31epxCpQFoR5nLrG?=
- =?us-ascii?Q?OY7qE+5qoRYAK739MwbrAe8yEONR50fgLboUCXIhmWvgP3Fs31QsFW+FDyE5?=
- =?us-ascii?Q?bN7Fwsrljo5tD0kv5AwJSOLclJPvIjITPfnXmvv7qkyoqEVjhjSDaWRYNsOX?=
- =?us-ascii?Q?TEWPbJcF2Umhr9Qbl7HHW+NM2YkKlEl5Jm4QRiyTzeqLJKTnRZksCJ8QT65R?=
- =?us-ascii?Q?ADGuMv1KtezlN29rT9DK3iGB2R65Bn8db3kLwu42k1iesOfLbWzQQhX15JPP?=
- =?us-ascii?Q?CxHXhl64cRHzZZoVrwGJWV60h/+ijSqX0scg1BNhq24uvWPaVUXJU7O42l/0?=
- =?us-ascii?Q?wvjeeKJSf375C9EwU3lmFL+AG6zigSwtd74YjeiqBStwPTD+wUSYAwnBhhd3?=
- =?us-ascii?Q?0kj3fMMU0QA/N2V40eciBP9S6RVEAjX/zRnJ+WQx5gn8VZ7GFa5ao/1YQAQM?=
- =?us-ascii?Q?/CO3TnHmKLgCiIvaCGv+H3R81HAjTbPilw1e0MP1UGuSCClgm0hf7ZwUMwl0?=
- =?us-ascii?Q?jiLRJWtFK3MqMPcGp4Ly+0bvDRXzu7jNK7Aplgos7CT35YYfKfNzWklr/s47?=
- =?us-ascii?Q?7Mb3qKoLyDNkkjSHg7/sJxF0zeQ3iqsGuZRob4mh7ssELVx9ZUzbfDOM5v+I?=
- =?us-ascii?Q?3CDR51lmDXbeUcrHLTVHSk6wwt9VdepRmcCxs8UXnWgUwCMFZVS6JR34Ndd5?=
- =?us-ascii?Q?WPmirushBUTyJIjmFdQ3myvJIQw6+BFR1vdeSLPLy2RY4FP8G3r+8FVxoTvL?=
- =?us-ascii?Q?ZkdBaF9xO1LcQ3VTevSRtr1zqcDk/rvVUt4WX3i1Mo5tFve9wWhUbg5X4gHV?=
- =?us-ascii?Q?M7LnOqJItRUDH/WK1sJCODDN1OyywRrdV0DdudUsZk+amibUU/DI3yMWvnKY?=
- =?us-ascii?Q?iTi6RPlB6r/2vRVXXicpHogQJpJQ607nDfQEoxnqibSpFj+jmHZzWBCGKyzZ?=
- =?us-ascii?Q?Whn+Zgw6j9xH8eOGrQ9LZkh3maExIRHqMo1rjdgnqxTuk+Prw8YoKVX7VRvv?=
- =?us-ascii?Q?HMzLPGgRoRhYJPGDOeWhh6zU8U25wdH8Yg1HW1uQSCQ/w/T4G8FEhGA/AkdI?=
- =?us-ascii?Q?Qe7uk+XK8EYBPY+XaeqQKELO6dH3hV2ucFwnl0X0/Ps8AH3seHTgb6PTW/dU?=
- =?us-ascii?Q?PjxVLMqFH3092kJkGn7bK4l9ibiv2+sKKwByAdnsEnsSJm7pNQQ7KgYXiZKH?=
- =?us-ascii?Q?zEhXyM5iNh1kNPLYal0EGX22bLG1vvodatWFned8K1yTWh58NGw3jqF4aZlx?=
- =?us-ascii?Q?zKUEY1MHcjeSUqUUDi4A7monYvnX4ncgv9xDrukcs9tFBEzXztW8XDO3fXNH?=
- =?us-ascii?Q?F5uMsOAIfEMdZAg+15624NRfavM=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ST46MCl87wIyMT8pbkBYJgmXI839EQUR2KyIo8CY6tg3iTk5+q/cVPWq9xdh?=
+ =?us-ascii?Q?cbI0M/+AQQdHU0dextes8xA8j2SCqduHESxJiYfRHJ/wXeYHmvHnqdzsmNEi?=
+ =?us-ascii?Q?hz5Enxt1RIgYtxSFTZ1OvizA9nSHGy5TSe1PKqfMQxPzV+MRQyqsD+ZGV+ij?=
+ =?us-ascii?Q?Y1DGKY+8CvgTKxfgD3O+vg+GlzEsozhLE+ZmlMoBWqG40g1jobHjYil2XDmm?=
+ =?us-ascii?Q?4x0yozIyK5wL8q5tKYGBSZEId9ORrI5/+pBUWj/fANctU2gydReogOkTLA2c?=
+ =?us-ascii?Q?Ary7yB5wHdhOoo006me3I6tpG2ip3i+BRtvSbbNzpefrJmpUdk2xn2GSJvKi?=
+ =?us-ascii?Q?hdIokL0eEQE91kFCXj2/Jm45dSNW9FQtJa8b4vNmFqi/uDL6ITWDFi/EXTU/?=
+ =?us-ascii?Q?vClAR0V/5lmcNEIvTLRZB93P3qsQaI27jfvvy4Mn/IfHC56WSrJv4zupvXq8?=
+ =?us-ascii?Q?VzdpgF/A7L9DguVoVdhLIu4hkXOkPlkNT8iiuoV5QYFeEEgLd/XkVX+3+DcD?=
+ =?us-ascii?Q?pmhsYw6ZXL+/UG9cYtnhe00x2ciGrOeQgJ5MCenPY/+Q5FsBev/tx65MocPn?=
+ =?us-ascii?Q?o/01d5IYUVVVTk4MO4OSCThQjZggUOXQElf+GqBAoSYZY3iGdZF3zEY+ONRW?=
+ =?us-ascii?Q?p/GhkOhE2u6ryjY3awdrJniuJbwiwkt/MMGQm/83wjZL6chxrbvxu3Uff6g7?=
+ =?us-ascii?Q?4Hrp/r8CBQtG2BaEA8ITD5OCrnuCtvhxu0vq0ZHmculfDuQo1AHvWvteJQOb?=
+ =?us-ascii?Q?nncRY/5eRKi/iT8bu/S8gSq5SAPhTDVbN6EXcjEoVvM79eCwR+SmsJsxc49O?=
+ =?us-ascii?Q?CbmEqW/1ovFJhK5BaDk09fs4zBrR0IhVtHhq6w7iVoF7JdBFkBC0xmTIKtk7?=
+ =?us-ascii?Q?HS55c0S0HoiIFu6kT4Scvno1VGT3WeMy7WvaNdRBUfN/Gt7ZTJFAoFktdhQa?=
+ =?us-ascii?Q?LCWWSxhON+QkzLeDC3oF5eQfr2kQrcXJ+3DgeRqaJzukArP5FZX1ICL8Eibk?=
+ =?us-ascii?Q?gjfqUDKvF0x5RKHEs8CnTf4yqa4rURnyctUUrVp85TCKYP+N4k80Bcrbeah9?=
+ =?us-ascii?Q?lzQ2mxd2C+UiQFN3AivPeNOfHErZsFYk6kW7BSYCVZ/zgg9Y+KWL5rJmqB1Q?=
+ =?us-ascii?Q?FqcECIpvOLIjV8ttiiKaFIunfdRx2eTNeCingHDAaLEbumCfDVj5aakYbsa8?=
+ =?us-ascii?Q?yu/1Yr0AyNOcgCejJL9UYVAj+Yje4Q56wW3PtpT/X52gkbJSoVy4iYqfL29+?=
+ =?us-ascii?Q?gTPLIutESnkH2LPAEnecgB2ChjvAEq34MZTvfpTOv1z11LrJnvJo9+/iQnre?=
+ =?us-ascii?Q?Vk3KZDviSOCDyWezMChlqZKL6XpebKvfzDJvVg75zOnQq8qcqvxNyCSes9WP?=
+ =?us-ascii?Q?/64/6pRPoNn+1N3SFfEIVdQBcv6vu43S5R+Dbsd5d4PXq8uPpl9W6211GjK1?=
+ =?us-ascii?Q?TaVkc56+BpyWd6JeNiyQtw3Oo0j3BpPyuct+SeTUdX5KNmtrEcEI5lYqYbZJ?=
+ =?us-ascii?Q?rZoRfbQoy7OE+ftDg6ZpXt80Z7nUVDPpofmKgWoqOt71acdgf0thWme0AD5K?=
+ =?us-ascii?Q?RoVNBmGnTsVXqiqUvdhftwMsF6Tlhzg7hk/Suaj0puzUfNsJXtILbYEniO5C?=
+ =?us-ascii?Q?41kLhIPklxAKnTUTEbMpdK+eAOpRpS73a7oGN14XbTHDeY6QVQOyHnM2QkKa?=
+ =?us-ascii?Q?gV+FwZAMbcYtnqQeNjUxdWzMpms=3D?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3869521e-f45b-414b-4600-08d9b3ede576
+X-MS-Exchange-CrossTenant-Network-Message-Id: 739e8e45-7771-4fd9-5184-08d9b3ee55bb
 X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Nov 2021 10:40:58.9369
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Nov 2021 10:44:07.2762
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: C0lfTSrpJGzdlXASqd/vSvCzyeIShhfo2xDXoYcnn5fEOINoKclg9hxW0gqBfEpnELEEtGmvboX1CjSXTfmHMPuBINV6U5diTII3QnPg48s=
+X-MS-Exchange-CrossTenant-UserPrincipalName: rONGNMVtTeAqzCP11o4oKg+apX7v40S2JBNFj10MO1wMRVdb6Ip9VLy69/oSLZZzpxA5tCuc7qNWHzSxhaSO2ahwFHP6y+4ZcYYbboFg5JY=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR10MB1357
 X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10183 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0 adultscore=0
- bulkscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
- definitions=main-2111300060
-X-Proofpoint-GUID: 4WxwEBm_42exwgwYp-y8TcPWVactkJFj
-X-Proofpoint-ORIG-GUID: 4WxwEBm_42exwgwYp-y8TcPWVactkJFj
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=432
+ phishscore=0 suspectscore=0 spamscore=0 adultscore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2111300060
+X-Proofpoint-GUID: 4JN-9VgUc3NHCEUsd8vgLlw4NWSRxADn
+X-Proofpoint-ORIG-GUID: 4JN-9VgUc3NHCEUsd8vgLlw4NWSRxADn
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The callers assume that "*fsdata" is set on the success path, but
-that's not necessarily true on this path.
+Hello Rakesh Babu,
 
-Fixes: 5cffff9e2986 ("ocfs2: Fix ocfs2_page_mkwrite()")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-Please review this one EXTRA CAREFULLY.  It's from static analysis and
-the truth is I'm not 100% sure it's correct.  I'm also not sure that
-it's a complete fix.
+The patch 3cffaed2136c: "octeontx2-pf: Ntuple filters support for VF
+netdev" from Aug 17, 2021, leads to the following Smatch static
+checker warning:
 
-Especially, please review how this is called from ocfs2_write_begin()
-to make sure that this doesn't break anything.
+    drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c:1247 rvu_mbox_handler_npc_install_flow()
+    error: uninitialized symbol 'nixlf'.
 
+    drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c:392 npc_get_default_entry_action()
+    error: uninitialized symbol 'nixlf'.
 
- fs/ocfs2/aops.c | 1 +
- 1 file changed, 1 insertion(+)
+drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
+    1154 int rvu_mbox_handler_npc_install_flow(struct rvu *rvu,
+    1155                                       struct npc_install_flow_req *req,
+    1156                                       struct npc_install_flow_rsp *rsp)
+    1157 {
+    1158         bool from_vf = !!(req->hdr.pcifunc & RVU_PFVF_FUNC_MASK);
+    1159         struct rvu_switch *rswitch = &rvu->rswitch;
+    1160         int blkaddr, nixlf, err;
+                              ^^^^^
+    1161         struct rvu_pfvf *pfvf;
+    1162         bool pf_set_vfs_mac = false;
+    1163         bool enable = true;
+    1164         u16 target;
+    1165 
+    1166         blkaddr = rvu_get_blkaddr(rvu, BLKTYPE_NPC, 0);
+    1167         if (blkaddr < 0) {
+    1168                 dev_err(rvu->dev, "%s: NPC block not implemented\n", __func__);
+    1169                 return NPC_MCAM_INVALID_REQ;
+    1170         }
+    1171 
+    1172         if (!is_npc_interface_valid(rvu, req->intf))
+    1173                 return NPC_FLOW_INTF_INVALID;
+    1174 
+    1175         if (from_vf && req->default_rule)
+    1176                 return NPC_FLOW_VF_PERM_DENIED;
+    1177 
+    1178         /* Each PF/VF info is maintained in struct rvu_pfvf.
+    1179          * rvu_pfvf for the target PF/VF needs to be retrieved
+    1180          * hence modify pcifunc accordingly.
+    1181          */
+    1182 
+    1183         /* AF installing for a PF/VF */
+    1184         if (!req->hdr.pcifunc)
+    1185                 target = req->vf;
+    1186         /* PF installing for its VF */
+    1187         else if (!from_vf && req->vf) {
+    1188                 target = (req->hdr.pcifunc & ~RVU_PFVF_FUNC_MASK) | req->vf;
+    1189                 pf_set_vfs_mac = req->default_rule &&
+    1190                                 (req->features & BIT_ULL(NPC_DMAC));
+    1191         }
+    1192         /* msg received from PF/VF */
+    1193         else
+    1194                 target = req->hdr.pcifunc;
+    1195 
+    1196         /* ignore chan_mask in case pf func is not AF, revisit later */
+    1197         if (!is_pffunc_af(req->hdr.pcifunc))
+    1198                 req->chan_mask = 0xFFF;
+    1199 
+    1200         err = npc_check_unsupported_flows(rvu, req->features, req->intf);
+    1201         if (err)
+    1202                 return NPC_FLOW_NOT_SUPPORTED;
+    1203 
+    1204         pfvf = rvu_get_pfvf(rvu, target);
+    1205 
+    1206         /* PF installing for its VF */
+    1207         if (req->hdr.pcifunc && !from_vf && req->vf)
+    1208                 set_bit(PF_SET_VF_CFG, &pfvf->flags);
+    1209 
+    1210         /* update req destination mac addr */
+    1211         if ((req->features & BIT_ULL(NPC_DMAC)) && is_npc_intf_rx(req->intf) &&
+    1212             is_zero_ether_addr(req->packet.dmac)) {
+    1213                 ether_addr_copy(req->packet.dmac, pfvf->mac_addr);
+    1214                 eth_broadcast_addr((u8 *)&req->mask.dmac);
+    1215         }
+    1216 
+    1217         /* Proceed if NIXLF is attached or not for TX rules */
+    1218         err = nix_get_nixlf(rvu, target, &nixlf, NULL);
+    1219         if (err && is_npc_intf_rx(req->intf) && !pf_set_vfs_mac)
+    1220                 return NPC_FLOW_NO_NIXLF;
 
-diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
-index 68d11c295dd3..a74a370f16f0 100644
---- a/fs/ocfs2/aops.c
-+++ b/fs/ocfs2/aops.c
-@@ -1813,6 +1813,7 @@ int ocfs2_write_begin_nolock(struct address_space *mapping,
- 	if (ret == -EAGAIN) {
- 		BUG_ON(wc->w_target_page);
- 		ret = 0;
-+		*fsdata = wc;
- 		goto out_quota;
- 	}
- 
--- 
-2.20.1
+If nix_get_nixlf() fails then "nixlf" is not necessarily initialized and
+then if is_npc_intf_rx() is true or pf_set_vfs_mac is false then this
+will not return.
 
+    1221 
+    1222         /* don't enable rule when nixlf not attached or initialized */
+    1223         if (!(is_nixlf_attached(rvu, target) &&
+    1224               test_bit(NIXLF_INITIALIZED, &pfvf->flags)))
+    1225                 enable = false;
+    1226 
+    1227         /* Packets reaching NPC in Tx path implies that a
+    1228          * NIXLF is properly setup and transmitting.
+    1229          * Hence rules can be enabled for Tx.
+    1230          */
+    1231         if (is_npc_intf_tx(req->intf))
+    1232                 enable = true;
+    1233 
+    1234         /* Do not allow requests from uninitialized VFs */
+    1235         if (from_vf && !enable)
+    1236                 return NPC_FLOW_VF_NOT_INIT;
+    1237 
+    1238         /* PF sets VF mac & VF NIXLF is not attached, update the mac addr */
+    1239         if (pf_set_vfs_mac && !enable) {
+    1240                 ether_addr_copy(pfvf->default_mac, req->packet.dmac);
+    1241                 ether_addr_copy(pfvf->mac_addr, req->packet.dmac);
+    1242                 set_bit(PF_SET_VF_MAC, &pfvf->flags);
+    1243                 return 0;
+    1244         }
+    1245 
+    1246         mutex_lock(&rswitch->switch_lock);
+--> 1247         err = npc_install_flow(rvu, blkaddr, target, nixlf, pfvf,
+                                                              ^^^^^
+Potentially passing an uninitialized value.
+
+    1248                                req, rsp, enable, pf_set_vfs_mac);
+    1249         mutex_unlock(&rswitch->switch_lock);
+    1250 
+    1251         return err;
+    1252 }
+
+regards,
+dan carpenter
