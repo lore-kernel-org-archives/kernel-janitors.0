@@ -2,75 +2,66 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BBCDC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 30 Nov 2021 09:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F40C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 30 Nov 2021 10:35:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235693AbhK3Jpx (ORCPT
+        id S233692AbhK3KjD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 30 Nov 2021 04:45:53 -0500
-Received: from www.linuxtv.org ([130.149.80.248]:48244 "EHLO www.linuxtv.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233704AbhK3Jpx (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 30 Nov 2021 04:45:53 -0500
-Received: from mchehab by www.linuxtv.org with local (Exim 4.92)
-        (envelope-from <mchehab@linuxtv.org>)
-        id 1mrzej-0004NL-4E; Tue, 30 Nov 2021 09:42:33 +0000
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Date:   Fri, 19 Nov 2021 16:09:07 +0000
-Subject: [git:media_tree/master] media: dvb-frontends/stv0367: remove redundant variable ADCClk_Hz
-To:     linuxtv-commits@linuxtv.org
-Cc:     kernel-janitors@vger.kernel.org,
-        Colin Ian King <colin.king@canonical.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Mail-followup-to: linux-media@vger.kernel.org
-Forward-to: linux-media@vger.kernel.org
-Reply-to: linux-media@vger.kernel.org
-Message-Id: <E1mrzej-0004NL-4E@www.linuxtv.org>
+        Tue, 30 Nov 2021 05:39:03 -0500
+Received: from szxga08-in.huawei.com ([45.249.212.255]:28131 "EHLO
+        szxga08-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233346AbhK3KjD (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 30 Nov 2021 05:39:03 -0500
+Received: from dggeml709-chm.china.huawei.com (unknown [172.30.72.56])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4J3JTB21yqz1DJlQ;
+        Tue, 30 Nov 2021 18:33:02 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ dggeml709-chm.china.huawei.com (10.3.17.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2308.20; Tue, 30 Nov 2021 18:35:42 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Linus Walleij <linus.walleij@linaro.org>,
+        Krzysztof Halasa <khalasa@piap.pl>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+CC:     <netdev@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH net-next] net: ixp4xx_hss: drop kfree for memory allocated with devm_kzalloc
+Date:   Tue, 30 Nov 2021 10:48:40 +0000
+Message-ID: <20211130104840.1767981-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggeml709-chm.china.huawei.com (10.3.17.139)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This is an automatic generated email to let you know that the following patch were queued:
+It's not necessary to free memory allocated with devm_kzalloc
+and using kfree leads to a double free.
 
-Subject: media: dvb-frontends/stv0367: remove redundant variable ADCClk_Hz
-Author:  Colin Ian King <colin.king@canonical.com>
-Date:    Thu Oct 14 16:32:53 2021 +0100
-
-GIT_AUTHOR_NAME=Colin King
-GIT_AUTHOR_EMAIL=colin.king@canonical.com
-
-Variable ADCClk_Hz is being initialised with a variable that is never read
-and then re-assigned immediately afterwards. Clean up the code by removing
-it and just returning the return value from the call to stv0367cab_get_mclk
-
-Addresses-Coverity: ("Unused value")
-
-Link: https://lore.kernel.org/linux-media/20211014153253.63527-1-colin.king@canonical.com
-
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-
- drivers/media/dvb-frontends/stv0367.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
+Fixes: 35aefaad326b ("net: ixp4xx_hss: Convert to use DT probing")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
+ drivers/net/wan/ixp4xx_hss.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/media/dvb-frontends/stv0367.c b/drivers/media/dvb-frontends/stv0367.c
-index 6c2b05fae1c5..95e376f23506 100644
---- a/drivers/media/dvb-frontends/stv0367.c
-+++ b/drivers/media/dvb-frontends/stv0367.c
-@@ -1797,11 +1797,7 @@ static u32 stv0367cab_get_mclk(struct dvb_frontend *fe, u32 ExtClk_Hz)
- 
- static u32 stv0367cab_get_adc_freq(struct dvb_frontend *fe, u32 ExtClk_Hz)
- {
--	u32 ADCClk_Hz = ExtClk_Hz;
--
--	ADCClk_Hz = stv0367cab_get_mclk(fe, ExtClk_Hz);
--
--	return ADCClk_Hz;
-+	return stv0367cab_get_mclk(fe, ExtClk_Hz);
+diff --git a/drivers/net/wan/ixp4xx_hss.c b/drivers/net/wan/ixp4xx_hss.c
+index d02d8a2eb99d..0b7d9f2f2b8b 100644
+--- a/drivers/net/wan/ixp4xx_hss.c
++++ b/drivers/net/wan/ixp4xx_hss.c
+@@ -1508,7 +1508,6 @@ static int ixp4xx_hss_remove(struct platform_device *pdev)
+ 	unregister_hdlc_device(port->netdev);
+ 	free_netdev(port->netdev);
+ 	npe_release(port->npe);
+-	kfree(port);
+ 	return 0;
  }
  
- static enum stv0367cab_mod stv0367cab_SetQamSize(struct stv0367_state *state,
+
