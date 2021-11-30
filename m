@@ -2,73 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E87C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 30 Nov 2021 12:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8954C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 30 Nov 2021 12:30:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241375AbhK3MNc (ORCPT
+        id S241600AbhK3Mdk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 30 Nov 2021 07:13:32 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:36276 "EHLO
+        Tue, 30 Nov 2021 07:33:40 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:42250 "EHLO
         sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233232AbhK3MNb (ORCPT
+        with ESMTP id S241588AbhK3Mde (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 30 Nov 2021 07:13:31 -0500
+        Tue, 30 Nov 2021 07:33:34 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 61E03CE191E;
-        Tue, 30 Nov 2021 12:10:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8B98DC53FCD;
-        Tue, 30 Nov 2021 12:10:09 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id E3DC8CE19CE;
+        Tue, 30 Nov 2021 12:30:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1553BC56748;
+        Tue, 30 Nov 2021 12:30:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638274209;
-        bh=PgS+nZgeT5V/ueZPIRQA7HhqwXFR4ewo69EuglngNzI=;
+        s=k20201202; t=1638275412;
+        bh=UUTw0oy7HwvjSPYQW51LGs2Hm3K17yDrHTmdO4PH71w=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=Axsh0DwJ5NbcE3H2XbIEDOYuknm5w4Y0NLLNKJbMnd3PdwCSLajtZ8Ji/gh7tQdzz
-         I85PkxoOx+yMYemybZ1WnG/SJLEtKyw4Eg3a8dJau2RQ1kWXwhHk/mLGWPRCXW46KJ
-         096jOs47yrfC6zc+eEA/Y7AiuUzL18Imbx3w3x9KDva6bcXnXpaz56GkCBSukEMFe3
-         YkrYKoa2aD6SRQrbaqEWZ5BJwWo6JO8ms03wEh9DrtexkMF/kIIQexzkgQJlUM9b+e
-         PIHnjhoaMM37VMzvzkMSbItQsjZtMecIBZP36TF8ZxBCa23ffq0RIqFYJ4QECqu4FY
-         0WSXom8bF1LAQ==
+        b=ld+AAzu4Co9TweI4koDb18iF0NT8ff1yZ2FNnOpXxYVPfIPU77dcrfYazM25mSO/h
+         nvCVMFzVgtbF9/iYJ8imHUyyaqGUlh5NgnxNjvB9RzBHD9PTw3LCyp7VgTzfMmWh8v
+         q5kx7mN5trksZhxNMQD5quVVRnvog3y8EHQGVE6V7Js37qK82bFi3zfu4WNxaUpMLZ
+         2D3qeYC5PONflcRENtWbnh2RhywRZOaFmydOeiJKRYRCoQQjjbx/JL3LCN/i97TDww
+         fq48iN2ePypRUU1jnAeHMLc7ouJIurHNT+Ah+3T/tcVRBs0m0R30cMj3VzEZMmw5OJ
+         sR3RIhyejEhiQ==
 Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 701F860A7E;
-        Tue, 30 Nov 2021 12:10:09 +0000 (UTC)
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id F3DC460A94;
+        Tue, 30 Nov 2021 12:30:11 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: marvell: mvpp2: Fix the computation of shared CPUs
+Subject: Re: [PATCH net-next] net: hns3: make symbol 'hclge_mac_speed_map_to_fw'
+ static
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <163827420945.23105.12464625635462017692.git-patchwork-notify@kernel.org>
-Date:   Tue, 30 Nov 2021 12:10:09 +0000
-References: <1093499694f6b375617197eae87db2083a17aaf4.1638222729.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1093499694f6b375617197eae87db2083a17aaf4.1638222729.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     mw@semihalf.com, linux@armlinux.org.uk, davem@davemloft.net,
-        kuba@kernel.org, atenart@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Message-Id: <163827541199.1181.7236143870277791794.git-patchwork-notify@kernel.org>
+Date:   Tue, 30 Nov 2021 12:30:11 +0000
+References: <20211130113437.1770221-1-weiyongjun1@huawei.com>
+In-Reply-To: <20211130113437.1770221-1-weiyongjun1@huawei.com>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     yisen.zhuang@huawei.com, salil.mehta@huawei.com,
+        davem@davemloft.net, kuba@kernel.org, tanhuazhong@huawei.com,
+        huangguangbin2@huawei.com, shenjian15@huawei.com,
+        moyufeng@huawei.com, zhangjiaran@huawei.com, liaoguojia@huawei.com,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        hulkci@huawei.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (master)
+This patch was applied to netdev/net-next.git (master)
 by David S. Miller <davem@davemloft.net>:
 
-On Mon, 29 Nov 2021 22:53:27 +0100 you wrote:
-> 'bitmap_fill()' fills a bitmap one 'long' at a time.
-> It is likely that an exact number of bits is expected.
+On Tue, 30 Nov 2021 11:34:37 +0000 you wrote:
+> The sparse tool complains as follows:
 > 
-> Use 'bitmap_set()' instead in order not to set unexpected bits.
+> drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c:2656:28: warning:
+>  symbol 'hclge_mac_speed_map_to_fw' was not declared. Should it be static?
 > 
-> Fixes: e531f76757eb ("net: mvpp2: handle cases where more CPUs are available than s/w threads")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> This symbol is not used outside of hclge_main.c, so marks it static.
 > 
 > [...]
 
 Here is the summary with links:
-  - net: marvell: mvpp2: Fix the computation of shared CPUs
-    https://git.kernel.org/netdev/net/c/b83f5ac7d922
+  - [net-next] net: hns3: make symbol 'hclge_mac_speed_map_to_fw' static
+    https://git.kernel.org/netdev/net-next/c/c0190879323f
 
 You are awesome, thank you!
 -- 
