@@ -2,54 +2,51 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8954C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 30 Nov 2021 12:30:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF6DC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 30 Nov 2021 12:50:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241600AbhK3Mdk (ORCPT
+        id S231459AbhK3Mxb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 30 Nov 2021 07:33:40 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:42250 "EHLO
-        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241588AbhK3Mde (ORCPT
+        Tue, 30 Nov 2021 07:53:31 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:43624 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230150AbhK3Mxa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 30 Nov 2021 07:33:34 -0500
+        Tue, 30 Nov 2021 07:53:30 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id E3DC8CE19CE;
-        Tue, 30 Nov 2021 12:30:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1553BC56748;
-        Tue, 30 Nov 2021 12:30:12 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7C836B8199D;
+        Tue, 30 Nov 2021 12:50:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3BA3AC53FC1;
+        Tue, 30 Nov 2021 12:50:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638275412;
-        bh=UUTw0oy7HwvjSPYQW51LGs2Hm3K17yDrHTmdO4PH71w=;
+        s=k20201202; t=1638276609;
+        bh=wTnpliE16cUbCWHyHtW0dOXWX662bN4oGy1G+1KlN0A=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=ld+AAzu4Co9TweI4koDb18iF0NT8ff1yZ2FNnOpXxYVPfIPU77dcrfYazM25mSO/h
-         nvCVMFzVgtbF9/iYJ8imHUyyaqGUlh5NgnxNjvB9RzBHD9PTw3LCyp7VgTzfMmWh8v
-         q5kx7mN5trksZhxNMQD5quVVRnvog3y8EHQGVE6V7Js37qK82bFi3zfu4WNxaUpMLZ
-         2D3qeYC5PONflcRENtWbnh2RhywRZOaFmydOeiJKRYRCoQQjjbx/JL3LCN/i97TDww
-         fq48iN2ePypRUU1jnAeHMLc7ouJIurHNT+Ah+3T/tcVRBs0m0R30cMj3VzEZMmw5OJ
-         sR3RIhyejEhiQ==
+        b=bVVYc6hlkdHBuvvlHdyZC/YnHOmhdUw083heW8EPGKOhOw18MeG/u1UX8p6bD5pmf
+         Iie+yDyTtCRnd3w4OEelvQ5ME8LHFJUidlm7gmWDY36AiW1zWzpAaUeh0pkaFQ42tu
+         yTChnzdMiNv0kADRoExrAmGxeHIcz9jkkw0YsA/IBBefENUa4yHIdKV8qcyNfZYxwC
+         4DG/u+F8EEd6LAaGSMfRBqthSQGFnmEgYcRY3Ipr1bq7ZNjMTbYRTDZbyfvgGAqjsH
+         3ueakcEjp9D7ps1+yETNOnfM47rDUCmQ6nyabtRoeww34hmKdG84uZLKvJaMFUfiZY
+         lD3aJDVSyitLQ==
 Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id F3DC460A94;
-        Tue, 30 Nov 2021 12:30:11 +0000 (UTC)
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 163B760A7E;
+        Tue, 30 Nov 2021 12:50:09 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: hns3: make symbol 'hclge_mac_speed_map_to_fw'
- static
+Subject: Re: [PATCH net-next] net: ixp4xx_hss: drop kfree for memory allocated
+ with devm_kzalloc
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <163827541199.1181.7236143870277791794.git-patchwork-notify@kernel.org>
-Date:   Tue, 30 Nov 2021 12:30:11 +0000
-References: <20211130113437.1770221-1-weiyongjun1@huawei.com>
-In-Reply-To: <20211130113437.1770221-1-weiyongjun1@huawei.com>
+Message-Id: <163827660908.10870.11448889104468467688.git-patchwork-notify@kernel.org>
+Date:   Tue, 30 Nov 2021 12:50:09 +0000
+References: <20211130104840.1767981-1-weiyongjun1@huawei.com>
+In-Reply-To: <20211130104840.1767981-1-weiyongjun1@huawei.com>
 To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     yisen.zhuang@huawei.com, salil.mehta@huawei.com,
-        davem@davemloft.net, kuba@kernel.org, tanhuazhong@huawei.com,
-        huangguangbin2@huawei.com, shenjian15@huawei.com,
-        moyufeng@huawei.com, zhangjiaran@huawei.com, liaoguojia@huawei.com,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        hulkci@huawei.com
+Cc:     linus.walleij@linaro.org, khalasa@piap.pl, davem@davemloft.net,
+        kuba@kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, hulkci@huawei.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -59,19 +56,19 @@ Hello:
 This patch was applied to netdev/net-next.git (master)
 by David S. Miller <davem@davemloft.net>:
 
-On Tue, 30 Nov 2021 11:34:37 +0000 you wrote:
-> The sparse tool complains as follows:
+On Tue, 30 Nov 2021 10:48:40 +0000 you wrote:
+> It's not necessary to free memory allocated with devm_kzalloc
+> and using kfree leads to a double free.
 > 
-> drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c:2656:28: warning:
->  symbol 'hclge_mac_speed_map_to_fw' was not declared. Should it be static?
-> 
-> This symbol is not used outside of hclge_main.c, so marks it static.
+> Fixes: 35aefaad326b ("net: ixp4xx_hss: Convert to use DT probing")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next] net: hns3: make symbol 'hclge_mac_speed_map_to_fw' static
-    https://git.kernel.org/netdev/net-next/c/c0190879323f
+  - [net-next] net: ixp4xx_hss: drop kfree for memory allocated with devm_kzalloc
+    https://git.kernel.org/netdev/net-next/c/196073f9c44b
 
 You are awesome, thank you!
 -- 
