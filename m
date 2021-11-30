@@ -2,93 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D4DC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Nov 2021 23:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0965C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 30 Nov 2021 04:30:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231747AbhK2XVL (ORCPT
+        id S238236AbhK3Eda (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 29 Nov 2021 18:21:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44414 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231620AbhK2XVK (ORCPT
+        Mon, 29 Nov 2021 23:33:30 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:37770 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233263AbhK3Ed3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 29 Nov 2021 18:21:10 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D239C061714;
-        Mon, 29 Nov 2021 15:17:52 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id u1so40188972wru.13;
-        Mon, 29 Nov 2021 15:17:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VbynDBrtrIEL8OAyHWbv2qBQ+JE1Sa3lpO8rfK9pZ10=;
-        b=D7cqz37ZwlaazrxfTJ3ewMvMA586jbArHykVtSxDPLlJ9Gaprp40Q7xJ5YPIGkrwfq
-         Mlcxqa9JNI9lgApB7r9dyNkQD67O884qRyro528JE7Sw4+ziEhv+lrl88IsnVrNvXLUY
-         +j+errdudods9C6ix7Bzb954NcA7HsFnqW7xpu708DhY0mh4CfAhiQoRDXT90DnsALlA
-         REWUSg3Os9Gbkeenirh24JoZAGl94tiVIixWoQGZU7FITfjGTMcFcacaEhheW63KuMh7
-         mynt5Viw6StTLzXigZ4KHS1A8RmlisPRcr8HSHtbUmHJrXAo8GQskY3L82RTF0/xO3q0
-         TTzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VbynDBrtrIEL8OAyHWbv2qBQ+JE1Sa3lpO8rfK9pZ10=;
-        b=LrnmPAE2fv5pHn1oXtoqHz/KnZk0GOgUw8l2lGHEqnzBqGz3+ococ7nGXn0MD0H3NY
-         p9s3QRXNjI6aXlv+WqW3qSYL+LYI6VkdCcKnH1adL2HDV3n8n8EreULcW3NjuhdTS9st
-         yXiK0HzlZwn2VESDmTUgdSL4Q4mPEE7pL0ALtynxS28Sk4v9ZYmajs9P2ELIculNCWyC
-         5KfCSPajeouqngwsDrHeNgZW2ptLVFUA8SpnFQEUdtNW36R3HkWEAaDWw8UBW4zJlbOp
-         4481qjlvK+GMQVjbfgqjBHSUiPYEWqTXrBE+PS7IAqKGjTXnXT0UgFc4fwtPJkoAL8+A
-         gj6Q==
-X-Gm-Message-State: AOAM532mlUL8ibt/waugDAMU6SKgnUx/RryddpCQ92tGEHMUqLy/1hdU
-        H4OO8HOMSeIAww==
-X-Google-Smtp-Source: ABdhPJxRaKrcRdpPqb0+Vtg25aoqMtpbWHxGvfRonzdT/5TkNunduBPY2zy2IV18CV8oevNodtZRMQ==
-X-Received: by 2002:a5d:4f12:: with SMTP id c18mr36271541wru.547.1638227870912;
-        Mon, 29 Nov 2021 15:17:50 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id o3sm670224wms.10.2021.11.29.15.17.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Nov 2021 15:17:50 -0800 (PST)
-From:   Colin Ian King <colin.i.king@googlemail.com>
-X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] input: palmas-pwrbutton: make a couple of arrays static const
-Date:   Mon, 29 Nov 2021 23:17:49 +0000
-Message-Id: <20211129231749.619469-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.33.1
-MIME-Version: 1.0
+        Mon, 29 Nov 2021 23:33:29 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6C0A1B8170E;
+        Tue, 30 Nov 2021 04:30:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2D567C53FC1;
+        Tue, 30 Nov 2021 04:30:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638246609;
+        bh=2NepT2UxNHjFhJbksmPuIO6fgos9BrB6n+vr7n4K1vw=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=nKY4BC3ZDmUt0EbQ4JZtyRaKr+kcBkxfCrTbC0qmnvRwfTOoIXV2JcufS40IH6qqD
+         iXkX7OsW137FAxaP5fxnJBBCsuMeuDl2hAdmRMQMcrB6bpDhp/PoGkLRvt5boDcxpb
+         eQzo+TWQvIQPaln/n8qOHMh/+JsH7RouA8cVCp8PJpbXnXEtV2lImxMExCm7ba+yeS
+         37QT7rX3uWiU0u7yv1wSEUJZvQ7B1QRkqxQERX5dHh9OVAxzQllve8T1hRwk/OQLRy
+         GR6FV/PGrJ6roi+5QxmyNt6AIygVvPm+YrSW3OhmNDSTMc298mf2Bw++Pkrzei8/m5
+         QJmGOzrhdjEWA==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 147AB60A50;
+        Tue, 30 Nov 2021 04:30:09 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: mscc: ocelot: fix missing unlock on error in
+ ocelot_hwstamp_set()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <163824660907.1110.5748829581500218696.git-patchwork-notify@kernel.org>
+Date:   Tue, 30 Nov 2021 04:30:09 +0000
+References: <20211129151652.1165433-1-weiyongjun1@huawei.com>
+In-Reply-To: <20211129151652.1165433-1-weiyongjun1@huawei.com>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     vladimir.oltean@nxp.com, claudiu.manoil@nxp.com,
+        alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com,
+        davem@davemloft.net, kuba@kernel.org, linux@armlinux.org.uk,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        hulkci@huawei.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate a couple of arrays on the stack but instead make them
-static const. Also makes the object code smaller by a few hundred
-bytes.
+Hello:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/input/misc/palmas-pwrbutton.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This patch was applied to netdev/net.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
-diff --git a/drivers/input/misc/palmas-pwrbutton.c b/drivers/input/misc/palmas-pwrbutton.c
-index f9b05cf09ff5..1c7ceb20b5af 100644
---- a/drivers/input/misc/palmas-pwrbutton.c
-+++ b/drivers/input/misc/palmas-pwrbutton.c
-@@ -115,8 +115,8 @@ static void palmas_pwron_params_ofinit(struct device *dev,
- 	struct device_node *np;
- 	u32 val;
- 	int i, error;
--	u8 lpk_times[] = { 6, 8, 10, 12 };
--	int pwr_on_deb_ms[] = { 15, 100, 500, 1000 };
-+	static const u8 lpk_times[] = { 6, 8, 10, 12 };
-+	static const int pwr_on_deb_ms[] = { 15, 100, 500, 1000 };
- 
- 	memset(config, 0, sizeof(*config));
- 
+On Mon, 29 Nov 2021 15:16:52 +0000 you wrote:
+> Add the missing mutex_unlock before return from function
+> ocelot_hwstamp_set() in the ocelot_setup_ptp_traps() error
+> handling case.
+> 
+> Fixes: 96ca08c05838 ("net: mscc: ocelot: set up traps for PTP packets")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next] net: mscc: ocelot: fix missing unlock on error in ocelot_hwstamp_set()
+    https://git.kernel.org/netdev/net/c/1a59c9c55585
+
+You are awesome, thank you!
 -- 
-2.33.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
