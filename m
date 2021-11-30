@@ -2,77 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E60FC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 30 Nov 2021 11:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E87C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 30 Nov 2021 12:10:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236283AbhK3LZF (ORCPT
+        id S241375AbhK3MNc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 30 Nov 2021 06:25:05 -0500
-Received: from szxga02-in.huawei.com ([45.249.212.188]:27319 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238912AbhK3LZA (ORCPT
+        Tue, 30 Nov 2021 07:13:32 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:36276 "EHLO
+        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233232AbhK3MNb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 30 Nov 2021 06:25:00 -0500
-Received: from dggeml709-chm.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4J3KY86p7rzbjBB;
-        Tue, 30 Nov 2021 19:21:32 +0800 (CST)
-Received: from localhost.localdomain (10.175.102.38) by
- dggeml709-chm.china.huawei.com (10.3.17.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2308.20; Tue, 30 Nov 2021 19:21:39 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, Yisen Zhuang <yisen.zhuang@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Huazhong Tan <tanhuazhong@huawei.com>,
-        Guangbin Huang <huangguangbin2@huawei.com>,
-        Jian Shen <shenjian15@huawei.com>,
-        Yufeng Mo <moyufeng@huawei.com>,
-        Jiaran Zhang <zhangjiaran@huawei.com>,
-        liaoguojia <liaoguojia@huawei.com>
-CC:     <netdev@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH net-next] net: hns3: make symbol 'hclge_mac_speed_map_to_fw' static
-Date:   Tue, 30 Nov 2021 11:34:37 +0000
-Message-ID: <20211130113437.1770221-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 30 Nov 2021 07:13:31 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 61E03CE191E;
+        Tue, 30 Nov 2021 12:10:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8B98DC53FCD;
+        Tue, 30 Nov 2021 12:10:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638274209;
+        bh=PgS+nZgeT5V/ueZPIRQA7HhqwXFR4ewo69EuglngNzI=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=Axsh0DwJ5NbcE3H2XbIEDOYuknm5w4Y0NLLNKJbMnd3PdwCSLajtZ8Ji/gh7tQdzz
+         I85PkxoOx+yMYemybZ1WnG/SJLEtKyw4Eg3a8dJau2RQ1kWXwhHk/mLGWPRCXW46KJ
+         096jOs47yrfC6zc+eEA/Y7AiuUzL18Imbx3w3x9KDva6bcXnXpaz56GkCBSukEMFe3
+         YkrYKoa2aD6SRQrbaqEWZ5BJwWo6JO8ms03wEh9DrtexkMF/kIIQexzkgQJlUM9b+e
+         PIHnjhoaMM37VMzvzkMSbItQsjZtMecIBZP36TF8ZxBCa23ffq0RIqFYJ4QECqu4FY
+         0WSXom8bF1LAQ==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 701F860A7E;
+        Tue, 30 Nov 2021 12:10:09 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.102.38]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggeml709-chm.china.huawei.com (10.3.17.139)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: marvell: mvpp2: Fix the computation of shared CPUs
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <163827420945.23105.12464625635462017692.git-patchwork-notify@kernel.org>
+Date:   Tue, 30 Nov 2021 12:10:09 +0000
+References: <1093499694f6b375617197eae87db2083a17aaf4.1638222729.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1093499694f6b375617197eae87db2083a17aaf4.1638222729.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     mw@semihalf.com, linux@armlinux.org.uk, davem@davemloft.net,
+        kuba@kernel.org, atenart@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The sparse tool complains as follows:
+Hello:
 
-drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c:2656:28: warning:
- symbol 'hclge_mac_speed_map_to_fw' was not declared. Should it be static?
+This patch was applied to netdev/net.git (master)
+by David S. Miller <davem@davemloft.net>:
 
-This symbol is not used outside of hclge_main.c, so marks it static.
+On Mon, 29 Nov 2021 22:53:27 +0100 you wrote:
+> 'bitmap_fill()' fills a bitmap one 'long' at a time.
+> It is likely that an exact number of bits is expected.
+> 
+> Use 'bitmap_set()' instead in order not to set unexpected bits.
+> 
+> Fixes: e531f76757eb ("net: mvpp2: handle cases where more CPUs are available than s/w threads")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> [...]
 
-Fixes: e46da6a3d4d3 ("net: hns3: refine function hclge_cfg_mac_speed_dup_hw()")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Here is the summary with links:
+  - net: marvell: mvpp2: Fix the computation of shared CPUs
+    https://git.kernel.org/netdev/net/c/b83f5ac7d922
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 7de4c56ef014..1815fcf168b0 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -2653,7 +2653,7 @@ static u8 hclge_check_speed_dup(u8 duplex, int speed)
- 	return duplex;
- }
- 
--struct hclge_mac_speed_map hclge_mac_speed_map_to_fw[] = {
-+static struct hclge_mac_speed_map hclge_mac_speed_map_to_fw[] = {
- 	{HCLGE_MAC_SPEED_10M, HCLGE_FW_MAC_SPEED_10M},
- 	{HCLGE_MAC_SPEED_100M, HCLGE_FW_MAC_SPEED_100M},
- 	{HCLGE_MAC_SPEED_1G, HCLGE_FW_MAC_SPEED_1G},
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
