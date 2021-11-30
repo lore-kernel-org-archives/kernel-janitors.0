@@ -2,33 +2,40 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B78C4C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 30 Nov 2021 11:21:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E60FC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 30 Nov 2021 11:21:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238834AbhK3LZE (ORCPT
+        id S236283AbhK3LZF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 30 Nov 2021 06:25:04 -0500
-Received: from szxga08-in.huawei.com ([45.249.212.255]:28132 "EHLO
-        szxga08-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238808AbhK3LY6 (ORCPT
+        Tue, 30 Nov 2021 06:25:05 -0500
+Received: from szxga02-in.huawei.com ([45.249.212.188]:27319 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238912AbhK3LZA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 30 Nov 2021 06:24:58 -0500
-Received: from dggeml709-chm.china.huawei.com (unknown [172.30.72.56])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4J3KVB0W5Qz1DJh0;
-        Tue, 30 Nov 2021 19:18:58 +0800 (CST)
+        Tue, 30 Nov 2021 06:25:00 -0500
+Received: from dggeml709-chm.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4J3KY86p7rzbjBB;
+        Tue, 30 Nov 2021 19:21:32 +0800 (CST)
 Received: from localhost.localdomain (10.175.102.38) by
  dggeml709-chm.china.huawei.com (10.3.17.139) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2308.20; Tue, 30 Nov 2021 19:21:37 +0800
+ 15.1.2308.20; Tue, 30 Nov 2021 19:21:39 +0800
 From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     <weiyongjun1@huawei.com>, NeilBrown <neilb@suse.de>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>
-CC:     <linux-nfs@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+To:     <weiyongjun1@huawei.com>, Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
+        Guangbin Huang <huangguangbin2@huawei.com>,
+        Jian Shen <shenjian15@huawei.com>,
+        Yufeng Mo <moyufeng@huawei.com>,
+        Jiaran Zhang <zhangjiaran@huawei.com>,
+        liaoguojia <liaoguojia@huawei.com>
+CC:     <netdev@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
         Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] NFSD: make symbol 'nfsd_notifier_lock' static
-Date:   Tue, 30 Nov 2021 11:34:36 +0000
-Message-ID: <20211130113436.1770168-1-weiyongjun1@huawei.com>
+Subject: [PATCH net-next] net: hns3: make symbol 'hclge_mac_speed_map_to_fw' static
+Date:   Tue, 30 Nov 2021 11:34:37 +0000
+Message-ID: <20211130113437.1770221-1-weiyongjun1@huawei.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -43,29 +50,29 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 The sparse tool complains as follows:
 
-fs/nfsd/nfssvc.c:437:1: warning:
- symbol 'nfsd_notifier_lock' was not declared. Should it be static?
+drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c:2656:28: warning:
+ symbol 'hclge_mac_speed_map_to_fw' was not declared. Should it be static?
 
-This symbol is not used outside of nfssvc.c, so marks it static.
+This symbol is not used outside of hclge_main.c, so marks it static.
 
-Fixes: 6ac25fbcbde9 ("NFSD: simplify locking for network notifier.")
+Fixes: e46da6a3d4d3 ("net: hns3: refine function hclge_cfg_mac_speed_dup_hw()")
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- fs/nfsd/nfssvc.c | 2 +-
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/nfsd/nfssvc.c b/fs/nfsd/nfssvc.c
-index 070525fbc1ad..14c1ef6f8cc7 100644
---- a/fs/nfsd/nfssvc.c
-+++ b/fs/nfsd/nfssvc.c
-@@ -434,7 +434,7 @@ static void nfsd_shutdown_net(struct net *net)
- 	nfsd_shutdown_generic();
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 7de4c56ef014..1815fcf168b0 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -2653,7 +2653,7 @@ static u8 hclge_check_speed_dup(u8 duplex, int speed)
+ 	return duplex;
  }
  
--DEFINE_SPINLOCK(nfsd_notifier_lock);
-+static DEFINE_SPINLOCK(nfsd_notifier_lock);
- static int nfsd_inetaddr_event(struct notifier_block *this, unsigned long event,
- 	void *ptr)
- {
+-struct hclge_mac_speed_map hclge_mac_speed_map_to_fw[] = {
++static struct hclge_mac_speed_map hclge_mac_speed_map_to_fw[] = {
+ 	{HCLGE_MAC_SPEED_10M, HCLGE_FW_MAC_SPEED_10M},
+ 	{HCLGE_MAC_SPEED_100M, HCLGE_FW_MAC_SPEED_100M},
+ 	{HCLGE_MAC_SPEED_1G, HCLGE_FW_MAC_SPEED_1G},
 
