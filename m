@@ -2,86 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48561C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Dec 2021 00:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C0F0C433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Dec 2021 00:32:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345775AbhLAAa0 (ORCPT
+        id S1345767AbhLAAgA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 30 Nov 2021 19:30:26 -0500
-Received: from smtprelay0147.hostedemail.com ([216.40.44.147]:42756 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1345737AbhLAAaO (ORCPT
+        Tue, 30 Nov 2021 19:36:00 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:45174 "EHLO
+        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345744AbhLAAf7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 30 Nov 2021 19:30:14 -0500
-Received: from omf08.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 692D718200A04;
-        Wed,  1 Dec 2021 00:26:43 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf08.hostedemail.com (Postfix) with ESMTPA id 11D2B516;
-        Wed,  1 Dec 2021 00:26:39 +0000 (UTC)
-Message-ID: <c5a827c2b690aeadf7d633c29edaf4db23d94fdb.camel@perches.com>
-Subject: Re: [PATCH] x86/platform/uv: make const pointer dots a static const
- array
-From:   Joe Perches <joe@perches.com>
-To:     Steve Wahl <steve.wahl@hpe.com>,
-        Colin Ian King <colin.i.king@googlemail.com>
-Cc:     Mike Travis <mike.travis@hpe.com>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        platform-driver-x86@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 30 Nov 2021 16:26:39 -0800
-In-Reply-To: <YaZ8vtajDKUVDCne@swahl-home.5wahls.com>
-References: <20211127170320.77963-1-colin.i.king@gmail.com>
-         <YaZ8vtajDKUVDCne@swahl-home.5wahls.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.4-1 
+        Tue, 30 Nov 2021 19:35:59 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id D99DFCE1D19;
+        Wed,  1 Dec 2021 00:32:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6244C53FCB;
+        Wed,  1 Dec 2021 00:32:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638318755;
+        bh=o/vguVdCIFrn8XRMYWINw9V41uwBDFShZeJRxnqWwho=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=lAA5qm4h4CeqHj7icP81QtUK9i8XTP7N1jKrKdgs7Pietyn+Gpb4BLyGFfH+QZ/lW
+         3IENHjFLQayGdnN0/cTzM2xT2Lxh18YA6sFngAx11xcM86WY9+mVyO6mKyxFiXhckC
+         1Vey1/8/59+fWf55QiJG2cGc/BVUIwUv3yf0HKYyyI0+GD1CkphpkFz4M8kp86D2aL
+         NPEjpBSGRvFm4zTB8r8d75v9Z7oRd7kIb5u3IjEMK8f2I5UT6KKHgLNsfcpMl7VqY8
+         UGyssa1hQvaHjAzslbzXJ4nBa0zJ9eUdy9oqAnwxby/wZDhkh1pIGpVIL2CMUttnRO
+         0VZLd/7mq5KDA==
+Received: by mail-oi1-f179.google.com with SMTP id u74so44842414oie.8;
+        Tue, 30 Nov 2021 16:32:35 -0800 (PST)
+X-Gm-Message-State: AOAM5312AJ3lKlRS1l9PyNvKk3VSWBQFM7p4G8cXccprwfke4GXlyQsx
+        WLE6rgcefbppY7eV+VMMk67JWGoXjPbxdkM8FX0=
+X-Google-Smtp-Source: ABdhPJxI1ik1dYJ6aPpTMBKWTgaM63xxSd+huBLdtmpJhNxeFVO031rRXXlqI3Ss5WQ1uJtWNwT1GPsfePUXXoFEcT0=
+X-Received: by 2002:aca:eb0b:: with SMTP id j11mr2564526oih.51.1638318755138;
+ Tue, 30 Nov 2021 16:32:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 8nkmn1zqzbke8kb9g4xjpgqpxscyxiah
-X-Rspamd-Server: rspamout02
-X-Rspamd-Queue-Id: 11D2B516
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1/IurlOFoNDFvDHrR/xzjuMQccTBxFaNzg=
-X-HE-Tag: 1638318399-827544
+Received: by 2002:ac9:428a:0:0:0:0:0 with HTTP; Tue, 30 Nov 2021 16:32:34
+ -0800 (PST)
+In-Reply-To: <20211130125047.GA24578@kili>
+References: <20211130125047.GA24578@kili>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Wed, 1 Dec 2021 09:32:34 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8MWZCft5s3tu2omjU__9J46sCXqO2rbph5Aqivzp3rUg@mail.gmail.com>
+Message-ID: <CAKYAXd8MWZCft5s3tu2omjU__9J46sCXqO2rbph5Aqivzp3rUg@mail.gmail.com>
+Subject: Re: [PATCH] ksmbd: fix error code in ndr_read_int32()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Steve French <sfrench@samba.org>,
+        Hyunchul Lee <hyc.lee@gmail.com>, linux-cifs@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 2021-11-30 at 13:34 -0600, Steve Wahl wrote:
-> On Sat, Nov 27, 2021 at 05:03:20PM +0000, Colin Ian King wrote:
-> > Don't populate the const array dots on the stack
-[]
-> Examination of the disassembly shows that the compiler actually
-> eliminates the creation of the pointer "dots" on the stack and just
-> passes the address of the string constant to the printk function.
-> 
-> So this change should not have any actual effect (I don't know where
-> you got the "shrinks object code" from), and in my humble opinion
-> makes the code less clear.
+2021-11-30 21:50 GMT+09:00, Dan Carpenter <dan.carpenter@oracle.com>:
+> This is a failure path and it should return -EINVAL instead of success.
+> Otherwise it could result in the caller using uninitialized memory.
+>
+> Fixes: 303fff2b8c77 ("ksmbd: add validation for ndr read/write functions")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Namjae Jeon <linkinjeon@kernel.org>
 
-Probably shrinks an allmodconfig where the symbols are referenced.
-It probably doesn't do anything to a defconfig.
-
-> As such, unless there's something here I don't understand, I vote to
-> reject this patch.
-[]
-> > but make it static
-> > const and make the pointer an array to remove a dereference. Shrinks
-> > object code a few bytes too.
-[]
-> > diff --git a/arch/x86/platform/uv/uv_nmi.c b/arch/x86/platform/uv/uv_nmi.c
-[]
-> > @@ -725,7 +725,7 @@ static void uv_nmi_dump_cpu_ip(int cpu, struct pt_regs *regs)
-> >   */
-> >  static void uv_nmi_dump_state_cpu(int cpu, struct pt_regs *regs)
-> >  {
-> > -	const char *dots = " ................................. ";
-> > +	static const char dots[] = " ................................. ";
-
-
+Thanks!
