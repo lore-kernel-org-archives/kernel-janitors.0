@@ -2,33 +2,33 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D55C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Dec 2021 22:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D7FC43219
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Dec 2021 22:19:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353469AbhLAWJV (ORCPT
+        id S1353551AbhLAWXH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Dec 2021 17:09:21 -0500
-Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:51570 "EHLO
+        Wed, 1 Dec 2021 17:23:07 -0500
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:52348 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353551AbhLAWIl (ORCPT
+        with ESMTP id S1353539AbhLAWXG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Dec 2021 17:08:41 -0500
+        Wed, 1 Dec 2021 17:23:06 -0500
 Received: from pop-os.home ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id sXj2ml4As65jHsXj3mTVw0; Wed, 01 Dec 2021 23:05:17 +0100
+        id sXx0ml9sL65jHsXx0mTXPr; Wed, 01 Dec 2021 23:19:43 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Wed, 01 Dec 2021 23:05:17 +0100
+X-ME-Date: Wed, 01 Dec 2021 23:19:43 +0100
 X-ME-IP: 86.243.171.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     chunkeey@googlemail.com, kvalo@codeaurora.org, davem@davemloft.net,
-        kuba@kernel.org
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+To:     sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com,
+        mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] carl9170: Use the bitmap API when applicable
-Date:   Wed,  1 Dec 2021 23:05:15 +0100
-Message-Id: <1fe18fb73f71d855043c40c83865ad539f326478.1638396221.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] media: mc: mc-entity.c: Use bitmap_zalloc() when applicable
+Date:   Wed,  1 Dec 2021 23:19:40 +0100
+Message-Id: <b11f646dda189f490c06bf671f64a2cc0af4d45c.1638397089.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -36,65 +36,47 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use 'bitmap_zalloc()' to simplify code, improve the semantic and avoid some
-open-coded arithmetic in allocator arguments.
-
-Note, that this 'bitmap_zalloc()' divides by BITS_PER_LONG the amount of
-memory allocated.
-The 'roundup()' used to computed the number of needed long should have
-been a DIV_ROUND_UP.
-
+'ent_enum->bmap' is a bitmap. So use 'bitmap_zalloc()' to simplify
+code, improve the semantic and avoid some open-coded arithmetic in
+allocator arguments.
 
 Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
 consistency.
 
-Use 'bitmap_zero()' to avoid hand writing it.
+While at it, remove a useless 'bitmap_zero()'.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-All uses of 'mem_bitmap' in 'carl9170/debug.c', 'carl9170/main.c' and
-'carl9170/tx.c' are consistent with a 'ar->fw.mem_blocks' bits long bitmap.
+ drivers/media/mc/mc-entity.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-So the smaller memory allocation of this patch looks correct to me.
-... but review with care :)
----
- drivers/net/wireless/ath/carl9170/main.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/carl9170/main.c b/drivers/net/wireless/ath/carl9170/main.c
-index cca3b086aa70..49f7ee1c912b 100644
---- a/drivers/net/wireless/ath/carl9170/main.c
-+++ b/drivers/net/wireless/ath/carl9170/main.c
-@@ -307,8 +307,7 @@ static void carl9170_zap_queues(struct ar9170 *ar)
- 	for (i = 0; i < ar->hw->queues; i++)
- 		ar->tx_stats[i].limit = CARL9170_NUM_TX_LIMIT_HARD;
- 
--	for (i = 0; i < DIV_ROUND_UP(ar->fw.mem_blocks, BITS_PER_LONG); i++)
--		ar->mem_bitmap[i] = 0;
-+	bitmap_zero(ar->mem_bitmap, ar->fw.mem_blocks);
- 
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(cvif, &ar->vif_list, list) {
-@@ -1968,9 +1967,7 @@ int carl9170_register(struct ar9170 *ar)
- 	if (WARN_ON(ar->mem_bitmap))
- 		return -EINVAL;
- 
--	ar->mem_bitmap = kcalloc(roundup(ar->fw.mem_blocks, BITS_PER_LONG),
--				 sizeof(unsigned long),
+diff --git a/drivers/media/mc/mc-entity.c b/drivers/media/mc/mc-entity.c
+index c02340698ad6..b411f9796191 100644
+--- a/drivers/media/mc/mc-entity.c
++++ b/drivers/media/mc/mc-entity.c
+@@ -48,12 +48,10 @@ __must_check int __media_entity_enum_init(struct media_entity_enum *ent_enum,
+ 					  int idx_max)
+ {
+ 	idx_max = ALIGN(idx_max, BITS_PER_LONG);
+-	ent_enum->bmap = kcalloc(idx_max / BITS_PER_LONG, sizeof(long),
 -				 GFP_KERNEL);
-+	ar->mem_bitmap = bitmap_zalloc(ar->fw.mem_blocks, GFP_KERNEL);
- 
- 	if (!ar->mem_bitmap)
++	ent_enum->bmap = bitmap_zalloc(idx_max, GFP_KERNEL);
+ 	if (!ent_enum->bmap)
  		return -ENOMEM;
-@@ -2085,7 +2082,7 @@ void carl9170_free(struct ar9170 *ar)
- 	kfree_skb(ar->rx_failover);
- 	ar->rx_failover = NULL;
  
--	kfree(ar->mem_bitmap);
-+	bitmap_free(ar->mem_bitmap);
- 	ar->mem_bitmap = NULL;
+-	bitmap_zero(ent_enum->bmap, idx_max);
+ 	ent_enum->idx_max = idx_max;
  
- 	kfree(ar->survey);
+ 	return 0;
+@@ -62,7 +60,7 @@ EXPORT_SYMBOL_GPL(__media_entity_enum_init);
+ 
+ void media_entity_enum_cleanup(struct media_entity_enum *ent_enum)
+ {
+-	kfree(ent_enum->bmap);
++	bitmap_free(ent_enum->bmap);
+ }
+ EXPORT_SYMBOL_GPL(media_entity_enum_cleanup);
+ 
 -- 
 2.30.2
 
