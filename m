@@ -2,87 +2,174 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7917C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Dec 2021 02:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D1BC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Dec 2021 02:52:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345986AbhLAC2e (ORCPT
+        id S241510AbhLACzr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 30 Nov 2021 21:28:34 -0500
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:54218 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241292AbhLAC22 (ORCPT
+        Tue, 30 Nov 2021 21:55:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57318 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241465AbhLACzq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 30 Nov 2021 21:28:28 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R261e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0UywMFvQ_1638325498;
-Received: from 30.225.24.35(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0UywMFvQ_1638325498)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 01 Dec 2021 10:24:59 +0800
-Message-ID: <92d4d393-9734-9f7e-4440-20429bdac14f@linux.alibaba.com>
-Date:   Wed, 1 Dec 2021 10:24:58 +0800
+        Tue, 30 Nov 2021 21:55:46 -0500
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5101DC061574
+        for <kernel-janitors@vger.kernel.org>; Tue, 30 Nov 2021 18:52:26 -0800 (PST)
+Received: by mail-pg1-x530.google.com with SMTP id 137so14910776pgg.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 30 Nov 2021 18:52:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=CyLZ0HcKYn5cINTo9abzB39mIlHZoj01C7i4Yaug5h0=;
+        b=THbyL37rvfXckghPZlSG1AOm0QJnDY49iEa3IgnQVndpSYwCdfa9PFpuPjKbekirht
+         f6r1CfsOtuwjrxaTCLTHIqqAVhMf2P0M6Eo9aXq8NJ3y+J5wdX+Hw5rXYSUQQQv8LA3t
+         OlIpT1HtmLOrVAUXLhnp80Ybe7jiye+vuYdSpUDdtGBCTnt/+i7YlEwO8CQwA3RpQy84
+         0wYN2eC8dy0oEIa6MRSIN/e3Y4aJ+4CGaz7Fg51V0ZV7jaDvYq6cQ7kis4jYf1IN7NR7
+         E73wd0XjtgujNQfVc0u1izNyA8HGwz0NLOgd79/mivOpPVrYjnzDjWYSP6dVGge8Evhs
+         c6uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=CyLZ0HcKYn5cINTo9abzB39mIlHZoj01C7i4Yaug5h0=;
+        b=E2msI8Ig6T4wDepEWuUZFLJGV2MG08tgiDn7L6dj0B3SvSBvbS6JeLau1+F4DM2byw
+         x4uTHDZMSKtUdSkvfpQzN8cpPE7foiKK8Pt9TtHjmOPdW4khLIbMUumupuOxCeSaC83V
+         rOFih+WFxE/9xbuEdHNXbDqUjx+Cs4lUI3Codb5gKVKNdhIPDr85jhbun1ugXS4pQqbr
+         3Yn1wPwNb1ITOjMvRNGOwqmR4utiY6qunq+1oz032YdiIRbfj/enr/nntti1VYNC2XN9
+         nsVXxMyFOFYmTryJpX3uRXuGfP7AQ4DK3i8464KYxPfXNCM1nK03iBOTew8wtj4rR4qj
+         w+BQ==
+X-Gm-Message-State: AOAM531mTk5dCBYk4dFbx7hwEzdw4r+gI7MrgoBb7prDrSwcmfuNPxVe
+        gWGncCaOT3MrJQbt05yD+sTBxg==
+X-Google-Smtp-Source: ABdhPJyOq0509u70/V8v/o1xyWmDvB3d1+CU3yhFTHABEAAYoaXKW8cBcTXYir8Uyy/Gz1GWXhWOcw==
+X-Received: by 2002:aa7:88d5:0:b0:49f:e382:3d62 with SMTP id k21-20020aa788d5000000b0049fe3823d62mr3085811pff.76.1638327145686;
+        Tue, 30 Nov 2021 18:52:25 -0800 (PST)
+Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
+        by smtp.gmail.com with ESMTPSA id o7sm16370996pgq.59.2021.11.30.18.52.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Nov 2021 18:52:25 -0800 (PST)
+Date:   Wed, 1 Dec 2021 02:52:21 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Colin Ian King <colin.i.king@googlemail.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/sev: clean up initialization of variables info and v
+Message-ID: <YabjZbB8rbMHHX25@google.com>
+References: <20211126223658.1150141-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.3.0
-Subject: Re: [PATCH] ocfs2: fix uninitialized variable in
- ocfs2_dio_wr_get_block()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Wengang Wang <wen.gang.wang@oracle.com>, ryan.ding@oracle.com,
-        Junxiao Bi <junxiao.bi@oracle.com>
-Cc:     Joel Becker <jlbec@evilplan.org>,
-        Sunil Mushran <sunil.mushran@oracle.com>,
-        ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Mark Fasheh <mark@fasheh.com>
-References: <20211130104043.GB5827@kili>
-From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20211130104043.GB5827@kili>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211126223658.1150141-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 11/30/21 6:40 PM, Dan Carpenter wrote:
-> The callers assume that "*fsdata" is set on the success path, but
-> that's not necessarily true on this path.
+On Fri, Nov 26, 2021, Colin Ian King wrote:
+> Currently variable info is being assigned twice, the second assignment
+> is redundant. Clean up the code by making the assignments at declaration
+> time and remove the latter two assignments.
 > 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-In ocfs2_page_mkwrite(), since in this case no target page locked, it
-will finally return VM_FAULT_NOPAGE (better VM_FAULT_RETRY?) and throw 
-to handle_mm_fault(). So no problem as comments described.
+Heh, checkpatch complains about the different email domains as it doesn't know
+that googlemail.com and gmail.com are more or less the same.  Doubt it matters
+much, but probably worth having your SoB match your local git config.
 
-But things seems changed since append direct io path started to use
-write_[begin/end]. In this path, the target page is expected as NULL.
-This needs more discussion.
-
-Thanks,
-Joseph
-
-> Fixes: 5cffff9e2986 ("ocfs2: Fix ocfs2_page_mkwrite()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
-> Please review this one EXTRA CAREFULLY.  It's from static analysis and
-> the truth is I'm not 100% sure it's correct.  I'm also not sure that
-> it's a complete fix.
+>  arch/x86/kernel/sev-shared.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
 > 
-> Especially, please review how this is called from ocfs2_write_begin()
-> to make sure that this doesn't break anything.
-> 
-> 
->  fs/ocfs2/aops.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
-> index 68d11c295dd3..a74a370f16f0 100644
-> --- a/fs/ocfs2/aops.c
-> +++ b/fs/ocfs2/aops.c
-> @@ -1813,6 +1813,7 @@ int ocfs2_write_begin_nolock(struct address_space *mapping,
->  	if (ret == -EAGAIN) {
->  		BUG_ON(wc->w_target_page);
->  		ret = 0;
-> +		*fsdata = wc;
->  		goto out_quota;
->  	}
+> diff --git a/arch/x86/kernel/sev-shared.c b/arch/x86/kernel/sev-shared.c
+> index ce987688bbc0..6083d6f658c8 100644
+> --- a/arch/x86/kernel/sev-shared.c
+> +++ b/arch/x86/kernel/sev-shared.c
+> @@ -104,10 +104,7 @@ static enum es_result verify_exception_info(struct ghcb *ghcb, struct es_em_ctxt
 >  
-> 
+>  	if (ret == 1) {
+>  		u64 info = ghcb->save.sw_exit_info_2;
+> -		unsigned long v;
+> -
+> -		info = ghcb->save.sw_exit_info_2;
+> -		v = info & SVM_EVTINJ_VEC_MASK;
+> +		unsigned long v = info & SVM_EVTINJ_VEC_MASK;
+
+'v' should really be a u8, and IMO 'v' is a pointlessly short.  Opportunistically
+squash this in?
+
+---
+ arch/x86/kernel/sev-shared.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/kernel/sev-shared.c b/arch/x86/kernel/sev-shared.c
+index 6083d6f658c8..2feb7359ed3a 100644
+--- a/arch/x86/kernel/sev-shared.c
++++ b/arch/x86/kernel/sev-shared.c
+@@ -104,13 +104,13 @@ static enum es_result verify_exception_info(struct ghcb *ghcb, struct es_em_ctxt
+
+ 	if (ret == 1) {
+ 		u64 info = ghcb->save.sw_exit_info_2;
+-		unsigned long v = info & SVM_EVTINJ_VEC_MASK;
++		u8 vector = info & SVM_EVTINJ_VEC_MASK;
+
+ 		/* Check if exception information from hypervisor is sane. */
+ 		if ((info & SVM_EVTINJ_VALID) &&
+-		    ((v == X86_TRAP_GP) || (v == X86_TRAP_UD)) &&
++		    ((vector == X86_TRAP_GP) || (vector == X86_TRAP_UD)) &&
+ 		    ((info & SVM_EVTINJ_TYPE_MASK) == SVM_EVTINJ_TYPE_EXEPT)) {
+-			ctxt->fi.vector = v;
++			ctxt->fi.vector = vector;
+
+ 			if (info & SVM_EVTINJ_VALID_ERR)
+ 				ctxt->fi.error_code = info >> 32;
+--
+
+
+>  		/* Check if exception information from hypervisor is sane. */
+
+s/sane/mostly sane, this code doesn't check that the hypervisor correctly provided
+an error.  It doesn't really matter since ctxt->fi.error_code is zeroed, i.e. will
+have clean data for #GP, and is ignored by #UD.  And nothing downstream should
+be doing anything more than reporting the error code anyways since the value is
+fully VMM controlled.  But to be pedantic...
+
+From: Sean Christopherson <seanjc@google.com>
+Date: Tue, 30 Nov 2021 18:40:30 -0800
+Subject: [PATCH] x86/sev: Verify that VMM provides error code on #GP, and not
+ on #UD
+
+When handling an "injected" exception after #VMGEXIT, verify that the VMM
+did (not) provide an error code as appropriate for the signaled vector.
+Treat an error code mismatch as a VMM error instead of synthesizing an
+exception.
+
+Fixes: 597cfe48212a ("x86/boot/compressed/64: Setup a GHCB-based VC Exception handler")
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kernel/sev-shared.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/sev-shared.c b/arch/x86/kernel/sev-shared.c
+index 2feb7359ed3a..139d88a76adc 100644
+--- a/arch/x86/kernel/sev-shared.c
++++ b/arch/x86/kernel/sev-shared.c
+@@ -105,11 +105,13 @@ static enum es_result verify_exception_info(struct ghcb *ghcb, struct es_em_ctxt
+ 	if (ret == 1) {
+ 		u64 info = ghcb->save.sw_exit_info_2;
+ 		u8 vector = info & SVM_EVTINJ_VEC_MASK;
++		bool want_error_code = (vector == X86_TRAP_GP);
+
+ 		/* Check if exception information from hypervisor is sane. */
+ 		if ((info & SVM_EVTINJ_VALID) &&
+ 		    ((vector == X86_TRAP_GP) || (vector == X86_TRAP_UD)) &&
+-		    ((info & SVM_EVTINJ_TYPE_MASK) == SVM_EVTINJ_TYPE_EXEPT)) {
++		    ((info & SVM_EVTINJ_TYPE_MASK) == SVM_EVTINJ_TYPE_EXEPT) &&
++		    (!!(info & SVM_EVTINJ_VALID_ERR) == want_error_code)) {
+ 			ctxt->fi.vector = vector;
+
+ 			if (info & SVM_EVTINJ_VALID_ERR)
+--
+
