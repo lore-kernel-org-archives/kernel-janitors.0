@@ -2,67 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C0F0C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Dec 2021 00:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7917C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Dec 2021 02:25:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345767AbhLAAgA (ORCPT
+        id S1345986AbhLAC2e (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 30 Nov 2021 19:36:00 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:45174 "EHLO
-        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345744AbhLAAf7 (ORCPT
+        Tue, 30 Nov 2021 21:28:34 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:54218 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241292AbhLAC22 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 30 Nov 2021 19:35:59 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id D99DFCE1D19;
-        Wed,  1 Dec 2021 00:32:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6244C53FCB;
-        Wed,  1 Dec 2021 00:32:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638318755;
-        bh=o/vguVdCIFrn8XRMYWINw9V41uwBDFShZeJRxnqWwho=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=lAA5qm4h4CeqHj7icP81QtUK9i8XTP7N1jKrKdgs7Pietyn+Gpb4BLyGFfH+QZ/lW
-         3IENHjFLQayGdnN0/cTzM2xT2Lxh18YA6sFngAx11xcM86WY9+mVyO6mKyxFiXhckC
-         1Vey1/8/59+fWf55QiJG2cGc/BVUIwUv3yf0HKYyyI0+GD1CkphpkFz4M8kp86D2aL
-         NPEjpBSGRvFm4zTB8r8d75v9Z7oRd7kIb5u3IjEMK8f2I5UT6KKHgLNsfcpMl7VqY8
-         UGyssa1hQvaHjAzslbzXJ4nBa0zJ9eUdy9oqAnwxby/wZDhkh1pIGpVIL2CMUttnRO
-         0VZLd/7mq5KDA==
-Received: by mail-oi1-f179.google.com with SMTP id u74so44842414oie.8;
-        Tue, 30 Nov 2021 16:32:35 -0800 (PST)
-X-Gm-Message-State: AOAM5312AJ3lKlRS1l9PyNvKk3VSWBQFM7p4G8cXccprwfke4GXlyQsx
-        WLE6rgcefbppY7eV+VMMk67JWGoXjPbxdkM8FX0=
-X-Google-Smtp-Source: ABdhPJxI1ik1dYJ6aPpTMBKWTgaM63xxSd+huBLdtmpJhNxeFVO031rRXXlqI3Ss5WQ1uJtWNwT1GPsfePUXXoFEcT0=
-X-Received: by 2002:aca:eb0b:: with SMTP id j11mr2564526oih.51.1638318755138;
- Tue, 30 Nov 2021 16:32:35 -0800 (PST)
+        Tue, 30 Nov 2021 21:28:28 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R261e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0UywMFvQ_1638325498;
+Received: from 30.225.24.35(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0UywMFvQ_1638325498)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 01 Dec 2021 10:24:59 +0800
+Message-ID: <92d4d393-9734-9f7e-4440-20429bdac14f@linux.alibaba.com>
+Date:   Wed, 1 Dec 2021 10:24:58 +0800
 MIME-Version: 1.0
-Received: by 2002:ac9:428a:0:0:0:0:0 with HTTP; Tue, 30 Nov 2021 16:32:34
- -0800 (PST)
-In-Reply-To: <20211130125047.GA24578@kili>
-References: <20211130125047.GA24578@kili>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Wed, 1 Dec 2021 09:32:34 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8MWZCft5s3tu2omjU__9J46sCXqO2rbph5Aqivzp3rUg@mail.gmail.com>
-Message-ID: <CAKYAXd8MWZCft5s3tu2omjU__9J46sCXqO2rbph5Aqivzp3rUg@mail.gmail.com>
-Subject: Re: [PATCH] ksmbd: fix error code in ndr_read_int32()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Steve French <sfrench@samba.org>,
-        Hyunchul Lee <hyc.lee@gmail.com>, linux-cifs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.3.0
+Subject: Re: [PATCH] ocfs2: fix uninitialized variable in
+ ocfs2_dio_wr_get_block()
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Wengang Wang <wen.gang.wang@oracle.com>, ryan.ding@oracle.com,
+        Junxiao Bi <junxiao.bi@oracle.com>
+Cc:     Joel Becker <jlbec@evilplan.org>,
+        Sunil Mushran <sunil.mushran@oracle.com>,
+        ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Mark Fasheh <mark@fasheh.com>
+References: <20211130104043.GB5827@kili>
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <20211130104043.GB5827@kili>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-2021-11-30 21:50 GMT+09:00, Dan Carpenter <dan.carpenter@oracle.com>:
-> This is a failure path and it should return -EINVAL instead of success.
-> Otherwise it could result in the caller using uninitialized memory.
->
-> Fixes: 303fff2b8c77 ("ksmbd: add validation for ndr read/write functions")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Namjae Jeon <linkinjeon@kernel.org>
 
-Thanks!
+
+On 11/30/21 6:40 PM, Dan Carpenter wrote:
+> The callers assume that "*fsdata" is set on the success path, but
+> that's not necessarily true on this path.
+> 
+
+In ocfs2_page_mkwrite(), since in this case no target page locked, it
+will finally return VM_FAULT_NOPAGE (better VM_FAULT_RETRY?) and throw 
+to handle_mm_fault(). So no problem as comments described.
+
+But things seems changed since append direct io path started to use
+write_[begin/end]. In this path, the target page is expected as NULL.
+This needs more discussion.
+
+Thanks,
+Joseph
+
+> Fixes: 5cffff9e2986 ("ocfs2: Fix ocfs2_page_mkwrite()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> Please review this one EXTRA CAREFULLY.  It's from static analysis and
+> the truth is I'm not 100% sure it's correct.  I'm also not sure that
+> it's a complete fix.
+> 
+> Especially, please review how this is called from ocfs2_write_begin()
+> to make sure that this doesn't break anything.
+> 
+> 
+>  fs/ocfs2/aops.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+> index 68d11c295dd3..a74a370f16f0 100644
+> --- a/fs/ocfs2/aops.c
+> +++ b/fs/ocfs2/aops.c
+> @@ -1813,6 +1813,7 @@ int ocfs2_write_begin_nolock(struct address_space *mapping,
+>  	if (ret == -EAGAIN) {
+>  		BUG_ON(wc->w_target_page);
+>  		ret = 0;
+> +		*fsdata = wc;
+>  		goto out_quota;
+>  	}
+>  
+> 
