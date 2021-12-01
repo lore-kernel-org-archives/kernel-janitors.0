@@ -2,48 +2,47 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A55C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Dec 2021 18:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA65C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Dec 2021 18:32:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352459AbhLASfc (ORCPT
+        id S1352573AbhLASgF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Dec 2021 13:35:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46200 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352470AbhLASf0 (ORCPT
+        Wed, 1 Dec 2021 13:36:05 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:57638 "EHLO
+        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1352511AbhLASfr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Dec 2021 13:35:26 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7977C061574
-        for <kernel-janitors@vger.kernel.org>; Wed,  1 Dec 2021 10:32:05 -0800 (PST)
+        Wed, 1 Dec 2021 13:35:47 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8FBF5B820FF
-        for <kernel-janitors@vger.kernel.org>; Wed,  1 Dec 2021 18:32:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBEE9C53FCD;
-        Wed,  1 Dec 2021 18:32:01 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id DEE17CE2083;
+        Wed,  1 Dec 2021 18:32:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A096C53FCD;
+        Wed,  1 Dec 2021 18:32:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638383523;
-        bh=dsGSvVwsFDlsp1QgsF8UIKkiq2nz3XnghIlxao0zEmI=;
+        s=k20201202; t=1638383543;
+        bh=4g5v88qsCsd2eOxSUuIi5nfN0VvYnTAxUAxeb2Tfytw=;
         h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=lr9RZlOWtzaOZ9pJ+CYQabzYms2JfTPwdZmqzs9GxOMmGj1Tto1bDdtPrBpP5IZLV
-         prRPAJxqExT6wM9/mQ4U2wMv9TMFKMG2HXCqHQe4G1Bj726wXg0ea6CeaIvTKiUmUO
-         Hqyy2Rh94N3O8leUPVWkmQ489qYWl8FicfqC91NsFGj49oZrM/kqlLWgc/PlHpIbIH
-         +x6rs2E8es+sO3lk21RReT8dLa8vwZjbGlV6ER/nhT+c99WuifXxYSviZadWj+1w0/
-         7Fj5zobMTF0f4QOYhhDfU0VAIj0nhf/IzirV43gltTqny86gPVcGwLmbKD0U/hSK0w
-         ksuPhbmLOgyuQ==
+        b=EiKCubeadJNn/PHgCLjVjjAtpedMYyGlyEzDsIuLfsuC4bsRfNHPGYUCDM3bA2ppQ
+         FF20EIagtMESiQPT4ruwPZhdu+wQmj3P15w9vYA7EFcxJzccUwoffoa++4Jsb4oA+f
+         fbabmk65q/nbSY4N8QNquvyp24Vlt3eF1CbQn6uuj8kKs6ucHwyKjkLhAG3va7gvVV
+         K6gAo8a2bS8TQekkeJ/jDoNN5ofos5ehd3EsZZQFqwgih0Q5JtkQQ7hvBF/+6U+1AF
+         O8q1iFKf5stU7gLqsN7LhwI5G1WfAqyFEhOlasjl2p/qHUbBYlT25g3z7VPRpFcKA5
+         H7EV93Ea5bBmw==
 From:   Mark Brown <broonie@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-Cc:     Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        kernel-janitors@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>
-In-Reply-To: <20211130125633.GA24941@kili>
-References: <20211130125633.GA24941@kili>
-Subject: Re: [PATCH] ASoC: amd: fix uninitialized variable in snd_acp6x_probe()
-Message-Id: <163838352162.2179725.6088119262152318727.b4-ty@kernel.org>
-Date:   Wed, 01 Dec 2021 18:32:01 +0000
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
+        linux-arm-kernel@lists.infradead.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-mediatek@lists.infradead.org, Takashi Iwai <tiwai@suse.com>,
+        Colin Ian King <colin.i.king@googlemail.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <20211129224236.506883-1-colin.i.king@gmail.com>
+References: <20211129224236.506883-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH] ASoC: mediatek: mt8195: make several arrays static const
+Message-Id: <163838354089.2179787.18120653222525343560.b4-ty@kernel.org>
+Date:   Wed, 01 Dec 2021 18:32:20 +0000
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -51,20 +50,21 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 30 Nov 2021 15:56:33 +0300, Dan Carpenter wrote:
-> The "index" is potentially used without being initialized on the error
-> path.
+On Mon, 29 Nov 2021 22:42:36 +0000, Colin Ian King wrote:
+> Don't populate various arrays on the stack but instead make them
+> static const. Also makes the object code smaller by a few hundred
+> bytes.
 > 
 > 
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-linus
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
 Thanks!
 
-[1/1] ASoC: amd: fix uninitialized variable in snd_acp6x_probe()
-      commit: d5c137f41352e8dd864522c417b45d8d1aebca68
+[1/1] ASoC: mediatek: mt8195: make several arrays static const
+      commit: 91745b034dca6044407b559fe28dd1cf7efccc29
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
