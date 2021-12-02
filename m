@@ -2,77 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3FAC4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Dec 2021 12:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 671A5C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Dec 2021 12:38:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357853AbhLBMXj (ORCPT
+        id S1347317AbhLBMlf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 2 Dec 2021 07:23:39 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:58698 "EHLO
-        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357835AbhLBMXi (ORCPT
+        Thu, 2 Dec 2021 07:41:35 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:54626 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346987AbhLBMld (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 2 Dec 2021 07:23:38 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 5059DCE22AC;
-        Thu,  2 Dec 2021 12:20:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 88907C58328;
-        Thu,  2 Dec 2021 12:20:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638447611;
-        bh=8fcE9M+MmmC5ejqHVi05G1HVed0nk11G8uSKiVFC1ZE=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=IY1HH5bMqmhDPOWpoz8Vy1cXuedeeBbZSFfWbxG0avniPYPjm2+r2w1+y8KiYV2xJ
-         JxSDXMuvL+MbVpCOH1uykk0J1rpS/moumBpdWGA603z5XkFxI4P/ZWlMk9sKbWGRuL
-         Q74U0zq/AwcdQLD08QiqJp+edRJWAnOE968IUvB2+HHtQfkN4wIc3tgN8E6BkbvMFz
-         Ok1y5TvrRvFWdJ84l7b62bYn+zMjw4Mf3biszLxyT+OVia4bdhv2ygM/vYpuR+MB3k
-         YHXz7Ul3lDNRCDzbRy3d7QyPP2SI1mB7wXuU1s3gAjfCDlNTrR88/zGRLEJb7T90Kx
-         5dIEBI1ZNshjQ==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 76270609EF;
-        Thu,  2 Dec 2021 12:20:11 +0000 (UTC)
+        Thu, 2 Dec 2021 07:41:33 -0500
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 899A4E79;
+        Thu,  2 Dec 2021 13:38:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1638448688;
+        bh=8laB6ZrK7mL8S9it7gK0pnuQ1r9qGWjJGPYXw7Sj4rA=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=cAhCaHoff0avaL228wDsPFu7O4+5ZfUhG+UrehEQnVUVC/AchTUQu8EilSaKCUeRz
+         qWWz8EhsAJZpPCZa5tS2P/g0hq1sFyopHT4J5UvLXWpDDZED2DeuY5dm5dlHbGokIs
+         +WKS52JJd5gjYvgKw6wDj438ZEhtjedCpPUgcTK8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: lan966x: Fix duplicate check in frame
- extraction
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <163844761147.9736.10176987879956906206.git-patchwork-notify@kernel.org>
-Date:   Thu, 02 Dec 2021 12:20:11 +0000
-References: <20211201145351.152208-1-horatiu.vultur@microchip.com>
-In-Reply-To: <20211201145351.152208-1-horatiu.vultur@microchip.com>
-To:     Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc:     UNGLinuxDriver@microchip.com, davem@davemloft.net, kuba@kernel.org,
-        dan.carpenter@oracle.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <b11f646dda189f490c06bf671f64a2cc0af4d45c.1638397089.git.christophe.jaillet@wanadoo.fr>
+References: <b11f646dda189f490c06bf671f64a2cc0af4d45c.1638397089.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] media: mc: mc-entity.c: Use bitmap_zalloc() when applicable
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com
+Date:   Thu, 02 Dec 2021 12:38:05 +0000
+Message-ID: <163844868581.3059017.16653620248778368715@Monstersaurus>
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Quoting Christophe JAILLET (2021-12-01 22:19:40)
+> 'ent_enum->bmap' is a bitmap. So use 'bitmap_zalloc()' to simplify
+> code, improve the semantic and avoid some open-coded arithmetic in
+> allocator arguments.
+>=20
+> Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
+> consistency.
+>=20
+> While at it, remove a useless 'bitmap_zero()'.
 
-This patch was applied to netdev/net-next.git (master)
-by David S. Miller <davem@davemloft.net>:
+Ah, yes kcalloc zeros memory, so it is doing a redundant clear as well.
+Changing to bitmap_zalloc looks a lot better though.
 
-On Wed, 1 Dec 2021 15:53:51 +0100 you wrote:
-> The blamed commit generates the following smatch static checker warning:
-> 
->  drivers/net/ethernet/microchip/lan966x/lan966x_main.c:515 lan966x_xtr_irq_handler()
->          warn: duplicate check 'sz < 0' (previous on line 502)
-> 
-> This patch fixes this issue removing the duplicate check 'sz < 0'
-> 
-> [...]
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Here is the summary with links:
-  - [net-next] net: lan966x: Fix duplicate check in frame extraction
-    https://git.kernel.org/netdev/net-next/c/a290cf692779
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/media/mc/mc-entity.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/media/mc/mc-entity.c b/drivers/media/mc/mc-entity.c
+> index c02340698ad6..b411f9796191 100644
+> --- a/drivers/media/mc/mc-entity.c
+> +++ b/drivers/media/mc/mc-entity.c
+> @@ -48,12 +48,10 @@ __must_check int __media_entity_enum_init(struct medi=
+a_entity_enum *ent_enum,
+>                                           int idx_max)
+>  {
+>         idx_max =3D ALIGN(idx_max, BITS_PER_LONG);
+> -       ent_enum->bmap =3D kcalloc(idx_max / BITS_PER_LONG, sizeof(long),
+> -                                GFP_KERNEL);
+> +       ent_enum->bmap =3D bitmap_zalloc(idx_max, GFP_KERNEL);
+>         if (!ent_enum->bmap)
+>                 return -ENOMEM;
+> =20
+> -       bitmap_zero(ent_enum->bmap, idx_max);
+>         ent_enum->idx_max =3D idx_max;
+> =20
+>         return 0;
+> @@ -62,7 +60,7 @@ EXPORT_SYMBOL_GPL(__media_entity_enum_init);
+> =20
+>  void media_entity_enum_cleanup(struct media_entity_enum *ent_enum)
+>  {
+> -       kfree(ent_enum->bmap);
+> +       bitmap_free(ent_enum->bmap);
+>  }
+>  EXPORT_SYMBOL_GPL(media_entity_enum_cleanup);
+> =20
+> --=20
+> 2.30.2
+>
