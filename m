@@ -2,103 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B6D6C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Dec 2021 19:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F341C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Dec 2021 20:16:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376647AbhLBTKo (ORCPT
+        id S1348712AbhLBUTg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 2 Dec 2021 14:10:44 -0500
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:53568 "EHLO
+        Thu, 2 Dec 2021 15:19:36 -0500
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:60356 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376640AbhLBTKn (ORCPT
+        with ESMTP id S243074AbhLBUTb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 2 Dec 2021 14:10:43 -0500
-Received: from [192.168.1.18] ([86.243.171.122])
+        Thu, 2 Dec 2021 15:19:31 -0500
+Received: from pop-os.home ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id srQMm8a6iHQrlsrQMmWszZ; Thu, 02 Dec 2021 20:07:19 +0100
-X-ME-Helo: [192.168.1.18]
+        id ssUvmqRgBozlissUvmqm80; Thu, 02 Dec 2021 21:16:07 +0100
+X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 02 Dec 2021 20:07:19 +0100
+X-ME-Date: Thu, 02 Dec 2021 21:16:07 +0100
 X-ME-IP: 86.243.171.122
-Subject: Re: [PATCH] xen-blkfront: Use the bitmap API when applicable
-To:     Joe Perches <joe@perches.com>, Juergen Gross <jgross@suse.com>,
-        boris.ostrovsky@oracle.com, sstabellini@kernel.org,
-        roger.pau@citrix.com, axboe@kernel.dk
-Cc:     xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <1c73cf8eaff02ea19439ec676c063e592d273cfe.1638392965.git.christophe.jaillet@wanadoo.fr>
- <c529a221-f444-ad26-11ff-f693401c9429@suse.com>
- <d8f87c17-75d1-2e6b-65e1-23adc75bb515@wanadoo.fr>
- <6fcddba84070c021eb92aa9a5ff15fb2a47e9acb.camel@perches.com>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <3d71577f-dabe-6e1a-4b03-2a44f304b702@wanadoo.fr>
-Date:   Thu, 2 Dec 2021 20:07:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+To:     boris.ostrovsky@oracle.com, jgross@suse.com,
+        sstabellini@kernel.org, roger.pau@citrix.com, axboe@kernel.dk
+Cc:     xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2] xen-blkfront: Use the bitmap API when applicable
+Date:   Thu,  2 Dec 2021 21:16:04 +0100
+Message-Id: <d6f31db1d2542e1b4ba66d4cea80d3891678aa5a.1638476031.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <6fcddba84070c021eb92aa9a5ff15fb2a47e9acb.camel@perches.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 02/12/2021 à 19:16, Joe Perches a écrit :
-> On Thu, 2021-12-02 at 19:12 +0100, Christophe JAILLET wrote:
->> Le 02/12/2021 à 07:12, Juergen Gross a écrit :
->>> On 01.12.21 22:10, Christophe JAILLET wrote:
->>>> Use 'bitmap_zalloc()' to simplify code, improve the semantic and avoid
->>>> some open-coded arithmetic in allocator arguments.
->>>>
->>>> Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
->>>> consistency.
->>>>
->>>> Use 'bitmap_copy()' to avoid an explicit 'memcpy()'
-> []
->>>> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
-> []
->>>> @@ -442,16 +442,14 @@ static int xlbd_reserve_minors(unsigned int
->>>> minor, unsigned int nr)
->>>>        if (end > nr_minors) {
->>>>            unsigned long *bitmap, *old;
->>>> -        bitmap = kcalloc(BITS_TO_LONGS(end), sizeof(*bitmap),
->>>> -                 GFP_KERNEL);
->>>> +        bitmap = bitmap_zalloc(end, GFP_KERNEL);
->>>>            if (bitmap == NULL)
->>>>                return -ENOMEM;
->>>>            spin_lock(&minor_lock);
->>>>            if (end > nr_minors) {
->>>>                old = minors;
->>>> -            memcpy(bitmap, minors,
->>>> -                   BITS_TO_LONGS(nr_minors) * sizeof(*bitmap));
->>>> +            bitmap_copy(bitmap, minors, nr_minors);
->>>>                minors = bitmap;
->>>>                nr_minors = BITS_TO_LONGS(end) * BITS_PER_LONG;
-> 
-> 		nr_minors = end;
-> ?
-> 
+Use 'bitmap_zalloc()' to simplify code, improve the semantic and avoid some
+open-coded arithmetic in allocator arguments.
 
-No,
-My understanding of the code is that if we lack space (end > nr_minors), 
-we need to allocate more. In such a case, we want to keep track of what 
-we have allocated, not what we needed.
-The "padding" bits in the "long align" allocation, can be used later.
+Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
+consistency.
 
-first call
-----------
-end = 65
-nr_minors = 63
+Use 'bitmap_copy()' to avoid an explicit 'memcpy()'
 
---> we need some space
---> we allocate 2 longs = 128 bits
---> we now use 65 bits of these 128 bits
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v1 --> v2: change another kfree into bitmap_free
+---
+ drivers/block/xen-blkfront.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-new call
---------
-end = 68
-nr_minors = 128 (from previous call)
---> no need to reallocate
+diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+index 700c765a759a..69cf13608ce0 100644
+--- a/drivers/block/xen-blkfront.c
++++ b/drivers/block/xen-blkfront.c
+@@ -442,22 +442,20 @@ static int xlbd_reserve_minors(unsigned int minor, unsigned int nr)
+ 	if (end > nr_minors) {
+ 		unsigned long *bitmap, *old;
+ 
+-		bitmap = kcalloc(BITS_TO_LONGS(end), sizeof(*bitmap),
+-				 GFP_KERNEL);
++		bitmap = bitmap_zalloc(end, GFP_KERNEL);
+ 		if (bitmap == NULL)
+ 			return -ENOMEM;
+ 
+ 		spin_lock(&minor_lock);
+ 		if (end > nr_minors) {
+ 			old = minors;
+-			memcpy(bitmap, minors,
+-			       BITS_TO_LONGS(nr_minors) * sizeof(*bitmap));
++			bitmap_copy(bitmap, minors, nr_minors);
+ 			minors = bitmap;
+ 			nr_minors = BITS_TO_LONGS(end) * BITS_PER_LONG;
+ 		} else
+ 			old = bitmap;
+ 		spin_unlock(&minor_lock);
+-		kfree(old);
++		bitmap_free(old);
+ 	}
+ 
+ 	spin_lock(&minor_lock);
+@@ -2610,7 +2608,7 @@ static void __exit xlblk_exit(void)
+ 
+ 	xenbus_unregister_driver(&blkfront_driver);
+ 	unregister_blkdev(XENVBD_MAJOR, DEV_NAME);
+-	kfree(minors);
++	bitmap_free(minors);
+ }
+ module_exit(xlblk_exit);
+ 
+-- 
+2.30.2
 
-CJ
