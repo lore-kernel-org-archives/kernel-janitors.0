@@ -2,96 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 671A5C4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Dec 2021 12:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48389C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  2 Dec 2021 18:12:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347317AbhLBMlf (ORCPT
+        id S1376579AbhLBSPc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 2 Dec 2021 07:41:35 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54626 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346987AbhLBMld (ORCPT
+        Thu, 2 Dec 2021 13:15:32 -0500
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:50706 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1376574AbhLBSPa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 2 Dec 2021 07:41:33 -0500
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 899A4E79;
-        Thu,  2 Dec 2021 13:38:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1638448688;
-        bh=8laB6ZrK7mL8S9it7gK0pnuQ1r9qGWjJGPYXw7Sj4rA=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=cAhCaHoff0avaL228wDsPFu7O4+5ZfUhG+UrehEQnVUVC/AchTUQu8EilSaKCUeRz
-         qWWz8EhsAJZpPCZa5tS2P/g0hq1sFyopHT4J5UvLXWpDDZED2DeuY5dm5dlHbGokIs
-         +WKS52JJd5gjYvgKw6wDj438ZEhtjedCpPUgcTK8=
-Content-Type: text/plain; charset="utf-8"
+        Thu, 2 Dec 2021 13:15:30 -0500
+Received: from [192.168.1.18] ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id sqYum8DwlHQrlsqYumWmIy; Thu, 02 Dec 2021 19:12:06 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Thu, 02 Dec 2021 19:12:06 +0100
+X-ME-IP: 86.243.171.122
+Subject: Re: [PATCH] xen-blkfront: Use the bitmap API when applicable
+To:     Juergen Gross <jgross@suse.com>, boris.ostrovsky@oracle.com,
+        sstabellini@kernel.org, roger.pau@citrix.com, axboe@kernel.dk
+Cc:     xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <1c73cf8eaff02ea19439ec676c063e592d273cfe.1638392965.git.christophe.jaillet@wanadoo.fr>
+ <c529a221-f444-ad26-11ff-f693401c9429@suse.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <d8f87c17-75d1-2e6b-65e1-23adc75bb515@wanadoo.fr>
+Date:   Thu, 2 Dec 2021 19:12:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <b11f646dda189f490c06bf671f64a2cc0af4d45c.1638397089.git.christophe.jaillet@wanadoo.fr>
-References: <b11f646dda189f490c06bf671f64a2cc0af4d45c.1638397089.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] media: mc: mc-entity.c: Use bitmap_zalloc() when applicable
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com
-Date:   Thu, 02 Dec 2021 12:38:05 +0000
-Message-ID: <163844868581.3059017.16653620248778368715@Monstersaurus>
-User-Agent: alot/0.10
+In-Reply-To: <c529a221-f444-ad26-11ff-f693401c9429@suse.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Quoting Christophe JAILLET (2021-12-01 22:19:40)
-> 'ent_enum->bmap' is a bitmap. So use 'bitmap_zalloc()' to simplify
-> code, improve the semantic and avoid some open-coded arithmetic in
-> allocator arguments.
->=20
-> Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
-> consistency.
->=20
-> While at it, remove a useless 'bitmap_zero()'.
+Le 02/12/2021 à 07:12, Juergen Gross a écrit :
+> On 01.12.21 22:10, Christophe JAILLET wrote:
+>> Use 'bitmap_zalloc()' to simplify code, improve the semantic and avoid 
+>> some
+>> open-coded arithmetic in allocator arguments.
+>>
+>> Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
+>> consistency.
+>>
+>> Use 'bitmap_copy()' to avoid an explicit 'memcpy()'
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>   drivers/block/xen-blkfront.c | 8 +++-----
+>>   1 file changed, 3 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+>> index 700c765a759a..fe4d69cf9469 100644
+>> --- a/drivers/block/xen-blkfront.c
+>> +++ b/drivers/block/xen-blkfront.c
+>> @@ -442,16 +442,14 @@ static int xlbd_reserve_minors(unsigned int 
+>> minor, unsigned int nr)
+>>       if (end > nr_minors) {
+>>           unsigned long *bitmap, *old;
+>> -        bitmap = kcalloc(BITS_TO_LONGS(end), sizeof(*bitmap),
+>> -                 GFP_KERNEL);
+>> +        bitmap = bitmap_zalloc(end, GFP_KERNEL);
+>>           if (bitmap == NULL)
+>>               return -ENOMEM;
+>>           spin_lock(&minor_lock);
+>>           if (end > nr_minors) {
+>>               old = minors;
+>> -            memcpy(bitmap, minors,
+>> -                   BITS_TO_LONGS(nr_minors) * sizeof(*bitmap));
+>> +            bitmap_copy(bitmap, minors, nr_minors);
+>>               minors = bitmap;
+>>               nr_minors = BITS_TO_LONGS(end) * BITS_PER_LONG;
+>>           } else
+> 
+> Shouldn't you use bitmap_free(old) some lines down?
 
-Ah, yes kcalloc zeros memory, so it is doing a redundant clear as well.
-Changing to bitmap_zalloc looks a lot better though.
+Obvious.
+I'll send a V2, Thx for the review.
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+CJ
 
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/media/mc/mc-entity.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/media/mc/mc-entity.c b/drivers/media/mc/mc-entity.c
-> index c02340698ad6..b411f9796191 100644
-> --- a/drivers/media/mc/mc-entity.c
-> +++ b/drivers/media/mc/mc-entity.c
-> @@ -48,12 +48,10 @@ __must_check int __media_entity_enum_init(struct medi=
-a_entity_enum *ent_enum,
->                                           int idx_max)
->  {
->         idx_max =3D ALIGN(idx_max, BITS_PER_LONG);
-> -       ent_enum->bmap =3D kcalloc(idx_max / BITS_PER_LONG, sizeof(long),
-> -                                GFP_KERNEL);
-> +       ent_enum->bmap =3D bitmap_zalloc(idx_max, GFP_KERNEL);
->         if (!ent_enum->bmap)
->                 return -ENOMEM;
-> =20
-> -       bitmap_zero(ent_enum->bmap, idx_max);
->         ent_enum->idx_max =3D idx_max;
-> =20
->         return 0;
-> @@ -62,7 +60,7 @@ EXPORT_SYMBOL_GPL(__media_entity_enum_init);
-> =20
->  void media_entity_enum_cleanup(struct media_entity_enum *ent_enum)
->  {
-> -       kfree(ent_enum->bmap);
-> +       bitmap_free(ent_enum->bmap);
->  }
->  EXPORT_SYMBOL_GPL(media_entity_enum_cleanup);
-> =20
-> --=20
-> 2.30.2
->
+> 
+>> @@ -2610,7 +2608,7 @@ static void __exit xlblk_exit(void)
+>>       xenbus_unregister_driver(&blkfront_driver);
+>>       unregister_blkdev(XENVBD_MAJOR, DEV_NAME);
+>> -    kfree(minors);
+>> +    bitmap_free(minors);
+>>   }
+>>   module_exit(xlblk_exit);
+> 
+> 
+> Juergen
+> 
+
