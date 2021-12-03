@@ -2,96 +2,118 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CBC2C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Dec 2021 02:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC83FC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Dec 2021 03:03:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378283AbhLCCzj (ORCPT
+        id S1378342AbhLCDHB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 2 Dec 2021 21:55:39 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:43600 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243536AbhLCCzg (ORCPT
+        Thu, 2 Dec 2021 22:07:01 -0500
+Received: from smtprelay0154.hostedemail.com ([216.40.44.154]:42294 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1350790AbhLCDHA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 2 Dec 2021 21:55:36 -0500
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3CCD0A59;
-        Fri,  3 Dec 2021 03:52:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1638499931;
-        bh=SnLYL+0P6D8oVgyVFOJ1csGxGyPoyV1B0+a7dbROoU4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Aovp1RYOso//aS2JCm4doWvuV7yCnSgfRfPj0XMp0VCcWoQUnGvunRC9foIIti6WZ
-         MFNg8E8DMelbhR/ll1UR3gEpfS3L0+Akyri3sy++veWG9wN0j3gqVYBC8xekLv91G+
-         rIh8EXOF6vUuSB26/ALJ5Ix+NrVHfxlHb8nv6yU8=
-Date:   Fri, 3 Dec 2021 04:51:45 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     sakari.ailus@linux.intel.com, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] media: mc: mc-entity.c: Use bitmap_zalloc() when
- applicable
-Message-ID: <YamGQbD+abET4rmx@pendragon.ideasonboard.com>
-References: <b11f646dda189f490c06bf671f64a2cc0af4d45c.1638397089.git.christophe.jaillet@wanadoo.fr>
+        Thu, 2 Dec 2021 22:07:00 -0500
+Received: from omf06.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 140B9101369A0;
+        Fri,  3 Dec 2021 03:03:35 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf06.hostedemail.com (Postfix) with ESMTPA id 6DDA420015;
+        Fri,  3 Dec 2021 03:03:32 +0000 (UTC)
+Message-ID: <863f2cddacac590d581cda09d548ee0a652df8a1.camel@perches.com>
+Subject: Re: [PATCH] xen-blkfront: Use the bitmap API when applicable
+From:   Joe Perches <joe@perches.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Juergen Gross <jgross@suse.com>, boris.ostrovsky@oracle.com,
+        sstabellini@kernel.org, roger.pau@citrix.com, axboe@kernel.dk
+Cc:     xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Date:   Thu, 02 Dec 2021 19:03:32 -0800
+In-Reply-To: <3d71577f-dabe-6e1a-4b03-2a44f304b702@wanadoo.fr>
+References: <1c73cf8eaff02ea19439ec676c063e592d273cfe.1638392965.git.christophe.jaillet@wanadoo.fr>
+         <c529a221-f444-ad26-11ff-f693401c9429@suse.com>
+         <d8f87c17-75d1-2e6b-65e1-23adc75bb515@wanadoo.fr>
+         <6fcddba84070c021eb92aa9a5ff15fb2a47e9acb.camel@perches.com>
+         <3d71577f-dabe-6e1a-4b03-2a44f304b702@wanadoo.fr>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.4-1ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b11f646dda189f490c06bf671f64a2cc0af4d45c.1638397089.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
+X-Stat-Signature: dsgan1p8pchxr8wbecis6grq8tsez18d
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 6DDA420015
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1/U5Pxt1pAwSKl1eR87urKf9gGDN2xSyaw=
+X-HE-Tag: 1638500612-192617
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
-
-Thank you for the patch.
-
-On Wed, Dec 01, 2021 at 11:19:40PM +0100, Christophe JAILLET wrote:
-> 'ent_enum->bmap' is a bitmap. So use 'bitmap_zalloc()' to simplify
-> code, improve the semantic and avoid some open-coded arithmetic in
-> allocator arguments.
+On Thu, 2021-12-02 at 20:07 +0100, Christophe JAILLET wrote:
+> Le 02/12/2021 à 19:16, Joe Perches a écrit :
+> > On Thu, 2021-12-02 at 19:12 +0100, Christophe JAILLET wrote:
+> > > Le 02/12/2021 à 07:12, Juergen Gross a écrit :
+> > > > On 01.12.21 22:10, Christophe JAILLET wrote:
+> > > > > Use 'bitmap_zalloc()' to simplify code, improve the semantic and avoid
+> > > > > some open-coded arithmetic in allocator arguments.
+> > > > > 
+> > > > > Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
+> > > > > consistency.
+> > > > > 
+> > > > > Use 'bitmap_copy()' to avoid an explicit 'memcpy()'
+> > []
+> > > > > diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+> > []
+> > > > > @@ -442,16 +442,14 @@ static int xlbd_reserve_minors(unsigned int
+> > > > > minor, unsigned int nr)
+> > > > >        if (end > nr_minors) {
+> > > > >            unsigned long *bitmap, *old;
+> > > > > -        bitmap = kcalloc(BITS_TO_LONGS(end), sizeof(*bitmap),
+> > > > > -                 GFP_KERNEL);
+> > > > > +        bitmap = bitmap_zalloc(end, GFP_KERNEL);
+> > > > >            if (bitmap == NULL)
+> > > > >                return -ENOMEM;
+> > > > >            spin_lock(&minor_lock);
+> > > > >            if (end > nr_minors) {
+> > > > >                old = minors;
+> > > > > -            memcpy(bitmap, minors,
+> > > > > -                   BITS_TO_LONGS(nr_minors) * sizeof(*bitmap));
+> > > > > +            bitmap_copy(bitmap, minors, nr_minors);
+> > > > >                minors = bitmap;
+> > > > >                nr_minors = BITS_TO_LONGS(end) * BITS_PER_LONG;
+> > 
+> > 		nr_minors = end;
+> > ?
+> > 
 > 
-> Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
-> consistency.
+> No,
+> My understanding of the code is that if we lack space (end > nr_minors), 
+> we need to allocate more. In such a case, we want to keep track of what 
+> we have allocated, not what we needed.
+> The "padding" bits in the "long align" allocation, can be used later.
+
 > 
-> While at it, remove a useless 'bitmap_zero()'.
+> first call
+> ----------
+> end = 65
+> nr_minors = 63
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> --> we need some space
+> --> we allocate 2 longs = 128 bits
+> --> we now use 65 bits of these 128 bits
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+or 96, 32 or 64 bit longs remember.
 
-> ---
->  drivers/media/mc/mc-entity.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/media/mc/mc-entity.c b/drivers/media/mc/mc-entity.c
-> index c02340698ad6..b411f9796191 100644
-> --- a/drivers/media/mc/mc-entity.c
-> +++ b/drivers/media/mc/mc-entity.c
-> @@ -48,12 +48,10 @@ __must_check int __media_entity_enum_init(struct media_entity_enum *ent_enum,
->  					  int idx_max)
->  {
->  	idx_max = ALIGN(idx_max, BITS_PER_LONG);
-> -	ent_enum->bmap = kcalloc(idx_max / BITS_PER_LONG, sizeof(long),
-> -				 GFP_KERNEL);
-> +	ent_enum->bmap = bitmap_zalloc(idx_max, GFP_KERNEL);
->  	if (!ent_enum->bmap)
->  		return -ENOMEM;
->  
-> -	bitmap_zero(ent_enum->bmap, idx_max);
->  	ent_enum->idx_max = idx_max;
->  
->  	return 0;
-> @@ -62,7 +60,7 @@ EXPORT_SYMBOL_GPL(__media_entity_enum_init);
->  
->  void media_entity_enum_cleanup(struct media_entity_enum *ent_enum)
->  {
-> -	kfree(ent_enum->bmap);
-> +	bitmap_free(ent_enum->bmap);
->  }
->  EXPORT_SYMBOL_GPL(media_entity_enum_cleanup);
->  
+> new call
+> --------
+> end = 68
+> nr_minors = 128 (from previous call)
 
--- 
-Regards,
+The initial allocation is now bitmap_zalloc which
+specifies only bits and the nr_minors is then in
+BITS_TO_LONGS(bits) * BITS_PER_LONG
 
-Laurent Pinchart
+Perhaps that assumes too much about the internal
+implementation of bitmap_alloc
+
+
+
