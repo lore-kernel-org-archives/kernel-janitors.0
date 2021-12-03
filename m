@@ -2,54 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E6D6C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Dec 2021 05:07:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC8D7C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Dec 2021 07:57:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232723AbhLCFLH (ORCPT
+        id S1379016AbhLCIAu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 3 Dec 2021 00:11:07 -0500
-Received: from helcar.hmeau.com ([216.24.177.18]:57380 "EHLO fornost.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234984AbhLCFLB (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 3 Dec 2021 00:11:01 -0500
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
-        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
-        id 1mt0n4-00029X-A8; Fri, 03 Dec 2021 16:07:23 +1100
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 03 Dec 2021 16:07:22 +1100
-Date:   Fri, 3 Dec 2021 16:07:22 +1100
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Boris Brezillon <bbrezillon@kernel.org>,
-        Srujana Challa <schalla@marvell.com>,
-        Arnaud Ebalard <arno@natisbad.org>,
-        Suheil Chandran <schandran@marvell.com>,
-        Lukasz Bartosik <lbartosik@marvell.com>,
-        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] crypto: octeontx2 - uninitialized variable in
- kvf_limits_store()
-Message-ID: <20211203050722.GC20393@gondor.apana.org.au>
-References: <20211127141027.GC24002@kili>
+        Fri, 3 Dec 2021 03:00:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48016 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1350800AbhLCIAt (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 3 Dec 2021 03:00:49 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE329C06173E;
+        Thu,  2 Dec 2021 23:57:25 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id t9so3901647wrx.7;
+        Thu, 02 Dec 2021 23:57:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=TNV9fHEzEZVf5RgXSWpjSpluBeliapHUf8v5v/Opj/M=;
+        b=d479v+zTrj3yISM6DulHtlbK/6f1XE8uPSziNBqeHqTrIzyMVmqeBGsmMPJIwn59we
+         4KyKd66AiXBIAR9e9t5CxIz4+7gFIABd1OmkrB2rQ6Irs+6jJK1jxv/kv06v6f4WTIJm
+         XDzamESwdaeQIwZGurAqansl6jhiAR/TcznUVHy2q6MI9VFFo4yBL+VIE5bUTZqrTX+O
+         Nkhk3lcrdZug9n412p5lGTq5DOM9RgmPWPrYYzhIndIi07rKPHjUEBNxbDlYS2LIrH9r
+         EmZd+FUOMdJmi4j8T2366SL2KI0g405NTwFpCy+FyUX2FYcRqIIimB85wRHtEtGobMbI
+         1DkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=TNV9fHEzEZVf5RgXSWpjSpluBeliapHUf8v5v/Opj/M=;
+        b=fETbjw4/hhQ50scII3XI0zuG03Ud6SVTFpUxLIyyI341171LvOVaMSWqnx1c4pAeYA
+         fe+EbGafrnZ2whk+2+UOx4axju+NopYh8IeYOrJKBk7t8jrY4HbtzDlroxzzj9YnsNjR
+         9eqlrwXYdFU5eVksyYzUgDBek989nW8hb3bWM0ZLtfWdRnNQNDh/a+7Jo0i8B9uGOUpi
+         4NRVKYYHJw9R9tBleVNQ9zNpCbi9010+KPb7jEVr6v3RoNV1dYBXZ3yloTeb7qwsZtY9
+         N9zXvI7HjyY2n/OWU0abHKkBCz+FKZfrjct3uPEkvagbl5dLhomEAFiO/5Fi69dWYdKj
+         oF7w==
+X-Gm-Message-State: AOAM530ZZZIRT117l8T2MMxQqMxc3PD+m9SJBVDs8ohLMjVQznBsJk/4
+        RFvjk1Xb6y5DgFUXskI5zg0=
+X-Google-Smtp-Source: ABdhPJxDUgqqn9c7zvg5vFxi97QijfcIxWHGUUCcGiAVUTbknSza8LEL7TbAB3i/SG3WAzWTUNJGtA==
+X-Received: by 2002:a05:6000:1681:: with SMTP id y1mr20072720wrd.52.1638518244267;
+        Thu, 02 Dec 2021 23:57:24 -0800 (PST)
+Received: from debian64.daheim (p5b0d7b73.dip0.t-ipconnect.de. [91.13.123.115])
+        by smtp.gmail.com with ESMTPSA id f19sm4928700wmq.34.2021.12.02.23.57.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Dec 2021 23:57:23 -0800 (PST)
+Received: from localhost.daheim ([127.0.0.1])
+        by debian64.daheim with esmtp (Exim 4.95)
+        (envelope-from <chunkeey@gmail.com>)
+        id 1mt2UB-0003lm-9X;
+        Fri, 03 Dec 2021 08:57:23 +0100
+Message-ID: <32587626-0dd5-f8d1-5573-1088fd6b375a@gmail.com>
+Date:   Fri, 3 Dec 2021 08:57:23 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211127141027.GC24002@kili>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.2
+Subject: Re: [PATCH] carl9170: Use the bitmap API when applicable
+Content-Language: de-DE
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        chunkeey@googlemail.com, kvalo@codeaurora.org, davem@davemloft.net,
+        kuba@kernel.org
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <1fe18fb73f71d855043c40c83865ad539f326478.1638396221.git.christophe.jaillet@wanadoo.fr>
+From:   Christian Lamparter <chunkeey@gmail.com>
+In-Reply-To: <1fe18fb73f71d855043c40c83865ad539f326478.1638396221.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Nov 27, 2021 at 05:10:27PM +0300, Dan Carpenter wrote:
-> If kstrtoint() fails then "lfs_num" is uninitialized and the warning
-> doesn't make any sense.  Just delete it.
+On 01/12/2021 23:05, Christophe JAILLET wrote:
+> Use 'bitmap_zalloc()' to simplify code, improve the semantic and avoid some
+> open-coded arithmetic in allocator arguments.
 > 
-> Fixes: 8ec8015a3168 ("crypto: octeontx2 - add support to process the crypto request")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/crypto/marvell/octeontx2/otx2_cptpf_main.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
-
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> Note, that this 'bitmap_zalloc()' divides by BITS_PER_LONG the amount of
+> memory allocated.
+> The 'roundup()' used to computed the number of needed long should have
+> been a DIV_ROUND_UP.
+> 
+> 
+> Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
+> consistency.
+> 
+> Use 'bitmap_zero()' to avoid hand writing it.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Christian Lamparter <chunkeey@gmail.com>
