@@ -2,206 +2,177 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77336C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Dec 2021 15:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF6B9C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Dec 2021 15:54:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352682AbhLCPbk (ORCPT
+        id S1381908AbhLCP5i (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 3 Dec 2021 10:31:40 -0500
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:47238 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S245140AbhLCPbj (ORCPT
+        Fri, 3 Dec 2021 10:57:38 -0500
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:52045 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239659AbhLCP5h (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 3 Dec 2021 10:31:39 -0500
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B3EMVou003278;
-        Fri, 3 Dec 2021 15:28:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=corp-2021-07-09;
- bh=6eHnM8uJmvyI/25PdrlJ9Lkt0+e2mLZyfdko+e8gHdM=;
- b=eYKyw9JAuJsXOv3CTlRs2d6ZkTbvvoiIKgwx34ItO3EO4QyThyLK/+dliJ6C2HiSbezQ
- m6TeHOCOJNzo56sNr+Y7U423k94+iejcAcG5madXIfFo1N6ERTUUCV+jXeWi7GevBBJZ
- oRvVIAikOXy+tmZhXRCakLb2YITStHjUji6SuZ2uVCm/J6EgmgtIWR/4rGdjBoffVdPE
- pWVXwrUu/GpeeVoz2HSkvCw585DRRYYqTHnEY5/oVSzDYnDsUSwfquT66ojkLQuJrfcu
- zkK6RcO2sRu5sfHpMkQOz6+aOQ0lc/VpszLDBe6KidgsFNP2z1OB/Bv8F3hNCvdfdLkI Tg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3cqmxs8cjp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 03 Dec 2021 15:28:05 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1B3FO4vf137488;
-        Fri, 3 Dec 2021 15:28:05 GMT
-Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam07lp2048.outbound.protection.outlook.com [104.47.56.48])
-        by aserp3030.oracle.com with ESMTP id 3ckaqmdar5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 03 Dec 2021 15:28:04 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nMhIK1SDw+NUhNlNfitdCX226doUAR3SHt1fAA3N5eXRc3Oxv21j/l31SoHtRcNLLFDLeMsDUMZxfkSJ+gMoONTtiTt3+3EBPpcJms3YHx4V1gQ/43qX213gMzoUE6v23jcAChGCBj1l1WnknxnE4P3aVSolvkHWcNmgB28qjG2KgPZFtBFh47SStNSYU5ouO6RJq4wfsO37dUC0DffBphBqypHu1Xr9gX1HefPe1SxC76jLBKNQS3KNkZfqCqsqqef6amcUjSBeK3GsqA0vBxAw+2RhpRZ+qCXKLGDzG2fQ6EFbFKAPvlBchwh7evpUXpmQfH5ws7Jqth62EKnH1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6eHnM8uJmvyI/25PdrlJ9Lkt0+e2mLZyfdko+e8gHdM=;
- b=XaaLrvsEEJQRXbYDshj/eEHHLTFHeL3JbRM6A8RLOHzK38jJqpZR+YkO7S59uPEyywVjw2+Fa8sm6T9h1cu5wSJZTs/Almyl3ELdgMrWZswL/WjhTWWAU2Zho+0MlC/U04M0uunJasgoIn6NCWp8X/qoTAxv+5ryhYCuBCcEp4SfHgtrCYzKhAwDLUNNogCx7ZDp4Ro7oVyZKeio2jcpB53DCbmgajHHCKHL8gKJPIi94l/3FV163nthHDgKidb1I1rNNheM9j7vkYEsn7Jjp/ItC6f+ePY0Wr40n2JyEkHF27iKyv5PyMLWbRov+2n1I7Wx1ErrIiLD9SZPHv8A9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6eHnM8uJmvyI/25PdrlJ9Lkt0+e2mLZyfdko+e8gHdM=;
- b=o1c6UA1KF5X4EOrqQHS/tsxSPoSE3KB7fJfMGd0zkJfWt10c5u82ga6OEj40WdD7kJKVrGDJ9vjg6tNVRd+2xogiJcEheL6jJr5qlltIqPzPohGgOhrhaDzB45pcV3sghnYGlJMnu6BHqimwoxtE3PZnIRYwxfMWjdkDEAfVWno=
-Received: from CH0PR10MB4858.namprd10.prod.outlook.com (2603:10b6:610:cb::17)
- by CH0PR10MB4873.namprd10.prod.outlook.com (2603:10b6:610:c7::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4734.23; Fri, 3 Dec
- 2021 15:28:03 +0000
-Received: from CH0PR10MB4858.namprd10.prod.outlook.com
- ([fe80::a4f2:aef4:d02b:9bde]) by CH0PR10MB4858.namprd10.prod.outlook.com
- ([fe80::a4f2:aef4:d02b:9bde%7]) with mapi id 15.20.4734.022; Fri, 3 Dec 2021
- 15:28:03 +0000
-From:   Chuck Lever III <chuck.lever@oracle.com>
-To:     Bruce Fields <bfields@fieldses.org>
-CC:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Neil Brown <neilb@suse.de>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] NFSD: make symbol 'nfsd_notifier_lock' static
-Thread-Topic: [PATCH -next] NFSD: make symbol 'nfsd_notifier_lock' static
-Thread-Index: AQHX5dx1rd4OTcROt0WbUE7C0kd8rqwcg4MAgAQhm4CAAEDugIAAAK8AgAACRAA=
-Date:   Fri, 3 Dec 2021 15:28:03 +0000
-Message-ID: <2DF935AD-CBD4-4C31-A08D-1C8127700C77@oracle.com>
-References: <20211130113436.1770168-1-weiyongjun1@huawei.com>
- <888F3743-AB98-41A6-9651-EFDE5987AA01@oracle.com>
- <20211203112505.GI9522@kadam>
- <0428D783-49FE-451E-827B-6DB8F03347D1@oracle.com>
- <20211203151956.GA24150@fieldses.org>
-In-Reply-To: <20211203151956.GA24150@fieldses.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3654.120.0.1.13)
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 4582d136-5f15-4f74-16b4-08d9b6717f51
-x-ms-traffictypediagnostic: CH0PR10MB4873:
-x-microsoft-antispam-prvs: <CH0PR10MB4873D800B378661DE85731CD936A9@CH0PR10MB4873.namprd10.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3173;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: I1Wz2qXnfv7FvczaoqZSFM3JFxM6SxPqxfu3siZsG55lj830N+/uMMbXBdG/qWdpfGJAGDsBXmTo4Dg/kWvCivbX/Z7WiQhgkM4GmcJ59WgbreinJNaltnb3NgqVqSb2Ia9DolXPcMUyyuOVZCKF0GA1yrPxtk51fUMCYNLlRNjF6KLDvmBjJkNe5RSQkmezV+DLs9EFSg8sp+jnaWiF35SJueOHsU8V9rOw7WUQ+tNLsYtJRRgBvroy0r5J8J5TsEO0OTfAFursMskzlixl35VBaTmk7zPqW89nDit7/Nd2rAyl50NF0BRz+W/BHEc/H6xA7oXeaSEUIBLheLZk8iDrOqiraWYPu14bXFh8vUBFg0gFE16JI/SztasMWPtrj50nwtE+dJiJA5N0MTT2kFhLRIgvSPCtTzZ+3u1PeaflFHPEsrSQQKgmZhT1hJ6vWC7OJeH4YnP4Vau0b+9oTZhjx+mw2Bve6BE6VaJqYdvbFN7MtXQ+pI2u8J9lvNRrouzgH6uaoyCSNawoWfhVuCK02qUlZkEKXkQChVQcbWXJbF7TETE0mWOl8ecuCkzTzm5wsA4UywlD5tzax3g1b5BGJu0I5qtNkgEvX/MG3tfagC45RSGeNomVxFbaA8Im4PpYxuUEIWFqemKQ35FnNU7gkXWNwSxCeZoe5APwecM2Wf5ANiDjegam01hkH+qpEukUlUP7rf0XMiAKYEOynb9vV24fRK60Sl9LoZmJdKbUweFRU431noisuktubriXr+FstWVS/bq+P3ohrZ+EHRgX9poKqUkr4EtG1xyDh+wONrVhtr/urG3cpPnXylOnFvYp81q2OQA23ZsNm69qew==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB4858.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(6486002)(86362001)(8676002)(38070700005)(71200400001)(316002)(83380400001)(508600001)(5660300002)(54906003)(36756003)(6512007)(38100700002)(6916009)(186003)(2616005)(33656002)(4326008)(66476007)(66946007)(76116006)(2906002)(6506007)(8936002)(53546011)(122000001)(66556008)(966005)(66446008)(64756008)(26005)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?kPPbNHGNjg68Q9jZ7n6q8y0jIRCXxrk75wpRm0L3jKn1Z7a0bpfrXjztYjb6?=
- =?us-ascii?Q?Kq6JiwHBjPwAyqIp/nd6HDs+6nE7CqEkSnoyTsp3Tzl98DwZVTWsjN9cMg0m?=
- =?us-ascii?Q?gO0Tt2TAfNr7+TujBP5xnANIosakqqXjYeHkA8N5EDY7EMPC49TbOSpJYECb?=
- =?us-ascii?Q?f2J3Q1lKBx+uxsKRNPfhOS2Yl9Mj48RPxdblaDhrTHsq4HGfApCNkkE5Sr4V?=
- =?us-ascii?Q?iCDwo+Gaei8+PQlILf0OzzwDjn9ly9EQvE1XlNMKKTnj19bk1cf3o75fmENv?=
- =?us-ascii?Q?DbshvLcDr5OImomb4Z/EmkAFgT8vOe5E3qKE1VaLDR+OSDOhAO0tXMuhj+TG?=
- =?us-ascii?Q?qVU8GL8RFIc3w5D+3gq4esN8xustPHZTYF1HN+JfCxMwMwQSUsPxkZqhr76G?=
- =?us-ascii?Q?ZVZiAgNj2P+wTrw/ZZLUgni8invrKRfrzfDh01cDf4kORkFtv4iypoPYMFKE?=
- =?us-ascii?Q?o4raLhmUYrLYlOy3feXDqq29622Yb0uBlk9dTqwEQfC6cYtSOM6PajNdbOCZ?=
- =?us-ascii?Q?jTeKFpdy5pS57HKhSG+Rxzvsoj6cFTyD/292T9GMIiw2XiYcLXOEluDQmRPv?=
- =?us-ascii?Q?Wy/XKnd9t9rnGZOr+OxAKO+bICXRr0FD1u87GRDF/otE57uAh/jzGwZrObw+?=
- =?us-ascii?Q?LLLnE5RdtVGCKiy+x4Pb+wHCP69ZZEoqVZzCNS4DqNonxYqQ+fxt9wF9EgW2?=
- =?us-ascii?Q?qI5J4vY5tSFky0O/ibHZYGbvlHVW+qr4bpV522L4er5QJooipu3SHCXe9Zl0?=
- =?us-ascii?Q?Bh2kxprKiUYqCXAFAxe+vKK3zmy1j8JRgrpgTouZT1NrwvIixhcDUvupOqbj?=
- =?us-ascii?Q?w0T9yWBR8SMn+zYwIs7VJBI1X5AgicCOGPowhMIsgODuPcpazemN8TimCWId?=
- =?us-ascii?Q?g4mYJ7hpxiGvT31Wr37ZtNyQCUQ/6R3rcfRkD8Iltv24LCW7H+VUpaBX9G0m?=
- =?us-ascii?Q?mQZVGzS3OjX6oFNbN4IlskQj4ZG5WXEGQU2RCeZorZTbXkXrAJtPFXI9EFze?=
- =?us-ascii?Q?Qc4rEyBXU0BDS4/V/MvZJ66AZOJriDxJZG69sFqSyfCce3rKBguCTWEguJxo?=
- =?us-ascii?Q?aAZo7qn9i0g2xREMCtPRo9ygNX+rbYPwlz7DTXx0xhD+Kr7AfMsf06MhrjjI?=
- =?us-ascii?Q?IdlPY630tEYjL6ovV+lv8Jsm000TPU5/Ivhl35agtkRQBNyDL/cb6myiuvBN?=
- =?us-ascii?Q?RngN9dCqk8EqAKEVS4WbY+NQv5wJybosoj88Fqqv7CDQaHDvSD1CxE6OJ0Xo?=
- =?us-ascii?Q?Q47SrUnlqYo1BW0m21VtOH6nb9ebRucF5eEBHT9FLctUB+dpMZh6c7gJCi/z?=
- =?us-ascii?Q?UOUoYGZn1o37ywARr2Omy0OtjMUg7GKrxQV4mS1thOgCkH0ch0b9aEsDX9qk?=
- =?us-ascii?Q?00k9MjfcGkHi1C16maOtmMOzmszCYfgA+PytTtx4YX8z/lg58Pxvx8J9u/0C?=
- =?us-ascii?Q?+2YU/MsYr4TX9tFh9zd3HPgdoR++AewwpCNSiPioeXMJqsDmdPoRyZv2Ib7G?=
- =?us-ascii?Q?KzOVSkVavek1PbiaOyggTduATVWqPTicYXIhBaPip96wxhTMMh6WO9tCB4ba?=
- =?us-ascii?Q?9I6eTf1HglDq1u23OOYAUj0BMRLOkAaOal9AfsKLSQ/Od8zGnib78l3WJBic?=
- =?us-ascii?Q?eSDQgz/MNNUh8vllOjuEZPM=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <85936C0AAB1CDB4AB0690168B492652C@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Fri, 3 Dec 2021 10:57:37 -0500
+Received: from [192.168.1.18] ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id tAszmOO0S2lVYtAszm6OyC; Fri, 03 Dec 2021 16:54:12 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Fri, 03 Dec 2021 16:54:12 +0100
+X-ME-IP: 86.243.171.122
+Subject: Re: [PATCH] xen-blkfront: Use the bitmap API when applicable
+To:     Joe Perches <joe@perches.com>, Juergen Gross <jgross@suse.com>,
+        boris.ostrovsky@oracle.com, sstabellini@kernel.org,
+        roger.pau@citrix.com, axboe@kernel.dk
+Cc:     xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <1c73cf8eaff02ea19439ec676c063e592d273cfe.1638392965.git.christophe.jaillet@wanadoo.fr>
+ <c529a221-f444-ad26-11ff-f693401c9429@suse.com>
+ <d8f87c17-75d1-2e6b-65e1-23adc75bb515@wanadoo.fr>
+ <6fcddba84070c021eb92aa9a5ff15fb2a47e9acb.camel@perches.com>
+ <3d71577f-dabe-6e1a-4b03-2a44f304b702@wanadoo.fr>
+ <863f2cddacac590d581cda09d548ee0a652df8a1.camel@perches.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <1e9291c6-48bb-88e5-37dc-f604cfa4c4db@wanadoo.fr>
+Date:   Fri, 3 Dec 2021 16:54:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB4858.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4582d136-5f15-4f74-16b4-08d9b6717f51
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2021 15:28:03.1712
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: cPJxDQCNc2SM0SqM7uj2x1xISV0TfbcZ+TqSG3DtAujemODT0cCqaH7UEO3YxrkZ9d3tx9Pm1hKRJi6UuvyLMA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB4873
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10186 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 mlxscore=0
- suspectscore=0 mlxlogscore=999 spamscore=0 phishscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
- definitions=main-2112030097
-X-Proofpoint-ORIG-GUID: PkzRArbUxVY6Oyr6RaAjDHzrgR5majEK
-X-Proofpoint-GUID: PkzRArbUxVY6Oyr6RaAjDHzrgR5majEK
+In-Reply-To: <863f2cddacac590d581cda09d548ee0a652df8a1.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Le 03/12/2021 à 04:03, Joe Perches a écrit :
+> On Thu, 2021-12-02 at 20:07 +0100, Christophe JAILLET wrote:
+>> Le 02/12/2021 à 19:16, Joe Perches a écrit :
+>>> On Thu, 2021-12-02 at 19:12 +0100, Christophe JAILLET wrote:
+>>>> Le 02/12/2021 à 07:12, Juergen Gross a écrit :
+>>>>> On 01.12.21 22:10, Christophe JAILLET wrote:
+>>>>>> Use 'bitmap_zalloc()' to simplify code, improve the semantic and avoid
+>>>>>> some open-coded arithmetic in allocator arguments.
+>>>>>>
+>>>>>> Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
+>>>>>> consistency.
+>>>>>>
+>>>>>> Use 'bitmap_copy()' to avoid an explicit 'memcpy()'
+>>> []
+>>>>>> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+>>> []
+>>>>>> @@ -442,16 +442,14 @@ static int xlbd_reserve_minors(unsigned int
+>>>>>> minor, unsigned int nr)
+>>>>>>         if (end > nr_minors) {
+>>>>>>             unsigned long *bitmap, *old;
+>>>>>> -        bitmap = kcalloc(BITS_TO_LONGS(end), sizeof(*bitmap),
+>>>>>> -                 GFP_KERNEL);
+>>>>>> +        bitmap = bitmap_zalloc(end, GFP_KERNEL);
+>>>>>>             if (bitmap == NULL)
+>>>>>>                 return -ENOMEM;
+>>>>>>             spin_lock(&minor_lock);
+>>>>>>             if (end > nr_minors) {
+>>>>>>                 old = minors;
+>>>>>> -            memcpy(bitmap, minors,
+>>>>>> -                   BITS_TO_LONGS(nr_minors) * sizeof(*bitmap));
+>>>>>> +            bitmap_copy(bitmap, minors, nr_minors);
+>>>>>>                 minors = bitmap;
+>>>>>>                 nr_minors = BITS_TO_LONGS(end) * BITS_PER_LONG;
+>>>
+>>> 		nr_minors = end;
+>>> ?
+>>>
+>>
+>> No,
+>> My understanding of the code is that if we lack space (end > nr_minors),
+>> we need to allocate more. In such a case, we want to keep track of what
+>> we have allocated, not what we needed.
+>> The "padding" bits in the "long align" allocation, can be used later.
+> 
+>>
+>> first call
+>> ----------
+>> end = 65
+>> nr_minors = 63
+>>
+>> --> we need some space
+>> --> we allocate 2 longs = 128 bits
+>> --> we now use 65 bits of these 128 bits
+> 
+> or 96, 32 or 64 bit longs remember.
 
+32 and 64 for sure, but I was not aware of 96. On which arch?
 
-> On Dec 3, 2021, at 10:19 AM, Bruce Fields <bfields@fieldses.org> wrote:
->=20
-> On Fri, Dec 03, 2021 at 03:17:30PM +0000, Chuck Lever III wrote:
->>=20
->>=20
->>> On Dec 3, 2021, at 6:25 AM, Dan Carpenter <dan.carpenter@oracle.com> wr=
-ote:
->>>=20
->>> On Tue, Nov 30, 2021 at 08:19:47PM +0000, Chuck Lever III wrote:
->>>>>=20
->>>>> -DEFINE_SPINLOCK(nfsd_notifier_lock);
->>>>> +static DEFINE_SPINLOCK(nfsd_notifier_lock);
->>>>> static int nfsd_inetaddr_event(struct notifier_block *this, unsigned =
-long event,
->>>>> 	void *ptr)
->>>>> {
->>>>>=20
->>>>=20
->>>> Thanks! This was pushed to the tip of the for-next branch at
->>>>=20
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git
->>>>=20
->>>> I removed the Fixes: line because a backport is unnecessary, and
->>>> the commit ID is not yet permanent.
->>>=20
->>> Removing the tag, makes it more complicated for backporters.  Before
->>> they could tell automatically from the Fixes tag that backporting was
->>> not necessary.
->>>=20
->>> On the other hand, does this patch really need a Fixes tag since it's
->>> not a runtime bug?  Different maintainers take different sides in that
->>> argument.
->>>=20
->>> If the patch needed a fixes tag then a lot of maintainers have scripts
->>> to update the tag during a rebase.  There are also automated tool run o=
-n
->>> linux-next which emails a warning when the Fixes tags point to an
->>> invalid hash.
->>=20
->> Hi Dan, the patch fixes a bug in my for-next branch, not in mainline.
->> There's really no need for a Fixes: tag.
->=20
-> Assuming it doesn't get folded into the fixed patch before going
-> upstream, it'd be useful information to have there.
+> 
+>>
+>> new call
+>> --------
+>> end = 68
+>> nr_minors = 128 (from previous call)
+> 
+> The initial allocation is now bitmap_zalloc which
+> specifies only bits and the nr_minors is then in
+> BITS_TO_LONGS(bits) * BITS_PER_LONG
+> 
+> Perhaps that assumes too much about the internal
+> implementation of bitmap_alloc
+> 
+> 
 
-I'm sorry, but I don't see how that information is useful for a
-fixing a patch that is in the same merge set. I'll fold it in.
+I get your point now, and I agree with you.
 
+Maybe something as what is done in mc-entity.c?
+Explicitly require more bits (which will be allocated anyway), instead 
+of taking advantage (read "hoping") that it will be done.
 
---
-Chuck Lever
+Could be:
 
+@@ -440,26 +440,25 @@ static int xlbd_reserve_minors(unsigned int minor, 
+unsigned int nr)
+  	int rc;
+
+  	if (end > nr_minors) {
+  		unsigned long *bitmap, *old;
+
+-		bitmap = kcalloc(BITS_TO_LONGS(end), sizeof(*bitmap),
+-				 GFP_KERNEL);
++		end = ALIGN(end, BITS_PER_LONG);
++		bitmap = bitmap_zalloc(end, GFP_KERNEL);
+  		if (bitmap == NULL)
+  			return -ENOMEM;
+
+  		spin_lock(&minor_lock);
+  		if (end > nr_minors) {
+  			old = minors;
+-			memcpy(bitmap, minors,
+-			       BITS_TO_LONGS(nr_minors) * sizeof(*bitmap));
++			bitmap_copy(bitmap, minors, nr_minors);
+  			minors = bitmap;
+-			nr_minors = BITS_TO_LONGS(end) * BITS_PER_LONG;
++			nr_minors = end;
+  		} else
+  			old = bitmap;
+  		spin_unlock(&minor_lock);
+-		kfree(old);
++		bitmap_free(old);
+  	}
+
+  	spin_lock(&minor_lock);
+  	if (find_next_bit(minors, end, minor) >= end) {
+  		bitmap_set(minors, minor, nr);
+@@ -2608,11 +2607,11 @@ static void __exit xlblk_exit(void)
+  {
+  	cancel_delayed_work_sync(&blkfront_work);
+
+  	xenbus_unregister_driver(&blkfront_driver);
+  	unregister_blkdev(XENVBD_MAJOR, DEV_NAME);
+-	kfree(minors);
++	bitmap_free(minors);
+  }
+  module_exit(xlblk_exit);
+
+  MODULE_DESCRIPTION("Xen virtual block device frontend");
+  MODULE_LICENSE("GPL");
 
 
