@@ -2,118 +2,54 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC83FC433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Dec 2021 03:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E6D6C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Dec 2021 05:07:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378342AbhLCDHB (ORCPT
+        id S232723AbhLCFLH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 2 Dec 2021 22:07:01 -0500
-Received: from smtprelay0154.hostedemail.com ([216.40.44.154]:42294 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1350790AbhLCDHA (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 2 Dec 2021 22:07:00 -0500
-Received: from omf06.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 140B9101369A0;
-        Fri,  3 Dec 2021 03:03:35 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf06.hostedemail.com (Postfix) with ESMTPA id 6DDA420015;
-        Fri,  3 Dec 2021 03:03:32 +0000 (UTC)
-Message-ID: <863f2cddacac590d581cda09d548ee0a652df8a1.camel@perches.com>
-Subject: Re: [PATCH] xen-blkfront: Use the bitmap API when applicable
-From:   Joe Perches <joe@perches.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Juergen Gross <jgross@suse.com>, boris.ostrovsky@oracle.com,
-        sstabellini@kernel.org, roger.pau@citrix.com, axboe@kernel.dk
-Cc:     xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Date:   Thu, 02 Dec 2021 19:03:32 -0800
-In-Reply-To: <3d71577f-dabe-6e1a-4b03-2a44f304b702@wanadoo.fr>
-References: <1c73cf8eaff02ea19439ec676c063e592d273cfe.1638392965.git.christophe.jaillet@wanadoo.fr>
-         <c529a221-f444-ad26-11ff-f693401c9429@suse.com>
-         <d8f87c17-75d1-2e6b-65e1-23adc75bb515@wanadoo.fr>
-         <6fcddba84070c021eb92aa9a5ff15fb2a47e9acb.camel@perches.com>
-         <3d71577f-dabe-6e1a-4b03-2a44f304b702@wanadoo.fr>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.4-1ubuntu2 
+        Fri, 3 Dec 2021 00:11:07 -0500
+Received: from helcar.hmeau.com ([216.24.177.18]:57380 "EHLO fornost.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234984AbhLCFLB (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 3 Dec 2021 00:11:01 -0500
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
+        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
+        id 1mt0n4-00029X-A8; Fri, 03 Dec 2021 16:07:23 +1100
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 03 Dec 2021 16:07:22 +1100
+Date:   Fri, 3 Dec 2021 16:07:22 +1100
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Boris Brezillon <bbrezillon@kernel.org>,
+        Srujana Challa <schalla@marvell.com>,
+        Arnaud Ebalard <arno@natisbad.org>,
+        Suheil Chandran <schandran@marvell.com>,
+        Lukasz Bartosik <lbartosik@marvell.com>,
+        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] crypto: octeontx2 - uninitialized variable in
+ kvf_limits_store()
+Message-ID: <20211203050722.GC20393@gondor.apana.org.au>
+References: <20211127141027.GC24002@kili>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Stat-Signature: dsgan1p8pchxr8wbecis6grq8tsez18d
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 6DDA420015
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1/U5Pxt1pAwSKl1eR87urKf9gGDN2xSyaw=
-X-HE-Tag: 1638500612-192617
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211127141027.GC24002@kili>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 2021-12-02 at 20:07 +0100, Christophe JAILLET wrote:
-> Le 02/12/2021 à 19:16, Joe Perches a écrit :
-> > On Thu, 2021-12-02 at 19:12 +0100, Christophe JAILLET wrote:
-> > > Le 02/12/2021 à 07:12, Juergen Gross a écrit :
-> > > > On 01.12.21 22:10, Christophe JAILLET wrote:
-> > > > > Use 'bitmap_zalloc()' to simplify code, improve the semantic and avoid
-> > > > > some open-coded arithmetic in allocator arguments.
-> > > > > 
-> > > > > Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
-> > > > > consistency.
-> > > > > 
-> > > > > Use 'bitmap_copy()' to avoid an explicit 'memcpy()'
-> > []
-> > > > > diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
-> > []
-> > > > > @@ -442,16 +442,14 @@ static int xlbd_reserve_minors(unsigned int
-> > > > > minor, unsigned int nr)
-> > > > >        if (end > nr_minors) {
-> > > > >            unsigned long *bitmap, *old;
-> > > > > -        bitmap = kcalloc(BITS_TO_LONGS(end), sizeof(*bitmap),
-> > > > > -                 GFP_KERNEL);
-> > > > > +        bitmap = bitmap_zalloc(end, GFP_KERNEL);
-> > > > >            if (bitmap == NULL)
-> > > > >                return -ENOMEM;
-> > > > >            spin_lock(&minor_lock);
-> > > > >            if (end > nr_minors) {
-> > > > >                old = minors;
-> > > > > -            memcpy(bitmap, minors,
-> > > > > -                   BITS_TO_LONGS(nr_minors) * sizeof(*bitmap));
-> > > > > +            bitmap_copy(bitmap, minors, nr_minors);
-> > > > >                minors = bitmap;
-> > > > >                nr_minors = BITS_TO_LONGS(end) * BITS_PER_LONG;
-> > 
-> > 		nr_minors = end;
-> > ?
-> > 
+On Sat, Nov 27, 2021 at 05:10:27PM +0300, Dan Carpenter wrote:
+> If kstrtoint() fails then "lfs_num" is uninitialized and the warning
+> doesn't make any sense.  Just delete it.
 > 
-> No,
-> My understanding of the code is that if we lack space (end > nr_minors), 
-> we need to allocate more. In such a case, we want to keep track of what 
-> we have allocated, not what we needed.
-> The "padding" bits in the "long align" allocation, can be used later.
+> Fixes: 8ec8015a3168 ("crypto: octeontx2 - add support to process the crypto request")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/crypto/marvell/octeontx2/otx2_cptpf_main.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 
-> 
-> first call
-> ----------
-> end = 65
-> nr_minors = 63
-> 
-> --> we need some space
-> --> we allocate 2 longs = 128 bits
-> --> we now use 65 bits of these 128 bits
-
-or 96, 32 or 64 bit longs remember.
-
-> 
-> new call
-> --------
-> end = 68
-> nr_minors = 128 (from previous call)
-
-The initial allocation is now bitmap_zalloc which
-specifies only bits and the nr_minors is then in
-BITS_TO_LONGS(bits) * BITS_PER_LONG
-
-Perhaps that assumes too much about the internal
-implementation of bitmap_alloc
-
-
-
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
