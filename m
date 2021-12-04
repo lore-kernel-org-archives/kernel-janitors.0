@@ -2,87 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F15E2C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Dec 2021 15:47:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D7EC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Dec 2021 19:51:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344987AbhLDPvR (ORCPT
+        id S1352265AbhLDTzL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 4 Dec 2021 10:51:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51210 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231259AbhLDPvR (ORCPT
+        Sat, 4 Dec 2021 14:55:11 -0500
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:53630 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1351477AbhLDTzG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 4 Dec 2021 10:51:17 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67317C061751;
-        Sat,  4 Dec 2021 07:47:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=WRnKEg35GZRxlFBDZ8nAe1ThfeNpialM6JAsEXyKYhE=; b=gdprMrDXo5A4+arqeARYGRAihR
-        UdIvyB7kSxMOpV82l7r42HGn+k8Pel//Fd6868kXaKf4Qr+b9Qmq6EKRqYQEJP7V5gnrk+QrxrXAD
-        mykg2ZBbnLSU6pLhGOGjvdPXSFn5PdcVQVQ9y7mRCl03rsCS9WSRpFFd3WWVfrZGAL7WqvmY5Eqgr
-        0IQQ9BPScEkxQ1hUsiP/91ERtF1rnqdHsBH2Qc/q+pHEVObYFcujp3SA55Eh0QMNk1UweLqMOJnsU
-        Bl8HBm62h7KPbvgA/o1BOnvvMVg9adm005X8DLTmPuv9odQyGr4vTsszpxNeD6jYhFO05AbOy6lCF
-        fhVkisiA==;
-Received: from [2602:306:c5a2:a380:b27b:25ff:fe2c:51a8]
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mtXGK-00DcGI-Uq; Sat, 04 Dec 2021 15:47:45 +0000
-Subject: Re: [PATCH] net: spider_net: Use non-atomic bitmap API when
- applicable
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        kou.ishizaki@toshiba.co.jp, davem@davemloft.net, kuba@kernel.org
-Cc:     netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <3de0792f5088f00d135c835df6c19e63ae95f5d2.1638026251.git.christophe.jaillet@wanadoo.fr>
-From:   Geoff Levand <geoff@infradead.org>
-Message-ID: <450ecfe8-94ce-46cb-0216-9fff22682426@infradead.org>
-Date:   Sat, 4 Dec 2021 07:47:41 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Sat, 4 Dec 2021 14:55:06 -0500
+Received: from pop-os.home ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id tb4Lm77Ovozlitb4Lmvzx5; Sat, 04 Dec 2021 20:51:38 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sat, 04 Dec 2021 20:51:38 +0100
+X-ME-IP: 86.243.171.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     mustafa.ismail@intel.com, shiraz.saleem@intel.com, jgg@ziepe.ca
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] RDMA/irdma: Fix the type used to declare a bitmap
+Date:   Sat,  4 Dec 2021 20:51:34 +0100
+Message-Id: <574b773fe7ced0cc87f1e1832350b38374815bd4.1638647428.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <3de0792f5088f00d135c835df6c19e63ae95f5d2.1638026251.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+'bitmapbuf' is really used as a bitmap, so it should be defined as a
+'unsigned long *' to be more consistent with the bitmap API.
 
-On 11/27/21 7:18 AM, Christophe JAILLET wrote:
-> No concurrent access is possible when a bitmap is local to a function.
-> So prefer the non-atomic functions to save a few cycles.
->    - replace a 'for' loop by an equivalent non-atomic 'bitmap_fill()' call
->    - use '__set_bit()'
-> 
-> While at it, clear the 'bitmask' bitmap only when needed.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is *not* compile tested. I don't have the needed cross compiling
-> tool chain.
-> ---
->  drivers/net/ethernet/toshiba/spider_net.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/infiniband/hw/irdma/pble.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-As I mentioned, my tdd-builder Docker image has a
-gcc-powerpc-linux-gnu cross compiler that can be used to build
-a ppc64 kernel:
+diff --git a/drivers/infiniband/hw/irdma/pble.h b/drivers/infiniband/hw/irdma/pble.h
+index e1b3b8118a2c..faf71c99e12e 100644
+--- a/drivers/infiniband/hw/irdma/pble.h
++++ b/drivers/infiniband/hw/irdma/pble.h
+@@ -69,7 +69,7 @@ struct irdma_add_page_info {
+ struct irdma_chunk {
+ 	struct list_head list;
+ 	struct irdma_dma_info dmainfo;
+-	void *bitmapbuf;
++	unsigned long *bitmapbuf;
+ 
+ 	u32 sizeofbitmap;
+ 	u64 size;
+-- 
+2.30.2
 
-  https://hub.docker.com/r/glevand/tdd-builder
-
-I also have a few helper scripts to run the container and cross
-compile a kernel:
-
-  https://github.com/glevand/tdd--docker/blob/master/builder/run-builder.sh
-  https://github.com/glevand/tdd-project/blob/master/scripts/build-linux-kernel.sh
-
-
-I applied your patch to v5.16-rc3 and no spider_net warnings
-or errors were seen when building with ppc64_defconfig. Thanks
-for your contribution.
-
-Acked-by: Geoff Levand <geoff@infradead.org>
