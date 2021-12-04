@@ -2,60 +2,59 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EF88C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Dec 2021 23:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE69C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Dec 2021 23:39:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233499AbhLDXfY (ORCPT
+        id S235130AbhLDXnE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 4 Dec 2021 18:35:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39622 "EHLO
+        Sat, 4 Dec 2021 18:43:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231145AbhLDXfY (ORCPT
+        with ESMTP id S234540AbhLDXnD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 4 Dec 2021 18:35:24 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24E9BC061751;
-        Sat,  4 Dec 2021 15:31:58 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id v11so13882851wrw.10;
-        Sat, 04 Dec 2021 15:31:58 -0800 (PST)
+        Sat, 4 Dec 2021 18:43:03 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 449F5C061751;
+        Sat,  4 Dec 2021 15:39:37 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id p18so5246775wmq.5;
+        Sat, 04 Dec 2021 15:39:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=TwHuq68BGqmW2Fn/QSPttgnID1EQBPBbIWi17rr9Wt0=;
-        b=p3aA+/XK9CZR2UZFRQ+oUvl5Qz4iSfm7XKTtBgNt9sXe20sZXdZDtmOsPk2WTjoIhW
-         zxQHi8P9zHfCCKyfyxNjRFIHu0gop+wbNKPkIKPR4oGRkVrLuTz3BOCAohSN8CUxBwHg
-         xMxHqyRMT5n9phe4ECe3vf5XPgxd+M8oLDD1NYAnlI/tObDdLuTC+0StpKh2mG19I66b
-         sCGpnBUmvi1BeDUVJqdiUe21suYTYc9l6qnfFdFiPBLQc7JX8viCrFW9syg2S346Aerj
-         cG2bKUa4udoBTOBLWoaSUP6o6UcGF3lLLEhmT0neCMluPf/zszV//T+1do/9n194d/f0
-         LOlg==
+        bh=OqnBagOxhhtF/t4GSojOaAJSnCcEzo0LpiQasnt5IRM=;
+        b=ToVzTZAJUUmSNvPQB7W3Emz73dFlKNGrKoLBFEqQIxWeMlqHSb5fe2LbsrfQw+Jp8g
+         6hO0qeRHogAF6XOozYoESgCr0S2Tw8ToggyWvtS37ysDUmNtWTxrXusTC4sHW/ziUZ0x
+         YLS4ttEadChVAv3kLWDS/+Zpeo+EAxKcE7Sh6N4nSqIy+UJjR/fP3l7SLol3jh54+vqo
+         zsIFf5witpxuzzUSFjp2UWCRZZS9VPYAdBmZQen21unM2DnwmYJrpGhLKpjlGhDAUtXl
+         JvrQr4wj2K/DZgVSC47/QvcqgyDyPxk/Mi62evwfng2/OE63rq/8Ybg0fOfCND6nrQpW
+         ls/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=TwHuq68BGqmW2Fn/QSPttgnID1EQBPBbIWi17rr9Wt0=;
-        b=S+v/VnVIIsq0ICV1V1Aw6dJ08JRtCZsi5dEHUfDGikiXNO2PpscRDoYGdepdcwznUi
-         2ynMQP8m6V7d3FrGxoY+Ry7pblKkMvWTOjuxRumZah++Dc1E2KOiKVrQXx5XWFpFNdHV
-         453RVCJXA5ReK4Hyu6y+vBUqhSA/gPHJkt8dgCRTAaDh05WJmvvAnOA2CWunKUbwU8Y+
-         H9eszQrXa4arL3Fv9R0vVe/GSBh9Viu13hoeKUlHyDfGnE1eNJDKZY4VVF/XsvpKsgVO
-         KmIS1pVdGUw4uUu07EeJ2nIx7FZOe7BJpkif1D+yQ56y/a28VizlOrjuGTJGMlAMvqQF
-         gYJA==
-X-Gm-Message-State: AOAM533LNJsWhqDfUVL5pX9Y20SVBl0I0ii5TV4UmpJd00M89kaDuuJs
-        /jVK+mbDHrqO2VsbCRx/y/C7e7YQi4KESw==
-X-Google-Smtp-Source: ABdhPJxaehApPnDPynBlXoaSmySz8HBQiG7JsfudAeFDxcAt3kKx61NAAawUPNZyaQWoRIVZP/YMtQ==
-X-Received: by 2002:adf:d1e2:: with SMTP id g2mr32679075wrd.362.1638660716448;
-        Sat, 04 Dec 2021 15:31:56 -0800 (PST)
+        bh=OqnBagOxhhtF/t4GSojOaAJSnCcEzo0LpiQasnt5IRM=;
+        b=bvbk7BT46uI/r8XKomThdc0/rkeF2w6F08leYyn8VTw5rZj9l4Evuwzhihaa5G1Un9
+         GNOHAb/xJH2gGLRIobHCNfIBMd8H71Ins9TuAMlmL4p7EtJG4a+fGqtBKL7qQLx/3VGl
+         EiinnRxwFsUUWQssN7Npl+h71zpbInM+kFwwT4ttOAowzbaLzgststXwjtbhrCTqCILf
+         6R5rO7ZVOSUwj5mxdHU8s57lDXsMMgSvlZsIcjAiJ3tMY0dOJKHfHFdvb9Rram7KMPnn
+         MNe5i1Ocowgj6b4ykS/yXuira8QPKjMmpd9kw3O/xYdw99UoAUxYXF+1qKQKxroZiKOe
+         JD8g==
+X-Gm-Message-State: AOAM533a3RCD6g+md7tRw+B7+pVBnc0ETAYX+9231TGBHcZPHMJ5vWc8
+        Big6W/NsdmAMFvs0lQYybBJOEbUnvHjW6Q==
+X-Google-Smtp-Source: ABdhPJzeEfY4eEtFp5Du9ySdu1XeMGwkUZVdxcdwI4WiW1nT/4aIdqCV30HN/rHZmEagiNevtHA4Xg==
+X-Received: by 2002:a05:600c:3b8f:: with SMTP id n15mr26942362wms.180.1638661175930;
+        Sat, 04 Dec 2021 15:39:35 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id w4sm6740284wrs.88.2021.12.04.15.31.55
+        by smtp.gmail.com with ESMTPSA id p13sm8980737wmi.0.2021.12.04.15.39.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Dec 2021 15:31:56 -0800 (PST)
+        Sat, 04 Dec 2021 15:39:35 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] hwmon: (adm1031): Remove redundant assignment to variable range
-Date:   Sat,  4 Dec 2021 23:31:55 +0000
-Message-Id: <20211204233155.55454-1-colin.i.king@gmail.com>
+Subject: [PATCH] intel_th: remove redundant re-assignment of pointer hubdrv
+Date:   Sat,  4 Dec 2021 23:39:34 +0000
+Message-Id: <20211204233934.80070-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,31 +63,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable range is being initialized with a value that is never read, it
-is being re-assigned in the next statement. The assignment is redundant,
-remove it and initialize range using the second assigned value. Clean up
-the formatting too by adding missing spaces.
+The pointer hubdrv is being re-assigned the same value as it was 
+initialized with only a few lines earlier. The re-assignment is
+redundant and can be removed.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/hwmon/adm1031.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/hwtracing/intel_th/core.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/hwmon/adm1031.c b/drivers/hwmon/adm1031.c
-index 257ec53ae723..ac841fa3a369 100644
---- a/drivers/hwmon/adm1031.c
-+++ b/drivers/hwmon/adm1031.c
-@@ -242,9 +242,8 @@ static int FAN_TO_REG(int reg, int div)
- static int AUTO_TEMP_MAX_TO_REG(int val, int reg, int pwm)
- {
- 	int ret;
--	int range = val - AUTO_TEMP_MIN_FROM_REG(reg);
-+	int range = ((val - AUTO_TEMP_MIN_FROM_REG(reg)) * 10) / (16 - pwm);
+diff --git a/drivers/hwtracing/intel_th/core.c b/drivers/hwtracing/intel_th/core.c
+index 7e753a75d23b..5de47b89a9e1 100644
+--- a/drivers/hwtracing/intel_th/core.c
++++ b/drivers/hwtracing/intel_th/core.c
+@@ -1048,7 +1048,6 @@ int intel_th_set_output(struct intel_th_device *thdev,
+ 	 * hub is instantiated together with the source device that
+ 	 * calls here, so guaranteed to be present.
+ 	 */
+-	hubdrv = to_intel_th_driver(hub->dev.driver);
+ 	if (!hubdrv || !try_module_get(hubdrv->driver.owner))
+ 		return -EINVAL;
  
--	range = ((val - AUTO_TEMP_MIN_FROM_REG(reg))*10)/(16 - pwm);
- 	ret = ((reg & 0xf8) |
- 	       (range < 10000 ? 0 :
- 		range < 20000 ? 1 :
 -- 
 2.33.1
 
