@@ -2,60 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54CF6C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Dec 2021 09:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD27DC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Dec 2021 14:00:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1384397AbhLDJNE (ORCPT
+        id S1385122AbhLDOEE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 4 Dec 2021 04:13:04 -0500
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:56387 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1384394AbhLDJNE (ORCPT
+        Sat, 4 Dec 2021 09:04:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55854 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344839AbhLDOED (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 4 Dec 2021 04:13:04 -0500
-Received: from pop-os.home ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id tR32mObqLUGqltR32mdi2U; Sat, 04 Dec 2021 10:09:37 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 04 Dec 2021 10:09:37 +0100
-X-ME-IP: 86.243.171.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     linux@armlinux.org.uk
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] ARM: l2c: tauros2: Fix a typo
-Date:   Sat,  4 Dec 2021 10:09:33 +0100
-Message-Id: <4d0a9df63e072f3da7f9e7cfa7b7733cef991504.1638608933.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sat, 4 Dec 2021 09:04:03 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E066C061751;
+        Sat,  4 Dec 2021 06:00:38 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id d9so12049977wrw.4;
+        Sat, 04 Dec 2021 06:00:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jRydfW5dCvLP5M5W9G1L390OMoiuU4elPL4v0ocR8GI=;
+        b=KfBlGlO8ievFtXcZ7gIBb6tFFJy1t6XUKHG/+LBpAlwkhYzMt4QygssKPV4cSEp9wr
+         l8v7mvBYvpnvaoybP7iEBDWWBLj88MUDWtLVwWwcQ7bogU9kgBUFI+blguQoahyTJdwg
+         74Gf23L4aIFOZuTq/B+31fc5qrMC4ihUcVyeuE/krOPX/sNL4KgOw1+Dy2+jbc3ejX9W
+         ogG1Pj0IrNllvaQB8qIU71LDG/R5LJUxrM3yy7eSbTDwOfk6v3qzNT1X6hgSyftXnqDt
+         uqwFaxyaHDbfstTuvUmfoAuxpljnwINbegY+dUs/3NQq5sdMdYBF7MhdfyWTzHX8G7Wm
+         Yllw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jRydfW5dCvLP5M5W9G1L390OMoiuU4elPL4v0ocR8GI=;
+        b=dPi0eVa/6SxE7ztlDmfgLPkj/sRwQv22UBuRSe5+XZb2xl0GTjhkUydTz8lRYq0zFJ
+         stlqLhLeoIdWW2Ynl47kKVhXnmz5X/kUm6nI/UebsIMr8ZSYNrZ1FfyoU4wmCmztoy4O
+         XkWZth8s+21OD6U/+7bnrvqNr1mILcatCEvI274DqBU66Om4XAcyrQkJZCYS6Ri/hLX3
+         KTOUTbdfiXUOwijIoyIUJ6b2tIqpE2+RSuXk2DSHuvmZYZ1vo7Twx/ywwtmfEFje6s91
+         1HzAop9W1iiQB8fDchRIfNA004bbQkrS1x4pbCZTo1KK4kdWNiN2DbM5a+y4/1y3hpKD
+         Kq0w==
+X-Gm-Message-State: AOAM531G/p9xSbe4T08N5o/Yg0nSwSXlxGRE5O5CvEMmhap1glwrP0jE
+        bOG0c8hT8dUNu1mvVleXJA4=
+X-Google-Smtp-Source: ABdhPJyp7Kwzh+WrHOuorXsYydzGifWlvVI1GsnYoZkSBQZorTbVIt+cVUlpC6Lv0Xx65iNRHim+7g==
+X-Received: by 2002:a05:6000:15c1:: with SMTP id y1mr31001064wry.63.1638626434368;
+        Sat, 04 Dec 2021 06:00:34 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id i7sm5593646wro.58.2021.12.04.06.00.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 04 Dec 2021 06:00:33 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Vinod Koul <vkoul@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        dmaengine@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dmaengine: stm32-mdma: Remove redundant initialization of pointer hwdesc
+Date:   Sat,  4 Dec 2021 14:00:32 +0000
+Message-Id: <20211204140032.548066-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-s/tauros/tauros2/ so that the message matches the property that is looked
-at.
+The pointer hwdesc is being initialized with a value that is never
+read, it is being updated later in a for-loop. The assignment is
+redundant and can be removed.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- arch/arm/mm/cache-tauros2.c | 2 +-
+ drivers/dma/stm32-mdma.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mm/cache-tauros2.c b/arch/arm/mm/cache-tauros2.c
-index 88255bea65e4..ae4858928fa7 100644
---- a/arch/arm/mm/cache-tauros2.c
-+++ b/arch/arm/mm/cache-tauros2.c
-@@ -295,7 +295,7 @@ void __init tauros2_init(unsigned int features)
- 	} else {
- 		ret = of_property_read_u32(node, "marvell,tauros2-cache-features", &f);
- 		if (ret) {
--			pr_info("Not found marvell,tauros-cache-features property, "
-+			pr_info("Not found marvell,tauros2-cache-features property, "
- 				"disable extra features\n");
- 			features = 0;
- 		} else
+diff --git a/drivers/dma/stm32-mdma.c b/drivers/dma/stm32-mdma.c
+index d30a4a28d3bf..805a449ff301 100644
+--- a/drivers/dma/stm32-mdma.c
++++ b/drivers/dma/stm32-mdma.c
+@@ -1279,7 +1279,7 @@ static size_t stm32_mdma_desc_residue(struct stm32_mdma_chan *chan,
+ 				      u32 curr_hwdesc)
+ {
+ 	struct stm32_mdma_device *dmadev = stm32_mdma_get_dev(chan);
+-	struct stm32_mdma_hwdesc *hwdesc = desc->node[0].hwdesc;
++	struct stm32_mdma_hwdesc *hwdesc;
+ 	u32 cbndtr, residue, modulo, burst_size;
+ 	int i;
+ 
 -- 
-2.30.2
+2.33.1
 
