@@ -2,60 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D7EC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Dec 2021 19:51:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 590DBC433FE
+	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Dec 2021 23:21:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352265AbhLDTzL (ORCPT
+        id S233189AbhLDXYe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 4 Dec 2021 14:55:11 -0500
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:53630 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351477AbhLDTzG (ORCPT
+        Sat, 4 Dec 2021 18:24:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37320 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231145AbhLDXYe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 4 Dec 2021 14:55:06 -0500
-Received: from pop-os.home ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id tb4Lm77Ovozlitb4Lmvzx5; Sat, 04 Dec 2021 20:51:38 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 04 Dec 2021 20:51:38 +0100
-X-ME-IP: 86.243.171.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     mustafa.ismail@intel.com, shiraz.saleem@intel.com, jgg@ziepe.ca
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] RDMA/irdma: Fix the type used to declare a bitmap
-Date:   Sat,  4 Dec 2021 20:51:34 +0100
-Message-Id: <574b773fe7ced0cc87f1e1832350b38374815bd4.1638647428.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sat, 4 Dec 2021 18:24:34 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02314C061751;
+        Sat,  4 Dec 2021 15:21:08 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id j3so13969399wrp.1;
+        Sat, 04 Dec 2021 15:21:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vmhLeOr94OYlbQhipNIZ1kv4mnRG0TgvipPVx8r866Y=;
+        b=RInm1Q/N3j6EcqmgREZi7vD2tPFV7rFOfP2Lea1HDh/SYi0DcXRlHmLpzoMjLcAzj4
+         sZXygngRcUGxlUzuBS8KMQ+bY432IIe5YxzUnDuvg5FPnCKlifEGenXKfGSkFQ7BDvcX
+         TqBr2CbjPyqoLvUW9V4Bdz2U8CsSy8r8g2LFhqVTFza6Q9hKGOTn5p6vATf72xGcPSy5
+         DLxi8lOwFLy7k/rbGDcrzaxFTp4zfHfoeh7jb0ltKldUyjMO0vYI0zQ6TICYYP9bD/Y+
+         Jdhsez8lrkwgHEan5blGE4TjhzuxS9ngscmROTyzdaIBHUBlZBWNiC36qhppemrZiOdk
+         ubAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vmhLeOr94OYlbQhipNIZ1kv4mnRG0TgvipPVx8r866Y=;
+        b=fZHch6rlbI/VnbdMN88pqUxn7gyjw2DLCwNC3aKXZotx7b/61SYOr0Q8h+nvuyMqi4
+         sS8SiWG/ZDvo67pnSZYhB2EuoAwA77fmkiFc0RsU6VtfGK1aEBN+VgBmHWWOMZMrURH+
+         rELcUktsQF338BZVUeOP1llFlXVf+a1iebtFHHve+R7bguA5wu4p7PzneAgE7J2UsVf1
+         ItqWO4S8jhLxErtGoBy56WsBFNQlHR+WAumYjPPCby2PrvPZvjRus7r//lOtJ/kKu6yT
+         671xf+6L8e+lQsXYxRFzXbvC0VxC2M9reHAyzBCZpXSgS/qiZ4xpSTEcS6AIW0D0DeI6
+         ygog==
+X-Gm-Message-State: AOAM532zVKhJ8DcscAR56o8+aRrnqO+k34TAEb4sPE0hzv9lEaogQJKV
+        Sgy8u2r4aWEONqxj6riK8eg=
+X-Google-Smtp-Source: ABdhPJwK0MCKKGrmYg0/9KFK32EssuGrvF1rMUeX+2SA3jvpySxX91heEhKCNGH76NX7DorbXIEsYg==
+X-Received: by 2002:a5d:6e04:: with SMTP id h4mr31041542wrz.127.1638660066603;
+        Sat, 04 Dec 2021 15:21:06 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id p2sm9290881wmq.23.2021.12.04.15.21.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 04 Dec 2021 15:21:06 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+        linux-mips@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] firmware: tee_bnxt: Remove redundant assignment to variable nbytes
+Date:   Sat,  4 Dec 2021 23:21:05 +0000
+Message-Id: <20211204232105.31114-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'bitmapbuf' is really used as a bitmap, so it should be defined as a
-'unsigned long *' to be more consistent with the bitmap API.
+Variable nbytes is being assigned a value that is never read, it is
+being re-assigned in the next statement. The assignment is redundant
+and can be removed.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/infiniband/hw/irdma/pble.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/firmware/broadcom/tee_bnxt_fw.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/infiniband/hw/irdma/pble.h b/drivers/infiniband/hw/irdma/pble.h
-index e1b3b8118a2c..faf71c99e12e 100644
---- a/drivers/infiniband/hw/irdma/pble.h
-+++ b/drivers/infiniband/hw/irdma/pble.h
-@@ -69,7 +69,7 @@ struct irdma_add_page_info {
- struct irdma_chunk {
- 	struct list_head list;
- 	struct irdma_dma_info dmainfo;
--	void *bitmapbuf;
-+	unsigned long *bitmapbuf;
+diff --git a/drivers/firmware/broadcom/tee_bnxt_fw.c b/drivers/firmware/broadcom/tee_bnxt_fw.c
+index a5bf4c3f6dc7..6d92ec02f2c7 100644
+--- a/drivers/firmware/broadcom/tee_bnxt_fw.c
++++ b/drivers/firmware/broadcom/tee_bnxt_fw.c
+@@ -143,8 +143,6 @@ int tee_bnxt_copy_coredump(void *buf, u32 offset, u32 size)
+ 	prepare_args(TA_CMD_BNXT_COPY_COREDUMP, &arg, param);
  
- 	u32 sizeofbitmap;
- 	u64 size;
+ 	while (rbytes)  {
+-		nbytes = rbytes;
+-
+ 		nbytes = min_t(u32, rbytes, param[0].u.memref.size);
+ 
+ 		/* Fill additional invoke cmd params */
 -- 
-2.30.2
+2.33.1
 
