@@ -2,59 +2,59 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE69C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Dec 2021 23:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF0C9C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Dec 2021 23:49:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235130AbhLDXnE (ORCPT
+        id S237432AbhLDXwd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 4 Dec 2021 18:43:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41364 "EHLO
+        Sat, 4 Dec 2021 18:52:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234540AbhLDXnD (ORCPT
+        with ESMTP id S229744AbhLDXwd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 4 Dec 2021 18:43:03 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 449F5C061751;
-        Sat,  4 Dec 2021 15:39:37 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id p18so5246775wmq.5;
-        Sat, 04 Dec 2021 15:39:37 -0800 (PST)
+        Sat, 4 Dec 2021 18:52:33 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8440C061751;
+        Sat,  4 Dec 2021 15:49:06 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id 137so5294050wma.1;
+        Sat, 04 Dec 2021 15:49:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=OqnBagOxhhtF/t4GSojOaAJSnCcEzo0LpiQasnt5IRM=;
-        b=ToVzTZAJUUmSNvPQB7W3Emz73dFlKNGrKoLBFEqQIxWeMlqHSb5fe2LbsrfQw+Jp8g
-         6hO0qeRHogAF6XOozYoESgCr0S2Tw8ToggyWvtS37ysDUmNtWTxrXusTC4sHW/ziUZ0x
-         YLS4ttEadChVAv3kLWDS/+Zpeo+EAxKcE7Sh6N4nSqIy+UJjR/fP3l7SLol3jh54+vqo
-         zsIFf5witpxuzzUSFjp2UWCRZZS9VPYAdBmZQen21unM2DnwmYJrpGhLKpjlGhDAUtXl
-         JvrQr4wj2K/DZgVSC47/QvcqgyDyPxk/Mi62evwfng2/OE63rq/8Ybg0fOfCND6nrQpW
-         ls/A==
+        bh=iWsnLUzt7xPyfaUEp7AhtS+i4yJOhxJfuwFef1QcioQ=;
+        b=MA90VAWGZs5/+OM/gUMZQ4HvKMjYJakgjAGicJ+e96yL97S1g+cVPZoeDTO1IBOJYu
+         BLNWDR9p+aHqXP4JOPxv2SZJht6Rsshz7RoRCbmVy/L8MDrvqaw/EpIzxYO7LybwmTqu
+         AWv4jmxVsd0IcuywtoKDNpedHCgaOgNQ6bfmksEZtchBEzp9iECqLoM2HW5ZfgZtOq08
+         iI2VVYnlAcfplIy87feZTL+OSdOCFArX2Eov4pU7Z414GwLG7rwgRSRmIcZHcc7Gm6xb
+         bxte7NrTxYloDk6Q+l4eclCsWVypXvG9rl7icTJvb05LS/71k3vdRMrlZo3nYscK1py/
+         8HUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=OqnBagOxhhtF/t4GSojOaAJSnCcEzo0LpiQasnt5IRM=;
-        b=bvbk7BT46uI/r8XKomThdc0/rkeF2w6F08leYyn8VTw5rZj9l4Evuwzhihaa5G1Un9
-         GNOHAb/xJH2gGLRIobHCNfIBMd8H71Ins9TuAMlmL4p7EtJG4a+fGqtBKL7qQLx/3VGl
-         EiinnRxwFsUUWQssN7Npl+h71zpbInM+kFwwT4ttOAowzbaLzgststXwjtbhrCTqCILf
-         6R5rO7ZVOSUwj5mxdHU8s57lDXsMMgSvlZsIcjAiJ3tMY0dOJKHfHFdvb9Rram7KMPnn
-         MNe5i1Ocowgj6b4ykS/yXuira8QPKjMmpd9kw3O/xYdw99UoAUxYXF+1qKQKxroZiKOe
-         JD8g==
-X-Gm-Message-State: AOAM533a3RCD6g+md7tRw+B7+pVBnc0ETAYX+9231TGBHcZPHMJ5vWc8
-        Big6W/NsdmAMFvs0lQYybBJOEbUnvHjW6Q==
-X-Google-Smtp-Source: ABdhPJzeEfY4eEtFp5Du9ySdu1XeMGwkUZVdxcdwI4WiW1nT/4aIdqCV30HN/rHZmEagiNevtHA4Xg==
-X-Received: by 2002:a05:600c:3b8f:: with SMTP id n15mr26942362wms.180.1638661175930;
-        Sat, 04 Dec 2021 15:39:35 -0800 (PST)
+        bh=iWsnLUzt7xPyfaUEp7AhtS+i4yJOhxJfuwFef1QcioQ=;
+        b=g1kKlFTIPmW3zj/FcIXR55lfyRoHQuVeMuMureVRwtPi3G+1dD4vDXuQFNicLctzKP
+         8Sg9c2vjWiXVMl0L4vUbc8x5Fk8Qhn0jjTIscxhNbY/9Ydmdpr+cVUSJAh7j19DeZRjW
+         U3cJnDOZW3i4Xa1zDAI67CsFL5QYEkIJJLjhfT6YfxNBHp5Ctrjd0qoRgv/+T8MiyIeL
+         fgaZv0a1Cb1/zpsvDZowms22suozpHKsNdNv55ozqXrRndo9yc/YeC851khm6oC8mKSv
+         oMuyjoBxPMyMz6YDc72D5ClylvQrPRuDW6vZomJVxRA17/0Bywn2qDvLAFRFP/LNXJ/I
+         Q4cw==
+X-Gm-Message-State: AOAM532Ss8hw8y90BeM1+PLKXewxD8iYEpZ+8RxpmIawlpUuDNEYFDzf
+        gL1Zh/RO/zcDAOf4fujxvBA=
+X-Google-Smtp-Source: ABdhPJyquTw+gollfacPNGvbmh7rTCuMo2tpX9RD66yE/W5y2bKwUkROwhBXl+w0tJmpMH2LGXmsdg==
+X-Received: by 2002:a7b:c24a:: with SMTP id b10mr26535230wmj.166.1638661745589;
+        Sat, 04 Dec 2021 15:49:05 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id p13sm8980737wmi.0.2021.12.04.15.39.35
+        by smtp.gmail.com with ESMTPSA id n15sm9278184wmq.38.2021.12.04.15.49.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Dec 2021 15:39:35 -0800 (PST)
+        Sat, 04 Dec 2021 15:49:05 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] intel_th: remove redundant re-assignment of pointer hubdrv
-Date:   Sat,  4 Dec 2021 23:39:34 +0000
-Message-Id: <20211204233934.80070-1-colin.i.king@gmail.com>
+Subject: [PATCH] IB/core: Remove redundant pointer mm
+Date:   Sat,  4 Dec 2021 23:49:04 +0000
+Message-Id: <20211204234904.105026-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -63,27 +63,35 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointer hubdrv is being re-assigned the same value as it was 
-initialized with only a few lines earlier. The re-assignment is
-redundant and can be removed.
+The pointer mm is assigned a value but it is never used. The pointer
+is redundant and can be removed.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/hwtracing/intel_th/core.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/infiniband/core/umem_odp.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/hwtracing/intel_th/core.c b/drivers/hwtracing/intel_th/core.c
-index 7e753a75d23b..5de47b89a9e1 100644
---- a/drivers/hwtracing/intel_th/core.c
-+++ b/drivers/hwtracing/intel_th/core.c
-@@ -1048,7 +1048,6 @@ int intel_th_set_output(struct intel_th_device *thdev,
- 	 * hub is instantiated together with the source device that
- 	 * calls here, so guaranteed to be present.
- 	 */
--	hubdrv = to_intel_th_driver(hub->dev.driver);
- 	if (!hubdrv || !try_module_get(hubdrv->driver.owner))
- 		return -EINVAL;
+diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
+index 7a47343d11f9..aead24c1a682 100644
+--- a/drivers/infiniband/core/umem_odp.c
++++ b/drivers/infiniband/core/umem_odp.c
+@@ -227,7 +227,6 @@ struct ib_umem_odp *ib_umem_odp_get(struct ib_device *device,
+ 				    const struct mmu_interval_notifier_ops *ops)
+ {
+ 	struct ib_umem_odp *umem_odp;
+-	struct mm_struct *mm;
+ 	int ret;
  
+ 	if (WARN_ON_ONCE(!(access & IB_ACCESS_ON_DEMAND)))
+@@ -241,7 +240,7 @@ struct ib_umem_odp *ib_umem_odp_get(struct ib_device *device,
+ 	umem_odp->umem.length = size;
+ 	umem_odp->umem.address = addr;
+ 	umem_odp->umem.writable = ib_access_writable(access);
+-	umem_odp->umem.owning_mm = mm = current->mm;
++	umem_odp->umem.owning_mm = current->mm;
+ 	umem_odp->notifier.ops = ops;
+ 
+ 	umem_odp->page_shift = PAGE_SHIFT;
 -- 
 2.33.1
 
