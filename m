@@ -2,127 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A81D2C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun,  5 Dec 2021 08:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F18C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  5 Dec 2021 22:59:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232155AbhLEIUz (ORCPT
+        id S240523AbhLEXCc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 5 Dec 2021 03:20:55 -0500
-Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:50342 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230098AbhLEIUy (ORCPT
+        Sun, 5 Dec 2021 18:02:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33416 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229918AbhLEXCb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 5 Dec 2021 03:20:54 -0500
-Received: from pop-os.home ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id tmi5mYC8yFGqttmi5mmE92; Sun, 05 Dec 2021 09:17:26 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 05 Dec 2021 09:17:26 +0100
-X-ME-IP: 86.243.171.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     mustafa.ismail@intel.com, shiraz.saleem@intel.com, jgg@ziepe.ca
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] RDMA/irdma: Fix a potential memory allocation issue in 'irdma_prm_add_pble_mem()'
-Date:   Sun,  5 Dec 2021 09:17:24 +0100
-Message-Id: <5e670b640508e14b1869c3e8e4fb970d78cbe997.1638692171.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Sun, 5 Dec 2021 18:02:31 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6E65C061714;
+        Sun,  5 Dec 2021 14:59:03 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id v11so18533483wrw.10;
+        Sun, 05 Dec 2021 14:59:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zr34TvOO3d1JB7j0fqyV15v/GgihB6ko7fQCW6kZ+78=;
+        b=AaV9GNH0Zd+OZWL3E0OUtUavJOzaAJ5UpOzM114x1era4POTjWYy1aOyPUWrYtf6+m
+         JHqmUtOg2m4ohAy36eORzgWhrLo6ZO/96u6smh9DWP2XBeO7LdTPolDDF8GAyqSLfZ23
+         GLXWUYVgTsikaIaBAXYCJGYggTqvHzk3P3t2ArclTjUytQmsWUYadBXAdcI7bye5hiBt
+         FzGpbM1pzwStE5hSVG028WfH8jrW15J+rCx0PPDCPGqrcgTesBJAfx+UxD/WnanfhZyP
+         buiqBlSPuTYpfj/ijYZnRpk0AjpsXHga4gbbB68WQ9rZe0ah1hHVUswLcX3mDuKNXvWN
+         dH0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zr34TvOO3d1JB7j0fqyV15v/GgihB6ko7fQCW6kZ+78=;
+        b=5fAhN8yOjK2saoCP7WUg+netT3M1Cj0+GVitW5oaCXK+J2kCJJWhJ4mYPkKK28OQBp
+         6qxn/kAU0KPsrK6gEx7hmVsUfskBqOCfJJvbXzddjGYDxRXrOqvH31IO17kD0w9Zej4o
+         kT9SsfL26JpekCechJ6pGx6xzXOdaDnzXYmMVzZLAXiSntvthvE2lOO9yZ6nZVji5A3L
+         NI0LucPL2iYtRe5Wr9sHulUfwpPxrHR2tvhqeHKSefUKke/YtDpwSSRU1UnfurGE/C90
+         pTT3WB31SbtORWYfsArT1dv3op6yOThpR9S0+Qr7ui0Ht8cI24uflAbhzGi+y2V1RrXH
+         aGQQ==
+X-Gm-Message-State: AOAM530aXU2IazMiL3h8qBcWRr0RmDxqKnbt6o3Vnk3N4R05DtYh+SOK
+        NeoCCyrHLcIB4bCUDlfX75k=
+X-Google-Smtp-Source: ABdhPJzfD3Pz4UhKfYwmPQpOGrTMcSC4EJBm2nc+AmxUni2rSzrx1hMSTD+1uFI9rdtqkxWkhPtEVA==
+X-Received: by 2002:adf:f90a:: with SMTP id b10mr37479813wrr.255.1638745142475;
+        Sun, 05 Dec 2021 14:59:02 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id q24sm11352331wmj.21.2021.12.05.14.59.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Dec 2021 14:59:01 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Sathya Prakash <sathya.prakash@broadcom.com>,
+        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+        Suganath Prabu Subramani 
+        <suganath-prabu.subramani@broadcom.com>,
+        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: mptfusion: remove redundant variable r
+Date:   Sun,  5 Dec 2021 22:59:01 +0000
+Message-Id: <20211205225901.54362-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'pchunk->bitmapbuf' is a bitmap. Its size (in number of bits) is stored in
-'pchunk->sizeofbitmap'.
+Variable r is being assigned a value that is never read. The assignment
+is redundant and so is the variable, so remove these. Remove unnecessary
+the {} braces in the if statement too.
 
-When it is allocated, the size (in bytes) is computed by:
-   size_in_bits >> 3
-
-There are 2 issues (numbers bellow assume that longs are 64 bits):
-   - there is no guarantee here that 'pchunk->bitmapmem.size' is modulo
-     BITS_PER_LONG but bitmaps are stored as longs
-     (sizeofbitmap=8 bits will only allocate 1 byte, instead of 8 (1 long))
-
-   - the number of bytes is computed with a shift, not a round up, so we
-     may allocate less memory than needed
-     (sizeofbitmap=65 bits will only allocate 8 bytes (i.e. 1 long), when 2
-     longs are needed = 16 bytes)
-
-Fix both issues by using 'bitmap_zalloc()' and remove the useless
-'bitmapmem' from 'struct irdma_chunk'.
-
-While at it, remove some useless NULL test before calling
-kfree/bitmap_free.
-
-Fixes: 915cc7ac0f8e ("RDMA/irdma: Add miscellaneous utility definitions")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/infiniband/hw/irdma/pble.c  | 6 ++----
- drivers/infiniband/hw/irdma/pble.h  | 1 -
- drivers/infiniband/hw/irdma/utils.c | 9 ++-------
- 3 files changed, 4 insertions(+), 12 deletions(-)
+ drivers/message/fusion/mptbase.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/infiniband/hw/irdma/pble.c b/drivers/infiniband/hw/irdma/pble.c
-index aeeb1c310965..941dd6310161 100644
---- a/drivers/infiniband/hw/irdma/pble.c
-+++ b/drivers/infiniband/hw/irdma/pble.c
-@@ -25,8 +25,7 @@ void irdma_destroy_pble_prm(struct irdma_hmc_pble_rsrc *pble_rsrc)
- 		list_del(&chunk->list);
- 		if (chunk->type == PBLE_SD_PAGED)
- 			irdma_pble_free_paged_mem(chunk);
--		if (chunk->bitmapbuf)
--			kfree(chunk->bitmapmem.va);
-+		bitmap_free(chunk->bitmapbuf);
- 		kfree(chunk->chunkmem.va);
- 	}
+diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
+index b94d5e4fdc23..24a4532053e4 100644
+--- a/drivers/message/fusion/mptbase.c
++++ b/drivers/message/fusion/mptbase.c
+@@ -1274,8 +1274,6 @@ mpt_send_handshake_request(u8 cb_idx, MPT_ADAPTER *ioc, int reqBytes, u32 *req,
+ static int
+ mpt_host_page_access_control(MPT_ADAPTER *ioc, u8 access_control_value, int sleepFlag)
+ {
+-	int	 r = 0;
+-
+ 	/* return if in use */
+ 	if (CHIPREG_READ32(&ioc->chip->Doorbell)
+ 	    & MPI_DOORBELL_ACTIVE)
+@@ -1289,9 +1287,9 @@ mpt_host_page_access_control(MPT_ADAPTER *ioc, u8 access_control_value, int slee
+ 		 (access_control_value<<12)));
+ 
+ 	/* Wait for IOC to clear Doorbell Status bit */
+-	if ((r = WaitForDoorbellAck(ioc, 5, sleepFlag)) < 0) {
++	if (WaitForDoorbellAck(ioc, 5, sleepFlag) < 0)
+ 		return -2;
+-	}else
++	else
+ 		return 0;
  }
-@@ -299,8 +298,7 @@ add_pble_prm(struct irdma_hmc_pble_rsrc *pble_rsrc)
- 	return 0;
  
- error:
--	if (chunk->bitmapbuf)
--		kfree(chunk->bitmapmem.va);
-+	bitmap_free(chunk->bitmapbuf);
- 	kfree(chunk->chunkmem.va);
- 
- 	return ret_code;
-diff --git a/drivers/infiniband/hw/irdma/pble.h b/drivers/infiniband/hw/irdma/pble.h
-index faf71c99e12e..d0d4f2b77d34 100644
---- a/drivers/infiniband/hw/irdma/pble.h
-+++ b/drivers/infiniband/hw/irdma/pble.h
-@@ -78,7 +78,6 @@ struct irdma_chunk {
- 	u32 pg_cnt;
- 	enum irdma_alloc_type type;
- 	struct irdma_sc_dev *dev;
--	struct irdma_virt_mem bitmapmem;
- 	struct irdma_virt_mem chunkmem;
- };
- 
-diff --git a/drivers/infiniband/hw/irdma/utils.c b/drivers/infiniband/hw/irdma/utils.c
-index 8b42c43fc14f..981107b40c90 100644
---- a/drivers/infiniband/hw/irdma/utils.c
-+++ b/drivers/infiniband/hw/irdma/utils.c
-@@ -2239,15 +2239,10 @@ enum irdma_status_code irdma_prm_add_pble_mem(struct irdma_pble_prm *pprm,
- 
- 	sizeofbitmap = (u64)pchunk->size >> pprm->pble_shift;
- 
--	pchunk->bitmapmem.size = sizeofbitmap >> 3;
--	pchunk->bitmapmem.va = kzalloc(pchunk->bitmapmem.size, GFP_KERNEL);
--
--	if (!pchunk->bitmapmem.va)
-+	pchunk->bitmapbuf = bitmap_zalloc(sizeofbitmap, GFP_KERNEL);
-+	if (!pchunk->bitmapbuf)
- 		return IRDMA_ERR_NO_MEMORY;
- 
--	pchunk->bitmapbuf = pchunk->bitmapmem.va;
--	bitmap_zero(pchunk->bitmapbuf, sizeofbitmap);
--
- 	pchunk->sizeofbitmap = sizeofbitmap;
- 	/* each pble is 8 bytes hence shift by 3 */
- 	pprm->total_pble_alloc += pchunk->size >> 3;
 -- 
-2.30.2
+2.33.1
 
