@@ -2,60 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81E3BC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun,  5 Dec 2021 00:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D030BC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun,  5 Dec 2021 00:17:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229661AbhLEAI4 (ORCPT
+        id S229871AbhLEAUs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 4 Dec 2021 19:08:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47062 "EHLO
+        Sat, 4 Dec 2021 19:20:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbhLEAIx (ORCPT
+        with ESMTP id S229512AbhLEAUq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 4 Dec 2021 19:08:53 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F7E4C061751;
-        Sat,  4 Dec 2021 16:05:27 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id l16so13966070wrp.11;
-        Sat, 04 Dec 2021 16:05:27 -0800 (PST)
+        Sat, 4 Dec 2021 19:20:46 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C15DC061751;
+        Sat,  4 Dec 2021 16:17:20 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id u17so6726082wrt.3;
+        Sat, 04 Dec 2021 16:17:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=yC4M601le6ee6oQ8Ai6FfGeF+kc+ch1qwxc6keK/wAw=;
-        b=AW0cefID8iErQnZxHYoxpb4CKNaNuA6zAtTlskrbIOQEcsLwvMgXUbQww6YOw4aOEt
-         f288wUnMDUX+MywyZRi1PWrycMuzaHDIwJ/fV0xNeOGHc/6s2cnNm3mAvWkatDvFFgdh
-         6U9WQG1klNGVoji7/KO2QafYJ5Czk69uPmpD+5k3aIzwYuJ8fYVoiRj1upS1AF7OazVI
-         UN1L7V3oyrflNUywMN+EBqZ7vFrkB0rCEB2HN2InAYL2/lGr7ULI86IQZpiruXoSKcmt
-         5Yl1h7qoJtqPnxGAPbxehsjbSbKEcexbZGyt8EmUAVu4CmSFFLtVnQyvOh1NQuQPA22S
-         o12g==
+        bh=ZT8uH+WZYKbbbA52e1mD7F2y2MEMzSLs39hZ2g9wA4o=;
+        b=KPbWipGF9NN5VmLf95S54L22RiZUamWDBWtWklREvuxwXPrnlh8NRSbAnpjKnX8EDj
+         GlzYua17dO6Dx1Uiu7UMY8W2+8eCXIKh2o4bXqMO2ZjEJcprllnKkrOnH75FQEMqAdSa
+         92ZGwM0B9DloU+dKbehCRq6dGDIWfurJmc1mL5EJho9cQr5b00TLvMiGbenXUtIuvfBH
+         eOvW+89a2VVehNIdfvemNfrtFZ5/qqeGwO0wF+TfEGisYpF35d0zH/uEbCOPp8IN56ig
+         idvpDlKglI3CayAycMeexGEY0oyN2r4ghxOppJ7AWR0yvujkDbW+Y/KnfSymHx2S/Kfh
+         CagA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=yC4M601le6ee6oQ8Ai6FfGeF+kc+ch1qwxc6keK/wAw=;
-        b=u+Ox/FEc/5WfJoiidYEa9s27T6MXEbb8YPgSQIcJYTTby44KosRzuDEwxjQ6H2UfTn
-         BG796P8NXmfB6j+r/Wr8y9Xn3XO02GKIdxRyycjREUB5izvXSnpaklgXyWSPWhDeIXs2
-         zE2hBYFHOh93R14qidKDYkt29ab7qf3ZLLvYJif7E+f9685rr1wtbNXj5tvijMwvO9PN
-         2JS45r8merDZQCahNSYZibNeAR+zbBL3mLq48lxaIZcEjg3ONG3O70RLXSxzBt6cSp2g
-         VwCpnQedthBZbMfYx+90Vk5AdfeJVZCEX+t2ebNqxswCas7XJ2p4fbfDjlpJujguwDjh
-         SBmg==
-X-Gm-Message-State: AOAM530/eiqTORqulNXHcMW0flijzdkBnkP2TRBnTxlksOxgYXkr3dog
-        v2m72+52HffiOMSzIV2pXPE=
-X-Google-Smtp-Source: ABdhPJzlH8VI8KMaYzxuhVquJGX/SvuBAhrMSbpOcctFPMrq0tSzmFghEKVLthjsRuVyKuN3ZK2pMQ==
-X-Received: by 2002:adf:eac8:: with SMTP id o8mr32100757wrn.337.1638662726167;
-        Sat, 04 Dec 2021 16:05:26 -0800 (PST)
+        bh=ZT8uH+WZYKbbbA52e1mD7F2y2MEMzSLs39hZ2g9wA4o=;
+        b=1etYmGb39k3KJmeKV/svCJIXm+He2a85uLet8B0CMwXlWOP1TPyLgHk8ixSMkjn27M
+         il8BO1FeP6bLsZE1XQL+HhhcYp6729dDW237legWtbYBkwlGV49YCowsdT7P/WyOg66m
+         ROuCp5a+/VIQsY0pxuQoXEjI7IsYl6QfR5r3L2lUdITEzcAk0EnD+yEB9uaNItKjPozh
+         AIVhAAol7lAGk+K9dRlKFqt1FKyJfmO1XiSX1o1I2LXEfMCRYnN8duOuzC/wlMstVFBS
+         dPAkzaDR1Vw20xHn+nFSm3NMSX9QJGZ4AG5K9CCDJI06465yUMCNxjTI8z0OWRTxzBxH
+         anQQ==
+X-Gm-Message-State: AOAM530R4g9VL+S29iXtqU0jN6obcveZgvOMpYdzM9uAJYn9g6Y09M3y
+        cWle7dBU4yjCqbySlm8nkGO7TVrS9WMITQ==
+X-Google-Smtp-Source: ABdhPJzIOV28vkE7Pge5Zpr2lvVGDACk/1izBZLlOk1DUonIBDpy4A/Sd2MgCq0qaQX92WqsvolTwg==
+X-Received: by 2002:adf:8bd8:: with SMTP id w24mr32610946wra.540.1638663438766;
+        Sat, 04 Dec 2021 16:17:18 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id b6sm10034667wmq.45.2021.12.04.16.05.25
+        by smtp.gmail.com with ESMTPSA id b11sm9053931wmj.35.2021.12.04.16.17.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Dec 2021 16:05:25 -0800 (PST)
+        Sat, 04 Dec 2021 16:17:18 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: ucb1400_ts: remove redundant variable penup
-Date:   Sun,  5 Dec 2021 00:05:25 +0000
-Message-Id: <20211205000525.153999-1-colin.i.king@gmail.com>
+Subject: [PATCH] media: saa7146: remove redundant assignments of i to zero
+Date:   Sun,  5 Dec 2021 00:17:17 +0000
+Message-Id: <20211205001717.178416-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,36 +65,36 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable penup is assigned a value but penup is never read later, it
-is redundant and can be removed.
+The variable i is assigned the value 0 and each time the value is
+never read after it has been assigned. The assignments are redundant
+and can be removed.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/input/touchscreen/ucb1400_ts.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/media/pci/saa7146/mxb.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/input/touchscreen/ucb1400_ts.c b/drivers/input/touchscreen/ucb1400_ts.c
-index e3f2c940ef3d..dfd3b35590c3 100644
---- a/drivers/input/touchscreen/ucb1400_ts.c
-+++ b/drivers/input/touchscreen/ucb1400_ts.c
-@@ -186,7 +186,6 @@ static irqreturn_t ucb1400_irq(int irqnr, void *devid)
- {
- 	struct ucb1400_ts *ucb = devid;
- 	unsigned int x, y, p;
--	bool penup;
+diff --git a/drivers/media/pci/saa7146/mxb.c b/drivers/media/pci/saa7146/mxb.c
+index 73fc901ecf3d..ae958ff206b2 100644
+--- a/drivers/media/pci/saa7146/mxb.c
++++ b/drivers/media/pci/saa7146/mxb.c
+@@ -340,7 +340,7 @@ static int mxb_init_done(struct saa7146_dev* dev)
+ 	struct tuner_setup tun_setup;
+ 	v4l2_std_id std = V4L2_STD_PAL_BG;
  
- 	if (unlikely(irqnr != ucb->irq))
- 		return IRQ_NONE;
-@@ -196,8 +195,7 @@ static irqreturn_t ucb1400_irq(int irqnr, void *devid)
- 	/* Start with a small delay before checking pendown state */
- 	msleep(UCB1400_TS_POLL_PERIOD);
+-	int i = 0, err = 0;
++	int i, err = 0;
  
--	while (!ucb->stopped && !(penup = ucb1400_ts_pen_up(ucb))) {
--
-+	while (!ucb->stopped && !ucb1400_ts_pen_up(ucb)) {
- 		ucb1400_adc_enable(ucb->ac97);
- 		x = ucb1400_ts_read_xpos(ucb);
- 		y = ucb1400_ts_read_ypos(ucb);
+ 	/* mute audio on tea6420s */
+ 	tea6420_route(mxb, 6);
+@@ -349,7 +349,6 @@ static int mxb_init_done(struct saa7146_dev* dev)
+ 	saa7111a_call(mxb, video, s_std, std);
+ 
+ 	/* select tuner-output on saa7111a */
+-	i = 0;
+ 	saa7111a_call(mxb, video, s_routing, SAA7115_COMPOSITE0,
+ 		SAA7111_FMT_CCIR, 0);
+ 
 -- 
 2.33.1
 
