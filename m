@@ -2,61 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D030BC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun,  5 Dec 2021 00:17:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C68B3C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun,  5 Dec 2021 00:22:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229871AbhLEAUs (ORCPT
+        id S229991AbhLEA0L (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 4 Dec 2021 19:20:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49646 "EHLO
+        Sat, 4 Dec 2021 19:26:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbhLEAUq (ORCPT
+        with ESMTP id S229772AbhLEA0L (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 4 Dec 2021 19:20:46 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C15DC061751;
-        Sat,  4 Dec 2021 16:17:20 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id u17so6726082wrt.3;
-        Sat, 04 Dec 2021 16:17:20 -0800 (PST)
+        Sat, 4 Dec 2021 19:26:11 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2708C061751;
+        Sat,  4 Dec 2021 16:22:44 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id c4so14012221wrd.9;
+        Sat, 04 Dec 2021 16:22:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=ZT8uH+WZYKbbbA52e1mD7F2y2MEMzSLs39hZ2g9wA4o=;
-        b=KPbWipGF9NN5VmLf95S54L22RiZUamWDBWtWklREvuxwXPrnlh8NRSbAnpjKnX8EDj
-         GlzYua17dO6Dx1Uiu7UMY8W2+8eCXIKh2o4bXqMO2ZjEJcprllnKkrOnH75FQEMqAdSa
-         92ZGwM0B9DloU+dKbehCRq6dGDIWfurJmc1mL5EJho9cQr5b00TLvMiGbenXUtIuvfBH
-         eOvW+89a2VVehNIdfvemNfrtFZ5/qqeGwO0wF+TfEGisYpF35d0zH/uEbCOPp8IN56ig
-         idvpDlKglI3CayAycMeexGEY0oyN2r4ghxOppJ7AWR0yvujkDbW+Y/KnfSymHx2S/Kfh
-         CagA==
+        bh=8WvnHvP5Xh5zEZuwYzlSuOSILzoaAjIl1mg5Ih9vLFg=;
+        b=EAAvKcrVXVAALdtMA8FFuOs4mAPjRxdQ0Wz7pqiUeT1h93jqY2j7LMW6AaE9wufNz7
+         N6eM6+bv2P2qrDJcvGswWXSwnzfkp4g4EnFiyWqQb9sVv0pMo4+7f0BHtxAi+yDP/qy9
+         VKTY7yIBXzY3NroFHnJrIylRxTJceqNK0m+Anp7B+TKQUzQEC8sBXVCq0e/Hr4D4LLs+
+         gxEYW2ChBDhIh8HmJ9sSTQWKIY2lPtpbLatk53qiogpJ60QmYPwVXRV+kXzPo//0Nc0A
+         iz19OkxuviFBqWcjuajPfGCbdcUVK6eCSzYOJLpeTFDqI/fMgamFA5OeFv2E4APji+NC
+         hjBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=ZT8uH+WZYKbbbA52e1mD7F2y2MEMzSLs39hZ2g9wA4o=;
-        b=1etYmGb39k3KJmeKV/svCJIXm+He2a85uLet8B0CMwXlWOP1TPyLgHk8ixSMkjn27M
-         il8BO1FeP6bLsZE1XQL+HhhcYp6729dDW237legWtbYBkwlGV49YCowsdT7P/WyOg66m
-         ROuCp5a+/VIQsY0pxuQoXEjI7IsYl6QfR5r3L2lUdITEzcAk0EnD+yEB9uaNItKjPozh
-         AIVhAAol7lAGk+K9dRlKFqt1FKyJfmO1XiSX1o1I2LXEfMCRYnN8duOuzC/wlMstVFBS
-         dPAkzaDR1Vw20xHn+nFSm3NMSX9QJGZ4AG5K9CCDJI06465yUMCNxjTI8z0OWRTxzBxH
-         anQQ==
-X-Gm-Message-State: AOAM530R4g9VL+S29iXtqU0jN6obcveZgvOMpYdzM9uAJYn9g6Y09M3y
-        cWle7dBU4yjCqbySlm8nkGO7TVrS9WMITQ==
-X-Google-Smtp-Source: ABdhPJzIOV28vkE7Pge5Zpr2lvVGDACk/1izBZLlOk1DUonIBDpy4A/Sd2MgCq0qaQX92WqsvolTwg==
-X-Received: by 2002:adf:8bd8:: with SMTP id w24mr32610946wra.540.1638663438766;
-        Sat, 04 Dec 2021 16:17:18 -0800 (PST)
+        bh=8WvnHvP5Xh5zEZuwYzlSuOSILzoaAjIl1mg5Ih9vLFg=;
+        b=vDk5cO6wISdkVklCAJbrwQn+A+nWaCODyVQvzyWWXeF8LT/mGda0iXaOPw3NwL2ohA
+         IHjVSFNPmZ+zNH0/UfhXTgfVH0SQlfOEdfdE2z+Jbyv1oobkeUBIdd8MuUeQdmL8pf0K
+         haf2rwd78zOymtL2pFqR1rg/TtJUpkMfCVvEX6bwo0prxG0GNkpjPsNWBOaSE7C5vMk9
+         UCdN16r6sc0eQC2aECH2+eVOSM9CFa7XmXVhYXI9Q5wom2ZOGfgAvYZMyN4eQay4G79W
+         x0eaav/MCYZaJx/ZGrQvQxEZNuUC0vRRR9VeHJOZaV1eeU50lWV/r2cK3J/EuEuITQ/X
+         PcSw==
+X-Gm-Message-State: AOAM5301CzF8t0+W4k5SYfBGMeAEzqp2Ys5X0SSOVodNPX+jNtyWLCBD
+        MkqTMf93GabeXP8B6EjEZTDg7oBKUlujng==
+X-Google-Smtp-Source: ABdhPJyMXPmWprMR6uuyVjokyNQWqpV/DA5jlV67129FrIOIuzDXSydHlQT/sDZc12mztOE4DMA8qw==
+X-Received: by 2002:a5d:4ccc:: with SMTP id c12mr32804357wrt.453.1638663763373;
+        Sat, 04 Dec 2021 16:22:43 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id b11sm9053931wmj.35.2021.12.04.16.17.18
+        by smtp.gmail.com with ESMTPSA id l8sm10517430wmc.40.2021.12.04.16.22.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Dec 2021 16:17:18 -0800 (PST)
+        Sat, 04 Dec 2021 16:22:43 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
+To:     prabhakar.csengg@gmail.com,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-media@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: saa7146: remove redundant assignments of i to zero
-Date:   Sun,  5 Dec 2021 00:17:17 +0000
-Message-Id: <20211205001717.178416-1-colin.i.king@gmail.com>
+Subject: [PATCH] media: davinci: remove redundant assignment to pointer common
+Date:   Sun,  5 Dec 2021 00:22:42 +0000
+Message-Id: <20211205002242.202769-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,36 +65,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable i is assigned the value 0 and each time the value is
-never read after it has been assigned. The assignments are redundant
-and can be removed.
+Pointer common is being assigned a value in a for-loop and the pointer
+is never read afterwards. The assignment is redundant and can be removed.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/media/pci/saa7146/mxb.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/media/platform/davinci/vpif_capture.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/media/pci/saa7146/mxb.c b/drivers/media/pci/saa7146/mxb.c
-index 73fc901ecf3d..ae958ff206b2 100644
---- a/drivers/media/pci/saa7146/mxb.c
-+++ b/drivers/media/pci/saa7146/mxb.c
-@@ -340,7 +340,7 @@ static int mxb_init_done(struct saa7146_dev* dev)
- 	struct tuner_setup tun_setup;
- 	v4l2_std_id std = V4L2_STD_PAL_BG;
- 
--	int i = 0, err = 0;
-+	int i, err = 0;
- 
- 	/* mute audio on tea6420s */
- 	tea6420_route(mxb, 6);
-@@ -349,7 +349,6 @@ static int mxb_init_done(struct saa7146_dev* dev)
- 	saa7111a_call(mxb, video, s_std, std);
- 
- 	/* select tuner-output on saa7111a */
--	i = 0;
- 	saa7111a_call(mxb, video, s_routing, SAA7115_COMPOSITE0,
- 		SAA7111_FMT_CCIR, 0);
- 
+diff --git a/drivers/media/platform/davinci/vpif_capture.c b/drivers/media/platform/davinci/vpif_capture.c
+index aba105fa7ef9..8fe55374c5a3 100644
+--- a/drivers/media/platform/davinci/vpif_capture.c
++++ b/drivers/media/platform/davinci/vpif_capture.c
+@@ -1467,7 +1467,6 @@ static int vpif_probe_complete(void)
+ 	for (k = 0; k < j; k++) {
+ 		/* Get the pointer to the channel object */
+ 		ch = vpif_obj.dev[k];
+-		common = &ch->common[k];
+ 		/* Unregister video device */
+ 		video_unregister_device(&ch->video_dev);
+ 	}
 -- 
 2.33.1
 
