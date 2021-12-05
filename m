@@ -2,63 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45AD4C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun,  5 Dec 2021 23:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C61AC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  5 Dec 2021 23:28:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240604AbhLEXLA (ORCPT
+        id S238745AbhLEXbx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 5 Dec 2021 18:11:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35248 "EHLO
+        Sun, 5 Dec 2021 18:31:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240584AbhLEXK7 (ORCPT
+        with ESMTP id S235176AbhLEXbx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 5 Dec 2021 18:10:59 -0500
+        Sun, 5 Dec 2021 18:31:53 -0500
 Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3542C061714;
-        Sun,  5 Dec 2021 15:07:31 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id p3-20020a05600c1d8300b003334fab53afso9090333wms.3;
-        Sun, 05 Dec 2021 15:07:31 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 977BEC061751;
+        Sun,  5 Dec 2021 15:28:25 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id y196so6818943wmc.3;
+        Sun, 05 Dec 2021 15:28:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=YCs4/c+MZjNeQBr7owALQPbVfoikSkuepr0D43CkZt4=;
-        b=etuc3JNHYSR2qBMjnECcQbwGd67gHRN3VVYeLjsq7ZYhehTG+8aw7oVS5D1GcLQDrG
-         otwhCin6RMIapm4tLRYP/3a7VSx384sq9rI+TcPg9b8JpCHLcLkwxLK0/vlOEAknDceI
-         sfkaeaS5DZmPeHdmNZof/Mcamu9ZioITqILs2lOoSObPpJU1/cd1sropa2N6CSlpa1G6
-         moEinBVkA7wyfKCcltaRX+ISLt5Y9piQXX2ELVTW1kxF98pNDQ7GsdOEdKWZFQZJFYpH
-         sg4IVc78cn7t98JlQ67ttGJ8PNABFLcNg1mma7j1yULMER8vP2y262/YJIuVTHmovo+8
-         pHMg==
+        bh=MYHt7ZQzY4yWVSIqfF5+ilzaoRCdpYyTUSLoTpW95ig=;
+        b=RS7mn8P3TrwLllhL8Vg3BlzAkzTGLOs+GN/jJAgZ00EMnfLTibUCwfdMN1IVZ7Wcyp
+         NV1Owj8g5jvVDwBxo/tI21NCnCnOY4bqS6kaxOtTAyVAb+JxiMxAzPMAWNOCliHtK1JU
+         xF13sICtRnk6YAiUisIPudeQ5PV872swJRfo5ZAhi6OL55hM4TjYEAfrUHcERgFFl639
+         EPOdVuiPaVMzcDZus/S0T6Ze5WZ5w3cuPysS3fL36zZ+YwBu2Xp5/hmCyiWk3aCN2n5L
+         Xt6uvZJfOoa/lstbm1k1EY/OpmV4QvqKc+25GGOQh812+Qy0Sig0F7ZL2d4/UCe3lvya
+         tlnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=YCs4/c+MZjNeQBr7owALQPbVfoikSkuepr0D43CkZt4=;
-        b=5Co0RmnDD87GImuiFJ7pInMnMDHQJ+L1/d3YHiFBQSBb0x2OLAUwXBn2UohMmhSBnw
-         RVPJcFtc7bA2UX/LSWV3aKpW/VYr+CyvHCBDRaqIhOong+Sp/DACKCoMdeI1WxV7SdTF
-         a08UljTF1a+pMltkokagYuIOyosF+Nbbev8BfO7vEGrCaw0mTf0KNDzV3zWXMaHyfNXT
-         eUei/QjoRidZeUlefBdThr3vmZ2fcYBKrqN4q71UdtBNsyemoOP2mNJRYBk0ihx556Y6
-         gOiJ3uIKi+PxeKgJ9PPOHblsPAoXEuGKSAWjbqPrNa7I1rS2MF7hA0RNir6g5QX1b9Uc
-         MpbQ==
-X-Gm-Message-State: AOAM531WObS1X4JRLabXqoPcG8Gd4otxMqhji/tv8xzRe3azh7SnhTNR
-        MmvX12U2KrJKfW3CNieII+c=
-X-Google-Smtp-Source: ABdhPJzFzTk4VJ2Kcyr0vUgFhVC5261Y6D40B5sxj5N0OrHad1y7My8v8MECFMVz/HoWa7xmbQ28Ww==
-X-Received: by 2002:a05:600c:6025:: with SMTP id az37mr34685964wmb.194.1638745650500;
-        Sun, 05 Dec 2021 15:07:30 -0800 (PST)
+        bh=MYHt7ZQzY4yWVSIqfF5+ilzaoRCdpYyTUSLoTpW95ig=;
+        b=Y0MFTsAEXidKpEw+aNkHfwjnV0Z3OLkPD0iYwn65jneUEd84x5HUg+MB/8tBJwpI5B
+         1kp2sFpQCSP+fAlvUbJ7joAlqcLelBsNaX0U0iwcHQuaNT1X+GzVw/3qLlZojXAYmAuV
+         5HmW+GAeEHjdxqo7dxjhi4oYqIKbUcgPqY5hYr8jw9cq9X9dxI/TGWQ9VXulUUUAxUxL
+         Pde84hiAK5OXN6mFPbOkZ06lMnoA6XZIgCgnvHb+xMFoqENwVf9eI+oZyuOB4QMWX2GN
+         8XAjqQGuNwI14mFOm9CMP7pZA19UK0lqWjtt6bAHAuPKpzu/0BZxBqud4KCtw814Xoov
+         l9cA==
+X-Gm-Message-State: AOAM530pXCupQqYhvNf8d+ZxjVlhK1/yH+LG3cPflpJQGdusMCNUUvrL
+        vhvpmuo9l9d2aeVt8fACSke18x8GiL0/pA==
+X-Google-Smtp-Source: ABdhPJw+Mc0XuHPaYMPfdfLL2D4qzyV574s0zmfji3g/HDr5siecHX6Q8rJIYEWdr0WZ7dUAFjtREg==
+X-Received: by 2002:a1c:8002:: with SMTP id b2mr34867358wmd.2.1638746904107;
+        Sun, 05 Dec 2021 15:28:24 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id q123sm11389887wma.30.2021.12.05.15.07.29
+        by smtp.gmail.com with ESMTPSA id y15sm11600091wry.72.2021.12.05.15.28.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Dec 2021 15:07:30 -0800 (PST)
+        Sun, 05 Dec 2021 15:28:23 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-serial@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mtd: onenand: remove redundant variable ooblen
-Date:   Sun,  5 Dec 2021 23:07:29 +0000
-Message-Id: <20211205230729.79337-1-colin.i.king@gmail.com>
+Subject: [PATCH] serial: 8250_pci: remove redundant assignment to tmp after the mask operation
+Date:   Sun,  5 Dec 2021 23:28:22 +0000
+Message-Id: <20211205232822.110099-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -67,37 +66,29 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable ooblen is being initialized with a value that is never read.
-The variable is never used after this, so it is redundant and can be
-removed.
+The variable tmp is being masked with a bitmask and the value is being
+written to port base + 0x3c.  However, the masked value is being written
+back to tmp and tmp is never used after this. The assignmentment is
+redundant, replace the &= operator with just &.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/mtd/nand/onenand/onenand_bbt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/tty/serial/8250/8250_pci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/nand/onenand/onenand_bbt.c b/drivers/mtd/nand/onenand/onenand_bbt.c
-index def89f108007..b17315f8e1d4 100644
---- a/drivers/mtd/nand/onenand/onenand_bbt.c
-+++ b/drivers/mtd/nand/onenand/onenand_bbt.c
-@@ -60,7 +60,7 @@ static int create_bbt(struct mtd_info *mtd, uint8_t *buf, struct nand_bbt_descr
- 	int i, j, numblocks, len, scanlen;
- 	int startblock;
- 	loff_t from;
--	size_t readlen, ooblen;
-+	size_t readlen;
- 	struct mtd_oob_ops ops;
- 	int rgn;
- 
-@@ -69,7 +69,7 @@ static int create_bbt(struct mtd_info *mtd, uint8_t *buf, struct nand_bbt_descr
- 	len = 2;
- 
- 	/* We need only read few bytes from the OOB area */
--	scanlen = ooblen = 0;
-+	scanlen = 0;
- 	readlen = bd->len;
- 
- 	/* chip == -1 case only */
+diff --git a/drivers/tty/serial/8250/8250_pci.c b/drivers/tty/serial/8250/8250_pci.c
+index 60f8fffdfd77..81aac3c25ead 100644
+--- a/drivers/tty/serial/8250/8250_pci.c
++++ b/drivers/tty/serial/8250/8250_pci.c
+@@ -1278,7 +1278,7 @@ static int pci_quatech_init(struct pci_dev *dev)
+ 			outl(inl(base + 0x38) | 0x00002000, base + 0x38);
+ 			tmp = inl(base + 0x3c);
+ 			outl(tmp | 0x01000000, base + 0x3c);
+-			outl(tmp &= ~0x01000000, base + 0x3c);
++			outl(tmp & ~0x01000000, base + 0x3c);
+ 		}
+ 	}
+ 	return 0;
 -- 
 2.33.1
 
