@@ -2,110 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58AA0C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Dec 2021 08:01:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE4FC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Dec 2021 08:30:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238770AbhLFIEk (ORCPT
+        id S239431AbhLFIdZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 6 Dec 2021 03:04:40 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:30274 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238716AbhLFIEk (ORCPT
+        Mon, 6 Dec 2021 03:33:25 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:43618 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S239430AbhLFIdU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 6 Dec 2021 03:04:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1638777671;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=wH8kwnz+ewHmU1AaRG71G1mumKaBP21RSNN+TDzU+jU=;
-        b=VvYVhrtMoNkV1cJiAZeizN29L8Uk+z0Yrfjy5ze85fgGcKlcYV0pv00XjvdNyOaejHV8b/
-        vf9XFhVbL6aSY9pm4juUN6VDn5T1U+UVUJw2Xh2SaxjeyW30bUlkA2IAzEhmSAi8ob8Mbt
-        ktwzGERYbar31xWmF7gtLP5nlDb5Mdc=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-248-x_HQ8QTiN8O3WlE8R93pEw-1; Mon, 06 Dec 2021 03:01:10 -0500
-X-MC-Unique: x_HQ8QTiN8O3WlE8R93pEw-1
-Received: by mail-lf1-f69.google.com with SMTP id s11-20020a195e0b000000b0041c0a47fb77so791231lfb.20
-        for <kernel-janitors@vger.kernel.org>; Mon, 06 Dec 2021 00:01:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wH8kwnz+ewHmU1AaRG71G1mumKaBP21RSNN+TDzU+jU=;
-        b=NZFrewHS8GEyaq5XYSSOlogBZOFDrHi+rOmP1fAyHSNfspi6dxn6HMHxqvgkN3tPvu
-         tDbZIdpD8Eblj3qH+j0kXN4+jJIkOTZIhch6KgFuBXpnLwvZ3voPKahjYgIznUFV1mMi
-         5PFFeyphuk1D7Yzkx6HkGjGvAXUkSj5fChlcA7qKHOtwcDJ3ZqoWVmEG3cqyRD+mhFhl
-         T88wCuVhKLr2KMD7+KQsCM/uiHJ7cgG1So2xoskPy/lGxbWzk6ncvFU2jDTg8ETOjP/i
-         nfSbgmrFIR1eatSWptWsBwct85lQIU+uf1gu1LwDGXWZmKU4oN6CWoHC6c1BVHZONb0o
-         6RXg==
-X-Gm-Message-State: AOAM530/NYK8k3X6YO4nxodS0+VlOwf2kO8jVG0gpDzo3AzyMu7esi/M
-        8auSC55FhtchBhVuF/cDv+ogBXPNbd0Nllg2dz/2TpfG0ow3jQP2IIBfqUWdxtk+Kzi2fvGa2Ir
-        wKY28rP6vBhMVPo9Rf4DO/GTAKFHvPyFWepu9OHyRu7/i
-X-Received: by 2002:a2e:b88d:: with SMTP id r13mr34211647ljp.362.1638777668624;
-        Mon, 06 Dec 2021 00:01:08 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzYfODCzAWEqMnMLn2tkI2pq1dE/G0Dew/Pmcpji5W/rXtHJLqZjo3c5XqwSdykVkg+nYS0G8Z980ScmvpQAlI=
-X-Received: by 2002:a2e:b88d:: with SMTP id r13mr34211635ljp.362.1638777668440;
- Mon, 06 Dec 2021 00:01:08 -0800 (PST)
+        Mon, 6 Dec 2021 03:33:20 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1B641GlM010420;
+        Mon, 6 Dec 2021 09:29:31 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=7dw5R5/FK9LuNdO5hgpabaKMusyc01qO1lYQBujU+TM=;
+ b=FnMw9A7tSgCl3z59RZaPD3wp5cQcGGcg+WromuhUTmwRcomG+0M7vrXNO+2aFPOmFTh+
+ HbcNYxd617kUOFO3At+3+6qPG55LHxAyzUq7cvf5M09dC+gV1sed0DPMsbY5eoWrKabd
+ rgOn2B54dxH0Ldf820aVlAMEyAjfKSTmLJo7RrBgJwKskzbJnYmM21UWH1iQUpX+xd9V
+ /S50NrAhY9SZ5JC+cAUfyBiWWqy7akQ186qSkIdjz1+WWetaGuIl3Ap6yeOJxUVcHPtN
+ tSc1Yk1YfuLsYLWCTZg5BTQ8eEoIQttJKZSLvnffEiv5i1bfxhbuk+ev9MHfqSXuL3Tp zQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3csb4j12uq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Dec 2021 09:29:31 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7F80910002A;
+        Mon,  6 Dec 2021 09:29:30 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 776942239B2;
+        Mon,  6 Dec 2021 09:29:30 +0100 (CET)
+Received: from lmecxl0995.lme.st.com (10.75.127.44) by SFHDAG2NODE2.st.com
+ (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Mon, 6 Dec
+ 2021 09:29:29 +0100
+Subject: Re: [Linux-stm32] [PATCH] dmaengine: stm32-mdma: Remove redundant
+ initialization of pointer hwdesc
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        <dmaengine@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20211204140032.548066-1-colin.i.king@gmail.com>
+From:   Amelie DELAUNAY <amelie.delaunay@foss.st.com>
+Message-ID: <6ddc679f-c6d4-c0b7-5e1c-ef156a392488@foss.st.com>
+Date:   Mon, 6 Dec 2021 09:29:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-References: <1638776941-34156-1-git-send-email-guanjun@linux.alibaba.com>
-In-Reply-To: <1638776941-34156-1-git-send-email-guanjun@linux.alibaba.com>
-From:   Jason Wang <jasowang@redhat.com>
-Date:   Mon, 6 Dec 2021 16:00:57 +0800
-Message-ID: <CACGkMEtNj_CyqV01MCKn6xa01d4FHscCZ9dgt3JCqrQYWaHpMA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] vduse: moving kvfree into caller
-To:     Guanjun <guanjun@linux.alibaba.com>
-Cc:     mst <mst@redhat.com>, Yongji Xie <xieyongji@bytedance.com>,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20211204140032.548066-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-06_03,2021-12-06_01,2021-12-02_01
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Dec 6, 2021 at 3:54 PM Guanjun <guanjun@linux.alibaba.com> wrote:
->
-> From: Guanjun <guanjun@linux.alibaba.com>
->
-> This free action should be moved into caller 'vduse_ioctl' in
-> concert with the allocation.
->
-> No functional change.
->
-> Fixes: c8a6153b6c59 ("vduse: Introduce VDUSE - vDPA Device in Userspace")
+Hi,
 
-Does this fix a real problem? If not, let's try not using fixes tags here.
+On 12/4/21 3:00 PM, Colin Ian King wrote:
+> The pointer hwdesc is being initialized with a value that is never
+> read, it is being updated later in a for-loop. The assignment is
+> redundant and can be removed.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Thanks
+Reviewed-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
 
-> Signed-off-by: Guanjun <guanjun@linux.alibaba.com>
 > ---
->  drivers/vdpa/vdpa_user/vduse_dev.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
-> index c9204c62f339..477a5a592002 100644
-> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> @@ -1355,7 +1355,6 @@ static int vduse_create_dev(struct vduse_dev_config *config,
->  err_str:
->         vduse_dev_destroy(dev);
->  err:
-> -       kvfree(config_buf);
->         return ret;
->  }
->
-> @@ -1406,6 +1405,8 @@ static long vduse_ioctl(struct file *file, unsigned int cmd,
->                 }
->                 config.name[VDUSE_NAME_MAX - 1] = '\0';
->                 ret = vduse_create_dev(&config, buf, control->api_version);
-> +               if (ret)
-> +                       kvfree(buf);
->                 break;
->         }
->         case VDUSE_DESTROY_DEV: {
-> --
-> 2.27.0
->
-
+>   drivers/dma/stm32-mdma.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dma/stm32-mdma.c b/drivers/dma/stm32-mdma.c
+> index d30a4a28d3bf..805a449ff301 100644
+> --- a/drivers/dma/stm32-mdma.c
+> +++ b/drivers/dma/stm32-mdma.c
+> @@ -1279,7 +1279,7 @@ static size_t stm32_mdma_desc_residue(struct stm32_mdma_chan *chan,
+>   				      u32 curr_hwdesc)
+>   {
+>   	struct stm32_mdma_device *dmadev = stm32_mdma_get_dev(chan);
+> -	struct stm32_mdma_hwdesc *hwdesc = desc->node[0].hwdesc;
+> +	struct stm32_mdma_hwdesc *hwdesc;
+>   	u32 cbndtr, residue, modulo, burst_size;
+>   	int i;
+>   
+> 
