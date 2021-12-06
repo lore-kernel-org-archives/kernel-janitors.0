@@ -2,62 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B2D6C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Dec 2021 15:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEDECC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Dec 2021 16:06:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244299AbhLFPRe (ORCPT
+        id S1358742AbhLFQJw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 6 Dec 2021 10:17:34 -0500
-Received: from www.linuxtv.org ([130.149.80.248]:56330 "EHLO www.linuxtv.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1354551AbhLFPOM (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 6 Dec 2021 10:14:12 -0500
-Received: from mchehab by www.linuxtv.org with local (Exim 4.92)
-        (envelope-from <mchehab@linuxtv.org>)
-        id 1muFda-00986G-8g; Mon, 06 Dec 2021 15:10:42 +0000
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Date:   Mon, 06 Dec 2021 14:04:40 +0000
-Subject: [git:media_stage/master] media: media si2168: Fix spelling mistake "previsously" -> "previously"
-To:     linuxtv-commits@linuxtv.org
-Cc:     kernel-janitors@vger.kernel.org,
-        Colin Ian King <colin.i.king@gmail.com>
-Mail-followup-to: linux-media@vger.kernel.org
-Forward-to: linux-media@vger.kernel.org
-Reply-to: linux-media@vger.kernel.org
-Message-Id: <E1muFda-00986G-8g@www.linuxtv.org>
+        Mon, 6 Dec 2021 11:09:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38702 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1358775AbhLFQHw (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 6 Dec 2021 11:07:52 -0500
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C964C0412B3;
+        Mon,  6 Dec 2021 07:46:13 -0800 (PST)
+Received: by mail-yb1-xb2e.google.com with SMTP id d10so32547284ybe.3;
+        Mon, 06 Dec 2021 07:46:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=e8VnTAo8sedImm7G/oZjQu3Dt8xy1R0MoEv9ZFn+tRY=;
+        b=BiEORb0u6SefPleMWVNRNKin5r+NQDOp2Jj1YJIrfMehWNAVB4n93yfjZ2VFanivz/
+         Zt7595IBBcOJPWgWvhqroa10oPjtMBXdWG0q/iTvxc37B1UJvTbCUcizk/7KvP4VC+LU
+         2jId1860Bwf9WLPIYNHHRIjLIPcKlL65uxIF12CQpqXtD/KTz/Y1Dqz9Jmd2eWFanMpz
+         3S/3VJOKC08btygpIfiuyl/c+ScEMTzyn3CgLAfTEqaFxKwn0qB/B6oaxeJ8IgBYEBp5
+         qhBxHJasuqgSBFbUkG9yvMafxW/ZVHa5N0pXLt5j8xTzELHSAYVrk+rTid04yWSWzg7W
+         7OSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=e8VnTAo8sedImm7G/oZjQu3Dt8xy1R0MoEv9ZFn+tRY=;
+        b=SGONwnulRRetyollIeWlOtcLNMB6LARREQdJZt3NgtFR3J7b99ErwzX1sSCgUpOfjE
+         oeFal2uukJSEZo8/vPcazF7V5siUT/tsaIAj80brNUP9xKvtgwe+wCEf1W8ZF5SAnonz
+         Mwxll4ouMDNWv+JuML2JBfNdodKTw3n8s20AiEMXxxmeICbTAmbMqrBbfo5uXa7ESqtP
+         a1e2iYC9hXxhLm6Z7u0SF2lbhrh8IUYjqLPwal4CS3G5m+d2C9ISor8iETRAxMDpKCTd
+         8lBoS2lMFqWcrdpkIeZcCt3iSaJMB44pC/SRWHKIjmhVyVOoSpAIF21uaO8IHq4Xmb0U
+         ocGA==
+X-Gm-Message-State: AOAM531j9vw8UpKbcu19k5ogHIft2ZCTtAUyF12sXOLSSmLUqnrSmZO7
+        tU6/6ty4ClwdRgFu49f4VzIJjY3bSc+/TTx7mNzT/+/dmvI=
+X-Google-Smtp-Source: ABdhPJwQN/3dc9TySPRoFSxcye+mzkRwb1a3ngc3AmV6qb8qiRLgsYlDsInR0hkKGhpnztNNJLDv5lokhXo25FZuiu4=
+X-Received: by 2002:a25:fc5:: with SMTP id 188mr43696974ybp.608.1638805572204;
+ Mon, 06 Dec 2021 07:46:12 -0800 (PST)
+MIME-Version: 1.0
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Mon, 6 Dec 2021 16:46:01 +0100
+Message-ID: <CAKXUXMz1P8xCW+fjaiu0rvgJYmwHocMmtp+19u-+CQkLi=X2cw@mail.gmail.com>
+Subject: Unused local variable load_addr in load_elf_binary()
+To:     Akira Kawata <akirakawata1@gmail.com>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This is an automatic generated email to let you know that the following patch were queued:
+Dear Akira-san,
 
-Subject: media: media si2168: Fix spelling mistake "previsously" -> "previously"
-Author:  Colin Ian King <colin.i.king@gmail.com>
-Date:    Tue Nov 23 10:06:45 2021 +0100
+With commit 0c9333606e30 ("fs/binfmt_elf: Fix AT_PHDR for unusual ELF
+files"), you have changed load_elf_binary() in ./fs/binfmt_elf.c in a
+way such that the local variable load_addr in load_elf_binary() is not
+used anymore.
 
-There is a spelling mistake in a dev_dbg message. Fix it.
+I had a quick look at the code and I think the following refactoring
+would be good:
 
-Link: https://lore.kernel.org/linux-media/20211123090645.165299-1-colin.i.king@gmail.com
+1. Remove the definition of load_addr and its unneeded computation of load_addr
 
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+2. Rename load_addr_set to first (or a similar name) to represent that
+this variable is not linked to the non-existing load_addr, but states
+that it captures the first iteration of the loop. Note that first has
+the inverse meaning of load_addr_set.
 
- drivers/media/dvb-frontends/si2168.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The issue was reported by make clang-analyzer:
 
----
+./fs/binfmt_elf.c:1167:5: warning: Value stored to 'load_addr' is
+never read [clang-analyzer-deadcode.DeadStores]
+                                load_addr += load_bias;
+                                ^            ~~~~~~~~~
 
-diff --git a/drivers/media/dvb-frontends/si2168.c b/drivers/media/dvb-frontends/si2168.c
-index 8a3c41a80c03..196e028a6617 100644
---- a/drivers/media/dvb-frontends/si2168.c
-+++ b/drivers/media/dvb-frontends/si2168.c
-@@ -549,7 +549,7 @@ static int si2168_resume(struct dvb_frontend *fe)
- 	 * device untouched.
- 	 */
- 	if (dev->initialized) {
--		dev_dbg(&client->dev, "previsously initialized, call si2168_init()\n");
-+		dev_dbg(&client->dev, "previously initialized, call si2168_init()\n");
- 		return si2168_init(fe);
- 	}
- 	dev_dbg(&client->dev, "not initialized yet, skipping init on resume\n");
+
+Best regards,
+
+Lukas
