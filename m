@@ -2,92 +2,59 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE68C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Dec 2021 09:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C049DC433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Dec 2021 13:05:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240171AbhLFJRC (ORCPT
+        id S243793AbhLFNJB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 6 Dec 2021 04:17:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56040 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240354AbhLFJPi (ORCPT
+        Mon, 6 Dec 2021 08:09:01 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:53606 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234946AbhLFNJB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 6 Dec 2021 04:15:38 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD5F6C0613F8;
-        Mon,  6 Dec 2021 01:12:09 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id u1so20872731wru.13;
-        Mon, 06 Dec 2021 01:12:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FGtulihe7ZbaEpsl9OFIbutBqE5uxxN+RlUqevniGGc=;
-        b=DbbFihlmvXc6TyE+X9Wrmn6Sr/drJkmcKW4d5y5EerCQmJdPZ2suF6Ex8CF5NX6OF3
-         uPnYpcBIz+kEOwbJNqN6GWAULeJGkVhhMbRFwdOXMWlu6fk73A+/W6zCawhxLK6ZBjCC
-         cNCqmRqI4/17gU7SMHeu3DvLVgeLVzjcO0IFeAiuTxdCrpjJ51C3PtNKPC6oMr/oFSVI
-         lJbfn75nalX9pn/peJ4eiUJCYEDWoeqfXzyz+ziztnUzTzv+qZNpCh7S/brpHmAQHcM2
-         EXK7WaPTQWHBGhbxC1e2EFeg9K2xQ4IsIFS4IXEvfZXTz5lLwbSLRcBGQtE4Zxsu9elQ
-         5LIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FGtulihe7ZbaEpsl9OFIbutBqE5uxxN+RlUqevniGGc=;
-        b=13z1yHj3EWUdJ1ixw8AHqHgbRVy/vCPILjsjqQ47Pc/gUANvRy4VqSUhIrodwqYm+H
-         lXXDpzsLxgARjjvWgttbRvPezkbTuqRz6Y/Y8/bnEUJGoNexBqw2QcvzdWSI+dRo9v46
-         h5j/WSpSnONiMub+ph9e6qPbswNpIWT2TzT9vdeebQRl6MOKWWJx/LpiPr9BlfEao0mc
-         sB3lpd6QFLFeJFZuihRwU5imiCwVywvhBN1ZD1pOOQhB4OHpe7Wnf0/pFxs6cwzPyNac
-         rfk653ObHlPL6lRbvGg/woSRT0Dcsl4+ko+XPZmLFAJB//rIiHoGl1XYUUX/jY0r6a3L
-         khMg==
-X-Gm-Message-State: AOAM532GEGvF+I+1wJ2uvVa4AMgcmV3TLQTXnvn2ANfB8kZf+OT3PoHl
-        kSXg5aItFtDGqK3ypwxAykZ75N1r/oNXKbnj
-X-Google-Smtp-Source: ABdhPJxFt/TJQBps8M+Vvod/JSl2PWMHsPrHLQtL5cNl1tVXXHphlF0EQ5Dz3rbTSGnnql423+gbcA==
-X-Received: by 2002:adf:fa0b:: with SMTP id m11mr40977623wrr.152.1638781928492;
-        Mon, 06 Dec 2021 01:12:08 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id p2sm12866223wmq.23.2021.12.06.01.12.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Dec 2021 01:12:07 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Yisen Zhuang <yisen.zhuang@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Guangbin Huang <huangguangbin2@huawei.com>,
-        netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net: hns3: Fix spelling mistake "faile" -> "failed"
-Date:   Mon,  6 Dec 2021 09:12:07 +0000
-Message-Id: <20211206091207.113648-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.33.1
+        Mon, 6 Dec 2021 08:09:01 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 7498421B40;
+        Mon,  6 Dec 2021 13:05:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1638795931; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=seNcCVmeKjbuPvrYBKoc8yqPAgK6xtZS/e04+RONdyQ=;
+        b=gv8BtY7lhi1h6/ghlaI9FyA47oIzeGMuyuzzrPZSWAyCnBCRZEMYROlsPn7fbTGEs2F9wg
+        dBDEk4aAaJ/6RJTIT9yaXY5B3hUV3rsT+TTdH2Z3yMiIa8luuzqJ1n1k/e4WGsZY4TQ13T
+        cS5BL0l5pDz+EMTcPHb4SuPb/jX8a8Y=
+Received: from suse.cz (unknown [10.163.24.10])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 80EDAA3B8B;
+        Mon,  6 Dec 2021 13:05:30 +0000 (UTC)
+Date:   Mon, 6 Dec 2021 14:05:30 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     rostedt@goodmis.org, senozhatsky@chromium.org,
+        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] vsprintf: Use non-atomic bitmap API when applicable
+Message-ID: <Ya4Kmsu3rO8o0gGb@alley>
+References: <1abf81a5e509d372393bd22041eed4ebc07ef9f7.1638023178.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1abf81a5e509d372393bd22041eed4ebc07ef9f7.1638023178.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a dev_err message. Fix it.
+On Sat 2021-11-27 15:27:35, Christophe JAILLET wrote:
+> The 'set' bitmap is local to this function. No concurrent access to it is
+> possible.
+> So prefer the non-atomic '__[set|clear]_bit()' function to save a few
+> cycles.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The patch has been committed into printk/linux.git, branch for-5.17.
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 3edea321e31a..1d1c4514aac2 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -8070,7 +8070,7 @@ static int hclge_cfg_common_loopback_wait(struct hclge_dev *hdev)
- 		dev_err(&hdev->pdev->dev, "wait loopback timeout\n");
- 		return -EBUSY;
- 	} else if (!(req->result & HCLGE_CMD_COMMON_LB_SUCCESS_B)) {
--		dev_err(&hdev->pdev->dev, "faile to do loopback test\n");
-+		dev_err(&hdev->pdev->dev, "failed to do loopback test\n");
- 		return -EIO;
- 	}
- 
--- 
-2.33.1
-
+Best Regards,
+Petr
