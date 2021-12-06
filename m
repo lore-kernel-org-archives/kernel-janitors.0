@@ -2,59 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C049DC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Dec 2021 13:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C7E8C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Dec 2021 13:22:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243793AbhLFNJB (ORCPT
+        id S244585AbhLFNZ6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 6 Dec 2021 08:09:01 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:53606 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234946AbhLFNJB (ORCPT
+        Mon, 6 Dec 2021 08:25:58 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:4210 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244369AbhLFNZ5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 6 Dec 2021 08:09:01 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 7498421B40;
-        Mon,  6 Dec 2021 13:05:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1638795931; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=seNcCVmeKjbuPvrYBKoc8yqPAgK6xtZS/e04+RONdyQ=;
-        b=gv8BtY7lhi1h6/ghlaI9FyA47oIzeGMuyuzzrPZSWAyCnBCRZEMYROlsPn7fbTGEs2F9wg
-        dBDEk4aAaJ/6RJTIT9yaXY5B3hUV3rsT+TTdH2Z3yMiIa8luuzqJ1n1k/e4WGsZY4TQ13T
-        cS5BL0l5pDz+EMTcPHb4SuPb/jX8a8Y=
-Received: from suse.cz (unknown [10.163.24.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 80EDAA3B8B;
-        Mon,  6 Dec 2021 13:05:30 +0000 (UTC)
-Date:   Mon, 6 Dec 2021 14:05:30 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     rostedt@goodmis.org, senozhatsky@chromium.org,
-        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] vsprintf: Use non-atomic bitmap API when applicable
-Message-ID: <Ya4Kmsu3rO8o0gGb@alley>
-References: <1abf81a5e509d372393bd22041eed4ebc07ef9f7.1638023178.git.christophe.jaillet@wanadoo.fr>
+        Mon, 6 Dec 2021 08:25:57 -0500
+Received: from fraeml745-chm.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4J73wg37xqz6899d;
+        Mon,  6 Dec 2021 21:21:23 +0800 (CST)
+Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
+ fraeml745-chm.china.huawei.com (10.206.15.226) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Mon, 6 Dec 2021 14:22:27 +0100
+Received: from [10.47.82.161] (10.47.82.161) by lhreml724-chm.china.huawei.com
+ (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.20; Mon, 6 Dec
+ 2021 13:22:26 +0000
+Subject: Re: [PATCH 1/3] scsi: hisi_sas: Use devm_bitmap_zalloc() when
+ applicable
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        <jejb@linux.ibm.com>, <martin.petersen@oracle.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <4afa3f71e66c941c660627c7f5b0223b51968ebb.1637961191.git.christophe.jaillet@wanadoo.fr>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <d1837f2b-2a04-0231-4ccd-1d1118afa595@huawei.com>
+Date:   Mon, 6 Dec 2021 13:22:13 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1abf81a5e509d372393bd22041eed4ebc07ef9f7.1638023178.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <4afa3f71e66c941c660627c7f5b0223b51968ebb.1637961191.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.47.82.161]
+X-ClientProxiedBy: lhreml721-chm.china.huawei.com (10.201.108.72) To
+ lhreml724-chm.china.huawei.com (10.201.108.75)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat 2021-11-27 15:27:35, Christophe JAILLET wrote:
-> The 'set' bitmap is local to this function. No concurrent access to it is
-> possible.
-> So prefer the non-atomic '__[set|clear]_bit()' function to save a few
-> cycles.
+On 26/11/2021 21:15, Christophe JAILLET wrote:
+> 'hisi_hba->slot_index_tags' is a bitmap. So use 'devm_bitmap_zalloc()' to
+> simplify code, improve the semantic and avoid some open-coded arithmetic
+> in allocator arguments.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Signed-off-by: Christophe JAILLET<christophe.jaillet@wanadoo.fr>
 
-The patch has been committed into printk/linux.git, branch for-5.17.
+Acked-by: John Garry <john.garry@huawei.com>
 
-Best Regards,
-Petr
+> ---
+> The use of 's' is questionable here. I've left it because it looks more
+> consistent this way with the surrounding code.
+> 
+> Can it be an issue to have the length of the allocated bitmap not being
+> a multiple of sizeof(long)?
+
+The driver does not rely on that (allocated bitmap being a multiple of 
+sizeof(long)), but the size is 4096 bits, which would be a multiple of 
+sizeof(long)
+
+Thanks,
+John
+
+> I guess that there is some kind of 'rounding' done by the memory allocator
+> to keep some alignment, so I think that the previous code is safe (but not
+> logical).
+> If this is not the case, there is a potential out of bound bug related to
+> the bitmap API that expect to access only longs (which is not necessarily
+> the case here).
+
