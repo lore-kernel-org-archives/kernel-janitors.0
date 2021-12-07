@@ -2,60 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE7CC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Dec 2021 00:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 410F0C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Dec 2021 02:05:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378883AbhLGA55 (ORCPT
+        id S235843AbhLGCI2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 6 Dec 2021 19:57:57 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:41466 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378860AbhLGA5g (ORCPT
+        Mon, 6 Dec 2021 21:08:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41682 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233930AbhLGCI2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 6 Dec 2021 19:57:36 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2B856B815DB;
-        Tue,  7 Dec 2021 00:54:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D757C004DD;
-        Tue,  7 Dec 2021 00:54:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638838445;
-        bh=MOFFfkFtc+MzJIZEKxsyGBCKlJUvd4Qzj1iJAAO8ysI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Jcq5Dcf1xoXUop/3vEBQSoLzp5DMbF1c6GR3+ztDwGBqyB4/ykSsSGODnz24ew5vF
-         PSuBRhRVqEouCTN8uIJ7UHtF/VJo6KOmziY994RUxecbKB9orz0jfFZ7fjMYtWWNsG
-         F7dGj42TcgnFoaL9gM4jNiuW4S6Ic4xvsdT+VBpXZlbDSzb+0W/T+o49ZZwP3g7Tyh
-         J1tBXsEKZe3idVJb83f6bC6yBfuZ7qaS3caE4FOUcnvNXWcrLAEjKkqKGng/i/bKw/
-         RzeWw1lYZS06g/qjaIKdm9EBIIjsG7FKlHY7GLWll7E8sWu/h9chbgsr5B+iNznGBM
-         FRCU5xKLAjTWg==
-Date:   Mon, 6 Dec 2021 16:54:03 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     GR-Linux-NIC-Dev@marvell.com, Ron Mercer <ron.mercer@qlogic.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jeff Garzik <jeff@garzik.org>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net/qla3xxx: fix an error code in
- ql_adapter_up()
-Message-ID: <20211206165403.05a420a5@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-In-Reply-To: <20211203101024.GI18178@kadam>
-References: <20211203100300.GF2480@kili>
-        <20211203101024.GI18178@kadam>
+        Mon, 6 Dec 2021 21:08:28 -0500
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AFF1C0613FE
+        for <kernel-janitors@vger.kernel.org>; Mon,  6 Dec 2021 18:04:58 -0800 (PST)
+Received: by mail-pf1-x430.google.com with SMTP id g18so11912662pfk.5
+        for <kernel-janitors@vger.kernel.org>; Mon, 06 Dec 2021 18:04:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=zXn+x6PjdC00rwvRf+3OxJFKpI6ggoGfZlhaFuosZ8c=;
+        b=GuSxN5uVJ9+WJ2iyh1JIFGQbXut/l2v2ypgv+dneHZFLf/s3lDtFO6XiM44xUnLO1T
+         lKinbTGi6CA9ot0MaE+HnJqfbGfBeISO+l2PDatV442RW/I6KMOC+W98BVX8/2h9yv+5
+         RLAKzV6pJVhT52YDwnpbv1VaeTkvg7BeaZNzo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=zXn+x6PjdC00rwvRf+3OxJFKpI6ggoGfZlhaFuosZ8c=;
+        b=h4INo/u+S1lWtkU9CjQGSZ4SAixGhgAomP1FfuJXJmRw9u4bmwnSM233RfPDl5RS5L
+         fs7mcDBFqPrzIgmCuMZjumkXSKVjJDw8X5onbIjm8DT2CSuUwTCkYDFugXRVVHvAASec
+         rjVMlr1VEnKpNq455rxveq0yiublmZDhCzdV7tyiwHIoHpygks7nOPXCSVDBqjsp5K31
+         GbTXqVhdmqe9w2O2kf+E0IDq5t9LpfFCjEwmI4MSbU+rAdieplldbe5uvIRvyzIsrNrC
+         2kJ71HyDFr/zfSUpMSm/CqwTZM6S59HpyDRE4eCXPk94xTICXcSLQ60eGM/qoQ+VkJJA
+         0NHQ==
+X-Gm-Message-State: AOAM532P+LnbzqG9At+tD6P1rl6WKq78x4G60W+FqpjNKQiWQ63imtI/
+        OyfC09JmLynqEReB76r/dQjidA==
+X-Google-Smtp-Source: ABdhPJzrx4Qt1TFkMbPfKuTpvu9+Jlgy2hTOryqedenVkWnW8IAs+2d8ehAQCi7OTneU/9GiEz8pRw==
+X-Received: by 2002:a63:1950:: with SMTP id 16mr22562347pgz.422.1638842697962;
+        Mon, 06 Dec 2021 18:04:57 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id y8sm14047067pfi.56.2021.12.06.18.04.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Dec 2021 18:04:57 -0800 (PST)
+Date:   Mon, 6 Dec 2021 18:04:56 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Akira Kawata <akirakawata1@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>
+Subject: Re: Unused local variable load_addr in load_elf_binary()
+Message-ID: <202112061804.5185ACABD@keescook>
+References: <CAKXUXMz1P8xCW+fjaiu0rvgJYmwHocMmtp+19u-+CQkLi=X2cw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKXUXMz1P8xCW+fjaiu0rvgJYmwHocMmtp+19u-+CQkLi=X2cw@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 3 Dec 2021 13:10:25 +0300 Dan Carpenter wrote:
-> I had intended to put [PATCH net] in the subject.  Although it's not a
-> high priority bug so net-next is fine too.
+On Mon, Dec 06, 2021 at 04:46:01PM +0100, Lukas Bulwahn wrote:
+> Dear Akira-san,
+> 
+> With commit 0c9333606e30 ("fs/binfmt_elf: Fix AT_PHDR for unusual ELF
+> files"), you have changed load_elf_binary() in ./fs/binfmt_elf.c in a
+> way such that the local variable load_addr in load_elf_binary() is not
+> used anymore.
 
-Looks like it's marked 'Changes Requested' in pw. The Fixes tag is also
-incorrect (the subject does not match, there's a [PATCH] in it, which
-seems to have been replaced by [PATCH net-next]). 
+EEk! yeah, this totally broke ELF randomization. this needs to be
+entirely reverted.
 
-Would you mind reposting?
+-- 
+Kees Cook
