@@ -2,60 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CBBCC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Dec 2021 22:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2D3CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Dec 2021 23:07:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242329AbhLGW5O (ORCPT
+        id S242460AbhLGXKo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Dec 2021 17:57:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53426 "EHLO
+        Tue, 7 Dec 2021 18:10:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233920AbhLGW5O (ORCPT
+        with ESMTP id S242406AbhLGXKn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Dec 2021 17:57:14 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14AE7C061574;
-        Tue,  7 Dec 2021 14:53:43 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id a9so753910wrr.8;
-        Tue, 07 Dec 2021 14:53:43 -0800 (PST)
+        Tue, 7 Dec 2021 18:10:43 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79A93C061574;
+        Tue,  7 Dec 2021 15:07:12 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id a18so818972wrn.6;
+        Tue, 07 Dec 2021 15:07:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=ZK3s8Av4bPqpJYSEgcMIEDCp3LprqI7QXlbouiexF64=;
-        b=DmiMJfW2DNxWs4g2BximzSUfaH4s0cWWf5zSJJpwDm4PUBYv+f2wqOhk4mqp94DORC
-         hy1zI2iXx3VmJ89emF7hn+GE1/QBlb3k7YwMEeGcy0xrWdwlTmxxuTvUwgywKCsvQaBM
-         9TCAnaS5iFUQK2QietG6/AZ3c22fihfcbSIdHYnDy1JVbVdBWFxqQXj5iY2/aILrIdQA
-         J1gfxm46AJy+9quDMYG2hiqKTtuyNU2BYdUXs1VrWyvwjx3Z8QvrrXb13kalN3ArWAsP
-         oWZCnQkRLgJGjRRuFJW7d8LTHBlYnGujAEmPbgVjnnyHh/oOrZvIiwxxTvrN3yHQ5dlF
-         KXhA==
+        bh=DcCZDxr7SMu2ST2bCheW+pTmK2hn1qh9rUqEtH0VUFo=;
+        b=bLQ2O/CdKWEqQVuAVdO65WBB0M2/5v9FbfRJZlgTL1a6fZdOm60L8EVFRtZl1mSzRN
+         lpXQRlmtBNRG3eeemQ0jK7wp0+jAUFxD6LmbFkcGJdN1cRMCXEDIFpgHkfbPC09TroDF
+         MOkrvDP+n4vr/5mQg5hD7WWKfCX7exPlczzEcZJB+h1pxQWZFqIrWGeZ9Ubl9o9uvI2X
+         4Ady/A9V6ADi78PMsJCEme/6ZkplYHqorKoYRy/wfJ9XEW++pG2XtTzO9QSsFbwF6FhH
+         FcM0qQAViW46Hwx9G7s+/8byiIsBF9+i+w8ErT14ZdlAX4ZSR8PZXu4Illr/2i4ax2eN
+         CKTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=ZK3s8Av4bPqpJYSEgcMIEDCp3LprqI7QXlbouiexF64=;
-        b=7th+Ib/IeTVwJO3XEfCEsJlW8mwvaDZbzpx/qP+3muUJeNx0FPtzmQO4RJR4KrGsUB
-         PaMAp3Kdwe8ecY/kkiUmehEgw0/gp0K7ZSt9IohF1fjDQWMWTTg2ZUJxzcaLqtuxdrCQ
-         SqlkNnBl66L8tDff4llGS0ouSUGo7h2NljrZtie+borG/6hi+pzqI3A/rUwRwFbiB5dt
-         iId5q+Al0LiygwLJnh66iuYN+OhYYBiZuVcnky1+UyEy4T61E+wVkF0qiwqrGQ/pcmcm
-         UnYptNfnM7o8DE4SOGWERXvz1XMDKAFs/tsZbQgYvxYLsUHLjvQbiWSWIBffLnhLcKZL
-         /3tw==
-X-Gm-Message-State: AOAM5309EIzRv2vplXDe1E7qhbkzWIKXfa7/E7OJu+J1k4aWeXNG73Vf
-        PDn6sYFM1rbqKEv55iR8XVo=
-X-Google-Smtp-Source: ABdhPJwfkVUsz+KfsP5NQDRkczNlMfg0uqEogRRtMLpe9+Fge9yQAzaKaBFnq5wryj8y0w3v/Zh7Dw==
-X-Received: by 2002:adf:82f7:: with SMTP id 110mr54962031wrc.111.1638917621766;
-        Tue, 07 Dec 2021 14:53:41 -0800 (PST)
+        bh=DcCZDxr7SMu2ST2bCheW+pTmK2hn1qh9rUqEtH0VUFo=;
+        b=ok+s+x6NaGQoJZCy9J46Q5akUJaFhoJxFx4sg0I6KbYiY6b7i3wmgVeGsgFy3gFojc
+         IkBrLvhoQuoItK2DH8FCc95POH0PimraT2nA3tKuU8f8Z1n+4+N2Qdf/8naKHY/1EJ5Q
+         8OwaKiDbckvW13LpoxLdaoi7Zwkss62KcjOJIkLepojNGjtKEkpGsINXxZIIktXOyTnx
+         8QRgO2mnXs7QVJc9d4p/n1DMI6vxo7p56uGR5qzy94tvZlvylXjx9vc31BGjhnR6zUeK
+         T/B66oAfWDcgJxEPyvq1o3MOHyOnNtBlxZruB0mKxNX5Xwb9YkTwypjRQFTTxdKa3ORn
+         0ohA==
+X-Gm-Message-State: AOAM533Sc62J1N0hNn+i95cqvfUe5zSwW1WhRPTdspSjJhZo0AaNafMb
+        nvqR12fW/3PD1DeNMZBGbhw=
+X-Google-Smtp-Source: ABdhPJzTUl2RXqgh7/qMQVxbAj5Aiu1asHPEJJWP4qPZPg/jkBlMGIyTKf399nxU3h/Rw7buDUr0gA==
+X-Received: by 2002:a05:6000:1201:: with SMTP id e1mr56646984wrx.298.1638918431085;
+        Tue, 07 Dec 2021 15:07:11 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id 138sm4104915wma.17.2021.12.07.14.53.41
+        by smtp.gmail.com with ESMTPSA id l11sm988962wrp.61.2021.12.07.15.07.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Dec 2021 14:53:41 -0800 (PST)
+        Tue, 07 Dec 2021 15:07:10 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] cifs: remove redundant assignment to pointer p
-Date:   Tue,  7 Dec 2021 22:53:40 +0000
-Message-Id: <20211207225340.83827-1-colin.i.king@gmail.com>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH][V2] intel_th: remove redundant re-assignment of pointer hubdrv
+Date:   Tue,  7 Dec 2021 23:07:09 +0000
+Message-Id: <20211207230709.121444-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,27 +64,39 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointer p is assigned a value that is never read, it is being
-re-assigned later. The assignment is redundant and can be removed.
+The pointer hubdrv is being re-assigned the same value as it was
+initialized with only a few lines earlier. The re-assignment is
+redundant and can be removed.
+
+As Dan Carpenter pointed out, the pointer hubdrv is hub - some_offset
+and in this case some_offset is zero. Since hub has already been
+dereferenced hubdrv can't be NULL so the NULL check is redundant
+and can also be removed.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/cifs/cifsfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-index d3f3acf340f1..61091eed8c65 100644
---- a/fs/cifs/cifsfs.c
-+++ b/fs/cifs/cifsfs.c
-@@ -775,7 +775,7 @@ cifs_get_root(struct smb3_fs_context *ctx, struct super_block *sb)
+---
+
+V2: Remove null check, kudos to Dan Carpenter for spotting this.
+
+---
+ drivers/hwtracing/intel_th/core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/hwtracing/intel_th/core.c b/drivers/hwtracing/intel_th/core.c
+index 7e753a75d23b..bf4ee2a31006 100644
+--- a/drivers/hwtracing/intel_th/core.c
++++ b/drivers/hwtracing/intel_th/core.c
+@@ -1048,8 +1048,7 @@ int intel_th_set_output(struct intel_th_device *thdev,
+ 	 * hub is instantiated together with the source device that
+ 	 * calls here, so guaranteed to be present.
+ 	 */
+-	hubdrv = to_intel_th_driver(hub->dev.driver);
+-	if (!hubdrv || !try_module_get(hubdrv->driver.owner))
++	if (!try_module_get(hubdrv->driver.owner))
+ 		return -EINVAL;
  
- 	sep = CIFS_DIR_SEP(cifs_sb);
- 	dentry = dget(sb->s_root);
--	p = s = full_path;
-+	s = full_path;
- 
- 	do {
- 		struct inode *dir = d_inode(dentry);
+ 	if (!hubdrv->set_output) {
 -- 
 2.33.1
 
