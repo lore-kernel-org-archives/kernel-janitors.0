@@ -2,229 +2,176 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84186C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Dec 2021 10:51:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ADA9C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Dec 2021 11:01:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230368AbhLGKz0 convert rfc822-to-8bit (ORCPT
+        id S235519AbhLGLEk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Dec 2021 05:55:26 -0500
-Received: from mga05.intel.com ([192.55.52.43]:57266 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230169AbhLGKz0 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Dec 2021 05:55:26 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10190"; a="323807456"
-X-IronPort-AV: E=Sophos;i="5.87,293,1631602800"; 
-   d="scan'208";a="323807456"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2021 02:51:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.87,293,1631602800"; 
-   d="scan'208";a="611630779"
-Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
-  by orsmga004.jf.intel.com with ESMTP; 07 Dec 2021 02:51:53 -0800
-Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1muY4e-000MTV-L4; Tue, 07 Dec 2021 10:51:52 +0000
-Date:   Tue, 7 Dec 2021 18:51:27 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Dan Carpenter <error27@gmail.com>,
-        Antonino Daplas <adaplas@gmail.com>
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fbdev: savagefb: make a variable local
-Message-ID: <202112071822.Ry2XAYAN-lkp@intel.com>
-References: <20211203095715.GD2480@kili>
-MIME-Version: 1.0
+        Tue, 7 Dec 2021 06:04:40 -0500
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:15612 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235147AbhLGLEi (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 7 Dec 2021 06:04:38 -0500
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B79GxfW012491;
+        Tue, 7 Dec 2021 11:01:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2021-07-09;
+ bh=I69QQS9x/JjEokjqDW18g139X3gHpeHayK6RJvdkSuE=;
+ b=l22Mdmi5KYRBTJxDIQPyZl1eNDBgopNx2RAPdPqgMwAtpU0ByyeYuB+HWdpdO/QYelAn
+ yaCFxYbF6L7+cl69PrlnTJzkGw/C4JxgmirTZoFHAqOIhwXKq9fScdSusUZqnKhNNBBb
+ QpIo9bD/jwzMoDzOU+py20fnu44qLevrZUBSJf9mlTQQXM2DdPnjN/bMAPtqReJuD1iL
+ vVSWD+cYOvLVdJjNeSYGEn2/Pw62ptZ+TFVgR+4O3HPOUsq4JxgRDl5+4PA9UIf5R/Ey
+ G0kvvhfZyrEmpLVlL3GcXjIx84ZiERAUw/zFm0pKU6asYsE7WrrrUhUJlA8aZLOrPJeg NA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3csc72d1y4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 Dec 2021 11:01:03 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1B7ApDh7003605;
+        Tue, 7 Dec 2021 11:01:03 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam07lp2040.outbound.protection.outlook.com [104.47.51.40])
+        by aserp3030.oracle.com with ESMTP id 3csc4t3wcf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 Dec 2021 11:01:02 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=l2TBB47aUkuWvHH+Si7b5PmIHC9jfI2G3AM5oJPMvGKwrb1kgWQzGQX/okqC+9sXm7xEngnJbqUlEHY2VfD22x+scFjfsLcFoqKrOTiNLp/cfs5rxdvyE4kQ3z8EBREvQ4AI6dysEjXY8IQccH6B3CJ/9DL78bG+eKJbgjKzX0+ELmxPnRezTt4e7D80MhHk5Hr3BnXq5uMS8zBTU/ekwyutCj2yZCTLvqrbRfj8sCclnrIyhg7iOXCRhI64rVCf0/fvVkEIhUE+h76QGKLJNAhEfe+RlZBEIpI4/dOPmNjfCJKbQo+0VE+CJRx39R7qJIFUyYwBw2hKixqxsXD1xw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=I69QQS9x/JjEokjqDW18g139X3gHpeHayK6RJvdkSuE=;
+ b=edV+EavzcqepazkH4qyGQkctbNgTsYgw2Kx0ODBuuW5lYJ96BtWe1PcxH2LeuPjDlTi+1j2SzldY+erx4B76k91GocONURb2F5vi8tEkzuZPEZ6SCoKgoiMyK7Iof6cmuVLdRL3KPM9rjt1TYFGZSZVD0TGaTPAC3ydFoeDC3ZsCjFHPYyIEK3Z8BiGWAPVibe1ucivWupGjks1AugtQjq6ctXGZYAykqUW+HnbLmW+FcDT3fd4RZdPAmPPioXmtc9BAPqQUysgBu0CJlLg7dAH8maekvpYqHe8lKnySN8rnvU5vZnx/jEcW+JhF1D0imVXAZB8eceddKhzTwH3B0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I69QQS9x/JjEokjqDW18g139X3gHpeHayK6RJvdkSuE=;
+ b=iO+HVVh4jQjXLNySJBjA1+nUlMidyu0HhBmG7/DCcHhf5oBXZPTHuD3q4+oYkhHiS2XtOL29U95Udis3xO/lWBt2+05+3NaIN+BoE+tdEbm60lmLHusxXB0EM536T3eFKe7xDOv5hj0G2hjU8EMB+CzLXp7z4E2X+n4+DoATv3A=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by MWHPR10MB1485.namprd10.prod.outlook.com
+ (2603:10b6:300:25::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.21; Tue, 7 Dec
+ 2021 11:01:01 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::7194:c377:36cc:d9f0]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::7194:c377:36cc:d9f0%6]) with mapi id 15.20.4755.022; Tue, 7 Dec 2021
+ 11:01:01 +0000
+Date:   Tue, 7 Dec 2021 14:00:40 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Xie Yongji <xieyongji@bytedance.com>
+Cc:     Jason Wang <jasowang@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        virtualization@lists.linux-foundation.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] vduse: fix memory corruption in vduse_dev_ioctl()
+Message-ID: <20211207110040.GH1978@kadam>
+References: <20211207104614.GA21381@kili>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20211203095715.GD2480@kili>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20211207104614.GA21381@kili>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: JNAP275CA0070.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:4f::18)
+ To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
+MIME-Version: 1.0
+Received: from kadam (102.222.70.114) by JNAP275CA0070.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:4f::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4755.14 via Frontend Transport; Tue, 7 Dec 2021 11:00:55 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 060f5915-4c10-4857-98e1-08d9b970dad6
+X-MS-TrafficTypeDiagnostic: MWHPR10MB1485:EE_
+X-Microsoft-Antispam-PRVS: <MWHPR10MB1485FFF806F1C243A43E61CE8E6E9@MWHPR10MB1485.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: xeoPi4BMmYAdQk0QvjwrkCfJT0yL+OtdC+hiLFsJc53nWyWMykBIQ08JrwNeDyPsjKEaFKlWquiVDwotBKw3P6fGMxqoqwfXNeJQFd8kVE9cNoKFuKYRT67UDip3QE8JrJpmx7Y/rMOu/KUZZR1XQE4L9mNqvkF3DtgBywxULttvmlOKiebl5sFVaoU2Ec5kPXZDoD/z5UaUM9twu6TSGP2x2Aa7Yf3dDbUXNKfdcgkAGefgaNJNaz8wNhHloNQUtcbynAnlEwmEiJOvUVYnfjlmt2XUw3fjuQ2aENKmerl9uk7RW69rO69Xgn+wcQ+BeuAIaS457UC5a+8qhbzQXYHACXtyGSzSDnv2TBazdyFXJYmaO4yNAvgq83ZOObY00U4ui0x1Q4W5i+hxY0dhno6YxIHMsFEWIs8eO3YICdORik2H+RvxH5dtqq5AI4kci/pmVifcDUxBVTtUOU9bOl0u4kP6pLBCWItUOHqr4AnKgtiWmrbHlEB+AiXZ/Avy9FOzGMXV0QpQWdLBYPG5CNUiPBWnOrx+OBbs/mBVoYvJwc8PJ81epC7oQbQYwY4KQMc0KGQeMkK58AxS7MIw0M/1ZSxK+OH1DVHN1xNY1sZ+MpbtTkjoGFE4zExKU+7ARbyFJ/ijKraR2cafY/MKQBK7UEYP6PeuZwZtPB60p7kMTFyiz17uBK3UlFJUuLbobIPekK4mQ0YMTcv/3g941A==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(1076003)(26005)(4326008)(38350700002)(55016003)(38100700002)(186003)(6666004)(83380400001)(5660300002)(956004)(86362001)(44832011)(8936002)(508600001)(9686003)(8676002)(52116002)(33656002)(66946007)(66476007)(66556008)(2906002)(9576002)(33716001)(316002)(110136005)(6496006)(54906003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?b/a1fN7agcxxhowyepmxPxrf1/6CmxXFtn4hpi1EBkzG2s+WQZkTfwl8A3lo?=
+ =?us-ascii?Q?TaYHOs6//acKMR/lF6ZWu1HzjMDkfAF5sw0Ir/+IpnUZupJrSB8K6MLl/I5j?=
+ =?us-ascii?Q?Vv7p04viJ080HzQy38kRLLSHhpxsX66DKLBupzgkAqMUxzkQ3ERLrMptcPD/?=
+ =?us-ascii?Q?dfsCUyWhGp5zaiuhwTHTwSWVr1f3L088WZKQ1F84RS12vAGUzZUNHFaOHJV/?=
+ =?us-ascii?Q?g71tYrOCob69FT++CEIhDtu2cu3n5BZF3EYxTlrRhM5YVnnE1NaAsSRvxU4E?=
+ =?us-ascii?Q?1z7uy+oIeAiE7wB7Oxer9veOCQI3TtzjRokPhr+XauOavwzAoftu8MZ1uH3E?=
+ =?us-ascii?Q?SN8hW0VjRRx4bSmyKjnkI2o8rzdhSASKOrcO5vcrC6u2SfQS2nvvOtSSx/6n?=
+ =?us-ascii?Q?9gDSCjF3ICL+2a2AplH/VKn4TjfoY5sz6YJTsOHcrp8uTwMo7JmELm/spvmX?=
+ =?us-ascii?Q?jMROclI7l1Acdmn39MHalSSSWMU5uiw95hou/mrb3AQeEFAk0jo9ryf1nU23?=
+ =?us-ascii?Q?W945LuFujn/SCks5H4GqwMT7mTeorpPMA6vIwhM5B6Sq2N0bVlfW/ItchBqe?=
+ =?us-ascii?Q?6mmVoOhcNFsoWhaimoXMEyGOHmKMDMfmrcohul9mn2vVQiD7sifVgCDTHiYS?=
+ =?us-ascii?Q?pHh1+7UUlw2n5Nz8FGugQs9ALlbUjlCfr3I7HbRVVyPZewxwcG5TRAmGrgPY?=
+ =?us-ascii?Q?ebpAQqjrIVigpy1lj2hCID0TOy7acmT8gpnXft/3xE0R3NfsR5HzyDA8XKau?=
+ =?us-ascii?Q?4srV33GQb3GthHzUFtWWXkD7ghfR+hILOcS5qcmEKzvzmZ+z0Ozkvl81yqru?=
+ =?us-ascii?Q?xTaw1/PM1/r201BtS3D0Zdx4nTKk09d9pGBN71BnW5NPiaulDi5ON0IHCNKb?=
+ =?us-ascii?Q?ZMq+2F6FexbH/3JDojki3AI/93Vjv79M49oyOETDbKIQWqTqzwtr5FvAzSBS?=
+ =?us-ascii?Q?+DJGD2FWb322kDIBpEB3jkZP28GdDSgTxGDuT/DzigiVy+aPecB5s4ICs6t5?=
+ =?us-ascii?Q?WKb21KoW8JUvPRbJIlGVJQppajFYpKJkjEjBaQRtlDjiLEM44soxb5F68nhE?=
+ =?us-ascii?Q?HBCPhujWf5GZcI9KxplEeXvw8FmsXTNiE4QN4HxyR4//sjCRx2A+opZt4r6Q?=
+ =?us-ascii?Q?ODl5BW9Yoc9d6xgda/ruGewTomTPPd/458u44al4gtIWrgV/jqHGbDk83IRL?=
+ =?us-ascii?Q?5FGwlpCUdipTitLaYWJteiFgpq79nwKiEhjKV2RYNOnzVr1clnuQtvQ10HcP?=
+ =?us-ascii?Q?T9tixjezizrVyMI3R1QE2KRicbtwvxX1wcPGIYM68/I5hbmWswM1+A1E4Ffk?=
+ =?us-ascii?Q?ch06EJpX5qUT49sH7MjjeG/Xz3o8RuJPnZU/hlbrLKExIPu0cJAunxFJ/tzZ?=
+ =?us-ascii?Q?LFd7zigM0mgpfxBX7z6CBtlaKwATyBFd6p2cSNM9/4+g/J5ytAMWP74A+LQz?=
+ =?us-ascii?Q?rWnt0qvf+X9LY9lTBdSrcRqpg0BTh8Vd05QAKvkdAKfEk8kuFz393tKkmdm1?=
+ =?us-ascii?Q?2cICbf+WhSuSq8+KWdIoMg/3mWjpAn41Bl2lBXLtBQT9IeVNm6LJZt9Z83fn?=
+ =?us-ascii?Q?GygzzVXl/USzr05pKkcZ1QtWg6qT/iAYbo3l9EHMFzBwv9ZP4Znr2INMK/0p?=
+ =?us-ascii?Q?4fmC+vlKG3/BbH6zLXaus7PobFlqZwHQkle9ZVfnRffCFOGVXhoJQWiOTZrw?=
+ =?us-ascii?Q?KKLOuBO2IZKCtK9GpHEog4/tsi0=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 060f5915-4c10-4857-98e1-08d9b970dad6
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Dec 2021 11:01:01.0037
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: r4BBCG82LTXzPHK9vtkghPWgHH8bZVz6YAV6kcPMZCnOktil8DSFj9t+bqFoPuQhIt1ajLTO7XQjyERjSvDK7wcp496S/AZvzo05w3U6V8s=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR10MB1485
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10190 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
+ phishscore=0 bulkscore=0 malwarescore=0 spamscore=0 suspectscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2112070063
+X-Proofpoint-ORIG-GUID: gixwBDZ0CW7u8gqLU6CFFrkDRIazFeKI
+X-Proofpoint-GUID: gixwBDZ0CW7u8gqLU6CFFrkDRIazFeKI
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+On Tue, Dec 07, 2021 at 01:46:14PM +0300, Dan Carpenter wrote:
+> The "config.offset" comes from the user.  There needs to a check to
+> prevent it being out of bounds.  The "config.offset" and
+> "dev->config_size" variables are both type u32.  So if the offset if
+> out of bounds then the "dev->config_size - config.offset" subtraction
+> results in a very high u32 value.
+> 
+> Fixes: c8a6153b6c59 ("vduse: Introduce VDUSE - vDPA Device in Userspace")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/vdpa/vdpa_user/vduse_dev.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
+> index c9204c62f339..2f789dca0c0b 100644
+> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> @@ -975,7 +975,8 @@ static long vduse_dev_ioctl(struct file *file, unsigned int cmd,
+>  			break;
+>  
+>  		ret = -EINVAL;
+> -		if (config.length == 0 ||
+> +		if (config.offset < dev->config_size ||
 
-Thank you for the patch! Perhaps something to improve:
+This is reversed.  Sorry.  Will send a fix.  I was over excited about
+this patch.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v5.16-rc4 next-20211207]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+Also I need to write a Smatch test for this so both the original and my
+patched version generate a warning.
 
-url:    https://github.com/0day-ci/linux/commits/Dan-Carpenter/fbdev-savagefb-make-a-variable-local/20211203-175849
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 5f58da2befa58edf3a70b91ed87ed9bf77f1e70e
-config: mips-buildonly-randconfig-r004-20211207 (https://download.01.org/0day-ci/archive/20211207/202112071822.Ry2XAYAN-lkp@intel.com/config)
-compiler: clang version 14.0.0 (https://github.com/llvm/llvm-project f50be8eb0a12a61d23db6cda452c693001d76898)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install mips cross compiling tool for clang build
-        # apt-get install binutils-mips-linux-gnu
-        # https://github.com/0day-ci/linux/commit/9ea7012b220fc1bd8aa2f0a65b97403cea046343
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Dan-Carpenter/fbdev-savagefb-make-a-variable-local/20211203-175849
-        git checkout 9ea7012b220fc1bd8aa2f0a65b97403cea046343
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=mips SHELL=/bin/bash drivers/video/fbdev/savage/
+regards,
+dan carpenter
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All warnings (new ones prefixed by >>):
-
->> drivers/video/fbdev/savage/savagefb_driver.c:2173:17: warning: unused variable 'edid'
-   unsigned char
-   ^
-   fatal error: error in backend: Nested variants found in inline asm string: '.if ( 0x00 ) != -1)) 0x00 ) != -1)) : ($( static struct ftrace_branch_data __attribute__((__aligned__(4))) __attribute__((__section__("_ftrace_branch"))) __if_trace = $( .func = __func__, .file = "arch/mips/include/asm/barrier.h", .line = 16, $); 0x00 ) != -1)) : $))) ) && ( (1 << 0) ); .set push; .set mips64r2; .rept 1; sync 0x00; .endr; .set pop; .else; ; .endif'
-   PLEASE submit a bug report to https://bugs.llvm.org/ and include the crash backtrace, preprocessed source, and associated run script.
-   Stack dump:
-   0. Program arguments: clang -Wp,-MMD,drivers/video/fbdev/savage/.savagefb_driver.o.d -nostdinc -Iarch/mips/include -I./arch/mips/include/generated -Iinclude -I./include -Iarch/mips/include/uapi -I./arch/mips/include/generated/uapi -Iinclude/uapi -I./include/generated/uapi -include include/linux/compiler-version.h -include include/linux/kconfig.h -include include/linux/compiler_types.h -D__KERNEL__ -DVMLINUX_LOAD_ADDRESS=0xffffffff80100000 -DLINKER_LOAD_ADDRESS=0xffffffff80100000 -DDATAOFFSET=0 -Qunused-arguments -fmacro-prefix-map== -DKBUILD_EXTRA_WARN1 -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar -fno-PIE -Werror=implicit-function-declaration -Werror=implicit-int -Werror=return-type -Wno-format-security -std=gnu89 --target=mips64el-linux -fintegrated-as -Werror=unknown-warning-option -Werror=ignored-optimization-argument -mabi=64 -G 0 -mno-abicalls -fno-pic -pipe -msoft-float -DGAS_HAS_SET_HARDFLOAT -Wa,-msoft-float -ffreestanding -EL -fno-stack-check -march=mips64 -Wa,--trap -DTOOLCHAIN_SUPPORTS_VIRT -Iarch/mips/include/asm/mach-malta -Iarch/mips/include/asm/mach-generic -fno-asynchronous-unwind-tables -fno-delete-null-pointer-checks -Wno-frame-address -Wno-address-of-packed-member -O2 -Wframe-larger-than=2048 -fstack-protector -Wimplicit-fallthrough -Wno-gnu -mno-global-merge -Wno-unused-but-set-variable -Wno-unused-const-variable -ftrivial-auto-var-init=zero -enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang -fno-stack-clash-protection -pg -falign-functions=64 -Wdeclaration-after-statement -Wvla -Wno-pointer-sign -Wno-array-bounds -fno-strict-overflow -fno-stack-check -Werror=date-time -Werror=incompatible-pointer-types -Wextra -Wunused -Wno-unused-parameter -Wmissing-declarations -Wmissing-format-attribute -Wmissing-prototypes -Wold-style-definition -Wmissing-include-dirs -Wunused-but-set-variable -Wunused-const-variable -Wno-missing-field-initializers -Wno-sign-compare -Wno-type-limits -I drivers/video/fbdev/savage -I ./drivers/video/fbdev/savage -ffunction-sections -fdata-sections -DKBUILD_MODFILE="drivers/video/fbdev/savage/savagefb" -DKBUILD_BASENAME="savagefb_driver" -DKBUILD_MODNAME="savagefb" -D__KBUILD_MODNAME=kmod_savagefb -c -o drivers/video/fbdev/savage/savagefb_driver.o drivers/video/fbdev/savage/savagefb_driver.c
-   1. <eof> parser at end of file
-   2. Code generation
-   3. Running pass 'Function Pass Manager' on module 'drivers/video/fbdev/savage/savagefb_driver.c'.
-   4. Running pass 'Mips Assembly Printer' on function '@savagefb_probe'
-   #0 0x000055c047cb37df Signals.cpp:0:0
-   #1 0x000055c047cb16fc llvm::sys::CleanupOnSignal(unsigned long) (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x339a6fc)
-   #2 0x000055c047bfef87 llvm::CrashRecoveryContext::HandleExit(int) (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x32e7f87)
-   #3 0x000055c047ca9dae llvm::sys::Process::Exit(int, bool) (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x3392dae)
-   #4 0x000055c04597378b (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x105c78b)
-   #5 0x000055c047c05a2c llvm::report_fatal_error(llvm::Twine const&, bool) (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x32eea2c)
-   #6 0x000055c0488b15e8 llvm::AsmPrinter::emitInlineAsm(llvm::MachineInstr const (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x3f9a5e8)
-   #7 0x000055c0488ad3e9 llvm::AsmPrinter::emitFunctionBody() (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x3f963e9)
-   #8 0x000055c0463c0afe llvm::MipsAsmPrinter::runOnMachineFunction(llvm::MachineFunction&) (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x1aa9afe)
-   #9 0x000055c047045a1d llvm::MachineFunctionPass::runOnFunction(llvm::Function&) (.part.53) MachineFunctionPass.cpp:0:0
-   #10 0x000055c04746dfc7 llvm::FPPassManager::runOnFunction(llvm::Function&) (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x2b56fc7)
-   #11 0x000055c04746e141 llvm::FPPassManager::runOnModule(llvm::Module&) (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x2b57141)
-   #12 0x000055c04746f41f llvm::legacy::PassManagerImpl::run(llvm::Module&) (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x2b5841f)
-   #13 0x000055c047fbab9a clang::EmitBackendOutput(clang::DiagnosticsEngine&, clang::HeaderSearchOptions const&, clang::CodeGenOptions const&, clang::TargetOptions const&, clang::LangOptions const&, llvm::StringRef, clang::BackendAction, std::unique_ptr<llvm::raw_pwrite_stream, std::default_delete<llvm::raw_pwrite_stream> >) (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x36a3b9a)
-   #14 0x000055c048c39443 clang::BackendConsumer::HandleTranslationUnit(clang::ASTContext&) (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x4322443)
-   #15 0x000055c049738d99 clang::ParseAST(clang::Sema&, bool, bool) (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x4e21d99)
-   #16 0x000055c048c3829f clang::CodeGenAction::ExecuteAction() (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x432129f)
-   #17 0x000055c0485c1401 clang::FrontendAction::Execute() (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x3caa401)
-   #18 0x000055c0485594ea clang::CompilerInstance::ExecuteAction(clang::FrontendAction&) (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x3c424ea)
-   #19 0x000055c04868a5ab (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x3d735ab)
-   #20 0x000055c0459744d4 cc1_main(llvm::ArrayRef<char char (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x105d4d4)
-   #21 0x000055c045971a1b ExecuteCC1Tool(llvm::SmallVectorImpl<char driver.cpp:0:0
-   #22 0x000055c0483fc4b5 void llvm::function_ref<void ()>::callback_fn<clang::driver::CC1Command::Execute(llvm::ArrayRef<llvm::Optional<llvm::StringRef> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> const::'lambda'()>(long) Job.cpp:0:0
-   #23 0x000055c047bfee43 llvm::CrashRecoveryContext::RunSafely(llvm::function_ref<void ()>) (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x32e7e43)
-   #24 0x000055c0483fcdb7 clang::driver::CC1Command::Execute(llvm::ArrayRef<llvm::Optional<llvm::StringRef> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> const (.part.216) Job.cpp:0:0
-   #25 0x000055c0483d40c7 clang::driver::Compilation::ExecuteCommand(clang::driver::Command const&, clang::driver::Command const (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x3abd0c7)
-   #26 0x000055c0483d4aa7 clang::driver::Compilation::ExecuteJobs(clang::driver::JobList const&, llvm::SmallVectorImpl<std::pair<int, clang::driver::Command >&) const (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x3abdaa7)
-   #27 0x000055c0483ddde9 clang::driver::Driver::ExecuteCompilation(clang::driver::Compilation&, llvm::SmallVectorImpl<std::pair<int, clang::driver::Command >&) (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x3ac6de9)
-   #28 0x000055c04589f17f main (/opt/cross/clang-097a1cb1d5/bin/clang-14+0xf8817f)
-   #29 0x00007f312c6b8d0a __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x26d0a)
-   #30 0x000055c04597153a _start (/opt/cross/clang-097a1cb1d5/bin/clang-14+0x105a53a)
-   clang-14: error: clang frontend command failed with exit code 70 (use -v to see invocation)
-   clang version 14.0.0 (git://gitmirror/llvm_project 097a1cb1d5ebb3a0ec4bcaed8ba3ff6a8e33c00a)
-   Target: mips64el-unknown-linux
-   Thread model: posix
-   InstalledDir: /opt/cross/clang-097a1cb1d5/bin
-   clang-14: note: diagnostic msg:
-   Makefile arch drivers include kernel nr_bisected scripts source usr
-
-
-vim +/edid +2173 drivers/video/fbdev/savage/savagefb_driver.c
-
-  2167	
-  2168	static int savagefb_probe(struct pci_dev *dev, const struct pci_device_id *id)
-  2169	{
-  2170		struct fb_info *info;
-  2171		struct savagefb_par *par;
-  2172		u_int h_sync, v_sync;
-> 2173		unsigned char *edid;
-  2174		int err, lpitch;
-  2175		int video_len;
-  2176	
-  2177		DBG("savagefb_probe");
-  2178	
-  2179		info = framebuffer_alloc(sizeof(struct savagefb_par), &dev->dev);
-  2180		if (!info)
-  2181			return -ENOMEM;
-  2182		par = info->par;
-  2183		mutex_init(&par->open_lock);
-  2184		err = pci_enable_device(dev);
-  2185		if (err)
-  2186			goto failed_enable;
-  2187	
-  2188		if ((err = pci_request_regions(dev, "savagefb"))) {
-  2189			printk(KERN_ERR "cannot request PCI regions\n");
-  2190			goto failed_enable;
-  2191		}
-  2192	
-  2193		err = -ENOMEM;
-  2194	
-  2195		if ((err = savage_init_fb_info(info, dev, id)))
-  2196			goto failed_init;
-  2197	
-  2198		err = savage_map_mmio(info);
-  2199		if (err)
-  2200			goto failed_mmio;
-  2201	
-  2202		video_len = savage_init_hw(par);
-  2203		/* FIXME: can't be negative */
-  2204		if (video_len < 0) {
-  2205			err = video_len;
-  2206			goto failed_mmio;
-  2207		}
-  2208	
-  2209		err = savage_map_video(info, video_len);
-  2210		if (err)
-  2211			goto failed_video;
-  2212	
-  2213		INIT_LIST_HEAD(&info->modelist);
-  2214	#if defined(CONFIG_FB_SAVAGE_I2C)
-  2215		savagefb_create_i2c_busses(info);
-  2216		savagefb_probe_i2c_connector(info, &edid);
-  2217		fb_edid_to_monspecs(edid, &info->monspecs);
-  2218		kfree(edid);
-  2219		fb_videomode_to_modelist(info->monspecs.modedb,
-  2220					 info->monspecs.modedb_len,
-  2221					 &info->modelist);
-  2222	#endif
-  2223		info->var = savagefb_var800x600x8;
-  2224		/* if a panel was detected, default to a CVT mode instead */
-  2225		if (par->SavagePanelWidth) {
-  2226			struct fb_videomode cvt_mode;
-  2227	
-  2228			memset(&cvt_mode, 0, sizeof(cvt_mode));
-  2229			cvt_mode.xres = par->SavagePanelWidth;
-  2230			cvt_mode.yres = par->SavagePanelHeight;
-  2231			cvt_mode.refresh = 60;
-  2232			/* FIXME: if we know there is only the panel
-  2233			 * we can enable reduced blanking as well */
-  2234			if (fb_find_mode_cvt(&cvt_mode, 0, 0))
-  2235				printk(KERN_WARNING "No CVT mode found for panel\n");
-  2236			else if (fb_find_mode(&info->var, info, NULL, NULL, 0,
-  2237					      &cvt_mode, 0) != 3)
-  2238				info->var = savagefb_var800x600x8;
-  2239		}
-  2240	
-  2241		if (mode_option) {
-  2242			fb_find_mode(&info->var, info, mode_option,
-  2243				     info->monspecs.modedb, info->monspecs.modedb_len,
-  2244				     NULL, 8);
-  2245		} else if (info->monspecs.modedb != NULL) {
-  2246			const struct fb_videomode *mode;
-  2247	
-  2248			mode = fb_find_best_display(&info->monspecs, &info->modelist);
-  2249			savage_update_var(&info->var, mode);
-  2250		}
-  2251	
-  2252		/* maximize virtual vertical length */
-  2253		lpitch = info->var.xres_virtual*((info->var.bits_per_pixel + 7) >> 3);
-  2254		info->var.yres_virtual = info->fix.smem_len/lpitch;
-  2255	
-  2256		if (info->var.yres_virtual < info->var.yres) {
-  2257			err = -ENOMEM;
-  2258			goto failed;
-  2259		}
-  2260	
-
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
