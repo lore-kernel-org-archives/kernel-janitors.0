@@ -2,73 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55EABC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Dec 2021 22:44:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57033C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Dec 2021 22:47:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237927AbhLGWrf (ORCPT
+        id S242320AbhLGWuw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Dec 2021 17:47:35 -0500
-Received: from mga12.intel.com ([192.55.52.136]:4185 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237728AbhLGWre (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Dec 2021 17:47:34 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10191"; a="217726744"
-X-IronPort-AV: E=Sophos;i="5.87,295,1631602800"; 
-   d="scan'208";a="217726744"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2021 14:44:03 -0800
-X-IronPort-AV: E=Sophos;i="5.87,295,1631602800"; 
-   d="scan'208";a="462510396"
-Received: from otcwcpicx3.sc.intel.com ([172.25.55.73])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2021 14:44:03 -0800
-Date:   Tue, 7 Dec 2021 22:43:50 +0000
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Reinette Chatre <reinette.chatre@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/resctrl: remove redundant assignment to variable
- chunks
-Message-ID: <Ya/jpoUWCy5shYI6@otcwcpicx3.sc.intel.com>
-References: <20211207223735.35173-1-colin.i.king@gmail.com>
+        Tue, 7 Dec 2021 17:50:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51942 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233594AbhLGWuw (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 7 Dec 2021 17:50:52 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 188D1C061574;
+        Tue,  7 Dec 2021 14:47:21 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id q3so765243wru.5;
+        Tue, 07 Dec 2021 14:47:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=O39HyWOFBZUdrPmreABJfrxuR9d3BPOym69qD3t0Fwo=;
+        b=OcdWNGmfAHOERVFlOngW3VtU4ZV4XYWa2nprnNgB1A7WDH1YEBnjmUXwmze98Ml97g
+         alEpF0pIToI6zohB0AzSPpA+LBoCFLLXdF+vGp4ZLjGqgqgtrTZ5y2AAhWDKqeAnsREa
+         R5zTj0Tz5wnuW9kN5hgl5Rs/RFxEWABPuQwissAEWrnH4+0Adwvo1GDeDQICsAJcUwfs
+         dw5gZHYhPYSx1FYn2g/wu8gjdnwiXVyv0A0h8Fj8sjQQQzpE12H4aQUFvO3IOfO1SXma
+         ARHmksmd6VUIhgPDQTt/WbPfAxVJQNDbFaWA3n7y+ECyQVl/4eZpWFA9ufXPEkdaPIhs
+         rMNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=O39HyWOFBZUdrPmreABJfrxuR9d3BPOym69qD3t0Fwo=;
+        b=mSh9BfJv0pu/ZCc04ufhNRkcJo6LbwGqMKmnJwhkXQ7nvTdMRNOX/tABhzl9kQSVvF
+         uxEaPVXIzgonq1lDbx1BRMNwLnatZkLNY/3Zzz5wee9uxbzmio9vKRnNJpgT+Co5KayZ
+         CmuTV0TNWZ2JyrDpkJDoDCRZJbCmg68Pbr7rfTpGT0480tbV0PDZKFr7b8rJ+xJCqoAB
+         qHJVySHeVEA0Be+NOmjezXvGqFSJL/V20mshDnsVsa9k5DdxIZJy512Lp5+plFKAABvU
+         vY1QGsX17iU6OrPoax/kPRxv+gEMBKB3KtRC0LbA/8sO2cx3ysJ2TrXIdBaS9ERS+xlb
+         +8LQ==
+X-Gm-Message-State: AOAM532lhEa19uKOgd1Kpv/LqngNZeQGLxAccZcCRZTp2uFtYnkxEMig
+        e1GicTGHilRL+1U2xxf+mVo=
+X-Google-Smtp-Source: ABdhPJx2+OaO2LWLFBLWfvNhY8D1veAxwiPR8r2M7DRaBnJ/ivOXkM73424dltZuqjE1hNsreXmPcA==
+X-Received: by 2002:a5d:4008:: with SMTP id n8mr54191507wrp.489.1638917239718;
+        Tue, 07 Dec 2021 14:47:19 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id p27sm847440wmi.28.2021.12.07.14.47.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Dec 2021 14:47:19 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] bpf: remove redundant assignment to pointer t
+Date:   Tue,  7 Dec 2021 22:47:18 +0000
+Message-Id: <20211207224718.59593-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211207223735.35173-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Dec 07, 2021 at 10:37:35PM +0000, Colin Ian King wrote:
-> The variable chunks is being shifted right and re-assinged the shifted
-> value which is then returned. Since chunks is not being read afterwards
-> the assignment is redundant and the >>= operator can be replaced with a
-> shift >> operator instead.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  arch/x86/kernel/cpu/resctrl/monitor.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-> index c9f0f3d63f75..eaf25a234ff5 100644
-> --- a/arch/x86/kernel/cpu/resctrl/monitor.c
-> +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-> @@ -282,7 +282,7 @@ static u64 mbm_overflow_count(u64 prev_msr, u64 cur_msr, unsigned int width)
->  	u64 shift = 64 - width, chunks;
->  
->  	chunks = (cur_msr << shift) - (prev_msr << shift);
-> -	return chunks >>= shift;
-> +	return chunks >> shift;
->  }
->  
->  static u64 __mon_event_count(u32 rmid, struct rmid_read *rr)
+The pointer t is being initialized with a value that is never read. The
+pointer is re-assigned a value a littler later on, hence the initialization
+is redundant and can be removed.
 
-Reviewed-by: Fenghua Yu <fenghua.yu@intel.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ kernel/bpf/btf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks.
+diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+index 48cdf5b425a7..c70f80055b8e 100644
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -836,7 +836,7 @@ static const char *btf_show_name(struct btf_show *show)
+ 	const char *ptr_suffix = &ptr_suffixes[strlen(ptr_suffixes)];
+ 	const char *name = NULL, *prefix = "", *parens = "";
+ 	const struct btf_member *m = show->state.member;
+-	const struct btf_type *t = show->state.type;
++	const struct btf_type *t;
+ 	const struct btf_array *array;
+ 	u32 id = show->state.type_id;
+ 	const char *member = NULL;
+-- 
+2.33.1
 
--Fenghua
