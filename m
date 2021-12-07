@@ -2,95 +2,123 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BAB1C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Dec 2021 13:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B30C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Dec 2021 14:44:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237297AbhLGNv4 (ORCPT
+        id S238168AbhLGOs2 convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Dec 2021 08:51:56 -0500
-Received: from mail-vk1-f175.google.com ([209.85.221.175]:39674 "EHLO
-        mail-vk1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237284AbhLGNvy (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Dec 2021 08:51:54 -0500
-Received: by mail-vk1-f175.google.com with SMTP id 84so9295564vkc.6;
-        Tue, 07 Dec 2021 05:48:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0L/U4lHg7r2G0KTHxmsk0qHApW5otmpmmAocXJGGt5U=;
-        b=iA0/DjVbvId2nTmOPGhvVButYzdrUbnlTNksaWfsFuP7Rg0mAXRAh12G76Usa11QSH
-         wRUjLq6x5iHlMFDQgGG3nwhkGqnHeY/ZFbDJ0CWIAIIfGv9YzxSyLbOo/BULurrnUWWA
-         EqfYY2yA2HEjM8yCpJDsj0iqlNAuE2tIWtTGX2zDS+vi80qzn7SddTQvDAIcwGWo1IH9
-         C5lRWbpK2JaCR9Fat92nbVTMKO1hltw5vnAst1h5zrs+cqEgdBL1If3cGtxw4CZ114o8
-         yS1NKMEHuprGN6DlAh4Nr6AiMWRApImexnSdfSGtGPJQKfRcDiTgRLtFeUMSQGkpB+4Z
-         rz5g==
-X-Gm-Message-State: AOAM5320sMdAi1CQw4SwkgsF+kz3WXjtJ5rQBithkbH5G0ibGbG2xJqY
-        U+9MviS57nAPObLfKeqRl/9gQZIcCCVHUg==
-X-Google-Smtp-Source: ABdhPJzQfVkmQr0G4rezSnBKH3ssy4Sl1PxiiE73ADr3R+7kdw6EhgX/pt9QFl5WBZP3AsSylIetQw==
-X-Received: by 2002:a1f:a787:: with SMTP id q129mr52287113vke.40.1638884903059;
-        Tue, 07 Dec 2021 05:48:23 -0800 (PST)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id t20sm6519901vsj.27.2021.12.07.05.48.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Dec 2021 05:48:22 -0800 (PST)
-Received: by mail-ua1-f47.google.com with SMTP id a14so26752176uak.0;
-        Tue, 07 Dec 2021 05:48:22 -0800 (PST)
-X-Received: by 2002:a05:6102:e10:: with SMTP id o16mr44197529vst.5.1638884902312;
- Tue, 07 Dec 2021 05:48:22 -0800 (PST)
+        Tue, 7 Dec 2021 09:48:28 -0500
+Received: from mga11.intel.com ([192.55.52.93]:15512 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231565AbhLGOs1 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 7 Dec 2021 09:48:27 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10190"; a="235100439"
+X-IronPort-AV: E=Sophos;i="5.87,293,1631602800"; 
+   d="scan'208";a="235100439"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2021 06:44:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.87,293,1631602800"; 
+   d="scan'208";a="462312784"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orsmga006.jf.intel.com with ESMTP; 07 Dec 2021 06:44:56 -0800
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Tue, 7 Dec 2021 06:44:56 -0800
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Tue, 7 Dec 2021 06:44:55 -0800
+Received: from fmsmsx612.amr.corp.intel.com ([10.18.126.92]) by
+ fmsmsx612.amr.corp.intel.com ([10.18.126.92]) with mapi id 15.01.2308.020;
+ Tue, 7 Dec 2021 06:44:55 -0800
+From:   "Saleem, Shiraz" <shiraz.saleem@intel.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+CC:     "Ismail, Mustafa" <mustafa.ismail@intel.com>,
+        "jgg@ziepe.ca" <jgg@ziepe.ca>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH] RDMA/irdma: Fix a potential memory allocation issue in
+ 'irdma_prm_add_pble_mem()'
+Thread-Topic: [PATCH] RDMA/irdma: Fix a potential memory allocation issue in
+ 'irdma_prm_add_pble_mem()'
+Thread-Index: AQHX6bCNMQeR51AEWEqSWwxcHSAfJ6wni3UA//+RAfA=
+Date:   Tue, 7 Dec 2021 14:44:55 +0000
+Message-ID: <0500c21d9d814715956e3275afd4f116@intel.com>
+References: <5e670b640508e14b1869c3e8e4fb970d78cbe997.1638692171.git.christophe.jaillet@wanadoo.fr>
+ <20211207131428.GF1956@kadam>
+In-Reply-To: <20211207131428.GF1956@kadam>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-reaction: no-action
+dlp-version: 11.6.200.16
+x-originating-ip: [10.1.200.100]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20211207134531.19560-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20211207134531.19560-1-lukas.bulwahn@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 7 Dec 2021 14:48:11 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWUbSbWVexx+jRN+XQvpYFTZ3K1M13=x3AHQ-fqM8TYCg@mail.gmail.com>
-Message-ID: <CAMuHMdWUbSbWVexx+jRN+XQvpYFTZ3K1M13=x3AHQ-fqM8TYCg@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: rectify entry for ROHM MULTIFUNCTION
- BD9571MWV-M PMIC DEVICE DRIVERS
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh@kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Lukas,
+> Subject: Re: [PATCH] RDMA/irdma: Fix a potential memory allocation issue in
+> 'irdma_prm_add_pble_mem()'
+> 
+> On Sun, Dec 05, 2021 at 09:17:24AM +0100, Christophe JAILLET wrote:
+> > @@ -299,8 +298,7 @@ add_pble_prm(struct irdma_hmc_pble_rsrc *pble_rsrc)
+> >  	return 0;
+> >
+> >  error:
+> > -	if (chunk->bitmapbuf)
+> > -		kfree(chunk->bitmapmem.va);
+> > +	bitmap_free(chunk->bitmapbuf);
+> >  	kfree(chunk->chunkmem.va);
+> 
+> Thanks for removing the "chunk->bitmapbuf = chunk->bitmapmem.va;" stuff.
+> It was really confusing.  The kfree(chunk->chunkmem.va) is equivalent to
+> kfree(chunk).  A good rule of thumb is that when you have one error:
+> label to free everything then it's normally going to be buggy.
+> 
+> drivers/infiniband/hw/irdma/pble.c
+>    281          pble_rsrc->next_fpm_addr += chunk->size;
+>    282          ibdev_dbg(to_ibdev(dev),
+>    283                    "PBLE: next_fpm_addr = %llx chunk_size[%llu] = 0x%llx\n",
+>    284                    pble_rsrc->next_fpm_addr, chunk->size, chunk->size);
+>    285          pble_rsrc->unallocated_pble -= (u32)(chunk->size >> 3);
+>    286          list_add(&chunk->list, &pble_rsrc->pinfo.clist);
+>                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> "chunk" added to the "->pinfo.clist" list.
+> 
+>    287          sd_reg_val = (sd_entry_type == IRDMA_SD_TYPE_PAGED) ?
+>    288                               sd_entry->u.pd_table.pd_page_addr.pa :
+>    289                               sd_entry->u.bp.addr.pa;
+>    290
+>    291          if (!sd_entry->valid) {
+>    292                  ret_code = irdma_hmc_sd_one(dev, hmc_info->hmc_fn_id,
+> sd_reg_val,
+>    293                                              idx->sd_idx, sd_entry->entry_type, true);
+>    294                  if (ret_code)
+>    295                          goto error;
+>                                 ^^^^^^^^^^^
+> 
+>    296          }
+>    297
+>    298          sd_entry->valid = true;
+>    299          return 0;
+>    300
+>    301  error:
+>    302          if (chunk->bitmapbuf)
+>    303                  kfree(chunk->bitmapmem.va);
+>    304          kfree(chunk->chunkmem.va);
+>                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> kfree(chunk) will lead to a use after free because it's still on the list.
+> 
 
-On Tue, Dec 7, 2021 at 2:45 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> Commit 983b62975e90 ("dt-bindings: mfd: bd9571mwv: Convert to json-schema")
-> converts bd9571mwv.txt to rohm,bd9571mwv.yaml, but missed to adjust its
-> reference in MAINTAINERS.
->
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
-> a broken reference. Repair this file reference in ROHM MULTIFUNCTION
-> BD9571MWV-M PMIC DEVICE DRIVERS.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Ugh! Yes, this is a bug. I will send a separate fix out shortly for this one.
 
-Mea culpa
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> ---
-> Lee, please pick this minor clean-up patch into your -next tree on top
-> of the commit mentioned above.
-
-Note that there's another broken reference that needs an update in
-Documentation/ABI/testing/sysfs-driver-bd9571mwv-regulator :-(
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Shiraz
