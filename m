@@ -2,74 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D75DC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Dec 2021 16:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E274C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Dec 2021 17:30:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239458AbhLGQLq (ORCPT
+        id S240006AbhLGRe2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Dec 2021 11:11:46 -0500
-Received: from mga05.intel.com ([192.55.52.43]:21677 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238478AbhLGQLq (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Dec 2021 11:11:46 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10190"; a="323864029"
-X-IronPort-AV: E=Sophos;i="5.87,293,1631602800"; 
-   d="scan'208";a="323864029"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2021 08:07:38 -0800
-X-IronPort-AV: E=Sophos;i="5.87,293,1631602800"; 
-   d="scan'208";a="502648934"
-Received: from ssaleem-mobl.amr.corp.intel.com ([10.212.26.33])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2021 08:07:36 -0800
-From:   Shiraz Saleem <shiraz.saleem@intel.com>
-To:     jgg@nvidia.com
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, dan.carpenter@oracle.com,
-        christophe.jaillet@wanadoo.fr,
-        Shiraz Saleem <shiraz.saleem@intel.com>
-Subject: [PATCH for-rc] RDMA/irdma: Fix a user-after-free in add_pble_prm
-Date:   Tue,  7 Dec 2021 09:21:36 -0600
-Message-Id: <20211207152135.2192-1-shiraz.saleem@intel.com>
-X-Mailer: git-send-email 2.31.0
+        Tue, 7 Dec 2021 12:34:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60770 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230020AbhLGRe1 (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 7 Dec 2021 12:34:27 -0500
+Received: from mail-oo1-xc2a.google.com (mail-oo1-xc2a.google.com [IPv6:2607:f8b0:4864:20::c2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96D81C061574;
+        Tue,  7 Dec 2021 09:30:56 -0800 (PST)
+Received: by mail-oo1-xc2a.google.com with SMTP id p2-20020a4adfc2000000b002c2676904fdso5603008ood.13;
+        Tue, 07 Dec 2021 09:30:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=UfRFcZhTqwVLVt7r2zueC/pU4lBh0hExXO/ZORo48wQ=;
+        b=owALHfLYmXossbIFvZDrUvt/Rivjzm1yU1ECHuCrg8uTANH2C+BbYxOMFrDmaceRyP
+         PNALtgmYczTPG4KqhsKYOkhCFRfPvp65jXNeeoUJp778fcE93b9uLmQehgNtEB/Katdl
+         9IM973tgVDhBfW0ATYwvf4SAp3uRH3se6A27oEN4fGjkI+7XdR5SAfMgP727kk7sQeBQ
+         oLduWw3VyAdJZmRMgXpulqB52pPbi3EVR+qfRMN2ElVZyyYI4dADkUX9pzbthshY3ayE
+         He7MrQOUIvsMXFlNg84Zm/pIFNsnLnJ4nrhVAYzF6EhNHNtat/YJVl6T5LFmbZd2V7bG
+         bmug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=UfRFcZhTqwVLVt7r2zueC/pU4lBh0hExXO/ZORo48wQ=;
+        b=UYsnBNQYq+l/28M3lk1O0VEDQPagNlwhfrO/QtYubEOKy9PZ8RRiokEvfPjFnvLSqi
+         dSFeTcu/9DY+Bx31v9RvvNnmbleQ8y8zISNmpezH1PAt3jZ6FT57sdPne3paYbDebWb9
+         KzBo28LvVnvn/WX9PIsXzp++ftZlvr0372WX4mlVL0DEBIputjNetkf5fzhit5wKmL2U
+         5AAuZbkOwCpSWH7dy7CyRbaGss0h/MyVDKJUR73I9NLhiArddVhHJngjQ7gt4dXdHP+W
+         1deIW8DoM8EygkQeohMHmUwiLOZXQqoI/1Iq8HMR696huETT+ot2Ragt0i2cpV1IWDp/
+         XCIw==
+X-Gm-Message-State: AOAM530qr8MVFVwK1qGHQf1uwEcjF/iaTu3cQEW0TM7XXdBEuCtyfEVE
+        a3RCr6zwg6apxlgT2m7lDWSYa1WZ4yY=
+X-Google-Smtp-Source: ABdhPJwIc0LVN4/MQdUZjJdvbi1VBFbGaJdglcFbSsjW5Rcqb43m1YoJc3mtk3uGKYJ9qrw43LmsJA==
+X-Received: by 2002:a05:6820:445:: with SMTP id p5mr27603951oou.9.1638898256014;
+        Tue, 07 Dec 2021 09:30:56 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id h1sm36907otq.45.2021.12.07.09.30.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Dec 2021 09:30:55 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Tue, 7 Dec 2021 09:30:54 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (adm1031): Remove redundant assignment to
+ variable range
+Message-ID: <20211207173054.GA657431@roeck-us.net>
+References: <20211204233155.55454-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211204233155.55454-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-When irdma_hmc_sd_one fails, 'chunk' is freed while its still on the PBLE
-info list.
+On Sat, Dec 04, 2021 at 11:31:55PM +0000, Colin Ian King wrote:
+> Variable range is being initialized with a value that is never read, it
+> is being re-assigned in the next statement. The assignment is redundant,
+> remove it and initialize range using the second assigned value. Clean up
+> the formatting too by adding missing spaces.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Add the chunk entry to the PBLE info list only after successful setting of
-the SD in irdma_hmc_sd_one.
+Applied.
 
-Fixes: e8c4dbc2fcac ("RDMA/irdma: Add PBLE resource manager")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Shiraz Saleem <shiraz.saleem@intel.com>
----
- drivers/infiniband/hw/irdma/pble.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
+Guenter
 
-diff --git a/drivers/infiniband/hw/irdma/pble.c b/drivers/infiniband/hw/irdma/pble.c
-index aeeb1c3..da032b9 100644
---- a/drivers/infiniband/hw/irdma/pble.c
-+++ b/drivers/infiniband/hw/irdma/pble.c
-@@ -283,7 +283,6 @@ static enum irdma_sd_entry_type irdma_get_type(struct irdma_sc_dev *dev,
- 		  "PBLE: next_fpm_addr = %llx chunk_size[%llu] = 0x%llx\n",
- 		  pble_rsrc->next_fpm_addr, chunk->size, chunk->size);
- 	pble_rsrc->unallocated_pble -= (u32)(chunk->size >> 3);
--	list_add(&chunk->list, &pble_rsrc->pinfo.clist);
- 	sd_reg_val = (sd_entry_type == IRDMA_SD_TYPE_PAGED) ?
- 			     sd_entry->u.pd_table.pd_page_addr.pa :
- 			     sd_entry->u.bp.addr.pa;
-@@ -295,6 +294,7 @@ static enum irdma_sd_entry_type irdma_get_type(struct irdma_sc_dev *dev,
- 			goto error;
- 	}
- 
-+	list_add(&chunk->list, &pble_rsrc->pinfo.clist);
- 	sd_entry->valid = true;
- 	return 0;
- 
--- 
-1.8.3.1
-
+> ---
+>  drivers/hwmon/adm1031.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hwmon/adm1031.c b/drivers/hwmon/adm1031.c
+> index 257ec53ae723..ac841fa3a369 100644
+> --- a/drivers/hwmon/adm1031.c
+> +++ b/drivers/hwmon/adm1031.c
+> @@ -242,9 +242,8 @@ static int FAN_TO_REG(int reg, int div)
+>  static int AUTO_TEMP_MAX_TO_REG(int val, int reg, int pwm)
+>  {
+>  	int ret;
+> -	int range = val - AUTO_TEMP_MIN_FROM_REG(reg);
+> +	int range = ((val - AUTO_TEMP_MIN_FROM_REG(reg)) * 10) / (16 - pwm);
+>  
+> -	range = ((val - AUTO_TEMP_MIN_FROM_REG(reg))*10)/(16 - pwm);
+>  	ret = ((reg & 0xf8) |
+>  	       (range < 10000 ? 0 :
+>  		range < 20000 ? 1 :
