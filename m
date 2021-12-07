@@ -2,98 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1183FC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Dec 2021 18:28:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3EE0C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Dec 2021 18:50:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235856AbhLGScV convert rfc822-to-8bit (ORCPT
+        id S231469AbhLGSxp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Dec 2021 13:32:21 -0500
-Received: from mga06.intel.com ([134.134.136.31]:59469 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231363AbhLGScV (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Dec 2021 13:32:21 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10190"; a="298448190"
-X-IronPort-AV: E=Sophos;i="5.87,295,1631602800"; 
-   d="scan'208";a="298448190"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2021 10:13:48 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.87,295,1631602800"; 
-   d="scan'208";a="479613314"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by orsmga002.jf.intel.com with ESMTP; 07 Dec 2021 10:13:47 -0800
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Tue, 7 Dec 2021 10:13:47 -0800
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Tue, 7 Dec 2021 10:13:46 -0800
-Received: from fmsmsx612.amr.corp.intel.com ([10.18.126.92]) by
- fmsmsx612.amr.corp.intel.com ([10.18.126.92]) with mapi id 15.01.2308.020;
- Tue, 7 Dec 2021 10:13:46 -0800
-From:   "Saleem, Shiraz" <shiraz.saleem@intel.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "Ismail, Mustafa" <mustafa.ismail@intel.com>,
-        "jgg@ziepe.ca" <jgg@ziepe.ca>
-CC:     "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH] RDMA/irdma: Fix a potential memory allocation issue in
- 'irdma_prm_add_pble_mem()'
-Thread-Topic: [PATCH] RDMA/irdma: Fix a potential memory allocation issue in
- 'irdma_prm_add_pble_mem()'
-Thread-Index: AQHX6bCNMQeR51AEWEqSWwxcHSAfJ6wnL0ag
-Date:   Tue, 7 Dec 2021 18:13:46 +0000
-Message-ID: <5f02a69c4f194803b4372493625c03be@intel.com>
-References: <5e670b640508e14b1869c3e8e4fb970d78cbe997.1638692171.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <5e670b640508e14b1869c3e8e4fb970d78cbe997.1638692171.git.christophe.jaillet@wanadoo.fr>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-reaction: no-action
-dlp-version: 11.6.200.16
-x-originating-ip: [10.1.200.100]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 7 Dec 2021 13:53:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51458 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240723AbhLGSxf (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 7 Dec 2021 13:53:35 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C975C061574;
+        Tue,  7 Dec 2021 10:50:04 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id y196so81980wmc.3;
+        Tue, 07 Dec 2021 10:50:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=u7XdQ/VlUebIhlzUYrxt+KTqCljNtBCSdqeyIMtJSqY=;
+        b=ZgMyPGocPP0u+RadRzuGuF00EcUdZ2CgWzvpnArMSAlVtRL87cupTzcHB1W7kJFv/J
+         wiMGGO2Wd6eR6P4jh60L65U9ThbB06XZ3p67/U+4GtPWQ9DikNqxEsmSYMPe1oJWBolv
+         z52Ch+zU9oh00Q/9siz8BYw1UZflLH0Yky/nrWGfsVfoIZd8KPw9kKk5oB40/STeHkST
+         ShMaXwYxN/QMXl9hnm+9hR64VQbBme2IrpvCB4zeJiROUgeDGYA9CR6gjrY2mmupgngA
+         jqGWSxnGvp04VejB/HIIHEre8i8pMfhZf31FuciK7+OYVS/QmpzG9tsJ0Fq7TUysdEbr
+         yumw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=u7XdQ/VlUebIhlzUYrxt+KTqCljNtBCSdqeyIMtJSqY=;
+        b=SpHMGtd9Pg6KZb+OE0o8MO1d/1KXgipB20sM98bxa4TBcH6WrWgK2eh2/HiRV1Vhv4
+         xLzIgwFSyYAhbfOFiG6YgHgfCaoVZ0VX4w6m6V9UKsS4j+3LEIi9j4MJQJXMfHZBXcbg
+         zCkMFC8duL6auoFT1Zc9ohJy785smg9P8l24vayOmzYB6EYZOTvr7F3V8+1JuQfG6XI6
+         GRTEgCOfnrzUYJ5UrXhc/qogQGQfRuFkKz6JCyjwyfhLM1UsKeR++InouKnrPRLnT4If
+         frI3T4XGY7dkhSYbr1CKxXP14Ad4mk8M52mWLV5/KnYjdADKkr9Im/f5XvxovQm+vUvR
+         /UpA==
+X-Gm-Message-State: AOAM532QcjJbp3GzXtHBePMfNNpJviV3KE6i3z4BlBAiiAfTEwNbHR47
+        XpE1M9lcX/sTEhMULtrKpu8=
+X-Google-Smtp-Source: ABdhPJwRvYVHCzKduuOwGUniyws4VRLzGZenCEc6xuGWd6jjWuIYl85FoHnukV0g99cuQ5seLvkkvA==
+X-Received: by 2002:a1c:4c19:: with SMTP id z25mr9111142wmf.177.1638903002849;
+        Tue, 07 Dec 2021 10:50:02 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id o12sm514723wmq.12.2021.12.07.10.50.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Dec 2021 10:50:02 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, linux-perf-users@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/events/amd/iommu: remove redundant assignment to variable shift
+Date:   Tue,  7 Dec 2021 18:50:01 +0000
+Message-Id: <20211207185001.1412413-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-> Subject: [PATCH] RDMA/irdma: Fix a potential memory allocation issue in
-> 'irdma_prm_add_pble_mem()'
-> 
-> 'pchunk->bitmapbuf' is a bitmap. Its size (in number of bits) is stored in 'pchunk-
-> >sizeofbitmap'.
-> 
-> When it is allocated, the size (in bytes) is computed by:
->    size_in_bits >> 3
-> 
-> There are 2 issues (numbers bellow assume that longs are 64 bits):
->    - there is no guarantee here that 'pchunk->bitmapmem.size' is modulo
->      BITS_PER_LONG but bitmaps are stored as longs
->      (sizeofbitmap=8 bits will only allocate 1 byte, instead of 8 (1 long))
-> 
->    - the number of bytes is computed with a shift, not a round up, so we
->      may allocate less memory than needed
->      (sizeofbitmap=65 bits will only allocate 8 bytes (i.e. 1 long), when 2
->      longs are needed = 16 bytes)
+Variable shift is being initialized with a value that is never read, it
+is being re-assigned later inside a loop. The assignment is redundant
+and can be removed.
 
-Since sizeofbitmap is always a multiple of 64 (pchunk->size is a multiple of 4K block size, and pprm->pble_shift = 6),
-I am not sure we will hit these issues today.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ arch/x86/events/amd/iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Fix both issues by using 'bitmap_zalloc()' and remove the useless 'bitmapmem'
-> from 'struct irdma_chunk'.
-> 
-> While at it, remove some useless NULL test before calling kfree/bitmap_free.
-
-Yes nonetheless the patch is good. And we should be using the bitmap_zalloc/free API's rather than open-coding it.
-
-Reviewed-by: Shiraz Saleem <shiraz.saleem@intel.com>
-
+diff --git a/arch/x86/events/amd/iommu.c b/arch/x86/events/amd/iommu.c
+index 913745f1419b..b15f7b950d2e 100644
+--- a/arch/x86/events/amd/iommu.c
++++ b/arch/x86/events/amd/iommu.c
+@@ -161,7 +161,7 @@ static int get_next_avail_iommu_bnk_cntr(struct perf_event *event)
+ 
+ 	raw_spin_lock_irqsave(&piommu->lock, flags);
+ 
+-	for (bank = 0, shift = 0; bank < max_banks; bank++) {
++	for (bank = 0; bank < max_banks; bank++) {
+ 		for (cntr = 0; cntr < max_cntrs; cntr++) {
+ 			shift = bank + (bank*3) + cntr;
+ 			if (piommu->cntr_assign_mask & BIT_ULL(shift)) {
+-- 
+2.33.1
 
