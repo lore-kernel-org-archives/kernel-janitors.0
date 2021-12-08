@@ -2,75 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 089CFC433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Dec 2021 05:40:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1CA4C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Dec 2021 07:05:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235191AbhLHFno (ORCPT
+        id S244416AbhLHHIw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 8 Dec 2021 00:43:44 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:34300 "EHLO
-        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229745AbhLHFno (ORCPT
+        Wed, 8 Dec 2021 02:08:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51350 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235463AbhLHHIv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 8 Dec 2021 00:43:44 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 25443CE1F97;
-        Wed,  8 Dec 2021 05:40:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 46087C341C6;
-        Wed,  8 Dec 2021 05:40:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638942009;
-        bh=nU5XG+b8MCrFzNwOjetq2h09RutOxnQGJxWJ+Try7+M=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=EPA7FpJon9+ktrdS4mnuykd4bWx5xVni5siOHmhKou636GVp7wp/0JMyRe+uztvKz
-         sNROZ9H0LgA4kZm6oskAwkqhxA5+yFLY6du+Oar51GWo60m6gNVfNETf55JrIXDIkr
-         DwmH2cUCfdgdvZwdY5DoZQ5qa68goPGuyOLf07zx1MD6NVt2Ka2LMH2CvXwwibeR9m
-         Zs3jZcE+7jTU/T+beIXPwPBnoG0V8uFEu3cnNztes5iYyKfeOP0T3RKRhMnIULLeVi
-         PuBhxjcEIEzw4Dlz07WJoEJFUjakO4ckEA1okIr1INTD27JeT4hWL5FucDYTKj78YD
-         /Qy8ZdwYfyDGA==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 2A16260A53;
-        Wed,  8 Dec 2021 05:40:09 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 8 Dec 2021 02:08:51 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54B7BC061574;
+        Tue,  7 Dec 2021 23:05:20 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id i5so2358110wrb.2;
+        Tue, 07 Dec 2021 23:05:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sMTKVUHespHQvvRUczObQ55Lrl+DRNepRfurh3saSM4=;
+        b=nuQY7BcjYDt7pdfFd/8rHCxsSFitwjmxnMEdo3dJXMUJhVSqNtRZHRbFpFx0IEPumg
+         99gJFQ+byHEsJ5/6X7pCkWPG3b0kS3uGfsK+wIfdYRl0W0fNEDL1lPdvsz5R40WpWKtk
+         aG6ubrNT0YgTi7hN3eZ8jw0WnhLT40L0sZKPvTupKda76INHPd2h5BN+Hz6fWRSPR464
+         tYZDwF/51b9tba20/95lITKoIfWsT+ElfVv7WR1OYiR+/jrBk7S4ecZD6cntEX4se8HH
+         pOm0x7XKim19+ILqz/0HpwojWF2AVxHjJ8ObJGyOMwsqezU+Vv+bcZMVm13UbEBPgXwu
+         kWJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sMTKVUHespHQvvRUczObQ55Lrl+DRNepRfurh3saSM4=;
+        b=yp0NkY8agmoJrvN2zDOF9+gchraJS9lmHiK7M7YGixowYl8pDwpMvTPjMPAEoNa0JF
+         xx2BYMWL5Bxy4g3JwsbBpLsbrZ23q3i1cYtlpvFOUVI7zhrZWu+O56vya4ii7xaym93O
+         ZlOFUgkA0XSHtpBpa0j00YxRiUc4qGZGCQvRNmYeLrGx7hyF6pzG/zHQdRmUtLL+6bLH
+         zHW+4c6V7ddMup/iSMTdRW2IqDAeVDyY+ddfsSKH1oJml+aCqyCyQnlfQlyCFzIBO0TG
+         nDBhZkCirFkyaVuLA/FvpwK/+/c+kMAFf46tKBBisNO6Xc0nOxGI0OE556yh2EJ3iH6R
+         LyQg==
+X-Gm-Message-State: AOAM5310auyQsfOjkoxCD5tyfp2Z0SPcnFSWlVVMWEoUgDPm01n9osbv
+        p492HzxnCSFt5gSfT/qVqg0=
+X-Google-Smtp-Source: ABdhPJzzO8zvmc8uMVoh3isAci9m7CH1gvzft247l9qrTSDnrqANBNVGxZHzyn/hyohzDz8+6FOgCg==
+X-Received: by 2002:a05:6000:1841:: with SMTP id c1mr57830704wri.425.1638947118821;
+        Tue, 07 Dec 2021 23:05:18 -0800 (PST)
+Received: from localhost.elektrobit.com (eth1-fw1-nbg6.eb.noris.de. [213.95.148.172])
+        by smtp.gmail.com with ESMTPSA id 4sm2302352wrz.90.2021.12.07.23.05.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Dec 2021 23:05:18 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     George Cherian <gcherian@marvell.com>,
+        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: remove devicetree binding entry for XLP9XX I2C DRIVER
+Date:   Wed,  8 Dec 2021 08:04:59 +0100
+Message-Id: <20211208070459.23222-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] net: hns3: Fix spelling mistake "faile" -> "failed"
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <163894200916.7821.12190074698627367127.git-patchwork-notify@kernel.org>
-Date:   Wed, 08 Dec 2021 05:40:09 +0000
-References: <20211206091207.113648-1-colin.i.king@gmail.com>
-In-Reply-To: <20211206091207.113648-1-colin.i.king@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     yisen.zhuang@huawei.com, salil.mehta@huawei.com,
-        davem@davemloft.net, kuba@kernel.org, huangguangbin2@huawei.com,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Commit 0e5f897708e8 ("dt-bindings: Remove Netlogic bindings") removes the
+devicetree binding i2c-xlp9xx.txt, but misses to remove its reference in
+MAINTAINERS.
 
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
+a broken reference. Remove this file reference in XLP9XX I2C DRIVER.
 
-On Mon,  6 Dec 2021 09:12:07 +0000 you wrote:
-> There is a spelling mistake in a dev_err message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Rob, please pick this minor cleanup patch on top of the commit mentioned
+above.
 
-Here is the summary with links:
-  - [next] net: hns3: Fix spelling mistake "faile" -> "failed"
-    https://git.kernel.org/netdev/net-next/c/3c5290a2dcdb
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
-You are awesome, thank you!
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 842be45b37ab..cbbcfc4237a6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -21095,7 +21095,6 @@ M:	George Cherian <gcherian@marvell.com>
+ L:	linux-i2c@vger.kernel.org
+ S:	Supported
+ W:	http://www.marvell.com
+-F:	Documentation/devicetree/bindings/i2c/i2c-xlp9xx.txt
+ F:	drivers/i2c/busses/i2c-xlp9xx.c
+ 
+ XRA1403 GPIO EXPANDER
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.26.2
 
