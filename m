@@ -2,49 +2,70 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DD9CC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Dec 2021 16:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C616C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Dec 2021 21:12:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237955AbhLIQxw (ORCPT
+        id S232317AbhLIVPh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 9 Dec 2021 11:53:52 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:38765 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237385AbhLIQxv (ORCPT
+        Thu, 9 Dec 2021 16:15:37 -0500
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:55917 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232627AbhLIVPf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 9 Dec 2021 11:53:51 -0500
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id EF45424000B;
-        Thu,  9 Dec 2021 16:50:14 +0000 (UTC)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-mtd@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: onenand: remove redundant variable ooblen
-Date:   Thu,  9 Dec 2021 17:50:14 +0100
-Message-Id: <20211209165014.528564-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20211205230729.79337-1-colin.i.king@gmail.com>
-References: 
+        Thu, 9 Dec 2021 16:15:35 -0500
+Received: from ubuntu-CJ.sitez.s.ibrowse.com ([146.0.31.27])
+        by smtp.orange.fr with ESMTPA
+        id vQhpme7oIMNzvvQhqmHER9; Thu, 09 Dec 2021 22:11:59 +0100
+X-ME-Helo: ubuntu-CJ.sitez.s.ibrowse.com
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Thu, 09 Dec 2021 22:11:59 +0100
+X-ME-IP: 146.0.31.27
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     don.brace@microchip.com, jejb@linux.ibm.com,
+        martin.petersen@oracle.com
+Cc:     storagedev@microchip.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] scsi: hpsa: Remove an unused variable in 'hpsa_update_scsi_devices()'
+Date:   Thu,  9 Dec 2021 22:11:56 +0100
+Message-Id: <9f80ea569867b5f7ae1e0f99d656e5a8bacad34e.1639084205.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'df87a1efb8372bc119abb5757a458d688ae2d580'
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 2021-12-05 at 23:07:29 UTC, Colin Ian King wrote:
-> Variable ooblen is being initialized with a value that is never read.
-> The variable is never used after this, so it is redundant and can be
-> removed.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+'lunzerobits' is unused. Remove it.
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
+This a left over of commit 2d62a33e05d4("hpsa: eliminate fake lun0
+enclosures")
 
-Miquel
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/scsi/hpsa.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index cdf3328cc065..a47bcce3c9c7 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -4354,7 +4354,6 @@ static void hpsa_update_scsi_devices(struct ctlr_info *h)
+ 	int i, ndevs_to_allocate;
+ 	int raid_ctlr_position;
+ 	bool physical_device;
+-	DECLARE_BITMAP(lunzerobits, MAX_EXT_TARGETS);
+ 
+ 	currentsd = kcalloc(HPSA_MAX_DEVICES, sizeof(*currentsd), GFP_KERNEL);
+ 	physdev_list = kzalloc(sizeof(*physdev_list), GFP_KERNEL);
+@@ -4368,7 +4367,6 @@ static void hpsa_update_scsi_devices(struct ctlr_info *h)
+ 		dev_err(&h->pdev->dev, "out of memory\n");
+ 		goto out;
+ 	}
+-	memset(lunzerobits, 0, sizeof(lunzerobits));
+ 
+ 	h->drv_req_rescan = 0; /* cancel scheduled rescan - we're doing it. */
+ 
+-- 
+2.32.0
+
