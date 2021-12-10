@@ -2,55 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66947C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Dec 2021 15:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C46FDC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Dec 2021 17:25:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242958AbhLJPnB (ORCPT
+        id S243922AbhLJR2p (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 10 Dec 2021 10:43:01 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:55917 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242956AbhLJPnA (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 10 Dec 2021 10:43:00 -0500
-Received: (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 61431240008;
-        Fri, 10 Dec 2021 15:39:21 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     boris.brezillon@collabora.com,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        npitre@baylibre.com
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] i3c/master: Fix a potentially infinite loop in 'hci_dat_v1_get_index()'
-Date:   Fri, 10 Dec 2021 16:39:20 +0100
-Message-Id: <163915075349.211901.7503592107826023565.b4-ty@bootlin.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <0cdf3cb10293ead1acd271fdb8a70369c298c082.1637186628.git.christophe.jaillet@wanadoo.fr>
-References: <0cdf3cb10293ead1acd271fdb8a70369c298c082.1637186628.git.christophe.jaillet@wanadoo.fr>
+        Fri, 10 Dec 2021 12:28:45 -0500
+Received: from mga05.intel.com ([192.55.52.43]:1250 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231180AbhLJR2l (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 10 Dec 2021 12:28:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1639157106; x=1670693106;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=U5UuDcLlUBY6hNX9XfK3sNQ4qtaq14yyKEoZ4SuQcqo=;
+  b=YUqcVjou9gmk1xycirmov2Qy71DYcYNAhqZF8dzs0IoHEEGRfMvy22YY
+   gysK33mWGz0KgNkbH0ilYkSY6it0i1R21+g+kX2q+dBfzXnOawNjvOn0S
+   q8qfSAWFslKe+n660/9QkcSBVqHWQwmd/W0tzHUfULfGRVGD4TLGpVPgN
+   ISLogp2nGPo15KFNy67Lmi24S/KVMyVTgmk9o88aUC+A6ZpS2bJPyTmNj
+   AWix5mtEtRBu7jw/ACHeLk6GjECEdoN1+MQBdP33NeQFtJ71X1yW+O8YG
+   Lm/XIt7NrCKSzwdwBKEt5XldisREswtU2RUwFsFMwVyk6AdQvgkwZbWew
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10194"; a="324656364"
+X-IronPort-AV: E=Sophos;i="5.88,196,1635231600"; 
+   d="scan'208";a="324656364"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2021 09:25:06 -0800
+X-IronPort-AV: E=Sophos;i="5.88,196,1635231600"; 
+   d="scan'208";a="612993405"
+Received: from lgfecara-mobl2.amr.corp.intel.com (HELO ldmartin-desk2) ([10.209.84.224])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2021 09:25:06 -0800
+Date:   Fri, 10 Dec 2021 09:25:05 -0800
+From:   Lucas De Marchi <lucas.demarchi@intel.com>
+To:     Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Anusha Srivatsa <anusha.srivatsa@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        =?utf-8?B?Sm9zw6k=?= Roberto de Souza <jose.souza@intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, dan.carpenter@oracle.com
+Subject: Re: [PATCH] drm: i915: display: intel_dmc: Fixes an unsigned
+ subtraction which can never be negative.
+Message-ID: <20211210172505.vdjhyvawwvte3lp7@ldmartin-desk2>
+X-Patchwork-Hint: comment
+References: <20211210044129.12422-1-harshit.m.mogalapalli@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20211210044129.12422-1-harshit.m.mogalapalli@oracle.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 17 Nov 2021 23:05:23 +0100, Christophe JAILLET wrote:
-> The code in 'hci_dat_v1_get_index()' really looks like a hand coded version
-> of 'for_each_set_bit()', except that a +1 is missing when searching for the
-> next set bit.
-> 
-> This really looks odd and it seems that it will loop until 'dat_w0_read()'
-> returns the expected result.
-> 
-> [...]
+On Thu, Dec 09, 2021 at 08:41:24PM -0800, Harshit Mogalapalli wrote:
+>smatch warning:
+>drivers/gpu/drm/i915/display/intel_dmc.c:601 parse_dmc_fw() warn:
+>unsigned 'fw->size - offset' is never less than zero
+>
+>Firmware size is size_t and offset is u32. So the subtraction is
+>unsigned which can never be less than zero.
+>
+>Fixes: 3d5928a168a9 ("drm/i915/xelpd: Pipe A DMC plugging")
+>Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 
-Applied, thanks!
 
-[1/1] i3c/master: Fix a potentially infinite loop in 'hci_dat_v1_get_index()'
-      commit: 3f43926f271287fb1744c9ac9ae1122497f2b0c2
+Reviewed-by: Lucas De Marchi <lucas.demarchi@intel.com>
 
-Best regards,
--- 
-Alexandre Belloni <alexandre.belloni@bootlin.com>
+"s|drm: i915: display: Fixes|drm/i915/display: Fix|" in the subject,
+that I will do when applying after we have the CI results.
+
+thanks
+Lucas De Marchi
+
+>---
+> drivers/gpu/drm/i915/display/intel_dmc.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/drivers/gpu/drm/i915/display/intel_dmc.c b/drivers/gpu/drm/i915/display/intel_dmc.c
+>index 0cab18f972d1..2f477c298b00 100644
+>--- a/drivers/gpu/drm/i915/display/intel_dmc.c
+>+++ b/drivers/gpu/drm/i915/display/intel_dmc.c
+>@@ -598,7 +598,7 @@ static void parse_dmc_fw(struct drm_i915_private *dev_priv,
+> 			continue;
+>
+> 		offset = readcount + dmc->dmc_info[id].dmc_offset * 4;
+>-		if (fw->size - offset < 0) {
+>+		if (offset > fw->size) {
+> 			drm_err(&dev_priv->drm, "Reading beyond the fw_size\n");
+> 			continue;
+> 		}
+>-- 
+>2.27.0
+>
