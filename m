@@ -2,110 +2,117 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F6CCC433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Dec 2021 07:40:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD369C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Dec 2021 07:46:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232063AbhLJHnv (ORCPT
+        id S233961AbhLJHtl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 10 Dec 2021 02:43:51 -0500
-Received: from mx07-00178001.pphosted.com ([185.132.182.106]:36458 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230138AbhLJHns (ORCPT
+        Fri, 10 Dec 2021 02:49:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46674 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231458AbhLJHtl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 10 Dec 2021 02:43:48 -0500
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1BA1aYmq012128;
-        Fri, 10 Dec 2021 08:39:51 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=y8fXV96zWdDMZeLFEEa1AkerZm20bgHfV165wlhhHdQ=;
- b=3vx+nwIFetFFP8jvuCz0gkpk4l9X4p8XBaUZVtFjiQQJc47k/00AzqDvgswjHDMin+Nh
- zRRSmAzhCaqF3ogT7Vzpod1ybIg1ka92RX38FjAoNUjmY7o0LjLGpXrRi+DuRIzPrGy3
- xtCnPUcJa5ycU4GPCKuSZ7QtIrdtjo4NA77FvS7Fak3sjrZ6BGHKsXeSxUrJk82tygJ6
- XTdZZpyD6dutg4j1C1Wjnh9luEmkxGr/Bm47hXJ9craxjyYzDtkzhu5KkUSuaM7Cbe5x
- m1y3pDEAigteKYYJD6RSR7en8kCQPatGstcliAYaKuiedYxDrtfMoArDz/aknuK94ibV 8A== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3cuf7sw5bw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Dec 2021 08:39:51 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3C02010002A;
-        Fri, 10 Dec 2021 08:39:50 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2102821CA77;
-        Fri, 10 Dec 2021 08:39:50 +0100 (CET)
-Received: from lmecxl0573.lme.st.com (10.75.127.51) by SFHDAG2NODE2.st.com
- (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Fri, 10 Dec
- 2021 08:39:49 +0100
-Subject: Re: [PATCH] media: c8sectpfe: fix double free in configure_channels()
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Peter Griffin <peter.griffin@linaro.org>
-CC:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-media@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20211208073544.GA22020@kili>
-From:   Patrice CHOTARD <patrice.chotard@foss.st.com>
-Message-ID: <c7cc65ab-e778-cde5-1496-d0f0929b822c@foss.st.com>
-Date:   Fri, 10 Dec 2021 08:39:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Fri, 10 Dec 2021 02:49:41 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79192C061746
+        for <kernel-janitors@vger.kernel.org>; Thu,  9 Dec 2021 23:46:06 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1mvabM-0003H5-Aw; Fri, 10 Dec 2021 08:45:56 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1mvabL-003jMu-Is; Fri, 10 Dec 2021 08:45:54 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1mvabK-0002Np-GS; Fri, 10 Dec 2021 08:45:54 +0100
+Date:   Fri, 10 Dec 2021 08:45:36 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pwm: atmel: remove redundant initialization of variable
+ timeout
+Message-ID: <20211210074536.lawpsch2i5bwyew7@pengutronix.de>
+References: <20211210002250.639251-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20211208073544.GA22020@kili>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2021-12-10_02,2021-12-08_01,2021-12-02_01
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="g5yndpvfpnnutbpm"
+Content-Disposition: inline
+In-Reply-To: <20211210002250.639251-1-colin.i.king@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan
 
-On 12/8/21 8:35 AM, Dan Carpenter wrote:
-> The configure_channels() function has a double free because
-> configure_memdma_and_inputblock() calls free_input_block() and then
-> it's called again in the error handling code.
-> 
-> Fixes: c5f5d0f99794 ("[media] c8sectpfe: STiH407/10 Linux DVB demux support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+--g5yndpvfpnnutbpm
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Dec 10, 2021 at 12:22:50AM +0000, Colin Ian King wrote:
+> The variable timeout is being initialized with a value that is never
+> read, it is being re-assigned the same value later on. Remove the
+> redundant initialization and keep the latter assignment because it's
+> closer to the use of the variable.
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c
-> index e1f520903248..7bb1384e4bad 100644
-> --- a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c
-> +++ b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c
-> @@ -925,7 +925,6 @@ static int c8sectpfe_remove(struct platform_device *pdev)
->  static int configure_channels(struct c8sectpfei *fei)
+>  drivers/pwm/pwm-atmel.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pwm/pwm-atmel.c b/drivers/pwm/pwm-atmel.c
+> index 98b34ea9f38e..8e00a4286145 100644
+> --- a/drivers/pwm/pwm-atmel.c
+> +++ b/drivers/pwm/pwm-atmel.c
+> @@ -271,7 +271,7 @@ static void atmel_pwm_disable(struct pwm_chip *chip, =
+struct pwm_device *pwm,
+>  			      bool disable_clk)
 >  {
->  	int index = 0, ret;
-> -	struct channel_info *tsin;
->  	struct device_node *child, *np = fei->dev->of_node;
->  
->  	/* iterate round each tsin and configure memdma descriptor and IB hw */
-> @@ -943,10 +942,9 @@ static int configure_channels(struct c8sectpfei *fei)
->  	return 0;
->  
->  err_unmap:
-> -	for (index = 0; index < fei->tsin_count; index++) {
-> -		tsin = fei->channel_data[index];
-> -		free_input_block(fei, tsin);
-> -	}
-> +	while (--index >= 0)
-> +		free_input_block(fei, fei->channel_data[index]);
-> +
->  	return ret;
->  }
->  
-> 
-Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
+>  	struct atmel_pwm_chip *atmel_pwm =3D to_atmel_pwm_chip(chip);
+> -	unsigned long timeout =3D jiffies + 2 * HZ;
+> +	unsigned long timeout;
+> =20
+>  	atmel_pwm_wait_nonpending(atmel_pwm, pwm->hwpwm);
+
+Reviewed-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+
+Did you spot this by using some static checker? If so, maybe attribute
+it in the commit log?
 
 Thanks
-Patrice
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--g5yndpvfpnnutbpm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmGzBZgACgkQwfwUeK3K
+7Ancbwf/Y9NIGfzWvo0izlxUFno6IppPuEmbAsX1KzxbrjwHYR4EPTMvTKZ9uO51
+839xuKr0RrXJ9U6mEns0tdc3AJ9YyFtTvz7eeRJKoTCtOAtJAxunOcAfzG1NY8ad
+6g2T+//11dbuaYWI+lZSNep2+ZYmN5tj2wkfo/ujMOWWHFEbjOw4OyvItvCzJNiw
+GTuuDrDewi+l/hzz9FBxROc7p4Tb6MZ51CvthADMR6z6tpeTyX0A7IOdtXWyMPTe
+1C2JGwEq4cE3u9Wg9ANNMgMdfzcPywdGwkz1cO9qf8r8sA/Sm53F4RLTx9C98E+l
+FbHjlJdKGtehZ9AJRaur6Kbd/gYtFA==
+=kDwy
+-----END PGP SIGNATURE-----
+
+--g5yndpvfpnnutbpm--
