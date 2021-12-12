@@ -2,106 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51203C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 12 Dec 2021 15:51:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB5CDC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 12 Dec 2021 17:20:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231533AbhLLPvt (ORCPT
+        id S231775AbhLLRU3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 12 Dec 2021 10:51:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59952 "EHLO
+        Sun, 12 Dec 2021 12:20:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231360AbhLLPvs (ORCPT
+        with ESMTP id S229787AbhLLRU3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 12 Dec 2021 10:51:48 -0500
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44197C061714;
-        Sun, 12 Dec 2021 07:51:48 -0800 (PST)
-Received: by mail-lj1-x231.google.com with SMTP id 13so20377391ljj.11;
-        Sun, 12 Dec 2021 07:51:48 -0800 (PST)
+        Sun, 12 Dec 2021 12:20:29 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7316C061714;
+        Sun, 12 Dec 2021 09:20:28 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id a18so23391100wrn.6;
+        Sun, 12 Dec 2021 09:20:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OsLzc8H+GZEt3KOwearXOutXvaRaNgkbn2EA2Jl4464=;
-        b=KDWtFqtVrDLPXuAZeJTCfEBgi9b6C9o1WUBoeqQJPNll8R7RqeiIXYme+HYIcZwRl5
-         xuiBKE8NCR5em7CAw6IkndCTXAstCwQwDzBHnzyR2+bKkxdL3rTBO0JnyVk5OEQ8J9tj
-         GjVDBWW8opJY6wwkezB9q2uzoqh8+hPefxKDY+ZoNJ2Qk+nNWHA6krz23vfJYUGS82HD
-         8fXGkmXQeES/Y3Rei1pRGx+5AZ41Wq9p9qaomIrLfBcjyQOT6kVyigmz8mPUdvhubsRr
-         kcbM/HyNddgRUDB0ubswOMBYTHye6FBh27T3Ioe7RlstJw05zr2RXcImAnwe+39LJ+eR
-         0zug==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=70CgJ9RKaeuujO3f4MTS8HwBDoID9iAqD2HNuMNQGgc=;
+        b=Vk4M6zc/V03u8SMNQp3AmcUN2udBSD6jv++9AYTr/xVgE1RSdJ44izCc8ZPDn63CHg
+         2uRQiILu5UoP9BUwHY2KC8oKeVqYZC78q8A07HtI4TrPi6hapgEg7xbAPBQUlOtuRrNZ
+         AC/2uL5rm9VY7Wwbjuxp+qcSaWivHcWKxQFxzULW+2zublISMut+4V50jVcw9jhLfluC
+         ELnV0P5ilzsforioqQ5REMrozofxFsBoYVwbKxLbnHfESjMz50DTRypNwt0FcH+xixlS
+         L59abvgW7pNTN8jB8MvOBV4ZsrCzgrGqSBoBwG1tcylmDcrWcme0gRubd2vIg8bVT+Hi
+         uMqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OsLzc8H+GZEt3KOwearXOutXvaRaNgkbn2EA2Jl4464=;
-        b=qodtLYzCs5k/mdn/T8Sy5faAB+VltcuOC+gt7dY1daE79Wuzin0+lGorPb9+oDA3kb
-         EjnKiizDeVrSIYvkX/qrOVmXWcFPxr1NVqSEdj5tUY+98gybmE2XA0gcpo/R6iw2ksCY
-         yNNEyPB3dD6TYe/Z4UQnzhFwKYsLuWiXQU5tHOPIdZx8+UDj/AuiLHigTPaBktmbq+0k
-         GWKU3ynQ5dLs96EQ0CloGrxCZge7eXdJXAsXHP/rh/u4sg48IpFKAuNT3GNYwuL3qHvC
-         IigWMEhQNfonTCj3GsAi/oZWgPqXTKHB/KKVSBpjM3jrg57mfV4RbbJLxT8sChFZL/R5
-         5EPg==
-X-Gm-Message-State: AOAM533jOkdgf27uZxCBuWQvOz3J0jBsQIM+a4hje/HO402T6xJQ6le9
-        8A83nPmYAZJkSwcZ0K7Yg4hYiXPvolWK7QuS4Kk=
-X-Google-Smtp-Source: ABdhPJyIEJGRkABCcxcHDH8NGnxW9Cq01811rNfomHL57m4I3W/hV/yodFWeaF9JzHZPiwVn49yvvR15VbhH31wSnP8=
-X-Received: by 2002:a2e:9c91:: with SMTP id x17mr24839371lji.330.1639324306165;
- Sun, 12 Dec 2021 07:51:46 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=70CgJ9RKaeuujO3f4MTS8HwBDoID9iAqD2HNuMNQGgc=;
+        b=Zwtp/wUcV/ISDUTHJiGTTj0AC7O6M+Uxf3fgE0mx5BAgN6mcNgwekHVyLEn19owOGI
+         iHdF3BAV6a5Pb9W51mF3Xxty8ZmzHXZfDoP6MX1avoGQVGGZNqOD+os618YrBJTrL5tm
+         72NjlBDslkIhgdywj+C52bTxNPf1XFzElsffMjRBrn5/iai6YEHAXtvxKII7nohQxz24
+         5d8v47zPUOdnLn+TloRl1us+6HEr9jbwWzJ8N25oyGXvRRr8Wp2OCClJRXyRAE853toz
+         Dze0EUcESwpXvzlfNcK/9mcukxC1RcyXa48c2wczcdxL7VVr0KcTUGEvyj0vU6vYMS4i
+         /6qw==
+X-Gm-Message-State: AOAM531Uqh8QZK+N9r3HqmvLUaxLGH+ayGeKQQn3iPxSb+yjW3S3A5is
+        dpLRCNiDK6hBS7qwKCAaDYk=
+X-Google-Smtp-Source: ABdhPJzJYIQf5+kNr6J5UeKg6XdZX5uI3o2BtWMQr8PWKwxgC3oj7S4QiAP68BE5vI2UQsbV1oBk7A==
+X-Received: by 2002:a5d:648d:: with SMTP id o13mr11600499wri.637.1639329627200;
+        Sun, 12 Dec 2021 09:20:27 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id t17sm4757529wmq.15.2021.12.12.09.20.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Dec 2021 09:20:26 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: drivers: opl3: Fix incorrect use of vp->state
+Date:   Sun, 12 Dec 2021 17:20:25 +0000
+Message-Id: <20211212172025.470367-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-References: <20211211180955.550380-1-colin.i.king@gmail.com>
-In-Reply-To: <20211211180955.550380-1-colin.i.king@gmail.com>
-From:   Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date:   Mon, 13 Dec 2021 00:51:34 +0900
-Message-ID: <CAKFNMokO9CA6n2veR9JOg7CbzvgUc6rDMofOu2aiU+CDTTsjoA@mail.gmail.com>
-Subject: Re: [PATCH] nilfs2: remove redundant pointer sbufs
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     linux-nilfs <linux-nilfs@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Dec 12, 2021 at 3:09 AM Colin Ian King <colin.i.king@gmail.com> wrote:
->
-> Pointer sbufs is being assigned a value but it's not being used
-> later on. The pointer is redundant and can be removed. Cleans up
-> scan-build static analysis warning:
->
-> fs/nilfs2/page.c:203:8: warning: Although the value stored to 'sbufs'
-> is used in the enclosing expression, the value is never actually read
-> from 'sbufs' [deadcode.DeadStores]
->         sbh = sbufs = page_buffers(src);
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Static analysis with scan-build has found an assignment to vp2 that is
+never used. It seems that the check on vp->state > 0 should be actually
+on vp2->state instead. Fix this.
 
-Looks good.
-Will apply, thank you.
+This dates back to 2002, I found the offending commit from the git
+history git://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git,
+commit 91e39521bbf6 ("[PATCH] ALSA patch for 2.5.4")
 
-Ryusuke Konishi
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/drivers/opl3/opl3_midi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  fs/nilfs2/page.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
-> index bc3e2cd4117f..063dd16d75b5 100644
-> --- a/fs/nilfs2/page.c
-> +++ b/fs/nilfs2/page.c
-> @@ -195,12 +195,12 @@ void nilfs_page_bug(struct page *page)
->   */
->  static void nilfs_copy_page(struct page *dst, struct page *src, int copy_dirty)
->  {
-> -       struct buffer_head *dbh, *dbufs, *sbh, *sbufs;
-> +       struct buffer_head *dbh, *dbufs, *sbh;
->         unsigned long mask = NILFS_BUFFER_INHERENT_BITS;
->
->         BUG_ON(PageWriteback(dst));
->
-> -       sbh = sbufs = page_buffers(src);
-> +       sbh = page_buffers(src);
->         if (!page_has_buffers(dst))
->                 create_empty_buffers(dst, sbh->b_size, 0);
->
-> --
-> 2.33.1
->
+diff --git a/sound/drivers/opl3/opl3_midi.c b/sound/drivers/opl3/opl3_midi.c
+index e1b69c65c3c8..e2b7be67f0e3 100644
+--- a/sound/drivers/opl3/opl3_midi.c
++++ b/sound/drivers/opl3/opl3_midi.c
+@@ -397,7 +397,7 @@ void snd_opl3_note_on(void *p, int note, int vel, struct snd_midi_channel *chan)
+ 	}
+ 	if (instr_4op) {
+ 		vp2 = &opl3->voices[voice + 3];
+-		if (vp->state > 0) {
++		if (vp2->state > 0) {
+ 			opl3_reg = reg_side | (OPL3_REG_KEYON_BLOCK +
+ 					       voice_offset + 3);
+ 			reg_val = vp->keyon_reg & ~OPL3_KEYON_BIT;
+-- 
+2.33.1
+
