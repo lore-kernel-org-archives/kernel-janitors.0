@@ -2,92 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED17CC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Dec 2021 18:56:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82378C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Dec 2021 18:58:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242012AbhLMS4a (ORCPT
+        id S239990AbhLMS6z (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Dec 2021 13:56:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47088 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233160AbhLMS43 (ORCPT
+        Mon, 13 Dec 2021 13:58:55 -0500
+Received: from polaris.svanheule.net ([84.16.241.116]:50396 "EHLO
+        polaris.svanheule.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236468AbhLMS6y (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Dec 2021 13:56:29 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAB31C061574;
-        Mon, 13 Dec 2021 10:56:28 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id u1so28618483wru.13;
-        Mon, 13 Dec 2021 10:56:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=SlRUCNZA27tVMMcwdRpt49s0tEWpr4zRWRRepQCcdFA=;
-        b=TZDTJVpd4mh00xWC2z0z5mHYHH2o9JjzG2pmnMngm1ScOQb4vMwt1hw3bQHfVaD+be
-         vlyvZG0lOATSHAG8/TAKUkYzZUryX2/bKeOm+0MpkG1wAJMsVV+GLsxJDuQ8zdi/GFHX
-         89YHco+p1YsDIWksqhSotC0WUL4R6iBR7p3ofHtc7h7AQYzMUajOz/z8vFyuJKarzCYe
-         D8cxIcpLGSU30Cl624XVZouBkXIoUek2nJgcsRYzuNk8dSvataBej7Nbul9pXXqZTqOi
-         q9xdulk4/wzNQ5Z0zos8gEgVxkdQNScmLo5FxkpV+2NXLcsa0ZKRWy0ZG+WV44WVchtG
-         ymdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=SlRUCNZA27tVMMcwdRpt49s0tEWpr4zRWRRepQCcdFA=;
-        b=mggzpcllawWq3XKE3ECGginq1wC7Y/Uom3lu4PRRILtIzTNUVesrkd5Yh2gNZRD7BF
-         wlP6AZU7aaLjhDMXWe9zOfnu0FV8esgQcIkm6cPSW4SqEQSB/O3D7XGjdXS0n2CNCMTQ
-         tddrNu3C9zOXq8RNPOuZpHarysKzK9a97WP2xluf/zVEmQjnrinr3q/22lJPAvnDObL1
-         ghdAZEADUIk2aqynaZNWoScS7V29dqLg31zxNL1LsiuweJ+pl+S/UC9bGHP5JCqdyOEJ
-         j2IZ81JTTDN48FXBglr9/wmpiO6dCfZt3F7YwXEUXINTbOUri2edQ7BoSs7IKlrqygrr
-         jTSg==
-X-Gm-Message-State: AOAM530LXyTBK0G1UpGI3mLhp+82dp/pvh5atoPDx0gzrOf3FrzoV2rR
-        vBnwn4dRZvsofiJlUrbL6O4=
-X-Google-Smtp-Source: ABdhPJw24lKF33uNsYPUjdoHiUoD27t9zwBAzTBlU549U7TdTtZQz1aZGZQZk7jnGsNdwoJuhAz1bg==
-X-Received: by 2002:a5d:6c67:: with SMTP id r7mr369009wrz.286.1639421787485;
-        Mon, 13 Dec 2021 10:56:27 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id e7sm14944804wrg.31.2021.12.13.10.56.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Dec 2021 10:56:26 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        linux-alpha@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] alpha: osf_sys: reduce kernel log spamming on invalid osf_mount call typenr
-Date:   Mon, 13 Dec 2021 18:56:25 +0000
-Message-Id: <20211213185625.546358-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.33.1
+        Mon, 13 Dec 2021 13:58:54 -0500
+X-Greylist: delayed 365 seconds by postgrey-1.27 at vger.kernel.org; Mon, 13 Dec 2021 13:58:54 EST
+Received: from [IPv6:2a02:a03f:eafe:c901:2a24:b9a0:7e22:e714] (unknown [IPv6:2a02:a03f:eafe:c901:2a24:b9a0:7e22:e714])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: sander@svanheule.net)
+        by polaris.svanheule.net (Postfix) with ESMTPSA id 5ED0C280909;
+        Mon, 13 Dec 2021 19:52:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
+        s=mail1707; t=1639421565;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/dsibw+615Whdc7GrNO7E0QGD49G7+bxFYOLZ3kh5cs=;
+        b=IimVS9+t9nS+BbyVZcnMFjwYYOsUQOtmXvuC5yx8Qhf36K/ooDMU9odJUO3PLo+22Qp7Cw
+        OhU6U4JH/L+o/R2qJCYGl8+90JuHEEHs2edENI1igYqwwT9jzljNHLbIIYortIhTV20ZKN
+        UdOWn+xKxMN9jxFHIJgNf70ko6bZMikSKtXI4Xhup1EeLWDddtQj7jG6iv9ZGfKqP4GlhX
+        1HuTHkiIjQHsKatH8zhECXC0O48xYKF5rnv8gOQ62e+Zm/NxSpj3O7qO1JB459SYZasFol
+        2lOziYvY0CoJduNWxn8CWniBovgZX5VLGUTvbj432XkS0IYelwoQBawGsBscaA==
+Message-ID: <cd01c62484faa9a5b364020c5c8985e3ea7fa643.camel@svanheule.net>
+Subject: Re: [PATCH 1/9] mips: drop selecting the non-existing config
+ SYS_HAS_EARLY_PRINTK_8250
+From:   Sander Vanheule <sander@svanheule.net>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-mips@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Maciej W . Rozycki" <macro@orcam.me.uk>,
+        Bert Vermeulen <bert@biot.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Paul Burton <paulburton@kernel.org>,
+        Daniel Silsby <dansilsby@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>
+Date:   Mon, 13 Dec 2021 19:52:44 +0100
+In-Reply-To: <20211213111642.11317-2-lukas.bulwahn@gmail.com>
+References: <20211213111642.11317-1-lukas.bulwahn@gmail.com>
+         <20211213111642.11317-2-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.2 (3.42.2-1.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Calling the osf_mount system call with an invalid typenr value will
-spam the kernel log with error messages. Reduce the spamming by making
-it a ratelimited printk.  Issue found when exercising with the stress-ng
-enosys system call stressor.
+Hi Lukas,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- arch/alpha/kernel/osf_sys.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for the patch!
 
-diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
-index 8bbeebb73cf0..2367a385d726 100644
---- a/arch/alpha/kernel/osf_sys.c
-+++ b/arch/alpha/kernel/osf_sys.c
-@@ -521,7 +521,7 @@ SYSCALL_DEFINE4(osf_mount, unsigned long, typenr, const char __user *, path,
- 		break;
- 	default:
- 		retval = -EINVAL;
--		printk("osf_mount(%ld, %x)\n", typenr, flag);
-+		printk_ratelimited("osf_mount(%ld, %x)\n", typenr, flag);
- 	}
- 
- 	return retval;
--- 
-2.33.1
+On Mon, 2021-12-13 at 12:16 +0100, Lukas Bulwahn wrote:
+> Commit 4042147a0cc6 ("MIPS: Add Realtek RTL838x/RTL839x support as generic
+> MIPS system") introduces config MACH_REALTEK_RTL, which selects the
+> non-existing config SYS_HAS_EARLY_PRINTK_8250.
+> 
+> As the MACH_REALTEK_RTL config also selects SYS_HAS_EARLY_PRINTK and
+> USE_GENERIC_EARLY_PRINTK_8250, an early printk with 8250 should be covered.
+> Probably SYS_HAS_EARLY_PRINTK_8250 is just some left-over from an early
+> draft version of this commit.
+> 
+> Drop selecting the non-existing config SYS_HAS_EARLY_PRINTK_8250.
+> 
+> Fixes: 4042147a0cc6 ("MIPS: Add Realtek RTL838x/RTL839x support as generic MIPS system")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  arch/mips/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+> index 00951bfdbab0..c89ce68d9580 100644
+> --- a/arch/mips/Kconfig
+> +++ b/arch/mips/Kconfig
+> @@ -640,7 +640,6 @@ config MACH_REALTEK_RTL
+>         select SYS_SUPPORTS_MULTITHREADING
+>         select SYS_SUPPORTS_VPE_LOADER
+>         select SYS_HAS_EARLY_PRINTK
+> -       select SYS_HAS_EARLY_PRINTK_8250
+>         select USE_GENERIC_EARLY_PRINTK_8250
+>         select BOOT_RAW
+>         select PINCTRL
 
+MACH_REALTEK_RTL doesn't actually call setup_8250_early_printk_port(). That means
+USE_GENERIC_EARLY_PRINTK_8250 is also not needed. Being MIPS_GENERIC, that additionaly
+means SYS_HAS_EARLY_PRINTK doesn't need to be selected. 
+
+I only recently found the MIPS_GENERIC "early" console therefore doesn't actually work,
+but we use the "ns16550a" earlycon console instead. So feel free to also drop the other
+two other EARLY_PRINTK symbols, if you think this is in-scope for this patch. Otherwise I
+can submit a separate patch later.
+
+In any case:
+Acked-by: Sander Vanheule <sander@svanheule.net>
+
+
+Best,
+Sander
