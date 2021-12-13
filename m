@@ -2,94 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8455C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 12 Dec 2021 22:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE801C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Dec 2021 05:20:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229790AbhLLWV0 (ORCPT
+        id S231871AbhLMFUz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 12 Dec 2021 17:21:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46364 "EHLO
+        Mon, 13 Dec 2021 00:20:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229762AbhLLWVZ (ORCPT
+        with ESMTP id S229738AbhLMFUz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 12 Dec 2021 17:21:25 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30152C06173F;
-        Sun, 12 Dec 2021 14:21:25 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id j3so24200708wrp.1;
-        Sun, 12 Dec 2021 14:21:25 -0800 (PST)
+        Mon, 13 Dec 2021 00:20:55 -0500
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36EADC06173F;
+        Sun, 12 Dec 2021 21:20:55 -0800 (PST)
+Received: by mail-pj1-x102d.google.com with SMTP id cq22-20020a17090af99600b001a9550a17a5so13816682pjb.2;
+        Sun, 12 Dec 2021 21:20:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7eDS74LpyA4frPSMwjjpOHEgUo/4S5rJ+isae+pfC4s=;
-        b=bpBy9vGXoqqpZox387Ye5rQni0fMcNgsX/u6iextlwu/sVGNU51eEEXWKPh+Gz4buh
-         oKOuN00BXR08mQWUuu8XQblM3iJ5c6cNTXpyA3aqzLuE50LYMyOGR5/N15nYp6DCGtO0
-         pmkI+CrL0aCcQNioauCYFrTBSPFRqlKQY0Fpp2Ah0ecEMWFmpSQc88fqpPhEqDHaUN7s
-         TH2OAYmIBGyj5jiXHjWea/Fc9nWj7a2M2r8NfZNrbrCYs2ja8j0E9kYt8WnwVZFkp1oD
-         cl6fBW25Zya5sTJMphBEXJ+MPo5baxef3ZsankCWTYm6TnVbV1JZCwHn4YP8fQJPaiTS
-         wIVQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=NYNZee22XbkwXg1taiKBO3ZWqciR+IbR7q5WucxbMWY=;
+        b=Jy/fsc+d4epQNjGtp7iVz37bvhv+yrKOWHIJ3q7YWsZVCtdTn3xgnByqbh2VwnFBiM
+         OgDjXUhR4mWEEC+rWmMdu+rzn+12n6ilC6kcHHs5T6tIouyzYqzN+zVcG8Q8b2v+LVp5
+         zgCsv0grMjikrO+r/2Ggyg0lvte5lF8sh9gKRWdXvcSZYQQzIuQdCXDPzd+8bpBkPyJ2
+         HteVY96KR0A4EvUD73wzIJGYhchxBTOEmmKTp/Uh0yTc3mqkI8fKB6shfkw/wLJRuewK
+         cAHi20rRBWBgprXOYfuagRlIJLIYgWI56YZTUuq9NvvaGmzagf8KJdczXwGH/ENIFHsG
+         6MXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7eDS74LpyA4frPSMwjjpOHEgUo/4S5rJ+isae+pfC4s=;
-        b=JBvY/6lArinfnv3DaEW3qXStwedokkRufhz/H/H3eT4wUjtGtKNXbOGE9aSPvG4u4j
-         2eSAXXt/cW48BavOfsFhz/XJzZeV23YJGlu46FT+tQPKdZ0lQLa/4KxrDqFTPylhPZcv
-         DvLN6ZsPSUV69+yV9AiI4tirKTeMkYQD/xXGtplnwGp9dvhWYAVHHeNQVDQdUd9jzWcd
-         fHF82k7rvkHggM7rxeZ/6Viua+e9ZzwjreiG1pvf+gdm1r/2mQLEY9kGzBy3au2yTpcS
-         RKeBTV15islnIT//q6TKCFU5o8pM8WdZJ3PAfrzGsSVT+Zpt+CXxKUtBgYfAJqV0rB3Y
-         duaA==
-X-Gm-Message-State: AOAM532akbthPMx69fidJ9hQYb48atDB1mgw50mJSv4jKzj+QKoPwZ4f
-        NfVZ4iHgYgMFl435aaS4EW0=
-X-Google-Smtp-Source: ABdhPJx6pob1SEOL7xPRpcRuOCpxcFDV6sWdOlb24PyMt32k6FS6/u74LDTUwyYVNU756HLHV2t4Sw==
-X-Received: by 2002:adf:e0c7:: with SMTP id m7mr28507060wri.530.1639347683811;
-        Sun, 12 Dec 2021 14:21:23 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id a198sm6202105wme.1.2021.12.12.14.21.23
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=NYNZee22XbkwXg1taiKBO3ZWqciR+IbR7q5WucxbMWY=;
+        b=DZMgOl4wBgr8aGKZRpY1HlscVirwR0rnDv+56P3DoUEC0H97G+beIIDQgaWGng2T1j
+         yCjV8P/8pHRyrbMlHfXx/AH5DgpOPiifMUMKs4HSnOK/MOs9QE9uVBnPXTHCHgDjzKFW
+         vhz2NuitqDDOp4IJdt1MGLbVJfG0MTB5xmNfz4YFdoT77Xzbn5JG3muBK4p8dPPlZGJH
+         5MU9fFya43zn5JuTajzcuoQB7s70FUpAYhlXeZEwFvtl6vKYkf8h9WE1fGbXEAHek3YW
+         fTVMpNpI+4QLDJ29tAet6cn13uYtiZXF0L4Ba+lCzgVTDEuy3P7U/F0lrwQi0i1b45su
+         uDGg==
+X-Gm-Message-State: AOAM530wzn69dH4nwLluwL52jZj1co2jzY2BD6BaWN7nMKE5faykWHN/
+        J9b7w9PD//VEpNVluN3gDINrKGxUEng=
+X-Google-Smtp-Source: ABdhPJzbxLwcUsNy36h8YtA2ItwOld6HAjYU2c7I1vzBDCu/k0bSBQb5TTzE1qPsRhDT6swE+TweEQ==
+X-Received: by 2002:a17:903:2305:b0:142:1bca:72eb with SMTP id d5-20020a170903230500b001421bca72ebmr93274358plh.67.1639372854567;
+        Sun, 12 Dec 2021 21:20:54 -0800 (PST)
+Received: from google.com ([2620:15c:202:201:e537:8856:7d40:7c6])
+        by smtp.gmail.com with ESMTPSA id md6sm5481358pjb.22.2021.12.12.21.20.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Dec 2021 14:21:23 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-perf-users@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] libperf tests: Fix a spelling mistake "Runnnig" -> "Running"
-Date:   Sun, 12 Dec 2021 22:21:22 +0000
-Message-Id: <20211212222122.478537-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.33.1
+        Sun, 12 Dec 2021 21:20:53 -0800 (PST)
+Date:   Sun, 12 Dec 2021 21:20:51 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: ucb1400_ts: remove redundant variable penup
+Message-ID: <YbbYM/P1d6eMd0nW@google.com>
+References: <20211205000525.153999-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211205000525.153999-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a __T_VERBOSE message. Fix it.
+On Sun, Dec 05, 2021 at 12:05:25AM +0000, Colin Ian King wrote:
+> Variable penup is assigned a value but penup is never read later, it
+> is redundant and can be removed.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/lib/perf/tests/test-evlist.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied, thank you.
 
-diff --git a/tools/lib/perf/tests/test-evlist.c b/tools/lib/perf/tests/test-evlist.c
-index 520a78267743..e7afff12c35a 100644
---- a/tools/lib/perf/tests/test-evlist.c
-+++ b/tools/lib/perf/tests/test-evlist.c
-@@ -535,7 +535,7 @@ static int test_stat_multiplexing(void)
- 				    (double)counts[i].run / (double)counts[i].ena * 100.0,
- 				    counts[i].run, counts[i].ena);
- 		} else if (scaled == -1) {
--			__T_VERBOSE("\t Not Runnnig\n");
-+			__T_VERBOSE("\t Not Running\n");
- 		} else {
- 			__T_VERBOSE("\t Not Scaling\n");
- 		}
 -- 
-2.33.1
-
+Dmitry
