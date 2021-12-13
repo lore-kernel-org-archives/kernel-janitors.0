@@ -2,59 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D23C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Dec 2021 09:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 224F5C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Dec 2021 09:37:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233666AbhLMJW6 (ORCPT
+        id S234640AbhLMJhr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Dec 2021 04:22:58 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:53216 "EHLO
-        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229697AbhLMJW6 (ORCPT
+        Mon, 13 Dec 2021 04:37:47 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:37690 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234376AbhLMJgf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Dec 2021 04:22:58 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 5BC22CE0E5C;
-        Mon, 13 Dec 2021 09:22:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE15BC00446;
-        Mon, 13 Dec 2021 09:22:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639387374;
-        bh=pJatBZj2GLc3qwVUTy3IIbzE0sicO7Iu9WxvVluNMFk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Lpdho40v56g3QumMljxLA56S0rbTHKy7/VfVTW0/Q3jzsCM78zbe+fr1kKsK/538G
-         aGvZeD1yl4zihuPS+IKsgWEGcRgtL9xqlw15r9Weq6g9msx9POZ2yDlAiS00Vt2HkT
-         Db2Ep3rzkjiK97ukHGVM70CP1xMfmnZMecKdRqiBqoHa1jO3hg2GBbfz/UWnUwayx9
-         YXGTRlwN/e63UJvyO1SisL/8Riox4HbqXtzNuzhN6TnbtF05O5lkqlunCt8ldwfHDW
-         EUtdZlav0Czu/lxOVzHmbhKnmizowgEDGHX+dZTTEnU0sPA2XuSyA12ojhGQ5INZdY
-         XpEDCJ2QOeDiw==
-Date:   Mon, 13 Dec 2021 14:52:50 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: sh: Use bitmap_zalloc() when applicable
-Message-ID: <YbcQ6pNZ1M4mLIx3@matsya>
-References: <3efaf2784424ae3d7411dc47f8b6b03e7bb8c059.1637702701.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3efaf2784424ae3d7411dc47f8b6b03e7bb8c059.1637702701.git.christophe.jaillet@wanadoo.fr>
+        Mon, 13 Dec 2021 04:36:35 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 63981210E6;
+        Mon, 13 Dec 2021 09:36:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1639388194; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=pEji7qG1lTG6T1BGFdtW1A7Ap+VS97P266CofDR8fQ8=;
+        b=A+zJ5xJxX03S4bo/5eo+q0q17dJxAR8omRSL73uYL66E7GtZr5QegeqmsRIlIwzBO5Vlhe
+        YY5R4D3bdEdzPux+yX8TCxV8VyHCXjmL/89+n3QFI1eJumR9fro+yo/h9A+xDfV8SXrGNH
+        VDtmd41Z+YwYIFjWKf/Fb0Cymt8VOBo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1639388194;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=pEji7qG1lTG6T1BGFdtW1A7Ap+VS97P266CofDR8fQ8=;
+        b=auCY3scAiBCqb0omX8COw2CSytol3N654vmh13IKj5jR9/uAVphBDD/iZC2FOtNafX3qxr
+        WjWKZ/3LmTgUfRDg==
+Received: from alsa1.suse.de (alsa1.suse.de [10.160.4.42])
+        by relay2.suse.de (Postfix) with ESMTP id 43A62A3B8B;
+        Mon, 13 Dec 2021 09:36:34 +0000 (UTC)
+Date:   Mon, 13 Dec 2021 10:36:34 +0100
+Message-ID: <s5hlf0oeti5.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: drivers: opl3: Fix incorrect use of vp->state
+In-Reply-To: <20211212172025.470367-1-colin.i.king@gmail.com>
+References: <20211212172025.470367-1-colin.i.king@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 23-11-21, 22:26, Christophe JAILLET wrote:
-> 'shdma_slave_used' is a bitmap. So use 'bitmap_zalloc()' to simplify code,
-> improve the semantic and avoid some open-coded arithmetic in allocator
-> arguments.
+On Sun, 12 Dec 2021 18:20:25 +0100,
+Colin Ian King wrote:
 > 
-> Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
-> consistency.
+> Static analysis with scan-build has found an assignment to vp2 that is
+> never used. It seems that the check on vp->state > 0 should be actually
+> on vp2->state instead. Fix this.
+> 
+> This dates back to 2002, I found the offending commit from the git
+> history git://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git,
+> commit 91e39521bbf6 ("[PATCH] ALSA patch for 2.5.4")
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Applied, thanks
+Thanks, applied now with Cc-to-stable.
 
--- 
-~Vinod
+
+Takashi
