@@ -2,76 +2,59 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE801C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Dec 2021 05:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D23C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Dec 2021 09:22:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231871AbhLMFUz (ORCPT
+        id S233666AbhLMJW6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Dec 2021 00:20:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52666 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229738AbhLMFUz (ORCPT
+        Mon, 13 Dec 2021 04:22:58 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:53216 "EHLO
+        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229697AbhLMJW6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Dec 2021 00:20:55 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36EADC06173F;
-        Sun, 12 Dec 2021 21:20:55 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id cq22-20020a17090af99600b001a9550a17a5so13816682pjb.2;
-        Sun, 12 Dec 2021 21:20:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=NYNZee22XbkwXg1taiKBO3ZWqciR+IbR7q5WucxbMWY=;
-        b=Jy/fsc+d4epQNjGtp7iVz37bvhv+yrKOWHIJ3q7YWsZVCtdTn3xgnByqbh2VwnFBiM
-         OgDjXUhR4mWEEC+rWmMdu+rzn+12n6ilC6kcHHs5T6tIouyzYqzN+zVcG8Q8b2v+LVp5
-         zgCsv0grMjikrO+r/2Ggyg0lvte5lF8sh9gKRWdXvcSZYQQzIuQdCXDPzd+8bpBkPyJ2
-         HteVY96KR0A4EvUD73wzIJGYhchxBTOEmmKTp/Uh0yTc3mqkI8fKB6shfkw/wLJRuewK
-         cAHi20rRBWBgprXOYfuagRlIJLIYgWI56YZTUuq9NvvaGmzagf8KJdczXwGH/ENIFHsG
-         6MXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=NYNZee22XbkwXg1taiKBO3ZWqciR+IbR7q5WucxbMWY=;
-        b=DZMgOl4wBgr8aGKZRpY1HlscVirwR0rnDv+56P3DoUEC0H97G+beIIDQgaWGng2T1j
-         yCjV8P/8pHRyrbMlHfXx/AH5DgpOPiifMUMKs4HSnOK/MOs9QE9uVBnPXTHCHgDjzKFW
-         vhz2NuitqDDOp4IJdt1MGLbVJfG0MTB5xmNfz4YFdoT77Xzbn5JG3muBK4p8dPPlZGJH
-         5MU9fFya43zn5JuTajzcuoQB7s70FUpAYhlXeZEwFvtl6vKYkf8h9WE1fGbXEAHek3YW
-         fTVMpNpI+4QLDJ29tAet6cn13uYtiZXF0L4Ba+lCzgVTDEuy3P7U/F0lrwQi0i1b45su
-         uDGg==
-X-Gm-Message-State: AOAM530wzn69dH4nwLluwL52jZj1co2jzY2BD6BaWN7nMKE5faykWHN/
-        J9b7w9PD//VEpNVluN3gDINrKGxUEng=
-X-Google-Smtp-Source: ABdhPJzbxLwcUsNy36h8YtA2ItwOld6HAjYU2c7I1vzBDCu/k0bSBQb5TTzE1qPsRhDT6swE+TweEQ==
-X-Received: by 2002:a17:903:2305:b0:142:1bca:72eb with SMTP id d5-20020a170903230500b001421bca72ebmr93274358plh.67.1639372854567;
-        Sun, 12 Dec 2021 21:20:54 -0800 (PST)
-Received: from google.com ([2620:15c:202:201:e537:8856:7d40:7c6])
-        by smtp.gmail.com with ESMTPSA id md6sm5481358pjb.22.2021.12.12.21.20.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Dec 2021 21:20:53 -0800 (PST)
-Date:   Sun, 12 Dec 2021 21:20:51 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: ucb1400_ts: remove redundant variable penup
-Message-ID: <YbbYM/P1d6eMd0nW@google.com>
-References: <20211205000525.153999-1-colin.i.king@gmail.com>
+        Mon, 13 Dec 2021 04:22:58 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 5BC22CE0E5C;
+        Mon, 13 Dec 2021 09:22:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE15BC00446;
+        Mon, 13 Dec 2021 09:22:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639387374;
+        bh=pJatBZj2GLc3qwVUTy3IIbzE0sicO7Iu9WxvVluNMFk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Lpdho40v56g3QumMljxLA56S0rbTHKy7/VfVTW0/Q3jzsCM78zbe+fr1kKsK/538G
+         aGvZeD1yl4zihuPS+IKsgWEGcRgtL9xqlw15r9Weq6g9msx9POZ2yDlAiS00Vt2HkT
+         Db2Ep3rzkjiK97ukHGVM70CP1xMfmnZMecKdRqiBqoHa1jO3hg2GBbfz/UWnUwayx9
+         YXGTRlwN/e63UJvyO1SisL/8Riox4HbqXtzNuzhN6TnbtF05O5lkqlunCt8ldwfHDW
+         EUtdZlav0Czu/lxOVzHmbhKnmizowgEDGHX+dZTTEnU0sPA2XuSyA12ojhGQ5INZdY
+         XpEDCJ2QOeDiw==
+Date:   Mon, 13 Dec 2021 14:52:50 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: sh: Use bitmap_zalloc() when applicable
+Message-ID: <YbcQ6pNZ1M4mLIx3@matsya>
+References: <3efaf2784424ae3d7411dc47f8b6b03e7bb8c059.1637702701.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211205000525.153999-1-colin.i.king@gmail.com>
+In-Reply-To: <3efaf2784424ae3d7411dc47f8b6b03e7bb8c059.1637702701.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Dec 05, 2021 at 12:05:25AM +0000, Colin Ian King wrote:
-> Variable penup is assigned a value but penup is never read later, it
-> is redundant and can be removed.
+On 23-11-21, 22:26, Christophe JAILLET wrote:
+> 'shdma_slave_used' is a bitmap. So use 'bitmap_zalloc()' to simplify code,
+> improve the semantic and avoid some open-coded arithmetic in allocator
+> arguments.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
+> consistency.
 
-Applied, thank you.
+Applied, thanks
 
 -- 
-Dmitry
+~Vinod
