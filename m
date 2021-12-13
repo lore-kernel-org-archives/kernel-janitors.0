@@ -2,53 +2,53 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7431C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Dec 2021 11:17:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F7EC433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Dec 2021 11:17:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235141AbhLMLRO (ORCPT
+        id S235211AbhLMLRU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Dec 2021 06:17:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50772 "EHLO
+        Mon, 13 Dec 2021 06:17:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234954AbhLMLRK (ORCPT
+        with ESMTP id S234949AbhLMLRI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Dec 2021 06:17:10 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FDC5C061751;
-        Mon, 13 Dec 2021 03:17:10 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id a9so26381017wrr.8;
-        Mon, 13 Dec 2021 03:17:10 -0800 (PST)
+        Mon, 13 Dec 2021 06:17:08 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23446C061574;
+        Mon, 13 Dec 2021 03:17:08 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id r9-20020a7bc089000000b00332f4abf43fso10708429wmh.0;
+        Mon, 13 Dec 2021 03:17:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/wqsag2uxVnTuI/QAGHRmj3exQQebAtaq7D6d3UaUwo=;
-        b=YOWf+5In5JEHLkyH0tZKIUsbRMR8F07CsQg25aGFCI8BJKg7vOUqNabuTQHS7uyAJt
-         YbeT/VcxSaBXA5MEeu4EWH/XYjUEfn+b2Cd5nEFgBB9V0qrd50cyI0efdw4zJnXGNTsu
-         bGCgKApNJo+fnpRSuMeE6yZmGWy4yv9I7Uj409+5tGkZGY12/sxq3Vw7mAGZCjd9mHOJ
-         hjnUrpmgqB24o77uBlGrbHlScJcrPKcfzWWIKLGq/egHI4keICKJO3wqH9xBhJg+2gWG
-         0VicSdIIAk4dg+BsCw9wCaDetG1jgapS9RRPMHbHscIyKuwhrIN+juui/RnklaV/PU/Y
-         Fqrg==
+        bh=uMRBfgWTYGWrAoh1xYDEsd3By2T32yUhl9tQpBijeUw=;
+        b=P8KULp4RxAz/ZT3rc5HBAu6BiRCKUwkHxSWSabJl6DUuHUToGmquWXEu0dmZjTSdEx
+         p58Z2hLKMJI5qfFo06+WZfEidkd9apgHIGq2nugu4cqCfEh0jmhX/C79kp8Hq+fwqYOn
+         JJS2J7BviG5r+grRwCg1xKEsS0sFHr3b6BFji/ffF0FBl3FrZ5JxxwshELUZYginOLfr
+         3S/5V0HsimlPq2K/tem1OcjUf2Sm6OaTqqimAjiQ4mU04BG5rweeJG3l2H+qp0oZR+uA
+         WTQsjqA5S2i2KwJwF+XBJSwOQuIfj4n9mUMmHx/RDep16pBClT75n+1+BfVTbGj8NKcK
+         3Esg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/wqsag2uxVnTuI/QAGHRmj3exQQebAtaq7D6d3UaUwo=;
-        b=sjF0oznHsXw/q/dMSPKIaUe2sFKtUGQawo5Xbv8ekjO68iQoeUXG/5yNFFpDbt8SVg
-         yYo832H+dePxhBzuHE60tN0bQGxeAwhcMBgW6XQJ5RClWDPp2iV4SQ4HDLGwSRX0jSuP
-         kqfgiU5axYi1K/rgc7aHZ8lbbMPeGo5rkBGwBEP9Ye56MZ6ZNPEJllUTXxfWflLlpgb9
-         e80vD4cZmseUZ63jClVoTIHFfCRo0YlMHknL3pRUMI0f8ZBOzBnt/BbcvLTldavtgKiH
-         jahGqsIVzHRqSKW9JVJ6DbJe+UfQkDPrGVlyKu98xMbwzo57viP0XFvda3rhglOqtTni
-         Y5iA==
-X-Gm-Message-State: AOAM531G2bV6hqHIRlZEVv9Y9l7n4OCwwYboWDecNsQSWn1UUnwwhyiq
-        NxdjXR0CqJbDV4DcdeB2LWk=
-X-Google-Smtp-Source: ABdhPJzM0MwxJtfv5lacI04lRH8UZylULPttANur9UjAL92TmaH2qyu5nQ70YKy541M+4nGfrgOK0w==
-X-Received: by 2002:adf:8bd2:: with SMTP id w18mr29826451wra.557.1639394228763;
-        Mon, 13 Dec 2021 03:17:08 -0800 (PST)
+        bh=uMRBfgWTYGWrAoh1xYDEsd3By2T32yUhl9tQpBijeUw=;
+        b=2DfpJF5NunM7838wRZ1udTGDCND7vRhp8qicDQF5ieRi6Yt18Y6PL2R3+iASuFAqN0
+         E25v8b6GC3KDlPsgpwd9yd26KlTrSNGkp/bEEVaA1a53qlLtzkATWzQTIIbgzyu+XZeZ
+         Ds9a1Jxw+1SBQ5HqroxBJZZWdiWkwYcH5sAxSoNyXDi7Mo+3Y+eUKo/qnCQGRAq98L2a
+         kwP0FQ3163dC9fN+JLUIoE6h9sXZfSNznX+M+XRAL2xbm8v8TtYzN+yPz59UCjiIzRRa
+         BCtHhiPlB+Xq7e1feB+N27k3/XZjbFgL1DAsB8TH88V0EQbAjbZGmoxmhP7a7gU/piMO
+         OLsQ==
+X-Gm-Message-State: AOAM533FLma7X8IKTuZpK2TxIP7pbaAGw1/xgLMklW4Q16zarLgf6sIC
+        6xq7UPLdxkdeuyEjDzIXQCLP6yhtjH8=
+X-Google-Smtp-Source: ABdhPJxRGYfYxeyJl459scyOTisugPEc2QmERThdCAzY4wLxtONPCFT8jSjVxD+jQL3W3deInk0dcQ==
+X-Received: by 2002:a1c:1d04:: with SMTP id d4mr35779758wmd.103.1639394226732;
+        Mon, 13 Dec 2021 03:17:06 -0800 (PST)
 Received: from DEL01603w.ebgroup.elektrobit.com (eth1-fw1-nbg6.eb.noris.de. [213.95.148.172])
-        by smtp.gmail.com with ESMTPSA id t17sm7255255wmq.15.2021.12.13.03.17.07
+        by smtp.gmail.com with ESMTPSA id t17sm7255255wmq.15.2021.12.13.03.17.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Dec 2021 03:17:08 -0800 (PST)
+        Mon, 13 Dec 2021 03:17:06 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
 To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         linux-mips@vger.kernel.org
@@ -62,9 +62,9 @@ Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Daniel Silsby <dansilsby@gmail.com>,
         Paul Cercueil <paul@crapouillou.net>,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH 9/9] mips: fix Kconfig reference to PHYS_ADDR_T_64BIT
-Date:   Mon, 13 Dec 2021 12:16:42 +0100
-Message-Id: <20211213111642.11317-10-lukas.bulwahn@gmail.com>
+Subject: [PATCH 7/9] mips: alchemy: remove historic comment on gpio build constraints
+Date:   Mon, 13 Dec 2021 12:16:40 +0100
+Message-Id: <20211213111642.11317-8-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20211213111642.11317-1-lukas.bulwahn@gmail.com>
 References: <20211213111642.11317-1-lukas.bulwahn@gmail.com>
@@ -74,44 +74,41 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit d4a451d5fc84 ("arch: remove the ARCH_PHYS_ADDR_T_64BIT config
-symbol") removes config ARCH_PHYS_ADDR_T_64BIT with all instances of that
-config refactored appropriately. Since then, it is recommended to use the
-config PHYS_ADDR_T_64BIT instead.
+In ./arch/mips/alchemy/common/gpiolib.c, the comment points out certain
+build constraints on CONFIG_GPIOLIB and CONFIG_ALCHEMY_GPIO_INDIRECT.
 
-Commit 171543e75272 ("MIPS: Disallow CPU_SUPPORTS_HUGEPAGES for XPA,EVA")
-introduces the expression "!(32BIT && (ARCH_PHYS_ADDR_T_64BIT || EVA))"
-for config CPU_SUPPORTS_HUGEPAGES, which unintentionally refers to the
-non-existing symbol ARCH_PHYS_ADDR_T_64BIT instead of the intended
-PHYS_ADDR_T_64BIT.
+The commit 832f5dacfa0b ("MIPS: Remove all the uses of custom gpio.h")
+makes all mips machines use the common gpio.h and removes the config
+ALCHEMY_GPIO_INDIRECT. So, this makes the comment in alchemy's gpiolib.c
+historic and obsolete, and can be removed after the commit above.
 
-Fix this Kconfig reference to the intended PHYS_ADDR_T_64BIT.
+The issue on the reference to a non-existing Kconfig symbol was identified
+with ./scripts/checkkconfigsymbols.py. This script has been quite useful
+to identify a number of bugs with Kconfig symbols and deserves to be
+executed and checked regularly.
 
-This issue was identified with the script ./scripts/checkkconfigsymbols.py.
-I then reported it on the mailing list and Paul confirmed the mistake in
-the linked email thread.
+So, remove the historic comment to reduce the reports made the script and
+simplify to use this script, as new issues are easier to spot when the
+list of reports is shorter.
 
-Link: https://lore.kernel.org/lkml/H8IU3R.H5QVNRA077PT@crapouillou.net/
-Suggested-by: Paul Cercueil <paul@crapouillou.net>
-Fixes: 171543e75272 ("MIPS: Disallow CPU_SUPPORTS_HUGEPAGES for XPA,EVA")
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- arch/mips/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/mips/alchemy/common/gpiolib.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index dafc1d62c224..affa31d055d0 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -2065,7 +2065,7 @@ config CPU_SUPPORTS_ADDRWINCFG
- 	bool
- config CPU_SUPPORTS_HUGEPAGES
- 	bool
--	depends on !(32BIT && (ARCH_PHYS_ADDR_T_64BIT || EVA))
-+	depends on !(32BIT && (PHYS_ADDR_T_64BIT || EVA))
- config MIPS_PGD_C0_CONTEXT
- 	bool
- 	depends on 64BIT
+diff --git a/arch/mips/alchemy/common/gpiolib.c b/arch/mips/alchemy/common/gpiolib.c
+index 7d5da5edd74d..a17d7a8909c4 100644
+--- a/arch/mips/alchemy/common/gpiolib.c
++++ b/arch/mips/alchemy/common/gpiolib.c
+@@ -23,8 +23,6 @@
+  *  675 Mass Ave, Cambridge, MA 02139, USA.
+  *
+  *  Notes :
+- *	This file must ONLY be built when CONFIG_GPIOLIB=y and
+- *	 CONFIG_ALCHEMY_GPIO_INDIRECT=n, otherwise compilation will fail!
+  *	au1000 SoC have only one GPIO block : GPIO1
+  *	Au1100, Au15x0, Au12x0 have a second one : GPIO2
+  *	Au1300 is totally different: 1 block with up to 128 GPIOs
 -- 
 2.26.2
 
