@@ -2,125 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA90C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Dec 2021 12:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A688AC433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Dec 2021 15:10:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233932AbhLNMZj (ORCPT
+        id S233317AbhLNPK3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Dec 2021 07:25:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60146 "EHLO
+        Tue, 14 Dec 2021 10:10:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233925AbhLNMZi (ORCPT
+        with ESMTP id S233120AbhLNPK2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Dec 2021 07:25:38 -0500
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 022C8C06173F;
-        Tue, 14 Dec 2021 04:25:38 -0800 (PST)
-Received: by mail-yb1-xb2d.google.com with SMTP id f9so45750326ybq.10;
-        Tue, 14 Dec 2021 04:25:37 -0800 (PST)
+        Tue, 14 Dec 2021 10:10:28 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FC83C061574;
+        Tue, 14 Dec 2021 07:10:28 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id y14-20020a17090a2b4e00b001a5824f4918so17363353pjc.4;
+        Tue, 14 Dec 2021 07:10:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=70ZpaJ3uo3igzKMIt1y9JPalUaB8ti9cw7hSBNZ1J7U=;
-        b=Gyzwa0v8wxz9jWlKX7+iVKGnsGbFmzgzc0C+17ffhE36858qFiNgKlXo/4adfIK81V
-         UMBoTjjB6CnGp3Rb1okXF1SUxduz7ExssOKZd5lryE5RMNV5sGSEkiRU6HhNToPPjRwo
-         MVcj/4e4x+3wLJwY4bkCFqdkQk/CJd+P0WGI/X5znVvkceKBu5QhxA9ufL4MeVSKDSWr
-         eT85VzgnjuyHZaUNrtv4WcYFFuiHE2doclV3DM+OhJeuNr4RGrl6Z0f9KatLnQjaqF7T
-         rDmX6irH803fnyGqz0AIfK6+xYaqHN2StQPsGZTHaCWJPgrfXRMu83esN4ETq5ZV2/Ku
-         ZS4Q==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=5LsH1waqw8lf+SoXbADAabkmN/ADSpKyyJbEXGWJEL8=;
+        b=fU2wEAKHPuxZxhFtbASWPKU9FQq3ou7kEnNHZBLoq6y724COW08FeRchE3Huxz37Om
+         CPXq6r6swOc/swqLjBdMJYbmxvBFtgiccMq9ooJomvA/hy0VH1H1EZ/eK2/wN1bdUsRq
+         j7tTCOTtor2s3A6FPCSL2IiV3tkHZSARzlYJGmqass3vee1FqyfNHwjhXhg7u82AbELx
+         LnFw5r9QTtdOFnz29DGMIMLgNxkUq6sXszY+X4Uyx5UyLipEWMPdpkDhg1Sp84eqDPrN
+         U+eauFRM+4zIo/xVIqbzneHUy6rM+sOv4mTG0FOfd+5qo3qNN+TLaKO9v36Zys48CdOK
+         7TRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=70ZpaJ3uo3igzKMIt1y9JPalUaB8ti9cw7hSBNZ1J7U=;
-        b=luUngNRO9uJtBB+mDir7FiuuRwb9x+4hZvVEYJaW2oYaR9q83jwQ8/UoB9HG0hx8oW
-         aCIHB0bRwfnzltvoRD+R4U4wGPqVVYpbyI8YJfOZleVHOU2OszVzQzEoEyqNFQUtRAdZ
-         AlX88FxCMZeBNgVTbQ4BEwSzUgvc9pOUsq/V2oLrM2clHhqnAuzv+k6D9QVkkFd+KbKt
-         bcoygFFcwy1aBo0cXuYKImq5TBvEufeJjA94R+83Z1zBhiZ4Zhr2Uro9i4zKHdnWFQr9
-         0yiAt13Htd1vhwLwMqhsaiojUmCG3Zz4XywYEZgGuVIsKGIgS7GGVSUByJIo6EHFDVFh
-         4PqQ==
-X-Gm-Message-State: AOAM533ZL5Db3v5s1G+6tURJJUCMX6MhhFiyrbvvpMjrPT+AzkRjwNES
-        noOL18AUE4FGzGQvwId7N0LP200qgKG8W9pkhkA=
-X-Google-Smtp-Source: ABdhPJz+4V+tcLba303QzieS/yi2HpD3kWyd6W3ZqI+OTfrwA3EfIuCCEhaE9jk3B3hQ+zZzBCRPYa6wpqKdPc2r730=
-X-Received: by 2002:a25:cad5:: with SMTP id a204mr5608187ybg.234.1639484737157;
- Tue, 14 Dec 2021 04:25:37 -0800 (PST)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=5LsH1waqw8lf+SoXbADAabkmN/ADSpKyyJbEXGWJEL8=;
+        b=VLPDnEfUPS1bpRzUvq4ILPICsqNl0rKLPCZnoUOkPJ0luQQ6p15GRMpqkAIE1fUiw/
+         XaL/2V4ykqpKEp5tB3BO3q9CghzmYcaoDyAGAim7LXz67uZCHGZv6Zm/KncbcKnmIhW0
+         gvqP8F7Pu7cGtXYiT4C6yPK+/3gG5xmABMWp0LA9yE8q1Mc5JOV7g8A4V5OAjXKCYFwR
+         vhzNOMblYNTRrr0QzyC++OFrDn2Y3zTJpQUcnxOZvfbn+LQ+lYIu5XnQJLPwc/C97zI4
+         FpslaQaXahCmAq7jTj1YyjEACaGmrNhZnI5BxIQrtJl6T7H0xmmE/+F/FmftjB8WU6Xg
+         bUSA==
+X-Gm-Message-State: AOAM533RFMht238D3t32LgC/lnvS8A5TWy3AkYABGmx86guY1QlMXFFg
+        pLnFuWQZSe7Xneexmgi/IzM=
+X-Google-Smtp-Source: ABdhPJxG9SXepBLOOP05pg7fGekyEizZJ8FSFvEkI1UpNGitO5QRVoZ2ECLIxt8yeQ43KT3baSEZdA==
+X-Received: by 2002:a17:902:8d8a:b0:143:bb4a:d1a with SMTP id v10-20020a1709028d8a00b00143bb4a0d1amr6117720plo.1.1639494628194;
+        Tue, 14 Dec 2021 07:10:28 -0800 (PST)
+Received: from [192.168.1.26] (ip174-67-196-173.oc.oc.cox.net. [174.67.196.173])
+        by smtp.gmail.com with ESMTPSA id na15sm3138133pjb.31.2021.12.14.07.10.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Dec 2021 07:10:27 -0800 (PST)
+Message-ID: <e8655acc-e21f-b876-9d0c-790a0ee809d7@gmail.com>
+Date:   Tue, 14 Dec 2021 07:10:26 -0800
 MIME-Version: 1.0
-References: <20211213111642.11317-1-lukas.bulwahn@gmail.com>
- <20211213111642.11317-2-lukas.bulwahn@gmail.com> <cd01c62484faa9a5b364020c5c8985e3ea7fa643.camel@svanheule.net>
-In-Reply-To: <cd01c62484faa9a5b364020c5c8985e3ea7fa643.camel@svanheule.net>
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Tue, 14 Dec 2021 13:25:26 +0100
-Message-ID: <CAKXUXMxQ_rCt0CQxKm7ym44vuMTT1cgnzSCdZZQN--DPwayG6Q@mail.gmail.com>
-Subject: Re: [PATCH 1/9] mips: drop selecting the non-existing config SYS_HAS_EARLY_PRINTK_8250
-To:     Sander Vanheule <sander@svanheule.net>
-Cc:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Maciej W . Rozycki" <macro@orcam.me.uk>,
-        Bert Vermeulen <bert@biot.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Paul Burton <paulburton@kernel.org>,
-        Daniel Silsby <dansilsby@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Subject: Re: [PATCH] scsi: lpfc: Terminate string in
+ lpfc_debugfs_nvmeio_trc_write()
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        James Smart <james.smart@broadcom.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>
+Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Hannes Reinecke <hare@suse.com>, linux-scsi@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20211214070527.GA27934@kili>
+From:   James Smart <jsmart2021@gmail.com>
+In-Reply-To: <20211214070527.GA27934@kili>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Dec 13, 2021 at 7:52 PM Sander Vanheule <sander@svanheule.net> wrote:
->
-> Hi Lukas,
->
-> Thanks for the patch!
->
-> On Mon, 2021-12-13 at 12:16 +0100, Lukas Bulwahn wrote:
-> > Commit 4042147a0cc6 ("MIPS: Add Realtek RTL838x/RTL839x support as generic
-> > MIPS system") introduces config MACH_REALTEK_RTL, which selects the
-> > non-existing config SYS_HAS_EARLY_PRINTK_8250.
-> >
-> > As the MACH_REALTEK_RTL config also selects SYS_HAS_EARLY_PRINTK and
-> > USE_GENERIC_EARLY_PRINTK_8250, an early printk with 8250 should be covered.
-> > Probably SYS_HAS_EARLY_PRINTK_8250 is just some left-over from an early
-> > draft version of this commit.
-> >
-> > Drop selecting the non-existing config SYS_HAS_EARLY_PRINTK_8250.
-> >
-> > Fixes: 4042147a0cc6 ("MIPS: Add Realtek RTL838x/RTL839x support as generic MIPS system")
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > ---
-> >  arch/mips/Kconfig | 1 -
-> >  1 file changed, 1 deletion(-)
-> >
-> > diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-> > index 00951bfdbab0..c89ce68d9580 100644
-> > --- a/arch/mips/Kconfig
-> > +++ b/arch/mips/Kconfig
-> > @@ -640,7 +640,6 @@ config MACH_REALTEK_RTL
-> >         select SYS_SUPPORTS_MULTITHREADING
-> >         select SYS_SUPPORTS_VPE_LOADER
-> >         select SYS_HAS_EARLY_PRINTK
-> > -       select SYS_HAS_EARLY_PRINTK_8250
-> >         select USE_GENERIC_EARLY_PRINTK_8250
-> >         select BOOT_RAW
-> >         select PINCTRL
->
-> MACH_REALTEK_RTL doesn't actually call setup_8250_early_printk_port(). That means
-> USE_GENERIC_EARLY_PRINTK_8250 is also not needed. Being MIPS_GENERIC, that additionaly
-> means SYS_HAS_EARLY_PRINTK doesn't need to be selected.
->
-> I only recently found the MIPS_GENERIC "early" console therefore doesn't actually work,
-> but we use the "ns16550a" earlycon console instead. So feel free to also drop the other
-> two other EARLY_PRINTK symbols, if you think this is in-scope for this patch. Otherwise I
-> can submit a separate patch later.
->
-> In any case:
-> Acked-by: Sander Vanheule <sander@svanheule.net>
->
+On 12/13/2021 11:05 PM, Dan Carpenter wrote:
+> The "mybuf" string comes from the user, so we need to ensure that it is
+> NUL terminated.
+> 
+> Fixes: bd2cdd5e400f ("scsi: lpfc: NVME Initiator: Add debugfs support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>   drivers/scsi/lpfc/lpfc_debugfs.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
 
-I am fine either way. Thomas, also feel free to just drop this patch
-in the series and take the full clean-up patch from Sander.
+Thanks Dan. Looks Good.
 
-Lukas
+Reviewed-by: James Smart <jsmart2021@gmail.com>
+
+-- james
