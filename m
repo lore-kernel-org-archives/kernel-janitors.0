@@ -2,134 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F5AC35270
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Dec 2021 16:01:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB21CC433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Dec 2021 16:56:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244241AbhLOPzi (ORCPT
+        id S245040AbhLOQ4T (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 15 Dec 2021 10:55:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42202 "EHLO
+        Wed, 15 Dec 2021 11:56:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244243AbhLOPzh (ORCPT
+        with ESMTP id S245037AbhLOQ4R (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 15 Dec 2021 10:55:37 -0500
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AC55C061574
-        for <kernel-janitors@vger.kernel.org>; Wed, 15 Dec 2021 07:55:37 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id e3so77398893edu.4
-        for <kernel-janitors@vger.kernel.org>; Wed, 15 Dec 2021 07:55:36 -0800 (PST)
+        Wed, 15 Dec 2021 11:56:17 -0500
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5FCAC06173E
+        for <kernel-janitors@vger.kernel.org>; Wed, 15 Dec 2021 08:56:16 -0800 (PST)
+Received: by mail-lj1-x229.google.com with SMTP id i63so34275230lji.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 15 Dec 2021 08:56:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NlGjvd3bAZBF07RocacyyaGPkf9pqsh2yay6ppOULlA=;
-        b=maiJbF+Hqds74IzLHNCykuX8HDfI2d1jLprH+MjLSPARk+vOIlX4WH5yRmc9D/LCRe
-         9gsp5u1IRVGlWvH4qoPZhOl52T8LkMKiaW9RqBoYT+7Ge4hwvkb2Uw1FiaeRiMIyFMFl
-         S0mfKItpD/wCOHRgwoaTYjp5SgHknM8HkeIFf4E6xEm6BzvGa7dkM92mtRL1NCbRvm+0
-         +LfpDsnxKTDMrYBjWuLYYkhoLqqTLXAZE7hLTULDnp9DxTaROFZKZo0Ax5eV8pyJEOOn
-         UKh/XS89pLZqZTeRxH8fV3VHBsJq1gLpWshork8dXmTTF44o46LFwleLehMWZOvDap6D
-         cwXA==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=/mM+TtN7QigfV8F9BSaGaHszde8U6/Lni1GFCo1emVk=;
+        b=dF6HpHPFiz7ifldwyihr5zXt1+h5MHmIv9Cm6jHNIH41piiiJWR0Kcf9gKAOGyiBBq
+         vHACI8SjJCg/LcKAxtj5FkQXlgaz1BGK9X9usL/XZv0BH59KCm6bpWEHc+ZVlKWWAVri
+         ndSOhrvG5OXK+mfw0MAcUtufp7WlyGlgtZoPyEczgyPecrOYRFGN8YWykNVL6v3iqJ9S
+         WCFlq5rhTDbYjcYca4pCSiQXZ1LX7upCHqjflKi7nRxya4FTVT7wN3XxJ6UHgfN5THaZ
+         Tjx/A4LFyEYjnij+NpJnefMS0sKCqYWPvVjoI74jYl8rC9/q/LEPXc3ZHD7Tzr8vw9Vi
+         g+WA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NlGjvd3bAZBF07RocacyyaGPkf9pqsh2yay6ppOULlA=;
-        b=k/uKkQM6SCcSqK7k5uyYxQphC1piNtfxkS2weIFSo1FzDBFUCWfWj7pcT4od/LpF1Z
-         4Xldiywe5Mcf+BIosnCiIsVYUcCL6K7shJWcyA3midMnNURK4sBAzlvJRbqqaaojEubr
-         3r+U8BotaEV3P/wnVfbfAjvI4OGb7M6HG54z8fa/xoCpc8ZMoTgJuaT/QHg5hP6Qum6I
-         0phfGQr6L/2hb+knM9dIJXQ9gehV0E1Md5Pv0AplrqZNN5sBbIFpD9qjFF8sfSXi40F9
-         TGkzEcLnLLi7qKsDpCoxmr0MzYsciNZUygH8ThFc1dHOSm3llbts8zWJZPUwJeTGgQRx
-         o8Ng==
-X-Gm-Message-State: AOAM531Ue3KZMdyT5oZcOyey2p7lXY/LEdG+EC6Kctqcz2ORM75OSDKh
-        JF60Jauw/zis8/eqoef+U5QeZVqvpOP9wfEFB91PAg==
-X-Google-Smtp-Source: ABdhPJxxvg2aqv3lFdj27qWiSJGlucd2t7lfYMVkXwhqM1JkRDQEP2QnJAuuekr7/BlbGJRQaKOtpZosmr1p0v7bif4=
-X-Received: by 2002:a17:907:9707:: with SMTP id jg7mr11340752ejc.533.1639583734953;
- Wed, 15 Dec 2021 07:55:34 -0800 (PST)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=/mM+TtN7QigfV8F9BSaGaHszde8U6/Lni1GFCo1emVk=;
+        b=jweKAr7m/Ih0Jgzc5cPwiaTLsb2+i31AvNygc4k74t53wKarLfxb4098BzZnCoUJVG
+         ahvHPcnz2nlGS8+fWdLyrxLfDpi0X32IOsbBwUM9KJPsgj4nzB6mA+nY+KN8TwE6TGrL
+         5pBPWu6+vZIvIdhxTYtoHZuSLl+BywICnz5PAzBGP9ytek5P/vPcvlojdYGi5EuVWVMB
+         efeLUInIDZw/YQ96zdBJX9Xyu0JyGWd5QZqKaGamGiCVEsfa3RMOb4PGnUEoOscSTQcV
+         ex5vlvTQiwFe3IOgqPa/DVOYzScDBskdIxGzdr2QwvT2UDq8LbSsu5Lj0ITcY4fJ0H7o
+         pp9g==
+X-Gm-Message-State: AOAM533C/mlULjUaeTsOB9n8fTEld9f3srvw9ZGnyGSCYgnu+gKiVpQ8
+        SBSmQO97luNk82TwZrSFBSCF0g==
+X-Google-Smtp-Source: ABdhPJxxxdf7tgICe77qXKsLRA6dZuxeJOxmfJaSbnj2PKfJJ2ko+kcJ9hGwJfYGy/h6bpf9qOqtjg==
+X-Received: by 2002:a2e:6e0d:: with SMTP id j13mr10688343ljc.124.1639587373419;
+        Wed, 15 Dec 2021 08:56:13 -0800 (PST)
+Received: from ?IPV6:2001:470:dd84:abc0::8a5? ([2001:470:dd84:abc0::8a5])
+        by smtp.gmail.com with ESMTPSA id m14sm550392ljg.2.2021.12.15.08.56.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Dec 2021 08:56:12 -0800 (PST)
+Message-ID: <ec877733-7e1e-7ba8-0df9-8a7542dd0377@linaro.org>
+Date:   Wed, 15 Dec 2021 19:56:11 +0300
 MIME-Version: 1.0
-References: <20211209143501.GA3041@kili> <CABXOdTcny657JOxK-iau2Sj06a5hcDOdWFg8wKUNupgAceUU9w@mail.gmail.com>
- <20211215081935.GY1978@kadam>
-In-Reply-To: <20211215081935.GY1978@kadam>
-From:   Guenter Roeck <groeck@google.com>
-Date:   Wed, 15 Dec 2021 07:55:23 -0800
-Message-ID: <CABXOdTceL3RBfzWTZ1SadGLvnRq7P7VdC_jTM5eVRqn3y3vWnQ@mail.gmail.com>
-Subject: Re: [PATCH] platform/chrome: cros_ec: fix read overflow in cros_ec_lpc_readmem()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Benson Leung <bleung@chromium.org>,
-        Bill Richardson <wfrichar@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Javier Martinez Canillas <javier@osg.samsung.com>,
-        Olof Johansson <olof@lixom.net>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.2
+Subject: Re: [PATCH] drm/msm/dp: Fix double free on error in
+ msm_dp_bridge_init()
+Content-Language: en-GB
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>
+Cc:     Sean Paul <sean@poorly.run>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+References: <20211215114900.GD14552@kili>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <20211215114900.GD14552@kili>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Dec 15, 2021 at 12:20 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> On Tue, Dec 14, 2021 at 03:02:41PM -0800, Guenter Roeck wrote:
-> >  On Thu, Dec 9, 2021 at 6:35 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > >
-> > > If bytes is larger than EC_MEMMAP_SIZE (255) then "EC_MEMMAP_SIZE -
-> > > bytes" is a very high unsigned value and basically offset is
-> > > accepted.  The second problem is that it uses >= instead of > so this
-> > > means that we are not able to read the very last byte.
-> > >
-> > > Fixes: ec2f33ab582b ("platform/chrome: Add cros_ec_lpc driver for x86 devices")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > ---
-> > >  drivers/platform/chrome/cros_ec_lpc.c | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
-> > > index d6306d2a096f..7e1d175def9f 100644
-> > > --- a/drivers/platform/chrome/cros_ec_lpc.c
-> > > +++ b/drivers/platform/chrome/cros_ec_lpc.c
-> > > @@ -290,7 +290,8 @@ static int cros_ec_lpc_readmem(struct cros_ec_device *ec, unsigned int offset,
-> > >         char *s = dest;
-> > >         int cnt = 0;
-> > >
-> > > -       if (offset >= EC_MEMMAP_SIZE - bytes)
-> > > +       if (offset > EC_MEMMAP_SIZE ||
-> > > +           bytes > EC_MEMMAP_SIZE - offset)
-> >
-> > I think that means we have the same problem if offset >
-> > EC_MEMMAP_SIZE, only now that condition isn't detected anymore because
-> > EC_MEMMAP_SIZE - offset is a very large number.
->
-> That's the bug which my patch addresses.  (My patch is option 1).
->
+On 15/12/2021 14:49, Dan Carpenter wrote:
+> The "dp_bridge" pointer is allocated with devm_kzalloc() so it will be
+> freed automatically.  Kfreeing it here will only lead to a double free.
+> 
+> Fixes: 8a3b4c17f863 ("drm/msm/dp: employ bridge mechanism for display enable and disable")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Ah yes, for some reason I overlooked the "offset > EC_MEMMAP_SIZE"
-part in your patch. Sorry, I must have been blind.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
+> ---
+>   drivers/gpu/drm/msm/dp/dp_drm.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/dp/dp_drm.c b/drivers/gpu/drm/msm/dp/dp_drm.c
+> index 188e77c59885..d4d360d19eba 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_drm.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_drm.c
+> @@ -243,7 +243,6 @@ struct drm_bridge *msm_dp_bridge_init(struct msm_dp *dp_display, struct drm_devi
+>   	rc = drm_bridge_attach(encoder, bridge, NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+>   	if (rc) {
+>   		DRM_ERROR("failed to attach bridge, rc=%d\n", rc);
+> -		kfree(dp_bridge);
+>   		return ERR_PTR(rc);
+>   	}
+>   
+> 
 
-Guenter
 
-> > I think what we really want is
-> >         if (offset + bytes > EC_MEMMAP_SIZE)
-> > only without the overflow. Not sure how we can get there without
-> > checking each part.
-> >         if (offset > EC_MEMMAP_SIZE || bytes > EC_MEMMAP_SIZE || bytes
-> > + offset > EC_MEMMAP_SIZE)
->
-> That is another solution which works.
->
-> >                 return -EINVAL;
-> > Maybe that ?
-> >         if ((u64) offset + bytes > EC_MEMMAP_SIZE)
-> >                 return -EINVAL;
->
-> A third viable solution.
->
-> I generally prefer option 2 to option 3.  I generally use that in code
-> that I'm writing.  There was one time Linus said he liked option 1
-> which I used here because it works regardless of the types or the valu
-> of EC_MEMMAP_SIZE.  This code already used the bytes > size - offset
-> idiom so I kept it as similar as possible.
->
-> regards,
-> dan carpenter
->
+-- 
+With best wishes
+Dmitry
