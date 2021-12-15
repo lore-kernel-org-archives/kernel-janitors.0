@@ -2,88 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A88C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Dec 2021 11:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0849C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Dec 2021 12:10:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242250AbhLOL6w (ORCPT
+        id S242332AbhLOMKs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 15 Dec 2021 06:58:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43770 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242231AbhLOL6u (ORCPT
+        Wed, 15 Dec 2021 07:10:48 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:33805 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S242320AbhLOMKq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 15 Dec 2021 06:58:50 -0500
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35255C061574
-        for <kernel-janitors@vger.kernel.org>; Wed, 15 Dec 2021 03:58:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=xorv+3pVspbDS0ZeYI0s5d0SoK4ERF0FnD42FTG8JyQ=; b=CKWuwoyvywIt/GQ2Wb5Ga2JylD
-        NMFLH1biyfd79OdWgbcxphVfTmHRocUQqwDBdFEb1uOBm1hhfeRxIjk3OGSX8/Eyzx8iIHiS7943m
-        gNcYL3stcBaZ8sGQFjJXvdhEooTB1aCVsbNHbohSB5qqdLQARs8McZM4lGuCwgbM+emOzC2JquPvf
-        DrZl9NB2D3XYoa6zLD6VdLmyfmsrXPpCbjFuRHMCGQKC4NtViMz/g50E1dnp80LMEgrJOpFT4U27E
-        5950eLEVEVhXZUYczIkzN1zz/jolCL5+p3ZMBcIAKciyQ2k91ZrrBCXxD86l35KDD4diWR0stkUOu
-        7Zs+szNg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56302)
-        by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1mxSvi-0006KZ-VP; Wed, 15 Dec 2021 11:58:43 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1mxSvg-0004SH-Eq; Wed, 15 Dec 2021 11:58:40 +0000
-Date:   Wed, 15 Dec 2021 11:58:40 +0000
-From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
+        Wed, 15 Dec 2021 07:10:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1639570246;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tCstWBntwdLH8X6Z5denuskbx5Cw56Mw/cfPzBjOs48=;
+        b=gYEySLCAOGoZm9WFKcOrStQlfGOUcdafqINTQfjDeY0ksZ9cIZjeXbztFSqTE7xlaqMYpc
+        ItT4B8il/z/4uYcT7W4eAnSDOPTRDL2OYlTl9XVBbKzDmFlHSomwWu3SiLkTft57AmAhDr
+        l5UEq6wu38tU2BZvC3x5cdke42hb+Xg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-14-CbljgMheOk-ZX6qOUdjv_A-1; Wed, 15 Dec 2021 07:10:44 -0500
+X-MC-Unique: CbljgMheOk-ZX6qOUdjv_A-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3A7F21052BAC;
+        Wed, 15 Dec 2021 12:10:39 +0000 (UTC)
+Received: from work (unknown [10.40.195.60])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8501B4299D;
+        Wed, 15 Dec 2021 12:10:37 +0000 (UTC)
+Date:   Wed, 15 Dec 2021 13:10:33 +0100
+From:   Lukas Czerner <lczerner@redhat.com>
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     kernel-janitors@vger.kernel.org
-Subject: Re: [bug report] net: phylink: use legacy_pre_march2020
-Message-ID: <YbnYcFaMYR5AWr47@shell.armlinux.org.uk>
-References: <20211215113539.GA14967@kili>
+Cc:     Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ext4: fix a copy and paste typo
+Message-ID: <20211215121033.nclqc5b7qnterwek@work>
+References: <20211215114309.GB14552@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211215113539.GA14967@kili>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20211215114309.GB14552@kili>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Dec 15, 2021 at 02:35:39PM +0300, Dan Carpenter wrote:
-> Hello Russell King (Oracle),
+On Wed, Dec 15, 2021 at 02:43:09PM +0300, Dan Carpenter wrote:
+> This was obviously supposed to be an ext4 struct, not xfs.  GCC
+> doesn't care either way so it doesn't affect the build or runtime.
+
+Wow, what a mistake. Nice catch, thanks!
+
+Reviewed-by: Lukas Czerner <lczerner@redhat.com>
+
 > 
-> This is a semi-automatic email about new static checker warnings.
+> Fixes: cebe85d570cf ("ext4: switch to the new mount api")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  fs/ext4/super.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> The patch 001f4261fe4d: "net: phylink: use legacy_pre_march2020" from 
-> Dec 9, 2021, leads to the following Smatch complaint:
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 5ec5a1c3b364..da40fb468d7f 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -2077,7 +2077,7 @@ static void ext4_fc_free(struct fs_context *fc)
+>  
+>  int ext4_init_fs_context(struct fs_context *fc)
+>  {
+> -	struct xfs_fs_context	*ctx;
+> +	struct ext4_fs_context *ctx;
+>  
+>  	ctx = kzalloc(sizeof(struct ext4_fs_context), GFP_KERNEL);
+>  	if (!ctx)
+> -- 
+> 2.20.1
 > 
->     drivers/net/phy/phylink.c:823 phylink_change_inband_advert()
->     error: we previously assumed 'pl->pcs_ops' could be null (see line 806)
-> 
-> drivers/net/phy/phylink.c
->    805	
->    806		if (!pl->pcs_ops && pl->config->legacy_pre_march2020) {
->                     ^^^^^^^^^^^^
-> Should this be an ||?
 
-No, the intention is correct, even though it looks a little weird.
-
-We only call phylink_change_inband_advert() if we are in in-band mode,
-and in-band mode for non-legacy users requires a PCS. Consequently, if
-legacy_pre_march2020 is clear, we have no PCS, and we reach here, then
-something is definitely broken.
-
-There isn't an easy way to detect this condition earlier, but we could
-do something like:
-
-	if (WARN_ON(!pl->pcs_ops))
-		return -EINVAL;
-
-which should be sufficiently noisy for people to do something about.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
