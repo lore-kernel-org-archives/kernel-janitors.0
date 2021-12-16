@@ -2,99 +2,145 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B52C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Dec 2021 09:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E43CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Dec 2021 10:50:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235232AbhLPJWN (ORCPT
+        id S231593AbhLPKut convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 16 Dec 2021 04:22:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55560 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235158AbhLPJWM (ORCPT
+        Thu, 16 Dec 2021 05:50:49 -0500
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:18774 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231342AbhLPKus (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 16 Dec 2021 04:22:12 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69BE3C061574;
-        Thu, 16 Dec 2021 01:22:12 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id t18so42884225wrg.11;
-        Thu, 16 Dec 2021 01:22:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=JzmZnw9w12jnhEnVgbRw3kRkLf6hu57Yrckak9H1oPM=;
-        b=ZRmx1zNAZjDwnqSeqDGTIEnhGfUEdpS/Mo5/SNagjhmXA1BlXThj/bRtYhhiDfBX6L
-         j4PpRuMGFir9Ue7Eump3JFHS3picyQv0Ua3br4dK4+NFyQ8avTtDErGqxrhAFo9vhh0l
-         yyp/pvjn8i6lYUf3CkUfs9Q+BMvf5JI5aTe7O7qHC6UztVQYi8y1MagKSrK2ziBmqC1y
-         VD+Ro47/0mbSfH7qeg9hIFmN3Bc8P+3OEoN5tfnqFFTxHBnpY4rq+4CUQW5RbeOVsnRQ
-         MldK/E0gpV/bU97CWFlHYn2+nKrCUdIRISuClKaTDh2MqCHSXkWslYuAeGClEmJXQnn7
-         7FKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JzmZnw9w12jnhEnVgbRw3kRkLf6hu57Yrckak9H1oPM=;
-        b=DnF4EJV1OS+f9k5eiXf6jNLLg4Vc779uKigaT7Y+5EkIS6MlPvsOUeMDrdXqn5Be0a
-         6154MxwTR6zc0hDRInzdGAVtXT5XQLLNeKqJuCYWgZSd6oxMbziqSkSR8XMZmtNNecgI
-         ru6aXFbSE1JnHRukgHplE0t0L93+5lWlCD860l3VL+W0vkTwX07Bx3ZsO0k3Zz4jPLGh
-         05yUk25ffBalcHAp830MJRgNsfWlsRuWRLrg/Eq5YnPEvLVbnGgyx60znW8mn5ka96QU
-         de+fFl9dxBQJpyrUm4s5wFKyQsSvqnEz0c5ckWRr0YzHyicAdZtWL5dRJoO3H+Zh75We
-         iAiQ==
-X-Gm-Message-State: AOAM532MZaGcmwVtxdJapNu0Ned/IgkcdrXy7uMHgA0q7fUYB6nubFea
-        0Q5mpix5JLpWO9vdm0ECL1Yoj5W0yK0=
-X-Google-Smtp-Source: ABdhPJwKtUkCsXljUJ9vO22KqT5+192jrHDhWPt397Y0gwY9TFqGZtsUJ61lgKspMWFMCtGOCFyDRQ==
-X-Received: by 2002:a5d:6da1:: with SMTP id u1mr7504507wrs.535.1639646530903;
-        Thu, 16 Dec 2021 01:22:10 -0800 (PST)
-Received: from felia.fritz.box ([2001:16b8:267b:1200:18af:bb55:aabf:94a8])
-        by smtp.gmail.com with ESMTPSA id y3sm2068981wrq.12.2021.12.16.01.22.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Dec 2021 01:22:10 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] HID: address kernel-doc warnings
-Date:   Thu, 16 Dec 2021 10:21:57 +0100
-Message-Id: <20211216092157.26912-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 16 Dec 2021 05:50:48 -0500
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1BG484u3011380;
+        Thu, 16 Dec 2021 05:50:43 -0500
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+        by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 3cyrbx9unc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 16 Dec 2021 05:50:43 -0500
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+        by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 1BGAogm6002013
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 16 Dec 2021 05:50:42 -0500
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Thu, 16 Dec
+ 2021 05:50:41 -0500
+Received: from ASHBMBX9.ad.analog.com ([fe80::ec36:89cb:a387:866]) by
+ ASHBMBX9.ad.analog.com ([fe80::ec36:89cb:a387:866%20]) with mapi id
+ 15.02.0986.014; Thu, 16 Dec 2021 05:50:41 -0500
+From:   "Tanislav, Cosmin" <Cosmin.Tanislav@analog.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+CC:     "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH] iio: addac: ad74413r: fix off by one in
+ ad74413r_parse_channel_config()
+Thread-Topic: [PATCH] iio: addac: ad74413r: fix off by one in
+ ad74413r_parse_channel_config()
+Thread-Index: AQHX8aocIRdZz4+5JU61aWdGiBPok6w08gqw
+Date:   Thu, 16 Dec 2021 10:50:41 +0000
+Message-ID: <45dd874f40e54872b4c94e00eae814c4@analog.com>
+References: <20211215115053.GE14552@kili>
+In-Reply-To: <20211215115053.GE14552@kili>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: =?us-ascii?Q?PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcY3RhbmlzbGFc?=
+ =?us-ascii?Q?YXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRi?=
+ =?us-ascii?Q?YTI5ZTM1Ylxtc2dzXG1zZy0wMjNiYzgwZi01ZTVlLTExZWMtYjZjZi00MTU2?=
+ =?us-ascii?Q?NDUwMDAwMzBcYW1lLXRlc3RcMDIzYmM4MTEtNWU1ZS0xMWVjLWI2Y2YtNDE1?=
+ =?us-ascii?Q?NjQ1MDAwMDMwYm9keS50eHQiIHN6PSIxODQ2IiB0PSIxMzI4NDEyNTQ0MDky?=
+ =?us-ascii?Q?MDUyMzQiIGg9IlZYOXpDcmFpSERKMjI5YlJhMVNmRDkra2xaWT0iIGlkPSIi?=
+ =?us-ascii?Q?IGJsPSIwIiBibz0iMSIgY2k9ImNBQUFBRVJIVTFSU1JVRk5DZ1VBQUVvQ0FB?=
+ =?us-ascii?Q?RHk5WlBFYXZMWEFZWHFyTTVTNDIzQWhlcXN6bExqYmNBREFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFIQUFBQURhQVFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFFQUFRQUJBQUFBVklFdm9RQUFBQUFBQUFBQUFBQUFBSjRBQUFCaEFHUUFh?=
+ =?us-ascii?Q?UUJmQUhNQVpRQmpBSFVBY2dCbEFGOEFjQUJ5QUc4QWFnQmxBR01BZEFCekFG?=
+ =?us-ascii?Q?OEFaZ0JoQUd3QWN3QmxBRjhBWmdCdkFITUFhUUIwQUdrQWRnQmxBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUVBQUFBQUFBQUFBZ0FBQUFBQW5nQUFBR0VBWkFCcEFGOEFjd0JsQUdNQWRR?=
+ =?us-ascii?Q?QnlBR1VBWHdCd0FISUFid0JxQUdVQVl3QjBBSE1BWHdCMEFHa0FaUUJ5QURF?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFRQUFBQUFBQUFBQ0FB?=
+ =?us-ascii?Q?QUFBQUNlQUFBQVlRQmtBR2tBWHdCekFHVUFZd0IxQUhJQVpRQmZBSEFBY2dC?=
+ =?us-ascii?Q?dkFHb0FaUUJqQUhRQWN3QmZBSFFBYVFCbEFISUFNZ0FBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFCQUFBQUFBQUFBQUlBQUFBQUFBPT0iLz48L21l?=
+ =?us-ascii?Q?dGE+?=
+x-dg-rorf: true
+x-originating-ip: [10.32.224.39]
+x-adiruleop-newscl: Rule Triggered
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Proofpoint-GUID: yAw_Ca8mR1fgH-b-G3mHZid8yV6nvcuZ
+X-Proofpoint-ORIG-GUID: yAw_Ca8mR1fgH-b-G3mHZid8yV6nvcuZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-16_04,2021-12-16_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ malwarescore=0 bulkscore=0 clxscore=1011 lowpriorityscore=0 suspectscore=0
+ phishscore=0 spamscore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
+ definitions=main-2112160061
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The command ./scripts/kernel-doc -none include/linux/hid.h reports:
+Reviewed-by: Cosmin Tanislav <cosmin.tanislav@analog.com>
 
-  include/linux/hid.h:818: warning: cannot understand function prototype: 'struct hid_ll_driver '
-  include/linux/hid.h:1135: warning: expecting prototype for hid_may_wakeup(). Prototype was for hid_hw_may_wakeup() instead
-
-Address those kernel-doc warnings.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- include/linux/hid.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/hid.h b/include/linux/hid.h
-index 3d83e7022f6c..7487b0586fe6 100644
---- a/include/linux/hid.h
-+++ b/include/linux/hid.h
-@@ -800,7 +800,7 @@ struct hid_driver {
- 	container_of(pdrv, struct hid_driver, driver)
- 
- /**
-- * hid_ll_driver - low level driver callbacks
-+ * struct hid_ll_driver - low level driver callbacks
-  * @start: called on probe to start the device
-  * @stop: called on remove
-  * @open: called by input layer on open
-@@ -1127,7 +1127,7 @@ static inline int hid_hw_idle(struct hid_device *hdev, int report, int idle,
- }
- 
- /**
-- * hid_may_wakeup - return if the hid device may act as a wakeup source during system-suspend
-+ * hid_hw_may_wakeup - return if the hid device may act as a wakeup source during system-suspend
-  *
-  * @hdev: hid device
-  */
--- 
-2.17.1
+> -----Original Message-----
+> From: Dan Carpenter <dan.carpenter@oracle.com>
+> Sent: Wednesday, December 15, 2021 1:51 PM
+> To: Tanislav, Cosmin <Cosmin.Tanislav@analog.com>
+> Cc: Hennerich, Michael <Michael.Hennerich@analog.com>; Jonathan
+> Cameron <jic23@kernel.org>; Linus Walleij <linus.walleij@linaro.org>; linux-
+> iio@vger.kernel.org; kernel-janitors@vger.kernel.org
+> Subject: [PATCH] iio: addac: ad74413r: fix off by one in
+> ad74413r_parse_channel_config()
+> 
+> [External]
+> 
+> The > needs to be >= to prevent accessing one element beyond the end of
+> the st->channel_configs[] array.
+> 
+> Fixes: fea251b6a5db ("iio: addac: add AD74413R driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> Obligatory grumble:  When you merge a new driver please use a patch
+> prefix based on what the driver will use.
+> 
+>  Bad: [SUBJECT] subsystem: add new driver for XYZ123
+> Good: [SUBJECT] subsystem/xyz123: add new driver for XYZ123
+> 
+> Same rule for adding subdirectories.  That way no one (me) has to guess.
+> 
+>  drivers/iio/addac/ad74413r.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/addac/ad74413r.c b/drivers/iio/addac/ad74413r.c
+> index cbd9aa9b399a..289d254943e1 100644
+> --- a/drivers/iio/addac/ad74413r.c
+> +++ b/drivers/iio/addac/ad74413r.c
+> @@ -1150,7 +1150,7 @@ static int ad74413r_parse_channel_config(struct
+> iio_dev *indio_dev,
+>  		return ret;
+>  	}
+> 
+> -	if (index > AD74413R_CHANNEL_MAX) {
+> +	if (index >= AD74413R_CHANNEL_MAX) {
+>  		dev_err(st->dev, "Channel index %u is too large\n", index);
+>  		return -EINVAL;
+>  	}
+> --
+> 2.20.1
 
