@@ -2,127 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5FEAC43217
-	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Dec 2021 15:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5BE7C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Dec 2021 15:45:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238314AbhLPPH5 (ORCPT
+        id S238638AbhLPPpF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 16 Dec 2021 10:07:57 -0500
-Received: from elvis.franken.de ([193.175.24.41]:50683 "EHLO elvis.franken.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235074AbhLPPH4 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 16 Dec 2021 10:07:56 -0500
-Received: from uucp (helo=alpha)
-        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
-        id 1mxsMK-0001iD-01; Thu, 16 Dec 2021 16:07:52 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id D50FAC09A0; Thu, 16 Dec 2021 16:03:47 +0100 (CET)
-Date:   Thu, 16 Dec 2021 16:03:47 +0100
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Maciej W . Rozycki" <macro@orcam.me.uk>,
-        Sander Vanheule <sander@svanheule.net>,
-        Bert Vermeulen <bert@biot.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Paul Burton <paulburton@kernel.org>,
-        Daniel Silsby <dansilsby@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH 0/9] Kconfig symbol clean-up on ./arch/mips/
-Message-ID: <20211216150347.GB15172@alpha.franken.de>
-References: <20211213111642.11317-1-lukas.bulwahn@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211213111642.11317-1-lukas.bulwahn@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 16 Dec 2021 10:45:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33186 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229704AbhLPPpE (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 16 Dec 2021 10:45:04 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83419C061574;
+        Thu, 16 Dec 2021 07:45:04 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id q16so4163807wrg.7;
+        Thu, 16 Dec 2021 07:45:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=/jha9cndIkDUqDGzCuDAbGL68WCP4ZkFrCHCGFvS9NU=;
+        b=hNqLAguz19bFoQGcAK15Ed/ccdjM/t5qAW0r6YVp6TCB744NduFAt1Wr2fQh840ANp
+         Qzndl8emfxBMTODABRHNSiFA6Co21+dUL9NWwV3FBsvMtNxWSBI6mKXW3XOdNg0a9Yzn
+         ABWvgB7kr5R5ntXlD7Euq4FkFM9W0n9W7/SHwCo2bYROYgGqhYsNkl5trXKu4xuErOW+
+         AVbOuqvO2GSggoZaoQjK6q20w98sgY2dRz3QMGOcD0jwCDE0ATf2dEAN2644i0F8d2cB
+         yv4cSlAAacjM6wckSPUoaGS1Qt2BD41TmjXVPW3UUgCJ22RZ+LFOw9oUyyM1/npWUZhK
+         Wpww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/jha9cndIkDUqDGzCuDAbGL68WCP4ZkFrCHCGFvS9NU=;
+        b=z2VWy4iuqhw1kNe5jHH0+B9p7t8HxBuCpunnYd2x9exaAkjGIzTHWDntkuuY+9KaEY
+         2K82Vv+BQxXL+dFTEngoJTZe4XiH83V0Bm61JN4mVbKvVAceFUkMAtkopJxAKDnZvkYr
+         4Yq/+FROfnWPVyI2xmFRuGykRwvwAq8erywHUium6Gj01BovTWKLmO1xrX/vd9iyGset
+         HqQxX6u5XqEsOuWQtuHiEtGS1NFHwmfdCkAN3S0kvoa9RVVdo/75pvENb1wqSk0F9n3Y
+         dV9SWRvEo1oeGWJyWkqyV4dW8MvB99OYefVJUysLqm3MNi9wFtLoDttS8byK+98p7kWk
+         lurg==
+X-Gm-Message-State: AOAM533Uk31tT+d/c3Wa7hFAvv5eVfuw3ugKpipPHvdjmflEVcwvo6dZ
+        dVs22eSWL4P6jpETlXL6alI=
+X-Google-Smtp-Source: ABdhPJyolMr0OuFmVV0QPXqOQnaVM3//e6hsDhL+jeMG36K/I6zFfzga9OMOtAiZPnMin9pDbJ4prw==
+X-Received: by 2002:adf:fa49:: with SMTP id y9mr7512398wrr.375.1639669503044;
+        Thu, 16 Dec 2021 07:45:03 -0800 (PST)
+Received: from felia.fritz.box ([2001:16b8:26ad:b100:414e:3655:7ee7:65c5])
+        by smtp.gmail.com with ESMTPSA id y11sm6537075wry.70.2021.12.16.07.45.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Dec 2021 07:45:02 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] hwmon: prefix kernel-doc comments for structs with struct
+Date:   Thu, 16 Dec 2021 16:42:57 +0100
+Message-Id: <20211216154257.26758-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Dec 13, 2021 at 12:16:33PM +0100, Lukas Bulwahn wrote:
-> Dear Thomas,
-> 
-> The script ./scripts/checkkconfigsymbols.py warns on invalid references to
-> Kconfig symbols (often, minor typos, name confusions or outdated references).
-> This is a patch series addressing the issues reported by
-> ./scripts/checkkconfigsymbols.py in the ./arch/mips/ directory, quickly
-> filtered down with:
-> 
->   ./scripts/checkkconfigsymbols.py | grep "arch/mips" -B 1
-> 
-> without considering kernel configs, i.e., after removing ./arch/mips/configs
-> in the working tree. It addresses all issues I considered to be "true
-> positives"; so, issues that should be addressed and cleaned up. 
-> 
-> The patches on updating the comments might arguably be considered of lower
-> value by itself, but as the other patches show, checkkconfigsymbols does detect
-> some relevant issues in the kernel tree otherwise being unnoticed.
-> So, it might be worth to clean up the kernel tree to have checkkconfigsymbols
-> produce a rather short list of issues and then continuously follow and check
-> what checkkconfigsymbols reports.
-> 
-> These are the remaining reports from checkkconfigsymbols in ./arch/mips, which
-> are not addressed in this series:
-> 
->   SGI_IP35
->   Referencing files: arch/mips/include/asm/sn/addrs.h, arch/mips/include/asm/sn/agent.h, arch/mips/include/asm/sn/klconfig.h
-> 
->   Rationale: Ralf Baechle rejected a patch to remove the "upstream-dead"
->   SGI_IP35 code in 2014, because there was still some out-of-tree users.
->   We might want to recheck if these out-of-tree users still exist or if this
->   code can be dropped now.
->   See email discussion: https://lore.kernel.org/lkml/1400584909.4912.35.camel@x220/T/#mf1d73d4f531bab670beb30aa0adfce34cbcad528
-> 
->   SHELL
->   Referencing files: arch/mips/Makefile, arch/mips/kernel/syscalls/Makefile
-> 
->   Rationale: Ignore CONFIG_SHELL. Default variable in Kbuild build system.
-> 
-> 
-> Each patch in this series can be discussed and applied individually. They are
-> sent in one patch series, as they all orginate from the investigation guided
-> by the same tool and hence share similar topics and resolutions.
-> 
-> Please pick this series of minor clean-up patches on ./arch/mips/. It applies
-> cleanly on next-20211210. The patches with Fixes: tags might be considerable
-> for stable.
-> 
-> 
-> Best regards,
-> 
-> Lukas
-> 
-> 
-> Lukas Bulwahn (9):
->   mips: drop selecting the non-existing config SYS_HAS_EARLY_PRINTK_8250
->   mips: add SYS_HAS_CPU_MIPS64_R5 config for MIPS Release 5 support
->   mips: drop selecting non-existing config NR_CPUS_DEFAULT_2
->   mips: dec: provide the correctly capitalized config CPU_R4X00 in init
->     error message
->   mips: kgdb: adjust the comment to the actual ifdef condition
->   mips: remove obsolete selection of CPU_HAS_LOAD_STORE_LR
->   mips: alchemy: remove historic comment on gpio build constraints
->   mips: txx9: remove left-over for removed TXX9_ACLC configs
->   mips: fix Kconfig reference to PHYS_ADDR_T_64BIT
-> 
->  arch/mips/Kconfig                  |  9 +++++----
->  arch/mips/alchemy/common/gpiolib.c |  2 --
->  arch/mips/dec/prom/init.c          |  2 +-
->  arch/mips/include/asm/kgdb.h       |  2 +-
->  arch/mips/txx9/Kconfig             |  3 ---
->  arch/mips/txx9/generic/setup.c     | 28 ----------------------------
->  6 files changed, 7 insertions(+), 39 deletions(-)
-> 
-> -- 
-> 2.26.2
+The command ./scripts/kernel-doc -none include/linux/hwmon.h warns:
 
-applied patches 2-8 to mips-next.
+  include/linux/hwmon.h:406: warning: This comment starts with '/**', but
+    isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+   * Channel information
+  include/linux/hwmon.h:425: warning: This comment starts with '/**', but
+    isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+   * Chip configuration
 
-Thomas.
+Address those kernel-doc warnings by prefixing kernel-doc descriptions for
+structs with the keyword 'struct'.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ include/linux/hwmon.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/hwmon.h b/include/linux/hwmon.h
+index 1e8d6ea8992e..fad1f1df26df 100644
+--- a/include/linux/hwmon.h
++++ b/include/linux/hwmon.h
+@@ -403,7 +403,7 @@ struct hwmon_ops {
+ };
+ 
+ /**
+- * Channel information
++ * struct hwmon_channel_info - Channel information
+  * @type:	Channel type.
+  * @config:	Pointer to NULL-terminated list of channel parameters.
+  *		Use for per-channel attributes.
+@@ -422,7 +422,7 @@ struct hwmon_channel_info {
+ 	})
+ 
+ /**
+- * Chip configuration
++ * struct hwmon_chip_info - Chip configuration
+  * @ops:	Pointer to hwmon operations.
+  * @info:	Null-terminated list of channel information.
+  */
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+2.17.1
+
