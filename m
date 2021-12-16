@@ -2,61 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EFD4C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Dec 2021 06:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E24A0C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Dec 2021 06:58:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232081AbhLPGsq (ORCPT
+        id S231981AbhLPG62 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 16 Dec 2021 01:48:46 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:38716 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230062AbhLPGsq (ORCPT
+        Thu, 16 Dec 2021 01:58:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50840 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229492AbhLPG61 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 16 Dec 2021 01:48:46 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 448B8B8220A;
-        Thu, 16 Dec 2021 06:48:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02AD7C36AE4;
-        Thu, 16 Dec 2021 06:48:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639637324;
-        bh=m5vS1HxsTPT0xOHjuF/PpXUmvflQ2rhqdTD07eZ9ZMY=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=THf9PKLwUtd/Yuv7bkKpf3yjfQE/UGTgfp6NXrD9xUJokhhNasudxxL0ktKGvcCsK
-         ATS5t36Tp1ihLKAGOXZnTRdLjRFAOT+OAsNb/FVSI5GwhubXPJjQNAUbk1x8Xx/zQS
-         y+mQ+jCkuJi6hMS1I2yx18UQLQ7We1bgmFnvZSUMFfNBsLhARPSbs+3JHBxVbSvbMR
-         /+6RkBZRqUSAOsWqSGcVnHaL4DqGICGT+CZu+4fABNyfBN4xvqK2P5gsbx79eoz5Mv
-         hUrC3dFJzE2Aj34hs084DQq9qqtISzRTgxtU1DLbmv3PYaQTw18D5BevcNIiLXmd7F
-         WPpSBhNh/ZM7w==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211126221239.1100960-1-colin.i.king@gmail.com>
-References: <20211126221239.1100960-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH] clk: stm32mp1: remove redundant assignment to pointer data
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Colin Ian King <colin.i.king@googlemail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Date:   Wed, 15 Dec 2021 22:48:42 -0800
-User-Agent: alot/0.9.1
-Message-Id: <20211216064844.02AD7C36AE4@smtp.kernel.org>
+        Thu, 16 Dec 2021 01:58:27 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3097AC061574;
+        Wed, 15 Dec 2021 22:58:27 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id s1so8159473wrg.1;
+        Wed, 15 Dec 2021 22:58:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=XpWcs0XbMlH4VQ6hw7+xSPVWX4q7iEBGmSQA5LzJK08=;
+        b=KpLR7KdZfjR1YsZpZau7nel5Iov1BHZulmr50C0qi8+Nbz1/3tGosxKZWpnCjfDjJP
+         cHrU29k1qR4/+2sv8mtbR0yh7GguxoRObfc8GfFRIdt0tlFlCe/H43MIO/9llMIQZR4a
+         P/7cJFbA3QbWtEOfz9gQfoOROKeDZGs6cR/gCW5eRWCHkf6uMHyOQ754hi3SulDtn0zn
+         8WHRgIar51da3O5T/pAZHFfYoMPu87tPxSTDnnDnLFAv3jliGB1etnUgN+1F5dLPv/hO
+         WwgV/y7yAU7Pg2q3sziYrKd0g9/nbDkI+l3iRfHsoiSFVeShEEFi20gzh+PgEpx3pDye
+         UEfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XpWcs0XbMlH4VQ6hw7+xSPVWX4q7iEBGmSQA5LzJK08=;
+        b=0yHh2de453oS7b7vGO7dw53D90lQbnh+cqOirG34Bonh7J/swwubBzGfesVl2CqZZJ
+         mB3SFI9bHJg0BqBoRvTE5gcBMGJww98h6PLOU/UdI/91TgP/+eTNWQA7X9mWgtOnmXMb
+         4ieFecATqJ2RwuV69UGk1vZETxeitwZl8d/NuLGtZku9+OUVyWCIVbqkSUVAAoKict1k
+         bXrE+mvvoohcqG5Eu0tcUf9QBB56ok66Hg3ETdRW/l9zeZK9Zj/efzA5WMh0kRyvv0aN
+         7Z9RH51od6wLxj25J0LaLqYW1lieSztYlugX36sZtMqZnt5sqd64knnxSNxJEo4WXDp7
+         5ILg==
+X-Gm-Message-State: AOAM532u1R2VoT5WlVBD+31W7/EX5zCb4Yn87obv17WlXsVAaD8pYSLi
+        sE2X/DPgPKdxjzd1WdGiHKa8yS7zU6g=
+X-Google-Smtp-Source: ABdhPJxp3ZXrPoJwzqsVZMOfkSKa2WxiAB5H8OKvSTfGLSvtRhguEnwUBykdSnxasAlAEmi4KJ+XCA==
+X-Received: by 2002:adf:97c2:: with SMTP id t2mr7512331wrb.577.1639637905795;
+        Wed, 15 Dec 2021 22:58:25 -0800 (PST)
+Received: from felia.fritz.box ([2001:16b8:267b:1200:18af:bb55:aabf:94a8])
+        by smtp.gmail.com with ESMTPSA id p12sm4718037wrr.10.2021.12.15.22.58.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Dec 2021 22:58:25 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Juergen Gross <jgross@suse.com>,
+        xen-devel@lists.xenproject.org, linux-usb@vger.kernel.org
+Cc:     Konrad Rzeszutek Wilk <Konrad.wilk@oracle.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: remove typo from XEN PVUSB DRIVER section
+Date:   Thu, 16 Dec 2021 07:55:47 +0100
+Message-Id: <20211216065547.18619-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Quoting Colin Ian King (2021-11-26 14:12:39)
-> The pointer data is being initialized with a value and a few lines
-> later on being re-assigned the same value, so this re-assignment is
-> redundant. Clean up the code and remove it.
->=20
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
+Commit a92548f90fa6 ("xen: add Xen pvUSB maintainer") adds the new XEN
+PVUSB DRIVER section, but one file entry contains an obvious typo.
 
-Applied to clk-next
+Fortunately, ./scripts/get_maintainer.pl --self-test=patterns warns:
+
+  warning: no file matches    F:    divers/usb/host/xen*
+
+Remove this obvious typo.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies on next-20211215
+
+Juergen, please ack.
+
+Greg, please pick this minor clean-up on top of the commit above.
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 97215d89df4e..a5df6e1219b6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -21007,7 +21007,7 @@ M:	Juergen Gross <jgross@suse.com>
+ L:	xen-devel@lists.xenproject.org (moderated for non-subscribers)
+ L:	linux-usb@vger.kernel.org
+ S:	Supported
+-F:	divers/usb/host/xen*
++F:	drivers/usb/host/xen*
+ F:	include/xen/interface/io/usbif.h
+ 
+ XEN SOUND FRONTEND DRIVER
+-- 
+2.17.1
+
