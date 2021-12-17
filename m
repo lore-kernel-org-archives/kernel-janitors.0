@@ -2,162 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F5FC433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Dec 2021 01:09:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4BDC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Dec 2021 04:04:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231637AbhLQBJE (ORCPT
+        id S232588AbhLQEEa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 16 Dec 2021 20:09:04 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:61453 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231622AbhLQBJD (ORCPT
+        Thu, 16 Dec 2021 23:04:30 -0500
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:13088 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229617AbhLQEEa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 16 Dec 2021 20:09:03 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20211217010901epoutp0151ac1de05a946a6d52648b649d935455~BZYBtxvVz2519925199epoutp01c
-        for <kernel-janitors@vger.kernel.org>; Fri, 17 Dec 2021 01:09:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20211217010901epoutp0151ac1de05a946a6d52648b649d935455~BZYBtxvVz2519925199epoutp01c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1639703341;
-        bh=64+sb0x84cnuhFi2hvopvmRPJOEX1nVTHzV4z5VhkmA=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=XsFrqpchyFfyh7Z9O3NhucIDX2RDmyZg6KXK7yrrCg0sPHM3hH+3Sbolm7elRTKV5
-         pRkz4w0I/Btp08nJnlaGKkSOh8EkOXCep2ne/GD/+PdLitG+xTU+md1iKaprQmEZTR
-         a5bhipXo80SEN3ecSGvSLIWqq6uLy4FNmWBrC84o=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20211217010901epcas1p1aac532660ac79a097d7214bd5ad2447f~BZYBNIutk1654616546epcas1p1n;
-        Fri, 17 Dec 2021 01:09:01 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.38.237]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4JFW8N3ccXz4x9QN; Fri, 17 Dec
-        2021 01:08:52 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        60.64.28648.F13EBB16; Fri, 17 Dec 2021 10:08:47 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20211217010847epcas1p2d44a4b1a5fa713c126a48697305c80b3~BZX0XEIHJ2372023720epcas1p2i;
-        Fri, 17 Dec 2021 01:08:47 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20211217010847epsmtrp2a813a03c1dc761672460a3f9f72a6cff~BZX0VH9pq2114021140epsmtrp2Q;
-        Fri, 17 Dec 2021 01:08:47 +0000 (GMT)
-X-AuditID: b6c32a39-ff1ff70000006fe8-5b-61bbe31f38ac
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        5F.EC.29871.E13EBB16; Fri, 17 Dec 2021 10:08:46 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20211217010846epsmtip16f9ee118c19b4120a71dabc79476bd2b~BZX0Dh7us0725907259epsmtip1O;
-        Fri, 17 Dec 2021 01:08:46 +0000 (GMT)
-Subject: Re: [PATCH v2] extcon: fix extcon_get_extcon_dev() error handling
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sebastian Reichel <sre@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <1b4515cc-bddc-ff3d-7789-ea2eb66a2e4e@samsung.com>
-Date:   Fri, 17 Dec 2021 10:31:47 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Thu, 16 Dec 2021 23:04:30 -0500
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BH2b1L8013696;
+        Fri, 17 Dec 2021 04:04:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2021-07-09;
+ bh=h1Gz3NmkkvAQalHSEv+c/ZfxMQ6PAkxx2LFttZmQzBU=;
+ b=mir5ta//8ikpWmg1jPS4rWiWb4oI6UZNmHNrlgiGOaRLqUzgu3NJE8L66RKPNK2zkvtu
+ tCYSRW4M9genKAT3aw29Xg2WBZKz6mrsgniY4fTAhD1Y+kKJdqJC3XmME4+/R56VivaH
+ zVeQdqnupxR/2AJqUe/aGUsqeI2fqogxgdooNweyh/Ln5A/BtR2Wwys3AWTZSTHczixt
+ EmK0JXa/LDHkPedLxsliezhAj7i4tjbSZRa+KV+ajAybfZIEtTUv6bV4aeFNdZOxcWPm
+ 8O8zBJzPSMJ9mGMwwS5y9xqpBxGv0HzjK5u7xGnYXmhBE2sadLW5SlMXImWSYTd/cv87 yg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3cyknc4pmq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Dec 2021 04:04:24 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1BH3xtUv028755;
+        Fri, 17 Dec 2021 04:04:23 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3020.oracle.com with ESMTP id 3cvneuxymt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Dec 2021 04:04:23 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 1BH44N7e044176;
+        Fri, 17 Dec 2021 04:04:23 GMT
+Received: from ca-mkp.mkp.ca.oracle.com (ca-mkp.ca.oracle.com [10.156.108.201])
+        by userp3020.oracle.com with ESMTP id 3cvneuxyky-1;
+        Fri, 17 Dec 2021 04:04:23 +0000
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <james.smart@broadcom.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Hannes Reinecke <hare@suse.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org
+Subject: Re: [PATCH] scsi: lpfc: Terminate string in lpfc_debugfs_nvmeio_trc_write()
+Date:   Thu, 16 Dec 2021 23:04:22 -0500
+Message-Id: <163971366746.31337.1114049407966426649.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20211214070527.GA27934@kili>
+References: <20211214070527.GA27934@kili>
 MIME-Version: 1.0
-In-Reply-To: <20211216155916.GA7738@kadam>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPJsWRmVeSWpSXmKPExsWy7bCmnq78492JBpsPGFgca3vCbvH633QW
-        i+bF69ks3hyfzmTRtXoni8XWW9IWl3fNYbOYvaSfxeJz7xFGi0XLWpktniw8w2Rxu3EFm8Xp
-        3SUWPw+dZ3Lg89jwaDWrx6ZVnWwe804Geuyfu4bd4+PTWywe7/ddZfPY+b2B3aNvyypGj8+b
-        5AI4o7JtMlITU1KLFFLzkvNTMvPSbZW8g+Od403NDAx1DS0tzJUU8hJzU22VXHwCdN0yc4BO
-        V1IoS8wpBQoFJBYXK+nb2RTll5akKmTkF5fYKqUWpOQUmBboFSfmFpfmpevlpZZYGRoYGJkC
-        FSZkZyz5foG94A9Xxf4DW5gbGO9ydDFyckgImEhMmN3M3sXIxSEksINRYun7jcwQzidGiQnX
-        trBBON8YJR7sXs8I03JiwzKolr2MEj/nzGCBcN4zSkx7+5gFpEpYwEuia/YhNhBbREBH4nLn
-        D7AOZoHrzBJ953czgSTYBLQk9r+4AVbEL6AocfXHY6AVHBy8AnYS025ZgYRZBFQl5r1aC1Yi
-        KhAmcXJbC9gVvAKCEidnPgHbxQk05uunr2BxZgEDiSOL5rBC2OISt57MZ4Kw5SW2v53DDPHB
-        Cw6Jpa3mELaLxM9P86A+E5Z4dXwLO4QtJfH53V6w9yUEljFK/JrcyQThrGeUeDmrE2qSscT+
-        pZOZIGxFiZ2/50JdwSfx7msPK8gzEgK8Eh1tQhAlyhKXH9yFKpeUWNzeyTaBUWkWkn9mIflh
-        FpIfZiH5YQEjyypGsdSC4tz01GLDAlN4hCfn525iBKdsLcsdjNPfftA7xMjEwXiIUYKDWUmE
-        V3H57kQh3pTEyqrUovz4otKc1OJDjKbAIJ7ILCWanA/MGnkl8YYmlgYmZkbGJhaGZoZK4rzP
-        /acnCgmkJ5akZqemFqQWwfQxcXBKNTAF10vyfTOYGD9JustEQmLz1tWVa9YKdm9eHbNEf8/F
-        A0Zua68uPhj87Chb27/TNw8oCJVvzjnGFO3mKasqOE9m4jpp2VvPROYHvZR8tofD55Za9NMY
-        +/+Xb/fKaK/rdDhZv+1lw4abvowvXrUnCfaulFkouaDwivbTbCa+lcXZ/HrFZQYSUu/PTlyw
-        adHH/ZN/nGS/lSCgmpkU+IvzY+zkje971f0SYrrv5RxZJPAzM3Kf47vEU4/mnwt7mxXAdG5i
-        gOatFf1X2C/rufAkcL6e3P3pxKJdVofZevxa325VeRBuIdjC39m9iF0k1OIYb2q0ksTRvMDn
-        eT8v/ymbZxaczfjE+1lvnHtk8Es3DiElluKMREMt5qLiRAAbvHQgYgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOIsWRmVeSWpSXmKPExsWy7bCSnK7c492JBrdbrCyOtT1ht3j9bzqL
-        RfPi9WwWb45PZ7LoWr2TxWLrLWmLy7vmsFnMXtLPYvG59wijxaJlrcwWTxaeYbK43biCzeL0
-        7hKLn4fOMznweWx4tJrVY9OqTjaPeScDPfbPXcPu8fHpLRaP9/uusnns/N7A7tG3ZRWjx+dN
-        cgGcUVw2Kak5mWWpRfp2CVwZS75fYC/4w1Wx/8AW5gbGuxxdjJwcEgImEic2LGPvYuTiEBLY
-        zSixomUbM0RCUmLaxaNANgeQLSxx+HAxRM1bRonGvvesIDXCAl4SXbMPsYHYIgI6Epc7f4AN
-        Yha4zSzRdOwJM0THbyaJrqcQU9kEtCT2v7gB1sEvoChx9cdjRpANvAJ2EtNuWYGEWQRUJea9
-        WgtWIioQJrFzyWMmEJtXQFDi5MwnLCA2J9CYr5++MoLYzAJ6Ejuu/2KFsMUlbj2ZzwRhy0ts
-        fzuHeQKj8Cwk7bOQtMxC0jILScsCRpZVjJKpBcW56bnFhgWGeanlesWJucWleel6yfm5mxjB
-        cauluYNx+6oPeocYmTgYDzFKcDArifAqLt+dKMSbklhZlVqUH19UmpNafIhRmoNFSZz3QtfJ
-        eCGB9MSS1OzU1ILUIpgsEwenVAPTwjefTojELjq0kEl4Y22S1uO7b6v/l0VpGpvyGMZmi6xk
-        LXug+rqtXern94fKe438ldYVBG8Ue/0zWSpLJrRYcSPzCgHR2WfF1sgJGHn+aa+5zcz0u1O5
-        6AVDu/n0C99uShx64vqoQEZE/Q7jjPtJk4vyNsxPrZgn83Xel82n5dfasYX5yXs/8i/afPdh
-        xpvPXc8neD9ZJMcW/VHmo2tWbeYksZ0hQgXbV5k+v8wvm/zkTv3cdzOjb+38V3v+qYRAvFtR
-        1pTvyoYWHuc0Ja5z2vakS5mzymuf9rLP89M9Evzx9bHNTPplV+RMF/VqbFsRqWsTt8JoaeCK
-        E8zXshg3TJTar/5FYm5gQ2HHk2glluKMREMt5qLiRAAzHHy3SgMAAA==
-X-CMS-MailID: 20211217010847epcas1p2d44a4b1a5fa713c126a48697305c80b3
-X-Msg-Generator: CA
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20211123084357epcas1p14833147710153f9606f14941ac8b0d96
-References: <CGME20211123084357epcas1p14833147710153f9606f14941ac8b0d96@epcas1p1.samsung.com>
-        <20211123083925.GA3277@kili>
-        <562b12ff-e395-c818-787e-7fd6ee6d53fb@samsung.com>
-        <20211216075233.GD1978@kadam>
-        <b4d0c326-3122-c5f9-f376-b122f263d92c@samsung.com>
-        <20211216080558.GE1978@kadam>
-        <c8d18573-5dc1-4d45-f134-2a1dbb7590b6@samsung.com>
-        <20211216155916.GA7738@kadam>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: L7mCZ3ajZ0Qh6kiWUldW5Gy_ng0p6f_X
+X-Proofpoint-GUID: L7mCZ3ajZ0Qh6kiWUldW5Gy_ng0p6f_X
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 12/17/21 12:59 AM, Dan Carpenter wrote:
-> On Thu, Dec 16, 2021 at 05:38:04PM +0900, Chanwoo Choi wrote:
->>>
->>> To be honest, I'm not sure how this differs from other functions which
->>> return -EPROBE_DEFER.  How do other functions guarantee they will only
->>> be called from probe()?
->>
->> If it is possible to know extcon_get_extcon_dev() will be only callled on probe,
->> it is no problem. But, it is not able to guarantee that extcon_get_extcon_dev()
->> is called on probe. Because of this reason, this issue should be handled in each device driver.
->>
->> -EPROBE_DEFER is only for probe step. If return -EPROBE_DEFER except for probe,
->> it is wrong return value.
+On Tue, 14 Dec 2021 10:05:27 +0300, Dan Carpenter wrote:
+
+> The "mybuf" string comes from the user, so we need to ensure that it is
+> NUL terminated.
 > 
-> The future is vast and unknowable.  We can't really future proof code
-> and we should never try do that if it makes the code more complicated
-> right now.
 > 
-> When Andy submitted basically the same patch as me three years ago we
-> worried about future developers so we didn't merge his patch.  But
-> three years later no non-probe() were introduced.  Meanwhile the bad API
-> created bugs in the kernel for current users.
 
-As you mentioned, there were no use case except for probe step.
-OK. I agree this approach.
+Applied to 5.16/scsi-fixes, thanks!
 
-
-For merging this patch, need to get ack from power-supply and usb maintainer.
-After getting the ack, I'll merge it. Thanks.
+[1/1] scsi: lpfc: Terminate string in lpfc_debugfs_nvmeio_trc_write()
+      https://git.kernel.org/mkp/scsi/c/9020be114a47
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Martin K. Petersen	Oracle Linux Engineering
