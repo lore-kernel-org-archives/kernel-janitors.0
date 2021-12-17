@@ -2,171 +2,172 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CF7C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Dec 2021 14:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BE8CC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Dec 2021 14:59:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237056AbhLQORo (ORCPT
+        id S237720AbhLQO7y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Dec 2021 09:17:44 -0500
-Received: from mail1.bemta33.messagelabs.com ([67.219.247.4]:45149 "EHLO
-        mail1.bemta33.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236999AbhLQORo (ORCPT
+        Fri, 17 Dec 2021 09:59:54 -0500
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:62918 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237716AbhLQO7x (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Dec 2021 09:17:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lenovo.com;
-        s=Selector; t=1639750663; i=@lenovo.com;
-        bh=98nc+1OGbHfZooAwPhay55LOoH6btmZ0NhjPClRkxG8=;
-        h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-         In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        b=V3iL6z2NldqY1d9d2UL/dPs48iMFnlG1yNy/fXbk9/D5ULpWXamEgOwlc+ebW7y2q
-         Az69BvFe83vFhE8UTLnehjfi784dPdGMXAAPSmbVJzx9Jb1HD0HxgylToPcvPUqXKI
-         oi4RrDZnlLf2rc4RrtR3BtOJGGvG8teyJPn9b9z2bIWkCSboaZH1NnAWGXdzMDwYRz
-         7Tjbvy3bbS+S3IkcS1MLE20FmQZvdqvvKFORXVxHc39p1YjMfQ/WYprC3FhMuTr3NA
-         I+vIWk5OCugJgcb1iz0VJSNbYGlAi4foWC6OW5GpdOF4sQeYdXiYCW710gw9FokB/H
-         nTa8GKgw6G/YQ==
-Received: from [100.114.67.184] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-4.bemta.az-a.us-east-2.aws.ess.symcld.net id 1E/EE-32326-70C9CB16; Fri, 17 Dec 2021 14:17:43 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKJsWRWlGSWpSXmKPExsWSoV9jpMs2Z0+
-  iwatX6hav/01nsXhzfDqTxdZb0hYHpk5jtli95wWzA6vHplWdbB4fn95i8Xi/7yqbx+dNcgEs
-  UayZeUn5FQmsGQe2TmMuWMlR8XHfRKYGxu9sXYxcHIwCS5klXh/ognIWsUr8On0Dyulkklj0+
-  CsjiCMkMJdJYuqfQyxdjJxAzj4miaNHHEBsCYHjjBLdq9whijoZJXZv/cEGUTSRSWL/XHmIxB
-  NGiU1T/7JCOA8YJU7/PcrexcjBwStgK/HobS2IySKgKrHhRABIL6+AoMTJmU/AlokKhEucXXW
-  bGaREWCBQ4shqY5Aws4C4xK0n85lAbBEBHYnLnT/YQaYzC0xllNjy6g47xA2aEjN+TQKz2QS0
-  JbZs+QV2G6eAlsTm9TuYIAZpSrRu/80OYctLbH87hxmiV1niV/95Zogn5SWWduxjhbATJHr+P
-  WKDsCUlrt28wA5hy0ocPTuHBcL2ldgy/zzYzRIC+hKvPwRBhAsktlxZDFWuJrHm/HrmCYx6s5
-  B8PAvJa7OQXDcLyXULGFlWMVolFWWmZ5TkJmbm6BoaGOgaGpromlkCkV5ilW6iXmmxbmpicYm
-  ukV5iebFeanGxXnFlbnJOil5easkmRmCKSilydd3BuHbVT71DjJIcTEqivHq5exKF+JLyUyoz
-  Eosz4otKc1KLDzHKcHAoSfAmdAPlBItS01Mr0jJzgOkSJi3BwaMkwvt4IlCat7ggMbc4Mx0id
-  YpRl2PCy7mLmIVY8vLzUqXEeVNmARUJgBRllObBjYCl7kuMslLCvIwMDAxCPAWpRbmZJajyrx
-  jFORiVhHkXgEzhycwrgdv0CugIJqAjwpN2gxxRkoiQkmpgsmdaf1xr54mpr291pO9yMa0+Ibh
-  /4w6NnstvA5Wnbt9kcrdN6knZMmMXgykX3xVonfXt07vbaMTDZL5YYXHawYfXV8guOG2j4f/9
-  x8/af/He1xT6Qv38VnkkNroK3RepKFofflJbbmnhyi2PL2jPW7nJZ4LqyzSZw2bVhzgVzYRiI
-  1JM9l3Qye//I86j22/Z9ie49s2hkumLF6e8kFukLZ6iv0gi0Tqzrd/4XbGaIofBlcXt605VM+
-  76dfSE9fr7lx7cffrhmcdEUV6h200/fsyb4ryxiV97hWObo2pEwannU45u0XHY/StXU2Ljo1s
-  Lt36fuan8DEeYbq3EjQnbzNzlltkpfD38asEnyRNPTJVYijMSDbWYi4oTAT3Zh/ZYBAAA
-X-Env-Sender: markpearson@lenovo.com
-X-Msg-Ref: server-2.tower-635.messagelabs.com!1639750660!13512!1
-X-Originating-IP: [104.47.124.50]
-X-SYMC-ESS-Client-Auth: mailfrom-relay-check=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.81.7; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 21855 invoked from network); 17 Dec 2021 14:17:42 -0000
-Received: from mail-hk2apc01lp2050.outbound.protection.outlook.com (HELO APC01-HK2-obe.outbound.protection.outlook.com) (104.47.124.50)
-  by server-2.tower-635.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 17 Dec 2021 14:17:42 -0000
+        Fri, 17 Dec 2021 09:59:53 -0500
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BHETXCc016436;
+        Fri, 17 Dec 2021 14:59:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : content-type : mime-version; s=corp-2021-07-09;
+ bh=ySHtHzBWShLcc8rWgOgYABZnTDgsKb2YRWuJR9iYYHg=;
+ b=eZ9+Sr+WZuHnmruphoVeDwJhjN3sAKoJinCU5aJTu/42dQOriGX4OkIxwqf0S83IE4h7
+ z2pdcM/dGAAmOoJLkEEtmz8i/gx/RY2vDQYXvslHriowPVvgPcPq4lGHm2cuJAZdEayJ
+ YzBcHt9W8IB/svlIZ219ka7otqnb/K1XJjtGlGwvpeUq3qoS/GtmJ4RZADRARZu+Djfe
+ dzmWULi02p2mRb+r5qMJi9tULXWnE0ymj1iVKA2uTG4KaRxT9YaxOhL7E0rvEqwbM+LE
+ jOxgAfYA2/EJ7gqkHzURspwy/beNMkfCJlP66sEbTHznUHZ3YQl4dv/lXU3ylys4Z3B8 gQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3cyknrntr2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Dec 2021 14:59:33 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1BHEujMN143764;
+        Fri, 17 Dec 2021 14:59:32 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2047.outbound.protection.outlook.com [104.47.66.47])
+        by userp3030.oracle.com with ESMTP id 3cvh43w02d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Dec 2021 14:59:32 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EeSds3A11qCa/EcJJkMIm/8g7fUGuK1Asfk7l6ktu9U0zzYIeCmYQAf2z+R6guSpYnV4pAoRtgUs8yh6uMv7Wg5EdiN/hBOGRIMblVhdMMbITtP4rYNumRoc+68DH05fQwJtOYbhmex2UIycVn6mp2dFteDX5Uaz7v4tv9ytg4RCjRdjDhBfm3UFVkkyO9lQOl+YnTsCNji9NDNikA1Tjw7BnEPgYnZKFuPadMjWNojcd9qg6GxY/txe3pSAxhggbjPWPDJmMFuoKzjw0+PDxSTKAEA6Edm1uTMj3dZNY8P/Hzhf6Go+PI9h1AXJCiOzO4l4T2K1Z5iuDuoW2ypvew==
+ b=DSEYssB/w0858G+PznT5vvc5eaJOdgqHopQ2tuUgf0FPVNTE4p2qkTGnBPvVvYlYeker/KTtb3YW36WHbPbzGgdKy3XVdASGog0eDtwfUt4beIfut1fm7r5WGYEI7wal076Y+stHjGTwV6pw+gLpPdRpGs4XRFbJDnBfmYOI1sZucfBSaIhMzb38pDV7adXElHH9Gt6VVNBAke/rKB9jE0GY9/hFjupYJuSC4trJyio2652OLrD/FdciOe7dp3wU1/0hCI0lODWTeAmaWiAhM/KC975eCMJozSyYgnxv7fRPmPMtSevjQCNniPLbEhVcAsFybHE4hTLb0Q9+52Qd3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=98nc+1OGbHfZooAwPhay55LOoH6btmZ0NhjPClRkxG8=;
- b=dLFXUgf/sE0qKXZ/00X17XZ5MO8rDP3rHzN/3tRT7IykKvhO1/0s4eU5kKxwDiv5iEh3TrkbyqabWLRAI7uOh+jgjY36dz4SoAVok9/cDzPFUABrp22H9HljWQ/jowjDweZAGQH8dyIJsmGtZzjxpmVFiUsgeEQytfOB44WsL5nhlvAPLo73zjHpe3TpeUfFOMpnKU5HQJG8OjCEL1b+nE4V0+b/Z4uq6XwjvdGfX0VmbatEto9H8tJICqZbweR9o9yRl2BRjQoXOqrFFJtz9oltgNb73jO5jXyOQaSc4AIbwNzy5jOaR0/yJYM/5ESq/3feQm6ZLuLUFrjZIC6pxg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
- is 104.232.225.6) smtp.rcpttodomain=oracle.com smtp.mailfrom=lenovo.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=lenovo.com;
- dkim=none (message not signed); arc=none
-Received: from SG2PR03CA0127.apcprd03.prod.outlook.com (2603:1096:4:91::31) by
- PS1PR0302MB2489.apcprd03.prod.outlook.com (2603:1096:803:8::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4823.8; Fri, 17 Dec
- 2021 14:17:39 +0000
-Received: from SG2APC01FT0044.eop-APC01.prod.protection.outlook.com
- (2603:1096:4:91:cafe::3) by SG2PR03CA0127.outlook.office365.com
- (2603:1096:4:91::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4823.7 via Frontend
- Transport; Fri, 17 Dec 2021 14:17:39 +0000
-X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is
- 104.232.225.6) smtp.mailfrom=lenovo.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=lenovo.com;
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- lenovo.com discourages use of 104.232.225.6 as permitted sender)
-Received: from mail.lenovo.com (104.232.225.6) by
- SG2APC01FT0044.mail.protection.outlook.com (10.13.36.162) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4778.13 via Frontend Transport; Fri, 17 Dec 2021 14:17:38 +0000
-Received: from reswpmail01.lenovo.com (10.62.32.20) by mail.lenovo.com
- (10.62.123.116) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2308.20; Fri, 17 Dec
- 2021 09:17:37 -0500
-Received: from [10.38.50.31] (10.38.50.31) by reswpmail01.lenovo.com
- (10.62.32.20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2308.20; Fri, 17 Dec
- 2021 09:17:36 -0500
-Message-ID: <3d96992a-c587-9490-7646-bddf9c7d62df@lenovo.com>
-Date:   Fri, 17 Dec 2021 09:17:35 -0500
+ bh=ySHtHzBWShLcc8rWgOgYABZnTDgsKb2YRWuJR9iYYHg=;
+ b=EeykePjoHR7offXGj5F0bOmodYmefO3oAgqdsyThOVEo4AGoe2TIy6ziLWbgS9zx5bytzFjYgeC7fvizzjpkvunDD8NPxzfigO7Bvyb1G83tMBG/m5yteq4vhC7yAW2mr7xZFSd58ltyVmDJBz2acmzO6iv1w5kX08FhvECWovQZ4jAi1ypaUsjKYRVSfmjNHNDkPPyQCS99ct2kAUFFAlDfUAKxqk5jY72WWKf6nQ/yZ6FB/cC7jV/KMhClBd5QQFxXaL29dUkHUKY2mMBPhaL1xYeVdDT6ecU+ht929KN52zBdwdV04UfzHe6vCFEiVctLVh+ItSFLPcN4Wo09kQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ySHtHzBWShLcc8rWgOgYABZnTDgsKb2YRWuJR9iYYHg=;
+ b=gonjEjVFwzLQ8mb3oah0C0aCYT7NXIWPHPlOMEtIwdvF1ICIBb+LFaxFeDpKPLUSAA/RlcOKHkBjaL/dPDYa9D1U4aA62DEEEIcOyF51CE/YLeRAerSDfR7lJpYRd7wwfM07vY5lJ+5OXvHmLYkF8hZrp8WZEc8haJ2sRdC8tf8=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by MWHPR10MB1424.namprd10.prod.outlook.com
+ (2603:10b6:300:21::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4778.17; Fri, 17 Dec
+ 2021 14:59:30 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::7194:c377:36cc:d9f0]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::7194:c377:36cc:d9f0%6]) with mapi id 15.20.4801.017; Fri, 17 Dec 2021
+ 14:59:29 +0000
+Date:   Fri, 17 Dec 2021 17:59:08 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Will Deacon <will@kernel.org>,
+        Bhaskara Budiredla <bbudiredla@marvell.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] drivers: perf: marvell_cn10k: fix an IS_ERR() vs NULL check
+Message-ID: <20211217145907.GA16611@kili>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: ZR0P278CA0061.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:21::12) To MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH] platform/x86: think-lmi: Prevent underflow in
- index_store()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        <platform-driver-x86@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20211217071209.GF26548@kili>
-From:   Mark Pearson <markpearson@lenovo.com>
-In-Reply-To: <20211217071209.GF26548@kili>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.38.50.31]
-X-ClientProxiedBy: reswpmail04.lenovo.com (10.62.32.23) To
- reswpmail01.lenovo.com (10.62.32.20)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f85016ef-d4b1-460c-8e55-08d9c167fb7e
-X-MS-TrafficTypeDiagnostic: PS1PR0302MB2489:EE_
-X-Microsoft-Antispam-PRVS: <PS1PR0302MB248959326AD5F6A7D999C3C5C5789@PS1PR0302MB2489.apcprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Office365-Filtering-Correlation-Id: 52b70b6f-735a-4e00-c2a3-08d9c16dd3b3
+X-MS-TrafficTypeDiagnostic: MWHPR10MB1424:EE_
+X-Microsoft-Antispam-PRVS: <MWHPR10MB1424148624B108ACD81FC16B8E789@MWHPR10MB1424.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3044;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: cENt6NaaAtvP3hf3jiLP0HOR3Gbq25bE0pKctQP6Yyaeik9MAOosUJdmyBDReE5jfEy2BTjx501df4wtOHvl4+UrJ7B74+wou7c7+VzNsh0U8OyF596Gn3qkrsjEKPbhq7jkgx6K/fLW/RIIKamGEfUDp0UxKtIcnlgyPafB+a3KuvSUQlkFkO0+EUZbLmHi1ZNN3B83TtRymu3nTKGpg9AFiQT1GNjeHjedJhElGt3mCn0VNM3e5Zx4valAxE/Oybjd7mXrZaJx803sJnSwlRgp3UrgtQXyu4Z4/3lLtwMLUwteiW3Qhmu9G0qI0LRAO1UDrYwjg27Pc4lxLVbdgqNeo/r5QNvmpSGZC383/MeNIAcaf75MEwqPk/7G8WlKEjmwKLaLAAXHyjkLU/yRAJ/rL4Xe/mDMWn2IIcOSGY/zvdw6PaBCJPpqM+Uq55bQE8UzEDNhynI5o6+dM8fERUjcqsfdhUCIHQr19CMPJMLP0qAOD8RnwcS30tojqo4rr3gXmA4XGWAnSDFaXz/cRq8C7wwtwjfO1kAYKNxNnA0IaMi/WlhlQAt7UiHUZ4umPYrgRX4JvhLlFllky3AvaupAdo8RxNfQB8V8IOkJRPGR7qP/Yc7tfd8fbYLiOt5LKYrfxa084vpIrvKvCyTdM7oJ3oqyxMezqFzMTCZQnd1ErR5EGbnt8nj5zfAu373VrGELvv4db+eYTRFcpZ+8spn4nWD9TbGfkGWdBzB2XLt0c+evcU9bHI2lPwaZLEzUIOwZ83O7LwH3qj3CAs/NyV00AURsfWbx8dFjOErNgtLhBt02pTSw3k+FrHCeFKmp
-X-Forefront-Antispam-Report: CIP:104.232.225.6;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.lenovo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230001)(4636009)(46966006)(36840700001)(40470700001)(47076005)(16526019)(186003)(26005)(82310400004)(83380400001)(426003)(70206006)(4326008)(31696002)(2616005)(86362001)(40460700001)(4001150100001)(53546011)(356005)(316002)(336012)(508600001)(81166007)(82960400001)(2906002)(5660300002)(36756003)(16576012)(54906003)(31686004)(6916009)(70586007)(36906005)(8936002)(8676002)(36860700001)(3940600001)(36900700001)(43740500002)(20210929001);DIR:OUT;SFP:1102;
-X-OriginatorOrg: lenovo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2021 14:17:38.9491
+X-Microsoft-Antispam-Message-Info: 7gHzzdL/y8H+1jTTheRq4U8KlKjhpmfUCmijosqaAsEVfjDYFj96QNhhDQWkAk8TShPSGENtvXK8BT4477FbNP4X15mWyGUdauJcRG/E9uuaicW4Tm2Brt/4LRev5kRbl3pvXYi4le5lCVbO7sO43N47KZhQDWcTQ61xF+kG8aUvTwcgmfYiY2DkJIUvj/qnh0v+b48ZuMwi1VOMCxS6Zp8hqFjlkA6RlYAvQncVfOMzbhvMs7fCjvXAI0YGgJNQy966+8/bVnAbzt19cc83qEHlmnIndHJ3rvkGHbQwhY7BkFjcShwBRi9vSLBNk9goXjLTru4/Mp2ZduXFnbaSadcauyqXmBwWDIBwi1D6cz0Y7JVxJnWF+QhsFUFJe2O3MBnR7KrF0cwxsmGvJ2anv54Cr9ro/pmVaXQ+UyWmKKontG3d14U+DbHm0u7LShvSS3Fv21AZ/M8l0Xw0jn6WTQ611W3gLE6y1eHa2s9iXgJZK0nZ6SqKHKxJ7zFm/RAPhPFrQgSQ31lBRHdIGtu3i+vRQpJnWrTokdSuPHO4FxQS9bB4Sfy1sFOBYSqK+5GubVbWI5xbkd9ndnodvZl0c3GMmvjsvH5YaN/mDIb8oLP4uArVOm3wvHK6Gc49KPNSnjWoNY5BCT5fb3pMK4AfVJErDIMOGum9mjtCoxfTM7j4dultMB5GSGu/ZKUOufnE2C1Bfr9UlOSt4D+xbkC4Wg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(7916004)(366004)(66946007)(508600001)(38350700002)(8936002)(44832011)(38100700002)(316002)(86362001)(110136005)(6486002)(52116002)(33716001)(33656002)(83380400001)(2906002)(26005)(5660300002)(9686003)(186003)(8676002)(1076003)(6666004)(6512007)(66556008)(66476007)(6506007)(4326008);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Hp4MFplJxNumqYkby1crXvr+iSD9aGn9Yb2mwsdUJHVCj2wWCa2nxTyHRm0n?=
+ =?us-ascii?Q?nYUdiF+26qr+0F2iSNGy20viNcZ93EMvbskveCrLW/f3aDKFNF8e7eWbsrel?=
+ =?us-ascii?Q?vPVMRRgb7Cla79k3nwv28x01ZjmD/LpAyn8zMPOl2J8EwTnNiNvmVSJgatUD?=
+ =?us-ascii?Q?qKt7mPZOAy1ei356L3AE3ag5W6dRPw88Q/99irhXMnaJ51X2Nt/wDelwE6Bs?=
+ =?us-ascii?Q?no3LvjwhBBDV3hAdjgGVCD3Ftuls0pYwi8wTPD/6g0gcGnc5q/HkYMcWjzIW?=
+ =?us-ascii?Q?j9t99UDzQUOqfxi/xqESAUFmUProkYAGw/edSXvljpaA7yqdi6TYbjn2vH7M?=
+ =?us-ascii?Q?0D8HF35ZleX4bZp/G9AUgN/iOYTNL2t7/0D+y8aaQKEhO2V/W3IRN2vJpirJ?=
+ =?us-ascii?Q?2yFPL/2bLJLghbHArq8x7b217SViDFFU89BqJyCPz1dd+QIGKg2NPSoqCY+c?=
+ =?us-ascii?Q?aiydI2XoEVWman8OxftUBMfKKisJchFkDpXgeDHad+bzjGOxlBwPaTvWMnVK?=
+ =?us-ascii?Q?vm228EozW14WGt/3iuf7Ri9SW/SmaVutzpQ493Ks1QF95nb9ua6qJZeQwxcU?=
+ =?us-ascii?Q?NBCyd7+5z+gEsMVV0ABf7C6c1dwcaCfR7VuptJEZDaL75i/DTYq9TLxeqFBk?=
+ =?us-ascii?Q?gWX+GEdZUDbcQAb60lyliRRIbe4ep2E6h8Ofivv6smXhCgIaOcTTrCeuTfUA?=
+ =?us-ascii?Q?22YH+GCvuMPhiuAAb3/rRA5cHi2NlTKVwfkUvBJZH5BJ+t8i65zyVrAr/91V?=
+ =?us-ascii?Q?RbOhSUt9W5LY8lXq821MuDZDpojPjBvLtyrAJggpzjxvPyClj6Io7cfIeGam?=
+ =?us-ascii?Q?6WNtZi28tXvkVd9N86HrkHuRuaK46DB9RMidMKMYu4meWyJKNhk0rofNSXxC?=
+ =?us-ascii?Q?HdjA2CvAlJWOGlUbTvcQpe8NGVu7nDPw3cM5EGQLAsNBIaedtgCyvb/CiRlf?=
+ =?us-ascii?Q?zo4PKw2iKvn8FuoAjoMknawFWmaWci1OLp4TyLoNKQRrtcDOH6PYyU1VE1r3?=
+ =?us-ascii?Q?1Hr61fhWnC3Sc0v/XqZ5DVZnxfSGcC4hFE69v63xuWi71O6TMmILViiH4tsT?=
+ =?us-ascii?Q?D/qVLYr0so3BmoVJ7oYbKJH5KGAhK3SQcwckjgqEWyFlgJciVlB2f4tSJq5+?=
+ =?us-ascii?Q?VWqT/E6PpZBzWlobv3OyQhlutX0JCh3OQtHZrlUzzJmpy8joCa1CH8friA15?=
+ =?us-ascii?Q?EI4DVEGbhW9EpbDZMaV7a+Rhl6953uK3FjqIp8ZyzTidPeeayN+ipYbMp/+6?=
+ =?us-ascii?Q?lWX5knkBEw9CO9duo9QUbfZ/XO5uY0FJWXuPrYOS/gmAIn8Do+rEbzyGuQ7I?=
+ =?us-ascii?Q?bs57bjx3gCSvCEUMH9d8SmAWQbO1Rbhis6CWxiEC8ZCBKviZBtFQYG0w9rYo?=
+ =?us-ascii?Q?c+g3hxq8bmWi19qKci+hno7zUEYKXffUOBAZY7nvrRYNXTFbjTXUYzBfbqfk?=
+ =?us-ascii?Q?uHxAuFPJK3t/G84zKUagMcDsTLzbwP1aEan73Q+VDPd/gnUI4Hmk2hfpckSF?=
+ =?us-ascii?Q?lvDLXbXyjZR/XomvyFvOshx7Pscg3H/tOb3Iqv2mS7oJYQJ/627Qxjc1ZF/W?=
+ =?us-ascii?Q?J9uE330x1nXF8C59paP/upGgNLB5Lz3sU4r0aqiWRh/l7XVpcieKAoxEOcrD?=
+ =?us-ascii?Q?oQ8E7ImH7IqCvqAKhD4hnnWl8Wi4UUBv39PKz4/o5D3Iu63WaOIPrTMptGOg?=
+ =?us-ascii?Q?XPtmYtAwvDNfgBGBCmgKsRTz7nM=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52b70b6f-735a-4e00-c2a3-08d9c16dd3b3
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2021 14:59:29.8214
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f85016ef-d4b1-460c-8e55-08d9c167fb7e
-X-MS-Exchange-CrossTenant-Id: 5c7d0b28-bdf8-410c-aa93-4df372b16203
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5c7d0b28-bdf8-410c-aa93-4df372b16203;Ip=[104.232.225.6];Helo=[mail.lenovo.com]
-X-MS-Exchange-CrossTenant-AuthSource: SG2APC01FT0044.eop-APC01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PS1PR0302MB2489
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MIBSgmaDCHQEESZQdNLI4nFrlmxUlaTpsQWiZU5Bz1f6zi5Bl4daAqz3p/f2Z109+2a3dHMekqeGnI5bJFYzeFxPhbgVhCqopx3AfzJ18gY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR10MB1424
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10200 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 suspectscore=0
+ malwarescore=0 mlxlogscore=999 bulkscore=0 mlxscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
+ definitions=main-2112170087
+X-Proofpoint-ORIG-GUID: YRxWigmEP9bSe5iTyDPSRG2OATZ1uIuz
+X-Proofpoint-GUID: YRxWigmEP9bSe5iTyDPSRG2OATZ1uIuz
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Thanks Dan
+The devm_ioremap() function does not return error pointers.  It returns
+NULL.
 
-On 2021-12-17 02:12, Dan Carpenter wrote:
-> There needs to be a check to prevent negative offsets for
-> setting->index.  I have reviewed this code and I think that the
-> "if (block->instance_count <= instance)" check in __query_block() will
-> prevent this from resulting in an out of bounds access.  But it's
-> still worth fixing.
-> 
-> Fixes: 640a5fa50a42 ("platform/x86: think-lmi: Opcode support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/platform/x86/think-lmi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/x86/think-lmi.c b/drivers/platform/x86/think-lmi.c
-> index 27ab8e4e5b83..0b73e16cccea 100644
-> --- a/drivers/platform/x86/think-lmi.c
-> +++ b/drivers/platform/x86/think-lmi.c
-> @@ -573,7 +573,7 @@ static ssize_t index_store(struct kobject *kobj,
->  	if (err < 0)
->  		return err;
->  
-> -	if (val > TLMI_INDEX_MAX)
-> +	if (val < 0 || val > TLMI_INDEX_MAX)
->  		return -EINVAL;
->  
->  	setting->index = val;
-> 
-Agreed, it's good to have this check.
-Thank you
-Mark
+Fixes: 036a7584bede ("drivers: perf: Add LLC-TAD perf counter support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+When you're adding a new driver please use the correct prefix for the
+first commit:
+
+ Bad: subsystem: Add new driver for Fancy New Hardware
+Good: subsystem/new_hdwr: Add new driver for Fancy New Hardware
+
+Otherwise it's impossible to guess which prefix you prefer.
+
+ drivers/perf/marvell_cn10k_tad_pmu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/perf/marvell_cn10k_tad_pmu.c b/drivers/perf/marvell_cn10k_tad_pmu.c
+index 250dd4c52d70..7f4d292658e3 100644
+--- a/drivers/perf/marvell_cn10k_tad_pmu.c
++++ b/drivers/perf/marvell_cn10k_tad_pmu.c
+@@ -312,7 +312,7 @@ static int tad_pmu_probe(struct platform_device *pdev)
+ 		regions[i].base = devm_ioremap(&pdev->dev,
+ 					       res->start,
+ 					       tad_pmu_page_size);
+-		if (IS_ERR(regions[i].base)) {
++		if (!regions[i].base) {
+ 			dev_err(&pdev->dev, "TAD%d ioremap fail\n", i);
+ 			return -ENOMEM;
+ 		}
+-- 
+2.20.1
+
