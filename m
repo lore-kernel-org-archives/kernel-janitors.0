@@ -2,93 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FDE3C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Dec 2021 21:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B94C3C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Dec 2021 22:20:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230459AbhLQV7A (ORCPT
+        id S230001AbhLQWUO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Dec 2021 16:59:00 -0500
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:65287 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230424AbhLQV7A (ORCPT
+        Fri, 17 Dec 2021 17:20:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40134 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229480AbhLQWUL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Dec 2021 16:59:00 -0500
-Received: from pop-os.home ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id yLFamDpNSUGqlyLFamEgAB; Fri, 17 Dec 2021 22:58:59 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Fri, 17 Dec 2021 22:58:59 +0100
-X-ME-IP: 86.243.171.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     dwmw2@infradead.org, baolu.lu@linux.intel.com, joro@8bytes.org,
-        will@kernel.org
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] iommu/vt-d: Use bitmap_zalloc() when applicable
-Date:   Fri, 17 Dec 2021 22:58:49 +0100
-Message-Id: <367914663187b8fe043e31b352cd6ad836088f0a.1639778255.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.30.2
+        Fri, 17 Dec 2021 17:20:11 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94D72C061574;
+        Fri, 17 Dec 2021 14:20:11 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3D09F62411;
+        Fri, 17 Dec 2021 22:20:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A20CAC36AE8;
+        Fri, 17 Dec 2021 22:20:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639779610;
+        bh=Kum7r0wTtsWIkvSn2t0rm2SvGvxHdbz+bkHQHaazmqA=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=OkJGksF+fKmA7OXDjNT2FU4sUMZGgakjKg4ihA4vUHhXrAtgQg6AXUvTSjyaYMzyF
+         b7tAN+nVOqbgRh9DDLqM9wzaed9eUaYDFWmZvIESN+W719XU6yfwhrtDsXSEPZSdti
+         QAIAJqi8fME6VFSc/rNOy7cPhv6uUzp3rr/LXQ7ngj/hj0inNo09HUPHLpcDB6GxSm
+         bA9bGBUlr03wXjcBmCXVT4CoZW4sHzN2VmVy1DoN3tNre/JTUDLDyooebHH2DGYXmv
+         kgsKA9J84Wm4o9r/rYn/6SOzls+qwzeQHfPNvGGo6Slnp2t3pt4hlfuxj9eW/8a+5C
+         auor5t46Mcp4A==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 7D62360A3C;
+        Fri, 17 Dec 2021 22:20:10 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] bpf,
+ selftests: Fix spelling mistake "tained" -> "tainted"
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <163977961050.17343.6487483630157192212.git-patchwork-notify@kernel.org>
+Date:   Fri, 17 Dec 2021 22:20:10 +0000
+References: <20211217182400.39296-1-colin.i.king@gmail.com>
+In-Reply-To: <20211217182400.39296-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     shuah@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+        andrii@kernel.org, kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, linux-kselftest@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'ommu->domain_ids' is a bitmap. So use 'bitmap_zalloc()' to simplify
-code and improve the semantic, instead of hand writing it.
+Hello:
 
-Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
-consistency.
+This patch was applied to bpf/bpf.git (master)
+by Daniel Borkmann <daniel@iogearbox.net>:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/iommu/intel/iommu.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+On Fri, 17 Dec 2021 18:24:00 +0000 you wrote:
+> There appears to be a spelling mistake in a bpf test message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  tools/testing/selftests/bpf/verifier/value_ptr_arith.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index b6a8f3282411..4acc97765209 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -1878,17 +1878,16 @@ static void iommu_disable_translation(struct intel_iommu *iommu)
- 
- static int iommu_init_domains(struct intel_iommu *iommu)
- {
--	u32 ndomains, nlongs;
-+	u32 ndomains;
- 	size_t size;
- 
- 	ndomains = cap_ndoms(iommu->cap);
- 	pr_debug("%s: Number of Domains supported <%d>\n",
- 		 iommu->name, ndomains);
--	nlongs = BITS_TO_LONGS(ndomains);
- 
- 	spin_lock_init(&iommu->lock);
- 
--	iommu->domain_ids = kcalloc(nlongs, sizeof(unsigned long), GFP_KERNEL);
-+	iommu->domain_ids = bitmap_zalloc(ndomains, GFP_KERNEL);
- 	if (!iommu->domain_ids)
- 		return -ENOMEM;
- 
-@@ -1903,7 +1902,7 @@ static int iommu_init_domains(struct intel_iommu *iommu)
- 	if (!iommu->domains || !iommu->domains[0]) {
- 		pr_err("%s: Allocating domain array failed\n",
- 		       iommu->name);
--		kfree(iommu->domain_ids);
-+		bitmap_free(iommu->domain_ids);
- 		kfree(iommu->domains);
- 		iommu->domain_ids = NULL;
- 		iommu->domains    = NULL;
-@@ -1964,7 +1963,7 @@ static void free_dmar_iommu(struct intel_iommu *iommu)
- 		for (i = 0; i < elems; i++)
- 			kfree(iommu->domains[i]);
- 		kfree(iommu->domains);
--		kfree(iommu->domain_ids);
-+		bitmap_free(iommu->domain_ids);
- 		iommu->domains = NULL;
- 		iommu->domain_ids = NULL;
- 	}
+Here is the summary with links:
+  - [next] bpf, selftests: Fix spelling mistake "tained" -> "tainted"
+    https://git.kernel.org/bpf/bpf/c/819d11507f66
+
+You are awesome, thank you!
 -- 
-2.30.2
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
