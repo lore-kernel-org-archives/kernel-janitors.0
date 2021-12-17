@@ -2,75 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D35C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Dec 2021 21:50:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53122C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Dec 2021 21:54:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230205AbhLQVu6 (ORCPT
+        id S230252AbhLQVyT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Dec 2021 16:50:58 -0500
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:60509 "EHLO
+        Fri, 17 Dec 2021 16:54:19 -0500
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:62150 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230189AbhLQVu5 (ORCPT
+        with ESMTP id S230145AbhLQVyT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Dec 2021 16:50:57 -0500
-Received: from [192.168.1.18] ([86.243.171.122])
+        Fri, 17 Dec 2021 16:54:19 -0500
+Received: from pop-os.home ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id yL7umDn0WUGqlyL7vmEfgL; Fri, 17 Dec 2021 22:50:55 +0100
-X-ME-Helo: [192.168.1.18]
+        id yLB7mDo2VUGqlyLB7mEfuG; Fri, 17 Dec 2021 22:54:18 +0100
+X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Fri, 17 Dec 2021 22:50:55 +0100
+X-ME-Date: Fri, 17 Dec 2021 22:54:18 +0100
 X-ME-IP: 86.243.171.122
-Subject: Re: [PATCH] powerpc/mpic: Use bitmap_zalloc() when applicable
-To:     vneethv@linux.ibm.com, oberpar@linux.ibm.com, hca@linux.ibm.com,
-        gor@linux.ibm.com, borntraeger@linux.ibm.com,
-        agordeev@linux.ibm.com
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <c323cce0ce286d41f4bf2d316c0e4cce0f4abfa8.1639776929.git.christophe.jaillet@wanadoo.fr>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <d0ffcb0f-459c-95c6-a3d2-da39a7d87873@wanadoo.fr>
-Date:   Fri, 17 Dec 2021 22:50:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+To:     mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
+        maz@kernel.org
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] powerpc/mpic: Use bitmap_zalloc() when applicable
+Date:   Fri, 17 Dec 2021 22:54:12 +0100
+Message-Id: <aa145f674e08044c98f13f1a985faa9cc29c3708.1639777976.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <c323cce0ce286d41f4bf2d316c0e4cce0f4abfa8.1639776929.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 17/12/2021 à 22:37, Christophe JAILLET a écrit :
-> 'mpic->protected' is a bitmap. So use 'bitmap_zalloc()' to simplify
-> code and improve the semantic, instead of hand writing it.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->   drivers/s390/cio/idset.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/s390/cio/idset.c b/drivers/s390/cio/idset.c
-> index 45f9c0736be4..7e5550230c0f 100644
-> --- a/drivers/s390/cio/idset.c
-> +++ b/drivers/s390/cio/idset.c
-> @@ -25,11 +25,10 @@ static struct idset *idset_new(int num_ssid, int num_id)
->   {
->   	struct idset *set;
->   
-> -	set = vmalloc(sizeof(struct idset) + bitmap_size(num_ssid, num_id));
-> +	set = vzalloc(sizeof(struct idset) + bitmap_size(num_ssid, num_id));
->   	if (set) {
->   		set->num_ssid = num_ssid;
->   		set->num_id = num_id;
-> -		memset(set->bitmap, 0, bitmap_size(num_ssid, num_id));
->   	}
->   	return set;
->   }
-> 
-NACK,
+'mpic->protected' is a bitmap. So use 'bitmap_zalloc()' to simplify
+code and improve the semantic, instead of hand writing it.
 
-my git GUI played me some tricks.
-Wrong patch attached :(
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ arch/powerpc/sysdev/mpic.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-CJ
+diff --git a/arch/powerpc/sysdev/mpic.c b/arch/powerpc/sysdev/mpic.c
+index 995fb2ada507..626ba4a9f64f 100644
+--- a/arch/powerpc/sysdev/mpic.c
++++ b/arch/powerpc/sysdev/mpic.c
+@@ -1323,8 +1323,7 @@ struct mpic * __init mpic_alloc(struct device_node *node,
+ 	psrc = of_get_property(mpic->node, "protected-sources", &psize);
+ 	if (psrc) {
+ 		/* Allocate a bitmap with one bit per interrupt */
+-		unsigned int mapsize = BITS_TO_LONGS(intvec_top + 1);
+-		mpic->protected = kcalloc(mapsize, sizeof(long), GFP_KERNEL);
++		mpic->protected = bitmap_zalloc(intvec_top + 1, GFP_KERNEL);
+ 		BUG_ON(mpic->protected == NULL);
+ 		for (i = 0; i < psize/sizeof(u32); i++) {
+ 			if (psrc[i] > intvec_top)
+-- 
+2.30.2
+
