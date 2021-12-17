@@ -2,113 +2,124 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A84C4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Dec 2021 15:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C624C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Dec 2021 17:05:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235268AbhLQPpR (ORCPT
+        id S239632AbhLQRF1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Dec 2021 10:45:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32784 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234993AbhLQPpP (ORCPT
+        Fri, 17 Dec 2021 12:05:27 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:47208 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239619AbhLQRFY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Dec 2021 10:45:15 -0500
-Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD99DC061574;
-        Fri, 17 Dec 2021 07:45:14 -0800 (PST)
-Received: by mail-oi1-x22c.google.com with SMTP id w64so4138896oif.10;
-        Fri, 17 Dec 2021 07:45:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=uZ8krUXCSkFJEVk+pBrz3qOWD2pHhzJx4XHVD2svN/s=;
-        b=OMqAz3f9cNg5bk4GTw5gw02EeUfitXDqPiwpHk7kHtiVU9126JRhVDM/hRTwrLyZXU
-         YxqWNYANU8oQkA2MkOmBFrqUDK2EvFZ/gSqGJ+90D0NKoKCxHVymT3eWu9aNbB74Wf3q
-         Y7njQorol6I+KaWCpVHLnEmjvnEeZFYOL5nsKm7x+2e4XphiDXd8kq2e8zuM3zOfQCZA
-         YjZTeOW8y4RA3o6f+ODYrZxQhAdWiLag7+fjT5/eo5tMC7AAnPVjLmnFWzHqLGwsCRhN
-         ujF90XWG0IRmpSbzY1Bxnc2rAOwRfaX6I8jli+FKPoOOMNh20DTSSUxUp9yJkcbDVlQO
-         Cj0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=uZ8krUXCSkFJEVk+pBrz3qOWD2pHhzJx4XHVD2svN/s=;
-        b=O3EKNNMfMNjCEkOAyKHpi8jLqWDDJr5EGHMX4iEth73lud3MLQ8hy+0LRnNcoEgddl
-         hwpXNHyzhHEl0ihX8Zb8xvSlzzjdu35arJnX2O925nZnAYdC8oLx8wD5rDSrHbIbelLX
-         rlCb1eBelYmndz1RWWlT+fbQVWlzbsvXaK5m0UHkzlNthJHIVGTwsFWo9JNSDJnXTTc1
-         ZOoxGIavJ6+yILCl8uQuYAQbqczjCXuHgQSuq/DQgC1EHxwVPNh2PwNpoAHEXuqW3wCB
-         30pZTibtCcGTk3keNtNTXRBVj6TcG/QlofOKJKcOujq9sfWbEDjms8qb8eEC/eOpkNZE
-         3Z8Q==
-X-Gm-Message-State: AOAM5322+KX6IzyL7Z+RlpcSnEzfBaoh2OcHmR75dJ/9WP2h3aAT683b
-        5xTB5MXav9Fa8uRSgLFXEXc=
-X-Google-Smtp-Source: ABdhPJyloBMK1IeYm+CC5Aj5GZB5qrSRSewk71IGCTlnLOPNwI/SibCCfGbCWe92ZytS8rjd+UET+A==
-X-Received: by 2002:a54:4590:: with SMTP id z16mr2413538oib.67.1639755914291;
-        Fri, 17 Dec 2021 07:45:14 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id m6sm1614536ooe.24.2021.12.17.07.45.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Dec 2021 07:45:13 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Fri, 17 Dec 2021 07:45:12 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: prefix kernel-doc comments for structs with struct
-Message-ID: <20211217154512.GA2882803@roeck-us.net>
-References: <20211216154257.26758-1-lukas.bulwahn@gmail.com>
+        Fri, 17 Dec 2021 12:05:24 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4E02462313;
+        Fri, 17 Dec 2021 17:05:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3F7BC36AE1;
+        Fri, 17 Dec 2021 17:05:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639760723;
+        bh=HGHIpmA0yzJfm35X6d4VhUpxnuLa9XOigADxb408EUM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Rg5afhcXiVCBjBanS4lOzia/BtDVwiBQSBxFHhL3AZQTu8JWfqBPS8yhXEr+2oEkV
+         y3Zko+BAQ+P5Cp3pxPfYQmCtCc/U7GT9pfWrLLY8Vz7rAzmFAexzlmh5KRkKYnVle2
+         m89IXzdY49Ce2kHGkxnCI0slit00Rm+JDbvuCeMcd6iQJAAbm1SaAVZEvbiROSzM41
+         aKTHf4Bq7sNrVkTJiKY6RByeA1lhM6553eeh0jyzp/ZWYIzuTblQsglbq0h4MafOP+
+         XD+IygridJZ7205AnvDHI5rbRS0sVZybdzNBlVbjHrwYXkNjsUs0ZrMiOP393imTBB
+         iSNBjBCzXhIvA==
+Date:   Fri, 17 Dec 2021 09:05:23 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] xfs: prevent a WARN_ONCE() in xfs_ioc_attr_list()
+Message-ID: <20211217170523.GG27664@magnolia>
+References: <20211217065453.GB26548@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211216154257.26758-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20211217065453.GB26548@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Dec 16, 2021 at 04:42:57PM +0100, Lukas Bulwahn wrote:
-> The command ./scripts/kernel-doc -none include/linux/hwmon.h warns:
+On Fri, Dec 17, 2021 at 09:54:53AM +0300, Dan Carpenter wrote:
+> The "bufsize" comes from the root user.  If "bufsize" is negative then,
+> because of type promotion, neither of the validation checks at the start
+> of the function are able to catch it:
 > 
->   include/linux/hwmon.h:406: warning: This comment starts with '/**', but
->     isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
->    * Channel information
->   include/linux/hwmon.h:425: warning: This comment starts with '/**', but
->     isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
->    * Chip configuration
+> 	if (bufsize < sizeof(struct xfs_attrlist) ||
+> 	    bufsize > XFS_XATTR_LIST_MAX)
+> 		return -EINVAL;
 > 
-> Address those kernel-doc warnings by prefixing kernel-doc descriptions for
-> structs with the keyword 'struct'.
+> This means "bufsize" will trigger (WARN_ON_ONCE(size > INT_MAX)) in
+> kvmalloc_node().  Fix this by changing the type from int to size_t.
 > 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied.
+Makes sense, particularly since the only caller supplies a u32 anyway.
 
-Thanks,
-Guenter
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 > ---
->  include/linux/hwmon.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> It's sort of hard to figure out which Fixes tag to use...  Maybe:
 > 
-> diff --git a/include/linux/hwmon.h b/include/linux/hwmon.h
-> index 1e8d6ea8992e..fad1f1df26df 100644
-> --- a/include/linux/hwmon.h
-> +++ b/include/linux/hwmon.h
-> @@ -403,7 +403,7 @@ struct hwmon_ops {
->  };
+> Fixes: 7661809d493b ("mm: don't allow oversized kvmalloc() calls")
+> 
+> so it gets backported to the kernels which have the warning?
+
+But that's just the warning, right?  I think the root problem here is
+turning the ioctl's u32 length argument into a signed int for parameter
+passing, and then promoting it back to unsigned types for validation and
+memory allocation.  I would have suggested:
+
+Fixes: 3e7a779937a2 ("xfs: move the legacy xfs_attr_list to xfs_ioctl.c")
+
+to trigger the autobackport robots, though that's a 2020 commit and
+hence not so useful for spelunking.
+
+Looking through the multiple reorganiziations of the git tree I think
+the validation error itself dates to before 2013, but patching old
+kernels will require the human touch.
+
+--D
+
+> 
+>  fs/xfs/xfs_ioctl.c | 2 +-
+>  fs/xfs/xfs_ioctl.h | 5 +++--
+>  2 files changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> index 174cd8950cb6..29231a8c8a45 100644
+> --- a/fs/xfs/xfs_ioctl.c
+> +++ b/fs/xfs/xfs_ioctl.c
+> @@ -372,7 +372,7 @@ int
+>  xfs_ioc_attr_list(
+>  	struct xfs_inode		*dp,
+>  	void __user			*ubuf,
+> -	int				bufsize,
+> +	size_t				bufsize,
+>  	int				flags,
+>  	struct xfs_attrlist_cursor __user *ucursor)
+>  {
+> diff --git a/fs/xfs/xfs_ioctl.h b/fs/xfs/xfs_ioctl.h
+> index 28453a6d4461..845d3bcab74b 100644
+> --- a/fs/xfs/xfs_ioctl.h
+> +++ b/fs/xfs/xfs_ioctl.h
+> @@ -38,8 +38,9 @@ xfs_readlink_by_handle(
+>  int xfs_ioc_attrmulti_one(struct file *parfilp, struct inode *inode,
+>  		uint32_t opcode, void __user *uname, void __user *value,
+>  		uint32_t *len, uint32_t flags);
+> -int xfs_ioc_attr_list(struct xfs_inode *dp, void __user *ubuf, int bufsize,
+> -	int flags, struct xfs_attrlist_cursor __user *ucursor);
+> +int xfs_ioc_attr_list(struct xfs_inode *dp, void __user *ubuf,
+> +		      size_t bufsize, int flags,
+> +		      struct xfs_attrlist_cursor __user *ucursor);
 >  
->  /**
-> - * Channel information
-> + * struct hwmon_channel_info - Channel information
->   * @type:	Channel type.
->   * @config:	Pointer to NULL-terminated list of channel parameters.
->   *		Use for per-channel attributes.
-> @@ -422,7 +422,7 @@ struct hwmon_channel_info {
->  	})
->  
->  /**
-> - * Chip configuration
-> + * struct hwmon_chip_info - Chip configuration
->   * @ops:	Pointer to hwmon operations.
->   * @info:	Null-terminated list of channel information.
->   */
+>  extern struct dentry *
+>  xfs_handle_to_dentry(
+> -- 
+> 2.20.1
+> 
