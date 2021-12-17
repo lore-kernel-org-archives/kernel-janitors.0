@@ -2,124 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C624C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Dec 2021 17:05:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF849C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Dec 2021 18:24:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239632AbhLQRF1 (ORCPT
+        id S240278AbhLQSYE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Dec 2021 12:05:27 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:47208 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239619AbhLQRFY (ORCPT
+        Fri, 17 Dec 2021 13:24:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42864 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229543AbhLQSYD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Dec 2021 12:05:24 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4E02462313;
-        Fri, 17 Dec 2021 17:05:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3F7BC36AE1;
-        Fri, 17 Dec 2021 17:05:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639760723;
-        bh=HGHIpmA0yzJfm35X6d4VhUpxnuLa9XOigADxb408EUM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Rg5afhcXiVCBjBanS4lOzia/BtDVwiBQSBxFHhL3AZQTu8JWfqBPS8yhXEr+2oEkV
-         y3Zko+BAQ+P5Cp3pxPfYQmCtCc/U7GT9pfWrLLY8Vz7rAzmFAexzlmh5KRkKYnVle2
-         m89IXzdY49Ce2kHGkxnCI0slit00Rm+JDbvuCeMcd6iQJAAbm1SaAVZEvbiROSzM41
-         aKTHf4Bq7sNrVkTJiKY6RByeA1lhM6553eeh0jyzp/ZWYIzuTblQsglbq0h4MafOP+
-         XD+IygridJZ7205AnvDHI5rbRS0sVZybdzNBlVbjHrwYXkNjsUs0ZrMiOP393imTBB
-         iSNBjBCzXhIvA==
-Date:   Fri, 17 Dec 2021 09:05:23 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] xfs: prevent a WARN_ONCE() in xfs_ioc_attr_list()
-Message-ID: <20211217170523.GG27664@magnolia>
-References: <20211217065453.GB26548@kili>
+        Fri, 17 Dec 2021 13:24:03 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B4DFC061574;
+        Fri, 17 Dec 2021 10:24:03 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id r17so5336274wrc.3;
+        Fri, 17 Dec 2021 10:24:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1DaKXL8orHozQmF64Lx5P0LmTQ5Gm5T6HjA9h/tMGP8=;
+        b=BsipFRerfGIbeJTeuRbVUn3UqG+64FCNItkHw9vUN1xUtYkwmFpROX+fv9Eilq+qp7
+         gns9xBw9nZZrqh/+sdZN6fmr1lxvZIl4N/UHYog9gLv54yldzSWj4a0K/MfIB622DQKx
+         2H4lemRpOOukPWNQST9JYB+Q0m871UzMN+AFEXHqfDWegjIxX2PWf0fRexRDcX8D3SKG
+         sWu/Kx+g05AUpBzeAWXvV3l/KOclFVpJyxto2ZExTDggkwBVYMkjZq+8tqqptamPspX9
+         KqieSXOyC7KmwoV3WnRNmN+d9kMmGhlRZ84w7HVVNOZslGEpScfBsZk/5C394TMGPjuy
+         bk5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1DaKXL8orHozQmF64Lx5P0LmTQ5Gm5T6HjA9h/tMGP8=;
+        b=bbypZdo5ZVAHi5FIoC9kHzE6hS2v9sTgmIV+8+8dC6dc3UBfh3ABLsNiK9dypxlD3P
+         OF7zrDG4VcDwKoyY3+G8sRxr0G0hPF/uAqKztfaBJswRyJvyQgpRzfXmEHXLm56brUjH
+         +rfWDQSSn5nSWtnlDMWkDFX66BId3oCmrtqvcdxmzcMu8IaGcTUJtHqERBXs5O+KbdJw
+         IJP80A49TCXeUO+SZKplqjF7fAg0KrlPhFDzzgIjYdH5oAHUCaKzSCBMJvExMXZ2Gnth
+         upYkyADIHKEuG3l28cLZ36jFPFoboqmbmf6wH2g7d7+ka2DhixZ4il6H3RO0GpjEIOjo
+         uZJA==
+X-Gm-Message-State: AOAM531UXoU9E5n3XlSbsNAvWmJIIewC++KTu72Uu0j0EE6boiZmdPTt
+        u1AzvWi8e4cHMkZFUJxFWWM=
+X-Google-Smtp-Source: ABdhPJwzAPXhWGTvt6MEl6bjCoE4AGsG11ijHe8AsJObT74ax5zenkB6BRkQI/+L4y18/l4UW6Gh6Q==
+X-Received: by 2002:adf:9146:: with SMTP id j64mr3540685wrj.487.1639765441644;
+        Fri, 17 Dec 2021 10:24:01 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id q123sm10860191wma.30.2021.12.17.10.24.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Dec 2021 10:24:01 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] bpf, selftests: Fix spelling mistake "tained" -> "tainted"
+Date:   Fri, 17 Dec 2021 18:24:00 +0000
+Message-Id: <20211217182400.39296-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211217065453.GB26548@kili>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Dec 17, 2021 at 09:54:53AM +0300, Dan Carpenter wrote:
-> The "bufsize" comes from the root user.  If "bufsize" is negative then,
-> because of type promotion, neither of the validation checks at the start
-> of the function are able to catch it:
-> 
-> 	if (bufsize < sizeof(struct xfs_attrlist) ||
-> 	    bufsize > XFS_XATTR_LIST_MAX)
-> 		return -EINVAL;
-> 
-> This means "bufsize" will trigger (WARN_ON_ONCE(size > INT_MAX)) in
-> kvmalloc_node().  Fix this by changing the type from int to size_t.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+There appears to be a spelling mistake in a bpf test message. Fix it.
 
-Makes sense, particularly since the only caller supplies a u32 anyway.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/testing/selftests/bpf/verifier/value_ptr_arith.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+diff --git a/tools/testing/selftests/bpf/verifier/value_ptr_arith.c b/tools/testing/selftests/bpf/verifier/value_ptr_arith.c
+index 4d347bc53aa2..359f3e8f8b60 100644
+--- a/tools/testing/selftests/bpf/verifier/value_ptr_arith.c
++++ b/tools/testing/selftests/bpf/verifier/value_ptr_arith.c
+@@ -1078,7 +1078,7 @@
+ 	.errstr_unpriv = "R0 pointer -= pointer prohibited",
+ },
+ {
+-	"map access: trying to leak tained dst reg",
++	"map access: trying to leak tainted dst reg",
+ 	.insns = {
+ 	BPF_MOV64_IMM(BPF_REG_0, 0),
+ 	BPF_ST_MEM(BPF_DW, BPF_REG_10, -8, 0),
+-- 
+2.33.1
 
-> ---
-> It's sort of hard to figure out which Fixes tag to use...  Maybe:
-> 
-> Fixes: 7661809d493b ("mm: don't allow oversized kvmalloc() calls")
-> 
-> so it gets backported to the kernels which have the warning?
-
-But that's just the warning, right?  I think the root problem here is
-turning the ioctl's u32 length argument into a signed int for parameter
-passing, and then promoting it back to unsigned types for validation and
-memory allocation.  I would have suggested:
-
-Fixes: 3e7a779937a2 ("xfs: move the legacy xfs_attr_list to xfs_ioctl.c")
-
-to trigger the autobackport robots, though that's a 2020 commit and
-hence not so useful for spelunking.
-
-Looking through the multiple reorganiziations of the git tree I think
-the validation error itself dates to before 2013, but patching old
-kernels will require the human touch.
-
---D
-
-> 
->  fs/xfs/xfs_ioctl.c | 2 +-
->  fs/xfs/xfs_ioctl.h | 5 +++--
->  2 files changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> index 174cd8950cb6..29231a8c8a45 100644
-> --- a/fs/xfs/xfs_ioctl.c
-> +++ b/fs/xfs/xfs_ioctl.c
-> @@ -372,7 +372,7 @@ int
->  xfs_ioc_attr_list(
->  	struct xfs_inode		*dp,
->  	void __user			*ubuf,
-> -	int				bufsize,
-> +	size_t				bufsize,
->  	int				flags,
->  	struct xfs_attrlist_cursor __user *ucursor)
->  {
-> diff --git a/fs/xfs/xfs_ioctl.h b/fs/xfs/xfs_ioctl.h
-> index 28453a6d4461..845d3bcab74b 100644
-> --- a/fs/xfs/xfs_ioctl.h
-> +++ b/fs/xfs/xfs_ioctl.h
-> @@ -38,8 +38,9 @@ xfs_readlink_by_handle(
->  int xfs_ioc_attrmulti_one(struct file *parfilp, struct inode *inode,
->  		uint32_t opcode, void __user *uname, void __user *value,
->  		uint32_t *len, uint32_t flags);
-> -int xfs_ioc_attr_list(struct xfs_inode *dp, void __user *ubuf, int bufsize,
-> -	int flags, struct xfs_attrlist_cursor __user *ucursor);
-> +int xfs_ioc_attr_list(struct xfs_inode *dp, void __user *ubuf,
-> +		      size_t bufsize, int flags,
-> +		      struct xfs_attrlist_cursor __user *ucursor);
->  
->  extern struct dentry *
->  xfs_handle_to_dentry(
-> -- 
-> 2.20.1
-> 
