@@ -2,94 +2,66 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF849C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Dec 2021 18:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D11AC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 17 Dec 2021 21:37:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240278AbhLQSYE (ORCPT
+        id S229792AbhLQVhT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 17 Dec 2021 13:24:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42864 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229543AbhLQSYD (ORCPT
+        Fri, 17 Dec 2021 16:37:19 -0500
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:53049 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229779AbhLQVhT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 17 Dec 2021 13:24:03 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B4DFC061574;
-        Fri, 17 Dec 2021 10:24:03 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id r17so5336274wrc.3;
-        Fri, 17 Dec 2021 10:24:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1DaKXL8orHozQmF64Lx5P0LmTQ5Gm5T6HjA9h/tMGP8=;
-        b=BsipFRerfGIbeJTeuRbVUn3UqG+64FCNItkHw9vUN1xUtYkwmFpROX+fv9Eilq+qp7
-         gns9xBw9nZZrqh/+sdZN6fmr1lxvZIl4N/UHYog9gLv54yldzSWj4a0K/MfIB622DQKx
-         2H4lemRpOOukPWNQST9JYB+Q0m871UzMN+AFEXHqfDWegjIxX2PWf0fRexRDcX8D3SKG
-         sWu/Kx+g05AUpBzeAWXvV3l/KOclFVpJyxto2ZExTDggkwBVYMkjZq+8tqqptamPspX9
-         KqieSXOyC7KmwoV3WnRNmN+d9kMmGhlRZ84w7HVVNOZslGEpScfBsZk/5C394TMGPjuy
-         bk5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1DaKXL8orHozQmF64Lx5P0LmTQ5Gm5T6HjA9h/tMGP8=;
-        b=bbypZdo5ZVAHi5FIoC9kHzE6hS2v9sTgmIV+8+8dC6dc3UBfh3ABLsNiK9dypxlD3P
-         OF7zrDG4VcDwKoyY3+G8sRxr0G0hPF/uAqKztfaBJswRyJvyQgpRzfXmEHXLm56brUjH
-         +rfWDQSSn5nSWtnlDMWkDFX66BId3oCmrtqvcdxmzcMu8IaGcTUJtHqERBXs5O+KbdJw
-         IJP80A49TCXeUO+SZKplqjF7fAg0KrlPhFDzzgIjYdH5oAHUCaKzSCBMJvExMXZ2Gnth
-         upYkyADIHKEuG3l28cLZ36jFPFoboqmbmf6wH2g7d7+ka2DhixZ4il6H3RO0GpjEIOjo
-         uZJA==
-X-Gm-Message-State: AOAM531UXoU9E5n3XlSbsNAvWmJIIewC++KTu72Uu0j0EE6boiZmdPTt
-        u1AzvWi8e4cHMkZFUJxFWWM=
-X-Google-Smtp-Source: ABdhPJwzAPXhWGTvt6MEl6bjCoE4AGsG11ijHe8AsJObT74ax5zenkB6BRkQI/+L4y18/l4UW6Gh6Q==
-X-Received: by 2002:adf:9146:: with SMTP id j64mr3540685wrj.487.1639765441644;
-        Fri, 17 Dec 2021 10:24:01 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id q123sm10860191wma.30.2021.12.17.10.24.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Dec 2021 10:24:01 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] bpf, selftests: Fix spelling mistake "tained" -> "tainted"
-Date:   Fri, 17 Dec 2021 18:24:00 +0000
-Message-Id: <20211217182400.39296-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.33.1
+        Fri, 17 Dec 2021 16:37:19 -0500
+Received: from pop-os.home ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id yKuhmDixnUGqlyKuhmEejY; Fri, 17 Dec 2021 22:37:16 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Fri, 17 Dec 2021 22:37:16 +0100
+X-ME-IP: 86.243.171.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     vneethv@linux.ibm.com, oberpar@linux.ibm.com, hca@linux.ibm.com,
+        gor@linux.ibm.com, borntraeger@linux.ibm.com,
+        agordeev@linux.ibm.com
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] powerpc/mpic: Use bitmap_zalloc() when applicable
+Date:   Fri, 17 Dec 2021 22:37:13 +0100
+Message-Id: <c323cce0ce286d41f4bf2d316c0e4cce0f4abfa8.1639776929.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There appears to be a spelling mistake in a bpf test message. Fix it.
+'mpic->protected' is a bitmap. So use 'bitmap_zalloc()' to simplify
+code and improve the semantic, instead of hand writing it.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- tools/testing/selftests/bpf/verifier/value_ptr_arith.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/s390/cio/idset.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/verifier/value_ptr_arith.c b/tools/testing/selftests/bpf/verifier/value_ptr_arith.c
-index 4d347bc53aa2..359f3e8f8b60 100644
---- a/tools/testing/selftests/bpf/verifier/value_ptr_arith.c
-+++ b/tools/testing/selftests/bpf/verifier/value_ptr_arith.c
-@@ -1078,7 +1078,7 @@
- 	.errstr_unpriv = "R0 pointer -= pointer prohibited",
- },
+diff --git a/drivers/s390/cio/idset.c b/drivers/s390/cio/idset.c
+index 45f9c0736be4..7e5550230c0f 100644
+--- a/drivers/s390/cio/idset.c
++++ b/drivers/s390/cio/idset.c
+@@ -25,11 +25,10 @@ static struct idset *idset_new(int num_ssid, int num_id)
  {
--	"map access: trying to leak tained dst reg",
-+	"map access: trying to leak tainted dst reg",
- 	.insns = {
- 	BPF_MOV64_IMM(BPF_REG_0, 0),
- 	BPF_ST_MEM(BPF_DW, BPF_REG_10, -8, 0),
+ 	struct idset *set;
+ 
+-	set = vmalloc(sizeof(struct idset) + bitmap_size(num_ssid, num_id));
++	set = vzalloc(sizeof(struct idset) + bitmap_size(num_ssid, num_id));
+ 	if (set) {
+ 		set->num_ssid = num_ssid;
+ 		set->num_id = num_id;
+-		memset(set->bitmap, 0, bitmap_size(num_ssid, num_id));
+ 	}
+ 	return set;
+ }
 -- 
-2.33.1
+2.30.2
 
