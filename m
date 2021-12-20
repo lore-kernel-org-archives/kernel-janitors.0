@@ -2,87 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA1A9C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Dec 2021 15:55:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C8EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Dec 2021 18:44:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237548AbhLTPza (ORCPT
+        id S240522AbhLTSoS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Dec 2021 10:55:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50262 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237485AbhLTPza (ORCPT
+        Mon, 20 Dec 2021 13:44:18 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:52834 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231635AbhLTSoS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Dec 2021 10:55:30 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5BF6C061574;
-        Mon, 20 Dec 2021 07:55:29 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id i22so20964949wrb.13;
-        Mon, 20 Dec 2021 07:55:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9FPHt4xWJuyC6gdHJsu28XiwBLFa9d5usSSlTiDeCYw=;
-        b=c8IvuhTEtIBHwwXw3dX7LRmVixLdlxaYUGHybVAQVwwXG4eQf5J9X+YhrOyRL4UC6D
-         paFv3FscJAJQkAz95YljUdLLhbJgjoI+neVJzFFNvrzHWoHRR2I7dzn+VFC6C4BnehdG
-         alldIw57cUKc1XEoGWI5UOwFn9BnUG5oEoAf9gGbeKGzSwSC7HtAIeRBMmdKWq0X8cTB
-         GSKrT94y4n8EwBdtJ+qFhdLROCaG8RJHs7npZpsSO54NMrZRzTolMgmyuuwqBXxVqk2q
-         kQAe38bZkALupoYJH+oHaLJys8da9nGG3z/BuTUdQjmwrw/9ot35gWUCne0AekE+oPV6
-         0jPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9FPHt4xWJuyC6gdHJsu28XiwBLFa9d5usSSlTiDeCYw=;
-        b=Motu4rFJqh3mjuZ68FlMy7IH9Yl4tuYBTHj2WODL1NLeokrswU0dV6j+SZkn4QjiJ1
-         rxpBV+cLLazH/5kgAjCiobj6OdRVm6Qqszpjdz2ggfH/CzRGe/F1fYG1BUyEpyVGHkW4
-         VxiZ3vGYtR0spiYkEaJkAn+KRDltCoCiTf0hdwhJeALxOoqfztyVVtXgSUDoPuUmR2Bl
-         PPOlJ7brCZxrUXP3yL/3ZNE814m7343q2submd9dtmjBGsKQC3LgFg6qT5H+Ux5bTHW6
-         KKtMqJBv+IQ8F7TenE14Dom5fotsXc6GygLpAfBkcbrCAOMR2UwbrYa/XULyOL9SIZ8P
-         tJSg==
-X-Gm-Message-State: AOAM530blkJXwWxxVVR9aCK27Qu0XVE9KROR/hCk8DX00rS5RWbx81Td
-        1AVoDceV3nBd06iqVMJURF4=
-X-Google-Smtp-Source: ABdhPJzhHDlAtzMTkmgBhfZNL3YQOcg2PDhKP1f6lkVEeVqJ3mrcrGIKbbldJpB3rP45ucn6NZAhhA==
-X-Received: by 2002:a5d:47ab:: with SMTP id 11mr5624491wrb.249.1640015728498;
-        Mon, 20 Dec 2021 07:55:28 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id b19sm21053664wmb.38.2021.12.20.07.55.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Dec 2021 07:55:28 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] hwmon/pmbus: (ir38064): Fix spelling mistake "comaptible" -> "compatible"
-Date:   Mon, 20 Dec 2021 15:55:27 +0000
-Message-Id: <20211220155527.179125-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.33.1
-MIME-Version: 1.0
+        Mon, 20 Dec 2021 13:44:18 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 01C85B81084;
+        Mon, 20 Dec 2021 18:44:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F0B7C36AE7;
+        Mon, 20 Dec 2021 18:44:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1640025855;
+        bh=UMPDFKVS0LM0oehPWCcne4pGYk2PvYD9Oz8t3gyLsCo=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=aEfECKyNPAlhNgEJ8X5/J8/+AMxyuJNGbCmUg4xjwBI83QAu1jHd985RokLXg3gvN
+         jHm2YuNYKDdWCd8iV+oQ4UdYbsFPTQ2iULyuwZepYVG12T9e4G3zmf3IW0+MpCVzdC
+         QtGsuvCi/9c7g2gvtCEJtjQ7mlSAFulCag1XAWBI5UtfBN5Hlnn/Se8kMhDmWGmgov
+         nMwT9xeEINRmsUGS9KZvuwAuGIxR48GhTWk+bVn6mOenpEqPMxmOuFpDQ9YRec2s8G
+         P+vXZrR9EDHiYEyV//3v5pJQiEH/9IOxsx4wiaf+d0gXCT7f6UjXwzvNfh1kqR9ynq
+         t+AyUySNr2gIA==
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] wilc1000: fix double free error in probe()
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20211217150311.GC16611@kili>
+References: <20211217150311.GC16611@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Ajay Singh <ajay.kathat@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <164002585215.16553.7189611104055917408.kvalo@kernel.org>
+Date:   Mon, 20 Dec 2021 18:44:14 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in the module description, fix it.
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/hwmon/pmbus/ir38064.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Smatch complains that there is a double free in probe:
+> 
+> drivers/net/wireless/microchip/wilc1000/spi.c:186 wilc_bus_probe() error: double free of 'spi_priv'
+> drivers/net/wireless/microchip/wilc1000/sdio.c:163 wilc_sdio_probe() error: double free of 'sdio_priv'
+> 
+> The problem is that wilc_netdev_cleanup() function frees "wilc->bus_data".
+> That's confusing and a layering violation.  Leave the frees in probe(),
+> delete the free in wilc_netdev_cleanup(), and add some new frees to the
+> remove() functions.
+> 
+> Fixes: dc8b338f3bcd ("wilc1000: use goto labels on error path")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Reviewed-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 
-diff --git a/drivers/hwmon/pmbus/ir38064.c b/drivers/hwmon/pmbus/ir38064.c
-index 07bdbb16f216..0ea7e1c18bdc 100644
---- a/drivers/hwmon/pmbus/ir38064.c
-+++ b/drivers/hwmon/pmbus/ir38064.c
-@@ -85,6 +85,6 @@ static struct i2c_driver ir38064_driver = {
- module_i2c_driver(ir38064_driver);
- 
- MODULE_AUTHOR("Maxim Sloyko <maxims@google.com>");
--MODULE_DESCRIPTION("PMBus driver for Infineon IR38064 and comaptible chips");
-+MODULE_DESCRIPTION("PMBus driver for Infineon IR38064 and compatible chips");
- MODULE_LICENSE("GPL");
- MODULE_IMPORT_NS(PMBUS);
+Patch applied to wireless-drivers-next.git, thanks.
+
+4894edacfa93 wilc1000: fix double free error in probe()
+
 -- 
-2.33.1
+https://patchwork.kernel.org/project/linux-wireless/patch/20211217150311.GC16611@kili/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
