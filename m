@@ -2,76 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA83C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Dec 2021 10:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA1A9C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Dec 2021 15:55:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231310AbhLTKkE (ORCPT
+        id S237548AbhLTPza (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Dec 2021 05:40:04 -0500
-Received: from smtp1.axis.com ([195.60.68.17]:40900 "EHLO smtp1.axis.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229488AbhLTKkE (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Dec 2021 05:40:04 -0500
+        Mon, 20 Dec 2021 10:55:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50262 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237485AbhLTPza (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 20 Dec 2021 10:55:30 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5BF6C061574;
+        Mon, 20 Dec 2021 07:55:29 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id i22so20964949wrb.13;
+        Mon, 20 Dec 2021 07:55:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=axis.com; q=dns/txt; s=axis-central1; t=1639996804;
-  x=1671532804;
-  h=date:to:cc:subject:message-id:references:mime-version:
-   content-transfer-encoding:in-reply-to:from;
-  bh=VLroCuA+HQwcMwKp0/ZNdCT4a3i07oLjzHJCYHuUIKw=;
-  b=SBkuN7/eOJGKuy1Dti4qjmN4CQEpphW01hI0PdFPS+a+i5E4Xwl8lVTV
-   H1kVe8/gmUGIv1eGn2WQhxn71+J5TgGF1NypS9PjnJSXocOdk8/IEjkWo
-   AlieH8nnwzdRRYjzv3PCmcEcAEnPrAO9gFkekAYcM2RSbiolNXZTRZYGU
-   S5HAnctwsctUAovi9v7zjKB8voLMHXwtvnm4LXhi4JsVeb1pS+SSHCo6+
-   auwn8EaodKiWeSTCY4ypO9yHASyGUOGShnFFUkjtRBw5mjxQnZzvyi78Y
-   NdhUPqg0FtGGVxS4n6tLFKVUzbAWakAdV2b3sQMZpu0ohAqdptXGYSoub
-   Q==;
-Date:   Mon, 20 Dec 2021 11:40:02 +0100
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     Jaehoon Chung <jh80.chung@samsung.com>,
-        =?iso-8859-1?Q?M=E5rten?= Lindahl <Marten.Lindahl@axis.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] mmc: dw_mmc: clean up a debug message
-Message-ID: <20211220104002.GA8585@axis.com>
-References: <20211217150348.GD16611@kili>
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9FPHt4xWJuyC6gdHJsu28XiwBLFa9d5usSSlTiDeCYw=;
+        b=c8IvuhTEtIBHwwXw3dX7LRmVixLdlxaYUGHybVAQVwwXG4eQf5J9X+YhrOyRL4UC6D
+         paFv3FscJAJQkAz95YljUdLLhbJgjoI+neVJzFFNvrzHWoHRR2I7dzn+VFC6C4BnehdG
+         alldIw57cUKc1XEoGWI5UOwFn9BnUG5oEoAf9gGbeKGzSwSC7HtAIeRBMmdKWq0X8cTB
+         GSKrT94y4n8EwBdtJ+qFhdLROCaG8RJHs7npZpsSO54NMrZRzTolMgmyuuwqBXxVqk2q
+         kQAe38bZkALupoYJH+oHaLJys8da9nGG3z/BuTUdQjmwrw/9ot35gWUCne0AekE+oPV6
+         0jPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9FPHt4xWJuyC6gdHJsu28XiwBLFa9d5usSSlTiDeCYw=;
+        b=Motu4rFJqh3mjuZ68FlMy7IH9Yl4tuYBTHj2WODL1NLeokrswU0dV6j+SZkn4QjiJ1
+         rxpBV+cLLazH/5kgAjCiobj6OdRVm6Qqszpjdz2ggfH/CzRGe/F1fYG1BUyEpyVGHkW4
+         VxiZ3vGYtR0spiYkEaJkAn+KRDltCoCiTf0hdwhJeALxOoqfztyVVtXgSUDoPuUmR2Bl
+         PPOlJ7brCZxrUXP3yL/3ZNE814m7343q2submd9dtmjBGsKQC3LgFg6qT5H+Ux5bTHW6
+         KKtMqJBv+IQ8F7TenE14Dom5fotsXc6GygLpAfBkcbrCAOMR2UwbrYa/XULyOL9SIZ8P
+         tJSg==
+X-Gm-Message-State: AOAM530blkJXwWxxVVR9aCK27Qu0XVE9KROR/hCk8DX00rS5RWbx81Td
+        1AVoDceV3nBd06iqVMJURF4=
+X-Google-Smtp-Source: ABdhPJzhHDlAtzMTkmgBhfZNL3YQOcg2PDhKP1f6lkVEeVqJ3mrcrGIKbbldJpB3rP45ucn6NZAhhA==
+X-Received: by 2002:a5d:47ab:: with SMTP id 11mr5624491wrb.249.1640015728498;
+        Mon, 20 Dec 2021 07:55:28 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id b19sm21053664wmb.38.2021.12.20.07.55.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Dec 2021 07:55:28 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] hwmon/pmbus: (ir38064): Fix spelling mistake "comaptible" -> "compatible"
+Date:   Mon, 20 Dec 2021 15:55:27 +0000
+Message-Id: <20211220155527.179125-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211217150348.GD16611@kili>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-From:   Marten Lindahl <martenli@axis.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Dec 17, 2021 at 04:03:48PM +0100, Dan Carpenter wrote:
-> The "0x" prefix is redundant when # flag is used.  It prints "0x0x".
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/mmc/host/dw_mmc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index f2a14a434bef..bec4796283fe 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -1307,7 +1307,7 @@ static void dw_mci_set_data_timeout(struct dw_mci *host,
->  		tmout |= (tmp & 0xFFFFFF) << 8;
->  
->  	mci_writel(host, TMOUT, tmout);
-> -	dev_dbg(host->dev, "timeout_ns: %u => TMOUT[31:8]: 0x%#08x",
-> +	dev_dbg(host->dev, "timeout_ns: %u => TMOUT[31:8]: %#08x",
->  		timeout_ns, tmout >> 8);
->  }
->  
-> -- 
-> 2.20.1
-> 
+There is a spelling mistake in the module description, fix it.
 
-Reviewed-by: Mårten Lindahl <marten.lindahl@axis.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/hwmon/pmbus/ir38064.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Kind regards
-Mårten
+diff --git a/drivers/hwmon/pmbus/ir38064.c b/drivers/hwmon/pmbus/ir38064.c
+index 07bdbb16f216..0ea7e1c18bdc 100644
+--- a/drivers/hwmon/pmbus/ir38064.c
++++ b/drivers/hwmon/pmbus/ir38064.c
+@@ -85,6 +85,6 @@ static struct i2c_driver ir38064_driver = {
+ module_i2c_driver(ir38064_driver);
+ 
+ MODULE_AUTHOR("Maxim Sloyko <maxims@google.com>");
+-MODULE_DESCRIPTION("PMBus driver for Infineon IR38064 and comaptible chips");
++MODULE_DESCRIPTION("PMBus driver for Infineon IR38064 and compatible chips");
+ MODULE_LICENSE("GPL");
+ MODULE_IMPORT_NS(PMBUS);
+-- 
+2.33.1
+
