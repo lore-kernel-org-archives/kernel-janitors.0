@@ -2,74 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D35FC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Dec 2021 19:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB556C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Dec 2021 19:28:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241762AbhLUTUn (ORCPT
+        id S241794AbhLUT2G (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 21 Dec 2021 14:20:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58484 "EHLO
+        Tue, 21 Dec 2021 14:28:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233354AbhLUTUm (ORCPT
+        with ESMTP id S241789AbhLUT2F (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 21 Dec 2021 14:20:42 -0500
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64C7BC061574;
-        Tue, 21 Dec 2021 11:20:42 -0800 (PST)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: usama.anjum)
-        with ESMTPSA id 80F221F42C82
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=collabora.com; s=mail;
-        t=1640114439; bh=5HlfVhipWFs2W1k7528IgRRoCTk0yWR3iwopOn1wo+c=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ehHxAsLx/S3nY1+gV41HuiPGFjdGXi3bzC40wvoLCwOlbeKi7L0ARTchZXIW+UB4P
-         +FNYjJX2fIGjufeBiENKWPtffq7iadL3oU+dyK8qMUW4wcP2kG4/ng8T4HwBNtCKrc
-         ESL/xbE2MnBnSZnSBE/v6wOOxWxj7pqfbvKkgh7/xRiMe6deZP9UB9O1Y0pCi4vGDE
-         1PlkVk2Dxfi+xBRjZ4US+uEbY7jQaRvAFItFtEQvaIB7vUnBzZWalKeIBws/6IPzJ6
-         Zr3LTITRoM382vdpBdrVOesaQW0AH/EbsLOb35NSnlVfk61A0LdrepdezamysM+PdV
-         RQV0RcyBNs8jw==
-Date:   Wed, 22 Dec 2021 00:20:32 +0500
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-To:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Mihail Chindris <mihail.chindris@analog.com>,
-        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Cc:     usama.anjum@collabora.com, kernel@collabora.com,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] drivers:iio:dac make expression evaluation 64-bit
-Message-ID: <YcIpAKV7Cmi0o7PU@debian-BULLSEYE-live-builder-AMD64>
+        Tue, 21 Dec 2021 14:28:05 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BE8BC061574;
+        Tue, 21 Dec 2021 11:28:05 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id v11so65002wrw.10;
+        Tue, 21 Dec 2021 11:28:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=54zGxX/pNsFEGTRMffzqOdT320nhaq4iFU14GnCGm74=;
+        b=fn4lwmVZp4pFH7HMXYHkCiMzn4ZY5ocaXBGnRkxGKfS5xJaDTkQJoy5jvBFH4QSsHl
+         G5WANlWXCjg+je7jq6HLL/klgNMTshet2t5KGTVt+TtiyqAuLWSwmLBnd5nuXFnvMDzy
+         d4G45gJnFOdZGo/i8eNCCLPJkCYLFwK3eQJXq3wJlb5RSmsyln4g+6zS0QqqhOStpnU4
+         cMLkQ8eEpOwgDzLZ+aVsqdH3wWHKO6U2usdnPxDUTuKQE//OhEIdjytKDZH7C3byf4P/
+         sjo4uLqyZCupP9RP2H5lVWnIQIzMjc/bWe/P5s6kO+n/AN6fPV+/59s2SZ+uOlbDL/p+
+         gmAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=54zGxX/pNsFEGTRMffzqOdT320nhaq4iFU14GnCGm74=;
+        b=SZRFPmKQrxjzKO1wL1DgD6jUhT3Pwii3ujvvm4WsvrgnTLH48VWyLa+6FJhKiBlzJ0
+         i8F5tr9Y2hlPDuqND1DGw5CJVzb0wiwOiyVCP+sVBkGp+cYpL6srEmRcyfeh3Y+fHhmF
+         H5Ia23JsXR6wmbhpLdq2a6I7LpUB7CkZ22sNtaytE2vp3mHGu4+uKld564ga+WBVF6sg
+         uO0Gix8ydzLtgBgxsb96eKk9+jY7XWxqrZhu5YHmgiI4HfHMuIz91JpNOAovUb9Smz6Z
+         5Njbmd/IsGhmNAcqLTCqKOYOzQsZKaDFz1GULA4f7udIYNokRdKoF6mriK7upqT8QnMi
+         XrpQ==
+X-Gm-Message-State: AOAM530ffsFaayCSfviWYPl5STwbeuem1GVW4xc4PFCYgsdt/HFIQSQn
+        laJ/dQdLjC8VXc7Dac0PVS7b++cBuE1eA1q0m0C2gw==
+X-Google-Smtp-Source: ABdhPJxuy0ZSllptPGAgjF64vL/b0YoqDQJMy6qH3aN6fJNHc0URALfBDwbJnVyvoUiZYFWSnSd9oQ==
+X-Received: by 2002:a05:6000:1ac6:: with SMTP id i6mr3691896wry.373.1640114884119;
+        Tue, 21 Dec 2021 11:28:04 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id m35sm7942852wms.1.2021.12.21.11.28.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Dec 2021 11:28:03 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     David Airlie <airlied@linux.ie>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] via-agp: remove redundant pointer current_size
+Date:   Tue, 21 Dec 2021 19:28:02 +0000
+Message-Id: <20211221192802.636630-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Two 32-bit values are being evaluated using 32-bit arithmetic and then
-passed to s64 type. It is wrong. Expression should be evaluated using
-64-bit arithmetic and then passed.
+Pointer current_size is being assigned a value but it is never
+read. The pointer is redundant and can be removed.
 
-Fixes: 8f2b54824b ("drivers:iio:dac: Add AD3552R driver support")
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/iio/dac/ad3552r.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/char/agp/via-agp.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/iio/dac/ad3552r.c b/drivers/iio/dac/ad3552r.c
-index 97f13c0b9631..b03d3c7cd4c4 100644
---- a/drivers/iio/dac/ad3552r.c
-+++ b/drivers/iio/dac/ad3552r.c
-@@ -770,7 +770,7 @@ static void ad3552r_calc_gain_and_offset(struct ad3552r_desc *dac, s32 ch)
- 	dac->ch_data[ch].scale_dec = DIV_ROUND_CLOSEST((s64)rem * 1000000,
- 							65536);
+diff --git a/drivers/char/agp/via-agp.c b/drivers/char/agp/via-agp.c
+index a460ae352772..b2f484f527fb 100644
+--- a/drivers/char/agp/via-agp.c
++++ b/drivers/char/agp/via-agp.c
+@@ -128,9 +128,6 @@ static int via_fetch_size_agp3(void)
+ static int via_configure_agp3(void)
+ {
+ 	u32 temp;
+-	struct aper_size_info_16 *current_size;
+-
+-	current_size = A_SIZE_16(agp_bridge->current_size);
  
--	dac->ch_data[ch].offset_int = div_s64_rem(v_min * 65536, span, &rem);
-+	dac->ch_data[ch].offset_int = div_s64_rem(v_min * 65536L, span, &rem);
- 	tmp = (s64)rem * 1000000;
- 	dac->ch_data[ch].offset_dec = div_s64(tmp, span);
- }
+ 	/* address to map to */
+ 	agp_bridge->gart_bus_addr = pci_bus_address(agp_bridge->dev,
 -- 
-2.30.2
+2.33.1
 
