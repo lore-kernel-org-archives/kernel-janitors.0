@@ -2,89 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E55ADC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Dec 2021 00:48:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 016C6C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Dec 2021 08:11:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233455AbhLUAsN (ORCPT
+        id S235427AbhLUILk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Dec 2021 19:48:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57410 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231254AbhLUAsN (ORCPT
+        Tue, 21 Dec 2021 03:11:40 -0500
+Received: from mail-vk1-f181.google.com ([209.85.221.181]:45027 "EHLO
+        mail-vk1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235432AbhLUILg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Dec 2021 19:48:13 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B15EC061574;
-        Mon, 20 Dec 2021 16:48:12 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id 185-20020a1c01c2000000b00345b7a50a7bso147232wmb.3;
-        Mon, 20 Dec 2021 16:48:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/kPfUDXgs/I5bXAuQrDJgSbN/QtfIuaiRvGXMYN9BHs=;
-        b=IpeqEo0vDIcG9LNaNsjUcUK7ecr2IjmvTO2xIbXXL831sIdXOxVN/8WNMb/n7zxcGJ
-         Nrd37AD61C8usPSfKUTs8xEj34IFZmzpecXKkdpckcd6Yf0eDY6I8KZdxFIiSwmmQVbO
-         moV/ISXcMG6kTovU3g70EjodnfJnKUZmRcUHEKXjX1a0znO96BL5zmaTvWGU/9wVBDvb
-         jzzcIzZ2f76f+blbfe1X22GF5noBUmsVa2us3I4wHoJ6WA0P1Gu8ta20lt2CFncYAycD
-         JualuUSkJK35OuvJI8lTcCSEi8XLq2FnTUYL+ULs8x5TIg6OE75P4konL26HRZen+6nJ
-         CNoA==
+        Tue, 21 Dec 2021 03:11:36 -0500
+Received: by mail-vk1-f181.google.com with SMTP id b77so2281683vka.11;
+        Tue, 21 Dec 2021 00:11:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/kPfUDXgs/I5bXAuQrDJgSbN/QtfIuaiRvGXMYN9BHs=;
-        b=jwgghIK69XD2BbKNrWKy4QEzb3mywahoOwuL74fPJyrQi3rEgtUmM4qL76XpfWWR6a
-         NagI2HLSlG5zzh5QN/geJX36krzFCt+S1ZlG9O10+PaLD4bOm3nksOt7P9p6imcgKFs1
-         ycK9REKB1weacNQzH/IEucvaA7CT6DfDwNvYT94acAiBJUICwL0iNWwDtyZDG2t5oZLl
-         aR+yl9o34zNcarOk9M5wKTxV5+xwErJYiq1+P0WUnzAKQMzf1NRufnIvfvfuAAaokGia
-         fJqYaIcklulsdU1T5ke1KJ2rUcc5g/Ps8yeW+CiWD+RasSqwTlH9W9hCc36IzQeUnxya
-         TKuw==
-X-Gm-Message-State: AOAM530yn8GcLKgPDbuzTkWf48DMeUGsXfJ9zeIVOxGmxWIx5thOrqn7
-        V2rfdGBGPUBpWvGig1IF/ok=
-X-Google-Smtp-Source: ABdhPJyXDI1q8mxV7GeqUWqzghf86fbpn8/L62NzGAUcAcp5DO7GgyRsexOq1rSdZcn1uo0X8y2PiQ==
-X-Received: by 2002:a05:600c:33a5:: with SMTP id o37mr418327wmp.83.1640047690903;
-        Mon, 20 Dec 2021 16:48:10 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id f18sm16498263wre.7.2021.12.20.16.48.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Dec 2021 16:48:10 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] cifs: remove redundant assignment to pointer p
-Date:   Tue, 21 Dec 2021 00:48:09 +0000
-Message-Id: <20211221004809.213602-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.33.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TB3EgKnQ6cDDwbUNjEM7H+wsTNMcb9wXt6YvS3W4ql8=;
+        b=jXYRKzSpCEHYENaxvdriLAWEEGUkR6NkkpovRU9Ehwl/l+QvWlHQGhTj1iyHgMopiE
+         IyDHyBYl5pHroyYRjeCv539l4B4IMjm5hcyr0Lt2YVpcgtMpvKkTcpRJCusFcNSRcy9K
+         kGgQoBlrH5ofcnyWQ2CccX3lGhBltYFPGVlK5TCY3smdRQmqvDJ2u/xDZ5X1n0vMbY+w
+         t0oBnk/Rg6C45B2fW7Uhas5HspN83dLQqyh8jQFyMTeVv0dDxBK+Lfqw49U0oc6BDilL
+         vSIYvwmTXK3nZBW39kvNYZEz3n/82hhE3xDDgcWh8hZoN5aF8eyin12wDCHoYMGVBIBC
+         5qdQ==
+X-Gm-Message-State: AOAM53284x8AjwrVqi4MN22CVj4cAjJDCJfjhUcSKCDIhg0qaCbnhYoJ
+        MkDKlB7b5JLM1iG+oaFtjw5kzWSPY6Xh5A==
+X-Google-Smtp-Source: ABdhPJxzRKHJi0hSv0lLc7UvBTg+bgTAuGdijAPJbPY9Q7lRnU7vwgvJ++BY/aHXe27BY4POTqz/YQ==
+X-Received: by 2002:a05:6122:d0f:: with SMTP id az15mr385543vkb.28.1640074295784;
+        Tue, 21 Dec 2021 00:11:35 -0800 (PST)
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
+        by smtp.gmail.com with ESMTPSA id q8sm821317vkq.4.2021.12.21.00.11.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Dec 2021 00:11:35 -0800 (PST)
+Received: by mail-ua1-f44.google.com with SMTP id o1so22311104uap.4;
+        Tue, 21 Dec 2021 00:11:35 -0800 (PST)
+X-Received: by 2002:a67:2e09:: with SMTP id u9mr653700vsu.77.1640074295303;
+ Tue, 21 Dec 2021 00:11:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211221004246.213203-1-colin.i.king@gmail.com>
+In-Reply-To: <20211221004246.213203-1-colin.i.king@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 21 Dec 2021 09:11:23 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXN=jjgirX4mTghvYo1TQtW4F+5uMLxHoOFKSXbqk5qPg@mail.gmail.com>
+Message-ID: <CAMuHMdXN=jjgirX4mTghvYo1TQtW4F+5uMLxHoOFKSXbqk5qPg@mail.gmail.com>
+Subject: Re: [PATCH] video: fbdev: mb862xx: remove redundant assignment to
+ pointer ptr
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointer p is being assigned with a value that is never read. The
-pointer is being re-assigned a different value inside the do-while
-loop. The assignment is redundant and can be removed.
+On Tue, Dec 21, 2021 at 3:01 AM Colin Ian King <colin.i.king@gmail.com> wrote:
+> The pointer ptr is being assigned a value that is never read. The
+> pointer is being re-assigned later in a loop. The assignment is
+> redundant and can be removed.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/cifs/cifsfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-index d3f3acf340f1..61091eed8c65 100644
---- a/fs/cifs/cifsfs.c
-+++ b/fs/cifs/cifsfs.c
-@@ -775,7 +775,7 @@ cifs_get_root(struct smb3_fs_context *ctx, struct super_block *sb)
- 
- 	sep = CIFS_DIR_SEP(cifs_sb);
- 	dentry = dget(sb->s_root);
--	p = s = full_path;
-+	s = full_path;
- 
- 	do {
- 		struct inode *dir = d_inode(dentry);
--- 
-2.32.0
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
