@@ -2,59 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB556C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Dec 2021 19:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F9DC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Dec 2021 19:38:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241794AbhLUT2G (ORCPT
+        id S241825AbhLUTiB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 21 Dec 2021 14:28:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60084 "EHLO
+        Tue, 21 Dec 2021 14:38:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241789AbhLUT2F (ORCPT
+        with ESMTP id S236649AbhLUTiA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 21 Dec 2021 14:28:05 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BE8BC061574;
-        Tue, 21 Dec 2021 11:28:05 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id v11so65002wrw.10;
-        Tue, 21 Dec 2021 11:28:05 -0800 (PST)
+        Tue, 21 Dec 2021 14:38:00 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 223AAC061574;
+        Tue, 21 Dec 2021 11:38:00 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id z206so113956wmc.1;
+        Tue, 21 Dec 2021 11:38:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=54zGxX/pNsFEGTRMffzqOdT320nhaq4iFU14GnCGm74=;
-        b=fn4lwmVZp4pFH7HMXYHkCiMzn4ZY5ocaXBGnRkxGKfS5xJaDTkQJoy5jvBFH4QSsHl
-         G5WANlWXCjg+je7jq6HLL/klgNMTshet2t5KGTVt+TtiyqAuLWSwmLBnd5nuXFnvMDzy
-         d4G45gJnFOdZGo/i8eNCCLPJkCYLFwK3eQJXq3wJlb5RSmsyln4g+6zS0QqqhOStpnU4
-         cMLkQ8eEpOwgDzLZ+aVsqdH3wWHKO6U2usdnPxDUTuKQE//OhEIdjytKDZH7C3byf4P/
-         sjo4uLqyZCupP9RP2H5lVWnIQIzMjc/bWe/P5s6kO+n/AN6fPV+/59s2SZ+uOlbDL/p+
-         gmAA==
+        bh=ShKLo5JWRh5D46tXs9GqlD9C6PwhWN2ufezlMwCL27I=;
+        b=hOXTwo82yY/1/1Bd2IWhwPL/cqSb355r5UmCjhC0ZdU3yLdvRs4yIl2/aMfjIw/4lb
+         a079zcXNWJ+en59cvUUKvYDNyn3ufubecVHqqXCEAXYQJxEYDBQVZ+Bp4z9YG+SK5vF5
+         pXk1QBueCwgq6trSxZRbvgb8BL0BU5K5B+bj1j4ZdOlF1Ksu3getq0/Wmk1mA7d6aIUp
+         Xxf0YOzg7h0/OI6rpl3hZSgfD94rRH4izhbVoVdYWXFAiSrbsfivVEmSq4x62MWeN7z9
+         9UWXBkNZ60aOgwJGwv8AkUDqX30mhNmMwjkG14y849GeP+LxEU36ZS0bReqJBXL6VkD8
+         NzXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=54zGxX/pNsFEGTRMffzqOdT320nhaq4iFU14GnCGm74=;
-        b=SZRFPmKQrxjzKO1wL1DgD6jUhT3Pwii3ujvvm4WsvrgnTLH48VWyLa+6FJhKiBlzJ0
-         i8F5tr9Y2hlPDuqND1DGw5CJVzb0wiwOiyVCP+sVBkGp+cYpL6srEmRcyfeh3Y+fHhmF
-         H5Ia23JsXR6wmbhpLdq2a6I7LpUB7CkZ22sNtaytE2vp3mHGu4+uKld564ga+WBVF6sg
-         uO0Gix8ydzLtgBgxsb96eKk9+jY7XWxqrZhu5YHmgiI4HfHMuIz91JpNOAovUb9Smz6Z
-         5Njbmd/IsGhmNAcqLTCqKOYOzQsZKaDFz1GULA4f7udIYNokRdKoF6mriK7upqT8QnMi
-         XrpQ==
-X-Gm-Message-State: AOAM530ffsFaayCSfviWYPl5STwbeuem1GVW4xc4PFCYgsdt/HFIQSQn
-        laJ/dQdLjC8VXc7Dac0PVS7b++cBuE1eA1q0m0C2gw==
-X-Google-Smtp-Source: ABdhPJxuy0ZSllptPGAgjF64vL/b0YoqDQJMy6qH3aN6fJNHc0URALfBDwbJnVyvoUiZYFWSnSd9oQ==
-X-Received: by 2002:a05:6000:1ac6:: with SMTP id i6mr3691896wry.373.1640114884119;
-        Tue, 21 Dec 2021 11:28:04 -0800 (PST)
+        bh=ShKLo5JWRh5D46tXs9GqlD9C6PwhWN2ufezlMwCL27I=;
+        b=moPJlOoqLlEM88rxOJ0UGSbjIJ1hukXNjIG96zLNmUF9JU3P7toatRqIuvcSAYucZ/
+         6ORxvkWYRJ7eRAnynCml+XnpAcHBofFgJA7VXqVYSiNwmeJg8mX6AhzohX5sqRL2BH4w
+         hcahibcD0IpnjNXSS3UfG8AaMwBw9PC/A6ZLiQWSXTLlrAC2kussSyqMQrRWFQecpqfE
+         ooLKT0ME7YlzbDxdzKJZGol5m216EdTJ0zlSynpc5VNhefcxDjIQF7TzkF5R9dsotqKC
+         Pc4TwBwSYg5pQ4ujVCiQXl1dEssSV0YKtGm/aT6CSnGar+QgH37FFNeWXtSFItsN96uN
+         iSqA==
+X-Gm-Message-State: AOAM531B2PX8Oz1CFwojhtMzv/n65nBH3I+bCEDcVoB23zlggkxmKtWj
+        lD+MU2zNQz/aNnjWttL7h8EIs47/Xi9neeXNEb+AXw==
+X-Google-Smtp-Source: ABdhPJznW54ADf1fY/nKhFMUwp+LGAUlR1cME5ebxGBMZ9+cjQPqNN2sjQGctHPT2Xf82IhWgOVJ+w==
+X-Received: by 2002:a05:600c:4e8d:: with SMTP id f13mr3993775wmq.7.1640115478612;
+        Tue, 21 Dec 2021 11:37:58 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id m35sm7942852wms.1.2021.12.21.11.28.03
+        by smtp.gmail.com with ESMTPSA id k19sm3153292wmo.29.2021.12.21.11.37.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Dec 2021 11:28:03 -0800 (PST)
+        Tue, 21 Dec 2021 11:37:58 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     David Airlie <airlied@linux.ie>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] via-agp: remove redundant pointer current_size
-Date:   Tue, 21 Dec 2021 19:28:02 +0000
-Message-Id: <20211221192802.636630-1-colin.i.king@gmail.com>
+Subject: [PATCH] netfilter: nft_set_pipapo_avx2: remove redundant pointer lt
+Date:   Tue, 21 Dec 2021 19:37:57 +0000
+Message-Id: <20211221193757.662152-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -63,28 +69,32 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Pointer current_size is being assigned a value but it is never
-read. The pointer is redundant and can be removed.
+The pointer lt is being assigned a value and then later
+updated but that value is never read. The pointer is
+redundant and can be removed.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/char/agp/via-agp.c | 3 ---
- 1 file changed, 3 deletions(-)
+ net/netfilter/nft_set_pipapo_avx2.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/char/agp/via-agp.c b/drivers/char/agp/via-agp.c
-index a460ae352772..b2f484f527fb 100644
---- a/drivers/char/agp/via-agp.c
-+++ b/drivers/char/agp/via-agp.c
-@@ -128,9 +128,6 @@ static int via_fetch_size_agp3(void)
- static int via_configure_agp3(void)
+diff --git a/net/netfilter/nft_set_pipapo_avx2.c b/net/netfilter/nft_set_pipapo_avx2.c
+index 6f4116e72958..52e0d026d30a 100644
+--- a/net/netfilter/nft_set_pipapo_avx2.c
++++ b/net/netfilter/nft_set_pipapo_avx2.c
+@@ -1048,11 +1048,9 @@ static int nft_pipapo_avx2_lookup_slow(unsigned long *map, unsigned long *fill,
+ 					struct nft_pipapo_field *f, int offset,
+ 					const u8 *pkt, bool first, bool last)
  {
- 	u32 temp;
--	struct aper_size_info_16 *current_size;
--
--	current_size = A_SIZE_16(agp_bridge->current_size);
+-	unsigned long *lt = f->lt, bsize = f->bsize;
++	unsigned long bsize = f->bsize;
+ 	int i, ret = -1, b;
  
- 	/* address to map to */
- 	agp_bridge->gart_bus_addr = pci_bus_address(agp_bridge->dev,
+-	lt += offset * NFT_PIPAPO_LONGS_PER_M256;
+-
+ 	if (first)
+ 		memset(map, 0xff, bsize * sizeof(*map));
+ 
 -- 
 2.33.1
 
