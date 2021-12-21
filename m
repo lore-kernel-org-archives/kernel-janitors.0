@@ -2,86 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4440CC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Dec 2021 19:12:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D35FC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Dec 2021 19:20:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241761AbhLUTMu (ORCPT
+        id S241762AbhLUTUn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 21 Dec 2021 14:12:50 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:38794 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237372AbhLUTMo (ORCPT
+        Tue, 21 Dec 2021 14:20:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58484 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233354AbhLUTUm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 21 Dec 2021 14:12:44 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D632361797
-        for <kernel-janitors@vger.kernel.org>; Tue, 21 Dec 2021 19:12:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63D9FC36AEA;
-        Tue, 21 Dec 2021 19:12:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640113963;
-        bh=zgeZRVRuafwQrEQMbJc8CNZl8kFQYTvPQfyRtjn3/VM=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=YxKHvZ4ib1x6Od9tHuokB1h1qHxqybGhoN7wyIAgjd0TcnUx8xrR180OnZGIqNbEG
-         uK+Eyyhyt58sG8LmjJCUqzSFxRImuHJAm/0mrAvSLMSgiXJbOn20qOmKKU/Txs7LAc
-         77n+KrSKhsBmM0qegALj+df95fCBoYZTSAh3qj6e3krHmW9V6itRJwfO/pTO++I/4M
-         iogMmDPv71uSgy21Ci89XQtVGMaxWikwskmkUg5Pr4UZuXTftki+arO2kEFaJmXyRN
-         Wifkrc08Ns4AtDn6NTnFtpzaoAlSDo8x48yBl+biBThOlMfa2LvdE0Dvbu3phCXuRG
-         WPcRs34/YYGJA==
-From:   Mark Brown <broonie@kernel.org>
-To:     Miaoqian Lin <linmq006@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
-        Banajit Goswami <bgoswami@codeaurora.org>,
-        alsa-devel@alsa-project.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <20211217150007.GB16611@kili>
-References: <20211217150007.GB16611@kili>
-Subject: Re: [PATCH] ASoC: qdsp6: fix a use after free bug in open()
-Message-Id: <164011396113.93163.3445360337147394616.b4-ty@kernel.org>
-Date:   Tue, 21 Dec 2021 19:12:41 +0000
+        Tue, 21 Dec 2021 14:20:42 -0500
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64C7BC061574;
+        Tue, 21 Dec 2021 11:20:42 -0800 (PST)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: usama.anjum)
+        with ESMTPSA id 80F221F42C82
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=collabora.com; s=mail;
+        t=1640114439; bh=5HlfVhipWFs2W1k7528IgRRoCTk0yWR3iwopOn1wo+c=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ehHxAsLx/S3nY1+gV41HuiPGFjdGXi3bzC40wvoLCwOlbeKi7L0ARTchZXIW+UB4P
+         +FNYjJX2fIGjufeBiENKWPtffq7iadL3oU+dyK8qMUW4wcP2kG4/ng8T4HwBNtCKrc
+         ESL/xbE2MnBnSZnSBE/v6wOOxWxj7pqfbvKkgh7/xRiMe6deZP9UB9O1Y0pCi4vGDE
+         1PlkVk2Dxfi+xBRjZ4US+uEbY7jQaRvAFItFtEQvaIB7vUnBzZWalKeIBws/6IPzJ6
+         Zr3LTITRoM382vdpBdrVOesaQW0AH/EbsLOb35NSnlVfk61A0LdrepdezamysM+PdV
+         RQV0RcyBNs8jw==
+Date:   Wed, 22 Dec 2021 00:20:32 +0500
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+To:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Mihail Chindris <mihail.chindris@analog.com>,
+        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Cc:     usama.anjum@collabora.com, kernel@collabora.com,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] drivers:iio:dac make expression evaluation 64-bit
+Message-ID: <YcIpAKV7Cmi0o7PU@debian-BULLSEYE-live-builder-AMD64>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 17 Dec 2021 18:00:07 +0300, Dan Carpenter wrote:
-> This code frees "graph" and then dereferences to save the error code.
-> Save the error code first and then use gotos to unwind the allocation.
-> 
-> 
+Two 32-bit values are being evaluated using 32-bit arithmetic and then
+passed to s64 type. It is wrong. Expression should be evaluated using
+64-bit arithmetic and then passed.
 
-Applied to
+Fixes: 8f2b54824b ("drivers:iio:dac: Add AD3552R driver support")
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+ drivers/iio/dac/ad3552r.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+diff --git a/drivers/iio/dac/ad3552r.c b/drivers/iio/dac/ad3552r.c
+index 97f13c0b9631..b03d3c7cd4c4 100644
+--- a/drivers/iio/dac/ad3552r.c
++++ b/drivers/iio/dac/ad3552r.c
+@@ -770,7 +770,7 @@ static void ad3552r_calc_gain_and_offset(struct ad3552r_desc *dac, s32 ch)
+ 	dac->ch_data[ch].scale_dec = DIV_ROUND_CLOSEST((s64)rem * 1000000,
+ 							65536);
+ 
+-	dac->ch_data[ch].offset_int = div_s64_rem(v_min * 65536, span, &rem);
++	dac->ch_data[ch].offset_int = div_s64_rem(v_min * 65536L, span, &rem);
+ 	tmp = (s64)rem * 1000000;
+ 	dac->ch_data[ch].offset_dec = div_s64(tmp, span);
+ }
+-- 
+2.30.2
 
-Thanks!
-
-[1/1] ASoC: qdsp6: fix a use after free bug in open()
-      commit: ac1e6bc146d45e15f0a5c0908338f918f6261388
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
