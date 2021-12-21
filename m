@@ -2,101 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 497D1C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Dec 2021 18:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B12C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Dec 2021 18:55:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241499AbhLUSpE (ORCPT
+        id S237214AbhLUSzo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 21 Dec 2021 13:45:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50232 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231534AbhLUSpE (ORCPT
+        Tue, 21 Dec 2021 13:55:44 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:36186 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241613AbhLUSzn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 21 Dec 2021 13:45:04 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A637C061574;
-        Tue, 21 Dec 2021 10:45:03 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id bg19-20020a05600c3c9300b0034565e837b6so1493315wmb.1;
-        Tue, 21 Dec 2021 10:45:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sP8tGVLSq+J8OoY4ZEIZdlL5ioBYvuT3xm7rNvUEflw=;
-        b=Jg3B9hSImyqr8JAxuDtr8VSKOk2Y/dAXnQlgy7Gs0O7lNN48oonawsgfd5T0X99BMo
-         3prOZpl0lcyHbJkGoeQwRcYztxCp+92XIxOGuuSg6El7mc6aTdhK+T+tTj/i2VYsIkqU
-         gY4zk7gyYyq74X4e4k7hJkOwXU8o37tJO+WpnIyFLBAnAOWNNONTc1q9kMAwmb9jkEnt
-         I91RZjm6gypNO5i37RPnL531XZMYwFlPpkaU+lQ8bkzy9e7gkPtEg11oida65UkuZBiX
-         g6SwKhPOWCEuCI3L3WC3qL/CvbAbkOjUohDi9YCu83hiYtcqFyy60QjlVj1VsEQut2Go
-         lp0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sP8tGVLSq+J8OoY4ZEIZdlL5ioBYvuT3xm7rNvUEflw=;
-        b=viOibeA3xtFisKTuL82WURXpMRrWLw3FuGd1rqtESA/rA+/1lVau51cDVho6eG426o
-         98xeLCxPV9neGLNnsqoks/LQrnDUXgoX/peImMW3z/RUsdwgYxlCdERncKxOyPsif+Rr
-         4ZZQFjEQNrZkNicYWVn20lPqMhcIyXwai7yXjVjp4gDBZ7MIOMSJP61quYyF30kdeC7h
-         1YQljHMYv0QGrkGZ8TosTTxJ/UxyK+e+H+XSEImaCk91rIKdVSQtKt7BB12fGMxF0s6Q
-         spBoiqS3Fa4mQrfWKzYDIWywgIcwmEfTg+UKYVowghyxq5CBIy3PMxCokN3Gl/STmy3a
-         t68w==
-X-Gm-Message-State: AOAM531rClg+gtYQcG717gNPX/3PpwU22/Bf5oTPjaLHuDXxOZ+RrGjA
-        YIvK9648r2lpFiZ1pDYGPmc=
-X-Google-Smtp-Source: ABdhPJwNmb5CLJkrtrJvYyjtqY1LRirngqPgqUNRGYXV+tkZmmmRO1HN1TdmGtt0k3LRJ6c2lALRaQ==
-X-Received: by 2002:a7b:c94f:: with SMTP id i15mr3892023wml.79.1640112302147;
-        Tue, 21 Dec 2021 10:45:02 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n8sm20269308wri.47.2021.12.21.10.45.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Dec 2021 10:45:01 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Xiaoming Ni <nixiaoming@huawei.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev
-Subject: [PATCH][next] kernel/sysctl.c: remove unused variable ten_thousand
-Date:   Tue, 21 Dec 2021 18:45:01 +0000
-Message-Id: <20211221184501.574670-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.33.1
+        Tue, 21 Dec 2021 13:55:43 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: usama.anjum)
+        with ESMTPSA id 433631F43227
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=collabora.com; s=mail;
+        t=1640112942; bh=KiejPSdYWwZWIDImvY8uKQpvAzfQ50qpR1+VWqWnoRQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=SUXl0HTDujcu3SWWJRpRHWF+zT8cL22bcdbsMRlxDJCCxZ3mjtFWIel+ux7LbHJ2s
+         4regin0H6NjVWMjq1IbW//rEmhIndgfmh2S9yq1Z4xnlXyuJXYxwNnO5iCJ58f6T/f
+         IGQcKuzGNsY03KNw5V/pzBEVfCcEiuSRas0Mhss3Gat+qiW6IJhLbEAVYLieJcSR+h
+         9stFowDKrBlz1t/WWxRnVGYLPYjyWTdLtxRZY6/KH1gfjZu5c3JKO9Q18sG80IDfB0
+         Iyzmmv0Rj/jqoqaFPNmChRbUtelIE/iFCuiY3E8g0MJ3i+xNuL1DMBSXgDhZ+RJrYr
+         E0aI5hO1IZZbg==
+Date:   Tue, 21 Dec 2021 23:55:35 +0500
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+To:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Vasily Averin <vvs@virtuozzo.com>,
+        "open list:KERNEL NFSD, SUNRPC, AND LOCKD SERVERS" 
+        <linux-nfs@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Cc:     usama.anjum@collabora.com, kernel@collabora.com,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] nfs: check nf pointer for validity before use
+Message-ID: <YcIjJ4jN3ax1rqaE@debian-BULLSEYE-live-builder-AMD64>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The const variable ten_thousand is not used, it is redundant and can
-be removed.
+Pointer nf can be NULL. It should be validated before dereferencing it.
 
-Cleans up clang warning:
-kernel/sysctl.c:99:18: warning: unused variable 'ten_thousand' [-Wunused-const-variable]
-static const int ten_thousand = 10000;
-
-Fixes: c26da54dc8ca ("printk: move printk sysctl to printk/sysctl.c")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Fixes: 8628027ba8 ("nfs: block notification on fs with its own ->lock")
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 ---
- kernel/sysctl.c | 3 ---
- 1 file changed, 3 deletions(-)
+ fs/nfsd/nfs4state.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 7f07b058b180..ace130de4a17 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -95,9 +95,6 @@
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index a526d4183348..bdd30988e615 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -6947,6 +6947,11 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 		goto out;
+ 	}
  
- /* Constants used for minimum and  maximum */
++	if (!nf) {
++		status = nfserr_openmode;
++		goto out;
++	}
++
+ 	/*
+ 	 * Most filesystems with their own ->lock operations will block
+ 	 * the nfsd thread waiting to acquire the lock.  That leads to
+@@ -6957,11 +6962,6 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 	if (nf->nf_file->f_op->lock)
+ 		fl_flags &= ~FL_SLEEP;
  
--#ifdef CONFIG_PRINTK
--static const int ten_thousand = 10000;
--#endif
- #ifdef CONFIG_PERF_EVENTS
- static const int six_hundred_forty_kb = 640 * 1024;
- #endif
+-	if (!nf) {
+-		status = nfserr_openmode;
+-		goto out;
+-	}
+-
+ 	nbl = find_or_allocate_block(lock_sop, &fp->fi_fhandle, nn);
+ 	if (!nbl) {
+ 		dprintk("NFSD: %s: unable to allocate block!\n", __func__);
 -- 
-2.33.1
+2.30.2
 
