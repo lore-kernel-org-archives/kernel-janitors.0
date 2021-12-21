@@ -2,78 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 016C6C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Dec 2021 08:11:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D19FCC433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Dec 2021 11:07:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235427AbhLUILk (ORCPT
+        id S236883AbhLULHW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 21 Dec 2021 03:11:40 -0500
-Received: from mail-vk1-f181.google.com ([209.85.221.181]:45027 "EHLO
-        mail-vk1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235432AbhLUILg (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 21 Dec 2021 03:11:36 -0500
-Received: by mail-vk1-f181.google.com with SMTP id b77so2281683vka.11;
-        Tue, 21 Dec 2021 00:11:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TB3EgKnQ6cDDwbUNjEM7H+wsTNMcb9wXt6YvS3W4ql8=;
-        b=jXYRKzSpCEHYENaxvdriLAWEEGUkR6NkkpovRU9Ehwl/l+QvWlHQGhTj1iyHgMopiE
-         IyDHyBYl5pHroyYRjeCv539l4B4IMjm5hcyr0Lt2YVpcgtMpvKkTcpRJCusFcNSRcy9K
-         kGgQoBlrH5ofcnyWQ2CccX3lGhBltYFPGVlK5TCY3smdRQmqvDJ2u/xDZ5X1n0vMbY+w
-         t0oBnk/Rg6C45B2fW7Uhas5HspN83dLQqyh8jQFyMTeVv0dDxBK+Lfqw49U0oc6BDilL
-         vSIYvwmTXK3nZBW39kvNYZEz3n/82hhE3xDDgcWh8hZoN5aF8eyin12wDCHoYMGVBIBC
-         5qdQ==
-X-Gm-Message-State: AOAM53284x8AjwrVqi4MN22CVj4cAjJDCJfjhUcSKCDIhg0qaCbnhYoJ
-        MkDKlB7b5JLM1iG+oaFtjw5kzWSPY6Xh5A==
-X-Google-Smtp-Source: ABdhPJxzRKHJi0hSv0lLc7UvBTg+bgTAuGdijAPJbPY9Q7lRnU7vwgvJ++BY/aHXe27BY4POTqz/YQ==
-X-Received: by 2002:a05:6122:d0f:: with SMTP id az15mr385543vkb.28.1640074295784;
-        Tue, 21 Dec 2021 00:11:35 -0800 (PST)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
-        by smtp.gmail.com with ESMTPSA id q8sm821317vkq.4.2021.12.21.00.11.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Dec 2021 00:11:35 -0800 (PST)
-Received: by mail-ua1-f44.google.com with SMTP id o1so22311104uap.4;
-        Tue, 21 Dec 2021 00:11:35 -0800 (PST)
-X-Received: by 2002:a67:2e09:: with SMTP id u9mr653700vsu.77.1640074295303;
- Tue, 21 Dec 2021 00:11:35 -0800 (PST)
+        Tue, 21 Dec 2021 06:07:22 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:44294 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236854AbhLULHW (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 21 Dec 2021 06:07:22 -0500
+Received: from zn.tnic (dslb-088-067-202-008.088.067.pools.vodafone-ip.de [88.67.202.8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CC6E21EC0328;
+        Tue, 21 Dec 2021 12:07:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1640084836;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=xXqBzKOLuHsEcaumBBArdM0Likeo4E7ACPcERYiHJFc=;
+        b=KBposX2+wjH1MTWWTHSdMaf1VyBgjY94aCZIT/K5EhNTpPWh9V69bRQbrF3DEwyfbIjP7j
+        wBP/vzNE6sIp6+RAxc8/j9Hoox73cNGHGaTB6VGp72BMXQpv34Tv3FeqHnu38Q8MmC1v31
+        RW4nvLwIIEpaTkmOoEI6XuPPaElgvho=
+Date:   Tue, 21 Dec 2021 12:07:19 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Colin Ian King <colin.i.king@googlemail.com>
+Cc:     Tony Luck <tony.luck@intel.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Robert Richter <rric@kernel.org>, linux-edac@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] EDAC/sb_edac: Remove redundant initialization of
+ variable rc
+Message-ID: <YcG1Z7XlSHZJuA0j@zn.tnic>
+References: <20211126221848.1125321-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-References: <20211221004246.213203-1-colin.i.king@gmail.com>
-In-Reply-To: <20211221004246.213203-1-colin.i.king@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 21 Dec 2021 09:11:23 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXN=jjgirX4mTghvYo1TQtW4F+5uMLxHoOFKSXbqk5qPg@mail.gmail.com>
-Message-ID: <CAMuHMdXN=jjgirX4mTghvYo1TQtW4F+5uMLxHoOFKSXbqk5qPg@mail.gmail.com>
-Subject: Re: [PATCH] video: fbdev: mb862xx: remove redundant assignment to
- pointer ptr
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20211126221848.1125321-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Dec 21, 2021 at 3:01 AM Colin Ian King <colin.i.king@gmail.com> wrote:
-> The pointer ptr is being assigned a value that is never read. The
-> pointer is being re-assigned later in a loop. The assignment is
-> redundant and can be removed.
->
+On Fri, Nov 26, 2021 at 10:18:48PM +0000, Colin Ian King wrote:
+> The variable rc is being initialized with a value that is never
+> read, it is being updated later on. The assignment is redundant and
+> can be removed.
+> 
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/edac/sb_edac.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/edac/sb_edac.c b/drivers/edac/sb_edac.c
+> index 1522d4aa2ca6..9678ab97c7ac 100644
+> --- a/drivers/edac/sb_edac.c
+> +++ b/drivers/edac/sb_edac.c
+> @@ -3439,7 +3439,7 @@ MODULE_DEVICE_TABLE(x86cpu, sbridge_cpuids);
+>  
+>  static int sbridge_probe(const struct x86_cpu_id *id)
+>  {
+> -	int rc = -ENODEV;
+> +	int rc;
+>  	u8 mc, num_mc = 0;
+>  	struct sbridge_dev *sbridge_dev;
+>  	struct pci_id_table *ptable = (struct pci_id_table *)id->driver_data;
+> -- 
 
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Applied, thanks.
 
-Gr{oetje,eeting}s,
+-- 
+Regards/Gruss,
+    Boris.
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+https://people.kernel.org/tglx/notes-about-netiquette
