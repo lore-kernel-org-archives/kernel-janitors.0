@@ -2,99 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 174AFC433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Dec 2021 19:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 821E9C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Dec 2021 23:10:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345252AbhLVTdy (ORCPT
+        id S242347AbhLVXKM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 22 Dec 2021 14:33:54 -0500
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:62663 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345251AbhLVTdy (ORCPT
+        Wed, 22 Dec 2021 18:10:12 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:40964 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242276AbhLVXKK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 22 Dec 2021 14:33:54 -0500
-Received: from pop-os.home ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id 07MznESxgf6fn07MznJHFa; Wed, 22 Dec 2021 20:33:51 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Wed, 22 Dec 2021 20:33:51 +0100
-X-ME-IP: 86.243.171.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     robdclark@gmail.com, sean@poorly.run, quic_abhinavk@quicinc.com,
-        airlied@linux.ie, daniel@ffwll.ch, swboyd@chromium.org,
-        bjorn.andersson@linaro.org
-Cc:     linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] drm/msm/dp: Simplify dp_debug_init() and dp_debug_get()
-Date:   Wed, 22 Dec 2021 20:33:47 +0100
-Message-Id: <dc2d6f535379dd38a5e3f9ba502f1f2b3d1f56b7.1640201523.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
+        Wed, 22 Dec 2021 18:10:10 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2D49C61D0D;
+        Wed, 22 Dec 2021 23:10:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 892DDC36AEB;
+        Wed, 22 Dec 2021 23:10:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1640214609;
+        bh=7Otd/kA4q/q/WsN2Gturuk9uPmb7yKnMwHrCxUaVoFk=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=mgMHF6nCmEVJoF0Y29PvollNcOdEVvZTQ9TSw7KQYFQcQS90idpHsXb28GBO5XvIJ
+         6pP82pVQgFFzI/2tY+XYzh9JBWelPBb3lJiY5wKRzljiee5eQ/5YsVL3JCcFq4u8oa
+         Z6HpU+jTFpV7RAJ5sYmNjpU0i6OvAnkSGph/1i+Bp5tHhUyOcl7ZE2olN1S0mTIND1
+         U7b4mPEqKXWyEbhiZmLiCE4NKHg/CNOFAEj7TumiVbcX35/EdWit6IrQShbwruTHlF
+         BQsYwpCLcyAAcs2q4zzXkkmfKFFsVUWWQaydGnG4OTE7gsj0mH7UABbBMgyZqfLwHq
+         TiXecbzIIi+CA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6091AFE55BD;
+        Wed, 22 Dec 2021 23:10:09 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: broadcom: bcm4908enet: remove redundant variable bytes
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164021460938.4565.17826150849581845629.git-patchwork-notify@kernel.org>
+Date:   Wed, 22 Dec 2021 23:10:09 +0000
+References: <20211222003937.727325-1-colin.i.king@gmail.com>
+In-Reply-To: <20211222003937.727325-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     rafal@milecki.pl, bcm-kernel-feedback-list@broadcom.com,
+        davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-dp_debug_init() always returns 0. So, make it a void function and simplify
-the only caller accordingly.
+Hello:
 
-While at it remove a useless 'rc' initialization in dp_debug_get()
+This patch was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/gpu/drm/msm/dp/dp_debug.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
+On Wed, 22 Dec 2021 00:39:37 +0000 you wrote:
+> The variable bytes is being used to summate slot lengths,
+> however the value is never used afterwards. The summation
+> is redundant so remove variable bytes.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/net/ethernet/broadcom/bcm4908_enet.c | 2 --
+>  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/dp/dp_debug.c b/drivers/gpu/drm/msm/dp/dp_debug.c
-index da4323556ef3..338f1f9c4d14 100644
---- a/drivers/gpu/drm/msm/dp/dp_debug.c
-+++ b/drivers/gpu/drm/msm/dp/dp_debug.c
-@@ -207,9 +207,8 @@ static const struct file_operations test_active_fops = {
- 	.write = dp_test_active_write
- };
- 
--static int dp_debug_init(struct dp_debug *dp_debug, struct drm_minor *minor)
-+static void dp_debug_init(struct dp_debug *dp_debug, struct drm_minor *minor)
- {
--	int rc = 0;
- 	struct dp_debug_private *debug = container_of(dp_debug,
- 			struct dp_debug_private, dp_debug);
- 
-@@ -229,17 +228,15 @@ static int dp_debug_init(struct dp_debug *dp_debug, struct drm_minor *minor)
- 			debug, &dp_test_type_fops);
- 
- 	debug->root = minor->debugfs_root;
--
--	return rc;
- }
- 
- struct dp_debug *dp_debug_get(struct device *dev, struct dp_panel *panel,
- 		struct dp_usbpd *usbpd, struct dp_link *link,
- 		struct drm_connector *connector, struct drm_minor *minor)
- {
--	int rc = 0;
- 	struct dp_debug_private *debug;
- 	struct dp_debug *dp_debug;
-+	int rc;
- 
- 	if (!dev || !panel || !usbpd || !link) {
- 		DRM_ERROR("invalid input\n");
-@@ -266,11 +263,7 @@ struct dp_debug *dp_debug_get(struct device *dev, struct dp_panel *panel,
- 	dp_debug->hdisplay = 0;
- 	dp_debug->vrefresh = 0;
- 
--	rc = dp_debug_init(dp_debug, minor);
--	if (rc) {
--		devm_kfree(dev, debug);
--		goto error;
--	}
-+	dp_debug_init(dp_debug, minor);
- 
- 	return dp_debug;
-  error:
+Here is the summary with links:
+  - net: broadcom: bcm4908enet: remove redundant variable bytes
+    https://git.kernel.org/netdev/net-next/c/62a3106697f3
+
+You are awesome, thank you!
 -- 
-2.32.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
