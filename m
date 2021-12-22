@@ -2,81 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2809C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Dec 2021 06:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F92C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Dec 2021 12:54:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242635AbhLVGGM (ORCPT
+        id S244977AbhLVMyN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 22 Dec 2021 01:06:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60752 "EHLO
+        Wed, 22 Dec 2021 07:54:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239092AbhLVGGL (ORCPT
+        with ESMTP id S233901AbhLVMyK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 22 Dec 2021 01:06:11 -0500
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F704C061574;
-        Tue, 21 Dec 2021 22:06:11 -0800 (PST)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: tomeu)
-        with ESMTPSA id 8C0121F43FE1
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=collabora.com; s=mail;
-        t=1640153170; bh=8gJhbItaHWtXAGQBnNApUCpJbX0QfBZk1NdEBMMiaik=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=g8UEvBERjahtMGC3pDLI+wlsQwnkaJPI+1zQIEnxTYb1ibOFzwqy385ChCPeJ2RDr
-         qhlpp5sLkNZGyOPascmRqqzF7EDo/rNlkNjXVaPLblhWgTMJI7Wf2+djHeXasUntqE
-         aoMn8YqGrWDd6/nxjHBd9FQI5eeuiwHyeMv7ZKlQRtSHQIDLJkRUKhV95/NmVnv65O
-         TxPxYtVaaLQmQ9H7KmRyiX3UQcHZPGmre4/0boPmgEzyRKtiejf4BfZ0a11OwA6fSN
-         +iAfO9OLBFBqSCxftdesQ2jKFBIMlYZiIK/+SsqRi14W8Bw8yHFhRrx7xhR0o0qEjC
-         AQv9foLpE7lLw==
-Subject: Re: [PATCH] nfs: check nf pointer for validity before use
-To:     Konstantin Ryabitsev <konstantin.ryabitsev@linux.dev>,
-        Chuck Lever III <chuck.lever@oracle.com>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     Bruce Fields <bfields@fieldses.org>,
-        Vasily Averin <vvs@virtuozzo.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>, kernel@collabora.com,
-        kernel-janitors@vger.kernel.org
-References: <05877B02-900A-4B22-9460-D2F0D20931DC@oracle.com>
- <YcIjJ4jN3ax1rqaE@debian-BULLSEYE-live-builder-AMD64>
- <f8459dd30802e4da915c63f6b70263e6@linux.dev>
-From:   Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Message-ID: <68222978-eb24-cf94-9fb5-4421cbb2b2c8@collabora.com>
-Date:   Wed, 22 Dec 2021 07:06:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
-MIME-Version: 1.0
-In-Reply-To: <f8459dd30802e4da915c63f6b70263e6@linux.dev>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 22 Dec 2021 07:54:10 -0500
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4915FC061574;
+        Wed, 22 Dec 2021 04:54:10 -0800 (PST)
+Received: by mail-wm1-x334.google.com with SMTP id e5so1124851wmq.1;
+        Wed, 22 Dec 2021 04:54:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=Ry2r1h/5gPEfjPNAeB20WCeNaM662aOvZ4e55tHa4OA=;
+        b=Of03S8B1wQYuhMUfs+mIklxnKsQtHZGPNn+H8z9lAO9iw/tp2DOrPhOKzlYf0U4gGJ
+         Q64WLhmin2tcdDkgCgitkeScLf3ca5y1z1hfnsmjNj+EFc9gY+by2xKUR8VgAqwdrMwn
+         4WyGaBEjxRF6zTbhC+nEWldYHZM6waRZwzeuiwaD8sAySOsdaN04jFWFf188QOP5XlYW
+         Ra8KzPqD3XmNlt1SIwW4uhRNyt3psKWM3sU7MlBNbMg3/919CBEbLBNC8c99yk+sE6uJ
+         6XLjyKNVvCqdLxx9bhby6PdGJsJlOXE2z3xWT8QBr6cxczWvMFbmixx+tlQZTZQpw9IJ
+         dVAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Ry2r1h/5gPEfjPNAeB20WCeNaM662aOvZ4e55tHa4OA=;
+        b=bnFL5xdoeGZkyo9nYZ1QwDBlytkWYHfI4UEEMjiuog4IYP7OACkKA6OMh1LMwd74EP
+         I7eLMLCVR8x4CBrLN6ucr/kUyZ7T+OjagQpevR3N6Mc0Fx7G5uJygorEI6eXk0ddC6pS
+         zaZbF6ktEU23xz80xv/Oe624nw5MkNZLI6dt88Q6JdzmdMxbrojMDlHhtfedeQ3iQQul
+         2sd4LPch1QV0Q7gmk2HTPGJerPwiPZXXTDmdxJuRpdM+R1Gwobs2tVKpsQT9VS2WIDoc
+         m43yVvCuvfL3BMiqigg2bfSCXQNfeG5I93Z17VVWL2OOyaYCpcKxv1jRScV+Kv27jKfk
+         k8Vg==
+X-Gm-Message-State: AOAM531v7fYmPkG0MIaSyUIPffHOwuGP5Zy7aCjRgKHKfvu8WJ+RYFyC
+        ey57EnfNmLoKd1vsiMy/cuc=
+X-Google-Smtp-Source: ABdhPJzprnj332k4bcwegE0DW9KLNfliUp/i1yMiDyUr51Ly928Q/8w1laehjVuOpszZf0NxLPt4TA==
+X-Received: by 2002:a05:600c:4fcd:: with SMTP id o13mr852886wmq.175.1640177648679;
+        Wed, 22 Dec 2021 04:54:08 -0800 (PST)
+Received: from felia.fritz.box ([2001:16b8:26d4:3a00:1de2:a01a:60c3:26d5])
+        by smtp.gmail.com with ESMTPSA id v1sm2102249wru.45.2021.12.22.04.54.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Dec 2021 04:54:08 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] x86: mm: refer to the intended config STRICT_DEVMEM in a comment
+Date:   Wed, 22 Dec 2021 13:53:47 +0100
+Message-Id: <20211222125347.13054-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 12/21/21 11:18 PM, Konstantin Ryabitsev wrote:
-> December 21, 2021 3:00 PM, "Chuck Lever III" <chuck.lever@oracle.com> wrote:
->> Btw, b4 complained about collabora.com's DKIM:
->>
->> [cel@bazille linux]$ b4 am
->> https://lore.kernel.org/linux-nfs/YcIjJ4jN3ax1rqaE@debian-BULLSEYE-live-builder-AMD64/raw
->> Grabbing thread from
->> lore.kernel.org/linux-nfs/YcIjJ4jN3ax1rqaE%40debian-BULLSEYE-live-builder-AMD64/t.mbox.gz
->> Analyzing 1 messages in the thread
->> Checking attestation on all messages, may take a moment...
->> ---
->> ✗ [PATCH] nfs: check nf pointer for validity before use
->> ---
->> ✗ BADSIG: DKIM/collabora.com
-> 
-> This is because collabora.com has DKIM canonicalization configured as "c=simple/simple". See my previous message to intel.com for why this should be changed to c=relaxed/simple:
-> 
-> https://lore.kernel.org/lkml/20211214150032.nioelgvmase7yyus@meerkat.local/
+Commit a4866aa81251 ("mm: Tighten x86 /dev/mem with zeroing reads") adds a
+comment to the function devmem_is_allowed() referring to a non-existing
+config STRICT_IOMEM, whereas the comment very likely intended to refer to
+the config STRICT_DEVMEM, as the commit adds some behavior for the config
+STRICT_DEVMEM.
 
-Thank you both, Chuck and Konstantin,
+Most of the initial analysis was actually done by Dave Hansen in the
+email thread below (see Link).
 
-I have forwarded this conversation to our sysadmin team.
+Refer to the intended and existing config STRICT_DEVMEM.
 
-Best regards,
+Link: https://lore.kernel.org/r/f9074e8d-9314-9d7d-7bf5-5b5538c8be8d@intel.com/
 
-Tomeu
+Suggested-by: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ arch/x86/mm/init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
+index 4ba024d5b63a..64ac8a5e928a 100644
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -847,7 +847,7 @@ int devmem_is_allowed(unsigned long pagenr)
+ 
+ 	/*
+ 	 * This must follow RAM test, since System RAM is considered a
+-	 * restricted resource under CONFIG_STRICT_IOMEM.
++	 * restricted resource under CONFIG_STRICT_DEVMEM.
+ 	 */
+ 	if (iomem_is_exclusive(pagenr << PAGE_SHIFT)) {
+ 		/* Low 1MB bypasses iomem restrictions. */
+-- 
+2.17.1
+
