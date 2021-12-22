@@ -2,91 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5B0BC433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Dec 2021 18:51:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 174AFC433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Dec 2021 19:33:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344913AbhLVSv1 (ORCPT
+        id S1345252AbhLVTdy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 22 Dec 2021 13:51:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37110 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344899AbhLVSv0 (ORCPT
+        Wed, 22 Dec 2021 14:33:54 -0500
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:62663 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345251AbhLVTdy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 22 Dec 2021 13:51:26 -0500
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D243C061574;
-        Wed, 22 Dec 2021 10:51:26 -0800 (PST)
-Received: by mail-ed1-x533.google.com with SMTP id bm14so12253824edb.5;
-        Wed, 22 Dec 2021 10:51:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KYTh2CwssS/3FtePDunwZjTT7AQdZfmbx8r4C9A/7rk=;
-        b=NkCq+PT+dxAtqEM4hO3GIGerh5pEAHRJ/tvQvHEAIqTVPFb1VzvT5vbB/p603Mc3TX
-         Ma5ejfdhhqTPhqiK+LanVD9cR6xKmKUWkgKx68Qr33HeuZeEgsDo5oJ0xhAuWKjD82XY
-         uPK9MpnzYeaiZfev1navurWuAW/b2be/zz1EFNhb/l6N7BHAY1r+mdJcK0z4piVR3Swz
-         Qc4KJqFuNZBxbocb0TcAIRAJgfMadSLBGB63cJfqxoTo6t2J6tdEOdbL7NIx5kKq9uyd
-         rGIU+f4MRcwGnDTl9W5JY7YUL8TJFgLbQZgUHQ5gxobtloyQqPkEj4zCxsIyp0ynaYoU
-         EVig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KYTh2CwssS/3FtePDunwZjTT7AQdZfmbx8r4C9A/7rk=;
-        b=BEN3X0XVKFRXQpVUtoa1+1PYYUNEqhbxCPW171Hg2QjntrRZjHTcYmx8KrcXGZ8Pbr
-         kPQCxcU9ln3h6xNJI4+tcjdagZ10Xxw61WfTxJ+cRn/YEbaFcNTNQxViDDkADEbu6eSJ
-         M0bgkeG+fG42l/jQ6DEH3ucNBRhH2Q9GyIeZjwvYtngnt+2qutlqPNPpfTCm9pWZMg3R
-         DiTqjUmrRUThvp+Tfm5o5zhGldAFrF6fhROdz+yY7oscEKn4GWEU3fQ3JyGYTq6w/yTK
-         QKcdwfLzgxG0aihjWjp3iI21RwA+IGtz7+0KsODjgIktuv2YZWwPM53J4Mo3l484I7yy
-         cpOw==
-X-Gm-Message-State: AOAM532y2bNI5UaZzBuEwnkdxpXAJhKJs4izTrq72hg9uwyyZ7kVvSvk
-        5F4NXSiHeMeyPRMF+yVZrm8uWayiHxYzYQBHVNQ=
-X-Google-Smtp-Source: ABdhPJyCRsdCg1paGM0b6KJFzrwBvF+whD52FtJVNqLzVlcBfwUrtUieqKtiF4oFQWciu1uukzbB/kN0jiZfv0E3pl4=
-X-Received: by 2002:a17:907:97cd:: with SMTP id js13mr2183968ejc.497.1640199084990;
- Wed, 22 Dec 2021 10:51:24 -0800 (PST)
+        Wed, 22 Dec 2021 14:33:54 -0500
+Received: from pop-os.home ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id 07MznESxgf6fn07MznJHFa; Wed, 22 Dec 2021 20:33:51 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Wed, 22 Dec 2021 20:33:51 +0100
+X-ME-IP: 86.243.171.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     robdclark@gmail.com, sean@poorly.run, quic_abhinavk@quicinc.com,
+        airlied@linux.ie, daniel@ffwll.ch, swboyd@chromium.org,
+        bjorn.andersson@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] drm/msm/dp: Simplify dp_debug_init() and dp_debug_get()
+Date:   Wed, 22 Dec 2021 20:33:47 +0100
+Message-Id: <dc2d6f535379dd38a5e3f9ba502f1f2b3d1f56b7.1640201523.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-References: <YcIpAKV7Cmi0o7PU@debian-BULLSEYE-live-builder-AMD64>
-In-Reply-To: <YcIpAKV7Cmi0o7PU@debian-BULLSEYE-live-builder-AMD64>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 22 Dec 2021 20:49:26 +0200
-Message-ID: <CAHp75VcU8B8fydh874p6HpgGXXRYvNGdphH=i17JHB3DYJ1JZQ@mail.gmail.com>
-Subject: Re: [PATCH] drivers:iio:dac make expression evaluation 64-bit
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Mihail Chindris <mihail.chindris@analog.com>,
-        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Collabora Kernel ML <kernel@collabora.com>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Dec 22, 2021 at 5:59 PM Muhammad Usama Anjum
-<usama.anjum@collabora.com> wrote:
->
-> Two 32-bit values are being evaluated using 32-bit arithmetic and then
-> passed to s64 type. It is wrong. Expression should be evaluated using
-> 64-bit arithmetic and then passed.
+dp_debug_init() always returns 0. So, make it a void function and simplify
+the only caller accordingly.
 
-...
+While at it remove a useless 'rc' initialization in dp_debug_get()
 
->         dac->ch_data[ch].scale_dec = DIV_ROUND_CLOSEST((s64)rem * 1000000,
->                                                         65536);
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/msm/dp/dp_debug.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
-Shouldn't the above be fixed as well? Has anybody tried to compile on
-32-bit arch this?
-
-> -       dac->ch_data[ch].offset_int = div_s64_rem(v_min * 65536, span, &rem);
-> +       dac->ch_data[ch].offset_int = div_s64_rem(v_min * 65536L, span, &rem);
->         tmp = (s64)rem * 1000000;
->         dac->ch_data[ch].offset_dec = div_s64(tmp, span);
->  }
-
+diff --git a/drivers/gpu/drm/msm/dp/dp_debug.c b/drivers/gpu/drm/msm/dp/dp_debug.c
+index da4323556ef3..338f1f9c4d14 100644
+--- a/drivers/gpu/drm/msm/dp/dp_debug.c
++++ b/drivers/gpu/drm/msm/dp/dp_debug.c
+@@ -207,9 +207,8 @@ static const struct file_operations test_active_fops = {
+ 	.write = dp_test_active_write
+ };
+ 
+-static int dp_debug_init(struct dp_debug *dp_debug, struct drm_minor *minor)
++static void dp_debug_init(struct dp_debug *dp_debug, struct drm_minor *minor)
+ {
+-	int rc = 0;
+ 	struct dp_debug_private *debug = container_of(dp_debug,
+ 			struct dp_debug_private, dp_debug);
+ 
+@@ -229,17 +228,15 @@ static int dp_debug_init(struct dp_debug *dp_debug, struct drm_minor *minor)
+ 			debug, &dp_test_type_fops);
+ 
+ 	debug->root = minor->debugfs_root;
+-
+-	return rc;
+ }
+ 
+ struct dp_debug *dp_debug_get(struct device *dev, struct dp_panel *panel,
+ 		struct dp_usbpd *usbpd, struct dp_link *link,
+ 		struct drm_connector *connector, struct drm_minor *minor)
+ {
+-	int rc = 0;
+ 	struct dp_debug_private *debug;
+ 	struct dp_debug *dp_debug;
++	int rc;
+ 
+ 	if (!dev || !panel || !usbpd || !link) {
+ 		DRM_ERROR("invalid input\n");
+@@ -266,11 +263,7 @@ struct dp_debug *dp_debug_get(struct device *dev, struct dp_panel *panel,
+ 	dp_debug->hdisplay = 0;
+ 	dp_debug->vrefresh = 0;
+ 
+-	rc = dp_debug_init(dp_debug, minor);
+-	if (rc) {
+-		devm_kfree(dev, debug);
+-		goto error;
+-	}
++	dp_debug_init(dp_debug, minor);
+ 
+ 	return dp_debug;
+  error:
 -- 
-With Best Regards,
-Andy Shevchenko
+2.32.0
+
