@@ -2,101 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F92C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Dec 2021 12:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF9EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Dec 2021 13:00:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244977AbhLVMyN (ORCPT
+        id S245127AbhLVNAR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 22 Dec 2021 07:54:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40844 "EHLO
+        Wed, 22 Dec 2021 08:00:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233901AbhLVMyK (ORCPT
+        with ESMTP id S245111AbhLVNAR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 22 Dec 2021 07:54:10 -0500
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4915FC061574;
-        Wed, 22 Dec 2021 04:54:10 -0800 (PST)
-Received: by mail-wm1-x334.google.com with SMTP id e5so1124851wmq.1;
-        Wed, 22 Dec 2021 04:54:10 -0800 (PST)
+        Wed, 22 Dec 2021 08:00:17 -0500
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15DC4C061401;
+        Wed, 22 Dec 2021 05:00:17 -0800 (PST)
+Received: by mail-yb1-xb31.google.com with SMTP id d10so6443346ybe.3;
+        Wed, 22 Dec 2021 05:00:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=Ry2r1h/5gPEfjPNAeB20WCeNaM662aOvZ4e55tHa4OA=;
-        b=Of03S8B1wQYuhMUfs+mIklxnKsQtHZGPNn+H8z9lAO9iw/tp2DOrPhOKzlYf0U4gGJ
-         Q64WLhmin2tcdDkgCgitkeScLf3ca5y1z1hfnsmjNj+EFc9gY+by2xKUR8VgAqwdrMwn
-         4WyGaBEjxRF6zTbhC+nEWldYHZM6waRZwzeuiwaD8sAySOsdaN04jFWFf188QOP5XlYW
-         Ra8KzPqD3XmNlt1SIwW4uhRNyt3psKWM3sU7MlBNbMg3/919CBEbLBNC8c99yk+sE6uJ
-         6XLjyKNVvCqdLxx9bhby6PdGJsJlOXE2z3xWT8QBr6cxczWvMFbmixx+tlQZTZQpw9IJ
-         dVAQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aaB61a7c9DxINzPtdKQI5VfQqfkyBLUL6KJtFjoHoH4=;
+        b=DYobZKni1BvZMsQQkn6f6UUD4Sv4gOwlFq7ovNWSefQjSaJucfTCmxdJhvP8QTEvc7
+         VnJNrt/md64qoG3R/lc/Nt/Em01gBKJmQtu9TJr8v4gmetHni/EEWyVC3IGJKlDHcM8z
+         /jDqAM39BQAK0o5oj0/Df4IP2IFjtrPS7nMb19Cm633+vuWcDTipL6ra8zVph8UUGT2Z
+         mXcLbOqRjCb975sz9ziMCm+dveThuvPs8k0UdU+xPyYiqZp5yNgX7uNGLYSgDzy1JOYY
+         GhA+hWg3dJ9RmgH5mgIfMW2lAE//Xz6wG2U8pcGbgf40880moNKE6jxavOiEghOSBPec
+         pU7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Ry2r1h/5gPEfjPNAeB20WCeNaM662aOvZ4e55tHa4OA=;
-        b=bnFL5xdoeGZkyo9nYZ1QwDBlytkWYHfI4UEEMjiuog4IYP7OACkKA6OMh1LMwd74EP
-         I7eLMLCVR8x4CBrLN6ucr/kUyZ7T+OjagQpevR3N6Mc0Fx7G5uJygorEI6eXk0ddC6pS
-         zaZbF6ktEU23xz80xv/Oe624nw5MkNZLI6dt88Q6JdzmdMxbrojMDlHhtfedeQ3iQQul
-         2sd4LPch1QV0Q7gmk2HTPGJerPwiPZXXTDmdxJuRpdM+R1Gwobs2tVKpsQT9VS2WIDoc
-         m43yVvCuvfL3BMiqigg2bfSCXQNfeG5I93Z17VVWL2OOyaYCpcKxv1jRScV+Kv27jKfk
-         k8Vg==
-X-Gm-Message-State: AOAM531v7fYmPkG0MIaSyUIPffHOwuGP5Zy7aCjRgKHKfvu8WJ+RYFyC
-        ey57EnfNmLoKd1vsiMy/cuc=
-X-Google-Smtp-Source: ABdhPJzprnj332k4bcwegE0DW9KLNfliUp/i1yMiDyUr51Ly928Q/8w1laehjVuOpszZf0NxLPt4TA==
-X-Received: by 2002:a05:600c:4fcd:: with SMTP id o13mr852886wmq.175.1640177648679;
-        Wed, 22 Dec 2021 04:54:08 -0800 (PST)
-Received: from felia.fritz.box ([2001:16b8:26d4:3a00:1de2:a01a:60c3:26d5])
-        by smtp.gmail.com with ESMTPSA id v1sm2102249wru.45.2021.12.22.04.54.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Dec 2021 04:54:08 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aaB61a7c9DxINzPtdKQI5VfQqfkyBLUL6KJtFjoHoH4=;
+        b=YH7jryhjyzRdygK1Ar4SoJFkAfi5UmChCyiDky8baM7GqqU0/QC5K+fm9Llw9imqGa
+         Lu3S8hZTTeBVZ9cMczC8vUzrJ6KawocdQvkb7egwZT5YwvupS5ydaw2h8XvcPmWT/4z4
+         29jzFb8HtfQWX/JU5bCyUDTMWkwTTvDK4izq1kQbst+mhlBWK8SGk5yDBCL0J3LeAN0R
+         ZY34DzT6AgQApWy3Ndbt70LfacMVcP4bU16B1QrOuAF7PFtxRBPfD48P5ghlJp/jz/aN
+         IH/4Vvbju0L4IAAIwuD+6s8jj3l7W2R2l5dGDyDA5wY4LBYPe4I5ASniKSUIBl2v5XJn
+         gSCA==
+X-Gm-Message-State: AOAM531DQrkp7ugc+52sBKqJT9yMSfv6m4FbRZw2DBI0cbklOMhpbW+0
+        FuNQ0Q1+lOUyJI3Z9RROY6WLHi/cvt7/JMSW4KU=
+X-Google-Smtp-Source: ABdhPJwrKuxap0lZ5lBtIC4T5EzGhxynqD8xxXeZzrcsqHwSveQZaQTiNDvUYFWwkR/+k21dEGN0bwkMvOiv1T49PcY=
+X-Received: by 2002:a25:ade0:: with SMTP id d32mr4102956ybe.510.1640178016160;
+ Wed, 22 Dec 2021 05:00:16 -0800 (PST)
+MIME-Version: 1.0
+References: <20210803113531.30720-1-lukas.bulwahn@gmail.com>
+ <f9074e8d-9314-9d7d-7bf5-5b5538c8be8d@intel.com> <CAKXUXMxQ83T7beOTuZ928=-eo2Tsr94TGxsaYh3+MHOJrDO8Bg@mail.gmail.com>
+ <0bc1734f-39c5-cf19-a77e-e0d08978b3d0@intel.com>
+In-Reply-To: <0bc1734f-39c5-cf19-a77e-e0d08978b3d0@intel.com>
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+Date:   Wed, 22 Dec 2021 14:00:05 +0100
+Message-ID: <CAKXUXMxW7-_D=u4GcsmASzM0Oa8qR-K7kmB945B=W+Zgg9WLgA@mail.gmail.com>
+Subject: Re: [PATCH 0/9] Kconfig symbol clean-up on ./arch/x86/
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] x86: mm: refer to the intended config STRICT_DEVMEM in a comment
-Date:   Wed, 22 Dec 2021 13:53:47 +0100
-Message-Id: <20211222125347.13054-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        X86 ML <x86@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Lubomir Rintel <lkundrak@v3.sk>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee.jones@linaro.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        platform-driver-x86@vger.kernel.org,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit a4866aa81251 ("mm: Tighten x86 /dev/mem with zeroing reads") adds a
-comment to the function devmem_is_allowed() referring to a non-existing
-config STRICT_IOMEM, whereas the comment very likely intended to refer to
-the config STRICT_DEVMEM, as the commit adds some behavior for the config
-STRICT_DEVMEM.
+On Tue, Aug 3, 2021 at 5:40 PM Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 8/3/21 8:12 AM, Lukas Bulwahn wrote:
+> >> It's a pretty safe guess that STRICT_IOMEM refers to CONFIG_STRICT_DEVMEM.
+> > Thanks, Dave.
+> >
+> > If the maintainers consider updates to comments making them consistent
+> > with the code as worth being picked, I will turn your analysis into a
+> > proper commit message and provide a patch to update that comment.
+>
+> I'd happily ack a patch that does that.  Might as well fix that kind of
+> stuff now before more time passes and it gets harder to track down.
 
-Most of the initial analysis was actually done by Dave Hansen in the
-email thread below (see Link).
+Sorry, Dave, it took me a bit longer to come back to my second pass on
+references to non-existing configs in the kernel tree...
 
-Refer to the intended and existing config STRICT_DEVMEM.
+I have just sent out a quick fix for this issue, now in your and other
+x86 maintainers' mailbox:
 
-Link: https://lore.kernel.org/r/f9074e8d-9314-9d7d-7bf5-5b5538c8be8d@intel.com/
+https://lore.kernel.org/all/20211222125347.13054-1-lukas.bulwahn@gmail.com/
 
-Suggested-by: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- arch/x86/mm/init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I am happy to get an ack for that patch.
 
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index 4ba024d5b63a..64ac8a5e928a 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -847,7 +847,7 @@ int devmem_is_allowed(unsigned long pagenr)
- 
- 	/*
- 	 * This must follow RAM test, since System RAM is considered a
--	 * restricted resource under CONFIG_STRICT_IOMEM.
-+	 * restricted resource under CONFIG_STRICT_DEVMEM.
- 	 */
- 	if (iomem_is_exclusive(pagenr << PAGE_SHIFT)) {
- 		/* Low 1MB bypasses iomem restrictions. */
--- 
-2.17.1
-
+Lukas
