@@ -2,65 +2,54 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0DF6C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Dec 2021 07:54:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A15CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Dec 2021 08:00:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231892AbhLWHy7 (ORCPT
+        id S242724AbhLWIAt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Dec 2021 02:54:59 -0500
-Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:54604 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243172AbhLWHyo (ORCPT
+        Thu, 23 Dec 2021 03:00:49 -0500
+Received: from mail.thebizzie.pl ([192.236.147.111]:58028 "EHLO
+        mail.thebizzie.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233197AbhLWIAt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Dec 2021 02:54:44 -0500
-Received: from pop-os.home ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id 0IvynZt01wEZf0Ivyn1UuC; Thu, 23 Dec 2021 08:54:42 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 23 Dec 2021 08:54:42 +0100
-X-ME-IP: 86.243.171.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     agross@kernel.org, bjorn.andersson@linaro.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] soc: qcom: llcc: Use devm_bitmap_zalloc() when applicable
-Date:   Thu, 23 Dec 2021 08:54:41 +0100
-Message-Id: <3ee83f75afa8754fade4fff6a03b57f0ae3ccc28.1640245993.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
+        Thu, 23 Dec 2021 03:00:49 -0500
+X-Greylist: delayed 304 seconds by postgrey-1.27 at vger.kernel.org; Thu, 23 Dec 2021 03:00:48 EST
+Received: by mail.thebizzie.pl (Postfix, from userid 1002)
+        id E9111181AE6; Thu, 23 Dec 2021 07:55:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=thebizzie.pl; s=mail;
+        t=1640246143; bh=kU+//Lu71IqgcFfjayWXuIc0mZtoyrYJc2YuqyU8eS8=;
+        h=Date:From:To:Subject:From;
+        b=RAmBCLRQeUdjreO4pCvp+ACn8zRSUr/Ss9gu/g8tjaBxuPuzyKXkIc/uYju+ck9YR
+         Cu4R/gnI8dcHpCGkagFYbjYHm0JtFLWUSaWDfe5Fjnas+ukN5sjHict1Izi5KxOUQo
+         h6LfY7keLvR0xJ5bi+wvUg3se9N+5QFLCbukzsRytDPpWn21UMBngOgoFw/ui6/Wj+
+         uUzMW9W1JWxBWSYT8Jyv8qRqgdmpz3uXFDTLByFMNJQ4H8k1n1qArBPXE9z5NvvSHE
+         tRduLbEpmmXCD+UshWvQc5rYvRWR8+67mFlv0E1YL3qWtgeIGVEoCkFWpA/pD0hL7/
+         ki/xiSdHVjOGg==
+Received: by mail.thebizzie.pl for <kernel-janitors@vger.kernel.org>; Thu, 23 Dec 2021 07:55:39 GMT
+Message-ID: <20211223074500-0.1.f.tho.0.0fc33mp2v0@thebizzie.pl>
+Date:   Thu, 23 Dec 2021 07:55:39 GMT
+From:   "Mateusz Adamczyk" <mateusz.adamczyk@thebizzie.pl>
+To:     <kernel-janitors@vger.kernel.org>
+Subject: Wycena paneli fotowoltaicznych
+X-Mailer: mail.thebizzie.pl
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'drv_data->bitmap' is a bitmap. So use 'devm_bitmap_zalloc()' to simplify
-code, improve the semantic.
+Dzie=C5=84 dobry,
 
-This also fixes a spurious indentation.
+dostrzegam mo=C5=BCliwo=C5=9B=C4=87 wsp=C3=B3=C5=82pracy z Pa=C5=84stwa f=
+irm=C4=85.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/soc/qcom/llcc-qcom.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+=C5=9Awiadczymy kompleksow=C4=85 obs=C5=82ug=C4=99 inwestycji w fotowolta=
+ik=C4=99, kt=C3=B3ra obni=C5=BCa koszty energii elektrycznej nawet o 90%.
 
-diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
-index ec52f29c8867..00274a93406b 100644
---- a/drivers/soc/qcom/llcc-qcom.c
-+++ b/drivers/soc/qcom/llcc-qcom.c
-@@ -632,9 +632,8 @@ static int qcom_llcc_probe(struct platform_device *pdev)
- 	for (i = 0; i < num_banks; i++)
- 		drv_data->offsets[i] = i * BANK_OFFSET_STRIDE;
- 
--	drv_data->bitmap = devm_kcalloc(dev,
--	BITS_TO_LONGS(drv_data->max_slices), sizeof(unsigned long),
--						GFP_KERNEL);
-+	drv_data->bitmap = devm_bitmap_zalloc(dev, drv_data->max_slices,
-+					      GFP_KERNEL);
- 	if (!drv_data->bitmap) {
- 		ret = -ENOMEM;
- 		goto err;
--- 
-2.32.0
+Czy s=C4=85 Pa=C5=84stwo zainteresowani weryfikacj=C4=85 wst=C4=99pnych p=
+ropozycji?
 
+
+Pozdrawiam,
+Mateusz Adamczyk
