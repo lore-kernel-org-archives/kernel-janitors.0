@@ -2,54 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A15CC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Dec 2021 08:00:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8BF0C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Dec 2021 09:03:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242724AbhLWIAt (ORCPT
+        id S1347350AbhLWJDo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Dec 2021 03:00:49 -0500
-Received: from mail.thebizzie.pl ([192.236.147.111]:58028 "EHLO
-        mail.thebizzie.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233197AbhLWIAt (ORCPT
+        Thu, 23 Dec 2021 04:03:44 -0500
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:57129 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232450AbhLWJDn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Dec 2021 03:00:49 -0500
-X-Greylist: delayed 304 seconds by postgrey-1.27 at vger.kernel.org; Thu, 23 Dec 2021 03:00:48 EST
-Received: by mail.thebizzie.pl (Postfix, from userid 1002)
-        id E9111181AE6; Thu, 23 Dec 2021 07:55:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=thebizzie.pl; s=mail;
-        t=1640246143; bh=kU+//Lu71IqgcFfjayWXuIc0mZtoyrYJc2YuqyU8eS8=;
-        h=Date:From:To:Subject:From;
-        b=RAmBCLRQeUdjreO4pCvp+ACn8zRSUr/Ss9gu/g8tjaBxuPuzyKXkIc/uYju+ck9YR
-         Cu4R/gnI8dcHpCGkagFYbjYHm0JtFLWUSaWDfe5Fjnas+ukN5sjHict1Izi5KxOUQo
-         h6LfY7keLvR0xJ5bi+wvUg3se9N+5QFLCbukzsRytDPpWn21UMBngOgoFw/ui6/Wj+
-         uUzMW9W1JWxBWSYT8Jyv8qRqgdmpz3uXFDTLByFMNJQ4H8k1n1qArBPXE9z5NvvSHE
-         tRduLbEpmmXCD+UshWvQc5rYvRWR8+67mFlv0E1YL3qWtgeIGVEoCkFWpA/pD0hL7/
-         ki/xiSdHVjOGg==
-Received: by mail.thebizzie.pl for <kernel-janitors@vger.kernel.org>; Thu, 23 Dec 2021 07:55:39 GMT
-Message-ID: <20211223074500-0.1.f.tho.0.0fc33mp2v0@thebizzie.pl>
-Date:   Thu, 23 Dec 2021 07:55:39 GMT
-From:   "Mateusz Adamczyk" <mateusz.adamczyk@thebizzie.pl>
-To:     <kernel-janitors@vger.kernel.org>
-Subject: Wycena paneli fotowoltaicznych
-X-Mailer: mail.thebizzie.pl
+        Thu, 23 Dec 2021 04:03:43 -0500
+Received: from pop-os.home ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id 0K0hniYVYS9NT0K0hnoUUg; Thu, 23 Dec 2021 10:03:41 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Thu, 23 Dec 2021 10:03:41 +0100
+X-ME-IP: 86.243.171.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com,
+        davem@davemloft.net, kuba@kernel.org
+Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] ice: Optimize a few bitmap operations
+Date:   Thu, 23 Dec 2021 10:03:37 +0100
+Message-Id: <b0cf67c12895e40b403a435192d47b0ac1a00def.1640250120.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dzie=C5=84 dobry,
+When a bitmap is local to a function, it is safe to use the non-atomic
+__[set|clear]_bit(). No concurrent accesses can occur.
 
-dostrzegam mo=C5=BCliwo=C5=9B=C4=87 wsp=C3=B3=C5=82pracy z Pa=C5=84stwa f=
-irm=C4=85.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/intel/ice/ice_flex_pipe.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-=C5=9Awiadczymy kompleksow=C4=85 obs=C5=82ug=C4=99 inwestycji w fotowolta=
-ik=C4=99, kt=C3=B3ra obni=C5=BCa koszty energii elektrycznej nawet o 90%.
+diff --git a/drivers/net/ethernet/intel/ice/ice_flex_pipe.c b/drivers/net/ethernet/intel/ice/ice_flex_pipe.c
+index d29197ab3d02..4deb2c9446ec 100644
+--- a/drivers/net/ethernet/intel/ice/ice_flex_pipe.c
++++ b/drivers/net/ethernet/intel/ice/ice_flex_pipe.c
+@@ -4440,7 +4440,7 @@ ice_update_fd_swap(struct ice_hw *hw, u16 prof_id, struct ice_fv_word *es)
+ 		for (j = 0; j < ICE_FD_SRC_DST_PAIR_COUNT; j++)
+ 			if (es[i].prot_id == ice_fd_pairs[j].prot_id &&
+ 			    es[i].off == ice_fd_pairs[j].off) {
+-				set_bit(j, pair_list);
++				__set_bit(j, pair_list);
+ 				pair_start[j] = i;
+ 			}
+ 	}
+@@ -4710,7 +4710,7 @@ ice_add_prof(struct ice_hw *hw, enum ice_block blk, u64 id, u8 ptypes[],
+ 			if (test_bit(ptg, ptgs_used))
+ 				continue;
+ 
+-			set_bit(ptg, ptgs_used);
++			__set_bit(ptg, ptgs_used);
+ 			/* Check to see there are any attributes for
+ 			 * this PTYPE, and add them if found.
+ 			 */
+@@ -5339,7 +5339,7 @@ ice_adj_prof_priorities(struct ice_hw *hw, enum ice_block blk, u16 vsig,
+ 			}
+ 
+ 			/* keep track of used ptgs */
+-			set_bit(t->tcam[i].ptg, ptgs_used);
++			__set_bit(t->tcam[i].ptg, ptgs_used);
+ 		}
+ 	}
+ 
+-- 
+2.32.0
 
-Czy s=C4=85 Pa=C5=84stwo zainteresowani weryfikacj=C4=85 wst=C4=99pnych p=
-ropozycji?
-
-
-Pozdrawiam,
-Mateusz Adamczyk
