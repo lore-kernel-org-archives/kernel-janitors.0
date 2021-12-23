@@ -2,92 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 562B1C4332F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Dec 2021 09:47:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F8EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Dec 2021 10:21:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347552AbhLWJrV (ORCPT
+        id S1347674AbhLWKVP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Dec 2021 04:47:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39308 "EHLO
+        Thu, 23 Dec 2021 05:21:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232539AbhLWJrU (ORCPT
+        with ESMTP id S239344AbhLWKVO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Dec 2021 04:47:20 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD176C061401;
-        Thu, 23 Dec 2021 01:47:19 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id bg2-20020a05600c3c8200b0034565c2be15so5352523wmb.0;
-        Thu, 23 Dec 2021 01:47:19 -0800 (PST)
+        Thu, 23 Dec 2021 05:21:14 -0500
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A965FC061401;
+        Thu, 23 Dec 2021 02:21:14 -0800 (PST)
+Received: by mail-yb1-xb2e.google.com with SMTP id d10so15029238ybe.3;
+        Thu, 23 Dec 2021 02:21:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1FljN4fCHiTpgSbWmh8CjysLa/wLOYbGIzjzvhbdhTs=;
-        b=aKaqI8DPvlYgtzQmCHC56vZGt89dgMytdw1+t6ERoTmIZu04DdR7Na0cOtZPyhWkE7
-         v5Vs9JB0NBO7rJAXhT0NRzbmFTfwGsd5u4Xx9fgu6DkvKm6+mXzeM0SO2DXYuO23xl8J
-         NeZu+rk4nVaUIzvtdZkZtOkjnKGZlgCAlTOKsdGV/V+6zHLLzYuNdIDCgEzO5lGGw0ku
-         7Mt5lmefX6Y+MylHMOc5LbzrHh9QvD5cQjIkVdhVd0KZQcuz08Cpbad+uUHsDo+B3jG2
-         sTvHF3qqXTCqhHhDjBaAZDJU1f+8d9MASetG7kUWjp53eo/k3WhaezLr1Cl3muWHEgis
-         PuZA==
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=KsIOojEX08aWCewXg//rXmzHnn7mySZCYR+v7sS+FY4=;
+        b=Wa2LpEvof2ondCIqXxDyABniFVWbQVENcZwSGEP8lok7abdGSB2qfjYwbtpF42Ea/v
+         TrlJALAgRvrAeNSkgHpisCZeSUQUzM0Lyfp3RGwPprOm29/BDMM2oEQCTGDfoDPjoTI4
+         9OhOXA2cx5BAbgYO/GAgRBJHB0gtJ+pLmc5gpJv5MsEZ1eSCMkAJ3XnC8rwqMRTPFcNH
+         4i3VElIXcZdVGpJwrd/Ucj/Y7ONIR8rPYdgxqePGH+qRMcBEVC8X4wuNrnTWy4z41pxv
+         k/PzRvPHFj8MK8IEs1IaYDBqPF+8kIavD+YA3gsrtGR4TOnepPUxKXG+4otjWrXCRkwf
+         uxMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1FljN4fCHiTpgSbWmh8CjysLa/wLOYbGIzjzvhbdhTs=;
-        b=dTSEM2eQNv/H55ACnGpH2feeOREs8/U8SB83ovcCmQc0wDIWi5Lf6j8kzgrOraZsrI
-         dtP4se0n3BFiKGG8KfjMJ+sDrkHJ3kGlapummGYNiJ/afQmgSsdUUNimDhQgpSFcSj+R
-         waTx2xS9Du3HpBdesdJYPrgb3yOQAus3W7HlZ0uSCzwlOa/2Gw1HEG95eykB6TTcTjBh
-         46gtmxu3Pe0j292s1TwVLH2tceF24/YMPs1HQaWVvSSUV9A2QpDICCjLFCVjS9mqWyKU
-         taJgedX3ECMG0jiUV8dWxXYVfkr8qCNlpw8eGzhw7b0+ej5hGDKZ0wbh49XsNdjejrTZ
-         YFBw==
-X-Gm-Message-State: AOAM530+O0R1V6sImpppiLWOq4I5AuOmnvMqeUEao3MLpZ2PcEgOw3Tt
-        NuBBKSwkhzMCUA+gyVxA/9U=
-X-Google-Smtp-Source: ABdhPJyjD7EvPp8lRfhnncq2YVvShxYwbEfiq4O/bXG90uQ2M9lxW1eoItKFJ4vI/TbR37/utFxCqA==
-X-Received: by 2002:a05:600c:3485:: with SMTP id a5mr1059237wmq.181.1640252838478;
-        Thu, 23 Dec 2021 01:47:18 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id v6sm7626471wmh.8.2021.12.23.01.47.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Dec 2021 01:47:17 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] Bluetooth: MGMT: Fix spelling mistake "simultanous" -> "simultaneous"
-Date:   Thu, 23 Dec 2021 09:47:17 +0000
-Message-Id: <20211223094717.1310828-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.33.1
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=KsIOojEX08aWCewXg//rXmzHnn7mySZCYR+v7sS+FY4=;
+        b=EVLWhySsMQeDNk/idLy0qasxcpkoxPPMTvJkpO7xyxyyvhEflebfxTlIKVUhuyfE6d
+         DI0NBLd9YUVevQ1mBexz28A1FCzUy4eqQYfnCXSBMpCeFP2sez0TprdiL+47cqxKqpwe
+         /6IP8AmXOsumckuxUuNYblAY6yAVPp6BeHTnQu6ihtEYxai1Jv3p68CegJlII10I9XHy
+         qDXS1QMKOX6VcLpe9sEcHLqdMk/RWUopEOyrsdYAY/mmSuhtKVMkljT+ekZbFXE+lAUP
+         GJxwH6GhvLAYbpDylKgi4KQxqnfs4ioBY5+dQITxmtZxax5TvvDLErpwmiNhvIAy+Pro
+         Muxw==
+X-Gm-Message-State: AOAM533L4wRdN0gSt0Mgagkdp0hK7sdQ2NLZ3XXBWs+HNBhTA72RXgGx
+        eC2TWygKDxLADteWiPsJI1QmPNJ3vqhG9j3ebns=
+X-Google-Smtp-Source: ABdhPJwXP0cYtdT8YXvq84jv2kX03nIHs5jmPaQNQMbpX3WzXkgAWIGsBTcOhtCkpjUSaZCq7wGhyXpac3FTXMMywAE=
+X-Received: by 2002:a25:cad5:: with SMTP id a204mr2537986ybg.234.1640254873841;
+ Thu, 23 Dec 2021 02:21:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Thu, 23 Dec 2021 11:21:03 +0100
+Message-ID: <CAKXUXMxa6zuTncNjTVHeU7nJ9uvv3KqMtSDocMC7P5hxfrkakQ@mail.gmail.com>
+Subject: code conditional on non-existing PPC_EARLY_DEBUG_MICROWATT.
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a bt_dev_info message. Fix it.
+Dear Benjamin, dear Paul, dear Michael,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- net/bluetooth/mgmt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+with commit 48b545b8018d ("powerpc/microwatt: Use standard 16550 UART
+for console"), you have some code in arch/powerpc/kernel/udbg_16550.c,
+conditional on the Kconfig symbol PPC_EARLY_DEBUG_MICROWATT. However,
+since then, the definition of this Kconfig symbol was never introduced
+to the mainline repository or current linux-next, nor am I finding any
+pending patch for that.
 
-diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
-index 6f192efd9da0..37087cf7dc5a 100644
---- a/net/bluetooth/mgmt.c
-+++ b/net/bluetooth/mgmt.c
-@@ -4335,7 +4335,7 @@ static int set_le_simultaneous_roles_func(struct sock *sk, struct hci_dev *hdev,
- 			hci_dev_clear_flag(hdev, HCI_LE_SIMULTANEOUS_ROLES);
- 	}
- 
--	bt_dev_info(hdev, "LE simultanous roles enable %d changed %d",
-+	bt_dev_info(hdev, "LE simultaneous roles enable %d changed %d",
- 		    val, changed);
- 
- 	memcpy(rp.uuid, le_simultaneous_roles_uuid, 16);
--- 
-2.33.1
+Are you going to add this config definition soon? Or did you identify
+that this setup code in udbg_16550.c is not actually needed and can we
+simply drop this code again?
 
+This issue was identified with the script ./scripts/checkkconfigsymbols.py.
+
+
+Best regards,
+
+Lukas
