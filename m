@@ -2,32 +2,33 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C76C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Dec 2021 16:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB067C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Dec 2021 16:23:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349083AbhLWQOv (ORCPT
+        id S1349031AbhLWQXE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Dec 2021 11:14:51 -0500
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:59252 "EHLO
+        Thu, 23 Dec 2021 11:23:04 -0500
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:51492 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231345AbhLWQOv (ORCPT
+        with ESMTP id S233687AbhLWQXD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Dec 2021 11:14:51 -0500
+        Thu, 23 Dec 2021 11:23:03 -0500
 Received: from pop-os.home ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id 0QjwnMoJoIEdl0QjwnhFhs; Thu, 23 Dec 2021 17:14:49 +0100
+        id 0QrtnMs08IEdl0QrtnhHRO; Thu, 23 Dec 2021 17:23:02 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 23 Dec 2021 17:14:49 +0100
+X-ME-Date: Thu, 23 Dec 2021 17:23:02 +0100
 X-ME-IP: 86.243.171.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     nm@ti.com, ssantosh@kernel.org
+To:     nm@ti.com, kristo@kernel.org, ssantosh@kernel.org,
+        lokeshvutla@ti.com, maz@kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] soc: ti: k3-ringacc: Use devm_bitmap_zalloc() when applicable
-Date:   Thu, 23 Dec 2021 17:14:46 +0100
-Message-Id: <45544b0d97a7bea7764292852842adf5085a7700.1640276001.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] firmware: ti_sci: Fix compilation failure when CONFIG_TI_SCI_PROTOCOL is not defined
+Date:   Thu, 23 Dec 2021 17:23:00 +0100
+Message-Id: <e6c3cb793e1a6a2a0ae2528d5a5650dfe6a4b6ff.1640276505.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -35,47 +36,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'rings_inuse' and 'proxy_inuse' are bitmaps. So use 'devm_bitmap_zalloc()'
-to simplify code and improve the semantic.
+Remove an extra ";" which breaks compilation.
 
+Fixes: 53bf2b0e4e4c ("firmware: ti_sci: Add support for getting resource with subtype")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/soc/ti/k3-ringacc.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ include/linux/soc/ti/ti_sci_protocol.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/soc/ti/k3-ringacc.c b/drivers/soc/ti/k3-ringacc.c
-index 31ab6c657fec..f7bf18b8229a 100644
---- a/drivers/soc/ti/k3-ringacc.c
-+++ b/drivers/soc/ti/k3-ringacc.c
-@@ -1402,12 +1402,10 @@ static int k3_ringacc_init(struct platform_device *pdev,
- 				      sizeof(*ringacc->rings) *
- 				      ringacc->num_rings,
- 				      GFP_KERNEL);
--	ringacc->rings_inuse = devm_kcalloc(dev,
--					    BITS_TO_LONGS(ringacc->num_rings),
--					    sizeof(unsigned long), GFP_KERNEL);
--	ringacc->proxy_inuse = devm_kcalloc(dev,
--					    BITS_TO_LONGS(ringacc->num_proxies),
--					    sizeof(unsigned long), GFP_KERNEL);
-+	ringacc->rings_inuse = devm_bitmap_zalloc(dev, ringacc->num_rings,
-+						  GFP_KERNEL);
-+	ringacc->proxy_inuse = devm_bitmap_zalloc(dev, ringacc->num_proxies,
-+						  GFP_KERNEL);
+diff --git a/include/linux/soc/ti/ti_sci_protocol.h b/include/linux/soc/ti/ti_sci_protocol.h
+index 0aad7009b50e..bd0d11af76c5 100644
+--- a/include/linux/soc/ti/ti_sci_protocol.h
++++ b/include/linux/soc/ti/ti_sci_protocol.h
+@@ -645,7 +645,7 @@ devm_ti_sci_get_of_resource(const struct ti_sci_handle *handle,
  
- 	if (!ringacc->rings || !ringacc->rings_inuse || !ringacc->proxy_inuse)
- 		return -ENOMEM;
-@@ -1483,9 +1481,8 @@ struct k3_ringacc *k3_ringacc_dmarings_init(struct platform_device *pdev,
- 				      sizeof(*ringacc->rings) *
- 				      ringacc->num_rings * 2,
- 				      GFP_KERNEL);
--	ringacc->rings_inuse = devm_kcalloc(dev,
--					    BITS_TO_LONGS(ringacc->num_rings),
--					    sizeof(unsigned long), GFP_KERNEL);
-+	ringacc->rings_inuse = devm_bitmap_zalloc(dev, ringacc->num_rings,
-+						  GFP_KERNEL);
- 
- 	if (!ringacc->rings || !ringacc->rings_inuse)
- 		return ERR_PTR(-ENOMEM);
+ static inline struct ti_sci_resource *
+ devm_ti_sci_get_resource(const struct ti_sci_handle *handle, struct device *dev,
+-			 u32 dev_id, u32 sub_type);
++			 u32 dev_id, u32 sub_type)
+ {
+ 	return ERR_PTR(-EINVAL);
+ }
 -- 
 2.32.0
 
