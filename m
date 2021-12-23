@@ -2,79 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8BF0C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Dec 2021 09:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 562B1C4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Dec 2021 09:47:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347350AbhLWJDo (ORCPT
+        id S1347552AbhLWJrV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Dec 2021 04:03:44 -0500
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:57129 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232450AbhLWJDn (ORCPT
+        Thu, 23 Dec 2021 04:47:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39308 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232539AbhLWJrU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Dec 2021 04:03:43 -0500
-Received: from pop-os.home ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id 0K0hniYVYS9NT0K0hnoUUg; Thu, 23 Dec 2021 10:03:41 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 23 Dec 2021 10:03:41 +0100
-X-ME-IP: 86.243.171.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com,
-        davem@davemloft.net, kuba@kernel.org
-Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] ice: Optimize a few bitmap operations
-Date:   Thu, 23 Dec 2021 10:03:37 +0100
-Message-Id: <b0cf67c12895e40b403a435192d47b0ac1a00def.1640250120.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
+        Thu, 23 Dec 2021 04:47:20 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD176C061401;
+        Thu, 23 Dec 2021 01:47:19 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id bg2-20020a05600c3c8200b0034565c2be15so5352523wmb.0;
+        Thu, 23 Dec 2021 01:47:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1FljN4fCHiTpgSbWmh8CjysLa/wLOYbGIzjzvhbdhTs=;
+        b=aKaqI8DPvlYgtzQmCHC56vZGt89dgMytdw1+t6ERoTmIZu04DdR7Na0cOtZPyhWkE7
+         v5Vs9JB0NBO7rJAXhT0NRzbmFTfwGsd5u4Xx9fgu6DkvKm6+mXzeM0SO2DXYuO23xl8J
+         NeZu+rk4nVaUIzvtdZkZtOkjnKGZlgCAlTOKsdGV/V+6zHLLzYuNdIDCgEzO5lGGw0ku
+         7Mt5lmefX6Y+MylHMOc5LbzrHh9QvD5cQjIkVdhVd0KZQcuz08Cpbad+uUHsDo+B3jG2
+         sTvHF3qqXTCqhHhDjBaAZDJU1f+8d9MASetG7kUWjp53eo/k3WhaezLr1Cl3muWHEgis
+         PuZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1FljN4fCHiTpgSbWmh8CjysLa/wLOYbGIzjzvhbdhTs=;
+        b=dTSEM2eQNv/H55ACnGpH2feeOREs8/U8SB83ovcCmQc0wDIWi5Lf6j8kzgrOraZsrI
+         dtP4se0n3BFiKGG8KfjMJ+sDrkHJ3kGlapummGYNiJ/afQmgSsdUUNimDhQgpSFcSj+R
+         waTx2xS9Du3HpBdesdJYPrgb3yOQAus3W7HlZ0uSCzwlOa/2Gw1HEG95eykB6TTcTjBh
+         46gtmxu3Pe0j292s1TwVLH2tceF24/YMPs1HQaWVvSSUV9A2QpDICCjLFCVjS9mqWyKU
+         taJgedX3ECMG0jiUV8dWxXYVfkr8qCNlpw8eGzhw7b0+ej5hGDKZ0wbh49XsNdjejrTZ
+         YFBw==
+X-Gm-Message-State: AOAM530+O0R1V6sImpppiLWOq4I5AuOmnvMqeUEao3MLpZ2PcEgOw3Tt
+        NuBBKSwkhzMCUA+gyVxA/9U=
+X-Google-Smtp-Source: ABdhPJyjD7EvPp8lRfhnncq2YVvShxYwbEfiq4O/bXG90uQ2M9lxW1eoItKFJ4vI/TbR37/utFxCqA==
+X-Received: by 2002:a05:600c:3485:: with SMTP id a5mr1059237wmq.181.1640252838478;
+        Thu, 23 Dec 2021 01:47:18 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id v6sm7626471wmh.8.2021.12.23.01.47.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Dec 2021 01:47:17 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] Bluetooth: MGMT: Fix spelling mistake "simultanous" -> "simultaneous"
+Date:   Thu, 23 Dec 2021 09:47:17 +0000
+Message-Id: <20211223094717.1310828-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-When a bitmap is local to a function, it is safe to use the non-atomic
-__[set|clear]_bit(). No concurrent accesses can occur.
+There is a spelling mistake in a bt_dev_info message. Fix it.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/net/ethernet/intel/ice/ice_flex_pipe.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/bluetooth/mgmt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_flex_pipe.c b/drivers/net/ethernet/intel/ice/ice_flex_pipe.c
-index d29197ab3d02..4deb2c9446ec 100644
---- a/drivers/net/ethernet/intel/ice/ice_flex_pipe.c
-+++ b/drivers/net/ethernet/intel/ice/ice_flex_pipe.c
-@@ -4440,7 +4440,7 @@ ice_update_fd_swap(struct ice_hw *hw, u16 prof_id, struct ice_fv_word *es)
- 		for (j = 0; j < ICE_FD_SRC_DST_PAIR_COUNT; j++)
- 			if (es[i].prot_id == ice_fd_pairs[j].prot_id &&
- 			    es[i].off == ice_fd_pairs[j].off) {
--				set_bit(j, pair_list);
-+				__set_bit(j, pair_list);
- 				pair_start[j] = i;
- 			}
- 	}
-@@ -4710,7 +4710,7 @@ ice_add_prof(struct ice_hw *hw, enum ice_block blk, u64 id, u8 ptypes[],
- 			if (test_bit(ptg, ptgs_used))
- 				continue;
- 
--			set_bit(ptg, ptgs_used);
-+			__set_bit(ptg, ptgs_used);
- 			/* Check to see there are any attributes for
- 			 * this PTYPE, and add them if found.
- 			 */
-@@ -5339,7 +5339,7 @@ ice_adj_prof_priorities(struct ice_hw *hw, enum ice_block blk, u16 vsig,
- 			}
- 
- 			/* keep track of used ptgs */
--			set_bit(t->tcam[i].ptg, ptgs_used);
-+			__set_bit(t->tcam[i].ptg, ptgs_used);
- 		}
+diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
+index 6f192efd9da0..37087cf7dc5a 100644
+--- a/net/bluetooth/mgmt.c
++++ b/net/bluetooth/mgmt.c
+@@ -4335,7 +4335,7 @@ static int set_le_simultaneous_roles_func(struct sock *sk, struct hci_dev *hdev,
+ 			hci_dev_clear_flag(hdev, HCI_LE_SIMULTANEOUS_ROLES);
  	}
  
+-	bt_dev_info(hdev, "LE simultanous roles enable %d changed %d",
++	bt_dev_info(hdev, "LE simultaneous roles enable %d changed %d",
+ 		    val, changed);
+ 
+ 	memcpy(rp.uuid, le_simultaneous_roles_uuid, 16);
 -- 
-2.32.0
+2.33.1
 
