@@ -2,32 +2,34 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2758C433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Dec 2021 21:33:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96465C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Dec 2021 21:55:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350355AbhLWVds (ORCPT
+        id S231576AbhLWVzp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Dec 2021 16:33:48 -0500
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:57997 "EHLO
+        Thu, 23 Dec 2021 16:55:45 -0500
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:56207 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350350AbhLWVds (ORCPT
+        with ESMTP id S231557AbhLWVzl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Dec 2021 16:33:48 -0500
+        Thu, 23 Dec 2021 16:55:41 -0500
 Received: from pop-os.home ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id 0VianGsLVbyf90VibnnW85; Thu, 23 Dec 2021 22:33:45 +0100
+        id 0W3lnGyoSbyf90W3lnnXk1; Thu, 23 Dec 2021 22:55:40 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 23 Dec 2021 22:33:45 +0100
+X-ME-Date: Thu, 23 Dec 2021 22:55:40 +0100
 X-ME-IP: 86.243.171.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     jiri@nvidia.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     axboe@kernel.dk, chaitanya.kulkarni@wdc.com, damien.lemoal@wdc.com,
+        ming.lei@redhat.com, Johannes.Thumshirn@wdc.com,
+        shinichiro.kawasaki@wdc.com, jiangguoqing@kylinos.cn
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] lib: objagg: Use the bitmap API when applicable
-Date:   Thu, 23 Dec 2021 22:33:42 +0100
-Message-Id: <f9541b085ec68e573004e1be200c11c9c901181a.1640295165.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] null_blk: Use bitmap_zalloc() when applicable
+Date:   Thu, 23 Dec 2021 22:55:36 +0100
+Message-Id: <3e68598defed010efb864ea55887d88ed0da02cc.1640296433.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -35,49 +37,47 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use 'bitmap_zalloc()' to simplify code, improve the semantic and reduce
-some open-coded arithmetic in allocator arguments.
+'nq->tag_map' is a bitmap. So use bitmap_zalloc() to simplify code and
+improve the semantic.
 
-Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
+Also change the corresponding kfree() into bitmap_free() to keep
 consistency.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- lib/objagg.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/block/null_blk/main.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/lib/objagg.c b/lib/objagg.c
-index 5e1676ccdadd..1e248629ed64 100644
---- a/lib/objagg.c
-+++ b/lib/objagg.c
-@@ -781,7 +781,6 @@ static struct objagg_tmp_graph *objagg_tmp_graph_create(struct objagg *objagg)
- 	struct objagg_tmp_node *node;
- 	struct objagg_tmp_node *pnode;
- 	struct objagg_obj *objagg_obj;
--	size_t alloc_size;
- 	int i, j;
+diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
+index 6be6ccd4a28f..9e058e0aa668 100644
+--- a/drivers/block/null_blk/main.c
++++ b/drivers/block/null_blk/main.c
+@@ -1661,7 +1661,7 @@ static blk_status_t null_queue_rq(struct blk_mq_hw_ctx *hctx,
  
- 	graph = kzalloc(sizeof(*graph), GFP_KERNEL);
-@@ -793,9 +792,7 @@ static struct objagg_tmp_graph *objagg_tmp_graph_create(struct objagg *objagg)
- 		goto err_nodes_alloc;
- 	graph->nodes_count = nodes_count;
- 
--	alloc_size = BITS_TO_LONGS(nodes_count * nodes_count) *
--		     sizeof(unsigned long);
--	graph->edges = kzalloc(alloc_size, GFP_KERNEL);
-+	graph->edges = bitmap_zalloc(nodes_count * nodes_count, GFP_KERNEL);
- 	if (!graph->edges)
- 		goto err_edges_alloc;
- 
-@@ -833,7 +830,7 @@ static struct objagg_tmp_graph *objagg_tmp_graph_create(struct objagg *objagg)
- 
- static void objagg_tmp_graph_destroy(struct objagg_tmp_graph *graph)
+ static void cleanup_queue(struct nullb_queue *nq)
  {
--	kfree(graph->edges);
-+	bitmap_free(graph->edges);
- 	kfree(graph->nodes);
- 	kfree(graph);
+-	kfree(nq->tag_map);
++	bitmap_free(nq->tag_map);
+ 	kfree(nq->cmds);
  }
+ 
+@@ -1790,14 +1790,13 @@ static const struct block_device_operations null_rq_ops = {
+ static int setup_commands(struct nullb_queue *nq)
+ {
+ 	struct nullb_cmd *cmd;
+-	int i, tag_size;
++	int i;
+ 
+ 	nq->cmds = kcalloc(nq->queue_depth, sizeof(*cmd), GFP_KERNEL);
+ 	if (!nq->cmds)
+ 		return -ENOMEM;
+ 
+-	tag_size = ALIGN(nq->queue_depth, BITS_PER_LONG) / BITS_PER_LONG;
+-	nq->tag_map = kcalloc(tag_size, sizeof(unsigned long), GFP_KERNEL);
++	nq->tag_map = bitmap_zalloc(nq->queue_depth, GFP_KERNEL);
+ 	if (!nq->tag_map) {
+ 		kfree(nq->cmds);
+ 		return -ENOMEM;
 -- 
 2.32.0
 
