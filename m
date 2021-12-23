@@ -2,76 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 821E9C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Dec 2021 23:10:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1FD3C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Dec 2021 05:09:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242347AbhLVXKM (ORCPT
+        id S233829AbhLWFJW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 22 Dec 2021 18:10:12 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:40964 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242276AbhLVXKK (ORCPT
+        Thu, 23 Dec 2021 00:09:22 -0500
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:58216 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232034AbhLWFJW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 22 Dec 2021 18:10:10 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2D49C61D0D;
-        Wed, 22 Dec 2021 23:10:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 892DDC36AEB;
-        Wed, 22 Dec 2021 23:10:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640214609;
-        bh=7Otd/kA4q/q/WsN2Gturuk9uPmb7yKnMwHrCxUaVoFk=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=mgMHF6nCmEVJoF0Y29PvollNcOdEVvZTQ9TSw7KQYFQcQS90idpHsXb28GBO5XvIJ
-         6pP82pVQgFFzI/2tY+XYzh9JBWelPBb3lJiY5wKRzljiee5eQ/5YsVL3JCcFq4u8oa
-         Z6HpU+jTFpV7RAJ5sYmNjpU0i6OvAnkSGph/1i+Bp5tHhUyOcl7ZE2olN1S0mTIND1
-         U7b4mPEqKXWyEbhiZmLiCE4NKHg/CNOFAEj7TumiVbcX35/EdWit6IrQShbwruTHlF
-         BQsYwpCLcyAAcs2q4zzXkkmfKFFsVUWWQaydGnG4OTE7gsj0mH7UABbBMgyZqfLwHq
-         TiXecbzIIi+CA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6091AFE55BD;
-        Wed, 22 Dec 2021 23:10:09 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 23 Dec 2021 00:09:22 -0500
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BN0bNjD026370;
+        Thu, 23 Dec 2021 05:09:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2021-07-09;
+ bh=h1Gz3NmkkvAQalHSEv+c/ZfxMQ6PAkxx2LFttZmQzBU=;
+ b=hR9E80P0+cZv0DH4LMOweUZO4BrDGm4+aUKpj/DR2ATWFZe0FQroLdTB7dkXwADSD73p
+ Mf/MNuymVSvtxx0JDi3UcnbmUDgfM6oBvCZF0bwQb93C5gZZEq7b2GCX5QVIZcloQzd+
+ FHXafEcHJ+88vsN3QqoND02bpb4OQaJCaEOldxIlcVyS8AG8wKxYefjRYzDtCyLu/18R
+ jA3R2Xfj4LXWTjC4gEMixE1OLz6b3Mi+7NB01HBVlWf2Wp+D0QEudHeYgtfV1YQVOmrQ
+ NjOFjwryajKcszUkqDGN4L3rbVbQdo92pLm2PtO0/9+QA4b5U3pnS3BPXLmrvwPYrE/w 7g== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3d4103a1ey-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 23 Dec 2021 05:09:09 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1BN511gq070356;
+        Thu, 23 Dec 2021 05:09:00 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3030.oracle.com with ESMTP id 3d15pfm5ta-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 23 Dec 2021 05:09:00 +0000
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 1BN58xaB091703;
+        Thu, 23 Dec 2021 05:08:59 GMT
+Received: from ca-mkp.mkp.ca.oracle.com (ca-mkp.ca.oracle.com [10.156.108.201])
+        by aserp3030.oracle.com with ESMTP id 3d15pfm5se-2;
+        Thu, 23 Dec 2021 05:08:59 +0000
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <james.smart@broadcom.com>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        kernel-janitors@vger.kernel.org, Hannes Reinecke <hare@suse.com>
+Subject: Re: [PATCH] scsi: lpfc: Terminate string in lpfc_debugfs_nvmeio_trc_write()
+Date:   Thu, 23 Dec 2021 00:08:56 -0500
+Message-Id: <164023593111.32381.16067012034027216653.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20211214070527.GA27934@kili>
+References: <20211214070527.GA27934@kili>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: broadcom: bcm4908enet: remove redundant variable bytes
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164021460938.4565.17826150849581845629.git-patchwork-notify@kernel.org>
-Date:   Wed, 22 Dec 2021 23:10:09 +0000
-References: <20211222003937.727325-1-colin.i.king@gmail.com>
-In-Reply-To: <20211222003937.727325-1-colin.i.king@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     rafal@milecki.pl, bcm-kernel-feedback-list@broadcom.com,
-        davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Proofpoint-ORIG-GUID: bXN7uAIM3-55gL28gT99Bq9OrSHEvM_q
+X-Proofpoint-GUID: bXN7uAIM3-55gL28gT99Bq9OrSHEvM_q
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+On Tue, 14 Dec 2021 10:05:27 +0300, Dan Carpenter wrote:
 
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 22 Dec 2021 00:39:37 +0000 you wrote:
-> The variable bytes is being used to summate slot lengths,
-> however the value is never used afterwards. The summation
-> is redundant so remove variable bytes.
+> The "mybuf" string comes from the user, so we need to ensure that it is
+> NUL terminated.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/net/ethernet/broadcom/bcm4908_enet.c | 2 --
->  1 file changed, 2 deletions(-)
+> 
 
-Here is the summary with links:
-  - net: broadcom: bcm4908enet: remove redundant variable bytes
-    https://git.kernel.org/netdev/net-next/c/62a3106697f3
+Applied to 5.16/scsi-fixes, thanks!
 
-You are awesome, thank you!
+[1/1] scsi: lpfc: Terminate string in lpfc_debugfs_nvmeio_trc_write()
+      https://git.kernel.org/mkp/scsi/c/9020be114a47
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Martin K. Petersen	Oracle Linux Engineering
