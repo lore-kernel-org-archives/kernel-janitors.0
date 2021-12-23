@@ -2,32 +2,32 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED2ACC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Dec 2021 07:40:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0DF6C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Dec 2021 07:54:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346878AbhLWHkq (ORCPT
+        id S231892AbhLWHy7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Dec 2021 02:40:46 -0500
-Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:63279 "EHLO
+        Thu, 23 Dec 2021 02:54:59 -0500
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:54604 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346867AbhLWHkq (ORCPT
+        with ESMTP id S243172AbhLWHyo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Dec 2021 02:40:46 -0500
+        Thu, 23 Dec 2021 02:54:44 -0500
 Received: from pop-os.home ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id 0IiQnZlqWwEZf0IiRn1Rhj; Thu, 23 Dec 2021 08:40:44 +0100
+        id 0IvynZt01wEZf0Ivyn1UuC; Thu, 23 Dec 2021 08:54:42 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 23 Dec 2021 08:40:44 +0100
+X-ME-Date: Thu, 23 Dec 2021 08:54:42 +0100
 X-ME-IP: 86.243.171.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     hminas@synopsys.com, gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     agross@kernel.org, bjorn.andersson@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] usb: dwc2: Simplify a bitmap declaration
-Date:   Thu, 23 Dec 2021 08:40:41 +0100
-Message-Id: <a2bf604d26dbe9816fdaae0faf4b4837ecacc6d3.1640245180.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] soc: qcom: llcc: Use devm_bitmap_zalloc() when applicable
+Date:   Thu, 23 Dec 2021 08:54:41 +0100
+Message-Id: <3ee83f75afa8754fade4fff6a03b57f0ae3ccc28.1640245993.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -35,27 +35,32 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use DECLARE_BITMAP() instead of hand writing it.
+'drv_data->bitmap' is a bitmap. So use 'devm_bitmap_zalloc()' to simplify
+code, improve the semantic.
+
+This also fixes a spurious indentation.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/usb/dwc2/core.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/soc/qcom/llcc-qcom.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/dwc2/core.h b/drivers/usb/dwc2/core.h
-index e2fe64239328..8a63da3ab39d 100644
---- a/drivers/usb/dwc2/core.h
-+++ b/drivers/usb/dwc2/core.h
-@@ -1154,8 +1154,7 @@ struct dwc2_hsotg {
- 	struct list_head periodic_sched_queued;
- 	struct list_head split_order;
- 	u16 periodic_usecs;
--	unsigned long hs_periodic_bitmap[
--		DIV_ROUND_UP(DWC2_HS_SCHEDULE_US, BITS_PER_LONG)];
-+	DECLARE_BITMAP(hs_periodic_bitmap, DWC2_HS_SCHEDULE_US);
- 	u16 periodic_qh_count;
- 	bool new_connection;
+diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+index ec52f29c8867..00274a93406b 100644
+--- a/drivers/soc/qcom/llcc-qcom.c
++++ b/drivers/soc/qcom/llcc-qcom.c
+@@ -632,9 +632,8 @@ static int qcom_llcc_probe(struct platform_device *pdev)
+ 	for (i = 0; i < num_banks; i++)
+ 		drv_data->offsets[i] = i * BANK_OFFSET_STRIDE;
  
+-	drv_data->bitmap = devm_kcalloc(dev,
+-	BITS_TO_LONGS(drv_data->max_slices), sizeof(unsigned long),
+-						GFP_KERNEL);
++	drv_data->bitmap = devm_bitmap_zalloc(dev, drv_data->max_slices,
++					      GFP_KERNEL);
+ 	if (!drv_data->bitmap) {
+ 		ret = -ENOMEM;
+ 		goto err;
 -- 
 2.32.0
 
