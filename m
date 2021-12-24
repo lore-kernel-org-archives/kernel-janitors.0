@@ -2,82 +2,54 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96465C433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Dec 2021 21:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D8B1C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Dec 2021 03:26:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231576AbhLWVzp (ORCPT
+        id S1351165AbhLXD0U (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Dec 2021 16:55:45 -0500
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:56207 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231557AbhLWVzl (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Dec 2021 16:55:41 -0500
-Received: from pop-os.home ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id 0W3lnGyoSbyf90W3lnnXk1; Thu, 23 Dec 2021 22:55:40 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 23 Dec 2021 22:55:40 +0100
-X-ME-IP: 86.243.171.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     axboe@kernel.dk, chaitanya.kulkarni@wdc.com, damien.lemoal@wdc.com,
-        ming.lei@redhat.com, Johannes.Thumshirn@wdc.com,
-        shinichiro.kawasaki@wdc.com, jiangguoqing@kylinos.cn
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] null_blk: Use bitmap_zalloc() when applicable
-Date:   Thu, 23 Dec 2021 22:55:36 +0100
-Message-Id: <3e68598defed010efb864ea55887d88ed0da02cc.1640296433.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
+        Thu, 23 Dec 2021 22:26:20 -0500
+Received: from helcar.hmeau.com ([216.24.177.18]:58464 "EHLO fornost.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1351168AbhLXD0J (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 23 Dec 2021 22:26:09 -0500
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
+        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
+        id 1n0bDQ-0006LP-CY; Fri, 24 Dec 2021 14:25:57 +1100
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 24 Dec 2021 14:25:56 +1100
+Date:   Fri, 24 Dec 2021 14:25:56 +1100
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Boris Brezillon <bbrezillon@kernel.org>,
+        Srujana Challa <schalla@marvell.com>,
+        Arnaud Ebalard <arno@natisbad.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Suheil Chandran <schandran@marvell.com>,
+        Shijith Thotton <sthotton@marvell.com>,
+        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] crypto: octeontx2 - out of bounds access in
+ otx2_cpt_dl_custom_egrp_delete()
+Message-ID: <YcU9xBEc9kFlm+at@gondor.apana.org.au>
+References: <20211217071232.GG26548@kili>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211217071232.GG26548@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'nq->tag_map' is a bitmap. So use bitmap_zalloc() to simplify code and
-improve the semantic.
+On Fri, Dec 17, 2021 at 10:12:32AM +0300, Dan Carpenter wrote:
+> If "egrp" is negative then it is causes an out of bounds access in
+> eng_grps->grp[].
+> 
+> Fixes: d9d7749773e8 ("crypto: octeontx2 - add apis for custom engine groups")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Also change the corresponding kfree() into bitmap_free() to keep
-consistency.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/block/null_blk/main.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
-index 6be6ccd4a28f..9e058e0aa668 100644
---- a/drivers/block/null_blk/main.c
-+++ b/drivers/block/null_blk/main.c
-@@ -1661,7 +1661,7 @@ static blk_status_t null_queue_rq(struct blk_mq_hw_ctx *hctx,
- 
- static void cleanup_queue(struct nullb_queue *nq)
- {
--	kfree(nq->tag_map);
-+	bitmap_free(nq->tag_map);
- 	kfree(nq->cmds);
- }
- 
-@@ -1790,14 +1790,13 @@ static const struct block_device_operations null_rq_ops = {
- static int setup_commands(struct nullb_queue *nq)
- {
- 	struct nullb_cmd *cmd;
--	int i, tag_size;
-+	int i;
- 
- 	nq->cmds = kcalloc(nq->queue_depth, sizeof(*cmd), GFP_KERNEL);
- 	if (!nq->cmds)
- 		return -ENOMEM;
- 
--	tag_size = ALIGN(nq->queue_depth, BITS_PER_LONG) / BITS_PER_LONG;
--	nq->tag_map = kcalloc(tag_size, sizeof(unsigned long), GFP_KERNEL);
-+	nq->tag_map = bitmap_zalloc(nq->queue_depth, GFP_KERNEL);
- 	if (!nq->tag_map) {
- 		kfree(nq->cmds);
- 		return -ENOMEM;
+All applied.  Thanks.
 -- 
-2.32.0
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
