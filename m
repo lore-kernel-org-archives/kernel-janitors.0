@@ -2,141 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28008C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Dec 2021 06:10:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D76C4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Dec 2021 07:07:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351469AbhLXGKg (ORCPT
+        id S1351724AbhLXHHI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 24 Dec 2021 01:10:36 -0500
-Received: from mail-eopbgr90078.outbound.protection.outlook.com ([40.107.9.78]:55520
-        "EHLO FRA01-MR2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S245665AbhLXGKg (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 24 Dec 2021 01:10:36 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gBEHNc+Ccgqjiv90oVUHDKD7/0Tu6huNRNQ+JQ61vhVB9PjrtID4YsHlpwL6//rD5ixPkj1huhkJUGsjx+5Y7FVUdpaYX44zmCh/8XJvQwsDvdbzX+NtWUq3Zjn61E6trP5F5qbEbC00WRtNM0ocTl4W77MX8blGXSC/aN2ctnBPvxb/yxOz+slZO6x50JhgIyXOFCxQ1clRcpiaKN3yfNrertfP8cnw+g+RXyi+JfwqZql1xeF3vfm2PaoMIlJC+WGiQOZHfY6r9XVYalYjYlotCgszpbzLwBqIR2ZQicIuuEbM4rR88T/2eV2sobDmFMf4LNNX8WezhjTrpSFx4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tYfYlP/ZorviMIZ+RtEYpwXT7dJwdA7a3JZrUJZm7Gs=;
- b=kERA4ermxTi+1XLnWKW/PlCuN5QXmHXWGRj+2tLi1t9fm+FeHYsH5Fd3K+TXPiLtFF5TprAN7OhKmteQJaOUoyMdaURCY0VWj3Dlb7alTsgfOzMYMsBOdMFgun8lHl9STXLnSTBgmCY8n415gjX4ioiQSdb7oaBTFp/l40C2j+DgFi4meSXRO5K24g/VFyV9ngICa4R+NtkLmGoFsd4DFW6kTlUyupQ3T3Vy1s6z3LOMXPa66AOGtKtAko44KrGMM6JRR2/Vm8QkBJ4CqVLD7G6ICUPZFUKncJo3DpYpdYV9rGhRjHP0tneWynZbFB7ReScb7gFGRtGhPM13XsTMGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=csgroup.eu; dmarc=pass action=none header.from=csgroup.eu;
- dkim=pass header.d=csgroup.eu; arc=none
-Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:31::15)
- by MRZP264MB2780.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:19::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4823.18; Fri, 24 Dec
- 2021 06:10:33 +0000
-Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
- ([fe80::f0ef:856d:b0de:e85d]) by MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
- ([fe80::f0ef:856d:b0de:e85d%7]) with mapi id 15.20.4823.021; Fri, 24 Dec 2021
- 06:10:33 +0000
-From:   Christophe Leroy <christophe.leroy@csgroup.eu>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-CC:     kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: code conditional on non-existing PPC_EARLY_DEBUG_MICROWATT.
-Thread-Topic: code conditional on non-existing PPC_EARLY_DEBUG_MICROWATT.
-Thread-Index: AQHX9+bpwKxnLB6mCUGSdobyDruDOqxBKhwA
-Date:   Fri, 24 Dec 2021 06:10:33 +0000
-Message-ID: <27eefbf2-fc2c-7800-1397-8acfea7ed7e8@csgroup.eu>
-References: <CAKXUXMxa6zuTncNjTVHeU7nJ9uvv3KqMtSDocMC7P5hxfrkakQ@mail.gmail.com>
-In-Reply-To: <CAKXUXMxa6zuTncNjTVHeU7nJ9uvv3KqMtSDocMC7P5hxfrkakQ@mail.gmail.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=csgroup.eu;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 88e845c2-985e-4159-fddd-08d9c6a41820
-x-ms-traffictypediagnostic: MRZP264MB2780:EE_
-x-microsoft-antispam-prvs: <MRZP264MB2780C14517FB91FF8BC49649ED7F9@MRZP264MB2780.FRAP264.PROD.OUTLOOK.COM>
-x-ms-oob-tlc-oobclassifiers: OLM:1751;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: MBw5kXQWEyUYPc392iTCH0yg8iHuV9KUsWops/GjrwQxEaluHeMZm/9hHaBHYktRofX/ctA5BuIYwoGROtrX5O26tVBkleQlV2MBPEUuIz2E9B/27em2Mfm003m7bpJ2vHF4UZ7VZ+mraepJIucFhWrh1dvL6lCcJNwgm+LJ4F6MW17Gt6scfZD9mdBMHub5DqXBFskm5jYEgZIKrU2hwrMTkFptKVyNf2qQZm6syLkZl6OmL9SUklZX2EtluObHrlQdgMfde2WOZ3cBqUr/RpJ6dA7vFZrxiyvsUqcFTiayiop3MPE84kL5D8UgjCHE7l0YGyVrfQfkcl/RAJCu0VVu7BQPTelOZSjDtEvhUjfCOQZ2ot4Rzz1Rl2k4CBuAC226vmpTdgRQK4sjzovULLklOa+tOwuOG5xwCfoREnARJiq5L0whVBXn4F3BaVPEcLNTp3RRd9obRIzTuljlmyzR+fa0PPDjEvBI6dwh5lt53lxZKOytA/7ATag4IgURD0nNF7WBkttAvXcI1QPm1oYPoXMYHDwSk/v4MQVQTDshZtIjC6XjtBo189J1PQz8CFoQAGEjBjtnmbrZYvgg1v2tc4EdtTbvdMnTWgtlbu0NULYe45uoVfiTPqm+UBjbnRT/64ktBnqKqn20qvGW+1aLhN/XWi78xMexTXUsQKEmvb6w7Eo+hbRcbRARLR6MxMElPG7fqZDJI3OK17zgnvEdXrLG+CAaTYVIg98p/805dvm5ARqmx8GpiRHQARzVOxHQScoZwWV1z3tIoO7zdBdAK/cKfrc1Lb8kGVGuFif2waHmpXbLdo4eRK8Xr6IWl5ueuUeZeOSePMl1GAU/Tvl9nALxwd/VsgeXUqLjGps=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(4636009)(366004)(86362001)(31686004)(36756003)(38100700002)(508600001)(26005)(4744005)(66946007)(66446008)(6506007)(76116006)(966005)(91956017)(54906003)(122000001)(71200400001)(83380400001)(64756008)(66476007)(66556008)(31696002)(2616005)(110136005)(5660300002)(2906002)(4326008)(8676002)(316002)(66574015)(186003)(44832011)(6486002)(38070700005)(8936002)(6512007)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Q1NhcE9Jb0l3TmU3VzgrcHBmRlR0TFE3OExzeEs5MDA2ZTJnSFdyMHpXUG9T?=
- =?utf-8?B?UHd2NktCK1pLRmJZMmRxc2dEUFJqcExpU0hiclFVRmU4WWFjYmtKVU4wTGts?=
- =?utf-8?B?Tkh6dHB4NHQ0QXBLV204ODFld2dyb3JpYWgyanhkRktQV2NZekhWN2k2YXJ2?=
- =?utf-8?B?dGd5TzZlWktBZkQrSFIrbXZZWjZKMDdMeVdsbDJhaGVMWG4rb1hndmxzb2Rm?=
- =?utf-8?B?K3dYZ0YxVm5PSU1BVDRXaTlUYTZVLzN0cVlDc0U3VnpJTFlNQmVrdWlubWxh?=
- =?utf-8?B?ODVuc0gwL2xUbDY1Sno3dkZ1ZmFFVDBLODJtYjBpcmIwakxYUVN3UlZyS2tV?=
- =?utf-8?B?K3orbTIwU1YwNDFMbHNPam5FQWRrOFhrUEJKZ2djUG1nY1hJRVA3c25qL0VQ?=
- =?utf-8?B?eVR3Q3dwZmMyS0xYSGlVa3pYQTJwVnVHd0xRSFVpaytvNCtDalJaNjdwcWFi?=
- =?utf-8?B?dGU1eTZjdXNIZDZTenB1c1d2Z1V6TG5FMXRhVkZLQlhieXc3YmJIQXg5VmMv?=
- =?utf-8?B?M0VDSXFtMmZPTFJZMi9HaXl4QXc2cmhyNy83WWdtdTZJWHdBcy9lUVBJVVJN?=
- =?utf-8?B?N3RGeEdZSnloSGJORlhRaHYvOXNlb1pmbGlzMXJHaHlnRHJKVHA4WENPd1E2?=
- =?utf-8?B?STU2TEFzNU9Gc1RlVGRPeG00cWJWaG9KLzUvLzBEazFFekZhRUVUTW9BNkVT?=
- =?utf-8?B?eFpwVTlPU2tVTkZYME9jQ1phQmRocXVBdTVCVXNqcHk2NFlaZVRsY01HRlBX?=
- =?utf-8?B?anV0SG45aFc1bjZiNUZqZm50Ylg5NzZVSHQwdUpHejFtd1lXcXluTHdtNEVo?=
- =?utf-8?B?ZGpKZ0RmNmhUeFlkNFE0c01SYWp3ZUUwTDQ4MENBMG5HMXRyUmJRVjNLWGx4?=
- =?utf-8?B?SjlHdmhXZEF1WUhFdHNXUm0rVXNmODNVRGxYUzNGWE12YXEzRmtkQmtlWC9n?=
- =?utf-8?B?TU53SDRrdlo4SkhzSnMrd2R6L3lpWHRrV002eDZCOHRVaHhHQy8wWGFVSWMx?=
- =?utf-8?B?MUVJQkFZME9VS0VXYXA2SVBLSUZrM2RtcGdCT25DZFRmYkc3d2s3QU1iN3pF?=
- =?utf-8?B?M3loTGo3cFExVk91MnZ6MEh6YnJ6bXRJSXRBdXRFSWUyK1B1dUwxU2JYK0dJ?=
- =?utf-8?B?ZzduRU5GMGI0ZGp4S1RmZENkNHFVdE9PRU5IVmdCbjk4TExLR2E4WXk2SC8x?=
- =?utf-8?B?TWxpRG5lUXR4dXAxdURuaVBNQStRdW5pM0RUTTZkREgza0IrM1ZPSit3SFVY?=
- =?utf-8?B?dFNGWHo5aFBhcHpmNjl5bFpDd2xKUm0yRXVsZ1BIeVRydEd6ZGxSWEtkT0d1?=
- =?utf-8?B?eDZheWFscFRJOHo1SkIyNEpxR2lWU0RYZzV4SG1UZlhuNGdLWGwrNGREa3Ru?=
- =?utf-8?B?OGNEV3RMNkkwQzE4c0RpbDc2SHhYa3JhUldqVGs5VGhtNEhqblEwOEJ2aU9C?=
- =?utf-8?B?bVJ0U3BhL2lSU0QrNFpxRXRnNk1QcTdNMFhpWTJyQXpCZHhVUmhUS2JPbSsz?=
- =?utf-8?B?cXE0c1pjOWN6ZFhqTWhEdHlib3NoN1dFdmV0N2FCcHRsSlpjOEM3U3ZDUW5X?=
- =?utf-8?B?aXVUZlh6L0E1SnhPWC90N2xycW1nQ3pYVkpuUEpOaStWMFNMTXlTaTh5VmJ0?=
- =?utf-8?B?cWJBdjY3TVNsM3FNU013VFZtSXdsSlhjZWZtZTlUVlF2b0hkYjk4cllrTmww?=
- =?utf-8?B?bkltVjV1L2tXclBxNzNEbnhwUWlnQVJOTFpHV0hYQndKbjRXNGFmTkMveVFl?=
- =?utf-8?B?eTJzWFlNUkhlUnZNcG13ZHoxUzIwYkJPKzgveUFERWhsQVV3blZGZU80SkRS?=
- =?utf-8?B?d3JBZG5PYnJoNnpTdEFNZi9sdGZNN3dJR1dxdzNPME95eHU3MmRnbTZySWZl?=
- =?utf-8?B?bHhQOHFsTllzRnNNeWFkd0VOSmo4YVRBSUZ2V0pnM3hrdnY0R3ZDUjJTV2to?=
- =?utf-8?B?VXE2RHVGbXlvYzRuSjVwWHpwZWQ4RXExT3ZXays4Y2dxSVpsaDVTWjNLeElW?=
- =?utf-8?B?S1luMmhyZWRjd292R29ZY1ppYWZwQXFvMTFFZkszVk1HVHJSZ1NqYkk4MEVX?=
- =?utf-8?B?Vi9nSTkxVFdMdHlTZEtCTXAxNmM1YzlDV2xwYWg4akpTR1ZHWGhaRTlRRVBi?=
- =?utf-8?B?cURvanFiemtBaFNsZzBBbW9kWUwrVVdkaTczRExtTUdiNmQ3UGY3djFDQjlC?=
- =?utf-8?B?WHIyWklBNlJqSWIrdGR2bmg2SFNVZExqZ096ZWl2eDJMK0ZPaG9qUUd0WVFX?=
- =?utf-8?Q?du98xYjWtR7i6SuuxX0WwTukn468s0rejpQQlz44Zo=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A0FE4D49D4F44844B7F5878F027863AA@FRAP264.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+        Fri, 24 Dec 2021 02:07:08 -0500
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:56611 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241206AbhLXHHH (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 24 Dec 2021 02:07:07 -0500
+Received: from pop-os.home ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id 0efJn3FOo65jH0efJnacG6; Fri, 24 Dec 2021 08:07:06 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Fri, 24 Dec 2021 08:07:06 +0100
+X-ME-IP: 86.243.171.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     james.smart@broadcom.com, dick.kennedy@broadcom.com,
+        jejb@linux.ibm.com, martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/2] scsi: lpfc: Cleanup some bitmap handling.
+Date:   Fri, 24 Dec 2021 08:06:56 +0100
+Message-Id: <cover.1640328930.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-X-OriginatorOrg: csgroup.eu
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88e845c2-985e-4159-fddd-08d9c6a41820
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Dec 2021 06:10:33.1074
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 9914def7-b676-4fda-8815-5d49fb3b45c8
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: aEOB3x7zj60x7TEJnSEsAkFTwRBSztetWlpJ/1bnoEeS3VDCaizSvhgxheEzDw5qS0Zx8MWFGNbUCRw8hc+i1Dxs/+i9uXapy5MwJrX8qNo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MRZP264MB2780
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-DQoNCkxlIDIzLzEyLzIwMjEgw6AgMTE6MjEsIEx1a2FzIEJ1bHdhaG4gYSDDqWNyaXTCoDoNCj4g
-RGVhciBCZW5qYW1pbiwgZGVhciBQYXVsLCBkZWFyIE1pY2hhZWwsDQo+IA0KPiB3aXRoIGNvbW1p
-dCA0OGI1NDViODAxOGQgKCJwb3dlcnBjL21pY3Jvd2F0dDogVXNlIHN0YW5kYXJkIDE2NTUwIFVB
-UlQNCj4gZm9yIGNvbnNvbGUiKSwgeW91IGhhdmUgc29tZSBjb2RlIGluIGFyY2gvcG93ZXJwYy9r
-ZXJuZWwvdWRiZ18xNjU1MC5jLA0KPiBjb25kaXRpb25hbCBvbiB0aGUgS2NvbmZpZyBzeW1ib2wg
-UFBDX0VBUkxZX0RFQlVHX01JQ1JPV0FUVC4gSG93ZXZlciwNCj4gc2luY2UgdGhlbiwgdGhlIGRl
-ZmluaXRpb24gb2YgdGhpcyBLY29uZmlnIHN5bWJvbCB3YXMgbmV2ZXIgaW50cm9kdWNlZA0KPiB0
-byB0aGUgbWFpbmxpbmUgcmVwb3NpdG9yeSBvciBjdXJyZW50IGxpbnV4LW5leHQsIG5vciBhbSBJ
-IGZpbmRpbmcgYW55DQo+IHBlbmRpbmcgcGF0Y2ggZm9yIHRoYXQuDQo+IA0KPiBBcmUgeW91IGdv
-aW5nIHRvIGFkZCB0aGlzIGNvbmZpZyBkZWZpbml0aW9uIHNvb24/IE9yIGRpZCB5b3UgaWRlbnRp
-ZnkNCj4gdGhhdCB0aGlzIHNldHVwIGNvZGUgaW4gdWRiZ18xNjU1MC5jIGlzIG5vdCBhY3R1YWxs
-eSBuZWVkZWQgYW5kIGNhbiB3ZQ0KPiBzaW1wbHkgZHJvcCB0aGlzIGNvZGUgYWdhaW4/DQo+IA0K
-PiBUaGlzIGlzc3VlIHdhcyBpZGVudGlmaWVkIHdpdGggdGhlIHNjcmlwdCAuL3NjcmlwdHMvY2hl
-Y2trY29uZmlnc3ltYm9scy5weS4NCj4gDQoNCg0KV2FzIGl0IGZvcmdvdHRlbiB3aGVuIGhhbmRs
-aW5nIGNvbW1lbnRzIHRvIA0KaHR0cHM6Ly9wYXRjaHdvcmsub3psYWJzLm9yZy9wcm9qZWN0L2xp
-bnV4cHBjLWRldi9wYXRjaC8yMDIwMDUwOTA1MDM0MC5HRDE0NjQ5NTRAdGhpbmtzLnBhdWx1cy5v
-emxhYnMub3JnLyANCj8=
+The 1st patch of this serie uses bitmap_zalloc() to simplify code.
+The 2nd patch makes sure that the whole bitmap is cleared, should it need more
+than 1 long.
+
+However, this 'fcf_rr_bmask' is small (LPFC_SLI4_FCF_TBL_INDX_MAX = 32 bits), so
+another option could be to use DECLARE_BITMAP instead of dynamic allocation.
+
+This would simplify code (no more allocation and associated error handling) and
+be slighly more efficient (1 less indirection when accessing the bitmap).
+In the case the 2nd patch could also be removed (using bitmap_zero() would still
+be cleaner (IMHO), but the actual memset+sizeof would work as expected)
+
+Let me know if I should send a v2 with this other approach.
+
+Christophe JAILLET (2):
+  scsi: lpfc: Use bitmap_zalloc() when applicable
+  scsi: lpfc: Make sure to completely clear some bitmaps
+
+ drivers/scsi/lpfc/lpfc_hbadisc.c |  7 ++++---
+ drivers/scsi/lpfc/lpfc_init.c    | 10 ++++------
+ drivers/scsi/lpfc/lpfc_sli.c     |  3 +--
+ 3 files changed, 9 insertions(+), 11 deletions(-)
+
+-- 
+2.32.0
+
