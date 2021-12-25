@@ -2,79 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C71C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 24 Dec 2021 23:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E316C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Dec 2021 22:42:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231737AbhLXXKM (ORCPT
+        id S232988AbhLYWmw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 24 Dec 2021 18:10:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51178 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231696AbhLXXKM (ORCPT
+        Sat, 25 Dec 2021 17:42:52 -0500
+Received: from gandalf.ozlabs.org ([150.107.74.76]:57393 "EHLO
+        gandalf.ozlabs.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231916AbhLYWmv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 24 Dec 2021 18:10:12 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35EABC061401;
-        Fri, 24 Dec 2021 15:10:12 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Sat, 25 Dec 2021 17:42:51 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id F2F27B82357;
-        Fri, 24 Dec 2021 23:10:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BBCC8C36AEA;
-        Fri, 24 Dec 2021 23:10:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640387409;
-        bh=fOtEvItekIGynlFbMmscCsUBbIwCtg1msDtgUQVsbP4=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=GNVmo0mVFuwDhKzSd+lP8+dAvcgZ23BJ38G2NSLpB+4Hxo65i3mOjE4rnTu0mAq45
-         hcqxtPktW3TMfOmmdgYTDSfsIHgACtF7Zl4VZqtBIskrUC91zFXiB7keKHR1+Hpzxo
-         7oo2a/Kkl4uUcoN0s7OazsiLRNccFWtzIvk/kDmkRAjK/QMiv6Gobs71x54jfjqYsA
-         jVGsc8Fb0kdUH6bixMrP81E8cOmUFCLAKCQ9BLZk8iBUfJp+7/vOf9mKJ7vD/60IPq
-         SqahXnxMisrwrZJ9v80VEEeSFJYekwfKvaGOOyFt2NsoI5HKnByA6vtFNT9323HeZx
-         6YHEsSRkwxTtw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A9A11EAC06B;
-        Fri, 24 Dec 2021 23:10:09 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4JLzTj6CNfz4xps;
+        Sun, 26 Dec 2021 09:42:49 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+        s=201909; t=1640472170;
+        bh=qiVqpRlRRXS0iAH2nX/AkQBYFrUOx2vQ2Vqp7kM0LCw=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=ECKWTM9gdi+sCsiy1dHQXyULGKSSWTz2ZLVhuUvcXREX9nG51Nm07U1fOp7KeiGI/
+         WFmzX7vg/CXq/BsT5Q5iGJZGoAgB+IkGwm1Ig1mf4/7GC8PgX3M6JUSOvCJgySS9tN
+         GMYrpOWwOCAt5rq1FE7zyCzfyPNMmEk1wQ3RZBRLaIvWVOoPU4dpwZAm4wDAvfxwfC
+         IQo1vaVUXbCBblQbpa0a41VYClo3FWcRXlzbfHXhTugyjRyIz340RAK0gQly+D+vi9
+         GGvp8MMYzz/6Ur5oTIViGAoSb8xsI6nAXfbZcD6MSW3rdh0CF/YT/7TFiJs34cefOd
+         tgW+6sSNJ1pzQ==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Cc:     kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: code conditional on non-existing PPC_EARLY_DEBUG_MICROWATT.
+In-Reply-To: <27eefbf2-fc2c-7800-1397-8acfea7ed7e8@csgroup.eu>
+References: <CAKXUXMxa6zuTncNjTVHeU7nJ9uvv3KqMtSDocMC7P5hxfrkakQ@mail.gmail.com>
+ <27eefbf2-fc2c-7800-1397-8acfea7ed7e8@csgroup.eu>
+Date:   Sun, 26 Dec 2021 09:42:48 +1100
+Message-ID: <87y2481f2v.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] lib: objagg: Use the bitmap API when applicable
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164038740969.29055.3830657211085766968.git-patchwork-notify@kernel.org>
-Date:   Fri, 24 Dec 2021 23:10:09 +0000
-References: <f9541b085ec68e573004e1be200c11c9c901181a.1640295165.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <f9541b085ec68e573004e1be200c11c9c901181a.1640295165.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     jiri@nvidia.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Christophe Leroy <christophe.leroy@csgroup.eu> writes:
+> Le 23/12/2021 =C3=A0 11:21, Lukas Bulwahn a =C3=A9crit=C2=A0:
+>> Dear Benjamin, dear Paul, dear Michael,
+>>=20
+>> with commit 48b545b8018d ("powerpc/microwatt: Use standard 16550 UART
+>> for console"), you have some code in arch/powerpc/kernel/udbg_16550.c,
+>> conditional on the Kconfig symbol PPC_EARLY_DEBUG_MICROWATT. However,
+>> since then, the definition of this Kconfig symbol was never introduced
+>> to the mainline repository or current linux-next, nor am I finding any
+>> pending patch for that.
+>>=20
+>> Are you going to add this config definition soon? Or did you identify
+>> that this setup code in udbg_16550.c is not actually needed and can we
+>> simply drop this code again?
+>>=20
+>> This issue was identified with the script ./scripts/checkkconfigsymbols.=
+py.
+>>=20
+>
+> Was it forgotten when handling comments to=20
+> https://patchwork.ozlabs.org/project/linuxppc-dev/patch/20200509050340.GD=
+1464954@thinks.paulus.ozlabs.org/=20
+> ?
 
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
+Yes. I reported it internally to some folks but I guess they haven't had
+time to send a fixup patch.
 
-On Thu, 23 Dec 2021 22:33:42 +0100 you wrote:
-> Use 'bitmap_zalloc()' to simplify code, improve the semantic and reduce
-> some open-coded arithmetic in allocator arguments.
-> 
-> Also change the corresponding 'kfree()' into 'bitmap_free()' to keep
-> consistency.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> [...]
+I'm pretty sure we just need the first three hunks of that patch, but it
+would be good if someone with a Microwatt setup could test it.
 
-Here is the summary with links:
-  - lib: objagg: Use the bitmap API when applicable
-    https://git.kernel.org/netdev/net-next/c/7c63f26cb518
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+cheers
