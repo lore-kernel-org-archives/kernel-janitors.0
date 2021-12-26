@@ -2,33 +2,35 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE58C433FE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 26 Dec 2021 14:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB8EAC433FE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 26 Dec 2021 15:14:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232090AbhLZOqY (ORCPT
+        id S232231AbhLZPON (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 26 Dec 2021 09:46:24 -0500
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:54818 "EHLO
+        Sun, 26 Dec 2021 10:14:13 -0500
+Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:64311 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229981AbhLZOqY (ORCPT
+        with ESMTP id S232225AbhLZPOM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 26 Dec 2021 09:46:24 -0500
+        Sun, 26 Dec 2021 10:14:12 -0500
 Received: from pop-os.home ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id 1UmzniXWu1UGB1UmznOQIQ; Sun, 26 Dec 2021 15:46:22 +0100
+        id 1VDpnig8t1UGB1VDqnOSgw; Sun, 26 Dec 2021 16:14:11 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 26 Dec 2021 15:46:22 +0100
+X-ME-Date: Sun, 26 Dec 2021 16:14:11 +0100
 X-ME-IP: 86.243.171.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     chenhuacai@kernel.org, jiaxun.yang@flygoat.com, tglx@linutronix.de,
-        maz@kernel.org
-Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     robdclark@gmail.com, sean@poorly.run, quic_abhinavk@quicinc.com,
+        airlied@linux.ie, daniel@ffwll.ch, bjorn.andersson@linaro.org,
+        swboyd@chromium.org, quic_khsieh@quicinc.com
+Cc:     linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] irqchip/loongson-pch-ms: Use bitmap_free() to free bitmap
-Date:   Sun, 26 Dec 2021 15:46:21 +0100
-Message-Id: <0b982ab54844803049c217b2899baa59602faacd.1640529916.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] drm/msm/dp: Fix a potential double free in an error handling path
+Date:   Sun, 26 Dec 2021 16:14:05 +0100
+Message-Id: <6fd20c8779d6b03a5b54509af25b478049482087.1640531508.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -36,27 +38,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-kfree() and bitmap_free() are the same. But using the latter is more
-consistent when freeing memory allocated with bitmap_zalloc().
+'dp_bridge' is devm_alloc'ed, so there is no need to free it explicitly or
+there will be a double free().
 
+Fixes: 8a3b4c17f863 ("drm/msm/dp: employ bridge mechanism for display enable and disable")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/irqchip/irq-loongson-pch-msi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/msm/dp/dp_drm.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-loongson-pch-msi.c b/drivers/irqchip/irq-loongson-pch-msi.c
-index 32562b7e681b..e3801c4a77ed 100644
---- a/drivers/irqchip/irq-loongson-pch-msi.c
-+++ b/drivers/irqchip/irq-loongson-pch-msi.c
-@@ -241,7 +241,7 @@ static int pch_msi_init(struct device_node *node,
- 	return 0;
+diff --git a/drivers/gpu/drm/msm/dp/dp_drm.c b/drivers/gpu/drm/msm/dp/dp_drm.c
+index 188e77c59885..d4d360d19eba 100644
+--- a/drivers/gpu/drm/msm/dp/dp_drm.c
++++ b/drivers/gpu/drm/msm/dp/dp_drm.c
+@@ -243,7 +243,6 @@ struct drm_bridge *msm_dp_bridge_init(struct msm_dp *dp_display, struct drm_devi
+ 	rc = drm_bridge_attach(encoder, bridge, NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+ 	if (rc) {
+ 		DRM_ERROR("failed to attach bridge, rc=%d\n", rc);
+-		kfree(dp_bridge);
+ 		return ERR_PTR(rc);
+ 	}
  
- err_map:
--	kfree(priv->msi_map);
-+	bitmap_free(priv->msi_map);
- err_priv:
- 	kfree(priv);
- 	return ret;
 -- 
 2.32.0
 
