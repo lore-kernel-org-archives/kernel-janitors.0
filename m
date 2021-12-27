@@ -2,77 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE91AC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Dec 2021 10:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3608EC433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Dec 2021 12:53:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236097AbhL0Kit (ORCPT
+        id S236761AbhL0MxX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Dec 2021 05:38:49 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:58322 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236006AbhL0Kis (ORCPT
+        Mon, 27 Dec 2021 07:53:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56614 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233867AbhL0MxW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Dec 2021 05:38:48 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8D904B80E99;
-        Mon, 27 Dec 2021 10:38:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C336EC36AEA;
-        Mon, 27 Dec 2021 10:38:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640601526;
-        bh=UlDl5CMBP4L/4kL0fP6+x1xKyPQKmZc9Cz+U98mFgKA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=YI6AsOhUMo8c1MCRqdlRqyTmSsm8pl76ossGnZBHzeiiM+HMwVmF4uttGqSiTegvy
-         njOfbEkqzn5zISphv/phQ4wujEp4QPo3YLzOI97jhtr5D04G6N8TcFf1GUCvNNClO5
-         Mz5RG96Y4hZ6Bzin3hl0eNjtE03CVJofGr+5YM/oSMlWRoWPQyX0vfFahnOxaQl4ia
-         jUlaYOhAczH645/uw9/UeAUEKg4zhMq9lLbQRkhHsXeBmgPm+LFss4ksl8GoR1tf0f
-         NQou49FkWKN+kCO7aexHao/YdcFOO2Kmopej+4exEXQxCufostO6pGwcF2VubJNBoT
-         qYCQXEG/LHLHw==
-Subject: Re: [PATCH] clk: socfpga: remove redundant assignment on division
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20211221003750.212780-1-colin.i.king@gmail.com>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Message-ID: <1ad78a3b-3faa-c6fe-be6e-d518eeadea50@kernel.org>
-Date:   Mon, 27 Dec 2021 04:38:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
-MIME-Version: 1.0
-In-Reply-To: <20211221003750.212780-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 27 Dec 2021 07:53:22 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B241C06173E;
+        Mon, 27 Dec 2021 04:53:22 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id k66-20020a1ca145000000b00345fa984108so2656878wme.2;
+        Mon, 27 Dec 2021 04:53:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=P/au97/FpQGpCIWXJLd40PtZYg+NpWsNt/T09/0nn+g=;
+        b=i4owH1aagy9ydAw3s1oaf8UoLtfw4gyeld2AiMpsi8EadR9S2YleL5Lv79Jsr1gSLL
+         wJuFUuiw5nyMjo+mj7KmEwImjQGIB9T0Jt4XMcv281+wEmKm3yCGu1YieObGFBrgi+4S
+         7iwgzJdEZ+HwEf1AFaRfc6g8UvNAudzEppHQ1rtxrF/QiSIPJ0ATyAxrNbGvOJkRsj3L
+         XNwVLspZMcZMZTy406rQSX/mHSMHfesO5yN/ueGdH8L/mhdrp2eQINWaUE49A5s4dhbK
+         7VlK9ZsKhejOzCfUNpZBL/8hLfJZ4U+sR2r1AWFiDdUI1G6Wec+yw734WXv6AFs6C0rE
+         YZ6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=P/au97/FpQGpCIWXJLd40PtZYg+NpWsNt/T09/0nn+g=;
+        b=CnI1Jn6ZaxkLEUm39YVJOwDIWIWG4jm7Bo31N4GgQbFbPM5i+liroj9xllm9N5WeCM
+         DX5u/2HJ1/jWvB/pwI5i8CtDf6lBnykidDU1p8n9kZFU0TgFPA17B9kDg+tM2QaKS4zq
+         ubwKdnrNmCXmEVcQgIwYZWGzXTPqS6N5GrEAUeFUbZQomN1c06i9eCnpl4ixHVY4eso8
+         4GVrG7dxhk7dUpMqAOb/xnxZziYxf3sbLvOGv9bxjaiKQAdXg2Xvh5LX3JPJMzQtiTxo
+         mmtUamM1SCKfbti6vwPNy4nqotDh8+EPVTnDAdGOyWe/IAnhxjewAzDdV92XrFP7UmuV
+         DKQQ==
+X-Gm-Message-State: AOAM532kQ8i5s9Acnb+41671OBSbJXo+3Dj/VNxUoWWpSs6nfLXKnQGc
+        Fx50ZGxxY2FOEtGoa5r2KFc=
+X-Google-Smtp-Source: ABdhPJytIe560EhN2h0QMk8mA3ZbjMwKjx9t9jLhWaRh41LdpywGHWtJKnt4PB1nBkNmaDeAtbZdcQ==
+X-Received: by 2002:a05:600c:35cf:: with SMTP id r15mr13190147wmq.106.1640609600481;
+        Mon, 27 Dec 2021 04:53:20 -0800 (PST)
+Received: from felia.fritz.box ([2001:16b8:26c4:7200:610f:609b:d46a:2a08])
+        by smtp.gmail.com with ESMTPSA id y8sm16666635wrd.10.2021.12.27.04.53.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Dec 2021 04:53:19 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] trace: remove unneeded initialization in __trace_uprobe_create()
+Date:   Mon, 27 Dec 2021 13:53:08 +0100
+Message-Id: <20211227125308.25787-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+There is no need to initialize ret with 0, as all the early error branches
+simply return constant values, and the default path always reaches
+ret = kern_path(filename, LOOKUP_FOLLOW, &path), which will reset ret
+before the initial value was ever used.
 
+Remove this unneeded initialization and keep the code succinct.
 
-On 12/20/21 6:37 PM, Colin Ian King wrote:
-> The variable parent_rate is being divided by div and the result
-> is re-assigned to parent_rate before being returned. The assignment
-> is redundant, replace /= operator with just / operator.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->   drivers/clk/socfpga/clk-pll-s10.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
-> index 70076a80149d..e444e4a0ee53 100644
-> --- a/drivers/clk/socfpga/clk-pll-s10.c
-> +++ b/drivers/clk/socfpga/clk-pll-s10.c
-> @@ -113,7 +113,7 @@ static unsigned long clk_boot_clk_recalc_rate(struct clk_hw *hwclk,
->   		SWCTRLBTCLKSEL_MASK) >>
->   		SWCTRLBTCLKSEL_SHIFT);
->   	div += 1;
-> -	return parent_rate /= div;
-> +	return parent_rate / div;
->   }
->   
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ kernel/trace/trace_uprobe.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Acked-by: Dinh Nguyen <dinguyen@kernel.org>
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index 5921951a0d5c..9da10c5efdce 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -548,7 +548,6 @@ static int __trace_uprobe_create(int argc, const char **argv)
+ 	bool is_return = false;
+ 	int i, ret;
+ 
+-	ret = 0;
+ 	ref_ctr_offset = 0;
+ 
+ 	switch (argv[0][0]) {
+-- 
+2.17.1
+
