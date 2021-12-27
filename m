@@ -2,88 +2,109 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3608EC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Dec 2021 12:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2574FC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Dec 2021 13:10:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236761AbhL0MxX (ORCPT
+        id S232944AbhL0NK5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Dec 2021 07:53:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56614 "EHLO
+        Mon, 27 Dec 2021 08:10:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233867AbhL0MxW (ORCPT
+        with ESMTP id S230148AbhL0NK5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Dec 2021 07:53:22 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B241C06173E;
-        Mon, 27 Dec 2021 04:53:22 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id k66-20020a1ca145000000b00345fa984108so2656878wme.2;
-        Mon, 27 Dec 2021 04:53:21 -0800 (PST)
+        Mon, 27 Dec 2021 08:10:57 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85DD6C06173E;
+        Mon, 27 Dec 2021 05:10:56 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id n10-20020a7bc5ca000000b00345c520d38eso8182545wmk.1;
+        Mon, 27 Dec 2021 05:10:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id;
-        bh=P/au97/FpQGpCIWXJLd40PtZYg+NpWsNt/T09/0nn+g=;
-        b=i4owH1aagy9ydAw3s1oaf8UoLtfw4gyeld2AiMpsi8EadR9S2YleL5Lv79Jsr1gSLL
-         wJuFUuiw5nyMjo+mj7KmEwImjQGIB9T0Jt4XMcv281+wEmKm3yCGu1YieObGFBrgi+4S
-         7iwgzJdEZ+HwEf1AFaRfc6g8UvNAudzEppHQ1rtxrF/QiSIPJ0ATyAxrNbGvOJkRsj3L
-         XNwVLspZMcZMZTy406rQSX/mHSMHfesO5yN/ueGdH8L/mhdrp2eQINWaUE49A5s4dhbK
-         7VlK9ZsKhejOzCfUNpZBL/8hLfJZ4U+sR2r1AWFiDdUI1G6Wec+yw734WXv6AFs6C0rE
-         YZ6Q==
+        bh=B6EDKAnHtoumNaOqDyi3E7TX6yPK13Mj5ojCgKu08oc=;
+        b=YAtG05krtdU9+ZKMiMUsGDdQ106+O6rwJkSc3+B1OrJeLMEu7x5YxedoO441w25Me6
+         WNNOup1KpSIHxOXs2fKl+dzKfd+Ao4yOBlEMFCgcHJM+lxazc0CpPNTHGAltw+uEauUs
+         pdalXh4hVj28OMwyhcsNuKLcWzeFZqXmgdBgV6I8xpkSGyEenqFdnXzdKeW4blFMn9zG
+         IdJTg+sfZ02OUpoP4uyhhGtu3q9hQoMLccoV4l2V6EqbYelkj3LhYnQO4Fqs9mJFKBgb
+         UD2KK3cMepIP5auToveFOPk0tTJi35PSR5meyu21AY3aXYp1qg2YkAForBZZls6ROd+a
+         I5Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=P/au97/FpQGpCIWXJLd40PtZYg+NpWsNt/T09/0nn+g=;
-        b=CnI1Jn6ZaxkLEUm39YVJOwDIWIWG4jm7Bo31N4GgQbFbPM5i+liroj9xllm9N5WeCM
-         DX5u/2HJ1/jWvB/pwI5i8CtDf6lBnykidDU1p8n9kZFU0TgFPA17B9kDg+tM2QaKS4zq
-         ubwKdnrNmCXmEVcQgIwYZWGzXTPqS6N5GrEAUeFUbZQomN1c06i9eCnpl4ixHVY4eso8
-         4GVrG7dxhk7dUpMqAOb/xnxZziYxf3sbLvOGv9bxjaiKQAdXg2Xvh5LX3JPJMzQtiTxo
-         mmtUamM1SCKfbti6vwPNy4nqotDh8+EPVTnDAdGOyWe/IAnhxjewAzDdV92XrFP7UmuV
-         DKQQ==
-X-Gm-Message-State: AOAM532kQ8i5s9Acnb+41671OBSbJXo+3Dj/VNxUoWWpSs6nfLXKnQGc
-        Fx50ZGxxY2FOEtGoa5r2KFc=
-X-Google-Smtp-Source: ABdhPJytIe560EhN2h0QMk8mA3ZbjMwKjx9t9jLhWaRh41LdpywGHWtJKnt4PB1nBkNmaDeAtbZdcQ==
-X-Received: by 2002:a05:600c:35cf:: with SMTP id r15mr13190147wmq.106.1640609600481;
-        Mon, 27 Dec 2021 04:53:20 -0800 (PST)
+        bh=B6EDKAnHtoumNaOqDyi3E7TX6yPK13Mj5ojCgKu08oc=;
+        b=i9X/UZUH0uJmk7/PpGVhHObJkCyVCo+lctsNbLyt2ctZvU+14BpbZEx28nEJJGTPt4
+         XNo1MD14mq14HXThQCwCy6Uxv8k1XerJgKurLp2+iTu9fcdFscf+GegQ3EpLcB9w9se/
+         bLNzSAb6tZ6ZbOSBQlZhpcHmh8KBd3/Iu7KRnbh8owyI7MoOGtNqWBEnPUGj3s/pIhUm
+         BzedDGEJ/9cc7HkTCIOQg8DnbSaDBVaww24Cc3RonsZ0EjhCXlisEXejgtHIWVoha2Y7
+         RVcjNe/9saYgdpKKFMnPaD0LYb2Xe4NDMVLFW3iqrbypxc3XjFa2hXOQFvR2ONpADp23
+         pm5Q==
+X-Gm-Message-State: AOAM533Dp3TlmU9KGmiP+C++SrZw3lWZSMjv5h1aAp1R0FO2Wxa5Ssva
+        WFPzsnJNEjedMv/ezJacB6Y=
+X-Google-Smtp-Source: ABdhPJw6OyLoHPd6dzSdn/iAJCsy45wJ8UA0VVqIflmFaZbeRCmMTG2k8vwe/wGY1GAJeXlYpxx8hQ==
+X-Received: by 2002:a05:600c:c7:: with SMTP id u7mr13159108wmm.85.1640610655047;
+        Mon, 27 Dec 2021 05:10:55 -0800 (PST)
 Received: from felia.fritz.box ([2001:16b8:26c4:7200:610f:609b:d46a:2a08])
-        by smtp.gmail.com with ESMTPSA id y8sm16666635wrd.10.2021.12.27.04.53.19
+        by smtp.gmail.com with ESMTPSA id y13sm17170951wrd.89.2021.12.27.05.10.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Dec 2021 04:53:19 -0800 (PST)
+        Mon, 27 Dec 2021 05:10:54 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Balbir Singh <bsingharora@gmail.com>
+Cc:     Tom Rix <trix@redhat.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        clang-built-linux@googlegroups.com,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] trace: remove unneeded initialization in __trace_uprobe_create()
-Date:   Mon, 27 Dec 2021 13:53:08 +0100
-Message-Id: <20211227125308.25787-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH RESEND] taskstats: remove unneeded dead assignment
+Date:   Mon, 27 Dec 2021 14:10:41 +0100
+Message-Id: <20211227131041.4668-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is no need to initialize ret with 0, as all the early error branches
-simply return constant values, and the default path always reaches
-ret = kern_path(filename, LOOKUP_FOLLOW, &path), which will reset ret
-before the initial value was ever used.
+make clang-analyzer on x86_64 defconfig caught my attention with:
 
-Remove this unneeded initialization and keep the code succinct.
+  kernel/taskstats.c:120:2: warning: Value stored to 'rc' is never read \
+  [clang-analyzer-deadcode.DeadStores]
+          rc = 0;
+          ^
+
+Commit d94a041519f3 ("taskstats: free skb, avoid returns in
+send_cpu_listeners") made send_cpu_listeners() not return a value and
+hence, the rc variable remained only to be used within the loop where
+it is always assigned before read and it does not need any other
+initialisation.
+
+So, simply remove this unneeded dead initializing assignment.
+
+As compilers will detect this unneeded assignment and optimize this anyway,
+the resulting object code is identical before and after this change.
+
+No functional change. No change to object code.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- kernel/trace/trace_uprobe.c | 1 -
+applies cleanly on current master and next-20201105
+Resend: still applies cleanly on next-20211224
+
+Balbir, please pick this minor non-urgent clean-up patch.
+
+ kernel/taskstats.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 5921951a0d5c..9da10c5efdce 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -548,7 +548,6 @@ static int __trace_uprobe_create(int argc, const char **argv)
- 	bool is_return = false;
- 	int i, ret;
+diff --git a/kernel/taskstats.c b/kernel/taskstats.c
+index a2802b6ff4bb..bd18a7bf5276 100644
+--- a/kernel/taskstats.c
++++ b/kernel/taskstats.c
+@@ -117,7 +117,6 @@ static void send_cpu_listeners(struct sk_buff *skb,
  
--	ret = 0;
- 	ref_ctr_offset = 0;
+ 	genlmsg_end(skb, reply);
  
- 	switch (argv[0][0]) {
+-	rc = 0;
+ 	down_read(&listeners->sem);
+ 	list_for_each_entry(s, &listeners->list, list) {
+ 		skb_next = NULL;
 -- 
 2.17.1
 
