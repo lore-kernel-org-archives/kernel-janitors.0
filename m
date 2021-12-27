@@ -2,93 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF8EC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Dec 2021 05:36:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11AD3C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Dec 2021 06:29:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235220AbhL0Fge (ORCPT
+        id S235321AbhL0G3P (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Dec 2021 00:36:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45484 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230149AbhL0Fge (ORCPT
+        Mon, 27 Dec 2021 01:29:15 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:36708 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235318AbhL0G3P (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Dec 2021 00:36:34 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42EE1C06173E
-        for <kernel-janitors@vger.kernel.org>; Sun, 26 Dec 2021 21:36:33 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id bt1so32458386lfb.13
-        for <kernel-janitors@vger.kernel.org>; Sun, 26 Dec 2021 21:36:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EF+jmTyvegw5LQ6AgqSKm6/snzft5eQBIQojLd8N8v8=;
-        b=F+PdweTyPAgk8X2RpoCfcdyPXddhm/T+/VQlHU50jPyhjtP9wXFSrVmuj/qGVEBtnW
-         2QkCF3oX8bWs0rqHAKwV5WvtDS+1fSq5aFawTroC7uAZKWnSh0rHm6NMElsYZwP0W42n
-         UgvmTvCA7D3FjrpQ4X1TzNJ9xhmlup7SlF8mc/ZNbTF2qLsAyirhPXVVJ7T61bw9JJp6
-         ZrVldFM62Km0RUtK/SijYLvy06LDMC4+IugMqvvMOD3fV0VHLWwFhenw/ejrmXOazyH4
-         Oo8Zmgreg6G9wEKKFTSIMk6+YWL78e5HlKNhkdmDo8fTlsFwJGCmRjyzNg4mWVaX4Tlx
-         0TnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EF+jmTyvegw5LQ6AgqSKm6/snzft5eQBIQojLd8N8v8=;
-        b=NP7R2p9Fl1u49myzbKJgPTPWweNJ99NmpWqo6/wvzzVwFNZZbJ9Y2PJcGGXXHOCw1B
-         3TfbON/uLRmc07sVeB9qESZCBuHKeDLnJSE4zvnCfLXpbr8DsqPtmf4fKB1G+TaP28rS
-         fw0k0ESw7uBqtHD1wchPr8BCdI7q3Bn6T7A6JY0orJ3c+Y575UppCQNvSgUxu1EchgKW
-         AY/796t7PJbjd6CJopN8+Lxju+OXBWXoySyLDCvogYGKTCZiIPsUfZ6fpWwRXCUfZhwE
-         /nFTFh/6dPJ15ojJx91MEmpIUqu5Lg0Cik2z+LLutnRLyHvMme6FvMEeuuObvfk3DD30
-         0zsw==
-X-Gm-Message-State: AOAM533lfFMpAcboCfq/eaOY02LXj/S1YowlLNyqIthVaNvV3DkSDOic
-        Y3QaYfb0NznODFO7E/tcaMb7AkeDX7/8MF1kbdSnDQ==
-X-Google-Smtp-Source: ABdhPJyufeH1AWueioCp4YOhlMH2oH9Z8gPmbMp3bV8dLO7KqY7RilFi05M8mSEsfnqmp/ap9/w2ps3tQXkmEAT9oQE=
-X-Received: by 2002:a05:6512:1116:: with SMTP id l22mr14145774lfg.253.1640583391499;
- Sun, 26 Dec 2021 21:36:31 -0800 (PST)
-MIME-Version: 1.0
-References: <0e30e1f1bde74bc95085093fb0289007d510a68c.1640529121.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <0e30e1f1bde74bc95085093fb0289007d510a68c.1640529121.git.christophe.jaillet@wanadoo.fr>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Mon, 27 Dec 2021 11:06:17 +0530
-Message-ID: <CAFA6WYOZtMW7bq98JXm8AqgajaYmythiDQ53k-zgew6zE63YCg@mail.gmail.com>
-Subject: Re: [PATCH] optee: Use bitmap_free() to free bitmap
+        Mon, 27 Dec 2021 01:29:15 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B4AA5B80E52;
+        Mon, 27 Dec 2021 06:29:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7F29C36AEA;
+        Mon, 27 Dec 2021 06:29:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1640586552;
+        bh=nfs9cY8hI68fJLHPs5Fa7P0ypNV+LDUhpthBrDIFF8E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ABAPlhryXS4apdou9GUXwJ8i5FQcKWPhWFsKp7W0eJWH4AMZRiTk0eGETSG0DstwF
+         84NvaMBh07x3inS0s2BeTyjeaglKmONOOBYVNDTjwo5M006tzcriXVb+OkSmba8D9/
+         dbk303EYzmi5XnWPJJQaYoe70dl6LR7fAjpV0GNQ=
+Date:   Mon, 27 Dec 2021 07:29:07 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     jens.wiklander@linaro.org, op-tee@lists.trustedfirmware.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Cc:     jk@ozlabs.org, joel@jms.id.au, alistair@popple.id.au,
+        eajames@linux.ibm.com, andrew@aj.id.au, linux-fsi@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] fsi: Aspeed: Fix a potential double free
+Message-ID: <YcldM9sgYdjMYMtH@kroah.com>
+References: <2cafa0607ca171ebd00ac6c7e073b46808e24f00.1640537669.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2cafa0607ca171ebd00ac6c7e073b46808e24f00.1640537669.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 26 Dec 2021 at 20:02, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> kfree() and bitmap_free() are the same. But using the latter is more
-> consistent when freeing memory allocated with bitmap_zalloc().
->
+On Sun, Dec 26, 2021 at 05:56:02PM +0100, Christophe JAILLET wrote:
+> 'aspeed' is a devm_alloc'ed, so there is no need to free it explicitly or
+> there will be a double free().
+
+A struct device can never be devm_alloced for obvious reasons.  Perhaps
+that is the real problem here?
+
+> Remove the 'release' function that is wrong and unneeded.
+> 
+> Fixes: 606397d67f41 ("fsi: Add ast2600 master driver")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/tee/optee/notif.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-
-Looks reasonable to me.
-
-Reviewed-by: Sumit Garg <sumit.garg@linaro.org>
-
--Sumit
-
-> diff --git a/drivers/tee/optee/notif.c b/drivers/tee/optee/notif.c
-> index a28fa03dcd0e..05212842b0a5 100644
-> --- a/drivers/tee/optee/notif.c
-> +++ b/drivers/tee/optee/notif.c
-> @@ -121,5 +121,5 @@ int optee_notif_init(struct optee *optee, u_int max_key)
->
->  void optee_notif_uninit(struct optee *optee)
->  {
-> -       kfree(optee->notif.bitmap);
-> +       bitmap_free(optee->notif.bitmap);
+> This patch is completely theoretical. It looks good to me, but there is a
+> little too much indirections for me. I'm also not that familiar with
+> fixing issue related to 'release' function...
+> 
+> ... So review with care :)
+> ---
+>  drivers/fsi/fsi-master-aspeed.c | 9 ---------
+>  1 file changed, 9 deletions(-)
+> 
+> diff --git a/drivers/fsi/fsi-master-aspeed.c b/drivers/fsi/fsi-master-aspeed.c
+> index 8606e55c1721..4a745ccb60cf 100644
+> --- a/drivers/fsi/fsi-master-aspeed.c
+> +++ b/drivers/fsi/fsi-master-aspeed.c
+> @@ -373,14 +373,6 @@ static int aspeed_master_break(struct fsi_master *master, int link)
+>  	return aspeed_master_write(master, link, 0, addr, &cmd, 4);
 >  }
-> --
-> 2.32.0
->
+>  
+> -static void aspeed_master_release(struct device *dev)
+> -{
+> -	struct fsi_master_aspeed *aspeed =
+> -		to_fsi_master_aspeed(dev_to_fsi_master(dev));
+> -
+> -	kfree(aspeed);
+> -}
+> -
+>  /* mmode encoders */
+>  static inline u32 fsi_mmode_crs0(u32 x)
+>  {
+> @@ -603,7 +595,6 @@ static int fsi_master_aspeed_probe(struct platform_device *pdev)
+>  	dev_info(&pdev->dev, "hub version %08x (%d links)\n", reg, links);
+>  
+>  	aspeed->master.dev.parent = &pdev->dev;
+> -	aspeed->master.dev.release = aspeed_master_release;
+
+Odd, then what deletes this device structure when the release function
+wants to be called?  You should have gotten a big warning from the
+kernel when removing the device from the system at runtime, did you test
+this somehow?
+
+This does not look correct at all.
+
+greg k-h
