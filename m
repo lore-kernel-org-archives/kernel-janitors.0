@@ -2,32 +2,32 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 187D3C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Dec 2021 16:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B131BC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Dec 2021 18:09:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229928AbhL0Q6R (ORCPT
+        id S231511AbhL0SJY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Dec 2021 11:58:17 -0500
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:64370 "EHLO
+        Mon, 27 Dec 2021 13:09:24 -0500
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:63800 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229868AbhL0Q6R (ORCPT
+        with ESMTP id S229970AbhL0SJX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Dec 2021 11:58:17 -0500
+        Mon, 27 Dec 2021 13:09:23 -0500
 Received: from pop-os.home ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id 1tK8nHljvHQrl1tK9nV4EA; Mon, 27 Dec 2021 17:58:14 +0100
+        id 1uQynxe1xMNzv1uQznw2pp; Mon, 27 Dec 2021 19:09:22 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 27 Dec 2021 17:58:14 +0100
+X-ME-Date: Mon, 27 Dec 2021 19:09:22 +0100
 X-ME-IP: 86.243.171.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     kvalo@kernel.org, davem@davemloft.net, kuba@kernel.org
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+To:     hubcap@omnibond.com, martin@omnibond.com, viro@zeniv.linux.org.uk
+Cc:     devel@lists.orangefs.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] ath: dfs_pattern_detector: Avoid open coded arithmetic in memory allocation
-Date:   Mon, 27 Dec 2021 17:58:10 +0100
-Message-Id: <0fbcd32a0384ac1f87c5a3549e505e4becc60226.1640624216.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] orangefs: Fix the size of a memory allocation in orangefs_bufmap_alloc()
+Date:   Mon, 27 Dec 2021 19:09:18 +0100
+Message-Id: <dd7d2a1dc70886787487452a50b1079ec8de5bc8.1640628556.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -35,45 +35,60 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-kmalloc_array()/kcalloc() should be used to avoid potential overflow when
-a multiplication is needed to compute the size of the requested memory.
+'buffer_index_array' really looks like a bitmap. So it should be allocated
+as such.
+When kzalloc is called, a number of bytes is expected, but a number of
+longs is passed instead.
 
-kmalloc_array() can be used here instead of kcalloc() because the array is
-fully initialized in the next 'for' loop.
+In get(), if not enough memory is allocated, un-allocated memory may be
+read or written.
 
-Finally, 'cd->detectors' is defined as 'struct pri_detector **detectors;'.
-So 'cd->detectors' and '*cd->detectors' are both some pointer.
-So use a more logical 'sizeof(*cd->detectors)'.
+So use bitmap_zalloc() to safely allocate the correct memory size and
+avoid un-expected behavior.
 
+While at it, change the corresponding kfree() into bitmap_free() to keep
+the semantic.
+
+Fixes: ea2c9c9f6574 ("orangefs: bufmap rewrite")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/wireless/ath/dfs_pattern_detector.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+If the above is correct, I guess that cc stable should be added.
+---
+ fs/orangefs/orangefs-bufmap.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/dfs_pattern_detector.c b/drivers/net/wireless/ath/dfs_pattern_detector.c
-index 75cb53a3ec15..27f4d74a41c8 100644
---- a/drivers/net/wireless/ath/dfs_pattern_detector.c
-+++ b/drivers/net/wireless/ath/dfs_pattern_detector.c
-@@ -197,7 +197,7 @@ static void channel_detector_exit(struct dfs_pattern_detector *dpd,
- static struct channel_detector *
- channel_detector_create(struct dfs_pattern_detector *dpd, u16 freq)
+diff --git a/fs/orangefs/orangefs-bufmap.c b/fs/orangefs/orangefs-bufmap.c
+index 538e839590ef..b501dc07f922 100644
+--- a/fs/orangefs/orangefs-bufmap.c
++++ b/fs/orangefs/orangefs-bufmap.c
+@@ -176,7 +176,7 @@ orangefs_bufmap_free(struct orangefs_bufmap *bufmap)
  {
--	u32 sz, i;
-+	u32 i;
- 	struct channel_detector *cd;
+ 	kfree(bufmap->page_array);
+ 	kfree(bufmap->desc_array);
+-	kfree(bufmap->buffer_index_array);
++	bitmap_free(bufmap->buffer_index_array);
+ 	kfree(bufmap);
+ }
  
- 	cd = kmalloc(sizeof(*cd), GFP_ATOMIC);
-@@ -206,8 +206,8 @@ channel_detector_create(struct dfs_pattern_detector *dpd, u16 freq)
+@@ -226,8 +226,7 @@ orangefs_bufmap_alloc(struct ORANGEFS_dev_map_desc *user_desc)
+ 	bufmap->desc_size = user_desc->size;
+ 	bufmap->desc_shift = ilog2(bufmap->desc_size);
  
- 	INIT_LIST_HEAD(&cd->head);
- 	cd->freq = freq;
--	sz = sizeof(cd->detectors) * dpd->num_radar_types;
--	cd->detectors = kzalloc(sz, GFP_ATOMIC);
-+	cd->detectors = kmalloc_array(dpd->num_radar_types,
-+				      sizeof(*cd->detectors), GFP_ATOMIC);
- 	if (cd->detectors == NULL)
- 		goto fail;
+-	bufmap->buffer_index_array =
+-		kzalloc(DIV_ROUND_UP(bufmap->desc_count, BITS_PER_LONG), GFP_KERNEL);
++	bufmap->buffer_index_array = bitmap_zalloc(bufmap->desc_count, GFP_KERNEL);
+ 	if (!bufmap->buffer_index_array)
+ 		goto out_free_bufmap;
  
+@@ -250,7 +249,7 @@ orangefs_bufmap_alloc(struct ORANGEFS_dev_map_desc *user_desc)
+ out_free_desc_array:
+ 	kfree(bufmap->desc_array);
+ out_free_index_array:
+-	kfree(bufmap->buffer_index_array);
++	bitmap_free(bufmap->buffer_index_array);
+ out_free_bufmap:
+ 	kfree(bufmap);
+ out:
 -- 
 2.32.0
 
