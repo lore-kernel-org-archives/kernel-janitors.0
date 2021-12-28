@@ -2,95 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CB62C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Dec 2021 16:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C5E3C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Dec 2021 17:36:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236498AbhL1Q6m (ORCPT
+        id S236784AbhL1Rgg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Dec 2021 11:58:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33340 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236490AbhL1Q6l (ORCPT
+        Tue, 28 Dec 2021 12:36:36 -0500
+Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:33289 "EHLO
+        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231489AbhL1Rgf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Dec 2021 11:58:41 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66858C06173F
-        for <kernel-janitors@vger.kernel.org>; Tue, 28 Dec 2021 08:58:41 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id g11so42699043lfu.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 28 Dec 2021 08:58:41 -0800 (PST)
+        Tue, 28 Dec 2021 12:36:35 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zrQnwrOYo44Zy15SHr8SgN0Chy99tnjGBiLMnJFezuA=;
-        b=BmyOQ+n+2q8EtIH/+W2DQ5gXaSxydrZiDK9gQHpDFhjnKjR6A8ZiGKOFENrAsf6Kup
-         7ZLAlzKRdwHSiPXOZhv7qImo9MVw0HrNTvk8cWiatYdoPJkjmx19D6e3+Zjwof54ELdh
-         rDzOQJb8fwd8ex27GBGO4UTLQ3rCOBUXN8Wmi9bmDLnUWhoMgbZtH7yelbeYBB1sYK1c
-         VQs6bRoXLKz/h0t+7Z5LMKBkLauP9PBtroxAEcn01Smq8JU0Mp2DOcS1CXKKyGSTke8I
-         K6dya80J5nEoQmQ8hMXysyICDX3mgBxEhYMCysmu24r1wSPnKD+Zf1P384FKCozPUIS/
-         2HNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zrQnwrOYo44Zy15SHr8SgN0Chy99tnjGBiLMnJFezuA=;
-        b=GzxsyMJ3OuMFGgweA1DFbpGDCmyxvtTcbhTKRfZzD3klpAZrEPIByTKlpwAJYeDAmi
-         lAceN6fC1z2LASJQlQAPlQ+GIeWDXxSGEXBTNwSbIuCO6rnloIdzCAgciivmyzWwZY2R
-         /Q+droidrv/msyGnF2lPjsBa34WNl9oQ3HF5Ofav9v++f7shX9N+ti2sa+Z8zY2Uttw5
-         PKE9HWf9d4uSx8QbgvkYoJG0PJtzTJ+6AntNW36zFqkvc/gZcCq+eW2VmecWF+tc+cGQ
-         k4DIeAwKOWmiTV8e7RARFNPqBg7+fqVoq4HUDF+dmF8mcpMFGsJQiyhukbzdBhf66eZP
-         DTyA==
-X-Gm-Message-State: AOAM530rUPnUlpwAqLQ8Nl1Pc9q6/+bLQrksS4QYogtNW1rF1SYelwZa
-        8N4gy5Q94Dw5lmKyH9jFodreFSRBXfvoNfgBObVolCQHDyskrw==
-X-Google-Smtp-Source: ABdhPJx4JoO51qdE7YskaABs81LWtu6BBrmrra8NDnH7XzKiBYGjPn+QvguCjJ0yBPPCmHp7CTk73mpMwcHQOOasimo=
-X-Received: by 2002:ac2:4c46:: with SMTP id o6mr20144159lfk.373.1640710719665;
- Tue, 28 Dec 2021 08:58:39 -0800 (PST)
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1640712995; x=1672248995;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=4OYDghXVhKB7oG2GEWMd9vQDKAFwA7xtNF7C6sQ+okg=;
+  b=B+chGsuIiRDLL1Vl8SI9NmtHgyCa4nw+o3NUjHKSCNpoupbiWjVNeLU3
+   7RhQM2WMkNnzb7VVePFD9xXvfaW6T7fMIQuZzFSVZbzVsSHOURvlzNFaO
+   y1mK+eLyaRtnD0NucQaJNmz8Ca6EGWJcHlUhSVWYcLXEVeYRgQYzzmu9C
+   Q=;
+Received: from unknown (HELO ironmsg02-sd.qualcomm.com) ([10.53.140.142])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 28 Dec 2021 09:36:35 -0800
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg02-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Dec 2021 09:36:34 -0800
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.922.19; Tue, 28 Dec 2021 09:36:34 -0800
+Received: from [10.110.91.229] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.922.19; Tue, 28 Dec
+ 2021 09:36:33 -0800
+Message-ID: <1a8dc2f2-b058-7243-f3dd-2defbca50e3d@quicinc.com>
+Date:   Tue, 28 Dec 2021 09:36:32 -0800
 MIME-Version: 1.0
-References: <07a8e48db446888bd77f16b88568e80904f52103.1640528089.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <07a8e48db446888bd77f16b88568e80904f52103.1640528089.git.christophe.jaillet@wanadoo.fr>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 28 Dec 2021 17:58:03 +0100
-Message-ID: <CAPDyKFpeiPcbvB2gV3P5z2bGpo_--gpFT_zUaMKA1kX8HT0uEA@mail.gmail.com>
-Subject: Re: [PATCH] mmc: pwrseq: Use bitmap_free() to free bitmap
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Subject: Re: [PATCH] drm/msm/dp: Fix a potential double free in an error
+ handling path
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        <robdclark@gmail.com>, <sean@poorly.run>,
+        <quic_abhinavk@quicinc.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <bjorn.andersson@linaro.org>, <swboyd@chromium.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <6fd20c8779d6b03a5b54509af25b478049482087.1640531508.git.christophe.jaillet@wanadoo.fr>
+From:   Kuogee Hsieh <quic_khsieh@quicinc.com>
+In-Reply-To: <6fd20c8779d6b03a5b54509af25b478049482087.1640531508.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 26 Dec 2021 at 15:15, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+
+On 12/26/2021 7:14 AM, Christophe JAILLET wrote:
+> 'dp_bridge' is devm_alloc'ed, so there is no need to free it explicitly or
+> there will be a double free().
 >
-> kfree() and bitmap_free() are the same. But using the later is more
-> consistent when freeing memory allocated with bitmap_alloc().
->
+> Fixes: 8a3b4c17f863 ("drm/msm/dp: employ bridge mechanism for display enable and disable")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Applied for next, thanks!
-
-Kind regards
-Uffe
-
-
+Reviewed-by: Kuogee Hsieh <quic_khsieh@quicinc.com>
 > ---
->  drivers/mmc/core/pwrseq_simple.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>   drivers/gpu/drm/msm/dp/dp_drm.c | 1 -
+>   1 file changed, 1 deletion(-)
 >
-> diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_simple.c
-> index ea4d3670560e..988467fbb621 100644
-> --- a/drivers/mmc/core/pwrseq_simple.c
-> +++ b/drivers/mmc/core/pwrseq_simple.c
-> @@ -54,7 +54,7 @@ static void mmc_pwrseq_simple_set_gpios_value(struct mmc_pwrseq_simple *pwrseq,
->                 gpiod_set_array_value_cansleep(nvalues, reset_gpios->desc,
->                                                reset_gpios->info, values);
->
-> -               kfree(values);
-> +               bitmap_free(values);
->         }
->  }
->
-> --
-> 2.32.0
->
+> diff --git a/drivers/gpu/drm/msm/dp/dp_drm.c b/drivers/gpu/drm/msm/dp/dp_drm.c
+> index 188e77c59885..d4d360d19eba 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_drm.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_drm.c
+> @@ -243,7 +243,6 @@ struct drm_bridge *msm_dp_bridge_init(struct msm_dp *dp_display, struct drm_devi
+>   	rc = drm_bridge_attach(encoder, bridge, NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+>   	if (rc) {
+>   		DRM_ERROR("failed to attach bridge, rc=%d\n", rc);
+> -		kfree(dp_bridge);
+>   		return ERR_PTR(rc);
+>   	}
+>   
