@@ -2,32 +2,33 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B36E6C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Dec 2021 20:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B268C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Dec 2021 21:09:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237301AbhL1Un3 (ORCPT
+        id S236344AbhL1VJV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Dec 2021 15:43:29 -0500
-Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:64786 "EHLO
+        Tue, 28 Dec 2021 16:09:21 -0500
+Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:53525 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237297AbhL1Un2 (ORCPT
+        with ESMTP id S236284AbhL1VJU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Dec 2021 15:43:28 -0500
+        Tue, 28 Dec 2021 16:09:20 -0500
 Received: from pop-os.home ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id 2JJbn9APaw2Xx2JJbnvI6T; Tue, 28 Dec 2021 21:43:24 +0100
+        id 2Jign9Hrmw2Xx2JignvJl9; Tue, 28 Dec 2021 22:09:19 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Tue, 28 Dec 2021 21:43:24 +0100
+X-ME-Date: Tue, 28 Dec 2021 22:09:19 +0100
 X-ME-IP: 86.243.171.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     sre@kernel.org, linus.walleij@linaro.org
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     jikos@kernel.org, benjamin.tissoires@redhat.com,
+        jose.exposito89@gmail.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] power: supply: ab8500: Fix the error handling path of ab8500_charger_probe()
-Date:   Tue, 28 Dec 2021 21:43:22 +0100
-Message-Id: <24a8b7e7b7b8f9f4b8eaad6707f420d55fd10aac.1640722789.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] HID: magicmouse: Fix an error handling path in magicmouse_probe()
+Date:   Tue, 28 Dec 2021 22:09:17 +0100
+Message-Id: <b0777c29fb4c59f27a726f62680b4c7f04c5c76e.1640725695.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -35,53 +36,28 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Since the commit below, ab8500_bm_of_remove() needs to be called after a
-successful ab8500_bm_of_probe() call.
-This commit has only updated the remove function.
+If the timer introduced by the commit below is started, then it must be
+deleted in the error handling of the probe. Otherwise it would trigger
+once the driver is no more.
 
-Fix the error handling path of the probe the same way.
-
-Fixes: 6252c706cdb0 ("power: supply: ab8500: Standardize operating temperature")
+Fixes: 0b91b4e4dae6 ("HID: magicmouse: Report battery level over USB")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-For a better understanding, maybe, the ab8500_bm_of_remove() call in the
-remove function should be moved at the bottom of the function, so that
-resources are freed in reverse order than allocation.
-I've not looked in details if the position of this call was important or
-not, though.
----
- drivers/power/supply/ab8500_charger.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/hid/hid-magicmouse.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/power/supply/ab8500_charger.c b/drivers/power/supply/ab8500_charger.c
-index db7457064a17..ce074c018dcb 100644
---- a/drivers/power/supply/ab8500_charger.c
-+++ b/drivers/power/supply/ab8500_charger.c
-@@ -3665,11 +3665,13 @@ static int ab8500_charger_probe(struct platform_device *pdev)
- 	}
- 	if (!match) {
- 		dev_err(dev, "no matching components\n");
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto remove_ab8500_bm;
- 	}
- 	if (IS_ERR(match)) {
- 		dev_err(dev, "could not create component match\n");
--		return PTR_ERR(match);
-+		ret = PTR_ERR(match);
-+		goto remove_ab8500_bm;
- 	}
+diff --git a/drivers/hid/hid-magicmouse.c b/drivers/hid/hid-magicmouse.c
+index eba1e8087bfd..b8b08f0a8c54 100644
+--- a/drivers/hid/hid-magicmouse.c
++++ b/drivers/hid/hid-magicmouse.c
+@@ -873,6 +873,7 @@ static int magicmouse_probe(struct hid_device *hdev,
  
- 	/* Notifier for external charger enabling */
-@@ -3710,6 +3712,8 @@ static int ab8500_charger_probe(struct platform_device *pdev)
- 	if (!di->ac_chg.enabled)
- 		blocking_notifier_chain_unregister(
- 			&charger_notifier_list, &charger_nb);
-+remove_ab8500_bm:
-+	ab8500_bm_of_remove(di->usb_chg.psy, di->bm);
+ 	return 0;
+ err_stop_hw:
++	del_timer_sync(&msc->battery_timer);
+ 	hid_hw_stop(hdev);
  	return ret;
  }
- 
 -- 
 2.32.0
 
