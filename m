@@ -2,91 +2,66 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A07C7C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Dec 2021 01:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 204EAC433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Dec 2021 01:49:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234400AbhL1BhW (ORCPT
+        id S232712AbhL1Btw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Dec 2021 20:37:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57434 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232933AbhL1BhW (ORCPT
+        Mon, 27 Dec 2021 20:49:52 -0500
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:40985 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230522AbhL1Btw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Dec 2021 20:37:22 -0500
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2F33C06173E;
-        Mon, 27 Dec 2021 17:37:21 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id d198-20020a1c1dcf000000b0034569cdd2a2so9194928wmd.5;
-        Mon, 27 Dec 2021 17:37:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gz2aWCWCCEe1u6rggzLlG69EStj3M0dnJRBR5Ximccw=;
-        b=fJzZNkNM4erOMQpEfC6XXJ1Ys0wicByRHCuoxx+SNzf9DJu5WrVeDeqVpTlETcHtkd
-         I0xEfW/fAapdGn0UyN7laeO9T1asr+s16RhMD3kSJjqP55OTAWrYuXHUbx4ZvflZakze
-         GdQYZafOf6u+FvZdyYt3uFNS2TaKcsoOXDLIQkIO8TmUzfFqDyPyJD4cXcPh3VFdPCWS
-         +Uf+3g9nJdhV5UCyHswFIpGLHqmuF4suXQyRmwlQKF+VYGpYlpQGZTFb0GOOAGHwb28Q
-         BtOKrY9KtE24jcNvbWzLfCYHK1DlgaBcOaB7iXTPmVwauLKPzJzVGvYnxK4lAMJfjkBV
-         lkDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gz2aWCWCCEe1u6rggzLlG69EStj3M0dnJRBR5Ximccw=;
-        b=YQ33d9WeRw1FPi9p8tilM8WzfN1zmjSilawxOpwulmqGUTQb+DYFGE+3ztTschqH8L
-         INq4XR2W9jOcO9IlcZ86LfRFx0zw5fLF+tcjO/UZgc2Kwv11oY7AHMQ2e2Q5+nTh360u
-         7UPz0RNfNtm6uubOtexJYdoB8Nx6JrFGY2xPFolf9r08ick2ryUMBc3AMMOhkZk5Av3z
-         eaGoUpfOcHu61xKNl/XjYXWjy4y/hIym2tmuYL9Nh7LtlVqm2kbHeJd8Oe7q0qdsDZ6w
-         7w42zUlbKxm/X1Gk6E09hZeCBVbhIgDwUqUawzu5LWVWTvpbcvJDrdqmnuoP5j+cAM1a
-         bqvQ==
-X-Gm-Message-State: AOAM5333SALTHGXhcMXtp8m5hHKoFrnPs5TQR7sPeVPgPpkLrD391FSO
-        YJHoIhEHRAXz8UKB0oUBowY=
-X-Google-Smtp-Source: ABdhPJwt3E5e6JEYid1bQ9uErzNt9j2HwKXRmQtTVQlaN1HB2xhvYgvpPGTPCMc/Ha93d7PP1/+HSQ==
-X-Received: by 2002:a05:600c:384c:: with SMTP id s12mr15396846wmr.108.1640655440417;
-        Mon, 27 Dec 2021 17:37:20 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id o2sm16179695wru.109.2021.12.27.17.37.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Dec 2021 17:37:19 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        ocfs2-devel@oss.oracle.com
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ocfs2: remove redundant assignment to pointer root_bh
-Date:   Tue, 28 Dec 2021 01:37:19 +0000
-Message-Id: <20211228013719.620923-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.33.1
+        Mon, 27 Dec 2021 20:49:52 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0V0.gs9J_1640656189;
+Received: from 30.225.24.26(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0V0.gs9J_1640656189)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 28 Dec 2021 09:49:50 +0800
+Message-ID: <f88a34a6-abe8-69e2-33e0-350a0a76eea7@linux.alibaba.com>
+Date:   Tue, 28 Dec 2021 09:49:49 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.4.0
+Subject: Re: [PATCH] ocfs2: remove redundant assignment to pointer root_bh
+Content-Language: en-US
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com,
+        akpm <akpm@linux-foundation.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20211228013719.620923-1-colin.i.king@gmail.com>
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <20211228013719.620923-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Pointer root_bh is being initialized with a value that is not read,
-it is being re-assigned later on closer to its use. The early
-initialization is redundant and can be removed.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/ocfs2/alloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-index bb247bc349e4..bf9357123bc5 100644
---- a/fs/ocfs2/alloc.c
-+++ b/fs/ocfs2/alloc.c
-@@ -2040,7 +2040,7 @@ static void ocfs2_complete_edge_insert(handle_t *handle,
- 	int i, idx;
- 	struct ocfs2_extent_list *el, *left_el, *right_el;
- 	struct ocfs2_extent_rec *left_rec, *right_rec;
--	struct buffer_head *root_bh = left_path->p_node[subtree_index].bh;
-+	struct buffer_head *root_bh;
- 
- 	/*
- 	 * Update the counts and position values within all the
--- 
-2.33.1
+On 12/28/21 9:37 AM, Colin Ian King wrote:
+> Pointer root_bh is being initialized with a value that is not read,
+> it is being re-assigned later on closer to its use. The early
+> initialization is redundant and can be removed.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
+Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+> ---
+>  fs/ocfs2/alloc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
+> index bb247bc349e4..bf9357123bc5 100644
+> --- a/fs/ocfs2/alloc.c
+> +++ b/fs/ocfs2/alloc.c
+> @@ -2040,7 +2040,7 @@ static void ocfs2_complete_edge_insert(handle_t *handle,
+>  	int i, idx;
+>  	struct ocfs2_extent_list *el, *left_el, *right_el;
+>  	struct ocfs2_extent_rec *left_rec, *right_rec;
+> -	struct buffer_head *root_bh = left_path->p_node[subtree_index].bh;
+> +	struct buffer_head *root_bh;
+>  
+>  	/*
+>  	 * Update the counts and position values within all the
