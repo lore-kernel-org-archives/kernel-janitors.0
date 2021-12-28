@@ -2,91 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B941FC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Dec 2021 08:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 366ADC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Dec 2021 12:20:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232588AbhL1ILR (ORCPT
+        id S230428AbhL1MUM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Dec 2021 03:11:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57890 "EHLO
+        Tue, 28 Dec 2021 07:20:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229581AbhL1ILQ (ORCPT
+        with ESMTP id S230301AbhL1MUL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Dec 2021 03:11:16 -0500
-Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 366F3C061574;
-        Tue, 28 Dec 2021 00:11:16 -0800 (PST)
-Received: by mail-yb1-xb34.google.com with SMTP id i3so37213409ybh.11;
-        Tue, 28 Dec 2021 00:11:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=s9OnzWfOxtr0nn687lLrh8Ahc8zvomjVWssCtaDeyTw=;
-        b=Lfpu9/BT5AYtS2pXE7LFVLEzluSq2XOJ8RBVaMN0mFulwFbRVaXRwSIeckZEZURsfo
-         1806rAOJbXUz/eHXx5wJtL8ncNkLgytegjTFB4oORAJVcwpyCh62hVZmqPNU5k3hMzes
-         FeRtfy6dMzx27yr6VW09SMcS+uvIcUWkpf7+T3td/E8gNo4EaxtpaSw2gBzbsGUGNtDc
-         F60y3ZDfiMGhcfrV+BqjB3yuALNpEQiWCnmqJNkCG6pKMdePlW2lWmjMGIt1tKhb//zA
-         ATR9SCLiY6hru/OgLa0xU8RlzaHR8Hmv5dFiBhHAKcl5qxtzWHqaDOIerE0MDXE8mamn
-         K7dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=s9OnzWfOxtr0nn687lLrh8Ahc8zvomjVWssCtaDeyTw=;
-        b=W9f5wARsaFZuNgxVJct4IjN7GNk+yyMqqSM8dNHfQWRiqdSP5lBka7Bk35q1+cFdbW
-         On9uTHd+KJaa/2SZ9PSnpx3doyYx4F8mkTBoI8QiphWjvUiNsRnFPaL8ntkVYGEJMv2Q
-         cFV3392biODGELxQcU54ZG9RyAdinJ5in1qn+C9rUELgkVFRhubZGI9x3Q8L357GaLXM
-         tD6WYcTGh7p9N3jJaXoXwz+Nq0lu9l6YURWRaGYe+LgY9nOXuOXdTnlQ8pUZp0lw81Gr
-         EWsSOSOHo8hJpdAuvl5pHcD2CmyfaKt/RLJQEvXTifE6AZKnqCpqm7NyVZzd/cfG9mYx
-         SM3Q==
-X-Gm-Message-State: AOAM530o9KmPCXjiYgHm2Y2lY4KUrClWVi0MfBkFJ8bBK/qmtHE+83Iq
-        wxDyy+6NdEZ8ORzhUqGM91rFGAExI81Evu4kxxyG6tdM
-X-Google-Smtp-Source: ABdhPJwZ1fIeb5IyXipxUDoGxzNopK3HD6DBvor7L6/Gpw+boBvFuI5yhjkwo3mId2//GRkVAW0xKRfz5mLPH7yfuYI=
-X-Received: by 2002:a25:2cd0:: with SMTP id s199mr10972416ybs.234.1640679074872;
- Tue, 28 Dec 2021 00:11:14 -0800 (PST)
+        Tue, 28 Dec 2021 07:20:11 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF75DC061574;
+        Tue, 28 Dec 2021 04:20:10 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 53995611E0;
+        Tue, 28 Dec 2021 12:20:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A7DB7C36AEB;
+        Tue, 28 Dec 2021 12:20:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1640694009;
+        bh=ZqpNAYZslppWZAxjgspaQbIdA3KXNlCzslcoXk+px7w=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=Yh0FK3eQNTf9BuUJgC8K0liaqz8H+4LI4UDhvbCQ9QqMXRg34iskTpGRlqcfYII2M
+         vA/U+1flea/CcDQ/vGoJ+vqPJHkRbvDgLJpPlCYLAo5NqnrbLW+VsybPiQSA73o+/s
+         C7KZCvz8uBkT1nxm+isS9K8S7BTdMYr3gFLr+MAtzavoZYJ6yMqPsn6zIwUo3SORsx
+         FGV0f6nAikmj+6n2cPQc6kmGSaZsA6XfgfTKUqmXaaLw7cSNlX8kkQCA9PgMtrc4ZS
+         Y+1I9NbT2KpQyRsV4pawHC+VuygmiHk9AHwI0r8v9Jst8uFbPrXYnbOmSnps8aUnGq
+         C/mOvuf1xMasQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 845DBC395E8;
+        Tue, 28 Dec 2021 12:20:09 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20211227064839.21405-1-lukas.bulwahn@gmail.com> <CACRpkdbFf3cNk6AKoahGsvY_RU+F0hnM6NWv0vcfjJO6RsQa+g@mail.gmail.com>
-In-Reply-To: <CACRpkdbFf3cNk6AKoahGsvY_RU+F0hnM6NWv0vcfjJO6RsQa+g@mail.gmail.com>
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Tue, 28 Dec 2021 09:11:04 +0100
-Message-ID: <CAKXUXMyq-M7Cc-1mN=Xp=Vov9qfE=+vix97kBZWMqEOjL_mjGw@mail.gmail.com>
-Subject: Re: [PATCH] mfd: db8500-prcmu: remove dead code for a non-existing config
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: ag71xx: Fix a potential double free in error handling
+ paths
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164069400953.26128.4657256476646014759.git-patchwork-notify@kernel.org>
+Date:   Tue, 28 Dec 2021 12:20:09 +0000
+References: <b2da37192380cdb9e81cad6484754b3159d12400.1640541019.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <b2da37192380cdb9e81cad6484754b3159d12400.1640541019.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     chris.snook@gmail.com, davem@davemloft.net, kuba@kernel.org,
+        andrew@lunn.ch, linux@rempel-privat.de, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Dec 28, 2021 at 1:48 AM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> On Mon, Dec 27, 2021 at 7:50 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->
-> > The config DBX500_PRCMU_QOS_POWER was never introduced in the kernel
-> > repository. So, the ifdef in  ./include/linux/mfd/dbx500-prcmu.h was never
-> > effective.
-> >
-> > Remove these dead function prototypes.
-> >
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
->
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->
-> BTW: Lukas are you using this platform or just general winter cleaning?
->
+Hello:
 
-I am not using this platform, but just doing some janitorial work with
-the checkkconfigsymbols.py script, which Randy Dunlap has pointed out
-to me. This "general winter cleaning" really started as a "summer
-break clean-up" and just took longer... I am also writing a blog post
-summarizing the results of these whole kernel clean-up activities and
-I will share it with you once it is published.
+This patch was applied to netdev/net.git (master)
+by David S. Miller <davem@davemloft.net>:
 
-Lukas
+On Sun, 26 Dec 2021 18:51:44 +0100 you wrote:
+> 'ndev' is a managed resource allocated with devm_alloc_etherdev(), so there
+> is no need to call free_netdev() explicitly or there will be a double
+> free().
+> 
+> Simplify all error handling paths accordingly.
+> 
+> Fixes: d51b6ce441d3 ("net: ethernet: add ag71xx driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> [...]
 
-> Yours,
-> Linus Walleij
+Here is the summary with links:
+  - net: ag71xx: Fix a potential double free in error handling paths
+    https://git.kernel.org/netdev/net/c/1cd5384c88af
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
