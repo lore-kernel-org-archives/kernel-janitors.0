@@ -2,66 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 204EAC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Dec 2021 01:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC475C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Dec 2021 07:47:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232712AbhL1Btw (ORCPT
+        id S235344AbhL1HrS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Dec 2021 20:49:52 -0500
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:40985 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230522AbhL1Btw (ORCPT
+        Tue, 28 Dec 2021 02:47:18 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:54933 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235332AbhL1HrR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Dec 2021 20:49:52 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0V0.gs9J_1640656189;
-Received: from 30.225.24.26(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0V0.gs9J_1640656189)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 28 Dec 2021 09:49:50 +0800
-Message-ID: <f88a34a6-abe8-69e2-33e0-350a0a76eea7@linux.alibaba.com>
-Date:   Tue, 28 Dec 2021 09:49:49 +0800
+        Tue, 28 Dec 2021 02:47:17 -0500
+Received: by mail-il1-f199.google.com with SMTP id g14-20020a92c7ce000000b002b1e78da1f9so11108191ilk.21
+        for <kernel-janitors@vger.kernel.org>; Mon, 27 Dec 2021 23:47:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to:cc;
+        bh=Uw0HySQnOliUjUKI3r/PFZeo3az9rpmElYd8X6AhRRc=;
+        b=sphLgN9RedxR+gQxrjkUFLZIVGZa06QSXlbk1payBNKWRXXu+OnMsZhdNsiQOjwDLO
+         RflHvfBZgdfWCMM5hhAqy+a2geVRd5WxfNFvRvpISTheOEy1S+RcyD/EsZqA+eipuYFZ
+         1GGmRFZmUv1MGDuBBBmGCqFDsWRdxSlZLWHlw6/KK82LWzuNhSIMDS7VlBVOvM/mj70X
+         6QAFB5vjYnbi/VreR51q1B7onksbIWmQkQpZNZ2QEwtNH1BOPZThTTuW1DnU1bNKuGm2
+         J49jF0zdidZVtKgWO9e/G/8Y/6nuFSr1w9bALwpzkyUKRO6/6pX7lPl60S2ZHbypcLMM
+         FQUA==
+X-Gm-Message-State: AOAM531F0oGSWblDLe0QeXpF6XqiOp0/3lbG1KJqC48gRV1OCy3Y1g4u
+        t2Mhw54m++Ual0A0irxX4DctmASyjfUjgVLxEiTCwCyxhPwp
+X-Google-Smtp-Source: ABdhPJzzBDBBy/cd8LQS9PQTs66isAN0tM25racBxresrnv1pJK8DlLuL0yS3O/+BJ612+mJNZ8W9lYMUF7fK4TZa/4hMmvqZTBX
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.4.0
-Subject: Re: [PATCH] ocfs2: remove redundant assignment to pointer root_bh
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com,
-        akpm <akpm@linux-foundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20211228013719.620923-1-colin.i.king@gmail.com>
-From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20211228013719.620923-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a02:b11d:: with SMTP id r29mr9712662jah.71.1640677637200;
+ Mon, 27 Dec 2021 23:47:17 -0800 (PST)
+Date:   Mon, 27 Dec 2021 23:47:17 -0800
+In-Reply-To: <f78b974a-e36b-6d23-6977-fdf50c05600b@wanadoo.fr>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c1a01605d4300787@google.com>
+Subject: Re: KMSAN: uninit-value in alauda_check_media
+From:   syzbot <syzbot+e7d46eb426883fb97efd@syzkaller.appspotmail.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     christophe.jaillet@wanadoo.fr, glider@google.com,
+        gregkh@linuxfoundation.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        stern@rowland.harvard.edu, syzkaller-bugs@googlegroups.com,
+        usb-storage@lists.one-eyed-alien.net
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+> Hi,
+>
+> (2nd try - text only format - sorry for the noise)
+>
+>
+> first try to use syzbot. I hope I do it right.
+> Discussion about the syz report can be found at 
+> https://lore.kernel.org/linux-kernel/0000000000007d25ff059457342d@google.com/
+>
+> This patch only test if alauda_get_media_status() (and its embedded 
+> usb_stor_ctrl_transfer()) before using the data.
+> In case of error, it returns USB_STOR_TRANSPORT_ERROR as done elsewhere.
+>
+> #syz test: 
 
+KMSAN bugs can only be tested on https://github.com/google/kmsan.git tree
+because KMSAN tool is not upstreamed yet.
+See https://goo.gl/tpsmEJ#kmsan-bugs for details.
 
-On 12/28/21 9:37 AM, Colin Ian King wrote:
-> Pointer root_bh is being initialized with a value that is not read,
-> it is being re-assigned later on closer to its use. The early
-> initialization is redundant and can be removed.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-
-Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-> ---
->  fs/ocfs2/alloc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-> index bb247bc349e4..bf9357123bc5 100644
-> --- a/fs/ocfs2/alloc.c
-> +++ b/fs/ocfs2/alloc.c
-> @@ -2040,7 +2040,7 @@ static void ocfs2_complete_edge_insert(handle_t *handle,
->  	int i, idx;
->  	struct ocfs2_extent_list *el, *left_el, *right_el;
->  	struct ocfs2_extent_rec *left_rec, *right_rec;
-> -	struct buffer_head *root_bh = left_path->p_node[subtree_index].bh;
-> +	struct buffer_head *root_bh;
->  
->  	/*
->  	 * Update the counts and position values within all the
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+>
+> CJ
+>
