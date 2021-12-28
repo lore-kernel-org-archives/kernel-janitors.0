@@ -2,93 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B131BC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Dec 2021 18:09:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE36C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Dec 2021 00:45:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231511AbhL0SJY (ORCPT
+        id S234193AbhL1Apq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Dec 2021 13:09:24 -0500
-Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:63800 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229970AbhL0SJX (ORCPT
+        Mon, 27 Dec 2021 19:45:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46116 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230257AbhL1App (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Dec 2021 13:09:23 -0500
-Received: from pop-os.home ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id 1uQynxe1xMNzv1uQznw2pp; Mon, 27 Dec 2021 19:09:22 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 27 Dec 2021 19:09:22 +0100
-X-ME-IP: 86.243.171.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     hubcap@omnibond.com, martin@omnibond.com, viro@zeniv.linux.org.uk
-Cc:     devel@lists.orangefs.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] orangefs: Fix the size of a memory allocation in orangefs_bufmap_alloc()
-Date:   Mon, 27 Dec 2021 19:09:18 +0100
-Message-Id: <dd7d2a1dc70886787487452a50b1079ec8de5bc8.1640628556.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
+        Mon, 27 Dec 2021 19:45:45 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2208DC06173E;
+        Mon, 27 Dec 2021 16:45:45 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id s1so35225309wrg.1;
+        Mon, 27 Dec 2021 16:45:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XaV/r3ZN+eYxYzo3M6I/TvOftLKV5Px1SaFfM14mJiw=;
+        b=Vf5TTiCXk0cnJUD3QC0y7FeI4qSwYQ/PGWiiHoiIcYcdWpu2JHa9MO2vtykbV6SGTO
+         Lmkbvs/picY7xAHERjmVlAiMlIB+KepySstshohEa8LDXzF7CLMTv2XYjHEMPT01nekR
+         sdK6G+ag18c/Gnd1/43SH5NqNxCX/bI7tNShFPmuoTQLp31hjxEOh2a0W5uURs+6DHq9
+         mOEBwWepmqle5LblqmHQMLIaMgfhLVjohZt3UbhljvPQmex6cVO636s9HPcGZ9/yyFEH
+         neHozZAMP7jsC8JK1scTjVZ/JT0qX2mU8haIirz24femwGBR+hmIMk+LZRWAKUJh7upB
+         uY9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XaV/r3ZN+eYxYzo3M6I/TvOftLKV5Px1SaFfM14mJiw=;
+        b=HhWIN2is0soWsgywfOSfTbKqwbagIyqjz9gOx9k7hgqk8+b2SV5D2/3jtrgqS2iKxB
+         xS8GPxKPjMl7FMSKJGxpe9CCNxizTM96bECmXls3luh5Gu7gfr/AgiJ9LjC9UJgh5L4u
+         rAOdKkNa9DAOzDpYnKKedJzUQnNY+L6dAUcknwz2SVur+yE5XbRquJo4b+phwo1sOWr5
+         nazgHq8fhTyQA5qpFEFOb3NSWTd6c+8KwqtT/giNNa4FRaYVddBUTBvWPkcZEpv3S2vA
+         r6OaDl/qSqO+BjZ5LdxIC7V8vFE9HPomEULck8696o4+uK6rzAD12Ay+Lq6I1VldjgeY
+         0LWg==
+X-Gm-Message-State: AOAM531g+APn6YLKWinLCHMvVqmkm62Ogd9jAi6Fm6doeCeowYUlu37M
+        yhbK2TBDqBsDrlT/U2DsYgY=
+X-Google-Smtp-Source: ABdhPJz15yzi2RBiXai0IBvh2zoAoXsjhhHM0H5xEoj1qLmDFgdLUaIVLTB1UPX1K1+jt0BDGV5rBQ==
+X-Received: by 2002:a5d:4588:: with SMTP id p8mr14365697wrq.106.1640652343581;
+        Mon, 27 Dec 2021 16:45:43 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id d143sm16464332wmd.6.2021.12.27.16.45.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Dec 2021 16:45:43 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] net: caif: remove redundant assignment to variable expectlen
+Date:   Tue, 28 Dec 2021 00:45:42 +0000
+Message-Id: <20211228004542.568277-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'buffer_index_array' really looks like a bitmap. So it should be allocated
-as such.
-When kzalloc is called, a number of bytes is expected, but a number of
-longs is passed instead.
+Variable expectlen is being assigned a value that is never read, the
+assignment occurs before a return statement. The assignment is
+redundant and can be removed.
 
-In get(), if not enough memory is allocated, un-allocated memory may be
-read or written.
-
-So use bitmap_zalloc() to safely allocate the correct memory size and
-avoid un-expected behavior.
-
-While at it, change the corresponding kfree() into bitmap_free() to keep
-the semantic.
-
-Fixes: ea2c9c9f6574 ("orangefs: bufmap rewrite")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-If the above is correct, I guess that cc stable should be added.
----
- fs/orangefs/orangefs-bufmap.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ net/caif/cfserl.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/orangefs/orangefs-bufmap.c b/fs/orangefs/orangefs-bufmap.c
-index 538e839590ef..b501dc07f922 100644
---- a/fs/orangefs/orangefs-bufmap.c
-+++ b/fs/orangefs/orangefs-bufmap.c
-@@ -176,7 +176,7 @@ orangefs_bufmap_free(struct orangefs_bufmap *bufmap)
- {
- 	kfree(bufmap->page_array);
- 	kfree(bufmap->desc_array);
--	kfree(bufmap->buffer_index_array);
-+	bitmap_free(bufmap->buffer_index_array);
- 	kfree(bufmap);
- }
- 
-@@ -226,8 +226,7 @@ orangefs_bufmap_alloc(struct ORANGEFS_dev_map_desc *user_desc)
- 	bufmap->desc_size = user_desc->size;
- 	bufmap->desc_shift = ilog2(bufmap->desc_size);
- 
--	bufmap->buffer_index_array =
--		kzalloc(DIV_ROUND_UP(bufmap->desc_count, BITS_PER_LONG), GFP_KERNEL);
-+	bufmap->buffer_index_array = bitmap_zalloc(bufmap->desc_count, GFP_KERNEL);
- 	if (!bufmap->buffer_index_array)
- 		goto out_free_bufmap;
- 
-@@ -250,7 +249,7 @@ orangefs_bufmap_alloc(struct ORANGEFS_dev_map_desc *user_desc)
- out_free_desc_array:
- 	kfree(bufmap->desc_array);
- out_free_index_array:
--	kfree(bufmap->buffer_index_array);
-+	bitmap_free(bufmap->buffer_index_array);
- out_free_bufmap:
- 	kfree(bufmap);
- out:
+diff --git a/net/caif/cfserl.c b/net/caif/cfserl.c
+index 40cd57ad0a0f..aee11c74d3c8 100644
+--- a/net/caif/cfserl.c
++++ b/net/caif/cfserl.c
+@@ -128,7 +128,6 @@ static int cfserl_receive(struct cflayer *l, struct cfpkt *newpkt)
+ 				if (pkt != NULL)
+ 					cfpkt_destroy(pkt);
+ 				layr->incomplete_frm = NULL;
+-				expectlen = 0;
+ 				spin_unlock(&layr->sync);
+ 				return -EPROTO;
+ 			}
 -- 
-2.32.0
+2.33.1
 
