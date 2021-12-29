@@ -2,141 +2,119 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6591C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Dec 2021 16:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A13C8C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Dec 2021 16:45:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237548AbhL2QKy (ORCPT
+        id S240881AbhL2Qp0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 29 Dec 2021 11:10:54 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:34478 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237439AbhL2QKx (ORCPT
+        Wed, 29 Dec 2021 11:45:26 -0500
+Received: from netrider.rowland.org ([192.131.102.5]:48309 "HELO
+        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S237396AbhL2QpZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 29 Dec 2021 11:10:53 -0500
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 88CCD464;
-        Wed, 29 Dec 2021 17:10:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1640794251;
-        bh=mr5lojsiIf1Co6+QVE9S6GTMc09dB0QzYOh+9i5UyV4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tVNRdI3BI7czljQ1G8W3D6xXxKUwqPjFSyTN3IFYcTxNeNWXH0tHBjpmVJmmFgajR
-         6Mah88GMpU0obH9/dh6gW6LD0JjyjnWq/8UUaZcsxMOd4n1p6daYdPUnEg1DmkMBmb
-         vSAU2tYExE+xajXCQM6y4Ai/EvZQLC4iFx/SNqmY=
-Date:   Wed, 29 Dec 2021 18:10:49 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+        Wed, 29 Dec 2021 11:45:25 -0500
+Received: (qmail 1096430 invoked by uid 1000); 29 Dec 2021 11:45:24 -0500
+Date:   Wed, 29 Dec 2021 11:45:24 -0500
+From:   Alan Stern <stern@rowland.harvard.edu>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     andrzej.hajda@intel.com, narmstrong@baylibre.com,
-        robert.foss@linaro.org, jonas@kwiboo.se, jernej.skrabec@gmail.com,
-        airlied@linux.ie, daniel@ffwll.ch, marex@denx.de,
-        frieder.schrempf@kontron.de, linus.walleij@linaro.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] drm/bridge: sn65dsi83: Fix an error handling path in
- sn65dsi83_probe()
-Message-ID: <YcyIidlnW4Sh6CGm@pendragon.ideasonboard.com>
-References: <4bc21aed4b60d3d5ac4b28d8b07a6fdd8da6a536.1640768126.git.christophe.jaillet@wanadoo.fr>
+Cc:     glider@google.com, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        usb-storage@lists.one-eyed-alien.net,
+        Kernel Janitors <kernel-janitors@vger.kernel.org>
+Subject: Re: KMSAN: uninit-value in alauda_check_media
+Message-ID: <YcyQpJGJRxsTKesd@rowland.harvard.edu>
+References: <0000000000007d25ff059457342d@google.com>
+ <f78b974a-e36b-6d23-6977-fdf50c05600b@wanadoo.fr>
+ <YcuUX6BVo+HA1TcI@rowland.harvard.edu>
+ <156fb7f1-cf12-e6cb-63c0-5c0413ce2b2e@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <4bc21aed4b60d3d5ac4b28d8b07a6fdd8da6a536.1640768126.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <156fb7f1-cf12-e6cb-63c0-5c0413ce2b2e@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
-
-Thank you for the patch.
-
-On Wed, Dec 29, 2021 at 09:58:44AM +0100, Christophe JAILLET wrote:
-> sn65dsi83_parse_dt() takes a reference on 'ctx->host_node' that must be
-> released in the error handling path of this function and of the probe.
-> This is only done in the remove function up to now.
+On Wed, Dec 29, 2021 at 10:16:22AM +0100, Christophe JAILLET wrote:
+> Le 28/12/2021 à 23:49, Alan Stern a écrit :
+> > On Tue, Dec 28, 2021 at 08:47:15AM +0100, Christophe JAILLET wrote:
+> > > Hi,
+> > > 
+> > > (2nd try - text only format - sorry for the noise)
+> > > 
+> > > 
+> > > first try to use syzbot. I hope I do it right.
+> > > Discussion about the syz report can be found at
+> > > https://lore.kernel.org/linux-kernel/0000000000007d25ff059457342d@google.com/
+> > > 
+> > > This patch only test if alauda_get_media_status() (and its embedded
+> > > usb_stor_ctrl_transfer()) before using the data.
+> > > In case of error, it returns USB_STOR_TRANSPORT_ERROR as done elsewhere.
+> > > 
+> > > #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> > > master
+> > > 
+> > > CJ
+> > > 
+> > 
+> > > diff --git a/drivers/usb/storage/alauda.c b/drivers/usb/storage/alauda.c
+> > > index 20b857e97e60..6c486d964911 100644
+> > > --- a/drivers/usb/storage/alauda.c
+> > > +++ b/drivers/usb/storage/alauda.c
+> > > @@ -318,7 +318,8 @@ static int alauda_get_media_status(struct us_data *us, unsigned char *data)
+> > >   	rc = usb_stor_ctrl_transfer(us, us->recv_ctrl_pipe,
+> > >   		command, 0xc0, 0, 1, data, 2);
+> > > -	usb_stor_dbg(us, "Media status %02X %02X\n", data[0], data[1]);
+> > > +	if (rc == USB_STOR_XFER_GOOD)
+> > > +		usb_stor_dbg(us, "Media status %02X %02X\n", data[0], data[1]);
+> > 
+> > Instead of adding this test, you could initialize data[0] and data[1]
+> > to zero before the call to usb_stor_ctrl_transfer.
 > 
-> Fixes: ceb515ba29ba ("drm/bridge: ti-sn65dsi83: Add TI SN65DSI83 and SN65DSI84 driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
-> v2: add error handling in sn65dsi83_parse_dt() [Laurent Pinchart]
-> ---
->  drivers/gpu/drm/bridge/ti-sn65dsi83.c | 32 +++++++++++++++++++--------
->  1 file changed, 23 insertions(+), 9 deletions(-)
+> Well, having the test is cleaner, IMHO.
+> If usb_stor_ctrl_transfer() fails, a message explaining the reason is
+> already generated by the same usb_stor_dbg(). Having an error message
+> followed by another one stating that the Media Status is 0x00 0x00 could be
+> confusing I think.
 > 
-> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
-> index 945f08de45f1..314a84ffcea3 100644
-> --- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
-> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
-> @@ -560,10 +560,14 @@ static int sn65dsi83_parse_dt(struct sn65dsi83 *ctx, enum sn65dsi83_model model)
->  	ctx->host_node = of_graph_get_remote_port_parent(endpoint);
->  	of_node_put(endpoint);
->  
-> -	if (ctx->dsi_lanes < 0 || ctx->dsi_lanes > 4)
-> -		return -EINVAL;
-> -	if (!ctx->host_node)
-> -		return -ENODEV;
-> +	if (ctx->dsi_lanes < 0 || ctx->dsi_lanes > 4) {
-> +		ret = -EINVAL;
-> +		goto err_put_node;
-> +	}
-> +	if (!ctx->host_node) {
-> +		ret = -ENODEV;
-> +		goto err_put_node;
-> +	}
->  
->  	ctx->lvds_dual_link = false;
->  	ctx->lvds_dual_link_even_odd_swap = false;
-> @@ -590,16 +594,22 @@ static int sn65dsi83_parse_dt(struct sn65dsi83 *ctx, enum sn65dsi83_model model)
->  
->  	ret = drm_of_find_panel_or_bridge(dev->of_node, 2, 0, &panel, &panel_bridge);
->  	if (ret < 0)
-> -		return ret;
-> +		goto err_put_node;
->  	if (panel) {
->  		panel_bridge = devm_drm_panel_bridge_add(dev, panel);
-> -		if (IS_ERR(panel_bridge))
-> -			return PTR_ERR(panel_bridge);
-> +		if (IS_ERR(panel_bridge)) {
-> +			ret = PTR_ERR(panel_bridge);
-> +			goto err_put_node;
-> +		}
->  	}
->  
->  	ctx->panel_bridge = panel_bridge;
->  
->  	return 0;
-> +
-> +err_put_node:
-> +	of_node_put(ctx->host_node);
-> +	return ret;
->  }
->  
->  static int sn65dsi83_host_attach(struct sn65dsi83 *ctx)
-> @@ -673,8 +683,10 @@ static int sn65dsi83_probe(struct i2c_client *client,
->  		return ret;
->  
->  	ctx->regmap = devm_regmap_init_i2c(client, &sn65dsi83_regmap_config);
-> -	if (IS_ERR(ctx->regmap))
-> -		return PTR_ERR(ctx->regmap);
-> +	if (IS_ERR(ctx->regmap)) {
-> +		ret = PTR_ERR(ctx->regmap);
-> +		goto err_put_node;
-> +	}
->  
->  	dev_set_drvdata(dev, ctx);
->  	i2c_set_clientdata(client, ctx);
-> @@ -691,6 +703,8 @@ static int sn65dsi83_probe(struct i2c_client *client,
->  
->  err_remove_bridge:
->  	drm_bridge_remove(&ctx->bridge);
-> +err_put_node:
-> +	of_node_put(ctx->host_node);
->  	return ret;
->  }
->  
+> Let me know if you have a real preference for a memset(data, 0, 2).
+> If so, I'll add it.
+> 
+> > 
+> > >   	return rc;
+> > >   }
+> > > @@ -453,8 +454,11 @@ static int alauda_check_media(struct us_data *us)
+> > >   {
+> > >   	struct alauda_info *info = (struct alauda_info *) us->extra;
+> > >   	unsigned char status[2];
+> > > +	int rc;
+> > > -	alauda_get_media_status(us, status);
+> > > +	rc = alauda_get_media_status(us, status);
+> > > +	if (rc != USB_STOR_TRANSPORT_GOOD)
+> > > +		return USB_STOR_TRANSPORT_ERROR;
+> > >   	/* Check for no media or door open */
+> > >   	if ((status[0] & 0x80) || ((status[0] & 0x1F) == 0x10)
+> > 
+> > In general this looks fine.  Let us know when you are ready to submit
+> > the patch.
+> 
+> I was unsure that this patch would get any interest because the driver looks
+> old. That's why I first tried to play with syzbot :)
 
--- 
-Regards,
+It is indeed old.  I doubt very many devices of this type are still in 
+use.
 
-Laurent Pinchart
+> In the syzbot history, you also mentioned that 'unsigned char status[2]'
+> should be 'unsigned char *status = us->iobuf;'
+> 
+> This is more a blind fix for me, but it looks consistent with other places
+> that call alauda_get_media_status().
+> 
+> So, once you confirm if you prefer my 'if' or a 'memset', I'll resend a
+> small serie for fixing both issues.
+
+"if" and "memset" are both acceptable.  You can use either one.
+
+Alan Stern
