@@ -2,75 +2,141 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 693FCC433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Dec 2021 14:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6591C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Dec 2021 16:10:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236848AbhL2OQf (ORCPT
+        id S237548AbhL2QKy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 29 Dec 2021 09:16:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60212 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233595AbhL2OQe (ORCPT
+        Wed, 29 Dec 2021 11:10:54 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:34478 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237439AbhL2QKx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 29 Dec 2021 09:16:34 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AB80C061574;
-        Wed, 29 Dec 2021 06:16:34 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E8036B81980;
-        Wed, 29 Dec 2021 14:16:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EF6DC36AE9;
-        Wed, 29 Dec 2021 14:16:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1640787391;
-        bh=+9JSWhnM/st3WyI+0cdaa71F5A8Jqr+ywwKFXLDZLLY=;
+        Wed, 29 Dec 2021 11:10:53 -0500
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 88CCD464;
+        Wed, 29 Dec 2021 17:10:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1640794251;
+        bh=mr5lojsiIf1Co6+QVE9S6GTMc09dB0QzYOh+9i5UyV4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=goKu5b7ygoUi580FJifzPW37sjedfPc4xic0oysl8r0zok+pZTrm3Gi1sER7dQJgC
-         tdL/P1RUAzn33pk6hZ2uDzhEAiXh2koLmzs/i8M0WaVs5G2n6ENGYWgVLh1lBeGZR4
-         fG6AtkRCf9fthcDUlgYZQieAduarw1N1yIR4NCZw=
-Date:   Wed, 29 Dec 2021 15:16:28 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/build: use the proper name CONFIG_FW_LOADER
-Message-ID: <YcxtvObu4Uofn208@kroah.com>
-References: <20211229111553.5846-1-lukas.bulwahn@gmail.com>
+        b=tVNRdI3BI7czljQ1G8W3D6xXxKUwqPjFSyTN3IFYcTxNeNWXH0tHBjpmVJmmFgajR
+         6Mah88GMpU0obH9/dh6gW6LD0JjyjnWq/8UUaZcsxMOd4n1p6daYdPUnEg1DmkMBmb
+         vSAU2tYExE+xajXCQM6y4Ai/EvZQLC4iFx/SNqmY=
+Date:   Wed, 29 Dec 2021 18:10:49 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     andrzej.hajda@intel.com, narmstrong@baylibre.com,
+        robert.foss@linaro.org, jonas@kwiboo.se, jernej.skrabec@gmail.com,
+        airlied@linux.ie, daniel@ffwll.ch, marex@denx.de,
+        frieder.schrempf@kontron.de, linus.walleij@linaro.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] drm/bridge: sn65dsi83: Fix an error handling path in
+ sn65dsi83_probe()
+Message-ID: <YcyIidlnW4Sh6CGm@pendragon.ideasonboard.com>
+References: <4bc21aed4b60d3d5ac4b28d8b07a6fdd8da6a536.1640768126.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20211229111553.5846-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <4bc21aed4b60d3d5ac4b28d8b07a6fdd8da6a536.1640768126.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Dec 29, 2021 at 12:15:53PM +0100, Lukas Bulwahn wrote:
-> Commit c8dcf655ec81 ("x86/build: Tuck away built-in firmware under
-> FW_LOADER") intends to add the expression regex only when FW_LOADER is
-> built-in, not a module or disabled.
+Hi Christophe,
+
+Thank you for the patch.
+
+On Wed, Dec 29, 2021 at 09:58:44AM +0100, Christophe JAILLET wrote:
+> sn65dsi83_parse_dt() takes a reference on 'ctx->host_node' that must be
+> released in the error handling path of this function and of the probe.
+> This is only done in the remove function up to now.
 > 
-> The config is called CONFIG_FW_LOADER when it is built-in; and
-> CONFIG_FW_LOADER_MODULE when it is a module.
-> 
-> So, adjust the condition to the actual name of the config.
-> 
-> Fixes: c8dcf655ec81 ("x86/build: Tuck away built-in firmware under FW_LOADER")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Fixes: ceb515ba29ba ("drm/bridge: ti-sn65dsi83: Add TI SN65DSI83 and SN65DSI84 driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
 > ---
+> v2: add error handling in sn65dsi83_parse_dt() [Laurent Pinchart]
+> ---
+>  drivers/gpu/drm/bridge/ti-sn65dsi83.c | 32 +++++++++++++++++++--------
+>  1 file changed, 23 insertions(+), 9 deletions(-)
 > 
-> I am wondering if this regular expression needs to be made differently
-> depending on the build configuration at all.
-> 
-> Could this not just be added unconditionally anyway or is not needed at all?
-> It seems that is was broken since its initial inclusion and nobody ever noticed.
+> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> index 945f08de45f1..314a84ffcea3 100644
+> --- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> @@ -560,10 +560,14 @@ static int sn65dsi83_parse_dt(struct sn65dsi83 *ctx, enum sn65dsi83_model model)
+>  	ctx->host_node = of_graph_get_remote_port_parent(endpoint);
+>  	of_node_put(endpoint);
+>  
+> -	if (ctx->dsi_lanes < 0 || ctx->dsi_lanes > 4)
+> -		return -EINVAL;
+> -	if (!ctx->host_node)
+> -		return -ENODEV;
+> +	if (ctx->dsi_lanes < 0 || ctx->dsi_lanes > 4) {
+> +		ret = -EINVAL;
+> +		goto err_put_node;
+> +	}
+> +	if (!ctx->host_node) {
+> +		ret = -ENODEV;
+> +		goto err_put_node;
+> +	}
+>  
+>  	ctx->lvds_dual_link = false;
+>  	ctx->lvds_dual_link_even_odd_swap = false;
+> @@ -590,16 +594,22 @@ static int sn65dsi83_parse_dt(struct sn65dsi83 *ctx, enum sn65dsi83_model model)
+>  
+>  	ret = drm_of_find_panel_or_bridge(dev->of_node, 2, 0, &panel, &panel_bridge);
+>  	if (ret < 0)
+> -		return ret;
+> +		goto err_put_node;
+>  	if (panel) {
+>  		panel_bridge = devm_drm_panel_bridge_add(dev, panel);
+> -		if (IS_ERR(panel_bridge))
+> -			return PTR_ERR(panel_bridge);
+> +		if (IS_ERR(panel_bridge)) {
+> +			ret = PTR_ERR(panel_bridge);
+> +			goto err_put_node;
+> +		}
+>  	}
+>  
+>  	ctx->panel_bridge = panel_bridge;
+>  
+>  	return 0;
+> +
+> +err_put_node:
+> +	of_node_put(ctx->host_node);
+> +	return ret;
+>  }
+>  
+>  static int sn65dsi83_host_attach(struct sn65dsi83 *ctx)
+> @@ -673,8 +683,10 @@ static int sn65dsi83_probe(struct i2c_client *client,
+>  		return ret;
+>  
+>  	ctx->regmap = devm_regmap_init_i2c(client, &sn65dsi83_regmap_config);
+> -	if (IS_ERR(ctx->regmap))
+> -		return PTR_ERR(ctx->regmap);
+> +	if (IS_ERR(ctx->regmap)) {
+> +		ret = PTR_ERR(ctx->regmap);
+> +		goto err_put_node;
+> +	}
+>  
+>  	dev_set_drvdata(dev, ctx);
+>  	i2c_set_clientdata(client, ctx);
+> @@ -691,6 +703,8 @@ static int sn65dsi83_probe(struct i2c_client *client,
+>  
+>  err_remove_bridge:
+>  	drm_bridge_remove(&ctx->bridge);
+> +err_put_node:
+> +	of_node_put(ctx->host_node);
+>  	return ret;
+>  }
+>  
 
-Very few people use built-in firmware, which is why no one probably ever
-noticed this :(
+-- 
+Regards,
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Laurent Pinchart
