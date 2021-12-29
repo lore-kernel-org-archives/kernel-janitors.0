@@ -2,92 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11251C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Dec 2021 19:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76192C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Dec 2021 19:36:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230305AbhL2TZQ (ORCPT
+        id S231148AbhL2TgP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 29 Dec 2021 14:25:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43378 "EHLO
+        Wed, 29 Dec 2021 14:36:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229627AbhL2TZQ (ORCPT
+        with ESMTP id S230494AbhL2TgO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 29 Dec 2021 14:25:16 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15563C061574;
-        Wed, 29 Dec 2021 11:25:16 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id l4so14248372wmq.3;
-        Wed, 29 Dec 2021 11:25:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=XWy6zb7VrjyL61C3FIcwxfgOsxnDVpBJZr50LV8zoyg=;
-        b=QdY3E+T6Nzxt8AzFFX7vO6vHUytofG/1cq6XPJi6ZvdL/utBcmvgfhMEdZC2rItpKw
-         IN477Yjkd9SjAsCbmXtfjHCmWYwXHm+QNFWikdr/82q1Q3wutxL0k8gtgacLmfFbFF4D
-         V+ucUKfaCZiDXsAvJL4cg9bme6RRiKN8AzvprAWEuGO5K1lciBEe0WZoxGHoUZZ0pWfi
-         1JPqwkMkfsNjl18sem3tgWyVVLG9NhZAaz8xueMUT4lKr3ALMlCTMakept5zGpZmGWoa
-         WuM1JTXAegrU2yiXOfm6t8rKNPVR+pSKcuSPtMPcPxW4ElBmDxvsgE2RSECbHUCIsxwM
-         izwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=XWy6zb7VrjyL61C3FIcwxfgOsxnDVpBJZr50LV8zoyg=;
-        b=BkPu193E6azRsKQB3sMaZghXf6mOJ3rKY6p/mepB2Vk7di+KlHgp/MgrYxREmKGt4A
-         GPcxO0HSI+ZoFJ0Gdt9aK7FpY8rnlz+viB3rmdRyG6LbJFcw8C+JaZ1LeHY0SKYV//1A
-         hLdRdYajJ21hlXoBC+HMGTKGj8Hfr026oQU20zSRaSqv6GCSTYR2t0kg8ey8GgJpzwLB
-         uij6+ffSxEbQCt6A9I6yM+6zMkFLsnEzhE7guwQGyCOZIPXkLmOwWZFfujB8NHFJXn3m
-         Le3eATGlaMbyyoeG6Jo4L64a0GPXArgdSjTYNowTdjNGXP4vb4/wFYonmoOy4bHJmP0b
-         /zSw==
-X-Gm-Message-State: AOAM532rJAft7aW553HUk7mUVh13+jT1hECkoJypChTV51gltroXLkZk
-        InlxK/VM1ELSmLnymNxwH+g=
-X-Google-Smtp-Source: ABdhPJxr0N9dwcDiO5BtWfsoSvknY2HG3QX/qXQ9wJPFG5mOIlJi1trxt+7YS2NOS0sgUWu8J1oquA==
-X-Received: by 2002:a7b:c341:: with SMTP id l1mr23876084wmj.60.1640805914522;
-        Wed, 29 Dec 2021 11:25:14 -0800 (PST)
-Received: from felia.fritz.box ([2001:16b8:2626:5600:5f5:a4cc:1dcf:a62])
-        by smtp.gmail.com with ESMTPSA id g18sm21892379wrv.42.2021.12.29.11.25.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Dec 2021 11:25:14 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Damien Le Moal <damien.lemoal@wdc.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-riscv@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] riscv: canaan: remove useless select of non-existing config SYSCON
-Date:   Wed, 29 Dec 2021 20:24:58 +0100
-Message-Id: <20211229192458.25138-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 29 Dec 2021 14:36:14 -0500
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7899C061574;
+        Wed, 29 Dec 2021 11:36:13 -0800 (PST)
+Received: from zn.tnic (dslb-088-067-202-008.088.067.pools.vodafone-ip.de [88.67.202.8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2152A1EC04EC;
+        Wed, 29 Dec 2021 20:36:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1640806568;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=zjGGgf4vZZGBZVnZreISFoCZqG7IYDBjGCqaWzTVoMk=;
+        b=GhgVNrNqF4r5fxtQbTMOSG5ybd6nCwCXz3ahY5zMQC18G1WGI0IoxD8ZS2Pi28SoVUrO0W
+        FBZN/PZ9+ONMHjcs+5GhiGYKXucq8lMtVHZFcCuiUBDZkBYD1yxglEOd2JCGw7m1Uft1XF
+        xOljKyIknJ7Ydnlv5xanBSiMBlPS9Dw=
+Date:   Wed, 29 Dec 2021 20:36:11 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/build: use the proper name CONFIG_FW_LOADER
+Message-ID: <Ycy4q2OhwTdLl+2S@zn.tnic>
+References: <20211229111553.5846-1-lukas.bulwahn@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20211229111553.5846-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The config SYSCON never existed in the kernel repository; so, the select of
-that config in ./drivers/soc/canaan/Kconfig has no effect.
+On Wed, Dec 29, 2021 at 12:15:53PM +0100, Lukas Bulwahn wrote:
+> Commit c8dcf655ec81 ("x86/build: Tuck away built-in firmware under
+> FW_LOADER") intends to add the expression regex only when FW_LOADER is
+> built-in, not a module or disabled.
+> 
+> The config is called CONFIG_FW_LOADER when it is built-in; and
+> CONFIG_FW_LOADER_MODULE when it is a module.
 
-Presumably, this was just some mistake, assuming some symmetry in handling
-and naming of configs that simply does not exist.
+$ git grep FW_LOADER_MODULE
+include/linux/firmware.h:37:#if defined(CONFIG_FW_LOADER) || (defined(CONFIG_FW_LOADER_MODULE) && defined(MODULE))
 
-Remove this useless select of a non-existing config.
+So either I'm not grepping right or that FW_LOADER_MODULE thing belongs
+to the past...
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- drivers/soc/canaan/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+Greg, Luis, what's up?
 
-diff --git a/drivers/soc/canaan/Kconfig b/drivers/soc/canaan/Kconfig
-index 853096b7e84c..2527cf5757ec 100644
---- a/drivers/soc/canaan/Kconfig
-+++ b/drivers/soc/canaan/Kconfig
-@@ -5,7 +5,6 @@ config SOC_K210_SYSCTL
- 	depends on RISCV && SOC_CANAAN && OF
- 	default SOC_CANAAN
-         select PM
--        select SYSCON
-         select MFD_SYSCON
- 	help
- 	  Canaan Kendryte K210 SoC system controller driver.
 -- 
-2.17.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
