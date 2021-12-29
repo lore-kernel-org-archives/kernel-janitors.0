@@ -2,130 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A6A8C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Dec 2021 09:16:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFFCDC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Dec 2021 11:16:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239499AbhL2JQ0 (ORCPT
+        id S239879AbhL2LQK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 29 Dec 2021 04:16:26 -0500
-Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:51209 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239474AbhL2JQZ (ORCPT
+        Wed, 29 Dec 2021 06:16:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48094 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235496AbhL2LQJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 29 Dec 2021 04:16:25 -0500
-Received: from [192.168.1.18] ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id 2V4InTzq1MxZu2V4InMidO; Wed, 29 Dec 2021 10:16:24 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Wed, 29 Dec 2021 10:16:24 +0100
-X-ME-IP: 86.243.171.122
-Message-ID: <156fb7f1-cf12-e6cb-63c0-5c0413ce2b2e@wanadoo.fr>
-Date:   Wed, 29 Dec 2021 10:16:22 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: KMSAN: uninit-value in alauda_check_media
-Content-Language: en-US
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     glider@google.com, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        usb-storage@lists.one-eyed-alien.net,
-        Kernel Janitors <kernel-janitors@vger.kernel.org>
-References: <0000000000007d25ff059457342d@google.com>
- <f78b974a-e36b-6d23-6977-fdf50c05600b@wanadoo.fr>
- <YcuUX6BVo+HA1TcI@rowland.harvard.edu>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <YcuUX6BVo+HA1TcI@rowland.harvard.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Wed, 29 Dec 2021 06:16:09 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7415EC061574;
+        Wed, 29 Dec 2021 03:16:09 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id w20so34762061wra.9;
+        Wed, 29 Dec 2021 03:16:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=fj9v03WIOgSR08ou05EzjrvJ+7CLv0+5hTLIsCE5StI=;
+        b=BWHF+T5kmYxsosqMuWNfAIcqWn5q5R/8K2Jwjrc/Yp3t4UHzF6a3w+U2Dt1MLI3GCU
+         m6rp1e0Kut/zSBrCIB70+lEyq7eF8k4L6d91kwMepDzM0xm1j+WJXkBBSCttbx/DBct5
+         0EAtYbPT2BD/oNuIvhYy6CoGQKhQAeKEdWJRGiuBvYuva0WA2qXTrTXW7JqSyeC2bXnZ
+         4tV/nemrM0FVzu8+2lQOBOkUWBuEZHcBbOkwVxjSVAX8MUEk3Jjh7/1fHuv84stwd5bn
+         8YjH4QREhUEp2Y7+PKAhi40N5QT72jYooaRd1tPNsJSHJhVlS36KpTGKku8rKbYJoGOH
+         v7uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=fj9v03WIOgSR08ou05EzjrvJ+7CLv0+5hTLIsCE5StI=;
+        b=ezhazQKejoJvy21ZONSrGKtIFJVxP2/0xkAgTDmLLgID9fHyO2f0GUlk5vTMC1StdJ
+         M/R99PNyxFCgdFfo2GHsMcQxvUcCo4NllVZDpo5m5/Uf06NoNT8V/OxhWqX+Zy8AlNxi
+         hOF7mry2b5d8H47QUDqFW5o8Fb7qScpO9CDSrbs7f9LOcSZ+QVERCfeL+YwlcVzLtVjW
+         7uFs20OfQcgDQXAaQZH3p5om8mp1T0IdFr0V/XvT0O6P4wfE2lIoKrDEspVQ/MWFybCe
+         Gh7Fd75f8HzCcWpS91G0rja2OxDarJtYb+vJ0OmrmeOe+pSXP4VR2az/ywDiXepmA+Fa
+         28DQ==
+X-Gm-Message-State: AOAM533hxmBs3suvNDVQ2OEJKGbf7xafqBjcbk2ry+XLsjrtQs4CK5xH
+        cNU3GnDNkvD32Mni8ud90CA=
+X-Google-Smtp-Source: ABdhPJzAKIfJly8RaCeqPTASh3XEypHJ5AJyp12ftriPta+Aqy7n7C0kbLgcaN0/0wFjj49PsYOuZw==
+X-Received: by 2002:a05:6000:148:: with SMTP id r8mr20373200wrx.333.1640776567534;
+        Wed, 29 Dec 2021 03:16:07 -0800 (PST)
+Received: from felia.fritz.box ([2001:16b8:2626:5600:5f5:a4cc:1dcf:a62])
+        by smtp.gmail.com with ESMTPSA id ay29sm23039644wmb.13.2021.12.29.03.16.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Dec 2021 03:16:06 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] x86/build: use the proper name CONFIG_FW_LOADER
+Date:   Wed, 29 Dec 2021 12:15:53 +0100
+Message-Id: <20211229111553.5846-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 28/12/2021 à 23:49, Alan Stern a écrit :
-> On Tue, Dec 28, 2021 at 08:47:15AM +0100, Christophe JAILLET wrote:
->> Hi,
->>
->> (2nd try - text only format - sorry for the noise)
->>
->>
->> first try to use syzbot. I hope I do it right.
->> Discussion about the syz report can be found at
->> https://lore.kernel.org/linux-kernel/0000000000007d25ff059457342d@google.com/
->>
->> This patch only test if alauda_get_media_status() (and its embedded
->> usb_stor_ctrl_transfer()) before using the data.
->> In case of error, it returns USB_STOR_TRANSPORT_ERROR as done elsewhere.
->>
->> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->> master
->>
->> CJ
->>
-> 
->> diff --git a/drivers/usb/storage/alauda.c b/drivers/usb/storage/alauda.c
->> index 20b857e97e60..6c486d964911 100644
->> --- a/drivers/usb/storage/alauda.c
->> +++ b/drivers/usb/storage/alauda.c
->> @@ -318,7 +318,8 @@ static int alauda_get_media_status(struct us_data *us, unsigned char *data)
->>   	rc = usb_stor_ctrl_transfer(us, us->recv_ctrl_pipe,
->>   		command, 0xc0, 0, 1, data, 2);
->>   
->> -	usb_stor_dbg(us, "Media status %02X %02X\n", data[0], data[1]);
->> +	if (rc == USB_STOR_XFER_GOOD)
->> +		usb_stor_dbg(us, "Media status %02X %02X\n", data[0], data[1]);
-> 
-> Instead of adding this test, you could initialize data[0] and data[1]
-> to zero before the call to usb_stor_ctrl_transfer.
+Commit c8dcf655ec81 ("x86/build: Tuck away built-in firmware under
+FW_LOADER") intends to add the expression regex only when FW_LOADER is
+built-in, not a module or disabled.
 
-Well, having the test is cleaner, IMHO.
-If usb_stor_ctrl_transfer() fails, a message explaining the reason is 
-already generated by the same usb_stor_dbg(). Having an error message 
-followed by another one stating that the Media Status is 0x00 0x00 could 
-be confusing I think.
+The config is called CONFIG_FW_LOADER when it is built-in; and
+CONFIG_FW_LOADER_MODULE when it is a module.
 
-Let me know if you have a real preference for a memset(data, 0, 2).
-If so, I'll add it.
+So, adjust the condition to the actual name of the config.
 
-> 
->>   
->>   	return rc;
->>   }
->> @@ -453,8 +454,11 @@ static int alauda_check_media(struct us_data *us)
->>   {
->>   	struct alauda_info *info = (struct alauda_info *) us->extra;
->>   	unsigned char status[2];
->> +	int rc;
->>   
->> -	alauda_get_media_status(us, status);
->> +	rc = alauda_get_media_status(us, status);
->> +	if (rc != USB_STOR_TRANSPORT_GOOD)
->> +		return USB_STOR_TRANSPORT_ERROR;
->>   
->>   	/* Check for no media or door open */
->>   	if ((status[0] & 0x80) || ((status[0] & 0x1F) == 0x10)
-> 
-> In general this looks fine.  Let us know when you are ready to submit
-> the patch.
+Fixes: c8dcf655ec81 ("x86/build: Tuck away built-in firmware under FW_LOADER")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
 
-I was unsure that this patch would get any interest because the driver 
-looks old. That's why I first tried to play with syzbot :)
+I am wondering if this regular expression needs to be made differently
+depending on the build configuration at all.
 
-In the syzbot history, you also mentioned that 'unsigned char status[2]' 
-should be 'unsigned char *status = us->iobuf;'
-
-This is more a blind fix for me, but it looks consistent with other 
-places that call alauda_get_media_status().
-
-So, once you confirm if you prefer my 'if' or a 'memset', I'll resend a 
-small serie for fixing both issues.
-
-CJ
+Could this not just be added unconditionally anyway or is not needed at all?
+It seems that is was broken since its initial inclusion and nobody ever noticed.
 
 
-> 
-> Alan Stern
-> 
+ arch/x86/tools/relocs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/tools/relocs.c b/arch/x86/tools/relocs.c
+index c736cf2ac76b..e2c5b296120d 100644
+--- a/arch/x86/tools/relocs.c
++++ b/arch/x86/tools/relocs.c
+@@ -68,7 +68,7 @@ static const char * const sym_regex_kernel[S_NSYMTYPES] = {
+ 	"(__parainstructions|__alt_instructions)(_end)?|"
+ 	"(__iommu_table|__apicdrivers|__smp_locks)(_end)?|"
+ 	"__(start|end)_pci_.*|"
+-#if CONFIG_FW_LOADER_BUILTIN
++#if CONFIG_FW_LOADER
+ 	"__(start|end)_builtin_fw|"
+ #endif
+ 	"__(start|stop)___ksymtab(_gpl)?|"
+-- 
+2.17.1
 
