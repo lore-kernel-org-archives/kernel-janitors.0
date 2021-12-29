@@ -2,77 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE7EC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Dec 2021 00:20:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA05C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Dec 2021 03:43:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233374AbhL2AUK (ORCPT
+        id S238535AbhL2Dnr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Dec 2021 19:20:10 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:46252 "EHLO
+        Tue, 28 Dec 2021 22:43:47 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:41416 "EHLO
         dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232670AbhL2AUK (ORCPT
+        with ESMTP id S234200AbhL2Dnp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Dec 2021 19:20:10 -0500
+        Tue, 28 Dec 2021 22:43:45 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 07BE861370;
-        Wed, 29 Dec 2021 00:20:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6FEE2C36AED;
-        Wed, 29 Dec 2021 00:20:09 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CE9036132A;
+        Wed, 29 Dec 2021 03:43:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2812C36AE7;
+        Wed, 29 Dec 2021 03:43:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640737209;
-        bh=8vWVsDn0KFyPwhRmyaqZKrj1RcwWs7YSNpi5QgEC6wc=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=ol2e58+CXgHdjGoKBTQTHzn6Bd+HJvyIcQt8+Fmi7DTk0Q3LDGGyaxEWxAfQgTioG
-         cDCre2+g2Wljfdif1YtTI13c9BE+NuwBG7eo+rIkg3XDAUKgJXXxTH+eulJx6dDAEp
-         3vSN1hG2hpx6kKUwjONkSKKyGE5h5QESrx186u1VsI/Q+BktERdmeG2ZZ0JiwGi7yh
-         O0PBFjwy8UDnniSttdfNDWK7hxBhXb1fwWZQSkN9gmfeHddZR9cVVcUoHWX/g3awA+
-         7Z8UPPhlcNgr9LpfAULeoO4LtOg0dAWFqkNZiqc3RVKce41Xe1eHkjtbPAVqDNZmnk
-         N+ppqkQRR4ASg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 49744C395E8;
-        Wed, 29 Dec 2021 00:20:09 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1640749424;
+        bh=pBleK/HLxkq2DSqnWGQeEvon68mcB1GiuzDLEaRVwJ0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=OttH/xv7S2dUTiQWzeyhkY3LFrabD274E1InLPRlIYe6Jq8yXe2NllsWPrHkDqZ5y
+         PvTEhYXG4OyHviTSfrzWzbYSL2ccshZ+978PRcFiglgG0NUhG9dF6ZHEUfhc2Nn5A4
+         I7BZwmdKFcTueLd+BnyQstFHPUqzyc2JJNngRvwv8j1XTbotpF+wIPLAJHe3fThdt2
+         kcbp4nuJiK0MANHSlie440HwRTKNAU6x1wJPacH8ORWIjlbKBOJCdUFNrzgfkeZpEy
+         HY3/07rOOQvevMQYx5KTBbeStOvP4gycGR22pPhcnvnN0eMUePcqGufeBBl6QJrEt1
+         o1mILfqZvQWNw==
+Subject: Re: [PATCH] ARC: perf: Remove redundant initialization of variable
+ idx
+To:     Colin Ian King <colin.i.king@googlemail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Vineet Gupta <vgupta@kernel.org>,
+        linux-perf-users@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20211126222312.1125594-1-colin.i.king@gmail.com>
+From:   Vineet Gupta <vgupta@kernel.org>
+Message-ID: <6f199a8f-9e22-be7c-ba0b-ebb534720a8b@kernel.org>
+Date:   Tue, 28 Dec 2021 19:43:42 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] ionic: Initialize the 'lif->dbid_inuse' bitmap
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164073720929.15020.13473393631637951212.git-patchwork-notify@kernel.org>
-Date:   Wed, 29 Dec 2021 00:20:09 +0000
-References: <6a478eae0b5e6c63774e1f0ddb1a3f8c38fa8ade.1640527506.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <6a478eae0b5e6c63774e1f0ddb1a3f8c38fa8ade.1640527506.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     snelson@pensando.io, drivers@pensando.io, davem@davemloft.net,
-        kuba@kernel.org, allenbh@pensando.io, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <20211126222312.1125594-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Sun, 26 Dec 2021 15:06:17 +0100 you wrote:
-> When allocated, this bitmap is not initialized. Only the first bit is set a
-> few lines below.
+On 11/26/21 2:23 PM, Colin Ian King wrote:
+> The variable idx is being initialized with a value that is never
+> read, it is being updated later on. The assignment is redundant and
+> can be removed.
 > 
-> Use bitmap_zalloc() to make sure that it is cleared before being used.
-> 
-> Fixes: 6461b446f2a0 ("ionic: Add interrupts and doorbells")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> [...]
+> Signed-off-by: Colin Ian King<colin.i.king@gmail.com>
 
-Here is the summary with links:
-  - ionic: Initialize the 'lif->dbid_inuse' bitmap
-    https://git.kernel.org/netdev/net/c/140c7bc7d119
+Sorry for the delay in getting to this. Added to ARC tree now.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thx,
+-Vineet
