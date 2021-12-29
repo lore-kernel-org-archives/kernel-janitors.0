@@ -2,92 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DFEC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Dec 2021 22:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE7EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Dec 2021 00:20:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237700AbhL1WtH (ORCPT
+        id S233374AbhL2AUK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Dec 2021 17:49:07 -0500
-Received: from netrider.rowland.org ([192.131.102.5]:35411 "HELO
-        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S237684AbhL1WtE (ORCPT
+        Tue, 28 Dec 2021 19:20:10 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:46252 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232670AbhL2AUK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Dec 2021 17:49:04 -0500
-Received: (qmail 1083515 invoked by uid 1000); 28 Dec 2021 17:49:03 -0500
-Date:   Tue, 28 Dec 2021 17:49:03 -0500
-From:   Alan Stern <stern@rowland.harvard.edu>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     syzbot+e7d46eb426883fb97efd@syzkaller.appspotmail.com,
-        glider@google.com, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        usb-storage@lists.one-eyed-alien.net,
-        Kernel Janitors <kernel-janitors@vger.kernel.org>
-Subject: Re: KMSAN: uninit-value in alauda_check_media
-Message-ID: <YcuUX6BVo+HA1TcI@rowland.harvard.edu>
-References: <0000000000007d25ff059457342d@google.com>
- <f78b974a-e36b-6d23-6977-fdf50c05600b@wanadoo.fr>
+        Tue, 28 Dec 2021 19:20:10 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 07BE861370;
+        Wed, 29 Dec 2021 00:20:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6FEE2C36AED;
+        Wed, 29 Dec 2021 00:20:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1640737209;
+        bh=8vWVsDn0KFyPwhRmyaqZKrj1RcwWs7YSNpi5QgEC6wc=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=ol2e58+CXgHdjGoKBTQTHzn6Bd+HJvyIcQt8+Fmi7DTk0Q3LDGGyaxEWxAfQgTioG
+         cDCre2+g2Wljfdif1YtTI13c9BE+NuwBG7eo+rIkg3XDAUKgJXXxTH+eulJx6dDAEp
+         3vSN1hG2hpx6kKUwjONkSKKyGE5h5QESrx186u1VsI/Q+BktERdmeG2ZZ0JiwGi7yh
+         O0PBFjwy8UDnniSttdfNDWK7hxBhXb1fwWZQSkN9gmfeHddZR9cVVcUoHWX/g3awA+
+         7Z8UPPhlcNgr9LpfAULeoO4LtOg0dAWFqkNZiqc3RVKce41Xe1eHkjtbPAVqDNZmnk
+         N+ppqkQRR4ASg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 49744C395E8;
+        Wed, 29 Dec 2021 00:20:09 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f78b974a-e36b-6d23-6977-fdf50c05600b@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] ionic: Initialize the 'lif->dbid_inuse' bitmap
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164073720929.15020.13473393631637951212.git-patchwork-notify@kernel.org>
+Date:   Wed, 29 Dec 2021 00:20:09 +0000
+References: <6a478eae0b5e6c63774e1f0ddb1a3f8c38fa8ade.1640527506.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <6a478eae0b5e6c63774e1f0ddb1a3f8c38fa8ade.1640527506.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     snelson@pensando.io, drivers@pensando.io, davem@davemloft.net,
+        kuba@kernel.org, allenbh@pensando.io, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Dec 28, 2021 at 08:47:15AM +0100, Christophe JAILLET wrote:
-> Hi,
-> 
-> (2nd try - text only format - sorry for the noise)
-> 
-> 
-> first try to use syzbot. I hope I do it right.
-> Discussion about the syz report can be found at
-> https://lore.kernel.org/linux-kernel/0000000000007d25ff059457342d@google.com/
-> 
-> This patch only test if alauda_get_media_status() (and its embedded
-> usb_stor_ctrl_transfer()) before using the data.
-> In case of error, it returns USB_STOR_TRANSPORT_ERROR as done elsewhere.
-> 
-> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> master
-> 
-> CJ
-> 
+Hello:
 
-> diff --git a/drivers/usb/storage/alauda.c b/drivers/usb/storage/alauda.c
-> index 20b857e97e60..6c486d964911 100644
-> --- a/drivers/usb/storage/alauda.c
-> +++ b/drivers/usb/storage/alauda.c
-> @@ -318,7 +318,8 @@ static int alauda_get_media_status(struct us_data *us, unsigned char *data)
->  	rc = usb_stor_ctrl_transfer(us, us->recv_ctrl_pipe,
->  		command, 0xc0, 0, 1, data, 2);
->  
-> -	usb_stor_dbg(us, "Media status %02X %02X\n", data[0], data[1]);
-> +	if (rc == USB_STOR_XFER_GOOD)
-> +		usb_stor_dbg(us, "Media status %02X %02X\n", data[0], data[1]);
+This patch was applied to netdev/net.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Instead of adding this test, you could initialize data[0] and data[1] 
-to zero before the call to usb_stor_ctrl_transfer.
+On Sun, 26 Dec 2021 15:06:17 +0100 you wrote:
+> When allocated, this bitmap is not initialized. Only the first bit is set a
+> few lines below.
+> 
+> Use bitmap_zalloc() to make sure that it is cleared before being used.
+> 
+> Fixes: 6461b446f2a0 ("ionic: Add interrupts and doorbells")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> [...]
 
->  
->  	return rc;
->  }
-> @@ -453,8 +454,11 @@ static int alauda_check_media(struct us_data *us)
->  {
->  	struct alauda_info *info = (struct alauda_info *) us->extra;
->  	unsigned char status[2];
-> +	int rc;
->  
-> -	alauda_get_media_status(us, status);
-> +	rc = alauda_get_media_status(us, status);
-> +	if (rc != USB_STOR_TRANSPORT_GOOD)
-> +		return USB_STOR_TRANSPORT_ERROR;
->  
->  	/* Check for no media or door open */
->  	if ((status[0] & 0x80) || ((status[0] & 0x1F) == 0x10)
+Here is the summary with links:
+  - ionic: Initialize the 'lif->dbid_inuse' bitmap
+    https://git.kernel.org/netdev/net/c/140c7bc7d119
 
-In general this looks fine.  Let us know when you are ready to submit 
-the patch.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Alan Stern
+
