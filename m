@@ -2,65 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9E2C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Dec 2021 15:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CAD1C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Dec 2021 15:09:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241312AbhL3PDh (ORCPT
+        id S231786AbhL3PJH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 30 Dec 2021 10:03:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46878 "EHLO
+        Thu, 30 Dec 2021 10:09:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241158AbhL3PD0 (ORCPT
+        with ESMTP id S233976AbhL3PJG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 30 Dec 2021 10:03:26 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29002C061756;
-        Thu, 30 Dec 2021 07:03:24 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id s1so51052595wrg.1;
-        Thu, 30 Dec 2021 07:03:24 -0800 (PST)
+        Thu, 30 Dec 2021 10:09:06 -0500
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 429A4C06173E;
+        Thu, 30 Dec 2021 07:09:06 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id a203-20020a1c7fd4000000b003457874263aso16196203wmd.2;
+        Thu, 30 Dec 2021 07:09:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=38/yrVuWSAfCYSbaKGGrfM8L6s+RDj4K4yPYyiKvNiI=;
-        b=GWLNgiwUblJV0XxdpM0BHtrR0T9SWGhFZtuJgSIJR00tliSRguVOWwfqB8AofC4QZJ
-         IeiQLrtSxAuIEB7fZqlWNnYHWW9qXaeUCTIdoAo3VjDs4EZGEKNsVKyT3dF5q+gX1jGN
-         Yg1l1FjIXh0lfthfcQKf0fqnb7QXWUK+c0plhJ6tFzq8w78GUfVf6mohUfCKKh7LW9dV
-         TF/SRfhTA0IbZnGeB55ogvoN16amdo+ZGS4UDevb7KW5FmP8UY8pAeWjxXA+taDm0XXw
-         Vgdj7wNDWkC8sQPZxA9O+3Q5P32s4e/+lLmZwd9egvY39GeCZ5LQSR7ydeCe1V4VtRdC
-         7KNw==
+        bh=sf/3KqcCBGZ0jjyoE9sxhd/PuBCJYLVQgneAgtveI+Q=;
+        b=VrLKSJJHDL2DA29VZEX7N3edD3i7J1oADh0QdE+Ge+67lM+yQkAOci75Oz2ljErixb
+         JGWYKOGDUm81Gr6QLvLWyvaiEWCS9H7/kchC8IP3E52+Wsm5Wniu2I9z3T0LgHkPWT2k
+         CYbmpkhZXP1xP/aGCwh0RRl768aTvEWeyotCQfaHpj2oDihdO8fPQ9qywBgnMO0sNP5L
+         XJwkIpZihkbNfjsPPljHiv2BHjV70T1/6IY/dbtMMokE9kEBKsSbFUEWmzn8jmfUZma0
+         N4hvkcBYVHlX834+yXrVnuS5yY+0RPM/ffnmu46nSi/88lDqu2Pwg6o/D6hbY4Dkqt4j
+         ZLNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=38/yrVuWSAfCYSbaKGGrfM8L6s+RDj4K4yPYyiKvNiI=;
-        b=MpNm14b/KXgRbDdmmKPp+olgkhTf/u5Igq9WRgZqnwTNTDsU7MDcDi4rBrQd2wpXYl
-         Utt6pscWbhX5GhHziG66zZ+Z2aMaIuqCc7ibfWVxZvvVblxbzgBGhv3Zg7wGP9ohf19Y
-         NPdUWzcx98E6a3ZEfBNVB9ofNRCXnJDlYSrzR1tnA7CjYXR925MZ+rzzlaFz05ijGri6
-         PuulG2okAw9QM5edYsUlJbcDf26dZ0Vu5LLE+jQ//Ik+9sZNx0uFO2TO8PHjSFD9PLk1
-         szuGvddBoAQYCm9dQvOHWlei0FNDp0/BwD58AFpWp0EGm4R57bqVl7NY9f/QOn3Bj1f8
-         zJ0w==
-X-Gm-Message-State: AOAM532QUgwD1h5UNB+U/1vo2Et5Zu8LboWDjEDSN3gFcVi9dfURh+Aa
-        DLOP3atDd+Ibyc7j0QyUF2c=
-X-Google-Smtp-Source: ABdhPJzJFblslRqe6k6soT6bYdtvRM6FNykV+vZhVFF5Q6xgwEU2Lbu9NgObdfMxP3WnVFj4GCN+YQ==
-X-Received: by 2002:adf:aa93:: with SMTP id h19mr25146605wrc.293.1640876602739;
-        Thu, 30 Dec 2021 07:03:22 -0800 (PST)
+        bh=sf/3KqcCBGZ0jjyoE9sxhd/PuBCJYLVQgneAgtveI+Q=;
+        b=vdpApFK2VaaSvv/LCImS07IOeSIzA0U2hJZjlBLVAU7FFN7p5aLGrvznRrb10jRhp4
+         1chXtF9i86f8fu00/gZ+Gbg4MHrdJjnZ+oIW+kI1c+V9xKERfHw2yHhZOmna1BmsahbD
+         +6+FHoVouprmUEWwM9D6qFiHaZF8foHCeDMSFRZQ33tyK3p6IWzpR7Ha2x5KzxxjIIQi
+         v6bVBQ2jzcT6GOe0gA5JhcqHRD+gPG5TqgjPfHMxvDY/9EL+Hz7okvaFYCGz/2vGyorQ
+         uBlj3fHnp93A0zRbeMWNWnQPu0l5lxZGUnIAKjQJz4yt5DnXrwgMsEAvrzzl5FDZExWa
+         8NgA==
+X-Gm-Message-State: AOAM5311Ba5oqChdLBtVqB/mtCoHmfnAnHreKWr4K7voMiR6s1cBZVWg
+        Wso/IG+UbcX2vtONwxnZQLB1WG7bt0H95aKh
+X-Google-Smtp-Source: ABdhPJwkiMs/OeTQoco6BR7K7opw58ewBVj+GETPXIuGVQyoCDEIJ0BNvZTdWtwtYsATV6WazqvGwg==
+X-Received: by 2002:a1c:3b86:: with SMTP id i128mr26609703wma.50.1640876944798;
+        Thu, 30 Dec 2021 07:09:04 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id bg12sm30555171wmb.5.2021.12.30.07.03.22
+        by smtp.gmail.com with ESMTPSA id l4sm27466631wry.85.2021.12.30.07.09.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Dec 2021 07:03:22 -0800 (PST)
+        Thu, 30 Dec 2021 07:09:04 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Dinh Nguyen <dinguyen@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-clk@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, llvm@lists.linux.dev,
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Stefan Berger <stefanb@linux.ibm.com>
+Cc:     kernel-janitors@vger.kernel.org,
+        Nathan Chancellor <nathan@kernel.org>, llvm@lists.linux.dev,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: socfpga: remove redundant assignment after a mask operation
-Date:   Thu, 30 Dec 2021 15:03:21 +0000
-Message-Id: <20211230150321.167576-1-colin.i.king@gmail.com>
+Subject: [PATCH] lib/oid_registry.c: remove redundant assignment to variable num
+Date:   Thu, 30 Dec 2021 15:09:03 +0000
+Message-Id: <20211230150903.190860-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -69,48 +66,32 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The assignment operation after a & mask operation is redundant, the
-variables being assigned are not used afterwards. Replace the &=
-operator with just & operator.
+The variable num is being assigned a value that is never read, it
+is being re-assigned a value in both paths of the following if
+statement. The assignment is redundant and can be removed.
 
-Cleans up two clang-scan warnings:
-drivers/clk/socfpga/clk-gate.c:37:10: warning: Although the value stored
-to 'l4_src' is used in the enclosing expression, the value is never
-actually read from 'l4_src' [deadcode.DeadStores]
-                return l4_src &= 0x1;
-                       ^         ~~~
-drivers/clk/socfpga/clk-gate.c:46:10: warning: Although the value stored
-to 'perpll_src' is used in the enclosing expression, the value is never
-actually read from 'perpll_src' [deadcode.DeadStores]
-                return perpll_src &= 0x3;
+Cleans up clang-scan warning:
+lib/oid_registry.c:149:3: warning: Value stored to 'num' is never
+read [deadcode.DeadStores]
+                num = 0;
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/clk/socfpga/clk-gate.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ lib/oid_registry.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
-index 1ec9678d8cd3..53d6e3ec4309 100644
---- a/drivers/clk/socfpga/clk-gate.c
-+++ b/drivers/clk/socfpga/clk-gate.c
-@@ -34,7 +34,7 @@ static u8 socfpga_clk_get_parent(struct clk_hw *hwclk)
+diff --git a/lib/oid_registry.c b/lib/oid_registry.c
+index e592d48b1974..fe6705cfd780 100644
+--- a/lib/oid_registry.c
++++ b/lib/oid_registry.c
+@@ -146,7 +146,6 @@ int sprint_oid(const void *data, size_t datasize, char *buffer, size_t bufsize)
+ 	bufsize -= count;
  
- 	if (streq(name, SOCFPGA_L4_MP_CLK)) {
- 		l4_src = readl(clk_mgr_base_addr + CLKMGR_L4SRC);
--		return l4_src &= 0x1;
-+		return l4_src & 0x1;
- 	}
- 	if (streq(name, SOCFPGA_L4_SP_CLK)) {
- 		l4_src = readl(clk_mgr_base_addr + CLKMGR_L4SRC);
-@@ -43,7 +43,7 @@ static u8 socfpga_clk_get_parent(struct clk_hw *hwclk)
- 
- 	perpll_src = readl(clk_mgr_base_addr + CLKMGR_PERPLL_SRC);
- 	if (streq(name, SOCFPGA_MMC_CLK))
--		return perpll_src &= 0x3;
-+		return perpll_src & 0x3;
- 	if (streq(name, SOCFPGA_NAND_CLK) ||
- 	    streq(name, SOCFPGA_NAND_X_CLK))
- 		return (perpll_src >> 2) & 3;
+ 	while (v < end) {
+-		num = 0;
+ 		n = *v++;
+ 		if (!(n & 0x80)) {
+ 			num = n;
 -- 
 2.33.1
 
