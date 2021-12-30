@@ -2,78 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 733C5C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Dec 2021 13:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C2BC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Dec 2021 13:46:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239462AbhL3NkL (ORCPT
+        id S239587AbhL3NqB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 30 Dec 2021 08:40:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56632 "EHLO
+        Thu, 30 Dec 2021 08:46:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232187AbhL3NkK (ORCPT
+        with ESMTP id S235880AbhL3NqA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 30 Dec 2021 08:40:10 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C870FC061574;
-        Thu, 30 Dec 2021 05:40:10 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BEFEE616DD;
-        Thu, 30 Dec 2021 13:40:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 28A0AC36AEF;
-        Thu, 30 Dec 2021 13:40:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640871609;
-        bh=SCpd+k2hQuqvRa/LUdzKFDSBwj6A8Ou8rza1SWTCyCo=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=LgRtqo4+jCxDUCca/TpVywtTXOy6USt2GoStoUEe2NYAUNmsExV7tULwPlrkyA24j
-         2sus+mfnrZa+Cs6HQ2/g3C2DX+7sxec9mF1L7l3G+UKfNlQ/DE3URtPhwnQryibgxc
-         B5XrVzGY84aELT7klnqL3HFn/cR9DWKIY1ncx8bUv0JydAyE2zD3Iq8a+S/VohD5fB
-         hzXtAz8+FZleJqrQbQJN8mhMVK2OeJqIOdjUL9LuQpf34lmhz/B6WeUqj06B6/jmIT
-         YcVUYe2CMnaWKZhanKNm+LngVoSTy0Wb1LJVZ1ZgsFIwGTpGqOJran4BSe+pOJKVi8
-         E7xuQ2aT3iWiQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 185B0C395E3;
-        Thu, 30 Dec 2021 13:40:09 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 30 Dec 2021 08:46:00 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E950C061574;
+        Thu, 30 Dec 2021 05:46:00 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id n14-20020a7bcbce000000b00332f4abf43fso7962222wmi.0;
+        Thu, 30 Dec 2021 05:46:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+nrSWP5T7g/6Hd2Mwif6iAnRqHbuh0AXAUD99jJuYV8=;
+        b=QOKn4DPLbDQCeqgwYjCebkywo1hkdJFJbdL70xP8l8aFPPufYrIedF5pN5qjirz2HP
+         WRt6N86lkVsQBxccR7usmq/A/qu4pe/1+/PyUlzXQva/h2e6CPPs+j7qX3mBcbyG9mh9
+         NI3cV7owIubZm+mAoTNqyIIL8nTZ7gwMuewzhNRQj0C8zHpx7q9lv5m7BzNRPfPygVdU
+         BN0zj0qcfZ775mNY+MKiDz18KVcSYu+PEh+dILz0ZzVZJ3621P9PfPlY7oS7cg1XYQta
+         jJRbxv6JjJLeVrs0cdjXKKx9ZfcbBXy5FjC+1K6VwbRRCOr9GjaZax0NF22xB3kbE9tY
+         ImLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+nrSWP5T7g/6Hd2Mwif6iAnRqHbuh0AXAUD99jJuYV8=;
+        b=l4FPl2xmp1GgGwLwRmIfvx1fPyN25AleFhy8LdCAj//CNbhkOnyfqjdiFP5VZNRvOL
+         8man4avR0F24kFbKadUQhFxqbJRQxM8idFMdC32b39rDCPmOFtznsLOVVpip/nvpLBei
+         47vqeDMrWfJa2ule1JBu+twE8t6+hUhc5xGdPkn7HBN+z+lFWgZuXWCRgbpDp+tu4CIa
+         7PokvirAtkc0UD6Jkzzk+XnonWSAwv8L6epjZcag1uPwvtgXemIce+Z/yYPnGrQ3aVoV
+         OKOezhdbqMV/uX2Ilt/EV6IQenZZ9KR4Um1AMBpis7HnCv9GQY2phVYOJoKGBPh9fFAX
+         mTfA==
+X-Gm-Message-State: AOAM5308LzaZzs0Ra+VgYeChMR3WzPn52oknw9+deMbyjk0BdKgdA5RS
+        Hf6gpJ6Gi0VJvB3AACQOE7M=
+X-Google-Smtp-Source: ABdhPJxrmn7Q+cEPjWO+mscNaLzrNCKtccUzYI+KO/u0EWRycxr6EDGdfPC22v1/O+iAzAgHMEcJ5w==
+X-Received: by 2002:a1c:7f57:: with SMTP id a84mr7480295wmd.115.1640871958712;
+        Thu, 30 Dec 2021 05:45:58 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id n12sm17371136wmq.30.2021.12.30.05.45.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Dec 2021 05:45:58 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] lib: remove redundant assignment to variable ret
+Date:   Thu, 30 Dec 2021 13:45:57 +0000
+Message-Id: <20211230134557.83633-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net/smc: Use the bitmap API when applicable
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164087160909.13913.9270430560087118697.git-patchwork-notify@kernel.org>
-Date:   Thu, 30 Dec 2021 13:40:09 +0000
-References: <2fe6e0424bed3ebd4098d3b881946ddf55342d1f.1640860762.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <2fe6e0424bed3ebd4098d3b881946ddf55342d1f.1640860762.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     kgraul@linux.ibm.com, davem@davemloft.net, kuba@kernel.org,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Variable ret is being assigned a value that is never read. If the
+for-loop is entered then ret is immediately re-assigned a new
+value. If the for-loop is not executed ret is never read. The
+assignment is redundant and can be removed.
 
-This patch was applied to netdev/net-next.git (master)
-by David S. Miller <davem@davemloft.net>:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ lib/asn1_encoder.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-On Thu, 30 Dec 2021 11:40:40 +0100 you wrote:
-> Using the bitmap API is less verbose than hand writing them.
-> It also improves the semantic.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  net/smc/smc_wr.c | 19 +++++--------------
->  1 file changed, 5 insertions(+), 14 deletions(-)
-
-Here is the summary with links:
-  - net/smc: Use the bitmap API when applicable
-    https://git.kernel.org/netdev/net-next/c/49dc9013e34b
-
-You are awesome, thank you!
+diff --git a/lib/asn1_encoder.c b/lib/asn1_encoder.c
+index 27bbe891714f..0fd3c454a468 100644
+--- a/lib/asn1_encoder.c
++++ b/lib/asn1_encoder.c
+@@ -164,8 +164,6 @@ asn1_encode_oid(unsigned char *data, const unsigned char *end_data,
+ 
+ 	data_len -= 3;
+ 
+-	ret = 0;
+-
+ 	for (i = 2; i < oid_len; i++) {
+ 		ret = asn1_encode_oid_digit(&d, &data_len, oid[i]);
+ 		if (ret < 0)
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.33.1
 
