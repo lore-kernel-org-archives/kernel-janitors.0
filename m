@@ -2,95 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E611AC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Dec 2021 17:20:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E7EC433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Dec 2021 17:24:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241440AbhL3RUG (ORCPT
+        id S241464AbhL3RYk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 30 Dec 2021 12:20:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48870 "EHLO
+        Thu, 30 Dec 2021 12:24:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236737AbhL3RUF (ORCPT
+        with ESMTP id S241440AbhL3RYk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 30 Dec 2021 12:20:05 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39581C061574;
-        Thu, 30 Dec 2021 09:20:05 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id v7so51567643wrv.12;
-        Thu, 30 Dec 2021 09:20:05 -0800 (PST)
+        Thu, 30 Dec 2021 12:24:40 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5E47C061574;
+        Thu, 30 Dec 2021 09:24:39 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id k66-20020a1ca145000000b00345fa984108so7941320wme.2;
+        Thu, 30 Dec 2021 09:24:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id;
-        bh=n/qQDXJk2QbH2NGsjvFVJ3ub2PnKBdYzofoYgc2mPZM=;
-        b=XrPlU1tx5TWNnHIjx83NHVcOfK6mlpBbpa6/8BUJlN94o4v8Y0mSY0zGWEf/hGvZ9L
-         DtR0hvQ63iuj7i0ayJrqmb+dj1HaPslKmm795bNWjD7ajEfs4yLRZSdKoGr/Lklc+wA/
-         hKQOvcEIw8ryMt+CytyyTcPTsXoMeJW8QbdN6zhq7XW7v2/eLicw3a+RobJCX4ayad90
-         dctaa8htJdCK+U74RtDAlXV29k531+mjLHI88wdd09vc4jWFU3rUZC+EyJKOqBiyDl4g
-         /ksAJG5UnfZGR2ybxW+YzobTlY1thsuJX02rNtDadTQcQZDm2asOTq+Ao1fXlvgFCc3L
-         F6TA==
+        bh=6vTt0sPTxRfRnwBDC4e+K/XdNIJukWXPcDujgrHoT4o=;
+        b=eJDrVz1NU+ONBzKG4ThrQEtMofLMh5ZhLIay3cQ7wx+ox56pzk0/XLMFosO8hlT45A
+         etxIuzwRZRiId08xrIb0g/0w60BkBjfQH/9HkEHX+8pC2rAr6pIoOvLDqttuL//8ivpn
+         D/XYvWNbru27I+iMpKpTlfNpls7zQKzLQ4eU5iNnhrZQFQ4t69jh9Hu8eL9o7VOw7yKK
+         C7vU4p7Lt5pCd++qOp7XNGTp8wIrF9uQLkaJc2xc0Fdoy6yv0vCfDp4UulRMfNj02P+I
+         iq6nI2HbBTeIofBGNt5MBVbkqZeNCsonfdDT3czbVImvKVYTCH5M5r1oYZsxAJADX+zP
+         2Bhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=n/qQDXJk2QbH2NGsjvFVJ3ub2PnKBdYzofoYgc2mPZM=;
-        b=dCgEpLazT4ol3l6cQZCtnFYSTsBOO+QY7cyF/GzK2si21CuJQRxQmxU90Yn7kVXazT
-         saOHmF2rNeXCEbGBGvDd1tB+Yz55cVB5AlEr6HQkU1lBBFnEGVarESra91jz/Wz0+13s
-         5b+bxa9D5WEsIR7G7bJiuPr/l7PaXtuzccYR0+DzHcJvpX5tzasBRH46HF66JnKOGPvP
-         Af8Rol6ulUDAH8HkwQsoSW2ljEmHGZKU5RURnmO7Fdw5tZwYJfpvTqjpRyJek+97eHb7
-         MJCZXkI2i5gVk/l3th8EMPl75/yr4DSA288haITeZi0Z6jM6oOUESoBb6v0cV8fgacz9
-         5vnA==
-X-Gm-Message-State: AOAM53377+JEqXV48R/DdLGPy6HW39JHpBKCgdh4QZhvqWQ9CQvhfeVp
-        t2+0flV4BbGplwpYW5SzRDAVwlnMtWQ=
-X-Google-Smtp-Source: ABdhPJz7pk+TZP3KIA3Wu6oebLD35Y7oBH4hmjvWmB6lCBLzTaBGLJqkAUgaOh9+sgYOQjuXLiFIXg==
-X-Received: by 2002:a5d:448f:: with SMTP id j15mr26833990wrq.603.1640884803135;
-        Thu, 30 Dec 2021 09:20:03 -0800 (PST)
+        bh=6vTt0sPTxRfRnwBDC4e+K/XdNIJukWXPcDujgrHoT4o=;
+        b=QkSVisbNcHH39+VhECasJnocIn5kS7e1elyBCKdbfSz/ahAjoIanUznW+HaN03K7a3
+         Xvrjmm3zRheznQEFqqFGX3PKTjpI1IGFCHWTmtyxVmVkSRnJx0Qyyh+xUiLezInFJy5U
+         D82Fanu3shj5339AgL+D39GNDPtmxcEdYbRMGCImv5Pf3ZTfvqNYGtQqxfvMOERKI/MU
+         tRF96iYGgnu6Bq+F+CMnv2ybVqZ2vWbZza3xMGBnmZI2nTf8jos5KAstKO2LZtDJXWOO
+         YC2armFtn6zYTBhVDHyTIOxzrL129IfXkcargyGvO3vPMxPP+dAz1bhLvOpzNNo+6ndc
+         jUuQ==
+X-Gm-Message-State: AOAM532x02dDS2I4uQWfGF78l5eCKWoid2dNsgxLoBb093AJlkezKMVy
+        mP2J7EnJ1/EXtvUGN+P4IpI=
+X-Google-Smtp-Source: ABdhPJzaRsPj9c7kb9qvOWtmeBfPFyfJGIUOuJPs+l8QumnmnvBhQj/v/qhgVjBQz0iibeJndx2YDw==
+X-Received: by 2002:a05:600c:348a:: with SMTP id a10mr26647064wmq.165.1640885078101;
+        Thu, 30 Dec 2021 09:24:38 -0800 (PST)
 Received: from felia.fritz.box ([2001:16b8:2657:9600:789b:54e9:fc28:95aa])
-        by smtp.gmail.com with ESMTPSA id z5sm23709975wru.87.2021.12.30.09.20.01
+        by smtp.gmail.com with ESMTPSA id n1sm25951857wri.46.2021.12.30.09.24.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Dec 2021 09:20:02 -0800 (PST)
+        Thu, 30 Dec 2021 09:24:37 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Andi Kleen <ak@linux.intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
+To:     Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        kgdb-bugreport@lists.sourceforge.net,
         Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] Documentation: refer to config RANDOMIZE_BASE for kernel address-space randomization
-Date:   Thu, 30 Dec 2021 18:19:40 +0100
-Message-Id: <20211230171940.27558-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] Documentation: kgdb: properly capitalize the MAGIC_SYSRQ config
+Date:   Thu, 30 Dec 2021 18:24:23 +0100
+Message-Id: <20211230172423.30430-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The config RANDOMIZE_SLAB does not exist, the authors probably intended to
-refer to the config RANDOMIZE_BASE, which provides kernel address-space
-randomization. They probably just confused SLAB with BASE (these two
-four-letter words coincidentally share three common letters), as they also
-point out the config SLAB_FREELIST_RANDOM as further randomization within
-the same sentence.
+Most readers are probably going to figure out that the config is actually
+all upper-case letters, as all Kconfig symbols are this way.
 
-Fix the reference of the config for kernel address-space randomization to
-the config that provides that.
+Properly capitalizing makes the script ./scripts/checkkconfigsymbols.py
+happy, which otherwise would report this as a reference to a non-existing
+Kconfig symbol.
 
-Fixes: 6e88559470f5 ("Documentation: Add section about CPU vulnerabilities for Spectre")
+So, use the right capitalization for the MAGIC_SYSRQ config in the kgdb
+documentation.
+
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- Documentation/admin-guide/hw-vuln/spectre.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/dev-tools/kgdb.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/admin-guide/hw-vuln/spectre.rst b/Documentation/admin-guide/hw-vuln/spectre.rst
-index ab7d402c1677..a2b22d5640ec 100644
---- a/Documentation/admin-guide/hw-vuln/spectre.rst
-+++ b/Documentation/admin-guide/hw-vuln/spectre.rst
-@@ -468,7 +468,7 @@ Spectre variant 2
-    before invoking any firmware code to prevent Spectre variant 2 exploits
-    using the firmware.
+diff --git a/Documentation/dev-tools/kgdb.rst b/Documentation/dev-tools/kgdb.rst
+index 43456244651a..3e3f7bca937d 100644
+--- a/Documentation/dev-tools/kgdb.rst
++++ b/Documentation/dev-tools/kgdb.rst
+@@ -402,7 +402,7 @@ This is a quick example of how to use kdb.
+ 2. Enter the kernel debugger manually or by waiting for an oops or
+    fault. There are several ways you can enter the kernel debugger
+    manually; all involve using the :kbd:`SysRq-G`, which means you must have
+-   enabled ``CONFIG_MAGIC_SysRq=y`` in your kernel config.
++   enabled ``CONFIG_MAGIC_SYSRQ=y`` in your kernel config.
  
--   Using kernel address space randomization (CONFIG_RANDOMIZE_SLAB=y
-+   Using kernel address space randomization (CONFIG_RANDOMIZE_BASE=y
-    and CONFIG_SLAB_FREELIST_RANDOM=y in the kernel configuration) makes
-    attacks on the kernel generally more difficult.
+    -  When logged in as root or with a super user session you can run::
+ 
+@@ -461,7 +461,7 @@ This is a quick example of how to use kdb with a keyboard.
+ 2. Enter the kernel debugger manually or by waiting for an oops or
+    fault. There are several ways you can enter the kernel debugger
+    manually; all involve using the :kbd:`SysRq-G`, which means you must have
+-   enabled ``CONFIG_MAGIC_SysRq=y`` in your kernel config.
++   enabled ``CONFIG_MAGIC_SYSRQ=y`` in your kernel config.
+ 
+    -  When logged in as root or with a super user session you can run::
  
 -- 
 2.17.1
