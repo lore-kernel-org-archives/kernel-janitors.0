@@ -2,59 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DFCCC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Dec 2021 15:33:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E512C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Dec 2021 15:39:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237885AbhL3PdE (ORCPT
+        id S237896AbhL3PjD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 30 Dec 2021 10:33:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53578 "EHLO
+        Thu, 30 Dec 2021 10:39:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233176AbhL3PdE (ORCPT
+        with ESMTP id S232051AbhL3PjD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 30 Dec 2021 10:33:04 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6ECFC061574;
-        Thu, 30 Dec 2021 07:33:03 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id a83-20020a1c9856000000b00344731e044bso13506812wme.1;
-        Thu, 30 Dec 2021 07:33:03 -0800 (PST)
+        Thu, 30 Dec 2021 10:39:03 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF55CC061574;
+        Thu, 30 Dec 2021 07:39:02 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id e5so15438550wmq.1;
+        Thu, 30 Dec 2021 07:39:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=F/EWLqn+e9gTwKuOiaXeqTXWRPro/3L5eOKPKtLfSqQ=;
-        b=F2xj/eue0N18OAuFeFppYZZI0LVUEofODrtQMNGa7VuIerW3u9I+DX+cafNk98nVtD
-         CWuEvjs+onYX0XYVEPTbGZS1zm1i1xUBaKmdk3NlWgd+O2VNSE3hDiJrQOBDYZDx4Tob
-         //SZ8GJM3GiAM6RlAos7W0zez0edEBRsuZfLJc4N89TU0hULYlWj8eVkt1Zqzfa2uldt
-         6Iex2JNUseCvXnkl1/sLPnOiVLKFWpXT8vCWwQJArFvdsACq1SvZXCoS/+ofNk3UGLc7
-         UEAFpQFTCGWq5E5SWEHfo93/XOnWBYT8gqOIONiQ+QuH8I+CGq2E6OAGm04JMB6Wm49L
-         jnrA==
+        bh=I9AZkgxt3oFSjtraDfx1nRfiDkrhrG6Pm0tqqpcNvhc=;
+        b=bqflPPc6wCUWpZKMBhJUPA2bKbVNizdp9h9CqGwu1nvA9ojekEPyDZSSjipxZagjKW
+         p8tBUpKebeCpx2sr/TH9TFEllj2Urz4QcUSrbtptbXu/FucCajlXEZZDeXnFXiu+CuhU
+         riz6tBfZ8qCq87gTQPmmslOujbVrwAwM7p+lf75XVmb0RAAZeCsMElvvUspAW23pQB28
+         vE3iiKqls5JrNK0ZHxgEHXRtKW/GW2pMdH9O0utp6stUWlOBR59ffP8f9r0jYRc4PQsv
+         qu2ysjxnGCIRL6G25bLzpBR9yA7ZvZmJT0VED+fSu6DgAP2AsXyhSVnPhmEFZX+opzgH
+         351A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=F/EWLqn+e9gTwKuOiaXeqTXWRPro/3L5eOKPKtLfSqQ=;
-        b=Kv4X7mZIhR8zALhvJxxZPbJt1PP1mQaxYG72Nk+gBPrIwJ59uBEreqx2lKrS1ujv5G
-         2sv0XT7dLg6FTICpehQobjnm9g7NCI/GDQnypRhSxngsNYXrgdrHaxSJRiuXm/fdjEmx
-         wHs74voWcXW1sIhxU0aV6Pe/rONF1Z9B6A17UK5uji7GBlUhWsE/GlAKGmWKKYevjE1g
-         hV7k+YdNZip71EyN+XAI0WhX5oZTBJB93g8KrH+v0tltnL2fGxSDhTy8jB36nykq9Z8X
-         q/6OVhViQtTgJYccIslitS/o0QwrXHR4g/kmz9PlPnhnEWWDZDac3VTLWlx3W8n+GWBD
-         qwRg==
-X-Gm-Message-State: AOAM533K11SbvWgt+UnOLhw3XsgsEbBKbMNHH8ZFBweDpj0jXMPHWJkh
-        pQMBW8i6Y9cTWE0/iN2ewk7UZ+4xELw/vV59
-X-Google-Smtp-Source: ABdhPJxsgPQYRnO/2pZhcUUy7gFIl3zoZNQQMnMihhxi0ImYLxf0ke1Ua8g2a+acrN6yRW39UUeIew==
-X-Received: by 2002:a1c:f205:: with SMTP id s5mr2872853wmc.33.1640878382374;
-        Thu, 30 Dec 2021 07:33:02 -0800 (PST)
+        bh=I9AZkgxt3oFSjtraDfx1nRfiDkrhrG6Pm0tqqpcNvhc=;
+        b=WbxJEpqP+ymVnIjP+nKkS/n3HXJrw3+Vm18irG4st0T4f05OdTF/Ieww7HdH0waFLo
+         igpAy9ARpjbaG8HN2yL1KRLUL9WqBqZE1KKBLfuogDdP5rfkBVAEWds2WUrRPYehW4iM
+         mSsPuuhNjsqrLshVh3Wb94h5hB6Ou4RfDPzU6gah7E6ZfRx4OCcpCScvzcUCYujIBd5Y
+         uJwy9CVR5LvCUEIGkw3KjUylTpiMC091S35HBUcA8TRndHrb+K7T6t1iWEhtbyWkjBoy
+         rWnO7UGgrJj2J+xaSxeGbh7ie3ygpyoP1GQE6HyyHrozDBikQ+M/pUB/uU5XgekwZix6
+         9iwg==
+X-Gm-Message-State: AOAM5306409FXcxIp58TlPZ587hXmS/oSjOPUcbFWZLTTpxFi7NOkh9O
+        ENgcxZJHtpcq8HpJbmCVAhW01ljKuO6M4IJm
+X-Google-Smtp-Source: ABdhPJwqcNkIbynb98xsLnxKmoiJ0xLF5vj/higGzJ5TgPDJZWn7rWwXX/VzeccMBY/5BOugHCIh/w==
+X-Received: by 2002:a05:600c:4e11:: with SMTP id b17mr26171361wmq.66.1640878741390;
+        Thu, 30 Dec 2021 07:39:01 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id m15sm27690200wrw.27.2021.12.30.07.33.01
+        by smtp.gmail.com with ESMTPSA id h19sm23297518wmm.13.2021.12.30.07.39.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Dec 2021 07:33:01 -0800 (PST)
+        Thu, 30 Dec 2021 07:39:01 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>
+To:     Karsten Graul <kgraul@linux.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] hpfs: remove redundant variable r
-Date:   Thu, 30 Dec 2021 15:33:01 +0000
-Message-Id: <20211230153301.248914-1-colin.i.king@gmail.com>
+Subject: [PATCH] net/smc: remove redundant re-assignment of pointer link
+Date:   Thu, 30 Dec 2021 15:39:00 +0000
+Message-Id: <20211230153900.274049-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -63,28 +66,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable r is being assigned a value and it is never read. The
-declaration and assignment are redundant and can be removed.
+The pointer link is being re-assigned the same value that it was
+initialized with in the previous declaration statement. The
+re-assignment is redundant and can be removed.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/hpfs/namei.c                   | 3 +--
- 2 files changed, 2 insertions(+), 3 deletions(-)
+ net/smc/smc_clc.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/hpfs/namei.c b/fs/hpfs/namei.c
-index d73f8a67168e..81b44bac4e1f 100644
---- a/fs/hpfs/namei.c
-+++ b/fs/hpfs/namei.c
-@@ -555,8 +555,7 @@ static int hpfs_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
- 	de.hidden = new_name[0] == '.';
+diff --git a/net/smc/smc_clc.c b/net/smc/smc_clc.c
+index 8409ab71a5e4..6be95a2a7b25 100644
+--- a/net/smc/smc_clc.c
++++ b/net/smc/smc_clc.c
+@@ -1021,7 +1021,6 @@ static int smc_clc_send_confirm_accept(struct smc_sock *smc,
+ 		struct smc_link *link = conn->lnk;
  
- 	if (new_inode) {
--		int r;
--		if ((r = hpfs_remove_dirent(old_dir, dno, dep, &qbh, 1)) != 2) {
-+		if (hpfs_remove_dirent(old_dir, dno, dep, &qbh, 1) != 2) {
- 			if ((nde = map_dirent(new_dir, hpfs_i(new_dir)->i_dno, new_name, new_len, NULL, &qbh1))) {
- 				clear_nlink(new_inode);
- 				copy_de(nde, &de);
+ 		/* SMC-R specific settings */
+-		link = conn->lnk;
+ 		memcpy(clc->hdr.eyecatcher, SMC_EYECATCHER,
+ 		       sizeof(SMC_EYECATCHER));
+ 		clc->hdr.typev1 = SMC_TYPE_R;
 -- 
 2.33.1
 
