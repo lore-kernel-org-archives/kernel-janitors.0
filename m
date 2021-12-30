@@ -2,104 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 378C3C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Dec 2021 18:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 773A0C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Dec 2021 19:58:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236892AbhL3SKo (ORCPT
+        id S242048AbhL3T6s (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 30 Dec 2021 13:10:44 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:58722 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229591AbhL3SKo (ORCPT
+        Thu, 30 Dec 2021 14:58:48 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:33732
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S242042AbhL3T6r (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 30 Dec 2021 13:10:44 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 30 Dec 2021 14:58:47 -0500
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com [209.85.208.197])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8739661705;
-        Thu, 30 Dec 2021 18:10:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04439C36AE9;
-        Thu, 30 Dec 2021 18:10:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640887842;
-        bh=wl13idcBH22Q98gEtmxIacxmyis+T8ZRvfxttNaeonI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=qm0aWo61gjrsc6uZGJHbroRrWXDZG2l+ccokx6g7SL/wTs5B6cBWKsbKI+xFxjmnJ
-         F6lBANDMVUaLvBjCSlW5ORtXSYuPXNvj9oLMr2DX/w2OwCFR91mg0xnlXisD/p2Atp
-         /kKgschEwantvmMUyPNvDhZ04RR2f4v41Ymp4I4MA9KWx2P6oX0nREMeRv3GbxTk+8
-         rjeEeH+RtY6qrU7HrGpL79CFHQ1ivZsjtsByWT7g2VjiwqBzyMIptD8HlLTNUSJCdB
-         8j/EA+2YFmgjsULkgR++mtGYnniek6k7to7UMc3CY2kvNNM6qkP6Ni0oV2JqKTAOlB
-         7BzUFKIrGhbwA==
-Subject: Re: [PATCH] clk: socfpga: remove redundant assignment after a mask
- operation
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 36B733F1AF
+        for <kernel-janitors@vger.kernel.org>; Thu, 30 Dec 2021 19:58:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1640894326;
+        bh=GNWzUrlrK9iApcC0QIt7hy4CWeyRUiCxofVD3uisya4=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=IQ0XcJkyjY35RH82W+KcSDToOvW8gpc1+D8s2XE8QiRxzgBMArbosRdYWRJRr1hUM
+         EjC13HVx4kkYU3P2gyH4FsFPUx7X8mwhrXXyg2I94H27jRDbTX2tIObJISFcWEeips
+         tFjt+WW1y00eslzFdEZKLNsgiKXIvQFtwtcqV9esj7NwiU/T+qQWo0TMwJvK8f/10i
+         7JwiitkuMLMLR1wgUfNbTaC3xu8zRLGZ20jSsmRgwp8IsLc2goaF8xNUPY2ejzsfZ9
+         dQaFZoaKat4LeXcYj243dA3R087vNje3ItgKKzqwwQ23an2lIjE2TRCVqyfFfTgvT9
+         bc6JhD1WxNlJg==
+Received: by mail-lj1-f197.google.com with SMTP id j15-20020a2e6e0f000000b0022db2724332so6169475ljc.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 30 Dec 2021 11:58:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=GNWzUrlrK9iApcC0QIt7hy4CWeyRUiCxofVD3uisya4=;
+        b=pTksQJSDAuKjJfVqAGXLg0F/BFydm84D3SjM9zyJmTkubx+8VNS8k55LBLA1RBoHVs
+         /L9BTAtkmU832fKLQdFBn7zWwef9zRpDFKz9HsD2HbjPTWQzWM4E3A7BEt8OPO/dqtkf
+         BvoW0XzoChALTdtro+SirQ3NBBFoS+zVvpPZXjKb4YV0S5R4Jlzh4At8h3exAYce7TrG
+         eUvKad7Z0pWydEBBXfxSMi022JSKXyWXZSzyeu0gExxz4IIsN1L+7qKrKosxIhpOoI66
+         QPoDpFMdXJkhmLIACFvVZ/unOispbk+9CChtuyzyoWAqwV/m6Cxk4iKOgQQeRHynFuio
+         TdCw==
+X-Gm-Message-State: AOAM530kz+75ExNK1T3sGAn2OCp1vNdK8htJmZAvPYyp+nBtyrys/mIs
+        8oOry5Od5PRA6gvZ0nRtYNPLqHov0JdsS6PPzbnCZZDeGZG2BMwy7g3x3Cwzu1f9dlrcrKhMR0v
+        QognPKJoBj/DJ3ABz5fcHzVVKp1l7ZjkLroIXeb+e/0ar3A==
+X-Received: by 2002:a05:6512:2311:: with SMTP id o17mr25992430lfu.256.1640894325566;
+        Thu, 30 Dec 2021 11:58:45 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzSa/wf1cnt5j7jqACUSdQ38QoQdVyafz5ZdxBfdxwsi0qKJ3PwI4Qbtw2FxwfqCGrdy+92UA==
+X-Received: by 2002:a05:6512:2311:: with SMTP id o17mr25992421lfu.256.1640894325422;
+        Thu, 30 Dec 2021 11:58:45 -0800 (PST)
+Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id z36sm2571458lfu.182.2021.12.30.11.58.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Dec 2021 11:58:44 -0800 (PST)
+Message-ID: <eb2f0bb7-46ee-2290-6b60-90f555e4811c@canonical.com>
+Date:   Thu, 30 Dec 2021 20:58:44 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH] nfc: st21nfca: remove redundant assignment to variable i
+Content-Language: en-US
 To:     Colin Ian King <colin.i.king@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-clk@vger.kernel.org
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, llvm@lists.linux.dev,
         linux-kernel@vger.kernel.org
-References: <20211230150321.167576-1-colin.i.king@gmail.com>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Message-ID: <7f5f8143-3eae-424f-b857-b57f66c96f65@kernel.org>
-Date:   Thu, 30 Dec 2021 12:10:40 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
-MIME-Version: 1.0
-In-Reply-To: <20211230150321.167576-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+References: <20211230161230.428457-1-colin.i.king@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211230161230.428457-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 12/30/21 9:03 AM, Colin Ian King wrote:
-> The assignment operation after a & mask operation is redundant, the
-> variables being assigned are not used afterwards. Replace the &=
-> operator with just & operator.
+On 30/12/2021 17:12, Colin Ian King wrote:
+> Variable i is being assigned a value that is never read, the
+> assignment is redundant and can be removed. Cleans up clang-scan
+> build warning:
 > 
-> Cleans up two clang-scan warnings:
-> drivers/clk/socfpga/clk-gate.c:37:10: warning: Although the value stored
-> to 'l4_src' is used in the enclosing expression, the value is never
-> actually read from 'l4_src' [deadcode.DeadStores]
->                  return l4_src &= 0x1;
->                         ^         ~~~
-> drivers/clk/socfpga/clk-gate.c:46:10: warning: Although the value stored
-> to 'perpll_src' is used in the enclosing expression, the value is never
-> actually read from 'perpll_src' [deadcode.DeadStores]
->                  return perpll_src &= 0x3;
+> drivers/nfc/st21nfca/i2c.c:319:4: warning: Value stored to 'i'
+> is never read [deadcode.DeadStores]
+>                         i = 0;
 > 
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->   drivers/clk/socfpga/clk-gate.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
-> index 1ec9678d8cd3..53d6e3ec4309 100644
-> --- a/drivers/clk/socfpga/clk-gate.c
-> +++ b/drivers/clk/socfpga/clk-gate.c
-> @@ -34,7 +34,7 @@ static u8 socfpga_clk_get_parent(struct clk_hw *hwclk)
->   
->   	if (streq(name, SOCFPGA_L4_MP_CLK)) {
->   		l4_src = readl(clk_mgr_base_addr + CLKMGR_L4SRC);
-> -		return l4_src &= 0x1;
-> +		return l4_src & 0x1;
->   	}
->   	if (streq(name, SOCFPGA_L4_SP_CLK)) {
->   		l4_src = readl(clk_mgr_base_addr + CLKMGR_L4SRC);
-> @@ -43,7 +43,7 @@ static u8 socfpga_clk_get_parent(struct clk_hw *hwclk)
->   
->   	perpll_src = readl(clk_mgr_base_addr + CLKMGR_PERPLL_SRC);
->   	if (streq(name, SOCFPGA_MMC_CLK))
-> -		return perpll_src &= 0x3;
-> +		return perpll_src & 0x3;
->   	if (streq(name, SOCFPGA_NAND_CLK) ||
->   	    streq(name, SOCFPGA_NAND_X_CLK))
->   		return (perpll_src >> 2) & 3;
+>  drivers/nfc/st21nfca/i2c.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
 
-Acked-by: Dinh Nguyen <dinguyen@kernel.org>
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+
+
+Best regards,
+Krzysztof
