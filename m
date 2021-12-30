@@ -2,104 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E7EC433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Dec 2021 17:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 378C3C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Dec 2021 18:10:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241464AbhL3RYk (ORCPT
+        id S236892AbhL3SKo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 30 Dec 2021 12:24:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49882 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241440AbhL3RYk (ORCPT
+        Thu, 30 Dec 2021 13:10:44 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:58722 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229591AbhL3SKo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 30 Dec 2021 12:24:40 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5E47C061574;
-        Thu, 30 Dec 2021 09:24:39 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id k66-20020a1ca145000000b00345fa984108so7941320wme.2;
-        Thu, 30 Dec 2021 09:24:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=6vTt0sPTxRfRnwBDC4e+K/XdNIJukWXPcDujgrHoT4o=;
-        b=eJDrVz1NU+ONBzKG4ThrQEtMofLMh5ZhLIay3cQ7wx+ox56pzk0/XLMFosO8hlT45A
-         etxIuzwRZRiId08xrIb0g/0w60BkBjfQH/9HkEHX+8pC2rAr6pIoOvLDqttuL//8ivpn
-         D/XYvWNbru27I+iMpKpTlfNpls7zQKzLQ4eU5iNnhrZQFQ4t69jh9Hu8eL9o7VOw7yKK
-         C7vU4p7Lt5pCd++qOp7XNGTp8wIrF9uQLkaJc2xc0Fdoy6yv0vCfDp4UulRMfNj02P+I
-         iq6nI2HbBTeIofBGNt5MBVbkqZeNCsonfdDT3czbVImvKVYTCH5M5r1oYZsxAJADX+zP
-         2Bhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6vTt0sPTxRfRnwBDC4e+K/XdNIJukWXPcDujgrHoT4o=;
-        b=QkSVisbNcHH39+VhECasJnocIn5kS7e1elyBCKdbfSz/ahAjoIanUznW+HaN03K7a3
-         Xvrjmm3zRheznQEFqqFGX3PKTjpI1IGFCHWTmtyxVmVkSRnJx0Qyyh+xUiLezInFJy5U
-         D82Fanu3shj5339AgL+D39GNDPtmxcEdYbRMGCImv5Pf3ZTfvqNYGtQqxfvMOERKI/MU
-         tRF96iYGgnu6Bq+F+CMnv2ybVqZ2vWbZza3xMGBnmZI2nTf8jos5KAstKO2LZtDJXWOO
-         YC2armFtn6zYTBhVDHyTIOxzrL129IfXkcargyGvO3vPMxPP+dAz1bhLvOpzNNo+6ndc
-         jUuQ==
-X-Gm-Message-State: AOAM532x02dDS2I4uQWfGF78l5eCKWoid2dNsgxLoBb093AJlkezKMVy
-        mP2J7EnJ1/EXtvUGN+P4IpI=
-X-Google-Smtp-Source: ABdhPJzaRsPj9c7kb9qvOWtmeBfPFyfJGIUOuJPs+l8QumnmnvBhQj/v/qhgVjBQz0iibeJndx2YDw==
-X-Received: by 2002:a05:600c:348a:: with SMTP id a10mr26647064wmq.165.1640885078101;
-        Thu, 30 Dec 2021 09:24:38 -0800 (PST)
-Received: from felia.fritz.box ([2001:16b8:2657:9600:789b:54e9:fc28:95aa])
-        by smtp.gmail.com with ESMTPSA id n1sm25951857wri.46.2021.12.30.09.24.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Dec 2021 09:24:37 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        kgdb-bugreport@lists.sourceforge.net,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] Documentation: kgdb: properly capitalize the MAGIC_SYSRQ config
-Date:   Thu, 30 Dec 2021 18:24:23 +0100
-Message-Id: <20211230172423.30430-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 30 Dec 2021 13:10:44 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8739661705;
+        Thu, 30 Dec 2021 18:10:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04439C36AE9;
+        Thu, 30 Dec 2021 18:10:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1640887842;
+        bh=wl13idcBH22Q98gEtmxIacxmyis+T8ZRvfxttNaeonI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=qm0aWo61gjrsc6uZGJHbroRrWXDZG2l+ccokx6g7SL/wTs5B6cBWKsbKI+xFxjmnJ
+         F6lBANDMVUaLvBjCSlW5ORtXSYuPXNvj9oLMr2DX/w2OwCFR91mg0xnlXisD/p2Atp
+         /kKgschEwantvmMUyPNvDhZ04RR2f4v41Ymp4I4MA9KWx2P6oX0nREMeRv3GbxTk+8
+         rjeEeH+RtY6qrU7HrGpL79CFHQ1ivZsjtsByWT7g2VjiwqBzyMIptD8HlLTNUSJCdB
+         8j/EA+2YFmgjsULkgR++mtGYnniek6k7to7UMc3CY2kvNNM6qkP6Ni0oV2JqKTAOlB
+         7BzUFKIrGhbwA==
+Subject: Re: [PATCH] clk: socfpga: remove redundant assignment after a mask
+ operation
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-clk@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, llvm@lists.linux.dev,
+        linux-kernel@vger.kernel.org
+References: <20211230150321.167576-1-colin.i.king@gmail.com>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Message-ID: <7f5f8143-3eae-424f-b857-b57f66c96f65@kernel.org>
+Date:   Thu, 30 Dec 2021 12:10:40 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
+MIME-Version: 1.0
+In-Reply-To: <20211230150321.167576-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Most readers are probably going to figure out that the config is actually
-all upper-case letters, as all Kconfig symbols are this way.
 
-Properly capitalizing makes the script ./scripts/checkkconfigsymbols.py
-happy, which otherwise would report this as a reference to a non-existing
-Kconfig symbol.
 
-So, use the right capitalization for the MAGIC_SYSRQ config in the kgdb
-documentation.
+On 12/30/21 9:03 AM, Colin Ian King wrote:
+> The assignment operation after a & mask operation is redundant, the
+> variables being assigned are not used afterwards. Replace the &=
+> operator with just & operator.
+> 
+> Cleans up two clang-scan warnings:
+> drivers/clk/socfpga/clk-gate.c:37:10: warning: Although the value stored
+> to 'l4_src' is used in the enclosing expression, the value is never
+> actually read from 'l4_src' [deadcode.DeadStores]
+>                  return l4_src &= 0x1;
+>                         ^         ~~~
+> drivers/clk/socfpga/clk-gate.c:46:10: warning: Although the value stored
+> to 'perpll_src' is used in the enclosing expression, the value is never
+> actually read from 'perpll_src' [deadcode.DeadStores]
+>                  return perpll_src &= 0x3;
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>   drivers/clk/socfpga/clk-gate.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
+> index 1ec9678d8cd3..53d6e3ec4309 100644
+> --- a/drivers/clk/socfpga/clk-gate.c
+> +++ b/drivers/clk/socfpga/clk-gate.c
+> @@ -34,7 +34,7 @@ static u8 socfpga_clk_get_parent(struct clk_hw *hwclk)
+>   
+>   	if (streq(name, SOCFPGA_L4_MP_CLK)) {
+>   		l4_src = readl(clk_mgr_base_addr + CLKMGR_L4SRC);
+> -		return l4_src &= 0x1;
+> +		return l4_src & 0x1;
+>   	}
+>   	if (streq(name, SOCFPGA_L4_SP_CLK)) {
+>   		l4_src = readl(clk_mgr_base_addr + CLKMGR_L4SRC);
+> @@ -43,7 +43,7 @@ static u8 socfpga_clk_get_parent(struct clk_hw *hwclk)
+>   
+>   	perpll_src = readl(clk_mgr_base_addr + CLKMGR_PERPLL_SRC);
+>   	if (streq(name, SOCFPGA_MMC_CLK))
+> -		return perpll_src &= 0x3;
+> +		return perpll_src & 0x3;
+>   	if (streq(name, SOCFPGA_NAND_CLK) ||
+>   	    streq(name, SOCFPGA_NAND_X_CLK))
+>   		return (perpll_src >> 2) & 3;
+> 
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- Documentation/dev-tools/kgdb.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/dev-tools/kgdb.rst b/Documentation/dev-tools/kgdb.rst
-index 43456244651a..3e3f7bca937d 100644
---- a/Documentation/dev-tools/kgdb.rst
-+++ b/Documentation/dev-tools/kgdb.rst
-@@ -402,7 +402,7 @@ This is a quick example of how to use kdb.
- 2. Enter the kernel debugger manually or by waiting for an oops or
-    fault. There are several ways you can enter the kernel debugger
-    manually; all involve using the :kbd:`SysRq-G`, which means you must have
--   enabled ``CONFIG_MAGIC_SysRq=y`` in your kernel config.
-+   enabled ``CONFIG_MAGIC_SYSRQ=y`` in your kernel config.
- 
-    -  When logged in as root or with a super user session you can run::
- 
-@@ -461,7 +461,7 @@ This is a quick example of how to use kdb with a keyboard.
- 2. Enter the kernel debugger manually or by waiting for an oops or
-    fault. There are several ways you can enter the kernel debugger
-    manually; all involve using the :kbd:`SysRq-G`, which means you must have
--   enabled ``CONFIG_MAGIC_SysRq=y`` in your kernel config.
-+   enabled ``CONFIG_MAGIC_SYSRQ=y`` in your kernel config.
- 
-    -  When logged in as root or with a super user session you can run::
- 
--- 
-2.17.1
-
+Acked-by: Dinh Nguyen <dinguyen@kernel.org>
