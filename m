@@ -2,62 +2,59 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CAD1C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Dec 2021 15:09:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DFCCC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Dec 2021 15:33:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231786AbhL3PJH (ORCPT
+        id S237885AbhL3PdE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 30 Dec 2021 10:09:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48322 "EHLO
+        Thu, 30 Dec 2021 10:33:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233976AbhL3PJG (ORCPT
+        with ESMTP id S233176AbhL3PdE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 30 Dec 2021 10:09:06 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 429A4C06173E;
-        Thu, 30 Dec 2021 07:09:06 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id a203-20020a1c7fd4000000b003457874263aso16196203wmd.2;
-        Thu, 30 Dec 2021 07:09:06 -0800 (PST)
+        Thu, 30 Dec 2021 10:33:04 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6ECFC061574;
+        Thu, 30 Dec 2021 07:33:03 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id a83-20020a1c9856000000b00344731e044bso13506812wme.1;
+        Thu, 30 Dec 2021 07:33:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=sf/3KqcCBGZ0jjyoE9sxhd/PuBCJYLVQgneAgtveI+Q=;
-        b=VrLKSJJHDL2DA29VZEX7N3edD3i7J1oADh0QdE+Ge+67lM+yQkAOci75Oz2ljErixb
-         JGWYKOGDUm81Gr6QLvLWyvaiEWCS9H7/kchC8IP3E52+Wsm5Wniu2I9z3T0LgHkPWT2k
-         CYbmpkhZXP1xP/aGCwh0RRl768aTvEWeyotCQfaHpj2oDihdO8fPQ9qywBgnMO0sNP5L
-         XJwkIpZihkbNfjsPPljHiv2BHjV70T1/6IY/dbtMMokE9kEBKsSbFUEWmzn8jmfUZma0
-         N4hvkcBYVHlX834+yXrVnuS5yY+0RPM/ffnmu46nSi/88lDqu2Pwg6o/D6hbY4Dkqt4j
-         ZLNQ==
+        bh=F/EWLqn+e9gTwKuOiaXeqTXWRPro/3L5eOKPKtLfSqQ=;
+        b=F2xj/eue0N18OAuFeFppYZZI0LVUEofODrtQMNGa7VuIerW3u9I+DX+cafNk98nVtD
+         CWuEvjs+onYX0XYVEPTbGZS1zm1i1xUBaKmdk3NlWgd+O2VNSE3hDiJrQOBDYZDx4Tob
+         //SZ8GJM3GiAM6RlAos7W0zez0edEBRsuZfLJc4N89TU0hULYlWj8eVkt1Zqzfa2uldt
+         6Iex2JNUseCvXnkl1/sLPnOiVLKFWpXT8vCWwQJArFvdsACq1SvZXCoS/+ofNk3UGLc7
+         UEAFpQFTCGWq5E5SWEHfo93/XOnWBYT8gqOIONiQ+QuH8I+CGq2E6OAGm04JMB6Wm49L
+         jnrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=sf/3KqcCBGZ0jjyoE9sxhd/PuBCJYLVQgneAgtveI+Q=;
-        b=vdpApFK2VaaSvv/LCImS07IOeSIzA0U2hJZjlBLVAU7FFN7p5aLGrvznRrb10jRhp4
-         1chXtF9i86f8fu00/gZ+Gbg4MHrdJjnZ+oIW+kI1c+V9xKERfHw2yHhZOmna1BmsahbD
-         +6+FHoVouprmUEWwM9D6qFiHaZF8foHCeDMSFRZQ33tyK3p6IWzpR7Ha2x5KzxxjIIQi
-         v6bVBQ2jzcT6GOe0gA5JhcqHRD+gPG5TqgjPfHMxvDY/9EL+Hz7okvaFYCGz/2vGyorQ
-         uBlj3fHnp93A0zRbeMWNWnQPu0l5lxZGUnIAKjQJz4yt5DnXrwgMsEAvrzzl5FDZExWa
-         8NgA==
-X-Gm-Message-State: AOAM5311Ba5oqChdLBtVqB/mtCoHmfnAnHreKWr4K7voMiR6s1cBZVWg
-        Wso/IG+UbcX2vtONwxnZQLB1WG7bt0H95aKh
-X-Google-Smtp-Source: ABdhPJwkiMs/OeTQoco6BR7K7opw58ewBVj+GETPXIuGVQyoCDEIJ0BNvZTdWtwtYsATV6WazqvGwg==
-X-Received: by 2002:a1c:3b86:: with SMTP id i128mr26609703wma.50.1640876944798;
-        Thu, 30 Dec 2021 07:09:04 -0800 (PST)
+        bh=F/EWLqn+e9gTwKuOiaXeqTXWRPro/3L5eOKPKtLfSqQ=;
+        b=Kv4X7mZIhR8zALhvJxxZPbJt1PP1mQaxYG72Nk+gBPrIwJ59uBEreqx2lKrS1ujv5G
+         2sv0XT7dLg6FTICpehQobjnm9g7NCI/GDQnypRhSxngsNYXrgdrHaxSJRiuXm/fdjEmx
+         wHs74voWcXW1sIhxU0aV6Pe/rONF1Z9B6A17UK5uji7GBlUhWsE/GlAKGmWKKYevjE1g
+         hV7k+YdNZip71EyN+XAI0WhX5oZTBJB93g8KrH+v0tltnL2fGxSDhTy8jB36nykq9Z8X
+         q/6OVhViQtTgJYccIslitS/o0QwrXHR4g/kmz9PlPnhnEWWDZDac3VTLWlx3W8n+GWBD
+         qwRg==
+X-Gm-Message-State: AOAM533K11SbvWgt+UnOLhw3XsgsEbBKbMNHH8ZFBweDpj0jXMPHWJkh
+        pQMBW8i6Y9cTWE0/iN2ewk7UZ+4xELw/vV59
+X-Google-Smtp-Source: ABdhPJxsgPQYRnO/2pZhcUUy7gFIl3zoZNQQMnMihhxi0ImYLxf0ke1Ua8g2a+acrN6yRW39UUeIew==
+X-Received: by 2002:a1c:f205:: with SMTP id s5mr2872853wmc.33.1640878382374;
+        Thu, 30 Dec 2021 07:33:02 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id l4sm27466631wry.85.2021.12.30.07.09.04
+        by smtp.gmail.com with ESMTPSA id m15sm27690200wrw.27.2021.12.30.07.33.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Dec 2021 07:09:04 -0800 (PST)
+        Thu, 30 Dec 2021 07:33:01 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Stefan Berger <stefanb@linux.ibm.com>
-Cc:     kernel-janitors@vger.kernel.org,
-        Nathan Chancellor <nathan@kernel.org>, llvm@lists.linux.dev,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] lib/oid_registry.c: remove redundant assignment to variable num
-Date:   Thu, 30 Dec 2021 15:09:03 +0000
-Message-Id: <20211230150903.190860-1-colin.i.king@gmail.com>
+To:     Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] hpfs: remove redundant variable r
+Date:   Thu, 30 Dec 2021 15:33:01 +0000
+Message-Id: <20211230153301.248914-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -66,32 +63,28 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable num is being assigned a value that is never read, it
-is being re-assigned a value in both paths of the following if
-statement. The assignment is redundant and can be removed.
-
-Cleans up clang-scan warning:
-lib/oid_registry.c:149:3: warning: Value stored to 'num' is never
-read [deadcode.DeadStores]
-                num = 0;
+The variable r is being assigned a value and it is never read. The
+declaration and assignment are redundant and can be removed.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- lib/oid_registry.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/hpfs/namei.c                   | 3 +--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/lib/oid_registry.c b/lib/oid_registry.c
-index e592d48b1974..fe6705cfd780 100644
---- a/lib/oid_registry.c
-+++ b/lib/oid_registry.c
-@@ -146,7 +146,6 @@ int sprint_oid(const void *data, size_t datasize, char *buffer, size_t bufsize)
- 	bufsize -= count;
+diff --git a/fs/hpfs/namei.c b/fs/hpfs/namei.c
+index d73f8a67168e..81b44bac4e1f 100644
+--- a/fs/hpfs/namei.c
++++ b/fs/hpfs/namei.c
+@@ -555,8 +555,7 @@ static int hpfs_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
+ 	de.hidden = new_name[0] == '.';
  
- 	while (v < end) {
--		num = 0;
- 		n = *v++;
- 		if (!(n & 0x80)) {
- 			num = n;
+ 	if (new_inode) {
+-		int r;
+-		if ((r = hpfs_remove_dirent(old_dir, dno, dep, &qbh, 1)) != 2) {
++		if (hpfs_remove_dirent(old_dir, dno, dep, &qbh, 1) != 2) {
+ 			if ((nde = map_dirent(new_dir, hpfs_i(new_dir)->i_dno, new_name, new_len, NULL, &qbh1))) {
+ 				clear_nlink(new_inode);
+ 				copy_de(nde, &de);
 -- 
 2.33.1
 
