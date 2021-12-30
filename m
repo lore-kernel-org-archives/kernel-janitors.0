@@ -2,98 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60944C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Dec 2021 16:12:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E611AC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Dec 2021 17:20:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241146AbhL3QMj (ORCPT
+        id S241440AbhL3RUG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 30 Dec 2021 11:12:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34044 "EHLO
+        Thu, 30 Dec 2021 12:20:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236629AbhL3QMi (ORCPT
+        with ESMTP id S236737AbhL3RUF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 30 Dec 2021 11:12:38 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 280ECC061574;
-        Thu, 30 Dec 2021 08:12:38 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id l4so15897666wmq.3;
-        Thu, 30 Dec 2021 08:12:38 -0800 (PST)
+        Thu, 30 Dec 2021 12:20:05 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39581C061574;
+        Thu, 30 Dec 2021 09:20:05 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id v7so51567643wrv.12;
+        Thu, 30 Dec 2021 09:20:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0Pnjdq429wkLvZ7QQ8EgNC1pfMpkmAT54Uvk5bVoFhM=;
-        b=BEiSf4gbp1br/LVg3r+zcs+4bkXIDqrEeZ85F9p58DS3Qt02rlPTygB3F5hgf5kbTz
-         FDipKDJduJOGHsrGf8lv3+Tkw0ieW3jmAOrem+U0/Z2gGjpHDWWpM/ZM2A+k4VuSgy5A
-         GDgjKrEZj3y1iPneHT+EJOvU1dH4FFTuGbRrv4qYMN8qW/ciRXMLT+Z6/Jvfy390SZ3V
-         ElLRAc7herXxFKTThTPXr9m8FoRPtzECxfrP/S1N1vTNOZfFBKc0jgc+oX9HWBx6AsbS
-         C0J3/uGz8XIzuov5xDD+Vb4vfC4ngCdM3F1SRlgY7cMgnYt5UcKkH4/EBKlITRZpFTos
-         4zhQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=n/qQDXJk2QbH2NGsjvFVJ3ub2PnKBdYzofoYgc2mPZM=;
+        b=XrPlU1tx5TWNnHIjx83NHVcOfK6mlpBbpa6/8BUJlN94o4v8Y0mSY0zGWEf/hGvZ9L
+         DtR0hvQ63iuj7i0ayJrqmb+dj1HaPslKmm795bNWjD7ajEfs4yLRZSdKoGr/Lklc+wA/
+         hKQOvcEIw8ryMt+CytyyTcPTsXoMeJW8QbdN6zhq7XW7v2/eLicw3a+RobJCX4ayad90
+         dctaa8htJdCK+U74RtDAlXV29k531+mjLHI88wdd09vc4jWFU3rUZC+EyJKOqBiyDl4g
+         /ksAJG5UnfZGR2ybxW+YzobTlY1thsuJX02rNtDadTQcQZDm2asOTq+Ao1fXlvgFCc3L
+         F6TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0Pnjdq429wkLvZ7QQ8EgNC1pfMpkmAT54Uvk5bVoFhM=;
-        b=JL+HuhWzxlRyacx1B9pK2PPPISlAFzhdNk2+lEI4SZV4lrMHBW859rBlpu7J0MjJpQ
-         vdEMnSPidncx5USJNl5L1ttyqahP7B8q6ANrvaWzKByoS2ZgOTuRMPwGLO4cEnfGvSZv
-         7Ak7CUE6DmaiwhzEZ4d2AjMJPySnpxyezzO8Av3xQ2WBvHMldbuLW2ZaZCNNn4RhU7t1
-         sQad2zfADiNK/fe4gxNT7wpxDE7xo6DtDDYuo5rolIuBmpoLSwig+07tS2e6JUuCCVhX
-         NWUKs9AXbFFGF7qBdSAQuDSEp1js6PBgQJT3FKxl3g1ZvJROG0l5N65NoyBm8XiY5s4k
-         F5Iw==
-X-Gm-Message-State: AOAM532rDpBlsbEnrD3eBCY4BxDzs+T3dmrEM6p++wcvdUrLVd4zDFv2
-        +L5OHhS3Sgl6fSFW62SrxB0=
-X-Google-Smtp-Source: ABdhPJy2dR79PiS8oIFSey0wDOUHMJPpwdSHdt3d8X6C2mRhOqvFfHypLxgtkKGOIHePbSSjleoqZA==
-X-Received: by 2002:a7b:c958:: with SMTP id i24mr26172837wml.75.1640880751645;
-        Thu, 30 Dec 2021 08:12:31 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id m17sm24300651wrw.11.2021.12.30.08.12.31
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=n/qQDXJk2QbH2NGsjvFVJ3ub2PnKBdYzofoYgc2mPZM=;
+        b=dCgEpLazT4ol3l6cQZCtnFYSTsBOO+QY7cyF/GzK2si21CuJQRxQmxU90Yn7kVXazT
+         saOHmF2rNeXCEbGBGvDd1tB+Yz55cVB5AlEr6HQkU1lBBFnEGVarESra91jz/Wz0+13s
+         5b+bxa9D5WEsIR7G7bJiuPr/l7PaXtuzccYR0+DzHcJvpX5tzasBRH46HF66JnKOGPvP
+         Af8Rol6ulUDAH8HkwQsoSW2ljEmHGZKU5RURnmO7Fdw5tZwYJfpvTqjpRyJek+97eHb7
+         MJCZXkI2i5gVk/l3th8EMPl75/yr4DSA288haITeZi0Z6jM6oOUESoBb6v0cV8fgacz9
+         5vnA==
+X-Gm-Message-State: AOAM53377+JEqXV48R/DdLGPy6HW39JHpBKCgdh4QZhvqWQ9CQvhfeVp
+        t2+0flV4BbGplwpYW5SzRDAVwlnMtWQ=
+X-Google-Smtp-Source: ABdhPJz7pk+TZP3KIA3Wu6oebLD35Y7oBH4hmjvWmB6lCBLzTaBGLJqkAUgaOh9+sgYOQjuXLiFIXg==
+X-Received: by 2002:a5d:448f:: with SMTP id j15mr26833990wrq.603.1640884803135;
+        Thu, 30 Dec 2021 09:20:03 -0800 (PST)
+Received: from felia.fritz.box ([2001:16b8:2657:9600:789b:54e9:fc28:95aa])
+        by smtp.gmail.com with ESMTPSA id z5sm23709975wru.87.2021.12.30.09.20.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Dec 2021 08:12:31 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, llvm@lists.linux.dev,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] nfc: st21nfca: remove redundant assignment to variable i
-Date:   Thu, 30 Dec 2021 16:12:30 +0000
-Message-Id: <20211230161230.428457-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.33.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Thu, 30 Dec 2021 09:20:02 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Andi Kleen <ak@linux.intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] Documentation: refer to config RANDOMIZE_BASE for kernel address-space randomization
+Date:   Thu, 30 Dec 2021 18:19:40 +0100
+Message-Id: <20211230171940.27558-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable i is being assigned a value that is never read, the
-assignment is redundant and can be removed. Cleans up clang-scan
-build warning:
+The config RANDOMIZE_SLAB does not exist, the authors probably intended to
+refer to the config RANDOMIZE_BASE, which provides kernel address-space
+randomization. They probably just confused SLAB with BASE (these two
+four-letter words coincidentally share three common letters), as they also
+point out the config SLAB_FREELIST_RANDOM as further randomization within
+the same sentence.
 
-drivers/nfc/st21nfca/i2c.c:319:4: warning: Value stored to 'i'
-is never read [deadcode.DeadStores]
-                        i = 0;
+Fix the reference of the config for kernel address-space randomization to
+the config that provides that.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Fixes: 6e88559470f5 ("Documentation: Add section about CPU vulnerabilities for Spectre")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/nfc/st21nfca/i2c.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ Documentation/admin-guide/hw-vuln/spectre.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nfc/st21nfca/i2c.c b/drivers/nfc/st21nfca/i2c.c
-index f126ce96a7df..05157fc0f4eb 100644
---- a/drivers/nfc/st21nfca/i2c.c
-+++ b/drivers/nfc/st21nfca/i2c.c
-@@ -315,10 +315,8 @@ static int st21nfca_hci_i2c_repack(struct sk_buff *skb)
- 		skb_pull(skb, 1);
+diff --git a/Documentation/admin-guide/hw-vuln/spectre.rst b/Documentation/admin-guide/hw-vuln/spectre.rst
+index ab7d402c1677..a2b22d5640ec 100644
+--- a/Documentation/admin-guide/hw-vuln/spectre.rst
++++ b/Documentation/admin-guide/hw-vuln/spectre.rst
+@@ -468,7 +468,7 @@ Spectre variant 2
+    before invoking any firmware code to prevent Spectre variant 2 exploits
+    using the firmware.
  
- 		r = check_crc(skb->data, skb->len);
--		if (r != 0) {
--			i = 0;
-+		if (r != 0)
- 			return -EBADMSG;
--		}
+-   Using kernel address space randomization (CONFIG_RANDOMIZE_SLAB=y
++   Using kernel address space randomization (CONFIG_RANDOMIZE_BASE=y
+    and CONFIG_SLAB_FREELIST_RANDOM=y in the kernel configuration) makes
+    attacks on the kernel generally more difficult.
  
- 		/* remove headbyte */
- 		skb_pull(skb, 1);
 -- 
-2.33.1
+2.17.1
 
