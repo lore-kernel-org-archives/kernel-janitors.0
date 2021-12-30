@@ -2,102 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC6B3C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Dec 2021 07:32:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 694F7C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Dec 2021 08:17:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235010AbhL3Hcp (ORCPT
+        id S237616AbhL3IRY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 30 Dec 2021 02:32:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60664 "EHLO
+        Thu, 30 Dec 2021 03:17:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231688AbhL3Hco (ORCPT
+        with ESMTP id S231140AbhL3IRX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 30 Dec 2021 02:32:44 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 534A8C061574;
-        Wed, 29 Dec 2021 23:32:44 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id q16so48814679wrg.7;
-        Wed, 29 Dec 2021 23:32:44 -0800 (PST)
+        Thu, 30 Dec 2021 03:17:23 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8C1FC061574;
+        Thu, 30 Dec 2021 00:17:22 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id q16so49001464wrg.7;
+        Thu, 30 Dec 2021 00:17:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id;
-        bh=dnl7F7ofGqHF6QeDzTBMKl07noHtejiBvVANKdLWEqc=;
-        b=KOezF837K++3rSfxFAMIm1NiBpQyTCCO0CvKMAMgFgYR2FeaJ9M/tF5zCRUIowb+if
-         ZhSQZfkLXYhbJEMZ0XV93Ix4RyVRviuGA8nj3l/I0lmMQ6l4napeERXdFCh2rHfojcEg
-         6hbftAR2NNR0/X5nTiZ1/d5V3z/b6srShabh21jdS+eLFBS3IAengqbqOFWIK4z+r3V2
-         qZOW3j9LfB2+7fXcUsdPlsP1v2H/e/AiQbMKfd/frw3I+O2v51eOgy3iuFAtN0vm49/V
-         j9cPT5QT/hEk7b9s/f1O2jZrEIDb7Od1MG9BjlFglIeCyhpuVaBjes8+C6vsbn2/9QAi
-         boxA==
+        bh=geuEd/JcVeINOoHDxuDR/f+b5PFdApW3RHaOzhYDz4g=;
+        b=pourZ0bKL9XPfFz/dG0H1gKSiqKzUvd7BDl1XzO6XAtsHctTIiLIskunz5V8qe3n1z
+         kTuR6hOUZHez5KIqbbf9IrKWWkKGgW426b7+6HdgnBF4GLtSiDP8EoxxNbrzE/saR6cs
+         0B1G0wyxrXRdCqOKl+2fDOis9F+QxAgvYpyTobEy5Gpm8xQddxrzIsxr9zzebp4Y37z/
+         BKfdE2DOBLC7IVsO4tZGf0WZc59YhejjaaSq6KNMx3Iqe8WwJIt2pKDC1aZqb+nedj/x
+         gcRfmWokftEvX5Zt10OO07+PTeDTSx1USlI+BlfTqvup4QLOdR48eQVqiZ7TJpHcZter
+         iUOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=dnl7F7ofGqHF6QeDzTBMKl07noHtejiBvVANKdLWEqc=;
-        b=T9AUIMF18py3CBOHWK+KxNiOywTc7MZV0IkPCVoetsf9HtapIJwJIkTOdVAzXs4xNi
-         VgrqVBrPJH9EphbyaX87ZI4lyuXjmqM4sL2BT2U0buShTzY/s+U9lZi+3tkb0zbcdzpi
-         ow8tZICVIKz+zavfn6Kf+WkgWWCVD6xZAfH/2Z3xHq1ukwrC5sIIVfgQH5xcargcgvAr
-         6eWgrm8xR8PUViYS0IdU3m2XnNEcJYA2P8XQ9jd6N169atcX1mPxDfimd46gl9TWJiU9
-         2HAesiyMXAmPIHXkSrHaLN7i1ZTOseBFk/0UzgmIppr0ovDXliM1LX+i7EFsyfJgtrNi
-         Kwww==
-X-Gm-Message-State: AOAM532tr0aiz/xvKdXCfytUR8bYaehiPTI9V5MnLUH5pFYoa2nYg2ua
-        g/Su26bjXvEnmvOT/fbDCdY=
-X-Google-Smtp-Source: ABdhPJy0ONqFn84YMo8GdaBqP5/7AJt9x8NkLf+U3bdnK93aKdlIyTlO7swZjdq7uExUaKQtpfMKmg==
-X-Received: by 2002:a05:6000:2a9:: with SMTP id l9mr24009882wry.71.1640849562756;
-        Wed, 29 Dec 2021 23:32:42 -0800 (PST)
+        bh=geuEd/JcVeINOoHDxuDR/f+b5PFdApW3RHaOzhYDz4g=;
+        b=gsExNCTfmvJi5goAOiKcomottNgbKcdtaht21yVG5FfOsNEp5nw25byU+E6blUNx9A
+         3wWk+UJcqa0h4RiZmxkv/LjT7P8NzHLT022yfWDE71sUPVmdj57oGnLGKBoUoVrngiK4
+         7FrYPYlk2Lec3ThESTPHneEiBAa/a6Ef6+mNBPyxahTE6Fl7xNDfmuR4bwOZkrnDAaBm
+         SuSe1MJKZChGW3bV9zth/mmIrAe+WPmxbfj9eUVInTDzh9OLdLFostqOrXadKHlsrJqr
+         /zZHRKhM903fm6hanQaE8lXHwpVzE9mMPQyaArzLZkLe77+HM78vgCOsaGsT4q6aAQqg
+         otaA==
+X-Gm-Message-State: AOAM530sd8AoTmyBZ3e1s4t+iVxmTOxIzhF9V9Rwf9iVb5HwM4pE2q7m
+        kTVHOu29pka6tT4sfzYARA8=
+X-Google-Smtp-Source: ABdhPJyR7kaVjSgs+djhL3tFHlq05F2u70kbJgoT2AcELMTnDfIQzYICWJaKD3bIoq8xV0fARDl8Yw==
+X-Received: by 2002:a05:6000:1449:: with SMTP id v9mr24161840wrx.49.1640852241270;
+        Thu, 30 Dec 2021 00:17:21 -0800 (PST)
 Received: from felia.fritz.box ([2001:16b8:2626:5600:789b:54e9:fc28:95aa])
-        by smtp.gmail.com with ESMTPSA id a198sm22864479wmd.42.2021.12.29.23.32.42
+        by smtp.gmail.com with ESMTPSA id u12sm22736319wrf.60.2021.12.30.00.17.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Dec 2021 23:32:42 -0800 (PST)
+        Thu, 30 Dec 2021 00:17:20 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        linux-block@vger.kernel.org
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        linuxppc-dev@lists.ozlabs.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH RESEND] blk-iocost: drop selecting undefined BLK_RQ_IO_DATA_LEN
-Date:   Thu, 30 Dec 2021 08:32:25 +0100
-Message-Id: <20211230073225.30255-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] powerpc/ptdump: fix conversion to GENERIC_PTDUMP
+Date:   Thu, 30 Dec 2021 09:17:03 +0100
+Message-Id: <20211230081703.31162-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit cd006509b0a9 ("blk-iocost: account for IO size when testing
-latencies") selects the non-existing config BLK_RQ_IO_DATA_LEN in
-config BLK_CGROUP_IOCOST.
+Commit e084728393a5 ("powerpc/ptdump: Convert powerpc to GENERIC_PTDUMP")
+replaces the use of the powerpc-specific config PPC_DEBUG_WX by the
+generic DEBUG_WX. The commit misses the use of PPC_DEBUG_WX in the
+function note_prot_wx().
 
-Hence, ./scripts/checkkconfigsymbols.py warns:
+Replace this last occurrence of PPC_DEBUG_WX to complete the conversion.
 
-  BLK_RQ_IO_DATA_LEN
-  Referencing files: block/Kconfig
+This issue is identified with the script ./scripts/checkkconfigsymbols.py.
 
-Probably, this select is just some unintended left-over from an earlier
-draft version; BLK_RQ_IO_DATA_LEN was never defined in any commit in the
-repository. So, drop this dead select to an undefined config.
-
-Fixes: cd006509b0a9 ("blk-iocost: account for IO size when testing latencies")
+Fixes: e084728393a5 ("powerpc/ptdump: Convert powerpc to GENERIC_PTDUMP")
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Acked-by: Tejun Heo <tj@kernel.org>
 ---
-first submission:
-https://lore.kernel.org/all/20211112093728.3237-1-lukas.bulwahn@gmail.com/
+ arch/powerpc/mm/ptdump/ptdump.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patch is already acked by Tejun.
-Jens, please pick this quick minor clean-up patch. 
-
- block/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/block/Kconfig b/block/Kconfig
-index d5d4197b7ed2..80826e28d0d5 100644
---- a/block/Kconfig
-+++ b/block/Kconfig
-@@ -136,7 +136,6 @@ config BLK_CGROUP_FC_APPID
- config BLK_CGROUP_IOCOST
- 	bool "Enable support for cost model based cgroup IO controller"
- 	depends on BLK_CGROUP
--	select BLK_RQ_IO_DATA_LEN
- 	select BLK_RQ_ALLOC_TIME
- 	help
- 	Enabling this option enables the .weight interface for cost
+diff --git a/arch/powerpc/mm/ptdump/ptdump.c b/arch/powerpc/mm/ptdump/ptdump.c
+index 031956d0ee84..be120e09aa3e 100644
+--- a/arch/powerpc/mm/ptdump/ptdump.c
++++ b/arch/powerpc/mm/ptdump/ptdump.c
+@@ -183,7 +183,7 @@ static void note_prot_wx(struct pg_state *st, unsigned long addr)
+ {
+ 	pte_t pte = __pte(st->current_flags);
+ 
+-	if (!IS_ENABLED(CONFIG_PPC_DEBUG_WX) || !st->check_wx)
++	if (!IS_ENABLED(CONFIG_DEBUG_WX) || !st->check_wx)
+ 		return;
+ 
+ 	if (!pte_write(pte) || !pte_exec(pte))
 -- 
 2.17.1
 
