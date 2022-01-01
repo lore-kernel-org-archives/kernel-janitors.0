@@ -2,33 +2,34 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3390BC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat,  1 Jan 2022 19:04:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4196C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat,  1 Jan 2022 21:15:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232498AbiAATEv (ORCPT
+        id S232716AbiAAVPf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 1 Jan 2022 14:04:51 -0500
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:57042 "EHLO
+        Sat, 1 Jan 2022 16:15:35 -0500
+Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:49739 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229839AbiAATEu (ORCPT
+        with ESMTP id S232707AbiAAVPf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 1 Jan 2022 14:04:50 -0500
+        Sat, 1 Jan 2022 16:15:35 -0500
 Received: from pop-os.home ([86.243.171.122])
         by smtp.orange.fr with ESMTPA
-        id 3jgMnLu6Bbyf93jgMn77BQ; Sat, 01 Jan 2022 20:04:49 +0100
+        id 3lisnPd6Q1yYB3lisn10zq; Sat, 01 Jan 2022 22:15:33 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 01 Jan 2022 20:04:49 +0100
+X-ME-Date: Sat, 01 Jan 2022 22:15:33 +0100
 X-ME-IP: 86.243.171.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     jgg@ziepe.ca, davem@davemloft.net, kuba@kernel.org, arnd@arndb.de,
-        tanghui20@huawei.com, gustavoars@kernel.org
+To:     bigeasy@linutronix.de, davem@davemloft.net, kuba@kernel.org,
+        tanhuazhong@huawei.com, arnd@arndb.de, moyufeng@huawei.com,
+        chenhao288@hisilicon.com
 Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] sun/cassini: Use dma_set_mask_and_coherent() and simplify code
-Date:   Sat,  1 Jan 2022 20:04:45 +0100
-Message-Id: <9608eda38887c50ac7399ea1b41f977709678ea3.1641063795.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] chelsio: cxgb: Use dma_set_mask_and_coherent() and simplify code
+Date:   Sat,  1 Jan 2022 22:15:29 +0100
+Message-Id: <80d7dd276d9be857f090fbe1f3dbbdc4b07141ec.1641071656.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -52,61 +53,58 @@ Simplify code and remove some dead code accordingly.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/sun/cassini.c | 26 ++++++--------------------
- 1 file changed, 6 insertions(+), 20 deletions(-)
+ drivers/net/ethernet/chelsio/cxgb/cxgb2.c | 19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/net/ethernet/sun/cassini.c b/drivers/net/ethernet/sun/cassini.c
-index d2d4f47c7e28..dba9f12efa1c 100644
---- a/drivers/net/ethernet/sun/cassini.c
-+++ b/drivers/net/ethernet/sun/cassini.c
-@@ -4893,8 +4893,8 @@ static int cas_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	unsigned long casreg_len;
- 	struct net_device *dev;
- 	struct cas *cp;
--	int i, err, pci_using_dac;
- 	u16 pci_cmd;
+diff --git a/drivers/net/ethernet/chelsio/cxgb/cxgb2.c b/drivers/net/ethernet/chelsio/cxgb/cxgb2.c
+index 18acd7cf3d6d..f4054d2553ea 100644
+--- a/drivers/net/ethernet/chelsio/cxgb/cxgb2.c
++++ b/drivers/net/ethernet/chelsio/cxgb/cxgb2.c
+@@ -944,11 +944,11 @@ static const struct net_device_ops cxgb_netdev_ops = {
+ 
+ static int init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ {
+-	int i, err, pci_using_dac = 0;
+ 	unsigned long mmio_start, mmio_len;
+ 	const struct board_info *bi;
+ 	struct adapter *adapter = NULL;
+ 	struct port_info *pi;
 +	int i, err;
- 	u8 orig_cacheline_size = 0, cas_cacheline_size = 0;
  
- 	if (cas_version_printed++ == 0)
-@@ -4965,23 +4965,10 @@ static int cas_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 
- 
- 	/* Configure DMA attributes. */
--	if (!dma_set_mask(&pdev->dev, DMA_BIT_MASK(64))) {
--		pci_using_dac = 1;
--		err = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(64));
--		if (err < 0) {
--			dev_err(&pdev->dev, "Unable to obtain 64-bit DMA "
--			       "for consistent allocations\n");
--			goto err_out_free_res;
--		}
--
--	} else {
--		err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
--		if (err) {
--			dev_err(&pdev->dev, "No usable DMA configuration, "
--			       "aborting\n");
--			goto err_out_free_res;
--		}
--		pci_using_dac = 0;
-+	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
-+	if (err) {
-+		dev_err(&pdev->dev, "No usable DMA configuration, aborting\n");
-+		goto err_out_free_res;
+ 	err = pci_enable_device(pdev);
+ 	if (err)
+@@ -961,17 +961,8 @@ static int init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		goto out_disable_pdev;
  	}
  
- 	casreg_len = pci_resource_len(pdev, 0);
-@@ -5087,8 +5074,7 @@ static int cas_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	if ((cp->cas_flags & CAS_FLAG_NO_HW_CSUM) == 0)
- 		dev->features |= NETIF_F_HW_CSUM | NETIF_F_SG;
+-	if (!dma_set_mask(&pdev->dev, DMA_BIT_MASK(64))) {
+-		pci_using_dac = 1;
+-
+-		if (dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(64))) {
+-			pr_err("%s: unable to obtain 64-bit DMA for coherent allocations\n",
+-			       pci_name(pdev));
+-			err = -ENODEV;
+-			goto out_disable_pdev;
+-		}
+-
+-	} else if ((err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32))) != 0) {
++	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
++	if (err) {
+ 		pr_err("%s: no usable DMA configuration\n", pci_name(pdev));
+ 		goto out_disable_pdev;
+ 	}
+@@ -1043,10 +1034,8 @@ static int init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		netdev->hw_features |= NETIF_F_SG | NETIF_F_IP_CSUM |
+ 			NETIF_F_RXCSUM;
+ 		netdev->features |= NETIF_F_SG | NETIF_F_IP_CSUM |
+-			NETIF_F_RXCSUM | NETIF_F_LLTX;
++			NETIF_F_RXCSUM | NETIF_F_LLTX | NETIF_F_HIGHDMA;
  
--	if (pci_using_dac)
--		dev->features |= NETIF_F_HIGHDMA;
-+	dev->features |= NETIF_F_HIGHDMA;
- 
- 	/* MTU range: 60 - varies or 9000 */
- 	dev->min_mtu = CAS_MIN_MTU;
+-		if (pci_using_dac)
+-			netdev->features |= NETIF_F_HIGHDMA;
+ 		if (vlan_tso_capable(adapter)) {
+ 			netdev->features |=
+ 				NETIF_F_HW_VLAN_CTAG_TX |
 -- 
 2.32.0
 
