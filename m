@@ -2,80 +2,177 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA8EC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun,  2 Jan 2022 12:30:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E3DC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  2 Jan 2022 15:33:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232321AbiABMaO (ORCPT
+        id S233252AbiABPdJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 2 Jan 2022 07:30:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40278 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232298AbiABMaN (ORCPT
+        Sun, 2 Jan 2022 10:33:09 -0500
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:58328 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232473AbiABPdI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 2 Jan 2022 07:30:13 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40A62C06173E;
-        Sun,  2 Jan 2022 04:30:12 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id ED54FB80B33;
-        Sun,  2 Jan 2022 12:30:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 90FDAC36AE7;
-        Sun,  2 Jan 2022 12:30:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641126609;
-        bh=v6ktzdYTB7iZC4vjZ2GYDLoq6WSG7WNKtd1JQHJmHF4=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=AIvMQk2b9eecfGDwG6qgYQ6ffZGFDjNafC1d9Cw5TkK4k6MKMfddtrsaKq5LCKQuS
-         BgWVQDGO8HTGtpfn143BMpDwxHOUcjFUADVfMhtkixBsGyFlVdAnUr8vLjPb43BW/j
-         sTIRZdu36HkICE/Vb6ll2bJ/On19ZC8ApijAQFstjHrPbnt9fFtUZ/Sr9SSqEaLc5E
-         RoIQAbt8MOVgypf1Lju5kWPiMq4hVKju17H+Dry1q1YRVN9yxUCUrHM7wjQ6FToX4w
-         ZSh7tqV5rrtV9dQk8ULXN5+1giqPktARJFQVb2PDrmicqArVzxqEJ6PkrPyAp68wCF
-         dRDeQ3I9iSEEw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 7B3BFC395EB;
-        Sun,  2 Jan 2022 12:30:09 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Sun, 2 Jan 2022 10:33:08 -0500
+Received: from pop-os.home ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id 42qyndeMqIEdl42qyn5k1V; Sun, 02 Jan 2022 16:33:05 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sun, 02 Jan 2022 16:33:05 +0100
+X-ME-IP: 86.243.171.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
+        logang@deltatee.com, akpm@linux-foundation.org, rppt@kernel.org,
+        david@redhat.com, arnd@arndb.de, martin.oliveira@eideticom.com
+Cc:     linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] alpha: Remove usage of the deprecated "pci-dma-compat.h" API
+Date:   Sun,  2 Jan 2022 16:32:59 +0100
+Message-Id: <0b8bacb36e111d2621c2c0459b20b1da9f4375c0.1641137463.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] enic: Use dma_set_mask_and_coherent()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164112660950.27407.17009004966403932689.git-patchwork-notify@kernel.org>
-Date:   Sun, 02 Jan 2022 12:30:09 +0000
-References: <f926eab883a3e5c4dbfd3eb5108b3e1828e6513b.1641045708.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <f926eab883a3e5c4dbfd3eb5108b3e1828e6513b.1641045708.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     benve@cisco.com, govind@gmx.com, davem@davemloft.net,
-        kuba@kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+In [1], Christoph Hellwig has proposed to remove the wrappers in
+include/linux/pci-dma-compat.h.
 
-This patch was applied to netdev/net-next.git (master)
-by David S. Miller <davem@davemloft.net>:
+Some reasons why this API should be removed have been given by Julia
+Lawall in [2].
 
-On Sat,  1 Jan 2022 15:02:45 +0100 you wrote:
-> Use dma_set_mask_and_coherent() instead of unrolling it with some
-> dma_set_mask()+dma_set_coherent_mask().
-> 
-> This simplifies code and removes some dead code (dma_set_coherent_mask()
-> can not fail after a successful dma_set_mask())
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> [...]
+A coccinelle script has been used to perform the needed transformation.
+Only relevant parts are given below.
 
-Here is the summary with links:
-  - enic: Use dma_set_mask_and_coherent()
-    https://git.kernel.org/netdev/net-next/c/c5180ad0c278
+@@ @@
+-    PCI_DMA_BIDIRECTIONAL
++    DMA_BIDIRECTIONAL
 
-You are awesome, thank you!
+@@ @@
+-    PCI_DMA_TODEVICE
++    DMA_TO_DEVICE
+
+@@ @@
+-    PCI_DMA_FROMDEVICE
++    DMA_FROM_DEVICE
+
+@@ @@
+-    PCI_DMA_NONE
++    DMA_NONE
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_map_single(e1, e2, e3, e4)
++    dma_map_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_single(e1, e2, e3, e4)
++    dma_unmap_single(&e1->dev, e2, e3, e4)
+
+@@
+expression e1, e2, e3, e4;
+@@
+-    pci_unmap_sg(e1, e2, e3, e4)
++    dma_unmap_sg(&e1->dev, e2, e3, e4)
+
+[1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
+[2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ arch/alpha/include/asm/floppy.h |  7 ++++---
+ arch/alpha/kernel/pci_iommu.c   | 12 ++++++------
+ 2 files changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/arch/alpha/include/asm/floppy.h b/arch/alpha/include/asm/floppy.h
+index 8dfdb3aa1d96..588758685439 100644
+--- a/arch/alpha/include/asm/floppy.h
++++ b/arch/alpha/include/asm/floppy.h
+@@ -43,17 +43,18 @@ alpha_fd_dma_setup(char *addr, unsigned long size, int mode, int io)
+ 	static int prev_dir;
+ 	int dir;
+ 
+-	dir = (mode != DMA_MODE_READ) ? PCI_DMA_FROMDEVICE : PCI_DMA_TODEVICE;
++	dir = (mode != DMA_MODE_READ) ? DMA_FROM_DEVICE : DMA_TO_DEVICE;
+ 
+ 	if (bus_addr 
+ 	    && (addr != prev_addr || size != prev_size || dir != prev_dir)) {
+ 		/* different from last time -- unmap prev */
+-		pci_unmap_single(isa_bridge, bus_addr, prev_size, prev_dir);
++		dma_unmap_single(&isa_bridge->dev, bus_addr, prev_size,
++				 prev_dir);
+ 		bus_addr = 0;
+ 	}
+ 
+ 	if (!bus_addr)	/* need to map it */
+-		bus_addr = pci_map_single(isa_bridge, addr, size, dir);
++		bus_addr = dma_map_single(&isa_bridge->dev, addr, size, dir);
+ 
+ 	/* remember this one as prev */
+ 	prev_addr = addr;
+diff --git a/arch/alpha/kernel/pci_iommu.c b/arch/alpha/kernel/pci_iommu.c
+index 21f9ac101324..e83a02ed5267 100644
+--- a/arch/alpha/kernel/pci_iommu.c
++++ b/arch/alpha/kernel/pci_iommu.c
+@@ -333,7 +333,7 @@ static dma_addr_t alpha_pci_map_page(struct device *dev, struct page *page,
+ 	struct pci_dev *pdev = alpha_gendev_to_pci(dev);
+ 	int dac_allowed;
+ 
+-	BUG_ON(dir == PCI_DMA_NONE);
++	BUG_ON(dir == DMA_NONE);
+ 
+ 	dac_allowed = pdev ? pci_dac_dma_supported(pdev, pdev->dma_mask) : 0; 
+ 	return pci_map_single_1(pdev, (char *)page_address(page) + offset, 
+@@ -356,7 +356,7 @@ static void alpha_pci_unmap_page(struct device *dev, dma_addr_t dma_addr,
+ 	struct pci_iommu_arena *arena;
+ 	long dma_ofs, npages;
+ 
+-	BUG_ON(dir == PCI_DMA_NONE);
++	BUG_ON(dir == DMA_NONE);
+ 
+ 	if (dma_addr >= __direct_map_base
+ 	    && dma_addr < __direct_map_base + __direct_map_size) {
+@@ -460,7 +460,7 @@ static void alpha_pci_free_coherent(struct device *dev, size_t size,
+ 				    unsigned long attrs)
+ {
+ 	struct pci_dev *pdev = alpha_gendev_to_pci(dev);
+-	pci_unmap_single(pdev, dma_addr, size, PCI_DMA_BIDIRECTIONAL);
++	dma_unmap_single(&pdev->dev, dma_addr, size, DMA_BIDIRECTIONAL);
+ 	free_pages((unsigned long)cpu_addr, get_order(size));
+ 
+ 	DBGA2("pci_free_consistent: [%llx,%zx] from %ps\n",
+@@ -639,7 +639,7 @@ static int alpha_pci_map_sg(struct device *dev, struct scatterlist *sg,
+ 	dma_addr_t max_dma;
+ 	int dac_allowed;
+ 
+-	BUG_ON(dir == PCI_DMA_NONE);
++	BUG_ON(dir == DMA_NONE);
+ 
+ 	dac_allowed = dev ? pci_dac_dma_supported(pdev, pdev->dma_mask) : 0;
+ 
+@@ -702,7 +702,7 @@ static int alpha_pci_map_sg(struct device *dev, struct scatterlist *sg,
+ 	/* Some allocation failed while mapping the scatterlist
+ 	   entries.  Unmap them now.  */
+ 	if (out > start)
+-		pci_unmap_sg(pdev, start, out - start, dir);
++		dma_unmap_sg(&pdev->dev, start, out - start, dir);
+ 	return -ENOMEM;
+ }
+ 
+@@ -722,7 +722,7 @@ static void alpha_pci_unmap_sg(struct device *dev, struct scatterlist *sg,
+ 	dma_addr_t max_dma;
+ 	dma_addr_t fbeg, fend;
+ 
+-	BUG_ON(dir == PCI_DMA_NONE);
++	BUG_ON(dir == DMA_NONE);
+ 
+ 	if (! alpha_mv.mv_pci_tbi)
+ 		return;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.32.0
 
