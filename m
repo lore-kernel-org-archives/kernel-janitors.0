@@ -2,99 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D33FDC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jan 2022 17:03:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4418C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jan 2022 17:40:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234546AbiACRDU (ORCPT
+        id S233366AbiACRkN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Jan 2022 12:03:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47232 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231962AbiACRDU (ORCPT
+        Mon, 3 Jan 2022 12:40:13 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:49442 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232983AbiACRkK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Jan 2022 12:03:20 -0500
-Received: from mail-qt1-x834.google.com (mail-qt1-x834.google.com [IPv6:2607:f8b0:4864:20::834])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7F94C061784
-        for <kernel-janitors@vger.kernel.org>; Mon,  3 Jan 2022 09:03:19 -0800 (PST)
-Received: by mail-qt1-x834.google.com with SMTP id z9so30993249qtj.9
-        for <kernel-janitors@vger.kernel.org>; Mon, 03 Jan 2022 09:03:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :mime-version;
-        bh=yJU9zhwni6o3+iZvN5P4ezbbFlptXIDjM38WRcxQ32E=;
-        b=noF8JJJJnvfKFqf33bkEgTwyL+UX4F10QJG8qoWpz1rTM/BAcfM4zuoGJ5do4kszrw
-         Rg1fvwEhmb0g1xcJ4QtLZ1GUD/qFfGjcMmExVedWogSh8dR7+QqHd43hlZUUyqpWqjtf
-         P8BBZZfluylu1FRF7Wof6nn/wMnS8IsuTaMctpLt1gDi/Vat8TpxY47OneRsgqRxA6pK
-         k5/XMUE1tLNtJWH7ZVCftAu8fdOstJOPt8ndDb7RMAsm/7oJ2uogNGMkhbEs3ckVXngJ
-         fqTFEDvCw60xJ4NKEcx3U+nXrKXjnef5GibvxoAGc/Umf3E3n/qk18l4By+fUUDALHG7
-         5+bQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:mime-version;
-        bh=yJU9zhwni6o3+iZvN5P4ezbbFlptXIDjM38WRcxQ32E=;
-        b=UW1Ne7FDa61XP4ySed4ESkYdLx17e+c/9oPZJa7AwNVpSlXbaBQ9V1Ddh5aNOn43O8
-         5WGxrO7pt5SpesjdK7ZrtcTTdwVDEQjO8Y9XEeRS63zXfITlyOI86ZilByQK0VTEqIhn
-         kAN6QyveetSJHSuH1dFUsp9klD1w8YM9dH4O/eFV22JxErQTwi+6VLVGsZFgW4fVy8hG
-         mVSppSWiOld+C8pDpBPzBsbRyBK5xkmEnL75TC/mMxlaEHoADbO1LCUoDOrCxhb+vghN
-         v7WIiDDa4pPUVT/wB2xabc8Vct7Ciz6z4r9o7caZxr68x6v0glT5wuVRnwVsfSk+kz1O
-         1vPA==
-X-Gm-Message-State: AOAM531BEZ9SuHoh9Nuy1vndXMXui3J4G4/j03IWUSTbskYA711dXGQu
-        nAvKKmTdHs+kNoYbiHNHTaZZC3nwt8Yjuw==
-X-Google-Smtp-Source: ABdhPJzA/SHPa7IwwpIDS2Ewwxk0uyuQatuwrlI5IDc0c1N8Iu658RAeumEbJlcYI0R9FitBZ7/n2A==
-X-Received: by 2002:ac8:7fc5:: with SMTP id b5mr40500137qtk.351.1641229399112;
-        Mon, 03 Jan 2022 09:03:19 -0800 (PST)
-Received: from xanadu.home (modemcable108.170-21-96.mc.videotron.ca. [96.21.170.108])
-        by smtp.gmail.com with ESMTPSA id f12sm27848315qkh.22.2022.01.03.09.03.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jan 2022 09:03:18 -0800 (PST)
-Date:   Mon, 3 Jan 2022 12:03:18 -0500 (EST)
-From:   Nicolas Pitre <npitre@baylibre.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-i3c@lists.infradead.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i3c/master/mipi-i3c-hci: correct the config reference
- for endianness
-In-Reply-To: <20220103094504.3602-1-lukas.bulwahn@gmail.com>
-Message-ID: <3p9691n5-3qs-7s3q-pp9-389621935prr@onlyvoer.pbz>
-References: <20220103094504.3602-1-lukas.bulwahn@gmail.com>
+        Mon, 3 Jan 2022 12:40:10 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 94CF31F40F22
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1641231609;
+        bh=jba+qGYPoJxadgjHqJkPUWClPPhUueOgEbofNmbVao8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jzciOK1oBh8BA/iUQo/fJ8O4H+vVLkQVF8dnDhqfbd0AXDF/O28ci5A4nulrEu8AG
+         Uc4GbNQWNYGc+eqBxYH2CLt08tWZnjVFPULSFkfwYUCazh2s3Lo9bW7Kr5rEFP4Qxb
+         XeOnmjegBXq8hW5N+wpwGmu+PVU9e8aJBVrOnDcgYALikHMLLlFwISa1GzlGf3Wz+C
+         luEZawf+ruw6qfqnOJWJCl9i391rfJKPuHdHZZ19fJOIMxSVmaKx8qU2m/l83z3Baq
+         lJIb7A6FMykf733yqlBSEUTa8gGi0GCJJFgLtNhkVKQGGaf6E+RpQJ8qTPDA0q7Sf6
+         JrbHqCPLGnDAw==
+Received: by earth.universe (Postfix, from userid 1000)
+        id 0E6843C0CB7; Mon,  3 Jan 2022 18:40:08 +0100 (CET)
+Date:   Mon, 3 Jan 2022 18:40:08 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] power: supply: ab8500: Fix the error handling path of
+ ab8500_charger_probe()
+Message-ID: <20220103174008.ixhrgigw63m5mic6@earth.universe>
+References: <24a8b7e7b7b8f9f4b8eaad6707f420d55fd10aac.1640722789.git.christophe.jaillet@wanadoo.fr>
+ <CACRpkdbTo2Xp9EUWPHjGafLRTh_9Vt54VoJ8fwDsbBukai3+Fw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="j5w7uj7gojjsprdn"
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbTo2Xp9EUWPHjGafLRTh_9Vt54VoJ8fwDsbBukai3+Fw@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 3 Jan 2022, Lukas Bulwahn wrote:
 
-> The referred config BIG_ENDIAN does not exist. The config for the
-> endianness of the CPU architecture is called CPU_BIG_ENDIAN.
-> 
-> Correct the config name to the existing config for the endianness.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+--j5w7uj7gojjsprdn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Nicolas Pitre <npitre@baylibre.com>
+Hi,
 
-> ---
->  drivers/i3c/master/mipi-i3c-hci/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i3c/master/mipi-i3c-hci/core.c b/drivers/i3c/master/mipi-i3c-hci/core.c
-> index 1b73647cc3b1..8c01123dc4ed 100644
-> --- a/drivers/i3c/master/mipi-i3c-hci/core.c
-> +++ b/drivers/i3c/master/mipi-i3c-hci/core.c
-> @@ -662,7 +662,7 @@ static int i3c_hci_init(struct i3c_hci *hci)
->  
->  	/* Make sure our data ordering fits the host's */
->  	regval = reg_read(HC_CONTROL);
-> -	if (IS_ENABLED(CONFIG_BIG_ENDIAN)) {
-> +	if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) {
->  		if (!(regval & HC_CONTROL_DATA_BIG_ENDIAN)) {
->  			regval |= HC_CONTROL_DATA_BIG_ENDIAN;
->  			reg_write(HC_CONTROL, regval);
-> -- 
-> 2.17.1
-> 
-> 
+On Sun, Jan 02, 2022 at 07:43:55AM +0100, Linus Walleij wrote:
+> On Tue, Dec 28, 2021 at 9:43 PM Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+>=20
+> > Since the commit below, ab8500_bm_of_remove() needs to be called after a
+> > successful ab8500_bm_of_probe() call.
+> > This commit has only updated the remove function.
+> >
+> > Fix the error handling path of the probe the same way.
+> >
+> > Fixes: 6252c706cdb0 ("power: supply: ab8500: Standardize operating temp=
+erature")
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>=20
+> Nice catch,
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Thanks, queued.
+
+-- Sebastian
+
+--j5w7uj7gojjsprdn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmHTNPcACgkQ2O7X88g7
++ppMgw/+JBF67FPkXlyFeGx5QLedhsp9fAeGvWODTgAhKMsBrkpVD145ocWOlPmC
+yr7Zg5JgFeK1SsONRraMpia7cCwOnI9BHh2HC6Ux0rCRpDYSf8yef+VyZZMNXhKG
+yn7XyEChqCZebEJwcp0UXrA6LMiLdV7XImqsRnPoYUYHOHAYxmdPtebHEFap/OTN
+zArBAArDskIsfcVZBU7iTMYo7rWGII8uzyZV15ceAR5H/I3FQ5eKT7Ct1nrVrDEh
+J0J6BXqBSlTQdK9AyvhK9lBACsrUOX0aIdGSo/Rwj3wR/Pj4/I9rNOQK9p+i5xOp
+zfcWVsa+G38XrwOqLNz0Pdkgx6yaylsIs4+P24Ur+I+yDAuP4uQBl313/Kl0rY4S
+OsO4K6IavojjL8hVo0fvvbDy+ZkzYl21aMtOfWZOL59FD5Ul1NUt8bX3xguRZpqK
+V23XjObrZCAr9lm2k7jafcscnejnLgCazW1JpwiQGxpv5+QzQX9UoQcmQVISmYtX
++qa28TmnHqqjdy/VJ4ZvztVlYV7ycmNAkH2gg4EwsMLzmQ2JgBl0RlP+q6e1iJC5
+PRwqTiEkwGZJzLNhs8P3kTr/X23GWON31WjtjKsLaxP1rXBpTcPuVY8l/qgPDro2
+aNZN7ib2jy19eevKULKIOa38BcOPkOFfM5ey16EKG4KRlT8/q60=
+=RhbU
+-----END PGP SIGNATURE-----
+
+--j5w7uj7gojjsprdn--
