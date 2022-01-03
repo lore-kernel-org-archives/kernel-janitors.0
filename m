@@ -2,69 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 583A2C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jan 2022 12:17:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2326C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jan 2022 12:38:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230247AbiACMRA (ORCPT
+        id S231794AbiACMik (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Jan 2022 07:17:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37898 "EHLO
+        Mon, 3 Jan 2022 07:38:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229590AbiACMQ7 (ORCPT
+        with ESMTP id S229596AbiACMik (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Jan 2022 07:16:59 -0500
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D962C061761;
-        Mon,  3 Jan 2022 04:16:59 -0800 (PST)
-Received: by mail-yb1-xb30.google.com with SMTP id w184so78686072ybg.5;
-        Mon, 03 Jan 2022 04:16:59 -0800 (PST)
+        Mon, 3 Jan 2022 07:38:40 -0500
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D47BAC061761;
+        Mon,  3 Jan 2022 04:38:39 -0800 (PST)
+Received: by mail-yb1-xb29.google.com with SMTP id w184so78842984ybg.5;
+        Mon, 03 Jan 2022 04:38:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:from:date:message-id:subject:to:cc;
-        bh=lOyYQI0CIiGDaIpaEWbuQqbHJxkreGLXN8QH7/z8oI4=;
-        b=avHPEGVXj896OQFF1OF8lCa7weuU688Bgnpm0I6pbYz1jMhNj2SDgNGAGsxgYOWx+c
-         cpbaI+2zQm4NH4mEZp8vasOY2vT9Edc/3q82TLFpkKZxWA6McTVyivhnhlomW0gSZETH
-         c/VZWKq2H5c5gEIo3cKElPBM179+Pq/ivqeFhTjEWKBR0QYsdk7PtUcXqxxNdFLl5fbe
-         HC4xM3B/D6RSOJfP0r5Ky1dVi9E3oOY90BuvcNe59iqbvkxBcD7yKYZ0LNk6Km+UUyd+
-         JmUg+t8XZi1bG73eHLaBasdU9dgEVq0npwkZbvcXTc2AdFM5khqDAru/yuHfS9FXsEWD
-         GKig==
+        bh=bLnja4l85nY7sG9mMjzxhaWHBfXUtbh2pLdWbEvQT2M=;
+        b=m4CUYDwwYGiBfH4j8fRGpV7WzjTeq6n6WgqFCAqLuacnUYGG+YJ8TCG+iuxNy+pSdq
+         MG6esO8rGS5DMqZWLdSneFAoX1677MpUP/IP6CXbNuI46zQv5DTlEQrJV23B89peuNXj
+         AVQch7sIfT0BLA2mfBu40WNwdVJgGpxdchG1g7z9fBk2gwrDpWWjCBr3S9wRj0cjgMEO
+         jlckqsAib8eKoGLX3GigP/bm0kWvfsAa76H3GT8j+3Ccy5b3bepMdJsrMAkjdqFKPUy/
+         IITm7l+6xloMLl/NAxLASRMLp0RirC0qBJHj260BWBGNNwwPJLYSmlNIDs4x2diUpZMU
+         fdvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=lOyYQI0CIiGDaIpaEWbuQqbHJxkreGLXN8QH7/z8oI4=;
-        b=7wVPrrvd5szd1JakcGc4VoMRah4kWZUtIcJ9jfOaSn5twf9qRI7Jol9QVQHLS5Bdmy
-         XoidvXEw9+iK1ULrwFx0aVTVpZJh+eZUphaSbuDfR1Uqkc9yU43tQvAYcCJxwfvGv+Lr
-         TeZB7YWxjzCt2fbSeQNlugO+yXvzqLr9yu019yuoSiUlbIOeTo9lIvNwIvDUblv3XHCF
-         MwSHlCj9AKc+9DiMS28c6OE4hC6WLysCndh+YeeUH6MHT5lcgaQD95ESnYAHwphAHpB3
-         SuIKa0DnfJRzvQvX5D3u2Uh14Mt4QKfSrMGEWbGsr/DDZFShBTNH/+KFMhpUEorHhLla
-         uVSQ==
-X-Gm-Message-State: AOAM531lXjC1UZlfiMz1Q6Tz0EAVriWKCI10+1ZJthHAnWigFB8ZimpM
-        jIkY1h9K+L8g+dkXuJeA3KXnn/VzP/Y9328mVxdzd1XJppg=
-X-Google-Smtp-Source: ABdhPJzFJ/ln50kOs0GKYcEn5ilkqzXWpFA5l2H5i2IT85AlUaFrXYtyGnGh00nCHkufXifTTHJwPUUlwvvkP5I6cis=
-X-Received: by 2002:a25:3454:: with SMTP id b81mr41515482yba.723.1641212218511;
- Mon, 03 Jan 2022 04:16:58 -0800 (PST)
+        bh=bLnja4l85nY7sG9mMjzxhaWHBfXUtbh2pLdWbEvQT2M=;
+        b=hbDIrNl3UHAox1Sux23ykPv1ta/noMSYoV/0qbGwxpzBoEfiN3QH/gnlqOkL8WDia/
+         xxAkQJrOoGfoPQNiDr36KrkxH4MT2vHaWtLdIpJPq3rYPUStMCPwogzmF89RkRkOR829
+         NVi4I9IuIk4Eb5v5X5J4ug8VjY75nvCjqoLVWUwhixqWu53WdZ1X+4Toj/QJTtt6Oynf
+         0/Yo7VNQwAI+P5LvwDbKuBS+h21qVQrh/34iP6d1m87/UUiAKz8WpMN40Qp4dEKjVVG2
+         QWYHJJ9E5neQ663dvTIusr8w/OyKhca/PDJqnpFgbCuGoUMSmng762YNBAprJyWbQFQV
+         z2fQ==
+X-Gm-Message-State: AOAM532Wn9zDzjIVpuFA5YXIkYZW2oKzReoOfOvI5pkiJpCjpBoEDttU
+        4GDLA/zRDbG15YUhub4lfGTrAswkD7YNzBCsSm5VHBF/MOY=
+X-Google-Smtp-Source: ABdhPJwdM3ZmHEBgBAOasDIn6DTwku2MFxMojwFtTshOEa88VdPAVXEVQwwrD/l8q8VtG5eC8Gu9lgQd/OKoDv/CcDY=
+X-Received: by 2002:a25:bccd:: with SMTP id l13mr15586329ybm.767.1641213519001;
+ Mon, 03 Jan 2022 04:38:39 -0800 (PST)
 MIME-Version: 1.0
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Mon, 3 Jan 2022 13:16:48 +0100
-Message-ID: <CAKXUXMwcPLAAviuotom39+9m3upZvir-az=_-ZxU0eOu8OPxWA@mail.gmail.com>
-Subject: Reference to non-existing config COMET_EARLY_UART_DEBUG
-To:     Brian Cain <bcain@codeaurora.org>, linux-hexagon@vger.kernel.org
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+Date:   Mon, 3 Jan 2022 13:38:28 +0100
+Message-ID: <CAKXUXMy=M42hapfG1S4ZT1v5WEdH2KYiF8Cgukmf48=FKFCyJg@mail.gmail.com>
+Subject: Potentially broken error path in bio_map_user_iov()
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         kernel-janitors <kernel-janitors@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dear Brian,
+Dear Christoph,
 
-In arch/hexagon/kernel/vm_init_segtable.S, an ifdef refers to
-CONFIG_COMET_EARLY_UART_DEBUG, but this config is never defined in the
-Kconfig files.
+in the function bio_map_user_iov() in ./block/blk-map.c, there is an
+error branch for unlikely(offs & queue_dma_alignment(rq->q)), where
+the supposingly expected error return value of the function is set,
+i.e., ret = -EINVAL;. However, the variable ret is unconditionally
+reset by the blk_rq_append_bio(...) call below, so that this 'ret =
+-EINVAL;' assignment has no effect.
 
-Can we delete this dead code in
-arch/hexagon/kernel/vm_init_segtable.S? If so, I will send a patch for
-that.
+I am unsure which control flow you expect for this error case through
+the bio_map_user_iov() function. Maybe you just want a patch like this
+below to return the error code if it is at least once set?
+
+diff --git a/block/blk-map.c b/block/blk-map.c
+index 4526adde0156..4a3f6703f46f 100644
+--- a/block/blk-map.c
++++ b/block/blk-map.c
+@@ -235,7 +235,7 @@ static int bio_map_user_iov(struct request *rq,
+struct iov_iter *iter,
+ {
+        unsigned int max_sectors = queue_max_hw_sectors(rq->q);
+        struct bio *bio;
+-       int ret;
++       int ret = 0;
+        int j;
+
+        if (!iov_iter_count(iter))
+@@ -296,6 +296,9 @@ static int bio_map_user_iov(struct request *rq,
+struct iov_iter *iter,
+                        break;
+        }
+
++       if (ret)
++               goto out_unmap;
++
+        ret = blk_rq_append_bio(rq, bio);
+        if (ret)
+                goto out_unmap;
+
+I know too little about this function and its intent to create a
+proper patch, though.
+
+I also looked at the previous versions, but the error code of this
+error branch was really never effectively returned before either (as
+far as I grasped the earlier versions of this function). So, this
+error path probably never worked as intended.
+
 
 Best regards,
 
