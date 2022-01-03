@@ -2,94 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E34C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jan 2022 09:43:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3CE4C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jan 2022 09:45:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232224AbiACJnl (ORCPT
+        id S232224AbiACJp2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Jan 2022 04:43:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60466 "EHLO
+        Mon, 3 Jan 2022 04:45:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231187AbiACJnl (ORCPT
+        with ESMTP id S229994AbiACJp1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Jan 2022 04:43:41 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5E1EC061784
-        for <kernel-janitors@vger.kernel.org>; Mon,  3 Jan 2022 01:43:40 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id f5so133725540edq.6
-        for <kernel-janitors@vger.kernel.org>; Mon, 03 Jan 2022 01:43:40 -0800 (PST)
+        Mon, 3 Jan 2022 04:45:27 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3166CC061761;
+        Mon,  3 Jan 2022 01:45:27 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id d9so68891911wrb.0;
+        Mon, 03 Jan 2022 01:45:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lTzK8y2sZdFz3nw0haA5lwIMdx2juzh7izt/ICeGVgM=;
-        b=FB1tV7RQM7sQzJfcRPNR/keMKuIUy1sf+mv0eGwPZdmmVPQMmzZPo1rOSBf1Af2d/i
-         nDfDh25ILugS3uVv7SsMa6qSy/RpjrBMj4Q86wmUCwTty2vYV44Tu9tIGeQbN6plLYDk
-         ReKedn4CsKpiNIyDjLJTpJLt8V48ZDUy0sKTzWlhWiEy5Lj5cZt9gJcp8uPJSxdl4eZH
-         Uk/zRoPZd5uFW6fmAtj0lNJ46qL8HlYz2pnTaKtQrh5HHwf7dzIsrkQBe9hq+ZGVLhCZ
-         pXzXfjcmLFCl3vjfhgoXqbxgeDKaze/TkEuy/JIXcHpgTZ4YBEitHs/82D5A1vO06Oxl
-         t/fA==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=T5DDOgxL5O1mGP/BjJa3BFAGfWgawXo/hAw4SBh7aQo=;
+        b=qDyMwxMDBtZgDNyVeZwTUcVrV6LGcEYlyYLR+dMs1cTDEdKZRvSDq1Kfr+CZ7yn46M
+         8WHie5401uZN7dnziHiF+eT7KVxJDjK3IXqPjH3gxIfd+FyU3SOLSdWL5aQNfb+x4i9f
+         avNtewEodCpIjke6bPV40Vii31eMHD6O6TkVZZfe1D7QlkiVJ6vPs33nKxRi36TLx2FJ
+         8K+q8IJinUvOP2PV/5YomLyJWuaAXrKiDLa02JwpYUwCXDI/sG4mQQdgtZIq3WihT0ai
+         wTfX8hZL4VYD2gvOmBxe9ZaQDPEtyiXqUEI+/8hsLbCbi3SVz2A6At954TLqYcTaOq77
+         +NFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lTzK8y2sZdFz3nw0haA5lwIMdx2juzh7izt/ICeGVgM=;
-        b=WpIDbmJCOk0HCyi2Zxs8moTS9n7X8lf3DvCWkmqGBj/Kdq3poAOushfDiBOUfHzdBf
-         ZiY7PMNLATygqqt3A0749PMSGd5UhfoMFcvssVcc+fKdD3QKgW7IK1MyFIBjJbPDArJQ
-         vrMiv86CsxKvVuIdH1ySi0/SAkjaDeArnIl3flfyQ42Se6tTdIOnWwKvJrawyvtADZ1v
-         5dzGOQP006+1zLCUFtYQDGQeXr/0J6MuIO/91GrUmEJWGr/hmkvV/+YqZzaaDqYUR4zL
-         7SOff6JpBhZ2tx1jLaLUvRrx+T5RsqOKIeRLmbTu8+fmBh9y4U3Y8hcmIuGaHk8KUlih
-         Cylg==
-X-Gm-Message-State: AOAM5327cC9HUM99czb7LObBn5OMqTccmOCFuXA1DN5vhzah3hecZaGl
-        Sm3p31x9xR4OIdFC3xCknqMPw+/q2ZosIxzy7KLB4vaLE0s=
-X-Google-Smtp-Source: ABdhPJyVtCS6fJWUtIb8A/66eRuM+ArEzeQDdaU+UeRjv+TDrX3l7jWqIkrd37j4yqnVlNagMqgT6yHfzl9Cx7n55Ls=
-X-Received: by 2002:a50:d74e:: with SMTP id i14mr42729606edj.243.1641203019547;
- Mon, 03 Jan 2022 01:43:39 -0800 (PST)
-MIME-Version: 1.0
-References: <0723049c70dd9c90b30137b704c82db27d0ac4df.1640528330.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <0723049c70dd9c90b30137b704c82db27d0ac4df.1640528330.git.christophe.jaillet@wanadoo.fr>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 3 Jan 2022 10:43:28 +0100
-Message-ID: <CAMRc=MdnFsZ3uQ3c3iN1Qc4fH=-wMKHY4+giTrqVTJuptKjb8Q@mail.gmail.com>
-Subject: Re: [PATCH] gpio: max3191x: Use bitmap_free() to free bitmap
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=T5DDOgxL5O1mGP/BjJa3BFAGfWgawXo/hAw4SBh7aQo=;
+        b=c1uyImMQsQScBpUUT+8aBo5jXUjqG+3rW2PFDggtGRdRZy+An7J9AfLYhtkm0v3FgO
+         Gk8FL5D9fXweBfiW6+0dG5KpSrhoxi8aZLq8nfiUBYk5kdQIoy13qzWg/NG1hU3DY+re
+         CeFZwoUINfPO2zo2XiGafDOKza1qWrA4MhG0ybi4uFADzOvU1UL4m4fSgsX5q8oudan4
+         EfhfXpk61GWcwsMIQAr/sB9rmOl35/FTuEAF/4e7vdxXBeIn+LVWODzFATqilQXrySj+
+         W+HIJi1/fiNiYqX14Jlz0c2orKttL18cz6ob6Q8N9Y+35RbcnL9m14rJN5pTx6ODUUyp
+         g6kQ==
+X-Gm-Message-State: AOAM530rNMlEbAHcpCpFhM60drTobt0POEf35x+6koabhsUwaW7zya6f
+        4gOXLePfg94KKO6YEgVdZBpj+bJzLgE=
+X-Google-Smtp-Source: ABdhPJyouQt7Kd6GIh4yY07o8rR3F5X49jA7mZgyI26ial9IKj5xt80kUeVo5RM6no7IF7YZsDwMgQ==
+X-Received: by 2002:a05:6000:11c3:: with SMTP id i3mr37798770wrx.426.1641203125700;
+        Mon, 03 Jan 2022 01:45:25 -0800 (PST)
+Received: from felia.fritz.box ([2001:16b8:26e8:4300:8413:3f69:6728:4e17])
+        by smtp.gmail.com with ESMTPSA id u20sm40035335wml.45.2022.01.03.01.45.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jan 2022 01:45:25 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Nicolas Pitre <npitre@baylibre.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-i3c@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] i3c/master/mipi-i3c-hci: correct the config reference for endianness
+Date:   Mon,  3 Jan 2022 10:45:04 +0100
+Message-Id: <20220103094504.3602-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Dec 26, 2021 at 3:19 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> kfree() and bitmap_free() are the same. But using the later is more
-> consistent when freeing memory allocated with bitmap_alloc().
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/gpio/gpio-max3191x.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-max3191x.c b/drivers/gpio/gpio-max3191x.c
-> index 310d1a248cae..51cd6f98d1c7 100644
-> --- a/drivers/gpio/gpio-max3191x.c
-> +++ b/drivers/gpio/gpio-max3191x.c
-> @@ -326,7 +326,7 @@ static void gpiod_set_array_single_value_cansleep(unsigned int ndescs,
->                 bitmap_zero(values, ndescs);
->
->         gpiod_set_array_value_cansleep(ndescs, desc, info, values);
-> -       kfree(values);
-> +       bitmap_free(values);
->  }
->
->  static struct gpio_descs *devm_gpiod_get_array_optional_count(
-> --
-> 2.32.0
->
+The referred config BIG_ENDIAN does not exist. The config for the
+endianness of the CPU architecture is called CPU_BIG_ENDIAN.
 
-Good point, applied.
+Correct the config name to the existing config for the endianness.
 
-Bart
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ drivers/i3c/master/mipi-i3c-hci/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/i3c/master/mipi-i3c-hci/core.c b/drivers/i3c/master/mipi-i3c-hci/core.c
+index 1b73647cc3b1..8c01123dc4ed 100644
+--- a/drivers/i3c/master/mipi-i3c-hci/core.c
++++ b/drivers/i3c/master/mipi-i3c-hci/core.c
+@@ -662,7 +662,7 @@ static int i3c_hci_init(struct i3c_hci *hci)
+ 
+ 	/* Make sure our data ordering fits the host's */
+ 	regval = reg_read(HC_CONTROL);
+-	if (IS_ENABLED(CONFIG_BIG_ENDIAN)) {
++	if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) {
+ 		if (!(regval & HC_CONTROL_DATA_BIG_ENDIAN)) {
+ 			regval |= HC_CONTROL_DATA_BIG_ENDIAN;
+ 			reg_write(HC_CONTROL, regval);
+-- 
+2.17.1
+
