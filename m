@@ -2,109 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2326C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jan 2022 12:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6946C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jan 2022 15:59:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231794AbiACMik (ORCPT
+        id S232855AbiACP7o (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Jan 2022 07:38:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42756 "EHLO
+        Mon, 3 Jan 2022 10:59:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229596AbiACMik (ORCPT
+        with ESMTP id S229545AbiACP7n (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Jan 2022 07:38:40 -0500
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D47BAC061761;
-        Mon,  3 Jan 2022 04:38:39 -0800 (PST)
-Received: by mail-yb1-xb29.google.com with SMTP id w184so78842984ybg.5;
-        Mon, 03 Jan 2022 04:38:39 -0800 (PST)
+        Mon, 3 Jan 2022 10:59:43 -0500
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCEDFC061761;
+        Mon,  3 Jan 2022 07:59:42 -0800 (PST)
+Received: by mail-pg1-x530.google.com with SMTP id r5so30415545pgi.6;
+        Mon, 03 Jan 2022 07:59:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=bLnja4l85nY7sG9mMjzxhaWHBfXUtbh2pLdWbEvQT2M=;
-        b=m4CUYDwwYGiBfH4j8fRGpV7WzjTeq6n6WgqFCAqLuacnUYGG+YJ8TCG+iuxNy+pSdq
-         MG6esO8rGS5DMqZWLdSneFAoX1677MpUP/IP6CXbNuI46zQv5DTlEQrJV23B89peuNXj
-         AVQch7sIfT0BLA2mfBu40WNwdVJgGpxdchG1g7z9fBk2gwrDpWWjCBr3S9wRj0cjgMEO
-         jlckqsAib8eKoGLX3GigP/bm0kWvfsAa76H3GT8j+3Ccy5b3bepMdJsrMAkjdqFKPUy/
-         IITm7l+6xloMLl/NAxLASRMLp0RirC0qBJHj260BWBGNNwwPJLYSmlNIDs4x2diUpZMU
-         fdvA==
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=ul8L7yJ1J0zXK3Ue0HqUoFN3kW9JC/qcbMluleB9bYk=;
+        b=BhhL/rcLHewHWuEpiTyXFcVFqUPcGFip+UI5EMwbtJwRNyRy+VgzNwt5779X0heBpt
+         0NFRaNryLWq6Ys86Z5rgZ7MvPwuq7KJEpxqt+hUnKvugsCiDFQjK9B471jz6Zq/UpVoS
+         NcNyyAfISHXLg1Mgi6mffySBV0DElYMDYqTDuWP2+zUQgOXcUr5CX2881LKbl6nA/dgG
+         fGE2fP3brPeCI8tTgpNvQoZSSnUXynEBTK6WGiootPmewqOSNro3Uzlbl/MMelFDUoTW
+         KOMbpM3ZNPgYtPoAepLTl8thFUncGVKUD96O1cbvnH3jxuncXnaBt7ENGRlKB5g/leug
+         EZJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=bLnja4l85nY7sG9mMjzxhaWHBfXUtbh2pLdWbEvQT2M=;
-        b=hbDIrNl3UHAox1Sux23ykPv1ta/noMSYoV/0qbGwxpzBoEfiN3QH/gnlqOkL8WDia/
-         xxAkQJrOoGfoPQNiDr36KrkxH4MT2vHaWtLdIpJPq3rYPUStMCPwogzmF89RkRkOR829
-         NVi4I9IuIk4Eb5v5X5J4ug8VjY75nvCjqoLVWUwhixqWu53WdZ1X+4Toj/QJTtt6Oynf
-         0/Yo7VNQwAI+P5LvwDbKuBS+h21qVQrh/34iP6d1m87/UUiAKz8WpMN40Qp4dEKjVVG2
-         QWYHJJ9E5neQ663dvTIusr8w/OyKhca/PDJqnpFgbCuGoUMSmng762YNBAprJyWbQFQV
-         z2fQ==
-X-Gm-Message-State: AOAM532Wn9zDzjIVpuFA5YXIkYZW2oKzReoOfOvI5pkiJpCjpBoEDttU
-        4GDLA/zRDbG15YUhub4lfGTrAswkD7YNzBCsSm5VHBF/MOY=
-X-Google-Smtp-Source: ABdhPJwdM3ZmHEBgBAOasDIn6DTwku2MFxMojwFtTshOEa88VdPAVXEVQwwrD/l8q8VtG5eC8Gu9lgQd/OKoDv/CcDY=
-X-Received: by 2002:a25:bccd:: with SMTP id l13mr15586329ybm.767.1641213519001;
- Mon, 03 Jan 2022 04:38:39 -0800 (PST)
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=ul8L7yJ1J0zXK3Ue0HqUoFN3kW9JC/qcbMluleB9bYk=;
+        b=PfshiK/QP5aSjpN2AT4LvPtiMjq5Zfk800B6GRlnjc33vI48cSRa3gYcn3nKUuXPGV
+         uC2QAITgBM5zMoLMaYg/qafta57PE5wfUCV1sJNmMd9k2u/V1s2BzAcgu77Pkr8SeRjv
+         MIz9trbiCEVsT7z7SXswwWY7fyd2TQ72f/0UV8PCVcST5o7yt+gnSj2YQSC2rC1IrSfY
+         BuYXZdhl4QnvsJPd2UbFoD/tGw/ufwhCI5pUQRNX7H1h7vCFmBHatlfrP/5lah5EUH9G
+         oSOzHsaVxxbpTA9jXg1QK44vrm4sqwwGfXhhL5ZpUeRvYtZbMAj8cJsRMgI84Wg9tdT5
+         Fzwg==
+X-Gm-Message-State: AOAM5300YxVFwiTpSRBU9AH42fVu7iv5fh3wR+oSrzk5C4f4bO+ZW3K1
+        ctFvCPbcCOLGmY1TFI3n2s0=
+X-Google-Smtp-Source: ABdhPJxp/Ic16mK7JMI9+HKup25AtmvCmIFdDy+ouZVAL4txSOBEa0euIyHjl7ZLRsMvDizTHzPROg==
+X-Received: by 2002:a05:6a00:8d3:b0:4bc:3fe0:98d2 with SMTP id s19-20020a056a0008d300b004bc3fe098d2mr22110560pfu.3.1641225582453;
+        Mon, 03 Jan 2022 07:59:42 -0800 (PST)
+Received: from [192.168.3.7] (softbank219203027033.bbtec.net. [219.203.27.33])
+        by smtp.gmail.com with ESMTPSA id f4sm36518361pfj.25.2022.01.03.07.59.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jan 2022 07:59:42 -0800 (PST)
+Message-ID: <a86506727555e6cd38681b94fcecf6b7fabf5bc8.camel@gmail.com>
+Subject: Re: [PATCH] media: pt3: Use dma_set_mask_and_coherent() and
+ simplify code
+From:   Akihiro TSUKADA <tskd08@gmail.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        mchehab@kernel.org, andy.shevchenko@gmail.com,
+        kirill.shilimanov@huawei.com, novikov@ispras.ru
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Date:   Tue, 04 Jan 2022 00:59:38 +0900
+In-Reply-To: <34f3a2b58d5f9078709b7d592536af0be49ea1d9.1641072450.git.christophe.jaillet@wanadoo.fr>
+References: <34f3a2b58d5f9078709b7d592536af0be49ea1d9.1641072450.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.42.2 
 MIME-Version: 1.0
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Mon, 3 Jan 2022 13:38:28 +0100
-Message-ID: <CAKXUXMy=M42hapfG1S4ZT1v5WEdH2KYiF8Cgukmf48=FKFCyJg@mail.gmail.com>
-Subject: Potentially broken error path in bio_map_user_iov()
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dear Christoph,
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/media/pci/pt3/pt3.c | 16 ++++------------
+>  1 file changed, 4 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/media/pci/pt3/pt3.c
+> b/drivers/media/pci/pt3/pt3.c
+> index 0d51bdf01f43..11f26cac0abc 100644
+> --- a/drivers/media/pci/pt3/pt3.c
+> +++ b/drivers/media/pci/pt3/pt3.c
+> @@ -707,18 +707,10 @@ static int pt3_probe(struct pci_dev *pdev,
+> const struct pci_device_id *ent)
+>         if (ret < 0)
+>                 return ret;
+>  
+> -       ret = dma_set_mask(&pdev->dev, DMA_BIT_MASK(64));
+> -       if (ret == 0)
+> -               dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(64));
+> -       else {
+> -               ret = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+> -               if (ret == 0)
+> -                       dma_set_coherent_mask(&pdev->dev,
+> DMA_BIT_MASK(32));
+> -               else {
+> -                       dev_err(&pdev->dev, "Failed to set DMA
+> mask\n");
+> -                       return ret;
+> -               }
+> -               dev_info(&pdev->dev, "Use 32bit DMA\n");
+> +       ret = dma_set_mask_and_coherent(&pdev->dev,
+> DMA_BIT_MASK(64));
+> +       if (ret) {
+> +               dev_err(&pdev->dev, "Failed to set DMA mask\n");
+> +               return ret;
+>         }
+>  
+>         pt3 = devm_kzalloc(&pdev->dev, sizeof(*pt3), GFP_KERNEL);
 
-in the function bio_map_user_iov() in ./block/blk-map.c, there is an
-error branch for unlikely(offs & queue_dma_alignment(rq->q)), where
-the supposingly expected error return value of the function is set,
-i.e., ret = -EINVAL;. However, the variable ret is unconditionally
-reset by the blk_rq_append_bio(...) call below, so that this 'ret =
--EINVAL;' assignment has no effect.
+tested on x86_64.
 
-I am unsure which control flow you expect for this error case through
-the bio_map_user_iov() function. Maybe you just want a patch like this
-below to return the error code if it is at least once set?
-
-diff --git a/block/blk-map.c b/block/blk-map.c
-index 4526adde0156..4a3f6703f46f 100644
---- a/block/blk-map.c
-+++ b/block/blk-map.c
-@@ -235,7 +235,7 @@ static int bio_map_user_iov(struct request *rq,
-struct iov_iter *iter,
- {
-        unsigned int max_sectors = queue_max_hw_sectors(rq->q);
-        struct bio *bio;
--       int ret;
-+       int ret = 0;
-        int j;
-
-        if (!iov_iter_count(iter))
-@@ -296,6 +296,9 @@ static int bio_map_user_iov(struct request *rq,
-struct iov_iter *iter,
-                        break;
-        }
-
-+       if (ret)
-+               goto out_unmap;
-+
-        ret = blk_rq_append_bio(rq, bio);
-        if (ret)
-                goto out_unmap;
-
-I know too little about this function and its intent to create a
-proper patch, though.
-
-I also looked at the previous versions, but the error code of this
-error branch was really never effectively returned before either (as
-far as I grasped the earlier versions of this function). So, this
-error path probably never worked as intended.
-
-
-Best regards,
-
-Lukas
+Acked-by: Akihiro Tsukada <tskd08@gmail.com>
