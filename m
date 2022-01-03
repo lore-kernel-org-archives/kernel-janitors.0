@@ -2,80 +2,68 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 825B8C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jan 2022 10:50:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 671EAC433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jan 2022 11:26:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232769AbiACKuL (ORCPT
+        id S232959AbiACL04 convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Jan 2022 05:50:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47024 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232753AbiACKuK (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Jan 2022 05:50:10 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95DA6C061784;
-        Mon,  3 Jan 2022 02:50:10 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3DBEC61025;
-        Mon,  3 Jan 2022 10:50:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9C3B1C36AF2;
-        Mon,  3 Jan 2022 10:50:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641207009;
-        bh=SbzhVYDA7q36z2bKdgU4rcWBPtBR6G7zZfQLH8PrWFk=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=UUX0YiaPjWOw7LxiIw0L/VEoiFtHiHVJOnAJNbXkWakqO4TXkfp0U7h7gPy6KguCy
-         LVioZVqAEVO1LVvygfQobxYbhS1y/s6LJkUqsaTd6yMAN1wzUz9QbGbIBFUuj2oMHS
-         TxjUMpORGWAj/oQcri0ahqzWslqWG9OxrIgE6xzpW69LcsYkEQ15c2ajeAjJ2MRTy5
-         cYxKXTsuWRWucWUrHmn0PqpJqTc3LdiMGuQG+iEoAgm+Pafn3k69r6euoHeCslBzmw
-         MrXAmftLb1ksLXqoiZZBhUAbPCKS6EGNabWEB/fOhMFb+FVT0JfGbA4q7cSHmjTUSU
-         4DdNwGXnN9WSw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 7FD0EF79406;
-        Mon,  3 Jan 2022 10:50:09 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] ethernet: s2io: Use dma_set_mask_and_coherent() and simplify
- code
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164120700951.2591.15379662570045379334.git-patchwork-notify@kernel.org>
-Date:   Mon, 03 Jan 2022 10:50:09 +0000
-References: <e53afd59c8938bfaaa94cadd4621d40f54ec2102.1641155181.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <e53afd59c8938bfaaa94cadd4621d40f54ec2102.1641155181.git.christophe.jaillet@wanadoo.fr>
+        Mon, 3 Jan 2022 06:26:56 -0500
+Received: from aposti.net ([89.234.176.197]:56396 "EHLO aposti.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231570AbiACL0z (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 3 Jan 2022 06:26:55 -0500
+Date:   Mon, 03 Jan 2022 11:26:41 +0000
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH] Input: gpio-keys: Avoid clearing twice some memory
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     jdmason@kudzu.us, davem@davemloft.net, kuba@kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+Cc:     dmitry.torokhov@gmail.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Message-Id: <H4T45R.07J01GT7EIY23@crapouillou.net>
+In-Reply-To: <d6ee621b9dd75b92f8831db365cee58dc2025322.1640813136.git.christophe.jaillet@wanadoo.fr>
+References: <d6ee621b9dd75b92f8831db365cee58dc2025322.1640813136.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Hi,
 
-This patch was applied to netdev/net-next.git (master)
-by David S. Miller <davem@davemloft.net>:
-
-On Sun,  2 Jan 2022 21:27:39 +0100 you wrote:
-> Use dma_set_mask_and_coherent() instead of unrolling it with some
-> dma_set_mask()+dma_set_coherent_mask().
+Le mer., déc. 29 2021 at 22:26:56 +0100, Christophe JAILLET 
+<christophe.jaillet@wanadoo.fr> a écrit :
+> bitmap_parselist() already clears the 'bits' bitmap, so there is no 
+> need
+> to clear it when it is allocated. This just wastes some cycles.
 > 
-> Moreover, as stated in [1], dma_set_mask() with a 64-bit mask will never
-> fail if dev->dma_mask is non-NULL.
-> So, if it fails, the 32 bits case will also fail for the same reason.
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Acked-by: Paul Cercueil <paul@crapouillou.net>
+
+Cheers,
+-Paul
+
+> ---
+>  drivers/input/keyboard/gpio_keys.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> [...]
-
-Here is the summary with links:
-  - ethernet: s2io: Use dma_set_mask_and_coherent() and simplify code
-    https://git.kernel.org/netdev/net-next/c/7120075ec41a
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> diff --git a/drivers/input/keyboard/gpio_keys.c 
+> b/drivers/input/keyboard/gpio_keys.c
+> index 8dbf1e69c90a..d75a8b179a8a 100644
+> --- a/drivers/input/keyboard/gpio_keys.c
+> +++ b/drivers/input/keyboard/gpio_keys.c
+> @@ -247,7 +247,7 @@ static ssize_t gpio_keys_attr_store_helper(struct 
+> gpio_keys_drvdata *ddata,
+>  	ssize_t error;
+>  	int i;
+> 
+> -	bits = bitmap_zalloc(n_events, GFP_KERNEL);
+> +	bits = bitmap_alloc(n_events, GFP_KERNEL);
+>  	if (!bits)
+>  		return -ENOMEM;
+> 
+> --
+> 2.32.0
+> 
 
 
