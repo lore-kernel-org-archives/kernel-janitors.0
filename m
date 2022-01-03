@@ -2,137 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35674C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun,  2 Jan 2022 21:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C303FC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jan 2022 01:52:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229913AbiABVHK (ORCPT
+        id S231361AbiACBwA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 2 Jan 2022 16:07:10 -0500
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:53112 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229898AbiABVHK (ORCPT
+        Sun, 2 Jan 2022 20:52:00 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:57703 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230258AbiACBwA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 2 Jan 2022 16:07:10 -0500
-Received: from pop-os.home ([86.243.171.122])
-        by smtp.orange.fr with ESMTPA
-        id 484InfezyIEdl484In6OF9; Sun, 02 Jan 2022 22:07:08 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 02 Jan 2022 22:07:08 +0100
-X-ME-IP: 86.243.171.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     jdmason@kudzu.us, davem@davemloft.net, kuba@kernel.org,
-        jesse.brandeburg@intel.com, liuhangbin@gmail.com,
-        colin.king@intel.com, zhengyongjun3@huawei.com,
-        paskripkin@gmail.com, arnd@arndb.de
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] net: vxge: Use dma_set_mask_and_coherent() and simplify code
-Date:   Sun,  2 Jan 2022 22:07:05 +0100
-Message-Id: <6e78ed8aef3240a2cbacb3e424c6470336253e47.1641157546.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
+        Sun, 2 Jan 2022 20:52:00 -0500
+Received: from mail-wr1-f50.google.com ([209.85.221.50]) by
+ mrelayeu.kundenserver.de (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1N2mWA-1mPbuM05mu-0135z1; Mon, 03 Jan 2022 02:51:58 +0100
+Received: by mail-wr1-f50.google.com with SMTP id i22so67102549wrb.13;
+        Sun, 02 Jan 2022 17:51:57 -0800 (PST)
+X-Gm-Message-State: AOAM532nrw7djO3ZVRRYV1wQ1b7GxSKXKb1qxAxyakxjH51WP7AHcbFm
+        +38EarQP/lFRiNDq8esMWmjRhfIKsCZNohTH3G0=
+X-Google-Smtp-Source: ABdhPJy/OLvkrfa3uca/8PNV9jtXkxIYVTA+Y3dckiQQVX+/vieDW+A7SrD0ghnDxY5JGEBk7gaoBrxcct8LDuzNqYM=
+X-Received: by 2002:adf:a352:: with SMTP id d18mr36633279wrb.317.1641174717604;
+ Sun, 02 Jan 2022 17:51:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <0b8bacb36e111d2621c2c0459b20b1da9f4375c0.1641137463.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <0b8bacb36e111d2621c2c0459b20b1da9f4375c0.1641137463.git.christophe.jaillet@wanadoo.fr>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sun, 2 Jan 2022 20:51:58 -0500
+X-Gmail-Original-Message-ID: <CAK8P3a2XwFveAd8nSCexZG3_UZga2PQ+EXHxQLGaWkLjCwrBxQ@mail.gmail.com>
+Message-ID: <CAK8P3a2XwFveAd8nSCexZG3_UZga2PQ+EXHxQLGaWkLjCwrBxQ@mail.gmail.com>
+Subject: Re: [PATCH] alpha: Remove usage of the deprecated "pci-dma-compat.h" API
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>, martin.oliveira@eideticom.com,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:7beYpQjZxJvqVmrlRuG56y5UE/scO4Q13N8XviTEF31wr11Boka
+ cBensjlgCN8p6gJO7tfJQCGANEQ5OeBqRInxkmKLTrFP5DlbODUK7oTQUPcS+8xqt8fewc4
+ 60nN0LfhddQmemkaenXKPhRPrXjoAo4BMMyqdr4QEuJN8dV8b5wUeTpPtKppn0gAKBVuenD
+ 03gLZ5Q/VdAXj5cILkWZQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:sXdiEJACyZI=:Mr52v0kT3eskIKkZmKQ44V
+ i/A8sDDVa1akWuT5fkYTJjE4xmatJsVB0DvLkQbEkX+vIaCoV6pNDRwkL7EF8srTNyoE4P0La
+ Mn/bOLyDKBfsQ0gqfQeQXPtam8W/n9tW/EigJhMY53c8j9MY8e8ic/gEgZ46ml8tRxYq6+pb+
+ ufdHUlk9qRKWQaKFOZ2dV2m9ndHLRFSi9y4MZYkBPUwDQNAL+UvKfU1wU2Ur5cysXqx6rCI8K
+ StT5tj6nndZKtpY/pcoJM1ObTVl2uJUPDF1K56l3dh/2pamZq6P/J/XqmUHLlYDKr1nL/CY1v
+ V2eMGEQ+W7Tvue7onhdZO49bUsZNtaDM6mmIPLpEApiNHJl2AUwzaTNxHajOC/mheWcN/r2x9
+ zL0Qc3FPx6InJg37rwwqMhLjYyn1Xr6NeDJD56N/3r+NDqO8RClzKO47H0YRoFdi8wpHiMDb5
+ uR05j0eWrKKUPcv9almo+/DcmFEVFpXsZV9Y0yw26wTmNLwfeTxheUzH630DlDHL1Z/oL2k10
+ 7zIJFsLSC3losYz86tZvaQCPoXcu7y6srtXwmx63nfWOM3eE/WBW+2qS2foWLuzlP7en4fvIw
+ sIMl23GowJ7dKtKnYiq2BEqw09bIZYkk1ugdN8yZuxp3hBCQRhUD2usmAQNN1JY7MqO8UFyZQ
+ fuSVjdWoIFM4IUbV9r8gSba+28WIVvndHM6+nF4fc0tOnrFN6aorIYF/99Hru45jJ4xk=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use dma_set_mask_and_coherent() instead of unrolling it with some
-dma_set_mask()+dma_set_coherent_mask().
+On Sun, Jan 2, 2022 at 10:32 AM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> In [1], Christoph Hellwig has proposed to remove the wrappers in
+> include/linux/pci-dma-compat.h.
+>
+> Some reasons why this API should be removed have been given by Julia
+> Lawall in [2].
+>
+> A coccinelle script has been used to perform the needed transformation.
+> Only relevant parts are given below.
+>
+>
+> [1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
+> [2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Moreover, as stated in [1], dma_set_mask() with a 64-bit mask will never
-fail if dev->dma_mask is non-NULL.
-So, if it fails, the 32 bits case will also fail for the same reason.
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
-That said, 'high_dma' can only be 1 after a successful
-dma_set_mask_and_coherent().
+It looks like the number of remaining files that use the old
+interfaces has gone down
+a lot more since you last sent these patches. I would suggest you send them as a
+series that includes the patch to remove the header as the last change, and
+ask Andrew to pick up the ones that remain after this resend into the -mm tree,
+possibly after the next -rc1. How many patches do you have left?
 
-Simplify code and remove some dead code accordingly, including a now
-useless parameter to vxge_device_register().
-
-[1]: https://lkml.org/lkml/2021/6/7/398
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-In vxge_device_register(), "ndev->features |= NETIF_F_HIGHDMA;" can
-certainly be moved a few lines above and merged with
-"dev->features |= ndev->hw_features | ..."
-
-However, as I can not test this change, I've left it as is to avoid
-potential side effects.
----
- .../net/ethernet/neterion/vxge/vxge-main.c    | 27 +++----------------
- 1 file changed, 4 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/net/ethernet/neterion/vxge/vxge-main.c b/drivers/net/ethernet/neterion/vxge/vxge-main.c
-index 2c2e9e56ed4e..aa7c093f1f91 100644
---- a/drivers/net/ethernet/neterion/vxge/vxge-main.c
-+++ b/drivers/net/ethernet/neterion/vxge/vxge-main.c
-@@ -3349,7 +3349,7 @@ static const struct net_device_ops vxge_netdev_ops = {
- };
- 
- static int vxge_device_register(struct __vxge_hw_device *hldev,
--				struct vxge_config *config, int high_dma,
-+				struct vxge_config *config,
- 				int no_of_vpath, struct vxgedev **vdev_out)
- {
- 	struct net_device *ndev;
-@@ -3421,11 +3421,7 @@ static int vxge_device_register(struct __vxge_hw_device *hldev,
- 	vxge_debug_init(vxge_hw_device_trace_level_get(hldev),
- 		"%s : checksumming enabled", __func__);
- 
--	if (high_dma) {
--		ndev->features |= NETIF_F_HIGHDMA;
--		vxge_debug_init(vxge_hw_device_trace_level_get(hldev),
--			"%s : using High DMA", __func__);
--	}
-+	ndev->features |= NETIF_F_HIGHDMA;
- 
- 	/* MTU range: 68 - 9600 */
- 	ndev->min_mtu = VXGE_HW_MIN_MTU;
-@@ -4282,7 +4278,6 @@ vxge_probe(struct pci_dev *pdev, const struct pci_device_id *pre)
- 	struct __vxge_hw_device *hldev;
- 	enum vxge_hw_status status;
- 	int ret;
--	int high_dma = 0;
- 	u64 vpath_mask = 0;
- 	struct vxgedev *vdev;
- 	struct vxge_config *ll_config = NULL;
-@@ -4372,22 +4367,9 @@ vxge_probe(struct pci_dev *pdev, const struct pci_device_id *pre)
- 		goto _exit0;
- 	}
- 
--	if (!dma_set_mask(&pdev->dev, DMA_BIT_MASK(64))) {
-+	if (!dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64))) {
- 		vxge_debug_ll_config(VXGE_TRACE,
- 			"%s : using 64bit DMA", __func__);
--
--		high_dma = 1;
--
--		if (dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(64))) {
--			vxge_debug_init(VXGE_ERR,
--				"%s : unable to obtain 64bit DMA for "
--				"consistent allocations", __func__);
--			ret = -ENOMEM;
--			goto _exit1;
--		}
--	} else if (!dma_set_mask(&pdev->dev, DMA_BIT_MASK(32))) {
--		vxge_debug_ll_config(VXGE_TRACE,
--			"%s : using 32bit DMA", __func__);
- 	} else {
- 		ret = -ENOMEM;
- 		goto _exit1;
-@@ -4555,8 +4537,7 @@ vxge_probe(struct pci_dev *pdev, const struct pci_device_id *pre)
- 	ll_config->tx_pause_enable = VXGE_PAUSE_CTRL_ENABLE;
- 	ll_config->rx_pause_enable = VXGE_PAUSE_CTRL_ENABLE;
- 
--	ret = vxge_device_register(hldev, ll_config, high_dma, no_of_vpath,
--				   &vdev);
-+	ret = vxge_device_register(hldev, ll_config, no_of_vpath, &vdev);
- 	if (ret) {
- 		ret = -EINVAL;
- 		goto _exit4;
--- 
-2.32.0
-
+         Arnd
