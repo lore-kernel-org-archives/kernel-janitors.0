@@ -2,68 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6655FC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jan 2022 10:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4500C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jan 2022 10:50:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232718AbiACKpL (ORCPT
+        id S232759AbiACKuL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Jan 2022 05:45:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45936 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231356AbiACKpK (ORCPT
+        Mon, 3 Jan 2022 05:50:11 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:57522 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232752AbiACKuK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Jan 2022 05:45:10 -0500
-Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80374C061761;
-        Mon,  3 Jan 2022 02:45:10 -0800 (PST)
-Received: by mail-yb1-xb2a.google.com with SMTP id d1so77351259ybh.6;
-        Mon, 03 Jan 2022 02:45:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=VbPuZiW/1Qkzm5w7KW+G1qO7Y5j2xfvJABuQJzXu4eE=;
-        b=fuaRNJKNrp3vE3uSHgjrdqCVm8KmM7Te50uPnH/Ks0UIQpYFDZbWUmZfkUcBIZQqPZ
-         /fw87SCujq3gddXDwi+xTVxWrYw9exzOJt4Kb0iGuNYGzMSm1VBsezRHgYaFHSr0/I0W
-         6U/dOL3UpvaGCJ7kiu7wbpF+u12biX3MqvE99GnVwq9sgNmxFySaJ/BXN0uBoMBDhEl9
-         s1jP5LzLIZrFflAHF/9C00w8hPU5vtE3LWSLT+SLVUyZH1IzbKgjEvKzeMtRgl3b+j6R
-         xnXxKlIYOq/fvqRFooXJcEkMRlaj7c6KZgELZNRipjCwe70TqrfIbwQBK2X2yC3gZPXF
-         QrGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=VbPuZiW/1Qkzm5w7KW+G1qO7Y5j2xfvJABuQJzXu4eE=;
-        b=srs4YI/Gae/u2Vgnq0gNKuxbV6gH9lYnMvZvrXPRWGy6lXVW/J63M2ZWtMxxX+NlMY
-         qDfRaj16fYtMNXlyNCVfQbfpa2GGWXXSlgZtrhYL2WTj15D6X+xQeNhUN8YR8IB60WU0
-         SLijOrBNxpomS3UfhY2n1G70q5pvCQQvT/X4am9WbcN+AHOPJeSGQbd/Ki0m8vUruOc1
-         NJJ2NpTTs3Z3Xj6zMR9ozbs2M+s1Z46IbkZLXcXya+FHcON6uRgO8pyM9tl8VqigXnJx
-         TSOAHBE3L55D4mimRxnvA/9ZkuCSMXjdogfJGnSo4u3lVIHt14dX27GfHDcSTMLlPAM9
-         l9gQ==
-X-Gm-Message-State: AOAM530w9PItB4mxggzX90pzb5Age/5JZ71muUz3+XsnQoSeXrBImEdu
-        14Xqtd8mZYtVL2UKcxPJUw6dWta3pSfYK9qKM4aB1aWSXFM=
-X-Google-Smtp-Source: ABdhPJwIrrCOZiixswFFGbjt1p5pJZZ5VD1zyAOhh+nu8/z+9NN2n0DbanaszwWOuuUSLDqwO5gAD0aVxqAZAL/FPr4=
-X-Received: by 2002:a25:cccf:: with SMTP id l198mr2515418ybf.608.1641206709699;
- Mon, 03 Jan 2022 02:45:09 -0800 (PST)
+        Mon, 3 Jan 2022 05:50:10 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 21F2A61023;
+        Mon,  3 Jan 2022 10:50:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 86957C36AEE;
+        Mon,  3 Jan 2022 10:50:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1641207009;
+        bh=Nt8rKJVx8L07QrjNrtOBcZ4c2qEOLYPssokLETed7ZU=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=OzwP/DZJpy19MOour9UXjU6NzLq4omAHTk1bJkwdnxt7ZdJ1J9oDRFgcsOYBXGG1L
+         Ks3BTtW6lnAMZs/simQ1hqNp2QujK1zjsxd+xuTGlBTXMELwXaBh3NuZtxM4UFEUgs
+         T+1DzogXJUPWwC6EXV2b8j59SnJnwM2A6PCKNqSSdtwy22sNEzm4UGL+l71eMp1q2L
+         f/moHa6sSLFXbaGsHErh1TYCO9eK4kxwwiLnoMD8ng3IkS9fkQSHlCyGdvtKWC3IH9
+         tTFxuArFXcUMOvGin4gdtRnq5GplmN4l0cWODwWmM+uv6Tl9uD8OL/brWj3mN6vyZ5
+         DUFzQSs/hrM7Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 74C37F79402;
+        Mon,  3 Jan 2022 10:50:09 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Mon, 3 Jan 2022 11:44:59 +0100
-Message-ID: <CAKXUXMwARdtgBQ26vB2c0gubgc5P08xfwyQonrG_D+p1iNDLxg@mail.gmail.com>
-Subject: Reference to non-existing CONFIG_CPU_H300H
-To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        uclinux-h8-devel@lists.sourceforge.jp
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: vxge: Use dma_set_mask_and_coherent() and simplify code
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164120700947.2591.17033109564004070251.git-patchwork-notify@kernel.org>
+Date:   Mon, 03 Jan 2022 10:50:09 +0000
+References: <6e78ed8aef3240a2cbacb3e424c6470336253e47.1641157546.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <6e78ed8aef3240a2cbacb3e424c6470336253e47.1641157546.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     jdmason@kudzu.us, davem@davemloft.net, kuba@kernel.org,
+        jesse.brandeburg@intel.com, liuhangbin@gmail.com,
+        colin.king@intel.com, zhengyongjun3@huawei.com,
+        paskripkin@gmail.com, arnd@arndb.de, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dear Yoshinori-san,
+Hello:
 
-In ./arch/h8300/include/asm/hash.h, there is a reference to
-CONFIG_CPU_H300H, but CONFIG_CPU_H300H does not exist.
+This patch was applied to netdev/net-next.git (master)
+by David S. Miller <davem@davemloft.net>:
 
-Was CONFIG_CPU_H8300H intended to be referred to here?
+On Sun,  2 Jan 2022 22:07:05 +0100 you wrote:
+> Use dma_set_mask_and_coherent() instead of unrolling it with some
+> dma_set_mask()+dma_set_coherent_mask().
+> 
+> Moreover, as stated in [1], dma_set_mask() with a 64-bit mask will never
+> fail if dev->dma_mask is non-NULL.
+> So, if it fails, the 32 bits case will also fail for the same reason.
+> 
+> [...]
 
-Best regards,
+Here is the summary with links:
+  - net: vxge: Use dma_set_mask_and_coherent() and simplify code
+    https://git.kernel.org/netdev/net-next/c/3d694552fd8f
 
-Lukas
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
