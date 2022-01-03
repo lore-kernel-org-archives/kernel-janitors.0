@@ -2,88 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3CE4C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jan 2022 09:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 346EFC433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jan 2022 10:30:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232224AbiACJp2 (ORCPT
+        id S232631AbiACKas (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Jan 2022 04:45:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60876 "EHLO
+        Mon, 3 Jan 2022 05:30:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229994AbiACJp1 (ORCPT
+        with ESMTP id S230223AbiACKas (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Jan 2022 04:45:27 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3166CC061761;
-        Mon,  3 Jan 2022 01:45:27 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id d9so68891911wrb.0;
-        Mon, 03 Jan 2022 01:45:27 -0800 (PST)
+        Mon, 3 Jan 2022 05:30:48 -0500
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDE07C061761
+        for <kernel-janitors@vger.kernel.org>; Mon,  3 Jan 2022 02:30:47 -0800 (PST)
+Received: by mail-pf1-x436.google.com with SMTP id t187so15538687pfb.11
+        for <kernel-janitors@vger.kernel.org>; Mon, 03 Jan 2022 02:30:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=T5DDOgxL5O1mGP/BjJa3BFAGfWgawXo/hAw4SBh7aQo=;
-        b=qDyMwxMDBtZgDNyVeZwTUcVrV6LGcEYlyYLR+dMs1cTDEdKZRvSDq1Kfr+CZ7yn46M
-         8WHie5401uZN7dnziHiF+eT7KVxJDjK3IXqPjH3gxIfd+FyU3SOLSdWL5aQNfb+x4i9f
-         avNtewEodCpIjke6bPV40Vii31eMHD6O6TkVZZfe1D7QlkiVJ6vPs33nKxRi36TLx2FJ
-         8K+q8IJinUvOP2PV/5YomLyJWuaAXrKiDLa02JwpYUwCXDI/sG4mQQdgtZIq3WihT0ai
-         wTfX8hZL4VYD2gvOmBxe9ZaQDPEtyiXqUEI+/8hsLbCbi3SVz2A6At954TLqYcTaOq77
-         +NFg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bqezZ2/HwBTxC4hfR4A8RkBTbm8B6r0iUtltdIvH/WQ=;
+        b=K5BEbt9OjKO+nuqxpvzbIOlXKc6txbVTj2xfbbvgeXff1lHQfcdfbFdinIBNEq0EyO
+         Y1aCWLAj4I6N5aIbVrp02f36dabPmFWQ8BiKUWjxqHdsE1oXmAmDB33rNVwT2RaiAGS2
+         nDMYYHPmDL4PfdBErgwWs8EHct2Z3Z+uDPY9KZ/+H+TJncxI2Pexcrtxgj/DbqOXEIVt
+         PCegKTkSznNwgTdolMRZLUIKw/hxyb2wMSN8XWJT8egb0H8fLooQPDX5yVhfIahzMBJa
+         23cSUeyaczkJ+xdjSYMP8Rzg70cKqDcxOZKBvM2STQF2+CH+UcTBs3UsOswcrji9OpBm
+         hKHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=T5DDOgxL5O1mGP/BjJa3BFAGfWgawXo/hAw4SBh7aQo=;
-        b=c1uyImMQsQScBpUUT+8aBo5jXUjqG+3rW2PFDggtGRdRZy+An7J9AfLYhtkm0v3FgO
-         Gk8FL5D9fXweBfiW6+0dG5KpSrhoxi8aZLq8nfiUBYk5kdQIoy13qzWg/NG1hU3DY+re
-         CeFZwoUINfPO2zo2XiGafDOKza1qWrA4MhG0ybi4uFADzOvU1UL4m4fSgsX5q8oudan4
-         EfhfXpk61GWcwsMIQAr/sB9rmOl35/FTuEAF/4e7vdxXBeIn+LVWODzFATqilQXrySj+
-         W+HIJi1/fiNiYqX14Jlz0c2orKttL18cz6ob6Q8N9Y+35RbcnL9m14rJN5pTx6ODUUyp
-         g6kQ==
-X-Gm-Message-State: AOAM530rNMlEbAHcpCpFhM60drTobt0POEf35x+6koabhsUwaW7zya6f
-        4gOXLePfg94KKO6YEgVdZBpj+bJzLgE=
-X-Google-Smtp-Source: ABdhPJyouQt7Kd6GIh4yY07o8rR3F5X49jA7mZgyI26ial9IKj5xt80kUeVo5RM6no7IF7YZsDwMgQ==
-X-Received: by 2002:a05:6000:11c3:: with SMTP id i3mr37798770wrx.426.1641203125700;
-        Mon, 03 Jan 2022 01:45:25 -0800 (PST)
-Received: from felia.fritz.box ([2001:16b8:26e8:4300:8413:3f69:6728:4e17])
-        by smtp.gmail.com with ESMTPSA id u20sm40035335wml.45.2022.01.03.01.45.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jan 2022 01:45:25 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Nicolas Pitre <npitre@baylibre.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-i3c@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] i3c/master/mipi-i3c-hci: correct the config reference for endianness
-Date:   Mon,  3 Jan 2022 10:45:04 +0100
-Message-Id: <20220103094504.3602-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bqezZ2/HwBTxC4hfR4A8RkBTbm8B6r0iUtltdIvH/WQ=;
+        b=x5zFahcHPJGPhWTkzQGzbze6gsXPRWw2dN5yY//lWyCA8szsWVkAh8Y+BHSobgYDXP
+         Ei1f6At4f5mq+VoznzQZrIiHdEGJg2nT4xeDJ/i93oX8oG57NUKgIY0ixiBvgjoGFu4E
+         F5nteUwR6sv/4IiFfApjTJx5+JrSF4JUP5NAiIj5GMRBhs2sIgb136DVuQIfW7E3ROw9
+         fWRAtXzYomZ0dd9b5acKVv3P+l2JjbeSD36VE0ziHgVgoU7RppXz/99PS+PK+CC4B/fD
+         gbk1vG2FHPrk9S3EywGLqd0GUPVlVvM/6hZIdpcMQeDhBBxghyvgJC9rexXbn0tvW33S
+         5EHg==
+X-Gm-Message-State: AOAM5305pA/TQ0Ene1d1tirFF5g88YdXNlu91KyjbXcFkDR4sjHxjgbS
+        umqzTim+rQXOO3F7G43Q3ZBtMCjdtl7tOdq0Fq+GFQ==
+X-Google-Smtp-Source: ABdhPJzjmfkMpGxFmUpkFi1mKbOuAv2LnaShqmU2K2ivWzs/UE9RKuPtNoD834Rh8/Elsaluwf7Y0D03nF5Me2CLMTg=
+X-Received: by 2002:a63:6d3:: with SMTP id 202mr38562627pgg.324.1641205846920;
+ Mon, 03 Jan 2022 02:30:46 -0800 (PST)
+MIME-Version: 1.0
+References: <4bc21aed4b60d3d5ac4b28d8b07a6fdd8da6a536.1640768126.git.christophe.jaillet@wanadoo.fr>
+ <YcyIidlnW4Sh6CGm@pendragon.ideasonboard.com>
+In-Reply-To: <YcyIidlnW4Sh6CGm@pendragon.ideasonboard.com>
+From:   Robert Foss <robert.foss@linaro.org>
+Date:   Mon, 3 Jan 2022 11:30:35 +0100
+Message-ID: <CAG3jFys8i+D32BSmsLnSG2ArP+wwf-q7DtxoateX8Ln-5V5RtA@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/bridge: sn65dsi83: Fix an error handling path in sn65dsi83_probe()
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        andrzej.hajda@intel.com, narmstrong@baylibre.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, airlied@linux.ie, daniel@ffwll.ch,
+        marex@denx.de, frieder.schrempf@kontron.de,
+        linus.walleij@linaro.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The referred config BIG_ENDIAN does not exist. The config for the
-endianness of the CPU architecture is called CPU_BIG_ENDIAN.
-
-Correct the config name to the existing config for the endianness.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- drivers/i3c/master/mipi-i3c-hci/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/i3c/master/mipi-i3c-hci/core.c b/drivers/i3c/master/mipi-i3c-hci/core.c
-index 1b73647cc3b1..8c01123dc4ed 100644
---- a/drivers/i3c/master/mipi-i3c-hci/core.c
-+++ b/drivers/i3c/master/mipi-i3c-hci/core.c
-@@ -662,7 +662,7 @@ static int i3c_hci_init(struct i3c_hci *hci)
- 
- 	/* Make sure our data ordering fits the host's */
- 	regval = reg_read(HC_CONTROL);
--	if (IS_ENABLED(CONFIG_BIG_ENDIAN)) {
-+	if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) {
- 		if (!(regval & HC_CONTROL_DATA_BIG_ENDIAN)) {
- 			regval |= HC_CONTROL_DATA_BIG_ENDIAN;
- 			reg_write(HC_CONTROL, regval);
--- 
-2.17.1
-
+Applied to drm-misc-next
