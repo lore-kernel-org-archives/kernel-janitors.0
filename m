@@ -2,51 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B77A3C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jan 2022 09:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E34C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jan 2022 09:43:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230115AbiACJYW (ORCPT
+        id S232224AbiACJnl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Jan 2022 04:24:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56250 "EHLO
+        Mon, 3 Jan 2022 04:43:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229516AbiACJYV (ORCPT
+        with ESMTP id S231187AbiACJnl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Jan 2022 04:24:21 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB912C061761;
-        Mon,  3 Jan 2022 01:24:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=sGoJXN5pj8zftVrL2EqoQsQDuD
-        ZWM36uueNDztFUl9/JYHRh0G8iIwvXl4wrNCl/sIgC3CieVyGqWKgW6VDJJD0pAxvu+uDN3nE3Adx
-        xqnAalMuWa3K0iqXl0gF5mYtUjDNI+QXqwFT12SM60VVH/5R8pShsfgMRk0cZxZOiTCNyUvxerMFo
-        4799X+oHIwUdZH6L5lesEAS3t6c9pBl6i4SrOqjree4t4j2ygE7z8UjWp3JFKpoT/1u1D+aPyBDFA
-        324ZVez+rNjGTGafsowA3LMUWue6QPzO4nqO/L131+VfTS/uyfFxcbxVL1hCZZYwOox+aQR0JOZcA
-        +dwElQNw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n4JZK-008g04-OC; Mon, 03 Jan 2022 09:23:54 +0000
-Date:   Mon, 3 Jan 2022 01:23:54 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] floppy: Remove usage of the deprecated
- "pci-dma-compat.h" API
-Message-ID: <YdLAqi+WQu4ZhAxE@infradead.org>
-References: <9e24eedeab44cbb840598bb188561a48811de845.1641119338.git.christophe.jaillet@wanadoo.fr>
+        Mon, 3 Jan 2022 04:43:41 -0500
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5E1EC061784
+        for <kernel-janitors@vger.kernel.org>; Mon,  3 Jan 2022 01:43:40 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id f5so133725540edq.6
+        for <kernel-janitors@vger.kernel.org>; Mon, 03 Jan 2022 01:43:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lTzK8y2sZdFz3nw0haA5lwIMdx2juzh7izt/ICeGVgM=;
+        b=FB1tV7RQM7sQzJfcRPNR/keMKuIUy1sf+mv0eGwPZdmmVPQMmzZPo1rOSBf1Af2d/i
+         nDfDh25ILugS3uVv7SsMa6qSy/RpjrBMj4Q86wmUCwTty2vYV44Tu9tIGeQbN6plLYDk
+         ReKedn4CsKpiNIyDjLJTpJLt8V48ZDUy0sKTzWlhWiEy5Lj5cZt9gJcp8uPJSxdl4eZH
+         Uk/zRoPZd5uFW6fmAtj0lNJ46qL8HlYz2pnTaKtQrh5HHwf7dzIsrkQBe9hq+ZGVLhCZ
+         pXzXfjcmLFCl3vjfhgoXqbxgeDKaze/TkEuy/JIXcHpgTZ4YBEitHs/82D5A1vO06Oxl
+         t/fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lTzK8y2sZdFz3nw0haA5lwIMdx2juzh7izt/ICeGVgM=;
+        b=WpIDbmJCOk0HCyi2Zxs8moTS9n7X8lf3DvCWkmqGBj/Kdq3poAOushfDiBOUfHzdBf
+         ZiY7PMNLATygqqt3A0749PMSGd5UhfoMFcvssVcc+fKdD3QKgW7IK1MyFIBjJbPDArJQ
+         vrMiv86CsxKvVuIdH1ySi0/SAkjaDeArnIl3flfyQ42Se6tTdIOnWwKvJrawyvtADZ1v
+         5dzGOQP006+1zLCUFtYQDGQeXr/0J6MuIO/91GrUmEJWGr/hmkvV/+YqZzaaDqYUR4zL
+         7SOff6JpBhZ2tx1jLaLUvRrx+T5RsqOKIeRLmbTu8+fmBh9y4U3Y8hcmIuGaHk8KUlih
+         Cylg==
+X-Gm-Message-State: AOAM5327cC9HUM99czb7LObBn5OMqTccmOCFuXA1DN5vhzah3hecZaGl
+        Sm3p31x9xR4OIdFC3xCknqMPw+/q2ZosIxzy7KLB4vaLE0s=
+X-Google-Smtp-Source: ABdhPJyVtCS6fJWUtIb8A/66eRuM+ArEzeQDdaU+UeRjv+TDrX3l7jWqIkrd37j4yqnVlNagMqgT6yHfzl9Cx7n55Ls=
+X-Received: by 2002:a50:d74e:: with SMTP id i14mr42729606edj.243.1641203019547;
+ Mon, 03 Jan 2022 01:43:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9e24eedeab44cbb840598bb188561a48811de845.1641119338.git.christophe.jaillet@wanadoo.fr>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <0723049c70dd9c90b30137b704c82db27d0ac4df.1640528330.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <0723049c70dd9c90b30137b704c82db27d0ac4df.1640528330.git.christophe.jaillet@wanadoo.fr>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 3 Jan 2022 10:43:28 +0100
+Message-ID: <CAMRc=MdnFsZ3uQ3c3iN1Qc4fH=-wMKHY4+giTrqVTJuptKjb8Q@mail.gmail.com>
+Subject: Re: [PATCH] gpio: max3191x: Use bitmap_free() to free bitmap
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Looks good,
+On Sun, Dec 26, 2021 at 3:19 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> kfree() and bitmap_free() are the same. But using the later is more
+> consistent when freeing memory allocated with bitmap_alloc().
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/gpio/gpio-max3191x.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpio-max3191x.c b/drivers/gpio/gpio-max3191x.c
+> index 310d1a248cae..51cd6f98d1c7 100644
+> --- a/drivers/gpio/gpio-max3191x.c
+> +++ b/drivers/gpio/gpio-max3191x.c
+> @@ -326,7 +326,7 @@ static void gpiod_set_array_single_value_cansleep(unsigned int ndescs,
+>                 bitmap_zero(values, ndescs);
+>
+>         gpiod_set_array_value_cansleep(ndescs, desc, info, values);
+> -       kfree(values);
+> +       bitmap_free(values);
+>  }
+>
+>  static struct gpio_descs *devm_gpiod_get_array_optional_count(
+> --
+> 2.32.0
+>
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Good point, applied.
+
+Bart
