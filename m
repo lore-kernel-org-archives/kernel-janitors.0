@@ -2,87 +2,298 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA49C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon,  3 Jan 2022 22:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 674BBC433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Jan 2022 00:15:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230394AbiACW5O (ORCPT
+        id S231419AbiADAP1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Jan 2022 17:57:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41722 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230361AbiACW5N (ORCPT
+        Mon, 3 Jan 2022 19:15:27 -0500
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:64664 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231201AbiADAP1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Jan 2022 17:57:13 -0500
-Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48985C061761;
-        Mon,  3 Jan 2022 14:57:13 -0800 (PST)
-Received: from localhost (unknown [IPv6:2601:281:8300:104d::5f6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id CC8CE4A8;
-        Mon,  3 Jan 2022 22:57:12 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net CC8CE4A8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-        t=1641250632; bh=EZSdjmbwoUZbkpeAbnWluDvQjX1mE6MaV2rTZoNqJKo=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=JIXjJsh4dDNZpukgwDev4HDO+SPs7iX0DV6uVCCscpmIs5BXAL4N3V0DJYviHhpso
-         CgtUCnoTt1gacDvexUJDpKSUn+gpYkejyJXzkFa48TOMqByAkxEWG5LdM9hXWwb3JB
-         TVvHfijE30UGVO3cfFO10ABCNsQhVBJSlsC2cMYQaJyMYSepEjzIdK4jbRN+2+GuTx
-         6Isq7gwfbB0MqTsjeg/9IcdpQjpEVsd1rS6WH0iQ2NTtZ/S7NJ8aYBLIM9JfWvVwLb
-         trSy7EE1M3O/ncIuTHjThM1NGqkp8CD4hkwb/UKR4P9ReQWo910KIyg/sPMVatrvTm
-         DS7qoBGUX9Hwg==
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        linux-doc@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] Documentation: refer to config RANDOMIZE_BASE for
- kernel address-space randomization
-In-Reply-To: <20211230171940.27558-1-lukas.bulwahn@gmail.com>
-References: <20211230171940.27558-1-lukas.bulwahn@gmail.com>
-Date:   Mon, 03 Jan 2022 15:57:15 -0700
-Message-ID: <875yr0xwac.fsf@meer.lwn.net>
+        Mon, 3 Jan 2022 19:15:27 -0500
+Received: from pop-os.home ([86.243.171.122])
+        by smtp.orange.fr with ESMTPA
+        id 4XU2nddpN65jH4XU2n26xb; Tue, 04 Jan 2022 01:15:24 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Tue, 04 Jan 2022 01:15:24 +0100
+X-ME-IP: 86.243.171.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com,
+        davem@davemloft.net, kuba@kernel.org
+Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] intel: Simplify DMA setting
+Date:   Tue,  4 Jan 2022 01:15:20 +0100
+Message-Id: <c7a34d0096eb4ba98dd9ce5b64ba079126cab708.1641255235.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
+As stated in [1], dma_set_mask() with a 64-bit mask will never fail if
+dev->dma_mask is non-NULL.
+So, if it fails, the 32 bits case will also fail for the same reason.
 
-> The config RANDOMIZE_SLAB does not exist, the authors probably intended to
-> refer to the config RANDOMIZE_BASE, which provides kernel address-space
-> randomization. They probably just confused SLAB with BASE (these two
-> four-letter words coincidentally share three common letters), as they also
-> point out the config SLAB_FREELIST_RANDOM as further randomization within
-> the same sentence.
->
-> Fix the reference of the config for kernel address-space randomization to
-> the config that provides that.
->
-> Fixes: 6e88559470f5 ("Documentation: Add section about CPU vulnerabilities for Spectre")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  Documentation/admin-guide/hw-vuln/spectre.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/admin-guide/hw-vuln/spectre.rst b/Documentation/admin-guide/hw-vuln/spectre.rst
-> index ab7d402c1677..a2b22d5640ec 100644
-> --- a/Documentation/admin-guide/hw-vuln/spectre.rst
-> +++ b/Documentation/admin-guide/hw-vuln/spectre.rst
-> @@ -468,7 +468,7 @@ Spectre variant 2
->     before invoking any firmware code to prevent Spectre variant 2 exploits
->     using the firmware.
->  
-> -   Using kernel address space randomization (CONFIG_RANDOMIZE_SLAB=y
-> +   Using kernel address space randomization (CONFIG_RANDOMIZE_BASE=y
->     and CONFIG_SLAB_FREELIST_RANDOM=y in the kernel configuration) makes
->     attacks on the kernel generally more difficult.
+Simplify code and remove some dead code accordingly.
 
-Makes sense to me...applied, thanks.
+[1]: https://lkml.org/lkml/2021/6/7/398
 
-jon
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/intel/e1000e/netdev.c    | 22 ++++++-------------
+ drivers/net/ethernet/intel/i40e/i40e_main.c   |  9 +++-----
+ drivers/net/ethernet/intel/iavf/iavf_main.c   |  9 +++-----
+ drivers/net/ethernet/intel/ice/ice_main.c     |  2 --
+ drivers/net/ethernet/intel/ixgb/ixgb_main.c   | 19 +++++-----------
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 20 ++++++-----------
+ .../net/ethernet/intel/ixgbevf/ixgbevf_main.c | 20 +++++------------
+ 7 files changed, 31 insertions(+), 70 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
+index 635a95927e93..4f6ee5c44f75 100644
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -7385,9 +7385,9 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	resource_size_t flash_start, flash_len;
+ 	static int cards_found;
+ 	u16 aspm_disable_flag = 0;
+-	int bars, i, err, pci_using_dac;
+ 	u16 eeprom_data = 0;
+ 	u16 eeprom_apme_mask = E1000_EEPROM_APME;
++	int bars, i, err;
+ 	s32 ret_val = 0;
+ 
+ 	if (ei->flags2 & FLAG2_DISABLE_ASPM_L0S)
+@@ -7401,17 +7401,11 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	if (err)
+ 		return err;
+ 
+-	pci_using_dac = 0;
+ 	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+-	if (!err) {
+-		pci_using_dac = 1;
+-	} else {
+-		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+-		if (err) {
+-			dev_err(&pdev->dev,
+-				"No usable DMA configuration, aborting\n");
+-			goto err_dma;
+-		}
++	if (err) {
++		dev_err(&pdev->dev,
++			"No usable DMA configuration, aborting\n");
++		goto err_dma;
+ 	}
+ 
+ 	bars = pci_select_bars(pdev, IORESOURCE_MEM);
+@@ -7547,10 +7541,8 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 
+ 	netdev->priv_flags |= IFF_UNICAST_FLT;
+ 
+-	if (pci_using_dac) {
+-		netdev->features |= NETIF_F_HIGHDMA;
+-		netdev->vlan_features |= NETIF_F_HIGHDMA;
+-	}
++	netdev->features |= NETIF_F_HIGHDMA;
++	netdev->vlan_features |= NETIF_F_HIGHDMA;
+ 
+ 	/* MTU range: 68 - max_hw_frame_size */
+ 	netdev->min_mtu = ETH_MIN_MTU;
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
+index ef3375e84821..ccd7e33aa80d 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_main.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+@@ -15282,12 +15282,9 @@ static int i40e_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	/* set up for high or low dma */
+ 	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+ 	if (err) {
+-		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+-		if (err) {
+-			dev_err(&pdev->dev,
+-				"DMA configuration failed: 0x%x\n", err);
+-			goto err_dma;
+-		}
++		dev_err(&pdev->dev,
++			"DMA configuration failed: 0x%x\n", err);
++		goto err_dma;
+ 	}
+ 
+ 	/* set up pci connections */
+diff --git a/drivers/net/ethernet/intel/iavf/iavf_main.c b/drivers/net/ethernet/intel/iavf/iavf_main.c
+index 504fea4e90fb..16c73ad1b0d3 100644
+--- a/drivers/net/ethernet/intel/iavf/iavf_main.c
++++ b/drivers/net/ethernet/intel/iavf/iavf_main.c
+@@ -4365,12 +4365,9 @@ static int iavf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 
+ 	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+ 	if (err) {
+-		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+-		if (err) {
+-			dev_err(&pdev->dev,
+-				"DMA configuration failed: 0x%x\n", err);
+-			goto err_dma;
+-		}
++		dev_err(&pdev->dev,
++			"DMA configuration failed: 0x%x\n", err);
++		goto err_dma;
+ 	}
+ 
+ 	err = pci_request_regions(pdev, iavf_driver_name);
+diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
+index 476533f63e09..4016031e1ba1 100644
+--- a/drivers/net/ethernet/intel/ice/ice_main.c
++++ b/drivers/net/ethernet/intel/ice/ice_main.c
+@@ -4435,8 +4435,6 @@ ice_probe(struct pci_dev *pdev, const struct pci_device_id __always_unused *ent)
+ 
+ 	/* set up for high or low DMA */
+ 	err = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
+-	if (err)
+-		err = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
+ 	if (err) {
+ 		dev_err(dev, "DMA configuration failed: 0x%x\n", err);
+ 		return err;
+diff --git a/drivers/net/ethernet/intel/ixgb/ixgb_main.c b/drivers/net/ethernet/intel/ixgb/ixgb_main.c
+index 99d481904ce6..affdefcca7e3 100644
+--- a/drivers/net/ethernet/intel/ixgb/ixgb_main.c
++++ b/drivers/net/ethernet/intel/ixgb/ixgb_main.c
+@@ -361,7 +361,6 @@ ixgb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	struct net_device *netdev = NULL;
+ 	struct ixgb_adapter *adapter;
+ 	static int cards_found = 0;
+-	int pci_using_dac;
+ 	u8 addr[ETH_ALEN];
+ 	int i;
+ 	int err;
+@@ -370,16 +369,10 @@ ixgb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	if (err)
+ 		return err;
+ 
+-	pci_using_dac = 0;
+ 	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+-	if (!err) {
+-		pci_using_dac = 1;
+-	} else {
+-		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+-		if (err) {
+-			pr_err("No usable DMA configuration, aborting\n");
+-			goto err_dma_mask;
+-		}
++	if (err) {
++		pr_err("No usable DMA configuration, aborting\n");
++		goto err_dma_mask;
+ 	}
+ 
+ 	err = pci_request_regions(pdev, ixgb_driver_name);
+@@ -444,10 +437,8 @@ ixgb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 			   NETIF_F_HW_VLAN_CTAG_FILTER;
+ 	netdev->hw_features |= NETIF_F_RXCSUM;
+ 
+-	if (pci_using_dac) {
+-		netdev->features |= NETIF_F_HIGHDMA;
+-		netdev->vlan_features |= NETIF_F_HIGHDMA;
+-	}
++	netdev->features |= NETIF_F_HIGHDMA;
++	netdev->vlan_features |= NETIF_F_HIGHDMA;
+ 
+ 	/* MTU range: 68 - 16114 */
+ 	netdev->min_mtu = ETH_MIN_MTU;
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+index abb118f0ae69..2bfeeaac5ef8 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+@@ -10632,9 +10632,9 @@ static int ixgbe_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	struct ixgbe_adapter *adapter = NULL;
+ 	struct ixgbe_hw *hw;
+ 	const struct ixgbe_info *ii = ixgbe_info_tbl[ent->driver_data];
+-	int i, err, pci_using_dac, expected_gts;
+ 	unsigned int indices = MAX_TX_QUEUES;
+ 	u8 part_str[IXGBE_PBANUM_LENGTH];
++	int i, err, expected_gts;
+ 	bool disable_dev = false;
+ #ifdef IXGBE_FCOE
+ 	u16 device_caps;
+@@ -10654,16 +10654,11 @@ static int ixgbe_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	if (err)
+ 		return err;
+ 
+-	if (!dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64))) {
+-		pci_using_dac = 1;
+-	} else {
+-		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+-		if (err) {
+-			dev_err(&pdev->dev,
+-				"No usable DMA configuration, aborting\n");
+-			goto err_dma;
+-		}
+-		pci_using_dac = 0;
++	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
++	if (err) {
++		dev_err(&pdev->dev,
++			"No usable DMA configuration, aborting\n");
++		goto err_dma;
+ 	}
+ 
+ 	err = pci_request_mem_regions(pdev, ixgbe_driver_name);
+@@ -10861,8 +10856,7 @@ static int ixgbe_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		netdev->hw_features |= NETIF_F_NTUPLE |
+ 				       NETIF_F_HW_TC;
+ 
+-	if (pci_using_dac)
+-		netdev->features |= NETIF_F_HIGHDMA;
++	netdev->features |= NETIF_F_HIGHDMA;
+ 
+ 	netdev->vlan_features |= netdev->features | NETIF_F_TSO_MANGLEID;
+ 	netdev->hw_enc_features |= netdev->vlan_features;
+diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+index 2459ecf65125..a54c23079da6 100644
+--- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
++++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+@@ -4511,22 +4511,17 @@ static int ixgbevf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	struct ixgbevf_adapter *adapter = NULL;
+ 	struct ixgbe_hw *hw = NULL;
+ 	const struct ixgbevf_info *ii = ixgbevf_info_tbl[ent->driver_data];
+-	int err, pci_using_dac;
+ 	bool disable_dev = false;
++	int err;
+ 
+ 	err = pci_enable_device(pdev);
+ 	if (err)
+ 		return err;
+ 
+-	if (!dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64))) {
+-		pci_using_dac = 1;
+-	} else {
+-		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+-		if (err) {
+-			dev_err(&pdev->dev, "No usable DMA configuration, aborting\n");
+-			goto err_dma;
+-		}
+-		pci_using_dac = 0;
++	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
++	if (err) {
++		dev_err(&pdev->dev, "No usable DMA configuration, aborting\n");
++		goto err_dma;
+ 	}
+ 
+ 	err = pci_request_regions(pdev, ixgbevf_driver_name);
+@@ -4606,10 +4601,7 @@ static int ixgbevf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	netdev->hw_features |= NETIF_F_GSO_PARTIAL |
+ 			       IXGBEVF_GSO_PARTIAL_FEATURES;
+ 
+-	netdev->features = netdev->hw_features;
+-
+-	if (pci_using_dac)
+-		netdev->features |= NETIF_F_HIGHDMA;
++	netdev->features = netdev->hw_features | NETIF_F_HIGHDMA;
+ 
+ 	netdev->vlan_features |= netdev->features | NETIF_F_TSO_MANGLEID;
+ 	netdev->mpls_features |= NETIF_F_SG |
+-- 
+2.32.0
+
