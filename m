@@ -2,90 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F08C8C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Jan 2022 13:31:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 515E5C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Jan 2022 15:44:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233626AbiADNbC (ORCPT
+        id S234998AbiADPo4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 4 Jan 2022 08:31:02 -0500
-Received: from mga01.intel.com ([192.55.52.88]:34504 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230287AbiADNbC (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 4 Jan 2022 08:31:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1641303062; x=1672839062;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=YSDR7VqnIEeScX1Ku+T5goZVV0p2a1T6EU3r17XKwSo=;
-  b=TX7/rIMyfc9IuuvW8hKdNJ+lZYFku4YMrAwYdZNQIwEVxFYe9PmM5EkG
-   vbr3THLzyjpi1tCZ/BTJGcXBEnhSaYyMoazf9EPe2VM84fsVddSmqoukZ
-   k/n8+2mwBpPFaDow2RBugYm05aDbQs4hnNEbfly9391aryy5z704J6/1a
-   if5R2Oq+hROBTt0iz+SYNVTtL428W8HLvS5sNv4HmlN03gOZwc3AZuEKy
-   A7r7dxFg1kR4S7LfJS/XnBEM3/OcUKpGI4PqZp2vnaG4r48ZyzzJlmcZo
-   csgjYmMRmdgP9YLkeKpGjECCG3vc/W6tTKsGBMEUmgBAeGcC7drmOevXD
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10216"; a="266490495"
-X-IronPort-AV: E=Sophos;i="5.88,261,1635231600"; 
-   d="scan'208";a="266490495"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jan 2022 05:31:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,261,1635231600"; 
-   d="scan'208";a="526049715"
-Received: from irvmail001.ir.intel.com ([10.43.11.63])
-  by orsmga008.jf.intel.com with ESMTP; 04 Jan 2022 05:30:58 -0800
-Received: from newjersey.igk.intel.com (newjersey.igk.intel.com [10.102.20.203])
-        by irvmail001.ir.intel.com (8.14.3/8.13.6/MailSET/Hub) with ESMTP id 204DUvm7014924;
-        Tue, 4 Jan 2022 13:30:57 GMT
-From:   Alexander Lobakin <alexandr.lobakin@intel.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Alexander Lobakin <alexandr.lobakin@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com,
-        davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [Intel-wired-lan] [PATCH] intel: Simplify DMA setting
-Date:   Tue,  4 Jan 2022 14:29:36 +0100
-Message-Id: <20220104132936.252202-1-alexandr.lobakin@intel.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <c7a34d0096eb4ba98dd9ce5b64ba079126cab708.1641255235.git.christophe.jaillet@wanadoo.fr>
-References: <c7a34d0096eb4ba98dd9ce5b64ba079126cab708.1641255235.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 4 Jan 2022 10:44:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44078 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234951AbiADPoz (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 4 Jan 2022 10:44:55 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC482C061761;
+        Tue,  4 Jan 2022 07:44:54 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id g7-20020a7bc4c7000000b00345c4bb365aso20241703wmk.4;
+        Tue, 04 Jan 2022 07:44:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=UZgyb2U19162yeBshMqDAobgM1UM6Ei3ph+HYHeKHG4=;
+        b=gczLsTMf/bfhbL55yEQ2UXzidnYPxLEss/ifBRaLBSfMS8TtvZvE0YKhPLrMrz8bBz
+         qOJPIMBIjxSA71g2Rt0Qj5i1pA0nSVwnPeAsZG5qt+FGPa51P3RPlvfJI91QB/p4Wj0e
+         NHy4jb26IlHUrKRXl1Rqre2hq2Z6wLEnPEpF17G5Gdc4gQD1yowsKegiQg22WblXps5s
+         NmjrVG7yHdSVLtT6gdDnWYPyJI3QJsB4NdxQrmUr2GiZtDaCzVKUPfOF6g6e6pgZy6qs
+         8rRu4kDEM3pr7PSV6HYIfq+72ehbQQcX0bUpMqVZPmACmAimKU8kHeDN8S0+JtzDJI1d
+         hUEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=UZgyb2U19162yeBshMqDAobgM1UM6Ei3ph+HYHeKHG4=;
+        b=yDoI6tYIUGu1dO2tXWj1RbbBI1HWpOavjD1Pxiaco0DUEROd31Gj7V20HUsDUHnrqW
+         9UvJVtDyjXJpVY/YZMCTMYQFLOwYGupVmMhg1vnVyqGe4ymtRnMmf2KIhxb8of0uqVGf
+         57Kfih2TXImct9YMFWIinnJNNWUF0j0iSRrBHsYBRwfiA6vZ4olYSQMib3AcHiqi0HJz
+         IwE4q8hDCBwPmbYQjweJ6lXzIxflxCCxtNZ6Zq1wGh4+E3QX+tQ249M6SoSjLbVRuK9I
+         hLVWG6ZZmc1ZFY1cp50OldYsbpqvVgN8ekrMRLxVKyr1gb4NIXTdMgMOzVdLvGb/9Dqc
+         cYxQ==
+X-Gm-Message-State: AOAM531HHDBjGwtphRKU5Ru6cSp1ZO1qEf58zxsgsJU3nHjhGmd3+MDZ
+        cAQdoV6iq3zbXQ9qoA2o++flvHLWx08=
+X-Google-Smtp-Source: ABdhPJzFtuM8tF9y9xxXooJDmNfSa7ycURqI6U7nxCrqAsDKa5tne1Rgpp3vjcUWzq0OlmsH8JOoZQ==
+X-Received: by 2002:a1c:ed01:: with SMTP id l1mr21616630wmh.185.1641311093440;
+        Tue, 04 Jan 2022 07:44:53 -0800 (PST)
+Received: from felia.fritz.box ([2001:16b8:2647:5a00:918:9389:3260:d714])
+        by smtp.gmail.com with ESMTPSA id m21sm36542318wrb.2.2022.01.04.07.44.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jan 2022 07:44:53 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Sander Vanheule <sander@svanheule.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-watchdog@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: remove typo from REALTEK OTTO WATCHDOG section
+Date:   Tue,  4 Jan 2022 16:44:14 +0100
+Message-Id: <20220104154414.21496-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Tue, 4 Jan 2022 01:15:20 +0100
+Commit 489119bf75e6 ("watchdog: Add Realtek Otto watchdog timer") adds the
+REALTEK OTTO WATCHDOG section in MAINTAINERS and one file entry refers to
+driver/watchdog/realtek_otto_wdt.c. The actual top-level directory name is
+drivers, not driver, though.
 
-> As stated in [1], dma_set_mask() with a 64-bit mask will never fail if
-> dev->dma_mask is non-NULL.
-> So, if it fails, the 32 bits case will also fail for the same reason.
-> 
-> Simplify code and remove some dead code accordingly.
-> 
-> [1]: https://lkml.org/lkml/2021/6/7/398
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/net/ethernet/intel/e1000e/netdev.c    | 22 ++++++-------------
->  drivers/net/ethernet/intel/i40e/i40e_main.c   |  9 +++-----
->  drivers/net/ethernet/intel/iavf/iavf_main.c   |  9 +++-----
->  drivers/net/ethernet/intel/ice/ice_main.c     |  2 --
->  drivers/net/ethernet/intel/ixgb/ixgb_main.c   | 19 +++++-----------
->  drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 20 ++++++-----------
->  .../net/ethernet/intel/ixgbevf/ixgbevf_main.c | 20 +++++------------
->  7 files changed, 31 insertions(+), 70 deletions(-)
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains:
 
-I like it, thanks!
+    warning: no file matches	F:	driver/watchdog/realtek_otto_wdt.c
 
-Reviewed-by: Alexander Lobakin <alexandr.lobakin@intel.com>
+Remove this obvious typo in the file entry.
 
-Tony might ask to split it into per-driver patches tho, will see.
+Fixes: 489119bf75e6 ("watchdog: Add Realtek Otto watchdog timer")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- 8< ---
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f7bf491409cf..b4fcc2bb7c54 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16307,7 +16307,7 @@ M:	Sander Vanheule <sander@svanheule.net>
+ L:	linux-watchdog@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/watchdog/realtek,otto-wdt.yaml
+-F:	driver/watchdog/realtek_otto_wdt.c
++F:	drivers/watchdog/realtek_otto_wdt.c
+ 
+ REALTEK RTL83xx SMI DSA ROUTER CHIPS
+ M:	Linus Walleij <linus.walleij@linaro.org>
+-- 
+2.17.1
 
-Al
