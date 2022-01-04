@@ -2,56 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A81ECC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Jan 2022 03:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A52C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  4 Jan 2022 05:35:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232593AbiADDaS (ORCPT
+        id S230386AbiADFf5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 3 Jan 2022 22:30:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46024 "EHLO
+        Tue, 4 Jan 2022 00:35:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230139AbiADDaR (ORCPT
+        with ESMTP id S230181AbiADFfz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 3 Jan 2022 22:30:17 -0500
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7413CC061761
-        for <kernel-janitors@vger.kernel.org>; Mon,  3 Jan 2022 19:30:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-        :Subject:From:Cc:To:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=8zeom9N3e50k8nkohwxAjqmn9nik85eklCEb4gg6NwQ=; b=dkq6feld3iB/XeE5Ssxy/ky96O
-        yImPozrFRNiW99WJrUC3J8FI18j7bQjoy5NQTFM5GgIGvj+ZhUoHsA9IqsFMnfqTDRD/vGLhNPKTt
-        5r5HIZv8kcecW6FqFwo3ti/zgpNkMdaPAyS3OKZIuM0WIzSfGqCAT7abnzxrjA9zFTU803U1MkB6m
-        tlqZ9YUWevsQp32RS+OV5jNnOCkwBn6aBSqrVuulZDs/nq+KGR5n6EToAVpCogmqCFVrfVPm8Z7FZ
-        1KQFc9sMTCZ9BojNvBx00xgBd19QcAh4tlQPzphXfgzDsQm40YQaypDmzKiXO0M1RwjYh0GAzCxrL
-        fnklut7A==;
-Received: from [2601:1c0:6280:3f0::aa0b]
-        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1n4aWd-005Cge-EF; Tue, 04 Jan 2022 03:30:15 +0000
-Message-ID: <c3af0ef3-1c9b-4893-f63d-fd24c4b9b689@infradead.org>
-Date:   Mon, 3 Jan 2022 19:30:12 -0800
+        Tue, 4 Jan 2022 00:35:55 -0500
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D2CCC061761;
+        Mon,  3 Jan 2022 21:35:55 -0800 (PST)
+Received: by mail-pg1-x52b.google.com with SMTP id v25so31781899pge.2;
+        Mon, 03 Jan 2022 21:35:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=u2Pf8pL2sVNEV7RbPPp0t2wGeTaqpnDUjJrN+zp8KiE=;
+        b=jFpMTVOBa4Pyj3tbO/IZP5DVS7wZGi3Y4vdlGLBvAX/DtHv37MC9hLXh/Mv3uC1vRg
+         mLzepdjFsgReescZv00/TWjtzCqALN+wt1VPNaDdAjiJKmlNTaZk+n7DBpn+6q9BHw5F
+         OFWFf64S/A+0t6Bo06p+hNVycb+cATnaVW1G+s0y7/4ljwUq+azSCazHXVAM39h1BJcz
+         afMZyci1PNM51T5yzEFScrBctAQsExBIgjU6kq5JoB4CJrZ4WWzV498UPYd8jCml1rMi
+         3lSeIKAT4MDQLyZsB0uKa+Ntc26DnYkSak/SZFZMdwxCO/c980j5lgxJfxzt7FxND1aC
+         K/ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=u2Pf8pL2sVNEV7RbPPp0t2wGeTaqpnDUjJrN+zp8KiE=;
+        b=EUOXvdIN07dLVhzXVVk6G/y4LQf4+Qp2TPU/LbgS/2fp+u6zwyKvMbVNap0yNFgaHo
+         klJHcDhCgOMgXErK9D9Uyon/EFTj8jnmoMdRukhvU9w1LQvVxrw9QcCN//HyuWSAvVIs
+         qChyea75yb71Zlbk637Hn0daOwsxLcAZjfV6OQ5UcKeiTq8GElSJZHUZoTlzbFQeVLYJ
+         k7pQZHxQAdEuofBzmG6lK60tYYsGz9Zv721aYkDjQSbPwDVC1jIQbgEHMq+FA4RADK4t
+         qhhrmYy8NX2YTmc9Rzsqsanfjp0lakqQ8dm123lQwCsLjyVAe4I2QJ+Vc5opPLMy3k7V
+         wKKg==
+X-Gm-Message-State: AOAM532ONQoTK4L1UY39gAwqVAJNZgQ5uzI/zxnVLH/vnHoBJA5mERaM
+        uj9KFf58OcSR92KTVTg1ym7hjjKArGM=
+X-Google-Smtp-Source: ABdhPJwTKX8jq1BmccHVqcQC5afDPa6EXhNwUkUHLz/s5et7MaY8OBWbUozTp8hnhmQ1vF3cP51P8A==
+X-Received: by 2002:a63:9a01:: with SMTP id o1mr43165100pge.449.1641274554454;
+        Mon, 03 Jan 2022 21:35:54 -0800 (PST)
+Received: from google.com ([2620:15c:202:201:a7d6:43d7:bbe3:3573])
+        by smtp.gmail.com with ESMTPSA id k23sm1029996pji.3.2022.01.03.21.35.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jan 2022 21:35:53 -0800 (PST)
+Date:   Mon, 3 Jan 2022 21:35:51 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     paul@crapouillou.net, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] Input: gpio-keys: Avoid clearing twice some memory
+Message-ID: <YdPct/+LBMWTZSeM@google.com>
+References: <d6ee621b9dd75b92f8831db365cee58dc2025322.1640813136.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Content-Language: en-US
-To:     kernel-janitors@vger.kernel.org
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: janitors suggestion: MAINTAINERS file
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d6ee621b9dd75b92f8831db365cee58dc2025322.1640813136.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Wed, Dec 29, 2021 at 10:26:56PM +0100, Christophe JAILLET wrote:
+> bitmap_parselist() already clears the 'bits' bitmap, so there is no need
+> to clear it when it is allocated. This just wastes some cycles.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Run './scripts/get_maintainer.pl --self-test' in a kernel git tree
-and fix some of the problems there.
+Applied, thank you.
 
-(I see around 130 reported problems.)
-(Be patient -- for me this took something like 45 minutes.)
-
-thanks.
 -- 
-~Randy
+Dmitry
