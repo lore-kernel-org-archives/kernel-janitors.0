@@ -2,72 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C9CAC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Jan 2022 20:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 603C1C433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Jan 2022 20:40:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244073AbiAEUfQ (ORCPT
+        id S244139AbiAEUkO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 5 Jan 2022 15:35:16 -0500
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:55971 "EHLO
+        Wed, 5 Jan 2022 15:40:14 -0500
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:64919 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244067AbiAEUfP (ORCPT
+        with ESMTP id S244130AbiAEUkJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 5 Jan 2022 15:35:15 -0500
+        Wed, 5 Jan 2022 15:40:09 -0500
 Received: from [192.168.1.18] ([90.11.185.88])
         by smtp.orange.fr with ESMTPA
-        id 5D04nytfdBazo5D05n0J6g; Wed, 05 Jan 2022 21:35:13 +0100
+        id 5D4nnyvDrBazo5D4nn0JZy; Wed, 05 Jan 2022 21:40:08 +0100
 X-ME-Helo: [192.168.1.18]
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Wed, 05 Jan 2022 21:35:13 +0100
+X-ME-Date: Wed, 05 Jan 2022 21:40:08 +0100
 X-ME-IP: 90.11.185.88
-Message-ID: <b14613cc-afbd-752b-e338-a5372a8ea3a7@wanadoo.fr>
-Date:   Wed, 5 Jan 2022 21:35:12 +0100
+Message-ID: <7d9a565e-5a5c-003a-b1e1-7bdf72f29efa@wanadoo.fr>
+Date:   Wed, 5 Jan 2022 21:40:05 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.1
-To:     hch@lst.de
-Cc:     linux-scsi@vger.kernel.org, martin.petersen@oracle.com,
-        Kernel Janitors <kernel-janitors@vger.kernel.org>
-References: <20211222092247.928711-1-hch@lst.de>
-Subject: Re: [PATCH] pmcraid: don't use GFP_DMA in pmcraid_alloc_sglist
+Subject: Re: [PATCH] drm/msm/dp: Fix a potential double free in an error
+ handling path
 Content-Language: en-US
+To:     Stephen Boyd <swboyd@chromium.org>, airlied@linux.ie,
+        bjorn.andersson@linaro.org, daniel@ffwll.ch,
+        quic_abhinavk@quicinc.com, quic_khsieh@quicinc.com,
+        robdclark@gmail.com, sean@poorly.run
+Cc:     linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <6fd20c8779d6b03a5b54509af25b478049482087.1640531508.git.christophe.jaillet@wanadoo.fr>
+ <CAE-0n52jDxkfYbsQPzKjSeD4rimTz1p2gaDRFpK-LLxxNV31Ow@mail.gmail.com>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20211222092247.928711-1-hch@lst.de>
+In-Reply-To: <CAE-0n52jDxkfYbsQPzKjSeD4rimTz1p2gaDRFpK-LLxxNV31Ow@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-> The driver doesn't express DMA addressing limitation under 32-bits
-> anywhere else, so remove the spurious GFP_DMA allocation.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
-> drivers/scsi/pmcraid.c  <https://lore.kernel.org/all/20211222092247.928711-1-hch@lst.de/#Z31drivers:scsi:pmcraid.c>  | 4 ++--
-> 1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff 
-<https://lore.kernel.org/all/20211222092247.928711-1-hch@lst.de/#iZ31drivers:scsi:pmcraid.c> 
---git a/drivers/scsi/pmcraid.c b/drivers/scsi/pmcraid.c > index 
-2fe7a0019fff2..928532180d323 100644 > --- a/drivers/scsi/pmcraid.c > +++ 
-b/drivers/scsi/pmcraid.c > @@ -3221,8 +3221,8 @@ static struct 
-pmcraid_sglist *pmcraid_alloc_sglist(int buflen) >  		return NULL;
->  
->  	sglist->order = order;
-> -	sgl_alloc_order(buflen, order, false,  > - GFP_KERNEL | GFP_DMA | __GFP_ZERO, &sglist->num_sg); > + 
-sgl_alloc_order(buflen, order, false, GFP_KERNEL | __GFP_ZERO, > + 
-&sglist->num_sg); > 
->  	return sglist;
->  }
+Le 05/01/2022 à 21:09, Stephen Boyd a écrit :
+> Quoting Christophe JAILLET (2021-12-26 07:14:05)
+>> 'dp_bridge' is devm_alloc'ed, so there is no need to free it explicitly or
+>> there will be a double free().
+>>
+>> Fixes: 8a3b4c17f863 ("drm/msm/dp: employ bridge mechanism for display enable and disable")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+> 
+> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+> 
+
+and
+
+ >
+ > Reviewed-by: Kuogee Hsieh <quic_khsieh@quicinc.com>
+ >
+
 
 Hi,
 
-some time ago I sent a patch because the address returned by
-sgl_alloc_order() isn't saved anywhere and really look like a bogus allocation and certainly a memory leak.
-
-See https://lore.kernel.org/linux-kernel/20200920075722.376644-1-christophe.jaillet@wanadoo.fr/
-
+Just for your information, it has also been reported by Dan Carpenter 1 
+or 2 weeks before me and is part of -next in commit 48d0cf4a7cf2.
 
 CJ
-
