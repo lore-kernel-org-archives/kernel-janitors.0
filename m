@@ -2,58 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E34C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Jan 2022 23:39:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 952F1C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Jan 2022 23:57:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245451AbiAEXjx (ORCPT
+        id S235266AbiAEX5Z (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 5 Jan 2022 18:39:53 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:33802 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S245445AbiAEXjv (ORCPT
+        Wed, 5 Jan 2022 18:57:25 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:49778 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235323AbiAEX5U (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 5 Jan 2022 18:39:51 -0500
-Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 205Ndl71017585
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 5 Jan 2022 18:39:47 -0500
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id F23F215C339C; Wed,  5 Jan 2022 18:39:46 -0500 (EST)
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     adilger.kernel@dilger.ca, Nghia Le <nghialm78@gmail.com>
-Cc:     "Theodore Ts'o" <tytso@mit.edu>, lukas.bulwahn@gmail.com,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ext4: remove useless resetting io_end_size in mpage_process_page()
-Date:   Wed,  5 Jan 2022 18:39:45 -0500
-Message-Id: <164142575579.441490.5053656243661327373.b4-ty@mit.edu>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20211025221803.3326-1-nghialm78@gmail.com>
-References: <20211025221803.3326-1-nghialm78@gmail.com>
+        Wed, 5 Jan 2022 18:57:20 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D5FF6B81158;
+        Wed,  5 Jan 2022 23:57:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C5C4C36AEB;
+        Wed,  5 Jan 2022 23:57:17 +0000 (UTC)
+Date:   Wed, 5 Jan 2022 18:57:15 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH] trace: remove unneeded initialization in
+ __trace_uprobe_create()
+Message-ID: <20220105185715.0b40cb3f@gandalf.local.home>
+In-Reply-To: <20211227125308.25787-1-lukas.bulwahn@gmail.com>
+References: <20211227125308.25787-1-lukas.bulwahn@gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 26 Oct 2021 05:18:03 +0700, Nghia Le wrote:
-> The command "make clang-analyzer" detects dead stores in
-> mpage_process_page() function.
-> 
-> Do not reset io_end_size to 0 in the current paths, as the function
-> exits on those paths without further using io_end_size.
-> 
-> 
-> [...]
+Masami, want to ack this?
 
-Applied, thanks!
+-- Steve
 
-[1/1] ext4: remove useless resetting io_end_size in mpage_process_page()
-      commit: 2e1a1101de1e37c80c750c2657cc35d7f560756c
 
-Best regards,
--- 
-Theodore Ts'o <tytso@mit.edu>
+On Mon, 27 Dec 2021 13:53:08 +0100
+Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+
+> There is no need to initialize ret with 0, as all the early error branches
+> simply return constant values, and the default path always reaches
+> ret = kern_path(filename, LOOKUP_FOLLOW, &path), which will reset ret
+> before the initial value was ever used.
+> 
+> Remove this unneeded initialization and keep the code succinct.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  kernel/trace/trace_uprobe.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> index 5921951a0d5c..9da10c5efdce 100644
+> --- a/kernel/trace/trace_uprobe.c
+> +++ b/kernel/trace/trace_uprobe.c
+> @@ -548,7 +548,6 @@ static int __trace_uprobe_create(int argc, const char **argv)
+>  	bool is_return = false;
+>  	int i, ret;
+>  
+> -	ret = 0;
+>  	ref_ctr_offset = 0;
+>  
+>  	switch (argv[0][0]) {
+
