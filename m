@@ -2,71 +2,118 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 603C1C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Jan 2022 20:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A49C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Jan 2022 21:23:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244139AbiAEUkO (ORCPT
+        id S244413AbiAEVXn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 5 Jan 2022 15:40:14 -0500
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:64919 "EHLO
+        Wed, 5 Jan 2022 16:23:43 -0500
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:55333 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244130AbiAEUkJ (ORCPT
+        with ESMTP id S244406AbiAEVXl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 5 Jan 2022 15:40:09 -0500
+        Wed, 5 Jan 2022 16:23:41 -0500
 Received: from [192.168.1.18] ([90.11.185.88])
         by smtp.orange.fr with ESMTPA
-        id 5D4nnyvDrBazo5D4nn0JZy; Wed, 05 Jan 2022 21:40:08 +0100
+        id 5Dkonz8rwBazo5Dkon0Nlo; Wed, 05 Jan 2022 22:23:40 +0100
 X-ME-Helo: [192.168.1.18]
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Wed, 05 Jan 2022 21:40:08 +0100
+X-ME-Date: Wed, 05 Jan 2022 22:23:40 +0100
 X-ME-IP: 90.11.185.88
-Message-ID: <7d9a565e-5a5c-003a-b1e1-7bdf72f29efa@wanadoo.fr>
-Date:   Wed, 5 Jan 2022 21:40:05 +0100
+Message-ID: <bc95636a-8b67-b0cd-dc18-b21ac4b83962@wanadoo.fr>
+Date:   Wed, 5 Jan 2022 22:23:27 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.1
-Subject: Re: [PATCH] drm/msm/dp: Fix a potential double free in an error
- handling path
-Content-Language: en-US
-To:     Stephen Boyd <swboyd@chromium.org>, airlied@linux.ie,
-        bjorn.andersson@linaro.org, daniel@ffwll.ch,
-        quic_abhinavk@quicinc.com, quic_khsieh@quicinc.com,
-        robdclark@gmail.com, sean@poorly.run
-Cc:     linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <6fd20c8779d6b03a5b54509af25b478049482087.1640531508.git.christophe.jaillet@wanadoo.fr>
- <CAE-0n52jDxkfYbsQPzKjSeD4rimTz1p2gaDRFpK-LLxxNV31Ow@mail.gmail.com>
+Subject: Re: [PATCH] alpha: Remove usage of the deprecated "pci-dma-compat.h"
+ API
+Content-Language: en-GB
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        martin.oliveira@eideticom.com, alpha <linux-alpha@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>
+References: <0b8bacb36e111d2621c2c0459b20b1da9f4375c0.1641137463.git.christophe.jaillet@wanadoo.fr>
+ <CAK8P3a2XwFveAd8nSCexZG3_UZga2PQ+EXHxQLGaWkLjCwrBxQ@mail.gmail.com>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <CAE-0n52jDxkfYbsQPzKjSeD4rimTz1p2gaDRFpK-LLxxNV31Ow@mail.gmail.com>
+In-Reply-To: <CAK8P3a2XwFveAd8nSCexZG3_UZga2PQ+EXHxQLGaWkLjCwrBxQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 05/01/2022 à 21:09, Stephen Boyd a écrit :
-> Quoting Christophe JAILLET (2021-12-26 07:14:05)
->> 'dp_bridge' is devm_alloc'ed, so there is no need to free it explicitly or
->> there will be a double free().
+Le 03/01/2022 à 02:51, Arnd Bergmann a écrit :
+> On Sun, Jan 2, 2022 at 10:32 AM Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
 >>
->> Fixes: 8a3b4c17f863 ("drm/msm/dp: employ bridge mechanism for display enable and disable")
+>> In [1], Christoph Hellwig has proposed to remove the wrappers in
+>> include/linux/pci-dma-compat.h.
+>>
+>> Some reasons why this API should be removed have been given by Julia
+>> Lawall in [2].
+>>
+>> A coccinelle script has been used to perform the needed transformation.
+>> Only relevant parts are given below.
+>>
+>>
+>> [1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
+>> [2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
+>>
 >> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
 > 
-> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 > 
-
-and
-
- >
- > Reviewed-by: Kuogee Hsieh <quic_khsieh@quicinc.com>
- >
-
+> It looks like the number of remaining files that use the old
+> interfaces has gone down
+> a lot more since you last sent these patches. I would suggest you send them as a
+> series that includes the patch to remove the header as the last change, and
+> ask Andrew to pick up the ones that remain after this resend into the -mm tree,
+> possibly after the next -rc1. How many patches do you have left?
+> 
+>           Arnd
+> 
 
 Hi,
 
-Just for your information, it has also been reported by Dan Carpenter 1 
-or 2 weeks before me and is part of -next in commit 48d0cf4a7cf2.
+This would be ~ 10 patches.
+I sent recently some missing ones because I was not aware of 
+--include-headers. So .h files were missing in my previous patches.
+
+
+The main remaining issue is linked to files in message/fusion.
+The patches are big.
+They have to be looked at carefully because it touches some GFP flags 
+when s/pci_alloc_consistent/dma_alloc_coherent/.
+
+My last try did not get any attention.
+Even [1] which is purely mechanical
+
+I'll try another approach without trying to turn some (hidden) 
+GFP_ATOMIC into GFP_KERNEL.
+1st patch: only mechanical changes done with coccinelle, leaving GFP_ATOMIC
+2nd patch: add some FIXME comments explaining why some could be turned 
+into GFP_KERNEL
+3rd patch: remove the comments and update the GFP flags accordingly.
+
+So, a maintainer could either apply 1 (no risk at all, should even 
+generate the same .o file), or 1+2 (only FIXME comments for future 
+analysis) or 1+2+3 for full clean-up (if he trusts me and/or has time to 
+check my explanations).
+
+This way, I hope that some could at least apply the first one.
+
+
+Being able to axe this deprecated API and .h file would be my 
+contribution to Ingo Molnar's "Fast Kernel Headers" tree :)
 
 CJ
+
+[1]: 
+https://lore.kernel.org/kernel-janitors/db5aa78d7d44b809ab83ba6fb4880d698517bfec.1623580326.git.christophe.jaillet@wanadoo.fr/
