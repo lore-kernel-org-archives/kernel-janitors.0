@@ -2,76 +2,51 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F4C2C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Jan 2022 06:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C61C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Jan 2022 08:55:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232566AbiAEGbQ (ORCPT
+        id S238708AbiAEIzs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 5 Jan 2022 01:31:16 -0500
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:65419 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232499AbiAEGbQ (ORCPT
+        Wed, 5 Jan 2022 03:55:48 -0500
+Received: from relay10.mail.gandi.net ([217.70.178.230]:43507 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238712AbiAEIzq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 5 Jan 2022 01:31:16 -0500
-Received: from [192.168.1.18] ([90.11.185.88])
-        by smtp.orange.fr with ESMTPA
-        id 4zpGnt6LQBazo4zpGny1Ls; Wed, 05 Jan 2022 07:31:14 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Wed, 05 Jan 2022 07:31:14 +0100
-X-ME-IP: 90.11.185.88
-Message-ID: <9b93f495-2bfe-1ade-141b-69c4842aee8e@wanadoo.fr>
-Date:   Wed, 5 Jan 2022 07:31:10 +0100
+        Wed, 5 Jan 2022 03:55:46 -0500
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 9F1EB240005;
+        Wed,  5 Jan 2022 08:55:44 +0000 (UTC)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     linux-i3c@lists.infradead.org, Nicolas Pitre <npitre@baylibre.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i3c/master/mipi-i3c-hci: correct the config reference for endianness
+Date:   Wed,  5 Jan 2022 09:55:43 +0100
+Message-Id: <164137293677.1744375.2377630941064960433.b4-ty@bootlin.com>
+X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20220103094504.3602-1-lukas.bulwahn@gmail.com>
+References: <20220103094504.3602-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [Intel-wired-lan] [PATCH] intel: Simplify DMA setting
-Content-Language: en-US
-To:     "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
-        "Lobakin, Alexandr" <alexandr.lobakin@intel.com>
-Cc:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "kuba@kernel.org" <kuba@kernel.org>,
-        "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-References: <c7a34d0096eb4ba98dd9ce5b64ba079126cab708.1641255235.git.christophe.jaillet@wanadoo.fr>
- <20220104132936.252202-1-alexandr.lobakin@intel.com>
- <c258c3bb440b88e984b0385af8ffb38a017ba644.camel@intel.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <c258c3bb440b88e984b0385af8ffb38a017ba644.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 04/01/2022 à 22:56, Nguyen, Anthony L a écrit :
-> On Tue, 2022-01-04 at 14:29 +0100, Alexander Lobakin wrote:
->> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> Date: Tue, 4 Jan 2022 01:15:20 +0100
->>
->> Reviewed-by: Alexander Lobakin <alexandr.lobakin@intel.com>
->>
->> Tony might ask to split it into per-driver patches tho, will see.
+On Mon, 3 Jan 2022 10:45:04 +0100, Lukas Bulwahn wrote:
+> The referred config BIG_ENDIAN does not exist. The config for the
+> endianness of the CPU architecture is called CPU_BIG_ENDIAN.
 > 
-> Hi Christophe,
+> Correct the config name to the existing config for the endianness.
 > 
-> As mentioned by others, would mind breaking these per-driver?
-> 
-> Thanks,
-> Tony
 > 
 
-I'll do, but to much bureaucracy will kill us all.
+Applied, thanks!
 
-CJ
+[1/1] i3c/master/mipi-i3c-hci: correct the config reference for endianness
+      commit: 7a2bccd1a27f0c8fc87e4ed56abd6ea9fa7314a6
 
->>
->> --- 8< ---
->>
->> Al
-> 
-
+Best regards,
+-- 
+Alexandre Belloni <alexandre.belloni@bootlin.com>
