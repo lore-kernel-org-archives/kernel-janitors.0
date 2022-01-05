@@ -2,70 +2,68 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E4C4C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Jan 2022 17:31:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9891C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  5 Jan 2022 19:51:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242271AbiAERbs (ORCPT
+        id S243712AbiAETvu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 5 Jan 2022 12:31:48 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:50142 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231202AbiAERbq (ORCPT
+        Wed, 5 Jan 2022 14:51:50 -0500
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:57689 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243696AbiAETvq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 5 Jan 2022 12:31:46 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9D84B61843;
-        Wed,  5 Jan 2022 17:31:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44026C36AE0;
-        Wed,  5 Jan 2022 17:31:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641403905;
-        bh=7y9Ztfyk/wsCxvSSy7rXBwr0Esh7XJzwinR6rTfAGbQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ezr/YSqT8M+w5ckBJEsDg1XbGQqZKVqTS2yk0YEZA/KzzPuCPQJ5nH3d28w2Jn2CP
-         RoJhRvIGwaDFh2qpavtjgRsWKcvpSShdgD4DfzYFH8UzV0jtUCxRGn/LlMH+RL5eR2
-         5lyGAna7mT8UJBtXbUkXbhXh5rF8zZahwDfIJVO0ngmgyHe1jk08PPcyJOjDGkxn/6
-         0/Pc0eLQd+h5f1v+CmGLBZp3k0ApKliUvVVVGwWNg2O2xdXwb7KahJITqARf6Um39A
-         4aE5I+1aQE8tyG/rkfptQqEuXjso0dXTGrw8VYhzEq84PDsAEmOHlzYU6cS3IUnbuQ
-         ltSvwUkpmoeuQ==
-From:   Will Deacon <will@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Bhaskara Budiredla <bbudiredla@marvell.com>
-Cc:     catalin.marinas@arm.com, kernel-team@android.com,
-        Will Deacon <will@kernel.org>, kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers: perf: marvell_cn10k: fix an IS_ERR() vs NULL check
-Date:   Wed,  5 Jan 2022 17:31:38 +0000
-Message-Id: <164130469774.128143.15567596913293745739.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20211217145907.GA16611@kili>
-References: <20211217145907.GA16611@kili>
+        Wed, 5 Jan 2022 14:51:46 -0500
+Received: from [192.168.1.18] ([90.11.185.88])
+        by smtp.orange.fr with ESMTPA
+        id 5CJynyfKuBazo5CJyn0El3; Wed, 05 Jan 2022 20:51:45 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Wed, 05 Jan 2022 20:51:45 +0100
+X-ME-IP: 90.11.185.88
+Message-ID: <86bf852e-4220-52d4-259d-3455bc24def1@wanadoo.fr>
+Date:   Wed, 5 Jan 2022 20:51:42 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH] enic: Use dma_set_mask_and_coherent()
+Content-Language: en-US
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     benve@cisco.com, govind@gmx.com, davem@davemloft.net,
+        kuba@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <f926eab883a3e5c4dbfd3eb5108b3e1828e6513b.1641045708.git.christophe.jaillet@wanadoo.fr>
+ <YdK4IIFvi5O5eXHC@infradead.org>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <YdK4IIFvi5O5eXHC@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 17 Dec 2021 17:59:08 +0300, Dan Carpenter wrote:
-> The devm_ioremap() function does not return error pointers.  It returns
-> NULL.
+Le 03/01/2022 à 09:47, Christoph Hellwig a écrit :
+> On Sat, Jan 01, 2022 at 03:02:45PM +0100, Christophe JAILLET wrote:
+>> -	err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(47));
+>> +	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(47));
+>>   	if (err) {
+>> +		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+>>   		if (err) {
+>>   			dev_err(dev, "No usable DMA configuration, aborting\n");
+>>   			goto err_out_release_regions;
+>>   		}
+>>   	} else {
+>>   		using_dac = 1;
 > 
+> There is no need for the callback.  All the routines to set a DMA mask
+> will only fail if the passed in mask is too small, but never if it is
+> larger than what is supported.  Also the using_dac variable is not
+> needed, NETIF_F_HIGHDMA can and should be set unconditionally.
 > 
 
-Applied to will (for-next/perf), thanks!
+Ok, thanks.
+I was only aware of the 64 bits case.
+The patch has already reached -next.
 
-[1/1] drivers: perf: marvell_cn10k: fix an IS_ERR() vs NULL check
-      https://git.kernel.org/will/c/2da56881a7f8
+I'll send another patch on to of it to go one step further.
 
-Cheers,
--- 
-Will
-
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
+CJ
