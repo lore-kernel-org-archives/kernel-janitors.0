@@ -2,113 +2,167 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CBF3C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Jan 2022 10:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A3FCC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Jan 2022 11:58:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237657AbiAFKJX (ORCPT
+        id S238694AbiAFL6V (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Jan 2022 05:09:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55134 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231360AbiAFKJW (ORCPT
+        Thu, 6 Jan 2022 06:58:21 -0500
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:11886 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238602AbiAFL6V (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Jan 2022 05:09:22 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69C61C061245
-        for <kernel-janitors@vger.kernel.org>; Thu,  6 Jan 2022 02:09:21 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id k21so4039414lfu.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 06 Jan 2022 02:09:21 -0800 (PST)
+        Thu, 6 Jan 2022 06:58:21 -0500
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 206AJlJl018918;
+        Thu, 6 Jan 2022 11:58:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : content-type : mime-version; s=corp-2021-07-09;
+ bh=VICRXe5mgR8w7eiIayeOOttRpxpfMLpgmYGF85O+ZhY=;
+ b=t9ZBlsqfHLNbSPDRCKq/MO+keydJp+bWjSV4wmEsDjDFMRUBVyCLSfWXPZO8yrfAyD+v
+ TsnJuoFdcy8W8WlyICXB/Gq04y98VIQ2vXTB/LfQQMpMAE6RMiH8gun1UqzowUl/PNU/
+ 4bZHIc/f2BS9YXO+L2sTjPzin9Udn4o+si1Arlh8OKM9VD4FGFsWdaLpunprpwLTZZ/x
+ Nhn2EdqThzBN8F9g2kCU0cA3XeNSgt5FjKq8QablSogbd18dqWAB+AG3GlUiJJ6IoLXp
+ V3PPA/5uuDyhFSDJSxMbh5sqvDbiBnaNS3REe1U83LMG2fE1Qighor4+oc/Xt3ykxEG9 xw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3ddmpp9gdq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Jan 2022 11:58:14 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 206BtLKp116694;
+        Thu, 6 Jan 2022 11:58:13 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101])
+        by userp3020.oracle.com with ESMTP id 3ddmq6m8qx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Jan 2022 11:58:13 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KGznkFFEQ4MwjVZyhZpDlZy+nslxTAikBO5jZoRhAAxymTU2C8Bekz7CTZDKB24GTtU+0iUlyilzJYozP1FtZfoSyXiYmZitap6HfixtIRUfiR+3x0Iy88PJPmbZPWPL+iMMONuJqqDNcbOk1RZjh0/4Zo94N0LzYZBVUXmRZObIEXhygt2gUvNheKtumfbmwj/y2CjHIgi+uKnl1433UV/bxWrbFlwGbZUNaqe4HlPZRoS34Y3FtJmaNRU6EJir2SmKsbsbIOaCXSimvzzExeEJFWeKr8CLrVSQbiEjYrSVq8pKlze0uB3TX2KoIT26rS+keyvwp6SoFWS1AnFBgg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VICRXe5mgR8w7eiIayeOOttRpxpfMLpgmYGF85O+ZhY=;
+ b=Q+lpQF3vfFCS2wbdVcxDN/b2tiIrZJxA0rfrHBpBg8Xck8tLwyYYooVkFTMV0pBhWL+dGhYfrmGhqfck41s2WEt4AGZILuFoHSdMWeMn+cWktWoHqGNG3YYu7p1WX51qcEaQHbX/tFhdLM4UUQDewgsZfHBNyyYz7iUxUn7Jw201fdhuxtNXTZ6uCvSHeEV/Aoq/pWo9t6XCHaL9kZX4mV5PAra9Y9GZT31ml7l/lyn0KgPoE1yiZC9cH6d9lhBGaBdFmbyicVMDLFOmmHFXG3grDt+QGy1c0flYeFp6cpaGtT3/k/xGDN9G8BcRjBMiX2N4b7ycqj7RVAcrZE0oAQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=I/rP0dNHt8Jazht9doi78Jhtq9KEOMg3d7CX9IcDqRY=;
-        b=HLoo5vmOFELqqkXBZQzi+nY5cb0VKfYI1MuYP5GcZ2b6CkBncMCdMi858SxG8V42wR
-         qSTE6LoppcghKZksAM2xHn3hacU16VYnFIVJqkpJ2sEsrbjhLsNEX1mYqbu1dB7m1D9d
-         92odfaQ9pBzeFCj+hahyHIq26MICyRkPiNvD0SK0BSWDs+rzYWZgBDDeIuxTdR4f6IoF
-         Qqt+yn9vwj3oG11o3VjMGb4oDXsQn7N8kkCmJfhC6I0C0sY05sofbvgO+MhYc5K0rfO8
-         DdkxZj9p6goOR/a/kCoNWT6GQexjnm/X8LqB06APNXu9HmAJuVFHzA+/fzXK3fc+9HC5
-         uPCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=I/rP0dNHt8Jazht9doi78Jhtq9KEOMg3d7CX9IcDqRY=;
-        b=NHHZTay6anHiXeY5q4Qt24l9jfI+wVlp4eUhpO0vAVlXqIiQN1bgqbVWr/r2wFZaq4
-         RHnCk9Ebj5Xsy2NswGbHBEwC8Wfk+1KYFEMdOzahOfheT1+Eg3TuXN7bj2gjgzBCfyJl
-         Ja9mQ9ZGcwZ1d7Oe1bvw6GB4v+axRsjnpg9pkXpQbRvZtzDSTyyJTt9eiVLgGOSDnBBB
-         KFlBa6B0Z+aBwnMoHeu5O18OwbIKCO0gEyS5uPPoSBdo1U2KRSgRPVavOf+5e8+FTEn1
-         Y/sj00Kmhy2Y2dO0uiOBzjJYcYBlNfWQ1aOkTh1NJ7GCPgpEvxZ11F0zRaagqFIe/aqE
-         BWiQ==
-X-Gm-Message-State: AOAM532KmkeXpOeHgbmYyNtRbTqVlNMF/0uWSEvto+Xo+tbqQZVQpFJn
-        iH9S9xciAf4pT3k/aPdm/E0=
-X-Google-Smtp-Source: ABdhPJzwQeD/cB9Y5GoBprwdH8rfm05M/8PBHCWWQXNzSBSGaxR0dlKjQhZ0zycPYbUtAlaHZicZ/w==
-X-Received: by 2002:a05:6512:260c:: with SMTP id bt12mr49856441lfb.506.1641463759566;
-        Thu, 06 Jan 2022 02:09:19 -0800 (PST)
-Received: from [192.168.1.11] ([94.103.227.53])
-        by smtp.gmail.com with ESMTPSA id g5sm133789lfj.33.2022.01.06.02.09.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jan 2022 02:09:19 -0800 (PST)
-Message-ID: <fdf648ba-2dc2-2369-47f5-b471c2b0852f@gmail.com>
-Date:   Thu, 6 Jan 2022 13:09:18 +0300
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VICRXe5mgR8w7eiIayeOOttRpxpfMLpgmYGF85O+ZhY=;
+ b=BjXs3VP14yNvKpoi2qUUdBo4BcYrbtAPYw0m6p4BMhFx2CI6LTdWHjr3i/mUCYvQpPTkZV80VKflTUOi9iJ6nlhlLT3CcFtya7byhlzJUob4y1k2L7uQ1FTpSBOCdLvQ3P/Kw2rWXozRbl9Em2pDrxH7TW6S21hmO48jCRcFWoA=
+Received: from CY4PR1001MB2358.namprd10.prod.outlook.com
+ (2603:10b6:910:4a::32) by CY4PR10MB1750.namprd10.prod.outlook.com
+ (2603:10b6:910:9::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4844.15; Thu, 6 Jan
+ 2022 11:58:11 +0000
+Received: from CY4PR1001MB2358.namprd10.prod.outlook.com
+ ([fe80::38cc:f6b:de96:1e0e]) by CY4PR1001MB2358.namprd10.prod.outlook.com
+ ([fe80::38cc:f6b:de96:1e0e%4]) with mapi id 15.20.4844.016; Thu, 6 Jan 2022
+ 11:58:11 +0000
+Date:   Thu, 6 Jan 2022 14:57:54 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jiri Pirko <jiri@resnulli.us>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH net] rocker: fix a sleeping in atomic bug
+Message-ID: <20220106115754.GB28590@kili>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: ZR0P278CA0182.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:44::15) To CY4PR1001MB2358.namprd10.prod.outlook.com
+ (2603:10b6:910:4a::32)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [bug report] asix: fix uninit-value in asix_mdio_read()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     kernel-janitors@vger.kernel.org
-References: <20220106100531.GA25074@kili>
-From:   Pavel Skripkin <paskripkin@gmail.com>
-In-Reply-To: <20220106100531.GA25074@kili>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b0405345-aedd-4b27-5243-08d9d10bd011
+X-MS-TrafficTypeDiagnostic: CY4PR10MB1750:EE_
+X-Microsoft-Antispam-PRVS: <CY4PR10MB1750D4F542356E41E75C0C758E4C9@CY4PR10MB1750.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2887;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: OKtfM8eVlD+mISVusBOY6kx6Ex/m6xX2bl7RDu8KlqTlMc9KTKOg7GJGpbjSvHImkSlVK0EyfXSJpjl58FjJpws+3CBeMsBUopJ3/dH7/C1LP/rUpp93UpHT2xhg/ENc/2t2PtyZ1e3YRHlWdOW1KfqLO404wRkBG4rsod8rTtOcDvJ38QgEHxIciMreWmtY6u7nYeRmDzj5EAXO9wC22BuPZ34/DqtpjHdIJ3Wqd8sszJTuD5O5OPhOc1QnP3t6r7b+thta80tt2x9r5f/uazpnSzf1JqBohxnhZJDgzSSAffQ8E6tNmBH239joReBo79ZZCqhvIQK4+2g9owWOmiANPzKsH2TbmNBZLHjgUOEJSBF9spATLt1EYsa/6CyS01nEczZBeMR1sIKawM/VXIerHP2eXLeLjOHalJ7NSQ/XXkaOdT4IaRxFqvGyOLJKACEHoFxVTdDUXqLFSdUlQI4H9BuuKC+6zrxxa1OvpPOP6TLXro+BDtLEwer6axbf1oJW5iDga7yS+qaEzd4kTFreywBSHHGPpZLMip79WfWJi+9KfbSSqRoaImv1+mUmKGhA6AViGDUZGx/nTUIFFt9rQkC+99FDBzZb++OduzMxkIsj1DQ4GpFuk1AGchtauj+ET5coF9rsju0JiKlB9dgSmWjJq3nMNigRn9eO3eoVbqtacQqCNK300foE9bETzxrVNHhCYUVHx92cS6bKSg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR1001MB2358.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(7916004)(366004)(5660300002)(8676002)(6486002)(33656002)(508600001)(52116002)(26005)(6916009)(86362001)(4326008)(6506007)(66476007)(66556008)(54906003)(33716001)(6666004)(186003)(9686003)(83380400001)(2906002)(8936002)(66946007)(1076003)(44832011)(38350700002)(38100700002)(316002)(6512007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?I19MKd2fFRlgveJrHbFvM//ao3srBvbhC8mtVOIKWdWcugXEY7YXS2YZCaWq?=
+ =?us-ascii?Q?0kdQdWB9NK7P/hiJl9dzu9XGnUoYce9AJvOd54VjWShKFOu5bx+tEqpQ1N2R?=
+ =?us-ascii?Q?dX5fCKjs1Q2v7VQpVQNd4Uk9cdg2sxTnJ+cFTuI+gXWrFD0CuwsRAsSIDKeL?=
+ =?us-ascii?Q?phBV7w+35h5dJxnozXGw+PnurDEb8g1PQgWX92TYNSZXFS+LwWECjGdqcYih?=
+ =?us-ascii?Q?xz+fMoQX+td0TZEYAc3kHm5EzUbLz2xaqdM/mvLFtFKnU9A7EGYM+bX+PLxf?=
+ =?us-ascii?Q?z2BjcZW8VOczmqbQhI3HHz8CBQk5r0TqAfq33TVDVGj/Un8YYM2JgMKUJ8uh?=
+ =?us-ascii?Q?4tuLLM8XY7MNNBlOUt5rBBcoL3PMccfBg5zl5JHQPdyR9tQfoNKbxLL+EhXB?=
+ =?us-ascii?Q?HAkMNNtjcAahwPvoS4Gghou7SrxNgK9+DqrmdnaR8xN4FUrXEOw1/YqNAgqW?=
+ =?us-ascii?Q?HdQtzdYckUF7WJ//ZnxGlp3HGrb+xOfcRq0jOComh3YaUwh9KhUatY0jsaH0?=
+ =?us-ascii?Q?XxX7KoM1DtmXKLzYlsqeLZ+gezX0mMEoZVTtH8P5Ju8xE4Kn6WjwUKiSRczl?=
+ =?us-ascii?Q?YNhr8Dj7J7tbuKOC89/mWIe+iI9cPSH1/ZuRsMqLIvJV61f3fAWSKAOkTc2Y?=
+ =?us-ascii?Q?Or4zGAQL66kq+9po3aa/FXzwFhUwUxfygko6anZPgnUAAYsxLu/zqMKMMnPT?=
+ =?us-ascii?Q?b4xXd4iLTXt7r3qWhLXZL+l9UqdIuTs50tHfBmQoPueZqKuy3TvIRw1rEdyT?=
+ =?us-ascii?Q?/jPS0OK0NZzraTcLat8132Cz33Ht9aFJx8lIaiOoNzuB3tKZGyIkKSMrJWov?=
+ =?us-ascii?Q?DXdIjmbFvHdvYSBGOrA6aRGqlQfD8JFQ4kHSkz7t+vymnO3uZmBzgjO5JlOr?=
+ =?us-ascii?Q?OszsPoQMPdkrMa6Zq7GyqwZc12JrOmvlA64MaG5DfF4zRiy8AL4G0ockQ1Nn?=
+ =?us-ascii?Q?hdIW9f36chmqs5PxBUdua899Iekv0MSZBrUUJHhGwuTmOWbZLgS0SQqCcmih?=
+ =?us-ascii?Q?jOum2Yv2r4XSdWr1Awu6K0HjulWyKWvcQ+nGha84JjDdkMc0IZjU9LojbNxa?=
+ =?us-ascii?Q?YM98NG14Uj+XiMTkppyqY5o9ckEgqTgcL0XQTipjigE10Cd6o849ztt/X1X6?=
+ =?us-ascii?Q?kES0okqB4Vlpw5w+3MfAVdN+OQKGN94qZthLcyDefh4yfaGu6JZpopRFptJc?=
+ =?us-ascii?Q?dYVC0IPF0hOX02nRqBAB21aHGwL7JrDT/UkDOWZl/KmEDVOxFDC6OD4hZ1P0?=
+ =?us-ascii?Q?bT95i4lEoPriHLIiOTA4iKnJDfVJm0GZo531RcwJFWcE2evChkA5VyD69UwX?=
+ =?us-ascii?Q?JYAm1vuPdryA7DgsQtmDA69ScgaPwedeP6tzYyLkXj/aY7loVr1lIWZHwaWV?=
+ =?us-ascii?Q?0EXxnbGSZmKTeqDH7Jv0LPIm1bXtER5RHLgSRbIy2Tap6gMZ1UwFTCrkUIKm?=
+ =?us-ascii?Q?PKdUKi3Skiykfn765JSIHYC6TZeFC/SYrCv9hfG5XqJY2MdIwPMdWf0qjW4h?=
+ =?us-ascii?Q?/u2FqRM9v4schG4K+9HQaBWxOhm/pNUH++1SuXEKf0PoNkpC/YV9KEPhjIZQ?=
+ =?us-ascii?Q?OHGtW3dAYsOmnwW8LQ3+S8LeNgpYtPcPaVFkJf1MZqv3gwafMg56Jx8B+X2g?=
+ =?us-ascii?Q?gRQ1OwYYl4baJ2rTieq6kCFV+CEu2R0AGdcTjyo0RcgsJ0Vu7rrxAUWEvUka?=
+ =?us-ascii?Q?0q8OYFGxTZFnHNNr2K3UDavfn0Y=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b0405345-aedd-4b27-5243-08d9d10bd011
+X-MS-Exchange-CrossTenant-AuthSource: CY4PR1001MB2358.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jan 2022 11:58:11.6371
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hxjWdmotZ3A79/62bPY6VHpD33itZt7sThi5eQLTwceDtQWrhtZhLxWmzJX1hpywnL8tTX0yozFSCw6nMjZpq6LY1dQV9fJk6xKF3n7jHDo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR10MB1750
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10218 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0 spamscore=0
+ suspectscore=0 mlxlogscore=886 phishscore=0 bulkscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2112160000
+ definitions=main-2201060084
+X-Proofpoint-ORIG-GUID: bHvSAkkRL3YAZ5ZtizdvXwRmSZCJP4vp
+X-Proofpoint-GUID: bHvSAkkRL3YAZ5ZtizdvXwRmSZCJP4vp
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+This code is holding the &ofdpa->flow_tbl_lock spinlock so it is not
+allowed to sleep.  That means we have to pass the OFDPA_OP_FLAG_NOWAIT
+flag to ofdpa_flow_tbl_del().
 
-On 1/6/22 13:05, Dan Carpenter wrote:
-> Hello Pavel Skripkin,
-> 
-> The patch 8035b1a2a37a: "asix: fix uninit-value in asix_mdio_read()"
-> from Dec 21, 2021, leads to the following Smatch static checker
-> warning:
-> 
-> 	drivers/net/usb/asix_common.c:82 asix_check_host_enable()
-> 	warn: 'ret' possible negative type promoted to high
-> 
-> drivers/net/usb/asix_common.c
->      68 static int asix_check_host_enable(struct usbnet *dev, int in_pm)
->      69 {
->      70         int i, ret;
->      71         u8 smsr;
->      72
->      73         for (i = 0; i < AX_HOST_EN_RETRIES; ++i) {
->      74                 ret = asix_set_sw_mii(dev, in_pm);
->      75                 if (ret == -ENODEV || ret == -ETIMEDOUT)
->      76                         break;
->      77                 usleep_range(1000, 1100);
->      78                 ret = asix_read_cmd(dev, AX_CMD_STATMNGSTS_REG,
->      79                                     0, 0, 1, &smsr, in_pm);
->      80                 if (ret == -ENODEV)
->      81                         break;
-> --> 82                 else if (ret < sizeof(smsr))
-> 
-> This has to be: if (ret < 0 || ret < sizeof(smsr)) { but even better
-> would be to fix asix_read_cmd() to not allow partial reads.  It should
+Fixes: 936bd486564a ("rocker: use FIB notifications instead of switchdev calls")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+From static analysis.  Not tested.
 
-Thanks for reporting this. It's indeed a bug.
+ drivers/net/ethernet/rocker/rocker_ofdpa.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I sent the fix yesterday, that disallows partial reads inside 
-asix_read_cmd()
+diff --git a/drivers/net/ethernet/rocker/rocker_ofdpa.c b/drivers/net/ethernet/rocker/rocker_ofdpa.c
+index 3e1ca7a8d029..bc70c6abd6a5 100644
+--- a/drivers/net/ethernet/rocker/rocker_ofdpa.c
++++ b/drivers/net/ethernet/rocker/rocker_ofdpa.c
+@@ -2783,7 +2783,8 @@ static void ofdpa_fib4_abort(struct rocker *rocker)
+ 		if (!ofdpa_port)
+ 			continue;
+ 		nh->fib_nh_flags &= ~RTNH_F_OFFLOAD;
+-		ofdpa_flow_tbl_del(ofdpa_port, OFDPA_OP_FLAG_REMOVE,
++		ofdpa_flow_tbl_del(ofdpa_port,
++				   OFDPA_OP_FLAG_REMOVE | OFDPA_OP_FLAG_NOWAIT,
+ 				   flow_entry);
+ 	}
+ 	spin_unlock_irqrestore(&ofdpa->flow_tbl_lock, flags);
+-- 
+2.20.1
 
-Please see
-
-https://lore.kernel.org/all/20220105131952.15693-1-paskripkin@gmail.com/
-
-
-With regards,
-Pavel Skripkin
