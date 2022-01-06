@@ -2,48 +2,44 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B3FC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Jan 2022 13:04:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCEC6C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Jan 2022 13:21:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239321AbiAFNEo (ORCPT
+        id S239510AbiAFNVf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Jan 2022 08:04:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38042 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238990AbiAFNEn (ORCPT
+        Thu, 6 Jan 2022 08:21:35 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:41972 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239484AbiAFNV2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Jan 2022 08:04:43 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0512C061245;
-        Thu,  6 Jan 2022 05:04:43 -0800 (PST)
+        Thu, 6 Jan 2022 08:21:28 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4F3C8617FF;
-        Thu,  6 Jan 2022 13:04:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7831DC36AE3;
-        Thu,  6 Jan 2022 13:04:41 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A8AB361BFA;
+        Thu,  6 Jan 2022 13:21:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B9B2C36AE3;
+        Thu,  6 Jan 2022 13:21:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641474282;
-        bh=OrpbMz33tmziz/Ene2vJS2s15wTiwckM/wakIsT7NvY=;
+        s=k20201202; t=1641475287;
+        bh=6j1fMUfutZuB78M/WJhvLhM7/vnCc0zb00rLQdybbFM=;
         h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=YdsZWjm5tMFJk/FQ/7b4cTFiFobAtPgu79wGZt/hy2uNv0g5KCnoQHopmi92SjECg
-         NN39H0txUQ1kU3kgn5HBSm9q4CSzMrhOzqA+5tl07l8Pr4h1fNQ0JQuYhF4ffe88Kx
-         G94xaawdGSzIOcsH/aGkf8HYTcILvgviEMGEIfU6lmVjijRAYQsL/v+IUil8yrRX+M
-         SKa7BBOrRXiC2URtn9KQpL6E6C3+OawK11MhLYfgrD0d5df3cNkloGEmbNJnJdQ/Nk
-         qi/O+1wYgmDWIuJLaJSeaJwXqj6IAjPCFV2LNknSjDG/TbFfZdbNIzbE6JDML1cdq0
-         B5XzNyAnMvAKQ==
-Date:   Thu, 6 Jan 2022 14:04:39 +0100 (CET)
+        b=C1yg/Sd2ig7ay28/kpRTe88LFzKTknzA3/+FGMIr//vBX4AqbsMFlXw2SlgcJ/uRJ
+         UH1inmzzYZXVx4V1X8N18aXH7RYLr1ZUzM+zSbtn7I/CSkeImK0HiOGsGVduWTNQxr
+         bLVvk//TTBDXDvnmHMQQO/tRgeGtxCgs0Op4SDIEBc7EFKygVD8TGmGZlj+/P98GI4
+         I5p74UbV7lJA3QbPyqRAq6uMWmZWLVbI2is6cF6DOBXVfa7LOOxfJXPl9A0nY2RvCz
+         HpaWUyPkhZBF5F8CFuShTvHT8E1e2tks5T+BiUNzqev+Z6IpDXi8OguVwYBr/ehxrV
+         6O0J2n0C1lBNA==
+Date:   Thu, 6 Jan 2022 14:21:24 +0100 (CET)
 From:   Jiri Kosina <jikos@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-cc:     benjamin.tissoires@redhat.com, jose.exposito89@gmail.com,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] HID: magicmouse: Fix an error handling path in
- magicmouse_probe()
-In-Reply-To: <b0777c29fb4c59f27a726f62680b4c7f04c5c76e.1640725695.git.christophe.jaillet@wanadoo.fr>
-Message-ID: <nycvar.YFH.7.76.2201061404340.16505@cbobk.fhfr.pm>
-References: <b0777c29fb4c59f27a726f62680b4c7f04c5c76e.1640725695.git.christophe.jaillet@wanadoo.fr>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: address kernel-doc warnings
+In-Reply-To: <20211216092157.26912-1-lukas.bulwahn@gmail.com>
+Message-ID: <nycvar.YFH.7.76.2201061421170.16505@cbobk.fhfr.pm>
+References: <20211216092157.26912-1-lukas.bulwahn@gmail.com>
 User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -51,32 +47,18 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 28 Dec 2021, Christophe JAILLET wrote:
+On Thu, 16 Dec 2021, Lukas Bulwahn wrote:
 
-> If the timer introduced by the commit below is started, then it must be
-> deleted in the error handling of the probe. Otherwise it would trigger
-> once the driver is no more.
+> The command ./scripts/kernel-doc -none include/linux/hid.h reports:
 > 
-> Fixes: 0b91b4e4dae6 ("HID: magicmouse: Report battery level over USB")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/hid/hid-magicmouse.c | 1 +
->  1 file changed, 1 insertion(+)
+>   include/linux/hid.h:818: warning: cannot understand function prototype: 'struct hid_ll_driver '
+>   include/linux/hid.h:1135: warning: expecting prototype for hid_may_wakeup(). Prototype was for hid_hw_may_wakeup() instead
 > 
-> diff --git a/drivers/hid/hid-magicmouse.c b/drivers/hid/hid-magicmouse.c
-> index eba1e8087bfd..b8b08f0a8c54 100644
-> --- a/drivers/hid/hid-magicmouse.c
-> +++ b/drivers/hid/hid-magicmouse.c
-> @@ -873,6 +873,7 @@ static int magicmouse_probe(struct hid_device *hdev,
->  
->  	return 0;
->  err_stop_hw:
-> +	del_timer_sync(&msc->battery_timer);
->  	hid_hw_stop(hdev);
->  	return ret;
->  }
+> Address those kernel-doc warnings.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Applied, thanks.
+Applied, thanks Lukas.
 
 -- 
 Jiri Kosina
