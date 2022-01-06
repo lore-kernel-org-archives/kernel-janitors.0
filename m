@@ -2,99 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A59FC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Jan 2022 18:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74944C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Jan 2022 19:03:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242917AbiAFSgF (ORCPT
+        id S243133AbiAFTDw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Jan 2022 13:36:05 -0500
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:60590 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242797AbiAFSgE (ORCPT
+        Thu, 6 Jan 2022 14:03:52 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:46990 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232414AbiAFTDv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Jan 2022 13:36:04 -0500
-Received: from [192.168.1.18] ([90.11.185.88])
-        by smtp.orange.fr with ESMTPA
-        id 5XcCn6oLyBazo5XcDn2y4b; Thu, 06 Jan 2022 19:36:03 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 06 Jan 2022 19:36:03 +0100
-X-ME-IP: 90.11.185.88
-Message-ID: <edd19014-3b99-fa0b-912b-e058c14401d8@wanadoo.fr>
-Date:   Thu, 6 Jan 2022 19:35:56 +0100
+        Thu, 6 Jan 2022 14:03:51 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 85149B819B4;
+        Thu,  6 Jan 2022 19:03:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B28AC36AEB;
+        Thu,  6 Jan 2022 19:03:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1641495829;
+        bh=caIq06vVwJ4QO86Oh793UHoQ2HsFfrAToS2F6AVTWXU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Fqx14Wn8tzPg6MwqzkQgjq2PzXCNNibNi3DHvECLHhwn6RaTQexfFWI+mpTU8PVsH
+         PCItXLJoVpoqQBofotHwOj8Dhae/7HU3k06BAzk91Pv7FpeeYb95WAU7SNrLt7przs
+         qQfK8yeDXLulyb4qz9OC8TxcgZR3UBRryweLRRt3EKNbHsl3KBiKtzZ0RLbeGWDu8G
+         qG763iK2Tr7bpisUduENY0PX+clUlVj7ylMEtxbLVROVOHQWHLYFkMJ6mls4y/XoFz
+         jUq61QM4o277qrMdif1efsnq51L0XltDuYC5BcztmVmFWY6hLWd3Jh74VMK/+pBYIw
+         dsYXyJ+xQo+SA==
+Date:   Thu, 6 Jan 2022 21:03:44 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lib: remove redundant assignment to variable ret
+Message-ID: <Ydc9EHZAqSgS4hol@iki.fi>
+References: <20211230134557.83633-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH] fsi: Aspeed: Fix a potential double free
-Content-Language: en-US
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Greg KH <gregkh@linuxfoundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        alistair@popple.id.au, linux-kernel@vger.kernel.org,
-        linux-fsi@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
-References: <2cafa0607ca171ebd00ac6c7e073b46808e24f00.1640537669.git.christophe.jaillet@wanadoo.fr>
- <YcldM9sgYdjMYMtH@kroah.com> <20220106081418.GH7674@kadam>
- <f2ba50fd-5c6b-e905-17ed-541dcc98c6c1@roeck-us.net>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <f2ba50fd-5c6b-e905-17ed-541dcc98c6c1@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211230134557.83633-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 06/01/2022 à 18:25, Guenter Roeck a écrit :
-> On 1/6/22 12:14 AM, Dan Carpenter wrote:
->> On Mon, Dec 27, 2021 at 07:29:07AM +0100, Greg KH wrote:
->>> On Sun, Dec 26, 2021 at 05:56:02PM +0100, Christophe JAILLET wrote:
->>>> 'aspeed' is a devm_alloc'ed, so there is no need to free it 
->>>> explicitly or
->>>> there will be a double free().
->>>
->>> A struct device can never be devm_alloced for obvious reasons.  Perhaps
->>> that is the real problem here?
->>>
->>
->> I don't understand how "aspeed" is a struct device.
->>
+On Thu, Dec 30, 2021 at 01:45:57PM +0000, Colin Ian King wrote:
+> Variable ret is being assigned a value that is never read. If the
+> for-loop is entered then ret is immediately re-assigned a new
+> value. If the for-loop is not executed ret is never read. The
+> assignment is redundant and can be removed.
 > 
-> -static void aspeed_master_release(struct device *dev)
-> -{
-> -    struct fsi_master_aspeed *aspeed =
-> -        to_fsi_master_aspeed(dev_to_fsi_master(dev));
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+
+
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+BR,
+Jarkko
+
+> ---
+>  lib/asn1_encoder.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/lib/asn1_encoder.c b/lib/asn1_encoder.c
+> index 27bbe891714f..0fd3c454a468 100644
+> --- a/lib/asn1_encoder.c
+> +++ b/lib/asn1_encoder.c
+> @@ -164,8 +164,6 @@ asn1_encode_oid(unsigned char *data, const unsigned char *end_data,
+>  
+>  	data_len -= 3;
+>  
+> -	ret = 0;
 > -
-> -    kfree(aspeed);
-> -}
+>  	for (i = 2; i < oid_len; i++) {
+>  		ret = asn1_encode_oid_digit(&d, &data_len, oid[i]);
+>  		if (ret < 0)
+> -- 
+> 2.33.1
 > 
-> So "dev" is embedded in struct fsi_master, and struct fsi_master is 
-> embedded
-> in struct fsi_master_aspeed. Since "struct device" is embedded, the data
-> structure embedding it must be released with the release function, as is 
-> done
-> here. The problem is indeed that the data structure is allocated with
-> devm_kzalloc(), which as Greg points out must not be devm_ allocated
-> (because its lifetime does not match the lifetime of devm_ allocated
-> memory).
-
-Thanks a lot for the detailed explanation.
-Crystal clear for me now.
-
-Do you want me to send a patch to remove the devm_ or will you?
-
-CJ
-
-> 
->> I've been working on understanding device managed memory recently for
->> Smatch.  It's really complicated.  There are a bunch of rules/heuristics
->> that I'm slowly creating to generate new warnings but I'm a long way
->> from understanding it well myself.
->>
-> 
-> A data structure embedding struct device must not be devm_ allocated,
-> and it must be released with the release callback. Maybe there is
-> a means to flag that somehow ?
-> 
-> Guenter
-> 
-
