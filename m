@@ -2,127 +2,162 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB34FC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Jan 2022 07:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 570AAC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Jan 2022 08:15:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236205AbiAFHtn (ORCPT
+        id S236461AbiAFIPK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Jan 2022 02:49:43 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:5604 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236198AbiAFHtm (ORCPT
+        Thu, 6 Jan 2022 03:15:10 -0500
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:34176 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236013AbiAFIPJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Jan 2022 02:49:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1641455382; x=1672991382;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=2WDD+HaOLgup4B5fEQYLo+csY4qLmPnygvxXzcy18iQ=;
-  b=OUficGyyNATVvETZflqH1X83WHSQPeDlyVeKFoutl94OC4VkqLtdvckN
-   wrcaD/5hH/1J5j8C0ifRpRRAusha1TeW50QLahtNOJoZ2bjcgrqjBl8Do
-   Fv+5m/cuTA/I4RfVqB6moEYtaszx0S3JHun/XWsmgSbXzlP9w6IPZ9nrZ
-   TObxq/svfhUSuKfgfPbMbtLqHJjaIKjUrAtrsBD4lFZKE00KrMlnTIaos
-   NCsUfMcilsNqRUNXqraTJ77RUTDW2yboF1tM/jBBhLrV+4ydI/U7JMxsS
-   QvKLDld6Uqzkv6L4iwIPYk6V78ch4Vrc/ibGXbh2MEN/BYNYikjp8LQxx
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.88,266,1635177600"; 
-   d="scan'208";a="188782112"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 06 Jan 2022 15:49:36 +0800
-IronPort-SDR: bO4XQF8/xxmNtULzXRPJVHnkV99Fnp+ea17+JhZgiMDeHXFUgWStzpnZK5PiWdkQy1D58CwDdb
- P90639W+JZFQ49ViDo4BJuPNS59xVOqGohud/LI2uhW9DMJrUXrnT9khW87qcYeuMwu/nt0+zB
- 1b+VlzihLhkikHBM4Ktgv5hCiV2yksbHXvu99YaKuNIIOsNjcvJFgjUfl93dAbtlDOluvd9R8d
- oVkmThGuEN5jvE74xUiSlfVAKtUlxI7HIq42oyXTUdxCINj9U61svU3scHAHdSC22m10VdMngI
- HBS1FjWPqBz1GkgD2SAPVWBM
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jan 2022 23:22:06 -0800
-IronPort-SDR: 08Hm5dPBcOjgT288qRSl7/nIz944WKrBNi+C6wbsO2NGAPGgkOeZ8zN8wSJBH6ixdQyBdhNGAi
- hi+a0y54D2qdA3Ajz7ui5uNy48gwUBznxyfSouZkQ4BFxiIsk+re+BKDkpDZthD6WZGP3Xbte5
- U+iJV3LR1RrPP14kv89PtaO03RxfqnS8R+6Z/gI5mXIPt9QcyYwreaEdJY8H7bD5PBnYcl1bAm
- Jd8O+80DEDE+kugOLFzJQKmQ52IU3gTdFJAbBig3FfQm/4z3ILnxgtPJDu+ncihJ1v1LLJWYMC
- Fhs=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jan 2022 23:49:37 -0800
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4JTz5X4GY8z1VSm2
-        for <kernel-janitors@vger.kernel.org>; Wed,  5 Jan 2022 23:49:36 -0800 (PST)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1641455376; x=1644047377; bh=2WDD+HaOLgup4B5fEQYLo+csY4qLmPnygvx
-        Xzcy18iQ=; b=uP4J5GAOC/i/fac34YK8PszLfeqTSzbT7NmYCFPHcJlXaqA2ro5
-        xSWcvbMKn07EMVQFud+vxIR7gIiggdcg6x5Z5wM+zMV9LjIzRuSni+F7hcgJ+HM7
-        h74Ws9HNuQQKlTld1chy3alkvaGYvvNQ1x0WJD77EOcz64TAgFcemtAuzTURrGgP
-        ljCfBERpRsDYbTcC6kwvSfiTU/R5EnaBixBQUTjaWLPrpVbynujP52rpun+FgYWa
-        6JsIOoViOVX1cyRbTWK3iJOO7DBe32qzojFz/pTFMfvSfUKeU4rcXpCgGijlPcjr
-        dqXT0spSpjVeoMQxbTwfiat2/+jtzoLiSJQ==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id oTOZkwdBd77j for <kernel-janitors@vger.kernel.org>;
-        Wed,  5 Jan 2022 23:49:36 -0800 (PST)
-Received: from [10.225.163.43] (unknown [10.225.163.43])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4JTz5V0scwz1VSkV;
-        Wed,  5 Jan 2022 23:49:33 -0800 (PST)
-Message-ID: <974640be-a87e-5a46-3dcc-ba8dbf79c9cf@opensource.wdc.com>
-Date:   Thu, 6 Jan 2022 16:49:32 +0900
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: [PATCH] null_blk: Use bitmap_zalloc() when applicable
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        axboe@kernel.dk, chaitanya.kulkarni@wdc.com, damien.lemoal@wdc.com,
-        ming.lei@redhat.com, Johannes.Thumshirn@wdc.com,
-        shinichiro.kawasaki@wdc.com, jiangguoqing@kylinos.cn,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thu, 6 Jan 2022 03:15:09 -0500
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 2067Xo2o012787;
+        Thu, 6 Jan 2022 08:14:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2021-07-09;
+ bh=dEgod9P118+sZBItOAP1adXVuQnrIHkqp8/lyG7is3k=;
+ b=bxR2QKNx0jxgCVBkRS3lfP5xtkHD5yeJVtHQ1HXXHFT6aYmr3MmhRg3iJ9afPcCBB1EW
+ Stp3TdX5aZOCEmOOFJOCo4LYpYNrdZfvfXVz3EFKWEcu13g74BkPhyAMARXi13NFHaNS
+ cHYMOEZzydTRL96feQ7WaKJRFB3aa+RgdYzxctrbpsFaUPfIpahahScCYcDXqyC9V7P1
+ hD0pmv+UEPiYYCBic9Q65Cu9ONgMC/sa+0QJRg1TME+I1ZFjI8079bXle0Z/xmsCvdOi
+ Gu9dOLqTscvIuuKyxK/p7b8s5NpnA/FroQzNHFvGWtzC+JhrALuUy4CcZtf3TWyMrJl1 ng== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3ddmpjryf4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Jan 2022 08:14:43 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 20685K9o176477;
+        Thu, 6 Jan 2022 08:14:42 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2170.outbound.protection.outlook.com [104.47.57.170])
+        by userp3020.oracle.com with ESMTP id 3ddmq6bfp5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Jan 2022 08:14:42 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QzVAdv6XpYsGFRrVPrwhpAtKuBY3vHBNPgBMgpJn6gwKkP6XTS+ybI/nGMCmHSPZXjYvAf/tiQfHP6Wn9Bl07UQnJS9ClYOwGeDlRxbSmN2FJOshScirPxyv3HBD+UrMBvK8Y6TCYw8Cmj9Ho9ySWDUF+BaeNNMZ+91e/4Ms+HfjeFHie2o7msmKwNIeJhGrnzLIZyWAKy89uCybljT7GSwqYGNhgMayTr2QWE+GAWlOd0ofotHLzfWHa1wbsI34DsIngdxg5rqw5+5KCNzsgi0MdcQyEZvxYoyBJFQptWvxrbs7Zh5LqxrtPYDs/uU8Mrx8fwRzrm5LelbFo9caGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dEgod9P118+sZBItOAP1adXVuQnrIHkqp8/lyG7is3k=;
+ b=GzQqkNZfVXkuoU/jj7MNGiYLUik9+lmF17SR/zZmyKYOupKzeDImURDBCcWPjWhmJKz2GXaw9Afpj23UkYrkrHWJBBRCPJyGJxPC1/XZr/WVlzYZoDcz2qc2uXIvcFdEmhCQYiJGDjei/uD3gaMcISQsoTawNFdfu8A0nnUhPelhKUZIDCgvWs5L7Q3nKtrx9yZ3KxNGBlQOdccy8AyAU2Bqbl/CO42wwdGZlz3t+flNA5Oa9cX/qbzsNuKWgDdYQV11ag0J5EjCYX8+wOFkfqQ5noSYOBS9icgbQhfz4r0zC/N0v/5sMfxAVMXH+y3j5TinsOmvUDBWK0jiQ5CMzA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dEgod9P118+sZBItOAP1adXVuQnrIHkqp8/lyG7is3k=;
+ b=ILwAbvbK/EhqDYzHKNpxAa1AAKD7wE/GPNjKLjnHGLNMAu/+6Lk6gxw48XBxMZeEKyBB2RlQ5eUzSXEYCyRJhg6Bfoe/IEjNwfYx51FnG0ZNxVbP4B9s+k0TQbN+g4REu1RCQWWGc8cUBXfA+5ivyhlC41qHhhK3hhi4NrDdst4=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by CO1PR10MB4513.namprd10.prod.outlook.com
+ (2603:10b6:303:93::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4844.16; Thu, 6 Jan
+ 2022 08:14:41 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::b889:5c86:23c0:82b8]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::b889:5c86:23c0:82b8%4]) with mapi id 15.20.4844.016; Thu, 6 Jan 2022
+ 08:14:40 +0000
+Date:   Thu, 6 Jan 2022 11:14:19 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>, jk@ozlabs.org,
+        joel@jms.id.au, alistair@popple.id.au, eajames@linux.ibm.com,
+        andrew@aj.id.au, linux-fsi@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-References: <3e68598defed010efb864ea55887d88ed0da02cc.1640296433.git.christophe.jaillet@wanadoo.fr>
- <c60a1750-ccbb-1f7a-12be-ac331393be80@opensource.wdc.com>
- <20220106074423.GG7674@kadam>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <20220106074423.GG7674@kadam>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] fsi: Aspeed: Fix a potential double free
+Message-ID: <20220106081418.GH7674@kadam>
+References: <2cafa0607ca171ebd00ac6c7e073b46808e24f00.1640537669.git.christophe.jaillet@wanadoo.fr>
+ <YcldM9sgYdjMYMtH@kroah.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YcldM9sgYdjMYMtH@kroah.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: JNAP275CA0072.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:4f::23)
+ To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 35de76de-fbe5-4890-cf80-08d9d0ec9687
+X-MS-TrafficTypeDiagnostic: CO1PR10MB4513:EE_
+X-Microsoft-Antispam-PRVS: <CO1PR10MB4513AB4FB27C95B5DA45DF968E4C9@CO1PR10MB4513.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1247;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: rMoHIRpWH5PDOZVpuFOvifDa5vi+SHppAdvcfIFFVer9Rcs/JQLHFPtGCNdz/hN/nPx8pNpdUHd0ANG61X9U42ozoWwQVQ9sGU1lg7c/ZshKlfDUr7DowyBkE2AGEpqNzILQ8OM49bUDtsbT99cSqZpCm4teofRrrJY8tY40OCxZPiayK6bGaSwKctSGfkJ3/8TLaScvwT5CIsaNIk2WyJY+zkIueurS39/dWc7PaXcGjIurolvqjC1WpjLCIvjlKjbwxeE9Qpf8Q2GWBV+3MXG7fx3vVNDDpGxyMt0DmcCxQGLGFdTDgZ91zhlui/M1ZPWd1QH9KIHsN/ZgXZrfzRpn6nexwksEwSwuH/8alZhfyCIjtsg3pMjBY3b0Afc0bYI8GI4iDs1BYP20Vz9r9hqCO1IqF1dKirnazhNEYG6eWluW3DVsUgKLEHBMSseoXvS/gOOyNc3ErLsm2202xZr4lHlqVH1kgEuu7F6Yd07XnZRsQGRBTxlVWAJsUQu57LfeezzvITKAVmQJuNXq9w/bU2DcbAtc0kD9LG49OuIJx73fQ8tg8tqBWcCLUwGNyccI2YfvLASCkMeSVMr8mApFZlxTAoAmbkVH954A1yBzFpLsltna0IxyLJM/oQFfsY5FI85y7ltWnfDu5TfxeKImwK9UOLe5aPICrj3uUqE57ZxbQe/+6dLPsPcG4FyBK3joTyXkrU5y9a8keya1Uw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(7916004)(366004)(38350700002)(316002)(86362001)(8936002)(6916009)(26005)(66946007)(6666004)(6506007)(7416002)(1076003)(186003)(66556008)(6486002)(33716001)(9686003)(83380400001)(5660300002)(66476007)(8676002)(2906002)(4326008)(33656002)(6512007)(508600001)(44832011)(52116002)(4744005)(38100700002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?r0hCIJk28JXEHINSASrHfAg3uR4D4G9ixHpU5taepAe0RO2/R29XXsS4klaL?=
+ =?us-ascii?Q?UuYhaZY3eZRw07critnR4ivpNkhd/Jgz5qzU2eT1YfHQNiBHx8zGvrM4KIlz?=
+ =?us-ascii?Q?T+wxnAW3hteo2tnKXMHAVUw+gU1QG26NGB6H2bSeX+mQonFruElojsivq8mB?=
+ =?us-ascii?Q?FCiKv62d1inW9Y+0ocQOUSqP3kKRGwPF01yFsFlQMYXWPMMe6owkrT15oFpQ?=
+ =?us-ascii?Q?KlkDxD4mn3YJi/Rwq+cLDC/YEfknfynr92snwWXDCgvR1wdO9l3NpXDxlgA4?=
+ =?us-ascii?Q?1cFkOaLwQ8X5c6+o75ZVbT60r/8bsCj9XMJvJKOX+tSSY1GW7yNf1dMs50b3?=
+ =?us-ascii?Q?PukcWlw1lQYrZxCn+yG7pia2vk8qYoVc6Y46efVkee7aD9xKFTBLkUvQxM90?=
+ =?us-ascii?Q?UGWMfXAMdGKwKsnjJhPrs4BnU8qTOqXVdNiJq6G2XikcuWlJJbGPZ9AT4iDg?=
+ =?us-ascii?Q?AAk8XBCrS4oH2vQFQbijWGGe3Vovrl4F0V2LbQxtcVBjXqdFWMjxSPvGIB0e?=
+ =?us-ascii?Q?31VNSudBNVkcQ5P25b+T3pb7kA4/qylMbGIFDEOlF9vIn+QlBDHZds+ju1Yq?=
+ =?us-ascii?Q?NlCMJX8ymUHhYQJpGfjAJk4VSe2TKCJ7hmIaxO3jYKmUvCE/0tqORlNDoBMl?=
+ =?us-ascii?Q?L9IcYcF9L/kuaspzmyz7CxAF8+arItTKKnNjg3hSZe43zIOS5PXc1jM5/tCV?=
+ =?us-ascii?Q?d1bbHGKVhVW4+BXG1daAnvnntdYjVVZKtamDV2Tehnnl+AKyuAfd40ySzYwD?=
+ =?us-ascii?Q?SyBO3ltClxkAV2JUVD3hoBC26UT1t6CRqhksiBwshQE28vJa7Kf4qYaNmKdW?=
+ =?us-ascii?Q?cjBBexjrh63pnqMcNa6OMvJhKJ/1QU9Llzx4mq1/vVLoIWH0CPbefI66WFPk?=
+ =?us-ascii?Q?dLlaaKc32W+2u0HMK3xESotH9vVJgCytBIj0SkZitLIgvxXzrNTbE6EvLKy0?=
+ =?us-ascii?Q?pcnQ/l4/5Qu42nt8ecJ4cOFIalypeCJN2JIq8RMN0V42x4Y1ZnoNEMDOD6hI?=
+ =?us-ascii?Q?XxndfDwo32SXY0SCnL5lmpg8TMS9t1YEADedImXe7vaxVHIwJaNmCk2Bvxm6?=
+ =?us-ascii?Q?Itsq37uNLEMwb4lapTx65gymdGRHzO5tjC/R+4Z+3S0oW2WkO/FC3cwTV0qp?=
+ =?us-ascii?Q?DyRh3hnJMtDyp6uZAM3Akq+vngeFelbqX2HIX6Cs97RhvJtYSHa+WenJ8dFh?=
+ =?us-ascii?Q?o8K2kYdrwcBbtZ2xM9EaCyJ1peEvnfpvEW7vejP4X31naymhryCug9vjrI0f?=
+ =?us-ascii?Q?5RWM3AiztKWKtvc34WxZMEwF/FaC0D2y49/+XH7bRnEMdbKK6OOvdZ0qy1XY?=
+ =?us-ascii?Q?7V2FqijcOioWf+bi8UGF0RMOw/fbYYsNNjoOB+x6MGw16uKcqUeNZhMLLBuV?=
+ =?us-ascii?Q?VMNSruFSnCfRDiYP6+oaBo3y0zzpUcNO27pyGGZFHCxSw2A6h3PRyNaYLSDP?=
+ =?us-ascii?Q?zkPXZdaOtM498aLFT0QjNwmhGAFxlmKasPwcXiZfI1G+B4mqY411AgX+5n3g?=
+ =?us-ascii?Q?ovACLrzKj/RA2qODI0ukqDmhHUNrSyjiCrUktIMwVglHsOp+fkfMALqZiifw?=
+ =?us-ascii?Q?h3O9a8BHLic2uO4f2KccMpoYcS0Pqxu/p6+4YcEKGW5CZigg+tXYR3/GARr7?=
+ =?us-ascii?Q?gYulADjrvy185iqtZtyuhZqvNTrqTjfOGaFf4FdbLKe2OmUmRAyqlPI4t3vx?=
+ =?us-ascii?Q?RvjHORx3LMI6oj+GORqw9H0pn0Y=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35de76de-fbe5-4890-cf80-08d9d0ec9687
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jan 2022 08:14:40.8321
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HxAbp64vz1xqaD3tiYXRJJ6xeUvzsfwOiuNhtPDAub2iAMUkfErIm/N+qcAnVkgFqpZqYwEvAG77bDl3K7PPDMpxf8yQz2QSwCQu/Hu54yw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4513
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10218 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0 spamscore=0
+ suspectscore=0 mlxlogscore=855 phishscore=0 bulkscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2112160000
+ definitions=main-2201060056
+X-Proofpoint-ORIG-GUID: Hhf9NE4mws_pnWKgGhB6jpJ8PAv9bSc1
+X-Proofpoint-GUID: Hhf9NE4mws_pnWKgGhB6jpJ8PAv9bSc1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 1/6/22 16:44, Dan Carpenter wrote:
-> On Thu, Dec 30, 2021 at 11:28:28AM +0900, Damien Le Moal wrote:
->>>  
->>> -	tag_size = ALIGN(nq->queue_depth, BITS_PER_LONG) / BITS_PER_LONG;
->>> -	nq->tag_map = kcalloc(tag_size, sizeof(unsigned long), GFP_KERNEL);
->>> +	nq->tag_map = bitmap_zalloc(nq->queue_depth, GFP_KERNEL);
->>>  	if (!nq->tag_map) {
->>>  		kfree(nq->cmds);
->>>  		return -ENOMEM;
->>
->> Before this patch, tag_size would always be a multiple of BITS_PER_LONG.
->> Using bitmap_zalloc(), that alignment goes away, but I think this is OK.
->>
+On Mon, Dec 27, 2021 at 07:29:07AM +0100, Greg KH wrote:
+> On Sun, Dec 26, 2021 at 05:56:02PM +0100, Christophe JAILLET wrote:
+> > 'aspeed' is a devm_alloc'ed, so there is no need to free it explicitly or
+> > there will be a double free().
 > 
-> It's still going to be a multiple of long.  Bitmaps are always stored
-> in longs.
-
-Yes, I understand that. I was referring to tag_size, which was rounded
-before. But tag_size is only a local variable and not the actual queue
-depth, which is not rounded. I got confused :)
-
-> 
-> regards,
-> dan carpenter
+> A struct device can never be devm_alloced for obvious reasons.  Perhaps
+> that is the real problem here?
 > 
 
+I don't understand how "aspeed" is a struct device.
 
--- 
-Damien Le Moal
-Western Digital Research
+I've been working on understanding device managed memory recently for
+Smatch.  It's really complicated.  There are a bunch of rules/heuristics
+that I'm slowly creating to generate new warnings but I'm a long way
+from understanding it well myself.
+
+regards,
+dan carpenter
+
