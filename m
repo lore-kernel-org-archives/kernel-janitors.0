@@ -2,65 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCEC6C433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Jan 2022 13:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADE4C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Jan 2022 13:50:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239510AbiAFNVf (ORCPT
+        id S239726AbiAFNuL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Jan 2022 08:21:35 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:41972 "EHLO
+        Thu, 6 Jan 2022 08:50:11 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:56170 "EHLO
         dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239484AbiAFNV2 (ORCPT
+        with ESMTP id S239275AbiAFNuK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Jan 2022 08:21:28 -0500
+        Thu, 6 Jan 2022 08:50:10 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A8AB361BFA;
-        Thu,  6 Jan 2022 13:21:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B9B2C36AE3;
-        Thu,  6 Jan 2022 13:21:25 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2A44661C14;
+        Thu,  6 Jan 2022 13:50:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 930B6C36AED;
+        Thu,  6 Jan 2022 13:50:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641475287;
-        bh=6j1fMUfutZuB78M/WJhvLhM7/vnCc0zb00rLQdybbFM=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=C1yg/Sd2ig7ay28/kpRTe88LFzKTknzA3/+FGMIr//vBX4AqbsMFlXw2SlgcJ/uRJ
-         UH1inmzzYZXVx4V1X8N18aXH7RYLr1ZUzM+zSbtn7I/CSkeImK0HiOGsGVduWTNQxr
-         bLVvk//TTBDXDvnmHMQQO/tRgeGtxCgs0Op4SDIEBc7EFKygVD8TGmGZlj+/P98GI4
-         I5p74UbV7lJA3QbPyqRAq6uMWmZWLVbI2is6cF6DOBXVfa7LOOxfJXPl9A0nY2RvCz
-         HpaWUyPkhZBF5F8CFuShTvHT8E1e2tks5T+BiUNzqev+Z6IpDXi8OguVwYBr/ehxrV
-         6O0J2n0C1lBNA==
-Date:   Thu, 6 Jan 2022 14:21:24 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: address kernel-doc warnings
-In-Reply-To: <20211216092157.26912-1-lukas.bulwahn@gmail.com>
-Message-ID: <nycvar.YFH.7.76.2201061421170.16505@cbobk.fhfr.pm>
-References: <20211216092157.26912-1-lukas.bulwahn@gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        s=k20201202; t=1641477009;
+        bh=Fwbo2yecLmp9uAeJ+cM83JzgCwQAI2o2P3vL8OnRblA=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=TlWqevPeTn86bi2sNLMOmtX6HvAfBe0Bg2sMa2+KddatFzdFDitTGQKipbQkO6pEz
+         uLwt1OT4ARJICMEA2Ez9+x21nE5eagdGOUB1+b71EnTL8u4FvXLU5ZJq8M6lL5YetN
+         RqRsBEXt68lIoRz15zIFd94SyF1d5auKmn1tUFk0LjabIFiVML+xCvHnUGLdOan+/3
+         RFZQoUPz6SYov2hnUnciSkxOdSHQ7mIWY0EDJELR+DXKzve6UAPj+Q+mU21EZdzWDY
+         iiqCFpefbaua1i0NyMz+ArGFHkS/eGf+iI5hgvkJPpTNrUVitzpQv9nqXIkeRP+H+5
+         JT8wEnJQjeg9g==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 77BADF7940B;
+        Thu,  6 Jan 2022 13:50:09 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] rocker: fix a sleeping in atomic bug
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164147700948.9137.13562727639638310210.git-patchwork-notify@kernel.org>
+Date:   Thu, 06 Jan 2022 13:50:09 +0000
+References: <20220106115754.GB28590@kili>
+In-Reply-To: <20220106115754.GB28590@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     jiri@resnulli.us, davem@davemloft.net, kuba@kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 16 Dec 2021, Lukas Bulwahn wrote:
+Hello:
 
-> The command ./scripts/kernel-doc -none include/linux/hid.h reports:
-> 
->   include/linux/hid.h:818: warning: cannot understand function prototype: 'struct hid_ll_driver '
->   include/linux/hid.h:1135: warning: expecting prototype for hid_may_wakeup(). Prototype was for hid_hw_may_wakeup() instead
-> 
-> Address those kernel-doc warnings.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+This patch was applied to netdev/net.git (master)
+by David S. Miller <davem@davemloft.net>:
 
-Applied, thanks Lukas.
+On Thu, 6 Jan 2022 14:57:54 +0300 you wrote:
+> This code is holding the &ofdpa->flow_tbl_lock spinlock so it is not
+> allowed to sleep.  That means we have to pass the OFDPA_OP_FLAG_NOWAIT
+> flag to ofdpa_flow_tbl_del().
+> 
+> Fixes: 936bd486564a ("rocker: use FIB notifications instead of switchdev calls")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> [...]
 
+Here is the summary with links:
+  - [net] rocker: fix a sleeping in atomic bug
+    https://git.kernel.org/netdev/net/c/43d012123122
+
+You are awesome, thank you!
 -- 
-Jiri Kosina
-SUSE Labs
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
