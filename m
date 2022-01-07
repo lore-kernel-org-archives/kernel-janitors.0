@@ -2,117 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5219C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jan 2022 01:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99DDCC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jan 2022 01:59:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345136AbiAGBfO (ORCPT
+        id S1345326AbiAGB7o (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Jan 2022 20:35:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40056 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344075AbiAGBfN (ORCPT
+        Thu, 6 Jan 2022 20:59:44 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:41501 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344533AbiAGB7j (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Jan 2022 20:35:13 -0500
-Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7376C061245;
-        Thu,  6 Jan 2022 17:35:13 -0800 (PST)
-Received: by mail-ot1-x335.google.com with SMTP id 45-20020a9d0a30000000b0058f1a6df088so5080046otg.4;
-        Thu, 06 Jan 2022 17:35:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ywgP16oIByxs3QRc1jRR8SDOEZAjX7UvCJxKV2kqOV4=;
-        b=mrh3lTBfiCf9J3eoPKI+PHd5CE9aD3+kFjRQfweXdWxj2krX/eCoEgC7mVPKYr74gZ
-         P/HEUv5RFc2St+AKt7HMKIMFEkr4FCRMn1fj7sygol6eKBjN+qjVF6mPw8QemvhQfQUX
-         fy+fhqkdqps5pcjkrbYQY7br0upRvbac5nqLmAvkNT9mX3npgkWdp4+yJDMPIhidv567
-         Y+Z1Xx4dp80BZ6SLHQIyDhWu9NFPdZ7dityC2PUpF1PjJDpLfLHynmPPUhQOWtK8/3ET
-         quxN83kXsgTIyeRE63Kfp//5zNXmybkCy8FbmSjyxSpbJSbIYWfaD5mPZ+k3VOxb/olz
-         afyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ywgP16oIByxs3QRc1jRR8SDOEZAjX7UvCJxKV2kqOV4=;
-        b=thnI3qhAdu0N+1gMGbcUfR1tN/DLpKqpqcm5A1+2lN5qYdtFrSJO52TWC1G5p0vhZU
-         gs1Bue+5j/GXzFbeMcpt7JeSMBbBjAFahhOPBFMhCIIhehdxkSmK8JHLM/5zvhueFuMr
-         ugpcPUtTeI7FCNFcU12JIt/FkLmgcloGLyszZGqcMwHf690cbUK45iYxCo2RodP6kiG6
-         CJrKgMctXQBEpfBl10YXcr6QeKhUliGsPa2+s7XXvhCh0f7gOPGBD2Pvx/N+AFtbHl0y
-         7RjaAwpIVQR16DtLT/Dk8XVfQGJA4X2VfonnRrud7ctdo31iLfXMSjqceBO19/LnGk3P
-         ClXA==
-X-Gm-Message-State: AOAM5339F/eg+pIVXIuF6dAiVNPLH5SuvRE7fDxSP8qbu6Ld3qCSIiEj
-        yb1to+hbSNuKtfjaO9j2yh7HF2Lu99E=
-X-Google-Smtp-Source: ABdhPJzeCW7OSrCBMsXcTSnyd7bsXkRM9ty/z7avlBtYxITWKpHY+umUnWdwBOBO03dkTdkW5XM2mA==
-X-Received: by 2002:a05:6830:2:: with SMTP id c2mr44862275otp.341.1641519312889;
-        Thu, 06 Jan 2022 17:35:12 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id k1sm658659otj.61.2022.01.06.17.35.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jan 2022 17:35:12 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Subject: Re: [PATCH] fsi: Aspeed: Fix a potential double free
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Greg KH <gregkh@linuxfoundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        alistair@popple.id.au, linux-kernel@vger.kernel.org,
-        linux-fsi@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
-References: <2cafa0607ca171ebd00ac6c7e073b46808e24f00.1640537669.git.christophe.jaillet@wanadoo.fr>
- <YcldM9sgYdjMYMtH@kroah.com> <20220106081418.GH7674@kadam>
- <f2ba50fd-5c6b-e905-17ed-541dcc98c6c1@roeck-us.net>
- <edd19014-3b99-fa0b-912b-e058c14401d8@wanadoo.fr>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <6926bb63-836b-b37c-3605-d6df9992bfaf@roeck-us.net>
-Date:   Thu, 6 Jan 2022 17:35:10 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Thu, 6 Jan 2022 20:59:39 -0500
+Received: from mail-ed1-f43.google.com ([209.85.208.43]) by
+ mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MOiLp-1mjy1m0Wit-00QFQI; Fri, 07 Jan 2022 02:59:37 +0100
+Received: by mail-ed1-f43.google.com with SMTP id j6so16310142edw.12;
+        Thu, 06 Jan 2022 17:59:37 -0800 (PST)
+X-Gm-Message-State: AOAM533wA5LJufOXRwkZBzeRLhNbm2eD7rqzc+Xz3rnBJi+P9t2VYdKM
+        1mDn2kVfXPO2OXbzUjTurxxQodFCK6VUrcAhm+0=
+X-Google-Smtp-Source: ABdhPJwNPusolPWQ0Dfm+FkLfh1W+9s6XBF4mIXZxjKoC1VGJSGdyFfgj8EhVdC8IWm5RZdDWKdfuddYhSIOwhhZCO4=
+X-Received: by 2002:a05:6000:16c7:: with SMTP id h7mr5177836wrf.317.1641517284064;
+ Thu, 06 Jan 2022 17:01:24 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <edd19014-3b99-fa0b-912b-e058c14401d8@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <cover.1641500561.git.christophe.jaillet@wanadoo.fr> <4c35f397720fccb6c9166fa85fa25475b0659a6a.1641500561.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <4c35f397720fccb6c9166fa85fa25475b0659a6a.1641500561.git.christophe.jaillet@wanadoo.fr>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 6 Jan 2022 20:01:21 -0500
+X-Gmail-Original-Message-ID: <CAK8P3a1sESb9CYs+N=rYs3=6Sq_CZHsKB0jXgT1n9XC7O9x_gA@mail.gmail.com>
+Message-ID: <CAK8P3a1sESb9CYs+N=rYs3=6Sq_CZHsKB0jXgT1n9XC7O9x_gA@mail.gmail.com>
+Subject: Re: [PATCH 09/16] media: v4l2-pci-skeleton: Remove usage of the
+ deprecated "pci-dma-compat.h" API
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:8oDH2q8ZcRAZYzpoxlwrzszTCFuRww0c7gPSMUEWwZ7ZseQZpY+
+ Bd54+PKN4HMm01RUjpSFgt22EY7EkvcEAZIsHvjpqCDvEfKXJ+QksZZ4iPZb9cwobXwjJl0
+ atlqcCTZrIXdy/ftSYpduzwbE/QVG/uNgABuC1WnhOuAV5fG1QGOfmvduqMMt+mm1O3i3MX
+ 8PmTXBNyQClB7J1/cYlsw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:L/dDlk68fws=:Yz0m+Bpi8dsgdSUM57PaXv
+ A1zljUGqyfjnFfsSNtWSu84FaVEv2I3IToPQ8One9WT9n2wsUHjh4Y44nEXoHWp5OjdbIY5og
+ yoDXjc/4rTpfR7kxUhMr6vSc10Vy6OFAmYs/mCH+k4JiHTHNXkHPYoby1aD0JC1VlZCjRsvUM
+ dwojnHZ7V4iAArtYmL3fMApzS9kkOB4SF2o/x1JVzSVzMLB+pedzBAQfWDBIV8N13UpxQzhGd
+ IrcckBK/GSnbfRNJbCc/emWJ2iTqYarfkfn+SQ9ihYvXw58x5/dP8TYVE+dqCVd6SfeG52VA6
+ 4uHquQJwL4cyMGipsaTHOTN9Yd+HRWlvudHmyMap0FSJMNJGTnkVqD8L4X+DqoSxwJbndy4sZ
+ Y/UN4+gj8BLkEyYF2rW7DDTedaX3WCQsW9VIrDPfjQb3qnfUWR56aLQCGkoQDkmhQZRTOlgWe
+ deuH6GPFtupdbJg4KxGeMeP6E/x1dVAesRa/6+Ua8mJgm3cvMfVv5B4Yn+3159QAIBc8RMDLC
+ l/6Gs6nFtTYsMw1tJxhy716Zf0MxWoMmpCEzbrIOEHYHAJeivkEymkAjTem5il+xZ/+4Olwhm
+ 2p6HpP2mdErESUeyTuLo3uY83sJYMIaZhg1baSaLpQ7MLfEPTFF6b5/+v7YW9CqbTSbwYMwna
+ tAk2kyV9OwuNK0DgkfFG3exa+slSv56xrEyWhY86q7nuvvQvvD/uj/he0OesPJlduGXBYO66N
+ yuSIiIdUISsdXcGICaRMqzbWcFPXxlyI4u55tzHg/RTRM8xy+dPsoZEiCukDllPBoB9W0gEXO
+ cmrWwjwtL6+8GcTqW/pTeMh3en9MpRRcT1/imwD48AH2W4RVyw=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 1/6/22 10:35 AM, Christophe JAILLET wrote:
-> Le 06/01/2022 à 18:25, Guenter Roeck a écrit :
->> On 1/6/22 12:14 AM, Dan Carpenter wrote:
->>> On Mon, Dec 27, 2021 at 07:29:07AM +0100, Greg KH wrote:
->>>> On Sun, Dec 26, 2021 at 05:56:02PM +0100, Christophe JAILLET wrote:
->>>>> 'aspeed' is a devm_alloc'ed, so there is no need to free it explicitly or
->>>>> there will be a double free().
->>>>
->>>> A struct device can never be devm_alloced for obvious reasons.  Perhaps
->>>> that is the real problem here?
->>>>
->>>
->>> I don't understand how "aspeed" is a struct device.
->>>
->>
->> -static void aspeed_master_release(struct device *dev)
->> -{
->> -    struct fsi_master_aspeed *aspeed =
->> -        to_fsi_master_aspeed(dev_to_fsi_master(dev));
->> -
->> -    kfree(aspeed);
->> -}
->>
->> So "dev" is embedded in struct fsi_master, and struct fsi_master is embedded
->> in struct fsi_master_aspeed. Since "struct device" is embedded, the data
->> structure embedding it must be released with the release function, as is done
->> here. The problem is indeed that the data structure is allocated with
->> devm_kzalloc(), which as Greg points out must not be devm_ allocated
->> (because its lifetime does not match the lifetime of devm_ allocated
->> memory).
-> 
-> Thanks a lot for the detailed explanation.
-> Crystal clear for me now.
-> 
-> Do you want me to send a patch to remove the devm_ or will you?
-> 
+On Thu, Jan 6, 2022 at 4:53 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> In [1], Christoph Hellwig has proposed to remove the wrappers in
+> include/linux/pci-dma-compat.h.
+>
+> Some reasons why this API should be removed have been given by Julia
+> Lawall in [2].
+>
+> A coccinelle script has been used to perform the needed transformation.
+> It can be found in [3].
+>
+> [1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
+> [2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
+> [3]: https://lore.kernel.org/kernel-janitors/20200716192821.321233-1-christophe.jaillet@wanadoo.fr/
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Sorry, I am way behind with code reviews. I won't have time to submit a patch.
-
-Guenter
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
