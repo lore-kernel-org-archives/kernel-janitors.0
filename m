@@ -2,65 +2,66 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1EE4C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  6 Jan 2022 23:06:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A039C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jan 2022 00:51:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245363AbiAFXGp (ORCPT
+        id S1344534AbiAGAvw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Jan 2022 18:06:45 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:38989 "EHLO
+        Thu, 6 Jan 2022 19:51:52 -0500
+Received: from mout.kundenserver.de ([212.227.17.24]:60753 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245283AbiAFXGo (ORCPT
+        with ESMTP id S1343978AbiAGAvw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Jan 2022 18:06:44 -0500
-Received: from mail-wr1-f42.google.com ([209.85.221.42]) by
- mrelayeu.kundenserver.de (mreue012 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MNOZO-1mlBJg2TjG-00Op6C; Fri, 07 Jan 2022 00:06:42 +0100
-Received: by mail-wr1-f42.google.com with SMTP id i22so7644605wrb.13;
-        Thu, 06 Jan 2022 15:06:42 -0800 (PST)
-X-Gm-Message-State: AOAM532NV0tP2YTklhpGRTZuGjMsAKOxqGOJhAFeulsNFcojQlOuN6uA
-        UNJzePoyg5UWA3iErYQLl2jJA0t7EGlEtBXtXTs=
-X-Google-Smtp-Source: ABdhPJzMj6xVjmpcWy7uxAm1SDGENlV1LdeAPWTqBhyWgP/ta3nPzaU9HiVSHY5IhZUe4kUZxh+mOC7tbMBL6EE76QE=
-X-Received: by 2002:a05:6000:16c7:: with SMTP id h7mr4945147wrf.317.1641510402182;
- Thu, 06 Jan 2022 15:06:42 -0800 (PST)
+        Thu, 6 Jan 2022 19:51:52 -0500
+Received: from mail-wm1-f52.google.com ([209.85.128.52]) by
+ mrelayeu.kundenserver.de (mreue108 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1M9WmQ-1n09J41MW4-005WCs; Fri, 07 Jan 2022 01:51:50 +0100
+Received: by mail-wm1-f52.google.com with SMTP id f189-20020a1c1fc6000000b00347ac5ccf6cso36492wmf.3;
+        Thu, 06 Jan 2022 16:51:50 -0800 (PST)
+X-Gm-Message-State: AOAM530JXeCunWgC14kNAntx869YryWbY/IS/8diWBuSzOkhXeGAZwET
+        g/gtrdDUkEspc90YpZ93GKi0HBLi9CeJX863z3Q=
+X-Google-Smtp-Source: ABdhPJxaOooSi6JuNuFqsiQf70TarUb7k59G6O1fatVVJVQP6kddZ7utdE6PGLlDcAYxwZk5b9AxJWt6LAM83gxSrd0=
+X-Received: by 2002:a7b:c190:: with SMTP id y16mr8483309wmi.35.1641516709979;
+ Thu, 06 Jan 2022 16:51:49 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1641500561.git.christophe.jaillet@wanadoo.fr> <4a0a48fb682d13e6861f604d3cad3424672bee1f.1641500561.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <4a0a48fb682d13e6861f604d3cad3424672bee1f.1641500561.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1641500561.git.christophe.jaillet@wanadoo.fr> <e89f4b29b9f7e0c711a3ccc16a009f49f416e1fc.1641500561.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <e89f4b29b9f7e0c711a3ccc16a009f49f416e1fc.1641500561.git.christophe.jaillet@wanadoo.fr>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 6 Jan 2022 18:06:35 -0500
-X-Gmail-Original-Message-ID: <CAK8P3a0MfHbB8ZFuTJpbVwPLZ-9QY-MWRFGukW1S4rbBBuDRzw@mail.gmail.com>
-Message-ID: <CAK8P3a0MfHbB8ZFuTJpbVwPLZ-9QY-MWRFGukW1S4rbBBuDRzw@mail.gmail.com>
-Subject: Re: [PATCH 03/16] fpga: dfl: pci: Remove usage of the deprecated
+Date:   Thu, 6 Jan 2022 19:51:47 -0500
+X-Gmail-Original-Message-ID: <CAK8P3a0w51bnDy2whAC8WOCx2=9UB1ViX3veOfhSmQwwLr3VNQ@mail.gmail.com>
+Message-ID: <CAK8P3a0w51bnDy2whAC8WOCx2=9UB1ViX3veOfhSmQwwLr3VNQ@mail.gmail.com>
+Subject: Re: [PATCH 04/16] media: Remove usage of the deprecated
  "pci-dma-compat.h" API
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Christoph Hellwig <hch@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>, hao.wu@intel.com,
-        Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>,
-        Xu Yilun <yilun.xu@intel.com>, linux-fpga@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        awalls@md.metrocast.net,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         kernel-janitors <kernel-janitors@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:jb3UUKeC73QXXLHG6BGQK8zdK3TrNekO/paL5Gh4SeHc4NGIos3
- ryzMcNHxpv7ykEcQy5/ZA2KuW3oCMi/4ZTgpW9dVGfeL0z4dkBGnSEJ285wJ3y1rZ3+aCUN
- +rsS0RFP9od8SF42ciHjtvWZMwcri5B/1hfCtZ287wfBtycFWXNPBPoL7SayC5pOeQLbx8v
- JXvPFkt1IMCScMd0chXgw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:uxzSQ5etFBE=:9uEF7FH/8Bb3K5B7Tprhtt
- 12fQ8+4kljbKzuh0VlrgRfqbf6LkP22HAZBECy7+gPeeAX1aP7xBpeVKE+DBfUGqjeKtwVVB8
- 7oBa7hjUNpvEgBKvqr2tqCmkesYccqG+gzR6PRfIXIMNpOQJVmo6Frt4T1BjqvC1KLRzUFaCn
- +UHcBXuw7VNS8Tm1T5gDgf+wpary3hEQOyZxcW5hpG7K00FFenWJgOGKVhg59Qh5X1hwBEM5e
- AWhL3+loBHHs4YiUOThY5Nrg2H0W8FplBX+cYAwNYOyEOrc8kokDNBPIFcYJpfaOCpG4g4lCg
- BK8j4V7jGlts9FNLbNBc20Kqje9pMA0Pk1oHB2k+T0AgMAEitT8deGtr6nZVtikghsZjiHtvl
- 66jaim20iVv1CvaPWZbXwsqoJP0e8zTZaKFQPlPyAZ+t9F3hcYiS1pM10id6b8X9dCObUEL/+
- GIxKpyUfGjNN4g9nDhjRahlh5y6txa+moCSAxSyL0eoiKuRMb/3AaXrIE6SNwJUFVe80bajuk
- yR1wRZ6GGGw/0tVvmORHd2OfWkMhM5zI3lII+FnI1h8AWhGX7MqByu8E7rmqSTiFWVpRY5bnD
- Tqn7Vo/L4WnwgEjCBvS7vhHbAtHLhaSiGuY6Qbfx8e8Wf7A5XyYyKWtn47TzqFcQaWiQl2zxZ
- JrBQBKdUX0Lp3OXlQJuJ4mBPElxIEPtiZqusARzQh17UmmVM6vQxDyOaWpuaZkeHVjgw=
+X-Provags-ID: V03:K1:xYiG2GR/hmv7XwdTZf69kHeOBGd9/1CmiJMtN+/LJx73FDb0km1
+ K3uMGRLJLzptbOiB6Tyc1CwlUoIjb3EDmwLamoC/W8hcq7emjVtOGJze4q48QgoketJdw/n
+ 3YqKcz4+xAWQPUPVKa5FLRULsPD+uKb0jRSA0WuNRl0K73pkH+DG/4zDxskldlAeBProp1I
+ 0Dup8FkH6f8VvYT1HzjVQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:thErucJKSqk=:Gys1v3E2yQEJcL+DNPrBRT
+ +uqmBWAqehiHSCNUQqaOT1HI8ucgq1t0y1MEx7IDX0BN0NySa2teh9h09puCwWLwbbKD1iSVs
+ JbRu9VV/OxdsQIVCA+ocPbKm9pRyVJ7tunWpjoAWaPzNZRtPry3Y+Ksxh+/M2dvQGpUA/SaQE
+ gcEcpuKJWn+RomGR1SU2Kthrb9acxBS/CySx+YOdnGIfEBHHxnL1fWax65VSIUQjeuKh304QB
+ u4/jRwS3MXJmHRSSmI6J3TKqMM4s6JxbUv/6oTJtdC8atU/IRBy3AKQc7PyzqCMHT5vels+uX
+ t0TXX19F0oLuPhDzc4+K6T90RmvR3MFOG6u5KRfGcJ+aBTshTfjCb+xoqVdQRST39eRMT1NsS
+ tJ1gLaKNDgZ6Ud19stmR6UlBEJcPMEL79R/iO62Zv0hToLp0oKLsbKOagFd+wBtSInZpI4joq
+ U1v4Oc2MZSzI83x7fRlJehKx7FFDq83E+4J+b2rPB7OU1wK2LnVa4Xn1Ei8ic2lo3CSPKYtki
+ /IwuaZ27wW+AkllEq8/homa6P5sjKA0IqjOq70mtslxMg65tzj3iv+WJ7/D+lB3cx9ETvXut2
+ 0ZO0lsRD/TX0Rqmnyn8mzgKpNamfWpQb1x1ccOIMzpvWTmxb6u+BvErj8TIlDEUrKYpNaRoDp
+ mROp0tldm+lls41DaIOLAIKWVmCbE364VoInI24g6jqzVIAoNGv//glGIWBn9DjO7aDo=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jan 6, 2022 at 4:49 PM Christophe JAILLET
+On Thu, Jan 6, 2022 at 4:50 PM Christophe JAILLET
 <christophe.jaillet@wanadoo.fr> wrote:
 >
 > In [1], Christoph Hellwig has proposed to remove the wrappers in
@@ -72,36 +73,13 @@ On Thu, Jan 6, 2022 at 4:49 PM Christophe JAILLET
 > A coccinelle script has been used to perform the needed transformation.
 > It can be found in [3].
 >
->
-> It has been hand modified to use 'dma_set_mask_and_coherent()' instead of
-> 'pci_set_dma_mask()/pci_set_consistent_dma_mask()' when applicable.
-> This is less verbose.
->
-> The explicit 'ret = -EIO;' has been removed because
-> 'dma_set_mask_and_coherent()' returns 0 or -EIO, so its return code can be
-> used directly.
->
->
 > [1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
 > [2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
 > [3]: https://lore.kernel.org/kernel-janitors/20200716192821.321233-1-christophe.jaillet@wanadoo.fr/
 >
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Reviewed-by: Xu Yilun <yilun.xu@intel.com>
 
-This is a correct conversion of the driver, but I'd prefer to keep this separate
-from the pci-dma-compat series.
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
-> +       ret = dma_set_mask_and_coherent(&pcidev->dev, DMA_BIT_MASK(64));
-> +       if (ret)
-> +               ret = dma_set_mask_and_coherent(&pcidev->dev, DMA_BIT_MASK(32));
-> +       if (ret) {
->                 dev_err(&pcidev->dev, "No suitable DMA support available.\n");
->                 goto disable_error_report_exit;
-
-The code looks a bit suspicous, both the old and the new version. If the device
-ends up on a bus that can only do 32-bit DMA, shouldn't it remember this and
-make sure it only does GFP_DMA32 allocations for buffers that are passed to
-the device?
-
-        Arnd
+Mauro, could you pick this up directly? It has no dependencies on the rest of
+the series.
