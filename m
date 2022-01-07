@@ -2,76 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6044BC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jan 2022 10:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC0D5C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jan 2022 10:26:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346609AbiAGKWM (ORCPT
+        id S237380AbiAGK0l (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 Jan 2022 05:22:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44404 "EHLO
+        Fri, 7 Jan 2022 05:26:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232237AbiAGKWL (ORCPT
+        with ESMTP id S237286AbiAGK0k (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 Jan 2022 05:22:11 -0500
-Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D3A7C061245;
-        Fri,  7 Jan 2022 02:22:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
-        Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-        Resent-Cc:Resent-Message-ID; bh=AYNTNL/S+QFpIYO6a0jZ1apwOzIYkDjKgtgTKBbTuZk=;
-        t=1641550931; x=1642760531; b=GuobMlhhmmN4iLh4S1Utru5+nawAeyUaXG0Rt29Cg+mhpf3
-        1Av3SxntJiOmjzSZuCO1PlP+8ZcANqDoTxUSa2JI76d7/sUicrl1qYRJH+6OBr46d2WawiK981txs
-        0TzpEOrLL08GwUa1a8yZBX6LLc+G3vNdcramkYt1haoKirXv9ByKWeQpRVppJ3BFPi2tD6CmjMaj8
-        xvhrzRTHsxgM8LdDpb/xiEhU83YcIfxx+b4FvjkToWX2DjIwaSb29LFsyzuE8jJO75IkvnhiklKyJ
-        EiopdpS301B1MJ2o01HbF3R6jZ0paJeexVxUQV/ymveQZVwrHuuWlvRlMSwFP0jA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-        (Exim 4.95)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1n5mNh-002rqD-Jk;
-        Fri, 07 Jan 2022 11:21:57 +0100
-Message-ID: <bbf4b392e557a36f45a8642682512964502a4196.camel@sipsolutions.net>
-Subject: Re: [PATCH] mt76: mt7915: fix a couple information leaks
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Felix Fietkau <nbd@nbd.name>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Shayne Chen <shayne.chen@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Kalle Valo <kvalo@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        MeiChia Chiu <meichia.chiu@mediatek.com>,
-        Money Wang <Money.Wang@mediatek.com>,
-        linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        Fri, 7 Jan 2022 05:26:40 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBDDBC061245;
+        Fri,  7 Jan 2022 02:26:40 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6BBDEB8255D;
+        Fri,  7 Jan 2022 10:26:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D8EDC36AE9;
+        Fri,  7 Jan 2022 10:26:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1641551198;
+        bh=Rw+VYT70aD5bce3sFap9PFdOHR03/WOo/CEeeP8Q5kg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=F1K45Mzyo8h9SscfTquxln5KIJleQLYsL0QcuS47g2lPVIwbIdJh94i7aiMg+4WFG
+         CzlKQJ9+NDot5oXzqBSiBQleKFwsG0K6nLDTvxaB+kvGpe517d/iqwZEZ3SqO8IxKA
+         IOX7jHzrCVcOuawGrRIukV7G3ZKj+zauMZGywkeMI7jPjYdBYs6/EyL5TQaS8EUTTS
+         DoSFgCOKjiHrybr80GRjQAtrJShJJ1+LR5s34JO+3Q/JaSlcBLsQ9RKHKMvOgc2sLZ
+         1jVI3vwUdfjuitgem3Wm/om7FkT/xgu/C4YfP5x2jJoGe+g/nAHCW0p54nFNAt3oGj
+         dNo3YPqKGeUOA==
+Date:   Fri, 7 Jan 2022 10:26:33 +0000
+From:   Filipe Manana <fdmanana@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Chris Mason <clm@fb.com>, Filipe Manana <fdmanana@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Date:   Fri, 07 Jan 2022 11:21:56 +0100
-In-Reply-To: <97dbf02a-e3c7-aa4a-c404-45fc6189dc10@nbd.name>
-References: <20220107073609.GH22086@kili>
-         <f61c6a25c7ad1ed452b4facf38c7e451d47c5dc0.camel@sipsolutions.net>
-         <97dbf02a-e3c7-aa4a-c404-45fc6189dc10@nbd.name>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.2 (3.42.2-1.fc35) 
+Subject: Re: [PATCH] btrfs: fix double unlock bugs in btrfs_compare_trees()
+Message-ID: <YdgVWU9lzrXG7Hsu@debian9.Home>
+References: <20220107072430.GE22086@kili>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220107072430.GE22086@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 2022-01-07 at 11:08 +0100, Felix Fietkau wrote:
-> > 
-> > Or maybe instead just mark the thing __packed (and/or explicitly add the
-> > padding if needed), it seems weird that we'd send something to the
-> > *firmware* that has a struct layout subject to compiler/arch padding
-> > rules.
-> I would also prefer explicitly adding the padding and leaving the rest 
-> of the code as-is.
+On Fri, Jan 07, 2022 at 10:24:30AM +0300, Dan Carpenter wrote:
+> These error paths unlock before the goto, but the goto also unlocks
+> so it's a double unlock.
+
+There's also the case where there's an unlock without a previous lock.
+I've just sent out a different version of the patch that fixes that as well:
+
+https://lore.kernel.org/linux-btrfs/a7b1b2094bb0697dda72bdd9bf1ed789cb0b9b08.1641550850.git.fdmanana@suse.com/
+
+Thanks.
+
 > 
-
-Arguably, if you add padding explicitly, you might want to also mark it
-__packed or add some BUILD_BUG_ON() ensuring there's no more padding
-added by the compiler because of weird architectures, or whatnot?
-
-johannes
+> Fixes: 5646ffa863d0 ("btrfs: make send work with concurrent block group relocation")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  fs/btrfs/send.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+> index 3fc144b8c0d8..1aa8a0998673 100644
+> --- a/fs/btrfs/send.c
+> +++ b/fs/btrfs/send.c
+> @@ -7152,7 +7152,6 @@ static int btrfs_compare_trees(struct btrfs_root *left_root,
+>  	left_path->nodes[left_level] =
+>  			btrfs_clone_extent_buffer(left_root->commit_root);
+>  	if (!left_path->nodes[left_level]) {
+> -		up_read(&fs_info->commit_root_sem);
+>  		ret = -ENOMEM;
+>  		goto out;
+>  	}
+> @@ -7162,7 +7161,6 @@ static int btrfs_compare_trees(struct btrfs_root *left_root,
+>  	right_path->nodes[right_level] =
+>  			btrfs_clone_extent_buffer(right_root->commit_root);
+>  	if (!right_path->nodes[right_level]) {
+> -		up_read(&fs_info->commit_root_sem);
+>  		ret = -ENOMEM;
+>  		goto out;
+>  	}
+> -- 
+> 2.20.1
+> 
