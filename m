@@ -2,75 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15CA2C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jan 2022 06:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7C9C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jan 2022 07:10:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233130AbiAGGek (ORCPT
+        id S234143AbiAGHKJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 Jan 2022 01:34:40 -0500
-Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:51901 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232985AbiAGGek (ORCPT
+        Fri, 7 Jan 2022 02:10:09 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:36346 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233511AbiAGHKI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 Jan 2022 01:34:40 -0500
-Received: from [192.168.1.18] ([90.11.185.88])
-        by smtp.orange.fr with ESMTPA
-        id 5iphnH3Y7w2Xx5ipinF57P; Fri, 07 Jan 2022 07:34:39 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Fri, 07 Jan 2022 07:34:39 +0100
-X-ME-IP: 90.11.185.88
-Message-ID: <5ed8c8d1-aa61-b2ba-62ff-6714a83c96ba@wanadoo.fr>
-Date:   Fri, 7 Jan 2022 07:34:37 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH 03/16] fpga: dfl: pci: Remove usage of the deprecated
- "pci-dma-compat.h" API
-Content-Language: en-US
+        Fri, 7 Jan 2022 02:10:08 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 455FE61F00;
+        Fri,  7 Jan 2022 07:10:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3023C36AEB;
+        Fri,  7 Jan 2022 07:10:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1641539407;
+        bh=Uhul5yfTlK51NvXqmK+aJv/o9GFXVvISZlskunMwVPw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=A1BXTvBzhvz5BYVJNRiFgUFgHt1n93t7Vw8bBDRvvCbAWUSyCGApyI5k2Jhv6Gg30
+         ifXzT2LyYV0MCnr0ekV3XEj+cTwjwnIqHrH6QloHVJd6CBMhpqOUE7oSzT5SqRB7S2
+         D795jEmWsdnfcN30eP5FRKffmOgEtwttDK0r1Sgr114QURpR/C2uyXnCyKBQrhC2Kl
+         pWNY+xU+64pY9h90ic2oH112rFrIqCc1BjemMEZd9ni3KJESgDrVQRFZlSfLNqERAM
+         Iqr17qBDIdnOWakNBdLtqOO1UiZagEYFL42vUxazNgPeU7QSqJ3T6eEOkgSQLrj2eU
+         ZLUGARrkJCoSw==
+Date:   Fri, 7 Jan 2022 08:10:03 +0100
+From:   Mauro Carvalho Chehab <mchehab@kernel.org>
 To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>, hao.wu@intel.com,
-        Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>,
-        Xu Yilun <yilun.xu@intel.com>, linux-fpga@vger.kernel.org,
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Christoph Hellwig <hch@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        awalls@md.metrocast.net,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         kernel-janitors <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH 04/16] media: Remove usage of the deprecated
+ "pci-dma-compat.h" API
+Message-ID: <20220107081003.63c7cea6@coco.lan>
+In-Reply-To: <CAK8P3a0w51bnDy2whAC8WOCx2=9UB1ViX3veOfhSmQwwLr3VNQ@mail.gmail.com>
 References: <cover.1641500561.git.christophe.jaillet@wanadoo.fr>
- <4a0a48fb682d13e6861f604d3cad3424672bee1f.1641500561.git.christophe.jaillet@wanadoo.fr>
- <CAK8P3a0MfHbB8ZFuTJpbVwPLZ-9QY-MWRFGukW1S4rbBBuDRzw@mail.gmail.com>
- <CAK8P3a01EyEzJKyk2upmvXW-VEb6XRGZgeBwEzH=jJYYL3saGg@mail.gmail.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <CAK8P3a01EyEzJKyk2upmvXW-VEb6XRGZgeBwEzH=jJYYL3saGg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        <e89f4b29b9f7e0c711a3ccc16a009f49f416e1fc.1641500561.git.christophe.jaillet@wanadoo.fr>
+        <CAK8P3a0w51bnDy2whAC8WOCx2=9UB1ViX3veOfhSmQwwLr3VNQ@mail.gmail.com>
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.31; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 07/01/2022 à 01:58, Arnd Bergmann a écrit :
-> On Thu, Jan 6, 2022 at 6:06 PM Arnd Bergmann <arnd@arndb.de> wrote:
->>
-> 
->>> [1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
->>> [2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
->>> [3]: https://lore.kernel.org/kernel-janitors/20200716192821.321233-1-christophe.jaillet@wanadoo.fr/
->>>
->>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>> Reviewed-by: Xu Yilun <yilun.xu@intel.com>
->>
->> This is a correct conversion of the driver, but I'd prefer to keep this separate
->> from the pci-dma-compat series.
-> 
-> Nevermind, I just misread the patch, and it is required after all to get
-> rid of pci_set_dma_mask()
+Em Thu, 6 Jan 2022 19:51:47 -0500
+Arnd Bergmann <arnd@arndb.de> escreveu:
+
+> On Thu, Jan 6, 2022 at 4:50 PM Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+> >
+> > In [1], Christoph Hellwig has proposed to remove the wrappers in
+> > include/linux/pci-dma-compat.h.
+> >
+> > Some reasons why this API should be removed have been given by Julia
+> > Lawall in [2].
+> >
+> > A coccinelle script has been used to perform the needed transformation.
+> > It can be found in [3].
+> >
+> > [1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
+> > [2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
+> > [3]: https://lore.kernel.org/kernel-janitors/20200716192821.321233-1-christophe.jaillet@wanadoo.fr/
+> >
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>  
 > 
 > Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 > 
+> Mauro, could you pick this up directly? It has no dependencies on the rest of
+> the series.
 
-Hi,
+Sure, but I already closed the media merge window. If you prefer to
+apply it directly via your tree, that would be OK for me as well.
+If so, just let me know. On such case:
 
-I also have another WIP which removes these DMA(32) fallbacks.
-It will be clean-up later-on.
+Acked-by: Mauro Carvalho Chehab <mchehab@kernel.org>
 
-CJ
-
+Regards,
+Mauro
