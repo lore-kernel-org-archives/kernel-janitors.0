@@ -2,80 +2,123 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99DDCC433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jan 2022 01:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB956C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jan 2022 02:36:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345326AbiAGB7o (ORCPT
+        id S1345433AbiAGCgT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Jan 2022 20:59:44 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:41501 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344533AbiAGB7j (ORCPT
+        Thu, 6 Jan 2022 21:36:19 -0500
+Received: from mail-qt1-f176.google.com ([209.85.160.176]:44602 "EHLO
+        mail-qt1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344793AbiAGCgR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Jan 2022 20:59:39 -0500
-Received: from mail-ed1-f43.google.com ([209.85.208.43]) by
- mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1MOiLp-1mjy1m0Wit-00QFQI; Fri, 07 Jan 2022 02:59:37 +0100
-Received: by mail-ed1-f43.google.com with SMTP id j6so16310142edw.12;
-        Thu, 06 Jan 2022 17:59:37 -0800 (PST)
-X-Gm-Message-State: AOAM533wA5LJufOXRwkZBzeRLhNbm2eD7rqzc+Xz3rnBJi+P9t2VYdKM
-        1mDn2kVfXPO2OXbzUjTurxxQodFCK6VUrcAhm+0=
-X-Google-Smtp-Source: ABdhPJwNPusolPWQ0Dfm+FkLfh1W+9s6XBF4mIXZxjKoC1VGJSGdyFfgj8EhVdC8IWm5RZdDWKdfuddYhSIOwhhZCO4=
-X-Received: by 2002:a05:6000:16c7:: with SMTP id h7mr5177836wrf.317.1641517284064;
- Thu, 06 Jan 2022 17:01:24 -0800 (PST)
+        Thu, 6 Jan 2022 21:36:17 -0500
+Received: by mail-qt1-f176.google.com with SMTP id a1so4229276qtx.11;
+        Thu, 06 Jan 2022 18:36:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=p1K15mtU3zzMsv0QlhLQ7Ko388P+IV6nME1cO1C6EvU=;
+        b=RwWfijicqAvoLpSjeB7cgho9YCGFNscwsH29QH23LpBQzLpCIJnUFkvEafSrwtVQ9N
+         otIkWAw3VNIVEJsPteIr70LIAmJvg9Nw+1duHoR4W8Rs5+JVRqLc14uTIGWZRgaviLrj
+         hGUUOdxk1Cu7Y8h7g30/svpTKmCHB2iwvXP5kEoUx6dM2eqQujcbmt4rPXa92Cy/Hquj
+         7JvRxgp9i44CkHYcz9U4bd8A+oEKbDX03FcHy3psFy4sz9RoOuTqdBnVN8Y8qd6oupmt
+         bSSZVmomVbEDzg9NPK9Elh2DEcTOG0Dd3ipYjdP+mIGnY9VQFwZxAidaMy6IK3g2JkZ7
+         I81g==
+X-Gm-Message-State: AOAM530AuZG5ME1uYSKCyz39fcfA6A7K9r8WzeQWu3TwpDar8U4Kajth
+        8MriW1Lp2VVF/zjGlm5cE/wt2xRjeiXOoHoB
+X-Google-Smtp-Source: ABdhPJwctH+K6wy/8G3P/ejagpHh3YQ8FjNq147K/x4fdUGFhbbD2HkKy7q43wGLdGsqa3wWDPLUXg==
+X-Received: by 2002:a05:622a:4c:: with SMTP id y12mr55998380qtw.21.1641522976789;
+        Thu, 06 Jan 2022 18:36:16 -0800 (PST)
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com. [209.85.219.47])
+        by smtp.gmail.com with ESMTPSA id l9sm2502430qkj.37.2022.01.06.18.36.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jan 2022 18:36:16 -0800 (PST)
+Received: by mail-qv1-f47.google.com with SMTP id kj16so4236122qvb.2;
+        Thu, 06 Jan 2022 18:36:16 -0800 (PST)
+X-Received: by 2002:a05:6214:252a:: with SMTP id gg10mr57473867qvb.19.1641522975923;
+ Thu, 06 Jan 2022 18:36:15 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1641500561.git.christophe.jaillet@wanadoo.fr> <4c35f397720fccb6c9166fa85fa25475b0659a6a.1641500561.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <4c35f397720fccb6c9166fa85fa25475b0659a6a.1641500561.git.christophe.jaillet@wanadoo.fr>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 6 Jan 2022 20:01:21 -0500
-X-Gmail-Original-Message-ID: <CAK8P3a1sESb9CYs+N=rYs3=6Sq_CZHsKB0jXgT1n9XC7O9x_gA@mail.gmail.com>
-Message-ID: <CAK8P3a1sESb9CYs+N=rYs3=6Sq_CZHsKB0jXgT1n9XC7O9x_gA@mail.gmail.com>
-Subject: Re: [PATCH 09/16] media: v4l2-pci-skeleton: Remove usage of the
- deprecated "pci-dma-compat.h" API
+References: <1063e5a4738d897adcaffce2ab8e4e45f07998ff.1635969326.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1063e5a4738d897adcaffce2ab8e4e45f07998ff.1635969326.git.christophe.jaillet@wanadoo.fr>
+From:   Li Yang <leoyang.li@nxp.com>
+Date:   Fri, 7 Jan 2022 10:36:04 +0800
+X-Gmail-Original-Message-ID: <CADRPPNRke7ga1MsSKEpr948wkgNygNTQhcnB7Kk-f7DhMpptMQ@mail.gmail.com>
+Message-ID: <CADRPPNRke7ga1MsSKEpr948wkgNygNTQhcnB7Kk-f7DhMpptMQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] soc: fsl: guts: Revert commit 3c0d64e867ed
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>
+Cc:     tyreld@linux.ibm.com, kernel-janitors@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:8oDH2q8ZcRAZYzpoxlwrzszTCFuRww0c7gPSMUEWwZ7ZseQZpY+
- Bd54+PKN4HMm01RUjpSFgt22EY7EkvcEAZIsHvjpqCDvEfKXJ+QksZZ4iPZb9cwobXwjJl0
- atlqcCTZrIXdy/ftSYpduzwbE/QVG/uNgABuC1WnhOuAV5fG1QGOfmvduqMMt+mm1O3i3MX
- 8PmTXBNyQClB7J1/cYlsw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:L/dDlk68fws=:Yz0m+Bpi8dsgdSUM57PaXv
- A1zljUGqyfjnFfsSNtWSu84FaVEv2I3IToPQ8One9WT9n2wsUHjh4Y44nEXoHWp5OjdbIY5og
- yoDXjc/4rTpfR7kxUhMr6vSc10Vy6OFAmYs/mCH+k4JiHTHNXkHPYoby1aD0JC1VlZCjRsvUM
- dwojnHZ7V4iAArtYmL3fMApzS9kkOB4SF2o/x1JVzSVzMLB+pedzBAQfWDBIV8N13UpxQzhGd
- IrcckBK/GSnbfRNJbCc/emWJ2iTqYarfkfn+SQ9ihYvXw58x5/dP8TYVE+dqCVd6SfeG52VA6
- 4uHquQJwL4cyMGipsaTHOTN9Yd+HRWlvudHmyMap0FSJMNJGTnkVqD8L4X+DqoSxwJbndy4sZ
- Y/UN4+gj8BLkEyYF2rW7DDTedaX3WCQsW9VIrDPfjQb3qnfUWR56aLQCGkoQDkmhQZRTOlgWe
- deuH6GPFtupdbJg4KxGeMeP6E/x1dVAesRa/6+Ua8mJgm3cvMfVv5B4Yn+3159QAIBc8RMDLC
- l/6Gs6nFtTYsMw1tJxhy716Zf0MxWoMmpCEzbrIOEHYHAJeivkEymkAjTem5il+xZ/+4Olwhm
- 2p6HpP2mdErESUeyTuLo3uY83sJYMIaZhg1baSaLpQ7MLfEPTFF6b5/+v7YW9CqbTSbwYMwna
- tAk2kyV9OwuNK0DgkfFG3exa+slSv56xrEyWhY86q7nuvvQvvD/uj/he0OesPJlduGXBYO66N
- yuSIiIdUISsdXcGICaRMqzbWcFPXxlyI4u55tzHg/RTRM8xy+dPsoZEiCukDllPBoB9W0gEXO
- cmrWwjwtL6+8GcTqW/pTeMh3en9MpRRcT1/imwD48AH2W4RVyw=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jan 6, 2022 at 4:53 PM Christophe JAILLET
+On Thu, Nov 4, 2021 at 4:09 AM Christophe JAILLET
 <christophe.jaillet@wanadoo.fr> wrote:
 >
-> In [1], Christoph Hellwig has proposed to remove the wrappers in
-> include/linux/pci-dma-compat.h.
+> This reverts commit 3c0d64e867ed
+> ("soc: fsl: guts: reuse machine name from device tree").
 >
-> Some reasons why this API should be removed have been given by Julia
-> Lawall in [2].
+> A following patch will fix the missing memory allocation failure check
+> instead.
 >
-> A coccinelle script has been used to perform the needed transformation.
-> It can be found in [3].
->
-> [1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
-> [2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
-> [3]: https://lore.kernel.org/kernel-janitors/20200716192821.321233-1-christophe.jaillet@wanadoo.fr/
->
+> Suggested-by: Tyrel Datwyler <tyreld@linux.ibm.com>
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Applied for next.  Thanks.
+
+> ---
+> This is a follow-up of discussion in:
+> https://lore.kernel.org/kernel-janitors/b12e8c5c5d6ab3061d9504de8fbaefcad6bbc385.1629321668.git.christophe.jaillet@wanadoo.fr/
+> ---
+>  drivers/soc/fsl/guts.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
+> index 072473a16f4d..af7741eafc57 100644
+> --- a/drivers/soc/fsl/guts.c
+> +++ b/drivers/soc/fsl/guts.c
+> @@ -28,7 +28,6 @@ struct fsl_soc_die_attr {
+>  static struct guts *guts;
+>  static struct soc_device_attribute soc_dev_attr;
+>  static struct soc_device *soc_dev;
+> -static struct device_node *root;
+>
+>
+>  /* SoC die attribute definition for QorIQ platform */
+> @@ -138,7 +137,7 @@ static u32 fsl_guts_get_svr(void)
+>
+>  static int fsl_guts_probe(struct platform_device *pdev)
+>  {
+> -       struct device_node *np = pdev->dev.of_node;
+> +       struct device_node *root, *np = pdev->dev.of_node;
+>         struct device *dev = &pdev->dev;
+>         const struct fsl_soc_die_attr *soc_die;
+>         const char *machine;
+> @@ -159,8 +158,9 @@ static int fsl_guts_probe(struct platform_device *pdev)
+>         root = of_find_node_by_path("/");
+>         if (of_property_read_string(root, "model", &machine))
+>                 of_property_read_string_index(root, "compatible", 0, &machine);
+> +       of_node_put(root);
+>         if (machine)
+> -               soc_dev_attr.machine = machine;
+> +               soc_dev_attr.machine = devm_kstrdup(dev, machine, GFP_KERNEL);
+>
+>         svr = fsl_guts_get_svr();
+>         soc_die = fsl_soc_die_match(svr, fsl_soc_die);
+> @@ -195,7 +195,6 @@ static int fsl_guts_probe(struct platform_device *pdev)
+>  static int fsl_guts_remove(struct platform_device *dev)
+>  {
+>         soc_device_unregister(soc_dev);
+> -       of_node_put(root);
+>         return 0;
+>  }
+>
+> --
+> 2.30.2
+>
