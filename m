@@ -2,51 +2,53 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB956C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jan 2022 02:36:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB35DC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jan 2022 02:40:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345433AbiAGCgT (ORCPT
+        id S1345512AbiAGCk5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Jan 2022 21:36:19 -0500
-Received: from mail-qt1-f176.google.com ([209.85.160.176]:44602 "EHLO
-        mail-qt1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344793AbiAGCgR (ORCPT
+        Thu, 6 Jan 2022 21:40:57 -0500
+Received: from mail-qt1-f171.google.com ([209.85.160.171]:42830 "EHLO
+        mail-qt1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345521AbiAGCk5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Jan 2022 21:36:17 -0500
-Received: by mail-qt1-f176.google.com with SMTP id a1so4229276qtx.11;
-        Thu, 06 Jan 2022 18:36:17 -0800 (PST)
+        Thu, 6 Jan 2022 21:40:57 -0500
+Received: by mail-qt1-f171.google.com with SMTP id y17so4244983qtx.9;
+        Thu, 06 Jan 2022 18:40:56 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=p1K15mtU3zzMsv0QlhLQ7Ko388P+IV6nME1cO1C6EvU=;
-        b=RwWfijicqAvoLpSjeB7cgho9YCGFNscwsH29QH23LpBQzLpCIJnUFkvEafSrwtVQ9N
-         otIkWAw3VNIVEJsPteIr70LIAmJvg9Nw+1duHoR4W8Rs5+JVRqLc14uTIGWZRgaviLrj
-         hGUUOdxk1Cu7Y8h7g30/svpTKmCHB2iwvXP5kEoUx6dM2eqQujcbmt4rPXa92Cy/Hquj
-         7JvRxgp9i44CkHYcz9U4bd8A+oEKbDX03FcHy3psFy4sz9RoOuTqdBnVN8Y8qd6oupmt
-         bSSZVmomVbEDzg9NPK9Elh2DEcTOG0Dd3ipYjdP+mIGnY9VQFwZxAidaMy6IK3g2JkZ7
-         I81g==
-X-Gm-Message-State: AOAM530AuZG5ME1uYSKCyz39fcfA6A7K9r8WzeQWu3TwpDar8U4Kajth
-        8MriW1Lp2VVF/zjGlm5cE/wt2xRjeiXOoHoB
-X-Google-Smtp-Source: ABdhPJwctH+K6wy/8G3P/ejagpHh3YQ8FjNq147K/x4fdUGFhbbD2HkKy7q43wGLdGsqa3wWDPLUXg==
-X-Received: by 2002:a05:622a:4c:: with SMTP id y12mr55998380qtw.21.1641522976789;
-        Thu, 06 Jan 2022 18:36:16 -0800 (PST)
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com. [209.85.219.47])
-        by smtp.gmail.com with ESMTPSA id l9sm2502430qkj.37.2022.01.06.18.36.16
+        bh=a3oveBvk/TJ7E2R11hx57UheCl6wg4a+PXG4wzrlHrU=;
+        b=hjn9/K5rvc2Ha8WtWuYlzdDB7rXIUES/BGuCsw0Ze5c+xf0aDS3rCT2xdXH3UoDQz/
+         AnSMDlqbeevPSznDd/95ZyRDwjK3baP/wYgOtFk50XcnG+3X3SDmKveq23gP4IfpzZ/7
+         ELJpzEiqPtaLqC74AXP7JliExKdjamqeCpncKW06kpylkMSAiJo8NTmYvj8JXpLPMRjR
+         riALwYWbMiBwz8j1zx5sieDDmTHV9iB9ggaJmYzcnhWKjxx/q+aujbWaHVNJp3gBJ8b1
+         R/n8BCaqzaj3A2AThqQt/RP637blJL61XYjApzWyGYscWGQPHJENqxnwej3sn7k8tb6b
+         a1aw==
+X-Gm-Message-State: AOAM531j4zr/iupMDBZjWlZFATmZ4SmREUyPnkyf5rKVYYHIGdlT9WKM
+        zE9FhoESzs3GPuJVUV6vYdQVUN1nhlg5Fw==
+X-Google-Smtp-Source: ABdhPJy+98KZMdgRomHIl0wQjDyz6kJktgoGwWe6gB9SvpeCcSM2U5jMQWiwUSwgG06T1v5aP3Xh3g==
+X-Received: by 2002:a05:622a:11c3:: with SMTP id n3mr53518144qtk.213.1641523256268;
+        Thu, 06 Jan 2022 18:40:56 -0800 (PST)
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com. [209.85.160.172])
+        by smtp.gmail.com with ESMTPSA id p16sm2904028qtx.19.2022.01.06.18.40.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jan 2022 18:36:16 -0800 (PST)
-Received: by mail-qv1-f47.google.com with SMTP id kj16so4236122qvb.2;
-        Thu, 06 Jan 2022 18:36:16 -0800 (PST)
-X-Received: by 2002:a05:6214:252a:: with SMTP id gg10mr57473867qvb.19.1641522975923;
- Thu, 06 Jan 2022 18:36:15 -0800 (PST)
+        Thu, 06 Jan 2022 18:40:56 -0800 (PST)
+Received: by mail-qt1-f172.google.com with SMTP id f17so1756295qtf.8;
+        Thu, 06 Jan 2022 18:40:55 -0800 (PST)
+X-Received: by 2002:ac8:4e85:: with SMTP id 5mr54938490qtp.416.1641523255287;
+ Thu, 06 Jan 2022 18:40:55 -0800 (PST)
 MIME-Version: 1.0
 References: <1063e5a4738d897adcaffce2ab8e4e45f07998ff.1635969326.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1063e5a4738d897adcaffce2ab8e4e45f07998ff.1635969326.git.christophe.jaillet@wanadoo.fr>
+ <4890990418ecbcfb8921efe8adb2019a03e5a1c1.1635969326.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <4890990418ecbcfb8921efe8adb2019a03e5a1c1.1635969326.git.christophe.jaillet@wanadoo.fr>
 From:   Li Yang <leoyang.li@nxp.com>
-Date:   Fri, 7 Jan 2022 10:36:04 +0800
-X-Gmail-Original-Message-ID: <CADRPPNRke7ga1MsSKEpr948wkgNygNTQhcnB7Kk-f7DhMpptMQ@mail.gmail.com>
-Message-ID: <CADRPPNRke7ga1MsSKEpr948wkgNygNTQhcnB7Kk-f7DhMpptMQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] soc: fsl: guts: Revert commit 3c0d64e867ed
+Date:   Fri, 7 Jan 2022 10:40:43 +0800
+X-Gmail-Original-Message-ID: <CADRPPNTRE9sUX-4XxvtoQkGqOXzBPm_1h-FRSRepWsxdFz3Tvg@mail.gmail.com>
+Message-ID: <CADRPPNTRE9sUX-4XxvtoQkGqOXzBPm_1h-FRSRepWsxdFz3Tvg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] soc: fsl: guts: Add a missing memory allocation
+ failure check
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc:     tyreld@linux.ibm.com, kernel-janitors@vger.kernel.org,
         linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
@@ -58,67 +60,50 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Nov 4, 2021 at 4:09 AM Christophe JAILLET
+On Thu, Nov 4, 2021 at 4:10 AM Christophe JAILLET
 <christophe.jaillet@wanadoo.fr> wrote:
 >
-> This reverts commit 3c0d64e867ed
-> ("soc: fsl: guts: reuse machine name from device tree").
+> If 'devm_kstrdup()' fails, we should return -ENOMEM.
 >
-> A following patch will fix the missing memory allocation failure check
-> instead.
+> While at it, move the 'of_node_put()' call in the error handling path and
+> after the 'machine' has been copied.
+> Better safe than sorry.
 >
 > Suggested-by: Tyrel Datwyler <tyreld@linux.ibm.com>
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied for next.  Thanks.
+Applied with Fixes tag and Depends-on tag added.  Thanks.
 
 > ---
-> This is a follow-up of discussion in:
-> https://lore.kernel.org/kernel-janitors/b12e8c5c5d6ab3061d9504de8fbaefcad6bbc385.1629321668.git.christophe.jaillet@wanadoo.fr/
+> Not sure of which Fixes tag to add. Should be a6fc3b698130, but since
+> another commit needs to be reverted for this patch to make sense, I'm
+> unsure of what to do. :(
+> So, none is given.
 > ---
->  drivers/soc/fsl/guts.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+>  drivers/soc/fsl/guts.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
 >
 > diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
-> index 072473a16f4d..af7741eafc57 100644
+> index af7741eafc57..5ed2fc1c53a0 100644
 > --- a/drivers/soc/fsl/guts.c
 > +++ b/drivers/soc/fsl/guts.c
-> @@ -28,7 +28,6 @@ struct fsl_soc_die_attr {
->  static struct guts *guts;
->  static struct soc_device_attribute soc_dev_attr;
->  static struct soc_device *soc_dev;
-> -static struct device_node *root;
->
->
->  /* SoC die attribute definition for QorIQ platform */
-> @@ -138,7 +137,7 @@ static u32 fsl_guts_get_svr(void)
->
->  static int fsl_guts_probe(struct platform_device *pdev)
->  {
-> -       struct device_node *np = pdev->dev.of_node;
-> +       struct device_node *root, *np = pdev->dev.of_node;
->         struct device *dev = &pdev->dev;
->         const struct fsl_soc_die_attr *soc_die;
->         const char *machine;
-> @@ -159,8 +158,9 @@ static int fsl_guts_probe(struct platform_device *pdev)
+> @@ -158,9 +158,14 @@ static int fsl_guts_probe(struct platform_device *pdev)
 >         root = of_find_node_by_path("/");
 >         if (of_property_read_string(root, "model", &machine))
 >                 of_property_read_string_index(root, "compatible", 0, &machine);
+> -       of_node_put(root);
+> -       if (machine)
+> +       if (machine) {
+>                 soc_dev_attr.machine = devm_kstrdup(dev, machine, GFP_KERNEL);
+> +               if (!soc_dev_attr.machine) {
+> +                       of_node_put(root);
+> +                       return -ENOMEM;
+> +               }
+> +       }
 > +       of_node_put(root);
->         if (machine)
-> -               soc_dev_attr.machine = machine;
-> +               soc_dev_attr.machine = devm_kstrdup(dev, machine, GFP_KERNEL);
 >
 >         svr = fsl_guts_get_svr();
 >         soc_die = fsl_soc_die_match(svr, fsl_soc_die);
-> @@ -195,7 +195,6 @@ static int fsl_guts_probe(struct platform_device *pdev)
->  static int fsl_guts_remove(struct platform_device *dev)
->  {
->         soc_device_unregister(soc_dev);
-> -       of_node_put(root);
->         return 0;
->  }
->
 > --
 > 2.30.2
 >
