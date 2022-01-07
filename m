@@ -2,84 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F4EFC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jan 2022 00:56:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93AEDC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jan 2022 00:58:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344045AbiAGA4W (ORCPT
+        id S1344672AbiAGA6d (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Jan 2022 19:56:22 -0500
-Received: from mout.kundenserver.de ([212.227.126.134]:48417 "EHLO
+        Thu, 6 Jan 2022 19:58:33 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:58897 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230133AbiAGA4W (ORCPT
+        with ESMTP id S230133AbiAGA6c (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Jan 2022 19:56:22 -0500
-Received: from mail-wm1-f48.google.com ([209.85.128.48]) by
+        Thu, 6 Jan 2022 19:58:32 -0500
+Received: from mail-wr1-f51.google.com ([209.85.221.51]) by
  mrelayeu.kundenserver.de (mreue011 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1M1q8m-1n7pPg1q5A-002ChG; Fri, 07 Jan 2022 01:56:20 +0100
-Received: by mail-wm1-f48.google.com with SMTP id v123so2947397wme.2;
-        Thu, 06 Jan 2022 16:56:20 -0800 (PST)
-X-Gm-Message-State: AOAM530jfekjigejhTLDOXluhtt0COCPQYc0Mu5p4f5MX/mAAMyVJw4G
-        EbAl9VUt9lPA/smHFJbbdnC06udKN5Egu2jactE=
-X-Google-Smtp-Source: ABdhPJxjN0PpAY15g3YezZc1097ikKMl8cojBSZBTSHIZod49CbqSEfCpIHQ97t2EibZ/TdiK8l3W1GIDlIfyiK2eos=
-X-Received: by 2002:a7b:c448:: with SMTP id l8mr8889792wmi.173.1641516980036;
- Thu, 06 Jan 2022 16:56:20 -0800 (PST)
+ 1MryCb-1mZLl547mP-00nwrQ; Fri, 07 Jan 2022 01:58:31 +0100
+Received: by mail-wr1-f51.google.com with SMTP id w20so8022640wra.9;
+        Thu, 06 Jan 2022 16:58:30 -0800 (PST)
+X-Gm-Message-State: AOAM533zWTLAKMEcV7Uo4P0bzAv8Pl25ySMtGdb3pt4sLeBzs6VA0O+O
+        jRm8vXoyMA6yUCH8jYkClWheiSxbD/xJDS4FTJc=
+X-Google-Smtp-Source: ABdhPJw358xnVBy0xVmQn6spXwbuORRrv/Zlnm9a5imL/72/70FXovvZLsKseIasTfU7fEcAA/3bt/0PrbYZH1MsmmA=
+X-Received: by 2002:a5d:6d0e:: with SMTP id e14mr54689312wrq.407.1641517110623;
+ Thu, 06 Jan 2022 16:58:30 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1641500561.git.christophe.jaillet@wanadoo.fr> <b88f25f3d07be92dd75494dc129a85619afb1366.1641500561.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <b88f25f3d07be92dd75494dc129a85619afb1366.1641500561.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1641500561.git.christophe.jaillet@wanadoo.fr>
+ <4a0a48fb682d13e6861f604d3cad3424672bee1f.1641500561.git.christophe.jaillet@wanadoo.fr>
+ <CAK8P3a0MfHbB8ZFuTJpbVwPLZ-9QY-MWRFGukW1S4rbBBuDRzw@mail.gmail.com>
+In-Reply-To: <CAK8P3a0MfHbB8ZFuTJpbVwPLZ-9QY-MWRFGukW1S4rbBBuDRzw@mail.gmail.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 6 Jan 2022 19:56:17 -0500
-X-Gmail-Original-Message-ID: <CAK8P3a2J_QZtqq8_y8hwSo4T_Dh_4f_WXy9osomHeBND3-abgA@mail.gmail.com>
-Message-ID: <CAK8P3a2J_QZtqq8_y8hwSo4T_Dh_4f_WXy9osomHeBND3-abgA@mail.gmail.com>
-Subject: Re: [PATCH 07/16] dmaengine: pch_dma: Remove usage of the deprecated
+Date:   Thu, 6 Jan 2022 19:58:28 -0500
+X-Gmail-Original-Message-ID: <CAK8P3a01EyEzJKyk2upmvXW-VEb6XRGZgeBwEzH=jJYYL3saGg@mail.gmail.com>
+Message-ID: <CAK8P3a01EyEzJKyk2upmvXW-VEb6XRGZgeBwEzH=jJYYL3saGg@mail.gmail.com>
+Subject: Re: [PATCH 03/16] fpga: dfl: pci: Remove usage of the deprecated
  "pci-dma-compat.h" API
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         Christoph Hellwig <hch@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, hao.wu@intel.com,
+        Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>,
+        Xu Yilun <yilun.xu@intel.com>, linux-fpga@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         kernel-janitors <kernel-janitors@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:NPDhkDyPz7/evS+qLJycWeh+LpmULWxQY7o4Jp3SxxD1PjmJZLY
- 6S4QR+5s7Dtm9IZnM0Zd2i5LM17wL0S4VgSYfbW67Bt9JvZjq71G/Cv6W/mHusq6HakCcxj
- 8O7QmB6hA5R3qXuO4CzhdbNuQ9u7xqBj1aTgjxzj1bVn9c/oSHiiqXOU/ldhXY1pt5CP1NL
- 6moalj1gusVCwxdjgiSjQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:fiSYhjP+vKg=:xbR1Oo53gAwr8ZBYJ4wl+c
- NmOcrgTn3ywwvGp1R0fuhWyCFlpAgOOnTZ+GUHYtowcsqGBhKa5sMKFH1twNv+ewrQ5+X0CFb
- WBUzqk3gbamXwDkGlrvGfPsaptHIOlMEIwEEYfVnAlENamqBK7AE5Zm/AZhyOTd8y4x2BQSxa
- ZZt3wuCYJb3RAO7piNswIiFnZCMYSm6ry1WwjAUrObLQq/f8KyJncsyS3axB6YgHgQUL+B0cS
- pYSbYBsjbnVv/MoBayanll5urDHKgxbrRSz9acTTZ6SZ0uGEcJhddlYhpFPMatZEdruxCZNUv
- UpdSkn7u7uVuMsFzsi1uXG+qRdzKoxODK2yZLFUJ60cgIuPP3j2CKMitaxR76PlcGFetM31QB
- JmycpSDSoKLPmT0YKW6UbwVl6cOblCdn7X21C3WNaLcHwGqw4bhXbDeCmUj9RhzALTmYb/ayJ
- DBxOA396fK4h2YycYT+bf1orPCyX0GEsTIH2w/6/4sWW7aCdBUsSc8d5O2B0wlxoTA62N2V86
- KzShcmHbB05F6gFxf9xpOgZi6XibdAoqNBXLez3alqfydAeBoKYhSouAAW6HNKTwEHUsmmNdD
- 3Wy8PO4E4zt4xGzLeAI4Wcihj+rlOjS2N/2UI2VmJgzxFT90TpyGKg6EAXR0Q3bErFAlQC+2s
- bqwhwMt5QHY5KcIC36kZhIR/M0Y/26YsxgigiRoDK6CP+bTxcQoAUGgxfGXzuXH6NwIhLozzz
- LLm027DEDZjWZpuB17g02D+cA/1y+3uuWuJ85Pz2SAJR7wnHwJAX7fF+4jN83P1IANfEsWpNi
- vSh24IcZvJAl1uxZaFlwxI7WCOp8WsNY/fBtqa3HLtNhi//pbI=
+X-Provags-ID: V03:K1:S2NrGVuAJNeavdPuhHi9VbemRQp6gLroIRh+i6dxMTncWt+j5Yc
+ jlCd6sEKAnBguUUv9AR5mN5Pz/+8b3+1c6O7ZJ2bq46mz9/R2mqUk1K4aTeLdTgmKatDoyN
+ HN0AsO5Gwu41LWyyEb4Cvf6axNMvmWLYUp11hmSqUJiNla9KsdeiQd/wPLeuyu+qBGdrnaf
+ vOPTfS5s4K/R8YugX3V7w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:kLzSUkWBejc=:2M0yazoBlemnF4JFCIolbg
+ LtdWTHkqJR+p7X0meRzANwVwWSent5vC/A2GBcgjjm4kvxsn/lEZ8Id9LvkyqV+QqcjelIZy5
+ AnpQZ+EN5xgyNp2qFXRDATPszv1V62+5RxYOXcuDS297StNZYLqZrOQIwcxd9QvNP+vPZE2MX
+ 14sJzumOVGwo6tnCS5METHD/DgW84a8Uvld2+nxwV+CM51DVVVgfyjy680CcXsiQ3utvmfYNt
+ OZo43mHMg4qADe80bwQC/QrNZzFmwnQOSF6xAjZwKEamtBU+6pkonDCzjXTlYNXrLjxYu6cwS
+ yGEHLQTrqbZVIZMtLxCv+ia/iFfJIWCXA+znHvJQ/vnvT6lbz0Oie4PJkk20e4W75P5l9qut1
+ O1BYoBr7NtGnKqqSZRePkZ71oU6MgjzIYU9mEJEUyiJh+A7lrSi98fxDMaYceLJ5OipeR7DKC
+ KogiB4jle/K2wWOgxcP/A/GBZ3uG8U9phgrPAoI9sch9akAxL58+9Yeue5LcbReM6S1+NhZ4N
+ b3tx/0AMk1qECz8QZW2BOJkQMHBwoHzDGixRMAbTT8nimtXH7XEhJ3i0X7BcMFlGmu7votXF8
+ C7RIeWgXoVARwqZOyBlsTR1zGiQ3U6iquPUhwzrAmqfLlb2+E/CXslAAbpBB6NGtbQrspG24h
+ 7BWIHWxgC9Rkg9CheBx2ZHf/E5+hYpO7dAbBoeU0cESCpUfh0YYAQZfiCsU+l8UubdDVAHaof
+ sFLChQTggOwvPVoOnsFYoWuwiX4MElU3Tr2dExk9UeyIBjf8oA8Pvydncg0Xr8NQLMSF8UDRj
+ EIktJi25XRxl7wTe+lDjF+NaD3xVsUn6g9li79pGiuQ+/ZRqKI0iif/QSjU14r2/LIBmPm9s6
+ KJhn81H04aR2DtnkLeRFwX13MrLR0Z6zkLKQxrHM3/zEhfdjeF2oyhTBjYofLnv7bt84Kz3tq
+ h3l+lRcIb3w==
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jan 6, 2022 at 4:52 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+On Thu, Jan 6, 2022 at 6:06 PM Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> In [1], Christoph Hellwig has proposed to remove the wrappers in
-> include/linux/pci-dma-compat.h.
+
+> > [1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
+> > [2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
+> > [3]: https://lore.kernel.org/kernel-janitors/20200716192821.321233-1-christophe.jaillet@wanadoo.fr/
+> >
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > Reviewed-by: Xu Yilun <yilun.xu@intel.com>
 >
-> Some reasons why this API should be removed have been given by Julia
-> Lawall in [2].
->
-> A coccinelle script has been used to perform the needed transformation.
-> It can be found in [3].
->
-> [1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
-> [2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
-> [3]: https://lore.kernel.org/kernel-janitors/20200716192821.321233-1-christophe.jaillet@wanadoo.fr/
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> This is a correct conversion of the driver, but I'd prefer to keep this separate
+> from the pci-dma-compat series.
+
+Nevermind, I just misread the patch, and it is required after all to get
+rid of pci_set_dma_mask()
 
 Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-
-Vinod, can you apply this one to the dmaengine tree? It has no other
-dependencies.
