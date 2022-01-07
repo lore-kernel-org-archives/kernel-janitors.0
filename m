@@ -2,76 +2,164 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB7EEC4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jan 2022 14:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C49F6C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jan 2022 17:23:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347758AbiAGOUO (ORCPT
+        id S1348561AbiAGRXk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 7 Jan 2022 09:20:14 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:34030 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231689AbiAGOUN (ORCPT
+        Fri, 7 Jan 2022 12:23:40 -0500
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:50913 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240677AbiAGRXj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 7 Jan 2022 09:20:13 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C5F7EB82631;
-        Fri,  7 Jan 2022 14:20:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 601D6C36AE5;
-        Fri,  7 Jan 2022 14:20:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641565210;
-        bh=2EOzG7oNFW/lw0SW/jsqf0o8yZgPDhMEI/bsIL/aFi4=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=PjIPfavU1YO/VWl4tZBgZRo2cFIL2w/wwzYWxk2Qos+kbOvB8I+aAkjQEdEBHI+re
-         WLHuAAiddq7+A0q+aCGJ87x8b4GUcm7QdtqIbrUKIbk8f7Y5wB8YuHwiERH15z5OxD
-         Q3Xhhiy+BYUB5031P0Dwvi5G0YB86o6+xtz2l+2mN5eboNbjTuZ8GALwiCH17BVRoG
-         9Onnu5HLotbLA3b8x++h9tu+2n9X5X2+w1SnSV2TEfMneODsekgNyuhI+iRqsfFKmO
-         M6FbnQsc92YLkA/DIaHTMjvbe1pyuY7voP8a2O+/Q2iruNu90QHcHGZjAv0paT4xvt
-         /ocNj6IU3ut6w==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 3B9D2F79405;
-        Fri,  7 Jan 2022 14:20:10 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 7 Jan 2022 12:23:39 -0500
+Received: from [192.168.1.18] ([90.11.185.88])
+        by smtp.orange.fr with ESMTPA
+        id 5sxancGFrwEZf5sxgnfr6r; Fri, 07 Jan 2022 18:23:36 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Fri, 07 Jan 2022 18:23:36 +0100
+X-ME-IP: 90.11.185.88
+Message-ID: <cfabcc1c-16cd-80f7-7d28-6d817c29a7a0@wanadoo.fr>
+Date:   Fri, 7 Jan 2022 18:23:25 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] netrom: fix api breakage in nr_setsockopt()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164156521023.21832.17160553680833983322.git-patchwork-notify@kernel.org>
-Date:   Fri, 07 Jan 2022 14:20:10 +0000
-References: <20220107071209.GA22086@kili>
-In-Reply-To: <20220107071209.GA22086@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     ralf@linux-mips.org, davem@davemloft.net, kuba@kernel.org,
-        linux-hams@vger.kernel.org, netdev@vger.kernel.org,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH 16/16] PCI: Remove usage of the deprecated
+ "pci-dma-compat.h" API
+Content-Language: en-US
+From:   Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     arnd@arndb.de, hch@infradead.org, akpm@linux-foundation.org,
+        bhelgaas@google.com, linux-pci@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <e965573211f8c81c8ba978cfbc21925810a662b1.1641500561.git.christophe.jaillet@wanadoo.fr>
+ <20220106222804.GA330366@bhelgaas>
+ <0e381699-8bfa-186b-3688-5346e42a63cd@wanadoo.fr>
+In-Reply-To: <0e381699-8bfa-186b-3688-5346e42a63cd@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
 
-This patch was applied to netdev/net.git (master)
-by David S. Miller <davem@davemloft.net>:
 
-On Fri, 7 Jan 2022 10:12:10 +0300 you wrote:
-> This needs to copy an unsigned int from user space instead of a long to
-> avoid breaking user space with an API change.
+Le 07/01/2022 à 07:34, Christophe JAILLET a écrit :
+> Le 06/01/2022 à 23:28, Bjorn Helgaas a écrit :
+>> On Thu, Jan 06, 2022 at 10:55:33PM +0100, Christophe JAILLET wrote:
+>>> Final step, remove pci-dma-compat.h
+>>>
+>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>>
+>> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+>>
+>> Obviously this has to be applied after all the others, so I assume
+>> somebody else will take this.
+>>
+>>> ---
+>>>   include/linux/pci-dma-compat.h | 129 ---------------------------------
+>>>   include/linux/pci.h            |   3 -
+>>>   2 files changed, 132 deletions(-)
+>>>   delete mode 100644 include/linux/pci-dma-compat.h
+>>>
+>>> diff --git a/include/linux/pci-dma-compat.h 
+>>> b/include/linux/pci-dma-compat.h
+>>> deleted file mode 100644
+>>> index 249d4d7fbf18..000000000000
+>>> --- a/include/linux/pci-dma-compat.h
+>>> +++ /dev/null
+>>> @@ -1,129 +0,0 @@
+>>> -/* SPDX-License-Identifier: GPL-2.0 */
+>>> -/* include this file if the platform implements the dma_ DMA Mapping 
+>>> API
+>>> - * and wants to provide the pci_ DMA Mapping API in terms of it */
+>>> -
+>>> -#ifndef _ASM_GENERIC_PCI_DMA_COMPAT_H
+>>> -#define _ASM_GENERIC_PCI_DMA_COMPAT_H
+>>> -
+>>> -#include <linux/dma-mapping.h>
+>>> -
+>>> [...]
+>>>  >>> diff --git a/include/linux/pci.h b/include/linux/pci.h
+>>> index d4308f847e58..ba8771eaf380 100644
+>>> --- a/include/linux/pci.h
+>>> +++ b/include/linux/pci.h
+>>> @@ -2455,9 +2455,6 @@ static inline bool 
+>>> pci_is_thunderbolt_attached(struct pci_dev *pdev)
+>>>   void pci_uevent_ers(struct pci_dev *pdev, enum  pci_ers_result 
+>>> err_type);
+>>>   #endif
+>>> -/* Provide the legacy pci_dma_* API */
+>>> -#include <linux/pci-dma-compat.h>
+>>> -
 > 
-> I have updated all the integer overflow checks from ULONG to UINT as
-> well.  This is a slight API change but I do not expect it to affect
-> anything in real life.
+> After one more night, I should have mentionned that the way have removed 
+> "pci-dma-compat.h" may break OTHER drives because of indirect include.
 > 
-> [...]
+> The line above should maybe be replaced by:
+>    #include <linux/dma-mapping.h>
+> which is hidden in "pci-dma-compat.h".
+> 
+> Will see if built-bots complain.
 
-Here is the summary with links:
-  - [net] netrom: fix api breakage in nr_setsockopt()
-    https://git.kernel.org/netdev/net/c/dc35616e6c29
+And so they did.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+What is the best option?
+1. Add    #include <linux/dma-mapping.h>?		or
+2. Add this "missing" include in needed place?
+
+I would say 2, but I would need help, because I don't have a built farm 
+at home! :)
 
 
+
+This breaks:
+
+    drivers/s390/net/ism_drv.c: In function 'register_sba':
+    drivers/s390/net/ism_drv.c:93:15: error: implicit declaration of 
+function 'dma_alloc_coherent' [-Werror=implicit-function-declaration]
+       93 |         sba = dma_alloc_coherent(&ism->pdev->dev, PAGE_SIZE, 
+&dma_handle,
+          |               ^~~~~~~~~~~~~~~~~~
+[...]
+
+
+
+I got another built failure that I don't understand:
+
+    In file included from drivers/scsi/fdomain.c:87:
+ >> include/scsi/scsicam.h:16:31: warning: 'struct block_device' 
+declared inside parameter list will not be visible outside of this 
+definition or declaration
+       16 | int scsicam_bios_param(struct block_device *bdev, sector_t 
+capacity, int *ip);
+          |                               ^~~~~~~~~~~~
+    include/scsi/scsicam.h:17:27: warning: 'struct block_device' 
+declared inside parameter list will not be visible outside of this 
+definition or declaration
+       17 | bool scsi_partsize(struct block_device *bdev, sector_t 
+capacity, int geom[3]);
+          |                           ^~~~~~~~~~~~
+    include/scsi/scsicam.h:18:40: warning: 'struct block_device' 
+declared inside parameter list will not be visible outside of this 
+definition or declaration
+       18 | unsigned char *scsi_bios_ptable(struct block_device *bdev);
+          |                                        ^~~~~~~~~~~~
+    drivers/scsi/fdomain.c: In function 'fdomain_biosparam':
+ >> drivers/scsi/fdomain.c:468:45: error: passing argument 1 of 
+'scsi_bios_ptable' from incompatible pointer type 
+[-Werror=incompatible-pointer-types]
+      468 |         unsigned char *p = scsi_bios_ptable(bdev);
+          |                                             ^~~~
+          |                                             |
+          |                                             struct 
+block_device *
+    In file included from drivers/scsi/fdomain.c:87:
+    include/scsi/scsicam.h:18:54: note: expected 'struct block_device *' 
+but argument is of type 'struct block_device *'
+       18 | unsigned char *scsi_bios_ptable(struct block_device *bdev);
+          |                                 ~~~~~~~~~~~~~~~~~~~~~^~~~
+
+
+CJ
