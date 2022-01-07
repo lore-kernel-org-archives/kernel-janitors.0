@@ -2,84 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93AEDC433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jan 2022 00:58:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B6A4C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri,  7 Jan 2022 01:00:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344672AbiAGA6d (ORCPT
+        id S1344052AbiAGBAn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 6 Jan 2022 19:58:33 -0500
-Received: from mout.kundenserver.de ([212.227.126.130]:58897 "EHLO
+        Thu, 6 Jan 2022 20:00:43 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:33739 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230133AbiAGA6c (ORCPT
+        with ESMTP id S236544AbiAGBAn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 6 Jan 2022 19:58:32 -0500
-Received: from mail-wr1-f51.google.com ([209.85.221.51]) by
+        Thu, 6 Jan 2022 20:00:43 -0500
+Received: from mail-wr1-f47.google.com ([209.85.221.47]) by
  mrelayeu.kundenserver.de (mreue011 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MryCb-1mZLl547mP-00nwrQ; Fri, 07 Jan 2022 01:58:31 +0100
-Received: by mail-wr1-f51.google.com with SMTP id w20so8022640wra.9;
-        Thu, 06 Jan 2022 16:58:30 -0800 (PST)
-X-Gm-Message-State: AOAM533zWTLAKMEcV7Uo4P0bzAv8Pl25ySMtGdb3pt4sLeBzs6VA0O+O
-        jRm8vXoyMA6yUCH8jYkClWheiSxbD/xJDS4FTJc=
-X-Google-Smtp-Source: ABdhPJw358xnVBy0xVmQn6spXwbuORRrv/Zlnm9a5imL/72/70FXovvZLsKseIasTfU7fEcAA/3bt/0PrbYZH1MsmmA=
-X-Received: by 2002:a5d:6d0e:: with SMTP id e14mr54689312wrq.407.1641517110623;
- Thu, 06 Jan 2022 16:58:30 -0800 (PST)
+ 1MD9jV-1nECKG2wcL-0097oP; Fri, 07 Jan 2022 02:00:41 +0100
+Received: by mail-wr1-f47.google.com with SMTP id r10so374715wrc.3;
+        Thu, 06 Jan 2022 17:00:41 -0800 (PST)
+X-Gm-Message-State: AOAM5335hx53U5HKfOMs7M8K3+PYufMuAtr0DC2nSITkFCuZIOAbc+T/
+        o3FOM69vDjCVNXG6i3xVgS3UPbHWGqItzuAlFsQ=
+X-Google-Smtp-Source: ABdhPJy+QxLYZAEh0tcKnUCPWH2awGby0oPIVh1+zunkAi9c20kfhXGBzIRZmpUDYW3Yto6/u5ecQOGKYn9Oed0f9pA=
+X-Received: by 2002:a5d:4651:: with SMTP id j17mr5394152wrs.219.1641517241345;
+ Thu, 06 Jan 2022 17:00:41 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1641500561.git.christophe.jaillet@wanadoo.fr>
- <4a0a48fb682d13e6861f604d3cad3424672bee1f.1641500561.git.christophe.jaillet@wanadoo.fr>
- <CAK8P3a0MfHbB8ZFuTJpbVwPLZ-9QY-MWRFGukW1S4rbBBuDRzw@mail.gmail.com>
-In-Reply-To: <CAK8P3a0MfHbB8ZFuTJpbVwPLZ-9QY-MWRFGukW1S4rbBBuDRzw@mail.gmail.com>
+References: <cover.1641500561.git.christophe.jaillet@wanadoo.fr> <bdcc562c16d2551d6eb87baf557813330de45127.1641500561.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <bdcc562c16d2551d6eb87baf557813330de45127.1641500561.git.christophe.jaillet@wanadoo.fr>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 6 Jan 2022 19:58:28 -0500
-X-Gmail-Original-Message-ID: <CAK8P3a01EyEzJKyk2upmvXW-VEb6XRGZgeBwEzH=jJYYL3saGg@mail.gmail.com>
-Message-ID: <CAK8P3a01EyEzJKyk2upmvXW-VEb6XRGZgeBwEzH=jJYYL3saGg@mail.gmail.com>
-Subject: Re: [PATCH 03/16] fpga: dfl: pci: Remove usage of the deprecated
+Date:   Thu, 6 Jan 2022 20:00:38 -0500
+X-Gmail-Original-Message-ID: <CAK8P3a1c_jOKX6EQihRY2TmjxMOkXDXDgdv4rUf_6e52+3o2Ag@mail.gmail.com>
+Message-ID: <CAK8P3a1c_jOKX6EQihRY2TmjxMOkXDXDgdv4rUf_6e52+3o2Ag@mail.gmail.com>
+Subject: Re: [PATCH 08/16] rapidio/tsi721: Remove usage of the deprecated
  "pci-dma-compat.h" API
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
         Christoph Hellwig <hch@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>, hao.wu@intel.com,
-        Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>,
-        Xu Yilun <yilun.xu@intel.com>, linux-fpga@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matt Porter <mporter@kernel.crashing.org>,
+        Alex Bounine <alex.bou9@gmail.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         kernel-janitors <kernel-janitors@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:S2NrGVuAJNeavdPuhHi9VbemRQp6gLroIRh+i6dxMTncWt+j5Yc
- jlCd6sEKAnBguUUv9AR5mN5Pz/+8b3+1c6O7ZJ2bq46mz9/R2mqUk1K4aTeLdTgmKatDoyN
- HN0AsO5Gwu41LWyyEb4Cvf6axNMvmWLYUp11hmSqUJiNla9KsdeiQd/wPLeuyu+qBGdrnaf
- vOPTfS5s4K/R8YugX3V7w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:kLzSUkWBejc=:2M0yazoBlemnF4JFCIolbg
- LtdWTHkqJR+p7X0meRzANwVwWSent5vC/A2GBcgjjm4kvxsn/lEZ8Id9LvkyqV+QqcjelIZy5
- AnpQZ+EN5xgyNp2qFXRDATPszv1V62+5RxYOXcuDS297StNZYLqZrOQIwcxd9QvNP+vPZE2MX
- 14sJzumOVGwo6tnCS5METHD/DgW84a8Uvld2+nxwV+CM51DVVVgfyjy680CcXsiQ3utvmfYNt
- OZo43mHMg4qADe80bwQC/QrNZzFmwnQOSF6xAjZwKEamtBU+6pkonDCzjXTlYNXrLjxYu6cwS
- yGEHLQTrqbZVIZMtLxCv+ia/iFfJIWCXA+znHvJQ/vnvT6lbz0Oie4PJkk20e4W75P5l9qut1
- O1BYoBr7NtGnKqqSZRePkZ71oU6MgjzIYU9mEJEUyiJh+A7lrSi98fxDMaYceLJ5OipeR7DKC
- KogiB4jle/K2wWOgxcP/A/GBZ3uG8U9phgrPAoI9sch9akAxL58+9Yeue5LcbReM6S1+NhZ4N
- b3tx/0AMk1qECz8QZW2BOJkQMHBwoHzDGixRMAbTT8nimtXH7XEhJ3i0X7BcMFlGmu7votXF8
- C7RIeWgXoVARwqZOyBlsTR1zGiQ3U6iquPUhwzrAmqfLlb2+E/CXslAAbpBB6NGtbQrspG24h
- 7BWIHWxgC9Rkg9CheBx2ZHf/E5+hYpO7dAbBoeU0cESCpUfh0YYAQZfiCsU+l8UubdDVAHaof
- sFLChQTggOwvPVoOnsFYoWuwiX4MElU3Tr2dExk9UeyIBjf8oA8Pvydncg0Xr8NQLMSF8UDRj
- EIktJi25XRxl7wTe+lDjF+NaD3xVsUn6g9li79pGiuQ+/ZRqKI0iif/QSjU14r2/LIBmPm9s6
- KJhn81H04aR2DtnkLeRFwX13MrLR0Z6zkLKQxrHM3/zEhfdjeF2oyhTBjYofLnv7bt84Kz3tq
- h3l+lRcIb3w==
+X-Provags-ID: V03:K1:b3f3bLRba7qTq2kT4lU5/vMkdzInvzsiOS8Ar7cIyd0kXMIzeyX
+ efKjS9bsSSCCOcf4J3uqygkcj8pkEXPyMRkWQ6CZS3kH0oDtPOWAylHHC+8YCy3Wvpf+TX6
+ YYM27lOVp0cpL2YRCJwh1gZgsh/v15NsmisFlM5tY57wXhizOpWYcaCcFBAz9q8v03vbCYo
+ zHLBxLhmYwO+Kng305Y+g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:nfYHcHTz8G8=:hLei3higSeMShsAvGcmrmn
+ NQSKlIdE0l31lqiqvaBvJdbjQOKj0//9HUenyYvKtCj1FP9BWJ8JeWz4jg4U2Iolg8nf0609j
+ vrq46QV8CvSsTeV7D+VgPOc7rxva2O8VrEOJqCCVaHV60/YrkC9VoEP+qQ//MAbyG/X/GTU04
+ ekobFh02Nzt/OXcaVKRapLbBpMBKoEKvElA4TGOb0fPYRh7lKEjb5cV8N19+9y8ndQC8nlRIS
+ oEhJixWW0BGGLbbofYXJoPEeu45KiJuoGzeY4cUeJA/jNMacFsbBibp1fjTosKt+VYwKXiN/0
+ hqyslI7Q1+2YwdxKv6ebr3RSoC8GVLrFXydvYKoGBt/VyJ26Q9/DHK6z5hIEhcIRpEyAuHfsQ
+ /VaNEN9N4XEHtbuEsr7S+NOljHXH81/gvuWP5cIgeverFv1ZUwTPyzo7Ob2bPSQK31TvtXd8w
+ glHhQvW73lgV2DZT9om0tiGuQfJust0RJdnrxQZpEqk9a3ktQ4Zew9Fa1/8Th458vwSZ079QH
+ lksQDohOQQ3zZ17zoqWJ9DUXnqPl/uib736qDTg18UaXqsX2Mm2l2gmtVDZgM4p9xuYB1f/Mb
+ OK5N7pBeGaHLcRFmnexLFYtKdb4xHYSR9wu1zrmTsdGHfQ64O7YXBn2aWRiWNnWj0MoS4de6i
+ PKlev0mSQvse3R8r+r4p4GG35PH8z5QVzkYSxRVPwRYgwyXsWkWUHe5s1aq4+K6BzUhS5HR8U
+ gf0WluQppmSi3UocShZDh7Kg/563hdw6oeq8Zyx6BNChJJJ/hj28O+mi/WjCGPhuf+17U+Gfi
+ 5oCBcBrIAxjkFYeEZLzh9zZ5+g9OMqDlszqGbJ/GSV+nao8HbM=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jan 6, 2022 at 6:06 PM Arnd Bergmann <arnd@arndb.de> wrote:
+On Thu, Jan 6, 2022 at 4:52 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 >
-
-> > [1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
-> > [2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
-> > [3]: https://lore.kernel.org/kernel-janitors/20200716192821.321233-1-christophe.jaillet@wanadoo.fr/
-> >
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > Reviewed-by: Xu Yilun <yilun.xu@intel.com>
+> In [1], Christoph Hellwig has proposed to remove the wrappers in
+> include/linux/pci-dma-compat.h.
 >
-> This is a correct conversion of the driver, but I'd prefer to keep this separate
-> from the pci-dma-compat series.
-
-Nevermind, I just misread the patch, and it is required after all to get
-rid of pci_set_dma_mask()
+> Some reasons why this API should be removed have been given by Julia
+> Lawall in [2].
+>
+> A coccinelle script has been used to perform the needed transformation.
+> It can be found in [3].
+>
+> [1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
+> [2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
+> [3]: https://lore.kernel.org/kernel-janitors/20200716192821.321233-1-christophe.jaillet@wanadoo.fr/
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 Reviewed-by: Arnd Bergmann <arnd@arndb.de>
