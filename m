@@ -2,143 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1748C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat,  8 Jan 2022 16:16:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B089C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sat,  8 Jan 2022 16:47:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229648AbiAHQQW (ORCPT
+        id S234739AbiAHQrX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 8 Jan 2022 11:16:22 -0500
-Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:59461 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbiAHQQV (ORCPT
+        Sat, 8 Jan 2022 11:47:23 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:51974 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232240AbiAHQrW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 8 Jan 2022 11:16:21 -0500
-Received: from pop-os.home ([90.11.185.88])
-        by smtp.orange.fr with ESMTPA
-        id 6EOAnCR2IWUfj6EOAnE8Wo; Sat, 08 Jan 2022 17:16:20 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 08 Jan 2022 17:16:20 +0100
-X-ME-IP: 90.11.185.88
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     rmody@marvell.com, skalluru@marvell.com,
-        GR-Linux-NIC-Dev@marvell.com, davem@davemloft.net, kuba@kernel.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] bna: Simplify DMA setting
-Date:   Sat,  8 Jan 2022 17:16:16 +0100
-Message-Id: <1d5a7b3f4fa735f1233c3eb3fa07e71df95fad75.1641658516.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
+        Sat, 8 Jan 2022 11:47:22 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B1EC460BC1;
+        Sat,  8 Jan 2022 16:47:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 391E3C36AE0;
+        Sat,  8 Jan 2022 16:47:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1641660441;
+        bh=U9npFUY7iCNVH3ln8/o5iklMBDi5AfqGyHfPSKi4pr8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GcJMkICcYbl5UyZ4Yp0+pox+Oo8YbsFZkKbAFVDDmO5pP1ot9LxvD/waLiUakx34k
+         Gw1FY+79d0l/itXMxsr0dxr3WqkDQuNDpMTnFHoZSLo6GuWuiUfplBhfxLg9HuSllJ
+         pC3ZDeUdwSUlM9Nn/LOvQGlBMQOHV7WKX+Vs0w7bBEnOli2yxtkAOvOiYr18okSDwO
+         L6qO7DQ9IThNYJU7PcfyrZjFInjpDVHF4hsE5J0k+U0fK2GXqeHtxIey1U5NeaI/+i
+         uWCWf9oXlAzQCgCrHL5OZ85rTAQlqKeivTJSa9Sqd2q49QKIxSeM6GMhiHI+qiLUS6
+         KdgE3YfRiz/UQ==
+Date:   Sat, 8 Jan 2022 22:17:16 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Christoph Hellwig <hch@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        dmaengine@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH 07/16] dmaengine: pch_dma: Remove usage of the deprecated
+ "pci-dma-compat.h" API
+Message-ID: <YdnAFMnXq0h8wj9V@matsya>
+References: <cover.1641500561.git.christophe.jaillet@wanadoo.fr>
+ <b88f25f3d07be92dd75494dc129a85619afb1366.1641500561.git.christophe.jaillet@wanadoo.fr>
+ <CAK8P3a2J_QZtqq8_y8hwSo4T_Dh_4f_WXy9osomHeBND3-abgA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a2J_QZtqq8_y8hwSo4T_Dh_4f_WXy9osomHeBND3-abgA@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-As stated in [1], dma_set_mask() with a 64-bit mask will never fail if
-dev->dma_mask is non-NULL.
-So, if it fails, the 32 bits case will also fail for the same reason.
+On 06-01-22, 19:56, Arnd Bergmann wrote:
+> On Thu, Jan 6, 2022 at 4:52 PM Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+> >
+> > In [1], Christoph Hellwig has proposed to remove the wrappers in
+> > include/linux/pci-dma-compat.h.
+> >
+> > Some reasons why this API should be removed have been given by Julia
+> > Lawall in [2].
+> >
+> > A coccinelle script has been used to perform the needed transformation.
+> > It can be found in [3].
+> >
+> > [1]: https://lore.kernel.org/kernel-janitors/20200421081257.GA131897@infradead.org/
+> > [2]: https://lore.kernel.org/kernel-janitors/alpine.DEB.2.22.394.2007120902170.2424@hadrien/
+> > [3]: https://lore.kernel.org/kernel-janitors/20200716192821.321233-1-christophe.jaillet@wanadoo.fr/
+> >
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> Vinod, can you apply this one to the dmaengine tree? It has no other
+> dependencies.
 
-So, if dma_set_mask_and_coherent() succeeds, 'using_dac' is known to be
-'true'. This variable can be removed.
+Sure, applied now.
 
-Simplify code and remove some dead code accordingly.
-
-[1]: https://lkml.org/lkml/2021/6/7/398
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/ethernet/brocade/bna/bnad.c | 34 ++++++++-----------------
- 1 file changed, 10 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/net/ethernet/brocade/bna/bnad.c b/drivers/net/ethernet/brocade/bna/bnad.c
-index bbdc829c3524..f1d2c4cd5da2 100644
---- a/drivers/net/ethernet/brocade/bna/bnad.c
-+++ b/drivers/net/ethernet/brocade/bna/bnad.c
-@@ -3421,7 +3421,7 @@ static const struct net_device_ops bnad_netdev_ops = {
- };
- 
- static void
--bnad_netdev_init(struct bnad *bnad, bool using_dac)
-+bnad_netdev_init(struct bnad *bnad)
- {
- 	struct net_device *netdev = bnad->netdev;
- 
-@@ -3434,10 +3434,8 @@ bnad_netdev_init(struct bnad *bnad, bool using_dac)
- 		NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM |
- 		NETIF_F_TSO | NETIF_F_TSO6;
- 
--	netdev->features |= netdev->hw_features | NETIF_F_HW_VLAN_CTAG_FILTER;
--
--	if (using_dac)
--		netdev->features |= NETIF_F_HIGHDMA;
-+	netdev->features |= netdev->hw_features | NETIF_F_HW_VLAN_CTAG_FILTER |
-+			    NETIF_F_HIGHDMA;
- 
- 	netdev->mem_start = bnad->mmio_start;
- 	netdev->mem_end = bnad->mmio_start + bnad->mmio_len - 1;
-@@ -3544,8 +3542,7 @@ bnad_lock_uninit(struct bnad *bnad)
- 
- /* PCI Initialization */
- static int
--bnad_pci_init(struct bnad *bnad,
--	      struct pci_dev *pdev, bool *using_dac)
-+bnad_pci_init(struct bnad *bnad, struct pci_dev *pdev)
- {
- 	int err;
- 
-@@ -3555,14 +3552,9 @@ bnad_pci_init(struct bnad *bnad,
- 	err = pci_request_regions(pdev, BNAD_NAME);
- 	if (err)
- 		goto disable_device;
--	if (!dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64))) {
--		*using_dac = true;
--	} else {
--		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
--		if (err)
--			goto release_regions;
--		*using_dac = false;
--	}
-+	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
-+	if (err)
-+		goto release_regions;
- 	pci_set_master(pdev);
- 	return 0;
- 
-@@ -3585,7 +3577,6 @@ static int
- bnad_pci_probe(struct pci_dev *pdev,
- 		const struct pci_device_id *pcidev_id)
- {
--	bool	using_dac;
- 	int	err;
- 	struct bnad *bnad;
- 	struct bna *bna;
-@@ -3615,13 +3606,8 @@ bnad_pci_probe(struct pci_dev *pdev,
- 	bnad->id = atomic_inc_return(&bna_id) - 1;
- 
- 	mutex_lock(&bnad->conf_mutex);
--	/*
--	 * PCI initialization
--	 *	Output : using_dac = 1 for 64 bit DMA
--	 *			   = 0 for 32 bit DMA
--	 */
--	using_dac = false;
--	err = bnad_pci_init(bnad, pdev, &using_dac);
-+	/* PCI initialization */
-+	err = bnad_pci_init(bnad, pdev);
- 	if (err)
- 		goto unlock_mutex;
- 
-@@ -3634,7 +3620,7 @@ bnad_pci_probe(struct pci_dev *pdev,
- 		goto pci_uninit;
- 
- 	/* Initialize netdev structure, set up ethtool ops */
--	bnad_netdev_init(bnad, using_dac);
-+	bnad_netdev_init(bnad);
- 
- 	/* Set link to down state */
- 	netif_carrier_off(netdev);
+Thanks
 -- 
-2.32.0
-
+~Vinod
