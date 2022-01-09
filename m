@@ -2,34 +2,37 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C1EC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun,  9 Jan 2022 16:04:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B51C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun,  9 Jan 2022 17:15:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235972AbiAIQEw (ORCPT
+        id S236132AbiAIRPx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 9 Jan 2022 11:04:52 -0500
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:64087 "EHLO
+        Sun, 9 Jan 2022 12:15:53 -0500
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:54385 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230112AbiAIQEw (ORCPT
+        with ESMTP id S231678AbiAIRPt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 9 Jan 2022 11:04:52 -0500
+        Sun, 9 Jan 2022 12:15:49 -0500
 Received: from pop-os.home ([90.11.185.88])
         by smtp.orange.fr with ESMTPA
-        id 6agcnj72KIEdl6agcnRQHw; Sun, 09 Jan 2022 17:04:51 +0100
+        id 6bnFnvX8hsoWh6bnFnvwgJ; Sun, 09 Jan 2022 18:15:48 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 09 Jan 2022 17:04:51 +0100
+X-ME-Date: Sun, 09 Jan 2022 18:15:48 +0100
 X-ME-IP: 90.11.185.88
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jiri Pirko <jiri@resnulli.us>,
+To:     Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Tony Nguyen <anthony.l.nguyen@intel.com>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org
-Subject: [PATCH] rocker: Remove useless DMA-32 fallback configuration
-Date:   Sun,  9 Jan 2022 17:04:48 +0100
-Message-Id: <9ba2d13099d216f3df83e50ad33a05504c90fe7c.1641744274.git.christophe.jaillet@wanadoo.fr>
+        Christoph Hellwig <hch@lst.de>,
+        Alexander Lobakin <alexandr.lobakin@intel.com>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Subject: [PATCH] i40e: Remove useless DMA-32 fallback configuration
+Date:   Sun,  9 Jan 2022 18:14:40 +0100
+Message-Id: <5549ec8837b3a6fab83e92c5206cc100ffd23d85.1641748468.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -41,43 +44,70 @@ As stated in [1], dma_set_mask() with a 64-bit mask never fails if
 dev->dma_mask is non-NULL.
 So, if it fails, the 32 bits case will also fail for the same reason.
 
+So, if dma_set_mask_and_coherent() succeeds, 'pci_using_dac' is known to be
+1.
+
 Simplify code and remove some dead code accordingly.
 
 [1]: https://lkml.org/lkml/2021/6/7/398
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Alexander Lobakin <alexandr.lobakin@intel.com>
 ---
- drivers/net/ethernet/rocker/rocker_main.c | 17 ++++-------------
- 1 file changed, 4 insertions(+), 13 deletions(-)
+ drivers/net/ethernet/intel/e1000e/netdev.c | 22 +++++++---------------
+ 1 file changed, 7 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/net/ethernet/rocker/rocker_main.c b/drivers/net/ethernet/rocker/rocker_main.c
-index b620470c7905..3fcea211716c 100644
---- a/drivers/net/ethernet/rocker/rocker_main.c
-+++ b/drivers/net/ethernet/rocker/rocker_main.c
-@@ -2870,19 +2870,10 @@ static int rocker_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		goto err_pci_request_regions;
- 	}
+diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
+index 635a95927e93..4f6ee5c44f75 100644
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -7385,9 +7385,9 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	resource_size_t flash_start, flash_len;
+ 	static int cards_found;
+ 	u16 aspm_disable_flag = 0;
+-	int bars, i, err, pci_using_dac;
+ 	u16 eeprom_data = 0;
+ 	u16 eeprom_apme_mask = E1000_EEPROM_APME;
++	int bars, i, err;
+ 	s32 ret_val = 0;
  
--	err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(64));
+ 	if (ei->flags2 & FLAG2_DISABLE_ASPM_L0S)
+@@ -7401,17 +7401,11 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	if (err)
+ 		return err;
+ 
+-	pci_using_dac = 0;
+ 	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
 -	if (!err) {
--		err = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(64));
--		if (err) {
--			dev_err(&pdev->dev, "dma_set_coherent_mask failed\n");
--			goto err_pci_set_dma_mask;
--		}
+-		pci_using_dac = 1;
 -	} else {
--		err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+-		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
 -		if (err) {
--			dev_err(&pdev->dev, "dma_set_mask failed\n");
--			goto err_pci_set_dma_mask;
+-			dev_err(&pdev->dev,
+-				"No usable DMA configuration, aborting\n");
+-			goto err_dma;
 -		}
-+	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
 +	if (err) {
-+		dev_err(&pdev->dev, "dma_set_mask failed\n");
-+		goto err_pci_set_dma_mask;
++		dev_err(&pdev->dev,
++			"No usable DMA configuration, aborting\n");
++		goto err_dma;
  	}
  
- 	if (pci_resource_len(pdev, 0) < ROCKER_PCI_BAR0_SIZE) {
+ 	bars = pci_select_bars(pdev, IORESOURCE_MEM);
+@@ -7547,10 +7541,8 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 
+ 	netdev->priv_flags |= IFF_UNICAST_FLT;
+ 
+-	if (pci_using_dac) {
+-		netdev->features |= NETIF_F_HIGHDMA;
+-		netdev->vlan_features |= NETIF_F_HIGHDMA;
+-	}
++	netdev->features |= NETIF_F_HIGHDMA;
++	netdev->vlan_features |= NETIF_F_HIGHDMA;
+ 
+ 	/* MTU range: 68 - max_hw_frame_size */
+ 	netdev->min_mtu = ETH_MIN_MTU;
 -- 
 2.32.0
 
