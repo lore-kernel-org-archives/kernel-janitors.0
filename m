@@ -2,36 +2,34 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 857F4C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun,  9 Jan 2022 09:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C4CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  9 Jan 2022 11:14:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233552AbiAIJEM (ORCPT
+        id S235284AbiAILOZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 9 Jan 2022 04:04:12 -0500
-Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:56962 "EHLO
+        Sun, 9 Jan 2022 06:14:25 -0500
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:60752 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233509AbiAIJEM (ORCPT
+        with ESMTP id S231903AbiAILOZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 9 Jan 2022 04:04:12 -0500
+        Sun, 9 Jan 2022 06:14:25 -0500
 Received: from pop-os.home ([90.11.185.88])
         by smtp.orange.fr with ESMTPA
-        id 6U7VnHG92FGqt6U7WnEdtC; Sun, 09 Jan 2022 10:04:10 +0100
+        id 6W9WnFFLj2lVY6W9WnYKn7; Sun, 09 Jan 2022 12:14:23 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 09 Jan 2022 10:04:10 +0100
+X-ME-Date: Sun, 09 Jan 2022 12:14:23 +0100
 X-ME-IP: 90.11.185.88
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Ajit Khaparde <ajit.khaparde@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
+To:     Mark Einon <mark.einon@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         netdev@vger.kernel.org
-Subject: [PATCH] be2net: Remove useless DMA-32 fallback configuration
-Date:   Sun,  9 Jan 2022 10:03:49 +0100
-Message-Id: <637696d7141faa68c29fc34b70f9aa67d5e605f0.1641718999.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] et131x: Remove useless DMA-32 fallback configuration
+Date:   Sun,  9 Jan 2022 12:13:47 +0100
+Message-Id: <b9aa46e7e5a5aa61f56aac5ea439930f41ad9946.1641726804.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -43,9 +41,10 @@ As stated in [1], dma_set_mask() with a 64-bit mask never fails if
 dev->dma_mask is non-NULL.
 So, if it fails, the 32 bits case will also fail for the same reason.
 
-So if dma_set_mask_and_coherent() succeeds, 'netdev->features' will have
-NETIF_F_HIGHDMA in all cases. Move the assignment of this feature in
-be_netdev_init() instead be_probe() which is a much logical place.
+Moreover, dma_set_mask_and_coherent() returns 0 or -EIO, so the return
+code of the function can be used directly. There is no need to 'rc = -EIO'
+explicitly.
+
 
 Simplify code and remove some dead code accordingly.
 
@@ -53,41 +52,26 @@ Simplify code and remove some dead code accordingly.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/emulex/benet/be_main.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/agere/et131x.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/emulex/benet/be_main.c b/drivers/net/ethernet/emulex/benet/be_main.c
-index 84b3ba9bdb18..d0c262f2695a 100644
---- a/drivers/net/ethernet/emulex/benet/be_main.c
-+++ b/drivers/net/ethernet/emulex/benet/be_main.c
-@@ -5194,7 +5194,8 @@ static void be_netdev_init(struct net_device *netdev)
- 		netdev->hw_features |= NETIF_F_RXHASH;
+diff --git a/drivers/net/ethernet/agere/et131x.c b/drivers/net/ethernet/agere/et131x.c
+index f4edc616388c..537e6a85e18d 100644
+--- a/drivers/net/ethernet/agere/et131x.c
++++ b/drivers/net/ethernet/agere/et131x.c
+@@ -3914,10 +3914,9 @@ static int et131x_pci_setup(struct pci_dev *pdev,
+ 	pci_set_master(pdev);
  
- 	netdev->features |= netdev->hw_features |
--		NETIF_F_HW_VLAN_CTAG_RX | NETIF_F_HW_VLAN_CTAG_FILTER;
-+		NETIF_F_HW_VLAN_CTAG_RX | NETIF_F_HW_VLAN_CTAG_FILTER |
-+		NETIF_F_HIGHDMA;
- 
- 	netdev->vlan_features |= NETIF_F_SG | NETIF_F_TSO | NETIF_F_TSO6 |
- 		NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
-@@ -5840,14 +5841,9 @@ static int be_probe(struct pci_dev *pdev, const struct pci_device_id *pdev_id)
- 	SET_NETDEV_DEV(netdev, &pdev->dev);
- 
- 	status = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
--	if (!status) {
--		netdev->features |= NETIF_F_HIGHDMA;
--	} else {
--		status = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
--		if (status) {
--			dev_err(&pdev->dev, "Could not set PCI DMA Mask\n");
--			goto free_netdev;
--		}
-+	if (status) {
-+		dev_err(&pdev->dev, "Could not set PCI DMA Mask\n");
-+		goto free_netdev;
+ 	/* Check the DMA addressing support of this device */
+-	if (dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64)) &&
+-	    dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32))) {
++	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
++	if (rc) {
+ 		dev_err(&pdev->dev, "No usable DMA addressing method\n");
+-		rc = -EIO;
+ 		goto err_release_res;
  	}
  
- 	status = pci_enable_pcie_error_reporting(pdev);
 -- 
 2.32.0
 
