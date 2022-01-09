@@ -2,90 +2,132 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66193C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun,  9 Jan 2022 21:05:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E000EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  9 Jan 2022 21:56:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233109AbiAIVFF (ORCPT
+        id S234718AbiAIV4d (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 9 Jan 2022 16:05:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53532 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232045AbiAIVFF (ORCPT
+        Sun, 9 Jan 2022 16:56:33 -0500
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:57038 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234700AbiAIV4c (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 9 Jan 2022 16:05:05 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DB18C06173F;
-        Sun,  9 Jan 2022 13:05:04 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id 18-20020a05600c22d200b00347d3a13c7cso3605268wmg.0;
-        Sun, 09 Jan 2022 13:05:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lg6Z6UgqVNey0NkbSjhi6a7Fl2EqTAOtDFR5jta0Uxw=;
-        b=n2F52I6+jgGSp26KEemyZHGHVnd/id+3quqJx5k8PvjLiMNjQ66OXBosizoYkpS1fR
-         /Pvzft+ozDgK4IpgGa49UPKLYKe4GqYsV+kYA0W3vq4WlkEIGvI9wDQM5sJsKGopje9d
-         rAGe81UYMHedBJMXRhZ1z3+0Zvr+cAPr9Cb8Cloq2GcJT323usF/W+6GuRerDXR9goah
-         kNRSyeSeWKsYfpK+FG2nY2zxuufEIaIaoNByJZdqPQohQ2RUei1SNznFCM5qpRXOKOAM
-         2KLy4mTdcCqP845QunRpioWdo88HJ1m479AxRnq2BGuo77cZLgGxwvNUKM+5zbZQj8dj
-         LmDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lg6Z6UgqVNey0NkbSjhi6a7Fl2EqTAOtDFR5jta0Uxw=;
-        b=3QF/8hdldhXTdRoRFE/0elOYGnuKrUx+1RuywPvx7M+C0y73i9Ze5T+AnkYKEjlWB/
-         EiG36t4ZKT1K/7/BHqPZouJvf02Ydw41v+A/KOee9WOIW4zUz0R9yebn2JXl18t6RGQa
-         B3vmiDCFDFoDo0/q81lhS0z0seLgmOSEmahHooa9Q8gpEXDitQyprl4TrB/NwF7b2C72
-         8nZ7zogFkmHBMCRH7C1C8u2YYD2a9fhjQ5+VDBaIvjbq7byFHK/Z3FxbFdCm/DmOzHcg
-         2KbMJEWdDczKskMPyFkgTyB3V04hiMYDhZP4elYRqmNE2moSZmssmNUDPdzrxAiNGcPq
-         UDEQ==
-X-Gm-Message-State: AOAM532D+fu/NAYdwfYoJmfjEdTqJ2wlnpeuq85v3Atdi0lW8nc6odRy
-        EwVXCrYIlV/SoNv3mjR1Mhk=
-X-Google-Smtp-Source: ABdhPJz1XLecsWUsrbpLxT7lkU5S/VJCREJzYyIe/ggiWOViEzrmEO+VeJxOPO+IL63OC77wh1YVHw==
-X-Received: by 2002:a7b:c317:: with SMTP id k23mr19790018wmj.20.1641762303179;
-        Sun, 09 Jan 2022 13:05:03 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id u11sm5152562wmq.2.2022.01.09.13.05.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jan 2022 13:05:02 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        linux-media@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: v4l2-ctrls: make array range static
-Date:   Sun,  9 Jan 2022 21:05:02 +0000
-Message-Id: <20220109210502.53438-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.33.1
+        Sun, 9 Jan 2022 16:56:32 -0500
+Received: from pop-os.home ([90.11.185.88])
+        by smtp.orange.fr with ESMTPA
+        id 6gArnkF9ZqYov6gArnGEU7; Sun, 09 Jan 2022 22:56:30 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sun, 09 Jan 2022 22:56:30 +0100
+X-ME-IP: 90.11.185.88
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Jeremy Kerr <jk@ozlabs.org>, Joel Stanley <joel@jms.id.au>,
+        Alistar Popple <alistair@popple.id.au>,
+        Eddie James <eajames@linux.ibm.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Guenter Roeck <linux@roeck-us.net>, linux-fsi@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+Subject: [PATCH v3] fsi: Aspeed: Fix a potential double free
+Date:   Sun,  9 Jan 2022 22:56:10 +0100
+Message-Id: <2c123f8b0a40dc1a061fae982169fe030b4f47e6.1641765339.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the read-only array range on the stack but
-instead it static. Also makes the object code a little smaller.
+A struct device can never be devm_alloc()'ed.
+Here, it is embedded in "struct fsi_master", and "struct fsi_master" is
+embedded in "struct fsi_master_aspeed".
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Since "struct device" is embedded, the data structure embedding it must be
+released with the release function, as is already done here.
+
+So use kzalloc() instead of devm_kzalloc() when allocating "aspeed" and
+update all error handling branches accordingly.
+
+This prevent a potential double free().
+
+This also fix another issue if opb_readl() fails. Instead of a direct
+return, it now jumps in the error handling path.
+
+Fixes: 606397d67f41 ("fsi: Add ast2600 master driver")
+Suggested-by: Greg KH <gregkh@linuxfoundation.org>
+Suggested-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/v4l2-core/v4l2-ctrls-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: Keep the release function which is correct
+    s/devm_kzalloc()/kzalloc()/ instead
 
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls-core.c b/drivers/media/v4l2-core/v4l2-ctrls-core.c
-index 54abe5245dcc..85c2d3f39d96 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls-core.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls-core.c
-@@ -382,7 +382,7 @@ validate_vp9_seg_params(struct v4l2_vp9_segmentation *seg)
+v3: Update the error handling path to free "aspeed" [Guenter Roeck]
+    Fix another issue when opb_readl() fails [Guenter Roeck]
+
+I hope that fixing both issues in the same patch is ok. It makes no sense
+to me not to update the goto to the correct label if opb_readl() fails.
+---
+ drivers/fsi/fsi-master-aspeed.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/fsi/fsi-master-aspeed.c b/drivers/fsi/fsi-master-aspeed.c
+index 8606e55c1721..0bed2fab8055 100644
+--- a/drivers/fsi/fsi-master-aspeed.c
++++ b/drivers/fsi/fsi-master-aspeed.c
+@@ -542,25 +542,28 @@ static int fsi_master_aspeed_probe(struct platform_device *pdev)
+ 		return rc;
  	}
  
- 	for (i = 0; i < ARRAY_SIZE(seg->feature_data); i++) {
--		const int range[] = { 255, 63, 3, 0 };
-+		static const int range[] = { 255, 63, 3, 0 };
+-	aspeed = devm_kzalloc(&pdev->dev, sizeof(*aspeed), GFP_KERNEL);
++	aspeed = kzalloc(sizeof(*aspeed), GFP_KERNEL);
+ 	if (!aspeed)
+ 		return -ENOMEM;
  
- 		for (j = 0; j < ARRAY_SIZE(seg->feature_data[j]); j++) {
- 			if (seg->feature_data[i][j] < -range[j] ||
+ 	aspeed->dev = &pdev->dev;
+ 
+ 	aspeed->base = devm_platform_ioremap_resource(pdev, 0);
+-	if (IS_ERR(aspeed->base))
+-		return PTR_ERR(aspeed->base);
++	if (IS_ERR(aspeed->base)) {
++		rc = PTR_ERR(aspeed->base);
++		goto err_free_aspeed;
++	}
+ 
+ 	aspeed->clk = devm_clk_get(aspeed->dev, NULL);
+ 	if (IS_ERR(aspeed->clk)) {
+ 		dev_err(aspeed->dev, "couldn't get clock\n");
+-		return PTR_ERR(aspeed->clk);
++		rc = PTR_ERR(aspeed->clk);
++		goto err_free_aspeed;
+ 	}
+ 	rc = clk_prepare_enable(aspeed->clk);
+ 	if (rc) {
+ 		dev_err(aspeed->dev, "couldn't enable clock\n");
+-		return rc;
++		goto err_free_aspeed;
+ 	}
+ 
+ 	rc = setup_cfam_reset(aspeed);
+@@ -595,7 +598,7 @@ static int fsi_master_aspeed_probe(struct platform_device *pdev)
+ 	rc = opb_readl(aspeed, ctrl_base + FSI_MVER, &raw);
+ 	if (rc) {
+ 		dev_err(&pdev->dev, "failed to read hub version\n");
+-		return rc;
++		goto err_release;
+ 	}
+ 
+ 	reg = be32_to_cpu(raw);
+@@ -634,6 +637,8 @@ static int fsi_master_aspeed_probe(struct platform_device *pdev)
+ 
+ err_release:
+ 	clk_disable_unprepare(aspeed->clk);
++err_free_aspeed:
++	kfree(aspeed);
+ 	return rc;
+ }
+ 
 -- 
 2.32.0
 
