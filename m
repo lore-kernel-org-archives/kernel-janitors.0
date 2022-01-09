@@ -2,60 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CAB1C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun,  9 Jan 2022 20:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32906C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  9 Jan 2022 20:31:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236918AbiAIUYW (ORCPT
+        id S236930AbiAIUbz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 9 Jan 2022 15:24:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44698 "EHLO
+        Sun, 9 Jan 2022 15:31:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236912AbiAIUYW (ORCPT
+        with ESMTP id S229579AbiAIUbz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 9 Jan 2022 15:24:22 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95F9FC06173F;
-        Sun,  9 Jan 2022 12:24:21 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id x18-20020a7bc212000000b00347cc83ec07so3763930wmi.4;
-        Sun, 09 Jan 2022 12:24:21 -0800 (PST)
+        Sun, 9 Jan 2022 15:31:55 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAD7DC06173F;
+        Sun,  9 Jan 2022 12:31:54 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id a5so19047261wrh.5;
+        Sun, 09 Jan 2022 12:31:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=3g9xJZUKTdObdxenWeNH8Dlatjv9+QI3Rg198Ffa9ic=;
-        b=YaRFtncdj1ROshARCNA9kzbe3I+VsIZ4ciKRGoSzHZZtBKG1DVfOoDwFghnZU3B37w
-         6GGYOEDpWilBUD0rFo2qv3ozAIB3x8FAQF6gwwpnqEwhIL3GSaLgbZ4Gdv7ribh6R5h7
-         QuzBsROFxqRO0a8gSVKX/wLDHTKAEmvfukIrOjCeMqip0wp2V1H7TCBrxsDiNfVKKPT+
-         Sa2TiLxib6EBHCX7/GNUdq2yrPXcHagCwXQ14hFCXIRE9r8NRSVEEeamJkWq1x7kVKdp
-         eSw+Y4RIh6bcuCl4AN301/bZkbtSDQVmEsdJ1BQK/IjvMdnuIOuKRuZPYIQUKudLa5TU
-         JFsw==
+        bh=CVxqdhSmwND7LPC9Ui4ZQJOIVfvWlzvv/90s7w6B5IM=;
+        b=c/Zk0NQcXA2SZ9SiVcMCotQhECHHHx7PSWjjvXc3/8beOJuLmOFmaZJ3B0UOrVzQiY
+         Rvpt1XGBc0vy0b7vroeODiwR3LaXmdaF/O11MNffAyjvA8a2hSRInyDWEJ1VKGTogXTI
+         pvQI30pctZNmdEbD3ly+7Pq9pjmqy4khzpI3vnJ0gHBuTVF0earYnmtKl1lMHPNqnPxL
+         3U99hze3eCkl5+lAkf6yln2HDhbiaVMfypz5PYaNS9G4ALkox/GmA+3kxCkV6ei5dJG/
+         7BRTQVrLytg9ZI/XwcBLhx+KXNvTrae3srdkbf0Ynwlm/I8Ur3PopP7ez7F+j5l05cvJ
+         WCYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=3g9xJZUKTdObdxenWeNH8Dlatjv9+QI3Rg198Ffa9ic=;
-        b=3ykDPGuXgwjebvLvmjEuIGMxW/rQ4FYJQD1xChuegcs+NXY/89PHBCFGBG9oF4xGkx
-         Itewo5CbX/Gfdrzz/8E0YfrA9a9pp5b5rR4ZZQB+iO4GBuxCy9RtFr6OQpOBUBfPl+4z
-         IdQh/b2I2L5RWL2rZ+IMWiWERmCQ0uzbaLZAbqWk7SuM53s9x83iygxUYtyCgEejamZ3
-         zr21Yq/kAylJRPHJa7tHrl1GZrIKGh7tLjFCQ01e2nYEdV+j8JZHQ6zIz1RHzHMyTrOa
-         2EzV126TVamnuRGPAYhk+B+VDqCQ7r8lzgIPTUju1GMeJ0wanefHuJ7zyweJchFbc4Kc
-         996w==
-X-Gm-Message-State: AOAM532jO3qBzrUY+ySltnMYoSZh2iTq91Wq2EH0QVj15sBeZQ6kCGuz
-        VRlXfa7cY58ShiePwcuzOBk=
-X-Google-Smtp-Source: ABdhPJzRufDB91BfN4hRrQjwHhuExdQzU5ripFMbBfk93hKD1KaWEwMv54woD7BaBc4boJbc86KUOA==
-X-Received: by 2002:a7b:c745:: with SMTP id w5mr19538596wmk.96.1641759860152;
-        Sun, 09 Jan 2022 12:24:20 -0800 (PST)
+        bh=CVxqdhSmwND7LPC9Ui4ZQJOIVfvWlzvv/90s7w6B5IM=;
+        b=iYldydz0Qtog/NE0EUg4YZ/2SVLNbD8TWiLYmmDnLxJR/SCwQW33TL3wNMuKyKsamw
+         xnWpxvHmVOfejEg7v4kC8kHC6WvAKNMQFnU5nO8RTaG/5tr2HEhlzj/sZAaN2eVDZ7IZ
+         IAGD8NUT1ce/2n6rCs8lKC0ffrpSSndo6WtGTNaUm7fUamj06IwJSBAvsYuD/u4ueGrh
+         5S6QY1p6GCxuy3TJxcmvc0+NDiCiwt5oJzyYo67+e03QZ4n3FZTj6wSGq046R5KbIn2l
+         BfudkT6tWy1bxYyfah97hcyXvs29JymjNAx6NrNM7B8x3thhEBTTEn2lNLWNOmLVhd5v
+         diow==
+X-Gm-Message-State: AOAM530kFqTCYm/Cb9oHHHZUhgVUvuiG1c7EP9P7QxD37O8tYhViK9Li
+        YRaDEYWptOmNJSpcCQEfUjU=
+X-Google-Smtp-Source: ABdhPJxVqtlvscb41hOdCYQDVd7o8btAn3V18ZKgh8iUFdh4Qc76jZk6Pjedl6ObHF3sbnrvwkRJrA==
+X-Received: by 2002:a5d:6d85:: with SMTP id l5mr62101570wrs.579.1641760313091;
+        Sun, 09 Jan 2022 12:31:53 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id b13sm4999052wrf.64.2022.01.09.12.24.19
+        by smtp.gmail.com with ESMTPSA id f8sm5304253wry.16.2022.01.09.12.31.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jan 2022 12:24:19 -0800 (PST)
+        Sun, 09 Jan 2022 12:31:52 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] nfc: pn544: make array rset_cmd static const
-Date:   Sun,  9 Jan 2022 20:24:18 +0000
-Message-Id: <20220109202418.50641-1-colin.i.king@gmail.com>
+Subject: [PATCH] i915: make array flex_regs static const
+Date:   Sun,  9 Jan 2022 20:31:52 +0000
+Message-Id: <20220109203152.51414-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -63,27 +68,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the read-only array rset_cmd on the stack but
+Don't populate the read-only array flex_regs on the stack but
 instead it static const. Also makes the object code a little smaller.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/nfc/pn544/i2c.c | 2 +-
+ drivers/gpu/drm/i915/i915_perf.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nfc/pn544/i2c.c b/drivers/nfc/pn544/i2c.c
-index 37d26f01986b..62a0f1a010cb 100644
---- a/drivers/nfc/pn544/i2c.c
-+++ b/drivers/nfc/pn544/i2c.c
-@@ -188,7 +188,7 @@ do {								\
- static void pn544_hci_i2c_platform_init(struct pn544_i2c_phy *phy)
- {
- 	int polarity, retry, ret;
--	char rset_cmd[] = { 0x05, 0xF9, 0x04, 0x00, 0xC3, 0xE5 };
-+	static const char rset_cmd[] = { 0x05, 0xF9, 0x04, 0x00, 0xC3, 0xE5 };
- 	int count = sizeof(rset_cmd);
- 
- 	nfc_info(&phy->i2c_dev->dev, "Detecting nfc_en polarity\n");
+diff --git a/drivers/gpu/drm/i915/i915_perf.c b/drivers/gpu/drm/i915/i915_perf.c
+index e27f3b7cf094..df698960fdc0 100644
+--- a/drivers/gpu/drm/i915/i915_perf.c
++++ b/drivers/gpu/drm/i915/i915_perf.c
+@@ -2114,7 +2114,7 @@ gen8_update_reg_state_unlocked(const struct intel_context *ce,
+ 	u32 ctx_oactxctrl = stream->perf->ctx_oactxctrl_offset;
+ 	u32 ctx_flexeu0 = stream->perf->ctx_flexeu0_offset;
+ 	/* The MMIO offsets for Flex EU registers aren't contiguous */
+-	i915_reg_t flex_regs[] = {
++	static const i915_reg_t flex_regs[] = {
+ 		EU_PERF_CNTL0,
+ 		EU_PERF_CNTL1,
+ 		EU_PERF_CNTL2,
 -- 
 2.32.0
 
