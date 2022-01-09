@@ -2,36 +2,33 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FFA4C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun,  9 Jan 2022 12:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10AC3C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  9 Jan 2022 12:30:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235491AbiAIMT4 (ORCPT
+        id S235510AbiAIMad (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 9 Jan 2022 07:19:56 -0500
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:63977 "EHLO
+        Sun, 9 Jan 2022 07:30:33 -0500
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:65065 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232959AbiAIMT4 (ORCPT
+        with ESMTP id S231767AbiAIMad (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 9 Jan 2022 07:19:56 -0500
+        Sun, 9 Jan 2022 07:30:33 -0500
 Received: from pop-os.home ([90.11.185.88])
         by smtp.orange.fr with ESMTPA
-        id 6XAunC92uUujj6XAvnIOjd; Sun, 09 Jan 2022 13:19:54 +0100
+        id 6XLCnCCcQUujj6XLCnIPoD; Sun, 09 Jan 2022 13:30:31 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 09 Jan 2022 13:19:54 +0100
+X-ME-Date: Sun, 09 Jan 2022 13:30:31 +0100
 X-ME-IP: 90.11.185.88
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Ariel Elior <aelior@marvell.com>,
-        Sudarsana Kalluru <skalluru@marvell.com>,
-        Manish Chopra <manishc@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
+To:     Seth Heasley <seth.heasley@intel.com>,
+        Neil Horman <nhorman@tuxdriver.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org
-Subject: [PATCH] bnx2x: Remove useless DMA-32 fallback configuration
-Date:   Sun,  9 Jan 2022 13:19:28 +0100
-Message-Id: <29608a525876afddceabf8f11b2ba606da8748fc.1641730747.git.christophe.jaillet@wanadoo.fr>
+        linux-i2c@vger.kernel.org
+Subject: [PATCH] i2c: ismt: Remove useless DMA-32 fallback configuration
+Date:   Sun,  9 Jan 2022 13:29:45 +0100
+Message-Id: <853d9f9d746864435abf93dfc822fccac5b04f37.1641731339.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -43,12 +40,6 @@ As stated in [1], dma_set_mask() with a 64-bit mask never fails if
 dev->dma_mask is non-NULL.
 So, if it fails, the 32 bits case will also fail for the same reason.
 
-Moreover, dma_set_mask_and_coherent() returns 0 or -EIO, so the return
-code of the function can be used directly.
-
-Finally, inline bnx2x_set_coherency_mask() because it is now only a wrapper
-for a single dma_set_mask_and_coherent() call.
-
 
 Simplify code and remove some dead code accordingly.
 
@@ -56,47 +47,27 @@ Simplify code and remove some dead code accordingly.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- .../net/ethernet/broadcom/bnx2x/bnx2x_main.c  | 19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
+ drivers/i2c/busses/i2c-ismt.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-index 4953f5e1e390..774c1f1a57c3 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -13044,19 +13044,6 @@ static const struct net_device_ops bnx2x_netdev_ops = {
- 	.ndo_features_check	= bnx2x_features_check,
- };
+diff --git a/drivers/i2c/busses/i2c-ismt.c b/drivers/i2c/busses/i2c-ismt.c
+index f4820fd3dc13..951f3511afaa 100644
+--- a/drivers/i2c/busses/i2c-ismt.c
++++ b/drivers/i2c/busses/i2c-ismt.c
+@@ -920,11 +920,8 @@ ismt_probe(struct pci_dev *pdev, const struct pci_device_id *id)
  
--static int bnx2x_set_coherency_mask(struct bnx2x *bp)
--{
--	struct device *dev = &bp->pdev->dev;
--
--	if (dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64)) != 0 &&
--	    dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32)) != 0) {
--		dev_err(dev, "System does not support DMA, aborting\n");
--		return -EIO;
--	}
--
--	return 0;
--}
--
- static void bnx2x_disable_pcie_error_reporting(struct bnx2x *bp)
- {
- 	if (bp->flags & AER_ENABLED) {
-@@ -13134,9 +13121,11 @@ static int bnx2x_init_dev(struct bnx2x *bp, struct pci_dev *pdev,
- 		goto err_out_release;
+ 	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+ 	if (err) {
+-		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+-		if (err) {
+-			dev_err(&pdev->dev, "dma_set_mask fail\n");
+-			return -ENODEV;
+-		}
++		dev_err(&pdev->dev, "dma_set_mask fail\n");
++		return -ENODEV;
  	}
  
--	rc = bnx2x_set_coherency_mask(bp);
--	if (rc)
-+	rc = dma_set_mask_and_coherent(&bp->pdev->dev, DMA_BIT_MASK(64));
-+	if (rc) {
-+		dev_err(&bp->pdev->dev, "System does not support DMA, aborting\n");
- 		goto err_out_release;
-+	}
- 
- 	dev->mem_start = pci_resource_start(pdev, 0);
- 	dev->base_addr = dev->mem_start;
+ 	err = ismt_dev_init(priv);
 -- 
 2.32.0
 
