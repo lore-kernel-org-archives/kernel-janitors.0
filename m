@@ -2,34 +2,34 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58FE1C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun,  9 Jan 2022 14:02:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13038C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  9 Jan 2022 15:41:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235747AbiAIN7x (ORCPT
+        id S235918AbiAIPl6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 9 Jan 2022 08:59:53 -0500
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:58357 "EHLO
+        Sun, 9 Jan 2022 10:41:58 -0500
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:60614 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233794AbiAIN7w (ORCPT
+        with ESMTP id S231642AbiAIPl6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 9 Jan 2022 08:59:52 -0500
+        Sun, 9 Jan 2022 10:41:58 -0500
 Received: from pop-os.home ([90.11.185.88])
         by smtp.orange.fr with ESMTPA
-        id 6YjenCh7DUujj6YjfnIYDW; Sun, 09 Jan 2022 14:59:51 +0100
+        id 6aKQniyrAIEdl6aKQnROA1; Sun, 09 Jan 2022 16:41:56 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 09 Jan 2022 14:59:51 +0100
+X-ME-Date: Sun, 09 Jan 2022 16:41:56 +0100
 X-ME-IP: 90.11.185.88
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Raju Rangoju <rajur@chelsio.com>,
+To:     Claudiu Manoil <claudiu.manoil@nxp.com>,
         "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
+        Jakub Kicinski <kuba@kernel.org>, Yangbo Lu <yangbo.lu@nxp.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         netdev@vger.kernel.org
-Subject: [PATCH] cxgb4vf: Remove useless DMA-32 fallback configuration
-Date:   Sun,  9 Jan 2022 14:59:48 +0100
-Message-Id: <b14986ea39cea2ca9a6cd0476a3fc167c853ee67.1641736772.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] net: enetc: Remove useless DMA-32 fallback configuration
+Date:   Sun,  9 Jan 2022 16:41:43 +0100
+Message-Id: <dbecd4eb49a9586ee343b5473dda4b84c42112e9.1641742884.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -41,65 +41,57 @@ As stated in [1], dma_set_mask() with a 64-bit mask never fails if
 dev->dma_mask is non-NULL.
 So, if it fails, the 32 bits case will also fail for the same reason.
 
-So, if dma_set_mask_and_coherent() succeeds, 'pci_using_dac' is known to be
-1.
-
 Simplify code and remove some dead code accordingly.
 
 [1]: https://lkml.org/lkml/2021/6/7/398
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- .../ethernet/chelsio/cxgb4vf/cxgb4vf_main.c   | 20 +++++--------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
+ drivers/net/ethernet/freescale/enetc/enetc.c     | 8 ++------
+ drivers/net/ethernet/freescale/enetc/enetc_ptp.c | 9 ++-------
+ 2 files changed, 4 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c b/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
-index acac2be0e3f0..7de3800437c9 100644
---- a/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
-@@ -2899,7 +2899,6 @@ static int cxgb4vf_pci_probe(struct pci_dev *pdev,
- 	struct net_device *netdev;
- 	struct port_info *pi;
- 	unsigned int pmask;
--	int pci_using_dac;
- 	int err, pidx;
- 
- 	/*
-@@ -2920,19 +2919,12 @@ static int cxgb4vf_pci_probe(struct pci_dev *pdev,
- 	}
- 
- 	/*
--	 * Set up our DMA mask: try for 64-bit address masking first and
--	 * fall back to 32-bit if we can't get 64 bits ...
-+	 * Set up our DMA mask
- 	 */
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/ethernet/freescale/enetc/enetc.c
+index eacb41f86bdb..d6930a797c6c 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc.c
+@@ -2897,12 +2897,8 @@ int enetc_pci_probe(struct pci_dev *pdev, const char *name, int sizeof_priv)
+ 	/* set up for high or low dma */
  	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
--	if (err == 0) {
--		pci_using_dac = 1;
--	} else {
--		err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
--		if (err != 0) {
--			dev_err(&pdev->dev, "no usable DMA configuration\n");
--			goto err_release_regions;
+ 	if (err) {
+-		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+-		if (err) {
+-			dev_err(&pdev->dev,
+-				"DMA configuration failed: 0x%x\n", err);
+-			goto err_dma;
 -		}
--		pci_using_dac = 0;
-+	if (err) {
-+		dev_err(&pdev->dev, "no usable DMA configuration\n");
-+		goto err_release_regions;
++		dev_err(&pdev->dev, "DMA configuration failed: 0x%x\n", err);
++		goto err_dma;
  	}
  
- 	/*
-@@ -3078,9 +3070,7 @@ static int cxgb4vf_pci_probe(struct pci_dev *pdev,
- 		netdev->hw_features = NETIF_F_SG | TSO_FLAGS | NETIF_F_GRO |
- 			NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM | NETIF_F_RXCSUM |
- 			NETIF_F_HW_VLAN_CTAG_TX | NETIF_F_HW_VLAN_CTAG_RX;
--		netdev->features = netdev->hw_features;
--		if (pci_using_dac)
--			netdev->features |= NETIF_F_HIGHDMA;
-+		netdev->features = netdev->hw_features | NETIF_F_HIGHDMA;
- 		netdev->vlan_features = netdev->features & VLAN_FEAT;
+ 	err = pci_request_mem_regions(pdev, name);
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc_ptp.c b/drivers/net/ethernet/freescale/enetc/enetc_ptp.c
+index 36b4f51dd297..17c097cef7d4 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc_ptp.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc_ptp.c
+@@ -42,15 +42,10 @@ static int enetc_ptp_probe(struct pci_dev *pdev,
+ 	if (err)
+ 		return dev_err_probe(&pdev->dev, err, "device enable failed\n");
  
- 		netdev->priv_flags |= IFF_UNICAST_FLT;
+-	/* set up for high or low dma */
+ 	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+ 	if (err) {
+-		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+-		if (err) {
+-			dev_err(&pdev->dev,
+-				"DMA configuration failed: 0x%x\n", err);
+-			goto err_dma;
+-		}
++		dev_err(&pdev->dev, "DMA configuration failed: 0x%x\n", err);
++		goto err_dma;
+ 	}
+ 
+ 	err = pci_request_mem_regions(pdev, KBUILD_MODNAME);
 -- 
 2.32.0
 
