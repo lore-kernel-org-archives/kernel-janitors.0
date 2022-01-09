@@ -2,34 +2,35 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7FAEC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun,  9 Jan 2022 18:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1ADEC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun,  9 Jan 2022 18:57:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236572AbiAIStS (ORCPT
+        id S234523AbiAIS5V (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 9 Jan 2022 13:49:18 -0500
-Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:55564 "EHLO
+        Sun, 9 Jan 2022 13:57:21 -0500
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:52986 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235136AbiAIStR (ORCPT
+        with ESMTP id S229455AbiAIS5U (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 9 Jan 2022 13:49:17 -0500
+        Sun, 9 Jan 2022 13:57:20 -0500
 Received: from pop-os.home ([90.11.185.88])
         by smtp.orange.fr with ESMTPA
-        id 6dFjnw05LsoWh6dFjnw55C; Sun, 09 Jan 2022 19:49:15 +0100
+        id 6dNWnw2VWsoWh6dNWnw5jl; Sun, 09 Jan 2022 19:57:19 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 09 Jan 2022 19:49:15 +0100
+X-ME-Date: Sun, 09 Jan 2022 19:57:19 +0100
 X-ME-IP: 90.11.185.88
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     GR-Linux-NIC-Dev@marvell.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
+To:     James Smart <james.smart@broadcom.com>,
+        Ram Vegesna <ram.vegesna@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org
-Subject: [PATCH] net/qla3xxx: Remove useless DMA-32 fallback configuration
-Date:   Sun,  9 Jan 2022 19:49:09 +0100
-Message-Id: <3011689e8c77d49d7e44509d5a8241320ec408c5.1641754134.git.christophe.jaillet@wanadoo.fr>
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
+Subject: [PATCH] scsi: efct: Remove useless DMA-32 fallback configuration
+Date:   Sun,  9 Jan 2022 19:57:04 +0100
+Message-Id: <958bcb2a6e86344c14f38369e8e7079615a2b0e3.1641754613.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -41,10 +42,10 @@ As stated in [1], dma_set_mask() with a 64-bit mask never fails if
 dev->dma_mask is non-NULL.
 So, if it fails, the 32 bits case will also fail for the same reason.
 
-So, if dma_set_mask_and_coherent() succeeds, 'pci_using_dac' is known to be
-1.
-
 Simplify code and remove some dead code accordingly.
+
+While at it, return the error code returned by dma_set_mask_and_coherent()
+instead of -1.
 
 [1]: https://lkml.org/lkml/2021/6/7/398
 
@@ -53,45 +54,31 @@ Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 This patch was not part of the 1st serie I've sent. So there is no
 Reviewed-by tag.
 ---
- drivers/net/ethernet/qlogic/qla3xxx.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/scsi/elx/efct/efct_driver.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qla3xxx.c b/drivers/net/ethernet/qlogic/qla3xxx.c
-index 71523d747e93..b30589a135c2 100644
---- a/drivers/net/ethernet/qlogic/qla3xxx.c
-+++ b/drivers/net/ethernet/qlogic/qla3xxx.c
-@@ -3750,7 +3750,7 @@ static int ql3xxx_probe(struct pci_dev *pdev,
- 	struct net_device *ndev = NULL;
- 	struct ql3_adapter *qdev = NULL;
- 	static int cards_found;
--	int pci_using_dac, err;
-+	int err;
+diff --git a/drivers/scsi/elx/efct/efct_driver.c b/drivers/scsi/elx/efct/efct_driver.c
+index ae62fc3c9ee3..b08fc8839808 100644
+--- a/drivers/scsi/elx/efct/efct_driver.c
++++ b/drivers/scsi/elx/efct/efct_driver.c
+@@ -541,13 +541,10 @@ efct_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
  
- 	err = pci_enable_device(pdev);
- 	if (err) {
-@@ -3766,11 +3766,7 @@ static int ql3xxx_probe(struct pci_dev *pdev,
+ 	pci_set_drvdata(pdev, efct);
  
- 	pci_set_master(pdev);
+-	if (dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64)) != 0) {
+-		dev_warn(&pdev->dev, "trying DMA_BIT_MASK(32)\n");
+-		if (dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32)) != 0) {
+-			dev_err(&pdev->dev, "setting DMA_BIT_MASK failed\n");
+-			rc = -1;
+-			goto dma_mask_out;
+-		}
++	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
++	if (rc) {
++		dev_err(&pdev->dev, "setting DMA_BIT_MASK failed\n");
++		goto dma_mask_out;
+ 	}
  
--	if (!dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64)))
--		pci_using_dac = 1;
--	else if (!(err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32))))
--		pci_using_dac = 0;
--
-+	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
- 	if (err) {
- 		pr_err("%s no usable DMA configuration\n", pci_name(pdev));
- 		goto err_out_free_regions;
-@@ -3797,8 +3793,7 @@ static int ql3xxx_probe(struct pci_dev *pdev,
- 
- 	qdev->msg_enable = netif_msg_init(debug, default_msg);
- 
--	if (pci_using_dac)
--		ndev->features |= NETIF_F_HIGHDMA;
-+	ndev->features |= NETIF_F_HIGHDMA;
- 	if (qdev->device_id == QL3032_DEVICE_ID)
- 		ndev->features |= NETIF_F_IP_CSUM | NETIF_F_SG;
- 
+ 	num_interrupts = efct_device_interrupts_required(efct);
 -- 
 2.32.0
 
