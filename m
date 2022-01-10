@@ -2,97 +2,58 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE75C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jan 2022 01:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EC6CC433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jan 2022 01:51:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232642AbiAJBL3 (ORCPT
+        id S238026AbiAJBve (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 9 Jan 2022 20:11:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50804 "EHLO
+        Sun, 9 Jan 2022 20:51:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229729AbiAJBL3 (ORCPT
+        with ESMTP id S238023AbiAJBvd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 9 Jan 2022 20:11:29 -0500
-Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBCAFC06173F;
-        Sun,  9 Jan 2022 17:11:28 -0800 (PST)
-Received: by mail-oi1-x22a.google.com with SMTP id t204so17175962oie.7;
-        Sun, 09 Jan 2022 17:11:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=F6urcwiu2eUOJWSMLNJN+g7iFfO+F3fQ+xSPdkGivsU=;
-        b=i1NboyVOoXP7d8zeEGiKH71dQVdT+b3sik2aZQvmr5V4h/yGFicfqYsFIskErXzgGz
-         AAu+ZWCixjtM140UQ59LvHcAGpBJvjEBvISFWBRX+uK9p+dpgE4VhiHCos6otcjyQpU4
-         fod9Tth3xnd8EGCLLOgPMNc0eefzXbNkljFdEkJ12UWaaJzFuJ1QutUMvuiv63Oh1/M2
-         GC1bIdQzLR989luRb1WH6b7+OcnHXzwEhSnLBCsJxVxBzyiaVRS7Us7U9WulnnXfUfnc
-         nBeALM9HSMwcyqHxhLZ25Ruh5dzbwKoMTbXGyLjrz2Kbn2KbE/nZ/Fbvy60lnX2Zgake
-         E4kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=F6urcwiu2eUOJWSMLNJN+g7iFfO+F3fQ+xSPdkGivsU=;
-        b=IXJHA85IJmvmS9TnAIlCSZ9AHmHDdIOV/PdxvbL35pVML/jJuM9OP9JA5OvB8IkKLA
-         hTnwRL+SB32M4hOTnimIgTXAGxuxf8AO7+ftqx28Eu+iPhuAGr+SPbGPrRQcYVin+LnF
-         AFOqAToGyZd/kWsERoSL3/Ppe2TcYIG/7EHksFKxd8oL5d4iZisQS62/LCB1x+wlfIpb
-         YM0ls1OQCmZlQYV1ZiZNRSvAXfw8Q56V4zRHudZhwLVJq6NtKg0B5NWOa03JUB6l6d+c
-         Fq71xzlcP+zs+WNkiqi3fzyOVw+h6KHYp/54Ah7eKDgtJC23aNo/udAPjY4DkR2gmlnU
-         CT7Q==
-X-Gm-Message-State: AOAM530WLsnNbWZvik/EaV/GEHAVWUyaC2PX7/3Lo99vtF+5Xd1BA5E5
-        8C3ZPGZ/oDYyzl/xkV1dRv8=
-X-Google-Smtp-Source: ABdhPJxpbKB5Y78UBzmf/TRkogz4RExWkq7xaURE9tcac2IeGrvBrM4DUofkEAV3vldfVEfqZ52Fug==
-X-Received: by 2002:a05:6808:b0e:: with SMTP id s14mr7521871oij.61.1641777088121;
-        Sun, 09 Jan 2022 17:11:28 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id o145sm1056686ooo.1.2022.01.09.17.11.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jan 2022 17:11:27 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Sun, 9 Jan 2022 17:11:25 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Aleksandr Mezin <mezin.alexander@gmail.com>,
-        Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] hwmon: nzxt-smart2: make array detect_fans_report
- static const
-Message-ID: <20220110011125.GA841668@roeck-us.net>
-References: <20220109194558.45811-1-colin.i.king@gmail.com>
+        Sun, 9 Jan 2022 20:51:33 -0500
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [IPv6:2404:9400:2:0:216:3eff:fee2:21ea])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CFAEC06173F;
+        Sun,  9 Jan 2022 17:51:33 -0800 (PST)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4JXGyW3mS5z4xtf;
+        Mon, 10 Jan 2022 12:51:31 +1100 (AEDT)
+From:   Michael Ellerman <patch-notifications@ellerman.id.au>
+To:     benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kernel-janitors@vger.kernel.org
+In-Reply-To: <9e24eedeab44cbb840598bb188561a48811de845.1641119338.git.christophe.jaillet@wanadoo.fr>
+References: <9e24eedeab44cbb840598bb188561a48811de845.1641119338.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] floppy: Remove usage of the deprecated "pci-dma-compat.h" API
+Message-Id: <164177945707.1604045.13531607758042426524.b4-ty@ellerman.id.au>
+Date:   Mon, 10 Jan 2022 12:50:57 +1100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220109194558.45811-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Jan 09, 2022 at 07:45:58PM +0000, Colin Ian King wrote:
-> Don't populate the read-only array detect_fans_report on the stack but
-> instead it static const. Also makes the object code a little smaller.
+On Sun, 2 Jan 2022 11:29:54 +0100, Christophe JAILLET wrote:
+> In [1], Christoph Hellwig has proposed to remove the wrappers in
+> include/linux/pci-dma-compat.h.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-
-Applied.
-
-Thanks,
-Guenter
-
-> ---
->  drivers/hwmon/nzxt-smart2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Some reasons why this API should be removed have been given by Julia
+> Lawall in [2].
 > 
-> diff --git a/drivers/hwmon/nzxt-smart2.c b/drivers/hwmon/nzxt-smart2.c
-> index 6e67da766969..dd892ff5a3e8 100644
-> --- a/drivers/hwmon/nzxt-smart2.c
-> +++ b/drivers/hwmon/nzxt-smart2.c
-> @@ -583,7 +583,7 @@ static int set_update_interval(struct drvdata *drvdata, long val)
->  static int init_device(struct drvdata *drvdata, long update_interval)
->  {
->  	int ret;
-> -	u8 detect_fans_report[] = {
-> +	static const u8 detect_fans_report[] = {
->  		OUTPUT_REPORT_ID_INIT_COMMAND,
->  		INIT_COMMAND_DETECT_FANS,
->  	};
+> A coccinelle script has been used to perform the needed transformation
+> Only relevant parts are given below.
+> 
+> [...]
+
+Applied to powerpc/next.
+
+[1/1] floppy: Remove usage of the deprecated "pci-dma-compat.h" API
+      https://git.kernel.org/powerpc/c/e57c2fd6cdf8db581ac93b909b2664751e7cf30c
+
+cheers
