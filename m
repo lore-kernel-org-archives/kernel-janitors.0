@@ -2,85 +2,113 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8A5C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jan 2022 12:03:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2817AC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jan 2022 12:13:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245199AbiAJMDn (ORCPT
+        id S245263AbiAJMNE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Jan 2022 07:03:43 -0500
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:53344 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245196AbiAJMDf (ORCPT
+        Mon, 10 Jan 2022 07:13:04 -0500
+Received: from mailgw01.mediatek.com ([60.244.123.138]:36744 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S235772AbiAJMNC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Jan 2022 07:03:35 -0500
-Received: from pop-os.home ([90.11.185.88])
-        by smtp.orange.fr with ESMTPA
-        id 6tOcndEAwLyIy6tOdnXf7n; Mon, 10 Jan 2022 13:03:32 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 10 Jan 2022 13:03:32 +0100
-X-ME-IP: 90.11.185.88
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     hch@lst.de, "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Hannes Reinecke <hare@suse.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-scsi@vger.kernel.org
-Subject: [PATCH v2] scsi: pmcraid: Fix memory allocation in 'pmcraid_alloc_sglist()'
-Date:   Mon, 10 Jan 2022 13:02:53 +0100
-Message-Id: <11a1bc98501de37baa5bcd10b61136f6e450b82e.1641816080.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
+        Mon, 10 Jan 2022 07:13:02 -0500
+X-UUID: 179ec19712d345d59e3d4d68b1dc6a93-20220110
+X-UUID: 179ec19712d345d59e3d4d68b1dc6a93-20220110
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        (envelope-from <sam.shih@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 923755758; Mon, 10 Jan 2022 20:12:57 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 10 Jan 2022 20:12:57 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Mon, 10 Jan 2022 20:12:57 +0800
+Message-ID: <0f3836a37d36dece52213d4b33e2b666cb187fc2.camel@mediatek.com>
+Subject: Re: GPL-1.0-licensed code for files
+ drivers/clk/mediatek/clk-mt7986* included with commit ec97d23c8e22 ("clk:
+ mediatek: add mt7986 clock support")
+From:   Sam Shih <sam.shih@mediatek.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Ryder Lee <ryder.lee@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        <linux-spdx@vger.kernel.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Mon, 10 Jan 2022 20:12:57 +0800
+In-Reply-To: <CAKXUXMy8ywQXqqmOvvm9wKL_ikixRJOFgCcgu4OdPUPhjq6MhA@mail.gmail.com>
+References: <CAKXUXMy8ywQXqqmOvvm9wKL_ikixRJOFgCcgu4OdPUPhjq6MhA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-When the scatter list is allocated in 'pmcraid_alloc_sglist()', the
-corresponding pointer should be stored in 'scatterlist' within the
-'pmcraid_sglist' structure. Otherwise, 'scatterlist' is NULL.
+Hi Luka/Stephen,
 
-This leads to a potential memory leak and NULL pointer dereference.
+This is my mistake, I seem to use an old license header on it.
+Just like "clk-mt7986-eth.c" in the same patch series,
 
-Fixes: ed4414cef2ad ("scsi: pmcraid: Use sgl_alloc_order() and sgl_free_order()")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is completely speculative and untested.
 
-Should it be correct, I think that their should be some trouble somewhere.
-Either NULL pointer dereference or incorrect behavior.
-The patch that introduced this potential bug is from 2018-02. So, this
-should have been spotted earlier.
+https://lore.kernel.org/all/20211217121148.6753-4-sam.shih@mediatek.com/
 
-So unless this driver is mostly unused, this looks odd to me.
-Feedback appreciated.
+I intend to license "clk-mt7986-apmixed.c", "clk-mt7986-infracfg.c",
+and "clk-mt7986-topckgen" under the kernel's standard GPL-2.0.
 
-Review with care!
+Should I need to resend this patch?
+Or I can just send a follow-up patch to fix it?
 
-v2: synch with -next-20220110
----
- drivers/scsi/pmcraid.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Regards,
+Sam
 
-diff --git a/drivers/scsi/pmcraid.c b/drivers/scsi/pmcraid.c
-index 928532180d32..e314ea133827 100644
---- a/drivers/scsi/pmcraid.c
-+++ b/drivers/scsi/pmcraid.c
-@@ -3221,8 +3221,9 @@ static struct pmcraid_sglist *pmcraid_alloc_sglist(int buflen)
- 		return NULL;
- 
- 	sglist->order = order;
--	sgl_alloc_order(buflen, order, false, GFP_KERNEL | __GFP_ZERO,
--			&sglist->num_sg);
-+	sglist->scatterlist = sgl_alloc_order(buflen, order, false,
-+					      GFP_KERNEL | __GFP_ZERO,
-+					      &sglist->num_sg);
- 
- 	return sglist;
- }
--- 
-2.32.0
+
+On Mon, 2022-01-10 at 10:56 +0100, Lukas Bulwahn wrote:
+> Dear Sam,
+> 
+> 
+> Thanks for contributing the mt7986 clock support to the kernel
+> repository with commit ec97d23c8e22 ("clk: mediatek: add mt7986 clock
+> support").
+> 
+> You have marked the files below with the GPL-1.0 License, which
+> ./scripts/spdxcheck.py identifies and warns about:
+> 
+> drivers/clk/mediatek/clk-mt7986-apmixed.c: 1:28 Invalid License ID:
+> GPL-1.0
+> drivers/clk/mediatek/clk-mt7986-infracfg.c: 1:28 Invalid License ID:
+> GPL-1.0
+> drivers/clk/mediatek/clk-mt7986-topckgen.c: 1:28 Invalid License ID:
+> GPL-1.0
+> 
+> The kernel's licensing rules are described here:
+> 
+> 
+https://urldefense.com/v3/__https://www.kernel.org/doc/html/latest/process/license-rules.html*kernel-licensing__;Iw!!CTRNKA9wMg0ARbw!3vjYIYa2VqgzRgsUxjx-mwtOtidbamcTDphKaMUo-7ql0YlaB4Qi_Xc-1vDpFfju$
+>  
+> 
+> The GPL-1.0 is a deprecated license in the kernel repository.
+> 
+> Driver code that is licensed with GPL-1.0 might not be compatible
+> with
+> GPL-2.0. I am not a lawyer, and we probably do not want to require
+> all
+> users of your driver code to needlessly involve a lawyer to get such
+> a
+> statement on license compatibility.
+> 
+> Do you really intend to license this code under GPL-1.0 and are you
+> aware of all the consequences for other developers and users? Or is
+> this a mistake and you intend to license it under the kernel's
+> standard GPL-2.0 license?
+> 
+> 
+> Best regards,
+> 
+> Lukas
 
