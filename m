@@ -2,96 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D22E1C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jan 2022 09:57:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8A5C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jan 2022 12:03:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243574AbiAJJ5s (ORCPT
+        id S245199AbiAJMDn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Jan 2022 04:57:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55880 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243497AbiAJJ5L (ORCPT
+        Mon, 10 Jan 2022 07:03:43 -0500
+Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:53344 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S245196AbiAJMDf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Jan 2022 04:57:11 -0500
-Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 911E6C06175B;
-        Mon, 10 Jan 2022 01:57:09 -0800 (PST)
-Received: by mail-yb1-xb34.google.com with SMTP id g80so36618724ybf.0;
-        Mon, 10 Jan 2022 01:57:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=d84IyUOyurvFvSv5LzCsSavV50bnV4A3aqd5IY6z158=;
-        b=n1Jwkx5Mf+1c/hDk5wx8AYKZgxTS6CYqlAM7OC1v31FwzX531Hlcs9476ZzHKmdlZU
-         k4e5Y91Uk//wMKAsqYLASYVHz6P71GAwTYUl35aE1cCQzd5cHZA+JohWXsbDX9ZFKiUe
-         irXq+j+Qr+7pFmbqsPAxPOLJLAq9NseoTbJJmQZpVd3Wi6s60d0yq6QQVvEBuj4pFZzt
-         9JNOAN/OgBw40Yit0zzmGq+z+fIdS31USLtnG8qbBrjeV6EoGzBfc++t6ilg7qL/JenG
-         obEFoTkA2+Y7VoKRC+a/K97LLWWanngUgJt7iT7I4jkCQsX/HawrhzZ2QBgTy627Haw2
-         F8oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=d84IyUOyurvFvSv5LzCsSavV50bnV4A3aqd5IY6z158=;
-        b=6/nVe41EhxIabXyOZi4QmteV28PyMT70Uy9zK6lLBJclHOek38l+Gc7ND4mo4fMbU7
-         mc1g1cS7Vr+fZlOG15col8PPzqZDu3cKVV/n0K9WKUL1F8whKJZXxPWb9NnzQcQJ1HYP
-         NeUGIX9QCUSohSE30iKdasgj3nAAK6iXKrPwVqc3TQtzBO/SDs5aOJ073u2YLRuQDqBe
-         X/SaMO8WuGVkUOwQQwSUzj38njZOfStE5aaMdfdwFOEFgXB662aOs8u3aP2S8TTr1nwI
-         vIQCJ2yAA7/rQixJMJJ8ukWm+AAuEEF0tW8oQjJ6LddRG0unQQDwNRZvz293+3jpbipr
-         MvUA==
-X-Gm-Message-State: AOAM533oORwwN3XcuyIrsw7ep7lJGRkkJzHdg5H2tCYX+m6lgFp3NSx5
-        6dAY/Ja55qU2RVX8WpxhijgmDWl2K6WB7Q1eKMA=
-X-Google-Smtp-Source: ABdhPJwVwWhfyHOvXBVycLJMUGG08bR7R08yhc/BPFfD/PcUUlXSuZShmbXi6vZjjPs/eKeTTdwAOc72VwRW/Jizwy0=
-X-Received: by 2002:a25:d44:: with SMTP id 65mr83645207ybn.510.1641808628617;
- Mon, 10 Jan 2022 01:57:08 -0800 (PST)
+        Mon, 10 Jan 2022 07:03:35 -0500
+Received: from pop-os.home ([90.11.185.88])
+        by smtp.orange.fr with ESMTPA
+        id 6tOcndEAwLyIy6tOdnXf7n; Mon, 10 Jan 2022 13:03:32 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Mon, 10 Jan 2022 13:03:32 +0100
+X-ME-IP: 90.11.185.88
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     hch@lst.de, "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Hannes Reinecke <hare@suse.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-scsi@vger.kernel.org
+Subject: [PATCH v2] scsi: pmcraid: Fix memory allocation in 'pmcraid_alloc_sglist()'
+Date:   Mon, 10 Jan 2022 13:02:53 +0100
+Message-Id: <11a1bc98501de37baa5bcd10b61136f6e450b82e.1641816080.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Mon, 10 Jan 2022 10:56:58 +0100
-Message-ID: <CAKXUXMy8ywQXqqmOvvm9wKL_ikixRJOFgCcgu4OdPUPhjq6MhA@mail.gmail.com>
-Subject: GPL-1.0-licensed code for files drivers/clk/mediatek/clk-mt7986*
- included with commit ec97d23c8e22 ("clk: mediatek: add mt7986 clock support")
-To:     Sam Shih <sam.shih@mediatek.com>, Ryder Lee <ryder.lee@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-spdx@vger.kernel.org,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dear Sam,
+When the scatter list is allocated in 'pmcraid_alloc_sglist()', the
+corresponding pointer should be stored in 'scatterlist' within the
+'pmcraid_sglist' structure. Otherwise, 'scatterlist' is NULL.
 
+This leads to a potential memory leak and NULL pointer dereference.
 
-Thanks for contributing the mt7986 clock support to the kernel
-repository with commit ec97d23c8e22 ("clk: mediatek: add mt7986 clock
-support").
+Fixes: ed4414cef2ad ("scsi: pmcraid: Use sgl_alloc_order() and sgl_free_order()")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is completely speculative and untested.
 
-You have marked the files below with the GPL-1.0 License, which
-./scripts/spdxcheck.py identifies and warns about:
+Should it be correct, I think that their should be some trouble somewhere.
+Either NULL pointer dereference or incorrect behavior.
+The patch that introduced this potential bug is from 2018-02. So, this
+should have been spotted earlier.
 
-drivers/clk/mediatek/clk-mt7986-apmixed.c: 1:28 Invalid License ID: GPL-1.0
-drivers/clk/mediatek/clk-mt7986-infracfg.c: 1:28 Invalid License ID: GPL-1.0
-drivers/clk/mediatek/clk-mt7986-topckgen.c: 1:28 Invalid License ID: GPL-1.0
+So unless this driver is mostly unused, this looks odd to me.
+Feedback appreciated.
 
-The kernel's licensing rules are described here:
+Review with care!
 
-https://www.kernel.org/doc/html/latest/process/license-rules.html#kernel-licensing
+v2: synch with -next-20220110
+---
+ drivers/scsi/pmcraid.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-The GPL-1.0 is a deprecated license in the kernel repository.
+diff --git a/drivers/scsi/pmcraid.c b/drivers/scsi/pmcraid.c
+index 928532180d32..e314ea133827 100644
+--- a/drivers/scsi/pmcraid.c
++++ b/drivers/scsi/pmcraid.c
+@@ -3221,8 +3221,9 @@ static struct pmcraid_sglist *pmcraid_alloc_sglist(int buflen)
+ 		return NULL;
+ 
+ 	sglist->order = order;
+-	sgl_alloc_order(buflen, order, false, GFP_KERNEL | __GFP_ZERO,
+-			&sglist->num_sg);
++	sglist->scatterlist = sgl_alloc_order(buflen, order, false,
++					      GFP_KERNEL | __GFP_ZERO,
++					      &sglist->num_sg);
+ 
+ 	return sglist;
+ }
+-- 
+2.32.0
 
-Driver code that is licensed with GPL-1.0 might not be compatible with
-GPL-2.0. I am not a lawyer, and we probably do not want to require all
-users of your driver code to needlessly involve a lawyer to get such a
-statement on license compatibility.
-
-Do you really intend to license this code under GPL-1.0 and are you
-aware of all the consequences for other developers and users? Or is
-this a mistake and you intend to license it under the kernel's
-standard GPL-2.0 license?
-
-
-Best regards,
-
-Lukas
