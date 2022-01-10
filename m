@@ -2,97 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 330DFC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jan 2022 15:39:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A563C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jan 2022 15:50:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236339AbiAJPjo (ORCPT
+        id S236522AbiAJPug (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Jan 2022 10:39:44 -0500
-Received: from mail-qv1-f47.google.com ([209.85.219.47]:46927 "EHLO
-        mail-qv1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229641AbiAJPjm (ORCPT
+        Mon, 10 Jan 2022 10:50:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52970 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236611AbiAJPud (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Jan 2022 10:39:42 -0500
-Received: by mail-qv1-f47.google.com with SMTP id r6so14746567qvr.13;
-        Mon, 10 Jan 2022 07:39:41 -0800 (PST)
+        Mon, 10 Jan 2022 10:50:33 -0500
+Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1AF9C061748
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jan 2022 07:50:33 -0800 (PST)
+Received: by mail-qt1-x835.google.com with SMTP id c10so13086357qte.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jan 2022 07:50:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=taJK4990Hf5ggLF7x5d/tJzG7fwO4y08TUkbCKMXkXM=;
+        b=SU3mKDe+NFt3ELa2q1426sexnDWTv18yKIPDP2du70kd2dvXb52pbMprOX3r4vXwnT
+         RbL/u0D3fPqnhE75Zta7ky5PgQl+H7WlhwgI11Y9Dz1SlLlNyp1vZelvZQfiKOIBLikl
+         9VdKprbwittxaamxOVCN3EL4GuHf/srjHctuYUzkQ2alUkCvKBgXraQVXsc11RTekBnu
+         iacR1txVlA/jNx6GNjsFWSQwvPhSc/uJHfJ/mKUmnB7DVKYliIoB4dEZciKewszMijkI
+         vO1LhdxWqyO0YGpmagOxmsqhoVMgkRSsEN7ww+ni+rjYhOHFPPU2YpgW1eD0xXLut+sY
+         VFOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HrUqLYnp+EBghrZhAUPX70obMslHMCDhZEuASiV4UeM=;
-        b=aPqRo2tVFgy5ejkycuuE2RCuA2wchgNt3NDzkxNvr2CfGPHinCf6uWN+WeZ8x55Mco
-         y6B602y//KUayN+bkdU0LhPN2xoYnEjM4VLKDoO9l3I/nDTfgIvNbuS4w2LzsSu/eY8U
-         aGckrPplTRm8zOzRqVS3KS0nt1HO655GxjHpfViRNhyV2lcYdn3WX77MAdg5BsjrNhZD
-         y8SfRcoEqhNrK7K9dfwqYeym4/O0eSb4GJhhCmGgmwYUo/wQBuHY5ICvN1l+9ARYJEEL
-         2vGkTl0Pq0fPuhVRK4KUbfC/qgvhk9mmhVhmBt5ulyQ0Xj2Qwof0DnayJfB3WWeVeoiy
-         YgTg==
-X-Gm-Message-State: AOAM532heNwesyyRKA1a8VQiA5JXyHVVFJsQwy5ETJOmhDcZeReYaX1J
-        USgwyXkPxNINCDnkxvlswtep4KLTD68Vls9n7VTUGwxV
-X-Google-Smtp-Source: ABdhPJze83vnfcSiJmIhtzb6F6zbpyVwh+LYKhbWg3NN76UJypnrzMoWY3TD+e9UUogomhrrOaAgYt98zyI82BOx5Ls=
-X-Received: by 2002:a05:6214:20a2:: with SMTP id 2mr68120313qvd.52.1641829181417;
- Mon, 10 Jan 2022 07:39:41 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=taJK4990Hf5ggLF7x5d/tJzG7fwO4y08TUkbCKMXkXM=;
+        b=GZrugjNCdOniA/KyKQV06smkFUj+BSeSBsDM118nyDEDcEiCzJkWmpfh7TZgsgHTeG
+         4GjoNbFX4AINxktPPd/MreF6QuayriQXYA5Zkz2/KD/uqTSHKJNoNgA0Qgz4JFOfpK5n
+         AK94bTfnKWZBejrZ/LEzYET7p+kGDPflBs1K5kGSqu5/nE2OrLHsDqUn8S56xCZtEo7Y
+         ALDPnyoGdscfu5e1xGn/VfRky34S0XW37FvyrABRcwOPU1mmvcuM1Udx7RLfLO1oCBEN
+         6mmltGBc/H9+rVQy4IPlFPKm48oMUbhtYb1aTa76uKYN+3fXIxBr3bW/FaTkzyDuDPAT
+         2v0w==
+X-Gm-Message-State: AOAM5328kmeqNrANBkI3IU7OLHm91U3M4IRc6HZgch4XTJ1ZVsJtNm4F
+        X48YjeiMbnydNFujn5RQ8qRZfw==
+X-Google-Smtp-Source: ABdhPJxBj0ZyPgNVhc4jPK7tenIAOTO7n8CuI533poIMXs6L4y67rXu3AheljFk+wuxJDExcGtdWCQ==
+X-Received: by 2002:ac8:74c6:: with SMTP id j6mr229936qtr.557.1641829832895;
+        Mon, 10 Jan 2022 07:50:32 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-162-113-129.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.129])
+        by smtp.gmail.com with ESMTPSA id r4sm900398qta.51.2022.01.10.07.50.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jan 2022 07:50:32 -0800 (PST)
+Received: from jgg by mlx with local (Exim 4.94)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1n6wwJ-00DpQ8-Ir; Mon, 10 Jan 2022 11:50:31 -0400
+Date:   Mon, 10 Jan 2022 11:50:31 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Subject: Re: [PATCH] IB/mthca: Remove useless DMA-32 fallback configuration
+Message-ID: <20220110155031.GI6467@ziepe.ca>
+References: <4aeb3dcf39490334acf583e723a08ea7262b0912.1641716983.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-References: <20220107073407.GG22086@kili> <20220107134617.GA895400@chenyu-desktop>
- <20220110061713.GA1951@kadam>
-In-Reply-To: <20220110061713.GA1951@kadam>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 10 Jan 2022 16:39:30 +0100
-Message-ID: <CAJZ5v0gdB_y9MVasdGhMCUPKZBzNPo1NxxkHh_QeKjh1DwPPfA@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: pfr_telemetry: Fix info leak in pfrt_log_ioctl()
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Chen Yu <yu.c.chen@intel.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4aeb3dcf39490334acf583e723a08ea7262b0912.1641716983.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jan 10, 2022 at 7:17 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> On Fri, Jan 07, 2022 at 09:46:17PM +0800, Chen Yu wrote:
-> > On Fri, Jan 07, 2022 at 10:34:07AM +0300, Dan Carpenter wrote:
-> > > The "data_info" struct is copied to the user.  It has a 4 byte struct
-> > > hole after the last struct member so we need to memset that to avoid
-> > > copying uninitialized stack data to the user.
-> > >
-> > > Fixes: b0013e037a8b ("ACPI: Introduce Platform Firmware Runtime Telemetry driver")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > ---
-> > > When you're adding a new driver to the kernel then please use the new
-> > > driver's prefix instead of just the subsystem prefix.
-> > >
-> > >  Bad: ACPI: Introduce Platform Firmware Runtime Telemetry driver
-> > > Good: ACPI / pfr_telemetry: Introduce Platform Firmware Runtime Telemetry driver
-> > >
-> > Thanks for pointing this out.
-> > > Otherwise it's just up to me to guess what prefix you wanted.
-> > >
-> > >  drivers/acpi/pfr_telemetry.c | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >
-> > > diff --git a/drivers/acpi/pfr_telemetry.c b/drivers/acpi/pfr_telemetry.c
-> > > index da50dd80192c..9abf350bd7a5 100644
-> > > --- a/drivers/acpi/pfr_telemetry.c
-> > > +++ b/drivers/acpi/pfr_telemetry.c
-> > > @@ -83,6 +83,7 @@ static int get_pfrt_log_data_info(struct pfrt_log_data_info *data_info,
-> > >     union acpi_object *out_obj, in_obj, in_buf;
-> > >     int ret = -EBUSY;
-> > >
-> > > +   memset(data_info, 0, sizeof(*data_info));
-> > Just one minor question, how about moving above before:
-> > data_info->status = out_obj->package.elements[LOG_STATUS_IDX].integer.value;
-> > after the sanity check of the _DSM result?
->
-> I guess I wanted to keep all the memsets together.  I feel like if the
-> data is invalid, then it's going to be a slow path and it's not worth
-> optimizing that case.  If the data is invalid then a little slow down is
-> the least of our concerns.
+On Sun, Jan 09, 2022 at 09:30:09AM +0100, Christophe JAILLET wrote:
+> As stated in [1], dma_set_mask() with a 64-bit mask never fails if
+> dev->dma_mask is non-NULL.
+> So, if it fails, the 32 bits case will also fail for the same reason.
+> 
+> Simplify code and remove some dead code accordingly.
+> 
+> [1]: https://lkml.org/lkml/2021/6/7/398
 
-Patch applied, thanks!
+Can you use lore links please?
 
-Yu, this series needs to spend a few days more in linux-next, because
-of the fixes against it sent lately.
+Jason
