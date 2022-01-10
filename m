@@ -2,53 +2,54 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BD5C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jan 2022 01:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1554CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jan 2022 01:01:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237772AbiAJBAt (ORCPT
+        id S237855AbiAJBBF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 9 Jan 2022 20:00:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48122 "EHLO
+        Sun, 9 Jan 2022 20:01:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237736AbiAJBAT (ORCPT
+        with ESMTP id S237720AbiAJBAR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 9 Jan 2022 20:00:19 -0500
+        Sun, 9 Jan 2022 20:00:17 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FA91C061756;
-        Sun,  9 Jan 2022 17:00:18 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94C5CC06175B;
+        Sun,  9 Jan 2022 17:00:17 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 206D1B8107B;
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1D18DB81085;
         Mon, 10 Jan 2022 01:00:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2454DC36B09;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0348EC36B04;
         Mon, 10 Jan 2022 01:00:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1641776414;
-        bh=xxrtH6AQpTOSTjEmBsXyFHyyljWLYcbQt6gYD5ZCeGs=;
+        bh=KswFpVK4DixhjjxjTyP5oo8O2HjjmOLZxMSzTZG+IFA=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=iknfAbllJeOlgq0JW5E9TtAh1lVup2JdNFjgLlqMUNSuVddZDVKVTOdDl4HmYqfnQ
-         imvrLF3uI36dYcdf0HX7ev2vcKJTbMTluFViKj32dIlm6mGg3P0KRL1PSFIhQMAUQE
-         uJqOQjImsOe3boGt3QY1gwSHQnQdseMpvCyZsIWAlsd5YSD1myOc5vRXdTd2gIMWho
-         x7lwUlEKTgLaROdlS/pY32R2cNRbwlWCxWSHZgouJvA1lZ1rs2scwzMRz3Gz4UckJf
-         drulTqucwNG06PcmznugQ/22fCKSfmwXdDHpYJIPbOV6fzMyMdY67u7QyFhtyFAiwJ
-         nAWq5SpusKKSA==
+        b=Geig0KPYYu6RancmWCRttoSAA50YVHsIMy8uG+YYVwvU7e8QsitV5C14paDv6e4Io
+         Nd7YMF1j7ftz6AC1UqEyWI2ZnD4xf+efo7jpqv69IjPXyhH3Vt5YZqNw/WztSJt4f4
+         gT0SM4m0itqdAdMh46vR55TWSAfILMzBwXYFwq0HwedGMkGvm/hBYEhZzce4DWe5LX
+         /OJCRPYpXWd7KIo9lqbCmCJPFDpdr1D7LM1XDs5/xtLHQlnH/dCuy5EL5rHFZNp695
+         tpieqwgqk/Ep9CbwE1FR3Eb3Oy9qFcMNqtT31qSNNbraCbNesjVqZ2ph+4JDJI9jF4
+         /y9s1mkD3vWng==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 11F1CF60791;
-        Mon, 10 Jan 2022 01:00:14 +0000 (UTC)
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E2468F6078F;
+        Mon, 10 Jan 2022 01:00:13 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: enetc: Remove useless DMA-32 fallback configuration
+Subject: Re: [PATCH] be2net: Remove useless DMA-32 fallback configuration
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164177641406.18208.1968849844538949127.git-patchwork-notify@kernel.org>
-Date:   Mon, 10 Jan 2022 01:00:14 +0000
-References: <dbecd4eb49a9586ee343b5473dda4b84c42112e9.1641742884.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <dbecd4eb49a9586ee343b5473dda4b84c42112e9.1641742884.git.christophe.jaillet@wanadoo.fr>
+Message-Id: <164177641392.18208.2737558467182195149.git-patchwork-notify@kernel.org>
+Date:   Mon, 10 Jan 2022 01:00:13 +0000
+References: <637696d7141faa68c29fc34b70f9aa67d5e605f0.1641718999.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <637696d7141faa68c29fc34b70f9aa67d5e605f0.1641718999.git.christophe.jaillet@wanadoo.fr>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     claudiu.manoil@nxp.com, davem@davemloft.net, kuba@kernel.org,
-        yangbo.lu@nxp.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+Cc:     ajit.khaparde@broadcom.com, sriharsha.basavapatna@broadcom.com,
+        somnath.kotur@broadcom.com, davem@davemloft.net, kuba@kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -58,20 +59,20 @@ Hello:
 This patch was applied to netdev/net-next.git (master)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Sun,  9 Jan 2022 16:41:43 +0100 you wrote:
+On Sun,  9 Jan 2022 10:03:49 +0100 you wrote:
 > As stated in [1], dma_set_mask() with a 64-bit mask never fails if
 > dev->dma_mask is non-NULL.
 > So, if it fails, the 32 bits case will also fail for the same reason.
 > 
-> Simplify code and remove some dead code accordingly.
-> 
-> [1]: https://lkml.org/lkml/2021/6/7/398
+> So if dma_set_mask_and_coherent() succeeds, 'netdev->features' will have
+> NETIF_F_HIGHDMA in all cases. Move the assignment of this feature in
+> be_netdev_init() instead be_probe() which is a much logical place.
 > 
 > [...]
 
 Here is the summary with links:
-  - net: enetc: Remove useless DMA-32 fallback configuration
-    https://git.kernel.org/netdev/net-next/c/cfcfc8f5a54b
+  - be2net: Remove useless DMA-32 fallback configuration
+    https://git.kernel.org/netdev/net-next/c/942e78916f0c
 
 You are awesome, thank you!
 -- 
