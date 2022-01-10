@@ -2,74 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB6DC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jan 2022 21:32:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A14C433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jan 2022 22:04:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244408AbiAJVcs (ORCPT
+        id S1345124AbiAJWEx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Jan 2022 16:32:48 -0500
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:60956 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244347AbiAJVcs (ORCPT
+        Mon, 10 Jan 2022 17:04:53 -0500
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:15024 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1345088AbiAJWEv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Jan 2022 16:32:48 -0500
-Received: from pop-os.home ([90.11.185.88])
-        by smtp.orange.fr with ESMTPA
-        id 72HTnAgehniux72HTnshQN; Mon, 10 Jan 2022 22:32:46 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 10 Jan 2022 22:32:46 +0100
-X-ME-IP: 90.11.185.88
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Marek Lindner <mareklindner@neomailbox.ch>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
-        Antonio Quartulli <a@unstable.cc>,
-        Sven Eckelmann <sven@narfation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org
-Subject: [PATCH] batman-adv: Remove redundant 'flush_workqueue()' calls
-Date:   Mon, 10 Jan 2022 22:32:27 +0100
-Message-Id: <2c2454cd728f427cada2c24cdb1ef2609dec5efc.1641850318.git.christophe.jaillet@wanadoo.fr>
+        Mon, 10 Jan 2022 17:04:51 -0500
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20AJlifk007280;
+        Mon, 10 Jan 2022 22:04:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2021-07-09;
+ bh=j8kyLVJ/vcALmp+cjVYbWRecKIqzVpUx/AEGGzhoIcI=;
+ b=GuJ6B5CUzWI7YA6wWS8Qdf7015IucHpocxsKxeCPRXhWAXCODzMVpnFu5cYbu9RMs1H8
+ awpAGGynhlTqVV0zsBfWHFEVCpbAN3qwHUT6x8TcC/z6+sJApAiUECjyz4CuaPDpuHH1
+ GSP2RrCf2XNe7EmEByv/TPK3qpoSzWPqIVi7Bqv+L+/4qkyOHp5DyDjzmoRS7gj3MU1z
+ Ae8/bLUFRSZ/+ORz/EreJpOZqzGUBhLl0KdLHBq4Lm9+Lln0jykAC5OwWOmrvU+KXs7/
+ tCmN7npHchR3X2vMKTXb0IelciZW1S+1JwHzPH+/ZUhmjuccVjIPfS6hbsSZXDT+pby3 TQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3dgkhx1m9v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Jan 2022 22:04:49 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 20ALtvBF139021;
+        Mon, 10 Jan 2022 22:04:49 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3020.oracle.com with ESMTP id 3df2e3vqts-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Jan 2022 22:04:49 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 20AM4iC4174082;
+        Mon, 10 Jan 2022 22:04:48 GMT
+Received: from ca-mkp.mkp.ca.oracle.com (ca-mkp.ca.oracle.com [10.156.108.201])
+        by aserp3020.oracle.com with ESMTP id 3df2e3vqp8-4;
+        Mon, 10 Jan 2022 22:04:48 +0000
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     linux-scsi@vger.kernel.org,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        mpi3mr-linuxdrv.pdl@broadcom.com,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        Colin Ian King <colin.i.king@gmail.com>,
+        Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH][next] scsi: mpi3mr: Fix some spelling mistakes
+Date:   Mon, 10 Jan 2022 17:04:36 -0500
+Message-Id: <164182835584.13635.12442712390166966548.b4-ty@oracle.com>
 X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20211224175240.1348942-1-colin.i.king@gmail.com>
+References: <20211224175240.1348942-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: ipyCed42Z6D2TitqyNq8MOHdgtvgiKUw
+X-Proofpoint-ORIG-GUID: ipyCed42Z6D2TitqyNq8MOHdgtvgiKUw
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'destroy_workqueue()' already drains the queue before destroying it, so
-there is no need to flush it explicitly.
+On Fri, 24 Dec 2021 17:52:40 +0000, Colin Ian King wrote:
 
-Remove the redundant 'flush_workqueue()' calls.
+> There are some spelling mistakes in some literal strings. Fix them.
+> 
+> 
 
-This was generated with coccinelle:
+Applied to 5.17/scsi-queue, thanks!
 
-@@
-expression E;
-@@
-- 	flush_workqueue(E);
-	destroy_workqueue(E);
+[1/1] scsi: mpi3mr: Fix some spelling mistakes
+      https://git.kernel.org/mkp/scsi/c/5867b8569e64
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- net/batman-adv/main.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/net/batman-adv/main.c b/net/batman-adv/main.c
-index 5207cd8d6ad8..8f1b724d0412 100644
---- a/net/batman-adv/main.c
-+++ b/net/batman-adv/main.c
-@@ -132,7 +132,6 @@ static void __exit batadv_exit(void)
- 	rtnl_link_unregister(&batadv_link_ops);
- 	unregister_netdevice_notifier(&batadv_hard_if_notifier);
- 
--	flush_workqueue(batadv_event_workqueue);
- 	destroy_workqueue(batadv_event_workqueue);
- 	batadv_event_workqueue = NULL;
- 
 -- 
-2.32.0
-
+Martin K. Petersen	Oracle Linux Engineering
