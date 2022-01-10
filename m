@@ -2,81 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A563C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jan 2022 15:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B56A8C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 10 Jan 2022 16:44:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236522AbiAJPug (ORCPT
+        id S237668AbiAJQoX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 10 Jan 2022 10:50:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52970 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236611AbiAJPud (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 10 Jan 2022 10:50:33 -0500
-Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1AF9C061748
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jan 2022 07:50:33 -0800 (PST)
-Received: by mail-qt1-x835.google.com with SMTP id c10so13086357qte.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Jan 2022 07:50:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=taJK4990Hf5ggLF7x5d/tJzG7fwO4y08TUkbCKMXkXM=;
-        b=SU3mKDe+NFt3ELa2q1426sexnDWTv18yKIPDP2du70kd2dvXb52pbMprOX3r4vXwnT
-         RbL/u0D3fPqnhE75Zta7ky5PgQl+H7WlhwgI11Y9Dz1SlLlNyp1vZelvZQfiKOIBLikl
-         9VdKprbwittxaamxOVCN3EL4GuHf/srjHctuYUzkQ2alUkCvKBgXraQVXsc11RTekBnu
-         iacR1txVlA/jNx6GNjsFWSQwvPhSc/uJHfJ/mKUmnB7DVKYliIoB4dEZciKewszMijkI
-         vO1LhdxWqyO0YGpmagOxmsqhoVMgkRSsEN7ww+ni+rjYhOHFPPU2YpgW1eD0xXLut+sY
-         VFOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=taJK4990Hf5ggLF7x5d/tJzG7fwO4y08TUkbCKMXkXM=;
-        b=GZrugjNCdOniA/KyKQV06smkFUj+BSeSBsDM118nyDEDcEiCzJkWmpfh7TZgsgHTeG
-         4GjoNbFX4AINxktPPd/MreF6QuayriQXYA5Zkz2/KD/uqTSHKJNoNgA0Qgz4JFOfpK5n
-         AK94bTfnKWZBejrZ/LEzYET7p+kGDPflBs1K5kGSqu5/nE2OrLHsDqUn8S56xCZtEo7Y
-         ALDPnyoGdscfu5e1xGn/VfRky34S0XW37FvyrABRcwOPU1mmvcuM1Udx7RLfLO1oCBEN
-         6mmltGBc/H9+rVQy4IPlFPKm48oMUbhtYb1aTa76uKYN+3fXIxBr3bW/FaTkzyDuDPAT
-         2v0w==
-X-Gm-Message-State: AOAM5328kmeqNrANBkI3IU7OLHm91U3M4IRc6HZgch4XTJ1ZVsJtNm4F
-        X48YjeiMbnydNFujn5RQ8qRZfw==
-X-Google-Smtp-Source: ABdhPJxBj0ZyPgNVhc4jPK7tenIAOTO7n8CuI533poIMXs6L4y67rXu3AheljFk+wuxJDExcGtdWCQ==
-X-Received: by 2002:ac8:74c6:: with SMTP id j6mr229936qtr.557.1641829832895;
-        Mon, 10 Jan 2022 07:50:32 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-162-113-129.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.129])
-        by smtp.gmail.com with ESMTPSA id r4sm900398qta.51.2022.01.10.07.50.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jan 2022 07:50:32 -0800 (PST)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1n6wwJ-00DpQ8-Ir; Mon, 10 Jan 2022 11:50:31 -0400
-Date:   Mon, 10 Jan 2022 11:50:31 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
+        Mon, 10 Jan 2022 11:44:23 -0500
+Received: from verein.lst.de ([213.95.11.211]:39328 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231379AbiAJQoV (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 10 Jan 2022 11:44:21 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 1AEF868BEB; Mon, 10 Jan 2022 17:44:18 +0100 (CET)
+Date:   Mon, 10 Jan 2022 17:44:17 +0100
+From:   Christoph Hellwig <hch@lst.de>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH] IB/mthca: Remove useless DMA-32 fallback configuration
-Message-ID: <20220110155031.GI6467@ziepe.ca>
-References: <4aeb3dcf39490334acf583e723a08ea7262b0912.1641716983.git.christophe.jaillet@wanadoo.fr>
+Cc:     hch@lst.de, "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Hannes Reinecke <hare@suse.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-scsi@vger.kernel.org
+Subject: Re: [PATCH v2] scsi: pmcraid: Fix memory allocation in
+ 'pmcraid_alloc_sglist()'
+Message-ID: <20220110164417.GA7133@lst.de>
+References: <11a1bc98501de37baa5bcd10b61136f6e450b82e.1641816080.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4aeb3dcf39490334acf583e723a08ea7262b0912.1641716983.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <11a1bc98501de37baa5bcd10b61136f6e450b82e.1641816080.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Jan 09, 2022 at 09:30:09AM +0100, Christophe JAILLET wrote:
-> As stated in [1], dma_set_mask() with a 64-bit mask never fails if
-> dev->dma_mask is non-NULL.
-> So, if it fails, the 32 bits case will also fail for the same reason.
+On Mon, Jan 10, 2022 at 01:02:53PM +0100, Christophe JAILLET wrote:
+> When the scatter list is allocated in 'pmcraid_alloc_sglist()', the
+> corresponding pointer should be stored in 'scatterlist' within the
+> 'pmcraid_sglist' structure. Otherwise, 'scatterlist' is NULL.
 > 
-> Simplify code and remove some dead code accordingly.
+> This leads to a potential memory leak and NULL pointer dereference.
 > 
-> [1]: https://lkml.org/lkml/2021/6/7/398
+> Fixes: ed4414cef2ad ("scsi: pmcraid: Use sgl_alloc_order() and sgl_free_order()")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> This patch is completely speculative and untested.
+> 
+> Should it be correct, I think that their should be some trouble somewhere.
+> Either NULL pointer dereference or incorrect behavior.
+> The patch that introduced this potential bug is from 2018-02. So, this
+> should have been spotted earlier.
+> 
+> So unless this driver is mostly unused, this looks odd to me.
+> Feedback appreciated.
 
-Can you use lore links please?
+The whole passthrough ioctl path looks completely broken to me.  For
+example it dma maps the scatterlist and after that copies data to it,
+which is prohibited by the DMA API contract.
 
-Jason
+So I'd be tempted to just remove the PMCRAID_PASSTHROUGH_IOCTL ioctl
+implementation entirely, and if users for it do pop up we should
+reimplement it using the proper block layer request mapping helpers.
+
+If for some reason we don't want that and just fix the obvious
+problem without a way to test for it, your patch looks good to me:
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
