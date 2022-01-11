@@ -2,114 +2,169 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C097C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jan 2022 21:41:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B574C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jan 2022 22:49:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244306AbiAKVlL (ORCPT
+        id S1346290AbiAKWtB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 Jan 2022 16:41:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45744 "EHLO
+        Tue, 11 Jan 2022 17:49:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244288AbiAKVlL (ORCPT
+        with ESMTP id S230248AbiAKWtA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 Jan 2022 16:41:11 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97D62C06173F;
-        Tue, 11 Jan 2022 13:41:10 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id x7so1289020lfu.8;
-        Tue, 11 Jan 2022 13:41:10 -0800 (PST)
+        Tue, 11 Jan 2022 17:49:00 -0500
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C443C06173F;
+        Tue, 11 Jan 2022 14:49:00 -0800 (PST)
+Received: by mail-pj1-x102f.google.com with SMTP id l10-20020a17090a384a00b001b22190e075so8109691pjf.3;
+        Tue, 11 Jan 2022 14:49:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xfXoAe+Vr+wVYpAjUIwEml+WxjdDvaFLuGHxawax4dI=;
-        b=TC0pmGpn3hr9VXbQQ74r4BDQQEllW9JeN3eeTIadmMbbY1D8baGxOFdJEoARQtYMs0
-         7D8yUFtaGv6sANxEc/VSM8IRUQjEsreLAa1lcHak9yvBsMYeVPcsnXBnkXzxsGOKOclz
-         O08RF+BEf5sjYj6u7PPLyi83lBCM1jkma6PU17aTfrq+xpeoFF61oo1sy41D26b+8CO8
-         2IzG+Ble9qig1OIbVABc9RjqPhyUDCR/7NzffXVvDP6MjgGC4HQZ7D5X8VOX+/VlpqUn
-         AscMcLncvlESH5uFzqOUx5c53vmwjp77Kag5di+MaNxrMtnll3QS0hdvaCkIKkGC8Gga
-         C+lw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=21jKrUVkF66YiKV2sXrARGR2A/0nZBDfj7NXOCvKelA=;
+        b=nXisYx8ZBeSjDj6qmYeFs0Yqef21/FqVlz4k8H5KmfMkzOYxFEblle1Nw19AdU847l
+         Gct9CO6zeDGHSpuXie0DfjveD1MAWSmSfMXa8rhbHd02jBDtBcIiWSEQpXK8zcRT8dWK
+         n8kNWQ0FqN21whTeiWu+pTSLMjVIYQfMgv3vkDxCnoWMmbKssGELswfHxYHbvdkt4sdK
+         AsEGzajg9HvNp2ODegvDffZT0mggKx2eCDS6GZ8oWMiHs5MKA9lFPjcqItSlAszGrD8R
+         6PQqsY0rqSPkCikGk3rVcT/BNmInBqtQLkmFbFsSg3dwHGyWprJSmCIC+6PEojD43FZ6
+         Oc3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xfXoAe+Vr+wVYpAjUIwEml+WxjdDvaFLuGHxawax4dI=;
-        b=hXloPi/fDu8XHIE9e+PUbkdubiAq5zi2OgYGY81tzzKzuBgDIf7JjX00jtmDUDdukA
-         bOeV+w7mPC/12sIhWc9/QEYtPd0d1EzKs/gv8el2BMR2B7lpl5e+Kgc02PH6+kQ6aTCM
-         ytItupMKRFsRFnGWdl47PyNaTTPtmSa5VulVCrbNDe7O2rd9MTMct7RiHS29+GXbG5b7
-         LzxNzvOaeiMCiYpaLw9FIvJKktWlPB+uPTDYuJbOX4+uUqTikm8BO1ytFKJ5LIUMrbhb
-         OI9dO4kG4u270OO3lIGo5hVfYlOONR17Lss4iOPhOHmGxuDX0u9Kq5KJnEKEM/OCTr+O
-         SnWg==
-X-Gm-Message-State: AOAM532tVgSmPhSu3DklWggy9gurgGTDPNaS+EVuIjMR4ujSvl85yt2u
-        8UmihDFJakXccSvTZWjLC+F++Tu8eo68IzQJsd0=
-X-Google-Smtp-Source: ABdhPJw4OLUWqvCpcDqUSuvMj9lAi1g2N7kIL3KMpZb6//moWAFGpxg63qUB5ebSf5RsSu+gcaApisEgWYUhPy39qs8=
-X-Received: by 2002:a05:6512:3e02:: with SMTP id i2mr4638095lfv.667.1641937268836;
- Tue, 11 Jan 2022 13:41:08 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=21jKrUVkF66YiKV2sXrARGR2A/0nZBDfj7NXOCvKelA=;
+        b=bKknW1Ils4lfW26XklnI/YmNiRPBM9jhw6DNs+uJCDDXaHbduwo62PoJdlaIdpiVdd
+         Vs74yJcQ/1dvxqGeUC/1EosY7eNdvweLPsAMlSRSUkIEEGS2ZMI57qgTlDSwoNcNJwGz
+         1Z1aQSEi3NxXreVMk6PkF+jROfYAQrVE0VTOQGuEccj6UHliEGkV7PYdVw/wYwK/6WzB
+         ZAvR85r0YxCaTrMCG/WUVJooCyyIAOg6vRGuEpZzD/QxLE5lgK+P7Hm9KhMaW0mfOc7A
+         KvEK7ygtmN9IzjlZ8qkv3PPGqkpHEdCQZtLuANpdBGEVzNiNMHI+sziD99jfcsSUwBSZ
+         ihFA==
+X-Gm-Message-State: AOAM533g20JS3vhsQhay6xzhOLJw7O7BtsXLq3NtRc9ORfodv3kurMuH
+        +xOS3jB4yuc/KxgPLYcqhNk=
+X-Google-Smtp-Source: ABdhPJxVdugbSGoBel+nf3MnQAUyXgpAyv9vsTtOpLV+sv1ywOHc+fsJPl/QAC+Cnj+s/sBPTuan6g==
+X-Received: by 2002:a63:a1a:: with SMTP id 26mr5909913pgk.212.1641941339672;
+        Tue, 11 Jan 2022 14:48:59 -0800 (PST)
+Received: from shinobu (113x37x72x24.ap113.ftth.ucom.ne.jp. [113.37.72.24])
+        by smtp.gmail.com with ESMTPSA id v15sm651825pfu.203.2022.01.11.14.48.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jan 2022 14:48:58 -0800 (PST)
+Date:   Wed, 12 Jan 2022 07:48:53 +0900
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] counter: fix an IS_ERR() vs NULL bug
+Message-ID: <Yd4JVSTUcFVFNhaJ@shinobu>
+References: <20220111173243.GA2192@kili>
 MIME-Version: 1.0
-References: <20220111071716.GC11243@kili>
-In-Reply-To: <20220111071716.GC11243@kili>
-From:   Steve French <smfrench@gmail.com>
-Date:   Tue, 11 Jan 2022 15:40:58 -0600
-Message-ID: <CAH2r5mtpdxfAcuThHDs+-UHFf1S=dmSxyXkk2NbaxMwd6FwfQA@mail.gmail.com>
-Subject: Re: [PATCH] cifs: uninitialized variable in cifs_get_next_mid()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Steve French <sfrench@samba.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        samba-technical <samba-technical@lists.samba.org>,
-        Enzo Matsumiya <ematsumiya@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="oLfUn8xMOtC9EV9z"
+Content-Disposition: inline
+In-Reply-To: <20220111173243.GA2192@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-That was fixed similarly a couple of days ago by a patch from Enzo
 
-commit 1913e1116a3174648cf2e6faedf29204f31cc438
-Author: Enzo Matsumiya <ematsumiya@suse.de>
-Date:   Fri Jan 7 19:51:39 2022 -0300
+--oLfUn8xMOtC9EV9z
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-    cifs: fix hang on cifs_get_next_mid()
-
-    Mount will hang if using SMB1 and DFS.
-
-    This is because every call to get_next_mid() will, unconditionally,
-    mark tcpStatus to CifsNeedReconnect before even establishing the
-    initial connect, because "reconnect" variable was not initialized.
-
-On Tue, Jan 11, 2022 at 5:03 AM Dan Carpenter via samba-technical
-<samba-technical@lists.samba.org> wrote:
->
-> The "reconnect" was never initialized to false.
->
-> Fixes: 220c5bc25d87 ("cifs: take cifs_tcp_ses_lock for status checks")
+On Tue, Jan 11, 2022 at 08:32:43PM +0300, Dan Carpenter wrote:
+> There are 8 callers for devm_counter_alloc() and they all check for NULL
+> instead of error pointers.  I think NULL is the better thing to return
+> for allocation functions so update counter_alloc() and devm_counter_alloc=
+()
+> to return NULL instead of error pointers.
+>=20
+> Fixes: c18e2760308e ("counter: Provide alternative counter registration f=
+unctions")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+
 > ---
->  fs/cifs/smb1ops.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/cifs/smb1ops.c b/fs/cifs/smb1ops.c
-> index 54319a789c92..6b1b048b36ae 100644
-> --- a/fs/cifs/smb1ops.c
-> +++ b/fs/cifs/smb1ops.c
-> @@ -163,7 +163,8 @@ cifs_get_next_mid(struct TCP_Server_Info *server)
->  {
->         __u64 mid = 0;
->         __u16 last_mid, cur_mid;
-> -       bool collision, reconnect;
-> +       bool reconnect = false;
-> +       bool collision;
->
->         spin_lock(&GlobalMid_Lock);
->
-> --
+> v2: make additional style changes
+>=20
+>  drivers/counter/counter-core.c | 15 ++++++---------
+>  1 file changed, 6 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/drivers/counter/counter-core.c b/drivers/counter/counter-cor=
+e.c
+> index 7e0957eea094..869894b74741 100644
+> --- a/drivers/counter/counter-core.c
+> +++ b/drivers/counter/counter-core.c
+> @@ -90,10 +90,8 @@ struct counter_device *counter_alloc(size_t sizeof_pri=
+v)
+>  	int err;
+> =20
+>  	ch =3D kzalloc(sizeof(*ch) + sizeof_priv, GFP_KERNEL);
+> -	if (!ch) {
+> -		err =3D -ENOMEM;
+> -		goto err_alloc_ch;
+> -	}
+> +	if (!ch)
+> +		return NULL;
+> =20
+>  	counter =3D &ch->counter;
+>  	dev =3D &counter->dev;
+> @@ -123,9 +121,8 @@ struct counter_device *counter_alloc(size_t sizeof_pr=
+iv)
+>  err_ida_alloc:
+> =20
+>  	kfree(ch);
+> -err_alloc_ch:
+> =20
+> -	return ERR_PTR(err);
+> +	return NULL;
+>  }
+>  EXPORT_SYMBOL_GPL(counter_alloc);
+> =20
+> @@ -208,12 +205,12 @@ struct counter_device *devm_counter_alloc(struct de=
+vice *dev, size_t sizeof_priv
+>  	int err;
+> =20
+>  	counter =3D counter_alloc(sizeof_priv);
+> -	if (IS_ERR(counter))
+> -		return counter;
+> +	if (!counter)
+> +		return NULL;
+> =20
+>  	err =3D devm_add_action_or_reset(dev, devm_counter_put, counter);
+>  	if (err < 0)
+> -		return ERR_PTR(err);
+> +		return NULL;
+> =20
+>  	return counter;
+>  }
+> --=20
 > 2.20.1
->
->
+>=20
 
+--oLfUn8xMOtC9EV9z
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Thanks,
+-----BEGIN PGP SIGNATURE-----
 
-Steve
+iQIzBAABCgAdFiEEk5I4PDJ2w1cDf/bghvpINdm7VJIFAmHeCUoACgkQhvpINdm7
+VJIVuA//SVLH57LkeS1FkN5e+LkoLiZFN2RImHGDSdhRQnsWLB1lssun+R79IZJz
+3G3ZrW6uy2AKq13kYDNxBeZmgKH1fHwLWgBsyErHU0BRkrJZExZVlULHEbVPFW6F
+58FO5RHTFxPLl6VdLmjD99IC1nMPYvoGhgJ+qJdhwTOupErvDxw9jVDq6CvNTTEv
+H5aiAt5LLSaNqSFw+QT01EMe2Q5N3FMQWqwjnox3FnJPp8AEsN9Tlzo4gr3q8ne9
+2zUf4ias2w5CDLAsRj6CJlxEXwokViRljIXGPem4eF0LRXqo3Fl695qwo/XPY9kk
+pcJ0JV/hl9RVHyo2sXNU/NS7rv0IiVT0TXtL91b8+zYywxnzrArF0XliPta+VKwI
+QCrSzmi7UV4u1zSHH3Webn+RTpUlGBVYPPoyPBYevWLzrfw5GvJ86a8godwKGXXf
+HltY1sVb3av180/f2l9VbPOgLitiIAyg6zwSU6OrpHin7cIlo+oInJuLCQtncCtI
+JtLdRuAZNGXJQcepePS916OHLAK7we7BJHZ/U3qM1VKnIHeQDZJuB5WRFbuwlmIi
+8FNz9egAUZ1z4g0wk+EzWoz18whgM35jCGbfWznFRDFT6iKlikSqoPSLfoCk+CPP
+cBRpEKEkwiLJyN9GYEvZIg6ia+hogkjH3ta9zdrefYzX9GxF59k=
+=9Edj
+-----END PGP SIGNATURE-----
+
+--oLfUn8xMOtC9EV9z--
