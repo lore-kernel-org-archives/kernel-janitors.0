@@ -2,82 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB3EBC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jan 2022 14:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 897C3C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jan 2022 16:09:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241796AbiAKOVz (ORCPT
+        id S1349809AbiAKQJT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 Jan 2022 09:21:55 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:60098 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241779AbiAKOVz (ORCPT
+        Tue, 11 Jan 2022 11:09:19 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:57588 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1349801AbiAKQJT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 Jan 2022 09:21:55 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A59EA61672;
-        Tue, 11 Jan 2022 14:21:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEBEAC36AE3;
-        Tue, 11 Jan 2022 14:21:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641910914;
-        bh=WFkEfIk0EPbaH4qxJesgqVL1hwKqSCeC9eRpCsYeSCU=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=Tmn8ApV+ZT/n93k+ZaXeFgYjILZ7pKrB5724CQziINRpFL6NWh+FhCrJuks02XoHx
-         MHn7lJL74Z1TYA5pDe0PIKoifFvUfeElWNs1GY+m1YenuY9d7BfsPCRp4tAdicLj+2
-         VeWVIJhrDgc9uiQA1WatdJSNqj/If5PN79CT2U9ELGGRty8zd9oPwvgtf3jpMULCjQ
-         iv1V160DDbO9PYvaQuiIlTjjr/mQm75VV/qgjtb5v/aREJBZ4vAVzaMAJOpdCR+DAn
-         5tp5EexXN8Ch5VqIK9P1jne3RHQspYE/c/yTnZpt95IeYG+5JvvrgEvnb8o2kMM2nL
-         MXhuEKGJ+mR/A==
-From:   Mark Brown <broonie@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Watson Chow <watson.chow@avnet.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        kernel-janitors@vger.kernel.org
-In-Reply-To: <20220111072657.GK11243@kili>
-References: <20220111072657.GK11243@kili>
-Subject: Re: [PATCH] regulator: max20086: fix error code in max20086_parse_regulators_dt()
-Message-Id: <164191091249.1756603.9938107427709378697.b4-ty@kernel.org>
-Date:   Tue, 11 Jan 2022 14:21:52 +0000
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Tue, 11 Jan 2022 11:09:19 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 0B79E1F3B8;
+        Tue, 11 Jan 2022 16:09:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1641917358; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=q2gg+/L0HZ5tyMQWbHtUsJyCbwGtfjLqKMlD+joksRQ=;
+        b=ZthQwQbW4V4HGZgW6ABIijkgdhpmLua7sHYbombLBY97+tZdeMyIH52yToqOi87OZ3T6+I
+        H98rJmasYI4TsihyC8ezwWuhM26eJRTDLgMvuq54VhKwX9JXYQsM1SkpJchQJ3UXz7f7WH
+        kRwgjETtAd7gbkuC0TyfN2oO4VpwC1s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1641917358;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=q2gg+/L0HZ5tyMQWbHtUsJyCbwGtfjLqKMlD+joksRQ=;
+        b=cC1a897iDSVlXNHATuLNT8IYUAjqBHuong6jlzN/TGbV70g4bi+jKsoxsHit8FarQCVoQ9
+        NcSefpzhh+iP5pCA==
+Received: from alsa1.suse.de (alsa1.suse.de [10.160.4.42])
+        by relay2.suse.de (Postfix) with ESMTP id D85B5A3B83;
+        Tue, 11 Jan 2022 16:09:17 +0000 (UTC)
+Date:   Tue, 11 Jan 2022 17:09:17 +0100
+Message-ID: <s5hfspub6fm.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     James Schulman <james.schulman@cirrus.com>,
+        Lucas Tanure <tanureal@opensource.cirrus.com>,
+        David Rhodes <david.rhodes@cirrus.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        patches@opensource.cirrus.com, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ALSA: hda: cs35l41: fix double free on error in probe()
+In-Reply-To: <20220111072232.GG11243@kili>
+References: <20220111072232.GG11243@kili>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 11 Jan 2022 10:26:58 +0300, Dan Carpenter wrote:
-> This code accidentally returns PTR_ERR(NULL) which is success.  It
-> should return a negative error code.
+On Tue, 11 Jan 2022 08:22:32 +0100,
+Dan Carpenter wrote:
 > 
+> If we encounter an error after the kfree(acpi_hw_cfg); then the goto
+> err; will result in a double free.
 > 
+> Fixes: 7b2f3eb492da ("ALSA: hda: cs35l41: Add support for CS35L41 in HDA systems")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to
+Thanks, applied now.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-linus
 
-Thanks!
-
-[1/1] regulator: max20086: fix error code in max20086_parse_regulators_dt()
-      commit: 879cf8006475642b747aaaa4d06f7044ab2de794
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Takashi
