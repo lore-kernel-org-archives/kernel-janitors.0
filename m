@@ -2,96 +2,114 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A1F2C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jan 2022 20:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C097C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 11 Jan 2022 21:41:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243615AbiAKUeO (ORCPT
+        id S244306AbiAKVlL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 11 Jan 2022 15:34:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58312 "EHLO
+        Tue, 11 Jan 2022 16:41:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243021AbiAKUeN (ORCPT
+        with ESMTP id S244288AbiAKVlL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 11 Jan 2022 15:34:13 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 820B9C06173F
-        for <kernel-janitors@vger.kernel.org>; Tue, 11 Jan 2022 12:34:13 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1n7NqG-0005KV-Gq; Tue, 11 Jan 2022 21:34:04 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1n7Nq9-009liu-K5; Tue, 11 Jan 2022 21:33:56 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1n7Nq8-0000bZ-M8; Tue, 11 Jan 2022 21:33:56 +0100
-Date:   Tue, 11 Jan 2022 21:33:56 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] counter: fix an IS_ERR() vs NULL bug
-Message-ID: <20220111203356.cnzpo4uyhnybm5cp@pengutronix.de>
-References: <20220111173243.GA2192@kili>
+        Tue, 11 Jan 2022 16:41:11 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97D62C06173F;
+        Tue, 11 Jan 2022 13:41:10 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id x7so1289020lfu.8;
+        Tue, 11 Jan 2022 13:41:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xfXoAe+Vr+wVYpAjUIwEml+WxjdDvaFLuGHxawax4dI=;
+        b=TC0pmGpn3hr9VXbQQ74r4BDQQEllW9JeN3eeTIadmMbbY1D8baGxOFdJEoARQtYMs0
+         7D8yUFtaGv6sANxEc/VSM8IRUQjEsreLAa1lcHak9yvBsMYeVPcsnXBnkXzxsGOKOclz
+         O08RF+BEf5sjYj6u7PPLyi83lBCM1jkma6PU17aTfrq+xpeoFF61oo1sy41D26b+8CO8
+         2IzG+Ble9qig1OIbVABc9RjqPhyUDCR/7NzffXVvDP6MjgGC4HQZ7D5X8VOX+/VlpqUn
+         AscMcLncvlESH5uFzqOUx5c53vmwjp77Kag5di+MaNxrMtnll3QS0hdvaCkIKkGC8Gga
+         C+lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xfXoAe+Vr+wVYpAjUIwEml+WxjdDvaFLuGHxawax4dI=;
+        b=hXloPi/fDu8XHIE9e+PUbkdubiAq5zi2OgYGY81tzzKzuBgDIf7JjX00jtmDUDdukA
+         bOeV+w7mPC/12sIhWc9/QEYtPd0d1EzKs/gv8el2BMR2B7lpl5e+Kgc02PH6+kQ6aTCM
+         ytItupMKRFsRFnGWdl47PyNaTTPtmSa5VulVCrbNDe7O2rd9MTMct7RiHS29+GXbG5b7
+         LzxNzvOaeiMCiYpaLw9FIvJKktWlPB+uPTDYuJbOX4+uUqTikm8BO1ytFKJ5LIUMrbhb
+         OI9dO4kG4u270OO3lIGo5hVfYlOONR17Lss4iOPhOHmGxuDX0u9Kq5KJnEKEM/OCTr+O
+         SnWg==
+X-Gm-Message-State: AOAM532tVgSmPhSu3DklWggy9gurgGTDPNaS+EVuIjMR4ujSvl85yt2u
+        8UmihDFJakXccSvTZWjLC+F++Tu8eo68IzQJsd0=
+X-Google-Smtp-Source: ABdhPJw4OLUWqvCpcDqUSuvMj9lAi1g2N7kIL3KMpZb6//moWAFGpxg63qUB5ebSf5RsSu+gcaApisEgWYUhPy39qs8=
+X-Received: by 2002:a05:6512:3e02:: with SMTP id i2mr4638095lfv.667.1641937268836;
+ Tue, 11 Jan 2022 13:41:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="kxuycue2yzjofszy"
-Content-Disposition: inline
-In-Reply-To: <20220111173243.GA2192@kili>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+References: <20220111071716.GC11243@kili>
+In-Reply-To: <20220111071716.GC11243@kili>
+From:   Steve French <smfrench@gmail.com>
+Date:   Tue, 11 Jan 2022 15:40:58 -0600
+Message-ID: <CAH2r5mtpdxfAcuThHDs+-UHFf1S=dmSxyXkk2NbaxMwd6FwfQA@mail.gmail.com>
+Subject: Re: [PATCH] cifs: uninitialized variable in cifs_get_next_mid()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Steve French <sfrench@samba.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        samba-technical <samba-technical@lists.samba.org>,
+        Enzo Matsumiya <ematsumiya@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+That was fixed similarly a couple of days ago by a patch from Enzo
 
---kxuycue2yzjofszy
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+commit 1913e1116a3174648cf2e6faedf29204f31cc438
+Author: Enzo Matsumiya <ematsumiya@suse.de>
+Date:   Fri Jan 7 19:51:39 2022 -0300
 
-On Tue, Jan 11, 2022 at 08:32:43PM +0300, Dan Carpenter wrote:
-> There are 8 callers for devm_counter_alloc() and they all check for NULL
-> instead of error pointers.  I think NULL is the better thing to return
-> for allocation functions so update counter_alloc() and devm_counter_alloc=
-()
-> to return NULL instead of error pointers.
->=20
-> Fixes: c18e2760308e ("counter: Provide alternative counter registration f=
-unctions")
+    cifs: fix hang on cifs_get_next_mid()
+
+    Mount will hang if using SMB1 and DFS.
+
+    This is because every call to get_next_mid() will, unconditionally,
+    mark tcpStatus to CifsNeedReconnect before even establishing the
+    initial connect, because "reconnect" variable was not initialized.
+
+On Tue, Jan 11, 2022 at 5:03 AM Dan Carpenter via samba-technical
+<samba-technical@lists.samba.org> wrote:
+>
+> The "reconnect" was never initialized to false.
+>
+> Fixes: 220c5bc25d87 ("cifs: take cifs_tcp_ses_lock for status checks")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  fs/cifs/smb1ops.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/cifs/smb1ops.c b/fs/cifs/smb1ops.c
+> index 54319a789c92..6b1b048b36ae 100644
+> --- a/fs/cifs/smb1ops.c
+> +++ b/fs/cifs/smb1ops.c
+> @@ -163,7 +163,8 @@ cifs_get_next_mid(struct TCP_Server_Info *server)
+>  {
+>         __u64 mid = 0;
+>         __u16 last_mid, cur_mid;
+> -       bool collision, reconnect;
+> +       bool reconnect = false;
+> +       bool collision;
+>
+>         spin_lock(&GlobalMid_Lock);
+>
+> --
+> 2.20.1
+>
+>
 
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
 
-Thanks
-Uwe
+-- 
+Thanks,
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---kxuycue2yzjofszy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmHd6a8ACgkQwfwUeK3K
-7Al9Iwf/WB14l+fGxcxwVADyOlw6ROsynRA+lFE0XfZnX2xqSR6j49wb9axN9LEv
-NC55VyFV3gYSX3Hqmeeqt+FzwxY4kuvydtB2olZwr8Tx88OKSKN6I+dByp8zSLql
-M42Hw5N+vJCX0eae379VFBzFGO9e5sZHjeUQngy1anRztQYNO2woQhKO+1WintrR
-gLgJwnYCcw5W6xQ+e1jAz92rGadfczIwGoANrU/BDqGtBiIixX8LEwc3Q18wdOEs
-PQ27vixCeuesXui0wdyRjk5OR8ghMFijTpVXI8OtERU36j7wsy7ou3oFf16AK1kL
-CpU/FxpraV8XwIivYLZD6oyS/5sYnA==
-=7eoW
------END PGP SIGNATURE-----
-
---kxuycue2yzjofszy--
+Steve
