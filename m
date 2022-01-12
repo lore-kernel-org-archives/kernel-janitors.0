@@ -2,162 +2,115 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4511C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jan 2022 06:27:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1EAAC433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jan 2022 10:09:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350985AbiALG11 (ORCPT
+        id S1352351AbiALKJT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 Jan 2022 01:27:27 -0500
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:8780 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231773AbiALG10 (ORCPT
+        Wed, 12 Jan 2022 05:09:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44482 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1352311AbiALKJS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 Jan 2022 01:27:26 -0500
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20C3OwSQ005856;
-        Wed, 12 Jan 2022 06:27:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : content-type : in-reply-to :
- mime-version; s=corp-2021-07-09;
- bh=vlaMazm/xII7aHSvcaml4LrZ1ax+JbkUd+FT3oKZlrM=;
- b=grSqls6dNCPACD5mwQ6dvppvqkLeAeGFtiEsQavObi8+OYS2cEG5NiWWGLabfg8lARVP
- yaDQnkrNuyU2Fiee5C9WzabtIUP+DKHRTEfXrWcw4Chc88vNT4BbHg9Nvn+YDWaHAPCV
- 6iVLLUg+SOPtbBa0vAuzm0VQmXuGzhuokMueJlZsFyE5cDU+BqRfzClQCYKPESnIEfeZ
- RryMzHdMW9z+Wxlhmh35g5mtoliGlifTobiLenQiMpYrfcD3YxMyWxkHWf5BvIb2dcJg
- tigX8t8A0VzQWsHW1e5U80QR7r1sQ/83uHbZy/TAuvGbFVPf/jGi4ThvaRp6/i16L/2z Eg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3dgjtgdmc0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Jan 2022 06:27:18 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 20C6G2mx046190;
-        Wed, 12 Jan 2022 06:27:17 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2103.outbound.protection.outlook.com [104.47.70.103])
-        by aserp3020.oracle.com with ESMTP id 3df2e5twmv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Jan 2022 06:27:17 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ciVe471lC6WMTlZPq8rVssPW9KEa+41agrXKDGZZCXtx5GMTpHc07KAVaW0IyMd5/T09RFQjsRSlsfByrsW5Ba0KNKOttl4W9lWYyREkUNH+H5OGXRlhXEq64lY5+QWDWoI3ko9zmZvfs/HgTtBjv2D1AX8v6OrIRmtXL2u9qTXasU8dBDAvJvYySFvbtdqAknTLpxvs0hnZ4E1worcKIrJJ9UdIg36dTRci0CRmGaksb/hjDXv0WwGeC6F49TWXvPRVJw1MwRQJio/firrUTCWxLSAbE9gI39xEHi5UTZ+mOTrkTKbLNn40SKkZRBkSedTArjycA5KhKw3gd4mCdw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vlaMazm/xII7aHSvcaml4LrZ1ax+JbkUd+FT3oKZlrM=;
- b=Vjpqrsq2pbugKELm/FDjpct2kT0BbVcvCb0XLFShlPzjIQq04p11mZUxqd1h7I2rsDDdb700F+lENExLCIzUPxRY5zpWbLkpsTS4wr1Zj5IgUvZymKj2XTE8Df7NgKwMTPiw1tiAKmPxH5o8NqWJ8L8aoLf3vMF1P0gx3c/bb8wsOhzlMg9kTme40Dg8xDmYFgY28TSkwGqHpp82EEy9UvXKA1Ll1+SRJCItO/2D6BzdpT4VsBTyAgAbfgdR9+DrbEQZ5r2QJYXqWyOKNzlCTFQSUbaEh1EtVumeCzqoGV6p44FwnnrzGvEnF1DzGapYRAs+xbqFKsS5MDzeSmTTrQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Wed, 12 Jan 2022 05:09:18 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6B33C061748
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Jan 2022 02:09:17 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id a1-20020a17090a688100b001b3fd52338eso2680537pjd.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Jan 2022 02:09:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vlaMazm/xII7aHSvcaml4LrZ1ax+JbkUd+FT3oKZlrM=;
- b=f0Az1r89SmbJ0ChSqtFZcEC8Q0UnPn90QnJyoHVQyGputkkNjJSqLoZ6zcv3SEW5yNulVZ/IoO952KqCiuKU95U6MTVhT2fSPg2YPM2STd7rqp69gRry8gfTVMxYPqWmKKxrhEdfX+pK7sR/mxS3BwZurXIRcRGuUp8PeLeiXro=
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28) by MWHPR1001MB2400.namprd10.prod.outlook.com
- (2603:10b6:301:33::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4867.11; Wed, 12 Jan
- 2022 06:27:15 +0000
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::b889:5c86:23c0:82b8]) by MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::b889:5c86:23c0:82b8%4]) with mapi id 15.20.4867.012; Wed, 12 Jan 2022
- 06:27:15 +0000
-Date:   Wed, 12 Jan 2022 09:26:57 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>
-Cc:     Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] netfilter: nft_connlimit: fix nft clone() functions
-Message-ID: <20220112062657.GE1951@kadam>
-References: <20220111072115.GF11243@kili>
- <20220111074505.GE1978@kadam>
- <Yd1O9RPFe3xlzztN@salvia>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yd1O9RPFe3xlzztN@salvia>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: JN2P275CA0014.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:3::26)
- To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=weNjN/xzHEHSDO334pDbfVWSs4mNM/PupPi9g1KN1hE=;
+        b=jiCM+hPrEi1OJLok7KC6lTf2sSpMxRXrphLjSEuFeYVPjqJR6MEuMKGdMkRiXmxFE6
+         risuvb9XncZd6rbufWNOjgZ3MpyEJu+C6u9FPQUX+wEfo8z1h7LhxwcXJs5yrgY0ORmk
+         hmzNpIXEP0HdMeZYxolP7W9PBLw7wpM34+VG2NIcPYSwqZjmfSnOvQ9NNSzcQztpxr8Y
+         TH9FGhTefEQ9rosu/FYuujV2qfcfH5hG4j2/E61TeORyjtODPMGM6MdQRm2iScSUUJG6
+         E+Kyj0qJiPi3wZ5l9rizfWxT12xfne7cj4FPqb5I8IiYsIcIDLdyEXrLwCWf7Sh4u1om
+         kLcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=weNjN/xzHEHSDO334pDbfVWSs4mNM/PupPi9g1KN1hE=;
+        b=EdskzB3dNsnJm/V96RKmLIufgh+ct2Gwuwzx1ivqPB45/rV7q0CyoUHbMvUjgkwfrI
+         Vr8eFV+AvJy+NQQSNZWu4MR9Y/SKFpa4n3lak5fjaPl5QTTSa5oi5nAlwFW5EhnncJbQ
+         iq1W/PT7Kib1OVTcpciBLglNUkMdMdlgHtbSohe4CuK1TBn/xZS44TfmYzhfOFHlPSO/
+         UdUwYw5C9uQA1AN/bgwhgDCfDfhk6Sq/pjXtk4mKJH+djFZkNeuBWSvQaoLms+x/juld
+         MsVwwu9/f9Qn1MLoyjXbXy2lTvo6HvxBEOtXuJ1TXjvlp9Wc9F3oVNlsOXNFwZlY0+Zl
+         ov1g==
+X-Gm-Message-State: AOAM533hy4Zdpw1CGVc+BYautzCAG9weBtsXPH5gouycC2qGwDJS7NtR
+        0sUbx3/Zec7DNDE2KftPVZ7GM2aSrUqRW+Ygi5BjKw==
+X-Google-Smtp-Source: ABdhPJwcbK22Ix9fd+ET1Pl7Cn1AzTSRRfd6vqqM6VwNy0agpUuC3dmSCsO7/PAKrF1qM5/LOorWQz4QQmZrUnz07oI=
+X-Received: by 2002:a17:902:b189:b0:149:6c45:24c with SMTP id
+ s9-20020a170902b18900b001496c45024cmr8488385plr.21.1641982157326; Wed, 12 Jan
+ 2022 02:09:17 -0800 (PST)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: bf6bfb9c-102f-438b-3d62-08d9d59492fa
-X-MS-TrafficTypeDiagnostic: MWHPR1001MB2400:EE_
-X-Microsoft-Antispam-PRVS: <MWHPR1001MB2400249C9CF43559C2DD171D8E529@MWHPR1001MB2400.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:758;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: mUl8t0jk/CLY/rsQRyKsdT7Bv1tYva/IzhV/hRP2jHVceOIKjQZo/YjV9tTXlsusDy1OHYxSuFV9VxppTLrLnYQzjTN0CPu7TQvJxB5ez3lP6RgCXEjreLKrbA+jfAqn5DksmpewKq1ijPRm6z006MEyokJ38uNhDlKvw0BqL+50wOm7tM4RvQj38IfE3YxHrF17yqwdS8QBUPRwPdXSN596N2/3azHrVvRROykcXhmbyvEqgJxRK+KS5gcKCH1ujEC2EcG+kvpm/Die0Ty1L+uWIo/2qot/yZuZOeyFzGwT68mG2HrDZjfUTv86efy+sIto+fM5+9lma06aavn+WW3JPuRM3sjEhXMKQL188KzRln1NgX/iCwKrn2WSiWnBjLNc2RURQcs0aPWheZFim9CfvOuOjqwLTzx7KhzmtVHUNgyIDQJNzWuKZD5RWXfJKxOx+HGgKIR/9asJI1zNV8pHT62kSiNoYblSmRelpn6AWVKW5wlGytQ4gLXeTGT6rCN/aFdU6/Jkra4+q0LP/DX9IUyeRg1fTZD/Vv1uxqe5bPfmUdsFes8m58ICJlc4WDmaeA4tInPC5Lr8T2Ri22PUmeyMY2S7yZs3tHXXhtixODViWFvcASoe3+pmYzc/hkw444BcyiaCQ6bQ5xAQ+xuS01ETfHTA8i/POBk97yEnJB8CJLdqlAAX/qhvwA18IrarJ78UfDXXaoMn1sluvg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(7916004)(366004)(6486002)(66476007)(5660300002)(86362001)(44832011)(26005)(66556008)(4744005)(4326008)(6512007)(33716001)(8676002)(316002)(33656002)(8936002)(9686003)(66946007)(54906003)(6506007)(38350700002)(186003)(6916009)(2906002)(38100700002)(83380400001)(1076003)(6666004)(508600001)(52116002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?WCNZJyUfLbMd9SAekYKyEFf2pmjwlMpRrjkNkcVhnKS745XRZedp7/+p8Nnm?=
- =?us-ascii?Q?06Bne9S7FwTeyNIXBaZbXWzZZHLvb0n1RuNnwvof0kPGpE+/sBssVAM4hk6Y?=
- =?us-ascii?Q?hpCNFEHLF31k0UHjA1ixgdsW/MppEaJkxJUNPntefDGDwbqbCc0gP6rxANL6?=
- =?us-ascii?Q?Ni8zcLzYQN5SoxhhAkQtcJjnUypR5tA+rMoXpZ3OFjx4kP3iu4zvmMnEk4Ou?=
- =?us-ascii?Q?altnTWKEeIA11LR7+yltjfbg0qLoagDLFTujbPsoGI1MYbhl/So3mcuwsr3K?=
- =?us-ascii?Q?m5zMqbv/vIRx8yxDpszg/ZG6sl1EQ9e19DbcyPa9BcM8J/mUcS5/aix4TBz1?=
- =?us-ascii?Q?rDWp2TVaTh7UP07TICO1vbQZ9KCxnnon90L38FsNp+uHCFp7859eFPHSOPDT?=
- =?us-ascii?Q?Be7UsbAR41CJHVttGXkxwSxYGAQ0z5jmZzpuUCn7oGRQ7DIoNFl7g9Hq3x+R?=
- =?us-ascii?Q?fi2PPFhjPyj3NMLt9lr8YZBdGD9Gb2VTL7Mu11a1WgRQVBPcOzd58XMV3KIb?=
- =?us-ascii?Q?lqmO2GssnCO4TY0FSr/UCfj1+3Da8+e+Be0z2yw6k3gSJwdoeun4sjMmqJjw?=
- =?us-ascii?Q?cwxLS9i+Z3CMMXT7G0sor1qAvLb4+fw9IHardnplCmACOcGD36/Yueo9HdKc?=
- =?us-ascii?Q?miG9vEMl1asS8RgBlSvsh+odpqUhFS6zePp/aEB+VxItaaP7n8XYi4GP5pYz?=
- =?us-ascii?Q?9xzwYvmWkoGOfJDPXW7dz5nTTFL0kpd2RJQ8/CbZeyr4zRNmpC6rFuXuR0jL?=
- =?us-ascii?Q?rIBWYW8ZBVHVp/XudHIxFKo7szOe6j0tdFWaaNAe0DxSIMrevD/cqouVOemv?=
- =?us-ascii?Q?ZWt3inwMTvpeNX49ikYB1UaY1K86//wh7AAVSnKYglMWnbHJoVdY/sXJYEgB?=
- =?us-ascii?Q?+bzLDBcmJHGbcI83EQhhHHrFUawVMzq6J5MKdJVy6nIIYIrcfofBNgtYX3Nb?=
- =?us-ascii?Q?ubU9Ahfy/1mvceHSRGbKWhHQyJN3pLrIW7zVFfBPD0UVMuxRvV95vRZRWXO1?=
- =?us-ascii?Q?IiMCPrwWwo2kJAbkcmU4zhXvMqyWgn1nGfoNsst2mb4sqjfvJUj2AbiCoMU4?=
- =?us-ascii?Q?1qauMb9t73F5nFsNQHyWim4/deo0N4UW+c3cscvRl3ACCSmdV63bTyOK9UoA?=
- =?us-ascii?Q?1bCoKuw2EUKKiriASZXQr0e5ij5jANgzy1Dzvxh51srMdeK/AxKN94Gf/IND?=
- =?us-ascii?Q?TKhTb8IGSzNcxJ39fgjRD+WbQgqE8htOtGGh84R4TruBDoh8PKjUgm991Z/X?=
- =?us-ascii?Q?moGvS9K5mCxWiiEJaXbC/SBjFs3yoBDFOm4x5hftCv5cWFEiw7+Ski8MlOir?=
- =?us-ascii?Q?DmjpQZnigYEo7EhfbWUufuDsg5xnn9iCuwDY3lR4SiZ8YcJfQX0xHyTb1qWa?=
- =?us-ascii?Q?biim3eP4JZBbdNkH+MoFqQBxspcNd5MOEF5l1yv3GIy089f1xVdJTg9d8Gsc?=
- =?us-ascii?Q?cSDyqrChER5MgYtPJnnQEERXB/i9DnKXVLezHgc2GXYgFCtmNNqqIlLU7wtJ?=
- =?us-ascii?Q?L6ersrZwyv4wwv0DKgDaC8UlohLBrJ2KwDlq9O7E373Qq7nfYLjPE6ndA6RV?=
- =?us-ascii?Q?lu2Dt8XsxXKpkYtEJ6VicZzw1ItClC9qp/1bG2iQPyAToVh8bcggYlrc56Lx?=
- =?us-ascii?Q?QdC5hy2xID3BphSO92k7Nk4PiGGXcCyRplnxV7wuwZRflsWXMYmELblU3pBn?=
- =?us-ascii?Q?KVxRYX0SkBVc6SjwB+KPWheWKQc=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf6bfb9c-102f-438b-3d62-08d9d59492fa
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jan 2022 06:27:15.0041
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Jv2cm5NJvWDbtzhZHElCtV4bPL7cn+vDsH+aUyTMFsjgfhdVetNa6t9HdDoCxpOM0PqPEUxX5o0lJev05m+WJ+ahmXiLgKM9KEGo3EKAhHk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1001MB2400
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10224 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 adultscore=0
- suspectscore=0 mlxlogscore=999 bulkscore=0 phishscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
- definitions=main-2201120039
-X-Proofpoint-GUID: V5g85GqzziI8RVt_BULo1cTX87eTlI8z
-X-Proofpoint-ORIG-GUID: V5g85GqzziI8RVt_BULo1cTX87eTlI8z
+References: <20220109204105.51878-1-colin.i.king@gmail.com> <Ydtoib+OCyaPhrOH@pendragon.ideasonboard.com>
+In-Reply-To: <Ydtoib+OCyaPhrOH@pendragon.ideasonboard.com>
+From:   Robert Foss <robert.foss@linaro.org>
+Date:   Wed, 12 Jan 2022 11:09:06 +0100
+Message-ID: <CAG3jFyu3aB0QnQfa-fu6_Zy_=R=9dnVLmW3RBXLv3bD=gUzQEA@mail.gmail.com>
+Subject: Re: [PATCH] drm/bridge: adv7533: make array clock_div_by_lanes static const
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Colin Ian King <colin.i.king@gmail.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jan 11, 2022 at 10:33:41AM +0100, Pablo Neira Ayuso wrote:
-> On Tue, Jan 11, 2022 at 10:45:05AM +0300, Dan Carpenter wrote:
-> > On Tue, Jan 11, 2022 at 10:21:15AM +0300, Dan Carpenter wrote:
-> > > These NULL checks are reversed so the clone() can never succeed.
-> > > 
-> > > Fixes: 37f319f37d90 ("netfilter: nft_connlimit: move stateful fields out of expression data")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > ---
-> > > v2: fix a couple similar bugs
-> > 
-> > Gar.  Nope.  Missed one still.
-> 
-> Already fixed in net-next
+On Sun, 9 Jan 2022 at 23:58, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Colin,
+>
+> Thank you for the patch.
+>
+> On Sun, Jan 09, 2022 at 08:41:05PM +0000, Colin Ian King wrote:
+> > Don't populate the read-only array clock_div_by_lanes on the stack but
+> > instead it static const. Also makes the object code a little smaller.
+> >
+> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> > ---
+> >  drivers/gpu/drm/bridge/adv7511/adv7533.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/bridge/adv7511/adv7533.c b/drivers/gpu/drm/bridge/adv7511/adv7533.c
+> > index eb7579dec40a..ef6270806d1d 100644
+> > --- a/drivers/gpu/drm/bridge/adv7511/adv7533.c
+> > +++ b/drivers/gpu/drm/bridge/adv7511/adv7533.c
+> > @@ -29,7 +29,7 @@ static void adv7511_dsi_config_timing_gen(struct adv7511 *adv)
+> >       struct mipi_dsi_device *dsi = adv->dsi;
+> >       struct drm_display_mode *mode = &adv->curr_mode;
+> >       unsigned int hsw, hfp, hbp, vsw, vfp, vbp;
+> > -     u8 clock_div_by_lanes[] = { 6, 4, 3 };  /* 2, 3, 4 lanes */
+> > +     static const u8 clock_div_by_lanes[] = { 6, 4, 3 };     /* 2, 3, 4 lanes */
+>
+> It's not mandatory, but I have a tendency to declare static const
+> variable first before all mutable variables.
+>
+> >
+> >       hsw = mode->hsync_end - mode->hsync_start;
+> >       hfp = mode->hsync_start - mode->hdisplay;
+>
+> I wonder if
+>
+>         /* set pixel clock divider mode */
+>         regmap_write(adv->regmap_cec, 0x16, (12 / dsi->lanes) << 3);
+>
+> would be even better, or if it would be too much black magic. Either
+> way,
+>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Maybe I misunderstood.  Are all four functions fixed?
-
-I'm looking at net-next and nft_connlimit_clone() is still broken.
-
-regards,
-dan carpenter
+Applied to drm-misc-next.
