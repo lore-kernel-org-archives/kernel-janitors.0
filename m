@@ -2,64 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF24AC433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jan 2022 23:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A0F5C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jan 2022 23:47:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235504AbiALXe6 (ORCPT
+        id S235607AbiALXro (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 Jan 2022 18:34:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60186 "EHLO
+        Wed, 12 Jan 2022 18:47:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235421AbiALXe5 (ORCPT
+        with ESMTP id S235590AbiALXro (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 Jan 2022 18:34:57 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10DB3C06173F;
-        Wed, 12 Jan 2022 15:34:57 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id k30so6987678wrd.9;
-        Wed, 12 Jan 2022 15:34:56 -0800 (PST)
+        Wed, 12 Jan 2022 18:47:44 -0500
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A59D7C06173F;
+        Wed, 12 Jan 2022 15:47:43 -0800 (PST)
+Received: by mail-wm1-x331.google.com with SMTP id f141-20020a1c1f93000000b003497aec3f86so2596352wmf.3;
+        Wed, 12 Jan 2022 15:47:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=3DEFgBCX906ok4X/wdH2dxwVHpxsjiS6oUvaGjRJjSc=;
-        b=e9IAmlaSjuYmaF9CmGYif8YYLo6UNV3nMGK3jnmOsCdkSHfSTMAEAv2Ra4qJjr0NE/
-         zahrF5w/PN6y+8Eb/frfktMb/xueFL+wxRRN2R/EKKmVeg6VJ7OwPGl7UyEbwGFE+R07
-         7wsLAOO8ebbFowfkS9p9MEzKjBQQ2wz4LoM0PvPAo6zKPj56ueOHHWNWsTQux55UEtUJ
-         bGzUoHAZo99kaLq6IajDlHYr6mpB64hNiLV2xqPeVP6O/BMFBPsJALc60mzqLlgIVnCf
-         j7EKQ/2Ko2XyM9AKKM2D1nhiqucm6fymtLaWuuI7uilmjtqmpqcJEoTg/Bc9j+R03j2M
-         iGsA==
+        bh=aJ+t5KPBHmObAXEucp1lDxWIckLxKNo3ipApmjpHFS8=;
+        b=FoHKvy8jOXROJPA/BKAAFbGezF6+Ysz69F/HtVV1vyaKKwc5zkG9kPCbIkdTIiSqC3
+         InQwrQ/ZuIBngh+RJCnw9SL3dcWgv3QfezIYVF45/N1Zl98/LSbrxrm2/uyR2/ESz+lY
+         F22HBnCGfyh+zAFU5ZqzxpfluKvjhxTavKvyaUVU1EvkYMA2s8bXlXMcuu3R3lYfmA90
+         J+wSBlWEVzoSscSzjbQe6vAfAtXqTE8yEk4LEgZIOhGw7z8gN/9M0wDzk7upFInCgdKm
+         +FiAr75dq+PvaWo0pTxSpy0KM/eTlv/WrZMwtxiTySuKkduqXyVUpme9qs6YpSJSSrNf
+         AvnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=3DEFgBCX906ok4X/wdH2dxwVHpxsjiS6oUvaGjRJjSc=;
-        b=Sx3cTmOLDx6THlFaGiVB7ratcPFosSeMAFTChy0Tss5xcat1+Y7M6238hjc/ylSJby
-         y91FzL7MuPYkT3roY1wsoET4RLEeN26HLvvqyRtAgv4AeGddvac2QD/xuI8M9FurjGkA
-         EEO1natKimoJmWIsLcv/650lfH7tjImIpqCaCn2ASLdsjztxf0JVGOafKQGVm7znebbM
-         2vTavCnZDTVYpGjFKq5IMlP866cZ1zEAQCPu7SrKpn2mpPLuJqonNCch9uEhd12SOp0x
-         eGWYCe3jGVlxUEhaKBzZdNq8pALePKcZJJ5elCd960DnLvAWlESFdE9+x8jtxRpX7QBh
-         jbew==
-X-Gm-Message-State: AOAM530w9K+jxDHNV6cg8Mfl6bgqJhUBPFD9KDHZDIKb/KkSQocMgFXO
-        FhETVrSBk4pJXR5vmLJbM5w=
-X-Google-Smtp-Source: ABdhPJxeMow1qP7JNTiHjKD4H5i8qsaxLomu8bgbsOMr814izohrtas13g4czBsvmKybVqg0ZNUM3A==
-X-Received: by 2002:a5d:5282:: with SMTP id c2mr1705884wrv.580.1642030495750;
-        Wed, 12 Jan 2022 15:34:55 -0800 (PST)
+        bh=aJ+t5KPBHmObAXEucp1lDxWIckLxKNo3ipApmjpHFS8=;
+        b=wqd+XIPKZmLtzQBfijkKL7B+uhJ+jAME50fsH1zVe/f2/LvKVktFByv7xyNV+WmF1h
+         rSAOjNtml3W3fwWC2bO1qkeWnS37grIraFbGyFGq1ubST8tskLpyDki3uV68cialCoha
+         buJqhafxQnchRhjhb7GdngcDSoClFVBLJZHKREykXi1vMSsuaW0b96EsgM3s9oBqJX2h
+         06dhLhRyjvDdZKq6AMmEESMJs7DyEwHxF7rOwWPCeb/9qxrOsdyKnLAp9hj7Z2Q5LRKx
+         M2L81h/z7jFuyWhi1hOu4nS57f7ypKcQ4PTn5fXpJ5Aoj1IYuqDMvy7eyqyd0WOjnoBx
+         QLig==
+X-Gm-Message-State: AOAM533Od9M/lG8lGRalbEnMhrIFq+1rsz8VLgRPEOb2pNa7l9Pd+p4D
+        xQimioNJzAoJ3BQZG8g7q8dP26RTuGISfg==
+X-Google-Smtp-Source: ABdhPJyeOMPQZMVd+rSnSZLcDVDIAEXJEqv6bt22UWvapDnuA+0wOSfrEODnidchAY4Z60MZbcRdzA==
+X-Received: by 2002:a05:600c:4991:: with SMTP id h17mr1533052wmp.14.1642031262336;
+        Wed, 12 Jan 2022 15:47:42 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id x6sm1051652wrt.58.2022.01.12.15.34.55
+        by smtp.gmail.com with ESMTPSA id u3sm1321186wrs.0.2022.01.12.15.47.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jan 2022 15:34:55 -0800 (PST)
+        Wed, 12 Jan 2022 15:47:41 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Nathan Chancellor <nathan@kernel.org>,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev
-Subject: [PATCH] crypto: asymmetric_keys: remove redundant pointer secs
-Date:   Wed, 12 Jan 2022 23:34:54 +0000
-Message-Id: <20220112233454.1207944-1-colin.i.king@gmail.com>
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        linux-ide@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ata: pata_ali: remove redundant return statement
+Date:   Wed, 12 Jan 2022 23:47:41 +0000
+Message-Id: <20220112234741.1232858-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -68,41 +64,29 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointer secs is assigned a value but it is never read. The
-pointer is redundant and can be removed. Cleans up clang scan
-warning:
-
-crypto/asymmetric_keys/verify_pefile.c:113:14: warning: Although
-the value stored to 'secs' is used in the enclosing expression,
-the value is never actually read from 'secs' [deadcode.DeadStores]
+A return statement is unnecessarily complicated, currently value
+in variable mask is bitwise-masked and the variable is being
+updated and then returned. Just updating the mask is all that is
+required as the following statement is a return.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- crypto/asymmetric_keys/verify_pefile.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/ata/pata_ali.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/crypto/asymmetric_keys/verify_pefile.c b/crypto/asymmetric_keys/verify_pefile.c
-index 7553ab18db89..a660e4d68d50 100644
---- a/crypto/asymmetric_keys/verify_pefile.c
-+++ b/crypto/asymmetric_keys/verify_pefile.c
-@@ -28,7 +28,7 @@ static int pefile_parse_binary(const void *pebuf, unsigned int pelen,
- 	const struct pe32plus_opt_hdr *pe64;
- 	const struct data_directory *ddir;
- 	const struct data_dirent *dde;
--	const struct section_header *secs, *sec;
-+	const struct section_header *sec;
- 	size_t cursor, datalen = pelen;
- 
- 	kenter("");
-@@ -110,7 +110,7 @@ static int pefile_parse_binary(const void *pebuf, unsigned int pelen,
- 	ctx->n_sections = pe->sections;
- 	if (ctx->n_sections > (ctx->header_size - cursor) / sizeof(*sec))
- 		return -ELIBBAD;
--	ctx->secs = secs = pebuf + cursor;
-+	ctx->secs = pebuf + cursor;
- 
- 	return 0;
+diff --git a/drivers/ata/pata_ali.c b/drivers/ata/pata_ali.c
+index ab28a6707b94..1b90cda27246 100644
+--- a/drivers/ata/pata_ali.c
++++ b/drivers/ata/pata_ali.c
+@@ -123,7 +123,7 @@ static unsigned long ali_20_filter(struct ata_device *adev, unsigned long mask)
+ 		mask &= ~(ATA_MASK_MWDMA | ATA_MASK_UDMA);
+ 	ata_id_c_string(adev->id, model_num, ATA_ID_PROD, sizeof(model_num));
+ 	if (strstr(model_num, "WDC"))
+-		return mask &= ~ATA_MASK_UDMA;
++		mask &= ~ATA_MASK_UDMA;
+ 	return mask;
  }
+ 
 -- 
 2.33.1
 
