@@ -2,126 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E691C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jan 2022 23:52:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99967C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jan 2022 23:55:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236041AbiALXwN (ORCPT
+        id S236247AbiALXzx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 Jan 2022 18:52:13 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:33252 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236082AbiALXwM (ORCPT
+        Wed, 12 Jan 2022 18:55:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36666 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236243AbiALXzl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 Jan 2022 18:52:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1642031532; x=1673567532;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=/mqEmsBcJQ9azy/1G+hXvIN0/87aNRTsGuVkMDmO0dE=;
-  b=Bb2b8K2o/+QTPcyiMHuKCxfOChvmhNKSbgdD3349jXGHYEoEmBLC1LxQ
-   R5WfZQACG4bh8ovDY14LitzSk/5v2HqIfUp8ru3YUulFuqCzyiDVjii87
-   tf6sq/75youahiX8TTPm7x0nhcU9ZwCdg/sS6xz7VA1Y6XC6Q787B/YsM
-   cI05+TtYqU1Li0Wd4jeA4W8oG9zhsNqz1TEIMVHgUF13pQYeihKi6tojk
-   NPBTIwnOr4K8mf5VUufFui1wDEL97yWMLWf/P58KUq6akrPnq1eDYvzrS
-   f0dcg2+uqxGpmMl3NqDEhAYgq5M0IYm/IHnZEHDt/HwzmAYuq6/XeIIpX
-   g==;
-X-IronPort-AV: E=Sophos;i="5.88,284,1635177600"; 
-   d="scan'208";a="195114698"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 13 Jan 2022 07:52:12 +0800
-IronPort-SDR: zp/UCmmIk5hQKfYRgr18gFFaHYeUg/DIhAv311Nf0pPsPRDqRIjeHmqQoSDKyHztWG8AqUZ8Xc
- W/3qtmXGkDXdMve1Gp6LR/qsT6Yu1/qETfzYKZXw39G2s8kBzUTjeWYzN6g1NoJbANdYT+ci58
- p6uJkllXkwTwJKVlrzIGoE1IS8yFwy+1ayNa61ScGryre0UZ6W8YNWqZt00nWNPLaG3d7fjqmB
- LCdtK5d04YiKmP23vjvIX4zv7IlXD8zTRPjuxLMbwnZNKsp/bZr52REL16tiyy5tfeY0QXv35x
- swToaxBEsCCSsfn8Y8IL3Py5
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2022 15:24:33 -0800
-IronPort-SDR: SoYkRIGZe525l8e2LwSPPXly8Txx+iidnaCrAgPTUir7sBpoVuFBXSV1XFtDD+lfverQOfItyh
- hnd6SDFXyR6HpRNYJ8H5PZhuaummf9PYPoRGWOaqB1sFlHRYDlAXuumLycUShmfXPegd4d+BnX
- 9fqKU+xRZ86vTuyLDNXOUSN+9WHB3N+GlaRS94o92O7TgozeIcS3Emr+gxMFfLnzxitrKjoKBJ
- EKZDakL+Jsc7jJ+Ovi1UC6+N0Iuq3Po9mtmx7wlgNMuCjQZAm8paEIQxs4dSaoj5DKlurwKTHx
- aWM=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2022 15:52:13 -0800
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4JZ49R6Hl4z1VSkf
-        for <kernel-janitors@vger.kernel.org>; Wed, 12 Jan 2022 15:52:11 -0800 (PST)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1642031531; x=1644623532; bh=/mqEmsBcJQ9azy/1G+hXvIN0/87aNRTsGuV
-        kMDmO0dE=; b=bX+45SacwqwDbCXir+ULwzJpqD/MzXCjzrM9pB4OstZvmMIxZ6d
-        bDoK4AyMqWQZ78fAt6U/zbtUZUJoN6fWRR6YFWQRA+xl5CRrwQ4pu8HxQaWc1t6u
-        q1cH8l5Wd8sPuaIR1nOy0nueSQS0O+90Xq2uSy95+eYQGJAGHXsXUwoYqL7N3nEz
-        6yfTXRpyfJl4xOTaTZUhaqwkal8tnvasJKfS5mUEMwwylVsd96rE2JxfLtWbSG+A
-        XpLICwUZIBPN4mqdenKBJTn8tzVSnHKB2kgvrjp6b+oXCR39uNub/yfMDSexc7m8
-        cKMcvpL636p3JqX4Xv6QNEz42SZjEU9QrKQ==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id bGd772ThV5UN for <kernel-janitors@vger.kernel.org>;
-        Wed, 12 Jan 2022 15:52:11 -0800 (PST)
-Received: from [10.225.163.46] (unknown [10.225.163.46])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4JZ49Q5nx5z1VSjC;
-        Wed, 12 Jan 2022 15:52:10 -0800 (PST)
-Message-ID: <2d9b4f08-967e-6040-a954-e7bfa7e4dce1@opensource.wdc.com>
-Date:   Thu, 13 Jan 2022 08:52:09 +0900
+        Wed, 12 Jan 2022 18:55:41 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC22EC061748;
+        Wed, 12 Jan 2022 15:55:35 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id k30so7049237wrd.9;
+        Wed, 12 Jan 2022 15:55:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZrJnoV8ByVp01mrwYzfs3BpkSmN3S2DUUHlhgKf3S44=;
+        b=VVT0NC1971pm7KJrYLjrND6wXdnBy4Fkz/NuATd6EdPB7ByJKyrJ0afI5SGvvRXz2X
+         50ZqJy4nI9D9gJBtTUBrkaRKLvs9lZsw5k29MfgIoIu5wR7NJXXhceHyij6sn3KnQo/v
+         101KK4ILIIy9LNQeBHo7LoBE3TeEu/FT99q1PtGFVefk/+mPyV1iHV6Swr0omhaMw/Wm
+         cT2vOaYP996ZtAtk9NTEToEVNxMldvHLfoatdCFTpGTecvpuAY03QbV2xg5TnDohKGub
+         EdYZ6tp6FS33cpLf7vvHzAxFOW6TTtRuqqce6e3+xxDWJJ5G8V5ZzlaPKylbuHWMkf/I
+         N0Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZrJnoV8ByVp01mrwYzfs3BpkSmN3S2DUUHlhgKf3S44=;
+        b=ba6Bq9ZGYC/qsGyFKlrYqfdgSinsiH3NYCt7Di8lcfhaV+dqAmXks1Qetesi+gN6z2
+         ittuyqGVXtIjrVncHWUOokQPtjlgA1hfv1DpqkJz0oav6q4O4WIdeb2C8aFfXE7AysQY
+         G7xCSfuZOPeF1LGrdHkLSfRnQ39/6XG9GfVOiIMp386sJWWMAgI85aONBKhG+r2FuOT1
+         C4k50mRiSJp+hRrMr25mHTFjFPmcykjDH45SPhzabB8B1lDVHyKll6uFaaypFK1nm2f7
+         oL+0EFfFO4/A/ACX/0B4nQH0REM93jGPy0D+DYiM7Qa2PAcjhgSzoAcRdEsL8QtsAyxl
+         w2Vw==
+X-Gm-Message-State: AOAM5301V+Xn0pvbSki90j5Mb4iR88497o3VGbRN8HHTVosEAP5S+9q+
+        FkTHm3KEDDGpeU/3vVQc+Fg=
+X-Google-Smtp-Source: ABdhPJy8XX5/dFYxJ5mkFUXKlNg3U36B1VmjIA6pRqoybdXmuNWLWzgHhjNNEEC94ODARsOq6v3/Hg==
+X-Received: by 2002:a05:6000:1787:: with SMTP id e7mr1711033wrg.31.1642031734649;
+        Wed, 12 Jan 2022 15:55:34 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id o8sm1337903wry.20.2022.01.12.15.55.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jan 2022 15:55:34 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Chas Williams <3chas3@gmail.com>,
+        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev
+Subject: [PATCH] atm: iphase: remove redundant pointer skb
+Date:   Wed, 12 Jan 2022 23:55:33 +0000
+Message-Id: <20220112235533.1281944-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: [PATCH] ata: pata_ali: remove redundant return statement
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>, linux-ide@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220112234741.1232858-1-colin.i.king@gmail.com>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <20220112234741.1232858-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 1/13/22 08:47, Colin Ian King wrote:
-> A return statement is unnecessarily complicated, currently value
-> in variable mask is bitwise-masked and the variable is being
-> updated and then returned. Just updating the mask is all that is
-> required as the following statement is a return.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/ata/pata_ali.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/ata/pata_ali.c b/drivers/ata/pata_ali.c
-> index ab28a6707b94..1b90cda27246 100644
-> --- a/drivers/ata/pata_ali.c
-> +++ b/drivers/ata/pata_ali.c
-> @@ -123,7 +123,7 @@ static unsigned long ali_20_filter(struct ata_device *adev, unsigned long mask)
->  		mask &= ~(ATA_MASK_MWDMA | ATA_MASK_UDMA);
->  	ata_id_c_string(adev->id, model_num, ATA_ID_PROD, sizeof(model_num));
->  	if (strstr(model_num, "WDC"))
-> -		return mask &= ~ATA_MASK_UDMA;
+The pointer skb is redundant, it is assigned a value that is never
+read and hence can be removed. Cleans up clang scan warning:
 
-Yeah, not to mention that is really ugly as the return should really
-have been:
+drivers/atm/iphase.c:205:18: warning: Although the value stored
+to 'skb' is used in the enclosing expression, the value is never
+actually read from 'skb' [deadcode.DeadStores]
 
-return mask & ~ATA_MASK_UDMA;
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/atm/iphase.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> +		mask &= ~ATA_MASK_UDMA;
->  	return mask;
->  }
->  
-
-Will queue this up.
-
+diff --git a/drivers/atm/iphase.c b/drivers/atm/iphase.c
+index bc8e8d9f176b..3e726ee91fdc 100644
+--- a/drivers/atm/iphase.c
++++ b/drivers/atm/iphase.c
+@@ -178,7 +178,6 @@ static void ia_hack_tcq(IADEV *dev) {
+ 
+ static u16 get_desc (IADEV *dev, struct ia_vcc *iavcc) {
+   u_short 		desc_num, i;
+-  struct sk_buff        *skb;
+   struct ia_vcc         *iavcc_r = NULL; 
+   unsigned long delta;
+   static unsigned long timer = 0;
+@@ -202,8 +201,7 @@ static u16 get_desc (IADEV *dev, struct ia_vcc *iavcc) {
+            else 
+               dev->ffL.tcq_rd -= 2;
+            *(u_short *)(dev->seg_ram + dev->ffL.tcq_rd) = i+1;
+-           if (!(skb = dev->desc_tbl[i].txskb) || 
+-                          !(iavcc_r = dev->desc_tbl[i].iavcc))
++           if (!dev->desc_tbl[i].txskb || !(iavcc_r = dev->desc_tbl[i].iavcc))
+               printk("Fatal err, desc table vcc or skb is NULL\n");
+            else 
+               iavcc_r->vc_desc_cnt--;
 -- 
-Damien Le Moal
-Western Digital Research
+2.33.1
+
