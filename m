@@ -2,107 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A79C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Jan 2022 09:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB625C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Jan 2022 09:24:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233948AbiAMJVW (ORCPT
+        id S234086AbiAMJYW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 13 Jan 2022 04:21:22 -0500
-Received: from mga01.intel.com ([192.55.52.88]:1346 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230397AbiAMJVV (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 13 Jan 2022 04:21:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1642065681; x=1673601681;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=kJXpkD0TqGstWjsq8Z/m8Tr6Aqf885r5vhHL1qEhWr4=;
-  b=KjkzXh5hmBv52PLnwlztZyHpCcmXgCVtjInEJtdJNv/yMpLNr3pCzmkx
-   Yq5tlH26qyWg5LH3h1WgkaLjJNGFsJID7zDufqKP3uCN1uQM++DWGl0WF
-   Ki6jMwgDKKTJxzP2aKn8CabVy5uW13ozKRUWJ3BPWLuh0tNqapNaj8LVO
-   8hedctvlEW1Y303JLw0NHa6BMidjJmzudm7xCAh2Cr4d5mq2FdPRfUdTO
-   xW2+rxvDwVcjNuAJsNiACimO9zg+vClZ4eIAk6SKByWgpD0CLIsnsPMd5
-   Ojh91lhK3OVUavt1THX7qG/82cIq53N702F7ypRcVRQD5Ng6s3/poONb2
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10225"; a="268321358"
-X-IronPort-AV: E=Sophos;i="5.88,284,1635231600"; 
-   d="scan'208";a="268321358"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2022 01:21:21 -0800
-X-IronPort-AV: E=Sophos;i="5.88,284,1635231600"; 
-   d="scan'208";a="529590256"
-Received: from joneil3-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.0.221])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2022 01:21:17 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+        Thu, 13 Jan 2022 04:24:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50400 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231805AbiAMJYU (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Thu, 13 Jan 2022 04:24:20 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8BA3C06173F;
+        Thu, 13 Jan 2022 01:24:19 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id r28so8940062wrc.3;
+        Thu, 13 Jan 2022 01:24:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GCkVJzyBm9DkekZ2srPt2opWmyZGjkyE6LY+JDVYLMc=;
+        b=MsEIc3Ul3dQHDwDf72c+U1apAqZ/UZChA40f5xPrGXMuNIeszzQ2ga75db/EC5nwQZ
+         Bj7kDO6oTSLkU3aesgaL9ILia2lxZysY9XmPUiUFEa8uCtUXRUoFmggNsTxKFX1lBf6N
+         APpNAwShwQesTa6CXS4Z+VfDm6EmUwgiKeiXHHkyE1Aw7byNdHxIbTEBLsQdEnfmQzs9
+         8Z8FYMxNwg0BciquMWt5UO8ev8l9bFqKUHTqGNuuuAWDZA7x+XTQ8W/VaAFuA1Or0i3L
+         V0v9YzUqttEkBvQMwNPTC4DLInyXdV+w8mF/EWLxZip7N8xUxvroftV6POWJi6W6DXbb
+         tflQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GCkVJzyBm9DkekZ2srPt2opWmyZGjkyE6LY+JDVYLMc=;
+        b=Y15xZd87oIj9TT5I1Hkvb4xlOOqBxbj2imZxLyXmdeA+yLBgUzVz14IrVhzkrA+SO2
+         JOO/IgTgx7pasTOH1QnHqdGUJNgttQymQ4hrKKm51QWKT6Nv09xzqGHWehXqwNytVOn/
+         yxvrATUnXLLBQn4lgj4num0d342TJRV2rvcmqJUGpUQ/fwcyj+CsGl+qrZP9cXwor0Bl
+         jNVe8ufCajiE0ZkZrwtLX8VlLjhZN/2h/rBITVjzSa+Q+s+IKQGswvZtXXdbwSBMGYGf
+         7cRtf5VX2o/PBSX55XVgSLgH6cksM/ZBg/Uxp8KwezVwqSLerkM+ZquMMEHw4Os4UtDg
+         lDKQ==
+X-Gm-Message-State: AOAM5316bv98PLVxWpmvwRRyKCNmqvpidQC/1r5NKt7uYsBl5TUQYFcn
+        tCDDLVfZRRm2kACPDKtRaYDSjT7wlB0EfOHE
+X-Google-Smtp-Source: ABdhPJyS3TMFMdJLERgMpQrmKP5ReJTdSxtyerLoyjHay7GNS9ARuJkSbPijRSZNowPJ4AcmuFrs2A==
+X-Received: by 2002:adf:d23b:: with SMTP id k27mr3368042wrh.517.1642065858592;
+        Thu, 13 Jan 2022 01:24:18 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id r13sm1938459wrn.101.2022.01.13.01.24.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jan 2022 01:24:18 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Luis Chamberlain <mcgrof@kernel.org>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][RESEND] i915: make array flex_regs static const
-In-Reply-To: <20220112223435.949071-1-colin.i.king@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20220112223435.949071-1-colin.i.king@gmail.com>
-Date:   Thu, 13 Jan 2022 11:21:15 +0200
-Message-ID: <87h7a86lf8.fsf@intel.com>
+Subject: [PATCH][next] kernel: Fix spelling mistake "compresser" -> "compressor"
+Date:   Thu, 13 Jan 2022 09:24:17 +0000
+Message-Id: <20220113092417.1354537-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 12 Jan 2022, Colin Ian King <colin.i.king@gmail.com> wrote:
-> Don't populate the read-only array flex_regs on the stack but
-> instead it static const. Also makes the object code a little smaller.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
->
-> ---
->
-> RESEND: Use correct e-mail address for sign-off and From: in e-mail.
+There is a spelling mistake in a pr_err error message. Fix it.
 
-There are a number of things at play here:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ kernel/module_decompress.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- Our tooling checks for certain things, such as author/signed-off-by
-  match, after applying the patch.
-
-- You have an entry in the kernel git .mailmap.
-
-- The git log.mailmap config default has changed from false to true.
-
-We apply the patch, and, with the default options, git show will display
-a different author than the signed-off-by.
-
-We should use --no-use-mailmap when examining a commit to ensure the
-commit is internally consistent, regardless of .mailmap.
-
-
-BR,
-Jani.
-
-
->
-> ---
->  drivers/gpu/drm/i915/i915_perf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/i915_perf.c b/drivers/gpu/drm/i915/i915_perf.c
-> index e27f3b7cf094..df698960fdc0 100644
-> --- a/drivers/gpu/drm/i915/i915_perf.c
-> +++ b/drivers/gpu/drm/i915/i915_perf.c
-> @@ -2114,7 +2114,7 @@ gen8_update_reg_state_unlocked(const struct intel_context *ce,
->  	u32 ctx_oactxctrl = stream->perf->ctx_oactxctrl_offset;
->  	u32 ctx_flexeu0 = stream->perf->ctx_flexeu0_offset;
->  	/* The MMIO offsets for Flex EU registers aren't contiguous */
-> -	i915_reg_t flex_regs[] = {
-> +	static const i915_reg_t flex_regs[] = {
->  		EU_PERF_CNTL0,
->  		EU_PERF_CNTL1,
->  		EU_PERF_CNTL2,
-
+diff --git a/kernel/module_decompress.c b/kernel/module_decompress.c
+index aeefd95a3337..b01c69c2ff99 100644
+--- a/kernel/module_decompress.c
++++ b/kernel/module_decompress.c
+@@ -106,7 +106,7 @@ static ssize_t module_gzip_decompress(struct load_info *info,
+ 
+ 	rc = zlib_inflateInit2(&s, -MAX_WBITS);
+ 	if (rc != Z_OK) {
+-		pr_err("failed to initialize decompresser: %d\n", rc);
++		pr_err("failed to initialize decompressor: %d\n", rc);
+ 		retval = -EINVAL;
+ 		goto out;
+ 	}
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+2.33.1
+
