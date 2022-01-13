@@ -2,61 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99967C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 12 Jan 2022 23:55:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6092C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 13 Jan 2022 00:05:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236247AbiALXzx (ORCPT
+        id S236446AbiAMAFs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 12 Jan 2022 18:55:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36666 "EHLO
+        Wed, 12 Jan 2022 19:05:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236243AbiALXzl (ORCPT
+        with ESMTP id S236356AbiAMAFr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 12 Jan 2022 18:55:41 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC22EC061748;
-        Wed, 12 Jan 2022 15:55:35 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id k30so7049237wrd.9;
-        Wed, 12 Jan 2022 15:55:35 -0800 (PST)
+        Wed, 12 Jan 2022 19:05:47 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 818EDC06173F;
+        Wed, 12 Jan 2022 16:05:47 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id k30so7080877wrd.9;
+        Wed, 12 Jan 2022 16:05:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=ZrJnoV8ByVp01mrwYzfs3BpkSmN3S2DUUHlhgKf3S44=;
-        b=VVT0NC1971pm7KJrYLjrND6wXdnBy4Fkz/NuATd6EdPB7ByJKyrJ0afI5SGvvRXz2X
-         50ZqJy4nI9D9gJBtTUBrkaRKLvs9lZsw5k29MfgIoIu5wR7NJXXhceHyij6sn3KnQo/v
-         101KK4ILIIy9LNQeBHo7LoBE3TeEu/FT99q1PtGFVefk/+mPyV1iHV6Swr0omhaMw/Wm
-         cT2vOaYP996ZtAtk9NTEToEVNxMldvHLfoatdCFTpGTecvpuAY03QbV2xg5TnDohKGub
-         EdYZ6tp6FS33cpLf7vvHzAxFOW6TTtRuqqce6e3+xxDWJJ5G8V5ZzlaPKylbuHWMkf/I
-         N0Dg==
+        bh=B96Zf7JbGiWB8a0l9E4LUmhTdYONZVGjIpO5gBzcQpU=;
+        b=nUWTJxjyqxw239n79lbq8UFam5zo7paOS3rJ/H9NI5WUpZefKsbDGUhKk57qXhppfS
+         xr4A6cULiA7qoedsyMMi2l4KQyZjMfNdzpk7393cxz0J3ioIyLuuLNs9FDhFUTnpl0f5
+         QI01BHdZBB8UyGS2+toen3wH0F2RKXI87F4CkycCJksHjOrgwhu/MQfUMZ1/IaXh9+JQ
+         Icd6uhfCb7V5k+eVsPFgq7LF52QRRSKDwwg8Hj0mYGzBiKBRWrW89k82JmlUJVTYx2aG
+         WCrkmmdiysKfChK2MV9ydbaxCf6ujZoXRT5Eyo+7GerKEG6fN5RyCUqYIyR5WLhbKyXV
+         6SWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=ZrJnoV8ByVp01mrwYzfs3BpkSmN3S2DUUHlhgKf3S44=;
-        b=ba6Bq9ZGYC/qsGyFKlrYqfdgSinsiH3NYCt7Di8lcfhaV+dqAmXks1Qetesi+gN6z2
-         ittuyqGVXtIjrVncHWUOokQPtjlgA1hfv1DpqkJz0oav6q4O4WIdeb2C8aFfXE7AysQY
-         G7xCSfuZOPeF1LGrdHkLSfRnQ39/6XG9GfVOiIMp386sJWWMAgI85aONBKhG+r2FuOT1
-         C4k50mRiSJp+hRrMr25mHTFjFPmcykjDH45SPhzabB8B1lDVHyKll6uFaaypFK1nm2f7
-         oL+0EFfFO4/A/ACX/0B4nQH0REM93jGPy0D+DYiM7Qa2PAcjhgSzoAcRdEsL8QtsAyxl
-         w2Vw==
-X-Gm-Message-State: AOAM5301V+Xn0pvbSki90j5Mb4iR88497o3VGbRN8HHTVosEAP5S+9q+
-        FkTHm3KEDDGpeU/3vVQc+Fg=
-X-Google-Smtp-Source: ABdhPJy8XX5/dFYxJ5mkFUXKlNg3U36B1VmjIA6pRqoybdXmuNWLWzgHhjNNEEC94ODARsOq6v3/Hg==
-X-Received: by 2002:a05:6000:1787:: with SMTP id e7mr1711033wrg.31.1642031734649;
-        Wed, 12 Jan 2022 15:55:34 -0800 (PST)
+        bh=B96Zf7JbGiWB8a0l9E4LUmhTdYONZVGjIpO5gBzcQpU=;
+        b=e89h8bM45AraQr1W66is+qNm/4K81UcbPgiS+N/afAvwoEFHCNf6eyO1T55ETVG5Ge
+         GTAxW8tSksQtCxBXK9zxWiMoacVjxXYbaX8JYGf13Z+5J8lzfMjVv41UGOPauxCf1Fpp
+         V1B9uGdD0RE9ryCq6Hu3/VxCTEuvg4/0UAZZOmbLNJt3c6aFyb3AgaBmerTaJwLtggEh
+         +UgnRXAp2biOD1YrquIXg8s+PkYGJLxBSlGqiwSjBkVgOw/+raTM60z3ZPvagIUibDly
+         3lLxoOtlUeBlHgRclI572u2Ilyjy5iQ1pdbxDdFualtanl+/0bqNoudTbVjlwI4UY7Yp
+         VYcQ==
+X-Gm-Message-State: AOAM531dfqu/B32ghPWVVbH2m8LgCfIf96n7t4Z7b+5SiktXpGwkhP3f
+        RYYf2lTJLNKjCey5VeZP9EI=
+X-Google-Smtp-Source: ABdhPJwpRmxNptr0kCGBzfBMdeVGo5gGW6lImhDWjH6nq9cG/U50U1+eHHcQHwb59H/2QHvslDyRfw==
+X-Received: by 2002:a5d:6d8c:: with SMTP id l12mr1713767wrs.365.1642032346183;
+        Wed, 12 Jan 2022 16:05:46 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id o8sm1337903wry.20.2022.01.12.15.55.34
+        by smtp.gmail.com with ESMTPSA id a3sm1255693wri.89.2022.01.12.16.05.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jan 2022 15:55:34 -0800 (PST)
+        Wed, 12 Jan 2022 16:05:45 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Chas Williams <3chas3@gmail.com>,
-        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org
+To:     Justin Sanders <justin@coraid.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         llvm@lists.linux.dev
-Subject: [PATCH] atm: iphase: remove redundant pointer skb
-Date:   Wed, 12 Jan 2022 23:55:33 +0000
-Message-Id: <20220112235533.1281944-1-colin.i.king@gmail.com>
+Subject: [PATCH] aoe: remove redundant assignment on variable n
+Date:   Thu, 13 Jan 2022 00:05:45 +0000
+Message-Id: <20220113000545.1307091-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,40 +65,32 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointer skb is redundant, it is assigned a value that is never
-read and hence can be removed. Cleans up clang scan warning:
+The variable n is being bit-wise or'd with a value and reassigned
+before being returned. The update of n is redundant, replace
+the |= operator with | instead. Cleans up clang scan warning:
 
-drivers/atm/iphase.c:205:18: warning: Although the value stored
-to 'skb' is used in the enclosing expression, the value is never
-actually read from 'skb' [deadcode.DeadStores]
+drivers/block/aoe/aoecmd.c:125:9: warning: Although the value stored
+to 'n' is used in the enclosing expression, the value is never
+actually read from 'n' [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/atm/iphase.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/block/aoe/aoecmd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/atm/iphase.c b/drivers/atm/iphase.c
-index bc8e8d9f176b..3e726ee91fdc 100644
---- a/drivers/atm/iphase.c
-+++ b/drivers/atm/iphase.c
-@@ -178,7 +178,6 @@ static void ia_hack_tcq(IADEV *dev) {
+diff --git a/drivers/block/aoe/aoecmd.c b/drivers/block/aoe/aoecmd.c
+index 588889bea7c3..6af111f568e4 100644
+--- a/drivers/block/aoe/aoecmd.c
++++ b/drivers/block/aoe/aoecmd.c
+@@ -122,7 +122,7 @@ newtag(struct aoedev *d)
+ 	register ulong n;
  
- static u16 get_desc (IADEV *dev, struct ia_vcc *iavcc) {
-   u_short 		desc_num, i;
--  struct sk_buff        *skb;
-   struct ia_vcc         *iavcc_r = NULL; 
-   unsigned long delta;
-   static unsigned long timer = 0;
-@@ -202,8 +201,7 @@ static u16 get_desc (IADEV *dev, struct ia_vcc *iavcc) {
-            else 
-               dev->ffL.tcq_rd -= 2;
-            *(u_short *)(dev->seg_ram + dev->ffL.tcq_rd) = i+1;
--           if (!(skb = dev->desc_tbl[i].txskb) || 
--                          !(iavcc_r = dev->desc_tbl[i].iavcc))
-+           if (!dev->desc_tbl[i].txskb || !(iavcc_r = dev->desc_tbl[i].iavcc))
-               printk("Fatal err, desc table vcc or skb is NULL\n");
-            else 
-               iavcc_r->vc_desc_cnt--;
+ 	n = jiffies & 0xffff;
+-	return n |= (++d->lasttag & 0x7fff) << 16;
++	return n | (++d->lasttag & 0x7fff) << 16;
+ }
+ 
+ static u32
 -- 
 2.33.1
 
