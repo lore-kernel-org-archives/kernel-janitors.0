@@ -2,86 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB73CC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Jan 2022 10:01:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3999CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 14 Jan 2022 13:15:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237477AbiANKBc (ORCPT
+        id S241177AbiANNPr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 14 Jan 2022 05:01:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45558 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234126AbiANKBa (ORCPT
+        Fri, 14 Jan 2022 08:15:47 -0500
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:39815 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231283AbiANNPr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 14 Jan 2022 05:01:30 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8102C061574
-        for <kernel-janitors@vger.kernel.org>; Fri, 14 Jan 2022 02:01:29 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id bg19-20020a05600c3c9300b0034565e837b6so3259657wmb.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 14 Jan 2022 02:01:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DcACr8Bd+mNZvnu1O74OohObZ0GddAZiXwcQTYhmUQY=;
-        b=p8xafJDL5i8uvPfKnstNQWZ9evJZVA7UxSY4oqdA6G4x/Evelpj/oHt+NLas34INpx
-         XNXJJghAC3Vl1rb1MOO1xHFMklmAD76kv8xB3JLIQ01DyzbUSuyOg5x90oagYmdO+RPw
-         uGbhqCfr/xmk99FjGbLezVxStHqEvNUKdFz8qLPTaoEIGjtb6s2Wedvb/R/8zH/HwTuS
-         c+iwgqBFr6jngXx3CFlT1Ppkn7TV8asB6XXywFA6pGr0O2LgydiTjBvGG8GjHfdlLB7Y
-         vXJPbRmVJt3PQxTw9sE0wjBvgIowondxtBER7pqsT0TfpRRneCv4LdRoPJganioaGSZs
-         6Fyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DcACr8Bd+mNZvnu1O74OohObZ0GddAZiXwcQTYhmUQY=;
-        b=uJLWZ+rkagLLRhUyP0ZY5TyiOagkFt5B3Pnnjz0xThrPgFwVOJCGNduyOME7VLvfh0
-         kE0X2Jgy6FiKz8s2tbEuTfk7jG7fbrUnuXDhvOtqKUonS+g83a2nZdMo68RhjHwZx7Os
-         vPdbSxxTDUhvZfYUQb1f1D0imn8SaWL5i2kSs68jja+vdOawEzuFBoNF3JqI2FQ9/PGU
-         h2FTmIy+3Q5MiQl6KCsaRB4nFsdyCtKPPubPq//IAmDZeMWvtc/DJMZWHtHrYLzthl0E
-         L53LTXl04OIKxsyKb0DjpTVVxuURRCINPdDSOV3BssfrcIZ30tXBzyqij/OauW/OmSMh
-         kz0w==
-X-Gm-Message-State: AOAM533kc9inCtSSk8hkFJPMA8sZRELmNXCH7pMbAw2DK0VTZ+yr5g4N
-        UF4AHHGRDUG7cse+jCC26h4KZj2TBP4dpD63QvrBz1TYjcs=
-X-Google-Smtp-Source: ABdhPJwe5ihRS+8JPaUHiM2gWpjslK40TLTyJ5Wm2IxkKjXyp5F5glRNDdvkaM6MX+lKXVyxeolziQq6bwiytBCmeLk=
-X-Received: by 2002:a05:600c:4f49:: with SMTP id m9mr14636872wmq.8.1642154488280;
- Fri, 14 Jan 2022 02:01:28 -0800 (PST)
+        Fri, 14 Jan 2022 08:15:47 -0500
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id A14385C00F7;
+        Fri, 14 Jan 2022 08:15:46 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Fri, 14 Jan 2022 08:15:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-type:content-transfer-encoding; s=fm1; bh=
+        s5NFdGeraYGYTX3ECjtHqze22e4ZVJLmziZZwnrxWWM=; b=GGN2/Gvz4mBeyZjM
+        vjwimBFMpu4PtmKqqjU+o3wIQaWlHGWWuvDLjKXBvTngtWyzUJPHbbTpdGfaXCCy
+        4gnE48eqkq+phV7VfGYB/A57ZFojatRPmPKE9Fh1PRFzbQGLGcrtkDmlvh03KJuI
+        gDHKnIdtjFTALtC66IyriL0DLpuBFVQL5ICeHrHdeRrm8PRvj/r8GPzfzsu5w7/u
+        Cp1kTZE6CgQqamNyBZY44ZLnDtCLtziNtsHfJC/t02hYt3gY76todU68iZvmR2SV
+        mqi1YAkjN06FPdXW5iSlCSFizxxgH0KwBYrFpz27AChN4ja+50ID66lq04oxI0rZ
+        CRWg1g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=s5NFdGeraYGYTX3ECjtHqze22e4ZVJLmziZZwnrxW
+        WM=; b=HXb+LuFjDml9IjOqxx2b0V0UO6VA23X9lx3HUjXQLZbnYjHEwC8IQMeHk
+        9hyyc74cC9t0p/s7jGxraxrkD+mi6IwR2rM22RNz6eN+WjyOOxwI/RORzlg85ISs
+        YKFLqh8FdRu3S8jFTzlMpIgC8Pkf/1KqIt2BLMLY6uZ2JUXbpEBRj3T5dWu6PwBk
+        T1IjuAaOAalCEa3NfUUCIhZi4QuaWskes+V+r3MKyUoFfSiuek3hr32MueekS98W
+        Zlr0d1FAZvk+v9Us1HZ48Z0VJXM6kSABN4LCm503clcnjXHbEpve7utvjmW1Z1CD
+        Jfizu05ABQYm5fl3TyOc2qUz6hHYw==
+X-ME-Sender: <xms:gnfhYR7NwbZ0CTHeNs2lZUNrp_5gL0kPTcZpXHPtsQKNLkM-q7J5nw>
+    <xme:gnfhYe5la1LUv18QPQeCxt5IWEmwi4f-GLhi4f5aZ1r-DLZBSRH_ZrDTBlu8JEBA3
+    Hsyw-lGBIVBTsg2WaM>
+X-ME-Received: <xmr:gnfhYYeSFugeAdIdFy_AmTOm-7AwKCLjuJELyRVhT8cgiH8kJ1WAy8t_T_faQB5VOQQbU_HND91vvy7uoncsBLLarEXKt2MYY_OqJ5g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrtdehgdehudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvffufffkofgjfhggtgfgsehtkeertdertdejnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepjeeugfegkeffgfeuvedtvddufffhjeffjeejvddvudduteehhfefhfefgeei
+    keeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:gnfhYaIZmYQXwzmixXpeGkZBD-37ZscbQHEK4VlLwhpjlXpQgcpbfA>
+    <xmx:gnfhYVI601t0OKv85yuKIGioKXjDl9X3J6uVCg4ajGM0dyLXZlBpPg>
+    <xmx:gnfhYTwd1D_ETMsl190ge5AGlkkALdaH_i6DRkCXvsn6Yqwq_WgEZg>
+    <xmx:gnfhYc8qu1dYTSLag23s-JnP_eDpLuroYvbHQoZy-qvjRW2mXkaSoQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 14 Jan 2022 08:15:45 -0500 (EST)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Emma Anholt <emma@anholt.net>, Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Colin Ian King <colin.i.king@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
+Cc:     Maxime Ripard <maxime@cerno.tech>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: (subset) [PATCH] drm/vc4: remove redundant assignment of variable size
+Date:   Fri, 14 Jan 2022 14:15:43 +0100
+Message-Id: <164216613944.47574.10826927845700954933.b4-ty@cerno.tech>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220112232036.1182846-1-colin.i.king@gmail.com>
+References: <20220112232036.1182846-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-References: <0e30e1f1bde74bc95085093fb0289007d510a68c.1640529121.git.christophe.jaillet@wanadoo.fr>
- <CAFA6WYOZtMW7bq98JXm8AqgajaYmythiDQ53k-zgew6zE63YCg@mail.gmail.com>
-In-Reply-To: <CAFA6WYOZtMW7bq98JXm8AqgajaYmythiDQ53k-zgew6zE63YCg@mail.gmail.com>
-From:   Jens Wiklander <jens.wiklander@linaro.org>
-Date:   Fri, 14 Jan 2022 11:01:17 +0100
-Message-ID: <CAHUa44Ghzbtj_YUQxAjq7cKmmJW8hRrYvq+9UwZn9CHkHO8_PQ@mail.gmail.com>
-Subject: Re: [PATCH] optee: Use bitmap_free() to free bitmap
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Dec 27, 2021 at 6:36 AM Sumit Garg <sumit.garg@linaro.org> wrote:
->
-> On Sun, 26 Dec 2021 at 20:02, Christophe JAILLET
-> <christophe.jaillet@wanadoo.fr> wrote:
-> >
-> > kfree() and bitmap_free() are the same. But using the latter is more
-> > consistent when freeing memory allocated with bitmap_zalloc().
-> >
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> >  drivers/tee/optee/notif.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
->
-> Looks reasonable to me.
->
-> Reviewed-by: Sumit Garg <sumit.garg@linaro.org>
->
+On Wed, 12 Jan 2022 23:20:36 +0000, Colin Ian King wrote:
+> The variable 'size' is being assigned a value that is never read,
+> the assignment is redundant and can be removed. Cleans up clang-scan
+> warning:
+> 
+> drivers/gpu/drm/vc4/vc4_bo.c:358:2: warning: Value stored to 'size'
+> is never read [deadcode.DeadStores]
+>         size = roundup(size, PAGE_SIZE);
+> 
+> [...]
 
-Looks good, picking up this.
+Applied to drm/drm-misc (drm-misc-next).
 
-Thanks,
-Jens
+Thanks!
+Maxime
