@@ -2,34 +2,35 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F29D7C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Jan 2022 15:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC551C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Jan 2022 15:24:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231894AbiAOPUp (ORCPT
+        id S231915AbiAOPY5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 15 Jan 2022 10:20:45 -0500
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:63621 "EHLO
+        Sat, 15 Jan 2022 10:24:57 -0500
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:58033 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231896AbiAOPUp (ORCPT
+        with ESMTP id S231697AbiAOPY5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 15 Jan 2022 10:20:45 -0500
+        Sat, 15 Jan 2022 10:24:57 -0500
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id 8krBn6lOIrdkG8krCnQwSd; Sat, 15 Jan 2022 16:20:43 +0100
+        id 8kvHn6mdxrdkG8kvHnQwnR; Sat, 15 Jan 2022 16:24:55 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 15 Jan 2022 16:20:43 +0100
+X-ME-Date: Sat, 15 Jan 2022 16:24:55 +0100
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     nirmal.patel@linux.intel.com, jonathan.derrick@linux.dev,
-        lorenzo.pieralisi@arm.com, robh@kernel.org, kw@linux.com,
-        bhelgaas@google.com
+To:     Nehal Shah <nehal-bakulchandra.shah@amd.com>,
+        Basavaraj Natikar <basavaraj.natikar@amd.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-pci@vger.kernel.org
-Subject: [PATCH] PCI: vmd: Remove useless DMA-32 fallback configuration
-Date:   Sat, 15 Jan 2022 16:20:29 +0100
-Message-Id: <f10bb9f76b275a74b4efd7661bf9499a8b72eaa2.1642259917.git.christophe.jaillet@wanadoo.fr>
+        linux-input@vger.kernel.org
+Subject: [PATCH] HID: amd_sfh: Remove useless DMA-32 fallback configuration
+Date:   Sat, 15 Jan 2022 16:24:50 +0100
+Message-Id: <a1ce59490a9a32f638a41fb80ff4b4598c33acec.1642260273.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -47,23 +48,27 @@ Simplify code and remove some dead code accordingly.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/pci/controller/vmd.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/hid/amd-sfh-hid/amd_sfh_pcie.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
-index cc166c683638..dead82b23a98 100644
---- a/drivers/pci/controller/vmd.c
-+++ b/drivers/pci/controller/vmd.c
-@@ -914,8 +914,7 @@ static int vmd_probe(struct pci_dev *dev, const struct pci_device_id *id)
+diff --git a/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c b/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
+index 2503be0253d3..673536d1d9ba 100644
+--- a/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
++++ b/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
+@@ -248,11 +248,8 @@ static int amd_mp2_pci_probe(struct pci_dev *pdev, const struct pci_device_id *i
+ 	pci_set_master(pdev);
+ 	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+ 	if (rc) {
+-		rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+-		if (rc) {
+-			dev_err(&pdev->dev, "failed to set DMA mask\n");
+-			return rc;
+-		}
++		dev_err(&pdev->dev, "failed to set DMA mask\n");
++		return rc;
  	}
  
- 	pci_set_master(dev);
--	if (dma_set_mask_and_coherent(&dev->dev, DMA_BIT_MASK(64)) &&
--	    dma_set_mask_and_coherent(&dev->dev, DMA_BIT_MASK(32))) {
-+	if (dma_set_mask_and_coherent(&dev->dev, DMA_BIT_MASK(64))) {
- 		err = -ENODEV;
- 		goto out_release_instance;
- 	}
+ 	privdata->cl_data = devm_kzalloc(&pdev->dev, sizeof(struct amdtp_cl_data), GFP_KERNEL);
 -- 
 2.32.0
 
