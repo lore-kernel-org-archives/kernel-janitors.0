@@ -2,33 +2,34 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 219D5C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Jan 2022 08:06:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C576C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Jan 2022 08:53:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232654AbiAOIGi (ORCPT
+        id S232697AbiAOIxL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 15 Jan 2022 03:06:38 -0500
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:54918 "EHLO
+        Sat, 15 Jan 2022 03:53:11 -0500
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:60533 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229816AbiAOIGh (ORCPT
+        with ESMTP id S232640AbiAOIxK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 15 Jan 2022 03:06:37 -0500
+        Sat, 15 Jan 2022 03:53:10 -0500
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id 8e55niL4YhTNk8e55n3jsu; Sat, 15 Jan 2022 09:06:36 +0100
+        id 8eo7nia4uhTNk8eo7n3nrl; Sat, 15 Jan 2022 09:53:08 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 15 Jan 2022 09:06:36 +0100
+X-ME-Date: Sat, 15 Jan 2022 09:53:08 +0100
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Adam Radford <aradford@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-usb@vger.kernel.org
-Subject: [PATCH] usb: host: xhci-plat: Remove useless DMA-32 fallback configuration
-Date:   Sat, 15 Jan 2022 09:06:31 +0100
-Message-Id: <178f859197bebb385609a7c9458fb972ed312e5d.1642233968.git.christophe.jaillet@wanadoo.fr>
+        linux-scsi@vger.kernel.org
+Subject: [PATCH] scsi: 3w-sas: Remove useless DMA-32 fallback configuration
+Date:   Sat, 15 Jan 2022 09:53:03 +0100
+Message-Id: <dbbe8671ca760972d80f8d35f3170b4609bee368.1642236763.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -46,44 +47,31 @@ Simplify code and remove some dead code accordingly.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-The "if (ret)" is also useless because
-dma_coerce_mask_and_coherent(..., 64) + dma_set_mask_and_coherent(..., 64)
-can't fail according to [1].
-However, I've left it as-is because it is a common pattern.
-It could be replaced by a comment explaining why, but looks like an
-overkill to me.
----
- drivers/usb/host/xhci-plat.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
+ drivers/scsi/3w-sas.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index c1edcc9b13ce..93b321682b35 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -226,20 +226,13 @@ static int xhci_plat_probe(struct platform_device *pdev)
- 	if (!sysdev)
- 		sysdev = &pdev->dev;
+diff --git a/drivers/scsi/3w-sas.c b/drivers/scsi/3w-sas.c
+index b9482da79512..3ebe66151dcb 100644
+--- a/drivers/scsi/3w-sas.c
++++ b/drivers/scsi/3w-sas.c
+@@ -1567,8 +1567,6 @@ static int twl_probe(struct pci_dev *pdev, const struct pci_device_id *dev_id)
+ 	pci_try_set_mwi(pdev);
  
--	/* Try to set 64-bit DMA first */
- 	if (WARN_ON(!sysdev->dma_mask))
- 		/* Platform did not initialize dma_mask */
--		ret = dma_coerce_mask_and_coherent(sysdev,
--						   DMA_BIT_MASK(64));
-+		ret = dma_coerce_mask_and_coherent(sysdev, DMA_BIT_MASK(64));
- 	else
- 		ret = dma_set_mask_and_coherent(sysdev, DMA_BIT_MASK(64));
--
--	/* If seting 64-bit DMA mask fails, fall back to 32-bit DMA mask */
--	if (ret) {
--		ret = dma_set_mask_and_coherent(sysdev, DMA_BIT_MASK(32));
--		if (ret)
--			return ret;
--	}
-+	if (ret)
-+		return ret;
+ 	retval = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+-	if (retval)
+-		retval = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+ 	if (retval) {
+ 		TW_PRINTK(host, TW_DRIVER, 0x18, "Failed to set dma mask");
+ 		retval = -ENODEV;
+@@ -1786,8 +1784,6 @@ static int __maybe_unused twl_resume(struct device *dev)
+ 	pci_try_set_mwi(pdev);
  
- 	pm_runtime_set_active(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
+ 	retval = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+-	if (retval)
+-		retval = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+ 	if (retval) {
+ 		TW_PRINTK(host, TW_DRIVER, 0x25, "Failed to set dma mask during resume");
+ 		retval = -ENODEV;
 -- 
 2.32.0
 
