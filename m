@@ -2,33 +2,32 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E368C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Jan 2022 07:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43579C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Jan 2022 07:45:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229863AbiAOHkw (ORCPT
+        id S232629AbiAOHpT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 15 Jan 2022 02:40:52 -0500
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:53961 "EHLO
+        Sat, 15 Jan 2022 02:45:19 -0500
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:53432 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230146AbiAOHkw (ORCPT
+        with ESMTP id S230077AbiAOHpT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 15 Jan 2022 02:40:52 -0500
+        Sat, 15 Jan 2022 02:45:19 -0500
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id 8dgAniCymhTNk8dgAn3hnT; Sat, 15 Jan 2022 08:40:51 +0100
+        id 8dkTniELThTNk8dkTn3i86; Sat, 15 Jan 2022 08:45:17 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 15 Jan 2022 08:40:51 +0100
+X-ME-Date: Sat, 15 Jan 2022 08:45:17 +0100
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Olivier Dautricourt <olivier.dautricourt@orolia.com>,
-        Stefan Roese <sr@denx.de>, Vinod Koul <vkoul@kernel.org>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        dmaengine@vger.kernel.org
-Subject: [PATCH] dmaengine: altera-msgdma: Remove useless DMA-32 fallback configuration
-Date:   Sat, 15 Jan 2022 08:40:47 +0100
-Message-Id: <01058ada3a0dea207212182ca7525060a204f1e1.1642232423.git.christophe.jaillet@wanadoo.fr>
+        linux-rdma@vger.kernel.org
+Subject: [PATCH v2] IB/mthca: Remove useless DMA-32 fallback configuration
+Date:   Sat, 15 Jan 2022 08:45:05 +0100
+Message-Id: <03c66fe5c2a81dbb29349ebf9af631e5ea216ec4.1642232675.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -46,24 +45,30 @@ Simplify code and remove some dead code accordingly.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/dma/altera-msgdma.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+v2: Update link to use lore instead of lklm
+---
+ drivers/infiniband/hw/mthca/mthca_main.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/dma/altera-msgdma.c b/drivers/dma/altera-msgdma.c
-index f5b885d69cd3..6f56dfd375e3 100644
---- a/drivers/dma/altera-msgdma.c
-+++ b/drivers/dma/altera-msgdma.c
-@@ -891,9 +891,7 @@ static int msgdma_probe(struct platform_device *pdev)
- 	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
- 	if (ret) {
- 		dev_warn(&pdev->dev, "unable to set coherent mask to 64");
--		ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
--		if (ret)
--			goto fail;
-+		goto fail;
+diff --git a/drivers/infiniband/hw/mthca/mthca_main.c b/drivers/infiniband/hw/mthca/mthca_main.c
+index f507c4cd46d3..b54bc8865dae 100644
+--- a/drivers/infiniband/hw/mthca/mthca_main.c
++++ b/drivers/infiniband/hw/mthca/mthca_main.c
+@@ -939,12 +939,8 @@ static int __mthca_init_one(struct pci_dev *pdev, int hca_type)
+ 
+ 	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+ 	if (err) {
+-		dev_warn(&pdev->dev, "Warning: couldn't set 64-bit PCI DMA mask.\n");
+-		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+-		if (err) {
+-			dev_err(&pdev->dev, "Can't set PCI DMA mask, aborting.\n");
+-			goto err_free_res;
+-		}
++		dev_err(&pdev->dev, "Can't set PCI DMA mask, aborting.\n");
++		goto err_free_res;
  	}
  
- 	msgdma_reset(mdev);
+ 	/* We can handle large RDMA requests, so allow larger segments. */
 -- 
 2.32.0
 
