@@ -2,84 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E7EAC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 15 Jan 2022 22:40:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D6FC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 Jan 2022 11:18:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233842AbiAOWkO (ORCPT
+        id S234856AbiAPLS3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 15 Jan 2022 17:40:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51904 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233838AbiAOWkL (ORCPT
+        Sun, 16 Jan 2022 06:18:29 -0500
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:57806 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231880AbiAPLS2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 15 Jan 2022 17:40:11 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98D64C06161C;
-        Sat, 15 Jan 2022 14:40:11 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 56C7C60F7E;
-        Sat, 15 Jan 2022 22:40:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B1C08C36AEC;
-        Sat, 15 Jan 2022 22:40:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642286409;
-        bh=CM/dcwr1T5eT7kHp/PEIguWwvyAkBSLmzeeBHvnaeI0=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=Ettey1UYCiVK1B1C6dzZQupVWDuoqaO7OIOCLHFbkd9m4O5wzE/iH59O7s7r038Cn
-         QHtQgRqDcmHjzbb115HYzco1y11wOQJC+TUy7pl1YljQljSUVPxV3LQ7RzlerMzf/2
-         +NpBtnZXhakmdnx+8FVjUV0OF3wBNjneDWRS27MGqhWKo9+6iiCmylZI9Pu+YiNiwh
-         vOZcqYv6K+AJ49uhG5EuzbZ8IgTWSddcPM6mx14y5rUU/4eQSUH3/pMiHBGHXxuaoO
-         5iOQu6gY94hoo4g4Cu8HsQBcF1YtH3ebkLpqxHTzgCsoqq3t6urhJQdIwnwP8za//K
-         QRf2idOQLovIA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8D2D8F60796;
-        Sat, 15 Jan 2022 22:40:09 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Sun, 16 Jan 2022 06:18:28 -0500
+Received: from pop-os.home ([90.126.236.122])
+        by smtp.orange.fr with ESMTPA
+        id 93YEngVhBZQwW93YFnBe69; Sun, 16 Jan 2022 12:18:25 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sun, 16 Jan 2022 12:18:25 +0100
+X-ME-IP: 90.126.236.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Bard Liao <yung-chuan.liao@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        alsa-devel@alsa-project.org
+Subject: [PATCH] ASoC: soc-pcm: use GFP_ATOMIC in dpcm_create_debugfs_state()
+Date:   Sun, 16 Jan 2022 12:18:17 +0100
+Message-Id: <ed322b8821fa787907c1a4cce879564d1281b69d.1642331884.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: ethernet: sun4i-emac: Fix an error handling path in
- emac_probe()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164228640957.24744.13688338637735089336.git-patchwork-notify@kernel.org>
-Date:   Sat, 15 Jan 2022 22:40:09 +0000
-References: <aa2344da574f58aeba869a9219b3549dbd65d8e4.1642250684.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <aa2344da574f58aeba869a9219b3549dbd65d8e4.1642250684.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     davem@davemloft.net, kuba@kernel.org, mripard@kernel.org,
-        wens@csie.org, jernej.skrabec@gmail.com, conleylee@foxmail.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+The commit below states that dpcm_be_connect() may be called from atomic
+context. It changes a GFP_KERNEL into a GFP_ATOMIC to deal with it.
 
-This patch was applied to netdev/net.git (master)
-by David S. Miller <davem@davemloft.net>:
+Another memory allocation is done in dpcm_create_debugfs_state() which is
+called by dpcm_be_connect(). Also use GFP_ATOMIC there to be consistent
+and be compliant with atomic context.
 
-On Sat, 15 Jan 2022 13:45:03 +0100 you wrote:
-> A dma_request_chan() call is hidden in emac_configure_dma().
-> It must be released in the probe if an error occurs, as already done in
-> the remove function.
-> 
-> Add the corresponding dma_release_channel() call.
-> 
-> Fixes: 47869e82c8b8 ("sun4i-emac.c: add dma support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> [...]
+Fixes: d8a9c6e1f676 ("ASoC: soc-pcm: use GFP_ATOMIC for dpcm structure")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Not clear to me how dpcm_be_connect() can be called from an atomic context,
+though. But better safe than sorry.
+---
+ sound/soc/soc-pcm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is the summary with links:
-  - net: ethernet: sun4i-emac: Fix an error handling path in emac_probe()
-    https://git.kernel.org/netdev/net/c/9a9acdccdfa4
-
-You are awesome, thank you!
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index 7abfc48b26ca..1a536a2b9dc3 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -212,7 +212,7 @@ static void dpcm_create_debugfs_state(struct snd_soc_dpcm *dpcm, int stream)
+ {
+ 	char *name;
+ 
+-	name = kasprintf(GFP_KERNEL, "%s:%s", dpcm->be->dai_link->name,
++	name = kasprintf(GFP_ATOMIC, "%s:%s", dpcm->be->dai_link->name,
+ 			 stream ? "capture" : "playback");
+ 	if (name) {
+ 		dpcm->debugfs_state = debugfs_create_dir(
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.32.0
 
