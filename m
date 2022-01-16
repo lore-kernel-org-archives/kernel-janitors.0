@@ -2,83 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA9BC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 Jan 2022 12:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C7CEC433FE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 Jan 2022 12:54:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235260AbiAPMxk (ORCPT
+        id S235281AbiAPMyq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 16 Jan 2022 07:53:40 -0500
-Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:58474 "EHLO
+        Sun, 16 Jan 2022 07:54:46 -0500
+Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:59290 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235255AbiAPMxk (ORCPT
+        with ESMTP id S235276AbiAPMyq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 16 Jan 2022 07:53:40 -0500
-Received: from pop-os.home ([90.126.236.122])
+        Sun, 16 Jan 2022 07:54:46 -0500
+Received: from [192.168.1.18] ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id 952QnSJT0EuQ2952QnkOP2; Sun, 16 Jan 2022 13:53:39 +0100
-X-ME-Helo: pop-os.home
+        id 953UnSJrpEuQ2953UnkOUl; Sun, 16 Jan 2022 13:54:45 +0100
+X-ME-Helo: [192.168.1.18]
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 16 Jan 2022 13:53:39 +0100
+X-ME-Date: Sun, 16 Jan 2022 13:54:45 +0100
 X-ME-IP: 90.126.236.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Message-ID: <47530ced-e200-3754-3aaa-65d2698624d6@wanadoo.fr>
+Date:   Sun, 16 Jan 2022 13:54:44 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH] lib/string_helpers: Use the given gfp flag when
+ allocating memory
+Content-Language: fr
 To:     Andy Shevchenko <andy@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
         Andrew Morton <akpm@linux-foundation.org>,
         Mel Gorman <mgorman@suse.de>, Michal Hocko <mhocko@suse.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2] lib/string_helpers: Use the given gfp flag when allocating memory
-Date:   Sun, 16 Jan 2022 13:53:37 +0100
-Message-Id: <1ec96b6e4f2e35599931d7516c6938c4a8845bf0.1642337606.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
-MIME-Version: 1.0
+        Vlastimil Babka <vbabka@suse.cz>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <30a0c2011f8034378639883339fa7d7c55e034a5.1642337349.git.christophe.jaillet@wanadoo.fr>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <30a0c2011f8034378639883339fa7d7c55e034a5.1642337349.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-kstrdup_quotable_cmdline() and kstrdup_quotable_file() are given a gfp flag
-that is passed and used for memory allocation in kstrdup_quotable() just a
-few lines below.
+Le 16/01/2022 à 13:49, Christophe JAILLET a écrit :
+> kstrdup_quotable_cmdline() is given a gfp flag that is passed and used for
+> memory allocation in kstrdup_quotable() just a few lines below.
+> 
+> It looks reasonable to use this gfp value for the buffer allocated and
+> freed in kstrdup_quotable_cmdline() as well.
+> 
+> Fixes: 0ee931c4e31a ("mm: treewide: remove GFP_TEMPORARY allocation flag")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> According to what I've found in 5.16, all callers use GFP_KERNEL, so this
+> patch should be a no-op.
+> But who knows how it will be used in the future. Better safe than sorry.
+> ---
+>   lib/string_helpers.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/lib/string_helpers.c b/lib/string_helpers.c
+> index 90f9f1b7afec..7aceeb40dfd7 100644
+> --- a/lib/string_helpers.c
+> +++ b/lib/string_helpers.c
+> @@ -624,7 +624,7 @@ char *kstrdup_quotable_cmdline(struct task_struct *task, gfp_t gfp)
+>   	char *buffer, *quoted;
+>   	int i, res;
+>   
+> -	buffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
+> +	buffer = kmalloc(PAGE_SIZE, gfp);
+>   	if (!buffer)
+>   		return NULL;
+>   
+> 
 
-It looks reasonable to use this gfp value for the buffer allocated and
-freed in these functions as well.
+I have sent a V2. I missed the same issue in kstrdup_quotable_file().
 
-Fixes: 0ee931c4e31a ("mm: treewide: remove GFP_TEMPORARY allocation flag")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-According to what I've found in 5.16, all callers use GFP_KERNEL, so this
-patch should be a no-op.
-But who knows how it will be used in the future. Better safe than sorry.
-
-v2: Add the change for kstrdup_quotable_file()
----
- lib/string_helpers.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/lib/string_helpers.c b/lib/string_helpers.c
-index 90f9f1b7afec..4433e486b725 100644
---- a/lib/string_helpers.c
-+++ b/lib/string_helpers.c
-@@ -624,7 +624,7 @@ char *kstrdup_quotable_cmdline(struct task_struct *task, gfp_t gfp)
- 	char *buffer, *quoted;
- 	int i, res;
- 
--	buffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
-+	buffer = kmalloc(PAGE_SIZE, gfp);
- 	if (!buffer)
- 		return NULL;
- 
-@@ -660,7 +660,7 @@ char *kstrdup_quotable_file(struct file *file, gfp_t gfp)
- 		return kstrdup("<unknown>", gfp);
- 
- 	/* We add 11 spaces for ' (deleted)' to be appended */
--	temp = kmalloc(PATH_MAX + 11, GFP_KERNEL);
-+	temp = kmalloc(PATH_MAX + 11, gfp);
- 	if (!temp)
- 		return kstrdup("<no_memory>", gfp);
- 
--- 
-2.32.0
-
+CJ
