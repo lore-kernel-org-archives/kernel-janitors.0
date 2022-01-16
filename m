@@ -2,79 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C7CEC433FE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 16 Jan 2022 12:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2033BC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 16 Jan 2022 18:46:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235281AbiAPMyq (ORCPT
+        id S235992AbiAPSqd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 16 Jan 2022 07:54:46 -0500
-Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:59290 "EHLO
+        Sun, 16 Jan 2022 13:46:33 -0500
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:63413 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235276AbiAPMyq (ORCPT
+        with ESMTP id S235924AbiAPSqc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 16 Jan 2022 07:54:46 -0500
-Received: from [192.168.1.18] ([90.126.236.122])
+        Sun, 16 Jan 2022 13:46:32 -0500
+Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id 953UnSJrpEuQ2953UnkOUl; Sun, 16 Jan 2022 13:54:45 +0100
-X-ME-Helo: [192.168.1.18]
+        id 9AXrnM977HZHJ9AXrn7KaY; Sun, 16 Jan 2022 19:46:30 +0100
+X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 16 Jan 2022 13:54:45 +0100
+X-ME-Date: Sun, 16 Jan 2022 19:46:30 +0100
 X-ME-IP: 90.126.236.122
-Message-ID: <47530ced-e200-3754-3aaa-65d2698624d6@wanadoo.fr>
-Date:   Sun, 16 Jan 2022 13:54:44 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH] lib/string_helpers: Use the given gfp flag when
- allocating memory
-Content-Language: fr
-To:     Andy Shevchenko <andy@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <30a0c2011f8034378639883339fa7d7c55e034a5.1642337349.git.christophe.jaillet@wanadoo.fr>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <30a0c2011f8034378639883339fa7d7c55e034a5.1642337349.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Tony Nguyen <anthony.l.nguyen@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Shiraz Saleem <shiraz.saleem@intel.com>,
+        Dave Ertman <david.m.ertman@intel.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Subject: [PATCH] ice: Don't use GFP_KERNEL in atomic context
+Date:   Sun, 16 Jan 2022 19:46:20 +0100
+Message-Id: <40c94af2f9140794351593047abc95ca65e4e576.1642358759.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 16/01/2022 à 13:49, Christophe JAILLET a écrit :
-> kstrdup_quotable_cmdline() is given a gfp flag that is passed and used for
-> memory allocation in kstrdup_quotable() just a few lines below.
-> 
-> It looks reasonable to use this gfp value for the buffer allocated and
-> freed in kstrdup_quotable_cmdline() as well.
-> 
-> Fixes: 0ee931c4e31a ("mm: treewide: remove GFP_TEMPORARY allocation flag")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> According to what I've found in 5.16, all callers use GFP_KERNEL, so this
-> patch should be a no-op.
-> But who knows how it will be used in the future. Better safe than sorry.
-> ---
->   lib/string_helpers.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/lib/string_helpers.c b/lib/string_helpers.c
-> index 90f9f1b7afec..7aceeb40dfd7 100644
-> --- a/lib/string_helpers.c
-> +++ b/lib/string_helpers.c
-> @@ -624,7 +624,7 @@ char *kstrdup_quotable_cmdline(struct task_struct *task, gfp_t gfp)
->   	char *buffer, *quoted;
->   	int i, res;
->   
-> -	buffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
-> +	buffer = kmalloc(PAGE_SIZE, gfp);
->   	if (!buffer)
->   		return NULL;
->   
-> 
+ice_misc_intr() is an irq handler. It should not sleep.
 
-I have sent a V2. I missed the same issue in kstrdup_quotable_file().
+Use GFP_ATOMIC instead of GFP_KERNEL when allocating some memory.
 
-CJ
+Fixes: 348048e724a0 ("ice: Implement iidc operations")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+I've never played a lot with irq handler. My understanding is that they
+should never sleep. So GFP_KERNEL must be avoided. So I guess that this
+patch is correct.
+
+However, I don't know if some special cases allow such allocation.
+Any feedback/pointer to a good doc/explanation is welcome :)
+---
+ drivers/net/ethernet/intel/ice/ice_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
+index 30814435f779..65de01f3a504 100644
+--- a/drivers/net/ethernet/intel/ice/ice_main.c
++++ b/drivers/net/ethernet/intel/ice/ice_main.c
+@@ -3018,7 +3018,7 @@ static irqreturn_t ice_misc_intr(int __always_unused irq, void *data)
+ 		struct iidc_event *event;
+ 
+ 		ena_mask &= ~ICE_AUX_CRIT_ERR;
+-		event = kzalloc(sizeof(*event), GFP_KERNEL);
++		event = kzalloc(sizeof(*event), GFP_ATOMIC);
+ 		if (event) {
+ 			set_bit(IIDC_EVENT_CRIT_ERR, event->type);
+ 			/* report the entire OICR value to AUX driver */
+-- 
+2.32.0
+
