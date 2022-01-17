@@ -2,100 +2,68 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 660F9C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jan 2022 09:52:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76409C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jan 2022 12:37:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237828AbiAQJwB (ORCPT
+        id S239922AbiAQMhk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Jan 2022 04:52:01 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:42344 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235893AbiAQJwA (ORCPT
+        Mon, 17 Jan 2022 07:37:40 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:42002 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234214AbiAQMhj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Jan 2022 04:52:00 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 345E41F398;
-        Mon, 17 Jan 2022 09:51:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1642413119; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=QssX3qy45EBop2wt4yRjxi92IzoJivyohNdN3f5hNiw=;
-        b=kOhALxsMoJnaaXNJF63lQgEXwc4lNu56pgVFV5TAN+m6lg13Dq4yYHTkHckIvdaA6Ya5Vf
-        NJm/iD5oNpr+X9PIVlVDU6pDNPHGXY6T5vryFcfBmsRxVKYWK/SFIQ3ssrnwBYiMzSB00h
-        LnRSsgtEhcwrLCLdNULQWIV+mhyDwhg=
-Received: from suse.cz (unknown [10.100.201.86])
+        Mon, 17 Jan 2022 07:37:39 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id ACA58A3B83;
-        Mon, 17 Jan 2022 09:51:58 +0000 (UTC)
-Date:   Mon, 17 Jan 2022 10:51:58 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Andy Shevchenko <andy@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] lib/string_helpers: Use the given gfp flag when
- allocating memory
-Message-ID: <YeU8PhtvvXIWtTk/@dhcp22.suse.cz>
-References: <30a0c2011f8034378639883339fa7d7c55e034a5.1642337349.git.christophe.jaillet@wanadoo.fr>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4E106B8104F;
+        Mon, 17 Jan 2022 12:37:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDA05C36AE3;
+        Mon, 17 Jan 2022 12:37:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642423057;
+        bh=P/4ypUvSVoNhfvCVlcs6PIj/nztszYxr3tJXDpKx0AQ=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=kOv0sLKAWJuO36BaFW/clbJNKuy30V1303of+GpbLMpl4xrne2D+RS9TMJ98EtdSQ
+         XIZFubm9zUuTnAPAttdoyJP1qu6XarL8Hr+gL9D9+wDt/WAjcMh9LGci5/m8XBUDrg
+         zmFfsvkKG3gXwD+cm5SEmELvMby/J+CMj1l9Hg9fGZSP9aC2iEvV40pG25BU66kWao
+         ryG8X2GUhMTKAPONFhpME76TTxQRcjkbilByqrIFFWwl/rHt/JyBgOfCFMfOCarcPD
+         jdj8PkRoQr4/gIHeu4TWi6ik4WvwyLeOQjR/sETSJqgwjaKGE08qlUR4QK+lAljQOk
+         +40GomMpyOnpQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <30a0c2011f8034378639883339fa7d7c55e034a5.1642337349.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ath11k: fix error code in
+ ath11k_qmi_assign_target_mem_chunk()
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20220111071445.GA11243@kili>
+References: <20220111071445.GA11243@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Anilkumar Kolli <akolli@codeaurora.org>,
+        ath11k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <164242305424.27899.2840074267453556270.kvalo@kernel.org>
+Date:   Mon, 17 Jan 2022 12:37:35 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun 16-01-22 13:49:22, Christophe JAILLET wrote:
-> kstrdup_quotable_cmdline() is given a gfp flag that is passed and used for
-> memory allocation in kstrdup_quotable() just a few lines below.
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
+
+> The "ret" vairable is not set at this point.  It could be uninitialized
+> or zero.  The correct thing to return is -ENODEV.
 > 
-> It looks reasonable to use this gfp value for the buffer allocated and
-> freed in kstrdup_quotable_cmdline() as well.
-> 
-> Fixes: 0ee931c4e31a ("mm: treewide: remove GFP_TEMPORARY allocation flag")
+> Fixes: 6ac04bdc5edb ("ath11k: Use reserved host DDR addresses from DT for PCI devices")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
 
-I do not think this commit is changing much here. It just replaces
-GFP_TEMPORARY with GFP_KERNEL so the code has ignored the gfp mask even
-before that change.
+Patch applied to ath-next branch of ath.git, thanks.
 
-All existing callers of kstrdup_quotable_cmdline use GFP_KERNEL so would
-it make more sense to simply drop the gfp argument altogether and use
-GFP_KERNEL internally?
-
-Normally it is better to have a full control of the allocation mask but
-if we have any non-GFP_KERNEL caller then I would rather have the
-argument added and the function checked whether all internal paths are
-gfp mask aware.
-
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> According to what I've found in 5.16, all callers use GFP_KERNEL, so this
-> patch should be a no-op.
-> But who knows how it will be used in the future. Better safe than sorry.
-> ---
->  lib/string_helpers.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/lib/string_helpers.c b/lib/string_helpers.c
-> index 90f9f1b7afec..7aceeb40dfd7 100644
-> --- a/lib/string_helpers.c
-> +++ b/lib/string_helpers.c
-> @@ -624,7 +624,7 @@ char *kstrdup_quotable_cmdline(struct task_struct *task, gfp_t gfp)
->  	char *buffer, *quoted;
->  	int i, res;
->  
-> -	buffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
-> +	buffer = kmalloc(PAGE_SIZE, gfp);
->  	if (!buffer)
->  		return NULL;
->  
-> -- 
-> 2.32.0
+c9b41832dc08 ath11k: fix error code in ath11k_qmi_assign_target_mem_chunk()
 
 -- 
-Michal Hocko
-SUSE Labs
+https://patchwork.kernel.org/project/linux-wireless/patch/20220111071445.GA11243@kili/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
