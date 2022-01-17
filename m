@@ -2,185 +2,136 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C953C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jan 2022 19:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE5F4C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jan 2022 19:56:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242313AbiAQTaF (ORCPT
+        id S235659AbiAQT4d (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Jan 2022 14:30:05 -0500
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:62299 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233567AbiAQTaF (ORCPT
+        Mon, 17 Jan 2022 14:56:33 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:48414 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231292AbiAQT4c (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Jan 2022 14:30:05 -0500
-Received: from [192.168.1.18] ([90.126.236.122])
-        by smtp.orange.fr with ESMTPA
-        id 9XhXn6cD441cb9XhYnqv0u; Mon, 17 Jan 2022 20:30:02 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 17 Jan 2022 20:30:02 +0100
-X-ME-IP: 90.126.236.122
-Message-ID: <025203f4-3487-1296-2d26-ddaad0d7a5cc@wanadoo.fr>
-Date:   Mon, 17 Jan 2022 20:29:59 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH] lib/string_helpers: Use the given gfp flag when
- allocating memory
-Content-Language: en-US
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Andy Shevchenko <andy@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <30a0c2011f8034378639883339fa7d7c55e034a5.1642337349.git.christophe.jaillet@wanadoo.fr>
- <YeU8PhtvvXIWtTk/@dhcp22.suse.cz> <YeWOd2G69LyR3PVZ@dhcp22.suse.cz>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <YeWOd2G69LyR3PVZ@dhcp22.suse.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Mon, 17 Jan 2022 14:56:32 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 86BC6212BB;
+        Mon, 17 Jan 2022 19:56:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1642449391; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=VMmfVtWZfJayBoRg9IT/rKNycU3qQzjET9EY7uXPW80=;
+        b=kbzExjsp4JpeHHwIZRJCubyF/IB1E/jmZSzeeILWAnQH75/TrSKIkX74WmASeiVmpn5j0b
+        hYDbjjAU6EWNB287GSpgmzFMmPDLrQfUA6QaUP12xZqZCMi3vm+3npNuDXdwWjslx5Z16T
+        b9JchkTF2qrH3GZiAWqLpKUcBYBjFiQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1642449391;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=VMmfVtWZfJayBoRg9IT/rKNycU3qQzjET9EY7uXPW80=;
+        b=IoKUbUflFJ6ZUB0IbLwWutrHc8uD1YJs4aDa5zqZ0YgZQ83wjCIxiIon5vDtG3qOTxXi8o
+        3fbo1HrBdYEh5zBQ==
+Received: from alsa1.suse.de (alsa1.suse.de [10.160.4.42])
+        by relay2.suse.de (Postfix) with ESMTP id 70B04A3B84;
+        Mon, 17 Jan 2022 19:56:31 +0000 (UTC)
+Date:   Mon, 17 Jan 2022 20:56:31 +0100
+Message-ID: <s5hlezeyw40.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        alsa-devel@alsa-project.org,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
+        Bard Liao <yung-chuan.liao@linux.intel.com>
+Subject: Re: [PATCH] ASoC: soc-pcm: use GFP_ATOMIC in dpcm_create_debugfs_state()
+In-Reply-To: <bbe18490-fba4-9307-fe5f-b02c00433d07@linux.intel.com>
+References: <ed322b8821fa787907c1a4cce879564d1281b69d.1642331884.git.christophe.jaillet@wanadoo.fr>
+        <s5hwniy21cl.wl-tiwai@suse.de>
+        <bbe18490-fba4-9307-fe5f-b02c00433d07@linux.intel.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 17/01/2022 à 16:42, Michal Hocko a écrit :
-> On Mon 17-01-22 10:51:59, Michal Hocko wrote:
->> On Sun 16-01-22 13:49:22, Christophe JAILLET wrote:
->>> kstrdup_quotable_cmdline() is given a gfp flag that is passed and used for
->>> memory allocation in kstrdup_quotable() just a few lines below.
->>>
->>> It looks reasonable to use this gfp value for the buffer allocated and
->>> freed in kstrdup_quotable_cmdline() as well.
->>>
->>> Fixes: 0ee931c4e31a ("mm: treewide: remove GFP_TEMPORARY allocation flag")
->>
->> I do not think this commit is changing much here. It just replaces
->> GFP_TEMPORARY with GFP_KERNEL so the code has ignored the gfp mask even
->> before that change.
->>
->> All existing callers of kstrdup_quotable_cmdline use GFP_KERNEL so would
->> it make more sense to simply drop the gfp argument altogether and use
->> GFP_KERNEL internally?
->>
->> Normally it is better to have a full control of the allocation mask but
->> if we have any non-GFP_KERNEL caller then I would rather have the
->> argument added and the function checked whether all internal paths are
->> gfp mask aware.
+On Mon, 17 Jan 2022 18:11:42 +0100,
+Pierre-Louis Bossart wrote:
 > 
-> In other words something like this:
-
-For me, this is just fine.
-This looks more consistant this way and (slighly) simplify the few callers.
-
-CJ
-
-
-> diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
-> index 2c46cd968ac4..44fde4b537f1 100644
-> --- a/drivers/gpu/drm/msm/msm_gpu.c
-> +++ b/drivers/gpu/drm/msm/msm_gpu.c
-> @@ -376,7 +376,7 @@ static void recover_worker(struct kthread_work *work)
->   		task = get_pid_task(submit->pid, PIDTYPE_PID);
->   		if (task) {
->   			comm = kstrdup(task->comm, GFP_KERNEL);
-> -			cmd = kstrdup_quotable_cmdline(task, GFP_KERNEL);
-> +			cmd = kstrdup_quotable_cmdline(task);
->   			put_task_struct(task);
->   		}
->   
-> @@ -467,7 +467,7 @@ static void fault_worker(struct kthread_work *work)
->   		task = get_pid_task(submit->pid, PIDTYPE_PID);
->   		if (task) {
->   			comm = kstrdup(task->comm, GFP_KERNEL);
-> -			cmd = kstrdup_quotable_cmdline(task, GFP_KERNEL);
-> +			cmd = kstrdup_quotable_cmdline(task);
->   			put_task_struct(task);
->   		}
->   
-> diff --git a/include/linux/string_helpers.h b/include/linux/string_helpers.h
-> index 4ba39e1403b2..7a67eee8bd0f 100644
-> --- a/include/linux/string_helpers.h
-> +++ b/include/linux/string_helpers.h
-> @@ -97,8 +97,8 @@ static inline void string_lower(char *dst, const char *src)
->   }
->   
->   char *kstrdup_quotable(const char *src, gfp_t gfp);
-> -char *kstrdup_quotable_cmdline(struct task_struct *task, gfp_t gfp);
-> -char *kstrdup_quotable_file(struct file *file, gfp_t gfp);
-> +char *kstrdup_quotable_cmdline(struct task_struct *task);
-> +char *kstrdup_quotable_file(struct file *file);
->   
->   void kfree_strarray(char **array, size_t n);
->   
-> diff --git a/lib/string_helpers.c b/lib/string_helpers.c
-> index d5d008f5b1d9..267e142c7e13 100644
-> --- a/lib/string_helpers.c
-> +++ b/lib/string_helpers.c
-> @@ -618,12 +618,13 @@ EXPORT_SYMBOL_GPL(kstrdup_quotable);
->    * command line, with inter-argument NULLs replaced with spaces,
->    * and other special characters escaped.
->    */
-> -char *kstrdup_quotable_cmdline(struct task_struct *task, gfp_t gfp)
-> +char *kstrdup_quotable_cmdline(struct task_struct *task)
->   {
-> +	gfp_t gfp = GFP_KERNEL;
->   	char *buffer, *quoted;
->   	int i, res;
->   
-> -	buffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
-> +	buffer = kmalloc(PAGE_SIZE, gfp);
->   	if (!buffer)
->   		return NULL;
->   
-> @@ -651,15 +652,16 @@ EXPORT_SYMBOL_GPL(kstrdup_quotable_cmdline);
->    * with special characters escaped, able to be safely logged. If
->    * there is an error, the leading character will be "<".
->    */
-> -char *kstrdup_quotable_file(struct file *file, gfp_t gfp)
-> +char *kstrdup_quotable_file(struct file *file)
->   {
-> +	gfp_t gfp = GFP_KERNEL;
->   	char *temp, *pathname;
->   
->   	if (!file)
->   		return kstrdup("<unknown>", gfp);
->   
->   	/* We add 11 spaces for ' (deleted)' to be appended */
-> -	temp = kmalloc(PATH_MAX + 11, GFP_KERNEL);
-> +	temp = kmalloc(PATH_MAX + 11, gfp);
->   	if (!temp)
->   		return kstrdup("<no_memory>", gfp);
->   
-> diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-> index b12f7d986b1e..79322ba89913 100644
-> --- a/security/loadpin/loadpin.c
-> +++ b/security/loadpin/loadpin.c
-> @@ -23,8 +23,8 @@ static void report_load(const char *origin, struct file *file, char *operation)
->   {
->   	char *cmdline, *pathname;
->   
-> -	pathname = kstrdup_quotable_file(file, GFP_KERNEL);
-> -	cmdline = kstrdup_quotable_cmdline(current, GFP_KERNEL);
-> +	pathname = kstrdup_quotable_file(file);
-> +	cmdline = kstrdup_quotable_cmdline(current);
->   
->   	pr_notice("%s %s obj=%s%s%s pid=%d cmdline=%s%s%s\n",
->   		  origin, operation,
-> diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-> index 06e226166aab..c87a41304b6c 100644
-> --- a/security/yama/yama_lsm.c
-> +++ b/security/yama/yama_lsm.c
-> @@ -54,8 +54,8 @@ static void __report_access(struct callback_head *work)
->   		container_of(work, struct access_report_info, work);
->   	char *target_cmd, *agent_cmd;
->   
-> -	target_cmd = kstrdup_quotable_cmdline(info->target, GFP_KERNEL);
-> -	agent_cmd = kstrdup_quotable_cmdline(info->agent, GFP_KERNEL);
-> +	target_cmd = kstrdup_quotable_cmdline(info->target);
-> +	agent_cmd = kstrdup_quotable_cmdline(info->agent);
->   
->   	pr_notice_ratelimited(
->   		"ptrace %s of \"%s\"[%d] was attempted by \"%s\"[%d]\n",
 > 
+> 
+> On 1/17/22 2:49 AM, Takashi Iwai wrote:
+> > On Sun, 16 Jan 2022 12:18:17 +0100,
+> > Christophe JAILLET wrote:
+> >>
+> >> The commit below states that dpcm_be_connect() may be called from atomic
+> >> context. It changes a GFP_KERNEL into a GFP_ATOMIC to deal with it.
+> >>
+> >> Another memory allocation is done in dpcm_create_debugfs_state() which is
+> >> called by dpcm_be_connect(). Also use GFP_ATOMIC there to be consistent
+> >> and be compliant with atomic context.
+> >>
+> >> Fixes: d8a9c6e1f676 ("ASoC: soc-pcm: use GFP_ATOMIC for dpcm structure")
+> >> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> >> ---
+> >> Not clear to me how dpcm_be_connect() can be called from an atomic context,
+> >> though. But better safe than sorry.
+> > 
+> > I don't think this no longer valid for the very latest code.
+> > The commit b7898396f4bb dropped the spurious dpcm_lock spinlock, so
+> > the code path you touched must be always sleepable.
+> > 
+> > Similarly, the commit d8a9c6e1f676 can be reverted now.
+> 
+> Can we really revert d8a9c6e1f676?
+> 
+> We did propagate the non-atomic FE property to the BE, but if both FE
+> and BE are both atomic that constraint would be required, no?
 
+At the kzalloc() call in dpcm_be_connect, there is no spin lock
+involved.  It's merely protected by card->pcm_mutex, instead.  The
+spinlock is applied at the later call with
+snd_soc_pcm_stream_lock_irq() only for the list manipulations.  (See
+it's *_irq(), not *_irqsave(); that means the context being sleepable
+at that point.)  So, we can use GFP_KERNEL safely there.
+
+GFP_ATOMIC was needed in the past where dpcm_be_connect() itself is
+called in dpcm_lock spinlock.  It was removed recently.
+
+
+Takashi
+
+> 
+> 
+> > 
+> > thanks,
+> > 
+> > Takashi
+> > 
+> >> ---
+> >>  sound/soc/soc-pcm.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+> >> index 7abfc48b26ca..1a536a2b9dc3 100644
+> >> --- a/sound/soc/soc-pcm.c
+> >> +++ b/sound/soc/soc-pcm.c
+> >> @@ -212,7 +212,7 @@ static void dpcm_create_debugfs_state(struct snd_soc_dpcm *dpcm, int stream)
+> >>  {
+> >>  	char *name;
+> >>  
+> >> -	name = kasprintf(GFP_KERNEL, "%s:%s", dpcm->be->dai_link->name,
+> >> +	name = kasprintf(GFP_ATOMIC, "%s:%s", dpcm->be->dai_link->name,
+> >>  			 stream ? "capture" : "playback");
+> >>  	if (name) {
+> >>  		dpcm->debugfs_state = debugfs_create_dir(
+> >> -- 
+> >> 2.32.0
+> >>
+> 
