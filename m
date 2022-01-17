@@ -2,68 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76409C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jan 2022 12:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C77C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 17 Jan 2022 12:42:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239922AbiAQMhk (ORCPT
+        id S237087AbiAQMmA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 17 Jan 2022 07:37:40 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:42002 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234214AbiAQMhj (ORCPT
+        Mon, 17 Jan 2022 07:42:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41944 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234166AbiAQMmA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 17 Jan 2022 07:37:39 -0500
+        Mon, 17 Jan 2022 07:42:00 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAFF0C061574;
+        Mon, 17 Jan 2022 04:41:59 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4E106B8104F;
-        Mon, 17 Jan 2022 12:37:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDA05C36AE3;
-        Mon, 17 Jan 2022 12:37:35 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 77858611B5;
+        Mon, 17 Jan 2022 12:41:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28955C36AE3;
+        Mon, 17 Jan 2022 12:41:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642423057;
-        bh=P/4ypUvSVoNhfvCVlcs6PIj/nztszYxr3tJXDpKx0AQ=;
+        s=k20201202; t=1642423318;
+        bh=GpsA3cbs+BIbsadEtt95gl6TWxIcj8Lx14iqogGceHc=;
         h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=kOv0sLKAWJuO36BaFW/clbJNKuy30V1303of+GpbLMpl4xrne2D+RS9TMJ98EtdSQ
-         XIZFubm9zUuTnAPAttdoyJP1qu6XarL8Hr+gL9D9+wDt/WAjcMh9LGci5/m8XBUDrg
-         zmFfsvkKG3gXwD+cm5SEmELvMby/J+CMj1l9Hg9fGZSP9aC2iEvV40pG25BU66kWao
-         ryG8X2GUhMTKAPONFhpME76TTxQRcjkbilByqrIFFWwl/rHt/JyBgOfCFMfOCarcPD
-         jdj8PkRoQr4/gIHeu4TWi6ik4WvwyLeOQjR/sETSJqgwjaKGE08qlUR4QK+lAljQOk
-         +40GomMpyOnpQ==
+        b=SLgRxz0jYUozJHlYpOvrK5lXePGyEUShn5V3MEMWjvF68cQ1jJikHw5FFddlprM1h
+         KxH+T3knOufWzZNA0nF/D5hoSnjf3ma5gqAtd4+8kedEcfGm54gHYikanjBq2DNaGD
+         TUnMbcqR1dtT61CU8d4NUpkP0+JtxS/PNmuq/Li/vaPDPLTOBZSQae6A0Kcb00P/Xo
+         Xzcs4gnPVtj365qmViZ2qY23RgyowYBSFSnPgL/mUk46y+iqWowLB5/MJTGm0UHhXe
+         RQiY0EjPkZymfRbenbk8yMkXdj9uzMnfdNmIrNZhCt5bXmRgR6QafJgJpIk5iWN0Xt
+         3neOnVofSjmbQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] ath11k: fix error code in
- ath11k_qmi_assign_target_mem_chunk()
+Subject: Re: [PATCH] ath: dfs_pattern_detector: Avoid open coded arithmetic in
+ memory allocation
 From:   Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20220111071445.GA11243@kili>
-References: <20220111071445.GA11243@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Anilkumar Kolli <akolli@codeaurora.org>,
-        ath11k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+In-Reply-To: <0fbcd32a0384ac1f87c5a3549e505e4becc60226.1640624216.git.christophe.jaillet@wanadoo.fr>
+References: <0fbcd32a0384ac1f87c5a3549e505e4becc60226.1640624216.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     davem@davemloft.net, kuba@kernel.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <164242305424.27899.2840074267453556270.kvalo@kernel.org>
-Date:   Mon, 17 Jan 2022 12:37:35 +0000 (UTC)
+Message-ID: <164242331548.27899.9932446295681799332.kvalo@kernel.org>
+Date:   Mon, 17 Jan 2022 12:41:56 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-> The "ret" vairable is not set at this point.  It could be uninitialized
-> or zero.  The correct thing to return is -ENODEV.
+> kmalloc_array()/kcalloc() should be used to avoid potential overflow when
+> a multiplication is needed to compute the size of the requested memory.
 > 
-> Fixes: 6ac04bdc5edb ("ath11k: Use reserved host DDR addresses from DT for PCI devices")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> kmalloc_array() can be used here instead of kcalloc() because the array is
+> fully initialized in the next 'for' loop.
+> 
+> Finally, 'cd->detectors' is defined as 'struct pri_detector **detectors;'.
+> So 'cd->detectors' and '*cd->detectors' are both some pointer.
+> So use a more logical 'sizeof(*cd->detectors)'.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
 
 Patch applied to ath-next branch of ath.git, thanks.
 
-c9b41832dc08 ath11k: fix error code in ath11k_qmi_assign_target_mem_chunk()
+a063b650ce5d ath: dfs_pattern_detector: Avoid open coded arithmetic in memory allocation
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20220111071445.GA11243@kili/
+https://patchwork.kernel.org/project/linux-wireless/patch/0fbcd32a0384ac1f87c5a3549e505e4becc60226.1640624216.git.christophe.jaillet@wanadoo.fr/
 
 https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
