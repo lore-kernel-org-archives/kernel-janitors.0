@@ -2,150 +2,129 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53110C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jan 2022 16:23:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B7C8C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 18 Jan 2022 20:01:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238293AbiARQXG (ORCPT
+        id S1349028AbiARUBf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 18 Jan 2022 11:23:06 -0500
-Received: from mga02.intel.com ([134.134.136.20]:20688 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236470AbiARQXE (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 18 Jan 2022 11:23:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1642522983; x=1674058983;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=yemg3DPaak21b4QQ6QUWUQzpYoGj++aHEpM6CdFUM4c=;
-  b=CeUIKUt2bu/V19rwbdL9ExLiHXhEoiSA7IXpxO+tjvJG3UH7HbkwjarQ
-   dB9fk6BFobTdymsiRZJjNdGCCPhhhNGc356R54Bm1TXTwt4ojoWy9r7S6
-   tu1WAOUYDcuJIFkwh60HLwaWMVFe0dqEv5TQ1pIMZHlGyvDM+tW/SR/le
-   uWRHtux4j64Tt+laYX5r2APRbCRoauj2trsAOIJZ6TtOo/guOMBoSsjmk
-   BUAxlQa8hWB9EaLIzDLuvSQsPngJL89uXh+GKbx2joBa1R4n9pn43AwlI
-   H8raNBBurMFnQRMIl/M1chQKADtEuH/T45Lzc5cWg7y7ttaCnNMuRVIYi
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10230"; a="232214254"
-X-IronPort-AV: E=Sophos;i="5.88,297,1635231600"; 
-   d="scan'208";a="232214254"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2022 08:23:02 -0800
-X-IronPort-AV: E=Sophos;i="5.88,297,1635231600"; 
-   d="scan'208";a="764640419"
-Received: from tzanussi-mobl4.amr.corp.intel.com (HELO [10.212.123.117]) ([10.212.123.117])
-  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2022 08:23:02 -0800
-Message-ID: <c842e1a7-ab46-8267-9700-22d0ecb508cb@linux.intel.com>
-Date:   Tue, 18 Jan 2022 10:22:48 -0600
+        Tue, 18 Jan 2022 15:01:35 -0500
+Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:61544 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1349014AbiARUBf (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 18 Jan 2022 15:01:35 -0500
+Received: from [192.168.1.18] ([90.126.236.122])
+        by smtp.orange.fr with ESMTPA
+        id 9ufbnIM9SeKJJ9ufbnhXGV; Tue, 18 Jan 2022 21:01:33 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Tue, 18 Jan 2022 21:01:33 +0100
+X-ME-IP: 90.126.236.122
+Message-ID: <464d0428-42ba-cd68-f21c-630850e6f3c7@wanadoo.fr>
+Date:   Tue, 18 Jan 2022 21:01:30 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [bug report] tracing: Allow whitespace to surround hist trigger
- filter
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        kernel-janitors@vger.kernel.org
-References: <20220118093809.GA13017@kili>
-From:   "Zanussi, Tom" <tom.zanussi@linux.intel.com>
-In-Reply-To: <20220118093809.GA13017@kili>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH] ice: Don't use GFP_KERNEL in atomic context
+Content-Language: en-US
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Tony Nguyen <anthony.l.nguyen@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Shiraz Saleem <shiraz.saleem@intel.com>,
+        Dave Ertman <david.m.ertman@intel.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+References: <40c94af2f9140794351593047abc95ca65e4e576.1642358759.git.christophe.jaillet@wanadoo.fr>
+ <YeSRUVmrdmlUXHDn@lunn.ch>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <YeSRUVmrdmlUXHDn@lunn.ch>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+Le 16/01/2022 à 22:42, Andrew Lunn a écrit :
+> On Sun, Jan 16, 2022 at 07:46:20PM +0100, Christophe JAILLET wrote:
+>> ice_misc_intr() is an irq handler. It should not sleep.
+>>
+>> Use GFP_ATOMIC instead of GFP_KERNEL when allocating some memory.
+>>
+>> Fixes: 348048e724a0 ("ice: Implement iidc operations")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> I've never played a lot with irq handler. My understanding is that they
+>> should never sleep.
+> 
+> Hi Christophe
+> 
+> Threaded interrupt handlers are allowed to sleep. However, this
+> handler is not being used in such a way. So your are probably correct
+> about GFP_KERNEL vs GFP_ATOMIC.
+> 
+>> ---
+>>   drivers/net/ethernet/intel/ice/ice_main.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
+>> index 30814435f779..65de01f3a504 100644
+>> --- a/drivers/net/ethernet/intel/ice/ice_main.c
+>> +++ b/drivers/net/ethernet/intel/ice/ice_main.c
+>> @@ -3018,7 +3018,7 @@ static irqreturn_t ice_misc_intr(int __always_unused irq, void *data)
+>>   		struct iidc_event *event;
+>>   
+>>   		ena_mask &= ~ICE_AUX_CRIT_ERR;
+>> -		event = kzalloc(sizeof(*event), GFP_KERNEL);
+>> +		event = kzalloc(sizeof(*event), GFP_ATOMIC);
+>>   		if (event) {
+>>   			set_bit(IIDC_EVENT_CRIT_ERR, event->type);
+>>   			/* report the entire OICR value to AUX driver */
+> 
+> What happens next is interesting...
+> 
+> 
+>                          event->reg = oicr;
+>                          ice_send_event_to_aux(pf, event);
+> 
+> where:
+> 
+> void ice_send_event_to_aux(struct ice_pf *pf, struct iidc_event *event)
+> {
+>          struct iidc_auxiliary_drv *iadrv;
+> 
+>          if (!pf->adev)
+>                  return;
+> 
+>          device_lock(&pf->adev->dev);
+>          iadrv = ice_get_auxiliary_drv(pf);
+>          if (iadrv && iadrv->event_handler)
+>                  iadrv->event_handler(pf, event);
+>          device_unlock(&pf->adev->dev);
+> }
+> 
+> device_lock() takes a mutex, not something you should be doing in
+> atomic context.
+> 
+> So it looks to me, this handler really should be running in thread
+> context...
+> 
+> 	Andrew
+> 
 
-On 1/18/2022 3:38 AM, Dan Carpenter wrote:
-> [ This is an older warning but renaming the function made it appear in
->    the new warnings list.  I have searched my outbox and I don't think
->    I forwarded this one before.  -dan ]
-> 
-> Hello Tom Zanussi,
-> 
-> The patch ec5ce0987541: "tracing: Allow whitespace to surround hist
-> trigger filter" from Jan 15, 2018, leads to the following Smatch
-> static checker warning:
-> 
-> 	kernel/trace/trace_events_hist.c:6199 event_hist_trigger_parse()
-> 	warn: 'p' can't be NULL.
-> 
-> kernel/trace/trace_events_hist.c
->      6149 static int event_hist_trigger_parse(struct event_command *cmd_ops,
->      6150                                     struct trace_event_file *file,
->      6151                                     char *glob, char *cmd, char *param)
->      6152 {
->      6153         unsigned int hist_trigger_bits = TRACING_MAP_BITS_DEFAULT;
->      6154         struct event_trigger_data *trigger_data;
->      6155         struct hist_trigger_attrs *attrs;
->      6156         struct event_trigger_ops *trigger_ops;
->      6157         struct hist_trigger_data *hist_data;
->      6158         struct synth_event *se;
->      6159         const char *se_name;
->      6160         bool remove = false;
->      6161         char *trigger, *p, *start;
->      6162         int ret = 0;
->      6163
->      6164         lockdep_assert_held(&event_mutex);
->      6165
->      6166         if (glob && strlen(glob)) {
->      6167                 hist_err_clear();
->      6168                 last_cmd_set(file, param);
->      6169         }
->      6170
->      6171         if (!param)
->      6172                 return -EINVAL;
->      6173
->      6174         if (glob[0] == '!')
->      6175                 remove = true;
->      6176
->      6177         /*
->      6178          * separate the trigger from the filter (k:v [if filter])
->      6179          * allowing for whitespace in the trigger
->      6180          */
->      6181         p = trigger = param;
->      6182         do {
->      6183                 p = strstr(p, "if");
->      6184                 if (!p)
->      6185                         break;
->      6186                 if (p == param)
->      6187                         return -EINVAL;
->      6188                 if (*(p - 1) != ' ' && *(p - 1) != '\t') {
->      6189                         p++;
->      6190                         continue;
->                                   ^^^^^^^^^
-> 
-> These are the continue paths
-> 
->      6191                 }
->      6192                 if (p >= param + strlen(param) - (sizeof("if") - 1) - 1)
->      6193                         return -EINVAL;
->      6194                 if (*(p + sizeof("if") - 1) != ' ' && *(p + sizeof("if") - 1) != '\t') {
->      6195                         p++;
->      6196                         continue;
->                                   ^^^^^^^^^
-> 
->      6197                 }
->      6198                 break;
-> --> 6199         } while (p);
-> 
-> Should this be } while(*p);?
+Ok, thanks for the explanation.
 
-No, it shouldn't be *p, it should be p, but the check at the top of the loop (if (!p) break) makes it redundant.  I'll submit a patch to change it to while (1) to avoid the warning.
+ice_misc_intr() is registered with devm_request_irq(), so it is a 
+handler that can't sleep.
 
-Thanks,
+I guess that more consideration should be taken into account than only:
+   s/devm_request_irq(handler)/devm_request_threaded_irq(NULL, handler)/
 
-Tom
+So I'll leave this one to people with the expected know-how.
 
-> 
->      6200
->      6201         if (!p)
->      6202                 param = NULL;
->      6203         else {
->      6204                 *(p - 1) = '\0';
->      6205                 param = strstrip(p);
->      6206                 trigger = strstrip(trigger);
->      6207         }
->      6208
-> 
-> regards,
-> dan carpenter
+If my s/GFP_KERNEL/GFP_ATOMIC/ makes enough sense as-is, that's fine for 
+me, but it looks that another solution is needed to fix the 2nd issue.
+
+
+CJ
