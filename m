@@ -2,60 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A894C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Jan 2022 22:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65385C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Jan 2022 22:46:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343712AbiASW1e (ORCPT
+        id S1357597AbiASWqb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Jan 2022 17:27:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41500 "EHLO
+        Wed, 19 Jan 2022 17:46:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234461AbiASW1d (ORCPT
+        with ESMTP id S229716AbiASWqb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Jan 2022 17:27:33 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5C64C061574;
-        Wed, 19 Jan 2022 14:27:32 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id az27-20020a05600c601b00b0034d2956eb04so8838773wmb.5;
-        Wed, 19 Jan 2022 14:27:32 -0800 (PST)
+        Wed, 19 Jan 2022 17:46:31 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E71CC061574;
+        Wed, 19 Jan 2022 14:46:30 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id w26so8234698wmi.0;
+        Wed, 19 Jan 2022 14:46:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=DewfwLZFcsnQ9ncpMxSujVRfw0OZIAPpjTixgbn7cO4=;
-        b=FyWmTBJWfW4BZj88fk1zNS4Qk6/ciN00sglYtgb2SE6qohdf1AnadARKLw9ZcAfc/C
-         cONhz7zFV5vSPQw2AVl+MlZ9fkWmw3s4m8YgOBFqoByk/49H6Lg8WlWrKW+S+5sKeqpI
-         HeEu+JN/UVkrgyEhzl/RVbOWrUNKZHznXJZ7/hkw7HCVyNR2HAxGM5hJTYiVJoATCsar
-         BJl3VM2dnTCo8gDSNUDvK/+IngGNdkjyK486MkdIq168GVGyCEBjyY3PlgwpaCpzMDJx
-         cyWVUe+CRQzahl20+O4/S5WS5TSFQ3+LTJbSN1m0T0cFZ79O2PYnz10IRVFBODTQ26VT
-         bFSQ==
+        bh=dozCW/4nG3udLwOhRUS1K5kLFfVXF4cNdQjF1vkmvlo=;
+        b=eTuSHohyTQB9Bmao7dqcPpa5iKgzaCjRBmINJezn9uUIsQIY4xO+7pmWpTVF4wcLIG
+         gJPXwv1OyMMCfBpUj3UrZY4ymzGYu8uV2D+/V4rKdRa1tf2kSDeSAPHIhrbq3GEkyV/7
+         C3v8D1BvXLf9U8Y8NdhEF5iNRuFqvH1l5RVHHLHoyJgogkZtBpV9PDF6+AeUMZovg6/2
+         ruYB4kiA9sXp+gcvkbgN4aAXJbtYldRjVg3Ajg9nVpI5yw2rPc0necow6Xz3WD5D9hXi
+         /UoIXE4A+U9vwKr8XaOIB+wRLsKWr9PzhocGZQrqTgWc4YTeI1xNTRZn+Ie5sofugWDE
+         GFpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=DewfwLZFcsnQ9ncpMxSujVRfw0OZIAPpjTixgbn7cO4=;
-        b=xrqxBFpG6s1189vslYo0F1ZAaQgp1TSYMWyNUYMyokJAfCFek+fGqTjE34a1AUd26+
-         hOEpc+KiV8paMJUDEs/rRni39S3h5aTiBVcmYM9NO+qNTZ46Jw6lHs/fdjNQftIDLuno
-         qyFJZNs5AVYuKo0ZYdBqM3tGv9D47UObBfJ+7jq6Y1zVyNXYVOWfvLiM6WwD8Lel6p8o
-         IYWF9fbWw9CHCKx1mzw/ZzPLlEbju8Yf1yKsGPbtH51yGpP2Zs4MsPcGTr7io8n5mDDD
-         ILMBxBVsex9v1AOlGN7+tVc75o4mbHfVgzQFNB5LiT2k9jy5P1xqjg7PkcuYpoQnYbBF
-         iEeg==
-X-Gm-Message-State: AOAM530AAEu3kaePl0eV2Rr0ssYi+yuu1URNr66N+Cjl+tuvmrrFlDIQ
-        MMWYc0+CRijM5GeVi4H1jKJ9ieIxOn6ETg==
-X-Google-Smtp-Source: ABdhPJwdHP56Fn/iianQoY6+zo6qivLJMovmcOBNiZlgtysy3YcqH7ISqcGIWhnB51NmGEt8inpFvA==
-X-Received: by 2002:a05:600c:a47:: with SMTP id c7mr5776345wmq.23.1642631251405;
-        Wed, 19 Jan 2022 14:27:31 -0800 (PST)
+        bh=dozCW/4nG3udLwOhRUS1K5kLFfVXF4cNdQjF1vkmvlo=;
+        b=EMkRNJoi+DvLifv3WOffk8U4oU1lxkgfFN8Og7IpBym96FCSBUWLK60UNskTaM4NUj
+         5WBao9OSpt1WV6Iv9oplzt2+aALK7U0kh5oLUCp7m02DHqiqhhjJtLIvDzAGKnUHtOvX
+         O8FgU8CVFaXaYNw1KV2aWa/NfcvElNA9YjYZDqu/2R55TtVJgJBvY1RRREzmjUuDY+TC
+         iqsqf+L5VZSYs6O/IlwGf56c0ookfDf4zD3Rz7Ds2yvA0vJ29aZpmeSeg2fhpTCxmxtF
+         DrWYLQZ1mTl7qNgsllH+R8i8NQdmMCjA69gHb/i2SO+SwLcNfejNF/PR2n0asBXqRrVr
+         hkkA==
+X-Gm-Message-State: AOAM531Q+V6payDEIWd/zbIdIw4HlQQIl81GkfE0m3ThV6rep1HV/ML0
+        aRbAa8IAVZ0hoV8OxC4k8D43EiB1/aldvg==
+X-Google-Smtp-Source: ABdhPJxOGEhjagNWyMQplUIULkMwQHFIt60zMdvuUb+Ib7Lu3QRBbFO1q1Qqx/xdRqaQeI+pXzRlvQ==
+X-Received: by 2002:a1c:4d01:: with SMTP id o1mr4298033wmh.170.1642632389084;
+        Wed, 19 Jan 2022 14:46:29 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id l13sm982203wrs.109.2022.01.19.14.27.30
+        by smtp.gmail.com with ESMTPSA id t17sm1109531wrs.10.2022.01.19.14.46.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jan 2022 14:27:30 -0800 (PST)
+        Wed, 19 Jan 2022 14:46:28 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fs/coredump: rate limit the unsafe core_pattern warning
-Date:   Wed, 19 Jan 2022 22:27:29 +0000
-Message-Id: <20220119222729.98545-1-colin.i.king@gmail.com>
+To:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Xinhui.Pan@amd.com, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev
+Subject: [PATCH] drm/radeon: remove redundant assignment to reg
+Date:   Wed, 19 Jan 2022 22:46:28 +0000
+Message-Id: <20220119224628.123084-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,28 +68,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-It is possible to spam the kernel log with many invalid attempts
-to set the core_pattern. Rate limit the warning message to make
-it less spammy.
+The pointer reg is being assigned a value that is not read, the
+exit path via label 'out' never accesses it. The assignment is
+redundant and can be removed.
+
+Cleans up clang scan build warning:
+drivers/gpu/drm/radeon/radeon_object.c:570:3: warning: Value
+stored to 'reg' is never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/coredump.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/radeon/radeon_object.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index 1c060c0a2d72..2dadc1dcaa2c 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -898,7 +898,7 @@ void validate_coredump_safety(void)
- {
- 	if (suid_dumpable == SUID_DUMP_ROOT &&
- 	    core_pattern[0] != '/' && core_pattern[0] != '|') {
--		pr_warn(
-+		pr_warn_ratelimited(
- "Unsafe core_pattern used with fs.suid_dumpable=2.\n"
- "Pipe handler or fully qualified core dump path required.\n"
- "Set kernel.core_pattern before fs.suid_dumpable.\n"
+diff --git a/drivers/gpu/drm/radeon/radeon_object.c b/drivers/gpu/drm/radeon/radeon_object.c
+index 56ede9d63b12..87536d205593 100644
+--- a/drivers/gpu/drm/radeon/radeon_object.c
++++ b/drivers/gpu/drm/radeon/radeon_object.c
+@@ -567,7 +567,6 @@ int radeon_bo_get_surface_reg(struct radeon_bo *bo)
+ 		return 0;
+ 
+ 	if (bo->surface_reg >= 0) {
+-		reg = &rdev->surface_regs[bo->surface_reg];
+ 		i = bo->surface_reg;
+ 		goto out;
+ 	}
 -- 
 2.33.1
 
