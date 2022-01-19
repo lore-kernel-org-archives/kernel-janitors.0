@@ -2,47 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E3E5C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Jan 2022 18:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A894C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 19 Jan 2022 22:27:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356586AbiASSCp (ORCPT
+        id S1343712AbiASW1e (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 19 Jan 2022 13:02:45 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:33360 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356575AbiASSCk (ORCPT
+        Wed, 19 Jan 2022 17:27:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41500 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234461AbiASW1d (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 19 Jan 2022 13:02:40 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 40E30B81995
-        for <kernel-janitors@vger.kernel.org>; Wed, 19 Jan 2022 18:02:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11466C004E1;
-        Wed, 19 Jan 2022 18:02:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642615358;
-        bh=ntFkmrYHf7DolESwdFrg5bWQtilBQv+yuy5/Fz0esAE=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=Num7TfczXyuFgQUEaNnJsxuhSPEJa5PzPlZ5KozMoGrfRWShxkoP7/mYFMiHF95OE
-         7+5+NJYqaTSEO2qcVwWnoCbmR9lfq4XyuAgMjh089/69bWLCukl3vxSoxJ2umxSCcl
-         CeMeOLNjfSgTa0+lHuC2wo39eaIbiMVRnrp+n0Dk3ofzouenC3Zh5iPDLAGMv5Uh0f
-         EIaPwQeOepjIJArXqYokLFfuJsTzq+wvMMl/+rZkPsLF+tohMh8mvDS7/Fir8UDLkB
-         WYkdzPwCb+75pOQdsP/qlB8lB7jod41ydD5NOUoYgQE8QBuaWz8oDBPbPq/zWyCO84
-         tRPVbP0FWry3A==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        Jaroslav Kysela <perex@perex.cz>,
-        kernel-janitors@vger.kernel.org
-In-Reply-To: <20220119123101.GA9509@kili>
-References: <20220119123101.GA9509@kili>
-Subject: Re: [PATCH] ASoC: max9759: fix underflow in speaker_gain_control_put()
-Message-Id: <164261535576.2816847.8184092572557171826.b4-ty@kernel.org>
-Date:   Wed, 19 Jan 2022 18:02:35 +0000
+        Wed, 19 Jan 2022 17:27:33 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5C64C061574;
+        Wed, 19 Jan 2022 14:27:32 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id az27-20020a05600c601b00b0034d2956eb04so8838773wmb.5;
+        Wed, 19 Jan 2022 14:27:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DewfwLZFcsnQ9ncpMxSujVRfw0OZIAPpjTixgbn7cO4=;
+        b=FyWmTBJWfW4BZj88fk1zNS4Qk6/ciN00sglYtgb2SE6qohdf1AnadARKLw9ZcAfc/C
+         cONhz7zFV5vSPQw2AVl+MlZ9fkWmw3s4m8YgOBFqoByk/49H6Lg8WlWrKW+S+5sKeqpI
+         HeEu+JN/UVkrgyEhzl/RVbOWrUNKZHznXJZ7/hkw7HCVyNR2HAxGM5hJTYiVJoATCsar
+         BJl3VM2dnTCo8gDSNUDvK/+IngGNdkjyK486MkdIq168GVGyCEBjyY3PlgwpaCpzMDJx
+         cyWVUe+CRQzahl20+O4/S5WS5TSFQ3+LTJbSN1m0T0cFZ79O2PYnz10IRVFBODTQ26VT
+         bFSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DewfwLZFcsnQ9ncpMxSujVRfw0OZIAPpjTixgbn7cO4=;
+        b=xrqxBFpG6s1189vslYo0F1ZAaQgp1TSYMWyNUYMyokJAfCFek+fGqTjE34a1AUd26+
+         hOEpc+KiV8paMJUDEs/rRni39S3h5aTiBVcmYM9NO+qNTZ46Jw6lHs/fdjNQftIDLuno
+         qyFJZNs5AVYuKo0ZYdBqM3tGv9D47UObBfJ+7jq6Y1zVyNXYVOWfvLiM6WwD8Lel6p8o
+         IYWF9fbWw9CHCKx1mzw/ZzPLlEbju8Yf1yKsGPbtH51yGpP2Zs4MsPcGTr7io8n5mDDD
+         ILMBxBVsex9v1AOlGN7+tVc75o4mbHfVgzQFNB5LiT2k9jy5P1xqjg7PkcuYpoQnYbBF
+         iEeg==
+X-Gm-Message-State: AOAM530AAEu3kaePl0eV2Rr0ssYi+yuu1URNr66N+Cjl+tuvmrrFlDIQ
+        MMWYc0+CRijM5GeVi4H1jKJ9ieIxOn6ETg==
+X-Google-Smtp-Source: ABdhPJwdHP56Fn/iianQoY6+zo6qivLJMovmcOBNiZlgtysy3YcqH7ISqcGIWhnB51NmGEt8inpFvA==
+X-Received: by 2002:a05:600c:a47:: with SMTP id c7mr5776345wmq.23.1642631251405;
+        Wed, 19 Jan 2022 14:27:31 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id l13sm982203wrs.109.2022.01.19.14.27.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jan 2022 14:27:30 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fs/coredump: rate limit the unsafe core_pattern warning
+Date:   Wed, 19 Jan 2022 22:27:29 +0000
+Message-Id: <20220119222729.98545-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -50,40 +64,28 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 19 Jan 2022 15:31:01 +0300, Dan Carpenter wrote:
-> Check for negative values of "priv->gain" to prevent an out of bounds
-> access.  The concern is that these might come from the user via:
->   -> snd_ctl_elem_write_user()
->     -> snd_ctl_elem_write()
->       -> kctl->put()
-> 
-> 
-> [...]
+It is possible to spam the kernel log with many invalid attempts
+to set the core_pattern. Rate limit the warning message to make
+it less spammy.
 
-Applied to
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/coredump.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-linus
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 1c060c0a2d72..2dadc1dcaa2c 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -898,7 +898,7 @@ void validate_coredump_safety(void)
+ {
+ 	if (suid_dumpable == SUID_DUMP_ROOT &&
+ 	    core_pattern[0] != '/' && core_pattern[0] != '|') {
+-		pr_warn(
++		pr_warn_ratelimited(
+ "Unsafe core_pattern used with fs.suid_dumpable=2.\n"
+ "Pipe handler or fully qualified core dump path required.\n"
+ "Set kernel.core_pattern before fs.suid_dumpable.\n"
+-- 
+2.33.1
 
-Thanks!
-
-[1/1] ASoC: max9759: fix underflow in speaker_gain_control_put()
-      commit: 4c907bcd9dcd233da6707059d777ab389dcbd964
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
