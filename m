@@ -2,96 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1050C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 21 Jan 2022 23:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13FC9C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 22 Jan 2022 02:43:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232937AbiAUXTH (ORCPT
+        id S231174AbiAVCnT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 21 Jan 2022 18:19:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51272 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232707AbiAUXTG (ORCPT
+        Fri, 21 Jan 2022 21:43:19 -0500
+Received: from szxga01-in.huawei.com ([45.249.212.187]:16728 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229603AbiAVCnS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 21 Jan 2022 18:19:06 -0500
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEC4DC06173B;
-        Fri, 21 Jan 2022 15:19:05 -0800 (PST)
-Received: by mail-yb1-xb31.google.com with SMTP id c10so31873029ybb.2;
-        Fri, 21 Jan 2022 15:19:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=i0MqnfhvrrNm0+DYJzeNHyL5ZK776WS/fCf9Zqaayfw=;
-        b=nU7E61IZBKXP96lCGxO6PmZrwPoC2JZkXyLL2SgvNyuTmGDiI1QUw9WWOk+22eX3uG
-         1vCSnfu1VniADxUqPO3/+vLo+CRHPYsMKuP4KmuGZXZE5e/Nyewnq3iTd7zcTtmO24R5
-         Eh6hbxS7M0TGdLlIW5kXyo6HglzxiPtzTh9UNHNZ6RDzdfoiVYhKR52bgTClosZ31/Mp
-         Od+QPf6zFfnhqdG/HJbzGoqli8NGukzWqAfRZlpE5bXfoLzEwGnsB+BHV4ADxn6nOzj1
-         ME/y372+JgNM9Ygem0LwaalWyWDxeYIaZ2tQp6VJSrKiQT5CR1eLindcPYIw4Vclu6Nj
-         2o2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=i0MqnfhvrrNm0+DYJzeNHyL5ZK776WS/fCf9Zqaayfw=;
-        b=wGWcU+pBoU/bFKAeloJhs/T4DAu+jGCIZ9ik7JxrTpkmct10ZPUkNqv2XLAI6Klamg
-         6bK/Wh3yM2YhRJA5a6ra1uuXIAYHJ9zpfxM3kugavQE/i/tYe+BJQWQI+8syI1Z90Wpx
-         JmVdCPMWUp0LBSSPP5X+6k+U7EGaik+eX/6nTt2ZcZ0QRZWuPVMNjqVeGtly9of/GLL9
-         o8i8GlDVqdMG6lw3XKhEjKeBHvnMgPf/unSTy7FuvTOATNVXHP4xCZ8VEma/vEMVEUOu
-         FLgGLQoEUFctmL1iuUUfmW3kFoUyPOmTfkD1zlo3fA2TDg6bVZ0/9aL+tkldkhGdy56I
-         lEjw==
-X-Gm-Message-State: AOAM5307eSNDW2Jb8E97Js+HZO7VspESvKH/dHx7fOSPjwcrrJ5WQM4l
-        u92Zf9vsNZ0hQ4BKKptI1vHeMPJFGia2G22xewWob/SiNeBwsA==
-X-Google-Smtp-Source: ABdhPJyqLvjVlApKxi9xKBBgMwGawPDx6GPTfXn5raCKFLqp6r2kVHzgw17Auj37v+knGAdx+2fW5Jg4CHWX23q5woQ=
-X-Received: by 2002:a25:b683:: with SMTP id s3mr9277279ybj.293.1642807144997;
- Fri, 21 Jan 2022 15:19:04 -0800 (PST)
+        Fri, 21 Jan 2022 21:43:18 -0500
+Received: from kwepemi100015.china.huawei.com (unknown [172.30.72.56])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4JggSH0H9VzZfcs;
+        Sat, 22 Jan 2022 10:39:27 +0800 (CST)
+Received: from kwepemm600019.china.huawei.com (7.193.23.64) by
+ kwepemi100015.china.huawei.com (7.221.188.125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Sat, 22 Jan 2022 10:43:15 +0800
+Received: from [10.174.177.210] (10.174.177.210) by
+ kwepemm600019.china.huawei.com (7.193.23.64) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Sat, 22 Jan 2022 10:43:15 +0800
+Subject: Re: [PATCH] mtd: phram: Prevent divide by zero bug in phram_setup()
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Joern Engel <joern@lazybastard.org>
+CC:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        <linux-mtd@lists.infradead.org>, <kernel-janitors@vger.kernel.org>
+References: <20220121053836.GA27293@kili>
+From:   yangerkun <yangerkun@huawei.com>
+Message-ID: <00cdcbbc-c74e-e7d1-f751-93aac5113eee@huawei.com>
+Date:   Sat, 22 Jan 2022 10:43:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
 MIME-Version: 1.0
-References: <20220111072319.GH11243@kili> <5202DA51-7BA4-41F1-BECA-858B894EC4F0@holtmann.org>
-In-Reply-To: <5202DA51-7BA4-41F1-BECA-858B894EC4F0@holtmann.org>
-From:   Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date:   Fri, 21 Jan 2022 15:18:54 -0800
-Message-ID: <CABBYNZLM2kxT5pet9ZMGowLCLgwhJW5JQCMj8kydH5pA_ddXtA@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: hci_sync: unlock on error in hci_inquiry_result_with_rssi_evt()
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220121053836.GA27293@kili>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.177.210]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemm600019.china.huawei.com (7.193.23.64)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Marcel,
+Thanks for the fix!
 
-On Fri, Jan 21, 2022 at 2:53 PM Marcel Holtmann <marcel@holtmann.org> wrote=
-:
->
-> Hi Dan,
->
-> > Add unlocks to two error paths in hci_inquiry_result_with_rssi_evt().
-> >
-> > Fixes: fee645033e2c ("Bluetooth: hci_event: Use skb_pull_data when proc=
-essing inquiry results")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> > net/bluetooth/hci_event.c | 6 +++---
-> > 1 file changed, 3 insertions(+), 3 deletions(-)
->
-> patch doesn=E2=80=99t apply cleanly, please rebase against bluetooth-next=
- tree.
->
-> Regards
->
-> Marcel
+Reviewed-by: yangerkun <yangerkun@huawei.com>
 
-Ive already applied this one:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.gi=
-t/commit/?id=3Dc07ba878ca199a6089cdb323bf526adbeeb4201f
-
-Might have forgotten to reply here.
-
---=20
-Luiz Augusto von Dentz
+On 2022/1/21 13:38, Dan Carpenter wrote:
+> The problem is that "erasesize" is a uint32_t type so it might be
+> non-zero but the truncated "(uint32_t)erasesize" value *is* zero. That
+> would lead to the divide by zero bug.
+> 
+> Avoid the bug by delaying the divide until after we have validated
+> that "erasesize" is reasonable.
+> 
+> Fixes: dc2b3e5cbc80 ("mtd: phram: use div_u64_rem to stop overwrite len in phram_setup")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>   drivers/mtd/devices/phram.c | 12 ++++++++----
+>   1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mtd/devices/phram.c b/drivers/mtd/devices/phram.c
+> index 6ed6c51fac69..d503821a3e60 100644
+> --- a/drivers/mtd/devices/phram.c
+> +++ b/drivers/mtd/devices/phram.c
+> @@ -264,16 +264,20 @@ static int phram_setup(const char *val)
+>   		}
+>   	}
+>   
+> -	if (erasesize)
+> -		div_u64_rem(len, (uint32_t)erasesize, &rem);
+> -
+>   	if (len == 0 || erasesize == 0 || erasesize > len
+> -	    || erasesize > UINT_MAX || rem) {
+> +	    || erasesize > UINT_MAX) {
+>   		parse_err("illegal erasesize or len\n");
+>   		ret = -EINVAL;
+>   		goto error;
+>   	}
+>   
+> +	div_u64_rem(len, (uint32_t)erasesize, &rem);
+> +	if (rem) {
+> +		parse_err("len is not multiple of erasesize\n");
+> +		ret = -EINVAL;
+> +		goto error;
+> +	}
+> +
+>   	ret = register_device(name, start, len, (uint32_t)erasesize);
+>   	if (ret)
+>   		goto error;
+> 
