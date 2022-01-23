@@ -2,95 +2,54 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CF0C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 23 Jan 2022 14:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A32F5C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 23 Jan 2022 15:23:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236784AbiAWOjw (ORCPT
+        id S237438AbiAWPXJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 23 Jan 2022 09:39:52 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:43316 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233561AbiAWOjv (ORCPT
+        Sun, 23 Jan 2022 10:23:09 -0500
+Received: from relay11.mail.gandi.net ([217.70.178.231]:57177 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237432AbiAWPXH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 23 Jan 2022 09:39:51 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5D57860DCB;
-        Sun, 23 Jan 2022 14:39:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5341C340E4;
-        Sun, 23 Jan 2022 14:39:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642948790;
-        bh=pbdm6yNzVp/q1gX4haqsF4KAHn/ly4XCm2b7ufFhvcI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Wr+DTn/aPm0RFQRCxe41WKikBqJ6SdbgwraVSTZRNizPiaQS8kyhev68O2YHAhsnA
-         OeZXOWBPf2xjaV/W7CyxK+lL1Y8zDdmxIqEiuXnnAwcjwXgK5lG9bsa8XeT0rqlUV3
-         wZSBZz+hW1+dvppu9LoxOqP15JXSW+cssV3Ui3lO4InfQCMnA58F2JRB2YbKzf5bo1
-         k3k4oa00VCpX3w7HmdmNJlVczyhsH+8GekL/yqmiiz/K1p+kfPgemdxoCW2ajoGfLR
-         o8onL05X2r0c6V9aPkmogoCtXIy8cTPd7ZSgixU1Z7RYNRY61g7BO/+X9GPrHN+A9f
-         QhbDbzr7IHcUw==
-Received: by mail-yb1-f179.google.com with SMTP id c6so42993484ybk.3;
-        Sun, 23 Jan 2022 06:39:50 -0800 (PST)
-X-Gm-Message-State: AOAM533b6L+iODZdUrcI7qA2gmS8WP81iLRVGxFqTa+CUf8rDBcxpCWn
-        5LYPb25+rJkY5ZZt1z/ZucQcLiKgg07+6hRYHPE=
-X-Google-Smtp-Source: ABdhPJwJFnlLrjCH33CrvzoYJ2kXlBqK2ErLkFwDl5tP5l3SjOYv7cZBRYYKfZOZZbEsk3e4uOoMz5PFi2Pn1K6eB/I=
-X-Received: by 2002:a05:6902:72a:: with SMTP id l10mr9866744ybt.302.1642948789950;
- Sun, 23 Jan 2022 06:39:49 -0800 (PST)
+        Sun, 23 Jan 2022 10:23:07 -0500
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id F2A67100005;
+        Sun, 23 Jan 2022 15:22:56 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Joern Engel <joern@lazybastard.org>,
+        yangerkun <yangerkun@huawei.com>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] mtd: phram: Prevent divide by zero bug in phram_setup()
+Date:   Sun, 23 Jan 2022 16:22:56 +0100
+Message-Id: <20220123152256.529296-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20220121115505.GI1978@kadam>
+References: 
 MIME-Version: 1.0
-References: <20220111071651.GB11243@kili>
-In-Reply-To: <20220111071651.GB11243@kili>
-From:   Oded Gabbay <ogabbay@kernel.org>
-Date:   Sun, 23 Jan 2022 16:39:23 +0200
-X-Gmail-Original-Message-ID: <CAFCwf139_RCeudr5RVxhO2A8G8vgj-Qc_0aZ8vGqLRjoP0Ga8g@mail.gmail.com>
-Message-ID: <CAFCwf139_RCeudr5RVxhO2A8G8vgj-Qc_0aZ8vGqLRjoP0Ga8g@mail.gmail.com>
-Subject: Re: [PATCH] habanalabs: silence an uninitialized variable warning
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ofir Bitton <obitton@habana.ai>,
-        Yuri Nudelman <ynudelman@habana.ai>,
-        farah kassabri <fkassabri@habana.ai>,
-        Alon Mizrahi <amizrahi@habana.ai>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: b'4f82eb6b4aec9d584c9dd370087db7a87c88bcb6'
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jan 11, 2022 at 9:17 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> Smatch warns that:
->
->     drivers/misc/habanalabs/common/command_buffer.c:471 hl_cb_ioctl()
->     error: uninitialized symbol 'device_va'.
->
-> Which is true, but harmless.  Anyway, it's easy to silence this by
-> adding a error check.
->
+On Fri, 2022-01-21 at 11:55:05 UTC, Dan Carpenter wrote:
+> The problem is that "erasesize" is a uint64_t type so it might be
+> non-zero but the lower 32 bits are zero so when it's truncated,
+> "(uint32_t)erasesize", then that value is zero. This leads to a
+> divide by zero bug.
+> 
+> Avoid the bug by delaying the divide until after we have validated
+> that "erasesize" is non-zero and within the uint32_t range.
+> 
+> Fixes: dc2b3e5cbc80 ("mtd: phram: use div_u64_rem to stop overwrite len in phram_setup")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/misc/habanalabs/common/command_buffer.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/misc/habanalabs/common/command_buffer.c b/drivers/misc/habanalabs/common/command_buffer.c
-> index 3c0ae07a2d80..b9483a3cee91 100644
-> --- a/drivers/misc/habanalabs/common/command_buffer.c
-> +++ b/drivers/misc/habanalabs/common/command_buffer.c
-> @@ -464,6 +464,8 @@ int hl_cb_ioctl(struct hl_fpriv *hpriv, void *data)
->                                 args->in.flags,
->                                 &usage_cnt,
->                                 &device_va);
-> +               if (rc)
-> +                       break;
->
->                 memset(&args->out, 0, sizeof(args->out));
->
-> --
-> 2.20.1
->
 
-Thanks!
-Reviewed-by: Oded Gabbay <ogabbay@kernel.org>
-Applied to -next.
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/next, thanks.
+
+Miquel
