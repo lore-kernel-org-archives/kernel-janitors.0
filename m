@@ -2,61 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E3DC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 23 Jan 2022 18:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A055C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 23 Jan 2022 22:16:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232194AbiAWSuG (ORCPT
+        id S240318AbiAWWQ0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 23 Jan 2022 13:50:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55906 "EHLO
+        Sun, 23 Jan 2022 17:16:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239684AbiAWStj (ORCPT
+        with ESMTP id S234697AbiAWWQZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 23 Jan 2022 13:49:39 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1996C06173B;
-        Sun, 23 Jan 2022 10:49:38 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id az27-20020a05600c601b00b0034d2956eb04so26141474wmb.5;
-        Sun, 23 Jan 2022 10:49:38 -0800 (PST)
+        Sun, 23 Jan 2022 17:16:25 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED829C06173B;
+        Sun, 23 Jan 2022 14:16:24 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id s18so10223853wrv.7;
+        Sun, 23 Jan 2022 14:16:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=QNqDn3I3LJLzoyMZXKpcI7Z5iL1QVKhcITQ7cdN2Eik=;
-        b=XTSyLsYruDxgGhVGg7tqEoHCKh7PCit7Tcwzd1PZxnc17OG1M5yfx2Hp2jHGXq1Ngn
-         QfALqEFpgro6Kw6mOECJe8weHFLrdej+K8689SgNWME0OcvKkd7VDMmed3kAZITt+sBP
-         H1ZFDWfExHmnjcOav2iVhMLQpaL0as+k1rXmznmBa85KOYEB+bZXmJi+6HbYozWpYYLq
-         FqTh0rEkmeB6jaVBtzNxBd8M7klwlWBXE2HTAvLdZZDLimiyivwQ04pReCFgHhNRGZHM
-         Upsx5za6EYRupJhomYcuMbY22jWa+PwfiwjuV/jXOgpqybUOcuab+H4ESIH1hwY4zy0N
-         78eA==
+        bh=JkiEYCh+nlDFeOW7dAXi5U5ovMgv7RIgGZQmqUFLweQ=;
+        b=Y782NLyzUAydn5rTsHO+uIIA35+kBDOAFG8Zd2Lu5HN6bEOm5f2St6kdME1mBVIFLT
+         B05i2B8sv0VgbPfkXV1FDqDFtCOUESixO47CrbpuJ5Xqdj5AzsaT2tIq5cOCWxfW3z56
+         QyN314pioZxtgPX2Bd0dMovoddq1ziX8RfT6b2ecLPAol13gyJZgeYcrQ9jbjTzvIHK+
+         +fsAdfSs/ptxA/A4s+Hr7NLP4vNMorVREsAaf5k3O+giohF0qXOK0gaHIlCn3N+C9jiG
+         VFrtVlmc6ldZ81aVzigMx0OHnwFofzqrj17Wc4julsgY810Sm8QCkdG5UhrUBaDtqNhp
+         AZjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=QNqDn3I3LJLzoyMZXKpcI7Z5iL1QVKhcITQ7cdN2Eik=;
-        b=lSOr8WDWZj65++MpTTm/wcbrwVQ19TQ5VBHTk+XrG+4mHxpiCJPHZjRptIfoQFIvb+
-         bELwkPOLxJbymts3srfu3czAvR25Vq/EqQtRkfvBAWQVbrfP5KnHJgD/V3OMLhCc66KC
-         sPxfZZc20h6xP+zdR83WHz8aTbXET7Fj2hueCjtqPdjNyMncnBsLc5nnJIJ/pYWv8QGD
-         BRoza+fq07/8di3ucfpfdObYxOEBRHNzlv5LmcA9DGUbVYVMnwEd7j0/9BQwwWajpPPu
-         1YoPxjvkykj5ZpR2EoJHY0r54kwRRCs9c+QcviCeEdObSzx9Y3o6eUayOa/q52dvGtoh
-         CF1Q==
-X-Gm-Message-State: AOAM532ziBgSnYgDK526rD07b2wWqk94t0/ow1CjgaWuEANcQpExFRPG
-        /NsG7VKkEdV7MQ5/b18Zrlg5R4KcWQTbDQ==
-X-Google-Smtp-Source: ABdhPJxNP8e3b/i3J1jIoUGak690AInHAgR5PpNWEkZNKxwUIDbwFrxt8DkRrzbZZjp4yuM3YhBOHA==
-X-Received: by 2002:a1c:4d1a:: with SMTP id o26mr6375332wmh.147.1642963777165;
-        Sun, 23 Jan 2022 10:49:37 -0800 (PST)
+        bh=JkiEYCh+nlDFeOW7dAXi5U5ovMgv7RIgGZQmqUFLweQ=;
+        b=qy0GHRgw1P60ZrFUM4wwLcF99HF0oVk/guPwmJKye0VoaTSKnsPQcworN+1AlXEtBE
+         YcRwQHqcIwPmomhM7+ocfAtwPu1SL5vMf3hWrjuksClI3WfRoPmBC3aHhqVpa0fqBqBS
+         XTqydH9ONyhGMHZdjcGeW1akXkjM8pMktnzbpAh0A5Xu2jcCF0AmJ9AqY4YUpEhRzJSU
+         /Eu2CN9F7wXM/Rzvx2PJ5xeD1NI6fffQD/7sOqOi+xD7Lt9UM0ZquUjN9JavMFlLbNo+
+         usrFJFaCqQff7FHcrPG52Mhwt+KQk/krnMt9S0EeJRvITIYEGv7rbeJTkB27C/8we3jv
+         4RKQ==
+X-Gm-Message-State: AOAM530zXCTN1DHl+6lsFCpl7IdIIKPXuZ+8wXDn34WEl+HybGdnorid
+        JJ3jU7HND+5NZ2pggB+P5uGeaw4th2pDrQ==
+X-Google-Smtp-Source: ABdhPJzwzD52JrriVt7nBB3oT3qBFQV1/vCle9VYKW48x0qDjIxIgzgos4imjnz6DAzLb+8xcDKi0Q==
+X-Received: by 2002:a5d:6750:: with SMTP id l16mr5731495wrw.196.1642976183468;
+        Sun, 23 Jan 2022 14:16:23 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id m5sm11013691wms.4.2022.01.23.10.49.36
+        by smtp.gmail.com with ESMTPSA id b11sm1238229wmq.46.2022.01.23.14.16.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jan 2022 10:49:36 -0800 (PST)
+        Sun, 23 Jan 2022 14:16:23 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Joakim Zhang <qiangqing.zhang@nxp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        linux-ide@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: fec_ptp: remove redundant initialization of variable val
-Date:   Sun, 23 Jan 2022 18:49:36 +0000
-Message-Id: <20220123184936.113486-1-colin.i.king@gmail.com>
+Subject: [PATCH] ata: pata_atiixp: make static read-only arrays const
+Date:   Sun, 23 Jan 2022 22:16:22 +0000
+Message-Id: <20220123221622.5543-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,27 +64,36 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable val is being initialized with a value that is never read,
-it is being re-assigned later. The assignment is redundant and
-can be removed.
+The static arrays pio_timings and mwdma_timings are read-only so
+it make sense to make them const.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/net/ethernet/freescale/fec_ptp.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/ata/pata_atiixp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/freescale/fec_ptp.c b/drivers/net/ethernet/freescale/fec_ptp.c
-index af99017a5453..7d49c28215f3 100644
---- a/drivers/net/ethernet/freescale/fec_ptp.c
-+++ b/drivers/net/ethernet/freescale/fec_ptp.c
-@@ -101,7 +101,6 @@ static int fec_ptp_enable_pps(struct fec_enet_private *fep, uint enable)
- 	u32 val, tempval;
- 	struct timespec64 ts;
- 	u64 ns;
--	val = 0;
+diff --git a/drivers/ata/pata_atiixp.c b/drivers/ata/pata_atiixp.c
+index c3a65ccd4b79..efdb94cff68b 100644
+--- a/drivers/ata/pata_atiixp.c
++++ b/drivers/ata/pata_atiixp.c
+@@ -102,7 +102,7 @@ static int atiixp_prereset(struct ata_link *link, unsigned long deadline)
  
- 	if (fep->pps_enable == enable)
- 		return 0;
+ static void atiixp_set_pio_timing(struct ata_port *ap, struct ata_device *adev, int pio)
+ {
+-	static u8 pio_timings[5] = { 0x5D, 0x47, 0x34, 0x22, 0x20 };
++	static const u8 pio_timings[5] = { 0x5D, 0x47, 0x34, 0x22, 0x20 };
+ 
+ 	struct pci_dev *pdev = to_pci_dev(ap->host->dev);
+ 	int dn = 2 * ap->port_no + adev->devno;
+@@ -149,7 +149,7 @@ static void atiixp_set_piomode(struct ata_port *ap, struct ata_device *adev)
+ 
+ static void atiixp_set_dmamode(struct ata_port *ap, struct ata_device *adev)
+ {
+-	static u8 mwdma_timings[5] = { 0x77, 0x21, 0x20 };
++	static const u8 mwdma_timings[5] = { 0x77, 0x21, 0x20 };
+ 
+ 	struct pci_dev *pdev = to_pci_dev(ap->host->dev);
+ 	int dma = adev->dma_mode;
 -- 
 2.33.1
 
