@@ -2,61 +2,59 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB12C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 23 Jan 2022 23:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 390EEC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 23 Jan 2022 23:34:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234920AbiAWXUm (ORCPT
+        id S240447AbiAWXeH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 23 Jan 2022 18:20:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58542 "EHLO
+        Sun, 23 Jan 2022 18:34:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230516AbiAWXUm (ORCPT
+        with ESMTP id S230242AbiAWXeH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 23 Jan 2022 18:20:42 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8343C06173B;
-        Sun, 23 Jan 2022 15:20:41 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id h29so7733192wrb.5;
-        Sun, 23 Jan 2022 15:20:41 -0800 (PST)
+        Sun, 23 Jan 2022 18:34:07 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F098BC06173B;
+        Sun, 23 Jan 2022 15:34:06 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id u15so10398648wrt.3;
+        Sun, 23 Jan 2022 15:34:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=X/+MzBPEwUeVy9YMiiZzeSURkIQk2JNPyEKNx23n8iE=;
-        b=RV3DPjzUZjdGL0OESWJkr7mBfuZTqf7vGut/A3LFsRTsuZmRlMum6GVPD8Qzicehfo
-         nEBGJSHPK9X6FhN+JKBZkrvTPQXtkuW3Anrm2b5HbajV2R+7PO8hsXj0KwxnU/C/sN5l
-         DPk1jz84dBesBaMegMqpyb/dPGkZB5dnHW7Wz2LZVAu2vasO5SZV4M/8Fwn1Pdu+YUzv
-         Z/+7e3sDWsoJ6HHs3nBlz+cTnLww9oTMmydHqvc1EyB3Q3Tv35UKzFFhlM2AMn5g3el4
-         LoBKg4f/xpHNceUXpdlp1eIGz23nOuZiYxAdqNRl7/jkPOmQwu/gW/Z0AaiuTm4I/BL3
-         TdaQ==
+        bh=gX00LRfhLCwbvXu3aEovaKIbbvwVWpZ2zTED2Jz94hQ=;
+        b=NpLW2Eki7mEVKi5nncvoW0FPpKpzZ0NkLEkJaqkI5Rt+KtuC6DWKpSqMz0FbqpQ/+B
+         NgPrUxWuK3v34tNdIscSMLRoVByDpF8TkMDjf1ixugoKWs5Yyr9O23buM3VczPTtmVBa
+         tA8duLElAsFUWuIyebGBbG/ejiSws11SUGs2SLd3VBEt06bya/SBkdsDMq0zBaJOTbiV
+         TKzmkRp7h9GGXieEEzR+JhtzwYiQZcyppstExzUW28+SGQnQkUKzSx6guDWMim/REXzc
+         VsNSY7UXwMwfwMNdl2Hh21JdS2uGwcqax/ztveqbokcKuwWfUX2hcGY982gKExvSUVEl
+         uQtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=X/+MzBPEwUeVy9YMiiZzeSURkIQk2JNPyEKNx23n8iE=;
-        b=fkWUxUqRKn8W+N7wrMRS436hB6Rs5dF4+WPDXxwK6qrWB2JUGE3G7EtrjZSMbEL8vK
-         AvYKIdZLyLqr3t27xlrfz8tuziNlO/7lE2iAZWEGm8OKlYGbYbpaErQ8Q4OJ8dIf8q39
-         7cKz8LQ9PBOOqxEUPQc5+KnXOnNyMjq8SRbFk3fAX0XcQ1XaVGJcvYDSKsXAtaebRgaA
-         xLAPwNJ5ffvA5o/ajI8GnVjsl7mjMIKRZ0jJlAi+dH80NgQzqGm37kv/MCpOGQQO6jbW
-         6u6c94qOkAjjvM5ykKkG33OAy5ZGAGEb2DNMjaCMSOqunOa6XNjk6U6IQiWCDLyRlpwf
-         MDHg==
-X-Gm-Message-State: AOAM531rKJWZIc/yNc26M/7W+H8ZOwmg3ru989PwYaAURBsRA/HpbkRL
-        362dJnsNa44RwDgOxXTOvh0=
-X-Google-Smtp-Source: ABdhPJypbu8H4eQZF4Tts1MmqzfLcVBzL44VFGv9yJFatulhGOEERN/kYdI4y5ks0aGSYSbHk9vJQA==
-X-Received: by 2002:adf:c542:: with SMTP id s2mr12053456wrf.237.1642980040384;
-        Sun, 23 Jan 2022 15:20:40 -0800 (PST)
+        bh=gX00LRfhLCwbvXu3aEovaKIbbvwVWpZ2zTED2Jz94hQ=;
+        b=VLe1UCAkrSdrQe72p+NrwSsQ7LacqW24siQeTkHEK/gzLrxiPkQtaK9cxRwxMn+kwe
+         rMQu5MJFRo5lSDNX9rSdz5rwdf5vvLIdetTygfg8+UxErzQd+dc1k8W3BJ8P4H9VWeaQ
+         e+VHE8oyP0olCtz4+7RULt5mWqLL44tiLDPMJk9lt+5SBTz9GzcKCBRQsCRcr8DLlOJy
+         ZukruC85F5p765aNFOn9XvdxRu43GimD283KSoaecqqxit3g2CfHGY3wz8CitfSzRXIC
+         If3J06ThFBufMP4MW5mB3wGBUg/dMI6tEdJnn6gkKL1y632Bj+SFKtOsZGm3ockxql7x
+         D5vQ==
+X-Gm-Message-State: AOAM533pO1oQXOBtSjO8i2OdZ52Ohm/+wBUUF+2uDfAWpzs9II+0+N7H
+        XPAktMhpFTMUuDGYeI1qAgbi9gqXE7ps5w==
+X-Google-Smtp-Source: ABdhPJw5+dICUhQBxSLbu9/1d8Kqd/W4DA9m4VwhtLtn+Ip/6m5srbg1xboW1rgya5qhkmQFElR81w==
+X-Received: by 2002:a5d:47ad:: with SMTP id 13mr12566259wrb.545.1642980845130;
+        Sun, 23 Jan 2022 15:34:05 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n13sm5335337wms.8.2022.01.23.15.20.39
+        by smtp.gmail.com with ESMTPSA id i3sm12307206wru.33.2022.01.23.15.34.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jan 2022 15:20:39 -0800 (PST)
+        Sun, 23 Jan 2022 15:34:04 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        devel@lists.orangefs.org
+To:     Dominik Brodowski <linux@dominikbrodowski.net>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] orangefs: make static read-only arrays modes and orangefs_modes const
-Date:   Sun, 23 Jan 2022 23:20:39 +0000
-Message-Id: <20220123232039.8036-1-colin.i.king@gmail.com>
+Subject: [PATCH] pcmcia: rsrc_nonstatic: make static read-only array order const
+Date:   Sun, 23 Jan 2022 23:34:03 +0000
+Message-Id: <20220123233403.8482-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,34 +63,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The static arrays modes and orangefs_modes are read-only so it makes
-sense to make them const.
+The static array is order read-only so it make sense to make
+it const.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/orangefs/orangefs-utils.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pcmcia/rsrc_nonstatic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/orangefs/orangefs-utils.c b/fs/orangefs/orangefs-utils.c
-index 46b7dcff18ac..87d83d08470d 100644
---- a/fs/orangefs/orangefs-utils.c
-+++ b/fs/orangefs/orangefs-utils.c
-@@ -538,13 +538,13 @@ __s32 ORANGEFS_util_translate_mode(int mode)
+diff --git a/drivers/pcmcia/rsrc_nonstatic.c b/drivers/pcmcia/rsrc_nonstatic.c
+index 6b6c578b5f92..bde377655d48 100644
+--- a/drivers/pcmcia/rsrc_nonstatic.c
++++ b/drivers/pcmcia/rsrc_nonstatic.c
+@@ -480,7 +480,7 @@ static u_long inv_probe(struct resource_map *m, struct pcmcia_socket *s)
+ static int validate_mem(struct pcmcia_socket *s, unsigned int probe_mask)
  {
- 	int ret = 0;
- 	int i = 0;
--	static int modes[NUM_MODES] = {
-+	static const int modes[NUM_MODES] = {
- 		S_IXOTH, S_IWOTH, S_IROTH,
- 		S_IXGRP, S_IWGRP, S_IRGRP,
- 		S_IXUSR, S_IWUSR, S_IRUSR,
- 		S_ISGID, S_ISUID
- 	};
--	static int orangefs_modes[NUM_MODES] = {
-+	static const int orangefs_modes[NUM_MODES] = {
- 		ORANGEFS_O_EXECUTE, ORANGEFS_O_WRITE, ORANGEFS_O_READ,
- 		ORANGEFS_G_EXECUTE, ORANGEFS_G_WRITE, ORANGEFS_G_READ,
- 		ORANGEFS_U_EXECUTE, ORANGEFS_U_WRITE, ORANGEFS_U_READ,
+ 	struct resource_map *m, mm;
+-	static unsigned char order[] = { 0xd0, 0xe0, 0xc0, 0xf0 };
++	static const unsigned char order[] = { 0xd0, 0xe0, 0xc0, 0xf0 };
+ 	unsigned long b, i, ok = 0;
+ 	struct socket_data *s_data = s->resource_data;
+ 
 -- 
 2.33.1
 
