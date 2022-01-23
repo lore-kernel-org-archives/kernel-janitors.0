@@ -2,80 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B514DC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 23 Jan 2022 06:54:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1775CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 23 Jan 2022 14:04:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235753AbiAWGyA (ORCPT
+        id S236653AbiAWOEc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 23 Jan 2022 01:54:00 -0500
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:53331 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232338AbiAWGx6 (ORCPT
+        Sun, 23 Jan 2022 09:04:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46394 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233165AbiAWOEc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 23 Jan 2022 01:53:58 -0500
-Received: from pop-os.home ([90.126.236.122])
-        by smtp.orange.fr with ESMTPA
-        id BWl8nGtI5HZHJBWl9nOzEa; Sun, 23 Jan 2022 07:53:56 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 23 Jan 2022 07:53:56 +0100
-X-ME-IP: 90.126.236.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Igor Russkikh <irusskikh@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org
-Subject: [PATCH] net: atlantic: Use the bitmap API instead of hand-writing it
-Date:   Sun, 23 Jan 2022 07:53:46 +0100
-Message-Id: <27b498801eb6d9d9876b35165c57b7f8606f4da8.1642920729.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
+        Sun, 23 Jan 2022 09:04:32 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4994FC06173B
+        for <kernel-janitors@vger.kernel.org>; Sun, 23 Jan 2022 06:04:31 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id F2D46B80CEE
+        for <kernel-janitors@vger.kernel.org>; Sun, 23 Jan 2022 14:04:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAE27C340E2;
+        Sun, 23 Jan 2022 14:04:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642946668;
+        bh=hVmka7E7LtDJ7yqUAlY3ND4Y2b2jX8U28hzoFzaJHW0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QZPSaLgPAgB8iu+/2baqDruGVT90M6F+qLDAY55lL6CZFTITbe1nG8gXrhabPsf+p
+         qAYIVKI7peI2GUJi9f65H3juCkS/orlf2njgoFgkdOjG7nlDjUvZ44DA/9CRAwY+0C
+         DqSprkNUW0EqSDlr42R2aSQ8jYnkCfshKBup48SY1il+0gnDv9/0+6GAytWrEeXkdI
+         L9UUaCTHSDq+MFWH48D456exm+was4ywuXGPQDGTU0avEQ6W08LCIgGMbQw2JDg9UI
+         EHq1DGDrXBWAGxC+NcDtJtDUmAHoXRr8Jyy1OPznL7izbov/48qZixymtlmpMExDJa
+         31p+yC+mZK1dA==
+Date:   Sun, 23 Jan 2022 19:34:24 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Swapnil Jakhade <sjakhade@cadence.com>,
+        Aswath Govindraju <a-govindraju@ti.com>,
+        linux-phy@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] phy: cadence: Sierra: fix error handling bugs in probe()
+Message-ID: <Ye1gaFOYziZDVs25@matsya>
+References: <20220115115146.GC7552@kili>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220115115146.GC7552@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Simplify code by using bitmap_weight() and bitmap_zero() instead of
-hand-writing these functions.
+On 15-01-22, 14:51, Dan Carpenter wrote:
+> There are two bugs in the error handling:
+> 1: If devm_of_phy_provider_register() fails then there was no cleanup.
+> 2: The error handling called of_node_put(child) improperly leading to
+>    a use after free.  We are only holding the reference inside the loop
+>    so the last two gotos after the loop lead to a use after free bug.
+>    Fix this by cleaning up the partial allocations (or partial iterations)
+>    in the loop before doing the goto.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/ethernet/aquantia/atlantic/aq_filters.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Applied, thanks
 
-diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_filters.c b/drivers/net/ethernet/aquantia/atlantic/aq_filters.c
-index 1bc4d33a0ce5..30a573db02bb 100644
---- a/drivers/net/ethernet/aquantia/atlantic/aq_filters.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_filters.c
-@@ -826,7 +826,6 @@ int aq_filters_vlans_update(struct aq_nic_s *aq_nic)
- 	struct aq_hw_s *aq_hw = aq_nic->aq_hw;
- 	int hweight = 0;
- 	int err = 0;
--	int i;
- 
- 	if (unlikely(!aq_hw_ops->hw_filter_vlan_set))
- 		return -EOPNOTSUPP;
-@@ -837,8 +836,7 @@ int aq_filters_vlans_update(struct aq_nic_s *aq_nic)
- 			 aq_nic->aq_hw_rx_fltrs.fl2.aq_vlans);
- 
- 	if (aq_nic->ndev->features & NETIF_F_HW_VLAN_CTAG_FILTER) {
--		for (i = 0; i < BITS_TO_LONGS(VLAN_N_VID); i++)
--			hweight += hweight_long(aq_nic->active_vlans[i]);
-+		hweight = bitmap_weight(aq_nic->active_vlans, VLAN_N_VID);
- 
- 		err = aq_hw_ops->hw_filter_vlan_ctrl(aq_hw, false);
- 		if (err)
-@@ -871,7 +869,7 @@ int aq_filters_vlan_offload_off(struct aq_nic_s *aq_nic)
- 	struct aq_hw_s *aq_hw = aq_nic->aq_hw;
- 	int err = 0;
- 
--	memset(aq_nic->active_vlans, 0, sizeof(aq_nic->active_vlans));
-+	bitmap_zero(aq_nic->active_vlans, VLAN_N_VID);
- 	aq_fvlan_rebuild(aq_nic, aq_nic->active_vlans,
- 			 aq_nic->aq_hw_rx_fltrs.fl2.aq_vlans);
- 
 -- 
-2.32.0
-
+~Vinod
