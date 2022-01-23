@@ -2,60 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D42C2C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 23 Jan 2022 22:22:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE9CC433FE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 23 Jan 2022 22:30:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240329AbiAWWWt (ORCPT
+        id S240349AbiAWWae (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 23 Jan 2022 17:22:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45966 "EHLO
+        Sun, 23 Jan 2022 17:30:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230019AbiAWWWs (ORCPT
+        with ESMTP id S240329AbiAWWad (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 23 Jan 2022 17:22:48 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D340C06173B;
-        Sun, 23 Jan 2022 14:22:48 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id f17so10248050wrx.1;
-        Sun, 23 Jan 2022 14:22:48 -0800 (PST)
+        Sun, 23 Jan 2022 17:30:33 -0500
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77A43C06173B;
+        Sun, 23 Jan 2022 14:30:33 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id l35-20020a05600c1d2300b0034d477271c1so26355108wms.3;
+        Sun, 23 Jan 2022 14:30:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=O3v5uwB/XqoZye4bhwmXdGCHA74bTpbhxCtsFP1wkqk=;
-        b=TLbPoRKj0iYZXA9sHWj1ZAF1UOrJZt0V0GvBsNaK/G8dhIB3xqPdjWJqaYL18sxOvt
-         ZymXqzKnDaRL0a0AMgCyNQjoPQtTnIzj0AM1YpzvdwSjLAEhVAcuQWxe9ZguTzP0cUVM
-         ws/OB95oPta6AOv9MwjanVKFbwoBNr0CjlhKMfKaD+aV4mt5HT4LhymbxceBM8tEJKoj
-         h+25vZ1WazqSHZn9Z1u7jYOH2Y7+j7lWmYOo00KD+mwTDr4BdVKTiil/jaq82DBCZHLM
-         Ym5fwM3cxGiOGqvTuxAf2fUqLUcPo4CFt/DiLLHXvtCGO/6M/SvzaBDJuBh6KbEhRuZ0
-         AHXA==
+        bh=05N9uh+4Ak2VGTM8SLSYA5VF5ZUwizJAzi30P4Q0iRw=;
+        b=NPt3mdSMhrv9lsWtnCpYgVJT+P4r6DvFFVhWMEF+qsCMv8p/KM3MY7GzS08yOUteuT
+         LHagLw8sHXlFvgO5E7F0DAzgxBgUTrPXv4yXumLELORCfCMPHjN8lGSSHuPtwArbJ4gO
+         1jTCF5oZteYXfjGjloKP2mmrwgvDAwkUgZ84SYQSMyAS1HoiT+6+FUNVUwjhz1wjAoLc
+         +Lp5xCdC1CF9p6d0fn0sfbk4L00rrxkJrARp+FqqNrhtdPvhnNDq0jZS4DQfr5STlSVu
+         LjaqfnKEDhI+29JSc07xts8njJhV1vUV5PirqvK/+XRuIqasz7YESbIHXaA7SxlgDQjv
+         MtSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=O3v5uwB/XqoZye4bhwmXdGCHA74bTpbhxCtsFP1wkqk=;
-        b=VsMoJRG1+SVain5dWzXi7xTeY1Yv8NankXsvNu4cQURz1Vxu5RwPmmXgWRNPLnj+UG
-         KVLAwT7WOo4TzZQplGZkV7yYsR5qnKvlL9ZafrzAtxX9JIY9u7JeitoO1I6WnzYrl4Vd
-         aaYC/iKvE/nj7OuiDqX13Yt7Ekn5N3UJGHhu8wbLqSPJ/ENhKjAKkgMypmsx5Q/Xiy6w
-         1JSNDWQh5ZahN2jZFB3njx+WGaqKL5jI1UcVwkPRQwMib8KOzTz8cv0i0Hf/abLZzzTT
-         LoVKt8zV87D8vp56hvWhhby8xPQqyRdQqmVu66a2YsNAsCHabUhgpMpc17XPKafMdcvZ
-         qZCQ==
-X-Gm-Message-State: AOAM532zQdwNZx1sfHabtMxvqWsdZfQuoveFXmI37zVunoo5GnANObJA
-        RrFP48ZpwS0ArOA6gz0Cr/Ml5DbiWbEefw==
-X-Google-Smtp-Source: ABdhPJywRT1dbxGkbq9H2v8AofH1SETZMi3wap5MSHeOEK56EbKWuSMorSIBlrXNsVRIzDEPIUWdEA==
-X-Received: by 2002:adf:9dce:: with SMTP id q14mr10857339wre.193.1642976566975;
-        Sun, 23 Jan 2022 14:22:46 -0800 (PST)
+        bh=05N9uh+4Ak2VGTM8SLSYA5VF5ZUwizJAzi30P4Q0iRw=;
+        b=T/ECKjksK96pHKgW40x1DSukEggG5Y0gcR1CtFSXCVz3vwtLQ47L3B6sALGnJraIKC
+         5hwrTDuKbpgvqydDCrG4AVWX070+8KU9LNLFFAcnK7m9KlwFR8ZXlvw3r1mePatx25ck
+         888IDsUVPSeBd+XziP45YseUZfsBkQZocAvLhoPYl6ZtcvKIPrsIO3UQ1OxLPF4zFcDe
+         km2SBpu8GNZnFLzUB4oCFEXQMUMZOxe9GyknIVjir3PnDee2BlCniiKYj3WJQUBIPlWE
+         +4zd6j+M7yS7Eb3T3XTFa1Ko6FWKi/4v5jLHc9Xr9UyNg7Qryiq+CBs21t22bh6e+sxp
+         NJAQ==
+X-Gm-Message-State: AOAM532SxBBST7bMQaNjoblZh+4vN8op2jfvUTkgxC3KdXqWX3JGsPPV
+        Mo9hPympNhyMUKn7iZ6CihY=
+X-Google-Smtp-Source: ABdhPJyMJ8VXx50B3SxP9I2RY6ip0w1a1Kzi1Kf73vVfrPUNQ54IUDnlElLRNFHeZuitW7cwxfi/eA==
+X-Received: by 2002:a1c:7316:: with SMTP id d22mr9132678wmb.5.1642977032008;
+        Sun, 23 Jan 2022 14:30:32 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id h127sm19066369wmh.2.2022.01.23.14.22.46
+        by smtp.gmail.com with ESMTPSA id n10sm14436700wrf.96.2022.01.23.14.30.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jan 2022 14:22:46 -0800 (PST)
+        Sun, 23 Jan 2022 14:30:31 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        linux-ide@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org
-Subject: [PATCH] ata: pata_pdc202xx_old: make make static read-only array pio_timing const
-Date:   Sun, 23 Jan 2022 22:22:46 +0000
-Message-Id: <20220123222246.5801-1-colin.i.king@gmail.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/i915/selftests: make static read-only array page_count const
+Date:   Sun, 23 Jan 2022 22:30:30 +0000
+Message-Id: <20220123223030.6005-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,27 +69,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The static array pio_timing is read-only so it make sense to make
+The static array page_count is read-only so it make sense to make
 it const.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/ata/pata_pdc202xx_old.c | 2 +-
+ drivers/gpu/drm/i915/selftests/scatterlist.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/ata/pata_pdc202xx_old.c b/drivers/ata/pata_pdc202xx_old.c
-index b99849095853..f894ff2de0a9 100644
---- a/drivers/ata/pata_pdc202xx_old.c
-+++ b/drivers/ata/pata_pdc202xx_old.c
-@@ -78,7 +78,7 @@ static void pdc202xx_configure_piomode(struct ata_port *ap, struct ata_device *a
+diff --git a/drivers/gpu/drm/i915/selftests/scatterlist.c b/drivers/gpu/drm/i915/selftests/scatterlist.c
+index d599186d5b71..a4f2fbb451e2 100644
+--- a/drivers/gpu/drm/i915/selftests/scatterlist.c
++++ b/drivers/gpu/drm/i915/selftests/scatterlist.c
+@@ -195,7 +195,7 @@ static unsigned int random_page_size_pages(unsigned long n,
+ 					   struct rnd_state *rnd)
  {
- 	struct pci_dev *pdev = to_pci_dev(ap->host->dev);
- 	int port = 0x60 + 8 * ap->port_no + 4 * adev->devno;
--	static u16 pio_timing[5] = {
-+	static const u16 pio_timing[5] = {
- 		0x0913, 0x050C , 0x0308, 0x0206, 0x0104
- 	};
- 	u8 r_ap, r_bp;
+ 	/* 4K, 64K, 2M */
+-	static unsigned int page_count[] = {
++	static const unsigned int page_count[] = {
+ 		BIT(12) >> PAGE_SHIFT,
+ 		BIT(16) >> PAGE_SHIFT,
+ 		BIT(21) >> PAGE_SHIFT,
 -- 
 2.33.1
 
