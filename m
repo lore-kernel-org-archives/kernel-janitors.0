@@ -2,89 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95CB9C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Jan 2022 18:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B2DC4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Jan 2022 20:54:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245162AbiAXSal (ORCPT
+        id S1352543AbiAXUxx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Jan 2022 13:30:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38510 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235727AbiAXSak (ORCPT
+        Mon, 24 Jan 2022 15:53:53 -0500
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:59362 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1390404AbiAXUpT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Jan 2022 13:30:40 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2C9DC06173B;
-        Mon, 24 Jan 2022 10:30:40 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3FE5D614AD;
-        Mon, 24 Jan 2022 18:30:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 623CEC340E5;
-        Mon, 24 Jan 2022 18:30:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643049039;
-        bh=sWky1z6e82y61W+ExVfU6DywuqIuqx2MeSnFl2lNsr4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=BUpSMogUy9XL3WKGYTkb5rIDTCR5WWPxazUcVTg6rgRYVwk/8EaVNy2RWvDx3lKrP
-         /gy10YZIjTcqvcuI9XE011gwb+eF/tog2/HLTO2GIIr12ddLhRABsd/Y10yGyReF/J
-         4fSBUK6onn8b1GEw5489RqKiR9TLfMPfpWPXkndzjeSTsUNweNkP74oBqnB01vJaL0
-         QKEIPUU9w415bJnTxe01P2xyuMEOpR7kZaFEL4Vs0c68skjYpV+TfdYXVCr8otmtqm
-         5Ll6+yMLjpj9377uk0JxHNwac33dXhbOPzpR0oBPUM/xctSzWCFIT3iRDKmGuXUiPL
-         4XMSVIWyYAVPQ==
-Date:   Mon, 24 Jan 2022 10:30:38 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-parisc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: tulip: remove redundant assignment to variable
- new_csr6
-Message-ID: <20220124103038.76f15516@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
-In-Reply-To: <20220123183440.112495-1-colin.i.king@gmail.com>
-References: <20220123183440.112495-1-colin.i.king@gmail.com>
+        Mon, 24 Jan 2022 15:45:19 -0500
+Received: from [192.168.1.18] ([90.126.236.122])
+        by smtp.orange.fr with ESMTPA
+        id C6DBnl19kAWDQC6DBnQiEv; Mon, 24 Jan 2022 21:45:16 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Mon, 24 Jan 2022 21:45:16 +0100
+X-ME-IP: 90.126.236.122
+Message-ID: <6a1b84da-d55e-e058-13a8-9920b05ff20d@wanadoo.fr>
+Date:   Mon, 24 Jan 2022 21:45:12 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v2] lib/string_helpers: Use the given gfp flag when
+ allocating memory
+Content-Language: en-US
+To:     Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc:     Andy Shevchenko <andy@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>, Michal Hocko <mhocko@suse.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <1ec96b6e4f2e35599931d7516c6938c4a8845bf0.1642337606.git.christophe.jaillet@wanadoo.fr>
+ <Ye63DkOZkBd2j+8+@smile.fi.intel.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <Ye63DkOZkBd2j+8+@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 23 Jan 2022 18:34:40 +0000 Colin Ian King wrote:
-> Variable new_csr6 is being initialized with a value that is never
-> read, it is being re-assigned later on. The assignment is redundant
-> and can be removed.
+Le 24/01/2022 à 15:26, Andy Shevchenko a écrit :
+> On Sun, Jan 16, 2022 at 01:53:37PM +0100, Christophe JAILLET wrote:
+>> kstrdup_quotable_cmdline() and kstrdup_quotable_file() are given a gfp flag
+>> that is passed and used for memory allocation in kstrdup_quotable() just a
+>> few lines below.
+>>
+>> It looks reasonable to use this gfp value for the buffer allocated and
+>> freed in these functions as well.
+> 
+> Acked-by: Andy Shevchenko <andriy.shevchenko@intel.com>
 
-> @@ -21,7 +21,7 @@ void pnic_do_nway(struct net_device *dev)
->  	struct tulip_private *tp = netdev_priv(dev);
->  	void __iomem *ioaddr = tp->base_addr;
->  	u32 phy_reg = ioread32(ioaddr + 0xB8);
-> -	u32 new_csr6 = tp->csr6 & ~0x40C40200;
-> +	u32 new_csr6;
->  
->  	if (phy_reg & 0x78000000) { /* Ignore baseT4 */
->  		if (phy_reg & 0x20000000)		dev->if_port = 5;
+Hi,
+just in case, another patch has been proposed in the thread related to 
+the v1 of this patch.
+See [1].
 
-I can't say I see what you mean, it's not set in some cases:
+I let you see which approach is the more relevant.
 
-			if (tp->medialock) {
-			} else if (tp->nwayset  &&  (dev->if_port & 1)) {
-				next_tick = 1*HZ;
-			} else if (dev->if_port == 0) {
-				dev->if_port = 3;
-				iowrite32(0x33, ioaddr + CSR12);
-				new_csr6 = 0x01860000;
-				iowrite32(0x1F868, ioaddr + 0xB8);
-			} else {
-				dev->if_port = 0;
-				iowrite32(0x32, ioaddr + CSR12);
-				new_csr6 = 0x00420000;
-				iowrite32(0x1F078, ioaddr + 0xB8);
-			}
-			if (tp->csr6 != new_csr6) {
-				tp->csr6 = new_csr6;
+CJ
 
+[1]: https://lore.kernel.org/linux-kernel/YeU8PhtvvXIWtTk%2F@dhcp22.suse.cz/
 
-That said clang doesn't complain so maybe I'm missing something static
-analysis had figured out about this code.
+> 
+>> Fixes: 0ee931c4e31a ("mm: treewide: remove GFP_TEMPORARY allocation flag")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> According to what I've found in 5.16, all callers use GFP_KERNEL, so this
+>> patch should be a no-op.
+>> But who knows how it will be used in the future. Better safe than sorry.
+>>
+>> v2: Add the change for kstrdup_quotable_file()
+>> ---
+>>   lib/string_helpers.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/lib/string_helpers.c b/lib/string_helpers.c
+>> index 90f9f1b7afec..4433e486b725 100644
+>> --- a/lib/string_helpers.c
+>> +++ b/lib/string_helpers.c
+>> @@ -624,7 +624,7 @@ char *kstrdup_quotable_cmdline(struct task_struct *task, gfp_t gfp)
+>>   	char *buffer, *quoted;
+>>   	int i, res;
+>>   
+>> -	buffer = kmalloc(PAGE_SIZE, GFP_KERNEL);
+>> +	buffer = kmalloc(PAGE_SIZE, gfp);
+>>   	if (!buffer)
+>>   		return NULL;
+>>   
+>> @@ -660,7 +660,7 @@ char *kstrdup_quotable_file(struct file *file, gfp_t gfp)
+>>   		return kstrdup("<unknown>", gfp);
+>>   
+>>   	/* We add 11 spaces for ' (deleted)' to be appended */
+>> -	temp = kmalloc(PATH_MAX + 11, GFP_KERNEL);
+>> +	temp = kmalloc(PATH_MAX + 11, gfp);
+>>   	if (!temp)
+>>   		return kstrdup("<no_memory>", gfp);
+>>   
+>> -- 
+>> 2.32.0
+>>
+> 
+
