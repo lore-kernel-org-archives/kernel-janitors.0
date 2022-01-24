@@ -2,75 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F62C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Jan 2022 07:33:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF41C433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Jan 2022 08:16:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241880AbiAXHds (ORCPT
+        id S242096AbiAXIQq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Jan 2022 02:33:48 -0500
-Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:63076 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235991AbiAXHdr (ORCPT
+        Mon, 24 Jan 2022 03:16:46 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:37036 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242110AbiAXIQp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Jan 2022 02:33:47 -0500
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-        by mx0b-0016f401.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 20O5tjrY008022;
-        Sun, 23 Jan 2022 23:33:37 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pfpt0220;
- bh=L6nx2R5aYAI03xiBq9N133nzcqVFlDhBMOV25SNCBGY=;
- b=VDdKLQ3mHAie2o0DgRHHJ/Dy/dLcvkaUZkIwTtbfeA3F4bvw35hw6AUF4fPmEQ7AEfBH
- XWOdg+5r0T9HUFc2Fl58cjRrvKBmWn1qJ4H1JP0nkz3Z/4Sv0WTKaq1XWbwxNPqOWynR
- iNVVYVfcgJ/ruiUYezGQxpZzpt0SOZ12qp9ELDetfxtjfcxGcrLQceLz8OXY/pdnY0TD
- ORkUdYEFGlkDf50/U/rprZ1tQnOPA+bxWtrhn151ODfMfHkDGb9ljHoY3bQhoh1k+wkO
- 7uGs9Jlt05BdejwZkMpobiLonf6sYajX28jM9oLIfSQt0a3kX3fSLUJOyPAZ4TrWvMmf nQ== 
-Received: from dc5-exch01.marvell.com ([199.233.59.181])
-        by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3dspd207b3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Sun, 23 Jan 2022 23:33:37 -0800
-Received: from DC5-EXCH02.marvell.com (10.69.176.39) by DC5-EXCH01.marvell.com
- (10.69.176.38) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Sun, 23 Jan
- 2022 23:33:35 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH02.marvell.com
- (10.69.176.39) with Microsoft SMTP Server id 15.0.1497.18 via Frontend
- Transport; Sun, 23 Jan 2022 23:33:35 -0800
-Received: from [10.193.32.121] (unknown [10.193.32.121])
-        by maili.marvell.com (Postfix) with ESMTP id D217E3F7058;
-        Sun, 23 Jan 2022 23:33:33 -0800 (PST)
-Message-ID: <7c74bd66-ee40-b636-8a06-0fc02d681f63@marvell.com>
-Date:   Mon, 24 Jan 2022 08:33:32 +0100
+        Mon, 24 Jan 2022 03:16:45 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A3858B80ECB;
+        Mon, 24 Jan 2022 08:16:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D33CEC340E1;
+        Mon, 24 Jan 2022 08:16:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643012202;
+        bh=1p4Ei0VQKjl/EI+UbOBbtqk35AVMqncFK1+SkqXuzTA=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=kEkJ8VYOppns4alKgHnJ3E9TEXtOhYfO7Fne4WuQX1e5Ife3PEZVNbE9PjCk52WpX
+         WxK90Y6QSSz65mdN6/JcFvg6hztXVPnoeyuqXLJu12TPq0G7Eha/c1tCqgU4XF0ae8
+         n/+qIWbMP1KHbNwrzkV/DxHteLKP0km6HP08UcVlcVZLQskw8MCHVFjwkRIyQwGZR+
+         E0+NUwTM5mdtrcdaf/TOMqtbB+/JtVJpluN4lhJpYhVTE9zxA9s+tYWN7Ls+IS3pYB
+         cBfov42qaIFPtQwkUbUh7vvvHbUkKf7TheTFuHGk7O2z8OaTZf2x55NWgz1UZlZpte
+         xw4rPYYqvxnow==
+Date:   Mon, 24 Jan 2022 09:16:38 +0100 (CET)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+cc:     Nehal Shah <nehal-bakulchandra.shah@amd.com>,
+        Basavaraj Natikar <basavaraj.natikar@amd.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-input@vger.kernel.org
+Subject: Re: [PATCH] HID: amd_sfh: Remove useless DMA-32 fallback
+ configuration
+In-Reply-To: <a1ce59490a9a32f638a41fb80ff4b4598c33acec.1642260273.git.christophe.jaillet@wanadoo.fr>
+Message-ID: <nycvar.YFH.7.76.2201240916280.28059@cbobk.fhfr.pm>
+References: <a1ce59490a9a32f638a41fb80ff4b4598c33acec.1642260273.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:96.0) Gecko/20100101
- Thunderbird/96.0
-Subject: Re: [EXT] [PATCH] net: atlantic: Use the bitmap API instead of
- hand-writing it
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <netdev@vger.kernel.org>
-References: <27b498801eb6d9d9876b35165c57b7f8606f4da8.1642920729.git.christophe.jaillet@wanadoo.fr>
-From:   Igor Russkikh <irusskikh@marvell.com>
-In-Reply-To: <27b498801eb6d9d9876b35165c57b7f8606f4da8.1642920729.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: bjXx8z6ilBfwrx7c8lr0koPGDqMWLj5L
-X-Proofpoint-ORIG-GUID: bjXx8z6ilBfwrx7c8lr0koPGDqMWLj5L
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-01-24_05,2022-01-21_01,2021-12-02_01
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Sat, 15 Jan 2022, Christophe JAILLET wrote:
 
-Thanks, Christophe,
-
-> Simplify code by using bitmap_weight() and bitmap_zero() instead of
-> hand-writing these functions.
+> As stated in [1], dma_set_mask() with a 64-bit mask never fails if
+> dev->dma_mask is non-NULL.
+> So, if it fails, the 32 bits case will also fail for the same reason.
+> 
+> Simplify code and remove some dead code accordingly.
+> 
+> [1]: https://lore.kernel.org/linux-kernel/YL3vSPK5DXTNvgdx@infradead.org/#t
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/hid/amd-sfh-hid/amd_sfh_pcie.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c b/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
+> index 2503be0253d3..673536d1d9ba 100644
+> --- a/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
+> +++ b/drivers/hid/amd-sfh-hid/amd_sfh_pcie.c
+> @@ -248,11 +248,8 @@ static int amd_mp2_pci_probe(struct pci_dev *pdev, const struct pci_device_id *i
+>  	pci_set_master(pdev);
+>  	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+>  	if (rc) {
+> -		rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+> -		if (rc) {
+> -			dev_err(&pdev->dev, "failed to set DMA mask\n");
+> -			return rc;
+> -		}
+> +		dev_err(&pdev->dev, "failed to set DMA mask\n");
+> +		return rc;
+>  	}
 
-Reviewed-by: Igor Russkikh <irusskikh@marvell.com>
+Applied, thank you.
+
+-- 
+Jiri Kosina
+SUSE Labs
+
