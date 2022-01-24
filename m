@@ -2,78 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D745C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Jan 2022 13:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE9CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Jan 2022 14:25:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242762AbiAXNCb (ORCPT
+        id S234153AbiAXOZI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Jan 2022 08:02:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44500 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239721AbiAXNC3 (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Jan 2022 08:02:29 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82383C06173B;
-        Mon, 24 Jan 2022 05:02:28 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 08F1CB80F98;
-        Mon, 24 Jan 2022 13:02:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B1322C340E1;
-        Mon, 24 Jan 2022 13:02:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643029345;
-        bh=nje50B4517VqOu/GSvwxl8SaiOfls+mUGaMg7iQTLF8=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=u/n7aYw2fZZjdNW+0jTkYJADmHP/3tSgp3xAOs2ZVEebSCh88sszP40CNLhoZAS/n
-         phzF6hINq0o4DjfIv3kx7GXSg3JqYXInuK9keOP8DU617iALOitzA0Az8U+dM/FzPk
-         UnkyfNU2+Bf4QAjdUd3xmZePYpM+huR+UuZiGhKSEOAdEL9Ttm4h9M9JLdNEyZHerk
-         dI9FYXzmFIF8uUvtl4tYu0KPW9zWet5iwduEklVAaCAaPIim5q7LwoYy7ptvaXzbJS
-         j5x0KH73gYMBK1EFXTvGN1EBUWJkAaQRvE3pf91xix5bD3oU5PdIQAYJJj5liKB0CQ
-         AsdlijJioI1sg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 98996F6079B;
-        Mon, 24 Jan 2022 13:02:25 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: atlantic: Use the bitmap API instead of hand-writing it
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164302934562.10228.6268047056193544757.git-patchwork-notify@kernel.org>
-Date:   Mon, 24 Jan 2022 13:02:25 +0000
-References: <27b498801eb6d9d9876b35165c57b7f8606f4da8.1642920729.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <27b498801eb6d9d9876b35165c57b7f8606f4da8.1642920729.git.christophe.jaillet@wanadoo.fr>
+        Mon, 24 Jan 2022 09:25:08 -0500
+Received: from mga03.intel.com ([134.134.136.65]:63763 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238109AbiAXOZG (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 24 Jan 2022 09:25:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1643034306; x=1674570306;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sfjkK22NlOUo/XJ4kG04bQhmoPnIkhf2ZWI38Fc2OVg=;
+  b=d29WbpZiD+hx8RUikC7umeIl9uefHO+RJChKWMc8+C5gShOMqNlM8XHp
+   UE3aBs9eqgiJcn8Ya9xZOdBqMOx/iRIiC7oewxl7X7CcKrDvt7VfOafBX
+   mAWgYGtk0s3CMhYOjQbhj1GOEw1954jM63E7ww2COxkm9mW1u0+pdtHXQ
+   t41/P/MscwKKeScWE0LDbqmEa2JCntq3GF4XPUe2rTxPieK9EGasdQ9eK
+   6+n813inj+4cApbTjq1t/XpYugY23X6LliyWCrDfAj5WZva88KuGOH9xI
+   9TCUEjgmRUyVDkDAxvuDtp9u4fdTHgN9Bm9EZWvNiaBQEJ80TdNbYzGg0
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10236"; a="246000553"
+X-IronPort-AV: E=Sophos;i="5.88,311,1635231600"; 
+   d="scan'208";a="246000553"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2022 06:25:05 -0800
+X-IronPort-AV: E=Sophos;i="5.88,311,1635231600"; 
+   d="scan'208";a="534242458"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.162])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2022 06:25:03 -0800
+Received: by lahna (sSMTP sendmail emulation); Mon, 24 Jan 2022 16:22:49 +0200
+Date:   Mon, 24 Jan 2022 16:22:49 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     irusskikh@marvell.com, davem@davemloft.net, kuba@kernel.org,
+Cc:     Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH] thunderbolt: Remove useless DMA-32 fallback configuration
+Message-ID: <Ye62OesXyIDhBEyy@lahna>
+References: <4b40fc065771fadc1a5187d533bd760e034ece58.1641732679.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4b40fc065771fadc1a5187d533bd760e034ece58.1641732679.git.christophe.jaillet@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net.git (master)
-by David S. Miller <davem@davemloft.net>:
-
-On Sun, 23 Jan 2022 07:53:46 +0100 you wrote:
-> Simplify code by using bitmap_weight() and bitmap_zero() instead of
-> hand-writing these functions.
+On Sun, Jan 09, 2022 at 01:51:31PM +0100, Christophe JAILLET wrote:
+> As stated in [1], dma_set_mask() with a 64-bit mask never fails if
+> dev->dma_mask is non-NULL.
+> So, if it fails, the 32 bits case will also fail for the same reason.
+> 
+> Simplify code and remove some dead code accordingly.
+> 
+> 
+> While at it, include directly <linux/dma-mapping.h> instead on relying on
+> indirect inclusion.
+> 
+> [1]: https://lkml.org/lkml/2021/6/7/398
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/net/ethernet/aquantia/atlantic/aq_filters.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
 
-Here is the summary with links:
-  - net: atlantic: Use the bitmap API instead of hand-writing it
-    https://git.kernel.org/netdev/net/c/ebe0582bee78
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Applied, thanks!
