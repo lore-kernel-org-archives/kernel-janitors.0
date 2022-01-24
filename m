@@ -2,105 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B2F3C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jan 2022 07:04:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4967DC433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jan 2022 07:31:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358773AbiAYHEF (ORCPT
+        id S1445741AbiAYHbF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Jan 2022 02:04:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60418 "EHLO
+        Tue, 25 Jan 2022 02:31:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S248974AbiAYEDM (ORCPT
+        with ESMTP id S1324764AbiAYDdr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Jan 2022 23:03:12 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57387C0613A0;
-        Mon, 24 Jan 2022 16:44:09 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id c190-20020a1c9ac7000000b0035081bc722dso394796wme.5;
-        Mon, 24 Jan 2022 16:44:09 -0800 (PST)
+        Mon, 24 Jan 2022 22:33:47 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62B07C08E6E8;
+        Mon, 24 Jan 2022 15:02:41 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id c2so24024930wml.1;
+        Mon, 24 Jan 2022 15:02:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fLRx9U/2NmB44pdLfJwKGSap2HFuUnZgoHSikvYyf1Y=;
-        b=Uri3ZygruRiJrNQhOePq8oZkEEomTzM8IcTOvseIjxw6EGnuo4ouml6ZToHiWPeeCF
-         9BF6aHgCHSxQqRmJn7Fz6eP5ybedfIMEqA0Cgiw837k6VqVPzFOqaXSTG8ETZut+juGG
-         FcayrugHrMuu0XpBzU8b8NYycxZCnABQ44ZPddny/6d9x0b/6uxVcw+9aXj4NX8cQ0V5
-         hVWo8mWoszhMdoJfvKdGHcltZVpE8s6V/XuxPFDs+BKS+JCJiGmH/twVLqtt9H/Xeujt
-         jmiCuB7fQQAvPPk92/TW/t+F3D34u1txrJ/3MjbVXFj2YwQDH2vOXwrhc5qp2s7yI1tN
-         K5eQ==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=n2IrAQGH1PArIko2WtGwF2rJLBMB1heq7fXZj36R6o4=;
+        b=W3sC6df7XXAKGG4jYBjOS537aHdpEpgYDYgz4k9pDfmHsg5Djlxzui5ONlhpNjw+5i
+         NeeSG0sU8eQh3hzsLqFn8ap2KJO8QG/jEs9FQzJfCf5PCIyhMeaFciCDtPNlsw24C8Dl
+         hyF+jlhWRG+eQWuu/P/we0fBSi3k8BAnUrh4zqmhdwN0fYt0S+vyYv3+NC/MdwbF/fje
+         Aw/nDw+VuCojPuGJCS+BA3EgnWeHxlpH6B8nFv7uSye+EQoAMTGA00D7JNFdb+EBiWVB
+         wMwpQZxZffaBnXA3HRHXhDinw7JyERxdzlfMOtGWqVCQPWpxw/C/SUuYJmEQqcRqtr/a
+         Fc9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=fLRx9U/2NmB44pdLfJwKGSap2HFuUnZgoHSikvYyf1Y=;
-        b=2Lte37nn0Z6fISVIL6YG8PDsDogdoDxhvVik9jvodOJKxnughvn4p6bKfXHst8aS9y
-         /cYU0N/QquR9B5t3URzwgMmniOmevuCNxN8c3P14lvlc46n6VY2Il+zlwOYcAzAgKm1l
-         kbITloPdtEYGNQqgxWe8PYfa/6D9AZziSmn7oWnAWfW0ago1GUIGj1PeMhgMIDJ9s/7J
-         JeO72ju2sjAMAlREbBgEWcYLktM6m5me3x5JgdWLWRiuLUQOSGZOSRxNNALKLuK2nkpy
-         pWGDO2oYJjhDcBCeGK5jRwUulk6LZAoqWPaXM6tBhy5Ja6t6XABcsyaz32aYuxudWhaa
-         BnEw==
-X-Gm-Message-State: AOAM532KdzkZF344hZY2sHtFvRUTd8HScjg/KZjXsAqjckXhntagC8/+
-        aaIo58lDjDszQnjnRk1yKSI=
-X-Google-Smtp-Source: ABdhPJz5o+URFYf4JkJc3R99+zOF/mY6qpbpL6hjRWY5PsvVBvKIC7+1cAsO8rmcqD0Yawnz5WqATA==
-X-Received: by 2002:a05:600c:35d0:: with SMTP id r16mr642530wmq.195.1643071447836;
-        Mon, 24 Jan 2022 16:44:07 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id g20sm925194wmq.9.2022.01.24.16.44.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jan 2022 16:44:07 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Christian Lamparter <chunkeey@googlemail.com>,
-        Kalle Valo <kvalo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stable@vger.kernel.org
-Subject: [PATCH] carl9170: fix missing bit-wise or operator for tx_params
-Date:   Tue, 25 Jan 2022 00:44:06 +0000
-Message-Id: <20220125004406.344422-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.33.1
+        bh=n2IrAQGH1PArIko2WtGwF2rJLBMB1heq7fXZj36R6o4=;
+        b=YGap5uuPu02FVumAPHbMMVAmJi6WWkbZGPVlIx1w3NZkWskl40hJubo3oOzVedDzlz
+         7Bcxxt5fujDt1oqO1LkLTvj1oZOfnZHPfSI42xFaUiZbU7d0ABVqNqML87RwWmjYZRFt
+         mrXx581ukdDYzdsDK3JlkM+htLwf10etNsXfRFkdOXsbXSHawG8MlKIGaF1ZTyr+s/nF
+         8K72r6gkQBB21fz+G+uKYMKJ7Yc9TszjV6SdZM/6NaaRUcao6HfSPJbMitkHyE3PjIC9
+         mx35UWi0lIbfWxidN4VMDL1l8sO21AXleaGuEJpN7GDsyEvKqJNvNvyUybhKCMnEFjmB
+         5TRw==
+X-Gm-Message-State: AOAM533x2UW0bzTU2xrQ9HeASYTq6zAeOsoHTBulUeKEegIffFAKo0/2
+        HwZiAxg5VtEHzG12CjzNDTzEOaAvo2ZC1w==
+X-Google-Smtp-Source: ABdhPJw76qIRylKa9jCoLOZmG21SwymRVgMwfgA54NqAG1iHt3KE8KIuIvcBx5BlWZ1PYGG/8yTv9w==
+X-Received: by 2002:a05:600c:204b:: with SMTP id p11mr413645wmg.47.1643065359832;
+        Mon, 24 Jan 2022 15:02:39 -0800 (PST)
+Received: from [192.168.0.209] (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.googlemail.com with ESMTPSA id m6sm680164wmq.6.2022.01.24.15.02.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jan 2022 15:02:39 -0800 (PST)
+Message-ID: <f6dac007-f7d4-0152-7e42-a6b0d0c1bbb3@gmail.com>
+Date:   Mon, 24 Jan 2022 23:02:38 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Subject: Re: [PATCH] ata: pata_pdc202xx_old: make make static read-only array
+ pio_timing const
+Content-Language: en-US
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>, linux-ide@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org
+References: <20220123222246.5801-1-colin.i.king@gmail.com>
+ <312af033-20f0-0288-94cc-e3fc9dd5d6b0@omp.ru>
+ <9a4c9ba0-00a3-eb1d-8cdd-f44d94f7c92a@opensource.wdc.com>
+From:   "Colin King (gmail)" <colin.i.king@gmail.com>
+In-Reply-To: <9a4c9ba0-00a3-eb1d-8cdd-f44d94f7c92a@opensource.wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Currently tx_params is being re-assigned with a new value and the
-previous setting IEEE80211_HT_MCS_TX_RX_DIFF is being overwritten.
-The assignment operator is incorrect, the original intent was to
-bit-wise or the value in. Fix this by replacing the = operator
-with |= instead.
+On 24/01/2022 21:37, Damien Le Moal wrote:
+> On 2022/01/25 2:15, Sergey Shtylyov wrote:
+>> Hello!
+>>
+>>     Too many verbs in the subject. :-)
+> 
+> Yep. I will fix that when applying. No need to resend !
 
-Kudos to Christian Lamparter for suggesting the correct fix.
-
-Fixes: fe8ee9ad80b2 ("carl9170: mac80211 glue and command interface")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-Cc: <Stable@vger.kernel.org>
-
----
-
-V2: change subject line to match the correct fix, add in the
-    missing | operator
----
- drivers/net/wireless/ath/carl9170/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/ath/carl9170/main.c b/drivers/net/wireless/ath/carl9170/main.c
-index 49f7ee1c912b..2208ec800482 100644
---- a/drivers/net/wireless/ath/carl9170/main.c
-+++ b/drivers/net/wireless/ath/carl9170/main.c
-@@ -1914,7 +1914,7 @@ static int carl9170_parse_eeprom(struct ar9170 *ar)
- 		WARN_ON(!(tx_streams >= 1 && tx_streams <=
- 			IEEE80211_HT_MCS_TX_MAX_STREAMS));
- 
--		tx_params = (tx_streams - 1) <<
-+		tx_params |= (tx_streams - 1) <<
- 			    IEEE80211_HT_MCS_TX_MAX_STREAMS_SHIFT;
- 
- 		carl9170_band_2GHz.ht_cap.mcs.tx_params |= tx_params;
--- 
-2.33.1
+Thanks for fixing this up. Much appreciated.
+> 
+>>
+>> On 1/24/22 1:22 AM, Colin Ian King wrote:
+>>
+>>> The static array pio_timing is read-only so it make sense to make
+>>> it const.
+>>>
+>>> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+>>
+>>     With that fixed:
+>>
+>> Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+> 
+> Thanks for the review.
+> 
+>>
+>> [...]
+>>
+>> MBR, Sergey
+> 
+> 
 
