@@ -2,83 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA9E2C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Jan 2022 17:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95CB9C433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 24 Jan 2022 18:30:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244292AbiAXRS6 (ORCPT
+        id S245162AbiAXSal (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Jan 2022 12:18:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49200 "EHLO
+        Mon, 24 Jan 2022 13:30:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244182AbiAXRS5 (ORCPT
+        with ESMTP id S235727AbiAXSak (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Jan 2022 12:18:57 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E57CCC06173B;
-        Mon, 24 Jan 2022 09:18:56 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id x7so51342529lfu.8;
-        Mon, 24 Jan 2022 09:18:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mLsUg6FDJGu3ZQCzAL6Mke2UDjBXWESzO9zt25xxlzw=;
-        b=p70OjH5RbVKPPgBPYNpwJN6ahExMTCzhbrwbcr68F9zVzK3xK6bm8x7Pbj1pelKT+7
-         8Vps8uCUaMrwTzJ2dSflfq1VccIyOkag05Y1u0RQyNhanL8hAnnfxKQhOeLTYYkF+76A
-         Zn/yMcAxzl09eKLmbUiNVAjccc5ZPdI1Bd2LV15ibenx7jauQ5RCWHI/4T6r6UaLn20e
-         0lSwlls/JlMpkhJT1KE6/6GX4pzRsKjGrUmWC9Rhf0PflWT503jJa4ir71G8MbdFK84B
-         qr0m7N8ijmPb/8m25HtwtRGKFyvV8jwowt57pB3xmV0c908NyKkFy3miJ16Th95glrJs
-         Aj6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mLsUg6FDJGu3ZQCzAL6Mke2UDjBXWESzO9zt25xxlzw=;
-        b=sNw2AtqEgkSSK4zrKik90kFbLLxkZQtrUFoNi8SmdraWWUnHudEQxcObAnHVNn//qQ
-         BU7w66HI/c8qij9tUqF+zJx3bJS1VGVdydn3e+sFFKTzJCFZO2yqQWgj1NnjF7TLG2nt
-         4vKnUVhThVnDcKbis9itQFhTWEzR0G7YZ6zvdXW1fS9nfZw8IfEgBVrmYMBWYBjsIBC4
-         wBo16qwuT6VcLb1JvAaamAMbHKb9xcYSgEbUucRWmfaaw8ZLuYFXeALMck4bqhTU87hh
-         3Yoltz+6n4um6XgvZtmevjOhMk0Uheg9/sl9dAY5mZcQ84YgYQfYZs26LXl7wL/RuBlA
-         qvSw==
-X-Gm-Message-State: AOAM533XZFF9V9Lvk8Dh84SMAYDzzuDP4K1nD1P24s4NatWGLWxhTrlT
-        BfJMXMQH/r7FTYLr7ALucrVqQg5THn4=
-X-Google-Smtp-Source: ABdhPJxaC1nse2djJr5e79EXHoQFceCpBhhox5IYuTAIWw/gPFy8nbks4WWi1bQb4YjSMQTHCvT7zQ==
-X-Received: by 2002:a05:6512:b19:: with SMTP id w25mr5361524lfu.690.1643044734838;
-        Mon, 24 Jan 2022 09:18:54 -0800 (PST)
-Received: from [192.168.1.103] ([178.176.78.239])
-        by smtp.gmail.com with ESMTPSA id h2sm1126268lft.58.2022.01.24.09.18.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jan 2022 09:18:54 -0800 (PST)
-Subject: Re: [PATCH] ata: pata_atiixp: make static read-only arrays const
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        linux-ide@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220123221622.5543-1-colin.i.king@gmail.com>
-From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Message-ID: <78ea807d-1bef-4eee-2ac0-ceebfb0a7db9@gmail.com>
-Date:   Mon, 24 Jan 2022 20:18:52 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Mon, 24 Jan 2022 13:30:40 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2C9DC06173B;
+        Mon, 24 Jan 2022 10:30:40 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3FE5D614AD;
+        Mon, 24 Jan 2022 18:30:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 623CEC340E5;
+        Mon, 24 Jan 2022 18:30:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643049039;
+        bh=sWky1z6e82y61W+ExVfU6DywuqIuqx2MeSnFl2lNsr4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=BUpSMogUy9XL3WKGYTkb5rIDTCR5WWPxazUcVTg6rgRYVwk/8EaVNy2RWvDx3lKrP
+         /gy10YZIjTcqvcuI9XE011gwb+eF/tog2/HLTO2GIIr12ddLhRABsd/Y10yGyReF/J
+         4fSBUK6onn8b1GEw5489RqKiR9TLfMPfpWPXkndzjeSTsUNweNkP74oBqnB01vJaL0
+         QKEIPUU9w415bJnTxe01P2xyuMEOpR7kZaFEL4Vs0c68skjYpV+TfdYXVCr8otmtqm
+         5Ll6+yMLjpj9377uk0JxHNwac33dXhbOPzpR0oBPUM/xctSzWCFIT3iRDKmGuXUiPL
+         4XMSVIWyYAVPQ==
+Date:   Mon, 24 Jan 2022 10:30:38 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-parisc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: tulip: remove redundant assignment to variable
+ new_csr6
+Message-ID: <20220124103038.76f15516@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
+In-Reply-To: <20220123183440.112495-1-colin.i.king@gmail.com>
+References: <20220123183440.112495-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20220123221622.5543-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 1/24/22 1:16 AM, Colin Ian King wrote:
+On Sun, 23 Jan 2022 18:34:40 +0000 Colin Ian King wrote:
+> Variable new_csr6 is being initialized with a value that is never
+> read, it is being re-assigned later on. The assignment is redundant
+> and can be removed.
 
-> The static arrays pio_timings and mwdma_timings are read-only so
-> it make sense to make them const.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> @@ -21,7 +21,7 @@ void pnic_do_nway(struct net_device *dev)
+>  	struct tulip_private *tp = netdev_priv(dev);
+>  	void __iomem *ioaddr = tp->base_addr;
+>  	u32 phy_reg = ioread32(ioaddr + 0xB8);
+> -	u32 new_csr6 = tp->csr6 & ~0x40C40200;
+> +	u32 new_csr6;
+>  
+>  	if (phy_reg & 0x78000000) { /* Ignore baseT4 */
+>  		if (phy_reg & 0x20000000)		dev->if_port = 5;
 
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+I can't say I see what you mean, it's not set in some cases:
 
-[...]
+			if (tp->medialock) {
+			} else if (tp->nwayset  &&  (dev->if_port & 1)) {
+				next_tick = 1*HZ;
+			} else if (dev->if_port == 0) {
+				dev->if_port = 3;
+				iowrite32(0x33, ioaddr + CSR12);
+				new_csr6 = 0x01860000;
+				iowrite32(0x1F868, ioaddr + 0xB8);
+			} else {
+				dev->if_port = 0;
+				iowrite32(0x32, ioaddr + CSR12);
+				new_csr6 = 0x00420000;
+				iowrite32(0x1F078, ioaddr + 0xB8);
+			}
+			if (tp->csr6 != new_csr6) {
+				tp->csr6 = new_csr6;
 
-MBR, Sergey
+
+That said clang doesn't complain so maybe I'm missing something static
+analysis had figured out about this code.
