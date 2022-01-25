@@ -2,53 +2,53 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD6DC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jan 2022 03:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD711C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jan 2022 03:23:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347621AbiAYDRK (ORCPT
+        id S1381532AbiAYDRb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Jan 2022 22:17:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55988 "EHLO
+        Mon, 24 Jan 2022 22:17:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S3415395AbiAYBp7 (ORCPT
+        with ESMTP id S3415505AbiAYBrG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Jan 2022 20:45:59 -0500
+        Mon, 24 Jan 2022 20:47:06 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21AA2C01D7CC;
-        Mon, 24 Jan 2022 17:27:03 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 759ADC01D7C8;
+        Mon, 24 Jan 2022 17:27:00 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2B38A6121F;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 13E4361214;
         Tue, 25 Jan 2022 01:27:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 89270C340E7;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7807CC340E5;
         Tue, 25 Jan 2022 01:26:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1643074019;
-        bh=KoCXqwAtOQUl137F9WCCAF0wUAWh3QeKgh1PfwR5B/k=;
+        bh=jHdoOJoEuHZBeA+OwrUqeObi/wvxQlAIyr5XxNX6914=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=s1hHQt29AeVfFEOeDOvGAfOnfaZX2i+pj3wZpl6Bw1ZXw7xccJzQY+HURuCWRtbOa
-         b+AoEYwrImEeu51qx4BqwiOznE0rL7qClzqUry5D/aOQQ41WN+l18p2Lb/8qbbeUp6
-         64+NkhX6aOO+7HOCVyRUWun3EOIz6VA61gDmRebTwl9sTORQtSpztR14QXOgb7a0jA
-         FXU0tJHM+mskAjnJmBLyltGDH5eldCBNEjggjtAQLr9iq325eBzwaMY6Cf/O4fCYih
-         KHH7mXY/nfLmoaZBqxdNp0liG5T/wFN8B8meRKfE6eXC6lPycB8vE0TvATdg2Tf+qL
-         i4UwRCDLHDoew==
+        b=VqDOV0m3mR3XjIf70NBI/GUkCqpGemEz98EzNc3qyUJgVPHRt/iPbs3IEibvfG2ey
+         UcRFAKDHCk3631inXq+kwKELB+IDWWx5sey0IWYLiNoA9pWjmPgFFTVfLYI48q+RsD
+         nXTUhYnAVSMu4yvSdSll6OjeCivkKrakLvDsuACeStnfAVDjLmV5Wly+y64Twssekz
+         R+teu/QpJ/Lnza0K2OuzKNBhBXHLC3lnIRroAG7UbAP/2BtnKlPl+Z6B/mq3fPSYgG
+         rTGWj5V0glQivlccxyYYVFv8G2J9i21MFqVk2CbQJ45cssPUG7PAgOSPZ99EGBTokZ
+         UXXwdyM1l9mLQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 694A7E5D087;
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5F51BF60799;
         Tue, 25 Jan 2022 01:26:59 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: usb: asix: remove redundant assignment to variable reg
+Subject: Re: [PATCH] net: fec_ptp: remove redundant initialization of variable val
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164307401942.21160.7465294917447555080.git-patchwork-notify@kernel.org>
+Message-Id: <164307401938.21160.8256923052141890317.git-patchwork-notify@kernel.org>
 Date:   Tue, 25 Jan 2022 01:26:59 +0000
-References: <20220123184035.112785-1-colin.i.king@gmail.com>
-In-Reply-To: <20220123184035.112785-1-colin.i.king@gmail.com>
+References: <20220123184936.113486-1-colin.i.king@gmail.com>
+In-Reply-To: <20220123184936.113486-1-colin.i.king@gmail.com>
 To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     davem@davemloft.net, kuba@kernel.org, linux@rempel-privat.de,
-        linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     qiangqing.zhang@nxp.com, davem@davemloft.net, kuba@kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -58,18 +58,19 @@ Hello:
 This patch was applied to netdev/net-next.git (master)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Sun, 23 Jan 2022 18:40:35 +0000 you wrote:
-> Variable reg is being masked however the variable is never read
-> after this. The assignment is redundant and can be removed.
+On Sun, 23 Jan 2022 18:49:36 +0000 you wrote:
+> Variable val is being initialized with a value that is never read,
+> it is being re-assigned later. The assignment is redundant and
+> can be removed.
 > 
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  drivers/net/usb/asix_devices.c | 1 -
+>  drivers/net/ethernet/freescale/fec_ptp.c | 1 -
 >  1 file changed, 1 deletion(-)
 
 Here is the summary with links:
-  - net: usb: asix: remove redundant assignment to variable reg
-    https://git.kernel.org/netdev/net-next/c/9f16e0fa1079
+  - net: fec_ptp: remove redundant initialization of variable val
+    https://git.kernel.org/netdev/net-next/c/6e667749271e
 
 You are awesome, thank you!
 -- 
