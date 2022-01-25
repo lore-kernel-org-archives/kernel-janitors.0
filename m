@@ -2,63 +2,198 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56AA1C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jan 2022 15:47:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E3DC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jan 2022 18:53:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1582370AbiAYPrR (ORCPT
+        id S232996AbiAYSwi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Jan 2022 10:47:17 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:50476 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356552AbiAYPpP (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 Jan 2022 10:45:15 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 73C7A61708;
-        Tue, 25 Jan 2022 15:45:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93D28C340E8;
-        Tue, 25 Jan 2022 15:45:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643125513;
-        bh=CcIRjfm17aVakeeVnaDmo1N/8z0dKUqDwIOCF455pyg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PzdVvAi+XKWBtlAo5HeCx7ZHwYJbZQti60n0ZrEtI+d4JBsSQ5AwRR6lMIYnMjYrC
-         wkpZ9/oLtxf7lblkl2jlbwO6hzrCZpZGHtB81cY1rfoC4ZhBwuImj52ynbKWr9Eww5
-         pz1u/LklUez7FC4055Mq/DvOfYNzM0/45E//yBMRZHpnNmkFAoPVZbrwSAEl0aQ+Zf
-         IrIF4sAiXT2oceh/uclpaCPoQj9c2mKYACQTQ1JO9TOXHuAuujH0p7lsKTZHNLh8V2
-         6dByHdZT57tNcmD9DdUZJ+X8YURpRJ49bCkEmWVlpdfQDyvRsA5hfCeJaS0RTgCF01
-         gwCsfmW6MwheA==
-Date:   Tue, 25 Jan 2022 07:45:12 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Colin Ian King <colin.i.king@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-parisc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: tulip: remove redundant assignment to variable
- new_csr6
-Message-ID: <20220125074512.73cc5cec@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
-In-Reply-To: <20220125141401.GV1951@kadam>
-References: <20220123183440.112495-1-colin.i.king@gmail.com>
-        <20220124103038.76f15516@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
-        <20220125141401.GV1951@kadam>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 25 Jan 2022 13:52:38 -0500
+Received: from mga17.intel.com ([192.55.52.151]:45031 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231197AbiAYSw1 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 25 Jan 2022 13:52:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1643136747; x=1674672747;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=S0Rc9wFrrUnPDVrInUyBnrw35Bv+a/KxQ5W0b0hWqZY=;
+  b=Qj4FapjWFZDE/xsS6fTQdG+gLFQqYqmHc3K2Smqi4AG1LLUhvXX6YXSC
+   rHrSAkay+ceIAeZJMuutQ0sNsYUbr6UNgVSurAHI8UO6tEtbofNX87YWU
+   +V3ZaO/aYcqML0VkuYJEjjZwu/YE7AdAm+Eka/f+Mds5DjecPdexUOhHL
+   WVFT30+xcnBoCzgVjjiH5dhyiWNLqu9Vyy5ihl8EUYG9d+xbKAtBmVH4t
+   LjCQxxvRB8WsPM/LbZPUEjRE+AoFv+RfJlKLvhevQ/mm08YBnjanOqKug
+   9hHtTQPXlV+MjfZuItY9jAfi3nb4C5E4C3xuaP4YyigoZGXeh1e+w5v5k
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10238"; a="227057663"
+X-IronPort-AV: E=Sophos;i="5.88,315,1635231600"; 
+   d="scan'208";a="227057663"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jan 2022 10:52:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,315,1635231600"; 
+   d="scan'208";a="477217243"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orsmga003.jf.intel.com with ESMTP; 25 Jan 2022 10:52:27 -0800
+Received: from orsmsx608.amr.corp.intel.com (10.22.229.21) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Tue, 25 Jan 2022 10:52:26 -0800
+Received: from orsmsx608.amr.corp.intel.com (10.22.229.21) by
+ ORSMSX608.amr.corp.intel.com (10.22.229.21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Tue, 25 Jan 2022 10:52:26 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx608.amr.corp.intel.com (10.22.229.21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20 via Frontend Transport; Tue, 25 Jan 2022 10:52:26 -0800
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.109)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2308.20; Tue, 25 Jan 2022 10:52:25 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MIQ96gTaBvce/jJLzMSnigfUGNwcbEFpdTwUV5jDf6OY4DkyjzQAdSPwMdUm9YX4fiIUILwZDRoj9YPQra0mdei3y+znPbEG5xfI6HRooF8IpjPo5bo7o7+dx4/DrlynWbMyUJzQTW4+4fDKJA77WSV6ZDzx3Ys/gVRGhJuxJiGpQOLKPxr45xIyxiKYdRktgL0QwLNJYFVzZ5mkqjVyk3WavRCB6JTXTIRMcJMIc1+QcvBYCjdJK1m1QNNieRzu3MjyYleg/D8lXNyD3nXVhH1rL6HtoGIsTIswTKRL4FxeDXOLWTMSR4r1LxOePZwMi5j9hPx3gQZ38v06W8ssPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=unorHrHFK69yrV12ajadq1SQeOcR5ezjEJO06Yd0dAY=;
+ b=WdnXYRNdr4v81sp3YwZDsvwWNYuWa/ji9iN0V3fuFVhoTGDp+bfT1ZA/lvvfDM5DBTewwgtOCYD7Cc/w5eZR+Ot0VgDD53h3f/7bdvEk+EoBq0OWksaykNGkgWMf6q6WTdzd8h0TOpsfiJTmPm7n5RJGg4QbjnfLEC97i52NUPzBSstP33WKwA0xpye5m/20XDc11ExGGQ4JQ5n34bcGxR/F1ON/hDWVyrK4/yignt8qJXb7a7LpfP/gUDDF1gt5ILSJzmct5L/cUPD3F9PKvynsk+BoW1v4cWuiRJO4Qjmw9Y2XkMM1wAjtFnvdXUpKXt1qnsiHnXz0EeRRF/Bnzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BY5PR11MB3911.namprd11.prod.outlook.com (2603:10b6:a03:18d::29)
+ by BN8PR11MB3603.namprd11.prod.outlook.com (2603:10b6:408:8b::29) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4909.10; Tue, 25 Jan
+ 2022 18:52:23 +0000
+Received: from BY5PR11MB3911.namprd11.prod.outlook.com
+ ([fe80::b006:30e2:f354:3ea5]) by BY5PR11MB3911.namprd11.prod.outlook.com
+ ([fe80::b006:30e2:f354:3ea5%5]) with mapi id 15.20.4930.015; Tue, 25 Jan 2022
+ 18:52:23 +0000
+Message-ID: <83d085f0-8f2e-dc92-dab3-61c0b7677df8@intel.com>
+Date:   Tue, 25 Jan 2022 10:52:19 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Firefox/91.0 Thunderbird/91.5.0
+Subject: Re: [PATCH][next] drm/i915/guc: fix spelling mistake "notificaion" ->
+ "notification"
+Content-Language: en-GB
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Matthew Brost <matthew.brost@intel.com>,
+        <intel-gfx@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>
+CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20220125091359.350918-1-colin.i.king@gmail.com>
+From:   John Harrison <john.c.harrison@intel.com>
+In-Reply-To: <20220125091359.350918-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW2PR2101CA0011.namprd21.prod.outlook.com
+ (2603:10b6:302:1::24) To BY5PR11MB3911.namprd11.prod.outlook.com
+ (2603:10b6:a03:18d::29)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e6ab0c20-7cf1-43ea-af29-08d9e033d263
+X-MS-TrafficTypeDiagnostic: BN8PR11MB3603:EE_
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-Microsoft-Antispam-PRVS: <BN8PR11MB3603883DA75DAE87408B93FDBD5F9@BN8PR11MB3603.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2803;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: pVOXxTKpDl32L98nDZkR2w9Vv7PzgMNmnu54RVClezPZ75m7T5FtTIX47iE7L0elFOqoKrVh2WKSgLh6qwICZFnuhtwCZ6cpMdTm8aJkYajLd1hRXGAH5gNOnPfR9YADjdm4D8vfYu+d6F0dUff2Gb9w1+4ZqAgUZ4J0WIaYqalqEp4fwPU3X0SNmq/fHtssPXpQ4gTDx3U0avh/+y+NiVpib2h3cYIoIzn0yT29TB/w9/fS4iKgqmCKGL0eOKvKeiYpokj1lDAaZdNDrAen4IRbMBlQgL380zPSvQtPsNHsuSSZitmmIB8ecTi0OYibTpj6HEECekN7TdBCcVmZ1HbkFOACMkH/UPT9zraVjKv/kvdocfo9GdBupqC8eUQkSj6ZzOaF1Z8Ja65phcLCtQN/ObtQuJqUEuu80zn9cmIdsvYuX7DxskyDMvxEasrXcvc1U+POhB/iRbNnVghQRJsI2YgRifWkWx8bAk0IcaevFXW2hVWzo7uWceMH40cLmLZwMqAfr+b4J7pHDFJQVTFWFYc4Cpflyy1lGtdBi/h44w3+Zmiq2W5ZWH8VkXPejmWkpD99a2/2XmdTY/BQvKWY1BpAwxYYo73gpNry/40tiswOOmZuAmgb/5iYcFiyMnQUPoA9LIJyP0RmBIlqIgSYsGzK6ly/DJfElkzhBO/dF26/8qFR0zGcvvn0OgjUO3+OZJHuKWb2AwL8ACcSAM+wlUCvjGpWADTiQww/Q99Zris5VGgWCsgvrm3knl7SqdlzHUhM8sXJsySzSiQ8uA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR11MB3911.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(83380400001)(26005)(4326008)(316002)(66556008)(66476007)(36756003)(66946007)(31686004)(8676002)(6506007)(53546011)(508600001)(186003)(5660300002)(6666004)(15650500001)(8936002)(7416002)(6486002)(921005)(2616005)(38100700002)(110136005)(2906002)(86362001)(82960400001)(31696002)(6512007)(43740500002)(45980500001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?U240NStzWWMveEVkbkZXK0M0dkRORHN6OXRRVmRqYWo0TDI5QlRRVDhuZG9H?=
+ =?utf-8?B?dlphYWlPV0V2YXdiNHJqZUFmSDRuNWhuM3M1OUs0RTV3K0s3Z1FWdWpuNFRT?=
+ =?utf-8?B?aUxiVTN3Z3V3anZqRmJ5RGJTcW56NVc2ZHNmNGtpNERnamFQcWw5dEJZNjNF?=
+ =?utf-8?B?U3NhNnpGeW5uSmkwYjdpVzB5Vy84cUtBUFJlK0dkS052SkM4QXlJYmdubERJ?=
+ =?utf-8?B?c1pKT3BiN1g4c1kydGJxWjdCSG9JYmFzcWFwNFdCR3A1VXVxaDJpZ2srckRS?=
+ =?utf-8?B?bG93ZlNmZ3FBRDVZdFJuQzdOcGVIRDhPWjJSbzJRaitXTjdQdTFBczAzdk02?=
+ =?utf-8?B?aFFqcEt1QlZGSUN3NmxlbytpNytscDYweDVoNWY0dGE1eWplTEsrZVk2OGFL?=
+ =?utf-8?B?M2FmdjNrWjcxUXk2RU9Tdkw5TmdRV2Zwa0JPVE53NjhZRFFmQWVCV0JocEhq?=
+ =?utf-8?B?eW1xZThjaysyQ1ZiR2NBb2NjbEt0YmdMQWVWQkdvL0dxQXJUeGhqK0FCR0NC?=
+ =?utf-8?B?cmdaY1Y1bWthTmwvK1BBVTZFTkF5TURYbGNpcEpjNGFuQjgxcTEyZUVzL3Nk?=
+ =?utf-8?B?TEg2ZjFiNFVtbkVEN3hNenQ4dEdoSXlwSzk4bjd1d25xMndmNHkyVnB6WkxD?=
+ =?utf-8?B?SGUwT3FiTWViNDdKRU5MY1lFLy9ud2svbUNHaW1WSCs0QXQvOXVZbTRGZ3RX?=
+ =?utf-8?B?VmpvOHkrc3lmSTBIMSsrNWU2K1FzQnoycDBoWXA3ODU4UFJkbmJnVXVuWFh0?=
+ =?utf-8?B?UUJZWDVCUDR0MW5zVnE4ZmJyM3FLcmJYYngrcDU1SFBkTTNtQ0FEOEt6WFhJ?=
+ =?utf-8?B?NGFCY2Z4S1paRHQ3S2pYVG1ta1kwMmU4T0p3ZUdHY2ZBeXBQWFVXMFdaZ1N4?=
+ =?utf-8?B?VVNSZDlzRlhVeEhGdXp3bWM0VVN4Y1ZYTGpGOVVWK2ltQnhiS09yNEgrN0Rv?=
+ =?utf-8?B?VXF6QkQ1ellKQlBPQ1pxdWVEL1lzcHRZdGJ6VS85VExZYVpud1RLYVhPVlNa?=
+ =?utf-8?B?bGVFeWhsSzIxMUorcTdDVmMxZmNYREhTeDhnQjBSTGVSZHlxL2ozc2NFcHVu?=
+ =?utf-8?B?cDkxb3lrNWJNR0pWR1RRTEJMekVRdUJaNVc3aldYOXNCSHFscUh5QmtHSTI2?=
+ =?utf-8?B?aVljcW1QY0NWMVJaR1dVZEgwT2trb3RpTGpFc0w2VXpVaXBsZjdqTjJ6b1VG?=
+ =?utf-8?B?S1I3NVI1dTRBai9MckxnL1RRUjBLQVV5WUVqVmhSUUt4Z0JtdSt2QzcvWUcx?=
+ =?utf-8?B?NWcwRzExODlDVTZ0c3U5ZzBzVlZ6aXUyTkxOQ2JXemlBUFhjOENqbEw5Sjlk?=
+ =?utf-8?B?MlhXbWtveEx6OE80L0NlQll3cGFycVRSb1ZxM25wQ3FtTVZEdW5MZGdHQU4r?=
+ =?utf-8?B?NXQzRFpZRVpWMFFPS3pTUTl5ZUdiS0JqdlNta0ZtWTZCZUxSMnlaWmlYdktz?=
+ =?utf-8?B?emVGbGQvelpaVXgxcHNFWkc5b3B3c2dnVm9zbnhzNytvTkNJQWx6K0l2dzlY?=
+ =?utf-8?B?TFFjaWpLYWxSRmhOeGNvUm9ZL0piTWxHQ01SUDF2QTNNbExWWVZkcnZCZFEy?=
+ =?utf-8?B?U2I1VVlpMklvRHZqYUNLUVBjUmRMai9zamZ3Wjh0KzFScldZOCtmeUlocnUr?=
+ =?utf-8?B?UDl3WUVqQ21UYjJDamhvZGRuVnRtRlM5NXg4TU5tS29vMmJoWjZla3JPNnRv?=
+ =?utf-8?B?cGgzb1N0cnhwemlLNTRBRW5lWFBTL1hsZGNSRUtXNDVzOGkvWlRiVTBtMEY1?=
+ =?utf-8?B?RFhXSDZXVEpoNkg0UFBtejJGTkZ4Wkdsa3lxazArR1MrRUpUdnp2OEhmcnh4?=
+ =?utf-8?B?NkpGT3l4cVZSTS85allKb0g3R054RHJaVktEOCtwMy9obmU5d1MyeHdzU1hB?=
+ =?utf-8?B?dTE4c2Q1TXRCS3ZUNWlVa1JLOEMzUXdNZEdCS1Z0bGtnUFgvZlhjNXl0bm9y?=
+ =?utf-8?B?Ym9PSU51UDlnZlhibEt4OWtnbno1TXp6VndLU3VuMEQ4dVlNOTRBNUlDeGxs?=
+ =?utf-8?B?czBYTzg2MjJENmsxdXBJUnVrWUJaUGRuMjRGejd1aGZpT3hIdzNaNm5VNWM3?=
+ =?utf-8?B?R3VzejRrZ3ZxaEF6Rk5vbWViTW5pK29qbkZiNkk3MjUzMkhYdmwyN2lXMm1j?=
+ =?utf-8?B?YjQ3TEQxSStreW1WU3pmcmxodGxJL0I1NUlwcTBpcmxWZzFrWnV2d2RDeTBs?=
+ =?utf-8?B?Mm0xeUc3NVZRZ2IxbVpHWU0yWThHOWlETEpwRjNqWWFGeDFLdStGQXhQMUNy?=
+ =?utf-8?Q?vrRQSuFay2C0p60pEAFZkM9+QRGZC1K5AT5RPpAoM0=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: e6ab0c20-7cf1-43ea-af29-08d9e033d263
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR11MB3911.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jan 2022 18:52:22.9212
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Zwm5+J3EqTzvVayCj8IQVY9HvVG7Opnf639GxI7sn1002yhvYI4qmBb+S3u7SklzL0j24qYJPqZXeBRTPvoNg/pQYyMCFgvfo1j+6D3bIUM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR11MB3603
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 25 Jan 2022 17:14:01 +0300 Dan Carpenter wrote:
-> You're looking at the wrong function.  This is pnic_do_nway() and you're
-> looking at pnic_timer().
+On 1/25/2022 01:13, Colin Ian King wrote:
+> There is a spelling mistake in a drm_err error message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Reviewed-by: John Harrison <John.C.Harrison@Intel.com>
 
-Ah, that explains it! Thanks, applied now.
+However, note that this message is going to be deleted anyway. Or at 
+least dropped down to an informational. Partly, there was confusion over 
+how the issue could arise. Partly the firmware bug leading to part of 
+the problem has now been fixed and the w/a removed from the driver. 
+Cleaning this error up accordingly is on my todo list...
 
-> Of course, Colin's patch assumes the current behavior is correct...  I
-> guess the current behavior can't be that terrible since it predates git
-> and no one has complained.
+Thanks,
+John.
 
-Entirely possible this driver was never used in the git era.
+
+> ---
+>   drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c b/drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c
+> index 1331ff91c5b0..1ae3d1f259e3 100644
+> --- a/drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c
+> +++ b/drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c
+> @@ -3942,7 +3942,7 @@ static void guc_handle_context_reset(struct intel_guc *guc,
+>   		guc_context_replay(ce);
+>   	} else {
+>   		drm_err(&guc_to_gt(guc)->i915->drm,
+> -			"Invalid GuC engine reset notificaion for 0x%04X on %s: banned = %d, blocked = %d",
+> +			"Invalid GuC engine reset notification for 0x%04X on %s: banned = %d, blocked = %d",
+>   			ce->guc_id.id, ce->engine->name, intel_context_is_banned(ce),
+>   			context_blocked(ce));
+>   	}
+
