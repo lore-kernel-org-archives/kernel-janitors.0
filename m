@@ -2,44 +2,45 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 350B5C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jan 2022 20:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B320C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jan 2022 21:32:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232008AbiAYU3t (ORCPT
+        id S233152AbiAYVcy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Jan 2022 15:29:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36498 "EHLO
+        Tue, 25 Jan 2022 16:32:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231996AbiAYU3h (ORCPT
+        with ESMTP id S233148AbiAYVcx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 Jan 2022 15:29:37 -0500
+        Tue, 25 Jan 2022 16:32:53 -0500
 Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC95DC06173B;
-        Tue, 25 Jan 2022 12:29:37 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F1EFC06173B;
+        Tue, 25 Jan 2022 13:32:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-        :In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=HuFsrsEjCeQb8F5o6wp0UCzTE2mHOFE1tAbifZs8KLw=; b=mq1rL5RHHhUx5YzffcC/GkJDtJ
-        Yi5m9hTUVZ0ZaUiZBmGflnWr/8kNQJukSAUsM3n5Vugs76dEknceOhLS23X1MkhUIe+mT3RxpGRF9
-        o34r4rt1gBktX5eoQuNS1DL5lkhnknLKpBBuIJAz0nVWXgsjl5hl7qvllBkvDXlRPeJx8YzKZVOxi
-        +xbf4KVHU7fgZfrBAFvxM/Gui+/ky0S+0jVrE1h+A/JHrAw+RNbisH8I4t+Bl58ub7qfIsO6Bof/7
-        kAmZmbTmanYRWsR5Z8/tgtRKF5mKZEhD35aWkh98h+ulDqPCMo3dM4wXKicWszORZQXRyn5INVOZU
-        GzE+iEXg==;
-Received: from [2601:1c0:6280:3f0::aa0b]
+        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=klGnJioOcgDKO/TJKK9IN06R18s20W+7JvkgdEv4Aw4=; b=qIoYpP71UhPHE0K6vzujD18XKY
+        7SZzWx6zDIvvHkm9p/b7r9nm8aBtuGldnLOZQLopnx1bdHrmVGn91GDbOFj4oHwrClngRjCrW5A3T
+        Cg/ea39ydmIASfDUj2/J22tIlEPgnRQN5a97KLRX4iXLuLVgoA9FAvxAnF+eNg78cys2yI1POMgiB
+        2nEzh91MCuMOwMcjMNktKbkKUM/81yNMZit+OPVr1YCm/rx3TlcbqvMUdm/g+6NOs2MPl9cszqqrx
+        NSXHC9aJE72mOsenqa1alw3Zx3F0XCuhDfHRA/DLp5NDcXI7Am1nsHFN+CEZB8lwHXR4fTxS91R4g
+        hbYjyhwA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
         by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nCSRF-003YjS-PQ; Tue, 25 Jan 2022 20:29:14 +0000
-Message-ID: <d1d154c1-dfdb-9899-8d40-4ff50de80df1@infradead.org>
-Date:   Tue, 25 Jan 2022 12:29:06 -0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH][next] perf/x86/rapl: replace 0 with NULL to initialize
- pointers
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
+        id 1nCTQX-003Zaf-Pi; Tue, 25 Jan 2022 21:32:33 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id AAB4F3002FC;
+        Tue, 25 Jan 2022 22:32:31 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 928D620172667; Tue, 25 Jan 2022 22:32:31 +0100 (CET)
+Date:   Tue, 25 Jan 2022 22:32:31 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
@@ -48,56 +49,23 @@ To:     Colin Ian King <colin.i.king@gmail.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Borislav Petkov <bp@alien8.de>,
         Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, linux-perf-users@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+        "H . Peter Anvin" <hpa@zytor.com>,
+        linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] perf/x86/rapl: replace 0 with NULL to initialize
+ pointers
+Message-ID: <YfBsb/3fR7v7tnr4@hirez.programming.kicks-ass.net>
 References: <20220125201403.670011-1-colin.i.king@gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20220125201403.670011-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 1/25/22 12:14, Colin Ian King wrote:
+On Tue, Jan 25, 2022 at 08:14:03PM +0000, Colin Ian King wrote:
 > Pointers should be initialized with NULL rather than zero. Fix these.
-> Cleans up sparse warning:
-> 
-> arch/x86/events/rapl.c:540:59: warning: Using plain integer as NULL pointer
 
-
-also was
-Reported-by: kernel test robot <lkp@intel.com>
-
-
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  arch/x86/events/rapl.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
-> index 77e3a47af5ad..7d70690fded5 100644
-> --- a/arch/x86/events/rapl.c
-> +++ b/arch/x86/events/rapl.c
-> @@ -537,11 +537,11 @@ static struct perf_msr intel_rapl_spr_msrs[] = {
->   * - want to use same event codes across both architectures
->   */
->  static struct perf_msr amd_rapl_msrs[] = {
-> -	[PERF_RAPL_PP0]  = { 0, &rapl_events_cores_group, 0, false, 0 },
-> +	[PERF_RAPL_PP0]  = { 0, &rapl_events_cores_group, NULL, false, 0 },
->  	[PERF_RAPL_PKG]  = { MSR_AMD_PKG_ENERGY_STATUS,  &rapl_events_pkg_group,   test_msr, false, RAPL_MSR_MASK },
-> -	[PERF_RAPL_RAM]  = { 0, &rapl_events_ram_group,   0, false, 0 },
-> -	[PERF_RAPL_PP1]  = { 0, &rapl_events_gpu_group,   0, false, 0 },
-> -	[PERF_RAPL_PSYS] = { 0, &rapl_events_psys_group,  0, false, 0 },
-> +	[PERF_RAPL_RAM]  = { 0, &rapl_events_ram_group,   NULL, false, 0 },
-> +	[PERF_RAPL_PP1]  = { 0, &rapl_events_gpu_group,   NULL, false, 0 },
-> +	[PERF_RAPL_PSYS] = { 0, &rapl_events_psys_group,  NULL, false, 0 },
->  };
->  
->  static int rapl_cpu_offline(unsigned int cpu)
-
--- 
-~Randy
+Why ? This isn't C++, heck, this isn't even C, this is the kernel, we
+hard rely on NULL being 0.
