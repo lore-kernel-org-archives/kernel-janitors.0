@@ -2,78 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0425C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jan 2022 05:52:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86EB1C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jan 2022 05:55:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240258AbiAYFwV (ORCPT
+        id S241119AbiAYFzb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 25 Jan 2022 00:52:21 -0500
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:10646 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235594AbiAYFli (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 25 Jan 2022 00:41:38 -0500
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20P2BgAK001281;
-        Tue, 25 Jan 2022 05:41:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2021-07-09;
- bh=+Fr20GVm/K7O8IeAcez9wVqesaeXGvlF5UDdXX6OAEE=;
- b=e0N3fQJozMX5zHQ0/35n9NlWwrLU3KzBm24vbpI7vqiygMbFvPBh3LlJN+JcqtlDvare
- 2ib0htEvmCvzkiOGXPNY1FDgGvHUEo1kPnMoOISqOqMH3Lp7GChiyKH8qDSJYiEyvt1j
- VypXGK9L0hsGJDJHKPgxOOe0PdCW+x6gAV/+LldjofPjQCEeCeLRFll2mVkwWWhOFhKG
- IN7MU3YRWL+q+RJBE4PzI0wUk3assNbeqI4BYn6AU75C2GMRbmGmTezswWKpZV6ZQWW+
- 85p9khQQ/IszKo4t5C6HZBUsaro1bzliUPXRm6lZ9oa8eSPYgc6hHUZ/T5EV68wc6Xqz xg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3dsy9s1usx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Jan 2022 05:41:34 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 20P5ePlE145387;
-        Tue, 25 Jan 2022 05:41:33 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3020.oracle.com with ESMTP id 3drbcn1st2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Jan 2022 05:41:33 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 20P5fW77149214;
-        Tue, 25 Jan 2022 05:41:32 GMT
-Received: from ca-mkp.mkp.ca.oracle.com (ca-mkp.ca.oracle.com [10.156.108.201])
-        by userp3020.oracle.com with ESMTP id 3drbcn1ss0-1;
-        Tue, 25 Jan 2022 05:41:32 +0000
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        linux-scsi@vger.kernel.org,
-        "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: 53c700: remove redundant assignment to pointer SCp
-Date:   Tue, 25 Jan 2022 00:41:28 -0500
-Message-Id: <164308927349.18787.18367431364523042445.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220123175530.110462-1-colin.i.king@gmail.com>
-References: <20220123175530.110462-1-colin.i.king@gmail.com>
+        Tue, 25 Jan 2022 00:55:31 -0500
+Received: from mga04.intel.com ([192.55.52.120]:21601 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229667AbiAYF3h (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 25 Jan 2022 00:29:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1643088577; x=1674624577;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=szMhn+GZucHPTDtHBcqaEh1jiwyMxWJmIcgFkQpSSbQ=;
+  b=JUrRQvlEErBUiJx4Eulam1oi85Wi9ulHMC/5TBrUC5XXPD5reL4TDfWr
+   BpZxTOCAJ+b5Nqnl0F6DliCV9ArxDAy0xxPkMYjPwJk3fFbDJwKVDPj1G
+   mTqfgtMdG5mh5xY9luELc/Jw39tQpjtyhBrDO2otuBFUnBoLTgfVwg7qT
+   Ab+IRhjXIcvQeNlEvuD27fUtcUzoRHGSXUyrgKL/tNK9AbK/fH10CCH8e
+   RYmgjArU9rIluL23qZyfJ0aV9Y5KHCpJ6oiV2UW/OOqMZ4ySl5JJUYgba
+   Skru88DW2j6+TvWyJKxgedTHhMhPvB+Fg799AFAg8EI5YGti1vELBoIQK
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10237"; a="245056447"
+X-IronPort-AV: E=Sophos;i="5.88,314,1635231600"; 
+   d="scan'208";a="245056447"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2022 21:17:31 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,314,1635231600"; 
+   d="scan'208";a="624343984"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.147])
+  by fmsmga002.fm.intel.com with SMTP; 24 Jan 2022 21:17:26 -0800
+Received: by stinkbox (sSMTP sendmail emulation); Tue, 25 Jan 2022 07:17:25 +0200
+Date:   Tue, 25 Jan 2022 07:17:25 +0200
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Sean Paul <seanpaul@chromium.org>,
+        Fernando Ramos <greenfoo@u92.eu>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Matt Roper <matthew.d.roper@intel.com>,
+        Eric Anholt <eric@anholt.net>, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm/i915/overlay: Prevent divide by zero bugs in scaling
+Message-ID: <Ye+H5fF6KeNA1Be3@intel.com>
+References: <20220124122409.GA31673@kili>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: mAGfV7S2YYC876uXELITSjOycHJN4pxu
-X-Proofpoint-ORIG-GUID: mAGfV7S2YYC876uXELITSjOycHJN4pxu
+In-Reply-To: <20220124122409.GA31673@kili>
+X-Patchwork-Hint: comment
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 23 Jan 2022 17:55:30 +0000, Colin Ian King wrote:
-
-> Pointer SCp is being re-assigned the same value that it was initialized
-> to a few lines earlier, the assignment is redundant and can be removed.
+On Mon, Jan 24, 2022 at 03:24:09PM +0300, Dan Carpenter wrote:
+> Smatch detected a divide by zero bug in check_overlay_scaling().
 > 
+>     drivers/gpu/drm/i915/display/intel_overlay.c:976 check_overlay_scaling()
+>     error: potential divide by zero bug '/ rec->dst_height'.
+>     drivers/gpu/drm/i915/display/intel_overlay.c:980 check_overlay_scaling()
+>     error: potential divide by zero bug '/ rec->dst_width'.
 > 
+> Prevent this by ensuring that the dst height and width are non-zero.
+> 
+> Fixes: 02e792fbaadb ("drm/i915: implement drmmode overlay support v4")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to 5.17/scsi-fixes, thanks!
+Thanks. Pushed to drm-intel-next.
 
-[1/1] scsi: 53c700: remove redundant assignment to pointer SCp
-      https://git.kernel.org/mkp/scsi/c/efd7bb1d75cf
+> ---
+> >From static analysis.  Not tested.
+> 
+>  drivers/gpu/drm/i915/display/intel_overlay.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/i915/display/intel_overlay.c b/drivers/gpu/drm/i915/display/intel_overlay.c
+> index 1a376e9a1ff3..d610e48cab94 100644
+> --- a/drivers/gpu/drm/i915/display/intel_overlay.c
+> +++ b/drivers/gpu/drm/i915/display/intel_overlay.c
+> @@ -959,6 +959,9 @@ static int check_overlay_dst(struct intel_overlay *overlay,
+>  	const struct intel_crtc_state *pipe_config =
+>  		overlay->crtc->config;
+>  
+> +	if (rec->dst_height == 0 || rec->dst_width == 0)
+> +		return -EINVAL;
+> +
+>  	if (rec->dst_x < pipe_config->pipe_src_w &&
+>  	    rec->dst_x + rec->dst_width <= pipe_config->pipe_src_w &&
+>  	    rec->dst_y < pipe_config->pipe_src_h &&
+> -- 
+> 2.20.1
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Ville Syrjälä
+Intel
