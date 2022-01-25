@@ -2,79 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD711C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jan 2022 03:23:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF4D1C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 25 Jan 2022 05:44:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381532AbiAYDRb (ORCPT
+        id S235918AbiAYFnV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 24 Jan 2022 22:17:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56092 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S3415505AbiAYBrG (ORCPT
+        Tue, 25 Jan 2022 00:43:21 -0500
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:38194 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235454AbiAYFlB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 24 Jan 2022 20:47:06 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 759ADC01D7C8;
-        Mon, 24 Jan 2022 17:27:00 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 13E4361214;
-        Tue, 25 Jan 2022 01:27:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7807CC340E5;
-        Tue, 25 Jan 2022 01:26:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643074019;
-        bh=jHdoOJoEuHZBeA+OwrUqeObi/wvxQlAIyr5XxNX6914=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=VqDOV0m3mR3XjIf70NBI/GUkCqpGemEz98EzNc3qyUJgVPHRt/iPbs3IEibvfG2ey
-         UcRFAKDHCk3631inXq+kwKELB+IDWWx5sey0IWYLiNoA9pWjmPgFFTVfLYI48q+RsD
-         nXTUhYnAVSMu4yvSdSll6OjeCivkKrakLvDsuACeStnfAVDjLmV5Wly+y64Twssekz
-         R+teu/QpJ/Lnza0K2OuzKNBhBXHLC3lnIRroAG7UbAP/2BtnKlPl+Z6B/mq3fPSYgG
-         rTGWj5V0glQivlccxyYYVFv8G2J9i21MFqVk2CbQJ45cssPUG7PAgOSPZ99EGBTokZ
-         UXXwdyM1l9mLQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5F51BF60799;
-        Tue, 25 Jan 2022 01:26:59 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 25 Jan 2022 00:41:01 -0500
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20P3dvCY005584;
+        Tue, 25 Jan 2022 05:40:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2021-07-09;
+ bh=sqUvDyA5YZpT3JndOpFnDDOz6wZ/rAgG1aiM+F3xWkw=;
+ b=jNEqIROOHq1GO38MVEs+E355KnwUxH+p10clWeFAny7QontAFAuekw+h0v3NfBKfQ/6P
+ gqWVyTgyez7JZJWIE2rs89INNMjtwH0DDpvvk1xG3UWQnwFB+sCU/v3KtBaTE6qF7aQH
+ eOjENlBDA5SaEALno7c4/Uqwf53p0kq1op1l80xsf9qNGzOP5cW6aSKbnYaCyTVZcrzf
+ ONBjQOakNLoLq1r31/UfBTAW+dMrTyVn/NSovkCjvn4Jppq4diOrrPzCQUzL8L0nPPsr
+ 4iE/lOKEvMK8TFpyGMFR6ioKMMAjX9U9DkfWprOf2qsCDOzgUj06+dri3pP0OsMlLvYu iQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3dswh9j7ta-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Jan 2022 05:40:57 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 20P5eu1b181678;
+        Tue, 25 Jan 2022 05:40:56 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3030.oracle.com with ESMTP id 3dr71x1sj0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Jan 2022 05:40:56 +0000
+Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 20P5embg181395;
+        Tue, 25 Jan 2022 05:40:50 GMT
+Received: from ca-mkp.mkp.ca.oracle.com (ca-mkp.ca.oracle.com [10.156.108.201])
+        by userp3030.oracle.com with ESMTP id 3dr71x1sgc-2;
+        Tue, 25 Jan 2022 05:40:50 +0000
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     Anil Gurumurthy <anil.gurumurthy@qlogic.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] scsi: bfa: Remove useless DMA-32 fallback configuration
+Date:   Tue, 25 Jan 2022 00:40:38 -0500
+Message-Id: <164308671272.32373.2478043846712410369.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <5663cef9b54004fa56cca7ce65f51eadfc3ecddb.1642238127.git.christophe.jaillet@wanadoo.fr>
+References: <5663cef9b54004fa56cca7ce65f51eadfc3ecddb.1642238127.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: fec_ptp: remove redundant initialization of variable val
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164307401938.21160.8256923052141890317.git-patchwork-notify@kernel.org>
-Date:   Tue, 25 Jan 2022 01:26:59 +0000
-References: <20220123184936.113486-1-colin.i.king@gmail.com>
-In-Reply-To: <20220123184936.113486-1-colin.i.king@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     qiangqing.zhang@nxp.com, davem@davemloft.net, kuba@kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+X-Proofpoint-ORIG-GUID: p6Xh9rVRl8eC5dSOorwm0j2goN3zjn6h
+X-Proofpoint-GUID: p6Xh9rVRl8eC5dSOorwm0j2goN3zjn6h
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+On Sat, 15 Jan 2022 10:15:41 +0100, Christophe JAILLET wrote:
 
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Sun, 23 Jan 2022 18:49:36 +0000 you wrote:
-> Variable val is being initialized with a value that is never read,
-> it is being re-assigned later. The assignment is redundant and
-> can be removed.
+> As stated in [1], dma_set_mask() with a 64-bit mask never fails if
+> dev->dma_mask is non-NULL.
+> So, if it fails, the 32 bits case will also fail for the same reason.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/net/ethernet/freescale/fec_ptp.c | 1 -
->  1 file changed, 1 deletion(-)
+> Simplify code and remove some dead code accordingly.
+> 
+> [1]: https://lore.kernel.org/linux-kernel/YL3vSPK5DXTNvgdx@infradead.org/#t
+> 
+> [...]
 
-Here is the summary with links:
-  - net: fec_ptp: remove redundant initialization of variable val
-    https://git.kernel.org/netdev/net-next/c/6e667749271e
+Applied to 5.17/scsi-fixes, thanks!
 
-You are awesome, thank you!
+[1/1] scsi: bfa: Remove useless DMA-32 fallback configuration
+      https://git.kernel.org/mkp/scsi/c/012d98dae453
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Martin K. Petersen	Oracle Linux Engineering
