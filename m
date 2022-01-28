@@ -2,42 +2,42 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB081C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Jan 2022 11:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50421C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Jan 2022 12:36:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348236AbiA1LvH (ORCPT
+        id S1348510AbiA1MgU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Jan 2022 06:51:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33712 "EHLO
+        Fri, 28 Jan 2022 07:36:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348220AbiA1LvE (ORCPT
+        with ESMTP id S231153AbiA1MgU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Jan 2022 06:51:04 -0500
+        Fri, 28 Jan 2022 07:36:20 -0500
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AF05C061714;
-        Fri, 28 Jan 2022 03:51:04 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18D74C061714;
+        Fri, 28 Jan 2022 04:36:19 -0800 (PST)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: usama.anjum)
-        with ESMTPSA id B03051F45E96
+        with ESMTPSA id 767F21F45EEA
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1643370663;
-        bh=ZTfpdFB0k8V5iAKA53Pw1fPeSktMJTlkZU1aFUU3f80=;
+        s=mail; t=1643373377;
+        bh=YtNcSY4XVYMhivO+4b/pttldYIe/hSGVUaO4aQU8K48=;
         h=From:To:Cc:Subject:Date:From;
-        b=SppjWrBIUF/AKYyZo9o87cbHJg1MANVp/ahJm1EdatzQNvY5VyKdACl5m41rc5n79
-         io3lGoxcNx1Kq5OoHpuwWjfNPT6HSXbPgxnqilOzRRXq4VSFaRLqDJUPcIHtky242H
-         LyTbtm6vg3xT53vMY2gNASQtckMOHJR6GJIKawlb8g8l1DQB4F/gYy3Mih2IVRmrI6
-         cgJu2Ks1HBq/+nfsjjesm0JWzpDBtxEa0cRKkJ/FKYH3hGaar6+obgPWkat2/9nVoR
-         HhA0ceky/AA4G1/sFS3C5H2vQxOvv0+wTbr5TiBuMYfNQh8M1Po+ZVkq08/FW2JhdU
-         HEiWcTfsUV+Sg==
+        b=HafNsL5TwEyIN1EqH+qVuV9c/oRkylS8g8M/EPoCZ2watO47Hc9bRD2C6Zm1+WCnx
+         aKptfjUesye4RIKjag/GHygSmsvAJQhUonu3z5j/alHkV98Lfq/vW7KOAF4Z2MaSIh
+         UtAFXRiTi6daP8BlLqFua+Vuxj6IIRhlcns8gkYrK9EyiEL5ulfIDfQ9X3gbyyGBHw
+         wlaSrfhYa07g4i+Elj/0dQnhvR4KtNAo8tEtZOU8YYhigGaQ3bfJNkxvcf2C7SUk5D
+         xeCz5cRayjo+z2NfeOX7PpPnZ7+W1pLtnDoyfz1gQagn602hRDxdfz454GbGmFlQvQ
+         F2xIkBmxVmMbA==
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
 To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>
 Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
         kernel@collabora.com, kernel-janitors@vger.kernel.org,
         linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] btrfs: Remove dead code
-Date:   Fri, 28 Jan 2022 16:50:27 +0500
-Message-Id: <20220128115027.1170373-1-usama.anjum@collabora.com>
+Subject: [PATCH] btrfs: initialize offset early
+Date:   Fri, 28 Jan 2022 17:35:58 +0500
+Message-Id: <20220128123558.1223205-1-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -45,45 +45,37 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Local variable stop_loop is assigned only once, to a constant value 0,
-making it effectively constant through out its scope. This constant
-variable is guarding deadcode. The two if conditions can never be true.
-Remove the variable and make the logic simple.
+Jump to out label can happen before offset is initialized. offset is
+being used in code after out label. initialize offset early to cater
+this case.
 
 Fixes: 585f784357d8 ("btrfs: use scrub_simple_mirror() to handle RAID56 data stripe scrub")
 Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 ---
- fs/btrfs/scrub.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ fs/btrfs/scrub.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
-index 4baa8e43d585b..26bbe93c3aa3c 100644
+index 26bbe93c3aa3c..3ace9766527ba 100644
 --- a/fs/btrfs/scrub.c
 +++ b/fs/btrfs/scrub.c
-@@ -3533,7 +3533,6 @@ static noinline_for_stack int scrub_stripe(struct scrub_ctx *sctx,
- 	u64 offset;	/* Offset inside the chunk */
+@@ -3530,7 +3530,7 @@ static noinline_for_stack int scrub_stripe(struct scrub_ctx *sctx,
+ 	u64 logic_end;
+ 	u64 physical_end;
+ 	u64 increment;	/* The logical increment after finishing one stripe */
+-	u64 offset;	/* Offset inside the chunk */
++	u64 offset = 0;	/* Offset inside the chunk */
  	u64 stripe_logical;
  	u64 stripe_end;
--	int stop_loop = 0;
  
- 	path = btrfs_alloc_path();
- 	if (!path)
-@@ -3652,14 +3651,8 @@ static noinline_for_stack int scrub_stripe(struct scrub_ctx *sctx,
- 		logical += increment;
- 		physical += map->stripe_len;
- 		spin_lock(&sctx->stat_lock);
--		if (stop_loop)
--			sctx->stat.last_physical = map->stripes[stripe_index].physical +
--						   dev_extent_len;
--		else
--			sctx->stat.last_physical = physical;
-+		sctx->stat.last_physical = physical;
- 		spin_unlock(&sctx->stat_lock);
--		if (stop_loop)
--			break;
- 	}
- out:
- 	/* push queued extents */
+@@ -3602,7 +3602,6 @@ static noinline_for_stack int scrub_stripe(struct scrub_ctx *sctx,
+ 	ASSERT(map->type & BTRFS_BLOCK_GROUP_RAID56_MASK);
+ 
+ 	physical = map->stripes[stripe_index].physical;
+-	offset = 0;
+ 	nstripes = div64_u64(dev_extent_len, map->stripe_len);
+ 	get_raid56_logic_offset(physical, stripe_index, map, &offset, NULL);
+ 	increment = map->stripe_len * nr_data_stripes(map);
 -- 
 2.30.2
 
