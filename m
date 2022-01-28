@@ -2,83 +2,127 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 235CEC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Jan 2022 17:01:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49418C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Jan 2022 17:07:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350396AbiA1RBN (ORCPT
+        id S1350434AbiA1RHz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Jan 2022 12:01:13 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:38294 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350394AbiA1RBN (ORCPT
+        Fri, 28 Jan 2022 12:07:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51902 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S245669AbiA1RHy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Jan 2022 12:01:13 -0500
+        Fri, 28 Jan 2022 12:07:54 -0500
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B717C061714;
+        Fri, 28 Jan 2022 09:07:54 -0800 (PST)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: usama.anjum)
-        with ESMTPSA id D8AC11F46392
+        with ESMTPSA id ADBB31F4077C
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1643389272;
-        bh=HcvGQIq3fvQYfjKx8yTy+bAX9ZDUMawBDHbxMWj950E=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=DxSLK81NgXLNHJdDzNjkSeN6KC6c+7RJmMh02ayrUFsCCU6kYJ2O1EhAhSkbMTLk9
-         fH1+qyCaLHEQRZE3Wk10iew8DQrLfd2IWFAR/G3tQzUftJzWEyvZg+98h1MI7vITSu
-         ARsacZ7SN96lfy6dIc/cObMGtxW0Hccye88uE98Zu2YSmmtHXMUq2PA0McIhuoGPr7
-         yTOAOmovRfB1jlojgKnCPN4v2nimKHwvLedNoAfu+/PvuQqcgsRZUv2bbfII0XaHyg
-         xJ3LEMR83OTAEB+5+FLa6DKKz36gIAWY+vgg8ckvDMQuMnWja3FlDHfoakpkyK4O3k
-         2XYjihUlGIo8A==
-Message-ID: <ab0b6146-d8ab-b9f5-4dea-99849a0f5ee4@collabora.com>
-Date:   Fri, 28 Jan 2022 22:01:03 +0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Cc:     usama.anjum@collabora.com,
-        Steve Longerbeam <slongerbeam@gmail.com>,
+        s=mail; t=1643389673;
+        bh=2xFNiO6fHDHvRM3tapKHLsYU7C7r1NhK4zVmOUghfCE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Nwgn/t3yPevwc+QMOee9BE3udvMx3HsLC2z6iuM3Uq0Y3ce6lPVjevczDXYE1xVVs
+         Xl/ZRFFrEv+iBexE6jFPJxEa9NwGL32JCA5R+MlzKNOvl+4KhiMdMrKEiEeWNzAZjq
+         sqA3UoILhalDrutVLIdnJMni1fepuo9Ev9PQlUJUe9Nb7QT7PZjYJKsmbH5NjUgLpg
+         wb1pcQC6bAjUStGxTdSCUttcqqcOnF6MKwI8eEoIxLAZAbBr6rdB+jlIo8WIzbk3H/
+         4rb49pRgXp8F50LxOP347ilePuLB7YXWRvNm1l74L2Z25hObVhq9mbLA+Wu/sn8scC
+         48jolvItzDYPQ==
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+To:     Steve Longerbeam <slongerbeam@gmail.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        Martin Kepplinger <martink@posteo.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>, kernel@collabora.com,
-        kernel-janitors@vger.kernel.org,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-staging@lists.linux.dev,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] media: imx: imx8mq-mipi_csi2: Remove unneeded code
-Content-Language: en-US
-To:     Fabio Estevam <festevam@gmail.com>
-References: <20220128133649.1393201-1-usama.anjum@collabora.com>
- <CAOMZO5DaNpZbO2JS7KUOHJLAZNqpnY_ub8H_UF2sSHuQp-Ki0g@mail.gmail.com>
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <CAOMZO5DaNpZbO2JS7KUOHJLAZNqpnY_ub8H_UF2sSHuQp-Ki0g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-media@vger.kernel.org (open list:MEDIA DRIVERS FOR FREESCALE IMX),
+        linux-staging@lists.linux.dev (open list:STAGING SUBSYSTEM),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX
+        / MXC ARM ARCHITECTURE), linux-kernel@vger.kernel.org (open list),
+        mkl@pengutronix.de
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        kernel@collabora.com, kernel-janitors@vger.kernel.org
+Subject: [PATCH V2] media: imx: imx8mq-mipi_csi2: Remove unneeded code
+Date:   Fri, 28 Jan 2022 22:07:22 +0500
+Message-Id: <20220128170722.1624767-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+ret is constant in imx8mq_mipi_csi_pm_suspend(). This function cannot
+return error. Remove the return variable. Simplify other functions which
+are using this function.
 
-On 1/28/22 9:23 PM, Fabio Estevam wrote:
-> Hi Muhammad,
-> 
-> On Fri, Jan 28, 2022 at 10:38 AM Muhammad Usama Anjum
-> <usama.anjum@collabora.com> wrote:
->>
->> ret is constant in imx8mq_mipi_csi_pm_suspend(). This function cannot
->> return error. Remove the return variable. Simplify other functions which
->> are using this function.
->>
->> Fixes: f0c2ba1ed4ad ("media: imx: imx8mq-mipi_csi2: fix system resume")
-> 
-> The patch looks good.
-> 
-> I would suggest removing the Fixes tag though as this is more of a
-> clean-up rather than a bug fix.
-I'll send a V2.
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+Changes in V2:
+Removed fixes tag
+---
+ drivers/staging/media/imx/imx8mq-mipi-csi2.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-Thanks,
-Usama
+diff --git a/drivers/staging/media/imx/imx8mq-mipi-csi2.c b/drivers/staging/media/imx/imx8mq-mipi-csi2.c
+index 3b9fa75efac6b..c992b845e63d1 100644
+--- a/drivers/staging/media/imx/imx8mq-mipi-csi2.c
++++ b/drivers/staging/media/imx/imx8mq-mipi-csi2.c
+@@ -693,11 +693,10 @@ static int imx8mq_mipi_csi_async_register(struct csi_state *state)
+  * Suspend/resume
+  */
+ 
+-static int imx8mq_mipi_csi_pm_suspend(struct device *dev)
++static void imx8mq_mipi_csi_pm_suspend(struct device *dev)
+ {
+ 	struct v4l2_subdev *sd = dev_get_drvdata(dev);
+ 	struct csi_state *state = mipi_sd_to_csi2_state(sd);
+-	int ret = 0;
+ 
+ 	mutex_lock(&state->lock);
+ 
+@@ -708,8 +707,6 @@ static int imx8mq_mipi_csi_pm_suspend(struct device *dev)
+ 	}
+ 
+ 	mutex_unlock(&state->lock);
+-
+-	return ret ? -EAGAIN : 0;
+ }
+ 
+ static int imx8mq_mipi_csi_pm_resume(struct device *dev)
+@@ -742,15 +739,12 @@ static int __maybe_unused imx8mq_mipi_csi_suspend(struct device *dev)
+ {
+ 	struct v4l2_subdev *sd = dev_get_drvdata(dev);
+ 	struct csi_state *state = mipi_sd_to_csi2_state(sd);
+-	int ret;
+ 
+-	ret = imx8mq_mipi_csi_pm_suspend(dev);
+-	if (ret)
+-		return ret;
++	imx8mq_mipi_csi_pm_suspend(dev);
+ 
+ 	state->state |= ST_SUSPENDED;
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int __maybe_unused imx8mq_mipi_csi_resume(struct device *dev)
+@@ -770,9 +764,7 @@ static int __maybe_unused imx8mq_mipi_csi_runtime_suspend(struct device *dev)
+ 	struct csi_state *state = mipi_sd_to_csi2_state(sd);
+ 	int ret;
+ 
+-	ret = imx8mq_mipi_csi_pm_suspend(dev);
+-	if (ret)
+-		return ret;
++	imx8mq_mipi_csi_pm_suspend(dev);
+ 
+ 	ret = icc_set_bw(state->icc_path, 0, 0);
+ 	if (ret)
+-- 
+2.30.2
+
