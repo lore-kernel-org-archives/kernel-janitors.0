@@ -2,94 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A44C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Jan 2022 16:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 235CEC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Jan 2022 17:01:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350302AbiA1Q7s (ORCPT
+        id S1350396AbiA1RBN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Jan 2022 11:59:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49986 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245576AbiA1Q7s (ORCPT
+        Fri, 28 Jan 2022 12:01:13 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:38294 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1350394AbiA1RBN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Jan 2022 11:59:48 -0500
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CD50C061714;
-        Fri, 28 Jan 2022 08:59:48 -0800 (PST)
+        Fri, 28 Jan 2022 12:01:13 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: usama.anjum)
-        with ESMTPSA id 660761F46376
+        with ESMTPSA id D8AC11F46392
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1643389187;
-        bh=zsFOqNJXl1POjN770OSH/AQ4HY1FlkWlk167Y5ylJlI=;
+        s=mail; t=1643389272;
+        bh=HcvGQIq3fvQYfjKx8yTy+bAX9ZDUMawBDHbxMWj950E=;
         h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=LgxMYS1GnF1HKHlWvC7pamz/kp8UyaHru3kXZzji+FL/DZ06HizwWldfi/lB17xts
-         3yDjqhn/H5jxjTl3Rs+Kv6dn2ohhqI0y65vTA0rDy1HbUtY8UEYXi9dTJ0KnTPTtt4
-         kzwUQZBbbg1bwb7j1apphwPTQzJyg7TYQEjSioqC2NKGBS+Q7R/HjuJiVDySyRewJM
-         g/JdAPTaqDbXaTcl+krXqhlGrSThU/YYsnwHCTLzoqgffkswZmAVIjHFMPOFBI1Gvr
-         lxKSOf+PmopiNVbRiQYQrU5v4dFcraIEbSV5iJkVO5yefYHsyGVE/SsF810kafr0QD
-         tAwajJvnaBvPg==
-Message-ID: <d7686623-c5ab-ce2a-386c-f35ec167ca81@collabora.com>
-Date:   Fri, 28 Jan 2022 21:59:39 +0500
+        b=DxSLK81NgXLNHJdDzNjkSeN6KC6c+7RJmMh02ayrUFsCCU6kYJ2O1EhAhSkbMTLk9
+         fH1+qyCaLHEQRZE3Wk10iew8DQrLfd2IWFAR/G3tQzUftJzWEyvZg+98h1MI7vITSu
+         ARsacZ7SN96lfy6dIc/cObMGtxW0Hccye88uE98Zu2YSmmtHXMUq2PA0McIhuoGPr7
+         yTOAOmovRfB1jlojgKnCPN4v2nimKHwvLedNoAfu+/PvuQqcgsRZUv2bbfII0XaHyg
+         xJ3LEMR83OTAEB+5+FLa6DKKz36gIAWY+vgg8ckvDMQuMnWja3FlDHfoakpkyK4O3k
+         2XYjihUlGIo8A==
+Message-ID: <ab0b6146-d8ab-b9f5-4dea-99849a0f5ee4@collabora.com>
+Date:   Fri, 28 Jan 2022 22:01:03 +0500
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Cc:     usama.anjum@collabora.com, kernel@collabora.com,
-        kernel-janitors@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: Remove checks for validity of dev
+Cc:     usama.anjum@collabora.com,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Martin Kepplinger <martink@posteo.de>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>, kernel@collabora.com,
+        kernel-janitors@vger.kernel.org,
+        linux-media <linux-media@vger.kernel.org>,
+        linux-staging@lists.linux.dev,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] media: imx: imx8mq-mipi_csi2: Remove unneeded code
 Content-Language: en-US
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Jean Delvare <jdelvare@suse.com>
-References: <20220128125913.1291533-1-usama.anjum@collabora.com>
- <6c0335ca-eb16-b4de-1f2c-8bdc82219b57@roeck-us.net>
+To:     Fabio Estevam <festevam@gmail.com>
+References: <20220128133649.1393201-1-usama.anjum@collabora.com>
+ <CAOMZO5DaNpZbO2JS7KUOHJLAZNqpnY_ub8H_UF2sSHuQp-Ki0g@mail.gmail.com>
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <6c0335ca-eb16-b4de-1f2c-8bdc82219b57@roeck-us.net>
+In-Reply-To: <CAOMZO5DaNpZbO2JS7KUOHJLAZNqpnY_ub8H_UF2sSHuQp-Ki0g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 1/28/22 8:05 PM, Guenter Roeck wrote:
-> On 1/28/22 04:59, Muhammad Usama Anjum wrote:
->> dev is being dereferenced in device_property_present() which means that
->> it is valid. Don't check its validity again and simplify the code.
->>
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->>   drivers/hwmon/hwmon.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
->> index e36ea82da1474..aec32abd0a89f 100644
->> --- a/drivers/hwmon/hwmon.c
->> +++ b/drivers/hwmon/hwmon.c
->> @@ -822,7 +822,7 @@ __hwmon_device_register(struct device *dev, const
->> char *name, void *drvdata,
->>       hwdev->name = name;
->>       hdev->class = &hwmon_class;
->>       hdev->parent = dev;
->> -    hdev->of_node = dev ? dev->of_node : NULL;
->> +    hdev->of_node = dev->of_node;
->>       hwdev->chip = chip;
->>       dev_set_drvdata(hdev, drvdata);
->>       dev_set_name(hdev, HWMON_ID_FORMAT, id);
->> @@ -834,7 +834,7 @@ __hwmon_device_register(struct device *dev, const
->> char *name, void *drvdata,
->>         INIT_LIST_HEAD(&hwdev->tzdata);
->>   -    if (dev && dev->of_node && chip && chip->ops->read &&
->> +    if (dev->of_node && chip && chip->ops->read &&
->>           chip->info[0]->type == hwmon_chip &&
->>           (chip->info[0]->config[0] & HWMON_C_REGISTER_TZ)) {
->>           err = hwmon_thermal_register_sensors(hdev);
-> 
-> Wrong fix, sorry. While I would love to make dev mandatory, the function
-> is called with dev == NULL from at least one place, and the check is
-> (still)
-> needed. Even if/when it is removed we would have to add an early check
-> and return -EINVAL if it is NULL.
-> 
-Thank you for the reply. I've looked at the code again. You are correct.
 
-> Guenter
+On 1/28/22 9:23 PM, Fabio Estevam wrote:
+> Hi Muhammad,
+> 
+> On Fri, Jan 28, 2022 at 10:38 AM Muhammad Usama Anjum
+> <usama.anjum@collabora.com> wrote:
+>>
+>> ret is constant in imx8mq_mipi_csi_pm_suspend(). This function cannot
+>> return error. Remove the return variable. Simplify other functions which
+>> are using this function.
+>>
+>> Fixes: f0c2ba1ed4ad ("media: imx: imx8mq-mipi_csi2: fix system resume")
+> 
+> The patch looks good.
+> 
+> I would suggest removing the Fixes tag though as this is more of a
+> clean-up rather than a bug fix.
+I'll send a V2.
+
+Thanks,
+Usama
