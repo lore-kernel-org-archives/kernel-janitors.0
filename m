@@ -2,126 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9202AC433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Jan 2022 14:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE00CC433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Jan 2022 15:05:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349514AbiA1OwD (ORCPT
+        id S1349147AbiA1PFE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Jan 2022 09:52:03 -0500
-Received: from mail-dm6nam10on2052.outbound.protection.outlook.com ([40.107.93.52]:37985
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1346346AbiA1Ovu (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Jan 2022 09:51:50 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ePLiDVLhIBjSg7eT2O4+AOgipT3E02km7yJA1hQEkYUaYERsh20XkTf3vF+6LPlhIMZw5An+0cB6IMemfbwyZtujTQT7kIYNLfvdJEbIBzyTVHKSQiGSKssf41ZiUfQmX8ldGIGYvb2pBSWWOh3ro9T16wV3YUBHWTQrcjsZkPaBp3uAoRQNXvKl4Ic+hFJQ6DoSwIj6y1PA8BX2GAMWFUfuQDE5P/1gqRyaITK8M/ZSgHucXS6ERN7rkVxrtkkUVrT8FunEnv3FBOds6XPVG/DESrs1pQRPyOGCClzpYC+5JYWBpgtcVYf+7hKxjKy91r8B16zEcsVaeb+ULMxUYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hRqVc8HVL6i0y1JlCqQMKUqWyNaGhCgIHuZavyc0hGU=;
- b=jY5KQN8Zpq1TMIKmInAnr6qQQ731aV6zUJmunIps8V/+YVjl9n0HbmGzBYQ/m8rRiB3H/WWJj/0mAN+je3twvDCV308KiiGd8JUWfjGmUiR7tEm0hdPJTzWAXVL9RjCMr9Lq2n5w37lerSyxC9WisNmD6A1XuMiUX7GYHqBkS1F1jAVG4PcirphpOhor4Rj3+nL7jZgULlsAPSL27440+/TAZPDOkKnwVkHbKqybNq7QAgtWXcB8BmI935a/VPWPCSssuVRO9irZ3DjHlhy+I+FzowxKACO+l5Z2nBef5ArWCcNA3qi4AeCpeiKp9STPgC2cTm/VPtnO1U8w6DnuzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hRqVc8HVL6i0y1JlCqQMKUqWyNaGhCgIHuZavyc0hGU=;
- b=tq5gnGGCJhvaYKbLFt0NcN94OZqPaoePAMpTQBlqa2Svrvqw0ZQx3vleWLBODS75xowUDiLXlRBL5xVDdiCMt/NDE0g/8M0ZgdXEll+KUrNOBf88Ynj0qasTk19NUtkx8GE5rdTUkDm9o1oNz5O0ycx/RhlpbPZkJeD6akZEBh0VG/JkKPSyhn8+gJtVehOf+JzG7KBpH2BeAr8olrlyHngJRG7mGIOOER5bj46uV9J9JLNdG35g1kC653RwKW3F41fGh75yQXuLEg41ml1xM9IYu79z/iI8gLj19pkNll7RRiF/IrTx0vQa19JugxGGYb3yT3gTEue9QVcVjFcJGQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB4192.namprd12.prod.outlook.com (2603:10b6:208:1d5::15)
- by BN8PR12MB4593.namprd12.prod.outlook.com (2603:10b6:408:aa::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4930.15; Fri, 28 Jan
- 2022 14:51:49 +0000
-Received: from MN2PR12MB4192.namprd12.prod.outlook.com
- ([fe80::e8f4:9793:da37:1bd3]) by MN2PR12MB4192.namprd12.prod.outlook.com
- ([fe80::e8f4:9793:da37:1bd3%4]) with mapi id 15.20.4930.020; Fri, 28 Jan 2022
- 14:51:49 +0000
-Date:   Fri, 28 Jan 2022 10:51:47 -0400
-From:   Jason Gunthorpe <jgg@nvidia.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH v2] IB/mthca: Remove useless DMA-32 fallback configuration
-Message-ID: <20220128145147.GB1792367@nvidia.com>
-References: <03c66fe5c2a81dbb29349ebf9af631e5ea216ec4.1642232675.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <03c66fe5c2a81dbb29349ebf9af631e5ea216ec4.1642232675.git.christophe.jaillet@wanadoo.fr>
-X-ClientProxiedBy: BLAPR03CA0134.namprd03.prod.outlook.com
- (2603:10b6:208:32e::19) To MN2PR12MB4192.namprd12.prod.outlook.com
- (2603:10b6:208:1d5::15)
+        Fri, 28 Jan 2022 10:05:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51410 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240215AbiA1PFD (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 28 Jan 2022 10:05:03 -0500
+Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8986BC061714;
+        Fri, 28 Jan 2022 07:05:03 -0800 (PST)
+Received: by mail-oi1-x22c.google.com with SMTP id q186so12784890oih.8;
+        Fri, 28 Jan 2022 07:05:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=cRkzWM8NeL3N7R1U1Fg4vj5Gf+jJ9eTY6cn4OX+5KNM=;
+        b=Lfbq+cGJpYtNeAE7/5LpPV891KqhMKy9UNpnstWTTz0OPv4tbncwlxhJL4PyIcfQfq
+         OQj8cfH1o9vIv230l11/kwi97CMFlDsNY7qG4B1uJux91qYzu0YlPaBJhcn8L7lM7/2I
+         JIIBcQp2WguZv9+cyFlAReZ/LaE67tYeTiASPAnyBZrMrJg55UPaHFvAIlnprrdTepkj
+         97QmywP6VzdY/tLJrOCPArtU2wiIu+nQEBvZn73jpAFjR4vucAljxZ5Fw7iQmqmtHs/L
+         RZvmkFnkRJRaiuE9vyPTNCJneHkaN//+PwtDLkaklwTOwsNPMdPtZEFivjQyYQhku9ec
+         XoEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
+         :subject:content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=cRkzWM8NeL3N7R1U1Fg4vj5Gf+jJ9eTY6cn4OX+5KNM=;
+        b=NK3keoUvIKcnNdPKmu7JaXnu5y8Xf/BybrnYjZ8zO1IXMe15ovmrdz8B6k9IkL8+IP
+         0LHCtrTB6g6xwiONuC/JhT21SF8+fSsmmz7w64BRHEv3k1FZxKj6iW1476XlqIzSC4Cu
+         7JGZdCtdbG2KHtI0wgI3UZ8wdlerFxcUtymIQs+WeiyULn14r1OVRNktJnvPN4JVj960
+         0OLzPYHWdiUdFbuzagfR1Ks2bnD1pRT2AB5zORbg4t/nUGjrZGj1THL7mtv5bXz4YWFc
+         QDCCsj5059F8dyFZSk61dpkYgBXEIA7r1YCNu1OO+02fFMs5aMb8n9Py1rnZOBE5N9HY
+         kndA==
+X-Gm-Message-State: AOAM533DllU/9O3YS7wLMCuoh9U9KB5aVMO9u9az9wyeXz49AtdL62LC
+        xouVQ24z/EPq51FkEeWImfDbl91WkR90SA==
+X-Google-Smtp-Source: ABdhPJxvO6lQWFvZ4fUaUQrzfe80kveQHpcR2480QCQIoyU/sxHMzpiRnJugWQQviUdNekrVx5v7zg==
+X-Received: by 2002:a54:4e94:: with SMTP id c20mr5604662oiy.132.1643382302903;
+        Fri, 28 Jan 2022 07:05:02 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id j3sm6798811oig.37.2022.01.28.07.05.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jan 2022 07:05:02 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <6c0335ca-eb16-b4de-1f2c-8bdc82219b57@roeck-us.net>
+Date:   Fri, 28 Jan 2022 07:05:00 -0800
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 24726128-bc02-46ea-9028-08d9e26db650
-X-MS-TrafficTypeDiagnostic: BN8PR12MB4593:EE_
-X-Microsoft-Antispam-PRVS: <BN8PR12MB45931CD10DAAABF832EE448EC2229@BN8PR12MB4593.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3631;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: CtdVCup//n/Pb0g3JWxFzy43eDD3gixdXMrvkE0ammzAnKcwusc6Q3b3CbWTuJfbQajdkrXnb6oS49Tp9Qwwh9Yhz1KtfifTqCWtUY8WUqucAUPRba8N6tw7lEZBSBRdeTB+wH7e1mlbJPX9QwiwVCm5XYd4HBqInEMM+EHQ7jIllZg7UHByDO0WQH0QXYPYFq/B9seTmecum79yzruYMAHqjRawviPLZBp0GDWuzFzYQRS0PTZe+acGzQ+2CjH0AdNSsny/ZPeHN/Lz2t/3VNZe/+mT7JqEWD8Dmtx7rsD0xKLTBjFKilKAaouqlJ3zet2xi/F+OrtPrhx2BXV8qweAm1rbVWjxyXB+O3vVYAppEw8C7awzEnS2PtXgm2DICySYLX2db2y9fuTkXdn3mRg97QYJFcILUih9/JnrXKc5swOG/myzrtEljhN45D9VX0GTnHcDxDJeWVKis7h/uX1grVlh7CEy5s+llLQ8ITkkd4dlrdQiAdKiSufqSSzExNZFMuX+oRCRXebpTedkI1wPuwpfcWgqy6uvbduNukrRFFLo5WwBcPKaGVmcQ9JXc2HClqsjVPUZRMdAd3wvhmYq9mjfr57H1sv6B6YTVNtWC9REvYsYQlhxo7SopLCpk1U+NA/mCclhfyrXhsXV9E+tl1EcX206dpSus0XrgKvqiVoVf34GT4zyMzVBVQeN7xurpVoK3KCTWcJ/lnF3LA1N+tm0a6GnX57kKD+3Lis=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB4192.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(2906002)(86362001)(8936002)(6512007)(2616005)(8676002)(6486002)(1076003)(966005)(6506007)(36756003)(186003)(26005)(4326008)(508600001)(316002)(4744005)(6916009)(5660300002)(83380400001)(33656002)(38100700002)(66556008)(66476007)(66946007)(20210929001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?s5PwMNC9Sn8jh7VIHSKcklA4oCZsjfob9BmBMvSorzLOut37oFSNRHMv1+hu?=
- =?us-ascii?Q?gr/U8flYzqqgSUIDY6Ul9wR+dMMS5C9lzdQmYE9U/rJOXxXjL2q7gmZVNjLo?=
- =?us-ascii?Q?5peKcifqAOnfYrf3SzfzZifOowfDpmBKrTtA5okq90zmwnNzXdTpRBC8RWgl?=
- =?us-ascii?Q?sSmqOmG2VphDtXeZL2ioot9Qw15o9k887rudkBhnPYn8LRFrpw9CJJEljXAm?=
- =?us-ascii?Q?HufetbJDdyv2udS+rHVAXfiIDtQzPO53qeGqPRTT6pz2eWdBXXdic+h4MSC9?=
- =?us-ascii?Q?p5t+TsfIAzsk90dpxULCG+N6Tawcen71vPb2xfxz+aQsemWFWQL3A1E1TQ+i?=
- =?us-ascii?Q?kPjASm/uLOpN8X8EUxSOZTnDEzvgY95Za1ZTKGBd2lWe2yo2eiWYEz9Nvlvm?=
- =?us-ascii?Q?+85j9ATRifF6tXy3a/W73sIozFLUHaIhiCmhsE7ISMZDEpyv0OKnBtViGWzQ?=
- =?us-ascii?Q?6X8XcKj2LqbEoMfFhNAz+1hF8gl7Yr8q5U9q9Y4tteM6zuCpmCWhshAEdr0M?=
- =?us-ascii?Q?YZTOtQFBghPsPhCAIXxsrSeiuJ+36Z3co4+j1XgMWswM2pDq3qZFRh7DTPia?=
- =?us-ascii?Q?q5C8NEEowQXRf6vTObkuh3LGcZ33kyaZMvrW0n3o5I3o5qoasiRCkOdcPlIW?=
- =?us-ascii?Q?yIL8jj8Tq15xX2jX9gaCY7+itEKvjIpfOOkEWB2xA0tDR1leZBdP5PJUQI8t?=
- =?us-ascii?Q?9HKeghaIllFlzvTbUXlus5i6haoQ2r01b7ETJ4mNZcSAeogcwSnlnWD5qhH0?=
- =?us-ascii?Q?vINQZTiQL177n8+noOJbViQChyo1wOl6cFa0P3NTmKoeZB4rHhWxR/YNZhYd?=
- =?us-ascii?Q?Zvt09U2NMTfQnmublEg9hi1EHibjA/WibCVSmTEHKjSez7UWK9khxs0tJTSh?=
- =?us-ascii?Q?wh/rBwFG/76tL4sMiW6CkVM0SJAvJDK0pruoIxzWt/w9Z796sq0nDzz1J6zO?=
- =?us-ascii?Q?7ggHllP5VOBYcjt8coRcYsHJ7IduYaVxqbb0xfEffUdzogwchACvpcLvBdrw?=
- =?us-ascii?Q?U4GtOBaVSFBftxFh1G4QAMi6B4EqL31QGenl3RlT1EorMPIesQEAld5/1OHf?=
- =?us-ascii?Q?j4WMaLqKZHpu8fwC8dSshOqX+l4Pb9671Fp2zuDQOe/MdKfwL3O26UIl8Ung?=
- =?us-ascii?Q?3M2yluIdrAfx1d3QZEfYK8gjf/P1G5bk9NbgnQO7O84MmQ+1tojcgdq/QP5r?=
- =?us-ascii?Q?A3Fsbx/4YfTBDvruuy+hS89cQnyIA0HXjzeOiySYWP+nzswRESeMdyE45Itc?=
- =?us-ascii?Q?HXPGeBj15oWYI3ue9AAYbhl1UlzFPVfKuiQrSXCD5ffAxbtuV14Fxe3IiT3J?=
- =?us-ascii?Q?AYB1xaCZyvWsO3c/9MudMRjK23GhsB8W2mnKVb5AE6VO60uONe2vJKPHdrl0?=
- =?us-ascii?Q?ON7zrjgTgP2HMpCqeOPJR6XLGv7cvAgDBunxlLbY30ydT60hR1/FI+oIcii1?=
- =?us-ascii?Q?/KHVNM3qvTpP67g2TzU3v9ZzRcQF4MVNINhl0+AkPQL6xyNHZe93ikghcPNe?=
- =?us-ascii?Q?f0Wlr9P54QWww2rzwpK9XsjOPJlidbnCCbjGiHfC5pztHXJ7dZe6nKqup52T?=
- =?us-ascii?Q?phnAIeYXd2fGza1iIbo=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 24726128-bc02-46ea-9028-08d9e26db650
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB4192.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jan 2022 14:51:48.9087
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2KSnkCqbbilF4TGjVxiayRE+iAp5qlWfSIJeXmQBdeguLwOwxmuLVujglyQ82usq
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB4593
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH] hwmon: Remove checks for validity of dev
+Content-Language: en-US
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Jean Delvare <jdelvare@suse.com>
+Cc:     kernel@collabora.com, kernel-janitors@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220128125913.1291533-1-usama.anjum@collabora.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+In-Reply-To: <20220128125913.1291533-1-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Jan 15, 2022 at 08:45:05AM +0100, Christophe JAILLET wrote:
-> As stated in [1], dma_set_mask() with a 64-bit mask never fails if
-> dev->dma_mask is non-NULL.
-> So, if it fails, the 32 bits case will also fail for the same reason.
+On 1/28/22 04:59, Muhammad Usama Anjum wrote:
+> dev is being dereferenced in device_property_present() which means that
+> it is valid. Don't check its validity again and simplify the code.
 > 
-> Simplify code and remove some dead code accordingly.
-> 
-> [1]: https://lore.kernel.org/linux-kernel/YL3vSPK5DXTNvgdx@infradead.org/#t
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 > ---
-> v2: Update link to use lore instead of lklm
-> ---
->  drivers/infiniband/hw/mthca/mthca_main.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
+>   drivers/hwmon/hwmon.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
+> index e36ea82da1474..aec32abd0a89f 100644
+> --- a/drivers/hwmon/hwmon.c
+> +++ b/drivers/hwmon/hwmon.c
+> @@ -822,7 +822,7 @@ __hwmon_device_register(struct device *dev, const char *name, void *drvdata,
+>   	hwdev->name = name;
+>   	hdev->class = &hwmon_class;
+>   	hdev->parent = dev;
+> -	hdev->of_node = dev ? dev->of_node : NULL;
+> +	hdev->of_node = dev->of_node;
+>   	hwdev->chip = chip;
+>   	dev_set_drvdata(hdev, drvdata);
+>   	dev_set_name(hdev, HWMON_ID_FORMAT, id);
+> @@ -834,7 +834,7 @@ __hwmon_device_register(struct device *dev, const char *name, void *drvdata,
+>   
+>   	INIT_LIST_HEAD(&hwdev->tzdata);
+>   
+> -	if (dev && dev->of_node && chip && chip->ops->read &&
+> +	if (dev->of_node && chip && chip->ops->read &&
+>   	    chip->info[0]->type == hwmon_chip &&
+>   	    (chip->info[0]->config[0] & HWMON_C_REGISTER_TZ)) {
+>   		err = hwmon_thermal_register_sensors(hdev);
 
-Applied to for-next, thanks
+Wrong fix, sorry. While I would love to make dev mandatory, the function
+is called with dev == NULL from at least one place, and the check is (still)
+needed. Even if/when it is removed we would have to add an early check
+and return -EINVAL if it is NULL.
 
-Jason
+Guenter
