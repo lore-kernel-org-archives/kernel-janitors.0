@@ -2,112 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0056C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Jan 2022 12:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA1BC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Jan 2022 12:42:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348576AbiA1Mjw (ORCPT
+        id S244770AbiA1MmN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Jan 2022 07:39:52 -0500
-Received: from mout.gmx.net ([212.227.15.15]:39881 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230134AbiA1Mjv (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Jan 2022 07:39:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1643373585;
-        bh=6tE2NcFalnAQCMAQKJi17/BdflSRtMX2plkpM36ZVsY=;
-        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=XejTKHw3N2+ugkSzdIXF1nzVGk12heobJzYcCb37GndxHprmkkJtSxAlOm49tbeSi
-         Oax1O7oPDU0u2P/TSzIrnl3AimYh3ZKkPNfoHoAldONCXEt4Zvkj57XjgeggdOVzIr
-         el9wEQZ0YXlkhm3jbj1Kf+y8n46Pww+IlEdpZ2EI=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx004
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1N8XTv-1m8w1R0JyT-014Toy; Fri, 28
- Jan 2022 13:39:44 +0100
-Message-ID: <cef3023e-121d-ad30-8b30-cf71c2da8d4e@gmx.com>
-Date:   Fri, 28 Jan 2022 20:39:38 +0800
+        Fri, 28 Jan 2022 07:42:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45846 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235668AbiA1MmL (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Fri, 28 Jan 2022 07:42:11 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 599BEC061714;
+        Fri, 28 Jan 2022 04:42:11 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E9F6761B9F;
+        Fri, 28 Jan 2022 12:42:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 020FDC340E0;
+        Fri, 28 Jan 2022 12:42:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643373730;
+        bh=wUt7Lpv1ipKqJDvhHGWAjln9cnXm1I4jIhfmigOT+f0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XXx0fuchgarQKfN1TwtXWoLv0qRHQG9XgBqVx2cCrIGnPPBz5e6GzXpYfRXjsPcrZ
+         sMFDj+ismMZ+Cr33Wji66LdLve8fFwBIe/GX7uqFLSP5B9bBFNnVxwREnjwdmH12/N
+         9/YoNapQS6dPuFvPfZhu0BJn5LF+V2cgYs8zuYiVjqtP4tu2x2U/VMeAgMOuplbNs3
+         MGHK9HdOcZ8YvX01wfEeNUmafmB2y4d4crzETAU+5sq0idbr8FW9SqP2671RzG4SFb
+         6+lKTEWq67rhdmS+NrlLYYZZAox2U8avBWj4d6Oop+mxOMmDkFJj4wAc+FWHESLsm2
+         HsAkGhksydPEQ==
+Date:   Fri, 28 Jan 2022 12:42:04 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] ASoC: ops: fix signedness bug in snd_soc_put_volsw()
+Message-ID: <YfPknO6si9CpotgS@sirena.org.uk>
+References: <20220128112007.GA24806@kili>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH] btrfs: initialize offset early
-Content-Language: en-US
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>
-Cc:     kernel@collabora.com, kernel-janitors@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220128123558.1223205-1-usama.anjum@collabora.com>
-From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-In-Reply-To: <20220128123558.1223205-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:na70Jhk/B47GVbtehEvOD7CSXF2+qUHcD01PG8oUcdetjJW6+SK
- 3u5q2WFEvlzCV0R5YfFAb2xoOxz/UIv7RqK9T9qR9zB3symgZRhxnNub7oYDFsbObjxQZiX
- 8P4N9dO8vERdKyCRQwq1a+XnRcP8Jc4wBSpUwkeiJf4sqaxCCOGxlBqPZH8yvPDSfSwTSCP
- ijq6LonCCo9n2q3ej2/sQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:jpSJIOG3HPQ=:ooIdLKh4KcX0a8WMDIqRzq
- m7+QtsGeNUqzX2n0ezyqU3o9u9t3AMYATWtXN0B9tavjW0gt62UMmI/Fs4MY4t27fhDXLeLw4
- BfM1uuZdw/pfdIjUEAIMmt63BTcAmwBMNzQHRtuWVnuzUuTLB00uqqQXHGbonlJKSTTJHtuLu
- 4PlgPhssqXiS4NJ+FkKEekY9MGwdLihkQoff467BtgoPWVtK9da1iRT4Yv4cCS7cMGM2lCvb4
- iNyXdi5HI6vRioeo6re1RIPxsCgw6iNANrf2mF9gZqBHefQyF2Js3/4+EQaOOaUBILRRqme8T
- HYfeYfY2Iiyus2snHDmFYLpqBBSB/58xKux8+2heUW/eg1khU05bphtLTqIiDMAgkHrf3VjWR
- poVZZDVvUDy3cfNgUBIhudeSaoIXBk8ZsAPVM8WC3BMVx2+NlIjdeVEtnLx9WHZCzmYFYrDRb
- 8rqz+7tne6/ghO90QeGt+/cWoELYT4J++2EKVjQ5C7ePVLZEY77/40zoUZUlMEI1nqzVgrpcU
- QIJ97sMu4dZLVjct7TjDKjoL1XsINW3D7OGCSAEgqF8NgaAREQ7mftheLeAmE55mKehz1EfL6
- JRViLlFxMv2OabM3hjMj0HguCOjp2wDEEm+0QvkBqG/6xKqcOanRvcwmSN+aamMhqibWQU21H
- H2idY4H97ikTD2Pk45B9Rc+AxQs5D+qSEl5KPcwN2WvJR+qEbbVDzmj8x9OPHWawN/uCjfKqG
- 0nwQSw6kKPFwNzdkosA1ii44FJ2rrOBNEuS1ReDybHaksBm/ux/H/BbT1nkJN/BHAx5tivXVX
- 135NzdD768fT7pOwPFjktcXyTVGQyVyEBrjT6e4ZWaqF8vaD5ytRM3yEiq1YusJKMZKHRX/O9
- 7HcUt0Pgk9c8RfpQQSBXVpuR+Hynnn1oFr9Ou0iEvFjcVg+a59S+70rlsssIvHWtOiaSVOJPP
- Om++DPqxUS2CFC49IWJP3M/H19ckx1KTapbdw4awUIq2A3z1UWS4uDfZJ5Uh8Akvjy67g0Dd1
- Wfu++2sEfbuPBHpXjg6hOxTKhREKt6Jd3XAIs+YgZEGA/dsafn9H8HQ0nitbHzWPEv5P/NdbQ
- URLXc3009sjqLg=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jOCcIIG5A6qPTuKn"
+Content-Disposition: inline
+In-Reply-To: <20220128112007.GA24806@kili>
+X-Cookie: Torque is cheap.
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
+--jOCcIIG5A6qPTuKn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2022/1/28 20:35, Muhammad Usama Anjum wrote:
-> Jump to out label can happen before offset is initialized. offset is
-> being used in code after out label. initialize offset early to cater
-> this case.
->
-> Fixes: 585f784357d8 ("btrfs: use scrub_simple_mirror() to handle RAID56 =
-data stripe scrub")
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+On Fri, Jan 28, 2022 at 02:20:07PM +0300, Dan Carpenter wrote:
+> The "val" and "val2" variables need to signed for the checking to work
+> as intended.
 
-Thanks for the fix.
+This means that the helpers won't support controls that use the top bit
+of a 32 bit register.
 
-Although the patch is only in misc-next, and due to another triggered
-ASSERT(), the series will be reworked soon.
+--jOCcIIG5A6qPTuKn
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Qu
+-----BEGIN PGP SIGNATURE-----
 
-> ---
->   fs/btrfs/scrub.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
-> index 26bbe93c3aa3c..3ace9766527ba 100644
-> --- a/fs/btrfs/scrub.c
-> +++ b/fs/btrfs/scrub.c
-> @@ -3530,7 +3530,7 @@ static noinline_for_stack int scrub_stripe(struct =
-scrub_ctx *sctx,
->   	u64 logic_end;
->   	u64 physical_end;
->   	u64 increment;	/* The logical increment after finishing one stripe */
-> -	u64 offset;	/* Offset inside the chunk */
-> +	u64 offset =3D 0;	/* Offset inside the chunk */
->   	u64 stripe_logical;
->   	u64 stripe_end;
->
-> @@ -3602,7 +3602,6 @@ static noinline_for_stack int scrub_stripe(struct =
-scrub_ctx *sctx,
->   	ASSERT(map->type & BTRFS_BLOCK_GROUP_RAID56_MASK);
->
->   	physical =3D map->stripes[stripe_index].physical;
-> -	offset =3D 0;
->   	nstripes =3D div64_u64(dev_extent_len, map->stripe_len);
->   	get_raid56_logic_offset(physical, stripe_index, map, &offset, NULL);
->   	increment =3D map->stripe_len * nr_data_stripes(map);
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmHz5JsACgkQJNaLcl1U
+h9DaKgf/cTmyNoSTqkw9Z3Ey0dOvYM7t57pbtbOZ0g5wy0D/1tX/fClL/peSKXGU
+60vA83fZ9RnX561xmKWv3E5Tqwj0+DK589nth2LcuJcSaZn0jyPgETF19uaXkACU
+aJ8QkIIlNT3OkVDgbAN0QYqSuL9TCBhsOGR6eaBwbG8NsoPrphIPae/RBBn/z1Jv
+IQGG1dcjervKJPw3bK7tzrdytvLnn8jqwMEkycxcxzrO7kw5vk2Dfu7vOzBLi2bt
+y3cDSD+87ybKxsEt92XZZrSOey79pKIj7kCDB1k0LuLNB5hlSdiQfbfXt/PTB3ws
+op+pdqiC8o5GDfLooYthOkZYHU/rSQ==
+=2D81
+-----END PGP SIGNATURE-----
+
+--jOCcIIG5A6qPTuKn--
