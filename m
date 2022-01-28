@@ -2,90 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF98C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Jan 2022 16:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0FF3C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Jan 2022 16:35:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350187AbiA1QYC (ORCPT
+        id S1350078AbiA1Qf6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Jan 2022 11:24:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41630 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350146AbiA1QX5 (ORCPT
+        Fri, 28 Jan 2022 11:35:58 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37996 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1350067AbiA1Qf5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Jan 2022 11:23:57 -0500
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD86BC06173B;
-        Fri, 28 Jan 2022 08:23:56 -0800 (PST)
-Received: by mail-ej1-x62d.google.com with SMTP id p15so17641572ejc.7;
-        Fri, 28 Jan 2022 08:23:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sbZKWsHJkalKhUpXu01Uv/vjdYsALlFDBYcY+6MyeMQ=;
-        b=QzCBjF31P01lAnXfncXg51KSZ75EHiN6F92VXUsfEGTcw+KfdYSKZex/ygYm3fMI6U
-         9k185flwZIQiTF7Lm0dCNYOM0b1xn4qRzUfBqwzajNNwMcDdxLAWDLtw19NZpPmW73F4
-         pkGQqlFTeJUZOaaGGBOUyKyCC/lTgWESisGBOvCG6Qt8Yg8IC5L2NL6UOH/FgwflXxPx
-         MrQuqSZZze4Xgq73WshcZBuudO2UdOJwIPEgmLf+ucnCvalzczdhkEcK96qPZHlMUrCD
-         qi8h7Fg53g/KCQh0e8afQQK4i+9jKVcbF4Xx4lidr9koUQuWJk5ISr9ksyh/EmZsEroC
-         Ck0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sbZKWsHJkalKhUpXu01Uv/vjdYsALlFDBYcY+6MyeMQ=;
-        b=0tY3BZGYdTsuDCuHwaTLjSaRHQyFbg4j1yz+tjHG9WY7RIlERmRboTGjIpfpNLmI9F
-         91ngPdeTg6YdmN4iqa3LwsgYMFwK012zB9GTcYa0DxXJRu2M/S3x0XCdj9qWuCcJ0osz
-         QKIsNK80QubPGbo7gi9p/vyDtYZtcxxS6qsIyno2LoiQclaxC7OJFsEgKJ4O/5QB1nDU
-         +dSrzoKrKBaYgPcZwLk04zh3Z8w8YOjWRfhOOdX4PE6HC2P5QYkrLEcTe0JhmNeZyIUm
-         UDQqZxTWQ9625lLxkl1CMugptDfaLuUIivo1EtL5besT0Hj60oaiAreoM2LjFnjU7/l8
-         mS2w==
-X-Gm-Message-State: AOAM533cDYNRjQuLVD0mSUTfysSs70vgSUuOcxg/UwbuPDecflGl0vtV
-        VvLSMxN+hK884qn3lEHRC0CeP1bSMrv98V6lf30=
-X-Google-Smtp-Source: ABdhPJwahl9ko5x+1BNqmFCRg8p0YyfdODE/JnyFQiQNl5j3ldPcUEGELox4ncL00U/q5JWJvFP7JqHpivc5xYyWlaU=
-X-Received: by 2002:a17:906:99c3:: with SMTP id s3mr7712428ejn.696.1643387035286;
- Fri, 28 Jan 2022 08:23:55 -0800 (PST)
+        Fri, 28 Jan 2022 11:35:57 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: usama.anjum)
+        with ESMTPSA id C990F1F46300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1643387755;
+        bh=S4Z9IVyEDWl5NFUhRrfhKWpv39Y/h9ZoEjs/1KHozrI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=akyfuuwp7yF5ZmP+FMZrRp8amwzILjjcWdkGPxvtVaKcXNQkFn0p9W9xtg+JcOLLy
+         nYpd6Pv7Il5ewKvnsxEY4jdo/CxchOZ0RGtSL0DKSKHneAwyKdqGIHybQAMk+9qK4K
+         bptyaGaQcGhB3j2/eD5Upv7o8HJA40ik7zd3fAe164EhYcwqdsi6qRrLUel9+i69uR
+         M7KF17DfyAIVAgNGpBIEcv/PO2MFpiFso+ttLqXrUOEUwHGle4tjBp4CQhzbIOb+oL
+         mATjdnOtTn0riKxVWnZOwggBqifwk1APp+Eh3nJ/vMgkqj/uaU81QOqU9fqDoesFZD
+         VUOaizw9THSXA==
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        kernel@collabora.com, kernel-janitors@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: visconti: Remove dead code
+Date:   Fri, 28 Jan 2022 21:35:27 +0500
+Message-Id: <20220128163527.1587325-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-References: <20220128133649.1393201-1-usama.anjum@collabora.com>
-In-Reply-To: <20220128133649.1393201-1-usama.anjum@collabora.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Fri, 28 Jan 2022 13:23:43 -0300
-Message-ID: <CAOMZO5DaNpZbO2JS7KUOHJLAZNqpnY_ub8H_UF2sSHuQp-Ki0g@mail.gmail.com>
-Subject: Re: [PATCH] media: imx: imx8mq-mipi_csi2: Remove unneeded code
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Martin Kepplinger <martink@posteo.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>, kernel@collabora.com,
-        kernel-janitors@vger.kernel.org,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-staging@lists.linux.dev,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Muhammad,
+rs_id is of unsigned type, u8. The condition rs_id >= 0 will always be
+true. Remove the if-else condition and the dead code.
 
-On Fri, Jan 28, 2022 at 10:38 AM Muhammad Usama Anjum
-<usama.anjum@collabora.com> wrote:
->
-> ret is constant in imx8mq_mipi_csi_pm_suspend(). This function cannot
-> return error. Remove the return variable. Simplify other functions which
-> are using this function.
->
-> Fixes: f0c2ba1ed4ad ("media: imx: imx8mq-mipi_csi2: fix system resume")
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+ drivers/clk/visconti/clkc.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-The patch looks good.
+diff --git a/drivers/clk/visconti/clkc.c b/drivers/clk/visconti/clkc.c
+index 56a8a4ffebca8..5ccf771d05985 100644
+--- a/drivers/clk/visconti/clkc.c
++++ b/drivers/clk/visconti/clkc.c
+@@ -147,13 +147,9 @@ int visconti_clk_register_gates(struct visconti_clk_provider *ctx,
+ 		if (!dev_name)
+ 			return -ENOMEM;
+ 
+-		if (clks[i].rs_id >= 0) {
+-			rson_offset = reset[clks[i].rs_id].rson_offset;
+-			rsoff_offset = reset[clks[i].rs_id].rsoff_offset;
+-			rs_idx = reset[clks[i].rs_id].rs_idx;
+-		} else {
+-			rson_offset = rsoff_offset = rs_idx = -1;
+-		}
++		rson_offset = reset[clks[i].rs_id].rson_offset;
++		rsoff_offset = reset[clks[i].rs_id].rsoff_offset;
++		rs_idx = reset[clks[i].rs_id].rs_idx;
+ 
+ 		div_clk = devm_clk_hw_register_fixed_factor(dev,
+ 							    dev_name,
+-- 
+2.30.2
 
-I would suggest removing the Fixes tag though as this is more of a
-clean-up rather than a bug fix.
