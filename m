@@ -2,193 +2,190 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C545C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Jan 2022 18:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B622C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Jan 2022 19:53:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243308AbiA1SxM (ORCPT
+        id S1351000AbiA1TxA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Jan 2022 13:53:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47976 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238277AbiA1SxM (ORCPT
+        Fri, 28 Jan 2022 14:53:00 -0500
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:54646 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231653AbiA1Tw7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Jan 2022 13:53:12 -0500
-Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55C7AC061714;
-        Fri, 28 Jan 2022 10:53:12 -0800 (PST)
-Received: by mail-oi1-x22f.google.com with SMTP id b186so7837312oif.1;
-        Fri, 28 Jan 2022 10:53:12 -0800 (PST)
+        Fri, 28 Jan 2022 14:52:59 -0500
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20SIaDp3012450;
+        Fri, 28 Jan 2022 19:52:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2021-07-09;
+ bh=LhH+bj6G+Y9Vw94u86soUSDCd2H0ryPZ6jbxHbmt8b4=;
+ b=s6A52enAzCftKn9GIQyEVE0MqwsfRbnNEDKektxh9gjlBk9+EVyKOiEq87tJTpF+7esB
+ eE+qu57ef2Zs2xfq+U6Nt7RxgLcs7XaFl7Ep4l8mVJM4jO+BaIQ1bWVrndCKOe9bgvVT
+ gDjZcqmti2vmEHLuLkgnxcvnSi/ZbS85OXtTlpJ5XZNO364z9h6KsRq4qUMJkYCiEbV/
+ 18Psc+G+IXz8G8CifVIs5reo/taYKahiJzkBCFRskdzh8A0SuwLCwoQM6RkiWw+h1DoR
+ 1D+n1NuT7mWAqwSvNlJC1kylSDHTdCHNnpQFD8lw5Y+AMidPL2OyRI0YgEp7QUPpIpvb xw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3duwub46ut-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Jan 2022 19:52:49 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 20SJpSHD045673;
+        Fri, 28 Jan 2022 19:52:48 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2170.outbound.protection.outlook.com [104.47.55.170])
+        by aserp3030.oracle.com with ESMTP id 3dr7ypdnet-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Jan 2022 19:52:48 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Z23+nhRpJpd9ls2ZEnQHlZv0qpwYVusAu5+hjkpAfNeLxnZ3KUbQl0deuE3sUngmBjexmjA30i0W2xmSvOmXNd5WRCaN/AkVC5HQBv66uqBGpW87ApeOWFzHc73RxRZ0Jf1X1VzD8Li6+kgEf0xAcf7lTTyNXMVENtIbgeIevd8Bmh1ApYXmM2Phi85flsNiGQMVWRdWYCmL6xbisIk6RmITEuAqEyKSCVFp0ngruDoYEYCZkRveeGgCwVnOzETdrye6LQS+sGeilpV5N5ZOVBEgw/dD2AzWMf2LNU1ofIx8v7Q8Zz6Dga4XETVWMJBP/raqjKBzWKX69lYD8YntLw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LhH+bj6G+Y9Vw94u86soUSDCd2H0ryPZ6jbxHbmt8b4=;
+ b=Rkk03EmMHp/RHzBUz0SgA/7SZLeRcB65T+8OuLRPjShCfiw79TfKA8FzGmG4iObMMZcZzC2dCRwvb3qNGSwr2G7GA5ltkS6KnS2i28rP1nvAhMV0kYHIisRAyocxQdmpHZ2w5d+LfWJ4J8zUikwHRqOvk0zuBJ+hcsG20mE1U9rJUlC3ckoaTgtMre2SYUKaG9R+2WRFVfFDeQOoHWjZhTXwu2eIQUuz50IkotXvJFp8wjYjAaBlX0W5AtFVFFN1q53nmohbSbKuPGgKat09MI8wW9so0jEjBheZAug5CL5McKOzYRcTkegCyCqtZE6+/swMTvx0wWVyo3A7kuEogA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pu4NSwnKcN2ktpCmENizSopNqGrtbHMNjwjQQEL3R9o=;
-        b=FMrK316cn1uFMuGw08XpxR3ytnj/a+OHArDyn4WZuTbrMozATGItbEp0OF5NCLdAKs
-         55wlAj/pLNbR3IY3wNMdQl3KC05xFW3ejCodXst/6aJbcvoC3IM/fFTHJDl7GsH7oQBy
-         H7Y3Ytxd0Q7Nh+hczHmz4zi+PNfK8YcG3iLFzzRqksyG+JcZJSXzEJxqF74+FoHNlcYC
-         jUiQfgStsVfpTNx84W9cfYSSasVqiH0lk2vQqJwoQslYryCMj7ob7TyO/VVc3uORYddv
-         Uau/3O3gWAWmqTVLpvUZ8Mj7cCmj+u/piSuDb5t6UzbGAFPwQzXC7a8fCCwnlP0dK3eC
-         CvOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pu4NSwnKcN2ktpCmENizSopNqGrtbHMNjwjQQEL3R9o=;
-        b=5i+g5bI8THJ9X21GMTkGGdgGq3XKLrtC1qbkTQrZ0FLTuj+hi4LzE00HzpzGzZI0yX
-         8t6F08W39VAF0Rl172I0aqnYBeCeTK/vOrDgGQgODewKW/zkCBSx6y4JAD+zVnp4uOiT
-         2aX8rGaPCIV+ynFa7PBATRA7x9szSfZu9yv91Nbd/z4Pw0QY9ZLqfvlkpZH6wQ3ElEx/
-         rp65RfGJA/ZvAQ/haumnhK83yq/Wbi+6+H3T7FabelvRpILBLiM6fVK2F5axTcP6DW1j
-         bCIuy66M44YAIMBs6da4sTuu5l2P/aspGAr6uSuvYcOcXXdprE7X9Nbey6fJTqaOR3id
-         OlKA==
-X-Gm-Message-State: AOAM531Wm7Nm6SCyu+m8OH5+wGSo6UV+htAnmH5eRuvTAIZWVW5NOf15
-        tRPV39XjsnQm+MYqDZ9zp+SLw/G2NR2AniSlaqM=
-X-Google-Smtp-Source: ABdhPJwKCzD8Rt5qit1gwag3Yzd6XxPW5CpF0ZA2+xx+dEK0So5xF+3/9NNczU849tHElw52wJ2ouSprPSX7g2wTnww=
-X-Received: by 2002:a05:6808:2189:: with SMTP id be9mr11097293oib.93.1643395991750;
- Fri, 28 Jan 2022 10:53:11 -0800 (PST)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LhH+bj6G+Y9Vw94u86soUSDCd2H0ryPZ6jbxHbmt8b4=;
+ b=DuW5sn8iCH+AVp3UGdeq0oSP5T3sRfLHgUvYIpyzJx7+G9u/j0yF3j7Tn7KI5b8OZ/7lQ1YTtrzAM9UR1QBFr3r4uOCx/dyhveUtWwyOHnoiQHTxB+22pxVHRWK0uRR2K+SeMjx3hvVytvDaUTxmW0n2Vy/i4vz+h3RbHHEbJXs=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by BLAPR10MB5332.namprd10.prod.outlook.com
+ (2603:10b6:208:30d::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4930.17; Fri, 28 Jan
+ 2022 19:52:46 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::e5a5:8f49:7ec4:b7b8]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::e5a5:8f49:7ec4:b7b8%5]) with mapi id 15.20.4930.019; Fri, 28 Jan 2022
+ 19:52:46 +0000
+Date:   Fri, 28 Jan 2022 22:52:27 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     Potnuri Bharat Teja <bharat@chelsio.com>,
+        Steve Wise <larrystevenwise@gmail.com>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] RDMA/cxgb4: fix refcounting leak in c4iw_ref_send_wait()
+Message-ID: <20220128195226.GN1978@kadam>
+References: <20220124122502.GB31673@kili>
+ <20220128171636.GA1892386@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220128171636.GA1892386@nvidia.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: JNXP275CA0038.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:18::26)
+ To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-References: <20220128173502.594099-1-colin.i.king@gmail.com> <6a5b1f8e-22a1-9c26-aea4-6bb38c4aa084@amd.com>
-In-Reply-To: <6a5b1f8e-22a1-9c26-aea4-6bb38c4aa084@amd.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Fri, 28 Jan 2022 13:53:00 -0500
-Message-ID: <CADnq5_PxSH6e-QgN7_srR4w47WCNdXTp6VGNZz0=sXp-ivw4Mg@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amd/display: fix spelling mistake: synatpics -> synaptics
-To:     Harry Wentland <harry.wentland@amd.com>
-Cc:     Colin Ian King <colin.i.king@gmail.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        xinhui pan <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8ae2bee4-98cc-4069-50a4-08d9e297c132
+X-MS-TrafficTypeDiagnostic: BLAPR10MB5332:EE_
+X-Microsoft-Antispam-PRVS: <BLAPR10MB5332ADB9E09B70E4F8F112028E229@BLAPR10MB5332.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 9DKh//RAyrlvQsi4maBb7exsFnEsz2wJSteDQqIXM8BT1cBmmvCkby7JGCm8z3Iu2d1X3qSEE0W8sX/kPdPe9UHq/8G4a82BspE1NGrjMUWV+caw9QU0G65dtbxwAw1SQUHKA6WyZmwRoGcYqIFg43JLMwYceL5WK0oec2VX9ACp9UQsv9vhDqA+7mHeu+fxq/e6KkLEiPbfjgTiD8LRehyJ6nAWY9ShPnLSIUV7UA9lweWSbmDf/e0THByTVhgo7oJ12TTbNDJKuL1V6sF7XfsboeS0xqFxwP64aPo3oCAPBEWs6y1YJePWVy5bDQ0ahF9CXVYWLYYTBw5PkoK6B35mLHIZB4YVu3RJTuFtNAPc06/yW3225bv+FlM5kBHi0QoEUk2b0eOXFAK2jDSk5jACBi21PqqnEaQ8a99ztitKF9Q2/F4pLqwsFmf3yVch2LSmN+ODJlS1NMSig1NN1ceOJ/EeG2tzr1tHEEn/7kV/Rx1aZCguuVQ2RKHBkrV3w0qSPLhe3T0XbESOwUT0izmPMYcpufT2+tk/Z0y8dPy+Au7KhBNKrZraTj12tnuU2tIqCMUfNNjFGnq8Qbekl1wTjn11ANzgbLLzA4rFsHQcKnjfuJSnYHWCaTnizqiPRBADtmpaSODHc250Q6O5H98GyZc6JeDuzDRUjl5LTSx5VOougSq/Nh/QzKQEj7gS1bnQrO971cBMi/nDfD3T1A==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(366004)(6916009)(44832011)(54906003)(5660300002)(6512007)(9686003)(26005)(1076003)(186003)(316002)(33716001)(83380400001)(66476007)(4326008)(6486002)(66556008)(8936002)(8676002)(52116002)(6506007)(6666004)(38100700002)(38350700002)(86362001)(2906002)(33656002)(508600001)(66946007)(20210929001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?c2AXFACb1MYmfZ/b4Ymx3DEXljQ9czCKuJepAtgucjVkAtWaFTXrJecKdsLP?=
+ =?us-ascii?Q?SrExw9vhOSsUkyzqkWZJWk3za/LfqRnT2kzILjMEcBWi9E1m+hVUuNIye8/e?=
+ =?us-ascii?Q?NbmfGpLvrkM8PVsmy6LFtioEXKGrS/Xs4XWSIZq4CZSBTlWLa3djdZHAB9mp?=
+ =?us-ascii?Q?78j7jktDG70YboFoJHnOifWjSFflwUSRdytgECMM8Wh/5Swij6D/KHETN+d2?=
+ =?us-ascii?Q?WrHMYWHgUFaHZeLEmuk09UoarzdYfgis5ZJ/cmr8twVvhJuU5hrxb+gx/uu1?=
+ =?us-ascii?Q?S3Bm2fdONXrpEuFxeYvXYoU8qpbqcOKC5/VfG5bjj65unTODJGXkLO6NXW+4?=
+ =?us-ascii?Q?B8D4asKP8oNI0HxOWPEtU2A0uyxzAMNH9la89CZtGf86MYxXC/FGqdDbr213?=
+ =?us-ascii?Q?O7U2vAyP0eiE00zwxGBslAliWu99vbPubhvsOR45e3e8/fy5DbLr/rA3AifS?=
+ =?us-ascii?Q?0pJN7vZQ+FXicrTxu2KWMbjHLr7sZReLQixRAvfoJssGG+Xeo9YjrkKo6/zK?=
+ =?us-ascii?Q?XqNrGw64IfREIeE6+VQGdY6gnMmAGvuuRIv9pgrOferxHhMj7EI0rNpZ3DkF?=
+ =?us-ascii?Q?Cr3T3qIJcgM92iXzu94BxCiRQVK/b8Bh2O5oBDwrGmWzc2actUCoDDwyB0bw?=
+ =?us-ascii?Q?FWQUpLttkzsMfBnPaDKX5vLAff8oYJzS6qhRCcv8kTtogD5/dK9haUBrc6+j?=
+ =?us-ascii?Q?22ZiGcyWDXWGo5OyqmPM+hTuqP2H5DevFzleNrBF/ebimen8ce8hnGMRXFXl?=
+ =?us-ascii?Q?NSvI+NtbS1ROpekrJgqOKQmeRFD2Vh1btp0JAAdgQOoZjup2ukVLVA0mkZNa?=
+ =?us-ascii?Q?pWn0UA5YoTNqKqGBSJjsoRXe0jJTqoUxmU35BixezvdjzAMSKAuhA1xHvIvt?=
+ =?us-ascii?Q?3RHvJqY921Xxb7Y+Cz/gGHRG2pTaHEr254dJs0DLviJoiPsWCV/WB3QcZ4//?=
+ =?us-ascii?Q?AiwCKOw6CF1aSdM4iYEssy/md83a9DPQLkrOs75EfjWoXnNdiblnU0p37BbJ?=
+ =?us-ascii?Q?DIetUDXwz0yfIhRQzIzwYzhe/vcBdw85Cko7kdpeJA2R9rsDzAK78sPuRdFn?=
+ =?us-ascii?Q?QtCnwDz/Yjmv7lKKLOt+bkZV8mvfofTjtHMz6GoAhjtwuO2CnK/GOhlIUQqj?=
+ =?us-ascii?Q?kTYjBic7/bK5FRJ1dqj3rBmieiXXZ1X+c45XLJBVEH6YoVbL9PP+j8+s3A+m?=
+ =?us-ascii?Q?klbldJX3Gh22xoHjFSVVs2dD9MgVKs5YpCPhPD6/idByTC5Nad1Gwnh7Vyg+?=
+ =?us-ascii?Q?bio/FIlPTprtK7gtwYxFFJBm8HOEYic/ma5vRdcoB+MKbOiZJUVsUd8mb5sz?=
+ =?us-ascii?Q?+v3COiGE3bZppCsubBy9BeUZkK3/fAWStAvebdILV5gS2vBKc+F9dKoOp8m/?=
+ =?us-ascii?Q?qP47EziiEdCyTnEdCQqV1ipruptFNeifXjH4CdG+DR4o41+/Qx6hi4St0ur4?=
+ =?us-ascii?Q?mBGQtEDPhmsvCx9pLLatNtTz/2N/DvRFHLrM1kEzqXG1Df5DCMt8im2fP9b2?=
+ =?us-ascii?Q?KTUlmAtVLKw1aMSjeoTmxnR1D9nLWg1t1B6cDgfNJYgQpSS3F2cEZjQqEu9c?=
+ =?us-ascii?Q?9FPBrDS/LvX0QWwu00J9ysWtpub2rNK3t3CotEmykzKEgvNMVdEfvKV088Uf?=
+ =?us-ascii?Q?SIaEZfoCe5nQ4O3z7pUJESRZxNA+W6xceYN94acCPac8/D9QB0sPWZ4/K54N?=
+ =?us-ascii?Q?VPH+3PYMlZP2qrBnPC0YL+qCDRw=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ae2bee4-98cc-4069-50a4-08d9e297c132
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jan 2022 19:52:46.4343
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ObVC0pXBS1pK0heCkHnFeBGnX1UpfeAg1vW9IbDiAKD43LoYJ2KEWKj4HmJh6QCLAjL4CnUuN2ntxaogdZoJGDAnee5ggNVq8TZou36HOlc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB5332
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10241 signatures=673430
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 bulkscore=0
+ suspectscore=0 malwarescore=0 adultscore=0 mlxlogscore=999 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2201110000
+ definitions=main-2201280115
+X-Proofpoint-GUID: q8-vPgwH7x_GkfEgwWwW2eBJA7_8tIfe
+X-Proofpoint-ORIG-GUID: q8-vPgwH7x_GkfEgwWwW2eBJA7_8tIfe
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
-
-Alex
-
-On Fri, Jan 28, 2022 at 12:59 PM Harry Wentland <harry.wentland@amd.com> wrote:
->
->
->
-> On 2022-01-28 12:35, Colin Ian King wrote:
-> > There are quite a few spelling mistakes in various function names
-> > and error messages. Fix these.
-> >
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
->
-> Reviewed-by: Harry Wentland <harry.wentland@amd.com>
->
-> Harry
->
+On Fri, Jan 28, 2022 at 01:16:36PM -0400, Jason Gunthorpe wrote:
+> On Mon, Jan 24, 2022 at 03:25:02PM +0300, Dan Carpenter wrote:
+> > Call c4iw_put_wr_wait() if c4iw_wait_for_reply() fails.  This
+> > code uses kobject so the worst impact from this bug is a DoS.
+> > 
+> > Fixes: 2015f26cfade ("iw_cxgb4: add referencing to wait objects")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > > ---
-> >  .../amd/display/amdgpu_dm/amdgpu_dm_helpers.c | 32 +++++++++----------
-> >  1 file changed, 16 insertions(+), 16 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-> > index 75b5299b3576..db4ab01267e4 100644
-> > --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-> > +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
-> > @@ -539,7 +539,7 @@ bool dm_helpers_submit_i2c(
-> >  }
-> >
-> >  #if defined(CONFIG_DRM_AMD_DC_DCN)
-> > -static bool execute_synatpics_rc_command(struct drm_dp_aux *aux,
-> > +static bool execute_synaptics_rc_command(struct drm_dp_aux *aux,
-> >               bool is_write_cmd,
-> >               unsigned char cmd,
-> >               unsigned int length,
-> > @@ -578,7 +578,7 @@ static bool execute_synatpics_rc_command(struct drm_dp_aux *aux,
-> >       ret = drm_dp_dpcd_write(aux, SYNAPTICS_RC_COMMAND, &rc_cmd, sizeof(rc_cmd));
-> >
-> >       if (ret < 0) {
-> > -             DRM_ERROR("     execute_synatpics_rc_command - write cmd ..., err = %d\n", ret);
-> > +             DRM_ERROR("     execute_synaptics_rc_command - write cmd ..., err = %d\n", ret);
-> >               return false;
-> >       }
-> >
-> > @@ -600,7 +600,7 @@ static bool execute_synatpics_rc_command(struct drm_dp_aux *aux,
-> >               drm_dp_dpcd_read(aux, SYNAPTICS_RC_DATA, data, length);
-> >       }
-> >
-> > -     DC_LOG_DC("     execute_synatpics_rc_command - success = %d\n", success);
-> > +     DC_LOG_DC("     execute_synaptics_rc_command - success = %d\n", success);
-> >
-> >       return success;
-> >  }
-> > @@ -618,54 +618,54 @@ static void apply_synaptics_fifo_reset_wa(struct drm_dp_aux *aux)
-> >       data[3] = 'U';
-> >       data[4] = 'S';
-> >
-> > -     if (!execute_synatpics_rc_command(aux, true, 0x01, 5, 0, data))
-> > +     if (!execute_synaptics_rc_command(aux, true, 0x01, 5, 0, data))
-> >               return;
-> >
-> >       // Step 3 and 4
-> > -     if (!execute_synatpics_rc_command(aux, false, 0x31, 4, 0x220998, data))
-> > +     if (!execute_synaptics_rc_command(aux, false, 0x31, 4, 0x220998, data))
-> >               return;
-> >
-> >       data[0] &= (~(1 << 1)); // set bit 1 to 0
-> > -     if (!execute_synatpics_rc_command(aux, true, 0x21, 4, 0x220998, data))
-> > +     if (!execute_synaptics_rc_command(aux, true, 0x21, 4, 0x220998, data))
-> >               return;
-> >
-> > -     if (!execute_synatpics_rc_command(aux, false, 0x31, 4, 0x220D98, data))
-> > +     if (!execute_synaptics_rc_command(aux, false, 0x31, 4, 0x220D98, data))
-> >               return;
-> >
-> >       data[0] &= (~(1 << 1)); // set bit 1 to 0
-> > -     if (!execute_synatpics_rc_command(aux, true, 0x21, 4, 0x220D98, data))
-> > +     if (!execute_synaptics_rc_command(aux, true, 0x21, 4, 0x220D98, data))
-> >               return;
-> >
-> > -     if (!execute_synatpics_rc_command(aux, false, 0x31, 4, 0x221198, data))
-> > +     if (!execute_synaptics_rc_command(aux, false, 0x31, 4, 0x221198, data))
-> >               return;
-> >
-> >       data[0] &= (~(1 << 1)); // set bit 1 to 0
-> > -     if (!execute_synatpics_rc_command(aux, true, 0x21, 4, 0x221198, data))
-> > +     if (!execute_synaptics_rc_command(aux, true, 0x21, 4, 0x221198, data))
-> >               return;
-> >
-> >       // Step 3 and 5
-> > -     if (!execute_synatpics_rc_command(aux, false, 0x31, 4, 0x220998, data))
-> > +     if (!execute_synaptics_rc_command(aux, false, 0x31, 4, 0x220998, data))
-> >               return;
-> >
-> >       data[0] |= (1 << 1); // set bit 1 to 1
-> > -     if (!execute_synatpics_rc_command(aux, true, 0x21, 4, 0x220998, data))
-> > +     if (!execute_synaptics_rc_command(aux, true, 0x21, 4, 0x220998, data))
-> >               return;
-> >
-> > -     if (!execute_synatpics_rc_command(aux, false, 0x31, 4, 0x220D98, data))
-> > +     if (!execute_synaptics_rc_command(aux, false, 0x31, 4, 0x220D98, data))
-> >               return;
-> >
-> >       data[0] |= (1 << 1); // set bit 1 to 1
-> >               return;
-> >
-> > -     if (!execute_synatpics_rc_command(aux, false, 0x31, 4, 0x221198, data))
-> > +     if (!execute_synaptics_rc_command(aux, false, 0x31, 4, 0x221198, data))
-> >               return;
-> >
-> >       data[0] |= (1 << 1); // set bit 1 to 1
-> > -     if (!execute_synatpics_rc_command(aux, true, 0x21, 4, 0x221198, data))
-> > +     if (!execute_synaptics_rc_command(aux, true, 0x21, 4, 0x221198, data))
-> >               return;
-> >
-> >       // Step 6
-> > -     if (!execute_synatpics_rc_command(aux, true, 0x02, 0, 0, NULL))
-> > +     if (!execute_synaptics_rc_command(aux, true, 0x02, 0, 0, NULL))
-> >               return;
-> >
-> >       DC_LOG_DC("Done apply_synaptics_fifo_reset_wa\n");
->
+> > >From static analysis.  Not tested.
+> > 
+> >  drivers/infiniband/hw/cxgb4/iw_cxgb4.h | 17 ++++++++++++-----
+> >  1 file changed, 12 insertions(+), 5 deletions(-)
+> 
+> Are you sure?  
+> 
+> Looking at the caller alloc_srq_queue() it calls down to
+> c4iw_ref_send_wait() then immediately exits on failure
+> 
+> The only caller c4iw_create_srq() 
+> 
+> 	ret = alloc_srq_queue(srq, ucontext ? &ucontext->uctx :
+> 			&rhp->rdev.uctx, srq->wr_waitp);
+> 	if (ret)
+> 		goto err_free_skb;
+> 
+> And then
+> 
+> err_free_skb:
+> 	kfree_skb(srq->destroy_skb);
+> err_free_srq_idx:
+> 	c4iw_free_srq_idx(&rhp->rdev, srq->idx);
+> err_free_wr_wait:
+> 	c4iw_put_wr_wait(srq->wr_waitp);
+> 
+> So we just double put the thing with this patch
+> 
+> I have no idea how this logic is supposed to work, and clearly
+> something is buggy in here,  but I can't say this is right..
+
+Yeah.  My patch isn't right.  That refcount from my patch is supposed to
+be decremented in _c4iw_wake_up().  That function gets called when the
+firmware responds in fw6_msg().  So if we cleanup everything and the
+firmware sends a delayed response the it leads to a use after free.
+
+Say the firmware never responds, then sure, that leads to a resource
+leak.  But it's better to have a small memory leak than a use after free.
+
+regards,
+dan carpenter
+
