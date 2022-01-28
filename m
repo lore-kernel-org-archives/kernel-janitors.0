@@ -2,82 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA1BC433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Jan 2022 12:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F38CAC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Jan 2022 13:00:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244770AbiA1MmN (ORCPT
+        id S232557AbiA1NAH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Jan 2022 07:42:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45846 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235668AbiA1MmL (ORCPT
+        Fri, 28 Jan 2022 08:00:07 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:36046 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229869AbiA1NAH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Jan 2022 07:42:11 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 599BEC061714;
-        Fri, 28 Jan 2022 04:42:11 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E9F6761B9F;
-        Fri, 28 Jan 2022 12:42:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 020FDC340E0;
-        Fri, 28 Jan 2022 12:42:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643373730;
-        bh=wUt7Lpv1ipKqJDvhHGWAjln9cnXm1I4jIhfmigOT+f0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XXx0fuchgarQKfN1TwtXWoLv0qRHQG9XgBqVx2cCrIGnPPBz5e6GzXpYfRXjsPcrZ
-         sMFDj+ismMZ+Cr33Wji66LdLve8fFwBIe/GX7uqFLSP5B9bBFNnVxwREnjwdmH12/N
-         9/YoNapQS6dPuFvPfZhu0BJn5LF+V2cgYs8zuYiVjqtP4tu2x2U/VMeAgMOuplbNs3
-         MGHK9HdOcZ8YvX01wfEeNUmafmB2y4d4crzETAU+5sq0idbr8FW9SqP2671RzG4SFb
-         6+lKTEWq67rhdmS+NrlLYYZZAox2U8avBWj4d6Oop+mxOMmDkFJj4wAc+FWHESLsm2
-         HsAkGhksydPEQ==
-Date:   Fri, 28 Jan 2022 12:42:04 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] ASoC: ops: fix signedness bug in snd_soc_put_volsw()
-Message-ID: <YfPknO6si9CpotgS@sirena.org.uk>
-References: <20220128112007.GA24806@kili>
+        Fri, 28 Jan 2022 08:00:07 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: usama.anjum)
+        with ESMTPSA id AD94F1F45F31
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1643374800;
+        bh=qpjsngu8uHb7twpIdfcS2cTWB2a6x0Zf7hcMkNFCCDg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ka8jRs3ohT4RnrJ4hfU0FL2r3gzE/orqRLHZRhPg9LOki6toywWd0J3osiikd8jfi
+         ZXv46gsxUWTMc4vx78IZx5Cd00/OOEUQWOrZXD4+E49ceBjRlhzl3SvheaG1KjrS9c
+         +kVmVBafu2sXXCvuJZAUzdby9rLYgrVgjbVynoedKTI8YZJH6B695rb2/SmH4hzXdv
+         tcuDOMnSJbAdH1MVrOjEvp0+j41LZZE05+d3n7s+fcmpeXereu3oXLUPmolTx07lmr
+         37rLEVI5223LsaDML8LjRAoFqhQO4vRtAnSkIYwD2t5f6L/uKUdCr6hAsOtN5ZqILL
+         M90tZDOopcKjQ==
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+To:     Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        kernel@collabora.com, kernel-janitors@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] hwmon: Remove checks for validity of dev
+Date:   Fri, 28 Jan 2022 17:59:13 +0500
+Message-Id: <20220128125913.1291533-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="jOCcIIG5A6qPTuKn"
-Content-Disposition: inline
-In-Reply-To: <20220128112007.GA24806@kili>
-X-Cookie: Torque is cheap.
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+dev is being dereferenced in device_property_present() which means that
+it is valid. Don't check its validity again and simplify the code.
 
---jOCcIIG5A6qPTuKn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+ drivers/hwmon/hwmon.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Fri, Jan 28, 2022 at 02:20:07PM +0300, Dan Carpenter wrote:
-> The "val" and "val2" variables need to signed for the checking to work
-> as intended.
+diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
+index e36ea82da1474..aec32abd0a89f 100644
+--- a/drivers/hwmon/hwmon.c
++++ b/drivers/hwmon/hwmon.c
+@@ -822,7 +822,7 @@ __hwmon_device_register(struct device *dev, const char *name, void *drvdata,
+ 	hwdev->name = name;
+ 	hdev->class = &hwmon_class;
+ 	hdev->parent = dev;
+-	hdev->of_node = dev ? dev->of_node : NULL;
++	hdev->of_node = dev->of_node;
+ 	hwdev->chip = chip;
+ 	dev_set_drvdata(hdev, drvdata);
+ 	dev_set_name(hdev, HWMON_ID_FORMAT, id);
+@@ -834,7 +834,7 @@ __hwmon_device_register(struct device *dev, const char *name, void *drvdata,
+ 
+ 	INIT_LIST_HEAD(&hwdev->tzdata);
+ 
+-	if (dev && dev->of_node && chip && chip->ops->read &&
++	if (dev->of_node && chip && chip->ops->read &&
+ 	    chip->info[0]->type == hwmon_chip &&
+ 	    (chip->info[0]->config[0] & HWMON_C_REGISTER_TZ)) {
+ 		err = hwmon_thermal_register_sensors(hdev);
+-- 
+2.30.2
 
-This means that the helpers won't support controls that use the top bit
-of a 32 bit register.
-
---jOCcIIG5A6qPTuKn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmHz5JsACgkQJNaLcl1U
-h9DaKgf/cTmyNoSTqkw9Z3Ey0dOvYM7t57pbtbOZ0g5wy0D/1tX/fClL/peSKXGU
-60vA83fZ9RnX561xmKWv3E5Tqwj0+DK589nth2LcuJcSaZn0jyPgETF19uaXkACU
-aJ8QkIIlNT3OkVDgbAN0QYqSuL9TCBhsOGR6eaBwbG8NsoPrphIPae/RBBn/z1Jv
-IQGG1dcjervKJPw3bK7tzrdytvLnn8jqwMEkycxcxzrO7kw5vk2Dfu7vOzBLi2bt
-y3cDSD+87ybKxsEt92XZZrSOey79pKIj7kCDB1k0LuLNB5hlSdiQfbfXt/PTB3ws
-op+pdqiC8o5GDfLooYthOkZYHU/rSQ==
-=2D81
------END PGP SIGNATURE-----
-
---jOCcIIG5A6qPTuKn--
