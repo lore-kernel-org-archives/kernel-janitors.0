@@ -2,89 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C60DC4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 28 Jan 2022 23:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A874C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 29 Jan 2022 01:15:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351792AbiA1XrO (ORCPT
+        id S1344677AbiA2BPa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 28 Jan 2022 18:47:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57586 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347866AbiA1XrN (ORCPT
+        Fri, 28 Jan 2022 20:15:30 -0500
+Received: from szxga02-in.huawei.com ([45.249.212.188]:17830 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234324AbiA2BP3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 28 Jan 2022 18:47:13 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 552D9C06174A;
-        Fri, 28 Jan 2022 15:47:11 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EA17961F31;
-        Fri, 28 Jan 2022 23:47:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02819C340E7;
-        Fri, 28 Jan 2022 23:47:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643413630;
-        bh=iNytjglSwIU8s0+h6erELVVSV91M1C1VRXtxDVxTAac=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=s4r58rKCpAZku+KAwDpt6mdrvCK13XEAitBqpT9R3cb3LDZy7wri6BuXyPHq3s81o
-         x2kOReJ4kjwUQ4PuJe6GxOVGwvzs9tSUdwROMoXFAFdz4nPX4LRtt9pPZPcKoZEJUy
-         jI+AamI5iB8S2eY+6YnYWM9yKQ2qrwA20iHpIeYyeRZC6f3CVBbmqPaL6GvqLXpzop
-         q7jQ18fhWalMot6OvOHphHHTdfL7DizgqBvB/0ALIXc/MaZJgSkixrD8S1kZ/1s8L0
-         KGKeJBTiPgNHfo33AXlecs0Keng1mMlUzjWlCoarbMeScwpT3/AEFW2LcN+quFJMVg
-         0j581gynUOX8A==
-From:   Mark Brown <broonie@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        agross@kernel.org, bjorn.andersson@linaro.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org
-In-Reply-To: <1b14e4ce91a33c16b2c655389c728071a9c9aa2e.1641643601.git.christophe.jaillet@wanadoo.fr>
-References: <1b14e4ce91a33c16b2c655389c728071a9c9aa2e.1641643601.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] spi: qcom: geni: Simplify DMA setting
-Message-Id: <164341362873.694916.2694684212503292812.b4-ty@kernel.org>
-Date:   Fri, 28 Jan 2022 23:47:08 +0000
+        Fri, 28 Jan 2022 20:15:29 -0500
+Received: from canpemm500009.china.huawei.com (unknown [172.30.72.55])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4JlxDY0cSsz9sRN;
+        Sat, 29 Jan 2022 09:14:05 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ canpemm500009.china.huawei.com (7.192.105.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Sat, 29 Jan 2022 09:15:26 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Tobias Waldekranz <tobias@waldekranz.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Calvin Johnson <calvin.johnson@oss.nxp.com>,
+        Markus Koch <markus@notsyncing.net>
+CC:     <netdev@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH net-next] net/fsl: xgmac_mdio: fix return value check in xgmac_mdio_probe()
+Date:   Sat, 29 Jan 2022 01:27:02 +0000
+Message-ID: <20220129012702.3220704-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ canpemm500009.china.huawei.com (7.192.105.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 8 Jan 2022 13:07:54 +0100, Christophe JAILLET wrote:
-> As stated in [1], dma_set_mask() with a 64-bit mask will never fail if
-> dev->dma_mask is non-NULL.
-> So, if it fails, the 32 bits case will also fail for the same reason.
-> 
-> Simplify code and remove some dead code accordingly.
-> 
-> [1]: https://lkml.org/lkml/2021/6/7/398
-> 
-> [...]
+In case of error, the function devm_ioremap() returns NULL pointer
+not ERR_PTR(). The IS_ERR() test in the return value check should
+be replaced with NULL test.
 
-Applied to
+Fixes: 1d14eb15dc2c ("net/fsl: xgmac_mdio: Use managed device resources")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/net/ethernet/freescale/xgmac_mdio.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+diff --git a/drivers/net/ethernet/freescale/xgmac_mdio.c b/drivers/net/ethernet/freescale/xgmac_mdio.c
+index d38d0c372585..264162049c6d 100644
+--- a/drivers/net/ethernet/freescale/xgmac_mdio.c
++++ b/drivers/net/ethernet/freescale/xgmac_mdio.c
+@@ -335,8 +335,8 @@ static int xgmac_mdio_probe(struct platform_device *pdev)
+ 	priv = bus->priv;
+ 	priv->mdio_base = devm_ioremap(&pdev->dev, res->start,
+ 				       resource_size(res));
+-	if (IS_ERR(priv->mdio_base))
+-		return PTR_ERR(priv->mdio_base);
++	if (!priv->mdio_base)
++		return -ENOMEM;
+ 
+ 	/* For both ACPI and DT cases, endianness of MDIO controller
+ 	 * needs to be specified using "little-endian" property.
 
-Thanks!
-
-[1/1] spi: qcom: geni: Simplify DMA setting
-      commit: bef8c5fdf50b573351571e94525800c41d9830f2
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
