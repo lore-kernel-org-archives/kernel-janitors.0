@@ -2,81 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A9FC433FE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 29 Jan 2022 08:32:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA243C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 29 Jan 2022 09:50:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352569AbiA2Icy (ORCPT
+        id S236428AbiA2JuK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 29 Jan 2022 03:32:54 -0500
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:58689 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352560AbiA2Icw (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 29 Jan 2022 03:32:52 -0500
-Received: from pop-os.home ([90.126.236.122])
-        by smtp.orange.fr with ESMTPA
-        id DjA9nC6cPvjW4DjA9nr50G; Sat, 29 Jan 2022 09:32:51 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 29 Jan 2022 09:32:51 +0100
-X-ME-IP: 90.126.236.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Johannes Thumshirn <johannes.thumshirn@men.de>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-iio@vger.kernel.org
-Subject: [PATCH] iio: adc: men_z188_adc: Fix a resource leak in an error handling path
-Date:   Sat, 29 Jan 2022 09:32:47 +0100
-Message-Id: <320fc777863880247c2aff4a9d1a54ba69abf080.1643445149.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
+        Sat, 29 Jan 2022 04:50:10 -0500
+Received: from phobos.denx.de ([85.214.62.61]:40010 "EHLO phobos.denx.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234124AbiA2JuK (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Sat, 29 Jan 2022 04:50:10 -0500
+Received: from crub (p508b6e90.dip0.t-ipconnect.de [80.139.110.144])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: agust@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id BD2D78210D;
+        Sat, 29 Jan 2022 10:50:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1643449808;
+        bh=wcVkdXf9yFZ5R/QSWp9DJkR9pJYiKAivTu+9LpeeBSQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Ytd+bRoJLgNjHWWwFhyqm9CGOLMwNRGwOafo7NDZc5AmzDdttsgAIFY3xkIjrB4Ng
+         2yFd7qr/HACHUWiU85gEFaTcYLue/uJf2SV/tqzNXaY59l8Is4x8uFCwyL23LzEYTr
+         8UO1Tgtyr2jAe5yU3qYG1lQhQh4uV9POl+8TdBC7clfpgLomdxDW58mjttmtnYyWiy
+         MnlZ/R0j6MZQw7MonX8QU2Vu0C9nSv0TQC973aDjuYXi/axZYReZoirZRwi19FKmwl
+         d40aUvl1doehfxjKifA4qIX/wzhhnuTIREplC/9kniI3LRdEAcFEtbqG51ljS9K2rv
+         lDosRuD3nOpIQ==
+Date:   Sat, 29 Jan 2022 10:50:07 +0100
+From:   Anatolij Gustschin <agust@denx.de>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Grant Likely <grant.likely@secretlab.ca>,
+        John Bonesio <bones@secretlab.ca>,
+        linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc: platforms: 52xx: Fix a resource leak in an
+ error handling path
+Message-ID: <20220129105007.6dfdea45@crub>
+In-Reply-To: <dec1496d46ccd5311d0f6e9f9ca4238be11bf6a6.1643440531.git.christophe.jaillet@wanadoo.fr>
+References: <dec1496d46ccd5311d0f6e9f9ca4238be11bf6a6.1643440531.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.5 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If iio_device_register() fails, a previous ioremap() is left unbalanced.
+On Sat, 29 Jan 2022 08:16:04 +0100
+Christophe JAILLET christophe.jaillet@wanadoo.fr wrote:
 
-Update the error handling path and add the missing iounmap() call, as
-already done in the remove function.
+>The error handling path of mpc52xx_lpbfifo_probe() and a request_irq() is
+>not balanced by a corresponding free_irq().
+>
+>Add the missing call, as already done in the remove function.
+>
+>Fixes: 3c9059d79f5e ("powerpc/5200: add LocalPlus bus FIFO device driver")
+>Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>---
+>Another strange thing is that the remove function has:
+>	/* Release the bestcomm transmit task */
+>	free_irq(bcom_get_task_irq(lpbfifo.bcom_tx_task), &lpbfifo);
+>but I've not been able to find a corresponding request_irq().
 
-Fixes: 74aeac4da66f ("iio: adc: Add MEN 16z188 ADC driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/iio/adc/men_z188_adc.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+This driver does not request the tx task irq itself, but a fifo
+client driver can request/free tx interrupts for submitted
+fifo write tasks, like mpc5200 fec and pata drivers do, so
+it is okay.
 
-diff --git a/drivers/iio/adc/men_z188_adc.c b/drivers/iio/adc/men_z188_adc.c
-index 42ea8bc7e780..adc5ceaef8c9 100644
---- a/drivers/iio/adc/men_z188_adc.c
-+++ b/drivers/iio/adc/men_z188_adc.c
-@@ -103,6 +103,7 @@ static int men_z188_probe(struct mcb_device *dev,
- 	struct z188_adc *adc;
- 	struct iio_dev *indio_dev;
- 	struct resource *mem;
-+	int ret;
- 
- 	indio_dev = devm_iio_device_alloc(&dev->dev, sizeof(struct z188_adc));
- 	if (!indio_dev)
-@@ -128,8 +129,14 @@ static int men_z188_probe(struct mcb_device *dev,
- 	adc->mem = mem;
- 	mcb_set_drvdata(dev, indio_dev);
- 
--	return iio_device_register(indio_dev);
-+	ret = iio_device_register(indio_dev);
-+	if (ret)
-+		goto err_unmap;
-+
-+	return 0;
- 
-+err_unmap:
-+	iounmap(adc->base);
- err:
- 	mcb_release_mem(mem);
- 	return -ENXIO;
--- 
-2.32.0
+>Is it dead code? Is there something missing in the probe?
 
+No.
+
+--
+Anatolij
