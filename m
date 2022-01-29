@@ -2,89 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A2F6C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 29 Jan 2022 16:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB786C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 29 Jan 2022 18:54:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352204AbiA2QWU (ORCPT
+        id S1353020AbiA2Syk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 29 Jan 2022 11:22:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49324 "EHLO
+        Sat, 29 Jan 2022 13:54:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352165AbiA2QWT (ORCPT
+        with ESMTP id S242589AbiA2Syj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 29 Jan 2022 11:22:19 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56EAFC06173B
-        for <kernel-janitors@vger.kernel.org>; Sat, 29 Jan 2022 08:22:19 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id z19so17784413lfq.13
-        for <kernel-janitors@vger.kernel.org>; Sat, 29 Jan 2022 08:22:19 -0800 (PST)
+        Sat, 29 Jan 2022 13:54:39 -0500
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED5DC061714;
+        Sat, 29 Jan 2022 10:54:39 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id ah7so28057210ejc.4;
+        Sat, 29 Jan 2022 10:54:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=waldekranz-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=5rb2bYUGOsznXSQW2SbmZuAdFHz29bFHdL1+tYXBjRE=;
-        b=xyjzk67oTRcgtPhJGd7tLSYTTLRfEbpi//R7oE1aHRWfa1QgcQp/WV7AJ/R9C5TMKT
-         XJ/LwSs94kqzWcdAJaL9ukFL3gYOLRt3IxqwmcvrBdhGf75VQhuMYtNW8QKUU+gAkm5M
-         j180E8WNi414CAKfHgyjOkQqLM9wgnpxMFDcYix7Smx23fet/qFzudGUEwyqYRky0bbn
-         pWF6X8CLsVb4TmjrT7DJ5Q3ZiVJT96nlnZgzU1dVgQTinmFACr5f05rX3PQDJV1e3f+u
-         6l/Y8Be9t4F/OFstrmIrgjdYmERfTEUnPhp9I9ZWlJq5vso8lJeq/WUHkLh5u1IqCsPq
-         maWQ==
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1dIx/IqWiv/WWm7kyGBaD8OgAX89Qcfb4TRiFj5tbEo=;
+        b=l1c+s/Ubw5dRxJadxh3PcbeOrd3x3kbo6i8JmXjzEQMZaSTO16HQdx3I0vUreojh8A
+         5mIJ83BN5mNHZAgJg+INAsnQri3TGqmnQ0DBWeF1SpYfsvnH4MqLrQk5/AyrAHTAxEVo
+         ZsArQrsEzOnLjRNP/UzelTlsxsZWzzCYjTeWwZZc+jSiBfdUzN5Kc0aoyB/jnJQ2JckI
+         wJ3hKoBwta9a3ZHAD4DzsnZ3CGlwDYxl5cXszd76KYXPfWPsVZNfFaB1RS/A2W8ynhAk
+         +/wPxXFt2IDRRhN1vsBtwXc8p8CP8DtCqFK/5wfdMjxXhZKhrfCXrx5hOY5wKo7TAFa2
+         uB2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=5rb2bYUGOsznXSQW2SbmZuAdFHz29bFHdL1+tYXBjRE=;
-        b=MxE3v0Hbw0oMSN26Qsd4YhLKwnwDfzrxW6wm0GvfXGrFoVM2ZB2S/nTws5KSYQnrUx
-         +y0U7Gl+W5HN4qJCjjlwnYdlPTnp1bbsB1jgyHIDgLDAVHAs5cToKhyM1Cw5cs+7JqKP
-         dFU3dB2E+0rUfQQFcA6XllYYmj2HML94fDsGnch12NhYR9zelQhiuGcdtoTDe9IzeBQF
-         PmRXXPHHlfDyiXmTMoz3S+MSsTKbGy5eahIvdlevOUU5lSjMSA3UdzzjEVdceXmaS0HF
-         orkc1BLCa0eV2A9SOMeBbEBcIzCdbMz/LCDfPpgFhY6JzFY7DbhYi9ymBUmrUDpQRN5D
-         P9pQ==
-X-Gm-Message-State: AOAM530TXM5Vs4UIa7og4hOBCme2LQ8XtzolPbcYpQGo9IjHAF+YcThG
-        MMB0zuBkcrSC1Ptupu+H9AOc0Q==
-X-Google-Smtp-Source: ABdhPJzIZNvcLjZkozB6mcFfZUdLmxqeYij3PD8XD5vhpivDm86V/WTKy69WAarSKYUO8136NCRbww==
-X-Received: by 2002:a05:6512:e87:: with SMTP id bi7mr9946776lfb.550.1643473337320;
-        Sat, 29 Jan 2022 08:22:17 -0800 (PST)
-Received: from wkz-x280 (h-212-85-90-115.A259.priv.bahnhof.se. [212.85.90.115])
-        by smtp.gmail.com with ESMTPSA id bq7sm2928931lfb.210.2022.01.29.08.22.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Jan 2022 08:22:16 -0800 (PST)
-From:   Tobias Waldekranz <tobias@waldekranz.com>
-To:     Wei Yongjun <weiyongjun1@huawei.com>, weiyongjun1@huawei.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Calvin Johnson <calvin.johnson@oss.nxp.com>,
-        Markus Koch <markus@notsyncing.net>
-Cc:     netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH net-next] net/fsl: xgmac_mdio: fix return value check in
- xgmac_mdio_probe()
-In-Reply-To: <20220129012702.3220704-1-weiyongjun1@huawei.com>
-References: <20220129012702.3220704-1-weiyongjun1@huawei.com>
-Date:   Sat, 29 Jan 2022 17:22:15 +0100
-Message-ID: <87czkabjgo.fsf@waldekranz.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1dIx/IqWiv/WWm7kyGBaD8OgAX89Qcfb4TRiFj5tbEo=;
+        b=3gKakXVq22vLZPK6vd5SEQ4gS9CXy/jwJ8Y4NYIBb6PMb9Q52j2EDQDBaaFcnlXTZ7
+         3iepxDtdls2CYtp4HBuUG7rQl8roYa0Xx7DvhHjnLOqYgfYvgBU9laQt6DNq70j4K8+O
+         0Nl6Orzgv1Foz7OZUXF4jvajqknyzEzUtSA0LA7LntaJ1MbyqDv0BZyAPKfTFBtc1mKM
+         Od1DheUEJe+STEY7YA+SFl8bY/0CV2/HaJ8XsASZ/xOYRO/Ks9hEJZQTLOFDwoPlUApc
+         lV4e+Urhrl1TQpDddS6+rCvw58+sg0XZ8JCO24eEa/lB8uBhtqUosBNpRLSWQtPazpSs
+         gJMg==
+X-Gm-Message-State: AOAM533xLL+L2j3z3xfKQ+dUT5oIb3++ZT27117tmIbyzNsHSZOsJx99
+        /iYHmNQnAuBzOxlah88kDyMqlmrSH5bmxMszTWjlDt+bRb8=
+X-Google-Smtp-Source: ABdhPJwUYgNNHPJYIUcBsTAd++MKr5tL+VooDz4sr2nMIPD4IgrE8R7vylTrJQW1Y+cutuXpRXb6G/sD0JTzSWu4TTs=
+X-Received: by 2002:a17:906:eb8a:: with SMTP id mh10mr8511020ejb.492.1643482477674;
+ Sat, 29 Jan 2022 10:54:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20220128170722.1624767-1-usama.anjum@collabora.com>
+In-Reply-To: <20220128170722.1624767-1-usama.anjum@collabora.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Sat, 29 Jan 2022 15:54:26 -0300
+Message-ID: <CAOMZO5CSE8bwASsk8_Z3J_i1rSKoiENx96_bLaYxQnvghgWtyw@mail.gmail.com>
+Subject: Re: [PATCH V2] media: imx: imx8mq-mipi_csi2: Remove unneeded code
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "open list:MEDIA DRIVERS FOR FREESCALE IMX" 
+        <linux-media@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <linux-staging@lists.linux.dev>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Marc Kleine-Budde <mkl@pengutronix.de>, kernel@collabora.com,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Jan 29, 2022 at 01:27, Wei Yongjun <weiyongjun1@huawei.com> wrote:
-> In case of error, the function devm_ioremap() returns NULL pointer
-> not ERR_PTR(). The IS_ERR() test in the return value check should
-> be replaced with NULL test.
+On Fri, Jan 28, 2022 at 2:07 PM Muhammad Usama Anjum
+<usama.anjum@collabora.com> wrote:
 >
-> Fixes: 1d14eb15dc2c ("net/fsl: xgmac_mdio: Use managed device resources")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ret is constant in imx8mq_mipi_csi_pm_suspend(). This function cannot
+> return error. Remove the return variable. Simplify other functions which
+> are using this function.
+>
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+> Changes in V2:
+> Removed fixes tag
 
-Reviewed-by: Tobias Waldekranz <tobias@waldekranz.com>
-
-Sorry about that. I started out by using devm_ioremap_resource, which
-uses the in-band error signaling, and forgot to match the guard when I
-changed it.
-
-I see that this was reported by your CI, do you mind me asking what it
-is running in the back-end? At least my version of sparse does not seem
-to catch this.
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
