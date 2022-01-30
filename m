@@ -2,80 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 353C6C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 30 Jan 2022 18:26:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D0EAC433FE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 30 Jan 2022 22:31:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350496AbiA3S0F (ORCPT
+        id S1356578AbiA3WbI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 30 Jan 2022 13:26:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50526 "EHLO
+        Sun, 30 Jan 2022 17:31:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241414AbiA3S0E (ORCPT
+        with ESMTP id S233616AbiA3WbH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 30 Jan 2022 13:26:04 -0500
-X-Greylist: delayed 1917 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 30 Jan 2022 10:26:04 PST
-Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57CA2C061714
-        for <kernel-janitors@vger.kernel.org>; Sun, 30 Jan 2022 10:26:04 -0800 (PST)
-Received: from ipservice-092-217-087-009.092.217.pools.vodafone-ip.de ([92.217.87.9] helo=martin-debian-2.paytec.ch)
-        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <postmaster@kaiser.cx>)
-        id 1nEEOn-0007xP-Bc; Sun, 30 Jan 2022 18:54:01 +0100
-Received: from martin by martin-debian-2.paytec.ch with local (Exim 4.94.2)
-        (envelope-from <martin@martin-debian-2.paytec.ch>)
-        id 1nEEOm-002wou-Ny; Sun, 30 Jan 2022 18:54:00 +0100
-Date:   Sun, 30 Jan 2022 18:54:00 +0100
-From:   Martin Kaiser <martin@kaiser.cx>
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Phillip Potter <phil@philpotter.co.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernel@collabora.com, kernel-janitors@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rt8188eu: Remove dead code
-Message-ID: <YfbQuA6SSIEXGrWu@martin-debian-1.paytec.ch>
-References: <20220128111954.1028121-1-usama.anjum@collabora.com>
+        Sun, 30 Jan 2022 17:31:07 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EB21C061714;
+        Sun, 30 Jan 2022 14:31:06 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id e2so21917461wra.2;
+        Sun, 30 Jan 2022 14:31:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Qfnq3r8dUjy2WwJMiSILTPUFk/Rn2N79sVKgYgCfIA8=;
+        b=CGrLjjxbIwaiJ0QiDWj4HjawyTXS9SUyVIle+XCoCYYseCvw/4WIpZ7H/Cv3AK+w/e
+         iibmB4C3IVTsXAqIv4laompEA61HpuyW07KLJ6iUe9xEd5RYQBHL3mCU1XQO14AuLqK5
+         8kSFAEnJa2ZFr9byADJCHRPK1QcbQDM/8tTGTor0mOH5IkIdUQeXZslCcG7euzESIkxU
+         ZjP/tAsdMCO7UJO3n2MeyC++CbA4jQrDIu1NNo3ZxiDVQUY9o/ebkE2rSVuBGI74jX/r
+         PpMUMa6LUSuaFWXCeQwzv/hIDWHgjHqQD8DuXgwExaF7AwET+/zydvRkKH8pnlzT5ujd
+         u+nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Qfnq3r8dUjy2WwJMiSILTPUFk/Rn2N79sVKgYgCfIA8=;
+        b=wuspglm2SojoSW8AUs+dOJwAE6GTt1ydc/TIV8VB1qEKCjZ5SOX733QBcFnjonrOH9
+         /y7JDnyUTx9WrjluNFa7FBngm5Zm/m3dwvxb4Zsqv7bMMj3mIySJfbLszKj+DZai0S1T
+         tD+VKQGf+Ix/+Jllr/BTNhv09FuVr0VFZZEE7I3sSCRnBumVipRk/HeVh0O/Kmv2D9HH
+         rgjRVdvqxDHpB6acts4dRGEhVZBkzZQ8P34Jgtvp4ec/Km89kTB2kGYJldnsf++NXtXx
+         dnXM6wfj4waKvOE0ys2bU0D2XM6OYnszmIWNgei+HQUcd/AgqpPaI8Dc9n2F+6a7uIc8
+         LmRA==
+X-Gm-Message-State: AOAM530eQlosXPGpTPrVlwtdP0CJiaicC/H529pSEGKEOSD+YadhdF8k
+        7Hc4mZPyoXJKkzXYvJLbJBc=
+X-Google-Smtp-Source: ABdhPJztqKfhsF0N16NIMVCPm96w/hpZCjhyrZZ8DoCY7fiG0BGbxtI+3WycgftZRZW5I73lu0DSaQ==
+X-Received: by 2002:adf:aad4:: with SMTP id i20mr15166391wrc.463.1643581865204;
+        Sun, 30 Jan 2022 14:31:05 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id a15sm10089489wrp.41.2022.01.30.14.31.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Jan 2022 14:31:04 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: gspca: remove redundant assignment of variable n
+Date:   Sun, 30 Jan 2022 22:31:03 +0000
+Message-Id: <20220130223103.6754-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220128111954.1028121-1-usama.anjum@collabora.com>
-Sender: "Martin Kaiser,,," <martin@martin-debian-2.paytec.ch>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Thus wrote Muhammad Usama Anjum (usama.anjum@collabora.com):
+The variable n is being assigned a value that is never read, it is
+being reassigned a different value a few statements later. The
+assignment is redundant and can be removed.
 
-> rtStatus is _SUCCESS when the execution reaches this if condition.
-> Remove the dead code.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/media/usb/gspca/pac7302.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> Fixes: 67396d2dfef3 ("staging: r8188eu: merge ODM_ConfigBBWithHeaderFile with its callers")
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
->  drivers/staging/r8188eu/hal/rtl8188e_phycfg.c | 3 ---
->  1 file changed, 3 deletions(-)
+diff --git a/drivers/media/usb/gspca/pac7302.c b/drivers/media/usb/gspca/pac7302.c
+index 2e8c3ef51ca3..608be0d64f94 100644
+--- a/drivers/media/usb/gspca/pac7302.c
++++ b/drivers/media/usb/gspca/pac7302.c
+@@ -794,7 +794,6 @@ static void sd_pkt_scan(struct gspca_dev *gspca_dev,
+ 		n = (sof - data) - (footer_length + sizeof pac_sof_marker);
+ 		if (n < 0) {
+ 			gspca_dev->image_len += n;
+-			n = 0;
+ 		} else {
+ 			gspca_frame_add(gspca_dev, INTER_PACKET, data, n);
+ 		}
+-- 
+2.34.1
 
-> diff --git a/drivers/staging/r8188eu/hal/rtl8188e_phycfg.c b/drivers/staging/r8188eu/hal/rtl8188e_phycfg.c
-> index 0b0690dfb947c..41a0d7f0d29f4 100644
-> --- a/drivers/staging/r8188eu/hal/rtl8188e_phycfg.c
-> +++ b/drivers/staging/r8188eu/hal/rtl8188e_phycfg.c
-> @@ -504,9 +504,6 @@ static	int phy_BB8188E_Config_ParaFile(struct adapter *Adapter)
->  		ODM_ReadAndConfig_PHY_REG_PG_8188E(&pHalData->odmpriv);
->  	}
-
-> -	if (rtStatus != _SUCCESS)
-> -		goto phy_BB8190_Config_ParaFile_Fail;
-> -
->  	/*  3. BB AGC table Initialization */
->  	if (HAL_STATUS_FAILURE == ODM_ReadAndConfig_AGC_TAB_1T_8188E(&pHalData->odmpriv))
->  		rtStatus = _FAIL;
-> -- 
-> 2.30.2
-
-Thanks for spotting this. It makes sense to remove this duplicate check.
-
-Acked-by: Martin Kaiser <martin@kaiser.cx>
-
-Looking at the function again, the rest of the error handling should be
-cleaned up as well. I'll send a patch for this.
