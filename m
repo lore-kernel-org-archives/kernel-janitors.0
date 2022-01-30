@@ -2,110 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BC7C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 30 Jan 2022 00:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1EAEC433FE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 30 Jan 2022 08:06:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243706AbiA3A66 (ORCPT
+        id S241170AbiA3IGp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 29 Jan 2022 19:58:58 -0500
-Received: from szxga02-in.huawei.com ([45.249.212.188]:17831 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233625AbiA3A66 (ORCPT
+        Sun, 30 Jan 2022 03:06:45 -0500
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:61516 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238565AbiA3IGn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 29 Jan 2022 19:58:58 -0500
-Received: from canpemm500009.china.huawei.com (unknown [172.30.72.57])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4JmXq118Khz9sPH;
-        Sun, 30 Jan 2022 08:57:33 +0800 (CST)
-Received: from [10.174.178.165] (10.174.178.165) by
- canpemm500009.china.huawei.com (7.192.105.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Sun, 30 Jan 2022 08:58:55 +0800
-Subject: Re: [PATCH net-next] net/fsl: xgmac_mdio: fix return value check in
- xgmac_mdio_probe()
-To:     Tobias Waldekranz <tobias@waldekranz.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Calvin Johnson <calvin.johnson@oss.nxp.com>,
-        Markus Koch <markus@notsyncing.net>
-CC:     <netdev@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Hulk Robot <hulkci@huawei.com>
-References: <20220129012702.3220704-1-weiyongjun1@huawei.com>
- <87czkabjgo.fsf@waldekranz.com>
-From:   "weiyongjun (A)" <weiyongjun1@huawei.com>
-Message-ID: <2855194d-9680-c78f-ad87-a2b789cc0363@huawei.com>
-Date:   Sun, 30 Jan 2022 08:58:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Sun, 30 Jan 2022 03:06:43 -0500
+Received: from pop-os.home ([90.126.236.122])
+        by smtp.orange.fr with ESMTPA
+        id E5ENnTKm7uCn2E5EOn1iwB; Sun, 30 Jan 2022 09:06:41 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sun, 30 Jan 2022 09:06:41 +0100
+X-ME-IP: 90.126.236.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        patches@opensource.cirrus.com, linux-input@vger.kernel.org
+Subject: [PATCH] Input: wm97xx: Simplify resource management
+Date:   Sun, 30 Jan 2022 09:06:36 +0100
+Message-Id: <87dce7e80ea9b191843fa22415ca3aef5f3cc2e6.1643529968.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <87czkabjgo.fsf@waldekranz.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.178.165]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- canpemm500009.china.huawei.com (7.192.105.203)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Since the commit in the Fixes tag below, 'wm->input_dev' is a managed
+resource that doesn't need to be explicitly unregistered or freed (see
+devm_input_allocate_device() documentation)
 
-> On Sat, Jan 29, 2022 at 01:27, Wei Yongjun <weiyongjun1@huawei.com> wrote:
->> In case of error, the function devm_ioremap() returns NULL pointer
->> not ERR_PTR(). The IS_ERR() test in the return value check should
->> be replaced with NULL test.
->>
->> Fixes: 1d14eb15dc2c ("net/fsl: xgmac_mdio: Use managed device resources")
->> Reported-by: Hulk Robot <hulkci@huawei.com>
->> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> Reviewed-by: Tobias Waldekranz <tobias@waldekranz.com>
->
-> Sorry about that. I started out by using devm_ioremap_resource, which
-> uses the in-band error signaling, and forgot to match the guard when I
-> changed it.
->
-> I see that this was reported by your CI, do you mind me asking what it
-> is running in the back-end? At least my version of sparse does not seem
-> to catch this.
+So, remove some unless line of code to slightly simplify it.
 
+Fixes: c72f61e74073 ("Input: wm97xx: split out touchscreen registering")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/input/touchscreen/wm97xx-core.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-It was reported by coccinelle with follow script:
-
-
-@@
-expression ret, E;
-@@
-ret = \(devm_ioport_map\|
-devm_ioremap\|
-devm_ioremap_wc\|
-devm_irq_alloc_generic_chip\|
-devm_kasprintf\|
-devm_kcalloc\|
-devm_kmalloc\|
-devm_kmalloc_array\|
-devm_kmemdup\|
-devm_kstrdup\|
-devm_kzalloc\|
-\)(...);
-... when != ret = E
-(
-- IS_ERR(ret)
-+ !ret
-|
-- !IS_ERR(ret)
-+ ret
-|
-- PTR_ERR(ret)
-+ -ENOMEM
-)
-
-
-
-It seems smatch also can report this.
-
-
-Regards,
-
-Wei Yongjun
-
+diff --git a/drivers/input/touchscreen/wm97xx-core.c b/drivers/input/touchscreen/wm97xx-core.c
+index 78d2ee99f37a..1b58611c8084 100644
+--- a/drivers/input/touchscreen/wm97xx-core.c
++++ b/drivers/input/touchscreen/wm97xx-core.c
+@@ -615,10 +615,9 @@ static int wm97xx_register_touch(struct wm97xx *wm)
+ 	 * extensions)
+ 	 */
+ 	wm->touch_dev = platform_device_alloc("wm97xx-touch", -1);
+-	if (!wm->touch_dev) {
+-		ret = -ENOMEM;
+-		goto touch_err;
+-	}
++	if (!wm->touch_dev)
++		return -ENOMEM;
++
+ 	platform_set_drvdata(wm->touch_dev, wm);
+ 	wm->touch_dev->dev.parent = wm->dev;
+ 	wm->touch_dev->dev.platform_data = pdata;
+@@ -629,9 +628,6 @@ static int wm97xx_register_touch(struct wm97xx *wm)
+ 	return 0;
+ touch_reg_err:
+ 	platform_device_put(wm->touch_dev);
+-touch_err:
+-	input_unregister_device(wm->input_dev);
+-	wm->input_dev = NULL;
+ 
+ 	return ret;
+ }
+@@ -639,8 +635,6 @@ static int wm97xx_register_touch(struct wm97xx *wm)
+ static void wm97xx_unregister_touch(struct wm97xx *wm)
+ {
+ 	platform_device_unregister(wm->touch_dev);
+-	input_unregister_device(wm->input_dev);
+-	wm->input_dev = NULL;
+ }
+ 
+ static int _wm97xx_probe(struct wm97xx *wm)
+-- 
+2.32.0
 
