@@ -2,67 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26BE4C4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jan 2022 15:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1660DC43217
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jan 2022 16:14:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379843AbiAaPt3 (ORCPT
+        id S1380104AbiAaQOf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Jan 2022 10:49:29 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:45876 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241992AbiAaPt2 (ORCPT
+        Mon, 31 Jan 2022 11:14:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60980 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1380125AbiAaQOS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Jan 2022 10:49:28 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 42B4461463;
-        Mon, 31 Jan 2022 15:49:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9529C340E8;
-        Mon, 31 Jan 2022 15:49:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643644167;
-        bh=RfzxGIAeIl9NFVKKuAGZG8H+QSlcGmJPcZgA7EV8CbY=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=tFoIX7sRZRLWnUdCKbZG0GPzcrBewtNA6uZGA9mlHt56/KG1sWli7EvjxYA12PWAS
-         XAsFDMnNIVfujCt/fgfzGGw5eXLYrg2+CPZ8pFFzxzRrGvJMdb53DtTTDysHdXHQNg
-         XRVgdJdlGLmPhibyOoIKLDo9BNs0NHNjKgUInCj6F6QuCoNwrCItRXsK+tXZ0c9qI3
-         yf/cuEICJrhtT/4mDunelqTs8eHQ8pmFuaekrXQXX1bHhftpR2XWWDGcSKc9RO/tWz
-         R0QchJxu8rfnTSQaAszaT0ccLdJWr5K/gYqy1XQaOIoRsqns7irC9mHjp4ru4gaIzp
-         XFMa+bjilsGsg==
-Content-Type: text/plain; charset="utf-8"
+        Mon, 31 Jan 2022 11:14:18 -0500
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B8C7C06173E;
+        Mon, 31 Jan 2022 08:14:14 -0800 (PST)
+Received: by mail-pl1-x62e.google.com with SMTP id c3so12769691pls.5;
+        Mon, 31 Jan 2022 08:14:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=/pdltBI+iiGeQ5gA5f30zIEh19HygeH9zPLuWiWvMYQ=;
+        b=hMCRiA3Ypccpm1omtUm1SKb0pg6mhtSck6YQpU3BXGcopcjYu4+UcFrhhHCzbG9Ej9
+         b9RO8SXkEaltRLYWHr+NG5KBfeTLHb7sj0sU/j//BOa53i4PifpAuIXqf9GJ7395biD5
+         rcgJ5dnFsLLXFd+hjx33NM79aGFTWjGjA5ZQoVGQSyCVgDhvXIpu+DPMvX1f8xq+faaV
+         KwCuHp0h1hggK/FeVoXQE6CiS6hSie/rTda5HN8H5zbUOEgFwo8h39Ynd4mZe5qDRjy2
+         oCv+6pEMyPH00nAyemaNrOyVAZ9YK6B8fhZhavHaflGlepWFIiU39YHHgkiUBSWKxhCK
+         Z1zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/pdltBI+iiGeQ5gA5f30zIEh19HygeH9zPLuWiWvMYQ=;
+        b=VSh8y8i6HmwvGpLOkou34npmp5XvY68PUGIiSYR2WnvV6OQIkWIAlBQOjB8eRxGYOI
+         6EnQ8/uS7uVjeZIZxij42qI63lDZW93hhubSGCta0p3jC74K34+Cq43lydUP5H4Px0TW
+         472e+X/2hA3EM4q1snVZgVWXA5++HYwmoU0DOGFY8/eMn11GSUCyDSu9v8+32LUIYLq0
+         vZECUnua2wyIzOcmJD8UDSLda/d1AL/6eGI+E5BUPbY53nGdBxuNcfqw6Bwnx7hbnLTE
+         hHE3qRkPt4oY2MCiVMjt4Kd3VIRTDK6rH1DWxJSBAJ2cZniscF207MS5aNvizyzXiCFe
+         RsDQ==
+X-Gm-Message-State: AOAM530TwVNrXcyDSy2I3nkpXF3trGLhcPJt5vwbZ08lnRilvqRm39k9
+        ROcencBuwBYnZ7geH04srIE=
+X-Google-Smtp-Source: ABdhPJxH23jNKrR3GSuqq3WTLpUnzOJ3BOcW6Gf9gby0rv87tmtdNi4iF48J2d83ZzhTJyt7SAHuCg==
+X-Received: by 2002:a17:90b:1e41:: with SMTP id pi1mr24736555pjb.62.1643645653725;
+        Mon, 31 Jan 2022 08:14:13 -0800 (PST)
+Received: from google.com ([2620:15c:202:201:6213:1c4:865f:204c])
+        by smtp.gmail.com with ESMTPSA id lt17sm11335673pjb.41.2022.01.31.08.14.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Jan 2022 08:14:12 -0800 (PST)
+Date:   Mon, 31 Jan 2022 08:14:09 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Sachin Kamat <sachin.kamat@linaro.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-input@vger.kernel.org
+Subject: Re: [PATCH] Input: samsung-keypad - Simplify resource management
+Message-ID: <YfgK0RPYbXSJ8fJ9@google.com>
+References: <8877b9db412fbeb3b43ba4a3ff6c4b39a5440c70.1643530436.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] cw1200: wsm: make array queue_id_to_wmm_aci static const
-From:   Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20220109230921.58766-1-colin.i.king@gmail.com>
-References: <20220109230921.58766-1-colin.i.king@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Solomon Peachy <pizza@shaftnet.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <164364416428.21641.10643273039618096010.kvalo@kernel.org>
-Date:   Mon, 31 Jan 2022 15:49:25 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8877b9db412fbeb3b43ba4a3ff6c4b39a5440c70.1643530436.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Colin Ian King <colin.i.king@gmail.com> wrote:
+Hi Christophe,
 
-> Don't populate the read-only array queue_id_to_wmm_aci on the stack
-> but instead make it static. Also makes the object code a little smaller.
+On Sun, Jan 30, 2022 at 09:14:08AM +0100, Christophe JAILLET wrote:
+> Since the commit in the Fixes tag below, 'keypad->input_dev' is a managed
+> resource that doesn't need to be explicitly unregistered or freed (see
+> devm_input_allocate_device() documentation)
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> So, remove some unless line of code to slightly simplify it.
+> 
+> Fixes: a57da3479545 ("Input: samsung-keypad - switch to using managed resources")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only
+> ---
+>  drivers/input/keyboard/samsung-keypad.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/input/keyboard/samsung-keypad.c b/drivers/input/keyboard/samsung-keypad.c
+> index df0258dcf89e..b6c3c6399b2e 100644
+> --- a/drivers/input/keyboard/samsung-keypad.c
+> +++ b/drivers/input/keyboard/samsung-keypad.c
+> @@ -451,8 +451,6 @@ static int samsung_keypad_remove(struct platform_device *pdev)
+>  
+>  	pm_runtime_disable(&pdev->dev);
+>  
+> -	input_unregister_device(keypad->input_dev);
+> -
 
-Patch applied to wireless-next.git, thanks.
+This is wrong; the order of operations is important and you do not want
+to call clk_enable/disable on an unprepared clock.
 
-fe683faecc7a cw1200: wsm: make array queue_id_to_wmm_aci static const
+If you want to do this you need to also replace clk_prepare/unprepare
+with devm_ variant.
+
+>  	clk_unprepare(keypad->clk);
+>  
+>  	return 0;
+> -- 
+> 2.32.0
+> 
+
+Thanks.
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20220109230921.58766-1-colin.i.king@gmail.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Dmitry
