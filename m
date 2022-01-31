@@ -2,112 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 351D9C4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jan 2022 11:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12BF7C4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jan 2022 11:46:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359353AbiAaLqp (ORCPT
+        id S1351385AbiAaLqu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Jan 2022 06:46:45 -0500
-Received: from mga02.intel.com ([134.134.136.20]:11337 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1377892AbiAaLdm (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Jan 2022 06:33:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1643628823; x=1675164823;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=r2zU0vRwxWHr5Wrk87f5nIJZlDMOAovObT6GySVXQkE=;
-  b=L/TEpVI5BkG6uR/p3qgeKg8ejxmzYMwvpxVlyTS3CPlgcNskBJb9g5RM
-   CeyRTaqO+/uU2zGXlSDefVjVy8ZP6Sw77156n0TMeIwnA61APEkh+Qt3p
-   08Wac65qlPs7FytEIhvg5cyrGg55v+iRG5ThlrHoNhZDaG/SzUP1DBEJr
-   6c1IJYs/79eebt09fysZc9rApBqLjv/lhCFUO5uS/HHop9IZJd+w2flVn
-   t7zvPDDVOe/MUjfsGpi1Zk5AJGLkY8Ayo/kNQQcNMcRUJbpP+D495EELn
-   m79KuzoghM/2AErIOtAixfSNfqOhGRq/RBKqPlym+ru6wUrbH+9e4UCTX
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10243"; a="234832591"
-X-IronPort-AV: E=Sophos;i="5.88,330,1635231600"; 
-   d="scan'208";a="234832591"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2022 03:25:30 -0800
-X-IronPort-AV: E=Sophos;i="5.88,330,1635231600"; 
-   d="scan'208";a="629991075"
-Received: from smile.fi.intel.com ([10.237.72.61])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2022 03:25:28 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1nEUnJ-00GqaD-2Z;
-        Mon, 31 Jan 2022 13:24:25 +0200
-Date:   Mon, 31 Jan 2022 13:24:24 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH] surface: surface3-wmi: Simplify resource management
-Message-ID: <YffG6JKmGCS1/h08@smile.fi.intel.com>
-References: <8b1a6d05036d5d9527241b2345482b369331ce5c.1643531799.git.christophe.jaillet@wanadoo.fr>
+        Mon, 31 Jan 2022 06:46:50 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:52208 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1377972AbiAaLkQ (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 31 Jan 2022 06:40:16 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 73E82B82A8F;
+        Mon, 31 Jan 2022 11:40:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2490BC36AE7;
+        Mon, 31 Jan 2022 11:40:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643629211;
+        bh=Zas3iMSEXsI9ThkZ6FbV3DG8f3yfiG2CrFJ2C+Ok5tE=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=I3kPkVhnZt/OqHH3Sdz0BahS4BlFWX7gcTBmQr/6uCONkuEHAXAuEmr91mDunFuKh
+         OZv/jOI7MaT4GZ0Vf2TPHrb7nnHiFpc1QZPs9Zyiq/mVXGyrSgN2/M8qTXubn9Kax6
+         LlpAczO6o03pooHrYACLMq6qCRv4uKgumpCvSXiEvebCmAsmbBrGNAUMLVPaXE7k8P
+         jQlH4ON+UKhawOuh8O8s0Nra7sYuz7il6bA7Ux0Jr4iQ7ts6mpZvm51TBIuQMjh7zw
+         Pc7mlo0JkzL3ERxGwwAzMI9U1s6kWhRuUfsZu9/TozVgrlw3MSZpBUlrPJkJ7/tJ7a
+         OO1Vllv7ELBqA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0614EE6BBCA;
+        Mon, 31 Jan 2022 11:40:11 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8b1a6d05036d5d9527241b2345482b369331ce5c.1643531799.git.christophe.jaillet@wanadoo.fr>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net/fsl: xgmac_mdio: fix return value check in
+ xgmac_mdio_probe()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164362921102.6327.11411849430767861808.git-patchwork-notify@kernel.org>
+Date:   Mon, 31 Jan 2022 11:40:11 +0000
+References: <20220129012702.3220704-1-weiyongjun1@huawei.com>
+In-Reply-To: <20220129012702.3220704-1-weiyongjun1@huawei.com>
+To:     weiyongjun (A) <weiyongjun1@huawei.com>
+Cc:     davem@davemloft.net, kuba@kernel.org, andrew@lunn.ch,
+        tobias@waldekranz.com, mw@semihalf.com, calvin.johnson@oss.nxp.com,
+        markus@notsyncing.net, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, hulkci@huawei.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Jan 30, 2022 at 09:36:54AM +0100, Christophe JAILLET wrote:
-> 's3_wmi.input' is a managed resource, so there should be no need to free it
-> explicitly.
-> 
-> Moreover, 's3_wmi' is a global variable. 's3_wmi.input' should be NULL
-> when this error handling path is executed, because it has not been
-> assigned yet.
-> 
-> All this is puzzling. So simplify it and remove a few lines of code to have
-> it be more straightforward.
+Hello:
 
+This patch was applied to netdev/net-next.git (master)
+by David S. Miller <davem@davemloft.net>:
 
-Seems correct cleanup / fix to me
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-> Fixes: 3dda3b3798f9 ("platform/x86: Add custom surface3 platform device for controlling LID")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only
-> ---
->  drivers/platform/surface/surface3-wmi.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+On Sat, 29 Jan 2022 01:27:02 +0000 you wrote:
+> In case of error, the function devm_ioremap() returns NULL pointer
+> not ERR_PTR(). The IS_ERR() test in the return value check should
+> be replaced with NULL test.
 > 
-> diff --git a/drivers/platform/surface/surface3-wmi.c b/drivers/platform/surface/surface3-wmi.c
-> index 09ac9cfc40d8..b9a4b2d81f4b 100644
-> --- a/drivers/platform/surface/surface3-wmi.c
-> +++ b/drivers/platform/surface/surface3-wmi.c
-> @@ -190,14 +190,11 @@ static int s3_wmi_create_and_register_input(struct platform_device *pdev)
->  
->  	error = input_register_device(input);
->  	if (error)
-> -		goto out_err;
-> +		return error;
->  
->  	s3_wmi.input = input;
->  
->  	return 0;
-> - out_err:
-> -	input_free_device(s3_wmi.input);
-> -	return error;
->  }
->  
->  static int __init s3_wmi_probe(struct platform_device *pdev)
-> -- 
-> 2.32.0
+> Fixes: 1d14eb15dc2c ("net/fsl: xgmac_mdio: Use managed device resources")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 > 
+> [...]
 
+Here is the summary with links:
+  - [net-next] net/fsl: xgmac_mdio: fix return value check in xgmac_mdio_probe()
+    https://git.kernel.org/netdev/net-next/c/cc4598cf179f
+
+You are awesome, thank you!
 -- 
-With Best Regards,
-Andy Shevchenko
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
