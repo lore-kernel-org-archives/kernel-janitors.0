@@ -2,116 +2,197 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F3ECC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jan 2022 16:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE410C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jan 2022 17:56:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380324AbiAaQ0q (ORCPT
+        id S1352535AbiAaR42 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Jan 2022 11:26:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35738 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380308AbiAaQ0m (ORCPT
+        Mon, 31 Jan 2022 12:56:28 -0500
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:29766 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240641AbiAaR41 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Jan 2022 11:26:42 -0500
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A34E9C06173B
-        for <kernel-janitors@vger.kernel.org>; Mon, 31 Jan 2022 08:26:41 -0800 (PST)
-Received: by mail-pg1-x531.google.com with SMTP id 133so12732867pgb.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 31 Jan 2022 08:26:41 -0800 (PST)
+        Mon, 31 Jan 2022 12:56:27 -0500
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20VFx58m010602;
+        Mon, 31 Jan 2022 17:56:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2021-07-09;
+ bh=iKg4aVr3KGg6kbIgIC/ogT2CeRRwdHRvqxA2vWA1JJQ=;
+ b=d6WX/sbjmKGOEfodi5RgursaH4fLzQeuTft/DHgnN7flqW2vM0WFT4yqdnOTH/Eqwgdz
+ vhJw2aNMeXlTpJ/HUcfQQwc//khC8bJ4NY+ZugSUXtMX70c2eKYlIB4LXhBp0HuUJ2sM
+ mJLzb3Hv8wPPauKRdpQnNQ/lRmNxcfk6lzx9e3dVgZMNobYcF1JYybmzPjSHdpbSM4q/
+ eyZEyLtEZG8jRonUgamDNQVX18tMVTkUBoeXFYwwE2GbnGiEL8Xs8fTZqXAUjHadmIzM
+ IR7n8niTpDK9m3TrPWRqPQc/FWGjalEXBU3yT7r5n/JQr5VuvEVqoui8xNJYuJAeE1L8 0A== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3dxjatrjrw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 31 Jan 2022 17:56:14 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 20VHoE3Z009289;
+        Mon, 31 Jan 2022 17:56:13 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2174.outbound.protection.outlook.com [104.47.57.174])
+        by userp3020.oracle.com with ESMTP id 3dvy1n74pq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 31 Jan 2022 17:56:13 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mFJjH7mbt0PyjMm4bdXSUx/Wm351bch84lGDjGsQZGs0/FzHN9okK07GBn/DRlP8HJTjkWndSpQJ60IkScOdsWvrvKfvwlw6TeFQmtzDbm29jTyPXIqLv0a55+WeHrDm2f/ic4qhUcbB09BNxm06cswoWLa5TWMFX2Fr/XVZleRc04rQNZG5cpYpDFCsKdIdATHmTb4/FktIdga0JBbQWRvzqqJEmtjLNzikuj48zKOn90brX+zJ9nD5ob1YURi0ZNs6K/2w79ygm8bMD9ZWpIqh1Q1zqSiQqiwItAaBYU27gofY8EBpSM//Cb1OyxeaC482i+vLArg+7L9ZlYQ/HQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iKg4aVr3KGg6kbIgIC/ogT2CeRRwdHRvqxA2vWA1JJQ=;
+ b=E4eTubyC0tkqM/cGWFwo5ynVXbxy/Ui6yiFoAnmC7IVwfoOkqfOYYUkqVbGEqdtWNcCe6tOnFZEm7aNq2JbPNX6LWD0d5RR0ov7KKmbsY5wF/qq06fqFsaoGco+fc7TKRwr9NKnvRUFxLPtgiagFHod6TaSyok9Tbr/C2MDGJFGvDi0d210/l+B/gQhSg53MhRmsEJDugbAu4ZtSp+vKoDSbNV+fz/1z/pq9Kqf0JSql71n/KgdDu7rz9XXTdpR4t6sDiKrUtYnk3lwi8ULdGLvWAaSlTvfTV+dFlJ0Hs8Z1bTS7TnPbgOqYekI7YzhMaPvVbPUAVAN8ncAPeTzyJA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cXgpXNmpURYuKO5hFXomyVO5gSKNrTXbh1rD4OzUpXg=;
-        b=WR1c+rZqvGGeYSIO6gzOcCW1QC9dPCVdFWw/OeifVZiQihnPygq/QdXzuViZ9SjphP
-         ayzUaWkLGwzDG4Xsge/K+PoDGxJiL1fTn8t/T5alQQYGbtr9FbCKoQYdPTPTAKoDAqvj
-         qwxu29KzmhcPfmcGid0kH50kWRV7OjH2pkxpbZpJUlldIKhYyNtY2LhMbyFaHT42ZoOu
-         OasYPUbcQuUdTH12mC2b6ZjJtt/eLtFk16st4bwPHmOOqg1vK9C2vNZw9XWNIuLy71FB
-         Rlgj9qfzTjR4Th548pf2sEQQGJld0nPufqxTkBZUwMhezj0nXWLsjGK2YoAuSuxoPTKh
-         +lJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cXgpXNmpURYuKO5hFXomyVO5gSKNrTXbh1rD4OzUpXg=;
-        b=YEGLdYpoGJf7U8HDL0CXSf2mDMRxJbQay3gKPUlTso9J19tWZsM/KuoInY+MDZlgfB
-         0ObdHnFhhBVpw24XRWKmNN/RVXCClbXPndc5stPNDEX895UvVNYzuyfx7pGW0AvwWe90
-         jXebEnG0aCb6tNmHzjDw5dloIrNSxDVajemxCKXtJsF0rLtNwC0rkPj4a0aS71VP7yeI
-         iaiEDJyWlHE2IMim9cKWaTbKAGqNCCelfZC67eodjk7VtlIOIvbyOb9+ZS0tU6+B5B7v
-         DQypWZljwfkUACBKkwP7w94smgFjYGhpH2rAUhbj4Yu2qydR6h02w3SLWJ9m/yoq6RbM
-         0zMg==
-X-Gm-Message-State: AOAM533/I7EJxAOrOuwPd6T/b08yIrvkzyX+/ZZkHXkWGrUqPLb6TI1P
-        7cZIKqhyQl83JhHZxjM4AXmrG8sSl6zQ9Me6uQlesw==
-X-Google-Smtp-Source: ABdhPJyul35EmKETJMvyOwoqTDyNw60O6aZw61+KCHfRM3+oym7Fio60R+RndTgIhPeuZtvYj2RPvrUYpe+m2VVADs8=
-X-Received: by 2002:a63:4a49:: with SMTP id j9mr17048783pgl.178.1643646401132;
- Mon, 31 Jan 2022 08:26:41 -0800 (PST)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iKg4aVr3KGg6kbIgIC/ogT2CeRRwdHRvqxA2vWA1JJQ=;
+ b=LFqVAm37ca9MigfvpeRANq8jMQ+IrOPcsVF92jn8Ml+JCc79WHaz+HVvklRX1jzyfFGVFqVmbeKkoDQpNxBxBUPc79vJoL8wx6N86Or2yzgE+XwY2ny7ZJwyNmHWw+KleKmmv/WIPIC0I9F5H9vONvIMFmLo5VZmW1knalcoFhQ=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by CH0PR10MB5323.namprd10.prod.outlook.com
+ (2603:10b6:610:c6::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4930.17; Mon, 31 Jan
+ 2022 17:56:09 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::e5a5:8f49:7ec4:b7b8]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::e5a5:8f49:7ec4:b7b8%5]) with mapi id 15.20.4930.021; Mon, 31 Jan 2022
+ 17:56:09 +0000
+Date:   Mon, 31 Jan 2022 20:55:46 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        kernel@collabora.com, kernel-janitors@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: visconti: Remove dead code
+Message-ID: <20220131175546.GO1951@kadam>
+References: <20220128163527.1587325-1-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220128163527.1587325-1-usama.anjum@collabora.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: JNXP275CA0021.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:19::33)
+ To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-References: <9c20eb74d42f6d4128e58e3e46aa320482472b77.1643468761.git.christophe.jaillet@wanadoo.fr>
- <CAG3jFytrA4D2-JrABb+iG2kFQHVB5-_UQWoQyFJ3R=rfarre-A@mail.gmail.com>
-In-Reply-To: <CAG3jFytrA4D2-JrABb+iG2kFQHVB5-_UQWoQyFJ3R=rfarre-A@mail.gmail.com>
-From:   Robert Foss <robert.foss@linaro.org>
-Date:   Mon, 31 Jan 2022 17:26:30 +0100
-Message-ID: <CAG3jFys5GLKpLFfeVUg-cJaY2j17Z=4c4M+QYiS6M=+b=YH=Ag@mail.gmail.com>
-Subject: Re: [PATCH] drm/bridge: lt9611: Fix an error handling path in lt9611_probe()
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 15738a2c-38ef-4145-8b9c-08d9e4e2f605
+X-MS-TrafficTypeDiagnostic: CH0PR10MB5323:EE_
+X-Microsoft-Antispam-PRVS: <CH0PR10MB5323795941DB237B8E9F4C2A8E259@CH0PR10MB5323.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: J1hTSUugPYeCw6IxrEBvgt3X3Zwn9htae26DpJ2MVZj8aCY4X15Z47hOqn31o7m25pCAtMRM1Ak7Xvya1Qp4Lv2S2it6Wv0C/6MzEpzuYeBlboo9Q62L10Xj6Y1KTseJ+1VhQnyM7Va9ZkaF1WoF8bAgbR8U74vLICWUcmhW5DhJAb5AwBhODovi4/5pdqjfuyBqI6uO2/Hgt/tr6UaCHfaiiEWVzC39CGvfS6OdXtbm8K/4V8h8B163Hegai0kbTD4PDh68qrv9oXqxWLVUDozPq+YBsJlFdTgWlUF68E+EYNkttGKtanKX9buTN9FxXQq6k2yC+YiNjzHy71oNbNLQwd2wfkArTtf50CLCFsnrMOV5W/0TYxyby6uSfc9GPM+d5hf7jNPOaYXooes8PTCMt7p9ciCYEDDvV3nm6ali+plPtrUPpttYOYIFNiE9HDZd8Z9X0r+137vgdgBFG9jhTto9a+ycMvOmf84TMnbbkDbRO9LqUV3VN6CQtMNkwqzK1uPio58m/B+MFz4WfeNp9K/iL6N3Aq3S8zey5mcjRmGES1v28P2RgyR0HZSzKDOf+fTX9MLvZkZejnV63dDgd7r3e1pKvO6Rz0SGsss8/eB0P13bt2Gp1/s6fdnK5jijwEo3Ou99yu40d98m0X8x5MbGzKrM+wauvoLxj0VCUN2O3M5HwDatxA33ySCaS6DaNR2b7xuPBa9kEt/0XQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(366004)(66476007)(6916009)(66946007)(2906002)(66556008)(54906003)(4326008)(8676002)(8936002)(33656002)(5660300002)(508600001)(38100700002)(6666004)(26005)(1076003)(186003)(38350700002)(6486002)(33716001)(316002)(83380400001)(44832011)(9686003)(86362001)(52116002)(6506007)(6512007)(20210929001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?rwsdFT0mLMSlXMS1vw88BpqVfiwSzeXjYm1BvjxiZZ5Sjf9LFzn1vuz/tsSZ?=
+ =?us-ascii?Q?S7DfM4da6dwqPfghhtIwkFPLMWNqJ7h3aYBQaZCJnAJWBzkFleUsOHPCBHYP?=
+ =?us-ascii?Q?8Jz6I8/cbjW+ZaLgyvYAUXmz4+fxn9fYmqnj4HIXGFUOcKpIP/IzDDI59JYK?=
+ =?us-ascii?Q?W4HGfq7cRNNuuCx72xnX3s8aZduNBz0TyqKqSfjoB5TxEbfvCLCLPfkGBtxI?=
+ =?us-ascii?Q?v/sjkV6G48VGgrr8z0wYj/E+U3XHjUGezxffUlKcrc6CofmUtyBxhllSk6HD?=
+ =?us-ascii?Q?XgShXMuRw+taarm3BYA+tTFhodYYk9//fZPh8s717OxfNXI0O3EXvPDVVUoT?=
+ =?us-ascii?Q?IfCXdJgDckFpRuVAr7J/yH2ignPCDAZ3lpCCfDIbehW7XwpZGekTZ39UW5Y+?=
+ =?us-ascii?Q?jdZq7iu8jp0pd+qEKULza7Y+Zw7G/NhLCYJzwTLcVeg+EX/SuMOV2Swxsnt8?=
+ =?us-ascii?Q?hcA7qZSsFj2hoW35BDuMZqWr5CkmB0l+YQgRe3kgXi5dRyPYaRBzCbVkKYlt?=
+ =?us-ascii?Q?c/ymi6b3gWSM2hF4nUNSrqgaHEHmGg0TeUQrzZVJXWktxHbNL1cRcTTZxUe3?=
+ =?us-ascii?Q?vIql6EuNCUjlYCpUzakeSzGKckTWFzl0n/S6u17YW745Q1YvgwTk6/6lE0r0?=
+ =?us-ascii?Q?sTxhCuWo49stKTKF2zasQlT4naSlBdzRD8H2IqDQ82dGAHTNQjFLuEOyhY/I?=
+ =?us-ascii?Q?ytp9DOTmrlgCBF+P0gOD+OlHXuc3B5MfC1IaPFEg8Pk0NPWb6kGrz6pfdxPQ?=
+ =?us-ascii?Q?77mxG0PAQSdgd1QEarB7O0MmxuaM7BpTPV2DmQV1nCxvEEtxVhNe2GngYnzd?=
+ =?us-ascii?Q?FT/SrlKccNqIO4BzJeRMm1agvA+QZ3LwLcfUB7Aokj6kJqZ+O335ndxSiZwg?=
+ =?us-ascii?Q?tKKSv6L1lzSqUEYaa/MDt5GZI2ZYKSaRTSzW3T1kobkRzV/8XMRkaAg0I9W4?=
+ =?us-ascii?Q?rSfRj0yjQOOg8f1szJPgrv74BHy5lVbbj3QG8IgKy8dzgC3LpjfVbdfgDqYe?=
+ =?us-ascii?Q?8oAMzZjZkt4GdGBjHdwAba4oqp9eByic6SatPdLdTmKvlO77vfQ5MssuXKOo?=
+ =?us-ascii?Q?Lo/edaMNqDZuylGoH4h+CJ4xA7ov0eCpixIrQ4ihgsilcQCeqPI0wFXtOjjC?=
+ =?us-ascii?Q?300XEfTWkiWQ02SpRoT945iVlumLFrjNM4IrFd4CIqaJgGCi9tQm6BAlFYz8?=
+ =?us-ascii?Q?AAwfJU8FyoI7O1X6yjPqlgd2Y50yWoF1mVuURe6tIZnJ+YA6g9gTo3JLWJVa?=
+ =?us-ascii?Q?Iu86Cu2NSth8Wql4L3N5lfVQz3Jr61Mfz5jpvfM165AIEwlyS8r87jBd8cj8?=
+ =?us-ascii?Q?bFSIOMPju+/ZgLwGlteqnUyS6xt6ssErQtDCaVH48WQKYVmWF2PeMp1G9LBL?=
+ =?us-ascii?Q?rjYKjD+K5O5DRQXKT+t5nPrVXPqPVJpvzvTYY2HxSK9Vk2nDPMxMCQnBSZEI?=
+ =?us-ascii?Q?2ZteJ7dTamNMtm0DH5UFtcTYRpMVuAPNfToTZ+gYt3IgSkIEPpTzspTKzbgm?=
+ =?us-ascii?Q?mrQ/MQND09XCdbKo+QkDlH/X/k4uA1u/G2Yktlku+rlWkVUPp+H/PwbnKcqP?=
+ =?us-ascii?Q?ZLc4y7gMewqY8bF7QRJAniitZhnGKdYFy3gY2KsZnjXBKGiQ0DDNWhvP6gAy?=
+ =?us-ascii?Q?w+DA1BbkCYFZDDEjTkwoM2UQZ1LQjJqMgDT451gFIn8G6bEPyJ0kALsXvSug?=
+ =?us-ascii?Q?6d0h6MI9ur+hFSMAdS8RZIM4PXM=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15738a2c-38ef-4145-8b9c-08d9e4e2f605
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jan 2022 17:56:09.3123
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1Rv1mVX/q02nXKHuIIgHTYGx/GgFM/uaSPQvCVq6EuU5yQZF9Nr6rGgFAKsSUddGC4eGb5kbGq+GXldK3iWWDB9xWvqHVfOfhh+19Ee2BQ8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5323
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10244 signatures=673430
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0 spamscore=0
+ bulkscore=0 adultscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2201110000
+ definitions=main-2201310116
+X-Proofpoint-GUID: Q4ANAYJBJg4tWM6jwcGr0iWm8FVKRdPs
+X-Proofpoint-ORIG-GUID: Q4ANAYJBJg4tWM6jwcGr0iWm8FVKRdPs
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 31 Jan 2022 at 17:25, Robert Foss <robert.foss@linaro.org> wrote:
->
-> Hey Christophe,
->
-> Thanks for submitting this fix.
->
-> On Sat, 29 Jan 2022 at 16:06, Christophe JAILLET
-> <christophe.jaillet@wanadoo.fr> wrote:
-> >
-> > If lt9611_audio_init() fails, some resources still need to be released
-> > before returning an error code.
-> >
-> > Add the missing goto the error handling path.
-> >
-> > Fixes: 23278bf54afe ("drm/bridge: Introduce LT9611 DSI to HDMI bridge")
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> >  drivers/gpu/drm/bridge/lontium-lt9611.c | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/bridge/lontium-lt9611.c b/drivers/gpu/drm/bridge/lontium-lt9611.c
-> > index dafb1b47c15f..00597eb54661 100644
-> > --- a/drivers/gpu/drm/bridge/lontium-lt9611.c
-> > +++ b/drivers/gpu/drm/bridge/lontium-lt9611.c
-> > @@ -1164,7 +1164,11 @@ static int lt9611_probe(struct i2c_client *client,
-> >
-> >         lt9611_enable_hpd_interrupts(lt9611);
-> >
-> > -       return lt9611_audio_init(dev, lt9611);
-> > +       ret = lt9611_audio_init(dev, lt9611);
-> > +       if (ret)
-> > +               goto err_remove_bridge;
-> > +
-> > +       return 0;
-> >
-> >  err_remove_bridge:
-> >         drm_bridge_remove(&lt9611->bridge);
-> > --
-> > 2.32.0
-> >
->
-> Reviewed-by: Robert Foss <robert.foss@linaro.org>
+On Fri, Jan 28, 2022 at 09:35:27PM +0500, Muhammad Usama Anjum wrote:
+> rs_id is of unsigned type, u8. The condition rs_id >= 0 will always be
+> true. Remove the if-else condition and the dead code.
+> 
 
-Applied to drm-misc-next.
+No, this isn't the right fix.
+
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+>  drivers/clk/visconti/clkc.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/clk/visconti/clkc.c b/drivers/clk/visconti/clkc.c
+> index 56a8a4ffebca8..5ccf771d05985 100644
+> --- a/drivers/clk/visconti/clkc.c
+> +++ b/drivers/clk/visconti/clkc.c
+> @@ -147,13 +147,9 @@ int visconti_clk_register_gates(struct visconti_clk_provider *ctx,
+>  		if (!dev_name)
+>  			return -ENOMEM;
+>  
+> -		if (clks[i].rs_id >= 0) {
+> -			rson_offset = reset[clks[i].rs_id].rson_offset;
+> -			rsoff_offset = reset[clks[i].rs_id].rsoff_offset;
+> -			rs_idx = reset[clks[i].rs_id].rs_idx;
+> -		} else {
+> -			rson_offset = rsoff_offset = rs_idx = -1;
+> -		}
+> +		rson_offset = reset[clks[i].rs_id].rson_offset;
+> +		rsoff_offset = reset[clks[i].rs_id].rsoff_offset;
+> +		rs_idx = reset[clks[i].rs_id].rs_idx;
+
+With Smatch you can type:
+
+$ smdb.py where visconti_clk_gate_table rs_id
+drivers/clk/visconti/clkc-tmpv770x.c | (null)                         | (struct visconti_clk_gate_table)->rs_id | 0-31,255
+
+That tells you it is assigned 255 as a global in drivers/clk/visconti/clkc-tmpv770x.c
+It takes some digging to find that assignment...
+
+drivers/clk/visconti/clkc-tmpv770x.c
+   175                /* PISYSTEM */
+   176                { TMPV770X_CLK_WRCK, "wrck",
+   177                        clks_parent_data, ARRAY_SIZE(clks_parent_data),
+   178                        0, 0x68, 0x168, 9, 32,
+   179                        -1, }, /* No reset */
+                              ^^
+Really, that -1 there should generate a static checker warning but it
+doesn't on Smatch...  :/
+
+But the probably the correct fix is to make rs_id and related variables
+and int instead of a u8.  I saw this bug but just reported it instead of
+fixing it.
+
+regards,
+dan carpenter
+
