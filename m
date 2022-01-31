@@ -2,87 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE0FCC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jan 2022 15:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26BE4C4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jan 2022 15:49:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349543AbiAaPTi (ORCPT
+        id S1379843AbiAaPt3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Jan 2022 10:19:38 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:58244 "EHLO
+        Mon, 31 Jan 2022 10:49:29 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:45876 "EHLO
         dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243672AbiAaPTf (ORCPT
+        with ESMTP id S241992AbiAaPt2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Jan 2022 10:19:35 -0500
+        Mon, 31 Jan 2022 10:49:28 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4C8EC6136E;
-        Mon, 31 Jan 2022 15:19:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A771C340E8;
-        Mon, 31 Jan 2022 15:19:32 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 42B4461463;
+        Mon, 31 Jan 2022 15:49:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9529C340E8;
+        Mon, 31 Jan 2022 15:49:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643642374;
-        bh=22wprm+poGEnOpfPLghnWFdYNEbG343GxfTtoARThUs=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=OXn5E61HYagB6ljowhjsk3TIRAmDOT17XEALV2kLpncFwxGPEXZXCewPFh3/qMU+4
-         r+FhSr41z8KOiSa9L9CZyGKIrcJczPo18zXIhN33i3MgxDYD0BrkJwOUovqGMunn6+
-         XPsJXj6BnfGUkfOOcpmotZ4Iv590sJo4FXEJIfWDT06HhbxjzKpdrUZe6IQQ28Yjr1
-         9Dyfrlu4ywQJclZwBCL9uSVmg5XJhV1M/zvXRHcG2XqH9nnn+8VExPkrvy9v47p+EG
-         ACnQhGi00bg95kve4MWIUOLXXxKCGbtfJ5mTOw5Ep/nlGeCsK77X5apGX2DC0wyYGq
-         3I/QfStCBBjXg==
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, patches@opensource.cirrus.com
-In-Reply-To: <87dce7e80ea9b191843fa22415ca3aef5f3cc2e6.1643529968.git.christophe.jaillet@wanadoo.fr>
-References: <87dce7e80ea9b191843fa22415ca3aef5f3cc2e6.1643529968.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] Input: wm97xx: Simplify resource management
-Message-Id: <164364237288.3159052.16795963706278985978.b4-ty@kernel.org>
-Date:   Mon, 31 Jan 2022 15:19:32 +0000
-MIME-Version: 1.0
+        s=k20201202; t=1643644167;
+        bh=RfzxGIAeIl9NFVKKuAGZG8H+QSlcGmJPcZgA7EV8CbY=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=tFoIX7sRZRLWnUdCKbZG0GPzcrBewtNA6uZGA9mlHt56/KG1sWli7EvjxYA12PWAS
+         XAsFDMnNIVfujCt/fgfzGGw5eXLYrg2+CPZ8pFFzxzRrGvJMdb53DtTTDysHdXHQNg
+         XRVgdJdlGLmPhibyOoIKLDo9BNs0NHNjKgUInCj6F6QuCoNwrCItRXsK+tXZ0c9qI3
+         yf/cuEICJrhtT/4mDunelqTs8eHQ8pmFuaekrXQXX1bHhftpR2XWWDGcSKc9RO/tWz
+         R0QchJxu8rfnTSQaAszaT0ccLdJWr5K/gYqy1XQaOIoRsqns7irC9mHjp4ru4gaIzp
+         XFMa+bjilsGsg==
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] cw1200: wsm: make array queue_id_to_wmm_aci static const
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20220109230921.58766-1-colin.i.king@gmail.com>
+References: <20220109230921.58766-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Solomon Peachy <pizza@shaftnet.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <164364416428.21641.10643273039618096010.kvalo@kernel.org>
+Date:   Mon, 31 Jan 2022 15:49:25 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 30 Jan 2022 09:06:36 +0100, Christophe JAILLET wrote:
-> Since the commit in the Fixes tag below, 'wm->input_dev' is a managed
-> resource that doesn't need to be explicitly unregistered or freed (see
-> devm_input_allocate_device() documentation)
+Colin Ian King <colin.i.king@gmail.com> wrote:
+
+> Don't populate the read-only array queue_id_to_wmm_aci on the stack
+> but instead make it static. Also makes the object code a little smaller.
 > 
-> So, remove some unless line of code to slightly simplify it.
-> 
-> 
-> [...]
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Applied to
+Patch applied to wireless-next.git, thanks.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-linus
+fe683faecc7a cw1200: wsm: make array queue_id_to_wmm_aci static const
 
-Thanks!
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20220109230921.58766-1-colin.i.king@gmail.com/
 
-[1/1] Input: wm97xx: Simplify resource management
-      commit: a4f399a1416f645ac701064a55b0cb5203707ac9
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
