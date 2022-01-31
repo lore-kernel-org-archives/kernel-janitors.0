@@ -2,79 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C901C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jan 2022 10:23:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 351D9C4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jan 2022 11:46:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358122AbiAaKXH (ORCPT
+        id S1359353AbiAaLqp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Jan 2022 05:23:07 -0500
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:57566 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1358119AbiAaKXC (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Jan 2022 05:23:02 -0500
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 20V8u3mh010749;
-        Mon, 31 Jan 2022 04:22:50 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=1LxMoGxnvs16zzdk3JQdyN+Uxz944Fqx8Dah0ipLXRo=;
- b=glXKKufiBp/JxUJepJd5gEsY8EHQQAAdeRFhdMZbt12ytRN01tghxWQk92N4o0FKUw39
- tsFUf7YZX0in4aSnoMvREX2TbDKcoTvI4PLbgPY6g0qbr1lmyuZZ3cqzc4OFl+Ccwd6w
- wVtKhed4RcFgOdXlh2VxvqdK5j64nNYMXX2HgijVe5MKUucG0xNux2dICSc/5CW4MVSB
- RMMFmK6vAx75gyq/jlUtDzOoBq+PRiF1isW+MLuDyyCmVLhwy73R3kWqb/vNAc4ranQD
- 4Y1sNTQFmp9c8T4AHg/dVxHLQeiwh8J0GvSnd5s0P39igEaVCLXZyB0CLbg9ZVgAk0/6 Mw== 
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-        by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3dw3v6agwv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Mon, 31 Jan 2022 04:22:50 -0600
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Mon, 31 Jan
- 2022 10:22:48 +0000
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.18 via Frontend
- Transport; Mon, 31 Jan 2022 10:22:48 +0000
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 8944CB0E;
-        Mon, 31 Jan 2022 10:22:48 +0000 (UTC)
-Date:   Mon, 31 Jan 2022 10:22:48 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+        Mon, 31 Jan 2022 06:46:45 -0500
+Received: from mga02.intel.com ([134.134.136.20]:11337 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1377892AbiAaLdm (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Mon, 31 Jan 2022 06:33:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1643628823; x=1675164823;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=r2zU0vRwxWHr5Wrk87f5nIJZlDMOAovObT6GySVXQkE=;
+  b=L/TEpVI5BkG6uR/p3qgeKg8ejxmzYMwvpxVlyTS3CPlgcNskBJb9g5RM
+   CeyRTaqO+/uU2zGXlSDefVjVy8ZP6Sw77156n0TMeIwnA61APEkh+Qt3p
+   08Wac65qlPs7FytEIhvg5cyrGg55v+iRG5ThlrHoNhZDaG/SzUP1DBEJr
+   6c1IJYs/79eebt09fysZc9rApBqLjv/lhCFUO5uS/HHop9IZJd+w2flVn
+   t7zvPDDVOe/MUjfsGpi1Zk5AJGLkY8Ayo/kNQQcNMcRUJbpP+D495EELn
+   m79KuzoghM/2AErIOtAixfSNfqOhGRq/RBKqPlym+ru6wUrbH+9e4UCTX
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10243"; a="234832591"
+X-IronPort-AV: E=Sophos;i="5.88,330,1635231600"; 
+   d="scan'208";a="234832591"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2022 03:25:30 -0800
+X-IronPort-AV: E=Sophos;i="5.88,330,1635231600"; 
+   d="scan'208";a="629991075"
+Received: from smile.fi.intel.com ([10.237.72.61])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2022 03:25:28 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1nEUnJ-00GqaD-2Z;
+        Mon, 31 Jan 2022 13:24:25 +0200
+Date:   Mon, 31 Jan 2022 13:24:24 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-CC:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Mark Brown <broonie@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <patches@opensource.cirrus.com>, <linux-input@vger.kernel.org>
-Subject: Re: [PATCH] Input: wm97xx: Simplify resource management
-Message-ID: <20220131102248.GX18506@ediswmail.ad.cirrus.com>
-References: <87dce7e80ea9b191843fa22415ca3aef5f3cc2e6.1643529968.git.christophe.jaillet@wanadoo.fr>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH] surface: surface3-wmi: Simplify resource management
+Message-ID: <YffG6JKmGCS1/h08@smile.fi.intel.com>
+References: <8b1a6d05036d5d9527241b2345482b369331ce5c.1643531799.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87dce7e80ea9b191843fa22415ca3aef5f3cc2e6.1643529968.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-GUID: Q45GjBQNoz-z6kcUdPSZxz0Ty83Mv4lK
-X-Proofpoint-ORIG-GUID: Q45GjBQNoz-z6kcUdPSZxz0Ty83Mv4lK
-X-Proofpoint-Spam-Reason: safe
+In-Reply-To: <8b1a6d05036d5d9527241b2345482b369331ce5c.1643531799.git.christophe.jaillet@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Jan 30, 2022 at 09:06:36AM +0100, Christophe JAILLET wrote:
-> Since the commit in the Fixes tag below, 'wm->input_dev' is a managed
-> resource that doesn't need to be explicitly unregistered or freed (see
-> devm_input_allocate_device() documentation)
+On Sun, Jan 30, 2022 at 09:36:54AM +0100, Christophe JAILLET wrote:
+> 's3_wmi.input' is a managed resource, so there should be no need to free it
+> explicitly.
 > 
-> So, remove some unless line of code to slightly simplify it.
+> Moreover, 's3_wmi' is a global variable. 's3_wmi.input' should be NULL
+> when this error handling path is executed, because it has not been
+> assigned yet.
 > 
-> Fixes: c72f61e74073 ("Input: wm97xx: split out touchscreen registering")
+> All this is puzzling. So simplify it and remove a few lines of code to have
+> it be more straightforward.
+
+
+Seems correct cleanup / fix to me
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+> Fixes: 3dda3b3798f9 ("platform/x86: Add custom surface3 platform device for controlling LID")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
+> Compile tested only
+> ---
+>  drivers/platform/surface/surface3-wmi.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/platform/surface/surface3-wmi.c b/drivers/platform/surface/surface3-wmi.c
+> index 09ac9cfc40d8..b9a4b2d81f4b 100644
+> --- a/drivers/platform/surface/surface3-wmi.c
+> +++ b/drivers/platform/surface/surface3-wmi.c
+> @@ -190,14 +190,11 @@ static int s3_wmi_create_and_register_input(struct platform_device *pdev)
+>  
+>  	error = input_register_device(input);
+>  	if (error)
+> -		goto out_err;
+> +		return error;
+>  
+>  	s3_wmi.input = input;
+>  
+>  	return 0;
+> - out_err:
+> -	input_free_device(s3_wmi.input);
+> -	return error;
+>  }
+>  
+>  static int __init s3_wmi_probe(struct platform_device *pdev)
+> -- 
+> 2.32.0
+> 
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Thanks,
-Charles
+
