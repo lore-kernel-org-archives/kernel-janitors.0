@@ -2,93 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3890DC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jan 2022 08:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C901C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jan 2022 10:23:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345107AbiAaInX (ORCPT
+        id S1358122AbiAaKXH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 31 Jan 2022 03:43:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39698 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344458AbiAaInU (ORCPT
+        Mon, 31 Jan 2022 05:23:07 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:57566 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1358119AbiAaKXC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 31 Jan 2022 03:43:20 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34269C061714;
-        Mon, 31 Jan 2022 00:43:20 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id c190-20020a1c9ac7000000b0035081bc722dso8793510wme.5;
-        Mon, 31 Jan 2022 00:43:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Qi/zABG7gb+Ye7V/MnSI6gU9BC7CUhBAHbHLsfakjjg=;
-        b=ilm+gX1nWIdPMtjzH4LqVjrzofZ696k8Ch3KNgYXZKsWOwDCQliegGhpCKO2KtUlI1
-         w8mEhQFXfpPBy1U8LHO+wUpJ8Kg5aQ0Uz25gOjpOYezx9RU4rRNp6E6LHFZPQHE4ex8E
-         ECSs5dRtIR6oo06ArkejwMwzqFvza6d8gmenHBOQCHYU/+3+Q2frrRXKH820dspOD5yz
-         BQmSm0E/rVkfBXh+5U+UVRqpQdhdIC+VMkPdc9od71bmjUDKEA17RXrshciYIKOAKVYR
-         W9yWnWKJ4GGqzkqVOiW/ShdECI85UdS/7q166dF8//izRTORCSOWNAITEaR0fUHNcx+C
-         BpnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Qi/zABG7gb+Ye7V/MnSI6gU9BC7CUhBAHbHLsfakjjg=;
-        b=qS20DZuZC4a1KV8aqgR6yP19IXv9r/oiOIH0xB5Zf4H6cpVHa9SGdkE372FuwXkoFy
-         tkkWun5d3wSIzS36ijtvVzOrkZYJi7qRHSq3fIepBLpSTHlSPa4Jy0Q/amZCqQNAKrgQ
-         NDtfI69yGNga1HVXz87SvPErq6mtLp7xP9xUkpcFezw7eKnzxC2/6ThB7eu2nf5Ooh2n
-         lxf/LJDm4lDWHB3Xzdeg5IZjoOZvzl5IcvUMdPvtyS0QfSglg8zzgdD/DvxC3rm5TTF/
-         efNwH0cjLHytuQQbCPWecB7uWKEEsCA50wu1q7GGO/zlTnHBxlejqc7VsWm/QINUzdNi
-         x78Q==
-X-Gm-Message-State: AOAM533e6myjUqYaWyJJSs7RKhsRROwlzyDGG191w9PBs50+nfJ6ZXxo
-        BhktLP62dxYdmTOFtwbE9ZQ=
-X-Google-Smtp-Source: ABdhPJzHvE1IQ6rmKoRZ07ClcR/2PZ+8R8gDBkyt60+ezc0zvMeoI+wS/4xKMMpqZzZ70aREXPwukg==
-X-Received: by 2002:a1c:1dd2:: with SMTP id d201mr17530355wmd.141.1643618598742;
-        Mon, 31 Jan 2022 00:43:18 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n15sm13421102wrf.37.2022.01.31.00.43.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Jan 2022 00:43:18 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Saeed Mahameed <saeedm@nvidia.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, Roi Dayan <roid@nvidia.com>,
-        Oz Shlomo <ozsh@nvidia.com>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net/mlx5e: Fix spelling mistake "supoported" -> "supported"
-Date:   Mon, 31 Jan 2022 08:43:17 +0000
-Message-Id: <20220131084317.8058-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Mon, 31 Jan 2022 05:23:02 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 20V8u3mh010749;
+        Mon, 31 Jan 2022 04:22:50 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=1LxMoGxnvs16zzdk3JQdyN+Uxz944Fqx8Dah0ipLXRo=;
+ b=glXKKufiBp/JxUJepJd5gEsY8EHQQAAdeRFhdMZbt12ytRN01tghxWQk92N4o0FKUw39
+ tsFUf7YZX0in4aSnoMvREX2TbDKcoTvI4PLbgPY6g0qbr1lmyuZZ3cqzc4OFl+Ccwd6w
+ wVtKhed4RcFgOdXlh2VxvqdK5j64nNYMXX2HgijVe5MKUucG0xNux2dICSc/5CW4MVSB
+ RMMFmK6vAx75gyq/jlUtDzOoBq+PRiF1isW+MLuDyyCmVLhwy73R3kWqb/vNAc4ranQD
+ 4Y1sNTQFmp9c8T4AHg/dVxHLQeiwh8J0GvSnd5s0P39igEaVCLXZyB0CLbg9ZVgAk0/6 Mw== 
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+        by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3dw3v6agwv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Mon, 31 Jan 2022 04:22:50 -0600
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Mon, 31 Jan
+ 2022 10:22:48 +0000
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.18 via Frontend
+ Transport; Mon, 31 Jan 2022 10:22:48 +0000
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 8944CB0E;
+        Mon, 31 Jan 2022 10:22:48 +0000 (UTC)
+Date:   Mon, 31 Jan 2022 10:22:48 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+CC:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Mark Brown <broonie@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <patches@opensource.cirrus.com>, <linux-input@vger.kernel.org>
+Subject: Re: [PATCH] Input: wm97xx: Simplify resource management
+Message-ID: <20220131102248.GX18506@ediswmail.ad.cirrus.com>
+References: <87dce7e80ea9b191843fa22415ca3aef5f3cc2e6.1643529968.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <87dce7e80ea9b191843fa22415ca3aef5f3cc2e6.1643529968.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-GUID: Q45GjBQNoz-z6kcUdPSZxz0Ty83Mv4lK
+X-Proofpoint-ORIG-GUID: Q45GjBQNoz-z6kcUdPSZxz0Ty83Mv4lK
+X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a NL_SET_ERR_MSG_MOD error
-message.  Fix it.
+On Sun, Jan 30, 2022 at 09:06:36AM +0100, Christophe JAILLET wrote:
+> Since the commit in the Fixes tag below, 'wm->input_dev' is a managed
+> resource that doesn't need to be explicitly unregistered or freed (see
+> devm_input_allocate_device() documentation)
+> 
+> So, remove some unless line of code to slightly simplify it.
+> 
+> Fixes: c72f61e74073 ("Input: wm97xx: split out touchscreen registering")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/ethernet/mellanox/mlx5/core/en/tc/act/ct.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/tc/act/ct.c b/drivers/net/ethernet/mellanox/mlx5/core/en/tc/act/ct.c
-index 85f0cb88127f..9fb1a9a8bc02 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en/tc/act/ct.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en/tc/act/ct.c
-@@ -21,7 +21,7 @@ tc_act_can_offload_ct(struct mlx5e_tc_act_parse_state *parse_state,
- 	}
- 
- 	if (parse_state->ct && !clear_action) {
--		NL_SET_ERR_MSG_MOD(extack, "Multiple CT actions are not supoported");
-+		NL_SET_ERR_MSG_MOD(extack, "Multiple CT actions are not supported");
- 		return false;
- 	}
- 
--- 
-2.34.1
-
+Thanks,
+Charles
