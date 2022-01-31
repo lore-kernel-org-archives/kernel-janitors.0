@@ -2,90 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DABF8C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 30 Jan 2022 23:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C761C433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 31 Jan 2022 02:54:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356805AbiA3X3O (ORCPT
+        id S1357435AbiAaCyM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 30 Jan 2022 18:29:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60652 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229903AbiA3X3N (ORCPT
+        Sun, 30 Jan 2022 21:54:12 -0500
+Received: from rtits2.realtek.com ([211.75.126.72]:43845 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1357428AbiAaCyH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 30 Jan 2022 18:29:13 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54797C061714;
-        Sun, 30 Jan 2022 15:29:13 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id u15so22017085wrt.3;
-        Sun, 30 Jan 2022 15:29:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zLbEQW9WRjfjCOJjcHwjau+rY74wRZCMKsTX1f6w8SU=;
-        b=WcoeXrV34BHPjj4lRvCCPIDlWvkDsD+33H+VXZqK7Z8jZ8ChwCFEcPrIu8RG0UYkm1
-         5KZtv8VbD7JlkSHihpNXk5Mt/EDnL9DIceqmr5Xg0r5uOBn2sn5ku2U31YJb4W9/f8pV
-         oJWD/nnFkbQGgcgCKqXY0mAxr2yYa0Fem8lYg+V+i2IqPCIMT9vntwXf1+yyCUYjgEzO
-         aprDFFudD4bEoOha2u4KEE8fFJbJItnFCFZfVRBgXvA8RuxPqP6OyG27pDvFPfbMjDx4
-         Z5GmYse/Kvc6/GHNv/EjuMNXCkJBVcK/srwWeT6F/wDVqFte5fS/KUN5k5kUa4vSMoTP
-         bVcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zLbEQW9WRjfjCOJjcHwjau+rY74wRZCMKsTX1f6w8SU=;
-        b=5kdPJ5nxvOp/FQ4ACsaeCnpMTqhl848rPpCUpwcnv7Qjy8mjASa7QPr2INDxQ7Fo9Z
-         Z1UmnrsUtbshotLPfCXk1X8oeP+CyFHLcOAhzOOXrjYuJxdcpHMlsoVDlzWzVGd0SbGc
-         EijLV92gL+KlkXllGeiKoUcSOxD4kZilMee2Bk9v1zdj71DiyGyiwnIdby+t8dRLiNyl
-         EmuQsi1Zq2eagex+0kI/kfBE0jmij7aYt35e8JtV81g7tGnrQpM1nAo+NVMhbjAFQTga
-         XF9AkX6xbGN/KZ3haBD3ZOlSffOGbXl/VtPrruJFCYBhEke4PnhFBgxqoC6AzIoSFQ73
-         HZ1g==
-X-Gm-Message-State: AOAM531+4aIM8+8yIOFPQcBNMJ97J/547HUHbZo/IsFPHEVSzf8kiy2U
-        FCDGt01Ei4XXQ3TkWbc9V5BvfGoDE6cDxw==
-X-Google-Smtp-Source: ABdhPJwUjvqkYN2VU4QMMbDI6+PcG9vx8rqmsQs4AgbDXlovRrJ7XEVkQAGvvD8saYv65P4rMAcinQ==
-X-Received: by 2002:a05:6000:170b:: with SMTP id n11mr14927426wrc.156.1643585351320;
-        Sun, 30 Jan 2022 15:29:11 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id 16sm7323377wmj.12.2022.01.30.15.29.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Jan 2022 15:29:10 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Ian Abbott <abbotti@mev.co.uk>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] comedi: remove redundant assignment to variable buffer_config
-Date:   Sun, 30 Jan 2022 23:29:10 +0000
-Message-Id: <20220130232910.9313-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
+        Sun, 30 Jan 2022 21:54:07 -0500
+Authenticated-By: 
+X-SpamFilter-By: ArmorX SpamTrap 5.73 with qID 20V2rf6V3003389, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+        by rtits2.realtek.com.tw (8.15.2/2.71/5.88) with ESMTPS id 20V2rf6V3003389
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Mon, 31 Jan 2022 10:53:41 +0800
+Received: from RTEXMBS02.realtek.com.tw (172.21.6.95) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Mon, 31 Jan 2022 10:53:41 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS02.realtek.com.tw (172.21.6.95) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.20; Mon, 31 Jan 2022 10:53:41 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::35e4:d9d1:102d:605e]) by
+ RTEXMBS04.realtek.com.tw ([fe80::35e4:d9d1:102d:605e%5]) with mapi id
+ 15.01.2308.020; Mon, 31 Jan 2022 10:53:41 +0800
+From:   Pkshih <pkshih@realtek.com>
+To:     "kvalo@kernel.org" <kvalo@kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "colin.i.king@gmail.com" <colin.i.king@gmail.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "kuba@kernel.org" <kuba@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rtlwifi: remove redundant initialization of variable ul_encalgo
+Thread-Topic: [PATCH] rtlwifi: remove redundant initialization of variable
+ ul_encalgo
+Thread-Index: AQHYFinyAYEbu+NX9kauX8snRBxGHqx76QqA
+Date:   Mon, 31 Jan 2022 02:53:40 +0000
+Message-ID: <55f8c7f2c75b18cd628d02a25ed96fae676eace2.camel@realtek.com>
+References: <20220130223714.6999-1-colin.i.king@gmail.com>
+In-Reply-To: <20220130223714.6999-1-colin.i.king@gmail.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.36.1-2 
+x-originating-ip: [111.252.224.243]
+x-kse-serverinfo: RTEXMBS02.realtek.com.tw, 9
+x-kse-attachmentfiltering-interceptor-info: no applicable attachment filtering
+ rules found
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: =?utf-8?B?Q2xlYW4sIGJhc2VzOiAyMDIyLzEvMzAg5LiL5Y2IIDEwOjIxOjAw?=
+x-kse-bulkmessagesfiltering-scan-result: protection disabled
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-ID: <AF69B66F0AB8C44397B963849C6B24DA@realtek.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-KSE-ServerInfo: RTEXH36505.realtek.com.tw, 9
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: protection disabled
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable buffer_config is being assigned a value that is never read, it
-is being re-assigned later on. The assignment is redundant and can be
-removed.
-
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/comedi/drivers/pcm3724.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/comedi/drivers/pcm3724.c b/drivers/comedi/drivers/pcm3724.c
-index e4103f9eeced..ca8bef54dacc 100644
---- a/drivers/comedi/drivers/pcm3724.c
-+++ b/drivers/comedi/drivers/pcm3724.c
-@@ -93,7 +93,6 @@ static void do_3724_config(struct comedi_device *dev,
- 	unsigned long port_8255_cfg;
- 
- 	config = I8255_CTRL_CW;
--	buffer_config = 0;
- 
- 	/* 1 in io_bits indicates output, 1 in config indicates input */
- 	if (!(s->io_bits & 0x0000ff))
--- 
-2.34.1
-
+T24gU3VuLCAyMDIyLTAxLTMwIGF0IDIyOjM3ICswMDAwLCBDb2xpbiBJYW4gS2luZyB3cm90ZToN
+Cj4gVmFyaWFibGUgdWxfZW5jYWxnbyBpcyBpbml0aWFsaXplZCB3aXRoIGEgdmFsdWUgdGhhdCBp
+cyBuZXZlciByZWFkLA0KPiBpdCBpcyBiZWluZyByZS1hc3NpZ25lZCBhIG5ldyB2YWx1ZSBpbiBl
+dmVyeSBjYXNlIGluIHRoZSBmb2xsb3dpbmcNCj4gc3dpdGNoIHN0YXRlbWVudC4gVGhlIGluaXRp
+YWxpemF0aW9uIGlzIHJlZHVuZGFudCBhbmQgY2FuIGJlIHJlbW92ZWQuDQo+IA0KPiBTaWduZWQt
+b2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4uaS5raW5nQGdtYWlsLmNvbT4NCg0KQWNrZWQt
+Ynk6IFBpbmctS2UgU2hpaCA8cGtzaGloQHJlYWx0ZWsuY29tPg0KDQo+IC0tLQ0KPiAgZHJpdmVy
+cy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydGx3aWZpL2NhbS5jIHwgMiArLQ0KPiAgMSBmaWxlIGNo
+YW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydGx3aWZpL2NhbS5jDQo+IGIvZHJpdmVycy9u
+ZXQvd2lyZWxlc3MvcmVhbHRlay9ydGx3aWZpL2NhbS5jDQo+IGluZGV4IDdhMDM1NWRjNmJhYi4u
+MzI5NzBlYTRiNGU3IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVr
+L3J0bHdpZmkvY2FtLmMNCj4gKysrIGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydGx3
+aWZpL2NhbS5jDQo+IEBAIC0yMDgsNyArMjA4LDcgQEAgdm9pZCBydGxfY2FtX2VtcHR5X2VudHJ5
+KHN0cnVjdCBpZWVlODAyMTFfaHcgKmh3LCB1OCB1Y19pbmRleCkNCj4gIA0KPiAgCXUzMiB1bF9j
+b21tYW5kOw0KPiAgCXUzMiB1bF9jb250ZW50Ow0KPiAtCXUzMiB1bF9lbmNhbGdvID0gcnRscHJp
+di0+Y2ZnLT5tYXBzW1NFQ19DQU1fQUVTXTsNCj4gKwl1MzIgdWxfZW5jYWxnbzsNCj4gIAl1OCBl
+bnRyeV9pOw0KPiAgDQo+ICAJc3dpdGNoIChydGxwcml2LT5zZWMucGFpcndpc2VfZW5jX2FsZ29y
+aXRobSkgew0KPiAtLSANCg0KV2hlbiBJIGNoZWNrIHRoaXMgcGF0Y2gsIEkgZmluZCB0aGVyZSBp
+cyBubyAnYnJlYWsnIGZvciBkZWZhdWx0IGNhc2UuDQpEbyB3ZSBuZWVkIG9uZT8gbGlrZQ0KDQpA
+QCAtMjI2LDYgKzIyNiw3IEBAIHZvaWQgcnRsX2NhbV9lbXB0eV9lbnRyeShzdHJ1Y3QgaWVlZTgw
+MjExX2h3ICpodywgdTggdWNfaW5kZXgpDQogICAgICAgICAgICAgICAgYnJlYWs7DQogICAgICAg
+IGRlZmF1bHQ6DQogICAgICAgICAgICAgICAgdWxfZW5jYWxnbyA9IHJ0bHByaXYtPmNmZy0+bWFw
+c1tTRUNfQ0FNX0FFU107DQorICAgICAgICAgICAgICAgYnJlYWs7DQogICAgICAgIH0NCiANCiAg
+ICAgICAgZm9yIChlbnRyeV9pID0gMDsgZW50cnlfaSA8IENBTV9DT05URU5UX0NPVU5UOyBlbnRy
+eV9pKyspIHsNCg0KLS0NClBpbmctS2UNCg0KDQo=
