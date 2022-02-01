@@ -2,140 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C745C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Feb 2022 12:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D9CDC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Feb 2022 12:32:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237766AbiBAMbZ (ORCPT
+        id S238135AbiBAMcz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Feb 2022 07:31:25 -0500
-Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:55070 "EHLO
+        Tue, 1 Feb 2022 07:32:55 -0500
+Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:58247 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237721AbiBAMbY (ORCPT
+        with ESMTP id S236453AbiBAMcy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Feb 2022 07:31:24 -0500
-Received: from pop-os.home ([90.126.236.122])
+        Tue, 1 Feb 2022 07:32:54 -0500
+Received: from [192.168.1.18] ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id EsJZnNwfKIz5VEsJanR6Gw; Tue, 01 Feb 2022 13:31:22 +0100
-X-ME-Helo: pop-os.home
+        id EsL6nNxOhIz5VEsL6nR6YE; Tue, 01 Feb 2022 13:32:53 +0100
+X-ME-Helo: [192.168.1.18]
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Tue, 01 Feb 2022 13:31:22 +0100
+X-ME-Date: Tue, 01 Feb 2022 13:32:53 +0100
 X-ME-IP: 90.126.236.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     christophe.leroy@csgroup.eu, benh@kernel.crashing.org,
-        paulus@samba.org, mpe@ellerman.id.au, allison@lohutok.net,
-        tglx@linutronix.de, clg@kaod.org, groug@kaod.org
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v2] powerpc/xive: Add some error handling code to 'xive_spapr_init()'
-Date:   Tue,  1 Feb 2022 13:31:16 +0100
-Message-Id: <564998101804886b151235c8a9f93020923bfd2c.1643718324.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
+Message-ID: <7c34009b-0d34-baa8-f4ff-68f2203422c5@wanadoo.fr>
+Date:   Tue, 1 Feb 2022 13:32:52 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH] powerpc/xive: Add some error handling code to
+ 'xive_spapr_init()'
+Content-Language: en-US
+To:     Christophe Leroy <christophe.leroy@csgroup.eu>,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        allison@lohutok.net, tglx@linutronix.de, clg@kaod.org,
+        groug@kaod.org
+Cc:     kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+References: <20190801110956.8517-1-christophe.jaillet@wanadoo.fr>
+ <1ea13a2a-90fd-07d3-2031-19e81ea349b4@csgroup.eu>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1ea13a2a-90fd-07d3-2031-19e81ea349b4@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'xive_irq_bitmap_add()' can return -ENOMEM.
-In this case, we should free the memory already allocated and return
-'false' to the caller.
+Le 01/02/2022 à 12:31, Christophe Leroy a écrit :
+> Hi,
+> 
+> Le 01/08/2019 à 13:09, Christophe JAILLET a écrit :
+>> 'xive_irq_bitmap_add()' can return -ENOMEM.
+>> In this case, we should free the memory already allocated and return
+>> 'false' to the caller.
+>>
+>> Also add an error path which undoes the 'tima = ioremap(...)'
+> 
+> This old patch doesn't apply, if it is still relevant can you please 
+> rebase ?
+> 
+> Thanks
+> Christophe
+> 
 
-Also add an error path which undoes the 'tima = ioremap(...)'
+Hi, funny to see a 2 1/2 years old patch to pop-up like that :)
+It still looks relevant to me.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-NOT compile tested (I don't have a cross compiler and won't install one).
-So if some correction or improvement are needed, feel free to propose and
-commit it directly.
+V2 sent.
+Still not compile tested.
 
-v2: rebase with latest -next
----
- arch/powerpc/sysdev/xive/spapr.c | 36 +++++++++++++++++++++++++-------
- 1 file changed, 28 insertions(+), 8 deletions(-)
-
-diff --git a/arch/powerpc/sysdev/xive/spapr.c b/arch/powerpc/sysdev/xive/spapr.c
-index 928f95004501..29456c255f9f 100644
---- a/arch/powerpc/sysdev/xive/spapr.c
-+++ b/arch/powerpc/sysdev/xive/spapr.c
-@@ -67,6 +67,17 @@ static int __init xive_irq_bitmap_add(int base, int count)
- 	return 0;
- }
- 
-+static void xive_irq_bitmap_remove_all(void)
-+{
-+	struct xive_irq_bitmap *xibm, *tmp;
-+
-+	list_for_each_entry_safe(xibm, tmp, &xive_irq_bitmaps, list) {
-+		list_del(&xibm->list);
-+		kfree(xibm->bitmap);
-+		kfree(xibm);
-+	}
-+}
-+
- static int __xive_irq_bitmap_alloc(struct xive_irq_bitmap *xibm)
- {
- 	int irq;
-@@ -803,7 +814,7 @@ bool __init xive_spapr_init(void)
- 	u32 val;
- 	u32 len;
- 	const __be32 *reg;
--	int i;
-+	int i, err;
- 
- 	if (xive_spapr_disabled())
- 		return false;
-@@ -828,23 +839,26 @@ bool __init xive_spapr_init(void)
- 	}
- 
- 	if (!xive_get_max_prio(&max_prio))
--		return false;
-+		goto err_unmap;
- 
- 	/* Feed the IRQ number allocator with the ranges given in the DT */
- 	reg = of_get_property(np, "ibm,xive-lisn-ranges", &len);
- 	if (!reg) {
- 		pr_err("Failed to read 'ibm,xive-lisn-ranges' property\n");
--		return false;
-+		goto err_unmap;
- 	}
- 
- 	if (len % (2 * sizeof(u32)) != 0) {
- 		pr_err("invalid 'ibm,xive-lisn-ranges' property\n");
--		return false;
-+		goto err_unmap;
- 	}
- 
--	for (i = 0; i < len / (2 * sizeof(u32)); i++, reg += 2)
--		xive_irq_bitmap_add(be32_to_cpu(reg[0]),
--				    be32_to_cpu(reg[1]));
-+	for (i = 0; i < len / (2 * sizeof(u32)); i++, reg += 2) {
-+		err = xive_irq_bitmap_add(be32_to_cpu(reg[0]),
-+					  be32_to_cpu(reg[1]));
-+		if (err < 0)
-+			goto err_mem_free;
-+	}
- 
- 	/* Iterate the EQ sizes and pick one */
- 	of_property_for_each_u32(np, "ibm,xive-eq-sizes", prop, reg, val) {
-@@ -855,10 +869,16 @@ bool __init xive_spapr_init(void)
- 
- 	/* Initialize XIVE core with our backend */
- 	if (!xive_core_init(np, &xive_spapr_ops, tima, TM_QW1_OS, max_prio))
--		return false;
-+		goto err_mem_free;
- 
- 	pr_info("Using %dkB queues\n", 1 << (xive_queue_shift - 10));
- 	return true;
-+
-+err_mem_free:
-+	xive_irq_bitmap_remove_all();
-+err_unmap:
-+	iounmap(tima);
-+	return false;
- }
- 
- machine_arch_initcall(pseries, xive_core_debug_init);
--- 
-2.32.0
-
+CJ
