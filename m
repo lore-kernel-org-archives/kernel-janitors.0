@@ -2,70 +2,140 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B66ACC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Feb 2022 12:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C745C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Feb 2022 12:31:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238003AbiBAM04 (ORCPT
+        id S237766AbiBAMbZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Feb 2022 07:26:56 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:58182 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229532AbiBAM0w (ORCPT
+        Tue, 1 Feb 2022 07:31:25 -0500
+Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:55070 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237721AbiBAMbY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Feb 2022 07:26:52 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9A1A6614D6;
-        Tue,  1 Feb 2022 12:26:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93578C340EB;
-        Tue,  1 Feb 2022 12:26:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643718403;
-        bh=ZCMtkNJow1Q7THiTZDQP6MEpXtw8VBWLQ9QxgGvOuMA=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=OyXpJ/mUtb8a5xMWBJPDMEuGFSJ3PK7u5K2fvb5uoVjQlsoA18rIuf4ttkZ9mW2dS
-         nhpxMyYaigmwLht0+uS+VvrrPT+AehvREiV85EkW/c2PH6ExtElpHcLfe/+knIuFG1
-         5yi4TfjaMOEcwyjsgIhyvlUlC6x84TacgWl91NtRzZ9zabspxvtAAnjbezlKEazyCS
-         mRDdB55WeYSD8+nBV7iOlkYhotCVqcZ2odPaDpqzJGzC3C0seHBiIMmirfBWp5uE5d
-         9nCKkFk1TXUk2MjNrJ40N78jVhtBjVXKMJ9gP68kDfYG+RB5woMUvCfang+SeveXDj
-         W/R4QeWfq0u4g==
-Content-Type: text/plain; charset="utf-8"
+        Tue, 1 Feb 2022 07:31:24 -0500
+Received: from pop-os.home ([90.126.236.122])
+        by smtp.orange.fr with ESMTPA
+        id EsJZnNwfKIz5VEsJanR6Gw; Tue, 01 Feb 2022 13:31:22 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Tue, 01 Feb 2022 13:31:22 +0100
+X-ME-IP: 90.126.236.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     christophe.leroy@csgroup.eu, benh@kernel.crashing.org,
+        paulus@samba.org, mpe@ellerman.id.au, allison@lohutok.net,
+        tglx@linutronix.de, clg@kaod.org, groug@kaod.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v2] powerpc/xive: Add some error handling code to 'xive_spapr_init()'
+Date:   Tue,  1 Feb 2022 13:31:16 +0100
+Message-Id: <564998101804886b151235c8a9f93020923bfd2c.1643718324.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] rtlwifi: remove redundant initialization of variable
- ul_encalgo
-From:   Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20220130223714.6999-1-colin.i.king@gmail.com>
-References: <20220130223714.6999-1-colin.i.king@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Ping-Ke Shih <pkshih@realtek.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <164371839993.16633.14924668742063969395.kvalo@kernel.org>
-Date:   Tue,  1 Feb 2022 12:26:41 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Colin Ian King <colin.i.king@gmail.com> wrote:
+'xive_irq_bitmap_add()' can return -ENOMEM.
+In this case, we should free the memory already allocated and return
+'false' to the caller.
 
-> Variable ul_encalgo is initialized with a value that is never read,
-> it is being re-assigned a new value in every case in the following
-> switch statement. The initialization is redundant and can be removed.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+Also add an error path which undoes the 'tima = ioremap(...)'
 
-Patch applied to wireless-next.git, thanks.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+NOT compile tested (I don't have a cross compiler and won't install one).
+So if some correction or improvement are needed, feel free to propose and
+commit it directly.
 
-e80affde1720 rtlwifi: remove redundant initialization of variable ul_encalgo
+v2: rebase with latest -next
+---
+ arch/powerpc/sysdev/xive/spapr.c | 36 +++++++++++++++++++++++++-------
+ 1 file changed, 28 insertions(+), 8 deletions(-)
 
+diff --git a/arch/powerpc/sysdev/xive/spapr.c b/arch/powerpc/sysdev/xive/spapr.c
+index 928f95004501..29456c255f9f 100644
+--- a/arch/powerpc/sysdev/xive/spapr.c
++++ b/arch/powerpc/sysdev/xive/spapr.c
+@@ -67,6 +67,17 @@ static int __init xive_irq_bitmap_add(int base, int count)
+ 	return 0;
+ }
+ 
++static void xive_irq_bitmap_remove_all(void)
++{
++	struct xive_irq_bitmap *xibm, *tmp;
++
++	list_for_each_entry_safe(xibm, tmp, &xive_irq_bitmaps, list) {
++		list_del(&xibm->list);
++		kfree(xibm->bitmap);
++		kfree(xibm);
++	}
++}
++
+ static int __xive_irq_bitmap_alloc(struct xive_irq_bitmap *xibm)
+ {
+ 	int irq;
+@@ -803,7 +814,7 @@ bool __init xive_spapr_init(void)
+ 	u32 val;
+ 	u32 len;
+ 	const __be32 *reg;
+-	int i;
++	int i, err;
+ 
+ 	if (xive_spapr_disabled())
+ 		return false;
+@@ -828,23 +839,26 @@ bool __init xive_spapr_init(void)
+ 	}
+ 
+ 	if (!xive_get_max_prio(&max_prio))
+-		return false;
++		goto err_unmap;
+ 
+ 	/* Feed the IRQ number allocator with the ranges given in the DT */
+ 	reg = of_get_property(np, "ibm,xive-lisn-ranges", &len);
+ 	if (!reg) {
+ 		pr_err("Failed to read 'ibm,xive-lisn-ranges' property\n");
+-		return false;
++		goto err_unmap;
+ 	}
+ 
+ 	if (len % (2 * sizeof(u32)) != 0) {
+ 		pr_err("invalid 'ibm,xive-lisn-ranges' property\n");
+-		return false;
++		goto err_unmap;
+ 	}
+ 
+-	for (i = 0; i < len / (2 * sizeof(u32)); i++, reg += 2)
+-		xive_irq_bitmap_add(be32_to_cpu(reg[0]),
+-				    be32_to_cpu(reg[1]));
++	for (i = 0; i < len / (2 * sizeof(u32)); i++, reg += 2) {
++		err = xive_irq_bitmap_add(be32_to_cpu(reg[0]),
++					  be32_to_cpu(reg[1]));
++		if (err < 0)
++			goto err_mem_free;
++	}
+ 
+ 	/* Iterate the EQ sizes and pick one */
+ 	of_property_for_each_u32(np, "ibm,xive-eq-sizes", prop, reg, val) {
+@@ -855,10 +869,16 @@ bool __init xive_spapr_init(void)
+ 
+ 	/* Initialize XIVE core with our backend */
+ 	if (!xive_core_init(np, &xive_spapr_ops, tima, TM_QW1_OS, max_prio))
+-		return false;
++		goto err_mem_free;
+ 
+ 	pr_info("Using %dkB queues\n", 1 << (xive_queue_shift - 10));
+ 	return true;
++
++err_mem_free:
++	xive_irq_bitmap_remove_all();
++err_unmap:
++	iounmap(tima);
++	return false;
+ }
+ 
+ machine_arch_initcall(pseries, xive_core_debug_init);
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20220130223714.6999-1-colin.i.king@gmail.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.32.0
 
