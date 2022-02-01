@@ -2,93 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B9AC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Feb 2022 14:23:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45427C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Feb 2022 14:41:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239200AbiBAOXo (ORCPT
+        id S237882AbiBAOlT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Feb 2022 09:23:44 -0500
-Received: from 5.mo548.mail-out.ovh.net ([188.165.49.213]:54503 "EHLO
-        5.mo548.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239187AbiBAOXm (ORCPT
+        Tue, 1 Feb 2022 09:41:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56090 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239290AbiBAOlP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Feb 2022 09:23:42 -0500
-Received: from mxplan5.mail.ovh.net (unknown [10.109.143.188])
-        by mo548.mail-out.ovh.net (Postfix) with ESMTPS id A45B120B2A;
-        Tue,  1 Feb 2022 13:28:30 +0000 (UTC)
-Received: from kaod.org (37.59.142.97) by DAG4EX1.mxp5.local (172.16.2.31)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Tue, 1 Feb
- 2022 14:28:29 +0100
-Authentication-Results: garm.ovh; auth=pass (GARM-97G002ded4642f-2264-41dd-88eb-91ec928a76b3,
-                    FC28BB27814F05D37416E671BAFA2F1ED858982E) smtp.auth=clg@kaod.org
-X-OVh-ClientIp: 82.64.250.170
-Message-ID: <ebf35275-cfb3-567d-97ba-ec81a6b40cb5@kaod.org>
-Date:   Tue, 1 Feb 2022 14:28:29 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH v2] powerpc/xive: Add some error handling code to
- 'xive_spapr_init()'
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        <christophe.leroy@csgroup.eu>, <benh@kernel.crashing.org>,
-        <paulus@samba.org>, <mpe@ellerman.id.au>, <allison@lohutok.net>,
-        <tglx@linutronix.de>, <groug@kaod.org>
-CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>
-References: <564998101804886b151235c8a9f93020923bfd2c.1643718324.git.christophe.jaillet@wanadoo.fr>
-From:   =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
-In-Reply-To: <564998101804886b151235c8a9f93020923bfd2c.1643718324.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [37.59.142.97]
-X-ClientProxiedBy: DAG8EX1.mxp5.local (172.16.2.71) To DAG4EX1.mxp5.local
- (172.16.2.31)
-X-Ovh-Tracer-GUID: 4ec3683f-a038-485c-ad83-90f117bf23d3
-X-Ovh-Tracer-Id: 3854518332830878709
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrgeefgdehfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfhfhfgjtgfgihesthekredttdefjeenucfhrhhomhepveorughrihgtpgfnvggpifhorghtvghruceotghlgheskhgrohgurdhorhhgqeenucggtffrrghtthgvrhhnpeeuveelvdejteegteefieevfeetffefvddvieekteevleefgeelgfeutedvfedvfeenucffohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppedtrddtrddtrddtpdefjedrheelrddugedvrdeljeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepmhigphhlrghnhedrmhgrihhlrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpegtlhhgsehkrghougdrohhrghdpnhgspghrtghpthhtohepuddprhgtphhtthhopehgrhhouhhgsehkrghougdrohhrgh
+        Tue, 1 Feb 2022 09:41:15 -0500
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F819C061714;
+        Tue,  1 Feb 2022 06:41:15 -0800 (PST)
+Received: by mail-ed1-x534.google.com with SMTP id c24so35113904edy.4;
+        Tue, 01 Feb 2022 06:41:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=YlB7zlFSI5Xx6Oi94mB0ruJo7k87kHZWZYG/IWCl5Ks=;
+        b=Yuy5wtvem1qXqHw9nz9JVB7iXu5lPoechBtxKDxX9eLg+kcWDHViatYhvSWyDBh7b/
+         D4OpR6hITF3cFsgzQrpR/uHXD7upaIDmjd3ZTagqYjPcK/n1He5gX8N1WkIR6f1WltoA
+         sqS3o/fMwPSfHUTr6LcoWrD1FpRdL5prNyvAbOxR1FgZvl/2vKGpgwLaWsZUyf05QMc5
+         PC+0SPcA6tvMHGZVE9XVlfYalJDk/ppXymjEL+3/6KYEjZ105fu0TVLRxeigpjmqZs8z
+         IDrBvrWHMVdjsxF6gb2fZkrub8/yweSMW2l9+KLUBwdMd80DICCWGiLZcRl2lm8lhW6x
+         a5gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=YlB7zlFSI5Xx6Oi94mB0ruJo7k87kHZWZYG/IWCl5Ks=;
+        b=d51hLsYPH7yb0VwAK/Ow4UHSRVXuJQfyHWsqQ7di+d9axnsfCjYTg+6SRWcVi9eg87
+         mmRyiHDGoJMmZPIwc41SiCqcCurLAS0ndOpOgY2Q5OG414qtbbF63xKB/Xrg+L1IIZuB
+         UcZdXiQ4ntHaZ2Hd5/uG6npFuhE9LWjHgd/QveRBBduyD3zuRP65Fsd48/mcZV5CwUu1
+         0xwsOoWHv0FFc3a2pkpfOdROpu1VrfLp6LoRUaIayz4y/WEpLdGk8BJDQNxWfxSgQxPz
+         hX1QaOoSOlDCWxMjWDK93F8cL9JTmf7IUW9bVmk5h2eDVClySHR1k+QX6MHTr7CNwbCB
+         TV1w==
+X-Gm-Message-State: AOAM530Vtdqg4D3AH7NcBCLWmU2Gm60geh5fMSUd50ppaapNeNa4yaKX
+        uNOyTvMSfogym3B5MVUDsXs=
+X-Google-Smtp-Source: ABdhPJyLYo0653RXI4dgoqe3YEiD7SYUQYHlbnKGRU+NA/rPEWI+vQ8HOG8ZuMQbxjaY3Oira1bCTg==
+X-Received: by 2002:a05:6402:1d56:: with SMTP id dz22mr26491813edb.82.1643726473570;
+        Tue, 01 Feb 2022 06:41:13 -0800 (PST)
+Received: from felia.fritz.box (200116b8264e13002de5049704703386.dip.versatel-1u1.de. [2001:16b8:264e:1300:2de5:497:470:3386])
+        by smtp.gmail.com with ESMTPSA id re16sm3160079ejb.29.2022.02.01.06.41.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Feb 2022 06:41:13 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] x86/fault: cast instr to __user locally in prefetch()
+Date:   Tue,  1 Feb 2022 15:40:55 +0100
+Message-Id: <20220201144055.5670-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2/1/22 13:31, Christophe JAILLET wrote:
-> 'xive_irq_bitmap_add()' can return -ENOMEM.
-> In this case, we should free the memory already allocated and return
-> 'false' to the caller.
-> 
-> Also add an error path which undoes the 'tima = ioremap(...)'
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Commit 35f1c89b0cce ("x86/fault: Fix AMD erratum #91 errata fixup for user
+code") uses accessors based on the access mode, i.e., it distinguishes its
+access if instr carries a user address or a kernel address.
 
-Reviewed-by: Cédric Le Goater <clg@kaod.org>
+Since that commit, sparse complains about passing an argument without
+__user annotation to get_user(), which expects a pointer with __user:
 
-> ---
-> NOT compile tested (I don't have a cross compiler and won't install one).
-> So if some correction or improvement are needed, feel free to propose and
-> commit it directly.
+  arch/x86/mm/fault.c:152:29: warning: incorrect type in argument 1 (different address spaces)
+  arch/x86/mm/fault.c:152:29:    expected void const volatile [noderef] __user *ptr
+  arch/x86/mm/fault.c:152:29:    got unsigned char *[assigned] instr
 
+instr is a user-space pointer in this branch of prefetch(), though:
 
-A cross compiler takes a couple of seconds to install on any distro.
-It takes a little more to compile the pseries defconfig. To test with
-QEMU, grab the disk image here :
+If user_mode, then instr is from user space. And if not user_mode, then
+instr is from kernel space. So, in this user_mode branch, confidently
+annotate instr with __user before passing it to get_user().
 
-   https://github.com/legoater/qemu-ppc-boot/blob/main/buildroot/qemu_ppc64le_pseries-2021.11-7-g3058e75456-20211206
+This annotation does no harm and just reminds everyone of the reasoning
+above and convinces sparse that the address spaces are handled correctly
+here.
 
-run :
+There is no need for others to check the situation of different address
+spaces on this specific branch due to this warning from sparse again.
 
-   qemu-system-ppc64 -M pseries -cpu POWER9 -kernel vmlinux -append "console=hvc0 rootwait root=/dev/sda" -drive file=rootfs.ext2,if=scsi,index=0,format=raw -nographic -net nic -net user -serial mon:stdio
+No functional change. No change in the generated object code.
 
-and you will have a pseries machine with network and disk using the
-XIVE interrupt controller.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ arch/x86/mm/fault.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-To get more info on the genirq layer and the XIVE driver, simply
-append :
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index d0074c6ed31a..fad8faa29d04 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -149,7 +149,7 @@ is_prefetch(struct pt_regs *regs, unsigned long error_code, unsigned long addr)
+ 		unsigned char opcode;
+ 
+ 		if (user_mode(regs)) {
+-			if (get_user(opcode, instr))
++			if (get_user(opcode, (unsigned char __user *) instr))
+ 				break;
+ 		} else {
+ 			if (get_kernel_nofault(opcode, instr))
+-- 
+2.17.1
 
-   dyndbg="file arch/powerpc/sysdev/xive/* +p; file kernel/irq/* +p"
-
-Thanks,
-
-C.
