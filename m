@@ -2,161 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F0C5C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Feb 2022 11:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E10C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Feb 2022 11:57:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237276AbiBALcA (ORCPT
+        id S237437AbiBAL5F (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Feb 2022 06:32:00 -0500
-Received: from pegase2.c-s.fr ([93.17.235.10]:56529 "EHLO pegase2.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237268AbiBALb7 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Feb 2022 06:31:59 -0500
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-        by localhost (Postfix) with ESMTP id 4Jp2p50jzKz9sSn;
-        Tue,  1 Feb 2022 12:31:57 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-        by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id D3CPxDswQAuy; Tue,  1 Feb 2022 12:31:57 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase2.c-s.fr (Postfix) with ESMTP id 4Jp2p46txLz9sSg;
-        Tue,  1 Feb 2022 12:31:56 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id D9D6B8B840;
-        Tue,  1 Feb 2022 12:31:56 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id ryWDZpz1U5iu; Tue,  1 Feb 2022 12:31:56 +0100 (CET)
-Received: from [192.168.5.118] (unknown [192.168.5.118])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 341EF8B839;
-        Tue,  1 Feb 2022 12:31:56 +0100 (CET)
-Message-ID: <1ea13a2a-90fd-07d3-2031-19e81ea349b4@csgroup.eu>
-Date:   Tue, 1 Feb 2022 12:31:55 +0100
+        Tue, 1 Feb 2022 06:57:05 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:52668 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237302AbiBAL5E (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 1 Feb 2022 06:57:04 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 030421F3A5;
+        Tue,  1 Feb 2022 11:57:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1643716623; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=T6S1ZfmJRkfd5YMTv7fcsXGlYQuGJkJu4gyAaW0w/4Y=;
+        b=vDBo1yOixkTVjEBDHkjtu6y/AbbMRuc7uGXCV3ewgskwOT0RpO+4v0Mvsmt85YZJVO8DLx
+        o4LU00D38bpxwthPDFvIRXYvaxHkc5oQyYQUSP8R16bqnCFESQQeo90rWhWuYoq9wzFcgE
+        9iKQXwvZGOKPayKTbsvaeyL5B6wOlU0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1643716623;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=T6S1ZfmJRkfd5YMTv7fcsXGlYQuGJkJu4gyAaW0w/4Y=;
+        b=2ACnZg8Ma3EzEWs9PgkQQDQyXWMRTzceeG2y4/dUcjBpnSyzZn94Vxgp5cIGqop6KGPrQu
+        Z3I5/+fcRI8N19Cw==
+Received: from quack3.suse.cz (unknown [10.163.28.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id E4453A3B84;
+        Tue,  1 Feb 2022 11:57:02 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 8823AA05B1; Tue,  1 Feb 2022 12:57:02 +0100 (CET)
+Date:   Tue, 1 Feb 2022 12:57:02 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Bobrowski <repnop@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] fanotify: Fix stale file descriptor in
+ copy_event_to_user()
+Message-ID: <20220201115702.3m3curnkpk7jld2o@quack3.lan>
+References: <20220128195656.GA26981@kili>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: [PATCH] powerpc/xive: Add some error handling code to
- 'xive_spapr_init()'
-Content-Language: fr-FR
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        allison@lohutok.net, tglx@linutronix.de, clg@kaod.org,
-        groug@kaod.org
-Cc:     kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-References: <20190801110956.8517-1-christophe.jaillet@wanadoo.fr>
-From:   Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20190801110956.8517-1-christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220128195656.GA26981@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
-
-Le 01/08/2019 à 13:09, Christophe JAILLET a écrit :
-> 'xive_irq_bitmap_add()' can return -ENOMEM.
-> In this case, we should free the memory already allocated and return
-> 'false' to the caller.
+On Fri 28-01-22 22:57:01, Dan Carpenter wrote:
+> This code calls fd_install() which gives the userspace access to the fd.
+> Then if copy_info_records_to_user() fails it calls put_unused_fd(fd) but
+> that will not release it and leads to a stale entry in the file
+> descriptor table.
 > 
-> Also add an error path which undoes the 'tima = ioremap(...)'
-
-This old patch doesn't apply, if it is still relevant can you please 
-rebase ?
-
-Thanks
-Christophe
-
+> Generally you can't trust the fd after a call to fd_install().  The fix
+> is to delay the fd_install() until everything else has succeeded.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Fortunately it requires CAP_SYS_ADMIN to reach this code so the security
+> impact is less.
+> 
+> Fixes: f644bc449b37 ("fanotify: fix copy_event_to_user() fid error clean up")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Reviewed-by: Mathias Krause <minipli@grsecurity.net>
+
+Thanks. I've added the patch to my tree and will push it to Linus.
+
+								Honza
+
 > ---
-> NOT compile tested (I don't have a cross compiler and won't install one).
-> So if some correction or improvement are needed, feel free to propose and
-> commit it directly.
-> ---
->   arch/powerpc/sysdev/xive/spapr.c | 36 +++++++++++++++++++++++++-------
->   1 file changed, 28 insertions(+), 8 deletions(-)
+>  fs/notify/fanotify/fanotify_user.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/powerpc/sysdev/xive/spapr.c b/arch/powerpc/sysdev/xive/spapr.c
-> index 52198131c75e..b3ae0b76c433 100644
-> --- a/arch/powerpc/sysdev/xive/spapr.c
-> +++ b/arch/powerpc/sysdev/xive/spapr.c
-> @@ -64,6 +64,17 @@ static int xive_irq_bitmap_add(int base, int count)
->   	return 0;
->   }
->   
-> +static void xive_irq_bitmap_remove_all(void)
-> +{
-> +	struct xive_irq_bitmap *xibm, *tmp;
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index 1026f67b1d1e..2ff6bd85ba8f 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -701,9 +701,6 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+>  	if (fanotify_is_perm_event(event->mask))
+>  		FANOTIFY_PERM(event)->fd = fd;
+>  
+> -	if (f)
+> -		fd_install(fd, f);
+> -
+>  	if (info_mode) {
+>  		ret = copy_info_records_to_user(event, info, info_mode, pidfd,
+>  						buf, count);
+> @@ -711,6 +708,9 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+>  			goto out_close_fd;
+>  	}
+>  
+> +	if (f)
+> +		fd_install(fd, f);
 > +
-> +	list_for_each_entry_safe(xibm, tmp, &xive_irq_bitmaps, list) {
-> +		list_del(&xibm->list);
-> +		kfree(xibm->bitmap);
-> +		kfree(xibm);
-> +	}
-> +}
-> +
->   static int __xive_irq_bitmap_alloc(struct xive_irq_bitmap *xibm)
->   {
->   	int irq;
-> @@ -723,7 +734,7 @@ bool __init xive_spapr_init(void)
->   	u32 val;
->   	u32 len;
->   	const __be32 *reg;
-> -	int i;
-> +	int i, err;
->   
->   	if (xive_spapr_disabled())
->   		return false;
-> @@ -748,23 +759,26 @@ bool __init xive_spapr_init(void)
->   	}
->   
->   	if (!xive_get_max_prio(&max_prio))
-> -		return false;
-> +		goto err_unmap;
->   
->   	/* Feed the IRQ number allocator with the ranges given in the DT */
->   	reg = of_get_property(np, "ibm,xive-lisn-ranges", &len);
->   	if (!reg) {
->   		pr_err("Failed to read 'ibm,xive-lisn-ranges' property\n");
-> -		return false;
-> +		goto err_unmap;
->   	}
->   
->   	if (len % (2 * sizeof(u32)) != 0) {
->   		pr_err("invalid 'ibm,xive-lisn-ranges' property\n");
-> -		return false;
-> +		goto err_unmap;
->   	}
->   
-> -	for (i = 0; i < len / (2 * sizeof(u32)); i++, reg += 2)
-> -		xive_irq_bitmap_add(be32_to_cpu(reg[0]),
-> -				    be32_to_cpu(reg[1]));
-> +	for (i = 0; i < len / (2 * sizeof(u32)); i++, reg += 2) {
-> +		err = xive_irq_bitmap_add(be32_to_cpu(reg[0]),
-> +					  be32_to_cpu(reg[1]));
-> +		if (err < 0)
-> +			goto err_mem_free;
-> +	}
->   
->   	/* Iterate the EQ sizes and pick one */
->   	of_property_for_each_u32(np, "ibm,xive-eq-sizes", prop, reg, val) {
-> @@ -775,8 +789,14 @@ bool __init xive_spapr_init(void)
->   
->   	/* Initialize XIVE core with our backend */
->   	if (!xive_core_init(&xive_spapr_ops, tima, TM_QW1_OS, max_prio))
-> -		return false;
-> +		goto err_mem_free;
->   
->   	pr_info("Using %dkB queues\n", 1 << (xive_queue_shift - 10));
->   	return true;
-> +
-> +err_mem_free:
-> +	xive_irq_bitmap_remove_all();
-> +err_unmap:
-> +	iounmap(tima);
-> +	return false;
->   }
+>  	return metadata.event_len;
+>  
+>  out_close_fd:
+> -- 
+> 2.20.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
