@@ -2,119 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B66DC4167D
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Feb 2022 15:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF44C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Feb 2022 21:34:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239684AbiBAPC5 (ORCPT
+        id S233070AbiBAVec (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Feb 2022 10:02:57 -0500
-Received: from mail-bn1nam07on2050.outbound.protection.outlook.com ([40.107.212.50]:8608
-        "EHLO NAM02-BN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S239679AbiBAPC4 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Feb 2022 10:02:56 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fJx5FZ2TyE5d3oXqyRaeCWhHKyS+JU/ADFpYLoUTnf50ZLZP8X7YIQdiQfzp8DlDukfF+TEURlvoYZzooVIzRRIf4N5zCn5ACsvak57FI82ss9dHEov8XSjiIm9rgoag2eWGREyPoD+4CqbKysIlyZ2rjJPdFZ6tTRUY/EKbBNKm6/DeB364gtDW/1+FCbHEDgS5FzqbRGJIgYSeuXjG5oIb8ysb20sxj4mtOIngS3QayuBqMQ2C+5HTOu35m+UPP//9Oy2b5s/6YJqLrFDXvWkSgkqkJfGi0Tzqpsq9P9QTfddrzB9F1ECcjKbfFbFd1QCqD9mhnzZLzRS+0DeOlA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Bwg4VMIN76rbTXHRgYGSTnmO1hOR/dBzbKAM9LGv5YQ=;
- b=OmQyt/9+ocYN53jfl+sRxcLH9oUq8i0VZTsAsqanGJTqM4ibxRCgv9GC3KiPRxVpQwARQ43gTqcjB/tCtaG4pLem8Viuy7Q4l0t35zuTav36v3xbhwbPRKh3kEw0LTt5Ntn1fpb8F9+CDAjqwANAX0AcXBNxHEgJpK1TdPn2rp7V38iwQMRdkwqhb0UN/JWORorbvWjJnITeihogbjDqSR1HpQmwzf70SNlfEC/m0JuaeezTF1NO7/taYTXh0xH+K9nh3VkZhvbGyncInV0G05H8v+D6chPys+XTMWZT902oM+BnsZSnrRB/PzsWubxi5LOADs+i9w2KiNuKgzpeHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Bwg4VMIN76rbTXHRgYGSTnmO1hOR/dBzbKAM9LGv5YQ=;
- b=btmoEnzM4Xyf1cpNzqjZUQ/7GLH+L7q3yDdZfrc0I+r6tN1zvXxdtWADUQ1VgGL2W+NINhCnE28cBEbk4thxMxik/kEzX3EJChLKsOXn18cOjgb8EksSSwotsKyAFoI987A75a6eww40rUvUEuGFnMYn5hBNeoIIJGXwh4xHX9zikVY6PhEF18Ffpy5GGR+g5GxY81nVNrDTQ7GTwzU3A9RQc5zZQpeSnMHavLso+1bvXXN0YzetZeMozX1Cporn+K1Wt/MigrMsaKhX7ly2KY+rSxBe5WPo3C9jKBSpaTEURsSGUM4b39elJrMzhSQH0jXGJTqTYT/vGXYk3sPj9g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB4192.namprd12.prod.outlook.com (2603:10b6:208:1d5::15)
- by SN1PR12MB2512.namprd12.prod.outlook.com (2603:10b6:802:31::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4930.15; Tue, 1 Feb
- 2022 15:02:54 +0000
-Received: from MN2PR12MB4192.namprd12.prod.outlook.com
- ([fe80::e8f4:9793:da37:1bd3]) by MN2PR12MB4192.namprd12.prod.outlook.com
- ([fe80::e8f4:9793:da37:1bd3%4]) with mapi id 15.20.4930.022; Tue, 1 Feb 2022
- 15:02:54 +0000
-Date:   Tue, 1 Feb 2022 11:02:52 -0400
-From:   Jason Gunthorpe <jgg@nvidia.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Yishai Hadas <yishaih@nvidia.com>, linux-rdma@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RDMA/mlx4: remove redundant assignment to variable nreq
-Message-ID: <20220201150252.GA2434511@nvidia.com>
-References: <20220130225747.8114-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220130225747.8114-1-colin.i.king@gmail.com>
-X-ClientProxiedBy: MN2PR19CA0025.namprd19.prod.outlook.com
- (2603:10b6:208:178::38) To MN2PR12MB4192.namprd12.prod.outlook.com
- (2603:10b6:208:1d5::15)
+        Tue, 1 Feb 2022 16:34:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40282 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229785AbiBAVeb (ORCPT
+        <rfc822;kernel-janitors@vger.kernel.org>);
+        Tue, 1 Feb 2022 16:34:31 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22917C061714
+        for <kernel-janitors@vger.kernel.org>; Tue,  1 Feb 2022 13:34:31 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id v13so34468978wrv.10
+        for <kernel-janitors@vger.kernel.org>; Tue, 01 Feb 2022 13:34:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=o6dfcfj1fYmfHwrU8oFxWopL9zS55EIBUP6w6pjzDbs=;
+        b=CwW5jzz1fyZNLAwZZpXdCjXMLwsyxUsxG705xfxxCOVaMTCgHbGDaY89+355N05Cnk
+         JF3iKFkb3iPffAzL2SQ5YhXiCfh2ded06huLPy0JUOp91vdqr+eJs/irW/bAzk2oWI0J
+         SPDfu5w7jxCJX8L9WRrJrR230LhLG5xkHCyBLfOUfN87jhxx5jmXxnhQV9okizblbScx
+         UNfz34XHCvL/4VeYuLtMBc8FSYtIeyFBLKO16Oe9aShd5Rgo34UdvX9QjdALz2n+t6X2
+         hi6aC6Mpc8nI8iVNwpxhBmRONr8/RU6D4NbAq3W6gyy/cRw57wDhuhW72WYU9hO92sMX
+         QV8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=o6dfcfj1fYmfHwrU8oFxWopL9zS55EIBUP6w6pjzDbs=;
+        b=XDckzCDondxtVbAqGIcUgJPx466dIhyiiNCSdIF0f+5Ueqq/bNoNKKAEw4wVdDdwhe
+         LL+u3tSvovSxZgJFToE7r4qT1gg9fzUc/VZ4Vri2nut+5FrI3Px77YG49kfGpocl1yc5
+         Lew88PSQp5KHntuHBcxKN1r/tawsUIc/5D2Vvy4kV93umJWgKTTgfqRzVZyB6EFHnjoD
+         IRw/UbpjkYJFQus1cqvIRfXUbbNAPFyr5lSs5qj7G86NNyk9BOLnmpS8y8nsv2IEOm9E
+         z+UU10+5+K82xYM1hCzDTL9plxDe0UXQG9vgUf6Tize+giFwLuCJS4Dbs48GtjDskOSa
+         O6Gw==
+X-Gm-Message-State: AOAM5309wGozsU/XLNANwcJ8lSToIdW1OIklJx6ZucKumwqQuEYmhz9W
+        xk2ovJzAVmOW4lLmNZ74RBC+/g==
+X-Google-Smtp-Source: ABdhPJxsGcBMu91sw12LbR6jqx45C4mC1Iioj5+479QjW+SHtt0CNdFUUvCPAiUR3rx9E151ybLTAg==
+X-Received: by 2002:a5d:4384:: with SMTP id i4mr411097wrq.607.1643751269283;
+        Tue, 01 Feb 2022 13:34:29 -0800 (PST)
+Received: from [192.168.0.162] (188-141-3-169.dynamic.upc.ie. [188.141.3.169])
+        by smtp.gmail.com with ESMTPSA id s9sm15423410wrr.84.2022.02.01.13.34.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Feb 2022 13:34:28 -0800 (PST)
+Message-ID: <52d89100-c2c7-8689-7545-0e8972a08b6e@linaro.org>
+Date:   Tue, 1 Feb 2022 21:34:28 +0000
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: cc4bd74b-60f2-4e84-fe7b-08d9e593ec62
-X-MS-TrafficTypeDiagnostic: SN1PR12MB2512:EE_
-X-Microsoft-Antispam-PRVS: <SN1PR12MB25123402B3E84C71D41A0F28C2269@SN1PR12MB2512.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2150;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: it6kWVUYgRUgxYsVUuAGgv6J1Il1sQX46QHrG9N6y9hpUS17ghnEAQfwcihWjD+5c6QZCviMsPLWGzwvxi/59WzLjNSR5lLrBy6GbCD/H8+CvYa6glDLUPQF1VRY8ZPeA/gfTIjY4fDG8/7xMv33uMyJ6Vo2cIBVDrxQCO/2mFJ+BvBs3s7WIBnN4E9OvprswlMn9YjEB8qzNmNLqGCMXLyRcCTCSiA6ifeUaEnXu4StSsjECSNmUZBMIGTYGXDfSKct0mzDgiK62fGSSY7mCCm10Xrb2Lj1wE6NQGT1TCGEaoo/k57jJrTF0i5j0d4/Yeu5rlqQoPkD9JDpePUbisXHm8m4Jw/fXe726wc/ekYVLTU4eaW1/28ciGBR7GvVXIRgGAcDSn0sfctPl3ddQDaYOzv56oesepRZ33LbwDA8oN2PQPSNzT9MkokdxEsRkJVHWMt5U3G9QIyA13UAJ2XHY70ShLsrrkclJ96ZlhGfbpfh3ouhE1re+th74ayCEd33hn6qDQofdtVIwOFu9dSeHNOhOQLsSIxZyjZ2GmFBWsii8z56EpiitKmFoRwDX3S+C3zpYhn0styAmJXjixdYzjWOS7etCGpmRJKNW2gxZITLOrUbxU+bUHaYCVTT3fTxMpWnIGkPaAfm9r9OJA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB4192.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(6916009)(1076003)(6506007)(6512007)(26005)(186003)(5660300002)(2616005)(316002)(33656002)(6486002)(508600001)(4744005)(36756003)(4326008)(86362001)(66556008)(8676002)(2906002)(8936002)(38100700002)(66476007)(83380400001)(66946007)(20210929001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?kbFOPfZUCeHNOVU6p/SNssbq898zJQRMLx8x6k5/GovHb9EIN/C/nG95Bkvn?=
- =?us-ascii?Q?wRz0R5amTbNwxGYQ92X/Q5Nj3GvmpuLuk6+kzJfnasUDqXjWDtoHZBECea7K?=
- =?us-ascii?Q?/mAQG1zqhCxh9NlvKCyQDNqQjlT2pmYXCY1AqB2oyspXIexmOZa8tOi6UAt6?=
- =?us-ascii?Q?53Z4NtrghQK/YJrM1AoM+9yku6BKmHu5LaDeCvblrUnmqxjpMJdR9hELvYK9?=
- =?us-ascii?Q?WnC7JNMn+KsfznnGEOqSD8Rl//UxmKQVdD7e02BFgFC+5+i/Hq4dVSDiR79W?=
- =?us-ascii?Q?B1i0an5Nwd8W7b4w/W+ICRhIXkViT2sQJHqcD/ixRiofmeNP5nesbsZJUbfU?=
- =?us-ascii?Q?4ZBhEoeBS1b1UlJXpSDaFyuyD7xC8eiUskLkX6Na6jGZCKLeUt+Yp1Txj5f1?=
- =?us-ascii?Q?UyQ15gZiGUa5FKDQs+WCG991L+wx/f3SGH5+/UY8MX4S7PcY3tRIHZKxulfs?=
- =?us-ascii?Q?DD+AkvgGuZmVIAsy3Ln/qv6v3goRRhN8j+zyuPpWqXJQwGQ+U75vCiBzNSPm?=
- =?us-ascii?Q?8Ell6CCBjAsd/AXBgo00J8bex9pSB5yba38S5v2T4cN6ZYcDgvYpvPCEhtsG?=
- =?us-ascii?Q?PzbwFlTh3jbOQCeoPQfOmlNQxKnD06r2sRiFaUEvOyAEa3TYeuTfjK/N2lkC?=
- =?us-ascii?Q?LSnuInsJqtI1BPXio3ILI2zGqVfcqEFciduEASKzbYc08+feUAMrdwn//zbI?=
- =?us-ascii?Q?XTmtrJnBixLQUBJ9hlxf+Y7S+833geqJ+MaW2/WU+WgZ/MD+ztYfqoR+2oJe?=
- =?us-ascii?Q?97R86tHh86Vo33P6CK7AGI4ayk7pcPS1txVNnpLgCZaDQRElXrIQrC4r3bk6?=
- =?us-ascii?Q?ZeHkmYVaFFoCN4+KGjAzImWMqRUsz5hEgpOPNtnKrDnmpQ6qKA9TCHlJJkvf?=
- =?us-ascii?Q?JChpRdmUQ7zetMwhFiac98xSCvfFy0ZziqJMdzdT5Mmjm4JrNzv80y1wvNg3?=
- =?us-ascii?Q?r7kuc5s7VojacYPoNL3RmkLT4y93CtB2uTZ4V4To+ToXKbCUEs5NIq8wG8th?=
- =?us-ascii?Q?QWpY8RoJv+nkMCNOQ5fTr+eZ3Xtjm9J+ixL3k81azre18cVyGHMvbRFTQZa9?=
- =?us-ascii?Q?eaEv5NPZUhaFSWPdGpTrrNyIouNJRCdgacQ9PTWGs8tU2mPsFMC7XPSo3ZCX?=
- =?us-ascii?Q?kJwZMrQSsuywQbczyf3q6Yc+dJK9NZI1hgninQ9B+hz7Oxiw4Gh6ndOc5Rkx?=
- =?us-ascii?Q?ShqJG7hDj/wol+w/hLgs1xZrFsc/W5chBWnk6TLYK0BbTNmvyuVz/1hs1i9K?=
- =?us-ascii?Q?ZDvQTfj/jarZYAvGjpfqyAM+CHLexTt3xhdTxIyHBgBk3CFA9JqaPVclHlhp?=
- =?us-ascii?Q?XrI5iX1eDcbD28WjDcCWHqL6tjXW1YmXXRxzye2sQAMWUlmxqT9U3KM/787v?=
- =?us-ascii?Q?/rbRTe5yMORfg6gwSeGGxgnWSCoEWEdvYCc9UpSt1AHovAcYmgrrNsHZEzQy?=
- =?us-ascii?Q?6Q6EDuIEnpqNhllak2NnvIIMhGEbfLgyCR68AJMCnSVtzPxfoFu2g92YQxoZ?=
- =?us-ascii?Q?9QbQ7kn1Uz5w9cxUec2kkPsRNCsxD6Dat0eyiLpe7bd5knqteppJ9rtIFdiZ?=
- =?us-ascii?Q?joZ61VlojUxf7IlFO94=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cc4bd74b-60f2-4e84-fe7b-08d9e593ec62
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB4192.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Feb 2022 15:02:54.2405
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kRYSQtLhzKv4ilqJ0wr5jcWqqih7tFyTk57nlsSeaD7YdVODWhNqUvuEv/6sNpo9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2512
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.1
+Subject: Re: [PATCH] wcn36xx: Uninitialized variable in
+ wcn36xx_change_opchannel()
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        Loic Poulain <loic.poulain@linaro.org>
+Cc:     wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20220201125941.GA22458@kili>
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20220201125941.GA22458@kili>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Jan 30, 2022 at 10:57:47PM +0000, Colin Ian King wrote:
-> Variable nreq is being assigned a value that is never read. The
-> assignment is redundant and can be removed.
+On 01/02/2022 12:59, Dan Carpenter wrote:
+> This code needs "channel" to be initialized to NULL for it to work
+> correctly.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/infiniband/hw/mlx4/srq.c | 1 -
->  1 file changed, 1 deletion(-)
+> Fixes: d6f2746691cb ("wcn36xx: Track the band and channel we are tuned to")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied to for-next, thanks
+good catch
 
-Jason
+Reviewed-by: Bryan O'Donoghue <bryan.odonghue@linaro.org>
