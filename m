@@ -2,53 +2,53 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE39EC433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Feb 2022 19:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4721BC433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Feb 2022 19:50:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346967AbiBBTtp (ORCPT
+        id S1346998AbiBBTug (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Feb 2022 14:49:45 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:35158 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231390AbiBBTto (ORCPT
+        Wed, 2 Feb 2022 14:50:36 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:44018 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346977AbiBBTue (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Feb 2022 14:49:44 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 212JnQVY115371;
-        Wed, 2 Feb 2022 13:49:26 -0600
+        Wed, 2 Feb 2022 14:50:34 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 212JoSCj069396;
+        Wed, 2 Feb 2022 13:50:28 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1643831366;
-        bh=hvsHZm8OlbAUiFjTn0w2jr5q8Ay/1dFkrjFBr7OmLRA=;
+        s=ti-com-17Q1; t=1643831428;
+        bh=PDV41FIeSzz6CCLPpJKxpTZ+EEr1ZsxD91v3CVrekpw=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=D9rfeYal3AfGzQHsLe8fBOMBUWhbKrourowq3QHvXCbODajTyf8ktwoglgFruYlyB
-         ufX6Qa7Fg0UzwZ/kDEGrgLldxIvwluWQU176+FuiDrFaCIQ+H5o1iSrQdWCoGgXJGw
-         6WKnWfecTbyyMrZebZTrZb/FiidIThrbje70fHCg=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 212JnQoD038094
+        b=Byts02izTV24QPqQMvm1o8HQgFwAlPuhRXuVHdTQwuSTrSpon3CwGUodX5Rf8Ja2c
+         Kx10LjFBxnsOyB7F+q01zlk8J/m9Ehk9rx2dFqhLyh76s6oWtXHYiabA79zi6+p9N+
+         3FDnO835o+5SZvlIiKiVwBeOpNQGT/d2NfubiI0o=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 212JoSDs004660
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 2 Feb 2022 13:49:26 -0600
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 2 Feb 2022 13:50:28 -0600
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Wed, 2
- Feb 2022 13:49:26 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ Feb 2022 13:50:28 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Wed, 2 Feb 2022 13:49:26 -0600
+ Frontend Transport; Wed, 2 Feb 2022 13:50:28 -0600
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 212JnQ5U042143;
-        Wed, 2 Feb 2022 13:49:26 -0600
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 212JoSHW004263;
+        Wed, 2 Feb 2022 13:50:28 -0600
 From:   Nishanth Menon <nm@ti.com>
-To:     <ssantosh@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        <maz@kernel.org>, <ssantosh@kernel.org>, <kristo@kernel.org>
 CC:     Nishanth Menon <nm@ti.com>, <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] soc: ti: k3-ringacc: Use devm_bitmap_zalloc() when applicable
-Date:   Wed, 2 Feb 2022 13:49:25 -0600
-Message-ID: <164383135100.1523.10038747585864521872.b4-ty@ti.com>
+Subject: Re: [PATCH] firmware: ti_sci: Fix compilation failure when CONFIG_TI_SCI_PROTOCOL is not defined
+Date:   Wed, 2 Feb 2022 13:50:27 -0600
+Message-ID: <164383139483.1725.16513553485038742707.b4-ty@ti.com>
 X-Mailer: git-send-email 2.31.1
-In-Reply-To: <45544b0d97a7bea7764292852842adf5085a7700.1640276001.git.christophe.jaillet@wanadoo.fr>
-References: <45544b0d97a7bea7764292852842adf5085a7700.1640276001.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <e6c3cb793e1a6a2a0ae2528d5a5650dfe6a4b6ff.1640276505.git.christophe.jaillet@wanadoo.fr>
+References: <e6c3cb793e1a6a2a0ae2528d5a5650dfe6a4b6ff.1640276505.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -59,17 +59,16 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 Hi Christophe JAILLET,
 
-On Thu, 23 Dec 2021 17:14:46 +0100, Christophe JAILLET wrote:
-> 'rings_inuse' and 'proxy_inuse' are bitmaps. So use 'devm_bitmap_zalloc()'
-> to simplify code and improve the semantic.
+On Thu, 23 Dec 2021 17:23:00 +0100, Christophe JAILLET wrote:
+> Remove an extra ";" which breaks compilation.
 > 
 > 
 
 I have applied the following to branch ti-drivers-soc-next on [1].
 Thank you!
 
-[1/1] soc: ti: k3-ringacc: Use devm_bitmap_zalloc() when applicable
-      commit: a8eba8dde5fbf0b9f62a38230af6d66c389c37fc
+[1/1] firmware: ti_sci: Fix compilation failure when CONFIG_TI_SCI_PROTOCOL is not defined
+      commit: 043cfff99a18933fda2fb2e163daee73cc07910b
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
