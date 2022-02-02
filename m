@@ -2,72 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 804EAC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Feb 2022 11:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 834B6C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Feb 2022 11:21:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244570AbiBBLJQ (ORCPT
+        id S1343791AbiBBLVX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Feb 2022 06:09:16 -0500
-Received: from relay028.a.hostedemail.com ([64.99.140.28]:43333 "EHLO
-        relay.hostedemail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343717AbiBBLJP (ORCPT
+        Wed, 2 Feb 2022 06:21:23 -0500
+Received: from relay035.a.hostedemail.com ([64.99.140.35]:43314 "EHLO
+        relay4.hostedemail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231209AbiBBLVV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Feb 2022 06:09:15 -0500
-Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
-        by unirelay13.hostedemail.com (Postfix) with ESMTP id 3907961059;
-        Wed,  2 Feb 2022 11:09:14 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf16.hostedemail.com (Postfix) with ESMTPA id D89622000E;
-        Wed,  2 Feb 2022 11:08:50 +0000 (UTC)
-Message-ID: <7719a17b34a22f8375fc0d192141c64952e5549d.camel@perches.com>
-Subject: Re: [PATCH][next][V2] usb: gadget: f_uac2: change
- maxpctksize/maxpcktsize to wMaxPacketSize
+        Wed, 2 Feb 2022 06:21:21 -0500
+Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
+        by unirelay07.hostedemail.com (Postfix) with ESMTP id E0A92212E0;
+        Wed,  2 Feb 2022 11:21:19 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf02.hostedemail.com (Postfix) with ESMTPA id 0368B80017;
+        Wed,  2 Feb 2022 11:20:56 +0000 (UTC)
+Message-ID: <a0ee4c6252ba69ec1425421ed3f297b12dfdcc3f.camel@perches.com>
+Subject: Re: [PATCH] rtlwifi: remove redundant initialization of variable
+ ul_encalgo
 From:   Joe Perches <joe@perches.com>
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pawel Laszczak <pawell@cadence.com>, linux-usb@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pavel.hofman@ivitera.com
-Date:   Wed, 02 Feb 2022 03:09:11 -0800
-In-Reply-To: <20220202104058.590312-1-colin.i.king@gmail.com>
-References: <20220202104058.590312-1-colin.i.king@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Pkshih <pkshih@realtek.com>, "kvalo@kernel.org" <kvalo@kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "colin.i.king@gmail.com" <colin.i.king@gmail.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "kuba@kernel.org" <kuba@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Wed, 02 Feb 2022 03:21:17 -0800
+In-Reply-To: <20220202110554.GT1978@kadam>
+References: <20220130223714.6999-1-colin.i.king@gmail.com>
+         <55f8c7f2c75b18cd628d02a25ed96fae676eace2.camel@realtek.com>
+         <20220202050229.GS1951@kadam>
+         <90e40bb19320dcc2f2099b97b4b9d7d23325eaac.camel@perches.com>
+         <20220202110554.GT1978@kadam>
 Content-Type: text/plain; charset="ISO-8859-1"
 User-Agent: Evolution 3.40.4-1ubuntu2 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: gei45f1cxduiugi4jbmn3onqt6wo3x18
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: D89622000E
+X-Stat-Signature: yntegr61bhth4o37xokye356pnstz3jh
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: 0368B80017
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX18jHCfyLGhudG7e1CQhdUFVttc/efTcP0Y=
-X-HE-Tag: 1643800130-668851
+X-Session-ID: U2FsdGVkX1/nffVRXJall65azq8iu1FI4aKTxEamYtk=
+X-HE-Tag: 1643800856-284986
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 2022-02-02 at 10:40 +0000, Colin Ian King wrote:
-> The spelling of maxpctksize and maxpcktsize is inconsistent, rename them
-> both to wMaxPacketSize instead.
+On Wed, 2022-02-02 at 14:05 +0300, Dan Carpenter wrote:
+> On Wed, Feb 02, 2022 at 02:10:40AM -0800, Joe Perches wrote:
+> > On Wed, 2022-02-02 at 08:02 +0300, Dan Carpenter wrote:
+> > > On Mon, Jan 31, 2022 at 02:53:40AM +0000, Pkshih wrote:
+> > > > On Sun, 2022-01-30 at 22:37 +0000, Colin Ian King wrote:
+> > > > 
+> > > > When I check this patch, I find there is no 'break' for default case.
+> > > > Do we need one? like
+> > > > 
+> > > > @@ -226,6 +226,7 @@ void rtl_cam_empty_entry(struct ieee80211_hw *hw, u8 uc_index)
+> > > >                 break;
+> > > >         default:
+> > > >                 ul_encalgo = rtlpriv->cfg->maps[SEC_CAM_AES];
+> > > > +               break;
+> > > 
+> > > No, it's not necessary.  The choice of style is up to the original
+> > > developer.
+> > 
+> > every case should have one.
+> > 
+> > Documentation/process/deprecated.rst:
+> > 
+> > All switch/case blocks must end in one of:
+> > 
+> > * break;
+> > * fallthrough;
+> > * continue;
+> > * goto <label>;
+> > * return [expression];
+> > 
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
-> V2: change both strings to wMaxPacketSize
-[hmm]
-> diff --git a/drivers/usb/gadget/function/f_uac2.c b/drivers/usb/gadget/function/f_uac2.c
-[]
-> @@ -755,11 +755,11 @@ static int set_ep_max_packet_size_bint(struct device *dev, const struct f_uac2_o
->  
->  	if (max_size_bw <= max_size_ep)
->  		dev_dbg(dev,
-> -			"%s %s: Would use maxpctksize %d and bInterval %d\n",
-> +			"%s %s: Would use wMaxPacketSize %d and bInterval %d\n",
->  			speed_names[speed], dir, max_size_bw, bint);
->  	else {
->  		dev_warn(dev,
-> -			"%s %s: Req. maxpcktsize %d at bInterval %d > max ISOC %d, may drop data!\n",
-> +			"%s %s: Req. wMaxPacketSize %d at bInterval %d > max ISOC %d, may drop data!\n",
->  			speed_names[speed], dir, max_size_bw, bint, max_size_ep);
+> I doubt that's what Kees had in mind when he wrote that.
 
-better still would be to align to the open parenthesis
+uhh, I wrote that.  I think Kees reformatted it for .rst
+
+> The extra break statement doesn't improve readability.  It also doesn't
+> hurt readability.
+> 
+> There is no reason to add a break statement after a default case.  No
+> one is going to add another case after the default case.
+
+Several hundred switch statements in the kernel use default:
+as the first block.
+
+> And if they
+> do then a dozen static analysis tools will complain about the missing
+> break.
+
+true, doesn't mean that's a good thing.
 
 
