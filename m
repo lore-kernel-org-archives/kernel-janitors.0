@@ -2,89 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF2DC433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Feb 2022 09:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFDF3C433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Feb 2022 09:57:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245416AbiBBJTh (ORCPT
+        id S245675AbiBBJ5F (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Feb 2022 04:19:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55756 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244541AbiBBJTg (ORCPT
+        Wed, 2 Feb 2022 04:57:05 -0500
+Received: from relay.hostedemail.com ([64.99.140.27]:25200 "EHLO
+        relay.hostedemail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235997AbiBBJ5F (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Feb 2022 04:19:36 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2388C061714;
-        Wed,  2 Feb 2022 01:19:35 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id m26so8471223wms.0;
-        Wed, 02 Feb 2022 01:19:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=p2wQ8mV586mhuZL4frfEIcmzmgyOteCfGDcIoUviviw=;
-        b=HMR0fQk+43OprJJQhoAWA1vrzxeJ7K9GuusGqJmhmn9qrV4FPNQCuVfQ/EgN6JDuOV
-         ItTGUF5Dgkbzrc0BP3kf4o8RgtuRJDgBUVW2u7ujycRXWXGbP3sHMT+FhVxbYKuCOhUP
-         NuSPhvF73lzYGN6aw9bRp1rufqZXbJGUxmm6uPoLSTgZUOtZAjVsr1FSgFWPnupx0W4b
-         QYCi6oFWCkLwseF/2urpLefcj+NlbRotNyjlgHlzqx/szIH6zrT6aE2x4G4PLXd/L5nc
-         x9Kik9/cIQ5FNFy9P66gMqEm3mpfzY1DYnOAXovJIggmVKx+xv+7Fa+WVJENIfcnY/oU
-         aS6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=p2wQ8mV586mhuZL4frfEIcmzmgyOteCfGDcIoUviviw=;
-        b=blXgJgCx/zGIRD2KucgcrJpP2HDMlIwVY6FAHr+LGdWHT76DI12W+G2JqekKnpBG1r
-         Mhiu+iDaBwypZS7uBhANgeYJ+3neSPBNREQO1FeT0tYMbVNhoQquPJR384iT1XqHPsCk
-         u+BGN/ZPa4aqMHbGKUfEBqjZ6Q9P/8GoHm5gY+oMuSFJQRxPRhaZFLSxjxNpB61Dycer
-         LAtcT4RjAqXa3q4LldA3nNhQw8g3EcIrXBlWeznzVNge61Pe96EvISMKyYT5mVEn2Qx4
-         WWHKXAh8u3haA14DB/pAX62LLhUmye+zXEdtGL0mSwYLZLzwe9fLdPzm9//feNWbf6e4
-         GIuQ==
-X-Gm-Message-State: AOAM5301MlghIuKOgrReWiXVuOJNUBoU5LZCfchwbhOslS0gR7rT0fS+
-        y0LYF/wN7ICjt3VLRguUaxU=
-X-Google-Smtp-Source: ABdhPJwM4L2i3gC4Fnib4qik/6mxnjQrjp2xywymmmJ4lMG28PscLkUb49xWC14FbXhvYlXRHY8BSw==
-X-Received: by 2002:a05:600c:35c4:: with SMTP id r4mr5271109wmq.29.1643793574508;
-        Wed, 02 Feb 2022 01:19:34 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n22sm4561639wmc.27.2022.02.02.01.19.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Feb 2022 01:19:34 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Felipe Balbi <balbi@kernel.org>,
+        Wed, 2 Feb 2022 04:57:05 -0500
+Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
+        by unirelay13.hostedemail.com (Postfix) with ESMTP id 0E224601EA;
+        Wed,  2 Feb 2022 09:57:04 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf02.hostedemail.com (Postfix) with ESMTPA id DD81E80009;
+        Wed,  2 Feb 2022 09:56:41 +0000 (UTC)
+Message-ID: <358563808e6cad1b003e4c5488cf65ff1267f1d8.camel@perches.com>
+Subject: Re: [PATCH][next] usb: gadget: f_uac2: Fix spelling mistake
+ "maxpctksize" -> "maxpcktsize"
+From:   Joe Perches <joe@perches.com>
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Felipe Balbi <balbi@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-usb@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] usb: gadget: f_uac2: Fix spelling mistake "maxpctksize" -> "maxpcktsize"
-Date:   Wed,  2 Feb 2022 09:19:33 +0000
-Message-Id: <20220202091933.580713-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.34.1
+Date:   Wed, 02 Feb 2022 01:57:01 -0800
+In-Reply-To: <20220202091933.580713-1-colin.i.king@gmail.com>
+References: <20220202091933.580713-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.4-1ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: DD81E80009
+X-Stat-Signature: 8s9f1roqfggujywr3xzpjx5e6wm4xc68
+X-Rspamd-Server: rspamout02
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1+ZFAGlReJmYZL2admrM2pyTvRcuBbmLaA=
+X-HE-Tag: 1643795801-100853
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a deb_dbg message. Fix it.
+On Wed, 2022-02-02 at 09:19 +0000, Colin Ian King wrote:
+> There is a spelling mistake in a deb_dbg message. Fix it.
+[]
+> diff --git a/drivers/usb/gadget/function/f_uac2.c b/drivers/usb/gadget/function/f_uac2.c
+[]
+> @@ -755,7 +755,7 @@ static int set_ep_max_packet_size_bint(struct device *dev, const struct f_uac2_o
+>  
+>  	if (max_size_bw <= max_size_ep)
+>  		dev_dbg(dev,
+> -			"%s %s: Would use maxpctksize %d and bInterval %d\n",
+> +			"%s %s: Would use maxpcktsize %d and bInterval %d\n",
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+why not just spell it out? or use wMaxPacketSize from the uapi include?
 ---
- drivers/usb/gadget/function/f_uac2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/gadget/function/f_uac2.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/usb/gadget/function/f_uac2.c b/drivers/usb/gadget/function/f_uac2.c
-index f2237bcdba7c..c9b8d11f9870 100644
+index f2237bcdba7c0..13b59128121a2 100644
 --- a/drivers/usb/gadget/function/f_uac2.c
 +++ b/drivers/usb/gadget/function/f_uac2.c
-@@ -755,7 +755,7 @@ static int set_ep_max_packet_size_bint(struct device *dev, const struct f_uac2_o
+@@ -755,12 +755,12 @@ static int set_ep_max_packet_size_bint(struct device *dev, const struct f_uac2_o
  
  	if (max_size_bw <= max_size_ep)
  		dev_dbg(dev,
 -			"%s %s: Would use maxpctksize %d and bInterval %d\n",
-+			"%s %s: Would use maxpcktsize %d and bInterval %d\n",
++			"%s %s: Would use wMaxPacketSize %d and bInterval %d\n",
  			speed_names[speed], dir, max_size_bw, bint);
  	else {
  		dev_warn(dev,
--- 
-2.34.1
+-			"%s %s: Req. maxpcktsize %d at bInterval %d > max ISOC %d, may drop data!\n",
+-			speed_names[speed], dir, max_size_bw, bint, max_size_ep);
++			 "%s %s: Req. wMaxPacketSize %d at bInterval %d > max ISOC %d, may drop data!\n",
++			 speed_names[speed], dir, max_size_bw, bint, max_size_ep);
+ 		max_size_bw = max_size_ep;
+ 	}
+ 
+
 
