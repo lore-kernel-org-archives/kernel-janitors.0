@@ -2,162 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B406C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Feb 2022 11:45:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC1BC433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Feb 2022 12:46:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343985AbiBBLpV (ORCPT
+        id S1344192AbiBBMqA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Feb 2022 06:45:21 -0500
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:20052 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231171AbiBBLpU (ORCPT
+        Wed, 2 Feb 2022 07:46:00 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:59498 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232095AbiBBMp7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Feb 2022 06:45:20 -0500
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 2129cSPL011406;
-        Wed, 2 Feb 2022 11:45:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : content-type : in-reply-to :
- mime-version; s=corp-2021-07-09;
- bh=rySwR4JhQT6VtGIRBQeGTIs4rfcjl+kYONLHY2CMJsg=;
- b=r4yH3V+TuL3yz3uWni470s0vcq+JhMYbqp3eUNSUW/PSFFn0M7SYwPgqUsLxhnXj8AS4
- 9fAmQVyAVPatuVPdombDeFB6pwBSb31eiepHQHK87psou+ZoilaN3Fbz20vA+5Q1NcsF
- S4rd7mSJn8qCq6/o5uDjnjm31rcn1lEx3puwytdBvRX4QvXyXU9OeNvKzF9gNMCuvOBL
- HILAfdWIj262oygpRKFdSBeOgA5zUqIPY9lXB3Wut2OxYbqUQD0UmtsSTpMfYdqm89Mr
- FKg+qUmqmKgzTQTfRx78xpFAFEo+01rDGND7EjipArs0Y6BLxA3rVABqi2Ua0cawivBs 6g== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3dxj9fwt41-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 02 Feb 2022 11:45:10 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 212BfiTD093347;
-        Wed, 2 Feb 2022 11:45:09 GMT
-Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam08lp2048.outbound.protection.outlook.com [104.47.73.48])
-        by aserp3030.oracle.com with ESMTP id 3dvumh6qpe-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 02 Feb 2022 11:45:09 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HZt1+gFos6WmE6302ZgU1zptFCKtqY/33no2ZFKUJWDLsBIQTzjjo6/aafGqkor6IY9tPtLBM+P2Db9cYtXpMAex9UY6cKZuoUFKgk5qXuT8hfh2sCxtw7BJ9iE10WaALdKdUD2nva4YO54G4YaDsLULn6KohKMuxcwhm8q6cBt9azWT3A0dPcNMiaQub98T08JjKtpLt92rhD7nxVzFWIvmoaw5yQOTik1y2+F7b4WFHi7LF4TDC3M1y77SSgJzL2FcLmVroIh/6f2iepVNeSX19tyrqNlVA6eVnP6KkvvcKIDasWuNmA17ZybbBF8pqUZKIVKenEYTwUcMDWf9aw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rySwR4JhQT6VtGIRBQeGTIs4rfcjl+kYONLHY2CMJsg=;
- b=a6OS4MJdfYLibyYFsFOVz97skpzYpJV/AOT1QBp07ns9E7I2/euQqb10Q9ap/VteH7a0KXaqHqCSYAYML9Fkty0VzwiXhBGugBjKf431t4VqGrJc85XNRvPVUrnVTL7kwB0ixG/3poRhyfnB89h6ASXIIVECcY+0c0BNwp5VGExDivv16i8cv3+VOa2B2B2ZefCiiK0ZXAwOihzEU53LaZBQkJ+gu8PLCuH9LZukGYEQbe50b1l7QDP58OfmE8xR3Jtakny2236N9ywHzlaySOQFk10Mu19SXOTXkaceqU7f+JJpTTNBj26M48dV8eLMV8qKaJQjRRONgy0FJTHezQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rySwR4JhQT6VtGIRBQeGTIs4rfcjl+kYONLHY2CMJsg=;
- b=tzrWVe8CW1nzNwGcsPWQEbMvMmk6ifqT/tqXfPfyL8pzaYk1nlK4cL7ySun9PiRnfKjIBVtoVXik9Z1X8PvMdLwaxRR2zoEUksWtR31QtzBS2OEaylhWEDtUqQwwEMN2HONBHVMrkQzLupUibCvtWhxgwbiz3qVU0KBtkgQRqZU=
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28) by BLAPR10MB4881.namprd10.prod.outlook.com
- (2603:10b6:208:327::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4951.11; Wed, 2 Feb
- 2022 11:45:07 +0000
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::e5a5:8f49:7ec4:b7b8]) by MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::e5a5:8f49:7ec4:b7b8%5]) with mapi id 15.20.4930.021; Wed, 2 Feb 2022
- 11:45:07 +0000
-Date:   Wed, 2 Feb 2022 14:44:26 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     Kees Cook <keescook@chromium.org>, Pkshih <pkshih@realtek.com>,
-        "kvalo@kernel.org" <kvalo@kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "colin.i.king@gmail.com" <colin.i.king@gmail.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "kuba@kernel.org" <kuba@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] rtlwifi: remove redundant initialization of variable
- ul_encalgo
-Message-ID: <20220202114425.GV1978@kadam>
-References: <20220130223714.6999-1-colin.i.king@gmail.com>
- <55f8c7f2c75b18cd628d02a25ed96fae676eace2.camel@realtek.com>
- <20220202050229.GS1951@kadam>
- <90e40bb19320dcc2f2099b97b4b9d7d23325eaac.camel@perches.com>
- <20220202110554.GT1978@kadam>
- <a0ee4c6252ba69ec1425421ed3f297b12dfdcc3f.camel@perches.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a0ee4c6252ba69ec1425421ed3f297b12dfdcc3f.camel@perches.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: JN2P275CA0042.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:2::30)
- To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
+        Wed, 2 Feb 2022 07:45:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1643805959;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=L2MgpqkUcQy8xm2YEczHn5aMWVUVny42CQPa38ApqUo=;
+        b=VBp3nBumZQG3y5BnoX/TJeVgV7ojZEiJgWPQPteEpPQVGeGJpsTEWoFLOEYg+/YRSJb25B
+        uT4fp4fwhpqVFKc0VJ6jH2Vdn9buQqmTfO8q73JFUutQNEKZakt5g1suy51cpc6k/2k/Ey
+        VBfXchn/8ijykm0+MXT5760YX9VhlEE=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-201-TPplXN3bPF-owhJEfhUM8Q-1; Wed, 02 Feb 2022 07:45:58 -0500
+X-MC-Unique: TPplXN3bPF-owhJEfhUM8Q-1
+Received: by mail-ed1-f70.google.com with SMTP id l14-20020aa7cace000000b003f7f8e1cbbdso10318674edt.20
+        for <kernel-janitors@vger.kernel.org>; Wed, 02 Feb 2022 04:45:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=L2MgpqkUcQy8xm2YEczHn5aMWVUVny42CQPa38ApqUo=;
+        b=ECEqDRAvYvfn5t65j/qY24qXDolWXzDIXInReWDZx3o8qZBCWWeraOxqjTT/wBzJQP
+         XcQeYH4LPKZuvcWVZweoITkunp+lL287DOUxllYBKApqSTnhSA7fzTRZyimy0CTxavaB
+         q8oYtbyEpDczWtNCKM8KQj55tBf3Cgakay40xKQ9aXVq/xQSdeVFH7cyDZAWNZmnhuQ3
+         xNT5vUp46GWNYAVTndp7WV7lbj+uwObuTeWLeUu0g2FlM5KybwoiD+PPbjtLMiusIVJm
+         058xhHsihZ4aZ9+aAFWH6wtPOtJU143xeKGWze1/GF4JCDB2SCjpYFMINNkePxCzjSzR
+         J30Q==
+X-Gm-Message-State: AOAM533yq2lUioSdgUrcDoTg9hiJml8uzfRLEQZn0Ls05MRUtxVemQI4
+        DYDB6Au9gy3cqqgY+nbl+HJcdFFLhCD2mNKqCe5v34TUOUr3Nwovz6/BB8z6XiK8T1uNuLWfZfu
+        efvpRpQedOG0aO9DQN6+Jeyt/ZOwu
+X-Received: by 2002:a05:6402:698:: with SMTP id f24mr30447149edy.159.1643805957168;
+        Wed, 02 Feb 2022 04:45:57 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJx0BOt5vFNLNoU+2m3VvI1dwFENKVK9kPv+3YXwZ4YNAFwj6bqDiewZqYzq9PKmLgXw0q43hA==
+X-Received: by 2002:a05:6402:698:: with SMTP id f24mr30447139edy.159.1643805957039;
+        Wed, 02 Feb 2022 04:45:57 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1? (2001-1c00-0c1e-bf00-1db8-22d3-1bc9-8ca1.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1])
+        by smtp.gmail.com with ESMTPSA id q6sm15775628ejx.113.2022.02.02.04.45.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Feb 2022 04:45:56 -0800 (PST)
+Message-ID: <8386b5bf-46bd-5927-9119-cdf77e1df082@redhat.com>
+Date:   Wed, 2 Feb 2022 13:45:55 +0100
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f5889931-0ba9-4bbb-7653-08d9e641755e
-X-MS-TrafficTypeDiagnostic: BLAPR10MB4881:EE_
-X-Microsoft-Antispam-PRVS: <BLAPR10MB4881E32EEF3498F5A04722568E279@BLAPR10MB4881.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:499;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 3yH45n8H5RjkrPeXazAnAE8rVOasV+DMEQcaEHfH3C1iDH72R/vOJh/hdu9pOC74OZ+Hzzb9hb7FKN+YSvuhHm8B2sEXxoyriu4Z1V49JBp5XsXDaRyVCu8Pd+mwzBwPbbY8gYEQoFJUWUEO0SCedBygQ4xLyX4xUDWSNfaokq4/SZDBeQ4DsyoBS371GboOFDJ6YDGmutmRFS4twXrbsvJ+oWstOUHWK1ym2ihoyBoDHO7yA2eYraApoRSFq3vnlOzKajattHs3lr7YjgrZaHlAHQLlBabCrOpKtC8YtbaEm8c1m4dcFXt8QgtJ6cMOH6f6uiyGwJO347lW9uxkP8yofJM9aRqLkqaprlYMOycaB8igGE9ocaY49k2Yc6b2IebDRtAErY7U5K9wg7sadVGyN7jSsgSiUD1NXkTgI+Qv6n6IJGmAffI2H/7OR63aZVRaGp5stPS4F3vlFlXZPTTe2vD/ww9M6y2CWFzX+fld+8ds1/Ip74NOC1khHmeblH/RxSeFA93jBYtoc1detin1SzJngI13//gQTdr7jRDq8Ib38MjcAjN7WMsJMBUP3Ca8OIYOyRbpgiweoU8Yz5JU0zarVLlq7mMkNkhqFwk4/2JfYvGNufz4DrQYWBXpuG5EOdDXGu9Upb7d1BAgODe2xMfq/aUSe9PuIV/SBwtfQEI252lkMpuDrQohu6V9diuatbeRNQNJCcOv+au6Ew==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(366004)(6486002)(33716001)(1076003)(186003)(6916009)(26005)(38350700002)(38100700002)(54906003)(316002)(66556008)(5660300002)(44832011)(6506007)(4744005)(33656002)(7416002)(52116002)(8936002)(66476007)(66946007)(8676002)(4326008)(2906002)(9686003)(6666004)(508600001)(6512007)(86362001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?bQoRiyB/rgU0tAMjv/a+h6Uh6GZrWBAETC25/OEddHiNcoOvcVGwuDr/iGxb?=
- =?us-ascii?Q?lbBV2Wu3J5Vbj8biciMebo3z/si4N+HidVd9p1oJpOBApwpRkj7y4kD0kCBR?=
- =?us-ascii?Q?TEHmuky6nEaXnC73uRcpgXYxz/kYgsHStiJdLXqjDqOUXW0hr7x2k1et0AfV?=
- =?us-ascii?Q?kIlbycJfxa7fITob+jJ6aD79HRtLnTHS9rC1WgdFcuJz7CeGBVu8RorNg4TB?=
- =?us-ascii?Q?+Q9TZBYJKwBmc2aHBpDy2txJ5pj4c0B/bjV+tHgksqpsnxAXR6/OxJNbQg6u?=
- =?us-ascii?Q?ZOznUm+WUFjyLTSleXlETZP0HnB2NvqyW1y2qQqvZZ6pTGqgFWCFo1/Kw+3p?=
- =?us-ascii?Q?rBZYr6n6j1nqNBSKHJe+4G0T72cg3vZ/y8iw02aou+8ZLroIXZbU+BSVdej4?=
- =?us-ascii?Q?ejUOeolRjRMpK0zuejx/9aQFelKCGIpyOdDLLc+Y+0HbdGwsdofyfvgf9vfw?=
- =?us-ascii?Q?qfXCjrmfPaskwOJ0RLdxaGqhqoBpvQcqjxaNsSwW2grPZGwBgENkQ7uePOUV?=
- =?us-ascii?Q?GfPcNq25mVWYni+zk8Eloixg9oD1iodQqyWrUAnjsLa9oFGbMp0RGggsiFLw?=
- =?us-ascii?Q?ZllcEriPP0EHn71Ul77bWI55MLwMM7cK1jDrqU8Wp5kJTvQpPPefBvvhLbR9?=
- =?us-ascii?Q?KMKOnBW1Q0PXQumIATpyswRJrJBmZSpiJdikIRyFL4t4k4UezsuEoRWSjGR7?=
- =?us-ascii?Q?RMFPy4iomEwCKG0tp1QzXQnDXe0Of/rDAtzb7QWb5ZOQuU3NQdwSV0mi2YJk?=
- =?us-ascii?Q?aJYzh2HxcUA7lpRErTxYd1EUapMIVX4BRZDZ7NY6MKHltceOSyM1D5lm8zZC?=
- =?us-ascii?Q?kGpGUPTHDIZ9tQyMUtcB9ahXDEAAgxoBp240FCLOAdTnN0QmQC+zf8EcKlgo?=
- =?us-ascii?Q?TV5i8vB667AqpezZRfZ6vfWgTWQPI8JodcGrhrme3mKgZmCHQuQ29nUng5m9?=
- =?us-ascii?Q?O3jmRMIRP5m/D3GIQoQb8TKCNyYIhCdOZAvD3/LW4vIZ6V2OzVnJ5W1q0yVa?=
- =?us-ascii?Q?R/WH4MUL7hkQtS7f8TtjC8PbMboHQgtn1CanB8tvHHHVuWqCkVVGLytlHKIp?=
- =?us-ascii?Q?T2073XThj7lXwU2HA8SlupIKtkh2qb2QXTpzNBRgpFp5rDE/mGtqnhLGklL2?=
- =?us-ascii?Q?PbhsKQ9ei26/lrCpLcrfYIG+SqbEu3CQ7WTZSNhqSVXgBt9PduJ5p5FhLwQ6?=
- =?us-ascii?Q?63n5jF4RwpSDfv0CIFWMfvPf2knDywty7uG4MbDp4C6mm2lM8nCL2qAu/Kdu?=
- =?us-ascii?Q?UIPHeJWlSSVZIDsyMBL7sIQ/EE9ZttBSMKreGsb5Ggpvop6D8BbrTCHD5+Hn?=
- =?us-ascii?Q?F2wuvJjDeu1Q721kYaxpVM7qRdLDW8PznSTJUh0SaeA207EaNGYKoQ3LiqAc?=
- =?us-ascii?Q?dUPO1koyxh4XDNmCqLDaUthkaDzHlgF+SC9FntnwvfGbb4zFe0FV31NnyrMW?=
- =?us-ascii?Q?e5TMCIVGvKIbpgwF4zt9HWuS6LGEdehSSghhalUPz5Ue+SnV8kJCITCezFbW?=
- =?us-ascii?Q?OmU0HB/yFROHX9A8ZKG9TTxwcv9hQt8C3A48zS+i/w231KdgLj+JYDXKJIF+?=
- =?us-ascii?Q?qLqyi8pNLLm833p2bCDt3paodThVdvatfD1KONV2wISwUp5JxYThijXpaSPf?=
- =?us-ascii?Q?L0CSYBEaiLGWZIb1sWRLrMdfW7UOZxs7Gdmf2gCfMSifKJs3T/ccRMNXBFXu?=
- =?us-ascii?Q?MXl+RKCZXZ/0XAmftRJ0Pra/4Vo=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5889931-0ba9-4bbb-7653-08d9e641755e
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Feb 2022 11:45:07.2273
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: H1dqVlAuKINyqwOBrGUlWJ9d0Ho9WO1DG4a8uNRBTvJKI+SrRJGUyGQZ8n9BcuZD8V6QJWea+UGGJTx/PUs06uyz3gYNn1Kz8j/WiM7wVrw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB4881
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10245 signatures=673430
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 phishscore=0
- mlxscore=0 adultscore=0 suspectscore=0 mlxlogscore=899 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2201110000
- definitions=main-2202020062
-X-Proofpoint-GUID: MZ4roNrRg_N4XAkFkH848bpA17Qehd9D
-X-Proofpoint-ORIG-GUID: MZ4roNrRg_N4XAkFkH848bpA17Qehd9D
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH][next] power: supply: axp288_fuel_gauge: Fix spelling
+ mistake "resisitor" -> "resistor"
+Content-Language: en-US
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, linux-pm@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220202091246.580091-1-colin.i.king@gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20220202091246.580091-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Feb 02, 2022 at 03:21:17AM -0800, Joe Perches wrote:
-> > I doubt that's what Kees had in mind when he wrote that.
+Hi,
+
+On 2/2/22 10:12, Colin Ian King wrote:
+> There is a spelling mistake in a MODULE_PARM_DESC description. Fix it.
 > 
-> uhh, I wrote that.  I think Kees reformatted it for .rst
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Heh.
+Oops my bad, patch looks good to me:
 
-You should have mentioned that you invented that rule!  That's like
-editing Wikipedia to say what you want and then citing it as a source...
+Acked-by: Hans de Goede <hdegoede@redhat.com>
 
-regards,
-dan carpenter
+Regards,
+
+Hans
+
+> ---
+>  drivers/power/supply/axp288_fuel_gauge.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/power/supply/axp288_fuel_gauge.c b/drivers/power/supply/axp288_fuel_gauge.c
+> index dcedbc59732d..13be2c1d6528 100644
+> --- a/drivers/power/supply/axp288_fuel_gauge.c
+> +++ b/drivers/power/supply/axp288_fuel_gauge.c
+> @@ -91,7 +91,7 @@
+>  
+>  static bool no_current_sense_res;
+>  module_param(no_current_sense_res, bool, 0444);
+> -MODULE_PARM_DESC(no_current_sense_res, "No (or broken) current sense resisitor");
+> +MODULE_PARM_DESC(no_current_sense_res, "No (or broken) current sense resistor");
+>  
+>  enum {
+>  	QWBTU_IRQ = 0,
+> 
+
