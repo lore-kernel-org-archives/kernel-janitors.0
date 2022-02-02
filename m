@@ -2,60 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D28F1C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Feb 2022 09:12:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5000C433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Feb 2022 09:15:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245334AbiBBJMv (ORCPT
+        id S245376AbiBBJPy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Feb 2022 04:12:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54178 "EHLO
+        Wed, 2 Feb 2022 04:15:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245328AbiBBJMu (ORCPT
+        with ESMTP id S232788AbiBBJPx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Feb 2022 04:12:50 -0500
+        Wed, 2 Feb 2022 04:15:53 -0500
 Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B958BC061714;
-        Wed,  2 Feb 2022 01:12:49 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id v13so36944416wrv.10;
-        Wed, 02 Feb 2022 01:12:49 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93FA5C061714;
+        Wed,  2 Feb 2022 01:15:53 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id e8so37112466wrc.0;
+        Wed, 02 Feb 2022 01:15:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=yJdtPOjpOJxcw/bDrep6QyoQiiLSPQ6yNsHfnZN05PI=;
-        b=jSUB4XrIRP6GTtKBT+hq9g63X7O1VislQePExHgAwMfwlO0SqMVeEd9JKZ9CJhFR+W
-         Wj5881Lad6UA9L/qk4xuwZlu6TUoOT3tuTZ5J5cdPCM9QdUu576JUaIjlOLdyG7enFlS
-         UdQIzMT6nYHC16AQoyJvWtGdya1EP48iuJxZ5E9I/ApEJHleOVYvTB7ff+4BrbCcN55y
-         IriE6ufcTxAYYFgTIoLHliIlDqlVGXl1NzivvraBEMHgtEtNvgb7ewKj96yTs5x+yJwe
-         OonhUvWaanyy7zyxFTocEz1LBO0k+ba1vZmXEGTJFeBax7RYM9352e6e3sSn0ZeuyqY0
-         76GQ==
+        bh=6p2dGIbQwImBA0dySet08I3gW/cnu8l/C4kG33NOFAA=;
+        b=EfbeggMuOhCBlQ73k9TCTmIrugE97UGBb6OyVHVz15FjAHW689OQ6CZIFWorQ7Sw0G
+         QzxE6IBfaOcxxre16drQ7XUh4yil4GWJlaBw/CFjKu4caaYc3hYuGOV3dMfvT4iwc5AF
+         i1P6iKrSp8A0QWbWAiSk1s3xOyjvy90/QLdXuZbtgxkPLHs93cTXiQt1/DsoROr5Q5ZJ
+         LUsDD9lbS2QKiG/o9jCGgTHo35S5oShw72G0GaUfGZCzmHmWHM/KoiFJYkOL8R2RZxMM
+         JPtvytjkGWUG3UXbGr/jFADyTcsM6UDDiMr0jPH4sk6+thzXcAWEsoN0Tdt1MK2Varh3
+         TC6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=yJdtPOjpOJxcw/bDrep6QyoQiiLSPQ6yNsHfnZN05PI=;
-        b=oqZ/49w8hghBuxrfOaiXr3ruKvXYX+wqoU249sELD7HGFVjcL7/vSI0JEq064OAKZ9
-         oIf8vLhVAQYdEpteR2j6wopzOZwQVY5Ljx8vLa0/X0x/74xzN/6G+dzJ4jVH0hHmKDNT
-         EFaYIFcrGi89A2r38fSxdI8JfOPnCVPK9D5e5jroXtN6+IW7CjGQLZnF6PP0fdj5FRTE
-         YFF4h0QQLIs+c3nGX67U1sfneCPScIqXy83+88prJ5QveSR2zWciZ/+2mmsb8GavR4XW
-         Os3h4FSn+Jha7gqkyhtv4CNepKAHoLNPxVH1pXAZsCIwb+KVvz+slzhM/nQLr6rcFRvW
-         n13Q==
-X-Gm-Message-State: AOAM5310XzHhoH7CeR+kaKSiMHW5upRr5/Df5HGTGqY6Xno0XhmdXjtw
-        Ksnh19/MYYmynKQuoE7kVQU=
-X-Google-Smtp-Source: ABdhPJzGm5XRxQrPBOIGpKj/DmunuAW2c5T5gyDjptyQR+b0izn4UDCqFxguQioa4WWh87M3GLZQvQ==
-X-Received: by 2002:a5d:6d82:: with SMTP id l2mr24731664wrs.236.1643793168264;
-        Wed, 02 Feb 2022 01:12:48 -0800 (PST)
+        bh=6p2dGIbQwImBA0dySet08I3gW/cnu8l/C4kG33NOFAA=;
+        b=dIeKfddK2814gVwDflP9oRHsdnpwZz75tj0xDV/lx/3EmSbe6291wA8B8tY4AgiKcD
+         X9J+2VwBCTSuFUCz8ubv0ZQnI8CmuPV4xeMdGdgQmkWmhZSmOsPDUNKCHIwlLZBszEYN
+         qp/AE/KrdTTW0crgWw7VTteSqhbLEQEQHfyIoM+7DDRF3bE/HKisahdrvOWdgCM/rXTG
+         l4pOzalHMrQMfncYTdFcAAluH2SzWxYMaP3kCbp+ma1eDFItlQexpKVYgQFlC80/w/Pd
+         Cblw1/lQhAVaG5CqGA0ObnxCFbLVFc8zaAZgriNpqCWcZw48qVSqksXvMGLquy2XnbZs
+         AvmQ==
+X-Gm-Message-State: AOAM530d4akyA/8efawB6yw3DwT+YjfJ3fCwGbsLfIhAITG977z7OBRd
+        EKQQ5Zd1poeLrPQP3EYAxqg=
+X-Google-Smtp-Source: ABdhPJz9o1UANCdn2LBDLwxh/VFwIVUGbN4l4E29CfmPx4tBYBNNLPaV9Lam9AS1o8nxAFF2t9kIzA==
+X-Received: by 2002:a5d:47cf:: with SMTP id o15mr24418696wrc.577.1643793352172;
+        Wed, 02 Feb 2022 01:15:52 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id b11sm4112779wmq.46.2022.02.02.01.12.47
+        by smtp.gmail.com with ESMTPSA id n2sm19441878wrw.63.2022.02.02.01.15.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Feb 2022 01:12:47 -0800 (PST)
+        Wed, 02 Feb 2022 01:15:51 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Sebastian Reichel <sre@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Hans de Goede <hdegoede@redhat.com>, linux-pm@vger.kernel.org
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] power: supply: axp288_fuel_gauge: Fix spelling mistake "resisitor" -> "resistor"
-Date:   Wed,  2 Feb 2022 09:12:46 +0000
-Message-Id: <20220202091246.580091-1-colin.i.king@gmail.com>
+Subject: [PATCH] pinctl: doc: Fix spelling mistake "resisitors" -> "resistors"
+Date:   Wed,  2 Feb 2022 09:15:51 +0000
+Message-Id: <20220202091551.580372-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,26 +69,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a MODULE_PARM_DESC description. Fix it.
+There is a spelling mistake in the documentation. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/power/supply/axp288_fuel_gauge.c | 2 +-
+ .../devicetree/bindings/pinctrl/brcm,bcm11351-pinctrl.txt       | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/power/supply/axp288_fuel_gauge.c b/drivers/power/supply/axp288_fuel_gauge.c
-index dcedbc59732d..13be2c1d6528 100644
---- a/drivers/power/supply/axp288_fuel_gauge.c
-+++ b/drivers/power/supply/axp288_fuel_gauge.c
-@@ -91,7 +91,7 @@
- 
- static bool no_current_sense_res;
- module_param(no_current_sense_res, bool, 0444);
--MODULE_PARM_DESC(no_current_sense_res, "No (or broken) current sense resisitor");
-+MODULE_PARM_DESC(no_current_sense_res, "No (or broken) current sense resistor");
- 
- enum {
- 	QWBTU_IRQ = 0,
+diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,bcm11351-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/brcm,bcm11351-pinctrl.txt
+index 4eaae32821ae..e047a198db38 100644
+--- a/Documentation/devicetree/bindings/pinctrl/brcm,bcm11351-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/brcm,bcm11351-pinctrl.txt
+@@ -85,7 +85,7 @@ Optional Properties (for I2C pins):
+ - function:			String. Specifies the pin mux selection. Values
+ 				must be one of: "alt1", "alt2", "alt3", "alt4"
+ - bias-pull-up:			Integer. Pull up strength in Ohm. There are 3
+-				pull-up resisitors (1.2k, 1.8k, 2.7k) available
++				pull-up resistors (1.2k, 1.8k, 2.7k) available
+ 				in parallel for I2C pins, so the valid values
+ 				are: 568, 720, 831, 1080, 1200, 1800, 2700 Ohm.
+ - bias-disable:			No arguments. Disable pin bias.
 -- 
 2.34.1
 
