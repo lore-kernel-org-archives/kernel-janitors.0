@@ -2,81 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAEA1C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Feb 2022 10:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71263C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Feb 2022 10:28:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245731AbiBBKKp (ORCPT
+        id S242291AbiBBK2B (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Feb 2022 05:10:45 -0500
-Received: from relay032.a.hostedemail.com ([64.99.140.32]:34636 "EHLO
-        relay3.hostedemail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232791AbiBBKKo (ORCPT
+        Wed, 2 Feb 2022 05:28:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42918 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234399AbiBBK2B (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Feb 2022 05:10:44 -0500
-Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
-        by unirelay06.hostedemail.com (Postfix) with ESMTP id 6A2342304B;
-        Wed,  2 Feb 2022 10:10:43 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf20.hostedemail.com (Postfix) with ESMTPA id 8BB4720032;
-        Wed,  2 Feb 2022 10:10:41 +0000 (UTC)
-Message-ID: <90e40bb19320dcc2f2099b97b4b9d7d23325eaac.camel@perches.com>
-Subject: Re: [PATCH] rtlwifi: remove redundant initialization of variable
- ul_encalgo
-From:   Joe Perches <joe@perches.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Pkshih <pkshih@realtek.com>
-Cc:     "kvalo@kernel.org" <kvalo@kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "colin.i.king@gmail.com" <colin.i.king@gmail.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "kuba@kernel.org" <kuba@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Wed, 02 Feb 2022 02:10:40 -0800
-In-Reply-To: <20220202050229.GS1951@kadam>
-References: <20220130223714.6999-1-colin.i.king@gmail.com>
-         <55f8c7f2c75b18cd628d02a25ed96fae676eace2.camel@realtek.com>
-         <20220202050229.GS1951@kadam>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.4-1ubuntu2 
+        Wed, 2 Feb 2022 05:28:01 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CFC1C061714;
+        Wed,  2 Feb 2022 02:28:01 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 91869B8307D;
+        Wed,  2 Feb 2022 10:27:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E5D9C004E1;
+        Wed,  2 Feb 2022 10:27:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643797678;
+        bh=9309zuAje4ZSMnel2PPjJY6oVpPYtw+wX81daTgIU2c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oUczvM4XVLV2xIieRd93WKRA/bDWHPu3bGZ1u8+QBmSTrYhSFHaxVMbBYJtCSLWlk
+         mdX5x+MpZ4Sv5+uIMHU+jLXER4S/FFWljsc4xjDHWvsS+VEcrhMQAtNCX18hdie3Tq
+         tvOKmwaVTMS6R5Evd+SWcetYCUDouNAsmsSEUG+69PZy9uHqXoXCViCNb6bZCVNAR4
+         TG1+f7hrbRy5HLTvf0bQpQ8+Wk9CiYxQVNT/kLeieirnakYBqyqiI5wNV+xTUDVxYg
+         9zVoNTWVEA73IoTzK4CT6l4aPLhXwxbfLd3PZNF2l3ePPcUJBCWqpoo5+OLV1VGdhV
+         quemPrBSKHD+w==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1nFCrU-0003Pl-Ed; Wed, 02 Feb 2022 11:27:41 +0100
+Date:   Wed, 2 Feb 2022 11:27:40 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Mitchell Tasman <tasman@leaflabs.com>,
+        Alex Elder <elder@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        greybus-dev@lists.linaro.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] staging: greybus: fix an error handling bug in
+ gb_svc_hello()
+Message-ID: <YfpcnDRAyeyoxi10@hovoldconsulting.com>
+References: <20220202072016.GA6748@kili>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: a6iseiq8hnmqaizdxdhrz3te8wu9jjme
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 8BB4720032
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX18DU2nJGrtl7nrzKyQf5hu1M0xTgVU9im4=
-X-HE-Tag: 1643796641-41319
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220202072016.GA6748@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 2022-02-02 at 08:02 +0300, Dan Carpenter wrote:
-> On Mon, Jan 31, 2022 at 02:53:40AM +0000, Pkshih wrote:
-> > On Sun, 2022-01-30 at 22:37 +0000, Colin Ian King wrote:
-> > 
-> > When I check this patch, I find there is no 'break' for default case.
-> > Do we need one? like
-> > 
-> > @@ -226,6 +226,7 @@ void rtl_cam_empty_entry(struct ieee80211_hw *hw, u8 uc_index)
-> >                 break;
-> >         default:
-> >                 ul_encalgo = rtlpriv->cfg->maps[SEC_CAM_AES];
-> > +               break;
+On Wed, Feb 02, 2022 at 10:20:16AM +0300, Dan Carpenter wrote:
+> Cleanup if gb_svc_queue_deferred_request() fails.
 > 
-> No, it's not necessary.  The choice of style is up to the original
-> developer.
+> Fixes: ee2f2074fdb2 ("greybus: svc: reconfig APBridgeA-Switch link to handle required load")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> From static analysis.  Not tested.
 
-every case should have one.
+Look correct. Thanks, Dan.
 
-Documentation/process/deprecated.rst:
+This part of Greybus no longer lives in staging and the prefix should be
 
-All switch/case blocks must end in one of:
+	greybus: svc:
 
-* break;
-* fallthrough;
-* continue;
-* goto <label>;
-* return [expression];
+I'd also prefer to see all error labels use an err_ prefix consistently.
 
+When looking at this code I found another bug so I'll fix up the above
+nits and send a series with both fixes as there will be a dependency.
 
+>  drivers/greybus/svc.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/greybus/svc.c b/drivers/greybus/svc.c
+> index ce7740ef449b..b19651048081 100644
+> --- a/drivers/greybus/svc.c
+> +++ b/drivers/greybus/svc.c
+> @@ -866,8 +866,14 @@ static int gb_svc_hello(struct gb_operation *op)
+>  
+>  	gb_svc_debugfs_init(svc);
+>  
+> -	return gb_svc_queue_deferred_request(op);
+> +	ret = gb_svc_queue_deferred_request(op);
+> +	if (ret)
+> +		goto remove_debugfs;
+> +
+> +	return 0;
+>  
+> +remove_debugfs:
+> +	gb_svc_debugfs_exit(svc);
+>  err_unregister_device:
+>  	gb_svc_watchdog_destroy(svc);
+>  	device_del(&svc->dev);
+
+Johan
