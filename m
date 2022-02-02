@@ -2,101 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71263C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Feb 2022 10:28:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD97BC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Feb 2022 10:31:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242291AbiBBK2B (ORCPT
+        id S245642AbiBBKb0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Feb 2022 05:28:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42918 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234399AbiBBK2B (ORCPT
-        <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Feb 2022 05:28:01 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CFC1C061714;
-        Wed,  2 Feb 2022 02:28:01 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 91869B8307D;
-        Wed,  2 Feb 2022 10:27:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E5D9C004E1;
-        Wed,  2 Feb 2022 10:27:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643797678;
-        bh=9309zuAje4ZSMnel2PPjJY6oVpPYtw+wX81daTgIU2c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oUczvM4XVLV2xIieRd93WKRA/bDWHPu3bGZ1u8+QBmSTrYhSFHaxVMbBYJtCSLWlk
-         mdX5x+MpZ4Sv5+uIMHU+jLXER4S/FFWljsc4xjDHWvsS+VEcrhMQAtNCX18hdie3Tq
-         tvOKmwaVTMS6R5Evd+SWcetYCUDouNAsmsSEUG+69PZy9uHqXoXCViCNb6bZCVNAR4
-         TG1+f7hrbRy5HLTvf0bQpQ8+Wk9CiYxQVNT/kLeieirnakYBqyqiI5wNV+xTUDVxYg
-         9zVoNTWVEA73IoTzK4CT6l4aPLhXwxbfLd3PZNF2l3ePPcUJBCWqpoo5+OLV1VGdhV
-         quemPrBSKHD+w==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1nFCrU-0003Pl-Ed; Wed, 02 Feb 2022 11:27:41 +0100
-Date:   Wed, 2 Feb 2022 11:27:40 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Mitchell Tasman <tasman@leaflabs.com>,
-        Alex Elder <elder@kernel.org>,
+        Wed, 2 Feb 2022 05:31:26 -0500
+Received: from cable.insite.cz ([84.242.75.189]:54289 "EHLO cable.insite.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232194AbiBBKb0 (ORCPT <rfc822;kernel-janitors@vger.kernel.org>);
+        Wed, 2 Feb 2022 05:31:26 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by cable.insite.cz (Postfix) with ESMTP id 7CDEBA1A3D402;
+        Wed,  2 Feb 2022 11:31:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ivitera.com; s=mail;
+        t=1643797884; bh=m57sKCZLcTtk6SauTtGjeo9rjfaMH2ssP+2/C7sdvVY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=qCtgBYxPM8ft2kwxbuXXs+31U2UGhoKWaWYydzgmpFH+SMepg5UEFtCYj5uBu1bPd
+         IzgZMSQByfDngmXufo6qFC6PCE7vrqJUDyv90k2GO5tIAnqwcw1Yrh5SVM1SAM694i
+         j+kdK/mjQYP06OqEwrEMBalPkLLsG9wPyZ3J8Ic4=
+Received: from cable.insite.cz ([84.242.75.189])
+        by localhost (server.insite.cz [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id i4YarFuNZVz5; Wed,  2 Feb 2022 11:31:19 +0100 (CET)
+Received: from [192.168.105.22] (dustin.pilsfree.net [81.201.58.138])
+        (Authenticated sender: pavel)
+        by cable.insite.cz (Postfix) with ESMTPSA id 21A85A1A3D400;
+        Wed,  2 Feb 2022 11:31:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ivitera.com; s=mail;
+        t=1643797879; bh=m57sKCZLcTtk6SauTtGjeo9rjfaMH2ssP+2/C7sdvVY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Pps74gPCpVJFjZa9EDBad20Vh2yQVkBR8cWqPq7ylJNulWdZjBMGzEYlfmJZT/uZX
+         gY4T9LWlOcRoMhdQonfnCMNDC91nd6JovUUG5X2FSH9b46PMo1l3FHbspW69l7sPtW
+         NwdygXmivZg54lxKE5qTGJHvh77UITxSfRv80CM0=
+Subject: Re: [PATCH][next] usb: gadget: f_uac2: Fix spelling mistake
+ "maxpctksize" -> "maxpcktsize"
+To:     Joe Perches <joe@perches.com>,
+        Colin Ian King <colin.i.king@gmail.com>,
+        Felipe Balbi <balbi@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        greybus-dev@lists.linaro.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] staging: greybus: fix an error handling bug in
- gb_svc_hello()
-Message-ID: <YfpcnDRAyeyoxi10@hovoldconsulting.com>
-References: <20220202072016.GA6748@kili>
+        linux-usb@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220202091933.580713-1-colin.i.king@gmail.com>
+ <358563808e6cad1b003e4c5488cf65ff1267f1d8.camel@perches.com>
+From:   Pavel Hofman <pavel.hofman@ivitera.com>
+Message-ID: <efcb90c2-cfbb-3264-bd6d-bca33b03fa48@ivitera.com>
+Date:   Wed, 2 Feb 2022 11:31:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220202072016.GA6748@kili>
+In-Reply-To: <358563808e6cad1b003e4c5488cf65ff1267f1d8.camel@perches.com>
+Content-Type: text/plain; charset=iso-8859-2; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Feb 02, 2022 at 10:20:16AM +0300, Dan Carpenter wrote:
-> Cleanup if gb_svc_queue_deferred_request() fails.
+
+
+Dne 02. 02. 22 v 10:57 Joe Perches napsal(a):
+> On Wed, 2022-02-02 at 09:19 +0000, Colin Ian King wrote:
+>> There is a spelling mistake in a deb_dbg message. Fix it.
+> []
+>> diff --git a/drivers/usb/gadget/function/f_uac2.c b/drivers/usb/gadget/function/f_uac2.c
+> []
+>> @@ -755,7 +755,7 @@ static int set_ep_max_packet_size_bint(struct device *dev, const struct f_uac2_o
+>>   
+>>   	if (max_size_bw <= max_size_ep)
+>>   		dev_dbg(dev,
+>> -			"%s %s: Would use maxpctksize %d and bInterval %d\n",
+>> +			"%s %s: Would use maxpcktsize %d and bInterval %d\n",
 > 
-> Fixes: ee2f2074fdb2 ("greybus: svc: reconfig APBridgeA-Switch link to handle required load")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> why not just spell it out? or use wMaxPacketSize from the uapi include?
+
+My reason for the ugly abbreviation (prone to misspelling for which I 
+apologize) was to keep the line length limit. I would be happy to see 
+wMaxPacketSize instead :-)
+
+Pavel.
+
 > ---
-> From static analysis.  Not tested.
-
-Look correct. Thanks, Dan.
-
-This part of Greybus no longer lives in staging and the prefix should be
-
-	greybus: svc:
-
-I'd also prefer to see all error labels use an err_ prefix consistently.
-
-When looking at this code I found another bug so I'll fix up the above
-nits and send a series with both fixes as there will be a dependency.
-
->  drivers/greybus/svc.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+>   drivers/usb/gadget/function/f_uac2.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/greybus/svc.c b/drivers/greybus/svc.c
-> index ce7740ef449b..b19651048081 100644
-> --- a/drivers/greybus/svc.c
-> +++ b/drivers/greybus/svc.c
-> @@ -866,8 +866,14 @@ static int gb_svc_hello(struct gb_operation *op)
->  
->  	gb_svc_debugfs_init(svc);
->  
-> -	return gb_svc_queue_deferred_request(op);
-> +	ret = gb_svc_queue_deferred_request(op);
-> +	if (ret)
-> +		goto remove_debugfs;
-> +
-> +	return 0;
->  
-> +remove_debugfs:
-> +	gb_svc_debugfs_exit(svc);
->  err_unregister_device:
->  	gb_svc_watchdog_destroy(svc);
->  	device_del(&svc->dev);
-
-Johan
+> diff --git a/drivers/usb/gadget/function/f_uac2.c b/drivers/usb/gadget/function/f_uac2.c
+> index f2237bcdba7c0..13b59128121a2 100644
+> --- a/drivers/usb/gadget/function/f_uac2.c
+> +++ b/drivers/usb/gadget/function/f_uac2.c
+> @@ -755,12 +755,12 @@ static int set_ep_max_packet_size_bint(struct device *dev, const struct f_uac2_o
+>   
+>   	if (max_size_bw <= max_size_ep)
+>   		dev_dbg(dev,
+> -			"%s %s: Would use maxpctksize %d and bInterval %d\n",
+> +			"%s %s: Would use wMaxPacketSize %d and bInterval %d\n",
+>   			speed_names[speed], dir, max_size_bw, bint);
+>   	else {
+>   		dev_warn(dev,
+> -			"%s %s: Req. maxpcktsize %d at bInterval %d > max ISOC %d, may drop data!\n",
+> -			speed_names[speed], dir, max_size_bw, bint, max_size_ep);
+> +			 "%s %s: Req. wMaxPacketSize %d at bInterval %d > max ISOC %d, may drop data!\n",
+> +			 speed_names[speed], dir, max_size_bw, bint, max_size_ep);
+>   		max_size_bw = max_size_ep;
+>   	}
+>   
+> 
+> 
