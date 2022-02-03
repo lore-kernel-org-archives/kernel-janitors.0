@@ -2,101 +2,139 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B58C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Feb 2022 09:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C48B7C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Feb 2022 10:45:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349427AbiBCJ3i (ORCPT
+        id S241083AbiBCKpB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Feb 2022 04:29:38 -0500
-Received: from rtits2.realtek.com ([211.75.126.72]:45007 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232084AbiBCJ3h (ORCPT
+        Thu, 3 Feb 2022 05:45:01 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:52097 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230289AbiBCKpB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Feb 2022 04:29:37 -0500
-Authenticated-By: 
-X-SpamFilter-By: ArmorX SpamTrap 5.73 with qID 2139TLi84003393, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36504.realtek.com.tw[172.21.6.27])
-        by rtits2.realtek.com.tw (8.15.2/2.71/5.88) with ESMTPS id 2139TLi84003393
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 3 Feb 2022 17:29:21 +0800
-Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
- RTEXH36504.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Thu, 3 Feb 2022 17:29:21 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXDAG02.realtek.com.tw (172.21.6.101) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Thu, 3 Feb 2022 17:29:21 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::35e4:d9d1:102d:605e]) by
- RTEXMBS04.realtek.com.tw ([fe80::35e4:d9d1:102d:605e%5]) with mapi id
- 15.01.2308.020; Thu, 3 Feb 2022 17:29:21 +0800
-From:   Pkshih <pkshih@realtek.com>
-To:     "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>,
-        Bernie Huang <phhuang@realtek.com>,
-        "tony0620emma@gmail.com" <tony0620emma@gmail.com>
-CC:     "kvalo@kernel.org" <kvalo@kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH v2] rtw88: fix use after free in rtw_hw_scan_update_probe_req()
-Thread-Topic: [PATCH v2] rtw88: fix use after free in
- rtw_hw_scan_update_probe_req()
-Thread-Index: AQHYGNesRVy32sMtk0aaFWmiiJyrgqyBCTgA
-Date:   Thu, 3 Feb 2022 09:29:20 +0000
-Message-ID: <779ff6e7a852a1aed4f65ba1fbe921917904e944.camel@realtek.com>
-References: <20220203082532.GA25151@kili>
-In-Reply-To: <20220203082532.GA25151@kili>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.36.1-2 
-x-originating-ip: [101.137.137.211]
-x-kse-serverinfo: RTEXDAG02.realtek.com.tw, 9
-x-kse-attachmentfiltering-interceptor-info: no applicable attachment filtering
- rules found
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: =?utf-8?B?Q2xlYW4sIGJhc2VzOiAyMDIyLzIvMyDkuIrljYggMDc6NTQ6MDA=?=
-x-kse-bulkmessagesfiltering-scan-result: protection disabled
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D75C4A60E34C7B4994DD22C3CC6E08EB@realtek.com>
-Content-Transfer-Encoding: base64
+        Thu, 3 Feb 2022 05:45:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1643885100;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6jbdwerPehMJZgP+utUUo4nFfSR4t23J67pZxvwQ5qI=;
+        b=THoo2sCHGlzI7XmEfjdo73E9fXt7P1II1UXaK2C+7LrlFmotGQ2eF8qol6f/3h1WZHxnoI
+        DqwCFjG/t67aVHUvgj8mfDSsPU2lGVSdEAbxrpctpyjXD7nblWsnLo50IyJ+vZRrkiK3kV
+        /1m4x1Y0Am/5BnfccApaVus+HJ0j7so=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-264-0lj9q-tPMjSPMuI0Cfy4LA-1; Thu, 03 Feb 2022 05:44:59 -0500
+X-MC-Unique: 0lj9q-tPMjSPMuI0Cfy4LA-1
+Received: by mail-ed1-f69.google.com with SMTP id f21-20020a50d555000000b00407a8d03b5fso1235663edj.9
+        for <kernel-janitors@vger.kernel.org>; Thu, 03 Feb 2022 02:44:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=6jbdwerPehMJZgP+utUUo4nFfSR4t23J67pZxvwQ5qI=;
+        b=ZAWOkgYjtOWqe6MfRqQeb29bGBdwzprFYVj4KYfSuEkLK5QqA0Yvensy10IumQ1qif
+         TMO2CvfO61/gzOMZGE1vmVzHcjjmskraQXNTQRy8Krj5MuQ7jVZim2Go7+NDFACI5iNm
+         zkN9jTcF6YD6sTQAc/6dXZz1RTqmrZer/7aN8eLp601I/PT89HCNLhoKMitKEdZzSsFr
+         NeFfoKA9qh5wv2fPlMqVYLXaOweGF7EIC+qauTpCVFVUG6QiZz2PhfTF2Gub4zi6Unsj
+         vI32/xT8dbS97SNWjg9zWJddH/O1Y6B4CfsTRcPPI9X3+2HSrte+PaXq/pmVgLfMzcVy
+         duUg==
+X-Gm-Message-State: AOAM531aAtnTeyGt1xW9nm/rh3FuXvTnX60gxYYV0wF2wMMGmoG/GD9a
+        fP9g5DpIfzIsjhH0bapms4vvJPZ5DCfFECDlmIbXv+Oxek8OgBK+FM1IGEkD/AC5V9T6v4gvf9Z
+        O0FB63VZidmLdDZJ72LxKBAmzcH8K
+X-Received: by 2002:a05:6402:348a:: with SMTP id v10mr34614486edc.249.1643885098345;
+        Thu, 03 Feb 2022 02:44:58 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJziGnZ4JGjZ6FxAD97378swmhF6EsF+lw6m58rqHfjOByG6S7DBP89wcwicAJQgVUaAaJkrQw==
+X-Received: by 2002:a05:6402:348a:: with SMTP id v10mr34614476edc.249.1643885098152;
+        Thu, 03 Feb 2022 02:44:58 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1? (2001-1c00-0c1e-bf00-1db8-22d3-1bc9-8ca1.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1])
+        by smtp.gmail.com with ESMTPSA id c14sm22295393edy.66.2022.02.03.02.44.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Feb 2022 02:44:57 -0800 (PST)
+Message-ID: <155858a5-1736-caee-d44d-b56e54797664@redhat.com>
+Date:   Thu, 3 Feb 2022 11:44:56 +0100
 MIME-Version: 1.0
-X-KSE-ServerInfo: RTEXH36504.realtek.com.tw, 9
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: protection disabled
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH] surface: surface3-wmi: Simplify resource management
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Mark Gross <markgross@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+References: <8b1a6d05036d5d9527241b2345482b369331ce5c.1643531799.git.christophe.jaillet@wanadoo.fr>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <8b1a6d05036d5d9527241b2345482b369331ce5c.1643531799.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-T24gVGh1LCAyMDIyLTAyLTAzIGF0IDExOjI1ICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
-PiBUaGlzIGNvZGUgbmVlZHMgdG8gdXNlIHNrYl9xdWV1ZV93YWxrX3NhZmUoKSBpbnN0ZWFkIG9m
-IHNrYl9xdWV1ZV93YWxrKCkNCj4gYmVjYXVzZSBpdCBmcmVlcyB0aGUgbGlzdCBpdGVyYXRvci4N
-Cj4gDQo+IEZpeGVzOiBkOTU5ODRiNTU4MGQgKCJydHc4ODogZml4IG1lbW9yeSBvdmVycnVuIGFu
-ZCBtZW1vcnkgbGVhayBkdXJpbmcgaHdfc2NhbiIpDQo+IFNpZ25lZC1vZmYtYnk6IERhbiBDYXJw
-ZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCg0KQWNrZWQtYnk6IFBpbmctS2UgU2hp
-aCA8cGtzaGloQHJlYWx0ZWsuY29tPg0KDQpUaGFuayB5b3UuDQoNCj4gLS0tDQo+IHYyOiBGaXgg
-YSBzaW1pbGFyIGlzc3VlIGluIF9ydHdfaHdfc2Nhbl91cGRhdGVfcHJvYmVfcmVxKCkgYXMgcG9p
-bnRlZA0KPiBvdXQgYnkgUGluZy1LZSBTaGloLg0KPiANCj4gIGRyaXZlcnMvbmV0L3dpcmVsZXNz
-L3JlYWx0ZWsvcnR3ODgvZncuYyB8IDYgKysrLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNl
-cnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0
-L3dpcmVsZXNzL3JlYWx0ZWsvcnR3ODgvZncuYyBiL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0
-ZWsvcnR3ODgvZncuYw0KPiBpbmRleCBjZTk1MzVjY2U3MjMuLjRjOGU1ZWE1ZDA2OSAxMDA2NDQN
-Cj4gLS0tIGEvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydHc4OC9mdy5jDQo+ICsrKyBi
-L2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnR3ODgvZncuYw0KPiBAQCAtMTg1Myw3ICsx
-ODUzLDcgQEAgc3RhdGljIGludCBfcnR3X2h3X3NjYW5fdXBkYXRlX3Byb2JlX3JlcShzdHJ1Y3Qg
-cnR3X2RldiAqcnR3ZGV2LCB1OA0KPiBudW1fcHJvYmVzLA0KPiAgCXJ0d2Rldi0+c2Nhbl9pbmZv
-LnByb2JlX3BnX3NpemUgPSBwYWdlX29mZnNldDsNCj4gIG91dDoNCj4gIAlrZnJlZShidWYpOw0K
-PiAtCXNrYl9xdWV1ZV93YWxrKHByb2JlX3JlcV9saXN0LCBza2IpDQo+ICsJc2tiX3F1ZXVlX3dh
-bGtfc2FmZShwcm9iZV9yZXFfbGlzdCwgc2tiLCB0bXApDQo+ICAJCWtmcmVlX3NrYihza2IpOw0K
-PiAgDQo+ICAJcmV0dXJuIHJldDsNCj4gQEAgLTE4NjQsNyArMTg2NCw3IEBAIHN0YXRpYyBpbnQg
-cnR3X2h3X3NjYW5fdXBkYXRlX3Byb2JlX3JlcShzdHJ1Y3QgcnR3X2RldiAqcnR3ZGV2LA0KPiAg
-ew0KPiAgCXN0cnVjdCBjZmc4MDIxMV9zY2FuX3JlcXVlc3QgKnJlcSA9IHJ0d3ZpZi0+c2Nhbl9y
-ZXE7DQo+ICAJc3RydWN0IHNrX2J1ZmZfaGVhZCBsaXN0Ow0KPiAtCXN0cnVjdCBza19idWZmICpz
-a2I7DQo+ICsJc3RydWN0IHNrX2J1ZmYgKnNrYiwgKnRtcDsNCj4gIAl1OCBudW0gPSByZXEtPm5f
-c3NpZHMsIGksIGJhbmRzID0gMDsNCj4gIAlpbnQgcmV0Ow0KPiAgDQo+IEBAIC0xODg5LDcgKzE4
-ODksNyBAQCBzdGF0aWMgaW50IHJ0d19od19zY2FuX3VwZGF0ZV9wcm9iZV9yZXEoc3RydWN0IHJ0
-d19kZXYgKnJ0d2RldiwNCj4gIAlyZXR1cm4gX3J0d19od19zY2FuX3VwZGF0ZV9wcm9iZV9yZXEo
-cnR3ZGV2LCBudW0gKiBiYW5kcywgJmxpc3QpOw0KPiAgDQo+ICBvdXQ6DQo+IC0Jc2tiX3F1ZXVl
-X3dhbGsoJmxpc3QsIHNrYikNCj4gKwlza2JfcXVldWVfd2Fsa19zYWZlKCZsaXN0LCBza2IsIHRt
-cCkNCj4gIAkJa2ZyZWVfc2tiKHNrYik7DQo+ICANCj4gIAlyZXR1cm4gcmV0Ow0KDQoNCg0K
+Hi,
+
+On 1/30/22 09:36, Christophe JAILLET wrote:
+> 's3_wmi.input' is a managed resource, so there should be no need to free it
+> explicitly.
+> 
+> Moreover, 's3_wmi' is a global variable. 's3_wmi.input' should be NULL
+> when this error handling path is executed, because it has not been
+> assigned yet.
+> 
+> All this is puzzling. So simplify it and remove a few lines of code to have
+> it be more straightforward.
+> 
+> Fixes: 3dda3b3798f9 ("platform/x86: Add custom surface3 platform device for controlling LID")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Thank you for your patch, I've applied this patch to my review-hans 
+branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+
+Note it will show up in my review-hans branch once I've pushed my
+local branch there, which might take a while.
+
+Once I've run some tests on this branch the patches there will be
+added to the platform-drivers-x86/for-next branch and eventually
+will be included in the pdx86 pull-request to Linus for the next
+merge-window.
+
+Regards,
+
+Hans
+
+
+> ---
+> Compile tested only
+> ---
+>  drivers/platform/surface/surface3-wmi.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/platform/surface/surface3-wmi.c b/drivers/platform/surface/surface3-wmi.c
+> index 09ac9cfc40d8..b9a4b2d81f4b 100644
+> --- a/drivers/platform/surface/surface3-wmi.c
+> +++ b/drivers/platform/surface/surface3-wmi.c
+> @@ -190,14 +190,11 @@ static int s3_wmi_create_and_register_input(struct platform_device *pdev)
+>  
+>  	error = input_register_device(input);
+>  	if (error)
+> -		goto out_err;
+> +		return error;
+>  
+>  	s3_wmi.input = input;
+>  
+>  	return 0;
+> - out_err:
+> -	input_free_device(s3_wmi.input);
+> -	return error;
+>  }
+>  
+>  static int __init s3_wmi_probe(struct platform_device *pdev)
+> 
+
