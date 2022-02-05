@@ -2,81 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C3E1C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Feb 2022 15:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22777C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Feb 2022 16:41:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229940AbiBEPKM (ORCPT
+        id S1380371AbiBEQlL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 5 Feb 2022 10:10:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49294 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244872AbiBEPKL (ORCPT
+        Sat, 5 Feb 2022 11:41:11 -0500
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:50379 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1348576AbiBEQlK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 5 Feb 2022 10:10:11 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A5DDC061348;
-        Sat,  5 Feb 2022 07:10:11 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 900A460F57;
-        Sat,  5 Feb 2022 15:10:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F11A7C340F0;
-        Sat,  5 Feb 2022 15:10:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644073810;
-        bh=llh/LMG/LWC77c6+KJBB2VKDIL4BsfkIFb4rp3JFVB4=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=FxMFZ8bGQVEZpjjw8Ngi86ssIfDRR8IGnt68TM4GBc0IwtsWxBpLH3s8l0CMqFvR0
-         EK5SOy57rG75BXmS7fB2IWOCdorr8/MQ6GmnXsUU4Bv6YD37tS13szJVeDp1G4zjyN
-         v058yXEAihqLKRSzVKrZCrQuFKCYQvpjB9u/ujrPbckVrtZY/fmpntxFEnkOza+fFC
-         KUCE+ZduPMhdNJzSkZ8COPGokpeYLpjPzNUkANMCY/xPbwXk4XUomDRMuQTriawzCx
-         t8eVWYm22y1O7FYqHlB73F299nhNgDoyBTFkTIt7HhiMreibrIKUnWRtJcXh4kAuT+
-         2DrLj0j7slLgw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D97EDE6D3DE;
-        Sat,  5 Feb 2022 15:10:09 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Sat, 5 Feb 2022 11:41:10 -0500
+Received: from pop-os.home ([90.126.236.122])
+        by smtp.orange.fr with ESMTPA
+        id GO7YngGexxHdTGO7YnEdz2; Sat, 05 Feb 2022 17:41:09 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sat, 05 Feb 2022 17:41:09 +0100
+X-ME-IP: 90.126.236.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-pm@vger.kernel.org
+Subject: [PATCH] power: supply: Simplify memory allocation
+Date:   Sat,  5 Feb 2022 17:40:57 +0100
+Message-Id: <c09fc0b84cb046ad31bc1da67607bf0e9fa07085.1644079229.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: dsa: qca8k: check correct variable in
- qca8k_phy_eth_command()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164407380987.16413.8541377022113087007.git-patchwork-notify@kernel.org>
-Date:   Sat, 05 Feb 2022 15:10:09 +0000
-References: <20220204100336.GA12539@kili>
-In-Reply-To: <20220204100336.GA12539@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     andrew@lunn.ch, ansuelsmth@gmail.com, vivien.didelot@gmail.com,
-        f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
-        kuba@kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Use devm_bitmap_zalloc() instead of hand writing it.
 
-This patch was applied to netdev/net-next.git (master)
-by David S. Miller <davem@davemloft.net>:
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/power/supply/power_supply_hwmon.c | 15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
 
-On Fri, 4 Feb 2022 13:03:36 +0300 you wrote:
-> This is a copy and paste bug.  It was supposed to check "clear_skb"
-> instead of "write_skb".
-> 
-> Fixes: 2cd548566384 ("net: dsa: qca8k: add support for phy read/write with mgmt Ethernet")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/net/dsa/qca8k.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Here is the summary with links:
-  - [net-next] net: dsa: qca8k: check correct variable in qca8k_phy_eth_command()
-    https://git.kernel.org/netdev/net-next/c/c3664d913dc1
-
-You are awesome, thank you!
+diff --git a/drivers/power/supply/power_supply_hwmon.c b/drivers/power/supply/power_supply_hwmon.c
+index bffe6d84c429..a48aa4afb828 100644
+--- a/drivers/power/supply/power_supply_hwmon.c
++++ b/drivers/power/supply/power_supply_hwmon.c
+@@ -324,11 +324,6 @@ static const struct hwmon_chip_info power_supply_hwmon_chip_info = {
+ 	.info = power_supply_hwmon_info,
+ };
+ 
+-static void power_supply_hwmon_bitmap_free(void *data)
+-{
+-	bitmap_free(data);
+-}
+-
+ int power_supply_add_hwmon_sysfs(struct power_supply *psy)
+ {
+ 	const struct power_supply_desc *desc = psy->desc;
+@@ -349,18 +344,14 @@ int power_supply_add_hwmon_sysfs(struct power_supply *psy)
+ 	}
+ 
+ 	psyhw->psy = psy;
+-	psyhw->props = bitmap_zalloc(POWER_SUPPLY_PROP_TIME_TO_FULL_AVG + 1,
+-				     GFP_KERNEL);
++	psyhw->props = devm_bitmap_zalloc(dev,
++					  POWER_SUPPLY_PROP_TIME_TO_FULL_AVG + 1,
++					  GFP_KERNEL);
+ 	if (!psyhw->props) {
+ 		ret = -ENOMEM;
+ 		goto error;
+ 	}
+ 
+-	ret = devm_add_action_or_reset(dev, power_supply_hwmon_bitmap_free,
+-			      psyhw->props);
+-	if (ret)
+-		goto error;
+-
+ 	for (i = 0; i < desc->num_properties; i++) {
+ 		const enum power_supply_property prop = desc->properties[i];
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.32.0
 
