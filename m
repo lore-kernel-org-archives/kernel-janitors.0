@@ -2,32 +2,34 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22777C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Feb 2022 16:41:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7F2C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Feb 2022 17:11:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380371AbiBEQlL (ORCPT
+        id S1380552AbiBERLE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 5 Feb 2022 11:41:11 -0500
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:50379 "EHLO
+        Sat, 5 Feb 2022 12:11:04 -0500
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:62223 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348576AbiBEQlK (ORCPT
+        with ESMTP id S1348697AbiBERLE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 5 Feb 2022 11:41:10 -0500
+        Sat, 5 Feb 2022 12:11:04 -0500
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id GO7YngGexxHdTGO7YnEdz2; Sat, 05 Feb 2022 17:41:09 +0100
+        id GOaSngReQxHdTGOaSnEh5w; Sat, 05 Feb 2022 18:11:02 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 05 Feb 2022 17:41:09 +0100
+X-ME-Date: Sat, 05 Feb 2022 18:11:02 +0100
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Sebastian Reichel <sre@kernel.org>
+To:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-pm@vger.kernel.org
-Subject: [PATCH] power: supply: Simplify memory allocation
-Date:   Sat,  5 Feb 2022 17:40:57 +0100
-Message-Id: <c09fc0b84cb046ad31bc1da67607bf0e9fa07085.1644079229.git.christophe.jaillet@wanadoo.fr>
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH 1/2] iommu/arm-smmu-v3: Avoid open coded arithmetic in memory allocation
+Date:   Sat,  5 Feb 2022 18:10:59 +0100
+Message-Id: <de9e8705169b5dc873f6ce9f9a17598de89aa6a7.1644081032.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -35,50 +37,36 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use devm_bitmap_zalloc() instead of hand writing it.
+kmalloc_array()/kcalloc() should be used to avoid potential overflow when
+a multiplication is needed to compute the size of the requested memory.
+
+So turn a devm_kzalloc()+explicit size computation into an equivalent
+devm_kcalloc().
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/power/supply/power_supply_hwmon.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+This is NOT compile tested.
+I don't have the needed cross compiling tools.
+---
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/power/supply/power_supply_hwmon.c b/drivers/power/supply/power_supply_hwmon.c
-index bffe6d84c429..a48aa4afb828 100644
---- a/drivers/power/supply/power_supply_hwmon.c
-+++ b/drivers/power/supply/power_supply_hwmon.c
-@@ -324,11 +324,6 @@ static const struct hwmon_chip_info power_supply_hwmon_chip_info = {
- 	.info = power_supply_hwmon_info,
- };
- 
--static void power_supply_hwmon_bitmap_free(void *data)
--{
--	bitmap_free(data);
--}
--
- int power_supply_add_hwmon_sysfs(struct power_supply *psy)
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+index 6dc6d8b6b368..14d06aad0726 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+@@ -2981,10 +2981,10 @@ static int arm_smmu_init_l1_strtab(struct arm_smmu_device *smmu)
  {
- 	const struct power_supply_desc *desc = psy->desc;
-@@ -349,18 +344,14 @@ int power_supply_add_hwmon_sysfs(struct power_supply *psy)
- 	}
+ 	unsigned int i;
+ 	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
+-	size_t size = sizeof(*cfg->l1_desc) * cfg->num_l1_ents;
+ 	void *strtab = smmu->strtab_cfg.strtab;
  
- 	psyhw->psy = psy;
--	psyhw->props = bitmap_zalloc(POWER_SUPPLY_PROP_TIME_TO_FULL_AVG + 1,
--				     GFP_KERNEL);
-+	psyhw->props = devm_bitmap_zalloc(dev,
-+					  POWER_SUPPLY_PROP_TIME_TO_FULL_AVG + 1,
-+					  GFP_KERNEL);
- 	if (!psyhw->props) {
- 		ret = -ENOMEM;
- 		goto error;
- 	}
- 
--	ret = devm_add_action_or_reset(dev, power_supply_hwmon_bitmap_free,
--			      psyhw->props);
--	if (ret)
--		goto error;
--
- 	for (i = 0; i < desc->num_properties; i++) {
- 		const enum power_supply_property prop = desc->properties[i];
+-	cfg->l1_desc = devm_kzalloc(smmu->dev, size, GFP_KERNEL);
++	cfg->l1_desc = devm_kcalloc(smmu->dev, cfg->num_l1_ents,
++				    sizeof(*cfg->l1_desc), GFP_KERNEL);
+ 	if (!cfg->l1_desc)
+ 		return -ENOMEM;
  
 -- 
 2.32.0
