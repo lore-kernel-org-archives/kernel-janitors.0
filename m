@@ -2,86 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B997FC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Feb 2022 17:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E500C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Feb 2022 17:38:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380560AbiBERLQ (ORCPT
+        id S1380764AbiBERiH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 5 Feb 2022 12:11:16 -0500
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:62306 "EHLO
+        Sat, 5 Feb 2022 12:38:07 -0500
+Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:63566 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380565AbiBERLM (ORCPT
+        with ESMTP id S1351942AbiBERiG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 5 Feb 2022 12:11:12 -0500
+        Sat, 5 Feb 2022 12:38:06 -0500
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id GOadngRjHxHdTGOadnEh74; Sat, 05 Feb 2022 18:11:11 +0100
+        id GP0dngbZqxHdTGP0dnEjnn; Sat, 05 Feb 2022 18:38:04 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 05 Feb 2022 18:11:11 +0100
+X-ME-Date: Sat, 05 Feb 2022 18:38:04 +0100
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>
+To:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH 2/2] iommu/arm-smmu-v3: Simplify memory allocation
-Date:   Sat,  5 Feb 2022 18:11:10 +0100
-Message-Id: <018afc7c92ae4132ac901b088b72ab5979256a9e.1644081032.git.christophe.jaillet@wanadoo.fr>
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH] drm/radeon: Avoid open coded arithmetic in memory allocation
+Date:   Sat,  5 Feb 2022 18:38:01 +0100
+Message-Id: <1f44de96e6a49e912111fb3b664f087328b4c2cd.1644082664.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <de9e8705169b5dc873f6ce9f9a17598de89aa6a7.1644081032.git.christophe.jaillet@wanadoo.fr>
-References: <de9e8705169b5dc873f6ce9f9a17598de89aa6a7.1644081032.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use devm_bitmap_zalloc() instead of hand writing it.
+kmalloc_array()/kcalloc() should be used to avoid potential overflow when
+a multiplication is needed to compute the size of the requested memory.
+
+So turn a kzalloc()+explicit size computation into an equivalent kcalloc().
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-This is NOT compile tested.
-I don't have the needed cross compiling tools.
----
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/radeon/radeon_atombios.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index 14d06aad0726..ba0e7f1f7dbf 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -2911,12 +2911,6 @@ static int arm_smmu_init_one_queue(struct arm_smmu_device *smmu,
- 	return 0;
- }
+diff --git a/drivers/gpu/drm/radeon/radeon_atombios.c b/drivers/gpu/drm/radeon/radeon_atombios.c
+index 28c4413f4dc8..7b9cc7a9f42f 100644
+--- a/drivers/gpu/drm/radeon/radeon_atombios.c
++++ b/drivers/gpu/drm/radeon/radeon_atombios.c
+@@ -897,13 +897,13 @@ bool radeon_get_atom_connector_info_from_supported_devices_table(struct
+ 	union atom_supported_devices *supported_devices;
+ 	int i, j, max_device;
+ 	struct bios_connector *bios_connectors;
+-	size_t bc_size = sizeof(*bios_connectors) * ATOM_MAX_SUPPORTED_DEVICE;
+ 	struct radeon_router router;
  
--static void arm_smmu_cmdq_free_bitmap(void *data)
--{
--	unsigned long *bitmap = data;
--	bitmap_free(bitmap);
--}
--
- static int arm_smmu_cmdq_init(struct arm_smmu_device *smmu)
- {
- 	int ret = 0;
-@@ -2927,13 +2921,13 @@ static int arm_smmu_cmdq_init(struct arm_smmu_device *smmu)
- 	atomic_set(&cmdq->owner_prod, 0);
- 	atomic_set(&cmdq->lock, 0);
+ 	router.ddc_valid = false;
+ 	router.cd_valid = false;
  
--	bitmap = (atomic_long_t *)bitmap_zalloc(nents, GFP_KERNEL);
-+	bitmap = (atomic_long_t *)devm_bitmap_zalloc(smmu->dev, nents,
-+						     GFP_KERNEL);
- 	if (!bitmap) {
- 		dev_err(smmu->dev, "failed to allocate cmdq bitmap\n");
- 		ret = -ENOMEM;
- 	} else {
- 		cmdq->valid_map = bitmap;
--		devm_add_action(smmu->dev, arm_smmu_cmdq_free_bitmap, bitmap);
- 	}
+-	bios_connectors = kzalloc(bc_size, GFP_KERNEL);
++	bios_connectors = kcalloc(ATOM_MAX_SUPPORTED_DEVICE,
++				  sizeof(*bios_connectors), GFP_KERNEL);
+ 	if (!bios_connectors)
+ 		return false;
  
- 	return ret;
 -- 
 2.32.0
 
