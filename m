@@ -2,32 +2,37 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D4F7C433FE
-	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Feb 2022 06:58:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4576FC4332F
+	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Feb 2022 07:40:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379547AbiBEG6u (ORCPT
+        id S1379595AbiBEHkx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 5 Feb 2022 01:58:50 -0500
-Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:53800 "EHLO
+        Sat, 5 Feb 2022 02:40:53 -0500
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:63316 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379540AbiBEG6t (ORCPT
+        with ESMTP id S1379590AbiBEHkw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 5 Feb 2022 01:58:49 -0500
+        Sat, 5 Feb 2022 02:40:52 -0500
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id GF1yn0ylHIQAdGF1znd3Hp; Sat, 05 Feb 2022 07:58:47 +0100
+        id GFggn1Io9IQAdGFggnd94L; Sat, 05 Feb 2022 08:40:51 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 05 Feb 2022 07:58:47 +0100
+X-ME-Date: Sat, 05 Feb 2022 08:40:51 +0100
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Sanjay R Mehta <sanju.mehta@amd.com>, Vinod Koul <vkoul@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        dmaengine@vger.kernel.org
-Subject: [PATCH v2] dmaengine: ptdma: Fix the error handling path in pt_core_init()
-Date:   Sat,  5 Feb 2022 07:58:44 +0100
-Message-Id: <41a963a35173f89c874f5c44df5530dc09fea8da.1644044244.git.christophe.jaillet@wanadoo.fr>
+        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org
+Subject: [PATCH] backlight: pwm_bl: Avoid open coded arithmetic in memory allocation
+Date:   Sat,  5 Feb 2022 08:40:48 +0100
+Message-Id: <bd3d74acfa58d59f6f5f81fc5a9fb409edb8d747.1644046817.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -35,74 +40,43 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In order to free resources correctly in the error handling path of
-pt_core_init(), 2 goto's have to be switched. Otherwise, some resources
-will leak and we will try to release things that have not been allocated
-yet.
+kmalloc_array()/kcalloc() should be used to avoid potential overflow when
+a multiplication is needed to compute the size of the requested memory.
 
-Also move a dev_err() to a place where it is more meaningful.
+So turn a kzalloc()+explicit size computation into an equivalent kcalloc().
 
-Fixes: fa5d823b16a9 ("dmaengine: ptdma: Initial driver for the AMD PTDMA")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-v2: update label names
-    move dev_err(dev, "unable to allocate an IRQ\n");
----
- drivers/dma/ptdma/ptdma-dev.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ drivers/video/backlight/pwm_bl.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/dma/ptdma/ptdma-dev.c b/drivers/dma/ptdma/ptdma-dev.c
-index 8a6bf291a73f..daafea5bc35d 100644
---- a/drivers/dma/ptdma/ptdma-dev.c
-+++ b/drivers/dma/ptdma/ptdma-dev.c
-@@ -207,7 +207,7 @@ int pt_core_init(struct pt_device *pt)
- 	if (!cmd_q->qbase) {
- 		dev_err(dev, "unable to allocate command queue\n");
- 		ret = -ENOMEM;
--		goto e_dma_alloc;
-+		goto e_destroy_pool;
- 	}
+diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+index 8d8959a70e44..c0523a0269ee 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -263,9 +263,8 @@ static int pwm_backlight_parse_dt(struct device *dev,
  
- 	cmd_q->qidx = 0;
-@@ -229,8 +229,10 @@ int pt_core_init(struct pt_device *pt)
+ 	/* read brightness levels from DT property */
+ 	if (num_levels > 0) {
+-		size_t size = sizeof(*data->levels) * num_levels;
+-
+-		data->levels = devm_kzalloc(dev, size, GFP_KERNEL);
++		data->levels = devm_kcalloc(dev, num_levels,
++					    sizeof(*data->levels), GFP_KERNEL);
+ 		if (!data->levels)
+ 			return -ENOMEM;
  
- 	/* Request an irq */
- 	ret = request_irq(pt->pt_irq, pt_core_irq_handler, 0, dev_name(pt->dev), pt);
--	if (ret)
--		goto e_pool;
-+	if (ret) {
-+		dev_err(dev, "unable to allocate an IRQ\n");
-+		goto e_free_dma;
-+	}
- 
- 	/* Update the device registers with queue information. */
- 	cmd_q->qcontrol &= ~CMD_Q_SIZE;
-@@ -250,21 +252,20 @@ int pt_core_init(struct pt_device *pt)
- 	/* Register the DMA engine support */
- 	ret = pt_dmaengine_register(pt);
- 	if (ret)
--		goto e_dmaengine;
-+		goto e_free_irq;
- 
- 	/* Set up debugfs entries */
- 	ptdma_debugfs_setup(pt);
- 
- 	return 0;
- 
--e_dmaengine:
-+e_free_irq:
- 	free_irq(pt->pt_irq, pt);
- 
--e_dma_alloc:
-+e_free_dma:
- 	dma_free_coherent(dev, cmd_q->qsize, cmd_q->qbase, cmd_q->qbase_dma);
- 
--e_pool:
--	dev_err(dev, "unable to allocate an IRQ\n");
-+e_destroy_pool:
- 	dma_pool_destroy(pt->cmd_q.dma_pool);
- 
- 	return ret;
+@@ -320,8 +319,8 @@ static int pwm_backlight_parse_dt(struct device *dev,
+ 			 * Create a new table of brightness levels with all the
+ 			 * interpolated steps.
+ 			 */
+-			size = sizeof(*table) * num_levels;
+-			table = devm_kzalloc(dev, size, GFP_KERNEL);
++			table = devm_kcalloc(dev, num_levels, sizeof(*table),
++					     GFP_KERNEL);
+ 			if (!table)
+ 				return -ENOMEM;
+ 			/*
 -- 
 2.32.0
 
