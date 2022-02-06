@@ -2,92 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E87A2C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat,  5 Feb 2022 17:55:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9703BC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Feb 2022 08:40:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380412AbiBERz7 (ORCPT
+        id S232006AbiBFIkL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 5 Feb 2022 12:55:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60244 "EHLO
+        Sun, 6 Feb 2022 03:40:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235159AbiBERz7 (ORCPT
+        with ESMTP id S231947AbiBFIkI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 5 Feb 2022 12:55:59 -0500
-Received: from mail-oo1-xc2e.google.com (mail-oo1-xc2e.google.com [IPv6:2607:f8b0:4864:20::c2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 401F8C061348;
-        Sat,  5 Feb 2022 09:55:58 -0800 (PST)
-Received: by mail-oo1-xc2e.google.com with SMTP id f11-20020a4abb0b000000b002e9abf6bcbcso8669057oop.0;
-        Sat, 05 Feb 2022 09:55:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=3Gxs8xXpvnxLnMLrJcMW4cpi6sp32phq+ZGNRuTkOVg=;
-        b=jnzgezbgaxOl2vqP4641tuJAkbmNKS2X4fjQ7dKPfjhL30+JcwFlhjZcfMKt9gxfSu
-         jTxI2Ui8kCvI3lfkujxpdIH4gf2nkKO/0Lf6J4UJrtO8ujN9gV1H9L/iiwO58wtcJYuG
-         7q7Nv1HRvA23t3VZFenvn3g3FLxtDRltnjisgcsMY5B1D2zTB1gsppc8qfllnwdfyU/h
-         htoPPV6idZGETiJedflTHWBEocOH+OjUtSeH26VvhcuZyCnnZhGoO04+jTjnSpAmv3mC
-         Foqqh24gZQyGEK8D6yirfDaL+Fdb6JUfXRNMXozZ+056g0lQycbv2daxFyY9PBnr/0rf
-         5xWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
-         :subject:content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=3Gxs8xXpvnxLnMLrJcMW4cpi6sp32phq+ZGNRuTkOVg=;
-        b=ZKws7ahWTgDkOY0qNc9eDvZNtFLhcF4iapaKyDEgrwPsUGh4H2ABNS+iYY2Y5wsEah
-         hbAGwnBX2ZuxaM6+C2j6lwghostTznaGL/XgsjP4Jt+dE88ua/cbpn1zn9veAuldvKXU
-         hr3WFkhOrxu19hFB0NZPeCqt50thtHotBuPr2OC5gDYvYb6XQLKM3Q3C0xwylXuCt8wz
-         nccunRfZOpdtDR2Gc+q6iDnBcppZor9LAZNM2MbHMJUNBn0+0Xap3910GJZ0sTru/cKH
-         g+25SAWdK187MflMwtAwNwqQHNCefvjXVn2f/dus5GqS5ScYixyk5/I3Or6+E9sbUzx9
-         KaMA==
-X-Gm-Message-State: AOAM532hs9r+Juehw1d3mpab0v9K3o5pPT/uEgnfQiIWnfT2Ssht5Cbw
-        cPp9i7MEHYb71vsW9xfLYu+nkNQbVpJwPg==
-X-Google-Smtp-Source: ABdhPJwn4wiwvH27+Y0xtqktq2n1H1SC31AGA0kxcZM/4TjI8f1FkFFnEww2hCWtqJTMlLtn+j8Aww==
-X-Received: by 2002:a05:6870:a556:: with SMTP id p22mr1849633oal.19.1644083757482;
-        Sat, 05 Feb 2022 09:55:57 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id y19sm2123217oti.49.2022.02.05.09.55.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 05 Feb 2022 09:55:56 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <334d923b-aaea-897f-1b80-d19a06be1383@roeck-us.net>
-Date:   Sat, 5 Feb 2022 09:55:55 -0800
+        Sun, 6 Feb 2022 03:40:08 -0500
+Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33648C061355
+        for <kernel-janitors@vger.kernel.org>; Sun,  6 Feb 2022 00:40:07 -0800 (PST)
+Received: from pop-os.home ([90.126.236.122])
+        by smtp.orange.fr with ESMTPA
+        id Gd5XnoDgy41cbGd5XnhTwE; Sun, 06 Feb 2022 09:40:04 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sun, 06 Feb 2022 09:40:04 +0100
+X-ME-IP: 90.126.236.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] misc: alcor_pci: Fix an error handling path
+Date:   Sun,  6 Feb 2022 09:39:54 +0100
+Message-Id: <918a9875b7f67b7f8f123c4446452603422e8c5e.1644136776.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH] hwmon: (asus-ec-sensors) fix a typo in asus_ec_probe()
-Content-Language: en-US
-To:     Eugene Shalygin <eugene.shalygin@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <20220205092015.GA612@kili>
- <CAB95QAS8LxMeWGFqZ3MGHBBxxBafz3w9L1GxxdP16XjZKLVAuw@mail.gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-In-Reply-To: <CAB95QAS8LxMeWGFqZ3MGHBBxxBafz3w9L1GxxdP16XjZKLVAuw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2/5/22 01:59, Eugene Shalygin wrote:
-> On Sat, 5 Feb 2022 at 10:20, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->>
->> There is no such struct as "asus_ec_sensors", it was supposed to be
->> "ec_sensors_data".  This typo does not affect either build or runtime.
-> 
-> Thank you for the fix! Perhaps you could also replace the sizeof
-> argument below with *state to make the compiler check the declaration
-> type?
-> 
+A successful ida_simple_get() should be balanced by a corresponding
+ida_simple_remove().
 
-The weirdness is coming from the fact that the probe function is
-really a shim and all work is done in configure_sensor_setup().
-A more conventional implementation would not have that separate
-function. Changing the above won't change that and on its own adds
-little value. I applied the patch as-is.
+Add the missing call in the error handling path of the probe.
 
-Guenter
+While at it, switch to ida_alloc()/ida_free() instead to
+ida_simple_get()/ida_simple_remove().
+The latter is deprecated and more verbose.
+
+Fixes: 4f556bc04e3c ("misc: cardreader: add new Alcor Micro Cardreader PCI driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/misc/cardreader/alcor_pci.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/misc/cardreader/alcor_pci.c b/drivers/misc/cardreader/alcor_pci.c
+index de6d44a158bb..3f514d77a843 100644
+--- a/drivers/misc/cardreader/alcor_pci.c
++++ b/drivers/misc/cardreader/alcor_pci.c
+@@ -266,7 +266,7 @@ static int alcor_pci_probe(struct pci_dev *pdev,
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+-	ret = ida_simple_get(&alcor_pci_idr, 0, 0, GFP_KERNEL);
++	ret = ida_alloc(&alcor_pci_idr, GFP_KERNEL);
+ 	if (ret < 0)
+ 		return ret;
+ 	priv->id = ret;
+@@ -280,7 +280,8 @@ static int alcor_pci_probe(struct pci_dev *pdev,
+ 	ret = pci_request_regions(pdev, DRV_NAME_ALCOR_PCI);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Cannot request region\n");
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto error_free_ida;
+ 	}
+ 
+ 	if (!(pci_resource_flags(pdev, bar) & IORESOURCE_MEM)) {
+@@ -324,6 +325,8 @@ static int alcor_pci_probe(struct pci_dev *pdev,
+ 
+ error_release_regions:
+ 	pci_release_regions(pdev);
++error_free_ida:
++	ida_free(&alcor_pci_idr, priv->id);
+ 	return ret;
+ }
+ 
+@@ -337,7 +340,7 @@ static void alcor_pci_remove(struct pci_dev *pdev)
+ 
+ 	mfd_remove_devices(&pdev->dev);
+ 
+-	ida_simple_remove(&alcor_pci_idr, priv->id);
++	ida_free(&alcor_pci_idr, priv->id);
+ 
+ 	pci_release_regions(pdev);
+ 	pci_set_drvdata(pdev, NULL);
+-- 
+2.32.0
+
