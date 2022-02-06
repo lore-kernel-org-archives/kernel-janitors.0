@@ -2,36 +2,35 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61792C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Feb 2022 09:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0042C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Feb 2022 09:47:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232502AbiBFJXt (ORCPT
+        id S232731AbiBFJrx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 6 Feb 2022 04:23:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57476 "EHLO
+        Sun, 6 Feb 2022 04:47:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232588AbiBFJTo (ORCPT
+        with ESMTP id S232692AbiBFJrx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 6 Feb 2022 04:19:44 -0500
+        Sun, 6 Feb 2022 04:47:53 -0500
 Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50252C06173B
-        for <kernel-janitors@vger.kernel.org>; Sun,  6 Feb 2022 01:19:42 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8253C061A73
+        for <kernel-janitors@vger.kernel.org>; Sun,  6 Feb 2022 01:47:51 -0800 (PST)
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id GdhrnoSYM41cbGdhsnhYtn; Sun, 06 Feb 2022 10:19:40 +0100
+        id Ge96nocwc41cbGe97nhcYF; Sun, 06 Feb 2022 10:47:49 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 06 Feb 2022 10:19:40 +0100
+X-ME-Date: Sun, 06 Feb 2022 10:47:49 +0100
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-        Jack Wang <jinpu.wang@ionos.com>, Jens Axboe <axboe@kernel.dk>
+To:     Vinod Koul <vkoul@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-block@vger.kernel.org
-Subject: [PATCH] block/rnbd: Remove a useless mutex
-Date:   Sun,  6 Feb 2022 10:19:38 +0100
-Message-Id: <a1b05cd5bee83778812c70e115e31b2e49cbad2a.1644139163.git.christophe.jaillet@wanadoo.fr>
+        dmaengine@vger.kernel.org
+Subject: [PATCH] dmaengine: Remove a useless mutex
+Date:   Sun,  6 Feb 2022 10:47:45 +0100
+Message-Id: <7180452c1d77b039e27b6f9418e0e7d9dd33c431.1644140845.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -43,47 +42,71 @@ According to lib/idr.c,
    The IDA handles its own locking.  It is safe to call any of the IDA
    functions without synchronisation in your code.
 
-so the 'ida_lock' mutex can just be removed.
-It is here only to protect some ida_simple_get()/ida_simple_remove() calls.
+so the 'chan_mutex' mutex can just be removed.
+It is here only to protect some ida_alloc()/ida_free() calls.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/block/rnbd/rnbd-clt.c | 5 -----
- 1 file changed, 5 deletions(-)
+Un-tested
+---
+ drivers/dma/dmaengine.c   | 7 -------
+ include/linux/dmaengine.h | 1 -
+ 2 files changed, 8 deletions(-)
 
-diff --git a/drivers/block/rnbd/rnbd-clt.c b/drivers/block/rnbd/rnbd-clt.c
-index 9a880d559ab8..eaff369eff36 100644
---- a/drivers/block/rnbd/rnbd-clt.c
-+++ b/drivers/block/rnbd/rnbd-clt.c
-@@ -23,7 +23,6 @@ MODULE_LICENSE("GPL");
+diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+index 2cfa8458b51b..e80feeea0e01 100644
+--- a/drivers/dma/dmaengine.c
++++ b/drivers/dma/dmaengine.c
+@@ -1053,9 +1053,7 @@ static int __dma_async_device_channel_register(struct dma_device *device,
+ 	 * When the chan_id is a negative value, we are dynamically adding
+ 	 * the channel. Otherwise we are static enumerating.
+ 	 */
+-	mutex_lock(&device->chan_mutex);
+ 	chan->chan_id = ida_alloc(&device->chan_ida, GFP_KERNEL);
+-	mutex_unlock(&device->chan_mutex);
+ 	if (chan->chan_id < 0) {
+ 		pr_err("%s: unable to alloc ida for chan: %d\n",
+ 		       __func__, chan->chan_id);
+@@ -1078,9 +1076,7 @@ static int __dma_async_device_channel_register(struct dma_device *device,
+ 	return 0;
  
- static int rnbd_client_major;
- static DEFINE_IDA(index_ida);
--static DEFINE_MUTEX(ida_lock);
- static DEFINE_MUTEX(sess_lock);
- static LIST_HEAD(sess_list);
+  err_out_ida:
+-	mutex_lock(&device->chan_mutex);
+ 	ida_free(&device->chan_ida, chan->chan_id);
+-	mutex_unlock(&device->chan_mutex);
+  err_free_dev:
+ 	kfree(chan->dev);
+  err_free_local:
+@@ -1113,9 +1109,7 @@ static void __dma_async_device_channel_unregister(struct dma_device *device,
+ 	device->chancnt--;
+ 	chan->dev->chan = NULL;
+ 	mutex_unlock(&dma_list_mutex);
+-	mutex_lock(&device->chan_mutex);
+ 	ida_free(&device->chan_ida, chan->chan_id);
+-	mutex_unlock(&device->chan_mutex);
+ 	device_unregister(&chan->dev->device);
+ 	free_percpu(chan->local);
+ }
+@@ -1250,7 +1244,6 @@ int dma_async_device_register(struct dma_device *device)
+ 	if (rc != 0)
+ 		return rc;
  
-@@ -55,9 +54,7 @@ static void rnbd_clt_put_dev(struct rnbd_clt_dev *dev)
- 	if (!refcount_dec_and_test(&dev->refcount))
- 		return;
+-	mutex_init(&device->chan_mutex);
+ 	ida_init(&device->chan_ida);
  
--	mutex_lock(&ida_lock);
- 	ida_simple_remove(&index_ida, dev->clt_device_id);
--	mutex_unlock(&ida_lock);
- 	kfree(dev->hw_queues);
- 	kfree(dev->pathname);
- 	rnbd_clt_put_sess(dev->sess);
-@@ -1460,10 +1457,8 @@ static struct rnbd_clt_dev *init_dev(struct rnbd_clt_session *sess,
- 		goto out_alloc;
- 	}
+ 	/* represent channels in sysfs. Probably want devs too */
+diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+index 842d4f7ca752..6db9e03afd0b 100644
+--- a/include/linux/dmaengine.h
++++ b/include/linux/dmaengine.h
+@@ -870,7 +870,6 @@ struct dma_device {
+ 	struct device *dev;
+ 	struct module *owner;
+ 	struct ida chan_ida;
+-	struct mutex chan_mutex;	/* to protect chan_ida */
  
--	mutex_lock(&ida_lock);
- 	ret = ida_simple_get(&index_ida, 0, 1 << (MINORBITS - RNBD_PART_BITS),
- 			     GFP_KERNEL);
--	mutex_unlock(&ida_lock);
- 	if (ret < 0) {
- 		pr_err("Failed to initialize device '%s' from session %s, allocating idr failed, err: %d\n",
- 		       pathname, sess->sessname, ret);
+ 	u32 src_addr_widths;
+ 	u32 dst_addr_widths;
 -- 
 2.32.0
 
