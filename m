@@ -2,37 +2,36 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9703BC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Feb 2022 08:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61792C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Feb 2022 09:23:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232006AbiBFIkL (ORCPT
+        id S232502AbiBFJXt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 6 Feb 2022 03:40:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48214 "EHLO
+        Sun, 6 Feb 2022 04:23:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231947AbiBFIkI (ORCPT
+        with ESMTP id S232588AbiBFJTo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 6 Feb 2022 03:40:08 -0500
+        Sun, 6 Feb 2022 04:19:44 -0500
 Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33648C061355
-        for <kernel-janitors@vger.kernel.org>; Sun,  6 Feb 2022 00:40:07 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50252C06173B
+        for <kernel-janitors@vger.kernel.org>; Sun,  6 Feb 2022 01:19:42 -0800 (PST)
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id Gd5XnoDgy41cbGd5XnhTwE; Sun, 06 Feb 2022 09:40:04 +0100
+        id GdhrnoSYM41cbGdhsnhYtn; Sun, 06 Feb 2022 10:19:40 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 06 Feb 2022 09:40:04 +0100
+X-ME-Date: Sun, 06 Feb 2022 10:19:40 +0100
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>
+To:     "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+        Jack Wang <jinpu.wang@ionos.com>, Jens Axboe <axboe@kernel.dk>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] misc: alcor_pci: Fix an error handling path
-Date:   Sun,  6 Feb 2022 09:39:54 +0100
-Message-Id: <918a9875b7f67b7f8f123c4446452603422e8c5e.1644136776.git.christophe.jaillet@wanadoo.fr>
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-block@vger.kernel.org
+Subject: [PATCH] block/rnbd: Remove a useless mutex
+Date:   Sun,  6 Feb 2022 10:19:38 +0100
+Message-Id: <a1b05cd5bee83778812c70e115e31b2e49cbad2a.1644139163.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -40,62 +39,51 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-A successful ida_simple_get() should be balanced by a corresponding
-ida_simple_remove().
+According to lib/idr.c,
+   The IDA handles its own locking.  It is safe to call any of the IDA
+   functions without synchronisation in your code.
 
-Add the missing call in the error handling path of the probe.
+so the 'ida_lock' mutex can just be removed.
+It is here only to protect some ida_simple_get()/ida_simple_remove() calls.
 
-While at it, switch to ida_alloc()/ida_free() instead to
-ida_simple_get()/ida_simple_remove().
-The latter is deprecated and more verbose.
-
-Fixes: 4f556bc04e3c ("misc: cardreader: add new Alcor Micro Cardreader PCI driver")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/misc/cardreader/alcor_pci.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/block/rnbd/rnbd-clt.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/misc/cardreader/alcor_pci.c b/drivers/misc/cardreader/alcor_pci.c
-index de6d44a158bb..3f514d77a843 100644
---- a/drivers/misc/cardreader/alcor_pci.c
-+++ b/drivers/misc/cardreader/alcor_pci.c
-@@ -266,7 +266,7 @@ static int alcor_pci_probe(struct pci_dev *pdev,
- 	if (!priv)
- 		return -ENOMEM;
+diff --git a/drivers/block/rnbd/rnbd-clt.c b/drivers/block/rnbd/rnbd-clt.c
+index 9a880d559ab8..eaff369eff36 100644
+--- a/drivers/block/rnbd/rnbd-clt.c
++++ b/drivers/block/rnbd/rnbd-clt.c
+@@ -23,7 +23,6 @@ MODULE_LICENSE("GPL");
  
--	ret = ida_simple_get(&alcor_pci_idr, 0, 0, GFP_KERNEL);
-+	ret = ida_alloc(&alcor_pci_idr, GFP_KERNEL);
- 	if (ret < 0)
- 		return ret;
- 	priv->id = ret;
-@@ -280,7 +280,8 @@ static int alcor_pci_probe(struct pci_dev *pdev,
- 	ret = pci_request_regions(pdev, DRV_NAME_ALCOR_PCI);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Cannot request region\n");
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto error_free_ida;
+ static int rnbd_client_major;
+ static DEFINE_IDA(index_ida);
+-static DEFINE_MUTEX(ida_lock);
+ static DEFINE_MUTEX(sess_lock);
+ static LIST_HEAD(sess_list);
+ 
+@@ -55,9 +54,7 @@ static void rnbd_clt_put_dev(struct rnbd_clt_dev *dev)
+ 	if (!refcount_dec_and_test(&dev->refcount))
+ 		return;
+ 
+-	mutex_lock(&ida_lock);
+ 	ida_simple_remove(&index_ida, dev->clt_device_id);
+-	mutex_unlock(&ida_lock);
+ 	kfree(dev->hw_queues);
+ 	kfree(dev->pathname);
+ 	rnbd_clt_put_sess(dev->sess);
+@@ -1460,10 +1457,8 @@ static struct rnbd_clt_dev *init_dev(struct rnbd_clt_session *sess,
+ 		goto out_alloc;
  	}
  
- 	if (!(pci_resource_flags(pdev, bar) & IORESOURCE_MEM)) {
-@@ -324,6 +325,8 @@ static int alcor_pci_probe(struct pci_dev *pdev,
- 
- error_release_regions:
- 	pci_release_regions(pdev);
-+error_free_ida:
-+	ida_free(&alcor_pci_idr, priv->id);
- 	return ret;
- }
- 
-@@ -337,7 +340,7 @@ static void alcor_pci_remove(struct pci_dev *pdev)
- 
- 	mfd_remove_devices(&pdev->dev);
- 
--	ida_simple_remove(&alcor_pci_idr, priv->id);
-+	ida_free(&alcor_pci_idr, priv->id);
- 
- 	pci_release_regions(pdev);
- 	pci_set_drvdata(pdev, NULL);
+-	mutex_lock(&ida_lock);
+ 	ret = ida_simple_get(&index_ida, 0, 1 << (MINORBITS - RNBD_PART_BITS),
+ 			     GFP_KERNEL);
+-	mutex_unlock(&ida_lock);
+ 	if (ret < 0) {
+ 		pr_err("Failed to initialize device '%s' from session %s, allocating idr failed, err: %d\n",
+ 		       pathname, sess->sessname, ret);
 -- 
 2.32.0
 
