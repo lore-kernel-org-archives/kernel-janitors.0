@@ -2,95 +2,120 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B22A3C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Feb 2022 20:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB71C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Feb 2022 20:53:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234674AbiBGUsk (ORCPT
+        id S231174AbiBGUxQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Feb 2022 15:48:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58560 "EHLO
+        Mon, 7 Feb 2022 15:53:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234640AbiBGUsj (ORCPT
+        with ESMTP id S229726AbiBGUxP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Feb 2022 15:48:39 -0500
-Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56996C06109E
-        for <kernel-janitors@vger.kernel.org>; Mon,  7 Feb 2022 12:48:27 -0800 (PST)
-Received: from pop-os.home ([90.126.236.122])
-        by smtp.orange.fr with ESMTPA
-        id HAvvnm18huvBOHAvwn6qGe; Mon, 07 Feb 2022 21:48:25 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 07 Feb 2022 21:48:25 +0100
-X-ME-IP: 90.126.236.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-        Jack Wang <jinpu.wang@ionos.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-block@vger.kernel.org
-Subject: [PATCH v2] block/rnbd: Remove a useless mutex
-Date:   Mon,  7 Feb 2022 21:48:19 +0100
-Message-Id: <7f9eccd8b1fce1bac45ac9b01a78cf72f54c0a61.1644266862.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
+        Mon, 7 Feb 2022 15:53:15 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74FC3C06173B;
+        Mon,  7 Feb 2022 12:53:13 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 1F6D11F380;
+        Mon,  7 Feb 2022 20:53:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1644267192; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=LKv3EweMD03rUYun/L5aHTmWoM0dcEXr0nhc6lTkmFE=;
+        b=gNgwVXkjoebU3goU0BxG421Itbvx1KH8zO+NvewX40vrvjeb9JdAPIisGVeLymndxdykw4
+        wdchpQ/FYPApj3Eix5rcYkBOVrW64/elRH7GXCoWMaGAw4i6O2VbQ2UBTIHV1c0vVj2o2S
+        zEOaG3VfvFVWJOI7lD7zigabDHBJEBk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1644267192;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=LKv3EweMD03rUYun/L5aHTmWoM0dcEXr0nhc6lTkmFE=;
+        b=xZy4q7+xKyTGorvlcoIz9qHMKtKKaRLNEiB3DH+5Ea26b0Y2jBLtBialYuZFa60Kx9hXIN
+        Iz0SUdav+1Vf3hAA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7426113C72;
+        Mon,  7 Feb 2022 20:53:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id StSIC7CGAWJOaQAAMHmgww
+        (envelope-from <neilb@suse.de>); Mon, 07 Feb 2022 20:53:04 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Jan Kara" <jack@suse.cz>
+Cc:     "Colin Ian King" <colin.i.king@gmail.com>,
+        "Jan Kara" <jack@suse.com>,
+        "Stephen Rothwell" <sfr@canb.auug.org.au>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] ext2: remove unused pointer bdi
+In-reply-to: <20220207144612.zdczs7wxzbuk3ydr@quack3.lan>
+References: <20220207134039.337197-1-colin.i.king@gmail.com>,
+ <20220207144612.zdczs7wxzbuk3ydr@quack3.lan>
+Date:   Tue, 08 Feb 2022 07:52:58 +1100
+Message-id: <164426717877.27779.5211639626156510807@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-According to lib/idr.c,
-   The IDA handles its own locking.  It is safe to call any of the IDA
-   functions without synchronisation in your code.
+On Tue, 08 Feb 2022, Jan Kara wrote:
+> On Mon 07-02-22 13:40:39, Colin Ian King wrote:
+> > The call to bdi_congested has been removed and so the bdi pointer
+> > is no longer required. Remove it.
+> >=20
+> > Fixes: 9bbab3a63d49 ("mm/fs: remove bdi_congested() and wb_congested() an=
+d related functions")
+> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+>=20
+> I guess this change is in mm tree? So probably it is best if Andrew picks
+> it up.
 
-so the 'ida_lock' mutex can just be removed.
-It is here only to protect some ida_simple_get()/ida_simple_remove() calls.
+I have to refresh the whole series - hopefully later this week.  I'll
+make sure to fix this bit.
 
-While at it, switch to ida_alloc_XXX()/ida_free() instead to
-ida_simple_get()/ida_simple_remove().
-The latter is deprecated and more verbose.
+Thanks,
+NeilBrown
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/block/rnbd/rnbd-clt.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/block/rnbd/rnbd-clt.c b/drivers/block/rnbd/rnbd-clt.c
-index 9a880d559ab8..1f63f308eb39 100644
---- a/drivers/block/rnbd/rnbd-clt.c
-+++ b/drivers/block/rnbd/rnbd-clt.c
-@@ -23,7 +23,6 @@ MODULE_LICENSE("GPL");
- 
- static int rnbd_client_major;
- static DEFINE_IDA(index_ida);
--static DEFINE_MUTEX(ida_lock);
- static DEFINE_MUTEX(sess_lock);
- static LIST_HEAD(sess_list);
- 
-@@ -55,9 +54,7 @@ static void rnbd_clt_put_dev(struct rnbd_clt_dev *dev)
- 	if (!refcount_dec_and_test(&dev->refcount))
- 		return;
- 
--	mutex_lock(&ida_lock);
--	ida_simple_remove(&index_ida, dev->clt_device_id);
--	mutex_unlock(&ida_lock);
-+	ida_free(&index_ida, dev->clt_device_id);
- 	kfree(dev->hw_queues);
- 	kfree(dev->pathname);
- 	rnbd_clt_put_sess(dev->sess);
-@@ -1460,10 +1457,8 @@ static struct rnbd_clt_dev *init_dev(struct rnbd_clt_session *sess,
- 		goto out_alloc;
- 	}
- 
--	mutex_lock(&ida_lock);
--	ret = ida_simple_get(&index_ida, 0, 1 << (MINORBITS - RNBD_PART_BITS),
--			     GFP_KERNEL);
--	mutex_unlock(&ida_lock);
-+	ret = ida_alloc_max(&index_ida, 1 << (MINORBITS - RNBD_PART_BITS),
-+			    GFP_KERNEL);
- 	if (ret < 0) {
- 		pr_err("Failed to initialize device '%s' from session %s, allocating idr failed, err: %d\n",
- 		       pathname, sess->sessname, ret);
--- 
-2.32.0
-
+>=20
+> 								Honza
+>=20
+> > ---
+> >  fs/ext2/ialloc.c | 3 ---
+> >  1 file changed, 3 deletions(-)
+> >=20
+> > diff --git a/fs/ext2/ialloc.c b/fs/ext2/ialloc.c
+> > index d632764da240..998dd2ac8008 100644
+> > --- a/fs/ext2/ialloc.c
+> > +++ b/fs/ext2/ialloc.c
+> > @@ -170,9 +170,6 @@ static void ext2_preread_inode(struct inode *inode)
+> >  	unsigned long offset;
+> >  	unsigned long block;
+> >  	struct ext2_group_desc * gdp;
+> > -	struct backing_dev_info *bdi;
+> > -
+> > -	bdi =3D inode_to_bdi(inode);
+> > =20
+> >  	block_group =3D (inode->i_ino - 1) / EXT2_INODES_PER_GROUP(inode->i_sb);
+> >  	gdp =3D ext2_get_group_desc(inode->i_sb, block_group, NULL);
+> > --=20
+> > 2.34.1
+> >=20
+> --=20
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+>=20
+>=20
