@@ -2,90 +2,126 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1962EC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Feb 2022 14:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5DC2C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Feb 2022 14:34:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352710AbiBGOcY (ORCPT
+        id S235756AbiBGOdk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Feb 2022 09:32:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56806 "EHLO
+        Mon, 7 Feb 2022 09:33:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240034AbiBGOGV (ORCPT
+        with ESMTP id S1385224AbiBGObv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Feb 2022 09:06:21 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B984C0401C3;
-        Mon,  7 Feb 2022 06:06:20 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id k18so24984471wrg.11;
-        Mon, 07 Feb 2022 06:06:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tBKWnS+g7You4oahdBZV1moenSdw6O464+uIoP4Ehfw=;
-        b=dXHUkHHHLQVcF081BhnShtt/ILiXpVb0T3NzyCo3i0nakhqxWs2EPz9K/tIrOG4t/q
-         ZmJBv6zMZ9oe2EmWqrcUsw0RWxqGsxtBSS4T4i2UE1VGygzOS0q5+qq1slHJLFk61oua
-         32mR5gFhRVh0FEPZ8PCqrbEPsdeUVImaqnqPUkg2cYvsF55RNOzS7L/8Bl9l/pljVxiV
-         Tc8pb7VPlg5FpOF2bd6lqh7OJ7EpRKlboqsn/+n+WB8gl5tuYmx6b8XTa6k97x7IPPxt
-         q7Mvq5E2Hi7r8q6eIWDyZ0jZ+gnBR4HFiHWwyOlmMbRQeGVbu6rIxc85DNgUrhocF6eh
-         OF4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tBKWnS+g7You4oahdBZV1moenSdw6O464+uIoP4Ehfw=;
-        b=Oa/vru13XJJl4LvgtF3HepbIBVdR4bkWMYXBGmJKDEtgEOg+fCVhJ5y606pI0+j3On
-         z/bpDHUSqPjV45QanUjDPUbe0jO9+8iTMBufbfyBuHrlP9u7dYLJq0d2Zs9G2rbA0Abs
-         SkNk2F7KlvjzxoeeAPdbnK3cDNYFaLex7KlBfNzZpeI85+UbXtvMsXt75LVZQHDRSNiy
-         GPumB6A2pOrV/shzsFCOFykR+hIGIrb7Fhby21HyYDumG4RTen21sX0KAUQe+PrtW8mz
-         pCYsWDpwZ8yaSapCQx0vliUW9Q7kWpgya+WMrs2EBKoyctwlR3jlNAfI1Djtpp6TxZLA
-         Fufw==
-X-Gm-Message-State: AOAM532iJqyj9LXFZTcE/MgVSXvk0uu3jd+wf3JxI+3EsHzBGYXZ5fSR
-        UU+n4dXBn5j/LdfAjulZvZsdmh7TCEGCJQ==
-X-Google-Smtp-Source: ABdhPJyKet9Uuh60UU/p6hDZJIyCF7NM/ixYXuVRcY9k1xOZeokpEzA36xzaIhpdpjAHmboNRpfbrw==
-X-Received: by 2002:a05:6000:1866:: with SMTP id d6mr10140333wri.309.1644242778904;
-        Mon, 07 Feb 2022 06:06:18 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n10sm4140786wrt.93.2022.02.07.06.06.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Feb 2022 06:06:18 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: usb-audio: remove redundant assignment to variable c
-Date:   Mon,  7 Feb 2022 14:06:17 +0000
-Message-Id: <20220207140617.341172-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Mon, 7 Feb 2022 09:31:51 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D52D2C0401C2;
+        Mon,  7 Feb 2022 06:31:50 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9941CB81598;
+        Mon,  7 Feb 2022 14:31:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BED3C340F1;
+        Mon,  7 Feb 2022 14:31:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1644244308;
+        bh=wzod6Dyf4Pjn7g62vKZJXz8+aqGlK2RqcGMJlGOO+gc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pR/rc2IOnNVHXsjA16yCQxeIvQNGQ9bKuej1oyOXwsuyp2DR/7MM1/yyFk7LlKTCy
+         CcKaqKT5aWwIsMUmb1sO3WSEzzfphNcMJ/7M1wPgIUNg+OaszixiNA8VoYl4NlguAG
+         Mt7rHrip30pxe3c5m4Zr0JTiEDGKHm0P0i8Z/Csd4xpwEVGUd3K7ryiKAqnc8RJlUZ
+         IvOtV01a9WEZa+AT5MbVZuH7mJj2RMzT75wyiFLK+Rad4r6AsG1kEJRekqehLFxbKN
+         5zMhCmTNNEDjsMNAYYEr7bxG/eV8yYG5W3nQg6bxUaTODhhyl0w0fVNVq+qm0LAXCM
+         7D/ITWViWm+2w==
+Date:   Mon, 7 Feb 2022 15:31:45 +0100
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Seth Heasley <seth.heasley@intel.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+Subject: Re: [PATCH] i2c: ismt: Remove useless DMA-32 fallback configuration
+Message-ID: <YgEtUT7Dhntmidxy@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Seth Heasley <seth.heasley@intel.com>,
+        Neil Horman <nhorman@tuxdriver.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org
+References: <853d9f9d746864435abf93dfc822fccac5b04f37.1641731339.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="yhVCcQgC/qrKuXoJ"
+Content-Disposition: inline
+In-Reply-To: <853d9f9d746864435abf93dfc822fccac5b04f37.1641731339.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable c is being initialized in an outer for-loop and also
-re-initialized inside an inner for-loop. The first initialization
-is redundant and can be removed.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- sound/usb/mixer_s1810c.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--yhVCcQgC/qrKuXoJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/sound/usb/mixer_s1810c.c b/sound/usb/mixer_s1810c.c
-index 0255089c9efb..fac4bbc6b275 100644
---- a/sound/usb/mixer_s1810c.c
-+++ b/sound/usb/mixer_s1810c.c
-@@ -221,7 +221,7 @@ static int snd_s1810c_init_mixer_maps(struct snd_usb_audio *chip)
- 	e = 0xbc;
- 	for (n = 0; n < 2; n++) {
- 		off = n * 18;
--		for (b = off, c = 0; b < 18 + off; b++) {
-+		for (b = off; b < 18 + off; b++) {
- 			/* This channel to all outputs ? */
- 			for (c = 0; c <= 8; c++) {
- 				snd_s1810c_send_ctl_packet(dev, a, b, c, 0, e);
--- 
-2.34.1
+On Sun, Jan 09, 2022 at 01:29:45PM +0100, Christophe JAILLET wrote:
+> As stated in [1], dma_set_mask() with a 64-bit mask never fails if
+> dev->dma_mask is non-NULL.
+> So, if it fails, the 32 bits case will also fail for the same reason.
+>=20
+>=20
+> Simplify code and remove some dead code accordingly.
+>=20
+> [1]: https://lkml.org/lkml/2021/6/7/398
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+Seth, Neil, do you agree?
+
+> ---
+>  drivers/i2c/busses/i2c-ismt.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-ismt.c b/drivers/i2c/busses/i2c-ismt.c
+> index f4820fd3dc13..951f3511afaa 100644
+> --- a/drivers/i2c/busses/i2c-ismt.c
+> +++ b/drivers/i2c/busses/i2c-ismt.c
+> @@ -920,11 +920,8 @@ ismt_probe(struct pci_dev *pdev, const struct pci_de=
+vice_id *id)
+> =20
+>  	err =3D dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+>  	if (err) {
+> -		err =3D dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+> -		if (err) {
+> -			dev_err(&pdev->dev, "dma_set_mask fail\n");
+> -			return -ENODEV;
+> -		}
+> +		dev_err(&pdev->dev, "dma_set_mask fail\n");
+> +		return -ENODEV;
+>  	}
+> =20
+>  	err =3D ismt_dev_init(priv);
+> --=20
+> 2.32.0
+>=20
+
+--yhVCcQgC/qrKuXoJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmIBLVEACgkQFA3kzBSg
+KbZOARAAs6L96EgsUONwDrm0mCyNPdQYFIyNuoaGkRc8YFVgR5B8EjJjYb4pWOp6
+kGF57f6ZKR04Wx0/6V7g865Kbs4oGloMA+xVWNJdMmFmZnBtRrMT3XDcfyBxQ1b1
+YPtMMqXenj2LlBgV5nGf3jqUm7Uillzmkld7mZ/j4pcmW+B0xKbe4XXl20o/Prk8
+OrpTwRyENhVWbiiAgyuVzrBvNe/Age4DnbekUQ+7g6MHgB8/EcnhUVE/WPJL+f84
+mLi60VoLCvp7rjsBGcxE7BweEBKnoTnPPS9Gn/aHNx9uQjuv0DwnbAr6118qD5G9
+szB+Llu7GHOV6NZQ/DB2SbMn6XjGS5QTv9+vuTKrdxOfnTyMEBJ7tThMyKcuu38U
+90YuYWKTfg3IkUxrgcWmJzI+1o7QC/bQq0BYkfKbbsHuTKdiKrfroc7yxGQLKW+B
+ni/Wc+SnmnpqKzoMB72lfX3RjpzvJABqASlY9VJa/p4xujcgWOgJzF5+I7pxDN8d
+mauQny5kOriUGqnwk0qoukPlgH508GKSYQ9xR6vajhO6FDdJxONi5aayz5FmhSPQ
+cronvGZDkgwATYs7whUEtnt7pupENNXzTZcCplQNp+6Ex3Wv5/BTdX3Gn0QqQviN
+Ar3kr2OfpDceky/GhwZi8pg7mH1DgO2Pm7+PPPCfo61PcuYaZLQ=
+=+skG
+-----END PGP SIGNATURE-----
+
+--yhVCcQgC/qrKuXoJ--
