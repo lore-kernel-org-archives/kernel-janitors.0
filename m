@@ -2,120 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB71C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Feb 2022 20:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F0D8C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Feb 2022 22:48:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231174AbiBGUxQ (ORCPT
+        id S245078AbiBGWsB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Feb 2022 15:53:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60916 "EHLO
+        Mon, 7 Feb 2022 17:48:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229726AbiBGUxP (ORCPT
+        with ESMTP id S234873AbiBGWsA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Feb 2022 15:53:15 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74FC3C06173B;
-        Mon,  7 Feb 2022 12:53:13 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 1F6D11F380;
-        Mon,  7 Feb 2022 20:53:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1644267192; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=LKv3EweMD03rUYun/L5aHTmWoM0dcEXr0nhc6lTkmFE=;
-        b=gNgwVXkjoebU3goU0BxG421Itbvx1KH8zO+NvewX40vrvjeb9JdAPIisGVeLymndxdykw4
-        wdchpQ/FYPApj3Eix5rcYkBOVrW64/elRH7GXCoWMaGAw4i6O2VbQ2UBTIHV1c0vVj2o2S
-        zEOaG3VfvFVWJOI7lD7zigabDHBJEBk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1644267192;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=LKv3EweMD03rUYun/L5aHTmWoM0dcEXr0nhc6lTkmFE=;
-        b=xZy4q7+xKyTGorvlcoIz9qHMKtKKaRLNEiB3DH+5Ea26b0Y2jBLtBialYuZFa60Kx9hXIN
-        Iz0SUdav+1Vf3hAA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7426113C72;
-        Mon,  7 Feb 2022 20:53:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id StSIC7CGAWJOaQAAMHmgww
-        (envelope-from <neilb@suse.de>); Mon, 07 Feb 2022 20:53:04 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 7 Feb 2022 17:48:00 -0500
+Received: from smtp.smtpout.orange.fr (smtp10.smtpout.orange.fr [80.12.242.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5772DC061355
+        for <kernel-janitors@vger.kernel.org>; Mon,  7 Feb 2022 14:47:59 -0800 (PST)
+Received: from pop-os.home ([90.126.236.122])
+        by smtp.orange.fr with ESMTPA
+        id HCncnIqRubnFGHCncnWXsD; Mon, 07 Feb 2022 23:47:57 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Mon, 07 Feb 2022 23:47:57 +0100
+X-ME-IP: 90.126.236.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH v2 2/2] iommu/arm-smmu-v3: Simplify memory allocation
+Date:   Mon,  7 Feb 2022 23:47:55 +0100
+Message-Id: <598bd905103dcbe5653a54bb0dfb5a8597728214.1644274051.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <3f7b9b202c6b6f5edc234ab7af5f208fbf8bc944.1644274051.git.christophe.jaillet@wanadoo.fr>
+References: <3f7b9b202c6b6f5edc234ab7af5f208fbf8bc944.1644274051.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Jan Kara" <jack@suse.cz>
-Cc:     "Colin Ian King" <colin.i.king@gmail.com>,
-        "Jan Kara" <jack@suse.com>,
-        "Stephen Rothwell" <sfr@canb.auug.org.au>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] ext2: remove unused pointer bdi
-In-reply-to: <20220207144612.zdczs7wxzbuk3ydr@quack3.lan>
-References: <20220207134039.337197-1-colin.i.king@gmail.com>,
- <20220207144612.zdczs7wxzbuk3ydr@quack3.lan>
-Date:   Tue, 08 Feb 2022 07:52:58 +1100
-Message-id: <164426717877.27779.5211639626156510807@noble.neil.brown.name>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 08 Feb 2022, Jan Kara wrote:
-> On Mon 07-02-22 13:40:39, Colin Ian King wrote:
-> > The call to bdi_congested has been removed and so the bdi pointer
-> > is no longer required. Remove it.
-> >=20
-> > Fixes: 9bbab3a63d49 ("mm/fs: remove bdi_congested() and wb_congested() an=
-d related functions")
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
->=20
-> I guess this change is in mm tree? So probably it is best if Andrew picks
-> it up.
+Use devm_bitmap_zalloc() instead of hand writing it.
 
-I have to refresh the whole series - hopefully later this week.  I'll
-make sure to fix this bit.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This is NOT compile tested.
+I don't have the needed cross compiling tools.
 
-Thanks,
-NeilBrown
+v2: - remove the dev_err() message
+    - remove the 'bitmap' variable
+    - update the error handling path to be more future proof and return
+      an explicit 0 in the success path
+---
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 22 +++++----------------
+ 1 file changed, 5 insertions(+), 17 deletions(-)
 
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+index 14d06aad0726..bbc4eeb42811 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+@@ -2911,32 +2911,20 @@ static int arm_smmu_init_one_queue(struct arm_smmu_device *smmu,
+ 	return 0;
+ }
+ 
+-static void arm_smmu_cmdq_free_bitmap(void *data)
+-{
+-	unsigned long *bitmap = data;
+-	bitmap_free(bitmap);
+-}
+-
+ static int arm_smmu_cmdq_init(struct arm_smmu_device *smmu)
+ {
+-	int ret = 0;
+ 	struct arm_smmu_cmdq *cmdq = &smmu->cmdq;
+ 	unsigned int nents = 1 << cmdq->q.llq.max_n_shift;
+-	atomic_long_t *bitmap;
+ 
+ 	atomic_set(&cmdq->owner_prod, 0);
+ 	atomic_set(&cmdq->lock, 0);
+ 
+-	bitmap = (atomic_long_t *)bitmap_zalloc(nents, GFP_KERNEL);
+-	if (!bitmap) {
+-		dev_err(smmu->dev, "failed to allocate cmdq bitmap\n");
+-		ret = -ENOMEM;
+-	} else {
+-		cmdq->valid_map = bitmap;
+-		devm_add_action(smmu->dev, arm_smmu_cmdq_free_bitmap, bitmap);
+-	}
++	cmdq->valid_map = (atomic_long_t *)devm_bitmap_zalloc(smmu->dev, nents,
++							      GFP_KERNEL);
++	if (!cmdq->valid_map)
++		return -ENOMEM;
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int arm_smmu_init_queues(struct arm_smmu_device *smmu)
+-- 
+2.32.0
 
->=20
-> 								Honza
->=20
-> > ---
-> >  fs/ext2/ialloc.c | 3 ---
-> >  1 file changed, 3 deletions(-)
-> >=20
-> > diff --git a/fs/ext2/ialloc.c b/fs/ext2/ialloc.c
-> > index d632764da240..998dd2ac8008 100644
-> > --- a/fs/ext2/ialloc.c
-> > +++ b/fs/ext2/ialloc.c
-> > @@ -170,9 +170,6 @@ static void ext2_preread_inode(struct inode *inode)
-> >  	unsigned long offset;
-> >  	unsigned long block;
-> >  	struct ext2_group_desc * gdp;
-> > -	struct backing_dev_info *bdi;
-> > -
-> > -	bdi =3D inode_to_bdi(inode);
-> > =20
-> >  	block_group =3D (inode->i_ino - 1) / EXT2_INODES_PER_GROUP(inode->i_sb);
-> >  	gdp =3D ext2_get_group_desc(inode->i_sb, block_group, NULL);
-> > --=20
-> > 2.34.1
-> >=20
-> --=20
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
->=20
->=20
