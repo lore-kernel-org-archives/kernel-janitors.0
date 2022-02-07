@@ -2,61 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F1FAC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Feb 2022 14:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1962EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Feb 2022 14:33:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376300AbiBGOCL (ORCPT
+        id S1352710AbiBGOcY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Feb 2022 09:02:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38518 "EHLO
+        Mon, 7 Feb 2022 09:32:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345274AbiBGNkm (ORCPT
+        with ESMTP id S240034AbiBGOGV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Feb 2022 08:40:42 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56CE0C043189;
-        Mon,  7 Feb 2022 05:40:42 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id e3so10897665wra.0;
-        Mon, 07 Feb 2022 05:40:42 -0800 (PST)
+        Mon, 7 Feb 2022 09:06:21 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B984C0401C3;
+        Mon,  7 Feb 2022 06:06:20 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id k18so24984471wrg.11;
+        Mon, 07 Feb 2022 06:06:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=jjxTRl/c4nrLxVy+a0+jLX2ZtSQhFhV7DHi5h4ELxr4=;
-        b=E+DyHE87RmaOz/LO2EGtRzJ7qReSsX8GI2mSUXxCy4Jb9z8abBB9IjlvhYdkQvxS+d
-         R8Sx1RmFrP21229QcZMtsm6EnCbvzpvQ/858oNxuiJxJu0W7LSB/cEhYpk9aT3nMcYWp
-         Tqd4zsXOmbtwCbQw+9jJiDJ8mIGtW+1QDwtv29bkCbYPPC9fkqVqtA3MUNZn+OR/rcdu
-         bhpBbP24HBiKTqH9nIBcYp9NoGtYXHgqiGso2mxnR9/MIrGUktDn2Si4E1Kfnf3sBbVp
-         EVOm61pTbrlOGKDYe9W1xJy9g/tr8ACXWYnALNw2MqAF1oVdfM3lx0f/9FiI96wlgbAe
-         UW5Q==
+        bh=tBKWnS+g7You4oahdBZV1moenSdw6O464+uIoP4Ehfw=;
+        b=dXHUkHHHLQVcF081BhnShtt/ILiXpVb0T3NzyCo3i0nakhqxWs2EPz9K/tIrOG4t/q
+         ZmJBv6zMZ9oe2EmWqrcUsw0RWxqGsxtBSS4T4i2UE1VGygzOS0q5+qq1slHJLFk61oua
+         32mR5gFhRVh0FEPZ8PCqrbEPsdeUVImaqnqPUkg2cYvsF55RNOzS7L/8Bl9l/pljVxiV
+         Tc8pb7VPlg5FpOF2bd6lqh7OJ7EpRKlboqsn/+n+WB8gl5tuYmx6b8XTa6k97x7IPPxt
+         q7Mvq5E2Hi7r8q6eIWDyZ0jZ+gnBR4HFiHWwyOlmMbRQeGVbu6rIxc85DNgUrhocF6eh
+         OF4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=jjxTRl/c4nrLxVy+a0+jLX2ZtSQhFhV7DHi5h4ELxr4=;
-        b=wEQSSkhnC0Ek5Fi79F8i4jfkQccHBPQ52/PM07yt1VkadW8RefytzMi8jbV8NNlxoi
-         HNxf+P33U96Zb0gZLyPnKtn3ynVQ0Ztkx4q6BVgg7lVIkRRklTFVs1okxcjv3TBxxQPp
-         daswirRuJtwg5OCRHiAjDkHq5sZR6R/TqTMEcQoGb3qyBBcH+NDihNGV4zVvSpEHwrLq
-         0voGOYLyKR1RHeFoXS97wVETlhB5k7czO04aLc2N6DREY70DhY3mwQt7kfjv0PRcZQ3k
-         DqaXxueUQjU+atTTBJEdCYUCFglc1fjind0yKq7Br5+4bvHWXNIXpvC2WOf6FmIHG9X5
-         RI5Q==
-X-Gm-Message-State: AOAM531RHYbhf9P/FgYCQRlczdyjtTcLWca/s+/UqgHgPqJgHzo6IHq5
-        G/RsPPEgI9+M1li02TQRgmc=
-X-Google-Smtp-Source: ABdhPJxsup6qGXdvRsBdbwgeWEnB972cXcL5N67PKOnqUSoTorSOUP3oaLQaaGmhbM1OvqMP/UFcBQ==
-X-Received: by 2002:a5d:4528:: with SMTP id j8mr2904210wra.544.1644241240818;
-        Mon, 07 Feb 2022 05:40:40 -0800 (PST)
+        bh=tBKWnS+g7You4oahdBZV1moenSdw6O464+uIoP4Ehfw=;
+        b=Oa/vru13XJJl4LvgtF3HepbIBVdR4bkWMYXBGmJKDEtgEOg+fCVhJ5y606pI0+j3On
+         z/bpDHUSqPjV45QanUjDPUbe0jO9+8iTMBufbfyBuHrlP9u7dYLJq0d2Zs9G2rbA0Abs
+         SkNk2F7KlvjzxoeeAPdbnK3cDNYFaLex7KlBfNzZpeI85+UbXtvMsXt75LVZQHDRSNiy
+         GPumB6A2pOrV/shzsFCOFykR+hIGIrb7Fhby21HyYDumG4RTen21sX0KAUQe+PrtW8mz
+         pCYsWDpwZ8yaSapCQx0vliUW9Q7kWpgya+WMrs2EBKoyctwlR3jlNAfI1Djtpp6TxZLA
+         Fufw==
+X-Gm-Message-State: AOAM532iJqyj9LXFZTcE/MgVSXvk0uu3jd+wf3JxI+3EsHzBGYXZ5fSR
+        UU+n4dXBn5j/LdfAjulZvZsdmh7TCEGCJQ==
+X-Google-Smtp-Source: ABdhPJyKet9Uuh60UU/p6hDZJIyCF7NM/ixYXuVRcY9k1xOZeokpEzA36xzaIhpdpjAHmboNRpfbrw==
+X-Received: by 2002:a05:6000:1866:: with SMTP id d6mr10140333wri.309.1644242778904;
+        Mon, 07 Feb 2022 06:06:18 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id 24sm1478380wmf.48.2022.02.07.05.40.40
+        by smtp.gmail.com with ESMTPSA id n10sm4140786wrt.93.2022.02.07.06.06.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Feb 2022 05:40:40 -0800 (PST)
+        Mon, 07 Feb 2022 06:06:18 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jan Kara <jack@suse.com>, Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        NeilBrown <neilb@suse.de>, linux-ext4@vger.kernel.org
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ext2: remove unused pointer bdi
-Date:   Mon,  7 Feb 2022 13:40:39 +0000
-Message-Id: <20220207134039.337197-1-colin.i.king@gmail.com>
+Subject: [PATCH] ALSA: usb-audio: remove redundant assignment to variable c
+Date:   Mon,  7 Feb 2022 14:06:17 +0000
+Message-Id: <20220207140617.341172-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,29 +64,28 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The call to bdi_congested has been removed and so the bdi pointer
-is no longer required. Remove it.
+The variable c is being initialized in an outer for-loop and also
+re-initialized inside an inner for-loop. The first initialization
+is redundant and can be removed.
 
-Fixes: 9bbab3a63d49 ("mm/fs: remove bdi_congested() and wb_congested() and related functions")
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/ext2/ialloc.c | 3 ---
- 1 file changed, 3 deletions(-)
+ sound/usb/mixer_s1810c.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ext2/ialloc.c b/fs/ext2/ialloc.c
-index d632764da240..998dd2ac8008 100644
---- a/fs/ext2/ialloc.c
-+++ b/fs/ext2/ialloc.c
-@@ -170,9 +170,6 @@ static void ext2_preread_inode(struct inode *inode)
- 	unsigned long offset;
- 	unsigned long block;
- 	struct ext2_group_desc * gdp;
--	struct backing_dev_info *bdi;
--
--	bdi = inode_to_bdi(inode);
- 
- 	block_group = (inode->i_ino - 1) / EXT2_INODES_PER_GROUP(inode->i_sb);
- 	gdp = ext2_get_group_desc(inode->i_sb, block_group, NULL);
+diff --git a/sound/usb/mixer_s1810c.c b/sound/usb/mixer_s1810c.c
+index 0255089c9efb..fac4bbc6b275 100644
+--- a/sound/usb/mixer_s1810c.c
++++ b/sound/usb/mixer_s1810c.c
+@@ -221,7 +221,7 @@ static int snd_s1810c_init_mixer_maps(struct snd_usb_audio *chip)
+ 	e = 0xbc;
+ 	for (n = 0; n < 2; n++) {
+ 		off = n * 18;
+-		for (b = off, c = 0; b < 18 + off; b++) {
++		for (b = off; b < 18 + off; b++) {
+ 			/* This channel to all outputs ? */
+ 			for (c = 0; c <= 8; c++) {
+ 				snd_s1810c_send_ctl_packet(dev, a, b, c, 0, e);
 -- 
 2.34.1
 
