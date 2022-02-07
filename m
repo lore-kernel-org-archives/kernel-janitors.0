@@ -2,104 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ADF6C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Feb 2022 09:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4BDC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Feb 2022 09:33:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235488AbiBGJcC (ORCPT
+        id S233297AbiBGJcu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Feb 2022 04:32:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55046 "EHLO
+        Mon, 7 Feb 2022 04:32:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241177AbiBGJWm (ORCPT
+        with ESMTP id S1354778AbiBGJbI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Feb 2022 04:22:42 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2D2DC043188;
-        Mon,  7 Feb 2022 01:22:39 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id s18so23499289wrv.7;
-        Mon, 07 Feb 2022 01:22:39 -0800 (PST)
+        Mon, 7 Feb 2022 04:31:08 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2E5BC043187
+        for <kernel-janitors@vger.kernel.org>; Mon,  7 Feb 2022 01:31:03 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id k1so7029801wrd.8
+        for <kernel-janitors@vger.kernel.org>; Mon, 07 Feb 2022 01:31:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nZXczi6C0VGVtmz89xEAfWTFn3tEw4CtQGzJll0eCx4=;
-        b=C2zZvx93c1YXMt79tE8s8Jb3PihXIjoInyAK1MvgNVVXGccfgn9/SllQZRW1jKrZYF
-         2ho9PDLah+3FbqS4d+l2VEvYjavolvmDhi7cQagujQbESdY84abjGgqJOJ9tRhv2Sje0
-         z76oNUH8LHs6e1CKpGldvwzh1XJdncNUFItMfL39LtF2/mo1DOxg53yamVyv6+Fl/Dxx
-         y10C8NXFT4bhLLwn/aiVMwMGx+Bpx2Wc5xz5KwJ4kv9U36R/cnQYpZlGvw2FyEnGFcw1
-         xlaqEbaA3oEIq1xE3oXXoME6BghM8oQoINGDpGqRrd59yNJ4uIVYcKzv0DtC4LjeWffG
-         UkWw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=e71qr5cQmHNfaTvqFdZSatwMnOkMecpoZmeynQAfXfU=;
+        b=IipD0Md8PLGqTRc8YbhUGW9RZUZYMQMHks4wT414D4MJkTvXaIaxCLgX7q7EqqZkkE
+         RniraUcxZGQqnV/BLhI8fR3OhKUqDYUBLkiKkwsuJN/ZNCuhQa9etjVpPPbBQ9jyOrwx
+         MGb+BBECiHqPAOCpL/b5+NFypnEjgPgL0Rb5qKUiTSwuyDcdtYMjQxjnCr4gVMsnv1db
+         4Li8Ccoityy3n7nCqgyhw562KdbA+9+AlCO3h6k33jebIUk0d7GU1cLOM5H73yN+w4Xf
+         YMhAHQA5StGpYsrAUVc3HUB89o5DXP0IdN5Syh15D5UZS0wH6QYVpbsbWtyqGxNwNZ4L
+         OgFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nZXczi6C0VGVtmz89xEAfWTFn3tEw4CtQGzJll0eCx4=;
-        b=eBCNdKzaLBVow+DZo2tV3y2mX39O5NxKR1By5Cpbn4pliYsrTR/c6KTp/kycCdvEWH
-         wbBmauwmoWs1v5NugKzCOGDZfZBIaVdjb9IRFYbS/NQJjIr+c5tFAND3V04VjxRpC4e7
-         qO54iKMhWCteJMo32R0em+17CRMn+sNV9DHKSpuY5vnZesSBJNqS2uMgQSmLypckYjck
-         g1vqgxyBeRvkXXpuui6szgHMiz7VZyuksThmHry5TWSJsFcWT/F1btGdDtLchmlJAWFf
-         qNQAKFZYzbRMrIy5ODvgJJqeEKsaNLe+EeAg5Yxos48qza6OVJkoL7TCIxXNKTa31b/V
-         YdBQ==
-X-Gm-Message-State: AOAM5312V/0rXY1vu9JlI/cX/JC+ivWu1PkRKs6QDv1wEEkZsEZvpVXL
-        u87Yj2emsDCqkIr7wGFt0bY=
-X-Google-Smtp-Source: ABdhPJybMsIXGUh1RzkJaVESTlrR03bfCQ5VzIOs1f03/DoZiXQy4UAlySTzfi0iky0Us5HZSHJx8Q==
-X-Received: by 2002:adf:f690:: with SMTP id v16mr510766wrp.707.1644225758361;
-        Mon, 07 Feb 2022 01:22:38 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id g7sm9866205wmq.3.2022.02.07.01.22.37
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=e71qr5cQmHNfaTvqFdZSatwMnOkMecpoZmeynQAfXfU=;
+        b=PKZXO8gmthx6WjnpoKX3UJuUAel1WJkqO+LxyGew0dzLjQUu+zAFzQylv0zPadKvIc
+         xUh5oJClqkhL8V+BWOZ/LUc/iWSbn+nxEj9926qxZXyhA0JlZXQpvGuYjt/Q7m7IFj1D
+         PGPglc2scDQO4nvcFPAGPzd3FK6ztMwOHMqWatD2cdDavAzHD79wT1FQ6r22NWRLfnkh
+         vPrcTqQBnICX6E63k77aXcvPoA5RN2IHH5Xv3mXwafPk2bfqzCh7mn8KXbPIY84K+yFM
+         kQ5+AMEGpRma1vfFTk1elD0mx4sHDV1L9eHn3eptLfeFJCTAnKBZj/ET8rhSVky0f04I
+         DQLw==
+X-Gm-Message-State: AOAM532s7eBLMIngKzWyzJEdN1xu1dHizlsjAEpgPj+ccDumV1+mTMks
+        +UzDtBWWeDddCBQaM9G4A50jnw==
+X-Google-Smtp-Source: ABdhPJxyfEhDPaQTrpIwF3s8f+P5EuB6O3syjtuhYC4gv/uXtG6GnEb8OsVA43hN5ymF4KDaQpvKuQ==
+X-Received: by 2002:a05:6000:385:: with SMTP id u5mr3350003wrf.105.1644226262555;
+        Mon, 07 Feb 2022 01:31:02 -0800 (PST)
+Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
+        by smtp.gmail.com with ESMTPSA id n15sm10497806wrf.37.2022.02.07.01.31.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Feb 2022 01:22:37 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Shuah Khan <shuah@kernel.org>,
-        alsa-devel@alsa-project.org, linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] kselftest: alsa: fix spelling mistake "desciptor" -> "descriptor"
-Date:   Mon,  7 Feb 2022 09:22:35 +0000
-Message-Id: <20220207092235.240284-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Mon, 07 Feb 2022 01:31:01 -0800 (PST)
+Date:   Mon, 7 Feb 2022 09:31:00 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Helge Deller <deller@gmx.de>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-pwm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH] backlight: pwm_bl: Avoid open coded arithmetic in memory
+ allocation
+Message-ID: <YgDm1FWtlneMLCTS@google.com>
+References: <bd3d74acfa58d59f6f5f81fc5a9fb409edb8d747.1644046817.git.christophe.jaillet@wanadoo.fr>
+ <20220207080128.xmvommcddjfgz7ey@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220207080128.xmvommcddjfgz7ey@pengutronix.de>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are some spelling mistakes in some ksft messages. Fix them.
+On Mon, 07 Feb 2022, Uwe Kleine-König wrote:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/alsa/mixer-test.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> On Sat, Feb 05, 2022 at 08:40:48AM +0100, Christophe JAILLET wrote:
+> > kmalloc_array()/kcalloc() should be used to avoid potential overflow when
+> > a multiplication is needed to compute the size of the requested memory.
+> > 
+> > So turn a kzalloc()+explicit size computation into an equivalent kcalloc().
+> > 
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> LGTM
+> 
+> Acked-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> Thanks
+> Uwe
 
-diff --git a/tools/testing/selftests/alsa/mixer-test.c b/tools/testing/selftests/alsa/mixer-test.c
-index d0b788b8d287..eb2213540fe3 100644
---- a/tools/testing/selftests/alsa/mixer-test.c
-+++ b/tools/testing/selftests/alsa/mixer-test.c
-@@ -198,7 +198,7 @@ static void find_controls(void)
- 
- 		err = snd_ctl_poll_descriptors_count(card_data->handle);
- 		if (err != 1) {
--			ksft_exit_fail_msg("Unexpected desciptor count %d for card %d\n",
-+			ksft_exit_fail_msg("Unexpected descriptor count %d for card %d\n",
- 					   err, card);
- 		}
- 
-@@ -248,12 +248,12 @@ static int wait_for_event(struct ctl_data *ctl, int timeout)
- 						       &(ctl->card->pollfd),
- 						       1, &revents);
- 		if (err < 0) {
--			ksft_print_msg("snd_ctl_poll_desciptors_revents() failed for %s: %d\n",
-+			ksft_print_msg("snd_ctl_poll_descriptors_revents() failed for %s: %d\n",
- 				       ctl->name, err);
- 			return err;
- 		}
- 		if (revents & POLLERR) {
--			ksft_print_msg("snd_ctl_poll_desciptors_revents() reported POLLERR for %s\n",
-+			ksft_print_msg("snd_ctl_poll_descriptors_revents() reported POLLERR for %s\n",
- 				       ctl->name);
- 			return -1;
- 		}
+I am totally confused!
+
 -- 
-2.34.1
-
+Lee Jones [李琼斯]
+Principal Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
