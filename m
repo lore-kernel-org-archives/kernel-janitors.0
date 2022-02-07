@@ -2,83 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BBCEC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Feb 2022 13:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 717D1C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Feb 2022 14:02:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346628AbiBGN2G (ORCPT
+        id S242066AbiBGOBR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Feb 2022 08:28:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47462 "EHLO
+        Mon, 7 Feb 2022 09:01:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1446548AbiBGMn3 (ORCPT
+        with ESMTP id S1390703AbiBGN7q (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Feb 2022 07:43:29 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E7C9C033256;
-        Mon,  7 Feb 2022 04:40:12 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0AA03B81247;
-        Mon,  7 Feb 2022 12:40:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 87459C340EF;
-        Mon,  7 Feb 2022 12:40:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644237609;
-        bh=xFqWxcO0ZOFW/A0bFuTO/amUCZo5jjYUv6KiZcjHi5Q=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=rFKREdmAVUEy93hgb+e2gXnS3oD4Lif8PJ9dBEKp4dIjT0SXhX6zYy0pvaSdbznMI
-         gB/8qV56WzbndURDcLYY+Il5NrsD6bmnpmXRFsgPkPVRe5YgWLZaAiZdAQ9zkhTb/U
-         7MULBDGE8Ze9fGX2S84GKTWlqNv1GVz9oEJn0FrRYFo4LGgByONUUwVv8zBvXC5REi
-         kyvaUJwbgsD+QQkdG4FQeFOJG3h3Xz6uc/b6DaV4vlZRr/vtf3NTip5Y9ONHF3ord4
-         iu6o2rN7KujIfsyQEvsEZdWvnJ6sBeAkJ6TYx3nlacMJpm6DRUofn0qEgK7W5ysXC3
-         CTAR351EQLQUw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6C263E6BB3D;
-        Mon,  7 Feb 2022 12:40:09 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 7 Feb 2022 08:59:46 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5DE8C0401C1;
+        Mon,  7 Feb 2022 05:59:45 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id r29so7007928wrr.13;
+        Mon, 07 Feb 2022 05:59:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mcWbPuUD9zG5TmO7Q6+xyivnOj6cc3M0HEAfvxU+7N0=;
+        b=itcITwBvp8aqCL8K9Inahp3hlAut70WgrUe2y7ZIrA9VKxPz5YUyvnE3a6pyDhe7A5
+         9vh8ylalPe4+CfW7VnQE6FYt0nWmKLEUUimUbA5rYZRjK6R/yR/rnCzDMvMwOGqwR/Zi
+         hZMn8ocr5DmpXhxBGcPQUF59bHnfxyRNzw9w21vKyd8f6n3YNIgvLlDsCdVZB41xbJNh
+         rOJIDTfuOSzYS4lLL/sIW6fSo6jCT0OF5a+UjFIc0coPFk15bf2HDT8tVKRWAPjCj7yU
+         YgAlaJkL6dDuWNxsVtQu0zHa2myy9fMZ2AJufcculCPCgrzfcE7r/xpAKnBJUON6DL2u
+         CeEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mcWbPuUD9zG5TmO7Q6+xyivnOj6cc3M0HEAfvxU+7N0=;
+        b=j3Gl14xoooPcjP0mo/aGRjYZL25QLYbD8byGfeFDpuxkgVYIOxjTyV1EpWTsHp97x3
+         9BG808HY0RBpvkxum89K7bU4RcCqKN9ay+VFYVQ9Hh7M7BryB2a1DApk4pR5hBB9OOdX
+         ioGI0nLq+kcxC1UgDfVzdduWUmI+vK+lzSQuR4+CNU+QFuLAtOp/CF2YWEFUDjw1FfX5
+         LmbreM0KP1wZSVFa8gZ52vLlgvjaJeCJP3jDCNgtajD6qL0UumEO7PfunoNbN4y3TeVH
+         D3iujowfkeqao+weeGKMWzUlWXX7fRQ8CPDmelrNC4y5ZllZxMbb64ibm5TOGJa2O4h7
+         1/+A==
+X-Gm-Message-State: AOAM533WlbpllNtbtjjP7s2C9OjNbhHQkAMrWVyQy0y9XUaqRwwV/4bZ
+        t7vsNoT4FMNpVxyXuWUq7Yfodq/3WGA=
+X-Google-Smtp-Source: ABdhPJwoYphSKekOyNfRZroxq98own7clIJ9kHg2JAwpfGVrwxrfnBnu7pYQNCeL7DH24pgwwfvC9g==
+X-Received: by 2002:adf:f312:: with SMTP id i18mr9978656wro.441.1644242384384;
+        Mon, 07 Feb 2022 05:59:44 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id x7sm9910183wrt.77.2022.02.07.05.59.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Feb 2022 05:59:43 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] iio: adc: cpcap-adc: remove redundant assignment to variable cal_data_diff
+Date:   Mon,  7 Feb 2022 13:59:43 +0000
+Message-Id: <20220207135943.340629-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 1/2 net-next] net: dsa: mv88e6xxx: Fix off by in one in
- mv88e6185_phylink_get_caps()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164423760943.4874.16326636205625200936.git-patchwork-notify@kernel.org>
-Date:   Mon, 07 Feb 2022 12:40:09 +0000
-References: <20220207082253.GA28514@kili>
-In-Reply-To: <20220207082253.GA28514@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     andrew@lunn.ch, rmk+kernel@armlinux.org.uk,
-        vivien.didelot@gmail.com, f.fainelli@gmail.com, olteanv@gmail.com,
-        davem@davemloft.net, kuba@kernel.org, kabel@kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+The variable cal_data_diff is being assigned a value that is never read,
+it is being re-assigned later on with a new value in both paths of an
+if statement. The assignment is redundant, so remove it.
 
-This series was applied to netdev/net-next.git (master)
-by David S. Miller <davem@davemloft.net>:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/iio/adc/cpcap-adc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Mon, 7 Feb 2022 11:22:53 +0300 you wrote:
-> The <= ARRAY_SIZE() needs to be < ARRAY_SIZE() to prevent an out of
-> bounds error.
-> 
-> Fixes: d4ebf12bcec4 ("net: dsa: mv88e6xxx: populate supported_interfaces and mac_capabilities")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/net/dsa/mv88e6xxx/chip.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Here is the summary with links:
-  - [1/2,net-next] net: dsa: mv88e6xxx: Fix off by in one in mv88e6185_phylink_get_caps()
-    https://git.kernel.org/netdev/net-next/c/dde41a697331
-  - [2/2,net-next] net: dsa: mv88e6xxx: Unlock on error in mv88e6xxx_port_bridge_join()
-    https://git.kernel.org/netdev/net-next/c/ff62433883b3
-
-You are awesome, thank you!
+diff --git a/drivers/iio/adc/cpcap-adc.c b/drivers/iio/adc/cpcap-adc.c
+index 40e59f4c95bc..b6c4ef70484e 100644
+--- a/drivers/iio/adc/cpcap-adc.c
++++ b/drivers/iio/adc/cpcap-adc.c
+@@ -474,7 +474,7 @@ static int cpcap_adc_calibrate_one(struct cpcap_adc *ddata,
+ 	for (i = 0; i < CPCAP_ADC_MAX_RETRIES; i++) {
+ 		calibration_data[0]  = 0;
+ 		calibration_data[1]  = 0;
+-		cal_data_diff = 0;
++
+ 		cpcap_adc_setup_calibrate(ddata, channel);
+ 		error = regmap_read(ddata->reg, calibration_register,
+ 				    &calibration_data[0]);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
