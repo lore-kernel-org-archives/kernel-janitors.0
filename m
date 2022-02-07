@@ -2,26 +2,26 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F0D8C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Feb 2022 22:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A40C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Feb 2022 22:50:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245078AbiBGWsB (ORCPT
+        id S245166AbiBGWux (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Feb 2022 17:48:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58730 "EHLO
+        Mon, 7 Feb 2022 17:50:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234873AbiBGWsA (ORCPT
+        with ESMTP id S231463AbiBGWuw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Feb 2022 17:48:00 -0500
+        Mon, 7 Feb 2022 17:50:52 -0500
 Received: from smtp.smtpout.orange.fr (smtp10.smtpout.orange.fr [80.12.242.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5772DC061355
-        for <kernel-janitors@vger.kernel.org>; Mon,  7 Feb 2022 14:47:59 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 799EDC061355
+        for <kernel-janitors@vger.kernel.org>; Mon,  7 Feb 2022 14:50:51 -0800 (PST)
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id HCncnIqRubnFGHCncnWXsD; Mon, 07 Feb 2022 23:47:57 +0100
+        id HCqPnIrPgbnFGHCqPnWY5d; Mon, 07 Feb 2022 23:50:49 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 07 Feb 2022 23:47:57 +0100
+X-ME-Date: Mon, 07 Feb 2022 23:50:49 +0100
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
@@ -30,75 +30,51 @@ Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         linux-arm-kernel@lists.infradead.org,
         iommu@lists.linux-foundation.org
-Subject: [PATCH v2 2/2] iommu/arm-smmu-v3: Simplify memory allocation
-Date:   Mon,  7 Feb 2022 23:47:55 +0100
-Message-Id: <598bd905103dcbe5653a54bb0dfb5a8597728214.1644274051.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2 1/2] iommu/arm-smmu-v3: Avoid open coded arithmetic in memory allocation
+Date:   Mon,  7 Feb 2022 23:50:48 +0100
+Message-Id: <3f7b9b202c6b6f5edc234ab7af5f208fbf8bc944.1644274051.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <3f7b9b202c6b6f5edc234ab7af5f208fbf8bc944.1644274051.git.christophe.jaillet@wanadoo.fr>
-References: <3f7b9b202c6b6f5edc234ab7af5f208fbf8bc944.1644274051.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use devm_bitmap_zalloc() instead of hand writing it.
+kmalloc_array()/kcalloc() should be used to avoid potential overflow when
+a multiplication is needed to compute the size of the requested memory.
+
+So turn a devm_kzalloc()+explicit size computation into an equivalent
+devm_kcalloc().
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Robin Murphy <robin.murphy@arm.com>
 ---
 This is NOT compile tested.
 I don't have the needed cross compiling tools.
 
-v2: - remove the dev_err() message
-    - remove the 'bitmap' variable
-    - update the error handling path to be more future proof and return
-      an explicit 0 in the success path
+v2: - no changes
+    - Acked-by added
 ---
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 22 +++++----------------
- 1 file changed, 5 insertions(+), 17 deletions(-)
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index 14d06aad0726..bbc4eeb42811 100644
+index 6dc6d8b6b368..14d06aad0726 100644
 --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
 +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -2911,32 +2911,20 @@ static int arm_smmu_init_one_queue(struct arm_smmu_device *smmu,
- 	return 0;
- }
- 
--static void arm_smmu_cmdq_free_bitmap(void *data)
--{
--	unsigned long *bitmap = data;
--	bitmap_free(bitmap);
--}
--
- static int arm_smmu_cmdq_init(struct arm_smmu_device *smmu)
+@@ -2981,10 +2981,10 @@ static int arm_smmu_init_l1_strtab(struct arm_smmu_device *smmu)
  {
--	int ret = 0;
- 	struct arm_smmu_cmdq *cmdq = &smmu->cmdq;
- 	unsigned int nents = 1 << cmdq->q.llq.max_n_shift;
--	atomic_long_t *bitmap;
+ 	unsigned int i;
+ 	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
+-	size_t size = sizeof(*cfg->l1_desc) * cfg->num_l1_ents;
+ 	void *strtab = smmu->strtab_cfg.strtab;
  
- 	atomic_set(&cmdq->owner_prod, 0);
- 	atomic_set(&cmdq->lock, 0);
+-	cfg->l1_desc = devm_kzalloc(smmu->dev, size, GFP_KERNEL);
++	cfg->l1_desc = devm_kcalloc(smmu->dev, cfg->num_l1_ents,
++				    sizeof(*cfg->l1_desc), GFP_KERNEL);
+ 	if (!cfg->l1_desc)
+ 		return -ENOMEM;
  
--	bitmap = (atomic_long_t *)bitmap_zalloc(nents, GFP_KERNEL);
--	if (!bitmap) {
--		dev_err(smmu->dev, "failed to allocate cmdq bitmap\n");
--		ret = -ENOMEM;
--	} else {
--		cmdq->valid_map = bitmap;
--		devm_add_action(smmu->dev, arm_smmu_cmdq_free_bitmap, bitmap);
--	}
-+	cmdq->valid_map = (atomic_long_t *)devm_bitmap_zalloc(smmu->dev, nents,
-+							      GFP_KERNEL);
-+	if (!cmdq->valid_map)
-+		return -ENOMEM;
- 
--	return ret;
-+	return 0;
- }
- 
- static int arm_smmu_init_queues(struct arm_smmu_device *smmu)
 -- 
 2.32.0
 
