@@ -2,75 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 573CAC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Feb 2022 10:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53DEFC433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Feb 2022 10:43:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236319AbiBGKYJ (ORCPT
+        id S231921AbiBGKmt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Feb 2022 05:24:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47158 "EHLO
+        Mon, 7 Feb 2022 05:42:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355058AbiBGKKv (ORCPT
+        with ESMTP id S237844AbiBGKde (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Feb 2022 05:10:51 -0500
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7F5EC0401CA;
-        Mon,  7 Feb 2022 02:10:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=6sxoW/ISAr7EZslftgzerxXaRtMvkVhaLePDKbPLOas=; b=gSngBZWRfuh9D5OmDHeCRTv/DB
-        vZuSAbCv00nahQ+hF31/TwvP8PsoEQS3ePAqMD/bJFnWcxyxjfMiR6nUOq6NxZNwJaMTOkdNzdbxn
-        t9W22ey7id5kRthOw22xQVifN22THHUQDYSgYDvoj+jIKKSHC7vzdtWyM9+i+OrjC4yLbyjsuIh/v
-        4VA5JFiYmYbB/xYyL3k65h88WEzOtOnZURQrTWI8UoMy3xrnZw08XSIGyAEHBz1sVRr1iz0CzXnev
-        TNjDV4WZgYfci0KAAnjKIAT1iuoc5l23sa54CP3BojThkP9pYRWHJmkhqMO6dONzpOESUMF/eFScL
-        k060uIuA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57076)
-        by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1nH0yg-0001Rr-5p; Mon, 07 Feb 2022 10:10:34 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1nH0yb-0007l1-CB; Mon, 07 Feb 2022 10:10:29 +0000
-Date:   Mon, 7 Feb 2022 10:10:29 +0000
-From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2 net-next] net: dsa: mv88e6xxx: Fix off by in one in
- mv88e6185_phylink_get_caps()
-Message-ID: <YgDwFdW/cBwKXGcx@shell.armlinux.org.uk>
-References: <20220207082253.GA28514@kili>
+        Mon, 7 Feb 2022 05:33:34 -0500
+X-Greylist: delayed 433 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 07 Feb 2022 02:33:34 PST
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 19783C043181
+        for <kernel-janitors@vger.kernel.org>; Mon,  7 Feb 2022 02:33:33 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 595B811B3;
+        Mon,  7 Feb 2022 02:26:20 -0800 (PST)
+Received: from [10.57.70.156] (unknown [10.57.70.156])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F01BB3F718;
+        Mon,  7 Feb 2022 02:26:18 -0800 (PST)
+Message-ID: <f17da9b7-1642-762c-0854-e131e3c2f438@arm.com>
+Date:   Mon, 7 Feb 2022 10:26:15 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220207082253.GA28514@kili>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.1
+Subject: Re: [PATCH 1/2] iommu/arm-smmu-v3: Avoid open coded arithmetic in
+ memory allocation
+Content-Language: en-GB
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org
+References: <de9e8705169b5dc873f6ce9f9a17598de89aa6a7.1644081032.git.christophe.jaillet@wanadoo.fr>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <de9e8705169b5dc873f6ce9f9a17598de89aa6a7.1644081032.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Feb 07, 2022 at 11:22:53AM +0300, Dan Carpenter wrote:
-> The <= ARRAY_SIZE() needs to be < ARRAY_SIZE() to prevent an out of
-> bounds error.
+On 2022-02-05 17:10, Christophe JAILLET wrote:
+> kmalloc_array()/kcalloc() should be used to avoid potential overflow when
+> a multiplication is needed to compute the size of the requested memory.
 > 
-> Fixes: d4ebf12bcec4 ("net: dsa: mv88e6xxx: populate supported_interfaces and mac_capabilities")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> So turn a devm_kzalloc()+explicit size computation into an equivalent
+> devm_kcalloc().
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> This is NOT compile tested.
+> I don't have the needed cross compiling tools.
 
-Good catch, thanks.
+FYI, https://cdn.kernel.org/pub/tools/crosstool/
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+Either way, the patch looks reasonable, thanks!
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
+Acked-by: Robin Murphy <robin.murphy@arm.com>
+
+> ---
+>   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> index 6dc6d8b6b368..14d06aad0726 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> @@ -2981,10 +2981,10 @@ static int arm_smmu_init_l1_strtab(struct arm_smmu_device *smmu)
+>   {
+>   	unsigned int i;
+>   	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
+> -	size_t size = sizeof(*cfg->l1_desc) * cfg->num_l1_ents;
+>   	void *strtab = smmu->strtab_cfg.strtab;
+>   
+> -	cfg->l1_desc = devm_kzalloc(smmu->dev, size, GFP_KERNEL);
+> +	cfg->l1_desc = devm_kcalloc(smmu->dev, cfg->num_l1_ents,
+> +				    sizeof(*cfg->l1_desc), GFP_KERNEL);
+>   	if (!cfg->l1_desc)
+>   		return -ENOMEM;
+>   
