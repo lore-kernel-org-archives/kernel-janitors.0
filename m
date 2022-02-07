@@ -2,59 +2,70 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11309C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E24C433FE
 	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Feb 2022 14:03:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237810AbiBGOCI (ORCPT
+        id S1356238AbiBGOCK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Feb 2022 09:02:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41900 "EHLO
+        Mon, 7 Feb 2022 09:02:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1388005AbiBGNrz (ORCPT
+        with ESMTP id S1381046AbiBGNdd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Feb 2022 08:47:55 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78F38C043188;
-        Mon,  7 Feb 2022 05:47:54 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id u23so1110893wru.6;
-        Mon, 07 Feb 2022 05:47:54 -0800 (PST)
+        Mon, 7 Feb 2022 08:33:33 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AF9FC043189;
+        Mon,  7 Feb 2022 05:33:32 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id v129so6337305wme.2;
+        Mon, 07 Feb 2022 05:33:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=bKcb6htcU3nqL3xVplZ7gYiatJOz+PCyFD5n/EZWoj0=;
-        b=j+4PquH5vQ/ytXnWXKd7Mwnr1N0q7MxKtLYjcLtMU+rSeTlZIpmk+erwRPZeqpj8he
-         0YBS9Pqhl0odXOIzEMcb07bJLy9apH/mcjGsC3/PtN0qZOmLoewHCYkGJS0UzP3zYfsd
-         +OdM1CAGbhDgNrJeLyVKCC6mfbKRO4E3S/JywHZJW9LqAFO8gCbht+dSRM6y/gsqa7V9
-         pZBbA/0EKyg9uRNCzAIXX+S0DUXLP2STHeavdPG1HfMOGcrAr0lQoetfrjgVD4ZPB0JU
-         GAJJUvobv1eRN1zxLWOLG7C9ySibU5HwzIwPB3FE+JJ3Z2kRmriXt/UYCt49htGKCwzP
-         vUmA==
+        bh=V9QEgmdSl8jrpLmboxH3MycHRrNVtMiq+z3Om5YP+L4=;
+        b=ZeXCogp2RMZJX5bCWf5GbVepmcsMjxXm6LLMgfx0ol8BSDdh8zAsv+NO9/LnCpM0jB
+         bVrc/woX1x72Ie3U1zOWBW+QSDGWgRoIhxbPYK3X2ZzjKJDMjnPpbYMJVM6Boqr2sPeL
+         /6sCSMQUF7rByaBI1nwjEu/MhYDhu1qvv+5TCmAdzNs7BgTo2djdrGjEPKsqW7EJefsD
+         P3neh3NRyJGCLgoNX1YxdsjWaL698+tF51+kY7JtQSg/bF3ycqX9PoPavxEQn+06JR4T
+         r2XMKw7uXjNmpoJYCU770I/sBp4rR71G5lrGSFrHU/NEg1K3bRMhiRMuuK+eyQHFr6Fw
+         u8yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=bKcb6htcU3nqL3xVplZ7gYiatJOz+PCyFD5n/EZWoj0=;
-        b=jDUgcRghCtsfDRKH8praX0D7s2xT5KmIGMJedQJFGLaVUrF7yWNGM5PkWDvXqSLDmU
-         FXgk7OQYQb/ymfcz0SA/6uKWaToWXti95YbGIS1JiWsTrnR0+NdnjEbNTAXQ0vlivcdj
-         ITFYHJb+brADOBEmOZV0uhyhJRRW1xbKGiuWzwM0cjyBXFRcSxPecdg17zJPNrrI0ure
-         jvXt2vpVhs1YMhUVQZx0NENTq+APFkQ/v9W0ddi4YnN8384RHARa4L9SZLZiu9NQWUVL
-         RzFNFgdj+aBNWxKVI8gYBWYI3V4fJhKl5g+AIFHVK+l7v0DlVap305RuGwyIIrDbwDLo
-         Hzsg==
-X-Gm-Message-State: AOAM532mDCMp9BMLySkFBCuggSNS3hngf/bT6W4AoF3tkAFEEC8BY5kK
-        qqpDXy2iqWS05vFxpfwl0grS8MFr2VQ=
-X-Google-Smtp-Source: ABdhPJwYYMhMJYTcuBEPRJVRuqoQJcLpP6bMYyYxlUmAcDxFRMlI5/R0GAvjpeLVSrk9rF217IVB+w==
-X-Received: by 2002:adf:e8c3:: with SMTP id k3mr5315177wrn.713.1644241673103;
-        Mon, 07 Feb 2022 05:47:53 -0800 (PST)
+        bh=V9QEgmdSl8jrpLmboxH3MycHRrNVtMiq+z3Om5YP+L4=;
+        b=hJAE/FGJ5sfq/a269J/NFlK9/RZWFhoSeD1eWoHdDgKmPyT0Net15V3f5swN2xv58G
+         ccUHSCExOlLT9h+7HOJjrXp0gIedPUjgIwzbveqSx5thHPVrvXnBgiQjKwIZ/FqB5ZFY
+         QhEpGnZPhpCsZwZNn0KrNF4KHPhvMDKeeZwfdDEk5PLjKio5gyeuQb7Am0KsezISk6a9
+         Ktg7BLS3l1i1FutbamshnrFKEZYnUGcLmi8RUlf5PX4hgP7wXy6RE7klayg6hUhkokRO
+         RJIs2Gr8adbAE/o4edtBVjHISu/t37QjJ5DnYUZxmfvFufe/8+aFbvSc+yRhQa5AOkbH
+         GXBg==
+X-Gm-Message-State: AOAM533fI1CIBL30lwDqLqgWMGmoZcEUqhsIkv/Y/HnjxFyPa49chFVZ
+        UprX5CeTAJMQUC3cj6gAA1s=
+X-Google-Smtp-Source: ABdhPJylUXyrmFmYPgL7jbK0a9g9xkwVwdjDV+JW8NPwgewUuCwNlNWvwo/VRNkr3mzIoT3RoF/Q2Q==
+X-Received: by 2002:a7b:c84f:: with SMTP id c15mr14361555wml.181.1644240811059;
+        Mon, 07 Feb 2022 05:33:31 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id r2sm17339250wmq.0.2022.02.07.05.47.52
+        by smtp.gmail.com with ESMTPSA id bg23sm11366849wmb.5.2022.02.07.05.33.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Feb 2022 05:47:52 -0800 (PST)
+        Mon, 07 Feb 2022 05:33:30 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Arend van Spriel <aspriel@gmail.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
+        Wright Feng <wright.feng@infineon.com>,
+        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        SHA-cyfmac-dev-list@infineon.com, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] intel_th: remove redundant early initialization of pointer hubdrv
-Date:   Mon,  7 Feb 2022 13:47:51 +0000
-Message-Id: <20220207134751.337775-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] brcmfmac: of: remove redundant variable len
+Date:   Mon,  7 Feb 2022 13:33:29 +0000
+Message-Id: <20220207133329.336664-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -63,29 +74,34 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Pointer hubdrv is being initialized with a value that is never read,
-it is being re-assigned the same value later on closer to where it
-is being first used. The initialization is redundant and can be
-removed.
+The variable len is being assigned bit is never used. The variable
+and the strlen call are redundant and can be removed.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/hwtracing/intel_th/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/hwtracing/intel_th/core.c b/drivers/hwtracing/intel_th/core.c
-index 7e753a75d23b..f8fa0bd414fb 100644
---- a/drivers/hwtracing/intel_th/core.c
-+++ b/drivers/hwtracing/intel_th/core.c
-@@ -1037,7 +1037,7 @@ int intel_th_set_output(struct intel_th_device *thdev,
- 			unsigned int master)
- {
- 	struct intel_th_device *hub = to_intel_th_hub(thdev);
--	struct intel_th_driver *hubdrv = to_intel_th_driver(hub->dev.driver);
-+	struct intel_th_driver *hubdrv;
- 	int ret;
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+index 5708de1d9f26..8623bde5eb70 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+@@ -71,14 +71,13 @@ void brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
+ 	/* Set board-type to the first string of the machine compatible prop */
+ 	root = of_find_node_by_path("/");
+ 	if (root) {
+-		int i, len;
++		int i;
+ 		char *board_type;
+ 		const char *tmp;
  
- 	/* In host mode, this is up to the external debugger, do nothing. */
+ 		of_property_read_string_index(root, "compatible", 0, &tmp);
+ 
+ 		/* get rid of '/' in the compatible string to be able to find the FW */
+-		len = strlen(tmp) + 1;
+ 		board_type = devm_kstrdup(dev, tmp, GFP_KERNEL);
+ 		if (!board_type) {
+ 			of_node_put(root);
 -- 
 2.34.1
 
