@@ -2,64 +2,52 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4695BC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Feb 2022 13:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77BB1C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Feb 2022 16:22:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357179AbiBHN6o (ORCPT
+        id S1383043AbiBHQWF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Feb 2022 08:58:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48980 "EHLO
+        Tue, 8 Feb 2022 11:22:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377097AbiBHN6o (ORCPT
+        with ESMTP id S1383035AbiBHQWE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Feb 2022 08:58:44 -0500
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E60AC03FECE
-        for <kernel-janitors@vger.kernel.org>; Tue,  8 Feb 2022 05:58:39 -0800 (PST)
-Received: by mail-pf1-x429.google.com with SMTP id n32so18975665pfv.11
-        for <kernel-janitors@vger.kernel.org>; Tue, 08 Feb 2022 05:58:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:in-reply-to:references:subject:message-id:date
-         :mime-version:content-transfer-encoding;
-        bh=AIz4u6+J7TOpSAJ7umSJYy5QMznxsAdsbABH881qXOc=;
-        b=QBvyg3iXYdPDog3Mjgdepp4ko2yHqMNCTbKR64iBX+RhYpRvyqc9bYuCOWzw/EZON6
-         fb0YVocvKj0GOxIgoDaLhJIaeIILGeA4+sI/bA1V8NnQlV8QaVtH3DW1WrqJBffNWdY7
-         sCD/aDoPpKxAgWDRoRQ4bnm1vQq+PsIXopIJNGuYb6jwVa8/gkzj39DQ5Y5uiy6x+EUP
-         T8Pxoy7zPp43NUyECscPQ6QNWxDkoTH6CMPeNlHI1Z/zsPmehJiSSgCAxEAbWc0JgqZC
-         E+QfZdAbsjlgqbEVdhhosJdoqYMnqw0y0qeOL/OicYv4pTxOO3O33DjWnwzI4g+wYUg3
-         JGPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
-         :message-id:date:mime-version:content-transfer-encoding;
-        bh=AIz4u6+J7TOpSAJ7umSJYy5QMznxsAdsbABH881qXOc=;
-        b=RxnjuGmTZGl6nh+5L8SYNp0MWlnVnoguBIDbqAhYmCp05RGP+2KPXTdVbvegcu4ZON
-         iNU+u22xBxf2Cn/7J+ZNIzS6I0ZVTONl1PR1cMBEOzALQnoGoJteuVg7fTY/+GU34lGW
-         aJ6Jb25tQuPiZuRxU76lWkQpoeizjjB/17GO0MUJXowKAl471t2e7SFFUnii3Koh7VzQ
-         k0kKTnENilmv6chRpfUXiGJCO2ttvMqRUISV+9/c951zQJ0smLHwj8+pngxtL0zUgEW8
-         KMbyCSdHiXTn97hS4a0ttqcKXNzTOKm0BESjaOj3seL6pW/IwC/ZoyqwTLhkJv1VXyxW
-         nYVw==
-X-Gm-Message-State: AOAM531LuD9U4pFzVQqbqkBGThe10MZdv1KWJzn1DqhSPYO/ZuAOqIhw
-        WtPUoFPvjuFCGDLx9DCz5W6zoCR0yJd8lg==
-X-Google-Smtp-Source: ABdhPJx66+slGS5Qs7Nt+9v0YLJNIrazUPmXvysxRltmh84zmjoesoqrKy5dz7gq35J9FjJAQOQbaA==
-X-Received: by 2002:a63:91c3:: with SMTP id l186mr3699400pge.558.1644328718641;
-        Tue, 08 Feb 2022 05:58:38 -0800 (PST)
-Received: from [192.168.1.116] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id r10sm2423434pgk.74.2022.02.08.05.58.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Feb 2022 05:58:38 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-        Jack Wang <jinpu.wang@ionos.com>
-Cc:     linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <7f9eccd8b1fce1bac45ac9b01a78cf72f54c0a61.1644266862.git.christophe.jaillet@wanadoo.fr>
-References: <7f9eccd8b1fce1bac45ac9b01a78cf72f54c0a61.1644266862.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v2] block/rnbd: Remove a useless mutex
-Message-Id: <164432871743.114004.5542011379839024648.b4-ty@kernel.dk>
-Date:   Tue, 08 Feb 2022 06:58:37 -0700
+        Tue, 8 Feb 2022 11:22:04 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A681C06174F;
+        Tue,  8 Feb 2022 08:22:03 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 26F346163C;
+        Tue,  8 Feb 2022 16:22:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97F12C004E1;
+        Tue,  8 Feb 2022 16:22:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1644337322;
+        bh=UaVxOWmsbivSkU9vIw/GYJbDCYQehGoFF7tme6i5Rgw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=V9Q0TqQSdjW4iYnYCrU2P4W7USzsBBA/Ckk5QjBhmR1VitF63RGskEr/3mzgYnuuj
+         qIgjoH+EVmb/4V3v6GpxKPcPmvoaxIALpXP1kKpDKkG9jVps2momdSLPeMz30DOJZY
+         0utjHzP133Ov84Z9EZUuZjW1zLOzf7Q3LGTHQZvxXQTm1WSZ1a6EvJl2FS0rCWi3tQ
+         7cGVMz8vbvMv7173RfD+zf0bI6YrSvcmwDNfBWoRuLFYy7TmqdwM3W6bsrENAp7VlU
+         PiXhNaFzBSwKS53bHCu+fSxEgcCsJ1Ib8Wq28M8D4hIoazgXSBo+SP9jdhMUdgF7xC
+         mbXo2FXH7L7fQ==
+From:   Will Deacon <will@kernel.org>
+To:     Joerg Roedel <joro@8bytes.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Robin Murphy <robin.murphy@arm.com>
+Cc:     catalin.marinas@arm.com, kernel-team@android.com,
+        Will Deacon <will@kernel.org>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] iommu/arm-smmu-v3: Avoid open coded arithmetic in memory allocation
+Date:   Tue,  8 Feb 2022 16:21:51 +0000
+Message-Id: <164433570600.932619.3193725963159387011.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <3f7b9b202c6b6f5edc234ab7af5f208fbf8bc944.1644274051.git.christophe.jaillet@wanadoo.fr>
+References: <3f7b9b202c6b6f5edc234ab7af5f208fbf8bc944.1644274051.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -67,23 +55,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 7 Feb 2022 21:48:19 +0100, Christophe JAILLET wrote:
-> According to lib/idr.c,
->    The IDA handles its own locking.  It is safe to call any of the IDA
->    functions without synchronisation in your code.
+On Mon, 7 Feb 2022 23:50:48 +0100, Christophe JAILLET wrote:
+> kmalloc_array()/kcalloc() should be used to avoid potential overflow when
+> a multiplication is needed to compute the size of the requested memory.
 > 
-> so the 'ida_lock' mutex can just be removed.
-> It is here only to protect some ida_simple_get()/ida_simple_remove() calls.
+> So turn a devm_kzalloc()+explicit size computation into an equivalent
+> devm_kcalloc().
+> 
 > 
 > [...]
 
-Applied, thanks!
+Applied to will (for-joerg/arm-smmu/updates), thanks!
 
-[1/1] block/rnbd: Remove a useless mutex
-      commit: a41cdf83a63122e5c5fb8c8550b812b25a332577
+[1/2] iommu/arm-smmu-v3: Avoid open coded arithmetic in memory allocation
+      https://git.kernel.org/will/c/98b64741d611
+[2/2] iommu/arm-smmu-v3: Simplify memory allocation
+      https://git.kernel.org/will/c/fcdeb8c34043
 
-Best regards,
+Cheers,
 -- 
-Jens Axboe
+Will
 
-
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
