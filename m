@@ -2,60 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 317B3C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Feb 2022 11:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4695BC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Feb 2022 13:58:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358594AbiBHLuo (ORCPT
+        id S1357179AbiBHN6o (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Feb 2022 06:50:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41356 "EHLO
+        Tue, 8 Feb 2022 08:58:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359750AbiBHLuc (ORCPT
+        with ESMTP id S1377097AbiBHN6o (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Feb 2022 06:50:32 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 223E9C07D6C3;
-        Tue,  8 Feb 2022 03:46:59 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id k1so13686114wrd.8;
-        Tue, 08 Feb 2022 03:46:59 -0800 (PST)
+        Tue, 8 Feb 2022 08:58:44 -0500
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E60AC03FECE
+        for <kernel-janitors@vger.kernel.org>; Tue,  8 Feb 2022 05:58:39 -0800 (PST)
+Received: by mail-pf1-x429.google.com with SMTP id n32so18975665pfv.11
+        for <kernel-janitors@vger.kernel.org>; Tue, 08 Feb 2022 05:58:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TmKAUjm7Amkz4S/+pPvWtraWrpa9Qq6Jt7Fq2nrePGY=;
-        b=EgeeHN4vzoL9zkyQQVYX1Lnc+cX0DZo1vKQPHeupYiXrhuhX3nBJAOCYY4IBoqxlyh
-         aaElxz/kT4CVD5ywumrG53+6Lbl4dCv1lTwUVOfJWALhBAlRFVmBcKRjmO7El/TbWlHH
-         w5ygQguZlGzTZrItZ5bMdJq3b1YNzmrxI49/7yG06HqexxLtBzh7VpV09oxNY+gHDMoz
-         voXJCeuN6gY4tomhUKUOhcOlL1StV4b+hBtrXzmQDg70ZZh8nFUZQlbqlwoPWR0LN8hr
-         mncBTWERBiafqsGg1V8Iv4MxqcrFjtvswXqQQfYWa2zSigAQPJYdhiOckoTYf+Zy82pb
-         55tg==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:in-reply-to:references:subject:message-id:date
+         :mime-version:content-transfer-encoding;
+        bh=AIz4u6+J7TOpSAJ7umSJYy5QMznxsAdsbABH881qXOc=;
+        b=QBvyg3iXYdPDog3Mjgdepp4ko2yHqMNCTbKR64iBX+RhYpRvyqc9bYuCOWzw/EZON6
+         fb0YVocvKj0GOxIgoDaLhJIaeIILGeA4+sI/bA1V8NnQlV8QaVtH3DW1WrqJBffNWdY7
+         sCD/aDoPpKxAgWDRoRQ4bnm1vQq+PsIXopIJNGuYb6jwVa8/gkzj39DQ5Y5uiy6x+EUP
+         T8Pxoy7zPp43NUyECscPQ6QNWxDkoTH6CMPeNlHI1Z/zsPmehJiSSgCAxEAbWc0JgqZC
+         E+QfZdAbsjlgqbEVdhhosJdoqYMnqw0y0qeOL/OicYv4pTxOO3O33DjWnwzI4g+wYUg3
+         JGPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TmKAUjm7Amkz4S/+pPvWtraWrpa9Qq6Jt7Fq2nrePGY=;
-        b=3rq9OAzRUzxvX7OvV1yrNCUtWxU0n239jAt6dPU14zTlXfxJwYoo6IsEKy1uCNIjgp
-         G9rkyaZ/sJRIZA0x6FYEv8cPAwZibr+p1URf78A14Z8viOQWicKyWp3e7TXGBJcF7Hz5
-         uSI7dkx7Ru/TZmM/RtgWiDeC9+PTUEBuwQ46+rFW2HQ3la3kgE/ddaYgn74vHvvlIIaR
-         QoDu4UkHREAQnKk7HigTl7/WmLbhRxZbMQGNPikYSFGxnDe4sWZ/3eVfYgShHdTZDJBY
-         Nz26PtU7G1WYAoAE2z4/5PNrr3FNmp1JxrkpKwiCH961Nfq28KymLbgiA2pkH0ycYBkA
-         ZZLA==
-X-Gm-Message-State: AOAM5339NysVO6QAgbP66cfOt1NnNSIT2QU1ix3PR0d48xFrqlid5KZA
-        hsBux1wNYnK4nK6x8EJs7hU=
-X-Google-Smtp-Source: ABdhPJydTeiXL4oQvRW9uwlGPuG9NdNqDOm+HT9vlgGdbCLc5ktplVB4jWosm30UjoJiuT+AoLlU0w==
-X-Received: by 2002:a05:6000:4:: with SMTP id h4mr3150446wrx.336.1644320817649;
-        Tue, 08 Feb 2022 03:46:57 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id c13sm12650329wrv.24.2022.02.08.03.46.56
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=AIz4u6+J7TOpSAJ7umSJYy5QMznxsAdsbABH881qXOc=;
+        b=RxnjuGmTZGl6nh+5L8SYNp0MWlnVnoguBIDbqAhYmCp05RGP+2KPXTdVbvegcu4ZON
+         iNU+u22xBxf2Cn/7J+ZNIzS6I0ZVTONl1PR1cMBEOzALQnoGoJteuVg7fTY/+GU34lGW
+         aJ6Jb25tQuPiZuRxU76lWkQpoeizjjB/17GO0MUJXowKAl471t2e7SFFUnii3Koh7VzQ
+         k0kKTnENilmv6chRpfUXiGJCO2ttvMqRUISV+9/c951zQJ0smLHwj8+pngxtL0zUgEW8
+         KMbyCSdHiXTn97hS4a0ttqcKXNzTOKm0BESjaOj3seL6pW/IwC/ZoyqwTLhkJv1VXyxW
+         nYVw==
+X-Gm-Message-State: AOAM531LuD9U4pFzVQqbqkBGThe10MZdv1KWJzn1DqhSPYO/ZuAOqIhw
+        WtPUoFPvjuFCGDLx9DCz5W6zoCR0yJd8lg==
+X-Google-Smtp-Source: ABdhPJx66+slGS5Qs7Nt+9v0YLJNIrazUPmXvysxRltmh84zmjoesoqrKy5dz7gq35J9FjJAQOQbaA==
+X-Received: by 2002:a63:91c3:: with SMTP id l186mr3699400pge.558.1644328718641;
+        Tue, 08 Feb 2022 05:58:38 -0800 (PST)
+Received: from [192.168.1.116] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id r10sm2423434pgk.74.2022.02.08.05.58.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Feb 2022 03:46:57 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] loop: clean up grammar in warning message
-Date:   Tue,  8 Feb 2022 11:46:56 +0000
-Message-Id: <20220208114656.61629-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Tue, 08 Feb 2022 05:58:38 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+        Jack Wang <jinpu.wang@ionos.com>
+Cc:     linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <7f9eccd8b1fce1bac45ac9b01a78cf72f54c0a61.1644266862.git.christophe.jaillet@wanadoo.fr>
+References: <7f9eccd8b1fce1bac45ac9b01a78cf72f54c0a61.1644266862.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v2] block/rnbd: Remove a useless mutex
+Message-Id: <164432871743.114004.5542011379839024648.b4-ty@kernel.dk>
+Date:   Tue, 08 Feb 2022 06:58:37 -0700
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -63,35 +67,23 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The phrase "has still" should be "still has" to clean up the grammar.
+On Mon, 7 Feb 2022 21:48:19 +0100, Christophe JAILLET wrote:
+> According to lib/idr.c,
+>    The IDA handles its own locking.  It is safe to call any of the IDA
+>    functions without synchronisation in your code.
+> 
+> so the 'ida_lock' mutex can just be removed.
+> It is here only to protect some ida_simple_get()/ida_simple_remove() calls.
+> 
+> [...]
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/block/loop.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Applied, thanks!
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 01cbbfc4e9e2..bdea448d2419 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1262,7 +1262,7 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
- 	if (size_changed && lo->lo_device->bd_inode->i_mapping->nrpages) {
- 		/* If any pages were dirtied after invalidate_bdev(), try again */
- 		err = -EAGAIN;
--		pr_warn("%s: loop%d (%s) has still dirty pages (nrpages=%lu)\n",
-+		pr_warn("%s: loop%d (%s) still has dirty pages (nrpages=%lu)\n",
- 			__func__, lo->lo_number, lo->lo_file_name,
- 			lo->lo_device->bd_inode->i_mapping->nrpages);
- 		goto out_unfreeze;
-@@ -1482,7 +1482,7 @@ static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
- 	/* invalidate_bdev should have truncated all the pages */
- 	if (lo->lo_device->bd_inode->i_mapping->nrpages) {
- 		err = -EAGAIN;
--		pr_warn("%s: loop%d (%s) has still dirty pages (nrpages=%lu)\n",
-+		pr_warn("%s: loop%d (%s) still has dirty pages (nrpages=%lu)\n",
- 			__func__, lo->lo_number, lo->lo_file_name,
- 			lo->lo_device->bd_inode->i_mapping->nrpages);
- 		goto out_unfreeze;
+[1/1] block/rnbd: Remove a useless mutex
+      commit: a41cdf83a63122e5c5fb8c8550b812b25a332577
+
+Best regards,
 -- 
-2.34.1
+Jens Axboe
+
 
