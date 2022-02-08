@@ -2,88 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E817DC4321E
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Feb 2022 19:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3DE5C388F3
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Feb 2022 22:26:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1385672AbiBHTAZ (ORCPT
+        id S1386922AbiBHW0n (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Feb 2022 14:00:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51574 "EHLO
+        Tue, 8 Feb 2022 17:26:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385660AbiBHTAY (ORCPT
+        with ESMTP id S1386998AbiBHVkK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Feb 2022 14:00:24 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E7D2C0612BA;
-        Tue,  8 Feb 2022 11:00:23 -0800 (PST)
+        Tue, 8 Feb 2022 16:40:10 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C7B5C0612B8;
+        Tue,  8 Feb 2022 13:40:09 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 047A3614E5;
-        Tue,  8 Feb 2022 19:00:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91181C340ED;
-        Tue,  8 Feb 2022 19:00:21 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2DD4161638;
+        Tue,  8 Feb 2022 21:40:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 851FEC340EE;
+        Tue,  8 Feb 2022 21:40:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644346822;
-        bh=x7Cg6DsGf+3kZH0y3tn63HpnQtCVa0lOTBUssXE7/jk=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=u2nZcWx9vdDcN5f8YxyKuKdv+DcFNJOu8INNPbfgMhmXsZOexeG4bjKXxHz95ngWg
-         wTQ1BzHnD7dzv4NBNS2FJbDM7J+OKMIQk+kmTo4HRr8QQdIcwpMABnYAlzNt5qBq8Z
-         5XOgIPYpWUSNjoBErT6HK8s6gAk8UAP6sQibfedvWrASqQapAEubbaSgbQ67+0stVd
-         /UdQx/itwa5jDtckv8d+vfU3PTyjjxE+CUKubOe1fyRyGfxEm7uRhpymgGegcMnEbV
-         cOx23m2grlp/dhfC4nHZ/WPXQlrZTYKqLoOVkm1AKEhqLdiTiqekudoaH3ZUmFAw05
-         gPGeEP78XKAjw==
-From:   Mark Brown <broonie@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     linux-spi@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <20220125065202.GA8807@kili>
-References: <20220125065202.GA8807@kili>
-Subject: Re: [PATCH] spi: spidev: prevent spidev->speed_hz from being zero
-Message-Id: <164434682130.1135514.6941363158812350659.b4-ty@kernel.org>
-Date:   Tue, 08 Feb 2022 19:00:21 +0000
-MIME-Version: 1.0
+        s=k20201202; t=1644356408;
+        bh=H7c2nk0Uo1AfUDbhAwMbIB5dfEpZKr1ih26waXCPdkw=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=Ta0MhK4FEzO/B+Zhb+wFo9bUMnuqfTnbiFGIZEanjltQXJMI6HooCfrkX7J0o2dOZ
+         FLgt83qPS7pHq0YuRio1H+YQ5ijSECBmucIJfHRkTMUNbaVIYyJ6QJvzaiSwl4QuuU
+         R1t8J+AIMMIa8jbOxOXYqRTZrwj9kqhy/Q9QIw9QEzUK1OhNhAtv34gqUDfBfPjmHA
+         ol3uWiSS5GCdaoysBiolKAG7IYMazBFiRUpbARAMiopuMmINz9uZFQhhUj6Mhh7AGb
+         L7Kjm7qiB3l5zR/sQrKL63jOAd5i5+AsADx0itB3jY+6WIKgfgMXcAym76/BMJzuF1
+         Xqmh1sIYVUipg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6E43DE5D084;
+        Tue,  8 Feb 2022 21:40:08 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] libbpf: Fix signedness bug in btf_dump_array_data()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164435640844.13285.18161344073556869381.git-patchwork-notify@kernel.org>
+Date:   Tue, 08 Feb 2022 21:40:08 +0000
+References: <20220208071552.GB10495@kili>
+In-Reply-To: <20220208071552.GB10495@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     ast@kernel.org, alan.maguire@oracle.com, daniel@iogearbox.net,
+        andrii@kernel.org, kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org, bpf@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 25 Jan 2022 09:52:02 +0300, Dan Carpenter wrote:
-> A zero value for spi->max_speed_hz or spidev->speed_hz does not make
-> sense and trying to set that can lead to divide by zero crashes in
-> a some of the drivers.
+Hello:
+
+This patch was applied to bpf/bpf-next.git (master)
+by Daniel Borkmann <daniel@iogearbox.net>:
+
+On Tue, 8 Feb 2022 10:15:52 +0300 you wrote:
+> The btf__resolve_size() function returns negative error codes so
+> "elem_size" must be signed for the error handling to work.
 > 
-> drivers/spi/spi-s3c64xx.c:874 s3c64xx_spi_setup() error: potential divide by zero bug '/ spi->max_speed_hz'.
-> drivers/spi/spi-fsl-dspi.c:613 hz_to_spi_baud() error: potential divide by zero bug '/ speed_hz'.
-> drivers/spi/spi-xlp.c:146 xlp_spi_setup() error: potential divide by zero bug '/ (spi->max_speed_hz)'.
-> drivers/spi/spi-orion.c:162 orion_spi_baudrate_set() error: potential divide by zero bug '/ speed'.
-> 
-> [...]
+> Fixes: 920d16af9b42 ("libbpf: BTF dumper support for typed data")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  tools/lib/bpf/btf_dump.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 
-Applied to
+Here is the summary with links:
+  - libbpf: Fix signedness bug in btf_dump_array_data()
+    https://git.kernel.org/bpf/bpf-next/c/4172843ed4a3
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Thanks!
 
-[1/1] spi: spidev: prevent spidev->speed_hz from being zero
-      commit: 833026ad56f76d1a1035d6511fd5aeed308465fd
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
