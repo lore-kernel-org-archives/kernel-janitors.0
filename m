@@ -2,99 +2,119 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AEE2C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Feb 2022 18:16:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E2A0C4167E
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Feb 2022 19:02:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239329AbiBISQv (ORCPT
+        id S241656AbiBITB7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 9 Feb 2022 13:16:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60122 "EHLO
+        Wed, 9 Feb 2022 14:01:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239183AbiBISQM (ORCPT
+        with ESMTP id S241696AbiBITAi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 9 Feb 2022 13:16:12 -0500
-Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07923C050CFB;
-        Wed,  9 Feb 2022 10:13:13 -0800 (PST)
-Received: by mail-qv1-xf30.google.com with SMTP id g3so2471395qvb.8;
-        Wed, 09 Feb 2022 10:13:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=H749CW18B+mXSE8eDYv1/GPO2QZK74ZBmLg43pWkuuA=;
-        b=F841N1bERIlML4db9R0BT96CTA0QpP6aRLjqXVe6M/anxj8aMvl9ww5b82+0Rg2cSK
-         oEJeNIvwGxmPa39+RJ79oUcKYbtS8PINfXmbu/eDhOlc16EQqExTMSOeVSJxSkz/3Q/E
-         bn3qhLPZKt6rBf2rLqCE8ptDtVCVMyyHZWrmDSBUVf88iAxD8ijTFoO0w+XZu+lm3vAt
-         9xjLd1LfCyAHjmW+dR3EbKjCWpG5A986FjK0BiPKLtBWC22MPb5Mq47Rz0dTmUQlnwno
-         FEKiKFZA5wJTupKZ2ddtfa9VOfsGGFLzj7aQP1FSoLFw2hU3/0LfGOJiadUJB53aClBW
-         8bqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=H749CW18B+mXSE8eDYv1/GPO2QZK74ZBmLg43pWkuuA=;
-        b=TPlxp/8lzZxU/7wHTdPQMwb1uiMtXeBIP9d89uj4In3eDmqxG6wl5TztUjC5Yl7Wrm
-         Y7medJgPDjEC63mwZyAgCQlxvg3iv+ngcVllSZ+FUpgLBMNiaDSjlf6JSiaHsmsulbR8
-         Gq0vsRXPIWa4aU5WTU5lGaytxUZI1OvL2H3w5cTgZlfxGd4Yr08F8qwoGjZOgx0uBJyZ
-         77VcWvJM61vgRtsIeWsvuuUdysGXQ5UX108Ei9/gXWXm4Zd/X54fwYroo8UVcMCWIMZH
-         VLnampympCDZf4fD9ru2K+Nq0JkWRJ/6DiobuHyjONsJDwyzHa1CFY2sBlfclVh+CL+T
-         A+7w==
-X-Gm-Message-State: AOAM5336SZkdidLZKndGtOyMo6w37PiuTtIFXOA9S9e2FyaIe+HwQJYq
-        unIvH1ooSVzuhnuCqPIroEK23ZjBUiE=
-X-Google-Smtp-Source: ABdhPJxTkH0UgeZjlxNYBmI+nkSHngYHyjuvLMzA1KReVb0DkSWEUzByshGHR1LnuHXR5sRorgpGmg==
-X-Received: by 2002:a05:6214:e84:: with SMTP id hf4mr2476659qvb.12.1644430391595;
-        Wed, 09 Feb 2022 10:13:11 -0800 (PST)
-Received: from [192.168.1.201] (pool-108-18-137-133.washdc.fios.verizon.net. [108.18.137.133])
-        by smtp.googlemail.com with ESMTPSA id x18sm9525495qta.57.2022.02.09.10.13.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Feb 2022 10:13:11 -0800 (PST)
-Subject: Re: [PATCH] pinctrl: fix loop in k210_pinconf_get_drive()
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Palmer Dabbelt <palmerdabbelt@google.com>,
-        linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <20220209180804.GA18385@kili>
-From:   Sean Anderson <seanga2@gmail.com>
-Message-ID: <4c833488-8763-f8d7-c96a-6f7420abe35c@gmail.com>
-Date:   Wed, 9 Feb 2022 13:13:10 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        Wed, 9 Feb 2022 14:00:38 -0500
+Received: from smtp.smtpout.orange.fr (smtp10.smtpout.orange.fr [80.12.242.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B4A2C003676
+        for <kernel-janitors@vger.kernel.org>; Wed,  9 Feb 2022 10:59:07 -0800 (PST)
+Received: from pop-os.home ([90.126.236.122])
+        by smtp.orange.fr with ESMTPA
+        id HsAznZHevbnFGHsAzncVqP; Wed, 09 Feb 2022 19:58:51 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Wed, 09 Feb 2022 19:58:51 +0100
+X-ME-IP: 90.126.236.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Simon Horman <simon.horman@corigine.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        John Hurley <john.hurley@netronome.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        oss-drivers@corigine.com, netdev@vger.kernel.org
+Subject: [PATCH] nfp: flower: Fix a potential theorical leak in nfp_tunnel_add_shared_mac()
+Date:   Wed,  9 Feb 2022 19:58:47 +0100
+Message-Id: <49e30a009f6fc56cfb76eb2c922740ac64c7767d.1644433109.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <20220209180804.GA18385@kili>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2/9/22 1:08 PM, Dan Carpenter wrote:
-> The loop exited too early so the k210_pinconf_drive_strength[0] array
-> element was never used.
-> 
-> Fixes: d4c34d09ab03 ("pinctrl: Add RISC-V Canaan Kendryte K210 FPIOA driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->   drivers/pinctrl/pinctrl-k210.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-k210.c b/drivers/pinctrl/pinctrl-k210.c
-> index 49e32684dbb2..e3d03f2de7ef 100644
-> --- a/drivers/pinctrl/pinctrl-k210.c
-> +++ b/drivers/pinctrl/pinctrl-k210.c
-> @@ -482,7 +482,7 @@ static int k210_pinconf_get_drive(unsigned int max_strength_ua)
->   {
->   	int i;
->   
-> -	for (i = K210_PC_DRIVE_MAX; i; i--) {
-> +	for (i = K210_PC_DRIVE_MAX; i >= 0; i--) {
->   		if (k210_pinconf_drive_strength[i] <= max_strength_ua)
->   			return i;
->   	}
-> 
+ida_simple_get() returns an id between min (0) and max (NFP_MAX_MAC_INDEX)
+inclusive.
+So NFP_MAX_MAC_INDEX (0xff) is a valid id
 
-Reviewed-by: Sean Anderson <seanga2@gmail.com>
+In order for the error handling path to work correctly, the 'invalid'
+value for 'ida_idx' should not be in the 0..NFP_MAX_MAC_INDEX range,
+inclusive.
+
+So set it to -1.
+
+While at it, use ida_alloc_xxx()/ida_free() instead to
+ida_simple_get()/ida_simple_remove().
+The latter is deprecated and more verbose.
+
+Fixes: 20cce8865098 ("nfp: flower: enable MAC address sharing for offloadable devs")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ .../ethernet/netronome/nfp/flower/tunnel_conf.c    | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c b/drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c
+index ce865e619568..b60c2b78ba04 100644
+--- a/drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c
++++ b/drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c
+@@ -922,8 +922,8 @@ nfp_tunnel_add_shared_mac(struct nfp_app *app, struct net_device *netdev,
+ 			  int port, bool mod)
+ {
+ 	struct nfp_flower_priv *priv = app->priv;
+-	int ida_idx = NFP_MAX_MAC_INDEX, err;
+ 	struct nfp_tun_offloaded_mac *entry;
++	int ida_idx = -1, err;
+ 	u16 nfp_mac_idx = 0;
+ 
+ 	entry = nfp_tunnel_lookup_offloaded_macs(app, netdev->dev_addr);
+@@ -942,8 +942,8 @@ nfp_tunnel_add_shared_mac(struct nfp_app *app, struct net_device *netdev,
+ 	if (!nfp_mac_idx) {
+ 		/* Assign a global index if non-repr or MAC is now shared. */
+ 		if (entry || !port) {
+-			ida_idx = ida_simple_get(&priv->tun.mac_off_ids, 0,
+-						 NFP_MAX_MAC_INDEX, GFP_KERNEL);
++			ida_idx = ida_alloc_max(&priv->tun.mac_off_ids,
++						NFP_MAX_MAC_INDEX, GFP_KERNEL);
+ 			if (ida_idx < 0)
+ 				return ida_idx;
+ 
+@@ -997,8 +997,8 @@ nfp_tunnel_add_shared_mac(struct nfp_app *app, struct net_device *netdev,
+ err_free_entry:
+ 	kfree(entry);
+ err_free_ida:
+-	if (ida_idx != NFP_MAX_MAC_INDEX)
+-		ida_simple_remove(&priv->tun.mac_off_ids, ida_idx);
++	if (ida_idx != -1)
++		ida_free(&priv->tun.mac_off_ids, ida_idx);
+ 
+ 	return err;
+ }
+@@ -1063,7 +1063,7 @@ nfp_tunnel_del_shared_mac(struct nfp_app *app, struct net_device *netdev,
+ 		}
+ 
+ 		ida_idx = nfp_tunnel_get_ida_from_global_mac_idx(entry->index);
+-		ida_simple_remove(&priv->tun.mac_off_ids, ida_idx);
++		ida_free(&priv->tun.mac_off_ids, ida_idx);
+ 		entry->index = nfp_mac_idx;
+ 		return 0;
+ 	}
+@@ -1077,7 +1077,7 @@ nfp_tunnel_del_shared_mac(struct nfp_app *app, struct net_device *netdev,
+ 	/* If MAC has global ID then extract and free the ida entry. */
+ 	if (nfp_tunnel_is_mac_idx_global(entry->index)) {
+ 		ida_idx = nfp_tunnel_get_ida_from_global_mac_idx(entry->index);
+-		ida_simple_remove(&priv->tun.mac_off_ids, ida_idx);
++		ida_free(&priv->tun.mac_off_ids, ida_idx);
+ 	}
+ 
+ 	kfree(entry);
+-- 
+2.32.0
+
