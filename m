@@ -2,80 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3DE5C388F3
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Feb 2022 22:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B593C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Feb 2022 06:08:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1386922AbiBHW0n (ORCPT
+        id S232878AbiBIGH4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Feb 2022 17:26:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43038 "EHLO
+        Wed, 9 Feb 2022 01:07:56 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:55686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1386998AbiBHVkK (ORCPT
+        with ESMTP id S237555AbiBIGDa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Feb 2022 16:40:10 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C7B5C0612B8;
-        Tue,  8 Feb 2022 13:40:09 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2DD4161638;
-        Tue,  8 Feb 2022 21:40:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 851FEC340EE;
-        Tue,  8 Feb 2022 21:40:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644356408;
-        bh=H7c2nk0Uo1AfUDbhAwMbIB5dfEpZKr1ih26waXCPdkw=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=Ta0MhK4FEzO/B+Zhb+wFo9bUMnuqfTnbiFGIZEanjltQXJMI6HooCfrkX7J0o2dOZ
-         FLgt83qPS7pHq0YuRio1H+YQ5ijSECBmucIJfHRkTMUNbaVIYyJ6QJvzaiSwl4QuuU
-         R1t8J+AIMMIa8jbOxOXYqRTZrwj9kqhy/Q9QIw9QEzUK1OhNhAtv34gqUDfBfPjmHA
-         ol3uWiSS5GCdaoysBiolKAG7IYMazBFiRUpbARAMiopuMmINz9uZFQhhUj6Mhh7AGb
-         L7Kjm7qiB3l5zR/sQrKL63jOAd5i5+AsADx0itB3jY+6WIKgfgMXcAym76/BMJzuF1
-         Xqmh1sIYVUipg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6E43DE5D084;
-        Tue,  8 Feb 2022 21:40:08 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 9 Feb 2022 01:03:30 -0500
+Received: from smtp.smtpout.orange.fr (smtp10.smtpout.orange.fr [80.12.242.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03A8FE01CCBA
+        for <kernel-janitors@vger.kernel.org>; Tue,  8 Feb 2022 22:03:22 -0800 (PST)
+Received: from pop-os.home ([90.126.236.122])
+        by smtp.orange.fr with ESMTPA
+        id Hg4QnU0tCbnFGHg4QnaWdd; Wed, 09 Feb 2022 07:03:16 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Wed, 09 Feb 2022 07:03:16 +0100
+X-ME-IP: 90.126.236.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Ben Skeggs <bskeggs@redhat.com>, Karol Herbst <kherbst@redhat.com>,
+        Lyude Paul <lyude@redhat.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Pierre Moreau <pierre.morrow@free.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Subject: [PATCH] drm/nouveau: Fix a potential theorical leak in nouveau_get_backlight_name()
+Date:   Wed,  9 Feb 2022 07:03:11 +0100
+Message-Id: <9ba85bca59df6813dc029e743a836451d5173221.1644386541.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] libbpf: Fix signedness bug in btf_dump_array_data()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164435640844.13285.18161344073556869381.git-patchwork-notify@kernel.org>
-Date:   Tue, 08 Feb 2022 21:40:08 +0000
-References: <20220208071552.GB10495@kili>
-In-Reply-To: <20220208071552.GB10495@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     ast@kernel.org, alan.maguire@oracle.com, daniel@iogearbox.net,
-        andrii@kernel.org, kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
-        john.fastabend@gmail.com, kpsingh@kernel.org, bpf@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+If successful ida_simple_get() calls are not undone when needed, some
+additional memory may be allocated and wasted.
 
-This patch was applied to bpf/bpf-next.git (master)
-by Daniel Borkmann <daniel@iogearbox.net>:
+Here, an ID between 0 and MAX_INT is required. If this ID is >=100, it is
+not taken into account and is wasted. It should be released.
 
-On Tue, 8 Feb 2022 10:15:52 +0300 you wrote:
-> The btf__resolve_size() function returns negative error codes so
-> "elem_size" must be signed for the error handling to work.
-> 
-> Fixes: 920d16af9b42 ("libbpf: BTF dumper support for typed data")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  tools/lib/bpf/btf_dump.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+Instead of calling ida_simple_remove(), take advantage of the 'max'
+parameter to require the ID not to be too big. Should it be too big, it
+is not allocated and don't need to be freed.
 
-Here is the summary with links:
-  - libbpf: Fix signedness bug in btf_dump_array_data()
-    https://git.kernel.org/bpf/bpf-next/c/4172843ed4a3
+While at it, use ida_alloc_xxx()/ida_free() instead to
+ida_simple_get()/ida_simple_remove().
+The latter is deprecated and more verbose.
 
-You are awesome, thank you!
+Fixes: db1a0ae21461 ("drm/nouveau/bl: Assign different names to interfaces")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is more a clean-up than a fix.
+It is unlikely than >= 100 backlight devices will be registered, and the
+over allocation would occur even much later when the underlying xarray is
+full.
+
+I also think that the 'if (bl->id >= 0)' before the ida_simple_remove()
+calls are useless. We don't store the id if a negative (i.e. error) is
+returned by ida_simple_get().
+
+Finally, having a '#define BL_MAX_MINORS 99' could be better than a
+magic number in the code.
+---
+ drivers/gpu/drm/nouveau/nouveau_backlight.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/nouveau/nouveau_backlight.c b/drivers/gpu/drm/nouveau/nouveau_backlight.c
+index ae2f2abc8f5a..ccd080ba30bf 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_backlight.c
++++ b/drivers/gpu/drm/nouveau/nouveau_backlight.c
+@@ -46,8 +46,8 @@ static bool
+ nouveau_get_backlight_name(char backlight_name[BL_NAME_SIZE],
+ 			   struct nouveau_backlight *bl)
+ {
+-	const int nb = ida_simple_get(&bl_ida, 0, 0, GFP_KERNEL);
+-	if (nb < 0 || nb >= 100)
++	const int nb = ida_alloc_max(&bl_ida, 99, GFP_KERNEL);
++	if (nb < 0)
+ 		return false;
+ 	if (nb > 0)
+ 		snprintf(backlight_name, BL_NAME_SIZE, "nv_backlight%d", nb);
+@@ -414,7 +414,7 @@ nouveau_backlight_init(struct drm_connector *connector)
+ 					    nv_encoder, ops, &props);
+ 	if (IS_ERR(bl->dev)) {
+ 		if (bl->id >= 0)
+-			ida_simple_remove(&bl_ida, bl->id);
++			ida_free(&bl_ida, bl->id);
+ 		ret = PTR_ERR(bl->dev);
+ 		goto fail_alloc;
+ 	}
+@@ -442,7 +442,7 @@ nouveau_backlight_fini(struct drm_connector *connector)
+ 		return;
+ 
+ 	if (bl->id >= 0)
+-		ida_simple_remove(&bl_ida, bl->id);
++		ida_free(&bl_ida, bl->id);
+ 
+ 	backlight_device_unregister(bl->dev);
+ 	nv_conn->backlight = NULL;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.32.0
 
