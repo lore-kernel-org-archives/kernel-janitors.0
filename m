@@ -2,73 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC756C4321E
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Feb 2022 01:28:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D19C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Feb 2022 03:31:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232338AbiBJB2a (ORCPT
+        id S232603AbiBJDbG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 9 Feb 2022 20:28:30 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:56084 "EHLO
+        Wed, 9 Feb 2022 22:31:06 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232830AbiBJB2I (ORCPT
+        with ESMTP id S232605AbiBJDbF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 9 Feb 2022 20:28:08 -0500
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B61420197;
-        Wed,  9 Feb 2022 17:28:11 -0800 (PST)
-Received: by mail-ot1-f50.google.com with SMTP id n6-20020a9d6f06000000b005a0750019a7so2778475otq.5;
-        Wed, 09 Feb 2022 17:28:11 -0800 (PST)
+        Wed, 9 Feb 2022 22:31:05 -0500
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E443123BDB;
+        Wed,  9 Feb 2022 19:31:07 -0800 (PST)
+Received: by mail-pj1-x1032.google.com with SMTP id h14-20020a17090a130e00b001b88991a305so7168047pja.3;
+        Wed, 09 Feb 2022 19:31:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=nvvlCC3Ik+A9UvhOEE+RahzQMEHLT3ALXE7RPHq6bo0=;
+        b=goUXqtpB5Sj1L6N906G/7vqkEFlKjCFgjbyFkZqaeLmU4hCHLxXnQlfoGeh3X/JwyG
+         TG4G8dTLwSXfHTJG9HtikIr2NPkIAOaGbdMdyI+wTSwjiJzaWu3+5cRjHfHrr5lzsTNg
+         W3MGGYOeCNOwhU+fCafboT+ke37bPLjmvwVDna3kxRER0t0XdABmOMtqrUhALE5S48hv
+         6QbkFAsGeum6AbwKcFw1SNNjew9kXNbfL1JRRXraZwAe4B7NyeDs+pBciYQVCZioCqUf
+         kZVEE2X2Gn+7MvInWt9GZj+L7xpmByspbX61GMthQbMTi1pEJ2c20bta7I3mxuyNFf3E
+         RiYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=siet+Ao2TH7V5m6SftR2gVXEXyrYhoODYtbaQVg/nkg=;
-        b=YNRMeQ04hxyAt6Zpl5OzJOlbVqSXQBqZ0EHbAVqoApo9bi82CP5RXJqAYvlep8w58t
-         SS7AH9OvM+tj0fkIpmv/37FL+Bujqd/ymdtuF9UHtqK4oQSKUu0W5AnSltcsRjHDm52m
-         vDtf9QI+InPCKT4PTQ99IKjY5JryW1eERxUIJifrnHU2oi7sHBGnoXfq4BnEuWDTWB15
-         /7m1M28GKMX6pe3+/y8rht6k7B7Nc5X7nt6iOvQQ6Eo4UmO6I8SERUrI4omfYUvDXabW
-         CDlo2s+RtAwPuCZsJ7m0MZhvcjLCXSnfPbwJndWHtXjtSj+truIg2tGwX6E6cVnRicD9
-         BLQA==
-X-Gm-Message-State: AOAM533UxnDxg/9q66cuB4v5RoOUCRMrGZRCInh8uA0FmnBYLMXQUsvD
-        AfGkcc9kUobwU0nx4briy9cdnOT2Clfz
-X-Google-Smtp-Source: ABdhPJzmtB6J3X9Ywh+GW7FeYw449wZbfGox6Vdj/LQZjI2yjkhUTsq3PQRmfnSFWvpLXg81YeejXg==
-X-Received: by 2002:a05:6830:12cf:: with SMTP id a15mr2071431otq.262.1644453043789;
-        Wed, 09 Feb 2022 16:30:43 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id i1sm4402159ood.32.2022.02.09.16.30.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Feb 2022 16:30:43 -0800 (PST)
-Received: (nullmailer pid 1258215 invoked by uid 1000);
-        Thu, 10 Feb 2022 00:30:42 -0000
-Date:   Wed, 9 Feb 2022 18:30:42 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        kernel-janitors@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, Scott Branden <sbranden@broadcom.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=nvvlCC3Ik+A9UvhOEE+RahzQMEHLT3ALXE7RPHq6bo0=;
+        b=V7gyxsrOYJNWyjBBIid/s9qdiDoMWTcicRxOCqRKo/8rlz5H4AU3vcwEZr4/n1zpec
+         JwxNujboVckNqGLrObJDRMcIKE9I/iqIuU1+IT9s/asUnFQMQ78PJz42eaYGGKSDfAoR
+         R4DP2c47UpbO2/Y3eVvQildOxWgLRmnYlzOGcSKevZtkgVggaZLgESruY+AP7CJJJdw9
+         yb+pcVUv5lX53kRZhz4QQPdf/Gr2gBJ5+pUqaalxy/Ybt8nXWbqSnHLtZ4Z9rjEb01RZ
+         MwI6Tz0lEAPl0mGonYWIbrD4xdLK0BbPuEYwL/HoPqGF7PuOnDIZQybEwNRg0XV9mDzN
+         H2mw==
+X-Gm-Message-State: AOAM532nujInk72l7R2gt6FXkg3zIGngrPsfsSgJoJOesmXQ+iQItv/7
+        UVOclVBC3l64vnAKUy1o9u8=
+X-Google-Smtp-Source: ABdhPJwTpk8bCXpASIyFuhcm3zEkisDZSfKcaGYV7LB7Ohjg4RnU5/jP6CwddnjyMQebLVzHOPLPNg==
+X-Received: by 2002:a17:902:7fc9:: with SMTP id t9mr5614339plb.53.1644463867386;
+        Wed, 09 Feb 2022 19:31:07 -0800 (PST)
+Received: from [192.168.1.3] (ip72-194-116-95.oc.oc.cox.net. [72.194.116.95])
+        by smtp.gmail.com with ESMTPSA id mu18sm252537pjb.18.2022.02.09.19.31.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Feb 2022 19:31:06 -0800 (PST)
+Message-ID: <21f1016c-d725-2c98-5aef-14e94e02364e@gmail.com>
+Date:   Wed, 9 Feb 2022 19:31:05 -0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.1
 Subject: Re: [PATCH] pinctl: doc: Fix spelling mistake "resisitors" ->
  "resistors"
-Message-ID: <YgRcspCc9UW2CRp3@robh.at.kernel.org>
+Content-Language: en-US
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20220202091551.580372-1-colin.i.king@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From:   Florian Fainelli <f.fainelli@gmail.com>
 In-Reply-To: <20220202091551.580372-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 02 Feb 2022 09:15:51 +0000, Colin Ian King wrote:
+
+
+On 2/2/2022 1:15 AM, Colin Ian King wrote:
 > There is a spelling mistake in the documentation. Fix it.
 > 
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  .../devicetree/bindings/pinctrl/brcm,bcm11351-pinctrl.txt       | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+-- 
+Florian
