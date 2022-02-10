@@ -2,72 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB882C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Feb 2022 08:33:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E67C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Feb 2022 08:47:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234928AbiBJIdQ (ORCPT
+        id S237903AbiBJIrH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 10 Feb 2022 03:33:16 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35190 "EHLO
+        Thu, 10 Feb 2022 03:47:07 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237572AbiBJIdO (ORCPT
+        with ESMTP id S237870AbiBJIrG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 10 Feb 2022 03:33:14 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E12D8204;
-        Thu, 10 Feb 2022 00:33:15 -0800 (PST)
+        Thu, 10 Feb 2022 03:47:06 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A2811E7;
+        Thu, 10 Feb 2022 00:47:08 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 88DBF616D6;
-        Thu, 10 Feb 2022 08:33:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94ABEC004E1;
-        Thu, 10 Feb 2022 08:33:13 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9ADE860EFB;
+        Thu, 10 Feb 2022 08:47:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0412C340ED;
+        Thu, 10 Feb 2022 08:47:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644481994;
-        bh=h5BAK9NL0LC0OjjGKnkej1s8XID/CDQC0NW9XJnwKa8=;
+        s=k20201202; t=1644482827;
+        bh=38hpu9snVYLkh52SddNroOa3n7Mojq75rM3tru+Si1M=;
         h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=tLWE9ZoM7S6iOyF5P/mAPIaareQqJT6nPKu6EvgUzKaik4prlQ6FCFNfbsAKrysAA
-         ePRLsVz1Qq4+JmgeAKxJWcxy7sO/CtNiLJb3Salm/n+ucJxGFE6Mba84WW8q8libEV
-         ySorjJVhOB5xQpKsaetGkyeqN+rBDfHf74EVi11cbphMTpDlK7bGqlwQO+W6r6zjRP
-         e6ZRilAIAZVTugTn0vyBeKKAF+xOiDXM3n5ChUn0MF3NRByMF3sPL9n9D0w9ClUDFl
-         yuCEA8W8nC8oRSo8/jvqE/tY4CIX4m7tUZgm/2+Al9Gv3hv2/qzAGZUrYKMxGtDS+F
-         7BOnfScbx2W3A==
+        b=ptm/3qISA+Z/QNILqwZUknrnwihP60fcjaBWDXHpEyMclieqiWh+33qXp7JGdENi8
+         RNam1xnsOb+80zCyoCoI/hw6WXdeMbLWs8TFqCRg/t6b/fooMMx86VHFLa7HDC4fwE
+         l1LRnJRWR1bdZw+q4/3Kg6zuEey0r/plSbgdmAk4/O87MGhljeqaTLm+R1LQNx/puq
+         Rau74jEJzeSFVmTo/dN3KX2FUwoB6rMMqXWnQJCcf3XIxJ+3hish8GQxCZdpF3rHie
+         Di8mvsjGS7piZhL7/uCcu2vkP8wu6hNlZh7xybMgNxQ5T648kIyAikxt8qnU+2jI6+
+         ViGrjjEUfHmdA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v2] rtw88: fix use after free in
- rtw_hw_scan_update_probe_req()
+Subject: Re: [PATCH][next] brcmfmac: of: remove redundant variable len
 From:   Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20220203082532.GA25151@kili>
-References: <20220203082532.GA25151@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Yan-Hsuan Chuang <tony0620emma@gmail.com>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        Po-Hao Huang <phhuang@realtek.com>,
-        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <20220207133329.336664-1-colin.i.king@gmail.com>
+References: <20220207133329.336664-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Arend van Spriel <aspriel@gmail.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
+        Wright Feng <wright.feng@infineon.com>,
+        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        SHA-cyfmac-dev-list@infineon.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <164448199009.15541.16431602582392525909.kvalo@kernel.org>
-Date:   Thu, 10 Feb 2022 08:33:13 +0000 (UTC)
+Message-ID: <164448282223.15541.14523972377351410590.kvalo@kernel.org>
+Date:   Thu, 10 Feb 2022 08:47:03 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+Colin Ian King <colin.i.king@gmail.com> wrote:
 
-> This code needs to use skb_queue_walk_safe() instead of skb_queue_walk()
-> because it frees the list iterator.
+> The variable len is being assigned bit is never used. The variable
+> and the strlen call are redundant and can be removed.
 > 
-> Fixes: d95984b5580d ("rtw88: fix memory overrun and memory leak during hw_scan")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
 Patch applied to wireless-next.git, thanks.
 
-a954f29aea5d rtw88: fix use after free in rtw_hw_scan_update_probe_req()
+2fd6d2ef6860 brcmfmac: of: remove redundant variable len
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20220203082532.GA25151@kili/
+https://patchwork.kernel.org/project/linux-wireless/patch/20220207133329.336664-1-colin.i.king@gmail.com/
 
 https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
