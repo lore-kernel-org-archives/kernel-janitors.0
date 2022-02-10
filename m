@@ -2,62 +2,56 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 155E8C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Feb 2022 20:54:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D84C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Feb 2022 22:27:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344431AbiBJUyY (ORCPT
+        id S1344819AbiBJW1A (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 10 Feb 2022 15:54:24 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:32874 "EHLO
+        Thu, 10 Feb 2022 17:27:00 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:51646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344381AbiBJUyT (ORCPT
+        with ESMTP id S243166AbiBJW1A (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 10 Feb 2022 15:54:19 -0500
-X-Greylist: delayed 550 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 10 Feb 2022 12:54:19 PST
-Received: from mxout04.lancloud.ru (mxout04.lancloud.ru [45.84.86.114])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAC0610C4
-        for <kernel-janitors@vger.kernel.org>; Thu, 10 Feb 2022 12:54:19 -0800 (PST)
-Received: from LanCloud
-DKIM-Filter: OpenDKIM Filter v2.11.0 mxout04.lancloud.ru 6BA9820B3AD2
-Received: from LanCloud
-Received: from LanCloud
-Received: from LanCloud
-Subject: Re: [PATCH 5/9] pata_mpc52xx: use GFP_KERNEL
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-CC:     <kernel-janitors@vger.kernel.org>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        <linux-ide@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20220210204223.104181-1-Julia.Lawall@inria.fr>
- <20220210204223.104181-6-Julia.Lawall@inria.fr>
-From:   Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <02326fc3-07ab-feda-1a32-ef4220fbceff@omp.ru>
-Date:   Thu, 10 Feb 2022 23:45:05 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Thu, 10 Feb 2022 17:27:00 -0500
+Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2353A262B
+        for <kernel-janitors@vger.kernel.org>; Thu, 10 Feb 2022 14:26:59 -0800 (PST)
+Received: from pop-os.home ([90.126.236.122])
+        by smtp.orange.fr with ESMTPA
+        id IHtwnjGK39r2MIHtwnUryp; Thu, 10 Feb 2022 23:26:58 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Thu, 10 Feb 2022 23:26:58 +0100
+X-ME-IP: 90.126.236.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     jhansen@vmware.com, vdasa@vmware.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, acking@vmware.com, dtor@vmware.com
+Cc:     pv-drivers@vmware.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/3] VMCI: Various fixes
+Date:   Thu, 10 Feb 2022 23:26:55 +0100
+Message-Id: <cover.1644531317.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <20220210204223.104181-6-Julia.Lawall@inria.fr>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.11.198]
-X-ClientProxiedBy: LFEXT01.lancloud.ru (fd00:f066::141) To
- LFEX1907.lancloud.ru (fd00:f066::207)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2/10/22 11:42 PM, Julia Lawall wrote:
+Patch 1 and 2 should be straighforward.
 
-> Platform_driver probe functions aren't called with locks held
-> and thus don't need GFP_ATOMIC. Use GFP_KERNEL instead.
-> 
-> Problem found with Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+But review with much more care the 3rd one, as explained below the --- in the
+patch.
 
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+Christophe JAILLET (3):
+  VMCI: Fix the description of vmci_check_host_caps()
+  VMCI: No need to clear memory after a dma_alloc_coherent() call
+  VMCI: Fix some error handling paths in vmci_guest_probe_device()
 
-[...]
+ drivers/misc/vmw_vmci/vmci_guest.c | 30 ++++++++++++++----------------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
 
-MBR, Sergey
+-- 
+2.32.0
+
