@@ -2,185 +2,150 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3098C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Feb 2022 09:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23AA4C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Feb 2022 13:05:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238597AbiBJJaN (ORCPT
+        id S241937AbiBJNFB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 10 Feb 2022 04:30:13 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:51552 "EHLO
+        Thu, 10 Feb 2022 08:05:01 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235338AbiBJJ3o (ORCPT
+        with ESMTP id S233456AbiBJNFA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 10 Feb 2022 04:29:44 -0500
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1DBF1125
-        for <kernel-janitors@vger.kernel.org>; Thu, 10 Feb 2022 01:29:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1644485377; x=1676021377;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=42WPzRfjzpiw9Qy6uiLgkdunh7Og8SSToqs4zDyK+vU=;
-  b=l7ek2ZUT7jrLuYScxNP+GmhdDb9lxr4ZAdrVfu9urIIJQYpVWGJGS2m6
-   HC9FeuMftXyKTcbgQgGaJLvcMcTB/O9pX2/WLobWeWqgkd93GnpbJJyxl
-   c9ssQOmPCkkJUUmOGrIgG4LAw+HoMy8hhyDcD5XXDAnbcPq44Q7BryE6d
-   uzu2PLQ2VuZLjxoNKdfyYDBkf/TWYShfnI2fGpkhourl2D1TRiQUJ7DqT
-   RoCm93vMTTiKB7xP/zJNvO+alCG/duTapN5ilY030LcnYtyI3V1fVUbNv
-   Q7CpQOjN5+RrxHd62t0dRxaE7S/TBck0hFrcqIBvQ26rTv+LSy/uz1j98
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10253"; a="249659194"
-X-IronPort-AV: E=Sophos;i="5.88,358,1635231600"; 
-   d="scan'208";a="249659194"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Feb 2022 01:29:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,358,1635231600"; 
-   d="scan'208";a="629627976"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmsmga002.fm.intel.com with ESMTP; 10 Feb 2022 01:29:37 -0800
-Received: from fmsmsx606.amr.corp.intel.com (10.18.126.86) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Thu, 10 Feb 2022 01:29:36 -0800
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx606.amr.corp.intel.com (10.18.126.86) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20 via Frontend Transport; Thu, 10 Feb 2022 01:29:36 -0800
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.103)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2308.20; Thu, 10 Feb 2022 01:29:36 -0800
+        Thu, 10 Feb 2022 08:05:00 -0500
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2108.outbound.protection.outlook.com [40.107.243.108])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D245C49;
+        Thu, 10 Feb 2022 05:05:01 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BF6CtMLmgprAJKoxV/T5BjuHldeL5oYt6T9mFX6QI7FNOkKjCbRDM8PvjXc06SyphYEB0QcX1k54uwB1k2DYX5GZTxUsPUx+3w0se5iXeBihRMIewTpNfzwKXsfJyVWgYufrKoJnOefiDf1xVSAQDk4/sk3UuQObQs0I1izumS3oxIB+9RYgSHMYaPwScrMxw4TQNvi/qnF88kKuV+HAgf0eg3LV/0uBOlXxM+JqG/s5r9maN02DNq2r9/58RMmesJr0R47YKm4yIu1mRqiqAusZhdBQhDuKyuLsEVu3NIadS3gFZ5PjtW5JJnmE5ALxcC9mWAGpxLrh2UGy1WO+iQ==
+ b=YmK8FhczbV7AF164BDrNzT64esIQ8XfQRKUmJHnaufNLNiZTrlV/mktiUE9E2qrcU6e9kcE71RvarVLSVJxPGxU5ET1YgRBjEno8cfBcV83L8mcI/po3Q8kvRC7X9rvZMrsHULftNeBJMEl0XsbmdrvbBdVCHqg35qdoez53UW80rPJw4Dcs/phf4vKnKkVX6/VAes8m6Hhmv2dBwrz1mbgnhJwj9AFaCwdTNN5y0ps1MExiBDiUoaJH0oNifk/C3MdVFAuwNLpHFRqAymI9gTrNRHbRU904Y3BmANtysWohtPsdnO96ECclG4n5P9gaXnSNPM1gejff6nrmqOlwOw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=alzoUgYz/v0IlSxWHcnFApADBBbn1avCM6VsKZDAIT4=;
- b=lzbp4DuBgOXhLykpwtjozbxr8GFZaysEBU+XGJM/R5mm3VIFIG6Wse0kqtTiKU322ZowuclkuwsK/A7kj5Y+fVbOCmg1rNImm7sILjZKawPvCqYfRaW/2FsSolNUORWtZX0Yj/tyYW6n1wBDLxlF5nT973D8wBuYAE8JXgmxaMt0WaTty98sdM2i3wmEqgjrM0+UNy/YXsnIOHvT+7cOORViS+zPhqnkO2hBvalvNJIVvhpF17SOnvsTSEE4PBm6sXpM23XNt0m8IsVjseyEdTGaf9rLMo7z6sSxzFxplblXdfHMXoX/6WRHIoc+8z/I4CjngouFBjcN4ebwRFw/DA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-Received: from DM6PR11MB2731.namprd11.prod.outlook.com (2603:10b6:5:c3::25) by
- CO1PR11MB4929.namprd11.prod.outlook.com (2603:10b6:303:6d::19) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4975.11; Thu, 10 Feb 2022 09:29:34 +0000
-Received: from DM6PR11MB2731.namprd11.prod.outlook.com
- ([fe80::b4f9:69c4:33a4:aca2]) by DM6PR11MB2731.namprd11.prod.outlook.com
- ([fe80::b4f9:69c4:33a4:aca2%6]) with mapi id 15.20.4951.019; Thu, 10 Feb 2022
- 09:29:34 +0000
-From:   "Jagielski, Jedrzej" <jedrzej.jagielski@intel.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [bug report] i40e: Fix race condition while adding/deleting
- MAC/VLAN filters
-Thread-Topic: [bug report] i40e: Fix race condition while adding/deleting
- MAC/VLAN filters
-Thread-Index: AQHYHLxdpZzrmY2O1k2Ha2UFp5bI+qyJe/QAgAMKUeA=
-Date:   Thu, 10 Feb 2022 09:29:34 +0000
-Message-ID: <DM6PR11MB2731DFAD68B949A31E5B2E29F02F9@DM6PR11MB2731.namprd11.prod.outlook.com>
-References: <20220208072004.GA19479@kili> <20220208105750.GT1978@kadam>
-In-Reply-To: <20220208105750.GT1978@kadam>
-Accept-Language: pl-PL, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.6.200.16
-dlp-reaction: no-action
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3c756032-7cf2-4bd5-aab5-08d9ec77d9bb
-x-ms-traffictypediagnostic: CO1PR11MB4929:EE_
-x-microsoft-antispam-prvs: <CO1PR11MB4929743A27EBEC3586A8559FF02F9@CO1PR11MB4929.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6430;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: F0IWmF9BE+B2as0eTY2NodvjtKu4e8G5kjpz1kZGJoKX1OexvGfynevuzrbbC+deYYdvru07rBNyyZwJ6EXQIqxspQ7ih+8tKc/vAnuk7hZOqz9iMiel/8ZkbK+mJxHq+8y5jQWxYEqD1m7jpuEQp6JHfPBK1NXYZSOv095tkiWOp1aON92vHdoZ60AmawZ6Xulkc9c7lIumfW+lxW7P0XP5qXopeOaVuI7VYUl7yyXQDiJgzsc2HK3Crtm0y+9wZHcSo/G5BPnKKT4LpmPumw9dxXNNyyGy5eu6ljDYyKwitDfU3bMjVL3gw33O+coB4Z0Oy+ky69KHVvz92afjGx6U9ba+RHrR6MuOYtkS3uiuwesZK/OmkNE9htje9XZ7S8Y7LRn4AxOkPpRAFMNJtt9yK3o08O3lCJxEMBnBb89eITVFaNN7oacE8VM/9i5QwgvfjTyIGdQVBVy/J0F3YTf3+YOuln6jH9zTIrCqkYR2jHVXqMtVIAfpu/a/JaisA7jaWqXrIcvUtSVo7Slb40+mRA/cIasY3XHl093kORwausSQkiFclNtRC/AhL36a7Nj+L0SEwnQPV0GPR5GqVPB5lQ9RqnPa2l6mVjNvKLGF0wPxqniw1002DDKuQf5WTQUM0lHZdIL5HQV5BI+y95lWSwlQftImQKEe/C9a3TypDC5RYpw6dwQzvatQf5svySrAV1LmVR5Eqp60UdYRaQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB2731.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(38070700005)(8676002)(33656002)(8936002)(66556008)(26005)(66476007)(66446008)(4326008)(55016003)(71200400001)(38100700002)(76116006)(66946007)(64756008)(2906002)(5660300002)(52536014)(186003)(6506007)(122000001)(83380400001)(6916009)(82960400001)(508600001)(9686003)(7696005)(86362001)(316002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Tks+smO6SPwCB/rW+bZsixDOQfeZfbKNCIaIf4oCHmiuWH/SGJFZsOZwNyBz?=
- =?us-ascii?Q?gz7HLOxO1xScNj1N/7+n/Stj0usrx8IfVcayWV5UpVcnm7GQ5EytARN69Fmj?=
- =?us-ascii?Q?8NGF7cwj8P8ausEhE5zDpmmNOXID/BSdn9kSlTcU7b11Hrzmq+1MC9u9GQaS?=
- =?us-ascii?Q?9vhdaETYQi+oxf9HvO5ad0C65/TJpRZy0wowgER8iM+wwn86Rq/NWGbjukwx?=
- =?us-ascii?Q?fg9OuqMfuuxjXt13htTc8t11uwVkoiQaGDbcXsRIAK0bXiGplbzEcAstxYZj?=
- =?us-ascii?Q?DJSmjUu/6Onjr8pRA/mF8/GgFIknbKIMmKf98I77PrU5Yixm0UVmpt9JnujX?=
- =?us-ascii?Q?InEravmjoKoBvf4JQEFbJ/j5g1S7s2Z0y7ObmzqTpQ9RcirnLk6eLT2/K5A2?=
- =?us-ascii?Q?didHKerZltlrHxf77qRH4StW0dOS8Ohp0fx5OKNRzpFWf5ziw516DuxjYXts?=
- =?us-ascii?Q?pjyvrNhoKGMXDSIiRdI3a0om766163U0zwtaxQ7VXU+xX8qb07r0BPlU10N4?=
- =?us-ascii?Q?PiF/bpB0gRq2jEf4rVDI5qLfpH9oUYJZqRgHjs/Fc3kzAGLO2Pf8cQMkSS8P?=
- =?us-ascii?Q?mn8Dggyn+MLCp0Us+dZAaa9taQFX8m73YxN/x0RVcDrDxoGHVRNlrR9o2SS3?=
- =?us-ascii?Q?dKlyEd15UyTDexQ5QuH0h+Nct8OHnwf4L+iU+7TP1A52ziBSu7a3T4HkT8b3?=
- =?us-ascii?Q?QCLY7nhmzpzBG+/4tgnxh88HzrW7VPo1itR9qYry+hTwPsxnHkklK8Bbkx4I?=
- =?us-ascii?Q?kF7DbAXSw+gQowxElMqrnjDRcjFGBBpODvOQYUaRUrayu84QYdi7zC4IQ7nt?=
- =?us-ascii?Q?jmijNkevBW0MNP2MYKKZZAdhFO5EHC5k0p8RqJMFaHN2xSgvLbuDu9M5wGc1?=
- =?us-ascii?Q?i4l71OUE5ZNnP/FUytFPC8CyhR7MjJvqziwCVN+nS7a1i7T2pRBg/GsrN+zv?=
- =?us-ascii?Q?/Q1qv6l3XKxR5pwkumG8xscp6O5dlVQgjHjT9ooBXG3aTM9Vt46Oe/5r3o1Z?=
- =?us-ascii?Q?c1HlLcOld9pjpiaFT7woYKY/FAZUdBPU9sYYiPLZl4dMSOYvOrfSeF3JbWjB?=
- =?us-ascii?Q?owdKkw+r5bqVwFpyH4eqCUrrqjMr3cCe7tywoUHq48Y2z0vl7xZ6ADD6M1dY?=
- =?us-ascii?Q?EjUWWQ/thbPyBQG186KiQc7hEJMCxJA1nYMOfzV9k7okrvHyD88R5vtgWj+o?=
- =?us-ascii?Q?etfVsGxscNVF5Altb39oLly9aWVt29n6YtWUKSHK/XbFXpmA/FhDF7hphRX1?=
- =?us-ascii?Q?k20dtYXs3fnpcBnwFTEnFZn1rlA2zqaQApzIwzErznUacc16s9JUTISxwxns?=
- =?us-ascii?Q?l7w7LppV4KR7P8xnXXdmdrrtLQOvy5K9h1x55h/Y5Hp5lu1On7xdPrU69+d4?=
- =?us-ascii?Q?3TCYBrZaG4kDwgEQ3qNGC0y8hewfTv83H8j04k2Pvj/5EfrVC6Dl21rG0LWD?=
- =?us-ascii?Q?a8tS0jJN0kKzegdwhnIVpuslHH4EGSbWbhcrHLDNOK48fdOhNTkt+qNW87rg?=
- =?us-ascii?Q?2Tl4Fz0NyhLc/V/9Rze/C9Ft63W+0emDa9dl+N+S1adK6UUaFnJKhIhwBZHd?=
- =?us-ascii?Q?vGrL+4w1lMzYvkl4kB4jowQiGM0X0yQFksbCBfzDoo0dJp+2pQOY2UaTjoMF?=
- =?us-ascii?Q?719JNDYJaMJYk8NlSKKRxoGrOUazeo+HvOKS7E6r3jpdxgCoEktGF99LCB3p?=
- =?us-ascii?Q?f6kSkA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ bh=vaKJyJQe9jzto/h7pFMBbVXbFd4NRv3XvIDgPYmXe5E=;
+ b=k4D34gQ7VIphIOjGKX9TuLPVpQS9G0HAzo1aWVVM35k+IVxQE+em+NtbTBhBLtv6rq5+YRoEp6wBIvWdB7fj+SYCmzir9dwLGDUVEdCFEnu41JRWdGKrndwiy7quJLRi0vKdH0T61mTDW4eHMm1Z/H5BN+qfCrepxeeL7eflx0nrtccp7Osy9xRrcPhUhc+oWrvejKypoHpxtdNIV5mJi5pnooFeuc8mqoO6FFnLNoxq0TjI4DKTsgxNbPs+lBtjnJtuDGWXOapzWfWS5YE5Syzi+LWZ3sLfenVa41C1rOOg5dJPMKVBcmkvjngaCRListp71y44OyZ+nPnbmHyPjA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
+ dkim=pass header.d=corigine.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vaKJyJQe9jzto/h7pFMBbVXbFd4NRv3XvIDgPYmXe5E=;
+ b=VtbkYmkvEeRWghJ/UuXxOj/3T48JHAA9l6sP6yaHADgf2h4cLaUdeOJX9EE2XNv1PhgNXTwvf+bQKpQE5MLH0RE8LAiEann3YwHbfsJpBQtyplhmjJj4AeGhcdiMyV8d4PTUNa/EDSd/U/KWMeq0sAA6F6UwmkIhMWrlYPM36WE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=corigine.com;
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
+ by BY5PR13MB3061.namprd13.prod.outlook.com (2603:10b6:a03:18e::26) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4995.6; Thu, 10 Feb
+ 2022 13:04:58 +0000
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::7037:b9dc:923c:c20d]) by PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::7037:b9dc:923c:c20d%7]) with mapi id 15.20.4975.014; Thu, 10 Feb 2022
+ 13:04:58 +0000
+Date:   Thu, 10 Feb 2022 14:04:52 +0100
+From:   Simon Horman <simon.horman@corigine.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        John Hurley <john.hurley@netronome.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        oss-drivers@corigine.com, netdev@vger.kernel.org
+Subject: Re: [PATCH] nfp: flower: Fix a potential theorical leak in
+ nfp_tunnel_add_shared_mac()
+Message-ID: <YgUNdJgC9dNJN82P@corigine.com>
+References: <49e30a009f6fc56cfb76eb2c922740ac64c7767d.1644433109.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <49e30a009f6fc56cfb76eb2c922740ac64c7767d.1644433109.git.christophe.jaillet@wanadoo.fr>
+X-ClientProxiedBy: AM4P190CA0007.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:200:56::17) To PH0PR13MB4842.namprd13.prod.outlook.com
+ (2603:10b6:510:78::6)
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ba54996c-4140-4702-0fed-08d9ec95f063
+X-MS-TrafficTypeDiagnostic: BY5PR13MB3061:EE_
+X-Microsoft-Antispam-PRVS: <BY5PR13MB306109E43C1B80C6F3A1D33DE82F9@BY5PR13MB3061.namprd13.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: DS9OOGoOlOyINa25i4ThleXVks7pRsoclkquhVkCoIU3inHf51r6mnuzXVD5uVGic6aNYjJQGj1D5kVj5hB77FaRZQJOISKii9Xmp/nc5BAblRikwccF7zDinLQH+0tzNjkRTcSO3isdnzf2LxolhCd/FmbLd6xPkwf+x2/Jsv7iHQ84WwSDJxryB+WLZqO2w3cRAypR/uF7oLgKI4BHJuaxn7X4Omnj49+qrCFfJJN8/9FYhp6R/8ghlRipV/0RhipBeTou1HwmP0ZHrm39cIrLdihFIvrqijvv4s45pewKAI7RdIihAof3UdpORWD1Pz8ysIrPHYEZpoKgaKdCJrYd4OainYU3wZ6gj98k1euqM5u/YeyenxSKMtU7ICFgpy64H3mhYjNuHqrNKYrr+W7aVl6+eJBZ3CnCjPPJ3WAjMnm9ZVRy1Sy9rf/oYUkuwaEyI68LQ0H7dxiMP1SbqgxxR70QDzyqDrTWOMAESXTalBuSnUIu12YU+92YFHo58afdGmVZS1mmsLzdOTfbuucK/t6am0m9aIfJbJbxN+2j76wN6OGOn3GJKig6INJK59IBQi3f/zudx6KpYOsy0ejQsdRIQv4YcQrCBOEind3n+L14Hsr504AeG17LTMR52Skgu8/jHY9c/e2M337ifH6jIJYR0gepBaMW4bCgJBSUgQUJF410qJ5nOwPHy94bPcDLejBwrfZZ4360TDCvHw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(376002)(396003)(346002)(366004)(136003)(39840400004)(54906003)(8936002)(186003)(6916009)(316002)(66946007)(66556008)(66476007)(86362001)(4326008)(8676002)(38100700002)(6506007)(52116002)(2616005)(6512007)(6486002)(508600001)(83380400001)(6666004)(2906002)(36756003)(44832011)(4744005)(5660300002)(21314003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?1gU48jXDmOcQQKeHXgzzYmYlOq3jMXVTn8d+J5BLfCORilHcUmtvsAewzO4m?=
+ =?us-ascii?Q?akX821un3d+xvx1vqXtB58lHWius+mS6XRe61CxFu5KRzy11+sH5J1vAMXRY?=
+ =?us-ascii?Q?t9Lnq66gEy0rjbM4yoM0IoT6b51mcubZq81CMxf5XkQnc4YBxw9dRpg8+0ZI?=
+ =?us-ascii?Q?NN127BYV07o2RIS2/ntnMMR6SR0GA5H1N0/8JBY7GAcNuQoYHKzxeCL8Cw26?=
+ =?us-ascii?Q?Oaag9Yo/s6C8agDabAk8X6IhIOHgTDDHf0ElV3q+gEamJ9UCnuk7sCdaFIXg?=
+ =?us-ascii?Q?7ZViav/XYaDYzFi1Y0tyu3U8bE0IoIySi4VTAo3fiIsGRphqCBMNW/Y+9Hel?=
+ =?us-ascii?Q?/vzWS8BzStlL4XY1TzDpUSfRCvAjQ2Mxappjtau21Q/gcEF9KJgXFf3Vn7lT?=
+ =?us-ascii?Q?mQYC8gBy2MlzNGz0pp9LkOjGOsEMIkE8GddX4WnbI8K2GTmdrHANC7OLX+ja?=
+ =?us-ascii?Q?hRZAmVHCeYDNf5JuAPCZsIZgUrpc/9sBxIweY1Hdlg0CxFa8XtS/+d1mF3fT?=
+ =?us-ascii?Q?+VuBKpdVtsQN9rHkbsTQdQqVuDslsihm50Vs0LNcgl5D44wouLe9ZMteYRq1?=
+ =?us-ascii?Q?VEpKWByQpSBfccrGdRDPAfjRXXHvw9JxZxf7rFNgNIfd2Spaci9LAtrU2kpu?=
+ =?us-ascii?Q?vVMiTvMaUFLPmLrDut7lmDg4RV5PP+2ijkQGeNf4oT7yaY6xpcH/OrBRcnU1?=
+ =?us-ascii?Q?hpg9qGZe/G0oYMLDYF8U1UduHiUByLbUlteE8mklzKT9SoJSk9+QDELAu258?=
+ =?us-ascii?Q?CP5vMyybo0qItrZaiJC+oiL+h00NknFYVL5To7H0oxnPgW7PYnVc6vnbgNNG?=
+ =?us-ascii?Q?QHF6VX1j91ntkLG3Lu+gYDzw2UTGxYfnoziJgXZgE22pSveJaR9/E8DZQp/1?=
+ =?us-ascii?Q?PjX7WKDZ2CSiapy/DDH1w9788MB6l+gjCGFAUuO73vMroSE3pPk/60atAEsd?=
+ =?us-ascii?Q?NlXa7KMBjqsorHl0EK1/HTyYkQBAKOKaCJruW3k26ki5mx+2yohBlWj6J3Fx?=
+ =?us-ascii?Q?pVUio0JWZgB55pGzdXzSdeN4vP5fY9x8Zv48Sl/5VVdXXPryJQFTKjQs4fZq?=
+ =?us-ascii?Q?SP40TVz3YQ879Ywh9C1wijuzkr6vCtDCaZmub1m1Ceef8TdfvHGmkg0VQZDI?=
+ =?us-ascii?Q?ETpO8f0HX47WSfg7AZsJe2YMHhmObOOnYl5JcrOM0ILkRl5zg1d07FryVT+3?=
+ =?us-ascii?Q?RLm9FQXimxnNejj+h/yxF70WSJdsZSNyZylk0p4ygd6QxcDm2SJ+hrF5ILwb?=
+ =?us-ascii?Q?3fORtq4ZTn4k4iXFuR2+6tmLWi3iB5lv7w2VEBFqZFardqhJSDM7pOAsvfdj?=
+ =?us-ascii?Q?2M6y5G1Cm5fM2wRzC7GL6ROGB+NJYpkztaI7R7dm/C3NteV1Fa4DiCmzYAyN?=
+ =?us-ascii?Q?Yexbm6nqsLlR+w8U1nYK7IoW0sJ68E756uLB0v3+DVSGdRpbVnGQhcf61jxG?=
+ =?us-ascii?Q?2iLbejoUnHO1CUJY5B8uguZ0SMa0AlO/Lzr61BzgUpHVU2khONrE9qEPS/Ga?=
+ =?us-ascii?Q?0i0FWvoSlWatv5t4avf1Y2Ds9CfbOmFAsDOHeH0bUmXg7sP7qdZpNdWQhXxH?=
+ =?us-ascii?Q?6T27hxqwzPJQ19cay27yvFCskhI5/mXe8X09b3YMoujpyXFuTmj6i33Pi+AH?=
+ =?us-ascii?Q?9/U6s6JNmh81n+E8zg4u3xYc9azVF5wVuUmEyB8/kshuddtDUKe0WdIOgvkO?=
+ =?us-ascii?Q?ijb3DfoANcI05gUEQyaHpZyo+RP98lH9VbBIHTZVup/HycFZ66l+L9hhhQY1?=
+ =?us-ascii?Q?efqHsqBnsQ=3D=3D?=
+X-OriginatorOrg: corigine.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba54996c-4140-4702-0fed-08d9ec95f063
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB2731.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c756032-7cf2-4bd5-aab5-08d9ec77d9bb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Feb 2022 09:29:34.6760
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Feb 2022 13:04:58.1160
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: XRByz8AEAGzZLEiA9Q/aJ1wYqoButbjMa0D+ZrgFvsK0Lg4SMfGqAHEpEU+uHGwYeOyaPvmGyjkoIAwZup8CipzuIJpmpzoJbSqFx/UP3yE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB4929
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YzrMNUZDbqYZQL4+JAYzP3+x12bmNoEsEqXpzz+1oz6JHhwY+0aldDwE9x5WPcwgpDAbe0s1Cy32wRGpYZvYnHbMV9eXiaTmPiRYJU1w4k0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR13MB3061
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello Dan,
+Hi Christophe,
 
->> The patch 53a9e346e159: "i40e: Fix race condition while=20
->> adding/deleting MAC/VLAN filters" from Jan 14, 2022, leads to the=20
->> following Smatch static checker warning:
->>=20
->> 	drivers/net/ethernet/intel/i40e/i40e_main.c:2153 i40e_aqc_del_filters()
->> 	error: uninitialized symbol 'aq_status'.
->>=20
->> drivers/net/ethernet/intel/i40e/i40e_main.c
->>     2140 static
->>     2141 void i40e_aqc_del_filters(struct i40e_vsi *vsi, const char *vsi=
-_name,
->>     2142                           struct i40e_aqc_remove_macvlan_elemen=
-t_data *list,
->>     2143                           int num_del, int *retval)
->>     2144 {
->>     2145         struct i40e_hw *hw =3D &vsi->back->hw;
->>     2146         enum i40e_admin_queue_err aq_status;
->>     2147         i40e_status aq_ret;
->>     2148=20
->>     2149         aq_ret =3D i40e_aq_remove_macvlan_v2(hw, vsi->seid, lis=
-t, num_del, NULL,
->>     2150                                            &aq_status);
->>     2151=20
->>     2152         /* Explicitly ignore and do not report when firmware re=
-turns ENOENT */
->> --> 2153         if (aq_ret && !(aq_status =3D=3D I40E_AQ_RC_ENOENT)) {
->>=20
->> The error pathes doesn't set aq_status.
->
->In my head, I wrote "The first error path doesn't set aq_status".
+On Wed, Feb 09, 2022 at 07:58:47PM +0100, Christophe JAILLET wrote:
+> ida_simple_get() returns an id between min (0) and max (NFP_MAX_MAC_INDEX)
+> inclusive.
+> So NFP_MAX_MAC_INDEX (0xff) is a valid id
+> 
+> In order for the error handling path to work correctly, the 'invalid'
+> value for 'ida_idx' should not be in the 0..NFP_MAX_MAC_INDEX range,
+> inclusive.
+> 
+> So set it to -1.
+> 
+> While at it, use ida_alloc_xxx()/ida_free() instead to
+> ida_simple_get()/ida_simple_remove().
+> The latter is deprecated and more verbose.
+> 
+> Fixes: 20cce8865098 ("nfp: flower: enable MAC address sharing for offloadable devs")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Thanks for that information. It is going to be investigated.
+Thanks for your patch.
 
-Regards,
-Jedrzej
+I agree that it is indeed a problem and your fix looks good.
+I would, however, prefer if the patch was split into two:
+
+1. Bug fix
+2. ida_alloc_xxx()/ida_free() cleanup
+
+Thanks again,
+Simon
+
+...
