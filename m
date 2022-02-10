@@ -2,121 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71AD3C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Feb 2022 22:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92701C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Feb 2022 22:34:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344967AbiBJW1h (ORCPT
+        id S1344993AbiBJWe6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 10 Feb 2022 17:27:37 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52298 "EHLO
+        Thu, 10 Feb 2022 17:34:58 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344945AbiBJW1h (ORCPT
+        with ESMTP id S1344958AbiBJWe4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 10 Feb 2022 17:27:37 -0500
+        Thu, 10 Feb 2022 17:34:56 -0500
 Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38F70266E
-        for <kernel-janitors@vger.kernel.org>; Thu, 10 Feb 2022 14:27:37 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E71C2651
+        for <kernel-janitors@vger.kernel.org>; Thu, 10 Feb 2022 14:34:56 -0800 (PST)
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id IHuZnjGYF9r2MIHuZnUs2h; Thu, 10 Feb 2022 23:27:35 +0100
+        id II1dnjIzz9r2MII1enUsYH; Thu, 10 Feb 2022 23:34:55 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 10 Feb 2022 23:27:35 +0100
+X-ME-Date: Thu, 10 Feb 2022 23:34:55 +0100
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     jhansen@vmware.com, vdasa@vmware.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, acking@vmware.com, dtor@vmware.com
-Cc:     pv-drivers@vmware.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 3/3] VMCI: Fix some error handling paths in vmci_guest_probe_device()
-Date:   Thu, 10 Feb 2022 23:27:34 +0100
-Message-Id: <c5c1a5f3547bea3c4a1cfb8474db683d83c0ca1d.1644531317.git.christophe.jaillet@wanadoo.fr>
+To:     Simon Horman <simon.horman@corigine.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        John Hurley <john.hurley@netronome.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        oss-drivers@corigine.com, netdev@vger.kernel.org
+Subject: [PATCH v2 1/2] nfp: flower: Fix a potential leak in nfp_tunnel_add_shared_mac()
+Date:   Thu, 10 Feb 2022 23:34:52 +0100
+Message-Id: <4acb805751f2cf5de8d69e9602a88ec39feff9fc.1644532467.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <cover.1644531317.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1644531317.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The 'err_remove_vmci_dev_g' error label is not at the right place.
-This could lead to un-released resource.
+ida_simple_get() returns an id between min (0) and max (NFP_MAX_MAC_INDEX)
+inclusive.
+So NFP_MAX_MAC_INDEX (0xff) is a valid id.
 
-There is also a missing label. If pci_alloc_irq_vectors() fails, the
-previous vmci_event_subscribe() call must be undone.
+In order for the error handling path to work correctly, the 'invalid'
+value for 'ida_idx' should not be in the 0..NFP_MAX_MAC_INDEX range,
+inclusive.
 
+So set it to -1.
+
+Fixes: 20cce8865098 ("nfp: flower: enable MAC address sharing for offloadable devs")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Review with GREAT care.
+ drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-This patch is a recent rebase of an old patch that has never been
-submitted.
-This function is huge and modifying its error handling path is error
-prone (at least for me).
-
-The patch is compile-tested only.
----
- drivers/misc/vmw_vmci/vmci_guest.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/misc/vmw_vmci/vmci_guest.c b/drivers/misc/vmw_vmci/vmci_guest.c
-index 02d4722d8474..2e8ad36895ae 100644
---- a/drivers/misc/vmw_vmci/vmci_guest.c
-+++ b/drivers/misc/vmw_vmci/vmci_guest.c
-@@ -765,7 +765,7 @@ static int vmci_guest_probe_device(struct pci_dev *pdev,
- 	/* Check host capabilities. */
- 	error = vmci_check_host_caps(pdev);
- 	if (error)
--		goto err_remove_bitmap;
-+		goto err_remove_vmci_dev_g;
+diff --git a/drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c b/drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c
+index cd50db779dda..9244b35e3855 100644
+--- a/drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c
++++ b/drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c
+@@ -922,8 +922,8 @@ nfp_tunnel_add_shared_mac(struct nfp_app *app, struct net_device *netdev,
+ 			  int port, bool mod)
+ {
+ 	struct nfp_flower_priv *priv = app->priv;
+-	int ida_idx = NFP_MAX_MAC_INDEX, err;
+ 	struct nfp_tun_offloaded_mac *entry;
++	int ida_idx = -1, err;
+ 	u16 nfp_mac_idx = 0;
  
- 	/* Enable device. */
+ 	entry = nfp_tunnel_lookup_offloaded_macs(app, netdev->dev_addr);
+@@ -997,7 +997,7 @@ nfp_tunnel_add_shared_mac(struct nfp_app *app, struct net_device *netdev,
+ err_free_entry:
+ 	kfree(entry);
+ err_free_ida:
+-	if (ida_idx != NFP_MAX_MAC_INDEX)
++	if (ida_idx != -1)
+ 		ida_simple_remove(&priv->tun.mac_off_ids, ida_idx);
  
-@@ -795,7 +795,7 @@ static int vmci_guest_probe_device(struct pci_dev *pdev,
- 		error = pci_alloc_irq_vectors(pdev, 1, 1,
- 				PCI_IRQ_MSIX | PCI_IRQ_MSI | PCI_IRQ_LEGACY);
- 		if (error < 0)
--			goto err_remove_bitmap;
-+			goto err_unsubscrive_event;
- 	} else {
- 		vmci_dev->exclusive_vectors = true;
- 	}
-@@ -871,13 +871,19 @@ static int vmci_guest_probe_device(struct pci_dev *pdev,
- err_disable_msi:
- 	pci_free_irq_vectors(pdev);
- 
-+err_unsubscrive_event:
- 	vmci_err = vmci_event_unsubscribe(ctx_update_sub_id);
- 	if (vmci_err < VMCI_SUCCESS)
- 		dev_warn(&pdev->dev,
- 			 "Failed to unsubscribe from event (type=%d) with subscriber (ID=0x%x): %d\n",
- 			 VMCI_EVENT_CTX_ID_UPDATE, ctx_update_sub_id, vmci_err);
- 
--err_remove_bitmap:
-+err_remove_vmci_dev_g:
-+	spin_lock_irq(&vmci_dev_spinlock);
-+	vmci_pdev = NULL;
-+	vmci_dev_g = NULL;
-+	spin_unlock_irq(&vmci_dev_spinlock);
-+
- 	if (vmci_dev->notification_bitmap) {
- 		vmci_write_reg(vmci_dev, VMCI_CONTROL_RESET, VMCI_CONTROL_ADDR);
- 		dma_free_coherent(&pdev->dev, PAGE_SIZE,
-@@ -885,12 +891,6 @@ static int vmci_guest_probe_device(struct pci_dev *pdev,
- 				  vmci_dev->notification_base);
- 	}
- 
--err_remove_vmci_dev_g:
--	spin_lock_irq(&vmci_dev_spinlock);
--	vmci_pdev = NULL;
--	vmci_dev_g = NULL;
--	spin_unlock_irq(&vmci_dev_spinlock);
--
- err_free_data_buffers:
- 	vmci_free_dg_buffers(vmci_dev);
- 
+ 	return err;
 -- 
 2.32.0
 
