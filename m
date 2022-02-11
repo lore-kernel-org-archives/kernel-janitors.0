@@ -2,76 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A10C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Feb 2022 01:19:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F69EC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Feb 2022 01:21:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346729AbiBKBTM (ORCPT
+        id S1346764AbiBKBV3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 10 Feb 2022 20:19:12 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35686 "EHLO
+        Thu, 10 Feb 2022 20:21:29 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346719AbiBKBTL (ORCPT
+        with ESMTP id S1346757AbiBKBV2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 10 Feb 2022 20:19:11 -0500
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 204252651
-        for <kernel-janitors@vger.kernel.org>; Thu, 10 Feb 2022 17:19:12 -0800 (PST)
-Received: by mail-yb1-xb33.google.com with SMTP id j2so20760567ybu.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 10 Feb 2022 17:19:12 -0800 (PST)
+        Thu, 10 Feb 2022 20:21:28 -0500
+Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0DD9270E
+        for <kernel-janitors@vger.kernel.org>; Thu, 10 Feb 2022 17:21:28 -0800 (PST)
+Received: by mail-yb1-xb35.google.com with SMTP id o19so20453411ybc.12
+        for <kernel-janitors@vger.kernel.org>; Thu, 10 Feb 2022 17:21:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=H9Yd8/YQb5ZJUEvP4mlzd3FbwU+8QT/5/lgHgUq257s=;
-        b=AIRSI3cMzMaKni8HjGUVaMbZAhUVlceEUvM1TVFe3VPqQyWXLz2Ak+cDAO5nh25AUQ
-         dQ3wE5W1pllDsx+K8PXA7t3fk+pbwx53ncl4DxX+P/sPCtfqhhCY3p7GAiLGMElEMBcT
-         Rs8XBznNz1hO9TGGw0UyBDAxLBlsOUXgNThNiBBNFXT02GOdDU4CcMQpLmmNZtAIXMiP
-         J2U67gmXjBPoFTZ3vC2aObwrtGXtzFhHXF5ryg5us7Gj9GfRYv6xoqaEfVp4BRY4OcPD
-         OmITTZAdt5Pngu3Te8EFZT3oHj3uqqBgP3EASdlKQFgwu1voCxa7FR42hHWE70gz11wS
-         uSFA==
+        bh=apbl1IBbPTd7mPNpWX7lJo6c6WmezPKP8rRQADu0iqI=;
+        b=Al9EYQ6UivIBEzJt+EXRPWQS4tQ+SZS7j9RAp0oHXZxyun1wJHq+IzElQLvKCTvlx+
+         QBg7KKMmxyv59N9pScYHlAEq8x3bjRI3h7T8UnGSTlkPgvUKGYFIJ/97N7e+4t6IG4hr
+         NUr+mc/t4DlsQamjGODM4GOesMED3y6G8pGjm9M8vi03iswVLNqmI1LCQCT8NHOSDF1m
+         D2Efq5FYVMAUWCONNrXorHlk3VOhxOr+M+nqRtaUpiiIzJUSqBCG31ONIb7a0D3HCXqg
+         wUQTiNi1kGcORkQGYyocKAElbLnegbHE0Os6F9IA/nq17CGhARVSu2cCgvmQuGsI+Cb9
+         W/Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=H9Yd8/YQb5ZJUEvP4mlzd3FbwU+8QT/5/lgHgUq257s=;
-        b=nvwojvNwaDdRG4oSn+aA5XU8Se1O1g6evGlsoCBUvOJ28UkaVjTjl+SExNGCHa65aD
-         Xc17dBcfLX+OsLNqNhZnuyAAtpFv/OdpVDZxnrVOTa6ZGBD/etmnxTEcmlJYaiu2YG04
-         TsHQKOmg+bxDaLkPpyWzqziHGVEK4Vjqn0WQ+aa2Rnb/JHE/7/vgW1hTyG0jJBpgJG9/
-         DiZFArPxB7LFbMnjh4GjEbfirqrIg3iGxPlY9ozAaGtU6IHb2RrL81BTMPbRBsNy7VRo
-         QX//fCbs48maZymM1UoWG+ijzjL8+bjJVtYNG5DvTGTafLMgnoT9KjEzoNsirXoqHhCs
-         vIBw==
-X-Gm-Message-State: AOAM530WkiVDGRVVgmrdNAy2elwKguPn8ldXEU8kr2Uw/+E2C7+nFZyq
-        bDZLGoHfZWAL5DNGEnR9w4ZFGPBhimpkEvXO9B3MDg==
-X-Google-Smtp-Source: ABdhPJxGv13LWL9egJMKkc/oNhbYkiByJArEzDE8gyZspHDoaexfLcX9zE0exXWR0/WRRRWmGDJt+Pt+o9nTlBDv9/M=
-X-Received: by 2002:a81:4cc3:: with SMTP id z186mr10688352ywa.140.1644542351380;
- Thu, 10 Feb 2022 17:19:11 -0800 (PST)
+        bh=apbl1IBbPTd7mPNpWX7lJo6c6WmezPKP8rRQADu0iqI=;
+        b=bTVBwPD2Xavdww40Su+aWgqv97Oj0SrikPdTlL2USiOUL+tDQ+eYSWXN4PYXGVY+xv
+         JCiwTZki6vS//V+pkQcU5PsQirqbYbUQ6G/nyvNJiW8w2XFSymSMn1mXiz6ncn1Bmcdk
+         0vgs+4dpwJv/Rxpqd8yHg7yIFiDp0jEKxPttqX7cmvUz70Tk0MYciDsVrf+rMaBBER0t
+         RL8B6896jNKW3Iy/vkxFx8+a3rpTQ0OI/44dfx9tFbhM5qoA8leG75InhpZUrW5PqHxu
+         qZekONAdTbhclhMU53au6kOBCRF+/ZZi4VVkmdNinRs0q6OcWKh+97qFsd406IaqIyr+
+         zd9Q==
+X-Gm-Message-State: AOAM5307ZzB/GiRD8f5p8be7fIICKx9cGC2ta7PeZU/8uXTYvg+fEBQV
+        pJbj68KzuzcrWwwsGI28tiHfeT+0MNWNHdkpOPXHug==
+X-Google-Smtp-Source: ABdhPJzXkCGm7OG5XsU6NkyfdBiqjONEKooP872F/l4oHbI98KkoThhR0NUJt7FrNPPtYs39W5QwDbpuLA78r846f48=
+X-Received: by 2002:a81:4402:: with SMTP id r2mr10308216ywa.126.1644542488134;
+ Thu, 10 Feb 2022 17:21:28 -0800 (PST)
 MIME-Version: 1.0
-References: <20220209180804.GA18385@kili>
-In-Reply-To: <20220209180804.GA18385@kili>
+References: <20220202091551.580372-1-colin.i.king@gmail.com>
+In-Reply-To: <20220202091551.580372-1-colin.i.king@gmail.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 11 Feb 2022 02:19:00 +0100
-Message-ID: <CACRpkdbgbrHBO7JFAf9yUjdOfnfavDaDSoUDniHTJT=-im0+oQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: fix loop in k210_pinconf_get_drive()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Sean Anderson <seanga2@gmail.com>,
-        Palmer Dabbelt <palmerdabbelt@google.com>,
-        linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+Date:   Fri, 11 Feb 2022 02:21:16 +0100
+Message-ID: <CACRpkdZUe65yuEBOctguBW4jUFt8U26Rsb_TwdFTdxKbKt58Og@mail.gmail.com>
+Subject: Re: [PATCH] pinctl: doc: Fix spelling mistake "resisitors" -> "resistors"
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Feb 9, 2022 at 7:08 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On Wed, Feb 2, 2022 at 10:15 AM Colin Ian King <colin.i.king@gmail.com> wrote:
 
-> The loop exited too early so the k210_pinconf_drive_strength[0] array
-> element was never used.
+> There is a spelling mistake in the documentation. Fix it.
 >
-> Fixes: d4c34d09ab03 ("pinctrl: Add RISC-V Canaan Kendryte K210 FPIOA driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Patch applied for fixes.
+Patch applied.
 
 Yours,
 Linus Walleij
