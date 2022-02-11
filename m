@@ -2,104 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AAA0C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Feb 2022 00:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A10C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Feb 2022 01:19:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346247AbiBKAU4 (ORCPT
+        id S1346729AbiBKBTM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 10 Feb 2022 19:20:56 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:53274 "EHLO
+        Thu, 10 Feb 2022 20:19:12 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346244AbiBKAUz (ORCPT
+        with ESMTP id S1346719AbiBKBTL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 10 Feb 2022 19:20:55 -0500
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F02B5594;
-        Thu, 10 Feb 2022 16:20:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1644538855; x=1676074855;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=e5IiG17cQUjJ9PQOtAwSdbXG1C8VuyC2rEhJR099Nh0=;
-  b=CKOumQBxcF5ZMTqiM+NbGG2w10b7obDNAH4wV+Qv62oVb2GAExdFxbHT
-   E9G5xVN37/aaf8OWhVbYFNNRwgBheYeB/GUo4j43sC11t0VbptYfSVK1Y
-   jYrmmzdO0Wn/h0aYx+Z7EWuSJE2vcu9tuSQYVhr47s41otER/udhWTmQJ
-   FJszQIsh+J1axg99dYqYt0JrWE9H3gFtUkUCmZMsNovYcG+5b7DDPGk4U
-   BIIFRbSyskrPEo+vsAxj41EtFNGwI3VIaxmwEAhVnsVU6o89BgeTK03eh
-   sIRtZQlGN1Ikvzr+iobUoTRRDkeULjEJiyDW7RGCRw5pm8xiqFJvLDeEB
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10254"; a="336046688"
-X-IronPort-AV: E=Sophos;i="5.88,359,1635231600"; 
-   d="scan'208";a="336046688"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Feb 2022 16:20:55 -0800
-X-IronPort-AV: E=Sophos;i="5.88,359,1635231600"; 
-   d="scan'208";a="774072606"
-Received: from wlincolx-mobl.amr.corp.intel.com (HELO [10.212.86.106]) ([10.212.86.106])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Feb 2022 16:20:54 -0800
-Message-ID: <d26561a1-ddd4-aea0-792d-efce104ad44f@linux.intel.com>
-Date:   Thu, 10 Feb 2022 18:20:53 -0600
+        Thu, 10 Feb 2022 20:19:11 -0500
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 204252651
+        for <kernel-janitors@vger.kernel.org>; Thu, 10 Feb 2022 17:19:12 -0800 (PST)
+Received: by mail-yb1-xb33.google.com with SMTP id j2so20760567ybu.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 10 Feb 2022 17:19:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=H9Yd8/YQb5ZJUEvP4mlzd3FbwU+8QT/5/lgHgUq257s=;
+        b=AIRSI3cMzMaKni8HjGUVaMbZAhUVlceEUvM1TVFe3VPqQyWXLz2Ak+cDAO5nh25AUQ
+         dQ3wE5W1pllDsx+K8PXA7t3fk+pbwx53ncl4DxX+P/sPCtfqhhCY3p7GAiLGMElEMBcT
+         Rs8XBznNz1hO9TGGw0UyBDAxLBlsOUXgNThNiBBNFXT02GOdDU4CcMQpLmmNZtAIXMiP
+         J2U67gmXjBPoFTZ3vC2aObwrtGXtzFhHXF5ryg5us7Gj9GfRYv6xoqaEfVp4BRY4OcPD
+         OmITTZAdt5Pngu3Te8EFZT3oHj3uqqBgP3EASdlKQFgwu1voCxa7FR42hHWE70gz11wS
+         uSFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=H9Yd8/YQb5ZJUEvP4mlzd3FbwU+8QT/5/lgHgUq257s=;
+        b=nvwojvNwaDdRG4oSn+aA5XU8Se1O1g6evGlsoCBUvOJ28UkaVjTjl+SExNGCHa65aD
+         Xc17dBcfLX+OsLNqNhZnuyAAtpFv/OdpVDZxnrVOTa6ZGBD/etmnxTEcmlJYaiu2YG04
+         TsHQKOmg+bxDaLkPpyWzqziHGVEK4Vjqn0WQ+aa2Rnb/JHE/7/vgW1hTyG0jJBpgJG9/
+         DiZFArPxB7LFbMnjh4GjEbfirqrIg3iGxPlY9ozAaGtU6IHb2RrL81BTMPbRBsNy7VRo
+         QX//fCbs48maZymM1UoWG+ijzjL8+bjJVtYNG5DvTGTafLMgnoT9KjEzoNsirXoqHhCs
+         vIBw==
+X-Gm-Message-State: AOAM530WkiVDGRVVgmrdNAy2elwKguPn8ldXEU8kr2Uw/+E2C7+nFZyq
+        bDZLGoHfZWAL5DNGEnR9w4ZFGPBhimpkEvXO9B3MDg==
+X-Google-Smtp-Source: ABdhPJxGv13LWL9egJMKkc/oNhbYkiByJArEzDE8gyZspHDoaexfLcX9zE0exXWR0/WRRRWmGDJt+Pt+o9nTlBDv9/M=
+X-Received: by 2002:a81:4cc3:: with SMTP id z186mr10688352ywa.140.1644542351380;
+ Thu, 10 Feb 2022 17:19:11 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Firefox/91.0 Thunderbird/91.5.0
-Subject: Re: [PATCH 3/9] ASoC: Intel: bytcr_wm5102: use GFP_KERNEL
-Content-Language: en-US
-To:     Julia Lawall <Julia.Lawall@inria.fr>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        Hans de Goede <hdegoede@redhat.com>
-Cc:     alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
-        Takashi Iwai <tiwai@suse.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-References: <20220210204223.104181-1-Julia.Lawall@inria.fr>
- <20220210204223.104181-4-Julia.Lawall@inria.fr>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <20220210204223.104181-4-Julia.Lawall@inria.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220209180804.GA18385@kili>
+In-Reply-To: <20220209180804.GA18385@kili>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 11 Feb 2022 02:19:00 +0100
+Message-ID: <CACRpkdbgbrHBO7JFAf9yUjdOfnfavDaDSoUDniHTJT=-im0+oQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: fix loop in k210_pinconf_get_drive()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Sean Anderson <seanga2@gmail.com>,
+        Palmer Dabbelt <palmerdabbelt@google.com>,
+        linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Wed, Feb 9, 2022 at 7:08 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
+> The loop exited too early so the k210_pinconf_drive_strength[0] array
+> element was never used.
+>
+> Fixes: d4c34d09ab03 ("pinctrl: Add RISC-V Canaan Kendryte K210 FPIOA driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On 2/10/22 14:42, Julia Lawall wrote:
-> Platform_driver probe functions aren't called with locks held
-> and thus don't need GFP_ATOMIC. Use GFP_KERNEL instead.
-> 
-> Problem found with Coccinelle.
+Patch applied for fixes.
 
-Thanks Julia, indeed it's the only case where GFP_ATOMIC is used for
-machine drivers.
-
-This was already present in the initial Android driver from Intel (2013)
-[1] and missed in the multiple passes to get this upstream.
-
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-
-[1]
-https://github.com/lenovo-yt2-dev/android_kernel_lenovo_baytrail/blob/cm-12.1/sound/soc/intel/board/byt_bl_wm5102.c
-
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
->  sound/soc/intel/boards/bytcr_wm5102.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/intel/boards/bytcr_wm5102.c b/sound/soc/intel/boards/bytcr_wm5102.c
-> index 504ef4cab111..8d8e96e3cd2d 100644
-> --- a/sound/soc/intel/boards/bytcr_wm5102.c
-> +++ b/sound/soc/intel/boards/bytcr_wm5102.c
-> @@ -389,7 +389,7 @@ static int snd_byt_wm5102_mc_probe(struct platform_device *pdev)
->  	bool sof_parent;
->  	int ret;
->  
-> -	priv = devm_kzalloc(dev, sizeof(*priv), GFP_ATOMIC);
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
->  	if (!priv)
->  		return -ENOMEM;
->  
-> 
+Yours,
+Linus Walleij
