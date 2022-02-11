@@ -2,140 +2,134 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2CE2C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Feb 2022 07:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 691B2C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Feb 2022 08:12:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238097AbiBKHnP (ORCPT
+        id S237502AbiBKIMm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 11 Feb 2022 02:43:15 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:51110 "EHLO
+        Fri, 11 Feb 2022 03:12:42 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:38940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242790AbiBKHnO (ORCPT
+        with ESMTP id S229808AbiBKIMl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 11 Feb 2022 02:43:14 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 232C0250
-        for <kernel-janitors@vger.kernel.org>; Thu, 10 Feb 2022 23:43:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1644565393;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Q+JoBX4dv2Ujy4kHFl4q2D9yIGmIdd5volu8AUosqWE=;
-        b=RdUhG+Hyq2LpweCA5pPN7RiZhctVT43Bxc9M2053mC39yhfl2J1kE3oZc7IPhh9VJJzpvV
-        FzbkkfLl8F+xuoxf3QX3BnU8RtY+zZBT5fDGfoim533yFV6SSX0+JyOeUWwt19CFA4myT/
-        ujPhZ3S8qumHSO+oOJMovj0E8yPh/VU=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-42-GobrnTxqNKCZYYGr_mUQMA-1; Fri, 11 Feb 2022 02:43:12 -0500
-X-MC-Unique: GobrnTxqNKCZYYGr_mUQMA-1
-Received: by mail-ej1-f69.google.com with SMTP id mp5-20020a1709071b0500b0069f2ba47b20so3677114ejc.19
-        for <kernel-janitors@vger.kernel.org>; Thu, 10 Feb 2022 23:43:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Q+JoBX4dv2Ujy4kHFl4q2D9yIGmIdd5volu8AUosqWE=;
-        b=HL+Cb+8FXM2BnDYq0qZhmgA1MNawL8gZVwBFN/LinUDK0XprZJXJqN81ulgjo2OJMM
-         L7oJodZA4uAjc1FqBUqWCbPMQ1QuGu9AdeN3nf/8GAbzf2ZOcgGIJJaUnQfoFcETu70q
-         34WQwC57U0MriCLBFCZXk5vta5eBirohyQNZVTQlXZYB1gNPQis6u2FK2I67HMt88fTq
-         Lw8tOe9/sQwtVh/wEQpeOPZDVvvXnu65uVSt4Z9oYHMWN7Kl7rS5F9O0K9w+3x9O0ObX
-         /xAsXdBaSD6POB5bbRTNG7K4rffyjRiotlpez3c58SgCTkJwUWtLTPuj+fAza1yvQYFA
-         fwVw==
-X-Gm-Message-State: AOAM533bNnqSXH0kv946iJKCGYh97ZTLaYmQISBsF9XemyH+l6jDYCTC
-        eXsFyRkuVclRgzpsQtRJbEc7hcIM7qV2ZjmjCPIj7AP48h3u1z8BHmPhLU8b3XQp2EeGcF35RN0
-        861TIFE91Ozw1GiZXzRiqAQXZCJ/r
-X-Received: by 2002:a17:906:5d14:: with SMTP id g20mr322480ejt.37.1644565391017;
-        Thu, 10 Feb 2022 23:43:11 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwEfQpRtLobU4UAs4SWOVNcJDhEjOkbQmmbly0Xr2tW7hupHSA1QdZZhCzrr2fKvmPOHvfu0w==
-X-Received: by 2002:a17:906:5d14:: with SMTP id g20mr322469ejt.37.1644565390811;
-        Thu, 10 Feb 2022 23:43:10 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1? (2001-1c00-0c1e-bf00-1db8-22d3-1bc9-8ca1.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1])
-        by smtp.gmail.com with ESMTPSA id g15sm4632241edz.100.2022.02.10.23.43.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Feb 2022 23:43:10 -0800 (PST)
-Message-ID: <d4425819-78c0-ad53-841d-fd59a59c2736@redhat.com>
-Date:   Fri, 11 Feb 2022 08:43:09 +0100
+        Fri, 11 Feb 2022 03:12:41 -0500
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2117.outbound.protection.outlook.com [40.107.236.117])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 408D63B5;
+        Fri, 11 Feb 2022 00:12:39 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=M3aDd4sLBhY8lX5+8rKV+aUyj4r49gOnzb8eoqHivxyyAJmFDgfbdk6gLfByG1UDlnZ6pvc7XKOVegFnb2f8PtJ1WCoT9r+3Et8CwmPUARWO7BcG/H9ZMZsldw0jYWJSBrEEdwYOEHmZoL5TLXHu2vvfmfERKunYQu2+/0sBczXNqIGCmteT7im2WJXopOpwHiM3KrzU6q2njuPh6y1k4R5/Ci2hN6jg7U35wO+Fgqh/sLI9iuivNmAvBCyILol1nwowzM2nEsoZAi0evKxhPmlU7VaKlw7C9nXuaNqZThNS8WYJHrzIJuppeMzAQjmNyPaQQ7XQw8DNlZAkO3kY3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IJjx1s5b0NAvQRvPeN6m7aADwjWtph47MCfAEmUNEsI=;
+ b=bzHgRaB8uKZLK7u9oWhxpCPRuou/7UV1kIBOR1zKPee7n5zndNg4NjKd7r0iyHT997Be8AUi5m2zUqO1cOTAyV57a/1VMLbR9o3eZxlhHf9BMr1IQvU3E0jU59yIq+AiQW3P6UNMKj/ALtmlhnCMfLqZk9QpUFoGx6jK84+rixGtnY9kyCdTvWMzFWAyEdnuzlrGgnEgq6VNzsDXxVNehjJVzCB6gFTQ0o0d9zA7RW5yyKmtM0VR6OVWDLRRuyLMQBU3nlcG8TanDc2PuMZyZyRl4mlmkCv2NY47d/WOHwjZ+ZB+BnO5+JgbAJZb98pQOWPlyeSIObP1U+Fn6JMdqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IJjx1s5b0NAvQRvPeN6m7aADwjWtph47MCfAEmUNEsI=;
+ b=EGiVLOKSqW4ncMns81l6/Mwdx/MvZca8qPFz/p+q9uRcc5BUxm7splB/0HSlMcQicwNgOQcR1DgHBXr3/rr0rnrK4IoqOowBUvUaof13nTnPH0O5DVV3Gef85Gq6Zkd8PZrFZayv5VCov3GBs7ru5D9pSnDy+TDlGnfD10sV7/E=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=corigine.com;
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
+ by BY5PR13MB3668.namprd13.prod.outlook.com (2603:10b6:a03:219::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4975.8; Fri, 11 Feb
+ 2022 08:12:36 +0000
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::7037:b9dc:923c:c20d]) by PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::7037:b9dc:923c:c20d%7]) with mapi id 15.20.4995.008; Fri, 11 Feb 2022
+ 08:12:36 +0000
+Date:   Fri, 11 Feb 2022 09:12:30 +0100
+From:   Simon Horman <simon.horman@corigine.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        John Hurley <john.hurley@netronome.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        oss-drivers@corigine.com, netdev@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] nfp: flower: Fix a potential leak in
+ nfp_tunnel_add_shared_mac()
+Message-ID: <YgYabjkREkxw1/Uf@corigine.com>
+References: <4acb805751f2cf5de8d69e9602a88ec39feff9fc.1644532467.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4acb805751f2cf5de8d69e9602a88ec39feff9fc.1644532467.git.christophe.jaillet@wanadoo.fr>
+X-ClientProxiedBy: AM9P195CA0015.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:20b:21f::20) To PH0PR13MB4842.namprd13.prod.outlook.com
+ (2603:10b6:510:78::6)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH 3/9] ASoC: Intel: bytcr_wm5102: use GFP_KERNEL
-Content-Language: en-US
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Julia Lawall <Julia.Lawall@inria.fr>,
-        Cezary Rojewski <cezary.rojewski@intel.com>
-Cc:     alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
-        Takashi Iwai <tiwai@suse.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-References: <20220210204223.104181-1-Julia.Lawall@inria.fr>
- <20220210204223.104181-4-Julia.Lawall@inria.fr>
- <d26561a1-ddd4-aea0-792d-efce104ad44f@linux.intel.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <d26561a1-ddd4-aea0-792d-efce104ad44f@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 14717b6b-a4f2-47eb-7c59-08d9ed364307
+X-MS-TrafficTypeDiagnostic: BY5PR13MB3668:EE_
+X-Microsoft-Antispam-PRVS: <BY5PR13MB366898C38E39E3028FABEEC1E8309@BY5PR13MB3668.namprd13.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: hhmaF21jqdRE34W/4Bs0SyR9Cj3XgQsFkpYJn9eS07tMwvxZqIWGROGAXXRqfYmSNCWtWqmGlkHxLDYgiaggH9M8QqtPvIQ16wVXfyGyDDMcBZM/kZ+g9BKuSm5X3SlFvTLzZJ2wfX9xZrQL4cxPfSLodlD6eI4zgnOW6hyvMAHJYM+qK+IY8lS7C5QZ3xgeHspD9OSFsLw2MdXJ7JRlkGEvaLclX08U8B/uT4POgqEM+S5pGHD/CLgx4XW2dWUSV9jx1SXxilZie7Pios0LaIqmCQAFJDquwQgmbtHeXmEkTv5vt2uYoC+Qih7B2jeOI/+/Wu7nnkv+ZI3q0VE1nqqee6IrlM1G4eVRjyiodorJMdkVmt0MIBTJ4aRjL5UIFxDkpBv03QGdWpON7nRVJoD5VrtytOsCM0T4juvxOHWdnM9HX+L0DYSn3bTjwCNKviNblv2KR8hTOoo/2alP+Qp/i+BJd54XtMiSkUso5BoCa18UqpbD3C1wv0PqqzHg+UBlsHrSY/UK8JhIi7t0VTsL1tGe6f5pfrnedxamgWnHWlYwhjETucfFB9V3ZiWDsauRNOp/MyHlkvuzoaNPiKg7K0dlP1n3yh0RVTd1O3lqZt5G5tfd8C2x83HBB4DqijmQo/xIBffwQwW3jtLoLQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(346002)(136003)(366004)(376002)(39840400004)(396003)(6666004)(54906003)(44832011)(38100700002)(6916009)(316002)(83380400001)(86362001)(6506007)(2616005)(52116002)(6512007)(8676002)(508600001)(66946007)(66556008)(186003)(5660300002)(36756003)(66476007)(4326008)(4744005)(2906002)(6486002)(8936002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?0jZjx+PmOj9A9aFj0aXoT+As8KAxE51Mgl/irT3E5Fwu5nNSXQxT8qBnUZFk?=
+ =?us-ascii?Q?S91CzDhyJktrAE/2A1K1Wy9JOAWndqTXQg9qsfkw+TGFO9co4KG6awbX0xPQ?=
+ =?us-ascii?Q?O9ZdWMSWRYi1d49C9T5ZmfRremntCi/qXi4Qaos17FREfoA8Ju2v1bzEphGI?=
+ =?us-ascii?Q?i+zzZrsttD7BBLBu0DU5jm8o0IZB5d5kpHj+HMgq6ZVM2MwWrKxBmoQPrHDZ?=
+ =?us-ascii?Q?t/uJqxWqlmqhS5uC7/4YEUPVyjlNpj/79yuyLrqP0MR2xOiy9d+1ElJbXvK9?=
+ =?us-ascii?Q?YvOkriltpXBn1qlPQkx0y2OEHdiPGiw6mVr0LSN4HmvEB8+v7555I57cQkcG?=
+ =?us-ascii?Q?7HmP62h4xtU8iDNGh3u1UYade1irWlNo16D4WG6OvnoqtwL3+DizTnYEDh3b?=
+ =?us-ascii?Q?EC7Oi6e6XKkO9m+gtzFks4hEYqEek+r27/DOjHpbEOvCDehCu6gdzcc3UKqn?=
+ =?us-ascii?Q?ShBZnZRvzOFSLxnNj0uLO63ib/fVBJqU7ZBw5tLh3ZyPvZREtfWwyyXm7sz7?=
+ =?us-ascii?Q?f//w73TvTXBASI9samfacujVLe11ZGOtQOJCP6FtX9Kjz2XXi9rDoDDeQ0hh?=
+ =?us-ascii?Q?OuezDoz12OhRfaYv7KMVaHDiPFBDPmqFu2CgfO7ScenFDAQ2lqWe4vIVjI+f?=
+ =?us-ascii?Q?gXs2fLt6HBHZr3+XJ1cPJimyOfRlFn1EJ0GF+TWy+Qgs+eCHDVYeRi4vfJjN?=
+ =?us-ascii?Q?7uN0b7KjRFyz/iw6EjxqBGSb6pH4DLI4krOiGjAFyAAzWidln6SUSojP9+Tn?=
+ =?us-ascii?Q?AYztLEG1oDei6Z654QD5y2B7VDFcVbbOp1AomlQKa0Hes5qsYsvuH2GuPTh9?=
+ =?us-ascii?Q?4Gvb798lJr1roMwJA3VZPdgcsRNwoJUKV8g2shIXCQqkphkQl00Drs59EqOZ?=
+ =?us-ascii?Q?Ctb6LGGlsiht+UNqxOH5hwOzxOszFiBI0behcyrAEu6v5qOpx5Elaep4EICu?=
+ =?us-ascii?Q?cwOvLZ945cGYXvaU+VJ+wQS1QN3iuoItueyutLxl6w12Lw8qXk/lTCDsvRmF?=
+ =?us-ascii?Q?KMFgg+moS1q+ccJZVo7R7+1glffbQGMCqN+vz+JtfKJ++0/yI3jrre8fALbg?=
+ =?us-ascii?Q?ndF7liDS1v5cOdlZUJIk7qo4w/uPRo7yhQDi4YACVxJWR+FzHTl/N6gdZMsp?=
+ =?us-ascii?Q?7qwSw3Am1QDcdmcURWuusUJnisbNWsweSHEG0bH4jJyxdQnVnWUOMeSqcQ4j?=
+ =?us-ascii?Q?+/luY7rzwLLkmYfR9DtWSzfpeDz3GVtypsJr0kJpDjAC4keQl2XBlMR+1mjM?=
+ =?us-ascii?Q?hNv2tmr5e7ApaIfWNIORM6MQUWlt/sSDhhpTlHVoNICXv7ytCoX4tRNaxkQd?=
+ =?us-ascii?Q?ZVmeuPlP1c2QNM9ao7QYS5BkcePomvRXn9vBa6zdA3G59+kO7g+E4QaXDCxJ?=
+ =?us-ascii?Q?2aOVvMpxdQI3YgTJCjfLJZ4WBZPtkQr9OEvFaLNEB3yLM9QrApNfk/yjCepv?=
+ =?us-ascii?Q?dFA7ZdHCMp9pM471aIkyXYi26OPIkvmdgB8beekeLfy+D8a0EFGI3fGM9RxJ?=
+ =?us-ascii?Q?x1+NQ0SRhkXPWwNXdlVDHL08n5MY0WWN8SP8UfuSuTXKwE/BZ/ZyxW6Pg8Ig?=
+ =?us-ascii?Q?W9//Lxui6stCXiR4jYQp6BlE9syjt1DcaKz9r9SnoBzv3XG287Q9ljaH1wJx?=
+ =?us-ascii?Q?F4/fE5OEvQLxASTcl68DE/NA4Xox3Ujie1gh/AbzNFj/Et5gdeLXS3TMips0?=
+ =?us-ascii?Q?yOCef+iNvWdAnVdMLAN4ZniivVfC0Mr/huqdRVeAReRBn6uBKehttPtXbKgH?=
+ =?us-ascii?Q?kPtsK/GXcA=3D=3D?=
+X-OriginatorOrg: corigine.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 14717b6b-a4f2-47eb-7c59-08d9ed364307
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Feb 2022 08:12:36.0560
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eTqQeRgBi/18zeaDLn4OOhPLE4wdoxLIyRIBruLCp6FeHbfr6tu1jKMzLIA33iMY0L/KNMEBacGICcKhFkHaPvrYMXUSViyh8skx9N4SWiU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR13MB3668
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
-
-On 2/11/22 01:20, Pierre-Louis Bossart wrote:
+On Thu, Feb 10, 2022 at 11:34:52PM +0100, Christophe JAILLET wrote:
+> ida_simple_get() returns an id between min (0) and max (NFP_MAX_MAC_INDEX)
+> inclusive.
+> So NFP_MAX_MAC_INDEX (0xff) is a valid id.
 > 
+> In order for the error handling path to work correctly, the 'invalid'
+> value for 'ida_idx' should not be in the 0..NFP_MAX_MAC_INDEX range,
+> inclusive.
 > 
-> On 2/10/22 14:42, Julia Lawall wrote:
->> Platform_driver probe functions aren't called with locks held
->> and thus don't need GFP_ATOMIC. Use GFP_KERNEL instead.
->>
->> Problem found with Coccinelle.
+> So set it to -1.
 > 
-> Thanks Julia, indeed it's the only case where GFP_ATOMIC is used for
-> machine drivers.
-> 
-> This was already present in the initial Android driver from Intel (2013)
-> [1] and missed in the multiple passes to get this upstream.
-> 
-> Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> Fixes: 20cce8865098 ("nfp: flower: enable MAC address sharing for offloadable devs")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Yeah I should have caught this when I upstreamed the machine driver:
+Thanks again for finding and fixing this.
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-
-
-> 
-> [1]
-> https://github.com/lenovo-yt2-dev/android_kernel_lenovo_baytrail/blob/cm-12.1/sound/soc/intel/board/byt_bl_wm5102.c
-> 
->>
->> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
->>
->> ---
->>  sound/soc/intel/boards/bytcr_wm5102.c |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/sound/soc/intel/boards/bytcr_wm5102.c b/sound/soc/intel/boards/bytcr_wm5102.c
->> index 504ef4cab111..8d8e96e3cd2d 100644
->> --- a/sound/soc/intel/boards/bytcr_wm5102.c
->> +++ b/sound/soc/intel/boards/bytcr_wm5102.c
->> @@ -389,7 +389,7 @@ static int snd_byt_wm5102_mc_probe(struct platform_device *pdev)
->>  	bool sof_parent;
->>  	int ret;
->>  
->> -	priv = devm_kzalloc(dev, sizeof(*priv), GFP_ATOMIC);
->> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
->>  	if (!priv)
->>  		return -ENOMEM;
->>  
->>
-> 
-
+Acked-by: Simon Horman <simon.horman@corigine.com>
