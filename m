@@ -2,110 +2,140 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E4A3C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Feb 2022 07:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2CE2C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Feb 2022 07:43:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347759AbiBKHnG (ORCPT
+        id S238097AbiBKHnP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 11 Feb 2022 02:43:06 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50954 "EHLO
+        Fri, 11 Feb 2022 02:43:15 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:51110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243498AbiBKHnF (ORCPT
+        with ESMTP id S242790AbiBKHnO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 11 Feb 2022 02:43:05 -0500
-Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85A4B2A6
-        for <kernel-janitors@vger.kernel.org>; Thu, 10 Feb 2022 23:43:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1644565383; x=1676101383;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=xV1Xt7qZuIJbKdhiwEYGnwXjYuIyIN/x/fsiGnpmYYw=;
-  b=gR0CMY5xOiGsFv1MY7269WO0VyHR2C3p/fNCQm1UWgGizlARj75eQhMa
-   2VrO+scOjWGgXOE9vYzsmp6RFaEJJ56oKWsNxy3DF/afOL6nmqyqeMapg
-   bD0JydhIjxYSu4Wqd2Bu9JpAEzhul/OrqEmGfvAwkj0mB2tK3ky19GvDV
-   myE5KTPNSEh5nt7s05LZ81Aq17bF/cF3bfkeWiI3JiUllQrbegA4Pxpwt
-   xYuif8KxAOl0e+6cfl9gG3ysQm2sUS34AaqH8NJHN+d4TpTsPL7yMztYK
-   f3bZJOFnBwyzEpzztduDd3YhOgBk1Qv5Om4xReDCdbZvOTgYLuPY9GSO/
-   g==;
-X-IronPort-AV: E=Sophos;i="5.88,359,1635177600"; 
-   d="scan'208";a="192675431"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 11 Feb 2022 15:43:02 +0800
-IronPort-SDR: jFV6QmDFeTZp7hVZ42MWZ/0EicM9yZ7nM3N6noOL9k6rWwLq9y/7x+q4MovhvOSdOSOlYrSGFN
- CZJLKclWAUvm4SMLBIIQ7Gy8HNsDQsgcXVemz9v+qqjV5xgCOFXzw2OSLM5pCqLb3rjKPZsKdC
- Z7iLy4QTC5A9+EaZniezdgGo/sSyDmSWPx0+f73tVZCC2ZZf+jOpTfXRqMVR5v5s3SSB7dWqnX
- aBCpJmdJ7QoTt3NPzDMRQ0mMsQp8iBFdShQ2MGJ3lgm2iNZqUo9i1xQD7/bghmadiWcj+UjmOf
- edLsXCUv5bCbL04ttWfnpyo/
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Feb 2022 23:14:50 -0800
-IronPort-SDR: 5RE0OWWXScMND5IunUVgqi8iucT58QT6H2nh69QyFyv3QDM6TwFhCf53T9APPDDBRLlzuUFVl6
- 2ODsWkePOA7LAu0Z/MuKKo27MHQy/6pal4syo2QSvqJjuUQ63IV+WEMrK3BadkvcNQjQsNR9+n
- xvELZyb92hnmQn1IFOQZz2VY4GYxSCVCDi/j24eu3+Zp6O9Y1AVvTYrDsL1SXQQuZTnJLcosLX
- SxL5WKuFN8GIeSz0kEHEUn8zctF0QMRReLXodltpLLRewb+zmeTHDn2pUHX5JoPcrZpnkAP9+f
- 4HE=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Feb 2022 23:43:05 -0800
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4Jw5FN0DrWz1SVp2
-        for <kernel-janitors@vger.kernel.org>; Thu, 10 Feb 2022 23:43:03 -0800 (PST)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1644565383; x=1647157384; bh=xV1Xt7qZuIJbKdhiwEYGnwXjYuIyIN/x/fs
-        iGnpmYYw=; b=JshSfVVOYE959No6nGQxRVk63PT3RmP6PQaYbL6DMAGcEbn159d
-        J7fyaH3wFhG73FJZng8Cp6a2tocOx8Z8+tHXzJ8yVuW8dNbaY7DlArOW2LLzN5Ba
-        dbQGF08J3JNDzSP+tnvqAwZq05WwsUH/bi/k5bzqxSklFFXoilKZttGp1S62vWE/
-        WVffW6JiKk92wkwsJ7u6IqAPjormbCW/BAcYR86tjoXuPt+EmoS0SvJb9o78SYIW
-        CtaHXBnTEkBurbDsWhNaLIOX08FmNqf1n16YYlbrSvB9RLcLwUmH18iNmQ1qmgPP
-        qhI6xEyGfZKKEObLKgYPeRfqj379FfVaOgQ==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id sQvmhjpaeb2j for <kernel-janitors@vger.kernel.org>;
-        Thu, 10 Feb 2022 23:43:03 -0800 (PST)
-Received: from [10.225.163.67] (unknown [10.225.163.67])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4Jw5FL664Gz1SHwl;
-        Thu, 10 Feb 2022 23:43:02 -0800 (PST)
-Message-ID: <ddc1de5f-04b2-19a3-ef95-dad189a66d04@opensource.wdc.com>
-Date:   Fri, 11 Feb 2022 16:43:01 +0900
+        Fri, 11 Feb 2022 02:43:14 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 232C0250
+        for <kernel-janitors@vger.kernel.org>; Thu, 10 Feb 2022 23:43:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1644565393;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Q+JoBX4dv2Ujy4kHFl4q2D9yIGmIdd5volu8AUosqWE=;
+        b=RdUhG+Hyq2LpweCA5pPN7RiZhctVT43Bxc9M2053mC39yhfl2J1kE3oZc7IPhh9VJJzpvV
+        FzbkkfLl8F+xuoxf3QX3BnU8RtY+zZBT5fDGfoim533yFV6SSX0+JyOeUWwt19CFA4myT/
+        ujPhZ3S8qumHSO+oOJMovj0E8yPh/VU=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-42-GobrnTxqNKCZYYGr_mUQMA-1; Fri, 11 Feb 2022 02:43:12 -0500
+X-MC-Unique: GobrnTxqNKCZYYGr_mUQMA-1
+Received: by mail-ej1-f69.google.com with SMTP id mp5-20020a1709071b0500b0069f2ba47b20so3677114ejc.19
+        for <kernel-janitors@vger.kernel.org>; Thu, 10 Feb 2022 23:43:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=Q+JoBX4dv2Ujy4kHFl4q2D9yIGmIdd5volu8AUosqWE=;
+        b=HL+Cb+8FXM2BnDYq0qZhmgA1MNawL8gZVwBFN/LinUDK0XprZJXJqN81ulgjo2OJMM
+         L7oJodZA4uAjc1FqBUqWCbPMQ1QuGu9AdeN3nf/8GAbzf2ZOcgGIJJaUnQfoFcETu70q
+         34WQwC57U0MriCLBFCZXk5vta5eBirohyQNZVTQlXZYB1gNPQis6u2FK2I67HMt88fTq
+         Lw8tOe9/sQwtVh/wEQpeOPZDVvvXnu65uVSt4Z9oYHMWN7Kl7rS5F9O0K9w+3x9O0ObX
+         /xAsXdBaSD6POB5bbRTNG7K4rffyjRiotlpez3c58SgCTkJwUWtLTPuj+fAza1yvQYFA
+         fwVw==
+X-Gm-Message-State: AOAM533bNnqSXH0kv946iJKCGYh97ZTLaYmQISBsF9XemyH+l6jDYCTC
+        eXsFyRkuVclRgzpsQtRJbEc7hcIM7qV2ZjmjCPIj7AP48h3u1z8BHmPhLU8b3XQp2EeGcF35RN0
+        861TIFE91Ozw1GiZXzRiqAQXZCJ/r
+X-Received: by 2002:a17:906:5d14:: with SMTP id g20mr322480ejt.37.1644565391017;
+        Thu, 10 Feb 2022 23:43:11 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwEfQpRtLobU4UAs4SWOVNcJDhEjOkbQmmbly0Xr2tW7hupHSA1QdZZhCzrr2fKvmPOHvfu0w==
+X-Received: by 2002:a17:906:5d14:: with SMTP id g20mr322469ejt.37.1644565390811;
+        Thu, 10 Feb 2022 23:43:10 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1? (2001-1c00-0c1e-bf00-1db8-22d3-1bc9-8ca1.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1])
+        by smtp.gmail.com with ESMTPSA id g15sm4632241edz.100.2022.02.10.23.43.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Feb 2022 23:43:10 -0800 (PST)
+Message-ID: <d4425819-78c0-ad53-841d-fd59a59c2736@redhat.com>
+Date:   Fri, 11 Feb 2022 08:43:09 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 5/9] pata_mpc52xx: use GFP_KERNEL
+ Thunderbird/91.3.0
+Subject: Re: [PATCH 3/9] ASoC: Intel: bytcr_wm5102: use GFP_KERNEL
 Content-Language: en-US
-To:     Julia Lawall <Julia.Lawall@inria.fr>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>
-Cc:     kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Julia Lawall <Julia.Lawall@inria.fr>,
+        Cezary Rojewski <cezary.rojewski@intel.com>
+Cc:     alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        Takashi Iwai <tiwai@suse.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
 References: <20220210204223.104181-1-Julia.Lawall@inria.fr>
- <20220210204223.104181-6-Julia.Lawall@inria.fr>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <20220210204223.104181-6-Julia.Lawall@inria.fr>
+ <20220210204223.104181-4-Julia.Lawall@inria.fr>
+ <d26561a1-ddd4-aea0-792d-efce104ad44f@linux.intel.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <d26561a1-ddd4-aea0-792d-efce104ad44f@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2/11/22 05:42, Julia Lawall wrote:
-> Platform_driver probe functions aren't called with locks held
-> and thus don't need GFP_ATOMIC. Use GFP_KERNEL instead.
+Hi,
+
+On 2/11/22 01:20, Pierre-Louis Bossart wrote:
 > 
-> Problem found with Coccinelle.
 > 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> On 2/10/22 14:42, Julia Lawall wrote:
+>> Platform_driver probe functions aren't called with locks held
+>> and thus don't need GFP_ATOMIC. Use GFP_KERNEL instead.
+>>
+>> Problem found with Coccinelle.
+> 
+> Thanks Julia, indeed it's the only case where GFP_ATOMIC is used for
+> machine drivers.
+> 
+> This was already present in the initial Android driver from Intel (2013)
+> [1] and missed in the multiple passes to get this upstream.
+> 
+> Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-Applied to for-5.18. Thanks !
+Yeah I should have caught this when I upstreamed the machine driver:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
 
 
--- 
-Damien Le Moal
-Western Digital Research
+
+> 
+> [1]
+> https://github.com/lenovo-yt2-dev/android_kernel_lenovo_baytrail/blob/cm-12.1/sound/soc/intel/board/byt_bl_wm5102.c
+> 
+>>
+>> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+>>
+>> ---
+>>  sound/soc/intel/boards/bytcr_wm5102.c |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/sound/soc/intel/boards/bytcr_wm5102.c b/sound/soc/intel/boards/bytcr_wm5102.c
+>> index 504ef4cab111..8d8e96e3cd2d 100644
+>> --- a/sound/soc/intel/boards/bytcr_wm5102.c
+>> +++ b/sound/soc/intel/boards/bytcr_wm5102.c
+>> @@ -389,7 +389,7 @@ static int snd_byt_wm5102_mc_probe(struct platform_device *pdev)
+>>  	bool sof_parent;
+>>  	int ret;
+>>  
+>> -	priv = devm_kzalloc(dev, sizeof(*priv), GFP_ATOMIC);
+>> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+>>  	if (!priv)
+>>  		return -ENOMEM;
+>>  
+>>
+> 
+
