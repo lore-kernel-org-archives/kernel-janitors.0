@@ -2,72 +2,120 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 369EFC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Feb 2022 00:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43192C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Feb 2022 09:58:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354484AbiBLAyC (ORCPT
+        id S233303AbiBLJ6g (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 11 Feb 2022 19:54:02 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:51690 "EHLO
+        Sat, 12 Feb 2022 04:58:36 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240377AbiBLAyC (ORCPT
+        with ESMTP id S233291AbiBLJ6f (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 11 Feb 2022 19:54:02 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E25CD44;
-        Fri, 11 Feb 2022 16:53:59 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AFA1961D6F;
-        Sat, 12 Feb 2022 00:53:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6A26C340E9;
-        Sat, 12 Feb 2022 00:53:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644627238;
-        bh=c5QTto3nIipjljAfBREqA9bPfy3ZjC7JQ20nTi6pERA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=uZyH84KAwrqX3N5sIeyjEwwI37yTCbu3uaA2vkZ3BcoPYrMA3FQ0uwRyLqlaXj15u
-         9krCb4veUck5vgSVCiCqn+GbzSs3cXlgQJAF7nLNw5sXYnZt1OQz17V1/CIHMSyhOo
-         b5wsLKY7MhGCcEyvI2Iuwje5Zu2ve7yT/ZI82QxqaY3LFtBH9ZmagYtCx8vlHaXq17
-         7evFnt8DzalOmceAksbIw7oiXRICWfebwBHCfQCbb0w9bAumGXiy3AO357l7iwOFdj
-         5QGWZTR+Rjg121HVrj/PJ6UQvPHANu9gN/5NSxY4wkvlqoJLfOVQWiz6RQdDU7aqEQ
-         n1RrWIAcINHmA==
-Date:   Fri, 11 Feb 2022 16:53:56 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Simon Horman <simon.horman@corigine.com>,
+        Sat, 12 Feb 2022 04:58:35 -0500
+Received: from smtp.smtpout.orange.fr (smtp09.smtpout.orange.fr [80.12.242.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F8F626107
+        for <kernel-janitors@vger.kernel.org>; Sat, 12 Feb 2022 01:58:30 -0800 (PST)
+Received: from pop-os.home ([90.126.236.122])
+        by smtp.orange.fr with ESMTPA
+        id IpAhndzDgtSo5IpAhneZDI; Sat, 12 Feb 2022 10:58:29 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sat, 12 Feb 2022 10:58:29 +0100
+X-ME-IP: 90.126.236.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Roopa Prabhu <roopa@nvidia.com>,
+        Nikolay Aleksandrov <nikolay@nvidia.com>,
         "David S. Miller" <davem@davemloft.net>,
-        John Hurley <john.hurley@netronome.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        oss-drivers@corigine.com, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] nfp: flower: Fix a potential leak in
- nfp_tunnel_add_shared_mac()
-Message-ID: <20220211165356.1927a81b@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-In-Reply-To: <4acb805751f2cf5de8d69e9602a88ec39feff9fc.1644532467.git.christophe.jaillet@wanadoo.fr>
-References: <4acb805751f2cf5de8d69e9602a88ec39feff9fc.1644532467.git.christophe.jaillet@wanadoo.fr>
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        bridge@lists.linux-foundation.org, netdev@vger.kernel.org
+Subject: [PATCH] net: bridge: Slightly optimize br_stp_change_bridge_id()
+Date:   Sat, 12 Feb 2022 10:58:20 +0100
+Message-Id: <73f674075ae5279e3d2fa07d61a0a75bc50790f3.1644659879.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 10 Feb 2022 23:34:52 +0100 Christophe JAILLET wrote:
-> ida_simple_get() returns an id between min (0) and max (NFP_MAX_MAC_INDEX)
-> inclusive.
-> So NFP_MAX_MAC_INDEX (0xff) is a valid id.
-> 
-> In order for the error handling path to work correctly, the 'invalid'
-> value for 'ida_idx' should not be in the 0..NFP_MAX_MAC_INDEX range,
-> inclusive.
-> 
-> So set it to -1.
-> 
-> Fixes: 20cce8865098 ("nfp: flower: enable MAC address sharing for offloadable devs")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+ether_addr_equal_64bits() can easy be used in place of ether_addr_equal()
+here.
+Padding in the 'net_bridge_port' structure is already there because it is a
+huge structure and the required fields are not at the end.
+'oldaddr' is local to the function. So add the required padding
+explicitly and simplify its definition.
 
-This patch is a fix and the other one is refactoring. They can't be
-in the same series because they need to go to different trees. Please
-repost the former with [PATCH net] and ~one week later the latter with
-[PATCH net-next].
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is more a POC for me.
+
+I'm unsure that using ether_addr_equal_64bits() is really useful. The
+speedup should be mostly un-noticeable.
+
+To make sure that we have the required padding, we either need to waste
+some space or rely on the fact that the address is embedded in a large
+enough structure. (which is the case here)
+
+So, it looks fragile to me and not future-proof.
+
+Feed-back highly appreciated to see if such patches are welcome and if I
+should spend some time on it.
+---
+ net/bridge/br_private.h |  5 +++++
+ net/bridge/br_stp_if.c  | 12 +++++++-----
+ 2 files changed, 12 insertions(+), 5 deletions(-)
+
+diff --git a/net/bridge/br_private.h b/net/bridge/br_private.h
+index 2661dda1a92b..2f78090574c9 100644
+--- a/net/bridge/br_private.h
++++ b/net/bridge/br_private.h
+@@ -363,6 +363,11 @@ struct net_bridge_port {
+ 	unsigned char			config_pending;
+ 	port_id				port_id;
+ 	port_id				designated_port;
++	/*
++	 * designated_root and designated_bridge must NOT be at the end of the
++	 * structure because ether_addr_equal_64bits() requires 2 bytes of
++	 * padding.
++	 */
+ 	bridge_id			designated_root;
+ 	bridge_id			designated_bridge;
+ 	u32				path_cost;
+diff --git a/net/bridge/br_stp_if.c b/net/bridge/br_stp_if.c
+index 75204d36d7f9..1bf0aaf29e5e 100644
+--- a/net/bridge/br_stp_if.c
++++ b/net/bridge/br_stp_if.c
+@@ -221,9 +221,11 @@ int br_stp_set_enabled(struct net_bridge *br, unsigned long val,
+ /* called under bridge lock */
+ void br_stp_change_bridge_id(struct net_bridge *br, const unsigned char *addr)
+ {
+-	/* should be aligned on 2 bytes for ether_addr_equal() */
+-	unsigned short oldaddr_aligned[ETH_ALEN >> 1];
+-	unsigned char *oldaddr = (unsigned char *)oldaddr_aligned;
++	/*
++	 * should be aligned on 2 bytes and have 2 bytes of padding for
++	 * ether_addr_equal_64bits()
++	 */
++	unsigned char oldaddr[ETH_ALEN + 2] __aligned(2);
+ 	struct net_bridge_port *p;
+ 	int wasroot;
+ 
+@@ -236,10 +238,10 @@ void br_stp_change_bridge_id(struct net_bridge *br, const unsigned char *addr)
+ 	eth_hw_addr_set(br->dev, addr);
+ 
+ 	list_for_each_entry(p, &br->port_list, list) {
+-		if (ether_addr_equal(p->designated_bridge.addr, oldaddr))
++		if (ether_addr_equal_64bits(p->designated_bridge.addr, oldaddr))
+ 			memcpy(p->designated_bridge.addr, addr, ETH_ALEN);
+ 
+-		if (ether_addr_equal(p->designated_root.addr, oldaddr))
++		if (ether_addr_equal_64bits(p->designated_root.addr, oldaddr))
+ 			memcpy(p->designated_root.addr, addr, ETH_ALEN);
+ 	}
+ 
+-- 
+2.32.0
+
