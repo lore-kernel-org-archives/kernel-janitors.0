@@ -2,82 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5B2C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Feb 2022 00:20:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 369EFC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Feb 2022 00:54:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354367AbiBLAUN (ORCPT
+        id S1354484AbiBLAyC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 11 Feb 2022 19:20:13 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56210 "EHLO
+        Fri, 11 Feb 2022 19:54:02 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:51690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242447AbiBLAUN (ORCPT
+        with ESMTP id S240377AbiBLAyC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 11 Feb 2022 19:20:13 -0500
+        Fri, 11 Feb 2022 19:54:02 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CF49D77;
-        Fri, 11 Feb 2022 16:20:11 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E25CD44;
+        Fri, 11 Feb 2022 16:53:59 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CB11461C65;
-        Sat, 12 Feb 2022 00:20:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2E48FC340EB;
-        Sat, 12 Feb 2022 00:20:10 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AFA1961D6F;
+        Sat, 12 Feb 2022 00:53:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6A26C340E9;
+        Sat, 12 Feb 2022 00:53:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644625210;
-        bh=0zIZnmg6cx0oOGvsLFwIZcbJ3GzQws/5gbITP1ynZxE=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=tqAQVvhvpFhnlB/uIOph5mZq3c5vOEOHwkETa7oGTI6aouf7MhFfm95BvE3TwEcYK
-         rsl2FGF7Sayyn0kfvfFT5fbb4L4UxUkI+f6Fn8Xd64nH3ld/qz8ucxOTbCYvBEdjie
-         HkPK3VTza3Im7akOiPU74OZkW6PiX4MXdsfPUq8F0FRilCFmOlHYV8hQ7elzHzRcaN
-         IdnXI9pPm8thVlM5st8fzcCe3l1OjE2Tt/XG64mHhjYWfKcWkEOLUuH6MdPDnfCuud
-         tm13iz21ysklrmpqFeHXWwc2C7n1Ws1gnQSjrNjjAFRzAp2wN8/jGxH04rx8iggaAG
-         kxUXGY6LwrVMQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 13B25E5D09D;
-        Sat, 12 Feb 2022 00:20:10 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1644627238;
+        bh=c5QTto3nIipjljAfBREqA9bPfy3ZjC7JQ20nTi6pERA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=uZyH84KAwrqX3N5sIeyjEwwI37yTCbu3uaA2vkZ3BcoPYrMA3FQ0uwRyLqlaXj15u
+         9krCb4veUck5vgSVCiCqn+GbzSs3cXlgQJAF7nLNw5sXYnZt1OQz17V1/CIHMSyhOo
+         b5wsLKY7MhGCcEyvI2Iuwje5Zu2ve7yT/ZI82QxqaY3LFtBH9ZmagYtCx8vlHaXq17
+         7evFnt8DzalOmceAksbIw7oiXRICWfebwBHCfQCbb0w9bAumGXiy3AO357l7iwOFdj
+         5QGWZTR+Rjg121HVrj/PJ6UQvPHANu9gN/5NSxY4wkvlqoJLfOVQWiz6RQdDU7aqEQ
+         n1RrWIAcINHmA==
+Date:   Fri, 11 Feb 2022 16:53:56 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Simon Horman <simon.horman@corigine.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        John Hurley <john.hurley@netronome.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        oss-drivers@corigine.com, netdev@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] nfp: flower: Fix a potential leak in
+ nfp_tunnel_add_shared_mac()
+Message-ID: <20220211165356.1927a81b@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+In-Reply-To: <4acb805751f2cf5de8d69e9602a88ec39feff9fc.1644532467.git.christophe.jaillet@wanadoo.fr>
+References: <4acb805751f2cf5de8d69e9602a88ec39feff9fc.1644532467.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/9] use GFP_KERNEL
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164462521007.28025.17507178732984421339.git-patchwork-notify@kernel.org>
-Date:   Sat, 12 Feb 2022 00:20:10 +0000
-References: <20220210204223.104181-1-Julia.Lawall@inria.fr>
-In-Reply-To: <20220210204223.104181-1-Julia.Lawall@inria.fr>
-To:     Julia Lawall <julia.lawall@inria.fr>
-Cc:     linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        MPT-FusionLinux.pdl@broadcom.com, linux-crypto@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, alsa-devel@alsa-project.org,
-        s.shtylyov@omp.ru, linux-ide@vger.kernel.org,
-        linux-mtd@lists.infradead.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu, 10 Feb 2022 21:42:14 +0100 you wrote:
-> Platform_driver and pci_driver probe functions aren't called with
-> locks held and thus don't need GFP_ATOMIC. Use GFP_KERNEL instead.
+On Thu, 10 Feb 2022 23:34:52 +0100 Christophe JAILLET wrote:
+> ida_simple_get() returns an id between min (0) and max (NFP_MAX_MAC_INDEX)
+> inclusive.
+> So NFP_MAX_MAC_INDEX (0xff) is a valid id.
 > 
-> All changes have been compile-tested.
+> In order for the error handling path to work correctly, the 'invalid'
+> value for 'ida_idx' should not be in the 0..NFP_MAX_MAC_INDEX range,
+> inclusive.
 > 
-> ---
+> So set it to -1.
 > 
-> [...]
+> Fixes: 20cce8865098 ("nfp: flower: enable MAC address sharing for offloadable devs")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Here is the summary with links:
-  - [1/9] net: moxa: use GFP_KERNEL
-    https://git.kernel.org/netdev/net-next/c/c9ac080b25d9
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+This patch is a fix and the other one is refactoring. They can't be
+in the same series because they need to go to different trees. Please
+repost the former with [PATCH net] and ~one week later the latter with
+[PATCH net-next].
