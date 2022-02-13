@@ -2,37 +2,39 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C754C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Feb 2022 19:49:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19BB8C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Feb 2022 21:31:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238046AbiBMTtG (ORCPT
+        id S238400AbiBMVbE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 13 Feb 2022 14:49:06 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60372 "EHLO
+        Sun, 13 Feb 2022 16:31:04 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229737AbiBMTtE (ORCPT
+        with ESMTP id S238362AbiBMVbD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 13 Feb 2022 14:49:04 -0500
-Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC07B3968D
-        for <kernel-janitors@vger.kernel.org>; Sun, 13 Feb 2022 11:48:57 -0800 (PST)
+        Sun, 13 Feb 2022 16:31:03 -0500
+Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E19C253B61
+        for <kernel-janitors@vger.kernel.org>; Sun, 13 Feb 2022 13:30:56 -0800 (PST)
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id JKrendyPyuvBOJKrenOULd; Sun, 13 Feb 2022 20:48:56 +0100
+        id JMSHnpnUSSrXTJMSInbeiQ; Sun, 13 Feb 2022 22:30:54 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 13 Feb 2022 20:48:56 +0100
+X-ME-Date: Sun, 13 Feb 2022 22:30:54 +0100
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Iwona Winiarska <iwona.winiarska@intel.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-hwmon@vger.kernel.org
-Subject: [PATCH] hwmon: peci: Use devm_delayed_work_autocancel() to simplify code
-Date:   Sun, 13 Feb 2022 20:48:53 +0100
-Message-Id: <fd277a708ede3882d7df6831f02d2e3c0cb813b8.1644781718.git.christophe.jaillet@wanadoo.fr>
+        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH] Bluetooth: 6lowpan: No need to clear memory twice
+Date:   Sun, 13 Feb 2022 22:30:47 +0100
+Message-Id: <2f67f1c5ed7de38b78a296c798f3d4afe9e3bd63.1644787831.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -40,56 +42,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use devm_delayed_work_autocancel() instead of hand writing it. This is
-less verbose and saves a few lines of code.
-
-devm_delayed_work_autocancel() uses devm_add_action() instead of
-devm_add_action_or_reset(). This is fine, because if the underlying memory
-allocation fails, no work has been scheduled yet. So there is nothing to
-undo.
+'peer_addr' is a structure embedded in 'struct lowpan_peer'. So there is no
+need to explicitly call memset(0) on it. It is already zeroed by kzalloc()
+when 'peer' is allocated.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/hwmon/peci/dimmtemp.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
+ net/bluetooth/6lowpan.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/hwmon/peci/dimmtemp.c b/drivers/hwmon/peci/dimmtemp.c
-index c8222354c005..96b9919db357 100644
---- a/drivers/hwmon/peci/dimmtemp.c
-+++ b/drivers/hwmon/peci/dimmtemp.c
-@@ -4,6 +4,7 @@
- #include <linux/auxiliary_bus.h>
- #include <linux/bitfield.h>
- #include <linux/bitops.h>
-+#include <linux/devm-helpers.h>
- #include <linux/hwmon.h>
- #include <linux/jiffies.h>
- #include <linux/module.h>
-@@ -378,13 +379,6 @@ static void create_dimm_temp_info_delayed(struct work_struct *work)
- 		dev_err(priv->dev, "Failed to populate DIMM temp info\n");
- }
+diff --git a/net/bluetooth/6lowpan.c b/net/bluetooth/6lowpan.c
+index 133d7ea063fb..8e8c07541153 100644
+--- a/net/bluetooth/6lowpan.c
++++ b/net/bluetooth/6lowpan.c
+@@ -641,7 +641,6 @@ static struct l2cap_chan *add_peer_chan(struct l2cap_chan *chan,
+ 		return NULL;
  
--static void remove_delayed_work(void *_priv)
--{
--	struct peci_dimmtemp *priv = _priv;
--
--	cancel_delayed_work_sync(&priv->detect_work);
--}
--
- static int peci_dimmtemp_probe(struct auxiliary_device *adev, const struct auxiliary_device_id *id)
- {
- 	struct device *dev = &adev->dev;
-@@ -415,9 +409,8 @@ static int peci_dimmtemp_probe(struct auxiliary_device *adev, const struct auxil
- 			 "Unexpected PECI revision %#x, some features may be unavailable\n",
- 			 peci_dev->info.peci_revision);
+ 	peer->chan = chan;
+-	memset(&peer->peer_addr, 0, sizeof(struct in6_addr));
  
--	INIT_DELAYED_WORK(&priv->detect_work, create_dimm_temp_info_delayed);
--
--	ret = devm_add_action_or_reset(priv->dev, remove_delayed_work, priv);
-+	ret = devm_delayed_work_autocancel(priv->dev, &priv->detect_work,
-+					   create_dimm_temp_info_delayed);
- 	if (ret)
- 		return ret;
+ 	baswap((void *)peer->lladdr, &chan->dst);
  
 -- 
 2.32.0
