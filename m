@@ -2,38 +2,37 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 200DAC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Feb 2022 18:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C754C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Feb 2022 19:49:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237672AbiBMS3T (ORCPT
+        id S238046AbiBMTtG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 13 Feb 2022 13:29:19 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:46710 "EHLO
+        Sun, 13 Feb 2022 14:49:06 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230009AbiBMS3T (ORCPT
+        with ESMTP id S229737AbiBMTtE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 13 Feb 2022 13:29:19 -0500
+        Sun, 13 Feb 2022 14:49:04 -0500
 Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 095A9575EA
-        for <kernel-janitors@vger.kernel.org>; Sun, 13 Feb 2022 10:29:12 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC07B3968D
+        for <kernel-janitors@vger.kernel.org>; Sun, 13 Feb 2022 11:48:57 -0800 (PST)
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id JJcSndXIyuvBOJJcSnONU3; Sun, 13 Feb 2022 19:29:11 +0100
+        id JKrendyPyuvBOJKrenOULd; Sun, 13 Feb 2022 20:48:56 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 13 Feb 2022 19:29:11 +0100
+X-ME-Date: Sun, 13 Feb 2022 20:48:56 +0100
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michal Simek <michal.simek@xilinx.com>
+To:     Iwona Winiarska <iwona.winiarska@intel.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] iio: adc: xilinx-ams: Use devm_delayed_work_autocancel() to simplify code
-Date:   Sun, 13 Feb 2022 19:29:05 +0100
-Message-Id: <2626e6a057e40cd2271ef0e5f81d12e607bad5b4.1644776929.git.christophe.jaillet@wanadoo.fr>
+        linux-hwmon@vger.kernel.org
+Subject: [PATCH] hwmon: peci: Use devm_delayed_work_autocancel() to simplify code
+Date:   Sun, 13 Feb 2022 20:48:53 +0100
+Message-Id: <fd277a708ede3882d7df6831f02d2e3c0cb813b8.1644781718.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -51,43 +50,45 @@ undo.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/iio/adc/xilinx-ams.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/hwmon/peci/dimmtemp.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/iio/adc/xilinx-ams.c b/drivers/iio/adc/xilinx-ams.c
-index 8343c5f74121..6ffddf4038b8 100644
---- a/drivers/iio/adc/xilinx-ams.c
-+++ b/drivers/iio/adc/xilinx-ams.c
-@@ -12,6 +12,7 @@
+diff --git a/drivers/hwmon/peci/dimmtemp.c b/drivers/hwmon/peci/dimmtemp.c
+index c8222354c005..96b9919db357 100644
+--- a/drivers/hwmon/peci/dimmtemp.c
++++ b/drivers/hwmon/peci/dimmtemp.c
+@@ -4,6 +4,7 @@
+ #include <linux/auxiliary_bus.h>
  #include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
+ #include <linux/bitops.h>
 +#include <linux/devm-helpers.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
-@@ -1348,11 +1349,6 @@ static void ams_clk_disable_unprepare(void *data)
- 	clk_disable_unprepare(data);
+ #include <linux/hwmon.h>
+ #include <linux/jiffies.h>
+ #include <linux/module.h>
+@@ -378,13 +379,6 @@ static void create_dimm_temp_info_delayed(struct work_struct *work)
+ 		dev_err(priv->dev, "Failed to populate DIMM temp info\n");
  }
  
--static void ams_cancel_delayed_work(void *data)
+-static void remove_delayed_work(void *_priv)
 -{
--	cancel_delayed_work(data);
+-	struct peci_dimmtemp *priv = _priv;
+-
+-	cancel_delayed_work_sync(&priv->detect_work);
 -}
 -
- static int ams_probe(struct platform_device *pdev)
+ static int peci_dimmtemp_probe(struct auxiliary_device *adev, const struct auxiliary_device_id *id)
  {
- 	struct iio_dev *indio_dev;
-@@ -1389,9 +1385,8 @@ static int ams_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
+ 	struct device *dev = &adev->dev;
+@@ -415,9 +409,8 @@ static int peci_dimmtemp_probe(struct auxiliary_device *adev, const struct auxil
+ 			 "Unexpected PECI revision %#x, some features may be unavailable\n",
+ 			 peci_dev->info.peci_revision);
  
--	INIT_DELAYED_WORK(&ams->ams_unmask_work, ams_unmask_worker);
--	ret = devm_add_action_or_reset(&pdev->dev, ams_cancel_delayed_work,
--				       &ams->ams_unmask_work);
-+	ret = devm_delayed_work_autocancel(&pdev->dev, &ams->ams_unmask_work,
-+					   ams_unmask_worker);
- 	if (ret < 0)
+-	INIT_DELAYED_WORK(&priv->detect_work, create_dimm_temp_info_delayed);
+-
+-	ret = devm_add_action_or_reset(priv->dev, remove_delayed_work, priv);
++	ret = devm_delayed_work_autocancel(priv->dev, &priv->detect_work,
++					   create_dimm_temp_info_delayed);
+ 	if (ret)
  		return ret;
  
 -- 
