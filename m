@@ -2,36 +2,38 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8027C433FE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Feb 2022 17:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 200DAC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Feb 2022 18:29:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237582AbiBMRzR (ORCPT
+        id S237672AbiBMS3T (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 13 Feb 2022 12:55:17 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:51944 "EHLO
+        Sun, 13 Feb 2022 13:29:19 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:46710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230120AbiBMRzR (ORCPT
+        with ESMTP id S230009AbiBMS3T (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 13 Feb 2022 12:55:17 -0500
+        Sun, 13 Feb 2022 13:29:19 -0500
 Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 332505A5AB
-        for <kernel-janitors@vger.kernel.org>; Sun, 13 Feb 2022 09:55:11 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 095A9575EA
+        for <kernel-janitors@vger.kernel.org>; Sun, 13 Feb 2022 10:29:12 -0800 (PST)
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id JJ5WndLDvuvBOJJ5XnOK2P; Sun, 13 Feb 2022 18:55:09 +0100
+        id JJcSndXIyuvBOJJcSnONU3; Sun, 13 Feb 2022 19:29:11 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 13 Feb 2022 18:55:09 +0100
+X-ME-Date: Sun, 13 Feb 2022 19:29:11 +0100
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Support Opensource <support.opensource@diasemi.com>,
-        Sebastian Reichel <sre@kernel.org>
+To:     Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michal Simek <michal.simek@xilinx.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-pm@vger.kernel.org
-Subject: [PATCH] power: supply: da9150-fg: Use devm_delayed_work_autocancel()
-Date:   Sun, 13 Feb 2022 18:55:05 +0100
-Message-Id: <c4cf74b56258c679f69bbc6350179b8b500f5800.1644774892.git.christophe.jaillet@wanadoo.fr>
+        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] iio: adc: xilinx-ams: Use devm_delayed_work_autocancel() to simplify code
+Date:   Sun, 13 Feb 2022 19:29:05 +0100
+Message-Id: <2626e6a057e40cd2271ef0e5f81d12e607bad5b4.1644776929.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -39,91 +41,54 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This driver only uses managed resources, except for the delayed work, if
-it is used.
+Use devm_delayed_work_autocancel() instead of hand writing it. This is
+less verbose and saves a few lines of code.
 
-Use devm_delayed_work_autocancel() to also manage the delayed work.
-The error handling path of the probe and the remove function can both be
-removed.
-
-This saves a few lines of code.
+devm_delayed_work_autocancel() uses devm_add_action() instead of
+devm_add_action_or_reset(). This is fine, because if the underlying memory
+allocation fails, no work has been scheduled yet. So there is nothing to
+undo.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/power/supply/da9150-fg.c | 31 ++++++++++---------------------
- 1 file changed, 10 insertions(+), 21 deletions(-)
+ drivers/iio/adc/xilinx-ams.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/power/supply/da9150-fg.c b/drivers/power/supply/da9150-fg.c
-index 6e367826aae9..e63fa62d1943 100644
---- a/drivers/power/supply/da9150-fg.c
-+++ b/drivers/power/supply/da9150-fg.c
-@@ -20,6 +20,7 @@
- #include <asm/div64.h>
- #include <linux/mfd/da9150/core.h>
- #include <linux/mfd/da9150/registers.h>
+diff --git a/drivers/iio/adc/xilinx-ams.c b/drivers/iio/adc/xilinx-ams.c
+index 8343c5f74121..6ffddf4038b8 100644
+--- a/drivers/iio/adc/xilinx-ams.c
++++ b/drivers/iio/adc/xilinx-ams.c
+@@ -12,6 +12,7 @@
+ #include <linux/bitfield.h>
+ #include <linux/clk.h>
+ #include <linux/delay.h>
 +#include <linux/devm-helpers.h>
- 
- /* Core2Wire */
- #define DA9150_QIF_READ		(0x0 << 7)
-@@ -506,7 +507,13 @@ static int da9150_fg_probe(struct platform_device *pdev)
- 	 * work for reporting data updates.
- 	 */
- 	if (fg->interval) {
--		INIT_DELAYED_WORK(&fg->work, da9150_fg_work);
-+		ret = devm_delayed_work_autocancel(dev, &fg->work,
-+						   da9150_fg_work);
-+		if (ret) {
-+			dev_err(dev, "Failed to init work\n");
-+			return ret;
-+		}
-+
- 		schedule_delayed_work(&fg->work,
- 				      msecs_to_jiffies(fg->interval));
- 	}
-@@ -515,34 +522,17 @@ static int da9150_fg_probe(struct platform_device *pdev)
- 	irq = platform_get_irq_byname(pdev, "FG");
- 	if (irq < 0) {
- 		dev_err(dev, "Failed to get IRQ FG: %d\n", irq);
--		ret = irq;
--		goto irq_fail;
-+		return irq;
- 	}
- 
- 	ret = devm_request_threaded_irq(dev, irq, NULL, da9150_fg_irq,
- 					IRQF_ONESHOT, "FG", fg);
- 	if (ret) {
- 		dev_err(dev, "Failed to request IRQ %d: %d\n", irq, ret);
--		goto irq_fail;
-+		return ret;
- 	}
- 
- 	return 0;
--
--irq_fail:
--	if (fg->interval)
--		cancel_delayed_work(&fg->work);
--
--	return ret;
--}
--
--static int da9150_fg_remove(struct platform_device *pdev)
--{
--	struct da9150_fg *fg = platform_get_drvdata(pdev);
--
--	if (fg->interval)
--		cancel_delayed_work(&fg->work);
--
--	return 0;
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/iopoll.h>
+@@ -1348,11 +1349,6 @@ static void ams_clk_disable_unprepare(void *data)
+ 	clk_disable_unprepare(data);
  }
  
- static int da9150_fg_resume(struct platform_device *pdev)
-@@ -564,7 +554,6 @@ static struct platform_driver da9150_fg_driver = {
- 		.name = "da9150-fuel-gauge",
- 	},
- 	.probe = da9150_fg_probe,
--	.remove = da9150_fg_remove,
- 	.resume = da9150_fg_resume,
- };
+-static void ams_cancel_delayed_work(void *data)
+-{
+-	cancel_delayed_work(data);
+-}
+-
+ static int ams_probe(struct platform_device *pdev)
+ {
+ 	struct iio_dev *indio_dev;
+@@ -1389,9 +1385,8 @@ static int ams_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	INIT_DELAYED_WORK(&ams->ams_unmask_work, ams_unmask_worker);
+-	ret = devm_add_action_or_reset(&pdev->dev, ams_cancel_delayed_work,
+-				       &ams->ams_unmask_work);
++	ret = devm_delayed_work_autocancel(&pdev->dev, &ams->ams_unmask_work,
++					   ams_unmask_worker);
+ 	if (ret < 0)
+ 		return ret;
  
 -- 
 2.32.0
