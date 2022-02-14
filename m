@@ -2,66 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FAFC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Feb 2022 09:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E96D9C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Feb 2022 09:44:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244337AbiBNJlo (ORCPT
+        id S245250AbiBNJo7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Feb 2022 04:41:44 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:34468 "EHLO
+        Mon, 14 Feb 2022 04:44:59 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:33874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244489AbiBNJk3 (ORCPT
+        with ESMTP id S244824AbiBNJo1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Feb 2022 04:40:29 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63F0FAE54;
-        Mon, 14 Feb 2022 01:35:51 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id i14so25711225wrc.10;
-        Mon, 14 Feb 2022 01:35:51 -0800 (PST)
+        Mon, 14 Feb 2022 04:44:27 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B0DA6D19B;
+        Mon, 14 Feb 2022 01:38:12 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id v12so25826263wrv.2;
+        Mon, 14 Feb 2022 01:38:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=/4o0Sh/HDw28K29dhWptIQG7sJvv6LA5ikZvkukruHE=;
-        b=MwgSTZgnHotojaZgn5Sp7lQFJP83AHlDASXB7/1KYjjda8kjGHs9bIYBCcAmML8x0e
-         PwKf8EV+q6zr7osLYlY0/qeHeNvcXePbtftCPgMcLsQiAwM6ZK40uLL8S1ylRg5kVXBs
-         M64EDQrvp1cjYZxftr2qaYjcciNKBHWGvsdx49ZBjlDsFTf7yvP2b0RPBJW5+gD6c42e
-         sQkj1pjWEcUuVgjLzvKw7obGVyx0u7/lNS66TilSdahadgfbd1mvTwZ9EuNeUUWTze1s
-         IrdoPMGfsdrHt18T9ZFUFVmxlLdezW1qmmmbv1YjMWkRNTHkHwRm2pvj/Y/TrQQ37+iV
-         UINQ==
+        bh=FwbcItNcsm7dTxEvHbAh6CvI7B2XT+qjV62cTTFagwM=;
+        b=Wxl6CgXnSUYOyv/ar/mxtQlrXLh8EkeQAWWUad/KB2GpooYqEDig6Whv+L1vujQ/Cv
+         nXShHlHkx+nP6XkAZXx01VOX8xuWX6val0flPOygMlds+P99XX22X3o6aGuML35xA/y8
+         WnqMaTdVdUMVK/qdv+cAXfpO2fvbgkLWEIWlRTdKO7ziHnf0KWCRo4AEj0Jt9kjnAEZU
+         1JRIFGuL6+DQ2sUyq4+cmVdTPm2chhpHQRwYURsTqzVLOunL5ezIiEedzv7jKMogU+UL
+         Uzpqiji2BoveSh/Gwh0uTkyPSB7ovGn7tjtwZe4Xtf2ansjkSciYeJOuoccTm8nIsDPg
+         YlqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=/4o0Sh/HDw28K29dhWptIQG7sJvv6LA5ikZvkukruHE=;
-        b=FXHBUR3yUkkX0XioPZUWarWS/3exYqSG2H7gJ43pO/8OXwUa1yoktP/iknHAEEU6wz
-         AdrDIA8Mhd2PJ7ZugChwhz1MaYjD8sJFPILGDs5dDSWTV4Mh2ZkriDyrzNram2rxlOLD
-         /EItDwIhCXILjHGh3hd1LtYkauzifeU8KDh4zVxTzPXYdAtuHD27LwW5Abg11Fsor3kt
-         rwcJb7dP7qH+DozOGnZTfshqci7kFpXVYg54GpvmAfrMJHQdoLYWahuxQuOhKad1vIdP
-         8g42TBMjQyRfj0GURo9QuzmjAuWQrec1QLnYzSDHUrWhDJBcD2J1PpNAYJuJtSPyKldh
-         DnIQ==
-X-Gm-Message-State: AOAM532J3ADagDmXjg7cphojc4bWYPX3CYTRdbFeAKhphjMC/E+EFuPE
-        ZyVIErB63tH8e6mtkJQDVW8=
-X-Google-Smtp-Source: ABdhPJwXHkfo0LVYpx7SEv6O1F58w6UNsO73U42vtQ17B2CQMPqe4CDwDvgTvyspI1UeUCCcFqjjxg==
-X-Received: by 2002:a5d:4fc4:: with SMTP id h4mr10734960wrw.481.1644831348777;
-        Mon, 14 Feb 2022 01:35:48 -0800 (PST)
+        bh=FwbcItNcsm7dTxEvHbAh6CvI7B2XT+qjV62cTTFagwM=;
+        b=gy7KkrniwE63igaSRUiBsK9QyTNFLOzrq2BJKqnZvU/Lo/5BqMeGCiawtsBVzTTohR
+         gFXbOhuc3bSFRH7Dmjcp38Hx7nprtCeLRhgF3bFrCZVlrxT17qQ9qQMXPc49bnCBmAcH
+         pHMXlKuzfl2XNt+kHYQgCvIssWqEksSOdN3tKHzRIlHHN4CZp6xKlWZqUKLHcnIrKFTB
+         3/ncfFs5m7ZnvKBDjdsjUu5idSuafB0ajdw73/gjruRlE8sQvrRxWQEDUdk+3p4iqAeb
+         sivm+m1R1KmbTsMEaHxulQ+XuJldp2T8att3ll9Z0X8MbV2a3H6mQo3nzewCDtbc6Jns
+         RkGQ==
+X-Gm-Message-State: AOAM5328AaivoWRvuDyZiyb7d5rqYD5yDzFW9XrPvtcuxLjX0P+A777N
+        h5Pw84YtV233Xoa7fPHbyHg=
+X-Google-Smtp-Source: ABdhPJxCUP1Y6OAuh3WjUMVMTHkWbPFYNV6VCirBHLjl5MEXY+oDXSnD8aIzgRd4bO8NRi3OukbljA==
+X-Received: by 2002:a5d:6888:: with SMTP id h8mr10351125wru.57.1644831491109;
+        Mon, 14 Feb 2022 01:38:11 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id u16sm3192017wmq.41.2022.02.14.01.35.48
+        by smtp.gmail.com with ESMTPSA id t18sm30595213wri.34.2022.02.14.01.38.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Feb 2022 01:35:48 -0800 (PST)
+        Mon, 14 Feb 2022 01:38:10 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-perf-users@vger.kernel.org
+To:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] perf tools: Fix spelling mistake "commpressor" -> "compressor"
-Date:   Mon, 14 Feb 2022 09:35:47 +0000
-Message-Id: <20220214093547.44590-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] selftests: net: cmsg_sender: Fix spelling mistake "MONOTINIC" -> "MONOTONIC"
+Date:   Mon, 14 Feb 2022 09:38:10 +0000
+Message-Id: <20220214093810.44792-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -70,26 +65,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a debug message. Fix it.
+There is a spelling mistake in an error message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- tools/perf/util/mmap.c | 2 +-
+ tools/testing/selftests/net/cmsg_sender.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 4cb5f2f159cc..50502b4a7ca4 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -298,7 +298,7 @@ int mmap__mmap(struct mmap *map, struct mmap_params *mp, int fd, struct perf_cpu
- 	map->comp_level = mp->comp_level;
- #ifndef PYTHON_PERF
- 	if (zstd_init(&map->zstd_data, map->comp_level)) {
--		pr_debug2("failed to init mmap commpressor, error %d\n", errno);
-+		pr_debug2("failed to init mmap compressor, error %d\n", errno);
- 		return -1;
- 	}
- #endif
+diff --git a/tools/testing/selftests/net/cmsg_sender.c b/tools/testing/selftests/net/cmsg_sender.c
+index 24444dc72543..efa617bd34e2 100644
+--- a/tools/testing/selftests/net/cmsg_sender.c
++++ b/tools/testing/selftests/net/cmsg_sender.c
+@@ -341,7 +341,7 @@ int main(int argc, char *argv[])
+ 	if (clock_gettime(CLOCK_REALTIME, &time_start_real))
+ 		error(ERN_GETTIME, errno, "gettime REALTIME");
+ 	if (clock_gettime(CLOCK_MONOTONIC, &time_start_mono))
+-		error(ERN_GETTIME, errno, "gettime MONOTINIC");
++		error(ERN_GETTIME, errno, "gettime MONOTONIC");
+ 
+ 	iov[0].iov_base = buf;
+ 	iov[0].iov_len = sizeof(buf);
 -- 
 2.34.1
 
