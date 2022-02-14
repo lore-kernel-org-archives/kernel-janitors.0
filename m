@@ -2,69 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7893AC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Feb 2022 20:53:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1772FC4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Feb 2022 21:35:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229487AbiBNUxx (ORCPT
+        id S231482AbiBNVfI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Feb 2022 15:53:53 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56046 "EHLO
+        Mon, 14 Feb 2022 16:35:08 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:53158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229977AbiBNUxb (ORCPT
+        with ESMTP id S231511AbiBNVfA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Feb 2022 15:53:31 -0500
-Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D1D7213DC8
-        for <kernel-janitors@vger.kernel.org>; Mon, 14 Feb 2022 12:53:10 -0800 (PST)
-Received: from pop-os.home ([90.126.236.122])
-        by smtp.orange.fr with ESMTPA
-        id JgihnBT5U41cbJgihn7hOL; Mon, 14 Feb 2022 20:09:08 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 14 Feb 2022 20:09:08 +0100
-X-ME-IP: 90.126.236.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-usb@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH] net: hso: Use GFP_KERNEL instead of GFP_ATOMIC when possible
-Date:   Mon, 14 Feb 2022 20:09:06 +0100
-Message-Id: <93e4c78983de9a20b1f9009d79116591f20fd1c2.1644865733.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
+        Mon, 14 Feb 2022 16:35:00 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B60B2158798;
+        Mon, 14 Feb 2022 13:32:26 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id c192so10338847wma.4;
+        Mon, 14 Feb 2022 13:32:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AYGIU0lBgl4d0sNWP4gNGrwgFdAF2VqmrC+fnt5WHX8=;
+        b=lEibEIIHHaNkCIBCOonaCkB5WT0qXvdINVme8DbMAQ4gXD8Y8gZ7MmRFtd+jeI340G
+         P3yf2zfHNl4eNYBwgYS2eODg+RA4I5mMh1mCS+Lsd+UlvDz55haq+BGGz2DX4ZB3rtAo
+         B7HUaJ0ax5xaUp++lwEdMWrz65Ju6n935WWXFf38LS6uYUOqNAD5fRcTd3xzF2R3J3CZ
+         L5pZq0TOkqyPaqpej5PXp/t89XLsmWFHUYxavOGXBPiE0pNqlCvoX0ifpawuBMaanR7a
+         hAU0T9yUZknzlJnd9XDhiGBMjpXYDKAzF+6oK2uqe197+OOhOiRiJba/J48mBYHoIjwn
+         XcVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AYGIU0lBgl4d0sNWP4gNGrwgFdAF2VqmrC+fnt5WHX8=;
+        b=rb3yvXW62IM0hvQQX7fAgqOjBtKs82xeoP/E4OgUPtalPg0/0amQmJ0d98b/4Lveqm
+         fv5FcNLz2dIyXq2IS7R0l5P2Qp8IXyi8l74+WHup3nW2AjKtA8mDWQM1RgxEDD8H3SXk
+         7lPxm1o62i/AqcO8s1IHez8Lg2rxVA5txFvuTIdyYkjR4b6IZ58jGQP3bYoSF6nD/mlH
+         W9HRV74kbG9EViHRxbGhjL5bFeLFPS/h5617+74HIvEkWdoL/xiwoVVF1FOYYktPBTrV
+         eSdx5cuLFKASIXbE/3S/tM6Okr63DFzzu4IpN9bY7lxqjpySH8s17ub+NgoMHLSBSKYW
+         /LIw==
+X-Gm-Message-State: AOAM533zGAbPUrun+KQ1KOwGxpwLN+JGvWv1YtszM2sK5u0WsHUayA6N
+        KJnbVUnDMMfCnV9EVaXl9GE=
+X-Google-Smtp-Source: ABdhPJzA+5buwGThU/StogQFez2aB+m4K2P39OqNL7jF9GJPAEIJXA4IsgbPmSGM6C562aVhBfktGg==
+X-Received: by 2002:a1c:7318:0:b0:37b:fa1b:1472 with SMTP id d24-20020a1c7318000000b0037bfa1b1472mr496215wmb.57.1644874345208;
+        Mon, 14 Feb 2022 13:32:25 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id 3sm26537410wrz.86.2022.02.14.13.32.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Feb 2022 13:32:24 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: tegra20: spdif: make const array rates static
+Date:   Mon, 14 Feb 2022 21:32:23 +0000
+Message-Id: <20220214213223.65780-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-hso_create_device() is only called from function that already use
-GFP_KERNEL. And all the callers are called from the probe function.
+Don't populate the read-only const array rates on the stack but
+instead it static. Also makes the object code a little smaller.
 
-So there is no need here to explicitly require a GFP_ATOMIC when
-allocating memory.
-
-Use GFP_KERNEL instead.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/net/usb/hso.c | 2 +-
+ sound/soc/tegra/tegra20_spdif.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/usb/hso.c b/drivers/net/usb/hso.c
-index f97813a4e8d1..f8221a7acf62 100644
---- a/drivers/net/usb/hso.c
-+++ b/drivers/net/usb/hso.c
-@@ -2319,7 +2319,7 @@ static struct hso_device *hso_create_device(struct usb_interface *intf,
- {
- 	struct hso_device *hso_dev;
+diff --git a/sound/soc/tegra/tegra20_spdif.c b/sound/soc/tegra/tegra20_spdif.c
+index d09cd7ee6879..64c2f304f254 100644
+--- a/sound/soc/tegra/tegra20_spdif.c
++++ b/sound/soc/tegra/tegra20_spdif.c
+@@ -186,7 +186,7 @@ static int tegra20_spdif_filter_rates(struct snd_pcm_hw_params *params,
+ 	struct snd_soc_dai *dai = rule->private;
+ 	struct tegra20_spdif *spdif = dev_get_drvdata(dai->dev);
+ 	struct clk *parent = clk_get_parent(spdif->clk_spdif_out);
+-	const unsigned int rates[] = { 32000, 44100, 48000 };
++	static const unsigned int rates[] = { 32000, 44100, 48000 };
+ 	long i, parent_rate, valid_rates = 0;
  
--	hso_dev = kzalloc(sizeof(*hso_dev), GFP_ATOMIC);
-+	hso_dev = kzalloc(sizeof(*hso_dev), GFP_KERNEL);
- 	if (!hso_dev)
- 		return NULL;
- 
+ 	parent_rate = clk_get_rate(parent);
 -- 
-2.32.0
+2.34.1
 
