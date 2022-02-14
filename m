@@ -2,88 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 628CFC433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Feb 2022 12:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B804C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Feb 2022 14:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353670AbiBNMzB (ORCPT
+        id S234161AbiBNOUV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Feb 2022 07:55:01 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:46082 "EHLO
+        Mon, 14 Feb 2022 09:20:21 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353671AbiBNMy6 (ORCPT
+        with ESMTP id S233252AbiBNOUT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Feb 2022 07:54:58 -0500
+        Mon, 14 Feb 2022 09:20:19 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A04C74C43C;
-        Mon, 14 Feb 2022 04:54:47 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87FAB4A3F8;
+        Mon, 14 Feb 2022 06:20:11 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3C9DE61477;
-        Mon, 14 Feb 2022 12:54:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CF1EC340E9;
-        Mon, 14 Feb 2022 12:54:44 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2F7236103D;
+        Mon, 14 Feb 2022 14:20:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8D43AC340EF;
+        Mon, 14 Feb 2022 14:20:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644843286;
-        bh=r7IKb+9DggDhLCpCMSDE8pe/YCI7ZnVvJgsKsInBzVw=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=mCVGimMag96xNclq+j7E0EsD4ZpiDxyO3y5NoNua3NiNEa+QrmFIGzcgzcKj9x12S
-         775RaIrQN/aHejUFADEdR2SBysAJW5H10XNpr+hGflR3j9ZPjmQ/siQwE2MwMH4qDO
-         6fZMib83HiI5Jxgp+CpWr7w+wf44UoTY8D2/m1LtiJ+mKV5qHPIFEzsteNWAyR1XOS
-         A9YRvyU4GEmUDCRZ9yARV3tHO7D3ZM0oqYFYvK2CM5/xi50IjEp+y8DyRj6Wfvv++K
-         brmPnfjgg1rxHtELt5q+qZBRDgxj/eClFlN+oxpiEoTVrfiqbGvfSt6RYBGgcwEmQj
-         C8C0Yhtodp1Jg==
-From:   Mark Brown <broonie@kernel.org>
-To:     Julia Lawall <Julia.Lawall@inria.fr>, linux-scsi@vger.kernel.org
-Cc:     linux-mtd@lists.infradead.org, MPT-FusionLinux.pdl@broadcom.com,
-        linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org, linux-media@vger.kernel.org,
-        alsa-devel@alsa-project.org
-In-Reply-To: <20220210204223.104181-1-Julia.Lawall@inria.fr>
-References: <20220210204223.104181-1-Julia.Lawall@inria.fr>
-Subject: Re: (subset) [PATCH 0/9] use GFP_KERNEL
-Message-Id: <164484328403.12994.4553763831627919088.b4-ty@kernel.org>
-Date:   Mon, 14 Feb 2022 12:54:44 +0000
-MIME-Version: 1.0
+        s=k20201202; t=1644848410;
+        bh=wmIB5Xx8YNnUp61IjytANTE6h4pdM98NwtQfxsN8ya8=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=pYBK/WpdPB+Adjglevy0jGVzBfuBMEdwXHH8BrZbH2MZqZgacGtuvZPO+ImU6k/XQ
+         CfoVzmV+0LFsOBnPGKyZb6xXIlcmwAfzJPZFpyglbLOMtL1pJkXa0vpfyvbq5WqOjG
+         tSo8sA6SGBvCay2POScyPZji8e96hukgYIptsaB3vXjdMuqAa10V5brRc4YNW0a5aD
+         ZjSTkXV1aRZFuTYBu2Mi+jq1OVetpoIyTQ/Te8W2es2IbV+2CRO3vDyuf/KjMYhbhE
+         NiT7Pskq1fzQCNE+GRS4lZpgA0WHmK2C96/cS46WNYVrKjcRITsTAYvUT4YJ2sIsLL
+         1mH8YHiOjboVg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 76C41E74CC2;
+        Mon, 14 Feb 2022 14:20:10 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] selftests: net: cmsg_sender: Fix spelling mistake
+ "MONOTINIC" -> "MONOTONIC"
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164484841048.14634.689140204535571711.git-patchwork-notify@kernel.org>
+Date:   Mon, 14 Feb 2022 14:20:10 +0000
+References: <20220214093810.44792-1-colin.i.king@gmail.com>
+In-Reply-To: <20220214093810.44792-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 10 Feb 2022 21:42:14 +0100, Julia Lawall wrote:
-> Platform_driver and pci_driver probe functions aren't called with
-> locks held and thus don't need GFP_ATOMIC. Use GFP_KERNEL instead.
+Hello:
+
+This patch was applied to netdev/net-next.git (master)
+by David S. Miller <davem@davemloft.net>:
+
+On Mon, 14 Feb 2022 09:38:10 +0000 you wrote:
+> There is a spelling mistake in an error message. Fix it.
 > 
-> All changes have been compile-tested.
-> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  tools/testing/selftests/net/cmsg_sender.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to
+Here is the summary with links:
+  - [next] selftests: net: cmsg_sender: Fix spelling mistake "MONOTINIC" -> "MONOTONIC"
+    https://git.kernel.org/netdev/net-next/c/12d8c11198af
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Thanks!
 
-[3/9] ASoC: Intel: bytcr_wm5102: use GFP_KERNEL
-      commit: 695c105933cfa04ccf84088342193ae43e37e0f5
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
