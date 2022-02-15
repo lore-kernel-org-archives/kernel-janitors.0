@@ -2,63 +2,58 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1FC2C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Feb 2022 05:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6D1C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Feb 2022 05:30:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231977AbiBOFSR (ORCPT
+        id S234035AbiBOFaZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Feb 2022 00:18:17 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49928 "EHLO
+        Tue, 15 Feb 2022 00:30:25 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231888AbiBOFSR (ORCPT
+        with ESMTP id S233988AbiBOFaR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Feb 2022 00:18:17 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83E30985A3;
-        Mon, 14 Feb 2022 21:18:07 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 15 Feb 2022 00:30:17 -0500
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 064DA123419;
+        Mon, 14 Feb 2022 21:30:09 -0800 (PST)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 33F52B817B0;
-        Tue, 15 Feb 2022 05:18:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7D1CC340EC;
-        Tue, 15 Feb 2022 05:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644902285;
-        bh=B0dV72SpkaC/hqg3i0PzRzrQESYJvg5LGjbZQ2GyHeI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DsNPRCay2L2EBDCGdxGRUbPZ8RNfMcxDib1LtwRy3xmJodn/cxNE8K7Fki3O0JeHs
-         y21gl3Lseg5Npewt/pgHL2qNGyuA4lIz2qAvsr6sQeniO+uhirk2+LSGRxFK1g2s6j
-         Hfmv4RDHMwlESivxfZlS9uuOc3C69LlDG1oiRzyGxeP/x2DMjg6MCXFePre2QmGpF6
-         Qp83riXkr9ZhqKwNMEV32wziklR9rqrrY0JFxiVapv0JHWo2YP0KGiO53CwZwU3xn8
-         shV9nVUEo23Q/a6lp+nN5gBFu3oWTX+KFHkLzt9YRewVYypDE1NbToSWf8dtv/tPL2
-         Yr9gl2awttn7A==
-Date:   Tue, 15 Feb 2022 10:48:00 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Sanjay R Mehta <sanju.mehta@amd.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, dmaengine@vger.kernel.org
-Subject: Re: [PATCH v2] dmaengine: ptdma: Fix the error handling path in
- pt_core_init()
-Message-ID: <Ygs3iKOUmCa+HtJp@matsya>
-References: <41a963a35173f89c874f5c44df5530dc09fea8da.1644044244.git.christophe.jaillet@wanadoo.fr>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4JyV6631Pkz4xcq;
+        Tue, 15 Feb 2022 16:30:06 +1100 (AEDT)
+From:   Michael Ellerman <patch-notifications@ellerman.id.au>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        paulus@samba.org, mpe@ellerman.id.au, groug@kaod.org,
+        benh@kernel.crashing.org, tglx@linutronix.de,
+        christophe.leroy@csgroup.eu, clg@kaod.org, allison@lohutok.net
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+In-Reply-To: <564998101804886b151235c8a9f93020923bfd2c.1643718324.git.christophe.jaillet@wanadoo.fr>
+References: <564998101804886b151235c8a9f93020923bfd2c.1643718324.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v2] powerpc/xive: Add some error handling code to 'xive_spapr_init()'
+Message-Id: <164490280126.270256.11152425799703453918.b4-ty@ellerman.id.au>
+Date:   Tue, 15 Feb 2022 16:26:41 +1100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <41a963a35173f89c874f5c44df5530dc09fea8da.1644044244.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 05-02-22, 07:58, Christophe JAILLET wrote:
-> In order to free resources correctly in the error handling path of
-> pt_core_init(), 2 goto's have to be switched. Otherwise, some resources
-> will leak and we will try to release things that have not been allocated
-> yet.
+On Tue, 1 Feb 2022 13:31:16 +0100, Christophe JAILLET wrote:
+> 'xive_irq_bitmap_add()' can return -ENOMEM.
+> In this case, we should free the memory already allocated and return
+> 'false' to the caller.
 > 
-> Also move a dev_err() to a place where it is more meaningful.
+> Also add an error path which undoes the 'tima = ioremap(...)'
+> 
+> 
+> [...]
 
-Applied, thanks
+Applied to powerpc/next.
 
--- 
-~Vinod
+[1/1] powerpc/xive: Add some error handling code to 'xive_spapr_init()'
+      https://git.kernel.org/powerpc/c/e414e2938ee26e734f19e92a60cd090ebaff37e6
+
+cheers
