@@ -2,53 +2,53 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D12C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Feb 2022 14:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4971CC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Feb 2022 15:00:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238804AbiBOOk2 (ORCPT
+        id S239492AbiBOPAY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Feb 2022 09:40:28 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48826 "EHLO
+        Tue, 15 Feb 2022 10:00:24 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238776AbiBOOk2 (ORCPT
+        with ESMTP id S239440AbiBOPAW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Feb 2022 09:40:28 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B6F610242B;
-        Tue, 15 Feb 2022 06:40:14 -0800 (PST)
+        Tue, 15 Feb 2022 10:00:22 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D00DA2FFF1;
+        Tue, 15 Feb 2022 07:00:12 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D34CEB81A6B;
-        Tue, 15 Feb 2022 14:40:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 97BE9C340FE;
-        Tue, 15 Feb 2022 14:40:11 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 51F456152E;
+        Tue, 15 Feb 2022 15:00:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B6834C340ED;
+        Tue, 15 Feb 2022 15:00:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644936011;
-        bh=BTyAeRKUCX4nKPYoAM+bIom35KvgaYtL0Oy8gSmCoDE=;
+        s=k20201202; t=1644937211;
+        bh=to3kVmcmgn+U0rI3lcpooQyf3iB2cKOoG3gY96rwPiM=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=YejL76nfui5aLYADmVTo96nTaPeaEnTJ02HyrUARC4v5zor6etUqN0+K5WStyL5fE
-         3YooPk6lOcE8aRNvxIgvP893jhsYIBli59Lcnvx5PU1eazIjC63IywLGcuj/7uwIy7
-         2+1QhDI8a7OypWcHU2u3HocIEQKpIQ4dCuvaK9qcqmHvfBrVHH8Y9sSRdbYCoRHuje
-         snAEwJiGXKX2+VxznNVy2WhwEDeRaco8oca11+B8L3O0gQvBacpphbP8jPkKbAOAx6
-         etIhHrL6ZdS5IiQsnnjM04DNNyLFA1Ksc/mt/OXW1Jd68LoVeIEZHmvWX6d0w9rjxL
-         WfaVPfm5yosWg==
+        b=usMkd1JtbCVgwtDWRhw6y2Fqh53H1Go9cNxd8KdmHWXiRzEWDgtVmXqdXfgKfMyj4
+         c9U2P+a9RTB7fwDJ491hXXYJLLjb+1VwdQ5DxtqQG9tuF7fl/KbI9mVz/ZIxWA6kRx
+         h4HmLNx+nYRatMzqiTugq8PDueCD2SDM1sV9WFAx32eyl+1kTWgPqhx+Lj+T/mjd73
+         T3gCR7SJ//KKLkcrhd4Ebu6pVDYZTjGmubb1Ph9Q77jXzsAJz60IH0Su6PAuoD0/pD
+         i/jcG933tFOYvUe7KovXp+m8SiFgKfIwPRp/hVQ0m74XLgzJU5Ub9O94/6jSeoOiL4
+         w06TiuvQLaBcw==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 84E5EE6D447;
-        Tue, 15 Feb 2022 14:40:11 +0000 (UTC)
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A245BE74CC2;
+        Tue, 15 Feb 2022 15:00:11 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: hso: Use GFP_KERNEL instead of GFP_ATOMIC when possible
+Subject: Re: [PATCH][next] net: dm9051: Fix spelling mistake "eror" -> "error"
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164493601153.31968.17892021066503340871.git-patchwork-notify@kernel.org>
-Date:   Tue, 15 Feb 2022 14:40:11 +0000
-References: <93e4c78983de9a20b1f9009d79116591f20fd1c2.1644865733.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <93e4c78983de9a20b1f9009d79116591f20fd1c2.1644865733.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     davem@davemloft.net, kuba@kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org
+Message-Id: <164493721165.12867.10859876993004985508.git-patchwork-notify@kernel.org>
+Date:   Tue, 15 Feb 2022 15:00:11 +0000
+References: <20220215103920.78380-1-colin.i.king@gmail.com>
+In-Reply-To: <20220215103920.78380-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     davem@davemloft.net, kuba@kernel.org, josright123@gmail.com,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -58,20 +58,17 @@ Hello:
 This patch was applied to netdev/net-next.git (master)
 by David S. Miller <davem@davemloft.net>:
 
-On Mon, 14 Feb 2022 20:09:06 +0100 you wrote:
-> hso_create_device() is only called from function that already use
-> GFP_KERNEL. And all the callers are called from the probe function.
+On Tue, 15 Feb 2022 10:39:20 +0000 you wrote:
+> There are spelling mistakes in debug messages. Fix them.
 > 
-> So there is no need here to explicitly require a GFP_ATOMIC when
-> allocating memory.
-> 
-> Use GFP_KERNEL instead.
-> 
-> [...]
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/net/ethernet/davicom/dm9051.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
 Here is the summary with links:
-  - net: hso: Use GFP_KERNEL instead of GFP_ATOMIC when possible
-    https://git.kernel.org/netdev/net-next/c/25ce79db8042
+  - [next] net: dm9051: Fix spelling mistake "eror" -> "error"
+    https://git.kernel.org/netdev/net-next/c/2c955856da4f
 
 You are awesome, thank you!
 -- 
