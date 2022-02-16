@@ -2,58 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 400F2C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Feb 2022 10:29:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6045EC433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Feb 2022 13:54:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231223AbiBPK3i (ORCPT
+        id S233946AbiBPNy6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Feb 2022 05:29:38 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:34294 "EHLO
+        Wed, 16 Feb 2022 08:54:58 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232037AbiBPK3X (ORCPT
+        with ESMTP id S233506AbiBPNy4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Feb 2022 05:29:23 -0500
-Received: from mail.holtmann.org (coyote.holtmann.net [212.227.132.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C4A9B22219E;
-        Wed, 16 Feb 2022 02:29:03 -0800 (PST)
-Received: from smtpclient.apple (p4fefcd07.dip0.t-ipconnect.de [79.239.205.7])
-        by mail.holtmann.org (Postfix) with ESMTPSA id D047FCEE75;
-        Wed, 16 Feb 2022 11:28:57 +0100 (CET)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 15.0 \(3693.60.0.1.1\))
-Subject: Re: [PATCH] Bluetooth: make array bt_uuid_any static const
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20220214215130.66993-1-colin.i.king@gmail.com>
-Date:   Wed, 16 Feb 2022 11:28:57 +0100
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <E7AEF7CE-CD73-4B64-A67D-8C141F124690@holtmann.org>
-References: <20220214215130.66993-1-colin.i.king@gmail.com>
+        Wed, 16 Feb 2022 08:54:56 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99D4B1F1B7A;
+        Wed, 16 Feb 2022 05:54:43 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3861CB81EE6;
+        Wed, 16 Feb 2022 13:54:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9EEEC004E1;
+        Wed, 16 Feb 2022 13:54:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645019681;
+        bh=2B8S6YHpBySf2hlnpABtSvzJucO6p4JkCrOONDOXBKY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=k65VbYj/zzOZyoCtMWTbOoLD/Jle4LYsluqjYQ93WllBLh0upRTIzBTe7bH31dNZW
+         LkpEOqe4y4gaSDaSnfh4sTjPM+zmFdChnqmPyY0c8Rp1IO+J5sb4S2FtcFw1/ntvSD
+         wje7UHNpyL54RLHsHNY0hMLAnlvtVQfjILUynNuDQNyNnyN5Up+puPXHZ/03DnulZR
+         FTfarCuzNdQw0dmQ5ZmQVSGM+NhYS4yikzHbxSP4KsNmUW0yw+cU61mEmFOS89cv76
+         pirAW+cb5ao551C7CavnQRwzr5wFPG7I8zdMutwifyrSrxxgVpnEcL5FzdbDG995MG
+         tn8JP9X3UfsIw==
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 52947400FE; Wed, 16 Feb 2022 10:54:39 -0300 (-03)
+Date:   Wed, 16 Feb 2022 10:54:39 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Colin Ian King <colin.i.king@gmail.com>
-X-Mailer: Apple Mail (2.3693.60.0.1.1)
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] perf tools: Fix spelling mistake "commpressor" ->
+ "compressor"
+Message-ID: <Yg0CHxw1iy2Y+F69@kernel.org>
+References: <20220214093547.44590-1-colin.i.king@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220214093547.44590-1-colin.i.king@gmail.com>
+X-Url:  http://acmel.wordpress.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Colin,
+Em Mon, Feb 14, 2022 at 09:35:47AM +0000, Colin Ian King escreveu:
+> There is a spelling mistake in a debug message. Fix it.
 
-> Don't populate the read-only array bt_uuid_any on the stack but
-> instead make it static const. Also makes the object code a little
-> smaller.
-> 
+Thanks, applied.
+
+- Arnaldo
+
+ 
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
-> net/bluetooth/mgmt.c | 4 +++-
-> 1 file changed, 3 insertions(+), 1 deletion(-)
+>  tools/perf/util/mmap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+> index 4cb5f2f159cc..50502b4a7ca4 100644
+> --- a/tools/perf/util/mmap.c
+> +++ b/tools/perf/util/mmap.c
+> @@ -298,7 +298,7 @@ int mmap__mmap(struct mmap *map, struct mmap_params *mp, int fd, struct perf_cpu
+>  	map->comp_level = mp->comp_level;
+>  #ifndef PYTHON_PERF
+>  	if (zstd_init(&map->zstd_data, map->comp_level)) {
+> -		pr_debug2("failed to init mmap commpressor, error %d\n", errno);
+> +		pr_debug2("failed to init mmap compressor, error %d\n", errno);
+>  		return -1;
+>  	}
+>  #endif
+> -- 
+> 2.34.1
 
-patch has been applied to bluetooth-next tree.
+-- 
 
-Regards
-
-Marcel
-
+- Arnaldo
