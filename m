@@ -2,186 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B23FCC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Feb 2022 17:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8101AC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Feb 2022 20:16:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234217AbiBPREk (ORCPT
+        id S230174AbiBPUQo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Feb 2022 12:04:40 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:34904 "EHLO
+        Wed, 16 Feb 2022 15:16:44 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233496AbiBPREj (ORCPT
+        with ESMTP id S230083AbiBPUQm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Feb 2022 12:04:39 -0500
-X-Greylist: delayed 335 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 16 Feb 2022 09:04:26 PST
-Received: from relay5.hostedemail.com (relay5.hostedemail.com [64.99.140.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 813BD2A523F
-        for <kernel-janitors@vger.kernel.org>; Wed, 16 Feb 2022 09:04:26 -0800 (PST)
-Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
-        by unirelay12.hostedemail.com (Postfix) with ESMTP id 032EF1214F5;
-        Wed, 16 Feb 2022 16:58:49 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf02.hostedemail.com (Postfix) with ESMTPA id 5043380014;
-        Wed, 16 Feb 2022 16:58:21 +0000 (UTC)
-Message-ID: <e5ad05f9744439a75978d4d453549e65fcfe317f.camel@perches.com>
-Subject: Re: [PATCH] scripts/spelling.txt: add more spellings to spelling.txt
-From:   Joe Perches <joe@perches.com>
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 16 Feb 2022 08:58:48 -0800
-In-Reply-To: <20220216152343.105546-1-colin.i.king@gmail.com>
-References: <20220216152343.105546-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.4-1ubuntu2 
+        Wed, 16 Feb 2022 15:16:42 -0500
+Received: from smtp.smtpout.orange.fr (smtp10.smtpout.orange.fr [80.12.242.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C996E89
+        for <kernel-janitors@vger.kernel.org>; Wed, 16 Feb 2022 12:16:25 -0800 (PST)
+Received: from pop-os.home ([90.126.236.122])
+        by smtp.orange.fr with ESMTPA
+        id KQiqnsZojEuQ2KQirnMe4b; Wed, 16 Feb 2022 21:16:23 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Wed, 16 Feb 2022 21:16:23 +0100
+X-ME-IP: 90.126.236.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] net: ll_temac: Use GFP_KERNEL instead of GFP_ATOMIC when possible
+Date:   Wed, 16 Feb 2022 21:16:16 +0100
+Message-Id: <694abd65418b2b3974106a82d758e3474c65ae8f.1645042560.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: uzn4q74z8bpsq6egyysaqcmorhywty1p
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: 5043380014
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX195J1Jnj4V3/mxZRqRzspY0lvcD1whVomI=
-X-HE-Tag: 1645030701-998022
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 2022-02-16 at 15:23 +0000, Colin Ian King wrote:
-> Some of the more common spelling mistakes and typos that I've found
-> while fixing up spelling mistakes in the kernel in the past four months.
+XTE_MAX_JUMBO_FRAME_SIZE is over 9000 bytes and the default value for
+'rx_bd_num' is RX_BD_NUM_DEFAULT	(i.e. 1024)
 
-thanks.
+So this loop allocates more than 9 Mo of memory.
 
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  scripts/spelling.txt | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/scripts/spelling.txt b/scripts/spelling.txt
-> index 0c8b79cfb1bb..8435b99452b6 100644
-> --- a/scripts/spelling.txt
-> +++ b/scripts/spelling.txt
-> @@ -180,6 +180,7 @@ asuming||assuming
->  asycronous||asynchronous
->  asychronous||asynchronous
->  asynchnous||asynchronous
-> +asynchronus||asynchronous
->  asynchromous||asynchronous
->  asymetric||asymmetric
->  asymmeric||asymmetric
-> @@ -231,6 +232,7 @@ baloons||balloons
->  bandwith||bandwidth
->  banlance||balance
->  batery||battery
-> +battey||battery
->  beacuse||because
->  becasue||because
->  becomming||becoming
-> @@ -333,6 +335,7 @@ commoditiy||commodity
->  comsume||consume
->  comsumer||consumer
->  comsuming||consuming
-> +comaptible||compatible
->  compability||compatibility
->  compaibility||compatibility
->  comparsion||comparison
-> @@ -353,7 +356,9 @@ compoment||component
->  comppatible||compatible
->  compres||compress
->  compresion||compression
-> +compresser||compressor
->  comression||compression
-> +comsumed||consumed
->  comunicate||communicate
->  comunication||communication
->  conbination||combination
-> @@ -530,6 +535,7 @@ dissconect||disconnect
->  distiction||distinction
->  divisable||divisible
->  divsiors||divisors
-> +dsiabled||disabled
->  docuentation||documentation
->  documantation||documentation
->  documentaion||documentation
-> @@ -677,6 +683,7 @@ frequence||frequency
->  frequncy||frequency
->  frequancy||frequency
->  frome||from
-> +fronend||frontend
->  fucntion||function
->  fuction||function
->  fuctions||functions
-> @@ -761,6 +768,7 @@ implmentation||implementation
->  implmenting||implementing
->  incative||inactive
->  incomming||incoming
-> +incompaitiblity||incompatibility
->  incompatabilities||incompatibilities
->  incompatable||incompatible
->  incompatble||incompatible
-> @@ -942,6 +950,7 @@ metdata||metadata
->  micropone||microphone
->  microprocesspr||microprocessor
->  migrateable||migratable
-> +millenium||millennium
->  milliseonds||milliseconds
->  minium||minimum
->  minimam||minimum
-> @@ -1007,6 +1016,7 @@ notity||notify
->  nubmer||number
->  numebr||number
->  numner||number
-> +nunber||number
->  obtaion||obtain
->  obusing||abusing
->  occassionally||occasionally
-> @@ -1136,6 +1146,7 @@ preprare||prepare
->  pressre||pressure
->  presuambly||presumably
->  previosuly||previously
-> +previsously||previously
->  primative||primitive
->  princliple||principle
->  priorty||priority
-> @@ -1297,6 +1308,7 @@ routins||routines
->  rquest||request
->  runing||running
->  runned||ran
-> +runnnig||running
->  runnning||running
->  runtine||runtime
->  sacrifying||sacrificing
-> @@ -1353,6 +1365,7 @@ similiar||similar
->  simlar||similar
->  simliar||similar
->  simpified||simplified
-> +simultanous||simultaneous
->  singaled||signaled
->  singal||signal
->  singed||signed
-> @@ -1461,6 +1474,7 @@ syste||system
->  sytem||system
->  sythesis||synthesis
->  taht||that
-> +tained||tainted
->  tansmit||transmit
->  targetted||targeted
->  targetting||targeting
-> @@ -1489,6 +1503,7 @@ timout||timeout
->  tmis||this
->  toogle||toggle
->  torerable||tolerable
-> +torlence||tolerance
->  traget||target
->  traking||tracking
->  tramsmitted||transmitted
-> @@ -1503,6 +1518,7 @@ transferd||transferred
->  transfered||transferred
->  transfering||transferring
->  transision||transition
-> +transistioned||transitioned
->  transmittd||transmitted
->  transormed||transformed
->  trasfer||transfer
+Previous memory allocations in this function already use GFP_KERNEL, so
+use __netdev_alloc_skb_ip_align() and an explicit GFP_KERNEL instead of a
+implicit GFP_ATOMIC.
 
+This gives more opportunities of successful allocation.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/xilinx/ll_temac_main.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
+index b900ab5aef2a..0547a3fde561 100644
+--- a/drivers/net/ethernet/xilinx/ll_temac_main.c
++++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
+@@ -361,8 +361,9 @@ static int temac_dma_bd_init(struct net_device *ndev)
+ 		lp->rx_bd_v[i].next = cpu_to_be32(lp->rx_bd_p
+ 			+ sizeof(*lp->rx_bd_v) * ((i + 1) % lp->rx_bd_num));
+ 
+-		skb = netdev_alloc_skb_ip_align(ndev,
+-						XTE_MAX_JUMBO_FRAME_SIZE);
++		skb = __netdev_alloc_skb_ip_align(ndev,
++						  XTE_MAX_JUMBO_FRAME_SIZE,
++						  GFP_KERNEL);
+ 		if (!skb)
+ 			goto out;
+ 
+-- 
+2.32.0
 
