@@ -2,90 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39312C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Feb 2022 10:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F24AC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Feb 2022 18:20:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239269AbiBQKsF (ORCPT
+        id S244161AbiBQSUy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Feb 2022 05:48:05 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:38582 "EHLO
+        Thu, 17 Feb 2022 13:20:54 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232911AbiBQKsF (ORCPT
+        with ESMTP id S244182AbiBQSUu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Feb 2022 05:48:05 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 140481E4C45;
-        Thu, 17 Feb 2022 02:47:51 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id y6-20020a7bc186000000b0037bdc5a531eso4328566wmi.0;
-        Thu, 17 Feb 2022 02:47:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wDOa5zAjxEYdZwQwENexU8DjbH6bq4RkGCaO539Y7fA=;
-        b=SEZtit2TYLlZ/CFGrluRQZeV2omoXH19rw3xlKJdlVIUe2ntmFOGvLtJX8Q06Ize2I
-         w6Ez8FL2EEo/CyelOhNsac7tbA//euZj5/tdMpE4SeUTEhiinaQH6n3NnO7tlaZdkv6f
-         gKG5i702oy+D2ftnUb+wC2U93LGsa0TewSfGgrfPkwSDsPkT9A8XUGCb7JCjfCd9rVuM
-         NK+EFWOq6+3Mrokj1f7jliRkubSonsyTmgdN5Jlo8VItpwbFJlb19JrDBuBAhuOGJ0H8
-         1QzgUmCDJXFfaZtCHN3pNYFysPfOHyxFX+Lm4P0diJllyfaeGoUEmvAdI07WosTEepXA
-         PDfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wDOa5zAjxEYdZwQwENexU8DjbH6bq4RkGCaO539Y7fA=;
-        b=qvgtfdh0Q4NiGxSxisOOEzhu2kY/9L+48XcUYQ9aTt3FJEG55UjBCDqbhfBXGHvHGB
-         cwxJgCxIJpFkTrqORmSOFd7zp25xsOAZVmOxbLJEl0eU2/IIiFYbBpFWAjmP1cjPKGB7
-         0uyLvHq4tq3QnkKE9EMvBOzFbR/Wa04ybP267QMBArF1UqvecAn4X4Okh+Qq3fbo1YwT
-         omK4EMJEQIan4r1qSoGbjB8JPcBVXXWD1CSaJA/nKWDWA0ilHznGsFxHcppQMHUj6B2g
-         2qbtJy86KjSqqqnI2RSsh0O2YkgmGSpIOJy48zi74Y7oO1BeKaQxZO42JGeWqWOPqP+C
-         M2sA==
-X-Gm-Message-State: AOAM533Dn5veRtCqFmKTwIvGPYBBy0g1rnQW/cM3UZXfwoPLvh89qqir
-        mAvbdcAbecpSUsAw/BrdklM=
-X-Google-Smtp-Source: ABdhPJyp+txqXxigrnTRyLOPTaPW0lu6yiIYHRrXl/74gmUQ+6rN929i/lmlIS8oTnw09BzzkYn4WQ==
-X-Received: by 2002:a7b:cb90:0:b0:37b:b88b:b4a2 with SMTP id m16-20020a7bcb90000000b0037bb88bb4a2mr2155841wmi.148.1645094869500;
-        Thu, 17 Feb 2022 02:47:49 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id p7sm13690196wrr.95.2022.02.17.02.47.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Feb 2022 02:47:48 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Pouiller?= 
-        <jerome.pouiller@silabs.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-staging@lists.linux.dev
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] staging: wfx: Fix spelling mistake "unexpectly" -> "unexpectedly"
-Date:   Thu, 17 Feb 2022 10:47:47 +0000
-Message-Id: <20220217104747.15424-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Thu, 17 Feb 2022 13:20:50 -0500
+Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 913222B2FF0
+        for <kernel-janitors@vger.kernel.org>; Thu, 17 Feb 2022 10:20:34 -0800 (PST)
+Received: from [192.168.1.18] ([90.126.236.122])
+        by smtp.orange.fr with ESMTPA
+        id KlOInzYku0Z1CKlOInhbZ2; Thu, 17 Feb 2022 19:20:32 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Thu, 17 Feb 2022 19:20:32 +0100
+X-ME-IP: 90.126.236.122
+Message-ID: <01035905-61f5-da02-36d5-92831e1da184@wanadoo.fr>
+Date:   Thu, 17 Feb 2022 19:20:30 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v2 1/2] nfp: flower: Fix a potential leak in
+ nfp_tunnel_add_shared_mac()
+Content-Language: en-US
+To:     Simon Horman <simon.horman@corigine.com>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        John Hurley <john.hurley@netronome.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        oss-drivers@corigine.com, netdev@vger.kernel.org
+References: <4acb805751f2cf5de8d69e9602a88ec39feff9fc.1644532467.git.christophe.jaillet@wanadoo.fr>
+ <20220211165356.1927a81b@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+ <20220217075940.GA4665@corigine.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20220217075940.GA4665@corigine.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a dev_warn message. Fix it.
+Le 17/02/2022 à 08:59, Simon Horman a écrit :
+> On Fri, Feb 11, 2022 at 04:53:56PM -0800, Jakub Kicinski wrote:
+>> On Thu, 10 Feb 2022 23:34:52 +0100 Christophe JAILLET wrote:
+>>> ida_simple_get() returns an id between min (0) and max (NFP_MAX_MAC_INDEX)
+>>> inclusive.
+>>> So NFP_MAX_MAC_INDEX (0xff) is a valid id.
+>>>
+>>> In order for the error handling path to work correctly, the 'invalid'
+>>> value for 'ida_idx' should not be in the 0..NFP_MAX_MAC_INDEX range,
+>>> inclusive.
+>>>
+>>> So set it to -1.
+>>>
+>>> Fixes: 20cce8865098 ("nfp: flower: enable MAC address sharing for offloadable devs")
+>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>>
+>> This patch is a fix and the other one is refactoring. They can't be
+>> in the same series because they need to go to different trees. Please
+>> repost the former with [PATCH net] and ~one week later the latter with
+>> [PATCH net-next].
+> 
+> Thanks Jakub.
+> 
+> Christophe, please let me know if you'd like me to handle reposting
+> the patches as described by Jakub.
+> 
+Hi,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/staging/wfx/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If you can, it's fine for me.
 
-diff --git a/drivers/staging/wfx/main.c b/drivers/staging/wfx/main.c
-index 0ddc67b56589..d832a22850c7 100644
---- a/drivers/staging/wfx/main.c
-+++ b/drivers/staging/wfx/main.c
-@@ -190,7 +190,7 @@ bool wfx_api_older_than(struct wfx_dev *wdev, int major, int minor)
- 			goto next;
- 		}
- 		if (chunk_len > WFX_PDS_MAX_CHUNK_SIZE)
--			dev_warn(wdev->dev, "PDS:%d: unexpectly large chunk\n", chunk_num);
-+			dev_warn(wdev->dev, "PDS:%d: unexpectedly large chunk\n", chunk_num);
- 		if (buf[4] != '{' || buf[chunk_len - 1] != '}')
- 			dev_warn(wdev->dev, "PDS:%d: unexpected content\n", chunk_num);
- 
--- 
-2.34.1
+I must admit that what I consider, as an hobbyist, too much bureaucracy 
+is sometimes discouraging.
 
+I do understand the need for maintainers to have things the way they 
+need, but, well, maybe sometimes it is too much.
+
+In this particular case, maybe patch 1/2 could be applied to net as-is, 
+and 2/2 just dropped because not really useful.
+
+
+(Just the thoughts of a tired man after a long day at work, don't worry, 
+tomorrow, I'll be in a better mood)
+
+CJ
