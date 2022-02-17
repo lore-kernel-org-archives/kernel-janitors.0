@@ -2,170 +2,144 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DD9C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Feb 2022 07:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC7FC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Feb 2022 07:59:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235998AbiBQHLS (ORCPT
+        id S231939AbiBQIAL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Feb 2022 02:11:18 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:44502 "EHLO
+        Thu, 17 Feb 2022 03:00:11 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233814AbiBQHLS (ORCPT
+        with ESMTP id S232817AbiBQIAE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Feb 2022 02:11:18 -0500
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2048.outbound.protection.outlook.com [40.107.223.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03068298AE3;
-        Wed, 16 Feb 2022 23:11:04 -0800 (PST)
+        Thu, 17 Feb 2022 03:00:04 -0500
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2090.outbound.protection.outlook.com [40.107.93.90])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54F1E26550E;
+        Wed, 16 Feb 2022 23:59:50 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YmGlMTEUPqYziOf2UJE9S7fKDaE/AqCiR2wGBaroKhVVtfk1AgCqS+r6YMuS7gF8VOOFlmucmiUrp6yAMo/qGxL3GSMcfAHXq141okc2zBTz4TOR/vg5ZRjHJoaxQhvqg0MAMbfbgLtu8qBWZ0yzsMsBGKwZN6JfCCkQXOLy/sE+hiw4YggutOVfguGgzcNmXiehkRoVgHO79vQbsTC2f8T6IAEvm/Cc0npIA/YtIK/hjqg6UbQt3f9PngThzV4EgnPD8+iERJHToi3bpRla7D5KsdVCFPqwWUOfnd5Bto682jHRwoDjA3zPojtEDmCmh7hiVKmyY6HUyAny/6cqSw==
+ b=DQdGcz+jz1hACqDIoeZTxyA7eRWUSNR4YHRWfqR18lz6cupW7X05Be/LyzZnMWR3SCuihOnTzkvL/yOFtClt6Z5hIOQNmXJelVDHlSB8R4XBlNq44RqnKIFDfzweWIyBgkH++ibb89CYdWYxjaRdTcRNqRSSr3v8pvA5TkPFwFSGnxpB/vYLWkdcCIk36AkeWJAes0vkJ30rdaynPClBTZxDye8czCuHr8yzFeWPtxHwraaJs0I1fEhPKVlG2DNEnVCKRbbQrhLujzR9zeMYOI4M/ygpdsBwlPn9SK3zOCyahsA8Uk56+ykNFk9kXHRJ1wsKpZadaRsU+HdBarqNmA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=L52cvMFB81nw1KUE02eAp3Z5r9Sr8v3OkaafiAroEuU=;
- b=nv/p7XRy/J+2fYGXxaOTfXZGNY+UIT27A9TijCKcj/2s+h9+qM2puTPJ15NOknv+nPrbh7QpweQGTi1o7Qi1wkTmRyXhvTfGAikRhvU53GFcSjYtWajatMQCmG4zXj3e593ynYQW6eiHA/Zac3cObVNgbTdRLEeH8DS5BrWaTvRaHPwLswiA24j06siaVIAsZFm92Ai1tFGTiTAX1gdAmksQaB1Pl2F4m0wjobe62CY5CTbCrVGdAYhqe8hlEqeyV/cRSPtFQDGgwXcWSvcOZSJftdzvXPMJj88Zzx6waeqxQKmGL73QzRCED2Wat7oDoNy5/IXwDy8mzegtj0rwTw==
+ bh=sGRu1MJIivbIGrOGbOw404DXfTvc3Xhpmy0OMZ2xOtI=;
+ b=lRX2SWolCl5fCgMrt/qGfnMI3NoVpfqVVKJx23Rb6G7Ora89DPw5TAVqadC3YRM3qsHLZpYrk2vd8YpluH+hoyuI/pCI0DBaP2fhBly1tvF3uzDY1EqujSYlps2dDo7P66dTQUTl59erk6ybaVsgbW4KZ0vR4Eez8eU4cB94NOsD4yf3KyuRar5h4wbazfJF614sZCYr5B6x9W1NWDm1Qn0HdPSwFRp0EyRzzrQ+6dRzfFlacGm1DqTyD7KCwL+jvpxLsa3ZWphy74UOVIG9DoKs62ZxTXflQfEXOJejHykxql3r1cw/7QVhemxQkQjF0eTmStoAZ7rh8x1DByX5YQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vmware.com; dmarc=pass action=none header.from=vmware.com;
- dkim=pass header.d=vmware.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
+ smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
+ dkim=pass header.d=corigine.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=L52cvMFB81nw1KUE02eAp3Z5r9Sr8v3OkaafiAroEuU=;
- b=fYg9mf1SG7s7ob/mGoas7AfhQXy7ECybjXMdvZd3ymYgEtRtGPXj6PS2al7E7myMa00mbVgrlhvoERiAtsvfU+Umm+sZ6JqB+p+fDHEopAn6V0vSsOGCE3AxhG7+drbZJOdn2d/H9OJiggbAK4ecoVBpbl6uDD4Exorl7W6X7aI=
-Received: from BYAPR05MB3960.namprd05.prod.outlook.com (2603:10b6:a02:88::12)
- by MN2PR05MB6622.namprd05.prod.outlook.com (2603:10b6:208:db::30) with
+ bh=sGRu1MJIivbIGrOGbOw404DXfTvc3Xhpmy0OMZ2xOtI=;
+ b=WDbXBGrodjFfITUS4ZsFCb/ZjNYT+zWdLMOSx93AoeCPvD4JcV11PosY0B6ysT2vjSJkEYInpVrkwndAbpRIYeQLWNrNbIxvnDZ4DrqU5RWEg/oFYHegXSCes96WImt3sc6GWRznYHPjSSlAoHTz1MhLVtQ/CDr5T7MsOWoXnXQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=corigine.com;
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
+ by BN6PR13MB1843.namprd13.prod.outlook.com (2603:10b6:404:145::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4995.16; Thu, 17 Feb
- 2022 07:10:59 +0000
-Received: from BYAPR05MB3960.namprd05.prod.outlook.com
- ([fe80::8442:3d51:d711:e651]) by BYAPR05MB3960.namprd05.prod.outlook.com
- ([fe80::8442:3d51:d711:e651%5]) with mapi id 15.20.4995.020; Thu, 17 Feb 2022
- 07:10:49 +0000
-From:   Vishnu Dasa <vdasa@vmware.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-CC:     Jorgen Hansen <jhansen@vmware.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "acking@vmware.com" <acking@vmware.com>,
-        "dtor@vmware.com" <dtor@vmware.com>,
-        Pv-drivers <Pv-drivers@vmware.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH 2/3] VMCI: No need to clear memory after a
- dma_alloc_coherent() call
-Thread-Topic: [PATCH 2/3] VMCI: No need to clear memory after a
- dma_alloc_coherent() call
-Thread-Index: AQHYHs1k1FkE9f+uNkWjdrIRHx81P6yXXVKA
-Date:   Thu, 17 Feb 2022 07:10:48 +0000
-Message-ID: <00F97241-10DF-4D3D-9544-105C4E9DC5BB@vmware.com>
-References: <cover.1644531317.git.christophe.jaillet@wanadoo.fr>
- <232d7bb2eace0d4dc2228134c6a424472412adfa.1644531317.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <232d7bb2eace0d4dc2228134c6a424472412adfa.1644531317.git.christophe.jaillet@wanadoo.fr>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vmware.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 4a4be843-22c6-4c2e-d97d-08d9f1e4a0b7
-x-ms-traffictypediagnostic: MN2PR05MB6622:EE_
-x-ld-processed: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0,ExtAddr
-x-ms-exchange-atpmessageproperties: SA|SL
-x-microsoft-antispam-prvs: <MN2PR05MB6622D97689A87980D6E85EF6CE369@MN2PR05MB6622.namprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5797;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: q6WzZHwkaNDuSmYlRHJJT0XLYj7URvA9km873ydyIkUo7oafZtG7ciIbKoanj8Hxs3p6vh4dMd4/Br/rc4oVhFK/Qef0/cpir7ci+PlLHIrD/Tj9QP4GrLXBdFMukmv+/NuWDz+Aev94bmD24Qsyh+D08t6zdD9LV7QL0fQNFtH6t7hI7AVFj9qE81m8hrHnwBieMvN2mZp/v/znwv2jfzYpIgBN928udCYvCsHg5E9XK+nKxd87O2iPDSSVxPfYEeZTQI+/zKmk4mmhieLRk4dyuzdIcTEeAzJR1XFprhlQMmyS+nXtJMm63l4JFDbOZ0VJ+hbUUKOP6rkYN0D6XPGeQZi3ctLVQ9U7Y0E/vff4xvA75ns8PoCzErx9z0L0gAz4Kbi3UvxEBCKNEPc0aaY+wen/SeiZ5Z2bVFJy8GcJALvWbKy8LVJQzRFWqKnbVcduJooSd4Us2UkxdHn6igOaSLi4d7Bko/E3Jl/2VlaXwLfEkz3h3tiR36a5126bXkMuJVrSls5wA88iDsr15CdueY3wQI+MqzTHdVDymsXjTUCJAQhCTApNvJs4QnklVB6Aw9+3YagoexLCl5MjUySU65vIkdteC6IIiy4cKZ4d7yCX3FqXglk86dqS7YjV7cfSN1lmyAVFiPhI3DXHzLB+XJCIQrMYQSQST84kCTa0NwUwnHLeuuxpu76nK6ySKhTFaeo9OpqTd3iieJpYYgtkKvqYoDuu9s/iAekCTM4=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR05MB3960.namprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(66476007)(76116006)(8676002)(66446008)(64756008)(66556008)(83380400001)(4326008)(66946007)(86362001)(53546011)(6512007)(38070700005)(6506007)(71200400001)(38100700002)(2906002)(36756003)(5660300002)(6486002)(2616005)(186003)(122000001)(8936002)(508600001)(6916009)(316002)(54906003)(33656002)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?9WU8uPgwA9OD1Ok/ZCCFl9McN2DU1GZhS8GTEcYjEbMI8fLbf4856sgttflI?=
- =?us-ascii?Q?ipeF1iVLbkff8fiyZIUtTK5eg2JVV4FuQYyU850NA4Pv9TEj/OTdpCv1lNVA?=
- =?us-ascii?Q?yRWysHW2V8xlEl4UcV+f0RcsTDb+GVFz/Otv57PGmVeTpHNo5rXPw6TU3RU+?=
- =?us-ascii?Q?6t1XrFrdtHU60dufcG6gMQZwrKgoeLAgL0tbmOYe3LOXyakyHelJw6hzxzOL?=
- =?us-ascii?Q?ol/6EOIpvHY63GDAzL9KPuEvvo1hFc+uv1fdvphWKbAefRrhc66m/l5rbmXq?=
- =?us-ascii?Q?vQ0Mdd7M1NpRcLN2h1XZW1MazpZc3/c31YPd/P9YNutxZekOQMf1lFqS0abO?=
- =?us-ascii?Q?+j3kNV6fHkqH1/H+zAkIWMVkJQ0pXv4eeeVYRbins+uKsQZOuhhQxZb+k020?=
- =?us-ascii?Q?Zp5jIc6Z8fEmrHDyUxTQAJcDMxaHUNvIafTg2E7RsCDtvFiuo1YtewWfOMvh?=
- =?us-ascii?Q?PUiFJeFOPYhkbMszYsxTGVoLD8Ry8KfepHEADsPCVruLKT3dFMfICHQOkFMX?=
- =?us-ascii?Q?OLpSFEoPS5+W8BdWPeh7hlodHvMKOb/YsdYAB3hMMga/BQZHATqZjl+4X0ME?=
- =?us-ascii?Q?KtQx8qLSkMNP7rR0SFfyoz4mCowNToYzkvhcrFKQp9AZCxKOseEOOAS9BMc5?=
- =?us-ascii?Q?FOY+u0ZeKg4WxDRbidbRBxDwrZfxegIZIYzikd/csVNMKkTu91AvXUGlzQ42?=
- =?us-ascii?Q?JZi8IASXixfdNikWGg0LoQFDrfO7o5Lg6ENkQKbhquF1x5a7r6Ab+CP416c7?=
- =?us-ascii?Q?Pb2QqT0ibcN8ktfchIINjntKacKwtA9Uz+GzXK64/MlYe3nc1tI+oRkNd3Ip?=
- =?us-ascii?Q?rrEJ8j7OrJk+xVd2V+oyAuHAaWJayqRD+oIcxsLIUviuMCMOyIbEQOhAOz71?=
- =?us-ascii?Q?I4qlE1yQ6Sfc8YN6xmPdNX88YwPBkje8TDI6zfPryX1A/5NsTNZKc+EK/EdD?=
- =?us-ascii?Q?RPu3Y8lk5eV4cNMzhgXslxYfkJrCNGMRgl/c8t+xCtfTflmWUXVFN6HnE6x5?=
- =?us-ascii?Q?BT5RVEpKPv3E0zlGk0eJlb7L2T0hTtIOzoRnMxothjNN4UIr7E28/r7w4dcO?=
- =?us-ascii?Q?Sd8HTcEJEkfM2k780EUvFAEq8GEWCq0wXk/1AiyBO3QJU8Io4SjaYN8cr0we?=
- =?us-ascii?Q?VVPDK86yswZSIvHPLrNg2JT9vgvJMMAoQu2F6/0YvubrHIYjeoTn6fDJf/0n?=
- =?us-ascii?Q?+woWuGu7lRUOPmI0YuTRmh91sygdtvUIFKpymYXzxGVD4CV6mrp2Vu0Wv/vf?=
- =?us-ascii?Q?CfsQyE7dSlDYbfCspZQ8mGsKuEUAcdPL8Wxekq9Cge2APxSLlKH1pzjitx2Y?=
- =?us-ascii?Q?SgrrAvJ2DBUUQoPQpRdVX0vLKJK6Nbc2Ag9LWbrtKylP4dScHv66rJuR9Q25?=
- =?us-ascii?Q?gOszob6LR2GI+/gBkxSFDCslIGznwXRaCvHuhwxdlUierTjyraoSaRYcKn80?=
- =?us-ascii?Q?VO34VuNfSEoPYMeV4Q15qFe88asZ/iiJuwnt+d93nrAo1w5RP0whPafEpGod?=
- =?us-ascii?Q?mdiEvhn82Alwx3TKpr9X/zlXSp7cIlJ/X9lkeeWL7aKXovtwDTF5b4Ar5MEF?=
- =?us-ascii?Q?OyBfYIU9XRxAjEH+7Q/3CnB1/x15HwIxKMrkphO7sxb87fsp426KcHvSRIuo?=
- =?us-ascii?Q?j8FHQm5nBaun4GfXxZeWdC09RdVO8ESYvCIiu/mftHjg3W2T4PYP1tKAV2Kb?=
- =?us-ascii?Q?ZlLe0BAnOCgkQaqi9nDz1RdyqpU=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <5A61E461690373479C4A5C1469BFEE74@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.7; Thu, 17 Feb
+ 2022 07:59:47 +0000
+Received: from PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::7037:b9dc:923c:c20d]) by PH0PR13MB4842.namprd13.prod.outlook.com
+ ([fe80::7037:b9dc:923c:c20d%7]) with mapi id 15.20.4995.015; Thu, 17 Feb 2022
+ 07:59:47 +0000
+Date:   Thu, 17 Feb 2022 08:59:41 +0100
+From:   Simon Horman <simon.horman@corigine.com>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "David S. Miller" <davem@davemloft.net>,
+        John Hurley <john.hurley@netronome.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        oss-drivers@corigine.com, netdev@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] nfp: flower: Fix a potential leak in
+ nfp_tunnel_add_shared_mac()
+Message-ID: <20220217075940.GA4665@corigine.com>
+References: <4acb805751f2cf5de8d69e9602a88ec39feff9fc.1644532467.git.christophe.jaillet@wanadoo.fr>
+ <20220211165356.1927a81b@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220211165356.1927a81b@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: AM8P251CA0020.EURP251.PROD.OUTLOOK.COM
+ (2603:10a6:20b:21b::25) To PH0PR13MB4842.namprd13.prod.outlook.com
+ (2603:10b6:510:78::6)
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b7387fd5-388e-41e2-11bf-08d9f1eb7787
+X-MS-TrafficTypeDiagnostic: BN6PR13MB1843:EE_
+X-Microsoft-Antispam-PRVS: <BN6PR13MB1843B40BE1D6B2F4E8FC4A16E8369@BN6PR13MB1843.namprd13.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: wz+q3OCFshBIT3TdPvVTk46KoxH3aezAERt0kqOHgHllzFg2WPnOHSD5g0cxs/1CnufXLsemveNq5uTkXOMSPLMo57lBeYih9vs0diYNw6oifvoB8Epwf1LU5dylM1R/OWzEqJc7emnV98Ddo+pKvBdQAt5Hwd7Gg0yfCgBHi4lvoO2GKlkMavUF3iW8L8EbRMcWH4qV3ktsArLwiLFAy6ZN2x+YbJJXO3y2N4wqPBrctNtcsT7H4uv9Leo8lZC4hM79l9tAjYObhSlftH5Kn7z8iEgQ3QvZoLDsBZWpJ90zt1f0ML/DUFlbjoW8r9qX/bA27exUMK4e2UsHd7pnxSXk/94kwRwo0xyL92zelgKfssPlvs8BcvgLvRTFHZmWI89x5zD1mwim2TyRc2Yp86EK3YpBsKFAFv6FEFTSspPHTW8zFocRaOvd6RW9nVgz1sPDTX1D/VqufN5Yjv4cVBlJMbbg3Bl7zUVJSRM9FmQ+QrCa4WGFrxy+W8gNGcVeWxrbkSXiT/gRLo94sI8H+EQsM+GpvjMhWydtx/W9FI+czpHCF3iNfaHG+g+vMm9HGlBAQs4Hpti1GAF57kra554BRJOuVaKai1D2hroegCkESxyP1qoUjLg8ASpN8848tHLZC2MkKydfxA1imPILyw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(136003)(396003)(39840400004)(376002)(346002)(2616005)(6666004)(8936002)(5660300002)(38100700002)(6916009)(54906003)(86362001)(316002)(36756003)(4326008)(186003)(66476007)(66556008)(66946007)(1076003)(33656002)(8676002)(44832011)(83380400001)(4744005)(2906002)(6512007)(6506007)(508600001)(6486002)(52116002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?C9QuocKtoM36k4dtoF2yybEBGwrqoWr2di2fP8VHMmT/osTDlEBKlOyi3FR9?=
+ =?us-ascii?Q?qFmGRNyDg045Gv0ZnEahIGEC2aq29/XChB6cmGFlK9LvFU8XYlKNRWJDMKGz?=
+ =?us-ascii?Q?bgb7vIUcnkYpsObjWCZpPfl/hhn6Rc6MjWJc2i2KRPESn5abhwgW0Z2PqKoc?=
+ =?us-ascii?Q?SY9V7dAG+6w+8KaHjpnTuTEv7Wyt+BxU2UAbNiXorSbjjfCrHXQOJ4l0WGSd?=
+ =?us-ascii?Q?XjpO41kBSd5muO2c8pjyaRo9aM7IwKd0LfzQrQ+TDWMoVv86xZjHzC2S39oo?=
+ =?us-ascii?Q?lIYGyw0re9slGTHji7YTYL8puuRZq/ukvkXur/IqUZ1kEugMmPR1Q0ORznUu?=
+ =?us-ascii?Q?qsbCL2Y2S4juIh32iOpn9xENmbbXcWkjzacverm93MT/5KuL/OFOIKW6G8We?=
+ =?us-ascii?Q?qI0I0NxnXxfwJYBnOgriTFJMb3x1COZ3kFR8gOSD16gLKy37sJfeOr65dC8V?=
+ =?us-ascii?Q?JeXlRYxHzzGRyKQi8oBXoCMq6p5FFK/HwOuhdRKSsjrJYJYT5w9WgWMWcWss?=
+ =?us-ascii?Q?SAGADLpRJPJSX3Tt4gMuzLSqaOFgptWXU1A/gyNAllSn8N015YmP1AdA1YdS?=
+ =?us-ascii?Q?ekmqxz4CjaRx5swXXOgfo9w7zVOVDgiSOzgtDDheGgw+LnywYrgPnos0sXee?=
+ =?us-ascii?Q?+7Kd05lVuD6p5XBpGoO9kzNXehwjZ4QCGQhfr4b7HYcvkgRbvBUY6eDXAorB?=
+ =?us-ascii?Q?cyJfjITN6ezhWwq5VbXtEJjwiHm35YbpsuONbK1LRyfLeW5+FURtuCwtA2/T?=
+ =?us-ascii?Q?bIpLMyxSsLl+eYtHrd87McF2mdZg03skInLpCMbm9fJMA59EwZGz76Z1TaL+?=
+ =?us-ascii?Q?tRn5nyrzfXFoN4Y2zQrOhxqBtr3OuEsbHAX763pywA8R3nqzBPuOXDt8umxa?=
+ =?us-ascii?Q?xkPlccJUKKhpGKtgEPaSh4erSt2jIxyNRMYjaPq3U72HCk1eGA7gUgk3yxMj?=
+ =?us-ascii?Q?7y9mTr02UF4UC06IbdNFUdIeAYycHBkq78q0BeeMRZ4Wyoi+uIRFj2NAWtvv?=
+ =?us-ascii?Q?CQfIFJisxMkUs1VgI61qhOu6SKtw5SxNFpOhgZOCTfzO4gsYqQHdb3Ga5X+h?=
+ =?us-ascii?Q?DQPPZftYX952COnddsvTuEts0ygZa/pjK5yy0alTEE5qp4rEJ+pCwH7RBpRH?=
+ =?us-ascii?Q?coB5hPszJmP+s19au0paJRx6+yoONpiRFVtZzqZonLTsUrTWppPb0qboTDlZ?=
+ =?us-ascii?Q?YiQ5t9afSIdEKW4FQbLjDi2BPrt9P2skD6A5llBWIH/MCmlIPTvgSzOKgK5O?=
+ =?us-ascii?Q?63s0NvX8xwPbAyiLHikIcoAD9c+4djfAIEVNZ94DQ5X86A3Dm318cdh9/QH+?=
+ =?us-ascii?Q?KXO/b+AY/L9IIj5DNOGnOSLPMo7RmUzCMPhvZsOgjNFXMrLcoXOf9wb1bSG4?=
+ =?us-ascii?Q?IgyfI2+z6VpEsz8JCEPha4NH6QKOr2xCJhRxJussFgocKNkBYQ1Fldiy0FAH?=
+ =?us-ascii?Q?hFMLdcZCDiIj+seYUy7eymEboSQJg7aw5ZOpAzDy/UBRg8PaG+VqN/hXfYkt?=
+ =?us-ascii?Q?f4U2+7EwCOqa2znMtMbOqubGcHz/s4cLOuPFvvJIqYddpQsTgCYfUyTuzHz4?=
+ =?us-ascii?Q?jPifUOklXFQxtuEQljPP7WASrdrFcRzXjEf82Se/Pi/8dU7uU0FdiIm7M6sq?=
+ =?us-ascii?Q?z+UaCwURmOKjiL8vyVPlrK8ls78KBMIsWIayRNV0QsrS+Uy+PPy9WCRzG2CU?=
+ =?us-ascii?Q?A14b06+rIl5ojRUXLt0RjuQkwvzUF1XBad4/LU9kpo665fioqmxrT0FHB90K?=
+ =?us-ascii?Q?tUYe3gXxLh+Pf+AZ0HcpPv4eum3h2dU=3D?=
+X-OriginatorOrg: corigine.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b7387fd5-388e-41e2-11bf-08d9f1eb7787
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR05MB3960.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4a4be843-22c6-4c2e-d97d-08d9f1e4a0b7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Feb 2022 07:10:48.9002
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2022 07:59:47.6147
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: +V7rFEHK1USwRWVraosuAIx8mnIseGG08ak8XTY6sE/vB0MQFUu+3o3C/qYW+31vxFtycUaQ1f/Q3s1RpAzG3g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR05MB6622
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IbyxC5hOJDYe5LoMY+8zIUsr8eaKw0ERANDR0bvprByuc4fMm78neEgp1DT48dgDPa2TYUbVPc0dcrG9LOKP2uw16G6Qm1GcE0jBVXY9iEg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR13MB1843
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Fri, Feb 11, 2022 at 04:53:56PM -0800, Jakub Kicinski wrote:
+> On Thu, 10 Feb 2022 23:34:52 +0100 Christophe JAILLET wrote:
+> > ida_simple_get() returns an id between min (0) and max (NFP_MAX_MAC_INDEX)
+> > inclusive.
+> > So NFP_MAX_MAC_INDEX (0xff) is a valid id.
+> > 
+> > In order for the error handling path to work correctly, the 'invalid'
+> > value for 'ida_idx' should not be in the 0..NFP_MAX_MAC_INDEX range,
+> > inclusive.
+> > 
+> > So set it to -1.
+> > 
+> > Fixes: 20cce8865098 ("nfp: flower: enable MAC address sharing for offloadable devs")
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> This patch is a fix and the other one is refactoring. They can't be
+> in the same series because they need to go to different trees. Please
+> repost the former with [PATCH net] and ~one week later the latter with
+> [PATCH net-next].
 
-> On Feb 10, 2022, at 2:27 PM, Christophe JAILLET <christophe.jaillet@wanad=
-oo.fr> wrote:
->=20
-> dma_alloc_coherent() already clear the allocated memory, there is no need
-> to explicitly call memset().
-> This saves a few cycles and a few lines of code.
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> drivers/misc/vmw_vmci/vmci_guest.c | 6 ++----
-> 1 file changed, 2 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/misc/vmw_vmci/vmci_guest.c b/drivers/misc/vmw_vmci/v=
-mci_guest.c
-> index 1a1858742f75..02d4722d8474 100644
-> --- a/drivers/misc/vmw_vmci/vmci_guest.c
-> +++ b/drivers/misc/vmw_vmci/vmci_guest.c
-> @@ -706,13 +706,11 @@ static int vmci_guest_probe_device(struct pci_dev *=
-pdev,
-> 		vmci_dev->notification_bitmap =3D dma_alloc_coherent(
-> 			&pdev->dev, PAGE_SIZE, &vmci_dev->notification_base,
-> 			GFP_KERNEL);
-> -		if (!vmci_dev->notification_bitmap) {
-> +		if (!vmci_dev->notification_bitmap)
-> 			dev_warn(&pdev->dev,
-> 				 "Unable to allocate notification bitmap\n");
-> -		} else {
-> -			memset(vmci_dev->notification_bitmap, 0, PAGE_SIZE);
-> +		else
-> 			caps_in_use |=3D VMCI_CAPS_NOTIFICATIONS;
-> -		}
-> 	}
->=20
-> 	if (mmio_base !=3D NULL) {
-> --=20
-> 2.32.0
->=20
+Thanks Jakub.
 
-Thanks!
-
-Acked-by: Vishnu Dasa <vdasa@vmware.com>=
+Christophe, please let me know if you'd like me to handle reposting
+the patches as described by Jakub.
