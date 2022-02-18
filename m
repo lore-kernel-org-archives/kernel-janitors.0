@@ -2,93 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F24AC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Feb 2022 18:20:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7183C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Feb 2022 05:00:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244161AbiBQSUy (ORCPT
+        id S230114AbiBRFAd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Feb 2022 13:20:54 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47318 "EHLO
+        Fri, 18 Feb 2022 00:00:33 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244182AbiBQSUu (ORCPT
+        with ESMTP id S230095AbiBRFAb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Feb 2022 13:20:50 -0500
-Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 913222B2FF0
-        for <kernel-janitors@vger.kernel.org>; Thu, 17 Feb 2022 10:20:34 -0800 (PST)
-Received: from [192.168.1.18] ([90.126.236.122])
-        by smtp.orange.fr with ESMTPA
-        id KlOInzYku0Z1CKlOInhbZ2; Thu, 17 Feb 2022 19:20:32 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 17 Feb 2022 19:20:32 +0100
-X-ME-IP: 90.126.236.122
-Message-ID: <01035905-61f5-da02-36d5-92831e1da184@wanadoo.fr>
-Date:   Thu, 17 Feb 2022 19:20:30 +0100
+        Fri, 18 Feb 2022 00:00:31 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50C232BAA0D;
+        Thu, 17 Feb 2022 21:00:15 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 05F0AB82583;
+        Fri, 18 Feb 2022 05:00:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 50476C340FA;
+        Fri, 18 Feb 2022 05:00:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645160412;
+        bh=Tjd6KAEJe125Y5LNoDcCFkRn6cC8snye/z4XPK+sb5I=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=neTrGpPB66lfHxTOkBCgVcayL7+lAZAGiuT2q2ASnsfS+G2wlgmdE113bPc1yP572
+         jZqo6jSolzvlGFrrLa3tpinHYXMmlV2H1dr0cu/ptP4oQZxoUU4ht0DT4DmnqmG+yl
+         Sgx5O/dy9sQxQbkhEEzoox4DJys1botLJKEhghU18iDPCDm4jRbjZ9mWw59EjB0e2k
+         wDkBRwZEojPInPEZic0PGZ5l1+tiZEuXEP0BqF7pkgACd41shQpJxap1i3ee2x+FSj
+         ExHwIrk6a3aOvXofQ2Z9Wz55GCjqAN1P06x1J+yPka5Hk5kbYycYqY1Yi2XHfdb/OR
+         mUrVihboCmPDA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 31746E6BBD2;
+        Fri, 18 Feb 2022 05:00:12 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v2 1/2] nfp: flower: Fix a potential leak in
- nfp_tunnel_add_shared_mac()
-Content-Language: en-US
-To:     Simon Horman <simon.horman@corigine.com>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        John Hurley <john.hurley@netronome.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        oss-drivers@corigine.com, netdev@vger.kernel.org
-References: <4acb805751f2cf5de8d69e9602a88ec39feff9fc.1644532467.git.christophe.jaillet@wanadoo.fr>
- <20220211165356.1927a81b@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
- <20220217075940.GA4665@corigine.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20220217075940.GA4665@corigine.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: ll_temac: Use GFP_KERNEL instead of GFP_ATOMIC when
+ possible
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164516041219.28752.17567769381515627753.git-patchwork-notify@kernel.org>
+Date:   Fri, 18 Feb 2022 05:00:12 +0000
+References: <694abd65418b2b3974106a82d758e3474c65ae8f.1645042560.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <694abd65418b2b3974106a82d758e3474c65ae8f.1645042560.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     davem@davemloft.net, kuba@kernel.org, michal.simek@xilinx.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 17/02/2022 à 08:59, Simon Horman a écrit :
-> On Fri, Feb 11, 2022 at 04:53:56PM -0800, Jakub Kicinski wrote:
->> On Thu, 10 Feb 2022 23:34:52 +0100 Christophe JAILLET wrote:
->>> ida_simple_get() returns an id between min (0) and max (NFP_MAX_MAC_INDEX)
->>> inclusive.
->>> So NFP_MAX_MAC_INDEX (0xff) is a valid id.
->>>
->>> In order for the error handling path to work correctly, the 'invalid'
->>> value for 'ida_idx' should not be in the 0..NFP_MAX_MAC_INDEX range,
->>> inclusive.
->>>
->>> So set it to -1.
->>>
->>> Fixes: 20cce8865098 ("nfp: flower: enable MAC address sharing for offloadable devs")
->>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>
->> This patch is a fix and the other one is refactoring. They can't be
->> in the same series because they need to go to different trees. Please
->> repost the former with [PATCH net] and ~one week later the latter with
->> [PATCH net-next].
+Hello:
+
+This patch was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Wed, 16 Feb 2022 21:16:16 +0100 you wrote:
+> XTE_MAX_JUMBO_FRAME_SIZE is over 9000 bytes and the default value for
+> 'rx_bd_num' is RX_BD_NUM_DEFAULT	(i.e. 1024)
 > 
-> Thanks Jakub.
+> So this loop allocates more than 9 Mo of memory.
 > 
-> Christophe, please let me know if you'd like me to handle reposting
-> the patches as described by Jakub.
+> Previous memory allocations in this function already use GFP_KERNEL, so
+> use __netdev_alloc_skb_ip_align() and an explicit GFP_KERNEL instead of a
+> implicit GFP_ATOMIC.
 > 
-Hi,
+> [...]
 
-If you can, it's fine for me.
+Here is the summary with links:
+  - net: ll_temac: Use GFP_KERNEL instead of GFP_ATOMIC when possible
+    https://git.kernel.org/netdev/net-next/c/60f8ad2392d0
 
-I must admit that what I consider, as an hobbyist, too much bureaucracy 
-is sometimes discouraging.
-
-I do understand the need for maintainers to have things the way they 
-need, but, well, maybe sometimes it is too much.
-
-In this particular case, maybe patch 1/2 could be applied to net as-is, 
-and 2/2 just dropped because not really useful.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-(Just the thoughts of a tired man after a long day at work, don't worry, 
-tomorrow, I'll be in a better mood)
-
-CJ
