@@ -2,36 +2,40 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3FE1C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Feb 2022 17:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0AD7C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Feb 2022 17:33:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238607AbiBRR3j (ORCPT
+        id S238629AbiBRRdi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Feb 2022 12:29:39 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:33656 "EHLO
+        Fri, 18 Feb 2022 12:33:38 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238605AbiBRR3h (ORCPT
+        with ESMTP id S238628AbiBRRdh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Feb 2022 12:29:37 -0500
+        Fri, 18 Feb 2022 12:33:37 -0500
 Received: from smtp.smtpout.orange.fr (smtp01.smtpout.orange.fr [80.12.242.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DEC62B4D82
-        for <kernel-janitors@vger.kernel.org>; Fri, 18 Feb 2022 09:29:20 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 155022B5227
+        for <kernel-janitors@vger.kernel.org>; Fri, 18 Feb 2022 09:33:20 -0800 (PST)
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id L74GnW5saFTgbL74Hni9ks; Fri, 18 Feb 2022 18:29:17 +0100
+        id L789nW7orFTgbL789niAWH; Fri, 18 Feb 2022 18:33:19 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Fri, 18 Feb 2022 18:29:17 +0100
+X-ME-Date: Fri, 18 Feb 2022 18:33:19 +0100
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Support Opensource <support.opensource@diasemi.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Hans de Goede <hdegoede@redhat.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
+        Purism Kernel Team <kernel@puri.sm>,
+        Sebastian Reichel <sre@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-input@vger.kernel.org
-Subject: [PATCH] Input: da9063 - Use devm_delayed_work_autocancel()
-Date:   Fri, 18 Feb 2022 18:29:13 +0100
-Message-Id: <a76ac3f4c7aee205395b89b5b3f587e30a48df96.1645205312.git.christophe.jaillet@wanadoo.fr>
+        linux-pm@vger.kernel.org
+Subject: [PATCH] power: supply: max17042_battery: Use devm_delayed_work_autocancel()
+Date:   Fri, 18 Feb 2022 18:33:15 +0100
+Message-Id: <670ef51366f96035f49852cd17325af10ffa07ea.1645205558.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -44,47 +48,46 @@ This saves a few lines of code.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/input/misc/da9063_onkey.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
+ drivers/power/supply/max17042_battery.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/input/misc/da9063_onkey.c b/drivers/input/misc/da9063_onkey.c
-index 79851923ee57..b14a389600c9 100644
---- a/drivers/input/misc/da9063_onkey.c
-+++ b/drivers/input/misc/da9063_onkey.c
-@@ -4,6 +4,7 @@
-  * Copyright (C) 2015  Dialog Semiconductor Ltd.
-  */
+diff --git a/drivers/power/supply/max17042_battery.c b/drivers/power/supply/max17042_battery.c
+index 87128cf0d577..ab031bbfbe78 100644
+--- a/drivers/power/supply/max17042_battery.c
++++ b/drivers/power/supply/max17042_battery.c
+@@ -9,6 +9,7 @@
+ // This driver is based on max17040_battery.c
  
+ #include <linux/acpi.h>
 +#include <linux/devm-helpers.h>
+ #include <linux/init.h>
  #include <linux/module.h>
- #include <linux/errno.h>
- #include <linux/input.h>
-@@ -182,13 +183,6 @@ static irqreturn_t da9063_onkey_irq_handler(int irq, void *data)
- 	return IRQ_HANDLED;
- }
+ #include <linux/slab.h>
+@@ -1030,13 +1031,6 @@ static const struct power_supply_desc max17042_no_current_sense_psy_desc = {
+ 	.num_properties	= ARRAY_SIZE(max17042_battery_props) - 2,
+ };
  
--static void da9063_cancel_poll(void *data)
+-static void max17042_stop_work(void *data)
 -{
--	struct da9063_onkey *onkey = data;
+-	struct max17042_chip *chip = data;
 -
--	cancel_delayed_work_sync(&onkey->work);
+-	cancel_work_sync(&chip->work);
 -}
 -
- static int da9063_onkey_probe(struct platform_device *pdev)
+ static int max17042_probe(struct i2c_client *client,
+ 			const struct i2c_device_id *id)
  {
- 	struct da9063_onkey *onkey;
-@@ -234,9 +228,8 @@ static int da9063_onkey_probe(struct platform_device *pdev)
+@@ -1142,8 +1136,8 @@ static int max17042_probe(struct i2c_client *client,
  
- 	input_set_capability(onkey->input, EV_KEY, KEY_POWER);
- 
--	INIT_DELAYED_WORK(&onkey->work, da9063_poll_on);
--
--	error = devm_add_action(&pdev->dev, da9063_cancel_poll, onkey);
-+	error = devm_delayed_work_autocancel(&pdev->dev, &onkey->work,
-+					     da9063_poll_on);
- 	if (error) {
- 		dev_err(&pdev->dev,
- 			"Failed to add cancel poll action: %d\n",
+ 	regmap_read(chip->regmap, MAX17042_STATUS, &val);
+ 	if (val & STATUS_POR_BIT) {
+-		INIT_WORK(&chip->work, max17042_init_worker);
+-		ret = devm_add_action(&client->dev, max17042_stop_work, chip);
++		ret = devm_work_autocancel(&client->dev, &chip->work,
++					   max17042_init_worker);
+ 		if (ret)
+ 			return ret;
+ 		schedule_work(&chip->work);
 -- 
 2.32.0
 
