@@ -2,40 +2,35 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C810C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Feb 2022 17:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3926FC433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Feb 2022 17:46:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238670AbiBRRh6 (ORCPT
+        id S234580AbiBRRrO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Feb 2022 12:37:58 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37374 "EHLO
+        Fri, 18 Feb 2022 12:47:14 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238621AbiBRRh6 (ORCPT
+        with ESMTP id S233540AbiBRRrN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Feb 2022 12:37:58 -0500
+        Fri, 18 Feb 2022 12:47:13 -0500
 Received: from smtp.smtpout.orange.fr (smtp01.smtpout.orange.fr [80.12.242.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D83427B27
-        for <kernel-janitors@vger.kernel.org>; Fri, 18 Feb 2022 09:37:41 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAE7230F45
+        for <kernel-janitors@vger.kernel.org>; Fri, 18 Feb 2022 09:46:55 -0800 (PST)
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id L7CNnW9vTFTgbL7CNniBOp; Fri, 18 Feb 2022 18:37:40 +0100
+        id L7LJnWEKdFTgbL7LKniDHC; Fri, 18 Feb 2022 18:46:54 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Fri, 18 Feb 2022 18:37:40 +0100
+X-ME-Date: Fri, 18 Feb 2022 18:46:54 +0100
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Hans de Goede <hdegoede@redhat.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
-        Purism Kernel Team <kernel@puri.sm>,
-        Sebastian Reichel <sre@kernel.org>
+To:     Chas Williams <3chas3@gmail.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-pm@vger.kernel.org
-Subject: [PATCH V2] power: supply: max17042_battery: Use devm_work_autocancel()
-Date:   Fri, 18 Feb 2022 18:37:37 +0100
-Message-Id: <670ea51361f96035f49852c617325af10ffa07ea.1645205558.git.christophe.jaillet@wanadoo.fr>
+        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org
+Subject: [PATCH] atm: nicstar: Use kcalloc() to simplify code
+Date:   Fri, 18 Feb 2022 18:46:51 +0100
+Message-Id: <68ec8438f31b1034b37b21a6c1b6c3de195b8adf.1645206403.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -43,53 +38,56 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use devm_work_autocancel() instead of hand-writing it.
-This saves a few lines of code.
+Use kcalloc() instead of kmalloc_array() and a loop to set all the values
+of the array to NULL.
+
+While at it, remove a duplicated assignment to 'scq->num_entries'.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-V2: s/devm_delayed_work_autocancel/devm_work_autocancel/
+ drivers/atm/nicstar.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
- drivers/power/supply/max17042_battery.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/power/supply/max17042_battery.c b/drivers/power/supply/max17042_battery.c
-index 87128cf0d577..ab031bbfbe78 100644
---- a/drivers/power/supply/max17042_battery.c
-+++ b/drivers/power/supply/max17042_battery.c
-@@ -9,6 +9,7 @@
- // This driver is based on max17040_battery.c
- 
- #include <linux/acpi.h>
-+#include <linux/devm-helpers.h>
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/slab.h>
-@@ -1030,13 +1031,6 @@ static const struct power_supply_desc max17042_no_current_sense_psy_desc = {
- 	.num_properties	= ARRAY_SIZE(max17042_battery_props) - 2,
- };
- 
--static void max17042_stop_work(void *data)
--{
--	struct max17042_chip *chip = data;
--
--	cancel_work_sync(&chip->work);
--}
--
- static int max17042_probe(struct i2c_client *client,
- 			const struct i2c_device_id *id)
+diff --git a/drivers/atm/nicstar.c b/drivers/atm/nicstar.c
+index bc5a6ab6fa4b..1a50de39f5b5 100644
+--- a/drivers/atm/nicstar.c
++++ b/drivers/atm/nicstar.c
+@@ -861,7 +861,6 @@ static void ns_init_card_error(ns_dev *card, int error)
+ static scq_info *get_scq(ns_dev *card, int size, u32 scd)
  {
-@@ -1142,8 +1136,8 @@ static int max17042_probe(struct i2c_client *client,
+ 	scq_info *scq;
+-	int i;
  
- 	regmap_read(chip->regmap, MAX17042_STATUS, &val);
- 	if (val & STATUS_POR_BIT) {
--		INIT_WORK(&chip->work, max17042_init_worker);
--		ret = devm_add_action(&client->dev, max17042_stop_work, chip);
-+		ret = devm_work_autocancel(&client->dev, &chip->work,
-+					   max17042_init_worker);
- 		if (ret)
- 			return ret;
- 		schedule_work(&chip->work);
+ 	if (size != VBR_SCQSIZE && size != CBR_SCQSIZE)
+ 		return NULL;
+@@ -875,9 +874,8 @@ static scq_info *get_scq(ns_dev *card, int size, u32 scd)
+ 		kfree(scq);
+ 		return NULL;
+ 	}
+-	scq->skb = kmalloc_array(size / NS_SCQE_SIZE,
+-				 sizeof(*scq->skb),
+-				 GFP_KERNEL);
++	scq->skb = kcalloc(size / NS_SCQE_SIZE, sizeof(*scq->skb),
++			   GFP_KERNEL);
+ 	if (!scq->skb) {
+ 		dma_free_coherent(&card->pcidev->dev,
+ 				  2 * size, scq->org, scq->dma);
+@@ -890,15 +888,11 @@ static scq_info *get_scq(ns_dev *card, int size, u32 scd)
+ 	scq->last = scq->base + (scq->num_entries - 1);
+ 	scq->tail = scq->last;
+ 	scq->scd = scd;
+-	scq->num_entries = size / NS_SCQE_SIZE;
+ 	scq->tbd_count = 0;
+ 	init_waitqueue_head(&scq->scqfull_waitq);
+ 	scq->full = 0;
+ 	spin_lock_init(&scq->lock);
+ 
+-	for (i = 0; i < scq->num_entries; i++)
+-		scq->skb[i] = NULL;
+-
+ 	return scq;
+ }
+ 
 -- 
 2.32.0
 
