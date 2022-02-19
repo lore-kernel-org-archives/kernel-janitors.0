@@ -2,80 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9009EC433FE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Feb 2022 07:05:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E1AAC4332F
+	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Feb 2022 16:40:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241381AbiBSHF4 (ORCPT
+        id S242642AbiBSQkf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 19 Feb 2022 02:05:56 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36930 "EHLO
+        Sat, 19 Feb 2022 11:40:35 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230412AbiBSHFy (ORCPT
+        with ESMTP id S242635AbiBSQkd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 19 Feb 2022 02:05:54 -0500
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AB61256ED8;
-        Fri, 18 Feb 2022 23:05:35 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=alibuda@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0V4sb8o._1645254330;
-Received: from 192.168.1.102(mailfrom:alibuda@linux.alibaba.com fp:SMTPD_---0V4sb8o._1645254330)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 19 Feb 2022 15:05:31 +0800
-Message-ID: <89147077-fadc-e5fc-ce91-0f3d4403c5f2@linux.alibaba.com>
-Date:   Sat, 19 Feb 2022 15:05:27 +0800
+        Sat, 19 Feb 2022 11:40:33 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 776D31D3D9B;
+        Sat, 19 Feb 2022 08:40:14 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 277E2B80BEA;
+        Sat, 19 Feb 2022 16:40:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B4BEAC340F6;
+        Sat, 19 Feb 2022 16:40:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645288811;
+        bh=hKNyPY4HUZF+Y7CQUjY/REY3Z02I7KGlKj1izoSpSck=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=fwVV+VvV6zGKP0oPky75PTn2jveerS+IwJlTf/JiDXh8/GDaGPUxBF/9zQWjPWfNb
+         7UCb8Oq8y/CH4t9XoTCNZznjaJUv+GT/ugnUgb80TOCdScqWTtjjbBSUCijzGgrqmR
+         SReAimYc6f1SpteggebXL5PSlA7MdSWbnFlfv64VO+A8bk3iOX0iQK23eIFuSGoLnd
+         BG8X/8J6EhscNQ4iAylye4Nq+k/NUQXkVlto4LwWOaKI/eLtQOgegwAewZmZADe21S
+         5qoFRjg0127n68szpfmxnzwll0NpkCsQYOTTeLMXeAeomrfqY9Bi3UayiA1m941PBK
+         6Gi/ayOCUYcoA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A20CAE7BB1B;
+        Sat, 19 Feb 2022 16:40:11 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.5.1
-Subject: Re: [PATCH net-next] net/smc: unlock on error paths in
- __smc_setsockopt()
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Karsten Graul <kgraul@linux.ibm.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20220218153259.GA4392@kili>
-From:   "D. Wythe" <alibuda@linux.alibaba.com>
-In-Reply-To: <20220218153259.GA4392@kili>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] atm: nicstar: Use kcalloc() to simplify code
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164528881165.6364.13367871092721954712.git-patchwork-notify@kernel.org>
+Date:   Sat, 19 Feb 2022 16:40:11 +0000
+References: <68ec8438f31b1034b37b21a6c1b6c3de195b8adf.1645206403.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <68ec8438f31b1034b37b21a6c1b6c3de195b8adf.1645206403.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     3chas3@gmail.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hello:
 
+This patch was applied to netdev/net-next.git (master)
+by David S. Miller <davem@davemloft.net>:
 
-在 2022/2/18 下午11:32, Dan Carpenter 写道:
-> These two error paths need to release_sock(sk) before returning.
+On Fri, 18 Feb 2022 18:46:51 +0100 you wrote:
+> Use kcalloc() instead of kmalloc_array() and a loop to set all the values
+> of the array to NULL.
 > 
-> Fixes: a6a6fe27bab4 ("net/smc: Dynamic control handshake limitation by socket options")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->   net/smc/af_smc.c | 12 ++++++++----
->   1 file changed, 8 insertions(+), 4 deletions(-)
+> While at it, remove a duplicated assignment to 'scq->num_entries'.
 > 
-> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
-> index d873afe2d4dc..38faf2b60327 100644
-> --- a/net/smc/af_smc.c
-> +++ b/net/smc/af_smc.c
-> @@ -2715,10 +2715,14 @@ static int __smc_setsockopt(struct socket *sock, int level, int optname,
->   	lock_sock(sk);
->   	switch (optname) {
->   	case SMC_LIMIT_HS:
-> -		if (optlen < sizeof(int))
-> -			return -EINVAL;
-> -		if (copy_from_sockptr(&val, optval, sizeof(int)))
-> -			return -EFAULT;
-> +		if (optlen < sizeof(int)) {
-> +			rc = -EINVAL;
-> +			break;
-> +		}
-> +		if (copy_from_sockptr(&val, optval, sizeof(int))) {
-> +			rc = -EFAULT;
-> +			break;
-> +		}
->   
->   		smc->limit_smc_hs = !!val;
->   		rc = 0;
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> [...]
 
-My mistake... thanks for your fixes.
+Here is the summary with links:
+  - atm: nicstar: Use kcalloc() to simplify code
+    https://git.kernel.org/netdev/net-next/c/92c54a65e6a8
 
-Reviewed-by: D. Wythe <alibuda@linux.alibaba.com>
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
