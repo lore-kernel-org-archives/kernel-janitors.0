@@ -2,115 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A2FAC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Feb 2022 11:39:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE64EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Feb 2022 22:15:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237205AbiBTLj3 (ORCPT
+        id S239908AbiBTWQE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 20 Feb 2022 06:39:29 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43156 "EHLO
+        Sun, 20 Feb 2022 17:16:04 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237212AbiBTLj2 (ORCPT
+        with ESMTP id S230124AbiBTWQD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 20 Feb 2022 06:39:28 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6890631DDE;
-        Sun, 20 Feb 2022 03:39:07 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Sun, 20 Feb 2022 17:16:03 -0500
+X-Greylist: delayed 431 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 20 Feb 2022 14:15:42 PST
+Received: from mail-4327.protonmail.ch (mail-4327.protonmail.ch [185.70.43.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B77F340DA
+        for <kernel-janitors@vger.kernel.org>; Sun, 20 Feb 2022 14:15:41 -0800 (PST)
+Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 18120B80CDD;
-        Sun, 20 Feb 2022 11:39:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68A1FC340E8;
-        Sun, 20 Feb 2022 11:39:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645357144;
-        bh=+CU4F09gW1jBdGn9D9BvL+RyHIoPA31D2oqtNT2Ket4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=d/++ud/mknmxEatFHQl7zc4/SOTpe35Zw8tYVB0WkYJTKiQiKQuFMtzBCJOWBk2gY
-         EXiOi0KexVIe+GDG1xMxaO9Qx88Zr624mfAMansh4SgfPRKl3m7J6OMvm9GscSL1Ad
-         kCqwkKSp0ozLJlZCBZ+ut7m3zoqeA3A8rGIXkBnFalSFOYOaAG8/YtDYQcAk+GNL4a
-         5UuL8gv7wP7e1JdhbChujxKDDsXTpQPdHTHDUueLDhb7m48GQBZqxnb57dLPbQH+aZ
-         cXfUlpJOrrKYkjxg/9H2+keBOq/44MHz0xENSJZ24E425uflChoL8E7IZq00ZlGcJ8
-         ehTzwWbciwDqQ==
-Date:   Sun, 20 Feb 2022 11:45:52 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] iio: adc: xilinx-ams: Use
- devm_delayed_work_autocancel() to simplify code
-Message-ID: <20220220114552.53fedd33@jic23-huawei>
-In-Reply-To: <2626e6a057e40cd2271ef0e5f81d12e607bad5b4.1644776929.git.christophe.jaillet@wanadoo.fr>
-References: <2626e6a057e40cd2271ef0e5f81d12e607bad5b4.1644776929.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.31; x86_64-pc-linux-gnu)
+        by mail-4321.protonmail.ch (Postfix) with ESMTPS id 4K201r4Q0Zz4wwd9
+        for <kernel-janitors@vger.kernel.org>; Sun, 20 Feb 2022 22:08:32 +0000 (UTC)
+Authentication-Results: mail-4321.protonmail.ch;
+        dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="u2g8eoH/"
+Date:   Sun, 20 Feb 2022 22:08:24 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail3; t=1645394908;
+        bh=PSaeiEzIlUfb9ImNQgZnCxzgFtApCnBzTORZq9m/JQo=;
+        h=Date:To:From:Cc:Reply-To:Subject:Message-ID:From:To:Cc:Date:
+         Subject:Reply-To:Feedback-ID:Message-ID;
+        b=u2g8eoH/tkDJFAnzdxpMcmWrIx3wRwdTpR/HCutq1FF+VUmiwcRrFJVrcPllgrd1x
+         7lVQoUxhbgx8G8KUjTIny1Ew1vt27L9g8xPQVlMJ2voQoRpPLj6emiTY0no3rnTBnu
+         sFGGyiRSBWCfuLECSRDxiTe71rir7Spv/saeRDB5Ev2Hul6gcKdIRSd7dCX8YqiTlp
+         Cj/EIJ/8g4SQHN9tlyKTZ1+U5jGLPALvdGB0Bf03vXzHQrUg5KIbwHVpwitKlVY5Ym
+         h2OWJYAJHjYhgO/o8IOxjNv0a72ueIoQXgYy5qS9F9rfn7edQSTRQu87bRcPm5m5I6
+         lsjR757uCxGPA==
+To:     kernel-janitors@vger.kernel.org
+From:   Nelson Penn <nelsonapenn@protonmail.com>
+Cc:     Nelson Penn <nelsonapenn@protonmail.com>
+Reply-To: Nelson Penn <nelsonapenn@protonmail.com>
+Subject: [PATCH] input-documentation: Make references to button_dev reflect that it is a pointer.
+Message-ID: <20220220220813.23398-1-nelsonapenn@protonmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 13 Feb 2022 19:29:05 +0100
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+The docs on creating an input device driver have an example in which
+button_dev is a pointer to an input_dev struct. However, in two code
+snippets below, button_dev is used as if it is not a pointer. Make
+references to button_dev reflect in these code snippets reflect that it
+is a pointer.
 
-> Use devm_delayed_work_autocancel() instead of hand writing it. This is
-> less verbose and saves a few lines of code.
-> 
-> devm_delayed_work_autocancel() uses devm_add_action() instead of
-> devm_add_action_or_reset(). This is fine, because if the underlying memory
-> allocation fails, no work has been scheduled yet. So there is nothing to
-> undo.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Looks good to me, but I'd ideally like some input from someone familiar with
-the driver.
+Signed-off-by: Nelson Penn <nelsonapenn@protonmail.com>
+---
+ Documentation/input/input-programming.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Thanks,
+diff --git a/Documentation/input/input-programming.rst b/Documentation/inpu=
+t/input-programming.rst
+index 2638dce69764..c9264814c7aa 100644
+--- a/Documentation/input/input-programming.rst
++++ b/Documentation/input/input-programming.rst
+@@ -85,15 +85,15 @@ accepted by this input device. Our example device can o=
+nly generate EV_KEY
+ type events, and from those only BTN_0 event code. Thus we only set these
+ two bits. We could have used::
 
-Jonathan
+-=09set_bit(EV_KEY, button_dev.evbit);
+-=09set_bit(BTN_0, button_dev.keybit);
++=09set_bit(EV_KEY, button_dev->evbit);
++=09set_bit(BTN_0, button_dev->keybit);
 
-> ---
->  drivers/iio/adc/xilinx-ams.c | 11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/xilinx-ams.c b/drivers/iio/adc/xilinx-ams.c
-> index 8343c5f74121..6ffddf4038b8 100644
-> --- a/drivers/iio/adc/xilinx-ams.c
-> +++ b/drivers/iio/adc/xilinx-ams.c
-> @@ -12,6 +12,7 @@
->  #include <linux/bitfield.h>
->  #include <linux/clk.h>
->  #include <linux/delay.h>
-> +#include <linux/devm-helpers.h>
->  #include <linux/interrupt.h>
->  #include <linux/io.h>
->  #include <linux/iopoll.h>
-> @@ -1348,11 +1349,6 @@ static void ams_clk_disable_unprepare(void *data)
->  	clk_disable_unprepare(data);
->  }
->  
-> -static void ams_cancel_delayed_work(void *data)
-> -{
-> -	cancel_delayed_work(data);
-> -}
-> -
->  static int ams_probe(struct platform_device *pdev)
->  {
->  	struct iio_dev *indio_dev;
-> @@ -1389,9 +1385,8 @@ static int ams_probe(struct platform_device *pdev)
->  	if (ret < 0)
->  		return ret;
->  
-> -	INIT_DELAYED_WORK(&ams->ams_unmask_work, ams_unmask_worker);
-> -	ret = devm_add_action_or_reset(&pdev->dev, ams_cancel_delayed_work,
-> -				       &ams->ams_unmask_work);
-> +	ret = devm_delayed_work_autocancel(&pdev->dev, &ams->ams_unmask_work,
-> +					   ams_unmask_worker);
->  	if (ret < 0)
->  		return ret;
->  
+ as well, but with more than single bits the first approach tends to be
+ shorter.
+
+ Then the example driver registers the input device structure by calling::
+
+-=09input_register_device(&button_dev);
++=09input_register_device(button_dev);
+
+ This adds the button_dev structure to linked lists of the input driver and
+ calls device handler modules _connect functions to tell them a new input
+--
+2.25.1
+
 
