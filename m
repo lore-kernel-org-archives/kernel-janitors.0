@@ -2,38 +2,37 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D574AC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Feb 2022 06:37:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F10C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 20 Feb 2022 07:27:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241330AbiBTGh1 (ORCPT
+        id S240055AbiBTH1m (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 20 Feb 2022 01:37:27 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36958 "EHLO
+        Sun, 20 Feb 2022 02:27:42 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231614AbiBTGh0 (ORCPT
+        with ESMTP id S237561AbiBTH1l (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 20 Feb 2022 01:37:26 -0500
+        Sun, 20 Feb 2022 02:27:41 -0500
 Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEDFB41607
-        for <kernel-janitors@vger.kernel.org>; Sat, 19 Feb 2022 22:37:04 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8988241994
+        for <kernel-janitors@vger.kernel.org>; Sat, 19 Feb 2022 23:27:20 -0800 (PST)
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id Lfq8nvjhNuCn2Lfq9nuQtp; Sun, 20 Feb 2022 07:37:02 +0100
+        id Lgcmnw8HQuCn2LgcmnuVzW; Sun, 20 Feb 2022 08:27:18 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 20 Feb 2022 07:37:02 +0100
+X-ME-Date: Sun, 20 Feb 2022 08:27:18 +0100
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
-        Sean Tranchetti <stranche@codeaurora.org>,
+To:     Sergey Shtylyov <s.shtylyov@omp.ru>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org
-Subject: [PATCH] net: qualcomm: rmnet: Use skb_put_zero() to simplify code
-Date:   Sun, 20 Feb 2022 07:36:59 +0100
-Message-Id: <8abfe32db956f335d65638dfafdd3577ab6baf0e.1645338968.git.christophe.jaillet@wanadoo.fr>
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] ravb: Use GFP_KERNEL instead of GFP_ATOMIC when possible
+Date:   Sun, 20 Feb 2022 08:27:15 +0100
+Message-Id: <3d67f0369909010d620bd413c41d11b302eb0ff8.1645342015.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -41,36 +40,36 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use skb_put_zero() instead of hand-writing it. This saves a few lines of
-code and is more readable.
+'max_rx_len' can be up to GBETH_RX_BUFF_MAX (i.e. 8192) (see
+'gbeth_hw_info').
+The default value of 'num_rx_ring' can be BE_RX_RING_SIZE (i.e. 1024).
+
+So this loop can allocate 8 Mo of memory.
+
+Previous memory allocations in this function already use GFP_KERNEL, so
+use __netdev_alloc_skb() and an explicit GFP_KERNEL instead of a
+implicit GFP_ATOMIC.
+
+This gives more opportunities of successful allocation.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-index 3676976c875b..ba194698cc14 100644
---- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-+++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c
-@@ -298,7 +298,6 @@ struct rmnet_map_header *rmnet_map_add_map_header(struct sk_buff *skb,
- {
- 	struct rmnet_map_header *map_header;
- 	u32 padding, map_datalen;
--	u8 *padbytes;
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index 24e2635c4c80..525d66f71f02 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -475,7 +475,7 @@ static int ravb_ring_init(struct net_device *ndev, int q)
+ 		goto error;
  
- 	map_datalen = skb->len - hdrlen;
- 	map_header = (struct rmnet_map_header *)
-@@ -323,8 +322,7 @@ struct rmnet_map_header *rmnet_map_add_map_header(struct sk_buff *skb,
- 	if (skb_tailroom(skb) < padding)
- 		return NULL;
- 
--	padbytes = (u8 *)skb_put(skb, padding);
--	memset(padbytes, 0, padding);
-+	skb_put_zero(skb, padding);
- 
- done:
- 	map_header->pkt_len = htons(map_datalen + padding);
+ 	for (i = 0; i < priv->num_rx_ring[q]; i++) {
+-		skb = netdev_alloc_skb(ndev, info->max_rx_len);
++		skb = __netdev_alloc_skb(ndev, info->max_rx_len, GFP_KERNEL);
+ 		if (!skb)
+ 			goto error;
+ 		ravb_set_buffer_align(skb);
 -- 
 2.32.0
 
