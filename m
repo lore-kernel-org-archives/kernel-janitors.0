@@ -2,78 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2250BC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Feb 2022 12:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7779CC433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Feb 2022 18:19:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357663AbiBUMNf (ORCPT
+        id S229803AbiBUST2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Feb 2022 07:13:35 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:41924 "EHLO
+        Mon, 21 Feb 2022 13:19:28 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357551AbiBUMNI (ORCPT
+        with ESMTP id S232420AbiBUSSa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Feb 2022 07:13:08 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C121A2408A;
-        Mon, 21 Feb 2022 04:10:13 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 2E7F0CE0FC9;
-        Mon, 21 Feb 2022 12:10:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 68C73C340EB;
-        Mon, 21 Feb 2022 12:10:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645445410;
-        bh=oqOXkVc5yNJhdWXMaD0+aKtSFP/ziOSljUYY0M9THmg=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=Qg8drU72Autm7s1kk0d1O2mJ9oms8oeKF99APQp7dTRFdNxluFzfFxSDPbCgXXKaf
-         9hiWoE57ZAMwEGtP/kHLrI7sIDNJPVF0spEADmjNknG28qohogkPT6mGONKpHMFh7H
-         Wb9YUzOJeN2JgWlbda2mWwIio28xJ0kXphnndjg+Ruj5hStRFdK6tAuqREiHJDwFIw
-         BawnE9bh9G86bs/XKFqeX9P9ICo4kAmmJNelY5TFPywad2HojmSnXw2mEhGXErFUgD
-         X3pLQl51KYavlVpQGN+k2zidZtY7SfMv1Y0x9Br2sALBaQjbsQym1dUFSXL34d6fAZ
-         AbjwsA7H5VoBg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 51F13E6D3E8;
-        Mon, 21 Feb 2022 12:10:10 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 21 Feb 2022 13:18:30 -0500
+Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C272F1089
+        for <kernel-janitors@vger.kernel.org>; Mon, 21 Feb 2022 10:08:41 -0800 (PST)
+Received: from [192.168.1.18] ([90.126.236.122])
+        by smtp.orange.fr with ESMTPA
+        id MD6uno17DHZHJMD6unoA5U; Mon, 21 Feb 2022 19:08:39 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Mon, 21 Feb 2022 19:08:39 +0100
+X-ME-IP: 90.126.236.122
+Message-ID: <79bdf543-4882-360e-567f-493e84f09d6b@wanadoo.fr>
+Date:   Mon, 21 Feb 2022 19:08:32 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v3] fsi: Aspeed: Fix a potential double free
+Content-Language: en-US
+To:     Joel Stanley <joel@jms.id.au>
+Cc:     Jeremy Kerr <jk@ozlabs.org>,
+        Alistar Popple <alistair@popple.id.au>,
+        Eddie James <eajames@linux.ibm.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>, linux-fsi@lists.ozlabs.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>
+References: <2c123f8b0a40dc1a061fae982169fe030b4f47e6.1641765339.git.christophe.jaillet@wanadoo.fr>
+ <CACPK8XfxZRXtU0Bn+f0=B3CGUE8A8i9Ob_a9=2t=TzLc5a+75w@mail.gmail.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <CACPK8XfxZRXtU0Bn+f0=B3CGUE8A8i9Ob_a9=2t=TzLc5a+75w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: qualcomm: rmnet: Use skb_put_zero() to simplify code
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164544541033.27256.3041730108852805872.git-patchwork-notify@kernel.org>
-Date:   Mon, 21 Feb 2022 12:10:10 +0000
-References: <8abfe32db956f335d65638dfafdd3577ab6baf0e.1645338968.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <8abfe32db956f335d65638dfafdd3577ab6baf0e.1645338968.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     subashab@codeaurora.org, stranche@codeaurora.org,
-        davem@davemloft.net, kuba@kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (master)
-by David S. Miller <davem@davemloft.net>:
-
-On Sun, 20 Feb 2022 07:36:59 +0100 you wrote:
-> Use skb_put_zero() instead of hand-writing it. This saves a few lines of
-> code and is more readable.
+Le 21/02/2022 à 10:24, Joel Stanley a écrit :
+> Hi Christophe,
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/net/ethernet/qualcomm/rmnet/rmnet_map_data.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+> Thanks for the patch.
+> 
+> On Sun, 9 Jan 2022 at 21:56, Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+>>
+>> A struct device can never be devm_alloc()'ed.
+>> Here, it is embedded in "struct fsi_master", and "struct fsi_master" is
+>> embedded in "struct fsi_master_aspeed".
+>>
+>> Since "struct device" is embedded, the data structure embedding it must be
+>> released with the release function, as is already done here.
+>>
+>> So use kzalloc() instead of devm_kzalloc() when allocating "aspeed" and
+>> update all error handling branches accordingly.
+> 
+> This looks like a problem with the design of the fsi master structure.
+> It's a common pattern to devm_alloc the platform devices as they are
+> probed, the fsi masters all embed a copy of struct fsi_master, which
+> as you say embeds struct device.
+> 
+> Can we learn from other bus drivers (eg i2c?) how we should lay out
+> these structures?
+> 
+Hi,
+I won't do it myself.
 
-Here is the summary with links:
-  - net: qualcomm: rmnet: Use skb_put_zero() to simplify code
-    https://git.kernel.org/netdev/net-next/c/354ad9a89399
+This goes beyond my knowledge and without the possibility to test it, it 
+would be just some random trial and error (as I did in the first broken 
+version of this patch).
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+CJ
