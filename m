@@ -2,177 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B0B3C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Feb 2022 10:04:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD84EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Feb 2022 10:42:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352892AbiBUKFJ (ORCPT
+        id S1355212AbiBUKm2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Feb 2022 05:05:09 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56890 "EHLO
+        Mon, 21 Feb 2022 05:42:28 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:33198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352663AbiBUJ4U (ORCPT
+        with ESMTP id S1355269AbiBUKkF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Feb 2022 04:56:20 -0500
-Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69910443F4;
-        Mon, 21 Feb 2022 01:24:35 -0800 (PST)
-Received: by mail-qv1-xf33.google.com with SMTP id d7so30507696qvk.2;
-        Mon, 21 Feb 2022 01:24:35 -0800 (PST)
+        Mon, 21 Feb 2022 05:40:05 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99C8CF3A
+        for <kernel-janitors@vger.kernel.org>; Mon, 21 Feb 2022 02:02:03 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id bq11so6862944edb.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 21 Feb 2022 02:02:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NfLzYG7x5hWrxzh3aPbQ9F5T1m6I+7za53WlrcA8RHg=;
-        b=TRVxoyTG2DYkX1CqX/AOQCl8MjLoZXTSrvOrHA6WfxVVOX2y5CdFMbwaDVMW+LVeeb
-         mObzVMrLCuE+wAiN8TIVOviFEz0Szf/Pguz4Mgc/3HSPwDX3BDZrevH3kahBMj6QrjXb
-         ZoencRJpPY4e4K66dWYBXJKt6X3gNJvrLwC5o=
+        d=monstr-eu.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=kMIEQ6EmXrcKF9QOgwi4JP+rN/GpqbWH/lqcMa8liiA=;
+        b=QQbUtc7TFLde+vu666fP1jpn3ZV0FX04icLIemzeQRGi911a0jMrdL8vJdmL3pepEi
+         6okCY+lM3vY8PCpbLkL0CN1RQ4ccaCqElG9sY+NLCKb3+FcPSFZopQ52JY04uQApqnML
+         Q4cY5EH3iUC6W+Su0VttBmEwgrjlKWAQYvTGBsWINSb5FBW79dNR5AY4+0ePzW4cOSBz
+         Q0sUk5AIW65Wwz/1e5NuOnsKKgKEjkWiLU4zNXi8yPSJJtSQpBUtIyP/KtVR7SCVX7xF
+         /nGHil8Eqxvg9T8QZOz9HbijZq4GNAT7JXWKEOQyr7dui6njbDWHiKdx9LVYzym+qEK1
+         yy+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NfLzYG7x5hWrxzh3aPbQ9F5T1m6I+7za53WlrcA8RHg=;
-        b=PzU2BLxCGFuHbgBwqmC990eOI0O+/o+iAlZgPhyH1hkQVnqOb5cnd4zmEx+0Kw1j+r
-         RYldKC/eNKK+ywbgrJJmDuOsapcakWbcLU4DxS40Db8HyeQtPPN8z0ExBaTn/hWvtMmy
-         LVVpNiqSdHfjKj8dlUYnrbY7HUdDFeCVwkalT+gXVyLa+LezGu7FnqJbj/IkU3ryZi/M
-         waJKLs4hgw5QiyIHLJVEF5N4v03WgKqyW1xDf5L271NsxKowzzzC0BzNQmSFve8m4JXQ
-         sQ+3SXl3zVsal/mb3CB1OPbeXjsW6EbZV+LDD6MbcL0hYz1e6iItp8SkXsDzb0jd78G7
-         S5Ig==
-X-Gm-Message-State: AOAM530MHDyJBWdTsFS5P22zzOzQyjouDbaLTO2I1iI1pAZZbp2mJcmv
-        L5m5zb65Vwpg2oupZ2HxVa8CrlQr6a7tHRXO/mU=
-X-Google-Smtp-Source: ABdhPJy9KlKEyt6s72SDOXKeNCVDgTsHYzPzdxKYJL2f5Y/OKpVgI2rlT7MItO9kJmKriRxMRYZKSWvL/3gNIyoDRa8=
-X-Received: by 2002:ad4:5ba2:0:b0:42d:64b8:52c3 with SMTP id
- 2-20020ad45ba2000000b0042d64b852c3mr14533967qvq.21.1645435474500; Mon, 21 Feb
- 2022 01:24:34 -0800 (PST)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=kMIEQ6EmXrcKF9QOgwi4JP+rN/GpqbWH/lqcMa8liiA=;
+        b=Nb6eybfDWRQKPWq5aAwCN8+7Rvv1PQYD2k36f/mgWMRlcYjCbMPBe7dPg5No4wUCSz
+         R5JyBO18elpEWgrO9dU9hk3zxCDmmkMp0nmh93SrsmXpAM+ShfdMXItSMX1Y3yWwyFyE
+         hKzrzEl2b2xg29/oPzCzrxGfuMM+GQrvHux6iAj0DurvkJDP8hejV5ayUje6zgSvNt6s
+         +iCiyVrTMZ90O91+stzQPjhXrLBKLiRddwQisq1pIcd4UgORL+Uc75u4blajbLHabeUD
+         7ZlEdSSxxNkYoS2OSiO+nX6MiNeizDrQN6jzV1gCo3ifdmqvfQmDhi243SuL69ay7JhU
+         W4+w==
+X-Gm-Message-State: AOAM532BCqw2o8C5uuE7LzeovxJgXSNZag97WEAAUxgINqUsIVW1vVzg
+        Oqp6QhhH7mGZKLsYZg/+fQlgrMoIeahNbw==
+X-Google-Smtp-Source: ABdhPJwoxhTQ66ov81uyxAEEkMdXe2eNB3Eu5awgfYyKsjlTo0UYbaWCPMaaN9gxOKo3lAv87zWjkw==
+X-Received: by 2002:a50:f686:0:b0:410:e352:e61a with SMTP id d6-20020a50f686000000b00410e352e61amr19883345edn.23.1645437721836;
+        Mon, 21 Feb 2022 02:02:01 -0800 (PST)
+Received: from ?IPV6:2a02:768:2307:40d6::f9e? ([2a02:768:2307:40d6::f9e])
+        by smtp.gmail.com with ESMTPSA id gs6sm702985ejb.17.2022.02.21.02.02.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Feb 2022 02:02:01 -0800 (PST)
+Message-ID: <f874a9c7-8d8d-fecc-8fc9-51dcf37cf60b@monstr.eu>
+Date:   Mon, 21 Feb 2022 11:02:00 +0100
 MIME-Version: 1.0
-References: <2c123f8b0a40dc1a061fae982169fe030b4f47e6.1641765339.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <2c123f8b0a40dc1a061fae982169fe030b4f47e6.1641765339.git.christophe.jaillet@wanadoo.fr>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Mon, 21 Feb 2022 09:24:22 +0000
-Message-ID: <CACPK8XfxZRXtU0Bn+f0=B3CGUE8A8i9Ob_a9=2t=TzLc5a+75w@mail.gmail.com>
-Subject: Re: [PATCH v3] fsi: Aspeed: Fix a potential double free
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Jeremy Kerr <jk@ozlabs.org>,
-        Alistar Popple <alistair@popple.id.au>,
-        Eddie James <eajames@linux.ibm.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Guenter Roeck <linux@roeck-us.net>, linux-fsi@lists.ozlabs.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [PATCH] iio: adc: xilinx-ams: Use devm_delayed_work_autocancel()
+ to simplify code
+Content-Language: en-US
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <2626e6a057e40cd2271ef0e5f81d12e607bad5b4.1644776929.git.christophe.jaillet@wanadoo.fr>
+ <20220220114552.53fedd33@jic23-huawei>
+From:   Michal Simek <monstr@monstr.eu>
+In-Reply-To: <20220220114552.53fedd33@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+Hi,
 
-Thanks for the patch.
+On 2/20/22 12:45, Jonathan Cameron wrote:
+> On Sun, 13 Feb 2022 19:29:05 +0100
+> Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+> 
+>> Use devm_delayed_work_autocancel() instead of hand writing it. This is
+>> less verbose and saves a few lines of code.
+>>
+>> devm_delayed_work_autocancel() uses devm_add_action() instead of
+>> devm_add_action_or_reset(). This is fine, because if the underlying memory
+>> allocation fails, no work has been scheduled yet. So there is nothing to
+>> undo.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Looks good to me, but I'd ideally like some input from someone familiar with
+> the driver.
 
-On Sun, 9 Jan 2022 at 21:56, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> A struct device can never be devm_alloc()'ed.
-> Here, it is embedded in "struct fsi_master", and "struct fsi_master" is
-> embedded in "struct fsi_master_aspeed".
->
-> Since "struct device" is embedded, the data structure embedding it must be
-> released with the release function, as is already done here.
->
-> So use kzalloc() instead of devm_kzalloc() when allocating "aspeed" and
-> update all error handling branches accordingly.
+Anand told me that the change is fine that's why here is my
+Acked-by: Michal Simek <michal.simek@xilinx.com>
 
-This looks like a problem with the design of the fsi master structure.
-It's a common pattern to devm_alloc the platform devices as they are
-probed, the fsi masters all embed a copy of struct fsi_master, which
-as you say embeds struct device.
+Jonathan: Anand decided to do change in his carrier that's why that emails won't 
+go through. But I am still around if you need something xilinx/amd to test.
 
-Can we learn from other bus drivers (eg i2c?) how we should lay out
-these structures?
-
-
-
-
->
-> This prevent a potential double free().
->
-> This also fix another issue if opb_readl() fails. Instead of a direct
-> return, it now jumps in the error handling path.
->
-> Fixes: 606397d67f41 ("fsi: Add ast2600 master driver")
-> Suggested-by: Greg KH <gregkh@linuxfoundation.org>
-> Suggested-by: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> v2: Keep the release function which is correct
->     s/devm_kzalloc()/kzalloc()/ instead
->
-> v3: Update the error handling path to free "aspeed" [Guenter Roeck]
->     Fix another issue when opb_readl() fails [Guenter Roeck]
->
-> I hope that fixing both issues in the same patch is ok. It makes no sense
-> to me not to update the goto to the correct label if opb_readl() fails.
-> ---
->  drivers/fsi/fsi-master-aspeed.c | 17 +++++++++++------
->  1 file changed, 11 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/fsi/fsi-master-aspeed.c b/drivers/fsi/fsi-master-aspeed.c
-> index 8606e55c1721..0bed2fab8055 100644
-> --- a/drivers/fsi/fsi-master-aspeed.c
-> +++ b/drivers/fsi/fsi-master-aspeed.c
-> @@ -542,25 +542,28 @@ static int fsi_master_aspeed_probe(struct platform_device *pdev)
->                 return rc;
->         }
->
-> -       aspeed = devm_kzalloc(&pdev->dev, sizeof(*aspeed), GFP_KERNEL);
-> +       aspeed = kzalloc(sizeof(*aspeed), GFP_KERNEL);
->         if (!aspeed)
->                 return -ENOMEM;
->
->         aspeed->dev = &pdev->dev;
->
->         aspeed->base = devm_platform_ioremap_resource(pdev, 0);
-> -       if (IS_ERR(aspeed->base))
-> -               return PTR_ERR(aspeed->base);
-> +       if (IS_ERR(aspeed->base)) {
-> +               rc = PTR_ERR(aspeed->base);
-> +               goto err_free_aspeed;
-> +       }
->
->         aspeed->clk = devm_clk_get(aspeed->dev, NULL);
->         if (IS_ERR(aspeed->clk)) {
->                 dev_err(aspeed->dev, "couldn't get clock\n");
-> -               return PTR_ERR(aspeed->clk);
-> +               rc = PTR_ERR(aspeed->clk);
-> +               goto err_free_aspeed;
->         }
->         rc = clk_prepare_enable(aspeed->clk);
->         if (rc) {
->                 dev_err(aspeed->dev, "couldn't enable clock\n");
-> -               return rc;
-> +               goto err_free_aspeed;
->         }
->
->         rc = setup_cfam_reset(aspeed);
-> @@ -595,7 +598,7 @@ static int fsi_master_aspeed_probe(struct platform_device *pdev)
->         rc = opb_readl(aspeed, ctrl_base + FSI_MVER, &raw);
->         if (rc) {
->                 dev_err(&pdev->dev, "failed to read hub version\n");
-> -               return rc;
-> +               goto err_release;
->         }
->
->         reg = be32_to_cpu(raw);
-> @@ -634,6 +637,8 @@ static int fsi_master_aspeed_probe(struct platform_device *pdev)
->
->  err_release:
->         clk_disable_unprepare(aspeed->clk);
-> +err_free_aspeed:
-> +       kfree(aspeed);
->         return rc;
->  }
->
-> --
-> 2.32.0
->
+Thanks,
+Michal
