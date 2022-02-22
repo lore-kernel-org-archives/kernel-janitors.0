@@ -2,86 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7779CC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Feb 2022 18:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC448C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Feb 2022 05:28:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229803AbiBUST2 (ORCPT
+        id S229520AbiBVF2I (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Feb 2022 13:19:28 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42186 "EHLO
+        Tue, 22 Feb 2022 00:28:08 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:46262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232420AbiBUSSa (ORCPT
+        with ESMTP id S229502AbiBVF2A (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Feb 2022 13:18:30 -0500
-Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C272F1089
-        for <kernel-janitors@vger.kernel.org>; Mon, 21 Feb 2022 10:08:41 -0800 (PST)
-Received: from [192.168.1.18] ([90.126.236.122])
-        by smtp.orange.fr with ESMTPA
-        id MD6uno17DHZHJMD6unoA5U; Mon, 21 Feb 2022 19:08:39 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 21 Feb 2022 19:08:39 +0100
-X-ME-IP: 90.126.236.122
-Message-ID: <79bdf543-4882-360e-567f-493e84f09d6b@wanadoo.fr>
-Date:   Mon, 21 Feb 2022 19:08:32 +0100
+        Tue, 22 Feb 2022 00:28:00 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8282D64EF;
+        Mon, 21 Feb 2022 21:27:33 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A7919B817C8;
+        Tue, 22 Feb 2022 05:00:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 57AB4C36AE2;
+        Tue, 22 Feb 2022 05:00:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645506010;
+        bh=/PqYZf5r6+Aqii+pbnW7Z+lNM+oI3qXTnsQ8wKHVPLY=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=ilZlgT7IdiUNcJea0PeQI0R7CURJSk0dfA2ATTObB40g536kLj7XwL0/xkfSzVwzs
+         Rx1gS+c5uaQWyt5YiCQv+ql/gacyLok8pEvt71S5Jsi/YwmTUtlixVW9e0PectbF2R
+         rY+oakO2nPjI6d5jyoHCbYdF5U95UcQoO6F7y/Znp01Zeq8dWP9Kf/OIUJ6qi+Nhmw
+         Wm2RJyaoflv65QWFNub46Tu/2qqavGqf+WNRN10T9RlbqU1tkvw//WNP8B8fLduAKY
+         pdckQnwOp8M0WKZ5TF1+BAiKAQiuNY3mNwxFjPKanVtmBqfAZxhEIQSVLRYirHO+Ic
+         E3WnEg992uA7A==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 4179DE6D3E8;
+        Tue, 22 Feb 2022 05:00:10 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v3] fsi: Aspeed: Fix a potential double free
-Content-Language: en-US
-To:     Joel Stanley <joel@jms.id.au>
-Cc:     Jeremy Kerr <jk@ozlabs.org>,
-        Alistar Popple <alistair@popple.id.au>,
-        Eddie James <eajames@linux.ibm.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Guenter Roeck <linux@roeck-us.net>, linux-fsi@lists.ozlabs.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>
-References: <2c123f8b0a40dc1a061fae982169fe030b4f47e6.1641765339.git.christophe.jaillet@wanadoo.fr>
- <CACPK8XfxZRXtU0Bn+f0=B3CGUE8A8i9Ob_a9=2t=TzLc5a+75w@mail.gmail.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <CACPK8XfxZRXtU0Bn+f0=B3CGUE8A8i9Ob_a9=2t=TzLc5a+75w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 net-next] net: dm9051: Fix use after free in
+ dm9051_loop_tx()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164550601026.6244.16246516737928646971.git-patchwork-notify@kernel.org>
+Date:   Tue, 22 Feb 2022 05:00:10 +0000
+References: <20220221105440.GA10045@kili>
+In-Reply-To: <20220221105440.GA10045@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     davem@davemloft.net, josright123@gmail.com, kuba@kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 21/02/2022 à 10:24, Joel Stanley a écrit :
-> Hi Christophe,
-> 
-> Thanks for the patch.
-> 
-> On Sun, 9 Jan 2022 at 21:56, Christophe JAILLET
-> <christophe.jaillet@wanadoo.fr> wrote:
->>
->> A struct device can never be devm_alloc()'ed.
->> Here, it is embedded in "struct fsi_master", and "struct fsi_master" is
->> embedded in "struct fsi_master_aspeed".
->>
->> Since "struct device" is embedded, the data structure embedding it must be
->> released with the release function, as is already done here.
->>
->> So use kzalloc() instead of devm_kzalloc() when allocating "aspeed" and
->> update all error handling branches accordingly.
-> 
-> This looks like a problem with the design of the fsi master structure.
-> It's a common pattern to devm_alloc the platform devices as they are
-> probed, the fsi masters all embed a copy of struct fsi_master, which
-> as you say embeds struct device.
-> 
-> Can we learn from other bus drivers (eg i2c?) how we should lay out
-> these structures?
-> 
-Hi,
-I won't do it myself.
+Hello:
 
-This goes beyond my knowledge and without the possibility to test it, it 
-would be just some random trial and error (as I did in the first broken 
-version of this patch).
+This patch was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
-CJ
+On Mon, 21 Feb 2022 13:54:40 +0300 you wrote:
+> This code dereferences "skb" after calling dev_kfree_skb().
+> 
+> Fixes: 2dc95a4d30ed ("net: Add dm9051 driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> v2: Only record successful transfers
+> 
+> [...]
+
+Here is the summary with links:
+  - [v2,net-next] net: dm9051: Fix use after free in dm9051_loop_tx()
+    https://git.kernel.org/netdev/net-next/c/b6553c71813f
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
