@@ -2,93 +2,109 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD58C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Feb 2022 12:17:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C973C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Feb 2022 12:43:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231203AbiBVMST (ORCPT
+        id S232013AbiBVMnz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 22 Feb 2022 07:18:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57478 "EHLO
+        Tue, 22 Feb 2022 07:43:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230218AbiBVMSS (ORCPT
+        with ESMTP id S230466AbiBVMny (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 22 Feb 2022 07:18:18 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7300799EDB;
-        Tue, 22 Feb 2022 04:17:52 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id k1so32836829wrd.8;
-        Tue, 22 Feb 2022 04:17:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JgLdi2meuFLJpL8uNWtBC1zuJoXMBF6NsvXnD2doIeY=;
-        b=kX+SGOoiqdzB+Xw5LMJ10rQhk4JeIqNTu3Cd18fdDI+IysPFISBqzPaNjEu9Vs1UYv
-         GmvkRFOCuf+4X+k0LOQjHzatUpP/40pUHohvyrTIGEx/vvDXRExgCYOk+lahtJCtVMgS
-         KEffB9PWFAFEs0ooD/J5gBS1kun6bR2pCdinOHAuaLhTBFquclzmDb/6ej6hCTsDGXac
-         GuxN2S7qqBy7fsTI6ye7wLk3XOb6j9Sxq0H8k1uHioeLoEzWzVTonWPyMYPdikWR31oU
-         er4Uaj8B7Y4Wwsv6Xny5fwbip1y1l+va5vGmYEoJPVeQA92Tvb3fLRMCMNStGFrgFLAt
-         /hvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JgLdi2meuFLJpL8uNWtBC1zuJoXMBF6NsvXnD2doIeY=;
-        b=Nqpp7sJeT4DHUZ2yvnCRppENujLcw3KcCeb/7Xxbjja1MHrzasbchPwYPZdY4k3WWN
-         ZG28i+PX3d5I+UjNFxVGaK/Zfde0H5+UlY7uideNWjnb8yL+RNApImdfNOa7BtjxJrrG
-         YFQHu5D4lnAZ/6TSHdR7Z2gwvssHND9s8NJz6+1VY2Sp1X4V36z+NYWWRvu90u4CwdgP
-         tbWBbWBHr/jZXMrSUgyoQO3dMjriqTbswjdryviWdI/GWVFrUyKCLOH3i62WfEYJQPlg
-         6A5FHQqvwXcpCBvSZFgLmvMzK+diJVGtLHQf6uwk7SM1QTEXzyGhiEjS8mSDtMTBugOA
-         j9Pg==
-X-Gm-Message-State: AOAM5320RIgxB1tchnV+IoqUF/68yZ6RRZMs1XCUKxV85B4PhgA/e/rV
-        Xu4qPYS9cvvQEPbJ/2zXQLQ=
-X-Google-Smtp-Source: ABdhPJwVQb9+cWnxQss89zNC1yfUKPK6lrRQb5gqdWK2hg3mVE/Ttlt8vJSgub9Vp7XN5MImK6G4Zw==
-X-Received: by 2002:a5d:4007:0:b0:1e6:3359:d0f with SMTP id n7-20020a5d4007000000b001e633590d0fmr19200436wrp.662.1645532270891;
-        Tue, 22 Feb 2022 04:17:50 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id z14sm1842806wrm.100.2022.02.22.04.17.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Feb 2022 04:17:50 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
-        Kalle Valo <kvalo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ath9k: make array voice_priority static const
-Date:   Tue, 22 Feb 2022 12:17:49 +0000
-Message-Id: <20220222121749.87513-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Tue, 22 Feb 2022 07:43:54 -0500
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5A6C122F77;
+        Tue, 22 Feb 2022 04:43:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1645533808; x=1677069808;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=V3OvJzcIYv9Xc/I5EnGnnaoV/n9suE3zy47qd9uxvdY=;
+  b=dq30ReBFRk1oDtE+KjAUesMwl76N53alJ8Yej0XpdSre37Nu8FDwMIpG
+   SUm/M2LqcxaqivsYBaWbbxkHb6QYMdRq1kAG8dUOzKTDg3pufM7du/kK4
+   mSJ/8pFngeTRVcDWl5Al6NTGxsncXCkROdkkNY2TGhpNOqOCccCebOGMW
+   9WzNYGBiU+WF3ERypsLDoe6cCsBNIlqlnGovz3IxbMMS9T4xnxoBU2kOb
+   TQ5fVJSsgm6pD97XOUsh2bGM5C8OdL2MhgmBS5x2r5Mw/AsEIoamMgkX8
+   S0GbLeHWzIWuGOoTCiq1vIC6t1Jy4YkvCgYigqdM/jGfBTVJI8UshsjgO
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10265"; a="251625687"
+X-IronPort-AV: E=Sophos;i="5.88,387,1635231600"; 
+   d="scan'208";a="251625687"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2022 04:43:28 -0800
+X-IronPort-AV: E=Sophos;i="5.88,387,1635231600"; 
+   d="scan'208";a="547725699"
+Received: from torta-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.49.14])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2022 04:43:24 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vandita Kulkarni <vandita.kulkarni@intel.com>,
+        Manasi Navare <manasi.d.navare@intel.com>
+Subject: Re: [PATCH] drm/i915: make a handful of read-only arrays static const
+In-Reply-To: <20220222120323.86480-1-colin.i.king@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20220222120323.86480-1-colin.i.king@gmail.com>
+Date:   Tue, 22 Feb 2022 14:43:22 +0200
+Message-ID: <87tucr6phx.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the read-only array voice_priority on the stack but
-instead make it static const. Also makes the object code a little
-smaller.
+On Tue, 22 Feb 2022, Colin Ian King <colin.i.king@gmail.com> wrote:
+> Don't populate the read-only arrays on the stack but instead make
+> them static const. Also makes the object code a little smaller.
+> Reformat the statements to clear up checkpatch warning.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/gpu/drm/i915/display/intel_vdsc.c | 16 ++++++++++++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/i915/display/intel_vdsc.c b/drivers/gpu/drm/i915/display/intel_vdsc.c
+> index 3faea903b9ae..d49f66237ec3 100644
+> --- a/drivers/gpu/drm/i915/display/intel_vdsc.c
+> +++ b/drivers/gpu/drm/i915/display/intel_vdsc.c
+> @@ -378,10 +378,18 @@ calculate_rc_params(struct rc_parameters *rc,
+>  {
+>  	int bpc = vdsc_cfg->bits_per_component;
+>  	int bpp = vdsc_cfg->bits_per_pixel >> 4;
+> -	int ofs_und6[] = { 0, -2, -2, -4, -6, -6, -8, -8, -8, -10, -10, -12, -12, -12, -12 };
+> -	int ofs_und8[] = { 2, 0, 0, -2, -4, -6, -8, -8, -8, -10, -10, -10, -12, -12, -12 };
+> -	int ofs_und12[] = { 2, 0, 0, -2, -4, -6, -8, -8, -8, -10, -10, -10, -12, -12, -12 };
+> -	int ofs_und15[] = { 10, 8, 6, 4, 2, 0, -2, -4, -6, -8, -10, -10, -12, -12, -12 };
+> +	static const int ofs_und6[] = {
+> +		0, -2, -2, -4, -6, -6, -8, -8, -8, -10, -10, -12, -12, -12, -12
+> +	};
+> +	static const int ofs_und8[] = {
+> +		2, 0, 0, -2, -4, -6, -8, -8, -8, -10, -10, -10, -12, -12, -12
+> +	};
+> +	static const int ofs_und12[] = {
+> +		2, 0, 0, -2, -4, -6, -8, -8, -8, -10, -10, -10, -12, -12, -12
+> +	};
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/wireless/ath/ath9k/mci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hmm, I wonder why the same values are duplicated in ofs_und8 and
+ofs_und12. Cc: Vandita, Manasi.
 
-diff --git a/drivers/net/wireless/ath/ath9k/mci.c b/drivers/net/wireless/ath/ath9k/mci.c
-index 39d46c203f6b..5e0ae7e6412f 100644
---- a/drivers/net/wireless/ath/ath9k/mci.c
-+++ b/drivers/net/wireless/ath/ath9k/mci.c
-@@ -43,7 +43,7 @@ static bool ath_mci_add_profile(struct ath_common *common,
- 				struct ath_mci_profile_info *info)
- {
- 	struct ath_mci_profile_info *entry;
--	u8 voice_priority[] = { 110, 110, 110, 112, 110, 110, 114, 116, 118 };
-+	static const u8 voice_priority[] = { 110, 110, 110, 112, 110, 110, 114, 116, 118 };
- 
- 	if ((mci->num_sco == ATH_MCI_MAX_SCO_PROFILE) &&
- 	    (info->type == MCI_GPM_COEX_PROFILE_VOICE))
+Regardless, the patch is sane.
+
+Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+
+> +	static const int ofs_und15[] = {
+> +		10, 8, 6, 4, 2, 0, -2, -4, -6, -8, -10, -10, -12, -12, -12
+> +	};
+>  	int qp_bpc_modifier = (bpc - 8) * 2;
+>  	u32 res, buf_i, bpp_i;
+
 -- 
-2.34.1
-
+Jani Nikula, Intel Open Source Graphics Center
