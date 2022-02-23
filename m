@@ -2,66 +2,115 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 437B6C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Feb 2022 07:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB44C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Feb 2022 12:10:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238766AbiBWHrd (ORCPT
+        id S240450AbiBWMKl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 23 Feb 2022 02:47:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43798 "EHLO
+        Wed, 23 Feb 2022 07:10:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238749AbiBWHrb (ORCPT
+        with ESMTP id S240394AbiBWMKc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 23 Feb 2022 02:47:31 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABCFD65797;
-        Tue, 22 Feb 2022 23:47:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=iy5Ofm6AWn5S0+TPzZqllkgh84EUFfIT9WUD1UClXn4=; b=KuGl+SxVwgaXgh5hLAVT1UAi4x
-        Mdf6Uz6m2y23+0SrvtSnU9O8BhDGXxKAatQH1UV+1HLTZS6EKiTcNTlvQr6XJI6pv0KEXE3xvFiKZ
-        R/Jky7QdCF8UDa+v3Z/QM6f/ERD1b/x8syFTQf7TpLLbwqST8AacGpmpD66qiLMZMpUOKXyZjimX2
-        dqd43SyR3QIvd4Ydjgs3/d/7SKJAn7H0MEg/DJhCNfnBiuUH1CugGaRKAQv+oCwF98QBvMo4HOU/T
-        ucaRKTd4ozFy8kNCn3ThNjnNyyDuUTB+nnvKoGQIx86jvBLxFv0AD8qU8mHYnOj4lkd3DtKX03IFR
-        DEkug9Yw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nMmLj-00DALX-99; Wed, 23 Feb 2022 07:46:11 +0000
-Date:   Tue, 22 Feb 2022 23:46:11 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     arnd@arndb.de, hch@infradead.org, akpm@linux-foundation.org,
-        rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
-        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        davem@davemloft.net, airlied@linux.ie, vkoul@kernel.org,
-        hao.wu@intel.com, trix@redhat.com, mdf@kernel.org,
-        yilun.xu@intel.com, awalls@md.metrocast.net, mchehab@kernel.org,
-        sathya.prakash@broadcom.com, sreekanth.reddy@broadcom.com,
-        suganath-prabu.subramani@broadcom.com, mporter@kernel.crashing.org,
-        alex.bou9@gmail.com, bhelgaas@google.com,
-        linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-fpga@vger.kernel.org, linux-media@vger.kernel.org,
-        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 00/16] Remove usage of the deprecated "pci-dma-compat.h"
- API
-Message-ID: <YhXmQwvjMFPQFPUr@infradead.org>
-References: <cover.1641500561.git.christophe.jaillet@wanadoo.fr>
+        Wed, 23 Feb 2022 07:10:32 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A17CF9D06E;
+        Wed, 23 Feb 2022 04:09:25 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id i19so13604817wmq.5;
+        Wed, 23 Feb 2022 04:09:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XthWtcx8CQQ6z/Lfovl9ePMxpx3VHx/bDsastA+Xo/Y=;
+        b=Y22cedrxeR+ywyVnUEBJ3MqpAQqnxuukkkbsAQRovrWabWEHabwzrgc17KdGiGOdno
+         IcSfsG9xcKK/PzvfrAjNob+muSRsfRTssCmuqTuG2BcIK+G5n7awdRq11RmEftEXZvnh
+         PCT24MiKvnplpPn91CXRNja1ceFgaPanB3ZtW3+5KplWtYVJtR2pm6BkopWOTggGr4MS
+         fmfN8LKpVjtncGQs8v1RFqREMxuSg4hop2IeekPD+7BaebKmkEfRS3ZqoYIoUYHB2RRZ
+         ffRba93CCry6mCGYojsiRTXVXoL7uzphXPQVl8sBZZSt8wYt/+IstT9JYggESauX2jFg
+         BfpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XthWtcx8CQQ6z/Lfovl9ePMxpx3VHx/bDsastA+Xo/Y=;
+        b=vkHGYdX0zBerX6SHDNEoqiaQhRtveFr6uoYjvhCfSdWND6PTbnqmAHmywUcTj71N47
+         Rnj1/CShSnrIsgJoQ6h7lvfg00PxWCzSegokApgXocKvH+bscZ5ZqPnlbouqxzIKN6BN
+         tzYZBY0fCIEQxjVULwCQxP4RuApBVHyeVKHcg7u78Rgb/PnaabSoXh+3wNhTqg24KUdk
+         EnLheIzX2yYwe7V9Z84PpwmTWDw9Y4whR6jaNLQxsMW8wL7I0g+UiHcspxKhRgHBXbZi
+         kLKhjKuUYz/2BsIT3bBqRW6eVTki2jpxy/Y+TmQSxCqu9UBQKZo/Jeiu4BCG7P7xw14J
+         kDmQ==
+X-Gm-Message-State: AOAM533S5sVA8RY6I1Thza8ATyVT3v92Xfqu46NEm90hMCSLrL/KTeS0
+        B42gN14iY8w5wytjd0f9vRA=
+X-Google-Smtp-Source: ABdhPJwhENDV0VlSU5f4YqTw2faSx1qMsaw+VxmLxp2w2HX7Rtqr3nK3WWBoH9/uoF2ijiMQmEtPug==
+X-Received: by 2002:a05:600c:48a:b0:380:3f3a:e08e with SMTP id d10-20020a05600c048a00b003803f3ae08emr7160797wme.1.1645618164119;
+        Wed, 23 Feb 2022 04:09:24 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id j10sm6733042wmq.20.2022.02.23.04.09.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Feb 2022 04:09:23 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][V2] drm/i915: make a handful of read-only arrays static const
+Date:   Wed, 23 Feb 2022 12:09:23 +0000
+Message-Id: <20220223120923.239867-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1641500561.git.christophe.jaillet@wanadoo.fr>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+Don't populate the read-only arrays on the stack but instead make
+them static const and signed 8 bit ints. Also makes the object code a
+little smaller.  Reformat the statements to clear up checkpatch warning.
 
-do you know what the state is in current linux-next?
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
 
-I think we'll just want to queue up anything left at this point in the
-dma-mapping or PCI tree and get it done.
+V2: Make arrays signed 8 bit integers as requested by Ville Syrjälä
+
+---
+ drivers/gpu/drm/i915/display/intel_vdsc.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/display/intel_vdsc.c b/drivers/gpu/drm/i915/display/intel_vdsc.c
+index 3faea903b9ae..d49f66237ec3 100644
+--- a/drivers/gpu/drm/i915/display/intel_vdsc.c
++++ b/drivers/gpu/drm/i915/display/intel_vdsc.c
+@@ -378,10 +378,18 @@ calculate_rc_params(struct rc_parameters *rc,
+ {
+ 	int bpc = vdsc_cfg->bits_per_component;
+ 	int bpp = vdsc_cfg->bits_per_pixel >> 4;
+-	int ofs_und6[] = { 0, -2, -2, -4, -6, -6, -8, -8, -8, -10, -10, -12, -12, -12, -12 };
+-	int ofs_und8[] = { 2, 0, 0, -2, -4, -6, -8, -8, -8, -10, -10, -10, -12, -12, -12 };
+-	int ofs_und12[] = { 2, 0, 0, -2, -4, -6, -8, -8, -8, -10, -10, -10, -12, -12, -12 };
+-	int ofs_und15[] = { 10, 8, 6, 4, 2, 0, -2, -4, -6, -8, -10, -10, -12, -12, -12 };
++	static const s8 ofs_und6[] = {
++		0, -2, -2, -4, -6, -6, -8, -8, -8, -10, -10, -12, -12, -12, -12
++	};
++	static const s8 ofs_und8[] = {
++		2, 0, 0, -2, -4, -6, -8, -8, -8, -10, -10, -10, -12, -12, -12
++	};
++	static const s8 ofs_und12[] = {
++		2, 0, 0, -2, -4, -6, -8, -8, -8, -10, -10, -10, -12, -12, -12
++	};
++	static const s8 ofs_und15[] = {
++		10, 8, 6, 4, 2, 0, -2, -4, -6, -8, -10, -10, -12, -12, -12
++	};
+ 	int qp_bpc_modifier = (bpc - 8) * 2;
+ 	u32 res, buf_i, bpp_i;
+ 
+-- 
+2.34.1
+
