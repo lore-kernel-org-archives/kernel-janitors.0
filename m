@@ -2,186 +2,127 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29006C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Feb 2022 15:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BA3C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Feb 2022 15:27:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235838AbiBXPJY (ORCPT
+        id S236257AbiBXP2N (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 24 Feb 2022 10:09:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42436 "EHLO
+        Thu, 24 Feb 2022 10:28:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235832AbiBXPJX (ORCPT
+        with ESMTP id S236314AbiBXP1S (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 24 Feb 2022 10:09:23 -0500
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF04B177D02;
-        Thu, 24 Feb 2022 07:08:52 -0800 (PST)
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 21OCYSGM023288;
-        Thu, 24 Feb 2022 15:08:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : content-type : in-reply-to :
- mime-version; s=corp-2021-07-09;
- bh=cNsuNrqNw4Yhr/lOLM8S1DvYK1T8iknNnUmFXZ3brII=;
- b=PCN4KDzhvW06TnjP6xWiFbFFpXz9SL8A/K/GUajAd6PHOA+ctjJJMo0zcmU9UpOFQo0I
- gaW7VagujNOCjNDCBwmSUlzfRa4yrfZ58M52SM+UlQ6/3UeHv4C3qB/lIeU4YapUNHjA
- dx5xIOpw7IvNctnwjtCgGC+rtljNBVL9AYmr/llX469RF9p9gpo6LgPAyRyt+UpZOqI2
- QoKNUAHgqTyZ0Je5VC8vMffgegenMI5ILW/sbLb/yO0KIsmKsJaRqfyg3HX1YGXlhCVU
- NGfZLifYM3GreSDSftTW19rfMpwqzwsmORaa/9a8BOh4aCDAQbJsCQ09p5mrgEkt9eKX ow== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3ecxfay029-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 24 Feb 2022 15:08:41 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 21OF6sOB026799;
-        Thu, 24 Feb 2022 15:08:39 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2174.outbound.protection.outlook.com [104.47.59.174])
-        by userp3020.oracle.com with ESMTP id 3eat0qwr8a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 24 Feb 2022 15:08:39 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BqXwQOw9zimVdP/aG0l6lUS1ikneSHxuN/0HAHEoqQz1r+NrE94fDdSDN8uKTI8WdINt0LVqbeejMbyU2KeDABzagwzVb+T4j5V/nu3QSnZueF8ZtzMKGK/YggBpyT5nh4p8+tXe/46UzgWkak8kLZ7ucssvlsdvzfAjK72RFU28c4MGIiZ9u128BX2D/bQxy9l9q8LIF0vhamd9LtjlRAlrIVufRqvpLqRH0pKKYDhVhfEIQPIfmzo3y/1kX8ykEPpl0pyXI89AiNuL8XtEK1Gkt2RBdC76Ck5U3ejEgVYLHVVry5UH9TgBfBdjpJWCKl3vFNPiy6z9KsIBcJAerw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cNsuNrqNw4Yhr/lOLM8S1DvYK1T8iknNnUmFXZ3brII=;
- b=ZmKgbY8glPlXae0nzFwUb6RhI0DuX37G6+LwVsVFsJF+/Xt2mOcUBO8dHf85k78YDBmSAaDq1PZ2Fk8c/r9uLnXvmhHRjZ6SR8KyFeR2nkYmH7ThlhcX8clqR3dl9qTJAx9LoyvlTva4ksSDAw9fMFiF3hsOzp2AK9uRSIOWmqNVP+XBEHjBVDLAGFyQ68N5XLLMb3gx03okM8/7Y9VL8EpW6IPF1uK/J2HRRo68JwGIZGBEgNbz8ybY4TuVOAoNmNJ+Y/i1Der7WNLPxGbma4iaF5rkOzyg57O4PPvFHhlkkmu5A0lCMCqFMRIIAhftQe8hoWZcOTsgKDPeZNCViA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cNsuNrqNw4Yhr/lOLM8S1DvYK1T8iknNnUmFXZ3brII=;
- b=IfRuzCzM8YOFpMHkSylIvmXqDQIuck7fF8zcMLJ4S8Kx28XfjH5uZy33vl3WBfdK3+E1J3Gx92BVxf8+MFL7gt1KVIZ81Kab8kQefzBUQ28/LFqTB+2fL2FSfCjXnb2gHTuxqQ0S/o4nieRXFKN1eU+Nbterut0hE0M6OSVwjYk=
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28) by DS7PR10MB5392.namprd10.prod.outlook.com
- (2603:10b6:5:297::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.21; Thu, 24 Feb
- 2022 15:08:37 +0000
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::2c3d:92b5:42b3:c1c5]) by MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::2c3d:92b5:42b3:c1c5%4]) with mapi id 15.20.4995.027; Thu, 24 Feb 2022
- 15:08:36 +0000
-Date:   Thu, 24 Feb 2022 18:08:10 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc:     Colin Ian King <colin.i.king@gmail.com>,
-        Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@toke.dk>,
-        Kalle Valo <kvalo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ath9k: make array voice_priority static const
-Message-ID: <20220224150810.GN3965@kadam>
-References: <20220222121749.87513-1-colin.i.king@gmail.com>
- <31aa626d-3d39-ca5f-c91d-47aa5bf7715b@quicinc.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <31aa626d-3d39-ca5f-c91d-47aa5bf7715b@quicinc.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: JNAP275CA0057.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:4f::9)
- To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
+        Thu, 24 Feb 2022 10:27:18 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 053D4331
+        for <kernel-janitors@vger.kernel.org>; Thu, 24 Feb 2022 07:26:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1645716408;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=QRB/W7Ct6Fvwq8WNLWdOFSX0Quf6CZk21tMewLGkssY=;
+        b=ZGOGx4MY6m1ZHKErWjqucZENe4Z4prThdMu+m2Wtrl7WwsByAmQGB1gWhwe9bGoLEtqV6L
+        DUdBKiCwgEhiQZz0HY/2tJhqqRLUUVwHUGN28Rbpzq+mdYGE3+hTznd3JZw2QuP/tmGtWR
+        zUaEnXTlZWQktoUZhgFTTPdPuS6aUQw=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-435-O42x37dwMCeZppItH9M0Cg-1; Thu, 24 Feb 2022 10:26:44 -0500
+X-MC-Unique: O42x37dwMCeZppItH9M0Cg-1
+Received: by mail-qv1-f69.google.com with SMTP id q14-20020a0cf5ce000000b004326eec23acso3129728qvm.20
+        for <kernel-janitors@vger.kernel.org>; Thu, 24 Feb 2022 07:26:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=QRB/W7Ct6Fvwq8WNLWdOFSX0Quf6CZk21tMewLGkssY=;
+        b=O8cJQKkRpz9z67iqIgvJ4adohqeENC6txQL7OEC2DVO6RZQr7VYjn5Xa2f4qC+7z1g
+         MduMW6P7J6tnhdPXLxVNuUEdM5aSW71YrdDt4jFP0tY6qxYRNgOJOmXFYArNqqtr88Ol
+         Mka2H+iJMFQtsYyzjSfOPmNbxZoeEo70wBn/hLTTOxd4i7+nkJNZSNBdMIg7MgHAMGZI
+         nf5R0KwtY9TK0FWAltqoMaoNJyuGoP2ehhNmTnV6GhOHo4itlELIqxbEeCk3udKftMZ0
+         hcroHHEsLvMMkdjAdkUs6fWOzw7/5qvezXtHQ3caU9u74Em36e0sFOr9KOvbIkIFSg7J
+         dlRw==
+X-Gm-Message-State: AOAM530vlhzGyxJMh2sBZAdoanrck8o6Ncb50s5FDEXVhTeQJ1ZXhmEJ
+        Q35RxEHdRVnFJJrDLYT7Y4Wrr0mrmD6ZDzQMaFaw1oJGHS4jdEAAx8HS9gAf8A/UCof0rfiVdbZ
+        whPHUtYzc+rT7UhPORxL/TVtbYyd/
+X-Received: by 2002:a05:622a:18b:b0:2de:8f67:b3e2 with SMTP id s11-20020a05622a018b00b002de8f67b3e2mr2793284qtw.104.1645716404331;
+        Thu, 24 Feb 2022 07:26:44 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzp5vc0QNLAJZl2b5ZiFxc9Cr3aXdBPfffT7AqQZBnqifESVp3GReU8S1yBO6pNLWMguAaOzw==
+X-Received: by 2002:a05:622a:18b:b0:2de:8f67:b3e2 with SMTP id s11-20020a05622a018b00b002de8f67b3e2mr2793263qtw.104.1645716404020;
+        Thu, 24 Feb 2022 07:26:44 -0800 (PST)
+Received: from [10.0.0.97] ([24.225.241.171])
+        by smtp.gmail.com with ESMTPSA id bp18sm1780832qtb.72.2022.02.24.07.26.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Feb 2022 07:26:43 -0800 (PST)
+Message-ID: <a733fc64-0c59-f495-5f12-d90750fd32d7@redhat.com>
+Date:   Thu, 24 Feb 2022 10:26:41 -0500
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 677c46b9-6761-4bdb-91fa-08d9f7a787b2
-X-MS-TrafficTypeDiagnostic: DS7PR10MB5392:EE_
-X-Microsoft-Antispam-PRVS: <DS7PR10MB539288904074235D67039C558E3D9@DS7PR10MB5392.namprd10.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: l9B/dC6/ez1c2c9U7+18qAJu2RmXTPUcvafJw4Pr7PFA5kta2hGjPLrY8aaK/4h8QJYg0IgO1MSsfNh4xhJYOUgFbNoY+KFbpXJmNCy8R54BcNTm89seEpbIPNHxZ6tGHBFlIhG1/z3l1MBPeDUYpHzvOwxdKOSmy+j/smWxb08Gn61eBjzZQDa1Z3W7T4+7IuizhrIIV9dkFm9BFGGqTfEBfAWaHPUryblBOxiOW6u9P2D/7PEkizeEYFPbteKNjS5w0msqW0KhjjzkW623dCucIVDiTX7ef3S64cyK3NTIalAhT2Zq5g7/XlAbONlgFAQQv4CapEqgV+GZD9usB5AqjhDtRBsUxx2q73ISd/Sa12M1OKoNlJxeO1MiCsdebkNOxhWrOmJHAEwrf0mNWI0rlB5/MpphpecuahsJtG+rpkDTwn3M2hDzd6L93KvG5gSMrltcxU9BB+2ycql3PrgEsijsi45cYX+oCLhzLFMxE4g8Xwkzk95D0y8ZHEn7rRqsbPk4FMZR0wSipN7wk60Oxbb7/5YpjhwCVtK4rP6ODkxwEccoPvogXMuziYPmhOCvx1pLYDJtLElUj52Kg1rXaoUWSVMTTnu3BaaKV2QIjhQnEx7znxrM3VN5qrbn8y74oPSrbgetgbrrIpY73sQjRXdk01cHqjzdWMJgJ53AqekGnnYFa0MTZb+tY1A/ZzRATFA2xWxNQRSqNeD2jg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(366004)(8676002)(4326008)(66946007)(66556008)(66476007)(33716001)(38100700002)(38350700002)(186003)(1076003)(26005)(6512007)(9686003)(508600001)(86362001)(53546011)(52116002)(316002)(8936002)(7416002)(6506007)(6486002)(2906002)(54906003)(6666004)(5660300002)(83380400001)(44832011)(6916009)(33656002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?tAZemm6wn7kxw7HgMjOmOd31Dgeh4NkuAWDZWjk2UcZ/lbnKiWVHRISilw/k?=
- =?us-ascii?Q?GjaHZ2cAfftdqrOYTJe1wSpffu5wlk1WiuOSZBkAbQS2f4raiQbk4Qq35xYM?=
- =?us-ascii?Q?69FTMM4mVh01oomYv/ng8yVznHttluKB8YUKFBR1DKSBldXEmxkBwbPRK9iu?=
- =?us-ascii?Q?CUkg15Nv6RVMiwRYrl8O46tbJ+1xp0+P9MMY4NEYyIPoDKNVpgZTi/LhXhUh?=
- =?us-ascii?Q?wiR6m8DxI/5AsPTH/EcQlelZSyoQsPFUzbM9PPfrXFRW7vyaeZGsxhVQi91b?=
- =?us-ascii?Q?lFvOE6fAsWZ/BTq/xzKXem11jM2iv4/nUDPEIknaLd27N3Pnof+btkErmonj?=
- =?us-ascii?Q?BQd03oNlAYd748WEXJoVVfY5xwy63dfjd7sg4OOQKQ16JPm4qPEEvfwUBw5w?=
- =?us-ascii?Q?xfEKNOTAgP4AukDmek5IZzuJQsq+bmbrpvJFIdBuiCxJcEMvmzhn8exU3lx1?=
- =?us-ascii?Q?imex70eL2TZ4DF9h0xKMDnFAjjuCfP4sKuyknTqy+InTA8yFLpGRhqonqkIN?=
- =?us-ascii?Q?Nh78jE/DucIdPtfAC/u5888nJdNNXtnO/oTGMfIjEwUUQc+uQcQWHCwmpkcw?=
- =?us-ascii?Q?rMx1przLixwRLIKqJebsI0ruySpSEzvHbwaIdh7gZ7nLt4+EYWP1DphZjPbj?=
- =?us-ascii?Q?uhXo6H5uRHJ1+rWWsE52FPa9cZM1roWMF9Ht5bhKEQGKsDWDD10nwJiMl/E7?=
- =?us-ascii?Q?GgO17JaJec99sx0Opd+1WYwGH62szdGlswNTXwryGa/fseyoV9Rilj8Xft2u?=
- =?us-ascii?Q?nJXGBkJZv5wsvqlIFGG/NbYki9etqHWeHoyUfXPDeD5DZfOGIJFi9c/FwuLl?=
- =?us-ascii?Q?aCGGTV/N0oCwJS+njHzLhTUWRlfQQ3q0IpAO4qN75XZqDdDwNSCrIHJuIt4a?=
- =?us-ascii?Q?evcBCd5YGHeblF28UDBpptY1nb8XIYSrBTURcercNoIsI48AgzxX+Cq2xnbl?=
- =?us-ascii?Q?3WUhYHBPKGFWGscJzd585XhgsysBH7/Sn72xWGP6GtWQXqreYZRS7+lt73Fx?=
- =?us-ascii?Q?i4S1LWuAvS3d516oU6lo1CwI3NznWYvYxQyeXApCttse+mHUqviKc3x/84hd?=
- =?us-ascii?Q?P9Et5Ptq4Pk4OxQMozvs5hmSxyqK03XXDygt5iIeYRvGlgNbgbzxS5ULJGY3?=
- =?us-ascii?Q?1PbXncWyIa8yRh0dORRt+MCE9nTI/MQ+qwTGp6poG2WlLFBLzpi3YfESM1yN?=
- =?us-ascii?Q?QePPb47hLHtsvkClk6dhzJV+UNpmjN/23xzyFcVi1sMFeDqZMIP81dFtGpsh?=
- =?us-ascii?Q?vsjpu9LWDy2/xB9fxgf0mGIhy8F2lGGTq4APZgtBEdQwYpUUca8Yu3ty0Bxr?=
- =?us-ascii?Q?KZDLhT8N0sCZyjxBXQyZIUiLHzHR5C5mq2br12XNW3Qwy5p0lmC5OQYzMjlK?=
- =?us-ascii?Q?y1o5d72SiOhzitmlOnIOpA3rU1PRK5lQSTmeX7x6tezAphDB0Kk8EY95LIDA?=
- =?us-ascii?Q?5HSmbr+oPQHVKsYJFpNmeXecWPzLPJ5lHTUsUbM8OfV1xCXewTHafhwc6EoR?=
- =?us-ascii?Q?DUSgVRR5cWHKeE6XVbMnNTfP7Itl+RfliTlZht7ARI42lx3jX1O+UoACU3xN?=
- =?us-ascii?Q?GYceGCV2XoPjpK7nw9MlgSzDrYAoJJN88hSZnwBMusHaCBoc1ibMIDmuVB3V?=
- =?us-ascii?Q?fXH48buJ8J1jpme1lR33MPNL2aB2Kuy5AL/HsLIsXCCZ70o8mhF0aN2KIEmn?=
- =?us-ascii?Q?ZuT+Hw=3D=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 677c46b9-6761-4bdb-91fa-08d9f7a787b2
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2022 15:08:36.8017
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Z/F/61hP2+v1MxZYfM4Q2YkzQrSezrr2pxjmRD9S9pYBhp7r52kFNXcoKkdj1BKuha1BjptBRRfghHJ5j265MDQq6e9AkibwEcO72vLAVao=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB5392
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10267 signatures=681306
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 spamscore=0
- mlxscore=0 adultscore=0 mlxlogscore=999 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2201110000
- definitions=main-2202240091
-X-Proofpoint-GUID: KhlCTHCJOWFlCtpRCjiNi2Jhqe82ddXN
-X-Proofpoint-ORIG-GUID: KhlCTHCJOWFlCtpRCjiNi2Jhqe82ddXN
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH net] tipc: Fix end of loop tests for list_for_each_entry()
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Richard Alpe <richard.alpe@ericsson.com>
+Cc:     Ying Xue <ying.xue@windriver.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Erik Hugne <erik.hugne@ericsson.com>, netdev@vger.kernel.org,
+        tipc-discussion@lists.sourceforge.net,
+        kernel-janitors@vger.kernel.org
+References: <20220222134311.GA2716@kili>
+From:   Jon Maloy <jmaloy@redhat.com>
+In-Reply-To: <20220222134311.GA2716@kili>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Feb 22, 2022 at 05:19:01PM -0800, Jeff Johnson wrote:
-> On 2/22/2022 4:17 AM, Colin Ian King wrote:
-> > Don't populate the read-only array voice_priority on the stack but
-> > instead make it static const. Also makes the object code a little
-> > smaller.
-> > 
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> > ---
-> >   drivers/net/wireless/ath/ath9k/mci.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/wireless/ath/ath9k/mci.c b/drivers/net/wireless/ath/ath9k/mci.c
-> > index 39d46c203f6b..5e0ae7e6412f 100644
-> > --- a/drivers/net/wireless/ath/ath9k/mci.c
-> > +++ b/drivers/net/wireless/ath/ath9k/mci.c
-> > @@ -43,7 +43,7 @@ static bool ath_mci_add_profile(struct ath_common *common,
-> >   				struct ath_mci_profile_info *info)
-> >   {
-> >   	struct ath_mci_profile_info *entry;
-> > -	u8 voice_priority[] = { 110, 110, 110, 112, 110, 110, 114, 116, 118 };
-> > +	static const u8 voice_priority[] = { 110, 110, 110, 112, 110, 110, 114, 116, 118 };
-> >   	if ((mci->num_sco == ATH_MCI_MAX_SCO_PROFILE) &&
-> >   	    (info->type == MCI_GPM_COEX_PROFILE_VOICE))
-> 
-> Reviewed-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> 
-> An additional cleanup that could be performed in that function:
-> 
-> 		if (info->voice_type < sizeof(voice_priority))
-> 
-> replace sizeof() with ARRAY_SIZE() so that it works correctly if the base
-> type is ever changed from u8
 
-You're right that ARRAY_SIZE() is better style but we have a bunch of
-static analysis to catch the bug if someone changes the type to int or
-whatever.
 
-regards,
-dan carpenter
+On 2/22/22 08:43, Dan Carpenter wrote:
+> These tests are supposed to check if the loop exited via a break or not.
+> However the tests are wrong because if we did not exit via a break then
+> "p" is not a valid pointer.  In that case, it's the equivalent of
+> "if (*(u32 *)sr == *last_key) {".  That's going to work most of the time,
+> but there is a potential for those to be equal.
+>
+> Fixes: 1593123a6a49 ("tipc: add name table dump to new netlink api")
+> Fixes: 1a1a143daf84 ("tipc: add publication dump to new netlink api")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>   net/tipc/name_table.c | 2 +-
+>   net/tipc/socket.c     | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/net/tipc/name_table.c b/net/tipc/name_table.c
+> index 01396dd1c899..1d8ba233d047 100644
+> --- a/net/tipc/name_table.c
+> +++ b/net/tipc/name_table.c
+> @@ -967,7 +967,7 @@ static int __tipc_nl_add_nametable_publ(struct tipc_nl_msg *msg,
+>   		list_for_each_entry(p, &sr->all_publ, all_publ)
+>   			if (p->key == *last_key)
+>   				break;
+> -		if (p->key != *last_key)
+> +		if (list_entry_is_head(p, &sr->all_publ, all_publ))
+>   			return -EPIPE;
+>   	} else {
+>   		p = list_first_entry(&sr->all_publ,
+> diff --git a/net/tipc/socket.c b/net/tipc/socket.c
+> index 3e63c83e641c..7545321c3440 100644
+> --- a/net/tipc/socket.c
+> +++ b/net/tipc/socket.c
+> @@ -3749,7 +3749,7 @@ static int __tipc_nl_list_sk_publ(struct sk_buff *skb,
+>   			if (p->key == *last_publ)
+>   				break;
+>   		}
+> -		if (p->key != *last_publ) {
+> +		if (list_entry_is_head(p, &tsk->publications, binding_sock)) {
+>   			/* We never set seq or call nl_dump_check_consistent()
+>   			 * this means that setting prev_seq here will cause the
+>   			 * consistence check to fail in the netlink callback
+Acked-by: Jon Maloy <jmaloy@redhat.com>
 
