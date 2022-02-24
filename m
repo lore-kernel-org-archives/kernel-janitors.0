@@ -2,40 +2,40 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61427C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Feb 2022 08:07:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC13C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Feb 2022 08:45:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231126AbiBXIIB (ORCPT
+        id S232066AbiBXIpb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 24 Feb 2022 03:08:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53828 "EHLO
+        Thu, 24 Feb 2022 03:45:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229737AbiBXIIB (ORCPT
+        with ESMTP id S231625AbiBXIpa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 24 Feb 2022 03:08:01 -0500
-X-Greylist: delayed 492 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 24 Feb 2022 00:07:29 PST
-Received: from mail.powerknight.com.pl (unknown [185.212.225.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 660D4159EA0
-        for <kernel-janitors@vger.kernel.org>; Thu, 24 Feb 2022 00:07:29 -0800 (PST)
-Received: by mail.powerknight.com.pl (Postfix, from userid 1001)
-        id 9ED3D6C3BF; Thu, 24 Feb 2022 08:59:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=powerknight.com.pl;
-        s=mail; t=1645689555;
-        bh=DOvn/9rDwQau5mzJFa5D5EjsnCORPgAuVOSsn5ToHWE=;
+        Thu, 24 Feb 2022 03:45:30 -0500
+X-Greylist: delayed 459 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 24 Feb 2022 00:45:01 PST
+Received: from mail.onlinesuccesses.pl (mail.onlinesuccesses.pl [198.244.150.235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C181583AA
+        for <kernel-janitors@vger.kernel.org>; Thu, 24 Feb 2022 00:45:01 -0800 (PST)
+Received: by mail.onlinesuccesses.pl (Postfix, from userid 1002)
+        id 3F2EAA2FD9; Thu, 24 Feb 2022 08:36:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onlinesuccesses.pl;
+        s=mail; t=1645691841;
+        bh=nE8HqilgMh4dy7+Z8ksfg7Bc9rmPeQtYFq3/3YR2ODU=;
         h=Date:From:To:Subject:From;
-        b=CRY5BeYqjKb6xQpHnMspYfyDb56z3Kwv0KYAwJPWZUrxcn5uRWLO15zqIWk6AX+zC
-         sxMCixl7eRPNAoRQqPLmnBR7NqJ0LXtUKodRa30igX7/Ra38HlcSuN/FqJ6kZEh3eI
-         +sjOTpCcnUb9y1qel5YkzImbVoAeIyjoFM7iAuFUBAetV4q5giO0ndXU+vgssKtU+L
-         il78k1/cpdM86WgZyXZLjlqeqkDaijBdHIRf9058x0CJAFBPovmm7ihOTkdRrRiVfU
-         DVCvG1fe5Jzw7TsL/lAYh2Jzuz+kODxtaMmVko9BHA84jDHqqhZm0iq3HNDhxBhEY9
-         SMdvLMCVVApUQ==
-Received: by mail.powerknight.com.pl for <kernel-janitors@vger.kernel.org>; Thu, 24 Feb 2022 07:59:00 GMT
-Message-ID: <20220224074501-0.1.t.m6n.0.gq7h6dar7g@powerknight.com.pl>
-Date:   Thu, 24 Feb 2022 07:59:00 GMT
-From:   "Marek Dranski" <marek.dranski@powerknight.com.pl>
+        b=Ukuh1RptbkpPK79T6wqxhDSjm3Fj4Yh3PIfInyM3S82iB44s069wWr3TdjM1WYVu9
+         fHwWHPyHLF0j8mEDHWx29+qTZmM9dpQzYM+eh8Kw+dQQiBjLIwmJCnJ1UUQnBAC949
+         63Q3mFbXIuTMMuGaUVAE3Kz+IBJfR7bP5j5qdKy7/orQnx/YCi+AnSCv/TedLXD57s
+         ZZOctHieAxQzRzbQgZ6/7txyylW5YZ6F5b0HA5ur9qqLunY6QBt4puIncKf83tmmkj
+         5YZGcxPxkIzNg5Evxo75yItdh+4XU5f9rhJ77ataOBlIQX7Rkin/xmQk+4ns0N651s
+         x3xkAvRIOIIHA==
+Received: by mail.onlinesuccesses.pl for <kernel-janitors@vger.kernel.org>; Thu, 24 Feb 2022 08:36:21 GMT
+Message-ID: <20220224074501-0.1.2r.hgaj.0.og2z2amh2j@onlinesuccesses.pl>
+Date:   Thu, 24 Feb 2022 08:36:21 GMT
+From:   "Wiktor Zielonko" <wiktor.zielonko@onlinesuccesses.pl>
 To:     <kernel-janitors@vger.kernel.org>
-Subject: Wycena paneli fotowoltaicznych
-X-Mailer: mail.powerknight.com.pl
+Subject: Ruch z pierwszej pozycji w Google
+X-Mailer: mail.onlinesuccesses.pl
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -43,17 +43,22 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Dzie=C5=84 dobry,=20
 
-dostrzegam mo=C5=BCliwo=C5=9B=C4=87 wsp=C3=B3=C5=82pracy z Pa=C5=84stwa f=
-irm=C4=85.
+jaki=C5=9B czas temu zg=C5=82osi=C5=82a si=C4=99 do nas firma, kt=C3=B3re=
+j strona internetowa nie pozycjonowa=C5=82a si=C4=99 wysoko w wyszukiwarc=
+e Google.=20
 
-=C5=9Awiadczymy kompleksow=C4=85 obs=C5=82ug=C4=99 inwestycji w fotowolta=
-ik=C4=99, kt=C3=B3ra obni=C5=BCa koszty energii elektrycznej nawet o 90%.
+Na podstawie wykonanego przez nas audytu SEO zoptymalizowali=C5=9Bmy tre=C5=
+=9Bci na stronie pod k=C4=85tem wcze=C5=9Bniej opracowanych s=C5=82=C3=B3=
+w kluczowych. Nasz wewn=C4=99trzny system codziennie analizuje prawid=C5=82=
+owe dzia=C5=82anie witryny.  Dzi=C4=99ki indywidualnej strategii, firma z=
+dobywa coraz wi=C4=99cej Klient=C3=B3w. =20
 
-Czy s=C4=85 Pa=C5=84stwo zainteresowani weryfikacj=C4=85 wst=C4=99pnych p=
-ropozycji?
+Czy chcieliby Pa=C5=84stwo zwi=C4=99kszy=C4=87 liczb=C4=99 os=C3=B3b odwi=
+edzaj=C4=85cych stron=C4=99 internetow=C4=85 firmy? M=C3=B3g=C5=82bym prz=
+edstawi=C4=87 ofert=C4=99?=20
 
 
-Pozdrawiam,
-Marek Dranski
+Pozdrawiam serdecznie,
+Wiktor Zielonko
