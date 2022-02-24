@@ -2,64 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42867C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Feb 2022 22:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 135EEC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Feb 2022 23:07:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235671AbiBXWnu (ORCPT
+        id S231915AbiBXXHc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 24 Feb 2022 17:43:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43972 "EHLO
+        Thu, 24 Feb 2022 18:07:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235670AbiBXWnt (ORCPT
+        with ESMTP id S229593AbiBXXHb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 24 Feb 2022 17:43:49 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FEB51A8049;
-        Thu, 24 Feb 2022 14:43:18 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id j22so1771572wrb.13;
-        Thu, 24 Feb 2022 14:43:18 -0800 (PST)
+        Thu, 24 Feb 2022 18:07:31 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 999AE14FBDB;
+        Thu, 24 Feb 2022 15:07:00 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id v2-20020a7bcb42000000b0037b9d960079so725278wmj.0;
+        Thu, 24 Feb 2022 15:07:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=bWKLMT4aebSJWW8C7UiCQ3/EbG02GUUsHveIfrNn2xE=;
-        b=hm/yI1Cy2Kc8mLeeLsOCHupF1kEHeji6XjXMjWyWbiitXdcqzotkVsqhN+bU7+hwc5
-         t/Jct+cxOWL03KF/nmu3K5nzMPMgen47vrPBS0NpiuJd/X0wuYF5NXJZvIQIRiPt2m2w
-         t2heHb5g/O+V72fy/UUlcjmfXgRF1p8E3GHQEcggq0h2lJaFK8l+BwBN9SYa65n/7a0w
-         2C53p+XtaPhGaJgtIquK/MEhhm+6m50rt73HguwdIImHYO/TW5gJo2qec+hnLWvUZBh3
-         2QRVv8+FfvYeIyvjXTU9Cn8tYpHjqa6RN24Eips/xUqhHgITJM9cj76iUEBh5xuAIJv1
-         Izig==
+        bh=wbra4FEQu0N4mKrIa+OeGATLAQAZRowiOgXpL7J/xdw=;
+        b=LsHQmedqI0UuvSsT/Sa28pwoSgDdgSdH3VFHn5qorZTLNoeeyCK4We76nwt9cag6J0
+         SxXuQ4jfmAzcVD8dl9JkwpGCsjp6IVOz0rj1zGzcXRjuJAsGYm4xQRTi94dsKIKT9SkE
+         P5dcflfhbRgfIg1D991mL/pDK++aP/95GT8gweqXqTByr5ZcWL9cN4dZRFj32d98t8TY
+         5hAfnK+kztK19VM1nvYQiBZ9jLzrkRHmLArDHQHx3cuZ98n5Ak+C+KH1klJdIeG9BUA0
+         oBODIgyzlf0aL8GjfgX+LuERKe5l6VeAr62qhgMAT1xIYm5xdpV3OYWrfn3pAfELos7Y
+         pAbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=bWKLMT4aebSJWW8C7UiCQ3/EbG02GUUsHveIfrNn2xE=;
-        b=EIl8b4/Qiwc16ZXPK3nO4OD6MEDU8DWImbOCGMaLelOgfabBA/fqItXAegf2RPndgD
-         /8Tx2eHYg4Idqc+pnamzx4Es27qJjZ/JF00nRV9TBZsjb6BR4Vl5z9VcU9capcBVBcmC
-         AWP0s7bBFrfcOOvI83RQsW0rNPlJFwLQbi5G2eRaGLc+P9NC4TYiSP32AMXLJ+M6VVrJ
-         q/Sba+qdEK4sGmTbxTDWUae+El9YcYXpEPMLjKncSI/fhA8axjFbbl96z7DbAkwkeesn
-         ecJ+c8vFy2uwXgUBK/Io+F6J/dEgnJJEb5BYugC0QxRP1Pt9NpC8fmBuS7ChXAbofY/E
-         dHlw==
-X-Gm-Message-State: AOAM531x9IYS/OHXqx8HfHENf34opeABGlihRPI33X7r8DEYwHATBVI8
-        IBPdQi1vtxjt9bVevIElBiM=
-X-Google-Smtp-Source: ABdhPJx+iF7F/adABVhKlAG8I0mrA22SnXPr653iA75eyj2+GDckFVmGWApaNaHjkGCuXsZThToCeQ==
-X-Received: by 2002:a05:6000:2c4:b0:1ea:910c:151c with SMTP id o4-20020a05600002c400b001ea910c151cmr3801018wry.92.1645742597131;
-        Thu, 24 Feb 2022 14:43:17 -0800 (PST)
+        bh=wbra4FEQu0N4mKrIa+OeGATLAQAZRowiOgXpL7J/xdw=;
+        b=5pcBJzO9Cf0iqqSBdhgB7acjoIuKxXXi0tWa06vztJn6eGOWomKVB4A48ZZU+F0It0
+         W7k2pI8Iz4ceGj6Wpri/lusZW0OuHWRv4FFrE2WXdFETQ+43NsQEPrPZcjETE6h18iMU
+         m5BtrNav+kMtY4X7xVsyXUa2rzD2Y/4TqezHMLdX8pFulJA+OoEnui5c28StHCNiaPFY
+         MOcWcSAcyhB8foKilDOAFEe4eYnnXOtbxeOiswroPoEDGf6RZJ9No2wggdFuUp4goEhW
+         M3Q5TVPhDyg9IyyMvfySCknb/H41G3jKgvEo8iq53avZpk9qaqkdfABs6uX11Wo5wfbP
+         6ITw==
+X-Gm-Message-State: AOAM530L019libqP5wVA6YaUBxcghYwVsEjDaXtn6fOVcesJaOdBekLA
+        BfaG3XeDCdrkiYpdsNM4Qi4=
+X-Google-Smtp-Source: ABdhPJxZaMBZe4P0qOe+ykgYjJYjNIWkvfk4T8H5ECaKz8j0I8xOAgTO42Ecmlg6mvTcu9izMXSlSg==
+X-Received: by 2002:a1c:f705:0:b0:37d:f2e5:d8ec with SMTP id v5-20020a1cf705000000b0037df2e5d8ecmr268682wmh.21.1645744019245;
+        Thu, 24 Feb 2022 15:06:59 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id a17-20020a5d5091000000b001edb61b2687sm736421wrt.63.2022.02.24.14.43.16
+        by smtp.gmail.com with ESMTPSA id q11-20020adfcd8b000000b001e320028660sm521461wrj.92.2022.02.24.15.06.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 14:43:16 -0800 (PST)
+        Thu, 24 Feb 2022 15:06:58 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Xinhui.Pan@amd.com, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev
-Subject: [PATCH][next] drm/amdgpu: Fix missing assignment to variable r
-Date:   Thu, 24 Feb 2022 22:43:16 +0000
-Message-Id: <20220224224316.149704-1-colin.i.king@gmail.com>
+To:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Phillip Potter <phil@philpotter.co.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Straube <straube.linux@gmail.com>,
+        linux-staging@lists.linux.dev
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] staging: r8188eu: remove redundant variable reg_0x143
+Date:   Thu, 24 Feb 2022 23:06:58 +0000
+Message-Id: <20220224230658.151338-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -68,34 +67,35 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Currently the call to function amdgpu_benchmark_move should be
-assigning the return value to variable r as this is checked in
-the next statement, however, this assignment is missing. Fix
-this by adding in the missing assignment.
+Variable reg_0x143 is being assigned a value, however is not being
+read. The variable is redundant and can be removed.
 
-Addresses clang scan warning:
-drivers/gpu/drm/amd/amdgpu/amdgpu_benchmark.c:168:7: warning:
-variable 'r' is uninitialized when used here [-Wuninitialized]
-
-Fixes: 9645c9c9fb15 ("drm/amdgpu: plumb error handling though amdgpu_benchmark()")
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_benchmark.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/r8188eu/hal/rtl8188e_hal_init.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_benchmark.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_benchmark.c
-index 3136a9ad2d54..bb293a5c6fd5 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_benchmark.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_benchmark.c
-@@ -163,7 +163,7 @@ int amdgpu_benchmark(struct amdgpu_device *adev, int test_number)
- 			 "benchmark test: %d (simple test, VRAM to VRAM)\n",
- 			 test_number);
- 		/* simple test, VRAM to VRAM */
--		amdgpu_benchmark_move(adev, 1024*1024, AMDGPU_GEM_DOMAIN_VRAM,
-+		r = amdgpu_benchmark_move(adev, 1024*1024, AMDGPU_GEM_DOMAIN_VRAM,
- 				      AMDGPU_GEM_DOMAIN_VRAM);
- 		if (r)
- 			goto done;
+diff --git a/drivers/staging/r8188eu/hal/rtl8188e_hal_init.c b/drivers/staging/r8188eu/hal/rtl8188e_hal_init.c
+index cf58dfc3ff4d..53ebea311723 100644
+--- a/drivers/staging/r8188eu/hal/rtl8188e_hal_init.c
++++ b/drivers/staging/r8188eu/hal/rtl8188e_hal_init.c
+@@ -189,7 +189,6 @@ static void efuse_read_phymap_from_txpktbuf(
+ {
+ 	u16 dbg_addr = 0;
+ 	u32 start  = 0, passing_time = 0;
+-	u8 reg_0x143 = 0;
+ 	__le32 lo32 = 0, hi32 = 0;
+ 	u16 len = 0, count = 0;
+ 	int i = 0;
+@@ -209,7 +208,7 @@ static void efuse_read_phymap_from_txpktbuf(
+ 
+ 		rtw_write8(adapter, REG_TXPKTBUF_DBG, 0);
+ 		start = jiffies;
+-		while (!(reg_0x143 = rtw_read8(adapter, REG_TXPKTBUF_DBG)) &&
++		while (!rtw_read8(adapter, REG_TXPKTBUF_DBG) &&
+ 		       (passing_time = rtw_get_passing_time_ms(start)) < 1000)
+ 			rtw_usleep_os(100);
+ 
 -- 
 2.34.1
 
