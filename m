@@ -2,62 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8567DC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Feb 2022 21:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D03EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Feb 2022 22:06:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232054AbiBXVw3 (ORCPT
+        id S235141AbiBXWGb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 24 Feb 2022 16:52:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36704 "EHLO
+        Thu, 24 Feb 2022 17:06:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235124AbiBXVw1 (ORCPT
+        with ESMTP id S230497AbiBXWGa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 24 Feb 2022 16:52:27 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BCAA11B5F7;
-        Thu, 24 Feb 2022 13:51:52 -0800 (PST)
-Received: by mail-wm1-x32d.google.com with SMTP id v2-20020a7bcb42000000b0037b9d960079so644985wmj.0;
-        Thu, 24 Feb 2022 13:51:52 -0800 (PST)
+        Thu, 24 Feb 2022 17:06:30 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71D8227C231;
+        Thu, 24 Feb 2022 14:05:59 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id d17so1702448wrc.9;
+        Thu, 24 Feb 2022 14:05:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=YmFWZxc6krmQRrhWIAxPmo8/k4kV7D8olzPCdDWyKQM=;
-        b=X5E/edASjqW4AmDXaRw68tytzufmqT8gIqxKApCij5Cxi4pSXeLwRjLdO6j9F3wkH4
-         i4fRl1qQo6SNEKbU1COrAitP5CDGXDsMmTpPb90lHkNOczhpfO27ZDei6Qwk650BSaUn
-         MRyMz5vBByitj7LOA3ZtLFSMCTnc+dtxos3cpHnSxBVUE+k1MHBcWJ4CHroOBQ/DIfxf
-         iZ1AA/BP1A40QlD+kDXVxmmLNB2lUHKqSxEvXwc4bbAmLUgvokKBXoAcykTt3uA6XL1/
-         vkrabdcd6O4BDyWBNb9EhW9tgSyXS8tTaZFcAiURnm6W5Zv2y5/5lI+JAYPLTfGAHYmC
-         5q2Q==
+        bh=et1Z6Z/KvYWUodJYfEuS39IO1XCVclEySq/foYvH8dk=;
+        b=mnf1tq4FpyWGBrbpbVW1mM5mQw5kAPuj7gsOJFmF1yavYT2tdb6vETJ3pe6Dag3IHp
+         pPBkr7t3Cn7aW2ZtN/KcQ7D60rgBUkHbNMjjvjP5KI3Ah3t2aLxXp6dTvlmNPY8r2ygn
+         nMaPnuIHGiYTHyhzZqZSwiUt6yo2d90NYr6E9iH6J4Cgk1IrVQhUH6MY75fInLmHBYBa
+         Q0i+KpyWeznUJbJ63DiwNXkkUiqOVuNJvX/7Yumxs8jnAKO/nVm5G0gSoHuT0x3tMYAV
+         PanbL0lw5881Pf0gJ9d5nXpkzhVVe1LkbbIxv93q3SqzreIff097RpzuGM3udF0Vtn5A
+         hs3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=YmFWZxc6krmQRrhWIAxPmo8/k4kV7D8olzPCdDWyKQM=;
-        b=Q9ZGfIuiWDrCCyWY8geDmrq7buJbqsVZTwkVZG/IyysXa24/f4JOGvICuKpwwXP0Ai
-         mjg/NMVsYtXPD9VpSAXWXvT04Slgiy7rXhR6LBxpOb8dYN/u8sHp+G5SeCtTM7BUzpr+
-         sE9GNlSy1JOeTQcjkuDlG5uON6lT5i9mXYqppRx21s1V9nnQQmfi1dXs8FypDJ69b7Dm
-         dwuoq+opESZHijQnDjast0Q6sSfltLaSClbS681bNpetosT8D8DZ7ZnZ7RPV5vXEdvba
-         25C1WtKCfeGCv3RCoLyktOzK0yI3occ5MTaEVSmNkXUHjalZEPLD/1GFziJU+UQmg5au
-         IYAA==
-X-Gm-Message-State: AOAM530alIz2wit82jNKDeMmznl8y7GqedbY+ouea51/A6w0qMIstQtQ
-        +xAmcLO5cYwyCS+9+FOkgzg=
-X-Google-Smtp-Source: ABdhPJxZ1KpbZuMsHDzvLhXF6ZMUiAMtkH8QGbAfvEoDmlzEFAHsu+keY4Gj4RcH8HO14t7vwlBAyw==
-X-Received: by 2002:a05:600c:2101:b0:381:2275:1d71 with SMTP id u1-20020a05600c210100b0038122751d71mr101315wml.90.1645739510678;
-        Thu, 24 Feb 2022 13:51:50 -0800 (PST)
+        bh=et1Z6Z/KvYWUodJYfEuS39IO1XCVclEySq/foYvH8dk=;
+        b=UBUhx3xe+FFvPMTC585xXJiMJ54hFc9deW8bqTOyAzSTQFkX4imx9KJ5Px/6HcaaSD
+         zQY0u9atk5wV11cp1p4g4RgA6C+UA5jSMuLGnCEz1oERtyAVtrOjQcCa8Xu76HZI+a9D
+         WOec0oAKxhKJs1SdTcHzdB8vf7fvrG4mf2AOhtytHv2IlPTNRNrktNt/zyTEB7HGbjEh
+         EFy9x8gvFLj/5i0q7JhMUwrGeLuOLZMViH/ZzQ37W2wEaMu8npEuD2bU+CNL8/3AAkgN
+         w1LkIT466Et9FD0IJViqU88LImYnEJy0HA0TzGOns3ADjcQlYpmuwafpeKlL14zE4Nz7
+         BA9A==
+X-Gm-Message-State: AOAM531raTVRqsH4YM5eKLYrbqVRnnabhs6KuvmukgjPpbjmLAvsHOSm
+        /kXiygOdIT3JeR2E50zBr/Ls7av6eu3Xxg==
+X-Google-Smtp-Source: ABdhPJxdmTL9qm2lX9wZlAGeBlGH0yxb/0WSSYGgg/cAt1Yo78pwYN9T0mgdpPvBtnk+KcI6OE643w==
+X-Received: by 2002:adf:910a:0:b0:1ed:c3fc:2dcf with SMTP id j10-20020adf910a000000b001edc3fc2dcfmr3845237wrj.430.1645740358055;
+        Thu, 24 Feb 2022 14:05:58 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id x11-20020adfdccb000000b001e57922b8b6sm490014wrm.43.2022.02.24.13.51.49
+        by smtp.gmail.com with ESMTPSA id v5-20020adfe4c5000000b001edc1e5053esm461372wrm.82.2022.02.24.14.05.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 13:51:50 -0800 (PST)
+        Thu, 24 Feb 2022 14:05:57 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Cosmin Tanislav <cosmin.tanislav@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] iio: accel: adxl367: Fix uninitialized variable handled
-Date:   Thu, 24 Feb 2022 21:51:49 +0000
-Message-Id: <20220224215149.146181-1-colin.i.king@gmail.com>
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev
+Subject: [PATCH][next] net: dsa: qca8k: return with -EINVAL on invalid port
+Date:   Thu, 24 Feb 2022 22:05:57 +0000
+Message-Id: <20220224220557.147075-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -66,30 +73,34 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable handle is not initialized leading to potential garbage
-results with the or operations. Fix this by replacing the first
-or operation to an assignment to ensure handled is initialized
-correctly.
+Currently an invalid port throws a WARN_ON warning however invalid
+uninitialized values in reg and cpu_port_index are being used later
+on. Fix this by returning -EINVAL for an invalid port value.
 
-Fixes: cbab791c5e2a ("iio: accel: add ADXL367 driver")
+Addresses clang-scan warnings:
+drivers/net/dsa/qca8k.c:1981:3: warning: 2nd function call argument is an
+  uninitialized value [core.CallAndMessage]
+drivers/net/dsa/qca8k.c:1999:9: warning: 2nd function call argument is an
+  uninitialized value [core.CallAndMessage]
+
+Fixes: 7544b3ff745b ("net: dsa: qca8k: move pcs configuration")
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/iio/accel/adxl367.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/dsa/qca8k.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/iio/accel/adxl367.c b/drivers/iio/accel/adxl367.c
-index b452d74b1d4d..350a89b61179 100644
---- a/drivers/iio/accel/adxl367.c
-+++ b/drivers/iio/accel/adxl367.c
-@@ -884,7 +884,7 @@ static irqreturn_t adxl367_irq_handler(int irq, void *private)
- 	if (ret)
- 		return IRQ_NONE;
+diff --git a/drivers/net/dsa/qca8k.c b/drivers/net/dsa/qca8k.c
+index 04fa21e37dfa..2ed45f69b8e4 100644
+--- a/drivers/net/dsa/qca8k.c
++++ b/drivers/net/dsa/qca8k.c
+@@ -1937,6 +1937,7 @@ static int qca8k_pcs_config(struct phylink_pcs *pcs, unsigned int mode,
  
--	handled |= adxl367_push_event(indio_dev, status);
-+	handled = adxl367_push_event(indio_dev, status);
- 	handled |= adxl367_push_fifo_data(indio_dev, status, fifo_entries);
+ 	default:
+ 		WARN_ON(1);
++		return -EINVAL;
+ 	}
  
- 	return handled ? IRQ_HANDLED : IRQ_NONE;
+ 	/* Enable/disable SerDes auto-negotiation as necessary */
 -- 
 2.34.1
 
