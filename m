@@ -2,63 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC13C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Feb 2022 08:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57427C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Feb 2022 10:02:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232066AbiBXIpb (ORCPT
+        id S233187AbiBXKDE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 24 Feb 2022 03:45:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55992 "EHLO
+        Thu, 24 Feb 2022 05:03:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231625AbiBXIpa (ORCPT
+        with ESMTP id S233178AbiBXKDE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 24 Feb 2022 03:45:30 -0500
-X-Greylist: delayed 459 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 24 Feb 2022 00:45:01 PST
-Received: from mail.onlinesuccesses.pl (mail.onlinesuccesses.pl [198.244.150.235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C181583AA
-        for <kernel-janitors@vger.kernel.org>; Thu, 24 Feb 2022 00:45:01 -0800 (PST)
-Received: by mail.onlinesuccesses.pl (Postfix, from userid 1002)
-        id 3F2EAA2FD9; Thu, 24 Feb 2022 08:36:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onlinesuccesses.pl;
-        s=mail; t=1645691841;
-        bh=nE8HqilgMh4dy7+Z8ksfg7Bc9rmPeQtYFq3/3YR2ODU=;
-        h=Date:From:To:Subject:From;
-        b=Ukuh1RptbkpPK79T6wqxhDSjm3Fj4Yh3PIfInyM3S82iB44s069wWr3TdjM1WYVu9
-         fHwWHPyHLF0j8mEDHWx29+qTZmM9dpQzYM+eh8Kw+dQQiBjLIwmJCnJ1UUQnBAC949
-         63Q3mFbXIuTMMuGaUVAE3Kz+IBJfR7bP5j5qdKy7/orQnx/YCi+AnSCv/TedLXD57s
-         ZZOctHieAxQzRzbQgZ6/7txyylW5YZ6F5b0HA5ur9qqLunY6QBt4puIncKf83tmmkj
-         5YZGcxPxkIzNg5Evxo75yItdh+4XU5f9rhJ77ataOBlIQX7Rkin/xmQk+4ns0N651s
-         x3xkAvRIOIIHA==
-Received: by mail.onlinesuccesses.pl for <kernel-janitors@vger.kernel.org>; Thu, 24 Feb 2022 08:36:21 GMT
-Message-ID: <20220224074501-0.1.2r.hgaj.0.og2z2amh2j@onlinesuccesses.pl>
-Date:   Thu, 24 Feb 2022 08:36:21 GMT
-From:   "Wiktor Zielonko" <wiktor.zielonko@onlinesuccesses.pl>
-To:     <kernel-janitors@vger.kernel.org>
-Subject: Ruch z pierwszej pozycji w Google
-X-Mailer: mail.onlinesuccesses.pl
+        Thu, 24 Feb 2022 05:03:04 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC89E124C04;
+        Thu, 24 Feb 2022 02:02:33 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id l1-20020a7bcf01000000b0037f881182a8so3152108wmg.2;
+        Thu, 24 Feb 2022 02:02:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5V+8zESMqAOqhShcImxsVrwQqPApUYX212lfufDlzI4=;
+        b=Ui8ORAybraPWfJ8gLXWOt/yX+8Py8ltRXxrn45enLFbpjw/LCz7AKbW8MzA10RJPbi
+         YrAx7DSi0AgAQp/ljOGkALIDi1XQCHV2JQkOTAUhAQxz+CJ9esBhyBcJguiS/EmC3V4a
+         QS0PMWFVyxrjTwO4BqERrXSqHUREj/aEeZX6/fzxW2zgHfYDmZvtbHjcC9zQo45IUVUz
+         3ZeR6WblZoouXvrA8KeDWJ3oOiZ5moxicPpukuueD8W81j6QQu/H+jk374ub79a54Bi+
+         nmf9BRfNAsDPlTsQ4MX5u4mbQ7fsS66X/UyK9BXJMZhn3FcZYMKHD7zn+5NIj0qw9R2J
+         zgVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5V+8zESMqAOqhShcImxsVrwQqPApUYX212lfufDlzI4=;
+        b=xfxe8Nq2dTUE+BIy+kAG+0B3NsDrUevAwmK8leqQDfu5Q9TaKgfFtq1AADLOh7PrqK
+         QLKq/8q53TYe0/NTxXzMScAp+yc7c5qiTUUU93HRDUDn1TNdgCuHCWsgg+tAbRnO87yC
+         ST4ZPKTGH4G+/r8HDD1see1zV35e8GrbejcP4cb+41xx9uaL65duCgcKkOAZNP2vzfbq
+         2MdBhMvGWXfkEBmDvB60URTe7TPn+SVltsKxJE35erxLzEmGL7mWLZc8dr7KBt8eyY7V
+         tbKckocN3SnxAIU/wpGb731cJn2TBWwa0ZVDUF0USoxnelMVOKJ6CRe2xZMQntN5lbLI
+         Mf1g==
+X-Gm-Message-State: AOAM532novlchXV98zaOU+zQVRyWZeD/aN9OiOBCATwj267tB8CPm7iV
+        mv2HSHwWFXixgozLyb+5Q80=
+X-Google-Smtp-Source: ABdhPJy3/oMg8ezNts7IDco/sL6COqLtAQmsk9VxvFN0rkACOsiHb7wusxREALjt38DRAk7F/e2hhQ==
+X-Received: by 2002:a7b:c383:0:b0:381:1b50:a9d with SMTP id s3-20020a7bc383000000b003811b500a9dmr611336wmj.90.1645696952299;
+        Thu, 24 Feb 2022 02:02:32 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id v2sm2132595wro.58.2022.02.24.02.02.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Feb 2022 02:02:31 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Luca Coelho <luciano.coelho@intel.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Ilan Peer <ilan.peer@intel.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] iwlwifi: mvm: Fix spelling mistake "Gerenal" -> "General"
+Date:   Thu, 24 Feb 2022 10:02:31 +0000
+Message-Id: <20220224100231.80152-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dzie=C5=84 dobry,=20
+There is a spelling mistake in a IWL_DEBUG_SCAN debug message. Fix it.
 
-jaki=C5=9B czas temu zg=C5=82osi=C5=82a si=C4=99 do nas firma, kt=C3=B3re=
-j strona internetowa nie pozycjonowa=C5=82a si=C4=99 wysoko w wyszukiwarc=
-e Google.=20
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/wireless/intel/iwlwifi/mvm/scan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Na podstawie wykonanego przez nas audytu SEO zoptymalizowali=C5=9Bmy tre=C5=
-=9Bci na stronie pod k=C4=85tem wcze=C5=9Bniej opracowanych s=C5=82=C3=B3=
-w kluczowych. Nasz wewn=C4=99trzny system codziennie analizuje prawid=C5=82=
-owe dzia=C5=82anie witryny.  Dzi=C4=99ki indywidualnej strategii, firma z=
-dobywa coraz wi=C4=99cej Klient=C3=B3w. =20
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/scan.c b/drivers/net/wireless/intel/iwlwifi/mvm/scan.c
+index a4077053e374..493a62071d8e 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/scan.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/scan.c
+@@ -2291,7 +2291,7 @@ iwl_mvm_scan_umac_fill_general_p_v11(struct iwl_mvm *mvm,
+ 
+ 	iwl_mvm_scan_umac_dwell_v11(mvm, gp, params);
+ 
+-	IWL_DEBUG_SCAN(mvm, "Gerenal: flags=0x%x, flags2=0x%x\n",
++	IWL_DEBUG_SCAN(mvm, "General: flags=0x%x, flags2=0x%x\n",
+ 		       gen_flags, gen_flags2);
+ 
+ 	gp->flags = cpu_to_le16(gen_flags);
+-- 
+2.34.1
 
-Czy chcieliby Pa=C5=84stwo zwi=C4=99kszy=C4=87 liczb=C4=99 os=C3=B3b odwi=
-edzaj=C4=85cych stron=C4=99 internetow=C4=85 firmy? M=C3=B3g=C5=82bym prz=
-edstawi=C4=87 ofert=C4=99?=20
-
-
-Pozdrawiam serdecznie,
-Wiktor Zielonko
