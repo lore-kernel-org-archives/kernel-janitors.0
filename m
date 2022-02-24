@@ -2,117 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB3DC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Feb 2022 20:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8567DC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Feb 2022 21:52:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234340AbiBXUXM (ORCPT
+        id S232054AbiBXVw3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 24 Feb 2022 15:23:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60416 "EHLO
+        Thu, 24 Feb 2022 16:52:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233918AbiBXUXM (ORCPT
+        with ESMTP id S235124AbiBXVw1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 24 Feb 2022 15:23:12 -0500
-Received: from smtp.smtpout.orange.fr (smtp02.smtpout.orange.fr [80.12.242.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5685C17B0F0
-        for <kernel-janitors@vger.kernel.org>; Thu, 24 Feb 2022 12:22:41 -0800 (PST)
-Received: from pop-os.home ([90.126.236.122])
-        by smtp.orange.fr with ESMTPA
-        id NKdLnAsz0eKJJNKdLn2zIS; Thu, 24 Feb 2022 21:22:39 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 24 Feb 2022 21:22:39 +0100
-X-ME-IP: 90.126.236.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jorgen Hansen <jhansen@vmware.com>, Vishnu Dasa <vdasa@vmware.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        pv-drivers@vmware.com
-Subject: [PATCH v2 3/3] VMCI: Fix some error handling paths in vmci_guest_probe_device()
-Date:   Thu, 24 Feb 2022 21:22:37 +0100
-Message-Id: <959218ce3b135197946d85cd9453551cd04fa5da.1645734041.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <c181bec88aab1145d3868d61b7e52d53923f8206.1645734041.git.christophe.jaillet@wanadoo.fr>
-References: <c181bec88aab1145d3868d61b7e52d53923f8206.1645734041.git.christophe.jaillet@wanadoo.fr>
+        Thu, 24 Feb 2022 16:52:27 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BCAA11B5F7;
+        Thu, 24 Feb 2022 13:51:52 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id v2-20020a7bcb42000000b0037b9d960079so644985wmj.0;
+        Thu, 24 Feb 2022 13:51:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YmFWZxc6krmQRrhWIAxPmo8/k4kV7D8olzPCdDWyKQM=;
+        b=X5E/edASjqW4AmDXaRw68tytzufmqT8gIqxKApCij5Cxi4pSXeLwRjLdO6j9F3wkH4
+         i4fRl1qQo6SNEKbU1COrAitP5CDGXDsMmTpPb90lHkNOczhpfO27ZDei6Qwk650BSaUn
+         MRyMz5vBByitj7LOA3ZtLFSMCTnc+dtxos3cpHnSxBVUE+k1MHBcWJ4CHroOBQ/DIfxf
+         iZ1AA/BP1A40QlD+kDXVxmmLNB2lUHKqSxEvXwc4bbAmLUgvokKBXoAcykTt3uA6XL1/
+         vkrabdcd6O4BDyWBNb9EhW9tgSyXS8tTaZFcAiURnm6W5Zv2y5/5lI+JAYPLTfGAHYmC
+         5q2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YmFWZxc6krmQRrhWIAxPmo8/k4kV7D8olzPCdDWyKQM=;
+        b=Q9ZGfIuiWDrCCyWY8geDmrq7buJbqsVZTwkVZG/IyysXa24/f4JOGvICuKpwwXP0Ai
+         mjg/NMVsYtXPD9VpSAXWXvT04Slgiy7rXhR6LBxpOb8dYN/u8sHp+G5SeCtTM7BUzpr+
+         sE9GNlSy1JOeTQcjkuDlG5uON6lT5i9mXYqppRx21s1V9nnQQmfi1dXs8FypDJ69b7Dm
+         dwuoq+opESZHijQnDjast0Q6sSfltLaSClbS681bNpetosT8D8DZ7ZnZ7RPV5vXEdvba
+         25C1WtKCfeGCv3RCoLyktOzK0yI3occ5MTaEVSmNkXUHjalZEPLD/1GFziJU+UQmg5au
+         IYAA==
+X-Gm-Message-State: AOAM530alIz2wit82jNKDeMmznl8y7GqedbY+ouea51/A6w0qMIstQtQ
+        +xAmcLO5cYwyCS+9+FOkgzg=
+X-Google-Smtp-Source: ABdhPJxZ1KpbZuMsHDzvLhXF6ZMUiAMtkH8QGbAfvEoDmlzEFAHsu+keY4Gj4RcH8HO14t7vwlBAyw==
+X-Received: by 2002:a05:600c:2101:b0:381:2275:1d71 with SMTP id u1-20020a05600c210100b0038122751d71mr101315wml.90.1645739510678;
+        Thu, 24 Feb 2022 13:51:50 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id x11-20020adfdccb000000b001e57922b8b6sm490014wrm.43.2022.02.24.13.51.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Feb 2022 13:51:50 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Cosmin Tanislav <cosmin.tanislav@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] iio: accel: adxl367: Fix uninitialized variable handled
+Date:   Thu, 24 Feb 2022 21:51:49 +0000
+Message-Id: <20220224215149.146181-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The 'err_remove_vmci_dev_g' error label is not at the right place.
-This could lead to un-released resource.
+Variable handle is not initialized leading to potential garbage
+results with the or operations. Fix this by replacing the first
+or operation to an assignment to ensure handled is initialized
+correctly.
 
-There is also a missing label. If pci_alloc_irq_vectors() fails, the
-previous vmci_event_subscribe() call must be undone.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Acked-by: Vishnu Dasa <vdasa@vmware.com>
+Fixes: cbab791c5e2a ("iio: accel: add ADXL367 driver")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-v2:
-   - Fix a typo (s/err_unsubscrive_event/err_unsubscribe_event/)
----
- drivers/misc/vmw_vmci/vmci_guest.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/iio/accel/adxl367.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/misc/vmw_vmci/vmci_guest.c b/drivers/misc/vmw_vmci/vmci_guest.c
-index 02d4722d8474..981b19308e6f 100644
---- a/drivers/misc/vmw_vmci/vmci_guest.c
-+++ b/drivers/misc/vmw_vmci/vmci_guest.c
-@@ -765,7 +765,7 @@ static int vmci_guest_probe_device(struct pci_dev *pdev,
- 	/* Check host capabilities. */
- 	error = vmci_check_host_caps(pdev);
- 	if (error)
--		goto err_remove_bitmap;
-+		goto err_remove_vmci_dev_g;
+diff --git a/drivers/iio/accel/adxl367.c b/drivers/iio/accel/adxl367.c
+index b452d74b1d4d..350a89b61179 100644
+--- a/drivers/iio/accel/adxl367.c
++++ b/drivers/iio/accel/adxl367.c
+@@ -884,7 +884,7 @@ static irqreturn_t adxl367_irq_handler(int irq, void *private)
+ 	if (ret)
+ 		return IRQ_NONE;
  
- 	/* Enable device. */
+-	handled |= adxl367_push_event(indio_dev, status);
++	handled = adxl367_push_event(indio_dev, status);
+ 	handled |= adxl367_push_fifo_data(indio_dev, status, fifo_entries);
  
-@@ -795,7 +795,7 @@ static int vmci_guest_probe_device(struct pci_dev *pdev,
- 		error = pci_alloc_irq_vectors(pdev, 1, 1,
- 				PCI_IRQ_MSIX | PCI_IRQ_MSI | PCI_IRQ_LEGACY);
- 		if (error < 0)
--			goto err_remove_bitmap;
-+			goto err_unsubscribe_event;
- 	} else {
- 		vmci_dev->exclusive_vectors = true;
- 	}
-@@ -871,13 +871,19 @@ static int vmci_guest_probe_device(struct pci_dev *pdev,
- err_disable_msi:
- 	pci_free_irq_vectors(pdev);
- 
-+err_unsubscribe_event:
- 	vmci_err = vmci_event_unsubscribe(ctx_update_sub_id);
- 	if (vmci_err < VMCI_SUCCESS)
- 		dev_warn(&pdev->dev,
- 			 "Failed to unsubscribe from event (type=%d) with subscriber (ID=0x%x): %d\n",
- 			 VMCI_EVENT_CTX_ID_UPDATE, ctx_update_sub_id, vmci_err);
- 
--err_remove_bitmap:
-+err_remove_vmci_dev_g:
-+	spin_lock_irq(&vmci_dev_spinlock);
-+	vmci_pdev = NULL;
-+	vmci_dev_g = NULL;
-+	spin_unlock_irq(&vmci_dev_spinlock);
-+
- 	if (vmci_dev->notification_bitmap) {
- 		vmci_write_reg(vmci_dev, VMCI_CONTROL_RESET, VMCI_CONTROL_ADDR);
- 		dma_free_coherent(&pdev->dev, PAGE_SIZE,
-@@ -885,12 +891,6 @@ static int vmci_guest_probe_device(struct pci_dev *pdev,
- 				  vmci_dev->notification_base);
- 	}
- 
--err_remove_vmci_dev_g:
--	spin_lock_irq(&vmci_dev_spinlock);
--	vmci_pdev = NULL;
--	vmci_dev_g = NULL;
--	spin_unlock_irq(&vmci_dev_spinlock);
--
- err_free_data_buffers:
- 	vmci_free_dg_buffers(vmci_dev);
- 
+ 	return handled ? IRQ_HANDLED : IRQ_NONE;
 -- 
-2.32.0
+2.34.1
 
