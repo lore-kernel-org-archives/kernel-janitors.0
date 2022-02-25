@@ -2,61 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 125C0C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Feb 2022 16:21:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56822C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Feb 2022 16:23:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242882AbiBYQVd (ORCPT
+        id S242944AbiBYQYQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Feb 2022 11:21:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56288 "EHLO
+        Fri, 25 Feb 2022 11:24:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242876AbiBYQVc (ORCPT
+        with ESMTP id S242946AbiBYQYN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Feb 2022 11:21:32 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA8336F4B6;
-        Fri, 25 Feb 2022 08:21:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=FZ+MIKFcY92n2eEbmV05gJlf+p4zCLQ/l4UmfykudCI=; b=OHdUVHs4ssN+cZff1Cz5+pI0bS
-        ACNDnitCkCgOeMfk5gHAdYVGGQ6ME1qo4qkJR7TLTp2sJqfXgC26sejwftaWRuLSQ2QgdEaTHgKcS
-        LumBh6cyD5rIHpzntIup3R4VIph/iP/IlDryFo7261s9jLf+pgqyQuTn/+hNcDMQY4jujjArIhda2
-        TF4OI8Z1yT7KkgU/aiDktotaDlqJVWouebA4emJYnv0RIB8s5A0kdloko8BGbhBYl2zUpg8dVEWaQ
-        +xZrdNzW+wzeWegSUfiXFYR5A0q3GL3p/8ExZszbBLmFxq2xIrxmNwTCzjjZtgaXkpm+Zzz73lf8O
-        f+1824/A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nNdK8-005sWo-3G; Fri, 25 Feb 2022 16:20:04 +0000
-Date:   Fri, 25 Feb 2022 08:20:04 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     arnd@arndb.de, hch@infradead.org, akpm@linux-foundation.org,
-        rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
-        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        davem@davemloft.net, airlied@linux.ie, vkoul@kernel.org,
-        hao.wu@intel.com, trix@redhat.com, mdf@kernel.org,
-        yilun.xu@intel.com, awalls@md.metrocast.net, mchehab@kernel.org,
-        sathya.prakash@broadcom.com, sreekanth.reddy@broadcom.com,
-        suganath-prabu.subramani@broadcom.com, mporter@kernel.crashing.org,
-        alex.bou9@gmail.com, bhelgaas@google.com,
-        linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-fpga@vger.kernel.org, linux-media@vger.kernel.org,
-        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 00/16] Remove usage of the deprecated "pci-dma-compat.h"
- API
-Message-ID: <YhkBtBdBhvCAtNH9@infradead.org>
-References: <cover.1641500561.git.christophe.jaillet@wanadoo.fr>
+        Fri, 25 Feb 2022 11:24:13 -0500
+Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB2F8CA0C9;
+        Fri, 25 Feb 2022 08:23:40 -0800 (PST)
+Received: by mail-ot1-x332.google.com with SMTP id j9-20020a9d7d89000000b005ad5525ba09so3922794otn.10;
+        Fri, 25 Feb 2022 08:23:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wR/eoNNXBj1/My2CpHa5GPCtjCjqHRpXOZvwkOgYW9w=;
+        b=EcyjzPZs9kbSzl+d2LBUySEw7Ulmassdt6Hh8IuhHTLAjFK8LAnbRNuhMjYtBURuh7
+         U7PUdfm+Nkp0qFhqzg1Ssk5rv1jeROeHDT3B/Is+J9tVvn/HlyFYUEwmU1gySUuSDRnW
+         KhjooY1BXTbxKsc2U7OKjXGvpb3oTkPdCkJ8JwhN1CJCTCn3eDDP6P7tBmPpKPaUKdxz
+         LWkFNyBxpuCT6w5i7QQxQBxuD74obmTKjekinxfe5gHfP5xsvdu3ncX302OFGRB7X9xe
+         IhOwETkKItOo8RFeRy77h4kQjtFMCklL7r7EtlhMWxZuhDmlN65X33dxeZ6vmdNc6rPT
+         xK5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wR/eoNNXBj1/My2CpHa5GPCtjCjqHRpXOZvwkOgYW9w=;
+        b=JFKdroa08qDMwRTcWgsKM35KIXrG0ZscDVyZ8g+/yply1JG5zob5R7t3nONbgSIhHU
+         N9PGZyswTMoJDtaqpluDExkovxwHWGUkZ5IsoNBBscF75uO/pFaN5+A1CaFYnQvsIaMG
+         8vLuPSKN0QXHfWs8Ya9QEEF+/4ILWZIgcVKz90FmdpFnI592mRokvIYAVEfbc+HCwQWX
+         PCp/PQa6xQSlwNUTWin7laSf9i75bvnh4kOCEPIg57mc+bzponlopc4RL9smeV0nftGG
+         w69Qu5vXa9i5X7cowH+80fWbtOl2dnIVxPnME0BHC2yzFU6fKAeN9Tlqb+VY0PMK6l+J
+         XCgA==
+X-Gm-Message-State: AOAM533RasaSYzkPqdTxdNBmfba7iAiUI3ywvecLG4gBQwIs4x/uPE40
+        IqjAyZYUIja9p1TqzKD+06IW8G1mZpN10wxhv+fl139p
+X-Google-Smtp-Source: ABdhPJy4YvYnuTW9nQ3arrHphuxc2EfNmJj4uEoJL2y6biBbvt5LPVxOadtYIjKArwwfIlgX/RiklDzSSXL8j5CHjGs=
+X-Received: by 2002:a9d:5a06:0:b0:5af:b5fd:5b72 with SMTP id
+ v6-20020a9d5a06000000b005afb5fd5b72mr2906065oth.200.1645806220062; Fri, 25
+ Feb 2022 08:23:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1641500561.git.christophe.jaillet@wanadoo.fr>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20220224224316.149704-1-colin.i.king@gmail.com>
+In-Reply-To: <20220224224316.149704-1-colin.i.king@gmail.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Fri, 25 Feb 2022 11:23:28 -0500
+Message-ID: <CADnq5_Ot37zJGv8+JPNHd5OfPy94Ek2xXnNQxbCbzUPXDofwzw@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/amdgpu: Fix missing assignment to variable r
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        xinhui pan <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, llvm@lists.linux.dev,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-I've applied patches 1,5,6,8 and 9 to the dma-mapping tree.
+Already fixed.  Thanks for the patch.
+
+Alex
+
+On Thu, Feb 24, 2022 at 5:43 PM Colin Ian King <colin.i.king@gmail.com> wrote:
+>
+> Currently the call to function amdgpu_benchmark_move should be
+> assigning the return value to variable r as this is checked in
+> the next statement, however, this assignment is missing. Fix
+> this by adding in the missing assignment.
+>
+> Addresses clang scan warning:
+> drivers/gpu/drm/amd/amdgpu/amdgpu_benchmark.c:168:7: warning:
+> variable 'r' is uninitialized when used here [-Wuninitialized]
+>
+> Fixes: 9645c9c9fb15 ("drm/amdgpu: plumb error handling though amdgpu_benchmark()")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_benchmark.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_benchmark.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_benchmark.c
+> index 3136a9ad2d54..bb293a5c6fd5 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_benchmark.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_benchmark.c
+> @@ -163,7 +163,7 @@ int amdgpu_benchmark(struct amdgpu_device *adev, int test_number)
+>                          "benchmark test: %d (simple test, VRAM to VRAM)\n",
+>                          test_number);
+>                 /* simple test, VRAM to VRAM */
+> -               amdgpu_benchmark_move(adev, 1024*1024, AMDGPU_GEM_DOMAIN_VRAM,
+> +               r = amdgpu_benchmark_move(adev, 1024*1024, AMDGPU_GEM_DOMAIN_VRAM,
+>                                       AMDGPU_GEM_DOMAIN_VRAM);
+>                 if (r)
+>                         goto done;
+> --
+> 2.34.1
+>
