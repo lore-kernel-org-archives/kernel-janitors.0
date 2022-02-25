@@ -2,111 +2,97 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C4AC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 24 Feb 2022 23:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D48C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Feb 2022 09:32:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230076AbiBXXSQ (ORCPT
+        id S239114AbiBYJdQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 24 Feb 2022 18:18:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60208 "EHLO
+        Fri, 25 Feb 2022 04:33:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbiBXXSP (ORCPT
+        with ESMTP id S235025AbiBYJdP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 24 Feb 2022 18:18:15 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A76E11B018F
-        for <kernel-janitors@vger.kernel.org>; Thu, 24 Feb 2022 15:17:44 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id 6-20020a05600c024600b0038125fa8e43so240763wmj.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 24 Feb 2022 15:17:44 -0800 (PST)
+        Fri, 25 Feb 2022 04:33:15 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 470D017B0F6;
+        Fri, 25 Feb 2022 01:32:43 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id l1-20020a7bcf01000000b0037f881182a8so1300171wmg.2;
+        Fri, 25 Feb 2022 01:32:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=philpotter-co-uk.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=8/1Ko41seG/Gcm0WMFG2nw3d5RUz09+SdFfLxzqmI+Y=;
-        b=3KjdLrszxDrpmXCBbrp8XDykgWJnHxMG4vGZnwF3Upt8qOUzgB1gxI4RelXYRvEYpk
-         rnZkYzC09Obn0wsG6q4clYgu6Gp3ZZs0tAcfZ2RdalJ/EDE4TD8Oxg68XLdpSKVESjE1
-         N44ZN7jWLfPpHwDq7Ux4HxISj/Y++/fKtqZNF6+vsNi2cQHYXU7TyP6XVrlgkVJy1IG6
-         f8WDxtTncheEKCF0O5DIGgLUITyURTLKWlA5WzYthQBCi3ey/kC2ojlgwLys1oC0qS7z
-         tNRgSxkw6k95uZCU7rhdFeGBqC4arUXaN0ybpNHt4nrQLaAx/xUCpfuZFSzx+tngDtDZ
-         BDvA==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/Anr/HpsJ2V3LE7H1qAJzQqqWy2ZK47ULNqlFEib6tU=;
+        b=P7ly3xMyPOrr3B0325E0teDM/lnRIOn9XJo7vDUt6oM76ogcTuQmAW6QSIVXm06n6x
+         clY6WFc+TmNkhiQfhXRr8z+8+GnhlhufGuUcCpWy72mXjFb/viNp1REsO6MooFRkqJKW
+         LiKPKOSqw2QbIhK8uF5COvxCOU35Ijtfx4xyKac9cRmg7dMheotudn9S9JZ3N7Tn7SyF
+         7Dz20E21T8NXyZywwDBROSordMx0mgKNb9BsZ3K4K7lDo/5eowmZTV2onhx2j37l5Ond
+         fYQvlVkhQXEtA1WzjBBIhYtMWPIIrs+qS4YVXWl27BzzfOPOQwSa5ZBSDUWT2SW3Pkd/
+         Wtuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=8/1Ko41seG/Gcm0WMFG2nw3d5RUz09+SdFfLxzqmI+Y=;
-        b=af7VG6ZHqqBuT7+XG+esaPxndOtTOQCy0ulW6wBtqSoPbNrGET11fPM+9khPfmzqZ4
-         noLoWfvj6D4nBHjKcKr/YQL25g74Q0tHkPZePoBL/Z1wVeu/Asm66FSF10ZpT3ngJhNF
-         0inkNp088/FuJ6F5ZLPKNK06DRLohoy9BDwfWY2cilg9IxKKab9yw4qLpkMEh72F3HJT
-         JdaixJeDtO/Huak5YVJs7SgynmR38NwZc1j/zBIOHEuK1Pb8Qim4cxwFcD4hNp0NoHPO
-         aFuPhbzUZOQMUZF/m2dCS2jWWXJQYdaOIV7CMA/YGXk2glEi3/52peTRBBKsPSbtCwqT
-         Ev5w==
-X-Gm-Message-State: AOAM531GFvV/gE38kjv8n0gfU0inRbVouQRkvQPJByp2FsExKwYFymTG
-        +I0pPJ3ishneFln9WAWd1O1lDw==
-X-Google-Smtp-Source: ABdhPJylRiAk8xI22jOcrIqwiVi33vbve6UeNUFi91annFZKh3Uzb8qARzjZWowIh8iJLzYTHFumMQ==
-X-Received: by 2002:a1c:2544:0:b0:381:18a:a46d with SMTP id l65-20020a1c2544000000b00381018aa46dmr294751wml.26.1645744663219;
-        Thu, 24 Feb 2022 15:17:43 -0800 (PST)
-Received: from equinox (2.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.a.1.e.e.d.f.d.0.b.8.0.1.0.0.2.ip6.arpa. [2001:8b0:dfde:e1a0::2])
-        by smtp.gmail.com with ESMTPSA id e33-20020a05600c4ba100b003810c690ba2sm3136456wmp.3.2022.02.24.15.17.42
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/Anr/HpsJ2V3LE7H1qAJzQqqWy2ZK47ULNqlFEib6tU=;
+        b=0W6atkdqnYO3Lxx/uEZ6DDxYf9JCIfOZwfYm83Vb3lTwz4Y28HtdxypCOG6O6HO55Y
+         C6f51U2VOIQLfvnLcDtAF4rA3Ku1N5q2a8zhX/YwCStY2gjXB5yVE/Pwk6lZk0CI9HWT
+         ZjeaPeYkCDb3DbqYnMmyl2WXBIl9MIMY3/rxxenk3IAfPKihV4kmOZ67JxBhswrhGafG
+         MDUjDTJpGjzsZrl4ZffP4x9/0RMyH4X7tIeyu6tjTW90iSDoi8XFcSgIfk98M7t0fMQB
+         +U/MedHjZA7V/NIWi2hVIDiqqoSrKG5wjooOhLke8+ND0NkEZ6onkpEYYUa4tmgT5IQ+
+         Xncg==
+X-Gm-Message-State: AOAM533oMr8tMxZbvCRMTSpbPlURQytICFjI5vnZ12ATYEu9K9ocFWCc
+        5oVOC62C0w0dW4eHJlRewtU=
+X-Google-Smtp-Source: ABdhPJwoCKrFbFoCIBMTdfn2qSE6TEQIPQ9CT9XkwjlSqgeqEjqMCQ0M7IbjTCUATIRzbiSlEcckPw==
+X-Received: by 2002:a05:600c:20b:b0:381:263:b5d6 with SMTP id 11-20020a05600c020b00b003810263b5d6mr1904829wmi.73.1645781561681;
+        Fri, 25 Feb 2022 01:32:41 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id x2-20020a7bc762000000b00380fd1ba4ebsm7733046wmk.9.2022.02.25.01.32.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 15:17:42 -0800 (PST)
-Date:   Thu, 24 Feb 2022 23:17:40 +0000
-From:   Phillip Potter <phil@philpotter.co.uk>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Phillip Potter <phil@philpotter.co.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Straube <straube.linux@gmail.com>,
-        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] staging: r8188eu: remove redundant variable
- reg_0x143
-Message-ID: <YhgSFC0VDvdfsryB@equinox>
-References: <20220224230658.151338-1-colin.i.king@gmail.com>
+        Fri, 25 Feb 2022 01:32:21 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev
+Subject: [PATCH] iommu/arm-smmu: remove redundant assignment to variable res
+Date:   Fri, 25 Feb 2022 09:32:05 +0000
+Message-Id: <20220225093205.170973-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220224230658.151338-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Feb 24, 2022 at 11:06:58PM +0000, Colin Ian King wrote:
-> Variable reg_0x143 is being assigned a value, however is not being
-> read. The variable is redundant and can be removed.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/staging/r8188eu/hal/rtl8188e_hal_init.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/r8188eu/hal/rtl8188e_hal_init.c b/drivers/staging/r8188eu/hal/rtl8188e_hal_init.c
-> index cf58dfc3ff4d..53ebea311723 100644
-> --- a/drivers/staging/r8188eu/hal/rtl8188e_hal_init.c
-> +++ b/drivers/staging/r8188eu/hal/rtl8188e_hal_init.c
-> @@ -189,7 +189,6 @@ static void efuse_read_phymap_from_txpktbuf(
->  {
->  	u16 dbg_addr = 0;
->  	u32 start  = 0, passing_time = 0;
-> -	u8 reg_0x143 = 0;
->  	__le32 lo32 = 0, hi32 = 0;
->  	u16 len = 0, count = 0;
->  	int i = 0;
-> @@ -209,7 +208,7 @@ static void efuse_read_phymap_from_txpktbuf(
->  
->  		rtw_write8(adapter, REG_TXPKTBUF_DBG, 0);
->  		start = jiffies;
-> -		while (!(reg_0x143 = rtw_read8(adapter, REG_TXPKTBUF_DBG)) &&
-> +		while (!rtw_read8(adapter, REG_TXPKTBUF_DBG) &&
->  		       (passing_time = rtw_get_passing_time_ms(start)) < 1000)
->  			rtw_usleep_os(100);
->  
-> -- 
-> 2.34.1
-> 
+The variable res is being assigned a value that isn't being read
+later. The assignment is redundant and can be removed.
 
-Looks good to me, thanks Colin.
+Cleans up clang scan warning:
+drivers/iommu/arm/arm-smmu/arm-smmu.c:2109:10: warning: Although the
+value stored to 'res' is used in the enclosing expression, the value
+is never actually read from 'res' [deadcode.DeadStores]
 
-Reviewed-by: Phillip Potter <phil@philpotter.co.uk>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/iommu/arm/arm-smmu/arm-smmu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Phil
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+index 4bc75c4ce402..f83d2c32b5a9 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+@@ -2106,7 +2106,7 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+ 		return PTR_ERR(smmu);
+ 
+ 	num_irqs = 0;
+-	while ((res = platform_get_resource(pdev, IORESOURCE_IRQ, num_irqs))) {
++	while (platform_get_resource(pdev, IORESOURCE_IRQ, num_irqs)) {
+ 		num_irqs++;
+ 		if (num_irqs > smmu->num_global_irqs)
+ 			smmu->num_context_irqs++;
+-- 
+2.34.1
+
