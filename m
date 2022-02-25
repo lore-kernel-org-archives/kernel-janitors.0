@@ -2,140 +2,117 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B927C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Feb 2022 12:18:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C78DEC433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Feb 2022 13:50:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235429AbiBYMTZ (ORCPT
+        id S234893AbiBYNvM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Feb 2022 07:19:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57078 "EHLO
+        Fri, 25 Feb 2022 08:51:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229922AbiBYMTY (ORCPT
+        with ESMTP id S233729AbiBYNvL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Feb 2022 07:19:24 -0500
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1anam02on2065.outbound.protection.outlook.com [40.107.96.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ADDB22BEB7;
-        Fri, 25 Feb 2022 04:18:53 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=N45WshOtmd+mAnHvqX0belFUTFZnV32A51GU6ASUs/8HJJYs3Cah1LAb+iJmLzPBnCm/UKOsVwgMtyyTwFIf621DGjmjpBji+aiW7JXgxUdhp8wEXU5wkPHhkTTz/IPOwNArBDUhQ6nKnDgVeqJ3yiYjGV3L0tiPjxFbBTCPljtnRdi443k/g7MY4x5BW1X+5dmPqoZ9G0kT4vhFWRhYKEb7aCZDozVlbwpy3vSd2aZHYRiFgeWXEs7cuuYtMiIflcFi1rckj/NfBaKbKpTXJGYPaoqJbRmENybfrOdDlqUgeS3LmZVlVHwl3R2KQ0GTJ9Sq6ClJQdVq3e2pQ0tSLQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FlSevdM/LsN81vu5oau9/ZCQWaPp9PhmZjKTbRRIC2I=;
- b=bjTO9y0pFyAKLyIwjxhhwQztkepp6gnmuqk0f2mhLWpmXyLo5ThUsn7YiOG9mM3Ay/uDkAjRGrWzQfzzCq1uhvYR1ZwT0Eq2SxM0GqvdbfGIlImIRNjC0kXHjNzwuE88LzdGkE4VcZyEtoSmPDiExsqzfOl8jnfzXCaDAAS8GeJJZtHf082lyqNFGmK00ONuFsLCpY5Uo2fYH0v3bko7KgMl069llg6nBjQb72Gh74bdx45J6ZgcYx8XKj6cv1/7OnXqS18gE+ckWv2YwmyY/adww4oOs7ZXCL7fL6n6zfIXZED6+IRtE3K6OSwJjB0SxvN+GKUV26aqeb7jav+wGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 12.22.5.234) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FlSevdM/LsN81vu5oau9/ZCQWaPp9PhmZjKTbRRIC2I=;
- b=pSLdU+Umv+80kyhBlsOLcBEqWAjN4JnBjhf6zarBTWjt+Jc3dh3QP8pOKJQIquxzQZ8Zpz4i+Npmc2h607QOrFiYrLEiQEQAnKbsU7L7INvch3/LfTxiVTXixNSXcT8wfXoIy+MKz7BUy+IDryRt7fhQkBolDXJVwZaYldHL7ETbven7+H8tX3SuR7pFz8eq0+1zJYxcotpjpcrU+qp9dk9vaAMW8BntRnqvNoDZC43hAOt7nDNB+aNB/j01IZ51N5dmb4SIwhb3qZPAjdYbU6/nFD/jYEcyM6szvPo4RLfAo+vS/8nMk+lrknE0gwbL75ZRuLdE8F1XlHzTjQ+GRw==
-Received: from BN9PR03CA0882.namprd03.prod.outlook.com (2603:10b6:408:13c::17)
- by PH0PR12MB5401.namprd12.prod.outlook.com (2603:10b6:510:d4::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.22; Fri, 25 Feb
- 2022 12:18:51 +0000
-Received: from BN8NAM11FT015.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:13c:cafe::4a) by BN9PR03CA0882.outlook.office365.com
- (2603:10b6:408:13c::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.22 via Frontend
- Transport; Fri, 25 Feb 2022 12:18:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 12.22.5.234)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 12.22.5.234 as permitted sender) receiver=protection.outlook.com;
- client-ip=12.22.5.234; helo=mail.nvidia.com;
-Received: from mail.nvidia.com (12.22.5.234) by
- BN8NAM11FT015.mail.protection.outlook.com (10.13.176.90) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.5017.22 via Frontend Transport; Fri, 25 Feb 2022 12:18:50 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by DRHQMAIL101.nvidia.com
- (10.27.9.10) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Fri, 25 Feb
- 2022 12:18:49 +0000
-Received: from [172.27.0.43] (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.9; Fri, 25 Feb 2022
- 04:18:46 -0800
-Message-ID: <5024bc30-d872-3861-a6fd-0a7dba5fbf3e@nvidia.com>
-Date:   Fri, 25 Feb 2022 14:18:44 +0200
+        Fri, 25 Feb 2022 08:51:11 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0DD21DA440;
+        Fri, 25 Feb 2022 05:50:39 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id b5so4669148wrr.2;
+        Fri, 25 Feb 2022 05:50:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ATbGzyh3Nal8Wuh5ClbaaT6PS0PYPkn30M5mIo7tHlA=;
+        b=eHwfx0elT0X2NkL9uZ0Nx5YpdEwcwV3MvfmoZzOcHPMysBfwnN9bQ8totyEwfdnOTH
+         h3fdfuDwaEZti3nCN2aRrp22fgLYK8J+hzaRxRZ0n73i1aK8TFAJ9BOTyItMO7nx4Nxs
+         IEIZxvAIsAewPVjM8h1Efr+nGXBHdFTJXfJJmw3c4xHg8rwYJiCIiBcJS+8b9aB1qgG0
+         QmkS/hHGv7NbNksohZm0DYUVbxCIc3B07nxkd+I2MrX5K6l+OQtowoSFzMKqCIOs3anL
+         JIQgt3NgeiaY86OR/QQvsJ8/3oG33Q/wNH67cTjEdaw57uoK9GKvf6ejsDrMwx/Woxed
+         /rIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ATbGzyh3Nal8Wuh5ClbaaT6PS0PYPkn30M5mIo7tHlA=;
+        b=bcJ6fHMzU8gIKUJmLNn8gq+xUqyDZBkVagj5skYb5HHsCStKDX3pmPSvIbRvFoguxB
+         sf24tZycoIt4OA4WLRXoerSxlIXqES6d/ObaQoYkcAmblwiDPpf2pwOrzwmcag/TUlDV
+         NQNBAlDBsmNPSpL8lY9W+DnfsARy/WzHQozqy4ELNmjLcBTFbDxEetWjvZpTABGD2m2Q
+         jRr5dRkh1CHwVxxe/+bm79CVw6dP9Ol1Eoevq9MOdpebEQGhw0RZQxoFs7yAJlbbe8rJ
+         74vC1Nmth7i9pKCz1dpduVPb6lU2kzF4ZmrEUOTJjq8F9rBfnKC4mRKxjZ8BlNJYDEr0
+         3aOA==
+X-Gm-Message-State: AOAM531k+Trt3YsSsU42bKz5B2syTXoNkX7CpCrvTdwLJo0osj5s3Gmk
+        byyB/gTTzfftwwe3IRAvR/a/olHOGrc=
+X-Google-Smtp-Source: ABdhPJw5fB4ALqWPdoEsUzsC/EipwrABWUhkidfssIRytK5jfvKZotEhlxoW1j6QMSoUcsjLGy2QbQ==
+X-Received: by 2002:adf:f049:0:b0:1ee:7523:ed53 with SMTP id t9-20020adff049000000b001ee7523ed53mr5195669wro.586.1645797038349;
+        Fri, 25 Feb 2022 05:50:38 -0800 (PST)
+Received: from orome ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id t9-20020a05600c198900b0037bd5fabd10sm2896563wmq.48.2022.02.25.05.50.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Feb 2022 05:50:37 -0800 (PST)
+Date:   Fri, 25 Feb 2022 14:50:35 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     airlied@linux.ie, daniel@ffwll.ch, linux-tegra@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 1/2] gpu: host1x: Fix an error handling path in
+ 'host1x_probe()'
+Message-ID: <Yhjeq0yIjq0knq8I@orome>
+References: <05c1932b66048ebf6742705e2ab16eea852c46d9.1636319710.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:98.0) Gecko/20100101
- Thunderbird/98.0
-Subject: Re: [PATCH] net/mlx5e: TC, Fix use after free in
- mlx5e_clone_flow_attr_for_post_act()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Saeed Mahameed <saeedm@nvidia.com>
-CC:     Leon Romanovsky <leon@kernel.org>, <netdev@vger.kernel.org>,
-        <linux-rdma@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20220224145325.GA6793@kili>
-From:   Roi Dayan <roid@nvidia.com>
-In-Reply-To: <20220224145325.GA6793@kili>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.126.230.35]
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 249da689-b2a3-4f55-efe1-08d9f858fb96
-X-MS-TrafficTypeDiagnostic: PH0PR12MB5401:EE_
-X-Microsoft-Antispam-PRVS: <PH0PR12MB54011DD6E0B81EB0864EAE6DB83E9@PH0PR12MB5401.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: silqCJxsvdF+LTfhE2awqetDtr5PqPSbf94yESYNKAuUVyXR2Z8dgBtMpgLIbC+gi+3bWSJTMvhAsC0CSe8zatOn79QkagsTompT95qTqKv5oeV7JST5435Ev8WTCXhRRf/IhdiuwtwB+0ERG059yDTiVPr1qB97jYMoJ/N9/RrTeMasf8/iKmpIrptvXEbufppGxolLAl5q0D3paXC/AkkhREUz+E1sGAI4zG4c/FI5dFhAEbOb+ut5Qtg8Mw3bEM5gbzZ94owBEtaTkTRU5bCayEdMD2k8FWrBjh3oTyLgbZ3Tl06pcVzO57nTshmsOacmnZQvv1aWm7VpVdMFGNh81J0UZuzUNKHglwJQAPxlBFvvDgQgGwuWigSe8LJkLCl3dTDFhMCUGaqmlY7q402+HibnKAW+o1mgK+bDmwpbvWOvvHQ4cwfv2o5LgWR4haLrPVC/2EbtxulYGazgQ1OSN+OOoC//W1EQZMIpHp7XGxL+Mq0W+qbbRQJGpmB6c5v3G4ZETE3rOzoNnDda2/LhLOpc5jjgZgCqdJNSoPLeiXs0k9NbTbEoCd16S4NoB2FNL5QsOh/qzOBNTDAyU6jmKC7H1yTvswEgFEWoDtOfzcE0JFYtrGjMK6Y5aBSFiQU4bSf0grUnt39+GH7v7mEMjznlO99tfITM2AGaVs3zTb5qMeikst+0i0JGdLy43HtfAxhzMjWyHRBG6om6rIn8mX0iJCKZfs2W+3/udkYK8/8yQmBAlD5sfaJ97ngLyxlPGzOMT87OCyVMHur4RiW8ysNzshYAAeGVbOCjS7Xd5+YDavXeMdYDOyrSFRR8l+3vmi0gvqsR3j8pxm6zdQ==
-X-Forefront-Antispam-Report: CIP:12.22.5.234;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:mail.nvidia.com;PTR:InfoNoRecords;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(46966006)(40470700004)(70586007)(70206006)(82310400004)(8936002)(508600001)(336012)(426003)(966005)(5660300002)(8676002)(4326008)(83380400001)(186003)(16526019)(26005)(86362001)(31696002)(6636002)(40460700003)(54906003)(2906002)(110136005)(53546011)(47076005)(31686004)(36756003)(316002)(16576012)(36860700001)(2616005)(81166007)(356005)(43740500002)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2022 12:18:50.9544
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 249da689-b2a3-4f55-efe1-08d9f858fb96
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[12.22.5.234];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT015.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5401
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vyHKb89PagxoToVb"
+Content-Disposition: inline
+In-Reply-To: <05c1932b66048ebf6742705e2ab16eea852c46d9.1636319710.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
+--vyHKb89PagxoToVb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2022-02-24 4:53 PM, Dan Carpenter wrote:
-> This returns freed memory leading to a use after free.  It's supposed to
-> return NULL.
-> 
-> Fixes: 8300f225268b ("net/mlx5e: Create new flow attr for multi table actions")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Sun, Nov 07, 2021 at 10:16:25PM +0100, Christophe JAILLET wrote:
+> Add the missing 'host1x_bo_cache_destroy()' call in the error handling
+> path of the probe, as already done in the remove function.
+>=20
+> In order to simplify the error handling, move the 'host1x_bo_cache_init()'
+> call after all the devm_ function.
+>=20
+> Fixes: e3166698a8a0 ("drm/tegra: Implement buffer object cache")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
-> This goes through Saeed's tree not the net tree.
-> 
->   drivers/net/ethernet/mellanox/mlx5/core/en_tc.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-> index 76a015dfc5fc..c0776a4a3845 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-> @@ -3398,7 +3398,7 @@ mlx5e_clone_flow_attr_for_post_act(struct mlx5_flow_attr *attr,
->   	if (!attr2 || !parse_attr) {
->   		kvfree(parse_attr);
->   		kfree(attr2);
-> -		return attr2;
-> +		return NULL;
->   	}
->   
->   	memcpy(attr2, attr, attr_sz);
+> Untested.
+> I hope that moving host1x_bo_cache_init() is just fine.
+> ---
+>  drivers/gpu/host1x/dev.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 
-hi, I noticed your fix now and already reviewed same fix from Colin
+Applied, thanks.
 
-https://patchwork.kernel.org/project/netdevbpf/patch/20220224221525.147744-1-colin.i.king@gmail.com/
+Thierry
 
-so just need to take either one.
-thanks
+--vyHKb89PagxoToVb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Reviewed-by: Roi Dayan <roid@nvidia.com>
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmIY3qsACgkQ3SOs138+
+s6FT3Q/9F6ouUGIx+ao9mlUapqMP8vnTVr9d0cxp5t28yWE8LlqPzzPSxyxomgUn
+mowdGHqZHQily8pApgMRGONs4pdgmIiyGcvlcBgcY5Iby/PXHjupQL/bvkv732/w
+pg3hzpTXauvOnTvfhhphqVkg2NSONrSW9i/TVx4Qik5vG3c4K35khMpFzy58xvsh
+8ejhPJpwo800XNlFZelmOLgurB0wk3TBTPDLLgkBveQGAjOFmjuJObE9TqnLXcJd
+h1Fd42Upp6OD3Fnpht7EoDKeXlQAJCT76yYCfIl50oFv1+UVp6CURk7v9vg8beDz
+dEIFSswA6qUOYE1/l9GvY/I8uaqPO8N+1kYeUxQ52sNQrwU0dDRbsgw/xSihZ+uC
+wrIrkOOiM+FExKzPzyxAunJP5ywayyjXFdbJ87XuCY3C1/EJMoqDs4ln/j23m33j
+Sz+3qWMCbuABwjePdUloBcbVaeaJFAuE9tIeVaA5EMPmw0v/DnNOBRzJTr8N9dQX
+zooNMwZqCXIdYisT+5AovG8pGTSnN/WQ5tRdME6qlPTDhjnlsmJbtjcgX4vb//BL
+0y3lKvbmAw+qGmSVC7VRYteW4TQrmo8g4CKYQqhFAnWk0YtME+MBGX08ri7gY1Ck
+okeFaTvJk6CAG1orZTRdokMiRgnW+sAzg/3TF9YUdLoi0/9WXLw=
+=WtCw
+-----END PGP SIGNATURE-----
+
+--vyHKb89PagxoToVb--
