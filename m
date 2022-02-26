@@ -2,142 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F8EC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Feb 2022 17:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B71BC43219
+	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Feb 2022 06:30:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243928AbiBYRl4 (ORCPT
+        id S230050AbiBZGar (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Feb 2022 12:41:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54950 "EHLO
+        Sat, 26 Feb 2022 01:30:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229674AbiBYRlz (ORCPT
+        with ESMTP id S229751AbiBZGaq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Feb 2022 12:41:55 -0500
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D6001EBA98;
-        Fri, 25 Feb 2022 09:41:23 -0800 (PST)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: usama.anjum)
-        with ESMTPSA id B90521F46598
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1645810882;
-        bh=g0A6Uimeahydl9ph1AOCmp+Nlt9LsBikz3PaHAbqQik=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=XSq27hNWEmg+dff4RWcqF8uRjKG41+rebGEt6dY+bVLIfhgB+/s8dF0ew02+wVCdk
-         ImnWiIpzlCJ2dwbhkJdxIVhdOijT52QuSb0hQJi8SKJ5CN+WUN453G3UGp+tGrPfyp
-         KKJbcfr6e/bm5/DN4G7Y2UhloQAFDkuHGRT9+N7HQL1EdvBvfXIB5nz2WcC57NZG1r
-         eIRkDZpyCmBVQeSR1lRZff/YAu8P35X3CZAa7P4t1TW91vN0F6512w52raITKS7uoY
-         0Iz3cf7kzwuuAfx4xe2DOoYXIfQ3mge13nLFrPSsrc+/boy69ArNkgOCz1V7iMWFmF
-         O5BFwY9hygLXg==
-Message-ID: <98ef3e84-e17e-d1b9-5109-ec631d77905e@collabora.com>
-Date:   Fri, 25 Feb 2022 22:41:14 +0500
+        Sat, 26 Feb 2022 01:30:46 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A730E5AA68;
+        Fri, 25 Feb 2022 22:30:12 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4088260C95;
+        Sat, 26 Feb 2022 06:30:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 912BCC340F3;
+        Sat, 26 Feb 2022 06:30:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645857011;
+        bh=rEhJL39ym3hsLRvBexO7f7Z8xVF2dwN5wlDy/4XSS8c=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=kBiw43Cw4FxPKCsT/3Y1dGdK+YuZvx6Ia8XS9Gbz90C3tKff8seNXZnoxEEGMy5TK
+         Vxw6xdi3P3rKPj/hhncE1x7/rxgtcGPBRgOFY8XzWkQeKHzdmQNyVs2ExkDDxFun5X
+         r+mtoGw4fZEpU7gIT2ZUqJ7Eg8IpBYD/MyHbXiGPY9PuCjiGPZF+GLHsbtdd3G2j/G
+         KDcWFvWs+3BfETcfz1RwuCeaSVSFcqn+jmWzjKzIS3VfUVfNuk34sq1S0E7QHjvgf7
+         fYZsqoJStcifc0WclDt5IAEftjYcCWvWKSAg7CKttH6iB79dr54hQku4mH6lMwLugn
+         7jW5XW5v05Zww==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 72818F03839;
+        Sat, 26 Feb 2022 06:30:11 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Cc:     usama.anjum@collabora.com, kernel@collabora.com,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH V2] media: imx: imx8mq-mipi_csi2: Remove unneeded code
-Content-Language: en-US
-To:     Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "open list:MEDIA DRIVERS FOR FREESCALE IMX" 
-        <linux-media@vger.kernel.org>,
-        "open list:STAGING SUBSYSTEM" <linux-staging@lists.linux.dev>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>, mkl@pengutronix.de,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-References: <20220128170722.1624767-1-usama.anjum@collabora.com>
- <cb4db484-c4e6-9cf9-baa5-0be454947ed5@collabora.com>
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <cb4db484-c4e6-9cf9-baa5-0be454947ed5@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] net: dsa: qca8k: return with -EINVAL on invalid port
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164585701146.29742.17771254320187155029.git-patchwork-notify@kernel.org>
+Date:   Sat, 26 Feb 2022 06:30:11 +0000
+References: <20220224220557.147075-1-colin.i.king@gmail.com>
+In-Reply-To: <20220224220557.147075-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com,
+        olteanv@gmail.com, davem@davemloft.net, kuba@kernel.org,
+        nathan@kernel.org, ndesaulniers@google.com,
+        rmk+kernel@armlinux.org.uk, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From:
-https://patchwork.linuxtv.org/project/linux-media/patch/20220128170722.1624767-1-usama.anjum@collabora.com/
+Hello:
 
-State	Under Review
-Delegated to:	Hans Verkuil
+This patch was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On 2/18/22 4:08 PM, Muhammad Usama Anjum wrote:
-> Reminder.
+On Thu, 24 Feb 2022 22:05:57 +0000 you wrote:
+> Currently an invalid port throws a WARN_ON warning however invalid
+> uninitialized values in reg and cpu_port_index are being used later
+> on. Fix this by returning -EINVAL for an invalid port value.
 > 
-> On 1/28/22 10:07 PM, Muhammad Usama Anjum wrote:
->> ret is constant in imx8mq_mipi_csi_pm_suspend(). This function cannot
->> return error. Remove the return variable. Simplify other functions which
->> are using this function.
->>
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->> Changes in V2:
->> Removed fixes tag
->> ---
->>  drivers/staging/media/imx/imx8mq-mipi-csi2.c | 16 ++++------------
->>  1 file changed, 4 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/staging/media/imx/imx8mq-mipi-csi2.c b/drivers/staging/media/imx/imx8mq-mipi-csi2.c
->> index 3b9fa75efac6b..c992b845e63d1 100644
->> --- a/drivers/staging/media/imx/imx8mq-mipi-csi2.c
->> +++ b/drivers/staging/media/imx/imx8mq-mipi-csi2.c
->> @@ -693,11 +693,10 @@ static int imx8mq_mipi_csi_async_register(struct csi_state *state)
->>   * Suspend/resume
->>   */
->>  
->> -static int imx8mq_mipi_csi_pm_suspend(struct device *dev)
->> +static void imx8mq_mipi_csi_pm_suspend(struct device *dev)
->>  {
->>  	struct v4l2_subdev *sd = dev_get_drvdata(dev);
->>  	struct csi_state *state = mipi_sd_to_csi2_state(sd);
->> -	int ret = 0;
->>  
->>  	mutex_lock(&state->lock);
->>  
->> @@ -708,8 +707,6 @@ static int imx8mq_mipi_csi_pm_suspend(struct device *dev)
->>  	}
->>  
->>  	mutex_unlock(&state->lock);
->> -
->> -	return ret ? -EAGAIN : 0;
->>  }
->>  
->>  static int imx8mq_mipi_csi_pm_resume(struct device *dev)
->> @@ -742,15 +739,12 @@ static int __maybe_unused imx8mq_mipi_csi_suspend(struct device *dev)
->>  {
->>  	struct v4l2_subdev *sd = dev_get_drvdata(dev);
->>  	struct csi_state *state = mipi_sd_to_csi2_state(sd);
->> -	int ret;
->>  
->> -	ret = imx8mq_mipi_csi_pm_suspend(dev);
->> -	if (ret)
->> -		return ret;
->> +	imx8mq_mipi_csi_pm_suspend(dev);
->>  
->>  	state->state |= ST_SUSPENDED;
->>  
->> -	return ret;
->> +	return 0;
->>  }
->>  
->>  static int __maybe_unused imx8mq_mipi_csi_resume(struct device *dev)
->> @@ -770,9 +764,7 @@ static int __maybe_unused imx8mq_mipi_csi_runtime_suspend(struct device *dev)
->>  	struct csi_state *state = mipi_sd_to_csi2_state(sd);
->>  	int ret;
->>  
->> -	ret = imx8mq_mipi_csi_pm_suspend(dev);
->> -	if (ret)
->> -		return ret;
->> +	imx8mq_mipi_csi_pm_suspend(dev);
->>  
->>  	ret = icc_set_bw(state->icc_path, 0, 0);
->>  	if (ret)
+> Addresses clang-scan warnings:
+> drivers/net/dsa/qca8k.c:1981:3: warning: 2nd function call argument is an
+>   uninitialized value [core.CallAndMessage]
+> drivers/net/dsa/qca8k.c:1999:9: warning: 2nd function call argument is an
+>   uninitialized value [core.CallAndMessage]
+> 
+> [...]
+
+Here is the summary with links:
+  - [next] net: dsa: qca8k: return with -EINVAL on invalid port
+    https://git.kernel.org/netdev/net-next/c/38455fbcc8ec
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
