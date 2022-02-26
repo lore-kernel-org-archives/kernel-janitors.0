@@ -2,85 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B71BC43219
-	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Feb 2022 06:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA1DBC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Feb 2022 09:27:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230050AbiBZGar (ORCPT
+        id S230391AbiBZJ2N (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 26 Feb 2022 01:30:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60732 "EHLO
+        Sat, 26 Feb 2022 04:28:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229751AbiBZGaq (ORCPT
+        with ESMTP id S230117AbiBZJ2L (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 26 Feb 2022 01:30:46 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A730E5AA68;
-        Fri, 25 Feb 2022 22:30:12 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4088260C95;
-        Sat, 26 Feb 2022 06:30:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 912BCC340F3;
-        Sat, 26 Feb 2022 06:30:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645857011;
-        bh=rEhJL39ym3hsLRvBexO7f7Z8xVF2dwN5wlDy/4XSS8c=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=kBiw43Cw4FxPKCsT/3Y1dGdK+YuZvx6Ia8XS9Gbz90C3tKff8seNXZnoxEEGMy5TK
-         Vxw6xdi3P3rKPj/hhncE1x7/rxgtcGPBRgOFY8XzWkQeKHzdmQNyVs2ExkDDxFun5X
-         r+mtoGw4fZEpU7gIT2ZUqJ7Eg8IpBYD/MyHbXiGPY9PuCjiGPZF+GLHsbtdd3G2j/G
-         KDcWFvWs+3BfETcfz1RwuCeaSVSFcqn+jmWzjKzIS3VfUVfNuk34sq1S0E7QHjvgf7
-         fYZsqoJStcifc0WclDt5IAEftjYcCWvWKSAg7CKttH6iB79dr54hQku4mH6lMwLugn
-         7jW5XW5v05Zww==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 72818F03839;
-        Sat, 26 Feb 2022 06:30:11 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Sat, 26 Feb 2022 04:28:11 -0500
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 746A44F9D4;
+        Sat, 26 Feb 2022 01:27:30 -0800 (PST)
+Received: from canpemm500009.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4K5LqV5DHczdfc0;
+        Sat, 26 Feb 2022 17:26:14 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ canpemm500009.china.huawei.com (7.192.105.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Sat, 26 Feb 2022 17:27:28 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, Vincent Shih <vincent.sunplus@gmail.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] nvmem: sunplus-ocotp: Make symbol 'sp_otp_v0' static
+Date:   Sat, 26 Feb 2022 09:43:34 +0000
+Message-ID: <20220226094334.3269357-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] net: dsa: qca8k: return with -EINVAL on invalid port
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164585701146.29742.17771254320187155029.git-patchwork-notify@kernel.org>
-Date:   Sat, 26 Feb 2022 06:30:11 +0000
-References: <20220224220557.147075-1-colin.i.king@gmail.com>
-In-Reply-To: <20220224220557.147075-1-colin.i.king@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com,
-        olteanv@gmail.com, davem@davemloft.net, kuba@kernel.org,
-        nathan@kernel.org, ndesaulniers@google.com,
-        rmk+kernel@armlinux.org.uk, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ canpemm500009.china.huawei.com (7.192.105.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+The sparse tool complains as follows:
 
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
+drivers/nvmem/sunplus-ocotp.c:74:29: warning:
+ symbol 'sp_otp_v0' was not declared. Should it be static?
 
-On Thu, 24 Feb 2022 22:05:57 +0000 you wrote:
-> Currently an invalid port throws a WARN_ON warning however invalid
-> uninitialized values in reg and cpu_port_index are being used later
-> on. Fix this by returning -EINVAL for an invalid port value.
-> 
-> Addresses clang-scan warnings:
-> drivers/net/dsa/qca8k.c:1981:3: warning: 2nd function call argument is an
->   uninitialized value [core.CallAndMessage]
-> drivers/net/dsa/qca8k.c:1999:9: warning: 2nd function call argument is an
->   uninitialized value [core.CallAndMessage]
-> 
-> [...]
+This symbol is not used outside of sunplus-ocotp.c, so marks it static.
 
-Here is the summary with links:
-  - [next] net: dsa: qca8k: return with -EINVAL on invalid port
-    https://git.kernel.org/netdev/net-next/c/38455fbcc8ec
+Fixes: 5293c629db95 ("nvmem: Add driver for OCOTP in Sunplus SP7021")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/nvmem/sunplus-ocotp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+diff --git a/drivers/nvmem/sunplus-ocotp.c b/drivers/nvmem/sunplus-ocotp.c
+index 2dc59c22eb55..e0b11e13f5f8 100644
+--- a/drivers/nvmem/sunplus-ocotp.c
++++ b/drivers/nvmem/sunplus-ocotp.c
+@@ -71,7 +71,7 @@ struct sp_ocotp_data {
+ 	int size;
+ };
+ 
+-const struct sp_ocotp_data  sp_otp_v0 = {
++static const struct sp_ocotp_data  sp_otp_v0 = {
+ 	.size = QAC628_OTP_SIZE,
+ };
+ 
 
