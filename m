@@ -2,53 +2,49 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12231C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Feb 2022 16:36:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F13EEC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Feb 2022 17:51:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232308AbiBZQgi (ORCPT
+        id S230400AbiBZRvn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 26 Feb 2022 11:36:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57680 "EHLO
+        Sat, 26 Feb 2022 12:51:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230359AbiBZQgi (ORCPT
+        with ESMTP id S229933AbiBZRvm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 26 Feb 2022 11:36:38 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6090B26295B;
-        Sat, 26 Feb 2022 08:36:03 -0800 (PST)
+        Sat, 26 Feb 2022 12:51:42 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 343A427EC17;
+        Sat, 26 Feb 2022 09:51:07 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 01F19B80814;
-        Sat, 26 Feb 2022 16:36:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F649C340E8;
-        Sat, 26 Feb 2022 16:35:57 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D6382B80947;
+        Sat, 26 Feb 2022 17:51:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D766C340E8;
+        Sat, 26 Feb 2022 17:51:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645893360;
-        bh=xX8VmDztp3N0GoPaZtIyUGbJBpyw5EhUWfj6kUcQHCc=;
+        s=k20201202; t=1645897864;
+        bh=V62jRcLH/8MNpKHjxDLun0Cs4D+nxjy4aEAg3Ka1ZY8=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=HR9lfhyI+fHAOfKgfe05UMA/jXHbf9+uZhq595RCkVcX2s0qFxVwi1STNsa5T6+7s
-         oZURCoGXOraYw3UPCridA37xCmIWnbIjMxIHx7OIx/Asb11+gS9mR+i9459ey1S2lI
-         4glj1gPAul4lWU6WYSqpPPaLit3AhAFDb5HrP0+R0SH1oPRqoa2hkOJBPmZE+PSX6r
-         mfiEtaQotW3aHoj90xMnxT96lX3f6cLtJ3NKhmMYCWUrln5UMYI9/MlHgl5rvmG/Lj
-         ur7/lhQlbd2Z/9pIE/A0PJ1PLDK0rP0SYvtxlhIdU5tHUqWMNFJnu+W3iVL4ZoqtcS
-         othBeSDGXJzKQ==
-Date:   Sat, 26 Feb 2022 16:43:00 +0000
+        b=Y4DxmxMNqySPLmaJ9+p7N/bL58oFGeTyUjCB37hXekQibCJGsn3rsRbIuqdkSJD4R
+         gbw4or82uI0d1i8MMNF2FJ5kmwuTSgybsg2hQE56mf6FDZzgA6WvhU+/SlBLhtBsTW
+         /a4S3lf1L+/X+uU0DF+x2dmP7NNqHN2GCA20I3brBaaA8vuI3pLX39aOQNVuD67UAW
+         krMFULc4SHmJgsgOHay5QmDP47p6lYtPgbrLAIk7IxwwypRKVGSyqJlCvRc6Ed3pwU
+         LDuoid8KapGOnC/WcoQGLMG66I4sHQ6pes/JUKwYNLCgE0U6jNZ3vclRu+e5Vb/Jgr
+         SAAPLPDwbUHBw==
+Date:   Sat, 26 Feb 2022 17:58:05 +0000
 From:   Jonathan Cameron <jic23@kernel.org>
-To:     Michal Simek <monstr@monstr.eu>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] iio: adc: xilinx-ams: Use
- devm_delayed_work_autocancel() to simplify code
-Message-ID: <20220226164300.63b31841@jic23-huawei>
-In-Reply-To: <f874a9c7-8d8d-fecc-8fc9-51dcf37cf60b@monstr.eu>
-References: <2626e6a057e40cd2271ef0e5f81d12e607bad5b4.1644776929.git.christophe.jaillet@wanadoo.fr>
-        <20220220114552.53fedd33@jic23-huawei>
-        <f874a9c7-8d8d-fecc-8fc9-51dcf37cf60b@monstr.eu>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Cosmin Tanislav <demonsingur@gmail.com>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio: accel: adxl367: unlock on error in
+ adxl367_buffer_predisable()
+Message-ID: <20220226175805.1f35babb@jic23-huawei>
+In-Reply-To: <20220224150228.GB6856@kili>
+References: <20220224150228.GB6856@kili>
 X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -57,43 +53,34 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 21 Feb 2022 11:02:00 +0100
-Michal Simek <monstr@monstr.eu> wrote:
+On Thu, 24 Feb 2022 18:02:28 +0300
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-> Hi,
+> This error path needs to call the mutex_unlock(&st->lock) before
+> returning.
 > 
-> On 2/20/22 12:45, Jonathan Cameron wrote:
-> > On Sun, 13 Feb 2022 19:29:05 +0100
-> > Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-> >   
-> >> Use devm_delayed_work_autocancel() instead of hand writing it. This is
-> >> less verbose and saves a few lines of code.
-> >>
-> >> devm_delayed_work_autocancel() uses devm_add_action() instead of
-> >> devm_add_action_or_reset(). This is fine, because if the underlying memory
-> >> allocation fails, no work has been scheduled yet. So there is nothing to
-> >> undo.
-> >>
-> >> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>  
-> > Looks good to me, but I'd ideally like some input from someone familiar with
-> > the driver.  
-> 
-> Anand told me that the change is fine that's why here is my
-> Acked-by: Michal Simek <michal.simek@xilinx.com>
-> 
-> Jonathan: Anand decided to do change in his carrier that's why that emails won't 
-> go through. But I am still around if you need something xilinx/amd to test.
-> 
-> Thanks,
-> Michal
+> Fixes: cbab791c5e2a ("iio: accel: add ADXL367 driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Thanks Michal and best wishes to Anand for whatever comes next!
-
-Applied to the togreg branch of iio.git and pushed out as testing for
-0-day to take a quick look before I expose this to linux-next.
-
-Thanks,
+Thanks, applied to the togreg branch of iio.git.
 
 Jonathan
 
+> ---
+>  drivers/iio/accel/adxl367.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/accel/adxl367.c b/drivers/iio/accel/adxl367.c
+> index b452d74b1d4d..bdc95409abed 100644
+> --- a/drivers/iio/accel/adxl367.c
+> +++ b/drivers/iio/accel/adxl367.c
+> @@ -1359,7 +1359,7 @@ static int adxl367_buffer_predisable(struct iio_dev *indio_dev)
+>  
+>  	ret = adxl367_set_measure_en(st, true);
+>  	if (ret)
+> -		return ret;
+> +		goto out;
+>  
+>  	ret = adxl367_set_temp_adc_mask_en(st, indio_dev->active_scan_mask,
+>  					   false);
 
