@@ -2,49 +2,50 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F13EEC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Feb 2022 17:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C594DC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Feb 2022 17:56:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230400AbiBZRvn (ORCPT
+        id S232322AbiBZR5K (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 26 Feb 2022 12:51:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56812 "EHLO
+        Sat, 26 Feb 2022 12:57:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229933AbiBZRvm (ORCPT
+        with ESMTP id S230391AbiBZR5K (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 26 Feb 2022 12:51:42 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 343A427EC17;
-        Sat, 26 Feb 2022 09:51:07 -0800 (PST)
+        Sat, 26 Feb 2022 12:57:10 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAD6FA9A59;
+        Sat, 26 Feb 2022 09:56:35 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D6382B80947;
-        Sat, 26 Feb 2022 17:51:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D766C340E8;
-        Sat, 26 Feb 2022 17:51:02 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 23BA3CE02C8;
+        Sat, 26 Feb 2022 17:56:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96DD9C340E8;
+        Sat, 26 Feb 2022 17:56:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645897864;
-        bh=V62jRcLH/8MNpKHjxDLun0Cs4D+nxjy4aEAg3Ka1ZY8=;
+        s=k20201202; t=1645898192;
+        bh=f1rXPWhnxCOFRUgklAr10oBR5V9QeViM4cIzoipAr0I=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Y4DxmxMNqySPLmaJ9+p7N/bL58oFGeTyUjCB37hXekQibCJGsn3rsRbIuqdkSJD4R
-         gbw4or82uI0d1i8MMNF2FJ5kmwuTSgybsg2hQE56mf6FDZzgA6WvhU+/SlBLhtBsTW
-         /a4S3lf1L+/X+uU0DF+x2dmP7NNqHN2GCA20I3brBaaA8vuI3pLX39aOQNVuD67UAW
-         krMFULc4SHmJgsgOHay5QmDP47p6lYtPgbrLAIk7IxwwypRKVGSyqJlCvRc6Ed3pwU
-         LDuoid8KapGOnC/WcoQGLMG66I4sHQ6pes/JUKwYNLCgE0U6jNZ3vclRu+e5Vb/Jgr
-         SAAPLPDwbUHBw==
-Date:   Sat, 26 Feb 2022 17:58:05 +0000
+        b=gTFgsu3oqSxeTGW6t4K99u6bsKuLnM0Z0zDuE0FpogEYbof8dxbRy9WpK66gdCPh2
+         a3wNnLegXNfyAFYn+o69ya7tvPS7SklitRNtbi6RCO3m4kzO71tKk3n4qjTlxY1Bmc
+         EReZOzuSxN5b8RLqED+4CbzODhCHwyo6pNSelFkmAZZ2jt6FyJveP0gBuVRitIGA1u
+         CnJets7xbFOk7DLYu+kJ5/oplp3UY1NZoPsoQ6GVWCntJKG/kk0O3JQEe9c7oVHPG7
+         Es5X/9gbaE5BhyWXt6UOG3lNsMTTVtHT/VNXE7SNATHT65wanxPoW3pWjCrCaxuQqJ
+         gwtIapBiqF1kQ==
+Date:   Sat, 26 Feb 2022 18:03:32 +0000
 From:   Jonathan Cameron <jic23@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
 Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Cosmin Tanislav <demonsingur@gmail.com>,
         Michael Hennerich <Michael.Hennerich@analog.com>,
-        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] iio: accel: adxl367: unlock on error in
- adxl367_buffer_predisable()
-Message-ID: <20220226175805.1f35babb@jic23-huawei>
-In-Reply-To: <20220224150228.GB6856@kili>
-References: <20220224150228.GB6856@kili>
+        Cosmin Tanislav <cosmin.tanislav@analog.com>,
+        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] iio: accel: adxl367: Fix uninitialized variable
+ handled
+Message-ID: <20220226180332.379a0ac2@jic23-huawei>
+In-Reply-To: <20220224215149.146181-1-colin.i.king@gmail.com>
+References: <20220224215149.146181-1-colin.i.king@gmail.com>
 X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -53,16 +54,23 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 24 Feb 2022 18:02:28 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On Thu, 24 Feb 2022 21:51:49 +0000
+Colin Ian King <colin.i.king@gmail.com> wrote:
 
-> This error path needs to call the mutex_unlock(&st->lock) before
-> returning.
+> Variable handle is not initialized leading to potential garbage
+> results with the or operations. Fix this by replacing the first
+> or operation to an assignment to ensure handled is initialized
+> correctly.
 > 
 > Fixes: cbab791c5e2a ("iio: accel: add ADXL367 driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Hi Colin,
 
-Thanks, applied to the togreg branch of iio.git.
+Nathan's patch hit my inbox first so I applied his but added
+an additional Reported-by: for you to reflect you also reported it
+via this patch.
+
+Thanks
 
 Jonathan
 
@@ -71,16 +79,16 @@ Jonathan
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/drivers/iio/accel/adxl367.c b/drivers/iio/accel/adxl367.c
-> index b452d74b1d4d..bdc95409abed 100644
+> index b452d74b1d4d..350a89b61179 100644
 > --- a/drivers/iio/accel/adxl367.c
 > +++ b/drivers/iio/accel/adxl367.c
-> @@ -1359,7 +1359,7 @@ static int adxl367_buffer_predisable(struct iio_dev *indio_dev)
->  
->  	ret = adxl367_set_measure_en(st, true);
+> @@ -884,7 +884,7 @@ static irqreturn_t adxl367_irq_handler(int irq, void *private)
 >  	if (ret)
-> -		return ret;
-> +		goto out;
+>  		return IRQ_NONE;
 >  
->  	ret = adxl367_set_temp_adc_mask_en(st, indio_dev->active_scan_mask,
->  					   false);
+> -	handled |= adxl367_push_event(indio_dev, status);
+> +	handled = adxl367_push_event(indio_dev, status);
+>  	handled |= adxl367_push_fifo_data(indio_dev, status, fifo_entries);
+>  
+>  	return handled ? IRQ_HANDLED : IRQ_NONE;
 
