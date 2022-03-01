@@ -2,100 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C9F2C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Mar 2022 09:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2397C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Mar 2022 09:58:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233729AbiCAJ2y (ORCPT
+        id S233176AbiCAJ7G (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Mar 2022 04:28:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33812 "EHLO
+        Tue, 1 Mar 2022 04:59:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233720AbiCAJ2y (ORCPT
+        with ESMTP id S231555AbiCAJ7F (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Mar 2022 04:28:54 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1195C10FE3;
-        Tue,  1 Mar 2022 01:28:14 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A1CB5615C6;
-        Tue,  1 Mar 2022 09:28:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D232DC340EE;
-        Tue,  1 Mar 2022 09:28:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646126893;
-        bh=G6h8jszAwYJPPcXy+BDianvBzTvPr+OQ1EdUgeja2xQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dAfQCTgP3bk1zhk4X2i5oeFmoouu+iJ1CL8pd88ePBLQQePKvG8AFws3eFsKA+OwP
-         +MQ82Y5E+BxIE6q1f1rpb4Bq/kMoCFBId2/Igq+cXxIwhTTFOEMKkBcWcMVMIO/cGJ
-         HEd7igpOy1BgOX16Q8WZmqzwpOv2agHrLEIDe1SgKClWxAcqkwPt85XswWRieW+fGx
-         CoSP3TYviCMhdo+vb6OIFWPomhlOKW5sBi1fewOhliFYFJ3DlNfqx30xXno1yXJkDB
-         1VjskLB8oMilTw5U1nATo39sN1fXCNI8U/j2dXWlZRjFs/aLTvRkp/LUlOBqE4Tsq+
-         wFKclcljWjKHQ==
-Received: by pali.im (Postfix)
-        id F1988C77; Tue,  1 Mar 2022 10:28:09 +0100 (CET)
-Date:   Tue, 1 Mar 2022 10:28:09 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] serial: mvebu-uart: fix return value check in
- mvebu_uart_clock_probe()
-Message-ID: <20220301092809.lobuk4u4mfgo4t4p@pali>
-References: <20220301075806.3950108-1-weiyongjun1@huawei.com>
+        Tue, 1 Mar 2022 04:59:05 -0500
+X-Greylist: delayed 1200 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 01 Mar 2022 01:58:23 PST
+Received: from 20.mo561.mail-out.ovh.net (20.mo561.mail-out.ovh.net [178.33.47.94])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73F5957155
+        for <kernel-janitors@vger.kernel.org>; Tue,  1 Mar 2022 01:58:22 -0800 (PST)
+Received: from player771.ha.ovh.net (unknown [10.110.115.29])
+        by mo561.mail-out.ovh.net (Postfix) with ESMTP id 291AA22AF6
+        for <kernel-janitors@vger.kernel.org>; Tue,  1 Mar 2022 09:19:02 +0000 (UTC)
+Received: from RCM-web4.webmail.mail.ovh.net (ip-194-187-74-233.konfederacka.maverick.com.pl [194.187.74.233])
+        (Authenticated sender: rafal@milecki.pl)
+        by player771.ha.ovh.net (Postfix) with ESMTPSA id CEE3927FF4D6E;
+        Tue,  1 Mar 2022 09:18:58 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Date:   Tue, 01 Mar 2022 10:18:58 +0100
+From:   =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] nvmem: check for allocation failure
+In-Reply-To: <20220301081127.GC17375@kili>
+References: <20220301081127.GC17375@kili>
+User-Agent: Roundcube Webmail/1.4.13
+Message-ID: <02cec796f9e50e0895b28c5000ea2254@milecki.pl>
+X-Sender: rafal@milecki.pl
+X-Originating-IP: 194.187.74.233
+X-Webmail-UserID: rafal@milecki.pl
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220301075806.3950108-1-weiyongjun1@huawei.com>
-User-Agent: NeoMutt/20180716
+X-Ovh-Tracer-Id: 16502596412997479291
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddruddtvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeggfffhvffujghffgfkgihitgfgsehtkehjtddtreejnecuhfhrohhmpeftrghfrghlpgfoihhlvggtkhhiuceorhgrfhgrlhesmhhilhgvtghkihdrphhlqeenucggtffrrghtthgvrhhnpeejffdufffgjefgvdeigedukefffeevheejueeikeehudeiudehvdeifeduteehieenucfkpheptddrtddrtddrtddpudelgedrudekjedrjeegrddvfeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopehplhgrhigvrhejjedurdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomheprhgrfhgrlhesmhhilhgvtghkihdrphhlpdhnsggprhgtphhtthhopedupdhrtghpthhtohepkhgvrhhnvghlqdhjrghnihhtohhrshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tuesday 01 March 2022 07:58:06 Wei Yongjun wrote:
-> In case of error, the function devm_ioremap() returns NULL pointer
-> not ERR_PTR(). The IS_ERR() test in the return value check should
-> be replaced with NULL test.
+On 2022-03-01 09:11, Dan Carpenter wrote:
+> Check for if the kcalloc() fails.
+> 
+> Fixes: 299dc152721f ("nvmem: brcm_nvram: parse NVRAM content into NVMEM 
+> cells")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Ou, that is really truth.
+Thank you!
 
-Reviewed-by: Pali Rohár <pali@kernel.org>
+Acked-by: Rafał Miłecki <rafal@milecki.pl>
 
-> Fixes: b7e2b5360f9b ("serial: mvebu-uart: implement UART clock driver for configuring UART base clock")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 > ---
->  drivers/tty/serial/mvebu-uart.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>  drivers/nvmem/brcm_nvram.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/tty/serial/mvebu-uart.c b/drivers/tty/serial/mvebu-uart.c
-> index 2e9263888ddc..45976e2140d4 100644
-> --- a/drivers/tty/serial/mvebu-uart.c
-> +++ b/drivers/tty/serial/mvebu-uart.c
-> @@ -1382,8 +1382,8 @@ static int mvebu_uart_clock_probe(struct platform_device *pdev)
->  	 */
->  	uart_clock_base->reg1 = devm_ioremap(dev, res->start,
->  					     resource_size(res));
-> -	if (IS_ERR(uart_clock_base->reg1))
-> -		return PTR_ERR(uart_clock_base->reg1);
-> +	if (!uart_clock_base->reg1)
-> +		return -ENOMEM;
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
->  	if (!res) {
-> @@ -1401,8 +1401,8 @@ static int mvebu_uart_clock_probe(struct platform_device *pdev)
->  	 */
->  	uart_clock_base->reg2 = devm_ioremap(dev, res->start,
->  					     resource_size(res));
-> -	if (IS_ERR(uart_clock_base->reg2))
-> -		return PTR_ERR(uart_clock_base->reg2);
-> +	if (!uart_clock_base->reg2)
-> +		return -ENOMEM;
->  
->  	hw_clk_data = devm_kzalloc(dev,
->  				   struct_size(hw_clk_data, hws,
+> diff --git a/drivers/nvmem/brcm_nvram.c b/drivers/nvmem/brcm_nvram.c
+> index 439f00b9eef6..c80af8a31eba 100644
+> --- a/drivers/nvmem/brcm_nvram.c
+> +++ b/drivers/nvmem/brcm_nvram.c
+> @@ -95,6 +95,8 @@ static int brcm_nvram_parse(struct brcm_nvram *priv)
+>  	len = le32_to_cpu(header.len);
 > 
+>  	data = kcalloc(1, len, GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+>  	memcpy_fromio(data, priv->base, len);
+>  	data[len - 1] = '\0';
