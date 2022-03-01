@@ -2,131 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 091B1C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Mar 2022 11:22:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD3EAC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Mar 2022 12:07:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232907AbiCALXg (ORCPT
+        id S234672AbiCAMIS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Mar 2022 06:23:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47064 "EHLO
+        Tue, 1 Mar 2022 07:08:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231239AbiCALXf (ORCPT
+        with ESMTP id S233206AbiCAMIR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Mar 2022 06:23:35 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D3F3C49C8C
-        for <kernel-janitors@vger.kernel.org>; Tue,  1 Mar 2022 03:22:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646133774;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=pFMGRfIAmrHrnLa3rzlWjdovVbrK0w7x/Azrkml2F4k=;
-        b=CxZKKkRSe0hVHBAj1hYwGPtx9sq/PYqPZQ5Z4aFCJLxNH84feo+1m7xMocd6qXvjIAIUee
-        QVDMexB2obHizvGAK2pXhrzrZ0AepXP4+07QYclRH7BeOp+2jY65OFK189EJL5aoSqdKYu
-        K+YKeUv098DW3WWSeTPRDLnauEaow5Y=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-631-xOS4H6B4OTSnqNa3WIN42Q-1; Tue, 01 Mar 2022 06:22:53 -0500
-X-MC-Unique: xOS4H6B4OTSnqNa3WIN42Q-1
-Received: by mail-ed1-f71.google.com with SMTP id h17-20020a05640250d100b004133863d836so7640058edb.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 01 Mar 2022 03:22:52 -0800 (PST)
+        Tue, 1 Mar 2022 07:08:17 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D892E1BE9D;
+        Tue,  1 Mar 2022 04:07:35 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id u1so20136234wrg.11;
+        Tue, 01 Mar 2022 04:07:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hSCwK5xS8mlQDgYKMAx0VBG8XXlCG6EJdzqrXuBG+YQ=;
+        b=PpIqQKZ/2cNpIDY6gBqHhJnRr265H0PDVQynomcMHlTr8MsfRqVJqI2q7fFxPqx+jk
+         yD9E3CnSgSUgB6+WYe5d4PMZG/SZhYkwSFAV5ZDa81V+sMuo2PS4m130jA0ho6Cn163k
+         F87UvbKWCHi9DDRimZOlxMQopfOeMis2dq/2HLkqxgVJR2vCIUnL2tFk9D840vMpT2XN
+         yi7h/zb7UkrNeoGmxhGCdptDY7X452KHD6msiDrQ7e85MnA67pRcgpd3V2LtW6WDlhK5
+         zxlpPZ81ImFOlWyrh2WMVKGXfupAmMfgICFs9YVG6ZSpIk7gkA+yVFVMokP1P0GB4dat
+         YzyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=pFMGRfIAmrHrnLa3rzlWjdovVbrK0w7x/Azrkml2F4k=;
-        b=E/ZS4TtfTfiP5ulJHQ/V+xRYD47QPUy7KErHDBE1GoyDnuUyUEekifYzmZtPrBf2f7
-         qu9IDEQlHUbvP3p+5DbUSfJR++lwlhxcRBMIPhY2KKNZwCmRejxs24iDzWVGOuq++Nsk
-         XFeuvP13ORTqQ0A6NJ7/QBYW4SYg9yvexNwQMsiHFIzs5diba3u+REz5dnDgm0BomUOh
-         OLptsIW52wCBI+BYda4qAvm+q5YSldqfcntd+7EDT2+R39OUe/mtTq8DTqjWF0Z2keEV
-         GUmf4GpIGSvZ0rIqi/41rhQdzcwdtFILNVkjJqoiVlSNGdGPHIcb3nuu3INCADoU2ynl
-         +DMg==
-X-Gm-Message-State: AOAM530cirRb2E8Bxy8CoW2aIKAZ2MFjdkHSYcFxnPk7GRu6go/lPuSi
-        dlgEV6F4PO8kHj5N8NPe3AQHaVUE9lhnkYlJzK7HpFMfmoAeJhfhnvwTZRY9V3DQKLPHZV/EfeE
-        VVXUpo9m3HcotMC2jES0DNlu1Il+t
-X-Received: by 2002:a17:907:1de9:b0:6b9:e4f:25ec with SMTP id og41-20020a1709071de900b006b90e4f25ecmr18442058ejc.741.1646133771856;
-        Tue, 01 Mar 2022 03:22:51 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJx+FvelUXqjUMkFgQlPbM4vmDcfG8aw+ARZ98e8mbNjb+ZEBkzBWNtvUDQB7qjysKVje2E3iA==
-X-Received: by 2002:a17:907:1de9:b0:6b9:e4f:25ec with SMTP id og41-20020a1709071de900b006b90e4f25ecmr18442036ejc.741.1646133771584;
-        Tue, 01 Mar 2022 03:22:51 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1? (2001-1c00-0c1e-bf00-1db8-22d3-1bc9-8ca1.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1])
-        by smtp.gmail.com with ESMTPSA id et3-20020a170907294300b006d6534ef273sm4619085ejc.156.2022.03.01.03.22.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Mar 2022 03:22:50 -0800 (PST)
-Message-ID: <497da433-f300-cfed-33af-02b8e9f16426@redhat.com>
-Date:   Tue, 1 Mar 2022 12:22:50 +0100
+        bh=hSCwK5xS8mlQDgYKMAx0VBG8XXlCG6EJdzqrXuBG+YQ=;
+        b=2vnozjfBVkKY9BNCJw39bidc0BL8ogLlIuxZggYpvuK1RekxIRuk9ZqoXF/6l7hH+k
+         vIzXXcZqsUqkOMGvJTm7Dhp2xqBLR0WbhroumGvQRbQBFK8IefXcO9f0JcKgrUJZ7M0y
+         /8RLm7Gekf4iL70QuXl9SmPJDtn/yO4mi583V1soxhW84h3JbHsyrLjlpk3WV9gvVZ3A
+         HuHhjAhlhm8bPU6Fbg6BYHlsqCDUR5ekDJ5JDyyOHFb/PKoTZhVUh4fznlQwO/wZfxCq
+         vHwrcQFrM4RJyuC+McpHGZdRr0pllmT+Tf7bbj4WheqfGexNqAYw0BMmizCi6NHJ9w0y
+         DpLg==
+X-Gm-Message-State: AOAM531nDWp07cmp+Ou5NLf3vK4zvYxfO/eDx0afwzMS6sVfy5EDaIbQ
+        9apl6EFcfRRtGUdqgmCdSfs=
+X-Google-Smtp-Source: ABdhPJy5w8b76F7DObiS0Zj5X/X3oN+Cn8tf+9SnqcR5dCpBJywM51JSJ2UGavHd5lzX1XYQiGhoSQ==
+X-Received: by 2002:a05:6000:114b:b0:1ed:c1d5:95a8 with SMTP id d11-20020a056000114b00b001edc1d595a8mr18938705wrx.539.1646136454271;
+        Tue, 01 Mar 2022 04:07:34 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id i15-20020a05600011cf00b001edc2966dd4sm13256718wrx.47.2022.03.01.04.07.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Mar 2022 04:07:33 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev
+Subject: [PATCH] ima: remove redundant initialization of pointer 'file'.
+Date:   Tue,  1 Mar 2022 12:07:32 +0000
+Message-Id: <20220301120732.670168-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: [PATCH] x86/PCI: Fix use after free in
- pci_acpi_root_prepare_resources()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20220301081010.GA17375@kili>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20220301081010.GA17375@kili>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
+The pointer 'file' is being initialized with a value that is never read,
+it is being re-assigned the same value later on closer to where it is
+being first used. The initialization is redundant and can be removed.
 
-On 3/1/22 09:10, Dan Carpenter wrote:
-> The resource_list_destroy_entry() function frees "entry", so move the
-> dereferences before the free.
-> 
-> Fixes: 62fabd56faaf ("x86/PCI: Disable exclusion of E820 reserved addresses in some cases")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  arch/x86/pci/acpi.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/pci/acpi.c b/arch/x86/pci/acpi.c
-> index e4617df661a9..fa89ffba2e51 100644
-> --- a/arch/x86/pci/acpi.c
-> +++ b/arch/x86/pci/acpi.c
-> @@ -357,14 +357,14 @@ static int pci_acpi_root_prepare_resources(struct acpi_pci_root_info *ci)
->  	status = acpi_pci_probe_root_resources(ci);
->  	if (pci_use_crs) {
->  		resource_list_for_each_entry_safe(entry, tmp, &ci->resources) {
-> -			if (resource_is_pcicfg_ioport(entry->res))
-> -				resource_list_destroy_entry(entry);
->  			if (resource_is_efi_mmio_region(entry->res)) {
->  				dev_info(&device->dev,
->  					"host bridge window %pR is marked by EFI as MMIO\n",
->  					entry->res);
->  				pci_use_e820 = false;
->  			}
-> +			if (resource_is_pcicfg_ioport(entry->res))
-> +				resource_list_destroy_entry(entry);
->  		}
->  		return status;
->  	}
+Cleans up clang scan build warning:
+security/integrity/ima/ima_main.c:434:15: warning: Value stored to 'file'
+during its initialization is never read [deadcode.DeadStores]
 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ security/integrity/ima/ima_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you, I actually send a new version of that commit to replace the original
-one also addressing some other issues:
-
-https://lore.kernel.org/linux-acpi/20220228105259.230903-1-hdegoede@redhat.com/
-
-I expect Rafael to pick up the new version, resolving this. But maybe
-Rafael prefers a follow up commit instead ?
-
-Regards,
-
-Hans
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index c6412dec3810..41b91a0bc8dc 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -431,7 +431,7 @@ int ima_file_mmap(struct file *file, unsigned long prot)
+ int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot)
+ {
+ 	struct ima_template_desc *template = NULL;
+-	struct file *file = vma->vm_file;
++	struct file *file;
+ 	char filename[NAME_MAX];
+ 	char *pathbuf = NULL;
+ 	const char *pathname = NULL;
+-- 
+2.34.1
 
