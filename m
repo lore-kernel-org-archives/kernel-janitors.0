@@ -2,77 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B2D9C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Mar 2022 07:26:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B09C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Mar 2022 07:42:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232941AbiCAH0l (ORCPT
+        id S231911AbiCAHms (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Mar 2022 02:26:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56456 "EHLO
+        Tue, 1 Mar 2022 02:42:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232881AbiCAH0k (ORCPT
+        with ESMTP id S233069AbiCAHmr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Mar 2022 02:26:40 -0500
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 472647B56F;
-        Mon, 28 Feb 2022 23:25:50 -0800 (PST)
-Received: by mail-pf1-x429.google.com with SMTP id z16so13426920pfh.3;
-        Mon, 28 Feb 2022 23:25:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=1xwPzYLmL8tsAcjKkLlXm2q5GxjDpfr4uBY/mxxN6f0=;
-        b=p0hUnlIqn4nB+9QAy6YtbzwVtFaaRd3iLy5CeGRJu5XFinQuo46QvcMxMAvlZ01ztU
-         +mh6iQ/P7DJY+bwlRLg36NWkpIyniBCQb0arpYppSI5gzAAuBH1Io0jqnjiBD79g4BqT
-         Koo6G2VmqJP+0hONu2wOf6bENkDdMbyj4bwGiBlIstAqz661ZuLR1ELpxudC5PNdg0nM
-         r37aPSH1Sq8Y1mm+MW4EltUhHuUWbCddplrmHG0WGMmFSVdnLDwd5ZYnmf3lVwACKRQv
-         Ly7j+WZVz6RFqrkCEB5o1hiKiSkS57kzfkMfDyfvxAaLw6JY/oor4ije/sbmdKZiwsdp
-         avZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=1xwPzYLmL8tsAcjKkLlXm2q5GxjDpfr4uBY/mxxN6f0=;
-        b=HQoxAQGY0K1DeezCK3veYbJPxPX+W2hxKWB0gG1d5pIYGoCIZ5NmndiatQDZ3WWTb9
-         Is3KpsAcCNXIAN8t+KnOVPOWNvmuQAjyW1GD4nOTZz92tC/8c+F5PPDR/v3+DlKxgtx1
-         9yk3Iw7XUdfGQMQS55sFZUmIl76RW+qfabJZy5qeJmlPDt7No/s0dDiu6XkX8PRhv7ME
-         6FUQocVq54VFVwobwvadto9xZ9uO7hLTHdkQEwxSjcxEbMVwHa1KPWHWY+DVvuSPKXIP
-         ZXjVo+6Tb7i4Ai9JY5Ze61QLz9qVTFYG16a6FGcFTO1oR40dUpuWUUGDvkAu7l0UmcR9
-         KFbQ==
-X-Gm-Message-State: AOAM530mq7SHM9brWxAF+xuiSNNpX8KnGrOU8l6nbo6DI6wTtzs9NKZW
-        y8y1C8vMfQCfDmARgRjsnKI=
-X-Google-Smtp-Source: ABdhPJxk2kkLGOShKr8fWcTWXMBEiU8Tp/GN26wOurQxDFduiq9JdkHrSPrhG04imVVDVCPRuqu8Bw==
-X-Received: by 2002:a05:6a00:1a04:b0:4e1:786c:cce3 with SMTP id g4-20020a056a001a0400b004e1786ccce3mr25912833pfv.81.1646119549671;
-        Mon, 28 Feb 2022 23:25:49 -0800 (PST)
-Received: from google.com ([2620:15c:202:201:c174:264:5e49:f2cb])
-        by smtp.gmail.com with ESMTPSA id 132-20020a62168a000000b004f40e8b3133sm636489pfw.188.2022.02.28.23.25.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Feb 2022 23:25:48 -0800 (PST)
-Date:   Mon, 28 Feb 2022 23:25:46 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Support Opensource <support.opensource@diasemi.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH] Input: da9063 - Use devm_delayed_work_autocancel()
-Message-ID: <Yh3KegzMC+JuUOdn@google.com>
-References: <a76ac3f4c7aee205395b89b5b3f587e30a48df96.1645205312.git.christophe.jaillet@wanadoo.fr>
+        Tue, 1 Mar 2022 02:42:47 -0500
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36E417CDD5;
+        Mon, 28 Feb 2022 23:42:06 -0800 (PST)
+Received: from canpemm500009.china.huawei.com (unknown [172.30.72.53])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4K78Kq67k8zBrRV;
+        Tue,  1 Mar 2022 15:40:15 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ canpemm500009.china.huawei.com (7.192.105.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Tue, 1 Mar 2022 15:42:03 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>,
+        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>
+CC:     <linux-serial@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] serial: mvebu-uart: fix return value check in mvebu_uart_clock_probe()
+Date:   Tue, 1 Mar 2022 07:58:06 +0000
+Message-ID: <20220301075806.3950108-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a76ac3f4c7aee205395b89b5b3f587e30a48df96.1645205312.git.christophe.jaillet@wanadoo.fr>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ canpemm500009.china.huawei.com (7.192.105.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Feb 18, 2022 at 06:29:13PM +0100, Christophe JAILLET wrote:
-> Use devm_delayed_work_autocancel() instead of hand-writing it.
-> This saves a few lines of code.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In case of error, the function devm_ioremap() returns NULL pointer
+not ERR_PTR(). The IS_ERR() test in the return value check should
+be replaced with NULL test.
 
-Applied, thank you.
+Fixes: b7e2b5360f9b ("serial: mvebu-uart: implement UART clock driver for configuring UART base clock")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/tty/serial/mvebu-uart.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
--- 
-Dmitry
+diff --git a/drivers/tty/serial/mvebu-uart.c b/drivers/tty/serial/mvebu-uart.c
+index 2e9263888ddc..45976e2140d4 100644
+--- a/drivers/tty/serial/mvebu-uart.c
++++ b/drivers/tty/serial/mvebu-uart.c
+@@ -1382,8 +1382,8 @@ static int mvebu_uart_clock_probe(struct platform_device *pdev)
+ 	 */
+ 	uart_clock_base->reg1 = devm_ioremap(dev, res->start,
+ 					     resource_size(res));
+-	if (IS_ERR(uart_clock_base->reg1))
+-		return PTR_ERR(uart_clock_base->reg1);
++	if (!uart_clock_base->reg1)
++		return -ENOMEM;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+ 	if (!res) {
+@@ -1401,8 +1401,8 @@ static int mvebu_uart_clock_probe(struct platform_device *pdev)
+ 	 */
+ 	uart_clock_base->reg2 = devm_ioremap(dev, res->start,
+ 					     resource_size(res));
+-	if (IS_ERR(uart_clock_base->reg2))
+-		return PTR_ERR(uart_clock_base->reg2);
++	if (!uart_clock_base->reg2)
++		return -ENOMEM;
+ 
+ 	hw_clk_data = devm_kzalloc(dev,
+ 				   struct_size(hw_clk_data, hws,
+
