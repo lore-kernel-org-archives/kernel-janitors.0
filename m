@@ -2,88 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E20DC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Mar 2022 09:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C9F2C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Mar 2022 09:28:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232078AbiCAJEM (ORCPT
+        id S233729AbiCAJ2y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Mar 2022 04:04:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47422 "EHLO
+        Tue, 1 Mar 2022 04:28:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbiCAJEL (ORCPT
+        with ESMTP id S233720AbiCAJ2y (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Mar 2022 04:04:11 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB9FA7087E;
-        Tue,  1 Mar 2022 01:03:29 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id n14so19299128wrq.7;
-        Tue, 01 Mar 2022 01:03:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=j0pKuZxEIbazMmfW3N+WzOik5yd4tjStLdtiIPiTMzQ=;
-        b=S8DJqyafrnRj+h01YCl2ziBZEgQ1qwa4M5+61CyatjSKtO77MNiJZI821BO2xmmNYn
-         i62bZZQSrlOTm6KQDcVAs9b7gQgZyI6mFFkhs8JJsNwkMcHU3kKjsyMocRYiPdr8ni5l
-         3dJZFUTH92Zv+Yow2Q7WliJxomeZ55+v0lV/fRHkmNewcy3x1TEwEJbwareg0uJh864Y
-         N6yehURW8TxkaByoHo5Ym+1Kqz0masUaC8TXhylN+tf91Nw4mMrVs3rJG/Ca7BTE0JJc
-         3715Wfyb8Jw/Dso8pfj54UrEKxA1bwMhwQ8FGMNoCam5RHkHZ8Ag8FJbkOEt5vZHhJxi
-         AQmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=j0pKuZxEIbazMmfW3N+WzOik5yd4tjStLdtiIPiTMzQ=;
-        b=Tz34FZnfeOIJ/upD4faABvz4GEZen/kvwiGSNpVcrDqFTKgaluLsjhha/yzWz78CKZ
-         H52UCziNvKNbdbBB7gQBekH0t9oLsHgDwypmzmxhKuhS22BcjI1rplsRgQ4n2oT3KmGS
-         +9fE61IrNtrFXp+9a0vHBaU3CGbtwJA98eLtxMeHo23EBXDUdJAyBL8XXlxXmFlSTqIA
-         WeLaUQu7gnVzbr8JU7kagvhMclegoTPpCdvN86oJ+2san+bG03Fgqoja174bqAIT77k6
-         +5oYex0g1LMnx/tsBwLEzvuSkf+ooxkdF497CdTIefeEytQaS2brLr4eMxmHMsnee+IK
-         /l3w==
-X-Gm-Message-State: AOAM5323GR6wu2ipZ0Q5ty+ipGJZqlqnlM1BwMDZ7jUiZSrTYhpskk1Y
-        +2NWv95PDT5DUBYUO0qhfSBUuY770ao=
-X-Google-Smtp-Source: ABdhPJyNR/LUVGKW1fdHspoZJ48HACeageVG4R4teuxprsu6lMp2q8wG6Y2B1quKALE+0IlF3vCvpA==
-X-Received: by 2002:a05:6000:188f:b0:1eb:74ed:9223 with SMTP id a15-20020a056000188f00b001eb74ed9223mr18951534wri.222.1646125408147;
-        Tue, 01 Mar 2022 01:03:28 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id p2-20020a1c7402000000b0038159076d30sm1870817wmc.22.2022.03.01.01.03.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Mar 2022 01:03:27 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Daniel Lezcano <daniel.lezcano@kernel.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] powercap/dtpm: Fix spelling mistake "initialze" -> "initialize"
-Date:   Tue,  1 Mar 2022 09:03:27 +0000
-Message-Id: <20220301090327.515454-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Tue, 1 Mar 2022 04:28:54 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1195C10FE3;
+        Tue,  1 Mar 2022 01:28:14 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A1CB5615C6;
+        Tue,  1 Mar 2022 09:28:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D232DC340EE;
+        Tue,  1 Mar 2022 09:28:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646126893;
+        bh=G6h8jszAwYJPPcXy+BDianvBzTvPr+OQ1EdUgeja2xQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dAfQCTgP3bk1zhk4X2i5oeFmoouu+iJ1CL8pd88ePBLQQePKvG8AFws3eFsKA+OwP
+         +MQ82Y5E+BxIE6q1f1rpb4Bq/kMoCFBId2/Igq+cXxIwhTTFOEMKkBcWcMVMIO/cGJ
+         HEd7igpOy1BgOX16Q8WZmqzwpOv2agHrLEIDe1SgKClWxAcqkwPt85XswWRieW+fGx
+         CoSP3TYviCMhdo+vb6OIFWPomhlOKW5sBi1fewOhliFYFJ3DlNfqx30xXno1yXJkDB
+         1VjskLB8oMilTw5U1nATo39sN1fXCNI8U/j2dXWlZRjFs/aLTvRkp/LUlOBqE4Tsq+
+         wFKclcljWjKHQ==
+Received: by pali.im (Postfix)
+        id F1988C77; Tue,  1 Mar 2022 10:28:09 +0100 (CET)
+Date:   Tue, 1 Mar 2022 10:28:09 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Hulk Robot <hulkci@huawei.com>
+Subject: Re: [PATCH -next] serial: mvebu-uart: fix return value check in
+ mvebu_uart_clock_probe()
+Message-ID: <20220301092809.lobuk4u4mfgo4t4p@pali>
+References: <20220301075806.3950108-1-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220301075806.3950108-1-weiyongjun1@huawei.com>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a pr_info message. Fix it.
+On Tuesday 01 March 2022 07:58:06 Wei Yongjun wrote:
+> In case of error, the function devm_ioremap() returns NULL pointer
+> not ERR_PTR(). The IS_ERR() test in the return value check should
+> be replaced with NULL test.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/powercap/dtpm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ou, that is really truth.
 
-diff --git a/drivers/powercap/dtpm.c b/drivers/powercap/dtpm.c
-index ec931a06d90a..b2bcd6d1e242 100644
---- a/drivers/powercap/dtpm.c
-+++ b/drivers/powercap/dtpm.c
-@@ -596,7 +596,7 @@ int dtpm_create_hierarchy(struct of_device_id *dtpm_match_table)
- 
- 		ret = dtpm_subsys[i]->init();
- 		if (ret)
--			pr_info("Failed to initialze '%s': %d",
-+			pr_info("Failed to initialize '%s': %d",
- 				dtpm_subsys[i]->name, ret);
- 	}
- 
--- 
-2.34.1
+Reviewed-by: Pali Rohár <pali@kernel.org>
 
+> Fixes: b7e2b5360f9b ("serial: mvebu-uart: implement UART clock driver for configuring UART base clock")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/tty/serial/mvebu-uart.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/mvebu-uart.c b/drivers/tty/serial/mvebu-uart.c
+> index 2e9263888ddc..45976e2140d4 100644
+> --- a/drivers/tty/serial/mvebu-uart.c
+> +++ b/drivers/tty/serial/mvebu-uart.c
+> @@ -1382,8 +1382,8 @@ static int mvebu_uart_clock_probe(struct platform_device *pdev)
+>  	 */
+>  	uart_clock_base->reg1 = devm_ioremap(dev, res->start,
+>  					     resource_size(res));
+> -	if (IS_ERR(uart_clock_base->reg1))
+> -		return PTR_ERR(uart_clock_base->reg1);
+> +	if (!uart_clock_base->reg1)
+> +		return -ENOMEM;
+>  
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+>  	if (!res) {
+> @@ -1401,8 +1401,8 @@ static int mvebu_uart_clock_probe(struct platform_device *pdev)
+>  	 */
+>  	uart_clock_base->reg2 = devm_ioremap(dev, res->start,
+>  					     resource_size(res));
+> -	if (IS_ERR(uart_clock_base->reg2))
+> -		return PTR_ERR(uart_clock_base->reg2);
+> +	if (!uart_clock_base->reg2)
+> +		return -ENOMEM;
+>  
+>  	hw_clk_data = devm_kzalloc(dev,
+>  				   struct_size(hw_clk_data, hws,
+> 
