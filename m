@@ -2,97 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA9CAC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Mar 2022 18:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EFEAC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Mar 2022 18:29:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244631AbiCBSOs (ORCPT
+        id S242671AbiCBSaV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Mar 2022 13:14:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36316 "EHLO
+        Wed, 2 Mar 2022 13:30:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244679AbiCBSOl (ORCPT
+        with ESMTP id S234009AbiCBSaV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Mar 2022 13:14:41 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B64E2BD880;
-        Wed,  2 Mar 2022 10:13:29 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id p9so4054191wra.12;
-        Wed, 02 Mar 2022 10:13:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5L8Hwj3FIl0Xgnzes+JlfSkI7X/LRJVH+HAy2sV4IVM=;
-        b=d5/4UL6UMw316oSWqEZCJq6fg77tBeU8ISJBAxeIFcSC3BBv2nxqdU3g/z4BTYns9l
-         GA3zbNzD/ILhdQimnFxGx7pwdKeZ0ONMAyv5RsoFU6FKgAycB0VA8N6wVJHZhCBFvzR4
-         fck4wJ6i3ALJGQfS4n858fp8cq2sKf26c4iki1R85ABS6N3VsPMYJUm0oGphl5Qk2HNA
-         emxtYBzW2ZG378Svaajz0q5MT4u/pywP8S8XZF3gnCkFQHTPYQmq4OuLPM0nXqtGugvD
-         qqPmQ0ERFoPbjtuURk2T4q9TeoPKFyJ9b9Lis8vR13B3Lz/eSYHThwm89hunzUzBp26M
-         PWmQ==
+        Wed, 2 Mar 2022 13:30:21 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2767CD8855
+        for <kernel-janitors@vger.kernel.org>; Wed,  2 Mar 2022 10:29:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1646245777;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=mjxXLj8rr6mOagH85zE8xjeRN36BLXJyOv2Vow+3Iko=;
+        b=SOBLWlsFreRPM9eDqwcF4muymatDR8dAreRea7oVmdcOiR1GJrdqiSLmCKl0M+dz8WdhoR
+        7kN4NCR0FCL3Kcf4JwHjZi8yV4EGhDTccHYjgdD7Ik0aHkf3YkoefxXB67AL/V65ZbSSV8
+        Mj6+EH3wg3LO31QvJFu59lQUUKivTuY=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-608-IxJqtS1GOeCHasuSLtHJrA-1; Wed, 02 Mar 2022 13:29:36 -0500
+X-MC-Unique: IxJqtS1GOeCHasuSLtHJrA-1
+Received: by mail-ed1-f72.google.com with SMTP id cm27-20020a0564020c9b00b004137effc24bso1477673edb.10
+        for <kernel-janitors@vger.kernel.org>; Wed, 02 Mar 2022 10:29:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5L8Hwj3FIl0Xgnzes+JlfSkI7X/LRJVH+HAy2sV4IVM=;
-        b=cw+8A0A3O2nY9cUsCYfkItVMxi4FA4h4sBEhlYLnDRXHtgfGSon+lRX4emGr+F1k8m
-         NbMZRYRWBG+7uU46f8OEiScFkS7T8rc1PUGcuCTedk/nOPSvXYOJ3vhRUCWRyDVStwdM
-         OZv5L6PdS/FGvcmtGg5M7l8AZnxFk8MWCpnCqGhgshKswi+4vpcxEsRQZct++ID2PL+4
-         RmiOb0CAYmKsZ1tq/7+rU/d1jYtiGasOeh5Rc9RvjYX04XPUUPpKIyuDfSof9mZnLJiL
-         uWvFO6BUyk8dtr/1PANFl4meukjMM2qIxjQ0j1d0MTyTqbILVXFVeh8STatgdbV34kzl
-         oW0w==
-X-Gm-Message-State: AOAM532g+573Ln5AefVr5YcsYhnSTUuac1d05CfZOywCyuWo/4TuW/Z6
-        fhxsyGwG4ALEHM3AfEMPYFxt4dOVMEi6aw==
-X-Google-Smtp-Source: ABdhPJylJfs5FBTbZvwKyYefm3ujs/kNK9gAIiH6yzqV5F+X+vOMfFby1thaHMNqsJuWpe9CoEzDJw==
-X-Received: by 2002:adf:80a4:0:b0:1e6:db9f:a8c4 with SMTP id 33-20020adf80a4000000b001e6db9fa8c4mr23857226wrl.345.1646244805070;
-        Wed, 02 Mar 2022 10:13:25 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id 7-20020a05600c020700b003862bfb550fsm1225138wmi.46.2022.03.02.10.13.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Mar 2022 10:13:24 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev
-Subject: [PATCH][next] HID: core: Remove redundant assignment to pointer field
-Date:   Wed,  2 Mar 2022 18:13:23 +0000
-Message-Id: <20220302181323.1100490-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mjxXLj8rr6mOagH85zE8xjeRN36BLXJyOv2Vow+3Iko=;
+        b=2UzJVUO4HMuPM22dCeOoNRahsz4Cn4YiYOHHt8AoPghFJwoyNfvK4Grx9xNdsOEDx9
+         FVIp8IbAha3kPcGvzK13lggFpr7bfJ+kDXRyu+fkqKXJuZjNioFor8D4G/gxs7f4lnkJ
+         f7l2uw3hvAlg0384HAdaB9Jso5PiW1/E/xwLstxFW+f1LB9RDlclbbM7+nluErfLxAC6
+         lGgukwg5kUFbzV3jst9xamcEJOU30YnTr9ucuKlL5dsz4JoiC+U0qfSpNMAr6q2XPyYr
+         s1C5szF6Cmoz3r5tgiQdPiaSxxjquk3gvVjZ90O3FEb1n1pQ3DwIVOhhZj5yCPNs1yP9
+         ry4w==
+X-Gm-Message-State: AOAM532KUrqtudwt6bPvkB5y4vVyo1y6a06Xh+vq/DpEbFOjqNBztLXd
+        6dHpzdbmV4aZvdZiKmxpiG4E5B8jeq+PIXHuH6pr5lVsheYZNJ+ThYvpqDwDJOKuWpjeqKkW9DQ
+        Zzjgfx+uxT3nydX1XgRaKhvvyZY8jpAuI5TVl17ZGFjzK
+X-Received: by 2002:a17:906:434e:b0:6d0:ed9c:68bc with SMTP id z14-20020a170906434e00b006d0ed9c68bcmr23152258ejm.70.1646245775074;
+        Wed, 02 Mar 2022 10:29:35 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxHDUcMifYOCkwoFjllRL4kRy+OwEBd4SDygd8H9xrln/fRsbCeSVG7U4y0FcBBR2l+QPrmM5Lpj1qKYIEzkDQ=
+X-Received: by 2002:a17:906:434e:b0:6d0:ed9c:68bc with SMTP id
+ z14-20020a170906434e00b006d0ed9c68bcmr23152246ejm.70.1646245774790; Wed, 02
+ Mar 2022 10:29:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20220302175309.1098827-1-colin.i.king@gmail.com>
+In-Reply-To: <20220302175309.1098827-1-colin.i.king@gmail.com>
+From:   Javier Martinez Canillas <javierm@redhat.com>
+Date:   Wed, 2 Mar 2022 19:29:23 +0100
+Message-ID: <CAFOAJEfS9dMY5nudeFxtwchTtLnBCh7N4qKaCdqvaodnRUFKzA@mail.gmail.com>
+Subject: Re: [PATCH][next] drm: ssd130x: remove redundant initialization of
+ pointer mode
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointer fields is being assigned a value that is never read, the
-pointer is re-assigned a new value in for-loops that occur later on.
-The assignment is redundant and can be removed.
+Hello Colin,
 
-Clean up clang scan build warning:
-drivers/hid/hid-core.c:1665:30: warning: Although the value stored
-to 'field' is used in the enclosing expression, the value is never
-actually read from 'field' [deadcode.DeadStores]
+Thanks for the patch.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/hid/hid-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Mar 2, 2022 at 6:53 PM Colin Ian King <colin.i.king@gmail.com> wrote:
+>
+> Pointer mode is being assigned a value that is never read, it is
+> being re-assigned later with a new value. The initialization is
+> redundant and can be removed.
+>
 
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index db925794fbe6..6579f4724bbb 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -1662,7 +1662,7 @@ static void hid_process_report(struct hid_device *hid,
- 
- 	/* first retrieve all incoming values in data */
- 	for (a = 0; a < report->maxfield; a++)
--		hid_input_fetch_field(hid, field = report->field[a], data);
-+		hid_input_fetch_field(hid, report->field[a], data);
- 
- 	if (!list_empty(&report->field_entry_list)) {
- 		/* INPUT_REPORT, we have a priority list of fields */
--- 
-2.34.1
+Indeed.
+
+Acked-by: Javier Martinez Canillas <javierm@redhat.com>
+
+Best regards,
+Javier
 
