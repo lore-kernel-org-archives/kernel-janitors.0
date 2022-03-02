@@ -2,77 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CB93C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  1 Mar 2022 18:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEEE2C433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Mar 2022 05:13:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236838AbiCASLM (ORCPT
+        id S239424AbiCBFOV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 1 Mar 2022 13:11:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34950 "EHLO
+        Wed, 2 Mar 2022 00:14:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234019AbiCASLM (ORCPT
+        with ESMTP id S237736AbiCBFOU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 1 Mar 2022 13:11:12 -0500
-Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3DEF45501
-        for <kernel-janitors@vger.kernel.org>; Tue,  1 Mar 2022 10:10:27 -0800 (PST)
-Received: from [192.168.1.18] ([90.126.236.122])
-        by smtp.orange.fr with ESMTPA
-        id P6x3nfbWfEafMP6x3nCIOI; Tue, 01 Mar 2022 19:10:25 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Tue, 01 Mar 2022 19:10:25 +0100
-X-ME-IP: 90.126.236.122
-Message-ID: <1d24bd65-e278-5562-a097-39a68470a1d4@wanadoo.fr>
-Date:   Tue, 1 Mar 2022 19:10:19 +0100
+        Wed, 2 Mar 2022 00:14:20 -0500
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63C206558;
+        Tue,  1 Mar 2022 21:13:37 -0800 (PST)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 2222UeWc006483;
+        Wed, 2 Mar 2022 05:13:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2021-07-09;
+ bh=OlihYRTaePBe+8R6+oM4RfXk0mMR/OaVcCm09rsRSdE=;
+ b=Ofd2rKLoAxLWNcVF3tmymcHJVhfJibcRfUeRrMw7gI+9sQ0WE3gdZTISV5RgExWCzqrW
+ RymqsZLCaruU0SgPfs5k36sPlml5pLFVTHOwFgxYH62HWEczmbSlVav11BAPd3/idq5H
+ i5tSBUlgbVGQ9Oa3MyufruU5KY766yRgE+oJJKnz1ULSf99h5Zf4RWC6/cNXm6v5dJ2O
+ 6coWbU7q3yl8B512RmFBV7lcZzBSqr+Ljz8Ey2nqujOy6vqCMLSbfO5SW7SJeyoJFtX8
+ c/EHJ8R+H+lcQpMvJxC2cwrYL4HMKpkk1CPhtA1sGaUraYsXduJK3ATGB5ZhjBiDX1fy Kw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3ehh2ejm88-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 02 Mar 2022 05:13:35 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 2225C1Eh175213;
+        Wed, 2 Mar 2022 05:13:34 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3030.oracle.com with ESMTP id 3ef9ayxgha-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 02 Mar 2022 05:13:34 +0000
+Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 2225DVPK178145;
+        Wed, 2 Mar 2022 05:13:34 GMT
+Received: from ca-mkp.mkp.ca.oracle.com (ca-mkp.ca.oracle.com [10.156.108.201])
+        by userp3030.oracle.com with ESMTP id 3ef9ayxgcv-3;
+        Wed, 02 Mar 2022 05:13:34 +0000
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Suganath Prabu Subramani 
+        <suganath-prabu.subramani@broadcom.com>,
+        Sathya Prakash <sathya.prakash@broadcom.com>,
+        Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Subject: Re: [PATCH] scsi: message: fusion: Use GFP_KERNEL instead of GFP_ATOMIC in non-atomic context
+Date:   Wed,  2 Mar 2022 00:13:21 -0500
+Message-Id: <164619702111.16127.16163616639439447777.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <eccb2179ce800529851ed4fabc9d3f95fbbf7d7f.1644906731.git.christophe.jaillet@wanadoo.fr>
+References: <eccb2179ce800529851ed4fabc9d3f95fbbf7d7f.1644906731.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH] nvmem: check for allocation failure
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20220301081127.GC17375@kili>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20220301081127.GC17375@kili>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: jemvxo1XqHYxGY6mHfJs0I1-YcIe0iKo
+X-Proofpoint-GUID: jemvxo1XqHYxGY6mHfJs0I1-YcIe0iKo
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 01/03/2022 à 09:11, Dan Carpenter a écrit :
-> Check for if the kcalloc() fails.
+On Tue, 15 Feb 2022 07:32:34 +0100, Christophe JAILLET wrote:
+
+> Just a few lines below this kzalloc() we have a mutex_lock() which can
+> sleep.
 > 
-> Fixes: 299dc152721f ("nvmem: brcm_nvram: parse NVRAM content into NVMEM cells")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->   drivers/nvmem/brcm_nvram.c | 2 ++
->   1 file changed, 2 insertions(+)
+> More over, the only way to call this function is when a delayed work is
+> schedule. And delayed work can sleep.
+>   INIT_DELAYED_WORK(&fw_event->work, mptsas_firmware_event_work);
+>     --> mptsas_firmware_event_work()
+>       --> mptsas_send_link_status_event()
+>         --> mptsas_expander_add()
 > 
-> diff --git a/drivers/nvmem/brcm_nvram.c b/drivers/nvmem/brcm_nvram.c
-> index 439f00b9eef6..c80af8a31eba 100644
-> --- a/drivers/nvmem/brcm_nvram.c
-> +++ b/drivers/nvmem/brcm_nvram.c
-> @@ -95,6 +95,8 @@ static int brcm_nvram_parse(struct brcm_nvram *priv)
->   	len = le32_to_cpu(header.len);
->   
->   	data = kcalloc(1, len, GFP_KERNEL);
+> [...]
 
-Hi,
+Applied to 5.18/scsi-queue, thanks!
 
-just for my understanding, why
-   - kcalloc(1, len) and not kzalloc(len)?
-   - kcalloc and not kmalloc_array, since data is fully filled just the 
-line below by memcpy_fromio()?
+[1/1] scsi: message: fusion: Use GFP_KERNEL instead of GFP_ATOMIC in non-atomic context
+      https://git.kernel.org/mkp/scsi/c/e3af2e3b0019
 
-CJ
-
-> +	if (!data)
-> +		return -ENOMEM;
->   	memcpy_fromio(data, priv->base, len);
->   	data[len - 1] = '\0';
->   
-
+-- 
+Martin K. Petersen	Oracle Linux Engineering
