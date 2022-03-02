@@ -2,61 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B56C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Mar 2022 18:03:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA9CAC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Mar 2022 18:14:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244400AbiCBSDp (ORCPT
+        id S244631AbiCBSOs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Mar 2022 13:03:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34500 "EHLO
+        Wed, 2 Mar 2022 13:14:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244398AbiCBSDi (ORCPT
+        with ESMTP id S244679AbiCBSOl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Mar 2022 13:03:38 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D36B81D32A;
-        Wed,  2 Mar 2022 10:02:54 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id b5so4065747wrr.2;
-        Wed, 02 Mar 2022 10:02:54 -0800 (PST)
+        Wed, 2 Mar 2022 13:14:41 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B64E2BD880;
+        Wed,  2 Mar 2022 10:13:29 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id p9so4054191wra.12;
+        Wed, 02 Mar 2022 10:13:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=SLLfjD749xSnL6xg2oAyC7SKFLVc/brW6p/9hUhDG8k=;
-        b=YzBwb+1Gi/Isd4K6+XoKfHngkObvdDjfOMeTAf9cbaKPpz/n9eGDMAufz7dq4Q8Wlf
-         uCJebMTuBQJnRvgFsS0ByF72owbw9eSp1477MHGZRq7Up3jkkfHVWhIrxbNK+6sbvf/Y
-         SbbNQ3arejFoEpc0YyexG0QgJ9jEkrY5qUumnx/KJt9nrJR+E87NT5eaNkDUZ5/428eI
-         nTgLenBBT7H9nYdMdKDDrB1p71yuLqAGNtiv5M12lokHmGrbNaDIdrd/sZ1Pxn/56+5/
-         Vp3hR0R2vgIeV/CdNBG6xsvLOHFmU9bnMtYlq8lefHRs/zx+Sh5KdSv262if3fo7H8eD
-         y9sQ==
+        bh=5L8Hwj3FIl0Xgnzes+JlfSkI7X/LRJVH+HAy2sV4IVM=;
+        b=d5/4UL6UMw316oSWqEZCJq6fg77tBeU8ISJBAxeIFcSC3BBv2nxqdU3g/z4BTYns9l
+         GA3zbNzD/ILhdQimnFxGx7pwdKeZ0ONMAyv5RsoFU6FKgAycB0VA8N6wVJHZhCBFvzR4
+         fck4wJ6i3ALJGQfS4n858fp8cq2sKf26c4iki1R85ABS6N3VsPMYJUm0oGphl5Qk2HNA
+         emxtYBzW2ZG378Svaajz0q5MT4u/pywP8S8XZF3gnCkFQHTPYQmq4OuLPM0nXqtGugvD
+         qqPmQ0ERFoPbjtuURk2T4q9TeoPKFyJ9b9Lis8vR13B3Lz/eSYHThwm89hunzUzBp26M
+         PWmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=SLLfjD749xSnL6xg2oAyC7SKFLVc/brW6p/9hUhDG8k=;
-        b=UdlrS/Rv87cHELpCtYN0JZa/co+xsb6Rn9xp65cGRDaB7393+ojZd7258/Nu/WzlUN
-         e27AtwWaadh+HcNXegDCWA/NCWM8A4zFzykT6dIV59A/NGqWPGLmfRmIdvPKyTI+mWdC
-         gcCMSz63Zi36rYedhNJRUlnqXJbIW2S8Kumd/vA05Oeoq5T0CLkrwlawvZCvbyovZbeJ
-         EGR6D7wabQY+VtSczb59GVuccM9W/FPmMG1plSpFf5qEQdEQLTQ/aoYIAAmxmnskJmCP
-         unmmlwHuamkH/MLQsQ5/QL5Z7CHHq1J0MxDBfdntGJ7NbpFuIuIdUyaSwnHtKpzNGdG8
-         XnLg==
-X-Gm-Message-State: AOAM532VDZIY/3B4ZY7yeMKJPTi0ZkrnbegQpcLLPTgWp2s6k0Aq8Ig6
-        ZGthjhLKS+9yHItcr0rRhnlyqZm/0DeCRQ==
-X-Google-Smtp-Source: ABdhPJxHQ7Py2A1/Xrj9k1ikIUZwbzyE7O+78XWO4g23mCyJzGBqZytwDf8Rr/KkRHc+5rXedOYG1w==
-X-Received: by 2002:adf:eb44:0:b0:1f0:483c:f015 with SMTP id u4-20020adfeb44000000b001f0483cf015mr1334771wrn.397.1646244173507;
-        Wed, 02 Mar 2022 10:02:53 -0800 (PST)
+        bh=5L8Hwj3FIl0Xgnzes+JlfSkI7X/LRJVH+HAy2sV4IVM=;
+        b=cw+8A0A3O2nY9cUsCYfkItVMxi4FA4h4sBEhlYLnDRXHtgfGSon+lRX4emGr+F1k8m
+         NbMZRYRWBG+7uU46f8OEiScFkS7T8rc1PUGcuCTedk/nOPSvXYOJ3vhRUCWRyDVStwdM
+         OZv5L6PdS/FGvcmtGg5M7l8AZnxFk8MWCpnCqGhgshKswi+4vpcxEsRQZct++ID2PL+4
+         RmiOb0CAYmKsZ1tq/7+rU/d1jYtiGasOeh5Rc9RvjYX04XPUUPpKIyuDfSof9mZnLJiL
+         uWvFO6BUyk8dtr/1PANFl4meukjMM2qIxjQ0j1d0MTyTqbILVXFVeh8STatgdbV34kzl
+         oW0w==
+X-Gm-Message-State: AOAM532g+573Ln5AefVr5YcsYhnSTUuac1d05CfZOywCyuWo/4TuW/Z6
+        fhxsyGwG4ALEHM3AfEMPYFxt4dOVMEi6aw==
+X-Google-Smtp-Source: ABdhPJylJfs5FBTbZvwKyYefm3ujs/kNK9gAIiH6yzqV5F+X+vOMfFby1thaHMNqsJuWpe9CoEzDJw==
+X-Received: by 2002:adf:80a4:0:b0:1e6:db9f:a8c4 with SMTP id 33-20020adf80a4000000b001e6db9fa8c4mr23857226wrl.345.1646244805070;
+        Wed, 02 Mar 2022 10:13:25 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id k17-20020a05600c1c9100b00386bb6e9c50sm1068631wms.45.2022.03.02.10.02.52
+        by smtp.gmail.com with ESMTPSA id 7-20020a05600c020700b003862bfb550fsm1225138wmi.46.2022.03.02.10.13.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Mar 2022 10:02:53 -0800 (PST)
+        Wed, 02 Mar 2022 10:13:24 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     SeongJae Park <sj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mm/damon/sysfs: Fix an array out-of-bounds read error due
-Date:   Wed,  2 Mar 2022 18:02:52 +0000
-Message-Id: <20220302180252.1099406-1-colin.i.king@gmail.com>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev
+Subject: [PATCH][next] HID: core: Remove redundant assignment to pointer field
+Date:   Wed,  2 Mar 2022 18:13:23 +0000
+Message-Id: <20220302181323.1100490-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,30 +66,33 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is an off-by-one error in the upper limit to a for-loop that
-causes an out-of-bounds read error on the array
-damon_sysfs_wmark_metric_strs. Fix the comparison by replacing
-the <= operator with <.
+The pointer fields is being assigned a value that is never read, the
+pointer is re-assigned a new value in for-loops that occur later on.
+The assignment is redundant and can be removed.
 
-Fixes: 8f614da9d987 ("mm/damon/sysfs: support DAMOS watermarks")
+Clean up clang scan build warning:
+drivers/hid/hid-core.c:1665:30: warning: Although the value stored
+to 'field' is used in the enclosing expression, the value is never
+actually read from 'field' [deadcode.DeadStores]
+
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- mm/damon/sysfs.c | 2 +-
+ drivers/hid/hid-core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/damon/sysfs.c b/mm/damon/sysfs.c
-index 32a9d21c0db5..fda2506c676f 100644
---- a/mm/damon/sysfs.c
-+++ b/mm/damon/sysfs.c
-@@ -266,7 +266,7 @@ static ssize_t metric_store(struct kobject *kobj, struct kobj_attribute *attr,
- 			struct damon_sysfs_watermarks, kobj);
- 	enum damos_wmark_metric metric;
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index db925794fbe6..6579f4724bbb 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -1662,7 +1662,7 @@ static void hid_process_report(struct hid_device *hid,
  
--	for (metric = 0; metric <= NR_DAMOS_WMARK_METRICS; metric++) {
-+	for (metric = 0; metric < NR_DAMOS_WMARK_METRICS; metric++) {
- 		if (sysfs_streq(buf, damon_sysfs_wmark_metric_strs[metric])) {
- 			watermarks->metric = metric;
- 			return count;
+ 	/* first retrieve all incoming values in data */
+ 	for (a = 0; a < report->maxfield; a++)
+-		hid_input_fetch_field(hid, field = report->field[a], data);
++		hid_input_fetch_field(hid, report->field[a], data);
+ 
+ 	if (!list_empty(&report->field_entry_list)) {
+ 		/* INPUT_REPORT, we have a priority list of fields */
 -- 
 2.34.1
 
