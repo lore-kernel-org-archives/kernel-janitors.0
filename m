@@ -2,64 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A69C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Mar 2022 20:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDAF4C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Mar 2022 20:53:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243280AbiCBUWD (ORCPT
+        id S233583AbiCBUyT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Mar 2022 15:22:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39288 "EHLO
+        Wed, 2 Mar 2022 15:54:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243076AbiCBUWC (ORCPT
+        with ESMTP id S235323AbiCBUyR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Mar 2022 15:22:02 -0500
-Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAC6ACE902
-        for <kernel-janitors@vger.kernel.org>; Wed,  2 Mar 2022 12:21:18 -0800 (PST)
-Received: from pop-os.home ([90.126.236.122])
-        by smtp.orange.fr with ESMTPA
-        id PVTInnglzSrXTPVTInhu5e; Wed, 02 Mar 2022 21:21:17 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Wed, 02 Mar 2022 21:21:17 +0100
-X-ME-IP: 90.126.236.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Rasesh Mody <rmody@marvell.com>, GR-Linux-NIC-Dev@marvell.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org
-Subject: [PATCH] bnx2: Fix an error message
-Date:   Wed,  2 Mar 2022 21:21:15 +0100
-Message-Id: <a6cf1111d372dd0a682f4ba929f9e8e2538260a6.1646252465.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 2 Mar 2022 15:54:17 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 320ADCA0C8;
+        Wed,  2 Mar 2022 12:53:33 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id BD650B82231;
+        Wed,  2 Mar 2022 20:53:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22413C340E9;
+        Wed,  2 Mar 2022 20:53:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1646254410;
+        bh=TgloV4B2vCHdyFP/LtMGAUPUvrUDGKFnl1FOodTZlcI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Ju0i4BULb8yoAdghQyVOOuGhBEhxPN1NBrXlxuAeZbje+6657mDkuLw9rQvumpEx0
+         x8BvHCVbA8QBeOZNJ+lGhMfCgDJQlANOCRKSLmElPKAgu50rpcT00004hN4HLdDT39
+         VyRrPTW+nM4/gLe253KnWBeB4BUEyH95lbGZn6ZA=
+Date:   Wed, 2 Mar 2022 12:53:29 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     SeongJae Park <sj@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/damon/sysfs: Fix an array out-of-bounds read error
+ due
+Message-Id: <20220302125329.65bc251ab9c2df865146a5ae@linux-foundation.org>
+In-Reply-To: <20220302180252.1099406-1-colin.i.king@gmail.com>
+References: <20220302180252.1099406-1-colin.i.king@gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Fix an error message and report the correct failing function.
+On Wed,  2 Mar 2022 18:02:52 +0000 Colin Ian King <colin.i.king@gmail.com> wrote:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/ethernet/broadcom/bnx2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> There is an off-by-one error in the upper limit to a for-loop that
+> causes an out-of-bounds read error on the array
+> damon_sysfs_wmark_metric_strs. Fix the comparison by replacing
+> the <= operator with <.
+> 
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2.c b/drivers/net/ethernet/broadcom/bnx2.c
-index e20aafeb4ca9..b97ed9b5f685 100644
---- a/drivers/net/ethernet/broadcom/bnx2.c
-+++ b/drivers/net/ethernet/broadcom/bnx2.c
-@@ -8216,7 +8216,7 @@ bnx2_init_board(struct pci_dev *pdev, struct net_device *dev)
- 		rc = dma_set_coherent_mask(&pdev->dev, persist_dma_mask);
- 		if (rc) {
- 			dev_err(&pdev->dev,
--				"pci_set_consistent_dma_mask failed, aborting\n");
-+				"dma_set_coherent_mask failed, aborting\n");
- 			goto err_out_unmap;
- 		}
- 	} else if ((rc = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32))) != 0) {
--- 
-2.32.0
-
+Thanks, we already have
+https://lkml.kernel.org/r/20220301185619.2904-1-sj@kernel.org
