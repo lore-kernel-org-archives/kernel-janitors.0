@@ -2,59 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 451E0C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Mar 2022 13:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F59C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Mar 2022 17:07:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236399AbiCBNJT (ORCPT
+        id S243579AbiCBRIW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Mar 2022 08:09:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47688 "EHLO
+        Wed, 2 Mar 2022 12:08:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232317AbiCBNJS (ORCPT
+        with ESMTP id S243643AbiCBRIS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Mar 2022 08:09:18 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DF8D20F59;
-        Wed,  2 Mar 2022 05:08:35 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id bk29so2720803wrb.4;
-        Wed, 02 Mar 2022 05:08:35 -0800 (PST)
+        Wed, 2 Mar 2022 12:08:18 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1506E5F65;
+        Wed,  2 Mar 2022 09:07:31 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id m6so3799224wrr.10;
+        Wed, 02 Mar 2022 09:07:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=xXlb7cc4EyqnzFw8PQ0fBnQFiOHYPm8hTsgKE/9CO8Q=;
-        b=np8mcRkHHqlMHinc7q2t/2Cpo2vbU8MWB+PuLJ05LpJg3PkpCND2SLdA8+h+nyquwP
-         5Ac60majuASwgCKFMdvHiZ0JIxrhJiDl2NUnqOR54PRxR0ViilucxdQPBYtYYxv41KPW
-         ed1su8/5e5wEAOZRJvbet8i6wZxQQh+13BcUZz1PviZNWQS47DdR6NIwvSZIrJTofUsR
-         AM7naPwKwGkd1MFJbdKJYtujY9wz3+ZF5lcfZAxCaymr1+ICDNoPvD+TgJ331G1JzMVT
-         b0KQyMiuvlaE6N/ndeQmh41u50QdE7chiwnvyFKXbO5NLfvPP2tnExYjQW76N6ZdX4wd
-         vl1g==
+        bh=+FBEODWlEwE4ZBpRu4pszv+L75J4ftu6Yw0by+ZcvnE=;
+        b=hOrlpj9wIqQtiZ2iI5gabtXozHts++6EWfoyBCd9XE7smYEqH0D0OVdiWv1pcyWOmv
+         drF40iR0EnF9vCeXmIYqfPop33M7aHpNtmCzSt5le3/11zOqSeexGyBz8MgQ4WEPa5oI
+         IAkV+2cfB3IjRsBMxueIpgamXDtArN4GOSuNjFxfLz7eFSSMx7HDIJrnb/ZruGVPRQqm
+         JuXSGImYl/NJQlq9JmPQ6uAcc6mnjQS0l7Y1oTTVRL9RQWBTmnnBopCO4aH4quRq43/G
+         dc2kmxA0iGAwtQmMN6z3smEFOwKvl/1qLFFuPzojfYWvmcG8HPgoK2q2CCBdNQ2VmTBc
+         0fUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=xXlb7cc4EyqnzFw8PQ0fBnQFiOHYPm8hTsgKE/9CO8Q=;
-        b=YVhWmStW704j/+7pA2RukzDFO8dCQ+CWG2XNxegsxG1G4erMr3Kp2saLa9mcVhjPfm
-         dbumB6s8xofE06WtwYvXuqg5TmahsDFP3C+sS/2vUM7aTe0QPhkjkxA5BW9w/DzMT81P
-         qAyQO0QiWY3dmWHUUo3t1u+cDRHkUwtr3Ye4B6O0jQ9ydQU1q4oGsfrvI3pEX26eWQG/
-         N8AheBvMMZyznECCwv2gfsPH/eiaZo7D8mXGRv8e7PSG8b6Vp56uTzRn/DDJyllwluaV
-         AnwwX1sZueDpbb6lZ2v3EdONmFTXdyw2AkYJUOGoNC3cSxqCLZF4mAau7LE7Jxf+T93B
-         C5Cg==
-X-Gm-Message-State: AOAM530S1V9M0gMxzpgIFSfGDX4alcXoHksryjjLKyqNcIoeIytX/MEj
-        0YJp9S1gympDm2daaaUvTS3vGtQwdcs=
-X-Google-Smtp-Source: ABdhPJzuQN521B1SFDVZQJm/ctLkm2aM+RnrCXlzS8OE0PrnAn77bMy5SiW3lTIfXcbxYhVHtuLpXw==
-X-Received: by 2002:adf:d1cc:0:b0:1f0:4570:bf75 with SMTP id b12-20020adfd1cc000000b001f04570bf75mr1502111wrd.656.1646226513863;
-        Wed, 02 Mar 2022 05:08:33 -0800 (PST)
+        bh=+FBEODWlEwE4ZBpRu4pszv+L75J4ftu6Yw0by+ZcvnE=;
+        b=6fuFDZzxWOGkFrJKQQXZuQTGyQ0ou3lpE3/TRfwMqATjtkIn4EUi1gB0XrdHf+lzIq
+         YZy5UCv0CbKZz1z8UHs19ope2G97ZMuWgILV7zB+fJQUxgmuGiw/wtCcrYqASvYBbJtJ
+         hKgpxM4JQWGYfUvatPb/J6K1DQC6Juc3cBOKtRq5p4x+cxswEAy6KV3OX+jCPPnoGiFc
+         UPkJZ3sTlo36y5LJ9RhoR41pkgJ7DofZvwl16u5c1PpvJNHIDxGl1HBkous45aDyyasr
+         O2YXV+245zvIwybjkW1iioiha7arNmPkmeoZ2oTkv22spLzfylBqx7zhWNYBUeH4pYy3
+         Y47w==
+X-Gm-Message-State: AOAM5313enK2e8TWaglWC9Be+NtWfpP6TkmiF+X6VK4klpON7GsBSCBp
+        v39CHqwzHFkzbrt43vGLAijYTENvADe/qg==
+X-Google-Smtp-Source: ABdhPJyDPnbwGRm/gHFADgHnG9mY1P7DvsXiSdJn8zqflakPBj5aWX46fD1EGCCM5wnDqY8YQSkV6A==
+X-Received: by 2002:adf:f201:0:b0:1ed:c254:c1a2 with SMTP id p1-20020adff201000000b001edc254c1a2mr23485713wro.106.1646240849938;
+        Wed, 02 Mar 2022 09:07:29 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id g17-20020a5d4891000000b001e74e998bf9sm16698803wrq.33.2022.03.02.05.08.33
+        by smtp.gmail.com with ESMTPSA id l15-20020a05600c4f0f00b0037d62a899b1sm6651200wmq.6.2022.03.02.09.07.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Mar 2022 05:08:33 -0800 (PST)
+        Wed, 02 Mar 2022 09:07:29 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] power: supply: ab8500: fix a handful of spelling mistakes
-Date:   Wed,  2 Mar 2022 13:08:32 +0000
-Message-Id: <20220302130832.1076437-1-colin.i.king@gmail.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev
+Subject: [PATCH] ALSA: echoaudio: remove redundant assignment to variable bytes
+Date:   Wed,  2 Mar 2022 17:07:28 +0000
+Message-Id: <20220302170728.1094633-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -63,54 +65,33 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are a few spelling mistakes in comments and in a dev_err
-error message. Fix them.
+The variable bytes is being assigned a value that is never read, it
+is being re-assigned inside a following if block. The assignment is
+redundant and can be removed.
+
+Cleans up clang scan build warning:
+sound/pci/echoaudio/midi.c:211:9: warning: Although the value stored
+to 'bytes' is used in the enclosing expression, the value is never
+actually read from 'bytes' [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/power/supply/ab8500_chargalg.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ sound/pci/echoaudio/midi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/power/supply/ab8500_chargalg.c b/drivers/power/supply/ab8500_chargalg.c
-index c9c7f7028af6..8842e51b8b1c 100644
---- a/drivers/power/supply/ab8500_chargalg.c
-+++ b/drivers/power/supply/ab8500_chargalg.c
-@@ -287,7 +287,7 @@ ab8500_chargalg_safety_timer_expired(struct hrtimer *timer)
-  * the maintenance timer
-  * @timer:     pointer to the timer structure
-  *
-- * This function gets called when the maintenence timer
-+ * This function gets called when the maintenance timer
-  * expires
-  */
- static enum hrtimer_restart
-@@ -431,7 +431,7 @@ static void ab8500_chargalg_stop_safety_timer(struct ab8500_chargalg *di)
- /**
-  * ab8500_chargalg_start_maintenance_timer() - Start charging maintenance timer
-  * @di:		pointer to the ab8500_chargalg structure
-- * @duration:	duration of ther maintenance timer in minutes
-+ * @duration:	duration of the maintenance timer in minutes
-  *
-  * The maintenance timer is used to maintain the charge in the battery once
-  * the battery is considered full. These timers are chosen to match the
-@@ -1271,7 +1271,7 @@ static void ab8500_chargalg_algorithm(struct ab8500_chargalg *di)
- 				STATE_SAFETY_TIMER_EXPIRED_INIT);
- 	}
- 	/*
--	 * Check if any interrupts has occured
-+	 * Check if any interrupts has occurred
- 	 * that will prevent us from charging
- 	 */
+diff --git a/sound/pci/echoaudio/midi.c b/sound/pci/echoaudio/midi.c
+index cb72d27e809e..7be5c3327b16 100644
+--- a/sound/pci/echoaudio/midi.c
++++ b/sound/pci/echoaudio/midi.c
+@@ -208,7 +208,7 @@ static void snd_echo_midi_output_write(struct timer_list *t)
  
-@@ -1525,7 +1525,7 @@ static void ab8500_chargalg_algorithm(struct ab8500_chargalg *di)
- 				       bi->alert_high_temp_charge_voltage_uv,
- 				       bi->alert_high_temp_charge_current_ua);
- 		} else {
--			dev_err(di->dev, "neither low or high temp event occured\n");
-+			dev_err(di->dev, "neither low or high temp event occurred\n");
- 			ab8500_chargalg_state_to(di, STATE_NORMAL_INIT);
- 			break;
- 		}
+ 	/* No interrupts are involved: we have to check at regular intervals
+ 	if the card's output buffer has room for new data. */
+-	sent = bytes = 0;
++	sent = 0;
+ 	spin_lock_irqsave(&chip->lock, flags);
+ 	chip->midi_full = 0;
+ 	if (!snd_rawmidi_transmit_empty(chip->midi_out)) {
 -- 
 2.34.1
 
