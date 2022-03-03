@@ -2,60 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3625C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Mar 2022 08:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 191CAC4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Mar 2022 09:05:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231734AbiCCI73 (ORCPT
+        id S231775AbiCCJF6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Mar 2022 03:59:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53936 "EHLO
+        Thu, 3 Mar 2022 04:05:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229609AbiCCI73 (ORCPT
+        with ESMTP id S229491AbiCCJF6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Mar 2022 03:59:29 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C81B916AA6F;
-        Thu,  3 Mar 2022 00:58:43 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id u10so5044244wra.9;
-        Thu, 03 Mar 2022 00:58:43 -0800 (PST)
+        Thu, 3 Mar 2022 04:05:58 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA2DE177740;
+        Thu,  3 Mar 2022 01:05:10 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id p184-20020a1c29c1000000b0037f76d8b484so2792148wmp.5;
+        Thu, 03 Mar 2022 01:05:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=MQJEo4upM9dSdfpug7K8DnThChzSPXUmNu2eyU+dF0c=;
-        b=Gha4Rawl9ZluKz5YWzXzEN2XIGAG+bVjt3e5SJt0uA2BR89mC8aU3Iy5NQ0VfXKh9g
-         kfesiK9eGEfxcURrhDHf+jBVKvIURS1woL7ItJJqTQpi7zfbvtnuZ+UJArukyBbTTNtP
-         aIc0ztOnpbZiug1qIO2nGgYq/TJfq+qxOqt251Jlyr4OwBP6nfRoXfe0UST1t6JmBJWj
-         YpJZFNoCPP3IrxoF6BFrZ+calNPV0ruIjn8FRqHh+FyAP2YF/Rx4oq9m7q2syd6CHXEE
-         D7z9oxSI2sVBUCUEFZ0kgsYuhBmd2+RQxr4vILUwWJiNP1VRV2dUTEIDR08MTR8nabiL
-         cX/w==
+        bh=+FOBCOKBUOKBrO8yhdXy1yyP31Rv+CE5Az+FJgpuSOw=;
+        b=bV0quv7CQHqRsqMuMnYki4NDf3gyminsa8fgh1Tkc09abQfrsbuKCSyIiNQsR89d3M
+         kj+RSpp585GVLCBfQZ3ZUb7yAUCpOu/yN7XukhV+udVL/9xkrC2ifWDnMgH5aunLxQTv
+         Zi6PGwfDUpWv7DW3l6wEV7x7EgcEk/5Rohqs54CouPvTTS78X4SMsbKnRzfnezg4kr4k
+         WWw3+EeOD1QM3tpg0qnkgvHB8rWJrMwRdXG6XyDwzPSwKDOwjxWyBNZVyYTZGShIPIVv
+         0hwKaTajT54NLnq6rHttPXXvBjRUKGGVgmaSg1AfIltw0xSOlJQEQr3UiLFI5QE6ygDR
+         1UTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=MQJEo4upM9dSdfpug7K8DnThChzSPXUmNu2eyU+dF0c=;
-        b=UpK8YtPwqNDUcoKTZg7x6rghz1FYeyLZAlR3rG7Lb5LOrm2KRKRS15h+U2cwoB7kQG
-         lnmoyBuov7j3ZG5YJkfR2i8dMaU3FQD9zxpB+URSARofofWPEVe+TZJauryQXtU7f7AX
-         Q4MrPthruPFe+CaS1UAQeBypfdW/LxSaj+kUroRD2x2MFOZczi+p2V4IRgvffI03Dl6+
-         yd8oFjr50Olm81f3zil2i/uu5Zpa4bBh4Zrsi6u7POF/TilMXy7hBD8tO285i9zGVwi+
-         tI5xQmtZfnlmEqtkiXrkklXURNfQPXpxLAIHeOqtY0ht22B/x/xUQVjx6qA2H4AfemOE
-         9ghQ==
-X-Gm-Message-State: AOAM531tnBr0V8nwrAFLB/8RBcuozfZskXl7Yf9/TS1OZsmJQ+Y5M008
-        OjvvwM5s3YyvmwbzBJ5BTkiExi40Nsg8/A==
-X-Google-Smtp-Source: ABdhPJzb79AfvihErqIaACg4s+qnD0+s9McBGRubFqnZIJTZQBGBFrhdjoEUdNRjlwKSfBwdcpzncQ==
-X-Received: by 2002:a05:6000:1e0c:b0:1f0:95f:42e7 with SMTP id bj12-20020a0560001e0c00b001f0095f42e7mr8929437wrb.239.1646297922269;
-        Thu, 03 Mar 2022 00:58:42 -0800 (PST)
+        bh=+FOBCOKBUOKBrO8yhdXy1yyP31Rv+CE5Az+FJgpuSOw=;
+        b=Moti2u3j8pA95HvPLQRerhGC3sVwbJ2deWif1rCJX6o5CToE4PGXb1bnXVRDYpcIOx
+         1W7189vfRtFKSpB1Gxc6rmaYmn4Iqj4fwzRCAKfoDV7U0ukff5Y6zBmsO1Nj6WWduajl
+         C/5DTY1pWsCDOSDiBN/9Zu9sJXXTPFVeaG9rIHXjSlxxWSdLWgeUQy2pmsK5QBoAFq51
+         iJcNjo3S69ayq8FmUOLWiWZYXQWkkdJIIaZUkkh9nKL3cIMPbgX/3ruyopl5FvZjwvrH
+         ZR1ic5uiJVn9FPbdVTc66bpFjGiCG8e6rYtjyniV6F7oyUW7qf9uWptYhAEs5AYRCt+q
+         qNAw==
+X-Gm-Message-State: AOAM533ddzI4x2phYqVbQYMsP5G6Czu/Se+KUM71ITSBrVkOTq3BK6rp
+        RquqHUc4Om2+WYoZh9xJQUc=
+X-Google-Smtp-Source: ABdhPJwQfGl2taTo7TZ21DRaALXumXvZYaUbZJ65zGR4LRTDVWP64sLQJSK2ZUxRUaKTbvBt3qe0jw==
+X-Received: by 2002:a1c:1907:0:b0:380:f6ec:4daa with SMTP id 7-20020a1c1907000000b00380f6ec4daamr3088912wmz.50.1646298309192;
+        Thu, 03 Mar 2022 01:05:09 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id f4-20020a5d4dc4000000b001d8e67e5214sm1418022wru.48.2022.03.03.00.58.41
+        by smtp.gmail.com with ESMTPSA id e20-20020adfa454000000b001f01a14dce8sm1357768wra.97.2022.03.03.01.05.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Mar 2022 00:58:41 -0800 (PST)
+        Thu, 03 Mar 2022 01:05:08 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
-        linux-wireless@vger.kernel.org
+To:     Abel Vesa <abel.vesa@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] bcma: gpio: remove redundant re-assignment of chip->owner
-Date:   Thu,  3 Mar 2022 08:58:41 +0000
-Message-Id: <20220303085841.1124766-1-colin.i.king@gmail.com>
+Subject: [PATCH] clk: imx: remove redundant re-assignment of pll->base
+Date:   Thu,  3 Mar 2022 09:05:08 +0000
+Message-Id: <20220303090508.1125175-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,30 +71,30 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are two identical assignments of chip->owner to the same value,
+There are two identical assignments of pll->base to the same value,
 the second assignment is redundant and can be removed.
 
 Cleans up cppcheck warning:
-drivers/bcma/driver_gpio.c:184:15: style: Variable 'chip->owner' is
+drivers/clk/imx/clk-sscg-pll.c:528:12: style: Variable 'pll->base' is
 reassigned a value before the old one has been used. [redundantAssignment]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/bcma/driver_gpio.c | 1 -
+ drivers/clk/imx/clk-sscg-pll.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/bcma/driver_gpio.c b/drivers/bcma/driver_gpio.c
-index 8a1e4705bc87..1e74ec1c7f23 100644
---- a/drivers/bcma/driver_gpio.c
-+++ b/drivers/bcma/driver_gpio.c
-@@ -181,7 +181,6 @@ int bcma_gpio_init(struct bcma_drv_cc *cc)
- 	chip->set		= bcma_gpio_set_value;
- 	chip->direction_input	= bcma_gpio_direction_input;
- 	chip->direction_output	= bcma_gpio_direction_output;
--	chip->owner		= THIS_MODULE;
- 	chip->parent		= bus->dev;
- #if IS_BUILTIN(CONFIG_OF)
- 	chip->of_node		= cc->core->dev.of_node;
+diff --git a/drivers/clk/imx/clk-sscg-pll.c b/drivers/clk/imx/clk-sscg-pll.c
+index 9d6cdff0537f..81f304fae908 100644
+--- a/drivers/clk/imx/clk-sscg-pll.c
++++ b/drivers/clk/imx/clk-sscg-pll.c
+@@ -525,7 +525,6 @@ struct clk_hw *imx_clk_hw_sscg_pll(const char *name,
+ 	init.parent_names = parent_names;
+ 	init.num_parents = num_parents;
+ 
+-	pll->base = base;
+ 	pll->hw.init = &init;
+ 
+ 	hw = &pll->hw;
 -- 
 2.34.1
 
