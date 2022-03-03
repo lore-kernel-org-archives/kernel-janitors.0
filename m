@@ -2,109 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D44D9C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Mar 2022 08:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3625C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Mar 2022 08:58:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229864AbiCCIix (ORCPT
+        id S231734AbiCCI73 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Mar 2022 03:38:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46714 "EHLO
+        Thu, 3 Mar 2022 03:59:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229678AbiCCIiw (ORCPT
+        with ESMTP id S229609AbiCCI73 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Mar 2022 03:38:52 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0E6B8148926
-        for <kernel-janitors@vger.kernel.org>; Thu,  3 Mar 2022 00:38:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646296687;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7VbL5lT53mUztHyArx9pP7wyihmJ4M3NPqTtcvOQ2VI=;
-        b=X6hNB79T/AP8VlAWg15d9IveEEkZKNhsAeiO9I6craiqet1W8RrTPyfV5gZ9nJKXHgQPPl
-        TBRWekikCjQwAjodNsYphOZlFRzCV6Pcl0HNESx98t5F2G5sXeOjhzKAv006v4Z+aEwxhT
-        gNd3ewXtXz1jVrkxqXHaIePQQAm/jbQ=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-499-yHYRTj_yMYG5A_8iGP_7ag-1; Thu, 03 Mar 2022 03:38:05 -0500
-X-MC-Unique: yHYRTj_yMYG5A_8iGP_7ag-1
-Received: by mail-wr1-f72.google.com with SMTP id a16-20020adff7d0000000b001f0473a6b25so1456641wrq.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 03 Mar 2022 00:38:05 -0800 (PST)
+        Thu, 3 Mar 2022 03:59:29 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C81B916AA6F;
+        Thu,  3 Mar 2022 00:58:43 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id u10so5044244wra.9;
+        Thu, 03 Mar 2022 00:58:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MQJEo4upM9dSdfpug7K8DnThChzSPXUmNu2eyU+dF0c=;
+        b=Gha4Rawl9ZluKz5YWzXzEN2XIGAG+bVjt3e5SJt0uA2BR89mC8aU3Iy5NQ0VfXKh9g
+         kfesiK9eGEfxcURrhDHf+jBVKvIURS1woL7ItJJqTQpi7zfbvtnuZ+UJArukyBbTTNtP
+         aIc0ztOnpbZiug1qIO2nGgYq/TJfq+qxOqt251Jlyr4OwBP6nfRoXfe0UST1t6JmBJWj
+         YpJZFNoCPP3IrxoF6BFrZ+calNPV0ruIjn8FRqHh+FyAP2YF/Rx4oq9m7q2syd6CHXEE
+         D7z9oxSI2sVBUCUEFZ0kgsYuhBmd2+RQxr4vILUwWJiNP1VRV2dUTEIDR08MTR8nabiL
+         cX/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=7VbL5lT53mUztHyArx9pP7wyihmJ4M3NPqTtcvOQ2VI=;
-        b=c20Xj01k8dRjCjTW0dp2geYtkUU2obdaOQFsKRDlf48+ApyQ94kl1VkNrVEi1UOPHe
-         cfgJzTnTmw0jsveh4ExbgyN/lBK6F3d0i8l/dF2oApvThu2LrbmReLob6BLZSUA/NKyt
-         M86f04LlRFYUvqB6/ZXpt6D6GmkMFpkilVBS1mJFIHnssbaL9D8wf5kevWMoTl1ctxAR
-         mB5dE3pbltVAnassqyFrYp/cihecxRqkdEsGIxovIxFGe9l+87ehjqFzB3QKu63hcRZV
-         KZFL8v0Jg6CL8jRIa9svc+CJC/b/OMaKrWLd6qbN36fEHgiNUi88bzwZ/+RjOV6mFmuV
-         FydA==
-X-Gm-Message-State: AOAM530VBi0WepEQEw7rfLbEeRpppUHjR2YRi48PcChPTljLql9VJdf2
-        w/g9F+1DZodQ5kDItkJ82HIEMycC6GQ7XDGirzjrw6zjHePhfyboc4X5taNDFIxselzp0d8nkAg
-        M5C2JUZVa0qOwi5b6GwMTLwsp8y7W
-X-Received: by 2002:a5d:47a4:0:b0:1f0:46e4:19bc with SMTP id 4-20020a5d47a4000000b001f046e419bcmr4066497wrb.601.1646296684784;
-        Thu, 03 Mar 2022 00:38:04 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJw/AOr9kcfSCL6dEmzp2KPAxB6X5N/u/fMMDoNJCyjfqcaaRT42zcBqSgBSliGMWF1kL7ADpA==
-X-Received: by 2002:a5d:47a4:0:b0:1f0:46e4:19bc with SMTP id 4-20020a5d47a4000000b001f046e419bcmr4066475wrb.601.1646296684567;
-        Thu, 03 Mar 2022 00:38:04 -0800 (PST)
-Received: from [192.168.1.102] ([92.176.231.205])
-        by smtp.gmail.com with ESMTPSA id v15-20020a5d590f000000b001f04b96f9a9sm1338936wrd.42.2022.03.03.00.38.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Mar 2022 00:38:04 -0800 (PST)
-Message-ID: <8cef7451-ac6a-9ca5-b521-1eec53d30880@redhat.com>
-Date:   Thu, 3 Mar 2022 09:38:03 +0100
+        bh=MQJEo4upM9dSdfpug7K8DnThChzSPXUmNu2eyU+dF0c=;
+        b=UpK8YtPwqNDUcoKTZg7x6rghz1FYeyLZAlR3rG7Lb5LOrm2KRKRS15h+U2cwoB7kQG
+         lnmoyBuov7j3ZG5YJkfR2i8dMaU3FQD9zxpB+URSARofofWPEVe+TZJauryQXtU7f7AX
+         Q4MrPthruPFe+CaS1UAQeBypfdW/LxSaj+kUroRD2x2MFOZczi+p2V4IRgvffI03Dl6+
+         yd8oFjr50Olm81f3zil2i/uu5Zpa4bBh4Zrsi6u7POF/TilMXy7hBD8tO285i9zGVwi+
+         tI5xQmtZfnlmEqtkiXrkklXURNfQPXpxLAIHeOqtY0ht22B/x/xUQVjx6qA2H4AfemOE
+         9ghQ==
+X-Gm-Message-State: AOAM531tnBr0V8nwrAFLB/8RBcuozfZskXl7Yf9/TS1OZsmJQ+Y5M008
+        OjvvwM5s3YyvmwbzBJ5BTkiExi40Nsg8/A==
+X-Google-Smtp-Source: ABdhPJzb79AfvihErqIaACg4s+qnD0+s9McBGRubFqnZIJTZQBGBFrhdjoEUdNRjlwKSfBwdcpzncQ==
+X-Received: by 2002:a05:6000:1e0c:b0:1f0:95f:42e7 with SMTP id bj12-20020a0560001e0c00b001f0095f42e7mr8929437wrb.239.1646297922269;
+        Thu, 03 Mar 2022 00:58:42 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id f4-20020a5d4dc4000000b001d8e67e5214sm1418022wru.48.2022.03.03.00.58.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Mar 2022 00:58:41 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+        linux-wireless@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] bcma: gpio: remove redundant re-assignment of chip->owner
+Date:   Thu,  3 Mar 2022 08:58:41 +0000
+Message-Id: <20220303085841.1124766-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH][next] drm: ssd130x: remove redundant initialization of
- pointer mode
-Content-Language: en-US
-From:   Javier Martinez Canillas <javierm@redhat.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        llvm@lists.linux.dev
-References: <20220302175309.1098827-1-colin.i.king@gmail.com>
- <CAFOAJEfS9dMY5nudeFxtwchTtLnBCh7N4qKaCdqvaodnRUFKzA@mail.gmail.com>
-In-Reply-To: <CAFOAJEfS9dMY5nudeFxtwchTtLnBCh7N4qKaCdqvaodnRUFKzA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 3/2/22 19:29, Javier Martinez Canillas wrote:
-> Hello Colin,
-> 
-> Thanks for the patch.
-> 
-> On Wed, Mar 2, 2022 at 6:53 PM Colin Ian King <colin.i.king@gmail.com> wrote:
->>
->> Pointer mode is being assigned a value that is never read, it is
->> being re-assigned later with a new value. The initialization is
->> redundant and can be removed.
->>
-> 
-> Indeed.
-> 
-> Acked-by: Javier Martinez Canillas <javierm@redhat.com>
->
+There are two identical assignments of chip->owner to the same value,
+the second assignment is redundant and can be removed.
 
-Pushed to drm-misc-next (with fixed drm/ssd130x subject prefix).
+Cleans up cppcheck warning:
+drivers/bcma/driver_gpio.c:184:15: style: Variable 'chip->owner' is
+reassigned a value before the old one has been used. [redundantAssignment]
 
-Thanks!
- -- 
-Best regards,
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/bcma/driver_gpio.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Javier Martinez Canillas
-Linux Engineering
-Red Hat
+diff --git a/drivers/bcma/driver_gpio.c b/drivers/bcma/driver_gpio.c
+index 8a1e4705bc87..1e74ec1c7f23 100644
+--- a/drivers/bcma/driver_gpio.c
++++ b/drivers/bcma/driver_gpio.c
+@@ -181,7 +181,6 @@ int bcma_gpio_init(struct bcma_drv_cc *cc)
+ 	chip->set		= bcma_gpio_set_value;
+ 	chip->direction_input	= bcma_gpio_direction_input;
+ 	chip->direction_output	= bcma_gpio_direction_output;
+-	chip->owner		= THIS_MODULE;
+ 	chip->parent		= bus->dev;
+ #if IS_BUILTIN(CONFIG_OF)
+ 	chip->of_node		= cc->core->dev.of_node;
+-- 
+2.34.1
 
