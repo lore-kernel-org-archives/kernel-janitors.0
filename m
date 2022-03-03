@@ -2,103 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D068C43219
-	for <kernel-janitors@archiver.kernel.org>; Wed,  2 Mar 2022 21:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6672C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Mar 2022 05:48:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245376AbiCBVh0 (ORCPT
+        id S229730AbiCCFt3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 2 Mar 2022 16:37:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45432 "EHLO
+        Thu, 3 Mar 2022 00:49:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245358AbiCBVhW (ORCPT
+        with ESMTP id S229491AbiCCFt2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 2 Mar 2022 16:37:22 -0500
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83D9C5640A;
-        Wed,  2 Mar 2022 13:36:37 -0800 (PST)
-Received: by mail-yb1-xb29.google.com with SMTP id g1so6186206ybe.4;
-        Wed, 02 Mar 2022 13:36:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=F9su24UUCpFbzNjnzich2MRj6bAe/1UrU40e7yTrYl4=;
-        b=kJYAGOURvvI51nvUQxCcdujpjcu86BIy/7PcVFcAJWYVOU+VYmjLG9uxZrne+ZHDgf
-         wtt7Kypti4GRddq2ZjajoyBnDi7tp09Cga9N7UzWlurwi96LioKSp8NONWFv5sT++x/h
-         h1WBPZHYIaPO5XacD02pjmsgSaHO6XXw9lqnlBJZ8+nPI42KCQpKwvtxWQvQz8fKku5f
-         gFc9tMlKx0mCEsRRlTZWPyER9U3zCGb/3DXO5eD8tMlpAluM0TeeXOqPHirtTqo8eSm0
-         0QWH5oMH1IqlROCrEpPnw21RjBWG22y6EHp2rBGdiYKJDjOePeQLu1Vhc3lIvK4Imm4x
-         p5Uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=F9su24UUCpFbzNjnzich2MRj6bAe/1UrU40e7yTrYl4=;
-        b=JWqXaFIgqrxP2j8EZHSwzPbAJyq5fDaTMNGghNein14AYt2H7EitiPgHHW+S3ZIs6x
-         S3ht+ln75f74A7hetB+PqsVo+5QIBP82plYIAY/Be8Hbbw990+45Gj8vqSGHPeteybZh
-         bUnmtWyjDgs0SWXPalE1DPfMnxmyKEuSdq7IzWJlHxrehBCnJGoK5Ez87tL6zq5fJT1X
-         PR7yuwcaD9OuX/zo8Z8iB8lZzddZHvBaEVQCRPqavcc45SFLNPY24vUFektGNuLc9zne
-         ALXl1qr/CIS6gHM8oHxSCOVh0UeBIAOX4yKcXq5/zVu/S2TzlUK/aW9EViDTyTRE3tJs
-         Ec+w==
-X-Gm-Message-State: AOAM5320W4XrRAGku9lyLkyp7z8Zr1teXjx+NM6uZmWzinFFWdJHhgT9
-        dvFMlvnFTU1uNFKzS5JNQ1BLDr5+KxKnXRu03tY=
-X-Google-Smtp-Source: ABdhPJw7BiPedTto2QQEQGe/650vKh+a92S6h573kPbrCj+bZkGHT0XJF4cXuWxFhf6Ef1veMooEo6KVj72th/wvP+w=
-X-Received: by 2002:a25:8546:0:b0:61e:1d34:ec71 with SMTP id
- f6-20020a258546000000b0061e1d34ec71mr29825208ybn.259.1646256996745; Wed, 02
- Mar 2022 13:36:36 -0800 (PST)
+        Thu, 3 Mar 2022 00:49:28 -0500
+Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70DF4119F00
+        for <kernel-janitors@vger.kernel.org>; Wed,  2 Mar 2022 21:48:41 -0800 (PST)
+Received: from [192.168.1.18] ([90.126.236.122])
+        by smtp.orange.fr with ESMTPA
+        id PeKLnokkrxHdTPeKLneDHk; Thu, 03 Mar 2022 06:48:39 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Thu, 03 Mar 2022 06:48:39 +0100
+X-ME-IP: 90.126.236.122
+Message-ID: <3bf9dbf1-74fc-5cc9-b6fc-c3267be0a4ac@wanadoo.fr>
+Date:   Thu, 3 Mar 2022 06:48:37 +0100
 MIME-Version: 1.0
-References: <e2c2fe36c226529c99595370003d3cb1b7133c47.1646252285.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <e2c2fe36c226529c99595370003d3cb1b7133c47.1646252285.git.christophe.jaillet@wanadoo.fr>
-From:   Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date:   Wed, 2 Mar 2022 13:36:25 -0800
-Message-ID: <CABBYNZKpZ+tA0YuBFzwug-W3Bcx9GuL4hcrPSfSQt0VnbZi58A@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
 Subject: Re: [PATCH] Bluetooth: Don't assign twice the same value
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+To:     Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+References: <e2c2fe36c226529c99595370003d3cb1b7133c47.1646252285.git.christophe.jaillet@wanadoo.fr>
+ <CABBYNZKpZ+tA0YuBFzwug-W3Bcx9GuL4hcrPSfSQt0VnbZi58A@mail.gmail.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc:     Marcel Holtmann <marcel@holtmann.org>,
         Johan Hedberg <johan.hedberg@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org,
         "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CABBYNZKpZ+tA0YuBFzwug-W3Bcx9GuL4hcrPSfSQt0VnbZi58A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+Le 02/03/2022 à 22:36, Luiz Augusto von Dentz a écrit :
+> Hi Christophe,
+> 
+> On Wed, Mar 2, 2022 at 12:18 PM Christophe JAILLET
+> <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org> wrote:
+>>
+>> data.pid is set twice with the same value. Remove one of these redundant
+>> calls.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+>> ---
+>>   net/bluetooth/l2cap_core.c | 1 -
+>>   1 file changed, 1 deletion(-)
+>>
+>> diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
+>> index e817ff0607a0..0d460cb7f965 100644
+>> --- a/net/bluetooth/l2cap_core.c
+>> +++ b/net/bluetooth/l2cap_core.c
+>> @@ -1443,7 +1443,6 @@ static void l2cap_ecred_connect(struct l2cap_chan *chan)
+>>          data.pdu.scid[0]     = cpu_to_le16(chan->scid);
+>>
+>>          chan->ident = l2cap_get_ident(conn);
+>> -       data.pid = chan->ops->get_peer_pid(chan);
+> 
+> Perhaps we should do if (!data->pid) then since afaik one can do
+> connect without bind.
 
-On Wed, Mar 2, 2022 at 12:18 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> data.pid is set twice with the same value. Remove one of these redundant
-> calls.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  net/bluetooth/l2cap_core.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
-> index e817ff0607a0..0d460cb7f965 100644
-> --- a/net/bluetooth/l2cap_core.c
-> +++ b/net/bluetooth/l2cap_core.c
-> @@ -1443,7 +1443,6 @@ static void l2cap_ecred_connect(struct l2cap_chan *chan)
->         data.pdu.scid[0]     = cpu_to_le16(chan->scid);
->
->         chan->ident = l2cap_get_ident(conn);
-> -       data.pid = chan->ops->get_peer_pid(chan);
-
-Perhaps we should do if (!data->pid) then since afaik one can do
-connect without bind.
-
->         data.count = 1;
->         data.chan = chan;
-> --
-> 2.32.0
->
+Not sure to follow you.
+'data' is local to this function. data->pid is undefined at this point.
 
 
--- 
-Luiz Augusto von Dentz
+If your comment is about the end of the function that should be 
+conditional, I don't know the bluetooth stack at all and can't have any 
+opinion about it.
+
+If it is relevant, s.o. else will need to provide a patch for it.
+
+CJ
+
+> 
+>>          data.count = 1;
+>>          data.chan = chan;
+>> --
+>> 2.32.0
+>>
+> 
+> 
+
