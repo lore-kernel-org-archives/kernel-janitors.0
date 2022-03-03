@@ -2,77 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F4FFC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Mar 2022 14:50:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA63C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu,  3 Mar 2022 15:14:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233042AbiCCOu6 (ORCPT
+        id S234142AbiCCPPQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 3 Mar 2022 09:50:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51920 "EHLO
+        Thu, 3 Mar 2022 10:15:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231432AbiCCOu5 (ORCPT
+        with ESMTP id S233874AbiCCPPN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 3 Mar 2022 09:50:57 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C00C4FC42;
-        Thu,  3 Mar 2022 06:50:12 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 31529B82600;
-        Thu,  3 Mar 2022 14:50:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E6BAEC004E1;
-        Thu,  3 Mar 2022 14:50:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646319010;
-        bh=M+Xlgcob4w5XnkVe4GbpEAx14evwYSmptbB04R43aMI=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=KawGHsPph71zbalUsK2m8Us87vom6GrWU+XBukaJe60dQrpi1oBSqRU8aoPCNnDMx
-         3e80LbrCqOiOI+/nU3iz1Fo0+8NyAkNcneUhUOLo9mRs7HrkDv2aq1bsgzRKCKNA26
-         ZA2cNSaC755gxGx+D1aYLsaer/P0vrs+E2rDR6ieKKkB3+mPsYv8uqmkTDZhmmfY72
-         28IewOtIIAXdieMwImAPvS/TM5DQoroO6N/jhW5ffCzx+mfB3LFdzVtJa8ieun2njS
-         P+6ytOiT/dkQpe+E0dQGHtyuQTw96to0rhtSjWb3kwNJe0HQMWBVXqyaBVcEhOMSYt
-         nvas+Tp5h49kA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C1FC5EAC096;
-        Thu,  3 Mar 2022 14:50:09 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 3 Mar 2022 10:15:13 -0500
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3723445509;
+        Thu,  3 Mar 2022 07:14:27 -0800 (PST)
+Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 223FEGv9016300
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 3 Mar 2022 10:14:16 -0500
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 0A9A315C0038; Thu,  3 Mar 2022 10:14:16 -0500 (EST)
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Colin Ian King <colin.i.king@gmail.com>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>, kernel-janitors@vger.kernel.org,
+        llvm@lists.linux.dev
+Subject: Re: [PATCH] ext4: remove redundant assignment to variable split_flag1
+Date:   Thu,  3 Mar 2022 10:14:09 -0500
+Message-Id: <164632037182.689479.9390107109546635119.b4-ty@mit.edu>
+X-Mailer: git-send-email 2.31.0
+In-Reply-To: <20220301121644.997833-1-colin.i.king@gmail.com>
+References: <20220301121644.997833-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] bnx2: Fix an error message
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164631900979.29171.14311877408050693466.git-patchwork-notify@kernel.org>
-Date:   Thu, 03 Mar 2022 14:50:09 +0000
-References: <a6cf1111d372dd0a682f4ba929f9e8e2538260a6.1646252465.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <a6cf1111d372dd0a682f4ba929f9e8e2538260a6.1646252465.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     rmody@marvell.com, GR-Linux-NIC-Dev@marvell.com,
-        davem@davemloft.net, kuba@kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net.git (master)
-by David S. Miller <davem@davemloft.net>:
-
-On Wed,  2 Mar 2022 21:21:15 +0100 you wrote:
-> Fix an error message and report the correct failing function.
+On Tue, 1 Mar 2022 12:16:44 +0000, Colin Ian King wrote:
+> Variable split_flag1 is being assigned a value that is never read,
+> it is being re-assigned a new value in the following code block.
+> The assignment is redundant and can be removed.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/net/ethernet/broadcom/bnx2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Cleans up clang scan build warning:
+> fs/ext4/extents.c:3371:2: warning: Value stored to 'split_flag1' is
+> never read [deadcode.DeadStores]
+> 
+> [...]
 
-Here is the summary with links:
-  - bnx2: Fix an error message
-    https://git.kernel.org/netdev/net/c/8ccffe9ac323
+Applied, thanks!
 
-You are awesome, thank you!
+[1/1] ext4: remove redundant assignment to variable split_flag1
+      commit: 6b71b69dd98b197deea0806417e88308e0876a10
+
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Theodore Ts'o <tytso@mit.edu>
