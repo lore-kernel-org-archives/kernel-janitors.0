@@ -2,117 +2,130 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA1FC433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Mar 2022 15:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B31EC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri,  4 Mar 2022 18:40:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240347AbiCDPeK (ORCPT
+        id S237792AbiCDSlY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 4 Mar 2022 10:34:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34700 "EHLO
+        Fri, 4 Mar 2022 13:41:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236638AbiCDPeJ (ORCPT
+        with ESMTP id S231818AbiCDSlX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 4 Mar 2022 10:34:09 -0500
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C35AD1089;
-        Fri,  4 Mar 2022 07:33:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1646408001; x=1677944001;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=AC+sn40Z+k5l1FB0jWe8IhHFK44Toly0dffZXkZtlDc=;
-  b=YG81gtEtFW30ptRiO1qIfhu6nNkxzyvMgSbO/20Q+Mpm6sbVTr2pWxQ/
-   kU68i6VoYG6aC73DLU/zf/tXju9xiBWqD3DoKwSxDfmDTdekp+Z+HcWXy
-   yEHej7FqT9z66u/Sn6ejf5tgAd32ZYfPAGPg9Y6H4ZwJGP8NF9u4NQPLx
-   QjrOwYVb7ltFbTS1OBxyxtjZw+hVqU+w5ygq+oXQGHpSwwDnH2nwlT6xM
-   F/+hkMKb/rFntGXdXRouN4RvjOs3CvaqmlbcYutfWfTNF+SjL2//yi2ub
-   AVkOpBjpuvGMObYNtcrA/RiDf6/g/AodjcnLV4Mc59B0jxJjGIhirE9lx
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10276"; a="254189793"
-X-IronPort-AV: E=Sophos;i="5.90,155,1643702400"; 
-   d="scan'208";a="254189793"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2022 07:33:21 -0800
-X-IronPort-AV: E=Sophos;i="5.90,155,1643702400"; 
-   d="scan'208";a="552259505"
-Received: from qiantong-mobl1.amr.corp.intel.com (HELO spandruv-desk1.amr.corp.intel.com) ([10.212.225.201])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2022 07:33:21 -0800
-Message-ID: <d51cfdfb53e5aaf723c025d79d0422e75b75a814.camel@linux.intel.com>
-Subject: Re: [PATCH] platform/x86/intel-uncore-freq: fix
- uncore_freq_common_init() error codes
-From:   srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        platform-driver-x86@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Date:   Fri, 04 Mar 2022 07:33:12 -0800
-In-Reply-To: <20220304131925.GG28739@kili>
-References: <20220304131925.GG28739@kili>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
+        Fri, 4 Mar 2022 13:41:23 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67D2C1637F3
+        for <kernel-janitors@vger.kernel.org>; Fri,  4 Mar 2022 10:40:34 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id b11so15634779lfb.12
+        for <kernel-janitors@vger.kernel.org>; Fri, 04 Mar 2022 10:40:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fungible.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1qNQzyNmyOmztuypwmQngSLxbTxrEy376+DYlmCUWE8=;
+        b=iBFf7P0UyD6s0JdSRHiObjKqGxjmKXIT95TZyobrYEEh7mo1QUAg/XYd3zDcZuMTrA
+         6rwrWLwtQTUHPOotGptjAYNcbUAMOR9IlX5tt9en2ZXfLSl6nXBScDvpGSGNjMgQKhe1
+         lmWL2uu4buvWQCiT1eiv6s32MuO0p+Yt3oq1w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1qNQzyNmyOmztuypwmQngSLxbTxrEy376+DYlmCUWE8=;
+        b=L407ClXtxR4TTtc+BizBZMvCDMiTjqcDPBbm2huLhy7joH/ju6LQzDbAgGqSYYDbUl
+         cQ7NHz58ZwkQQ/TquSdzcjBfDbYLecZQALkoBbYqJq4znFYJ7VDHfKgj1o/E/c9SjQCm
+         Va0mPJ43LeXRv8vuETNiIi3q4SPW1JLB7S8BDvNr8dna1/ZZI/NhlEDH5OrN0SDqLdve
+         toKITMExG2ENexJO4TmdhZIYAyhffEy13z1iWssxqMGlWwg4Jw96Nr0LfM7eHdCJ8axr
+         ETwdPxvOjoO76qemEf95wpVBhU+048ymc+XozYsxBItegkw6xte3Tz3wY9m3X7ET6mP3
+         mqFw==
+X-Gm-Message-State: AOAM531aAXd0K7CkIDYMauEsmuD79q7WGfuAKIuGRmPyvN8wXmzfLDKc
+        ynI8VKoY7b2ZYJok5uW7r1/tMgdfa5XECnf1pMDjOblFIDA=
+X-Google-Smtp-Source: ABdhPJxYH0XaXIvu90Yw8DrkwPnOM3U0tPXXxhXwz9iyFElvZKw8yEoH44ZBqhKVOQtD/XU+7yelFi4xr9CGlw32+4s=
+X-Received: by 2002:a05:6512:4017:b0:443:b9ee:2a3d with SMTP id
+ br23-20020a056512401700b00443b9ee2a3dmr29999lfb.593.1646419230307; Fri, 04
+ Mar 2022 10:40:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220304131718.GF28739@kili>
+In-Reply-To: <20220304131718.GF28739@kili>
+From:   Dimitris Michailidis <d.michailidis@fungible.com>
+Date:   Fri, 4 Mar 2022 10:40:19 -0800
+Message-ID: <CAOkoqZktHZ8Aqf5-WFuOt8ngt5cnbH48kpYKMnMFBhG7diXvPQ@mail.gmail.com>
+Subject: Re: [bug report] net/funeth: probing and netdev ops
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 2022-03-04 at 16:19 +0300, Dan Carpenter wrote:
-> Currently the uncore_freq_common_init() return one on success and
-> zero on failure.  There is only one caller and it has a "forgot to
-> set
-> the error code" bug.  Change uncore_freq_common_init() to return
-> negative error codes which makes the code simpler and avoids this
-> kind
-> of bug in the future.
-> 
-> Fixes: dbce412a7733 ("platform/x86/intel-uncore-freq: Split common
-> and enumeration part")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+On Fri, Mar 4, 2022 at 5:17 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> Hello Dimitris Michailidis,
+>
+> The patch ee6373ddf3a9: "net/funeth: probing and netdev ops" from Feb
+> 24, 2022, leads to the following Smatch static checker warning:
+>
+>         drivers/net/ethernet/fungible/funeth/funeth_main.c:477 fun_free_rings()
+>         warn: 'rxqs' was already freed.
+>
+> drivers/net/ethernet/fungible/funeth/funeth_main.c
+>     443 static void fun_free_rings(struct net_device *netdev, struct fun_qset *qset)
+>     444 {
+>     445         struct funeth_priv *fp = netdev_priv(netdev);
+>     446         struct funeth_txq **xdpqs = qset->xdpqs;
+>     447         struct funeth_rxq **rxqs = qset->rxqs;
+>     448
+>     449         /* qset may not specify any queues to operate on. In that case the
+>     450          * currently installed queues are implied.
+>     451          */
+>     452         if (!rxqs) {
+>     453                 rxqs = rtnl_dereference(fp->rxqs);
+>     454                 xdpqs = rtnl_dereference(fp->xdpqs);
+>     455                 qset->txqs = fp->txqs;
+>     456                 qset->nrxqs = netdev->real_num_rx_queues;
+>     457                 qset->ntxqs = netdev->real_num_tx_queues;
+>     458                 qset->nxdpqs = fp->num_xdpqs;
+>     459         }
+>     460         if (!rxqs)
+>     461                 return;
+>     462
+>     463         if (rxqs == rtnl_dereference(fp->rxqs)) {
+>     464                 rcu_assign_pointer(fp->rxqs, NULL);
+>     465                 rcu_assign_pointer(fp->xdpqs, NULL);
+>     466                 synchronize_net();
+>     467                 fp->txqs = NULL;
+>     468         }
+>     469
+>     470         free_rxqs(rxqs, qset->nrxqs, qset->rxq_start, qset->state);
+>     471         free_txqs(qset->txqs, qset->ntxqs, qset->txq_start, qset->state);
+>     472         free_xdpqs(xdpqs, qset->nxdpqs, qset->xdpq_start, qset->state);
+>     473         if (qset->state == FUN_QSTATE_DESTROYED)
+>     474                 kfree(rxqs);
+>                         ^^^^^^^^^^^
+> Should this return or set "rxqs = NULL" or something?
+>
+>     475
+>     476         /* Tell the caller which queues were operated on. */
+> --> 477         qset->rxqs = rxqs;
+>                 ^^^^^^^^^^^^^^^^^^
+> Only bad things will happen with safing this freed pointer.
 
-> ---
->  .../x86/intel/uncore-frequency/uncore-frequency-common.c        | 2
-> +-
->  drivers/platform/x86/intel/uncore-frequency/uncore-frequency.c  | 2
-> +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-
-> frequency-common.c b/drivers/platform/x86/intel/uncore-
-> frequency/uncore-frequency-common.c
-> index e4d5a7960234..84eabd6156bb 100644
-> --- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-
-> common.c
-> +++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-
-> common.c
-> @@ -231,7 +231,7 @@ int uncore_freq_common_init(int
-> (*read_control_freq)(struct uncore_data *data, u
->                 ++uncore_instance_count;
->         mutex_unlock(&uncore_lock);
->  
-> -       return (!!uncore_root_kobj);
-> +       return uncore_root_kobj ? 0 : -ENOMEM;
->  }
->  EXPORT_SYMBOL_NS_GPL(uncore_freq_common_init,
-> INTEL_UNCORE_FREQUENCY);
->  
-> diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-
-> frequency.c b/drivers/platform/x86/intel/uncore-frequency/uncore-
-> frequency.c
-> index 791af0e287e4..c61f804dd44e 100644
-> --- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency.c
-> +++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency.c
-> @@ -225,7 +225,7 @@ static int __init intel_uncore_init(void)
->  
->         ret = uncore_freq_common_init(uncore_read_control_freq,
-> uncore_write_control_freq,
->                                       uncore_read_freq);
-> -       if (!ret)
-> +       if (ret)
->                 goto err_free;
->  
->         ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
+There is a legitimate use case of passing this value back, namely using the
+pointer value itself to identify the queue set that was operated on.
+One must not
+dereference the pointer of course. The same is true for other fields here, e.g.,
+xdpqs on the next line may also be pointing to freed memory. Note also that the
+caller may initialize this field to the same value so it isn't the
+case that if line 477
+were removed the field could not be pointing to freed memory.
 
+Having said that there isn't a current caller that uses these pointers
+even as just
+values if they've asked for memory to be freed. I don't think there's
+a bug here though.
+
+>
+>     478         qset->xdpqs = xdpqs;
+>     479 }
+>
+> regards,
+> dan carpenter
