@@ -2,35 +2,41 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA2BC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Mar 2022 17:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F3C8C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun,  6 Mar 2022 18:08:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233363AbiCFRpx (ORCPT
+        id S232159AbiCFSJH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 6 Mar 2022 12:45:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59334 "EHLO
+        Sun, 6 Mar 2022 13:09:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233726AbiCFRpw (ORCPT
+        with ESMTP id S232255AbiCFSJG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 6 Mar 2022 12:45:52 -0500
+        Sun, 6 Mar 2022 13:09:06 -0500
 Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB3C223BCB
-        for <kernel-janitors@vger.kernel.org>; Sun,  6 Mar 2022 09:44:59 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFCFD13F58
+        for <kernel-janitors@vger.kernel.org>; Sun,  6 Mar 2022 10:08:13 -0800 (PST)
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id QuwCnSnHcqMVEQuwDn0HmW; Sun, 06 Mar 2022 18:44:58 +0100
+        id QvIenSw8RqMVEQvIfn0MA6; Sun, 06 Mar 2022 19:08:12 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 06 Mar 2022 18:44:58 +0100
+X-ME-Date: Sun, 06 Mar 2022 19:08:12 +0100
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     ulf.hansson@linaro.org, cjb@laptop.org
-Cc:     linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] mmc: wmt-sdmmc: Fix an error handling path in wmt_mci_probe()
-Date:   Sun,  6 Mar 2022 18:44:56 +0100
-Message-Id: <bf2e2e69226b20d173cce66287f59488fd47474b.1646588375.git.christophe.jaillet@wanadoo.fr>
+To:     Eddie James <eajames@linux.ibm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-media@vger.kernel.org, openbmc@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+Subject: [PATCH] media: aspeed: Fix an error handling path in aspeed_video_probe()
+Date:   Sun,  6 Mar 2022 19:08:07 +0100
+Message-Id: <7d1f5e853bccba4a70294d81419a0cf21ff91f41.1646590067.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -41,29 +47,41 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 A dma_free_coherent() call is missing in the error handling path of the
 probe, as already done in the remove function.
 
-Fixes: 3a96dff0f828 ("mmc: SD/MMC Host Controller for Wondermedia WM8505/WM8650")
+In fact, this call is included in aspeed_video_free_buf(). So use the
+latter both in the error handling path of the probe and in the remove
+function.
+It is easier to see the relation with aspeed_video_alloc_buf() this way.
+
+Fixes: d2b4387f3bdf ("media: platform: Add Aspeed Video Engine driver")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-I've not been able to find a Fixes tag because of the renaming of
-function and files.
-However, it looks old (before 2008)
+Compile tested only
 ---
- drivers/mmc/host/wmt-sdmmc.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/platform/aspeed-video.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/host/wmt-sdmmc.c b/drivers/mmc/host/wmt-sdmmc.c
-index 163ac9df8cca..8e18f01c0938 100644
---- a/drivers/mmc/host/wmt-sdmmc.c
-+++ b/drivers/mmc/host/wmt-sdmmc.c
-@@ -863,6 +863,8 @@ static int wmt_mci_probe(struct platform_device *pdev)
- 	return 0;
- fail6:
- 	clk_put(priv->clk_sdmmc);
-+	dma_free_coherent(&pdev->dev, mmc->max_blk_count * 16,
-+			  priv->dma_desc_buffer, priv->dma_desc_device_addr);
- fail5:
- 	free_irq(dma_irq, priv);
- fail4:
+diff --git a/drivers/media/platform/aspeed-video.c b/drivers/media/platform/aspeed-video.c
+index 51fb18453b81..e0b5d416b6ee 100644
+--- a/drivers/media/platform/aspeed-video.c
++++ b/drivers/media/platform/aspeed-video.c
+@@ -1933,6 +1933,7 @@ static int aspeed_video_probe(struct platform_device *pdev)
+ 
+ 	rc = aspeed_video_setup_video(video);
+ 	if (rc) {
++		aspeed_video_free_buf(video, &video->jpeg);
+ 		clk_unprepare(video->vclk);
+ 		clk_unprepare(video->eclk);
+ 		return rc;
+@@ -1964,8 +1965,7 @@ static int aspeed_video_remove(struct platform_device *pdev)
+ 
+ 	v4l2_device_unregister(v4l2_dev);
+ 
+-	dma_free_coherent(video->dev, VE_JPEG_HEADER_SIZE, video->jpeg.virt,
+-			  video->jpeg.dma);
++	aspeed_video_free_buf(video, &video->jpeg);
+ 
+ 	of_reserved_mem_device_release(dev);
+ 
 -- 
 2.32.0
 
