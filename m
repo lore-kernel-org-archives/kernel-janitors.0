@@ -2,94 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E684BC433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Mar 2022 15:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F5E4C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Mar 2022 15:21:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242883AbiCGPKU (ORCPT
+        id S239417AbiCGPWs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Mar 2022 10:10:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40468 "EHLO
+        Mon, 7 Mar 2022 10:22:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236493AbiCGPKS (ORCPT
+        with ESMTP id S237362AbiCGPWr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Mar 2022 10:10:18 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 834FE4DF58;
-        Mon,  7 Mar 2022 07:09:23 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1F1D961224;
-        Mon,  7 Mar 2022 15:09:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6614EC340E9;
-        Mon,  7 Mar 2022 15:09:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646665762;
-        bh=Py6F6pj5cnvncL/T9T4/xc5qexf5xVDcQfXArLLcVm4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DK5yv1ZrizLihhuKE0R/q79w74Jywoiov4DIhk3ueYtmk+52qdsPmpIic2XD6lZpt
-         LlBv+cUWfcBmF1cLL9lB1l0ZM8fFIRYYoD3EQBZEGXb8sKfkdC+AaJup99RU6SEk+2
-         OPlPwsmxWjg4WmehDEVSsW5lgiJbDWBHb6hbb+qz6BR27TfeHdcMVqP1v6xqIUEcGl
-         uHBofUhqF9md4QSBeIg5yEHYSrVgw/Y67THY/k2BwZ07ggFoFM8klw/NPloBwZBnNI
-         wS1Cc0UR9+WS9Lhv8+/HIPua7WrwHTzFrKjgezW7GY698Q4flZR98i2ZCy75JHa6pn
-         vbUTJaKVjKJxQ==
-Date:   Mon, 7 Mar 2022 20:39:16 +0530
-From:   Manivannan Sadhasivam <mani@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Hemant Kumar <hemantk@codeaurora.org>,
-        Alex Elder <elder@linaro.org>, mhi@lists.linux.dev,
-        linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] bus: mhi: ep: Fix signedness bug in
- mhi_ep_register_controller()
-Message-ID: <20220307150916.GO12451@workstation>
-References: <20220307142822.GC19660@kili>
+        Mon, 7 Mar 2022 10:22:47 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A2028D6A3;
+        Mon,  7 Mar 2022 07:21:52 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id r65so9412308wma.2;
+        Mon, 07 Mar 2022 07:21:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=N3zVdZIdUp2SndvqCDVv0wLLG00x7X2w4FcjL+gKARY=;
+        b=nh76nqjdSWUzPHfeHac1Cemx0gt6iOLqZ7gUAYB9njkbJ5uIed+uFdnUtCgcEzkY2m
+         kk1f+n1i8/SDWaZ9GivaveBtcP92ZZ+moPcualmBFLCIbjjBUDN1lrYuKuzeZBdXIooj
+         dX39oEEXCFKREaU/e53HJK5Q8N1UNc4eZBIhq+cV2wEbIpejXycZ0spDbr1tGpowvwCr
+         CWwDB44Sd6+nOEY7gWsKNT7dRFWs65mJNWfbApoklXkDmtNDiGk2kgfh5QeXm7EaDyzV
+         /V+O6fE/c6JxjZKyNwI2OqRLyxymuLNljvcd1AFyoHiP8/Mz12C7gbfO1KIj998nsxxX
+         6gZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=N3zVdZIdUp2SndvqCDVv0wLLG00x7X2w4FcjL+gKARY=;
+        b=ZHZgMETGydEQZhuUxFH5f1Y0h2ScB8vHDQR3EGkg60+TckO6AddTKXP0YldBeytvJo
+         t9gPFqP+KRVHwnvRYNAfCKkw3ab83OAJ68n+H2YkUKwAQ3Suqiml8b2mNwCwcaxJkBgS
+         jgyLNRmjdtbJglfTrNhxNIAZQcQX52/eMdr6GPkbl3LDRewYrtW+ZDhsunjjsy2ZYT+Y
+         Ws4QVEgYuH0aUvG6P1dggqrA8HzP3yeknYAkD1ttBA7PltokcFrZZvtlMqFpybU4bul8
+         R5cyF+iXVqfLYrFaKCplEJpplUp3eYWg89ybgLiM8RIa4ICk9HKmjh6E3uiPiiWAk/Sb
+         qjPQ==
+X-Gm-Message-State: AOAM531FokKvJtqFP8jcU0IIP9qcwN0vo6GJURR1aZ48y7X4+jX6hnL1
+        c0Yxf+vXBLbr31T3reGhMG4=
+X-Google-Smtp-Source: ABdhPJzoVbtWjie8oUL0KyAGWJ2UJtdQdOZdXjz6HbfRjjX7p2bvz5+ddajXPvHa+Ia+Gl7C0n4jag==
+X-Received: by 2002:a05:600c:2056:b0:389:736a:5631 with SMTP id p22-20020a05600c205600b00389736a5631mr15342323wmg.120.1646666511084;
+        Mon, 07 Mar 2022 07:21:51 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id p12-20020a056000018c00b001f079518150sm8403134wrx.93.2022.03.07.07.21.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Mar 2022 07:21:50 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Jan Kara <jack@suse.com>, linux-kernel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, llvm@lists.linux.dev
+Subject: [PATCH] udf: remove redundant assignment of variable etype
+Date:   Mon,  7 Mar 2022 15:21:49 +0000
+Message-Id: <20220307152149.139045-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220307142822.GC19660@kili>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Mar 07, 2022 at 05:28:22PM +0300, Dan Carpenter wrote:
-> The "mhi_cntrl->index" variable is unsigned so the error handling will
-> not work.
-> 
-> Fixes: 10f0ab9c6787 ("bus: mhi: ep: Add support for registering MHI endpoint controllers")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Variable etype is being assigned a value that is never read. The
+variable and assignment are redundant and can be removed.
 
-Thanks for the fix! The fix was already added to mhi-next (squashed) as a
-response to the previous report.
+Cleans up clang scan build warning:
+fs/udf/super.c:2485:10: warning: Although the value stored to 'etype'
+is used in the enclosing expression, the value is never actually read
+from 'etype' [deadcode.DeadStores]
 
-https://lore.kernel.org/mhi/20220307071739.GM12451@workstation/T/#t
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/udf/super.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Thanks,
-Mani
+diff --git a/fs/udf/super.c b/fs/udf/super.c
+index 48871615e489..4042d9739fb7 100644
+--- a/fs/udf/super.c
++++ b/fs/udf/super.c
+@@ -2474,7 +2474,6 @@ static unsigned int udf_count_free_table(struct super_block *sb,
+ 	unsigned int accum = 0;
+ 	uint32_t elen;
+ 	struct kernel_lb_addr eloc;
+-	int8_t etype;
+ 	struct extent_position epos;
+ 
+ 	mutex_lock(&UDF_SB(sb)->s_alloc_mutex);
+@@ -2482,7 +2481,7 @@ static unsigned int udf_count_free_table(struct super_block *sb,
+ 	epos.offset = sizeof(struct unallocSpaceEntry);
+ 	epos.bh = NULL;
+ 
+-	while ((etype = udf_next_aext(table, &epos, &eloc, &elen, 1)) != -1)
++	while (udf_next_aext(table, &epos, &eloc, &elen, 1) != -1)
+ 		accum += (elen >> table->i_sb->s_blocksize_bits);
+ 
+ 	brelse(epos.bh);
+-- 
+2.35.1
 
-> ---
->  drivers/bus/mhi/ep/main.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/bus/mhi/ep/main.c b/drivers/bus/mhi/ep/main.c
-> index 3e98107f08c4..879071b021d5 100644
-> --- a/drivers/bus/mhi/ep/main.c
-> +++ b/drivers/bus/mhi/ep/main.c
-> @@ -1418,11 +1418,10 @@ int mhi_ep_register_controller(struct mhi_ep_cntrl *mhi_cntrl,
->  	mhi_ep_mmio_set_env(mhi_cntrl, MHI_EE_AMSS);
->  
->  	/* Set controller index */
-> -	mhi_cntrl->index = ida_alloc(&mhi_ep_cntrl_ida, GFP_KERNEL);
-> -	if (mhi_cntrl->index < 0) {
-> -		ret = mhi_cntrl->index;
-> +	ret = ida_alloc(&mhi_ep_cntrl_ida, GFP_KERNEL);
-> +	if (ret < 0)
->  		goto err_destroy_wq;
-> -	}
-> +	mhi_cntrl->index = ret;
->  
->  	irq_set_status_flags(mhi_cntrl->irq, IRQ_NOAUTOEN);
->  	ret = request_irq(mhi_cntrl->irq, mhi_ep_irq, IRQF_TRIGGER_HIGH,
-> -- 
-> 2.20.1
-> 
