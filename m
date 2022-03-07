@@ -2,61 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6153DC433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Mar 2022 15:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 025E2C433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Mar 2022 15:53:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243707AbiCGPbp (ORCPT
+        id S240906AbiCGPyh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Mar 2022 10:31:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41038 "EHLO
+        Mon, 7 Mar 2022 10:54:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232666AbiCGPbo (ORCPT
+        with ESMTP id S238588AbiCGPyf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Mar 2022 10:31:44 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 123075749E;
-        Mon,  7 Mar 2022 07:30:50 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id e24so10921233wrc.10;
-        Mon, 07 Mar 2022 07:30:49 -0800 (PST)
+        Mon, 7 Mar 2022 10:54:35 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF32866610;
+        Mon,  7 Mar 2022 07:53:40 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id b5so24052114wrr.2;
+        Mon, 07 Mar 2022 07:53:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=VEUtjRWw8hcXPx8ISHtvMs+ktqj0awQxQ1FmrJuTsp0=;
-        b=MNpHF7Pxg9BKJiM7fXtwr+H0qiQHTO5YaiWRpoj8JeGPvWbNy27/PM68jvK4QSBRoS
-         eJV84YLL7LY0Kx+2dttq4o8BSGVJnTkTkSVrSQ6jqym1hnTU/KN1tiaQ4HT3YxHnGaep
-         l/BgDYpY9h1dRuCJcH3/sPXiySIO+U6vefOR+F4+6/wYeky7WPYEoZhJjDMIx0OvJUnr
-         rJpIGYuHLOeHT93rWf+ikiIQTOzZMcEJeJjTV+qPGfz/r4iAqH5VCVB98b/FMsXQJZQT
-         bPAklAmCoO81z7iPKi3IVku0QUFChskh487B2KlaehvDU0EI0uy5Gq33vkGC5FnOYU2C
-         YW9A==
+        bh=VCMF7JOePAGAD2TRuJoonUYYB1mQc1S3qSAF6RtOJWY=;
+        b=mqvy472H4fpcBOM1bST+j5DbuOBj4z4Zd8s+2YSbdcQo6ChrFa6JapwmdFDuwZtvnd
+         IMXCTSOD3UH8W3dh4affMWFJeG9t7zLBnzCseOxGwss+RhRaTMPJi9+Gh/LG+7NLJGwz
+         09JtCCYz55HcoePAc8CIjItO5FFk01yWi1dhcVUJ6AVHygAdvQvYB4p1ugGTP4w3MwTb
+         uaIOxR6/gl74GqxZlO3G2wzbCZNNDD641IE/0tc61jLvsgDmPQ3grbRpXBOgemIw45iZ
+         p7rSjpQctaEvD9aDhcAvIOZS6aSSsxsjQcgomCvaIa8xTfhX6dc2wsFEEMmI+tYTrjEf
+         r31w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=VEUtjRWw8hcXPx8ISHtvMs+ktqj0awQxQ1FmrJuTsp0=;
-        b=6gCUcgdLxzXXsPIx7rX6oQXVwrtHf7Hlt32yokXmdktU9yWzLXYX2eZh5F6xTfmdV1
-         LttieduH0Yo7DZB7Fc1jFUvQQLcxETn1Sy0N695ei9ijYFXGbAavTkaK1raBtJie65eu
-         ox8MDb1FSWYDbJCKny5vL7Gvd6r9dxxtl/gC2bugoDSDb0bccTY+XPNtRs6Ge9LoZ7At
-         mVJEzOiRw/6YoZEIbA2FM8pBW+ia0n2bL0rCtXrGXfCzjqBnvTjLa1J/2QmlX47wfkXr
-         vXBOAcpL7zcd4Sqf5lGi1wF/V7YnRoSQu8tt8SFTOZetr7aYtS9Cyqdqbn0+KHz9g97Q
-         hkBQ==
-X-Gm-Message-State: AOAM532CuK1t3+xGdeBRu5I7Sm/3tqzsZ61CPbl3u34VURz7OFURYs1W
-        lyaEBRETQ6Ps/yeLAqpDtAM=
-X-Google-Smtp-Source: ABdhPJybfHSo0eCkjaEOHXAgaY8b9TUr8U9Fg4tG5GiMhl+kF2PHHrRNJApWZg0ccl+N6LMTkzuvSA==
-X-Received: by 2002:a5d:64ac:0:b0:1e7:1415:2548 with SMTP id m12-20020a5d64ac000000b001e714152548mr8834834wrp.267.1646667048657;
-        Mon, 07 Mar 2022 07:30:48 -0800 (PST)
+        bh=VCMF7JOePAGAD2TRuJoonUYYB1mQc1S3qSAF6RtOJWY=;
+        b=Ct/L2FQwvOSYXvAeNejwJm70MKdZNRXOOsrx8CdMuyIAzF9ZT7kl0L+epIn9V1qRpx
+         8rEK0gP7ndHcyqDS37S8vRT2t4qm9IDkN7lAwoP5dMY6uhRV5mzwRds+vHw00sNPXAJ6
+         VPRk+GluitJb+TKMQrKNkh2vocly5Ei2YgvXi+i2JN68S0jZELnmOb8lRsjufdggHOp6
+         PnNM7f5vuD7EfsWMYYPTSS4uczyfeMc7jZuyXGLo/qr3XpJeseivMnB0RkqsrOqK5y1O
+         i0KweFECenlOA3b95DE2qEs9FQfNIA7ezqysktr3n0EM94178wOf5mikbMk6yoROfzpm
+         v4hQ==
+X-Gm-Message-State: AOAM532J1bEVlUx2NF6XGeOfvj/HsPIZDzxCucb0FlSP1m9MPUhIy2CP
+        F+mDiBJms1siIOuEkIvJZtttR8s9sXcPvQ==
+X-Google-Smtp-Source: ABdhPJx9tp6UqpNijYut2CQMscnG37GHYd0RtPgRD/hiGSg3Txqamr2jn3+qrxh5a0lI0idxw+ZDGg==
+X-Received: by 2002:a5d:6a47:0:b0:1f1:e562:bef9 with SMTP id t7-20020a5d6a47000000b001f1e562bef9mr7183983wrw.445.1646668419347;
+        Mon, 07 Mar 2022 07:53:39 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id m13-20020a05600c4f4d00b00386744cb31bsm15673525wmq.35.2022.03.07.07.30.48
+        by smtp.gmail.com with ESMTPSA id g17-20020adff411000000b001f03426827csm11727167wro.71.2022.03.07.07.53.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Mar 2022 07:30:48 -0800 (PST)
+        Mon, 07 Mar 2022 07:53:39 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         llvm@lists.linux.dev
-Subject: [PATCH] tty: serial: jsm: remove redundant assignments to variable linestatus
-Date:   Mon,  7 Mar 2022 15:30:47 +0000
-Message-Id: <20220307153047.139639-1-colin.i.king@gmail.com>
+Subject: [PATCH] Bluetooth: mgmt: remove redundant assignment to variable cur_len
+Date:   Mon,  7 Mar 2022 15:53:38 +0000
+Message-Id: <20220307155338.140860-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,42 +69,34 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable linestatus is being assigned values that are never read, the
-assignments are redundant and can be removed.
+Variable cur_len is being ininitialized with a value in the start of
+a for-loop but this is never read, it is being re-assigned a new value
+on the first statement in the for-loop.  The initialization is redundant
+and can be removed.
 
-Cleans up clang scan warnings:
-drivers/tty/serial/jsm/jsm_cls.c:369:2: warning: Value stored to
-'linestatus' is never read [deadcode.DeadStores]
-drivers/tty/serial/jsm/jsm_cls.c:400:4: warning: Value stored to
-'linestatus' is never read [deadcode.DeadStores]
+Cleans up clang scan build warning:
+net/bluetooth/mgmt.c:7958:14: warning: Although the value stored to 'cur_len'
+is used in the enclosing expression, the value is never actually read
+from 'cur_len' [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/tty/serial/jsm/jsm_cls.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ net/bluetooth/mgmt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/jsm/jsm_cls.c b/drivers/tty/serial/jsm/jsm_cls.c
-index b280da50290c..444f233ebd1f 100644
---- a/drivers/tty/serial/jsm/jsm_cls.c
-+++ b/drivers/tty/serial/jsm/jsm_cls.c
-@@ -350,7 +350,7 @@ static void cls_assert_modem_signals(struct jsm_channel *ch)
- static void cls_copy_data_from_uart_to_queue(struct jsm_channel *ch)
- {
- 	int qleft = 0;
--	u8 linestatus = 0;
-+	u8 linestatus;
- 	u8 error_mask = 0;
- 	u16 head;
- 	u16 tail;
-@@ -365,8 +365,6 @@ static void cls_copy_data_from_uart_to_queue(struct jsm_channel *ch)
- 	head = ch->ch_r_head & RQUEUEMASK;
- 	tail = ch->ch_r_tail & RQUEUEMASK;
+diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
+index 8101a6a31841..e0137bc1080e 100644
+--- a/net/bluetooth/mgmt.c
++++ b/net/bluetooth/mgmt.c
+@@ -7955,7 +7955,7 @@ static bool tlv_data_is_valid(struct hci_dev *hdev, u32 adv_flags, u8 *data,
+ 		return false;
  
--	/* Get our cached LSR */
--	linestatus = ch->ch_cached_lsr;
- 	ch->ch_cached_lsr = 0;
+ 	/* Make sure that the data is correctly formatted. */
+-	for (i = 0, cur_len = 0; i < len; i += (cur_len + 1)) {
++	for (i = 0; i < len; i += (cur_len + 1)) {
+ 		cur_len = data[i];
  
- 	/* Store how much space we have left in the queue */
+ 		if (!cur_len)
 -- 
 2.35.1
 
