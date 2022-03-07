@@ -2,64 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3830EC4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Mar 2022 18:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C885C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Mar 2022 18:31:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242378AbiCGSSC (ORCPT
+        id S244814AbiCGSb7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Mar 2022 13:18:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60656 "EHLO
+        Mon, 7 Mar 2022 13:31:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244730AbiCGSSB (ORCPT
+        with ESMTP id S244815AbiCGSb6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Mar 2022 13:18:01 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF08675E47;
-        Mon,  7 Mar 2022 10:17:06 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id k29-20020a05600c1c9d00b003817fdc0f00so9804421wms.4;
-        Mon, 07 Mar 2022 10:17:06 -0800 (PST)
+        Mon, 7 Mar 2022 13:31:58 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C17E811A9;
+        Mon,  7 Mar 2022 10:31:02 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id i8so24724665wrr.8;
+        Mon, 07 Mar 2022 10:31:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=sayrSIk+NDM65AKvFJGH6QJQ+sc3l62Epi/p4rWp0co=;
-        b=oax+5ZR4uPTHvguofbQbtcUO/6gTvB/BultTtgRVppN+Esz2DDuKovZi47mRi4VUab
-         voCR7Gz7m8k+D6WiKFDW3fubOt1z2EDvArL67+T8JgyD66xpEXqa/Toqn6f/pbrOJrcF
-         ETUjSWPZgFa4LgVcFGzB51T78/WUfxACryDkxzAEaDnCyAh+gQU9Nww5E78NzHrPbPx7
-         BWxccytxW3SW0v5bf85gZrIkwmECGTbOepkjvCgh7A7f9x46chlArdPVMQfq7+55wTtk
-         xW18sa01nWH81gCf828GYjkClQEkYyP0WHjSMrXK60GYrwDbNx8GqV65ygerkdG0lx0C
-         KGyA==
+        bh=m72AqO39IssFZDp6OQ50uBNhRiFL6qd5FMbmNqInMYY=;
+        b=HG61rhPPl9ijRh/DZjgsmR3XRCPX1iN+yDTPO4PeEJ0JpRqVmDcfGpwFqmwcSp6+6d
+         cgebmSecr2IZzjfmNSNVux931ao5vRa6VgGAO/I6H8rv5tfNjHw04WBUabXBhdbpB8RN
+         blalDdsFWmw5RVfjNfZMRrh4ebsmXAnZL9kUCrraKLoBHvZZ1X3Npz4kxI5QeXHgfFq5
+         wRf0Q1kt+cti0BPtl1h8Y8KkYtAfKEZPWqusx+0ADysc50rydtVt97Buo4HWBwDWTCx9
+         w+FaTbI3/fmy3/AlmN8mQEEulymHvFKwFes2F76kBnOKoCm/YqB2c3ddSQSweQt9u+ev
+         VF6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=sayrSIk+NDM65AKvFJGH6QJQ+sc3l62Epi/p4rWp0co=;
-        b=YKz67wbCqRYiC+kUh5MHUlRV6e1nkWmFx+7oLeYL6EOqwexcblaMGqGMnqgcW36k/b
-         V720LXbGX3AwpQS50kSZZW5gebGuyInF1fqh2bQsj5N37EUFmFatVoQBR9cOFrLqxd73
-         4ELTBzckIWbEU1qXkzBq+fvHmRmrh5EiSSmssYeSd7Anpr04ow7Dvg08HBOsKPDUEB8h
-         Xe0TNdlnNNu3WAOI2IuSW7cFDnF+HWI8QXMTMscrInB7978iEy+YhhAO7bSiDnicEfa8
-         siGGf77TxtBedTuMEgHfcqDnA3QwxhDTAbYLCTpICGpoyEf2ku01AA21Uz+6w9pWielI
-         jP8A==
-X-Gm-Message-State: AOAM531mZjOcbiYu5g8GGTVu6ddX+SldRD0XipGtxbJNuJpAAoqqpaoB
-        /GdWiwY2odrJ7Uv0wm6SAIaYF8qzChNgEg==
-X-Google-Smtp-Source: ABdhPJxdUz78okhuvUq7H9aHqcb9xUZ5Eomn4OM9KtxAU3Wo+/Qd9m5moXVVdWEcWCu0X3A31wQ3Ow==
-X-Received: by 2002:a7b:c8cf:0:b0:389:a5f5:5b0 with SMTP id f15-20020a7bc8cf000000b00389a5f505b0mr145235wml.37.1646677025308;
-        Mon, 07 Mar 2022 10:17:05 -0800 (PST)
+        bh=m72AqO39IssFZDp6OQ50uBNhRiFL6qd5FMbmNqInMYY=;
+        b=1n4WQUscXjMSZCQ1aO8yD8vYxKUVv1bqhi1s7OdWDG0EHLvq9eTgW+gBsp4HQTtzfq
+         RmvRUyIoTV5jzE2m+djYzZITSUk5l7adHXUVEHeEQ4RAgVnL6aDtyW0/uaCGzl244YIq
+         ldN6xBq1otUHNnkhUTZEVUjtq+gBJK/VZ/gDKzO3TU+/A1ISYJ47vaijOjwE6YzCinrB
+         zwASIb5KAE/rIzs8cNxGFvHIUeC9kBnMBXAkxOmrfvS8uiPWEnEI98E3S2pfH9RpMcBT
+         DpXlwvNTbEZwtrANPctljcsAg5WMvqaZFxCWBmAtYRMauvr2QPzIMB9T8vVdoORs0Yqp
+         EYvg==
+X-Gm-Message-State: AOAM530LnlVqQdx1bwuLfYMAqueVW2lfZtZsA1DcY7gUyVZK7WLtkZgk
+        3hd02gd1EDa11wO3/9doK7A=
+X-Google-Smtp-Source: ABdhPJxY7q8nq1BsndaRkG27EN2+/8HLVeSIn5ggzQYJgfOt/hH8PMDTLAG/+sdpy1hRcaUn75eAtQ==
+X-Received: by 2002:a5d:6852:0:b0:1f0:98e7:a963 with SMTP id o18-20020a5d6852000000b001f098e7a963mr9303209wrw.646.1646677861176;
+        Mon, 07 Mar 2022 10:31:01 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id a10-20020a7bc1ca000000b00389bc87db45sm66515wmj.7.2022.03.07.10.17.04
+        by smtp.gmail.com with ESMTPSA id h13-20020adff18d000000b001f1de9f930esm13371560wro.81.2022.03.07.10.31.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Mar 2022 10:17:04 -0800 (PST)
+        Mon, 07 Mar 2022 10:31:00 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Sandy Huang <hjc@rock-chips.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
+To:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         llvm@lists.linux.dev
-Subject: [PATCH] drm/rockchip: remove redundant assignment to pointer connector
-Date:   Mon,  7 Mar 2022 18:17:04 +0000
-Message-Id: <20220307181704.149076-1-colin.i.king@gmail.com>
+Subject: [PATCH] USB: serial: usb_wwan: remove redundant assignment to variable i
+Date:   Mon,  7 Mar 2022 18:31:00 +0000
+Message-Id: <20220307183100.150082-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -68,31 +66,31 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointer connector is being assigned a value that is never read,
-it is being re-assigned in the following statement. The assignment
-is redundant and can be removed.
+Variable i is being assigned a value that is never read, it is being
+re-assigned two statements later in a for-loop. The assignment is
+redundant and can be removed.
 
 Cleans up clang scan build warning:
-drivers/gpu/drm/rockchip/rockchip_rgb.c:153:2: warning: Value stored
-to 'connector' is never read [deadcode.DeadStores]
+drivers/usb/serial/usb_wwan.c:151:2: warning: Value stored to 'i'
+is never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/rockchip/rockchip_rgb.c | 1 -
+ drivers/usb/serial/usb_wwan.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_rgb.c b/drivers/gpu/drm/rockchip/rockchip_rgb.c
-index 2494b079489d..92a727931a49 100644
---- a/drivers/gpu/drm/rockchip/rockchip_rgb.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_rgb.c
-@@ -150,7 +150,6 @@ struct rockchip_rgb *rockchip_rgb_init(struct device *dev,
- 	if (ret)
- 		goto err_free_encoder;
+diff --git a/drivers/usb/serial/usb_wwan.c b/drivers/usb/serial/usb_wwan.c
+index cb01283d4d15..dab38b63eaf7 100644
+--- a/drivers/usb/serial/usb_wwan.c
++++ b/drivers/usb/serial/usb_wwan.c
+@@ -148,7 +148,6 @@ int usb_wwan_write(struct tty_struct *tty, struct usb_serial_port *port,
  
--	connector = &rgb->connector;
- 	connector = drm_bridge_connector_init(rgb->drm_dev, encoder);
- 	if (IS_ERR(connector)) {
- 		DRM_DEV_ERROR(drm_dev->dev,
+ 	dev_dbg(&port->dev, "%s: write (%d chars)\n", __func__, count);
+ 
+-	i = 0;
+ 	left = count;
+ 	for (i = 0; left > 0 && i < N_OUT_URB; i++) {
+ 		todo = left;
 -- 
 2.35.1
 
