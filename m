@@ -2,95 +2,154 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C0FC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Mar 2022 14:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCCBC433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Mar 2022 14:43:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243283AbiCGOhY (ORCPT
+        id S243340AbiCGOoL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Mar 2022 09:37:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39614 "EHLO
+        Mon, 7 Mar 2022 09:44:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233330AbiCGOhX (ORCPT
+        with ESMTP id S243329AbiCGOoJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Mar 2022 09:37:23 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54AC27E590;
-        Mon,  7 Mar 2022 06:36:28 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id j26so13262778wrb.1;
-        Mon, 07 Mar 2022 06:36:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CeIhj+xlbNH1tbRacxDrcMILHX0PhWKDMIaEBWJrU/0=;
-        b=L9Yy9MzJkNzV/4C4etsj7XGiuZUF21kwtAR0Kpsb8xVBwxFXRDOY0SHCeC9pHGeCIr
-         eXS7pcBvdlYH+iYGPPnCfKfgnuUANcL66LChHy+NdG2AcBhTVSH+2pwiTszUh1RQEt35
-         VmcuZCb+Wkfsx8x1GLdfUT990PIwmIi2z0014LwVppPzA01QJ+6KrohYMnoI1l1KQnzu
-         kUeqz/ibg2YsIXINHBcwCdiH/EAYyugzNK7sjhbbAtP00I65BX5N8a3+ZaKTezIkQck9
-         pXfV4lcBRtdV7tj5MQz61/zpG0ucxZySFwtCjUpmFEQ00CnYOQIRhTaoQ9snz4kPTlj0
-         vTFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CeIhj+xlbNH1tbRacxDrcMILHX0PhWKDMIaEBWJrU/0=;
-        b=2xCMe/KosgvNIprVKQS8J74tqsA1nDVt4OP5TAkiu+42epWWQ29qlfUpNT2ClGayBM
-         HFwWbLKo6plDB2PTUljbKmP59Fi5FWKKUFzjweiT2mXhchqM1Q6Oh98xKmm+bT2SKSIO
-         QS+k4gFK1CPBBEqhE3yB21IjHlsTpUNE/OzznWrFed53diSmUqTzhHqGzGh+tWvsXmg2
-         bpXInC7c9yO8vC3aR9e15g8+Xl7jH//ShykbIDtR+FVeG0c2EJJK16mKWj1wZ+jOyiGR
-         fJ58AUnIrkcd+xb5AIMN8rkrsZoO3fXl5GT55y4Lq4oBq2Vh2LdPSo3+Q2ZuqcWDDsN9
-         AM+Q==
-X-Gm-Message-State: AOAM531FTLvotrPxJ15N3Aou0kE0/pYVI1IgayawzIT8KPQP/mnCfpp/
-        sbrCWnzmABOVSZkyt5xLEbE=
-X-Google-Smtp-Source: ABdhPJzAxxaAb26zhaHLIkISgqgjxNtoRShsy26CNag6U+fVlySw7Ij39E5P0na4aYKZjESTeF9bLA==
-X-Received: by 2002:adf:fc08:0:b0:1f0:48ef:cec7 with SMTP id i8-20020adffc08000000b001f048efcec7mr8170366wrr.540.1646663786801;
-        Mon, 07 Mar 2022 06:36:26 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id l1-20020a05600c4f0100b00387369f380bsm14428800wmq.41.2022.03.07.06.36.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Mar 2022 06:36:26 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Forest Bond <forest@alittletooquiet.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-staging@lists.linux.dev
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: vt6655: remove redundant assignment of pointer tx_key
-Date:   Mon,  7 Mar 2022 14:36:25 +0000
-Message-Id: <20220307143625.136189-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Mon, 7 Mar 2022 09:44:09 -0500
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2056.outbound.protection.outlook.com [40.107.94.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 000FF5C34C
+        for <kernel-janitors@vger.kernel.org>; Mon,  7 Mar 2022 06:43:14 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dwCE1jGsxluQ7IVa1sgH4XG64Q53mjWnJuns1kf5rIVKaodt68JjQ1eYvA1Bppn6dIPkvkfUKDi997pI/tD4agXRepHTG4Bfi5mKQ5OPAiG44JTZJIkayC5uY4ltQPYcsPde4OjRDVheJBcEwb+Vlukr87myh7kAgUGs7ZtApt2SjrS03edg8csxO/ZWFxZZRoTga+xTz+D9B2fDZBhHWYNbnSU3Fiv3qMbL1D7ScgSSb4zf7Wut6w+n14/XU/rgBlI6XdBh0FdNHjOVLNeRhbQIDGrHdSyWmQmKaLdE1yqewrOxy42Rlbkozb2FtPw5lzuoFw6UI8xzRMXIktYy5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xiyuFjV22lG1P+OUhOkLsDdEke+uiQ5Kbi18B8MPag4=;
+ b=SZQzaLgTSqjeDgTyE8LCLgnd8dY8viMvxXbJmAVR4LYu8u4paqED8uhx90U7Ir1V795jmUo4Pslts09i6FeDBzvLtevE7QI9IlIKFX0B5UsdVjQ2f0cjrPLyvLVRF9NcVb03ICzv9dyfP4AwGsG2M0O8Q5gO0pn5dnkyGycNOW7TCeNEuTSO5FjLEpkBmdMf11mXH8AVy7ucuzp4NnDRR7C5YrLrgkPR+u7XSr63ZuolL22UqhC+HPQdDMWRAse9tj5sVNUQ0lHcYjjGGJ9N7aTyoYrNLVd+k7nF9OG7ANseH/PPCC0k9GHWQ7yqWU7y9Q02drIA9PqgcS3pt7GYXw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xiyuFjV22lG1P+OUhOkLsDdEke+uiQ5Kbi18B8MPag4=;
+ b=ZbenyBMDruaMYYvwRmVVlhBBN0jQri487GT7nZQC+n5ehbof5n+qdtYwK0GL7c6YRAPZWMj7No4HZuwy9OaxX5L2xNTck/+f4uEJ5o6DAgy1Y3qMW0CiMlBg53jvjqWR7np2Wn8KFoQA7THqPs+dnejiKjcBvzyWauz+1d1GjQ8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN2PR12MB4342.namprd12.prod.outlook.com (2603:10b6:208:264::7)
+ by MWHPR12MB1390.namprd12.prod.outlook.com (2603:10b6:300:12::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5038.16; Mon, 7 Mar
+ 2022 14:43:12 +0000
+Received: from MN2PR12MB4342.namprd12.prod.outlook.com
+ ([fe80::48e2:1306:25a3:5f14]) by MN2PR12MB4342.namprd12.prod.outlook.com
+ ([fe80::48e2:1306:25a3:5f14%5]) with mapi id 15.20.5038.027; Mon, 7 Mar 2022
+ 14:43:12 +0000
+Message-ID: <883bee2e-bca0-e0d1-613d-d744574ffde8@amd.com>
+Date:   Mon, 7 Mar 2022 20:24:05 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH] drm/selftests: missing error code in
+ igt_buddy_alloc_smoke()
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Matthew Auld <matthew.auld@intel.com>,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+References: <20220307125458.GA16710@kili>
+From:   Arunpravin <arunpravin.paneerselvam@amd.com>
+In-Reply-To: <20220307125458.GA16710@kili>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BM1PR0101CA0014.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:b00:18::24) To MN2PR12MB4342.namprd12.prod.outlook.com
+ (2603:10b6:208:264::7)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7900dfe2-31c7-41dd-cfcc-08da0048cdd4
+X-MS-TrafficTypeDiagnostic: MWHPR12MB1390:EE_
+X-Microsoft-Antispam-PRVS: <MWHPR12MB1390A2654941EDC8F8D7BB6EE4089@MWHPR12MB1390.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: mFLMizwFQWlf+gaF6XGyBdw2OAkSOHKIZJVe1T5P3q//9pnBNOqDiOYjIk3MjywuPhCttG02u160vyV2FAI0UkBw/M9U0mR6L2xXBTe9AET5g2xV/nRReyciDA9HoMY4csE9SB92GYIhMu7qj2ZtWtCTBNk6OsRCkt35eSOE8f1w4amEdWUuS0gBwSgjXSBRCBl3NJohCstpKn10LuPZwLBr42MVzwFHv0ctnRST5hLXL8fQKblLB640ZJe5GGqfgFiN4Hgm/XgHbWfX/AhkckWJ+yUGUENNOBe7uvLGInA7JSIzQjDtsNRehftrIOUsVc1jWXn2xkfoBLuLeQfB+WerxXCmQHef1OUs6meGly36zxP88eTAhBpJknAeUIeK/qwSiPfyD4LmGclLnOhxA8n8yYyv6a4T5Q4EFVMeLbC4FaNs/Hxpiq1IziIsmXKJbj4vUJRjDaJfz/OgAoxtRuYWJmftosTogi5jwfODTjIO3IOOymkjVpUKx/dXRcL+eG1COUkm/e8n9SKt6AfpvnPp1qNbcJ8PbrGoGwnavRIIJLnFhhKtVqPGjbwIfVbBYyDjbVV8Jm2FO8KgFGL9zxbnTU2UZNWtBw1OBjz996lAb04CDMvCNekZvxl4yIBFw+fAPr1vR2gxyElbafNDnVbujrCm1ttxejydyNVN8wAGEtgo0q+V6YDPhKKBAKofK693KewunVRSFDD5dmIeuuYkA2XPhGUC4Cqp3CGqmoeJ7SwvnYnYhQTLBB8JoXJp
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB4342.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(186003)(6512007)(2906002)(4744005)(86362001)(26005)(316002)(110136005)(54906003)(2616005)(38100700002)(6486002)(83380400001)(31696002)(66556008)(66476007)(8676002)(4326008)(66946007)(508600001)(53546011)(36756003)(31686004)(5660300002)(8936002)(6666004)(6506007)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?d0VoWDlpaFFwekVRN3MzcUhCcVFJZjlVbktrbExBZHZOcU1IcTkyRlAyb1dG?=
+ =?utf-8?B?OFc3Rk1hMUZSYzZiRVB1dzF0STJweFgybVRFTHU3YmtkL0hnWHU3a1U2WWlT?=
+ =?utf-8?B?VWxjQllLSEZhSjBNSWhVSGRyRCs1UGJ2TlllM1M5YjRJVVdPTUZRczFsZzNi?=
+ =?utf-8?B?V3VFK2FBOG9LLy80VkVDQmNsWWpJOUd2Y3pjSG5RN3RTcHRSa253dzlhRmdv?=
+ =?utf-8?B?cFQzK1hrMFY1aXlmUUEydVhMVUVRVEwxajdPUnZBakhWdlRranhKdW9aandp?=
+ =?utf-8?B?MnFJVzZuUmNDcFl5aGlTTGMxR3VQTy84SDNaWko3OW5FdzJWVlB1cGJZMDEx?=
+ =?utf-8?B?eHkwTjRDdXJURFN5TGlnZDdhWnc3QXJLTlJCZU4vRTQxLzFDaElWVFZUSXRE?=
+ =?utf-8?B?RjJjaU4raTl6cHkvcGtKUURWWUpWcGNtaGdTTFM1RENaTm9nT0xXQlFTdklU?=
+ =?utf-8?B?N3JIRVAwNTVnUTRzTk9ZdzVmZHZlWE9iZWNhbUpYanRkMEx1eWJJWG9ybU4z?=
+ =?utf-8?B?N2s4c21hUkw3QUNLWDdBbHl1ckFPSU8vRWk3YWpWU1FFMEFHckNkUnRmSmVa?=
+ =?utf-8?B?NzFRY3h4YkRaNnNWb09ZNjdhczVrYU84UzQzdndJMlpXYnVqVmdZc2dpMk9M?=
+ =?utf-8?B?KysyUk1ZbFNDZzdKelVoM2Fid1dQcHhGNHhRbUFobHR2SUdneENTcCt1ZUpI?=
+ =?utf-8?B?Y0JaY2FyMU1lT0tWNFVZcWEyVmNEUGFkTHpITE1tT2ZaOTBIZWo3WCs2ck5u?=
+ =?utf-8?B?OXNzWmd4a3E0d3VWNTRlTkpSVnJraDEzNHJ1RWgyTGk1MXpHczhXbTJNQWJy?=
+ =?utf-8?B?Nk1IS0ZySFVGamNrV3RXMVQzZEQycEZEU0E0TWk0bmcyOTNxQ0E2eXFVSjdG?=
+ =?utf-8?B?MWQyeTdXZ1dnRTJ4eVNuQWN2SVVoUnM5Z1RaZURhRFZST1BkQThkNi9NZit5?=
+ =?utf-8?B?UUxSSFErT2ZLV3pjNmgzTjNlbFY5em1Zc1pBcWdMRi9GUUgwNTJUMlE4YkFO?=
+ =?utf-8?B?K2ptNGdGc2RkeDBaMXZiR2xXMnVZcTVRQUd6RkNVUkpEcSszbWQyMFp3dnd3?=
+ =?utf-8?B?Ky9HS0RBY2M3eHJCa0s0aFppdEJDTit5Z3k0VVJWYXBwZHVETlBTSUlrbmJF?=
+ =?utf-8?B?R2o2TjFKM2xxcXhJYVc5VXRjeG9YdUlyZU5HUFZpcGRxcERxSmN5aXhFR1lv?=
+ =?utf-8?B?SXRCaTFzMmJIV3VSMWpPczVjSUNvekIrVjBaRlVSelVhZFhJSjhDWDlGd3Uv?=
+ =?utf-8?B?eWZBeEJ3Qm4xT080K28vTjFsWWdaR0dkNWRYdVc0UEZUam5KVitwRHpCaVJG?=
+ =?utf-8?B?SS81STR5T0pENjg1NjFUTSt4WTN1WktlOWdOZWtKWTFMWlljMVZxbWRGdVR6?=
+ =?utf-8?B?R1lvN0xoQnNUVktnUC85YTB2c1UzWDkrc0dzdTNIbEg3a1FFNlpkQVpHMng0?=
+ =?utf-8?B?S01RdTJwOVoreDAzS3JTRkcydWlUZXhkeXEvSFF1dGdJcTl5VUpRWTJoZFRp?=
+ =?utf-8?B?WkdncGlWaFdvcUJjcmErcFlsTngyNFRjUDltdWFPdm14Zmt0dk9TY3paWita?=
+ =?utf-8?B?SEhOVUg3OTlydmlSdEE1UWFEbGgzUzloNTh5SUV5NDY5dEJxSmpUeVU3dXpS?=
+ =?utf-8?B?c1FSYnVpUXI1Y0JUbWxON0ZKU1lLVkpKNmxvMjZBZEl5MCtCL2YybmZua2xa?=
+ =?utf-8?B?cHp6cDU0Q2tKN2c3RGR1ajAybGlQNnRIUHlkcmNlL3lvZHVoMmZVTWhFNVlR?=
+ =?utf-8?B?ZmxTclk5VzZ2K1o1eW0yQkIrNHhSa3ZtRmNQSjlzZy80Z2FkWUxGNXVkQjVB?=
+ =?utf-8?B?Ky9EeVkzNmxUQng4ODdFb2VTYUJVVFY1c08yb0tVaDg0dXljVlA2NjViWlhF?=
+ =?utf-8?B?cTBFZEtwTmxJSHdJVnRaSk4xd1FVWGFxY09YU3o3VllQNnM5OXRMcy9aSUZK?=
+ =?utf-8?B?NktWVGxkck9oZXU4ejlsckFHQklPZU5xL0Y4SXM5aThzczhsbDlWT3YwNXlm?=
+ =?utf-8?B?VW92Y0x1Znl6TGY3d0ZFeEt6RGZwaTltT0lGU2ZDbXFGQmFBMXM4dUk3bXVZ?=
+ =?utf-8?B?WUZydUJpQU9pdHRyS04rbytXTWxJUUh0Z3VpZzFoZ1Avak05RXRaUmJrOVZh?=
+ =?utf-8?B?cWgwTEtyVzlYbDB6bTZTMndqSkxyamRCS0hnZGpXanlNbHRQYzhLODdlZU1W?=
+ =?utf-8?Q?b9GlB8eHwjRl4SSJ8ynBj2s=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7900dfe2-31c7-41dd-cfcc-08da0048cdd4
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB4342.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2022 14:43:12.2749
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: L18QHL9bxY21UYNSE4i4CrSuD6X7gtSW+2rdFG9RnrBuoSuTH85VIPgY6vkFM6NFPT0NuT9XlGHbhZFy48qRQA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1390
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Pointer tx_key is being assigned a value that is never read, it is
-being re-assigned a new value later. The assignment is redundant
-and can be removed.
+Reviewed-by:Arunpravin <Arunpravin.PaneerSelvam@amd.com>
 
-Cleans up clan scan build warning:
-drivers/staging/vt6655/rxtx.c:1311:3: warning: Value stored
-to 'tx_key' is never read [deadcode.DeadStores]
-
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/staging/vt6655/rxtx.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/staging/vt6655/rxtx.c b/drivers/staging/vt6655/rxtx.c
-index 0de801b666da..53506e242a96 100644
---- a/drivers/staging/vt6655/rxtx.c
-+++ b/drivers/staging/vt6655/rxtx.c
-@@ -1308,8 +1308,6 @@ int vnt_generate_fifo_header(struct vnt_private *priv, u32 dma_idx,
- 			cpu_to_le16(ieee80211_get_hdrlen_from_skb(skb) << 10);
- 
- 	if (info->control.hw_key) {
--		tx_key = info->control.hw_key;
--
- 		switch (info->control.hw_key->cipher) {
- 		case WLAN_CIPHER_SUITE_WEP40:
- 		case WLAN_CIPHER_SUITE_WEP104:
--- 
-2.35.1
-
+On 07/03/22 6:24 pm, Dan Carpenter wrote:
+> Set the error code to -ENOMEM if drm_random_order() fails.
+> 
+> Fixes: e6ff5ef81170 ("drm/selftests: add drm buddy smoke testcase")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/gpu/drm/selftests/test-drm_buddy.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/selftests/test-drm_buddy.c b/drivers/gpu/drm/selftests/test-drm_buddy.c
+> index fa997f89522b..6eba590afa9b 100644
+> --- a/drivers/gpu/drm/selftests/test-drm_buddy.c
+> +++ b/drivers/gpu/drm/selftests/test-drm_buddy.c
+> @@ -488,8 +488,10 @@ static int igt_buddy_alloc_smoke(void *arg)
+>  	}
+>  
+>  	order = drm_random_order(mm.max_order + 1, &prng);
+> -	if (!order)
+> +	if (!order) {
+> +		err = -ENOMEM;
+>  		goto out_fini;
+> +	}
+>  
+>  	for (i = 0; i <= mm.max_order; ++i) {
+>  		struct drm_buddy_block *block;
+> 
