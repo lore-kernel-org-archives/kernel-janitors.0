@@ -2,70 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B28DC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Mar 2022 22:32:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6981C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Mar 2022 22:42:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343753AbiCGWd2 (ORCPT
+        id S1343830AbiCGWns (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Mar 2022 17:33:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40822 "EHLO
+        Mon, 7 Mar 2022 17:43:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232516AbiCGWd0 (ORCPT
+        with ESMTP id S243229AbiCGWnr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Mar 2022 17:33:26 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1CE4DEA9;
-        Mon,  7 Mar 2022 14:32:29 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id j17so25675010wrc.0;
-        Mon, 07 Mar 2022 14:32:29 -0800 (PST)
+        Mon, 7 Mar 2022 17:43:47 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8D5E2982F;
+        Mon,  7 Mar 2022 14:42:49 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id k24so16155743wrd.7;
+        Mon, 07 Mar 2022 14:42:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=DwDl1ku4FUR5Ozi9oblunGojtzeBv0vdXYXme8GlGQY=;
-        b=IUNi9+FI52U0cv+PUG+qweTy8nwwW48D9CMfQGeCE47bUPz2LBvDbUVxBiZIrEeLAz
-         Y7sR06LdemXXT5m4g8hKzaOmFxiEUXwB8mkmWjomvZzIB5RuCLTX5yLhDZQMGeoSXCin
-         qJB0nfLdQ3d1uj7JiN5obuaX9OQ1qVHZbtgdqnQVUiC7yIBS5VZSnVjpuDh4gtkSQFH5
-         wX2ZM8E5srFPFwF+lcgJabZ3d7dspb7oltIkZ0ljVyFShpj4vm+IGO/KrfaLGkXZiTQO
-         SZ4mWbwAP0XXMQ5KLIqe0izjLvsNdT1Jb3g0pZH8nxYtsfj1ISua+a+kyK4tgcubjtt7
-         6PmQ==
+        bh=doUASiEkKSCXAFSzEQp6F7J0ad241mwX8xOq8sbVorM=;
+        b=XHB5Kp+JDUH60WICe5UwMmi3bPPyLh9hOv9OKWCyeHrPAAWe3qBLn1Kgoe58esYtTP
+         eDBBIKQNb+duIemCig5COE9QCqjIW/9Jg48wjbbpOVLdbHBR9drfJOTAUPsBcPlLxr7X
+         glRdirD02kHhMJfYRXSzpi/sWzpuhvLEpIjRten57Z2yisGFeeXAandDDWbHjx5qHDkr
+         m11Cl1Zp2vQEVcP26mn5Vfn6ALXDWBVWYLYBiLVnK9SowiEu00gHfI+5vSpTW/lAVtAd
+         kdHJtfNAvPWui3pO7wIuRus0BF4tDnIEgcYQu0mQtUBJAK4qCsOF0Z/V8qoEr0FhynOB
+         Gj4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=DwDl1ku4FUR5Ozi9oblunGojtzeBv0vdXYXme8GlGQY=;
-        b=B3oaGj/E1F0kzWUQ/0AHW8cxfWz8/pzzMfdQhsjbz2Ea5+haR20O0e+9KV1joG/KjO
-         ByqzLLVvIrmii12lhQWDC4mKMn0qgsrDk+YLaHDsNjaroqqNfHTooQq4n2L5qRX6/Iz5
-         3fikP+EN3MkIXX0RdRibk1+40ACYufERAPuXX2lcfb8rsgNtKQUqN+3/xPL7Df5iX2LT
-         ZpmD4cMb97jz5BEHIduy2gWmgAi91buPJPYkE4uPOBRTgCSNXdoEepJM1Luxa78tPLDk
-         hRDlgwpsEAVciN9spBeFKBQG4672voNlBsLX+ke5q+LHZ1cuY0hhhKQ8sJZxZPviCOwB
-         +K7A==
-X-Gm-Message-State: AOAM533bN/dxD8dh1sZiTnsJp+jH+m5ypXBOZ0WGqXU7fKSC0QO0Aplc
-        /JGiJXnh2PLP5iLaVICvzlw=
-X-Google-Smtp-Source: ABdhPJxNaqxuh9UAePJwBUcDhV11+dIihM3RKCeeagx9+lhDMIFNlTBCNlLdHLPx6C1jU9UeY9Qe+Q==
-X-Received: by 2002:a05:6000:2c5:b0:1f0:6657:5601 with SMTP id o5-20020a05600002c500b001f066575601mr10178060wry.629.1646692348638;
-        Mon, 07 Mar 2022 14:32:28 -0800 (PST)
+        bh=doUASiEkKSCXAFSzEQp6F7J0ad241mwX8xOq8sbVorM=;
+        b=VdR5g6HhiFddEiZaJUub9Vqa7nYTui4nLar5A6+0wKpq9hoGdJaz5Gkk8aj395bj0g
+         ohJHfu8qtjrgU23iDDRMpOuXI0x/erpDiZl2fDj/A/NJELMtfI8BLqO2fSIzHfDGgKFL
+         PfmH0X/1fJyCxUzUvuQe+RTLEWYLU0l/hKfWXiAgI2hyFD4rXakwcjLdyObbC2WVqame
+         KARjy9eH6Np7bOR3Zmm+3GfN7nRqNlfBtuMi4tZxMWi267Q57hhmHB6sWxqJ6pEW3kDM
+         FavPVt7C95FMk8w8kf0nNhQgDn1oJTPgQbHXAt1lT8bxCERA7dfwU7DqByJ8p8EVDrPr
+         x2fA==
+X-Gm-Message-State: AOAM533fdaLSJMEsFSpbKOogwexZ2CQ1epO1cqr/9ARDxD/+TMvmaZOr
+        amRxcyetrCQbIU9GC4959NZFc/gezZ1/BA==
+X-Google-Smtp-Source: ABdhPJz1ftml4JACkXfhIC8v5g7ez3OZ02XSySK0IO+HN357sjY+KWVo8zSkozz34MQPXvwazGGrzQ==
+X-Received: by 2002:a5d:48d1:0:b0:1e3:2401:f229 with SMTP id p17-20020a5d48d1000000b001e32401f229mr10012515wrs.694.1646692968554;
+        Mon, 07 Mar 2022 14:42:48 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id p12-20020a056000018c00b001f079518150sm9132760wrx.93.2022.03.07.14.32.27
+        by smtp.gmail.com with ESMTPSA id t184-20020a1c46c1000000b003814de297fcsm500430wma.16.2022.03.07.14.42.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Mar 2022 14:32:28 -0800 (PST)
+        Mon, 07 Mar 2022 14:42:48 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Arend van Spriel <aspriel@gmail.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-hsien Lin <chi-hsien.lin@infineon.com>,
-        Wright Feng <wright.feng@infineon.com>,
-        Chung-hsien Hsu <chung-hsien.hsu@infineon.com>,
-        Kalle Valo <kvalo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        SHA-cyfmac-dev-list@infineon.com, netdev@vger.kernel.org
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] brcmfmac: make the read-only array pktflags static const
-Date:   Mon,  7 Mar 2022 22:32:27 +0000
-Message-Id: <20220307223227.165963-1-colin.i.king@gmail.com>
+Subject: [PATCH] media: gspca: make the read-only array table static const
+Date:   Mon,  7 Mar 2022 22:42:47 +0000
+Message-Id: <20220307224247.167172-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -74,28 +65,28 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the read-only array pktflags on the stack but
+Don't populate the read-only array table on the stack but
 instead make it static const. Also makes the object code a little
 smaller.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 2 +-
+ drivers/media/usb/gspca/spca561.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-index b2fb9fcacdc9..f0ad1e23f3c8 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-@@ -4623,7 +4623,7 @@ s32 brcmf_vif_set_mgmt_ie(struct brcmf_cfg80211_vif *vif, s32 pktflag,
+diff --git a/drivers/media/usb/gspca/spca561.c b/drivers/media/usb/gspca/spca561.c
+index d608a518c141..431527ed602b 100644
+--- a/drivers/media/usb/gspca/spca561.c
++++ b/drivers/media/usb/gspca/spca561.c
+@@ -510,7 +510,7 @@ static void setexposure(struct gspca_dev *gspca_dev, s32 val)
+ 	/* We choose to use the high bits setting the fixed framerate divisor
+ 	   asap, as setting high basic exposure setting without the fixed
+ 	   divider in combination with high gains makes the cam stop */
+-	int table[] =  { 0, 450, 550, 625, EXPOSURE_MAX };
++	static const int table[] =  { 0, 450, 550, 625, EXPOSURE_MAX };
  
- s32 brcmf_vif_clear_mgmt_ies(struct brcmf_cfg80211_vif *vif)
- {
--	s32 pktflags[] = {
-+	static const s32 pktflags[] = {
- 		BRCMF_VNDR_IE_PRBREQ_FLAG,
- 		BRCMF_VNDR_IE_PRBRSP_FLAG,
- 		BRCMF_VNDR_IE_BEACON_FLAG
+ 	for (i = 0; i < ARRAY_SIZE(table) - 1; i++) {
+ 		if (val <= table[i + 1]) {
 -- 
 2.35.1
 
