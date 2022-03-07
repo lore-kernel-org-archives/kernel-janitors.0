@@ -2,140 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BB4FC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Mar 2022 10:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A910C433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Mar 2022 12:18:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236845AbiCGKOX (ORCPT
+        id S240952AbiCGMTD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Mar 2022 05:14:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33856 "EHLO
+        Mon, 7 Mar 2022 07:19:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242126AbiCGKLP (ORCPT
+        with ESMTP id S241382AbiCGMTB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Mar 2022 05:11:15 -0500
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D51898879E;
-        Mon,  7 Mar 2022 01:54:29 -0800 (PST)
-Received: by mail-ej1-x62c.google.com with SMTP id qx21so30577618ejb.13;
-        Mon, 07 Mar 2022 01:54:29 -0800 (PST)
+        Mon, 7 Mar 2022 07:19:01 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCEE45BD28
+        for <kernel-janitors@vger.kernel.org>; Mon,  7 Mar 2022 04:18:07 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id r7so10119050lfc.4
+        for <kernel-janitors@vger.kernel.org>; Mon, 07 Mar 2022 04:18:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=LFdIEDDy0ZaKGYeFQ4O3vTisKLa+lVgmmPHb0pU4IoY=;
-        b=qoygGdB9he2opWGHDYY9XoglRQBeKxqr2galGyGL324N6uwz5pYadRvnCC/qmNoth2
-         SSfIHRN5tIWzfosn3sS8tPkOytRkjeisdeDpM2k0zRYTe/kAsGdQqIyqANiVzAG6P2LH
-         SAdpeHjenJ2OHWABdj13zKU8Psy1bUdE1o5tqvvOETChL5hMz1fNIOWfsXUewp8/wHDB
-         1ve8ceRYlWaZyuxoBXLj1LzDNjKUn/oSswux10YTXCHdGobid0FL5GdG3MYQ13HM5Vat
-         RJgFmQFHC+D1lnfzCKDRY+bOBt0pYxbEdb+n/OuV599iG3vXRILheS1wnPIMPCbFBhbf
-         ObjQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ir/rPEzTgBLKB8JMU8C+SpZVAErsjWczEwy3W0PY9us=;
+        b=NAi9Hp76EZ0pg4WrnyReVA+F7lei8tkpibMWNH21fjc57P+SJgE3Xgk4S0GFafjgB+
+         gIFfuXwI7r38wU64qeUsHVsaUewPetwyvYik6XcX8z8DV2pJJ+6Y1GWmQFK495DZOqGl
+         1oLxIeyFAFXKC4+df6C/B0cQ4lzb7Qq9GxBwjP0mLP2FEOmuLRjWYwaMjCN1QVMlBIhV
+         uu9b27aKEI4bWIzlPaXUpLLl+aSoMHceenNXf8zitHEUsfdiNAtGo9opE5LhVYaEl/+p
+         zu4Mbpi2qkfWlN3nDlZDsujXHEQTtNqhRQ0FzAN2KyAys19ogoXR7lB4AiPXVCNvFBfv
+         /hbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=LFdIEDDy0ZaKGYeFQ4O3vTisKLa+lVgmmPHb0pU4IoY=;
-        b=ZSJ6dqaohmaCwsyTuH+7l5R5WCVFbKN11n4pK83+QxxpMbxpfxvL11DEX/Kmra6X6c
-         lhMtQ7zmEErvtU+0Xk6KDe7LjmA2KJg2kn75LnxrSWQPb6ME10HwdkthF9/kDkpLggwf
-         Y9x3Rp0mThP0vFxX2b2HIu9lmA4uEJJBcEi97pgMnfsTKoNYZ0zJjuR7TFqvrUJEU2sO
-         KyWjsMxWSz8XCGJP4COEe7nJjFNqS9HSKxfF4AiJMrP3ne3QwB+pPMPXoaVWnBdldtut
-         uayaGvo7Fs511gIJvKy8pTVB1czTtCYq3Iq4DXFjHd04mllGVUlGaBrn9253McIpgN4k
-         nPHQ==
-X-Gm-Message-State: AOAM532q1BSIxL/r6IAIyR/38gw4a7c2elZJm/yHAXDfIGwSG/QkR/yE
-        Wdb66Dyi60Vkw1Wv9Gzvbzk=
-X-Google-Smtp-Source: ABdhPJzn9/vfO4XyyIBeJkoetqe/kypEJfdHkvj7lvP5sVvs0XW3c1b5gVNgK7dQKvtaEsb5zpkcxw==
-X-Received: by 2002:a17:907:168f:b0:6da:b548:4f9f with SMTP id hc15-20020a170907168f00b006dab5484f9fmr8375270ejc.666.1646646867157;
-        Mon, 07 Mar 2022 01:54:27 -0800 (PST)
-Received: from felia.fritz.box (200116b826f87d009c8e984acb545ab7.dip.versatel-1u1.de. [2001:16b8:26f8:7d00:9c8e:984a:cb54:5ab7])
-        by smtp.gmail.com with ESMTPSA id n3-20020a1709061d0300b006da94efcc7esm4333310ejh.204.2022.03.07.01.54.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Mar 2022 01:54:26 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH RESEND] block: remove dead queue_dma_alignment branch from bio_map_user_iov()
-Date:   Mon,  7 Mar 2022 10:54:11 +0100
-Message-Id: <20220307095411.30459-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ir/rPEzTgBLKB8JMU8C+SpZVAErsjWczEwy3W0PY9us=;
+        b=hXvJFs7Jn0XNgtSNzfnhvIKb8AM/57sCvdyKQnn33CvlRLzdKqZ0ajHSYwrm7GIWwx
+         YboqgEU5pwRDyC16GAZAHswN6MqZrmC/fTWwTanfIU5FjeeVJE9DA5VfBA5Swl7TMy3j
+         achjLI7DfnufaUe8qJr7mgU+UUsvEervLVO6F/VfLGjJDUKYQMlXQZoACMguYyCP0mFy
+         oU/nvWtSm7G3912OE7tletwoKLx/jqsbFdHX0m6JLSQ4SNJjsg5yd9OSd56fHFe/MVPr
+         avdktQR+N/N9kF17I1hj8hrGosyljWoOOlpB01yN9YWKM9+KmBCmiPryWvw9dEJ+5UeM
+         sYNg==
+X-Gm-Message-State: AOAM533rsBCymMbqvQihYyGYB3fEowyjVgHtcFpn8HUoaWbxarHxtCPA
+        95T3h7DMZ5TPbohgzE9tKqAb07fd3XIVobtBhSk5Lw==
+X-Google-Smtp-Source: ABdhPJz/PIFiiW6ET6enYPE2YnpMXMFruAGL0j5yT0Z210W/RQmAZibs1/nuAT2qmU93HoHUPgWF8feZ2nDStus7cEU=
+X-Received: by 2002:ac2:5f0b:0:b0:448:1e32:4531 with SMTP id
+ 11-20020ac25f0b000000b004481e324531mr7445670lfq.167.1646655484705; Mon, 07
+ Mar 2022 04:18:04 -0800 (PST)
+MIME-Version: 1.0
+References: <bf2e2e69226b20d173cce66287f59488fd47474b.1646588375.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <bf2e2e69226b20d173cce66287f59488fd47474b.1646588375.git.christophe.jaillet@wanadoo.fr>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 7 Mar 2022 13:17:28 +0100
+Message-ID: <CAPDyKFpyhS2poZj2E4oYfGOSoH6AuiUnL79_6-mozg5hxcT2gA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: wmt-sdmmc: Fix an error handling path in wmt_mci_probe()
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     cjb@laptop.org, linux-mmc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If queue_dma_alignment(rq->q), then blk_rq_map_user_iov() will call
-bio_copy_user_iov() and not bio_map_user_iov(). So, bio_map_user_iov() does
-not need to handle the queue_dma_alignment(rq->q) case in any special way.
+On Sun, 6 Mar 2022 at 18:44, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> A dma_free_coherent() call is missing in the error handling path of the
+> probe, as already done in the remove function.
+>
+> Fixes: 3a96dff0f828 ("mmc: SD/MMC Host Controller for Wondermedia WM8505/WM8650")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> I've not been able to find a Fixes tag because of the renaming of
+> function and files.
+> However, it looks old (before 2008)
 
-Remove this dead branch from bio_map_user_iov().
+Let's keep the above and monitor what the backport process reports.
 
-Suggested-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
-still applies on next-20220307
+Applied for next, thanks!
 
-added Christoph's Reviewed-by tag from:
-  https://lore.kernel.org/all/20220104124724.GA21670@lst.de/
-
-Jens, this patch must have fell through the cracks...
-please pick this minor non-urgent clean-up patch.
+Kind regards
+Uffe
 
 
- block/blk-map.c | 41 ++++++++++++++++++-----------------------
- 1 file changed, 18 insertions(+), 23 deletions(-)
-
-diff --git a/block/blk-map.c b/block/blk-map.c
-index c7f71d83eff1..2a1d7c5f791e 100644
---- a/block/blk-map.c
-+++ b/block/blk-map.c
-@@ -260,31 +260,26 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
- 
- 		npages = DIV_ROUND_UP(offs + bytes, PAGE_SIZE);
- 
--		if (unlikely(offs & queue_dma_alignment(rq->q))) {
--			ret = -EINVAL;
--			j = 0;
--		} else {
--			for (j = 0; j < npages; j++) {
--				struct page *page = pages[j];
--				unsigned int n = PAGE_SIZE - offs;
--				bool same_page = false;
--
--				if (n > bytes)
--					n = bytes;
--
--				if (!bio_add_hw_page(rq->q, bio, page, n, offs,
--						     max_sectors, &same_page)) {
--					if (same_page)
--						put_page(page);
--					break;
--				}
--
--				added += n;
--				bytes -= n;
--				offs = 0;
-+		for (j = 0; j < npages; j++) {
-+			struct page *page = pages[j];
-+			unsigned int n = PAGE_SIZE - offs;
-+			bool same_page = false;
-+
-+			if (n > bytes)
-+				n = bytes;
-+
-+			if (!bio_add_hw_page(rq->q, bio, page, n, offs,
-+					     max_sectors, &same_page)) {
-+				if (same_page)
-+					put_page(page);
-+				break;
- 			}
--			iov_iter_advance(iter, added);
-+
-+			added += n;
-+			bytes -= n;
-+			offs = 0;
- 		}
-+		iov_iter_advance(iter, added);
- 		/*
- 		 * release the pages we didn't map into the bio, if any
- 		 */
--- 
-2.17.1
-
+> ---
+>  drivers/mmc/host/wmt-sdmmc.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/mmc/host/wmt-sdmmc.c b/drivers/mmc/host/wmt-sdmmc.c
+> index 163ac9df8cca..8e18f01c0938 100644
+> --- a/drivers/mmc/host/wmt-sdmmc.c
+> +++ b/drivers/mmc/host/wmt-sdmmc.c
+> @@ -863,6 +863,8 @@ static int wmt_mci_probe(struct platform_device *pdev)
+>         return 0;
+>  fail6:
+>         clk_put(priv->clk_sdmmc);
+> +       dma_free_coherent(&pdev->dev, mmc->max_blk_count * 16,
+> +                         priv->dma_desc_buffer, priv->dma_desc_device_addr);
+>  fail5:
+>         free_irq(dma_irq, priv);
+>  fail4:
+> --
+> 2.32.0
+>
