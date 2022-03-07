@@ -2,61 +2,70 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C744C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Mar 2022 22:13:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB9BC433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Mar 2022 22:24:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343675AbiCGWOs (ORCPT
+        id S243056AbiCGWZ1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Mar 2022 17:14:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52096 "EHLO
+        Mon, 7 Mar 2022 17:25:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343673AbiCGWOr (ORCPT
+        with ESMTP id S241302AbiCGWZ1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Mar 2022 17:14:47 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D8F3580C3;
-        Mon,  7 Mar 2022 14:13:51 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id u10so23906845wra.9;
-        Mon, 07 Mar 2022 14:13:51 -0800 (PST)
+        Mon, 7 Mar 2022 17:25:27 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1A7B6FA00;
+        Mon,  7 Mar 2022 14:24:31 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id j26so15201077wrb.1;
+        Mon, 07 Mar 2022 14:24:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=S4KRc2JPrzXRUzhnhouVf6rWLnTNsy7QJgg90N+SFgg=;
-        b=OJtwXtXx5Eannq7k//Jp5ML1sR9bjgU0QhTwDhoiYjGHJzvyWMKCjsL6808BvtzLX7
-         MsCm1kwWhic6uQ2XcyfXFmqa0/UI0qPdcdwqiu3Q+jCCsbmRv4pdtgatzOZ3qkBkDdSK
-         M62qT+tJqC7J/4A91+1QBiosBt66dMVGT0lNc/NBJ1QO3wKDdUm22UbmqOh0+EX/3CMg
-         IdtfFVzSgrYJyZhXrzvjRa3RD7MyWNiAW0yQlzWHxhPsuxFrUjIxz1ubrg8oRy1hlURO
-         yLJTC9J4X9bIXlj3+yRkucOed8eOecV5OfSJdP2xpJpveTN8hFSgJFJvtKMTDOkZfXUQ
-         kdMw==
+        bh=zbMZsIhYJ+77vvsPZqt2FUvbmhqeDxMePb3nZB4cAlI=;
+        b=qk/46LPOyKRdvec+MKolVbUYO/E7hTEJpciHXRhBVUmmNAyo2C/8d97ZqVaKPsuFQR
+         g28XiQxVe2sCZP1J4om1F2VAvaHjlN/A2tbJdm+zmnUPpCGWKbq/BnCGY54cDizS2sXh
+         DLljZlhxEuuZ5m1bXGEl69acOJ4W+UjX66CaqOXniK4WwpzQvxJ1hcO7bd5TxzkBfT+h
+         xYU0X44s5t62Q1FwkakwfyYhu3oOR2xcNYRsAVzer1zydacqroMozijJcMVywovCq/tF
+         g7gYlW0Hi5PIkn+Cq66Jbm3y7aHTCF7jCpU0NH0egwL9p84eecVwb01d9H0Fj+dRhmP1
+         aCOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=S4KRc2JPrzXRUzhnhouVf6rWLnTNsy7QJgg90N+SFgg=;
-        b=edQ1riKNDLM3hSPhHy1mq15+WYXnAO6sPO3l4wHGo+TMgCWXNmR/FP8rNo3bm08JTW
-         49nwtms0eMumoaImm2zsO44TYzBCrVyl7/LS/9uHBdTQHoJuneqrovtZUT0VUBSuWrt4
-         E/fvXeQ0GTcqTV6xLJb60O22Kn6VhP25VLzIwZlvWHxAiiArfvl3I9BajDtDTsmTEoou
-         +T879qGFHKl2Fnjyesqu8H0hg9fAYdp0uMzj4hQrWKisH92rQuHjhu86LLa8qnw3agXf
-         BVuZ0zpR0EOI7bas7eiOl9jO+9V/GYLiqxBadZcQ0GYND5Ekli91Dc6oTHBIljtHMll1
-         9sFA==
-X-Gm-Message-State: AOAM530Afh5s2UNz7nPdBfpcpVyIuYAbPhxulX1H11fP3pN3RwuI0OXe
-        gexncZO+mx22ICa45+lgjG0=
-X-Google-Smtp-Source: ABdhPJxuX46N8YfLziPqQK5LGqqqEsE4uEjlh6AByOvMMDk5DZJk92B96+DWQv3THo8a6V4GBZOjJg==
-X-Received: by 2002:adf:eb4d:0:b0:1ed:c1f7:a951 with SMTP id u13-20020adfeb4d000000b001edc1f7a951mr9484235wrn.454.1646691230225;
-        Mon, 07 Mar 2022 14:13:50 -0800 (PST)
+        bh=zbMZsIhYJ+77vvsPZqt2FUvbmhqeDxMePb3nZB4cAlI=;
+        b=FoBUoTOCx7kWbyazQOEyVGyQJPuz3JXkXLtJPZgjltZhdHDSE2bBCx6ngUdqqBUcdk
+         IQBb3s0c1vcZNGgf3cfo8gG6wAsfhZq2nWgSwxDjJFWLe31D08Pus/CwFYEm7ToHAi2S
+         1qtOluoGOH9HzS8qFzAuL1btX6djFSufhiAQr8PBVIkInjTtpTNmOoWhwvr8QYMlukEL
+         1MJjVkk9FTp0VvFzY4Pab++i2w3QCxw1NwfejuLKribGXmoeLx9ygnqtfbG3QJZoLN5f
+         eVpjqcdyyKYnNOYYlm7FbHr/kwSGDiLDaQCLK8K4fKcVjW+QrbeGJOFw7d5D5xWzKzhK
+         2bhQ==
+X-Gm-Message-State: AOAM530sHMDTOGgrSUN3Z4bh0Vi8xroETEIXrYP9+QEIDoM+4jm1Gv56
+        I7YqkxzVyov6mYJrBsRKU08=
+X-Google-Smtp-Source: ABdhPJwqSNvyS4GjI+QGP/a7FIEfmDb8n8qMgSIZbujBF1i1aTX14o3KbErC3DQHg6WB2p2+k3Yong==
+X-Received: by 2002:adf:e98d:0:b0:1f1:5d2b:eee6 with SMTP id h13-20020adfe98d000000b001f15d2beee6mr9674551wrm.143.1646691870231;
+        Mon, 07 Mar 2022 14:24:30 -0800 (PST)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n4-20020a056000170400b001f1fefa429bsm2741564wrc.8.2022.03.07.14.13.49
+        by smtp.gmail.com with ESMTPSA id u10-20020a05600c19ca00b00389860c6d3asm543321wmq.23.2022.03.07.14.24.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Mar 2022 14:13:49 -0800 (PST)
+        Mon, 07 Mar 2022 14:24:29 -0800 (PST)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Taras Chornyi <tchornyi@marvell.com>,
+To:     Felix Fietkau <nbd@nbd.name>,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Shayne Chen <shayne.chen@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Kalle Valo <kvalo@kernel.org>,
         "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+        Jakub Kicinski <kuba@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net: prestera: acl: make read-only array client_map static const
-Date:   Mon,  7 Mar 2022 22:13:49 +0000
-Message-Id: <20220307221349.164585-1-colin.i.king@gmail.com>
+Subject: [PATCH] mt76: connac: make read-only array ba_range static const
+Date:   Mon,  7 Mar 2022 22:24:29 +0000
+Message-Id: <20220307222429.165336-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,28 +74,28 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the read-only array client_map  on the stack but
+Don't populate the read-only array ba_range on the stack but
 instead make it static const. Also makes the object code a little
 smaller.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/net/ethernet/marvell/prestera/prestera_acl.c | 2 +-
+ drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/marvell/prestera/prestera_acl.c b/drivers/net/ethernet/marvell/prestera/prestera_acl.c
-index e4af8a503277..47c899c08951 100644
---- a/drivers/net/ethernet/marvell/prestera/prestera_acl.c
-+++ b/drivers/net/ethernet/marvell/prestera/prestera_acl.c
-@@ -91,7 +91,7 @@ static const struct rhashtable_params __prestera_acl_rule_entry_ht_params = {
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.c b/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.c
+index 0a646ae51c8d..fb44fc6c78f3 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.c
+@@ -1044,7 +1044,7 @@ void mt76_connac_mcu_wtbl_ba_tlv(struct mt76_dev *dev, struct sk_buff *skb,
+ 	}
  
- int prestera_acl_chain_to_client(u32 chain_index, u32 *client)
- {
--	u32 client_map[] = {
-+	static const u32 client_map[] = {
- 		PRESTERA_HW_COUNTER_CLIENT_LOOKUP_0,
- 		PRESTERA_HW_COUNTER_CLIENT_LOOKUP_1,
- 		PRESTERA_HW_COUNTER_CLIENT_LOOKUP_2
+ 	if (enable && tx) {
+-		u8 ba_range[] = { 4, 8, 12, 24, 36, 48, 54, 64 };
++		static const u8 ba_range[] = { 4, 8, 12, 24, 36, 48, 54, 64 };
+ 		int i;
+ 
+ 		for (i = 7; i > 0; i--) {
 -- 
 2.35.1
 
