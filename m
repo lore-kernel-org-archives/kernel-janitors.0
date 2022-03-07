@@ -2,79 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03274C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Mar 2022 23:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29983C433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Mar 2022 23:31:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343557AbiCGXbH (ORCPT
+        id S1343967AbiCGXcA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Mar 2022 18:31:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43226 "EHLO
+        Mon, 7 Mar 2022 18:32:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240124AbiCGXbG (ORCPT
+        with ESMTP id S1343977AbiCGXb5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Mar 2022 18:31:06 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5679F24F25;
-        Mon,  7 Mar 2022 15:30:11 -0800 (PST)
+        Mon, 7 Mar 2022 18:31:57 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 302735521C;
+        Mon,  7 Mar 2022 15:31:01 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D60E36122C;
-        Mon,  7 Mar 2022 23:30:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4616EC340F4;
-        Mon,  7 Mar 2022 23:30:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646695810;
-        bh=U+rWhl3oOvuEaen7v0Bp5SCF/5OB6Y92K5CtNu4t+7w=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=W5Kp0Cs7egMyRTFhlBpNyIXgCE8M+P+gGUhvuLeN+uqgKCC6d8QBeUlqwuQDwHNcA
-         ETOXYjXxTkGqU1MzFx1TZt6Jbw8lPgPX/Xvv3r6ADC96EUU8ZeFYBbX5iuhQdeYkQm
-         vWwKAP3RNcJ4Cqzl29ThGIfHiHfeGiH2G31WNPj++9scij2w0CZFOvB+4feR4bBBgA
-         sKkwiWYGXqmdrSnrZR4LTR8h0xic1MbFh2GOJr3Eq+PMgDuUzSj6Op0oqOdK89cClM
-         kLSMrC8f4J/a9k9GRFegc/JuBNWUEQNtXKi4jH7DM+bzggpyrIx53Igq7gUDD/DA0e
-         OEeGHeTvLmzPQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 267DAEAC095;
-        Mon,  7 Mar 2022 23:30:10 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] ptp: ocp: off by in in ptp_ocp_tod_gnss_name()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164669581015.18752.8236550371182241860.git-patchwork-notify@kernel.org>
-Date:   Mon, 07 Mar 2022 23:30:10 +0000
-References: <20220307141318.GA18867@kili>
-In-Reply-To: <20220307141318.GA18867@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     richardcochran@gmail.com, vadfed@fb.com, jonathan.lemon@gmail.com,
-        davem@davemloft.net, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+        by ams.source.kernel.org (Postfix) with ESMTPS id ABA43B81737;
+        Mon,  7 Mar 2022 23:30:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00BA1C340E9;
+        Mon,  7 Mar 2022 23:30:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1646695858;
+        bh=GLHZ0g7/ahjQIoT7Hjah1xiXd6M2mLb2IGNVLEJ/7Gs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=REJp/obTuejYpLoch8Hfxx/RSRxb6X5P89DxJtG7F3ptwSa1P7l+zjQrRftm1DR1U
+         u1B5TqV2fiDfudWL6kn5MolHJtFHQutExXkVvcN9m+LbS6eFoCMObkkk3sHPLFiR/B
+         kmDpmDZjLVVfKtD7HUAKe/Hbf+C17J2cD48B5+mw=
+Date:   Mon, 7 Mar 2022 15:30:57 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Balbir Singh <bsingharora@gmail.com>, Tom Rix <trix@redhat.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        clang-built-linux@googlegroups.com,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND 2] taskstats: remove unneeded dead assignment
+Message-Id: <20220307153057.3212144c1ba19a10573df079@linux-foundation.org>
+In-Reply-To: <20220307093942.21310-1-lukas.bulwahn@gmail.com>
+References: <20220307093942.21310-1-lukas.bulwahn@gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+On Mon,  7 Mar 2022 10:39:42 +0100 Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon, 7 Mar 2022 17:13:18 +0300 you wrote:
-> The > ARRAY_SIZE() needs to be >= ARRAY_SIZE() to prevent an out of
-> bounds access.
+> make clang-analyzer on x86_64 defconfig caught my attention with:
 > 
-> Fixes: 9f492c4cb235 ("ptp: ocp: add TOD debug information")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/ptp/ptp_ocp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>   kernel/taskstats.c:120:2: warning: Value stored to 'rc' is never read \
+>   [clang-analyzer-deadcode.DeadStores]
+>           rc = 0;
+>           ^
+> 
+> Commit d94a041519f3 ("taskstats: free skb, avoid returns in
+> send_cpu_listeners") made send_cpu_listeners() not return a value and
+> hence, the rc variable remained only to be used within the loop where
+> it is always assigned before read and it does not need any other
+> initialisation.
+> 
+> So, simply remove this unneeded dead initializing assignment.
+> 
+> As compilers will detect this unneeded assignment and optimize this anyway,
+> the resulting object code is identical before and after this change.
+> 
+> No functional change. No change to object code.
+> 
+> ...
+>
+> --- a/kernel/taskstats.c
+> +++ b/kernel/taskstats.c
+> @@ -117,7 +117,6 @@ static void send_cpu_listeners(struct sk_buff *skb,
+>  
+>  	genlmsg_end(skb, reply);
+>  
+> -	rc = 0;
+>  	down_read(&listeners->sem);
+>  	list_for_each_entry(s, &listeners->list, list) {
+>  		skb_next = NULL;
 
-Here is the summary with links:
-  - [net-next] ptp: ocp: off by in in ptp_ocp_tod_gnss_name()
-    https://git.kernel.org/netdev/net-next/c/72f00505f2d2
+Yup.  It would be better to also reduce the scope of `rc' so later code
+can't go and read it uninitialized.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+--- a/kernel/taskstats.c~taskstats-remove-unneeded-dead-assignment-fix
++++ a/kernel/taskstats.c
+@@ -113,12 +113,14 @@ static void send_cpu_listeners(struct sk
+ 	struct listener *s, *tmp;
+ 	struct sk_buff *skb_next, *skb_cur = skb;
+ 	void *reply = genlmsg_data(genlhdr);
+-	int rc, delcount = 0;
++	int delcount = 0;
+ 
+ 	genlmsg_end(skb, reply);
+ 
+ 	down_read(&listeners->sem);
+ 	list_for_each_entry(s, &listeners->list, list) {
++		int rc;
++
+ 		skb_next = NULL;
+ 		if (!list_is_last(&s->list, &listeners->list)) {
+ 			skb_next = skb_clone(skb_cur, GFP_KERNEL);
+_
 
+(we could just elimiate `rc' altogether, but I think the above is OK,
+perhaps a little more readable).
 
