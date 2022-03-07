@@ -2,104 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A910C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Mar 2022 12:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7278BC433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Mar 2022 12:40:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240952AbiCGMTD (ORCPT
+        id S235781AbiCGMlW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Mar 2022 07:19:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40508 "EHLO
+        Mon, 7 Mar 2022 07:41:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241382AbiCGMTB (ORCPT
+        with ESMTP id S241381AbiCGMlU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Mar 2022 07:19:01 -0500
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCEE45BD28
-        for <kernel-janitors@vger.kernel.org>; Mon,  7 Mar 2022 04:18:07 -0800 (PST)
-Received: by mail-lf1-x136.google.com with SMTP id r7so10119050lfc.4
-        for <kernel-janitors@vger.kernel.org>; Mon, 07 Mar 2022 04:18:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ir/rPEzTgBLKB8JMU8C+SpZVAErsjWczEwy3W0PY9us=;
-        b=NAi9Hp76EZ0pg4WrnyReVA+F7lei8tkpibMWNH21fjc57P+SJgE3Xgk4S0GFafjgB+
-         gIFfuXwI7r38wU64qeUsHVsaUewPetwyvYik6XcX8z8DV2pJJ+6Y1GWmQFK495DZOqGl
-         1oLxIeyFAFXKC4+df6C/B0cQ4lzb7Qq9GxBwjP0mLP2FEOmuLRjWYwaMjCN1QVMlBIhV
-         uu9b27aKEI4bWIzlPaXUpLLl+aSoMHceenNXf8zitHEUsfdiNAtGo9opE5LhVYaEl/+p
-         zu4Mbpi2qkfWlN3nDlZDsujXHEQTtNqhRQ0FzAN2KyAys19ogoXR7lB4AiPXVCNvFBfv
-         /hbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ir/rPEzTgBLKB8JMU8C+SpZVAErsjWczEwy3W0PY9us=;
-        b=hXvJFs7Jn0XNgtSNzfnhvIKb8AM/57sCvdyKQnn33CvlRLzdKqZ0ajHSYwrm7GIWwx
-         YboqgEU5pwRDyC16GAZAHswN6MqZrmC/fTWwTanfIU5FjeeVJE9DA5VfBA5Swl7TMy3j
-         achjLI7DfnufaUe8qJr7mgU+UUsvEervLVO6F/VfLGjJDUKYQMlXQZoACMguYyCP0mFy
-         oU/nvWtSm7G3912OE7tletwoKLx/jqsbFdHX0m6JLSQ4SNJjsg5yd9OSd56fHFe/MVPr
-         avdktQR+N/N9kF17I1hj8hrGosyljWoOOlpB01yN9YWKM9+KmBCmiPryWvw9dEJ+5UeM
-         sYNg==
-X-Gm-Message-State: AOAM533rsBCymMbqvQihYyGYB3fEowyjVgHtcFpn8HUoaWbxarHxtCPA
-        95T3h7DMZ5TPbohgzE9tKqAb07fd3XIVobtBhSk5Lw==
-X-Google-Smtp-Source: ABdhPJz/PIFiiW6ET6enYPE2YnpMXMFruAGL0j5yT0Z210W/RQmAZibs1/nuAT2qmU93HoHUPgWF8feZ2nDStus7cEU=
-X-Received: by 2002:ac2:5f0b:0:b0:448:1e32:4531 with SMTP id
- 11-20020ac25f0b000000b004481e324531mr7445670lfq.167.1646655484705; Mon, 07
- Mar 2022 04:18:04 -0800 (PST)
+        Mon, 7 Mar 2022 07:41:20 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E3384A90F
+        for <kernel-janitors@vger.kernel.org>; Mon,  7 Mar 2022 04:40:22 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C3983B811E3
+        for <kernel-janitors@vger.kernel.org>; Mon,  7 Mar 2022 12:40:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6A12C340F3;
+        Mon,  7 Mar 2022 12:40:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646656819;
+        bh=7b1ai/DLaoMwWypU8/jHGkgvIV0Cz5+Yuo+N0X/U11Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SlNQh+jBd/QVag3+y5/nDYbxuAOc8AgW3WHCDAo0wlwLeJjdMJfFv6h4bixOEF+sV
+         Y4QfKCvJwIjxcLMRu4DU7GasEtSXuriu8RrK5rRl6jzm/MScW5NXjW4zgUx7ClJ4s/
+         Q72SXBIK2rqI0b7DmzAHEYr3RjW4UEF6P4zierWHBZzlX38vgO1IB9rL47xpfymf0g
+         OzzD0px6U01YA89igIipbc9YbSme3QQwa3Ky5vzhHVQLxTOXvTDZLt1enNDfohOlWX
+         Ih1XlU6hDv4fwSJUSaHRRB3zr4ubHqJJBp1rita+5qjbdAxDf1hvW79nx/5oR+7UFs
+         PMF6ZrN2ex58Q==
+Date:   Mon, 7 Mar 2022 12:40:10 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Meng Tang <tangmeng@uniontech.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/4] ASoC: amd: vg: fix signedness bug in
+ acp5x_audio_probe()
+Message-ID: <YiX9Kp9AFYNiqJcL@sirena.org.uk>
+References: <20220304131256.GA28739@kili>
 MIME-Version: 1.0
-References: <bf2e2e69226b20d173cce66287f59488fd47474b.1646588375.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <bf2e2e69226b20d173cce66287f59488fd47474b.1646588375.git.christophe.jaillet@wanadoo.fr>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 7 Mar 2022 13:17:28 +0100
-Message-ID: <CAPDyKFpyhS2poZj2E4oYfGOSoH6AuiUnL79_6-mozg5hxcT2gA@mail.gmail.com>
-Subject: Re: [PATCH] mmc: wmt-sdmmc: Fix an error handling path in wmt_mci_probe()
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     cjb@laptop.org, linux-mmc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Czo/FV3lhKwL15bG"
+Content-Disposition: inline
+In-Reply-To: <20220304131256.GA28739@kili>
+X-Cookie: Whatever became of eternal truth?
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 6 Mar 2022 at 18:44, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> A dma_free_coherent() call is missing in the error handling path of the
-> probe, as already done in the remove function.
->
-> Fixes: 3a96dff0f828 ("mmc: SD/MMC Host Controller for Wondermedia WM8505/WM8650")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> I've not been able to find a Fixes tag because of the renaming of
-> function and files.
-> However, it looks old (before 2008)
 
-Let's keep the above and monitor what the backport process reports.
+--Czo/FV3lhKwL15bG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Applied for next, thanks!
+On Fri, Mar 04, 2022 at 04:12:56PM +0300, Dan Carpenter wrote:
+> The "adata->i2s_irq" variable is unsigned so the error handling
+> will not work.
 
-Kind regards
-Uffe
+This series has a 1/4 and a 1/3 but no 3/4.
 
+--Czo/FV3lhKwL15bG
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> ---
->  drivers/mmc/host/wmt-sdmmc.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/mmc/host/wmt-sdmmc.c b/drivers/mmc/host/wmt-sdmmc.c
-> index 163ac9df8cca..8e18f01c0938 100644
-> --- a/drivers/mmc/host/wmt-sdmmc.c
-> +++ b/drivers/mmc/host/wmt-sdmmc.c
-> @@ -863,6 +863,8 @@ static int wmt_mci_probe(struct platform_device *pdev)
->         return 0;
->  fail6:
->         clk_put(priv->clk_sdmmc);
-> +       dma_free_coherent(&pdev->dev, mmc->max_blk_count * 16,
-> +                         priv->dma_desc_buffer, priv->dma_desc_device_addr);
->  fail5:
->         free_irq(dma_irq, priv);
->  fail4:
-> --
-> 2.32.0
->
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmIl/SkACgkQJNaLcl1U
+h9Dk8Qf/b60qYtpv/9beRu/xqunawztZFok9vyGOKB0Yr4shMKqB6xPbozNFZ32p
+/uFfcCSuL+7eExwYpzWeCOMzt215eTGTdKu0is9CHRyjOGI1YX1DEbaT5Ph3418l
+c6VbA0aeSSxCA/mIYSSZjP3KH6f6t+O8qbEKczr8gkCzTRny6oXc7IkO21AICYex
+FPFEDbvlY2JfT7VJjL7dDRZQZW3a03ciP6Cr1frN5Swniqn7kZ8sMO90xtlIcMJz
+keodhwXvmXXuxpD9OR4MBQNKXc7uGQEr+BaJnvsR3yiUVp3Nu5v+N6pnWISCX0zu
+8UjMu8p5q1DkydOKoSdByy8wADqDYA==
+=zG8U
+-----END PGP SIGNATURE-----
+
+--Czo/FV3lhKwL15bG--
