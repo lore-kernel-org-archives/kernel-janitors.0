@@ -2,114 +2,142 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C7E4C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 13:37:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42123C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 15:21:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347141AbiCHNiH (ORCPT
+        id S245730AbiCHPWX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Mar 2022 08:38:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42714 "EHLO
+        Tue, 8 Mar 2022 10:22:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347178AbiCHNh4 (ORCPT
+        with ESMTP id S234882AbiCHPWW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Mar 2022 08:37:56 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32ED9496AA
-        for <kernel-janitors@vger.kernel.org>; Tue,  8 Mar 2022 05:36:58 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id h14so7267920lfk.11
-        for <kernel-janitors@vger.kernel.org>; Tue, 08 Mar 2022 05:36:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iYBVyOw/jQFGIr6GyFmmUL1KjMeFXQPX2EGW015MmY8=;
-        b=XEJKHgW+qOM9hCTAxVOsEciI9wGIDg/n2/0NwnRFHY/AvPWXNtqow+SKVqr/L3UYQB
-         5LCHnu0y/cBxqFX4Q9xygJRMI1qhWkCucvcUQLYFf4ZIYc1x4v5MtdiZiURsKvRwKp0u
-         WBxEke5AQ1sjdbz1Kg9Vvu8DLK/PXkaVZsjotNOYz2zvt7nBC5qB5fik4bWRMkw+waoF
-         r+spnuNgehJXE8qnmxWmYYKbLIoSkAA3H7bxIuzsWzHAAe7SI4m8mMzaP1qsvAeCkk2T
-         4NI3Kdx0mMN0SKr2hvqlIik3LPHu9tCQwsVe/yZSJD3UnKFGtyYTdxkrE8341CRxg7Hl
-         xOtw==
+        Tue, 8 Mar 2022 10:22:22 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1623C4DF4E
+        for <kernel-janitors@vger.kernel.org>; Tue,  8 Mar 2022 07:21:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1646752885;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=mbYT+mQV69L07Y5e1RX6+MZSdhQ1u9n+Wejp5VgtP+Q=;
+        b=O7HcRmE5mzGXf+ZJqsJXXi7fBV1X4FWfaTBCe5ktJxJybjCXnenqw0xAQO0ZkUy5kEpwXl
+        cDoBEriI3Cri+cVV4SvIrFDPf/8VFxKKNeBI1GXJ6KuIHP0OlMS1V4f218Wj6H8ZvBLmSv
+        Roju/qDm08U+7up/8nXRpXa6MsSU0cE=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-470-mLFP83pENYGVUUMkqG64Aw-1; Tue, 08 Mar 2022 10:21:24 -0500
+X-MC-Unique: mLFP83pENYGVUUMkqG64Aw-1
+Received: by mail-ed1-f69.google.com with SMTP id i5-20020a056402054500b00415ce7443f4so9862979edx.12
+        for <kernel-janitors@vger.kernel.org>; Tue, 08 Mar 2022 07:21:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iYBVyOw/jQFGIr6GyFmmUL1KjMeFXQPX2EGW015MmY8=;
-        b=A4ZPWX987At7cUQbS8HLf1Fi/cSnuNlBllhPuinbbEukeGFc/7BKl77cDYBZdnL24v
-         JcM236u0qpSZd6dB5GTsSv+MFshLYse51iH13h92XP/sms9154yj0twRegEPVFHhLHyW
-         MB5CZkwxnNRunWTNWPRMSlTBrV8yS0t6HPXLGg3fE7SpeQjJ7fPjE7x0QxHz6ivL7mBN
-         63uCYKwbCGsjnCB0z2G3nN1n+N8u5HaWrQorl5uxrtfSNSENuNt+AZ0+zrfqzdVZHH5j
-         xlKqFZeYbIRfOpxcIS6F/tq6aNMkyo8l85cE5B/dnYrZrgAQYD1T6B2DhczCTdLH7osC
-         zUlA==
-X-Gm-Message-State: AOAM530RNkRhPSD3FaewxP9gI3eDqa2wqYvhBqimQLB1JBKKYyCQ62zk
-        +NYT75Hn0tRHpSbc/3kBCOfN4OpPU7HaXNn4wZ3I2cpbfVU=
-X-Google-Smtp-Source: ABdhPJyaBZXPpHXunr37L3bMLyy0YhR1BIKiVTwgDDKe5fvRDAjPt+D0FS9J/HXwRCPXeCEZQBp0IXJ+JUNhUVcU3sM=
-X-Received: by 2002:a05:6512:308e:b0:448:3826:6d68 with SMTP id
- z14-20020a056512308e00b0044838266d68mr3948099lfd.184.1646746616253; Tue, 08
- Mar 2022 05:36:56 -0800 (PST)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=mbYT+mQV69L07Y5e1RX6+MZSdhQ1u9n+Wejp5VgtP+Q=;
+        b=aqDci9tnR8NKD1KcROXuh1M5FDEr50rGSG+lGjKkeaPSiQUbWpJH2Lqxj9B4Y89Z/G
+         TuTxARtwz0ufVvBa8kwfDEBTsqKNhuSMmUGJwP7mBrHTepuCKLonS9IeT3C+xTtbn8DE
+         ZbdlUcwb8kAYvHnzfSr6d5W6IGwZMKrZbrrsWE7oGPl312S/Eof6qTS8q1FwReegFOod
+         C79Labbpa9ICwAp64pqqMmlEW8q8OFn3Obk7my2qiJDUv4DpAEWFRs8pQImXXmYCJ6Xn
+         u+oS/MlxKS8cWkUaUYLt8rdybIdgYZTVWe86EhsrQOihA2ZgZLRvJWXvK7Xx7F66uzh1
+         Q9sA==
+X-Gm-Message-State: AOAM5308VVWj/VufAHQkd2E7IVAxaswMmzw4dXNtOmFEXH8XguYM7ozx
+        ANIEuEaObEHsSZHclEbVF7b8d5BDRf6y04Ha3RVwHFa+9ufjbV6ijvGxIYg5nUKMkYVo8cdhtM/
+        ufnQl8OfMsbDRktMXCkAjI3PkmGvE
+X-Received: by 2002:a17:906:3ec9:b0:6bb:2eb9:84f with SMTP id d9-20020a1709063ec900b006bb2eb9084fmr13617239ejj.86.1646752882782;
+        Tue, 08 Mar 2022 07:21:22 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJx3rNiVTf6eT4CF+lg7atnitRG6bFQKjVQT2DbYgx4ZO5cBZAdGR8gw+h+vCo7CBzIw8Mtvrw==
+X-Received: by 2002:a17:906:3ec9:b0:6bb:2eb9:84f with SMTP id d9-20020a1709063ec900b006bb2eb9084fmr13617216ejj.86.1646752882534;
+        Tue, 08 Mar 2022 07:21:22 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1? (2001-1c00-0c1e-bf00-1db8-22d3-1bc9-8ca1.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1])
+        by smtp.gmail.com with ESMTPSA id q16-20020a170906145000b006bdaf981589sm6027458ejc.81.2022.03.08.07.21.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Mar 2022 07:21:21 -0800 (PST)
+Message-ID: <7f6d3091-d305-9aa1-f0cb-93c6d0a1850b@redhat.com>
+Date:   Tue, 8 Mar 2022 16:21:21 +0100
 MIME-Version: 1.0
-References: <bf2e2e69226b20d173cce66287f59488fd47474b.1646588375.git.christophe.jaillet@wanadoo.fr>
- <20220308125445.GE3293@kadam>
-In-Reply-To: <20220308125445.GE3293@kadam>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 8 Mar 2022 14:36:19 +0100
-Message-ID: <CAPDyKFpdghX5je_Dvy+aam3zmbJpArFocrqURK1LVCZNwAvVSA@mail.gmail.com>
-Subject: Re: [PATCH] mmc: wmt-sdmmc: Fix an error handling path in wmt_mci_probe()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Subject: Re: [PATCH] platform/x86/intel-uncore-freq: fix
+ uncore_freq_common_init() error codes
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc:     Mark Gross <markgross@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        platform-driver-x86@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20220304131925.GG28739@kili>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20220304131925.GG28739@kili>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 8 Mar 2022 at 13:55, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> On Sun, Mar 06, 2022 at 06:44:56PM +0100, Christophe JAILLET wrote:
-> > A dma_free_coherent() call is missing in the error handling path of the
-> > probe, as already done in the remove function.
-> >
-> > Fixes: 3a96dff0f828 ("mmc: SD/MMC Host Controller for Wondermedia WM8505/WM8650")
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> > I've not been able to find a Fixes tag because of the renaming of
-> > function and files.
-> > However, it looks old (before 2008)
->
-> You did add a fixes tag and it's from 2012.  :P
->
-> > ---
-> >  drivers/mmc/host/wmt-sdmmc.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/drivers/mmc/host/wmt-sdmmc.c b/drivers/mmc/host/wmt-sdmmc.c
-> > index 163ac9df8cca..8e18f01c0938 100644
-> > --- a/drivers/mmc/host/wmt-sdmmc.c
-> > +++ b/drivers/mmc/host/wmt-sdmmc.c
-> > @@ -863,6 +863,8 @@ static int wmt_mci_probe(struct platform_device *pdev)
-> >       return 0;
-> >  fail6:
-> >       clk_put(priv->clk_sdmmc);
-> > +     dma_free_coherent(&pdev->dev, mmc->max_blk_count * 16,
-> > +                       priv->dma_desc_buffer, priv->dma_desc_device_addr);
-> >  fail5:
-> >       free_irq(dma_irq, priv);
->
-> This isn't quite right.  If of_clk_get() fails it should call
-> dma_free_coherent() but it does not.  You need to add:
->
->  fail6:
->         clk_put(priv->clk_sdmmc);
-> +fail5_and_a_half:
-> +       dma_free_coherent(&pdev->dev, mmc->max_blk_count * 16,
-> +                         priv->dma_desc_buffer, priv->dma_desc_device_addr);
->  fail5:
->         free_irq(dma_irq, priv);
->
-> regards,
-> dan carpenter
+Hi,
 
-Thanks Dan for reviewing, I have dropped the $subject patch from my next branch.
+On 3/4/22 14:19, Dan Carpenter wrote:
+> Currently the uncore_freq_common_init() return one on success and
+> zero on failure.  There is only one caller and it has a "forgot to set
+> the error code" bug.  Change uncore_freq_common_init() to return
+> negative error codes which makes the code simpler and avoids this kind
+> of bug in the future.
+> 
+> Fixes: dbce412a7733 ("platform/x86/intel-uncore-freq: Split common and enumeration part")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Kind regards
-Uffe
+Thank you for your patch, I've applied this patch to my review-hans 
+branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+
+Note it will show up in my review-hans branch once I've pushed my
+local branch there, which might take a while.
+
+Once I've run some tests on this branch the patches there will be
+added to the platform-drivers-x86/for-next branch and eventually
+will be included in the pdx86 pull-request to Linus for the next
+merge-window.
+
+Regards,
+
+Hans
+
+
+> ---
+>  .../x86/intel/uncore-frequency/uncore-frequency-common.c        | 2 +-
+>  drivers/platform/x86/intel/uncore-frequency/uncore-frequency.c  | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common.c b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common.c
+> index e4d5a7960234..84eabd6156bb 100644
+> --- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common.c
+> +++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common.c
+> @@ -231,7 +231,7 @@ int uncore_freq_common_init(int (*read_control_freq)(struct uncore_data *data, u
+>  		++uncore_instance_count;
+>  	mutex_unlock(&uncore_lock);
+>  
+> -	return (!!uncore_root_kobj);
+> +	return uncore_root_kobj ? 0 : -ENOMEM;
+>  }
+>  EXPORT_SYMBOL_NS_GPL(uncore_freq_common_init, INTEL_UNCORE_FREQUENCY);
+>  
+> diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency.c b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency.c
+> index 791af0e287e4..c61f804dd44e 100644
+> --- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency.c
+> +++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency.c
+> @@ -225,7 +225,7 @@ static int __init intel_uncore_init(void)
+>  
+>  	ret = uncore_freq_common_init(uncore_read_control_freq, uncore_write_control_freq,
+>  				      uncore_read_freq);
+> -	if (!ret)
+> +	if (ret)
+>  		goto err_free;
+>  
+>  	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
+
