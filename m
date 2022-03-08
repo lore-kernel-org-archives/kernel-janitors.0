@@ -2,93 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5639C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 10:00:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0593C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 10:30:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345594AbiCHKBL (ORCPT
+        id S1345877AbiCHKbj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Mar 2022 05:01:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52532 "EHLO
+        Tue, 8 Mar 2022 05:31:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345586AbiCHKBK (ORCPT
+        with ESMTP id S245724AbiCHKbh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Mar 2022 05:01:10 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F04D424BA;
-        Tue,  8 Mar 2022 02:00:13 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2C884B81852;
-        Tue,  8 Mar 2022 10:00:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A211C340EC;
-        Tue,  8 Mar 2022 10:00:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646733610;
-        bh=i9OsW0AxWUwQAqlooc3ym6MdFnqZBd8K+5Fvlrk6mtU=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=ckuT8PXN7SFaIJqlzPOteFj+N41XPUi/lgSmPd73URwm6TZgybje+FEe++jWtUObn
-         B0WKkxsEHzpzIdfW4TqdKsEbhtXvD/LFaSLzqXnlR1dR+0Vi0JWrcAAlXxLaEwRc36
-         aMSFEtLBEBU5mopwbCP7GEenk9ts3TpohdI7eFUyQ7gDTXV+8jgaFi+uoZ6eiA09Dm
-         1D7938BniNvXaWXOgVS8giW362QJ+FzLA5avakNRIHx6jo8PVU90RCYeo7ItSIvvlS
-         zfjyxpRcTcy6rWrcDC84EyMxQVi/FHphI2oUziOCuHFdxUpp6CvtSW9MuRpSL3BtdH
-         iajV0MXm1oyEA==
-From:   Kalle Valo <kvalo@kernel.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     ath11k@lists.infradead.org,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-wireless\@vger.kernel.org" <linux-wireless@vger.kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: rectify entry for QUALCOMM ATHEROS ATH11K WIRELESS DRIVER
-References: <20220308071827.9453-1-lukas.bulwahn@gmail.com>
-        <87o82gsvqf.fsf@kernel.org>
-        <CAKXUXMwhMuUCzATH15GD7was8SkHqcYz-8swTMdE+wuE0yvknQ@mail.gmail.com>
-Date:   Tue, 08 Mar 2022 12:00:04 +0200
-In-Reply-To: <CAKXUXMwhMuUCzATH15GD7was8SkHqcYz-8swTMdE+wuE0yvknQ@mail.gmail.com>
-        (Lukas Bulwahn's message of "Tue, 8 Mar 2022 09:57:02 +0100")
-Message-ID: <87k0d4sr17.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 8 Mar 2022 05:31:37 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9516242EF5;
+        Tue,  8 Mar 2022 02:30:41 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id o1so22749288edc.3;
+        Tue, 08 Mar 2022 02:30:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tYotIQtVF5XPHG/2k4UETbG/SQ0kI6Pzodt53Ep40a8=;
+        b=VNj1DyuZ9ao36J47REAMw34AlX/wp5hah4VfJzWWyG86ubJPbQIkOFNUMHw7ehZDBC
+         M6Y1DOGknHOjHQ5g+1KT4EF3mUxJADclSSEcbEiuop1rx6AmTCOdH5OfCKSJe5Qxo/cI
+         R6Sp3yt2GyLhh2PX9RESxFGkNVsEd1o+b8qPR+d5QSkp97FAWc0/Sfhz3w6elCU79sae
+         PBelu/n9K4fqq7ORtE6mPjrqnWvsFzrLnEldRkHt2BLy0q+vRMV5FsYJaBr/2K1HBNw+
+         VJUE34RGaxGz6BuFtYAKUSJJrHBj3fXT5NR+gp0iAoRtVZS5ZEaorsF9vlM993nuZAd6
+         g9LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tYotIQtVF5XPHG/2k4UETbG/SQ0kI6Pzodt53Ep40a8=;
+        b=J7qBp/Xe0f47/7XWYO8xQXhV6anyLf32A44n4PRpT6aMsaKuqyXfF/ncNbIILsFqnM
+         5p+Ck7KsDCvj2FZgV+wvTx31YSGLtOF91QuppianB29926ofjyfgNLs5g5MxGD35yh83
+         s/KdMIIhq4aTeUqXtNcI3tueJbAxA7P990TFCJBC5D4pXUULYvgBN3KYh/9ov9UCD+bC
+         2miD9Bw/T1f4tggxJt8sX9t8p8Drx+1GeEwcNOlq4IlNc7UgfdCspjAXUEEBw7BcffaI
+         IMTSy+mTiXkpqgOY6uu8fE9sejvf93GbNSNxCWY6Kz/PxIipNSEJR0SgRzeeLDVuXrHg
+         KmyQ==
+X-Gm-Message-State: AOAM533Tbc3SGXTEY9ibvircZoeM6nzkolMC3hNYV1MlDm25A8fVtPbn
+        lHnDZwQOFxYxQ/q+ZesKj/c=
+X-Google-Smtp-Source: ABdhPJxZlpvszIcXr52D0kizLh5f3rZYQrmHYuC8il/GvI86pVH0zCNpJebjG36qLXX0ZNNKb60VvA==
+X-Received: by 2002:a50:da89:0:b0:413:adb1:cf83 with SMTP id q9-20020a50da89000000b00413adb1cf83mr15282645edj.158.1646735439932;
+        Tue, 08 Mar 2022 02:30:39 -0800 (PST)
+Received: from felia.fritz.box (200116b82626c9000cc91df728b27ead.dip.versatel-1u1.de. [2001:16b8:2626:c900:cc9:1df7:28b2:7ead])
+        by smtp.gmail.com with ESMTPSA id q10-20020aa7cc0a000000b0040f826f09fdsm7381826edt.81.2022.03.08.02.30.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Mar 2022 02:30:39 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc:     Luiz Angelo Daros de Luca <luizluca@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        =?UTF-8?q?Alvin=20=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: rectify entry for REALTEK RTL83xx SMI DSA ROUTER CHIPS
+Date:   Tue,  8 Mar 2022 11:30:27 +0100
+Message-Id: <20220308103027.32191-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
+Commit 429c83c78ab2 ("dt-bindings: net: dsa: realtek: convert to YAML
+schema, add MDIO") converts realtek-smi.txt to realtek.yaml, but missed to
+adjust its reference in MAINTAINERS.
 
-> On Tue, Mar 8, 2022 at 9:18 AM Kalle Valo <kvalo@kernel.org> wrote:
->>
->> + linux-wireless
->>
->> Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
->>
->> > Commit dae0978d4174 ("dt: bindings: net: add qcom,ath11k.yaml") obviously
->> > adds qcom,ath11k.yaml, but the file entry in MAINTAINERS, added with
->> > commit fcda1cb81663 ("MAINTAINERS: add DT bindings files for ath10k and
->> > ath11k") then refers to qcom,ath11k.txt.
->> >
->> > Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
->> > broken reference.
->> >
->> > Repair this file reference in QUALCOMM ATHEROS ATH11K WIRELESS DRIVER, and
->> > put it in alphabetic order while at it.
->> >
->> > Fixes: fcda1cb81663 ("MAINTAINERS: add DT bindings files for ath10k and ath11k")
->> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
->> > ---
->> > Kalle, please pick this minor non-urgent clean-up patch.
->>
->> Can you resubmit as v2 and also CC linux-wireless, please? This way I
->> can pick this up directly from patchwork.
->>
->
-> Sure, I just did so, see:
->
-> https://lore.kernel.org/linux-wireless/20220308085503.537-1-lukas.bulwahn@gmail.com/
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
-And I see it in patchwork now, thanks.
+Repair this file reference in REALTEK RTL83xx SMI DSA ROUTER CHIPS.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on next-20220308
+
+David, please pick this minor non-urgent clean-up patch for net-next.
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 38cdf9aadfe4..8c7e40e1215e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16638,7 +16638,7 @@ REALTEK RTL83xx SMI DSA ROUTER CHIPS
+ M:	Linus Walleij <linus.walleij@linaro.org>
+ M:	Alvin Šipraga <alsi@bang-olufsen.dk>
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/net/dsa/realtek-smi.txt
++F:	Documentation/devicetree/bindings/net/dsa/realtek.yaml
+ F:	drivers/net/dsa/realtek/*
+ 
+ REALTEK WIRELESS DRIVER (rtlwifi family)
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+2.17.1
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
