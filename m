@@ -2,98 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD3DC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 09:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5639C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 10:00:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345467AbiCHJuY (ORCPT
+        id S1345594AbiCHKBL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Mar 2022 04:50:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57528 "EHLO
+        Tue, 8 Mar 2022 05:01:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345461AbiCHJuW (ORCPT
+        with ESMTP id S1345586AbiCHKBK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Mar 2022 04:50:22 -0500
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 368C7340EF
-        for <kernel-janitors@vger.kernel.org>; Tue,  8 Mar 2022 01:49:26 -0800 (PST)
-Received: by mail-wr1-x42b.google.com with SMTP id k24so18074948wrd.7
-        for <kernel-janitors@vger.kernel.org>; Tue, 08 Mar 2022 01:49:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=tkgcK8ecZDBc70jdMa4zDKJRDRWY03o3rPLloJ/xBNM=;
-        b=CTK9yN2t0kI7VgXrEVmOTtL8IKfSeXEg0FvDL3uDI899+ylaBe1y6FpDQTAOPHzAfT
-         pPDqtWN7m83nZTRVEBCQSjdyImTfzOQ3z7g+I2Fi8MuYjfy1znIIm3/xjsFFB+GaAwuj
-         05ZQGbKsq9nCBPP3nJxHxI/fyrr2LlqT9/sPOeGOHwsmJPYpZuVuuk4kkJU6dmwz4dse
-         waRkLfrWvdMsjc0w3pLAI9Jto5VlK4oupDg+Xg/JZcb39dI7dxjvFVj/ErP29dNjltR/
-         5l8537CKwqIVrea7SRGOT8VqSRLRz4ocRWwy6yOcFvi1H5xwbGIV6SZvrjApHIzYJlp7
-         xSvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=tkgcK8ecZDBc70jdMa4zDKJRDRWY03o3rPLloJ/xBNM=;
-        b=PRaU3nGrm2QCHgcWBpcIuErv2yHPvxNrfOL/D6sQX2AIlP0UzArtc+PfhpT/ZDBctG
-         aQzSsqeeaBAZ6cPtCzXty4jEvnEeEeOcsUN1vIs+a5r+OGS29EVJGryXh7JBYL1VlwkY
-         6lWHyLmbzByJoLbeZ+J5zwnWQ5P5yylsAHn2hyLfczd9PA/KgSeSmB3B1ODP+3zHjiWK
-         qDRrFKGmSdl5duMYbaStLs9MB6V+TAtoXH0LXBueWitWf4Bk+kmEW9BM4BWk3iLLDcjW
-         5lltaNwkAv7VRtKBHKfDyGMc0jYFcpn9k2BNEhXtzF9/SUN154UKStoY7541r4EFvDuB
-         LtFw==
-X-Gm-Message-State: AOAM531+hAEiEWdq7DYjLyd3kXkmb3kt17Nry0/58dXsnIbGICurn+fc
-        2KAj4CqQqOxcdDHrKbLSO/X0QA==
-X-Google-Smtp-Source: ABdhPJzu5ztwwSo4Mv9Dznx8FsQWqzTSnjzdm45GfvoBksxlgazbg25aWALOpjMpC3bJt+SB3BqiuA==
-X-Received: by 2002:adf:b74b:0:b0:1ed:e1d3:e053 with SMTP id n11-20020adfb74b000000b001ede1d3e053mr11636346wre.131.1646732964772;
-        Tue, 08 Mar 2022 01:49:24 -0800 (PST)
-Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
-        by smtp.gmail.com with ESMTPSA id u18-20020adfdd52000000b001f04e9f215fsm13036739wrm.53.2022.03.08.01.49.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Mar 2022 01:49:24 -0800 (PST)
-Date:   Tue, 8 Mar 2022 09:49:22 +0000
-From:   Lee Jones <lee.jones@linaro.org>
+        Tue, 8 Mar 2022 05:01:10 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F04D424BA;
+        Tue,  8 Mar 2022 02:00:13 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2C884B81852;
+        Tue,  8 Mar 2022 10:00:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A211C340EC;
+        Tue,  8 Mar 2022 10:00:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646733610;
+        bh=i9OsW0AxWUwQAqlooc3ym6MdFnqZBd8K+5Fvlrk6mtU=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=ckuT8PXN7SFaIJqlzPOteFj+N41XPUi/lgSmPd73URwm6TZgybje+FEe++jWtUObn
+         B0WKkxsEHzpzIdfW4TqdKsEbhtXvD/LFaSLzqXnlR1dR+0Vi0JWrcAAlXxLaEwRc36
+         aMSFEtLBEBU5mopwbCP7GEenk9ts3TpohdI7eFUyQ7gDTXV+8jgaFi+uoZ6eiA09Dm
+         1D7938BniNvXaWXOgVS8giW362QJ+FzLA5avakNRIHx6jo8PVU90RCYeo7ItSIvvlS
+         zfjyxpRcTcy6rWrcDC84EyMxQVi/FHphI2oUziOCuHFdxUpp6CvtSW9MuRpSL3BtdH
+         iajV0MXm1oyEA==
+From:   Kalle Valo <kvalo@kernel.org>
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: rectify entry for ROHM MULTIFUNCTION
- BD9571MWV-M PMIC DEVICE DRIVERS
-Message-ID: <YicmotR7h3HH6v3q@google.com>
-References: <20220308085136.30753-1-lukas.bulwahn@gmail.com>
+Cc:     ath11k@lists.infradead.org,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-wireless\@vger.kernel.org" <linux-wireless@vger.kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: rectify entry for QUALCOMM ATHEROS ATH11K WIRELESS DRIVER
+References: <20220308071827.9453-1-lukas.bulwahn@gmail.com>
+        <87o82gsvqf.fsf@kernel.org>
+        <CAKXUXMwhMuUCzATH15GD7was8SkHqcYz-8swTMdE+wuE0yvknQ@mail.gmail.com>
+Date:   Tue, 08 Mar 2022 12:00:04 +0200
+In-Reply-To: <CAKXUXMwhMuUCzATH15GD7was8SkHqcYz-8swTMdE+wuE0yvknQ@mail.gmail.com>
+        (Lukas Bulwahn's message of "Tue, 8 Mar 2022 09:57:02 +0100")
+Message-ID: <87k0d4sr17.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220308085136.30753-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 08 Mar 2022, Lukas Bulwahn wrote:
+Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
 
-> Commit 983b62975e90 ("dt-bindings: mfd: bd9571mwv: Convert to json-schema")
-> converts bd9571mwv.txt to rohm,bd9571mwv.yaml, but missed to adjust its
-> reference in MAINTAINERS.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
-> 
-> Repair this file reference in ROHM MULTIFUNCTION BD9571MWV-M PMIC DEVICE
-> DRIVERS.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Lee, please pick this minor non-urgent clean-up patch. Thanks.
-> 
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> On Tue, Mar 8, 2022 at 9:18 AM Kalle Valo <kvalo@kernel.org> wrote:
+>>
+>> + linux-wireless
+>>
+>> Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
+>>
+>> > Commit dae0978d4174 ("dt: bindings: net: add qcom,ath11k.yaml") obviously
+>> > adds qcom,ath11k.yaml, but the file entry in MAINTAINERS, added with
+>> > commit fcda1cb81663 ("MAINTAINERS: add DT bindings files for ath10k and
+>> > ath11k") then refers to qcom,ath11k.txt.
+>> >
+>> > Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+>> > broken reference.
+>> >
+>> > Repair this file reference in QUALCOMM ATHEROS ATH11K WIRELESS DRIVER, and
+>> > put it in alphabetic order while at it.
+>> >
+>> > Fixes: fcda1cb81663 ("MAINTAINERS: add DT bindings files for ath10k and ath11k")
+>> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+>> > ---
+>> > Kalle, please pick this minor non-urgent clean-up patch.
+>>
+>> Can you resubmit as v2 and also CC linux-wireless, please? This way I
+>> can pick this up directly from patchwork.
+>>
+>
+> Sure, I just did so, see:
+>
+> https://lore.kernel.org/linux-wireless/20220308085503.537-1-lukas.bulwahn@gmail.com/
 
-Applied, thanks.
+And I see it in patchwork now, thanks.
 
 -- 
-Lee Jones [李琼斯]
-Principal Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
