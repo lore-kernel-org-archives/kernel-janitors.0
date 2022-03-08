@@ -2,127 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E569CC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 15:24:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A925C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 15:26:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236725AbiCHPZT (ORCPT
+        id S1347808AbiCHP1p (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Mar 2022 10:25:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56528 "EHLO
+        Tue, 8 Mar 2022 10:27:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234280AbiCHPZS (ORCPT
+        with ESMTP id S1347809AbiCHP1o (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Mar 2022 10:25:18 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 138BD473B2
-        for <kernel-janitors@vger.kernel.org>; Tue,  8 Mar 2022 07:24:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646753061;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NLK1TLy6cekXv585hOIZVnzIsZx+71BAsYDU2BfUhvM=;
-        b=CjZOv1hrMTYzMRkEvuo8+rckKoI672xNuIEKYABG1CwdPvD2E6mxaul4sURvsmv5IJVR3n
-        fyD5E7FEs4XmG8C04xnGU9OrQpQnqJAfdY+rLzJgytgsfJzCWYbTIiyBvEOjY9IKBk1myJ
-        Sq+uAN4TkT/SDmJapCzhW5YpgmwTWOM=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-248-PDhYe3ejM6u7YBlz3UlReQ-1; Tue, 08 Mar 2022 10:24:20 -0500
-X-MC-Unique: PDhYe3ejM6u7YBlz3UlReQ-1
-Received: by mail-ed1-f72.google.com with SMTP id r8-20020aa7d588000000b00416438ed9a2so4335429edq.11
-        for <kernel-janitors@vger.kernel.org>; Tue, 08 Mar 2022 07:24:19 -0800 (PST)
+        Tue, 8 Mar 2022 10:27:44 -0500
+Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D73F49F9A
+        for <kernel-janitors@vger.kernel.org>; Tue,  8 Mar 2022 07:26:47 -0800 (PST)
+Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-2db569555d6so205391027b3.12
+        for <kernel-janitors@vger.kernel.org>; Tue, 08 Mar 2022 07:26:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BDg83KmxExGv2FTVzKSEUkIFPafp8SLQqggPFQR6FYo=;
+        b=i57L6Z+tbb7HROJlg+BbVrHHFL+dr6ZTQym4TJ1LIhKfteG/s4OkwFbOkBRqfS20+W
+         Uk+h5tB3/gb4V9xAXo0nr8EDXvCGyWb9ES6bLCNWr9IcFfhgrYwOrVd/TnY+dKIVbwsM
+         W8YH4JqK1fYahcX8d5Q3KaTgozihTANwCFeYfHfEw2t7ZjfIjtwFqp3KuQW5nJvXo/CG
+         JrLHkgDQjz1Ks88fc21Pf62HB4li084AMgHs33PuzW3KG3aJbdvUXniwB3WsPlMEGjmH
+         Zw1z4XHSrlpgBy+BmcQuuhrn0/pqh3D60f3Zn6UIyPM83YBBW5enm31VcSYI859ljPEG
+         5EAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=NLK1TLy6cekXv585hOIZVnzIsZx+71BAsYDU2BfUhvM=;
-        b=zRxNAbAsA0zWBT7TPypNFjEfsn72BR5cbyuzg67ESW8Lh7wvTI82kGNv6zsuuVD9wT
-         swnue1p6uFCP41Rt7IlHd5jdOgU1+TsnQGi/tGRmSz6YOxRDPmWOSK7n08ZAT/kgrJLq
-         sLfbkKjXJWPGBvf/WyTXYGBMa5Ob3VjXcHhoFMricXsmCxOzMc8QyD7mCYNQuhhO05xI
-         SbYiLuL9idoYVgA7gRHyUarfAzeBrX1sCPaF6K8/DHPDiszvlTHfp9hRS6wEp+PM0Xan
-         4UcuP6glFdJ+vEWuY+OTftA/cR0SCq5IgeDHAHi6M1GOv66GaWmFgEO0FxPsGILU6mnN
-         fXbQ==
-X-Gm-Message-State: AOAM533OJHTMsv2Y0Qbe1kyJ3QQMlKKil+f+nuYtWqBbtt8k2Ok3kSwn
-        tVvlxRYReVkPL4/nd5tA+i1Ob7HjsXyX6FyhZpRD+U6t0OdR4hd2VlwCiAyYTOVJH5nNOtztfYL
-        7X/hOLX1Tyj0ppQac5i5Nfhf+2nLr
-X-Received: by 2002:a17:907:94c6:b0:6da:9561:ce0 with SMTP id dn6-20020a17090794c600b006da95610ce0mr13291515ejc.342.1646753058755;
-        Tue, 08 Mar 2022 07:24:18 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzUjdmgCBJrV6Nhjld2XTJ4wXc0rctI3JiXX0AyXuueBVvyLYJhWNOSri7JO+HDw4edSL21Qw==
-X-Received: by 2002:a17:907:94c6:b0:6da:9561:ce0 with SMTP id dn6-20020a17090794c600b006da95610ce0mr13291486ejc.342.1646753058324;
-        Tue, 08 Mar 2022 07:24:18 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1? (2001-1c00-0c1e-bf00-1db8-22d3-1bc9-8ca1.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1])
-        by smtp.gmail.com with ESMTPSA id k19-20020a1709062a5300b006c75a94c587sm6090845eje.65.2022.03.08.07.24.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Mar 2022 07:24:17 -0800 (PST)
-Message-ID: <4d997aff-38cc-f986-2b37-34e5429f40c9@redhat.com>
-Date:   Tue, 8 Mar 2022 16:24:17 +0100
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BDg83KmxExGv2FTVzKSEUkIFPafp8SLQqggPFQR6FYo=;
+        b=ewA1VzeiU/lxlAFzMbUYempdlwid3EhVmknpAZ1xZd1IlL33WJOi73OohrRydtUeLa
+         miWugcnruILmbH/X1D+fPZD6h+kA0y0lq/skYx3GNjRGQsQmHYNNKpUrpFaKD+gq+6sU
+         n6Xjy+fV3jh7DO/5OmIM8j5/uzOfVbABohxSFGNUYk4FGpwbOlPsVqDdPyq/SUDUmoIa
+         0/P15hdH60CuSIff15EyDJ1FHyJEo0KugGj19Pz9Ev4JavGmitvQb16zWRgUperX9IGD
+         Ra1zkcPUppH7yha6Cpr1Kk5K+73GKMomWm2/q+RNNwdC82iGlERb7tbDSvow8AXRAIUz
+         t7Xg==
+X-Gm-Message-State: AOAM531VKxR0+Wn8Si1JQuHpBR1ts0SmtcD0mHB8Eo56/SR61RFw7XvP
+        P9j/KYls7Ubq26E5WCg1VhkGiUqIecp3nJipw7byqA==
+X-Google-Smtp-Source: ABdhPJxLlp5No+qYWJ6byYFHq0gYnFD75Zl8qKyzpnp75MjksryAO9rMKbI2ZtH9mya7XknA9Tix8MROT4Q2zzrd3oI=
+X-Received: by 2002:a81:9c47:0:b0:2db:9e18:6e75 with SMTP id
+ n7-20020a819c47000000b002db9e186e75mr13379232ywa.437.1646753206417; Tue, 08
+ Mar 2022 07:26:46 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: [PATCH] platform/x86: amd-pmc: uninitialized variable in
- amd_pmc_s2d_init()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        Sanket Goswami <Sanket.Goswami@amd.com>
-Cc:     Mark Gross <markgross@kernel.org>,
-        Mario Limonciello <mario.limonciello@amd.com>,
-        platform-driver-x86@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <20220307141832.GA19660@kili>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20220307141832.GA19660@kili>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220308103027.32191-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220308103027.32191-1-lukas.bulwahn@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 8 Mar 2022 16:26:35 +0100
+Message-ID: <CACRpkdZJYVRQKWDkp95pF8cdokBw3C0gx1ckmHq=F3tDiV3FvQ@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: rectify entry for REALTEK RTL83xx SMI DSA
+ ROUTER CHIPS
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        Luiz Angelo Daros de Luca <luizluca@gmail.com>,
+        =?UTF-8?Q?Alvin_=C5=A0ipraga?= <ALSI@bang-olufsen.dk>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
+On Tue, Mar 8, 2022 at 11:30 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 
-On 3/7/22 15:18, Dan Carpenter wrote:
-> The "size" variable can be uninitialized if amd_pmc_send_cmd() fails.
-> 
-> Fixes: 3d7d407dfb05 ("platform/x86: amd-pmc: Add support for AMD Spill to DRAM STB feature")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Commit 429c83c78ab2 ("dt-bindings: net: dsa: realtek: convert to YAML
+> schema, add MDIO") converts realtek-smi.txt to realtek.yaml, but missed to
+> adjust its reference in MAINTAINERS.
+>
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken reference.
+>
+> Repair this file reference in REALTEK RTL83xx SMI DSA ROUTER CHIPS.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Thank you for your patch, I've applied this patch to my review-hans 
-branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Note it will show up in my review-hans branch once I've pushed my
-local branch there, which might take a while.
-
-Once I've run some tests on this branch the patches there will be
-added to the platform-drivers-x86/for-next branch and eventually
-will be included in the pdx86 pull-request to Linus for the next
-merge-window.
-
-Regards,
-
-Hans
-
-
-> ---
->  drivers/platform/x86/amd-pmc.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/x86/amd-pmc.c b/drivers/platform/x86/amd-pmc.c
-> index 425a86108f75..fc0b4d628dec 100644
-> --- a/drivers/platform/x86/amd-pmc.c
-> +++ b/drivers/platform/x86/amd-pmc.c
-> @@ -708,8 +708,9 @@ static const struct pci_device_id pmc_pci_ids[] = {
->  
->  static int amd_pmc_s2d_init(struct amd_pmc_dev *dev)
->  {
-> -	u32 size, phys_addr_low, phys_addr_hi;
-> +	u32 phys_addr_low, phys_addr_hi;
->  	u64 stb_phys_addr;
-> +	u32 size = 0;
->  
->  	/* Spill to DRAM feature uses separate SMU message port */
->  	dev->msg_port = 1;
-
+Yours,
+Linus Walleij
