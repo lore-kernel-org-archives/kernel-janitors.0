@@ -2,94 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C387FC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 10:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73802C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 11:26:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345978AbiCHKto (ORCPT
+        id S1346396AbiCHL1o (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Mar 2022 05:49:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35204 "EHLO
+        Tue, 8 Mar 2022 06:27:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343543AbiCHKtn (ORCPT
+        with ESMTP id S233551AbiCHL1n (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Mar 2022 05:49:43 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BA8231231
-        for <kernel-janitors@vger.kernel.org>; Tue,  8 Mar 2022 02:48:47 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id t11so27821269wrm.5
-        for <kernel-janitors@vger.kernel.org>; Tue, 08 Mar 2022 02:48:47 -0800 (PST)
+        Tue, 8 Mar 2022 06:27:43 -0500
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24F2A443E6;
+        Tue,  8 Mar 2022 03:26:47 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id r10so28014975wrp.3;
+        Tue, 08 Mar 2022 03:26:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=oePfju4fJo1u0s2xutLmdABPmoZWfyejObfpQ2SykO4=;
-        b=Kvw4rYX1l2sThJBvtCbIACTNXs1/EIDUO7KiaORWiPElVea4Aug/UYOTP+zjI/JyJK
-         27zrtK+BkR4xPR0hwcDn0ewK9C/ltgfxEuBhpij0ZOFUwYpQpp12I2BXFpv2fB8mjRDN
-         UJV+7o0cMfCQTraeALyQd2k0q9tinPQA9Rk4gNS2DeucN6mxnz61dnJ0pbmqdvMi8Pmw
-         687pFuRIOXgKHJO++mTRgs0kINcItgyzAazm2Kp66ihf5JJYF8X9dU7hImFdFRDTphTz
-         B8puYe7LgWXVqP+6wEsz4XGPfSyn+/pVJnxRBuLUAZEyU65MRd35xVsEVGq7A+V+9FQj
-         zDYQ==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=dqty/TsmBq2P0dxufcWyURR/ltsPmc0+kvmHNye4yXI=;
+        b=BHSaqjEm2Fc29hKVgZGSOyhtVWgV9cM97zb5nQX25Tr+TVY63J1xa6uz1HpH9Yi1qC
+         y6Gv+v1bl59rRt4yN7LEvM6IY1N9Gp9PkpEL0z5C4Ul0tS1aI++Q1/TbZZ0e0O4YKAku
+         JDO4xmq3sqRV+/sSjq3+EkuJteX5Xx6S143R3W/gnLJrQnxZnQTqL1LAsT1g3xmtEemm
+         qxjbgg8N7X4l9r2QdQlO9V397S3KqXF/6ogJ6gk7BLIk7WkKT5K7VpBXOcRn3pIlZes2
+         c08cxVKUn2FkF9nTV8nFUDEZxibMq19SujyuVaGbUGeySu93zW1HAuI94wUOKVxuFnkK
+         eZYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=oePfju4fJo1u0s2xutLmdABPmoZWfyejObfpQ2SykO4=;
-        b=DwsjYi680vgf7wMJV0yRiB+MAbLnoE3PI6/NXVizG/ohjsRXtoNfzXvmgenz8i5Vsa
-         XcBzxM+Hp59sbEeawannq8Zs5GpzstgtVOPfAJi9abuuzrkNthkww7Gts4n+ehBPFoZs
-         opFmUIy8S6L8a3LVK8NWsyqSXaygIrm58FacQBkN+mUTq+2necROKnkhTSpe+DrQdAaW
-         BoTQ3pvrrpyToUV6Vi3Qm8pB/v//OtRhyvpr7MXj2J4DbYlXhfV8vxT8QpD0r3eoiRQp
-         MdbCzjXpgr2tdgOccXIKogT/FTHE4YG8o1/PxBFRxd1HoZAj379lGTpEclPKBuRzgLzf
-         woWg==
-X-Gm-Message-State: AOAM532K7IZtV6cdCbeDPDEJpKvusQcw32vmB5/PV01TmQlZIANawuxp
-        m9YsU7rFD+Kmj8Dc4gr9NhKmH8W8zTzFhTcr
-X-Google-Smtp-Source: ABdhPJzJ87arojJYxVBgmLEfJTdVqi9wnz2y1QmFwmq0HFgSG6F6XH8GI/oU72rHX3ZHD0Ni89Qz0w==
-X-Received: by 2002:adf:80d0:0:b0:1dc:90a8:4a1d with SMTP id 74-20020adf80d0000000b001dc90a84a1dmr11506035wrl.180.1646736525957;
-        Tue, 08 Mar 2022 02:48:45 -0800 (PST)
-Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
-        by smtp.gmail.com with ESMTPSA id r12-20020a05600c2c4c00b003816932de9csm1823380wmg.24.2022.03.08.02.48.45
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=dqty/TsmBq2P0dxufcWyURR/ltsPmc0+kvmHNye4yXI=;
+        b=j4zRSif5vQQIUB9kDrh03wg0Jl2Tq5q5erUiN/lxrc8cW98tWqer/hRHqYpr0cuLGI
+         Sk4bg0xMJHlvNyQxxwP6ZrpjQ/pIM/hUs+3gNbtDwPPC/woeROB96xBeTGLWQQoeNAQR
+         r3z5DumyYHozplavua+SQtefxaR9EPWH3LGIZqTx+V1ne2RPUfKGY5c0tAnhcdivZkop
+         SRW5AUs/gjxIphlKFRQmEGge8T2/ynzu/w3j7yRAkY6mCtpLXVGlJLexU1O0td9FF4lx
+         k9gDiI3zImtqoSaowQvm3fAqvLxcWtZunJ0Oz0DeJQJ7PchHfRfaxCFIQw5HejUjm4yz
+         FGiA==
+X-Gm-Message-State: AOAM532rVeDljYcKINcH6x38hiu40uQbcdjA6+g4GdEGUYrE15/fenA4
+        yz31HkUJHIEVxtEk84a6B0w=
+X-Google-Smtp-Source: ABdhPJznvKM8N9UDgvVSyNbUsEqfibtuEC8ss6x9swDX0tUbsU7FGuqpbqsuPawzfYW+3oRNUEvsZw==
+X-Received: by 2002:a5d:6b0f:0:b0:1e7:9432:ee8c with SMTP id v15-20020a5d6b0f000000b001e79432ee8cmr11448484wrw.216.1646738805525;
+        Tue, 08 Mar 2022 03:26:45 -0800 (PST)
+Received: from felia.fritz.box (200116b82626c9000cc91df728b27ead.dip.versatel-1u1.de. [2001:16b8:2626:c900:cc9:1df7:28b2:7ead])
+        by smtp.gmail.com with ESMTPSA id o11-20020adf9d4b000000b001f0077ea337sm14141215wre.22.2022.03.08.03.26.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Mar 2022 02:48:45 -0800 (PST)
-Date:   Tue, 8 Mar 2022 10:48:43 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Helge Deller <deller@gmx.de>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH] backlight: backlight: Slighly simplify
- devm_of_find_backlight()
-Message-ID: <Yic0i9DFzv3bWoTz@google.com>
-References: <f998a4291d865273afa0d1f85764a9ac7fbc1b64.1644738084.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f998a4291d865273afa0d1f85764a9ac7fbc1b64.1644738084.git.christophe.jaillet@wanadoo.fr>
+        Tue, 08 Mar 2022 03:26:45 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Hsin-Yi Wang <hsinyi@chromium.org>,
+        Yunfei Dong <yunfei.dong@mediatek.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Cc:     Rick Chang <rick.chang@mediatek.com>,
+        Bin Liu <bin.liu@mediatek.com>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH 0/2] MAINTAINERS: minor clean-up from device-tree conversions
+Date:   Tue,  8 Mar 2022 12:26:28 +0100
+Message-Id: <20220308112630.546-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 13 Feb 2022, Christophe JAILLET wrote:
+Hi Mauro,
 
-> Use devm_add_action_or_reset() instead of devm_add_action()+hand writing
-> what is done in the release function, should an error occur.
-> 
-> This is more straightforward and saves a few lines of code.
-> 
-> While at it, remove a useless test in devm_backlight_release(). 'data' is
-> known to be not NULL when this function is called.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/video/backlight/backlight.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
+please pick these two minor non-urgent clean-up patches for your media-next tree.
 
-Applied, thanks.
+Best regards,
+
+Lukas
+
+Lukas Bulwahn (2):
+  MAINTAINERS: refurbish MEDIATEK JPEG DRIVER section
+  MAINTAINERS: rectify entry for MEDIATEK MEDIA DRIVER
+
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 -- 
-Lee Jones [李琼斯]
-Principal Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.17.1
+
