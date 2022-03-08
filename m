@@ -2,98 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E2BAC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 06:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77CE8C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 06:30:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344424AbiCHGZO (ORCPT
+        id S243788AbiCHGbJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Mar 2022 01:25:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35706 "EHLO
+        Tue, 8 Mar 2022 01:31:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344436AbiCHGZM (ORCPT
+        with ESMTP id S242009AbiCHGbH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Mar 2022 01:25:12 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2B033CA5F;
-        Mon,  7 Mar 2022 22:24:15 -0800 (PST)
+        Tue, 8 Mar 2022 01:31:07 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 581503CA45;
+        Mon,  7 Mar 2022 22:30:12 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 49F00B81737;
-        Tue,  8 Mar 2022 06:24:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9AD7C340EB;
-        Tue,  8 Mar 2022 06:24:12 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DC580615ED;
+        Tue,  8 Mar 2022 06:30:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4B7F0C340FB;
+        Tue,  8 Mar 2022 06:30:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646720652;
-        bh=Ofliel9YomlgWZWMQ9ro1PAV0p7ilJ4RJ5K2eDsgY0E=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hYg95hDkwyxfD5HhUf7SIUj87w3SPzhl6HL9atrhOQSS6M6aVv5RsSUeuY/i7YA0v
-         KvD3dQnA2XpMCzhAJDCCLBLNlbJN9iBA/TY6+cVSk6UF2A7Gu0Bj8w76CYr8xgVhzl
-         N09a2q3z23gqM0sjjS6cir1IcqCw79PUSBHkJwqYOpiyDYvePYrwXFFMVcPPbDKRaC
-         Uo9GuS9ZahMYJAVQO9ht48NZPt7hAJfA6/fH1nzvSBxJ6jIfvapliJQBdsaW1bfboj
-         tfO1T1RNYXcmOHHmXqJZCaK7p1GdjHcKwpumdf0xCETT+9ZE8PZKVDkXiYGDO4UA30
-         7tcg8+c4mvHgA==
-Date:   Mon, 7 Mar 2022 22:24:11 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] ethernet: sun: Fix an error handling path in
- happy_meal_pci_probe()
-Message-ID: <20220307222411.34bde8e1@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-In-Reply-To: <242ebc5e7dedc6b0d7f47cbf7768326c127f955b.1646584729.git.christophe.jaillet@wanadoo.fr>
-References: <242ebc5e7dedc6b0d7f47cbf7768326c127f955b.1646584729.git.christophe.jaillet@wanadoo.fr>
+        s=k20201202; t=1646721011;
+        bh=e36adnyi5LSWGX0SKleP5HljDauG6e7o4+faZH1RcRc=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=Xx52ruL29VRURPE4nPo6ii+helSJVFN8ubbubqCoUIXow+fPxlcKdNr/mdc85OhJI
+         Ko4+MSYye5IJ2Egs9QAj3mU6dhTwUyueR5cT8jH3Y74+6Rr2J7rEYAHpCB4vX8kc/+
+         62ZDldky8DnBOfqWHx7Iqtwk+M6aPGaet9AkI/TfVF87O1FzL4PcC+6uMrdpwlwfe+
+         gyEF+hxxS0GarS/9g0OODnsdr5MxoAY59PwsKsly5KuvUgNAM3NGF0eNQCTgJwHrjF
+         mq2+b/fQ3oRxicFf6c1Y6quzaMHAnZnvvZUGPvMz+Ruz6ioLys/t9UAG8uy6/4Wu9X
+         9fnxDSN5ndlUg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 35B15F0383B;
+        Tue,  8 Mar 2022 06:30:11 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] vxlan_core: delete unnecessary condition
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164672101121.16776.2633185369226094504.git-patchwork-notify@kernel.org>
+Date:   Tue, 08 Mar 2022 06:30:11 +0000
+References: <20220307125735.GC16710@kili>
+In-Reply-To: <20220307125735.GC16710@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     davem@davemloft.net, nikolay@nvidia.com, kuba@kernel.org,
+        roopa@nvidia.com, edumazet@google.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun,  6 Mar 2022 17:39:10 +0100 Christophe JAILLET wrote:
-> A dma_free_coherent() call is missing in the error handling path of the
-> probe, as already done in the remove function.
+Hello:
+
+This patch was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon, 7 Mar 2022 15:57:36 +0300 you wrote:
+> The previous check handled the "if (!nh)" condition so we know "nh"
+> is non-NULL here.  Delete the check and pull the code in one tab.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
-> dma_alloc_coherent() uses '&pdev->dev' and the remove function
-> 'hp->dma_dev'.
-> This change is a copy&paste from the remove function, so I've left the
-> latter. It is not important because on line 3017 we have
-> "hp->dma_dev = &pdev->dev;" so both expression are the same.
+> This not a bug so a Fixes tag is innappropriate, however for reviewers
+> this was introduced in commit 4095e0e1328a ("drivers: vxlan: vnifilter:
+> per vni stats")
 > 
-> 
-> I've not been able to find a Fixes tag because of the renaming of
-> function and files.
-> However, it looks old (before 2008)
+> [...]
 
-Looks like we got an identical fix from someone else a day earlier:
+Here is the summary with links:
+  - [net-next] vxlan_core: delete unnecessary condition
+    https://git.kernel.org/netdev/net-next/c/8daf4e75fc09
 
-https://lore.kernel.org/all/1646492104-23040-1-git-send-email-zheyuma97@gmail.com/
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-> diff --git a/drivers/net/ethernet/sun/sunhme.c b/drivers/net/ethernet/sun/sunhme.c
-> index ad9029ae6848..348ed5412544 100644
-> --- a/drivers/net/ethernet/sun/sunhme.c
-> +++ b/drivers/net/ethernet/sun/sunhme.c
-> @@ -3146,7 +3146,7 @@ static int happy_meal_pci_probe(struct pci_dev *pdev,
->  	if (err) {
->  		printk(KERN_ERR "happymeal(PCI): Cannot register net device, "
->  		       "aborting.\n");
-> -		goto err_out_iounmap;
-> +		goto err_out_free_dma;
->  	}
->  
->  	pci_set_drvdata(pdev, hp);
-> @@ -3179,6 +3179,10 @@ static int happy_meal_pci_probe(struct pci_dev *pdev,
->  
->  	return 0;
->  
-> +err_out_free_dma:
-> +	dma_free_coherent(hp->dma_dev, PAGE_SIZE,
-> +			  hp->happy_block, hp->hblock_dvma);
-> +
->  err_out_iounmap:
->  	iounmap(hp->gregs);
->  
 
