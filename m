@@ -2,57 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8085C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 08:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71CB4C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 08:52:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240957AbiCHIf0 (ORCPT
+        id S1345334AbiCHIxC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Mar 2022 03:35:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36412 "EHLO
+        Tue, 8 Mar 2022 03:53:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238944AbiCHIfZ (ORCPT
+        with ESMTP id S1345255AbiCHIww (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Mar 2022 03:35:25 -0500
-Received: from mail.olerise.pl (mail.olerise.pl [46.183.184.59])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B6862899D
-        for <kernel-janitors@vger.kernel.org>; Tue,  8 Mar 2022 00:34:29 -0800 (PST)
-Received: by mail.olerise.pl (Postfix, from userid 1001)
-        id 32F5C4286F; Tue,  8 Mar 2022 09:31:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=olerise.pl; s=mail;
-        t=1646728468; bh=ZNYiuZLXlxCdAPtstEG/gwJieB5RBwA/cHj1SZ3Mpl0=;
-        h=Date:From:To:Subject:From;
-        b=c7csMiRgp+eOK7w2oM/iPJvOocDf4HpHCUMYfulqibJMz8YxMUOh9T2Mq3Dt1Aout
-         Ku8n4oTKY5IjLvteQq+Iq202i4nkPX45iETCvFBsVdZrUNGZ19iEIzmCH+QTmIPr0+
-         p3mFNvc4htPSEkOL8AIEN7VP3c0jjJCTkCvStfVwVU1To3Z+oIQMPxPGvCWBF6W2/V
-         J08SPHQcUW++KdoH1Gty2QUAB+YTtLXU25gcl03MsR9fg5DDJ5nAbM/8qS1A5Lpf2r
-         3S/y1IQXmrvSg7QklrC5Xa08QQLPqW3UpxHUVz8swIxfIrCt3Bm6URxBA/BbFOM00t
-         6Vig2yNN4/nnw==
-Received: by mail.olerise.pl for <kernel-janitors@vger.kernel.org>; Tue,  8 Mar 2022 08:30:52 GMT
-Message-ID: <20220308084500-0.1.26.mj8p.0.taieadsfg6@olerise.pl>
-Date:   Tue,  8 Mar 2022 08:30:52 GMT
-From:   =?UTF-8?Q? "Miko=C5=82aj_Rudzik" ?= <mikolaj.rudzik@olerise.pl>
-To:     <kernel-janitors@vger.kernel.org>
-Subject: =?UTF-8?Q?Nap=C5=82yw_Klient=C3=B3w_ze_strony?=
-X-Mailer: mail.olerise.pl
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 8 Mar 2022 03:52:52 -0500
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD3974090E;
+        Tue,  8 Mar 2022 00:51:51 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id dr20so37504624ejc.6;
+        Tue, 08 Mar 2022 00:51:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=weKpcHAcnZbt3XokDlK6GEAJ8PK3dGcUQJAFMx5soSc=;
+        b=YcCGih06qdszN3WESTIuZ81II8HBzbpwHe8fbppflLOAsMDS32mq8z8ZH6k101gg8z
+         Marfr2hHyKsthm618MBbMYiVdVA7p0nKmGsFmQBjx+pqSw9gF14RDOnfoDL7znJLh3ZM
+         p5ZRtxA/H8YeBjfDSHrX+jCNFrR81JY5F48pVVyyx4/qiqepfzkfiDTPkEG/IXA8ztEA
+         H5c1LJ0rlF4nOjxRkG+gH8CO4M7pwFEX3PilXFw3o5yk43xLoeAtgC5WkLxXahZsmVcz
+         y3EYfnSdy0N6VLdceHkl9iCcx4XMiZULWNJUb/isBhSNlKrS9IzI7eb3J630YL80ojMI
+         G7+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=weKpcHAcnZbt3XokDlK6GEAJ8PK3dGcUQJAFMx5soSc=;
+        b=7cf/uGO1brkO3wqKM7vlEsnlyIghkIu3QLqa5AA5xO0Q3IUFMHRVyKEseM+4I6sJEw
+         Uk+AZ2gQnN8LRcCKMs/hpMyJhvmfFqbVigb7Q+C1skUlmAR1OiH+Muwmbi7jqOdnnTV/
+         pXRSBJo+WlrkjpWgp/Y8epK/y6LQ/krRWQx/AICfL7l5t/4jhK7B0UcTHER9Y6ndNLUJ
+         NFZ/4ZbG71s+ek1RwcMv0lq4Mc0MLh/0L/BMVB3KBvzI1ALbPqPeeM7MwzQg3JbblWnd
+         3QETvmIGSbp3q1gCdafmee5XUwS2QmtRQH8F3OqkFubw1Q0/cLguoYQCKhAgz4hGno0R
+         f2PQ==
+X-Gm-Message-State: AOAM530i99xAKP+XnkcqEzypAXn+hNs44dzB3GL/3L7B0bD52LmgnTp8
+        tZLBLdRdOyEYs5JgQhdYGNsXEEN9Tz4=
+X-Google-Smtp-Source: ABdhPJx9TgI8fo2rPRv7i3Gr41qIyvnF3isNGnqAzJKtTTygfNkGSUPBDjqZvpo8BnuURfm23fu/gg==
+X-Received: by 2002:a17:906:4a96:b0:6c5:5ea9:5366 with SMTP id x22-20020a1709064a9600b006c55ea95366mr12075447eju.473.1646729510133;
+        Tue, 08 Mar 2022 00:51:50 -0800 (PST)
+Received: from felia.fritz.box (200116b82626c9000cc91df728b27ead.dip.versatel-1u1.de. [2001:16b8:2626:c900:cc9:1df7:28b2:7ead])
+        by smtp.gmail.com with ESMTPSA id z22-20020a17090655d600b006d229436793sm5558656ejp.223.2022.03.08.00.51.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Mar 2022 00:51:49 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Lee Jones <lee.jones@linaro.org>, linux-renesas-soc@vger.kernel.org
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: rectify entry for ROHM MULTIFUNCTION BD9571MWV-M PMIC DEVICE DRIVERS
+Date:   Tue,  8 Mar 2022 09:51:36 +0100
+Message-Id: <20220308085136.30753-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Commit 983b62975e90 ("dt-bindings: mfd: bd9571mwv: Convert to json-schema")
+converts bd9571mwv.txt to rohm,bd9571mwv.yaml, but missed to adjust its
+reference in MAINTAINERS.
 
-chcia=C5=82bym poinformowa=C4=87 Pa=C5=84stwa o mo=C5=BCliwo=C5=9Bci pozy=
-skania nowych zlece=C5=84 ze strony www.
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
-Widzimy zainteresowanie potencjalnych Klient=C3=B3w Pa=C5=84stwa firm=C4=85=
-, dlatego ch=C4=99tnie pomo=C5=BCemy Pa=C5=84stwu dotrze=C4=87 z ofert=C4=
-=85 do wi=C4=99kszego grona odbiorc=C3=B3w poprzez efektywne metody pozyc=
-jonowania strony w Google.
+Repair this file reference in ROHM MULTIFUNCTION BD9571MWV-M PMIC DEVICE
+DRIVERS.
 
-Czy m=C3=B3g=C5=82bym liczy=C4=87 na kontakt zwrotny?
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Lee, please pick this minor non-urgent clean-up patch. Thanks.
 
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Pozdrawiam
-Miko=C5=82aj Rudzik
+diff --git a/MAINTAINERS b/MAINTAINERS
+index dc984c050086..c1eed1a2ffc9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16695,7 +16695,7 @@ M:	Marek Vasut <marek.vasut+renesas@gmail.com>
+ L:	linux-kernel@vger.kernel.org
+ L:	linux-renesas-soc@vger.kernel.org
+ S:	Supported
+-F:	Documentation/devicetree/bindings/mfd/bd9571mwv.txt
++F:	Documentation/devicetree/bindings/mfd/rohm,bd9571mwv.yaml
+ F:	drivers/gpio/gpio-bd9571mwv.c
+ F:	drivers/mfd/bd9571mwv.c
+ F:	drivers/regulator/bd9571mwv-regulator.c
+-- 
+2.17.1
+
