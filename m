@@ -2,95 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53BEFC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 06:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2362DC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 07:18:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242147AbiCHGcd (ORCPT
+        id S1344529AbiCHHTx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Mar 2022 01:32:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47104 "EHLO
+        Tue, 8 Mar 2022 02:19:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244999AbiCHGc3 (ORCPT
+        with ESMTP id S236167AbiCHHTw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Mar 2022 01:32:29 -0500
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FBE13D483;
-        Mon,  7 Mar 2022 22:31:31 -0800 (PST)
-Received: by mail-ed1-f51.google.com with SMTP id w4so20534548edc.7;
-        Mon, 07 Mar 2022 22:31:31 -0800 (PST)
+        Tue, 8 Mar 2022 02:19:52 -0500
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FA2C31212;
+        Mon,  7 Mar 2022 23:18:49 -0800 (PST)
+Received: by mail-ej1-x630.google.com with SMTP id kt27so37234102ejb.0;
+        Mon, 07 Mar 2022 23:18:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VErC7r/VIhgtIP6NXdpGci8BSiNBhU0SX2iLoyScINk=;
+        b=UKq/CMmizDKXVLYIBOg1sWN/vdxd+lNt9BCksrJ6lhd99YZMNEzWssT30OY8G41Z9d
+         TEl+b/Oue1O2zgnSh3WbLjc5wyHsYmvcLdrZzL90buknv/MfS/tU0ZfbI8KZLeQq1ym+
+         LBxzdsDEaPlvbWLPxED5f1XSzF7z0tVW0NA2SnXPYqYXkbvH+GQdLMnXnD6EZ4pne1nM
+         ZKrhfgfj8odm8ue9yo49ENe3XpEjx9cjK8ajyTKzNTsi8lWTJvBeMb2RI6WeLrOzspCX
+         gYdm/tmc6S6DoQN7E3bw0g9WGBce6TVAE706YGWEn6OMR/LP91C0JFYF9EWeOb7Shg67
+         lmdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=ExA2winC/bnMZ2JkgE+r6xBTL0yncJAqBVQpnJpaDj8=;
-        b=lE3oc88hOOIIRS8ohC43jQkwJDBEiBIi1HrZfgXpJvIHM7SLmlPVOWD3xYss0Cz7jn
-         v3bixF0W04C5mdWixeGrLOJZiauHNOaNR4apHRlA5dEm2EJoxg9WaDKCvu6/VWjbbLjI
-         XnBf+jRdFGgNWYHN0C/FyGOEv9txVU2BCQh3r5k4txzC4h5+c+RkYsSGnPeOPRhvokmw
-         T67PR+U7pkXlykmDoOoZQkT98TZEKcTuKcH3DasprdPkGCHzmmWeb/qQUmoW4lJL3lTC
-         3gVluY5NU72a+2Kk+uSIy+T1BaFIWR/nHrRyI4sy1/gthQ9YX4e7MnHOsO00bEAE65eD
-         rIBw==
-X-Gm-Message-State: AOAM5306iQy+DaFb4YjvCpkEIAGJr4SdcRERpxUngloM4SB7gI337DxP
-        XY6XEBR3ZolVKM6bsa5Cmjg=
-X-Google-Smtp-Source: ABdhPJzNzVQZgW80pNg0y9KL0gbSYgXIJIIH824sOsoUVfDF1ii/M9Z4dMNbQ3K8tQNuqIg8h+IvWA==
-X-Received: by 2002:a50:d711:0:b0:410:a51a:77c5 with SMTP id t17-20020a50d711000000b00410a51a77c5mr14667857edi.154.1646721089642;
-        Mon, 07 Mar 2022 22:31:29 -0800 (PST)
-Received: from [192.168.1.49] (185-219-167-24-static.vivo.cz. [185.219.167.24])
-        by smtp.gmail.com with ESMTPSA id y41-20020a50bb2c000000b0041622779c50sm4374661ede.37.2022.03.07.22.31.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Mar 2022 22:31:29 -0800 (PST)
-Message-ID: <0eff632e-4a9d-f593-72de-243ff4c7733f@kernel.org>
-Date:   Tue, 8 Mar 2022 07:31:27 +0100
+        bh=VErC7r/VIhgtIP6NXdpGci8BSiNBhU0SX2iLoyScINk=;
+        b=02fr40hdgkydYHHIJ7TNTT3ae/myvtb2setJwFufAYPSbq0vWktZfaXfrmJCtp6Mke
+         WI7B8Fm86m1OpliEG4OkHtzgFebrhg3I84qLHwtQq8pBE4jMppaE6P41YsTP8TQEBdBf
+         btuw75nquOaFPRVQJoaFo8gk6/eGnrmII+eHipmS6FmAht15SZaTdP5tqz32lzdP1t6E
+         9DYrhbUjXCAKzFJ99JSkyTWNqFvTlGMvryMAufpsdp8ge4BTpWzleUfd+lXtnlRr5wjD
+         p8Z0yIta+ixkAkvl3FnEqJUbS3pam/X9ETNCMcIHk/kn9EIf6G8L6F7isLFpJ3b7etOI
+         KuQg==
+X-Gm-Message-State: AOAM53373rWEO5Y/LolhzNAimTiJdnHppCxjAb5XRQL4gx6VLf9mj3lL
+        fr8Do3a4p3TIYuLQctnOd44=
+X-Google-Smtp-Source: ABdhPJx92VMHnkznyhGHK41B+WRt9fmIrnkEFUivR46lfNOwYjAVmLv5Ee3fSQR9lFCpAwi8hZ5mSw==
+X-Received: by 2002:a17:906:7751:b0:6ce:e3c:81a6 with SMTP id o17-20020a170906775100b006ce0e3c81a6mr11625922ejn.278.1646723927789;
+        Mon, 07 Mar 2022 23:18:47 -0800 (PST)
+Received: from felia.fritz.box (200116b82626c9000cc91df728b27ead.dip.versatel-1u1.de. [2001:16b8:2626:c900:cc9:1df7:28b2:7ead])
+        by smtp.gmail.com with ESMTPSA id v4-20020a170906338400b006d5aca9fc80sm5452981eja.106.2022.03.07.23.18.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Mar 2022 23:18:47 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Kalle Valo <kvalo@kernel.org>, ath11k@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: rectify entry for QUALCOMM ATHEROS ATH11K WIRELESS DRIVER
+Date:   Tue,  8 Mar 2022 08:18:27 +0100
+Message-Id: <20220308071827.9453-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH] serial: 8250_mtk: make two read-only arrays static const
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220307230055.168241-1-colin.i.king@gmail.com>
-From:   Jiri Slaby <jirislaby@kernel.org>
-In-Reply-To: <20220307230055.168241-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 08. 03. 22, 0:00, Colin Ian King wrote:
-> Don't populate the read-only arrays fraction_L_mapping and
-> fraction_M_mapping on the stack but instead make them static
-> const. Also makes the object code a little smaller.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->   drivers/tty/serial/8250/8250_mtk.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/8250/8250_mtk.c b/drivers/tty/serial/8250/8250_mtk.c
-> index fb65dc601b23..f4a0caa56f84 100644
-> --- a/drivers/tty/serial/8250/8250_mtk.c
-> +++ b/drivers/tty/serial/8250/8250_mtk.c
-> @@ -289,10 +289,10 @@ static void
->   mtk8250_set_termios(struct uart_port *port, struct ktermios *termios,
->   			struct ktermios *old)
->   {
-> -	unsigned short fraction_L_mapping[] = {
-> +	static const unsigned short fraction_L_mapping[] = {
->   		0, 1, 0x5, 0x15, 0x55, 0x57, 0x57, 0x77, 0x7F, 0xFF, 0xFF
->   	};
-> -	unsigned short fraction_M_mapping[] = {
-> +	static const unsigned short fraction_M_mapping[] = {
->   		0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 3
->   	};
+Commit dae0978d4174 ("dt: bindings: net: add qcom,ath11k.yaml") obviously
+adds qcom,ath11k.yaml, but the file entry in MAINTAINERS, added with
+commit fcda1cb81663 ("MAINTAINERS: add DT bindings files for ath10k and
+ath11k") then refers to qcom,ath11k.txt.
 
-And perhaps make them both unsigned char?
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
-thanks,
+Repair this file reference in QUALCOMM ATHEROS ATH11K WIRELESS DRIVER, and
+put it in alphabetic order while at it.
+
+Fixes: fcda1cb81663 ("MAINTAINERS: add DT bindings files for ath10k and ath11k")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Kalle, please pick this minor non-urgent clean-up patch.
+
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2b96a22cf5ea..1e567236146f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15923,8 +15923,8 @@ M:	Kalle Valo <kvalo@kernel.org>
+ L:	ath11k@lists.infradead.org
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git
++F:	Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml
+ F:	drivers/net/wireless/ath/ath11k/
+-F:	Documentation/devicetree/bindings/net/wireless/qcom,ath11k.txt
+ 
+ QUALCOMM ATHEROS ATH9K WIRELESS DRIVER
+ M:	Toke Høiland-Jørgensen <toke@toke.dk>
 -- 
-js
-suse labs
+2.17.1
+
