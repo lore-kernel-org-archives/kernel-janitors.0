@@ -2,112 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29983C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon,  7 Mar 2022 23:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE7D0C4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 00:12:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343967AbiCGXcA (ORCPT
+        id S240099AbiCHANO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 7 Mar 2022 18:32:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45392 "EHLO
+        Mon, 7 Mar 2022 19:13:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343977AbiCGXb5 (ORCPT
+        with ESMTP id S239607AbiCHANO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 7 Mar 2022 18:31:57 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 302735521C;
-        Mon,  7 Mar 2022 15:31:01 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id ABA43B81737;
-        Mon,  7 Mar 2022 23:30:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00BA1C340E9;
-        Mon,  7 Mar 2022 23:30:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1646695858;
-        bh=GLHZ0g7/ahjQIoT7Hjah1xiXd6M2mLb2IGNVLEJ/7Gs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=REJp/obTuejYpLoch8Hfxx/RSRxb6X5P89DxJtG7F3ptwSa1P7l+zjQrRftm1DR1U
-         u1B5TqV2fiDfudWL6kn5MolHJtFHQutExXkVvcN9m+LbS6eFoCMObkkk3sHPLFiR/B
-         kmDpmDZjLVVfKtD7HUAKe/Hbf+C17J2cD48B5+mw=
-Date:   Mon, 7 Mar 2022 15:30:57 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Balbir Singh <bsingharora@gmail.com>, Tom Rix <trix@redhat.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        clang-built-linux@googlegroups.com,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND 2] taskstats: remove unneeded dead assignment
-Message-Id: <20220307153057.3212144c1ba19a10573df079@linux-foundation.org>
-In-Reply-To: <20220307093942.21310-1-lukas.bulwahn@gmail.com>
-References: <20220307093942.21310-1-lukas.bulwahn@gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Mon, 7 Mar 2022 19:13:14 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3A2E63818A
+        for <kernel-janitors@vger.kernel.org>; Mon,  7 Mar 2022 16:11:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1646698287;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=MFrVezwVhJ+SZBQIzjB4A9UTX6BXwFx20i/3W4fbeS0=;
+        b=KPubOxNDZwcBZhA+uGnz4PIEphCSMYvEC4E2WtIMm1FRNvN+QBWfBqvRNDp+zPXoi2JYI6
+        /Ba3Th0F+DQ5mNna9zfo/2AKVC8RyV4a60dHuR7bRnx6Yz6F4jstmOSUIkQZPVpxaydIQT
+        8VClP7dZuKoNN+CpABNVXOcrv9bLdB4=
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
+ [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-508-aCv5l3PwOdmkZUEztVLA-Q-1; Mon, 07 Mar 2022 19:11:26 -0500
+X-MC-Unique: aCv5l3PwOdmkZUEztVLA-Q-1
+Received: by mail-pf1-f198.google.com with SMTP id d145-20020a621d97000000b004f7285f67e8so600705pfd.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 07 Mar 2022 16:11:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=MFrVezwVhJ+SZBQIzjB4A9UTX6BXwFx20i/3W4fbeS0=;
+        b=BlCx3N+xIgnAL9cBPCgsWKMcEmTvrN0dyxVOPcOI/UrPN2sfvKO34l9s0GJ/l6EZ+V
+         bSJwOFCx2XsXaNwK0kDf8OOXptc/yqTyFgc+QtQIMhOz3geDQSYiJIhFYoVShGKgg/Xn
+         gwhcrMcD+vBU+0QRmZhl5Y//E0Tou3+wkHyAwmLQFLpInQhOCzZOHzbHmgHAZi50AA9M
+         dL3iGct2kGd0XtJJyUZ1dNeGJKwZNXk5vv3d5ax5DUeq/qfRdkisqdvxOlzJjhQX0ovs
+         q4M6+HuhjKuQJe3YapcjSlHcM1HXDpwWKNGxVNy48QV5SjTlGI62KsBlfw9V6t06INiU
+         tXSQ==
+X-Gm-Message-State: AOAM531s8hYtL45SFvL1hjrKubH2iW8NjbjkkakEo40sLEFWON9X84q1
+        SoZgh4r2wYbsf9I5cFqqA38u9Rm2sz+bwG8btcKi04ni2hh0MMG+zIhx2P8PvFVjRzsZV78ilxd
+        8yL8jxOekvphnhAQ2evKwa2xKO2M1Aoujh/4P5nEcAu5JKtTRQQYqwkVK5DgdGjQe+xAMcSHKPb
+        ueww==
+X-Received: by 2002:a63:224a:0:b0:368:e837:3262 with SMTP id t10-20020a63224a000000b00368e8373262mr11864492pgm.546.1646698285180;
+        Mon, 07 Mar 2022 16:11:25 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyMI7E0+LGSreWJe1Mlxya1Ol+gk3q2p9Fnofvveu46/ok8zfWOyMW3xGC9x0WhZjxjOdCaJg==
+X-Received: by 2002:a63:224a:0:b0:368:e837:3262 with SMTP id t10-20020a63224a000000b00368e8373262mr11864465pgm.546.1646698284756;
+        Mon, 07 Mar 2022 16:11:24 -0800 (PST)
+Received: from [10.72.13.171] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id m79-20020a628c52000000b004f6f249d298sm6335571pfd.80.2022.03.07.16.11.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Mar 2022 16:11:24 -0800 (PST)
+Subject: Re: [PATCH] ceph: uninitialized variable in debug output
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20220307142121.GB19660@kili>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <ca7956ad-5179-15bd-aa38-d14e0dc990ad@redhat.com>
+Date:   Tue, 8 Mar 2022 08:11:17 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
+MIME-Version: 1.0
+In-Reply-To: <20220307142121.GB19660@kili>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon,  7 Mar 2022 10:39:42 +0100 Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 
-> make clang-analyzer on x86_64 defconfig caught my attention with:
-> 
->   kernel/taskstats.c:120:2: warning: Value stored to 'rc' is never read \
->   [clang-analyzer-deadcode.DeadStores]
->           rc = 0;
->           ^
-> 
-> Commit d94a041519f3 ("taskstats: free skb, avoid returns in
-> send_cpu_listeners") made send_cpu_listeners() not return a value and
-> hence, the rc variable remained only to be used within the loop where
-> it is always assigned before read and it does not need any other
-> initialisation.
-> 
-> So, simply remove this unneeded dead initializing assignment.
-> 
-> As compilers will detect this unneeded assignment and optimize this anyway,
-> the resulting object code is identical before and after this change.
-> 
-> No functional change. No change to object code.
-> 
-> ...
+On 3/7/22 10:21 PM, Dan Carpenter wrote:
+> If read_mapping_folio() fails then "inline_version" is printed without
+> being initialized.
 >
-> --- a/kernel/taskstats.c
-> +++ b/kernel/taskstats.c
-> @@ -117,7 +117,6 @@ static void send_cpu_listeners(struct sk_buff *skb,
->  
->  	genlmsg_end(skb, reply);
->  
-> -	rc = 0;
->  	down_read(&listeners->sem);
->  	list_for_each_entry(s, &listeners->list, list) {
->  		skb_next = NULL;
+> Fixes: 083db6fd3e73 ("ceph: uninline the data on a file opened for writing")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>   fs/ceph/addr.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index 3c1257b09775..0d4120297ede 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -1632,9 +1632,10 @@ int ceph_uninline_data(struct file *file)
+>   	struct ceph_osd_request *req;
+>   	struct ceph_cap_flush *prealloc_cf;
+>   	struct folio *folio = NULL;
+> +	u64 inline_version = -1;
+>   	struct page *pages[1];
+> -	u64 len, inline_version;
+>   	int err = 0;
+> +	u64 len;
+>   
+>   	prealloc_cf = ceph_alloc_cap_flush();
+>   	if (!prealloc_cf)
 
-Yup.  It would be better to also reduce the scope of `rc' so later code
-can't go and read it uninitialized.
+Possibly we'd better format the 'inline_version' in hexadecimal ?
 
---- a/kernel/taskstats.c~taskstats-remove-unneeded-dead-assignment-fix
-+++ a/kernel/taskstats.c
-@@ -113,12 +113,14 @@ static void send_cpu_listeners(struct sk
- 	struct listener *s, *tmp;
- 	struct sk_buff *skb_next, *skb_cur = skb;
- 	void *reply = genlmsg_data(genlhdr);
--	int rc, delcount = 0;
-+	int delcount = 0;
- 
- 	genlmsg_end(skb, reply);
- 
- 	down_read(&listeners->sem);
- 	list_for_each_entry(s, &listeners->list, list) {
-+		int rc;
-+
- 		skb_next = NULL;
- 		if (!list_is_last(&s->list, &listeners->list)) {
- 			skb_next = skb_clone(skb_cur, GFP_KERNEL);
-_
-
-(we could just elimiate `rc' altogether, but I think the above is OK,
-perhaps a little more readable).
+Reviewed-by: Xiubo Li<xiubli@redhat.com>
 
