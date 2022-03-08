@@ -2,105 +2,109 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FFE7C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 21:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3855EC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 23:10:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350448AbiCHV0u (ORCPT
+        id S230027AbiCHXLs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Mar 2022 16:26:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35474 "EHLO
+        Tue, 8 Mar 2022 18:11:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350455AbiCHV0u (ORCPT
+        with ESMTP id S229483AbiCHXLr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Mar 2022 16:26:50 -0500
-Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7434F50470
-        for <kernel-janitors@vger.kernel.org>; Tue,  8 Mar 2022 13:25:52 -0800 (PST)
-Received: from [192.168.1.18] ([90.126.236.122])
-        by smtp.orange.fr with ESMTPA
-        id RhKwn3JSLzH5fRhKwn1IDA; Tue, 08 Mar 2022 22:25:49 +0100
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Tue, 08 Mar 2022 22:25:49 +0100
-X-ME-IP: 90.126.236.122
-Message-ID: <4039fd4b-87db-2d6e-2c8d-b6ff0129ed0d@wanadoo.fr>
-Date:   Tue, 8 Mar 2022 22:25:41 +0100
+        Tue, 8 Mar 2022 18:11:47 -0500
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9317E75635
+        for <kernel-janitors@vger.kernel.org>; Tue,  8 Mar 2022 15:10:44 -0800 (PST)
+Received: by mail-lf1-x133.google.com with SMTP id h14so642951lfk.11
+        for <kernel-janitors@vger.kernel.org>; Tue, 08 Mar 2022 15:10:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tclsFaPE34TrWsSULlYvU9YsW3x7Tf6mvtJ/Ff+EAgw=;
+        b=YTxtynEturtmQ9+fQ2vk4MLEzSozTMNeDRXaVWblqZvl5cNILUeHdpEsitwfPfNIzn
+         uCtJuZ5NsjYf2Ok6NBtbFh9Ma45M5vV4eDFye5M5b2CqwFnkNoA8DFyU50SPmMselqV/
+         q/tlUGMcxIMfJNgMyYAgT5U/xKc9hbMGY84CXSrjQz3QPryQGm3EntO5dzCPy4t1eLLM
+         PJF3EWLGIRs9IQkx+NbaWBj8+A2ASwVgX7J8o5ZMMpRM0FvqYWU3ThHQDTV7BjFmtynz
+         gVx61JpRkMOep1q+pQ1+vJQs7ocgJhkFT/XQnL7qiyo2bgs0+u1VgxYEfGddeAxQFlhp
+         Cxgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tclsFaPE34TrWsSULlYvU9YsW3x7Tf6mvtJ/Ff+EAgw=;
+        b=hK4c9sf+PyI8NI/s6KJgWmL2+7ihd0snCdSPNu8a6NzFJfRXzkIStVE78lSrftTFY1
+         cZ9MCwFPyOLLlwkrmEGr9fW+oN0nxg0PsWuiBH0ym2uMSbQC3hv9avk/JUC/v4i8K3vm
+         phHMh+Xt8UQiSqBqpwgURyTfPOgi9HBAubCL+qjmD2dQeTnyRTw8jIfBmVDQ2axBR/KE
+         CXBSD28zcuE6q4kn0mYfkEz4M5CJsGNdG69rMbb8raO+JY0g2Ln0SO+mnm/lawwj9TBC
+         WQC276S18re8igvk3/AFA5XxVTKk1ip+qMW/3EvDEFpNzOlUu+9/Qh0EUgaMjorqyFit
+         OXtw==
+X-Gm-Message-State: AOAM532OVs7CdcL1yL/ueXdrAIzXsk5lD/Hk/boMv+BuNAwJuD0Fya/u
+        u9G47TNKbMmwXzrXA/j/Av1dCjl4IeYfsSNiWDRl6w==
+X-Google-Smtp-Source: ABdhPJx/fglOdwsFUXGzUPIPq1H3ZUZI8HoqBE3Dc7CpwH2vZZ4CHq8MWt1insKPhpHz2VgNI0Ys/4lxjE1mEucfOrE=
+X-Received: by 2002:a05:6512:31d4:b0:445:e4ef:c0f8 with SMTP id
+ j20-20020a05651231d400b00445e4efc0f8mr12498094lfe.626.1646781042694; Tue, 08
+ Mar 2022 15:10:42 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH] mmc: wmt-sdmmc: Fix an error handling path in
- wmt_mci_probe()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>, ulf.hansson@linaro.org
-Cc:     linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <bf2e2e69226b20d173cce66287f59488fd47474b.1646588375.git.christophe.jaillet@wanadoo.fr>
- <20220308125445.GE3293@kadam>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20220308125445.GE3293@kadam>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20220307181704.149076-1-colin.i.king@gmail.com>
+In-Reply-To: <20220307181704.149076-1-colin.i.king@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 8 Mar 2022 15:10:31 -0800
+Message-ID: <CAKwvOdkXNGRJkZDd7Cg8jhL9Ex7R+VPYqEEc+VpwDyi9NJKXQQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/rockchip: remove redundant assignment to pointer connector
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Sandy Huang <hjc@rock-chips.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, knaerzche@gmail.com,
+        Heiko Stuebner <heiko@sntech.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 08/03/2022 à 13:54, Dan Carpenter a écrit :
-> On Sun, Mar 06, 2022 at 06:44:56PM +0100, Christophe JAILLET wrote:
->> A dma_free_coherent() call is missing in the error handling path of the
->> probe, as already done in the remove function.
->>
->> Fixes: 3a96dff0f828 ("mmc: SD/MMC Host Controller for Wondermedia WM8505/WM8650")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> I've not been able to find a Fixes tag because of the renaming of
->> function and files.
->> However, it looks old (before 2008)
-> 
-> You did add a fixes tag and it's from 2012.  :P
+On Mon, Mar 7, 2022 at 10:17 AM Colin Ian King <colin.i.king@gmail.com> wrote:
+>
+> The pointer connector is being assigned a value that is never read,
+> it is being re-assigned in the following statement. The assignment
+> is redundant and can be removed.
+>
+> Cleans up clang scan build warning:
+> drivers/gpu/drm/rockchip/rockchip_rgb.c:153:2: warning: Value stored
+> to 'connector' is never read [deadcode.DeadStores]
 
-Well, a bit too much of copy&paste from [1] :(
++ Author & reviewer of:
+Fixes: 2e87bf389e13 ("drm/rockchip: add DRM_BRIDGE_ATTACH_NO_CONNECTOR
+flag to drm_bridge_attach")
 
-[1]: 
-https://lore.kernel.org/all/242ebc5e7dedc6b0d7f47cbf7768326c127f955b.1646584729.git.christophe.jaillet@wanadoo.fr/
-
-> 
->> ---
->>   drivers/mmc/host/wmt-sdmmc.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/mmc/host/wmt-sdmmc.c b/drivers/mmc/host/wmt-sdmmc.c
->> index 163ac9df8cca..8e18f01c0938 100644
->> --- a/drivers/mmc/host/wmt-sdmmc.c
->> +++ b/drivers/mmc/host/wmt-sdmmc.c
->> @@ -863,6 +863,8 @@ static int wmt_mci_probe(struct platform_device *pdev)
->>   	return 0;
->>   fail6:
->>   	clk_put(priv->clk_sdmmc);
->> +	dma_free_coherent(&pdev->dev, mmc->max_blk_count * 16,
->> +			  priv->dma_desc_buffer, priv->dma_desc_device_addr);
->>   fail5:
->>   	free_irq(dma_irq, priv);
-> 
-> This isn't quite right.  If of_clk_get() fails it should call
-> dma_free_coherent() but it does not.  You need to add:
-
-Agreed, thx for the review.
-If no one fix it in the meanwhile, I'll send a v2 this WE or next week.
-
-CJ
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/gpu/drm/rockchip/rockchip_rgb.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_rgb.c b/drivers/gpu/drm/rockchip/rockchip_rgb.c
+> index 2494b079489d..92a727931a49 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_rgb.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_rgb.c
+> @@ -150,7 +150,6 @@ struct rockchip_rgb *rockchip_rgb_init(struct device *dev,
+>         if (ret)
+>                 goto err_free_encoder;
+>
+> -       connector = &rgb->connector;
+>         connector = drm_bridge_connector_init(rgb->drm_dev, encoder);
+>         if (IS_ERR(connector)) {
+>                 DRM_DEV_ERROR(drm_dev->dev,
+> --
+> 2.35.1
+>
+>
 
 
-> 
->   fail6:
->   	clk_put(priv->clk_sdmmc);
-> +fail5_and_a_half:
-> +	dma_free_coherent(&pdev->dev, mmc->max_blk_count * 16,
-> +			  priv->dma_desc_buffer, priv->dma_desc_device_addr);
->   fail5:
->   	free_irq(dma_irq, priv);
-> 
-> regards,
-> dan carpenter
-> 
-> 
-
+-- 
+Thanks,
+~Nick Desaulniers
