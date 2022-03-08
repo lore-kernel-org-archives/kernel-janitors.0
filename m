@@ -2,101 +2,114 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60B13C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 11:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C73C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  8 Mar 2022 11:44:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343806AbiCHLow (ORCPT
+        id S244072AbiCHLpn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Mar 2022 06:44:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37922 "EHLO
+        Tue, 8 Mar 2022 06:45:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346645AbiCHLoW (ORCPT
+        with ESMTP id S1346695AbiCHLpg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Mar 2022 06:44:22 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E282B13E97;
-        Tue,  8 Mar 2022 03:43:15 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id l1-20020a05600c4f0100b00389645443d2so1301102wmq.2;
-        Tue, 08 Mar 2022 03:43:15 -0800 (PST)
+        Tue, 8 Mar 2022 06:45:36 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F4033E5D7;
+        Tue,  8 Mar 2022 03:44:36 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id x5so24036190edd.11;
+        Tue, 08 Mar 2022 03:44:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=BD9aL/dk972NeBQAccfFJoKozgGlibcPRxYjlFBN04k=;
-        b=HKZd76acvxhuP1BW/RDw2oDbrADj7nvmM0wYNYDB9G0smXzeJyRazrshA1yYwkV0Io
-         jPRxoZHjqxwNrFCPAhOs87KulQ168F2ZIJA0dL0sDnelfLoaryk3z7sTS7+YsqQU77Aj
-         RrYMwXqAaQ0bgXsewEEmdgdnW1oGu6SFAVfbLViM4ZT+exZGNVslMW+zPMmjv2Q2rnXr
-         IZggZAqSVMT2pQSJja8yxysD17kcg9XkJwV03PCpHN8O0ICv8z/xpxlK9/qG2Jg/kqf5
-         yTPUZzMSfAewV+2GHkRYkqYyI5WnWSX86TeX80dVyDwy0d1Svc9BAN66Z4xh5ccw8RM1
-         RwnQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=JMRbz6J1yWshdN+XM2gYkyrpKd4K5wvxuv5/wGGiQFc=;
+        b=OKM75JlRjWvWpwoYf1E0yHZch86+h4aKV1Tj1Zt/TVB6Wg6FBJL1axc55dc0CodgRu
+         civSLGEB/uQ8FErK0LBEaCNcC9FcRCWqNXmA7WBCFOqqA5RhhkKYrGpGF58nrDEwLOdU
+         XE9nDRx8gUPU83ih4io9MlShh2My8VtsZ8yzi+SePDKF8uAy/dtihvmpHRIIBMl6EdYu
+         m0zLAs4HvYrxmaN+SNqmtMTEWtcksgm9A+WDIOVXPnTuBt4gQGyqD3oHK+La3ls7K6Jz
+         D0VPEaE6hRJggWYbqubE7AyXpZDYq3LfhBq8GLIewJlkJOkclDTB0MVzrtokyzfSvhco
+         lxwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=BD9aL/dk972NeBQAccfFJoKozgGlibcPRxYjlFBN04k=;
-        b=BdbacgkmaGF2vO7VogZGveKGnEffK4IYaQujqOe5BG58pOHQ4gNrSJJWirNr8fP7Zt
-         3hO5uMQLec5jp6Mw2nipI4ZhZobDJ/oJ2yug7zEJ2Y/JZOHqyOXWOPpUL3O6ilfxjeLc
-         D1K3BBxGLYsNXeMQJ4JLYDLEz0t6uD1ZgJXJ7vDBJU1NARfFX9Z1UevzOMb2d4uD70RQ
-         WJpQfkZA1wbr4P88FpYZospcxPnmoRWTqO9DZ4IC8FrGjpLjhRSBf/PhIzBhgbeygHYW
-         2FNDfLxUmQZ5TXmKe0pA01friRXDWO0AE6InOA1PX1lGulWiXSJtIkNCbhUoYk6mZR2V
-         1S3g==
-X-Gm-Message-State: AOAM533L/ATY3KREn3brt7yAOIFAKzXu2Krw0zhGEfKChxK4miDx9Y8r
-        /+3eGDhswNG1fK8KDarVw98=
-X-Google-Smtp-Source: ABdhPJxHS9QZHXHiJbg8LL9woOu+Y9wLufJJ6DmZ5EISoQGuEpYGXYx9AX/nNTbePJ25NMWVKuvkpQ==
-X-Received: by 2002:a1c:4489:0:b0:389:8b0f:9a67 with SMTP id r131-20020a1c4489000000b003898b0f9a67mr3202144wma.40.1646739794391;
-        Tue, 08 Mar 2022 03:43:14 -0800 (PST)
-Received: from felia.fritz.box (200116b82626c9000cc91df728b27ead.dip.versatel-1u1.de. [2001:16b8:2626:c900:cc9:1df7:28b2:7ead])
-        by smtp.gmail.com with ESMTPSA id p11-20020adf9d8b000000b001f063deef80sm11773169wre.86.2022.03.08.03.43.13
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=JMRbz6J1yWshdN+XM2gYkyrpKd4K5wvxuv5/wGGiQFc=;
+        b=uJkQjmFnxbFEOyg+7RmlFy/Jfy7nyUv4B/T5izVcA/D/V5kMiNxUs2SZKJ9bA7n76u
+         ZCKXym1/A1XITwN3DaLSoUND9FYg7gHBHfOu8DoHxQXDG9osIBsvKX0gsWhEM9szOF4S
+         EJ1+hKR2Z3A1g/CZP+eBk8Tn0UKmSo57qeGnOiCNHkVsQfUZRG/E94jPeN/vQhTWiOqR
+         vlOYnXg3IgJ33mt1asreVlZt4VVH0XSY7f//8CBPb4//O3PAWPB89kz8sVJ1RulQfwde
+         lwZ0lkUNKDp7kD5k4bwviuvmP2NBq5sucC6FVPK40iB5KGtfVc5WuUhpaica/7sICpMH
+         8XUQ==
+X-Gm-Message-State: AOAM5332smgcNPgON7tSevRCWEfBWOQuAyWiv+D5uj5Ih+rHiOvmGROK
+        mAh1PQb1Kh2A56wME4TsvkY=
+X-Google-Smtp-Source: ABdhPJynjbtLJHmlzmzSALzgeprNdMLWfvq3lyyL11wapuPi1rffKj6gVUedEWAiSb+GbE3XbdLmQQ==
+X-Received: by 2002:a50:9d47:0:b0:40f:9d3d:97b6 with SMTP id j7-20020a509d47000000b0040f9d3d97b6mr15545850edk.392.1646739875071;
+        Tue, 08 Mar 2022 03:44:35 -0800 (PST)
+Received: from skbuf ([188.25.231.156])
+        by smtp.gmail.com with ESMTPSA id r6-20020a1709064d0600b006da7ca3e514sm5734108eju.208.2022.03.08.03.44.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Mar 2022 03:43:14 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Bin Liu <bin.liu@mediatek.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH RFC] MAINTAINERS: drop unreachable contact for MEDIATEK JPEG DRIVER
-Date:   Tue,  8 Mar 2022 12:43:00 +0100
-Message-Id: <20220308114300.12502-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 08 Mar 2022 03:44:34 -0800 (PST)
+Date:   Tue, 8 Mar 2022 13:44:33 +0200
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        Luiz Angelo Daros de Luca <luizluca@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: rectify entry for REALTEK RTL83xx SMI DSA
+ ROUTER CHIPS
+Message-ID: <20220308114433.ucxenhxoq2grty4k@skbuf>
+References: <20220308103027.32191-1-lukas.bulwahn@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220308103027.32191-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-After sending a patch to Rick Chang, the mediatek mail server responded:
+On Tue, Mar 08, 2022 at 11:30:27AM +0100, Lukas Bulwahn wrote:
+> Commit 429c83c78ab2 ("dt-bindings: net: dsa: realtek: convert to YAML
+> schema, add MDIO") converts realtek-smi.txt to realtek.yaml, but missed to
+> adjust its reference in MAINTAINERS.
+> 
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken reference.
+> 
+> Repair this file reference in REALTEK RTL83xx SMI DSA ROUTER CHIPS.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
 
-  ** Message not delivered **
+Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
 
-  Your message couldn't be delivered to rick.chang@mediatek.com because
-  the remote server is misconfigured. See technical details below for more
-  information.
-
-  The response from the remote server was:
-  550 Relaying mail to rick.chang@mediatek.com is not allowed
-
-So, drop Rick Chang from the MEDIATEK JPEG DRIVER section.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-
-If Rick Chang is gone, pick this patch.
-
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8c7e40e1215e..02a75dd04187 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12334,7 +12334,6 @@ F:	drivers/iommu/mtk_iommu*
- F:	include/dt-bindings/memory/mt*-port.h
- 
- MEDIATEK JPEG DRIVER
--M:	Rick Chang <rick.chang@mediatek.com>
- M:	Bin Liu <bin.liu@mediatek.com>
- S:	Supported
- F:	Documentation/devicetree/bindings/media/mediatek-jpeg-*.yaml
--- 
-2.17.1
-
+> applies cleanly on next-20220308
+> 
+> David, please pick this minor non-urgent clean-up patch for net-next.
+> 
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 38cdf9aadfe4..8c7e40e1215e 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -16638,7 +16638,7 @@ REALTEK RTL83xx SMI DSA ROUTER CHIPS
+>  M:	Linus Walleij <linus.walleij@linaro.org>
+>  M:	Alvin Šipraga <alsi@bang-olufsen.dk>
+>  S:	Maintained
+> -F:	Documentation/devicetree/bindings/net/dsa/realtek-smi.txt
+> +F:	Documentation/devicetree/bindings/net/dsa/realtek.yaml
+>  F:	drivers/net/dsa/realtek/*
+>  
+>  REALTEK WIRELESS DRIVER (rtlwifi family)
+> -- 
+> 2.17.1
+> 
