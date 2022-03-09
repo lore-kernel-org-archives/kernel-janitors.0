@@ -2,205 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1EAC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Mar 2022 19:50:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F1BEC433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Mar 2022 22:10:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238032AbiCITvt (ORCPT
+        id S238539AbiCIWL4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 9 Mar 2022 14:51:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41464 "EHLO
+        Wed, 9 Mar 2022 17:11:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238036AbiCITvs (ORCPT
+        with ESMTP id S232651AbiCIWLz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 9 Mar 2022 14:51:48 -0500
-Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5559C3DDC7
-        for <kernel-janitors@vger.kernel.org>; Wed,  9 Mar 2022 11:50:46 -0800 (PST)
-Received: from pop-os.home ([90.126.236.122])
-        by smtp.orange.fr with ESMTPA
-        id S2KXnvZvuuvBOS2KXn74JY; Wed, 09 Mar 2022 20:50:44 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Wed, 09 Mar 2022 20:50:44 +0100
-X-ME-IP: 90.126.236.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     bhelgaas@google.com, arnd@arndb.de, hch@infradead.org,
-        akpm@linux-foundation.org
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] PCI: Remove the deprecated "pci-dma-compat.h" API
-Date:   Wed,  9 Mar 2022 20:50:39 +0100
-Message-Id: <25d93797bd5a5bae5c7613ec42c01ecd7c69cd17.1646855282.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
+        Wed, 9 Mar 2022 17:11:55 -0500
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5B4B120F44;
+        Wed,  9 Mar 2022 14:10:54 -0800 (PST)
+Received: from mail-wr1-f47.google.com ([209.85.221.47]) by
+ mrelayeu.kundenserver.de (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1Mhl4Q-1o5p7c43JA-00dn4Q; Wed, 09 Mar 2022 23:10:53 +0100
+Received: by mail-wr1-f47.google.com with SMTP id q14so5166270wrc.4;
+        Wed, 09 Mar 2022 14:10:52 -0800 (PST)
+X-Gm-Message-State: AOAM532kejNrbECFCg1pGeByIFYDZ+e6JfGmWP/pDZzWU0A/Iw4Mexkr
+        jrt8ZBSVCsfQ7NJeYmHefQEIQEJkzWogY3XIyyI=
+X-Google-Smtp-Source: ABdhPJxsBGIQNKZzHxQk8oqPdmlG3af8A3l8ciIsInAxxCnaweP10DRaknHvPgyXAEXDv60+d1/JCW6F4HQCVabMjxE=
+X-Received: by 2002:adf:e181:0:b0:1f7:7d5e:c3bb with SMTP id
+ az1-20020adfe181000000b001f77d5ec3bbmr1273025wrb.12.1646863852593; Wed, 09
+ Mar 2022 14:10:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <25d93797bd5a5bae5c7613ec42c01ecd7c69cd17.1646855282.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <25d93797bd5a5bae5c7613ec42c01ecd7c69cd17.1646855282.git.christophe.jaillet@wanadoo.fr>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 9 Mar 2022 23:10:36 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0bwM3fQDGOzRZm09eJ1vgB4ptQxMdo=6XOEfi6B3KTjw@mail.gmail.com>
+Message-ID: <CAK8P3a0bwM3fQDGOzRZm09eJ1vgB4ptQxMdo=6XOEfi6B3KTjw@mail.gmail.com>
+Subject: Re: [PATCH] PCI: Remove the deprecated "pci-dma-compat.h" API
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:3Mo/QZCO4GmcfQLv+pAYUPIQ5X+XcR3FmhkrlcYVicXuNVYmoyS
+ O7PygsMPHbjRhwkRLoGWCbMAXvIZ28ruxdGL7jxF2SIH/ADy79kHgmltU6SpF11UUHksPrx
+ TsGSgaZAFPIiyAaWgLEtSCTLc5CxLI5MFS1XMdfGLSWokDF8bdTtbg6nn4fRgopLZs4NkRM
+ GBpFR9CdeYYOcXKE9WNMw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:bODM39m/7Lg=:PMXFlBnLIeLh4TR1+Hu3wP
+ //5GYQ4iZ1h+ORqg3tHlSw9j3GY4psYZYhdiaeUUAHqmEdfxFdqhCFjWys8T40nmDvbtYl8Cl
+ lKAg4Ca/sJU1l57iyIrC+l/jWhI4RkG59iC0bkY6STojD8ZEI2lpd9GZs4cYPu/rzQuk9akt0
+ h2nsJTZXkLr5RGOqMV+zURG+uI5XebRosXBWoY2gs+XEgXGfepAY4e95U81Ah5wbJ8ueR9dcC
+ F8AhabhT551kw9GTAqH8YdioCnhmqg68XqW+tWMOmO9C8iPieXXY1Kx2s25nAHuzxXjGtsgA7
+ qwfneqpZn8eFyk8EkwP7rwOPgfFt4MGzBQhaRdM2wBtTUYXh/SgOpXEcS31P208dIzW4ruRhs
+ Vm2ZuBFoV34yX7YWSrdiGWWndGUQbDfaBjcjxTd2HGfJ07dyfzskbScA75hDF1NTsujpPSJl6
+ 5xCkRlRlyKG5cwGzWKaIn3eRqs7uwNXq97QEO0AjTCGzpyoQMAlQR/6cnc9Lc8DA0nJYFquFc
+ RtwjtrnD7rpl46QQ4e0oG28866MNtW7ylG2Md9uygTNSigMIGIRcpFxNBsezwd6Yp38vAquGG
+ +lzVBhfgmFFqzYaDlxjL3AcYQHkYuL8IANlbQZ8kneLju7OGh+6TFmv0jxdXUd5Dad3hECCUB
+ J+Cy54eV7RT6LrKmtCWzl5A1S0EvR58/DC50sgOhDMpMb+bu0jqRA9XmLgzMPMn8Hjuo=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Now that all usages of the functions defined in "pci-dma-compat.h" have
-been removed, it is time to remove this file as well.
+On Wed, Mar 9, 2022 at 8:50 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> Now that all usages of the functions defined in "pci-dma-compat.h" have
+> been removed, it is time to remove this file as well.
+>
+> In order not to break builds, move the "#include <linux/dma-mapping.h>"
+> that was in "pci-dma-compat.h" into "include/linux/pci.h"
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-In order not to break builds, move the "#include <linux/dma-mapping.h>"
-that was in "pci-dma-compat.h" into "include/linux/pci.h"
+Thanks a lot for following through with this!
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- include/linux/pci-dma-compat.h | 129 ---------------------------------
- include/linux/pci.h            |   3 +-
- 2 files changed, 1 insertion(+), 131 deletions(-)
- delete mode 100644 include/linux/pci-dma-compat.h
-
-diff --git a/include/linux/pci-dma-compat.h b/include/linux/pci-dma-compat.h
-deleted file mode 100644
-index 249d4d7fbf18..000000000000
---- a/include/linux/pci-dma-compat.h
-+++ /dev/null
-@@ -1,129 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--/* include this file if the platform implements the dma_ DMA Mapping API
-- * and wants to provide the pci_ DMA Mapping API in terms of it */
--
--#ifndef _ASM_GENERIC_PCI_DMA_COMPAT_H
--#define _ASM_GENERIC_PCI_DMA_COMPAT_H
--
--#include <linux/dma-mapping.h>
--
--/* This defines the direction arg to the DMA mapping routines. */
--#define PCI_DMA_BIDIRECTIONAL	DMA_BIDIRECTIONAL
--#define PCI_DMA_TODEVICE	DMA_TO_DEVICE
--#define PCI_DMA_FROMDEVICE	DMA_FROM_DEVICE
--#define PCI_DMA_NONE		DMA_NONE
--
--static inline void *
--pci_alloc_consistent(struct pci_dev *hwdev, size_t size,
--		     dma_addr_t *dma_handle)
--{
--	return dma_alloc_coherent(&hwdev->dev, size, dma_handle, GFP_ATOMIC);
--}
--
--static inline void *
--pci_zalloc_consistent(struct pci_dev *hwdev, size_t size,
--		      dma_addr_t *dma_handle)
--{
--	return dma_alloc_coherent(&hwdev->dev, size, dma_handle, GFP_ATOMIC);
--}
--
--static inline void
--pci_free_consistent(struct pci_dev *hwdev, size_t size,
--		    void *vaddr, dma_addr_t dma_handle)
--{
--	dma_free_coherent(&hwdev->dev, size, vaddr, dma_handle);
--}
--
--static inline dma_addr_t
--pci_map_single(struct pci_dev *hwdev, void *ptr, size_t size, int direction)
--{
--	return dma_map_single(&hwdev->dev, ptr, size, (enum dma_data_direction)direction);
--}
--
--static inline void
--pci_unmap_single(struct pci_dev *hwdev, dma_addr_t dma_addr,
--		 size_t size, int direction)
--{
--	dma_unmap_single(&hwdev->dev, dma_addr, size, (enum dma_data_direction)direction);
--}
--
--static inline dma_addr_t
--pci_map_page(struct pci_dev *hwdev, struct page *page,
--	     unsigned long offset, size_t size, int direction)
--{
--	return dma_map_page(&hwdev->dev, page, offset, size, (enum dma_data_direction)direction);
--}
--
--static inline void
--pci_unmap_page(struct pci_dev *hwdev, dma_addr_t dma_address,
--	       size_t size, int direction)
--{
--	dma_unmap_page(&hwdev->dev, dma_address, size, (enum dma_data_direction)direction);
--}
--
--static inline int
--pci_map_sg(struct pci_dev *hwdev, struct scatterlist *sg,
--	   int nents, int direction)
--{
--	return dma_map_sg(&hwdev->dev, sg, nents, (enum dma_data_direction)direction);
--}
--
--static inline void
--pci_unmap_sg(struct pci_dev *hwdev, struct scatterlist *sg,
--	     int nents, int direction)
--{
--	dma_unmap_sg(&hwdev->dev, sg, nents, (enum dma_data_direction)direction);
--}
--
--static inline void
--pci_dma_sync_single_for_cpu(struct pci_dev *hwdev, dma_addr_t dma_handle,
--		    size_t size, int direction)
--{
--	dma_sync_single_for_cpu(&hwdev->dev, dma_handle, size, (enum dma_data_direction)direction);
--}
--
--static inline void
--pci_dma_sync_single_for_device(struct pci_dev *hwdev, dma_addr_t dma_handle,
--		    size_t size, int direction)
--{
--	dma_sync_single_for_device(&hwdev->dev, dma_handle, size, (enum dma_data_direction)direction);
--}
--
--static inline void
--pci_dma_sync_sg_for_cpu(struct pci_dev *hwdev, struct scatterlist *sg,
--		int nelems, int direction)
--{
--	dma_sync_sg_for_cpu(&hwdev->dev, sg, nelems, (enum dma_data_direction)direction);
--}
--
--static inline void
--pci_dma_sync_sg_for_device(struct pci_dev *hwdev, struct scatterlist *sg,
--		int nelems, int direction)
--{
--	dma_sync_sg_for_device(&hwdev->dev, sg, nelems, (enum dma_data_direction)direction);
--}
--
--static inline int
--pci_dma_mapping_error(struct pci_dev *pdev, dma_addr_t dma_addr)
--{
--	return dma_mapping_error(&pdev->dev, dma_addr);
--}
--
--#ifdef CONFIG_PCI
--static inline int pci_set_dma_mask(struct pci_dev *dev, u64 mask)
--{
--	return dma_set_mask(&dev->dev, mask);
--}
--
--static inline int pci_set_consistent_dma_mask(struct pci_dev *dev, u64 mask)
--{
--	return dma_set_coherent_mask(&dev->dev, mask);
--}
--#else
--static inline int pci_set_dma_mask(struct pci_dev *dev, u64 mask)
--{ return -EIO; }
--static inline int pci_set_consistent_dma_mask(struct pci_dev *dev, u64 mask)
--{ return -EIO; }
--#endif
--
--#endif
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 60d423d8f0c4..7f924b5edd1d 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -2472,8 +2472,7 @@ static inline bool pci_is_thunderbolt_attached(struct pci_dev *pdev)
- void pci_uevent_ers(struct pci_dev *pdev, enum  pci_ers_result err_type);
- #endif
- 
--/* Provide the legacy pci_dma_* API */
--#include <linux/pci-dma-compat.h>
-+#include <linux/dma-mapping.h>
- 
- #define pci_printk(level, pdev, fmt, arg...) \
- 	dev_printk(level, &(pdev)->dev, fmt, ##arg)
--- 
-2.32.0
-
+Acked-by: Arnd Bergmann <arnd@arndb.de>
