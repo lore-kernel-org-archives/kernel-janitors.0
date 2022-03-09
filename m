@@ -2,72 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3685C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Mar 2022 03:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 350A0C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  9 Mar 2022 06:30:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231638AbiCIDII (ORCPT
+        id S230026AbiCIGbU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 8 Mar 2022 22:08:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38928 "EHLO
+        Wed, 9 Mar 2022 01:31:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231633AbiCIDII (ORCPT
+        with ESMTP id S230017AbiCIGbM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 8 Mar 2022 22:08:08 -0500
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AC5714A6F0;
-        Tue,  8 Mar 2022 19:07:08 -0800 (PST)
-X-UUID: daade56b740b43d3b91adfd9e2c0c7f3-20220309
-X-UUID: daade56b740b43d3b91adfd9e2c0c7f3-20220309
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw02.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 246531414; Wed, 09 Mar 2022 11:04:32 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Wed, 9 Mar 2022 11:04:31 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 9 Mar 2022 11:04:31 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     <lukas.bulwahn@gmail.com>
-CC:     <bin.liu@mediatek.com>, <kernel-janitors@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
-        <mchehab@kernel.org>
-Subject: Re: [PATCH RFC] MAINTAINERS: drop unreachable contact for MEDIATEK JPEG DRIVER
-Date:   Wed, 9 Mar 2022 11:04:31 +0800
-Message-ID: <20220309030431.31247-1-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220308114300.12502-1-lukas.bulwahn@gmail.com>
-References: <20220308114300.12502-1-lukas.bulwahn@gmail.com>
+        Wed, 9 Mar 2022 01:31:12 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5253414561B;
+        Tue,  8 Mar 2022 22:30:14 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 9D9EFCE1D7F;
+        Wed,  9 Mar 2022 06:30:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B2001C340F7;
+        Wed,  9 Mar 2022 06:30:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646807410;
+        bh=3M4MKg7rpgfaMb+u02OrdlJdFEkHXrF7Y9UAR8ezcGI=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=O+WJlU+Yc4ZTvxANti2QDaf46YrvLqiHlgnoG3yJ2nCnDx3FGpaoGWw3RDaLM7gII
+         KCMvIdwwt34S7q9xzkgWIwDhu0lgMwN7ZmMUBZSXNpxQRUS719HGiGjCbf3km0NO+Z
+         z+0M7JPJEgtKTKDF1QEdgbnoCPGUGZfns+iBNhdJq192vx5yIp+4mwYdxxbFFB2TuK
+         +okHtkNRSYJjnX0uek1EPi2T2RrU0q/02ZjpxKUWLifRTENH1M3kSF8jr0JFs/kOV/
+         f+8n7hxYeu2FEAk+twJMO1/iu0dg8nPvPr6aQ92MB3n/W5R5uDqFZO5Cjoc5rVDBTX
+         wyZ0KMDHtpIdQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9C422E73C2D;
+        Wed,  9 Mar 2022 06:30:10 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] net: prestera: acl: make read-only array client_map
+ static const
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164680741063.15140.5277351972560162204.git-patchwork-notify@kernel.org>
+Date:   Wed, 09 Mar 2022 06:30:10 +0000
+References: <20220307221349.164585-1-colin.i.king@gmail.com>
+In-Reply-To: <20220307221349.164585-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     tchornyi@marvell.com, davem@davemloft.net, kuba@kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Lukas,
+Hello:
 
-> After sending a patch to Rick Chang, the mediatek mail server responded:
-> 
->   ** Message not delivered **
-> 
->   Your message couldn't be delivered to rick.chang@mediatek.com because
->   the remote server is misconfigured. See technical details below for more
->   information.
-> 
->   The response from the remote server was:
->   550 Relaying mail to rick.chang@mediatek.com is not allowed
-> 
-> So, drop Rick Chang from the MEDIATEK JPEG DRIVER section.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+This patch was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
-I confirmed that Rick Chang has left Mediatek, so it is ok to remove his name.
+On Mon,  7 Mar 2022 22:13:49 +0000 you wrote:
+> Don't populate the read-only array client_map  on the stack but
+> instead make it static const. Also makes the object code a little
+> smaller.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/net/ethernet/marvell/prestera/prestera_acl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Miles Chen <miles.chen@mediatek.com>
+Here is the summary with links:
+  - [next] net: prestera: acl: make read-only array client_map static const
+    https://git.kernel.org/netdev/net-next/c/d82a6c5ef9dc
 
-Thanks,
-Miles
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
