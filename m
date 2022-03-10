@@ -2,90 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA17C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Mar 2022 13:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 161B4C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Mar 2022 14:54:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242310AbiCJNOw (ORCPT
+        id S242040AbiCJOzp convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 10 Mar 2022 08:14:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45048 "EHLO
+        Thu, 10 Mar 2022 09:55:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231617AbiCJNOw (ORCPT
+        with ESMTP id S1347939AbiCJOvf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 10 Mar 2022 08:14:52 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E121D7C792;
-        Thu, 10 Mar 2022 05:13:50 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8C7FEB82618;
-        Thu, 10 Mar 2022 13:13:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DDAAC340E8;
-        Thu, 10 Mar 2022 13:13:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646918028;
-        bh=hLAwTLXVIMcSoOs+DZE5AFrkLCUXZidEtWnQvIrw/tU=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=n6ZAn42uSq803NRWqlQCNO1MoJy7a11DC3hZHbv1j6suwf4QD3Ye56cQcpFoikUtt
-         vkWv2HNPhmZ0FZEnvA5Tkd2QGAVXCunRFU23qWBEDXEoH9Noi5r/29OPlrZ+KK4Y/m
-         shqQA4BDUnllAv7q6k48yn/G/KG6zvyi20Ot4lL3GwuT2rYnvd/9PcxckR9WZRJ1cZ
-         1hrUqAOhTn2SlOnP0xNqI3s4DNyLkwA4rOpOb5V2a5AxBlLsRZhGsxOw4JFz3kPxPi
-         3j1IReqmSFNZyfz56xywDTUA9CY/Vmxp2L3d82UZgMIXELuTTO2Si9Hr52vbfkCs2H
-         rrrtQTMzSlwHQ==
-From:   Mark Brown <broonie@kernel.org>
+        Thu, 10 Mar 2022 09:51:35 -0500
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F19C819C35;
+        Thu, 10 Mar 2022 06:50:32 -0800 (PST)
+Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1nSK7V-0004bE-W9; Thu, 10 Mar 2022 15:50:26 +0100
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
 To:     Colin Ian King <colin.i.king@gmail.com>,
-        alsa-devel@alsa-project.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <20220309164116.178685-1-colin.i.king@gmail.com>
-References: <20220309164116.178685-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] ASoC: atmel: mchp-pdmc: Fix spelling mistake "microchopnes" -> "microphones"
-Message-Id: <164691802584.2018412.7073594890516356081.b4-ty@kernel.org>
-Date:   Thu, 10 Mar 2022 13:13:45 +0000
+        Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Sandy Huang <hjc@rock-chips.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, knaerzche@gmail.com
+Subject: Re: [PATCH] drm/rockchip: remove redundant assignment to pointer connector
+Date:   Thu, 10 Mar 2022 15:50:25 +0100
+Message-ID: <4453075.DPozGzHrQt@diego>
+In-Reply-To: <CAKwvOdkXNGRJkZDd7Cg8jhL9Ex7R+VPYqEEc+VpwDyi9NJKXQQ@mail.gmail.com>
+References: <20220307181704.149076-1-colin.i.king@gmail.com> <CAKwvOdkXNGRJkZDd7Cg8jhL9Ex7R+VPYqEEc+VpwDyi9NJKXQQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 9 Mar 2022 16:41:16 +0000, Colin Ian King wrote:
-> There is a spelling mistake in a dev_info message. Fix it.
+Hi,
+
+looks like I wasn't in the original recipient list, so only got Nick's
+answer.
+
+Am Mittwoch, 9. März 2022, 00:10:31 CET schrieb Nick Desaulniers:
+> On Mon, Mar 7, 2022 at 10:17 AM Colin Ian King <colin.i.king@gmail.com> wrote:
+> >
+> > The pointer connector is being assigned a value that is never read,
+> > it is being re-assigned in the following statement. The assignment
+> > is redundant and can be removed.
+> >
+> > Cleans up clang scan build warning:
+> > drivers/gpu/drm/rockchip/rockchip_rgb.c:153:2: warning: Value stored
+> > to 'connector' is never read [deadcode.DeadStores]
+> 
+> + Author & reviewer of:
+> Fixes: 2e87bf389e13 ("drm/rockchip: add DRM_BRIDGE_ATTACH_NO_CONNECTOR
+> flag to drm_bridge_attach")
+> 
+> >
+> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> > ---
+> >  drivers/gpu/drm/rockchip/rockchip_rgb.c | 1 -
+> >  1 file changed, 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/rockchip/rockchip_rgb.c b/drivers/gpu/drm/rockchip/rockchip_rgb.c
+> > index 2494b079489d..92a727931a49 100644
+> > --- a/drivers/gpu/drm/rockchip/rockchip_rgb.c
+> > +++ b/drivers/gpu/drm/rockchip/rockchip_rgb.c
+> > @@ -150,7 +150,6 @@ struct rockchip_rgb *rockchip_rgb_init(struct device *dev,
+> >         if (ret)
+> >                 goto err_free_encoder;
+> >
+> > -       connector = &rgb->connector;
+> >         connector = drm_bridge_connector_init(rgb->drm_dev, encoder);
+
+I don't think this will work as expected.
+
+Yes, the whole thing looks a bit broken right now, but the connector
+field in the rockchip_rgb struct still exists and rockchip_rgb_fini also
+still uses it when calling drm_connector_cleanup.
+
+Same issue seems to exist in in rockchip_lvds.c with drm_connector_cleanup
+it seems.
+
+I guess drm_bridge_connector_destroy() is responsible for the cleanup so
+the drm_connector_cleanup call both in rockchip_rgb and rockchip_lvds
+as well as the local connector elements can go away as well?
+
+
+Heiko
+
+
+> >         if (IS_ERR(connector)) {
+> >                 DRM_DEV_ERROR(drm_dev->dev,
+> > --
+> > 2.35.1
+> >
+> >
 > 
 > 
+> 
 
-Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Thanks!
 
-[1/1] ASoC: atmel: mchp-pdmc: Fix spelling mistake "microchopnes" -> "microphones"
-      commit: 6b6bb5e26222021abe1c5360f43b4c2ff1dd012f
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
