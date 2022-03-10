@@ -2,111 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 161B4C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Mar 2022 14:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F90C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 10 Mar 2022 16:19:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242040AbiCJOzp convert rfc822-to-8bit (ORCPT
+        id S242659AbiCJQUZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 10 Mar 2022 09:55:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53394 "EHLO
+        Thu, 10 Mar 2022 11:20:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347939AbiCJOvf (ORCPT
+        with ESMTP id S242274AbiCJQUP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 10 Mar 2022 09:51:35 -0500
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F19C819C35;
-        Thu, 10 Mar 2022 06:50:32 -0800 (PST)
-Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1nSK7V-0004bE-W9; Thu, 10 Mar 2022 15:50:26 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Sandy Huang <hjc@rock-chips.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, knaerzche@gmail.com
-Subject: Re: [PATCH] drm/rockchip: remove redundant assignment to pointer connector
-Date:   Thu, 10 Mar 2022 15:50:25 +0100
-Message-ID: <4453075.DPozGzHrQt@diego>
-In-Reply-To: <CAKwvOdkXNGRJkZDd7Cg8jhL9Ex7R+VPYqEEc+VpwDyi9NJKXQQ@mail.gmail.com>
-References: <20220307181704.149076-1-colin.i.king@gmail.com> <CAKwvOdkXNGRJkZDd7Cg8jhL9Ex7R+VPYqEEc+VpwDyi9NJKXQQ@mail.gmail.com>
+        Thu, 10 Mar 2022 11:20:15 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D983265B;
+        Thu, 10 Mar 2022 08:18:33 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8563461B6B;
+        Thu, 10 Mar 2022 16:18:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4A64C340E8;
+        Thu, 10 Mar 2022 16:18:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646929092;
+        bh=RL6LWXRaaVwckNt7HfefIcDqliQpIbRJZYvaKxx3k+w=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=igtxKHRC+lYvIQv2mKpJ29IQ8z849L4f7oaALvJSIfI0Vo79K8sJiMFKVg3l4n+LT
+         Lg7kwiqCGpNxlnoOkLiDtWl7pItY4mIwTPsoGBrAAeOAHOrtIdAENDQfrwhlCMCI1j
+         3IgXM9AId4n3F+zo8+0dlUHbNKnTrQA5xZaWVBGi6AtIAl/xknQ+Xl6HB2NlvP0l/O
+         bqEpoiOVb8ptq4eRlyfMObNL43eKwE0AG3AKGHZ845hPxI0pUGwzMJRJ1o4tpmpxNx
+         /P4s17QgUcDYs6oxYP3jBR+ObB81HFvm5P9HI29z31rP9+L5R8E3cH4ESvV4UCS1xN
+         xVMkvAhJOPQNg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] bcma: gpio: remove redundant re-assignment of chip->owner
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20220303085841.1124766-1-colin.i.king@gmail.com>
+References: <20220303085841.1124766-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     =?utf-8?b?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <164692908978.6056.13110647210803354793.kvalo@kernel.org>
+Date:   Thu, 10 Mar 2022 16:18:11 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
+Colin Ian King <colin.i.king@gmail.com> wrote:
 
-looks like I wasn't in the original recipient list, so only got Nick's
-answer.
-
-Am Mittwoch, 9. März 2022, 00:10:31 CET schrieb Nick Desaulniers:
-> On Mon, Mar 7, 2022 at 10:17 AM Colin Ian King <colin.i.king@gmail.com> wrote:
-> >
-> > The pointer connector is being assigned a value that is never read,
-> > it is being re-assigned in the following statement. The assignment
-> > is redundant and can be removed.
-> >
-> > Cleans up clang scan build warning:
-> > drivers/gpu/drm/rockchip/rockchip_rgb.c:153:2: warning: Value stored
-> > to 'connector' is never read [deadcode.DeadStores]
+> There are two identical assignments of chip->owner to the same value,
+> the second assignment is redundant and can be removed.
 > 
-> + Author & reviewer of:
-> Fixes: 2e87bf389e13 ("drm/rockchip: add DRM_BRIDGE_ATTACH_NO_CONNECTOR
-> flag to drm_bridge_attach")
+> Cleans up cppcheck warning:
+> drivers/bcma/driver_gpio.c:184:15: style: Variable 'chip->owner' is
+> reassigned a value before the old one has been used. [redundantAssignment]
 > 
-> >
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> > ---
-> >  drivers/gpu/drm/rockchip/rockchip_rgb.c | 1 -
-> >  1 file changed, 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/rockchip/rockchip_rgb.c b/drivers/gpu/drm/rockchip/rockchip_rgb.c
-> > index 2494b079489d..92a727931a49 100644
-> > --- a/drivers/gpu/drm/rockchip/rockchip_rgb.c
-> > +++ b/drivers/gpu/drm/rockchip/rockchip_rgb.c
-> > @@ -150,7 +150,6 @@ struct rockchip_rgb *rockchip_rgb_init(struct device *dev,
-> >         if (ret)
-> >                 goto err_free_encoder;
-> >
-> > -       connector = &rgb->connector;
-> >         connector = drm_bridge_connector_init(rgb->drm_dev, encoder);
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-I don't think this will work as expected.
+Patch applied to wireless-next.git, thanks.
 
-Yes, the whole thing looks a bit broken right now, but the connector
-field in the rockchip_rgb struct still exists and rockchip_rgb_fini also
-still uses it when calling drm_connector_cleanup.
+857f837d856a bcma: gpio: remove redundant re-assignment of chip->owner
 
-Same issue seems to exist in in rockchip_lvds.c with drm_connector_cleanup
-it seems.
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20220303085841.1124766-1-colin.i.king@gmail.com/
 
-I guess drm_bridge_connector_destroy() is responsible for the cleanup so
-the drm_connector_cleanup call both in rockchip_rgb and rockchip_lvds
-as well as the local connector elements can go away as well?
-
-
-Heiko
-
-
-> >         if (IS_ERR(connector)) {
-> >                 DRM_DEV_ERROR(drm_dev->dev,
-> > --
-> > 2.35.1
-> >
-> >
-> 
-> 
-> 
-
-
-
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
