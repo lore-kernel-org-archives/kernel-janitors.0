@@ -2,62 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85476C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Mar 2022 09:51:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 063BAC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Mar 2022 13:10:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236367AbiCKJwj (ORCPT
+        id S239036AbiCKNL2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 11 Mar 2022 04:52:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54278 "EHLO
+        Fri, 11 Mar 2022 08:11:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232555AbiCKJwi (ORCPT
+        with ESMTP id S235877AbiCKNL0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 11 Mar 2022 04:52:38 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C94C11B9899;
-        Fri, 11 Mar 2022 01:51:35 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7FE75B82854;
-        Fri, 11 Mar 2022 09:51:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0CC5C340E9;
-        Fri, 11 Mar 2022 09:51:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646992293;
-        bh=GgeVWzigsW0ZPmr8VdhWGO1YRsLbRV7QEtBKeJ2FhJM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qKFkgRowKCjGVBPs2b4KkC6r3lzOa6nfChakVBU1Y/hcU22frFiF2m3UFF8CtAgMW
-         3VaLITCkVM5rKjf+nGpJeMBxusyJWWOTZz8ye/01nDL7ZOqlH1WNO1HiKHbRyVqeUC
-         9qySmTZ52iKBhtY9Zm6GzgK6Wc4ZLRbkHZl4otzDv0k5YIhkUoT8H3LxrK+yTbrhci
-         SWq4o0J2tLk7LwP6NAaxHyc4/dLITzyvHCDb8WnCSqKpahjY8xy4YWiNLYXUVvh+sR
-         p9JCIz8Iq/GZW1RxErnSeEZG0QrLmR1+LScbyFxmbYNh95lhbNNg/UDcYhjKujuBUb
-         WT387zltDl4EA==
-Date:   Fri, 11 Mar 2022 15:21:29 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, dmaengine@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: idxd: Remove useless DMA-32 fallback
- configuration
-Message-ID: <YisboSIXfVVfGOyN@matsya>
-References: <009c80294dba72858cd8a6ed2ed81041df1b1e82.1642231430.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <009c80294dba72858cd8a6ed2ed81041df1b1e82.1642231430.git.christophe.jaillet@wanadoo.fr>
+        Fri, 11 Mar 2022 08:11:26 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88B681C230E;
+        Fri, 11 Mar 2022 05:10:23 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id h15so12874288wrc.6;
+        Fri, 11 Mar 2022 05:10:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=ifuiYsfaZmXujhhjdnLGqkFWQ/ohB0GeELLEYUmC2Ro=;
+        b=Da9XXFi60VvRHH8Yzcn8N5oz1mPAi4o7TexgydtetpRGNxTKZwD/SZT2wemiyZYTJs
+         r1cjTiLN4nG1ULIMV3K6Yi+6hrhey4qdqB/DxGqXSo7GFIPDgrO45gnpOLv87DaALjQv
+         7z0iR0cGb8lhFHrPO6yY1Y8leQg0TPy3I9HxaBNiuOiPGD7GYLXz98+NhYPccVj19zhb
+         92FkqCJlD+buFnh18dsLjwDwR4GTkvrghyUln7qJBkOwMmVwlr6X8Ugbpl+EMDNuJaxb
+         hqmlzEXS7ojFUojtQkooC1CIornXfqvvDWG/hRHWWrbfrxUqP2RhBqg8AJ0f7uc1wddG
+         49aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ifuiYsfaZmXujhhjdnLGqkFWQ/ohB0GeELLEYUmC2Ro=;
+        b=vu6TkpE5xOeqrIHuVopPrTWVE0bOeh6wdWE9wu6JFq/8w2GSG7q50LxpIhtqvDqsJb
+         R0j10pD1ls4G8RdtbX82Aw2GCyfUqdSMKS6rJlt86HWAqQiZd/tVvj6MXw50WyPE7HWX
+         5IqKm4UV0VuJrR9p+4o+CPquTMqAFm8ykeX3QwAa5SlPvPnLblarBIW5QiHf6dSHAB9w
+         CjitnB/GWAt82Dh8H9Mqto47Znlx3zDQ6g797p6Cwl6cEdtgTtNyCv93AOv16cP16tOC
+         pzTkNH8ugnz+3u0WkfprQfF0Bv9WDTPQqXiNLuMWDCrVPB+EFeeOTWROrXx9mqfmFQts
+         QI6Q==
+X-Gm-Message-State: AOAM531xYKSTkiuA/6vjQ1QwzPuJCkGIRhN1rH1OvxU4Fuw5HUkz50zk
+        6jLnwDAM7wbtXJplcXRN3xI=
+X-Google-Smtp-Source: ABdhPJxnhIX4FNkmpQCGan7ANCBMmiZgwwCSIIz3zRWvpgP/Rp8upFTo/ZOYgr2xBSbtS7Ij8OkRNw==
+X-Received: by 2002:a05:6000:143:b0:1f0:25a1:874c with SMTP id r3-20020a056000014300b001f025a1874cmr7220705wrx.191.1647004221946;
+        Fri, 11 Mar 2022 05:10:21 -0800 (PST)
+Received: from felia.fritz.box (200116b826a9a900147fc2a0771e144b.dip.versatel-1u1.de. [2001:16b8:26a9:a900:147f:c2a0:771e:144b])
+        by smtp.gmail.com with ESMTPSA id e4-20020adffc44000000b001f1dba38a65sm6581325wrs.105.2022.03.11.05.10.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Mar 2022 05:10:21 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Russell King <linux@armlinux.org.uk>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: drop entry to removed file in ARM/RISCPC ARCHITECTURE
+Date:   Fri, 11 Mar 2022 14:09:56 +0100
+Message-Id: <20220311130957.17884-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 15-01-22, 08:24, Christophe JAILLET wrote:
-> As stated in [1], dma_set_mask() with a 64-bit mask never fails if
-> dev->dma_mask is non-NULL.
-> So, if it fails, the 32 bits case will also fail for the same reason.
-> 
-> Simplify code and remove some dead code accordingly.
+Commit c1fe8d054c0a ("ARM: riscpc: use GENERIC_IRQ_MULTI_HANDLER") removes
+arch/arm/include/asm/hardware/entry-macro-iomd.S, but missed to adjust
+MAINTAINERS.
 
-Applied, thanks
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
+Drop the file entry to the removed file in ARM/RISCPC ARCHITECTURE.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Ard, please pick this minor non-urgent clean-up patch. Thanks.
+
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 02a75dd04187..d0df1309cca2 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2606,7 +2606,6 @@ M:	Russell King <linux@armlinux.org.uk>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+ W:	http://www.armlinux.org.uk/
+-F:	arch/arm/include/asm/hardware/entry-macro-iomd.S
+ F:	arch/arm/include/asm/hardware/ioc.h
+ F:	arch/arm/include/asm/hardware/iomd.h
+ F:	arch/arm/include/asm/hardware/memc.h
 -- 
-~Vinod
+2.17.1
+
