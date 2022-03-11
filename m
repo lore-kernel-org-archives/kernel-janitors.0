@@ -2,91 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12623C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Mar 2022 15:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23ADDC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Mar 2022 15:21:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233951AbiCKPDE (ORCPT
+        id S1348804AbiCKPWU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 11 Mar 2022 10:03:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38520 "EHLO
+        Fri, 11 Mar 2022 10:22:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348567AbiCKPDD (ORCPT
+        with ESMTP id S1348478AbiCKPWT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 11 Mar 2022 10:03:03 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D29611A41C4;
-        Fri, 11 Mar 2022 07:01:59 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id j26so13388609wrb.1;
-        Fri, 11 Mar 2022 07:01:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=1yVENyOQOecnCsSm/L9M6oucS2QvVZWZizJODtkoods=;
-        b=lP9AH/Mq+lqnhMiX7+ICJiv5rA2Rx6dYjSaD5FoDvC2n4AvxAqlCcD+GSYGDqLa5uG
-         aBG6YNxasUJzJFQ5IwOkQQXKGDgXCzhnQQuu5e0vSNxHlZ29VIbyiZLVJrkJP7qpOgKR
-         Rd7ABrWFT9x/4l2uwwxPVEp5r/LPOgXcNpUaSlJ+ZnYhbW5A1Vz5SjKVtbhZypJfdxf0
-         QkquxXqZT4+CunOwCJ0DWdAS0JXkFFB1e7KppdivbCJDnG68vA/7JvUrrQ+BFykidqi/
-         HxuMBIl4Pv6YHF+qY/XkC2A9++g6dQRP3qOxiA48UaAFdpCJUW52P5PKTOI7KNZ87A7y
-         BXWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=1yVENyOQOecnCsSm/L9M6oucS2QvVZWZizJODtkoods=;
-        b=foLJAce+7up76TS2KaXCl8rWKWd0OdZtZ4ChRJ1wKxuY2N31yAODCBaZ4Y/GuqumiJ
-         qF5mTxQSOuWN2B2m8851KDh0TjIIFMhZM4F67cjPH2kYWJjBusWaIk+veYEpsuN91GYs
-         GVWb1wU/cEfIEgz5PThV70rnJCcKNwaNnNhk2POhLPM0KkWpv9dwHNJxYBapuBYLo/8O
-         88XcUPhJTfSMSdpxOOdcmTSr/l5uWnmXHW0gsCaltVDNtNIXdhnfMN/8PJG1R/ajeNCm
-         On4KuicYGc5h33A+74m54XUmLO1uWNGZU/F1CBkm4n0P0twerk+Ev4NIbHQf0Q8rG+rz
-         /QMg==
-X-Gm-Message-State: AOAM531H0+zr3E6dtQcDF5gst++YqKSTCWQCfD0e9R6ptFaCXfA+K/Ra
-        WAC5SnXKBzHagXZ4dFRmoo4=
-X-Google-Smtp-Source: ABdhPJzRBzpsbQodY/pB/Rj59OPH2lLArF5pQU/85Pld/wnjXEm40fySqS3rCMmJaarhSqDiPpoocA==
-X-Received: by 2002:adf:db43:0:b0:1ef:7195:43cd with SMTP id f3-20020adfdb43000000b001ef719543cdmr7664546wrj.495.1647010918239;
-        Fri, 11 Mar 2022 07:01:58 -0800 (PST)
-Received: from felia.fritz.box (200116b826a9a900147fc2a0771e144b.dip.versatel-1u1.de. [2001:16b8:26a9:a900:147f:c2a0:771e:144b])
-        by smtp.gmail.com with ESMTPSA id a8-20020a05600c068800b00389bdc8c8c2sm6925800wmn.12.2022.03.11.07.01.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Mar 2022 07:01:57 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Alan Kao <alankao@andestech.com>,
+        Fri, 11 Mar 2022 10:22:19 -0500
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4CDF1C65F0;
+        Fri, 11 Mar 2022 07:21:15 -0800 (PST)
+Received: from mail-wr1-f54.google.com ([209.85.221.54]) by
+ mrelayeu.kundenserver.de (mreue106 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1Mi27T-1o6AhM3yJV-00e2Dy; Fri, 11 Mar 2022 16:21:13 +0100
+Received: by mail-wr1-f54.google.com with SMTP id k24so13443212wrd.7;
+        Fri, 11 Mar 2022 07:21:13 -0800 (PST)
+X-Gm-Message-State: AOAM532GJjCowykab+q4BsEgG7bbxyxR/h5bHYpfn8nFJFEY40g54ZRX
+        mSNPNbfGNsk9Gi3eAo5Wmnc8H27N9LEsFWJfcW8=
+X-Google-Smtp-Source: ABdhPJw9NDhuSTGQU9QfnpOildSbNkuwrW+GWGrbcDHOVBryRnm6vvVP6Bnb4fn03D/5c33g2QQrdz9i4OUDvElO/JI=
+X-Received: by 2002:a5d:6d0f:0:b0:203:9157:1c48 with SMTP id
+ e15-20020a5d6d0f000000b0020391571c48mr4897403wrq.192.1647012073552; Fri, 11
+ Mar 2022 07:21:13 -0800 (PST)
+MIME-Version: 1.0
+References: <20220311150122.23010-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220311150122.23010-1-lukas.bulwahn@gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 11 Mar 2022 16:20:57 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1qAHQ=Qv+5Ke2t5oPnrf1mQ9akog3uN-B=KYcaWxtd=g@mail.gmail.com>
+Message-ID: <CAK8P3a1qAHQ=Qv+5Ke2t5oPnrf1mQ9akog3uN-B=KYcaWxtd=g@mail.gmail.com>
+Subject: Re: [PATCH] clocksource: remove left-over from removing the
+ timer-atcpit100 driver
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Alan Kao <alankao@andestech.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] clocksource: remove left-over from removing the timer-atcpit100 driver
-Date:   Fri, 11 Mar 2022 16:01:22 +0100
-Message-Id: <20220311150122.23010-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:iujwSflD2FqnNKKSFtXnpTmd3ExGypDaXJohWnBlujIZ0yDek+x
+ eIXRWlDbIEnxB1M02T4cPPAngX+tkL9SPrDeZc4EssOndsnMFfct8Wpo/aSkxAHQbBjmyeG
+ jkJy+54ZA8rw1I8VT4Pr16379I4BunuanaJWTshGJR8DUBRxzpuWAsJTmqmVGMgJCPvK4po
+ cgi0+WSVg/W9jbeqI3/FQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:o1pIy9amqnc=:nY1dezg9Z5AWrIHEYAiTHI
+ 5P4IDpl6galEWXfrhndlWeGJLBNZ4kDHbomxKy8E675g9gaQH+C+qDi9CuJhL6/Ewe0DeFtQn
+ l/TPyVCfOlIadmzrIwwvRLqjn7lPW9d9awzU4G0ICAwhogtLSFKnafBRQxcaPUZunFyZxy36J
+ CQw+GUdoa5br3wG82+ierZABF6bBWRII+8V3xHP0neJjvWrS4Kxsw8qy1Vk4ia1rqcF6Ushuv
+ iV6ugBeeJbZNoHcCNa5iP2BdNsJBn1FBUv6hGFEm/iNrF/IalXtYTFJQBU5WCNzEbfHslwVgt
+ IZxfYczCvhjHfsEGoUD0OCw+0pUQ+wanCOvaIjrg3J5NQiUk+wpPd1AUHTagD22kZifMWQZ6i
+ YOnFI3Zxq1zVsSzVpLNdfY1LHbaPZCNUHtdTl09Cak5AibTjim5dH3jF6zk4z3bqS7yMIPtHc
+ JECA51M8OtU8JLpoANOS9eFz6Fn3SnEloZoYm2pmSPAB2KZXrMOgMjZhXOI5Cr9QUxYK+ePx+
+ JEoY9TmOQD8Kw1uOz9dVwbqIKEsMETJrVozBtbqJOsiJUTu7GK+prahRmQD+5uj8yF9SVYp0e
+ lAFOwGyX+mq+SUaAGLhmHZp18qvA4tfs1nq12cP0WQxgrdjMoOEQAQvZeT3WwX4c5JVvpYzlv
+ jvdfrDvIOHZs3/O1q1P09e0KFp6S6v4vss8buyh2UTJT6BA5K6rX6U1XCQT3xbfOJHsY=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 3edb65f4e8fd ("nds32: Remove the architecture") removes the config
-ATCPIT100_TIMER and its corresponding source file timer-atcpit100.c, but it
-misses to remove the corresponding line in the clocksource Makefile.
+On Fri, Mar 11, 2022 at 4:01 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> Commit 3edb65f4e8fd ("nds32: Remove the architecture") removes the config
+> ATCPIT100_TIMER and its corresponding source file timer-atcpit100.c, but it
+> misses to remove the corresponding line in the clocksource Makefile.
+>
+> So, remove this left-over of this driver removal in the Makefile now.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Arnd, please pick this minor clean-up to your nds32 architecture removal.
 
-So, remove this left-over of this driver removal in the Makefile now.
+Thanks for catching this!
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Arnd, please pick this minor clean-up to your nds32 architecture removal.
+I had actually fixed it up locally after noticiing the same thing, but failed to
+push my updated commit because it required a force-push.
 
- drivers/clocksource/Makefile | 1 -
- 1 file changed, 1 deletion(-)
+I have now pushed my earlier branch, which also contains an updated
+changelog text.
 
-diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-index fa5f624eadb6..9c85ee2bb373 100644
---- a/drivers/clocksource/Makefile
-+++ b/drivers/clocksource/Makefile
-@@ -81,7 +81,6 @@ obj-$(CONFIG_INGENIC_SYSOST)	+= ingenic-sysost.o
- obj-$(CONFIG_INGENIC_TIMER)		+= ingenic-timer.o
- obj-$(CONFIG_CLKSRC_ST_LPC)		+= clksrc_st_lpc.o
- obj-$(CONFIG_X86_NUMACHIP)		+= numachip.o
--obj-$(CONFIG_ATCPIT100_TIMER)		+= timer-atcpit100.o
- obj-$(CONFIG_RISCV_TIMER)		+= timer-riscv.o
- obj-$(CONFIG_CLINT_TIMER)		+= timer-clint.o
- obj-$(CONFIG_CSKY_MP_TIMER)		+= timer-mp-csky.o
--- 
-2.17.1
-
+         Arnd
