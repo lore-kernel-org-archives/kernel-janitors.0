@@ -2,92 +2,134 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 939E6C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Mar 2022 14:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD25C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Mar 2022 14:52:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349772AbiCKOmI (ORCPT
+        id S1349667AbiCKOx7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 11 Mar 2022 09:42:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33758 "EHLO
+        Fri, 11 Mar 2022 09:53:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349857AbiCKOl5 (ORCPT
+        with ESMTP id S1349439AbiCKOx5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 11 Mar 2022 09:41:57 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DA1C9AD9C;
-        Fri, 11 Mar 2022 06:40:30 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id g3so11211253edu.1;
-        Fri, 11 Mar 2022 06:40:30 -0800 (PST)
+        Fri, 11 Mar 2022 09:53:57 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E67B19BE63;
+        Fri, 11 Mar 2022 06:52:53 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id u1so13292774wrg.11;
+        Fri, 11 Mar 2022 06:52:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id;
-        bh=6bBLgCZgh0VQ3FiDVqjw/OukOofGYEtfzJRk02RBM7o=;
-        b=gY/yIqlH3OgvuFjrktmlEFwOsbONmlnlNbX+FuSeohPTknZWmyBmI2Zl7nZxPFdJ4X
-         ttO8wJYlBiwlW2uTD3y53K/0mpxcey7ORYV8RY7E6+4E59BuE5HfBykd8XdFRf4pf0OC
-         8kOk0Yx4MHDJxTMQb/n+/nY62aQCspVizCb0pfxgXaMMCAChLosPK2BdiIon8CXTtz66
-         xyhDicp5gdFLpnPy9f+fVMhc4USmymLeeskvw4ueAXa7Jj8f5R+taHwdJoStM8WkOEjT
-         i0TBzWc937PSkKUUthz+rn7Nbx6rKnkYroOdH095vz8o0JEawpvqYBsWXNwuX5C7PAUI
-         YgbQ==
+        bh=zXbQhDsb4KeIHJF68pqLMN1JbVnR3P47zU5x8xmbukY=;
+        b=BSANDLIqhwKqPBrb7Qys22MwnO6tUlv/4n97D6C6X5Xo7C0ubhSTuXrHjbCMsBJEm8
+         vmPhN2Koys66YJNxCfSmp+wBXlE+eJuOg6kODRnr6pMIoth0zpdaqu1ilC64Fj0yKH38
+         RthvqcRt3yNJAR9BT1UzW04Ux/o89D7N86AEIm7yZxKDtgFjLn4lzGWY8VLmAN/Bga+B
+         pZsS9dpYySIl/qfRzxYPYGJifxR9SDNeBc5s8yJnJGVegL7LHXyPDgnQnOq0tH91dFW4
+         8Evma8cK5v5z1t1ppjbgDxvCCen/LmKduf4oXjcfhNsNzMZ5mwu4BccW4yFxlUQ+zVk+
+         dsUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6bBLgCZgh0VQ3FiDVqjw/OukOofGYEtfzJRk02RBM7o=;
-        b=J8bqkCpzNH9A5lP5585PPLNMYW8uSuwfDJ4m6fvA+eeuELxL1CVxwdNOZa+pr8AnMx
-         wffJC37lVzNsCg+aYeIsxTvtMmFsNr2O5hLELgjJhzyyYOSG16SqydeI/3/7Dr5hQV6x
-         4pM004HWHgtxKTiqP9mA4NKZ2PVCz0ka+m2ZbVpj+SKU0GdGkbmAd2Qf5cOqGpV+qdpM
-         4rBA0ACbcaBomIjENdTwYVJm9ihhE/2pOZUktnKLr22wVAW8D0JKkTBPh32rLgp0pwkr
-         Am+EdDpwd9OKMGf3o5W/RE/7J0QjCkyz2P/dQdxPzuws4xRba1peuL9aSardYXPCZrBp
-         Tp/Q==
-X-Gm-Message-State: AOAM530UGS7ItQ+gE/Q37/vn+dQAN7rGr7C6/nRpQ+kYnfvxRZM2lV+v
-        WyLpy33t5qNykfqwg/49lTzRXQVsKYs=
-X-Google-Smtp-Source: ABdhPJx6wABjmYegKi4YgVH5rutTffU4pxGVLltDmYlM4H7/jarWaxh3CL1PYSblSpN226tNEjgPzA==
-X-Received: by 2002:aa7:d5d9:0:b0:416:1dd3:7714 with SMTP id d25-20020aa7d5d9000000b004161dd37714mr9225263eds.256.1647009628632;
-        Fri, 11 Mar 2022 06:40:28 -0800 (PST)
+        bh=zXbQhDsb4KeIHJF68pqLMN1JbVnR3P47zU5x8xmbukY=;
+        b=FQpnxvQBqOGaidusiacIIH3+ws05K35pFlr7cfVLo39samG0QUV8089ly1gEyCefUe
+         F2Rt6Gnbsqf+CkGbIodvzXfGw6ha5Nyctvd8XTiYCSHS14HhCA37Qinc5SvPmkqYu7GR
+         /lJyMLVXRQiz9ZmpDhQFxqVHvxS3Q7enTQqXxNBgIhH/mz6ILiNwxmSF37TqAuQ0nRfV
+         1WZCFnltcR3/ZLsL1vAmafkkoPe73yxBBHxiffg4osXXsEx01YD9GKmQWbxcEQo82alx
+         7TQIzV+J4vzvpIhN+dmldZHs9GXWfSS4LO2ASTfwHpe+bimi/cDIx8XpMSOhZCDl8qH0
+         CnYQ==
+X-Gm-Message-State: AOAM530xFMZiKvA3TIwABDMmIrGCP8XNOCgt8+3LCjwoSUCzPIy2Juxr
+        WFLgQkuO++IttE7rQpTrGYU=
+X-Google-Smtp-Source: ABdhPJzHH8NgnMxZ4xQfDUIJUUso04P4Zd8QBxBCn/z6kuDzIy8sTogfhut+UHhuw2kIN85qtVoNrQ==
+X-Received: by 2002:adf:fbd0:0:b0:1e6:8ec3:570 with SMTP id d16-20020adffbd0000000b001e68ec30570mr8040941wrs.396.1647010371688;
+        Fri, 11 Mar 2022 06:52:51 -0800 (PST)
 Received: from felia.fritz.box (200116b826a9a900147fc2a0771e144b.dip.versatel-1u1.de. [2001:16b8:26a9:a900:147f:c2a0:771e:144b])
-        by smtp.gmail.com with ESMTPSA id bq23-20020a170906d0d700b006db0372d3a2sm3045117ejb.20.2022.03.11.06.40.27
+        by smtp.gmail.com with ESMTPSA id n8-20020adf8b08000000b001f046cc8891sm7037812wra.24.2022.03.11.06.52.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Mar 2022 06:40:28 -0800 (PST)
+        Fri, 11 Mar 2022 06:52:51 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] fs: remove reference to the removed config NFSD_V3
-Date:   Fri, 11 Mar 2022 15:39:41 +0100
-Message-Id: <20220311143941.9628-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] mfd: ab8500: clean up definitions in header after debugfs removal
+Date:   Fri, 11 Mar 2022 15:52:09 +0100
+Message-Id: <20220311145209.17346-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 6a687e69a54e ("NFSD: Remove CONFIG_NFSD_V3") removes the config
-NFSD_V3, but misses one reference in fs/Kconfig.
+Commit 3d4d1266597c ("mfd: ab8500: Drop debugfs module") removes the config
+AB8500_DEBUG in drivers/mfd/Kconfig, but missed a reference to this config
+in include/linux/mfd/abx500/ab8500.h.
 
-Remove this remaining reference to the removed config symbol.
+The functions ab8500_dump_all_banks() and ab8500_debug_register_interrupt()
+in the ab8500 header, previously with definitions conditioned on
+AB8500_DEBUG, are now completely needless to define and handle at all.
 
-This issue was discovered with ./scripts/checkkconfigsymbols.py.
+The function ab8500_debug_register_interrupt() is not used at all and can
+just be removed.
+
+The function ab8500_dump_all_banks() is just registered in the abx500_ops
+struct in the dump_all_banks field, but this is then not further referenced
+anywhere else at all. So, safely drop the dump_all_banks field from
+abx500_ops and delete the ab8500_dump_all_banks() definition.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Chuck, please pick this quick fix to your commit in linux-next.
+Linus, Lee, please pick this clean-up on top of the commit above.
 
- fs/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mfd/ab8500-core.c         | 3 +--
+ include/linux/mfd/abx500.h        | 1 -
+ include/linux/mfd/abx500/ab8500.h | 9 ---------
+ 3 files changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 7f2455e8e18a..ec2cf8ccd170 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -344,7 +344,7 @@ config LOCKD
+diff --git a/drivers/mfd/ab8500-core.c b/drivers/mfd/ab8500-core.c
+index 6a059270acdc..9049030a0c82 100644
+--- a/drivers/mfd/ab8500-core.c
++++ b/drivers/mfd/ab8500-core.c
+@@ -328,8 +328,7 @@ static struct abx500_ops ab8500_ops = {
+ 	.set_register_page = NULL,
+ 	.mask_and_set_register = ab8500_mask_and_set_register,
+ 	.event_registers_startup_state_get = NULL,
+-	.startup_irq_enabled = NULL,
+-	.dump_all_banks = ab8500_dump_all_banks,
++	.startup_irq_enabled = NULL
+ };
  
- config LOCKD_V4
- 	bool
--	depends on NFSD_V3 || NFS_V3
-+	depends on NFS_V3
- 	depends on FILE_LOCKING
- 	default y
+ static void ab8500_irq_lock(struct irq_data *data)
+diff --git a/include/linux/mfd/abx500.h b/include/linux/mfd/abx500.h
+index 7f07cfe44753..507e3d2f062f 100644
+--- a/include/linux/mfd/abx500.h
++++ b/include/linux/mfd/abx500.h
+@@ -63,7 +63,6 @@ struct abx500_ops {
+ 	int (*mask_and_set_register) (struct device *, u8, u8, u8, u8);
+ 	int (*event_registers_startup_state_get) (struct device *, u8 *);
+ 	int (*startup_irq_enabled) (struct device *, unsigned int);
+-	void (*dump_all_banks) (struct device *);
+ };
  
+ int abx500_register_ops(struct device *core_dev, struct abx500_ops *ops);
+diff --git a/include/linux/mfd/abx500/ab8500.h b/include/linux/mfd/abx500/ab8500.h
+index 302a330c5c84..42fd5da7d8a7 100644
+--- a/include/linux/mfd/abx500/ab8500.h
++++ b/include/linux/mfd/abx500/ab8500.h
+@@ -503,13 +503,4 @@ static inline int is_ab9540_2p0_or_earlier(struct ab8500 *ab)
+ 
+ void ab8500_override_turn_on_stat(u8 mask, u8 set);
+ 
+-#ifdef CONFIG_AB8500_DEBUG
+-extern int prcmu_abb_read(u8 slave, u8 reg, u8 *value, u8 size);
+-void ab8500_dump_all_banks(struct device *dev);
+-void ab8500_debug_register_interrupt(int line);
+-#else
+-static inline void ab8500_dump_all_banks(struct device *dev) {}
+-static inline void ab8500_debug_register_interrupt(int line) {}
+-#endif
+-
+ #endif /* MFD_AB8500_H */
 -- 
 2.17.1
 
