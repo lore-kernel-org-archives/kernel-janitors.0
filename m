@@ -2,98 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48364C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Mar 2022 13:21:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 939E6C433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Mar 2022 14:41:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348852AbiCKNWE (ORCPT
+        id S1349772AbiCKOmI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 11 Mar 2022 08:22:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60560 "EHLO
+        Fri, 11 Mar 2022 09:42:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239206AbiCKNWD (ORCPT
+        with ESMTP id S1349857AbiCKOl5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 11 Mar 2022 08:22:03 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 722151C2D97;
-        Fri, 11 Mar 2022 05:21:00 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id y22so10914792eds.2;
-        Fri, 11 Mar 2022 05:21:00 -0800 (PST)
+        Fri, 11 Mar 2022 09:41:57 -0500
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DA1C9AD9C;
+        Fri, 11 Mar 2022 06:40:30 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id g3so11211253edu.1;
+        Fri, 11 Mar 2022 06:40:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id;
-        bh=KeIcFi3Rr2zXYQr6fLEKbqt/2PwXApn2VhoSkP/Ntyc=;
-        b=jkyAQPSP/xz+inFQxVFY0mppDO9MzYQLQeOd8v14TimD8JzQhX/JidRRqqZ0OWKxGv
-         g1/khMtqk+7ZUFDvfh/oW8w8YCifaIKwqVewNuy3v6rZ/BXuX5tsI5avxWJVKxLbcpaT
-         nkJwKbI6B7s+bswHpbWkRo0SFhYem9Boj/Tx5t90dgDjDx1Lr5a+iICusDlGH4KK22A1
-         qmNtCi5kADJ5ETV0BQtaNZVraQV1qYnIhiueBBBjhMZZmRKjgykSpagzpt+J5VAQnnga
-         N/x6/ml5uL3utQoVAzkvJZSshTI2Oy99aMVh+2ftyXpfwjybDmSkFaSpjowP6OLsyg68
-         FLvg==
+        bh=6bBLgCZgh0VQ3FiDVqjw/OukOofGYEtfzJRk02RBM7o=;
+        b=gY/yIqlH3OgvuFjrktmlEFwOsbONmlnlNbX+FuSeohPTknZWmyBmI2Zl7nZxPFdJ4X
+         ttO8wJYlBiwlW2uTD3y53K/0mpxcey7ORYV8RY7E6+4E59BuE5HfBykd8XdFRf4pf0OC
+         8kOk0Yx4MHDJxTMQb/n+/nY62aQCspVizCb0pfxgXaMMCAChLosPK2BdiIon8CXTtz66
+         xyhDicp5gdFLpnPy9f+fVMhc4USmymLeeskvw4ueAXa7Jj8f5R+taHwdJoStM8WkOEjT
+         i0TBzWc937PSkKUUthz+rn7Nbx6rKnkYroOdH095vz8o0JEawpvqYBsWXNwuX5C7PAUI
+         YgbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=KeIcFi3Rr2zXYQr6fLEKbqt/2PwXApn2VhoSkP/Ntyc=;
-        b=Vm8JUV8zsXmNmw6qaQUIuJgwqy//0jGzxWvd7M7cFJqQUauvWQzH6r+S4dPCoj0fhp
-         zDWn4r+ODSO/n47JEMuz4pkrYsJ5Zl7IESEvPTWHsXYBQ4rsTni6Yz2SdZBgKMS3uYw+
-         RvwyaoTc5BA2Ra2J5X9hcXmjT/u/ES92eyhcN0NSzZo/EYszN40r7XFtAf8gs07OIj3H
-         aA8X+CFNUQSNToZvjAJnHprc1dhwftQ9iG+V5h8lMR8OP9w/f8HYlVSzgnPwSJLxIrS1
-         4xdpqpf7MTOAcl4pku0zayAPC5Ju+UfXPXK3vsqV52k0niRc0+tcjisYN75aOC+EimGR
-         k0Sg==
-X-Gm-Message-State: AOAM533B9bhTMaaR1ZxVv954D9EcsZxcQmT87DjEAYnE5xpeMPcsKBjy
-        6hFJ/JObPWYFm8DI3dK9l4U=
-X-Google-Smtp-Source: ABdhPJwVXUzZB5cpKF2x75RtFG3YEMTiKoforB885AlXxaBQxm2RTqSxA2WUUMN/51rejK5FcxSHGA==
-X-Received: by 2002:a05:6402:4414:b0:408:4dc0:3ee9 with SMTP id y20-20020a056402441400b004084dc03ee9mr8686736eda.203.1647004858571;
-        Fri, 11 Mar 2022 05:20:58 -0800 (PST)
+        bh=6bBLgCZgh0VQ3FiDVqjw/OukOofGYEtfzJRk02RBM7o=;
+        b=J8bqkCpzNH9A5lP5585PPLNMYW8uSuwfDJ4m6fvA+eeuELxL1CVxwdNOZa+pr8AnMx
+         wffJC37lVzNsCg+aYeIsxTvtMmFsNr2O5hLELgjJhzyyYOSG16SqydeI/3/7Dr5hQV6x
+         4pM004HWHgtxKTiqP9mA4NKZ2PVCz0ka+m2ZbVpj+SKU0GdGkbmAd2Qf5cOqGpV+qdpM
+         4rBA0ACbcaBomIjENdTwYVJm9ihhE/2pOZUktnKLr22wVAW8D0JKkTBPh32rLgp0pwkr
+         Am+EdDpwd9OKMGf3o5W/RE/7J0QjCkyz2P/dQdxPzuws4xRba1peuL9aSardYXPCZrBp
+         Tp/Q==
+X-Gm-Message-State: AOAM530UGS7ItQ+gE/Q37/vn+dQAN7rGr7C6/nRpQ+kYnfvxRZM2lV+v
+        WyLpy33t5qNykfqwg/49lTzRXQVsKYs=
+X-Google-Smtp-Source: ABdhPJx6wABjmYegKi4YgVH5rutTffU4pxGVLltDmYlM4H7/jarWaxh3CL1PYSblSpN226tNEjgPzA==
+X-Received: by 2002:aa7:d5d9:0:b0:416:1dd3:7714 with SMTP id d25-20020aa7d5d9000000b004161dd37714mr9225263eds.256.1647009628632;
+        Fri, 11 Mar 2022 06:40:28 -0800 (PST)
 Received: from felia.fritz.box (200116b826a9a900147fc2a0771e144b.dip.versatel-1u1.de. [2001:16b8:26a9:a900:147f:c2a0:771e:144b])
-        by smtp.gmail.com with ESMTPSA id u9-20020a170906124900b006ce88a505a1sm3027146eja.179.2022.03.11.05.20.57
+        by smtp.gmail.com with ESMTPSA id bq23-20020a170906d0d700b006db0372d3a2sm3045117ejb.20.2022.03.11.06.40.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Mar 2022 05:20:58 -0800 (PST)
+        Fri, 11 Mar 2022 06:40:28 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     robh+dt@kernel.org, devicetree@vger.kernel.org
-Cc:     davem@davemloft.net, kuba@kernel.org,
-        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        Corentin Labbe <clabbe@baylibre.com>,
+To:     Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: rectify entry for ARM/CORTINA SYSTEMS GEMINI ARM ARCHITECTURE
-Date:   Fri, 11 Mar 2022 14:20:16 +0100
-Message-Id: <20220311132016.24090-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] fs: remove reference to the removed config NFSD_V3
+Date:   Fri, 11 Mar 2022 15:39:41 +0100
+Message-Id: <20220311143941.9628-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 208b65f7b5cc ("dt-bindings: net: convert net/cortina,gemini-ethernet
-to yaml") converts cortina,gemini-ethernet.txt to yaml, but missed to
-adjust its reference in MAINTAINERS.
+Commit 6a687e69a54e ("NFSD: Remove CONFIG_NFSD_V3") removes the config
+NFSD_V3, but misses one reference in fs/Kconfig.
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
+Remove this remaining reference to the removed config symbol.
 
-Repair this file reference in ARM/CORTINA SYSTEMS GEMINI ARM ARCHITECTURE.
+This issue was discovered with ./scripts/checkkconfigsymbols.py.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Rob, please pick this minor non-urgent cleanup patch in your -next tree on
-top of the commit above.
+Chuck, please pick this quick fix to your commit in linux-next.
 
- MAINTAINERS | 2 +-
+ fs/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d0a17fcf264b..80e5867b2afa 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2004,7 +2004,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- T:	git git://github.com/ulli-kroll/linux.git
- F:	Documentation/devicetree/bindings/arm/gemini.yaml
--F:	Documentation/devicetree/bindings/net/cortina,gemini-ethernet.txt
-+F:	Documentation/devicetree/bindings/net/cortina,gemini-ethernet.yaml
- F:	Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
- F:	Documentation/devicetree/bindings/rtc/faraday,ftrtc010.yaml
- F:	arch/arm/boot/dts/gemini*
+diff --git a/fs/Kconfig b/fs/Kconfig
+index 7f2455e8e18a..ec2cf8ccd170 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -344,7 +344,7 @@ config LOCKD
+ 
+ config LOCKD_V4
+ 	bool
+-	depends on NFSD_V3 || NFS_V3
++	depends on NFS_V3
+ 	depends on FILE_LOCKING
+ 	default y
+ 
 -- 
 2.17.1
 
