@@ -2,96 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36AB3C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 11 Mar 2022 23:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5EAEC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Mar 2022 10:27:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229887AbiCKXDu (ORCPT
+        id S231678AbiCLK2U (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 11 Mar 2022 18:03:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59568 "EHLO
+        Sat, 12 Mar 2022 05:28:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230141AbiCKXC2 (ORCPT
+        with ESMTP id S229907AbiCLK2T (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 11 Mar 2022 18:02:28 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D266326AD6;
-        Fri, 11 Mar 2022 14:56:12 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id n33-20020a05600c3ba100b003832caf7f3aso6602062wms.0;
-        Fri, 11 Mar 2022 14:56:12 -0800 (PST)
+        Sat, 12 Mar 2022 05:28:19 -0500
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61FE21E6951;
+        Sat, 12 Mar 2022 02:27:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zy99wYs9INav6M+ySXDMbZ4xodBN9Of1pEI1cnAd+IU=;
-        b=YFFd/bnQJxeEEeMYOwwsSTbyCr+f8rdr616qqP+QY1ExSLUq3ssa6RC7sMOL/8H9Dv
-         nW6rQP2YPvZXtANAWlm23tcjBBOh59DLjKr5kfo5BJ4u9nMh/LOmyD4dC3jfd/iVvu6Z
-         sSLS1Bbpt3MShIjl+mExU9FMV6j0MaUGQ7s+Vh9mlGVVP9pYPXDAODsrvD+cD1CAryld
-         O2LEZek9PED++b6JclN3ln1G9jw5Sr9WoW1VfZG/APrGnVzAOALWJExp0eBUilml8gtL
-         CLkRtuKMqSNZcTlcZBGorPaettgPwxtkhF0ae7x9CHtugeQ99b7xfHsICdgcEA2hyHed
-         vBEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zy99wYs9INav6M+ySXDMbZ4xodBN9Of1pEI1cnAd+IU=;
-        b=ByoVqrE49WHCjq2FuMmvY+0B7zLdl5AAZbXto4fIAg01iNxhFs4yflUE3lcZkajIYV
-         0VSLDo/opbTsMZ82M/JAoqrBctEbARM6g1UXi/Urvv6CY8+dr6jG2a5m8gz66IIlU2Md
-         TEE9M77nf3jc+2mri3TjaMheao9v4CafLZgfViA+DlS/VemNwbGhrKUD1qAHfx/WZ1k3
-         4XO5zb5zJoqN9zGUu1T0wjd3MGgehb4IO/Hts7rHUaao69cSXDxXIQuE1pt2RqamhnL6
-         18MIdTRTKU1w5udKddN0QhRYZCA190h7rnD8TnN8O6v6uiMLYHj3WZY+5W+h28ZVij0Q
-         7Qpg==
-X-Gm-Message-State: AOAM530YdG7GsTOx6mir3a2Fj+lU6UgdwF4Wbah39RjR0lLYYNNRL8QR
-        DQQv0oxLXCfyS8i+Sq6ouOv0DJ6FpOs=
-X-Google-Smtp-Source: ABdhPJzUnhOjVhBQKglAYTmPJ0DMk1ouF5Z9hNagJaoeLjx8vEAlx70nCsM8tihGtMP3bdv1+UVDKw==
-X-Received: by 2002:a05:600c:4a12:b0:389:9c7d:5917 with SMTP id c18-20020a05600c4a1200b003899c7d5917mr9028457wmp.0.1647039371326;
-        Fri, 11 Mar 2022 14:56:11 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id l8-20020a5d6688000000b001f04ae0bb6csm7346837wru.58.2022.03.11.14.56.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Mar 2022 14:56:10 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Amitkumar Karwar <amitkarwar@gmail.com>,
-        Ganapathi Bhat <ganapathi017@gmail.com>,
-        Sharvari Harisangam <sharvari.harisangam@nxp.com>,
-        Xinming Hu <huxinming820@gmail.com>,
-        Kalle Valo <kvalo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mwifiex: make read-only array wmm_oui static const
-Date:   Fri, 11 Mar 2022 22:56:10 +0000
-Message-Id: <20220311225610.10895-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+  d=inria.fr; s=dc;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Cf3d/zYyP1qElLyGMKalfDePFpmbmiLI2TKBOV9FAj8=;
+  b=r1LvOmlMPSBgD1ppTQls3Zx1NDsxNu/BY1x1IlAbU4VoDfy0tGxd7p1v
+   9UDwmqUuvBCgRGtSd5UR4X6K8V1l7ZtjpMe88rbvO2r3tgx9aaHYbrPK9
+   Ykws3igWEYUgiBIOhLGyjtnrOmUplk3NkoOiT9UGgxTAd3PvoI0hjW5nn
+   w=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="5.90,175,1643670000"; 
+   d="scan'208";a="25781347"
+Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2022 11:27:11 +0100
+From:   Julia Lawall <Julia.Lawall@inria.fr>
+To:     Steve French <sfrench@samba.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/6] cifs: use kzalloc
+Date:   Sat, 12 Mar 2022 11:27:00 +0100
+Message-Id: <20220312102705.71413-2-Julia.Lawall@inria.fr>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20220312102705.71413-1-Julia.Lawall@inria.fr>
+References: <20220312102705.71413-1-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the read-only array wmm_oui on the stack but
-instead make it static const. Also makes the object code a little
-smaller.
+Use kzalloc instead of kmalloc + memset.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+The semantic patch that makes this change is:
+(https://coccinelle.gitlabpages.inria.fr/website/)
+
+//<smpl>
+@@
+expression res, size, flag;
+@@
+- res = kmalloc(size, flag);
++ res = kzalloc(size, flag);
+  ...
+- memset(res, 0, size);
+//</smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
 ---
- drivers/net/wireless/marvell/mwifiex/uap_cmd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/cifs/transport.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/uap_cmd.c b/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-index 18e89777b784..630e1679c3f9 100644
---- a/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-+++ b/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-@@ -389,7 +389,7 @@ mwifiex_set_wmm_params(struct mwifiex_private *priv,
- {
- 	const u8 *vendor_ie;
- 	const u8 *wmm_ie;
--	u8 wmm_oui[] = {0x00, 0x50, 0xf2, 0x02};
-+	static const u8 wmm_oui[] = {0x00, 0x50, 0xf2, 0x02};
+diff --git a/fs/cifs/transport.c b/fs/cifs/transport.c
+index eeb1a699bd6f..4ff8e165a180 100644
+--- a/fs/cifs/transport.c
++++ b/fs/cifs/transport.c
+@@ -464,13 +464,12 @@ smb_send_rqst(struct TCP_Server_Info *server, int num_rqst,
+ 		return -EIO;
+ 	}
  
- 	vendor_ie = cfg80211_find_vendor_ie(WLAN_OUI_MICROSOFT,
- 					    WLAN_OUI_TYPE_MICROSOFT_WMM,
--- 
-2.35.1
+-	tr_hdr = kmalloc(sizeof(*tr_hdr), GFP_NOFS);
++	tr_hdr = kzalloc(sizeof(*tr_hdr), GFP_NOFS);
+ 	if (!tr_hdr)
+ 		return -ENOMEM;
+ 
+ 	memset(&cur_rqst[0], 0, sizeof(cur_rqst));
+ 	memset(&iov, 0, sizeof(iov));
+-	memset(tr_hdr, 0, sizeof(*tr_hdr));
+ 
+ 	iov.iov_base = tr_hdr;
+ 	iov.iov_len = sizeof(*tr_hdr);
 
