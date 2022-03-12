@@ -2,91 +2,66 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 456AEC433FE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Mar 2022 10:27:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45365C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 12 Mar 2022 21:44:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231582AbiCLK2b (ORCPT
+        id S232760AbiCLVpE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 12 Mar 2022 05:28:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47524 "EHLO
+        Sat, 12 Mar 2022 16:45:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231758AbiCLK2Z (ORCPT
+        with ESMTP id S232749AbiCLVpD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 12 Mar 2022 05:28:25 -0500
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C2151E6951;
-        Sat, 12 Mar 2022 02:27:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=stEf22hi8ODEHQdWrg8iLu47DwcXnuaCT7isJzYDhRA=;
-  b=deEbcJzgiOY2sCecLvFUg44QLuAtr9BErJnFjjX61WzAxxWAD+qCeUaH
-   z2Mz+OTRc86RDPtIsNA3EKoZAcwkC4E9EmcruQilgOLprVgF2A+e8qBFr
-   UbuP2lZhs94moodfwUuMtou2gQ9YUCOzNrNKogsYJk3QF8tsoxBpkHj4d
-   0=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="5.90,175,1643670000"; 
-   d="scan'208";a="25781352"
-Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2022 11:27:11 +0100
-From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Andrey Konovalov <andreyknvl@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] usb: raw-gadget: use kzalloc
-Date:   Sat, 12 Mar 2022 11:27:05 +0100
-Message-Id: <20220312102705.71413-7-Julia.Lawall@inria.fr>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20220312102705.71413-1-Julia.Lawall@inria.fr>
+        Sat, 12 Mar 2022 16:45:03 -0500
+Received: from relay3.hostedemail.com (relay3.hostedemail.com [64.99.140.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A13C643EDE;
+        Sat, 12 Mar 2022 13:43:55 -0800 (PST)
+Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
+        by unirelay02.hostedemail.com (Postfix) with ESMTP id 9E35F23501;
+        Sat, 12 Mar 2022 21:43:54 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf20.hostedemail.com (Postfix) with ESMTPA id 5FE732002B;
+        Sat, 12 Mar 2022 21:43:53 +0000 (UTC)
+Message-ID: <2422fcc6d9a1e03e4dde90ea91327764ab5ee4b5.camel@perches.com>
+Subject: Re: [PATCH 3/6] ALSA: seq: oss: use kzalloc
+From:   Joe Perches <joe@perches.com>
+To:     Julia Lawall <Julia.Lawall@inria.fr>,
+        Jaroslav Kysela <perex@perex.cz>
+Cc:     kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Date:   Sat, 12 Mar 2022 13:43:52 -0800
+In-Reply-To: <20220312102705.71413-4-Julia.Lawall@inria.fr>
 References: <20220312102705.71413-1-Julia.Lawall@inria.fr>
+         <20220312102705.71413-4-Julia.Lawall@inria.fr>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.4-1ubuntu2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 5FE732002B
+X-Stat-Signature: rmt9obkyouuykyseiymery8o93ewmsek
+X-Rspamd-Server: rspamout01
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1+wmoUH95/RP/dF0B8Uoo7RJ+6BRXnnwI0=
+X-HE-Tag: 1647121433-91170
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use kzalloc instead of kmalloc + memset.
+On Sat, 2022-03-12 at 11:27 +0100, Julia Lawall wrote:
+> Use kzalloc instead of kmalloc + memset.
+[]
+> diff --git a/sound/core/seq/oss/seq_oss_init.c b/sound/core/seq/oss/seq_oss_init.c
+[]
+> @@ -81,7 +81,6 @@ snd_seq_oss_create_client(void)
+>  	system_client = rc;
+>  
+>  	/* create annoucement receiver port */
 
-The semantic patch that makes this change is:
-(https://coccinelle.gitlabpages.inria.fr/website/)
+unrelated trivia: typo of announcement above
 
-//<smpl>
-@@
-expression res, size, flag;
-@@
-- res = kmalloc(size, flag);
-+ res = kzalloc(size, flag);
-  ...
-- memset(res, 0, size);
-//</smpl>
+> -	memset(port, 0, sizeof(*port));
+>  	strcpy(port->name, "Receiver");
+>  	port->addr.client = system_client;
+>  	port->capability = SNDRV_SEQ_PORT_CAP_WRITE; /* receive only */
+> 
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
----
- drivers/usb/gadget/legacy/raw_gadget.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/usb/gadget/legacy/raw_gadget.c b/drivers/usb/gadget/legacy/raw_gadget.c
-index d86c3a36441e..135e75b891f6 100644
---- a/drivers/usb/gadget/legacy/raw_gadget.c
-+++ b/drivers/usb/gadget/legacy/raw_gadget.c
-@@ -1157,7 +1157,7 @@ static int raw_ioctl_eps_info(struct raw_dev *dev, unsigned long value)
- 	struct usb_raw_eps_info *info;
- 	struct raw_ep *ep;
- 
--	info = kmalloc(sizeof(*info), GFP_KERNEL);
-+	info = kzalloc(sizeof(*info), GFP_KERNEL);
- 	if (!info) {
- 		ret = -ENOMEM;
- 		goto out;
-@@ -1177,7 +1177,6 @@ static int raw_ioctl_eps_info(struct raw_dev *dev, unsigned long value)
- 		goto out_free;
- 	}
- 
--	memset(info, 0, sizeof(*info));
- 	for (i = 0; i < dev->eps_num; i++) {
- 		ep = &dev->eps[i];
- 		strscpy(&info->eps[i].name[0], ep->ep->name,
 
