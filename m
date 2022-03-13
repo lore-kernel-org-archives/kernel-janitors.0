@@ -2,41 +2,45 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A52F0C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Mar 2022 08:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99B21C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Mar 2022 14:18:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231331AbiCMI5y (ORCPT
+        id S234590AbiCMOUC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 13 Mar 2022 04:57:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50380 "EHLO
+        Sun, 13 Mar 2022 10:20:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232210AbiCMI5t (ORCPT
+        with ESMTP id S231871AbiCMOUC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 13 Mar 2022 04:57:49 -0400
+        Sun, 13 Mar 2022 10:20:02 -0400
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 363B9A7760;
-        Sun, 13 Mar 2022 00:56:41 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C2DD27B14;
+        Sun, 13 Mar 2022 07:18:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=p6RhWnOgz5gn6ZKATCVUa/Wp+aXaVj0QweG0UGMuM2M=;
-  b=XrHrNfTD7tmUVD3KV5sKgKY2jHOQhL1FgXEuMg11nDFFB+SJHfiZDahv
-   YmTzt3nnxfg4ZQYG00cjcwbMllpTZECyJTf0+pahIImsDp0ySt/GWF3dA
-   7KpM6yii8IOk2coec+you88s317RvYr6GrIGVmxRLfGcJVfkXrftZI5JX
-   0=;
+  bh=oUw08iIpNlygYly08MUnof6lcGY7VIecIfYGombIoYI=;
+  b=aESEUeMXhAHD94xBHKwIkW/ULJB1+YT56YrwSh1/6GtGfkJrZ3/TgGfx
+   hOGDQyQQQ/KxyWuaTnT/7HEfOFd8JxMxJX6o9lMgGZfowf2HkGXLSY6yz
+   JQxWG2inP7sKNbqc+g+igQf2d3MbouIppRt/Tex33kV7+RYjno6Bq2/VO
+   8=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.90,178,1643670000"; 
-   d="scan'208";a="25843487"
+   d="scan'208";a="25859617"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2022 09:56:40 +0100
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2022 15:18:51 +0100
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Jaroslav Kysela <perex@perex.cz>, Joe Perches <joe@perches.com>
-Cc:     kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: seq: oss: fix typo
-Date:   Sun, 13 Mar 2022 09:56:35 +0100
-Message-Id: <20220313085635.102123-1-Julia.Lawall@inria.fr>
+To:     James Smart <james.smart@broadcom.com>,
+        Joe Perches <joe@perches.com>
+Cc:     kernel-janitors@vger.kernel.org,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 4/6 v2] scsi: lpfc: use kcalloc
+Date:   Sun, 13 Mar 2022 15:18:47 +0100
+Message-Id: <20220313141847.109804-1-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -44,34 +48,43 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Fix typo in "announcement".
+Use kcalloc instead of kmalloc + memset.
 
-Reported-by: Joe Perches <joe@perches.com>
+Suggested-by: Joe Perches <joe@perches.com>
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
 
-This applies on top of:
+v2: Use kcalloc instead of kzalloc
 
-From: Julia Lawall <Julia.Lawall@inria.fr>
-To: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>,alsa-devel@alsa-project.org,linux-kernel@vger.kernel.org
-Subject: [PATCH 3/6] ALSA: seq: oss: use kzalloc
+ drivers/scsi/lpfc/lpfc_debugfs.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
- sound/core/seq/oss/seq_oss_init.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/core/seq/oss/seq_oss_init.c b/sound/core/seq/oss/seq_oss_init.c
-index 04a3376a6e66..42d4e7535a82 100644
---- a/sound/core/seq/oss/seq_oss_init.c
-+++ b/sound/core/seq/oss/seq_oss_init.c
-@@ -80,7 +80,7 @@ snd_seq_oss_create_client(void)
+diff --git a/drivers/scsi/lpfc/lpfc_debugfs.c b/drivers/scsi/lpfc/lpfc_debugfs.c
+index 30fac2f6fb06..7b24c932e812 100644
+--- a/drivers/scsi/lpfc/lpfc_debugfs.c
++++ b/drivers/scsi/lpfc/lpfc_debugfs.c
+@@ -6272,9 +6272,9 @@ lpfc_debugfs_initialize(struct lpfc_vport *vport)
+ 				 phba->hba_debugfs_root,
+ 				 phba, &lpfc_debugfs_op_slow_ring_trc);
+ 		if (!phba->slow_ring_trc) {
+-			phba->slow_ring_trc = kmalloc(
+-				(sizeof(struct lpfc_debugfs_trc) *
+-				lpfc_debugfs_max_slow_ring_trc),
++			phba->slow_ring_trc = kcalloc(
++				lpfc_debugfs_max_slow_ring_trc,
++				sizeof(struct lpfc_debugfs_trc),
+ 				GFP_KERNEL);
+ 			if (!phba->slow_ring_trc) {
+ 				lpfc_printf_vlog(vport, KERN_ERR, LOG_INIT,
+@@ -6283,9 +6283,6 @@ lpfc_debugfs_initialize(struct lpfc_vport *vport)
+ 				goto debug_failed;
+ 			}
+ 			atomic_set(&phba->slow_ring_trc_cnt, 0);
+-			memset(phba->slow_ring_trc, 0,
+-				(sizeof(struct lpfc_debugfs_trc) *
+-				lpfc_debugfs_max_slow_ring_trc));
+ 		}
  
- 	system_client = rc;
- 
--	/* create annoucement receiver port */
-+	/* create announcement receiver port */
- 	strcpy(port->name, "Receiver");
- 	port->addr.client = system_client;
- 	port->capability = SNDRV_SEQ_PORT_CAP_WRITE; /* receive only */
+ 		snprintf(name, sizeof(name), "nvmeio_trc");
 
