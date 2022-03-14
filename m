@@ -2,72 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B9A2C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 12:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F94C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 13:03:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235702AbiCNMtv (ORCPT
+        id S238792AbiCNNET (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Mar 2022 08:49:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52416 "EHLO
+        Mon, 14 Mar 2022 09:04:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237907AbiCNMr4 (ORCPT
+        with ESMTP id S231416AbiCNNET (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Mar 2022 08:47:56 -0400
+        Mon, 14 Mar 2022 09:04:19 -0400
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A05F13D7D;
-        Mon, 14 Mar 2022 05:41:45 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39C4B2BC8;
+        Mon, 14 Mar 2022 06:03:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=RBomFePC0D3Nz1nRDfr5gUM4W4kZT6zAPNV0+Hq+aWE=;
-  b=OpCQwjxAdFHsU6aTCrifW9qTCnMKp+/mh16Ez/S05MOtWRHohzP+fqYW
-   ou319aHC2g3dk9DRUyMuuXJ5PSYtjNvyz9HA96Y5f5miGPVgjul3aSef/
-   8Tc0aL7i2fjvDQYaUWuZUNDusJOhCHSZ5rnx6/cTj8q9Nvt0lxrS41Ab+
-   w=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=sZGCWDh0dfZ+WLDvLb/SCotSw5Z7sq0gZZDxSTkfyJo=;
+  b=fbq7d3sCUpERkXkj8lEkFFwZhvtPpyB6uiTLBhL/3Gt9IccehSvO7YZ6
+   2bm/d2XdrHaIEMdFLEUG7C5x1PmbMJ9nLezz+kaCvFDfuQvyPOCrSpEEq
+   6B4zaFZUvtvqoiJNjH1x5r6OgT0kGVUAwn3wXOYIGzj5tafxGl606BVWK
+   c=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.90,180,1643670000"; 
-   d="scan'208";a="25997347"
-Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2022 12:54:00 +0100
-From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Tero Kristo <kristo@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 14/30] clk: ti: clkctrl: fix typos in comments
-Date:   Mon, 14 Mar 2022 12:53:38 +0100
-Message-Id: <20220314115354.144023-15-Julia.Lawall@inria.fr>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20220314115354.144023-1-Julia.Lawall@inria.fr>
-References: <20220314115354.144023-1-Julia.Lawall@inria.fr>
+   d="scan'208";a="26014036"
+Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2022 14:03:02 +0100
+Date:   Mon, 14 Mar 2022 14:03:01 +0100 (CET)
+From:   Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: julia@hadrien
+To:     Marc Kleine-Budde <mkl@pengutronix.de>
+cc:     Wolfgang Grandegger <wg@grandegger.com>,
+        kernel-janitors@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 27/30] can: ucan: fix typos in comments
+In-Reply-To: <20220314120502.kpc27kzk2dnou2td@pengutronix.de>
+Message-ID: <alpine.DEB.2.22.394.2203141402480.2561@hadrien>
+References: <20220314115354.144023-1-Julia.Lawall@inria.fr> <20220314115354.144023-28-Julia.Lawall@inria.fr> <20220314120502.kpc27kzk2dnou2td@pengutronix.de>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Various spelling mistakes in comments.
-Detected with the help of Coccinelle.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
----
- drivers/clk/ti/clkctrl.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, 14 Mar 2022, Marc Kleine-Budde wrote:
 
-diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-index 864c484bde1b..170cdf9ea8f6 100644
---- a/drivers/clk/ti/clkctrl.c
-+++ b/drivers/clk/ti/clkctrl.c
-@@ -603,7 +603,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
- 
- 	/*
- 	 * The code below can be removed when all clkctrl nodes use domain
--	 * specific compatible proprerty and standard clock node naming
-+	 * specific compatible property and standard clock node naming
- 	 */
- 	if (legacy_naming) {
- 		provider->clkdm_name = kasprintf(GFP_KERNEL, "%pOFnxxx", node->parent);
+> On 14.03.2022 12:53:51, Julia Lawall wrote:
+> > Various spelling mistakes in comments.
+> > Detected with the help of Coccinelle.
+> >
+> > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+>
+> Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
+>
+> Should I take this, or are you going to upstream this?
 
+You can take it.
+
+thanks,
+julia
+
+>
+> Marc
+>
+> --
+> Pengutronix e.K.                 | Marc Kleine-Budde           |
+> Embedded Linux                   | https://www.pengutronix.de  |
+> Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
+> Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
+>
