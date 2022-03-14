@@ -2,125 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02027C4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 12:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4996C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 12:47:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231829AbiCNMq6 (ORCPT
+        id S231239AbiCNMsy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Mar 2022 08:46:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52360 "EHLO
+        Mon, 14 Mar 2022 08:48:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234672AbiCNMq1 (ORCPT
+        with ESMTP id S238201AbiCNMr5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Mar 2022 08:46:27 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C18D1F636;
-        Mon, 14 Mar 2022 05:38:03 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id qt6so33533710ejb.11;
-        Mon, 14 Mar 2022 05:38:02 -0700 (PDT)
+        Mon, 14 Mar 2022 08:47:57 -0400
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 978233917E;
+        Mon, 14 Mar 2022 05:41:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=DHDXfguQf/+0V20Zk/mruH8iTYp9EnY9SZujr9Uh8qY=;
-        b=TKtBFa9ixDzFuEWiW6FvgilF1e6EJ1hdGIdyPqxyN9AbC1VUQ7PQFZmTXSJ063AbOe
-         Dkk9eSZAeu27C2tw3g164G7EfPumW080ea1Ly0r5Ew6T96agB942zrX5oJ1T57zTvV4O
-         fxnkhkzo6Pe3kPzU5Ak2Xuupjvv0ddjwLmJbA6BDLGtEj2XSQG97d26kQ/NcLoCnzcfH
-         xAuTFqS7RbJHAqtqErj7Wrxm+t+ba6E8vhko0zL6fILBsjULIg2tM6A/7JD75cwhWb0A
-         j5+8XEIRebN08xSz5toCWQhpK9Gra8IsDrVV4CoLTM1ls8O6LJiiLFf6nMsRhcgMb5MX
-         Fphg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=DHDXfguQf/+0V20Zk/mruH8iTYp9EnY9SZujr9Uh8qY=;
-        b=nlR/4zlyjIwGJcIRBdluUGmpbFSXURDyBhlI9GFHZsXCL3LLSLt/ywhGA61SzWf0Q3
-         UPbhejpdTUIUT6iBSl7SI0nJv4kN/li8F8sveBLNvDFGSmwA7ihxJaUJeHwxlBzitQ0m
-         7kRP8cm2sY8UK/KdCWkG0LAldSb/eKVa12YAAli66VfUZ6Wm/nYeTis5GH4ptenXP8oF
-         i8PP7/Ioc5ouXv4mvI2YLWXjmnZDQN4hnyAHJmr1frsomzKm3BcZOwGRpI/Gx0P+15NU
-         m50c7ObbKa2B/hhisdf7FLM2FT+Go2QRTgJVkFleuiwepY4wqC6cxdKTo8q4e4VsFa8X
-         9S4g==
-X-Gm-Message-State: AOAM533hMyu3vF1GZ65Oc8irZFPuNOG76/FYJxmDopYYJT4XKGMmr5GC
-        1K9nGEi9T9GnO5Py1/umAVg=
-X-Google-Smtp-Source: ABdhPJxwELyfsQSJTNq8Sa1l7yiWAs9D0dHvQGP4T1HLkCTbCN50lBERRClcm7Ub9FPMyHuRg9NoSw==
-X-Received: by 2002:a17:907:6d82:b0:6d6:da31:e542 with SMTP id sb2-20020a1709076d8200b006d6da31e542mr18590966ejc.135.1647261452616;
-        Mon, 14 Mar 2022 05:37:32 -0700 (PDT)
-Received: from [192.168.1.116] ([77.124.29.183])
-        by smtp.gmail.com with ESMTPSA id k7-20020aa7c047000000b004132d3b60aasm7821888edo.78.2022.03.14.05.37.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Mar 2022 05:37:32 -0700 (PDT)
-Message-ID: <66fa1399-cc4b-8bdc-d4bc-ed9befe1803e@gmail.com>
-Date:   Mon, 14 Mar 2022 14:37:29 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.2
-Subject: Re: [PATCH 2/6] net/mlx4_en: use kzalloc
-Content-Language: en-US
-To:     Julia Lawall <Julia.Lawall@inria.fr>,
-        Tariq Toukan <tariqt@nvidia.com>
+  d=inria.fr; s=dc;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=hkSvYg+QhqgFZs/M00yfIFpfr0WP6sk4OF7YMdOXfzM=;
+  b=cAIVo/VSoFJ93ordGoT7KpoGY4itLt7GuKTgBDMzcvn0vvhHNiXO85XV
+   NKck4K9KZuU/STC8Z4bOBtD9EQ93cvGlW+vLZ+lyBlTaAv8HJznQqu8Zo
+   SXP2YNagNcNJMD4treHXZzuintqxmGcTq9yGWrB7/SCXoT5Tm/iEkZmXz
+   Q=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="5.90,180,1643670000"; 
+   d="scan'208";a="25997348"
+Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2022 12:54:00 +0100
+From:   Julia Lawall <Julia.Lawall@inria.fr>
+To:     Andy Gross <agross@kernel.org>
 Cc:     kernel-janitors@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220312102705.71413-1-Julia.Lawall@inria.fr>
- <20220312102705.71413-3-Julia.Lawall@inria.fr>
-From:   Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <20220312102705.71413-3-Julia.Lawall@inria.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 15/30] clk: qcom: sm6125-gcc: fix typos in comments
+Date:   Mon, 14 Mar 2022 12:53:39 +0100
+Message-Id: <20220314115354.144023-16-Julia.Lawall@inria.fr>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20220314115354.144023-1-Julia.Lawall@inria.fr>
+References: <20220314115354.144023-1-Julia.Lawall@inria.fr>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Various spelling mistakes in comments.
+Detected with the help of Coccinelle.
 
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-On 3/12/2022 12:27 PM, Julia Lawall wrote:
-> Use kzalloc instead of kmalloc + memset.
-> 
-> The semantic patch that makes this change is:
-> (https://coccinelle.gitlabpages.inria.fr/website/)
-> 
-> //<smpl>
-> @@
-> expression res, size, flag;
-> @@
-> - res = kmalloc(size, flag);
-> + res = kzalloc(size, flag);
->    ...
-> - memset(res, 0, size);
-> //</smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
->   drivers/net/ethernet/mellanox/mlx4/en_rx.c |    3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx4/en_rx.c b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-> index 8cfc649f226b..8f762fc170b3 100644
-> --- a/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-> +++ b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-> @@ -1067,7 +1067,7 @@ static int mlx4_en_config_rss_qp(struct mlx4_en_priv *priv, int qpn,
->   	struct mlx4_qp_context *context;
->   	int err = 0;
->   
-> -	context = kmalloc(sizeof(*context), GFP_KERNEL);
-> +	context = kzalloc(sizeof(*context), GFP_KERNEL);
->   	if (!context)
->   		return -ENOMEM;
->   
-> @@ -1078,7 +1078,6 @@ static int mlx4_en_config_rss_qp(struct mlx4_en_priv *priv, int qpn,
->   	}
->   	qp->event = mlx4_en_sqp_event;
->   
-> -	memset(context, 0, sizeof(*context));
->   	mlx4_en_fill_qp_context(priv, ring->actual_size, ring->stride, 0, 0,
->   				qpn, ring->cqn, -1, context);
->   	context->db_rec_addr = cpu_to_be64(ring->wqres.db.dma);
-> 
+---
+ drivers/clk/qcom/gcc-sm6125.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks for your patch.
-
-Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
+diff --git a/drivers/clk/qcom/gcc-sm6125.c b/drivers/clk/qcom/gcc-sm6125.c
+index 431b55bb0d2f..cf3af88d4021 100644
+--- a/drivers/clk/qcom/gcc-sm6125.c
++++ b/drivers/clk/qcom/gcc-sm6125.c
+@@ -4151,7 +4151,7 @@ static int gcc_sm6125_probe(struct platform_device *pdev)
+ 
+ 	/*
+ 	 * Enable DUAL_EDGE mode for MCLK RCGs
+-	 * This is requierd to enable MND divider mode
++	 * This is required to enable MND divider mode
+ 	 */
+ 	regmap_update_bits(regmap, 0x51004, 0x3000, 0x2000);
+ 	regmap_update_bits(regmap, 0x51020, 0x3000, 0x2000);
 
