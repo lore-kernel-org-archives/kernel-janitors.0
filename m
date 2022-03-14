@@ -2,44 +2,43 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9158EC4321E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A9BC4167D
 	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 12:21:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238896AbiCNMWT (ORCPT
+        id S240818AbiCNMWX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Mar 2022 08:22:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49698 "EHLO
+        Mon, 14 Mar 2022 08:22:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243861AbiCNMVU (ORCPT
+        with ESMTP id S243879AbiCNMVV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Mar 2022 08:21:20 -0400
+        Mon, 14 Mar 2022 08:21:21 -0400
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 847E2BE5;
-        Mon, 14 Mar 2022 05:17:22 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 321F81140;
+        Mon, 14 Mar 2022 05:17:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=yAh5dhSWoezDHAmIMKrnf1fmCmAoJ/u8UhSQGN/+5rg=;
-  b=AOnEnK5rwCG4310Vpj8R+iKPhl+ZQD+1cDacCSAMGCta6CgsSn9yBslL
-   Y1TrJpCX8hv7jCgskW7U1RQ8F6ZnlT4GCA0nKToZhZGvR2wQ42o/C7TAp
-   6Uwkpl70GJ0CwzNzwB5HL+SwW86rfOZM88KpUW0hoMBFN0ZoFvJLVt9bZ
-   Y=;
+  bh=FWNbZTFAMBhTgS2R1HpJWQ7vZbciDztq6nj7YGJohCE=;
+  b=HQtBKMWZuEVOREaqlRVE/01NtC4d9mTQstV2bcHaHlXi2M27x094itGk
+   yuLGQkwQVo5Kd+5w4hU+jps2xadytqyLLJD/jb2fGybRoVlo75MrqeOgt
+   CniSZtbcfdKiirA6FrQ75csVKfWVUiiTbUXYzQvGVOJZ2yELq0Y+wq8mE
+   U=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.90,180,1643670000"; 
-   d="scan'208";a="25997353"
+   d="scan'208";a="25997337"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2022 12:54:00 +0100
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2022 12:53:59 +0100
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Kalle Valo <kvalo@kernel.org>
+To:     Justin Ernst <justin.ernst@hpe.com>
 Cc:     kernel-janitors@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 20/30] airo: fix typos in comments
-Date:   Mon, 14 Mar 2022 12:53:44 +0100
-Message-Id: <20220314115354.144023-21-Julia.Lawall@inria.fr>
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 05/30] x86/platform/uv: fix typos in comments
+Date:   Mon, 14 Mar 2022 12:53:29 +0100
+Message-Id: <20220314115354.144023-6-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20220314115354.144023-1-Julia.Lawall@inria.fr>
 References: <20220314115354.144023-1-Julia.Lawall@inria.fr>
@@ -55,20 +54,20 @@ Detected with the help of Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/net/wireless/cisco/airo.c |    2 +-
+ drivers/platform/x86/uv_sysfs.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/cisco/airo.c b/drivers/net/wireless/cisco/airo.c
-index 452d08545d31..10daef81c355 100644
---- a/drivers/net/wireless/cisco/airo.c
-+++ b/drivers/net/wireless/cisco/airo.c
-@@ -545,7 +545,7 @@ struct ConfigRid {
- #define MODE_CFG_MASK cpu_to_le16(0xff)
- #define MODE_ETHERNET_HOST cpu_to_le16(0<<8) /* rx payloads converted */
- #define MODE_LLC_HOST cpu_to_le16(1<<8) /* rx payloads left as is */
--#define MODE_AIRONET_EXTEND cpu_to_le16(1<<9) /* enable Aironet extenstions */
-+#define MODE_AIRONET_EXTEND cpu_to_le16(1<<9) /* enable Aironet extensions */
- #define MODE_AP_INTERFACE cpu_to_le16(1<<10) /* enable ap interface extensions */
- #define MODE_ANTENNA_ALIGN cpu_to_le16(1<<11) /* enable antenna alignment */
- #define MODE_ETHER_LLC cpu_to_le16(1<<12) /* enable ethernet LLC */
+diff --git a/drivers/platform/x86/uv_sysfs.c b/drivers/platform/x86/uv_sysfs.c
+index 625b0b79d185..7c7c95c59908 100644
+--- a/drivers/platform/x86/uv_sysfs.c
++++ b/drivers/platform/x86/uv_sysfs.c
+@@ -555,7 +555,7 @@ static int init_pci_top_obj(struct uv_pci_top_obj *top_obj, char *line)
+ 	 */
+ 	line[6] = '_';
+ 
+-	/* Null terminate after the concatencated name tokens
++	/* Null terminate after the concatenated name tokens
+ 	 * to produce kobj name string.
+ 	 */
+ 	line[14] = '\0';
 
