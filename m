@@ -2,44 +2,46 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A4AC43219
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 12:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 828BAC4167D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 12:47:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231956AbiCNMsy (ORCPT
+        id S232711AbiCNMsz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Mar 2022 08:48:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53618 "EHLO
+        Mon, 14 Mar 2022 08:48:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239275AbiCNMr6 (ORCPT
+        with ESMTP id S237123AbiCNMry (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Mar 2022 08:47:58 -0400
+        Mon, 14 Mar 2022 08:47:54 -0400
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 955BD3A1A2;
-        Mon, 14 Mar 2022 05:41:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF2A638BCC;
+        Mon, 14 Mar 2022 05:41:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=+hYUu2G/bq68s9f2SGkYZi4xlcaxcWwYD94UHu9GgRY=;
-  b=p9GC6OpXJFvaT9UgALjpX+KCc0W9t9BgRzlCd4QoDwR4er5TD0eMzJXf
-   DzriE/66opaOKETRTPjE9OG0m7KC1tMUXl7LiKztQkRo8CQrgGKYtj8jC
-   QkOqFsWa0Hcrkc3qfiXAVUjObxEM1YZHFPRQ9Qi9fLqe470ItuvysdJfW
-   k=;
+  bh=ydan4DcFWSqbAVwutC+rrcavDBQ1Llz9s3pxcPtxROk=;
+  b=NVZvyqGzeDgz6fVAat5ruw+l13ThAvGEZes/BTGBhOmDh6Na4lMuZcvY
+   vN7nHEqhzJl1s6x6G4HwpeV1DKXCJEyvct7hxj4hRkL0bEJEsJvugAb/q
+   zDmyxHqHHACtbsYT/jaIfCC4PBNDQG9nGYf6KIhQVGQhiShgqHbeqhDuK
+   o=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.90,180,1643670000"; 
-   d="scan'208";a="25997352"
+   d="scan'208";a="25997364"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2022 12:54:00 +0100
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Ping-Ke Shih <pkshih@realtek.com>
-Cc:     kernel-janitors@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 19/30] rtlwifi: rtl8821ae: fix typos in comments
-Date:   Mon, 14 Mar 2022 12:53:43 +0100
-Message-Id: <20220314115354.144023-20-Julia.Lawall@inria.fr>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 30/30] perf/core: fix typos in comments
+Date:   Mon, 14 Mar 2022 12:53:54 +0100
+Message-Id: <20220314115354.144023-31-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20220314115354.144023-1-Julia.Lawall@inria.fr>
 References: <20220314115354.144023-1-Julia.Lawall@inria.fr>
@@ -55,38 +57,20 @@ Detected with the help of Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ kernel/events/core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c
-index f6bff0ebd6b0..f3fe16798c59 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c
-@@ -872,7 +872,7 @@ static void rtl8821ae_dm_false_alarm_counter_statistics(struct ieee80211_hw *hw)
- 	else
- 		falsealm_cnt->cnt_all = falsealm_cnt->cnt_ofdm_fail;
- 
--	/*reset OFDM FA coutner*/
-+	/*reset OFDM FA counter*/
- 	rtl_set_bbreg(hw, ODM_REG_OFDM_FA_RST_11AC, BIT(17), 1);
- 	rtl_set_bbreg(hw, ODM_REG_OFDM_FA_RST_11AC, BIT(17), 0);
- 	/* reset CCK FA counter*/
-@@ -1464,7 +1464,7 @@ void rtl8812ae_dm_txpower_tracking_callback_thermalmeter(
- 	const u8 *delta_swing_table_idx_tup_b;
- 	const u8 *delta_swing_table_idx_tdown_b;
- 
--	/*2. Initilization ( 7 steps in total )*/
-+	/*2. Initialization ( 7 steps in total )*/
- 	rtl8812ae_get_delta_swing_table(hw,
- 		&delta_swing_table_idx_tup_a,
- 		&delta_swing_table_idx_tdown_a,
-@@ -2502,7 +2502,7 @@ static void rtl8821ae_dm_check_edca_turbo(struct ieee80211_hw *hw)
- 	rtlpriv->dm.dbginfo.num_non_be_pkt = 0;
- 
- 	/*===============================
--	 * list paramter for different platform
-+	 * list parameter for different platform
- 	 *===============================
- 	 */
- 	pb_is_cur_rdl_state = &rtlpriv->dm.is_cur_rdlstate;
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index cfde994ce61c..25fcd4cca0d7 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -872,7 +872,7 @@ static void perf_cgroup_switch(struct task_struct *task, int mode)
+ 			 * event_filter_match() to not have to pass
+ 			 * task around
+ 			 * we pass the cpuctx->ctx to perf_cgroup_from_task()
+-			 * because cgorup events are only per-cpu
++			 * because cgroup events are only per-cpu
+ 			 */
+ 			cpuctx->cgrp = perf_cgroup_from_task(task,
+ 							     &cpuctx->ctx);
 
