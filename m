@@ -2,94 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C18C4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 12:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C224EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 12:21:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240782AbiCNMLj (ORCPT
+        id S240892AbiCNMWF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Mar 2022 08:11:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33618 "EHLO
+        Mon, 14 Mar 2022 08:22:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241653AbiCNMI7 (ORCPT
+        with ESMTP id S243874AbiCNMVV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Mar 2022 08:08:59 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BFDE4FC4E
-        for <kernel-janitors@vger.kernel.org>; Mon, 14 Mar 2022 05:05:45 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mkl@pengutronix.de>)
-        id 1nTjSG-0006MY-0k; Mon, 14 Mar 2022 13:05:40 +0100
-Received: from pengutronix.de (2a03-f580-87bc-d400-cd06-1d72-9fa6-b58a.ip6.dokom21.de [IPv6:2a03:f580:87bc:d400:cd06:1d72:9fa6:b58a])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        (Authenticated sender: mkl-all@blackshift.org)
-        by smtp.blackshift.org (Postfix) with ESMTPSA id AA0FD4AE7C;
-        Mon, 14 Mar 2022 12:05:02 +0000 (UTC)
-Date:   Mon, 14 Mar 2022 13:05:02 +0100
-From:   Marc Kleine-Budde <mkl@pengutronix.de>
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     Wolfgang Grandegger <wg@grandegger.com>,
-        kernel-janitors@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 27/30] can: ucan: fix typos in comments
-Message-ID: <20220314120502.kpc27kzk2dnou2td@pengutronix.de>
+        Mon, 14 Mar 2022 08:21:21 -0400
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7143810BC;
+        Mon, 14 Mar 2022 05:17:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=VH4JLLVTmsGjZM12TeV9tkCYfL9x4NOujHU4Jgu+w1I=;
+  b=L3CXpax2DaNttb9lDffzBgJzlv8QFSW1v5rEwdDwwuvtUyy7/mpbG6iX
+   /WY7B1Pp7OxOx5CSLVvbFeFgK55HhM32oZ7Ebx7cCX8bp6RpBRp2UwMBv
+   d3MNv+Ns7ff4VorRWJmuPPyY04juf4MHXdfBhjYHAjJIqzZlrjlX1moTG
+   U=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="5.90,180,1643670000"; 
+   d="scan'208";a="25997363"
+Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2022 12:54:00 +0100
+From:   Julia Lawall <Julia.Lawall@inria.fr>
+To:     Alex Deucher <alexander.deucher@amd.com>
+Cc:     kernel-janitors@vger.kernel.org,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 29/30] drm/amdgpu: fix typos in comments
+Date:   Mon, 14 Mar 2022 12:53:53 +0100
+Message-Id: <20220314115354.144023-30-Julia.Lawall@inria.fr>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20220314115354.144023-1-Julia.Lawall@inria.fr>
 References: <20220314115354.144023-1-Julia.Lawall@inria.fr>
- <20220314115354.144023-28-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="utbqex7kud7q6aoc"
-Content-Disposition: inline
-In-Reply-To: <20220314115354.144023-28-Julia.Lawall@inria.fr>
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Various spelling mistakes in comments.
+Detected with the help of Coccinelle.
 
---utbqex7kud7q6aoc
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-On 14.03.2022 12:53:51, Julia Lawall wrote:
-> Various spelling mistakes in comments.
-> Detected with the help of Coccinelle.
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+index fe660a8e150f..970b065e9a6b 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+@@ -340,7 +340,7 @@ static void amdgpu_cs_get_threshold_for_moves(struct amdgpu_device *adev,
+ 	if (free_vram >= 128 * 1024 * 1024 || free_vram >= total_vram / 8) {
+ 		s64 min_us;
+ 
+-		/* Be more aggresive on dGPUs. Try to fill a portion of free
++		/* Be more aggressive on dGPUs. Try to fill a portion of free
+ 		 * VRAM now.
+ 		 */
+ 		if (!(adev->flags & AMD_IS_APU))
+@@ -1280,7 +1280,7 @@ static int amdgpu_cs_submit(struct amdgpu_cs_parser *p,
+ 			continue;
+ 
+ 		/*
+-		 * Work around dma_resv shortcommings by wrapping up the
++		 * Work around dma_resv shortcomings by wrapping up the
+ 		 * submission in a dma_fence_chain and add it as exclusive
+ 		 * fence.
+ 		 */
 
-Should I take this, or are you going to upstream this?
-
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde           |
-Embedded Linux                   | https://www.pengutronix.de  |
-Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
-
---utbqex7kud7q6aoc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEBsvAIBsPu6mG7thcrX5LkNig010FAmIvL2sACgkQrX5LkNig
-013ghgf+OFs60+q+Dd4p/sUmD7ZvtB2QitZ69mbLVzun53kAWpiwm8dMpruvkzVv
-3fJoo1LQf3RatjI3X1VdBhhPiXydxXqsPyPKM+wqGIFx4eBvUVVX2tqkJWa8fCiT
-thYXj2u52KL/ewRCqY2n2P/SV9TZkBh1XCi0VfNJXctig/trq6EI8ggC5WDHPyqS
-F+RLj00w4KXI1qm0cB81jzv9UV0I2yBhkdPhXcNZB6Wc7vgEeTufJwMwyPScrEVB
-NopO4WdprdujxEEXl01ajOknMu6cuI2XCyVLWljYENYCbCfQ1AV19uYrYbTazGP/
-iyaki+mj1/3mHLwV1NfiqnMPC0u8ug==
-=Z0sl
------END PGP SIGNATURE-----
-
---utbqex7kud7q6aoc--
