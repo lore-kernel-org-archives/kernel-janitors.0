@@ -2,89 +2,70 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99B21C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 13 Mar 2022 14:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F5A5C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 06:51:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234590AbiCMOUC (ORCPT
+        id S236190AbiCNGw7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 13 Mar 2022 10:20:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38332 "EHLO
+        Mon, 14 Mar 2022 02:52:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231871AbiCMOUC (ORCPT
+        with ESMTP id S229904AbiCNGw6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 13 Mar 2022 10:20:02 -0400
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C2DD27B14;
-        Sun, 13 Mar 2022 07:18:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=oUw08iIpNlygYly08MUnof6lcGY7VIecIfYGombIoYI=;
-  b=aESEUeMXhAHD94xBHKwIkW/ULJB1+YT56YrwSh1/6GtGfkJrZ3/TgGfx
-   hOGDQyQQQ/KxyWuaTnT/7HEfOFd8JxMxJX6o9lMgGZfowf2HkGXLSY6yz
-   JQxWG2inP7sKNbqc+g+igQf2d3MbouIppRt/Tex33kV7+RYjno6Bq2/VO
-   8=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="5.90,178,1643670000"; 
-   d="scan'208";a="25859617"
-Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2022 15:18:51 +0100
-From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     James Smart <james.smart@broadcom.com>,
-        Joe Perches <joe@perches.com>
-Cc:     kernel-janitors@vger.kernel.org,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/6 v2] scsi: lpfc: use kcalloc
-Date:   Sun, 13 Mar 2022 15:18:47 +0100
-Message-Id: <20220313141847.109804-1-Julia.Lawall@inria.fr>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 14 Mar 2022 02:52:58 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 301693E0DA;
+        Sun, 13 Mar 2022 23:51:49 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 740E5218FD;
+        Mon, 14 Mar 2022 06:51:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1647240707; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KaGB7dEJoq/IO9YnLPYzErd3/g/5zWdaF8A5d/oApOQ=;
+        b=cfya0Glh/FJn65IhLMvH8+C8+gbOmDTJj/odI7/GBa5mOplXL1RpolGDj4VdU+C4zHComa
+        m8wS5A9jfJIyWss6aRbqmuuZslc2Tt/VTL3kuTdUsJf5V6vS6HIshvTJhgThnt0WfAXqnh
+        cQO06e0p2P/axbvh3dlb/yMLvTgY38Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1647240707;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KaGB7dEJoq/IO9YnLPYzErd3/g/5zWdaF8A5d/oApOQ=;
+        b=OP92m/bbnzatAlmrPUi2OFwxPvZ18N6vU/YHCJw9TBIrFWHOjTDrpDpC4Z0IqMqPkQU5BP
+        nhdqH3u/am4g6qAA==
+Received: from alsa1.suse.de (alsa1.suse.de [10.160.4.42])
+        by relay2.suse.de (Postfix) with ESMTP id 4413CA3B81;
+        Mon, 14 Mar 2022 06:51:47 +0000 (UTC)
+Date:   Mon, 14 Mar 2022 07:51:47 +0100
+Message-ID: <s5h5yohc9h8.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Joe Perches <joe@perches.com>,
+        kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: seq: oss: fix typo
+In-Reply-To: <20220313085635.102123-1-Julia.Lawall@inria.fr>
+References: <20220313085635.102123-1-Julia.Lawall@inria.fr>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use kcalloc instead of kmalloc + memset.
+On Sun, 13 Mar 2022 09:56:35 +0100,
+Julia Lawall wrote:
+> 
+> Fix typo in "announcement".
+> 
+> Reported-by: Joe Perches <joe@perches.com>
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Suggested-by: Joe Perches <joe@perches.com>
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+Thanks, applied now.
 
----
 
-v2: Use kcalloc instead of kzalloc
-
- drivers/scsi/lpfc/lpfc_debugfs.c |    9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/scsi/lpfc/lpfc_debugfs.c b/drivers/scsi/lpfc/lpfc_debugfs.c
-index 30fac2f6fb06..7b24c932e812 100644
---- a/drivers/scsi/lpfc/lpfc_debugfs.c
-+++ b/drivers/scsi/lpfc/lpfc_debugfs.c
-@@ -6272,9 +6272,9 @@ lpfc_debugfs_initialize(struct lpfc_vport *vport)
- 				 phba->hba_debugfs_root,
- 				 phba, &lpfc_debugfs_op_slow_ring_trc);
- 		if (!phba->slow_ring_trc) {
--			phba->slow_ring_trc = kmalloc(
--				(sizeof(struct lpfc_debugfs_trc) *
--				lpfc_debugfs_max_slow_ring_trc),
-+			phba->slow_ring_trc = kcalloc(
-+				lpfc_debugfs_max_slow_ring_trc,
-+				sizeof(struct lpfc_debugfs_trc),
- 				GFP_KERNEL);
- 			if (!phba->slow_ring_trc) {
- 				lpfc_printf_vlog(vport, KERN_ERR, LOG_INIT,
-@@ -6283,9 +6283,6 @@ lpfc_debugfs_initialize(struct lpfc_vport *vport)
- 				goto debug_failed;
- 			}
- 			atomic_set(&phba->slow_ring_trc_cnt, 0);
--			memset(phba->slow_ring_trc, 0,
--				(sizeof(struct lpfc_debugfs_trc) *
--				lpfc_debugfs_max_slow_ring_trc));
- 		}
- 
- 		snprintf(name, sizeof(name), "nvmeio_trc");
-
+Takashi
