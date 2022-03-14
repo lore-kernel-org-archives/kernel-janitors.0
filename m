@@ -2,89 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B75EC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 11:50:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF6A1C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 11:54:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239659AbiCNLwB (ORCPT
+        id S236738AbiCNLzL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Mar 2022 07:52:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51316 "EHLO
+        Mon, 14 Mar 2022 07:55:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237669AbiCNLwA (ORCPT
+        with ESMTP id S231281AbiCNLzK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Mar 2022 07:52:00 -0400
+        Mon, 14 Mar 2022 07:55:10 -0400
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F1D73F312;
-        Mon, 14 Mar 2022 04:50:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ADB365BB;
+        Mon, 14 Mar 2022 04:54:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=5tca+TAwShJLomr3kMuD+RKN41E2Sud56aTrN49/wAs=;
-  b=sZ6GqgN6LulclYMfrUGCFxnkK/8pww9se3SwTz6FOtPpcNrwPpBd+KQJ
-   uocAZuk55q0BSZBflnbCyHtvtpyHyjGc/Nvhh2b+uYReATG6xYpslxJ9l
-   iNJk5inyO3KJOwI78DJP0qJHrQ8Fba3Fgk9//L56GkGPt+pLtHSlzG22S
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=tUZ4BT09/8qQZ4OVodaS1wcOjxkTbhWVDWuaJwUiKeo=;
+  b=uBd9tS2n8ybReuNK1b/L02Vra/YSvVjl33RTouN182APqXUyGoG9CpLA
+   VeEkoE0EXInVijXpm7YAWbzNPL8shlfZk3Z7SfZ5jmI6YBf7ZX7YVdiN2
+   hYO3XoHTYtmgKbUjQhenHP5IKvOfkma0NEqMIN9ZygYcI71yS2y+igpOJ
    w=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.90,180,1643670000"; 
-   d="scan'208";a="25996944"
-Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2022 12:50:48 +0100
-Date:   Mon, 14 Mar 2022 12:50:48 +0100 (CET)
-From:   Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: julia@hadrien
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-cc:     Joe Perches <joe@perches.com>,
-        James Smart <james.smart@broadcom.com>,
-        kernel-janitors@vger.kernel.org,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH 4/6] scsi: lpfc: use kzalloc
-In-Reply-To: <20220314113407.GM3293@kadam>
-Message-ID: <alpine.DEB.2.22.394.2203141247120.2561@hadrien>
-References: <20220312102705.71413-1-Julia.Lawall@inria.fr> <20220312102705.71413-5-Julia.Lawall@inria.fr> <846e22e76ba9e4c620df159b073bbf4e058a35f0.camel@perches.com> <20220314113407.GM3293@kadam>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+   d="scan'208";a="25997333"
+Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2022 12:53:59 +0100
+From:   Julia Lawall <Julia.Lawall@inria.fr>
+To:     Evan Quan <evan.quan@amd.com>
+Cc:     kernel-janitors@vger.kernel.org,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 01/30] drm/amd/pm: fix typos in comments
+Date:   Mon, 14 Mar 2022 12:53:25 +0100
+Message-Id: <20220314115354.144023-2-Julia.Lawall@inria.fr>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20220314115354.144023-1-Julia.Lawall@inria.fr>
+References: <20220314115354.144023-1-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Various spelling mistakes in comments.
+Detected with the help of Coccinelle.
 
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-On Mon, 14 Mar 2022, Dan Carpenter wrote:
+---
+ drivers/gpu/drm/amd/pm/amdgpu_pm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> On Sat, Mar 12, 2022 at 01:45:01PM -0800, Joe Perches wrote:
-> > On Sat, 2022-03-12 at 11:27 +0100, Julia Lawall wrote:
-> > > Use kzalloc instead of kmalloc + memset.
-> > []
-> > > diff --git a/drivers/scsi/lpfc/lpfc_debugfs.c b/drivers/scsi/lpfc/lpfc_debugfs.c
-> > []
-> > > @@ -6272,10 +6272,8 @@ lpfc_debugfs_initialize(struct lpfc_vport *vport)
-> > >  				 phba->hba_debugfs_root,
-> > >  				 phba, &lpfc_debugfs_op_slow_ring_trc);
-> > >  		if (!phba->slow_ring_trc) {
-> > > -			phba->slow_ring_trc = kmalloc(
-> > > -				(sizeof(struct lpfc_debugfs_trc) *
-> > > -				lpfc_debugfs_max_slow_ring_trc),
-> > > -				GFP_KERNEL);
-> > > +			phba->slow_ring_trc = kzalloc((sizeof(struct lpfc_debugfs_trc) * lpfc_debugfs_max_slow_ring_trc),
-> > > +						      GFP_KERNEL);
-> >
-> > kcalloc
-> >
->
-> Did someone have a Coccinelle script that converted kzalloc() to
-> kcalloc()?
+diff --git a/drivers/gpu/drm/amd/pm/amdgpu_pm.c b/drivers/gpu/drm/amd/pm/amdgpu_pm.c
+index cbbbd4079249..5cd67ddf8495 100644
+--- a/drivers/gpu/drm/amd/pm/amdgpu_pm.c
++++ b/drivers/gpu/drm/amd/pm/amdgpu_pm.c
+@@ -1870,7 +1870,7 @@ static ssize_t amdgpu_set_smartshift_bias(struct device *dev,
+ 	amdgpu_smartshift_bias = bias;
+ 	r = count;
+ 
+-	/* TODO: upadte bias level with SMU message */
++	/* TODO: update bias level with SMU message */
+ 
+ out:
+ 	pm_runtime_mark_last_busy(ddev->dev);
 
-Not sure if I have ever done that.  A long time ago, I made one that
-starts with kmalloc and picks kzalloc or kcalloc.  Perhaps Kees did such a
-thing?
-
-I'll see if it would be useful.
-
-julia
