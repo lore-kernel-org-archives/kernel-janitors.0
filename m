@@ -2,46 +2,43 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0DEEC433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 12:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B9A2C433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 12:48:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233610AbiCNMtt (ORCPT
+        id S235702AbiCNMtv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Mar 2022 08:49:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55936 "EHLO
+        Mon, 14 Mar 2022 08:49:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236869AbiCNMry (ORCPT
+        with ESMTP id S237907AbiCNMr4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Mar 2022 08:47:54 -0400
+        Mon, 14 Mar 2022 08:47:56 -0400
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4BBB377F1;
-        Mon, 14 Mar 2022 05:41:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A05F13D7D;
+        Mon, 14 Mar 2022 05:41:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=M9spczh/Q2CKy8sMPxzQoXDaExSwQXf/vtHnX1TW0y0=;
-  b=JWnavQwdiW+E6NAcxa3wyUKgIVR+UCaJGE5YAkPfKZtGey9O/SI36evj
-   d+SVjeyrAeMgnizhu4vffjSJlsafhVrIqYgsE/RuHNYaSxDD05aGLpJO8
-   r1q6tOpvTLJABZtZ/UcZ3ItWN2ER1A7GJ1vVFzo81Db16EirVNqPVeMRT
-   U=;
+  bh=RBomFePC0D3Nz1nRDfr5gUM4W4kZT6zAPNV0+Hq+aWE=;
+  b=OpCQwjxAdFHsU6aTCrifW9qTCnMKp+/mh16Ez/S05MOtWRHohzP+fqYW
+   ou319aHC2g3dk9DRUyMuuXJ5PSYtjNvyz9HA96Y5f5miGPVgjul3aSef/
+   8Tc0aL7i2fjvDQYaUWuZUNDusJOhCHSZ5rnx6/cTj8q9Nvt0lxrS41Ab+
+   w=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.90,180,1643670000"; 
-   d="scan'208";a="25997360"
+   d="scan'208";a="25997347"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2022 12:54:00 +0100
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Harald Freudenberger <freude@linux.ibm.com>
+To:     Tero Kristo <kristo@kernel.org>
 Cc:     kernel-janitors@vger.kernel.org,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 26/30] s390/pkey: fix typos in comments
-Date:   Mon, 14 Mar 2022 12:53:50 +0100
-Message-Id: <20220314115354.144023-27-Julia.Lawall@inria.fr>
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 14/30] clk: ti: clkctrl: fix typos in comments
+Date:   Mon, 14 Mar 2022 12:53:38 +0100
+Message-Id: <20220314115354.144023-15-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20220314115354.144023-1-Julia.Lawall@inria.fr>
 References: <20220314115354.144023-1-Julia.Lawall@inria.fr>
@@ -57,20 +54,20 @@ Detected with the help of Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/s390/crypto/pkey_api.c |    2 +-
+ drivers/clk/ti/clkctrl.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/s390/crypto/pkey_api.c b/drivers/s390/crypto/pkey_api.c
-index cf23ce1b1146..7f69ca695fc2 100644
---- a/drivers/s390/crypto/pkey_api.c
-+++ b/drivers/s390/crypto/pkey_api.c
-@@ -155,7 +155,7 @@ static int pkey_skey2pkey(const u8 *key, struct pkey_protkey *pkey)
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+index 864c484bde1b..170cdf9ea8f6 100644
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -603,7 +603,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 
  	/*
- 	 * The cca_xxx2protkey call may fail when a card has been
- 	 * addressed where the master key was changed after last fetch
--	 * of the mkvp into the cache. Try 3 times: First witout verify
-+	 * of the mkvp into the cache. Try 3 times: First without verify
- 	 * then with verify and last round with verify and old master
- 	 * key verification pattern match not ignored.
+ 	 * The code below can be removed when all clkctrl nodes use domain
+-	 * specific compatible proprerty and standard clock node naming
++	 * specific compatible property and standard clock node naming
  	 */
+ 	if (legacy_naming) {
+ 		provider->clkdm_name = kasprintf(GFP_KERNEL, "%pOFnxxx", node->parent);
 
