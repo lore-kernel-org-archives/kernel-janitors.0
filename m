@@ -2,87 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB31EC4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 20:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CDB9C433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 22:01:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245070AbiCNUbc (ORCPT
+        id S245457AbiCNWCY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Mar 2022 16:31:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38710 "EHLO
+        Mon, 14 Mar 2022 18:02:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245034AbiCNUbZ (ORCPT
+        with ESMTP id S245425AbiCNWCW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Mar 2022 16:31:25 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B595E39827;
-        Mon, 14 Mar 2022 13:30:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 94B1CB81026;
-        Mon, 14 Mar 2022 20:30:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4C4DEC36AE9;
-        Mon, 14 Mar 2022 20:30:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647289811;
-        bh=uLLNEo2KuqE/YxBYqDJGt2C9i0qNEgY7SPcUzgiznVk=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=KSdJV0Nr6PH56dRvpyreK8Yv2TzppJmvm4v2HhSDZlhKT0LSad1hfJvJSpzZVcO9d
-         zHJi6VvKrJAmS0T3joCqvHRXlFdKQlox2FOL5o22ch62xkW78NUj9CTUmjOfKaAzvY
-         9wa3Li6Hhcj84nqdq5Zqw+FFIZAxg1ebLJNn+THcBi2aSLdI7JbUIrcFov90+OwV0Q
-         zv85rGj50dgH9jUKb2sZlceYR38o+H9QNFXEhxQyuN0GgSQQXFG5YXFUz2YNqo6r/R
-         WJCLtYJ2RD4vSP5TpCum1H/05+0bSavkIZaGcTXiNBVaTe+d3Tmg61eQY08Sc3iO2L
-         gGS1F0tzOonqw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2832EEAC095;
-        Mon, 14 Mar 2022 20:30:11 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 14 Mar 2022 18:02:22 -0400
+Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 442C63C48F;
+        Mon, 14 Mar 2022 15:01:11 -0700 (PDT)
+Received: by mail-yb1-xb2a.google.com with SMTP id o5so4745858ybe.2;
+        Mon, 14 Mar 2022 15:01:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FDQp0elUbEb3l2ztp8B9W0hhZAwxOZgBnkRa+RhHUnU=;
+        b=WvHe4lvu9eMeiGDQrTW+QFd0atSq6h7tPADdOTemrhvtyF8fR44hONCUmP0BXcMICq
+         JD3TdX9CequRTw9vJXkuES8i5Gko+9m6uEF/P0SfS+6vGijN1MQDhGVutZ81RLJAQS2S
+         uTSibi6jnSh+A8VH9wDeT9A4EtrE+iqiTaHdH9mEXKFPyMQ7B8N6QQLS4hz8Egcl9AO+
+         U46H8gbP8konmPKMj6reDwTQbs50B8ykWJEDaT/WLGDYDVzZhJRxl9mZp+zDSapC/lZZ
+         cJhnrPLQEUA0wJhh3vfgUOYJaP3mJ3T/KUZmlR+tni99BAty+93dOAESeaaejKEbG6KE
+         UU3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FDQp0elUbEb3l2ztp8B9W0hhZAwxOZgBnkRa+RhHUnU=;
+        b=HicE5R3XrpaO6TncjgeGxicCpgGIxZtAvj1Iwg9ePt0fzbCpTckId38OTwevc256rA
+         pE5KU/ujewY4Nf4smBwOrUpVCE8RYiZOo1HovOXu9j1NRQDOFnsunD/j69v/oxRLU7Ii
+         clNCQGao454S7Sh/CpAhYov7HWtJzted8zk0mzMmJ6viZlsmzdnZu5+hlitXyzQdddLk
+         jduDMrJhh2UkgadNZYOhnA2xerzmiZSajPGU2dw30NC6fAc6C2+sVNEF6+UxwiOlMGdb
+         uyWiRCfF/OYGysWW4LhJ1JLNBBS+x0T8ycy4NtfoUUNdmSkuNwZkSwDS2uyFoV1qvo8i
+         STQQ==
+X-Gm-Message-State: AOAM533BrIHoFH/U2HCH9dtqR8Hm2CXfclg0TFIQx3tZXjAfpoLbzCsi
+        gGAji7LqJNo+znrqX26e8mXuZ0vuQN0Z2ULYvhOITELI
+X-Google-Smtp-Source: ABdhPJyje4eQsiO8dt4q7jDAtFimCxHJPbizI7qD7bwtkI9WgWPNi408Kg2S6oHIMFc3vrtLGm9QkspOr98knrLIUO0=
+X-Received: by 2002:a25:a467:0:b0:61e:1b4a:7700 with SMTP id
+ f94-20020a25a467000000b0061e1b4a7700mr19985076ybi.390.1647295270388; Mon, 14
+ Mar 2022 15:01:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/6] use kzalloc
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164728981116.21494.4613160192240776648.git-patchwork-notify@kernel.org>
-Date:   Mon, 14 Mar 2022 20:30:11 +0000
-References: <20220312102705.71413-1-Julia.Lawall@inria.fr>
-In-Reply-To: <20220312102705.71413-1-Julia.Lawall@inria.fr>
-To:     Julia Lawall <julia.lawall@inria.fr>
-Cc:     linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        alsa-devel@alsa-project.org, samba-technical@lists.samba.org,
-        linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-scsi@vger.kernel.org, andreyknvl@gmail.com,
-        linux-usb@vger.kernel.org
+References: <e2c2fe36c226529c99595370003d3cb1b7133c47.1646252285.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <e2c2fe36c226529c99595370003d3cb1b7133c47.1646252285.git.christophe.jaillet@wanadoo.fr>
+From:   Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date:   Mon, 14 Mar 2022 15:00:59 -0700
+Message-ID: <CABBYNZ+uNjszAf9jYL4iu+HxjrktnQL2FeQfdDRnFfNNnmw07g@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: Don't assign twice the same value
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Hi Christophe,
 
-This series was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Sat, 12 Mar 2022 11:26:59 +0100 you wrote:
-> Use kzalloc instead of kmalloc + memset.
-> 
+On Wed, Mar 2, 2022 at 12:18 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> data.pid is set twice with the same value. Remove one of these redundant
+> calls.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
-> 
->  drivers/net/ethernet/mellanox/mlx4/en_rx.c |    3 +--
->  drivers/net/wireless/zydas/zd1201.c        |    3 +--
->  drivers/scsi/lpfc/lpfc_debugfs.c           |    9 ++-------
->  drivers/usb/gadget/legacy/raw_gadget.c     |    3 +--
->  fs/cifs/transport.c                        |    3 +--
->  sound/core/seq/oss/seq_oss_init.c          |    3 +--
->  6 files changed, 7 insertions(+), 17 deletions(-)
+>  net/bluetooth/l2cap_core.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
+> index e817ff0607a0..0d460cb7f965 100644
+> --- a/net/bluetooth/l2cap_core.c
+> +++ b/net/bluetooth/l2cap_core.c
+> @@ -1443,7 +1443,6 @@ static void l2cap_ecred_connect(struct l2cap_chan *chan)
+>         data.pdu.scid[0]     = cpu_to_le16(chan->scid);
+>
+>         chan->ident = l2cap_get_ident(conn);
+> -       data.pid = chan->ops->get_peer_pid(chan);
+>
+>         data.count = 1;
+>         data.chan = chan;
+> --
+> 2.32.0
+>
+Applied, thanks.
 
-Here is the summary with links:
-  - [2/6] net/mlx4_en: use kzalloc
-    https://git.kernel.org/netdev/net-next/c/3c2dfb735b4a
-  - [5/6] zd1201: use kzalloc
-    (no matching commit)
-
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Luiz Augusto von Dentz
