@@ -2,43 +2,41 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A9BC4167D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 12:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D780C4707A
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 12:21:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240818AbiCNMWX (ORCPT
+        id S237756AbiCNMWZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Mar 2022 08:22:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49100 "EHLO
+        Mon, 14 Mar 2022 08:22:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243879AbiCNMVV (ORCPT
+        with ESMTP id S243882AbiCNMVV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
         Mon, 14 Mar 2022 08:21:21 -0400
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 321F81140;
-        Mon, 14 Mar 2022 05:17:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91D38264D;
+        Mon, 14 Mar 2022 05:17:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=FWNbZTFAMBhTgS2R1HpJWQ7vZbciDztq6nj7YGJohCE=;
-  b=HQtBKMWZuEVOREaqlRVE/01NtC4d9mTQstV2bcHaHlXi2M27x094itGk
-   yuLGQkwQVo5Kd+5w4hU+jps2xadytqyLLJD/jb2fGybRoVlo75MrqeOgt
-   CniSZtbcfdKiirA6FrQ75csVKfWVUiiTbUXYzQvGVOJZ2yELq0Y+wq8mE
-   U=;
+  bh=yHuInlLPYPtI5nW4OGH0dkkIEdiHVs1voPfQFQF2pHY=;
+  b=VrmSxakQgGIDKCRASUzXErERNiVN+dY7ummNknm001h+ThPgV64wTc7u
+   N1oqDszfVBOHhyVEKvdL1x77msMSa/h9ndecLXIHPLF0gkXx4vk/GgwaE
+   otvs8qYlMQkMvD/zviv8r4UC3e9Yh4I1Z/b2lmIFZ7v71XxH60x04BvkB
+   c=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.90,180,1643670000"; 
-   d="scan'208";a="25997337"
+   d="scan'208";a="25997341"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2022 12:53:59 +0100
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Justin Ernst <justin.ernst@hpe.com>
-Cc:     kernel-janitors@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 05/30] x86/platform/uv: fix typos in comments
-Date:   Mon, 14 Mar 2022 12:53:29 +0100
-Message-Id: <20220314115354.144023-6-Julia.Lawall@inria.fr>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     kernel-janitors@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 08/30] leds: pca963x: fix typos in comments
+Date:   Mon, 14 Mar 2022 12:53:32 +0100
+Message-Id: <20220314115354.144023-9-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20220314115354.144023-1-Julia.Lawall@inria.fr>
 References: <20220314115354.144023-1-Julia.Lawall@inria.fr>
@@ -54,20 +52,20 @@ Detected with the help of Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/platform/x86/uv_sysfs.c |    2 +-
+ drivers/leds/leds-pca963x.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/uv_sysfs.c b/drivers/platform/x86/uv_sysfs.c
-index 625b0b79d185..7c7c95c59908 100644
---- a/drivers/platform/x86/uv_sysfs.c
-+++ b/drivers/platform/x86/uv_sysfs.c
-@@ -555,7 +555,7 @@ static int init_pci_top_obj(struct uv_pci_top_obj *top_obj, char *line)
- 	 */
- 	line[6] = '_';
+diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
+index 00aecd67e348..268c6bea2158 100644
+--- a/drivers/leds/leds-pca963x.c
++++ b/drivers/leds/leds-pca963x.c
+@@ -249,7 +249,7 @@ static int pca963x_blink_set(struct led_classdev *led_cdev,
  
--	/* Null terminate after the concatencated name tokens
-+	/* Null terminate after the concatenated name tokens
- 	 * to produce kobj name string.
- 	 */
- 	line[14] = '\0';
+ 	period = pca963x_period_scale(led, time_on + time_off);
+ 
+-	/* If period not supported by hardware, default to someting sane. */
++	/* If period not supported by hardware, default to something sane. */
+ 	if ((period < PCA963X_BLINK_PERIOD_MIN) ||
+ 	    (period > PCA963X_BLINK_PERIOD_MAX)) {
+ 		time_on = 500;
 
