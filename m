@@ -2,43 +2,44 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7968AC43217
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 12:21:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9158EC4321E
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 12:21:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233160AbiCNMWP (ORCPT
+        id S238896AbiCNMWT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Mar 2022 08:22:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49514 "EHLO
+        Mon, 14 Mar 2022 08:22:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243868AbiCNMVV (ORCPT
+        with ESMTP id S243861AbiCNMVU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Mar 2022 08:21:21 -0400
+        Mon, 14 Mar 2022 08:21:20 -0400
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6915F22;
-        Mon, 14 Mar 2022 05:17:28 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 847E2BE5;
+        Mon, 14 Mar 2022 05:17:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=PohfiM/jemSw4lByumgtDX8BMjTHdgwkmP7e9cEnTTo=;
-  b=RXw0XrlN4OTwPHzhfcm0YzzUPIdrHr+IaikXeaoun2xV3D55B2BtfOLn
-   gNwI+926Y10jB264AiXXPz4oHQQ4Bd21JYPLx6GfUqwIUBvSoUF8aS5St
-   9c6tGEVCFhumdDA2ZTkRnlRP5yjL9/Whql9ezg24/orvPQtGEoqwAJN/o
-   Q=;
+  bh=yAh5dhSWoezDHAmIMKrnf1fmCmAoJ/u8UhSQGN/+5rg=;
+  b=AOnEnK5rwCG4310Vpj8R+iKPhl+ZQD+1cDacCSAMGCta6CgsSn9yBslL
+   Y1TrJpCX8hv7jCgskW7U1RQ8F6ZnlT4GCA0nKToZhZGvR2wQ42o/C7TAp
+   6Uwkpl70GJ0CwzNzwB5HL+SwW86rfOZM88KpUW0hoMBFN0ZoFvJLVt9bZ
+   Y=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.90,180,1643670000"; 
-   d="scan'208";a="25997359"
+   d="scan'208";a="25997353"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2022 12:54:00 +0100
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Hannes Reinecke <hare@suse.com>
+To:     Kalle Valo <kvalo@kernel.org>
 Cc:     kernel-janitors@vger.kernel.org,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 25/30] treewide: fix typos in comments
-Date:   Mon, 14 Mar 2022 12:53:49 +0100
-Message-Id: <20220314115354.144023-26-Julia.Lawall@inria.fr>
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 20/30] airo: fix typos in comments
+Date:   Mon, 14 Mar 2022 12:53:44 +0100
+Message-Id: <20220314115354.144023-21-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20220314115354.144023-1-Julia.Lawall@inria.fr>
 References: <20220314115354.144023-1-Julia.Lawall@inria.fr>
@@ -54,20 +55,20 @@ Detected with the help of Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/scsi/aic7xxx/aicasm/aicasm.c |    2 +-
+ drivers/net/wireless/cisco/airo.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/aic7xxx/aicasm/aicasm.c b/drivers/scsi/aic7xxx/aicasm/aicasm.c
-index 5f474e490f3e..cd692a4c5f85 100644
---- a/drivers/scsi/aic7xxx/aicasm/aicasm.c
-+++ b/drivers/scsi/aic7xxx/aicasm/aicasm.c
-@@ -283,7 +283,7 @@ main(int argc, char *argv[])
- 		/*
- 		 * Decend the tree of scopes and insert/emit
- 		 * patches as appropriate.  We perform a depth first
--		 * tranversal, recursively handling each scope.
-+		 * traversal, recursively handling each scope.
- 		 */
- 		/* start at the root scope */
- 		dump_scope(SLIST_FIRST(&scope_stack));
+diff --git a/drivers/net/wireless/cisco/airo.c b/drivers/net/wireless/cisco/airo.c
+index 452d08545d31..10daef81c355 100644
+--- a/drivers/net/wireless/cisco/airo.c
++++ b/drivers/net/wireless/cisco/airo.c
+@@ -545,7 +545,7 @@ struct ConfigRid {
+ #define MODE_CFG_MASK cpu_to_le16(0xff)
+ #define MODE_ETHERNET_HOST cpu_to_le16(0<<8) /* rx payloads converted */
+ #define MODE_LLC_HOST cpu_to_le16(1<<8) /* rx payloads left as is */
+-#define MODE_AIRONET_EXTEND cpu_to_le16(1<<9) /* enable Aironet extenstions */
++#define MODE_AIRONET_EXTEND cpu_to_le16(1<<9) /* enable Aironet extensions */
+ #define MODE_AP_INTERFACE cpu_to_le16(1<<10) /* enable ap interface extensions */
+ #define MODE_ANTENNA_ALIGN cpu_to_le16(1<<11) /* enable antenna alignment */
+ #define MODE_ETHER_LLC cpu_to_le16(1<<12) /* enable ethernet LLC */
 
