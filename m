@@ -2,44 +2,41 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A324C3526E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 12:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32724C4167B
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 12:21:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241375AbiCNMWe (ORCPT
+        id S241387AbiCNMWg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Mar 2022 08:22:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50856 "EHLO
+        Mon, 14 Mar 2022 08:22:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243862AbiCNMVU (ORCPT
+        with ESMTP id S243872AbiCNMVV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Mar 2022 08:21:20 -0400
+        Mon, 14 Mar 2022 08:21:21 -0400
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9936C62;
-        Mon, 14 Mar 2022 05:17:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87B451096;
+        Mon, 14 Mar 2022 05:17:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=+QWaBDYxADvSsUY8qg5wOXMDHzBy5XuwKndW6k+z53c=;
-  b=iDNSBE41Nm8OgSBkPg8VbFTfqyui2cAsU7o3PiVl53qcCApFjm+i7YSj
-   upsrgeoeFoBN1ZYs54zq0bBgKLl6U2FOfYXTJkFFxMXfEI0xd1OD8f5QN
-   UsLDj5JRueFP/s6Wq0yCUcYpitC754Kyju23WQGbo2lgD/DiJmcrqq/wI
-   M=;
+  bh=W/+ETx5b3xS1Tdv9RdFRhbPpWKbPzvFWXK5rp+AtZnI=;
+  b=syBj3rUl3ursH0T++MuaesnsdMP2hosY4QJOBLPo46+CkhrwQsA7Mi8s
+   zbicBYa2rxPCOsEpDZ0NuY7meHnhcIvDxphOVVXXybCjQwkR3ToUKADVV
+   SC767kaFu8jfBW0jAhVy5zkX9xjfbEuM5i1C1uxUesnxLD8KzP+u1kMJp
+   s=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.90,180,1643670000"; 
-   d="scan'208";a="25997355"
+   d="scan'208";a="25997362"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2022 12:54:00 +0100
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [PATCH 21/30] spi: sun4i: fix typos in comments
-Date:   Mon, 14 Mar 2022 12:53:45 +0100
-Message-Id: <20220314115354.144023-22-Julia.Lawall@inria.fr>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
+        linux-power@fi.rohmeurope.com, linux-kernel@vger.kernel.org
+Subject: [PATCH 28/30] mfd: bd9576: fix typos in comments
+Date:   Mon, 14 Mar 2022 12:53:52 +0100
+Message-Id: <20220314115354.144023-29-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20220314115354.144023-1-Julia.Lawall@inria.fr>
 References: <20220314115354.144023-1-Julia.Lawall@inria.fr>
@@ -55,20 +52,20 @@ Detected with the help of Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/spi/spi-sun4i.c |    2 +-
+ drivers/mfd/rohm-bd9576.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-sun4i.c b/drivers/spi/spi-sun4i.c
-index 1fdfc6e6691d..6000d0761206 100644
---- a/drivers/spi/spi-sun4i.c
-+++ b/drivers/spi/spi-sun4i.c
-@@ -280,7 +280,7 @@ static int sun4i_spi_transfer_one(struct spi_master *master,
- 	 * SPI_CLK = MOD_CLK / (2 ^ (cdr + 1))
- 	 * Or we can use CDR2, which is calculated with the formula:
- 	 * SPI_CLK = MOD_CLK / (2 * (cdr + 1))
--	 * Wether we use the former or the latter is set through the
-+	 * Whether we use the former or the latter is set through the
- 	 * DRS bit.
- 	 *
- 	 * First try CDR2, and if we can't reach the expected
+diff --git a/drivers/mfd/rohm-bd9576.c b/drivers/mfd/rohm-bd9576.c
+index 6661a27d69a8..f37cd4f27aeb 100644
+--- a/drivers/mfd/rohm-bd9576.c
++++ b/drivers/mfd/rohm-bd9576.c
+@@ -23,7 +23,7 @@ enum {
+ };
+ 
+ /*
+- * Due to the BD9576MUF nasty IRQ behaiour we don't always populate IRQs.
++ * Due to the BD9576MUF nasty IRQ behaviour we don't always populate IRQs.
+  * These will be added to regulator resources only if IRQ information for the
+  * PMIC is populated in device-tree.
+  */
 
