@@ -2,102 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3930BC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 15:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D16C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 15:03:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241746AbiCNPBM (ORCPT
+        id S242361AbiCNPFC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Mar 2022 11:01:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34126 "EHLO
+        Mon, 14 Mar 2022 11:05:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241727AbiCNPBJ (ORCPT
+        with ESMTP id S241977AbiCNPE7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 14 Mar 2022 11:01:09 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3659419B9;
-        Mon, 14 Mar 2022 07:59:58 -0700 (PDT)
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 22ECqXdf000863;
-        Mon, 14 Mar 2022 15:59:53 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=date : from : to :
- cc : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=selector1; bh=3d3xphwtCiYLHwmvMiCMqQ9IdfMaodMtFG7XX2hajkg=;
- b=6t2yZ1M7nzybm88aNxh41drGu5zAh/kl5/YUxPXfvCuhFXuPfENUBGceOg2fhhktapVh
- Euahgcl5npYz0qdtHbX8r47lYhXsUzkdQ74LP3UnWOg6+t6AbQzO95O7DGnBrSQmmQ29
- tVJiq/H7a2i6xx36e7+8vncdzCNUDlQIqaSSnOyzRuLO8sECtBei6xdSwSHwR5aM0iWX
- 9SUNucU3FZ+SY43rlLIkhysGZE9rB015a7UEdC2eT3zp9YHpEFQ6rm7QTSvkxidGxjK1
- FBbrI99nh6fjeZ/566FH1WAkyqsO6jnQsn9lp0Uoz5zusORLFqoyZziDDQO+eANN4jey Iw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3et63hrtm5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 14 Mar 2022 15:59:53 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A8E7210002A;
-        Mon, 14 Mar 2022 15:59:50 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D87742291A3;
-        Mon, 14 Mar 2022 15:59:50 +0100 (CET)
-Received: from gnbcxd0016.gnb.st.com (10.75.127.47) by SFHDAG2NODE2.st.com
- (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Mon, 14 Mar
- 2022 15:59:50 +0100
-Date:   Mon, 14 Mar 2022 15:59:42 +0100
-From:   Alain Volmat <alain.volmat@foss.st.com>
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-CC:     <kernel-janitors@vger.kernel.org>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 16/30] drm/sti: fix typos in comments
-Message-ID: <20220314145928.GA529711@gnbcxd0016.gnb.st.com>
-Mail-Followup-To: Julia Lawall <Julia.Lawall@inria.fr>,
-        kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20220314115354.144023-1-Julia.Lawall@inria.fr>
- <20220314115354.144023-17-Julia.Lawall@inria.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20220314115354.144023-17-Julia.Lawall@inria.fr>
-X-Disclaimer: ce message est personnel / this message is private
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-14_11,2022-03-14_01,2022-02-23_01
+        Mon, 14 Mar 2022 11:04:59 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7430B3E5F9;
+        Mon, 14 Mar 2022 08:03:49 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id t11so24444972wrm.5;
+        Mon, 14 Mar 2022 08:03:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=s9afH/O5dsvmhKf0xLBy1pTIXzqvR2poyDjCQitPnEo=;
+        b=qfRD3pKDrDX47pmXSjGhNqcjA7KM+hfWLwQM0iFWiIeul9+y0qGGCT1FHQdZRds8vE
+         rlD8MF93CHJIRVUqf+UB7bHOrFpDrf+esCnBJBZd5HMW4Qsj8xLzYgIVo9oSLFQ63Ex6
+         kyp6MMBK7Tnsnt5SRHWKZpREIkF/rHNqGdUlKhAYRli7ZkPQiF98SSn6NBFd9wjzPCvz
+         qshV0Z88R9mJiX/I4yt1k1rVulf0TniklKm8pYqeRSo/kuymwRKuk0KoIAnhNY4+5rxo
+         qZLiiXms1Q1OuiJtiSwt68dLbGNeOEIPdJ9jHl08i7QKOgNRuiz+Zp6jDGyJ0LwWA0qo
+         Ge0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=s9afH/O5dsvmhKf0xLBy1pTIXzqvR2poyDjCQitPnEo=;
+        b=ofGLPVEYcpvbhZ5pYKSKoYQApAwmH6tz3K7tzUrZd7sGvMCGNflEyN5Nc8J/rXn4qm
+         C+mQ+eyaf3S9CjaxI29XSad5i3wOubwDAmvwAWuiKvzxpdZK08W0w/l9OKFGE/jjfYo9
+         ZcYqztIBq078RN/dbgnYO8ouHi+9ca3awHhTmkwrVyPJnizj19g8nYul6iF+bU8ZGiU/
+         fHvUtJ7LbnXqFIBCk/5mcmNfc3zFh/LTm4xDv2qSNey/s25cgm6W1MQcrDfQ1iWi0u6o
+         pXiDblVq2s0oAqsEldt1mGSv0HRCV9fFnIXyoT7JEdDjVYwJ51rIn7a8w3W8/U+4A2xY
+         0ETA==
+X-Gm-Message-State: AOAM532xSquo8tQPybGwFtK+krgVryHTO6HGlsE3awXYVA1V6N7S4xCc
+        QiHhnf4TFWZ9uwekRj/Eqfc=
+X-Google-Smtp-Source: ABdhPJx6tlK4XTUgp3t2NhLgW6fI5LZXMa6JxSyqNy1w53t5oFfFJVnfI1IC5qUXdBorh3/4e6raHg==
+X-Received: by 2002:a05:6000:1868:b0:203:732f:d657 with SMTP id d8-20020a056000186800b00203732fd657mr16382494wri.664.1647270227888;
+        Mon, 14 Mar 2022 08:03:47 -0700 (PDT)
+Received: from felia.fritz.box (200116b82624ff0060a4091d550340a9.dip.versatel-1u1.de. [2001:16b8:2624:ff00:60a4:91d:5503:40a9])
+        by smtp.gmail.com with ESMTPSA id l25-20020a1c7919000000b0038999b380e9sm14984749wme.38.2022.03.14.08.03.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Mar 2022 08:03:47 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org
+Cc:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        kernel-janitors@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] sr: simplify the local variable initialization in sr_block_open()
+Date:   Mon, 14 Mar 2022 16:03:21 +0100
+Message-Id: <20220314150321.17720-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Julia
+Commit 01d0c698536f ("sr: implement ->free_disk to simplify refcounting")
+refactored sr_block_open(), initialized one variable with a duplicate
+assignment (probably an unintended copy & paste duplication) and turned one
+error case into an early return, which makes the initialization of the
+return variable needless.
 
-thanks for the patch.
+So, simplify the local variable initialization in sr_block_open() to make
+the code a bit more clear.
 
-Reviewed-by: Alain Volmat <alain.volmat@foss.st.com>
+No functional change. No change in resulting object code.
 
-Alain
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Christoph, please ack.
 
-On Mon, Mar 14, 2022 at 12:53:40PM +0100, Julia Lawall wrote:
-> Various spelling mistakes in comments.
-> Detected with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
->  drivers/gpu/drm/sti/sti_gdp.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/sti/sti_gdp.c b/drivers/gpu/drm/sti/sti_gdp.c
-> index 3db3768a3241..b58415f2e4d8 100644
-> --- a/drivers/gpu/drm/sti/sti_gdp.c
-> +++ b/drivers/gpu/drm/sti/sti_gdp.c
-> @@ -406,7 +406,7 @@ static struct sti_gdp_node_list *sti_gdp_get_free_nodes(struct sti_gdp *gdp)
->  		    (hw_nvn != gdp->node_list[i].top_field_paddr))
->  			return &gdp->node_list[i];
->  
-> -	/* in hazardious cases restart with the first node */
-> +	/* in hazardous cases restart with the first node */
->  	DRM_ERROR("inconsistent NVN for %s: 0x%08X\n",
->  			sti_plane_to_str(&gdp->plane), hw_nvn);
->  
-> 
+Jens, please pick this minor clean-up on your -next branch on top of the
+commit above.
+
+ drivers/scsi/sr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
+index 00142095522a..5ba9df334968 100644
+--- a/drivers/scsi/sr.c
++++ b/drivers/scsi/sr.c
+@@ -483,9 +483,9 @@ static void sr_revalidate_disk(struct scsi_cd *cd)
+ 
+ static int sr_block_open(struct block_device *bdev, fmode_t mode)
+ {
+-	struct scsi_cd *cd = cd = scsi_cd(bdev->bd_disk);
++	struct scsi_cd *cd = scsi_cd(bdev->bd_disk);
+ 	struct scsi_device *sdev = cd->device;
+-	int ret = -ENXIO;
++	int ret;
+ 
+ 	if (scsi_device_get(cd->device))
+ 		return -ENXIO;
+-- 
+2.17.1
+
