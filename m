@@ -2,45 +2,44 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC96AC433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 12:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9671DC4321E
+	for <kernel-janitors@archiver.kernel.org>; Mon, 14 Mar 2022 12:21:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241322AbiCNMW2 (ORCPT
+        id S241345AbiCNMWa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 14 Mar 2022 08:22:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49560 "EHLO
+        Mon, 14 Mar 2022 08:22:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243869AbiCNMVV (ORCPT
+        with ESMTP id S243871AbiCNMVV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
         Mon, 14 Mar 2022 08:21:21 -0400
-X-Greylist: delayed 1408 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 14 Mar 2022 05:17:30 PDT
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BFCF1030;
-        Mon, 14 Mar 2022 05:17:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF8A1E63;
+        Mon, 14 Mar 2022 05:17:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=TstykKkU8UiYmac2M4JtdidjM5ToasXW3oJnVLqn9vc=;
-  b=uZzqcfNxXJOrnqiHy4dxBPEniXBeG9MHrl0ZszKiBL28QGGlpwFHTMjF
-   loVpcgV/rW9yM/CyACnLPSer0B4BmLiaeINYnwYmVfsjN8moHt0A+kD0z
-   +zUVg7IyX0JWs0U1lX5a8D9OyAhUqXLaK8QS62Xj/Adbc3xtMZRueg8OR
-   8=;
+  bh=p+CikC4X47ZG7b8MRH9xWwSSqybVMgqq5WbmVhupRyE=;
+  b=mFjBt77DK8FJmsGr2gkx0PLeVEaq7KSzeWXoSpQZS/+fKLbCsM0a9woJ
+   vvm29KaiFbwkCsvyLPiPtC3D4fH3n+DvCyL3tRtiD9w957x3GjlJxnYHD
+   pBLOyNfG0ExaYV15uWdg0LIt5O7xv48qADyMyUsdNJm6+3Ck3+vH6iq0G
+   I=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.90,180,1643670000"; 
-   d="scan'208";a="25997361"
+   d="scan'208";a="25997358"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2022 12:54:00 +0100
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Wolfgang Grandegger <wg@grandegger.com>
+To:     Nilesh Javali <njavali@marvell.com>
 Cc:     kernel-janitors@vger.kernel.org,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 27/30] can: ucan: fix typos in comments
-Date:   Mon, 14 Mar 2022 12:53:51 +0100
-Message-Id: <20220314115354.144023-28-Julia.Lawall@inria.fr>
+        GR-QLogic-Storage-Upstream@marvell.com,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 24/30] scsi: qla2xxx: fix typos in comments
+Date:   Mon, 14 Mar 2022 12:53:48 +0100
+Message-Id: <20220314115354.144023-25-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20220314115354.144023-1-Julia.Lawall@inria.fr>
 References: <20220314115354.144023-1-Julia.Lawall@inria.fr>
@@ -56,29 +55,20 @@ Detected with the help of Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/net/can/usb/ucan.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/qla2xxx/qla_gs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/can/usb/ucan.c b/drivers/net/can/usb/ucan.c
-index c7c41d1fd038..5ae0d7c017cc 100644
---- a/drivers/net/can/usb/ucan.c
-+++ b/drivers/net/can/usb/ucan.c
-@@ -1392,7 +1392,7 @@ static int ucan_probe(struct usb_interface *intf,
- 	 * Stage 3 for the final driver initialisation.
- 	 */
- 
--	/* Prepare Memory for control transferes */
-+	/* Prepare Memory for control transfers */
- 	ctl_msg_buffer = devm_kzalloc(&udev->dev,
- 				      sizeof(union ucan_ctl_payload),
- 				      GFP_KERNEL);
-@@ -1526,7 +1526,7 @@ static int ucan_probe(struct usb_interface *intf,
- 	ret = ucan_device_request_in(up, UCAN_DEVICE_GET_FW_STRING, 0,
- 				     sizeof(union ucan_ctl_payload));
- 	if (ret > 0) {
--		/* copy string while ensuring zero terminiation */
-+		/* copy string while ensuring zero termination */
- 		strncpy(firmware_str, up->ctl_msg_buffer->raw,
- 			sizeof(union ucan_ctl_payload));
- 		firmware_str[sizeof(union ucan_ctl_payload)] = '\0';
+diff --git a/drivers/scsi/qla2xxx/qla_gs.c b/drivers/scsi/qla2xxx/qla_gs.c
+index a812f4a45232..717141afb439 100644
+--- a/drivers/scsi/qla2xxx/qla_gs.c
++++ b/drivers/scsi/qla2xxx/qla_gs.c
+@@ -1767,7 +1767,7 @@ qla2x00_hba_attributes(scsi_qla_host_t *vha, void *entries,
+ 	size += alen;
+ 	ql_dbg(ql_dbg_disc, vha, 0x20aa,
+ 	    "CT PAYLOAD LENGTH = 0x%x.\n", be32_to_cpu(eiter->a.max_ct_len));
+-	/* Node Sybolic Name */
++	/* Node Symbolic Name */
+ 	eiter = entries + size;
+ 	eiter->type = cpu_to_be16(FDMI_HBA_NODE_SYMBOLIC_NAME);
+ 	alen = qla2x00_get_sym_node_name(vha, eiter->a.sym_name,
 
