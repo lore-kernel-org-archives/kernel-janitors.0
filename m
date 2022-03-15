@@ -2,89 +2,55 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A76BAC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 22:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0CB8C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 22:23:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243229AbiCOWYU (ORCPT
+        id S1349124AbiCOWZB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Mar 2022 18:24:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33342 "EHLO
+        Tue, 15 Mar 2022 18:25:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352258AbiCOWYN (ORCPT
+        with ESMTP id S234619AbiCOWZA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Mar 2022 18:24:13 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F799DEF7;
-        Tue, 15 Mar 2022 15:22:56 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id p184-20020a1c29c1000000b0037f76d8b484so399230wmp.5;
-        Tue, 15 Mar 2022 15:22:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NILLa8/Wqej3wpbHLLRCUXVc0e9MgSOU9rbFzOM+cHU=;
-        b=quOnDda/OOeeWN3YStiDcYUbVyRzWRuWpZ8C0+0fjZztOi2hSl56aigBGUjV2nASpw
-         h5yPRMgNwt7zob3HJ3HR3pxFBGvZ27Cvp1hvSL3ZgKWjcshoD8Px97wXLfY6IcnyxDh2
-         9hs/YbD9AKYLZ78Efgtq+6qoepipGucMuhUMM/y9p02lT6kj6VelSECI67fpJL3W4p0V
-         pK0z2teNdDaZjhMsr7sNMam9ccO2jssPZFG5UtsJ1OgfbDrw7qRylaLs2h6+rXYsVo6y
-         qkzWsTKQlIi9BmT9qobQBwGiivia2aq8uv8BTZ0wbZnk26B4fHhSMaXAAtf1cstiRWSn
-         bDUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NILLa8/Wqej3wpbHLLRCUXVc0e9MgSOU9rbFzOM+cHU=;
-        b=roAD/jkumpRsEROFWJ0IilLMXvPu8yqPG6oIifE6GiK9WA+FeGS7Y9cvGwHGKPlIOJ
-         84A+JqOZtK2hLPhFt/mE3a7lJ01PkzU2Z1fxPj6BdXjtS5wkwW8wsgK5HkBFj7lBR0uL
-         oYRqoPh9XKMeVd8LwKrov0b5IYvPuV3OEh/sOFad4hKig6aiJCGnVoaKHh1IvQ8P7udf
-         tHfK5dfgfsVjZeBCzUWZg2wnAW7Fy3SGmFkfB6VHMEYNC5DILLFT8w5ExM1Rey4Eee2L
-         Xat7Z4nHkQQCtxrK+aZliULJPZYhR43a1WDNhgFrRgt7GYcEMyaqyIm62zzP5OEsYb8f
-         dEqA==
-X-Gm-Message-State: AOAM533uaR/EGCiuvbwW4c9+64kU+14kvX9njL2LGfvy2Tb43xivBJdO
-        2Kww8em3LSB2OV/dJEvCJ5Nk2Afb17NLjQ==
-X-Google-Smtp-Source: ABdhPJzFkWpBSmRN+CmnmQDSA3JN3kuPjYC1/NBrERXWzD1EF78FQfkWkQTrHTKwvKJbU9zYU94Cdg==
-X-Received: by 2002:a05:600c:378d:b0:38b:e12f:edde with SMTP id o13-20020a05600c378d00b0038be12feddemr3398093wmr.69.1647382974782;
-        Tue, 15 Mar 2022 15:22:54 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id o7-20020a5d6707000000b001f067c7b47fsm240710wru.27.2022.03.15.15.22.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Mar 2022 15:22:54 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] misc: sgi-gru: Fix spelling mistake "unexpect" -> "unexpected"
-Date:   Tue, 15 Mar 2022 22:22:53 +0000
-Message-Id: <20220315222253.2960047-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Tue, 15 Mar 2022 18:25:00 -0400
+X-Greylist: delayed 1379 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 15 Mar 2022 15:23:47 PDT
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [142.44.231.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C669F33A06;
+        Tue, 15 Mar 2022 15:23:47 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nUFDh-00Br3M-OO; Tue, 15 Mar 2022 22:00:45 +0000
+Date:   Tue, 15 Mar 2022 22:00:45 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Benjamin LaHaise <bcrl@kvack.org>, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] aio: drop needless assignment in aio_read()
+Message-ID: <YjEMjYtpFjyUvFPV@zeniv-ca.linux.org.uk>
+References: <20220314154605.11498-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220314154605.11498-1-lukas.bulwahn@gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in an error message. Fix it.
+On Mon, Mar 14, 2022 at 04:46:05PM +0100, Lukas Bulwahn wrote:
+> Commit 84c4e1f89fef ("aio: simplify - and fix - fget/fput for io_submit()")
+> refactored aio_read() and some error cases into early return, which made
+> some intermediate assignment of the return variable needless.
+> 
+> Drop this needless assignment in aio_read().
+> 
+> No functional change. No change in resulting object code.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> I cc'ed Linus as he is the author of the referred commit, but I expect
+> that this clean-up just goes the usual way to Al Viro and then in some
+> git pull to Linus.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/misc/sgi-gru/grukservices.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/misc/sgi-gru/grukservices.c b/drivers/misc/sgi-gru/grukservices.c
-index 0ea923fe6371..19dbdad8ad8a 100644
---- a/drivers/misc/sgi-gru/grukservices.c
-+++ b/drivers/misc/sgi-gru/grukservices.c
-@@ -1016,7 +1016,7 @@ static int quicktest1(unsigned long arg)
- 			break;
- 	}
- 	if (ret != MQE_QUEUE_FULL || i != 4) {
--		printk(KERN_DEBUG "GRU:%d quicktest1: unexpect status %d, i %d\n",
-+		printk(KERN_DEBUG "GRU:%d quicktest1: unexpected status %d, i %d\n",
- 		       smp_processor_id(), ret, i);
- 		goto done;
- 	}
--- 
-2.35.1
-
+Applied...
