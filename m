@@ -2,107 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39188C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 22:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C81C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 22:48:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352349AbiCOWsF (ORCPT
+        id S1352372AbiCOWuH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Mar 2022 18:48:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45488 "EHLO
+        Tue, 15 Mar 2022 18:50:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244890AbiCOWsE (ORCPT
+        with ESMTP id S1350376AbiCOWuE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Mar 2022 18:48:04 -0400
+        Tue, 15 Mar 2022 18:50:04 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1C9013F1C;
-        Tue, 15 Mar 2022 15:46:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49CB756C21;
+        Tue, 15 Mar 2022 15:48:52 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 82E64B818FA;
-        Tue, 15 Mar 2022 22:46:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DFD8C340E8;
-        Tue, 15 Mar 2022 22:46:49 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 00EC5B818D3;
+        Tue, 15 Mar 2022 22:48:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AED3CC340E8;
+        Tue, 15 Mar 2022 22:48:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647384409;
-        bh=N9lCbpEw1q3lRoy24tF2qlRq74xnf7ooDJWrMeDL1EY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=g0NnX8+TBBskcnwrMyXlYjeOCzaFo6VRENFxN4FfJ0dTLKxA7lZm84tm805j+Df37
-         NanO9ZYi8lQ0JIPwcsco+QV72L2TRZkis9Ut+dL5tr0GzhUd4qrl4p4fK2UmHZvvoW
-         i4sqEjIeZnrV23YLjRhlW1Fh0ygPLVbnlOltyBBX0OL6Ss4AUsocmhd6LYDNQ0GFH6
-         fN8AJOTJyc9tPrc3mjxQ5mIvgHekuvrLxJCJtpx7CL8CIm7UPdQF4jwI1NmuzwJ+zz
-         hl2jbd8VX9k6RXAGpGCOMxfLKczz5FBK8cXma3rk449E+tNa+GMHakVsbIi6WET5vm
-         qXRr5nmARyhYQ==
-Received: by pali.im (Postfix)
-        id 0795E824; Tue, 15 Mar 2022 23:46:45 +0100 (CET)
-Date:   Tue, 15 Mar 2022 23:46:45 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: supply: bq2415x: Fix spelling mistake "vender" ->
- "vendor"
-Message-ID: <20220315224645.ytcf7y7awc3q2y6j@pali>
-References: <20220315223700.2961660-1-colin.i.king@gmail.com>
+        s=k20201202; t=1647384529;
+        bh=AbKXXpWtIybMeDJAnL0pTXEGeuf+WhH1XeWvboxWJfw=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=FCY/KOAuxadBlAw2dOhF565hovODg4HmxRtqT7Je0ujCg22wNMmW8lpBFHNzVC/OB
+         DfXxAw8/QqRMXTrfAu1Ab+nIhsS0gRanjRKjqyTodO04v+rtiRipHzvxO4DubCIekG
+         PY2mCwp2NcMMr0Uq9hrrYrznQtoSUTT/uE7GMFAjSEBC1vKARtH5C/Uvw/Ycd4RJYV
+         KFYk8TRCudblFrNbRnRwQjphkTygEFqPrDhymMg/g01njMPQdOpYf6kC90fpnk1/62
+         HBysgvu1Key2fTmvKbYnXaTdn0LRkU19wJYCSw15D6XLCUTCyRRdOMv/UK8sQKDT0j
+         QU4z9MJIsC2MQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220315223700.2961660-1-colin.i.king@gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220314115354.144023-15-Julia.Lawall@inria.fr>
+References: <20220314115354.144023-1-Julia.Lawall@inria.fr> <20220314115354.144023-15-Julia.Lawall@inria.fr>
+Subject: Re: [PATCH 14/30] clk: ti: clkctrl: fix typos in comments
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Julia Lawall <Julia.Lawall@inria.fr>,
+        Tero Kristo <kristo@kernel.org>
+Date:   Tue, 15 Mar 2022 15:48:47 -0700
+User-Agent: alot/0.10
+Message-Id: <20220315224849.AED3CC340E8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tuesday 15 March 2022 22:37:00 Colin Ian King wrote:
-> There are several spelling mistakes in comments, function names
-> and literal strings. Fix these.
-
-I do not think that there are mistakes.
-
-Please look at page 29 of the official bq24150 datasheet:
-https://www.ti.com/lit/ds/symlink/bq24150.pdf
-
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Quoting Julia Lawall (2022-03-14 04:53:38)
+> Various spelling mistakes in comments.
+> Detected with the help of Coccinelle.
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+>=20
 > ---
->  drivers/power/supply/bq2415x_charger.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/power/supply/bq2415x_charger.c b/drivers/power/supply/bq2415x_charger.c
-> index 5724001e66b9..b35700071966 100644
-> --- a/drivers/power/supply/bq2415x_charger.c
-> +++ b/drivers/power/supply/bq2415x_charger.c
-> @@ -71,7 +71,7 @@
->  #define BQ2415X_BIT_OTG_PL		1
->  #define BQ2415X_BIT_OTG_EN		0
->  
-> -/* vender register */
-> +/* vendor register */
->  #define BQ2415X_MASK_VENDER		(BIT(5)|BIT(6)|BIT(7))
->  #define BQ2415X_SHIFT_VENDER		5
->  #define BQ2415X_MASK_PN			(BIT(3)|BIT(4))
-> @@ -491,8 +491,8 @@ static int bq2415x_detect_revision(struct bq2415x_device *bq)
->  	return -1;
->  }
->  
-> -/* return chip vender code */
-> -static int bq2415x_get_vender_code(struct bq2415x_device *bq)
-> +/* return chip vendor code */
-> +static int bq2415x_get_vendor_code(struct bq2415x_device *bq)
->  {
->  	int ret;
->  
-> @@ -1501,9 +1501,9 @@ static int bq2415x_power_supply_init(struct bq2415x_device *bq)
->  		sprintf(revstr, "1.%d", ret);
->  
->  	bq->model = kasprintf(GFP_KERNEL,
-> -				"chip %s, revision %s, vender code %.3d",
-> +				"chip %s, revision %s, vendor code %.3d",
->  				bq2415x_chip_name[chip], revstr,
-> -				bq2415x_get_vender_code(bq));
-> +				bq2415x_get_vendor_code(bq));
->  	if (!bq->model) {
->  		dev_err(bq->dev, "failed to allocate model name\n");
->  		return -ENOMEM;
-> -- 
-> 2.35.1
-> 
+
+Applied to clk-next
