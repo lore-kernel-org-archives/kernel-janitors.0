@@ -2,60 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50879C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 20:16:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F2AC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 20:20:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351626AbiCOURj (ORCPT
+        id S235380AbiCOUVP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Mar 2022 16:17:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33168 "EHLO
+        Tue, 15 Mar 2022 16:21:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234688AbiCOURi (ORCPT
+        with ESMTP id S231422AbiCOUVO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Mar 2022 16:17:38 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 751CB5AA7C;
-        Tue, 15 Mar 2022 13:16:26 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id r10so180466wrp.3;
-        Tue, 15 Mar 2022 13:16:26 -0700 (PDT)
+        Tue, 15 Mar 2022 16:21:14 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2B7F1AF23;
+        Tue, 15 Mar 2022 13:20:01 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id r6so195188wrr.2;
+        Tue, 15 Mar 2022 13:20:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=IbbjVN0Q8IlfsZ85oniZzYVvKEoAu/4r4JrF1woWNgk=;
-        b=WA364z6v6yFOrho2KuxyZFk72Bcx89l5vi22pwWXWvkxr2NQGEHOzFSIMnE89MyMz2
-         PuG1jahMn97C6QDBCjmxOgUWfR4LR2XH75IU3YS05N8ae+GMYaMAi7DEYmo/V8eV02/d
-         ztHgGSQEjur7eAk5HNusQt+dygxJrKSq4Jsfya28gV37tAUIsd+07HQni3eSFf1xSMu/
-         qqHfGaTabYM4LQ8TCdSyudSAG9z15SvU+ghEYHR9UcYdRXDCdkP05TZRgPv7Zk4MEAVQ
-         +wtefAkkrFstYy7FqpY95JH681HmltLkUDuOShnZLqyU57EDZ+OP1HUsw6BJSjR/U+sf
-         AJgA==
+        bh=DTszUtVXhMXCklp1DkwPfLyUBq8IyS44PJQOjnsl7zM=;
+        b=SPqWmTFtkfahHl0PUZs9Lg2ZO2M/oEw97UPxTfJ/vQHXox2hjbH8lSKWcWMAHe4puk
+         8mF+u7KkA0GwkJH+47537hJBjA9aE+0wp3L8MBZfWI+eYyqtmGkBSCpPy8E4f76r0VMO
+         G+jMTTdRvYNumxJE+6+hhRD+mWljFffNtADIU4RGL/EoqeQlbDAUKqFSHuCiU/y2gAjT
+         rcYkS43vdDuGxYzmaWpVQ1rG+oLa67n0aP/QSjfNZjyTcTNeTOFu9eNSdoK7pXLolGr6
+         MlbLwjNi+iIxEZYKll19BCfQNuuQRQf7yc0gT3Xzp+pf7SM9k6ZeOj7V39CI2N5NC53v
+         LKLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=IbbjVN0Q8IlfsZ85oniZzYVvKEoAu/4r4JrF1woWNgk=;
-        b=AVAC40IuM9C9VTnxv2a2lKu5xuLl58LGUQ2RMSOwFGsI9kHDOjXb4k8MaqwbJlKCiT
-         Sh2Wuo/jtD8WAkH06AZtB74Nr8uEqmemIOArpvFDERYMGeC6ad2I4cJj8DK1u2e50dCt
-         sip4i95nKstpf9NWQ9+UI7HkltmoT//q/9RgsVYVP7/aNBZ26OI6h62Zdyg/XKgspSn/
-         dLExgFwiLEujKZ6RJLN4xYwT0hn6RY2lPxVOTSu7eJN+loGPCBAUNCsH6rme91l6cZML
-         yMs8N2sVRRZtLOG8a3Wk7MzAoMPtVcbyFkmA5Fr3/s5xZXtYHbpwZ/kkAy2NO3naP3ZX
-         qb9w==
-X-Gm-Message-State: AOAM5315WsDPSWakd7/0pwsau5FPpX8VGQO4zPlp81daAK4A5JumPaVu
-        8dhKW5DIORO2WcrWah98p5o=
-X-Google-Smtp-Source: ABdhPJz6x+l/GjODhBBJl0FbUTTh0W8inuyeGHQI1mYX3UpiPbl9wbJZKGDo2fANf0JNfxvVFJlOlg==
-X-Received: by 2002:a5d:525b:0:b0:203:8f00:1a56 with SMTP id k27-20020a5d525b000000b002038f001a56mr19697216wrc.202.1647375384932;
-        Tue, 15 Mar 2022 13:16:24 -0700 (PDT)
+        bh=DTszUtVXhMXCklp1DkwPfLyUBq8IyS44PJQOjnsl7zM=;
+        b=sug66b4HjEaJjaZbW40kXbBSdrUYxfBPw6SF5p1BMNdgBMg2AfmhzZMPfO8gB+rOm1
+         XgUv4gp1SXykqtcQTDxUtLTNh+s6v5Q2oIcyZFThvlRjhZEx8/7pbpY4W3BQSAr7ZAN6
+         QHqisjmaATh8iKHAIw3YdyJAf6cA2L0NS9A9aiYCjqsIZXrf3wpxTG3B8XYIn7ehV4m3
+         nvq0dF4MXYidvqndmgl5RLxgdfMijfWSY98WBlcG2VPuAYFGz72T8KgyvTsuylFM1cZm
+         22TrK0PyroXqiP3BQZpRu90MSnzPbrNUtV9ERUfTWpMhDduqCtdQmFWWB5MPk2QttBG7
+         Joww==
+X-Gm-Message-State: AOAM530zVXfs+p7U5nrbLperRKfiWYAyfATgcc13V0jRxDABu1sI64rM
+        MoEQnqgxDjQQ3bqWkX+3F1AsF0gGX4D2zQ==
+X-Google-Smtp-Source: ABdhPJxQNMuNpDzGV85jK9DavDvA+ngvgzAqBLvkyT6j8b8JEHgSYCJaSLlNbf5IIq5d6udlcm+CKA==
+X-Received: by 2002:a05:6000:1847:b0:203:8141:9d58 with SMTP id c7-20020a056000184700b0020381419d58mr21770796wri.262.1647375600540;
+        Tue, 15 Mar 2022 13:20:00 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id i11-20020a05600c354b00b00389f440512esm3359836wmq.32.2022.03.15.13.16.24
+        by smtp.gmail.com with ESMTPSA id h12-20020a5d548c000000b001f1f99e7792sm16084895wrv.111.2022.03.15.13.19.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Mar 2022 13:16:24 -0700 (PDT)
+        Tue, 15 Mar 2022 13:20:00 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        sparclinux@vger.kernel.org
+To:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Xinhui.Pan@amd.com, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] sparc: Fix spelling mistake "wont" -> "won't"
-Date:   Tue, 15 Mar 2022 20:16:23 +0000
-Message-Id: <20220315201623.2951748-1-colin.i.king@gmail.com>
+Subject: [PATCH] drm/amdgpu: Fix spelling mistake "regiser" -> "register"
+Date:   Tue, 15 Mar 2022 20:19:59 +0000
+Message-Id: <20220315201959.2952327-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,26 +67,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a missing contraction hyphen a prom_printf message. Fix it.
+There is a spelling mistake in a dev_error error message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- arch/sparc/kernel/leon_smp.c | 2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/sparc/kernel/leon_smp.c b/arch/sparc/kernel/leon_smp.c
-index 1eed26d423fb..cf3bddda8bb0 100644
---- a/arch/sparc/kernel/leon_smp.c
-+++ b/arch/sparc/kernel/leon_smp.c
-@@ -135,7 +135,7 @@ static void leon_smp_setbroadcast(unsigned int mask)
- 	    ((LEON3_BYPASS_LOAD_PA(&(leon3_irqctrl_regs->mpstatus)) >>
- 	      LEON3_IRQMPSTATUS_BROADCAST) & 1);
- 	if (!broadcast) {
--		prom_printf("######## !!!! The irqmp-ctrl must have broadcast enabled, smp wont work !!!!! ####### nr cpus: %d\n",
-+		prom_printf("######## !!!! The irqmp-ctrl must have broadcast enabled, smp won't work !!!!! ####### nr cpus: %d\n",
- 		     leon_smp_nrcpus());
- 		if (leon_smp_nrcpus() > 1) {
- 			BUG();
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
+index a025f080aa6a..9aa355a5ac3c 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
+@@ -919,7 +919,7 @@ static u32 amdgpu_virt_rlcg_reg_rw(struct amdgpu_device *adev, u32 offset, u32 v
+ 						"wrong operation type, rlcg failed to program reg: 0x%05x\n", offset);
+ 				} else if (tmp & AMDGPU_RLCG_REG_NOT_IN_RANGE) {
+ 					dev_err(adev->dev,
+-						"regiser is not in range, rlcg failed to program reg: 0x%05x\n", offset);
++						"register is not in range, rlcg failed to program reg: 0x%05x\n", offset);
+ 				} else {
+ 					dev_err(adev->dev,
+ 						"unknown error type, rlcg failed to program reg: 0x%05x\n", offset);
 -- 
 2.35.1
 
