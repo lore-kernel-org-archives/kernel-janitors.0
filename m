@@ -2,60 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79829C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 22:15:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9237CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 22:19:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347257AbiCOWQ5 (ORCPT
+        id S1352170AbiCOWUq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Mar 2022 18:16:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46432 "EHLO
+        Tue, 15 Mar 2022 18:20:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345510AbiCOWQ4 (ORCPT
+        with ESMTP id S1352174AbiCOWUp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Mar 2022 18:16:56 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F6215574F;
-        Tue, 15 Mar 2022 15:15:42 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id r7so266767wmq.2;
-        Tue, 15 Mar 2022 15:15:42 -0700 (PDT)
+        Tue, 15 Mar 2022 18:20:45 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8E095C647;
+        Tue, 15 Mar 2022 15:19:31 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id i8so483922wrr.8;
+        Tue, 15 Mar 2022 15:19:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=LvmJVqdwrlWMkUS3ETMsrhpklEVgEBwydXDxUXvsw4Y=;
-        b=kwXAy1bc0B18qwisUML/KSrBSAAR5AmmqDoFZt+icCfloKqtfsMrMaJZpa2gxSjAX5
-         fbvbo4sEJc7XQoPxPGUkctEBGmtvmt3lfFTeAMyPJZZBfPAh+VOTyvr8eqRPD1TkzPoP
-         NqNan8F9VcUHqDtLV5sGv6Sy42XGqQARPqNt3jF5ZagvK+GrbEtVCQ4MU+NLRe11jV+l
-         em8nzdQarzjQ7hjybrExEGDVPZsxc9VfBB4xcyo1AOGYE9Av+4K2UDLq2XlzhEZsqcJN
-         QvDeHq+3LqAZhnyw1mLEFU5yRpJonxncHSH2IzloUCMQpxuacqNBLM2F2gXUt2QvkMYk
-         +pdg==
+        bh=8T8z6iflW4XiGgdmUlJWREss0zwpqrW7ArvyzTkY4zM=;
+        b=lxEl0y0ShtAvyYuhvNC8Q/4+oXxFjSyp28eUVJDpMW6CQEjUnM6BMGVmpYW3th8nkd
+         euW34T+fWPWl284pgF6SHEkSvIGa4Hbb0QhBRT/qPaUvE5l0HwSkfbAPUnjiV4Ir/uzD
+         NGrLammWYvTAXL3fCpJLmXqqCELSnRwjI+wauZiAp5GexK4nrqLKfSPwakEC9azelsta
+         mVN6gTlo3j3fS+kGTEx1suFgJ3kvKl2jsj55HiMPSqfUm2ZjAUmnN9H8wt3/0xsMM8Cb
+         uedz/YRd7rRlnsOY+ROrjiV6OFypkesLWvJhNaLbx3L3hip8k3oVsjR4y+808zdcRwPe
+         AdDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=LvmJVqdwrlWMkUS3ETMsrhpklEVgEBwydXDxUXvsw4Y=;
-        b=ER2Z2qWGYWz2Ve92bI0c2r7411wa7T5LCrbzfkoGltc+RBWyaHCTaAI1/8U3cW19zk
-         h/JYuPyb2Ksm2ePyTRAI1tcpHnNVGew8AeuvTuEcV6Mn+KhaB+OOb2k0nG1OUDi8Iisq
-         nIRew3Zk82DBv9gd5R0NT3WLssHb1/pSQgmCBeb3god/dsuWGCnkRGuTnf6o1En9CtLZ
-         J08zdBBam6WVNQHn4k/Ymmkg8AqAFzfjuMqs+e0QI2lu6SPqVWcZFbOZHJSrSlEop/Kf
-         YwxQMPqpvI6MJz1EAMEF7MkTc1NdlwbtE3OgWAi2GpsOE+AVuo6V03/ZLFoC9GMIt4z+
-         +EJg==
-X-Gm-Message-State: AOAM531qP/VWas9qDmZGUuOi/AXTHlDQ433EELS0xBadPRH7ofFAFEU/
-        ElCABQPqJz13hnfjrLmRPkakp4lTDZ0tJA==
-X-Google-Smtp-Source: ABdhPJytypUFMlvsSHibSN8JM1X8fOVUmKnATp66W/nZO8/7ST1zZRg+cR0zT/YNrBTbOXU+eYNy/g==
-X-Received: by 2002:a1c:7c04:0:b0:388:6cd5:b45b with SMTP id x4-20020a1c7c04000000b003886cd5b45bmr5100136wmc.8.1647382541056;
-        Tue, 15 Mar 2022 15:15:41 -0700 (PDT)
+        bh=8T8z6iflW4XiGgdmUlJWREss0zwpqrW7ArvyzTkY4zM=;
+        b=cQEzYT4J+cmnvdMzIyX6pT/19Y0uz88K59wcinbXz+9DZK3xMBDxE/IG36cY+LPNo9
+         tA70npqVokB4BFEdG3mMbdi6DUkPwWxw+oGJJMckZ7Jd9D0WWDlV9PkinxAIHGs0Xm80
+         tzevVcFTWRLSxaVd0AGHPAfzR1oE/lm7p400kxE66yur47qejKr+MnHWRFDDLyh6wqac
+         j2lqyCHa1upTPeavyueGTjBK28gQe6uHGMuWa54iSeEtuEXMBGd8PR7mcqeC2p+YqoDB
+         5PddydIJZvnzZxsDQVF1xfcCnXekV+eDYGgWTldG35RF/MRIPTIoSR3mX7jQXyxdvkCZ
+         x5OA==
+X-Gm-Message-State: AOAM5313dZavEW6FkhGoLO7v020svYNpTdjxKqfMqqOwdJiHnoUFwT3Q
+        FQLEDgJLvFqLu2hIjqN5hpQ=
+X-Google-Smtp-Source: ABdhPJyXK/m628DIv4EB8bxcG/ulR9do+Vkrf7eORkrGXSrrF/fzSZiewYbv/kCVjR8iw1vQkAVUvg==
+X-Received: by 2002:a5d:4e51:0:b0:203:dc47:24c2 with SMTP id r17-20020a5d4e51000000b00203dc4724c2mr1236474wrt.628.1647382770264;
+        Tue, 15 Mar 2022 15:19:30 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id r13-20020a5d498d000000b001f0587248c4sm166448wrq.3.2022.03.15.15.15.40
+        by smtp.gmail.com with ESMTPSA id i15-20020a05600011cf00b001edc2966dd4sm159780wrx.47.2022.03.15.15.19.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Mar 2022 15:15:40 -0700 (PDT)
+        Tue, 15 Mar 2022 15:19:29 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+To:     Ben Skeggs <bskeggs@redhat.com>, Karol Herbst <kherbst@redhat.com>,
+        Lyude Paul <lyude@redhat.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] block/bfq-iosched: Fix spelling mistake "tenative" -> "tentative"
-Date:   Tue, 15 Mar 2022 22:15:39 +0000
-Message-Id: <20220315221539.2959167-1-colin.i.king@gmail.com>
+Subject: [PATCH] drm/nouveau: Fix spelling mistake "endianess" -> "endianness"
+Date:   Tue, 15 Mar 2022 22:19:29 +0000
+Message-Id: <20220315221929.2959700-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,26 +66,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a bfq_log_bfqq message. Fix it.
+There is a spelling mistake in a nvdev_error error message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- block/bfq-iosched.c | 2 +-
+ drivers/gpu/drm/nouveau/nvkm/engine/device/base.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 064f6b4c1c16..2e0dd68a3cbe 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -2153,7 +2153,7 @@ static void bfq_check_waker(struct bfq_data *bfqd, struct bfq_queue *bfqq,
- 		bfqq->waker_detection_started = now_ns;
- 		bfq_bfqq_name(bfqq->tentative_waker_bfqq, waker_name,
- 			      MAX_BFQQ_NAME_LENGTH);
--		bfq_log_bfqq(bfqd, bfqq, "set tenative waker %s", waker_name);
-+		bfq_log_bfqq(bfqd, bfqq, "set tentative waker %s", waker_name);
- 	} else /* Same tentative waker queue detected again */
- 		bfqq->num_waker_detections++;
- 
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c
+index 88d262ba648c..62efbd0f3846 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/base.c
+@@ -2935,7 +2935,7 @@ nvkm_device_ctor(const struct nvkm_device_func *func,
+ 		/* switch mmio to cpu's native endianness */
+ 		if (!nvkm_device_endianness(device)) {
+ 			nvdev_error(device,
+-				    "Couldn't switch GPU to CPUs endianess\n");
++				    "Couldn't switch GPU to CPUs endianness\n");
+ 			ret = -ENOSYS;
+ 			goto done;
+ 		}
 -- 
 2.35.1
 
