@@ -2,63 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D809C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 22:26:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3AFBC433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 22:29:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352225AbiCOW1f (ORCPT
+        id S1351271AbiCOWag (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Mar 2022 18:27:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40758 "EHLO
+        Tue, 15 Mar 2022 18:30:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234619AbiCOW1a (ORCPT
+        with ESMTP id S1345139AbiCOWa3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Mar 2022 18:27:30 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3E405C66A;
-        Tue, 15 Mar 2022 15:26:17 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id b19so480830wrh.11;
-        Tue, 15 Mar 2022 15:26:17 -0700 (PDT)
+        Tue, 15 Mar 2022 18:30:29 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A3F83B036;
+        Tue, 15 Mar 2022 15:29:17 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id p9so482743wra.12;
+        Tue, 15 Mar 2022 15:29:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=d+7gsptSCcEneI6TJ6IZ79PWOc2Xel+uahXLSZntUag=;
-        b=VcvBmfSZbZGqcGB3qO8Czr6VUT5EVLRrSAeNopn67koxcESvdWZ0yXBUItmbeSfvJN
-         +nb1xRbrkN4/iXywG7iwJq1aS+2L+N0xa7Rf7EaZephFmfOFR8zi8p/BmofUu//Hu8A4
-         zzH39iCzT1dFQuUG77bO2FbdbXr6BVaOO+sCKM24tjc7iIHp7Esw+BB1ryNYawpR7Kel
-         y+2JqGgDlkM+kVgLLs9v74uMWkGujkh+I0Ws0IBI2fv/H4BORTft5lZ1l/V2AWjnZw6K
-         SaeMtpHwZaUzQxPruC2Tpt9AF9sgTX0iazad2DNivMYqAp38zeATnR2RIrn9wFtEnCgo
-         GV2Q==
+        bh=2mP7it1/VwMA5etq+ao66GLxUXQ6KGLRAa8IlL6JtUU=;
+        b=CuFGm/I1dRoambfUa96lRkaH7kV7vgcN9VEUSVwtWPkwpJRWU96AUhgWgzJb0Kebak
+         PcQ8Xi0UeSVTammDQxivKuBDY6fp394GdgcFk+RAkIHvgFZ/xWpxuxsreW6cLySGNhmq
+         XaR/GdbxY+vrbFvGqNNgWoVA96UIy9KdyVHh6jRLBNjp8go9jB4OALqLkkG446Yz6Flo
+         oN0ichTEsqz8bxrMNtrE+6tGR0S8IsHke7Bpgh8kNaTmrdA7Um3jIqyoJ+CVtv65xCnV
+         hoqpS71dInSf8bJ6wAJNm5eVeu2PWq9CzyU4D0wfZUxHP0c3l/3XC7D0oqZezwinipvL
+         ikyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=d+7gsptSCcEneI6TJ6IZ79PWOc2Xel+uahXLSZntUag=;
-        b=Sn6z7MGwYUc5G03v0+VKMI9GLTuwdfIVVdHeSVBOEMDS9NLwWYkcWNvmg0SBHF0GE4
-         NrS5DZfUv1fDvHtVYQgRbjDePgXJc0wCmlstN2ygY7naW5i5g7TAmE7zl0qaUbvBiTHK
-         /AOfnjUXP0TWzAwb5+fQvapcEl19dSANXgPJ8L9qiTMsiyPPshQH/NpF4W7yjpm4q+uJ
-         VLKDzEtRU3gH6hiBHpr3g6mVIOqlV6c+dmTUMOrdHABua4V/+XMht0e06HPiYj7mMprC
-         8vMNZj4qLGqrjVjA5UYRw8/TJL4bta+c+PjNpJU49vOfl4kKuBZCWBdQKDfMlZx8KJi6
-         yWVQ==
-X-Gm-Message-State: AOAM531+OyTmqcgyYsm+V6YtcfQ4ZF42gi9seht3ifipcuPQ42dnv6ud
-        SRGt0iWZxMg5W2HKHtJCzlkkN1yI2WWxrg==
-X-Google-Smtp-Source: ABdhPJzrvoqRxNXnTa1VtmcVGYIfbK7Xnsy3iA2OLrU5s6f7sViv5YbKf701tetRQ9Iyc0IlyaQRgA==
-X-Received: by 2002:a5d:6751:0:b0:1f0:4a7a:ba31 with SMTP id l17-20020a5d6751000000b001f04a7aba31mr21882773wrw.181.1647383176605;
-        Tue, 15 Mar 2022 15:26:16 -0700 (PDT)
+        bh=2mP7it1/VwMA5etq+ao66GLxUXQ6KGLRAa8IlL6JtUU=;
+        b=ROIyQrzYQhdecelmJptv/xvV48zWQCZEz6j9CT5yOOBnJwLYLuJhTzKmcteFns3xml
+         1wQnQzLRTr1bUW4Vf+cafYtXr63untWY/ow7+bwGhuIAOWHvP/o9TJo2RaYfU2eFfvy0
+         qZNsblmRUL4TWMUk1ODPxuvVnz/yd5jcjS/skSnauJ31gqWeqf3hEqoFSiaumSN/LZb6
+         CGbQyPcbSyWnQ9uSN7ymfVsun3L3YzJEmPRv3BAoQLomMwCNgJa70xpdqsIy54OEOYIc
+         ULM+HfohgTGen7lpMZ+VPEvISqW1m139mx02Cdnmj6wO55KF1ZuXzu3r5EIWIAV0zf+F
+         eIVw==
+X-Gm-Message-State: AOAM531CQZuD+F4/aoenB+bfKb9ASoCaUlqtxW/Db6YTAsDE6On/nRx8
+        bPrnrg1M6VNiYDmd/LJ1tsoEBcy65kyu3g==
+X-Google-Smtp-Source: ABdhPJxs5/XVKI8M6uvLbmKJ6JqUOz2cIuVNKXlVOZcM3keHpp0j1e9aIE29YLBbfuwAjynFaSaRlg==
+X-Received: by 2002:adf:ce03:0:b0:1f0:62b9:3c7a with SMTP id p3-20020adfce03000000b001f062b93c7amr21796516wrn.102.1647383355616;
+        Tue, 15 Mar 2022 15:29:15 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id l13-20020a05600002ad00b00203d64c5289sm155955wry.112.2022.03.15.15.26.16
+        by smtp.gmail.com with ESMTPSA id bg18-20020a05600c3c9200b0037c2ef07493sm109916wmb.3.2022.03.15.15.29.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Mar 2022 15:26:16 -0700 (PDT)
+        Tue, 15 Mar 2022 15:29:15 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jeroen de Borst <jeroendb@google.com>,
-        Catherine Sullivan <csully@google.com>,
-        David Awogbemila <awogbemila@google.com>,
+To:     Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+        Jakub Kicinski <kuba@kernel.org>,
+        Guangbin Huang <huangguangbin2@huawei.com>,
+        netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] gve: Fix spelling mistake "droping" -> "dropping"
-Date:   Tue, 15 Mar 2022 22:26:15 +0000
-Message-Id: <20220315222615.2960504-1-colin.i.king@gmail.com>
+Subject: [PATCH] net: hns3: Fix spelling mistake "does't" -> "doesn't"
+Date:   Tue, 15 Mar 2022 22:29:14 +0000
+Message-Id: <20220315222914.2960786-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -67,26 +68,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a netdev_warn warning. Fix it.
+There is a spelling mistake in a dev_warn message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/net/ethernet/google/gve/gve_rx.c | 2 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/google/gve/gve_rx.c b/drivers/net/ethernet/google/gve/gve_rx.c
-index e4e98aa7745f..021bbf308d68 100644
---- a/drivers/net/ethernet/google/gve/gve_rx.c
-+++ b/drivers/net/ethernet/google/gve/gve_rx.c
-@@ -439,7 +439,7 @@ static bool gve_rx_ctx_init(struct gve_rx_ctx *ctx, struct gve_rx_ring *rx)
- 		if (frag_size > rx->packet_buffer_size) {
- 			packet_size_error = true;
- 			netdev_warn(priv->dev,
--				    "RX fragment error: packet_buffer_size=%d, frag_size=%d, droping packet.",
-+				    "RX fragment error: packet_buffer_size=%d, frag_size=%d, dropping packet.",
- 				    rx->packet_buffer_size, be16_to_cpu(desc->len));
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+index 089f4444b7e3..1f87a8a3fe32 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+@@ -1225,7 +1225,7 @@ static int hclge_tm_pri_dwrr_cfg(struct hclge_dev *hdev)
+ 		ret = hclge_tm_ets_tc_dwrr_cfg(hdev);
+ 		if (ret == -EOPNOTSUPP) {
+ 			dev_warn(&hdev->pdev->dev,
+-				 "fw %08x does't support ets tc weight cmd\n",
++				 "fw %08x doesn't support ets tc weight cmd\n",
+ 				 hdev->fw_version);
+ 			ret = 0;
  		}
- 		page_info = &rx->data.page_info[idx];
 -- 
 2.35.1
 
