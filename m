@@ -2,62 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F4A6C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 20:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E3F9C433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 20:42:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351703AbiCOU3M (ORCPT
+        id S1351786AbiCOUnV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Mar 2022 16:29:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50284 "EHLO
+        Tue, 15 Mar 2022 16:43:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241868AbiCOU3L (ORCPT
+        with ESMTP id S1351779AbiCOUnU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Mar 2022 16:29:11 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43BA713D79;
-        Tue, 15 Mar 2022 13:27:59 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id x15so155076wru.13;
-        Tue, 15 Mar 2022 13:27:59 -0700 (PDT)
+        Tue, 15 Mar 2022 16:43:20 -0400
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEE814BFDE
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Mar 2022 13:42:07 -0700 (PDT)
+Received: by mail-io1-xd35.google.com with SMTP id r11so164930ioh.10
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Mar 2022 13:42:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=h0qv9mDXmv5p2CFMjUqbXa1C/c2t8JyqpwfD6/zqQ/M=;
-        b=fjiVnzPc4UZCBBrTPKOfYYmoXaUOtGyPRHh4ux1ZLiyfmsCcqUiOe1IB/LzQ1CyQt3
-         IXGfKSN9eJrFDlOp3zY9DqxR38Qe1EK0Vvd62scS6r3EB2J6yW8x2+PINXyXpBQ9aGDV
-         Xxlj5UAK2kc9OwuNWBiSKufcxt25YGZWTq5SXvG8QdQcl1D9CfThWz0+GP9CF/HYRv9e
-         XveWpnYyXuESbrnUb6OZBQkG9nrFPE3N0ILVguJ4qPAB6+MSqTVaOHwj3OSyfXdFv5L0
-         Dnv+QVQkEQRXBtWeRjAqnZgvrWOepS+AeZ8P7dah3xMRuOUff8pWEcxnCHmsl552b+AH
-         A+3Q==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:in-reply-to:references:subject:message-id:date
+         :mime-version:content-transfer-encoding;
+        bh=3LYA3F2vS7/qRcuHKgfo+jK9meyWqLhonxVb0i4Hx5E=;
+        b=JeaFSWMAHkn88CJQ7Mt1LcJQgY6H3z7RzwGpe0n8y3L0NI06u9lVkivHPoeAw0zRmZ
+         K2qGAtbPX8jksaz032oREYbw/0yMTOWJhCv2Or9dsjzcHDEVojzLbdykPuNgiqjKwMni
+         B5OCnDwbIszh/wytrjATI/83XWdwSWil+C/TGz27DNTT/v9TUDHl4qNC7+9tkisJI9ao
+         KtIYrS0WF5D7th0tM1ik+R3w1SV00MX9jDR9O8GENmNV1Bq5JIr6CQU93gUQGVQuynrf
+         aJMq10vY9CPJfe4rDbeT+Q2Y36j2zYZBvWPNct8SlYtiSSs1WsUUsm8RJy+MUE3WUYQQ
+         P+sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=h0qv9mDXmv5p2CFMjUqbXa1C/c2t8JyqpwfD6/zqQ/M=;
-        b=Gyt70LKYAHC6gVxQb3WGnP8ZUZULa23i8AG2Bi8olrd3DaUZzH5fcd3EUpGM9yk314
-         b+y8RE5XVOvxA39ycR5+3iSbrEZtu5Sr5gXk2gWXC/kqrNl8BVRaolDYNKp69tEuXzD2
-         zeD7mNmGihECqW7QjPFA3zz+ROphio1mYO1pWNVSpQPJVejpGKGXcFGdeN3lfmJvgv48
-         /MntK9obr7zDVA6BcNky1218Dng8he5/H+VvIOivuHQ5kA+9eGDELaEqJFYkYdrSgvSE
-         Alu8qs3K3ViWQKr6LqF7s8ioAyZc6fahdlFVo+n4zYZGPNsFIS5kTS0TfF0ErEjKzVnq
-         YGMw==
-X-Gm-Message-State: AOAM530Izjw9etZ27J/tFqVJeHBd+G38kulzaJKItAVQow+crzpr+TaL
-        6jCFyftOO6JJObigp6LnU2+Tjmuod7QOlQ==
-X-Google-Smtp-Source: ABdhPJxWml19jK5phIRP74Sz6aAEW6VQiwapgaPeuLaXEULiFk2g8DMD+bAHm+XedIs+G/5tQnMSOQ==
-X-Received: by 2002:adf:b64c:0:b0:1e3:16d0:3504 with SMTP id i12-20020adfb64c000000b001e316d03504mr21433640wre.333.1647376077808;
-        Tue, 15 Mar 2022 13:27:57 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id bg42-20020a05600c3caa00b00380deeaae72sm2300849wmb.1.2022.03.15.13.27.57
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=3LYA3F2vS7/qRcuHKgfo+jK9meyWqLhonxVb0i4Hx5E=;
+        b=fJzA4+dmtvypZFI02TJDhNWHkyjT0CzCI7FQ4+hQKFHTZrD9vQkuprtoNmm9WI+J2D
+         OPyRz/j5Iqb/8aO6KpPcKq980H5CqT6uBDi2Phs5LubDzl9+k+afbG84OUDHC+1pf/C9
+         QkOhI64kGWDPosQHRvVqM9fOeNxvpGVrPVGicXoawABkdgS0DlJk1Ri47x6NGReE+NFI
+         x5vIZaQCA3iKUzkYod5xBmMzWqp/h0EHbXzGjpzjsHwhHxRrZFy91IbG+RVl895NGbyq
+         RPv9tBzAFsBcmkHBi0RumzhqXVfSm9RJnnRC1vc5BvxnJhqYvI3TXzXSOmpj8arBU43i
+         qjVQ==
+X-Gm-Message-State: AOAM532D9i+s+rw6S49R6JL7VdS/0pOWcDBRqeU7Zc1Lwwl2EXf05Z7E
+        BKpUIZyQN5XSj46T1cDKU2shpQ==
+X-Google-Smtp-Source: ABdhPJxyYA1foZ099T/TN7q5N1/aFnC/sZVxSPSTvM5nF2IoFH3QbFH+2gatQLGEz+Ob6ehjUf8AyQ==
+X-Received: by 2002:a05:6638:259:b0:319:e237:b6f9 with SMTP id w25-20020a056638025900b00319e237b6f9mr16110035jaq.186.1647376927106;
+        Tue, 15 Mar 2022 13:42:07 -0700 (PDT)
+Received: from [127.0.1.1] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id k5-20020a5d97c5000000b006412c791f90sm10260598ios.31.2022.03.15.13.42.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Mar 2022 13:27:57 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Sudeep Holla <sudeep.holla@arm.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        linux-acpi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mailbox: pcc: Fix spelling mistake "Plaform" -> "Platform"
-Date:   Tue, 15 Mar 2022 20:27:56 +0000
-Message-Id: <20220315202756.2953329-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Tue, 15 Mar 2022 13:42:06 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     linux-block@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        clang-built-linux@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        kernel-janitors@vger.kernel.org
+In-Reply-To: <20220314150321.17720-1-lukas.bulwahn@gmail.com>
+References: <20220314150321.17720-1-lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] sr: simplify the local variable initialization in sr_block_open()
+Message-Id: <164737692606.34720.13651107602467649811.b4-ty@kernel.dk>
+Date:   Tue, 15 Mar 2022 14:42:06 -0600
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -65,26 +70,25 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a pr_err error message. Fix it.
+On Mon, 14 Mar 2022 16:03:21 +0100, Lukas Bulwahn wrote:
+> Commit 01d0c698536f ("sr: implement ->free_disk to simplify refcounting")
+> refactored sr_block_open(), initialized one variable with a duplicate
+> assignment (probably an unintended copy & paste duplication) and turned one
+> error case into an early return, which makes the initialization of the
+> return variable needless.
+> 
+> So, simplify the local variable initialization in sr_block_open() to make
+> the code a bit more clear.
+> 
+> [...]
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/mailbox/pcc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied, thanks!
 
-diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
-index ed18936b8ce6..2b209acdbab2 100644
---- a/drivers/mailbox/pcc.c
-+++ b/drivers/mailbox/pcc.c
-@@ -676,7 +676,7 @@ static int pcc_mbox_probe(struct platform_device *pdev)
- 
- 		if (pcct_entry->type == ACPI_PCCT_TYPE_EXT_PCC_SLAVE_SUBSPACE &&
- 		    !pcc_mbox_ctrl->txdone_irq) {
--			pr_err("Plaform Interrupt flag must be set to 1");
-+			pr_err("Platform Interrupt flag must be set to 1");
- 			rc = -EINVAL;
- 			goto err;
- 		}
+[1/1] sr: simplify the local variable initialization in sr_block_open()
+      commit: 79d45f57a19537a1ec6ebf836944e968b154f86e
+
+Best regards,
 -- 
-2.35.1
+Jens Axboe
+
 
