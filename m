@@ -2,106 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C93BCC35274
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 13:41:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB93C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 15:20:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348763AbiCONmS (ORCPT
+        id S1349532AbiCOPVX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Mar 2022 09:42:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44524 "EHLO
+        Tue, 15 Mar 2022 11:21:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348757AbiCONmS (ORCPT
+        with ESMTP id S233159AbiCOPVW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Mar 2022 09:42:18 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45DA152E66;
-        Tue, 15 Mar 2022 06:41:05 -0700 (PDT)
+        Tue, 15 Mar 2022 11:21:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1943740E6D;
+        Tue, 15 Mar 2022 08:20:11 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id AD8FFB81677;
-        Tue, 15 Mar 2022 13:41:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07A13C340E8;
-        Tue, 15 Mar 2022 13:40:54 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AA94861225;
+        Tue, 15 Mar 2022 15:20:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 16B53C340ED;
+        Tue, 15 Mar 2022 15:20:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647351662;
-        bh=gvl9SFrDd+2JfY4XpOU21w5Fgp3RnrxgO3xzRNMW3ig=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=FpIzPAInqwcWVe7lVXyZMo10uysAvQH5/+0FSS06nOQud/sjKtVu2eXUrgVVwDtnS
-         K9saXWWZ1hCdhU07mL3gP1lbyLMM5ncodj0hAGG1sCe8guzPWwUCxCvCMd4UnYk0ij
-         MiKnX5ElR8cklFLsknUpJxfH63KChYC/OCTeoHADKe2d7sJJxnj+KlqJSXMWCfA0RW
-         7IMl8VYJBtsy0LvBdpwYawlVvfm1y/uovTsdBOXZktA8NvrkBJg6F9XHpbVdi97yvv
-         ktn0TMEJDT+qVku5scquwwLC4arp4ujY52Gxd5XtzcUD53EHdZUC9sEswg4SOYFru/
-         p422dM8tR7ngQ==
-From:   Mark Brown <broonie@kernel.org>
-To:     Julia Lawall <Julia.Lawall@inria.fr>, linux-can@vger.kernel.org
-Cc:     netdev@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Shayne Chen <shayne.chen@mediatek.com>,
-        linux-media@vger.kernel.org,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        linux-perf-users@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Sean Wang <sean.wang@mediatek.com>,
-        linux-arm-msm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        platform-driver-x86@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        target-devel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-s390@vger.kernel.org,
-        Jonas Karlman <jonas@kwiboo.se>, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-power@fi.rohmeurope.com,
-        linux-omap@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-leds@vger.kernel.org, linux-spi@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, linux-clk@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-scsi@vger.kernel.org,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-wireless@vger.kernel.org
-In-Reply-To: <20220314115354.144023-1-Julia.Lawall@inria.fr>
-References: <20220314115354.144023-1-Julia.Lawall@inria.fr>
-Subject: Re: (subset) [PATCH 00/30] fix typos in comments
-Message-Id: <164735165474.3687547.1964402001196947729.b4-ty@kernel.org>
-Date:   Tue, 15 Mar 2022 13:40:54 +0000
-MIME-Version: 1.0
+        s=k20201202; t=1647357610;
+        bh=hV7TWjA4mrhGqnN1c6IGfxD94bpnAvcHgGYjUnxAeH4=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=nd35ZJ+blcXYJRlO1lOdb2CpUDg9rhxRQVCBQXRj7AxnQ87LwiuH6VShW9Bgv2Ezw
+         FgkYUejhzr22pgBrP9JZdLjQgtPfjYF6ceIIKQXwX6IST3DcMDBFZ5I1bH00ApMGNW
+         i1xIi1UssVIfneiSvysXuvZgr0tgARs2v6EnuOznEcCM7lUjEjHiGpUyBf1zILxUe/
+         H+AJXmxIpx9/yXk08Nc6CDYU/5oE9myb28Ax/ysI6pa5wRiHOfS02ecGcQOm87UObR
+         H333bDhDT9OmuWKKhM2hC/yVjMwSYqtBjVFp183RbHoLzlm1mDBgkGj2q+h4D2a110
+         qMycI0VUCZ4UQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id ED197E6D44B;
+        Tue, 15 Mar 2022 15:20:09 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: sparx5: fix a couple warning messages
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164735760996.20923.1446111901508222494.git-patchwork-notify@kernel.org>
+Date:   Tue, 15 Mar 2022 15:20:09 +0000
+References: <20220314140327.GB30883@kili>
+In-Reply-To: <20220314140327.GB30883@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     davem@davemloft.net, horatiu.vultur@microchip.com, kuba@kernel.org,
+        lars.povlsen@microchip.com, Steen.Hegelund@microchip.com,
+        UNGLinuxDriver@microchip.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 14 Mar 2022 12:53:24 +0100, Julia Lawall wrote:
-> Various spelling mistakes in comments.
-> Detected with the help of Coccinelle.
+Hello:
+
+This patch was applied to netdev/net-next.git (master)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Mon, 14 Mar 2022 17:03:27 +0300 you wrote:
+> The WARN_ON() macro takes a condition, not a warning message.
 > 
+> Fixes: 0933bd04047c ("net: sparx5: Add support for ptp clocks")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/net/ethernet/microchip/sparx5/sparx5_ptp.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied to
+Here is the summary with links:
+  - [net-next] net: sparx5: fix a couple warning messages
+    https://git.kernel.org/netdev/net-next/c/c24f657791fd
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Thanks!
 
-[21/30] spi: sun4i: fix typos in comments
-        commit: 2002c13243d595e211c0dad6b8e2e87f906f474b
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
