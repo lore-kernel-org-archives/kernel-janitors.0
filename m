@@ -2,88 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C73C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 22:40:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39188C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 22:46:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243678AbiCOWly (ORCPT
+        id S1352349AbiCOWsF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Mar 2022 18:41:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36964 "EHLO
+        Tue, 15 Mar 2022 18:48:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352284AbiCOWlw (ORCPT
+        with ESMTP id S244890AbiCOWsE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Mar 2022 18:41:52 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1AEA5D191;
-        Tue, 15 Mar 2022 15:40:39 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id p184-20020a1c29c1000000b0037f76d8b484so418305wmp.5;
-        Tue, 15 Mar 2022 15:40:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eF7Ju9bnYULQUD4TwuczuGatyNZQSDGQVXAZ0n/JqVM=;
-        b=JzvlDbj0rGw2ex9OZz3+XQ9aH3k/b0BEu3N9rMMDnaT0HhAo1N1AdPu3yyufQX1dvU
-         o5Q00Dh3e6lanAiOLLA3lX5CELdRGeJkjL6jGi8RjWnaVzugda0WFu49sR+D6t7Je/2e
-         2cMt2c/in3BrNJ21ftvLJy70SXbii8cHUsjBCKniu1m1yZ18mTVSNLlOO84jiwgsA+jD
-         pzz+fcoTk2tJH8k4sWHysC1QW+pL3LnhK2Ag0j/jpiFLyNlzHCHdfu64qPuZMk4Ejme4
-         TrCq/reqlXcPq2IcCh8RcbjRh+uO3jtf7ksrlZbvzukZGWAeKpJGdSS56+Dpa2aGgubN
-         inyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eF7Ju9bnYULQUD4TwuczuGatyNZQSDGQVXAZ0n/JqVM=;
-        b=PZqOotiOSQWOswvKFagVJyxe9QgUdyuy21Un68ls8RuWw9TyHElGHu/6VPmAzIqOXc
-         vscXP96ITxHFvLUQ1JTrYaPe9T9SOv5BWeYSbwFQer8RHBUH7TfYOT9kpEJrK+Na9S0M
-         dj4YO4nxw5zLsjPJaG7xlh2upZ0ZWV03Al1SfFS0x5zCR29Qj+gh4w63Q8osI11Ni2ay
-         4eoXkXFL6QRwANpv0HsnNTUDXncau2CtbnrcJzsUlZ8IMKTrV4KVLB3aupP54ZsjLwns
-         U4ETg9WQ3BSOEVsWHbTGpaWfyiSRaTLjEBC92tlsYek3X5NPY3hAznq4vNPdG3hFQab+
-         j9Wg==
-X-Gm-Message-State: AOAM531I8dlNfRS4GB2kS5amTu93iA23Q2kHT44xX7ElbwnhtVSEMM+3
-        IvjK0kWZzXdytk/7XLwIYbg=
-X-Google-Smtp-Source: ABdhPJw2MXRwi/73MA6L129wuYZTRDb820LGgWutg815SGiu09p+4S6TbWm6HQDHIY1UlND+YA6fQA==
-X-Received: by 2002:a05:600c:4408:b0:388:a042:344f with SMTP id u8-20020a05600c440800b00388a042344fmr5099652wmn.52.1647384038341;
-        Tue, 15 Mar 2022 15:40:38 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id f22-20020a1cc916000000b00380d3e49e89sm102234wmb.22.2022.03.15.15.40.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Mar 2022 15:40:38 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-staging@lists.linux.dev
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8192e: Fix spelling mistake "RESQUEST" -> "REQUEST"
-Date:   Tue, 15 Mar 2022 22:40:37 +0000
-Message-Id: <20220315224037.2962063-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Tue, 15 Mar 2022 18:48:04 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1C9013F1C;
+        Tue, 15 Mar 2022 15:46:51 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 82E64B818FA;
+        Tue, 15 Mar 2022 22:46:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DFD8C340E8;
+        Tue, 15 Mar 2022 22:46:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1647384409;
+        bh=N9lCbpEw1q3lRoy24tF2qlRq74xnf7ooDJWrMeDL1EY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=g0NnX8+TBBskcnwrMyXlYjeOCzaFo6VRENFxN4FfJ0dTLKxA7lZm84tm805j+Df37
+         NanO9ZYi8lQ0JIPwcsco+QV72L2TRZkis9Ut+dL5tr0GzhUd4qrl4p4fK2UmHZvvoW
+         i4sqEjIeZnrV23YLjRhlW1Fh0ygPLVbnlOltyBBX0OL6Ss4AUsocmhd6LYDNQ0GFH6
+         fN8AJOTJyc9tPrc3mjxQ5mIvgHekuvrLxJCJtpx7CL8CIm7UPdQF4jwI1NmuzwJ+zz
+         hl2jbd8VX9k6RXAGpGCOMxfLKczz5FBK8cXma3rk449E+tNa+GMHakVsbIi6WET5vm
+         qXRr5nmARyhYQ==
+Received: by pali.im (Postfix)
+        id 0795E824; Tue, 15 Mar 2022 23:46:45 +0100 (CET)
+Date:   Tue, 15 Mar 2022 23:46:45 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] power: supply: bq2415x: Fix spelling mistake "vender" ->
+ "vendor"
+Message-ID: <20220315224645.ytcf7y7awc3q2y6j@pali>
+References: <20220315223700.2961660-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220315223700.2961660-1-colin.i.king@gmail.com>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a netdev_dbg message. Fix it.
+On Tuesday 15 March 2022 22:37:00 Colin Ian King wrote:
+> There are several spelling mistakes in comments, function names
+> and literal strings. Fix these.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/staging/rtl8192e/rtllib_rx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I do not think that there are mistakes.
 
-diff --git a/drivers/staging/rtl8192e/rtllib_rx.c b/drivers/staging/rtl8192e/rtllib_rx.c
-index e3d0a361d370..eb904b42f9c6 100644
---- a/drivers/staging/rtl8192e/rtllib_rx.c
-+++ b/drivers/staging/rtl8192e/rtllib_rx.c
-@@ -2732,7 +2732,7 @@ static void rtllib_rx_mgt(struct rtllib_device *ieee,
- 			      (struct rtllib_probe_response *)header, stats);
- 		break;
- 	case RTLLIB_STYPE_PROBE_REQ:
--		netdev_dbg(ieee->dev, "received PROBE RESQUEST (%d)\n",
-+		netdev_dbg(ieee->dev, "received PROBE REQUEST (%d)\n",
- 			   WLAN_FC_GET_STYPE(le16_to_cpu(header->frame_ctl)));
- 		if ((ieee->softmac_features & IEEE_SOFTMAC_PROBERS) &&
- 		    ((ieee->iw_mode == IW_MODE_ADHOC ||
--- 
-2.35.1
+Please look at page 29 of the official bq24150 datasheet:
+https://www.ti.com/lit/ds/symlink/bq24150.pdf
 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/power/supply/bq2415x_charger.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/power/supply/bq2415x_charger.c b/drivers/power/supply/bq2415x_charger.c
+> index 5724001e66b9..b35700071966 100644
+> --- a/drivers/power/supply/bq2415x_charger.c
+> +++ b/drivers/power/supply/bq2415x_charger.c
+> @@ -71,7 +71,7 @@
+>  #define BQ2415X_BIT_OTG_PL		1
+>  #define BQ2415X_BIT_OTG_EN		0
+>  
+> -/* vender register */
+> +/* vendor register */
+>  #define BQ2415X_MASK_VENDER		(BIT(5)|BIT(6)|BIT(7))
+>  #define BQ2415X_SHIFT_VENDER		5
+>  #define BQ2415X_MASK_PN			(BIT(3)|BIT(4))
+> @@ -491,8 +491,8 @@ static int bq2415x_detect_revision(struct bq2415x_device *bq)
+>  	return -1;
+>  }
+>  
+> -/* return chip vender code */
+> -static int bq2415x_get_vender_code(struct bq2415x_device *bq)
+> +/* return chip vendor code */
+> +static int bq2415x_get_vendor_code(struct bq2415x_device *bq)
+>  {
+>  	int ret;
+>  
+> @@ -1501,9 +1501,9 @@ static int bq2415x_power_supply_init(struct bq2415x_device *bq)
+>  		sprintf(revstr, "1.%d", ret);
+>  
+>  	bq->model = kasprintf(GFP_KERNEL,
+> -				"chip %s, revision %s, vender code %.3d",
+> +				"chip %s, revision %s, vendor code %.3d",
+>  				bq2415x_chip_name[chip], revstr,
+> -				bq2415x_get_vender_code(bq));
+> +				bq2415x_get_vendor_code(bq));
+>  	if (!bq->model) {
+>  		dev_err(bq->dev, "failed to allocate model name\n");
+>  		return -ENOMEM;
+> -- 
+> 2.35.1
+> 
