@@ -2,164 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CA5C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 07:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1558FC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 08:56:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242021AbiCOHBf (ORCPT
+        id S1346260AbiCOI5O (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Mar 2022 03:01:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39984 "EHLO
+        Tue, 15 Mar 2022 04:57:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238981AbiCOHBd (ORCPT
+        with ESMTP id S241081AbiCOI5N (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Mar 2022 03:01:33 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D632449F10;
-        Tue, 15 Mar 2022 00:00:19 -0700 (PDT)
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22F3E09t015173;
-        Tue, 15 Mar 2022 06:59:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : content-type : mime-version; s=corp-2021-07-09;
- bh=3hB3h4dIjrPsOOxe0uPeRqer8F5pUyXXoLcjJznlUr4=;
- b=sm52ZdFp8GWwtaa58LwhhLYIvHFir5lM1VBhi6G2sqKWJl4/RnTUaQS/bCRkGOzSI547
- 2ySR8naU7T07QWn1v4SmTJOnVnIbQQJiXm9C0PjcrjcMsJTBjn8WOqiyndONaTcXKNjH
- /bGQWh16WFHwci02AA4bOpB2uwap9gg5x9i06qRtjfJC/0D/T/FvGhdj4Z/KBgyjeE5H
- zkzvDxx/xdZ+Xr79xf/Asa9XIqbeq06L7Jh6B2tXzHoJmqVQF4Ohu/KaniA6ppLbbDht
- jCmvdmG1hHkOVkWzAELnmQrBAh6BQj2J697TxJEdSQ/ajn0HPBEBLscba1d2JmxHbJQi AA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3et60rj6xy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Mar 2022 06:59:58 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 22F6tpa5007575;
-        Tue, 15 Mar 2022 06:59:57 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2174.outbound.protection.outlook.com [104.47.57.174])
-        by aserp3020.oracle.com with ESMTP id 3et64jpbnc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Mar 2022 06:59:57 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GFP7NQlUFdmy1parmxZyri/Y77y6ida724iBQz2lHLu2oMa+cKa6RChgTdD1x9cmnuUTsQNCmLP3Rjbpe01CfLD4PiWuPpHQ9tBYjv4vr4Htqjz0GHYq8CXV/5G3MXehxY+zwffX8Yau4pEzgDYVekFevzfmdJxzyaSoacnndVlNd9m8SCSOIoE9pK6Puc5E+vL2yozbMQMgBPTNCexVWnaIZtrvVCWJ38bpEuD+XS5Kba9uHG553cY/ubkYkCsbb/8DOuiG2tvBz/hSP7XLM7v36TeTEgrHjBeui6xvo2k07lwOhD0pOD/z2McrNym7SzLZ4rO7SARhQnMa7aSfCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3hB3h4dIjrPsOOxe0uPeRqer8F5pUyXXoLcjJznlUr4=;
- b=oGarCkdAGB64t5X5r8qGprdjP0JwfLK14imNYItoW2qPbsrgX5o7M/tXIT4JryL1qbwHnTFl9o3WVENCYMhom6eAosStDN9awz/WCVSMG/B9eISU380jfxf8fM65kqtCEcPGK2tpet9spSvzYOXj7sB4IPWxMsrNN2zr8k5BR1cV4RcmnvwUWddgF+OQgMQhimJ1C/jzZtNZB4NlqLVAZzeXNMLEttAExfNGXoJxU1jTDD3Xg83jR6igeLkRfLCa8qDBeksJA0LSWmqWgfg37hewK1unVvCFy+sGH5KcUpOf5m8aNPqfft6ld+Nu6A1iFmJeuGNh7gq4hCZvopgpLw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Tue, 15 Mar 2022 04:57:13 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E4904D9C2;
+        Tue, 15 Mar 2022 01:56:01 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id r6so27413401wrr.2;
+        Tue, 15 Mar 2022 01:56:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3hB3h4dIjrPsOOxe0uPeRqer8F5pUyXXoLcjJznlUr4=;
- b=WN/IlNTRPcHbGBurqVhrP9BYnGDDj5fnakEFXTjcjxbvzuQgEBeggFp19snb5g2X3ymSiBs0j/OKpd+LfATXBLc/vHbirq+EdqeRpwCInXLn3ci5XAZm1I6BiT6TKKUHdB1I5+wFBTsbmdmH5l9JqNSSafNAkBekXeZwVbcfu3I=
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28) by CH2PR10MB4149.namprd10.prod.outlook.com
- (2603:10b6:610:a7::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5061.22; Tue, 15 Mar
- 2022 06:59:55 +0000
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::2c3d:92b5:42b3:c1c5]) by MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::2c3d:92b5:42b3:c1c5%4]) with mapi id 15.20.5061.022; Tue, 15 Mar 2022
- 06:59:55 +0000
-Date:   Tue, 15 Mar 2022 09:59:44 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Shawn Lin <shawn.lin@rock-chips.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] PCI: rockchip: fix find_first_zero_bit() limit
-Message-ID: <20220315065944.GB13572@kili>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: ZR0P278CA0188.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:44::20) To MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 020cdfed-3b95-43db-ab20-08da06516950
-X-MS-TrafficTypeDiagnostic: CH2PR10MB4149:EE_
-X-Microsoft-Antispam-PRVS: <CH2PR10MB41499176687BBA75B1B72C238E109@CH2PR10MB4149.namprd10.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Tv64KakBwq15fUEGG+AtOXg20DzIYoLkNmKFbQF6FIX2hjUq7plGlPrPDrhYFBjwJEZpsX6pjKsaRTQj8Mvn/RcMunidGTz1DDuVArjPQRjfBeBeUF6yIDBROGPFASBdtWkijREwCiQU7JMU4Ib5NS77R1sgRUHEAHAIU+Ef677QghjW5fKDg2pA5boXOt7LCnBlZQnF4axG4W8d1Sz0J0R72BEfFZgH6mQWJYSsjHUJBwTPoXzY+pD6Os0/frubssraAGphDKuJI+Rb+9lSOkOI6CQmvMjwVOVJ0aEnSdsfFUlFSD+27+YsB3NnrpzLXbtELDrvmcqF5kQ/cOOtL8CKPoN1SilkECF53PCm4sRNipZc+08N4sPzDDU1PVg4W25hG+wJFZD4iRn7tHSB4tjdMvQ5U2+Zgr17UVYNKc5Wn4qj9xYTUdL3z3X0HNeVpmeZ9OrnNFTcL2WGMsa/V/mAo2NxDmFRTDJ350b1UUxelk5ijgFOojzutHZHRJouFPWYh1JHNdhy+1Am6wFGmIgy0pNuq8ikn2YHSsZJeMMwQmVqh4tps5ccIaTkk6EBKJLkMVOq3soA/k0NUes4M9he0pHK8PSFMmW040OqiVF9yNti41BpiTZ8LcOBX0Cg+1yag7Z7wlKBA5cuW4a13JxuEnXTynjiHyqb2cYjnZE2RHuv2x9w3xwI65ZAEGMgjp6L9sr47h4svnnKDNiMug==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(366004)(6916009)(54906003)(316002)(33656002)(66946007)(33716001)(508600001)(8936002)(44832011)(6486002)(4744005)(66476007)(5660300002)(2906002)(38100700002)(38350700002)(8676002)(4326008)(66556008)(86362001)(6666004)(9686003)(1076003)(26005)(6512007)(6506007)(83380400001)(186003)(52116002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ne+4RzvQIU253qqW29VBef6Emi5OOMV80eZf2h+1qjsYB5RtBcIgxUuDLTsz?=
- =?us-ascii?Q?frS2fdz+xzYwg7VZuROFmv6/Lo6c0YlRVXmAk3KBlkt67staLTdTdp1gQASA?=
- =?us-ascii?Q?ZCvIy+0d44/vIwze9wKVr7sp3OyFe7/QLwtwDc+m/nqvq1X0bRMIpCt/EMri?=
- =?us-ascii?Q?hAHX9XjOtOcxRp+9CYO74TzSAGbFDEbSgOwEm4y/g3CaSW1dhLMNfEFYS85p?=
- =?us-ascii?Q?HkRbCESMS2iau2DnGTO6kSFJPqnBC4No3LG7grLU7UgGLGpwpXVJMJBIraK1?=
- =?us-ascii?Q?cOLPbmDeKcQVrjrJssbrSW4/I9X/NPKsLOhUkCnBUgJWwlXd7It0TFsFqZvX?=
- =?us-ascii?Q?y75oJNy5cJwpnpY2kGsCXPDf5kQmFHDWt02CIyK8wcGlkh31PDUdk0zYCIOd?=
- =?us-ascii?Q?cCXoTogITLgxkJYd6MZhvJ57mkUwmsu4haDMo+B20Jt5psWE6rgENlCA+xYv?=
- =?us-ascii?Q?7qcToQvhTmLQV9rq+qOk4kia1KKEavDAfdxmbEw4EZXgKOtC+ElF+XKHE0EU?=
- =?us-ascii?Q?M5FrkTZefD87+V2ejf2FR00mckhETnKBAdOTem09L/qFGypGH2bOftZghQJB?=
- =?us-ascii?Q?MTJNw/klgRwR2gYKKIB4587h8blhSB29ybOGxYXjVq6deULdT+2/O4cSjNkz?=
- =?us-ascii?Q?ggTSfB1IirgzM54wtxyOgY4mvPPIEgFWvbkimSiboTXm1pANgka7srOP4Gps?=
- =?us-ascii?Q?+lsSNy4HY8lIwY1rCZVz4jULy3eKWOh/sxA7A3o1KbW+VP8Obwtm7sTjnduj?=
- =?us-ascii?Q?4pAZqJjraf9XK5te1zIYxb9jcrFhsvfTdRLopZUVTrz3q545E0Wd9NurhnyP?=
- =?us-ascii?Q?kiiKJ7luYz3rWhLc4LpTMHhldT+zDVW8WXi4H73jjpuylOSdIvYeKcoPqRPd?=
- =?us-ascii?Q?9gOzVTGB5WEI3INCqRApu+rA/vWCq2FnWjPvJaNNXieLyQQmwieCS8uY5oaP?=
- =?us-ascii?Q?AnNi9tXhn6/veNZA2hIHpmIL6fyEK/+CheRCd+FegDve19yRrXoJyXDT9fAw?=
- =?us-ascii?Q?KV/uiGlJwKJd1kDyW+AXvGoTvbBdnz7wD86Pg3XoWuTrloP+er52+QFLTj2C?=
- =?us-ascii?Q?ik+cJhqeTtlQYsesoTZioSEMslFL79JkvOrC6t0hxwv/WkUHTwm2v+q+nmG2?=
- =?us-ascii?Q?J/JAZ3/C4GoiRvnIgRckEpITy+JbOgXONFB/USKyhP83OnUUVzctZmV+BeQ4?=
- =?us-ascii?Q?n9k6NVqmL+xp8g8FdirIvEYDQs08OHU3eRys9Rnr7+FTU5cddt6hU9xoYPFu?=
- =?us-ascii?Q?3lET50uoUpDwmDdMHj/ZCoONSG5758HuwzlqOSfj3UDhoDywKk+NMfEJ63K5?=
- =?us-ascii?Q?TxK50QtsX4EMu9hIQX78C4qTi8Wfmnnm+5dVDm5iIhlUeEwi1HvFbAnON4Om?=
- =?us-ascii?Q?T5vPcvnffCWkZUYJx4fnUQ/4CjGSIgt468txxvilhV0eNJ/sZ3Enm8O5Mcgv?=
- =?us-ascii?Q?XSgyyZ/ID+IbUI5TpJoL54jzswcpYnay7Z5Jlmy1K5Ycy+j2jzViEw=3D=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 020cdfed-3b95-43db-ab20-08da06516950
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Mar 2022 06:59:55.8170
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2/9EI4DF3R0k/rJ9fSVnOqpXu3KWLQg9gYjcemYVN38V1CwAA3pOwy4+nvoSZZ4PSklpn8qZDdz9QZKF1Sh/Xe2eyVQhPGX/2PTnV1AwhAo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB4149
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10286 signatures=693139
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
- malwarescore=0 mlxscore=0 suspectscore=0 spamscore=0 bulkscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2203150045
-X-Proofpoint-ORIG-GUID: BwjJLdgh8BBoEOpZQT52M9OeMzYuxalA
-X-Proofpoint-GUID: BwjJLdgh8BBoEOpZQT52M9OeMzYuxalA
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=+9b1eA94wfP4i6MAVgWuHZj4pXzpE1FtolQLRVci5l0=;
+        b=QjEfVsX4+qdHdmOCh+9K0nGg5N8WZAjOHXYq/YjA5UNMGT2h6ZKP4507RjVXer1NBK
+         RpAOgKQL7NByXozBw9ay0z5UVzajz8cuop3HQZBcJ2jRUePmXcSoAabjxLnrLYV7D0Iu
+         SQd+vcI/UWSTxGBs7l+aEzPP7GPhQ0zzP2g4RgtIqRTPiLhoUBAhD307ZepvwuFtujAM
+         13bO6qMdkyrv1Xr5Bx2WoEt6e0t9gNXu659MjPa6ICMEPv25WBsxqw6nCcqG9XRPOQYj
+         Mqn8KGDmYS+JIzdJ6oNWagOWr7L5xwJgWth4GfV0D1FdUyXXDL2IoIc0hLs5OyXY9iEu
+         7CnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=+9b1eA94wfP4i6MAVgWuHZj4pXzpE1FtolQLRVci5l0=;
+        b=QFYOdAvMoryPLGmbsk9NYz+1r0skP2l6iR+ir2chQqsAbGQQwZrGpJ/ERV0nAFVwgL
+         z+xtfZwTV1ZBEPuue49azPjDPo4dj40rJN0GCh3c0F1OhGmrI3vLQEf6Ku8zYX7glxlQ
+         qRbOGRh2Hc2OzL4VYfwfvvlBgVHPqbG7AHRs/d4tH8T18w3pMouXTmcHF31uiyMAQbt4
+         pHcfd6Z1r8H7Z2PjKRv4ZHfTjkk83bpbA00/1QV1lDFxc4GqIjVEEtckcGAjpgrpBYPD
+         WIAPEKAVFJ7qe6z8+4nq0LTw5jsEPbE6DbmpLK5LFZ5GJPU4WV2Jye/EnpSJJZIjyddk
+         XpKA==
+X-Gm-Message-State: AOAM531+gogDYm/W2FWCX+rbN/1Rb72tLxdulZ2huOXqB34KtsILOmj/
+        xcgZTXqQMX60mY0544iBgK4=
+X-Google-Smtp-Source: ABdhPJwiO4fI4TEOC9OkpnPcoHgV1zvTwwzhG81K66/p6v79SLGEfQaxkFswTwTdO5a/5WYnJcuIcQ==
+X-Received: by 2002:a05:6000:15c3:b0:203:b7a0:ae6b with SMTP id y3-20020a05600015c300b00203b7a0ae6bmr6538739wry.692.1647334559883;
+        Tue, 15 Mar 2022 01:55:59 -0700 (PDT)
+Received: from felia.fritz.box (200116b8264e940055af9bf2b8e4e824.dip.versatel-1u1.de. [2001:16b8:264e:9400:55af:9bf2:b8e4:e824])
+        by smtp.gmail.com with ESMTPSA id r4-20020a1c2b04000000b0038a0e15ee13sm1698724wmr.8.2022.03.15.01.55.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Mar 2022 01:55:59 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     "Paul E . McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org
+Cc:     Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] srcu: drop the needless initialization in srcu_gp_start()
+Date:   Tue, 15 Mar 2022 09:55:49 +0100
+Message-Id: <20220315085549.22033-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The ep->ob_region_map bitmap is a long and it has BITS_PER_LONG bits.
+Commit 9c7ef4c30f12 ("srcu: Make Tree SRCU able to operate without snp_node
+array") initializes the local variable sdp differently depending on the
+srcu's state in srcu_gp_start().
 
-Fixes: cf590b078391 ("PCI: rockchip: Add EP driver for Rockchip PCIe controller")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Hence, the initialization of sdp with the variable definition is not used
+before its second initialization.
+
+Drop the needless initialization in srcu_gp_start() to have clear code.
+
+No functional change. Some changes in the resulting object code due to
+various rearrangements by the compiler.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- drivers/pci/controller/pcie-rockchip-ep.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Paul, please pick this minor non-urgent clean-up patch.
 
-diff --git a/drivers/pci/controller/pcie-rockchip-ep.c b/drivers/pci/controller/pcie-rockchip-ep.c
-index 5fb9ce6e536e..d1a200b93b2b 100644
---- a/drivers/pci/controller/pcie-rockchip-ep.c
-+++ b/drivers/pci/controller/pcie-rockchip-ep.c
-@@ -264,8 +264,7 @@ static int rockchip_pcie_ep_map_addr(struct pci_epc *epc, u8 fn, u8 vfn,
- 	struct rockchip_pcie *pcie = &ep->rockchip;
- 	u32 r;
+
+ kernel/rcu/srcutree.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+index 328dd9ba9037..470da67325d6 100644
+--- a/kernel/rcu/srcutree.c
++++ b/kernel/rcu/srcutree.c
+@@ -598,7 +598,7 @@ EXPORT_SYMBOL_GPL(__srcu_read_unlock);
+  */
+ static void srcu_gp_start(struct srcu_struct *ssp)
+ {
+-	struct srcu_data *sdp = this_cpu_ptr(ssp->sda);
++	struct srcu_data *sdp;
+ 	int state;
  
--	r = find_first_zero_bit(&ep->ob_region_map,
--				sizeof(ep->ob_region_map) * BITS_PER_LONG);
-+	r = find_first_zero_bit(&ep->ob_region_map, BITS_PER_LONG);
- 	/*
- 	 * Region 0 is reserved for configuration space and shouldn't
- 	 * be used elsewhere per TRM, so leave it out.
+ 	if (smp_load_acquire(&ssp->srcu_size_state) < SRCU_SIZE_WAIT_BARRIER)
 -- 
-2.20.1
+2.17.1
 
