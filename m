@@ -2,64 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A17B0C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 22:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D98CCC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 22:56:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352383AbiCOWuR (ORCPT
+        id S1349312AbiCOW6J (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Mar 2022 18:50:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50622 "EHLO
+        Tue, 15 Mar 2022 18:58:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352377AbiCOWuP (ORCPT
+        with ESMTP id S242097AbiCOW6G (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Mar 2022 18:50:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 296175D1A8;
-        Tue, 15 Mar 2022 15:49:03 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BBF6C61463;
-        Tue, 15 Mar 2022 22:49:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C0F4C340E8;
-        Tue, 15 Mar 2022 22:49:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647384542;
-        bh=g0OpN289mv7nvfnKGCGmf+rrL1H85SzTDW50hzuAF5s=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=BC+IM1hkmFrODWmov045SpoXC9QQVPeujNrAhIG4piW99GhYirG4aiGlQJkyprmSG
-         pxiMx7RGuROBucC8H7SRp6yj6ag7CaL1w+e+MwWrqLx6ZPfbWV2kdt8BN4IKMkEXzc
-         rzECpAMIr/4zrHiy6Aw7WjJqaRdFEe2mSeeX6S+DFe35UHWiW2MNSuRQA4Mzv3uzTk
-         TxDN4FnT5uFglldJMcNGd5AeMKIocxaAolZOGdI5gOE3ajAwJ0kNKEjY1IZFXBDHxS
-         WZErS74bORdtSPbvyjzqzsRzvJHoXtS7+ihMPefj1NuLfHua65CHHpR9nSo5oYxJRz
-         3CYlzYgGghnfg==
-Content-Type: text/plain; charset="utf-8"
+        Tue, 15 Mar 2022 18:58:06 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F9705D5E8;
+        Tue, 15 Mar 2022 15:56:54 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id r64so298512wmr.4;
+        Tue, 15 Mar 2022 15:56:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=24VtKr5EZlRUAniNrHl7Vqv7yBDi06kzFW/0QHQhnB8=;
+        b=iOXBAO77/3BxYFKnUR3HJOj0oYwu2mPCVP8ro8d1TeO7WOc5+Kh2QIm4LdvrPudqmP
+         qrqrcW3y/qQlOeFsejQIYAyQ2MR3JdPg41qlgHh+dFDn7Qx1mXD7adIxjt9DueUwZbvj
+         CvaPHqLgeNznzoSypSlSrZJ3XB58BKfJFy7sDlG3ehc+eLpWCzcKTpDmOce7MUgDk6+6
+         pNM+bgxX5z//NS4rZStaKpNhd3F0DIQiXJrZXl3VkfYRjb0rlrfRsH6BYWe8YieIzROL
+         0lZIkySK+NCTeybzHBE/f87UQT+tv7b//Swo2qeX9tiY+wSNqyKfuEUAKvq1lpmXf00c
+         w+zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=24VtKr5EZlRUAniNrHl7Vqv7yBDi06kzFW/0QHQhnB8=;
+        b=O62r/36SdGqjKQYypp3ZBQuJdq7BQ7uWsSfkxaHn6NntU6H5zXkvnqWs20Gx6xOH5s
+         20n8xMUsPBgnLisAMvjyQQABMf+Bd7eFAwywk8PkBU3osa7mkB8rM1iiD5szakFEx0za
+         gymXXbxWBPgUMqu2KlBEeyGVeD/l48Mp+2GbhQ8td/PdVPr1p2DSYZlm46wIJhNz53gL
+         LswRnBpJrOLRgFJmgT0vkDd3wcMSSGCl+yDWL7r7p1V/D6CpKyLEGvhNx+uBIXDSJ0pa
+         arQoD5cd2g4qS4qz7W/746LREU/rKiufAArcaUnA+VXwQHbSq6No2apXDI1Jjx6aH2tT
+         vTNw==
+X-Gm-Message-State: AOAM531cYPnOBkxUzquua/6oBCy0FA99vMolLqr2ucLNmkl98sk9P+3t
+        B1fxOVcDfKBFcLBazoVHDug=
+X-Google-Smtp-Source: ABdhPJxxZGPsRiBZgZTSNbvIqcIom80atjiTUxAC5vg9WqZDEpWBmtueEfZ+7k4YNsyBiUizj6d+sA==
+X-Received: by 2002:a7b:c844:0:b0:37b:b986:7726 with SMTP id c4-20020a7bc844000000b0037bb9867726mr5167966wml.160.1647385012614;
+        Tue, 15 Mar 2022 15:56:52 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id bg18-20020a05600c3c9200b0037c2ef07493sm150641wmb.3.2022.03.15.15.56.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Mar 2022 15:56:52 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] kselftests/sched: Fix spelling mistake "hiearchy" -> "hierarchy"
+Date:   Tue, 15 Mar 2022 22:56:51 +0000
+Message-Id: <20220315225651.2963692-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220314115354.144023-16-Julia.Lawall@inria.fr>
-References: <20220314115354.144023-1-Julia.Lawall@inria.fr> <20220314115354.144023-16-Julia.Lawall@inria.fr>
-Subject: Re: [PATCH 15/30] clk: qcom: sm6125-gcc: fix typos in comments
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Andy Gross <agross@kernel.org>,
-        Julia Lawall <Julia.Lawall@inria.fr>
-Date:   Tue, 15 Mar 2022 15:49:00 -0700
-User-Agent: alot/0.10
-Message-Id: <20220315224902.1C0F4C340E8@smtp.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Quoting Julia Lawall (2022-03-14 04:53:39)
-> Various spelling mistakes in comments.
-> Detected with the help of Coccinelle.
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
->=20
-> ---
+There is a spelling mistake in a message. Fix it.
 
-Applied to clk-next
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/testing/selftests/sched/cs_prctl_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/sched/cs_prctl_test.c b/tools/testing/selftests/sched/cs_prctl_test.c
+index 8109b17dc764..62b579b601bf 100644
+--- a/tools/testing/selftests/sched/cs_prctl_test.c
++++ b/tools/testing/selftests/sched/cs_prctl_test.c
+@@ -267,7 +267,7 @@ int main(int argc, char *argv[])
+ 	if (setpgid(0, 0) != 0)
+ 		handle_error("process group");
+ 
+-	printf("\n## Create a thread/process/process group hiearchy\n");
++	printf("\n## Create a thread/process/process group hierarchy\n");
+ 	create_processes(num_processes, num_threads, procs);
+ 	need_cleanup = 1;
+ 	disp_processes(num_processes, procs);
+-- 
+2.35.1
+
