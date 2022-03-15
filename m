@@ -2,160 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3730BC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 15:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B71C8C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 15 Mar 2022 15:48:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349690AbiCOPl6 (ORCPT
+        id S1349733AbiCOPt7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 15 Mar 2022 11:41:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48082 "EHLO
+        Tue, 15 Mar 2022 11:49:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349442AbiCOPl5 (ORCPT
+        with ESMTP id S1343895AbiCOPt6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 15 Mar 2022 11:41:57 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC7B053B54;
-        Tue, 15 Mar 2022 08:40:44 -0700 (PDT)
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22FFRTb3026512;
-        Tue, 15 Mar 2022 15:40:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : content-type : in-reply-to :
- mime-version; s=corp-2021-07-09;
- bh=5vaK2eq89aC915XbI1RBKSb6iYEGRJnkHkVFpL1heAQ=;
- b=Us4oLdBRTqSMFXflFBdGIph3u1+trdnJqzP8lCco5tCUnTk6Il/mNX4biVApYgm96Bzg
- /1UmnLypWZmYK08DctGPno6akINFdjlLSkiaJQ6Q17JpJ8PGCT8NFPPYBHEc5/beWoz1
- 2HH9AMMdxphJBAtPpuX0s7yQCdGaYdbMW8ibq28tZIFPWvODK1YAR0QlSVdtggq79qTZ
- uhbfFw7Ng8BddSIdxBUj25PtlN6awG55fBYxCbs5S3lSD+q2j8AtsCv0G4VL92jhBRmE
- yLvUYlabxhZU6kvZzxY1vzqtgeZfpGXiuj8yK6uqE0nyTZiK1wwGRw81098P0vsuJKf/ 1Q== 
-Received: from aserp3030.oracle.com ([141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3et60rkj6t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Mar 2022 15:40:33 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 22FFWMnq133698;
-        Tue, 15 Mar 2022 15:40:32 GMT
-Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam07lp2049.outbound.protection.outlook.com [104.47.51.49])
-        by aserp3030.oracle.com with ESMTP id 3et64tq28e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Mar 2022 15:40:32 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CSgyfLNG6oNqUlQHaGXym6u9UgX6ILYIp8JUgEKQ8hLS8/XGyWGrO3jXjuFQuwHRlZtfwX/CxKkGH6g/ywSovsU9unykSIHHvMh0DdbL/mpUIY62iCaNQg0exv41OhnpUfsW3LegkUoHEtvhhH13qtsLm9iwNwUST6ck/RUQyIh75Hjqs7sby+QrOHOuFCwIBeCgftIukUpxNmJb71ewxSQ9Z+Bx9UE/C7gkJwVezhp+2wisu/drZ5l6nQq0HovOuiCyJVpuM7XNfKCI0vaDyw7+2UtvDsVVG/OvLsPF5gv/VawN2bhQ+/sly60D9Url5IibITYQxhHVZPv7/F2I6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5vaK2eq89aC915XbI1RBKSb6iYEGRJnkHkVFpL1heAQ=;
- b=oJjr0V1VfX6sXz4Kt+IUbyPb+61FfTmsDla3tYhHXQ+9AxIqQp99AVgTTsDgKEh1RfYtLGAxyc5g1RMmFYoY6lkFhvu2SJ9ZIr7V0GhKBGTV0RG/dDjn6GAjtnJba4ES8RkU9JZ9y5PLKbF554U2n5Dfx1vAfzXW4PPz/vPuz4BNSvHlxSrJQq9d6IZVT7CP1bdyk9A4wBVwXA6hLy0h7NdOk86qbWVjH6bDJnzBNayZ+YghvZE7/MRVzUDKpGAc+LCfEB5o/ome0135vHlpzUQelxgAn1WLmDyCVX5a1ZilkBeY0ZYj46CWn2bturRK4DGnfk81jn+Iz5OzLkR7Ag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Tue, 15 Mar 2022 11:49:58 -0400
+Received: from mail-oo1-xc30.google.com (mail-oo1-xc30.google.com [IPv6:2607:f8b0:4864:20::c30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AA114093F;
+        Tue, 15 Mar 2022 08:48:47 -0700 (PDT)
+Received: by mail-oo1-xc30.google.com with SMTP id n5-20020a4a9545000000b0031d45a442feso24865741ooi.3;
+        Tue, 15 Mar 2022 08:48:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5vaK2eq89aC915XbI1RBKSb6iYEGRJnkHkVFpL1heAQ=;
- b=DxWlNJVaMRrKHM4gRtqVxGySWJmh9p5W8yShEyyOgCuTMDVzuSfzs95FCJfboaw9oyQA/+vvOJLSN6ZtvLOhy6ub+KAWQfEtOlbncDcoEbiKs2I8z6u4Zk2jl203pR37zeE03bU88FhfXifjo8QtIrrJZ0nxGgA1LfoORD3+X6k=
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28) by CO1PR10MB4594.namprd10.prod.outlook.com
- (2603:10b6:303:9a::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5081.14; Tue, 15 Mar
- 2022 15:40:31 +0000
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::2c3d:92b5:42b3:c1c5]) by MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::2c3d:92b5:42b3:c1c5%4]) with mapi id 15.20.5061.022; Tue, 15 Mar 2022
- 15:40:30 +0000
-Date:   Tue, 15 Mar 2022 18:40:02 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     kernel test robot <lkp@intel.com>
-Cc:     Dan Carpenter <error27@gmail.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Subject: Re: [PATCH] NFSD: prevent integer overflow on 32 bit systems
-Message-ID: <20220315154002.GO3293@kadam>
-References: <20220314140958.GE30883@kili>
- <202203150321.2NA8SWEv-lkp@intel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202203150321.2NA8SWEv-lkp@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: JNAP275CA0014.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:4c::19)
- To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0oBLK/WFMknYvKURGJIli6IvZDSQNi3zYIXFNVj9K60=;
+        b=nYXBpvzGCEAvTjaVlPXhhHMWazEYvb5pBevKdKZrjbGvbas2C9XkIkGgKnPSBJx/OF
+         ujaLhVNXscYH6hsNZWsciYzPdDO19U+K3SxeC0+Uqu+Jfr/qH9xiKYGckvY/7cXtP5lf
+         RCA/RZfA0X8TdmrbV3KdffCBCpo/II30WreXLAhARRalIdmIed+r1m3QitVwpy2IwCMs
+         62SDjBWk17V+nXt4xMdulGtjv16tb6M8G7nGa9xeZz3/hszDY/5SZpuIF7RnPuTy11BY
+         KCRX/TRy7f0oVaCFoDOTllgiJoJBhSP5ihb0GLutPg4qtuU6eqSGqPKLGO6jYdF+t/KH
+         HIMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0oBLK/WFMknYvKURGJIli6IvZDSQNi3zYIXFNVj9K60=;
+        b=Fsgi7nrXK27ipj5UmQcFHjj5vt9ZN3n8oVZZogK/OwmgIZW5XF4nPk8HKuvZsx8PTL
+         msTGoLk9PzlAYN32vRrgf2jLTM2iszfACnzAO3JabNln4KXS8R4tOcoB4FAHtVEYIMaL
+         TzwXeFFlj8xMYPqBDBkO2ibU4Z4nEu7VK07E7nX11S1lry/wNC1WkX3q4y/PYn8W/GsO
+         v5FPK10Xm+v7uEbzTTvgfGjVHFzIpQmLbFv+sbkygxUl8bLrdOG20p1/pCJJXbKfZzaW
+         hxaCDzhsBs4eu7yZXzU9VCzWBqRLIW0TY3WubO9xo+JSAU408sTD7UyeG2TMuMZlZgWx
+         Hgnw==
+X-Gm-Message-State: AOAM531O5u/RH1Y1t89ga/BmYsZLLDYNtVv2std9vqMePPVdy7Diw386
+        fnBF1vOnnVlvgHAWCQnVVSC119+D+GLKpVU1vY5U98zV
+X-Google-Smtp-Source: ABdhPJwpXOt0Mp8zlogrF70BHsQMg5Vyj96T9pKbpTFbnXrM3doKh9nhd30RmJatM32y9hkuDtFUuCQXArbWCE8AUXE=
+X-Received: by 2002:a05:6870:630c:b0:da:b3f:324d with SMTP id
+ s12-20020a056870630c00b000da0b3f324dmr1816757oao.253.1647359326455; Tue, 15
+ Mar 2022 08:48:46 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 81a72c02-6b1f-48b5-ca05-08da069a22e9
-X-MS-TrafficTypeDiagnostic: CO1PR10MB4594:EE_
-X-Microsoft-Antispam-PRVS: <CO1PR10MB45940A67288FAFED9436B4F68E109@CO1PR10MB4594.namprd10.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: NaL+qwL2nl/Z6KjcuBSL5iDsyTYU6EsVqYZIJZncMIriLJvd/O3bzZz1/H8dn/K9SUX+F4PceQVNChaFJuHcrEcHhf7TYH6RWBJdWGQiN0GKveBVH3aD2V3hdTGnuuvOe/wrOYa8h8Qtn5VSqz5WVEEadYYbT3aZJloJ6aAz4NI87RKdVawpwvGpRk9OqwlHreSOIPcjgDICrGbd5SRkY7UwRTEldvnCipHTIZad04M5FGRfluVFxVCwtxCXpiGEhP6djY28AwD7KHN5595iV6X/i1Xpk/J+VEtq+ecr85mMequnlczuPUgm3QcKdRTiVbg4nv/4ArvYZIetytv0doSxC0jeRX+YAhW9Sn2i4BTVJRTBFLP3WcoI52TBAfsrGt8IKDnU2Gn3Ei+mkuDybl1i/N8NpfdYBYw0e1qe8cCz/OHI+rCX7Nm7E+6APNoGSA+noADln+TYQFk+OY6/6u1X8257CHz6Jouv+5UlG5g7EJXGycrNornK/8blX/Vp8VyTnxpm9LKUmuLPpFQiezik/y0ktm9jbJHBBfa/AjTa2eb4fXSzgqIumlyRuiLJZEyisjtqaP40G2DWHBzwO4j0lBHZR9drsThBceNioq366JU1ulyGXpwg0d5hrkqbO4X3289Oyr3msWVo/lnmxOIGoXi7UP8ydaZvNRsp1sm6bMP8YBcfegMEt/h5e0BQbTImLTr1+iQAK/JnSeKpYw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(366004)(2906002)(4744005)(6486002)(44832011)(186003)(26005)(5660300002)(8936002)(1076003)(107886003)(6666004)(508600001)(52116002)(4326008)(86362001)(33656002)(6506007)(54906003)(9686003)(316002)(6512007)(66946007)(66476007)(66556008)(33716001)(8676002)(38350700002)(38100700002)(83380400001)(6916009);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?OdWQvJswrKl5yItBeb4DC5srumjjNKAIthPuQSocUZQ1mmjTjA9KTa/v594N?=
- =?us-ascii?Q?IIjNZWGUVfPnGwD2z7UgrjGVe4UKsW+CDcpw4csyplrw+VxwZPrZn/JCYF6H?=
- =?us-ascii?Q?d0s2mPT+K8YVorqct4LMtpxqt2igBc1cYyYSbCXofhppApBYhxpScOI04IJv?=
- =?us-ascii?Q?vukN4MiYPVvYFzaKTiC+E0gn1burLvccE1UGnVtRYTMR6xBDbix+9CTiPRN8?=
- =?us-ascii?Q?4KH0V6BQbAf8iX7ppN+WD6ugc6mQePF41Fk8WFzoeV/WizisWA4oTWYExrby?=
- =?us-ascii?Q?Yp5gsMhhSqQwCScqftV434nB4U0GQN1g0mMsLaI5g4fL0+saarbOaS0W/vvF?=
- =?us-ascii?Q?jM2FMGJTKsz83qO0C0LKK0iFcL/nkDiQ3UuiDYeKLIx6RBdKC8iYItdOZ4c5?=
- =?us-ascii?Q?OSYS2TOj3JXYsfhjhCrL6t1JcqcwBU9fjmV+CGQ/TH9oXaFXgNZCPYLHnDaY?=
- =?us-ascii?Q?tQuIuvB1aLdsX1xq9IkEkmVNXjlVW4JE3GynpjtcVxAQj+MR/YEqdWvrxoJR?=
- =?us-ascii?Q?I6yHL+N/JW49GBamGaNY641Hfvgw7QV5zWoA38mtOXLY8g1/pXoMThRKOSIG?=
- =?us-ascii?Q?Wpq6FpImJXsWscVM70guSxueoh7tlLxF2QzLwt8dLGv3wGdKPN+UfmwoSxzH?=
- =?us-ascii?Q?r71WXdWil3ewlAZ2tJRN8HIZtNGXMnp/nYtuu1LkucNHPKMjvQ0jaRMMR4mk?=
- =?us-ascii?Q?65mxzfSB4Ff9qpkvvEmQmMiN063DMs7sfSgooedoESpa5O6kaykfSRnnBWf4?=
- =?us-ascii?Q?zhbJ+4ojJYdVv5I/SagBWCHtAIlCzsLAqYOvO0VahyjssjwcWKR4QbzfyO1O?=
- =?us-ascii?Q?s5YCHRB90CBJy0urtKQxvU3TFZA0xD7Z1D7vPVndk843GJ+78LLSNyXs6X6R?=
- =?us-ascii?Q?vtyyxE8neFvgPgcOj57W0tD8mlSTyVlehaLqkEX6ugTceMHqc4aazGye3yWu?=
- =?us-ascii?Q?UmRAMbON6lmdwdHTdv6XLxYNfxb+QyRArfvNSQuqCYyYQ+XdIp3tt/KOtHcs?=
- =?us-ascii?Q?6nJUzS7So/PB3xkYjU/DhcvWEMOOCpnyU8NOtV1UCd6FLrh0CqnuJEykKzZ4?=
- =?us-ascii?Q?4IWJEiakOwnuHpIWQr0l7shEEsBQJH/VBaKuIt/judArRakEM2aLl3gbbINO?=
- =?us-ascii?Q?MuDjtWM8catuNgaGz64w70i76lacqYjVe5AD1pX5B+uZVY5u82Yoi8/lm2I3?=
- =?us-ascii?Q?eakSbS4XcbnN5oZbThszxvxNjwdHOeI72E80IC40EE/SbMniKfKswoE28YXY?=
- =?us-ascii?Q?TIvU3uolIPER3WZwh7hTlsR/MT9QRXVcrdwblyE3tNsewEBqaIfCzqceOQGT?=
- =?us-ascii?Q?gRRWSBHqDNAPb1eUM0UlO/Q4z6Ic47TQezlBS47z1bKcIZEz8y68zH9o3vUI?=
- =?us-ascii?Q?LKKPsrrlOy1CW9q4jz4JJW/gGz36X3Qc6gKPneds2seO9zPCGcMC3EIYjWa8?=
- =?us-ascii?Q?wYs+UCvzROTLhm6oCXV9sr+zYRb7GwiyF4PrCvSi6apexwrSbpliPw=3D=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 81a72c02-6b1f-48b5-ca05-08da069a22e9
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Mar 2022 15:40:30.8698
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fjXULgjR78L0zWMKeSIyYQmcviwqJsE0FWk2KBVXqkaa1HL/nLJdCj1mvTmGg48sm1wcsHDy0zkyDfjOol4qb+50K0Ts5kye5FAisU2wv1Y=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4594
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10287 signatures=693139
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 phishscore=0
- suspectscore=0 mlxscore=0 adultscore=0 spamscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2202240000
- definitions=main-2203150101
-X-Proofpoint-ORIG-GUID: QhyV_N8ghT14ENEVRwleoKeQun1pMRbf
-X-Proofpoint-GUID: QhyV_N8ghT14ENEVRwleoKeQun1pMRbf
+References: <20220314115354.144023-1-Julia.Lawall@inria.fr> <20220314115354.144023-2-Julia.Lawall@inria.fr>
+In-Reply-To: <20220314115354.144023-2-Julia.Lawall@inria.fr>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Tue, 15 Mar 2022 11:48:34 -0400
+Message-ID: <CADnq5_OveiyS80yF=COha1iuAmm7NBay1q0JogkqcxqJ7ie=JQ@mail.gmail.com>
+Subject: Re: [PATCH 01/30] drm/amd/pm: fix typos in comments
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     Evan Quan <evan.quan@amd.com>, David Airlie <airlied@linux.ie>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Mar 15, 2022 at 03:57:36AM +0800, kernel test robot wrote:
->    In file included from net/ipv4/ipconfig.c:59:
->    In file included from include/linux/nfs_fs.h:31:
->    In file included from include/linux/sunrpc/auth.h:13:
->    In file included from include/linux/sunrpc/sched.h:19:
-> >> include/linux/sunrpc/xdr.h:734:10: warning: result of comparison of constant 4611686018427387903 with expression of type '__u32' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
->            if (len > ULONG_MAX / sizeof(*p))
->                ~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~
+Applied.  Thanks!
 
-Smatch also wanted to send this warning.  I am testing a fix to silence
-this warning in Smatch.  It looks for an some_int > some_expression
-where some_expression has ULONG_MAX on the far left hand side of the
-binop.  Because the some_expression always starts with ULONG_MAX and
-then divides it and/or subtracts from it to get the max.
-
-regards,
-dan carpenter
-
+On Mon, Mar 14, 2022 at 8:01 AM Julia Lawall <Julia.Lawall@inria.fr> wrote:
+>
+> Various spelling mistakes in comments.
+> Detected with the help of Coccinelle.
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+>
+> ---
+>  drivers/gpu/drm/amd/pm/amdgpu_pm.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/pm/amdgpu_pm.c b/drivers/gpu/drm/amd/pm/amdgpu_pm.c
+> index cbbbd4079249..5cd67ddf8495 100644
+> --- a/drivers/gpu/drm/amd/pm/amdgpu_pm.c
+> +++ b/drivers/gpu/drm/amd/pm/amdgpu_pm.c
+> @@ -1870,7 +1870,7 @@ static ssize_t amdgpu_set_smartshift_bias(struct device *dev,
+>         amdgpu_smartshift_bias = bias;
+>         r = count;
+>
+> -       /* TODO: upadte bias level with SMU message */
+> +       /* TODO: update bias level with SMU message */
+>
+>  out:
+>         pm_runtime_mark_last_busy(ddev->dev);
+>
