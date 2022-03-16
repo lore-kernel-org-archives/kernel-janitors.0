@@ -2,94 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A065C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Mar 2022 05:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BCF4C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Mar 2022 05:21:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353573AbiCPFKC (ORCPT
+        id S244730AbiCPFW7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Mar 2022 01:10:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56022 "EHLO
+        Wed, 16 Mar 2022 01:22:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229725AbiCPFKB (ORCPT
+        with ESMTP id S239007AbiCPFW6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Mar 2022 01:10:01 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A6729FD7;
-        Tue, 15 Mar 2022 22:08:48 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id qa43so1750702ejc.12;
-        Tue, 15 Mar 2022 22:08:47 -0700 (PDT)
+        Wed, 16 Mar 2022 01:22:58 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB9965BE6C;
+        Tue, 15 Mar 2022 22:21:44 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id qa43so1788239ejc.12;
+        Tue, 15 Mar 2022 22:21:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id;
-        bh=TYMzVJwHrkXu2HIyh0HGbyp3jpaDgUy5zW81BF3Qd30=;
-        b=FQOB+XjHJHMj4Oo+Pt8qytWOzHWGk1cOeQ/T5Jly+Zw+ZDYo+uS1z7omOSphWdX3He
-         H4oxBbNOFQrOsfjouOoitynIT1zACmHKxKkBZ0YWs4F74SD6p/EMO4Iu9+cMU1Y5fjoE
-         ClHKZX0jj+TQwOjwPTidWcEk8D98JWO6BVMIQTlzBqF47I6bTudxIfudnNOEEd8K3etw
-         ejto33Whlrrirn+W79+x6nEnGsrbft2u+OW5i5c+HQmlmky7iPu1ZKjIpNlrrepBohpp
-         cCYdvto7rpTfjKDz8CymbVEdzCHdBYG/abbAMYYjFcUxZfpIxMZm24nAmrokUBbw3p8+
-         HMYA==
+        bh=FJPuvcpULrXU5rJIxqChK1QcwIzv3ZufSJl5Tvybh4Q=;
+        b=Pi0mNJrZGf0xS0gPTi1wEYM9oEa9N9U6+KeW/SphwCtCMLelTdyH2/RGPTt4M00mGc
+         lWRV5j7BYg6dJzMqj9DRSExxYZ7WDl/kbnpTDfDvObVyylt52rfcqBVPaNTzSd7lPBx+
+         J6mvj01XvMNaYDH6PnF2GdcWlzSvIu5THKK+jBuHYTumIyK/NvLqqjlUEjT2lq4tdDbQ
+         qlMdqOR5DbHt5mIw8PFkcPngHD/E/49lXq6PG4gUnXbU/sVwJMCr3VJLPokY3BoDfl+a
+         msWHdYHI4A+ApGbYiwieXSu3lWIHXR5DjZpNYrNRU7H4BMuQq7IVWNgpIQ+D2JPEoPVK
+         Wt2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=TYMzVJwHrkXu2HIyh0HGbyp3jpaDgUy5zW81BF3Qd30=;
-        b=2OoziRUWBFLcP8xwkS79ljGOJPIf7rRkPNEmmnFY9EMMEf8EsR1269nOCCoG+a7UbR
-         +VXsST8DmAHJhvC72/FoWZGJ+wdDqvqm2Q52jX1+gwEuP/D5v6KjkXQie3i5jv9gkOhg
-         XR0z9R/rLTx7UA55wYl4j09Y7bzit4PKJKZUUlbgKptrmwttnUrz0tBwua9qKBtuglbP
-         8+5V2ydcBJKB3JK7lDlmlfKUvMdF6VFjm7xYSOtkH8urpq5k1uzxXzKC1NFeJdQo8DeC
-         JKzUKWIcUcrodpGhVj+d6h4fAkXyDcIgjjaDlZCI6cf7r6onm+jrSyrwQnejVw83lbY2
-         kB3Q==
-X-Gm-Message-State: AOAM5314w445B/vWAjJoLc4Es3sDiQc5ISyQxJbPQoId8AgnJcmIzUXq
-        brAUx6Bw45G1u0AhboiQwkc=
-X-Google-Smtp-Source: ABdhPJzkOdUjwmOskoUASUCvBP2RXwbF06L1RFocyA7nRnmnKRkwBcY0MMbYCBOz9ePQJrBmBvF1/A==
-X-Received: by 2002:a17:906:5804:b0:6ce:3f17:bf35 with SMTP id m4-20020a170906580400b006ce3f17bf35mr25106475ejq.346.1647407326404;
-        Tue, 15 Mar 2022 22:08:46 -0700 (PDT)
+        bh=FJPuvcpULrXU5rJIxqChK1QcwIzv3ZufSJl5Tvybh4Q=;
+        b=Gqf2mrWUQe1dFDjSIWHrs7JTamwGUlVNWfKm9MPeHB7k4g3xWeUem7PoLn5I/ocngt
+         urxxHtv75WGN6VZ+R5CE5D9txsoi0YIkr7reMYKC8vyktdv/ZT5M3CvzH+60qzNa8Soc
+         0SGKDZLZUbKPIQS6dhGWNT7xzrJ70UYblkuTmWV9MIFY8hHFQiixrge3s3Z+wmRnLRSQ
+         EoIQk60dPdGfn6jTT4rCdqFuVajxWgFgvLcYO9tBSZmyp+pcElPlemTqSomWmpB6x3pc
+         D1KaG3vin7ZdM4tSdu9Ra93EaFEekoiDSatCLW7KQ1Hjz7z5YTABBBdeWo+LRfVQJQBM
+         G0+Q==
+X-Gm-Message-State: AOAM533zMqcmRR/2DOFwbZYTChvjW2iF4rrFQG4xpl+o2jkfBtaYCqbJ
+        65lsPnucbElIdinaI9T5YzXvalzpi8M=
+X-Google-Smtp-Source: ABdhPJyivZ/URHlB2xL5PAgwk7CHlC6dMQg2EP1/JL1OLFw8sLjTPvEWbukfEh2PKpSDFH6A/iDoog==
+X-Received: by 2002:a17:907:60cf:b0:6db:f0a6:74af with SMTP id hv15-20020a17090760cf00b006dbf0a674afmr5994072ejc.317.1647408103284;
+        Tue, 15 Mar 2022 22:21:43 -0700 (PDT)
 Received: from felia.fritz.box (200116b826783100351493f9f729970f.dip.versatel-1u1.de. [2001:16b8:2678:3100:3514:93f9:f729:970f])
-        by smtp.gmail.com with ESMTPSA id dd6-20020a1709069b8600b006dbb5266bb3sm414339ejc.1.2022.03.15.22.08.45
+        by smtp.gmail.com with ESMTPSA id j11-20020a05640211cb00b00418572a3638sm430509edw.38.2022.03.15.22.21.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Mar 2022 22:08:46 -0700 (PDT)
+        Tue, 15 Mar 2022 22:21:42 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Borislav Petkov <bp@alien8.de>, x86@kernel.org
-Cc:     linux-mm@kvack.org, Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
+To:     Dan Williams <dan.j.williams@intel.com>, nvdimm@lists.linux.dev
+Cc:     Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: drop entry to removed file in EXEC & BINFMT API
-Date:   Wed, 16 Mar 2022 06:08:28 +0100
-Message-Id: <20220316050828.17255-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: remove section LIBNVDIMM BLK: MMIO-APERTURE DRIVER
+Date:   Wed, 16 Mar 2022 06:21:33 +0100
+Message-Id: <20220316052133.26212-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit f9444ea5e208 ("x86: Remove a.out support") removes
-arch/x86/ia32/ia32_aout.c, but misses a reference to that file in
-MAINTAINERS.
+Commit f8669f1d6a86 ("nvdimm/blk: Delete the block-aperture window driver")
+removes the file drivers/nvdimm/blk.c, but misses to adjust MAINTAINERS.
 
 Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
 broken reference.
 
-Drop the file entry to the removed file in EXEC & BINFMT API.
+The section LIBNVDIMM BLK: MMIO-APERTURE DRIVER refers to the driver in
+blk.c, and some more generic nvdimm code in region_devs.c.
+
+As the driver is deleted, delete the section LIBNVDIMM BLK: MMIO-APERTURE
+DRIVER in MAINTAINERS as well.
+
+The remaining file region_devs.c is still covered by the section LIBNVDIMM:
+NON-VOLATILE MEMORY DEVICE SUBSYSTEM, and all patches to region_devs.c will
+still reach the same developers as before.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Borislav, please pick this minor clean-up patch on your -next tree on top
-of the commit above.
+Dan, please pick this minor clean-up patch in your -next tree on top of
+the commit above.
 
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+ MAINTAINERS | 11 -----------
+ 1 file changed, 11 deletions(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 8f5d5fb7cdde..faa5e53db1dd 100644
+index faa5e53db1dd..5eacf125e052 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -7365,7 +7365,6 @@ L:	linux-mm@kvack.org
- S:	Supported
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/execve
- F:	arch/alpha/kernel/binfmt_loader.c
--F:	arch/x86/ia32/ia32_aout.c
- F:	fs/*binfmt_*.c
- F:	fs/exec.c
- F:	include/linux/binfmts.h
+@@ -11128,17 +11128,6 @@ F:	drivers/ata/
+ F:	include/linux/ata.h
+ F:	include/linux/libata.h
+ 
+-LIBNVDIMM BLK: MMIO-APERTURE DRIVER
+-M:	Dan Williams <dan.j.williams@intel.com>
+-M:	Vishal Verma <vishal.l.verma@intel.com>
+-M:	Dave Jiang <dave.jiang@intel.com>
+-L:	nvdimm@lists.linux.dev
+-S:	Supported
+-Q:	https://patchwork.kernel.org/project/linux-nvdimm/list/
+-P:	Documentation/nvdimm/maintainer-entry-profile.rst
+-F:	drivers/nvdimm/blk.c
+-F:	drivers/nvdimm/region_devs.c
+-
+ LIBNVDIMM BTT: BLOCK TRANSLATION TABLE
+ M:	Vishal Verma <vishal.l.verma@intel.com>
+ M:	Dan Williams <dan.j.williams@intel.com>
 -- 
 2.17.1
 
