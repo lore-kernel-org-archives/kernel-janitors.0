@@ -2,77 +2,53 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29BFCC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Mar 2022 15:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB9BC433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Mar 2022 15:47:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240333AbiCPPer (ORCPT
+        id S239857AbiCPPsm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Mar 2022 11:34:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51698 "EHLO
+        Wed, 16 Mar 2022 11:48:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235248AbiCPPep (ORCPT
+        with ESMTP id S1357365AbiCPPsi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Mar 2022 11:34:45 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 699B027CF5;
-        Wed, 16 Mar 2022 08:33:31 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 19C31B81C13;
-        Wed, 16 Mar 2022 15:33:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60621C340E9;
-        Wed, 16 Mar 2022 15:33:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647444808;
-        bh=ErcNptfdS+iULWkDCthzkd1Qlz8XmSgG7d9SHtOVd6w=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=r/2kQFJvaZjB7AWFCs8Q52daB1EaPRTWtGum0gkBvfbiNec39Pc9qIC8IAJHvXAxf
-         z500tjRlXwl3m5mhyjj12lJFItWBC+6vnYT+di/0gMA/ldgwVAeDQ7QJIxN9z2If37
-         KALcW4WG5W/tauDlpQmJgoBsEhkHgNe6E+U4dPsfKidozFEi+m2durbnr6pyry5NC0
-         XwSoIjFdAjD0UNZJdLit7d6XCaNMzWC1HPc4lEVFeKGTOJnQuOer3Rb/oX4OCJWSHV
-         6A+TxwpXC/fJrQ+ui279dWTFNKXj/vyvyBMUNvrSvnnmO9Y94Ij043kjGE6YEf7Zyl
-         gOCG1H1ch9RAw==
-Content-Type: text/plain; charset="utf-8"
+        Wed, 16 Mar 2022 11:48:38 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 53F1D6D39F;
+        Wed, 16 Mar 2022 08:47:23 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1C1B71476;
+        Wed, 16 Mar 2022 08:47:23 -0700 (PDT)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3AECE3F7D7;
+        Wed, 16 Mar 2022 08:47:22 -0700 (PDT)
+Date:   Wed, 16 Mar 2022 15:47:19 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Jassi Brar <jassisinghbrar@gmail.com>, linux-acpi@vger.kernel.org,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] mailbox: pcc: Fix spelling mistake "Plaform" ->
+ "Platform"
+Message-ID: <YjIGh3RUpvBQxWuo@bogus>
+References: <20220315202756.2953329-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [v2] MAINTAINERS: fix ath11k DT bindings location
-From:   Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20220308085503.537-1-lukas.bulwahn@gmail.com>
-References: <20220308085503.537-1-lukas.bulwahn@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     ath11k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <164744480556.16413.9130060448491474487.kvalo@kernel.org>
-Date:   Wed, 16 Mar 2022 15:33:27 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220315202756.2953329-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+On Tue, Mar 15, 2022 at 08:27:56PM +0000, Colin Ian King wrote:
+> There is a spelling mistake in a pr_err error message. Fix it.
+>
 
-> Commit dae0978d4174 ("dt: bindings: net: add qcom,ath11k.yaml") obviously
-> adds qcom,ath11k.yaml, but the file entry in MAINTAINERS, added with
-> commit fcda1cb81663 ("MAINTAINERS: add DT bindings files for ath10k and
-> ath11k") then refers to qcom,ath11k.txt.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
-> 
-> Repair this file reference in QUALCOMM ATHEROS ATH11K WIRELESS DRIVER, and
-> put it in alphabetic order while at it.
-> 
-> Fixes: fcda1cb81663 ("MAINTAINERS: add DT bindings files for ath10k and ath11k")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Not sure why you have tagged next, this is in the mainline too.
+Anyways,
 
-Patch applied to wireless-next.git, thanks.
-
-5df2dc0087e9 MAINTAINERS: fix ath11k DT bindings location
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20220308085503.537-1-lukas.bulwahn@gmail.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Regards,
+Sudeep
