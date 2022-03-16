@@ -2,69 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C7F4C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Mar 2022 09:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB075C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Mar 2022 09:09:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354785AbiCPJEA (ORCPT
+        id S1350796AbiCPJKP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Mar 2022 05:04:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44564 "EHLO
+        Wed, 16 Mar 2022 05:10:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239395AbiCPJD7 (ORCPT
+        with ESMTP id S232911AbiCPJKO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Mar 2022 05:03:59 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7907A652D1;
-        Wed, 16 Mar 2022 02:02:45 -0700 (PDT)
-Received: from zn.tnic (p2e55dff8.dip0.t-ipconnect.de [46.85.223.248])
+        Wed, 16 Mar 2022 05:10:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04A2F5BD2D;
+        Wed, 16 Mar 2022 02:09:00 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0E74D1EC0559;
-        Wed, 16 Mar 2022 10:02:40 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1647421360;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=cNVs3xEveSi/MGIuYUf5dSaXySYKdj1WMoxoR9xRyYk=;
-        b=JgHIekcSA2BHkJVlO2ogfSTfeNCuzLL4D5S/0duQXGgGlFuky8PAAXv/xPx7um+lae25Aj
-        4xtSkSHBN5ySDE6Z0Vu0xOS/BXNNe1uOXLfDR2RCrJktwGRL0U/hGDEDGOkcFAN0DEAQ7i
-        lvgVXfk187EBt1FbQrId/vCn7sKS60U=
-Date:   Wed, 16 Mar 2022 10:02:35 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     X86 ML <x86@kernel.org>, Linux-MM <linux-mm@kvack.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: drop entry to removed file in EXEC & BINFMT
- API
-Message-ID: <YjGnq9q48FL5a34Q@zn.tnic>
-References: <20220316050828.17255-1-lukas.bulwahn@gmail.com>
- <YjGWPh6MSLqeL47e@zn.tnic>
- <CAKXUXMzcAFv2FmU7L8HHA4Sp9uehqW_gfez7qVfsf1O6PsnwtA@mail.gmail.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EA50B61582;
+        Wed, 16 Mar 2022 09:08:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCDA8C340E9;
+        Wed, 16 Mar 2022 09:08:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1647421705;
+        bh=rPQpV9Lw/eMshhljsz2yvsSqLDbzQaQMWnQQeOMi9vE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=krhQjgx9rU6Eb4MiqdCu4Zd0+Ggw4nBA+QiiwaVAN6F60rnCpOcihsW9Gj2F/fFj6
+         Im+iN4N2qvESzTG2Bae2lh6eMYTG54TlrcblXfUXxjLsKxvfddIijTYTfO8vvrraFO
+         B0kekjLOgW9nGIueuPck03pmkXgoCNR4OsYlK/7SXcDQ8O+qH6im76BCkeVOQKAtUc
+         L7vX+0xHjXPv2oNG481fij/HjvZOgFwSALCECe7QygGHddhrb/XnPhvWW2T390A+Dl
+         TsHlr+oN5bBok/VsZyKMN5regO2pm/8VSSKEV9Fj+X73IwNTb0jFxok3fT/FxVERsG
+         OkQY3C4JgcpnA==
+Date:   Wed, 16 Mar 2022 11:08:20 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Aharon Landau <aharonl@nvidia.com>,
+        Mark Zhang <markzhang@nvidia.com>,
+        Neta Ostrovsky <netao@nvidia.com>,
+        Gal Pressman <galpress@amazon.com>, linux-rdma@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] RDMA/nldev: prevent underflow in
+ nldev_stat_set_counter_dynamic_doit()
+Message-ID: <YjGpBOCMPOwMBwgg@unreal>
+References: <20220316083948.GC30941@kili>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKXUXMzcAFv2FmU7L8HHA4Sp9uehqW_gfez7qVfsf1O6PsnwtA@mail.gmail.com>
+In-Reply-To: <20220316083948.GC30941@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Mar 16, 2022 at 09:12:54AM +0100, Lukas Bulwahn wrote:
-> I guess then you can squash my one-line patch into your patch, and
+On Wed, Mar 16, 2022 at 11:39:48AM +0300, Dan Carpenter wrote:
+> This code checks "index" for an upper bound but it does not check for
+> negatives.  Change the type to unsigned to prevent underflows.
+> 
+> Fixes: 3c3c1f141639 ("RDMA/nldev: Allow optional-counter status configuration through RDMA netlink")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> Could we not use a nldev_policy[] to tighten the bounds checking even
+> more?
 
-Right.
+We are doing it, when calling to nlmsg_parse() at the beginning of nldev_stat_set_doit().
+The entry_attr, which used as input to index, is tb[RDMA_NLDEV_ATTR_STAT_HWCOUNTER_INDEX].
 
-> then we put all this into the closet and wait for another day where
-> this feature can be removed.
+However it is not enough and we still need your change, because input
+can be large enough to be casted to negative value.
 
-Yeah, I wouldn't hold my breath. Everytime I attempt this, someone
-crawls out of the woodwork with a use case.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Thanks,
+Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
