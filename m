@@ -2,103 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7554FC433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Mar 2022 06:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6396FC433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Mar 2022 07:25:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353931AbiCPGf3 (ORCPT
+        id S237911AbiCPH0o (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Mar 2022 02:35:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58086 "EHLO
+        Wed, 16 Mar 2022 03:26:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349781AbiCPGf1 (ORCPT
+        with ESMTP id S1354042AbiCPH0m (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Mar 2022 02:35:27 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E25523CA4B;
-        Tue, 15 Mar 2022 23:34:13 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id q5so1779697ljb.11;
-        Tue, 15 Mar 2022 23:34:13 -0700 (PDT)
+        Wed, 16 Mar 2022 03:26:42 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9796B5FF3B;
+        Wed, 16 Mar 2022 00:25:26 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id t1so1610929edc.3;
+        Wed, 16 Mar 2022 00:25:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=++sa46MhpxjLZvQiBNBROIYgnEoEgMiydkA3vO85G7U=;
-        b=SNUuaqm75EI0XWtB8fHZf6wvFEokjwp2fTUs+dK+S/Zm1Ow/VfJ3qlTL3AcuVao/C+
-         tWWS4RCRZ/w9FQC58sXFjAM904UYhyMAbGwnnp74AIAZqojBGXDNccIrFBvVj12CuJ+c
-         cBzbfOE1OBeCqj4x625ts2yQaXf0aXVP0zA9NuJxA25NWFOB4LHd7jfccKuRWjCn90x9
-         /AGL+3XN++s61neGYD5kt9FV/xghZ8v/iDJ2KJCqSbIAxGo8IsTuJkpK7o4tMFC46mG3
-         cmAIPx7OyXQrZWpGtjWs5vMwCz9wh28jxJrs0C/wghLM1jQs9OCzT3itsXvuNgHwc/sV
-         Nlyg==
+        h=from:to:cc:subject:date:message-id;
+        bh=k2XDkxW4pcLGrgBabuAmAWd2wJ7suNpD4bXx0nDuw4w=;
+        b=e87GAQob7VcIIZSaxRDrpHGZbYz0ZLqpbpsbExBi7EtftlKzsTJpNifAKitn4+JP7O
+         0bcmBf8LEgJP/UMjC0df3Brsms6H4l2DLgnzJq1LLbpKrAfpXXsZQQV043DiOmOAT6D2
+         eoxkM2OQPP3m6nYcsOUM8ZNdroy0XKNotNJsX7jOhw5lgVbSMY/HTS4ucOA9FWbabWSI
+         2rLUDsW/81XtrV7kaSxTGL86iPvWnvvOF2olzaA0RsjETSgkSOETvBD60d7FbRBCVBi1
+         YXj+ZdgJVi6KknqY7nXvfgbKM8pBAwJ7QG9AWhzX4Xwg9evIKsUaoKs1hC7hp9fnODwc
+         hQJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=++sa46MhpxjLZvQiBNBROIYgnEoEgMiydkA3vO85G7U=;
-        b=BmxJTI/RLXXY1mFkL9kOA4svkKKvZgO8QTCV2pH7QCSOL0h+Q2ef6d9Q4up6Xn9sqo
-         lbk3OTkCkli0rODvrqnZb77AJ+1FTdttBIqX0ZAvbyli5e1IechwLPcWUb8N9HyBq5Yw
-         khz/VPdy65vkQrrNWPskeZZ1PTwBayE8/y7ptKL9XrWHWp4d4RP5+dpTFxI6ToGd0QUy
-         Wsh8Vioa9tnkLwCbaoYSlJg2erSyZ4jHaprXwxVHjs2ey+f06/ahE/TeZtVrv5ge7n0X
-         ST5xFvJI1rE/dsdP2gv34pHNOzVlFpCmA5dQbO7BWm+TocSPlb9gz/9LH9NVj8TiR3a1
-         Pssw==
-X-Gm-Message-State: AOAM530kE4rgaFbt62kbbR/FY3Tnj4sPdgNHabevGXLd1W0aJZxOjJYs
-        0R1to8OMK4GkmuV3NfGGbuc=
-X-Google-Smtp-Source: ABdhPJw9Ww1GDbf/aCnm1Gvac/Z8tRDtL6lbAgGCsIzAKktioAvkLknuASghcm3WBucuxEXIZ8MTOA==
-X-Received: by 2002:a2e:b004:0:b0:247:e29f:fbd4 with SMTP id y4-20020a2eb004000000b00247e29ffbd4mr19034842ljk.315.1647412452039;
-        Tue, 15 Mar 2022 23:34:12 -0700 (PDT)
-Received: from [10.0.0.127] (91-159-150-230.elisa-laajakaista.fi. [91.159.150.230])
-        by smtp.gmail.com with ESMTPSA id l9-20020a2ea309000000b00246299de080sm102223lje.48.2022.03.15.23.34.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Mar 2022 23:34:11 -0700 (PDT)
-Message-ID: <4d3c65c0-1bc3-bc8f-393a-22c964f18120@gmail.com>
-Date:   Wed, 16 Mar 2022 08:34:12 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] ASoC: ti: Fix spelling mistake "cant" -> "can't"
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-omap@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220315230816.2964577-1-colin.i.king@gmail.com>
-From:   =?UTF-8?Q?P=c3=a9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
-In-Reply-To: <20220315230816.2964577-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=k2XDkxW4pcLGrgBabuAmAWd2wJ7suNpD4bXx0nDuw4w=;
+        b=IdsMZX2O0qGaTG+a3v37hNMLqZZEDInvI2Qjc/0r6AgU9x1WISGHv1DM2PoYeWrhdy
+         CfNsWaCHCD9OGFBP8DmrmOCsAH9rlzhqXhXMKVvbtuZ9ZMI95sWJAE3TrPRmXstZh570
+         egE1OEX+FPq32WCBfJHOPUPAMpNfodZlz7h+qXzza0plE7+mjffHMXw1WnDLfuESF76C
+         BAXTxpB+L0l4RQloOkn32wfDPbmL89WQK2ldCdFmZXJu27eqJ287w5JA/6CgY4yTEFEL
+         qLJsk4L9jlcQ2FbgUafD3OA9L3Y6PE0/buZCRAiPCEHv1Ut4TNMu893AqPSvR6IRm9Jc
+         HYXA==
+X-Gm-Message-State: AOAM531gzjMyN8R6mlwLrHO7fBL+1qrsA+KXV4wpLwS5hS9yMPDJwIvv
+        r4bhIh4MVenlsbxt0u1LCKdP2yUJxf0=
+X-Google-Smtp-Source: ABdhPJxyekmY0haMxC8PoH31GMrAN1hP/z/MhOAc/9HVXy5Z5yU61UaHNqQ45lG2uvlq/M7CCL85BA==
+X-Received: by 2002:a05:6402:40d1:b0:418:e73c:a1a8 with SMTP id z17-20020a05640240d100b00418e73ca1a8mr1850794edb.321.1647415524913;
+        Wed, 16 Mar 2022 00:25:24 -0700 (PDT)
+Received: from felia.fritz.box (200116b826783100351493f9f729970f.dip.versatel-1u1.de. [2001:16b8:2678:3100:3514:93f9:f729:970f])
+        by smtp.gmail.com with ESMTPSA id y19-20020a1709064b1300b006dabe44a6edsm515502eju.141.2022.03.16.00.25.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Mar 2022 00:25:24 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: adjust entries to nxp driver movement in media platform
+Date:   Wed, 16 Mar 2022 08:25:17 +0100
+Message-Id: <20220316072517.3607-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Commit 46fb99951fe2 ("media: platform: place NXP drivers on a separate dir")
+moves various files in media/platform into a nxp subdirectory. It adjusts
+the section MEDIA DRIVER FOR FREESCALE IMX PXP in MAINTAINERS, but misses
+some references in NXP i.MX 8QXP/8QM JPEG V4L2 DRIVER and MEDIA DRIVERS
+FOR FREESCALE IMX7.
 
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
-On 16/03/2022 01:08, Colin Ian King wrote:
-> There is a spelling mistake in a dev_err message. Fix it.
+Adjust the file references in the NXP i.MX 8QXP/8QM JPEG V4L2 DRIVER and
+MEDIA DRIVERS FOR FREESCALE IMX7 sections.
 
-Acked-by: Peter Ujfalusi <peter.ujfalusi@gmail.com>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Mauro, please pick this minor clean-up on your -next tree on top of the
+commit above.
 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  sound/soc/ti/omap-dmic.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/ti/omap-dmic.c b/sound/soc/ti/omap-dmic.c
-> index a26588e9c3bc..f3eed20611a3 100644
-> --- a/sound/soc/ti/omap-dmic.c
-> +++ b/sound/soc/ti/omap-dmic.c
-> @@ -474,7 +474,7 @@ static int asoc_dmic_probe(struct platform_device *pdev)
->  
->  	dmic->fclk = devm_clk_get(dmic->dev, "fck");
->  	if (IS_ERR(dmic->fclk)) {
-> -		dev_err(dmic->dev, "cant get fck\n");
-> +		dev_err(dmic->dev, "can't get fck\n");
->  		return -ENODEV;
->  	}
->  
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5eacf125e052..c4f54cf46ae8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12130,7 +12130,7 @@ T:	git git://linuxtv.org/media_tree.git
+ F:	Documentation/admin-guide/media/imx7.rst
+ F:	Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
+ F:	Documentation/devicetree/bindings/media/nxp,imx7-csi.yaml
+-F:	drivers/media/platform/imx/imx-mipi-csis.c
++F:	drivers/media/platform/nxp/imx-mipi-csis.c
+ F:	drivers/staging/media/imx/imx7-media-csi.c
+ 
+ MEDIA DRIVERS FOR HELENE
+@@ -14166,7 +14166,7 @@ R:	NXP Linux Team <linux-imx@nxp.com>
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/media/nxp,imx8-jpeg.yaml
+-F:	drivers/media/platform/imx-jpeg
++F:	drivers/media/platform/nxp/imx-jpeg
+ 
+ NZXT-KRAKEN2 HARDWARE MONITORING DRIVER
+ M:	Jonas Malaco <jonas@protocubo.io>
 -- 
-Péter
+2.17.1
+
