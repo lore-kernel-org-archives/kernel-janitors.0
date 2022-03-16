@@ -2,73 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC201C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Mar 2022 13:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 112BBC43219
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Mar 2022 15:28:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350515AbiCPNkM (ORCPT
+        id S229528AbiCPP3n (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Mar 2022 09:40:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46894 "EHLO
+        Wed, 16 Mar 2022 11:29:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239490AbiCPNkM (ORCPT
+        with ESMTP id S1347360AbiCPP3k (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Mar 2022 09:40:12 -0400
+        Wed, 16 Mar 2022 11:29:40 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61DA926AE9;
-        Wed, 16 Mar 2022 06:38:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C69F51EAE8;
+        Wed, 16 Mar 2022 08:28:26 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 90F4260B63;
-        Wed, 16 Mar 2022 13:38:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E599C340E9;
-        Wed, 16 Mar 2022 13:38:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1647437934;
-        bh=jkyP0tJEz44jNr8gm6cik1fDuFLMdPOw5VY4g8caLoU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JSbieH9z+sfyBQ354Y59WFJFNXoZASTWqH2/BWo9R5cNn4b9suR0f1Ku2sA82Lmrp
-         aoy7G0QYTIMo8TYI7gcf8ZdSKvL91l91CdDht09mZ11xgrN7bJ2FT9AO3h3u2dfDDD
-         CI2AZU02p45UPQtWMTwHQWVuh5ameLzNH77mWJec=
-Date:   Wed, 16 Mar 2022 14:38:49 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Christian Brauner <christian@brauner.io>,
-        Hridya Valsaraju <hridya@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: remove the obsolete file entry for staging
- in ANDROID DRIVERS
-Message-ID: <YjHoaV+Z5u10YWHC@kroah.com>
-References: <20220316124802.372-1-lukas.bulwahn@gmail.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 620986154E;
+        Wed, 16 Mar 2022 15:28:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69C6BC340EC;
+        Wed, 16 Mar 2022 15:28:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1647444505;
+        bh=5rbztnXVsrPksaO1G7Gp7Ki/1G4oYU03f3llLlYU4fQ=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=Yr93PbHj8a/yKJrbZJKXDrn8ftjsRpej4pOn+ABJuBKwn2cnE8Hq/rOkSxi6D5CiR
+         z7w8kweUvo1hZzp6YZzLn4QPT3DIFI+RFi7XzcnCxorb+JS6Eqf/nk8UXr8H93MzIE
+         uDm/gWbzheOwBQmImPdVvXUW8M1ybdMj/C0mGgpCRFT3QDK9bnxkvziEJM5AdfzOWu
+         ttluVhZnzyP34v1YFOnrf+kgXqZCyPs9/t/GGWMVNMzciNw4VhavsytmJD23QaujiH
+         m7txBK8JfNgHpiKOWBKsW/v+2NNp9xw50zoCJIuhrdPMJl8NGkXWAIlV2RoDOXGRYV
+         n3EgO3UIk1o7g==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220316124802.372-1-lukas.bulwahn@gmail.com>
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] mwifiex: make read-only array wmm_oui static const
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20220311225610.10895-1-colin.i.king@gmail.com>
+References: <20220311225610.10895-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Amitkumar Karwar <amitkarwar@gmail.com>,
+        Ganapathi Bhat <ganapathi017@gmail.com>,
+        Sharvari Harisangam <sharvari.harisangam@nxp.com>,
+        Xinming Hu <huxinming820@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <164744450133.16413.10583656975501578777.kvalo@kernel.org>
+Date:   Wed, 16 Mar 2022 15:28:23 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Mar 16, 2022 at 01:48:02PM +0100, Lukas Bulwahn wrote:
-> Commit 721412ed3d81 ("staging: remove ashmem") removes the last android
-> driver from staging, but misses to adjust MAINTAINERS.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
-> 
-> Remove the obsolete file entry in ANDROID DRIVERS.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Greg, please pick this minor clean-up patch for your staging-next tree on
-> top of the commit above.
+Colin Ian King <colin.i.king@gmail.com> wrote:
 
-Now picked up, thanks for the fix.
+> Don't populate the read-only array wmm_oui on the stack but
+> instead make it static const. Also makes the object code a little
+> smaller.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-greg k-h
+Patch applied to wireless-next.git, thanks.
+
+e7d1fc0b5ff2 mwifiex: make read-only array wmm_oui static const
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20220311225610.10895-1-colin.i.king@gmail.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
