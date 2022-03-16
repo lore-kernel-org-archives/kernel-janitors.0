@@ -2,101 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB6D3C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Mar 2022 12:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E60FCC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Mar 2022 12:48:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355848AbiCPMnx (ORCPT
+        id S1355909AbiCPMte (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Mar 2022 08:43:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55472 "EHLO
+        Wed, 16 Mar 2022 08:49:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355827AbiCPMnw (ORCPT
+        with ESMTP id S232270AbiCPMtd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Mar 2022 08:43:52 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CA9266233;
-        Wed, 16 Mar 2022 05:42:38 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id r13so3899640ejd.5;
-        Wed, 16 Mar 2022 05:42:38 -0700 (PDT)
+        Wed, 16 Mar 2022 08:49:33 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CC392FFF8;
+        Wed, 16 Mar 2022 05:48:19 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id w4so2559968edc.7;
+        Wed, 16 Mar 2022 05:48:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id;
-        bh=9IInFWrLxCVqPix8X21YygHN86QpSMY0BdaJzSVmBoc=;
-        b=LDbSMsXV8Ov5U+KaAZBIfn3hKYyhKypsC3fWznpL7UpqseP5Ua6h/w2tMR44iqQti5
-         QemZ8IxrxCLE77kqxTCw1fgpxUV/l3sHc3ODOXRxIjRUvVWkcXfZxvg8YQOboMZ9OzIz
-         8tXvEt1qUp/ReRB6aVnSK8rukyTcpSgwgxoyNTcw9gTd1wcKXo3Hc1/I4FsciXYMsC5A
-         Gu4fVuHX39pymWOYyRBetJOHc/2XJuj6Bx+Bbm35ldz9+VT6nnQTL/+93SVeUWDlI5yr
-         SJlVjlAXYS54I71RDpnkSZwbo9IM61mop1gRNOf2Gte7TJhOtwjYufxncW6OiZIw2SE7
-         RLDw==
+        bh=XygkMwuh2MWsaZ+MkMSHPntfTcHrWBaJgT8VxhIRrmw=;
+        b=YVVZeqqYD6xLnTq4lZJk+K2oYMIm+k7Z1fSxloPG9AJXclhPEjY7B/Zjt9QNUDpl/j
+         2WdHmvgbKvFGVzCOzkib8tchMvDvVwZ9nvJintoDictU5depVV1XFdDhRPLsNe4fTlfW
+         /qGMMrsySxMaQqEVxhJgLW4lChzrcvPVpZr+87wDeCepL3PNl5hY9j8WiwXJVwVNa3J4
+         0xidiQRTiCh2LI4syKweFiWTxl9ZKDthrpoSbmEPdsEtiw4tZzQpKxdSvMQV9cGUAS5e
+         n3KWjagY91M2w8lhn2ZvZFgQ76Y7iWd+SstwU+FggiGScxUln7gISYEg2BzesePyRkTm
+         3fKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=9IInFWrLxCVqPix8X21YygHN86QpSMY0BdaJzSVmBoc=;
-        b=l/y89eA+HO92TH10vn/rDFDNwadsQrssBbKc+CX9WfjiR/XaegXijA23xdaqBe39+b
-         TCCmLSbUPsg7RhdPzDf+YiVvpmZ+QkNAtWHiHpLI18hWt3GoPHARAuQHGj1q3t0y+x+C
-         aNbLIe8UoZj5l/cC0e9tHAq4c7aUim3VUCJzzrhD0syH5aXlazWlXTDOcXNR/VUF0kxJ
-         Z9fgUzFWh++rxOwqXG/amGxbmREKnJCdoWVEOLRtvdhd7G4mbsRQSivJJE6uMWX5acBd
-         nddE3ybu61iDQDWCOtxboNP/FKNku4y4tkvkEbq3J2C0hzYyxIJscXyRsqVKbQOIGFz0
-         AEvg==
-X-Gm-Message-State: AOAM531qAln5egxCAyzWY760JbfxTFVg+pMRRvzCOqyyQeylK81quT6b
-        ySO/60hL33Dg1v+WMhEngb0=
-X-Google-Smtp-Source: ABdhPJxzYN1LhU3YiE/4BtEOd+7p1K6N+tDvf5hL4uhYLhywE2nS+2o556lATWec5chd0V0Ja9Uheg==
-X-Received: by 2002:a17:906:58b:b0:6cf:65f5:de28 with SMTP id 11-20020a170906058b00b006cf65f5de28mr25879917ejn.614.1647434556867;
-        Wed, 16 Mar 2022 05:42:36 -0700 (PDT)
+        bh=XygkMwuh2MWsaZ+MkMSHPntfTcHrWBaJgT8VxhIRrmw=;
+        b=Ptp1ke1ZczohjAe8rgrkNt1DJLeRs5HRJMuJGY4us1uaXLAuiiKcV4ssQNuUU0ZO2L
+         LGHstI16xLs6grSbFMM3jhiaASwnrJL1IH9F/qjSoZ4QazyDQFsPdwmnYb6JGScfG39+
+         3nOMSy3jJi3u4m3a31uNya/95UYPjAblOlCC2tZQwi9rE2Ww6wpnyNOaeF1dXVNb67hv
+         gSYcExMgA2nD9w6TE1DAcBfPorNL8JrVh1FGiDgL3PRbeeuluS2/ROrhaRbONBXFMs/6
+         vmeyQU3MFK8+KvvF78SJ9yPBqrfnGfSNjixzOWjcvh7GHtkUtwOcEWukTiquOew56EAf
+         Z+jA==
+X-Gm-Message-State: AOAM5332cIncd4f2QelT03jTpBC/1v338ydBxjXNqvRARq7DMBEAkrxi
+        AhhB3FdAXIhixJ9m0iRKE08=
+X-Google-Smtp-Source: ABdhPJxUCbJI38d9XPAi/0rGzQd0QKenyZzwAhUeJfbNsh0a1ESINhjn30PLIdVhLxk5y5HgOnmQrg==
+X-Received: by 2002:aa7:d4d6:0:b0:416:30a2:58c7 with SMTP id t22-20020aa7d4d6000000b0041630a258c7mr29118605edr.271.1647434897994;
+        Wed, 16 Mar 2022 05:48:17 -0700 (PDT)
 Received: from felia.fritz.box (200116b826783100351493f9f729970f.dip.versatel-1u1.de. [2001:16b8:2678:3100:3514:93f9:f729:970f])
-        by smtp.gmail.com with ESMTPSA id ji15-20020a170907980f00b006df87edf6ebsm129620ejc.154.2022.03.16.05.42.35
+        by smtp.gmail.com with ESMTPSA id t19-20020a1709060c5300b006d582121f99sm848189ejf.36.2022.03.16.05.48.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Mar 2022 05:42:36 -0700 (PDT)
+        Wed, 16 Mar 2022 05:48:17 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc:     Zhou Wang <wangzhou1@hisilicon.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+To:     Christoph Hellwig <hch@lst.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Christian Brauner <christian@brauner.io>,
+        Hridya Valsaraju <hridya@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: adjust entry for header movement in hisilicon qm driver
-Date:   Wed, 16 Mar 2022 13:42:24 +0100
-Message-Id: <20220316124224.29091-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: remove the obsolete file entry for staging in ANDROID DRIVERS
+Date:   Wed, 16 Mar 2022 13:48:02 +0100
+Message-Id: <20220316124802.372-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit ff5812e00d5e ("crypto: hisilicon/qm: Move the QM header to
-include/linux") moves drivers/crypto/hisilicon/qm.h to
-include/linux/hisi_acc_qm.h, but misses to adjust MAINTAINERS.
+Commit 721412ed3d81 ("staging: remove ashmem") removes the last android
+driver from staging, but misses to adjust MAINTAINERS.
 
 Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
 broken reference.
 
-Adjust the file entry in the HISILICON QM AND ZIP Controller DRIVER
-following this file movement.
+Remove the obsolete file entry in ANDROID DRIVERS.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Alex, please pick this minor clean-up on your -next tree on top of the
-commit above.
+Greg, please pick this minor clean-up patch for your staging-next tree on
+top of the commit above.
 
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 845b36c0f0f5..963d7001f2ce 100644
+index 963d7001f2ce..192e99b6b8f0 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -8852,9 +8852,9 @@ L:	linux-crypto@vger.kernel.org
- S:	Maintained
- F:	Documentation/ABI/testing/debugfs-hisi-zip
- F:	drivers/crypto/hisilicon/qm.c
--F:	drivers/crypto/hisilicon/qm.h
- F:	drivers/crypto/hisilicon/sgl.c
- F:	drivers/crypto/hisilicon/zip/
-+F:	include/linux/hisi_acc_qm.h
+@@ -1325,7 +1325,6 @@ L:	linux-kernel@vger.kernel.org
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+ F:	drivers/android/
+-F:	drivers/staging/android/
  
- HISILICON ROCE DRIVER
- M:	Wenpeng Liang <liangwenpeng@huawei.com>
+ ANDROID GOLDFISH PIC DRIVER
+ M:	Miodrag Dinic <miodrag.dinic@mips.com>
 -- 
 2.17.1
 
