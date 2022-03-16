@@ -2,72 +2,54 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB075C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Mar 2022 09:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66373C433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Mar 2022 09:55:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350796AbiCPJKP (ORCPT
+        id S1355057AbiCPJ5J (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Mar 2022 05:10:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57898 "EHLO
+        Wed, 16 Mar 2022 05:57:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232911AbiCPJKO (ORCPT
+        with ESMTP id S1350863AbiCPJ5I (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Mar 2022 05:10:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04A2F5BD2D;
-        Wed, 16 Mar 2022 02:09:00 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EA50B61582;
-        Wed, 16 Mar 2022 09:08:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCDA8C340E9;
-        Wed, 16 Mar 2022 09:08:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647421705;
-        bh=rPQpV9Lw/eMshhljsz2yvsSqLDbzQaQMWnQQeOMi9vE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=krhQjgx9rU6Eb4MiqdCu4Zd0+Ggw4nBA+QiiwaVAN6F60rnCpOcihsW9Gj2F/fFj6
-         Im+iN4N2qvESzTG2Bae2lh6eMYTG54TlrcblXfUXxjLsKxvfddIijTYTfO8vvrraFO
-         B0kekjLOgW9nGIueuPck03pmkXgoCNR4OsYlK/7SXcDQ8O+qH6im76BCkeVOQKAtUc
-         L7vX+0xHjXPv2oNG481fij/HjvZOgFwSALCECe7QygGHddhrb/XnPhvWW2T390A+Dl
-         TsHlr+oN5bBok/VsZyKMN5regO2pm/8VSSKEV9Fj+X73IwNTb0jFxok3fT/FxVERsG
-         OkQY3C4JgcpnA==
-Date:   Wed, 16 Mar 2022 11:08:20 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Aharon Landau <aharonl@nvidia.com>,
-        Mark Zhang <markzhang@nvidia.com>,
-        Neta Ostrovsky <netao@nvidia.com>,
-        Gal Pressman <galpress@amazon.com>, linux-rdma@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] RDMA/nldev: prevent underflow in
- nldev_stat_set_counter_dynamic_doit()
-Message-ID: <YjGpBOCMPOwMBwgg@unreal>
-References: <20220316083948.GC30941@kili>
+        Wed, 16 Mar 2022 05:57:08 -0400
+X-Greylist: delayed 2292 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 16 Mar 2022 02:55:53 PDT
+Received: from bitmer.com (49-237-179-185.static.tentacle.fi [185.179.237.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 852C955771;
+        Wed, 16 Mar 2022 02:55:53 -0700 (PDT)
+Received: from jarkko by bitmer.com with local (Exim 4.89)
+        (envelope-from <jarkko.nikula@bitmer.com>)
+        id 1nUPmO-0007RG-Tx; Wed, 16 Mar 2022 11:17:16 +0200
+Date:   Wed, 16 Mar 2022 11:17:16 +0200
+From:   Jarkko Nikula <jarkko.nikula@bitmer.com>
+To:     =?iso-8859-1?Q?P=E9ter?= Ujfalusi <peter.ujfalusi@gmail.com>
+Cc:     Colin Ian King <colin.i.king@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: ti: Fix spelling mistake "cant" -> "can't"
+Message-ID: <20220316091716.wk25xjliy4zzvzb3@bitmer.com>
+References: <20220315230816.2964577-1-colin.i.king@gmail.com>
+ <4d3c65c0-1bc3-bc8f-393a-22c964f18120@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20220316083948.GC30941@kili>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4d3c65c0-1bc3-bc8f-393a-22c964f18120@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Mar 16, 2022 at 11:39:48AM +0300, Dan Carpenter wrote:
-> This code checks "index" for an upper bound but it does not check for
-> negatives.  Change the type to unsigned to prevent underflows.
+On Wed, Mar 16, 2022 at 08:34:12AM +0200, Péter Ujfalusi wrote:
 > 
-> Fixes: 3c3c1f141639 ("RDMA/nldev: Allow optional-counter status configuration through RDMA netlink")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Could we not use a nldev_policy[] to tighten the bounds checking even
-> more?
-
-We are doing it, when calling to nlmsg_parse() at the beginning of nldev_stat_set_doit().
-The entry_attr, which used as input to index, is tb[RDMA_NLDEV_ATTR_STAT_HWCOUNTER_INDEX].
-
-However it is not enough and we still need your change, because input
-can be large enough to be casted to negative value.
-
-Thanks,
-Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
+> 
+> On 16/03/2022 01:08, Colin Ian King wrote:
+> > There is a spelling mistake in a dev_err message. Fix it.
+> 
+> Acked-by: Peter Ujfalusi <peter.ujfalusi@gmail.com>
+>
+Acked-by: Jarkko Nikula <jarkko.nikula@bitmer.com>
