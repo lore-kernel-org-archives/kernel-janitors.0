@@ -2,64 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9492EC433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Mar 2022 07:50:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C17C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 16 Mar 2022 08:13:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354338AbiCPHvv (ORCPT
+        id S1354432AbiCPIOW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Mar 2022 03:51:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40646 "EHLO
+        Wed, 16 Mar 2022 04:14:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344701AbiCPHvu (ORCPT
+        with ESMTP id S1354430AbiCPIOV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Mar 2022 03:51:50 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D85B75B3CC;
-        Wed, 16 Mar 2022 00:50:36 -0700 (PDT)
-Received: from zn.tnic (p5de8e440.dip0.t-ipconnect.de [93.232.228.64])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 131D81EC056A;
-        Wed, 16 Mar 2022 08:50:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1647417031;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=xG00aaFEHjWHCmGyBp8U73MMpXK7Oqyw1ad6T9YHcYo=;
-        b=kDBF+oqjLywhB6FXJfOmM6xIvFJi0AhUalvdn0mtrFUFG7Xu9dtwSk4DCqSCWEZzeMhzQ+
-        3GCkr+DRpaJA9agMhPalpHWFq7i4dMu8MZtClprqJkndzSJhg6pR1BfhoqXm7hMPSA6n1W
-        ALm4KdkSOtaZIVbZDOWNetd/wwABatM=
-Date:   Wed, 16 Mar 2022 08:48:14 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     x86@kernel.org, linux-mm@kvack.org,
+        Wed, 16 Mar 2022 04:14:21 -0400
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 731B325C8;
+        Wed, 16 Mar 2022 01:13:06 -0700 (PDT)
+Received: by mail-yb1-xb30.google.com with SMTP id v35so2963969ybi.10;
+        Wed, 16 Mar 2022 01:13:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TeV6RUw+DNsdu8AvRyuJcTYqLVcyGU4+g4ue41Pfh1k=;
+        b=DWvxgRTwX2slFxXNq5JIefab+rLZkZHD/EcVvkIu6p4ryFP2B1Bd9c3y1ZrtCgcPq8
+         yoscRXE9C5tNj1ffr2YHgCnVdaoRAT3zCTEwo8ggHylgGOKkmpf/VyesheXkeXssle35
+         IjViWrhdHO/OC8A4gnjMRDizEqK/dgGt655iINkV45bfDlSCafpG5Nft5Eg/R/SAJ8IE
+         kDtJiG8lBruDynHbq6k7mK/bWmEi7NCFZnbXeGzD5J3dUq0OZGUQCh/Hy0VCakKkjxeF
+         +2tFGwyEtpGqkeG3fzfyzvDa2EVXZhkSV3yJnR505PjVEsX/9vhslej45czNmEBp7djc
+         GNrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TeV6RUw+DNsdu8AvRyuJcTYqLVcyGU4+g4ue41Pfh1k=;
+        b=inSFqFkabWiuMiE6RlcfVDv/Ff9phQH85CbT1p1P6uuXG0TwUyzgPSEyHH6f2VUISS
+         hDgQUMpFMu+qMeYYBOJdxrrlXQJ+qmKyK+JcAtOOcXytb9jnaYBBSbZUCjb3mOnqhgvK
+         EmbjUgT0TNJ7hSu2kmI/hjpNCaWBU66OpbCZtcW8UYTQ57LKWoTAjrRSzK/3w/Bp1jRT
+         RckZlq7GZvCUnZ+eWmgM1+X0bGy2wowHJ7ejiQp5/OAKEcTxKIMtaHaD6RuX9Ig6OtPp
+         QY4TAG3WxDRCmydq/j6FVZKaYVtD9RTRAAM9rUSS/zmqRYledr/qwDVsZHTOg+K1Z0gu
+         8a6g==
+X-Gm-Message-State: AOAM533PMduRrrWEFRVgIEdnLFyO0rVNj2xssklHeNDgNFXj3d+KHV7y
+        uVH2850S/+LQDUO3Hn8ZsqUbJxaQBkIbt0apxkEZfRnP
+X-Google-Smtp-Source: ABdhPJxr/Z5kzjkSPtuhJ2saAhxlgEZoX1YZ6szgngBQrmgZAcyScJplyOZJwLuaVoz2JDhvgt2wHMYUd8RidOSECsU=
+X-Received: by 2002:a5b:20f:0:b0:628:6a2b:ee2c with SMTP id
+ z15-20020a5b020f000000b006286a2bee2cmr28076249ybl.175.1647418385568; Wed, 16
+ Mar 2022 01:13:05 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220316050828.17255-1-lukas.bulwahn@gmail.com> <YjGWPh6MSLqeL47e@zn.tnic>
+In-Reply-To: <YjGWPh6MSLqeL47e@zn.tnic>
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Wed, 16 Mar 2022 09:12:54 +0100
+Message-ID: <CAKXUXMzcAFv2FmU7L8HHA4Sp9uehqW_gfez7qVfsf1O6PsnwtA@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: drop entry to removed file in EXEC & BINFMT API
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     X86 ML <x86@kernel.org>, Linux-MM <linux-mm@kvack.org>,
         Eric Biederman <ebiederm@xmission.com>,
         Kees Cook <keescook@chromium.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: drop entry to removed file in EXEC & BINFMT
- API
-Message-ID: <YjGWPh6MSLqeL47e@zn.tnic>
-References: <20220316050828.17255-1-lukas.bulwahn@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220316050828.17255-1-lukas.bulwahn@gmail.com>
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Mar 16, 2022 at 06:08:28AM +0100, Lukas Bulwahn wrote:
-> Commit f9444ea5e208 ("x86: Remove a.out support") removes
-> arch/x86/ia32/ia32_aout.c, but misses a reference to that file in
-> MAINTAINERS.
+On Wed, Mar 16, 2022 at 8:50 AM Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Wed, Mar 16, 2022 at 06:08:28AM +0100, Lukas Bulwahn wrote:
+> > Commit f9444ea5e208 ("x86: Remove a.out support") removes
+> > arch/x86/ia32/ia32_aout.c, but misses a reference to that file in
+> > MAINTAINERS.
+>
+> It seems we're keeping a.out after all:
+>
+> https://lore.kernel.org/r/4c449fab-8135-5057-7d2c-7b948ce130cc@theinnocuous.com
+>
 
-It seems we're keeping a.out after all:
+I guess then you can squash my one-line patch into your patch, and
+then we put all this into the closet and wait for another day where
+this feature can be removed.
 
-https://lore.kernel.org/r/4c449fab-8135-5057-7d2c-7b948ce130cc@theinnocuous.com
+Thanks, Boris.
 
--- 
-Regards/Gruss,
-    Boris.
+Lukas
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> --
+> Regards/Gruss,
+>     Boris.
+>
+> https://people.kernel.org/tglx/notes-about-netiquette
