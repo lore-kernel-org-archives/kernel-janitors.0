@@ -2,64 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B55ABC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Mar 2022 19:22:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F26B6C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Mar 2022 20:31:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237970AbiCQTXV (ORCPT
+        id S229739AbiCQUdD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Mar 2022 15:23:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52658 "EHLO
+        Thu, 17 Mar 2022 16:33:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238108AbiCQTXP (ORCPT
+        with ESMTP id S229738AbiCQUcv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Mar 2022 15:23:15 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D52C217C4B;
-        Thu, 17 Mar 2022 12:21:58 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4C17FB81FA4;
-        Thu, 17 Mar 2022 19:21:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04190C340E9;
-        Thu, 17 Mar 2022 19:21:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647544916;
-        bh=qx6jx9YM+UsjiKdjOLV8P9ZHkAxi3jf4cdgY8sQswSo=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=RFk3IvHs/N1/uxEzEeUa/Lpu4Xk8ykcr+jQjHNstShonsukVNh6JlYD+8mzRSLWxR
-         uOUOodWb53EOsJ8LACfnezK2h0YDgxO9dLMW1mV1INHchiUhQP6wVt7MR1dm1RXioM
-         NC2cIyKU1OAtsiHRqVUnwzqNZ2Qk8eWdnzkZB4vpIXYoFTBYqt3eOYDG0NoKm/3aOx
-         7Scgid+iB6pwOFcOSxz2oAlfTuCIs7usJxNqob9bRPd8IZjmKyI2eE2wKZTk1K07mZ
-         fkEhUxcGLiy2lF6wHalvlIXyZqzHmQA4oKAcKB9fFI7AP/N+lB0UgO6HcJnUQJakFw
-         RiR/B+NkMsGCw==
-Content-Type: text/plain; charset="utf-8"
+        Thu, 17 Mar 2022 16:32:51 -0400
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4F4518A3CF;
+        Thu, 17 Mar 2022 13:31:34 -0700 (PDT)
+Received: by mail-oi1-x22d.google.com with SMTP id 12so6803008oix.12;
+        Thu, 17 Mar 2022 13:31:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=V4LhBNYnhdygc0CZZHH2ej2UF+qrm4ulwWEIxzmxAaw=;
+        b=dar6Vs3kjGkCthhBYvhfxSifJx9V/Ldg9ALQfn/DAwU7An1VoKquqdZhbmS/6Yzub9
+         QbqN6HXQaSgE3UTOC0oN+gejpLxQxIFQkHjs8hplnYWwKhvOvUAvtID/1WYMBW9s+t5h
+         dTBX6BdaXctfugE6/4qMa0PCgBsKKIMaBFLkf334qEAK3CI2SunnI+cHHTIiE366YE7U
+         taG1Hr1vOdFfqhube0rpis+ncHTP3XYWtFQIVMEcqqd4vGE0gXF8mOngvwLnnTHCxDFj
+         mjihcCmduqABv7XB10XJxA/Sp8ahuxiqPMTgjGm81S3JHjZhWiNjjWLPcxXiV6NpukQY
+         h3hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=V4LhBNYnhdygc0CZZHH2ej2UF+qrm4ulwWEIxzmxAaw=;
+        b=zvHQhz7ZHwVeHYyANoai3bkzYeRapJ3CR8xi8Q5fLEd/8NXZxeJ+OIs06VLfdkP/XY
+         QC5Scwhw92KnX4pcX8InOW6uDNj0oUQlMxVZ+4QPiciUuq+IAU1DXL7mOkbnLIUoLCtX
+         JwO+bF9fkxLN0jxn+y1xAYiVWPrDk4qY3tgBovWOp+g7l/7d8ZwYgOijwtd2hrxJMUuO
+         x2BwUf0CrC2SSbB47Z3e66sKg0TOgK0Tb8BJ4jabYW9giDlxCGBPQn+tOYY27CN8nY+y
+         ueISN4TIeGTKB5bHLceljr645FgRKmzlL/3zWXkxr3Xah/39Zp5QN3JNGJ91PiijpPXL
+         eUjg==
+X-Gm-Message-State: AOAM5301ZbFPeeEV++lnBSVSqGrNsUtBARMMBz6Xw15vjUz1c9eWkXU2
+        lQtZVY+haY1oUYagZlvCpJstQr6GTc6GMMDCx78a15H6
+X-Google-Smtp-Source: ABdhPJzfXLl6CjRpcz/xsIrozszoM9Zxzo1ZghzalC9LjaTSEVZBWPtjOkaOWTRLElQXRVjGKWPWZU4nF/4n3UlgxUM=
+X-Received: by 2002:aca:d07:0:b0:2ec:eaaf:a036 with SMTP id
+ 7-20020aca0d07000000b002eceaafa036mr2865348oin.253.1647549094217; Thu, 17 Mar
+ 2022 13:31:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220316083533.GA30941@kili>
-References: <20220316083533.GA30941@kili>
-Subject: Re: [PATCH] clk: visconti: prevent array overflow in visconti_clk_register_gates()
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Date:   Thu, 17 Mar 2022 12:21:54 -0700
-User-Agent: alot/0.10
-Message-Id: <20220317192156.04190C340E9@smtp.kernel.org>
+References: <20220315201959.2952327-1-colin.i.king@gmail.com>
+In-Reply-To: <20220315201959.2952327-1-colin.i.king@gmail.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Thu, 17 Mar 2022 16:31:23 -0400
+Message-ID: <CADnq5_PE-zWB9Cjw05Pby44G-uNG4t8i09Z92-f9O_QiPo+HfQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: Fix spelling mistake "regiser" -> "register"
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        xinhui pan <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Quoting Dan Carpenter (2022-03-16 01:35:33)
-> This code was using -1 to represent that there was no reset function.
-> Unfortunately, the -1 was stored in u8 so the if (clks[i].rs_id >=3D 0)
-> condition was always true.  This lead to an out of bounds access in
-> visconti_clk_register_gates().
->=20
-> Fixes: b4cbe606dc36 ("clk: visconti: Add support common clock driver and =
-reset driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
+Applied.  Thanks!
 
-Applied to clk-next
+Alex
+
+On Tue, Mar 15, 2022 at 4:20 PM Colin Ian King <colin.i.king@gmail.com> wrote:
+>
+> There is a spelling mistake in a dev_error error message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
+> index a025f080aa6a..9aa355a5ac3c 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_virt.c
+> @@ -919,7 +919,7 @@ static u32 amdgpu_virt_rlcg_reg_rw(struct amdgpu_device *adev, u32 offset, u32 v
+>                                                 "wrong operation type, rlcg failed to program reg: 0x%05x\n", offset);
+>                                 } else if (tmp & AMDGPU_RLCG_REG_NOT_IN_RANGE) {
+>                                         dev_err(adev->dev,
+> -                                               "regiser is not in range, rlcg failed to program reg: 0x%05x\n", offset);
+> +                                               "register is not in range, rlcg failed to program reg: 0x%05x\n", offset);
+>                                 } else {
+>                                         dev_err(adev->dev,
+>                                                 "unknown error type, rlcg failed to program reg: 0x%05x\n", offset);
+> --
+> 2.35.1
+>
