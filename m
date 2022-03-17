@@ -2,78 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B85C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Mar 2022 08:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE08C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Mar 2022 09:03:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231479AbiCQIso (ORCPT
+        id S231705AbiCQJFM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Mar 2022 04:48:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36366 "EHLO
+        Thu, 17 Mar 2022 05:05:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229837AbiCQIsn (ORCPT
+        with ESMTP id S231635AbiCQJFL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Mar 2022 04:48:43 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 975311CABD6;
-        Thu, 17 Mar 2022 01:47:27 -0700 (PDT)
-Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KK11k5DHqz67Y4H;
-        Thu, 17 Mar 2022 16:45:30 +0800 (CST)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2375.24; Thu, 17 Mar 2022 09:47:25 +0100
-Received: from [10.47.84.96] (10.47.84.96) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.21; Thu, 17 Mar
- 2022 08:47:25 +0000
-Message-ID: <8ea15300-9301-a54e-8a65-78aa46745d08@huawei.com>
-Date:   Thu, 17 Mar 2022 08:47:24 +0000
+        Thu, 17 Mar 2022 05:05:11 -0400
+Received: from mail.onlinesuccesses.pl (mail.onlinesuccesses.pl [198.244.150.235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5903DA6D5
+        for <kernel-janitors@vger.kernel.org>; Thu, 17 Mar 2022 02:03:55 -0700 (PDT)
+Received: by mail.onlinesuccesses.pl (Postfix, from userid 1002)
+        id DF5EDA4201; Thu, 17 Mar 2022 09:01:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onlinesuccesses.pl;
+        s=mail; t=1647507698;
+        bh=nE8HqilgMh4dy7+Z8ksfg7Bc9rmPeQtYFq3/3YR2ODU=;
+        h=Date:From:To:Subject:From;
+        b=CZSOyJWAZ+7FBgdOkJ5oPKYEyL3qPvGh77d7zAW8Qwaxh9n8rwl8PWx49N3JYik7a
+         Myc7CSzWW2mzwYvkLJ+i9zEIH4LKCwL9QRNlu+x/KuylkO9JsKlWE/Dak6ufCDXyE4
+         hsKnT0PDn5hNrwQOj+vQ18ZtThfMmt3y8LCwlGbj6FT0YDZMZiTE5MaqGEAwwqtcgU
+         5ab0Xv0rkouyTKwV16DQCYftUcRDE+AdkkVfnOL9q8b0Sw8Nk9eM0MOoFXT9r2lN5+
+         RQlobAlhLNyS9NJLrm0YHUXC3mk1hcVgDfpfYwpONnApY6Xw7wi4189Iojy1vPtrwW
+         +gkD4cOuBetwA==
+Received: by mail.onlinesuccesses.pl for <kernel-janitors@vger.kernel.org>; Thu, 17 Mar 2022 09:01:01 GMT
+Message-ID: <20220317074501-0.1.36.mrn2.0.8cfv6lanpd@onlinesuccesses.pl>
+Date:   Thu, 17 Mar 2022 09:01:01 GMT
+From:   "Wiktor Zielonko" <wiktor.zielonko@onlinesuccesses.pl>
+To:     <kernel-janitors@vger.kernel.org>
+Subject: Ruch z pierwszej pozycji w Google
+X-Mailer: mail.onlinesuccesses.pl
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH] scsi: hisi_sas: remove stray fallthrough annotation
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        <linux-scsi@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20220317075214.GC25237@kili>
-From:   John Garry <john.garry@huawei.com>
-In-Reply-To: <20220317075214.GC25237@kili>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.47.84.96]
-X-ClientProxiedBy: lhreml735-chm.china.huawei.com (10.201.108.86) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 17/03/2022 07:52, Dan Carpenter wrote:
-> This case statement doesn't fall through any more so remove the
-> fallthrough annotation.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Dzie=C5=84 dobry,=20
 
-Thanks
+jaki=C5=9B czas temu zg=C5=82osi=C5=82a si=C4=99 do nas firma, kt=C3=B3re=
+j strona internetowa nie pozycjonowa=C5=82a si=C4=99 wysoko w wyszukiwarc=
+e Google.=20
 
-Acked-by: John Garry <john.garry@huawei.com>
+Na podstawie wykonanego przez nas audytu SEO zoptymalizowali=C5=9Bmy tre=C5=
+=9Bci na stronie pod k=C4=85tem wcze=C5=9Bniej opracowanych s=C5=82=C3=B3=
+w kluczowych. Nasz wewn=C4=99trzny system codziennie analizuje prawid=C5=82=
+owe dzia=C5=82anie witryny.  Dzi=C4=99ki indywidualnej strategii, firma z=
+dobywa coraz wi=C4=99cej Klient=C3=B3w. =20
 
-> ---
->   drivers/scsi/hisi_sas/hisi_sas_main.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-> index 461ef8a76c4c..4bda2f6cb352 100644
-> --- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-> +++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-> @@ -442,7 +442,6 @@ void hisi_sas_task_deliver(struct hisi_hba *hisi_hba,
->   	case SAS_PROTOCOL_INTERNAL_ABORT:
->   		hisi_sas_task_prep_abort(hisi_hba, slot);
->   		break;
-> -	fallthrough;
->   	default:
->   		return;
->   	}
+Czy chcieliby Pa=C5=84stwo zwi=C4=99kszy=C4=87 liczb=C4=99 os=C3=B3b odwi=
+edzaj=C4=85cych stron=C4=99 internetow=C4=85 firmy? M=C3=B3g=C5=82bym prz=
+edstawi=C4=87 ofert=C4=99?=20
 
+
+Pozdrawiam serdecznie,
+Wiktor Zielonko
