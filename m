@@ -2,97 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0399CC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Mar 2022 23:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D53C7C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Mar 2022 23:50:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230166AbiCQXsH (ORCPT
+        id S230174AbiCQXve (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Mar 2022 19:48:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53068 "EHLO
+        Thu, 17 Mar 2022 19:51:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229776AbiCQXsH (ORCPT
+        with ESMTP id S230288AbiCQXvb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Mar 2022 19:48:07 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FA2226133B;
-        Thu, 17 Mar 2022 16:46:49 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id r10so9607132wrp.3;
-        Thu, 17 Mar 2022 16:46:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=44jSVu9ViGX65V2KV4sJoKN91g8S2sbZ550L2N5DUJ4=;
-        b=l/0VWzdsq+0tapKmp9GM2+I2R4GUGVKdkGWYWuAwvHzKLPI3p5TshglsScGVDa6NFW
-         DaUSL0XENlAwNhjU9nCyUGZAAKbuLTE5fPZkTuqREBsP1ImFELxbCE3lmp3Tj4nI/jZy
-         9MwmBjSZpXSmwI4DVJZDYjtVulXynQRqIUs3I7K0QsW9YAidOZSK0Tv9Ac8x3k42NYBa
-         rI6tO6VGSjlkuhdZoQ0C6BU3ba7i/97qKi1VIMAusTrJVubzZfr5sUa8Dru53eP9ebuz
-         wQGxh7PiQr4lqSAjy9LGqm91YM5rAGN3LoMMnC2WtFXix6zXjBdx0Wr+n4qempHJNmVk
-         hZKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=44jSVu9ViGX65V2KV4sJoKN91g8S2sbZ550L2N5DUJ4=;
-        b=sPUOJTii9xSjQLTLtiE9pAUEoyRZQ97p9muRYglQ8XeP08eSzXK+xguUdunXn0d7WS
-         wVpb8MrYYI+0t75LPg1n+CtVhWjapuI9RQSkFske7aIIRvBsUNPwviB8wVBSD8ppXr+1
-         rOMoFfV9wCA7CuEHjwAtVOClA4K5EGYlkgb+qpWWqSH7NY3Do9olkGBqI5DgyNBrpn94
-         L8ASrm77fkUD7j4pyCEg8BCe27j+7/pA8vzYasdRCeBwuEndc5JvLqztBoD2u/OfvXtz
-         JIw+rGwLfXl6d4BXPC7gYH920dFy5UMh8dFAeBJ/1ZR/tQoOtYRP37mohKxm2SoTOzXA
-         R/kg==
-X-Gm-Message-State: AOAM533QnNUUji0luwbIBmqt0dLmZ8/kWiHDtEizzgV7z3a8Lr0MKx2m
-        cUDK0wkJNEdEa8kRwzXm+oY=
-X-Google-Smtp-Source: ABdhPJxdH/WN2xf224PSCmdD+V5oRw0iLxFKpaeNeTNgCZ9Kx3jYO0+gAPl3kcA/9A7EbQbNAzpyng==
-X-Received: by 2002:adf:efd2:0:b0:203:db42:c56c with SMTP id i18-20020adfefd2000000b00203db42c56cmr5842974wrp.698.1647560808002;
-        Thu, 17 Mar 2022 16:46:48 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id v5-20020adfe4c5000000b001edc1e5053esm4860565wrm.82.2022.03.17.16.46.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Mar 2022 16:46:47 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
-        Jens Axboe <axboe@kernel.dk>, xen-devel@lists.xenproject.org,
-        linux-block@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev
-Subject: [PATCH] xen-blkback: remove redundant assignment to variable i
-Date:   Thu, 17 Mar 2022 23:46:46 +0000
-Message-Id: <20220317234646.78158-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
-MIME-Version: 1.0
+        Thu, 17 Mar 2022 19:51:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8118D2B04F1;
+        Thu, 17 Mar 2022 16:50:14 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1C02961337;
+        Thu, 17 Mar 2022 23:50:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id F3FCDC340FA;
+        Thu, 17 Mar 2022 23:50:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1647561013;
+        bh=GSOTd2RxSS2kcmyFx4FLiHgoTudEzwGqgoH4ZKQYRv0=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=SGDYuBs2TF9rGRZ60vJCgfRlPYr2aqy+9e6lWoy5MiU5bDekN1eshO9NX8qtKCdCJ
+         Yxd5EveoNUGIcZkVfUy1K+aMu75g2AUlRntP5XQr0PcvJK6iwTZLs4oJa7BspN5krx
+         pmKcrWMuH3Fa7ds9pQhaXZkjWCNOhPBf5Hsdk7VUraHroid96td1kzMOmbjNVfnsQr
+         lRikQk32sqfI8h5AYLF9kacET9IiWdczwR9UmXSNqSCVmq5wMITpL90EjL18yL9fvf
+         oRe30Mht1yHus+x2NEZ4RDFycLkDUzd5WGbnCNaXnWNzyVWIzoDl8KkclEjiPArcg6
+         OClPeApAfv1tQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id DE2F3F03846;
+        Thu, 17 Mar 2022 23:50:12 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] gtp: Remove a bogus tab
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164756101290.14093.7117497281533622987.git-patchwork-notify@kernel.org>
+Date:   Thu, 17 Mar 2022 23:50:12 +0000
+References: <20220317075642.GD25237@kili>
+In-Reply-To: <20220317075642.GD25237@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     pablo@netfilter.org, laforge@gnumonks.org, davem@davemloft.net,
+        kuba@kernel.org, osmocom-net-gprs@lists.osmocom.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable i is being assigned a value that is never read, it is being
-re-assigned later in a for-loop. The assignment is redundant and can
-be removed.
+Hello:
 
-Cleans up clang scan build warning:
-drivers/block/xen-blkback/blkback.c:934:14: warning: Although the value
-stored to 'i' is used in the enclosing expression, the value is never
-actually read from 'i' [deadcode.DeadStores]
+This patch was applied to netdev/net-next.git (master)
+by Tony Nguyen <anthony.l.nguyen@intel.com>:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/block/xen-blkback/blkback.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, 17 Mar 2022 10:56:42 +0300 you wrote:
+> The "kfree_skb(skb_to_send);" is not supposed to be indented that far.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/net/gtp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
-index d1e26461a64e..de42458195bc 100644
---- a/drivers/block/xen-blkback/blkback.c
-+++ b/drivers/block/xen-blkback/blkback.c
-@@ -931,7 +931,7 @@ static int xen_blkbk_parse_indirect(struct blkif_request *req,
- 	if (rc)
- 		goto unmap;
- 
--	for (n = 0, i = 0; n < nseg; n++) {
-+	for (n = 0; n < nseg; n++) {
- 		uint8_t first_sect, last_sect;
- 
- 		if ((n % SEGS_PER_INDIRECT_FRAME) == 0) {
+Here is the summary with links:
+  - [net-next] gtp: Remove a bogus tab
+    https://git.kernel.org/netdev/net-next/c/02f393381d14
+
+You are awesome, thank you!
 -- 
-2.35.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
