@@ -2,77 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21543C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Mar 2022 11:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC1AC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Mar 2022 13:01:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232951AbiCQLVf (ORCPT
+        id S229888AbiCQNCl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Mar 2022 07:21:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41412 "EHLO
+        Thu, 17 Mar 2022 09:02:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232960AbiCQLVf (ORCPT
+        with ESMTP id S230362AbiCQNCc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Mar 2022 07:21:35 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D58C61E3E03;
-        Thu, 17 Mar 2022 04:20:17 -0700 (PDT)
+        Thu, 17 Mar 2022 09:02:32 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D3A320C2E6;
+        Thu, 17 Mar 2022 06:00:14 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 38EB5CE22DC;
-        Thu, 17 Mar 2022 11:20:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 803F3C36AE2;
-        Thu, 17 Mar 2022 11:20:14 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id DF202B81DA1;
+        Thu, 17 Mar 2022 13:00:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 817B2C340EF;
+        Thu, 17 Mar 2022 13:00:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647516014;
-        bh=nCuwQehZV3E3+yHCPJUenkVbOnNfVLacM411RXq1JBQ=;
+        s=k20201202; t=1647522010;
+        bh=yV5Jc/gBBDkmafjLLLBbIHDho+86bn0+HPLxHDuESuk=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=lX9UWohllyxg/2VmSSr4NgF9UCMF0/A/Tpq7Et1aKpk87D77wei9aN4oI7mr5KWf9
-         g15UpVyqIArst4kd2Vnh22Nrt8QwnYXHJXWZ4TCxK5rQo6WywInZEVNA2f48vApRru
-         Qx78D/GS8slE1Ez465DFyfl/LucxYSqZQ+m59CS4cqFHj+HzuD5cGwDBNLpUd89ZjX
-         YR2PDXYQXNipw2uK3xN6G0MDYqplflniczsiRv5pX4GS0ek5Hi7aAEzM9p/jZwQGqQ
-         PhA/QRYb9fOBn1cePptVSZaH84wMr1hm6oonpasWLmsG9kGx8IyCm+3ekHZjkVb9De
-         lo0Rx+p8BdlfQ==
+        b=i7kCys/S82opt7twEnwe3E5pOF1Eu0Iu/wGbHYWM4Rr0HCwmCtmIBQZsp6ivfDP4x
+         YdCv6GjKp28OwXTIgzfEQT7Rw4z7YxKKIqkblSiYziORuUaK+mtAu7cS5r8i3q1CM3
+         lAOXygUkfoLgn2cUEVbDFRQHFyiPS7Axgi2//Ahre7Oy1IORBycxrQnLXMw5q4JboO
+         g9PCvscoFF2mbJiYUSGE5OU3KllCctiFc+oYKguyjWwtYJJdmR7Qocjcm61kcKzCUa
+         ZFfjOHHoKZuVB3kMZD0U2DJj0kGyPo61cMBLU80naZrjp2qwiLMnHbgeAb8XQL/SYh
+         LsMoLeSxTgnrg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 663C1E8DD5B;
-        Thu, 17 Mar 2022 11:20:14 +0000 (UTC)
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5A76DE6D3DD;
+        Thu, 17 Mar 2022 13:00:10 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] Bluetooth: btmtkuart: fix error handling in
- mtk_hci_wmt_sync()
-From:   patchwork-bot+bluetooth@kernel.org
-Message-Id: <164751601441.15552.578400949800414032.git-patchwork-notify@kernel.org>
-Date:   Thu, 17 Mar 2022 11:20:14 +0000
-References: <20220317075740.GE25237@kili>
-In-Reply-To: <20220317075740.GE25237@kili>
+Subject: Re: [PATCH net-next] net: stmmac: clean up impossible condition
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164752201035.1459.5576780774534521056.git-patchwork-notify@kernel.org>
+Date:   Thu, 17 Mar 2022 13:00:10 +0000
+References: <20220316083744.GB30941@kili>
+In-Reply-To: <20220316083744.GB30941@kili>
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     sean.wang@mediatek.com, marcel@holtmann.org,
-        johan.hedberg@gmail.com, luiz.dentz@gmail.com,
-        matthias.bgg@gmail.com, linux-bluetooth@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Cc:     peppe.cavallaro@st.com, boon.leong.ong@intel.com,
+        alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+        davem@davemloft.net, kuba@kernel.org, mcoquelin.stm32@gmail.com,
+        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 Hello:
 
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Marcel Holtmann <marcel@holtmann.org>:
+This patch was applied to netdev/net-next.git (master)
+by Paolo Abeni <pabeni@redhat.com>:
 
-On Thu, 17 Mar 2022 10:57:40 +0300 you wrote:
-> This code has an uninitialized variable warning:
+On Wed, 16 Mar 2022 11:37:44 +0300 you wrote:
+> This code works but it has a static checker warning:
 > 
->     drivers/bluetooth/btmtkuart.c:184 mtk_hci_wmt_sync()
->     error: uninitialized symbol 'wc'.
+>     drivers/net/ethernet/stmicro/stmmac/stmmac_main.c:1687 init_dma_rx_desc_rings()
+>     warn: always true condition '(queue >= 0) => (0-u32max >= 0)'
 > 
-> But it also has error paths which have memory leaks.
+> Obviously, it makes no sense to check if an unsigned int is >= 0.  What
+> prevents this code from being a forever loop is that later there is a
+> separate check for if (queue == 0).
 > 
 > [...]
 
 Here is the summary with links:
-  - Bluetooth: btmtkuart: fix error handling in mtk_hci_wmt_sync()
-    https://git.kernel.org/bluetooth/bluetooth-next/c/65d6602f6334
+  - [net-next] net: stmmac: clean up impossible condition
+    https://git.kernel.org/netdev/net-next/c/58e06d05d43a
 
 You are awesome, thank you!
 -- 
