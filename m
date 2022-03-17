@@ -2,83 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC1AC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Mar 2022 13:01:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A1A9C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Mar 2022 14:17:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229888AbiCQNCl (ORCPT
+        id S234983AbiCQOS3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Mar 2022 09:02:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33562 "EHLO
+        Thu, 17 Mar 2022 10:18:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230362AbiCQNCc (ORCPT
+        with ESMTP id S233407AbiCQOS2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Mar 2022 09:02:32 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D3A320C2E6;
-        Thu, 17 Mar 2022 06:00:14 -0700 (PDT)
+        Thu, 17 Mar 2022 10:18:28 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AC3BA6E1D;
+        Thu, 17 Mar 2022 07:17:11 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DF202B81DA1;
-        Thu, 17 Mar 2022 13:00:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 817B2C340EF;
-        Thu, 17 Mar 2022 13:00:10 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A13DDB81E54;
+        Thu, 17 Mar 2022 14:17:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6D83C340E9;
+        Thu, 17 Mar 2022 14:17:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647522010;
-        bh=yV5Jc/gBBDkmafjLLLBbIHDho+86bn0+HPLxHDuESuk=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=i7kCys/S82opt7twEnwe3E5pOF1Eu0Iu/wGbHYWM4Rr0HCwmCtmIBQZsp6ivfDP4x
-         YdCv6GjKp28OwXTIgzfEQT7Rw4z7YxKKIqkblSiYziORuUaK+mtAu7cS5r8i3q1CM3
-         lAOXygUkfoLgn2cUEVbDFRQHFyiPS7Axgi2//Ahre7Oy1IORBycxrQnLXMw5q4JboO
-         g9PCvscoFF2mbJiYUSGE5OU3KllCctiFc+oYKguyjWwtYJJdmR7Qocjcm61kcKzCUa
-         ZFfjOHHoKZuVB3kMZD0U2DJj0kGyPo61cMBLU80naZrjp2qwiLMnHbgeAb8XQL/SYh
-         LsMoLeSxTgnrg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5A76DE6D3DD;
-        Thu, 17 Mar 2022 13:00:10 +0000 (UTC)
+        s=k20201202; t=1647526629;
+        bh=4yTtPxDsez82JJrZymLem6q7cLgKEHs+DjNsrwNpr7g=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=KSBKjh4bc42EwYX8CQMC3a8puVBTt5rQCMd8+xoPtDceLi0VWXlpX5tsYGzhARJNg
+         a3ulk1xTqpJPe3/9+naGcmuPFCMjQ5feYh/MKClGeaYD1sNjmr+eC1a0HchYBpe4RX
+         I+pVH93dRSg6/GbGCGjR4KzxdvBh/p1pFRnhn+OWQXRMwhYDdrCrRPI1vW4hXntiCU
+         +2zgMKzuXAdTVCMF5Ze+OD2DZTIhXfv0GbF+1nEiOcLMTOiR0ZU1xeIZNkLqB7s5lu
+         Au8rvSTFlRoHhawag+J8JVdYCDfLMEoP08xbVO0dGgqHuiKhf6ZFN1Y3YjHbjlGnvN
+         XMDMjdjWiJn7A==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: stmmac: clean up impossible condition
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164752201035.1459.5576780774534521056.git-patchwork-notify@kernel.org>
-Date:   Thu, 17 Mar 2022 13:00:10 +0000
-References: <20220316083744.GB30941@kili>
-In-Reply-To: <20220316083744.GB30941@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     peppe.cavallaro@st.com, boon.leong.ong@intel.com,
-        alexandre.torgue@foss.st.com, joabreu@synopsys.com,
-        davem@davemloft.net, kuba@kernel.org, mcoquelin.stm32@gmail.com,
-        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        kernel-janitors@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] brcmfmac: p2p: Fix spelling mistake "Comback" ->
+ "Comeback"
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20220316233938.55135-1-colin.i.king@gmail.com>
+References: <20220316233938.55135-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Arend van Spriel <aspriel@gmail.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        SHA-cyfmac-dev-list@infineon.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <164752662488.16149.346921748924515883.kvalo@kernel.org>
+Date:   Thu, 17 Mar 2022 14:17:06 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Colin Ian King <colin.i.king@gmail.com> wrote:
 
-This patch was applied to netdev/net-next.git (master)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Wed, 16 Mar 2022 11:37:44 +0300 you wrote:
-> This code works but it has a static checker warning:
+> There are some spelling mistakes in comments and brcmf_dbg messages.
+> Fix these.
 > 
->     drivers/net/ethernet/stmicro/stmmac/stmmac_main.c:1687 init_dma_rx_desc_rings()
->     warn: always true condition '(queue >= 0) => (0-u32max >= 0)'
-> 
-> Obviously, it makes no sense to check if an unsigned int is >= 0.  What
-> prevents this code from being a forever loop is that later there is a
-> separate check for if (queue == 0).
-> 
-> [...]
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Here is the summary with links:
-  - [net-next] net: stmmac: clean up impossible condition
-    https://git.kernel.org/netdev/net-next/c/58e06d05d43a
+Patch applied to wireless-next.git, thanks.
 
-You are awesome, thank you!
+7f5f00cdf795 brcmfmac: p2p: Fix spelling mistake "Comback" -> "Comeback"
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+https://patchwork.kernel.org/project/linux-wireless/patch/20220316233938.55135-1-colin.i.king@gmail.com/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
