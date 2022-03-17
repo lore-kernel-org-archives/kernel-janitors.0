@@ -2,112 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04249C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Mar 2022 00:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F2DCC4332F
+	for <kernel-janitors@archiver.kernel.org>; Thu, 17 Mar 2022 02:40:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245550AbiCQALi (ORCPT
+        id S1358471AbiCQCla (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 16 Mar 2022 20:11:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58942 "EHLO
+        Wed, 16 Mar 2022 22:41:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229566AbiCQALh (ORCPT
+        with ESMTP id S1354977AbiCQCl2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 16 Mar 2022 20:11:37 -0400
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2F8D19C22;
-        Wed, 16 Mar 2022 17:10:20 -0700 (PDT)
-Authenticated-By: 
-X-SpamFilter-By: ArmorX SpamTrap 5.73 with qID 22H0A0fnC004517, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-        by rtits2.realtek.com.tw (8.15.2/2.71/5.88) with ESMTPS id 22H0A0fnC004517
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 17 Mar 2022 08:10:00 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Thu, 17 Mar 2022 08:10:00 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS04.realtek.com.tw (172.21.6.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Thu, 17 Mar 2022 08:09:59 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::41d7:1d2e:78a6:ff34]) by
- RTEXMBS04.realtek.com.tw ([fe80::41d7:1d2e:78a6:ff34%5]) with mapi id
- 15.01.2308.021; Thu, 17 Mar 2022 08:09:59 +0800
-From:   Pkshih <pkshih@realtek.com>
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Kalle Valo <kvalo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] rtw89: Fix spelling mistake "Mis-Match" -> "Mismatch"
-Thread-Topic: [PATCH] rtw89: Fix spelling mistake "Mis-Match" -> "Mismatch"
-Thread-Index: AQHYOY+MjEpKADeJ1EiR/B9g/alLqKzCs3rQ
-Date:   Thu, 17 Mar 2022 00:09:59 +0000
-Message-ID: <895366eef1d44540beab3145a36a02bb@realtek.com>
-References: <20220316234242.55515-1-colin.i.king@gmail.com>
-In-Reply-To: <20220316234242.55515-1-colin.i.king@gmail.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.69.188]
-x-kse-serverinfo: RTEXMBS04.realtek.com.tw, 9
-x-kse-attachmentfiltering-interceptor-info: no applicable attachment filtering
- rules found
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: =?utf-8?B?Q2xlYW4sIGJhc2VzOiAyMDIyLzMvMTYg5LiL5Y2IIDA1OjE3OjAw?=
-x-kse-bulkmessagesfiltering-scan-result: protection disabled
+        Wed, 16 Mar 2022 22:41:28 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2A5F20185;
+        Wed, 16 Mar 2022 19:40:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 814FFB81DEA;
+        Thu, 17 Mar 2022 02:40:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 294E7C340EF;
+        Thu, 17 Mar 2022 02:40:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1647484811;
+        bh=d6PHNPVPmTysZRBit4MXXt2WuAvPHuq0x2xiVX6+buQ=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=Bd03dVaQKeLa5kOBEyhtT8eCYCLD/LUX/77MAU8WEW/Gr/wbI9ZqqKXFS7jtixiZW
+         rfJtkwdDOBlb9sx5sAIW6FCgXkbjhtX8OxzwhBFghAKl3zfDguPK1HFcAZ9cs50ixn
+         R6xuGNdYYtfG8VzV/bzaKtPAc3B4ePpNZQcZmbEOarpoHzSkU9rbWpTzpPYNeivBx/
+         t81cumUNi+67xotsGyRyc/UJ31hEI2xX0pvVqhAH+1VCH5q/uK9oNFqJod8dWMzZB5
+         aQfl1vQS5gB8DRrxp8FwQscKBOMPPiiN3FQIfoPwuReXFMK/ddUO/VFZw3+3MsMVC2
+         K1uaMWuAy1IMA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E8A2BF03848;
+        Thu, 17 Mar 2022 02:40:10 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-KSE-ServerInfo: RTEXH36505.realtek.com.tw, 9
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: protection disabled
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: hns3: Fix spelling mistake "does't" -> "doesn't"
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164748481094.31245.11981080354188425621.git-patchwork-notify@kernel.org>
+Date:   Thu, 17 Mar 2022 02:40:10 +0000
+References: <20220315222914.2960786-1-colin.i.king@gmail.com>
+In-Reply-To: <20220315222914.2960786-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     yisen.zhuang@huawei.com, salil.mehta@huawei.com,
+        davem@davemloft.net, kuba@kernel.org, huangguangbin2@huawei.com,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IENvbGluIElhbiBLaW5nIDxj
-b2xpbi5pLmtpbmdAZ21haWwuY29tPg0KPiBTZW50OiBUaHVyc2RheSwgTWFyY2ggMTcsIDIwMjIg
-Nzo0MyBBTQ0KPiBUbzogUGtzaGloIDxwa3NoaWhAcmVhbHRlay5jb20+OyBLYWxsZSBWYWxvIDxr
-dmFsb0BrZXJuZWwub3JnPjsgRGF2aWQgUyAuIE1pbGxlciA8ZGF2ZW1AZGF2ZW1sb2Z0Lm5ldD47
-DQo+IEpha3ViIEtpY2luc2tpIDxrdWJhQGtlcm5lbC5vcmc+OyBsaW51eC13aXJlbGVzc0B2Z2Vy
-Lmtlcm5lbC5vcmc7IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IGtlcm5lbC1qYW5pdG9y
-c0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVj
-dDogW1BBVENIXSBydHc4OTogRml4IHNwZWxsaW5nIG1pc3Rha2UgIk1pcy1NYXRjaCIgLT4gIk1p
-c21hdGNoIg0KPiANCj4gVGhlcmUgYXJlIHNvbWUgc3BlbGxpbmcgbWlzdGFrZXMgaW4gc29tZSBs
-aXRlcmFsIHN0cmluZ3MuIEZpeCB0aGVtLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFu
-IEtpbmcgPGNvbGluLmkua2luZ0BnbWFpbC5jb20+DQoNCkFja2VkLWJ5OiBQaW5nLUtlIFNoaWgg
-PHBrc2hpaEByZWFsdGVrLmNvbT4NCg0KPiAtLS0NCj4gIGRyaXZlcnMvbmV0L3dpcmVsZXNzL3Jl
-YWx0ZWsvcnR3ODkvY29leC5jIHwgNiArKystLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2Vy
-dGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQv
-d2lyZWxlc3MvcmVhbHRlay9ydHc4OS9jb2V4LmMgYi9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFs
-dGVrL3J0dzg5L2NvZXguYw0KPiBpbmRleCAwN2YyNjcxOGI2NmYuLjk5YWJkMGZlN2YxNSAxMDA2
-NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydHc4OS9jb2V4LmMNCj4g
-KysrIGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydHc4OS9jb2V4LmMNCj4gQEAgLTQ2
-MjMsMTIgKzQ2MjMsMTIgQEAgc3RhdGljIHZvaWQgX3Nob3dfY3hfaW5mbyhzdHJ1Y3QgcnR3ODlf
-ZGV2ICpydHdkZXYsIHN0cnVjdCBzZXFfZmlsZSAqbSkNCj4gIAl2ZXJfaG90Zml4ID0gRklFTERf
-R0VUKEdFTk1BU0soMTUsIDgpLCBjaGlwLT53bGN4X2Rlc2lyZWQpOw0KPiAgCXNlcV9wcmludGYo
-bSwgIiglcywgZGVzaXJlZDolZC4lZC4lZCksICIsDQo+ICAJCSAgICh3bC0+dmVyX2luZm8uZndf
-Y29leCA+PSBjaGlwLT53bGN4X2Rlc2lyZWQgPw0KPiAtCQkgICAiTWF0Y2giIDogIk1pcy1NYXRj
-aCIpLCB2ZXJfbWFpbiwgdmVyX3N1YiwgdmVyX2hvdGZpeCk7DQo+ICsJCSAgICJNYXRjaCIgOiAi
-TWlzbWF0Y2giKSwgdmVyX21haW4sIHZlcl9zdWIsIHZlcl9ob3RmaXgpOw0KPiANCj4gIAlzZXFf
-cHJpbnRmKG0sICJCVF9GV19jb2V4OiVkKCVzLCBkZXNpcmVkOiVkKVxuIiwNCj4gIAkJICAgYnQt
-PnZlcl9pbmZvLmZ3X2NvZXgsDQo+ICAJCSAgIChidC0+dmVyX2luZm8uZndfY29leCA+PSBjaGlw
-LT5idGN4X2Rlc2lyZWQgPw0KPiAtCQkgICAiTWF0Y2giIDogIk1pcy1NYXRjaCIpLCBjaGlwLT5i
-dGN4X2Rlc2lyZWQpOw0KPiArCQkgICAiTWF0Y2giIDogIk1pc21hdGNoIiksIGNoaXAtPmJ0Y3hf
-ZGVzaXJlZCk7DQo+IA0KPiAgCWlmIChidC0+ZW5hYmxlLm5vdyAmJiBidC0+dmVyX2luZm8uZncg
-PT0gMCkNCj4gIAkJcnR3ODlfYnRjX2Z3X2VuX3JwdChydHdkZXYsIFJQVF9FTl9CVF9WRVJfSU5G
-TywgdHJ1ZSk7DQo+IEBAIC01MDc1LDcgKzUwNzUsNyBAQCBzdGF0aWMgdm9pZCBfc2hvd19kbV9p
-bmZvKHN0cnVjdCBydHc4OV9kZXYgKnJ0d2Rldiwgc3RydWN0IHNlcV9maWxlICptKQ0KPiAgCXNl
-cV9wcmludGYobSwgImxlYWtfYXA6JWQsIGZ3X29mZmxvYWQ6JXMlc1xuIiwgZG0tPmxlYWtfYXAs
-DQo+ICAJCSAgIChCVENfQ1hfRldfT0ZGTE9BRCA/ICJZIiA6ICJOIiksDQo+ICAJCSAgIChkbS0+
-d2xfZndfY3hfb2ZmbG9hZCA9PSBCVENfQ1hfRldfT0ZGTE9BRCA/DQo+IC0JCSAgICAiIiA6ICIo
-TWlzLU1hdGNoISEpIikpOw0KPiArCQkgICAgIiIgOiAiKE1pc21hdGNoISEpIikpOw0KPiANCj4g
-IAlpZiAoZG0tPnJmX3RyeF9wYXJhLndsX3R4X3Bvd2VyID09IDB4ZmYpDQo+ICAJCXNlcV9wcmlu
-dGYobSwNCj4gLS0NCj4gMi4zNS4xDQo+IA0KPiAtLS0tLS1QbGVhc2UgY29uc2lkZXIgdGhlIGVu
-dmlyb25tZW50IGJlZm9yZSBwcmludGluZyB0aGlzIGUtbWFpbC4NCg==
+Hello:
+
+This patch was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 15 Mar 2022 22:29:14 +0000 you wrote:
+> There is a spelling mistake in a dev_warn message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Here is the summary with links:
+  - net: hns3: Fix spelling mistake "does't" -> "doesn't"
+    https://git.kernel.org/netdev/net-next/c/f403443015c6
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
