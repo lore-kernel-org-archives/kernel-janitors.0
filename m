@@ -2,105 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A573C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Mar 2022 00:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 731C8C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Mar 2022 00:45:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231223AbiCRAkt (ORCPT
+        id S231243AbiCRArN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Mar 2022 20:40:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35626 "EHLO
+        Thu, 17 Mar 2022 20:47:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbiCRAks (ORCPT
+        with ESMTP id S229482AbiCRArN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Mar 2022 20:40:48 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71913E994F;
-        Thu, 17 Mar 2022 17:39:30 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id j26so9728968wrb.1;
-        Thu, 17 Mar 2022 17:39:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7gsTkrihCJqnEHPeTUREyY+grPIvlwOYy2RYZrHaUHI=;
-        b=FLPx3v9O3yp794Fc9m8+3Fms180PmpDjbtrLO0Xu1i8qXrAd/9enHHAeShbg4oSb7t
-         md9G09lQyD5JyMP0ZOdKfNy4zxT1/xQDszXVsxP0F/x1wl9DLVVpLchZbrsin0Bk66P1
-         6vop8DECEbBHRj1ikoWDW3T6qUgGUzdvVDfOLlDTvrq+71zXZi95SfBq+N42khglWfuX
-         awl0h72ycsBAS7Vc2MvCwZJOkRdTx/T8lBcQ45hjGnfQ3EcTD2ycbkgFp385z3MYIC6P
-         APBPni1nM3HPfu7A1b4AouHvNpwkbgHS7k3Dshz85Qn2R5p6/e7AC7alVu8nhg2wvHKX
-         yjMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7gsTkrihCJqnEHPeTUREyY+grPIvlwOYy2RYZrHaUHI=;
-        b=h9r3Z7u5YrIMSxiZdaOgTqp+vaTPBcz7edOmEw36FGZa1qStVbF8CnI80P8VDdqOyx
-         z/HGxa9oeAqmBS52HR8cd0cJvFGv9LnJAu5upXRuNfFBV4WoCGg4ze1YWlV6aup2HGCe
-         HQAdA5Ol9llMwGVYu4AjlFdcPt7bDGUZelWmeBASUI6nOc+16RnM6C1k9f14+hZ6f4YW
-         A0/T3t5BGZT5slpgXWiRwSwmRJNIi39mJey54aRwPjotYBY8TAae64rhVHqsNbqiUcmD
-         05Lc5Cz59JCMXgirCsORy9bRuynPvF9Mz4W2Zb2wLuIf0A6bi2ZxybG/D616RJvuUagv
-         NXcA==
-X-Gm-Message-State: AOAM530f17/pLSJ0gxFjPeneVQgbVqe6OslyjcYZjVFBymUzy6dDmpIp
-        62OAli+eD4YJ4XwDXQrclYw=
-X-Google-Smtp-Source: ABdhPJwoQZOjUskNt5TU0ZyJE8Ju4uZEdL59fCI7gDoWZSkg2jY3/M90ILkKoeR3EvRnfG/qXKEatQ==
-X-Received: by 2002:a05:6000:18ac:b0:203:ecad:a203 with SMTP id b12-20020a05600018ac00b00203ecada203mr4249744wri.177.1647563969021;
-        Thu, 17 Mar 2022 17:39:29 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id 2-20020a1c1902000000b00380d3873d6asm5533293wmz.43.2022.03.17.17.39.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Mar 2022 17:39:28 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Sathya Prakash <sathya.prakash@broadcom.com>,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-        Suganath Prabu Subramani 
-        <suganath-prabu.subramani@broadcom.com>,
-        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev
-Subject: [PATCH] scsi: message: fusion: mptbase: remove redundant variable dmp
-Date:   Fri, 18 Mar 2022 00:39:27 +0000
-Message-Id: <20220318003927.81471-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Thu, 17 Mar 2022 20:47:13 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E06552986E8;
+        Thu, 17 Mar 2022 17:45:55 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 916B3B81F6A;
+        Fri, 18 Mar 2022 00:45:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ECEBC340E9;
+        Fri, 18 Mar 2022 00:45:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1647564353;
+        bh=869vS8CNRy7w/fO0Z3K24Zwe/P2FIlJv9kmWIGddaJ0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=cmr9ZqXCFS93xvfnp/inh6Nz+h9u2D+XvrlcMZOnuSc1PIQ7o0RPB2vZg+8NSTgmM
+         ZLYY1svNwPNBZCrXgNDVuQqVmFGP8oIfhtXXN45S8scBQTlfcTISSHPcRq76nLhb/x
+         AzvREflIpFQD2J2NcnScnyn0XWGkpmRZd/XQ7YKdNOK7ixyjzFU2Ca3rwrhYjvdM95
+         +MMjuj/2dStN4sYluSsNL2ye+ZAxP6gQKnmj4nKkVMQoqrf5soe46X7l5wiuIccrcA
+         IL0n31Gko0MEIUGPE15nG3mYp9F4kh7CigmkDwHAa7M3gR6b2+T0QL/A6FPdPS1Vwt
+         ksAwLY65cyT+Q==
+Date:   Thu, 17 Mar 2022 17:45:47 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     patchwork-bot+netdevbpf@kernel.org
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>, pablo@netfilter.org,
+        laforge@gnumonks.org, davem@davemloft.net,
+        osmocom-net-gprs@lists.osmocom.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] gtp: Remove a bogus tab
+Message-ID: <20220317174547.6193437e@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+In-Reply-To: <164756101290.14093.7117497281533622987.git-patchwork-notify@kernel.org>
+References: <20220317075642.GD25237@kili>
+        <164756101290.14093.7117497281533622987.git-patchwork-notify@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable dmp is being assigned a value that is never read, the
-variable is redundant and can be removed.
+On Thu, 17 Mar 2022 23:50:12 +0000 patchwork-bot+netdevbpf@kernel.org
+wrote:
+> Hello:
+> 
+> This patch was applied to netdev/net-next.git (master)
+> by Tony Nguyen <anthony.l.nguyen@intel.com>:
+> 
+> On Thu, 17 Mar 2022 10:56:42 +0300 you wrote:
+> > The "kfree_skb(skb_to_send);" is not supposed to be indented that far.
+> > 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
+> >  drivers/net/gtp.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)  
+> 
+> Here is the summary with links:
+>   - [net-next] gtp: Remove a bogus tab
+>     https://git.kernel.org/netdev/net-next/c/02f393381d14
 
-Cleans up clang scan build warning:
-drivers/message/fusion/mptbase.c:6667:39: warning: Although
-the value stored to 'dmp' is used in the enclosing expression,
-the value is never actually read from 'dmp' [deadcode.DeadStores]
-
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/message/fusion/mptbase.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
-index e90adfa57950..9b3ba2df71c7 100644
---- a/drivers/message/fusion/mptbase.c
-+++ b/drivers/message/fusion/mptbase.c
-@@ -6658,13 +6658,13 @@ static int mpt_summary_proc_show(struct seq_file *m, void *v)
- static int mpt_version_proc_show(struct seq_file *m, void *v)
- {
- 	u8	 cb_idx;
--	int	 scsi, fc, sas, lan, ctl, targ, dmp;
-+	int	 scsi, fc, sas, lan, ctl, targ;
- 	char	*drvname;
- 
- 	seq_printf(m, "%s-%s\n", "mptlinux", MPT_LINUX_VERSION_COMMON);
- 	seq_printf(m, "  Fusion MPT base driver\n");
- 
--	scsi = fc = sas = lan = ctl = targ = dmp = 0;
-+	scsi = fc = sas = lan = ctl = targ = 0;
- 	for (cb_idx = MPT_MAX_PROTOCOL_DRIVERS-1; cb_idx; cb_idx--) {
- 		drvname = NULL;
- 		if (MptCallbacks[cb_idx]) {
--- 
-2.35.1
-
+Not really, the patch that got applied was the version from Wojciech.
