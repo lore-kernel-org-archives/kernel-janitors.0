@@ -2,64 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7615FC433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Mar 2022 00:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C26CCC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Mar 2022 01:20:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231246AbiCRAvw (ORCPT
+        id S231452AbiCRBV4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Mar 2022 20:51:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48050 "EHLO
+        Thu, 17 Mar 2022 21:21:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbiCRAvp (ORCPT
+        with ESMTP id S230352AbiCRBV4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Mar 2022 20:51:45 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CCED13DB61;
-        Thu, 17 Mar 2022 17:50:27 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id v130-20020a1cac88000000b00389d0a5c511so5898455wme.5;
-        Thu, 17 Mar 2022 17:50:27 -0700 (PDT)
+        Thu, 17 Mar 2022 21:21:56 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D07E2571A5;
+        Thu, 17 Mar 2022 18:20:38 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id l1-20020a05600c4f0100b00389645443d2so4103556wmq.2;
+        Thu, 17 Mar 2022 18:20:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=3pMEbKBsMpapDd8TCjE4RHFawECGaW/7eNS3lLK39RM=;
-        b=nurmfdO1iMIrBTlsO7SIBEuIZr5DueNEiSytzbs9NuL2KOS/DHR/ihWYxPNIKIvIos
-         qE2q38W5m0BtJEBxcRlYheiXOLooMSQf3rokqWtNO0i6qVOpzfADGXKZBGPZySVHe3xP
-         Os+26lqEw08MMVC4YINaAGUl0uGzucz7Wv1/MCy7vztqDnrqsPSVcHjEeVNpZoXZosEE
-         JO4gQ2RBB9Y+gIvpzQkIhFQ9T1ar5IgFM1rwDrPwR7PUE2cmGK91R6rK/Z3DNR4i0eLn
-         mmlgroZmqLPbYTueAZnwLINL5LYxYwTYE94eBxiT7Vz1fP6DMhAwsxFirkXj8IrsEHaR
-         zLpA==
+        bh=Ow9WE/x0y21BF9BsskKcwPU9dRpux5T6k8fuA2iplUY=;
+        b=bkbL5JcCQo9od9B8PDETuIDSCmJX4W+4yEy5eDK/EewHA/vnjY1V++LrJsoLAJNSWr
+         t++U5vfBgEh7cc4xzofaI+Hr7fB8ujopEoSCFzaGGdE8yUMlSroMIAIF4w4VWMADGRBC
+         9oPd32W+a7wG/yttwzLKjo1l+GQfc8fE+l6Fqc7aVMLogiHfwnYEWhLnCGTheo6VcRRd
+         +OWFRvg+QBKgScA+rI+nKm5DqR/qb15I0JC8aOSVtTzzO7i3VYkqYE8zmeNCwRlYKeky
+         kELehVXcLA/elcnqLI77ADQsB2txDYujDre3S+x3mwrm8UQr0ZlApYFBZeCvlTPfxPj9
+         aTGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=3pMEbKBsMpapDd8TCjE4RHFawECGaW/7eNS3lLK39RM=;
-        b=35mzEG0vRlI1VCFqPJu6Y1Qfn4fWmyUV1bUOWXVuQ9hzON9UctFBAeHpo2cZTStc8X
-         FI0OoFGhodLf2bOaz6MieEHvVaNU9eKAG6DUsI3wDg5mtO2r160uOUgTy3B69UKL+zGf
-         JSJD+Wpdmxf8l/FDU0n1vR7bh3DStrV/zeeWJWLaVzlI1llAQp7QtvWwutIqVJ61piLw
-         B4XqgkD2cKpqPyEOdaD7kqZ9GTj9XJnK7tkxX16aJmIe2oHfjINdaHjSdDugJgJEgq88
-         6zP1KRK73wiGmFZt7XYF7xzEV5/mxL146irTn0c49bg19jNS/i3wO/x+jgH+5/JE9wt8
-         Gktg==
-X-Gm-Message-State: AOAM533j8J2h2RA3i9iGHwgN8eWJ+A3GuqOj/KcD8w1aRZAmYfcI9ko2
-        IscVGG7DYxgdHxNlveiUbJY=
-X-Google-Smtp-Source: ABdhPJxlOL4MExEm3h26Y4McVA9a+lQbSOcpch5+/PntdcTOqCOFkKirk/UG1u3K3uaNw444o89q6g==
-X-Received: by 2002:a05:600c:a4b:b0:37b:ea2b:5583 with SMTP id c11-20020a05600c0a4b00b0037bea2b5583mr14211291wmq.139.1647564625886;
-        Thu, 17 Mar 2022 17:50:25 -0700 (PDT)
+        bh=Ow9WE/x0y21BF9BsskKcwPU9dRpux5T6k8fuA2iplUY=;
+        b=gHOg2A4hK1fqJh1wOL9NZoKn/GpMXEBIlXM2L4T0uVEYq6E81V1VryIS4ge7nQyjo2
+         PykYKftoyWDO+Pf52rt6Lcmbr42WDxLtn5O/RXF3vbyJ10sLm5PplmjXgOPH5k6rsE5S
+         FOkjGZUj/kl+HsPzpUiu8JAqocbjiwxMsCszegcnUIHdEOnWalwigcO2J2UCWTJ5szkz
+         Y8Vn+gJ05jpP/iaP5yNBfKEjj8aJluuVy84ZYczlUHdEMRVCY0Zl9nKjBSBE/v5fEmIR
+         IX/L4C7+ZYIHChV/vv4e5t6NJtSy3d4o9/oRNbD5ML0mwBwGzAgVNO9DBO9TNAp71sds
+         UDTQ==
+X-Gm-Message-State: AOAM533PF8I6YprHNHytJMbZPRnKFNCRVlFYk9I6AHluMAV+IMF8U4fG
+        D0j5ssTmbRPFroO9tDpVde4=
+X-Google-Smtp-Source: ABdhPJwLPznoPhNWDA2mDexWJeLTMIRynOicTwbpMOkJYwaiy79gn+qAu0F/euVWJTGQzZS90MYo2A==
+X-Received: by 2002:a05:600c:3b14:b0:389:e95d:75af with SMTP id m20-20020a05600c3b1400b00389e95d75afmr13523900wms.143.1647566437133;
+        Thu, 17 Mar 2022 18:20:37 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n65-20020a1c2744000000b003862bfb509bsm9483720wmn.46.2022.03.17.17.50.24
+        by smtp.gmail.com with ESMTPSA id j34-20020a05600c1c2200b0038995cb915fsm13381888wms.9.2022.03.17.18.20.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Mar 2022 17:50:25 -0700 (PDT)
+        Thu, 17 Mar 2022 18:20:36 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Chris Snook <chris.snook@gmail.com>,
+To:     Shahed Shaikh <shshaikh@marvell.com>,
+        Manish Chopra <manishc@marvell.com>,
+        GR-Linux-NIC-Dev@marvell.com,
         "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Gatis Peisenieks <gatis@mikrotik.com>, netdev@vger.kernel.org
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         llvm@lists.linux.dev
-Subject: [PATCH] atl1c: remove redundant assignment to variable size
-Date:   Fri, 18 Mar 2022 00:50:21 +0000
-Message-Id: <20220318005021.82073-1-colin.i.king@gmail.com>
+Subject: [PATCH] qlcnic: remove redundant assignment to variable index
+Date:   Fri, 18 Mar 2022 01:20:35 +0000
+Message-Id: <20220318012035.89482-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -68,33 +68,33 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable sie is being assigned a value that is never read. The
-The assignment is redundant and can be removed.
+Variable index is being assigned a value that is never read, it is being
+re-assigned later in a following for-loop. The assignment is redundant
+and can be removed.
 
 Cleans up clang scan build warning:
-drivers/net/ethernet/atheros/atl1c/atl1c_main.c:1054:22: warning:
-Although the value stored to 'size' is used in the enclosing
-expression, the value is never actually read from 'size'
-[deadcode.DeadStores]
+drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c:1358:17: warning:
+Although the value stored to 'index' is used in the enclosing expression,
+the value is never actually read from 'index' [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/net/ethernet/atheros/atl1c/atl1c_main.c | 2 +-
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/atheros/atl1c/atl1c_main.c b/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
-index f50604f3e541..49459397993e 100644
---- a/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
-+++ b/drivers/net/ethernet/atheros/atl1c/atl1c_main.c
-@@ -1051,7 +1051,7 @@ static int atl1c_setup_ring_resources(struct atl1c_adapter *adapter)
- 	 * each ring/block may need up to 8 bytes for alignment, hence the
- 	 * additional bytes tacked onto the end.
- 	 */
--	ring_header->size = size =
-+	ring_header->size =
- 		sizeof(struct atl1c_tpd_desc) * tpd_ring->count * tqc +
- 		sizeof(struct atl1c_rx_free_desc) * rfd_ring->count * rqc +
- 		sizeof(struct atl1c_recv_ret_status) * rfd_ring->count * rqc +
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c
+index e10fe071a40f..54a2d653be63 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c
+@@ -1355,7 +1355,7 @@ static void qlcnic_get_ethtool_stats(struct net_device *dev,
+ 
+ 	memset(data, 0, stats->n_stats * sizeof(u64));
+ 
+-	for (ring = 0, index = 0; ring < adapter->drv_tx_rings; ring++) {
++	for (ring = 0; ring < adapter->drv_tx_rings; ring++) {
+ 		if (adapter->is_up == QLCNIC_ADAPTER_UP_MAGIC) {
+ 			tx_ring = &adapter->tx_ring[ring];
+ 			data = qlcnic_fill_tx_queue_stats(data, tx_ring);
 -- 
 2.35.1
 
