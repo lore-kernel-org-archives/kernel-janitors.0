@@ -2,41 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEFB8C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Mar 2022 16:33:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA5C1C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Mar 2022 17:41:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238831AbiCRQfE (ORCPT
+        id S239719AbiCRRmW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Mar 2022 12:35:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40090 "EHLO
+        Fri, 18 Mar 2022 13:42:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238922AbiCRQez (ORCPT
+        with ESMTP id S239707AbiCRRmT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Mar 2022 12:34:55 -0400
-Received: from smtp4.emailarray.com (smtp4.emailarray.com [65.39.216.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA1A923193C
-        for <kernel-janitors@vger.kernel.org>; Fri, 18 Mar 2022 09:33:34 -0700 (PDT)
-Received: (qmail 73806 invoked by uid 89); 18 Mar 2022 16:33:32 -0000
-Received: from unknown (HELO localhost) (amxlbW9uQGZsdWdzdmFtcC5jb21AMTYzLjExNC4xMzIuNQ==) (POLARISLOCAL)  
-  by smtp4.emailarray.com with SMTP; 18 Mar 2022 16:33:32 -0000
-Date:   Fri, 18 Mar 2022 09:33:31 -0700
-From:   Jonathan Lemon <jonathan.lemon@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 net-next] ptp: ocp: use snprintf() in ptp_ocp_verify()
-Message-ID: <20220318163331.yabbgis2u57vp3cu@bsd-mbp.dhcp.thefacebook.com>
-References: <20220318074723.GA6617@kili>
+        Fri, 18 Mar 2022 13:42:19 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18B16197AF1;
+        Fri, 18 Mar 2022 10:41:00 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C4B7FB824F0;
+        Fri, 18 Mar 2022 17:40:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C420C340E8;
+        Fri, 18 Mar 2022 17:40:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1647625257;
+        bh=y1kSwAeyUIPDD0WUz6meKPi7vm54XPFekIW69rri3cY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HCL2ClCbITt12Y9eqokJetjwA0tRnCwNDm412G4Ql1rs+kWvAlzVKXsC8JYDGSL6N
+         U95VkEqvnmbPNsg70bQc3bXxthHOUgXO69AT6NvQY4n1qkVYJ9GG//g5fduPgexaPE
+         0GZszFFZisqQiqD2OYD4MfVPlOx/c5HSdQS1g6vgGdX6g+HWh44YlOR81IrVV1mpVu
+         WIvlIaxL+7EE0zpw+10uHxyJxhabj6naed5nh4COB+flhrzzD/0ZxLE5Ceryx4Jyrh
+         vlVvBagxU0tJXKlRUdk78I8efZb7AM7NXI1xG8GhoEHVadnigj7Y9fV0kwk6Jynhgf
+         FReVWA2JgrjHw==
+Date:   Fri, 18 Mar 2022 11:40:55 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        linux-nvme@lists.infradead.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] nvmet: remove redundant assignment after left shift
+Message-ID: <YjTEJx2Uk2RN1+p5@C02CK6Q3MD6M>
+References: <20220318013014.90698-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220318074723.GA6617@kili>
+In-Reply-To: <20220318013014.90698-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 18, 2022 at 10:47:23AM +0300, Dan Carpenter wrote:
-> This code is fine, but it's easier to review if we use snprintf()
-> instead of sprintf().
+On Fri, Mar 18, 2022 at 01:30:14AM +0000, Colin Ian King wrote:
+> The left shift is followed by a re-assignment back to cc_css,
+> the assignment is redundant. Fix this by replacing the <<=
+> operator with << instead.
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Jonathan Lemon <jonathan.lemon@gmail.com>
+> Cleans up clang scan build warning:
+> drivers/nvme/target/core.c:1124:10: warning: Although the value
+> stored to 'cc_css' is used in the enclosing expression, the
+> value is never actually read from 'cc_css' [deadcode.DeadStores]
+
+Looks good.
+
+Reviewed-by: Keith Busch <kbusch@kernel.org>
