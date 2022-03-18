@@ -2,147 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84FDBC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Mar 2022 11:35:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0439AC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Mar 2022 12:53:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235778AbiCRLg6 (ORCPT
+        id S236398AbiCRMy1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Mar 2022 07:36:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55868 "EHLO
+        Fri, 18 Mar 2022 08:54:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230412AbiCRLg5 (ORCPT
+        with ESMTP id S230008AbiCRMy0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Mar 2022 07:36:57 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C5A92BB7C2
-        for <kernel-janitors@vger.kernel.org>; Fri, 18 Mar 2022 04:35:38 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id b24so9884469edu.10
-        for <kernel-janitors@vger.kernel.org>; Fri, 18 Mar 2022 04:35:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PvnbZcDCgkYNSLP/yg+3XNnpLOW7ZH/onRa1mY+vpE8=;
-        b=c4am+y3ktiacNDRaupRCY7pgsa3Au0OGzqCZEID2LZKMaNX1+4LqPgDfMagUZcLq9L
-         2fAGJ/R9klpu35iHbgT5sgghYA0Yl7eyweWBv6myoD2YFVNRNfLOmpWPEUETg0AHbzXd
-         fUVHnqWbBR34bGc3NUZbFPZss3iXSXxD/nHJP1/abr9OKzu+2ThZU3y2rzWmNIbJhCtp
-         BIr9w+W/cuAcaa/P2qpnrV3KT53jU/P3fehNhEndPD0MZfEbJDh+vtasFdFppmppkpAZ
-         P1rXj5XDspmtiNFVuvROi0jBLzEgqsm7bIk5yOXRCoZ6+MBsfbM8ZhqlQjpzuHHz+I4R
-         xaZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PvnbZcDCgkYNSLP/yg+3XNnpLOW7ZH/onRa1mY+vpE8=;
-        b=S6gHbPWHhcbmfXmyMQ4l0rOE05685vgQNEKnFMO4qOdzUcjMbuLDKfUk4C58BB1pbw
-         sWPHNDj/1moP4AaBfpUsdIMDPnQd3shQLmvDm/DcKXXq8CjuRxFGkxdKZvQq26oIMNfq
-         jeBzg+JGSWgWjFnrVXBPG1BFwu8U0gq4Donpg46mMkk5he2gR4pUbUDIx5uZ08rh32TC
-         IfFTpJmt8w9LdEoxiyoEuZWKq6VNVrB4O+xOup5RHoCbGaKwH9Dm7dOV7fFOdSQoVxFa
-         VhNy3GuTrqkJsp2VpM2mltUpaYZpQm6LhJfYDTtz1BD/2YDQlqIz9Ljv/tqdMkXoN2Dl
-         Up0A==
-X-Gm-Message-State: AOAM5313Exb2CF4cS6EqguCNbJWk1876nDhuyzQ5q3jYQ47kuxmTzYlW
-        ogqRVYzfiNXQ0qqAJnJIrOyXXjyO4cEQWCbkNtY26w==
-X-Google-Smtp-Source: ABdhPJwlYfQib+cOLIidlYcjtpVcZAnKceZWAkBTEp+mhLE+Frrgy2MkVVbrdB8gu+9vVP98vk1yA0ZchvfLOtStoIc=
-X-Received: by 2002:a05:6402:3715:b0:410:a415:fd95 with SMTP id
- ek21-20020a056402371500b00410a415fd95mr8991954edb.288.1647603336540; Fri, 18
- Mar 2022 04:35:36 -0700 (PDT)
+        Fri, 18 Mar 2022 08:54:26 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94375434AE;
+        Fri, 18 Mar 2022 05:53:07 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 5CE71B82270;
+        Fri, 18 Mar 2022 12:53:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C39AC340E8;
+        Fri, 18 Mar 2022 12:53:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1647607985;
+        bh=rTQbhPYYVJZgomybu+cN6oILoN69uaVjQZtcndr1FFc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NUyBeQKyk6l9YfLYfuD0D5RDqVMG+2q+g7Uoq10Rpv/IHBD5JRwda/n81wiOw6QRK
+         UcA0IPIfsi5cIbvb42rjRZHCjA5ua7OiOkLrmXJx+PBnI1Epb4RBuZF9Fh9By7n48I
+         OOlYGhhqlwhCnvy+SaeR+qaZqCjnSovqGHD6EzPk=
+Date:   Fri, 18 Mar 2022 13:53:01 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Ricky WU <ricky_wu@realtek.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] misc: rtsx: fix indenting in rts5228_extra_init_hw()
+Message-ID: <YjSArZ10NZLsJ3vb@kroah.com>
+References: <20220307141421.GC18867@kili>
 MIME-Version: 1.0
-References: <20220318103729.157574-22-Julia.Lawall@inria.fr>
-In-Reply-To: <20220318103729.157574-22-Julia.Lawall@inria.fr>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 18 Mar 2022 12:35:25 +0100
-Message-ID: <CAMRc=McwxPAe1z48HGwYDgqNc+kachZXax6GBw04nNm0ij_ftw@mail.gmail.com>
-Subject: Re: [PATCH] ARM: davinci: fix typos in comments
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     Sekhar Nori <nsekhar@ti.com>, kernel-janitors@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220307141421.GC18867@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 18, 2022 at 11:37 AM Julia Lawall <Julia.Lawall@inria.fr> wrote:
->
-> Various spelling mistakes in comments.
-> Detected with the help of Coccinelle.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
->
+On Mon, Mar 07, 2022 at 05:14:21PM +0300, Dan Carpenter wrote:
+> This code should be indented one more tab.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  arch/arm/mach-davinci/board-dm355-evm.c  |    4 ++--
->  arch/arm/mach-davinci/board-dm365-evm.c  |    2 +-
->  arch/arm/mach-davinci/board-dm644x-evm.c |    2 +-
->  arch/arm/mach-davinci/devices.c          |    2 +-
->  4 files changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/arm/mach-davinci/board-dm355-evm.c b/arch/arm/mach-davinci/board-dm355-evm.c
-> index 3c5a9e3c128a..36983dd73904 100644
-> --- a/arch/arm/mach-davinci/board-dm355-evm.c
-> +++ b/arch/arm/mach-davinci/board-dm355-evm.c
-> @@ -222,7 +222,7 @@ static struct v4l2_input tvp5146_inputs[] = {
->
->  /*
->   * this is the route info for connecting each input to decoder
-> - * ouput that goes to vpfe. There is a one to one correspondence
-> + * output that goes to vpfe. There is a one to one correspondence
->   * with tvp5146_inputs
->   */
->  static struct vpfe_route tvp5146_routes[] = {
-> @@ -295,7 +295,7 @@ static struct vpbe_enc_mode_info dm355evm_enc_preset_timing[] = {
->  #define VENC_STD_ALL   (V4L2_STD_NTSC | V4L2_STD_PAL)
->
->  /*
-> - * The outputs available from VPBE + ecnoders. Keep the
-> + * The outputs available from VPBE + encoders. Keep the
->   * the order same as that of encoders. First those from venc followed by that
->   * from encoders. Index in the output refers to index on a particular encoder.
->   * Driver uses this index to pass it to encoder when it supports more than
-> diff --git a/arch/arm/mach-davinci/board-dm365-evm.c b/arch/arm/mach-davinci/board-dm365-evm.c
-> index b3bef74c982a..21cf356fcd01 100644
-> --- a/arch/arm/mach-davinci/board-dm365-evm.c
-> +++ b/arch/arm/mach-davinci/board-dm365-evm.c
-> @@ -535,7 +535,7 @@ static struct vpbe_enc_mode_info dm365evm_enc_preset_timing[] = {
->  #define VENC_STD_ALL   (V4L2_STD_NTSC | V4L2_STD_PAL)
->
->  /*
-> - * The outputs available from VPBE + ecnoders. Keep the
-> + * The outputs available from VPBE + encoders. Keep the
->   * the order same as that of encoders. First those from venc followed by that
->   * from encoders. Index in the output refers to index on a particular
->   * encoder.Driver uses this index to pass it to encoder when it supports more
-> diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
-> index cce3a621eb20..1493f4a77e29 100644
-> --- a/arch/arm/mach-davinci/board-dm644x-evm.c
-> +++ b/arch/arm/mach-davinci/board-dm644x-evm.c
-> @@ -260,7 +260,7 @@ static struct v4l2_input dm644xevm_tvp5146_inputs[] = {
->
->  /*
->   * this is the route info for connecting each input to decoder
-> - * ouput that goes to vpfe. There is a one to one correspondence
-> + * output that goes to vpfe. There is a one to one correspondence
->   * with tvp5146_inputs
->   */
->  static struct vpfe_route dm644xevm_tvp5146_routes[] = {
-> diff --git a/arch/arm/mach-davinci/devices.c b/arch/arm/mach-davinci/devices.c
-> index 849e811fade7..781a619af1e1 100644
-> --- a/arch/arm/mach-davinci/devices.c
-> +++ b/arch/arm/mach-davinci/devices.c
-> @@ -245,7 +245,7 @@ void __init davinci_setup_mmc(int module, struct davinci_mmc_config *config)
->                         /* Power-on 3.3V IO cells */
->                         __raw_writel(0,
->                                 DAVINCI_SYSMOD_VIRT(SYSMOD_VDD3P3VPWDN));
-> -                       /*Set up the pull regiter for MMC */
-> +                       /*Set up the pull register for MMC */
+> Introduced in commit 86f4c65fd500 ("misc: rtsx: rts522a rts5228 rts5261
+> support Runtime PM").  No Fixes tag because it's not a bug.
+> 
+>  drivers/misc/cardreader/rts5228.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/misc/cardreader/rts5228.c b/drivers/misc/cardreader/rts5228.c
+> index af581f4f74d1..ec97854e1f70 100644
+> --- a/drivers/misc/cardreader/rts5228.c
+> +++ b/drivers/misc/cardreader/rts5228.c
+> @@ -491,9 +491,9 @@ static int rts5228_extra_init_hw(struct rtsx_pcr *pcr)
+>  
+>  	if (pcr->rtd3_en) {
+>  		rtsx_pci_write_register(pcr, pcr->reg_pm_ctrl3, 0x01, 0x01);
+> -	rtsx_pci_write_register(pcr, RTS5228_REG_PME_FORCE_CTL,
+> -				FORCE_PM_CONTROL | FORCE_PM_VALUE,
+> -				FORCE_PM_CONTROL | FORCE_PM_VALUE);
+> +		rtsx_pci_write_register(pcr, RTS5228_REG_PME_FORCE_CTL,
+> +					FORCE_PM_CONTROL | FORCE_PM_VALUE,
+> +					FORCE_PM_CONTROL | FORCE_PM_VALUE);
+>  	} else {
+>  		rtsx_pci_write_register(pcr, pcr->reg_pm_ctrl3, 0x01, 0x00);
+>  		rtsx_pci_write_register(pcr, RTS5228_REG_PME_FORCE_CTL,
+> -- 
+> 2.20.1
+> 
 
-While at it you could add a missic space.
-
-With that:
-
-Reviewed-by: Bartosz Golaszewski <brgl@bgdev.pl>
-
->                         davinci_cfg_reg(DM644X_MSTK);
->                 }
->
->
+Someone beat you to it:
+	https://lore.kernel.org/r/20220303020206.98911-1-yang.lee@linux.alibaba.com
