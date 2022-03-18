@@ -2,72 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF2FC433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Mar 2022 10:38:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 679FAC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Mar 2022 11:08:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235291AbiCRKkB (ORCPT
+        id S235625AbiCRLJY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Mar 2022 06:40:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37486 "EHLO
+        Fri, 18 Mar 2022 07:09:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235167AbiCRKjL (ORCPT
+        with ESMTP id S235641AbiCRLJT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Mar 2022 06:39:11 -0400
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5EEC8908A;
-        Fri, 18 Mar 2022 03:37:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=QtFW6Q+pfo+IdSPSw6/HTOFAVn24hdsGX+8wfv0Ib98=;
-  b=G72E4xSQfkVFZTg0XnMPo5ZsuOOfydikSaj5TMGIqVFTRqiztEBRI81S
-   kdJMhnqach7lQSPt0MfEVfFQWDG2Wli4fHgo84rrzolr8UNcXgRUFKgGm
-   aZwlAeVRggpN6hkDjLDw4iJbDInCUZsRRuSpbGPuSoVkg3SSaTSiXoDG9
-   c=;
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="5.90,192,1643670000"; 
-   d="scan'208";a="8935673"
-Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2022 11:37:40 +0100
-From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Paul Walmsley <paul@pwsan.com>
+        Fri, 18 Mar 2022 07:09:19 -0400
+Received: from relay3.hostedemail.com (relay3.hostedemail.com [64.99.140.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83A5315679C
+        for <kernel-janitors@vger.kernel.org>; Fri, 18 Mar 2022 04:07:56 -0700 (PDT)
+Received: from omf13.hostedemail.com (a10.router.float.18 [10.200.18.1])
+        by unirelay12.hostedemail.com (Postfix) with ESMTP id D99401208D5;
+        Fri, 18 Mar 2022 11:07:54 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf13.hostedemail.com (Postfix) with ESMTPA id 7DE6A2000D;
+        Fri, 18 Mar 2022 11:07:53 +0000 (UTC)
+Message-ID: <176f485c00e3c6c03ff794dc47f23702fc592a4f.camel@perches.com>
+Subject: Re: [PATCH] mm: fix typos in comments
+From:   Joe Perches <joe@perches.com>
+To:     Julia Lawall <Julia.Lawall@inria.fr>,
+        Richard Henderson <rth@twiddle.net>
 Cc:     kernel-janitors@vger.kernel.org,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: OMAP1: fix typos in comments
-Date:   Fri, 18 Mar 2022 11:37:28 +0100
-Message-Id: <20220318103729.157574-33-Julia.Lawall@inria.fr>
-X-Mailer: git-send-email 2.20.1
+Date:   Fri, 18 Mar 2022 04:07:52 -0700
+In-Reply-To: <20220318103729.157574-19-Julia.Lawall@inria.fr>
+References: <20220318103729.157574-19-Julia.Lawall@inria.fr>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.4-1ubuntu2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: x7ke1aw8edz91no8i5thucyw4zq3zu8b
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 7DE6A2000D
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX19c3Gj+9w+SnUdOlsv8MpJuj/ml9126C9w=
+X-HE-Tag: 1647601673-641712
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Various spelling mistakes in comments.
-Detected with the help of Coccinelle.
+On Fri, 2022-03-18 at 11:37 +0100, Julia Lawall wrote:
+> Various spelling mistakes in comments.
+[]
+> diff --git a/arch/alpha/kernel/sys_eiger.c b/arch/alpha/kernel/sys_eiger.c
+[]
+> @@ -148,7 +148,7 @@ eiger_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+>  
+>  	/* The SRM console has already calculated out the IRQ value's for
+>  	   option cards. As this works lets just read in the value already
+> -	   set and change it to a useable value by Linux.
+> +	   set and change it to a usable value by Linux.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+generally accepted alternative spelling.
 
----
- arch/arm/mach-omap1/clock_data.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+https://www.dictionary.com/browse/useable
 
-diff --git a/arch/arm/mach-omap1/clock_data.c b/arch/arm/mach-omap1/clock_data.c
-index 3ebcd96efbff..c761e72563c1 100644
---- a/arch/arm/mach-omap1/clock_data.c
-+++ b/arch/arm/mach-omap1/clock_data.c
-@@ -818,7 +818,7 @@ int __init omap1_clk_init(void)
- 		omap_readw(ARM_SYSST), omap_readw(DPLL_CTL),
- 		omap_readw(ARM_CKCTL));
- 
--	/* We want to be in syncronous scalable mode */
-+	/* We want to be in synchronous scalable mode */
- 	omap_writew(0x1000, ARM_SYSST);
- 
- 
 
