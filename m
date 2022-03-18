@@ -2,64 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C26CCC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Mar 2022 01:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F948C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Mar 2022 01:30:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231452AbiCRBV4 (ORCPT
+        id S231512AbiCRBbf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 17 Mar 2022 21:21:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35550 "EHLO
+        Thu, 17 Mar 2022 21:31:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230352AbiCRBV4 (ORCPT
+        with ESMTP id S229642AbiCRBbe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 17 Mar 2022 21:21:56 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D07E2571A5;
-        Thu, 17 Mar 2022 18:20:38 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id l1-20020a05600c4f0100b00389645443d2so4103556wmq.2;
-        Thu, 17 Mar 2022 18:20:38 -0700 (PDT)
+        Thu, 17 Mar 2022 21:31:34 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07C231207C8;
+        Thu, 17 Mar 2022 18:30:17 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id u10so9787869wra.9;
+        Thu, 17 Mar 2022 18:30:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=Ow9WE/x0y21BF9BsskKcwPU9dRpux5T6k8fuA2iplUY=;
-        b=bkbL5JcCQo9od9B8PDETuIDSCmJX4W+4yEy5eDK/EewHA/vnjY1V++LrJsoLAJNSWr
-         t++U5vfBgEh7cc4xzofaI+Hr7fB8ujopEoSCFzaGGdE8yUMlSroMIAIF4w4VWMADGRBC
-         9oPd32W+a7wG/yttwzLKjo1l+GQfc8fE+l6Fqc7aVMLogiHfwnYEWhLnCGTheo6VcRRd
-         +OWFRvg+QBKgScA+rI+nKm5DqR/qb15I0JC8aOSVtTzzO7i3VYkqYE8zmeNCwRlYKeky
-         kELehVXcLA/elcnqLI77ADQsB2txDYujDre3S+x3mwrm8UQr0ZlApYFBZeCvlTPfxPj9
-         aTGQ==
+        bh=y8hWtjydg1Uns+eOzqAaZoK2Vcd2nxaf7d5KD8AEEt4=;
+        b=hBcKG/WWy4HsVunBcI3ydG4SVMw/+29z7t+io0+b0TKqfjgmGEmZ6UIS16BlYMVnwH
+         LxM8FKgjziksWCiNEINZw5PnnjGyJ0TFNAGqqmfkffcNSldXqTB0ahWuMKbSLTla0rSm
+         aVCNkZcqC4xnqvxoIyrYoZe/yVo+ziL8w0HNivZbX7THsXlDKOltYyjBVlrpG6+OExVP
+         vNgFLlz++46k3zKIhiMIw6lbWM5rb35CI0eOcQJuefJdUr/J23F3Qp4XLu7ftVDezuAs
+         YgRPfekxmOYFaEu2294R2k5pLnxC8R9N46JAFHGHMsjZa5+h4eOh5bRzCemrU83DQHFp
+         kNog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=Ow9WE/x0y21BF9BsskKcwPU9dRpux5T6k8fuA2iplUY=;
-        b=gHOg2A4hK1fqJh1wOL9NZoKn/GpMXEBIlXM2L4T0uVEYq6E81V1VryIS4ge7nQyjo2
-         PykYKftoyWDO+Pf52rt6Lcmbr42WDxLtn5O/RXF3vbyJ10sLm5PplmjXgOPH5k6rsE5S
-         FOkjGZUj/kl+HsPzpUiu8JAqocbjiwxMsCszegcnUIHdEOnWalwigcO2J2UCWTJ5szkz
-         Y8Vn+gJ05jpP/iaP5yNBfKEjj8aJluuVy84ZYczlUHdEMRVCY0Zl9nKjBSBE/v5fEmIR
-         IX/L4C7+ZYIHChV/vv4e5t6NJtSy3d4o9/oRNbD5ML0mwBwGzAgVNO9DBO9TNAp71sds
-         UDTQ==
-X-Gm-Message-State: AOAM533PF8I6YprHNHytJMbZPRnKFNCRVlFYk9I6AHluMAV+IMF8U4fG
-        D0j5ssTmbRPFroO9tDpVde4=
-X-Google-Smtp-Source: ABdhPJwLPznoPhNWDA2mDexWJeLTMIRynOicTwbpMOkJYwaiy79gn+qAu0F/euVWJTGQzZS90MYo2A==
-X-Received: by 2002:a05:600c:3b14:b0:389:e95d:75af with SMTP id m20-20020a05600c3b1400b00389e95d75afmr13523900wms.143.1647566437133;
-        Thu, 17 Mar 2022 18:20:37 -0700 (PDT)
+        bh=y8hWtjydg1Uns+eOzqAaZoK2Vcd2nxaf7d5KD8AEEt4=;
+        b=p5QYPTrwP/qIjuGjux85VLUQQwYpph1HUehVB+z6XqNXDEAngPakVIjY/Srh4yoV+1
+         c/ScHrY/WMrIcGSUeByAwhXIsvjjaKl/xBGO9upyn7258xeoTSS10BOkG6+BRMO3vw/I
+         ujaRs/Yqnr1BJHJAa3tTbcsgQCKKhppk4Teqmo+YIMAuiFdHhTWzyKfyx6Gy2F8wdLx/
+         DB7MwLW1YJjiLJGllRpdeCPusaBYJjhn4MMcCDLsXwONPj1L/IuSI1NY1fgrmZjnFExO
+         dcgqzbwvj6EVU2wOw2P9ap1V0CQ2arRgtjhNEnT34tpblxOTAvwfG8niMUCDcoku2XjH
+         QTgQ==
+X-Gm-Message-State: AOAM533lCWveMCx/okfwuZWzMv3Agg9FhQvKqExSOuBssLCp51zFRfCJ
+        MGYn3opc8wO71n55HT6sFEE=
+X-Google-Smtp-Source: ABdhPJy44/ZTFxrG+FCtGZtXs1cj8lLzdIGlbJvYj5LgXRGfXlHaGY9J6mj7f3LTMs9tZivMYD9a9Q==
+X-Received: by 2002:a5d:59ab:0:b0:203:cc07:8d82 with SMTP id p11-20020a5d59ab000000b00203cc078d82mr5881291wrr.688.1647567015653;
+        Thu, 17 Mar 2022 18:30:15 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id j34-20020a05600c1c2200b0038995cb915fsm13381888wms.9.2022.03.17.18.20.36
+        by smtp.gmail.com with ESMTPSA id n65-20020a1c2744000000b003862bfb509bsm9534520wmn.46.2022.03.17.18.30.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Mar 2022 18:20:36 -0700 (PDT)
+        Thu, 17 Mar 2022 18:30:15 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Shahed Shaikh <shshaikh@marvell.com>,
-        Manish Chopra <manishc@marvell.com>,
-        GR-Linux-NIC-Dev@marvell.com,
-        "David S . Miller" <davem@davemloft.net>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
+To:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        linux-nvme@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         llvm@lists.linux.dev
-Subject: [PATCH] qlcnic: remove redundant assignment to variable index
-Date:   Fri, 18 Mar 2022 01:20:35 +0000
-Message-Id: <20220318012035.89482-1-colin.i.king@gmail.com>
+Subject: [PATCH] nvmet: remove redundant assignment after left shift
+Date:   Fri, 18 Mar 2022 01:30:14 +0000
+Message-Id: <20220318013014.90698-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -68,33 +66,33 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable index is being assigned a value that is never read, it is being
-re-assigned later in a following for-loop. The assignment is redundant
-and can be removed.
+The left shift is followed by a re-assignment back to cc_css,
+the assignment is redundant. Fix this by replacing the <<=
+operator with << instead.
 
 Cleans up clang scan build warning:
-drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c:1358:17: warning:
-Although the value stored to 'index' is used in the enclosing expression,
-the value is never actually read from 'index' [deadcode.DeadStores]
+drivers/nvme/target/core.c:1124:10: warning: Although the value
+stored to 'cc_css' is used in the enclosing expression, the
+value is never actually read from 'cc_css' [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c | 2 +-
+ drivers/nvme/target/core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c
-index e10fe071a40f..54a2d653be63 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c
-@@ -1355,7 +1355,7 @@ static void qlcnic_get_ethtool_stats(struct net_device *dev,
+diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
+index 724a6d373340..75876f70a7eb 100644
+--- a/drivers/nvme/target/core.c
++++ b/drivers/nvme/target/core.c
+@@ -1121,7 +1121,7 @@ static inline u8 nvmet_cc_iocqes(u32 cc)
  
- 	memset(data, 0, stats->n_stats * sizeof(u64));
- 
--	for (ring = 0, index = 0; ring < adapter->drv_tx_rings; ring++) {
-+	for (ring = 0; ring < adapter->drv_tx_rings; ring++) {
- 		if (adapter->is_up == QLCNIC_ADAPTER_UP_MAGIC) {
- 			tx_ring = &adapter->tx_ring[ring];
- 			data = qlcnic_fill_tx_queue_stats(data, tx_ring);
+ static inline bool nvmet_css_supported(u8 cc_css)
+ {
+-	switch (cc_css <<= NVME_CC_CSS_SHIFT) {
++	switch (cc_css << NVME_CC_CSS_SHIFT) {
+ 	case NVME_CC_CSS_NVM:
+ 	case NVME_CC_CSS_CSI:
+ 		return true;
 -- 
 2.35.1
 
