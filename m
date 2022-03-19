@@ -2,71 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE4C6C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 18 Mar 2022 21:34:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A88C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Mar 2022 03:57:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241128AbiCRVfk (ORCPT
+        id S241998AbiCSD6p (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 18 Mar 2022 17:35:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49068 "EHLO
+        Fri, 18 Mar 2022 23:58:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231609AbiCRVfg (ORCPT
+        with ESMTP id S241990AbiCSD6n (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 18 Mar 2022 17:35:36 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 733AC1DA8FB;
-        Fri, 18 Mar 2022 14:34:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 29CC1B825BC;
-        Fri, 18 Mar 2022 21:34:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 844B9C340E8;
-        Fri, 18 Mar 2022 21:34:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647639253;
-        bh=/Z1/M59ERRvXYmQlgycDFVEYINXXv8fogwEEU16Qt4M=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=ZiR4AmRfKV8EXsbSsSYThjhv5snfOKECbUvrz/85NVtCPg6RpN8wdZgFA7tULHxL8
-         QQVcQyzjIEav97Ihf8ZNXPBARhz5OXmTQLGXZNtYQWds/uS05G+EzB2ryVZJ5s3Zzg
-         v1+/e9faKKmJOOTu1ezLrx6mY6h4XWiDiFzI3j/gFTq/AxtaBcXgmg1zdf4+lbTcOi
-         6lrV3ULA1mNwkID7upto1Gif4VR71Mc6VIt5KgJR4TLKoUdv81uZqS2KkQ0TkBjRER
-         zzpoqiKeFVUXSzaS49Oywk1xAsGpGcVGH5e1cZfpgSuiP9WX1gzt6hSBebkrHFLDKR
-         eCecZIx2ciQFA==
-Date:   Fri, 18 Mar 2022 14:34:13 -0700 (PDT)
-From:   Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
-To:     Luca Fancellu <Luca.Fancellu@arm.com>
-cc:     Julia Lawall <Julia.Lawall@inria.fr>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] xen/arm: fix typos in comments
-In-Reply-To: <50B35A3D-9848-4B89-8935-AD3A1330D7CF@arm.com>
-Message-ID: <alpine.DEB.2.22.394.2203181430300.2910984@ubuntu-linux-20-04-desktop>
-References: <20220318103729.157574-15-Julia.Lawall@inria.fr> <50B35A3D-9848-4B89-8935-AD3A1330D7CF@arm.com>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+        Fri, 18 Mar 2022 23:58:43 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAC05103B98;
+        Fri, 18 Mar 2022 20:57:22 -0700 (PDT)
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22J1Va7b017423;
+        Sat, 19 Mar 2022 03:57:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2021-07-09;
+ bh=ZzqC69aMNoybtc6rTubeedjbC2mkw8ISGSTNmgrTWnI=;
+ b=hrxa6sH2Ta7p/wl67EsXVPMiPsMiim+/w5q7oVElh0Z8EY1nlZAoyDYshwtlv5eEP+hh
+ 55TvEXw1RclpoGUYjgX9mwgRl183aHOC5Tt8cj17QRf3+WOpgMAMlQ6rIgtYobdBicF/
+ bh08kRxFMdM+/cmIPKD83HJZP4vKYoYMmTBpUl2qUaFbU3ZWmHl6bpEQiW4929P2vtMD
+ fic2/0YPMFobRanDv/mIVF4ePe9e3424WFfLackSblb1a9s7z3Vp4kVSVfvSSI2Q+IOo
+ llzDbegObog1TrQ3HFzHEFrG5RGDoJGPdL/JAQe62ag2Ho5f1vb6U7vepstggD2QZRcH JA== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3ew5kcg2ku-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 19 Mar 2022 03:57:16 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 22J3v8HY007190;
+        Sat, 19 Mar 2022 03:57:15 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3ew5kyshp6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 19 Mar 2022 03:57:15 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 22J3v5Qo007126;
+        Sat, 19 Mar 2022 03:57:15 GMT
+Received: from ca-mkp.mkp.ca.oracle.com (ca-mkp.ca.oracle.com [10.156.108.201])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3ew5kyshmn-7;
+        Sat, 19 Mar 2022 03:57:14 +0000
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     Joe Perches <joe@perches.com>,
+        Julia Lawall <Julia.Lawall@inria.fr>,
+        James Smart <james.smart@broadcom.com>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 4/6 v2] scsi: lpfc: use kcalloc
+Date:   Fri, 18 Mar 2022 23:56:57 -0400
+Message-Id: <164766213032.31329.7586542683502803593.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220313141847.109804-1-Julia.Lawall@inria.fr>
+References: <20220313141847.109804-1-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: 1oryhxHHBOkg7RQi_PlwBT-2J3zOXQuV
+X-Proofpoint-ORIG-GUID: 1oryhxHHBOkg7RQi_PlwBT-2J3zOXQuV
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 18 Mar 2022, Luca Fancellu wrote:
-> > On 18 Mar 2022, at 10:37, Julia Lawall <Julia.Lawall@inria.fr> wrote:
-> > 
-> > Various spelling mistakes in comments.
-> > Detected with the help of Coccinelle.
-> > 
-> > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+On Sun, 13 Mar 2022 15:18:47 +0100, Julia Lawall wrote:
+
+> Use kcalloc instead of kmalloc + memset.
 > 
-> Reviewed-by: Luca Fancellu <luca.fancellu@arm.com>
+> 
 
-Acked-by: Stefano Stabellini <sstabellini@kernel.org>
+Applied to 5.18/scsi-queue, thanks!
 
-I assume this patch will go via the trivial tree? If not and you want
-this patch to be picked up in the Xen tree let me know.
+[4/6] scsi: lpfc: use kcalloc
+      https://git.kernel.org/mkp/scsi/c/dc2646417d54
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
