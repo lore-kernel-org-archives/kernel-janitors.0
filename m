@@ -2,89 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61301C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Mar 2022 18:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21097C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Mar 2022 19:55:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241423AbiCSST5 (ORCPT
+        id S244063AbiCST4r (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 19 Mar 2022 14:19:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54424 "EHLO
+        Sat, 19 Mar 2022 15:56:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234687AbiCSST4 (ORCPT
+        with ESMTP id S232643AbiCST4q (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 19 Mar 2022 14:19:56 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D01719A54E;
-        Sat, 19 Mar 2022 11:18:33 -0700 (PDT)
+        Sat, 19 Mar 2022 15:56:46 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A06321760C8;
+        Sat, 19 Mar 2022 12:55:23 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B77CC60AB4;
-        Sat, 19 Mar 2022 18:18:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 402C6C340EC;
-        Sat, 19 Mar 2022 18:18:30 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 5FF1ACE02C8;
+        Sat, 19 Mar 2022 19:55:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF6CAC340EC;
+        Sat, 19 Mar 2022 19:55:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647713912;
-        bh=W/45bdkqqVIDTi0QdnUU8/dGtYxRWLLNZWpynRVWzsI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=OEb2vAIdUMUBvrk6iMO/XL8F2yY4scUfhU97ZQoVKCSW+snL1A5+yMvq/i5KiB/7A
-         NT4Mjh+CZ06vBIOIm6YaN28n+ujzKJhRR9EJcL2cVZkkz7ERg49lrX/WhC+3UW43yo
-         nKalEmpFD/1TqGuat9eQiKB7CmooEy1URQI0nhq/L3a6PdHAral7uK6KQ7iG08zyy0
-         RHnSbu4wiO5lCCBoRqx2MFGCrsoZQEg5uCH5Xl08bggy0GaKuqdxJdI43RyxFyShLI
-         y5wWCYf4XgJ7UjGfPMUmYPtbQZkSH1TKVhkWTpTjVutV/CuqscyklGVz8E+ZtIwBzQ
-         CIKGEcrPeTE9Q==
-Date:   Sat, 19 Mar 2022 18:25:55 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Mihail Chindris <mihail.chindris@analog.com>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] iio: dac: ad3552r: fix signedness bug in
- ad3552r_reset()
-Message-ID: <20220319182555.73aaa20a@jic23-huawei>
-In-Reply-To: <20220316122354.GA16825@kili>
-References: <20220316122354.GA16825@kili>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        s=k20201202; t=1647719719;
+        bh=uj4MoN7wLRxHPnrpjOAR9P4RjaXPPxcItDjnxxSh7Cw=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=tPONuXnoCi8KQRX7JcDsMsCgDDufn3i13p+NVHbCfqOenZmE8yBhIdEmdWdf27nth
+         L8diqg8F46NYMxzNcVeV31yh8PIG9n8vqQ470pQ3epDL2QpmMxEbSY+D4KZIahM477
+         Eki96j54uA/oI5fg6IInWD+vGghADCzKf/t/nDmDiN4wJYHJGKz/vpKGeeqUI5WTm0
+         sIRtUkVSMWPNm8q0kCssS0MnPRBAFaV5Ro48kZOlgPWMYbF9bLMwLdpMzeMDsR7/jM
+         M6eDKdlWxg8L1PI+z9wAPYOVtEotkeQPA1dzHeaKatR2j2wfmEzGWWMQPgbAtHn3ft
+         dYF5rYuzFnrfg==
+Message-ID: <8a5fdf42-d457-7f47-b66a-8447fb297be0@kernel.org>
+Date:   Sat, 19 Mar 2022 15:55:18 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v2] dmaengine: qcom_hidma: Remove useless DMA-32 fallback
+ configuration
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org
+References: <4deb32b0c7838da66608022c584326eb01d0da03.1642232106.git.christophe.jaillet@wanadoo.fr>
+ <ee43d68f-000c-6513-38f2-877b9018ab22@kernel.org>
+ <08b7604d-f528-ecb7-a8b2-7c9c36518143@wanadoo.fr>
+From:   Sinan Kaya <okaya@kernel.org>
+In-Reply-To: <08b7604d-f528-ecb7-a8b2-7c9c36518143@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 16 Mar 2022 15:23:54 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
-
-> The "val" variable is used to store either negative error codes from
-> ad3552r_read_reg_wrapper() or positive u16 values on success.  It needs
-> to be signed for the error handling to work correctly.
+On 3/19/2022 2:24 AM, Christophe JAILLET wrote:
+> Le 22/01/2022 à 19:05, Sinan Kaya a écrit :
+>> On 1/15/2022 2:35 AM, Christophe JAILLET wrote:
+>>> As stated in [1], dma_set_mask() with a 64-bit mask never fails if
+>>> dev->dma_mask is non-NULL.
+>>> So, if it fails, the 32 bits case will also fail for the same reason.
+>>>
+>>> Simplify code and remove some dead code accordingly.
+>>>
+>>> [1]: 
+>>> https://lore.kernel.org/linux-kernel/YL3vSPK5DXTNvgdx@infradead.org/#t
+>>>
+>>
+>> Can we please document this?
 > 
-> Fixes: 8f2b54824b28 ("drivers:iio:dac: Add AD3552R driver support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Applied to the fixes-togreg branch of iio.git, but I won't be pushing it
-out publicly until I have rebased that tree on rc1 as it may make a mess
-of ordering in linux-next
-
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/dac/ad3552r.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Hi, the patch has been applied, but [1] is sometimes given as an 
+> explanation link.
 > 
-> diff --git a/drivers/iio/dac/ad3552r.c b/drivers/iio/dac/ad3552r.c
-> index 97f13c0b9631..e0a93b27e0e8 100644
-> --- a/drivers/iio/dac/ad3552r.c
-> +++ b/drivers/iio/dac/ad3552r.c
-> @@ -656,7 +656,7 @@ static int ad3552r_reset(struct ad3552r_desc *dac)
->  {
->  	struct reg_addr_pool addr;
->  	int ret;
-> -	u16 val;
-> +	int val;
->  
->  	dac->gpio_reset = devm_gpiod_get_optional(&dac->spi->dev, "reset",
->  						  GPIOD_OUT_LOW);
+> CJ
+> 
+> 
+> [1]: 
+> https://lists.linuxfoundation.org/pipermail/iommu/2019-February/033674.html
+
+Sounds good, please carry my
+
+Acked-By: Sinan Kaya <okaya@kernel.org>
 
