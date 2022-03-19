@@ -2,71 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E1BFC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Mar 2022 07:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 755A6C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Mar 2022 11:16:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242317AbiCSHCx (ORCPT
+        id S242761AbiCSLSS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 19 Mar 2022 03:02:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36558 "EHLO
+        Sat, 19 Mar 2022 07:18:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236462AbiCSHCt (ORCPT
+        with ESMTP id S236984AbiCSLSQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 19 Mar 2022 03:02:49 -0400
-Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87BD219BE78
-        for <kernel-janitors@vger.kernel.org>; Sat, 19 Mar 2022 00:01:28 -0700 (PDT)
-Received: from pop-os.home ([90.126.236.122])
-        by smtp.orange.fr with ESMTPA
-        id VT5ZnbL9ovjW4VT5ZnU3SP; Sat, 19 Mar 2022 08:01:27 +0100
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 19 Mar 2022 08:01:27 +0100
-X-ME-IP: 90.126.236.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Bottomley <James.Bottomley@SteelEye.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-scsi@vger.kernel.org
-Subject: [PATCH] zorro: Fix a resource leak in zorro7xx_remove_one()
-Date:   Sat, 19 Mar 2022 08:01:24 +0100
-Message-Id: <247066a3104d25f9a05de8b3270fc3c848763bcc.1647673264.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
+        Sat, 19 Mar 2022 07:18:16 -0400
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [IPv6:2a0b:5c81:1c1::37])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2332E2C3DD8;
+        Sat, 19 Mar 2022 04:16:55 -0700 (PDT)
+Received: from darkstar.musicnaut.iki.fi (85-76-3-17-nat.elisa-mobile.fi [85.76.3.17])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: aaro.koskinen)
+        by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 5311A1B005E7;
+        Sat, 19 Mar 2022 13:16:50 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+        t=1647688610;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=LtNthnYK/2RafUQShjpikkAGPGYQA3FW9B2cxMSy73k=;
+        b=RR2PqifMXA+DY1ljIC2dkKNovLXtB+EK/A4uUub169rxOkKgpOMZTcXw17egBUoNCbqhNc
+        Wj567aPXirL15p77CnkoT3Mir9vsQ3xxf8zHTDe3gjPea7AcMpTNaMp58MTn1gfzxcMdzA
+        mwWvFW9HGFpu7lkzh633SlBCYnGabIzJ9RgCir96BkdJqlo+m9y07XN/1vlnO0TGCaXQvy
+        d8o6FZGLTIlVDIXpRLeYMiuYaQ2g54TVvlxSWZRUrz/sqbk97mMAEMLa/QPto20uX5rFnD
+        +HzQl/7XIGy7/Sp8LS22KeA/aYgpDTEexdpm5td87+zYuZb12KAfKVpQnp6hJQ==
+Date:   Sat, 19 Mar 2022 13:16:48 +0200
+From:   Aaro Koskinen <aaro.koskinen@iki.fi>
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     Paul Walmsley <paul@pwsan.com>, kernel-janitors@vger.kernel.org,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: OMAP1: fix typos in comments
+Message-ID: <20220319111648.GD1986@darkstar.musicnaut.iki.fi>
+References: <20220318103729.157574-33-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220318103729.157574-33-Julia.Lawall@inria.fr>
+ARC-Authentication-Results: i=1;
+        ORIGINATING;
+        auth=pass smtp.auth=aaro.koskinen smtp.mailfrom=aaro.koskinen@iki.fi
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1647688610; a=rsa-sha256;
+        cv=none;
+        b=lA+W8taBKSTwr16a/oezH/zLCzbdc2OmKMJKF/mDWPTRA9pbccAxyi3cSEiuDB8G1TJJeu
+        lqOXO/TjQVo7mNO0w7LuFwwSw4NS7IiI5lYXkyBUZRxEdZKS8guQy1NoF1QG6Ux9P9nHq6
+        zC3OlXbCMLaQIigdlTrCPOBmyhhTPtQ4/9lQ0oRoqOP0zDtVLI6p1cWjUU6KX/TyOYB6nn
+        v/K9p2rEAFmTsOVlM9OmbiYentzoRF9x7anwWGXRJdR4xxrfVecpLB5akNSO4smbwA9AQh
+        OFwDf17S6S+IR8W9CfRfh8Mpqn2rxM03jfJkRiVCJrWmYQWLLXdAbWwJjsadBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+        s=lahtoruutu; t=1647688610;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=LtNthnYK/2RafUQShjpikkAGPGYQA3FW9B2cxMSy73k=;
+        b=E6y98qRVObu5fsrif+T7yAkDCUzEbR5CZlsNnAdB7ZJsHB7wuXOT4gW2bAx88qA9wxK9XP
+        Ch2uXSg+4yZssuTR32PAgEduUIYLkOj7MoeMCwbc+yWasxq1fLQ8IeifPknIlC64M4/bco
+        wy8aZl1rSU1323chFUNZlTaNwhY1+9lZAadz5biK4Tg+7K9oVqj8trV5B5vTOGDoVs2eIv
+        qnz5688Y2gjLc0zKUnYjlxKDpHBBZXy/vra+59nUyEvSamazQWP7yNimiEOpc8o3NsxpAd
+        VnjtLXVjkUi20FJ0BlMjiKrgizaRJ8oyRFYX+uSVMCGrJ6NS4OAyjUobEvgzyQ==
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The error handling path of the probe releases a resource that is not freed
-in the remove function.
+On Fri, Mar 18, 2022 at 11:37:28AM +0100, Julia Lawall wrote:
+> Various spelling mistakes in comments.
+> Detected with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-In some cases, a ioremap() must be undone.
+Reviewed-by: Aaro Koskinen <aaro.koskinen@iki.fi>
 
-Add the missing iounmap() call in the remove function.
+A.
 
-Fixes: 45804fbb00ee ("[SCSI] 53c700: Amiga Zorro NCR53c710 SCSI")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/scsi/zorro7xx.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/scsi/zorro7xx.c b/drivers/scsi/zorro7xx.c
-index 27b9e2baab1a..7acf9193a9e8 100644
---- a/drivers/scsi/zorro7xx.c
-+++ b/drivers/scsi/zorro7xx.c
-@@ -159,6 +159,8 @@ static void zorro7xx_remove_one(struct zorro_dev *z)
- 	scsi_remove_host(host);
- 
- 	NCR_700_release(host);
-+	if (host->base > 0x01000000)
-+		iounmap(hostdata->base);
- 	kfree(hostdata);
- 	free_irq(host->irq, host);
- 	zorro_release_device(z);
--- 
-2.32.0
-
+> ---
+>  arch/arm/mach-omap1/clock_data.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mach-omap1/clock_data.c b/arch/arm/mach-omap1/clock_data.c
+> index 3ebcd96efbff..c761e72563c1 100644
+> --- a/arch/arm/mach-omap1/clock_data.c
+> +++ b/arch/arm/mach-omap1/clock_data.c
+> @@ -818,7 +818,7 @@ int __init omap1_clk_init(void)
+>  		omap_readw(ARM_SYSST), omap_readw(DPLL_CTL),
+>  		omap_readw(ARM_CKCTL));
+>  
+> -	/* We want to be in syncronous scalable mode */
+> +	/* We want to be in synchronous scalable mode */
+>  	omap_writew(0x1000, ARM_SYSST);
+>  
+>  
+> 
