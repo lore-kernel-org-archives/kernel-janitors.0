@@ -2,99 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3DB8C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Mar 2022 06:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E1BFC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Mar 2022 07:01:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242252AbiCSG00 (ORCPT
+        id S242317AbiCSHCx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 19 Mar 2022 02:26:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53486 "EHLO
+        Sat, 19 Mar 2022 03:02:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236098AbiCSG0Z (ORCPT
+        with ESMTP id S236462AbiCSHCt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 19 Mar 2022 02:26:25 -0400
+        Sat, 19 Mar 2022 03:02:49 -0400
 Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77133E0B3
-        for <kernel-janitors@vger.kernel.org>; Fri, 18 Mar 2022 23:25:03 -0700 (PDT)
-Received: from [192.168.1.18] ([90.126.236.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87BD219BE78
+        for <kernel-janitors@vger.kernel.org>; Sat, 19 Mar 2022 00:01:28 -0700 (PDT)
+Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id VSWInb6MLvjW4VSWJnTyuB; Sat, 19 Mar 2022 07:25:01 +0100
-X-ME-Helo: [192.168.1.18]
+        id VT5ZnbL9ovjW4VT5ZnU3SP; Sat, 19 Mar 2022 08:01:27 +0100
+X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 19 Mar 2022 07:25:01 +0100
+X-ME-Date: Sat, 19 Mar 2022 08:01:27 +0100
 X-ME-IP: 90.126.236.122
-Message-ID: <08b7604d-f528-ecb7-a8b2-7c9c36518143@wanadoo.fr>
-Date:   Sat, 19 Mar 2022 07:24:58 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v2] dmaengine: qcom_hidma: Remove useless DMA-32 fallback
- configuration
-Content-Language: en-US
-To:     Sinan Kaya <okaya@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org
-References: <4deb32b0c7838da66608022c584326eb01d0da03.1642232106.git.christophe.jaillet@wanadoo.fr>
- <ee43d68f-000c-6513-38f2-877b9018ab22@kernel.org>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <ee43d68f-000c-6513-38f2-877b9018ab22@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Bottomley <James.Bottomley@SteelEye.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-scsi@vger.kernel.org
+Subject: [PATCH] zorro: Fix a resource leak in zorro7xx_remove_one()
+Date:   Sat, 19 Mar 2022 08:01:24 +0100
+Message-Id: <247066a3104d25f9a05de8b3270fc3c848763bcc.1647673264.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 22/01/2022 à 19:05, Sinan Kaya a écrit :
-> On 1/15/2022 2:35 AM, Christophe JAILLET wrote:
->> As stated in [1], dma_set_mask() with a 64-bit mask never fails if
->> dev->dma_mask is non-NULL.
->> So, if it fails, the 32 bits case will also fail for the same reason.
->>
->> Simplify code and remove some dead code accordingly.
->>
->> [1]: 
->> https://lore.kernel.org/linux-kernel/YL3vSPK5DXTNvgdx@infradead.org/#t
->>
-> 
-> Can we please document this?
+The error handling path of the probe releases a resource that is not freed
+in the remove function.
 
-Hi, the patch has been applied, but [1] is sometimes given as an 
-explanation link.
+In some cases, a ioremap() must be undone.
 
-CJ
+Add the missing iounmap() call in the remove function.
 
+Fixes: 45804fbb00ee ("[SCSI] 53c700: Amiga Zorro NCR53c710 SCSI")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/scsi/zorro7xx.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-[1]: 
-https://lists.linuxfoundation.org/pipermail/iommu/2019-February/033674.html
-
-> 
-> Usual practice was to try allocating 64 bit DMA if possible and fallback
-> to 32 bits.
-> 
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> v2: have the subject and updated driver match
->> ---
->>   drivers/dma/qcom/hidma.c | 4 +---
->>   1 file changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/drivers/dma/qcom/hidma.c b/drivers/dma/qcom/hidma.c
->> index 65d054bb11aa..51587cf8196b 100644
->> --- a/drivers/dma/qcom/hidma.c
->> +++ b/drivers/dma/qcom/hidma.c
->> @@ -838,9 +838,7 @@ static int hidma_probe(struct platform_device *pdev)
->>       rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
->>       if (rc) {
->>           dev_warn(&pdev->dev, "unable to set coherent mask to 64");
->> -        rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
->> -        if (rc)
->> -            goto dmafree;
->> +        goto dmafree;
->>       }
->>       dmadev->lldev = hidma_ll_init(dmadev->ddev.dev,
-> 
-> 
+diff --git a/drivers/scsi/zorro7xx.c b/drivers/scsi/zorro7xx.c
+index 27b9e2baab1a..7acf9193a9e8 100644
+--- a/drivers/scsi/zorro7xx.c
++++ b/drivers/scsi/zorro7xx.c
+@@ -159,6 +159,8 @@ static void zorro7xx_remove_one(struct zorro_dev *z)
+ 	scsi_remove_host(host);
+ 
+ 	NCR_700_release(host);
++	if (host->base > 0x01000000)
++		iounmap(hostdata->base);
+ 	kfree(hostdata);
+ 	free_irq(host->irq, host);
+ 	zorro_release_device(z);
+-- 
+2.32.0
 
