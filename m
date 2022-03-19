@@ -2,97 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1150C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Mar 2022 11:23:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61301C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Mar 2022 18:18:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242790AbiCSLYZ (ORCPT
+        id S241423AbiCSST5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 19 Mar 2022 07:24:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53998 "EHLO
+        Sat, 19 Mar 2022 14:19:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238827AbiCSLYY (ORCPT
+        with ESMTP id S234687AbiCSST4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 19 Mar 2022 07:24:24 -0400
-X-Greylist: delayed 415 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 19 Mar 2022 04:23:02 PDT
-Received: from meesny.iki.fi (meesny.iki.fi [IPv6:2001:67c:2b0:1c1::201])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D510C1C7F17;
-        Sat, 19 Mar 2022 04:23:02 -0700 (PDT)
-Received: from darkstar.musicnaut.iki.fi (85-76-3-17-nat.elisa-mobile.fi [85.76.3.17])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Sat, 19 Mar 2022 14:19:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D01719A54E;
+        Sat, 19 Mar 2022 11:18:33 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: aaro.koskinen)
-        by meesny.iki.fi (Postfix) with ESMTPSA id 2421220AF5;
-        Sat, 19 Mar 2022 13:16:02 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-        t=1647688562;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=O3HSI3kgBP9o10gxLuhqQNqLjuiIJtyoXFee1GnFDww=;
-        b=TkMLjdYlVQkEsd/BWSVLtjFp8B67Ez3eL4BSXr0RA+K4/KZVTk70jqOF5kFaavGKqP4Wfs
-        WYOewSwRGkUoEgAwaWmDcMX28ae3IeJ+SSqOqm4n2hrDrPTSnbrczkXggvrdW8AS+OuG4A
-        MW28lQgDLjhMZNtGh6ow+BIuAiXHdz4=
-Date:   Sat, 19 Mar 2022 13:16:00 +0200
-From:   Aaro Koskinen <aaro.koskinen@iki.fi>
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     kernel-janitors@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] omap1: htc_herald: fix typos in comments
-Message-ID: <20220319111600.GC1986@darkstar.musicnaut.iki.fi>
-References: <20220318103729.157574-27-Julia.Lawall@inria.fr>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B77CC60AB4;
+        Sat, 19 Mar 2022 18:18:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 402C6C340EC;
+        Sat, 19 Mar 2022 18:18:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1647713912;
+        bh=W/45bdkqqVIDTi0QdnUU8/dGtYxRWLLNZWpynRVWzsI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=OEb2vAIdUMUBvrk6iMO/XL8F2yY4scUfhU97ZQoVKCSW+snL1A5+yMvq/i5KiB/7A
+         NT4Mjh+CZ06vBIOIm6YaN28n+ujzKJhRR9EJcL2cVZkkz7ERg49lrX/WhC+3UW43yo
+         nKalEmpFD/1TqGuat9eQiKB7CmooEy1URQI0nhq/L3a6PdHAral7uK6KQ7iG08zyy0
+         RHnSbu4wiO5lCCBoRqx2MFGCrsoZQEg5uCH5Xl08bggy0GaKuqdxJdI43RyxFyShLI
+         y5wWCYf4XgJ7UjGfPMUmYPtbQZkSH1TKVhkWTpTjVutV/CuqscyklGVz8E+ZtIwBzQ
+         CIKGEcrPeTE9Q==
+Date:   Sat, 19 Mar 2022 18:25:55 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Mihail Chindris <mihail.chindris@analog.com>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio: dac: ad3552r: fix signedness bug in
+ ad3552r_reset()
+Message-ID: <20220319182555.73aaa20a@jic23-huawei>
+In-Reply-To: <20220316122354.GA16825@kili>
+References: <20220316122354.GA16825@kili>
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220318103729.157574-27-Julia.Lawall@inria.fr>
-ARC-Authentication-Results: i=1;
-        ORIGINATING;
-        auth=pass smtp.auth=aaro.koskinen smtp.mailfrom=aaro.koskinen@iki.fi
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1647688562; a=rsa-sha256; cv=none;
-        b=M8vH3FQS7nMt/sEnmefQnt/ZQdwIv5ZXxQuReK8V8VxC0tmsowmna3DAczgS7a4prjQyje
-        U/tFgcWy+ZTYOtitNqo4vUzu503yFxL341nLhd97ZEMLAMCMwZiQLuAiNPEsPRLE1JLIND
-        ilIr0artOjDu2hbfuGT4+BMBuv08+S8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-        s=meesny; t=1647688562;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=O3HSI3kgBP9o10gxLuhqQNqLjuiIJtyoXFee1GnFDww=;
-        b=cVhaRE9aKxgRXpjNeSDtn7BCgdquclIasP3INrQmN9teRDa4wFerlEolusuFKmx3cWp3Bf
-        H6x5kJVi+J7k5GGNsMIHEPLvFxXsDNbzYvXC61kmuVoLFARt3w+hsZdhGEKUyvWGNEWDPd
-        t0/gF0fIlBo52HVdV9PyMe7ZE/m7ut0=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 18, 2022 at 11:37:22AM +0100, Julia Lawall wrote:
-> Various spelling mistakes in comments.
-> Detected with the help of Coccinelle.
+On Wed, 16 Mar 2022 15:23:54 +0300
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
+
+> The "val" variable is used to store either negative error codes from
+> ad3552r_read_reg_wrapper() or positive u16 values on success.  It needs
+> to be signed for the error handling to work correctly.
 > 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> Fixes: 8f2b54824b28 ("drivers:iio:dac: Add AD3552R driver support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Applied to the fixes-togreg branch of iio.git, but I won't be pushing it
+out publicly until I have rebased that tree on rc1 as it may make a mess
+of ordering in linux-next
 
-Reviewed-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Thanks,
 
-A.
+Jonathan
 
-> 
 > ---
->  arch/arm/mach-omap1/board-htcherald.c |    2 +-
+>  drivers/iio/dac/ad3552r.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm/mach-omap1/board-htcherald.c b/arch/arm/mach-omap1/board-htcherald.c
-> index 258304edf23e..d528b8497061 100644
-> --- a/arch/arm/mach-omap1/board-htcherald.c
-> +++ b/arch/arm/mach-omap1/board-htcherald.c
-> @@ -170,7 +170,7 @@ static const unsigned int htc_herald_keymap[] = {
->  	KEY(3, 0, KEY_VOLUMEUP), /* Volume up */
->  	KEY(4, 0, KEY_F2),  /* Right bar (landscape) */
->  	KEY(5, 0, KEY_MAIL), /* Win key (portrait) */
-> -	KEY(6, 0, KEY_DIRECTORY), /* Right bar (protrait) */
-> +	KEY(6, 0, KEY_DIRECTORY), /* Right bar (portrait) */
->  	KEY(0, 1, KEY_LEFTCTRL), /* Windows key */
->  	KEY(1, 1, KEY_COMMA),
->  	KEY(2, 1, KEY_M),
-> 
+> diff --git a/drivers/iio/dac/ad3552r.c b/drivers/iio/dac/ad3552r.c
+> index 97f13c0b9631..e0a93b27e0e8 100644
+> --- a/drivers/iio/dac/ad3552r.c
+> +++ b/drivers/iio/dac/ad3552r.c
+> @@ -656,7 +656,7 @@ static int ad3552r_reset(struct ad3552r_desc *dac)
+>  {
+>  	struct reg_addr_pool addr;
+>  	int ret;
+> -	u16 val;
+> +	int val;
+>  
+>  	dac->gpio_reset = devm_gpiod_get_optional(&dac->spi->dev, "reset",
+>  						  GPIOD_OUT_LOW);
+
