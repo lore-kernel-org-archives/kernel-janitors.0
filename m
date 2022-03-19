@@ -2,80 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F34E8C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Mar 2022 04:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3DB8C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 19 Mar 2022 06:25:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242132AbiCSEvf (ORCPT
+        id S242252AbiCSG00 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 19 Mar 2022 00:51:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53172 "EHLO
+        Sat, 19 Mar 2022 02:26:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241900AbiCSEvd (ORCPT
+        with ESMTP id S236098AbiCSG0Z (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 19 Mar 2022 00:51:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FA43393ED;
-        Fri, 18 Mar 2022 21:50:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 92D7460BA5;
-        Sat, 19 Mar 2022 04:50:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DF3E0C340F3;
-        Sat, 19 Mar 2022 04:50:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647665410;
-        bh=Wia9h0kro9w5M8zRQMzT6WKW5JZ0MKe/hbIX+WdEhdM=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=V0bF5pWoGpOgPrQJjEXwYJTUgUbwC7z3JwzpQLsa0M+hulkObk64J6TBEoGe/jFrp
-         2uKQ76Pzful3np5vP8po8zlB6IQIPZtsUDeTasT/RJTQtd/jLMQCjGHuAcuG9fegct
-         JV8fZfYz/LhHbx4TMAVUsWQo8mvisj7sAgXOBq1nqO1zsVu8Azg7uYeDPo2K1FUZUF
-         CY0w107y6wLEVLoIwZY71+S7tMp1A2Z8dadX3jXk7BL6X85M4nnZlEJJcyHpW09pUW
-         6cP41ShJUNvW6+uKuz40xVTf8r91YExg/vuFQIMuNWJsbuoZy1JpSE/rKxDKcPlTOa
-         IbKJkAD8U1WVQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C4BA2F03842;
-        Sat, 19 Mar 2022 04:50:10 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Sat, 19 Mar 2022 02:26:25 -0400
+Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77133E0B3
+        for <kernel-janitors@vger.kernel.org>; Fri, 18 Mar 2022 23:25:03 -0700 (PDT)
+Received: from [192.168.1.18] ([90.126.236.122])
+        by smtp.orange.fr with ESMTPA
+        id VSWInb6MLvjW4VSWJnTyuB; Sat, 19 Mar 2022 07:25:01 +0100
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sat, 19 Mar 2022 07:25:01 +0100
+X-ME-IP: 90.126.236.122
+Message-ID: <08b7604d-f528-ecb7-a8b2-7c9c36518143@wanadoo.fr>
+Date:   Sat, 19 Mar 2022 07:24:58 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v2] dmaengine: qcom_hidma: Remove useless DMA-32 fallback
+ configuration
+Content-Language: en-US
+To:     Sinan Kaya <okaya@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org
+References: <4deb32b0c7838da66608022c584326eb01d0da03.1642232106.git.christophe.jaillet@wanadoo.fr>
+ <ee43d68f-000c-6513-38f2-877b9018ab22@kernel.org>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <ee43d68f-000c-6513-38f2-877b9018ab22@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 net-next] ptp: ocp: use snprintf() in ptp_ocp_verify()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164766541080.28065.6549943859608107838.git-patchwork-notify@kernel.org>
-Date:   Sat, 19 Mar 2022 04:50:10 +0000
-References: <20220318074723.GA6617@kili>
-In-Reply-To: <20220318074723.GA6617@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     jonathan.lemon@gmail.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Fri, 18 Mar 2022 10:47:23 +0300 you wrote:
-> This code is fine, but it's easier to review if we use snprintf()
-> instead of sprintf().
+Le 22/01/2022 à 19:05, Sinan Kaya a écrit :
+> On 1/15/2022 2:35 AM, Christophe JAILLET wrote:
+>> As stated in [1], dma_set_mask() with a 64-bit mask never fails if
+>> dev->dma_mask is non-NULL.
+>> So, if it fails, the 32 bits case will also fail for the same reason.
+>>
+>> Simplify code and remove some dead code accordingly.
+>>
+>> [1]: 
+>> https://lore.kernel.org/linux-kernel/YL3vSPK5DXTNvgdx@infradead.org/#t
+>>
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> v2: re-spin the patch based on the latest tree.  It turns out that the
-> code is not buggy so don't make the buffer larger and don't add a Fixes
-> tag.
+> Can we please document this?
+
+Hi, the patch has been applied, but [1] is sometimes given as an 
+explanation link.
+
+CJ
+
+
+[1]: 
+https://lists.linuxfoundation.org/pipermail/iommu/2019-February/033674.html
+
 > 
-> [...]
-
-Here is the summary with links:
-  - [v2,net-next] ptp: ocp: use snprintf() in ptp_ocp_verify()
-    https://git.kernel.org/netdev/net-next/c/d5f497b88979
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+> Usual practice was to try allocating 64 bit DMA if possible and fallback
+> to 32 bits.
+> 
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> v2: have the subject and updated driver match
+>> ---
+>>   drivers/dma/qcom/hidma.c | 4 +---
+>>   1 file changed, 1 insertion(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/dma/qcom/hidma.c b/drivers/dma/qcom/hidma.c
+>> index 65d054bb11aa..51587cf8196b 100644
+>> --- a/drivers/dma/qcom/hidma.c
+>> +++ b/drivers/dma/qcom/hidma.c
+>> @@ -838,9 +838,7 @@ static int hidma_probe(struct platform_device *pdev)
+>>       rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+>>       if (rc) {
+>>           dev_warn(&pdev->dev, "unable to set coherent mask to 64");
+>> -        rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+>> -        if (rc)
+>> -            goto dmafree;
+>> +        goto dmafree;
+>>       }
+>>       dmadev->lldev = hidma_ll_init(dmadev->ddev.dev,
+> 
+> 
 
