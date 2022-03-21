@@ -2,103 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C75ACC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Mar 2022 12:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 125F6C433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Mar 2022 15:30:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347471AbiCUMiT (ORCPT
+        id S1350249AbiCUPbi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Mar 2022 08:38:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49632 "EHLO
+        Mon, 21 Mar 2022 11:31:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347505AbiCUMh4 (ORCPT
+        with ESMTP id S238427AbiCUPbg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Mar 2022 08:37:56 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C0048F9A6
-        for <kernel-janitors@vger.kernel.org>; Mon, 21 Mar 2022 05:36:31 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mkl@pengutronix.de>)
-        id 1nWHGw-0002gR-F8; Mon, 21 Mar 2022 13:36:30 +0100
-Received: from pengutronix.de (2a03-f580-87bc-d400-87a7-3ba5-ba0a-e35e.ip6.dokom21.de [IPv6:2a03:f580:87bc:d400:87a7:3ba5:ba0a:e35e])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        (Authenticated sender: mkl-all@blackshift.org)
-        by smtp.blackshift.org (Postfix) with ESMTPSA id 094C550951;
-        Mon, 21 Mar 2022 12:36:29 +0000 (UTC)
-Date:   Mon, 21 Mar 2022 13:36:28 +0100
-From:   Marc Kleine-Budde <mkl@pengutronix.de>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     linux-can@vger.kernel.org,
-        Amit Kumar Mahapatra <amit.kumar-mahapatra@xilinx.com>,
-        Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>,
-        Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: rectify entry for XILINX CAN DRIVER
-Message-ID: <20220321123628.xor3acqqtsio6rc7@pengutronix.de>
-References: <20220321122840.17841-1-lukas.bulwahn@gmail.com>
+        Mon, 21 Mar 2022 11:31:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3333814092;
+        Mon, 21 Mar 2022 08:30:11 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BB6CC6106E;
+        Mon, 21 Mar 2022 15:30:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1C1CDC340F2;
+        Mon, 21 Mar 2022 15:30:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1647876610;
+        bh=AveAZ/3hKAGUAES+HC0hqCGqhlq9GGIJEnRyUj9KmHM=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=CwQLVBeQ4XDqtA6sZedyeIVTYA62GKzs2G4bjxZfLuLpAqv7VXRBjbJZWSnmbYTVN
+         /TztKdkoaKJBhKol0Bo2t8rbyl+mcz7SKUMLHcyVbfKbqCFIbBTQV9PiIOpHMh1UGZ
+         6frvva4mnxxJrhgjFo4/9k0vguCUIBFJrNgmQxsxW5h8stuTPojtYBTMwt/AXjCmR4
+         WyuhC1axRxV2jEhPOISD7rIShVsIBgPbHtODRiP7Y+Q6uPBYT6k0SMamk6dNCStRvE
+         LHYnVASlfdj/6JM5p3HeYSx+qkqfchqTcyPaQ63tvlHigcTq7b/9Cid6su487k4+8I
+         66vKtSNSUqF6Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id F16D3E7BB0B;
+        Mon, 21 Mar 2022 15:30:09 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="wf6zkoaopeuzp55v"
-Content-Disposition: inline
-In-Reply-To: <20220321122840.17841-1-lukas.bulwahn@gmail.com>
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] ARM: net: bpf: fix typos in comments
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164787660998.26943.16234173622571786402.git-patchwork-notify@kernel.org>
+Date:   Mon, 21 Mar 2022 15:30:09 +0000
+References: <20220318103729.157574-9-Julia.Lawall@inria.fr>
+In-Reply-To: <20220318103729.157574-9-Julia.Lawall@inria.fr>
+To:     Julia Lawall <julia.lawall@inria.fr>
+Cc:     illusionist.neo@gmail.com, kernel-janitors@vger.kernel.org,
+        linux@armlinux.org.uk, ast@kernel.org, daniel@iogearbox.net,
+        andrii@kernel.org, kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hello:
 
---wf6zkoaopeuzp55v
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch was applied to bpf/bpf-next.git (master)
+by Daniel Borkmann <daniel@iogearbox.net>:
 
-On 21.03.2022 13:28:40, Lukas Bulwahn wrote:
-> Commit 7843d3c8e5e6 ("dt-bindings: can: xilinx_can: Convert Xilinx CAN
-> binding to YAML") converts xilinx_can.txt to xilinx,can.yaml, but missed =
-to
-> adjust its reference in MAINTAINERS.
->=20
-> Hence, ./scripts/get_maintainer.pl --self-test=3Dpatterns complains about=
- a
-> broken reference.
->=20
-> Repair this file reference in XILINX CAN DRIVER.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+On Fri, 18 Mar 2022 11:37:04 +0100 you wrote:
+> Various spelling mistakes in comments.
+> Detected with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> 
 > ---
-> Marc, please pick this minor non-urgent clean-up patch in your can-next
-> tree on top of the commit above.
+>  arch/arm/net/bpf_jit_32.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks for the patch. Added to linux-can-next/testing.
+Here is the summary with links:
+  - ARM: net: bpf: fix typos in comments
+    https://git.kernel.org/bpf/bpf-next/c/d8dc09a4db45
 
-Regards,
-Marc
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde           |
-Embedded Linux                   | https://www.pengutronix.de  |
-Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
 
---wf6zkoaopeuzp55v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEBsvAIBsPu6mG7thcrX5LkNig010FAmI4cUkACgkQrX5LkNig
-012NSgf9EivbGzj8YWszX1kiGTU8gvWE/4QaiT05Z/0k+iIEjLr2d9zE3UnTW2yP
-gWhJZaInj+T95cldNrcHHQTDYy+6tYbbBgPO8NDHDJAx+BgBkqzaqs7R7HA4ro5k
-noQu5raLVX0zZEC6qO5nu9E3a88NJnTWkUXyuAu8wxkBRFfYooIA9sECcaRd6B2k
-VnYEZ9jq/dB7/37J99qM3stFcoUupA1Z4zyqoFxGdxeM2ru4/WogwkQDAPS26OuH
-IBu77gt6JJqs8XbKuUt4eYWL6GoNxbFO3d7c/HSAae0V5Ajd5/rdFYJJX5IKwiaq
-xX7pCYl8p0oqLbdbgRvfAFpK9vzBWw==
-=mvu3
------END PGP SIGNATURE-----
-
---wf6zkoaopeuzp55v--
