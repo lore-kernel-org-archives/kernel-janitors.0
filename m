@@ -2,81 +2,97 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C363BC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Mar 2022 05:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A7E6C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Mar 2022 05:11:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242439AbiCUFF5 (ORCPT
+        id S1344123AbiCUFNL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Mar 2022 01:05:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35498 "EHLO
+        Mon, 21 Mar 2022 01:13:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229982AbiCUFFz (ORCPT
+        with ESMTP id S1343527AbiCUFNK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Mar 2022 01:05:55 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5055C1152;
-        Sun, 20 Mar 2022 22:04:29 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id o3-20020a17090a3d4300b001c6bc749227so6010014pjf.1;
-        Sun, 20 Mar 2022 22:04:29 -0700 (PDT)
+        Mon, 21 Mar 2022 01:13:10 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C67064C78D
+        for <kernel-janitors@vger.kernel.org>; Sun, 20 Mar 2022 22:11:45 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id d18so11734067plr.6
+        for <kernel-janitors@vger.kernel.org>; Sun, 20 Mar 2022 22:11:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=rWn5lOEVKhm+FQ6md1T7NJaCwXARs2ppaRXQ0ISSujo=;
-        b=Z6CZCluY+X4TE/5PAqyM+8g2WPrypjmBsL4y9z7MyQq3tnZf1i78nZxX+Ig3SqfwVs
-         d3CkCW/Qzu2bBiDBkxAAE8BGkeTniraV8l7JRVXOYpd2umcmF8xuq3lyIr9zHM5pnmmA
-         ezJbzllMjrutcx6j0MQ+FFw6Ge/1ee7xP7BAkBI0fb1WvpjtQOpyvWPprZl2sdi2799w
-         sFHZRZbTeNZDsaFdReL81SbPcdaJuGm/MBF6sswlFx3SJ+//oI/mrFbA75jOxReJxtiU
-         9hDsg0vzu271i2j++j68tVZe3DHzbVM4LGX2AmeMNgTkLrUKfVdD3jJ2gJFTrCcMvSGH
-         V1/Q==
+         :content-disposition:in-reply-to:user-agent;
+        bh=ljtCtXdVDHvboQzqZn2Q/lABoXg83zrD6bjOe7HHLFQ=;
+        b=zfrmFyu/ZYdoUki2x8lfXqzA+xFOfDNne30+A0kuctzZXnrUfD659CDieFanTrv3ym
+         h7/+Mi9WRZ8kPZXyA2Y27+TEoVcM3QsxC8yjssKaQgYIvuKCwEYlB3Wnyfr4cFQyTaK1
+         nZ4s7AJMu7uVqv4/UnjgC8rv6vmx1l4/ycjLOnkiVxihvPOarlJvT1pnSRLkSeyqMRO5
+         1qJl9DJK93bcaINaFdqtb9UQo84Y4IuUmTxZHvmmDep2CP0z9r9lEE6bISsIM8eCBXvo
+         uPppjNLRkdm1iCvcgOQmohE4QG+QzsF8ONc1U9VYeQaBcQPx+aaTA/Fd7WgnHb+z0bVV
+         Dd2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=rWn5lOEVKhm+FQ6md1T7NJaCwXARs2ppaRXQ0ISSujo=;
-        b=sa25JSriYchqBkaPBhiqHAdQkhokpRB0dYEmVFrKBmL3rWGXuzkInbAXftdZBjXibM
-         K1eoSR2emadQb92zCcR4JS7V/uPysWztaU30tAK3BiAIoCHzDsdBAKCbUn728X5Tt/0g
-         ZSZOjmCxh4i1Q+b5EEkknWdWjF11ve44jRD4iyiBk6PBxPGIMvB/XME2Tn2hNg8lLCfI
-         YLy+xyeBNng7Fo7uVbpEnHkbsSFYX1bcrxB9tQ+qHvGvP3EaA8WfiY6cgl6ODOq6eLx3
-         dpQJYHKo1Q/S3xDR8Q5O9raY2rSAtowY7exL/fxnL1sboJMzYJdwnbXRGK6qxlFTR+xv
-         T22w==
-X-Gm-Message-State: AOAM533Aqs1arqRM0rZHqHE/gyOP+R8ivX/OpinKR27BiuvSOS3Ru+Bc
-        vT8+Xulozdm0I5phOI9EhuI=
-X-Google-Smtp-Source: ABdhPJw3GsuYmAvFujOtsMEZmTIiI8Ukt+Rrq0Zw7bPrTEkxB9B36nuwkv85fIHGkT5k+pTveYeOEQ==
-X-Received: by 2002:a17:90b:4f92:b0:1bf:25e2:f6af with SMTP id qe18-20020a17090b4f9200b001bf25e2f6afmr24103584pjb.98.1647839068735;
-        Sun, 20 Mar 2022 22:04:28 -0700 (PDT)
-Received: from google.com ([2620:15c:202:201:31f6:c8f1:6f10:b2ec])
-        by smtp.gmail.com with ESMTPSA id d5-20020a17090acd0500b001b9c05b075dsm18659405pju.44.2022.03.20.22.04.27
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ljtCtXdVDHvboQzqZn2Q/lABoXg83zrD6bjOe7HHLFQ=;
+        b=dQXDzCyu60tMH+X70lvwIkVZkzgioA7eBS3atDSxjStEHwwuGuDKdiK4EPQthoaJ9N
+         jqvHyaZVSsYFhPAArshN+Ggqb8x1IVXVux+oLh90EiFRq+dDaX0IP7mU9Mz9r8PSzisw
+         0LxzZwk7m8c3frh+uJRqDmPDZKmrNZh3zbAR4m61oeVzLc2MenC6EYdX5lZ/clf2RlTL
+         ikRk/4Urn6GIZtGqzJZyfiaiSqPksAEkvDM/Iioo9besowHlYsRq3i76kKSkNBpSnyzS
+         /9oixB/CW9fm7rsjmU8gTZ5xLMdMchR1KJbVU8wWEPlSLA+dK+0bHSdEos6X5w9N41nA
+         KTcA==
+X-Gm-Message-State: AOAM533B8fp5+lSIMGjZtfvpYr4AEz/Gu4wKQbK1KIeZi5+onGxG8gdH
+        fTntplY9V4/DLhPaM5TydBisoaYWgoPcXQ==
+X-Google-Smtp-Source: ABdhPJxpP7IH2vtw0+4J1t9nHjBU4tJNb2wQP+R8AXexRkuTkU6j6fBJND4g9OSGcNQaJ2MyM1HtBQ==
+X-Received: by 2002:a17:902:700b:b0:148:ee33:70fe with SMTP id y11-20020a170902700b00b00148ee3370femr11279112plk.38.1647839505294;
+        Sun, 20 Mar 2022 22:11:45 -0700 (PDT)
+Received: from localhost ([223.184.83.228])
+        by smtp.gmail.com with ESMTPSA id o5-20020a655bc5000000b00372f7ecfcecsm13170925pgr.37.2022.03.20.22.11.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Mar 2022 22:04:28 -0700 (PDT)
-Date:   Sun, 20 Mar 2022 22:04:25 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] Input: adi: remove redundant variable z
-Message-ID: <YjgHWeTiAWRty3rK@google.com>
-References: <20220318002318.80519-1-colin.i.king@gmail.com>
+        Sun, 20 Mar 2022 22:11:44 -0700 (PDT)
+Date:   Mon, 21 Mar 2022 10:41:42 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     Viresh Kumar <vireshk@kernel.org>, kernel-janitors@vger.kernel.org,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: spear: fix typos in comments
+Message-ID: <20220321051142.pkihlm6bnclmtdrq@vireshk-i7>
+References: <20220318103729.157574-21-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220318002318.80519-1-colin.i.king@gmail.com>
+In-Reply-To: <20220318103729.157574-21-Julia.Lawall@inria.fr>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 18, 2022 at 12:23:18AM +0000, Colin Ian King wrote:
-> Variable z is being assigned a value that is never read, the
-> variable is redundant and can be removed.
+On 18-03-22, 11:37, Julia Lawall wrote:
+> Various spelling mistakes in comments.
+> Detected with the help of Coccinelle.
 > 
-> Cleans up clang scan build warning:
-> drivers/input/joystick/adi.c:139:6: warning: Although the
-> value stored to 'z' is used in the enclosing expression,
-> the value is never actually read from 'z' [deadcode.DeadStores]
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  arch/arm/mach-spear/spear13xx.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mach-spear/spear13xx.c b/arch/arm/mach-spear/spear13xx.c
+> index 74d1ca2a529a..b38391e9d8bf 100644
+> --- a/arch/arm/mach-spear/spear13xx.c
+> +++ b/arch/arm/mach-spear/spear13xx.c
+> @@ -29,7 +29,7 @@ void __init spear13xx_l2x0_init(void)
+>  	/*
+>  	 * 512KB (64KB/way), 8-way associativity, parity supported
+>  	 *
+> -	 * FIXME: 9th bit, of Auxillary Controller register must be set
+> +	 * FIXME: 9th bit, of Auxiliary Controller register must be set
+>  	 * for some spear13xx devices for stable L2 operation.
+>  	 *
+>  	 * Enable Early BRESP, L2 prefetch for Instruction and Data,
 
-Applied, thank you.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
 -- 
-Dmitry
+viresh
