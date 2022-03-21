@@ -2,94 +2,169 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D11B9C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Mar 2022 09:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C66D4C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 21 Mar 2022 10:02:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345581AbiCUJB4 (ORCPT
+        id S1345962AbiCUKD0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 21 Mar 2022 05:01:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33498 "EHLO
+        Mon, 21 Mar 2022 06:03:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345571AbiCUJBz (ORCPT
+        with ESMTP id S1346119AbiCUKCw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 21 Mar 2022 05:01:55 -0400
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B1058C7CA;
-        Mon, 21 Mar 2022 02:00:28 -0700 (PDT)
-Received: by mail-qt1-f172.google.com with SMTP id v14so11398604qta.2;
-        Mon, 21 Mar 2022 02:00:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xIZ3EUUKNdtUQ47jI5vIUZBFjHsbOyEGol2LvB0SN0o=;
-        b=Qxv/MUakbXwXTRVO/SQZjifkWTraB0Rm845cccjc923wfyieY+oThu4I80gLXMhCoJ
-         Bq4xBRcm/MIr8BEzMK8MLxpJeFpBhxhTIDHIdSUauT/Slnr5rbAHrB1c7qTmEctPab8+
-         UD9RuBi9bbKeTSj0ZbYbughNdeiA5qaa6nKjpR/ieguZOWRFuVeEyalWpwWfKgslX3Zw
-         u+E5M4/4z0GhVldXkNx9brEO7tx+9dH8r9mnMs6HaKGnITpbTsC6tw4mNiW+s71a4IAQ
-         6+2gaU1JfzKutYNtT5ZUsXXDMgt1x1lqXGNhQiTpQ4W048YE/lWaX85C0WvwdA44TQ7u
-         M1FQ==
-X-Gm-Message-State: AOAM533bT6UM+3YeKf029hmGcH2kI/Ao+yMSS34YcPhWptpMxhFNXw7F
-        X5rOa8IIQcPWf83XAkTZtCGTzMW9MBWAtQ==
-X-Google-Smtp-Source: ABdhPJxbdHbBA3Bahrof3NselpCQ3MCeJHm0U7LjM7L4UufcxNIF2+MXvsTPmVtLCxiKPM3GrG3G/Q==
-X-Received: by 2002:a05:622a:1822:b0:2e1:b2d4:d877 with SMTP id t34-20020a05622a182200b002e1b2d4d877mr15423381qtc.630.1647853227458;
-        Mon, 21 Mar 2022 02:00:27 -0700 (PDT)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id bm21-20020a05620a199500b0067d5e6c7bd8sm7374128qkb.56.2022.03.21.02.00.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Mar 2022 02:00:27 -0700 (PDT)
-Received: by mail-yb1-f171.google.com with SMTP id h126so26834183ybc.1;
-        Mon, 21 Mar 2022 02:00:26 -0700 (PDT)
-X-Received: by 2002:a25:dc4:0:b0:629:2337:f9ea with SMTP id
- 187-20020a250dc4000000b006292337f9eamr21473033ybn.6.1647853226676; Mon, 21
- Mar 2022 02:00:26 -0700 (PDT)
+        Mon, 21 Mar 2022 06:02:52 -0400
+X-Greylist: delayed 63 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 21 Mar 2022 03:01:27 PDT
+Received: from esa3.hc3370-68.iphmx.com (esa3.hc3370-68.iphmx.com [216.71.145.155])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FCF33AA78
+        for <kernel-janitors@vger.kernel.org>; Mon, 21 Mar 2022 03:01:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=citrix.com; s=securemail; t=1647856887;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=4RckOyHuQ5kYI0KTpTlxEdTuSeWl8kDZa4B0qCmjOyw=;
+  b=FuzhEMq9Cjxx0j5Qum76vDPkZEeTUQskQaZ9gnauEcdJtA7puz/uhTOP
+   9A66+LozlVLckc7bq47O6X44G+T0TUZDMy8IJkoqEvUcyaYBuemGOsjA7
+   uMNJdF1KaFCtgwagfjUsKrITJ1RfUUOF2vnHfVaenDloZkzz81ByVRYwx
+   c=;
+Authentication-Results: esa3.hc3370-68.iphmx.com; dkim=pass (signature verified) header.i=@citrix.onmicrosoft.com
+X-SBRS: 5.1
+X-MesageID: 66745199
+X-Ironport-Server: esa3.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.156.83
+X-Policy: $RELAYED
+IronPort-Data: A9a23:A0pLa6nPgzHnKsQaygorzzro5gwGJkRdPkR7XQ2eYbSJt1+Wr1Gzt
+ xIaD2nSbv7YN2T8f9snOY2/9EwCvcPRnIBrSFBo/npnRCMWpZLJC+rCIxarNUt+DCFioGGLT
+ Sk6QoOdRCzhZiaE/n9BCpC48T8kk/vgqoPUUIYoAAgoLeNfYHpn2EoLd9IR2NYy24DiWVrV4
+ LsenuWEULOb828sWo4rw/rrRCNH5JwebxtB4zTSzdgS1LPvvyF94KA3fMldHFOhKmVgJcaoR
+ v6r8V2M1jixEyHBqD+Suu2TnkUiGtY+NOUV45Zcc/DKbhNq/kTe3kunXRa1hIg+ZzihxrhMJ
+ NtxWZOYGRclNJHtksshTzpTTCdAOLJcpIDKCC3q2SCT5xWun3rExvxvCAc9PJEC+/YxCmZLn
+ RAaAGlTNFbZ3bvwme/lDLk37iggBJCD0Ic3oHZvwCufFf87aZvCX7/L9ZlT2zJYasVmQ6iBO
+ 5dAOGsHgBLoXS8VFFkFCosHjMjzuWTdSC1qolDFqv9ii4TU5FMoi+W8WDbPQfSJSN9Tk0Ldp
+ GvA/nj+GAoyKtOS03yG/2iqi+uJmjn0MKoWFbul5rtpjUeVy2g7FhIbTx24rOO/h0r4XMhQQ
+ 2QQ/jQrhawz71CwCN38WQCo5nKJoHY0X9tWDv1/4gWKwan8/QmUHC4HQyRHZdhgs9U5LRQh0
+ VuImZXoQz9utrK9RneU97PSpjS3UQAcPWUFaAcHQBED7t2lrIJbpgLCSJNvHbC4ivXxGCrs2
+ HaaoS4mnbIRgMUXkaKh8jj6bymE/8aTCFRvv0OOAzzjvlgRiJOZi5KAuUjX58phJqmlUnqK4
+ 346nteEsN8DJMTY/MCSe9klELas7veDFTTTh19zApUsnwiQF26fkZN4u28nehowWioQUXqwO
+ RKI51sNjHNGFCHyBZKbdb5dHCjDIULIMd3+Hs7ZYdNVCnSaXF/WpXo+DaJ8Mo2EraTNrU3dE
+ crAGSpPJSxDYUiC8NZRb71BuYLHPghkmQvuqWnTlnxLK4a2an+PUqsiO1CTdO0/567siFyLr
+ 4kPbpPTkkUGC7yWjszrHWk7dw1iEJTGLcqu95w/mhCrfGKK513N+9eOmOh8KuSJboxel/vS/
+ 2HVZ6Or4AGXuJEzEi3TMioLQOq2Bf5X9CtnVQRxbQfA8yVyOu6HsfZAH6bbiJF6rYSPO9YvF
+ KJbEyhBa9wSIgn6F8M1NsCs8tY9KEz12Wpj/UONOVACQnKpfCSQkvfMdQrz7igeSC2xsMo1u
+ bq70Q3HB5EEQmxf4Az+MppDE3vZUaAhpd9P
+IronPort-HdrOrdr: A9a23:vQWcVaPv/ZwJfcBcTyP155DYdb4zR+YMi2TDiHofdfUFSKClfp
+ 6V8cjztSWUtN4QMEtQ/uxoHJPwO080kqQFnLX5XI3SJzUO3VHHEGgM1/qB/9SNIVyaygcZ79
+ YdT0EcMqyAMbEZt7eC3ODQKb9Jq7PmgcOVbKXlvg9QpGlRGt9dBmxCe2Cm+yNNNW177c1TLu
+ vi2iMLnUvpRV0nKuCAQlUVVenKoNPG0LrgfB49HhYirC2Dlymh5rLWGwWRmk52aUIE/Z4StU
+ z+1yDp7KSqtP+2jjfaym/o9pxT3P/s0MFKCsCggtUcbh/slgGrToJ8XKDqhkF/nMifrHIR1P
+ XcqRYpOMp+r1vXY2GOuBPonzLt1T4/gkWSvmOwsD/Gm4jUVTg6A81OicZyaR3C8Xctu9l6ze
+ Ziw3+Zn4A/N2KOoA3No/zzEz16nEu9pnQv1cQJiWZEbIcYYLhN6aQC4UJuFosaFi6S0vFqLA
+ BXNrCc2B9qSyLbU5iA1VMfg+BEH05DUytue3Jy9PB8iFNt7TJEJ0hx/r1qop5PzuN5d3B+3Z
+ W2Dk1ZrsA/ciYoV9MOOA4ge7rANoWfe2OEDIqtSW6XYZ3vfUi976LK3A==
+X-IronPort-AV: E=Sophos;i="5.90,198,1643691600"; 
+   d="scan'208";a="66745199"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FH0GUeUe9+XOTHqYtAraBj4C2XnrHeoM96AcgSsK6b1nc7vdtInAi9j/B3XqkqFITd1+oXJFfAlPpWPTEqNAh+06GcJo5wEQB6KCxdAcoCtzcahmTM7lByxJwjcqOmG74ANE9rFI70JW84OZ+Ypp9bVuiBM/oZarVsu1VP1uacPKPEztsFwuEattbPIjEKVdJPgY+XNmBlUwo7ebtKvbOwfzWU1LypnvxDWTT0KUWoY6uu7z5NOY5dX/rd5QBgQBYDJXoOJ2pAmFyP2A7EZHGxpBnRd4L+9I+cvnrcvYzjCvyzOSVJ+CrYCZ1JxoThKBcQJsP9ZOVDaJIHT0u552Bg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LJxLXOd/g+NcgzFBMKk/6O/8OuPEssPXeeYfnKDPtG0=;
+ b=A50FAf01qR7bF9Glx54iJv603uLfyzarwcGG7uNUmVlxIhelTJUzuRsK51wYIH8ZOWuV/CTKH5V4t8Jc/YHEozMFC7D31/2vt2eK7HZxYss+ha4HrIPhibc59Om8xtVhte8bLo8wDptFDzYXrMFjN6vOWbpXU/3R+FvH22TDA61EREtUaat0ZFW87QARNaHHrAyJTN5G8MWyoCeMLczVWEK6b9KQlIyFpdJFwHyoYfgxp4ARUmtV4yZDFZ03UfBgJSTphWCYb5yn1pIeI6gJrqWe1mzitKFfNFQ7aRk+HsTplId7ww+KD+3bql750poKtKHLkY13rgrA2uElElFQmA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=citrix.com; dmarc=pass action=none header.from=citrix.com;
+ dkim=pass header.d=citrix.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=citrix.onmicrosoft.com; s=selector2-citrix-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LJxLXOd/g+NcgzFBMKk/6O/8OuPEssPXeeYfnKDPtG0=;
+ b=hRlQ2QNydZbs7MZMO1KvtkrBRuRkLZwBUG42Ek518GlXXVSXk9JCG38xpjCQ7vE6jramEwoBU8J3HQusSfaqVqER5N8dAFW1eWsVrb2GU9mMpRDLlENrDtGn2a19wC6NTe2unGeWHN4T1WhIk1rA6k12Qe9IewvCcUyZp3upkl8=
+Date:   Mon, 21 Mar 2022 11:00:13 +0100
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+CC:     Jens Axboe <axboe@kernel.dk>, <xen-devel@lists.xenproject.org>,
+        <linux-block@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>
+Subject: Re: [PATCH] xen-blkback: remove redundant assignment to variable i
+Message-ID: <YjhMre8vckI1HbSS@Air-de-Roger>
+References: <20220317234646.78158-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220317234646.78158-1-colin.i.king@gmail.com>
+X-ClientProxiedBy: LO2P265CA0241.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:8a::13) To DS7PR03MB5608.namprd03.prod.outlook.com
+ (2603:10b6:5:2c9::18)
 MIME-Version: 1.0
-References: <247066a3104d25f9a05de8b3270fc3c848763bcc.1647673264.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <247066a3104d25f9a05de8b3270fc3c848763bcc.1647673264.git.christophe.jaillet@wanadoo.fr>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 21 Mar 2022 10:00:15 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUgXek+BDT4vJQfFcwDgQfyDAB=wXfdC0poynzH26=okw@mail.gmail.com>
-Message-ID: <CAMuHMdUgXek+BDT4vJQfFcwDgQfyDAB=wXfdC0poynzH26=okw@mail.gmail.com>
-Subject: Re: [PATCH] zorro: Fix a resource leak in zorro7xx_remove_one()
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        James Bottomley <James.Bottomley@steeleye.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, scsi <linux-scsi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 889f5f94-f5a8-48a9-f05d-08da0b219ab6
+X-MS-TrafficTypeDiagnostic: PH7PR03MB6944:EE_
+X-Microsoft-Antispam-PRVS: <PH7PR03MB6944166296D4E2C6802A04878F169@PH7PR03MB6944.namprd03.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 50Mk5dI1AbaE+zveTAmqMcD0J+N9zbjq1kfTbL/bTjpVrYDLFXnAPg19bmMHVyDxes7bnAyfoBKE3YmMO2tFNznIPE0JfPa643m1fxYaVwq2xgD4WfhEL4Lg0L2j9NZL3EfkbKJ01KLdKWcPqtjYxmip5RRFku1HilWblK14SIImo9Cu9sYUPJHLTHc6ay62iEiAxcibnIhBL9ly9BDYgPdJFAFeMxALad0rq7i6LxKnlgBl7QPP+U+XhflYwNn3vFHUGz5qkwto3qHQrg0hupd/wfZyufmcZAoMkWbTJaaLTf+NxMXzpHSZKhG8yMAEG6fdqqqrbT9zHWFsvH9abyHuoHB8JIwOtIxDJ6fAMgHQWzBWoAu5c6SB1jWq5haYcsh0cmfNKN61TNhdOI8Vlz+wYGy6fZlM05SnT6lUZ/5GEbEnf8EFe6ZHvW+rSgtdw50z8j1+BOQojAMWIwYpFcfaV6r5C8QgpJfRMuYy+qyS0g8iy6Spy9qSQZ/38Ap2h4RSofGXLzc/bkC/rW14baDdAXCe9gPOohCZzkcski2/9zSvziJsvAXqg0WFOA8byPpm02Xoh/9qiU9kML9aBSXyrBKtDAm1JkYVL41NJ0odaiFzRhoII1Iw7rKCip1gQ7BENc/4HhRoSXqxsGmBpV0BqkaAqS21m3ZOX7ErtO1OVgERI8VSJBJnmPSoQ5QUS4JizGNYQmu7u1faxEKJNg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR03MB5608.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(7916004)(366004)(2906002)(9686003)(6512007)(6666004)(33716001)(86362001)(83380400001)(66946007)(66556008)(8936002)(66476007)(85182001)(4326008)(508600001)(8676002)(6506007)(26005)(82960400001)(186003)(6916009)(4744005)(5660300002)(316002)(6486002)(38100700002)(129723003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OGMvakdRM2dwR1ZGQUk0SVIwclhVdFpwaTRVQ0lhWUMxbDFabEYxOHcxa0tI?=
+ =?utf-8?B?OTg4SEpwOC9meDNPcHVFYWVyVFEyZ0Q4eXFSSk9MZnVYMzNNOTRIeWtVMEpF?=
+ =?utf-8?B?UERrWnAyZkYyVnRCRWVsMzF6bG9YU0NhdzR4Q3RvSXpDa21LcDZLTzRQVTRC?=
+ =?utf-8?B?cFF2cCtqMDlLSXVoR2pDSUErVGo2aDdZRlJyNlhBM1BRS3FoWUlnR1lJMGpG?=
+ =?utf-8?B?YjZidFRSV1BlN1pkVitkVldrUGhDaEplMkdHem9Cbk5ZSk41WjNCOXN3MCti?=
+ =?utf-8?B?UEF1MDhRK1hBdkJnRWlTdy94ZVZZWjZrMUZkTElyd1QvR085aFhZVFdkdlpL?=
+ =?utf-8?B?NFJFdnA3NE5Gazk4M253Sldrb0JlTXBQYTNHd1hRVndlUEF5bllNMmtLZllQ?=
+ =?utf-8?B?U1o1YjFLUHNCNEdsQ1BNS2UzRlIwZTBYN3prNGZoM2xmU202d1NhUUxQby8w?=
+ =?utf-8?B?ZG1BMVRqK1hlTDVRTjZQSzF1UzI5RGFjWXdFQWJadC9UYzBEalJpdjFGYUNZ?=
+ =?utf-8?B?bWVEQ0N1bGxzNloxMVNIbmdCdmp4NmUyUDhQMVlYOFNBUmxkT1hPRjdPcGxk?=
+ =?utf-8?B?d3VlY2ppS01GT2RkMEVQYWpTQnZETTRKMmtYemNwMWx3dVpaQXozcHg4aWdO?=
+ =?utf-8?B?ekRxTkQxblUzT2kwMG9KbnhNK2h2TXFGWmNLN2Z4NlJDcDhhTVlkbTVGaDU3?=
+ =?utf-8?B?UEwvaHlFTEp3d2tHR1hIZklEeTdlUDNIbHVET3gwRXp0YzZxNXNiM0FmL3Rt?=
+ =?utf-8?B?VElIMlF3dGw3ZjM4Rzg1K0JsbU4vUzhMWTA3T0RSR25HYzNtYld3YWVYU2gz?=
+ =?utf-8?B?QnBNdlo3Nk52RzBNQW10L0ltY3dJL0h2NUR1UTdkT0pUKy9WN1V1SGh3eGlJ?=
+ =?utf-8?B?TVorT2o4eDZkdFJ2MGNSS0czVlBZek5sRFVTOEVJUDZVUWY5M0JLam5PSTB6?=
+ =?utf-8?B?ZWI5N25IRzBndE5rY2ZJK2pQbm5YWVJTU1Y4S240N0hKanc5RWV0YlJZc296?=
+ =?utf-8?B?cGpNcWxyNXJNRTQvSktudlRlVzl0ZlozaE83ZDB1ZlNhZ3dUQXJzamo2UDYz?=
+ =?utf-8?B?VHUyY1BIbnQwMzYvbnZpb0FqLzl2UFZaQ0tkN1dQWVFDeXRLcXAzM3NleCt1?=
+ =?utf-8?B?aGpXcDZrWG1UUy9WSGNLVUZZNmpsZVFkdUFNU2tGV2s0MUlyY050bThCNVJY?=
+ =?utf-8?B?S1lQVC9wcllJdDVKSStKMHZwWWQzaWVNbS84MmRkelFSUEtCdmZrUm1kU2F5?=
+ =?utf-8?B?N1FQMHJMQWhRcWV2RThGYXVRRWRpeFdMZXVYNW40bVpOalVTODRmRjBNYU02?=
+ =?utf-8?B?am85SGY2ZUFCQU93MkZOZ213NVNBWS93ckpOL2xIUkpOSzdGSTlYVFd3OFI3?=
+ =?utf-8?B?cEZVNUlwbVhnRmw1QzI5VGRkbXAwVE1iSjlLVVREOE5EbHJ6cHBkcVhjcEVZ?=
+ =?utf-8?B?T1NjbTdKK0JMaGZnOWdkUjRjSDRJQW16MGg0cTNiN2I2RVVkdHZFQ3NqV1RV?=
+ =?utf-8?B?QXQ2dGp0WlJWSmZiaFREMFNRWWRFdE8vYll3MUx1NHg1OEZjUm5mZ3lEZFlt?=
+ =?utf-8?B?c0FCdE9Yb3NYOFhqR251VXovOFpoeDM2S0ZTTUFjVVFlaHNMU0JVay9LSE8z?=
+ =?utf-8?B?d2FJTThtYVM0YlUxVnV4SENZbmk3UWt1YnZGUXpOdzkyWnEyMGZoQ210bmY5?=
+ =?utf-8?B?cDQ5Z3JrMmRrOHNObVBUc0hKcVpwdlBrc0JKeUZiVjJ5MXVDaHFRd0dncmtw?=
+ =?utf-8?B?ZStJZGFBQURXcHNFZHQyaEhnbTF6WUY0MHdLRnlCYWcyblJXT1lUc1oybW1j?=
+ =?utf-8?B?T1VmcXpvTjNRUXV4ajFZTW9PU3ZaOHVHVWhtS1RJallTcFhSelo1aklsVUNO?=
+ =?utf-8?B?QmxPOFJWY0xDcnNFNFpITURTamJLbUZvTE5ZTE5wMW43TDE5TXdaMFBQWTla?=
+ =?utf-8?B?OVFuRzJQOHBUNVlLSTRVNFJIcGxycXZPK21VOURUTUVNeW9UdnpBMDJra0Nk?=
+ =?utf-8?B?aGdHalI4dXdRPT0=?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 889f5f94-f5a8-48a9-f05d-08da0b219ab6
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR03MB5608.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2022 10:00:18.4946
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 335836de-42ef-43a2-b145-348c2ee9ca5b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CSxd25QMo8d1nkDYATJGnZ8HAwfUk1uR9jct47LiURPY7APTQhZEWmnH0+gTsdkiPbgzEUQb9E+hBeBygge2Cg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR03MB6944
+X-OriginatorOrg: citrix.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+On Thu, Mar 17, 2022 at 11:46:46PM +0000, Colin Ian King wrote:
+> Variable i is being assigned a value that is never read, it is being
+> re-assigned later in a for-loop. The assignment is redundant and can
+> be removed.
+> 
+> Cleans up clang scan build warning:
+> drivers/block/xen-blkback/blkback.c:934:14: warning: Although the value
+> stored to 'i' is used in the enclosing expression, the value is never
+> actually read from 'i' [deadcode.DeadStores]
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-On Sat, Mar 19, 2022 at 8:01 AM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
-> The error handling path of the probe releases a resource that is not freed
-> in the remove function.
->
-> In some cases, a ioremap() must be undone.
->
-> Add the missing iounmap() call in the remove function.
->
-> Fixes: 45804fbb00ee ("[SCSI] 53c700: Amiga Zorro NCR53c710 SCSI")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Roger Pau Monné <roger.pau@citrix.com>
 
-Thanks for your patch!
-
-The online-summary should be
-"scsi: zorro7xx: Fix a resource leak in zorro7xx_remove_one()".
-
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks, Roger.
