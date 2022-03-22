@@ -2,101 +2,109 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E03C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Mar 2022 21:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88ABEC433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Mar 2022 22:28:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235567AbiCVV3q (ORCPT
+        id S237931AbiCVW3f (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 22 Mar 2022 17:29:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45772 "EHLO
+        Tue, 22 Mar 2022 18:29:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233342AbiCVV3o (ORCPT
+        with ESMTP id S229755AbiCVW3d (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 22 Mar 2022 17:29:44 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E1B3252AA;
-        Tue, 22 Mar 2022 14:28:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E83CC61742;
-        Tue, 22 Mar 2022 21:28:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CB98C340EC;
-        Tue, 22 Mar 2022 21:28:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647984495;
-        bh=z7sSQuBtQBxbMwccDOoXZ0fsZlSrkrwm+R7uLjpsZqw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kJQs58PG2xFMwpCfzlHvter4+rQt7+Anxjz8Cdb6PYGs0PTJKQFaMBVwM4EBGuEZ7
-         y0PubNL0ZbFOYydBjNgLVrYjOGzzpibmJC/Uwlv187LKSBU2eJ85RyEGqKHzCDINb8
-         46FNnre2jGHfcxn787J6nFvH0gg/CRKE8iLBfT3pQn9EPNO9yp6y7zWWVcad6mXuCv
-         o8OF8z+vyXpA/22l1uST9VhRZwggKduAvhkpvpZampH/ngdmtX7Yw9ngC7Okqw0dbF
-         +x03E9Bsi02HPskRBUfgiGa6WOfiAtjg2rWs3jl66rMrpzw255ykZVcBVdlkHlxbXP
-         lTVeR2BsYWxpw==
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id D677540407; Tue, 22 Mar 2022 18:28:12 -0300 (-03)
-Date:   Tue, 22 Mar 2022 18:28:12 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ian Rogers <irogers@google.com>
-Cc:     Colin Ian King <colin.i.king@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf build-id: Fix spelling mistake "Cant" -> "Can't"
-Message-ID: <Yjo/bPt+elQNM2WR@kernel.org>
-References: <20220316232452.53062-1-colin.i.king@gmail.com>
- <CAP-5=fWA=OGggwz730ScghTmUqeWGSG3hXv2swCRKGafOOSiDg@mail.gmail.com>
+        Tue, 22 Mar 2022 18:29:33 -0400
+Received: from mail-vs1-xe30.google.com (mail-vs1-xe30.google.com [IPv6:2607:f8b0:4864:20::e30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7E3048E49;
+        Tue, 22 Mar 2022 15:28:04 -0700 (PDT)
+Received: by mail-vs1-xe30.google.com with SMTP id g21so20648760vsp.6;
+        Tue, 22 Mar 2022 15:28:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=HjP+WYgkuquMP9HLNm0D3kb+9NTb8P2x7yQwd4RNgpQ=;
+        b=aH3Em2Ln7Yyh931WTdExYFWl/LYNVEPDi2+0dPgdzm8nrlyrNGgYU6uiYnJHMg1OcI
+         zzlWkhTVpGKj7MKenfW0CQVLGGCqIzE08ozETz/ruaR8RdPsabJzPK1VJrxzcwzKXb8q
+         5zh1I5Ufw0j/KhViKfNfAYx2sPcQJy2Z74wX7iMFnR/TY+qayywwWnI+jmk3nU7B7RWG
+         0XCxHBZ3DfC0xrTJ0JP565aQJ8lt2TuShs8wdf8IusCQ4wQe3BzHehCq9MnXD0pEvXXx
+         viPERF716BvAe2iuwhRFFJDg0ZRC/W1fTeuFd+ROFz5C1YMnu+ntnaDd6uSWLoKRUhI1
+         EfRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=HjP+WYgkuquMP9HLNm0D3kb+9NTb8P2x7yQwd4RNgpQ=;
+        b=LfW17BYBXKpum6kTD8U0KvBR5yVoVieAh/3GC9ccrUgaHnw/74bJNIg/Fyu8hpzHxR
+         MQ17RWEhcZdo1SgrFFTSq6mxggQVzvMeWGC3QE/SLxRlG9mI1aTynwcJw3srI6cdZrbW
+         xEHiznau9dlTqNhWHpVxL9wGsdcVXUYPL+qSGrcjfaBKVFcPYx4OJfXTHPpjyxdZz2lC
+         Jt58mujCFTD5sgRr2JALDj6vrxwH+/+wAfYMkNaM8M7Gf4HCscBurT7cjwNkKsoNisk2
+         Bi1Gdg9vKfh1ZopELEJG1hB3hVkNlbwpGWOpxvYT3Yg6XmNHNjfn2tBhnjB9ytyPxDAF
+         6Rgg==
+X-Gm-Message-State: AOAM530v3cBcvL36WgzI8uvWs2rR6DE28Whh1p6m4BxFQllcqJKq6RYN
+        Svt5bJGTzP/aVByQFuIkhcGSq0+zYvtGJt3gwf0=
+X-Google-Smtp-Source: ABdhPJxavs/AEHRq5EzJNKwgi55bRPwWQ4fu9Cx2wzgWmN9Ra3rM6mqBRbogaT7+kB58XPj3D8U2s3nmDbUhuxLxmtc=
+X-Received: by 2002:a05:6102:83c:b0:324:e435:eb01 with SMTP id
+ k28-20020a056102083c00b00324e435eb01mr8046903vsb.13.1647988083767; Tue, 22
+ Mar 2022 15:28:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAP-5=fWA=OGggwz730ScghTmUqeWGSG3hXv2swCRKGafOOSiDg@mail.gmail.com>
-X-Url:  http://acmel.wordpress.com
+References: <f8f1f383c4533a91a6025b1db5827ed6aaab002f.1647980983.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <f8f1f383c4533a91a6025b1db5827ed6aaab002f.1647980983.git.christophe.jaillet@wanadoo.fr>
+From:   Hyunchul Lee <hyc.lee@gmail.com>
+Date:   Wed, 23 Mar 2022 07:27:52 +0900
+Message-ID: <CANFS6bZGXA_9eMo=Wv=H6BG4kt5-mKuK8A=m-P3VqKKxamnK2w@mail.gmail.com>
+Subject: Re: [PATCH] ksmbd: Remove a redundant zeroing of memory
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Namjae Jeon <linkinjeon@kernel.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Steve French <sfrench@samba.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        linux-cifs <linux-cifs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Em Wed, Mar 16, 2022 at 08:10:28PM -0700, Ian Rogers escreveu:
-> On Wed, Mar 16, 2022 at 4:25 PM Colin Ian King <colin.i.king@gmail.com> wrote:
-> >
-> > There is a spelling mistake in a pr_err message. Fix it.
-> >
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> 
-> Acked-by: Ian Rogers <irogers@google.com>
+Acked-by: Hyunchul Lee <hyc.lee@gmail.com>
 
-Thanks, applied.
+2022=EB=85=84 3=EC=9B=94 23=EC=9D=BC (=EC=88=98) =EC=98=A4=EC=A0=84 5:29, C=
+hristophe JAILLET
+<christophe.jaillet@wanadoo.fr>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> fill_transform_hdr() already call memset(0) on its 1st argument, so there
+> is no need to clear it explicitly before calling this function.
+>
+> Use kmalloc() instead of kzalloc() to save a few cycles.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Alternatively, fill_transform_hdr() has only one caller. So its memset()
+> could be removed instead and this kzalloc() left as is.
+> ---
+>  fs/ksmbd/smb2pdu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/ksmbd/smb2pdu.c b/fs/ksmbd/smb2pdu.c
+> index bcb98109bac9..0e4f819e5859 100644
+> --- a/fs/ksmbd/smb2pdu.c
+> +++ b/fs/ksmbd/smb2pdu.c
+> @@ -8434,7 +8434,7 @@ int smb3_encrypt_resp(struct ksmbd_work *work)
+>         if (ARRAY_SIZE(iov) < rq_nvec)
+>                 return -ENOMEM;
+>
+> -       work->tr_buf =3D kzalloc(sizeof(struct smb2_transform_hdr) + 4, G=
+FP_KERNEL);
+> +       work->tr_buf =3D kmalloc(sizeof(struct smb2_transform_hdr) + 4, G=
+FP_KERNEL);
+>         if (!work->tr_buf)
+>                 return rc;
+>
+> --
+> 2.32.0
+>
 
-- Arnaldo
 
- 
-> Thanks,
-> Ian
-> 
-> > ---
-> >  tools/perf/util/build-id.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
-> > index 7a5821c87f94..82f3d46bea70 100644
-> > --- a/tools/perf/util/build-id.c
-> > +++ b/tools/perf/util/build-id.c
-> > @@ -762,7 +762,7 @@ build_id_cache__add(const char *sbuild_id, const char *name, const char *realnam
-> >
-> >                 len = readlink(linkname, path, sizeof(path) - 1);
-> >                 if (len <= 0) {
-> > -                       pr_err("Cant read link: %s\n", linkname);
-> > +                       pr_err("Can't read link: %s\n", linkname);
-> >                         goto out_free;
-> >                 }
-> >                 path[len] = '\0';
-> > --
-> > 2.35.1
-> >
-
--- 
-
-- Arnaldo
+--=20
+Thanks,
+Hyunchul
