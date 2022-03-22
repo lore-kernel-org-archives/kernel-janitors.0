@@ -2,35 +2,37 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C81C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Mar 2022 19:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7898AC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Mar 2022 20:25:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231903AbiCVTuy (ORCPT
+        id S234044AbiCVU1F (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 22 Mar 2022 15:50:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59800 "EHLO
+        Tue, 22 Mar 2022 16:27:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229733AbiCVTux (ORCPT
+        with ESMTP id S233944AbiCVU0v (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 22 Mar 2022 15:50:53 -0400
+        Tue, 22 Mar 2022 16:26:51 -0400
 Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82AE44E382
-        for <kernel-janitors@vger.kernel.org>; Tue, 22 Mar 2022 12:49:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE6C566632
+        for <kernel-janitors@vger.kernel.org>; Tue, 22 Mar 2022 13:25:13 -0700 (PDT)
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id WkV8nBW5DIQAdWkV8n8jiu; Tue, 22 Mar 2022 20:49:22 +0100
+        id Wl42nBncYIQAdWl43n8pUd; Tue, 22 Mar 2022 21:25:12 +0100
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Tue, 22 Mar 2022 20:49:22 +0100
+X-ME-Date: Tue, 22 Mar 2022 21:25:12 +0100
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Vineet Gupta <vgupta@kernel.org>
+To:     Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-snps-arc@lists.infradead.org
-Subject: [PATCH] ARC: Remove a redundant memset()
-Date:   Tue, 22 Mar 2022 20:49:05 +0100
-Message-Id: <98e53b48968d3c29be44f6a302a04e64e5b59f08.1647978533.git.christophe.jaillet@wanadoo.fr>
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] pstore: Remove a redundant zeroing of memory
+Date:   Tue, 22 Mar 2022 21:25:09 +0100
+Message-Id: <d5860f2816968b9ffbaea0ae13f65d988e51eb49.1647980703.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -38,28 +40,29 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-disasm_instr() already call memset(0) on its 2nd argument, so there is no
-need to clear it explicitly before calling this function.
+pstore_record_init() already call memset(0) on its 1st argument, so there
+is no need to clear it explicitly before calling this function.
 
-Remove the redundant memset().
+Use kmalloc() instead of kzalloc() to save a few cycles.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/arc/kernel/disasm.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/pstore/platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arc/kernel/disasm.c b/arch/arc/kernel/disasm.c
-index 03f8b1be0c3a..e9f16d9e113f 100644
---- a/arch/arc/kernel/disasm.c
-+++ b/arch/arc/kernel/disasm.c
-@@ -503,7 +503,6 @@ int __kprobes disasm_next_pc(unsigned long pc, struct pt_regs *regs,
- {
- 	struct disasm_state instr;
+diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
+index e26162f102ff..82eaf5a121a9 100644
+--- a/fs/pstore/platform.c
++++ b/fs/pstore/platform.c
+@@ -749,7 +749,7 @@ void pstore_get_backend_records(struct pstore_info *psi,
+ 		struct pstore_record *record;
+ 		int rc;
  
--	memset(&instr, 0, sizeof(struct disasm_state));
- 	disasm_instr(pc, &instr, 0, regs, cregs);
- 
- 	*next_pc = pc + instr.instr_len;
+-		record = kzalloc(sizeof(*record), GFP_KERNEL);
++		record = kmalloc(sizeof(*record), GFP_KERNEL);
+ 		if (!record) {
+ 			pr_err("out of memory creating record\n");
+ 			break;
 -- 
 2.32.0
 
