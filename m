@@ -2,77 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1ED5C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Mar 2022 14:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C81C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 22 Mar 2022 19:49:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235291AbiCVOa6 (ORCPT
+        id S231903AbiCVTuy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 22 Mar 2022 10:30:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58426 "EHLO
+        Tue, 22 Mar 2022 15:50:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233837AbiCVOa5 (ORCPT
+        with ESMTP id S229733AbiCVTux (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 22 Mar 2022 10:30:57 -0400
-Received: from ha.nfschina.com (unknown [IPv6:2400:dd01:100f:2:72e2:84ff:fe10:5f45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9E4C9654A1;
-        Tue, 22 Mar 2022 07:29:29 -0700 (PDT)
-Received: from localhost (unknown [127.0.0.1])
-        by ha.nfschina.com (Postfix) with ESMTP id 345A31E80D6B;
-        Tue, 22 Mar 2022 22:28:40 +0800 (CST)
-X-Virus-Scanned: amavisd-new at test.com
-Received: from ha.nfschina.com ([127.0.0.1])
-        by localhost (ha.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 9lyuXtfIkRuj; Tue, 22 Mar 2022 22:28:37 +0800 (CST)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        (Authenticated sender: liqiong@nfschina.com)
-        by ha.nfschina.com (Postfix) with ESMTPA id 3586C1E80D24;
-        Tue, 22 Mar 2022 22:28:37 +0800 (CST)
-From:   liqiong <liqiong@nfschina.com>
-To:     naoya.horiguchi@nec.com, akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, yuzhe@nfschina.com,
-        renyu@nfschina.com, liqiong <liqiong@nfschina.com>
-Subject: [PATCH] mm: remove unnecessary (void*) conversions.
-Date:   Tue, 22 Mar 2022 22:28:26 +0800
-Message-Id: <20220322142826.25939-1-liqiong@nfschina.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20220322121338.27428-1-liqiong@nfschina.com>
-References: <20220322121338.27428-1-liqiong@nfschina.com>
+        Tue, 22 Mar 2022 15:50:53 -0400
+Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82AE44E382
+        for <kernel-janitors@vger.kernel.org>; Tue, 22 Mar 2022 12:49:24 -0700 (PDT)
+Received: from pop-os.home ([90.126.236.122])
+        by smtp.orange.fr with ESMTPA
+        id WkV8nBW5DIQAdWkV8n8jiu; Tue, 22 Mar 2022 20:49:22 +0100
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Tue, 22 Mar 2022 20:49:22 +0100
+X-ME-IP: 90.126.236.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Vineet Gupta <vgupta@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-snps-arc@lists.infradead.org
+Subject: [PATCH] ARC: Remove a redundant memset()
+Date:   Tue, 22 Mar 2022 20:49:05 +0100
+Message-Id: <98e53b48968d3c29be44f6a302a04e64e5b59f08.1647978533.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-No need cast (void*) to (struct hwp_walk*).
+disasm_instr() already call memset(0) on its 2nd argument, so there is no
+need to clear it explicitly before calling this function.
 
-Signed-off-by: liqiong <liqiong@nfschina.com>
-Acked-by: Naoya Horiguchi <naoya.horiguchi@nec.com>
-Reviewed-by: Muchun Song <songmuchun@bytedance.com>
+Remove the redundant memset().
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- mm/memory-failure.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arc/kernel/disasm.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 97a9ed8f87a9..4ed0dcf03659 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -630,7 +630,7 @@ static int check_hwpoisoned_pmd_entry(pmd_t *pmdp, unsigned long addr,
- static int hwpoison_pte_range(pmd_t *pmdp, unsigned long addr,
- 			      unsigned long end, struct mm_walk *walk)
+diff --git a/arch/arc/kernel/disasm.c b/arch/arc/kernel/disasm.c
+index 03f8b1be0c3a..e9f16d9e113f 100644
+--- a/arch/arc/kernel/disasm.c
++++ b/arch/arc/kernel/disasm.c
+@@ -503,7 +503,6 @@ int __kprobes disasm_next_pc(unsigned long pc, struct pt_regs *regs,
  {
--	struct hwp_walk *hwp = (struct hwp_walk *)walk->private;
-+	struct hwp_walk *hwp = walk->private;
- 	int ret = 0;
- 	pte_t *ptep, *mapped_pte;
- 	spinlock_t *ptl;
-@@ -664,7 +664,7 @@ static int hwpoison_hugetlb_range(pte_t *ptep, unsigned long hmask,
- 			    unsigned long addr, unsigned long end,
- 			    struct mm_walk *walk)
- {
--	struct hwp_walk *hwp = (struct hwp_walk *)walk->private;
-+	struct hwp_walk *hwp = walk->private;
- 	pte_t pte = huge_ptep_get(ptep);
- 	struct hstate *h = hstate_vma(walk->vma);
+ 	struct disasm_state instr;
  
+-	memset(&instr, 0, sizeof(struct disasm_state));
+ 	disasm_instr(pc, &instr, 0, regs, cregs);
+ 
+ 	*next_pc = pc + instr.instr_len;
 -- 
-2.11.0
+2.32.0
 
