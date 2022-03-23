@@ -2,41 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B1DC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Mar 2022 08:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE2DC433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 23 Mar 2022 10:05:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242590AbiCWIVs (ORCPT
+        id S243409AbiCWKGz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 23 Mar 2022 04:21:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47504 "EHLO
+        Wed, 23 Mar 2022 06:06:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242588AbiCWIVr (ORCPT
+        with ESMTP id S238997AbiCWKGy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 23 Mar 2022 04:21:47 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D1A66626;
-        Wed, 23 Mar 2022 01:20:18 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 1AC3D68BEB; Wed, 23 Mar 2022 09:20:15 +0100 (CET)
-Date:   Wed, 23 Mar 2022 09:20:14 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        linux-nvme@lists.infradead.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] nvmet: remove redundant assignment after left shift
-Message-ID: <20220323082014.GB26611@lst.de>
-References: <20220318013014.90698-1-colin.i.king@gmail.com>
+        Wed, 23 Mar 2022 06:06:54 -0400
+Received: from ha.nfschina.com (unknown [IPv6:2400:dd01:100f:2:72e2:84ff:fe10:5f45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 91EA775E70;
+        Wed, 23 Mar 2022 03:05:24 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by ha.nfschina.com (Postfix) with ESMTP id D74EF1E80D93;
+        Wed, 23 Mar 2022 18:04:36 +0800 (CST)
+X-Virus-Scanned: amavisd-new at test.com
+Received: from ha.nfschina.com ([127.0.0.1])
+        by localhost (ha.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id ogp0T_Jy8HPp; Wed, 23 Mar 2022 18:04:34 +0800 (CST)
+Received: from localhost.localdomain (unknown [101.228.254.169])
+        (Authenticated sender: yuzhe@nfschina.com)
+        by ha.nfschina.com (Postfix) with ESMTPA id BECE51E80D8B;
+        Wed, 23 Mar 2022 18:04:33 +0800 (CST)
+From:   yuzhe <yuzhe@nfschina.com>
+To:     trond.myklebust@hammerspace.com, anna@kernel.org,
+        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, liqiong@nfschina.com
+Cc:     yuzhe <yuzhe@nfschina.com>
+Subject: [PATCH] NFSv4: remove unnecessary (void*) conversions.
+Date:   Wed, 23 Mar 2022 03:05:14 -0700
+Message-Id: <20220323100514.182532-1-yuzhe@nfschina.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220318013014.90698-1-colin.i.king@gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Thanks,
+No need cast (void*) to (struct idmap *).
 
-applied to nvme-5.18.
+Signed-off-by: yuzhe <yuzhe@nfschina.com>
+---
+ fs/nfs/nfs4idmap.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/nfs/nfs4idmap.c b/fs/nfs/nfs4idmap.c
+index f331866dd418..6d4d602235be 100644
+--- a/fs/nfs/nfs4idmap.c
++++ b/fs/nfs/nfs4idmap.c
+@@ -668,7 +668,7 @@ idmap_pipe_downcall(struct file *filp, const char __user *src, size_t mlen)
+ {
+ 	struct request_key_auth *rka;
+ 	struct rpc_inode *rpci = RPC_I(file_inode(filp));
+-	struct idmap *idmap = (struct idmap *)rpci->private;
++	struct idmap *idmap = rpci->private;
+ 	struct key *authkey;
+ 	struct idmap_msg im;
+ 	size_t namelen_in;
+@@ -735,7 +735,7 @@ static void
+ idmap_release_pipe(struct inode *inode)
+ {
+ 	struct rpc_inode *rpci = RPC_I(inode);
+-	struct idmap *idmap = (struct idmap *)rpci->private;
++	struct idmap *idmap = rpci->private;
+ 
+ 	nfs_idmap_abort_pipe_upcall(idmap, -EPIPE);
+ }
+-- 
+2.25.1
+
