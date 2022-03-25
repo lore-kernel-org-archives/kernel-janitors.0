@@ -2,80 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB9AC433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Mar 2022 14:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB42C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Mar 2022 15:39:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359361AbiCYOp1 (ORCPT
+        id S245718AbiCYPky (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Mar 2022 10:45:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34214 "EHLO
+        Fri, 25 Mar 2022 11:40:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245230AbiCYOpS (ORCPT
+        with ESMTP id S1354255AbiCYPjz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Mar 2022 10:45:18 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC23453E11;
-        Fri, 25 Mar 2022 07:43:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=cTgeBhPIbMY2V/22QHpipzHYQo1f8A2IaNn1vFaLLvc=; b=EEzOp9MMcWXnOV4bnHe7adlGGK
-        xzrNIZa61NM4/fZPJ6JyvG9dcjT/gauP0EYpnwcC/yxTaQmbXa/I5RPqc42jIVjG9gzX07iE1VY5V
-        gWS4FCAKfVQOziqea/TWGQ2Nf4aYsIOH9BWuurOC38DzprRD/zckDJjR8Yh6IJwvy7yu9hI3wPVhh
-        FbTwtVQZZyHyKaRes4s1LUuIoz7mLWmAEGtlD3M3yBTJV3hjlmP+riqZ3YQr3y5SJ75AxW5BxIlS3
-        J1VraOkrRotoV6yelwTxVNeVG2+BfME/k3Qy1TYEz6v06MV3K/1ORXzvQ/TzMuwb9Q3UIrVtOzZ4L
-        8OZb9Aig==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nXl9o-00ERDU-FZ; Fri, 25 Mar 2022 14:43:16 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 320563002BE;
-        Fri, 25 Mar 2022 15:43:15 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 12064206DBC36; Fri, 25 Mar 2022 15:43:15 +0100 (CET)
-Date:   Fri, 25 Mar 2022 15:43:14 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        kernel-janitors@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v2 0/4] kprobes: rethook: x86: Replace kretprobe
- trampoline with rethook
-Message-ID: <Yj3VAsgGA9zJvxgs@hirez.programming.kicks-ass.net>
-References: <164821817332.2373735.12048266953420821089.stgit@devnote2>
+        Fri, 25 Mar 2022 11:39:55 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 070557006B
+        for <kernel-janitors@vger.kernel.org>; Fri, 25 Mar 2022 08:35:35 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id p10so8149342lfa.12
+        for <kernel-janitors@vger.kernel.org>; Fri, 25 Mar 2022 08:35:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=OCf/0n6GjcmqDXv8Gioi+rhx4QNjBGF9KHVx3ac+6zE=;
+        b=lUF1kfyWCBY65hVtIc4RDSVWVab21h3hkYrW10/qDdQ+inzdR6BKvrUsbg7iMBAhgq
+         K6xgQR74RPxrhD1UEEaACDTOf7ubhYXHGnuGhEUnER7Kg25KoYQhvgy5P/PGEUe7qzY9
+         xqvYdezclPzQvGc1JcBOScYjZKlFLGNVECEvrIU62rN4X8nzx8yYABRxAY6LtFhFQ6jp
+         jG3KeDl1mLau2dWkuegD2hF/leT+alM83CfDNGIMw1e3k2diTCNr4hpth7jvWvmlN0og
+         t0i47g7oO4x3bV71uwIXX00hLeEx746Nc90cysQ9bakwJ0Q3Krlrnncxfbbu6L7IphDz
+         E4ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=OCf/0n6GjcmqDXv8Gioi+rhx4QNjBGF9KHVx3ac+6zE=;
+        b=4RDBhwiDVsfPqsyGUA2yjIp7vKwEF3gjWb2z4wHEvbhtRzQ2TreLtNN+IwpMAlCRWY
+         w0JOPJHTjd03C0I6HJNoDt50HsuMqVIbAG87y+oK0yfLu9aeEUEruAsy6jLSevNNgr2Z
+         HvrXu8aMnux46Qai0w0REMhfTtCfTQu1V66I07QM1SpqX2rt0HEZRlQVvhXNpNnlkbPU
+         colN1u5Zw69O8F/qg258+C7oQOsg8Q09nRAggKzFJQhnkwhOW7t9ed3G3W57y2EsDkbB
+         QY2xkbRhf5vpLJvGltcDRj+nef/PhFkikpIBhaVhW3N05RsSjeO/Og3A1Uebm3EAFTmU
+         P7Xw==
+X-Gm-Message-State: AOAM5314U9V/Bvim4Erjcj/rOYA6uopdFQ6BDlwob0uw0mQMB29CGAyY
+        CS/PF9LOklMmHVfb13K2QdLnzj5O6KGzJMZtHojHU3tnRrQ=
+X-Google-Smtp-Source: ABdhPJx0hLUe9jJXny+YCVlcT52sqvjNuR4X9mNRTi2FZSY4rv6FBedlNYLfuXDYnp3u4nPn4j6lJaNUTIpHodV575c=
+X-Received: by 2002:a05:6512:b11:b0:44a:2ead:daf2 with SMTP id
+ w17-20020a0565120b1100b0044a2eaddaf2mr8251633lfu.642.1648222532821; Fri, 25
+ Mar 2022 08:35:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <164821817332.2373735.12048266953420821089.stgit@devnote2>
+From:   Harm Smits <harmsmitsdev@gmail.com>
+Date:   Fri, 25 Mar 2022 16:35:19 +0100
+Message-ID: <CAO64rh6_m6rx_=rPcEGLzzT5oaJFYzbE2RSQ-9zwk83ysj16wg@mail.gmail.com>
+Subject: [question] Whats up with loading the GDT in startup_setup_env in x86_64?
+To:     kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 25, 2022 at 11:22:53PM +0900, Masami Hiramatsu wrote:
+Hello,
 
-> Masami Hiramatsu (3):
->       kprobes: Use rethook for kretprobe if possible
->       rethook: kprobes: x86: Replace kretprobe with rethook on x86
->       x86,kprobes: Fix optprobe trampoline to generate complete pt_regs
-> 
-> Peter Zijlstra (1):
->       Subject: x86,rethook: Fix arch_rethook_trampoline() to generate a complete pt_regs
+I really have no clue where to ask these kinds of questions so please
+excuse me if this is the wrong mailing list. However, I was working my
+way through the linux boot code as I am trying to understand to
+somewhat of a degree how Linux booting is done. I have gotten to the
+point, right before it switches to virtual address space.
 
-You fat-fingered the subject there ^
+However, there is this one line that just bugs me. Maybe it's an
+actual bug (although I doubt it), but the call to `native_load_gdt`
+contains a virtual address space ptr, and I simply am wondering why in
+the world it is not page faulting. If I change it to be contained
+within `fixup_pointer` it still works, and nothing seems to have
+changed.
 
-Other than that:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/kernel/head64.c#n617
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+What's the reason that in this case the pointer is not wrapped in
+'fixup_pointer'?
 
-Hopefully the ftrace return trampoline can also be switched over..
+-- 
+Kind regards,
+Harm
