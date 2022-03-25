@@ -2,79 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB42C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Mar 2022 15:39:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6850C4332F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Mar 2022 16:50:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245718AbiCYPky (ORCPT
+        id S1353627AbiCYQve (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Mar 2022 11:40:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33054 "EHLO
+        Fri, 25 Mar 2022 12:51:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354255AbiCYPjz (ORCPT
+        with ESMTP id S1356491AbiCYQvd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Mar 2022 11:39:55 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 070557006B
-        for <kernel-janitors@vger.kernel.org>; Fri, 25 Mar 2022 08:35:35 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id p10so8149342lfa.12
-        for <kernel-janitors@vger.kernel.org>; Fri, 25 Mar 2022 08:35:35 -0700 (PDT)
+        Fri, 25 Mar 2022 12:51:33 -0400
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EF7BC12CF;
+        Fri, 25 Mar 2022 09:49:59 -0700 (PDT)
+Received: by mail-pf1-x436.google.com with SMTP id p8so6879533pfh.8;
+        Fri, 25 Mar 2022 09:49:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=OCf/0n6GjcmqDXv8Gioi+rhx4QNjBGF9KHVx3ac+6zE=;
-        b=lUF1kfyWCBY65hVtIc4RDSVWVab21h3hkYrW10/qDdQ+inzdR6BKvrUsbg7iMBAhgq
-         K6xgQR74RPxrhD1UEEaACDTOf7ubhYXHGnuGhEUnER7Kg25KoYQhvgy5P/PGEUe7qzY9
-         xqvYdezclPzQvGc1JcBOScYjZKlFLGNVECEvrIU62rN4X8nzx8yYABRxAY6LtFhFQ6jp
-         jG3KeDl1mLau2dWkuegD2hF/leT+alM83CfDNGIMw1e3k2diTCNr4hpth7jvWvmlN0og
-         t0i47g7oO4x3bV71uwIXX00hLeEx746Nc90cysQ9bakwJ0Q3Krlrnncxfbbu6L7IphDz
-         E4ug==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0kOdsZwrQL1XfPdlkXlj/9Xa+AzVdDQNepJd8esNMSA=;
+        b=RH/4wmzM1N3goA6fDZmEOIqtcFbnwVj6hl5sryG3LVcXbBaAg9OcTs0/mLXdIkBzIN
+         KoStwbD4ZY9nNn9EgZkemVf1m6GGtdopt2bFVM4viCuyBJRomC+f7npkNtNB0fCB/KB4
+         gvoZNLNQUKQI2VLfiNYQ7/C4/QdOLqYznSm6nM2jR3aMfDDTntAeCmuvwIezXqUbDHfy
+         pBQad0mQ0n3cJseK4nbrh610UoIoqXdFPu9AwgRu5nm7mLEzdEkSzIUUkM81ksnI6MLx
+         +vsIvtoxlIWvxM8xyEhQmDGBITfT4k6qkRN7BRv0aH/wP+jQLLWc17mqgQCJzVz+mHc9
+         55PQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=OCf/0n6GjcmqDXv8Gioi+rhx4QNjBGF9KHVx3ac+6zE=;
-        b=4RDBhwiDVsfPqsyGUA2yjIp7vKwEF3gjWb2z4wHEvbhtRzQ2TreLtNN+IwpMAlCRWY
-         w0JOPJHTjd03C0I6HJNoDt50HsuMqVIbAG87y+oK0yfLu9aeEUEruAsy6jLSevNNgr2Z
-         HvrXu8aMnux46Qai0w0REMhfTtCfTQu1V66I07QM1SpqX2rt0HEZRlQVvhXNpNnlkbPU
-         colN1u5Zw69O8F/qg258+C7oQOsg8Q09nRAggKzFJQhnkwhOW7t9ed3G3W57y2EsDkbB
-         QY2xkbRhf5vpLJvGltcDRj+nef/PhFkikpIBhaVhW3N05RsSjeO/Og3A1Uebm3EAFTmU
-         P7Xw==
-X-Gm-Message-State: AOAM5314U9V/Bvim4Erjcj/rOYA6uopdFQ6BDlwob0uw0mQMB29CGAyY
-        CS/PF9LOklMmHVfb13K2QdLnzj5O6KGzJMZtHojHU3tnRrQ=
-X-Google-Smtp-Source: ABdhPJx0hLUe9jJXny+YCVlcT52sqvjNuR4X9mNRTi2FZSY4rv6FBedlNYLfuXDYnp3u4nPn4j6lJaNUTIpHodV575c=
-X-Received: by 2002:a05:6512:b11:b0:44a:2ead:daf2 with SMTP id
- w17-20020a0565120b1100b0044a2eaddaf2mr8251633lfu.642.1648222532821; Fri, 25
- Mar 2022 08:35:32 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0kOdsZwrQL1XfPdlkXlj/9Xa+AzVdDQNepJd8esNMSA=;
+        b=YRXWdSBiWJT2UGH0wzFFudCzNVApWWKeLF5vXeNRlyv0IVmrd2cOUhyLNeiN8nrhSS
+         IKpaYOlCSgN2BZKhvnqhyK6FoSE23FW3/IUi2CKJ3C/G17fzyfuArcyxMNPQ/aQu7HG5
+         1UP8gZptuaegkpbFDcvcA5LxSkAn5eLYglDCCMIT8adIk4QVisA2y9ErFxrexy0asgZF
+         i4/IvyviY8+4bBvX6CkIzmM2tBxEEOTf3+WDjX4A325AOp0Q6uBAIOqx3M6p/dZU3rY3
+         kjkOKpMKf4DoXDunzhZxoDNM2FMCRVevw/zRpaHmBX02oSEaNmw9ZdH2SBIk6OlgnorB
+         Wb7Q==
+X-Gm-Message-State: AOAM531rRkfbZBsz0l46Lub7HFPl2A3jdewE9x/W+aQJGrV7g6gAZBn0
+        KFgeTgsdC/0KYA7qHgr+oKeb2hUbnX7GOkfRTWU=
+X-Google-Smtp-Source: ABdhPJyfhFBRXE5h3qte2x1DrZmNxncfozsOwJFINaTypXcQNRxAhkfoT3oCXvO/uJG6iEaiY9FupxTkU1CGWVRTEBo=
+X-Received: by 2002:a63:c00c:0:b0:37c:942e:6c3c with SMTP id
+ h12-20020a63c00c000000b0037c942e6c3cmr398099pgg.336.1648226998607; Fri, 25
+ Mar 2022 09:49:58 -0700 (PDT)
 MIME-Version: 1.0
-From:   Harm Smits <harmsmitsdev@gmail.com>
-Date:   Fri, 25 Mar 2022 16:35:19 +0100
-Message-ID: <CAO64rh6_m6rx_=rPcEGLzzT5oaJFYzbE2RSQ-9zwk83ysj16wg@mail.gmail.com>
-Subject: [question] Whats up with loading the GDT in startup_setup_env in x86_64?
-To:     kernel-janitors@vger.kernel.org
+References: <164821817332.2373735.12048266953420821089.stgit@devnote2> <Yj3VAsgGA9zJvxgs@hirez.programming.kicks-ass.net>
+In-Reply-To: <Yj3VAsgGA9zJvxgs@hirez.programming.kicks-ass.net>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Fri, 25 Mar 2022 09:49:47 -0700
+Message-ID: <CAADnVQLg0h7aJBPSfmQdL_M=S9QHWe+xLXZPL4gzMYejz=Mf0Q@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 0/4] kprobes: rethook: x86: Replace kretprobe
+ trampoline with rethook
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        X86 ML <x86@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        kernel-janitors@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello,
+On Fri, Mar 25, 2022 at 7:43 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Fri, Mar 25, 2022 at 11:22:53PM +0900, Masami Hiramatsu wrote:
+>
+> > Masami Hiramatsu (3):
+> >       kprobes: Use rethook for kretprobe if possible
+> >       rethook: kprobes: x86: Replace kretprobe with rethook on x86
+> >       x86,kprobes: Fix optprobe trampoline to generate complete pt_regs
+> >
+> > Peter Zijlstra (1):
+> >       Subject: x86,rethook: Fix arch_rethook_trampoline() to generate a complete pt_regs
+>
+> You fat-fingered the subject there ^
+>
+> Other than that:
+>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+>
+> Hopefully the ftrace return trampoline can also be switched over..
 
-I really have no clue where to ask these kinds of questions so please
-excuse me if this is the wrong mailing list. However, I was working my
-way through the linux boot code as I am trying to understand to
-somewhat of a degree how Linux booting is done. I have gotten to the
-point, right before it switches to virtual address space.
+Thanks Peter. What's an ETA on landing endbr set?
+Did I miss a pull req?
+I see an odd error in linux-next with bpf selftests
+which may or may not be related. Planning to debug it
+when everything settles in Linus's tree.
 
-However, there is this one line that just bugs me. Maybe it's an
-actual bug (although I doubt it), but the call to `native_load_gdt`
-contains a virtual address space ptr, and I simply am wondering why in
-the world it is not page faulting. If I change it to be contained
-within `fixup_pointer` it still works, and nothing seems to have
-changed.
+Masami, could you do another respin?
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/kernel/head64.c#n617
-
-What's the reason that in this case the pointer is not wrapped in
-'fixup_pointer'?
-
--- 
-Kind regards,
-Harm
+Also do you mind squashing patches 2,3,4 ?
+It's odd to have the same lines of code patched up 3 times.
+Just do it right once.
