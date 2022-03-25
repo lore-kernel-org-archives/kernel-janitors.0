@@ -2,138 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C4EC433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Mar 2022 14:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB9AC433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 25 Mar 2022 14:43:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354204AbiCYOZb (ORCPT
+        id S1359361AbiCYOp1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 25 Mar 2022 10:25:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38734 "EHLO
+        Fri, 25 Mar 2022 10:45:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359350AbiCYOZZ (ORCPT
+        with ESMTP id S245230AbiCYOpS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 25 Mar 2022 10:25:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB2242E9C8;
-        Fri, 25 Mar 2022 07:23:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3E22361B54;
-        Fri, 25 Mar 2022 14:23:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC3EBC340E9;
-        Fri, 25 Mar 2022 14:23:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648218223;
-        bh=GPBnrR38vldcM8pzwaRlh5Fu/HDIL2hc4on8+T36Er8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EAAhFGkhi1aX7fVJg/Bib2z5DjRp+ujnvhI0mqyoJK5rtNf6oOHxZjlqRCsIl9jQq
-         eh/ri5oEnker+VUfn3+nod5blYUqRHXzuuG0Z1z9RGXu06B4a0tvA8yDN3oONXF/bw
-         7Q2uszm0uAu5Culp8xJUxDTGsbTJ7+xa4QTNkGx+Bjo+MqphS3RZr+r3K7d53Y+UhW
-         1S4uVHxl4AP2wVFbSQSJO7qpUZdl6ItlNeDnC0o6z7T/71zJx3o5/ZXxcBVGwTQfMS
-         W41H5UwdIgCS2T9g8h9/bXyH/gzqFjQOChijAcZ7x86TieweoOQ5DaEwshfcPc8G23
-         zcYY8gspMVICw==
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Alexei Starovoitov <ast@kernel.org>,
+        Fri, 25 Mar 2022 10:45:18 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC23453E11;
+        Fri, 25 Mar 2022 07:43:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=cTgeBhPIbMY2V/22QHpipzHYQo1f8A2IaNn1vFaLLvc=; b=EEzOp9MMcWXnOV4bnHe7adlGGK
+        xzrNIZa61NM4/fZPJ6JyvG9dcjT/gauP0EYpnwcC/yxTaQmbXa/I5RPqc42jIVjG9gzX07iE1VY5V
+        gWS4FCAKfVQOziqea/TWGQ2Nf4aYsIOH9BWuurOC38DzprRD/zckDJjR8Yh6IJwvy7yu9hI3wPVhh
+        FbTwtVQZZyHyKaRes4s1LUuIoz7mLWmAEGtlD3M3yBTJV3hjlmP+riqZ3YQr3y5SJ75AxW5BxIlS3
+        J1VraOkrRotoV6yelwTxVNeVG2+BfME/k3Qy1TYEz6v06MV3K/1ORXzvQ/TzMuwb9Q3UIrVtOzZ4L
+        8OZb9Aig==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nXl9o-00ERDU-FZ; Fri, 25 Mar 2022 14:43:16 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 320563002BE;
+        Fri, 25 Mar 2022 15:43:15 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 12064206DBC36; Fri, 25 Mar 2022 15:43:15 +0100 (CET)
+Date:   Fri, 25 Mar 2022 15:43:14 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
         Andrii Nakryiko <andrii.nakryiko@gmail.com>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Dan Carpenter <dan.carpenter@oracle.com>,
         kernel-janitors@vger.kernel.org,
         Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
         Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH bpf-next v2 4/4] x86,kprobes: Fix optprobe trampoline to generate complete pt_regs
-Date:   Fri, 25 Mar 2022 23:23:38 +0900
-Message-Id: <164821821812.2373735.10590204580147294378.stgit@devnote2>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <164821817332.2373735.12048266953420821089.stgit@devnote2>
+Subject: Re: [PATCH bpf-next v2 0/4] kprobes: rethook: x86: Replace kretprobe
+ trampoline with rethook
+Message-ID: <Yj3VAsgGA9zJvxgs@hirez.programming.kicks-ass.net>
 References: <164821817332.2373735.12048266953420821089.stgit@devnote2>
-User-Agent: StGit/0.19
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <164821817332.2373735.12048266953420821089.stgit@devnote2>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Currently the optprobe trampoline template code ganerate an
-almost complete pt_regs on-stack, everything except regs->ss.
-The 'regs->ss' points to the top of stack, which is not a
-valid segment decriptor.
+On Fri, Mar 25, 2022 at 11:22:53PM +0900, Masami Hiramatsu wrote:
 
-As same as the rethook does, complete the job by also pushing ss.
+> Masami Hiramatsu (3):
+>       kprobes: Use rethook for kretprobe if possible
+>       rethook: kprobes: x86: Replace kretprobe with rethook on x86
+>       x86,kprobes: Fix optprobe trampoline to generate complete pt_regs
+> 
+> Peter Zijlstra (1):
+>       Subject: x86,rethook: Fix arch_rethook_trampoline() to generate a complete pt_regs
 
-Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- arch/x86/kernel/kprobes/opt.c |   25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+You fat-fingered the subject there ^
 
-diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
-index b4a54a52aa59..e6b8c5362b94 100644
---- a/arch/x86/kernel/kprobes/opt.c
-+++ b/arch/x86/kernel/kprobes/opt.c
-@@ -106,7 +106,8 @@ asm (
- 			".global optprobe_template_entry\n"
- 			"optprobe_template_entry:\n"
- #ifdef CONFIG_X86_64
--			/* We don't bother saving the ss register */
-+			"       pushq $" __stringify(__KERNEL_DS) "\n"
-+			/* Save the 'sp - 8', this will be fixed later. */
- 			"	pushq %rsp\n"
- 			"	pushfq\n"
- 			".global optprobe_template_clac\n"
-@@ -121,14 +122,17 @@ asm (
- 			".global optprobe_template_call\n"
- 			"optprobe_template_call:\n"
- 			ASM_NOP5
--			/* Move flags to rsp */
-+			/* Copy 'regs->flags' into 'regs->ss'. */
- 			"	movq 18*8(%rsp), %rdx\n"
--			"	movq %rdx, 19*8(%rsp)\n"
-+			"	movq %rdx, 20*8(%rsp)\n"
- 			RESTORE_REGS_STRING
--			/* Skip flags entry */
--			"	addq $8, %rsp\n"
-+			/* Skip 'regs->flags' and 'regs->sp'. */
-+			"	addq $16, %rsp\n"
-+			/* And pop flags register from 'regs->ss'. */
- 			"	popfq\n"
- #else /* CONFIG_X86_32 */
-+			"	pushl %ss\n"
-+			/* Save the 'sp - 4', this will be fixed later. */
- 			"	pushl %esp\n"
- 			"	pushfl\n"
- 			".global optprobe_template_clac\n"
-@@ -142,12 +146,13 @@ asm (
- 			".global optprobe_template_call\n"
- 			"optprobe_template_call:\n"
- 			ASM_NOP5
--			/* Move flags into esp */
-+			/* Copy 'regs->flags' into 'regs->ss'. */
- 			"	movl 14*4(%esp), %edx\n"
--			"	movl %edx, 15*4(%esp)\n"
-+			"	movl %edx, 16*4(%esp)\n"
- 			RESTORE_REGS_STRING
--			/* Skip flags entry */
--			"	addl $4, %esp\n"
-+			/* Skip 'regs->flags' and 'regs->sp'. */
-+			"	addl $8, %esp\n"
-+			/* And pop flags register from 'regs->ss'. */
- 			"	popfl\n"
- #endif
- 			".global optprobe_template_end\n"
-@@ -179,6 +184,8 @@ optimized_callback(struct optimized_kprobe *op, struct pt_regs *regs)
- 		kprobes_inc_nmissed_count(&op->kp);
- 	} else {
- 		struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
-+		/* Adjust stack pointer */
-+		regs->sp += sizeof(long);
- 		/* Save skipped registers */
- 		regs->cs = __KERNEL_CS;
- #ifdef CONFIG_X86_32
+Other than that:
 
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+
+Hopefully the ftrace return trampoline can also be switched over..
