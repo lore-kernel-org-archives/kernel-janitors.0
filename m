@@ -2,40 +2,42 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F9AC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Mar 2022 11:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB92C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Mar 2022 11:18:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232985AbiC0LIY (ORCPT
+        id S232877AbiC0LUB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 27 Mar 2022 07:08:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47230 "EHLO
+        Sun, 27 Mar 2022 07:20:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231390AbiC0LIY (ORCPT
+        with ESMTP id S229861AbiC0LUA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 27 Mar 2022 07:08:24 -0400
+        Sun, 27 Mar 2022 07:20:00 -0400
 Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51F3437ABB
-        for <kernel-janitors@vger.kernel.org>; Sun, 27 Mar 2022 04:06:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B3BE35A9E
+        for <kernel-janitors@vger.kernel.org>; Sun, 27 Mar 2022 04:18:22 -0700 (PDT)
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id YQj9no0PLvjW4YQj9nukfS; Sun, 27 Mar 2022 13:06:41 +0200
+        id YQuZno4PVvjW4YQuZnulRo; Sun, 27 Mar 2022 13:18:20 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 27 Mar 2022 13:06:41 +0200
+X-ME-Date: Sun, 27 Mar 2022 13:18:20 +0200
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-        Jack Wang <jinpu.wang@ionos.com>, Jens Axboe <axboe@kernel.dk>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Danil Kipnis <danil.kipnis@cloud.ionos.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Hridya Valsaraju <hridya@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Jack Wang <jinpu.wang@cloud.ionos.com>,
-        linux-block@vger.kernel.org
-Subject: [PATCH] block/rnbd: Fix the maximum clt_device_id value in init_dev()
-Date:   Sun, 27 Mar 2022 13:06:30 +0200
-Message-Id: <42165d3f9dfc7abb54542d34a4e33ea8e83b101c.1648379172.git.christophe.jaillet@wanadoo.fr>
+        Todd Kjos <tkjos@google.com>
+Subject: [PATCH] binderfs: Fix the maximum minor value in binderfs_binder_device_create() and binderfs_binder_ctl_create()
+Date:   Sun, 27 Mar 2022 13:18:17 +0200
+Message-Id: <ba880255b91b4682c21c62ae0bc5673e34a119aa.1648379891.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -43,61 +45,53 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-ida_alloc_range(..., min, max, ...) returns values from min to max,
-inclusive.
+ida_alloc_max(..., max, ...) returns values from 0 to max, inclusive.
 
-So, '1 << (MINORBITS - RNBD_PART_BITS)' is a valid value for ret, which is
-then saved in 'dev->clt_device_id'.
+So, BINDERFS_MAX_MINOR is a valid value for 'minor'.
 
-This value is used in rnbd_client_setup_device() and passed to
-rnbd_clt_setup_gen_disk().
-There we have:
-    dev->gd->first_minor	= idx << RNBD_PART_BITS
+BINDERFS_MAX_MINOR is '1U << MINORBITS' and we have:
+	#define MKDEV(ma,mi)	(((ma) << MINORBITS) | (mi))
 
-So a possible value for 'gd->first_minor' is '1 << MINORBITS'
+So, When this value is used in MKDEV() and it will overflow.
 
-This is an issue because:
-    rnbd_clt_setup_gen_disk()
-    --> add_disk(dev->gd)
-      --> device_add_disk(NULL, disk, NULL)
-
-And there we have:
-   ddev->devt = MKDEV(disk->major, disk->first_minor);
-
-So, should 'gd->first_minor' be '1 << MINORBITS', MKDEV() would overflow.
-
-Fixes: f7a7a5c228d4 ("block/rnbd: client: main functionality")
+Fixes: 3ad20fe393b3 ("binder: implement binderfs")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-#define MKDEV(ma,mi)	(((ma) << MINORBITS) | (mi))
-
 This patch is completely speculative.
 
-I think that:
-	if (disk->first_minor + disk->minors > MINORMASK + 1)
-		return -EINVAL;
-in device_add_disk() handles this corner case.
-Anyway, if I'm correct, handling the error earlier can't hurt (at least I
-guess so :)).
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The 'BINDERFS_MAX_MINOR_CAPPED - 1' is here only for symmetry with the
+BINDERFS_MAX_MINOR case. I'm not sure at all that is is needed and, more
+importantly, that it is correct.
 ---
- drivers/block/rnbd/rnbd-clt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/android/binderfs.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/block/rnbd/rnbd-clt.c b/drivers/block/rnbd/rnbd-clt.c
-index b66e8840b94b..db900c3786a3 100644
---- a/drivers/block/rnbd/rnbd-clt.c
-+++ b/drivers/block/rnbd/rnbd-clt.c
-@@ -1454,7 +1454,7 @@ static struct rnbd_clt_dev *init_dev(struct rnbd_clt_session *sess,
- 		goto out_alloc;
- 	}
- 
--	ret = ida_alloc_max(&index_ida, 1 << (MINORBITS - RNBD_PART_BITS),
-+	ret = ida_alloc_max(&index_ida, (1 << (MINORBITS - RNBD_PART_BITS)) - 1,
- 			    GFP_KERNEL);
- 	if (ret < 0) {
- 		pr_err("Failed to initialize device '%s' from session %s, allocating idr failed, err: %d\n",
+diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
+index e3605cdd4335..47df1f381150 100644
+--- a/drivers/android/binderfs.c
++++ b/drivers/android/binderfs.c
+@@ -130,8 +130,8 @@ static int binderfs_binder_device_create(struct inode *ref_inode,
+ 	mutex_lock(&binderfs_minors_mutex);
+ 	if (++info->device_count <= info->mount_opts.max)
+ 		minor = ida_alloc_max(&binderfs_minors,
+-				      use_reserve ? BINDERFS_MAX_MINOR :
+-						    BINDERFS_MAX_MINOR_CAPPED,
++				      use_reserve ? BINDERFS_MAX_MINOR - 1:
++						    BINDERFS_MAX_MINOR_CAPPED - 1,
+ 				      GFP_KERNEL);
+ 	else
+ 		minor = -ENOSPC;
+@@ -433,8 +433,8 @@ static int binderfs_binder_ctl_create(struct super_block *sb)
+ 	/* Reserve a new minor number for the new device. */
+ 	mutex_lock(&binderfs_minors_mutex);
+ 	minor = ida_alloc_max(&binderfs_minors,
+-			      use_reserve ? BINDERFS_MAX_MINOR :
+-					    BINDERFS_MAX_MINOR_CAPPED,
++			      use_reserve ? BINDERFS_MAX_MINOR - 1 :
++					    BINDERFS_MAX_MINOR_CAPPED - 1,
+ 			      GFP_KERNEL);
+ 	mutex_unlock(&binderfs_minors_mutex);
+ 	if (minor < 0) {
 -- 
 2.32.0
 
