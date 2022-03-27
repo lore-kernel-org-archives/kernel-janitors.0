@@ -2,42 +2,35 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB92C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Mar 2022 11:18:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F2CEC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Mar 2022 18:48:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232877AbiC0LUB (ORCPT
+        id S236352AbiC0SuP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 27 Mar 2022 07:20:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47756 "EHLO
+        Sun, 27 Mar 2022 14:50:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229861AbiC0LUA (ORCPT
+        with ESMTP id S231373AbiC0SuO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 27 Mar 2022 07:20:00 -0400
-Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B3BE35A9E
-        for <kernel-janitors@vger.kernel.org>; Sun, 27 Mar 2022 04:18:22 -0700 (PDT)
+        Sun, 27 Mar 2022 14:50:14 -0400
+Received: from smtp.smtpout.orange.fr (smtp04.smtpout.orange.fr [80.12.242.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 756BE1140
+        for <kernel-janitors@vger.kernel.org>; Sun, 27 Mar 2022 11:48:34 -0700 (PDT)
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id YQuZno4PVvjW4YQuZnulRo; Sun, 27 Mar 2022 13:18:20 +0200
+        id YXwFnGd76nyGdYXwFnJOjt; Sun, 27 Mar 2022 20:48:32 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 27 Mar 2022 13:18:20 +0200
+X-ME-Date: Sun, 27 Mar 2022 20:48:32 +0200
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Hridya Valsaraju <hridya@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
+To:     Jens Axboe <axboe@kernel.dk>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Todd Kjos <tkjos@google.com>
-Subject: [PATCH] binderfs: Fix the maximum minor value in binderfs_binder_device_create() and binderfs_binder_ctl_create()
-Date:   Sun, 27 Mar 2022 13:18:17 +0200
-Message-Id: <ba880255b91b4682c21c62ae0bc5673e34a119aa.1648379891.git.christophe.jaillet@wanadoo.fr>
+        linux-block@vger.kernel.org
+Subject: [PATCH 1/2] null_blk: Fix an error handling path in null_add_dev()
+Date:   Sun, 27 Mar 2022 20:48:30 +0200
+Message-Id: <876904b8334049a3be89d8bd278b04a421601baa.1648406899.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -45,53 +38,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-ida_alloc_max(..., max, ...) returns values from 0 to max, inclusive.
+In case of error, call to ida_simple_get() must be undone in the error
+handling path.
 
-So, BINDERFS_MAX_MINOR is a valid value for 'minor'.
-
-BINDERFS_MAX_MINOR is '1U << MINORBITS' and we have:
-	#define MKDEV(ma,mi)	(((ma) << MINORBITS) | (mi))
-
-So, When this value is used in MKDEV() and it will overflow.
-
-Fixes: 3ad20fe393b3 ("binder: implement binderfs")
+Fixes: a0725ab0c753 ("Merge branch 'for-4.14/block' of git://git.kernel.dk/linux-block")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-This patch is completely speculative.
+ drivers/block/null_blk/main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-The 'BINDERFS_MAX_MINOR_CAPPED - 1' is here only for symmetry with the
-BINDERFS_MAX_MINOR case. I'm not sure at all that is is needed and, more
-importantly, that it is correct.
----
- drivers/android/binderfs.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-index e3605cdd4335..47df1f381150 100644
---- a/drivers/android/binderfs.c
-+++ b/drivers/android/binderfs.c
-@@ -130,8 +130,8 @@ static int binderfs_binder_device_create(struct inode *ref_inode,
- 	mutex_lock(&binderfs_minors_mutex);
- 	if (++info->device_count <= info->mount_opts.max)
- 		minor = ida_alloc_max(&binderfs_minors,
--				      use_reserve ? BINDERFS_MAX_MINOR :
--						    BINDERFS_MAX_MINOR_CAPPED,
-+				      use_reserve ? BINDERFS_MAX_MINOR - 1:
-+						    BINDERFS_MAX_MINOR_CAPPED - 1,
- 				      GFP_KERNEL);
- 	else
- 		minor = -ENOSPC;
-@@ -433,8 +433,8 @@ static int binderfs_binder_ctl_create(struct super_block *sb)
- 	/* Reserve a new minor number for the new device. */
- 	mutex_lock(&binderfs_minors_mutex);
- 	minor = ida_alloc_max(&binderfs_minors,
--			      use_reserve ? BINDERFS_MAX_MINOR :
--					    BINDERFS_MAX_MINOR_CAPPED,
-+			      use_reserve ? BINDERFS_MAX_MINOR - 1 :
-+					    BINDERFS_MAX_MINOR_CAPPED - 1,
- 			      GFP_KERNEL);
- 	mutex_unlock(&binderfs_minors_mutex);
- 	if (minor < 0) {
+diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
+index 05b1120e6623..a330a118659d 100644
+--- a/drivers/block/null_blk/main.c
++++ b/drivers/block/null_blk/main.c
+@@ -2074,6 +2074,7 @@ static int null_add_dev(struct nullb_device *dev)
+ 	return 0;
+ out_cleanup_zone:
+ 	null_free_zoned_dev(dev);
++	ida_free(&nullb_indexes, nullb->index);
+ out_cleanup_disk:
+ 	blk_cleanup_disk(nullb->disk);
+ out_cleanup_tags:
 -- 
 2.32.0
 
