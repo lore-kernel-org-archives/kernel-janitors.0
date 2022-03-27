@@ -2,36 +2,40 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE55C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 26 Mar 2022 14:50:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F9AC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 27 Mar 2022 11:06:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232559AbiCZOwc (ORCPT
+        id S232985AbiC0LIY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 26 Mar 2022 10:52:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44928 "EHLO
+        Sun, 27 Mar 2022 07:08:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232727AbiCZOw2 (ORCPT
+        with ESMTP id S231390AbiC0LIY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 26 Mar 2022 10:52:28 -0400
-Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2741D2467E9
-        for <kernel-janitors@vger.kernel.org>; Sat, 26 Mar 2022 07:50:51 -0700 (PDT)
+        Sun, 27 Mar 2022 07:08:24 -0400
+Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51F3437ABB
+        for <kernel-janitors@vger.kernel.org>; Sun, 27 Mar 2022 04:06:44 -0700 (PDT)
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id Y7kdn2IzuxHdTY7kdnd4rD; Sat, 26 Mar 2022 15:50:49 +0100
+        id YQj9no0PLvjW4YQj9nukfS; Sun, 27 Mar 2022 13:06:41 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 26 Mar 2022 15:50:49 +0100
+X-ME-Date: Sun, 27 Mar 2022 13:06:41 +0200
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.de>,
-        Jan Kara <jack@suse.cz>
+To:     "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+        Jack Wang <jinpu.wang@ionos.com>, Jens Axboe <axboe@kernel.dk>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Danil Kipnis <danil.kipnis@cloud.ionos.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Jack Wang <jinpu.wang@cloud.ionos.com>,
         linux-block@vger.kernel.org
-Subject: [PATCH] block: Fix the maximum minor value is blk_alloc_ext_minor()
-Date:   Sat, 26 Mar 2022 15:50:46 +0100
-Message-Id: <cc17199798312406b90834e433d2cefe8266823d.1648306232.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] block/rnbd: Fix the maximum clt_device_id value in init_dev()
+Date:   Sun, 27 Mar 2022 13:06:30 +0200
+Message-Id: <42165d3f9dfc7abb54542d34a4e33ea8e83b101c.1648379172.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -42,41 +46,58 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 ida_alloc_range(..., min, max, ...) returns values from min to max,
 inclusive.
 
-So, NR_EXT_DEVT is a valid idx returned by blk_alloc_ext_minor().
+So, '1 << (MINORBITS - RNBD_PART_BITS)' is a valid value for ret, which is
+then saved in 'dev->clt_device_id'.
 
-This is an issue because in device_add_disk(), this value is used in:
+This value is used in rnbd_client_setup_device() and passed to
+rnbd_clt_setup_gen_disk().
+There we have:
+    dev->gd->first_minor	= idx << RNBD_PART_BITS
+
+So a possible value for 'gd->first_minor' is '1 << MINORBITS'
+
+This is an issue because:
+    rnbd_clt_setup_gen_disk()
+    --> add_disk(dev->gd)
+      --> device_add_disk(NULL, disk, NULL)
+
+And there we have:
    ddev->devt = MKDEV(disk->major, disk->first_minor);
-and NR_EXT_DEVT is '(1 << MINORBITS)'.
 
-So, should 'disk->first_minor' be NR_EXT_DEVT, it would overflow.
+So, should 'gd->first_minor' be '1 << MINORBITS', MKDEV() would overflow.
 
-Fixes: 22ae8ce8b892 ("block: simplify bdev/disk lookup in blkdev_get")
+Fixes: f7a7a5c228d4 ("block/rnbd: client: main functionality")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 #define MKDEV(ma,mi)	(((ma) << MINORBITS) | (mi))
 
-This patch is completely speculative, but it seems that idr_alloc() and
-ida_alloc_range() don't have the same semantic regarding the upper bound.
-idr_alloc() looks exclusive, while ida_alloc_range() is inclusive.
+This patch is completely speculative.
 
-We changed from the first one to the other one in the commit in Fixes:.
+I think that:
+	if (disk->first_minor + disk->minors > MINORMASK + 1)
+		return -EINVAL;
+in device_add_disk() handles this corner case.
+Anyway, if I'm correct, handling the error earlier can't hurt (at least I
+guess so :)).
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- block/genhd.c | 2 +-
+ drivers/block/rnbd/rnbd-clt.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/block/genhd.c b/block/genhd.c
-index c9a4fc90d3e9..b8b6759d670f 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -335,7 +335,7 @@ int blk_alloc_ext_minor(void)
- {
- 	int idx;
+diff --git a/drivers/block/rnbd/rnbd-clt.c b/drivers/block/rnbd/rnbd-clt.c
+index b66e8840b94b..db900c3786a3 100644
+--- a/drivers/block/rnbd/rnbd-clt.c
++++ b/drivers/block/rnbd/rnbd-clt.c
+@@ -1454,7 +1454,7 @@ static struct rnbd_clt_dev *init_dev(struct rnbd_clt_session *sess,
+ 		goto out_alloc;
+ 	}
  
--	idx = ida_alloc_range(&ext_devt_ida, 0, NR_EXT_DEVT, GFP_KERNEL);
-+	idx = ida_alloc_range(&ext_devt_ida, 0, NR_EXT_DEVT - 1, GFP_KERNEL);
- 	if (idx == -ENOSPC)
- 		return -EBUSY;
- 	return idx;
+-	ret = ida_alloc_max(&index_ida, 1 << (MINORBITS - RNBD_PART_BITS),
++	ret = ida_alloc_max(&index_ida, (1 << (MINORBITS - RNBD_PART_BITS)) - 1,
+ 			    GFP_KERNEL);
+ 	if (ret < 0) {
+ 		pr_err("Failed to initialize device '%s' from session %s, allocating idr failed, err: %d\n",
 -- 
 2.32.0
 
