@@ -2,90 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA0FAC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Mar 2022 02:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E7CCC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Mar 2022 06:14:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231233AbiC2Cv4 (ORCPT
+        id S232926AbiC2GQK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 28 Mar 2022 22:51:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42332 "EHLO
+        Tue, 29 Mar 2022 02:16:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230033AbiC2Cvy (ORCPT
+        with ESMTP id S230471AbiC2GQH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 28 Mar 2022 22:51:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA4D21B0BFA;
-        Mon, 28 Mar 2022 19:50:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8474961331;
-        Tue, 29 Mar 2022 02:50:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D2981C340F3;
-        Tue, 29 Mar 2022 02:50:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648522211;
-        bh=VFNVDTJ88SUpJ6Zwq7mqd7EHeXLrQ/aFLmwE8fbPIoY=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=Wiv+6vWDp7qX8bzfacwID+uNFwJHaNdMAJt/Ohnc8ju0QIdFFy/BrZVkWWMrCDRCC
-         1Xi+QY+z+WcoLnp/PPEyaHCC/Erqed26StqL6H8xiszgXD9FiRHrEy20rPMJQwuD/5
-         X05OstagM9aAFCwbcl5ZBWBN+iT4H2Gc8rWJ8hnD3OQJn61Y+oeg1Hzo7KxwPUQl84
-         JH3CR1hXMORW5efTx65bq6d0HxJB6JLZsKJq5XSOGaQh4aB6BBaNMgLO19d0IZE5K6
-         6fVC49d9+mUFId2If0XznpVDQo2+UYuHl09vZisHQyBBHOoW3PemNNX+j582HeGu+P
-         E49rA+3USGvdQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B46A5E7BB0B;
-        Tue, 29 Mar 2022 02:50:11 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 29 Mar 2022 02:16:07 -0400
+Received: from ha.nfschina.com (unknown [IPv6:2400:dd01:100f:2:72e2:84ff:fe10:5f45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E7ADD9549A;
+        Mon, 28 Mar 2022 23:14:23 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by ha.nfschina.com (Postfix) with ESMTP id 6261E1E80D78;
+        Tue, 29 Mar 2022 14:13:47 +0800 (CST)
+X-Virus-Scanned: amavisd-new at test.com
+Received: from ha.nfschina.com ([127.0.0.1])
+        by localhost (ha.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id BrCJMHfyAm77; Tue, 29 Mar 2022 14:13:44 +0800 (CST)
+Received: from [18.165.124.108] (unknown [101.228.248.165])
+        (Authenticated sender: yuzhe@nfschina.com)
+        by ha.nfschina.com (Postfix) with ESMTPA id EB7331E80D75;
+        Tue, 29 Mar 2022 14:13:43 +0800 (CST)
+Message-ID: <0f4cf955-ca2b-626f-867e-5a0ecfe68ca1@nfschina.com>
+Date:   Tue, 29 Mar 2022 14:14:16 +0800
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] KVM: arm64: vgic-debug: remove unnecessary type castings
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     james.morse@arm.com, alexandru.elisei@arm.com,
+        suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org, liqiong@nfschina.com,
+        kernel-janitors@vger.kernel.org
+References: <20220328103836.2829-1-yuzhe@nfschina.com>
+ <87h77ifbbd.wl-maz@kernel.org>
+From:   yuzhe <yuzhe@nfschina.com>
+In-Reply-To: <87h77ifbbd.wl-maz@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v3 0/4] kprobes: rethook: x86: Replace kretprobe
- trampoline with rethook
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164852221173.18072.2644155030177980593.git-patchwork-notify@kernel.org>
-Date:   Tue, 29 Mar 2022 02:50:11 +0000
-References: <164826160914.2455864.505359679001055158.stgit@devnote2>
-In-Reply-To: <164826160914.2455864.505359679001055158.stgit@devnote2>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     ast@kernel.org, andrii.nakryiko@gmail.com, x86@kernel.org,
-        peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com,
-        dan.carpenter@oracle.com, kernel-janitors@vger.kernel.org,
-        rostedt@goodmis.org, jolsa@kernel.org, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+在 2022/3/28 21:36, Marc Zyngier 写道:
 
-This series was applied to bpf/bpf.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
+> On Mon, 28 Mar 2022 11:38:36 +0100,
+> yuzhe <yuzhe@nfschina.com> wrote:
+>> remove unnecessary castings, from "void *" to "struct kvm *"
+>>
+>> Signed-off-by: yuzhe <yuzhe@nfschina.com>
+>> ---
+>>   arch/arm64/kvm/vgic/vgic-debug.c | 8 ++++----
+>>   1 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/arm64/kvm/vgic/vgic-debug.c b/arch/arm64/kvm/vgic/vgic-debug.c
+>> index f38c40a76251..927e5c1f650d 100644
+>> --- a/arch/arm64/kvm/vgic/vgic-debug.c
+>> +++ b/arch/arm64/kvm/vgic/vgic-debug.c
+>> @@ -82,7 +82,7 @@ static bool end_of_vgic(struct vgic_state_iter *iter)
+>>   
+>>   static void *vgic_debug_start(struct seq_file *s, loff_t *pos)
+>>   {
+>> -	struct kvm *kvm = (struct kvm *)s->private;
+>> +	struct kvm *kvm = s->private;
+>>   	struct vgic_state_iter *iter;
+>>   
+>>   	mutex_lock(&kvm->lock);
+>> @@ -110,7 +110,7 @@ static void *vgic_debug_start(struct seq_file *s, loff_t *pos)
+>>   
+>>   static void *vgic_debug_next(struct seq_file *s, void *v, loff_t *pos)
+>>   {
+>> -	struct kvm *kvm = (struct kvm *)s->private;
+>> +	struct kvm *kvm = s->private;
+>>   	struct vgic_state_iter *iter = kvm->arch.vgic.iter;
+>>   
+>>   	++*pos;
+>> @@ -122,7 +122,7 @@ static void *vgic_debug_next(struct seq_file *s, void *v, loff_t *pos)
+>>   
+>>   static void vgic_debug_stop(struct seq_file *s, void *v)
+>>   {
+>> -	struct kvm *kvm = (struct kvm *)s->private;
+>> +	struct kvm *kvm = s->private;
+>>   	struct vgic_state_iter *iter;
+>>   
+>>   	/*
+>> @@ -229,7 +229,7 @@ static void print_irq_state(struct seq_file *s, struct vgic_irq *irq,
+>>   
+>>   static int vgic_debug_show(struct seq_file *s, void *v)
+>>   {
+>> -	struct kvm *kvm = (struct kvm *)s->private;
+>> +	struct kvm *kvm = s->private;
+>>   	struct vgic_state_iter *iter = (struct vgic_state_iter *)v;
+> How about you fully get rid of the unnecessary casts then?
+>
+> 	M.
 
-On Sat, 26 Mar 2022 11:26:49 +0900 you wrote:
-> Hi,
-> 
-> Here are the 3rd version for generic kretprobe and kretprobe on x86 for
-> replacing the kretprobe trampoline with rethook. The previous version
-> is here[1]
-> 
-> [1] https://lore.kernel.org/all/164821817332.2373735.12048266953420821089.stgit@devnote2/T/#u
-> 
-> [...]
-
-Here is the summary with links:
-  - [bpf-next,v3,1/4] kprobes: Use rethook for kretprobe if possible
-    https://git.kernel.org/bpf/bpf/c/73f9b911faa7
-  - [bpf-next,v3,2/4] x86,rethook,kprobes: Replace kretprobe with rethook on x86
-    https://git.kernel.org/bpf/bpf/c/f3a112c0c40d
-  - [bpf-next,v3,3/4] x86,rethook: Fix arch_rethook_trampoline() to generate a complete pt_regs
-    https://git.kernel.org/bpf/bpf/c/0ef6f5c09371
-  - [bpf-next,v3,4/4] x86,kprobes: Fix optprobe trampoline to generate complete pt_regs
-    https://git.kernel.org/bpf/bpf/c/45c23bf4d1a4
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+I don't know what you exactly mean. I follow the kernel-janitors/TODO List to get rid of the unnecessary casts.
+And I checked all the code in the arch directory and found these issues.
 
