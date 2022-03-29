@@ -2,95 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BC8C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Mar 2022 07:07:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8CBC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Mar 2022 07:26:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233284AbiC2HJf (ORCPT
+        id S230270AbiC2H2C (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 29 Mar 2022 03:09:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44570 "EHLO
+        Tue, 29 Mar 2022 03:28:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232859AbiC2HJd (ORCPT
+        with ESMTP id S229502AbiC2H2A (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 29 Mar 2022 03:09:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E953323D5AF;
-        Tue, 29 Mar 2022 00:07:51 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AAEB76152F;
-        Tue, 29 Mar 2022 07:07:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CC48C2BBE4;
-        Tue, 29 Mar 2022 07:07:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648537640;
-        bh=nQUP/FbGXeuylpTH5/b3zyp7BFtDjtEua/L88aOE6cc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=LOsDzegZzfHWobPhUSjo+fS0pkmNbYdNkDxNG5AEmOj/qltw5OBAdpLcwyr4crcqx
-         L5NEsAWfpVcS1Zi0Ioy8GKmC8SHSTJVdarhmySpt9QgA87E4X1VnBBGVPIde/MPmID
-         Zrii/Ov86Mcz2jdmJ3lT/ZSrn4spzwjSNgv19jjLFncof4C6ddR3Y6rSrcBuC53M/c
-         uuX0uClv2TgkEAgb66bNcVVpQNkzFsYAfMlWdzTi4jEIMWvVYYHTLjlTK645Ln6ZdE
-         ZeayuFwvK+a1Wpg7w73Ple9E994Yq5CbHmgQUL3puRjtNWiLzkOPPW8URlBs2uzmM8
-         fh6AhpaJemo9g==
-Received: from ip-185-104-136-29.ptr.icomera.net ([185.104.136.29] helo=wait-a-minute.misterjones.org)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <maz@kernel.org>)
-        id 1nZ5wj-00HaMS-BO; Tue, 29 Mar 2022 08:07:17 +0100
-Date:   Tue, 29 Mar 2022 08:07:12 +0100
-Message-ID: <87r16li6e7.wl-maz@kernel.org>
-From:   Marc Zyngier <maz@kernel.org>
-To:     yuzhe <yuzhe@nfschina.com>
+        Tue, 29 Mar 2022 03:28:00 -0400
+Received: from ha.nfschina.com (unknown [IPv6:2400:dd01:100f:2:72e2:84ff:fe10:5f45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D1A282467F4;
+        Tue, 29 Mar 2022 00:26:17 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by ha.nfschina.com (Postfix) with ESMTP id BF6B51E80D7E;
+        Tue, 29 Mar 2022 15:25:42 +0800 (CST)
+X-Virus-Scanned: amavisd-new at test.com
+Received: from ha.nfschina.com ([127.0.0.1])
+        by localhost (ha.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 9r--XoVcY8pM; Tue, 29 Mar 2022 15:25:40 +0800 (CST)
+Received: from [18.165.124.108] (unknown [101.228.248.165])
+        (Authenticated sender: yuzhe@nfschina.com)
+        by ha.nfschina.com (Postfix) with ESMTPA id 6921A1E80D70;
+        Tue, 29 Mar 2022 15:25:39 +0800 (CST)
+Message-ID: <49b93407-dee3-b3bb-6d36-d6f94e9b16bf@nfschina.com>
+Date:   Tue, 29 Mar 2022 15:26:11 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] KVM: arm64: vgic-debug: remove unnecessary type castings
+To:     Marc Zyngier <maz@kernel.org>
 Cc:     james.morse@arm.com, alexandru.elisei@arm.com,
         suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org,
         linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
         linux-kernel@vger.kernel.org, liqiong@nfschina.com,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: vgic-debug: remove unnecessary type castings
-In-Reply-To: <0f4cf955-ca2b-626f-867e-5a0ecfe68ca1@nfschina.com>
 References: <20220328103836.2829-1-yuzhe@nfschina.com>
-        <87h77ifbbd.wl-maz@kernel.org>
-        <0f4cf955-ca2b-626f-867e-5a0ecfe68ca1@nfschina.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.104.136.29
-X-SA-Exim-Rcpt-To: yuzhe@nfschina.com, james.morse@arm.com, alexandru.elisei@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org, liqiong@nfschina.com, kernel-janitors@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+ <87h77ifbbd.wl-maz@kernel.org>
+ <0f4cf955-ca2b-626f-867e-5a0ecfe68ca1@nfschina.com>
+ <87r16li6e7.wl-maz@kernel.org>
+From:   yuzhe <yuzhe@nfschina.com>
+In-Reply-To: <87r16li6e7.wl-maz@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 29 Mar 2022 07:14:16 +0100,
-yuzhe <yuzhe@nfschina.com> wrote:
-> 
-> >> @@ -229,7 +229,7 @@ static void print_irq_state(struct seq_file *s, struct vgic_irq *irq,
-> >>     static int vgic_debug_show(struct seq_file *s, void *v)
-> >>   {
-> >> -	struct kvm *kvm = (struct kvm *)s->private;
-> >> +	struct kvm *kvm = s->private;
-> >>   	struct vgic_state_iter *iter = (struct vgic_state_iter *)v;
-> > How about you fully get rid of the unnecessary casts then?
-> > 
-> > 	M.
-> 
-> I don't know what you exactly mean. I follow the
-> kernel-janitors/TODO List to get rid of the unnecessary casts.  And
-> I checked all the code in the arch directory and found these issues.
+在 2022/3/29 15:07, Marc Zyngier 写道:
 
-Let me quote the lines again:
+> On Tue, 29 Mar 2022 07:14:16 +0100,
+> yuzhe <yuzhe@nfschina.com> wrote:
+>>>> @@ -229,7 +229,7 @@ static void print_irq_state(struct seq_file *s, struct vgic_irq *irq,
+>>>>      static int vgic_debug_show(struct seq_file *s, void *v)
+>>>>    {
+>>>> -	struct kvm *kvm = (struct kvm *)s->private;
+>>>> +	struct kvm *kvm = s->private;
+>>>>    	struct vgic_state_iter *iter = (struct vgic_state_iter *)v;
+>>> How about you fully get rid of the unnecessary casts then?
+>>>
+>>> 	M.
+>> I don't know what you exactly mean. I follow the
+>> kernel-janitors/TODO List to get rid of the unnecessary casts.  And
+>> I checked all the code in the arch directory and found these issues.
+> Let me quote the lines again:
+>
+>>>>      static int vgic_debug_show(struct seq_file *s, void *v)
+> [...]
+>>>>    	struct vgic_state_iter *iter = (struct vgic_state_iter *)v;
+> Do you see what I mean?
+>
+> 	M.
 
-> >>     static int vgic_debug_show(struct seq_file *s, void *v)
-[...]
-> >>   	struct vgic_state_iter *iter = (struct vgic_state_iter *)v;
+Got it, thanks. I will check again and resubmit.
 
-Do you see what I mean?
+yuzhe
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
