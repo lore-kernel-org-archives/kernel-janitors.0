@@ -2,81 +2,114 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8CBC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Mar 2022 07:26:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF5AC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 29 Mar 2022 10:21:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230270AbiC2H2C (ORCPT
+        id S235105AbiC2KWv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 29 Mar 2022 03:28:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57302 "EHLO
+        Tue, 29 Mar 2022 06:22:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229502AbiC2H2A (ORCPT
+        with ESMTP id S231421AbiC2KWu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 29 Mar 2022 03:28:00 -0400
+        Tue, 29 Mar 2022 06:22:50 -0400
 Received: from ha.nfschina.com (unknown [IPv6:2400:dd01:100f:2:72e2:84ff:fe10:5f45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D1A282467F4;
-        Tue, 29 Mar 2022 00:26:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D19E85F94;
+        Tue, 29 Mar 2022 03:21:06 -0700 (PDT)
 Received: from localhost (unknown [127.0.0.1])
-        by ha.nfschina.com (Postfix) with ESMTP id BF6B51E80D7E;
-        Tue, 29 Mar 2022 15:25:42 +0800 (CST)
+        by ha.nfschina.com (Postfix) with ESMTP id 177B71E80D85;
+        Tue, 29 Mar 2022 18:20:31 +0800 (CST)
 X-Virus-Scanned: amavisd-new at test.com
 Received: from ha.nfschina.com ([127.0.0.1])
         by localhost (ha.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 9r--XoVcY8pM; Tue, 29 Mar 2022 15:25:40 +0800 (CST)
-Received: from [18.165.124.108] (unknown [101.228.248.165])
+        with ESMTP id DkKIvnZ9PCZ3; Tue, 29 Mar 2022 18:20:28 +0800 (CST)
+Received: from ubuntu.localdomain (unknown [101.228.248.165])
         (Authenticated sender: yuzhe@nfschina.com)
-        by ha.nfschina.com (Postfix) with ESMTPA id 6921A1E80D70;
-        Tue, 29 Mar 2022 15:25:39 +0800 (CST)
-Message-ID: <49b93407-dee3-b3bb-6d36-d6f94e9b16bf@nfschina.com>
-Date:   Tue, 29 Mar 2022 15:26:11 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] KVM: arm64: vgic-debug: remove unnecessary type castings
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     james.morse@arm.com, alexandru.elisei@arm.com,
-        suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org,
+        by ha.nfschina.com (Postfix) with ESMTPA id 8DE961E80D84;
+        Tue, 29 Mar 2022 18:20:27 +0800 (CST)
+From:   Yu Zhe <yuzhe@nfschina.com>
+To:     maz@kernel.org, james.morse@arm.com, alexandru.elisei@arm.com,
+        suzuki.poulose@arm.com
+Cc:     catalin.marinas@arm.com, will@kernel.org, keescook@chromium.org,
+        samitolvanen@google.com, ricarkol@google.com, justin.he@arm.com,
         linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-kernel@vger.kernel.org, liqiong@nfschina.com,
-        kernel-janitors@vger.kernel.org
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Yu Zhe <yuzhe@nfschina.com>
+Subject: [PATCH] KVM: arm64: vgic: remove unnecessary type castings
+Date:   Tue, 29 Mar 2022 03:20:59 -0700
+Message-Id: <20220329102059.268983-1-yuzhe@nfschina.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220328103836.2829-1-yuzhe@nfschina.com>
 References: <20220328103836.2829-1-yuzhe@nfschina.com>
- <87h77ifbbd.wl-maz@kernel.org>
- <0f4cf955-ca2b-626f-867e-5a0ecfe68ca1@nfschina.com>
- <87r16li6e7.wl-maz@kernel.org>
-From:   yuzhe <yuzhe@nfschina.com>
-In-Reply-To: <87r16li6e7.wl-maz@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-在 2022/3/29 15:07, Marc Zyngier 写道:
+remove unnecessary casts.
 
-> On Tue, 29 Mar 2022 07:14:16 +0100,
-> yuzhe <yuzhe@nfschina.com> wrote:
->>>> @@ -229,7 +229,7 @@ static void print_irq_state(struct seq_file *s, struct vgic_irq *irq,
->>>>      static int vgic_debug_show(struct seq_file *s, void *v)
->>>>    {
->>>> -	struct kvm *kvm = (struct kvm *)s->private;
->>>> +	struct kvm *kvm = s->private;
->>>>    	struct vgic_state_iter *iter = (struct vgic_state_iter *)v;
->>> How about you fully get rid of the unnecessary casts then?
->>>
->>> 	M.
->> I don't know what you exactly mean. I follow the
->> kernel-janitors/TODO List to get rid of the unnecessary casts.  And
->> I checked all the code in the arch directory and found these issues.
-> Let me quote the lines again:
->
->>>>      static int vgic_debug_show(struct seq_file *s, void *v)
-> [...]
->>>>    	struct vgic_state_iter *iter = (struct vgic_state_iter *)v;
-> Do you see what I mean?
->
-> 	M.
+Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+---
+ arch/arm64/kvm/vgic/vgic-debug.c | 10 +++++-----
+ arch/arm64/kvm/vgic/vgic-its.c   |  2 +-
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-Got it, thanks. I will check again and resubmit.
-
-yuzhe
+diff --git a/arch/arm64/kvm/vgic/vgic-debug.c b/arch/arm64/kvm/vgic/vgic-debug.c
+index f38c40a76251..78cde687383c 100644
+--- a/arch/arm64/kvm/vgic/vgic-debug.c
++++ b/arch/arm64/kvm/vgic/vgic-debug.c
+@@ -82,7 +82,7 @@ static bool end_of_vgic(struct vgic_state_iter *iter)
+ 
+ static void *vgic_debug_start(struct seq_file *s, loff_t *pos)
+ {
+-	struct kvm *kvm = (struct kvm *)s->private;
++	struct kvm *kvm = s->private;
+ 	struct vgic_state_iter *iter;
+ 
+ 	mutex_lock(&kvm->lock);
+@@ -110,7 +110,7 @@ static void *vgic_debug_start(struct seq_file *s, loff_t *pos)
+ 
+ static void *vgic_debug_next(struct seq_file *s, void *v, loff_t *pos)
+ {
+-	struct kvm *kvm = (struct kvm *)s->private;
++	struct kvm *kvm = s->private;
+ 	struct vgic_state_iter *iter = kvm->arch.vgic.iter;
+ 
+ 	++*pos;
+@@ -122,7 +122,7 @@ static void *vgic_debug_next(struct seq_file *s, void *v, loff_t *pos)
+ 
+ static void vgic_debug_stop(struct seq_file *s, void *v)
+ {
+-	struct kvm *kvm = (struct kvm *)s->private;
++	struct kvm *kvm = s->private;
+ 	struct vgic_state_iter *iter;
+ 
+ 	/*
+@@ -229,8 +229,8 @@ static void print_irq_state(struct seq_file *s, struct vgic_irq *irq,
+ 
+ static int vgic_debug_show(struct seq_file *s, void *v)
+ {
+-	struct kvm *kvm = (struct kvm *)s->private;
+-	struct vgic_state_iter *iter = (struct vgic_state_iter *)v;
++	struct kvm *kvm = s->private;
++	struct vgic_state_iter *iter = v;
+ 	struct vgic_irq *irq;
+ 	struct kvm_vcpu *vcpu = NULL;
+ 	unsigned long flags;
+diff --git a/arch/arm64/kvm/vgic/vgic-its.c b/arch/arm64/kvm/vgic/vgic-its.c
+index 089fc2ffcb43..2e13402be3bd 100644
+--- a/arch/arm64/kvm/vgic/vgic-its.c
++++ b/arch/arm64/kvm/vgic/vgic-its.c
+@@ -2143,7 +2143,7 @@ static int vgic_its_save_ite(struct vgic_its *its, struct its_device *dev,
+ static int vgic_its_restore_ite(struct vgic_its *its, u32 event_id,
+ 				void *ptr, void *opaque)
+ {
+-	struct its_device *dev = (struct its_device *)opaque;
++	struct its_device *dev = opaque;
+ 	struct its_collection *collection;
+ 	struct kvm *kvm = its->dev->kvm;
+ 	struct kvm_vcpu *vcpu = NULL;
+-- 
+2.25.1
 
