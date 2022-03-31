@@ -2,71 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1210EC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 31 Mar 2022 17:01:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3564CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 31 Mar 2022 20:19:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239758AbiCaRD0 (ORCPT
+        id S241350AbiCaUVl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 31 Mar 2022 13:03:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56760 "EHLO
+        Thu, 31 Mar 2022 16:21:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233801AbiCaRDZ (ORCPT
+        with ESMTP id S239564AbiCaUVk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 31 Mar 2022 13:03:25 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D12C1D917E;
-        Thu, 31 Mar 2022 10:01:35 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 72EF1210F4;
-        Thu, 31 Mar 2022 17:01:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1648746094;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=mrLcQqsOy2MMUv2jAhQzXmgiWR004Vcrgnce+Xhb8M8=;
-        b=oJK10tQpFLGonXUBEZyMymAupUoVt4BgLQEui7nPJ10Q7+eeBbJq9UOaNOs+rtt0owHUvB
-        HDYjloPQ/Zh29PVxCrCdJ3ctEjAWiUXVlkUYxOoGPUVFze6shxgsWjuNTaODMWSyKoICPn
-        lLt+LE8kj+1w6SZQqZVztvlHZ6vPcNo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1648746094;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=mrLcQqsOy2MMUv2jAhQzXmgiWR004Vcrgnce+Xhb8M8=;
-        b=LIWaiB8F2zs83JhxtpHY0OzG/Nahi0anq74xIwoCUK2HNbfDCzXxyW7n9p1fskiMDXtRFt
-        ULezZvPAeUGOm3CA==
-Received: from ds.suse.cz (ds.suse.cz [10.100.12.205])
-        by relay2.suse.de (Postfix) with ESMTP id 35A65A3B82;
-        Thu, 31 Mar 2022 17:01:34 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id AB1B1DA7F3; Thu, 31 Mar 2022 18:57:35 +0200 (CEST)
-Date:   Thu, 31 Mar 2022 18:57:35 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Yu Zhe <yuzhe@nfschina.com>
-Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, liqiong@nfschina.com
-Subject: Re: [PATCH] btrfs: remove unnecessary type castings
-Message-ID: <20220331165735.GD15609@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Yu Zhe <yuzhe@nfschina.com>, clm@fb.com,
-        josef@toxicpanda.com, dsterba@suse.com, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        liqiong@nfschina.com
-References: <20220331103408.31867-1-yuzhe@nfschina.com>
+        Thu, 31 Mar 2022 16:21:40 -0400
+Received: from smtp.smtpout.orange.fr (smtp02.smtpout.orange.fr [80.12.242.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 243A21728B3
+        for <kernel-janitors@vger.kernel.org>; Thu, 31 Mar 2022 13:19:52 -0700 (PDT)
+Received: from pop-os.home ([90.126.236.122])
+        by smtp.orange.fr with ESMTPA
+        id a1Gln3Kfl9eePa1GmnadrV; Thu, 31 Mar 2022 22:19:49 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Thu, 31 Mar 2022 22:19:49 +0200
+X-ME-IP: 90.126.236.122
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        alsa-devel@alsa-project.org
+Subject: [PATCH] ASoC: soc-pcm: use GFP_KERNEL when the code is sleepable
+Date:   Thu, 31 Mar 2022 22:19:44 +0200
+Message-Id: <e740f1930843060e025e3c0f17ec1393cfdafb26.1648757961.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220331103408.31867-1-yuzhe@nfschina.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Mar 31, 2022 at 03:34:08AM -0700, Yu Zhe wrote:
-> remove unnecessary void* type castings.
-> 
-> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+At the kzalloc() call in dpcm_be_connect(), there is no spin lock involved.
+It's merely protected by card->pcm_mutex, instead.  The spinlock is applied
+at the later call with snd_soc_pcm_stream_lock_irq() only for the list
+manipulations.  (See it's *_irq(), not *_irqsave(); that means the context
+being sleepable at that point.)  So, we can use GFP_KERNEL safely there.
 
-Added to misc-next, thanks.
+This patch revert commit d8a9c6e1f676 ("ASoC: soc-pcm: use GFP_ATOMIC for
+dpcm structure") which is no longer needed since commit b7898396f4bb
+("ASoC: soc-pcm: Fix and cleanup DPCM locking").
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+See discussion in the thread at:
+   https://lore.kernel.org/all/ed322b8821fa787907c1a4cce879564d1281b69d.1642331884.git.christophe.jaillet@wanadoo.fr/
+---
+ sound/soc/soc-pcm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index 9a954680d492..11c9853e9e80 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -1214,7 +1214,7 @@ static int dpcm_be_connect(struct snd_soc_pcm_runtime *fe,
+ 		be_substream->pcm->nonatomic = 1;
+ 	}
+ 
+-	dpcm = kzalloc(sizeof(struct snd_soc_dpcm), GFP_ATOMIC);
++	dpcm = kzalloc(sizeof(struct snd_soc_dpcm), GFP_KERNEL);
+ 	if (!dpcm)
+ 		return -ENOMEM;
+ 
+-- 
+2.32.0
+
