@@ -2,75 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3564CC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 31 Mar 2022 20:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64780C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 31 Mar 2022 20:35:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241350AbiCaUVl (ORCPT
+        id S239705AbiCaUhb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 31 Mar 2022 16:21:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38176 "EHLO
+        Thu, 31 Mar 2022 16:37:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239564AbiCaUVk (ORCPT
+        with ESMTP id S233744AbiCaUha (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 31 Mar 2022 16:21:40 -0400
+        Thu, 31 Mar 2022 16:37:30 -0400
 Received: from smtp.smtpout.orange.fr (smtp02.smtpout.orange.fr [80.12.242.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 243A21728B3
-        for <kernel-janitors@vger.kernel.org>; Thu, 31 Mar 2022 13:19:52 -0700 (PDT)
-Received: from pop-os.home ([90.126.236.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E351FABC9
+        for <kernel-janitors@vger.kernel.org>; Thu, 31 Mar 2022 13:35:39 -0700 (PDT)
+Received: from [192.168.1.18] ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id a1Gln3Kfl9eePa1GmnadrV; Thu, 31 Mar 2022 22:19:49 +0200
-X-ME-Helo: pop-os.home
+        id a1W5n3SZZ9eePa1W5nafzK; Thu, 31 Mar 2022 22:35:38 +0200
+X-ME-Helo: [192.168.1.18]
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 31 Mar 2022 22:19:49 +0200
+X-ME-Date: Thu, 31 Mar 2022 22:35:38 +0200
 X-ME-IP: 90.126.236.122
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        alsa-devel@alsa-project.org
-Subject: [PATCH] ASoC: soc-pcm: use GFP_KERNEL when the code is sleepable
-Date:   Thu, 31 Mar 2022 22:19:44 +0200
-Message-Id: <e740f1930843060e025e3c0f17ec1393cfdafb26.1648757961.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
+Message-ID: <5a5fec66-f8af-7e6e-5afe-97e4eb21c51a@wanadoo.fr>
+Date:   Thu, 31 Mar 2022 22:35:37 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] binderfs: Fix the maximum minor value in
+ binderfs_binder_device_create() and binderfs_binder_ctl_create()
+Content-Language: en-US
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Hridya Valsaraju <hridya@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Todd Kjos <tkjos@google.com>
+References: <ba880255b91b4682c21c62ae0bc5673e34a119aa.1648379891.git.christophe.jaillet@wanadoo.fr>
+ <20220329112011.j4xf2qjktfqokkyn@wittgenstein>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20220329112011.j4xf2qjktfqokkyn@wittgenstein>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-At the kzalloc() call in dpcm_be_connect(), there is no spin lock involved.
-It's merely protected by card->pcm_mutex, instead.  The spinlock is applied
-at the later call with snd_soc_pcm_stream_lock_irq() only for the list
-manipulations.  (See it's *_irq(), not *_irqsave(); that means the context
-being sleepable at that point.)  So, we can use GFP_KERNEL safely there.
+Le 29/03/2022 à 13:20, Christian Brauner a écrit :
+> On Sun, Mar 27, 2022 at 01:18:17PM +0200, Christophe JAILLET wrote:
+>> ida_alloc_max(..., max, ...) returns values from 0 to max, inclusive.
+>>
+>> So, BINDERFS_MAX_MINOR is a valid value for 'minor'.
+>>
+>> BINDERFS_MAX_MINOR is '1U << MINORBITS' and we have:
+>> 	#define MKDEV(ma,mi)	(((ma) << MINORBITS) | (mi))
+>>
+>> So, When this value is used in MKDEV() and it will overflow.
+>>
+>> Fixes: 3ad20fe393b3 ("binder: implement binderfs")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> This patch is completely speculative.
+>>
+>> The 'BINDERFS_MAX_MINOR_CAPPED - 1' is here only for symmetry with the
+>> BINDERFS_MAX_MINOR case. I'm not sure at all that is is needed and, more
+>> importantly, that it is correct.
+> 
+> Hm, since we're "removing" one alloctable device for the initial ipc
+> namespace, I think we need the -1 for the capped value.
+> 
+> Though I wonder if the simpler fix wouldn't just be to:
+> 
+> #define BINDERFS_MAX_MINOR MINORMASK
+> 
+> since include/linux/kdev_t.h has:
+> 
+> #define MINORBITS	20
+> #define MINORMASK	((1U << MINORBITS) - 1)
+> 
 
-This patch revert commit d8a9c6e1f676 ("ASoC: soc-pcm: use GFP_ATOMIC for
-dpcm structure") which is no longer needed since commit b7898396f4bb
-("ASoC: soc-pcm: Fix and cleanup DPCM locking").
+Hi,
+I mostly agree with you, but I don't have a strong opinion on the other 
+uses of BINDERFS_MAX_MINOR.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-See discussion in the thread at:
-   https://lore.kernel.org/all/ed322b8821fa787907c1a4cce879564d1281b69d.1642331884.git.christophe.jaillet@wanadoo.fr/
----
- sound/soc/soc-pcm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The ones related to 'max' values looks good to me, but I don't know the 
+implication for the one used in binderfs_make_inode() and in 
+init_binderfs().
 
-diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
-index 9a954680d492..11c9853e9e80 100644
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -1214,7 +1214,7 @@ static int dpcm_be_connect(struct snd_soc_pcm_runtime *fe,
- 		be_substream->pcm->nonatomic = 1;
- 	}
- 
--	dpcm = kzalloc(sizeof(struct snd_soc_dpcm), GFP_ATOMIC);
-+	dpcm = kzalloc(sizeof(struct snd_soc_dpcm), GFP_KERNEL);
- 	if (!dpcm)
- 		return -ENOMEM;
- 
--- 
-2.32.0
+I won't be able to help further here.
 
+CJ
