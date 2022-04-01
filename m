@@ -2,96 +2,127 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64780C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 31 Mar 2022 20:35:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0732C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Apr 2022 07:05:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239705AbiCaUhb (ORCPT
+        id S1343691AbiDAHHn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 31 Mar 2022 16:37:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42374 "EHLO
+        Fri, 1 Apr 2022 03:07:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233744AbiCaUha (ORCPT
+        with ESMTP id S241247AbiDAHHl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 31 Mar 2022 16:37:30 -0400
-Received: from smtp.smtpout.orange.fr (smtp02.smtpout.orange.fr [80.12.242.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E351FABC9
-        for <kernel-janitors@vger.kernel.org>; Thu, 31 Mar 2022 13:35:39 -0700 (PDT)
-Received: from [192.168.1.18] ([90.126.236.122])
-        by smtp.orange.fr with ESMTPA
-        id a1W5n3SZZ9eePa1W5nafzK; Thu, 31 Mar 2022 22:35:38 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 31 Mar 2022 22:35:38 +0200
-X-ME-IP: 90.126.236.122
-Message-ID: <5a5fec66-f8af-7e6e-5afe-97e4eb21c51a@wanadoo.fr>
-Date:   Thu, 31 Mar 2022 22:35:37 +0200
+        Fri, 1 Apr 2022 03:07:41 -0400
+Received: from ha.nfschina.com (unknown [IPv6:2400:dd01:100f:2:72e2:84ff:fe10:5f45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4FC23FA213;
+        Fri,  1 Apr 2022 00:05:51 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by ha.nfschina.com (Postfix) with ESMTP id EBFCB1E80CC5;
+        Fri,  1 Apr 2022 15:05:21 +0800 (CST)
+X-Virus-Scanned: amavisd-new at test.com
+Received: from ha.nfschina.com ([127.0.0.1])
+        by localhost (ha.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id hKzsnrIxJeEi; Fri,  1 Apr 2022 15:05:19 +0800 (CST)
+Received: from ubuntu.localdomain (unknown [101.228.248.165])
+        (Authenticated sender: yuzhe@nfschina.com)
+        by ha.nfschina.com (Postfix) with ESMTPA id ABEB21E80C85;
+        Fri,  1 Apr 2022 15:05:18 +0800 (CST)
+From:   Yu Zhe <yuzhe@nfschina.com>
+To:     ericvh@gmail.com, lucho@ionkov.net, asmadeus@codewreck.org,
+        linux_oss@crudebyte.com
+Cc:     v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, liqiong@nfschina.com,
+        Yu Zhe <yuzhe@nfschina.com>
+Subject: [PATCH] 9p: remove unnecessary type castings
+Date:   Fri,  1 Apr 2022 00:05:45 -0700
+Message-Id: <20220401070545.50577-1-yuzhe@nfschina.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] binderfs: Fix the maximum minor value in
- binderfs_binder_device_create() and binderfs_binder_ctl_create()
-Content-Language: en-US
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Hridya Valsaraju <hridya@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Todd Kjos <tkjos@google.com>
-References: <ba880255b91b4682c21c62ae0bc5673e34a119aa.1648379891.git.christophe.jaillet@wanadoo.fr>
- <20220329112011.j4xf2qjktfqokkyn@wittgenstein>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20220329112011.j4xf2qjktfqokkyn@wittgenstein>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 29/03/2022 à 13:20, Christian Brauner a écrit :
-> On Sun, Mar 27, 2022 at 01:18:17PM +0200, Christophe JAILLET wrote:
->> ida_alloc_max(..., max, ...) returns values from 0 to max, inclusive.
->>
->> So, BINDERFS_MAX_MINOR is a valid value for 'minor'.
->>
->> BINDERFS_MAX_MINOR is '1U << MINORBITS' and we have:
->> 	#define MKDEV(ma,mi)	(((ma) << MINORBITS) | (mi))
->>
->> So, When this value is used in MKDEV() and it will overflow.
->>
->> Fixes: 3ad20fe393b3 ("binder: implement binderfs")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> This patch is completely speculative.
->>
->> The 'BINDERFS_MAX_MINOR_CAPPED - 1' is here only for symmetry with the
->> BINDERFS_MAX_MINOR case. I'm not sure at all that is is needed and, more
->> importantly, that it is correct.
-> 
-> Hm, since we're "removing" one alloctable device for the initial ipc
-> namespace, I think we need the -1 for the capped value.
-> 
-> Though I wonder if the simpler fix wouldn't just be to:
-> 
-> #define BINDERFS_MAX_MINOR MINORMASK
-> 
-> since include/linux/kdev_t.h has:
-> 
-> #define MINORBITS	20
-> #define MINORMASK	((1U << MINORBITS) - 1)
-> 
+remove unnecessary void* type castings.
 
-Hi,
-I mostly agree with you, but I don't have a strong opinion on the other 
-uses of BINDERFS_MAX_MINOR.
+Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+---
+ fs/9p/fid.c            | 2 +-
+ fs/9p/v9fs.c           | 2 +-
+ fs/9p/vfs_inode.c      | 4 ++--
+ fs/9p/vfs_inode_dotl.c | 4 ++--
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
-The ones related to 'max' values looks good to me, but I don't know the 
-implication for the one used in binderfs_make_inode() and in 
-init_binderfs().
+diff --git a/fs/9p/fid.c b/fs/9p/fid.c
+index 79df61fe0e59..c2b8d7fc9e53 100644
+--- a/fs/9p/fid.c
++++ b/fs/9p/fid.c
+@@ -53,7 +53,7 @@ static struct p9_fid *v9fs_fid_find_inode(struct inode *inode, kuid_t uid)
+ 	p9_debug(P9_DEBUG_VFS, " inode: %p\n", inode);
+ 
+ 	spin_lock(&inode->i_lock);
+-	h = (struct hlist_head *)&inode->i_private;
++	h = &inode->i_private;
+ 	hlist_for_each_entry(fid, h, ilist) {
+ 		if (uid_eq(fid->uid, uid)) {
+ 			refcount_inc(&fid->count);
+diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
+index e28ddf763b3b..51ddc58a7029 100644
+--- a/fs/9p/v9fs.c
++++ b/fs/9p/v9fs.c
+@@ -622,7 +622,7 @@ static void v9fs_sysfs_cleanup(void)
+ 
+ static void v9fs_inode_init_once(void *foo)
+ {
+-	struct v9fs_inode *v9inode = (struct v9fs_inode *)foo;
++	struct v9fs_inode *v9inode = foo;
+ 
+ 	memset(&v9inode->qid, 0, sizeof(v9inode->qid));
+ 	inode_init_once(&v9inode->vfs_inode);
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index 55367ecb9442..f415fd7a1eaf 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -409,7 +409,7 @@ static int v9fs_test_inode(struct inode *inode, void *data)
+ 	int umode;
+ 	dev_t rdev;
+ 	struct v9fs_inode *v9inode = V9FS_I(inode);
+-	struct p9_wstat *st = (struct p9_wstat *)data;
++	struct p9_wstat *st = data;
+ 	struct v9fs_session_info *v9ses = v9fs_inode2v9ses(inode);
+ 
+ 	umode = p9mode2unixmode(v9ses, st, &rdev);
+@@ -438,7 +438,7 @@ static int v9fs_test_new_inode(struct inode *inode, void *data)
+ static int v9fs_set_inode(struct inode *inode,  void *data)
+ {
+ 	struct v9fs_inode *v9inode = V9FS_I(inode);
+-	struct p9_wstat *st = (struct p9_wstat *)data;
++	struct p9_wstat *st = data;
+ 
+ 	memcpy(&v9inode->qid, &st->qid, sizeof(st->qid));
+ 	return 0;
+diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
+index d17502a738a9..b910fee62e25 100644
+--- a/fs/9p/vfs_inode_dotl.c
++++ b/fs/9p/vfs_inode_dotl.c
+@@ -57,7 +57,7 @@ static kgid_t v9fs_get_fsgid_for_create(struct inode *dir_inode)
+ static int v9fs_test_inode_dotl(struct inode *inode, void *data)
+ {
+ 	struct v9fs_inode *v9inode = V9FS_I(inode);
+-	struct p9_stat_dotl *st = (struct p9_stat_dotl *)data;
++	struct p9_stat_dotl *st = data;
+ 
+ 	/* don't match inode of different type */
+ 	if (inode_wrong_type(inode, st->st_mode))
+@@ -88,7 +88,7 @@ static int v9fs_test_new_inode_dotl(struct inode *inode, void *data)
+ static int v9fs_set_inode_dotl(struct inode *inode,  void *data)
+ {
+ 	struct v9fs_inode *v9inode = V9FS_I(inode);
+-	struct p9_stat_dotl *st = (struct p9_stat_dotl *)data;
++	struct p9_stat_dotl *st = data;
+ 
+ 	memcpy(&v9inode->qid, &st->qid, sizeof(st->qid));
+ 	inode->i_generation = st->st_gen;
+-- 
+2.25.1
 
-I won't be able to help further here.
-
-CJ
