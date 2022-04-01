@@ -2,58 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0998AC433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Apr 2022 14:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C91F3C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Apr 2022 14:06:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344061AbiDAOGl (ORCPT
+        id S1346555AbiDAOIZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 1 Apr 2022 10:06:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48854 "EHLO
+        Fri, 1 Apr 2022 10:08:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346268AbiDAOGk (ORCPT
+        with ESMTP id S1346540AbiDAOIZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 1 Apr 2022 10:06:40 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F1E192D1C
-        for <kernel-janitors@vger.kernel.org>; Fri,  1 Apr 2022 07:04:49 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id p17so2533684plo.9
-        for <kernel-janitors@vger.kernel.org>; Fri, 01 Apr 2022 07:04:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Ucv1GhW8n0nffIVAqwQW+4kQjGqiGk4YkR9GX1DvEsc=;
-        b=MIrHnCeFbGOfpivtgisoY5HXpgz6Q5VL9xHBd/dPaYsRwhrs50kmiCRdY89OdvBYRZ
-         F3V8IKQQyIeBrypQXH5M0QoXaTdSSKWUBc++Iy9beGHg807nb9pdvncodhoQBonOhPDb
-         9yIf1S5eW+PrU7/pB+Wt7kjfFKYCCtYFNX6t/tikx0W89iGIsCgwELEU9YPoKMLHuE1U
-         HEQQgMdXcMkmkg79835gk0gaX/ZuFy6zCKw5p7Kz7TxrSeDIz1BUrFfMSlgEkJH1JDYI
-         yiqGVXlaiem5BE2UfJBdAX7NprjiKvBz6/0ZmKfIsotOF2o0SDDhSg+rPA9br5/m/1/c
-         c93Q==
+        Fri, 1 Apr 2022 10:08:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 69F54215469
+        for <kernel-janitors@vger.kernel.org>; Fri,  1 Apr 2022 07:06:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1648821994;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oPKiMeBipG/n75nIi9Z8lQEgirdQ3eeZPdOA5+6OEM4=;
+        b=FQnFN/w/wUeSKe0PfiBHMd+tzA+UR4c5dtuesLm+w1ZhbM9kKl+wgL16mKdUn3XXlyWcUu
+        KBOjp/TUfT10XJhMgcMjCrssdYcKplQdIzUBR7Kkndk5JdGYkwHp9fCCj3P00nAbgi4CGE
+        4MezlV8DyPV11W9/O42I+hKEIn3GngM=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-634-xVMrJLFUMZidzA3HVgsmLg-1; Fri, 01 Apr 2022 10:06:33 -0400
+X-MC-Unique: xVMrJLFUMZidzA3HVgsmLg-1
+Received: by mail-ej1-f70.google.com with SMTP id gx12-20020a1709068a4c00b006df7e8181ceso1650393ejc.10
+        for <kernel-janitors@vger.kernel.org>; Fri, 01 Apr 2022 07:06:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Ucv1GhW8n0nffIVAqwQW+4kQjGqiGk4YkR9GX1DvEsc=;
-        b=qZcYGSBOZMz3wLBn9Np0HUEN1sAObTex3StHmOB77GU69CBBbQExQ0Z6NIBJinWGju
-         f2IzAyMAfHsMaUzYizU5HS/bav6gQNr7g9asLTqvltX8MMRS7T7IUoHTjCg9ttYhfAh5
-         8BSONV0KiED/Zcx2Y78C0+XmJOroXfFOW9g2aMuBPy/eygjLmV50OgsorPP99edZsWdq
-         mZojN+nBJFiCESODUY8rbynW/J3pnP0V3Uu1hgRa9at8TuyClcomdmF8penSha9Idika
-         Ld9v9hq1EHhcIcLQpz1TQExG+hs4W49ootRROX0M5NsXa8npM1r/kW7aPKBD/aHv1zyj
-         w94A==
-X-Gm-Message-State: AOAM530dTvW+mPxzYtuI/FDBUFb9I3gUceeQHDNBjZqcWZAOZZHXwp0J
-        t2Kch4ntIypIiZNyFWYqDRi8fA==
-X-Google-Smtp-Source: ABdhPJwESG5OVr0BG3gSD4dSk1bo0d33fp8l727aMxWsQBm5ROkAmBlmQGdAK9cq3ps2vPOHpYgn3w==
-X-Received: by 2002:a17:90a:628b:b0:1c6:a410:d73f with SMTP id d11-20020a17090a628b00b001c6a410d73fmr12299042pjj.96.1648821888825;
-        Fri, 01 Apr 2022 07:04:48 -0700 (PDT)
-Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
-        by smtp.gmail.com with ESMTPSA id y11-20020aa793cb000000b004fb597d85b2sm3225176pff.160.2022.04.01.07.04.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Apr 2022 07:04:48 -0700 (PDT)
-Date:   Fri, 1 Apr 2022 14:04:44 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=oPKiMeBipG/n75nIi9Z8lQEgirdQ3eeZPdOA5+6OEM4=;
+        b=7cCnA0t3t0qVZgFVOWvGXZIZesb6Yv9D52wMY2RVtOppkPXljx3itgRY9jkBNcdL+L
+         GOiEan+v4b4tBvLFswV11kq3DhzswTfmku1z798FyA4QcRBbrLs3VcJTBrNlEu3byogN
+         VTiSC7rY4HxP66AaoCAyE6WFDruMmB3Seua7aaPd7Pscym/DJtGuv8DVxlrrDli1d/Dt
+         6RmT1Z0UCgsVdPlXt7HFgsBOa6HvkUqdP0z84bOQoGJg3sjMCteekr7/oKKTFIRNHyxx
+         YxplK8B0VYyZ3IicMgXliIq+LyNCaHDUbWSYHD/4Dn3aDRluMMkJTVj0llKH3sGeoKVx
+         CKCw==
+X-Gm-Message-State: AOAM530uYz6iDAPT5H8AHBUfYyi94+8GvIIwm5d61tboxzPhcefonWm1
+        /efGp2SNAaQOXjCH6PA6MwZfDjQaQkRgC2zOrkrLTOItthw/4V09kz0UBdc3FIgcKaHBn8jtU5s
+        MhTxlrIYGlzNTt+ACxcKnQF8rlMpm
+X-Received: by 2002:a17:907:2cc6:b0:6e0:1ae5:d762 with SMTP id hg6-20020a1709072cc600b006e01ae5d762mr9714607ejc.291.1648821991798;
+        Fri, 01 Apr 2022 07:06:31 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzD6bu0GtgNQPcO6zhHTHlVfQGsBTyEM/XcoIIEW2FyS6WECKfMjFl64ImfiDDCAZyLfM/7cA==
+X-Received: by 2002:a17:907:2cc6:b0:6e0:1ae5:d762 with SMTP id hg6-20020a1709072cc600b006e01ae5d762mr9714577ejc.291.1648821991539;
+        Fri, 01 Apr 2022 07:06:31 -0700 (PDT)
+Received: from ?IPV6:2001:b07:6468:f312:1c09:f536:3de6:228c? ([2001:b07:6468:f312:1c09:f536:3de6:228c])
+        by smtp.googlemail.com with ESMTPSA id c12-20020a05640227cc00b004192114e521sm1221807ede.60.2022.04.01.07.06.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Apr 2022 07:06:30 -0700 (PDT)
+Message-ID: <705809c7-8370-de2e-fe32-47735fc9c39e@redhat.com>
+Date:   Fri, 1 Apr 2022 16:06:29 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] KVM: MMU: fix an IS_ERR() vs NULL bug
+Content-Language: en-US
+To:     Sean Christopherson <seanjc@google.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
         Wanpeng Li <wanpengli@tencent.com>,
         Jim Mattson <jmattson@google.com>,
         Joerg Roedel <joro@8bytes.org>,
@@ -62,81 +75,23 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
         "H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] KVM: MMU: fix an IS_ERR() vs NULL bug
-Message-ID: <YkcGfMNjaayttqtC@google.com>
-References: <20220401100147.GA29786@kili>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220401100147.GA29786@kili>
+References: <20220401100147.GA29786@kili> <YkcGfMNjaayttqtC@google.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+In-Reply-To: <YkcGfMNjaayttqtC@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Apr 01, 2022, Dan Carpenter wrote:
-> The alloc_workqueue() function does not return error pointers, it
-> returns NULL on error.  Update the check accordingly.
-> 
-> Fixes: 1a3320dd2939 ("KVM: MMU: propagate alloc_workqueue failure")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
+On 4/1/22 16:04, Sean Christopherson wrote:
+> Paolo, any objection to also returning '0' in all non-error paths?  There's no
+> need to return whether or not the TDP MMU is enabled since that's handled locally,
+> and the "return 1" is rather odd.
 
-Reviewed-by: Sean Christopherson <seanjc@google.com>
+Well, I kept that because I thought there was a hidden reason for that. 
+  At this point I was really about to press Enter and send out the pull 
+request, so...
 
-> Obviously, I noticed that the patch says "propagate alloc_workqueue
-> failure" so that's a puzzling thing.  Merge issue perhaps?  In
-> linux-next it alloc_workqueue() returns NULL.
+Paolo
 
-No merge issue, just a goof.  The "propagate" patch was added because KVM neglected
-to check for allocation failure, so at least it was a step in the right direction :-)
-
->  arch/x86/kvm/mmu/tdp_mmu.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-> index a2f9a34a0168..d71d177ae6b8 100644
-> --- a/arch/x86/kvm/mmu/tdp_mmu.c
-> +++ b/arch/x86/kvm/mmu/tdp_mmu.c
-> @@ -22,8 +22,8 @@ int kvm_mmu_init_tdp_mmu(struct kvm *kvm)
->  		return 0;
->  
->  	wq = alloc_workqueue("kvm", WQ_UNBOUND|WQ_MEM_RECLAIM|WQ_CPU_INTENSIVE, 0);
-> -	if (IS_ERR(wq))
-> -		return PTR_ERR(wq);
-> +	if (!wq)
-> +		return -ENOMEM;
->  
->  	/* This should not be changed for the lifetime of the VM. */
->  	kvm->arch.tdp_mmu_enabled = true;
-> -- 
-
-Paolo, any objection to also returning '0' in all non-error paths?  There's no
-need to return whether or not the TDP MMU is enabled since that's handled locally,
-and the "return 1" is rather odd.
-
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index dbf46dd98618..dec32b4a13aa 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -5779,7 +5779,7 @@ int kvm_mmu_init_vm(struct kvm *kvm)
-        spin_lock_init(&kvm->arch.mmu_unsync_pages_lock);
-
-        r = kvm_mmu_init_tdp_mmu(kvm);
--       if (r < 0)
-+       if (r)
-                return r;
-
-        node->track_write = kvm_mmu_pte_write;
-diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-index a2f9a34a0168..3a60b999e1aa 100644
---- a/arch/x86/kvm/mmu/tdp_mmu.c
-+++ b/arch/x86/kvm/mmu/tdp_mmu.c
-@@ -31,7 +31,7 @@ int kvm_mmu_init_tdp_mmu(struct kvm *kvm)
-        spin_lock_init(&kvm->arch.tdp_mmu_pages_lock);
-        INIT_LIST_HEAD(&kvm->arch.tdp_mmu_pages);
-        kvm->arch.tdp_mmu_zap_wq = wq;
--       return 1;
-+       return 0;
- }
-
- /* Arbitrarily returns true so that this may be used in if statements. */
