@@ -2,42 +2,36 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5933AC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Apr 2022 06:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B95C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Apr 2022 07:24:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241447AbiDCHAb (ORCPT
+        id S1355029AbiDCHZw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 3 Apr 2022 03:00:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55334 "EHLO
+        Sun, 3 Apr 2022 03:25:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355336AbiDCHA3 (ORCPT
+        with ESMTP id S233315AbiDCHZv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 3 Apr 2022 03:00:29 -0400
+        Sun, 3 Apr 2022 03:25:51 -0400
 Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CB9F25D9
-        for <kernel-janitors@vger.kernel.org>; Sat,  2 Apr 2022 23:58:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F9DE31DC6
+        for <kernel-janitors@vger.kernel.org>; Sun,  3 Apr 2022 00:23:56 -0700 (PDT)
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id auBxnonYqN7CcauBynMxii; Sun, 03 Apr 2022 08:58:31 +0200
+        id auaYnoz7xN7CcauaYnN1jG; Sun, 03 Apr 2022 09:23:54 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 03 Apr 2022 08:58:31 +0200
+X-ME-Date: Sun, 03 Apr 2022 09:23:54 +0200
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Banajit Goswami <bgoswami@codeaurora.org>,
-        Venkata Prasad Potturu <quic_potturu@quicinc.com>,
-        Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        alsa-devel@alsa-project.org
-Subject: [PATCH v2] ASoC: codecs: Fix an error handling path in (rx|tx|va)_macro_probe()
-Date:   Sun,  3 Apr 2022 08:58:27 +0200
-Message-Id: <5b5a015a9b1dc8011c6a4053fa49da1f2531e47c.1648969065.git.christophe.jaillet@wanadoo.fr>
+        virtualization@lists.linux-foundation.org
+Subject: [PATCH] vp_vdpa: Fix an error handling path in vp_vdpa_probe()
+Date:   Sun,  3 Apr 2022 09:23:52 +0200
+Message-Id: <d7015dad7734eac626f5e8de2687cad40568ad79.1648970592.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -45,126 +39,65 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-After a successful lpass_macro_pds_init() call, lpass_macro_pds_exit() must
-be called.
+If an error occurs after a successful vp_modern_probe() call, it should be
+undone by a corresponding vp_modern_remove() call, as already do in the
+remove function.
 
-Add the missing call in the error handling path of the probe function and
-use it.
-
-Fixes: 9e3d83c52844 ("ASoC: codecs: Add power domains support in digital macro codecs")
+Fixes: 64b9f64f80a6 ("vdpa: introduce virtio pci driver")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Maybe some lpass_macro_pds_init() calls could be moved in order to simplify
-some error handling paths. This would avoid the
-s/return/ret = <error>; goto err;/ introduced in this patch.
-However I'm always reluctant to shuffle code because it sometimes introduce
-some subtle bugs. So I've left it as-is.
-Let me know the right direction.
+This patch is completely speculative.
+Review with care.
 ---
- sound/soc/codecs/lpass-rx-macro.c | 14 ++++++++++----
- sound/soc/codecs/lpass-tx-macro.c | 14 ++++++++++----
- sound/soc/codecs/lpass-va-macro.c |  8 ++++++--
- 3 files changed, 26 insertions(+), 10 deletions(-)
+ drivers/vdpa/virtio_pci/vp_vdpa.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/codecs/lpass-rx-macro.c b/sound/soc/codecs/lpass-rx-macro.c
-index 6884ae505e33..3143f9cd7277 100644
---- a/sound/soc/codecs/lpass-rx-macro.c
-+++ b/sound/soc/codecs/lpass-rx-macro.c
-@@ -3566,12 +3566,16 @@ static int rx_macro_probe(struct platform_device *pdev)
- 		return PTR_ERR(rx->pds);
- 
- 	base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(base))
--		return PTR_ERR(base);
-+	if (IS_ERR(base)) {
-+		ret = PTR_ERR(base);
-+		goto err;
-+	}
- 
- 	rx->regmap = devm_regmap_init_mmio(dev, base, &rx_regmap_config);
--	if (IS_ERR(rx->regmap))
--		return PTR_ERR(rx->regmap);
-+	if (IS_ERR(rx->regmap)) {
-+		ret = PTR_ERR(rx->regmap);
-+		goto err;
-+	}
- 
- 	dev_set_drvdata(dev, rx);
- 
-@@ -3632,6 +3636,8 @@ static int rx_macro_probe(struct platform_device *pdev)
- err_dcodec:
- 	clk_disable_unprepare(rx->macro);
- err:
-+	lpass_macro_pds_exit(rx->pds);
-+
- 	return ret;
- }
- 
-diff --git a/sound/soc/codecs/lpass-tx-macro.c b/sound/soc/codecs/lpass-tx-macro.c
-index 714a411d5337..55503ba480bb 100644
---- a/sound/soc/codecs/lpass-tx-macro.c
-+++ b/sound/soc/codecs/lpass-tx-macro.c
-@@ -1828,8 +1828,10 @@ static int tx_macro_probe(struct platform_device *pdev)
- 		return PTR_ERR(tx->pds);
- 
- 	base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(base))
--		return PTR_ERR(base);
-+	if (IS_ERR(base)) {
-+		ret = PTR_ERR(base);
-+		goto err;
-+	}
- 
- 	/* Update defaults for lpass sc7280 */
- 	if (of_device_is_compatible(np, "qcom,sc7280-lpass-tx-macro")) {
-@@ -1846,8 +1848,10 @@ static int tx_macro_probe(struct platform_device *pdev)
+diff --git a/drivers/vdpa/virtio_pci/vp_vdpa.c b/drivers/vdpa/virtio_pci/vp_vdpa.c
+index cce101e6a940..9b713fe0f2c7 100644
+--- a/drivers/vdpa/virtio_pci/vp_vdpa.c
++++ b/drivers/vdpa/virtio_pci/vp_vdpa.c
+@@ -491,7 +491,7 @@ static int vp_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	if (ret) {
+ 		dev_err(&pdev->dev,
+ 			"Failed for adding devres for freeing irq vectors\n");
+-		goto err;
++		goto err_remove;
  	}
  
- 	tx->regmap = devm_regmap_init_mmio(dev, base, &tx_regmap_config);
--	if (IS_ERR(tx->regmap))
--		return PTR_ERR(tx->regmap);
-+	if (IS_ERR(tx->regmap)) {
-+		ret = PTR_ERR(tx->regmap);
-+		goto err;
-+	}
- 
- 	dev_set_drvdata(dev, tx);
- 
-@@ -1907,6 +1911,8 @@ static int tx_macro_probe(struct platform_device *pdev)
- err_dcodec:
- 	clk_disable_unprepare(tx->macro);
- err:
-+	lpass_macro_pds_exit(tx->pds);
-+
- 	return ret;
- }
- 
-diff --git a/sound/soc/codecs/lpass-va-macro.c b/sound/soc/codecs/lpass-va-macro.c
-index f3cb596058e0..d18b56e60433 100644
---- a/sound/soc/codecs/lpass-va-macro.c
-+++ b/sound/soc/codecs/lpass-va-macro.c
-@@ -1434,8 +1434,10 @@ static int va_macro_probe(struct platform_device *pdev)
- 		va->dmic_clk_div = VA_MACRO_CLK_DIV_2;
- 	} else {
- 		ret = va_macro_validate_dmic_sample_rate(sample_rate, va);
--		if (!ret)
--			return -EINVAL;
-+		if (!ret) {
-+			ret = -EINVAL;
-+			goto err;
-+		}
+ 	vp_vdpa->vring = devm_kcalloc(&pdev->dev, vp_vdpa->queues,
+@@ -500,7 +500,7 @@ static int vp_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	if (!vp_vdpa->vring) {
+ 		ret = -ENOMEM;
+ 		dev_err(&pdev->dev, "Fail to allocate virtqueues\n");
+-		goto err;
++		goto err_remove;
  	}
  
- 	base = devm_platform_ioremap_resource(pdev, 0);
-@@ -1492,6 +1494,8 @@ static int va_macro_probe(struct platform_device *pdev)
- err_dcodec:
- 	clk_disable_unprepare(va->macro);
- err:
-+	lpass_macro_pds_exit(va->pds);
-+
- 	return ret;
- }
+ 	for (i = 0; i < vp_vdpa->queues; i++) {
+@@ -511,7 +511,7 @@ static int vp_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		if (!vp_vdpa->vring[i].notify) {
+ 			ret = -EINVAL;
+ 			dev_warn(&pdev->dev, "Fail to map vq notify %d\n", i);
+-			goto err;
++			goto err_remove;
+ 		}
+ 	}
+ 	vp_vdpa->config_irq = VIRTIO_MSI_NO_VECTOR;
+@@ -519,11 +519,13 @@ static int vp_vdpa_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	ret = vdpa_register_device(&vp_vdpa->vdpa, vp_vdpa->queues);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to register to vdpa bus\n");
+-		goto err;
++		goto err_remove;
+ 	}
  
+ 	return 0;
+ 
++err_remove:
++	vp_modern_remove(&vp_vdpa->mdev);
+ err:
+ 	put_device(&vp_vdpa->vdpa.dev);
+ 	return ret;
 -- 
 2.32.0
 
