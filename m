@@ -2,41 +2,38 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5642EC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Apr 2022 10:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48CAEC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Apr 2022 13:06:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356427AbiDCK1i (ORCPT
+        id S236999AbiDCNIQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 3 Apr 2022 06:27:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41080 "EHLO
+        Sun, 3 Apr 2022 09:08:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356388AbiDCK1h (ORCPT
+        with ESMTP id S231740AbiDCNIP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 3 Apr 2022 06:27:37 -0400
-Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9569D377C0
-        for <kernel-janitors@vger.kernel.org>; Sun,  3 Apr 2022 03:25:43 -0700 (PDT)
+        Sun, 3 Apr 2022 09:08:15 -0400
+Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CE9E26AF9
+        for <kernel-janitors@vger.kernel.org>; Sun,  3 Apr 2022 06:06:21 -0700 (PDT)
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id axQSnFdrzRGzQaxQTnw9cR; Sun, 03 Apr 2022 12:25:41 +0200
+        id azvonDip2OAnaazvon4plZ; Sun, 03 Apr 2022 15:06:18 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 03 Apr 2022 12:25:41 +0200
+X-ME-Date: Sun, 03 Apr 2022 15:06:18 +0200
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Stephan Gerhold <stephan@gerhold.net>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH] remoteproc: mtk_scp: Fix a potential double free
-Date:   Sun,  3 Apr 2022 12:25:39 +0200
-Message-Id: <1d15923b4ffb94531435c48482fef276a11b9a67.1648981531.git.christophe.jaillet@wanadoo.fr>
+        linux-phy@lists.infradead.org
+Subject: [PATCH] phy: ti: tusb1210: Fix an error handling path in tusb1210_probe()
+Date:   Sun,  3 Apr 2022 15:06:08 +0200
+Message-Id: <07c4926c42243cedb3b6067a241bb486fdda01b5.1648991162.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -44,26 +41,41 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'scp->rproc' is allocated using devm_rproc_alloc(), so there is no need
-to free it explicitly in the remove function.
+tusb1210_probe_charger_detect() must be undone by a corresponding
+tusb1210_remove_charger_detect() in the error handling path, as already
+done in the remove function.
 
-Fixes: c1407ac1099a ("remoteproc: mtk_scp: Use devm variant of rproc_alloc()")
+Fixes: 48969a5623ed ("phy: ti: tusb1210: Add charger detection")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/remoteproc/mtk_scp.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/phy/ti/phy-tusb1210.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 38609153bf64..4a0e6c4bc6f4 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -877,7 +877,6 @@ static int scp_remove(struct platform_device *pdev)
- 	for (i = 0; i < SCP_IPI_MAX; i++)
- 		mutex_destroy(&scp->ipi_desc[i].lock);
- 	mutex_destroy(&scp->send_lock);
--	rproc_free(scp->rproc);
+diff --git a/drivers/phy/ti/phy-tusb1210.c b/drivers/phy/ti/phy-tusb1210.c
+index a0cdbcadf09e..008d80977fc5 100644
+--- a/drivers/phy/ti/phy-tusb1210.c
++++ b/drivers/phy/ti/phy-tusb1210.c
+@@ -537,12 +537,18 @@ static int tusb1210_probe(struct ulpi *ulpi)
+ 	tusb1210_probe_charger_detect(tusb);
  
+ 	tusb->phy = ulpi_phy_create(ulpi, &phy_ops);
+-	if (IS_ERR(tusb->phy))
+-		return PTR_ERR(tusb->phy);
++	if (IS_ERR(tusb->phy)) {
++		ret = PTR_ERR(tusb->phy);
++		goto err_remove_charger;
++	}
+ 
+ 	phy_set_drvdata(tusb->phy, tusb);
+ 	ulpi_set_drvdata(ulpi, tusb);
  	return 0;
++
++err_remove_charger:
++	tusb1210_remove_charger_detect(tusb);
++	return ret;
  }
+ 
+ static void tusb1210_remove(struct ulpi *ulpi)
 -- 
 2.32.0
 
