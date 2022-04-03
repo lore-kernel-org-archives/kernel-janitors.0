@@ -2,36 +2,41 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F2CC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Apr 2022 10:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5642EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Apr 2022 10:25:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353647AbiDCKNL (ORCPT
+        id S1356427AbiDCK1i (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 3 Apr 2022 06:13:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36850 "EHLO
+        Sun, 3 Apr 2022 06:27:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356253AbiDCKNK (ORCPT
+        with ESMTP id S1356388AbiDCK1h (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 3 Apr 2022 06:13:10 -0400
+        Sun, 3 Apr 2022 06:27:37 -0400
 Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 015CD35A94
-        for <kernel-janitors@vger.kernel.org>; Sun,  3 Apr 2022 03:11:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9569D377C0
+        for <kernel-janitors@vger.kernel.org>; Sun,  3 Apr 2022 03:25:43 -0700 (PDT)
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id axCUnFYCnRGzQaxCUnw7xL; Sun, 03 Apr 2022 12:11:15 +0200
+        id axQSnFdrzRGzQaxQTnw9cR; Sun, 03 Apr 2022 12:25:41 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 03 Apr 2022 12:11:15 +0200
+X-ME-Date: Sun, 03 Apr 2022 12:25:41 +0200
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Mark Brown <broonie@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-spi@vger.kernel.org
-Subject: [PATCH] spi: mxic: Fix an error handling path in mxic_spi_probe()
-Date:   Sun,  3 Apr 2022 12:11:13 +0200
-Message-Id: <09c81f751241f6ec0bac7a48d4ec814a742e0d17.1648980664.git.christophe.jaillet@wanadoo.fr>
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH] remoteproc: mtk_scp: Fix a potential double free
+Date:   Sun,  3 Apr 2022 12:25:39 +0200
+Message-Id: <1d15923b4ffb94531435c48482fef276a11b9a67.1648981531.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -39,27 +44,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If spi_register_master() fails, we must undo a previous
-mxic_spi_mem_ecc_probe() call, as already done in the remove function.
+'scp->rproc' is allocated using devm_rproc_alloc(), so there is no need
+to free it explicitly in the remove function.
 
-Fixes: 00360ebae483 ("spi: mxic: Add support for pipelined ECC operations")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: c1407ac1099a ("remoteproc: mtk_scp: Use devm variant of rproc_alloc()")
 ---
- drivers/spi/spi-mxic.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/remoteproc/mtk_scp.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/spi/spi-mxic.c b/drivers/spi/spi-mxic.c
-index 55c092069301..65be8e085ab8 100644
---- a/drivers/spi/spi-mxic.c
-+++ b/drivers/spi/spi-mxic.c
-@@ -813,6 +813,7 @@ static int mxic_spi_probe(struct platform_device *pdev)
- 	if (ret) {
- 		dev_err(&pdev->dev, "spi_register_master failed\n");
- 		pm_runtime_disable(&pdev->dev);
-+		mxic_spi_mem_ecc_remove(mxic);
- 	}
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index 38609153bf64..4a0e6c4bc6f4 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -877,7 +877,6 @@ static int scp_remove(struct platform_device *pdev)
+ 	for (i = 0; i < SCP_IPI_MAX; i++)
+ 		mutex_destroy(&scp->ipi_desc[i].lock);
+ 	mutex_destroy(&scp->send_lock);
+-	rproc_free(scp->rproc);
  
- 	return ret;
+ 	return 0;
+ }
 -- 
 2.32.0
 
