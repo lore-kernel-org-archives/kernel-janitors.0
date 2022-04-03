@@ -2,38 +2,36 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B40C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Apr 2022 09:59:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F2CC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Apr 2022 10:11:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240869AbiDCKBP (ORCPT
+        id S1353647AbiDCKNL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 3 Apr 2022 06:01:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40424 "EHLO
+        Sun, 3 Apr 2022 06:13:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236610AbiDCKBO (ORCPT
+        with ESMTP id S1356253AbiDCKNK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 3 Apr 2022 06:01:14 -0400
+        Sun, 3 Apr 2022 06:13:10 -0400
 Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ADF0AE50
-        for <kernel-janitors@vger.kernel.org>; Sun,  3 Apr 2022 02:59:19 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 015CD35A94
+        for <kernel-janitors@vger.kernel.org>; Sun,  3 Apr 2022 03:11:16 -0700 (PDT)
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id ax0vnFTWQRGzQax0vnw6b6; Sun, 03 Apr 2022 11:59:18 +0200
+        id axCUnFYCnRGzQaxCUnw7xL; Sun, 03 Apr 2022 12:11:15 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 03 Apr 2022 11:59:18 +0200
+X-ME-Date: Sun, 03 Apr 2022 12:11:15 +0200
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Mark Brown <broonie@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [PATCH] usb: misc: eud: Fix an error handling path in eud_probe()
-Date:   Sun,  3 Apr 2022 11:59:15 +0200
-Message-Id: <362908699275ecec078381b42d87c817c6965fc6.1648979948.git.christophe.jaillet@wanadoo.fr>
+        linux-spi@vger.kernel.org
+Subject: [PATCH] spi: mxic: Fix an error handling path in mxic_spi_probe()
+Date:   Sun,  3 Apr 2022 12:11:13 +0200
+Message-Id: <09c81f751241f6ec0bac7a48d4ec814a742e0d17.1648980664.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -41,46 +39,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-It is odd to call devm_add_action_or_reset() before calling the function
-that should be undone.
+If spi_register_master() fails, we must undo a previous
+mxic_spi_mem_ecc_probe() call, as already done in the remove function.
 
-Either, the "_or_reset" part should be omitted, or the action should be
-recorded after the resources have been allocated.
-
-Switch the order of devm_add_action_or_reset() and usb_role_switch_get().
-
-Fixes: 9a1bf58ccd44 ("usb: misc: eud: Add driver support for Embedded USB Debugger(EUD)")
+Fixes: 00360ebae483 ("spi: mxic: Add support for pipelined ECC operations")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/usb/misc/qcom_eud.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/spi/spi-mxic.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/usb/misc/qcom_eud.c b/drivers/usb/misc/qcom_eud.c
-index f929bffdc5d1..b7f13df00764 100644
---- a/drivers/usb/misc/qcom_eud.c
-+++ b/drivers/usb/misc/qcom_eud.c
-@@ -186,16 +186,16 @@ static int eud_probe(struct platform_device *pdev)
+diff --git a/drivers/spi/spi-mxic.c b/drivers/spi/spi-mxic.c
+index 55c092069301..65be8e085ab8 100644
+--- a/drivers/spi/spi-mxic.c
++++ b/drivers/spi/spi-mxic.c
+@@ -813,6 +813,7 @@ static int mxic_spi_probe(struct platform_device *pdev)
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "spi_register_master failed\n");
+ 		pm_runtime_disable(&pdev->dev);
++		mxic_spi_mem_ecc_remove(mxic);
+ 	}
  
- 	chip->dev = &pdev->dev;
- 
--	ret = devm_add_action_or_reset(chip->dev, eud_role_switch_release, chip);
--	if (ret)
--		return dev_err_probe(chip->dev, ret,
--				"failed to add role switch release action\n");
--
- 	chip->role_sw = usb_role_switch_get(&pdev->dev);
- 	if (IS_ERR(chip->role_sw))
- 		return dev_err_probe(chip->dev, PTR_ERR(chip->role_sw),
- 					"failed to get role switch\n");
- 
-+	ret = devm_add_action_or_reset(chip->dev, eud_role_switch_release, chip);
-+	if (ret)
-+		return dev_err_probe(chip->dev, ret,
-+				"failed to add role switch release action\n");
-+
- 	chip->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(chip->base))
- 		return PTR_ERR(chip->base);
+ 	return ret;
 -- 
 2.32.0
 
