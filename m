@@ -2,38 +2,47 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48CAEC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Apr 2022 13:06:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A86C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Apr 2022 15:41:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236999AbiDCNIQ (ORCPT
+        id S1359252AbiDCPnM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 3 Apr 2022 09:08:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52338 "EHLO
+        Sun, 3 Apr 2022 11:43:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231740AbiDCNIP (ORCPT
+        with ESMTP id S1359260AbiDCPml (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 3 Apr 2022 09:08:15 -0400
-Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CE9E26AF9
-        for <kernel-janitors@vger.kernel.org>; Sun,  3 Apr 2022 06:06:21 -0700 (PDT)
+        Sun, 3 Apr 2022 11:42:41 -0400
+Received: from smtp.smtpout.orange.fr (smtp01.smtpout.orange.fr [80.12.242.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4F5C2E0AC
+        for <kernel-janitors@vger.kernel.org>; Sun,  3 Apr 2022 08:40:40 -0700 (PDT)
 Received: from pop-os.home ([90.126.236.122])
         by smtp.orange.fr with ESMTPA
-        id azvonDip2OAnaazvon4plZ; Sun, 03 Apr 2022 15:06:18 +0200
+        id b2LBnqhuvxsSgb2LCnvlQt; Sun, 03 Apr 2022 17:40:38 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 03 Apr 2022 15:06:18 +0200
+X-ME-Date: Sun, 03 Apr 2022 17:40:38 +0200
 X-ME-IP: 90.126.236.122
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Stephan Gerhold <stephan@gerhold.net>
+To:     Felix Fietkau <nbd@nbd.name>,
+        Lorenzo Bianconi <lorenzo@kernel.org>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Shayne Chen <shayne.chen@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Deren Wu <deren.wu@mediatek.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-phy@lists.infradead.org
-Subject: [PATCH] phy: ti: tusb1210: Fix an error handling path in tusb1210_probe()
-Date:   Sun,  3 Apr 2022 15:06:08 +0200
-Message-Id: <07c4926c42243cedb3b6067a241bb486fdda01b5.1648991162.git.christophe.jaillet@wanadoo.fr>
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH] mt76: mt7921: Fix the error handling path of mt7921_pci_probe()
+Date:   Sun,  3 Apr 2022 17:40:33 +0200
+Message-Id: <ca5003e9c6fd2293d7a14ec693e15cc3d6e849a6.1649000427.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -41,41 +50,45 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-tusb1210_probe_charger_detect() must be undone by a corresponding
-tusb1210_remove_charger_detect() in the error handling path, as already
-done in the remove function.
+In case of error, some resources must be freed, as already done above and
+below the devm_kmemdup() and __mt7921e_mcu_drv_pmctrl() calls added in the
+commit in Fixes:.
 
-Fixes: 48969a5623ed ("phy: ti: tusb1210: Add charger detection")
+Fixes: 602cc0c9618a ("mt76: mt7921e: fix possible probe failure after reboot")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/phy/ti/phy-tusb1210.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+This is more or less a blind fix.
+Review with care.
+---
+ drivers/net/wireless/mediatek/mt76/mt7921/pci.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/phy/ti/phy-tusb1210.c b/drivers/phy/ti/phy-tusb1210.c
-index a0cdbcadf09e..008d80977fc5 100644
---- a/drivers/phy/ti/phy-tusb1210.c
-+++ b/drivers/phy/ti/phy-tusb1210.c
-@@ -537,12 +537,18 @@ static int tusb1210_probe(struct ulpi *ulpi)
- 	tusb1210_probe_charger_detect(tusb);
- 
- 	tusb->phy = ulpi_phy_create(ulpi, &phy_ops);
--	if (IS_ERR(tusb->phy))
--		return PTR_ERR(tusb->phy);
-+	if (IS_ERR(tusb->phy)) {
-+		ret = PTR_ERR(tusb->phy);
-+		goto err_remove_charger;
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7921/pci.c b/drivers/net/wireless/mediatek/mt76/mt7921/pci.c
+index 1a01d025bbe5..062e2b422478 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7921/pci.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7921/pci.c
+@@ -302,8 +302,10 @@ static int mt7921_pci_probe(struct pci_dev *pdev,
+ 	dev->bus_ops = dev->mt76.bus;
+ 	bus_ops = devm_kmemdup(dev->mt76.dev, dev->bus_ops, sizeof(*bus_ops),
+ 			       GFP_KERNEL);
+-	if (!bus_ops)
+-		return -ENOMEM;
++	if (!bus_ops) {
++		ret = -ENOMEM;
++		goto err_free_dev;
 +	}
  
- 	phy_set_drvdata(tusb->phy, tusb);
- 	ulpi_set_drvdata(ulpi, tusb);
- 	return 0;
-+
-+err_remove_charger:
-+	tusb1210_remove_charger_detect(tusb);
-+	return ret;
- }
+ 	bus_ops->rr = mt7921_rr;
+ 	bus_ops->wr = mt7921_wr;
+@@ -312,7 +314,7 @@ static int mt7921_pci_probe(struct pci_dev *pdev,
  
- static void tusb1210_remove(struct ulpi *ulpi)
+ 	ret = __mt7921e_mcu_drv_pmctrl(dev);
+ 	if (ret)
+-		return ret;
++		goto err_free_dev;
+ 
+ 	mdev->rev = (mt7921_l1_rr(dev, MT_HW_CHIPID) << 16) |
+ 		    (mt7921_l1_rr(dev, MT_HW_REV) & 0xff);
 -- 
 2.32.0
 
