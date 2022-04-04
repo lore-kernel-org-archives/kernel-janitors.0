@@ -2,82 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B676C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Apr 2022 07:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1410C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Apr 2022 07:57:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377720AbiDDHnH (ORCPT
+        id S1377850AbiDDH7i (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 4 Apr 2022 03:43:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56012 "EHLO
+        Mon, 4 Apr 2022 03:59:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377713AbiDDHnF (ORCPT
+        with ESMTP id S233822AbiDDH7h (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 4 Apr 2022 03:43:05 -0400
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50F62237C8;
-        Mon,  4 Apr 2022 00:41:10 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 0A6921BF20C;
-        Mon,  4 Apr 2022 07:41:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649058064;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NF/lJpAU/03I6K15u5g/9mSVcCQHoYVSaTao1w1uDOY=;
-        b=js/pMYM+6GRo15VMAvIr6mlVXqnxs+Wy/XTidvHnkvi1yU16p8akkRvd7Fpo9AqsEiRiRY
-        XlSpI2iFJXdu0nFG8xGxkGgZDkTG9YVCEXbtVHPjjuNCFwyMS5Q9hJVRe7hKtm9ivt3LAp
-        pNZP1B1axMOKxWhrf/SJEsvfmL92N2ekSfUl9cLw/rv3V72f8joQ4Uwd8QVXbvj03MIAjW
-        2whEKSr4OfY2FY2IAoOILxDIkn0CMo80LXkUntFiByoZ89mL6MuKHagpzsmtrrjKu8BSS7
-        bSqqagwP7BLw2i0qHfkZZj0PnQGNO9HkAA88ayPT+RpDQ61EsFW1AscjqbRIow==
-Date:   Mon, 4 Apr 2022 09:41:02 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH] spi: mxic: Fix an error handling path in
- mxic_spi_probe()
-Message-ID: <20220404094102.48edaab5@xps13>
-In-Reply-To: <09c81f751241f6ec0bac7a48d4ec814a742e0d17.1648980664.git.christophe.jaillet@wanadoo.fr>
-References: <09c81f751241f6ec0bac7a48d4ec814a742e0d17.1648980664.git.christophe.jaillet@wanadoo.fr>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 4 Apr 2022 03:59:37 -0400
+X-Greylist: delayed 418 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 04 Apr 2022 00:57:42 PDT
+Received: from mail.bizcall.pl (mail.bizcall.pl [192.71.213.112])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07CC43B00B
+        for <kernel-janitors@vger.kernel.org>; Mon,  4 Apr 2022 00:57:42 -0700 (PDT)
+Received: by mail.bizcall.pl (Postfix, from userid 1001)
+        id 8ACB5419B9; Mon,  4 Apr 2022 09:49:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=bizcall.pl; s=mail;
+        t=1649058637; bh=L7rZPDqncV/PGNK3vBL4eFyhOA8rMHMu3jCfxnl4mEc=;
+        h=Date:From:To:Subject:From;
+        b=Ipqo7pltwA77wpO/2YpFji0OiQMIqtVYs/aAAnFcUcgBGpYb/VCXTZzkhqwL6IH2+
+         AtbbKa4CuNNUhYHuJZmyezLQJHNl4RkV660QYVqUaHf2pCXOQ+JY/T9CURVFYSTppu
+         QABhYwGjB3zib2BHNzl8yDBQG01jekTDSEIsbRpdrKxqPIPGcv6G2yW/n04eBT8r18
+         SbUgun8TZKv0x9nvhqEerTbduYjxQA1z6zoFV70Dj48qz1TSainBpUw1/6ntr2TL2B
+         l6XVewjHJiQcNqulf06DwELYMp0BEgLlvHZupHTAjYgYaAHHWhwgilwnbDAmfwAZIO
+         aLVNjKCxpDHsw==
+Received: by mail.bizcall.pl for <kernel-janitors@vger.kernel.org>; Mon,  4 Apr 2022 07:47:55 GMT
+Message-ID: <20220404084501-0.1.1u.5dgn.0.87lxro74m8@bizcall.pl>
+Date:   Mon,  4 Apr 2022 07:47:55 GMT
+From:   "Marek Onufrowicz" <marek.onufrowicz@bizcall.pl>
+To:     <kernel-janitors@vger.kernel.org>
+Subject: Prezentacja
+X-Mailer: mail.bizcall.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+Dzie=C5=84 dobry!
 
-christophe.jaillet@wanadoo.fr wrote on Sun,  3 Apr 2022 12:11:13 +0200:
+Czy m=C3=B3g=C5=82bym przedstawi=C4=87 rozwi=C4=85zanie, kt=C3=B3re umo=C5=
+=BCliwia monitoring ka=C5=BCdego auta w czasie rzeczywistym w tym jego po=
+zycj=C4=99, zu=C5=BCycie paliwa i przebieg?
 
-> If spi_register_master() fails, we must undo a previous
-> mxic_spi_mem_ecc_probe() call, as already done in the remove function.
->=20
-> Fixes: 00360ebae483 ("spi: mxic: Add support for pipelined ECC operations=
-")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/spi/spi-mxic.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/spi/spi-mxic.c b/drivers/spi/spi-mxic.c
-> index 55c092069301..65be8e085ab8 100644
-> --- a/drivers/spi/spi-mxic.c
-> +++ b/drivers/spi/spi-mxic.c
-> @@ -813,6 +813,7 @@ static int mxic_spi_probe(struct platform_device *pde=
-v)
->  	if (ret) {
->  		dev_err(&pdev->dev, "spi_register_master failed\n");
->  		pm_runtime_disable(&pdev->dev);
-> +		mxic_spi_mem_ecc_remove(mxic);
+Dodatkowo nasze narz=C4=99dzie minimalizuje koszty utrzymania samochod=C3=
+=B3w, skraca czas przejazd=C3=B3w, a tak=C5=BCe tworzenie planu tras czy =
+dostaw.
 
-I missed it, thanks!
+Z naszej wiedzy i do=C5=9Bwiadczenia korzysta ju=C5=BC ponad 49 tys. Klie=
+nt=C3=B3w. Monitorujemy 809 000 pojazd=C3=B3w na ca=C5=82ym =C5=9Bwiecie,=
+ co jest nasz=C4=85 najlepsz=C4=85 wizyt=C3=B3wk=C4=85.
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Bardzo prosz=C4=99 o e-maila zwrotnego, je=C5=9Bli mogliby=C5=9Bmy wsp=C3=
+=B3lnie om=C3=B3wi=C4=87 potencja=C5=82 wykorzystania takiego rozwi=C4=85=
+zania w Pa=C5=84stwa firmie.
 
-Cheers,
-Miqu=C3=A8l
+
+Pozdrawiam,
+Marek Onufrowicz
