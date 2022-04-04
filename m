@@ -2,93 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80201C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Apr 2022 22:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B676C433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Apr 2022 07:41:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243823AbiDCWIU (ORCPT
+        id S1377720AbiDDHnH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 3 Apr 2022 18:08:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34556 "EHLO
+        Mon, 4 Apr 2022 03:43:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229613AbiDCWIT (ORCPT
+        with ESMTP id S1377713AbiDDHnF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 3 Apr 2022 18:08:19 -0400
-X-Greylist: delayed 1207 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 03 Apr 2022 15:06:25 PDT
-Received: from gateway30.websitewelcome.com (gateway30.websitewelcome.com [192.185.193.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73B5539149
-        for <kernel-janitors@vger.kernel.org>; Sun,  3 Apr 2022 15:06:25 -0700 (PDT)
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 3DB29FE64
-        for <kernel-janitors@vger.kernel.org>; Sun,  3 Apr 2022 16:46:18 -0500 (CDT)
-Received: from 162-215-252-75.unifiedlayer.com ([208.91.199.152])
-        by cmsmtp with SMTP
-        id b838nInrjdx86b838nmBxu; Sun, 03 Apr 2022 16:46:18 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
-        :Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
-        :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=UCsEhOVOXaKcIEYupusBoXQ4ng1au/G3kQqBKENbw7Y=; b=C3JVxT2sngssHTTbVRfeTeI977
-        jZ7NYq9LvL5fZU/gIlyfbMIze9FPTreQ+bHFyqzqDmiXnm2Z+wJLjxt7itsXDHdKsLR8/7uEK33zB
-        kGRpIXpFivi6NOgcU6ha2y11DKrIUAcGEhf5evPCvXJPFX3tk6nOidzimJl8anCoy2jwr2Y/jk/zw
-        UvinEjuSuwRbuUfbqhKkPGKb9mIYAqUPN9e8A6YEHwc4o37DmwguJoDmm9uHTqlJbLUxNn92mmSnm
-        zc3M9DdPaDaCAB2YtvbZem1ZqdRxkchMj/KpTPdztsVjR8lS9H8uQOsVcdoHHMIpe+IMHmCrQj9mt
-        4Ku9PSwQ==;
-Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:57832 helo=localhost)
-        by bh-25.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <linux@roeck-us.net>)
-        id 1nb837-003F1n-QZ; Sun, 03 Apr 2022 21:46:17 +0000
-Date:   Sun, 3 Apr 2022 14:46:16 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
+        Mon, 4 Apr 2022 03:43:05 -0400
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50F62237C8;
+        Mon,  4 Apr 2022 00:41:10 -0700 (PDT)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 0A6921BF20C;
+        Mon,  4 Apr 2022 07:41:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1649058064;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=NF/lJpAU/03I6K15u5g/9mSVcCQHoYVSaTao1w1uDOY=;
+        b=js/pMYM+6GRo15VMAvIr6mlVXqnxs+Wy/XTidvHnkvi1yU16p8akkRvd7Fpo9AqsEiRiRY
+        XlSpI2iFJXdu0nFG8xGxkGgZDkTG9YVCEXbtVHPjjuNCFwyMS5Q9hJVRe7hKtm9ivt3LAp
+        pNZP1B1axMOKxWhrf/SJEsvfmL92N2ekSfUl9cLw/rv3V72f8joQ4Uwd8QVXbvj03MIAjW
+        2whEKSr4OfY2FY2IAoOILxDIkn0CMo80LXkUntFiByoZ89mL6MuKHagpzsmtrrjKu8BSS7
+        bSqqagwP7BLw2i0qHfkZZj0PnQGNO9HkAA88ayPT+RpDQ61EsFW1AscjqbRIow==
+Date:   Mon, 4 Apr 2022 09:41:02 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Iwona Winiarska <iwona.winiarska@intel.com>,
-        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH] hwmon: peci: Use devm_delayed_work_autocancel() to
- simplify code
-Message-ID: <20220403214616.GA3058630@roeck-us.net>
-References: <fd277a708ede3882d7df6831f02d2e3c0cb813b8.1644781718.git.christophe.jaillet@wanadoo.fr>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH] spi: mxic: Fix an error handling path in
+ mxic_spi_probe()
+Message-ID: <20220404094102.48edaab5@xps13>
+In-Reply-To: <09c81f751241f6ec0bac7a48d4ec814a742e0d17.1648980664.git.christophe.jaillet@wanadoo.fr>
+References: <09c81f751241f6ec0bac7a48d4ec814a742e0d17.1648980664.git.christophe.jaillet@wanadoo.fr>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fd277a708ede3882d7df6831f02d2e3c0cb813b8.1644781718.git.christophe.jaillet@wanadoo.fr>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-BWhitelist: no
-X-Source-IP: 108.223.40.66
-X-Source-L: No
-X-Exim-ID: 1nb837-003F1n-QZ
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 108-223-40-66.lightspeed.sntcca.sbcglobal.net (localhost) [108.223.40.66]:57832
-X-Source-Auth: guenter@roeck-us.net
-X-Email-Count: 24
-X-Source-Cap: cm9lY2s7YWN0aXZzdG07YmgtMjUud2ViaG9zdGJveC5uZXQ=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Feb 13, 2022 at 08:48:53PM +0100, Christophe JAILLET wrote:
-> Use devm_delayed_work_autocancel() instead of hand writing it. This is
-> less verbose and saves a few lines of code.
-> 
-> devm_delayed_work_autocancel() uses devm_add_action() instead of
-> devm_add_action_or_reset(). This is fine, because if the underlying memory
-> allocation fails, no work has been scheduled yet. So there is nothing to
-> undo.
-> 
+Hi Christophe,
+
+christophe.jaillet@wanadoo.fr wrote on Sun,  3 Apr 2022 12:11:13 +0200:
+
+> If spi_register_master() fails, we must undo a previous
+> mxic_spi_mem_ecc_probe() call, as already done in the remove function.
+>=20
+> Fixes: 00360ebae483 ("spi: mxic: Add support for pipelined ECC operations=
+")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Reviewed-by: Iwona Winiarska <iwona.winiarska@intel.com>
+> ---
+>  drivers/spi/spi-mxic.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/spi/spi-mxic.c b/drivers/spi/spi-mxic.c
+> index 55c092069301..65be8e085ab8 100644
+> --- a/drivers/spi/spi-mxic.c
+> +++ b/drivers/spi/spi-mxic.c
+> @@ -813,6 +813,7 @@ static int mxic_spi_probe(struct platform_device *pde=
+v)
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "spi_register_master failed\n");
+>  		pm_runtime_disable(&pdev->dev);
+> +		mxic_spi_mem_ecc_remove(mxic);
 
-Aplied to hwmon-next.
+I missed it, thanks!
 
-Thanks,
-Guenter
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+
+Cheers,
+Miqu=C3=A8l
