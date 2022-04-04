@@ -2,80 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4920BC4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Apr 2022 21:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63139C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Apr 2022 21:27:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382387AbiDDV3X (ORCPT
+        id S1382392AbiDDV33 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:29:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54066 "EHLO
+        Mon, 4 Apr 2022 17:29:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379992AbiDDSf2 (ORCPT
+        with ESMTP id S1379826AbiDDSLb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 4 Apr 2022 14:35:28 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99A70DE6;
-        Mon,  4 Apr 2022 11:33:32 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id y6so8875657plg.2;
-        Mon, 04 Apr 2022 11:33:32 -0700 (PDT)
+        Mon, 4 Apr 2022 14:11:31 -0400
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66D733A5F9
+        for <kernel-janitors@vger.kernel.org>; Mon,  4 Apr 2022 11:09:34 -0700 (PDT)
+Received: by mail-lj1-x22d.google.com with SMTP id m12so2304298ljp.8
+        for <kernel-janitors@vger.kernel.org>; Mon, 04 Apr 2022 11:09:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HTlJgdeE3lDAqjCO4JsmP8RkA59LG12ag3IJtKwIY0w=;
-        b=P+dfA3xvQXkqkDVlraLxZTQnIMWTwarqXlYTJ99lRVk7T2xkorG4bZnidEdbaLbGES
-         RyNomIVom+PWAe4r4wm2td8PnRxJ9fAslAsGGwkaSzZvwUETX8b6s7pETYTcMoWWdkRH
-         aHxvAIhs/IbxLyErjub8jgWIo187ee97PNZ2Ucy9yi18MGSTIY2Ona5H4w53u9CExOgg
-         0NG53Fk4vnKnuZlUnihv7Vj5hPA/pqAxYAir8fpcby0uEDowXno2DUlEQOMk0HpKq6Fl
-         yRWuvEAWnpGK623LtUxevSPLH5yZhlzfBdYTJ53WysTo6T0Gfy7XshDsS60LFpHGAiS5
-         /EXg==
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Uz4lPE2rdo2tRM1taU9hjtHkKN6cEscjMgtJGGpCZK0=;
+        b=AKh+Xx8Jri22FLpKBD4E3RoftVzjoBrDVxvOksJJs1GiZpvdGJdEX2vPXJvyGWVcDC
+         Tsws7vziNMKhEc1zFl/txeNmPo/Wx7XJU0EJZq+3mQ6ntGZLXmpSi8w6nhlFDGUBzWmX
+         Yq+MB4VarfRzItJWG71o6LZ/2bUZ5IMRLDkDDxXbx8gBkWa58++9ibIS0lfl8QXbFYIc
+         e6nDCpIHZIZkDQigSykJm8MIxAStv7nYv6rs85ZIHdGzECyEPFVpFeNZslA0YGNsgm/J
+         vb7bEkgtvx02wVWUHzX1C4z68lOmkxFEyA4y4BJ3/zRjlRU1yBfRbZ5ORhOrFwx5FwrM
+         BsDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HTlJgdeE3lDAqjCO4JsmP8RkA59LG12ag3IJtKwIY0w=;
-        b=349U9bjqolacvAF4TKlIz+2Gd7qTGBuC3N/ZYwht3ZvGxHP1RBsMYLidX/ELmo7HeA
-         asSRettZfdQigejH6qFFh+XfHF/UwPachcyXD/X2DmMaqkDMo4FzJ/e2lfJWwGzv/RrK
-         G3x10TKowmTm6PfHormpchrmzjv+guPiwdWwzysOfLm/WHswv4mdcn5fqRuJTRJUD+Ik
-         hhpoZmT/MFzSju7MlekRmeGD2Zf5LlK9N6kz3W6P66WemdIlT73y2dGRbkfUrUw66sbj
-         wfzVqetKKqgigp9MDMf0EuyL4no8M/QKBOrTABNG3JS/bxyL916sITK4sMkzkAFftKBL
-         UxaQ==
-X-Gm-Message-State: AOAM533CDjOP9IM+YcMDT8JD7NyhhlW+nrCdnx18ZUvHa2dPDeGwHDCP
-        4EfdttWvYUaVnkIc6NY3j6g=
-X-Google-Smtp-Source: ABdhPJwNXvwaTH65EoOOHPTEfB5Y2JfrzarbaacpVXtcBxzrJWqO/r0jswwpURqlCoHbrfBnh+mFIw==
-X-Received: by 2002:a17:90b:224f:b0:1c9:949e:2202 with SMTP id hk15-20020a17090b224f00b001c9949e2202mr567659pjb.56.1649097212048;
-        Mon, 04 Apr 2022 11:33:32 -0700 (PDT)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id b13-20020a056a000ccd00b004fadb6f0299sm13163917pfv.191.2022.04.04.11.33.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Apr 2022 11:33:31 -0700 (PDT)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     bcm-kernel-feedback-list@broadcom.com,
-        Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     kernel-janitors@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: brcmstb: fix typos in comments
-Date:   Mon,  4 Apr 2022 11:33:29 -0700
-Message-Id: <20220404183329.2316211-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220318103729.157574-34-Julia.Lawall@inria.fr>
-References: <20220318103729.157574-34-Julia.Lawall@inria.fr>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Uz4lPE2rdo2tRM1taU9hjtHkKN6cEscjMgtJGGpCZK0=;
+        b=dtN3xgHqCnijazXRENiqetHwqZMDbFOfpxG64s9hjF8NWj8soa2zOaPPS5zTfGatvM
+         r6hb/FolLJW2olQ33EncKkCs3cvC0SPyu9N7WUGUzaeMPUQkvXohc3KbFYmJIB8TSgzm
+         vL20iGJAhl0d3OpTA02lqlZLBQecTQ8W6ex6OftbSJDW45qz6S/LnFT0mFeqE445AO8b
+         y7/OPkvhWA0kgfKb0/s1GKWfoBF10Y3iDR19DFpI7aHL9KhXaNQ6yi1XP2w+KTIaewKg
+         u5zQrw1UsOxEarfuwkf1AESvkv5ZgjnW0QVDTGmj4cgYnfIq0iifEwlVBQ83FB/qXOt/
+         ksPg==
+X-Gm-Message-State: AOAM531xbP7O8ZfDYrzHRNIJ5xEimhT1mekNIH3+ErphpLbhuAl/Ue1g
+        yMKbtwrMbTObecQZYN38UeLHiVf1e0Bx/wH7bvQhZA==
+X-Google-Smtp-Source: ABdhPJyEamkccvVwsWuiMfR8yOe39RymGH9/TLP+zLi/6TZpWH3im6mHt1c9jyr67LnqZRKEZnZwcP1sY9HjUQIPna4=
+X-Received: by 2002:a05:651c:1588:b0:249:b90d:253c with SMTP id
+ h8-20020a05651c158800b00249b90d253cmr525887ljq.408.1649095772447; Mon, 04 Apr
+ 2022 11:09:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220318000055.79280-1-colin.i.king@gmail.com>
+In-Reply-To: <20220318000055.79280-1-colin.i.king@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 4 Apr 2022 11:09:21 -0700
+Message-ID: <CAKwvOd=GRBTs43JcwMBS=aEYtOXLP+SVEj3d89LjcfJJZLOZ5Q@mail.gmail.com>
+Subject: Re: [PATCH] amd64-agp: remove redundant assignment to variable i
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     David Airlie <airlied@linux.ie>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 18 Mar 2022 11:37:29 +0100, Julia Lawall <Julia.Lawall@inria.fr> wrote:
-> Various spelling mistakes in comments.
-> Detected with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
+On Thu, Mar 17, 2022 at 5:01 PM Colin Ian King <colin.i.king@gmail.com> wrote:
+>
+> Variable i is being assigned a value that is never read, it is being
+> re-assigned later in a for-loop. The assignment is redundant and can
+> be removed.
+>
+> Cleans up clang scan build warning:
+> drivers/char/agp/amd64-agp.c:336:2: warning: Value stored to 'i' is
+> never read [deadcode.DeadStores]
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Applied to https://github.com/Broadcom/stblinux/commits/soc/next, thanks!
---
-Florian
+Thanks for the patch!
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+
+> ---
+>  drivers/char/agp/amd64-agp.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/char/agp/amd64-agp.c b/drivers/char/agp/amd64-agp.c
+> index dc78a4fb879e..5f64991c73bf 100644
+> --- a/drivers/char/agp/amd64-agp.c
+> +++ b/drivers/char/agp/amd64-agp.c
+> @@ -333,7 +333,6 @@ static int cache_nbs(struct pci_dev *pdev, u32 cap_ptr)
+>         if (!amd_nb_has_feature(AMD_NB_GART))
+>                 return -ENODEV;
+>
+> -       i = 0;
+>         for (i = 0; i < amd_nb_num(); i++) {
+>                 struct pci_dev *dev = node_to_amd_nb(i)->misc;
+>                 if (fix_northbridge(dev, pdev, cap_ptr) < 0) {
+> --
+> 2.35.1
+>
+>
+
+
+-- 
+Thanks,
+~Nick Desaulniers
