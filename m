@@ -2,89 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD33BC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Apr 2022 22:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35F01C35276
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Apr 2022 22:09:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231784AbiDEV7s (ORCPT
+        id S233763AbiDEWF6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Apr 2022 17:59:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43932 "EHLO
+        Tue, 5 Apr 2022 18:05:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1443051AbiDEPiw (ORCPT
+        with ESMTP id S1457632AbiDEQWh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Apr 2022 11:38:52 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEA4E144B5C;
-        Tue,  5 Apr 2022 06:54:15 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id h4so19385760wrc.13;
-        Tue, 05 Apr 2022 06:54:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DtW73tEE2+XFkT3bPsX/7iGbHd2vWpPYT/i50JAUgmI=;
-        b=KRuBEqeehUWFQiE6Qb6pz2CZtRUAXww/24GIyCnvwpdbtfIKvDXbMg/G7g3DnY42x6
-         /iZbgKc5kKf24N8Ac4Mpu156t4HMYzU7Nm+RM3S3BnmbpSHNkHbZn/OOn478oWoEpF8E
-         De5/l0DXrm9uA/jpBI0/y5L4nLSqe4IWXKqb4B9WfjbhMRIsV28Dz8F/Eb2URXYcNzQM
-         AtiZNEnvnfUmIdfza2vc32Mep19NqVFUKjYP78+D97mljq2ztcdx3TyvTolE+C9Klo0g
-         A++9eTEGSW/RNdTwnTzk/7OBaYYwNf3nClqpPAgFLubykoDzWaSzpo9QnkjU9VSqUVjI
-         FKYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DtW73tEE2+XFkT3bPsX/7iGbHd2vWpPYT/i50JAUgmI=;
-        b=wg2+xuN2p/2bH9p0ysDY0PM6PYQ8n/7R/ZS4VFjHDTpKvINogCpTWx/9WCBTAuVo7j
-         PinirXoGTmofj2Ln5Gan1Gip4C4OocGgxWo9ob4Hebzu3IWGVWAYomgkiDu5ndSHpCJG
-         QFAJ0oW6NBPzGaWiTVhc5iXnMjD1+YO6NIaNpTn1gq3pgWIPuDudm9J/EU/9+FtU1sIu
-         xrpdDGHoP0pQg07hQI4Eqbw7zJ1eVlpNL2JkUzBA7Ge3jdsFYByX2WdTDB5XkDS3o5Mm
-         XQiZWc98z48LaZGT5nYfjLgplX4JvuwyDyHWNPGAvQqdBhwsCSAooD3JxOe2UnROC4Q/
-         mkDg==
-X-Gm-Message-State: AOAM530w4awfk3c2ymPRlPpwMmmXnYDUIurCvkyZUeqlNaQuxi3UlFmy
-        0sqjcuoEVA10yEhRf1DKOkA=
-X-Google-Smtp-Source: ABdhPJx7uWLB6seAta51fiSK0+njz9yI+4yOg/CEwF3nvoU2EuPI0t4kkYbH392xPZ7JN2jShsBA+w==
-X-Received: by 2002:a05:6000:156d:b0:204:c24:895f with SMTP id 13-20020a056000156d00b002040c24895fmr3015212wrz.339.1649166854425;
-        Tue, 05 Apr 2022 06:54:14 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id k12-20020a5d628c000000b00203e2fbb2absm12132822wru.113.2022.04.05.06.54.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Apr 2022 06:54:13 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: echoaudio: remove redundant assignment to variable i
-Date:   Tue,  5 Apr 2022 14:54:12 +0100
-Message-Id: <20220405135412.199251-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Tue, 5 Apr 2022 12:22:37 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FE8C5D676;
+        Tue,  5 Apr 2022 09:20:37 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id DCBFE1F38D;
+        Tue,  5 Apr 2022 16:20:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1649175635; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=IaeKt7hV7UqwigSIbp40W1LQkurWXOIlKnY07ODu6m0=;
+        b=R4n65WDvnTHDlv1h8WsdQcxcF+ycmmkc9KiVy5PgkRKBndkJGYAK8pZPGu0b65mFIB78y9
+        gXzP6TUGH0n0P9TsMcXV4XFD6U6VJXOAP+Vk6fKuKb/Mu1oIV0apBbFOxmoBCCX2gglF/B
+        ZNIn0UXFUpN2LHOjzp4nWaNiW8dqrsw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1649175635;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=IaeKt7hV7UqwigSIbp40W1LQkurWXOIlKnY07ODu6m0=;
+        b=JuSbKRdEVmd3C3fVNg6/P94AXqhC70FYDi15WnxwsYcWNX181kZCN6aAG2jZJ8HlUJWuIV
+        a+15WpjRFs+L94Cg==
+Received: from alsa1.suse.de (alsa1.suse.de [10.160.4.42])
+        by relay2.suse.de (Postfix) with ESMTP id C7A22A3B88;
+        Tue,  5 Apr 2022 16:20:35 +0000 (UTC)
+Date:   Tue, 05 Apr 2022 18:20:35 +0200
+Message-ID: <s5hee2b5woc.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: echoaudio: remove redundant assignment to variable i
+In-Reply-To: <20220405135412.199251-1-colin.i.king@gmail.com>
+References: <20220405135412.199251-1-colin.i.king@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable i is being assigned a value that is never read, it
-is being re-assigned in the following for-loop. The assignment is
-redundant and can be removed.
+On Tue, 05 Apr 2022 15:54:12 +0200,
+Colin Ian King wrote:
+> 
+> The variable i is being assigned a value that is never read, it
+> is being re-assigned in the following for-loop. The assignment is
+> redundant and can be removed.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- sound/pci/echoaudio/midi.c | 1 -
- 1 file changed, 1 deletion(-)
+Thanks, applied.
 
-diff --git a/sound/pci/echoaudio/midi.c b/sound/pci/echoaudio/midi.c
-index 7be5c3327b16..47b2c023ee3d 100644
---- a/sound/pci/echoaudio/midi.c
-+++ b/sound/pci/echoaudio/midi.c
-@@ -124,7 +124,6 @@ static int midi_service_irq(struct echoaudio *chip)
- 		return 0;
- 
- 	/* Get the MIDI data from the comm page */
--	i = 1;
- 	received = 0;
- 	for (i = 1; i <= count; i++) {
- 		/* Get the MIDI byte */
--- 
-2.35.1
 
+Takashi
