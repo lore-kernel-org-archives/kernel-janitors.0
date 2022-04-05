@@ -2,65 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5729C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Apr 2022 04:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AFE0C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Apr 2022 10:53:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230438AbiDEEVA (ORCPT
+        id S240939AbiDEKz1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Apr 2022 00:21:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57488 "EHLO
+        Tue, 5 Apr 2022 06:55:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230448AbiDEEUl (ORCPT
+        with ESMTP id S1347159AbiDEJqD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Apr 2022 00:20:41 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09CBFF71;
-        Mon,  4 Apr 2022 21:17:25 -0700 (PDT)
+        Tue, 5 Apr 2022 05:46:03 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEE30DCE2B;
+        Tue,  5 Apr 2022 02:32:33 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C5F05B81B79;
-        Tue,  5 Apr 2022 04:17:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FCF7C340F0;
-        Tue,  5 Apr 2022 04:17:21 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 98173615E5;
+        Tue,  5 Apr 2022 09:32:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 014EDC385AC;
+        Tue,  5 Apr 2022 09:32:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649132242;
-        bh=KCPGLPVeH6NYTKvdtiGBtcJRWw93SSF1I3156qmZZSM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QVwAnVKdmrWaK0a/L7PZoNplSCX1Y7xJ2q3ES1fA6a+owx43D7XQ80+BCiWLUUPrn
-         ph3OJTwN+MqWw85S+HQXSJ4rOrTIPan2Uaymd64QPTpjNqFnOWJ5dMuE2ns+/1WEo2
-         nl62VqxlWyc4YKy82ppGGnQZd2idxD6Y5BKjueAd11a2sgURGMZi+GAMOKsEeXZvIT
-         m6MHO6FTUFPjsj97zkEx/UsySW5csN6hBW2s6fxcZSMdGNDQUiFvzixym59uKjeOJS
-         FaFYt819xFCAGo8wJG8aaeA+Q5aovyeVNODa+oL2d9Z0Sa41zoetW+NgVEB3HiUs9O
-         0x26KECI1U2kA==
-Date:   Tue, 5 Apr 2022 09:47:18 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Bard Liao <yung-chuan.liao@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
+        s=k20201202; t=1649151152;
+        bh=JncMrmfzGwPQjE8v5Pu7YmvmRGLYwvdId2BOQWsQm3g=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=Lwe2vorGKyGz1bl2S5iuUkKHrbRH7fJipkVD/5CprU9IVf1St+0vLejwdA5JNej4E
+         2TC2gE/DAVvJijHf6f7ncy2/3gEaLoHAFsKOEMM/kJcoGijA1Sth6yuHjqq91Rwqf+
+         a+I311V25B6/YKfySaEQMlVHnDJYeGHiwn/5zvQ29TLp13jMHvPBmA2SjSVWgIx/sC
+         R31xZuDvm8NqXlplbULmp0BI6pXvcUTJyGpEcw8HxQsPBbPfUps8N8ltJIm8vsLyjS
+         KmwSwVK3BXUHZAmyMVJVTBhvJy7fNRutKOlxp+JPb10YAYlr7ZgF/VB9Wbb5O0n5Vx
+         9J/T+CMQJqRNQ==
+From:   Mark Brown <broonie@kernel.org>
+To:     miquel.raynal@bootlin.com, christophe.jaillet@wanadoo.fr
+Cc:     linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] soundwire: qcom: fix an error message in
- swrm_wait_for_frame_gen_enabled()
-Message-ID: <YkvCzlU5/KuKE1rS@matsya>
-References: <20220307125814.GD16710@kili>
+In-Reply-To: <09c81f751241f6ec0bac7a48d4ec814a742e0d17.1648980664.git.christophe.jaillet@wanadoo.fr>
+References: <09c81f751241f6ec0bac7a48d4ec814a742e0d17.1648980664.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] spi: mxic: Fix an error handling path in mxic_spi_probe()
+Message-Id: <164915115073.276894.2017003822406152149.b4-ty@kernel.org>
+Date:   Tue, 05 Apr 2022 10:32:30 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220307125814.GD16710@kili>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 07-03-22, 15:58, Dan Carpenter wrote:
-> The logical AND && is supposed to be bitwise AND & so it will sometimes
-> print "connected" instead of "disconnected".
+On Sun, 3 Apr 2022 12:11:13 +0200, Christophe JAILLET wrote:
+> If spi_register_master() fails, we must undo a previous
+> mxic_spi_mem_ecc_probe() call, as already done in the remove function.
+> 
+> 
 
-Applied, thanks
+Applied to
 
--- 
-~Vinod
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/1] spi: mxic: Fix an error handling path in mxic_spi_probe()
+      commit: 35d516bdcd92fde46202d06b68df1166760208fd
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
