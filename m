@@ -2,112 +2,109 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 549F4C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Apr 2022 16:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B77B1C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Apr 2022 16:13:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236924AbiDFQCI (ORCPT
+        id S237252AbiDFQPb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 6 Apr 2022 12:02:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34548 "EHLO
+        Wed, 6 Apr 2022 12:15:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236933AbiDFQCC (ORCPT
+        with ESMTP id S237236AbiDFQPP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 6 Apr 2022 12:02:02 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9F0F348A67;
-        Wed,  6 Apr 2022 06:32:19 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id yy13so4343466ejb.2;
-        Wed, 06 Apr 2022 06:32:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=niunOJ3MaXUFHbr4lbaS6D1TbU9QBsWRT6UXQMa2ITQ=;
-        b=nkXV47q3wTX2IKhRobhX9k0wlO78UWo3Pu1cGioH8EzA5XNkKBINxeIcA6qNduJWCa
-         fdcbIZE2tAhplyS7K4DkNZc7pXz+ba22d/7OPtvHVcO8ha3afT9O8+Nb6qYgNVkUO9xS
-         Sr5MmOo8w1shDyK/prx9VliBS+wbmCPkNdjRgf04BlemlcmS5jDoyBQh6Olfqwe8lsLL
-         pz3NQHK4TIYz9T6ArCbIxNJjrEdEFKuf66ctnNgOGxwEkJUXAwencqQi4OZr0Pju/o51
-         YZy5feqpqgIeSXJhtsL/inBW/VXSW6jDf6pOZDA0vX0ceDeyH/ok5EHxGQO2lYte+COn
-         8glA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=niunOJ3MaXUFHbr4lbaS6D1TbU9QBsWRT6UXQMa2ITQ=;
-        b=LOZusQmECm8lRpSieExeNFBvPVLziJ1ZHlwSh4VyN1Uni/1Vd/fdVRRTdOnFkdQIvV
-         zgI5aIkotgUTT73zYoGcrQagLLNBwAl7iqpDIYOeQ/3/YsuQgXjY/RFu9rHQqDsTfyhj
-         mn0IqE3qkGNhF8VNN1fsnawJjVb3tsYUZ+RoL9+y/iDO+Ul88JESKz7Vz/x4QmbTceqK
-         PeNA3H3OsuvAclpUXsDlCuSbTYMTHve8OlbkFpAfk2zC9XJYubLcJ6c2OQKtZ8IK2IbD
-         ViYvSVj4g/ea3JQbvXRjoSdIdk0M3fji9rPmonVOMo4plRJGUjJ2Il1nci5jxJxZQ78m
-         O1Ng==
-X-Gm-Message-State: AOAM53180/iBi4Haci3uZWhgAKtMoh093x21GXsHVmVL0UIKm2LGRUTI
-        ltqyoW6jslhAvbhMm1N0iig=
-X-Google-Smtp-Source: ABdhPJyg/OBIlUh7EMNy4f0TXHsNiCHCCBnWiWJ/r6XOCH2Fjigs+ZL4f8/vPP3nFsOzBdCi0E1d+A==
-X-Received: by 2002:a17:907:7206:b0:6e6:d0b7:fd88 with SMTP id dr6-20020a170907720600b006e6d0b7fd88mr8074540ejc.121.1649251938297;
-        Wed, 06 Apr 2022 06:32:18 -0700 (PDT)
-Received: from orome (pd9e518f7.dip0.t-ipconnect.de. [217.229.24.247])
-        by smtp.gmail.com with ESMTPSA id jt8-20020a170906ca0800b006df9b29eaf1sm6535874ejb.8.2022.04.06.06.32.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Apr 2022 06:32:16 -0700 (PDT)
-Date:   Wed, 6 Apr 2022 15:32:14 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        kernel-janitors@vger.kernel.org,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: tegra: fix typos in comments
-Message-ID: <Yk2WXutks478t7MJ@orome>
-References: <20220318103729.157574-8-Julia.Lawall@inria.fr>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Yd0gt/eyj0AUzh/G"
-Content-Disposition: inline
-In-Reply-To: <20220318103729.157574-8-Julia.Lawall@inria.fr>
-User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
+        Wed, 6 Apr 2022 12:15:15 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CABA3E37FB;
+        Tue,  5 Apr 2022 21:11:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1649218307; x=1680754307;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=cR9iKxrz/8HA3dd1/jwZRF3XG6WX3t9oScAc0DPOnW8=;
+  b=Qhr3ZgcT6AghAGdmMiC42Yq+xjXtn3ha0USfQQjyMEydVBDv0FC4Afip
+   QdNUZQ5q7U+avhoyBYeNyTjKoqHwy+n23gZMIHzRPszfWR/i5RRVn9FAA
+   ivTGW0i/EvCYdBLPQvqQOYItX+SyA2zvCLZ/mNieoxs8FT4MbVJm9nC/C
+   a9ayqykO7f69eBEIwUcKcPSD+CVQsymH20Nr3ySz9Zj6Ag6I/EYxD7+A4
+   m/MYFj82grrvtlc+Q/5JvURh0DZ0wzaeJArpjZFZUwgo4zPIIwuEOqryq
+   l+kWxm2bsTJyg/7HHWH44kRAvhEqy+H1bV212Gk/aG7KTZUvU9SM7g5uW
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10308"; a="241530382"
+X-IronPort-AV: E=Sophos;i="5.90,239,1643702400"; 
+   d="scan'208";a="241530382"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2022 21:11:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,239,1643702400"; 
+   d="scan'208";a="524294591"
+Received: from unknown (HELO localhost.localdomain) ([10.23.185.145])
+  by orsmga006.jf.intel.com with ESMTP; 05 Apr 2022 21:11:44 -0700
+Message-ID: <f3b6524f899f2775e630dee2ad1cc4c4c389b2fe.camel@intel.com>
+Subject: Re: [PATCH] i2c: ismt: Remove useless DMA-32 fallback configuration
+From:   Seth Heasley <seth.heasley@intel.com>
+To:     Wolfram Sang <wsa@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Neil Horman <nhorman@tuxdriver.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org,
+        seth.heasley@intel.com
+Date:   Tue, 05 Apr 2022 14:13:04 -0700
+In-Reply-To: <YgEtUT7Dhntmidxy@shikoro>
+References: <853d9f9d746864435abf93dfc822fccac5b04f37.1641731339.git.christophe.jaillet@wanadoo.fr>
+         <YgEtUT7Dhntmidxy@shikoro>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-8.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Mon, 2022-02-07 at 15:31 +0100, Wolfram Sang wrote:
+> On Sun, Jan 09, 2022 at 01:29:45PM +0100, Christophe JAILLET wrote:
+> > As stated in [1], dma_set_mask() with a 64-bit mask never fails if
+> > dev->dma_mask is non-NULL.
+> > So, if it fails, the 32 bits case will also fail for the same
+> > reason.
+> > 
+> > 
+> > Simplify code and remove some dead code accordingly.
+> > 
+> > [1]: https://lkml.org/lkml/2021/6/7/398
+> > 
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Seth Heasley <seth.heasley@intel.com>
+> 
+> Seth, Neil, do you agree?
 
---Yd0gt/eyj0AUzh/G
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, I agree this change makes sense.
 
-On Fri, Mar 18, 2022 at 11:37:03AM +0100, Julia Lawall wrote:
-> Various spelling mistakes in comments.
-> Detected with the help of Coccinelle.
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
->=20
-> ---
->  arch/arm/mach-tegra/platsmp.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> > ---
+> >  drivers/i2c/busses/i2c-ismt.c | 7 ++-----
+> >  1 file changed, 2 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/i2c/busses/i2c-ismt.c
+> > b/drivers/i2c/busses/i2c-ismt.c
+> > index f4820fd3dc13..951f3511afaa 100644
+> > --- a/drivers/i2c/busses/i2c-ismt.c
+> > +++ b/drivers/i2c/busses/i2c-ismt.c
+> > @@ -920,11 +920,8 @@ ismt_probe(struct pci_dev *pdev, const struct
+> > pci_device_id *id)
+> >  
+> >  	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+> >  	if (err) {
+> > -		err = dma_set_mask_and_coherent(&pdev->dev,
+> > DMA_BIT_MASK(32));
+> > -		if (err) {
+> > -			dev_err(&pdev->dev, "dma_set_mask fail\n");
+> > -			return -ENODEV;
+> > -		}
+> > +		dev_err(&pdev->dev, "dma_set_mask fail\n");
+> > +		return -ENODEV;
+> >  	}
+> >  
+> >  	err = ismt_dev_init(priv);
+> > -- 
+> > 2.32.0
+> > 
 
-Applied, thanks.
-
-Thierry
-
---Yd0gt/eyj0AUzh/G
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmJNll4ACgkQ3SOs138+
-s6H3AA/8ChdHj0sdYCc2sTyKoZSt78iMAJsOzE65Xmc7eeU51exdcOjPG6EysgRb
-Lgp/iu4ViEw4u6P9pvsA/buET898qfi96cHeoCESqrDza4NEqSwL6+8vr+I3l+ZV
-YySgT6FbybCt6jmxo0BTg5Lw9Q/ytHl3RUtsS+CJCbmHd6jjzbXOoKdwCsyZZ/jh
-dz4Ht6iW9k+1xg2kgr1KCPiVN5INHBSfqKuS1l9OYSUme3vfjEPt+XlqkKms9L4c
-KNk1J5QQ/tujKhvUNNtjNstuVPAbNSue/FyTRPsoMH0ha8esJ9kZmA3UCEP/n3mY
-gYzaRpk1CNrUxdIhmry6evmKnmnybcKtYZaLnc3VAJaSPrUu3ewuF1bm9Qdpi8XH
-Ks4UsSDkrjUuPs+blRz5XKt/+AlQj9mnkAT4cUf/No9edP6oza0qyJXYcWRcYVRx
-bxthehCUCeJLtb5nnKZ0I7jTBPN/vBlS7rZkzbUtyKJRp0Kspamgy/aNqDu0ynjR
-IUaqFbe3r507xZP0za5BVEbOmdXy/+QwP3YvIdpj5/8i1JqBfRkeCMGDtWdu7/zC
-t0f5rRfJswHx1DtYxbzWI8ULphiYrV4bHFVklhmduOAYWwJ1uLgYFgLzb/MlcgK7
-quS3WEWN11kTWHlwm+BHv+3PCvxzIuiiNH5LbcKA1toTRlMWEwo=
-=Cw0h
------END PGP SIGNATURE-----
-
---Yd0gt/eyj0AUzh/G--
