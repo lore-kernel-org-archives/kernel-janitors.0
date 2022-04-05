@@ -2,70 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09FE6C35273
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F11C4707E
 	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Apr 2022 22:09:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231825AbiDEWFr (ORCPT
+        id S236180AbiDEWGD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Apr 2022 18:05:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57894 "EHLO
+        Tue, 5 Apr 2022 18:06:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1389781AbiDEP0q (ORCPT
+        with ESMTP id S1573147AbiDESCB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Apr 2022 11:26:46 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28AE1EEA43;
-        Tue,  5 Apr 2022 06:37:32 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: kholk11)
-        with ESMTPSA id C01181F4512B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1649165850;
-        bh=plGTTyi7O6qDtXxCe+h/xQcs9ltHnMhWtxjOqkuVZDA=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=c7CbAeTNu93R+wac0xUo8wYt5JHYwVPd64SEqW/SDwK8otS4ZmnyP2OT8Zetat059
-         odFY4s7LLMRKdZx+u9DgJ+6R76/bmNzUrxwpPJMv+KYldaKtX0rVOinXvHBuewmHCd
-         GPiHBfHg9bzOyApLYuAlAGJ54YI1ZvRFGvvu31CzQMNaPh7/FpmEf6WgCoWWVghk0v
-         n7+V4pbW+bbDbiuVhQ74MTamguMKsNtXVYQJBaVZkV4tM1g6haDmp3nJBTJhcq+6me
-         SGNpIoCdUfJATVmysl7Ianu9MVm7k8Y6RobJ0fX1h6SE+SehjaHHxv8XRMMnf90Yif
-         lU13kvmJsV8CA==
-Message-ID: <9999f731-1e95-ef51-4b09-c88222320696@collabora.com>
-Date:   Tue, 5 Apr 2022 15:37:26 +0200
+        Tue, 5 Apr 2022 14:02:01 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAC68EBB9D;
+        Tue,  5 Apr 2022 11:00:01 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id w4so20488284wrg.12;
+        Tue, 05 Apr 2022 11:00:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ps9sabn/FLiol/hOAkHVK8/MzrVBlohNvXit/I8IEYc=;
+        b=R44RXszOTrCfg9a6xQntX7eXLlcenLZQ79iHWwZfWh9PijVC/UjlQitBO/Yt/Wq/W5
+         dTA4dRF74W0DLZK0MUpa6PxqZxtBFxQmoUyDUjy0e4JVi5WXu/xU+Y1Hzb7op13pN/t1
+         Vco1rVX5eqUYMewLGvFa+zlth4/k7DCJ+ThdQOvI7x0KHIQ5FaPPk/UWHJC1orymLQX4
+         7XSCpRaubPqT0f6R2D/NEp8qzZ0wueIQDW44oLsn/B677uMWwY0PSYg/po63Ac2Z5RkA
+         BLP8vayDRRtqY/sys3mO8EU3v1ruGqddsM+LoJibpZoG4yzJujdjCt1+X2uICb0xzSeQ
+         swXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ps9sabn/FLiol/hOAkHVK8/MzrVBlohNvXit/I8IEYc=;
+        b=1OAgLFHfQ6LCXk2se/Fx8MowrtwgUHu+r+8eR2bLNVxhV+7Px0ZkBgV4mI2BgYS1fv
+         fvSgyS/DOxllkVRBNVLsdP8WXXUr7ft9TAP7cdjtXgTrGaVvlm4w/uqFe7T5gMniWA6t
+         E/YQpMxKW6zc6ZS2IKk+hWJkh/QgdhSTPjKPPTJPDp1mTXnB36ozXtTf98+b3qPqM/n2
+         Aw79UVnTh5pd1SIJLktRXcHTwMNfb4QjC/9r/Hf4w7N/KZ76Z9cBc/CRXO9gCi+Uihb2
+         GNJclavOv2Hnq9pQkZTyqYdhiIxVlObnD+54t+giQqode3fLTzlRcIsB5UM2RqpzXN4E
+         uKUg==
+X-Gm-Message-State: AOAM5309NQ0h/oYmjB2wHLcF0dNCP5wx751JG6Go4dd0zCEnSYTzlfUw
+        6dD+nUQeQhhOU1Z4hraB/PQ=
+X-Google-Smtp-Source: ABdhPJzPk+TK/I+NTaHUbvTpHCArFr87ss2K8cjZe77v1loJE5zgGUwLw+jFL7OH+UyTRqfqB5ZSBw==
+X-Received: by 2002:a5d:5608:0:b0:206:11c2:b65d with SMTP id l8-20020a5d5608000000b0020611c2b65dmr3663036wrv.215.1649181600255;
+        Tue, 05 Apr 2022 11:00:00 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id k9-20020adfb349000000b00206101fc58fsm6898756wrd.110.2022.04.05.10.59.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Apr 2022 10:59:59 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: platform: samsung: remove redundant assignment to variable m
+Date:   Tue,  5 Apr 2022 18:59:59 +0100
+Message-Id: <20220405175959.223443-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] remoteproc: mtk_scp: Fix a potential double free
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <1d15923b4ffb94531435c48482fef276a11b9a67.1648981531.git.christophe.jaillet@wanadoo.fr>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <1d15923b4ffb94531435c48482fef276a11b9a67.1648981531.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Il 03/04/22 12:25, Christophe JAILLET ha scritto:
-> 'scp->rproc' is allocated using devm_rproc_alloc(), so there is no need
-> to free it explicitly in the remove function.
-> 
-> Fixes: c1407ac1099a ("remoteproc: mtk_scp: Use devm variant of rproc_alloc()")
+The variable m is being assigned a value that is never read, it
+is being re-assigned in both paths of the following if-statement.
+The assignment is redundant and can be removed.
 
-Hello Cristophe,
-thanks for the patch!
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-s5p.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-I agree with what you're doing here, but you forgot to add your Signed-off-by.
-Please resend it with your signoff, then I will give you my R-b.
-Also, please make sure to add me to the Ccs so that I can see your v2 sooner!
+diff --git a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-s5p.c b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-s5p.c
+index 01b47b3df1e7..33e6e85dfd78 100644
+--- a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-s5p.c
++++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-s5p.c
+@@ -52,7 +52,6 @@ void s5p_jpeg_proc_mode(void __iomem *regs, unsigned long mode)
+ {
+ 	unsigned long reg, m;
+ 
+-	m = S5P_PROC_MODE_DECOMPR;
+ 	if (mode == S5P_JPEG_ENCODE)
+ 		m = S5P_PROC_MODE_COMPR;
+ 	else
+-- 
+2.35.1
 
-Thanks,
-Angelo
