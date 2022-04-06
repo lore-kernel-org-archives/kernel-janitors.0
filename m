@@ -2,94 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E86A3C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Apr 2022 12:22:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C52B7C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Apr 2022 15:55:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232331AbiDFMYh (ORCPT
+        id S236846AbiDFP45 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 6 Apr 2022 08:24:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56480 "EHLO
+        Wed, 6 Apr 2022 11:56:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234308AbiDFMXO (ORCPT
+        with ESMTP id S236662AbiDFP4s (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 6 Apr 2022 08:23:14 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3E69116D;
-        Wed,  6 Apr 2022 01:08:38 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id d29so1930947wra.10;
-        Wed, 06 Apr 2022 01:08:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Oy67HKB+CH5MprbImCqTy7TMJ9Sc0ffSgIQtidsk7ic=;
-        b=NbUT5qTkF0/yhbtTMiRU91oFoO0A54Mr1tlwna16DC4OO0Rr/LNqXcYHCszzOaUxjV
-         6/x2ZV853pL7kHV4/RSDr8FsYGEWC0U2h5TULHMl5Tl5AkhueCmCKJp1FXV4PeLwtQJP
-         unoNRURHRC1IpADCz0yElwjJtGKB4cw5VSJ7vK+CAnF8zgtDgj4uWlV7TrvPCYZTBwBr
-         6dIYnop/zOV07tgWx4e7/ff8WqO6BSL+ahSr/4rDLUPJ7yBviKCuYO66ThgWTnazwt3u
-         QR46MaoMWWyaltmwYP4iv66YyBURkogn2t0/JLY3nFhP/Jhs8hT6ydJNUglysMoF3zDy
-         qDUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Oy67HKB+CH5MprbImCqTy7TMJ9Sc0ffSgIQtidsk7ic=;
-        b=f7QK6LOR/Zp4ke41y6ZPkcl63JsVzIQhUvg3UnpKVxFBEbKAUTWdV5bOnhzrQ436K4
-         vy3PxKbuJqr9TRJtBjO+Uf96j/rpPL9MyTAg7YOO8f28ArK3Ty92j3FZ+axmCoPpUHzO
-         gIGhZwPvp2+Yw5ZM275TQtCeWMj8HYTZy+Lq5p4LID1Uh3VSpLUDb0IEofg/dbvgbKMI
-         mkETjljV4jjsSWjo4TQR2ibtAifZADF92GZP3qDMZI2/rYrCo3jqQVAyd/SpmjivNvfg
-         rNfvlPZf4bR36t+rosfwwQcwdZYj38msFUrkOrZm7JVw32nDr+pLAYw9A/LZccEDaSRV
-         LFWw==
-X-Gm-Message-State: AOAM533igNL7u77mDyftQLa+tk2FI4x2YWVGz5Ze5M4gF+gE4uWxDdL5
-        VOz0hz83moKmqh5u5Gv/vbs=
-X-Google-Smtp-Source: ABdhPJyGUySVImbWHPE8ZMHJL80liCjqLWjiWY9DChxMxo3AEPwcFSHgFeTYEXGDgCP96GwANq5Omg==
-X-Received: by 2002:a5d:6d8b:0:b0:203:f9b4:be1d with SMTP id l11-20020a5d6d8b000000b00203f9b4be1dmr5704571wrs.298.1649232517257;
-        Wed, 06 Apr 2022 01:08:37 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id l3-20020a1ced03000000b0038ce57d28a1sm4035390wmh.26.2022.04.06.01.08.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Apr 2022 01:08:36 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] libbpf: Fix spelling mistake "libaries" -> "libraries"
-Date:   Wed,  6 Apr 2022 09:08:35 +0100
-Message-Id: <20220406080835.14879-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Wed, 6 Apr 2022 11:56:48 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B43B25A62A9;
+        Wed,  6 Apr 2022 06:22:38 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 563A5B823BF;
+        Wed,  6 Apr 2022 13:22:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08C2DC385A7;
+        Wed,  6 Apr 2022 13:22:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649251356;
+        bh=TLyvTgiqSYYjMHPC+UQMx0cLGBFAbPTGSNIZDD5qmEE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=BRcBrf+6Ca4lrZIXmPFpnu3aoqjnUw8Z6cGxpjYO6fDettqwmZVCSZOBIDjbNq5YO
+         i5dzuDYR466yR9B0fywX8ZLS4PfkvRVA3d5dgswxve5JR04uo5sl6q1eF5FS8iRgbt
+         GwlSaGapzZSML6khLQC38qPSgzf4Vcu6K0tQvETDYD/0PA4/4eAakoulI0mdHDq+UM
+         E9gaEVbSo/U0Ob/Nj1VCvMzAms8bYJaOpLrryGksX2erF/kPMQhBcBmkF5A4NqPuoz
+         Qw94e16voGukyrwBeUu708IJvfk0MmtInmz6xMhBXUBoPGp45bobwDs9thZs76CmOW
+         M53nCiiglPPcQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=hot-poop.lan)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <maz@kernel.org>)
+        id 1nc5cH-002AfU-Jz; Wed, 06 Apr 2022 14:22:33 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     alexandru.elisei@arm.com, suzuki.poulose@arm.com,
+        Yu Zhe <yuzhe@nfschina.com>, james.morse@arm.com
+Cc:     keescook@chromium.org, ricarkol@google.com, justin.he@arm.com,
+        linux-arm-kernel@lists.infradead.org, samitolvanen@google.com,
+        kernel-janitors@vger.kernel.org, catalin.marinas@arm.com,
+        kvmarm@lists.cs.columbia.edu, will@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: arm64: vgic: remove unnecessary type castings
+Date:   Wed,  6 Apr 2022 14:22:31 +0100
+Message-Id: <164925133306.3716042.8666897986559310118.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220329102059.268983-1-yuzhe@nfschina.com>
+References: <20220328103836.2829-1-yuzhe@nfschina.com> <20220329102059.268983-1-yuzhe@nfschina.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: alexandru.elisei@arm.com, suzuki.poulose@arm.com, yuzhe@nfschina.com, james.morse@arm.com, keescook@chromium.org, ricarkol@google.com, justin.he@arm.com, linux-arm-kernel@lists.infradead.org, samitolvanen@google.com, kernel-janitors@vger.kernel.org, catalin.marinas@arm.com, kvmarm@lists.cs.columbia.edu, will@kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a pr_warn message. Fix it.
+On Tue, 29 Mar 2022 03:20:59 -0700, Yu Zhe wrote:
+> remove unnecessary casts.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/lib/bpf/usdt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to fixes, thanks!
 
-diff --git a/tools/lib/bpf/usdt.c b/tools/lib/bpf/usdt.c
-index 1bce2eab5e89..c5acf2824fcc 100644
---- a/tools/lib/bpf/usdt.c
-+++ b/tools/lib/bpf/usdt.c
-@@ -687,7 +687,7 @@ static int collect_usdt_targets(struct usdt_manager *man, Elf *elf, const char *
- 			 * to shared libraries with no PID filter.
- 			 */
- 			if (pid < 0) {
--				pr_warn("usdt: attaching to shared libaries without specific PID is not supported on current kernel\n");
-+				pr_warn("usdt: attaching to shared libraries without specific PID is not supported on current kernel\n");
- 				err = -ENOTSUP;
- 				goto err_out;
- 			}
+[1/1] KVM: arm64: vgic: remove unnecessary type castings
+      commit: c707663e81ef48d279719e97fd86acef835a2671
+
+Cheers,
+
+	M.
 -- 
-2.35.1
+Without deviation from the norm, progress is not possible.
+
 
