@@ -2,109 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B77B1C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Apr 2022 16:13:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C994C433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Apr 2022 19:49:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237252AbiDFQPb (ORCPT
+        id S232920AbiDFTvV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 6 Apr 2022 12:15:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60118 "EHLO
+        Wed, 6 Apr 2022 15:51:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237236AbiDFQPP (ORCPT
+        with ESMTP id S232890AbiDFTuq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 6 Apr 2022 12:15:15 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CABA3E37FB;
-        Tue,  5 Apr 2022 21:11:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649218307; x=1680754307;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=cR9iKxrz/8HA3dd1/jwZRF3XG6WX3t9oScAc0DPOnW8=;
-  b=Qhr3ZgcT6AghAGdmMiC42Yq+xjXtn3ha0USfQQjyMEydVBDv0FC4Afip
-   QdNUZQ5q7U+avhoyBYeNyTjKoqHwy+n23gZMIHzRPszfWR/i5RRVn9FAA
-   ivTGW0i/EvCYdBLPQvqQOYItX+SyA2zvCLZ/mNieoxs8FT4MbVJm9nC/C
-   a9ayqykO7f69eBEIwUcKcPSD+CVQsymH20Nr3ySz9Zj6Ag6I/EYxD7+A4
-   m/MYFj82grrvtlc+Q/5JvURh0DZ0wzaeJArpjZFZUwgo4zPIIwuEOqryq
-   l+kWxm2bsTJyg/7HHWH44kRAvhEqy+H1bV212Gk/aG7KTZUvU9SM7g5uW
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10308"; a="241530382"
-X-IronPort-AV: E=Sophos;i="5.90,239,1643702400"; 
-   d="scan'208";a="241530382"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2022 21:11:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,239,1643702400"; 
-   d="scan'208";a="524294591"
-Received: from unknown (HELO localhost.localdomain) ([10.23.185.145])
-  by orsmga006.jf.intel.com with ESMTP; 05 Apr 2022 21:11:44 -0700
-Message-ID: <f3b6524f899f2775e630dee2ad1cc4c4c389b2fe.camel@intel.com>
-Subject: Re: [PATCH] i2c: ismt: Remove useless DMA-32 fallback configuration
-From:   Seth Heasley <seth.heasley@intel.com>
-To:     Wolfram Sang <wsa@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Neil Horman <nhorman@tuxdriver.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org,
-        seth.heasley@intel.com
-Date:   Tue, 05 Apr 2022 14:13:04 -0700
-In-Reply-To: <YgEtUT7Dhntmidxy@shikoro>
-References: <853d9f9d746864435abf93dfc822fccac5b04f37.1641731339.git.christophe.jaillet@wanadoo.fr>
-         <YgEtUT7Dhntmidxy@shikoro>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-8.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 6 Apr 2022 15:50:46 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4362E216A56;
+        Wed,  6 Apr 2022 10:20:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D6C15B824E6;
+        Wed,  6 Apr 2022 17:20:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6FAAAC385A3;
+        Wed,  6 Apr 2022 17:20:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649265612;
+        bh=Mo8HirllIynk/z8CgfkYFr8U2nZhqSzLoJnSPMEkdKc=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=PeKFiO72mWGWyUeFzVUOvAhDJ1IQt8fp0nSbB/BY5edlC2n4AiR1okEfvfImJtCbD
+         7oSEsIeAzWcfiItk+Okk0aEiMFwaXWlitF1IXmvJi3TfzsfawdqV1rkhORDa3GIU1A
+         S/8WZdgi8lBDW6MLjNBBDzMaJROw3COQJnhTTLBBgaD30S8ZoYdt/1e6mAwIbal+R+
+         f029O143joNsXcBWh7EpaBUTTkinQhSIdrrBuMSrJuMS0kfsx3SELZ56c04ZTLpHOT
+         asuEOUdwOCoFA+QAoQk81p082YhCJOhmunmJdwOPe+Uum1xHtoPVKDcy/qlnXz1shJ
+         J4sLX+8iF6w7A==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5252BE85D53;
+        Wed,  6 Apr 2022 17:20:12 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] libbpf: Fix spelling mistake "libaries" -> "libraries"
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <164926561233.23950.5713179481350505645.git-patchwork-notify@kernel.org>
+Date:   Wed, 06 Apr 2022 17:20:12 +0000
+References: <20220406080835.14879-1-colin.i.king@gmail.com>
+In-Reply-To: <20220406080835.14879-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 2022-02-07 at 15:31 +0100, Wolfram Sang wrote:
-> On Sun, Jan 09, 2022 at 01:29:45PM +0100, Christophe JAILLET wrote:
-> > As stated in [1], dma_set_mask() with a 64-bit mask never fails if
-> > dev->dma_mask is non-NULL.
-> > So, if it fails, the 32 bits case will also fail for the same
-> > reason.
-> > 
-> > 
-> > Simplify code and remove some dead code accordingly.
-> > 
-> > [1]: https://lkml.org/lkml/2021/6/7/398
-> > 
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Seth Heasley <seth.heasley@intel.com>
-> 
-> Seth, Neil, do you agree?
+Hello:
 
-Yes, I agree this change makes sense.
+This patch was applied to bpf/bpf-next.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
 
+On Wed,  6 Apr 2022 09:08:35 +0100 you wrote:
+> There is a spelling mistake in a pr_warn message. Fix it.
 > 
-> > ---
-> >  drivers/i2c/busses/i2c-ismt.c | 7 ++-----
-> >  1 file changed, 2 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/i2c/busses/i2c-ismt.c
-> > b/drivers/i2c/busses/i2c-ismt.c
-> > index f4820fd3dc13..951f3511afaa 100644
-> > --- a/drivers/i2c/busses/i2c-ismt.c
-> > +++ b/drivers/i2c/busses/i2c-ismt.c
-> > @@ -920,11 +920,8 @@ ismt_probe(struct pci_dev *pdev, const struct
-> > pci_device_id *id)
-> >  
-> >  	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
-> >  	if (err) {
-> > -		err = dma_set_mask_and_coherent(&pdev->dev,
-> > DMA_BIT_MASK(32));
-> > -		if (err) {
-> > -			dev_err(&pdev->dev, "dma_set_mask fail\n");
-> > -			return -ENODEV;
-> > -		}
-> > +		dev_err(&pdev->dev, "dma_set_mask fail\n");
-> > +		return -ENODEV;
-> >  	}
-> >  
-> >  	err = ismt_dev_init(priv);
-> > -- 
-> > 2.32.0
-> > 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  tools/lib/bpf/usdt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Here is the summary with links:
+  - [next] libbpf: Fix spelling mistake "libaries" -> "libraries"
+    https://git.kernel.org/bpf/bpf-next/c/a8d600f6bcd4
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
