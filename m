@@ -2,144 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B26C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Apr 2022 07:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C453C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Apr 2022 09:25:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242320AbiDGHyY (ORCPT
+        id S237325AbiDGJ07 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Apr 2022 03:54:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36840 "EHLO
+        Thu, 7 Apr 2022 05:26:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242318AbiDGHyX (ORCPT
+        with ESMTP id S232732AbiDGJ06 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Apr 2022 03:54:23 -0400
-Received: from ha.nfschina.com (unknown [IPv6:2400:dd01:100f:2:72e2:84ff:fe10:5f45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E21C31B84ED;
-        Thu,  7 Apr 2022 00:52:23 -0700 (PDT)
-Received: from localhost (unknown [127.0.0.1])
-        by ha.nfschina.com (Postfix) with ESMTP id 014CC1E80D17;
-        Thu,  7 Apr 2022 15:52:06 +0800 (CST)
-X-Virus-Scanned: amavisd-new at test.com
-Received: from ha.nfschina.com ([127.0.0.1])
-        by localhost (ha.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id WxWf7QKsoZzt; Thu,  7 Apr 2022 15:52:03 +0800 (CST)
-Received: from ubuntu.localdomain (unknown [101.228.248.165])
-        (Authenticated sender: yuzhe@nfschina.com)
-        by ha.nfschina.com (Postfix) with ESMTPA id 3F7C61E80C8C;
-        Thu,  7 Apr 2022 15:52:02 +0800 (CST)
-From:   Yu Zhe <yuzhe@nfschina.com>
-To:     trond.myklebust@hammerspace.com, anna@kernel.org
-Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, liqiong@nfschina.com,
-        Yu Zhe <yuzhe@nfschina.com>
-Subject: [PATCH] NFS: remove unnecessary type castings
-Date:   Thu,  7 Apr 2022 00:52:16 -0700
-Message-Id: <20220407075216.116940-1-yuzhe@nfschina.com>
-X-Mailer: git-send-email 2.25.1
+        Thu, 7 Apr 2022 05:26:58 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 794AF5007B;
+        Thu,  7 Apr 2022 02:24:58 -0700 (PDT)
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 2375IfKD006910;
+        Thu, 7 Apr 2022 11:24:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=jjm66IhMmXssBJIGy9+tsQSPGgWrKquMgoKpEwFFvcE=;
+ b=fPZLiI2XbDepOd2MTC1IYuiTf2yNBTg9DGHWuEPllYK7cbjIrbf/5kMRR97oNKrJOpV9
+ NKduqSXlxz8zYVQdCvC8WG6CwsUYLNOC/3nx0nTDIhUZpbd7Pkj2K2s3E6xIcrdcGW39
+ kHwC0SBxXjYRFbdvJiNWxttSpd7iK1gy4PWmvyEHyhCvpIkyj4Bep9fxbEIvNPwRgZOj
+ iU2gblPzOlH49dIJCEPQ37uTxdQ7a1zM1pe8Hhed5R8P+BPuJVo2cWvd9xaHl0nx6trD
+ p4Q6ezV17XTvudMaSWnSbKsVr12TAujTfN0y/3Br39yO6/4F2QBJBQ4RVTzfCOwoDWXr MQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3f8x9gjqkn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Apr 2022 11:24:52 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8F54810002A;
+        Thu,  7 Apr 2022 11:24:51 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7ECD2215A31;
+        Thu,  7 Apr 2022 11:24:51 +0200 (CEST)
+Received: from [10.201.22.81] (10.75.127.45) by SFHDAG2NODE2.st.com
+ (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Thu, 7 Apr
+ 2022 11:24:50 +0200
+Message-ID: <129c5d51-b645-e9eb-00ad-c660d2f16b9d@foss.st.com>
+Date:   Thu, 7 Apr 2022 11:24:40 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] drm: sti: fix spelling mistake: rejec -> rejection
+Content-Language: en-US
+To:     Colin King <colin.king@canonical.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        "David Airlie" <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>
+CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20191004082706.26478-1-colin.king@canonical.com>
+From:   Philippe CORNU <philippe.cornu@foss.st.com>
+In-Reply-To: <20191004082706.26478-1-colin.king@canonical.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-04-06_13,2022-04-06_01,2022-02-23_01
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-remove unnecessary casts.
 
-Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
----
- fs/nfs/inode.c      | 6 +++---
- fs/nfs/nfs42xattr.c | 2 +-
- fs/nfs/nfs4idmap.c  | 4 ++--
- fs/nfs/nfs4proc.c   | 4 ++--
- 4 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-index 7eb3b08d702f..c1d0f10cbc67 100644
---- a/fs/nfs/inode.c
-+++ b/fs/nfs/inode.c
-@@ -318,7 +318,7 @@ struct nfs_find_desc {
- static int
- nfs_find_actor(struct inode *inode, void *opaque)
- {
--	struct nfs_find_desc	*desc = (struct nfs_find_desc *)opaque;
-+	struct nfs_find_desc	*desc = opaque;
- 	struct nfs_fh		*fh = desc->fh;
- 	struct nfs_fattr	*fattr = desc->fattr;
- 
-@@ -336,7 +336,7 @@ nfs_find_actor(struct inode *inode, void *opaque)
- static int
- nfs_init_locked(struct inode *inode, void *opaque)
- {
--	struct nfs_find_desc	*desc = (struct nfs_find_desc *)opaque;
-+	struct nfs_find_desc	*desc = opaque;
- 	struct nfs_fattr	*fattr = desc->fattr;
- 
- 	set_nfs_fileid(inode, fattr->fileid);
-@@ -2271,7 +2271,7 @@ static inline void nfs4_init_once(struct nfs_inode *nfsi)
- 
- static void init_once(void *foo)
- {
--	struct nfs_inode *nfsi = (struct nfs_inode *) foo;
-+	struct nfs_inode *nfsi = foo;
- 
- 	inode_init_once(&nfsi->vfs_inode);
- 	INIT_LIST_HEAD(&nfsi->open_files);
-diff --git a/fs/nfs/nfs42xattr.c b/fs/nfs/nfs42xattr.c
-index ad3405c64b9e..34245aa7e9de 100644
---- a/fs/nfs/nfs42xattr.c
-+++ b/fs/nfs/nfs42xattr.c
-@@ -981,7 +981,7 @@ nfs4_xattr_entry_count(struct shrinker *shrink, struct shrink_control *sc)
- 
- static void nfs4_xattr_cache_init_once(void *p)
- {
--	struct nfs4_xattr_cache *cache = (struct nfs4_xattr_cache *)p;
-+	struct nfs4_xattr_cache *cache = p;
- 
- 	spin_lock_init(&cache->listxattr_lock);
- 	atomic_long_set(&cache->nent, 0);
-diff --git a/fs/nfs/nfs4idmap.c b/fs/nfs/nfs4idmap.c
-index f331866dd418..3cba5a225f5f 100644
---- a/fs/nfs/nfs4idmap.c
-+++ b/fs/nfs/nfs4idmap.c
-@@ -585,7 +585,7 @@ static int nfs_idmap_legacy_upcall(struct key *authkey, void *aux)
- 	struct request_key_auth *rka = get_request_key_auth(authkey);
- 	struct rpc_pipe_msg *msg;
- 	struct idmap_msg *im;
--	struct idmap *idmap = (struct idmap *)aux;
-+	struct idmap *idmap = aux;
- 	struct key *key = rka->target_key;
- 	int ret = -ENOKEY;
- 
-@@ -668,7 +668,7 @@ idmap_pipe_downcall(struct file *filp, const char __user *src, size_t mlen)
- {
- 	struct request_key_auth *rka;
- 	struct rpc_inode *rpci = RPC_I(file_inode(filp));
--	struct idmap *idmap = (struct idmap *)rpci->private;
-+	struct idmap *idmap = rpci->private;
- 	struct key *authkey;
- 	struct idmap_msg im;
- 	size_t namelen_in;
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index e3f5b380cefe..4131d27c382d 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -6564,7 +6564,7 @@ static void nfs4_delegreturn_prepare(struct rpc_task *task, void *data)
- 	struct nfs4_delegreturndata *d_data;
- 	struct pnfs_layout_hdr *lo;
- 
--	d_data = (struct nfs4_delegreturndata *)data;
-+	d_data = data;
- 
- 	if (!d_data->lr.roc && nfs4_wait_on_layoutreturn(d_data->inode, task)) {
- 		nfs4_sequence_done(task, &d_data->res.seq_res);
-@@ -8808,7 +8808,7 @@ int nfs4_proc_exchange_id(struct nfs_client *clp, const struct cred *cred)
- void nfs4_test_session_trunk(struct rpc_clnt *clnt, struct rpc_xprt *xprt,
- 			    void *data)
- {
--	struct nfs4_add_xprt_data *adata = (struct nfs4_add_xprt_data *)data;
-+	struct nfs4_add_xprt_data *adata = data;
- 	struct rpc_task *task;
- 	int status;
- 
--- 
-2.25.1
+On 10/4/19 10:27, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> In other places of the driver the string hdmi_rejection_pll is
+> used instead of the truncated hdmi_rejec_pll, so use this string
+> instead to be consistent.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   drivers/gpu/drm/sti/sti_hdmi.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
+> index 814560ead4e1..e2018e4a3ec5 100644
+> --- a/drivers/gpu/drm/sti/sti_hdmi.c
+> +++ b/drivers/gpu/drm/sti/sti_hdmi.c
+> @@ -886,7 +886,7 @@ static void sti_hdmi_pre_enable(struct drm_bridge *bridge)
+>   	if (clk_prepare_enable(hdmi->clk_tmds))
+>   		DRM_ERROR("Failed to prepare/enable hdmi_tmds clk\n");
+>   	if (clk_prepare_enable(hdmi->clk_phy))
+> -		DRM_ERROR("Failed to prepare/enable hdmi_rejec_pll clk\n");
+> +		DRM_ERROR("Failed to prepare/enable hdmi_rejection_pll clk\n");
+>   
+>   	hdmi->enabled = true;
+>   
 
+Dear Colin,
+Many thanks for your patch,
+Applied on drm-misc-next.
+and sorry for the delay.
+Have a good day
+Philippe :-)
