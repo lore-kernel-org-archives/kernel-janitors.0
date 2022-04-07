@@ -2,91 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E3CBC433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Apr 2022 10:28:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7363C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Apr 2022 13:35:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244254AbiDGKac (ORCPT
+        id S1343667AbiDGNhk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Apr 2022 06:30:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42768 "EHLO
+        Thu, 7 Apr 2022 09:37:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244238AbiDGKaY (ORCPT
+        with ESMTP id S1343689AbiDGNhf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Apr 2022 06:30:24 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A1FD7562E;
-        Thu,  7 Apr 2022 03:28:24 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id r13so7142600wrr.9;
-        Thu, 07 Apr 2022 03:28:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ysgmGY6z1GzJduDa17oOz+oi20hGek39JwUR/trWayM=;
-        b=p/UKZVzzSUUKarQCEnoZqYwnOj+5vqcExcRo3+EUkYFVCcXjRLJIEQI5GVNfNtmCcF
-         v8midJ0etw5XJGZTnMUnHCf95YASegao9CAoqK5BkIPREypo3OSYwoAVWIsB868p7x3N
-         +xt6oxh97IpMEpGqXt4G5QNCPIcjcbqaDG0lxhtXHlJrTG/N910e2LFuEBqson19rxh1
-         XF9x1CyDwoUwZPMo/fa0ngSje09cbZMublaAXz7je8SfS8mhDo4Hl5eDAkyMWWJREsbO
-         3rgFQBxtbt0v98Zg0m3Uya9j10VNdFDtllzVNsDdpUsI/OPNmjcjDMFIdH/ejYcNbo6/
-         LajQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ysgmGY6z1GzJduDa17oOz+oi20hGek39JwUR/trWayM=;
-        b=RAhyODHFcMUSpOjfZfZh20hkkeYyz266nXi4hJ9ZmUI2ZNiqlADblfK4xP05QE8dYo
-         agvSGOzpIfRZoWQrgC72eiLjbBimzvnlg9pwvV5i7ANtjPHMYWvqiOh9pb2wylYlu4nG
-         m7q28USKtuTb4fbCnbxKZk447Y2iBaZyHRhIqt2xyNpZtKz92SUkHxZQ5HvmrXBk/HYC
-         K9bKv5FM8I0iH8ofX/m58XI28/e1tdSyUXGJpfstSwHo5Hoqe3Sl8EdpJBP51kUXN0dS
-         7aeFZtJK5OiQbj4LCl+jpZ6/3aZaPO9NqEBR9CYbyXqK7IoV1vV2GmiPC/qS5cBnaLog
-         3uVA==
-X-Gm-Message-State: AOAM5331/t+MXWUL80q1sRhacNakGLB+fEEuCyUob3zsdjx+nx284QyU
-        6YvJgcSX02uivf+XZv0JucI=
-X-Google-Smtp-Source: ABdhPJypRKzmEZSzNa0J3mxMTVI9MuNVTozm69KlQDYEEvfmJj13FcjuX0vcYG5/HgQzqulKmvGw7w==
-X-Received: by 2002:adf:dcc1:0:b0:206:1a02:95a0 with SMTP id x1-20020adfdcc1000000b002061a0295a0mr10127116wrm.183.1649327302637;
-        Thu, 07 Apr 2022 03:28:22 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id m5-20020a05600c3b0500b0038e7466b048sm7727933wms.0.2022.04.07.03.28.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Apr 2022 03:28:21 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Kalle Valo <kvalo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, ath11k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ath11k: Fix spelling mistake "reseting" -> "resetting"
-Date:   Thu,  7 Apr 2022 11:28:20 +0100
-Message-Id: <20220407102820.613881-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Thu, 7 Apr 2022 09:37:35 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DA761109;
+        Thu,  7 Apr 2022 06:35:22 -0700 (PDT)
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 237A6u7u024447;
+        Thu, 7 Apr 2022 13:35:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2021-07-09;
+ bh=plnEtZF86isv65a8puHtZOzw2xcyhXCk0JU+ZyMN+9I=;
+ b=z0acsNfFVSNApqvfkmPnwzZvZd5HN+GUBSDHeCYVaYbzUsYyzD0hoF0UP047fzRTHb+X
+ y6R2qouRyKpMR4Xf9NIpCZJrFA31pq7B+QhA7Rx0ExTKIJzXln77KN+f+37YQuRZu47f
+ WjZn78Aj9xA0cUmE4ev0o1MUos0blpLZzovbC+XHg1O4T5uPAqcOQzPKM3Afs8udgjDK
+ O6KlpPrK65MCZZHizur7v6JLYief4Xre+kMU9kYumd/4ZfxzipMXQ8y15eQywr+Zv6lB
+ BtoGzRzZsuIBRcXA6KzbasF1HJByLfsWOMo0DNcLHRGyQ2cpewXBTw7FmFWgBlwzw81w vQ== 
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3f6f1tc3qy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 07 Apr 2022 13:35:21 +0000
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 237DLVn1036817;
+        Thu, 7 Apr 2022 13:35:20 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3f97uwtvqv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 07 Apr 2022 13:35:20 +0000
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 237DZJLg032479;
+        Thu, 7 Apr 2022 13:35:19 GMT
+Received: from ca-mkp.mkp.ca.oracle.com (ca-mkp.ca.oracle.com [10.156.108.201])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3f97uwtvpy-1;
+        Thu, 07 Apr 2022 13:35:19 +0000
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     linux-scsi@vger.kernel.org
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] scsi: bnx2fc: Fix spelling mistake "mis-match" -> "mismatch"
+Date:   Thu,  7 Apr 2022 09:35:00 -0400
+Message-Id: <164929679002.15424.1799871728349449815.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220319231122.21476-1-colin.i.king@gmail.com>
+References: <20220319231122.21476-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: 5g9tPed7M2ZeAktsEZzpftQeYyNZ2ZyM
+X-Proofpoint-GUID: 5g9tPed7M2ZeAktsEZzpftQeYyNZ2ZyM
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in an ath11k_warn message. Fix it.
+On Sat, 19 Mar 2022 23:11:22 +0000, Colin Ian King wrote:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/wireless/ath/ath11k/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> There are a few spelling mistakes in some error messages. Fix them.
+> 
+> 
 
-diff --git a/drivers/net/wireless/ath/ath11k/core.c b/drivers/net/wireless/ath/ath11k/core.c
-index cbac1919867f..1537ec0ae2e7 100644
---- a/drivers/net/wireless/ath/ath11k/core.c
-+++ b/drivers/net/wireless/ath/ath11k/core.c
-@@ -1567,7 +1567,7 @@ static void ath11k_core_reset(struct work_struct *work)
- 		 * completed, then the second reset worker will destroy the previous one,
- 		 * thus below is to avoid that.
- 		 */
--		ath11k_warn(ab, "already reseting count %d\n", reset_count);
-+		ath11k_warn(ab, "already resetting count %d\n", reset_count);
- 
- 		reinit_completion(&ab->reset_complete);
- 		time_left = wait_for_completion_timeout(&ab->reset_complete,
+Applied to 5.18/scsi-fixes, thanks!
+
+[1/1] scsi: bnx2fc: Fix spelling mistake "mis-match" -> "mismatch"
+      https://git.kernel.org/mkp/scsi/c/7ff897b2a595
+
 -- 
-2.35.1
-
+Martin K. Petersen	Oracle Linux Engineering
