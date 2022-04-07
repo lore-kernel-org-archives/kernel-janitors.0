@@ -2,50 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B16BC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Apr 2022 09:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E3CBC433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Apr 2022 10:28:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243857AbiDGJkj (ORCPT
+        id S244254AbiDGKac (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Apr 2022 05:40:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38918 "EHLO
+        Thu, 7 Apr 2022 06:30:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243860AbiDGJk1 (ORCPT
+        with ESMTP id S244238AbiDGKaY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Apr 2022 05:40:27 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E4A61B2154;
-        Thu,  7 Apr 2022 02:38:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 89590B826EC;
-        Thu,  7 Apr 2022 09:38:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00DF9C385A9;
-        Thu,  7 Apr 2022 09:38:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649324301;
-        bh=uIwgR3pVWQ2tLhHj07s4Etx3NDjbjW6eqYEftcbaJ9w=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=ewszGuCnjWBBxeWe2aGzoWNNNNMjuHKnmxSX+XWKgZNRjVicp+Ep0zw9knfu4lVdC
-         flciZcPQ8r1QqzTVPlfDRekWIPuEd2P1cR6ldDpo4Ve3dLeXr2ITVmLt/gMGrexJMf
-         Ssa4x1iRBOPlHg21pxLfbxk5xxyN8+CFAYz5TI5wek43ZpehMNNWfyO68rhXWj0bXi
-         7KjYlpMqFhyMFMBMLloAOTVgG+EWWZ8DTFij3snbVsi12vbwMDblHlsmLf1aJhUvXb
-         Al+EWZ3ASFhSoy6VhYA44n9D66mrSacxhgOc3WFp8B1ulSwVWVbn97H5hbMpgLp0dT
-         ovGl2UlfDlaFA==
-From:   Mark Brown <broonie@kernel.org>
-To:     daniel.baluta@nxp.com, Jaroslav Kysela <perex@perex.cz>,
-        lgirdwood@gmail.com, christophe.jaillet@wanadoo.fr,
-        Takashi Iwai <tiwai@suse.com>,
-        pierre-louis.bossart@linux.intel.com,
-        ranjani.sridharan@linux.intel.com, kai.vehmanen@linux.intel.com
-Cc:     sound-open-firmware@alsa-project.org, alsa-devel@alsa-project.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <3bbf03cfd1966bc6fb6dd0939e039fc161078a61.1647757329.git.christophe.jaillet@wanadoo.fr>
-References: <3bbf03cfd1966bc6fb6dd0939e039fc161078a61.1647757329.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] ASoC: SOF: topology: Avoid open coded arithmetic in memory allocation
-Message-Id: <164932429871.3844153.12183120087286124160.b4-ty@kernel.org>
-Date:   Thu, 07 Apr 2022 10:38:18 +0100
+        Thu, 7 Apr 2022 06:30:24 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A1FD7562E;
+        Thu,  7 Apr 2022 03:28:24 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id r13so7142600wrr.9;
+        Thu, 07 Apr 2022 03:28:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ysgmGY6z1GzJduDa17oOz+oi20hGek39JwUR/trWayM=;
+        b=p/UKZVzzSUUKarQCEnoZqYwnOj+5vqcExcRo3+EUkYFVCcXjRLJIEQI5GVNfNtmCcF
+         v8midJ0etw5XJGZTnMUnHCf95YASegao9CAoqK5BkIPREypo3OSYwoAVWIsB868p7x3N
+         +xt6oxh97IpMEpGqXt4G5QNCPIcjcbqaDG0lxhtXHlJrTG/N910e2LFuEBqson19rxh1
+         XF9x1CyDwoUwZPMo/fa0ngSje09cbZMublaAXz7je8SfS8mhDo4Hl5eDAkyMWWJREsbO
+         3rgFQBxtbt0v98Zg0m3Uya9j10VNdFDtllzVNsDdpUsI/OPNmjcjDMFIdH/ejYcNbo6/
+         LajQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ysgmGY6z1GzJduDa17oOz+oi20hGek39JwUR/trWayM=;
+        b=RAhyODHFcMUSpOjfZfZh20hkkeYyz266nXi4hJ9ZmUI2ZNiqlADblfK4xP05QE8dYo
+         agvSGOzpIfRZoWQrgC72eiLjbBimzvnlg9pwvV5i7ANtjPHMYWvqiOh9pb2wylYlu4nG
+         m7q28USKtuTb4fbCnbxKZk447Y2iBaZyHRhIqt2xyNpZtKz92SUkHxZQ5HvmrXBk/HYC
+         K9bKv5FM8I0iH8ofX/m58XI28/e1tdSyUXGJpfstSwHo5Hoqe3Sl8EdpJBP51kUXN0dS
+         7aeFZtJK5OiQbj4LCl+jpZ6/3aZaPO9NqEBR9CYbyXqK7IoV1vV2GmiPC/qS5cBnaLog
+         3uVA==
+X-Gm-Message-State: AOAM5331/t+MXWUL80q1sRhacNakGLB+fEEuCyUob3zsdjx+nx284QyU
+        6YvJgcSX02uivf+XZv0JucI=
+X-Google-Smtp-Source: ABdhPJypRKzmEZSzNa0J3mxMTVI9MuNVTozm69KlQDYEEvfmJj13FcjuX0vcYG5/HgQzqulKmvGw7w==
+X-Received: by 2002:adf:dcc1:0:b0:206:1a02:95a0 with SMTP id x1-20020adfdcc1000000b002061a0295a0mr10127116wrm.183.1649327302637;
+        Thu, 07 Apr 2022 03:28:22 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id m5-20020a05600c3b0500b0038e7466b048sm7727933wms.0.2022.04.07.03.28.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Apr 2022 03:28:21 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Kalle Valo <kvalo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, ath11k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ath11k: Fix spelling mistake "reseting" -> "resetting"
+Date:   Thu,  7 Apr 2022 11:28:20 +0100
+Message-Id: <20220407102820.613881-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -53,36 +67,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 20 Mar 2022 07:22:26 +0100, Christophe JAILLET wrote:
-> Use kcalloc() instead of kzalloc()+open coded multiplication.
-> This is safer and saves a few lines of code.
-> 
-> 
+There is a spelling mistake in an ath11k_warn message. Fix it.
 
-Applied to
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/wireless/ath/ath11k/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+diff --git a/drivers/net/wireless/ath/ath11k/core.c b/drivers/net/wireless/ath/ath11k/core.c
+index cbac1919867f..1537ec0ae2e7 100644
+--- a/drivers/net/wireless/ath/ath11k/core.c
++++ b/drivers/net/wireless/ath/ath11k/core.c
+@@ -1567,7 +1567,7 @@ static void ath11k_core_reset(struct work_struct *work)
+ 		 * completed, then the second reset worker will destroy the previous one,
+ 		 * thus below is to avoid that.
+ 		 */
+-		ath11k_warn(ab, "already reseting count %d\n", reset_count);
++		ath11k_warn(ab, "already resetting count %d\n", reset_count);
+ 
+ 		reinit_completion(&ab->reset_complete);
+ 		time_left = wait_for_completion_timeout(&ab->reset_complete,
+-- 
+2.35.1
 
-Thanks!
-
-[1/1] ASoC: SOF: topology: Avoid open coded arithmetic in memory allocation
-      commit: 0a480df0b87a75b315cc6eef62bfb597111ee630
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
