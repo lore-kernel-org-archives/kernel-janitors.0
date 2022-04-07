@@ -2,104 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C453C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Apr 2022 09:25:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B16BC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Apr 2022 09:38:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237325AbiDGJ07 (ORCPT
+        id S243857AbiDGJkj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Apr 2022 05:26:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38406 "EHLO
+        Thu, 7 Apr 2022 05:40:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232732AbiDGJ06 (ORCPT
+        with ESMTP id S243860AbiDGJk1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Apr 2022 05:26:58 -0400
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 794AF5007B;
-        Thu,  7 Apr 2022 02:24:58 -0700 (PDT)
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 2375IfKD006910;
-        Thu, 7 Apr 2022 11:24:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=jjm66IhMmXssBJIGy9+tsQSPGgWrKquMgoKpEwFFvcE=;
- b=fPZLiI2XbDepOd2MTC1IYuiTf2yNBTg9DGHWuEPllYK7cbjIrbf/5kMRR97oNKrJOpV9
- NKduqSXlxz8zYVQdCvC8WG6CwsUYLNOC/3nx0nTDIhUZpbd7Pkj2K2s3E6xIcrdcGW39
- kHwC0SBxXjYRFbdvJiNWxttSpd7iK1gy4PWmvyEHyhCvpIkyj4Bep9fxbEIvNPwRgZOj
- iU2gblPzOlH49dIJCEPQ37uTxdQ7a1zM1pe8Hhed5R8P+BPuJVo2cWvd9xaHl0nx6trD
- p4Q6ezV17XTvudMaSWnSbKsVr12TAujTfN0y/3Br39yO6/4F2QBJBQ4RVTzfCOwoDWXr MQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3f8x9gjqkn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Apr 2022 11:24:52 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8F54810002A;
-        Thu,  7 Apr 2022 11:24:51 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7ECD2215A31;
-        Thu,  7 Apr 2022 11:24:51 +0200 (CEST)
-Received: from [10.201.22.81] (10.75.127.45) by SFHDAG2NODE2.st.com
- (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Thu, 7 Apr
- 2022 11:24:50 +0200
-Message-ID: <129c5d51-b645-e9eb-00ad-c660d2f16b9d@foss.st.com>
-Date:   Thu, 7 Apr 2022 11:24:40 +0200
+        Thu, 7 Apr 2022 05:40:27 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E4A61B2154;
+        Thu,  7 Apr 2022 02:38:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 89590B826EC;
+        Thu,  7 Apr 2022 09:38:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00DF9C385A9;
+        Thu,  7 Apr 2022 09:38:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649324301;
+        bh=uIwgR3pVWQ2tLhHj07s4Etx3NDjbjW6eqYEftcbaJ9w=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=ewszGuCnjWBBxeWe2aGzoWNNNNMjuHKnmxSX+XWKgZNRjVicp+Ep0zw9knfu4lVdC
+         flciZcPQ8r1QqzTVPlfDRekWIPuEd2P1cR6ldDpo4Ve3dLeXr2ITVmLt/gMGrexJMf
+         Ssa4x1iRBOPlHg21pxLfbxk5xxyN8+CFAYz5TI5wek43ZpehMNNWfyO68rhXWj0bXi
+         7KjYlpMqFhyMFMBMLloAOTVgG+EWWZ8DTFij3snbVsi12vbwMDblHlsmLf1aJhUvXb
+         Al+EWZ3ASFhSoy6VhYA44n9D66mrSacxhgOc3WFp8B1ulSwVWVbn97H5hbMpgLp0dT
+         ovGl2UlfDlaFA==
+From:   Mark Brown <broonie@kernel.org>
+To:     daniel.baluta@nxp.com, Jaroslav Kysela <perex@perex.cz>,
+        lgirdwood@gmail.com, christophe.jaillet@wanadoo.fr,
+        Takashi Iwai <tiwai@suse.com>,
+        pierre-louis.bossart@linux.intel.com,
+        ranjani.sridharan@linux.intel.com, kai.vehmanen@linux.intel.com
+Cc:     sound-open-firmware@alsa-project.org, alsa-devel@alsa-project.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <3bbf03cfd1966bc6fb6dd0939e039fc161078a61.1647757329.git.christophe.jaillet@wanadoo.fr>
+References: <3bbf03cfd1966bc6fb6dd0939e039fc161078a61.1647757329.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] ASoC: SOF: topology: Avoid open coded arithmetic in memory allocation
+Message-Id: <164932429871.3844153.12183120087286124160.b4-ty@kernel.org>
+Date:   Thu, 07 Apr 2022 10:38:18 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] drm: sti: fix spelling mistake: rejec -> rejection
-Content-Language: en-US
-To:     Colin King <colin.king@canonical.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        "David Airlie" <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>
-CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20191004082706.26478-1-colin.king@canonical.com>
-From:   Philippe CORNU <philippe.cornu@foss.st.com>
-In-Reply-To: <20191004082706.26478-1-colin.king@canonical.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-04-06_13,2022-04-06_01,2022-02-23_01
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 10/4/19 10:27, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Sun, 20 Mar 2022 07:22:26 +0100, Christophe JAILLET wrote:
+> Use kcalloc() instead of kzalloc()+open coded multiplication.
+> This is safer and saves a few lines of code.
 > 
-> In other places of the driver the string hdmi_rejection_pll is
-> used instead of the truncated hdmi_rejec_pll, so use this string
-> instead to be consistent.
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/gpu/drm/sti/sti_hdmi.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
-> index 814560ead4e1..e2018e4a3ec5 100644
-> --- a/drivers/gpu/drm/sti/sti_hdmi.c
-> +++ b/drivers/gpu/drm/sti/sti_hdmi.c
-> @@ -886,7 +886,7 @@ static void sti_hdmi_pre_enable(struct drm_bridge *bridge)
->   	if (clk_prepare_enable(hdmi->clk_tmds))
->   		DRM_ERROR("Failed to prepare/enable hdmi_tmds clk\n");
->   	if (clk_prepare_enable(hdmi->clk_phy))
-> -		DRM_ERROR("Failed to prepare/enable hdmi_rejec_pll clk\n");
-> +		DRM_ERROR("Failed to prepare/enable hdmi_rejection_pll clk\n");
->   
->   	hdmi->enabled = true;
->   
 
-Dear Colin,
-Many thanks for your patch,
-Applied on drm-misc-next.
-and sorry for the delay.
-Have a good day
-Philippe :-)
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: SOF: topology: Avoid open coded arithmetic in memory allocation
+      commit: 0a480df0b87a75b315cc6eef62bfb597111ee630
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
