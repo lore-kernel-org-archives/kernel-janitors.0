@@ -2,41 +2,48 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C466C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Apr 2022 13:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 389EBC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Apr 2022 18:56:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236451AbiDHNp4 (ORCPT
+        id S238345AbiDHS6n (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 8 Apr 2022 09:45:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42394 "EHLO
+        Fri, 8 Apr 2022 14:58:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236434AbiDHNpy (ORCPT
+        with ESMTP id S233067AbiDHS6g (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 8 Apr 2022 09:45:54 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E90ED49925;
-        Fri,  8 Apr 2022 06:43:50 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC2CE113E;
-        Fri,  8 Apr 2022 06:43:50 -0700 (PDT)
-Received: from e123427-lin.arm.com (unknown [10.57.11.200])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 52F193F5A1;
-        Fri,  8 Apr 2022 06:43:48 -0700 (PDT)
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Shawn Lin <shawn.lin@rock-chips.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        linux-rockchip@lists.infradead.org, Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH] PCI: rockchip: fix find_first_zero_bit() limit
-Date:   Fri,  8 Apr 2022 14:43:43 +0100
-Message-Id: <164942539812.30278.5716796264039659479.b4-ty@arm.com>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20220315065944.GB13572@kili>
-References: <20220315065944.GB13572@kili>
+        Fri, 8 Apr 2022 14:58:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5313A209A50;
+        Fri,  8 Apr 2022 11:56:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E38A261545;
+        Fri,  8 Apr 2022 18:56:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4972CC385A1;
+        Fri,  8 Apr 2022 18:56:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649444191;
+        bh=nIAQQiM25OUwJCglLgOqN04FfV2hY/JrotWsrqPqsPs=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=PL0p03H2RZ4zrIHtNHXATSJ3k3akFyjyrULUbduj2T8cHrs+mrZAetrUj0jB9qpkR
+         tIjGHo2c2KQZY6EsO21t+TT6G03NltB9Kelpcjyu3XTtqvIXt4v3vAIF1dL3o5I2Fe
+         imzc7Qt64iVcFCJ/GclFSrWXMQBl471JnnLJl5JiPAiKWcxLmvFo9pcSRlumehztUv
+         xaFhVs0xhI+A+xetEEyimj1gARyBick7ly/TYvgTxWqOd9JrHD/MkXMXi2GoNNikQf
+         P9bEentAIdovHsZXwX9vLqs0eyrTrVxgrsvUzVRWRlfZpnW6oRhcTK2fdEHcv0r5q4
+         P/i3vFaMBzeuA==
+From:   Mark Brown <broonie@kernel.org>
+To:     quic_srivasam@quicinc.com, perex@perex.cz,
+        quic_potturu@quicinc.com, christophe.jaillet@wanadoo.fr,
+        srinivas.kandagatla@linaro.org, tiwai@suse.com, lgirdwood@gmail.com
+Cc:     alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <5b5a015a9b1dc8011c6a4053fa49da1f2531e47c.1648969065.git.christophe.jaillet@wanadoo.fr>
+References: <5b5a015a9b1dc8011c6a4053fa49da1f2531e47c.1648969065.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v2] ASoC: codecs: Fix an error handling path in (rx|tx|va)_macro_probe()
+Message-Id: <164944418901.1442858.13330584837821971131.b4-ty@kernel.org>
+Date:   Fri, 08 Apr 2022 19:56:29 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -44,15 +51,40 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 15 Mar 2022 09:59:44 +0300, Dan Carpenter wrote:
-> The ep->ob_region_map bitmap is a long and it has BITS_PER_LONG bits.
+On Sun, 3 Apr 2022 08:58:27 +0200, Christophe JAILLET wrote:
+> After a successful lpass_macro_pds_init() call, lpass_macro_pds_exit() must
+> be called.
+> 
+> Add the missing call in the error handling path of the probe function and
+> use it.
 > 
 > 
+> [...]
 
-Applied to pci/rockchip, thanks!
+Applied to
 
-[1/1] PCI: rockchip: fix find_first_zero_bit() limit
-      https://git.kernel.org/lpieralisi/pci/c/096950e230
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: codecs: Fix an error handling path in (rx|tx|va)_macro_probe()
+      commit: ddfd534528146660de75ee84d6db10f10e778f95
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Lorenzo
+Mark
