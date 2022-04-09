@@ -2,97 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA116C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat,  9 Apr 2022 06:19:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7A36C4332F
+	for <kernel-janitors@archiver.kernel.org>; Sat,  9 Apr 2022 06:28:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239721AbiDIGVp (ORCPT
+        id S240118AbiDIGaK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 9 Apr 2022 02:21:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60008 "EHLO
+        Sat, 9 Apr 2022 02:30:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231951AbiDIGVo (ORCPT
+        with ESMTP id S239016AbiDIGaI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 9 Apr 2022 02:21:44 -0400
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8A923AA5E;
-        Fri,  8 Apr 2022 23:19:37 -0700 (PDT)
-Authenticated-By: 
-X-SpamFilter-By: ArmorX SpamTrap 5.73 with qID 2396JGY00012484, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-        by rtits2.realtek.com.tw (8.15.2/2.71/5.88) with ESMTPS id 2396JGY00012484
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Sat, 9 Apr 2022 14:19:16 +0800
-Received: from RTEXMBS02.realtek.com.tw (172.21.6.95) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Sat, 9 Apr 2022 14:19:16 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS02.realtek.com.tw (172.21.6.95) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.27; Sat, 9 Apr 2022 14:19:15 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::34e7:ab63:3da4:27c6]) by
- RTEXMBS04.realtek.com.tw ([fe80::34e7:ab63:3da4:27c6%5]) with mapi id
- 15.01.2308.021; Sat, 9 Apr 2022 14:19:15 +0800
-From:   Pkshih <pkshih@realtek.com>
-To:     "dan.carpenter@oracle.com" <dan.carpenter@oracle.com>
-CC:     "kvalo@kernel.org" <kvalo@kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "pabeni@redhat.com" <pabeni@redhat.com>
-Subject: Re: [PATCH] rtw89: pci: reversed conditions in rtw89_write16_mdio_mask()
-Thread-Topic: [PATCH] rtw89: pci: reversed conditions in
- rtw89_write16_mdio_mask()
-Thread-Index: AQHYS9j4UB37KjNlp02PwOAzTJmg7qzmlaQA
-Date:   Sat, 9 Apr 2022 06:19:15 +0000
-Message-ID: <55fe8f8f382ae27048152c59dfc51be75dd4e658.camel@realtek.com>
-References: <20220409061318.GB5447@kili>
-In-Reply-To: <20220409061318.GB5447@kili>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.36.1-2 
-x-originating-ip: [125.224.82.63]
-x-kse-serverinfo: RTEXMBS02.realtek.com.tw, 9
-x-kse-attachmentfiltering-interceptor-info: no applicable attachment filtering
- rules found
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: =?utf-8?B?Q2xlYW4sIGJhc2VzOiAyMDIyLzQvOSDkuIrljYggMDM6NDA6MDA=?=
-x-kse-bulkmessagesfiltering-scan-result: protection disabled
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <BCDCD34B54B53F4B97A77C518867BE66@realtek.com>
-Content-Transfer-Encoding: base64
+        Sat, 9 Apr 2022 02:30:08 -0400
+Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BAAB2CCAF
+        for <kernel-janitors@vger.kernel.org>; Fri,  8 Apr 2022 23:27:59 -0700 (PDT)
+Received: from pop-os.home ([86.243.180.246])
+        by smtp.orange.fr with ESMTPA
+        id d4Zgn0yPQNEW1d4ZgnPvBC; Sat, 09 Apr 2022 08:27:57 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sat, 09 Apr 2022 08:27:57 +0200
+X-ME-IP: 86.243.180.246
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     angelogioacchino.delregno@collabora.com,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH v2] remoteproc: mtk_scp: Fix a potential double free
+Date:   Sat,  9 Apr 2022 08:27:54 +0200
+Message-Id: <1d15023b4afb94591435c48482fe1276411b9a07.1648981531.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-X-KSE-ServerInfo: RTEXH36505.realtek.com.tw, 9
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: protection disabled
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-T24gU2F0LCAyMDIyLTA0LTA5IGF0IDA5OjEzICswMzAwLCBEYW4gQ2FycGVudGVyIHdyb3RlOg0K
-PiBUaGVzZSBpZiBjb25kaXRpb25zIGFyZSByZXZlcnNlZCBzbyBpdCB3aWxsIGp1c3QgcmV0dXJu
-IHN1Y2Nlc3Mgd2l0aG91dA0KPiB3cml0aW5nLg0KPiANCj4gRml4ZXM6IDc0MGM0MzFjMjJmZSAo
-InJ0dzg5OiBwY2k6IGFkZCByZWdpc3RlciBkZWZpbml0aW9uIHRvIHJ0dzg5X3BjaV9pbmZvIHRv
-IGdlbmVyYWxpemUgcGNpDQo+IGNvZGUiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBEYW4gQ2FycGVudGVy
-IDxkYW4uY2FycGVudGVyQG9yYWNsZS5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9uZXQvd2lyZWxl
-c3MvcmVhbHRlay9ydHc4OS9wY2kuYyB8IDQgKystLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5z
-ZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25l
-dC93aXJlbGVzcy9yZWFsdGVrL3J0dzg5L3BjaS5jIGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVh
-bHRlay9ydHc4OS9wY2kuYw0KPiBpbmRleCBkY2Y5MDdiODFjZmYuLmVjYjQxOTAxMGYwYyAxMDA2
-NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydHc4OS9wY2kuYw0KPiAr
-KysgYi9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0dzg5L3BjaS5jDQo+IEBAIC0xNTIy
-LDcgKzE1MjIsNyBAQCBydHc4OV93cml0ZTE2X21kaW9fbWFzayhzdHJ1Y3QgcnR3ODlfZGV2ICpy
-dHdkZXYsIHU4IGFkZHIsIHUxNiBtYXNrLCB1MTYNCj4gZGF0YSwgdQ0KPiAgCXUxNiB2YWw7DQo+
-ICANCj4gIAlyZXQgPSBydHc4OV9yZWFkMTZfbWRpbyhydHdkZXYsIGFkZHIsIHNwZWVkLCAmdmFs
-KTsNCj4gLQlpZiAoIXJldCkNCj4gKwlpZiAocmV0KQ0KPiAgCQlyZXR1cm4gcmV0Ow0KPiAgDQo+
-ICAJc2hpZnQgPSBfX2ZmcyhtYXNrKTsNCj4gQEAgLTE1MzAsNyArMTUzMCw3IEBAIHJ0dzg5X3dy
-aXRlMTZfbWRpb19tYXNrKHN0cnVjdCBydHc4OV9kZXYgKnJ0d2RldiwgdTggYWRkciwgdTE2IG1h
-c2ssIHUxNg0KPiBkYXRhLCB1DQo+ICAJdmFsIHw9ICgoZGF0YSA8PCBzaGlmdCkgJiBtYXNrKTsN
-Cj4gIA0KPiAgCXJldCA9IHJ0dzg5X3dyaXRlMTZfbWRpbyhydHdkZXYsIGFkZHIsIHZhbCwgc3Bl
-ZWQpOw0KPiAtCWlmICghcmV0KQ0KPiArCWlmIChyZXQpDQo+ICAJCXJldHVybiByZXQ7DQo+ICAN
-Cj4gIAlyZXR1cm4gMDsNCg0KSSBoYXZlIGZvdW5kIGFuZCBzZW50IGEgcGF0Y2ggdG8gZml4IHRo
-aXM6DQpodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC13aXJlbGVzcy8yMDIyMDQwODAwMTM1
-My4xNzE4OC0xNC1wa3NoaWhAcmVhbHRlay5jb20vVC8jdQ0KDQpUaGFuayB5b3UNClBpbmctS2UN
-Cg0KDQo=
+'scp->rproc' is allocated using devm_rproc_alloc(), so there is no need
+to free it explicitly in the remove function.
+
+Fixes: c1407ac1099a ("remoteproc: mtk_scp: Use devm variant of rproc_alloc()")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+v1 -> v2:
+	- add missing Signed-off-by
+---
+ drivers/remoteproc/mtk_scp.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index 38609153bf64..4a0e6c4bc6f4 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -877,7 +877,6 @@ static int scp_remove(struct platform_device *pdev)
+ 	for (i = 0; i < SCP_IPI_MAX; i++)
+ 		mutex_destroy(&scp->ipi_desc[i].lock);
+ 	mutex_destroy(&scp->send_lock);
+-	rproc_free(scp->rproc);
+ 
+ 	return 0;
+ }
+-- 
+2.32.0
+
