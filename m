@@ -2,65 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D60B0C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat,  9 Apr 2022 21:46:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 138C9C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Apr 2022 16:50:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232442AbiDIVsK (ORCPT
+        id S240762AbiDJQwU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 9 Apr 2022 17:48:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41906 "EHLO
+        Sun, 10 Apr 2022 12:52:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229632AbiDIVsJ (ORCPT
+        with ESMTP id S240090AbiDJQwS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 9 Apr 2022 17:48:09 -0400
-X-Greylist: delayed 515 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 09 Apr 2022 14:46:01 PDT
-Received: from mail.toke.dk (mail.toke.dk [45.145.95.4])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74C32C70
-        for <kernel-janitors@vger.kernel.org>; Sat,  9 Apr 2022 14:46:01 -0700 (PDT)
-From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=toke.dk; s=20161023;
-        t=1649540241; bh=vgHyx9BgxzG0UUENvbI1qWkuRKnGIRcnPb2rw2vPhac=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=hzIw18JJEu/uR3fjBa5QErIhy8JdKEc//GE+ftX+gw0dxf7BlJK5HF46iyfzQp+eh
-         PUOnW8WZnud0l/ONM3GQks2gwaOZp+W63FLZUrr7pfBXxfx/BQQyj02c76Olmm1vik
-         Grie5b1hj/aDWxV/IN7455ZrLkR/nY/LpGuQycwCTStbaQUu30sfk1yIr5dVRRL2Je
-         KFAjfGxMPHXEoPN73uozsHrx+9txpc7gkBT2GWvnIwVo4C32mHxKNFsgUX/AKmS71V
-         O9AuiF+BIXRg5ceUs1WtmuEcByuKtmka2iYBkPgKJpYHa09tlQqGWide/pQLkRf6G4
-         zN+gn/3jONl3w==
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Oleksij Rempel <linux@rempel-privat.de>
-Cc:     Kalle Valo <kvalo@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "John W. Linville" <linville@tuxdriver.com>,
-        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ath9k_htc: fix potential out of bounds access with
- invalid rxstatus->rs_keyix
-In-Reply-To: <20220409061225.GA5447@kili>
-References: <20220409061225.GA5447@kili>
-Date:   Sat, 09 Apr 2022 23:37:21 +0200
-X-Clacks-Overhead: GNU Terry Pratchett
-Message-ID: <87tub26ir2.fsf@toke.dk>
+        Sun, 10 Apr 2022 12:52:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81BBD13F14;
+        Sun, 10 Apr 2022 09:50:07 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1C3E86112F;
+        Sun, 10 Apr 2022 16:50:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CE02C385A1;
+        Sun, 10 Apr 2022 16:50:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649609406;
+        bh=lZPE+OeVGho9/MsXezYadGxibCtHR7leSyeCe+qHDP8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=WzuVHgYazvHNRT7R+Y9AUY4W+YDxexGWwm1r9e+QosXAM1l/F57WgzSsOjxRJ2jvX
+         4Z4+7+GLrUSXfrCHudCLd9H2trn2GLvluW8wC4EPXVsZMzJayXYUBPMkrBbTa16w6q
+         Gvv7AMnURt+Ur27xKpHT227Ht6F6KHlkYrOMU1lLak+uH5WGw28ohaG1J4eOdKjN6i
+         lF4KkLqEkDZsAR7SrvrwIkbQv122L7TGLiB8LYPJ1YtUyEBs5QchL1fVwjQ8SPZH9M
+         oJTgvswR7b+dbhW5OI14W7Y6SxhtTROvYkORqjNb5GWBfAsRY9TYXbhadxuK9CEuRX
+         Nm0rGVjFH96/g==
+Date:   Sun, 10 Apr 2022 17:57:56 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     "Sa, Nuno" <Nuno.Sa@analog.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] iio:dac:ad3552r: Fix an IS_ERR() vs NULL check
+Message-ID: <20220410175756.29f7a1b2@jic23-huawei>
+In-Reply-To: <PH0PR03MB6786CFA5554F79CCC3BA6FAF99E59@PH0PR03MB6786.namprd03.prod.outlook.com>
+References: <20220404114244.GA19201@kili>
+        <PH0PR03MB6786CFA5554F79CCC3BA6FAF99E59@PH0PR03MB6786.namprd03.prod.outlook.com>
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> writes:
+On Mon, 4 Apr 2022 12:34:25 +0000
+"Sa, Nuno" <Nuno.Sa@analog.com> wrote:
 
-> The "rxstatus->rs_keyix" eventually gets passed to test_bit() so we need =
-to
-> ensure that it is within than bitmap.
+> > From: Dan Carpenter <dan.carpenter@oracle.com>
+> > Sent: Monday, April 4, 2022 1:43 PM
+> > To: Lars-Peter Clausen <lars@metafoo.de>
+> > Cc: Hennerich, Michael <Michael.Hennerich@analog.com>; Jonathan
+> > Cameron <jic23@kernel.org>; linux-iio@vger.kernel.org; Sa, Nuno
+> > <Nuno.Sa@analog.com>; kernel-janitors@vger.kernel.org
+> > Subject: [PATCH] iio:dac:ad3552r: Fix an IS_ERR() vs NULL check
+> >=20
+> > [External]
+> >=20
+> > The fwnode_get_named_child_node() function does not return error
+> > pointers.  It returns NULL.  Update the check accordingly.
+> >=20
+> > Fixes: 8f2b54824b28 ("drivers:iio:dac: Add AD3552R driver support")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > --- =20
+>=20
+> Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+Applied to the fixes-togreg branch of iio.git.
 
-s/than/the/ ?
+Thanks,
 
-This I think Kalle can fix up when applying :)
+Jonathan
 
-> drivers/net/wireless/ath/ath9k/common.c:46 ath9k_cmn_rx_accept()
-> error: passing untrusted data 'rx_stats->rs_keyix' to 'test_bit()'
->
-> Fixes: 4ed1a8d4a257 ("ath9k_htc: use ath9k_cmn_rx_accept")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>=20
+> >  drivers/iio/dac/ad3552r.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/iio/dac/ad3552r.c b/drivers/iio/dac/ad3552r.c
+> > index 97f13c0b9631..59f49b7564b2 100644
+> > --- a/drivers/iio/dac/ad3552r.c
+> > +++ b/drivers/iio/dac/ad3552r.c
+> > @@ -809,10 +809,10 @@ static int
+> > ad3552r_configure_custom_gain(struct ad3552r_desc *dac,
+> >=20
+> >  	gain_child =3D fwnode_get_named_child_node(child,
+> >  						 "custom-output-range-
+> > config");
+> > -	if (IS_ERR(gain_child)) {
+> > +	if (!gain_child) {
+> >  		dev_err(dev,
+> >  			"mandatory custom-output-range-config
+> > property missing\n");
+> > -		return PTR_ERR(gain_child);
+> > +		return -EINVAL;
+> >  	}
+> >=20
+> >  	dac->ch_data[ch].range_override =3D 1;
+> > --
+> > 2.20.1 =20
+>=20
 
-Acked-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@toke.dk>
