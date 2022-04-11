@@ -2,110 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 138C9C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Apr 2022 16:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE97FC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Apr 2022 02:50:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240762AbiDJQwU (ORCPT
+        id S240150AbiDKCwz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 10 Apr 2022 12:52:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41698 "EHLO
+        Sun, 10 Apr 2022 22:52:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240090AbiDJQwS (ORCPT
+        with ESMTP id S235173AbiDKCwy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 10 Apr 2022 12:52:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81BBD13F14;
-        Sun, 10 Apr 2022 09:50:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1C3E86112F;
-        Sun, 10 Apr 2022 16:50:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CE02C385A1;
-        Sun, 10 Apr 2022 16:50:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649609406;
-        bh=lZPE+OeVGho9/MsXezYadGxibCtHR7leSyeCe+qHDP8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=WzuVHgYazvHNRT7R+Y9AUY4W+YDxexGWwm1r9e+QosXAM1l/F57WgzSsOjxRJ2jvX
-         4Z4+7+GLrUSXfrCHudCLd9H2trn2GLvluW8wC4EPXVsZMzJayXYUBPMkrBbTa16w6q
-         Gvv7AMnURt+Ur27xKpHT227Ht6F6KHlkYrOMU1lLak+uH5WGw28ohaG1J4eOdKjN6i
-         lF4KkLqEkDZsAR7SrvrwIkbQv122L7TGLiB8LYPJ1YtUyEBs5QchL1fVwjQ8SPZH9M
-         oJTgvswR7b+dbhW5OI14W7Y6SxhtTROvYkORqjNb5GWBfAsRY9TYXbhadxuK9CEuRX
-         Nm0rGVjFH96/g==
-Date:   Sun, 10 Apr 2022 17:57:56 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     "Sa, Nuno" <Nuno.Sa@analog.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] iio:dac:ad3552r: Fix an IS_ERR() vs NULL check
-Message-ID: <20220410175756.29f7a1b2@jic23-huawei>
-In-Reply-To: <PH0PR03MB6786CFA5554F79CCC3BA6FAF99E59@PH0PR03MB6786.namprd03.prod.outlook.com>
-References: <20220404114244.GA19201@kili>
-        <PH0PR03MB6786CFA5554F79CCC3BA6FAF99E59@PH0PR03MB6786.namprd03.prod.outlook.com>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        Sun, 10 Apr 2022 22:52:54 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F5B8E090
+        for <kernel-janitors@vger.kernel.org>; Sun, 10 Apr 2022 19:50:42 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id mp16-20020a17090b191000b001cb5efbcab6so4802813pjb.4
+        for <kernel-janitors@vger.kernel.org>; Sun, 10 Apr 2022 19:50:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZrZ5rDgqEUbVpEm+O9sloaqEPKbBeBqsdAreas8s0sQ=;
+        b=oaNwzIorQSMwZEymn1K2hsZ3/YUxXAz15bafp0ZmVf4q9/79kiNPbLeaVKNCyH9l2J
+         lzFTfp0nEG/vPiaPsQVVZtM0dxrwUsn9uiVBxDQSzHfZjdYxDMu6jjJHr/uH779rP9UN
+         9GjY5KOJTSaJYsNo5AW3Ym9BKLB+QhFD44ld7PYZFv04BAsuEufCRlP9X16aPxaDdvDv
+         4/2n3X2KvwVmI94tqw3dve4ZW+WY0JRp4aqfGPZ/tir/47BYxwJJvBG6Y+mlQ7eKE5iQ
+         6Thg60iWCXoGOVPCmo4w2Ij5DYoSMmEdH8bBnKKyMUYxTUXHygJgcBOh3Jr6eeZDs6Xf
+         XRIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZrZ5rDgqEUbVpEm+O9sloaqEPKbBeBqsdAreas8s0sQ=;
+        b=qlizQavqoDV79gAcKR94oCb81731zWMlnHFaE0qB6UrCtZ/2QaSewPRAq99uT6HCNa
+         kM5+pkOx9o1mW08ySedXAQFkAUPa4zzR63VFdxZEIomjWWbeXEUrV5rDPknMaK1Xh0VU
+         yxRKR2zeIi4vt8NA+Has62f8e15tgPDOYW38eFLhG/pPaeklrVSsn8qbPK9PEPLMBdGl
+         GPP7styhkXf4Ej6NzzABAPkIKpGFBYJTfnRXtlbBuRoq/Br+UT55eeI85hwhhsnLOFMW
+         PGM49FQOPEGmEvyD1q4HaTOsCnACAGcynbIXIAeUUCTq3NmNnXJhjVeNk7KvlbIheI6q
+         1Y4w==
+X-Gm-Message-State: AOAM532pVPiizTatRtVEdtDVmYeRpSCeeLAlhjDoCc45tSlRffEhZ7IU
+        20K194o+501qHTLHTMzhE/mG8A==
+X-Google-Smtp-Source: ABdhPJxe+MoLvnZTblrcT0nPzRDuAIRKLlKtgVSkqtkNQAOEc2bU3+M/mPp/NIzKaXVPsfVmnf6xJw==
+X-Received: by 2002:a17:902:b183:b0:14f:c266:20d5 with SMTP id s3-20020a170902b18300b0014fc26620d5mr30506102plr.136.1649645442037;
+        Sun, 10 Apr 2022 19:50:42 -0700 (PDT)
+Received: from localhost ([223.184.83.228])
+        by smtp.gmail.com with ESMTPSA id c17-20020a62e811000000b005058e80c604sm8499783pfi.53.2022.04.10.19.50.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Apr 2022 19:50:41 -0700 (PDT)
+Date:   Mon, 11 Apr 2022 08:20:39 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sibi Sankar <sibis@codeaurora.org>, linux-pm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] OPP: call of_node_put() on error path in
+ _bandwidth_supported()
+Message-ID: <20220411025039.ptimpe3pwur26spt@vireshk-i7>
+References: <20220406064014.GA28099@kili>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220406064014.GA28099@kili>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 4 Apr 2022 12:34:25 +0000
-"Sa, Nuno" <Nuno.Sa@analog.com> wrote:
+On 06-04-22, 09:40, Dan Carpenter wrote:
+> This code does not call of_node_put(opp_np) if of_get_next_available_child()
+> returns NULL.  But it should.
+> 
+> Fixes: 45679f9b508f ("opp: Don't parse icc paths unnecessarily")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/opp/of.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/opp/of.c b/drivers/opp/of.c
+> index 440ab5a03df9..95b184fc3372 100644
+> --- a/drivers/opp/of.c
+> +++ b/drivers/opp/of.c
+> @@ -437,11 +437,11 @@ static int _bandwidth_supported(struct device *dev, struct opp_table *opp_table)
+>  
+>  	/* Checking only first OPP is sufficient */
+>  	np = of_get_next_available_child(opp_np, NULL);
+> +	of_node_put(opp_np);
+>  	if (!np) {
+>  		dev_err(dev, "OPP table empty\n");
+>  		return -EINVAL;
+>  	}
+> -	of_node_put(opp_np);
+>  
+>  	prop = of_find_property(np, "opp-peak-kBps", NULL);
+>  	of_node_put(np);
 
-> > From: Dan Carpenter <dan.carpenter@oracle.com>
-> > Sent: Monday, April 4, 2022 1:43 PM
-> > To: Lars-Peter Clausen <lars@metafoo.de>
-> > Cc: Hennerich, Michael <Michael.Hennerich@analog.com>; Jonathan
-> > Cameron <jic23@kernel.org>; linux-iio@vger.kernel.org; Sa, Nuno
-> > <Nuno.Sa@analog.com>; kernel-janitors@vger.kernel.org
-> > Subject: [PATCH] iio:dac:ad3552r: Fix an IS_ERR() vs NULL check
-> >=20
-> > [External]
-> >=20
-> > The fwnode_get_named_child_node() function does not return error
-> > pointers.  It returns NULL.  Update the check accordingly.
-> >=20
-> > Fixes: 8f2b54824b28 ("drivers:iio:dac: Add AD3552R driver support")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > --- =20
->=20
-> Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
-Applied to the fixes-togreg branch of iio.git.
+Applied. Thanks.
 
-Thanks,
-
-Jonathan
-
->=20
-> >  drivers/iio/dac/ad3552r.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/iio/dac/ad3552r.c b/drivers/iio/dac/ad3552r.c
-> > index 97f13c0b9631..59f49b7564b2 100644
-> > --- a/drivers/iio/dac/ad3552r.c
-> > +++ b/drivers/iio/dac/ad3552r.c
-> > @@ -809,10 +809,10 @@ static int
-> > ad3552r_configure_custom_gain(struct ad3552r_desc *dac,
-> >=20
-> >  	gain_child =3D fwnode_get_named_child_node(child,
-> >  						 "custom-output-range-
-> > config");
-> > -	if (IS_ERR(gain_child)) {
-> > +	if (!gain_child) {
-> >  		dev_err(dev,
-> >  			"mandatory custom-output-range-config
-> > property missing\n");
-> > -		return PTR_ERR(gain_child);
-> > +		return -EINVAL;
-> >  	}
-> >=20
-> >  	dac->ch_data[ch].range_override =3D 1;
-> > --
-> > 2.20.1 =20
->=20
-
+-- 
+viresh
