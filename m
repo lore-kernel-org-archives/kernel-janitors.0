@@ -2,71 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69BEFC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Apr 2022 13:21:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B57BAC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Apr 2022 13:27:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353267AbiDLNYA (ORCPT
+        id S1356016AbiDLN3c (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 12 Apr 2022 09:24:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58866 "EHLO
+        Tue, 12 Apr 2022 09:29:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355965AbiDLNWU (ORCPT
+        with ESMTP id S232196AbiDLN3X (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 12 Apr 2022 09:22:20 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60E8FB47;
-        Tue, 12 Apr 2022 06:12:50 -0700 (PDT)
+        Tue, 12 Apr 2022 09:29:23 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C9A1D7;
+        Tue, 12 Apr 2022 06:27:05 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 28BE5B81B1F;
-        Tue, 12 Apr 2022 13:12:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AC7EC385B3;
-        Tue, 12 Apr 2022 13:12:45 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 07F46619D7;
+        Tue, 12 Apr 2022 13:27:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9577EC385A1;
+        Tue, 12 Apr 2022 13:27:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649769168;
-        bh=/vmu44weNRIQQXno9KBtiVr3WCW3XhcLvkMQI6ma3p4=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=qPMhMA/1nt5PjdyYlYofPIkLDrgS/GxzukEvqNUNEwWUpRZ5hWJCWF0HqRZNmUCR4
-         OP+KEPXV6Pw36hLg/1TmF1zG2oe+uWulYFfpOdgeecwZBHuz18W8tNH5orLFViooxK
-         kl+4i9AdEwZvTNGoyuG3qEk9WiXgxr6M9EhLawNV5WuM4G+0mt4aiYaqBdGeqsMd6G
-         3YMFHdUGLHBgN3k3kth1+3ChUZNTEmRTP3RWdVkFdkTyS1+2u15D7c2CSICtdlIKie
-         +3S5uPxnmYfuN3vCY0WFGwuvMMvMnpGhqeIdAd5Qhk/GmHlR3uzrSjzwqt7eJbvRHl
-         VYNHN2612HCfw==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH][next] ath11k: Fix spelling mistake "reseting" ->
- "resetting"
+        s=k20201202; t=1649770024;
+        bh=4SRMm+oi+OXE5VmvCpvFhkMlZkhqhIVBfNpql/7kyPQ=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=qWV+Lea1tXQSYUwgAZtZ4pFi645XWEi86YDrMS5snj9TX+F+EB71mhkf6z+nkVQJC
+         pOFfIIwNE6tbqP0AaW10xIYlFU2dMzdNbED/siTYxuiUe+9uYD1wZXB054SuoKew7x
+         J3CtwsI6+cA9Lwk567ss31520Qs02GSKDHEfO0VgnH+2s4h0yb4tuZWhVniTKsAi+w
+         G9BwMQj/ECIY1rGwnGy5SbQQ+vxCNu+VhmwBcuRaHTehE09xPQi+WivOB9/c7gaXvn
+         PtyP3Ljv3pxOkmhMUz7/JxdCYskS9h2bkuddyZ+qB1oV4uIzscVkcYZqjKSL3nuy5/
+         nEdeJizXLDpxg==
 From:   Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20220407102820.613881-1-colin.i.king@gmail.com>
-References: <20220407102820.613881-1-colin.i.king@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
+To:     Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Oleksij Rempel <linux@rempel-privat.de>,
         Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, ath11k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <164976916384.15500.12618442954054836491.kvalo@kernel.org>
-Date:   Tue, 12 Apr 2022 13:12:45 +0000 (UTC)
+        Paolo Abeni <pabeni@redhat.com>,
+        "John W. Linville" <linville@tuxdriver.com>,
+        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ath9k_htc: fix potential out of bounds access with invalid rxstatus->rs_keyix
+References: <20220409061225.GA5447@kili> <87tub26ir2.fsf@toke.dk>
+Date:   Tue, 12 Apr 2022 16:26:58 +0300
+In-Reply-To: <87tub26ir2.fsf@toke.dk> ("Toke \=\?utf-8\?Q\?H\=C3\=B8iland-J\?\=
+ \=\?utf-8\?Q\?\=C3\=B8rgensen\=22's\?\= message of
+        "Sat, 09 Apr 2022 23:37:21 +0200")
+Message-ID: <875yneo2jh.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Colin Ian King <colin.i.king@gmail.com> wrote:
+Toke H=C3=B8iland-J=C3=B8rgensen <toke@toke.dk> writes:
 
-> There is a spelling mistake in an ath11k_warn message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+> Dan Carpenter <dan.carpenter@oracle.com> writes:
+>
+>> The "rxstatus->rs_keyix" eventually gets passed to test_bit() so we need=
+ to
+>> ensure that it is within than bitmap.
+>
+> s/than/the/ ?
+>
+> This I think Kalle can fix up when applying :)
 
-Patch applied to ath-next branch of ath.git, thanks.
+Yup, fixed now in the pending branch.
 
-405342ebea2a ath11k: Fix spelling mistake "reseting" -> "resetting"
+--=20
+https://patchwork.kernel.org/project/linux-wireless/list/
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20220407102820.613881-1-colin.i.king@gmail.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
+hes
