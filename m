@@ -2,90 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0BC8C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Apr 2022 17:04:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD904C4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Apr 2022 01:50:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354031AbiDLRGr (ORCPT
+        id S231593AbiDMBxP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 12 Apr 2022 13:06:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45474 "EHLO
+        Tue, 12 Apr 2022 21:53:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357953AbiDLRGd (ORCPT
+        with ESMTP id S229755AbiDMBxO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 12 Apr 2022 13:06:33 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4050613E8C
-        for <kernel-janitors@vger.kernel.org>; Tue, 12 Apr 2022 10:04:14 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id y6so17351301plg.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 12 Apr 2022 10:04:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=svCJiNYCVSTSADFJuSISCpOI75wKzQz4JEvN3pdJrsM=;
-        b=I0pM3O+HVyaN+WR40sxZKPBujfPiS3TYbtroP2cR9D3EyonmrVjWLo+lFmCjjMF/C9
-         cKC95ZxJ5Wrj7D8YYDHGFUDvGV5CqSfJIeyJZp4xia9AH0fNss/9hGUjx3Dc5k/kk+NI
-         SK55KI1P+NrSthu6nAnBYzB/AAGQORsGEG9JNxBoBlmcVXq8WOOypF/3nfo1RTjKbfAK
-         3wkiCRIRYK/PBpuqmNWFGd3fnVzQpOgfZYmS3EiJjdqvm+ZOuX4X+FXha0FXLcH2RAYv
-         wEPfq51y/pCgvHdYlIvMzU1RG15mFEFWbDIbpcC1v792nKvKq9up0JlbsebYKLsxNu3N
-         N77w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=svCJiNYCVSTSADFJuSISCpOI75wKzQz4JEvN3pdJrsM=;
-        b=T834f+YI5ZjPQ3Ys1hG41IkR/Z1kDpHbp3BIjzmcsODv5Sn3T41aAO54Bf2BbAerO+
-         NZM+wLhxuP0dYQeZfmLAVifqDcGYclH2xuO3dfQ+/v0Ar3IMADqiNTOL36HWvZo0WKae
-         gBcHxstGztU8BWhb7S1w51yKCehiM751vkpRtQ66OXDIla8flazpS1eIvszxllLct5ar
-         IbmGUWvz7WV5GxailI4zgqZxb8DVHLDrh3tvwqDQD+Sa7J/AIy42tRGKkciHjwSEhvNv
-         eO79JsvUNLTWMhraDEiGkPr8NWkMhzkZzcodeWgkiA5DthJnioo0JMuPqnfAPPWPz6Pc
-         kpRA==
-X-Gm-Message-State: AOAM5307eQ2mui/OaYGKKoh4CqqZJicWRhHP/4CD821dNWJxTBdR85/F
-        oJj0usT2sW939ZtTi7XHtwHa6Q==
-X-Google-Smtp-Source: ABdhPJxED4y9fHEAFYCWz2UyU0Yj+9pcsOz0knbV4/SXxH9hKezQCW0Zl7/FRRX8+OwqcltokcmuJw==
-X-Received: by 2002:a17:90b:19d0:b0:1cb:7ef1:d915 with SMTP id nm16-20020a17090b19d000b001cb7ef1d915mr6130873pjb.16.1649783053717;
-        Tue, 12 Apr 2022 10:04:13 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id k92-20020a17090a4ce500b001ca69b5c034sm49060pjh.46.2022.04.12.10.04.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Apr 2022 10:04:12 -0700 (PDT)
-Date:   Tue, 12 Apr 2022 11:04:10 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v2] remoteproc: mtk_scp: Fix a potential double free
-Message-ID: <20220412170410.GA465495@p14s>
-References: <1d15023b4afb94591435c48482fe1276411b9a07.1648981531.git.christophe.jaillet@wanadoo.fr>
- <34c30f7c-70e2-dc95-a664-9379f91f5aed@collabora.com>
+        Tue, 12 Apr 2022 21:53:14 -0400
+Received: from ha.nfschina.com (unknown [IPv6:2400:dd01:100f:2:72e2:84ff:fe10:5f45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 83CC327FE7;
+        Tue, 12 Apr 2022 18:50:54 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by ha.nfschina.com (Postfix) with ESMTP id 7F4E21E80D9E;
+        Wed, 13 Apr 2022 09:49:36 +0800 (CST)
+X-Virus-Scanned: amavisd-new at test.com
+Received: from ha.nfschina.com ([127.0.0.1])
+        by localhost (ha.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id P---MdcC6w0a; Wed, 13 Apr 2022 09:49:33 +0800 (CST)
+Received: from ubuntu.localdomain (unknown [101.228.255.56])
+        (Authenticated sender: yuzhe@nfschina.com)
+        by ha.nfschina.com (Postfix) with ESMTPA id 08A021E80D95;
+        Wed, 13 Apr 2022 09:49:32 +0800 (CST)
+From:   Yu Zhe <yuzhe@nfschina.com>
+To:     ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org
+Cc:     netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org, liqiong@nfschina.com,
+        kernel-janitors@vger.kernel.org, Yu Zhe <yuzhe@nfschina.com>
+Subject: [PATCH] bpf: remove unnecessary type castings
+Date:   Tue, 12 Apr 2022 18:50:48 -0700
+Message-Id: <20220413015048.12319-1-yuzhe@nfschina.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <34c30f7c-70e2-dc95-a664-9379f91f5aed@collabora.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Apr 11, 2022 at 10:55:52AM +0200, AngeloGioacchino Del Regno wrote:
-> Il 09/04/22 08:27, Christophe JAILLET ha scritto:
-> > 'scp->rproc' is allocated using devm_rproc_alloc(), so there is no need
-> > to free it explicitly in the remove function.
-> > 
-> > Fixes: c1407ac1099a ("remoteproc: mtk_scp: Use devm variant of rproc_alloc()")
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+remove unnecessary void* type castings.
 
-Applied.
+Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+---
+ kernel/bpf/bpf_struct_ops.c | 4 ++--
+ kernel/bpf/hashtab.c        | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-Thanks,
-Mathieu
+diff --git a/kernel/bpf/bpf_struct_ops.c b/kernel/bpf/bpf_struct_ops.c
+index 21069dbe9138..de01d37c2d3b 100644
+--- a/kernel/bpf/bpf_struct_ops.c
++++ b/kernel/bpf/bpf_struct_ops.c
+@@ -263,7 +263,7 @@ int bpf_struct_ops_map_sys_lookup_elem(struct bpf_map *map, void *key,
+ 	/* No lock is needed.  state and refcnt do not need
+ 	 * to be updated together under atomic context.
+ 	 */
+-	uvalue = (struct bpf_struct_ops_value *)value;
++	uvalue = value;
+ 	memcpy(uvalue, st_map->uvalue, map->value_size);
+ 	uvalue->state = state;
+ 	refcount_set(&uvalue->refcnt, refcount_read(&kvalue->refcnt));
+@@ -353,7 +353,7 @@ static int bpf_struct_ops_map_update_elem(struct bpf_map *map, void *key,
+ 	if (err)
+ 		return err;
+ 
+-	uvalue = (struct bpf_struct_ops_value *)value;
++	uvalue = value;
+ 	err = check_zero_holes(t, uvalue->data);
+ 	if (err)
+ 		return err;
+diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
+index 65877967f414..c68fbebc8c00 100644
+--- a/kernel/bpf/hashtab.c
++++ b/kernel/bpf/hashtab.c
+@@ -738,7 +738,7 @@ static void check_and_free_timer(struct bpf_htab *htab, struct htab_elem *elem)
+  */
+ static bool htab_lru_map_delete_node(void *arg, struct bpf_lru_node *node)
+ {
+-	struct bpf_htab *htab = (struct bpf_htab *)arg;
++	struct bpf_htab *htab = arg;
+ 	struct htab_elem *l = NULL, *tgt_l;
+ 	struct hlist_nulls_head *head;
+ 	struct hlist_nulls_node *n;
+-- 
+2.25.1
 
-> 
-> 
