@@ -2,94 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EC58C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Apr 2022 10:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94CF9C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Apr 2022 12:01:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242379AbiDNKjV (ORCPT
+        id S237342AbiDNMDm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Apr 2022 06:39:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45160 "EHLO
+        Thu, 14 Apr 2022 08:03:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241898AbiDNKjV (ORCPT
+        with ESMTP id S243145AbiDNMCy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Apr 2022 06:39:21 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E512374860;
-        Thu, 14 Apr 2022 03:36:52 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id r13so6281489wrr.9;
-        Thu, 14 Apr 2022 03:36:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=T+H9uo8jaDQ+kAk6GpwLVDlfJtlk/SgUkV35P9NpXgY=;
-        b=l9ztUzpU2wRO+hzdBfUprIPjKonUiQxgtSHxGQCjqNQn/2qVyihMV1BTV6Yp1hLgWV
-         JKfjhMoWW+g4zIVo9QKAVW+t02X0RwnJ/OzdUEFcQ83XHDBLeWM68ALhAq8McUfQY4Uj
-         5Yr+QVJ1HSWKZ3WEF/J7NuRboDG01MN1gnXUmGXrFrPvP3VqfMo4TfcUhxg7+VX7gZBG
-         ll/x5T8M6Jk2iTMNqSUOX/0O7/XKREyrDUXOnVtTOhYi0JrvAIV28kOlprJDJgB5p0cu
-         V5V7zxxkHSPMixnUGqN+XuTBGlsEl7n5xvDuf162O8b1rfOlUL3knPt0tQEVA/LTMxlw
-         Qo2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=T+H9uo8jaDQ+kAk6GpwLVDlfJtlk/SgUkV35P9NpXgY=;
-        b=gyuhfQ2QfMqhERyo2DRoZ/xnod5PpU9p7obJP5MJQxj9wH9LZUCHvQnaamm69pe1K8
-         iDiVkBHyLlBGSTz64qmjqvJtXBrmjFH0oISAchBwGbz3e3f2CL3wYohSdQFn2aoxeaa0
-         aUlof/8656NMbXAGaK8xC2S3pLAoHTO9yKqQyjUuJE1CWlzPFNSjO2Q09qJS6xSfeCwM
-         UcuzwDE2Mjl6JqZLRqibcCqnEjQqS34SHA+Ix1L4/WZnqs9y40IQn5+UX4lxbCp0hnID
-         9BwV0rn45TL9B7oPG2r7OIqWgj9inCZn48gyZIwuaqXJC41EyVt/NN76w5TGPAIp7iDC
-         v8qw==
-X-Gm-Message-State: AOAM530Oo43lClsIQ+swilNCyzdMtWo0j26A8tr8U/dYHyICDobc+Dw6
-        t3JrciLOiHidxdbg1SOrtfE=
-X-Google-Smtp-Source: ABdhPJwXV3YcP+8w+S0kD0SJTZ0cELq2D30GQr5G2hcFvNyGEpDonekUEQKh7+KK4uvvTBtW/681Vw==
-X-Received: by 2002:adf:f348:0:b0:207:a696:db82 with SMTP id e8-20020adff348000000b00207a696db82mr1641280wrp.292.1649932611540;
-        Thu, 14 Apr 2022 03:36:51 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id p15-20020a5d59af000000b0020858885fd7sm1830260wrr.9.2022.04.14.03.36.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Apr 2022 03:36:51 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-staging@lists.linux.dev
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][V2] staging: rtl8192u: make read-only array EWC11NHTCap static const
-Date:   Thu, 14 Apr 2022 11:36:50 +0100
-Message-Id: <20220414103650.297396-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Thu, 14 Apr 2022 08:02:54 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C376BF4;
+        Thu, 14 Apr 2022 05:00:21 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: kholk11)
+        with ESMTPSA id 503611F479AA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1649937620;
+        bh=SIfLgdnnm8Mr1pbjdeSXLKHkft4Qo/podTgV9ZDU6oA=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Zg5ZpRBctAbEWetGACqu7m5ZTuMBIP5UM9CW0mHjzxWc9yf6zxgri36QFRVRjFe8r
+         q1k0qUq5I9KDxSWMh70FuxJ/Z7zG2Hfa7/zale0fdLVS7CAyUbwObk8mNvDyot53uP
+         +IQOXs3VLcYC+43iXuXMkYMgW+NzpNj9pjZUgui/WWFR6F5aVi8cgDenBSd/G4lKAf
+         8Tr1vm9ZVoqDRVNWvBXgv1KWwwVnHUPH+hXPS+mMC8X0/57TecA6wAfRmGCa+0jOrG
+         CaTqlo5j2ZcT8SOi18q3e72PURRomPvUN+U+Jl3d+TpmmrHRmYk9M75ytNGAzxHgL/
+         KJzCU9Xf5zMUA==
+Message-ID: <98a1d6fa-c5d0-f1f2-ad85-f5246b368fb3@collabora.com>
+Date:   Thu, 14 Apr 2022 14:00:17 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] mt76: mt7921: make read-only array ppet16_ppet8_ru3_ru0
+ static const
+Content-Language: en-US
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Felix Fietkau <nbd@nbd.name>,
+        Lorenzo Bianconi <lorenzo@kernel.org>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Shayne Chen <shayne.chen@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220414095438.294980-1-colin.i.king@gmail.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20220414095438.294980-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the read-only array EWC11NHTCap on the stack but instead
-make it static const. Also makes the object code a little smaller.
-Remove comment.
+Il 14/04/22 11:54, Colin Ian King ha scritto:
+> Don't populate the read-only array ppet16_ppet8_ru3_ru0 on the stack but
+> instead make it static const. Also makes the object code a little smaller.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
+Tested OK (mt7921 on PCIe), and....
 
-V2: remove unnecessary comment as per Greg's request
-
----
- drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-index 358c35d9589c..a93f09033d9d 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-@@ -480,7 +480,7 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
- 	}
- 	memset(posHTCap, 0, *len);
- 	if (pHT->ePeerHTSpecVer == HT_SPEC_VER_EWC) {
--		u8	EWC11NHTCap[] = {0x00, 0x90, 0x4c, 0x33};	// For 11n EWC definition, 2007.07.17, by Emily
-+		static const u8	EWC11NHTCap[] = {0x00, 0x90, 0x4c, 0x33};
- 
- 		memcpy(posHTCap, EWC11NHTCap, sizeof(EWC11NHTCap));
- 		pCapELE = (struct ht_capability_ele *)&posHTCap[4];
--- 
-2.35.1
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
