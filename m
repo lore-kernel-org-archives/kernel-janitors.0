@@ -2,76 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DFABC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Apr 2022 10:26:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EC58C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Apr 2022 10:36:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241775AbiDNK2h (ORCPT
+        id S242379AbiDNKjV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Apr 2022 06:28:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56130 "EHLO
+        Thu, 14 Apr 2022 06:39:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239011AbiDNK2g (ORCPT
+        with ESMTP id S241898AbiDNKjV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Apr 2022 06:28:36 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 964636C94D;
-        Thu, 14 Apr 2022 03:26:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3345161DCE;
-        Thu, 14 Apr 2022 10:26:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44599C385A5;
-        Thu, 14 Apr 2022 10:26:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1649931970;
-        bh=ZQjNNGaDE88G+jCAsYeLoetA2Gs7aMcuSn6n5mbSGRQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KAT+o4XQH1FNm9EN+3rrEgo4JjdEeyC31cRmpj6eXF809docckODh6KUgWiqAskHz
-         nuqzEc1O1r2oWJn+8Dv0UdL16IbjOgdzK1Vrfm8nL/AFnTrI6waLreybSzJEFuxoye
-         dwmPIbuKN35WHObLKoGfjgUqyGfKmIMYtdpkzL14=
-Date:   Thu, 14 Apr 2022 12:26:00 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8192u: make read-only array EWC11NHTCap
- static const
-Message-ID: <Ylf2uDiVLniQiACK@kroah.com>
-References: <20220414101838.296944-1-colin.i.king@gmail.com>
+        Thu, 14 Apr 2022 06:39:21 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E512374860;
+        Thu, 14 Apr 2022 03:36:52 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id r13so6281489wrr.9;
+        Thu, 14 Apr 2022 03:36:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=T+H9uo8jaDQ+kAk6GpwLVDlfJtlk/SgUkV35P9NpXgY=;
+        b=l9ztUzpU2wRO+hzdBfUprIPjKonUiQxgtSHxGQCjqNQn/2qVyihMV1BTV6Yp1hLgWV
+         JKfjhMoWW+g4zIVo9QKAVW+t02X0RwnJ/OzdUEFcQ83XHDBLeWM68ALhAq8McUfQY4Uj
+         5Yr+QVJ1HSWKZ3WEF/J7NuRboDG01MN1gnXUmGXrFrPvP3VqfMo4TfcUhxg7+VX7gZBG
+         ll/x5T8M6Jk2iTMNqSUOX/0O7/XKREyrDUXOnVtTOhYi0JrvAIV28kOlprJDJgB5p0cu
+         V5V7zxxkHSPMixnUGqN+XuTBGlsEl7n5xvDuf162O8b1rfOlUL3knPt0tQEVA/LTMxlw
+         Qo2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=T+H9uo8jaDQ+kAk6GpwLVDlfJtlk/SgUkV35P9NpXgY=;
+        b=gyuhfQ2QfMqhERyo2DRoZ/xnod5PpU9p7obJP5MJQxj9wH9LZUCHvQnaamm69pe1K8
+         iDiVkBHyLlBGSTz64qmjqvJtXBrmjFH0oISAchBwGbz3e3f2CL3wYohSdQFn2aoxeaa0
+         aUlof/8656NMbXAGaK8xC2S3pLAoHTO9yKqQyjUuJE1CWlzPFNSjO2Q09qJS6xSfeCwM
+         UcuzwDE2Mjl6JqZLRqibcCqnEjQqS34SHA+Ix1L4/WZnqs9y40IQn5+UX4lxbCp0hnID
+         9BwV0rn45TL9B7oPG2r7OIqWgj9inCZn48gyZIwuaqXJC41EyVt/NN76w5TGPAIp7iDC
+         v8qw==
+X-Gm-Message-State: AOAM530Oo43lClsIQ+swilNCyzdMtWo0j26A8tr8U/dYHyICDobc+Dw6
+        t3JrciLOiHidxdbg1SOrtfE=
+X-Google-Smtp-Source: ABdhPJwXV3YcP+8w+S0kD0SJTZ0cELq2D30GQr5G2hcFvNyGEpDonekUEQKh7+KK4uvvTBtW/681Vw==
+X-Received: by 2002:adf:f348:0:b0:207:a696:db82 with SMTP id e8-20020adff348000000b00207a696db82mr1641280wrp.292.1649932611540;
+        Thu, 14 Apr 2022 03:36:51 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id p15-20020a5d59af000000b0020858885fd7sm1830260wrr.9.2022.04.14.03.36.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Apr 2022 03:36:51 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-staging@lists.linux.dev
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][V2] staging: rtl8192u: make read-only array EWC11NHTCap static const
+Date:   Thu, 14 Apr 2022 11:36:50 +0100
+Message-Id: <20220414103650.297396-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220414101838.296944-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Apr 14, 2022 at 11:18:38AM +0100, Colin Ian King wrote:
-> Don't populate the read-only array EWC11NHTCap on the stack but instead
-> make it static const. Also makes the object code a little smaller. Move
-> comment to clean up checkpatch warning.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-> index 358c35d9589c..b4cbe499ba37 100644
-> --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-> +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-> @@ -480,7 +480,8 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
->  	}
->  	memset(posHTCap, 0, *len);
->  	if (pHT->ePeerHTSpecVer == HT_SPEC_VER_EWC) {
-> -		u8	EWC11NHTCap[] = {0x00, 0x90, 0x4c, 0x33};	// For 11n EWC definition, 2007.07.17, by Emily
-> +		/* For 11n EWC definition, 2007.07.17, by Emily */
+Don't populate the read-only array EWC11NHTCap on the stack but instead
+make it static const. Also makes the object code a little smaller.
+Remove comment.
 
-This is not needed anymore, you know this...
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
 
-Just delete it please.
+V2: remove unnecessary comment as per Greg's request
 
-thanks,
+---
+ drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-greg k-h
+diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
+index 358c35d9589c..a93f09033d9d 100644
+--- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
++++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
+@@ -480,7 +480,7 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
+ 	}
+ 	memset(posHTCap, 0, *len);
+ 	if (pHT->ePeerHTSpecVer == HT_SPEC_VER_EWC) {
+-		u8	EWC11NHTCap[] = {0x00, 0x90, 0x4c, 0x33};	// For 11n EWC definition, 2007.07.17, by Emily
++		static const u8	EWC11NHTCap[] = {0x00, 0x90, 0x4c, 0x33};
+ 
+ 		memcpy(posHTCap, EWC11NHTCap, sizeof(EWC11NHTCap));
+ 		pCapELE = (struct ht_capability_ele *)&posHTCap[4];
+-- 
+2.35.1
+
