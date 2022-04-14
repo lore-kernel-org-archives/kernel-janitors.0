@@ -2,91 +2,109 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD798C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Apr 2022 08:08:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14183C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Apr 2022 08:48:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239335AbiDNILM (ORCPT
+        id S241103AbiDNIuk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Apr 2022 04:11:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43754 "EHLO
+        Thu, 14 Apr 2022 04:50:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230453AbiDNILE (ORCPT
+        with ESMTP id S236287AbiDNIui (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Apr 2022 04:11:04 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10FB747396;
-        Thu, 14 Apr 2022 01:08:38 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id w4so5774894wrg.12;
-        Thu, 14 Apr 2022 01:08:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tx/zMBOLjddkHmbrwkzmuT+90GnJTCLZ7tgbeDO6umk=;
-        b=D977sj3KXt6wL/UzY9DpO+6L8paeDsUe4BB7swuP+SiXlsPDeG9hgE9wq+GcnCXsDK
-         10Kgak5i0a1f4MMp4k9qytrGgUROPl62y8PlxKe9FLJO82goNThADT6LGSR48SJ7F6/t
-         88MDIwKp36FEUww8eiOLFDTk8kGPRNJeQU2fyNZNu6FD+P8QuyIsvvFyQrnd0AS9FKpj
-         1DnzG1GnEv7s2Zc1955SVZwRWTOyJOKqD6QqcMTRQK82Tz+PKs+rGjw+w4rysh35qmsd
-         ZggISr7aJf3UE+wOQzmY+GL1aBpgqM2mNNi/mt7C3F9WXELtF/ARWXKs9mJa9fu8SVBn
-         J0kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tx/zMBOLjddkHmbrwkzmuT+90GnJTCLZ7tgbeDO6umk=;
-        b=16i+xxQNUrXfKubxyLh8tTK00WoB8frneZteMiGHMyci3w/HT/0LW9RKyrxFDWUbtU
-         u8B/Bud+lal2Y3WgXyRbqsQBt5POab5HoShUle3hnDWXyIV0oMImqq2U8hEfdsjbYYsN
-         6PgGa6dKOUoldDLFOwlTMdu1UYjYmhBrH7amK+Do0F6y0abP55TEEAAkV/GFmBhi0MUj
-         igijla5ThKSO2X4mLq6drsDmLZW9EOJIYLwnvfZmuSLAGs3AfAQKcbIEps3/MXSxQjWO
-         rKJGz1CbTB3fa5eCzJ3xp6TGlGA43ppeUW0ukYGrVLjb0YKSoBBSwqGtCMhTbVtdnfJU
-         fp0g==
-X-Gm-Message-State: AOAM533LfqkxkkNmCEyWkVAAbB/wO1+NOHihDz0dP1QHRu2T8ybKTDW+
-        zkSUhFvEP/OxpRnPcayFJAg=
-X-Google-Smtp-Source: ABdhPJzH2Wv1o3UrZyadfbu/jCeujblFCffDU03I3Nhk3ovr+BkF6vAwwoLhaGD7M5hAZPhhXCWTeg==
-X-Received: by 2002:a05:6000:1a85:b0:205:a234:d0a5 with SMTP id f5-20020a0560001a8500b00205a234d0a5mr1182485wry.126.1649923716182;
-        Thu, 14 Apr 2022 01:08:36 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n10-20020a5d588a000000b002052e4aaf89sm1101992wrf.80.2022.04.14.01.08.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Apr 2022 01:08:35 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Veerasenareddy Burru <vburru@marvell.com>,
-        Abhijit Ayarekar <aayarekar@marvell.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] octeon_ep: Fix spelling mistake "inerrupts" -> "interrupts"
-Date:   Thu, 14 Apr 2022 09:08:34 +0100
-Message-Id: <20220414080834.290840-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Thu, 14 Apr 2022 04:50:38 -0400
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [IPv6:2a0b:5c81:1c1::37])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDE741EAEC
+        for <kernel-janitors@vger.kernel.org>; Thu, 14 Apr 2022 01:48:13 -0700 (PDT)
+Received: from hillosipuli.retiisi.eu (89-27-103-169.bb.dnainternet.fi [89.27.103.169])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: sailus)
+        by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 866091B001CF;
+        Thu, 14 Apr 2022 11:48:08 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+        t=1649926088;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=MwUGtzT4Ya5DJOi91TQOaG6spJ7XBSP7OpQSwUZss98=;
+        b=EdC/gE0hA/6Fdl3DmUDyB2l0ulqvfwYlI2I6scFIHxmzsLSys89Y7mHwozeSVArPbXdbEL
+        rdf2l1pK/jgSs7m5Etecjp9NThoYbgDaOq2GjBL4SkyowaYisPAZ6nyf3wVl6aA03ynomm
+        FnF92dxVua5fjqKl3s0veFPwEN3Zcka98F4tauaC23RAIeQDojh1fyQxEgtQ7VnHi6oHVC
+        EnS6LMF7+wBPMEvZnaXkLhzUsvwKuSqpp0vhpkLGC7F1j6ct5tEiOkBRvl8BQcofjlz/NG
+        8lUNwpyOOSzEIT99XWRQnym8GvaQErgd2LOwjXgR2JAtD7oq9bCV65LIeyn7OA==
+Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 3664A634C91;
+        Thu, 14 Apr 2022 11:48:08 +0300 (EEST)
+Date:   Thu, 14 Apr 2022 11:48:08 +0300
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     Shunqian Zheng <zhengsq@rock-chips.com>,
+        kernel-janitors@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/30] media: i2c: ov5695: fix typos in comments
+Message-ID: <YlffyFr5pgdeBtD2@valkosipuli.retiisi.eu>
+References: <20220314115354.144023-1-Julia.Lawall@inria.fr>
+ <20220314115354.144023-10-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220314115354.144023-10-Julia.Lawall@inria.fr>
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1649926088; a=rsa-sha256;
+        cv=none;
+        b=CdM10Dj5w6c6AifGUuTLWi4GKdhe71NKcZjgOVfP9p632bcCZAIAfZaaKzS5+Xc8hwMr1r
+        GAWQRBY+S8hpfV/grjiy/KI+fWIjUl6bFLSDp12v40OJRtzni6ArbiYUQhpj8vF2RHYvut
+        PfSCiT47VLq3EH2LZWeJY65I8OCZVvqjEfZA/z/64Jv6CkUbhnP8MidcqHOPjfspgfkyr7
+        9RRz3FxKsIRt2SoLKJfEYQdLcW+VCCz0wGfo8H0vwF8JfFjkNz627ziGSs2mln57VkoC0t
+        1B8VzVK9toqtnd6ZX7Zq6rEi39JtL9Y58CzFvxfA3XEGb8rWJOHsuTx1Erms5g==
+ARC-Authentication-Results: i=1;
+        ORIGINATING;
+        auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+        s=lahtoruutu; t=1649926088;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=MwUGtzT4Ya5DJOi91TQOaG6spJ7XBSP7OpQSwUZss98=;
+        b=wJPCzT71qx5KQ17MNk0VM85QDNLRK3UrOPfpuHhqtfMdTszmmWw99YwirdLBMMNi2i2K0Y
+        Xxqi2Cu1/PuZemZ7FvHmpe3iIr/7x/tvGHTW19ou4vwoBuBqMgWw9wH608vajaSQhUNKqJ
+        SDxi/AoGriUAunbT5NZXThqe3Ol212JByQMV8k3195CZfkbNKG4ay42OmxBUVgc8/irVFu
+        418EAnl6sdW/4fClu4RRMRvaD7AflChZdOw3D6apHriPAwHu/TJUeFPlpPgc40opjl+OY+
+        yCPv0HMLWixpoRroZ5ik4kDWVvW49FbGDqXmBVfERF1wkjXF39kjn+q79hMEWA==
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a dev_info message. Fix it.
+On Mon, Mar 14, 2022 at 12:53:33PM +0100, Julia Lawall wrote:
+> Various spelling mistakes in comments.
+> Detected with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> 
+> ---
+>  drivers/media/i2c/ov5695.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/i2c/ov5695.c b/drivers/media/i2c/ov5695.c
+> index 439385938a51..910309783885 100644
+> --- a/drivers/media/i2c/ov5695.c
+> +++ b/drivers/media/i2c/ov5695.c
+> @@ -1122,7 +1122,7 @@ static int ov5695_set_ctrl(struct v4l2_ctrl *ctrl)
+>  
+>  	switch (ctrl->id) {
+>  	case V4L2_CID_EXPOSURE:
+> -		/* 4 least significant bits of expsoure are fractional part */
+> +		/* 4 least significant bits of exposure are fractional part */
+>  		ret = ov5695_write_reg(ov5695->client, OV5695_REG_EXPOSURE,
+>  				       OV5695_REG_VALUE_24BIT, ctrl->val << 4);
+>  		break;
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/ethernet/marvell/octeon_ep/octep_cn9k_pf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied, thanks!
 
-diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_cn9k_pf.c b/drivers/net/ethernet/marvell/octeon_ep/octep_cn9k_pf.c
-index 1e47143c596d..6ad88d0fe43f 100644
---- a/drivers/net/ethernet/marvell/octeon_ep/octep_cn9k_pf.c
-+++ b/drivers/net/ethernet/marvell/octeon_ep/octep_cn9k_pf.c
-@@ -487,7 +487,7 @@ static irqreturn_t octep_non_ioq_intr_handler_cn93_pf(void *dev)
- 		goto irq_handled;
- 	}
- 
--	dev_info(&pdev->dev, "Reserved inerrupts raised; Ignore\n");
-+	dev_info(&pdev->dev, "Reserved interrupts raised; Ignore\n");
- irq_handled:
- 	return IRQ_HANDLED;
- }
 -- 
-2.35.1
-
+Sakari Ailus
