@@ -2,68 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D01B4C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Apr 2022 10:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59BCEC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Apr 2022 10:18:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239918AbiDNKJt (ORCPT
+        id S236161AbiDNKVG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Apr 2022 06:09:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38812 "EHLO
+        Thu, 14 Apr 2022 06:21:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbiDNKJr (ORCPT
+        with ESMTP id S230289AbiDNKVF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Apr 2022 06:09:47 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8FE770924;
-        Thu, 14 Apr 2022 03:07:22 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id r13so6186001wrr.9;
-        Thu, 14 Apr 2022 03:07:22 -0700 (PDT)
+        Thu, 14 Apr 2022 06:21:05 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D35B271ED7;
+        Thu, 14 Apr 2022 03:18:40 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id ay11-20020a05600c1e0b00b0038eb92fa965so5643852wmb.4;
+        Thu, 14 Apr 2022 03:18:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=FFoJHVfLIsD3E+on3fTDKrttYh+nASwnL70uWLoYl9Q=;
-        b=VscGeHgYpmqeZ24KSQ/hrzLntZvcTorl7hNN8mWj2wVp30uAyGkYNMQKP5pAepk+Un
-         fNtFCRZwDfFHcKQwosalJ5McUw/MADo+ebT8PWfvovN8VSCSqBKMSOW1np+kXuePcXna
-         49NUH9NxDn2VbsWyBzOycnqrPo2Y0a9zlQiXlFizwLte3fS+claG54t0m4apRKQj0mvU
-         HKHvpLFJ9cAUuthpQNFjY5hSHW9txaW25djdd3mMjbfP6uHCzjJBZepwJHkGx8+jCYQK
-         tjzhX0TJwAJsW6jKFJDRL96bIHEmFXBsBZYcH0LunRq3Irg9Gh16yKiAEfWVar4GDwun
-         AQHw==
+        bh=3r7O9jHU98BWgcu+jBEa/rllRwW774nvph0dWvI3Q58=;
+        b=ewn8QLRlCSPgCWU2xGDKwaGsKBJvKuehotVP23Tc9czCjucDaQixnCkYBFqOh5Lorg
+         OBDyN93rY2Srmdv17UVs3oPZri8dyuuZaj9ZTADrJteDGYrG4ITPCJ4vVPEpAHPzeKfT
+         1erhhKcK9e9jmaDpHhfCwJ2JCZCSYKWrAwAqql9KvcOCB3OkYViPKPWWPTVw56ehd88w
+         JBJ05Mli9oYcr/tSB56DIrqIbr+okc2ZgnPX3JQ9eCIQ46QqJ13oTsTDrXFI+xNBLisF
+         CobF+xlEVB8LXeCRtZrhuHIsZs0i/RlWmyR4cVWo1crkT3519dKLMSecQGvlTIs6zWJi
+         Sq3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=FFoJHVfLIsD3E+on3fTDKrttYh+nASwnL70uWLoYl9Q=;
-        b=EGMFb1g9mPAi0hKxWrNfe7k3nvc8NawQ9JEO9qs59MLKi/POswVGz4FV++YhhPUO4i
-         EtPhSmJKUIlpaBAlYcIUuwZQB0MMfcj37IyEh4Kckxe5089tDJYp60fAo+sc3mGiMuAS
-         oat2yOsxnTcJyjXtgXqXXhKf712UTaLUFodq7fPW4JgOIwLypNv60sfdKAJa5Jlwt4CX
-         aOBriAi7FI8SmJ8+7GGDcT2A8mqzLknCdBh/2x7ZMiwomgObZzD0aHIkfszY/KWIu1Z8
-         wv1EvJLOlNsih8FQ0d1hDXcI7grxptEh4unbhEaGxrBCYsMEr02LGWKe7ZL/Yspivk7i
-         euyg==
-X-Gm-Message-State: AOAM532i3ozPVYiQnzkT4Izl0UnX09GmKxV+QM0tvWr0A6hUebMhP8XZ
-        Mls4mRHdo1HfdeaJXi2p3ws=
-X-Google-Smtp-Source: ABdhPJyH8xWu3hK9Rp5rWB/cER0XqvTzFgaHtKIxauOasle6toXEo+fVD2SGosOUt/9LjDccndSFHQ==
-X-Received: by 2002:a5d:4d02:0:b0:207:a6e8:ef4a with SMTP id z2-20020a5d4d02000000b00207a6e8ef4amr1501714wrt.245.1649930841574;
-        Thu, 14 Apr 2022 03:07:21 -0700 (PDT)
+        bh=3r7O9jHU98BWgcu+jBEa/rllRwW774nvph0dWvI3Q58=;
+        b=yV23the4J7wW5RcCiGOaIiaWsCcn0NoE3JxQWwwDepLc7G6P4X4MosxpF67BwKalDx
+         b7FzAUI7XHkcvEOz/3NNe06m4lly2mckfRJ7xHfgFSMmhpVyymeU31b6MULJTxUELChw
+         x0TWxqL9Wfiad1EKn+UJUht7IwZwlQk8sZ0vXfSWz8CNvrNpt0wYm4aRhU9rzuXzio/7
+         Gqk6JIbHv51Jnn1xk+wCbjCzBJ4WvjW+mA1Ck5k4B0Q7ndUf7cvWLYRxFdSBxS0KWfnr
+         kyiNeSMkzF62go8mVPGctDKeXovUhKHzfZo4CE2+uh2NiKqQ2zhan/JQbZHghcvqhf7A
+         KSzA==
+X-Gm-Message-State: AOAM530B4fBwWhh7tEh6m4uQlLy/FJNcrfi0ui1pEKurtyeUOEJwSpMB
+        cIude1jyLcIOadDe2BxZdUA+Wq/7U1+4Lg==
+X-Google-Smtp-Source: ABdhPJzmHm+1Q6N/ukniEJqJEgv0gHvZkFocvlhvKx1KJWDfVWoIO8oyF10j0cQgKu+jK5zR9YqGEQ==
+X-Received: by 2002:a05:600c:3ba9:b0:38e:c8c6:ae0d with SMTP id n41-20020a05600c3ba900b0038ec8c6ae0dmr2466305wms.120.1649931519234;
+        Thu, 14 Apr 2022 03:18:39 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id r7-20020a05600c2c4700b0038eb7d8df69sm1580412wmg.11.2022.04.14.03.07.21
+        by smtp.gmail.com with ESMTPSA id r129-20020a1c2b87000000b0038e6a025d05sm1777745wmr.18.2022.04.14.03.18.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Apr 2022 03:07:21 -0700 (PDT)
+        Thu, 14 Apr 2022 03:18:38 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-staging@lists.linux.dev
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] KVM: VMX: make read-only const array vmx_uret_msrs_list static
-Date:   Thu, 14 Apr 2022 11:07:20 +0100
-Message-Id: <20220414100720.295502-1-colin.i.king@gmail.com>
+Subject: [PATCH] staging: rtl8192u: make read-only array EWC11NHTCap static const
+Date:   Thu, 14 Apr 2022 11:18:38 +0100
+Message-Id: <20220414101838.296944-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -72,27 +64,29 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the read-only array vmx_uret_msrs_list on the stack
-but instead make it static. Also makes the object code a little smaller.
+Don't populate the read-only array EWC11NHTCap on the stack but instead
+make it static const. Also makes the object code a little smaller. Move
+comment to clean up checkpatch warning.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- arch/x86/kvm/vmx/vmx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index c654c9d76e09..36429e2bb918 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -7871,7 +7871,7 @@ static __init void vmx_setup_user_return_msrs(void)
- 	 * but is never loaded into hardware.  MSR_CSTAR is also never loaded
- 	 * into hardware and is here purely for emulation purposes.
- 	 */
--	const u32 vmx_uret_msrs_list[] = {
-+	static const u32 vmx_uret_msrs_list[] = {
- 	#ifdef CONFIG_X86_64
- 		MSR_SYSCALL_MASK, MSR_LSTAR, MSR_CSTAR,
- 	#endif
+diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
+index 358c35d9589c..b4cbe499ba37 100644
+--- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
++++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
+@@ -480,7 +480,8 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
+ 	}
+ 	memset(posHTCap, 0, *len);
+ 	if (pHT->ePeerHTSpecVer == HT_SPEC_VER_EWC) {
+-		u8	EWC11NHTCap[] = {0x00, 0x90, 0x4c, 0x33};	// For 11n EWC definition, 2007.07.17, by Emily
++		/* For 11n EWC definition, 2007.07.17, by Emily */
++		static const u8	EWC11NHTCap[] = {0x00, 0x90, 0x4c, 0x33};
+ 
+ 		memcpy(posHTCap, EWC11NHTCap, sizeof(EWC11NHTCap));
+ 		pCapELE = (struct ht_capability_ele *)&posHTCap[4];
 -- 
 2.35.1
 
