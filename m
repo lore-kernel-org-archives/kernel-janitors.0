@@ -2,61 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97DA1C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Apr 2022 09:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33A6EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Apr 2022 09:50:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241874AbiDNJmN (ORCPT
+        id S240906AbiDNJwi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Apr 2022 05:42:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38646 "EHLO
+        Thu, 14 Apr 2022 05:52:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241367AbiDNJmN (ORCPT
+        with ESMTP id S242078AbiDNJwe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Apr 2022 05:42:13 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2393418349;
-        Thu, 14 Apr 2022 02:39:49 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id l62-20020a1c2541000000b0038e4570af2fso2790259wml.5;
-        Thu, 14 Apr 2022 02:39:49 -0700 (PDT)
+        Thu, 14 Apr 2022 05:52:34 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14A331D0D7;
+        Thu, 14 Apr 2022 02:50:10 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id r13so6128824wrr.9;
+        Thu, 14 Apr 2022 02:50:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=YtL4PfIKAQHImqDfdsnYHC8wpiKIcPT767j29SH/w+M=;
-        b=dSuYjD4dOgLzqgimwlqKtIZPGMEpMI5L43hQl49NMM1jYBVO+7ch3hziIXWtKxiDGh
-         UI96AezjFgcw+/ZbUfNqEHIKtloVnTMvtG4ZD8AR7EFytcuRLqlUw6Ls4TDFUl8aEQlJ
-         dBobHdWK5WpdoZnS0v22whzMGmwOT8cSqmp9nO0K46AE9HfksV8+ULgS+cbZEo039VTh
-         2fyFqGUhV+JhY0DoV3QchPE70ZUvFH9KXX2w9qNhiDlkeP9gArhO/uC7rk7f47HjTfha
-         lIKu+KsLwa1B/kewIXosYTUOEhDfRp22DldTHqbf+BP+lX3+kjXUYnH29k3SEXY+Ci5C
-         kYew==
+        bh=jEqj6dS4hwxknxKt8nbPyGn8ylY4KI7wiQLCN0ytwd4=;
+        b=dfBpiVjlsURgw8l1FtunpLP/SXCSK+cHRWaMACUIAXOF9E1QQqQTXu94LlsgW4GVUy
+         Q3w50jSbkKuNiID+VmJqjZ52X2aPihb9PthzPoE2/SbKed3FHv4Ex7Pum721tZLC8id+
+         ygqRV2LUDEnRfdAo50KOE3YVvYuXEIaGKNtwoEf1h/KFltgi5QcYD51YikrCsVpyP1B2
+         Gr7QE55XUqaCfiUeJ72eAODxAcLjcaVfieiVLc5AxET0l2MySq9wEK0ZsWUzrAsEc7bj
+         6rMP/giWWEa04hkIOcJkoXGfR604MyjqX2/Z552f20oMdgEEuMmIed1JjhH8Dt6h7iFX
+         Y+yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=YtL4PfIKAQHImqDfdsnYHC8wpiKIcPT767j29SH/w+M=;
-        b=u24x2riSQnVB01fYn9p5+BUm1COtcm3D7tuztFa52OfHU2ofsqlVzViBwMAYkfXoKp
-         SIjhX8BDh3m8u8akjkipE2b0LJNHrfETaD7IoivXDXwmvZ92ibbldN7OHxB8tOnCQ97A
-         d4SARzXWa9jl5ggq9ZdZBQO/7Br6JU0TWX73CWXTv1pigFle+InDWctnoqRJJnA9XSn1
-         BS7yzvsCNHpned/Nb4NVAhrfeyvTnOw5POV/E7XbdSMbjIBUGDCsHhKbseeXnHLS6ngB
-         T4JZzjis9mQ6+PFQPPdc3KTjll5STEpmygDcIA3yUpLN6sToo2vuZj3pqalCg9vweI8n
-         XdtQ==
-X-Gm-Message-State: AOAM531vxEWWkhg30qh7NdcMQS6IajCupOiACwyBbtrY3HlBVViiQLHr
-        Q9StAZeaHQLfRrlvm/d43yk=
-X-Google-Smtp-Source: ABdhPJw9xkbW1XNdvckIj25AurBQzfpQUc9bgLajIGEhZ1Qt8HdBmTwwlxBFODE8lW+Nro16pLNO1Q==
-X-Received: by 2002:a05:600c:4e8b:b0:38c:90cf:1158 with SMTP id f11-20020a05600c4e8b00b0038c90cf1158mr2788409wmq.107.1649929187578;
-        Thu, 14 Apr 2022 02:39:47 -0700 (PDT)
+        bh=jEqj6dS4hwxknxKt8nbPyGn8ylY4KI7wiQLCN0ytwd4=;
+        b=01DdaZT6a1/TasyvPMjaU9XLMWHvhZ8F4xigF/ZfWS9tg0H1rwsUZ1/fXa/xrQXNk7
+         Z654s0Vk596EOnlc+GH6B9vGU/0LroZvi3plv0yFZ5KAkMWBrfNt3FqwUaHIZbUsVGhS
+         mF3cn36Ho0S+fYWBsXvz5mLMq/LjoLLxGPeNTdxb1Y49xV8cteR6wsnsSF8M52z0vpLM
+         afmZOqPal4sTtniAs46JyvcBo6YzrXoo/PPje7k5gC1gitBDepG0nAqIKeI0UgpEa+EH
+         SgVnnkHOXqrYwx/tL10g/Di/Pstjg8kHWx2VCRpI6HhH3aSkrosgu+fqkXOaNlgqa/Eq
+         ep1w==
+X-Gm-Message-State: AOAM531oAL1jRddwV9PoqZkkNOPcuwpaRNHN20BWlPHJvdaSU0THX8uk
+        1DEssAjfx+cNGa/Fm0cPi5k=
+X-Google-Smtp-Source: ABdhPJxiZGluHglMS5C73Q43h6GixG8ijFHiGdPg6fgRtR4THaNsuPUS55cih+bWuraSUoJZyEJAIg==
+X-Received: by 2002:adf:f841:0:b0:207:a09b:d3cf with SMTP id d1-20020adff841000000b00207a09bd3cfmr1455218wrq.161.1649929808574;
+        Thu, 14 Apr 2022 02:50:08 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id m7-20020adfe0c7000000b002060e7bbe49sm1670354wri.45.2022.04.14.02.39.46
+        by smtp.gmail.com with ESMTPSA id n65-20020a1c2744000000b003862bfb509bsm5102648wmn.46.2022.04.14.02.50.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Apr 2022 02:39:47 -0700 (PDT)
+        Thu, 14 Apr 2022 02:50:08 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org
+To:     Felix Fietkau <nbd@nbd.name>,
+        Lorenzo Bianconi <lorenzo@kernel.org>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Shayne Chen <shayne.chen@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers/hid/hid-lenovo: make read-only array tp10ubkbd_led static const
-Date:   Thu, 14 Apr 2022 10:39:46 +0100
-Message-Id: <20220414093946.294449-1-colin.i.king@gmail.com>
+Subject: [PATCH] mt76: mt7915: make read-only array ppet16_ppet8_ru3_ru0 static const
+Date:   Thu, 14 Apr 2022 10:50:07 +0100
+Message-Id: <20220414095007.294746-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,27 +75,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the read-only array tp10ubkbd_led on the stack but instead
-make it static const. Also makes the object code a little smaller.
+Don't populate the read-only array ppet16_ppet8_ru3_ru0 on the stack but
+instead make it static const. Also makes the object code a little smaller.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/hid/hid-lenovo.c | 2 +-
+ drivers/net/wireless/mediatek/mt76/mt7915/init.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-lenovo.c b/drivers/hid/hid-lenovo.c
-index 93b1f935e526..c7b25a67ab09 100644
---- a/drivers/hid/hid-lenovo.c
-+++ b/drivers/hid/hid-lenovo.c
-@@ -835,7 +835,7 @@ static int lenovo_led_brightness_set(struct led_classdev *led_cdev,
- 	struct device *dev = led_cdev->dev->parent;
- 	struct hid_device *hdev = to_hid_device(dev);
- 	struct lenovo_drvdata *data_pointer = hid_get_drvdata(hdev);
--	u8 tp10ubkbd_led[] = { TP10UBKBD_MUTE_LED, TP10UBKBD_MICMUTE_LED };
-+	static const u8 tp10ubkbd_led[] = { TP10UBKBD_MUTE_LED, TP10UBKBD_MICMUTE_LED };
- 	int led_nr = 0;
- 	int ret = 0;
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/init.c b/drivers/net/wireless/mediatek/mt76/mt7915/init.c
+index 6d29366c5139..4b3cdb48b4bc 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7915/init.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7915/init.c
+@@ -814,7 +814,7 @@ static void
+ mt7915_gen_ppe_thresh(u8 *he_ppet, int nss)
+ {
+ 	u8 i, ppet_bits, ppet_size, ru_bit_mask = 0x7; /* HE80 */
+-	u8 ppet16_ppet8_ru3_ru0[] = {0x1c, 0xc7, 0x71};
++	static const u8 ppet16_ppet8_ru3_ru0[] = {0x1c, 0xc7, 0x71};
  
+ 	he_ppet[0] = FIELD_PREP(IEEE80211_PPE_THRES_NSS_MASK, nss - 1) |
+ 		     FIELD_PREP(IEEE80211_PPE_THRES_RU_INDEX_BITMASK_MASK,
 -- 
 2.35.1
 
