@@ -2,78 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FD8C4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Apr 2022 10:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F069C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 17 Apr 2022 20:04:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352202AbiDOKW4 (ORCPT
+        id S234950AbiDQUHO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 15 Apr 2022 06:22:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50846 "EHLO
+        Sun, 17 Apr 2022 16:07:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352283AbiDOKWo (ORCPT
+        with ESMTP id S234937AbiDQUHM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 15 Apr 2022 06:22:44 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA840AC05A;
-        Fri, 15 Apr 2022 03:20:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 888BEB82DEE;
-        Fri, 15 Apr 2022 10:20:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 46B35C385A6;
-        Fri, 15 Apr 2022 10:20:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650018014;
-        bh=PaY/ntdZ5Yibo6BVXe7E+AX6IN9dt5+Gh5e51jh8ERw=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=tndsMcdHLKiFPAx2otn6O6h3Tu+35qdwnNuW8KGghrc2B0593Md1rOwzNsCZUOVXJ
-         9KeIsdjodzOqljxz6ZJiFDgbSZE6SRy2NFDOOg4KmjVAWPKmaWyZCscJvOAHPk6Bwu
-         acgkuCFbpVFZie32MJmGRYtHoGbtJc94a5UnmDPClk/ZFPilEmxIhg999/TNXgcoxP
-         /R7WEV76DcwEcQJyzMpTEnZDiUFJQg8B0UBvZ2SXUCnEw32xbtvqqGi1VVEH29ZSLk
-         ffbbJwPp9YIDLmClNvFZN520L5BfK/47QzjF/6E2p7vz1FpG1o/OuQ/fisxDlKNe0s
-         7t/zemAu9yqzw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2F0F0E8DBD4;
-        Fri, 15 Apr 2022 10:20:14 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Sun, 17 Apr 2022 16:07:12 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCC112F017;
+        Sun, 17 Apr 2022 13:04:36 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id o5-20020a17090ad20500b001ca8a1dc47aso15693388pju.1;
+        Sun, 17 Apr 2022 13:04:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=H+OPSyyonW6HqnJS2JTKZaWpcaV7HVVc6KNd817IfUk=;
+        b=Tfpw6Nqca+lXJSrK4lvlarfIRRGOTaewNd41ato7WFmWjDw1kYiTEzOOOfM6PxyUV1
+         fTUqrhP2PywqMAZqJUvOBVuyi6iVFoP6ALrxefPfrNhRJG1uJdDNR1uzwIum3dIcjvHZ
+         Z9fbniQnzU4jZxaFqi20cuz8Qx/zd+7T+QT7SFleK7mtSx93UoaQCZfVShJmwLMjUd4e
+         iftGfvoSJyA7XvBt47tUAOnpFP/ZGyg58VRFgNrfan0xE3tzmX4iScHAXAHZ/l2BbOAK
+         9OUvq3q/fwEk+KM3ispL/GQE4OlBed45HSt4dweYJkwxua9sVBuFCoAF/OCMT0LaWaSb
+         7tzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=H+OPSyyonW6HqnJS2JTKZaWpcaV7HVVc6KNd817IfUk=;
+        b=7khyR667fB0UeV8MZyTKfffD9wbZF91peHGltFXTYrmiYLcMjkK92y7+PTVOSgGb+5
+         LmuK00v0lT+T/ocxGgpMZaodZjQMNksiJmd6i5oK7bhKJd1KgrrlvA9PS/Va79lkt5fy
+         lWa1UCqnAEgNMheo1/A7iyv7sAdNwAA2dWFNe+WhSPJxeEqYYSgR9fGipumvi0v9ID7x
+         fz/EBy0zlTsj3nUzwUrbKy0H9/E5ez5PYYfDBYtuaVPl1slZiloLfJt7DbiEfHsD37l5
+         YfbOSPby43QWMfakt9bq1e2CoEI4yLhlPSSsSPpH45mUxlduay2ZkwgCLuSi+C0jmRKx
+         dwJw==
+X-Gm-Message-State: AOAM531u0hfv3Qiw4ZVtcDjDRMnvQWlbgCux3rWQEbXF3E53dBPTvEc5
+        N7Fqshsl6urbEEGJQkV1HJ0=
+X-Google-Smtp-Source: ABdhPJycZYmQ6RNR+xmy0+nxm1UaZf3Ik5XVk8UqyieOCpKW4q24P7IlZICYbM3L4/kj0KnSEOTo4g==
+X-Received: by 2002:a17:90a:ff17:b0:1cb:a182:9b05 with SMTP id ce23-20020a17090aff1700b001cba1829b05mr9489331pjb.1.1650225876199;
+        Sun, 17 Apr 2022 13:04:36 -0700 (PDT)
+Received: from google.com ([2620:15c:202:201:1752:34a6:ebd3:cc40])
+        by smtp.gmail.com with ESMTPSA id pi2-20020a17090b1e4200b001c7b15928e0sm15330951pjb.23.2022.04.17.13.04.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Apr 2022 13:04:35 -0700 (PDT)
+Date:   Sun, 17 Apr 2022 13:04:33 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Jeff LaBundy <jeff@labundy.com>, linux-input@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] Input: iqs7222 - propagate some error codes correctly
+Message-ID: <Ylxy0fnZ0lNSWzxh@google.com>
+References: <20220412153954.GA15406@kili>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] octeon_ep: Fix spelling mistake "inerrupts" ->
- "interrupts"
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <165001801418.12692.17059813313427087802.git-patchwork-notify@kernel.org>
-Date:   Fri, 15 Apr 2022 10:20:14 +0000
-References: <20220414080834.290840-1-colin.i.king@gmail.com>
-In-Reply-To: <20220414080834.290840-1-colin.i.king@gmail.com>
-To:     Colin King (gmail) <colin.i.king@gmail.com>
-Cc:     vburru@marvell.com, aayarekar@marvell.com, davem@davemloft.net,
-        kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220412153954.GA15406@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (master)
-by David S. Miller <davem@davemloft.net>:
-
-On Thu, 14 Apr 2022 09:08:34 +0100 you wrote:
-> There is a spelling mistake in a dev_info message. Fix it.
+On Tue, Apr 12, 2022 at 06:39:54PM +0300, Dan Carpenter wrote:
+> If fwnode_property_count_u32() returns a negative error code then,
+> because of type promotion, the "count > ARRAY_SIZE(pins)" condition
+> will be true.  The negative "count" is type promoted to a high unsigned
+> size_t value.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/net/ethernet/marvell/octeon_ep/octep_cn9k_pf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> That means the "else if (count < 0)" condition will always be false and
+> we don't print that error message or propagate the error code from
+> fwnode_property_count_u32() as intended.
+> 
+> Fix this by re-ordering the checks so that we check for negative first.
+> 
+> Fixes: e505edaedcb9 ("Input: add support for Azoteq IQS7222A/B/C")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Here is the summary with links:
-  - [next] octeon_ep: Fix spelling mistake "inerrupts" -> "interrupts"
-    https://git.kernel.org/netdev/net-next/c/bb578430d05b
+Applied, thank you.
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Dmitry
