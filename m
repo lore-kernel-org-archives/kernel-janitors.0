@@ -2,104 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F5DC433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Apr 2022 15:35:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED08FC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Apr 2022 19:21:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240134AbiDRPiE (ORCPT
+        id S1347643AbiDRTXj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 18 Apr 2022 11:38:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46668 "EHLO
+        Mon, 18 Apr 2022 15:23:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345437AbiDRPh2 (ORCPT
+        with ESMTP id S238222AbiDRTXi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 18 Apr 2022 11:37:28 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08F0543EEC;
-        Mon, 18 Apr 2022 07:58:45 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id x18so11007229wrc.0;
-        Mon, 18 Apr 2022 07:58:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CX/IUq1aN3lYpmTZrmux2ZoNqle4gaskLWMK3nNShGw=;
-        b=JdNM/niE5cXM0TtsJv+AiQG6UfTArLkryCgK8z4GIkdoaRaCxwAIIidvmgZ+mkVEt8
-         /4jGxK4C9/KlzaR+i6YfxG/XjIY5r2P9vF282wKEN702SZOJiIU3ZrGMdpzVnrdW3caj
-         Z71tHHaOsQ6+ELTgAjQa/y/4XCfZMxeIyWXd0dGoGNj+dzoLH/hQoP/8rNOvNPFoKbBQ
-         /LT6wmL2EybaqGXORDRUZN1ep0jeDcqhAxazDCKHQbMT4bzOI+a3ANSvoV4eqQzMqIze
-         YZat7aMSXjylpz2cBZMUzb4WPYOo1i9LKSmhmlPBY1hBJNZaTJ+WGiCRqDYST9xZcYL4
-         HYww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CX/IUq1aN3lYpmTZrmux2ZoNqle4gaskLWMK3nNShGw=;
-        b=NsNcabalVN18tFWmKypk/4KceResJxFbOucmtqNsU/lLzx3+5MFhjeSCRDXL62NLZV
-         yRS47Lpfck2ILR25dlK785iONMgY7QN+ounciUlQ+ggEGXzbwVt8GReh3SWNsDTA0HgN
-         rVa7+2Ki1Jz/y7iBWFiq78cQWZ336GqNxbw355vtozsTXmqH2DkofpKbBAbITEeddz0L
-         8Du58/9+5ecxU8fgvAZjQSCmZLRwv3GcfupaFZWSZMAUkPDIRaTDr0g/f2OVz/v5BKsM
-         8+Z08OXHMnepQoUcWW/pKC/+zWlSuFcxPCGK+vQJ/8WJbva4Bg6wBdPSJuJQsDKbbwcY
-         ALBQ==
-X-Gm-Message-State: AOAM5327Xvjq3uLysjAGDr2NqyoQYFebNSTMh9qql5tss0YQD7aGKC/U
-        tY63MD/pzF9iQrKFLvP+OQP8ZfMsWv4=
-X-Google-Smtp-Source: ABdhPJzzsluWxj0VaudxL34jveGy6/JC2BIiCB0OvhXZF9RY9e4P8n4nrql3SI+RbCDjUd+6EDMyGA==
-X-Received: by 2002:a5d:6c68:0:b0:20a:8d5f:681a with SMTP id r8-20020a5d6c68000000b0020a8d5f681amr6931611wrz.470.1650293923638;
-        Mon, 18 Apr 2022 07:58:43 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id h2-20020a05600c414200b0038ec7a4f07esm16740652wmm.33.2022.04.18.07.58.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Apr 2022 07:58:43 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Matt Porter <mporter@kernel.crashing.org>,
-        Alexandre Bounine <alex.bou9@gmail.com>,
-        linux-kernel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, llvm@lists.linux.dev
-Subject: [PATCH] rapidio: Remove redundant variable tmp
-Date:   Mon, 18 Apr 2022 15:58:42 +0100
-Message-Id: <20220418145842.87154-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Mon, 18 Apr 2022 15:23:38 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87C0A1E3C0;
+        Mon, 18 Apr 2022 12:20:56 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 42CEDB8108C;
+        Mon, 18 Apr 2022 19:20:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3BFFC385A1;
+        Mon, 18 Apr 2022 19:20:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650309654;
+        bh=JkPoMATZPqYrWmJR/tP2X4yunIQyekw0+0bnzubxdDA=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=LkfWzKv35GijH0w5RkbjBNWBxy8ZNK8xSrpr1Cw3WJcg/JFwWeU41ZKdZH5yejwb9
+         jLdNeQkJgZ7XY70lrYwCa1z2gMsGEMOL+feqSTIUz9iBBCDbKe4IIY3g4TF1fjTcxb
+         38+HeXJLNNFJDKhnDtNzBAeWX1WXVB5PZFJmbQe1x1LwA8zXeIL7syKdQsxiwcx6Iv
+         +dlpcfVeD1+2g3vwfb+ER4Wvqa1t1RFmI/a3zFwTgh9/4yANW85ahMT3V2zhoG2Bmz
+         sDBXqOcx0F+skjSv4Fq7LvjV5Of0/P2KfLahKsvAQA8cAxLQzIxXyFYzFq+A2OBI1D
+         3huqqHSPMhWFA==
+Message-ID: <480a930d-8294-ddbe-6460-1a4aae319501@kernel.org>
+Date:   Mon, 18 Apr 2022 12:20:52 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] ARC: fix typos in comments
+Content-Language: en-US
+To:     Julia Lawall <Julia.Lawall@inria.fr>,
+        Vineet Gupta <vgupta@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20220318103729.157574-20-Julia.Lawall@inria.fr>
+From:   Vineet Gupta <vgupta@kernel.org>
+In-Reply-To: <20220318103729.157574-20-Julia.Lawall@inria.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable tmp is being assigned a value that is never read, the variable
-is redundant and can be removed.
 
-Cleans up clang scan build warning:
-drivers/rapidio/rio-scan.c:561:10: warning: Although the value stored
-to 'tmp' is used in the enclosing expression, the value is never actually
-read from 'tmp' [deadcode.DeadStores]
+On 3/18/22 03:37, Julia Lawall wrote:
+> Various spelling mistakes in comments.
+> Detected with the help of Coccinelle.
+>
+> Signed-off-by: Julia Lawall<Julia.Lawall@inria.fr>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/rapidio/rio-scan.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Applied.
 
-diff --git a/drivers/rapidio/rio-scan.c b/drivers/rapidio/rio-scan.c
-index 19b0c33f4a62..5256e76ab29c 100644
---- a/drivers/rapidio/rio-scan.c
-+++ b/drivers/rapidio/rio-scan.c
-@@ -524,7 +524,6 @@ static int rio_enum_peer(struct rio_net *net, struct rio_mport *port,
- {
- 	struct rio_dev *rdev;
- 	u32 regval;
--	int tmp;
- 
- 	if (rio_mport_chk_dev_access(port,
- 			RIO_ANY_DESTID(port->sys_size), hopcount)) {
-@@ -558,8 +557,7 @@ static int rio_enum_peer(struct rio_net *net, struct rio_mport *port,
- 	rio_mport_write_config_32(port, RIO_ANY_DESTID(port->sys_size),
- 				  hopcount,
- 				  RIO_HOST_DID_LOCK_CSR, port->host_deviceid);
--	while ((tmp = rio_get_host_deviceid_lock(port, hopcount))
--	       < port->host_deviceid) {
-+	while (rio_get_host_deviceid_lock(port, hopcount) < port->host_deviceid) {
- 		/* Delay a bit */
- 		mdelay(1);
- 		/* Attempt to acquire device lock again */
--- 
-2.35.1
-
+Thx,
+-Vineet
