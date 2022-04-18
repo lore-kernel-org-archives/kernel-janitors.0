@@ -2,64 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF03C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Apr 2022 14:55:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E94C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Apr 2022 15:06:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239365AbiDRO6c (ORCPT
+        id S243686AbiDRPJM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 18 Apr 2022 10:58:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56234 "EHLO
+        Mon, 18 Apr 2022 11:09:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345110AbiDRO6F (ORCPT
+        with ESMTP id S244069AbiDRPI4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 18 Apr 2022 10:58:05 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABCEC32EF8;
-        Mon, 18 Apr 2022 06:46:06 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id e21so18618068wrc.8;
-        Mon, 18 Apr 2022 06:46:06 -0700 (PDT)
+        Mon, 18 Apr 2022 11:08:56 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA46B8FE62;
+        Mon, 18 Apr 2022 07:00:40 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id n126-20020a1c2784000000b0038e8af3e788so8850632wmn.1;
+        Mon, 18 Apr 2022 07:00:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=yoyp44JzkHGTT8ZqJq8l6tDNGuUOI937tn9ZpUzw9Wk=;
-        b=gh/1az9LTsIQ8Waf71s3RlA7yMXX3Mse3hATc2/up5VvELAIhgtHel3pbElJrsVo2Z
-         ekz2AFEXacg2HIbAA2Fp1xbsgwpbyk0bAfqoC2FOK0P62HXf9rb8Zmo7vAj1LTpS3iEj
-         Ixi6t4b9Pd20eV09JXiONq1W46dNqBFKz4bhgiWiBdq2AVyq4uzV/BH3bEucMunsQkiF
-         E8kaThovYTKQQnqJ4dxlKqjbJUWNMkNR497vhYUMVd3zuW+G4AoI9Gz8tzqCZOLjjWk1
-         De79kUsuZqELYp1BmokBLWJ1QBrvDibANF6ZLTZEaqs49XeQBlZVX0ADsMUjKf2KtgH2
-         iUHw==
+        bh=B6x/x31zD6jdr7v3jc1uXumCewA6SO4UbVpg60xKCXk=;
+        b=MzV3Dc04CvwAAiwc8eYESy/kUaiawkJiTKLqHR78r064hc0eGHjL0wY8jaNT6CT5u7
+         aCZsjaiV/ws6ZL/JvWYudvnvWAvGUfJJlxJ4Hb48PqzawA817UQTH3dsQKlPAWtkvFsj
+         Ih67M4YTAfVmXn4I2pee+/ksFZ5deFcTkONGa04NQt+PZ/j0UhBcY0BM34E8tJ5kzEdS
+         D4yCc3nSVc87XqniZVIvrb7MPFYr4rB/N5hydMUpF1gcWlilGGpa/plQeImgOjuVeQTw
+         EsICi6rN5bmvq/V+Z/aYb4kN6Pm808V2chgU+Zd/+k5ll2oQfbiAFEJv9J+FM8QdH+b3
+         yqXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=yoyp44JzkHGTT8ZqJq8l6tDNGuUOI937tn9ZpUzw9Wk=;
-        b=lrOeSFWCoskZ4Z+OQ6Ryh0SW6EarHVbbpXdWVrS/PjcdlIbicCrokbR05kLALVW6AS
-         VNxeX2HAnZBhvOeCGEXBQMQ0wZ8aANlGbcHN0SDwniedJFEL6+LA81fEo/iNoNsAWcq9
-         OBki691CMZyBuB4Sa8lOz6jx3Kfpt+Fp+jq9pWR6JJW+8DzQkbpz+hBPJlLgWh1etIOy
-         W1QVSQXu/Hky51rpubp99scZX5ZbjbG5EEnhxPrb/0nsJd1ZmDGOpdEr53asYNfc8Jcy
-         SMEniYxZ6BCfEfRZV2DsMRfm+llcHJXuJGNEkZHSqHG6pH9024Uk1evIsOAbSJyko8WN
-         tP6A==
-X-Gm-Message-State: AOAM531rjiDvVPE7DLYAyW+WvY204F75s1ftjWkUDQyv2P6uymHEnRql
-        rD9EdgNE9hrzZnPYfphrYoDVNeoMvXw=
-X-Google-Smtp-Source: ABdhPJxAVkklnnI5HFoDgPCIommVtr6wdWI7ulYdjfDzlnh9LUgLfiMDzA4l6bYkJLTgZA9t1un9QA==
-X-Received: by 2002:a5d:67d2:0:b0:207:a5cf:c14d with SMTP id n18-20020a5d67d2000000b00207a5cfc14dmr8421376wrw.365.1650289564671;
-        Mon, 18 Apr 2022 06:46:04 -0700 (PDT)
+        bh=B6x/x31zD6jdr7v3jc1uXumCewA6SO4UbVpg60xKCXk=;
+        b=AsEKwQBOMXBTscgTf4dqiOhvhAVxGHuVKBzwmbhtcH8LTtgAyOc1+j1x7yD1DT9d0n
+         UT6BheX5yytyDbZEEO3NrxptY7zKCRwa4Ub62aciKbyIE7lOQasMfPHFT49lz6SPsIES
+         WKwlQ2iqy5D7aDXvCLf1HpGi/GyA6Y8ZCJn0zlb7d41OX79c1f84HWmyoPqPGimX7whb
+         uF0Nz/z2egHX0Hl01r2cJRMjMFXS7NZjKTYP9yvHdXDnNqhxEr77uzAjk8+nkKPCxCJy
+         NeUVYHh5AQu9DU1QWtBJ5yyXFmq3xGRar+Fq6iMcwXm7F9+7G+B3NqGR4kzzjNofG2vS
+         ZUaQ==
+X-Gm-Message-State: AOAM530J7svxk9O6cjwZL/Y7cQBhhbyXqEaP01LinIcOwG7fmutxnhxp
+        DuQ9JN3c7awxSkPZzExrPzI=
+X-Google-Smtp-Source: ABdhPJymwRgSS/QTCpphJK2gWO5fWNVAensdOd5debCCtyT1eqh6vN7nhxp1YqM5axzZBxB5ViUQIA==
+X-Received: by 2002:a05:600c:34c5:b0:38f:fbcb:e45 with SMTP id d5-20020a05600c34c500b0038ffbcb0e45mr15309073wmq.66.1650290439536;
+        Mon, 18 Apr 2022 07:00:39 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id v11-20020a056000144b00b0020a9c02f60dsm1835302wrx.50.2022.04.18.06.46.04
+        by smtp.gmail.com with ESMTPSA id p14-20020a05600c1d8e00b0038ecb2d2feasm12977678wms.4.2022.04.18.07.00.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Apr 2022 06:46:04 -0700 (PDT)
+        Mon, 18 Apr 2022 07:00:39 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, linux-staging@lists.linux.dev
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        ntfs3@lists.linux.dev
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         llvm@lists.linux.dev
-Subject: [PATCH] staging: iio: ad2s1210: remove redundant assignment to variable negative
-Date:   Mon, 18 Apr 2022 14:46:03 +0100
-Message-Id: <20220418134603.81336-1-colin.i.king@gmail.com>
+Subject: [PATCH] fs/ntfs3: remove redundant assignment to variable vcn
+Date:   Mon, 18 Apr 2022 15:00:38 +0100
+Message-Id: <20220418140038.82843-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -68,30 +65,32 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable negative is being assigned a value that is never read, it is
-being re-assigned later. The assignment is redundant and can be removed.
+Variable vcn is being assigned a value that is never read, it is
+being re-assigned again in the initialization of a for-loop.  The
+assignment is redundant and can be removed.
 
 Cleans up clang scan build warning:
-drivers/staging/iio/resolver/ad2s1210.c:502:3: warning: Value stored
-to 'negative' is never read [deadcode.DeadStores]
+fs/ntfs3/attrib.c:1176:7: warning: Value stored to 'vcn' during its
+initialization is never read [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/staging/iio/resolver/ad2s1210.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/ntfs3/attrib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/iio/resolver/ad2s1210.c b/drivers/staging/iio/resolver/ad2s1210.c
-index 74adb82f37c3..c0b2716d0511 100644
---- a/drivers/staging/iio/resolver/ad2s1210.c
-+++ b/drivers/staging/iio/resolver/ad2s1210.c
-@@ -499,7 +499,6 @@ static int ad2s1210_read_raw(struct iio_dev *indio_dev,
- 		ret = IIO_VAL_INT;
- 		break;
- 	case IIO_ANGL_VEL:
--		negative = st->rx[0] & 0x80;
- 		vel = be16_to_cpup((__be16 *)st->rx);
- 		vel >>= 16 - st->resolution;
- 		if (vel & 0x8000) {
+diff --git a/fs/ntfs3/attrib.c b/fs/ntfs3/attrib.c
+index e8c00dda42ad..fc0623b029e6 100644
+--- a/fs/ntfs3/attrib.c
++++ b/fs/ntfs3/attrib.c
+@@ -1173,7 +1173,7 @@ int attr_load_runs_range(struct ntfs_inode *ni, enum ATTR_TYPE type,
+ {
+ 	struct ntfs_sb_info *sbi = ni->mi.sbi;
+ 	u8 cluster_bits = sbi->cluster_bits;
+-	CLST vcn = from >> cluster_bits;
++	CLST vcn;
+ 	CLST vcn_last = (to - 1) >> cluster_bits;
+ 	CLST lcn, clen;
+ 	int err;
 -- 
 2.35.1
 
