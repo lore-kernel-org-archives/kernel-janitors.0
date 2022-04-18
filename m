@@ -2,64 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55434C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Apr 2022 15:29:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F5DC433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Apr 2022 15:35:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244014AbiDRPcI (ORCPT
+        id S240134AbiDRPiE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 18 Apr 2022 11:32:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40854 "EHLO
+        Mon, 18 Apr 2022 11:38:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344940AbiDRPbV (ORCPT
+        with ESMTP id S1345437AbiDRPh2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 18 Apr 2022 11:31:21 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62FFA64E5;
-        Mon, 18 Apr 2022 07:44:19 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id u3so18830208wrg.3;
-        Mon, 18 Apr 2022 07:44:19 -0700 (PDT)
+        Mon, 18 Apr 2022 11:37:28 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08F0543EEC;
+        Mon, 18 Apr 2022 07:58:45 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id x18so11007229wrc.0;
+        Mon, 18 Apr 2022 07:58:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=U/BmndimxRUeGnhgbDunPyQq29ma5+SBfEP8BqMsdFU=;
-        b=ZLnqQm98G+ZMkFQXpLyGZSX7fecCPhjMaUZd1GrcqcdgaP6HD6TuQSlDJ3MYDJ6g7y
-         fjGPUCmal/HdSK6Joq1ZM5PJTvmmrMpUwmh9uy8kZyyOytxq4Fz91uEVLK/alpOxuHD+
-         hhKyyIWY6OZg4IaB8v/e30AnJ50CeXu34skkKWsH66GkjbeNa7HhkbRLzoYi5D01P4Gb
-         G5IiYD7NH9MxyhCdiPXFNJ0pIWeASI4bs01Vyn9WUV+AurAIfp9oIcZHa0DdeIQuZLEK
-         6dv3Howdcd6jr+QU19tVb12STIXLZaknW+Tm6Q12MyVCw1Mz9sQRQ7882olvihPcasSD
-         Z0nQ==
+        bh=CX/IUq1aN3lYpmTZrmux2ZoNqle4gaskLWMK3nNShGw=;
+        b=JdNM/niE5cXM0TtsJv+AiQG6UfTArLkryCgK8z4GIkdoaRaCxwAIIidvmgZ+mkVEt8
+         /4jGxK4C9/KlzaR+i6YfxG/XjIY5r2P9vF282wKEN702SZOJiIU3ZrGMdpzVnrdW3caj
+         Z71tHHaOsQ6+ELTgAjQa/y/4XCfZMxeIyWXd0dGoGNj+dzoLH/hQoP/8rNOvNPFoKbBQ
+         /LT6wmL2EybaqGXORDRUZN1ep0jeDcqhAxazDCKHQbMT4bzOI+a3ANSvoV4eqQzMqIze
+         YZat7aMSXjylpz2cBZMUzb4WPYOo1i9LKSmhmlPBY1hBJNZaTJ+WGiCRqDYST9xZcYL4
+         HYww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=U/BmndimxRUeGnhgbDunPyQq29ma5+SBfEP8BqMsdFU=;
-        b=m3i5mmN4b9dxY02Ht33enK1Is16KU5aNWitkytB6ggnDyZo0ZYPCo5YNpCxhXCJB/W
-         jf3A9erR8ysECSKBJXejD04Ju63CeH6nQcuAT6J5J/aYrRC7tvPYr7qsNC3dFfsfx3vT
-         p9HD/llAS2TnAx2sMdJAwWS/FMRCKZ4Jx54JOSlDSSlt7ZsomRqjjSMArd8BshsXAazw
-         z8HrCaBcw8w0TWg4Of+/r9v1gGoVaBVT8Cgn5+2nvEEYnr1GlgdMautntnrOwfSBLzPT
-         1+INy2LQDBJIlP17/QOdxncYbpRJCvQ/ZYkj4T5gYqgtHcXocmvJGX+VLBJWbCoDf26w
-         vyig==
-X-Gm-Message-State: AOAM533azVBcPXhL2mvdSWaw83vpux5ggO8a7FLT/mwdpOcbRamqhSqd
-        luEt3RK7FX9BMQtbm1WQvyc=
-X-Google-Smtp-Source: ABdhPJy6pPOJ+6VhwxYN/pnIzTHx+lgfuKlb7rqnPNvgzd2Y+LUnRXOI5h+9yUgPBmkfSXaE05jaAQ==
-X-Received: by 2002:a05:6000:1ace:b0:203:d465:1a83 with SMTP id i14-20020a0560001ace00b00203d4651a83mr8476727wry.26.1650293058002;
-        Mon, 18 Apr 2022 07:44:18 -0700 (PDT)
+        bh=CX/IUq1aN3lYpmTZrmux2ZoNqle4gaskLWMK3nNShGw=;
+        b=NsNcabalVN18tFWmKypk/4KceResJxFbOucmtqNsU/lLzx3+5MFhjeSCRDXL62NLZV
+         yRS47Lpfck2ILR25dlK785iONMgY7QN+ounciUlQ+ggEGXzbwVt8GReh3SWNsDTA0HgN
+         rVa7+2Ki1Jz/y7iBWFiq78cQWZ336GqNxbw355vtozsTXmqH2DkofpKbBAbITEeddz0L
+         8Du58/9+5ecxU8fgvAZjQSCmZLRwv3GcfupaFZWSZMAUkPDIRaTDr0g/f2OVz/v5BKsM
+         8+Z08OXHMnepQoUcWW/pKC/+zWlSuFcxPCGK+vQJ/8WJbva4Bg6wBdPSJuJQsDKbbwcY
+         ALBQ==
+X-Gm-Message-State: AOAM5327Xvjq3uLysjAGDr2NqyoQYFebNSTMh9qql5tss0YQD7aGKC/U
+        tY63MD/pzF9iQrKFLvP+OQP8ZfMsWv4=
+X-Google-Smtp-Source: ABdhPJzzsluWxj0VaudxL34jveGy6/JC2BIiCB0OvhXZF9RY9e4P8n4nrql3SI+RbCDjUd+6EDMyGA==
+X-Received: by 2002:a5d:6c68:0:b0:20a:8d5f:681a with SMTP id r8-20020a5d6c68000000b0020a8d5f681amr6931611wrz.470.1650293923638;
+        Mon, 18 Apr 2022 07:58:43 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id d2-20020a056000186200b0020a7be3f1d2sm9107529wri.53.2022.04.18.07.44.17
+        by smtp.gmail.com with ESMTPSA id h2-20020a05600c414200b0038ec7a4f07esm16740652wmm.33.2022.04.18.07.58.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Apr 2022 07:44:17 -0700 (PDT)
+        Mon, 18 Apr 2022 07:58:43 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Rob Herring <robh@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev
-Subject: [PATCH] PCI: versatile: Remove redundant variable retval
-Date:   Mon, 18 Apr 2022 15:44:16 +0100
-Message-Id: <20220418144416.86121-1-colin.i.king@gmail.com>
+To:     Matt Porter <mporter@kernel.crashing.org>,
+        Alexandre Bounine <alex.bou9@gmail.com>,
+        linux-kernel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, llvm@lists.linux.dev
+Subject: [PATCH] rapidio: Remove redundant variable tmp
+Date:   Mon, 18 Apr 2022 15:58:42 +0100
+Message-Id: <20220418145842.87154-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -68,35 +65,41 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable retval is being assigned a value that is never read, the
-variable is redundant and can be removed.
+Variable tmp is being assigned a value that is never read, the variable
+is redundant and can be removed.
 
 Cleans up clang scan build warning:
-drivers/pci/controller/pci-versatile.c:37:10: warning: Although the value
-stored to 'retval' is used in the enclosing expression, the value is never
-actually read from 'retval' [deadcode.DeadStores]
+drivers/rapidio/rio-scan.c:561:10: warning: Although the value stored
+to 'tmp' is used in the enclosing expression, the value is never actually
+read from 'tmp' [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/pci/controller/pci-versatile.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/rapidio/rio-scan.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pci/controller/pci-versatile.c b/drivers/pci/controller/pci-versatile.c
-index 653d5d0ecf81..7991d334e0f1 100644
---- a/drivers/pci/controller/pci-versatile.c
-+++ b/drivers/pci/controller/pci-versatile.c
-@@ -31,10 +31,9 @@ static u32 pci_slot_ignore;
- 
- static int __init versatile_pci_slot_ignore(char *str)
+diff --git a/drivers/rapidio/rio-scan.c b/drivers/rapidio/rio-scan.c
+index 19b0c33f4a62..5256e76ab29c 100644
+--- a/drivers/rapidio/rio-scan.c
++++ b/drivers/rapidio/rio-scan.c
+@@ -524,7 +524,6 @@ static int rio_enum_peer(struct rio_net *net, struct rio_mport *port,
  {
--	int retval;
- 	int slot;
+ 	struct rio_dev *rdev;
+ 	u32 regval;
+-	int tmp;
  
--	while ((retval = get_option(&str, &slot))) {
-+	while (get_option(&str, &slot)) {
- 		if ((slot < 0) || (slot > 31))
- 			pr_err("Illegal slot value: %d\n", slot);
- 		else
+ 	if (rio_mport_chk_dev_access(port,
+ 			RIO_ANY_DESTID(port->sys_size), hopcount)) {
+@@ -558,8 +557,7 @@ static int rio_enum_peer(struct rio_net *net, struct rio_mport *port,
+ 	rio_mport_write_config_32(port, RIO_ANY_DESTID(port->sys_size),
+ 				  hopcount,
+ 				  RIO_HOST_DID_LOCK_CSR, port->host_deviceid);
+-	while ((tmp = rio_get_host_deviceid_lock(port, hopcount))
+-	       < port->host_deviceid) {
++	while (rio_get_host_deviceid_lock(port, hopcount) < port->host_deviceid) {
+ 		/* Delay a bit */
+ 		mdelay(1);
+ 		/* Attempt to acquire device lock again */
 -- 
 2.35.1
 
