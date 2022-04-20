@@ -2,181 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC39C4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Apr 2022 07:56:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D70C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Apr 2022 17:40:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376565AbiDTH6z (ORCPT
+        id S1346353AbiDTRmw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Apr 2022 03:58:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55422 "EHLO
+        Wed, 20 Apr 2022 13:42:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376552AbiDTH6w (ORCPT
+        with ESMTP id S237160AbiDTRmv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Apr 2022 03:58:52 -0400
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F08B638A4
-        for <kernel-janitors@vger.kernel.org>; Wed, 20 Apr 2022 00:56:05 -0700 (PDT)
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220420075603epoutp010156c5c7304f4310e3af48d4a9f85e69~ni6z_HNYU0343703437epoutp01i
-        for <kernel-janitors@vger.kernel.org>; Wed, 20 Apr 2022 07:56:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220420075603epoutp010156c5c7304f4310e3af48d4a9f85e69~ni6z_HNYU0343703437epoutp01i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1650441363;
-        bh=M9HvEE5NcKQUrqGqE6i+kOsIDLbwyBOY5HTkit9ErSo=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=fnhXvvBaVOLFzSxumWLXHhSItgJ0TGpRIzocsRiXxhlOC3BqCaqm+MWs+wMVV4Mbj
-         jvIUMw5O2NF47lbADL8xqQMaviIFliK7EkueWTbliMxnyRnO6BO98CoX4T4z6VplCt
-         nAbkofz4m21UCMwhGZose3eBsZlVVDxZ9PUdiaDQ=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20220420075602epcas1p475c3b660e87635fc49f66378abdb95bd~ni6zSs41o3004030040epcas1p4G;
-        Wed, 20 Apr 2022 07:56:02 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.36.144]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4KjtJx5kpjz4x9Q3; Wed, 20 Apr
-        2022 07:56:01 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C9.FE.39539.19CBF526; Wed, 20 Apr 2022 16:56:01 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220420075601epcas1p4a80b77be683df8ccd68be008d57f3100~ni6xr9q2W2990329903epcas1p4B;
-        Wed, 20 Apr 2022 07:56:01 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220420075601epsmtrp2e96a1f16bf6e5e87ae4d00516c30d02d~ni6xlxmod2136621366epsmtrp2G;
-        Wed, 20 Apr 2022 07:56:01 +0000 (GMT)
-X-AuditID: b6c32a36-c1dff70000019a73-91-625fbc91c095
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        87.28.03370.09CBF526; Wed, 20 Apr 2022 16:56:00 +0900 (KST)
-Received: from [10.113.221.211] (unknown [10.113.221.211]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220420075600epsmtip2185b9e32f61ab60a62757711346c655f~ni6xPEwJ92729127291epsmtip2R;
-        Wed, 20 Apr 2022 07:56:00 +0000 (GMT)
-Message-ID: <3b31ce4d-02ca-cdde-9c17-553102e8c149@samsung.com>
-Date:   Wed, 20 Apr 2022 17:08:30 +0900
+        Wed, 20 Apr 2022 13:42:51 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9971B43ADF;
+        Wed, 20 Apr 2022 10:40:04 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id x33so4311302lfu.1;
+        Wed, 20 Apr 2022 10:40:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=fDm0hCeP1iuF9WL7RiqDe/J3rtlxPQX1zeA/vezHRa0=;
+        b=WA6ZRCaU3cdlumlpbvWHxfloi03BAMhbknENhqsaWPbHRTCv9SZOTLs6l5atjl/rNB
+         WhDgJgxuFoJ/Qjj/q6o0HjImWWNexAoe3iis41zRi8T7cp+cNxoIeLsaIrzGx7M+aP5f
+         yTAUWAt+k6SrK4lNorKyp7zkayVMzWGHtU826B3wT4VF+PqS8rhJhhQw+6nzVJOpHjPO
+         Z+fl0//75bOefoMVkqelSYCTT7/Fe7c10WZtohovtXDzsn3PyILek6foHM5/OQmQFSLW
+         u1+mJd34DWLpm19EGHWC0J1RcHPjVNnGwatLnAkk0E4lmNtGfNVpgiVhfCCchSqTE+cC
+         Tr+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=fDm0hCeP1iuF9WL7RiqDe/J3rtlxPQX1zeA/vezHRa0=;
+        b=zdu1gMgQd6+MDp3H8S+NCcjuLHjg29gxBItxzhtBIdwItURUHeGDvVxDd7Mc09tuhc
+         4oUUPfWa+8mEi0zyGAq7GcVNFvvm5YRDMX78DVR8C5Iinw7UeEm5BXDXhei5gVf+G1mT
+         AG8R71Q4zAmHEtvlJ6CcP5NS/fhk/iO+FXA46+t6f3/RD/XHCToyooePf3PbLN75+T7u
+         lvG9VDHtV8lkQr2DwRgsbV34xOE86cDYZAS2W5GgHfI5Sv853ZA5K+MTAF37JVftQA4J
+         avGSEeR493mgbugCyRHNtobBOhgqvnjhU4CwvU+xYZz3pZsFzuhc/3gw2d10pKpgkTcq
+         F4Cg==
+X-Gm-Message-State: AOAM533Nzb5cLxGlJXU9gTDaSRq0L8vJ+19cmOs2DzZXm9rIccZNRuMt
+        knmk/celBkcCvJHMFaB9GwA=
+X-Google-Smtp-Source: ABdhPJxge8XTkpASmraJ0VjrGWjf9n/ju/ayI7pvlM3z8AJpfQOWU1Cqk3TRPVw0hpSrfMk+YQhJmQ==
+X-Received: by 2002:a05:6512:1504:b0:44b:36e:b50d with SMTP id bq4-20020a056512150400b0044b036eb50dmr15640332lfb.558.1650476402746;
+        Wed, 20 Apr 2022 10:40:02 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:9cae:8c00:9682:e720:334f:2fac? (dxw3k4yf2tnxwyp6sg02y-3.rev.dnainternet.fi. [2001:14ba:9cae:8c00:9682:e720:334f:2fac])
+        by smtp.gmail.com with ESMTPSA id s17-20020a195e11000000b0046eec768984sm1785063lfb.200.2022.04.20.10.40.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Apr 2022 10:40:02 -0700 (PDT)
+Message-ID: <90e11a93-4f3a-2209-2bc2-acfb791b8ac0@gmail.com>
+Date:   Wed, 20 Apr 2022 20:40:08 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
-        Thunderbird/91.7.0
-Subject: Re: [PATCH] drm/exynos: fix IS_ERR() vs NULL check in probe
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] fs/ntfs3: remove redundant assignment to variable vcn
 Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Jagan Teki <jagan@amarulasolutions.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-From:   Inki Dae <inki.dae@samsung.com>
-In-Reply-To: <20220412041936.GK12805@kadam>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOJsWRmVeSWpSXmKPExsWy7bCmnu7EPfFJBrvW6Fr0njvJZPFg3jY2
-        i9f/prNY/N82kdniytf3bBZfNk1gs9h6S9pi7+ut7BZnm96wW8w4v4/JYu2Ru+wWn2Y9ZLaY
-        MfklmwOvx9qP91k99n5bwOJx59oeNo/t3x6wetzvPs7k8fHpLRaPvi2rGD0+b5IL4IjKtslI
-        TUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBOllJoSwxpxQo
-        FJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2BaoFecmFtcmpeul5daYmVoYGBkClSYkJ3xavka
-        xoJ2wYrr284zNTBO5+ti5OSQEDCR2PFjP0sXIxeHkMAORolvf1ZBOZ8YJX4c280G4XxmlDiw
-        /iQzTMuza1uhqnYxSszZtIQZwnnPKPF25iUmkCpeATuJOXcfsoDYLAKqEo8u/2CHiAtKnJz5
-        BCwuKhAh8evWI7C4sICLxLalnWAbmAXEJW49mQ82R0RAR+JyJ0gvF1C8l0XiX8NpsCI2oKET
-        V9xnA7E5BbQllm6YzATRLC/RvHU22EUSAjc4JD5uvwZ1t4vE52l72SFsYYlXx7dA2VISn9/t
-        ZYNomMwocef6ChYIZwajxOGf1xkhqowl9i8FWcEBtEJTYv0ufYiwosTO33MZITbzSbz72sMK
-        UiIhwCvR0SYEUaIkceziDagpEhIXlkxkg7A9JGbe/c02gVFxFlLAzEIKgFlI/pmFsHgBI8sq
-        RrHUguLc9NRiwwIjeIQn5+duYgSnaC2zHYyT3n7QO8TIxMF4iFGCg1lJhDd0ZnySEG9KYmVV
-        alF+fFFpTmrxIUZTYPRMZJYSTc4HZom8knhDE0sDEzMjYxMLQzNDJXHeVdNOJwoJpCeWpGan
-        phakFsH0MXFwSjUw2T4pnjRrRqb/Qgalk29ij5xvy7uyXWftoRUPbsa6Lzz4sV2v+vND7vK9
-        X/TfKV4rj+PMvKLr/VE0zD8s/EDQYSGGXf2x84usJt37+e23xCylz4feXq2yDum+npe/9Ypt
-        2pNVW8oefnXfkjrF8JY2s8+V+bJ8IQcf/37Mu8ROlPmDZ1yn1QNOnifRdxk4dkgppAbO3FH9
-        I2KRRBcj/1Tt2LvLzyv4f1V6sIzRzlx59YubRy4GyLD4p0Z+jDmrqLl5R62vaArL8u+tL/6J
-        3iy3q1p39OeS81kX0ucvMljM3G//zWTjrsX7380pnN7l2f7Jsq8wds4CbZkwz5jad98PsV8p
-        1zs87fbXJa8rwttkE5RYijMSDbWYi4oTAbX28phaBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGIsWRmVeSWpSXmKPExsWy7bCSvO6EPfFJBvvbzC16z51ksngwbxub
-        xet/01ks/m+byGxx5et7NosvmyawWby4d5HFYustaYu9r7eyW5xtesNuMeP8PiaLtUfuslt8
-        mvWQ2WLG5JdsDnweaz/eZ/XY+20Bi8eda3vYPLZ/e8Dqcb/7OJPHx6e3WDz6tqxi9Pi8SS6A
-        I4rLJiU1J7MstUjfLoEr49XyNYwF7YIV17edZ2pgnM7XxcjJISFgIvHs2laWLkYuDiGBHYwS
-        J8/OBnI4gBISElu2ckCYwhKHDxdDlLxllFi2agMbSC+vgJ3EnLsPWUBsFgFViUeXf7BDxAUl
-        Ts58AhYXFYiQWLZrKpgtLOAisW1pJzOIzSwgLnHryXwmEFtEQEficidILxdQfCKLxNw3bxkh
-        tl1mlGjbvw6sig1ow8QV98E2cwpoSyzdMJkJ5DpmAXWJ9fOEIIbKSzRvnc08gVFoFpI7ZiHZ
-        NwuhYxaSjgWMLKsYJVMLinPTc4sNC4zyUsv1ihNzi0vz0vWS83M3MYKjUktrB+OeVR/0DjEy
-        cTAeYpTgYFYS4Q2dGZ8kxJuSWFmVWpQfX1Sak1p8iFGag0VJnPdC18l4IYH0xJLU7NTUgtQi
-        mCwTB6dUA9Pab7smpa98+I1p16uEfz9ye30OPHk8m+/fwm4z5rOuM7xPztbt+nNUstmgqH9h
-        618O5Y/HWBNatqxSTyqTttlz5nj+xZjz634vYK+3KeubL80Wts9VT+jOiszW8OrqE8osbzNL
-        66qWtr94rya63SzNbo7a7iUc2+3lle5Md9q7M/nfnqc/vtyeEnNZaA5Dvt9nj63ue0yvfZTj
-        PxSpNUts3ZMLq2YrNvbs5m3N/vDg6N9XZU+O5W54n6XddfjWKumbZUEHhadsnSzkvnvDzkdq
-        B6Xn/mlckDMl49npfVOmi/b2mtT+ycqRVK08/XKq5oxwyysTtnw6uCZy/rEA8S7mk/wBZYvX
-        8/vsNzf8/ermXCWW4oxEQy3mouJEACguqEM5AwAA
-X-CMS-MailID: 20220420075601epcas1p4a80b77be683df8ccd68be008d57f3100
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220408102327epcas1p409b13bf2da7e19b0a24571ce50e3ea92
-References: <CGME20220408102327epcas1p409b13bf2da7e19b0a24571ce50e3ea92@epcas1p4.samsung.com>
-        <20220408102134.GA14120@kili>
-        <c7606920-b5c9-f8e3-3026-631a796c195a@samsung.com>
-        <20220412041936.GK12805@kadam>
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        ntfs3@lists.linux.dev
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev
+References: <20220418140038.82843-1-colin.i.king@gmail.com>
+From:   Kari Argillander <kari.argillander@gmail.com>
+In-Reply-To: <20220418140038.82843-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
-
-22. 4. 12. 13:19에 Dan Carpenter 이(가) 쓴 글:
-> On Tue, Apr 12, 2022 at 10:01:20AM +0900, Inki Dae wrote:
->> Hi Dan Carpenter.
->>
->> Same patch[1] was posted so I will pick it up. 
->>
->> [1] https://protect2.fireeye.com/v1/url?k=94e9d569-f562c05f-94e85e26-000babff9b5d-4d4f5b20cfffa24c&q=1&e=727c2c54-2082-4e0f-87d7-c6702bf4c81e&u=https%3A%2F%2Fwww.spinics.net%2Flists%2Farm-kernel%2Fmsg967488.html 
->>
+On 18.4.2022 17.00, Colin Ian King wrote:
+> Variable vcn is being assigned a value that is never read, it is
+> being re-assigned again in the initialization of a for-loop.  The
+> assignment is redundant and can be removed.
 > 
-> It's not the same.  That one returns -EINVAL and mine returns
-> -EPROBE_DEFER.  I obvoiously thought that -EPROBE_DEFER was the correct
-> return but I wasn't positive.  -EPROBE_DEFER is kind of a special
-> return so I think it matters to get this correct.
+> Cleans up clang scan build warning:
+> fs/ntfs3/attrib.c:1176:7: warning: Value stored to 'vcn' during its
+> initialization is never read [deadcode.DeadStores]
 > 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Correct so I requested[1] him to fix it but the delivery failed. :( I will just pick your patch up. :)
-[Delivery Failure] Re: [PATCH -next] drm/exynos: mic: fix return value check in exynos_mic_probe().
+Reviewed-by: Kari Argillander <kari.argillander@gmail.com>
 
-[1] My email sent below,
---------------------
-22. 4. 6. 18:22에 Yang Yingliang 이(가) 쓴 글:
- > If of_graph_get_remote_node() fails, it returns NULL pointer, replaces
- > IS_ERR() check with NULL pointer check.
- >
- > Fixes: dd8b6803bc49 ("exynos: drm: dsi: Attach in_bridge in MIC driver")
- > Reported-by: Hulk Robot <hulkci@huawei.com>
- > Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
- > ---
- > drivers/gpu/drm/exynos/exynos_drm_mic.c | 4 ++--
- > 1 file changed, 2 insertions(+), 2 deletions(-)
- >
- > diff --git a/drivers/gpu/drm/exynos/exynos_drm_mic.c 
-b/drivers/gpu/drm/exynos/exynos_drm_mic.c
- > index 9e06f8e2a863..43fc357a6682 100644
- > --- a/drivers/gpu/drm/exynos/exynos_drm_mic.c
- > +++ b/drivers/gpu/drm/exynos/exynos_drm_mic.c
- > @@ -434,9 +434,9 @@ static int exynos_mic_probe(struct platform_device *pdev)
- >
- > remote = of_graph_get_remote_node(dev->of_node, 1, 0);
- > mic->next_bridge = of_drm_find_bridge(remote);
- > - if (IS_ERR(mic->next_bridge)) {
- > + if (!mic->next_bridge) {
- > DRM_DEV_ERROR(dev, "mic: Failed to find next bridge\n");
- > - ret = PTR_ERR(mic->next_bridge);
- > + ret = -EINVAL;
-
--EPROBE_DEFER should be returned instead. Could you modify and resend it again?
-
-> regards,
-> dan carpenter
+> ---
+>   fs/ntfs3/attrib.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> 
+> diff --git a/fs/ntfs3/attrib.c b/fs/ntfs3/attrib.c
+> index e8c00dda42ad..fc0623b029e6 100644
+> --- a/fs/ntfs3/attrib.c
+> +++ b/fs/ntfs3/attrib.c
+> @@ -1173,7 +1173,7 @@ int attr_load_runs_range(struct ntfs_inode *ni, enum ATTR_TYPE type,
+>   {
+>   	struct ntfs_sb_info *sbi = ni->mi.sbi;
+>   	u8 cluster_bits = sbi->cluster_bits;
+> -	CLST vcn = from >> cluster_bits;
+> +	CLST vcn;
+>   	CLST vcn_last = (to - 1) >> cluster_bits;
+>   	CLST lcn, clen;
+>   	int err;
