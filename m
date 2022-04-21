@@ -2,127 +2,172 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F898C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Apr 2022 15:48:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 547C9C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Apr 2022 15:50:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1390309AbiDUPv2 (ORCPT
+        id S1390309AbiDUPwu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 21 Apr 2022 11:51:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47400 "EHLO
+        Thu, 21 Apr 2022 11:52:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229787AbiDUPv2 (ORCPT
+        with ESMTP id S1390353AbiDUPwg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 21 Apr 2022 11:51:28 -0400
-Received: from ha.nfschina.com (unknown [IPv6:2400:dd01:100f:2:72e2:84ff:fe10:5f45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0AA164738D;
-        Thu, 21 Apr 2022 08:48:35 -0700 (PDT)
-Received: from localhost (unknown [127.0.0.1])
-        by ha.nfschina.com (Postfix) with ESMTP id 71E1D1E80D0B;
-        Thu, 21 Apr 2022 23:46:02 +0800 (CST)
-X-Virus-Scanned: amavisd-new at test.com
-Received: from ha.nfschina.com ([127.0.0.1])
-        by localhost (ha.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 5oMn8UwNA64M; Thu, 21 Apr 2022 23:45:59 +0800 (CST)
-Received: from ubuntu.localdomain (unknown [101.228.255.56])
-        (Authenticated sender: yuzhe@nfschina.com)
-        by ha.nfschina.com (Postfix) with ESMTPA id EA9491E80CF9;
-        Thu, 21 Apr 2022 23:45:58 +0800 (CST)
-From:   Yu Zhe <yuzhe@nfschina.com>
-To:     mareklindner@neomailbox.ch, sw@simonwunderlich.de, a@unstable.cc,
-        sven@narfation.org, davem@davemloft.net, kuba@kernel.org,
-        pabeni@redhat.com
-Cc:     b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, liqiong@nfschina.com,
-        kernel-janitors@vger.kernel.org, Yu Zhe <yuzhe@nfschina.com>
-Subject: [PATCH] batman-adv: remove unnecessary type castings
-Date:   Thu, 21 Apr 2022 08:48:29 -0700
-Message-Id: <20220421154829.9775-1-yuzhe@nfschina.com>
-X-Mailer: git-send-email 2.25.1
+        Thu, 21 Apr 2022 11:52:36 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E85AE4706E;
+        Thu, 21 Apr 2022 08:49:45 -0700 (PDT)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 23LE13oP009567;
+        Thu, 21 Apr 2022 15:49:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : content-type : mime-version; s=corp-2021-07-09;
+ bh=dIRqQt7Lt0jkB1klSblkRHBPA1X3Z01c3YYbkfbcZdw=;
+ b=lqsqmGnNOrYU1hJfuRua1mOfv2kJbAp3XuwljTxMbb45UdveJbpe2/iF1fcjEPOP9qoO
+ ekhwIKwCgRQQzo/UnrhBuooHiHSI0FAsHTW7WKiEgwF+8pUE9dVPV9g3bOnvq3KuGn9O
+ Xw4//QxS5on6BCwqtu9wJQ83AmcPcqtS2sikhi/R4bYy24ixicRkF6t4VNP8Etg26gyt
+ ckD5FuuBCaGl4eaSTZY6KnVU0Uiuafa0NCnGUyuQP0VcDoiBr4ype5edh2mg7+AbYE7j
+ mroyVaqrtWbt644OLqyzaxKiFRHZiouvZn+zucupqNeN55ARS18s04wfBh6DeeC8tQvj Ng== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3ffndtmf1t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Apr 2022 15:49:24 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 23LFkjIh040746;
+        Thu, 21 Apr 2022 15:49:17 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2168.outbound.protection.outlook.com [104.47.55.168])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3ffm88vna7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Apr 2022 15:49:17 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CbffCeM9YQK0o1UoBKM+CrNTq0uB2beik++CVqXEGSpOHIxp+uHdTfFNZ0YpNGISv3T02cxWD0MVgbMJe2eeZm6C555rGrdXQbHikU3DS/TrG5MawPfwxFtpFU5UYll/0q2QP7r14XXwVq2NlEucpDEg6V43SXFY7oD5zoCVg5CGGuounz9eHGsytrM3CWKArj6hzge9S1TgTl+v6GDTGd+wOZYEOSqKfQnxpNoAySBrozIhJgYkCnYO3j0LrzYUxj5lfSZcDhcBqCQI6jqcWNTn4FMAzhxSYWF3YMnFz8u10lqhI0rDEnh76GNvPOw82HH35R8yCFcNF6n1K2HipQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dIRqQt7Lt0jkB1klSblkRHBPA1X3Z01c3YYbkfbcZdw=;
+ b=fK4bO75LGmAk6vym71Kyjg0WGOYoBZco+PLnmt3kc9f3DyjUV5109sSvpYKrV5kmLLw4FBjxAuTLCDbIJnVqJNgm/xDAzmD7ob0WePyvIBSdU+xYrp/8V8zyng1p6G7wLtwF95OnHxH68Gl0PlhmHu+u3euT2NPhCjvq+nFRttesdepspjvL24crsA6tsQAou0PuZIHcp4GK4s0ZiyDW7nKb6gxx/veFVKscM6bJY05K0mtvGmfrZltotithYGhTkxoY3arCPt00QJcW5jgZUCJHisBWoBn1YF+qRgiED1sa5DOrnQeQGbCsBX3FlTg6MJzP+wwYIRW4ed9yDWCYvw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dIRqQt7Lt0jkB1klSblkRHBPA1X3Z01c3YYbkfbcZdw=;
+ b=fK3hHvFIarSO+HlXTgUKlfA4Z4rbcUatmU0L2gfa2rIiJzRgceLKrJzDxN3Ss8U70Q3Yb1yU/zPPQRghix5DlUnzvjLyQc6XGIEItlx8d3Nkbs6dLxvT2ync57A1i/1paOaUpig1F/hsmDlHEdevABl/bljvsIliXjZlSJt4N5k=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by CY4PR10MB1351.namprd10.prod.outlook.com
+ (2603:10b6:903:2b::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.14; Thu, 21 Apr
+ 2022 15:49:15 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::b5d5:7b39:ca2d:1b87]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::b5d5:7b39:ca2d:1b87%5]) with mapi id 15.20.5164.025; Thu, 21 Apr 2022
+ 15:49:15 +0000
+Date:   Thu, 21 Apr 2022 18:49:02 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Felix Fietkau <nbd@nbd.name>
+Cc:     John Crispin <john@phrozen.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Mark Lee <Mark-MC.Lee@mediatek.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        netdev@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] net: ethernet: mtk_eth_soc: add check for
+ allocation failure
+Message-ID: <YmF87nnzwiJC71k6@kili>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-ClientProxiedBy: ZR0P278CA0002.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:16::12) To MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 32e58fdf-68e8-4864-66ee-08da23ae7d09
+X-MS-TrafficTypeDiagnostic: CY4PR10MB1351:EE_
+X-Microsoft-Antispam-PRVS: <CY4PR10MB1351AA0952DF131009DF519A8EF49@CY4PR10MB1351.namprd10.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: OXFp1flKK+gKnFQ5XrxFYadGUs7mn9qqjeUEkrfbY1VsEygNB999K4sVoYQgtFninzQCv90RAyhDM9r3O2xWT6lABwsC5su0zGFPvFDrKLLcLBfxSLWYVNiZ9FUb94AE1dnkryw87L0746Ek2foHMKeB4jJ3rScDtaNEp1ix78QLkfthwSLZvrHN2P4IPr+2+qEz7J4XB1pOXoqleBDz/vekibZ9Ea3UiClCUtzTZTWFQtrhjP98BEkDJnf8O/nHXh3f3jFX6abol1ObrMyUD+Jz4Bu6f7eEbi5XZHD9BBGzhn2RTMpMo4JO+fMmrnq/CEo0xxKmyILpppmSgBIQbnU+yyH1/jDQ8s7SOU49/iKAz90ZI2XMhnR+UcNicIyBn+uLemj3lva+4f/7sNlAJE+mqPGRO9tHFVazCYyE3tISaft7QARPutdRxxsJsQn4Ny/eMlozJ46GFNsyoIftw0T++UTBjFHmc22UgS9zetGsFO+1Rm/ZCGiMmUcm28yKW/iR6rbI3xX8z7vhJfCunTlxVObUgbD8gPaCrizxcpNJBeEmW215cS0VqN1i4CN2cZbJDg4Ru5+NW6hrXNBIXe7NxqamAqxyvwjihBwAiJGwIczTKymhGUhW2ra8ep68N1X01a6MfFOMjgjfBxToakuARZ9gT4ytZ00Ci4PwNeSLFvudKIAwR2RZdD1OnnoUeclkxatg8r5fvdmt1NcP0Q==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(366004)(6506007)(6512007)(9686003)(26005)(38100700002)(52116002)(6486002)(7416002)(4744005)(38350700002)(8936002)(5660300002)(6666004)(2906002)(83380400001)(33716001)(86362001)(44832011)(508600001)(186003)(316002)(54906003)(66946007)(66476007)(6916009)(66556008)(4326008)(8676002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?e9Rpw7GmdJ0lRP0e/D+KBsiOX4sqt6CjKuVXYheP+2I55Q1CL45AJBvjQNtq?=
+ =?us-ascii?Q?WHU5WBFmAFqrTH+z2BfZcT81i00rv0lQaD6aPvlraiKDyJyc5iXevagGChRh?=
+ =?us-ascii?Q?ZLO21yuEo8JN16Q6RE32P0rUEMZrE7a4Dp48FrVIoq+LIZm5R2ByrhCi/WfG?=
+ =?us-ascii?Q?3YT3Ees9Zi++NsTexc7L+vlYmmkDJeAn/8p7k+3AP70KZtyOqAGG8v00w54Z?=
+ =?us-ascii?Q?9JDd1e1x63dUSminbQ5ncIF9+9Cc2xviTaDGYc3jKoaRMBg4d56DZ4amZ5fQ?=
+ =?us-ascii?Q?HSYDrcbKvRZDplG4xeNH0pZMAg8P+r1m5bgt6uwQhlnbZmSGL+W9Wm6wCbLo?=
+ =?us-ascii?Q?yfPFHCCd9HO5txaQ9OTRg8v+uQhKuMZ3ftKdbmoWefTJaCmoIDLek/+Z/I2p?=
+ =?us-ascii?Q?t+aUId7Jm2O3NQvc/QBkqa2MWY/wH5hITF1/6Ae7ITTlYg+wIbu7yAvL88/F?=
+ =?us-ascii?Q?rxy2ilhqwjGFTUf2ENUH1rftKEyN0t8wHx/b3PGFJAk3gxBP07kVYzVRsHUu?=
+ =?us-ascii?Q?HNCamvyOz8KCGND5czcSE275H6p+ws+8svEJJjgPQO4VSi/Qj2RwrNBJpE40?=
+ =?us-ascii?Q?F1V9AI+h4FSkpkKf61fCkDb2mCMqKg7W1UhXWgR31g7ALC48Pa9p40p1dspg?=
+ =?us-ascii?Q?0mCYaCs/FKTmlDZNLDsQTQ9psM9TzhGiE0QG/9lAO1tBD4c1jxN0br2uPQ8V?=
+ =?us-ascii?Q?/zeYn0ixsPRFDquUh41WOfPvIYVauqfdOPsdRrxeFsvH/FYDfKlgFmd/ncwP?=
+ =?us-ascii?Q?kpl8h+8J+BPZKj04n43yj0oAMJ/pbD6VGUJCZXbaZp1q68h4YxZW7Nf5h39C?=
+ =?us-ascii?Q?czuf0rxOrPqbEihoDie80epQR/TMKgn5+alxwyhkRU4mHIxPGbAaSREnOei2?=
+ =?us-ascii?Q?ZDtWTYqOcWqejxUriedDRfIpUkephUtDHFSYos9NdmQpDnHk/yeeOkQ9uqol?=
+ =?us-ascii?Q?CZN0hGM18UoAT1crS2X0/QKiG36t+DynGHwrHaBKFmzp3SKoOJSfguDqG7rv?=
+ =?us-ascii?Q?zP2IlJRKIom5uMBkBAmBnKvxHgml5vKn/wNNWmrlOo90XC3AvN8qESjE9Bca?=
+ =?us-ascii?Q?HDS0fXBnjs+fFeSdprdxuhpFlHD+WR+Jl3hL7NhiJq9cBKXyXSlTf3MWMr3C?=
+ =?us-ascii?Q?lFwYDHyGDGjBMRsLl1JuOR89WRxTTWTCTx5TbPq0X93PW6yWzEDWOsoBTAeF?=
+ =?us-ascii?Q?IDKydiWQYVLkGmrQZXWtdPREht+Mxk4Z9TTlAgaFUdDS1pJlJEFVAkAsQGUv?=
+ =?us-ascii?Q?Hfe2MPw2PuIS0nJQZ5VB4xynvLaIifGijKcIgtJrSKXGh4rVV/9jS6QWSgr0?=
+ =?us-ascii?Q?6zl8vdKLfPilXbS8/sdGIX/svskHWKTqhFCBDWbnD3KR79s1gSFxzxswc9bD?=
+ =?us-ascii?Q?CQT2PljwaLAfUDw2PdC5r66Z9a71Q5sBPMytAE0bsCYsOUw7uTZCei5rVb2V?=
+ =?us-ascii?Q?SnttgmI5abg7Xx5TRYwd+LDoSC8wbgI7a75M0cDJlBhHVm7pLt/xKrJi2iyI?=
+ =?us-ascii?Q?MHOvklLYvLn3ein3gZWI0vrn+KbFsfxZVlsbihtt4L/LVXpQlcgFwmYgoMgW?=
+ =?us-ascii?Q?SaTDfs9eYoczoVCfr4o/ThT6Fqyxu9jP9GwtmYoefooZxgfu9YLULjMxG1cH?=
+ =?us-ascii?Q?yR800QYPeTXqssxBcw/e3oFKUhcuqTjitsP6Ms1z2W+ewrxerYmHTU37Amu4?=
+ =?us-ascii?Q?YKu8PFwh2t5zq1lr+yDaYOdWCVvE3R9+pnizM1CQgihLAVRAHNOYnzMWcB7n?=
+ =?us-ascii?Q?HCH3b08viWouSRGO0TKY7gVG2+ZN/yM=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32e58fdf-68e8-4864-66ee-08da23ae7d09
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2022 15:49:15.7583
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TAtJQ4Piw4L1bOCvE0hXbFfN4nTYX39/EQw2kwIZVHxgZwAAked6rP4c+SGGqdReWbEh7Gvd5KgifRYdK3GUk5tkRwG3viYOEUehdl++8+k=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR10MB1351
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.486,18.0.858
+ definitions=2022-04-21_02:2022-04-21,2022-04-21 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0 phishscore=0
+ adultscore=0 mlxlogscore=999 spamscore=0 bulkscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2202240000
+ definitions=main-2204210085
+X-Proofpoint-ORIG-GUID: HO3IZxmQuTPpfubunHitvtbyF6-vgasf
+X-Proofpoint-GUID: HO3IZxmQuTPpfubunHitvtbyF6-vgasf
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-remove unnecessary void* type castings.
+Check if the kzalloc() failed.
 
-Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+Fixes: 804775dfc288 ("net: ethernet: mtk_eth_soc: add support for Wireless Ethernet Dispatch (WED)")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- net/batman-adv/bridge_loop_avoidance.c |  4 ++--
- net/batman-adv/translation-table.c     | 10 +++++-----
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/mediatek/mtk_wed.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/net/batman-adv/bridge_loop_avoidance.c b/net/batman-adv/bridge_loop_avoidance.c
-index 7f8a14d99cdb..38cc21370eda 100644
---- a/net/batman-adv/bridge_loop_avoidance.c
-+++ b/net/batman-adv/bridge_loop_avoidance.c
-@@ -65,7 +65,7 @@ batadv_bla_send_announce(struct batadv_priv *bat_priv,
-  */
- static inline u32 batadv_choose_claim(const void *data, u32 size)
- {
--	struct batadv_bla_claim *claim = (struct batadv_bla_claim *)data;
-+	struct batadv_bla_claim *claim = data;
- 	u32 hash = 0;
+diff --git a/drivers/net/ethernet/mediatek/mtk_wed.c b/drivers/net/ethernet/mediatek/mtk_wed.c
+index f0eacf819cd9..a2793bbb8ce0 100644
+--- a/drivers/net/ethernet/mediatek/mtk_wed.c
++++ b/drivers/net/ethernet/mediatek/mtk_wed.c
+@@ -827,6 +827,8 @@ void mtk_wed_add_hw(struct device_node *np, struct mtk_eth *eth,
+ 		goto unlock;
  
- 	hash = jhash(&claim->addr, sizeof(claim->addr), hash);
-@@ -86,7 +86,7 @@ static inline u32 batadv_choose_backbone_gw(const void *data, u32 size)
- 	const struct batadv_bla_backbone_gw *gw;
- 	u32 hash = 0;
- 
--	gw = (struct batadv_bla_backbone_gw *)data;
-+	gw = data;
- 	hash = jhash(&gw->orig, sizeof(gw->orig), hash);
- 	hash = jhash(&gw->vid, sizeof(gw->vid), hash);
- 
-diff --git a/net/batman-adv/translation-table.c b/net/batman-adv/translation-table.c
-index 8478034d3abf..f579060aa503 100644
---- a/net/batman-adv/translation-table.c
-+++ b/net/batman-adv/translation-table.c
-@@ -106,7 +106,7 @@ static inline u32 batadv_choose_tt(const void *data, u32 size)
- 	struct batadv_tt_common_entry *tt;
- 	u32 hash = 0;
- 
--	tt = (struct batadv_tt_common_entry *)data;
-+	tt = data;
- 	hash = jhash(&tt->addr, ETH_ALEN, hash);
- 	hash = jhash(&tt->vid, sizeof(tt->vid), hash);
- 
-@@ -2766,7 +2766,7 @@ static void batadv_tt_tvlv_generate(struct batadv_priv *bat_priv,
- 	u32 i;
- 
- 	tt_tot = batadv_tt_entries(tt_len);
--	tt_change = (struct batadv_tvlv_tt_change *)tvlv_buff;
-+	tt_change = tvlv_buff;
- 
- 	if (!valid_cb)
- 		return;
-@@ -3994,7 +3994,7 @@ static void batadv_tt_tvlv_ogm_handler_v1(struct batadv_priv *bat_priv,
- 	if (tvlv_value_len < sizeof(*tt_data))
- 		return;
- 
--	tt_data = (struct batadv_tvlv_tt_data *)tvlv_value;
-+	tt_data = tvlv_value;
- 	tvlv_value_len -= sizeof(*tt_data);
- 
- 	num_vlan = ntohs(tt_data->num_vlan);
-@@ -4037,7 +4037,7 @@ static int batadv_tt_tvlv_unicast_handler_v1(struct batadv_priv *bat_priv,
- 	if (tvlv_value_len < sizeof(*tt_data))
- 		return NET_RX_SUCCESS;
- 
--	tt_data = (struct batadv_tvlv_tt_data *)tvlv_value;
-+	tt_data = tvlv_value;
- 	tvlv_value_len -= sizeof(*tt_data);
- 
- 	tt_vlan_len = sizeof(struct batadv_tvlv_tt_vlan_data);
-@@ -4129,7 +4129,7 @@ static int batadv_roam_tvlv_unicast_handler_v1(struct batadv_priv *bat_priv,
- 		goto out;
- 
- 	batadv_inc_counter(bat_priv, BATADV_CNT_TT_ROAM_ADV_RX);
--	roaming_adv = (struct batadv_tvlv_roam_adv *)tvlv_value;
-+	roaming_adv = tvlv_value;
- 
- 	batadv_dbg(BATADV_DBG_TT, bat_priv,
- 		   "Received ROAMING_ADV from %pM (client %pM)\n",
+ 	hw = kzalloc(sizeof(*hw), GFP_KERNEL);
++	if (!hw)
++		goto unlock;
+ 	hw->node = np;
+ 	hw->regs = regs;
+ 	hw->eth = eth;
 -- 
-2.25.1
+2.20.1
 
