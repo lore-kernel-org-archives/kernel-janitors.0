@@ -2,91 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57DEAC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Apr 2022 08:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EBC8C433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Apr 2022 11:51:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230437AbiDUI6i (ORCPT
+        id S1354297AbiDULx5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 21 Apr 2022 04:58:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37930 "EHLO
+        Thu, 21 Apr 2022 07:53:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230393AbiDUI6h (ORCPT
+        with ESMTP id S229912AbiDULx4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 21 Apr 2022 04:58:37 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 112751AF2C;
-        Thu, 21 Apr 2022 01:55:49 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id m14so5675067wrb.6;
-        Thu, 21 Apr 2022 01:55:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Rx6YW0z7TNgwrZzCOM/LadQs2IROT5w7euvFjQgv97I=;
-        b=KF2vkyN/kcWb3uC+3v/wWOoqsfdtj2UwSVyPlTbFTNKEMy6eNSh3WI6DKjEac6mKA0
-         eEE8dgZGBRacJwS9FyI8He8jccbvTR4qE3SfEzC+aN3FFphgG0TwKMcwB9lG50K/Pktd
-         E4sXnZ/laH6RvPi7kFR+vqz+PdnLuOvtgjfCSW5YNmwDzfRY2qOm5hhHs4jhI1zsQzrw
-         lsH+f15LfyCR1YAEdKKamN5rLaOe5H75Xn8NuHuYKv923XxcNklBgNqO8oFyR1VUPiwr
-         i+gxqvXyh+jb7ttNvF4IahsukBwcsXUuzZh6xUweqravQosdFu/rcgeBazlpbywI/C/H
-         m0xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Rx6YW0z7TNgwrZzCOM/LadQs2IROT5w7euvFjQgv97I=;
-        b=EDCjv1fnVn6NW6MwW0jkyOYAXL2JUtMyIs4UdeO8YkANYkCZOYNatxPIQmhGuv/Cb/
-         6DVaF3DgqulcWE5mX5FEF2N+500RHeK7mEQ1mVTpd+Qt1qp8kO+fgX/XGwuaOpGfBcgh
-         KAKGR+M4w+cXlXEbOicApajlw0KwMf8vI98BsaFI6ognymyKmmxOI8BjfxDUQEITOd6K
-         6xSN8b95iR2upxHpg0LfXdJaf+8qk8A9J6u0a4OnNoZUUNBOql8+Y/YCdQlJ5ujjp4Zj
-         vbmTD8WLaV5RWkxXq6cqxBDTOw+OZhteOzf4UApsfynFtbhehvIJ/TZbgXNEfKmzPgK4
-         HFUg==
-X-Gm-Message-State: AOAM531uUP3GyxUC/J65wlUE8Ow3GWrmXPHf9VNzBNozEeX4SRlUK6zY
-        LhWIhaAzmaKvYeYeUA/D850=
-X-Google-Smtp-Source: ABdhPJxWKzmGEVET2B/IQtcjzG1GiBxqmi9/CRN/U34lV/Xj2CT045mFHvG8LKRvHXGM3gcTi8SiiA==
-X-Received: by 2002:a5d:52c9:0:b0:207:99d3:7b4d with SMTP id r9-20020a5d52c9000000b0020799d37b4dmr19770425wrv.77.1650531347604;
-        Thu, 21 Apr 2022 01:55:47 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id m4-20020a7bcb84000000b00389efb7a5b4sm1539091wmi.17.2022.04.21.01.55.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Apr 2022 01:55:47 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Yisen Zhuang <yisen.zhuang@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net: hns3: Fix spelling mistake "actvie" -> "active"
-Date:   Thu, 21 Apr 2022 09:55:46 +0100
-Message-Id: <20220421085546.321792-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Thu, 21 Apr 2022 07:53:56 -0400
+Received: from muru.com (muru.com [72.249.23.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2B4D02A265;
+        Thu, 21 Apr 2022 04:51:07 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 1649E8106;
+        Thu, 21 Apr 2022 11:48:15 +0000 (UTC)
+Date:   Thu, 21 Apr 2022 14:51:05 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Julia Lawall <Julia.Lawall@inria.fr>, Arnd Bergmann <arnd@arndb.de>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        kernel-janitors@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] omap1: htc_herald: fix typos in comments
+Message-ID: <YmFFKaTjlky5ELFZ@atomide.com>
+References: <20220318103729.157574-27-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220318103729.157574-27-Julia.Lawall@inria.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a netdev_info message. Fix it.
+Hi,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+* Julia Lawall <Julia.Lawall@inria.fr> [220318 12:36]:
+> Various spelling mistakes in comments.
+> Detected with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-index bb001f597857..1db8a86f046d 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-@@ -1915,7 +1915,7 @@ static int hns3_set_tunable(struct net_device *netdev,
- 			return ret;
- 		}
- 
--		netdev_info(netdev, "the actvie tx spare buf size is %u, due to page order\n",
-+		netdev_info(netdev, "the active tx spare buf size is %u, due to page order\n",
- 			    priv->ring->tx_spare->len);
- 
- 		break;
--- 
-2.35.1
+Probably best that Arnd picks this into his omap1-multiplatform branch:
 
+Acked-by: Tony Lindgren <tony@atomide.com>
+
+Regards,
+
+Tony
+
+> ---
+>  arch/arm/mach-omap1/board-htcherald.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mach-omap1/board-htcherald.c b/arch/arm/mach-omap1/board-htcherald.c
+> index 258304edf23e..d528b8497061 100644
+> --- a/arch/arm/mach-omap1/board-htcherald.c
+> +++ b/arch/arm/mach-omap1/board-htcherald.c
+> @@ -170,7 +170,7 @@ static const unsigned int htc_herald_keymap[] = {
+>  	KEY(3, 0, KEY_VOLUMEUP), /* Volume up */
+>  	KEY(4, 0, KEY_F2),  /* Right bar (landscape) */
+>  	KEY(5, 0, KEY_MAIL), /* Win key (portrait) */
+> -	KEY(6, 0, KEY_DIRECTORY), /* Right bar (protrait) */
+> +	KEY(6, 0, KEY_DIRECTORY), /* Right bar (portrait) */
+>  	KEY(0, 1, KEY_LEFTCTRL), /* Windows key */
+>  	KEY(1, 1, KEY_COMMA),
+>  	KEY(2, 1, KEY_M),
+> 
