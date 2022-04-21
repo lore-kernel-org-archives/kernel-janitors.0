@@ -2,110 +2,151 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 728CFC433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Apr 2022 16:02:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5066CC433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Apr 2022 16:05:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1390429AbiDUQFQ (ORCPT
+        id S1390463AbiDUQIS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 21 Apr 2022 12:05:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57340 "EHLO
+        Thu, 21 Apr 2022 12:08:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243552AbiDUQFO (ORCPT
+        with ESMTP id S1390456AbiDUQIO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 21 Apr 2022 12:05:14 -0400
-Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0343843ACA
-        for <kernel-janitors@vger.kernel.org>; Thu, 21 Apr 2022 09:02:23 -0700 (PDT)
-Received: from pop-os.home ([86.243.180.246])
-        by smtp.orange.fr with ESMTPA
-        id hZG5nf9FJ8sSvhZG5n3O1L; Thu, 21 Apr 2022 18:02:21 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 21 Apr 2022 18:02:21 +0200
-X-ME-IP: 86.243.180.246
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jeremy Kerr <jk@ozlabs.org>, Joel Stanley <joel@jms.id.au>,
-        Alistar Popple <alistair@popple.id.au>,
-        Eddie James <eajames@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-fsi@lists.ozlabs.org
-Subject: [PATCH] fsi: Fix error handling in fsi_master_register() and its callers
-Date:   Thu, 21 Apr 2022 18:02:15 +0200
-Message-Id: <f37bfdccfcf8a8d1bdcbf668b802df13253ed3fe.1650556911.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
+        Thu, 21 Apr 2022 12:08:14 -0400
+Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71F00DF4B;
+        Thu, 21 Apr 2022 09:05:24 -0700 (PDT)
+Received: by mail-qk1-x72d.google.com with SMTP id d19so3890072qko.3;
+        Thu, 21 Apr 2022 09:05:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:date:from:to:cc:subject:message-id:reply-to:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Gy5Mr4Xkw0nWQenTM/V7cPlnk9oixh5l2qY9cIcFB80=;
+        b=pi/G8voGK0cPNA1b/Rr6VJ7C3dQV99G8Nik/zvxyVOgzREcgQC7MD9xz0EVxLY5j0c
+         ivezdbe7qV/+yMxw/e6URTJyULm3pEB8i9twf1fR51s6Ek8wEJJIMn8oblyBRW+hx6hC
+         4REzdhy+fKBOq4ZObHV03F2Yk3eZ/D87GD5eTSo7l97UsQfW9Rq+XJg5r8pUG/kupaG6
+         jVzWYf6YEY2JDdI0CeThJRlf1eET2WVV5eJi95fUltKNWlcg7FDqM/YSJqaowvofMNN8
+         aM3iijCdchGN5LpMTZd8RV3gcW9+EUp66DQAzLyHw4hEHqSbMD3i5TQ5PDNotz/kAQZL
+         Nhcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :reply-to:references:mime-version:content-disposition:in-reply-to;
+        bh=Gy5Mr4Xkw0nWQenTM/V7cPlnk9oixh5l2qY9cIcFB80=;
+        b=frzcx4WqnoeB4eG4BRIrgaUFraI+r3jeAkaj32LaZINq2CZbjYwxjlDWWkcJ0eth3S
+         W783NvyHQB4Fo8WzOjNEGK1UEWw1/ezvFHXtx99QCQXIS9CRiqj7w3WoswwH93HCqiKI
+         Q6J1dTG2wHT7KmBqypOy7oZnaK7ItTz13/5kYsjoBPVPEouh5bslA63AlRpLBwFxlcAf
+         ZTPNx04XesS7VhXYOtsObJkY0YfiKvmADACbxTOuwec9BNaA6Kgk1mN1a6rGfgSL7sV1
+         PneMKFBF4RErdhsBDwxX7fHmz5OXI9E3lYTmUslsKzjeHygsY6VEuEWWFikpJM+AQQMy
+         m4hw==
+X-Gm-Message-State: AOAM530wg5LgLDnDPi0isMzzNYyMLKBbr1cpPutSmRBWf8u0YJnj18QL
+        hWALMOcUo1MlBc/6Ej0WsYNP6TdIGYa5
+X-Google-Smtp-Source: ABdhPJz/7u44W+IRgWJVfcUVdJskycBKqQDsrYenXyQ7fjJunRRBNoKajf9zCm0UYnE5z/br/6jnmA==
+X-Received: by 2002:a37:9e47:0:b0:69e:a534:24b5 with SMTP id h68-20020a379e47000000b0069ea53424b5mr96977qke.510.1650557123483;
+        Thu, 21 Apr 2022 09:05:23 -0700 (PDT)
+Received: from serve.minyard.net (serve.minyard.net. [2001:470:b8f6:1b::1])
+        by smtp.gmail.com with ESMTPSA id 2-20020a05620a06c200b0069ea498aec7sm3078129qky.16.2022.04.21.09.05.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Apr 2022 09:05:23 -0700 (PDT)
+Sender: Corey Minyard <tcminyard@gmail.com>
+Received: from minyard.net (unknown [IPv6:2001:470:b8f6:1b:a578:422:b82d:51be])
+        by serve.minyard.net (Postfix) with ESMTPSA id 6A697180004;
+        Thu, 21 Apr 2022 16:05:22 +0000 (UTC)
+Date:   Thu, 21 Apr 2022 11:05:21 -0500
+From:   Corey Minyard <minyard@acm.org>
+To:     Yu Zhe <yuzhe@nfschina.com>
+Cc:     openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        liqiong@nfschina.com
+Subject: Re: [PATCH] ipmi: remove unnecessary type castings
+Message-ID: <20220421160521.GB426325@minyard.net>
+Reply-To: minyard@acm.org
+References: <20220421150941.7659-1-yuzhe@nfschina.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220421150941.7659-1-yuzhe@nfschina.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-fsi_master_register() calls device_register().
-When device_register() fails, put_device() still needs to be called.
+On Thu, Apr 21, 2022 at 08:09:41AM -0700, Yu Zhe wrote:
+> remove unnecessary void* type castings.
 
-Up to now, there is no put_device() in fsi_master_register().
-Some callers of fsi_master_register() have it, some have not.
- - fsi_master_acf_probe() call put_device() if fsi_master_register() fails
- - fsi_master_gpio_probe() call put_device() if fsi_master_register() fails
- - fsi_master_aspeed_probe() doesn't
- - hub_master_probe() doesn't
+Thanks, queued for next release.
 
-In order to fix it and be consistent with the different callers, add the
-missing put_device() in the error handling path of fsi_master_register()
-and remove it from 2 callers that were handling it by themselves.
+-corey
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is speculative and compile tested only.
-Review with care.
-
-Another alternative would be to add the put_device() call in
-fsi_master_aspeed_probe() and hub_master_probe() if it makes more sense.
-
-Having one or more Fixes tag is a bit hard because of the relations and
-log history of the 5 files involved in this bug fix.
----
- drivers/fsi/fsi-core.c          | 1 +
- drivers/fsi/fsi-master-ast-cf.c | 1 -
- drivers/fsi/fsi-master-gpio.c   | 1 -
- 3 files changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
-index 3a7b78e36701..640692e5400f 100644
---- a/drivers/fsi/fsi-core.c
-+++ b/drivers/fsi/fsi-core.c
-@@ -1319,6 +1319,7 @@ int fsi_master_register(struct fsi_master *master)
- 
- 	rc = device_register(&master->dev);
- 	if (rc) {
-+		put_device(&master->dev);
- 		ida_simple_remove(&master_ida, master->idx);
- 		return rc;
- 	}
-diff --git a/drivers/fsi/fsi-master-ast-cf.c b/drivers/fsi/fsi-master-ast-cf.c
-index 24292acdbaf8..dde63d703ea1 100644
---- a/drivers/fsi/fsi-master-ast-cf.c
-+++ b/drivers/fsi/fsi-master-ast-cf.c
-@@ -1395,7 +1395,6 @@ static int fsi_master_acf_probe(struct platform_device *pdev)
- 		return 0;
- 
- 	device_remove_file(master->dev, &dev_attr_external_mode);
--	put_device(&master->master.dev);
- 	return rc;
- 
-  stop_copro:
-diff --git a/drivers/fsi/fsi-master-gpio.c b/drivers/fsi/fsi-master-gpio.c
-index 7d5f29b4b595..1ae3c164d7fd 100644
---- a/drivers/fsi/fsi-master-gpio.c
-+++ b/drivers/fsi/fsi-master-gpio.c
-@@ -856,7 +856,6 @@ static int fsi_master_gpio_probe(struct platform_device *pdev)
- 	rc = fsi_master_register(&master->master);
- 	if (rc) {
- 		device_remove_file(&pdev->dev, &dev_attr_external_mode);
--		put_device(&master->master.dev);
- 		return rc;
- 	}
- 	return 0;
--- 
-2.32.0
-
+> 
+> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+> ---
+>  drivers/char/ipmi/ipmi_msghandler.c | 6 +++---
+>  drivers/char/ipmi/ipmi_ssif.c       | 6 +++---
+>  2 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+> index c59265146e9c..6e6aee19c39d 100644
+> --- a/drivers/char/ipmi/ipmi_msghandler.c
+> +++ b/drivers/char/ipmi/ipmi_msghandler.c
+> @@ -2296,7 +2296,7 @@ static int i_ipmi_request(struct ipmi_user     *user,
+>  	recv_msg->user_msg_data = user_msg_data;
+>  
+>  	if (supplied_smi)
+> -		smi_msg = (struct ipmi_smi_msg *) supplied_smi;
+> +		smi_msg = supplied_smi;
+>  	else {
+>  		smi_msg = ipmi_alloc_smi_msg();
+>  		if (smi_msg == NULL) {
+> @@ -3989,7 +3989,7 @@ static int handle_ipmb_direct_rcv_rsp(struct ipmi_smi *intf,
+>  	struct ipmi_recv_msg *recv_msg;
+>  	struct ipmi_ipmb_direct_addr *daddr;
+>  
+> -	recv_msg = (struct ipmi_recv_msg *) msg->user_data;
+> +	recv_msg = msg->user_data;
+>  	if (recv_msg == NULL) {
+>  		dev_warn(intf->si_dev,
+>  			 "IPMI message received with no owner. This could be because of a malformed message, or because of a hardware error.  Contact your hardware vendor for assistance.\n");
+> @@ -4407,7 +4407,7 @@ static int handle_bmc_rsp(struct ipmi_smi *intf,
+>  	struct ipmi_recv_msg *recv_msg;
+>  	struct ipmi_system_interface_addr *smi_addr;
+>  
+> -	recv_msg = (struct ipmi_recv_msg *) msg->user_data;
+> +	recv_msg = msg->user_data;
+>  	if (recv_msg == NULL) {
+>  		dev_warn(intf->si_dev,
+>  			 "IPMI message received with no owner. This could be because of a malformed message, or because of a hardware error.  Contact your hardware vendor for assistance.\n");
+> diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
+> index f199cc194844..e8ee195a33cf 100644
+> --- a/drivers/char/ipmi/ipmi_ssif.c
+> +++ b/drivers/char/ipmi/ipmi_ssif.c
+> @@ -1053,7 +1053,7 @@ static void start_next_msg(struct ssif_info *ssif_info, unsigned long *flags)
+>  static void sender(void                *send_info,
+>  		   struct ipmi_smi_msg *msg)
+>  {
+> -	struct ssif_info *ssif_info = (struct ssif_info *) send_info;
+> +	struct ssif_info *ssif_info = send_info;
+>  	unsigned long oflags, *flags;
+>  
+>  	BUG_ON(ssif_info->waiting_msg);
+> @@ -1090,7 +1090,7 @@ static int get_smi_info(void *send_info, struct ipmi_smi_info *data)
+>   */
+>  static void request_events(void *send_info)
+>  {
+> -	struct ssif_info *ssif_info = (struct ssif_info *) send_info;
+> +	struct ssif_info *ssif_info = send_info;
+>  	unsigned long oflags, *flags;
+>  
+>  	if (!ssif_info->has_event_buffer)
+> @@ -1107,7 +1107,7 @@ static void request_events(void *send_info)
+>   */
+>  static void ssif_set_need_watch(void *send_info, unsigned int watch_mask)
+>  {
+> -	struct ssif_info *ssif_info = (struct ssif_info *) send_info;
+> +	struct ssif_info *ssif_info = send_info;
+>  	unsigned long oflags, *flags;
+>  	long timeout = 0;
+>  
+> -- 
+> 2.25.1
+> 
