@@ -2,102 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D70C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Apr 2022 17:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D94CAC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Apr 2022 06:13:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346353AbiDTRmw (ORCPT
+        id S1384695AbiDUGQe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Apr 2022 13:42:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57044 "EHLO
+        Thu, 21 Apr 2022 02:16:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237160AbiDTRmv (ORCPT
+        with ESMTP id S1384614AbiDUGQd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Apr 2022 13:42:51 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9971B43ADF;
-        Wed, 20 Apr 2022 10:40:04 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id x33so4311302lfu.1;
-        Wed, 20 Apr 2022 10:40:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=fDm0hCeP1iuF9WL7RiqDe/J3rtlxPQX1zeA/vezHRa0=;
-        b=WA6ZRCaU3cdlumlpbvWHxfloi03BAMhbknENhqsaWPbHRTCv9SZOTLs6l5atjl/rNB
-         WhDgJgxuFoJ/Qjj/q6o0HjImWWNexAoe3iis41zRi8T7cp+cNxoIeLsaIrzGx7M+aP5f
-         yTAUWAt+k6SrK4lNorKyp7zkayVMzWGHtU826B3wT4VF+PqS8rhJhhQw+6nzVJOpHjPO
-         Z+fl0//75bOefoMVkqelSYCTT7/Fe7c10WZtohovtXDzsn3PyILek6foHM5/OQmQFSLW
-         u1+mJd34DWLpm19EGHWC0J1RcHPjVNnGwatLnAkk0E4lmNtGfNVpgiVhfCCchSqTE+cC
-         Tr+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=fDm0hCeP1iuF9WL7RiqDe/J3rtlxPQX1zeA/vezHRa0=;
-        b=zdu1gMgQd6+MDp3H8S+NCcjuLHjg29gxBItxzhtBIdwItURUHeGDvVxDd7Mc09tuhc
-         4oUUPfWa+8mEi0zyGAq7GcVNFvvm5YRDMX78DVR8C5Iinw7UeEm5BXDXhei5gVf+G1mT
-         AG8R71Q4zAmHEtvlJ6CcP5NS/fhk/iO+FXA46+t6f3/RD/XHCToyooePf3PbLN75+T7u
-         lvG9VDHtV8lkQr2DwRgsbV34xOE86cDYZAS2W5GgHfI5Sv853ZA5K+MTAF37JVftQA4J
-         avGSEeR493mgbugCyRHNtobBOhgqvnjhU4CwvU+xYZz3pZsFzuhc/3gw2d10pKpgkTcq
-         F4Cg==
-X-Gm-Message-State: AOAM533Nzb5cLxGlJXU9gTDaSRq0L8vJ+19cmOs2DzZXm9rIccZNRuMt
-        knmk/celBkcCvJHMFaB9GwA=
-X-Google-Smtp-Source: ABdhPJxge8XTkpASmraJ0VjrGWjf9n/ju/ayI7pvlM3z8AJpfQOWU1Cqk3TRPVw0hpSrfMk+YQhJmQ==
-X-Received: by 2002:a05:6512:1504:b0:44b:36e:b50d with SMTP id bq4-20020a056512150400b0044b036eb50dmr15640332lfb.558.1650476402746;
-        Wed, 20 Apr 2022 10:40:02 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:9cae:8c00:9682:e720:334f:2fac? (dxw3k4yf2tnxwyp6sg02y-3.rev.dnainternet.fi. [2001:14ba:9cae:8c00:9682:e720:334f:2fac])
-        by smtp.gmail.com with ESMTPSA id s17-20020a195e11000000b0046eec768984sm1785063lfb.200.2022.04.20.10.40.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Apr 2022 10:40:02 -0700 (PDT)
-Message-ID: <90e11a93-4f3a-2209-2bc2-acfb791b8ac0@gmail.com>
-Date:   Wed, 20 Apr 2022 20:40:08 +0300
+        Thu, 21 Apr 2022 02:16:33 -0400
+Received: from smtp.smtpout.orange.fr (smtp01.smtpout.orange.fr [80.12.242.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B58313DDB
+        for <kernel-janitors@vger.kernel.org>; Wed, 20 Apr 2022 23:13:43 -0700 (PDT)
+Received: from pop-os.home ([86.243.180.246])
+        by smtp.orange.fr with ESMTPA
+        id hQ4RnnGg8iK8nhQ4Sno46S; Thu, 21 Apr 2022 08:13:41 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Thu, 21 Apr 2022 08:13:41 +0200
+X-ME-IP: 86.243.180.246
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        dmaengine@vger.kernel.org
+Subject: [PATCH] dmaengine: idxd: Fix the error handling path in idxd_cdev_register()
+Date:   Thu, 21 Apr 2022 08:13:38 +0200
+Message-Id: <1b5033dcc87b5f2a953c413f0306e883e6114542.1650521591.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH] fs/ntfs3: remove redundant assignment to variable vcn
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        ntfs3@lists.linux.dev
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev
-References: <20220418140038.82843-1-colin.i.king@gmail.com>
-From:   Kari Argillander <kari.argillander@gmail.com>
-In-Reply-To: <20220418140038.82843-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 18.4.2022 17.00, Colin Ian King wrote:
-> Variable vcn is being assigned a value that is never read, it is
-> being re-assigned again in the initialization of a for-loop.  The
-> assignment is redundant and can be removed.
-> 
-> Cleans up clang scan build warning:
-> fs/ntfs3/attrib.c:1176:7: warning: Value stored to 'vcn' during its
-> initialization is never read [deadcode.DeadStores]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+If a call to alloc_chrdev_region() fails, the already allocated resources
+are leaking.
 
-Reviewed-by: Kari Argillander <kari.argillander@gmail.com>
+Add the needed error handling path to fix the leak.
 
-> ---
->   fs/ntfs3/attrib.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ntfs3/attrib.c b/fs/ntfs3/attrib.c
-> index e8c00dda42ad..fc0623b029e6 100644
-> --- a/fs/ntfs3/attrib.c
-> +++ b/fs/ntfs3/attrib.c
-> @@ -1173,7 +1173,7 @@ int attr_load_runs_range(struct ntfs_inode *ni, enum ATTR_TYPE type,
->   {
->   	struct ntfs_sb_info *sbi = ni->mi.sbi;
->   	u8 cluster_bits = sbi->cluster_bits;
-> -	CLST vcn = from >> cluster_bits;
-> +	CLST vcn;
->   	CLST vcn_last = (to - 1) >> cluster_bits;
->   	CLST lcn, clen;
->   	int err;
+Fixes: 42d279f9137a ("dmaengine: idxd: add char driver to expose submission portal to userland")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/dma/idxd/cdev.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/dma/idxd/cdev.c b/drivers/dma/idxd/cdev.c
+index b9b2b4a4124e..033df43db0ce 100644
+--- a/drivers/dma/idxd/cdev.c
++++ b/drivers/dma/idxd/cdev.c
+@@ -369,10 +369,16 @@ int idxd_cdev_register(void)
+ 		rc = alloc_chrdev_region(&ictx[i].devt, 0, MINORMASK,
+ 					 ictx[i].name);
+ 		if (rc)
+-			return rc;
++			goto err_free_chrdev_region;
+ 	}
+ 
+ 	return 0;
++
++err_free_chrdev_region:
++	for (i--; i >= 0; i--)
++		unregister_chrdev_region(ictx[i].devt, MINORMASK);
++
++	return rc;
+ }
+ 
+ void idxd_cdev_remove(void)
+-- 
+2.32.0
+
