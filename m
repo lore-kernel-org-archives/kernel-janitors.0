@@ -2,73 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90024C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Apr 2022 11:51:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A9ACC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Apr 2022 14:36:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353572AbiDULyV (ORCPT
+        id S1389404AbiDUOis (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 21 Apr 2022 07:54:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40592 "EHLO
+        Thu, 21 Apr 2022 10:38:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230158AbiDULyU (ORCPT
+        with ESMTP id S1389435AbiDUOir (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 21 Apr 2022 07:54:20 -0400
-Received: from muru.com (muru.com [72.249.23.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B6BEB2A265;
-        Thu, 21 Apr 2022 04:51:31 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id A873B8106;
-        Thu, 21 Apr 2022 11:48:39 +0000 (UTC)
-Date:   Thu, 21 Apr 2022 14:51:30 +0300
-From:   Tony Lindgren <tony@atomide.com>
-To:     Julia Lawall <Julia.Lawall@inria.fr>, Arnd Bergmann <arnd@arndb.de>
-Cc:     Paul Walmsley <paul@pwsan.com>, kernel-janitors@vger.kernel.org,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: OMAP1: fix typos in comments
-Message-ID: <YmFFQjmAYS7btKsP@atomide.com>
-References: <20220318103729.157574-33-Julia.Lawall@inria.fr>
+        Thu, 21 Apr 2022 10:38:47 -0400
+Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04A8A1CFD6
+        for <kernel-janitors@vger.kernel.org>; Thu, 21 Apr 2022 07:35:55 -0700 (PDT)
+Received: from pop-os.home ([86.243.180.246])
+        by smtp.orange.fr with ESMTPA
+        id hXuQn30c3AyM1hXuRnZAqN; Thu, 21 Apr 2022 16:35:53 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Thu, 21 Apr 2022 16:35:53 +0200
+X-ME-IP: 86.243.180.246
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: [PATCH] bus: sunxi-rsb: Fix the return value of sunxi_rsb_device_create()
+Date:   Thu, 21 Apr 2022 16:35:49 +0200
+Message-Id: <ef2b9576350bba4c8e05e669e9535e9e2a415763.1650551719.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220318103729.157574-33-Julia.Lawall@inria.fr>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
+This code is really spurious.
+It always returns an ERR_PTR, even when err is known to be 0 and calls
+put_device() after a successful device_register() call.
 
-* Julia Lawall <Julia.Lawall@inria.fr> [220318 12:36]:
-> Various spelling mistakes in comments.
-> Detected with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+It is likely that the return statement in the normal path is missing.
+Add 'return rdev;' to fix it.
 
-Probably best that Arnd picks this into his omap1-multiplatform branch:
+Fixes: d787dcdb9c8f ("bus: sunxi-rsb: Add driver for Allwinner Reduced Serial Bus")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is completely speculative and compile tested only.
+---
+ drivers/bus/sunxi-rsb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+diff --git a/drivers/bus/sunxi-rsb.c b/drivers/bus/sunxi-rsb.c
+index 4566e730ef2b..60b082fe2ed0 100644
+--- a/drivers/bus/sunxi-rsb.c
++++ b/drivers/bus/sunxi-rsb.c
+@@ -227,6 +227,8 @@ static struct sunxi_rsb_device *sunxi_rsb_device_create(struct sunxi_rsb *rsb,
+ 
+ 	dev_dbg(&rdev->dev, "device %s registered\n", dev_name(&rdev->dev));
+ 
++	return rdev;
++
+ err_device_add:
+ 	put_device(&rdev->dev);
+ 
+-- 
+2.32.0
 
-Regards,
-
-Tony
-
-> ---
->  arch/arm/mach-omap1/clock_data.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/mach-omap1/clock_data.c b/arch/arm/mach-omap1/clock_data.c
-> index 3ebcd96efbff..c761e72563c1 100644
-> --- a/arch/arm/mach-omap1/clock_data.c
-> +++ b/arch/arm/mach-omap1/clock_data.c
-> @@ -818,7 +818,7 @@ int __init omap1_clk_init(void)
->  		omap_readw(ARM_SYSST), omap_readw(DPLL_CTL),
->  		omap_readw(ARM_CKCTL));
->  
-> -	/* We want to be in syncronous scalable mode */
-> +	/* We want to be in synchronous scalable mode */
->  	omap_writew(0x1000, ARM_SYSST);
->  
->  
-> 
