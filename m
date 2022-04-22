@@ -2,88 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22478C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Apr 2022 07:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE09C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Apr 2022 07:40:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1444895AbiDVHhz (ORCPT
+        id S1445004AbiDVHnO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Apr 2022 03:37:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52056 "EHLO
+        Fri, 22 Apr 2022 03:43:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1444876AbiDVHhy (ORCPT
+        with ESMTP id S1444959AbiDVHmf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Apr 2022 03:37:54 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9AA1260F;
-        Fri, 22 Apr 2022 00:35:00 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 9226E210F4;
-        Fri, 22 Apr 2022 07:34:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1650612899; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Fri, 22 Apr 2022 03:42:35 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B8339517D0
+        for <kernel-janitors@vger.kernel.org>; Fri, 22 Apr 2022 00:39:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1650613181;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=CoKlO+fXUiau8VMVUQKx3k/6EuFzG9GIbfxFrogHx6w=;
-        b=dySGsqJdEmSJDYmSvOklfVpkuZHJ23u9g1XhRJDcQoLdKgRG5kmI1lpiTUWcSy7MtqR7zM
-        kXwCyLTlbnp+iE9neiu8jg1lhFPIDng+OjhqwbJ52cuWGbwwYU1o5p6p+n2i/KC3xGvKZl
-        0hE/7gJMEJKlgdQaF4sMg91/V0j/qiM=
-Received: from suse.cz (unknown [10.100.201.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 6010B2C146;
-        Fri, 22 Apr 2022 07:34:59 +0000 (UTC)
-Date:   Fri, 22 Apr 2022 09:34:57 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Scott Cheloha <cheloha@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nathan Lynch <nathanl@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+        bh=OTSUiueHwVf/dbd1QJxPKAiv9Tb89ujDYdY/eBNq3Fo=;
+        b=jIe9EPEPC6WZ5+Q7sIfraeaaaHxR3AOw6iv3jkMeZEBgsbw0lCjZiFQTLVDZJeVLnqjFJe
+        ity3e7gclepPU0r/2epl4ISSLaFQM5YjChjodpwWOpfQ88LSyWdY3yVzRIV/YzxaPQFYBV
+        Z19nN8rgTPoIfjfuuh7fsKKJl1f1ZGc=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-477-p8RaX-zyOEKHod2pfyg-Nw-1; Fri, 22 Apr 2022 03:39:40 -0400
+X-MC-Unique: p8RaX-zyOEKHod2pfyg-Nw-1
+Received: by mail-wm1-f72.google.com with SMTP id 186-20020a1c02c3000000b003928cd3853aso1211766wmc.9
+        for <kernel-janitors@vger.kernel.org>; Fri, 22 Apr 2022 00:39:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:organization:in-reply-to
+         :content-transfer-encoding;
+        bh=OTSUiueHwVf/dbd1QJxPKAiv9Tb89ujDYdY/eBNq3Fo=;
+        b=NLuL7Db/QoY+iOaEra/xOerYMYSdk8+ZLk5Yrrp83eD86tyXa4FtEgnygMAC4hYXR8
+         XZVPc65vGvollOyCHCUJaJM/lGdZLeigO3S+sLXuePwXWVHiKAIfdOY7p+rK1r2q628B
+         HV5yILRkkn4Nsa1EN8wPBAK5oLUnR7LKtdNsxT7QaaQMwpallbxPK66aI37rSNBDESpa
+         OzdCBbOIK+KQsEvvE0+EWjodFAQqBe4dd2bMwWXVqniO7sk6gOMYcjHzL2Ygrv0U55bl
+         AcXorf/qehc6DV1W2lF7YsofEvetWgwDEtop76xIl5uTMpB+gZMCIXeWFpM1QzbKD9vJ
+         D4lw==
+X-Gm-Message-State: AOAM5317kK1PdDIbbEFn9PJQqeEENOXfIXSsQk/J1M60ZrwoejmJpQH7
+        ffea8WO4uAi1QNhCHlZSJjiH1y7OjbXtY4zMbESVn2naBdU22vp2bOWabRBcOBrhBHWzmFw5V/U
+        l6MQfEjkGi8jI5B8fijaDDdSND+X9
+X-Received: by 2002:adf:ed4e:0:b0:20a:c805:1d62 with SMTP id u14-20020adfed4e000000b0020ac8051d62mr1787590wro.134.1650613179583;
+        Fri, 22 Apr 2022 00:39:39 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyEj/kZHw3Xd6aev6oueKi84P2Bo2sdX2NK9wAJbmPEGb3bCNVMi6gs3/pbgL2tcEKTtTxN8Q==
+X-Received: by 2002:adf:ed4e:0:b0:20a:c805:1d62 with SMTP id u14-20020adfed4e000000b0020ac8051d62mr1787567wro.134.1650613179292;
+        Fri, 22 Apr 2022 00:39:39 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c702:dd00:745e:20b7:bfa4:2e5f? (p200300cbc702dd00745e20b7bfa42e5f.dip0.t-ipconnect.de. [2003:cb:c702:dd00:745e:20b7:bfa4:2e5f])
+        by smtp.gmail.com with ESMTPSA id v11-20020a056000144b00b0020a9c02f60dsm1052532wrx.50.2022.04.22.00.39.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Apr 2022 00:39:38 -0700 (PDT)
+Message-ID: <3c218202-c4de-958c-8cf2-b0f24550d0d1@redhat.com>
+Date:   Fri, 22 Apr 2022 09:39:37 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.2
 Subject: Re: [PATCH] drivers/base/memory: Fix a reference counting issue in
  __add_memory_block()
-Message-ID: <YmJaoSam6g95yToH@dhcp22.suse.cz>
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Scott Cheloha <cheloha@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nathan Lynch <nathanl@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 References: <d44c63d78aafe844f920dc02ad6af25acc448fcf.1650611702.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
 In-Reply-To: <d44c63d78aafe844f920dc02ad6af25acc448fcf.1650611702.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri 22-04-22 09:15:21, Christophe JAILLET wrote:
+On 22.04.22 09:15, Christophe JAILLET wrote:
 > There is no point in doing put_device()/device_unregister() on a
 > device that has just been registered a few lines above. This will lead to
 > a double reference decrement.
-
-This is a bit confusing. I would rephrase.
-"
-__add_memory_block calls both put_device and device_unregister when
-storing the memory block into the xarray. This is incorrect because
-xarray doesn't take an additional reference and device_unregister
-already calls put_device.
-"
-
-Btw. I do not think this failure path can be triggered, or is there a
-way to hit it?
- 
+> 
 > I guess that this put_device()/device_unregister() is a cut'n'paste from
 > remove_memory_block() (i.e. unregister_memory() at the time being) which
 > does need it.
 > 
 > Fixes: 4fb6eabf1037 ("drivers/base/memory.c: cache memory blocks in xarray to accelerate lookup")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Other than that looks good to me. With the changelog clarified,
-especially the part that evaluates whether this is a real or a
-theoretical problem, feel free to add
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-Thanks!
-
 > ---
 >  drivers/base/memory.c | 5 ++---
 >  1 file changed, 2 insertions(+), 3 deletions(-)
@@ -105,9 +115,14 @@ Thanks!
 >  	return ret;
 >  }
 >  
-> -- 
-> 2.32.0
+
+Looks correct to me. I assume this will only happen once the stars
+align, but it's most certainly wrong I think.
+
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
 -- 
-Michal Hocko
-SUSE Labs
+Thanks,
+
+David / dhildenb
+
