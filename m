@@ -2,140 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F03AC4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Apr 2022 05:07:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AECC433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Apr 2022 06:02:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1444069AbiDVFKi (ORCPT
+        id S1444130AbiDVGFJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Apr 2022 01:10:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47716 "EHLO
+        Fri, 22 Apr 2022 02:05:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1444052AbiDVFKh (ORCPT
+        with ESMTP id S1444113AbiDVGFF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Apr 2022 01:10:37 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53CB04BBB5;
-        Thu, 21 Apr 2022 22:07:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1650604065; x=1682140065;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zLyK1VfPZcWeTRL84aSwetNS1RsgGB8NmLFyPkDWGM0=;
-  b=mV7rVfzCk9BXnOAUp3b2m/CMhmIUlNliOCRoB1z3Jf3c6BQ3tLfiRp2Q
-   y3IdEQCpb/xDfyxmSmeTBrFjcU1SWkDOiEZ+Yvu408c7npXe7FzLB3KzV
-   Eypmh4s6DxesIonV76hP0AeeZ5BRZbiMq06atU3yC9GjiwV3vwPOgt7vP
-   0WpWf9krisspuEFGkJkNEVdcjT2Ei4AYjDn4BMYlXChxAEtTwfe/9Jhpf
-   1HD5GFVqMZUTUe2EJPdJQwAkjrbGoa1J0jgQcsER9Kf8iaib7Y24sVPT9
-   hAByTJ8UXOknoMVIMAn3F10e6sNEBgdd85aqQ3EY4jwJao12NWxp2iPt+
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10324"; a="244501170"
-X-IronPort-AV: E=Sophos;i="5.90,280,1643702400"; 
-   d="scan'208";a="244501170"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2022 22:07:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,280,1643702400"; 
-   d="scan'208";a="593989379"
-Received: from lkp-server01.sh.intel.com (HELO 3abc53900bec) ([10.239.97.150])
-  by orsmga001.jf.intel.com with ESMTP; 21 Apr 2022 22:07:41 -0700
-Received: from kbuild by 3abc53900bec with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nhlW8-0009FA-Nd;
-        Fri, 22 Apr 2022 05:07:40 +0000
-Date:   Fri, 22 Apr 2022 13:07:20 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Yu Zhe <yuzhe@nfschina.com>, mareklindner@neomailbox.ch,
-        sw@simonwunderlich.de, a@unstable.cc, sven@narfation.org,
-        davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com
-Cc:     kbuild-all@lists.01.org, b.a.t.m.a.n@lists.open-mesh.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        liqiong@nfschina.com, kernel-janitors@vger.kernel.org,
-        Yu Zhe <yuzhe@nfschina.com>
-Subject: Re: [PATCH] batman-adv: remove unnecessary type castings
-Message-ID: <202204221227.5z0xsJa9-lkp@intel.com>
-References: <20220421154829.9775-1-yuzhe@nfschina.com>
+        Fri, 22 Apr 2022 02:05:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 520C24F9FA;
+        Thu, 21 Apr 2022 23:02:12 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E2DCE61DC8;
+        Fri, 22 Apr 2022 06:02:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B682EC385A4;
+        Fri, 22 Apr 2022 06:02:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650607331;
+        bh=4841fxDo2IBFBAW/st3C9bLw2mUJ8qtFufsuF9mZbWQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RQwBI/WC4vM1T5dWLU1/Q20cPmmCuTVI3H7URdIOvuNuybvwmyA4T/99z3W0rO8wi
+         XaQ4/ywPvslBHuQcn8QDVOOCxuplNxf6G/1xbuBCwpa/4bjxCbkdtdsusXHSCmgz8h
+         lcXhpt46CJviGbDzAeK4jwjhscWjp6Wkkf6hSxjj69dRTr+pJG6StSqVtav6Dk+gmW
+         gNWzYNrLCGQVgts9lSkzT6kzQIjn9RxnlELwlt0p0KuIXnQgeXjXfr5nJQtKLVizu0
+         jM0k9T/dVMw5bXy9IdfzR/SJX2X5VMGncFtL2VMKfjqnoE0+D5u98nBks232h1vzn6
+         cT68y/ovBAJ/g==
+Date:   Fri, 22 Apr 2022 11:32:07 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, dmaengine@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: idxd: Fix the error handling path in
+ idxd_cdev_register()
+Message-ID: <YmJE3/zDdp/1YiaD@matsya>
+References: <1b5033dcc87b5f2a953c413f0306e883e6114542.1650521591.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220421154829.9775-1-yuzhe@nfschina.com>
+In-Reply-To: <1b5033dcc87b5f2a953c413f0306e883e6114542.1650521591.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Yu,
+On 21-04-22, 08:13, Christophe JAILLET wrote:
+> If a call to alloc_chrdev_region() fails, the already allocated resources
+> are leaking.
+> 
+> Add the needed error handling path to fix the leak.
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on linus/master]
-[also build test WARNING on v5.18-rc3 next-20220421]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Yu-Zhe/batman-adv-remove-unnecessary-type-castings/20220421-235254
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git b253435746d9a4a701b5f09211b9c14d3370d0da
-config: parisc-randconfig-s031-20220421 (https://download.01.org/0day-ci/archive/20220422/202204221227.5z0xsJa9-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 11.2.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # apt-get install sparse
-        # sparse version: v0.6.4-dirty
-        # https://github.com/intel-lab-lkp/linux/commit/2474b41c585e849d3546e0aba8f3c862735a04ff
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Yu-Zhe/batman-adv-remove-unnecessary-type-castings/20220421-235254
-        git checkout 2474b41c585e849d3546e0aba8f3c862735a04ff
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=parisc SHELL=/bin/bash net/batman-adv/
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-
-sparse warnings: (new ones prefixed by >>)
->> net/batman-adv/bridge_loop_avoidance.c:68:42: sparse: sparse: incorrect type in initializer (different modifiers) @@     expected struct batadv_bla_claim *claim @@     got void const *data @@
-   net/batman-adv/bridge_loop_avoidance.c:68:42: sparse:     expected struct batadv_bla_claim *claim
-   net/batman-adv/bridge_loop_avoidance.c:68:42: sparse:     got void const *data
->> net/batman-adv/bridge_loop_avoidance.c:68:42: sparse: sparse: incorrect type in initializer (different modifiers) @@     expected struct batadv_bla_claim *claim @@     got void const *data @@
-   net/batman-adv/bridge_loop_avoidance.c:68:42: sparse:     expected struct batadv_bla_claim *claim
-   net/batman-adv/bridge_loop_avoidance.c:68:42: sparse:     got void const *data
---
->> net/batman-adv/translation-table.c:109:12: sparse: sparse: incorrect type in assignment (different modifiers) @@     expected struct batadv_tt_common_entry *tt @@     got void const *data @@
-   net/batman-adv/translation-table.c:109:12: sparse:     expected struct batadv_tt_common_entry *tt
-   net/batman-adv/translation-table.c:109:12: sparse:     got void const *data
->> net/batman-adv/translation-table.c:109:12: sparse: sparse: incorrect type in assignment (different modifiers) @@     expected struct batadv_tt_common_entry *tt @@     got void const *data @@
-   net/batman-adv/translation-table.c:109:12: sparse:     expected struct batadv_tt_common_entry *tt
-   net/batman-adv/translation-table.c:109:12: sparse:     got void const *data
-
-vim +68 net/batman-adv/bridge_loop_avoidance.c
-
-    53	
-    54	static void batadv_bla_periodic_work(struct work_struct *work);
-    55	static void
-    56	batadv_bla_send_announce(struct batadv_priv *bat_priv,
-    57				 struct batadv_bla_backbone_gw *backbone_gw);
-    58	
-    59	/**
-    60	 * batadv_choose_claim() - choose the right bucket for a claim.
-    61	 * @data: data to hash
-    62	 * @size: size of the hash table
-    63	 *
-    64	 * Return: the hash index of the claim
-    65	 */
-    66	static inline u32 batadv_choose_claim(const void *data, u32 size)
-    67	{
-  > 68		struct batadv_bla_claim *claim = data;
-    69		u32 hash = 0;
-    70	
-    71		hash = jhash(&claim->addr, sizeof(claim->addr), hash);
-    72		hash = jhash(&claim->vid, sizeof(claim->vid), hash);
-    73	
-    74		return hash % size;
-    75	}
-    76	
+Applied, thanks
 
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+~Vinod
