@@ -2,114 +2,123 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 490D4C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Apr 2022 08:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A9B7C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Apr 2022 08:03:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1445441AbiDVIEv (ORCPT
+        id S1445447AbiDVIGr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Apr 2022 04:04:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44144 "EHLO
+        Fri, 22 Apr 2022 04:06:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1445436AbiDVIEt (ORCPT
+        with ESMTP id S1445460AbiDVIGp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Apr 2022 04:04:49 -0400
-Received: from ciao.gmane.io (ciao.gmane.io [116.202.254.214])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5759D527DB
-        for <kernel-janitors@vger.kernel.org>; Fri, 22 Apr 2022 01:01:57 -0700 (PDT)
-Received: from list by ciao.gmane.io with local (Exim 4.92)
-        (envelope-from <glkj-kernel-janitors-2@m.gmane-mx.org>)
-        id 1nhoEl-0009YY-16
-        for kernel-janitors@vger.kernel.org; Fri, 22 Apr 2022 10:01:55 +0200
-X-Injected-Via-Gmane: http://gmane.org/
-To:     kernel-janitors@vger.kernel.org
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] drivers/base/memory: Fix a reference counting issue in
- __add_memory_block()
-Date:   Fri, 22 Apr 2022 10:01:48 +0200
-Message-ID: <ef8e4a32-bc05-2632-bc09-00a20faf49dd@wanadoo.fr>
-References: <d44c63d78aafe844f920dc02ad6af25acc448fcf.1650611702.git.christophe.jaillet@wanadoo.fr>
- <YmJaoSam6g95yToH@dhcp22.suse.cz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Content-Language: en-GB
-In-Reply-To: <YmJaoSam6g95yToH@dhcp22.suse.cz>
-Cc:     linux-kernel@vger.kernel.org
+        Fri, 22 Apr 2022 04:06:45 -0400
+X-Greylist: delayed 491 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 22 Apr 2022 01:03:52 PDT
+Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1FAA52E41;
+        Fri, 22 Apr 2022 01:03:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
+        s=20121; t=1650614137;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to; bh=FFj6+/K+6ijDBVy6GU0k6XitYfz7fo/RaeEwRuAByJ4=;
+        b=hwcVhN6601PAIDsZN+Ji0A/wlk+AnYcRg99FBkeGflffJA7MRpJJgwXAv8suOG7bouq4K0
+        pL595d9LsgxwqoOjOYTvVHg6XYmZXkMebHu9/9s5cfjPJ3u65hzjqU8iZuA31FuX89AXil
+        n5/E5ypdRCuFHd0KoeVVR29oAT4NX2g=
+From:   Sven Eckelmann <sven@narfation.org>
+To:     yuzhe@nfschina.com
+Cc:     a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org,
+        davem@davemloft.net, kernel-janitors@vger.kernel.org,
+        kuba@kernel.org, linux-kernel@vger.kernel.org,
+        liqiong@nfschina.com, mareklindner@neomailbox.ch,
+        netdev@vger.kernel.org, pabeni@redhat.com, sven@narfation.org,
+        sw@simonwunderlich.de
+Subject: Re: [PATCH] batman-adv: remove unnecessary type castings
+Date:   Fri, 22 Apr 2022 09:55:34 +0200
+Message-ID: <3537486.13E77TLkhO@ripper>
+In-Reply-To: <20220421154829.9775-1-yuzhe@nfschina.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="nextPart3059673.4202UCAtWU"; micalg="pgp-sha512"; protocol="application/pgp-signature"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
-Message-ID: <20220422080148.4obiau2Bq_HTaaIy4UosKDOE8EqkrHbW9c-Fk4sgzAA@z>
 
-Le 22/04/2022 à 09:34, Michal Hocko a écrit :
-> On Fri 22-04-22 09:15:21, Christophe JAILLET wrote:
->> There is no point in doing put_device()/device_unregister() on a
->> device that has just been registered a few lines above. This will lead to
->> a double reference decrement.
-> 
-> This is a bit confusing. I would rephrase.
-> "
-> __add_memory_block calls both put_device and device_unregister when
-> storing the memory block into the xarray. This is incorrect because
-> xarray doesn't take an additional reference and device_unregister
-> already calls put_device.
-> "
-> 
-> Btw. I do not think this failure path can be triggered, or is there a
-> way to hit it?
->   
->> I guess that this put_device()/device_unregister() is a cut'n'paste from
->> remove_memory_block() (i.e. unregister_memory() at the time being) which
->> does need it.
->>
->> Fixes: 4fb6eabf1037 ("drivers/base/memory.c: cache memory blocks in xarray to accelerate lookup")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> Other than that looks good to me. With the changelog clarified,
-> especially the part that evaluates whether this is a real or a
-> theoretical problem, feel free to add
-> Acked-by: Michal Hocko <mhocko@suse.com>
+--nextPart3059673.4202UCAtWU
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Sven Eckelmann <sven@narfation.org>
+To: yuzhe@nfschina.com
+Cc: a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org, davem@davemloft.net, kernel-janitors@vger.kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, liqiong@nfschina.com, mareklindner@neomailbox.ch, netdev@vger.kernel.org, pabeni@redhat.com, sven@narfation.org, sw@simonwunderlich.de
+Subject: Re: [PATCH] batman-adv: remove unnecessary type castings
+Date: Fri, 22 Apr 2022 09:55:34 +0200
+Message-ID: <3537486.13E77TLkhO@ripper>
+In-Reply-To: <20220421154829.9775-1-yuzhe@nfschina.com>
 
-I'll send a v2 with the updated changelog.
+Hi,
 
-I do agree that this is certainly a theoretical issue.
-Moreover, should it be triggered, I think that it would only print a 
-warning message about an erroneous decrement on a ref counted resource 
-that is already 0.
+we neither received your mail via the mailing list nor our private mail 
+servers. It seems your mail setup is broken:
 
-Well, it also saves 2 LoC and will look more logical to other readers 
-(and static checkers :) )
+    Apr 21 15:48:37 dvalin postfix/smtpd[10256]: NOQUEUE: reject: RCPT from unknown[2400:dd01:100f:2:72e2:84ff:fe10:5f45]: 450 4.7.1 <ha.nfschina.com>: Helo command rejected: Host not found; from=<yuzhe@nfschina.com> to=<sven@narfation.org> proto=ESMTP helo=<ha.nfschina.co>
 
-Thanks for the quick review for both of you.
 
-CJ
-> 
-> Thanks!
-> 
->> ---
->>   drivers/base/memory.c | 5 ++---
->>   1 file changed, 2 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
->> index 7222ff9b5e05..084d67fd55cc 100644
->> --- a/drivers/base/memory.c
->> +++ b/drivers/base/memory.c
->> @@ -636,10 +636,9 @@ static int __add_memory_block(struct memory_block *memory)
->>   	}
->>   	ret = xa_err(xa_store(&memory_blocks, memory->dev.id, memory,
->>   			      GFP_KERNEL));
->> -	if (ret) {
->> -		put_device(&memory->dev);
->> +	if (ret)
->>   		device_unregister(&memory->dev);
->> -	}
->> +
->>   	return ret;
->>   }
->>   
->> -- 
->> 2.32.0
-> 
+And when I test it myself, it is also not working:
+
+    $ dig @8.8.8.8 ha.nfschina.com
+
+    ; <<>> DiG 9.16.27-Debian <<>> @8.8.8.8 ha.nfschina.com
+    ; (1 server found)
+    ;; global options: +cmd
+    ;; Got answer:
+    ;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 39639
+    ;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
+    
+    ;; OPT PSEUDOSECTION:
+    ; EDNS: version: 0, flags:; udp: 512
+    ;; QUESTION SECTION:
+    ;ha.nfschina.com.               IN      A
+    
+    ;; AUTHORITY SECTION:
+    nfschina.com.           600     IN      SOA     dns11.hichina.com. hostmaster.hichina.com. 2022011002 3600 1200 86400 600
+
+    ;; Query time: 328 msec
+    ;; SERVER: 8.8.8.8#53(8.8.8.8)
+    ;; WHEN: Fri Apr 22 09:51:56 CEST 2022
+    ;; MSG SIZE  rcvd: 105
+
+
+Please fix this before sending patches out.
+
+
+But the kernel test bot already demonstrated why this patch is not a good 
+idea. You can improve it and resent it but I will not accept it in this form.
+
+
+Kind regards,
+	Sven
+--nextPart3059673.4202UCAtWU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEF10rh2Elc9zjMuACXYcKB8Eme0YFAmJiX3YACgkQXYcKB8Em
+e0Y0dQ/+NFnsxqJsaMC0zYzt5WK1JDVmpYneRZuoEf62CIsbpN+AtGouyHyqpRQA
+UBOK4KaKDKL/iUTAz9m6kJ7k65RxnE9/WnwJaEbY1JNzn0V7mhxJOEarZrjjcz1J
+R4MVT/l/vQHDhcGWwX0l4YHkXiUDjtmT1SripHZGouhOoxW/yCg7MPGDsIHNCWBw
+Nj3kqClxRhwp+MExsKxmylX6EnIlOxO3Z5gtk848BaDgvpatjJkAxRDmpuxvDFn/
+QTm70eQ5mLV/B2E5aZSH1IfYB77n9upt9PGp/r3FSwaUJaCBMPTyK6iDGG7fiwym
+GlJhzoagbtr2zy8GlFWTFJKcTFt6uwhl1yRqQ37BTWVB86oFEp9pB2d+1J14m3gK
+1+MjhWhfVN5Q8SALqpIZl5ms9grA+R1+SAW95mvdRitYgIqSpQt5+aLuelHiJMu0
+fKgHOBQPabaFdTv973KAZP24lQTTOnkXQGPSbKRFzXperFql1sy7Rm+ZxUi4HmbS
+HbUm9dApMdPpv+h/km0LKOnyca4c5ZPXXrY7iI9Y/lSevPSgQD8M8YtcV64kkAn7
+s73LFpzveIGz/ITKycpOhGeWVJQRDKndJiZIQLJTfAGiy8P9SUeo+2I3fYT69lkb
+y+z5SmMz1RBBXRmLhy6OiCe6xajWe/gQ82SN74O0uRthjQIX8dQ=
+=yYih
+-----END PGP SIGNATURE-----
+
+--nextPart3059673.4202UCAtWU--
+
 
 
