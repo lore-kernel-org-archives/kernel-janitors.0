@@ -2,82 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64DECC4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Apr 2022 09:30:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09AF9C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Apr 2022 11:04:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1446075AbiDVJdM (ORCPT
+        id S1446810AbiDVLHP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Apr 2022 05:33:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49222 "EHLO
+        Fri, 22 Apr 2022 07:07:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1446104AbiDVJdH (ORCPT
+        with ESMTP id S245078AbiDVLHO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Apr 2022 05:33:07 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D710B4EF6C;
-        Fri, 22 Apr 2022 02:30:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 3EE7BCE282F;
-        Fri, 22 Apr 2022 09:30:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 792D3C385AE;
-        Fri, 22 Apr 2022 09:30:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650619811;
-        bh=4BJZmEVhYZrUvVU6UDMs/63mofJAqQXx7Fh//ZtPELE=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=oXcUm3/OfvUQrRqFPjGM0708vHge2XT6eA9yNra/Z7rzAVXzJMqznGzwyGKUaa3dE
-         4HJ59SaClIzZs1Y7BSyRnpPhRmvjpaLO6XsUvvhm5cvtg2rihNhc0txbyFMKJB7f8q
-         yhn18KnB9MmT3eWZxf4gdyMVwbO/t9kLAQwM24rtFp9qETAbwL3+2PTAML8ZHFYu2C
-         xVl3jjrKTJjKe9u/XKGNao9v4vliuvgxKrnrK6KrOZbxljUv9Z8HnJkJ07gBWjS1jg
-         2TECGWebuJH+N7WByXUuMnDt2gxguJosqQzrCzbAj/JYqXSzNWHov40yo+5a5VSy1V
-         8wegkRaY0Ckfw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 65203E85D90;
-        Fri, 22 Apr 2022 09:30:11 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] myri10ge: remove redundant assignment to variable status
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <165061981141.24106.14578807719178720929.git-patchwork-notify@kernel.org>
-Date:   Fri, 22 Apr 2022 09:30:11 +0000
-References: <20220418143759.85626-1-colin.i.king@gmail.com>
-In-Reply-To: <20220418143759.85626-1-colin.i.king@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     christopher.lee@cspi.com, davem@davemloft.net, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Fri, 22 Apr 2022 07:07:14 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C83F225C5B;
+        Fri, 22 Apr 2022 04:04:21 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id b19so10495079wrh.11;
+        Fri, 22 Apr 2022 04:04:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aX+af2NbLYVavvKgA4KwWpvzLYIlHAkPkYV9LErzorg=;
+        b=RdHAhqBriPScMcrozEZlK7PFf9XAzS66rQDFLnBoBGAjWkJ7ciJZqrY/zzYe3YX17f
+         7AokDza8jYTO67wDtahYdd39QdhtAGMTR1Z+fChGeL5RQ5s3mu+dE5QXdr4g5D0Nn2Lv
+         r1eWsmVYpCq0eTUVG3+pS6mSWehXyAqz21wkoV6oiAyrwameuNpy3EwKEUu3AoZUmOWP
+         vCgIHjGKOo6FkYp2AJFq5XSstiG/kCcQZsSJfps3gVrh/BGFhQDjSsMNlwMU2dIfn2pi
+         ygilEu7iPO8Ej7VI6eX/jVxFCbTziPFMbs8as6KzKxodZMsgb5BvyaK4EmIn7wteA8Ry
+         ZC8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aX+af2NbLYVavvKgA4KwWpvzLYIlHAkPkYV9LErzorg=;
+        b=rE7aaaBPYZl/p13l5XcOyNEIcT344OGdNSGkCJeELkBbuPwLrbJdO9eR/eSi790k6t
+         2znRXNCS0kMYxhZL2nLAQVOh43dr5rQOHYIrSFRB+AHrqnDKh3l7UOVXfpLYGl1NqJOh
+         y3zJJZQh0og6Vf3yxsZ2NU4pnY5o9Gj/BUJfV7egOMEws2Rdk9Nu/dKJsqMZKjvrUygd
+         D/FjAWpE8Ca8p1ocMUDzrIZXe1wZjrzKC24NRTF2NLnkrB6QlVlRS3+Ig9ZnCaiFENC9
+         kbpLhZNJbYWqnvDWroOl3gGi6nHrIhErMLj6pyL8wEW3+uY2Qwgs2WF4+ZS9jqfw2ZtX
+         ahXg==
+X-Gm-Message-State: AOAM533ANesMSzDlSdr/Qgb9r+Om3KvAzaVkyBXTYiZhDLfgficHKXwC
+        7r5SNXnSbEpXsfV7PjfrZ/4HrFfEc6w=
+X-Google-Smtp-Source: ABdhPJyaWqhcVGDLHxDxRf5Wk/P202UvjQHRnNHU8QKJ6oMsRDnKf4mr9mgXnEEACMXB/grE982s0A==
+X-Received: by 2002:adf:fb4d:0:b0:207:a376:7585 with SMTP id c13-20020adffb4d000000b00207a3767585mr3220431wrs.489.1650625460208;
+        Fri, 22 Apr 2022 04:04:20 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id r5-20020adfa145000000b0020acc9de8c4sm705518wrr.38.2022.04.22.04.04.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Apr 2022 04:04:19 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>, Tom Rix <trix@redhat.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         llvm@lists.linux.dev
+Subject: [PATCH] kernel/irq/matrix.c: remove redundant assignment to variable 'end'
+Date:   Fri, 22 Apr 2022 12:04:18 +0100
+Message-Id: <20220422110418.1264778-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Variable end is being initialized with a value that is never read, it
+is being re-assigned later with the same value. The initialization is
+redundant and can be removed.
 
-This patch was applied to netdev/net-next.git (master)
-by David S. Miller <davem@davemloft.net>:
+Cleans up clang scan build warning:
+kernel/irq/matrix.c:289:25: warning: Value stored to 'end' during its
+initialization is never read [deadcode.DeadStores]
 
-On Mon, 18 Apr 2022 15:37:59 +0100 you wrote:
-> Variable status is being assigned a value that is never read, it is
-> being re-assigned again later on. The assignment is redundant and can
-> be removed.
-> 
-> Cleans up clang scan build warning:
-> drivers/net/ethernet/myricom/myri10ge/myri10ge.c:582:7: warning: Although
-> the value stored to 'status' is used in the enclosing expression, the
-> value is never actually read from 'status' [deadcode.DeadStores]
-> 
-> [...]
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ kernel/irq/matrix.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is the summary with links:
-  - myri10ge: remove redundant assignment to variable status
-    https://git.kernel.org/netdev/net-next/c/1c604f91b773
-
-You are awesome, thank you!
+diff --git a/kernel/irq/matrix.c b/kernel/irq/matrix.c
+index bbfb26489aa1..1698e77645ac 100644
+--- a/kernel/irq/matrix.c
++++ b/kernel/irq/matrix.c
+@@ -286,7 +286,7 @@ void irq_matrix_remove_managed(struct irq_matrix *m, const struct cpumask *msk)
+ int irq_matrix_alloc_managed(struct irq_matrix *m, const struct cpumask *msk,
+ 			     unsigned int *mapped_cpu)
+ {
+-	unsigned int bit, cpu, end = m->alloc_end;
++	unsigned int bit, cpu, end;
+ 	struct cpumap *cm;
+ 
+ 	if (cpumask_empty(msk))
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.35.1
 
