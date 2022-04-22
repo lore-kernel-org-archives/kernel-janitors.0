@@ -2,58 +2,58 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38FA9C433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Apr 2022 02:41:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE58C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Apr 2022 02:51:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1443471AbiDVCoe (ORCPT
+        id S1352185AbiDVCye (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 21 Apr 2022 22:44:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41002 "EHLO
+        Thu, 21 Apr 2022 22:54:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1443464AbiDVCod (ORCPT
+        with ESMTP id S229901AbiDVCyc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 21 Apr 2022 22:44:33 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 326DB4C426;
-        Thu, 21 Apr 2022 19:41:39 -0700 (PDT)
+        Thu, 21 Apr 2022 22:54:32 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C28994C429;
+        Thu, 21 Apr 2022 19:51:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1650595300; x=1682131300;
+  t=1650595900; x=1682131900;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=ziHABANE59wRolQJClZuDMbt1HuNA/mx2V8HeNMrpkM=;
-  b=Ql1FTKJtwodtMO+qh3i4hKx/UeOdNhm2Yfcy6bAVOw64ZaVCmodRx8W/
-   +w/r3pjP02blguIZRDUAnDO040LaHyR0oL0Wuip4CFwGBSNenCPvAHvMB
-   KHODCtT4S66MkUAOxY4O9Rf9GkBiy1H+uOvYt0xjO2OVfCwfCOsP8G5AU
-   DNsm2ZDgRbcA8snWZ//C9GsFU/yx06FCLFKM38RVL4rectiW/UfZ1wnNt
-   m6iOY25vQWALTQd0ESIv/Z0aMtY7gvkL6iWBG7DLQsvJpgku6lFi0kjFX
-   k+iDDXCnK7aDBcnozXrevZjT9pzTDt7PxgIKyy3EgecDKxaU9Cq2s0095
+  bh=/EP0iWdKOEiGzPNvILshoCXIoQqdE97BuNJKc07nAWo=;
+  b=T9m9RRwpv7jOjlFPtN/Yel1eUtEz/QlLobOL/dHeD85i8o4/YVado5sx
+   C49cD9wwII2JnioPQcGgdeA7Dh9txY4i6S03U+txwndueIJ1kRiV5h1MV
+   rkPaBYU+/vKP405knFROkIivJHrIe8k5PGynFgQf/0i/UUKdRr868MxLg
+   9igLo+PBqVX9dcJihBVC0lLn+B0mGIT5Vsj1R0aoSN80eRf/k1Mk1i041
+   TWrP9xmg0agzqGUdnUZORlcxUwuKsJ1+VDJoWmm+ub8V2GIPy7EueE0nd
+   xOucic83O4I+H+yJCnEVKY1MqWGffxeMHH2MObo24YJB+S3gJFTJsBnGl
    Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10324"; a="245122193"
+X-IronPort-AV: E=McAfee;i="6400,9594,10324"; a="264021688"
 X-IronPort-AV: E=Sophos;i="5.90,280,1643702400"; 
-   d="scan'208";a="245122193"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2022 19:41:39 -0700
+   d="scan'208";a="264021688"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2022 19:51:40 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,280,1643702400"; 
-   d="scan'208";a="511375279"
+   d="scan'208";a="562856314"
 Received: from lkp-server01.sh.intel.com (HELO 3abc53900bec) ([10.239.97.150])
-  by orsmga003.jf.intel.com with ESMTP; 21 Apr 2022 19:41:35 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 21 Apr 2022 19:51:36 -0700
 Received: from kbuild by 3abc53900bec with local (Exim 4.95)
         (envelope-from <lkp@intel.com>)
-        id 1nhjEl-00097y-7D;
-        Fri, 22 Apr 2022 02:41:35 +0000
-Date:   Fri, 22 Apr 2022 10:41:00 +0800
+        id 1nhjOR-00098z-QD;
+        Fri, 22 Apr 2022 02:51:35 +0000
+Date:   Fri, 22 Apr 2022 10:51:17 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Yu Zhe <yuzhe@nfschina.com>, mareklindner@neomailbox.ch,
         sw@simonwunderlich.de, a@unstable.cc, sven@narfation.org,
         davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com
-Cc:     kbuild-all@lists.01.org, b.a.t.m.a.n@lists.open-mesh.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        liqiong@nfschina.com, kernel-janitors@vger.kernel.org,
-        Yu Zhe <yuzhe@nfschina.com>
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, liqiong@nfschina.com,
+        kernel-janitors@vger.kernel.org, Yu Zhe <yuzhe@nfschina.com>
 Subject: Re: [PATCH] batman-adv: remove unnecessary type castings
-Message-ID: <202204221051.PRtLc0f7-lkp@intel.com>
+Message-ID: <202204221034.hfPA4RPW-lkp@intel.com>
 References: <20220421154829.9775-1-yuzhe@nfschina.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -65,44 +65,46 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 Hi Yu,
 
-Thank you for the patch! Perhaps something to improve:
+Thank you for the patch! Yet something to improve:
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v5.18-rc3 next-20220421]
+[auto build test ERROR on linus/master]
+[also build test ERROR on v5.18-rc3 next-20220421]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch]
 
 url:    https://github.com/intel-lab-lkp/linux/commits/Yu-Zhe/batman-adv-remove-unnecessary-type-castings/20220421-235254
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git b253435746d9a4a701b5f09211b9c14d3370d0da
-config: x86_64-randconfig-a013 (https://download.01.org/0day-ci/archive/20220422/202204221051.PRtLc0f7-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.2.0-20) 11.2.0
+config: i386-randconfig-a013 (https://download.01.org/0day-ci/archive/20220422/202204221034.hfPA4RPW-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 5bd87350a5ae429baf8f373cb226a57b62f87280)
 reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
         # https://github.com/intel-lab-lkp/linux/commit/2474b41c585e849d3546e0aba8f3c862735a04ff
         git remote add linux-review https://github.com/intel-lab-lkp/linux
         git fetch --no-tags linux-review Yu-Zhe/batman-adv-remove-unnecessary-type-castings/20220421-235254
         git checkout 2474b41c585e849d3546e0aba8f3c862735a04ff
         # save the config file
         mkdir build_dir && cp config build_dir/.config
-        make W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash net/batman-adv/
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 SHELL=/bin/bash net/batman-adv/
 
 If you fix the issue, kindly add following tag as appropriate
 Reported-by: kernel test robot <lkp@intel.com>
 
-All warnings (new ones prefixed by >>):
+All errors (new ones prefixed by >>):
 
-   net/batman-adv/bridge_loop_avoidance.c: In function 'batadv_choose_claim':
->> net/batman-adv/bridge_loop_avoidance.c:68:42: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-      68 |         struct batadv_bla_claim *claim = data;
-         |                                          ^~~~
+>> net/batman-adv/bridge_loop_avoidance.c:68:27: error: initializing 'struct batadv_bla_claim *' with an expression of type 'const void *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+           struct batadv_bla_claim *claim = data;
+                                    ^       ~~~~
+   1 error generated.
 --
-   net/batman-adv/translation-table.c: In function 'batadv_choose_tt':
->> net/batman-adv/translation-table.c:109:12: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-     109 |         tt = data;
-         |            ^
+>> net/batman-adv/translation-table.c:109:5: error: assigning to 'struct batadv_tt_common_entry *' from 'const void *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+           tt = data;
+              ^ ~~~~
+   1 error generated.
 
 
-vim +/const +68 net/batman-adv/bridge_loop_avoidance.c
+vim +68 net/batman-adv/bridge_loop_avoidance.c
 
     53	
     54	static void batadv_bla_periodic_work(struct work_struct *work);
