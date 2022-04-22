@@ -2,37 +2,40 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 018E9C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Apr 2022 06:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A6AC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Apr 2022 07:15:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1444524AbiDVGvS (ORCPT
+        id S1444716AbiDVHSU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Apr 2022 02:51:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50698 "EHLO
+        Fri, 22 Apr 2022 03:18:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1444515AbiDVGvP (ORCPT
+        with ESMTP id S1444620AbiDVHST (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Apr 2022 02:51:15 -0400
+        Fri, 22 Apr 2022 03:18:19 -0400
 Received: from smtp.smtpout.orange.fr (smtp04.smtpout.orange.fr [80.12.242.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D40150E04
-        for <kernel-janitors@vger.kernel.org>; Thu, 21 Apr 2022 23:48:21 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91C803E0CB
+        for <kernel-janitors@vger.kernel.org>; Fri, 22 Apr 2022 00:15:26 -0700 (PDT)
 Received: from pop-os.home ([86.243.180.246])
         by smtp.orange.fr with ESMTPA
-        id hn5Xn05RsYnCyhn5Xn2aYb; Fri, 22 Apr 2022 08:48:20 +0200
+        id hnVin0NUEYnCyhnVjn2j0K; Fri, 22 Apr 2022 09:15:25 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Fri, 22 Apr 2022 08:48:20 +0200
+X-ME-Date: Fri, 22 Apr 2022 09:15:25 +0200
 X-ME-IP: 86.243.180.246
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Sven Van Asbroeck <TheSven73@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Scott Cheloha <cheloha@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nathan Lynch <nathanl@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Sven Van Asbroeck <thesven73@gmail.com>,
-        linux-staging@lists.linux.dev
-Subject: [PATCH] staging: fieldbus: Fix the error handling path in anybuss_host_common_probe()
-Date:   Fri, 22 Apr 2022 08:48:18 +0200
-Message-Id: <5401a519608d6e1a4e7435c20f4f20b0c5c36c23.1650610082.git.christophe.jaillet@wanadoo.fr>
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] drivers/base/memory: Fix a reference counting issue in __add_memory_block()
+Date:   Fri, 22 Apr 2022 09:15:21 +0200
+Message-Id: <d44c63d78aafe844f920dc02ad6af25acc448fcf.1650611702.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -40,29 +43,37 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If device_register() fails, device_unregister() should not be called
-because it will free some resources that are not allocated.
-put_device() should be used instead.
+There is no point in doing put_device()/device_unregister() on a
+device that has just been registered a few lines above. This will lead to
+a double reference decrement.
 
-Fixes: 308ee87a2f1e ("staging: fieldbus: anybus-s: support HMS Anybus-S bus")
+I guess that this put_device()/device_unregister() is a cut'n'paste from
+remove_memory_block() (i.e. unregister_memory() at the time being) which
+does need it.
+
+Fixes: 4fb6eabf1037 ("drivers/base/memory.c: cache memory blocks in xarray to accelerate lookup")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/staging/fieldbus/anybuss/host.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/base/memory.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/fieldbus/anybuss/host.c b/drivers/staging/fieldbus/anybuss/host.c
-index a344410e48fe..cd86b9c9e345 100644
---- a/drivers/staging/fieldbus/anybuss/host.c
-+++ b/drivers/staging/fieldbus/anybuss/host.c
-@@ -1384,7 +1384,7 @@ anybuss_host_common_probe(struct device *dev,
- 		goto err_device;
- 	return cd;
- err_device:
--	device_unregister(&cd->client->dev);
-+	put_device(&cd->client->dev);
- err_kthread:
- 	kthread_stop(cd->qthread);
- err_reset:
+diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+index 7222ff9b5e05..084d67fd55cc 100644
+--- a/drivers/base/memory.c
++++ b/drivers/base/memory.c
+@@ -636,10 +636,9 @@ static int __add_memory_block(struct memory_block *memory)
+ 	}
+ 	ret = xa_err(xa_store(&memory_blocks, memory->dev.id, memory,
+ 			      GFP_KERNEL));
+-	if (ret) {
+-		put_device(&memory->dev);
++	if (ret)
+ 		device_unregister(&memory->dev);
+-	}
++
+ 	return ret;
+ }
+ 
 -- 
 2.32.0
 
