@@ -2,48 +2,48 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E0EC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Apr 2022 02:20:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38FA9C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Apr 2022 02:41:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233304AbiDVCXc (ORCPT
+        id S1443471AbiDVCoe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 21 Apr 2022 22:23:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58878 "EHLO
+        Thu, 21 Apr 2022 22:44:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231551AbiDVCXa (ORCPT
+        with ESMTP id S1443464AbiDVCod (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 21 Apr 2022 22:23:30 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BD9149263;
-        Thu, 21 Apr 2022 19:20:39 -0700 (PDT)
+        Thu, 21 Apr 2022 22:44:33 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 326DB4C426;
+        Thu, 21 Apr 2022 19:41:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1650594039; x=1682130039;
+  t=1650595300; x=1682131300;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=QY4+iCfT1Wy7jYCT0r02vdmfMy8p/eY4uf/pYw6auo0=;
-  b=HKEz8YOdSu3RZK4fAnYRh7BHINw7nMzZib5wXpmfSBqnA4jBUCObmv2X
-   g4QRYnlHolKlKxzyobwzHQmRdet4RdGDlADyJ2Z+S8pI+IzcQkbG+FmDW
-   YiNh6G24uKLXcC20bqmIEvzVcE7Cbr+mszAVOJD36albcEPNA0zBhab3P
-   7vthFME8sQjpWVccDd4763SMcfoTWCl4X3UhvQ9z71D9AvaYk/U+PxqCb
-   SP0/JSkKDbFYLgPJkG/ZreHkKPS/fNaqf5UU+1QSJAXiXzZBymvz5PLpl
-   qJXTa2XK7ymEQk8v0th2WyrD1PDnuBEeygB3SzT4PZ6YaZlqv8/q11soy
+  bh=ziHABANE59wRolQJClZuDMbt1HuNA/mx2V8HeNMrpkM=;
+  b=Ql1FTKJtwodtMO+qh3i4hKx/UeOdNhm2Yfcy6bAVOw64ZaVCmodRx8W/
+   +w/r3pjP02blguIZRDUAnDO040LaHyR0oL0Wuip4CFwGBSNenCPvAHvMB
+   KHODCtT4S66MkUAOxY4O9Rf9GkBiy1H+uOvYt0xjO2OVfCwfCOsP8G5AU
+   DNsm2ZDgRbcA8snWZ//C9GsFU/yx06FCLFKM38RVL4rectiW/UfZ1wnNt
+   m6iOY25vQWALTQd0ESIv/Z0aMtY7gvkL6iWBG7DLQsvJpgku6lFi0kjFX
+   k+iDDXCnK7aDBcnozXrevZjT9pzTDt7PxgIKyy3EgecDKxaU9Cq2s0095
    Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10324"; a="251868464"
+X-IronPort-AV: E=McAfee;i="6400,9594,10324"; a="245122193"
 X-IronPort-AV: E=Sophos;i="5.90,280,1643702400"; 
-   d="scan'208";a="251868464"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2022 19:20:38 -0700
+   d="scan'208";a="245122193"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2022 19:41:39 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,280,1643702400"; 
-   d="scan'208";a="562849639"
+   d="scan'208";a="511375279"
 Received: from lkp-server01.sh.intel.com (HELO 3abc53900bec) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 21 Apr 2022 19:20:35 -0700
+  by orsmga003.jf.intel.com with ESMTP; 21 Apr 2022 19:41:35 -0700
 Received: from kbuild by 3abc53900bec with local (Exim 4.95)
         (envelope-from <lkp@intel.com>)
-        id 1nhiuQ-00097C-Jl;
-        Fri, 22 Apr 2022 02:20:34 +0000
-Date:   Fri, 22 Apr 2022 10:20:20 +0800
+        id 1nhjEl-00097y-7D;
+        Fri, 22 Apr 2022 02:41:35 +0000
+Date:   Fri, 22 Apr 2022 10:41:00 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Yu Zhe <yuzhe@nfschina.com>, mareklindner@neomailbox.ch,
         sw@simonwunderlich.de, a@unstable.cc, sven@narfation.org,
@@ -53,7 +53,7 @@ Cc:     kbuild-all@lists.01.org, b.a.t.m.a.n@lists.open-mesh.org,
         liqiong@nfschina.com, kernel-janitors@vger.kernel.org,
         Yu Zhe <yuzhe@nfschina.com>
 Subject: Re: [PATCH] batman-adv: remove unnecessary type castings
-Message-ID: <202204221027.ETcMYyKP-lkp@intel.com>
+Message-ID: <202204221051.PRtLc0f7-lkp@intel.com>
 References: <20220421154829.9775-1-yuzhe@nfschina.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -75,18 +75,16 @@ https://git-scm.com/docs/git-format-patch]
 
 url:    https://github.com/intel-lab-lkp/linux/commits/Yu-Zhe/batman-adv-remove-unnecessary-type-castings/20220421-235254
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git b253435746d9a4a701b5f09211b9c14d3370d0da
-config: m68k-defconfig (https://download.01.org/0day-ci/archive/20220422/202204221027.ETcMYyKP-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 11.2.0
+config: x86_64-randconfig-a013 (https://download.01.org/0day-ci/archive/20220422/202204221051.PRtLc0f7-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.2.0-20) 11.2.0
 reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
         # https://github.com/intel-lab-lkp/linux/commit/2474b41c585e849d3546e0aba8f3c862735a04ff
         git remote add linux-review https://github.com/intel-lab-lkp/linux
         git fetch --no-tags linux-review Yu-Zhe/batman-adv-remove-unnecessary-type-castings/20220421-235254
         git checkout 2474b41c585e849d3546e0aba8f3c862735a04ff
         # save the config file
         mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross W=1 O=build_dir ARCH=m68k SHELL=/bin/bash net/batman-adv/
+        make W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash net/batman-adv/
 
 If you fix the issue, kindly add following tag as appropriate
 Reported-by: kernel test robot <lkp@intel.com>
@@ -97,6 +95,11 @@ All warnings (new ones prefixed by >>):
 >> net/batman-adv/bridge_loop_avoidance.c:68:42: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
       68 |         struct batadv_bla_claim *claim = data;
          |                                          ^~~~
+--
+   net/batman-adv/translation-table.c: In function 'batadv_choose_tt':
+>> net/batman-adv/translation-table.c:109:12: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+     109 |         tt = data;
+         |            ^
 
 
 vim +/const +68 net/batman-adv/bridge_loop_avoidance.c
