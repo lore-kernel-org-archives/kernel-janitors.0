@@ -2,61 +2,122 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AECC433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Apr 2022 06:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91523C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Apr 2022 06:34:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1444130AbiDVGFJ (ORCPT
+        id S1444445AbiDVGgy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Apr 2022 02:05:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44322 "EHLO
+        Fri, 22 Apr 2022 02:36:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1444113AbiDVGFF (ORCPT
+        with ESMTP id S1444433AbiDVGgw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Apr 2022 02:05:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 520C24F9FA;
-        Thu, 21 Apr 2022 23:02:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E2DCE61DC8;
-        Fri, 22 Apr 2022 06:02:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B682EC385A4;
-        Fri, 22 Apr 2022 06:02:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650607331;
-        bh=4841fxDo2IBFBAW/st3C9bLw2mUJ8qtFufsuF9mZbWQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RQwBI/WC4vM1T5dWLU1/Q20cPmmCuTVI3H7URdIOvuNuybvwmyA4T/99z3W0rO8wi
-         XaQ4/ywPvslBHuQcn8QDVOOCxuplNxf6G/1xbuBCwpa/4bjxCbkdtdsusXHSCmgz8h
-         lcXhpt46CJviGbDzAeK4jwjhscWjp6Wkkf6hSxjj69dRTr+pJG6StSqVtav6Dk+gmW
-         gNWzYNrLCGQVgts9lSkzT6kzQIjn9RxnlELwlt0p0KuIXnQgeXjXfr5nJQtKLVizu0
-         jM0k9T/dVMw5bXy9IdfzR/SJX2X5VMGncFtL2VMKfjqnoE0+D5u98nBks232h1vzn6
-         cT68y/ovBAJ/g==
-Date:   Fri, 22 Apr 2022 11:32:07 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, dmaengine@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: idxd: Fix the error handling path in
- idxd_cdev_register()
-Message-ID: <YmJE3/zDdp/1YiaD@matsya>
-References: <1b5033dcc87b5f2a953c413f0306e883e6114542.1650521591.git.christophe.jaillet@wanadoo.fr>
+        Fri, 22 Apr 2022 02:36:52 -0400
+Received: from smtp.smtpout.orange.fr (smtp04.smtpout.orange.fr [80.12.242.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D849250B38
+        for <kernel-janitors@vger.kernel.org>; Thu, 21 Apr 2022 23:33:57 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.180.246])
+        by smtp.orange.fr with ESMTPA
+        id hmrXnzwe5YnCyhmrXn2WbY; Fri, 22 Apr 2022 08:33:54 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Fri, 22 Apr 2022 08:33:54 +0200
+X-ME-IP: 86.243.180.246
+Message-ID: <26efc808-acd7-cff3-82e7-66561314f8ca@wanadoo.fr>
+Date:   Fri, 22 Apr 2022 08:33:50 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1b5033dcc87b5f2a953c413f0306e883e6114542.1650521591.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] fsi: Fix error handling in fsi_master_register() and its
+ callers
+Content-Language: en-US
+To:     Jeremy Kerr <jk@ozlabs.org>, Joel Stanley <joel@jms.id.au>,
+        Alistar Popple <alistair@popple.id.au>,
+        Eddie James <eajames@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-fsi@lists.ozlabs.org
+Newsgroups: gmane.linux.kernel,gmane.linux.kernel.janitors
+References: <f37bfdccfcf8a8d1bdcbf668b802df13253ed3fe.1650556911.git.christophe.jaillet@wanadoo.fr>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <f37bfdccfcf8a8d1bdcbf668b802df13253ed3fe.1650556911.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 21-04-22, 08:13, Christophe JAILLET wrote:
-> If a call to alloc_chrdev_region() fails, the already allocated resources
-> are leaking.
+Le 21/04/2022 à 18:02, Christophe JAILLET a écrit :
+> fsi_master_register() calls device_register().
+> When device_register() fails, put_device() still needs to be called.
 > 
-> Add the needed error handling path to fix the leak.
+> Up to now, there is no put_device() in fsi_master_register().
+> Some callers of fsi_master_register() have it, some have not.
+>   - fsi_master_acf_probe() call put_device() if fsi_master_register() fails
+>   - fsi_master_gpio_probe() call put_device() if fsi_master_register() fails
+>   - fsi_master_aspeed_probe() doesn't
+>   - hub_master_probe() doesn't
+> 
+> In order to fix it and be consistent with the different callers, add the
+> missing put_device() in the error handling path of fsi_master_register()
+> and remove it from 2 callers that were handling it by themselves.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> This patch is speculative and compile tested only.
+> Review with care.
+> 
+> Another alternative would be to add the put_device() call in
+> fsi_master_aspeed_probe() and hub_master_probe() if it makes more sense.
+> 
+> Having one or more Fixes tag is a bit hard because of the relations and
+> log history of the 5 files involved in this bug fix.
+> ---
+>   drivers/fsi/fsi-core.c          | 1 +
+>   drivers/fsi/fsi-master-ast-cf.c | 1 -
+>   drivers/fsi/fsi-master-gpio.c   | 1 -
+>   3 files changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
+> index 3a7b78e36701..640692e5400f 100644
+> --- a/drivers/fsi/fsi-core.c
+> +++ b/drivers/fsi/fsi-core.c
+> @@ -1319,6 +1319,7 @@ int fsi_master_register(struct fsi_master *master)
+>   
+>   	rc = device_register(&master->dev);
+>   	if (rc) {
+> +		put_device(&master->dev);
+>   		ida_simple_remove(&master_ida, master->idx);
+>   		return rc;
+>   	}
+> diff --git a/drivers/fsi/fsi-master-ast-cf.c b/drivers/fsi/fsi-master-ast-cf.c
+> index 24292acdbaf8..dde63d703ea1 100644
+> --- a/drivers/fsi/fsi-master-ast-cf.c
+> +++ b/drivers/fsi/fsi-master-ast-cf.c
+> @@ -1395,7 +1395,6 @@ static int fsi_master_acf_probe(struct platform_device *pdev)
+>   		return 0;
+>   
+>   	device_remove_file(master->dev, &dev_attr_external_mode);
+> -	put_device(&master->master.dev);
+>   	return rc;
+>   
+>    stop_copro:
+> diff --git a/drivers/fsi/fsi-master-gpio.c b/drivers/fsi/fsi-master-gpio.c
+> index 7d5f29b4b595..1ae3c164d7fd 100644
+> --- a/drivers/fsi/fsi-master-gpio.c
+> +++ b/drivers/fsi/fsi-master-gpio.c
+> @@ -856,7 +856,6 @@ static int fsi_master_gpio_probe(struct platform_device *pdev)
+>   	rc = fsi_master_register(&master->master);
+>   	if (rc) {
+>   		device_remove_file(&pdev->dev, &dev_attr_external_mode);
+> -		put_device(&master->master.dev);
+>   		return rc;
+>   	}
+>   	return 0;
 
-Applied, thanks
+NACK
 
--- 
-~Vinod
+After additional reading of the code, it looks good to me as-is.
+Usage in fsi_master_aspeed_probe() and hub_master_probe() seem to have 
+no release function.
+
+CJ
