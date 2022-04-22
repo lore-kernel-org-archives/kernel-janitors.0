@@ -2,84 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF1AC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Apr 2022 08:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F96FC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Apr 2022 08:30:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241184AbiDVIQv (ORCPT
+        id S1445594AbiDVIdF convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Apr 2022 04:16:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54966 "EHLO
+        Fri, 22 Apr 2022 04:33:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232025AbiDVIQs (ORCPT
+        with ESMTP id S1392566AbiDVIcc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Apr 2022 04:16:48 -0400
-Received: from smtp.smtpout.orange.fr (smtp04.smtpout.orange.fr [80.12.242.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C757852E45
-        for <kernel-janitors@vger.kernel.org>; Fri, 22 Apr 2022 01:13:55 -0700 (PDT)
-Received: from pop-os.home ([86.243.180.246])
-        by smtp.orange.fr with ESMTPA
-        id hoQKn11J2YnCyhoQLn3306; Fri, 22 Apr 2022 10:13:53 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Fri, 22 Apr 2022 10:13:53 +0200
-X-ME-IP: 86.243.180.246
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Scott Cheloha <cheloha@linux.vnet.ibm.com>,
-        Nathan Lynch <nathanl@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2] drivers/base/memory: Fix an unlikely reference counting issue in __add_memory_block()
-Date:   Fri, 22 Apr 2022 10:13:48 +0200
-Message-Id: <d44c63d78affe844f020dc02ad6af29abc448fc4.1650611702.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 22 Apr 2022 04:32:32 -0400
+X-Greylist: delayed 544 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 22 Apr 2022 01:29:40 PDT
+Received: from mx4.uni-regensburg.de (mx4.uni-regensburg.de [194.94.157.149])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3439852E76
+        for <kernel-janitors@vger.kernel.org>; Fri, 22 Apr 2022 01:29:40 -0700 (PDT)
+Received: from mx4.uni-regensburg.de (localhost [127.0.0.1])
+        by localhost (Postfix) with SMTP id 4ABF3600004E;
+        Fri, 22 Apr 2022 10:20:31 +0200 (CEST)
+Received: from gwsmtp.uni-regensburg.de (gwsmtp1.uni-regensburg.de [132.199.5.51])
+        by mx4.uni-regensburg.de (Postfix) with ESMTP id 343C56000050;
+        Fri, 22 Apr 2022 10:20:31 +0200 (CEST)
+Received: from uni-regensburg-smtp1-MTA by gwsmtp.uni-regensburg.de
+        with Novell_GroupWise; Fri, 22 Apr 2022 10:20:31 +0200
+Message-Id: <6262654D020000A100049812@gwsmtp.uni-regensburg.de>
+X-Mailer: Novell GroupWise Internet Agent 18.4.0 
+Date:   Fri, 22 Apr 2022 10:20:29 +0200
+From:   "Ulrich Windl" <Ulrich.Windl@rz.uni-regensburg.de>
+To:     <michael.christie@oracle.com>, "Lee Duncan" <lduncan@suse.com>
+Cc:     "open-iscsi" <open-iscsi@googlegroups.com>, <jejb@linux.ibm.com>,
+        <martin.petersen@oracle.com>, "Chris Leech" <cleech@redhat.com>,
+        <kernel-janitors@vger.kernel.org>, <linux-scsi@vger.kernel.org>
+Subject: Antw: [EXT] [PATCH] scsi: iscsi: fix harmless double shift bug
+References: <YmFyWHf8nrrx+SHa@kili>
+In-Reply-To: <YmFyWHf8nrrx+SHa@kili>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-__add_memory_block() calls both put_device() and device_unregister() when
-storing the memory block into the xarray. This is incorrect because xarray
-doesn't take an additional reference and device_unregister() already calls
-put_device().
+>>> Dan Carpenter <dan.carpenter@oracle.com> schrieb am 21.04.2022 um 17:03 in
+Nachricht <YmFyWHf8nrrx+SHa@kili>:
+> These flags are supposed to be bit numbers.  Right now they cause a
+> double shift bug where we use BIT(BIT(2)) instead of BIT(2).
+> Fortunately, the bit numbers are small and it's done consistently so it
+> does not cause an issue at run time.
+> 
+> Fixes: 5bd856256f8c ("scsi: iscsi: Merge suspend fields")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  include/scsi/libiscsi.h | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/scsi/libiscsi.h b/include/scsi/libiscsi.h
+> index d0a24779c52d..c0703cd20a99 100644
+> --- a/include/scsi/libiscsi.h
+> +++ b/include/scsi/libiscsi.h
+> @@ -54,9 +54,9 @@ enum {
+>  #define ISID_SIZE			6
+>  
+>  /* Connection flags */
+> -#define ISCSI_CONN_FLAG_SUSPEND_TX	BIT(0)
+> -#define ISCSI_CONN_FLAG_SUSPEND_RX	BIT(1)
+> -#define ISCSI_CONN_FLAG_BOUND		BIT(2)
+> +#define ISCSI_CONN_FLAG_SUSPEND_TX	0
+> +#define ISCSI_CONN_FLAG_SUSPEND_RX	1
+> +#define ISCSI_CONN_FLAG_BOUND		2
 
-Triggering the issue looks really unlikely and its only effect should be to
-log a spurious warning about a ref counted issue.
+Actually it's not the "flag" then, but the "flag's bit position".
+Personally I think applying BIT() again is the bug, not the definition.
 
-Fixes: 4fb6eabf1037 ("drivers/base/memory.c: cache memory blocks in xarray to accelerate lookup")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
----
-v2: Update Changelog
-    Add 'unlikely' in the title
-    Add Acked/Reviewed-by tags
----
- drivers/base/memory.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+>  
+>  #define ISCSI_ITT_MASK			0x1fff
+>  #define ISCSI_TOTAL_CMDS_MAX		4096
+> -- 
+> 2.20.1
+> 
+> -- 
+> You received this message because you are subscribed to the Google Groups 
+> "open-iscsi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an 
+> email to open-iscsi+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit 
+> https://groups.google.com/d/msgid/open-iscsi/YmFyWHf8nrrx%2BSHa%40kili.
 
-diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-index 7222ff9b5e05..084d67fd55cc 100644
---- a/drivers/base/memory.c
-+++ b/drivers/base/memory.c
-@@ -636,10 +636,9 @@ static int __add_memory_block(struct memory_block *memory)
- 	}
- 	ret = xa_err(xa_store(&memory_blocks, memory->dev.id, memory,
- 			      GFP_KERNEL));
--	if (ret) {
--		put_device(&memory->dev);
-+	if (ret)
- 		device_unregister(&memory->dev);
--	}
-+
- 	return ret;
- }
- 
--- 
-2.32.0
+
+
 
