@@ -2,72 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE29C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 23 Apr 2022 13:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99233C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 23 Apr 2022 19:39:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235780AbiDWNbC (ORCPT
+        id S236888AbiDWTmv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 23 Apr 2022 09:31:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50486 "EHLO
+        Sat, 23 Apr 2022 15:42:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235770AbiDWNa6 (ORCPT
+        with ESMTP id S231515AbiDWTmt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 23 Apr 2022 09:30:58 -0400
-Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E2A17C784
-        for <kernel-janitors@vger.kernel.org>; Sat, 23 Apr 2022 06:28:01 -0700 (PDT)
-Received: from pop-os.home ([86.243.180.246])
-        by smtp.orange.fr with ESMTPA
-        id iFnrnuctdAKwFiFnrnIybL; Sat, 23 Apr 2022 15:27:59 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 23 Apr 2022 15:27:59 +0200
-X-ME-IP: 86.243.180.246
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+        Sat, 23 Apr 2022 15:42:49 -0400
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C8F163BD7;
+        Sat, 23 Apr 2022 12:39:51 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 0E0A85C012A;
+        Sat, 23 Apr 2022 15:39:48 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Sat, 23 Apr 2022 15:39:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        cc:cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm2; t=1650742788; x=
+        1650829188; bh=4vxkg9IMcjJOiy5SDNt57YSz4yw72vztdXiM5e6IuG0=; b=m
+        WW5s+GJ2P/jN9MpkkXewZp7eWSXacHGDjssEC2/odUmWdlt729h+WhBqU8bGS7ph
+        Dy1BCPAMV2tVLFvMpMBns3Q8iJ/92kF00MneTt29MsaH3irBUWBxoDYQ1DqoQA2/
+        Wj6qRAWfwbm2waEEL5zxNH4WUd2cMsBGKq4PkrrV+T5et8P3pNGwznxt8ktTO4D1
+        QfD21duOF5/2y6YDeXOSoxJsqkzTDD0XSFmQWiBUW71ppzBE7MBM3ZNGg7dBGaqj
+        pUxDZIVvJ2F7dFCIx4UOFDqTdFrSSb8vwPcX+sZBG4rjw6ew6NFuN74Y2Lg9xmMr
+        mCL7cHjvC5aMlg+VgPfOw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; t=1650742788; x=1650829188; bh=4vxkg9IMcjJOi
+        y5SDNt57YSz4yw72vztdXiM5e6IuG0=; b=qQeKvyYULGbtEWTw3HfUsv/ZzQ2jx
+        pjALMwl5eJB9yQpLAu8aF4vnYZbH1AxqjU5SI8GRXUhZ2IBbiGcZZdFl9XhqeD+V
+        B+o1fNZ+n1p2vUZnMwK3GNcUkB77eSrr7enLUhBkw7yWgHgfuc0IEwCxxgIN6oR5
+        bG/uWhL+6J2l9dt2iTygUQhXspIqvqJrkxzVQBhPmZXHtlUM2BH338z2OlBBG5r8
+        IK3dyx3XRHU+YBITnBXYPImieBnFkYz1ht+Gdy6WolNvFapeL4agHUIXm30GLSVZ
+        Zjmd/ycdlbFHDAwoVwlKHzHpPqt00uins+WuHhUXbUhbbjqpUaMSQmKSQ==
+X-ME-Sender: <xms:A1ZkYkYBFPWYKymvM_-E4_MqR2O_LDPQKZ_Is2mLm_yA-tnwhT531g>
+    <xme:A1ZkYvaKJ3tj4sKrEMo9QDjrquwuNT7Ym9eMBUy5ufvmUcDuBPc99M5V9GNMx29Ww
+    SpYGCiH-yPFCezWAw>
+X-ME-Received: <xmr:A1ZkYu-G11xV6RcYuZ0nfi5UcY8ccKZ3E1ZkgvXMSDyyXh7lFTZ-Pg7bdxrXFLkEIURtinm4Dmg8ybgdPHLs0OrF0xKXtUvd6Os5vdeWAeBLY3IJ9zZ27_1eqw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrtdeigddugedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepuffvvehfhffkffgfgggjtgfgsehtjeertddtfeejnecuhfhrohhmpefurghm
+    uhgvlhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenuc
+    ggtffrrghtthgvrhhnpefftdevkedvgeekueeutefgteffieelvedukeeuhfehledvhfei
+    tdehudfhudehhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
+X-ME-Proxy: <xmx:A1ZkYuqZNhZt2-WZy92ZKdG9DU4EcTHphUjGjBh9oE8QOp0IanXn8Q>
+    <xmx:A1ZkYvqIg4-OTCTD590GyqjfqHAk11kRi667Cct3QNZQ7KMCzBkNiQ>
+    <xmx:A1ZkYsSKcNvxUg-HfgZT71jSPQMnEj9RVUkvmoJ6WGRxwzCKlgLqOg>
+    <xmx:BFZkYi0JLqzuFTcYAgEcjf4CoR3PTEVewFILDOTzkCS4sQbTu4Ni6g>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 23 Apr 2022 15:39:46 -0400 (EDT)
+Subject: Re: [PATCH] bus: sunxi-rsb: Fix the return value of
+ sunxi_rsb_device_create()
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-mips@vger.kernel.org
-Subject: [PATCH] MIPS: SGI-IP30: Free some unused memory
-Date:   Sat, 23 Apr 2022 15:27:58 +0200
-Message-Id: <f9475119cf8d7dc51f9f993ab6a4de40a2735ca1.1650720466.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.32.0
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+References: <ef2b9576350bba4c8e05e669e9535e9e2a415763.1650551719.git.christophe.jaillet@wanadoo.fr>
+From:   Samuel Holland <samuel@sholland.org>
+Message-ID: <ff0ae741-efc4-ba6f-d869-4cb8fb7149ad@sholland.org>
+Date:   Sat, 23 Apr 2022 14:39:45 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <ef2b9576350bba4c8e05e669e9535e9e2a415763.1650551719.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-platform_device_add_data() duplicates the memory it is passed. So we can
-free some memory to save a few bytes that would remain unused otherwise.
+On 4/21/22 9:35 AM, Christophe JAILLET wrote:
+> This code is really spurious.
+> It always returns an ERR_PTR, even when err is known to be 0 and calls
+> put_device() after a successful device_register() call.
+> 
+> It is likely that the return statement in the normal path is missing.
+> Add 'return rdev;' to fix it.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- arch/mips/sgi-ip30/ip30-xtalk.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Thanks for the patch. This definitely looks to be the case.
 
-diff --git a/arch/mips/sgi-ip30/ip30-xtalk.c b/arch/mips/sgi-ip30/ip30-xtalk.c
-index 8a2894645529..8129524421cb 100644
---- a/arch/mips/sgi-ip30/ip30-xtalk.c
-+++ b/arch/mips/sgi-ip30/ip30-xtalk.c
-@@ -63,6 +63,8 @@ static void bridge_platform_create(int widget, int masterwid)
- 	}
- 	platform_device_add_resources(pdev, &w1_res, 1);
- 	platform_device_add_data(pdev, wd, sizeof(*wd));
-+	/* platform_device_add_data() duplicates the data */
-+	kfree(wd);
- 	platform_device_add(pdev);
- 
- 	bd = kzalloc(sizeof(*bd), GFP_KERNEL);
-@@ -92,6 +94,8 @@ static void bridge_platform_create(int widget, int masterwid)
- 	bd->io_offset	= IP30_SWIN_BASE(widget);
- 
- 	platform_device_add_data(pdev, bd, sizeof(*bd));
-+	/* platform_device_add_data() duplicates the data */
-+	kfree(bd);
- 	platform_device_add(pdev);
- 	pr_info("xtalk:%x bridge widget\n", widget);
- 	return;
--- 
-2.32.0
+> Fixes: d787dcdb9c8f ("bus: sunxi-rsb: Add driver for Allwinner Reduced Serial Bus")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
+Reviewed-by: Samuel Holland <samuel@sholland.org>
+Tested-by: Samuel Holland <samuel@sholland.org>
