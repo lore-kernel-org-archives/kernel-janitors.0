@@ -2,69 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B7F9C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 23 Apr 2022 02:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DCE5C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 23 Apr 2022 09:32:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231721AbiDWCEb (ORCPT
+        id S234537AbiDWJfX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Apr 2022 22:04:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58856 "EHLO
+        Sat, 23 Apr 2022 05:35:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231713AbiDWCEX (ORCPT
+        with ESMTP id S230527AbiDWJfW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Apr 2022 22:04:23 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4359BB9;
-        Fri, 22 Apr 2022 19:01:27 -0700 (PDT)
+        Sat, 23 Apr 2022 05:35:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F223236691;
+        Sat, 23 Apr 2022 02:32:26 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9B0CAB8216B;
-        Sat, 23 Apr 2022 02:01:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E902C385A0;
-        Sat, 23 Apr 2022 02:01:25 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F0CF460E77;
+        Sat, 23 Apr 2022 09:32:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A42F0C385A0;
+        Sat, 23 Apr 2022 09:32:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650679285;
-        bh=mrOPhWLuAIUxSoj+v6MDLwHfuvPmqtwovzfv/A80gNE=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=JShmaSoog00ktcZWVyCeeeRXc4TOBoCUdltifsplVJo0hlLCA9mIiOeLvgLg832DC
-         +bUn00nVuYccRZtaHS7g0lbrbFaM3ca8W3ic/i+r9IkOWUd6Q0YQvyriLMH4s0ACZQ
-         JUHh16tpm/IxsVt+35u4o4NYWRRQq5ZfYnzAipBuVo/DzdBOcEIkD3BiqdvFNiKqsP
-         79vQ5hISAzH6sF3k5cWm0wUDJaQeK8Q5BgtoYO1PyLQo+KnSF26e+MVxsZNUoU0kqe
-         P4dGGqxD92++BGd6yoQI5vI0LAtEx/Mvh8CZqRmxSM9Jhcka8m5Wh0SfcVohJPwOAT
-         Hg/JFcgj9eDWA==
+        s=k20201202; t=1650706345;
+        bh=iTzT18ATw05JJxPbBnFZHAUxOKvVk2zyufdr7Bnot1E=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=QmGJZDFDPiVLQAO+00Js0dVsA0NJLwBjcRE9p3yY83qzo/FzkeDCzssrXp1ZwiMx3
+         IP7aQjNSssqSQdLXiWXMpPvWExaKttOzL979WcHEHRtX7VLrzbDCQBGCxUlt5roIz8
+         rid7IWNVw+yclqnE+y8xUDHWClwFjnngKeLoYKlvLIqIX4e6HeVdssHlDKmcGVta9l
+         4sy+avg5DNH6stqAstKCLcVNSPnIhl/q3EjsSpOekFaHwxLiFpNnh/AkfuiuK2v+BH
+         55WaLg/irgQISBHyO9iji/U6aK50++5tj3ZJYWIXeLwvsbNisjK5ZoXiFL73GL4Ym4
+         WpzJLdnqamzwg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220418141537.83994-1-colin.i.king@gmail.com>
-References: <20220418141537.83994-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH] clk: actions: remove redundant assignment after a mask operation
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev
-To:     Andreas =?utf-8?q?F=C3=A4rber?= <afaerber@suse.de>,
-        Colin Ian King <colin.i.king@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-actions@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Date:   Fri, 22 Apr 2022 19:01:23 -0700
-User-Agent: alot/0.10
-Message-Id: <20220423020125.3E902C385A0@smtp.kernel.org>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] ath9k_htc: fix potential out of bounds access with
+ invalid
+ rxstatus->rs_keyix
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20220409061225.GA5447@kili>
+References: <20220409061225.GA5447@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Toke =?iso-8859-1?q?H=F8iland-J=F8rgensen?= <toke@toke.dk>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "John W. Linville" <linville@tuxdriver.com>,
+        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <165070634193.13738.14372114031952605423.kvalo@kernel.org>
+Date:   Sat, 23 Apr 2022 09:32:23 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Quoting Colin Ian King (2022-04-18 07:15:37)
-> The assignment operation after a & mask operation is redundant,
-> the &=3D operator can be replaced with just the & operator.
->=20
-> Cleans up a clang-scan warning:
-> drivers/clk/actions/owl-pll.c:28:9: warning: Although the value
-> stored to 'mul' is used in the enclosing expression, the value is
-> never actually read from 'mul' [deadcode.DeadStores]
->=20
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-Applied to clk-next
+> The "rxstatus->rs_keyix" eventually gets passed to test_bit() so we need to
+> ensure that it is within the bitmap.
+> 
+> drivers/net/wireless/ath/ath9k/common.c:46 ath9k_cmn_rx_accept()
+> error: passing untrusted data 'rx_stats->rs_keyix' to 'test_bit()'
+> 
+> Fixes: 4ed1a8d4a257 ("ath9k_htc: use ath9k_cmn_rx_accept")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Acked-by: Toke Høiland-Jørgensen <toke@toke.dk>
+> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+
+Patch applied to ath-next branch of ath.git, thanks.
+
+2dc509305cf9 ath9k_htc: fix potential out of bounds access with invalid rxstatus->rs_keyix
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20220409061225.GA5447@kili/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
