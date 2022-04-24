@@ -2,62 +2,59 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84616C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Apr 2022 18:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DBEAC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Apr 2022 20:59:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237122AbiDXSiW (ORCPT
+        id S239610AbiDXVCv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 24 Apr 2022 14:38:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48156 "EHLO
+        Sun, 24 Apr 2022 17:02:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229929AbiDXSiU (ORCPT
+        with ESMTP id S233920AbiDXVCu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 24 Apr 2022 14:38:20 -0400
+        Sun, 24 Apr 2022 17:02:50 -0400
 Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E8FFDFA5;
-        Sun, 24 Apr 2022 11:35:15 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id d5so2748723wrb.6;
-        Sun, 24 Apr 2022 11:35:15 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F36A69488;
+        Sun, 24 Apr 2022 13:59:48 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id b19so18214611wrh.11;
+        Sun, 24 Apr 2022 13:59:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=349XFvM6t5JIYAzx/9jOMxcyDaGjEC8LJK6aTpUuIMg=;
-        b=RximP2STPGTwfaqjRxZ9EaaaNjMB9VPGv+TMWWc1/rmkTluj14SIJeUnLigW7BRhQr
-         rQ14jBCh4dcxCWQ6LqpUPREv+cZcMEaAXPK/hUnSQsZc80brfS7dEmf3YifOui/TYODB
-         g3Hp0CvlGf8WOeRe74ibnhSu3ltQ/0c3Wg0/hbHCpRX/4rDdnef3b585uAUWHRatJGN1
-         aGnQaOJb6XxO+nhaKYETvz3XXDtWmzu/vLfeXFI2IzhiPKLEYmiF88e+UQAKqpfNQzjT
-         iFWKUcRFQDyjOLxJUo8HOz1XDUQxohHfqWj9KxVDr1CXx+JkFKtIXIZehGa9r/w3DtBk
-         N4NQ==
+        bh=iC9g0FH3bzlHy7hoAv9K0hivd/arMZ+Ly8xR4y4PBWk=;
+        b=P+8os97Rm5U4fIyuksZFXvRkInCU65BbYq2K9UoiK/mVjmr82Ylpl5MFYaRprjB+tn
+         15C4QL7f4g8WZHtYI+7gd1R04rtCBQZzEjfUkCGHvHxTVpPklYNWEOAHIJp+I3mmeY4l
+         0zA+UEhSK946KfO7C9AzBJ5f4PeevFiabTfmAeNheaYbkuc40D5DgaYLTdOpvVL5+YY8
+         clUsiu+UUHoIN4abTLuAqIBMtsa2fNmfmJ98WdAdba7pmFCufkXCkEaMPiiSKXfH8v1P
+         4oQJCDm9pEBO63zeHJc8j99PWXxiPpkqML4vWfKRAjA5QeDwGNixWskYgsCu6j2Y/fr9
+         tAgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=349XFvM6t5JIYAzx/9jOMxcyDaGjEC8LJK6aTpUuIMg=;
-        b=WZqpldrelKiqdcKkaIx3AhDjbBGxCkQ9bD6ZIt2PibrnYaAZ3GPBoI7N4l9EnT1zI/
-         l9JWC8lUHsFIyHOi4x1Coq4Ya9fbeq9fJrFZOJPqLsIHTkb+tLDex1yifW6E/jUbyBuU
-         g5eLEVBUphFaKx8LCiBZ9BqkDnyyZPgtKyJQjgO66SmPwOKt8JlTJLFIaaHfJr2ey38Y
-         KeYWo1ekPGMd1Gc0M7HxHLG0GBQDcJRfLZXx4d1G0685dJFtSq0HPnO7xrYzL+wZTWRW
-         2Yc80Vpy7VzmqyOe3uXwdxVbxSiwq2OJA2tLUUO65SFYt/cZY+ej07vPJeUTKbT5by2q
-         po7Q==
-X-Gm-Message-State: AOAM5334u/awFpKQTsxbj+c3pYY1eaFHsPD6LmBrzzrYoD5KbgamtZkb
-        9mghT1wL9Pfim0nHsqJGhXItrgR6mNh2Ig==
-X-Google-Smtp-Source: ABdhPJxhKw8Ct/ffWL61Xq54wzGLON3haioc9TF0zqvEjFjtlU0qST5fxv3vVDHYSfiWPgNc6TwUCA==
-X-Received: by 2002:a05:6000:1789:b0:20a:9f94:1620 with SMTP id e9-20020a056000178900b0020a9f941620mr11858147wrg.640.1650825314073;
-        Sun, 24 Apr 2022 11:35:14 -0700 (PDT)
+        bh=iC9g0FH3bzlHy7hoAv9K0hivd/arMZ+Ly8xR4y4PBWk=;
+        b=yuW37nqSeHohQuwkIDRz1+pxvFbpTjvzVPJTKJ/uUv0nIBYqcFtTwbERMn4FfGmsYw
+         HjJGlPbOpGgv8axgb4SeHf7acaf1Wikhlb3nIqE1UofTfM1Gkf236QB7W9LXTTrIF7zB
+         gwg/GJsWZfZtsoZvUWQ8lcvUxoDCcT/htQDxwVRuVOOnMzogiTTSjv3Femox3EDfUIW2
+         FP+Rk7Hz9ki3BmUjl52gV7z62rfF7S0XXfrB01UfJPFIqqeoUa6rPuqL+lMtN+t/nr9y
+         tuE1YKtnBPAfUYLbR/+ZFoaZzh0PwxXse3rq5s1uuTT1T1ZUfbHJ/hRxYxjLm0ffv7vx
+         TgBw==
+X-Gm-Message-State: AOAM532W9SaO7kCpapX+/RJdGxbVatdJAxWN6qBvMjGaIqiRhyByMVdg
+        1sYubNJulTES07uOSyM7gnI=
+X-Google-Smtp-Source: ABdhPJyOmQXw6y5ZKF2bDQTx9dMffPCO4ImkFLqarqZm9PGwJVZtU39NB9Mq+ZuTOO9z5oke2RehRg==
+X-Received: by 2002:a05:6000:1a44:b0:20a:ccde:c139 with SMTP id t4-20020a0560001a4400b0020accdec139mr9326075wry.320.1650833987138;
+        Sun, 24 Apr 2022 13:59:47 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id d2-20020a056000186200b0020a7be3f1d2sm8442792wri.53.2022.04.24.11.35.13
+        by smtp.gmail.com with ESMTPSA id m41-20020a05600c3b2900b00393e6f6c130sm3653656wms.42.2022.04.24.13.59.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Apr 2022 11:35:13 -0700 (PDT)
+        Sun, 24 Apr 2022 13:59:46 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Emma Anholt <emma@anholt.net>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Melissa Wen <mwen@igalia.com>,
-        "Juan A . Suarez Romero" <jasuarez@igalia.com>,
-        dri-devel@lists.freedesktop.org
+To:     Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/v3d: Fix null pointer dereference of pointer perfmon
-Date:   Sun, 24 Apr 2022 19:35:12 +0100
-Message-Id: <20220424183512.1365683-1-colin.i.king@gmail.com>
+Subject: [PATCH] ALSA: pcm: Check for null pointer of pointer substream before dereferencing it
+Date:   Sun, 24 Apr 2022 21:59:45 +0100
+Message-Id: <20220424205945.1372247-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -66,34 +63,39 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In the unlikely event that pointer perfmon is null the WARN_ON return path
-occurs after the pointer has already been deferenced. Fix this by only
-dereferencing perfmon after it has been null checked.
+Pointer substream is being dereferenced on the assignment of pointer card
+before substream is being null checked with the macro PCM_RUNTIME_CHECK.
+Although PCM_RUNTIME_CHECK calls BUG_ON, it still is useful to perform the
+the pointer check before card is assigned.
 
-Fixes: 26a4dc29b74a ("drm/v3d: Expose performance counters to userspace")
+Fixes: commit d4cfb30fce03 ("ALSA: pcm: Set per-card upper limit of PCM buffer allocations")
+
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/v3d/v3d_perfmon.c | 3 ++-
+ sound/core/pcm_memory.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/v3d/v3d_perfmon.c b/drivers/gpu/drm/v3d/v3d_perfmon.c
-index 0288ef063513..f6a88abccc7d 100644
---- a/drivers/gpu/drm/v3d/v3d_perfmon.c
-+++ b/drivers/gpu/drm/v3d/v3d_perfmon.c
-@@ -25,11 +25,12 @@ void v3d_perfmon_start(struct v3d_dev *v3d, struct v3d_perfmon *perfmon)
+diff --git a/sound/core/pcm_memory.c b/sound/core/pcm_memory.c
+index 8848d2f3160d..b8296b6eb2c1 100644
+--- a/sound/core/pcm_memory.c
++++ b/sound/core/pcm_memory.c
+@@ -453,7 +453,6 @@ EXPORT_SYMBOL(snd_pcm_lib_malloc_pages);
+  */
+ int snd_pcm_lib_free_pages(struct snd_pcm_substream *substream)
  {
- 	unsigned int i;
- 	u32 mask;
--	u8 ncounters = perfmon->ncounters;
-+	u8 ncounters;
+-	struct snd_card *card = substream->pcm->card;
+ 	struct snd_pcm_runtime *runtime;
  
- 	if (WARN_ON_ONCE(!perfmon || v3d->active_perfmon))
- 		return;
- 
-+	ncounters = perfmon->ncounters;
- 	mask = GENMASK(ncounters - 1, 0);
- 
- 	for (i = 0; i < ncounters; i++) {
+ 	if (PCM_RUNTIME_CHECK(substream))
+@@ -462,6 +461,8 @@ int snd_pcm_lib_free_pages(struct snd_pcm_substream *substream)
+ 	if (runtime->dma_area == NULL)
+ 		return 0;
+ 	if (runtime->dma_buffer_p != &substream->dma_buffer) {
++		struct snd_card *card = substream->pcm->card;
++
+ 		/* it's a newly allocated buffer.  release it now. */
+ 		do_free_pages(card, runtime->dma_buffer_p);
+ 		kfree(runtime->dma_buffer_p);
 -- 
 2.35.1
 
