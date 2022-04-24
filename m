@@ -2,90 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5830FC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Apr 2022 16:13:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4AC7C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Apr 2022 17:31:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234224AbiDXQQg (ORCPT
+        id S235058AbiDXReh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 24 Apr 2022 12:16:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36140 "EHLO
+        Sun, 24 Apr 2022 13:34:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234208AbiDXQQe (ORCPT
+        with ESMTP id S229539AbiDXReg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 24 Apr 2022 12:16:34 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A87F14DEB5;
-        Sun, 24 Apr 2022 09:13:33 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id x3so7914320wmj.5;
-        Sun, 24 Apr 2022 09:13:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+ObLcZEUQxD8FwLhd5DJnfColWxUYkRGqghpm3bA5uM=;
-        b=ncvMStXd44nfdtehxW3QyeCA9dTGDoz0HQIC9gjUtqGA4Iom4noF68Ld2hN/+86Vaa
-         otCal3sGJ9Oy34hY0kEz5vx2n58DyRb6aqG4IONt+ieYQOBL7qtsxyfgN8CzBSEAeO2p
-         ttWSTb0tJ/RwnAqpbaHOkSgVe53l2H45vfdcuRt2P70KMs7XXxRN1yP1RubOSGFf7LNW
-         eSIoRelsI15zZQW8zzkUY0H7hqD7DpmpzyrDTHz18WOyskaHQNxjevmmS2zwul9Klyd3
-         an7rreHbFQlVduA9o1EGniC/qBWBBIghxgcxTh0UQw8I9qxnU/loW80CZpIy6NKO8B2T
-         v59A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+ObLcZEUQxD8FwLhd5DJnfColWxUYkRGqghpm3bA5uM=;
-        b=DTkcDBp/gw9jqQxnki3pMCB6XstgBWEFm6wYCTw0SohJNO0L4QEBbKamwsiWmFTirS
-         aT6WEHgcf13EpcKdzD2i9eKQU9XWgMUCf015O3CBJkaIrmMzVCLq7nVIxH9IzV6voAMV
-         HPvPnOm0JfBWcagChYtso8ftbdpvCtNjXJ0zEoMXAez55V53ZBt/36SVJHy7E1+bFUcK
-         c3RCPvev+NGk9R8q2Q+ISCrOGmuUAhaxi0BivSLViO1oPF2ufq2O/DPdfP1oFRYkvhuW
-         H6qqYJvW3jsLlVfbZndi5CeEtOiP3cckaDbaYkeG80jXaZxA07TeUsJzlkVTG19vGaoq
-         C+9w==
-X-Gm-Message-State: AOAM530W7enj8QVxEGuwQBrgGshL++zsw2eXnnbjeY7kk1+GPxnyeVx1
-        jGe02Qr/wZF8PuiKqfBTzsg=
-X-Google-Smtp-Source: ABdhPJyh3p31G4sIeVZXTGFdvpzzk7/VTR2UidhWmiitY7AivHww4XQg6U7xwHJh/6v4nJfIiLzehg==
-X-Received: by 2002:a7b:c94a:0:b0:38e:c252:4a58 with SMTP id i10-20020a7bc94a000000b0038ec2524a58mr22601807wml.177.1650816812065;
-        Sun, 24 Apr 2022 09:13:32 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id a7-20020adffb87000000b00207982c7f4dsm6840310wrr.67.2022.04.24.09.13.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Apr 2022 09:13:31 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Dave Kleikamp <shaggy@kernel.org>,
-        jfs-discussion@lists.sourceforge.net
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] jfs: remove unused pointer tblk
-Date:   Sun, 24 Apr 2022 17:13:30 +0100
-Message-Id: <20220424161330.1360068-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Sun, 24 Apr 2022 13:34:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A223662A1B;
+        Sun, 24 Apr 2022 10:31:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 441C761203;
+        Sun, 24 Apr 2022 17:31:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DEA5C385A7;
+        Sun, 24 Apr 2022 17:31:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650821494;
+        bh=jjxwm4sbDuaBN4rFT9BE+jraiy9tujTIunLpi1T1TEI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=bgGcfKBQJSA9ZTmvok+gWbgQBWcu8FBdj6HJ7gStN+DRw7spivYeG6PBklcWTaiSF
+         XJcIqflG8yO9nabBJlZfoT23DGTVezq74ofTTQbWK/7oq24cyZ9X82IftHDg76WQuf
+         9o2bCyLtV6Nti0ikA3P2/RlzeCMGfF/Hbl9fGDCtflaL3hGm1eGgEHUCPu/E/Ak2ml
+         irUOx9E3zWAPLed9T3l2cnvouu0NT6glhQJxLcmWfC9EjPm/GTJlhKHG4T1Nz5YUxH
+         f7bTrHsaXYymy1xORDRUE/7fsEmgd5D3Pc674vZHBqrIIWQctQf6S403EDync8Fwgu
+         BsEu1G69WinVg==
+Date:   Sun, 24 Apr 2022 18:39:40 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev
+Subject: Re: [PATCH] staging: iio: ad2s1210: remove redundant assignment to
+ variable negative
+Message-ID: <20220424183940.3b209ee5@jic23-huawei>
+In-Reply-To: <20220418134603.81336-1-colin.i.king@gmail.com>
+References: <20220418134603.81336-1-colin.i.king@gmail.com>
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The pointer tlbk is not used, it is redundant and can be removed.
-Cleans up cppcheck warning:
+On Mon, 18 Apr 2022 14:46:03 +0100
+Colin Ian King <colin.i.king@gmail.com> wrote:
 
-linux/fs/jfs/jfs_xtree.c:2551:17: style: Unused variable: tblk [unusedVariable]
+> Variable negative is being assigned a value that is never read, it is
+> being re-assigned later. The assignment is redundant and can be removed.
+> 
+> Cleans up clang scan build warning:
+> drivers/staging/iio/resolver/ad2s1210.c:502:3: warning: Value stored
+> to 'negative' is never read [deadcode.DeadStores]
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/jfs/jfs_xtree.c | 1 -
- 1 file changed, 1 deletion(-)
+Seems that someone decided to match again against the endian converted
+version so indeed this is pointless.
 
-diff --git a/fs/jfs/jfs_xtree.c b/fs/jfs/jfs_xtree.c
-index 3148e9b35f3b..d29979d0a6aa 100644
---- a/fs/jfs/jfs_xtree.c
-+++ b/fs/jfs/jfs_xtree.c
-@@ -2548,7 +2548,6 @@ xtRelocate(tid_t tid, struct inode * ip, xad_t * oxad,	/* old XAD */
- 	   int xtype)
- {				/* extent type: XTPAGE or DATAEXT */
- 	int rc = 0;
--	struct tblock *tblk;
- 	struct tlock *tlck;
- 	struct xtlock *xtlck;
- 	struct metapage *mp, *pmp, *lmp, *rmp;	/* meta-page buffer */
--- 
-2.35.1
+Applied to the togreg branch of iio.git and pushed out as testing for 0-day
+to see if it can find anything we missed.
+
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/staging/iio/resolver/ad2s1210.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/staging/iio/resolver/ad2s1210.c b/drivers/staging/iio/resolver/ad2s1210.c
+> index 74adb82f37c3..c0b2716d0511 100644
+> --- a/drivers/staging/iio/resolver/ad2s1210.c
+> +++ b/drivers/staging/iio/resolver/ad2s1210.c
+> @@ -499,7 +499,6 @@ static int ad2s1210_read_raw(struct iio_dev *indio_dev,
+>  		ret = IIO_VAL_INT;
+>  		break;
+>  	case IIO_ANGL_VEL:
+> -		negative = st->rx[0] & 0x80;
+>  		vel = be16_to_cpup((__be16 *)st->rx);
+>  		vel >>= 16 - st->resolution;
+>  		if (vel & 0x8000) {
 
