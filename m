@@ -2,103 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99233C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 23 Apr 2022 19:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A96C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Apr 2022 15:47:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236888AbiDWTmv (ORCPT
+        id S232271AbiDXPu1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 23 Apr 2022 15:42:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43570 "EHLO
+        Sun, 24 Apr 2022 11:50:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231515AbiDWTmt (ORCPT
+        with ESMTP id S229657AbiDXPuY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 23 Apr 2022 15:42:49 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C8F163BD7;
-        Sat, 23 Apr 2022 12:39:51 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 0E0A85C012A;
-        Sat, 23 Apr 2022 15:39:48 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Sat, 23 Apr 2022 15:39:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        cc:cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm2; t=1650742788; x=
-        1650829188; bh=4vxkg9IMcjJOiy5SDNt57YSz4yw72vztdXiM5e6IuG0=; b=m
-        WW5s+GJ2P/jN9MpkkXewZp7eWSXacHGDjssEC2/odUmWdlt729h+WhBqU8bGS7ph
-        Dy1BCPAMV2tVLFvMpMBns3Q8iJ/92kF00MneTt29MsaH3irBUWBxoDYQ1DqoQA2/
-        Wj6qRAWfwbm2waEEL5zxNH4WUd2cMsBGKq4PkrrV+T5et8P3pNGwznxt8ktTO4D1
-        QfD21duOF5/2y6YDeXOSoxJsqkzTDD0XSFmQWiBUW71ppzBE7MBM3ZNGg7dBGaqj
-        pUxDZIVvJ2F7dFCIx4UOFDqTdFrSSb8vwPcX+sZBG4rjw6ew6NFuN74Y2Lg9xmMr
-        mCL7cHjvC5aMlg+VgPfOw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; t=1650742788; x=1650829188; bh=4vxkg9IMcjJOi
-        y5SDNt57YSz4yw72vztdXiM5e6IuG0=; b=qQeKvyYULGbtEWTw3HfUsv/ZzQ2jx
-        pjALMwl5eJB9yQpLAu8aF4vnYZbH1AxqjU5SI8GRXUhZ2IBbiGcZZdFl9XhqeD+V
-        B+o1fNZ+n1p2vUZnMwK3GNcUkB77eSrr7enLUhBkw7yWgHgfuc0IEwCxxgIN6oR5
-        bG/uWhL+6J2l9dt2iTygUQhXspIqvqJrkxzVQBhPmZXHtlUM2BH338z2OlBBG5r8
-        IK3dyx3XRHU+YBITnBXYPImieBnFkYz1ht+Gdy6WolNvFapeL4agHUIXm30GLSVZ
-        Zjmd/ycdlbFHDAwoVwlKHzHpPqt00uins+WuHhUXbUhbbjqpUaMSQmKSQ==
-X-ME-Sender: <xms:A1ZkYkYBFPWYKymvM_-E4_MqR2O_LDPQKZ_Is2mLm_yA-tnwhT531g>
-    <xme:A1ZkYvaKJ3tj4sKrEMo9QDjrquwuNT7Ym9eMBUy5ufvmUcDuBPc99M5V9GNMx29Ww
-    SpYGCiH-yPFCezWAw>
-X-ME-Received: <xmr:A1ZkYu-G11xV6RcYuZ0nfi5UcY8ccKZ3E1ZkgvXMSDyyXh7lFTZ-Pg7bdxrXFLkEIURtinm4Dmg8ybgdPHLs0OrF0xKXtUvd6Os5vdeWAeBLY3IJ9zZ27_1eqw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrtdeigddugedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepuffvvehfhffkffgfgggjtgfgsehtjeertddtfeejnecuhfhrohhmpefurghm
-    uhgvlhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenuc
-    ggtffrrghtthgvrhhnpefftdevkedvgeekueeutefgteffieelvedukeeuhfehledvhfei
-    tdehudfhudehhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:A1ZkYuqZNhZt2-WZy92ZKdG9DU4EcTHphUjGjBh9oE8QOp0IanXn8Q>
-    <xmx:A1ZkYvqIg4-OTCTD590GyqjfqHAk11kRi667Cct3QNZQ7KMCzBkNiQ>
-    <xmx:A1ZkYsSKcNvxUg-HfgZT71jSPQMnEj9RVUkvmoJ6WGRxwzCKlgLqOg>
-    <xmx:BFZkYi0JLqzuFTcYAgEcjf4CoR3PTEVewFILDOTzkCS4sQbTu4Ni6g>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 23 Apr 2022 15:39:46 -0400 (EDT)
-Subject: Re: [PATCH] bus: sunxi-rsb: Fix the return value of
- sunxi_rsb_device_create()
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-References: <ef2b9576350bba4c8e05e669e9535e9e2a415763.1650551719.git.christophe.jaillet@wanadoo.fr>
-From:   Samuel Holland <samuel@sholland.org>
-Message-ID: <ff0ae741-efc4-ba6f-d869-4cb8fb7149ad@sholland.org>
-Date:   Sat, 23 Apr 2022 14:39:45 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Sun, 24 Apr 2022 11:50:24 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64082369E3;
+        Sun, 24 Apr 2022 08:47:23 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id j15so4374946wrb.2;
+        Sun, 24 Apr 2022 08:47:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HL7fiyqBRJgE+CGCRvNmcBkaeCPL+1i1yCArETsMyBM=;
+        b=n2yWnonI7du9MFsjYTSAWxBiEk3Zx4vMDTNeK4HGkocQMwrAHedYIpioUmELh5BuMf
+         tw+hs3iMD8c2kPcRipWzi9NEy25L7t6RVmlW8YuLJyIMMIHSkH/sd9Fw+uZPqeJ9F7iS
+         8tRKAXD7zsFUplY5aKdHoePaghWshlXzK/j4Cxjz8GAcz1RW7d1BEsy/Z/qmC7MaXGfi
+         lF+7Z96VQzo8YOqGaSA26zAmR04pOO0Vf30YRWGGFmhPvVUZ+ddlT+PqfFFcCGqhSTAN
+         dsvDMmePDzEWLKv6Dsq3SzcrbUh6woAPxlIhsjYI3PGHNVPDsvPLeK5sOqx2zn2D5k8Q
+         sXSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HL7fiyqBRJgE+CGCRvNmcBkaeCPL+1i1yCArETsMyBM=;
+        b=EEplXDSsqZLiNdkv/XM+pYpqd+i6Gzp6TaKaXLa+iP5CTrVaYeEwrPU1bOAfqQRyUx
+         DF2VK/XGZeCOYxYgcOT/F/w8OKRz/pUqhD1zXsC8EOA6i7dWHQ/dIjiqSO1eOh2349jv
+         a19ytkqq0thA61icnr87sURm6ucqEFplXIP0hF/MtJbL0lo88Fn/0Zr0yK38j/Mw1Z77
+         7TI62MpPkN71QY3Z4Alp5LtOUhqTUlYh3PkEKQp7wxk0JPH8Fe0UpP/7mMhvfw8Z/3fM
+         E6OVDYpfqFxybWp2EPUxaQSWVUrwI5r+f1SUAfAePjfbm1aZhIgT+OpWxIn9fn6VT2lb
+         tirg==
+X-Gm-Message-State: AOAM533m4Oah7k2G+wd3fKxj1J32h3JdKTIUVMeduw64ksX5EQjxWvAg
+        q+ftVKzWkI5EUbhEo2AZ3Es=
+X-Google-Smtp-Source: ABdhPJztWvLsOXWw956Mfgn5IeL2UgX9y+VtogVSBEpQQHlKROzfOtMt4S3ZnFmm8Ws3U3WoOKUyhw==
+X-Received: by 2002:adf:db86:0:b0:205:bccf:8cbf with SMTP id u6-20020adfdb86000000b00205bccf8cbfmr10914407wri.346.1650815241868;
+        Sun, 24 Apr 2022 08:47:21 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id q16-20020a1ce910000000b0038eabd31749sm7937628wmc.32.2022.04.24.08.47.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Apr 2022 08:47:21 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: dvbdev: remove redundant initialization of variable ret
+Date:   Sun, 24 Apr 2022 16:47:20 +0100
+Message-Id: <20220424154720.1356873-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-In-Reply-To: <ef2b9576350bba4c8e05e669e9535e9e2a415763.1650551719.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 4/21/22 9:35 AM, Christophe JAILLET wrote:
-> This code is really spurious.
-> It always returns an ERR_PTR, even when err is known to be 0 and calls
-> put_device() after a successful device_register() call.
-> 
-> It is likely that the return statement in the normal path is missing.
-> Add 'return rdev;' to fix it.
+Variable ret is being ininitialized with a value that is never read.
+The ininitializtion is redundant and can be removed. Move the variable
+to the scope it is required.
 
-Thanks for the patch. This definitely looks to be the case.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/media/dvb-core/dvbdev.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> Fixes: d787dcdb9c8f ("bus: sunxi-rsb: Add driver for Allwinner Reduced Serial Bus")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+diff --git a/drivers/media/dvb-core/dvbdev.c b/drivers/media/dvb-core/dvbdev.c
+index 675d877a67b2..d5a142ef9876 100644
+--- a/drivers/media/dvb-core/dvbdev.c
++++ b/drivers/media/dvb-core/dvbdev.c
+@@ -243,7 +243,7 @@ static void dvb_media_device_free(struct dvb_device *dvbdev)
+ static int dvb_create_tsout_entity(struct dvb_device *dvbdev,
+ 				    const char *name, int npads)
+ {
+-	int i, ret = 0;
++	int i;
+ 
+ 	dvbdev->tsout_pads = kcalloc(npads, sizeof(*dvbdev->tsout_pads),
+ 				     GFP_KERNEL);
+@@ -260,6 +260,7 @@ static int dvb_create_tsout_entity(struct dvb_device *dvbdev,
+ 	for (i = 0; i < npads; i++) {
+ 		struct media_pad *pads = &dvbdev->tsout_pads[i];
+ 		struct media_entity *entity = &dvbdev->tsout_entity[i];
++		int ret;
+ 
+ 		entity->name = kasprintf(GFP_KERNEL, "%s #%d", name, i);
+ 		if (!entity->name)
+-- 
+2.35.1
 
-Reviewed-by: Samuel Holland <samuel@sholland.org>
-Tested-by: Samuel Holland <samuel@sholland.org>
