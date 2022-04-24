@@ -2,60 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A96C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Apr 2022 15:47:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5830FC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Apr 2022 16:13:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232271AbiDXPu1 (ORCPT
+        id S234224AbiDXQQg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 24 Apr 2022 11:50:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50328 "EHLO
+        Sun, 24 Apr 2022 12:16:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229657AbiDXPuY (ORCPT
+        with ESMTP id S234208AbiDXQQe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 24 Apr 2022 11:50:24 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64082369E3;
-        Sun, 24 Apr 2022 08:47:23 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id j15so4374946wrb.2;
-        Sun, 24 Apr 2022 08:47:23 -0700 (PDT)
+        Sun, 24 Apr 2022 12:16:34 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A87F14DEB5;
+        Sun, 24 Apr 2022 09:13:33 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id x3so7914320wmj.5;
+        Sun, 24 Apr 2022 09:13:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=HL7fiyqBRJgE+CGCRvNmcBkaeCPL+1i1yCArETsMyBM=;
-        b=n2yWnonI7du9MFsjYTSAWxBiEk3Zx4vMDTNeK4HGkocQMwrAHedYIpioUmELh5BuMf
-         tw+hs3iMD8c2kPcRipWzi9NEy25L7t6RVmlW8YuLJyIMMIHSkH/sd9Fw+uZPqeJ9F7iS
-         8tRKAXD7zsFUplY5aKdHoePaghWshlXzK/j4Cxjz8GAcz1RW7d1BEsy/Z/qmC7MaXGfi
-         lF+7Z96VQzo8YOqGaSA26zAmR04pOO0Vf30YRWGGFmhPvVUZ+ddlT+PqfFFcCGqhSTAN
-         dsvDMmePDzEWLKv6Dsq3SzcrbUh6woAPxlIhsjYI3PGHNVPDsvPLeK5sOqx2zn2D5k8Q
-         sXSQ==
+        bh=+ObLcZEUQxD8FwLhd5DJnfColWxUYkRGqghpm3bA5uM=;
+        b=ncvMStXd44nfdtehxW3QyeCA9dTGDoz0HQIC9gjUtqGA4Iom4noF68Ld2hN/+86Vaa
+         otCal3sGJ9Oy34hY0kEz5vx2n58DyRb6aqG4IONt+ieYQOBL7qtsxyfgN8CzBSEAeO2p
+         ttWSTb0tJ/RwnAqpbaHOkSgVe53l2H45vfdcuRt2P70KMs7XXxRN1yP1RubOSGFf7LNW
+         eSIoRelsI15zZQW8zzkUY0H7hqD7DpmpzyrDTHz18WOyskaHQNxjevmmS2zwul9Klyd3
+         an7rreHbFQlVduA9o1EGniC/qBWBBIghxgcxTh0UQw8I9qxnU/loW80CZpIy6NKO8B2T
+         v59A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=HL7fiyqBRJgE+CGCRvNmcBkaeCPL+1i1yCArETsMyBM=;
-        b=EEplXDSsqZLiNdkv/XM+pYpqd+i6Gzp6TaKaXLa+iP5CTrVaYeEwrPU1bOAfqQRyUx
-         DF2VK/XGZeCOYxYgcOT/F/w8OKRz/pUqhD1zXsC8EOA6i7dWHQ/dIjiqSO1eOh2349jv
-         a19ytkqq0thA61icnr87sURm6ucqEFplXIP0hF/MtJbL0lo88Fn/0Zr0yK38j/Mw1Z77
-         7TI62MpPkN71QY3Z4Alp5LtOUhqTUlYh3PkEKQp7wxk0JPH8Fe0UpP/7mMhvfw8Z/3fM
-         E6OVDYpfqFxybWp2EPUxaQSWVUrwI5r+f1SUAfAePjfbm1aZhIgT+OpWxIn9fn6VT2lb
-         tirg==
-X-Gm-Message-State: AOAM533m4Oah7k2G+wd3fKxj1J32h3JdKTIUVMeduw64ksX5EQjxWvAg
-        q+ftVKzWkI5EUbhEo2AZ3Es=
-X-Google-Smtp-Source: ABdhPJztWvLsOXWw956Mfgn5IeL2UgX9y+VtogVSBEpQQHlKROzfOtMt4S3ZnFmm8Ws3U3WoOKUyhw==
-X-Received: by 2002:adf:db86:0:b0:205:bccf:8cbf with SMTP id u6-20020adfdb86000000b00205bccf8cbfmr10914407wri.346.1650815241868;
-        Sun, 24 Apr 2022 08:47:21 -0700 (PDT)
+        bh=+ObLcZEUQxD8FwLhd5DJnfColWxUYkRGqghpm3bA5uM=;
+        b=DTkcDBp/gw9jqQxnki3pMCB6XstgBWEFm6wYCTw0SohJNO0L4QEBbKamwsiWmFTirS
+         aT6WEHgcf13EpcKdzD2i9eKQU9XWgMUCf015O3CBJkaIrmMzVCLq7nVIxH9IzV6voAMV
+         HPvPnOm0JfBWcagChYtso8ftbdpvCtNjXJ0zEoMXAez55V53ZBt/36SVJHy7E1+bFUcK
+         c3RCPvev+NGk9R8q2Q+ISCrOGmuUAhaxi0BivSLViO1oPF2ufq2O/DPdfP1oFRYkvhuW
+         H6qqYJvW3jsLlVfbZndi5CeEtOiP3cckaDbaYkeG80jXaZxA07TeUsJzlkVTG19vGaoq
+         C+9w==
+X-Gm-Message-State: AOAM530W7enj8QVxEGuwQBrgGshL++zsw2eXnnbjeY7kk1+GPxnyeVx1
+        jGe02Qr/wZF8PuiKqfBTzsg=
+X-Google-Smtp-Source: ABdhPJyh3p31G4sIeVZXTGFdvpzzk7/VTR2UidhWmiitY7AivHww4XQg6U7xwHJh/6v4nJfIiLzehg==
+X-Received: by 2002:a7b:c94a:0:b0:38e:c252:4a58 with SMTP id i10-20020a7bc94a000000b0038ec2524a58mr22601807wml.177.1650816812065;
+        Sun, 24 Apr 2022 09:13:32 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id q16-20020a1ce910000000b0038eabd31749sm7937628wmc.32.2022.04.24.08.47.20
+        by smtp.gmail.com with ESMTPSA id a7-20020adffb87000000b00207982c7f4dsm6840310wrr.67.2022.04.24.09.13.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Apr 2022 08:47:21 -0700 (PDT)
+        Sun, 24 Apr 2022 09:13:31 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
+To:     Dave Kleikamp <shaggy@kernel.org>,
+        jfs-discussion@lists.sourceforge.net
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: dvbdev: remove redundant initialization of variable ret
-Date:   Sun, 24 Apr 2022 16:47:20 +0100
-Message-Id: <20220424154720.1356873-1-colin.i.king@gmail.com>
+Subject: [PATCH] jfs: remove unused pointer tblk
+Date:   Sun, 24 Apr 2022 17:13:30 +0100
+Message-Id: <20220424161330.1360068-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,36 +64,28 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable ret is being ininitialized with a value that is never read.
-The ininitializtion is redundant and can be removed. Move the variable
-to the scope it is required.
+The pointer tlbk is not used, it is redundant and can be removed.
+Cleans up cppcheck warning:
+
+linux/fs/jfs/jfs_xtree.c:2551:17: style: Unused variable: tblk [unusedVariable]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/media/dvb-core/dvbdev.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/jfs/jfs_xtree.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/media/dvb-core/dvbdev.c b/drivers/media/dvb-core/dvbdev.c
-index 675d877a67b2..d5a142ef9876 100644
---- a/drivers/media/dvb-core/dvbdev.c
-+++ b/drivers/media/dvb-core/dvbdev.c
-@@ -243,7 +243,7 @@ static void dvb_media_device_free(struct dvb_device *dvbdev)
- static int dvb_create_tsout_entity(struct dvb_device *dvbdev,
- 				    const char *name, int npads)
- {
--	int i, ret = 0;
-+	int i;
- 
- 	dvbdev->tsout_pads = kcalloc(npads, sizeof(*dvbdev->tsout_pads),
- 				     GFP_KERNEL);
-@@ -260,6 +260,7 @@ static int dvb_create_tsout_entity(struct dvb_device *dvbdev,
- 	for (i = 0; i < npads; i++) {
- 		struct media_pad *pads = &dvbdev->tsout_pads[i];
- 		struct media_entity *entity = &dvbdev->tsout_entity[i];
-+		int ret;
- 
- 		entity->name = kasprintf(GFP_KERNEL, "%s #%d", name, i);
- 		if (!entity->name)
+diff --git a/fs/jfs/jfs_xtree.c b/fs/jfs/jfs_xtree.c
+index 3148e9b35f3b..d29979d0a6aa 100644
+--- a/fs/jfs/jfs_xtree.c
++++ b/fs/jfs/jfs_xtree.c
+@@ -2548,7 +2548,6 @@ xtRelocate(tid_t tid, struct inode * ip, xad_t * oxad,	/* old XAD */
+ 	   int xtype)
+ {				/* extent type: XTPAGE or DATAEXT */
+ 	int rc = 0;
+-	struct tblock *tblk;
+ 	struct tlock *tlck;
+ 	struct xtlock *xtlck;
+ 	struct metapage *mp, *pmp, *lmp, *rmp;	/* meta-page buffer */
 -- 
 2.35.1
 
