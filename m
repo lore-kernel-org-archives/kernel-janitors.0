@@ -2,95 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4AC7C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Apr 2022 17:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8400C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Apr 2022 18:12:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235058AbiDXReh (ORCPT
+        id S237023AbiDXSPD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 24 Apr 2022 13:34:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46652 "EHLO
+        Sun, 24 Apr 2022 14:15:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229539AbiDXReg (ORCPT
+        with ESMTP id S232215AbiDXSPC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 24 Apr 2022 13:34:36 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A223662A1B;
-        Sun, 24 Apr 2022 10:31:35 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 441C761203;
-        Sun, 24 Apr 2022 17:31:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DEA5C385A7;
-        Sun, 24 Apr 2022 17:31:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650821494;
-        bh=jjxwm4sbDuaBN4rFT9BE+jraiy9tujTIunLpi1T1TEI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=bgGcfKBQJSA9ZTmvok+gWbgQBWcu8FBdj6HJ7gStN+DRw7spivYeG6PBklcWTaiSF
-         XJcIqflG8yO9nabBJlZfoT23DGTVezq74ofTTQbWK/7oq24cyZ9X82IftHDg76WQuf
-         9o2bCyLtV6Nti0ikA3P2/RlzeCMGfF/Hbl9fGDCtflaL3hGm1eGgEHUCPu/E/Ak2ml
-         irUOx9E3zWAPLed9T3l2cnvouu0NT6glhQJxLcmWfC9EjPm/GTJlhKHG4T1Nz5YUxH
-         f7bTrHsaXYymy1xORDRUE/7fsEmgd5D3Pc674vZHBqrIIWQctQf6S403EDync8Fwgu
-         BsEu1G69WinVg==
-Date:   Sun, 24 Apr 2022 18:39:40 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev
-Subject: Re: [PATCH] staging: iio: ad2s1210: remove redundant assignment to
- variable negative
-Message-ID: <20220424183940.3b209ee5@jic23-huawei>
-In-Reply-To: <20220418134603.81336-1-colin.i.king@gmail.com>
-References: <20220418134603.81336-1-colin.i.king@gmail.com>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        Sun, 24 Apr 2022 14:15:02 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4150668F91;
+        Sun, 24 Apr 2022 11:11:59 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id d22so4131334wrc.13;
+        Sun, 24 Apr 2022 11:11:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Ig9YP3YTXVoTvXh+iWd0BxQVnOKiliBqH/4WwV9hMaQ=;
+        b=GdRNvTfO2/Nn/vEPEoSQ3vXDGYmzsxeFwRwK+82Ps4kCWIuPhbRvuIzqBXYZdbCcCt
+         a9cRcxwrEJBg1LmZjA9Y4FjSu/pLzhQnZsbTgWewj5gV/MPxHcewY51KLT7fSE3Yrd6t
+         h1YhFgczYh0N3NTUI0UwkHVJXnYwuR2OYYF/iF4Yln3jNG9XvkZwtNs5vSeIwvo61c/p
+         BfqcStZv4BcmYX08nUcEIIa+LPzHpHWnEkXV8NVt11/Ch9wN476quLX3eFxie0M0T637
+         Sk5Ef+eRIZSQF2eDvvf1UKaKn9eOC0lSa3BfYA2yGVGJx2vcwOC58IEdfBD+g8bkTKab
+         Mg8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Ig9YP3YTXVoTvXh+iWd0BxQVnOKiliBqH/4WwV9hMaQ=;
+        b=pqekaEozeizWPrLhAy+5eyX28Fu3G2CQb/HHaodwcNR1S34VxrAbdrT/LifFtgyLeG
+         uoje7XS6GaEqHmYHsTbAqpvJ/ycY+7iVJGBwUsBy9d731K5ivp8HgrHDlUYf7WGvQ4EY
+         +QPeQ4/+Bj7mX5nembZyk/wnNVKDbMSN9IGLSaKNCcPtgokFuHF44El5ziPT/0m4nrK8
+         IbzmwrQzTspCetjl/Mee3K4kjude5EP/9yV+q4pKwCawOXFt/jvfyKbtAcgX/MJVr7Tx
+         qGtbKai83WX1lKsG0kMDkf8ZQYQkFkQiEf3VCfZytZISWm9UadjQ0p+9/kYSWOkf9TJ3
+         w8Jw==
+X-Gm-Message-State: AOAM533KQR6d2cSRVIc60GEmYEfHhAJh0qYb8xaEctXlD63cbLDkoop/
+        0VlojtDOkxgXOK8T6j5V06M=
+X-Google-Smtp-Source: ABdhPJzl8AxrYA9hU6qSgpunjLklruTGLN5eQDyxctexbG3YbYjoQpezFTE60y7Bma4U6LZiH7JRwQ==
+X-Received: by 2002:a05:6000:1547:b0:20a:79dd:28bf with SMTP id 7-20020a056000154700b0020a79dd28bfmr11181514wry.505.1650823917456;
+        Sun, 24 Apr 2022 11:11:57 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id p7-20020a5d4e07000000b002079a418430sm6804254wrt.85.2022.04.24.11.11.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Apr 2022 11:11:57 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Sumit Garg <sumit.garg@linaro.org>, Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        op-tee@lists.trustedfirmware.org, linux-crypto@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] hwrng: optee-rng: remove redundant initialization to variable rng_size
+Date:   Sun, 24 Apr 2022 19:11:56 +0100
+Message-Id: <20220424181156.1364446-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 18 Apr 2022 14:46:03 +0100
-Colin Ian King <colin.i.king@gmail.com> wrote:
+Variable rng_size is being initialized with a value that is never read,
+the variable is being re-assigned later on. The initialization is
+redundant and can be removed.
 
-> Variable negative is being assigned a value that is never read, it is
-> being re-assigned later. The assignment is redundant and can be removed.
-> 
-> Cleans up clang scan build warning:
-> drivers/staging/iio/resolver/ad2s1210.c:502:3: warning: Value stored
-> to 'negative' is never read [deadcode.DeadStores]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Cleans up cppcheck warning:
+Variable 'rng_size' is assigned a value that is never used.
 
-Seems that someone decided to match again against the endian converted
-version so indeed this is pointless.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/char/hw_random/optee-rng.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to the togreg branch of iio.git and pushed out as testing for 0-day
-to see if it can find anything we missed.
-
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/staging/iio/resolver/ad2s1210.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/staging/iio/resolver/ad2s1210.c b/drivers/staging/iio/resolver/ad2s1210.c
-> index 74adb82f37c3..c0b2716d0511 100644
-> --- a/drivers/staging/iio/resolver/ad2s1210.c
-> +++ b/drivers/staging/iio/resolver/ad2s1210.c
-> @@ -499,7 +499,6 @@ static int ad2s1210_read_raw(struct iio_dev *indio_dev,
->  		ret = IIO_VAL_INT;
->  		break;
->  	case IIO_ANGL_VEL:
-> -		negative = st->rx[0] & 0x80;
->  		vel = be16_to_cpup((__be16 *)st->rx);
->  		vel >>= 16 - st->resolution;
->  		if (vel & 0x8000) {
+diff --git a/drivers/char/hw_random/optee-rng.c b/drivers/char/hw_random/optee-rng.c
+index a948c0727b2b..96b5d546d136 100644
+--- a/drivers/char/hw_random/optee-rng.c
++++ b/drivers/char/hw_random/optee-rng.c
+@@ -115,7 +115,7 @@ static size_t get_optee_rng_data(struct optee_rng_private *pvt_data,
+ static int optee_rng_read(struct hwrng *rng, void *buf, size_t max, bool wait)
+ {
+ 	struct optee_rng_private *pvt_data = to_optee_rng_private(rng);
+-	size_t read = 0, rng_size = 0;
++	size_t read = 0, rng_size;
+ 	int timeout = 1;
+ 	u8 *data = buf;
+ 
+-- 
+2.35.1
 
