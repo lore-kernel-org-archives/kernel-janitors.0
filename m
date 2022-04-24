@@ -2,60 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 075B4C433FE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Apr 2022 18:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84616C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Apr 2022 18:35:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237040AbiDXSZc (ORCPT
+        id S237122AbiDXSiW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 24 Apr 2022 14:25:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58962 "EHLO
+        Sun, 24 Apr 2022 14:38:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229929AbiDXSZb (ORCPT
+        with ESMTP id S229929AbiDXSiU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 24 Apr 2022 14:25:31 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD61935DFC;
-        Sun, 24 Apr 2022 11:22:29 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id e2so11661463wrh.7;
-        Sun, 24 Apr 2022 11:22:29 -0700 (PDT)
+        Sun, 24 Apr 2022 14:38:20 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E8FFDFA5;
+        Sun, 24 Apr 2022 11:35:15 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id d5so2748723wrb.6;
+        Sun, 24 Apr 2022 11:35:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=wT0yCkCPfUh9wJVGH/cyL5YlmE2FY+B2AtzYeQRFBe8=;
-        b=PBRNOBspxhZH6xkWDOVGcD03fAg9QSzA1SVbhHueRaV9B0/ta7fzOXc3vRDfgowf/u
-         wL4jkSX3CF8Mp83GhbUT3zNIdfM9Cw2dwB0LvJrPjygAVM23pvT1L0yd/LGK/QpJEWL5
-         lFTqpE7uJr0y/j5ucF9FnnGdA6fMjRlOu/l9bdvSsAAwh7sXs7u8JNjNUpI7ttS8JM/Y
-         w4O7nGAmu9W3SCKRoZtvH6n774nvi/DnmUjJJ8XGCCNewrRPwby/XIf6UcjyQZ2IICYa
-         9VA2jFJtwZ9piMTeRAw4FuUCBFusghFperqQ/9f+RJ2REhpIygGbvt3QMojnLI2JIjqV
-         /FtA==
+        bh=349XFvM6t5JIYAzx/9jOMxcyDaGjEC8LJK6aTpUuIMg=;
+        b=RximP2STPGTwfaqjRxZ9EaaaNjMB9VPGv+TMWWc1/rmkTluj14SIJeUnLigW7BRhQr
+         rQ14jBCh4dcxCWQ6LqpUPREv+cZcMEaAXPK/hUnSQsZc80brfS7dEmf3YifOui/TYODB
+         g3Hp0CvlGf8WOeRe74ibnhSu3ltQ/0c3Wg0/hbHCpRX/4rDdnef3b585uAUWHRatJGN1
+         aGnQaOJb6XxO+nhaKYETvz3XXDtWmzu/vLfeXFI2IzhiPKLEYmiF88e+UQAKqpfNQzjT
+         iFWKUcRFQDyjOLxJUo8HOz1XDUQxohHfqWj9KxVDr1CXx+JkFKtIXIZehGa9r/w3DtBk
+         N4NQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=wT0yCkCPfUh9wJVGH/cyL5YlmE2FY+B2AtzYeQRFBe8=;
-        b=TPuiraGCstj9pnrAmNcej8oXrp2GnP6Oqy8CUDC1ey1iDkVtnp49HaMNATSXvnFG5A
-         74lb0xHsvWvBm5xKx+DPhmkk17EF+ShzbRvr9+92OJJ07HPLU8w81038mfE1tligAk5J
-         ow83NKA6Jj9SfQnZpxDtL5E3JDiwZEBIrA1dvviaVm7vuRuiethxmp/G+TEMPchoXpnA
-         eIXWeicXgAg6P/4NS834i/9qgIhp21RA07oKvXuAPFMyypmBf9cFyClYT9PMMVAUICt/
-         MksWAzCP5CUQp2rndj+caEM7SD+FQnd694MvmFJSA23FiGkh0zHVqeoerWANvDuJm+gZ
-         UgOA==
-X-Gm-Message-State: AOAM532oCWJXjSXQpEbsQYjjEdXCDiQwc5ILfd+AK4FuKnqDpFf+bage
-        7lkgkrlxun0D2rrxbF2Sf3E=
-X-Google-Smtp-Source: ABdhPJz6/5wQ5Ppxi30Gf0C/oy0GxYq51PUK+QDtwAXOR9uXYefeoH5f8FB6BX+AU3iUm42KxnpEzw==
-X-Received: by 2002:a5d:64a4:0:b0:20a:d322:9765 with SMTP id m4-20020a5d64a4000000b0020ad3229765mr5931891wrp.536.1650824548232;
-        Sun, 24 Apr 2022 11:22:28 -0700 (PDT)
+        bh=349XFvM6t5JIYAzx/9jOMxcyDaGjEC8LJK6aTpUuIMg=;
+        b=WZqpldrelKiqdcKkaIx3AhDjbBGxCkQ9bD6ZIt2PibrnYaAZ3GPBoI7N4l9EnT1zI/
+         l9JWC8lUHsFIyHOi4x1Coq4Ya9fbeq9fJrFZOJPqLsIHTkb+tLDex1yifW6E/jUbyBuU
+         g5eLEVBUphFaKx8LCiBZ9BqkDnyyZPgtKyJQjgO66SmPwOKt8JlTJLFIaaHfJr2ey38Y
+         KeYWo1ekPGMd1Gc0M7HxHLG0GBQDcJRfLZXx4d1G0685dJFtSq0HPnO7xrYzL+wZTWRW
+         2Yc80Vpy7VzmqyOe3uXwdxVbxSiwq2OJA2tLUUO65SFYt/cZY+ej07vPJeUTKbT5by2q
+         po7Q==
+X-Gm-Message-State: AOAM5334u/awFpKQTsxbj+c3pYY1eaFHsPD6LmBrzzrYoD5KbgamtZkb
+        9mghT1wL9Pfim0nHsqJGhXItrgR6mNh2Ig==
+X-Google-Smtp-Source: ABdhPJxhKw8Ct/ffWL61Xq54wzGLON3haioc9TF0zqvEjFjtlU0qST5fxv3vVDHYSfiWPgNc6TwUCA==
+X-Received: by 2002:a05:6000:1789:b0:20a:9f94:1620 with SMTP id e9-20020a056000178900b0020a9f941620mr11858147wrg.640.1650825314073;
+        Sun, 24 Apr 2022 11:35:14 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id az30-20020a05600c601e00b0038ebd950caesm6854328wmb.30.2022.04.24.11.22.27
+        by smtp.gmail.com with ESMTPSA id d2-20020a056000186200b0020a7be3f1d2sm8442792wri.53.2022.04.24.11.35.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Apr 2022 11:22:27 -0700 (PDT)
+        Sun, 24 Apr 2022 11:35:13 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+To:     Emma Anholt <emma@anholt.net>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Melissa Wen <mwen@igalia.com>,
+        "Juan A . Suarez Romero" <jasuarez@igalia.com>,
+        dri-devel@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: mux: remove redundant initialization of variable width
-Date:   Sun, 24 Apr 2022 19:22:27 +0100
-Message-Id: <20220424182227.1364966-1-colin.i.king@gmail.com>
+Subject: [PATCH] drm/v3d: Fix null pointer dereference of pointer perfmon
+Date:   Sun, 24 Apr 2022 19:35:12 +0100
+Message-Id: <20220424183512.1365683-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,36 +66,34 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable width is being ininitialized with a value that is never read.
-The ininitializtion is redundant and can be removed. Move the variable
-to the scope it is required.
+In the unlikely event that pointer perfmon is null the WARN_ON return path
+occurs after the pointer has already been deferenced. Fix this by only
+dereferencing perfmon after it has been null checked.
 
-Cleans up cppcheck warning:
-Variable 'width' is assigned a value that is never used.
-
+Fixes: 26a4dc29b74a ("drm/v3d: Expose performance counters to userspace")
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/clk/clk-mux.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/v3d/v3d_perfmon.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index 214045f6e989..fa817c317c2a 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -157,11 +157,11 @@ struct clk_hw *__clk_hw_register_mux(struct device *dev, struct device_node *np,
- 	struct clk_mux *mux;
- 	struct clk_hw *hw;
- 	struct clk_init_data init = {};
--	u8 width = 0;
- 	int ret = -EINVAL;
+diff --git a/drivers/gpu/drm/v3d/v3d_perfmon.c b/drivers/gpu/drm/v3d/v3d_perfmon.c
+index 0288ef063513..f6a88abccc7d 100644
+--- a/drivers/gpu/drm/v3d/v3d_perfmon.c
++++ b/drivers/gpu/drm/v3d/v3d_perfmon.c
+@@ -25,11 +25,12 @@ void v3d_perfmon_start(struct v3d_dev *v3d, struct v3d_perfmon *perfmon)
+ {
+ 	unsigned int i;
+ 	u32 mask;
+-	u8 ncounters = perfmon->ncounters;
++	u8 ncounters;
  
- 	if (clk_mux_flags & CLK_MUX_HIWORD_MASK) {
--		width = fls(mask) - ffs(mask) + 1;
-+		u8 width = fls(mask) - ffs(mask) + 1;
-+
- 		if (width + shift > 16) {
- 			pr_err("mux value exceeds LOWORD field\n");
- 			return ERR_PTR(-EINVAL);
+ 	if (WARN_ON_ONCE(!perfmon || v3d->active_perfmon))
+ 		return;
+ 
++	ncounters = perfmon->ncounters;
+ 	mask = GENMASK(ncounters - 1, 0);
+ 
+ 	for (i = 0; i < ncounters; i++) {
 -- 
 2.35.1
 
