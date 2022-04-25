@@ -2,82 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7BC6C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Apr 2022 04:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5986EC433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Apr 2022 05:52:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240822AbiDYEFE (ORCPT
+        id S238043AbiDYFzr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 25 Apr 2022 00:05:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50626 "EHLO
+        Mon, 25 Apr 2022 01:55:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238046AbiDYEFD (ORCPT
+        with ESMTP id S238037AbiDYFzn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 25 Apr 2022 00:05:03 -0400
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B5B65FB6;
-        Sun, 24 Apr 2022 21:02:00 -0700 (PDT)
-Received: by mail-pg1-x533.google.com with SMTP id q12so12338687pgj.13;
-        Sun, 24 Apr 2022 21:02:00 -0700 (PDT)
+        Mon, 25 Apr 2022 01:55:43 -0400
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2CEC3632B
+        for <kernel-janitors@vger.kernel.org>; Sun, 24 Apr 2022 22:52:34 -0700 (PDT)
+Received: by mail-pl1-x62c.google.com with SMTP id n8so24711693plh.1
+        for <kernel-janitors@vger.kernel.org>; Sun, 24 Apr 2022 22:52:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=XpqXUKQnBMu16RDI3lug4RWsduF9+QynmSZQ3BCqjAg=;
-        b=dRi+fDayDSsY4PNuZojPnc78erUng+iTE61/if5JtS9deSN5Kue2wbhrHWwIRwJsw0
-         uRKEZZq2d0oQzKHVnCMa+BOIAhpyczU4b1XENcA2or9LBLCAtYiCZYYq11m9+wW1Xih0
-         verUXesH6xwXZ5u2pAD6egcZgQusy+7jzrSrE7OoiMcDDzSwFe8aMcoRWHp4fjNmTRmA
-         IKNo5CcXN7Ns1IIHoBFMPFPtkda9PFAsAnyKWLvDR6Sf2qaRswCR4XdyNaJFEehVfSPE
-         TKsXlCXUT4IcnDYXQGMWIITz1O+Mz2yFdi7ymEn16nHtPjZf9g17a2rf4RX2LI777YXb
-         JXGA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I8PWt7OjbJmxLANi6mNzNMu0WXmhqmQPufvVnsJYKmw=;
+        b=RN+YWN/6ZEosVdavFx6I+1osrVBC6v3XRA/fIXRE0bY2SOhSo+1/4Wqfie+Hs44EOi
+         hTNboelvwlwPk379FYh10R/YISw23eV3zPOfAuuAZDdKVh05n6aEiv+Y1uf81gHDNEj4
+         OvdOUiAnM4PnFQHQDidUvwNGOAJ8zYHXn2cZlK0qsqgBOlMDOdzYEHdNoDr4UDed78rq
+         QofJYCCDnCmbBK5vX+WWyhb8qoFmhqquCmPYp89NgTY35yQJ9DCDaFB0IxH/vstbfjmf
+         QmytdENTfQFln9XSaOKk0VH55nJgtEA7SKH4I3CuLblBxs1MiT0N26oHoebuSZcKGGCI
+         ACNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=XpqXUKQnBMu16RDI3lug4RWsduF9+QynmSZQ3BCqjAg=;
-        b=jSLjktOInhWA8BIUUV+5c6yJTdXqk3ijeaBNqjcpYElMbTKYOQSDgHlVoEYoR+HA9J
-         VpFcKgpoJ7RuBNvmU83/aowj0BvlxTIsrpmDexWCDSZeBhMq+m4LHqu+9dZeeEfihcSm
-         B0rtj2l1U5by1ZT9oKsnQBH1XUWBlpilvMGxdtBPjpYEq7kFJUz11KfuxXbuNkGoc7mq
-         TSgJV0xAP0yp1kSplJyvoLkeaqzu8lPdAfiKov4lghn+gMIQUFcbvCcrNBt5OgFVhDMT
-         jcEDaRKIqBc1wrXWhDDX8AIVNjadx+UOrz1HqNf54wck8vGynfieDedeuVit+qicKmWj
-         iy2w==
-X-Gm-Message-State: AOAM531Aw72xHpMK5C/s3A9UwkgDXq5jshGstG+9pNyB7+hkuD0dEua1
-        n6tDrxKkEC1szHHSZlgk574=
-X-Google-Smtp-Source: ABdhPJx3mcsUbCjgVIlR76wYqJ8xMmU4F0udievDmHkC2+5Ct4NkT4XlJe7M5Vsc+lyReFF2m1CQvA==
-X-Received: by 2002:a63:fc18:0:b0:39c:f431:8310 with SMTP id j24-20020a63fc18000000b0039cf4318310mr13368460pgi.433.1650859319693;
-        Sun, 24 Apr 2022 21:01:59 -0700 (PDT)
-Received: from google.com ([2620:15c:202:201:282a:d50e:e0fc:c145])
-        by smtp.gmail.com with ESMTPSA id g14-20020a63200e000000b0039d9816238fsm8004385pgg.81.2022.04.24.21.01.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Apr 2022 21:01:58 -0700 (PDT)
-Date:   Sun, 24 Apr 2022 21:01:56 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] Input: aiptek - remove redundant assignment to variable
- ret
-Message-ID: <YmYdNLCRKZtuZG6D@google.com>
-References: <20220418142457.84708-1-colin.i.king@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I8PWt7OjbJmxLANi6mNzNMu0WXmhqmQPufvVnsJYKmw=;
+        b=kllY46GqUmS48SSAnzT0x4vDfJIIMxF/lvq14PfDG9hhoXrvzolC5Oz9OYIF+8K+NG
+         oCrbB7aSVlajKO59PMJisLL6vtUNiUUOPXWof6MzS2UF9sg7BwV/FavbSjLSelbqhgpl
+         vrHTD6L8rUxwMZbBedkpd+2QIufa/cDr3rdITTok87vwxEFEF+Mmhndb37u9n/eA9tlR
+         S5CBWfRDuF8NNJZKEDG40y538ANVUFMpmcfwoqxDuIo9opCI2Wx8J0BLhSkRDj7+5oDp
+         PqCYvx+bLrf65gD43bGgU5nCm7tfLO6mEuwSajANgZiKiHdpjiJ4VpyoRzOG8kAqjcm9
+         iDDw==
+X-Gm-Message-State: AOAM5323jIaGKhCeazC7cZwu41wRKkxqiNBM6uVDGDvegpkKp8aYMiGe
+        slUtoGg6ygPy0E/6XZwmrmUAm5Nlpu6+FV7AvLQxNSdA2rj6mw==
+X-Google-Smtp-Source: ABdhPJwHuUIcwQrmSB5z5lvcykuJgyvBocbIF4etjzQWiYbhgjI8gV8ciq759eDd9ud0j1ZfooBpy+vVS4zuhMC83WY=
+X-Received: by 2002:a17:902:9f96:b0:15d:1ee7:4231 with SMTP id
+ g22-20020a1709029f9600b0015d1ee74231mr1335076plq.131.1650865953665; Sun, 24
+ Apr 2022 22:52:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220418142457.84708-1-colin.i.king@gmail.com>
+References: <20220424181156.1364446-1-colin.i.king@gmail.com>
+In-Reply-To: <20220424181156.1364446-1-colin.i.king@gmail.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Mon, 25 Apr 2022 11:22:19 +0530
+Message-ID: <CAFA6WYMeOv160_mnEHVN9GgN1tqN9Zt0GqnGQRgP4m8V-aztTQ@mail.gmail.com>
+Subject: Re: [PATCH] hwrng: optee-rng: remove redundant initialization to
+ variable rng_size
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        op-tee@lists.trustedfirmware.org, linux-crypto@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Apr 18, 2022 at 03:24:57PM +0100, Colin Ian King wrote:
-> Variable ret is being assigned a value that is never read, it is
-> being re-assigned again in either path of the if statement. The
-> assignment is redundant and can be removed.
-> 
-> Cleans up clang scan build warning:
-> Although the value stored to 'ret' is used in the enclosing expression,
-> the value is never actually read from 'ret' [deadcode.DeadStores]
-> 
+On Sun, 24 Apr 2022 at 23:41, Colin Ian King <colin.i.king@gmail.com> wrote:
+>
+> Variable rng_size is being initialized with a value that is never read,
+> the variable is being re-assigned later on. The initialization is
+> redundant and can be removed.
+>
+> Cleans up cppcheck warning:
+> Variable 'rng_size' is assigned a value that is never used.
+>
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/char/hw_random/optee-rng.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
 
-Applied, thank you.
+Reviewed-by: Sumit Garg <sumit.garg@linaro.org>
 
--- 
-Dmitry
+-Sumit
+
+> diff --git a/drivers/char/hw_random/optee-rng.c b/drivers/char/hw_random/optee-rng.c
+> index a948c0727b2b..96b5d546d136 100644
+> --- a/drivers/char/hw_random/optee-rng.c
+> +++ b/drivers/char/hw_random/optee-rng.c
+> @@ -115,7 +115,7 @@ static size_t get_optee_rng_data(struct optee_rng_private *pvt_data,
+>  static int optee_rng_read(struct hwrng *rng, void *buf, size_t max, bool wait)
+>  {
+>         struct optee_rng_private *pvt_data = to_optee_rng_private(rng);
+> -       size_t read = 0, rng_size = 0;
+> +       size_t read = 0, rng_size;
+>         int timeout = 1;
+>         u8 *data = buf;
+>
+> --
+> 2.35.1
+>
