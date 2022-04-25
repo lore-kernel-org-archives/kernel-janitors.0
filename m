@@ -2,67 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18AA7C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Apr 2022 07:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 235EBC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Apr 2022 10:30:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234897AbiDYHNb (ORCPT
+        id S241456AbiDYKdb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 25 Apr 2022 03:13:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60982 "EHLO
+        Mon, 25 Apr 2022 06:33:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234757AbiDYHN3 (ORCPT
+        with ESMTP id S238159AbiDYKdQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 25 Apr 2022 03:13:29 -0400
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5F77220C5;
-        Mon, 25 Apr 2022 00:10:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:
-        In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=B9WB+hwhosJvYbo65GHTbgrVCXpNO9OFYMi8Pd4ssjM=; b=oGM378hpwyyWgNK+VOIA1H0x7u
-        WtffthAd0NQPAVqMFccjAax977qkbil5cGtMEF50TXta1rBKXer3eWMh0HcGudRb8WPBY8Rj4POso
-        rPt4H6mv+Q84MHv3IW6y74Rn8eH2LVIfIoarXYimaKR8KvKfFiNOJmI4TZ5/aPwU2CXksdr8uCmQC
-        j3X19KKGSDUMPVNHXowbu2a6WJx+OlNWWlz8wQDfyszGRhXvz85GIFVF5Giz5ZldYccQ2pV0AXk5H
-        XExvNE3b2YOh3F1vzIP/3FLUAmj8NSavUmbnERzRhFPGVVDEn9eNVjCJAZpQNLCJmNanv02ZYb9BH
-        nu+Gdy1w==;
-Received: from ip171.dynamic.igalia.com ([192.168.10.171])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-        id 1nisrR-000CQI-LG; Mon, 25 Apr 2022 09:10:17 +0200
-Message-ID: <890f6416ab37e40c929d95a8b4dcc8feb3dfb4d1.camel@igalia.com>
-Subject: Re: [PATCH] drm/v3d: Fix null pointer dereference of pointer perfmon
-From:   "Juan A." =?ISO-8859-1?Q?Su=E1rez?= <jasuarez@igalia.com>
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Emma Anholt <emma@anholt.net>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Melissa Wen <mwen@igalia.com>,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 25 Apr 2022 09:10:17 +0200
-In-Reply-To: <20220424183512.1365683-1-colin.i.king@gmail.com>
-References: <20220424183512.1365683-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
+        Mon, 25 Apr 2022 06:33:16 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F66222A;
+        Mon, 25 Apr 2022 03:30:12 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2D49E60EC4;
+        Mon, 25 Apr 2022 10:30:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 82C39C385A4;
+        Mon, 25 Apr 2022 10:30:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650882611;
+        bh=9IBThzZfRfFGRygmt26kLGYK/fRYWzh59kZXPTNxgKk=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=fo/9rGhOEWYIvNijrtoxZhCbcgrD6wPis+Bpa2oLK2Hi+i6wyuKRC3PZP3lesHpKE
+         SPyAopHgTk4r+RSaHcSAWRq911G43ySk+IVOXHVDgVSkqAcXN2teaq20KAatbZEa8J
+         gq3ytHUJiwN6UH/TQA9sDG/JWAjUlCgK5WaqRDueBJzON0h/QK30iQSyopKhjt1yQC
+         heawSSFqEEy/1KmC7vqTCs4yqttk2EzsF9B2qO6S8CL2w/ox0aZKu1y+/DRPst18o5
+         SRZZiZ7EhaYALt59cpAHdaBsKfrqHCrxKYw8ccraXiZuT5fK/3sZvbm52l9ELOSteP
+         MMm4XyiVastLg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 66946E85D90;
+        Mon, 25 Apr 2022 10:30:11 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: lan966x: fix a couple off by one bugs
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <165088261141.604.6325494108887689082.git-patchwork-notify@kernel.org>
+Date:   Mon, 25 Apr 2022 10:30:11 +0000
+References: <YmF8RTClhMXPVPgh@kili>
+In-Reply-To: <YmF8RTClhMXPVPgh@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     horatiu.vultur@microchip.com, UNGLinuxDriver@microchip.com,
+        davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 2022-04-24 at 19:35 +0100, Colin Ian King wrote:
-> In the unlikely event that pointer perfmon is null the WARN_ON return
-> path
-> occurs after the pointer has already been deferenced. Fix this by
-> only
-> dereferencing perfmon after it has been null checked.
+Hello:
+
+This patch was applied to netdev/net.git (master)
+by David S. Miller <davem@davemloft.net>:
+
+On Thu, 21 Apr 2022 18:46:13 +0300 you wrote:
+> The lan966x->ports[] array has lan966x->num_phys_ports elements.  These
+> are assigned in lan966x_probe().  That means the > comparison should be
+> changed to >=.
 > 
+> The first off by one check is harmless but the second one could lead to
+> an out of bounds access and a crash.
+> 
+> [...]
 
-Good catch!
+Here is the summary with links:
+  - [net] net: lan966x: fix a couple off by one bugs
+    https://git.kernel.org/netdev/net/c/9810c58c7051
 
-Reviewed-by: Juan A. Suarez <jasuarez@igalia.com>
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-
-	J.A.
 
