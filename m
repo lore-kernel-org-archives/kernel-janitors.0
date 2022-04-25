@@ -2,107 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7365DC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Apr 2022 12:48:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9593CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Apr 2022 12:51:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232289AbiDYMvf (ORCPT
+        id S241869AbiDYMyH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 25 Apr 2022 08:51:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37158 "EHLO
+        Mon, 25 Apr 2022 08:54:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230153AbiDYMvd (ORCPT
+        with ESMTP id S241984AbiDYMyD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 25 Apr 2022 08:51:33 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C5062FAF7F
-        for <kernel-janitors@vger.kernel.org>; Mon, 25 Apr 2022 05:48:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1650890908;
+        Mon, 25 Apr 2022 08:54:03 -0400
+Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CA2C184;
+        Mon, 25 Apr 2022 05:50:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
+        s=20121; t=1650891042;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=N3u12wuLEP305W7IcqSlnc/KS4m0t+UufQFeHSMO7Og=;
-        b=HMNdaMlTjSeyxPJVM7zQ4QceklZHuMi0UATVEnnkY1m6PHks5O/BYR/IaIcAnFHNc4I0Gg
-        TF0QggfZ+NTXuorBByxNCH1uK7bx5FmahlyhCZCaoj/mnF2Rezq+sSornyEx2zsRRX7Djz
-        c45TDZKVCmCll2/OLtKdURFpdmaBxpU=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-35-FVBNLz_pMsWSqAlIrr3jIA-1; Mon, 25 Apr 2022 08:48:27 -0400
-X-MC-Unique: FVBNLz_pMsWSqAlIrr3jIA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2F55285A5BC;
-        Mon, 25 Apr 2022 12:48:27 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2566140C1241;
-        Mon, 25 Apr 2022 12:48:27 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 23PCmRVk003883;
-        Mon, 25 Apr 2022 08:48:27 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 23PCmRVa003879;
-        Mon, 25 Apr 2022 08:48:27 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Mon, 25 Apr 2022 08:48:27 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-cc:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
-        Milan Broz <gmazyland@gmail.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] dm integrity: fix error code in dm_integrity_ctr()
-In-Reply-To: <YmaMgPr8bM/0PFUi@kili>
-Message-ID: <alpine.LRH.2.02.2204250846510.1699@file01.intranet.prod.int.rdu2.redhat.com>
-References: <YmaMgPr8bM/0PFUi@kili>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        bh=RuGwl2hwKjdiBN+xQt2K7PK+6H9hVtI6INGqk1BZ3MQ=;
+        b=bzC/NVfpIoMtLD1rLqbV0/KYVQ8RveWKmFoVna65i6PQYMW8wk/hdMPr7uRQJQyu+I7Adc
+        vmlc3JHfTnyOeL7KbhGPhOWgQWES7gBPWZKeCjFzNEtfliiyGxir6F8jPCdkWUX8QRC18B
+        atZa9HuSx+aSRrtVEEoUldXSoWX5c4k=
+From:   Sven Eckelmann <sven@narfation.org>
+To:     mareklindner@neomailbox.ch, sw@simonwunderlich.de, a@unstable.cc,
+        davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+        Yu Zhe <yuzhe@nfschina.com>
+Cc:     b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, liqiong@nfschina.com,
+        kernel-janitors@vger.kernel.org, Yu Zhe <yuzhe@nfschina.com>
+Subject: Re: [PATCH] batman-adv: remove unnecessary type castings
+Date:   Mon, 25 Apr 2022 14:50:38 +0200
+Message-ID: <2133162.nbW41nx31j@ripper>
+In-Reply-To: <20220425113635.1609532-1-yuzhe@nfschina.com>
+References: <20220421154829.9775-1-yuzhe@nfschina.com> <20220425113635.1609532-1-yuzhe@nfschina.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
+Content-Type: multipart/signed; boundary="nextPart1665509.GfMoWaoWtX"; micalg="pgp-sha512"; protocol="application/pgp-signature"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Thanks for finding it.
+--nextPart1665509.GfMoWaoWtX
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Sven Eckelmann <sven@narfation.org>
+To: mareklindner@neomailbox.ch, sw@simonwunderlich.de, a@unstable.cc, davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, Yu Zhe <yuzhe@nfschina.com>
+Cc: b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, liqiong@nfschina.com, kernel-janitors@vger.kernel.org, Yu Zhe <yuzhe@nfschina.com>
+Subject: Re: [PATCH] batman-adv: remove unnecessary type castings
+Date: Mon, 25 Apr 2022 14:50:38 +0200
+Message-ID: <2133162.nbW41nx31j@ripper>
+In-Reply-To: <20220425113635.1609532-1-yuzhe@nfschina.com>
+References: <20220421154829.9775-1-yuzhe@nfschina.com> <20220425113635.1609532-1-yuzhe@nfschina.com>
 
-
-On Mon, 25 Apr 2022, Dan Carpenter wrote:
-
-> The "r" variable shadows an earlier "r" that has function scope.  It
-> means that we accidentally return success instead of an error code.
-> Smatch has a warning for this:
+On Monday, 25 April 2022 13:36:35 CEST Yu Zhe wrote:
+> remove unnecessary void* type castings.
 > 
-> 	drivers/md/dm-integrity.c:4503 dm_integrity_ctr()
-> 	warn: missing error code 'r'
-> 
-> Fixes: 7eada909bfd7 ("dm: add integrity target")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-add:
-
-Cc: stable@vger.kernel.org
-Reviewed-by: Mikulas Patocka <mpatocka@redhat.com>
-
+> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
 > ---
->  drivers/md/dm-integrity.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/md/dm-integrity.c b/drivers/md/dm-integrity.c
-> index 36ae30b73a6e..3d5a0ce123c9 100644
-> --- a/drivers/md/dm-integrity.c
-> +++ b/drivers/md/dm-integrity.c
-> @@ -4494,8 +4494,6 @@ static int dm_integrity_ctr(struct dm_target *ti, unsigned argc, char **argv)
->  	}
->  
->  	if (should_write_sb) {
-> -		int r;
-> -
->  		init_journal(ic, 0, ic->journal_sections, 0);
->  		r = dm_integrity_failed(ic);
->  		if (unlikely(r)) {
-> -- 
-> 2.35.1
-> 
+>  net/batman-adv/translation-table.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+
+If you send a second version then please use `git format-patch -v2 ...` to 
+format the patch. Now it looks in patchworks like you've resent the first 
+version again. And please also add a little changelog after "---" which 
+explains what you've changed. It is trivial in this little patch but still 
+might be useful.
+
+Regarding the patch: Now you've removed bridge_loop_avoidance.c + 
+batadv_choose_tt instead of fixing your patch. I would really prefer this 
+patch version:
+
+https://git.open-mesh.org/linux-merge.git/commitdiff/8864d2fcf04385cabb8c8bb159f1f2ba5790cf71
+
+Kind regards,
+	Sven
+--nextPart1665509.GfMoWaoWtX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEF10rh2Elc9zjMuACXYcKB8Eme0YFAmJmmR4ACgkQXYcKB8Em
+e0ZF9w//UFNInA7OC2T9+5zJHFRLWNgj6+C6pX9JeoShV3BYfv11IUXGEoIOjJo8
+b3H97XoTedEQ+tfmHQZTeEwKInyaMFeBUI0DDATjtezwmlHmTkUe7cepupPhv2Oy
+7eVxA4FN9pjDl2TIfN9qSkKiFNnCbgzLclwFsnLrTWt0R1o2Wtkb2HN5qXEPXg5Z
+Cpsh1GUDuYhec+w+xyK3rcqeTrfgUdwTh6SvzckPPweX6QIMBIHFLjmsvmRiYDAc
+7KFaXJxA7KvMduW7zQN26VblEZrhbHwlmTozo7VvdZo+k0ekhSdRseFj5dIRfhs9
+r2b6weEAM7NBI/+NHGHHXIS9kFs+LqLpiwAkZhpDrLPD0OvtqMPtjR0e8sBtFhx0
+llMZOfJJgcQ5QH0WuPyQ4c7YBYBHUXK9UzMlOkMFe12xPERXt8kIR2Vb2dAmdOMk
+5JYrxNRvoCEcID5uGrPpXJ1V2G7KJfaiekEmG56nWgk4Q4ys+wMLnDtzs5GuQ67W
+zlKSkJeoViMevRRH4EoyDdezeToP3LPQb9NoTLncPEtnyIu91ugfoxPgigBjINq5
+qu8JoJqH7UHRkNIdYvWxyuN9DFY/bwsZFToBJjDK4kaobfrL1/ATGfC8mTUSv3pl
+kno8dU9pOOTqTLgZTWfSyrubhNwJ6K0k+JCHx4saaNIF0ERrNOw=
+=bG0x
+-----END PGP SIGNATURE-----
+
+--nextPart1665509.GfMoWaoWtX--
+
+
 
