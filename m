@@ -2,98 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D16C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 24 Apr 2022 21:15:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7BC6C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Apr 2022 04:02:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239604AbiDXVSo (ORCPT
+        id S240822AbiDYEFE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 24 Apr 2022 17:18:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45452 "EHLO
+        Mon, 25 Apr 2022 00:05:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233662AbiDXVSl (ORCPT
+        with ESMTP id S238046AbiDYEFD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 24 Apr 2022 17:18:41 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEF8213CD2;
-        Sun, 24 Apr 2022 14:15:38 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id w4so18231441wrg.12;
-        Sun, 24 Apr 2022 14:15:38 -0700 (PDT)
+        Mon, 25 Apr 2022 00:05:03 -0400
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B5B65FB6;
+        Sun, 24 Apr 2022 21:02:00 -0700 (PDT)
+Received: by mail-pg1-x533.google.com with SMTP id q12so12338687pgj.13;
+        Sun, 24 Apr 2022 21:02:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QLCz1aEPZpTPZGtnpY3lHtJPFa6xwSRJK3O6rkL3K5c=;
-        b=aCkTg93Kczt9m6C0yGFdto0l0p1yyEUzTPppKeDoSVWvQRERuAsM6KmuUbXV13pnrF
-         Ftxp6eK8GcyYBiLbl79e3Aao75qo+6/wUyemedovZToO9dx4TnDZvHCJdAn4SsMdj+0w
-         43Xy7RxetQ3kuPR0H6+b6N6I+BZy+6oAMaEyQaq8LYkSrZSnz/4A0uk40HrtJi1dBoBV
-         uwjC5VmshX7W0tC9pnXXxII6dXgfSb449cYLqRo8yeZRsfnPheAA0fz4bODERkiWLdyt
-         ZfVirEV/P7A+iSmK46RivLw7mjB2mRseKAOkACDdzq71CY2aM0TgbXnJFauYlZPYbYAZ
-         ufxg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=XpqXUKQnBMu16RDI3lug4RWsduF9+QynmSZQ3BCqjAg=;
+        b=dRi+fDayDSsY4PNuZojPnc78erUng+iTE61/if5JtS9deSN5Kue2wbhrHWwIRwJsw0
+         uRKEZZq2d0oQzKHVnCMa+BOIAhpyczU4b1XENcA2or9LBLCAtYiCZYYq11m9+wW1Xih0
+         verUXesH6xwXZ5u2pAD6egcZgQusy+7jzrSrE7OoiMcDDzSwFe8aMcoRWHp4fjNmTRmA
+         IKNo5CcXN7Ns1IIHoBFMPFPtkda9PFAsAnyKWLvDR6Sf2qaRswCR4XdyNaJFEehVfSPE
+         TKsXlCXUT4IcnDYXQGMWIITz1O+Mz2yFdi7ymEn16nHtPjZf9g17a2rf4RX2LI777YXb
+         JXGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QLCz1aEPZpTPZGtnpY3lHtJPFa6xwSRJK3O6rkL3K5c=;
-        b=B41/ExnDz+bCJgtnJ286vQHoRTE97YWmsSXeA8REh/SdtOelTQnphyzZwmp0CuxNSK
-         30GJYJ3K8Vw7fBZaUXrioXOe64NxBq6qvFAgfi5vU23OwmPmDHhlCk9skXkG9z9VJfhA
-         5C9DOXOKLPnfzViNqSOLfVLdS6Qm3AUj9aYqZfczhSHGz/IiJGoH4VYcqC5PoEATi4NL
-         vuvH79VLiRuzMIA3nk5gIMrUM6coSv07qtdbOuVaRGv4MDQ5icnX2KuUCb5MPuRtUuY1
-         dBKOjVhCGTisGkCba65cKfSzg/UNAYFxvobgiTjaf4yMBFc8shNQFA73ChMdJADgVEs0
-         N2lg==
-X-Gm-Message-State: AOAM531orNzzFAJOMQva5OHLJNbivpZ8zSRHUCPBEUJmJiIqjOoyLyxj
-        te1x3RoCE+F/hgjnMXJUFPY=
-X-Google-Smtp-Source: ABdhPJz/FOFaeagHS5EO2XRc0+fKcdVmCWhnmahvPolqKQRCXrZWtIDoi0pRkc8kI5dw3Gh1Fp25tg==
-X-Received: by 2002:a5d:6d0d:0:b0:20a:d741:6949 with SMTP id e13-20020a5d6d0d000000b0020ad7416949mr4522984wrq.312.1650834937597;
-        Sun, 24 Apr 2022 14:15:37 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id bi7-20020a05600c3d8700b0038eb78569aasm9571468wmb.20.2022.04.24.14.15.36
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=XpqXUKQnBMu16RDI3lug4RWsduF9+QynmSZQ3BCqjAg=;
+        b=jSLjktOInhWA8BIUUV+5c6yJTdXqk3ijeaBNqjcpYElMbTKYOQSDgHlVoEYoR+HA9J
+         VpFcKgpoJ7RuBNvmU83/aowj0BvlxTIsrpmDexWCDSZeBhMq+m4LHqu+9dZeeEfihcSm
+         B0rtj2l1U5by1ZT9oKsnQBH1XUWBlpilvMGxdtBPjpYEq7kFJUz11KfuxXbuNkGoc7mq
+         TSgJV0xAP0yp1kSplJyvoLkeaqzu8lPdAfiKov4lghn+gMIQUFcbvCcrNBt5OgFVhDMT
+         jcEDaRKIqBc1wrXWhDDX8AIVNjadx+UOrz1HqNf54wck8vGynfieDedeuVit+qicKmWj
+         iy2w==
+X-Gm-Message-State: AOAM531Aw72xHpMK5C/s3A9UwkgDXq5jshGstG+9pNyB7+hkuD0dEua1
+        n6tDrxKkEC1szHHSZlgk574=
+X-Google-Smtp-Source: ABdhPJx3mcsUbCjgVIlR76wYqJ8xMmU4F0udievDmHkC2+5Ct4NkT4XlJe7M5Vsc+lyReFF2m1CQvA==
+X-Received: by 2002:a63:fc18:0:b0:39c:f431:8310 with SMTP id j24-20020a63fc18000000b0039cf4318310mr13368460pgi.433.1650859319693;
+        Sun, 24 Apr 2022 21:01:59 -0700 (PDT)
+Received: from google.com ([2620:15c:202:201:282a:d50e:e0fc:c145])
+        by smtp.gmail.com with ESMTPSA id g14-20020a63200e000000b0039d9816238fsm8004385pgg.81.2022.04.24.21.01.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Apr 2022 14:15:37 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Fenghua Yu <fenghua.yu@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Shuah Khan <shuah@kernel.org>, Babu Moger <babu.moger@amd.com>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/resctrl: Fix null pointer dereference on open failed
-Date:   Sun, 24 Apr 2022 22:15:36 +0100
-Message-Id: <20220424211536.1373878-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Sun, 24 Apr 2022 21:01:58 -0700 (PDT)
+Date:   Sun, 24 Apr 2022 21:01:56 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] Input: aiptek - remove redundant assignment to variable
+ ret
+Message-ID: <YmYdNLCRKZtuZG6D@google.com>
+References: <20220418142457.84708-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220418142457.84708-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Currently if opening /dev/null fails to open then file pointer fp
-is null and further access to fp via fprintf will cause a null
-pointer dereference. Fix this by returning a negative error value
-when a null fp is detected.
+On Mon, Apr 18, 2022 at 03:24:57PM +0100, Colin Ian King wrote:
+> Variable ret is being assigned a value that is never read, it is
+> being re-assigned again in either path of the if statement. The
+> assignment is redundant and can be removed.
+> 
+> Cleans up clang scan build warning:
+> Although the value stored to 'ret' is used in the enclosing expression,
+> the value is never actually read from 'ret' [deadcode.DeadStores]
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Fixes: a2561b12fe39 ("selftests/resctrl: Add built in benchmark")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/resctrl/fill_buf.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Applied, thank you.
 
-diff --git a/tools/testing/selftests/resctrl/fill_buf.c b/tools/testing/selftests/resctrl/fill_buf.c
-index 51e5cf22632f..56ccbeae0638 100644
---- a/tools/testing/selftests/resctrl/fill_buf.c
-+++ b/tools/testing/selftests/resctrl/fill_buf.c
-@@ -121,8 +121,10 @@ static int fill_cache_read(unsigned char *start_ptr, unsigned char *end_ptr,
- 
- 	/* Consume read result so that reading memory is not optimized out. */
- 	fp = fopen("/dev/null", "w");
--	if (!fp)
-+	if (!fp) {
- 		perror("Unable to write to /dev/null");
-+		return -1;
-+	}
- 	fprintf(fp, "Sum: %d ", ret);
- 	fclose(fp);
- 
 -- 
-2.35.1
-
+Dmitry
