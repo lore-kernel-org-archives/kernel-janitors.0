@@ -2,97 +2,97 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4780C43217
-	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Apr 2022 11:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CBF9C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Apr 2022 11:36:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236425AbiDYLRy (ORCPT
+        id S234876AbiDYLjs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 25 Apr 2022 07:17:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51508 "EHLO
+        Mon, 25 Apr 2022 07:39:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241784AbiDYLRh (ORCPT
+        with ESMTP id S229870AbiDYLjq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 25 Apr 2022 07:17:37 -0400
+        Mon, 25 Apr 2022 07:39:46 -0400
 Received: from mail.nfschina.com (unknown [IPv6:2400:dd01:100f:2:72e2:84ff:fe10:5f45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 392F93137E;
-        Mon, 25 Apr 2022 04:14:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2FE1E1B0;
+        Mon, 25 Apr 2022 04:36:40 -0700 (PDT)
 Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id 415491E80D78;
-        Mon, 25 Apr 2022 19:11:26 +0800 (CST)
+        by mail.nfschina.com (Postfix) with ESMTP id 047D91E80D56;
+        Mon, 25 Apr 2022 19:33:34 +0800 (CST)
 X-Virus-Scanned: amavisd-new at test.com
 Received: from mail.nfschina.com ([127.0.0.1])
         by localhost (mail.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id YXA5B4jbnLbT; Mon, 25 Apr 2022 19:11:23 +0800 (CST)
-Received: from [18.165.124.109] (unknown [101.228.255.56])
+        with ESMTP id fHsaOolkcdnu; Mon, 25 Apr 2022 19:33:31 +0800 (CST)
+Received: from ubuntu.localdomain (unknown [101.228.255.56])
         (Authenticated sender: yuzhe@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id 16C8A1E80D76;
-        Mon, 25 Apr 2022 19:11:23 +0800 (CST)
-Message-ID: <2822d906-6006-2530-eca8-f4c398a1357d@nfschina.com>
-Date:   Mon, 25 Apr 2022 19:14:28 +0800
+        by mail.nfschina.com (Postfix) with ESMTPA id C9AB71E80C99;
+        Mon, 25 Apr 2022 19:33:30 +0800 (CST)
+From:   Yu Zhe <yuzhe@nfschina.com>
+To:     mareklindner@neomailbox.ch, sw@simonwunderlich.de, a@unstable.cc,
+        sven@narfation.org, davem@davemloft.net, kuba@kernel.org,
+        pabeni@redhat.com
+Cc:     b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, liqiong@nfschina.com,
+        kernel-janitors@vger.kernel.org, Yu Zhe <yuzhe@nfschina.com>
+Subject: [PATCH] batman-adv: remove unnecessary type castings
+Date:   Mon, 25 Apr 2022 04:36:35 -0700
+Message-Id: <20220425113635.1609532-1-yuzhe@nfschina.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220421154829.9775-1-yuzhe@nfschina.com>
+References: <20220421154829.9775-1-yuzhe@nfschina.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH] batman-adv: remove unnecessary type castings
-To:     Sven Eckelmann <sven@narfation.org>
-Cc:     a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org,
-        davem@davemloft.net, kernel-janitors@vger.kernel.org,
-        kuba@kernel.org, linux-kernel@vger.kernel.org,
-        liqiong@nfschina.com, mareklindner@neomailbox.ch,
-        netdev@vger.kernel.org, pabeni@redhat.com, sw@simonwunderlich.de
-References: <3537486.13E77TLkhO@ripper>
-From:   yuzhe <yuzhe@nfschina.com>
-In-Reply-To: <3537486.13E77TLkhO@ripper>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
+remove unnecessary void* type castings.
 
-thanks for your reply, we have fixed our mail server. And I'll correct and resubmit my patch.
+Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+---
+ net/batman-adv/translation-table.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-在 2022/4/22 15:55, Sven Eckelmann 写道:
+diff --git a/net/batman-adv/translation-table.c b/net/batman-adv/translation-table.c
+index 8478034d3abf..cbf96eebf05b 100644
+--- a/net/batman-adv/translation-table.c
++++ b/net/batman-adv/translation-table.c
+@@ -2766,7 +2766,7 @@ static void batadv_tt_tvlv_generate(struct batadv_priv *bat_priv,
+ 	u32 i;
+ 
+ 	tt_tot = batadv_tt_entries(tt_len);
+-	tt_change = (struct batadv_tvlv_tt_change *)tvlv_buff;
++	tt_change = tvlv_buff;
+ 
+ 	if (!valid_cb)
+ 		return;
+@@ -3994,7 +3994,7 @@ static void batadv_tt_tvlv_ogm_handler_v1(struct batadv_priv *bat_priv,
+ 	if (tvlv_value_len < sizeof(*tt_data))
+ 		return;
+ 
+-	tt_data = (struct batadv_tvlv_tt_data *)tvlv_value;
++	tt_data = tvlv_value;
+ 	tvlv_value_len -= sizeof(*tt_data);
+ 
+ 	num_vlan = ntohs(tt_data->num_vlan);
+@@ -4037,7 +4037,7 @@ static int batadv_tt_tvlv_unicast_handler_v1(struct batadv_priv *bat_priv,
+ 	if (tvlv_value_len < sizeof(*tt_data))
+ 		return NET_RX_SUCCESS;
+ 
+-	tt_data = (struct batadv_tvlv_tt_data *)tvlv_value;
++	tt_data = tvlv_value;
+ 	tvlv_value_len -= sizeof(*tt_data);
+ 
+ 	tt_vlan_len = sizeof(struct batadv_tvlv_tt_vlan_data);
+@@ -4129,7 +4129,7 @@ static int batadv_roam_tvlv_unicast_handler_v1(struct batadv_priv *bat_priv,
+ 		goto out;
+ 
+ 	batadv_inc_counter(bat_priv, BATADV_CNT_TT_ROAM_ADV_RX);
+-	roaming_adv = (struct batadv_tvlv_roam_adv *)tvlv_value;
++	roaming_adv = tvlv_value;
+ 
+ 	batadv_dbg(BATADV_DBG_TT, bat_priv,
+ 		   "Received ROAMING_ADV from %pM (client %pM)\n",
+-- 
+2.25.1
 
-> Hi,
->
-> we neither received your mail via the mailing list nor our private mail
-> servers. It seems your mail setup is broken:
->
->      Apr 21 15:48:37 dvalin postfix/smtpd[10256]: NOQUEUE: reject: RCPT from unknown[2400:dd01:100f:2:72e2:84ff:fe10:5f45]: 450 4.7.1 <ha.nfschina.com>: Helo command rejected: Host not found; from=<yuzhe@nfschina.com> to=<sven@narfation.org> proto=ESMTP helo=<ha.nfschina.co>
->
->
-> And when I test it myself, it is also not working:
->
->      $ dig @8.8.8.8 ha.nfschina.com
->
->      ; <<>> DiG 9.16.27-Debian <<>> @8.8.8.8 ha.nfschina.com
->      ; (1 server found)
->      ;; global options: +cmd
->      ;; Got answer:
->      ;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 39639
->      ;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
->      
->      ;; OPT PSEUDOSECTION:
->      ; EDNS: version: 0, flags:; udp: 512
->      ;; QUESTION SECTION:
->      ;ha.nfschina.com.               IN      A
->      
->      ;; AUTHORITY SECTION:
->      nfschina.com.           600     IN      SOA     dns11.hichina.com. hostmaster.hichina.com. 2022011002 3600 1200 86400 600
->
->      ;; Query time: 328 msec
->      ;; SERVER: 8.8.8.8#53(8.8.8.8)
->      ;; WHEN: Fri Apr 22 09:51:56 CEST 2022
->      ;; MSG SIZE  rcvd: 105
->
->
-> Please fix this before sending patches out.
->
->
-> But the kernel test bot already demonstrated why this patch is not a good
-> idea. You can improve it and resent it but I will not accept it in this form.
->
->
-> Kind regards,
-> 	Sven
