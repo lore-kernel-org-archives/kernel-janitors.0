@@ -2,95 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0302DC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Apr 2022 17:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B80C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 25 Apr 2022 22:49:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240787AbiDYReb (ORCPT
+        id S235371AbiDYWwl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 25 Apr 2022 13:34:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44450 "EHLO
+        Mon, 25 Apr 2022 18:52:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238514AbiDYReb (ORCPT
+        with ESMTP id S229807AbiDYWwk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 25 Apr 2022 13:34:31 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4121583A2;
-        Mon, 25 Apr 2022 10:31:24 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id w16so9751600ejb.13;
-        Mon, 25 Apr 2022 10:31:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Lx7n01ak613wao/PeGm56R/NraVbxP43cN5ZMlrScAY=;
-        b=AWomtSHBSdpy50i/AiQTF1zEO67p6sM2bAacCXCIrE1EI3drNnFByVmoCM0R/JmKoO
-         9gRqHx/Jriy3h41XZP3C0mqTsYL8gZMgJtK5YGBcBAM13cfn2MrAbHZu+63WnkD3pA0M
-         DlNSX4/BDpYDhYNLxlybbm4UpTRPqmYx6mc07No5+cFKexLhyMCE/gp0T9Y5ncFf9UlH
-         4t+iuhsW2AwBCXq8A0RuQ0hp4vsOhB/eDpAaHSKVH5lGxCZa6y2yaOCbBcLTm58dwi5j
-         2mokqtKMGMcjlCu7ZnzTM9o/NOIptNtADfUmrdCmKHoADrK3HZRdkAov3SEu1yD6nH7F
-         2pNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Lx7n01ak613wao/PeGm56R/NraVbxP43cN5ZMlrScAY=;
-        b=yWaRFSJ4t1V7Q49cde4pYMMv83Ld2nWxCRXiwgtdeRmlRF2wUnNS7CsJ2q3tOrfAqK
-         8ZfO85p+EuhzFYnTSpB2HAqVtQfVhRCphB0OhnjX/CUycBvYU10wZU9WSYhMBwuVbVaH
-         xbu3eQyNvmHSticVzD5ZRNsgC3eIET0s1BaS89Fiya7BPMzrXu0hfwz6mZQB+zu2Vd8p
-         aYZZ6YetqoA0BbdylwKaUlHVzkUe0/d7ToTV1ha+pLD1uC/4C2Np4QT8PEnYDfmuRg0J
-         XoGYsKDbEXjyGGO0whsQ00vGuCWHSLwHUhUzGlqcQiZ056FsQhxxDLajlunr8QlYfLcp
-         ahFg==
-X-Gm-Message-State: AOAM532W6UEKmkjKrz4Ls9t4DiZf1NCfJ00SBXNyT1PHD0v9zkeLnNR6
-        6hJ4tqpi2zzJXOZ7K30cV2c=
-X-Google-Smtp-Source: ABdhPJxvwSr3XtyRkaaNJxbkUJVkHfpHdLP+s0Vc1yhmamJDJWKzG5omORC7vSs528rfOCd348xwnw==
-X-Received: by 2002:a17:907:6289:b0:6e0:eb0c:8ee7 with SMTP id nd9-20020a170907628900b006e0eb0c8ee7mr16442680ejc.245.1650907883149;
-        Mon, 25 Apr 2022 10:31:23 -0700 (PDT)
-Received: from kista.localnet (cpe-86-58-32-107.static.triera.net. [86.58.32.107])
-        by smtp.gmail.com with ESMTPSA id r19-20020a17090638d300b006d6e4fc047bsm3884297ejd.11.2022.04.25.10.31.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Apr 2022 10:31:22 -0700 (PDT)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Samuel Holland <samuel@sholland.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: Re: [PATCH] bus: sunxi-rsb: Fix the return value of sunxi_rsb_device_create()
-Date:   Mon, 25 Apr 2022 19:31:21 +0200
-Message-ID: <2699804.BEx9A2HvPv@kista>
-In-Reply-To: <ff0ae741-efc4-ba6f-d869-4cb8fb7149ad@sholland.org>
-References: <ef2b9576350bba4c8e05e669e9535e9e2a415763.1650551719.git.christophe.jaillet@wanadoo.fr> <ff0ae741-efc4-ba6f-d869-4cb8fb7149ad@sholland.org>
+        Mon, 25 Apr 2022 18:52:40 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96F22113CAF;
+        Mon, 25 Apr 2022 15:49:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 34D34B818FA;
+        Mon, 25 Apr 2022 22:49:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8670C385A9;
+        Mon, 25 Apr 2022 22:49:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650926972;
+        bh=65ZfwId3z88lOwarYLJJhKmde8T17svhcGfPB01Bnvw=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=CrrSdpUqm4Tmvc9osrbNHIaPBwyO3lJXvtU/LDsR18kATGOLwlzYSE76KpTrC5/qc
+         teHsGxBZiE0jvEEtNeaYbsgwR4UkI6AFguyJkEe92+qum0SFjtSpxVc3EmbFFrmw5S
+         KZVpI2vUA7Kc4OmHr/Hatj0o2ai+Nc1J0PKL45g6ZFcD1HqxbiQU2Nw5xPvaz5f8RL
+         ZtqmGQWEkI+qqMdgJsQDBhSWsQbWowgiwTaEQWIz1I4leCWE+UzXoW+bYbF7J8gljb
+         jUtRpZmQKr5CoujoMXZ7CHV7AqJD7zYprzDCGD6RjAvYu87tW1kdwlh8hpypUI9tX8
+         t5oomTJ57X7VQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220424182227.1364966-1-colin.i.king@gmail.com>
+References: <20220424182227.1364966-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH] clk: mux: remove redundant initialization of variable width
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+Date:   Mon, 25 Apr 2022 15:49:30 -0700
+User-Agent: alot/0.10
+Message-Id: <20220425224932.C8670C385A9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dne sobota, 23. april 2022 ob 21:39:45 CEST je Samuel Holland napisal(a):
-> On 4/21/22 9:35 AM, Christophe JAILLET wrote:
-> > This code is really spurious.
-> > It always returns an ERR_PTR, even when err is known to be 0 and calls
-> > put_device() after a successful device_register() call.
-> > 
-> > It is likely that the return statement in the normal path is missing.
-> > Add 'return rdev;' to fix it.
-> 
-> Thanks for the patch. This definitely looks to be the case.
-> 
-> > Fixes: d787dcdb9c8f ("bus: sunxi-rsb: Add driver for Allwinner Reduced 
-Serial Bus")
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> Reviewed-by: Samuel Holland <samuel@sholland.org>
-> Tested-by: Samuel Holland <samuel@sholland.org>
-> 
+Quoting Colin Ian King (2022-04-24 11:22:27)
+> Variable width is being ininitialized with a value that is never read.
+> The ininitializtion is redundant and can be removed. Move the variable
+> to the scope it is required.
+>=20
+> Cleans up cppcheck warning:
+> Variable 'width' is assigned a value that is never used.
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
 
-Applied to sunxi/fixes-for-5.18, thanks!
-
-Best regards,
-Jernej
-
-
+Applied to clk-next
