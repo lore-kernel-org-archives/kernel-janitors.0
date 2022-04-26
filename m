@@ -2,49 +2,45 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B984C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Apr 2022 18:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88842C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Apr 2022 18:47:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352347AbiDZSuh (ORCPT
+        id S1352427AbiDZSul (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 26 Apr 2022 14:50:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37132 "EHLO
+        Tue, 26 Apr 2022 14:50:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245755AbiDZSuf (ORCPT
+        with ESMTP id S1352459AbiDZSuj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 26 Apr 2022 14:50:35 -0400
-Received: from smtp.smtpout.orange.fr (smtp01.smtpout.orange.fr [80.12.242.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ABD98D6BC
-        for <kernel-janitors@vger.kernel.org>; Tue, 26 Apr 2022 11:47:24 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.180.246])
-        by smtp.orange.fr with ESMTPA
-        id jQDZnijInrYGrjQDZnIczV; Tue, 26 Apr 2022 20:47:22 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Tue, 26 Apr 2022 20:47:22 +0200
-X-ME-IP: 86.243.180.246
-Message-ID: <80a426b3-ece2-129c-edca-03556e1ecbb6@wanadoo.fr>
-Date:   Tue, 26 Apr 2022 20:47:20 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
+        Tue, 26 Apr 2022 14:50:39 -0400
+Received: from ciao.gmane.io (ciao.gmane.io [116.202.254.214])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1709A8C7C8
+        for <kernel-janitors@vger.kernel.org>; Tue, 26 Apr 2022 11:47:29 -0700 (PDT)
+Received: from list by ciao.gmane.io with local (Exim 4.92)
+        (envelope-from <glkj-kernel-janitors-2@m.gmane-mx.org>)
+        id 1njQDf-0005eQ-UC
+        for kernel-janitors@vger.kernel.org; Tue, 26 Apr 2022 20:47:27 +0200
+X-Injected-Via-Gmane: http://gmane.org/
+To:     kernel-janitors@vger.kernel.org
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Subject: Re: [PATCH 1/2] drm/amdkfd: Use bitmap_zalloc() when applicable
-Content-Language: fr
-To:     Felix Kuehling <felix.kuehling@amd.com>, alexander.deucher@amd.com,
-        christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@linux.ie,
-        daniel@ffwll.ch
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Newsgroups: gmane.linux.kernel.janitors,gmane.comp.freedesktop.amd-gfx,gmane.comp.video.dri.devel,gmane.linux.kernel
+Date:   Tue, 26 Apr 2022 20:47:20 +0200
+Message-ID: <80a426b3-ece2-129c-edca-03556e1ecbb6@wanadoo.fr>
 References: <f12820f6c5fca9b10ac8f82b3689c50ccb6966aa.1638117878.git.christophe.jaillet@wanadoo.fr>
  <14268d5a-9a4a-2921-9961-d5d36fad47b2@amd.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <14268d5a-9a4a-2921-9961-d5d36fad47b2@amd.com>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Content-Language: fr
+In-Reply-To: <14268d5a-9a4a-2921-9961-d5d36fad47b2@amd.com>
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
+Message-ID: <20220426184720.wzu7-wb5evfDzG-zYGx32bhmbsYYe-mMR7J2sl_Hvz0@z>
 
 Le 26/04/2022 à 20:01, Felix Kuehling a écrit :
 > Hi Christophe,
@@ -122,4 +118,5 @@ CJ
 >>   }
 >>   static inline uint64_t kfd_gtt_sa_calc_gpu_addr(uint64_t start_addr,
 > 
+
 
