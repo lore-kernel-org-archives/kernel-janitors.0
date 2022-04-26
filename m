@@ -2,140 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D580BC433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Apr 2022 10:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A554CC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Apr 2022 12:25:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349425AbiDZKlS (ORCPT
+        id S1347924AbiDZM2o (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 26 Apr 2022 06:41:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52162 "EHLO
+        Tue, 26 Apr 2022 08:28:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350002AbiDZKjw (ORCPT
+        with ESMTP id S245146AbiDZM2m (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 26 Apr 2022 06:39:52 -0400
-Received: from mail.nfschina.com (unknown [IPv6:2400:dd01:100f:2:72e2:84ff:fe10:5f45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C10EA33379;
-        Tue, 26 Apr 2022 03:29:37 -0700 (PDT)
-Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id 9A2431E80D56;
-        Tue, 26 Apr 2022 18:26:22 +0800 (CST)
-X-Virus-Scanned: amavisd-new at test.com
-Received: from mail.nfschina.com ([127.0.0.1])
-        by localhost (mail.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ov-cdY0XkzzQ; Tue, 26 Apr 2022 18:26:19 +0800 (CST)
-Received: from ubuntu.localdomain (unknown [101.228.255.56])
-        (Authenticated sender: yuzhe@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id 1FB091E80CE6;
-        Tue, 26 Apr 2022 18:26:19 +0800 (CST)
-From:   Yu Zhe <yuzhe@nfschina.com>
-To:     mareklindner@neomailbox.ch, sw@simonwunderlich.de, a@unstable.cc,
-        sven@narfation.org, davem@davemloft.net, kuba@kernel.org,
-        pabeni@redhat.com
-Cc:     b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, liqiong@nfschina.com,
-        kernel-janitors@vger.kernel.org, hukun@nfschina.com,
-        Yu Zhe <yuzhe@nfschina.com>, kernel test robot <lkp@intel.com>
-Subject: [PATCH v2] batman-adv: remove unnecessary type castings
-Date:   Tue, 26 Apr 2022 03:29:31 -0700
-Message-Id: <20220426102932.1613820-1-yuzhe@nfschina.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220425113635.1609532-1-yuzhe@nfschina.com>
-References: <20220425113635.1609532-1-yuzhe@nfschina.com>
+        Tue, 26 Apr 2022 08:28:42 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3596666AC9;
+        Tue, 26 Apr 2022 05:25:34 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id y21so11099303wmi.2;
+        Tue, 26 Apr 2022 05:25:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AEGDxEoZo4Owm1HQ+h+bYb/0LtcFO1Dwja4aXVPVeOE=;
+        b=iwLyqGtidwR4gF1oF0MSpetu/hE/KigWy9ZiBW3FhLFPnVcCGv7nc3W58WS+tCNgr8
+         2lnYmmkS0dBw4gjOBu67C02VFF5/Bv1ERcP5J+fMpSyJiT254cdKVNRluh2k4kluLVFz
+         RhYC6xO/O88/sb+H+8O38JTlfidJ3CmYuoTDhjv22cTaqK54t0iS7O15R6ixYzcHO3Lt
+         J9lttcMeLhP3iqgIAdvSJO3PrH7tBQ99lWsh7fCGFOpZhtPOaU1BsoxfwSekS36iyS7T
+         L+tvhg9ExbA88vmpERVYPoOWC2IM0AK/OzcP+1cThYZpNxCmhPuJu890lXZqqumjJH28
+         r1NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AEGDxEoZo4Owm1HQ+h+bYb/0LtcFO1Dwja4aXVPVeOE=;
+        b=EQ/jXWxeLN/+vx4Hkl6CiIbLTYK6/Q3YI5otIaavJDFnPQXIDbQ8h+0IQ0UuTKunPX
+         raELdtHj6PhGWSK71AaDeoJISmOfBci9C09BtOQfw+FUyGwYElsA/qq5JDR6G81auIEr
+         ECkg/u4NCrvaDHsVnP/FVV+mOnvYThGlxVzK+3opABh8h9DcH6BPjq9Hn6lSMTh5OClb
+         0we3OxASmgoFlI37qNFqiIoCgh7C0P4iQBUBd92YZ4P/MvGuZfXtzVx68oSUxDK4ZWja
+         qgngczgnUXxAwKBhy/fEUCE/Z49QY3uaB89P3hv9Ne3168VAYnhUaZzhcxbwnt9NMMXo
+         FHKA==
+X-Gm-Message-State: AOAM532sFb2bsGTipjSS8dlrAlRLTLmJKvwDb6mnLn4Rf1xzdYIGmqiK
+        vI1PiBUKOVqqCK8bTd2hZ/s=
+X-Google-Smtp-Source: ABdhPJwWzZt/8S2psE8et87L+MMPxiSEMyaRtYt7FZ21rmoYGjJxFMtbPsGM8oc2Rp1taF5F0mWt5w==
+X-Received: by 2002:a05:600c:3c86:b0:392:990b:ae29 with SMTP id bg6-20020a05600c3c8600b00392990bae29mr30016938wmb.105.1650975932670;
+        Tue, 26 Apr 2022 05:25:32 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id c13-20020adfa30d000000b0020adc82de11sm4848195wrb.26.2022.04.26.05.25.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Apr 2022 05:25:32 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Fenghua Yu <fenghua.yu@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Babu Moger <babu.moger@amd.com>,
+        linux-kselftest@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][V2] selftests/resctrl: Fix null pointer dereference on open failed
+Date:   Tue, 26 Apr 2022 13:25:31 +0100
+Message-Id: <20220426122531.1506634-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
-[sven@narfation.org: Fix missing const in batadv_choose* functions]
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Reported-by: kernel test robot <lkp@intel.com>
+Currently if opening /dev/null fails to open then file pointer fp
+is null and further access to fp via fprintf will cause a null
+pointer dereference. Fix this by returning a negative error value
+when a null fp is detected.
+
+Detected using cppcheck static analysis:
+tools/testing/selftests/resctrl/fill_buf.c:124:6: note: Assuming
+that condition '!fp' is not redundant
+ if (!fp)
+     ^
+tools/testing/selftests/resctrl/fill_buf.c:126:10: note: Null
+pointer dereference
+ fprintf(fp, "Sum: %d ", ret);
+
+Fixes: a2561b12fe39 ("selftests/resctrl: Add built in benchmark")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+
+V2: Add cppcheck analysis information
 
 ---
-v2:
-- fix discarding 'const' qualifier from pointer target type
----
- net/batman-adv/bridge_loop_avoidance.c |  4 ++--
- net/batman-adv/translation-table.c     | 12 ++++++------
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ tools/testing/selftests/resctrl/fill_buf.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/net/batman-adv/bridge_loop_avoidance.c b/net/batman-adv/bridge_loop_avoidance.c
-index 7f8a14d99cdb..37ce6cfb3520 100644
---- a/net/batman-adv/bridge_loop_avoidance.c
-+++ b/net/batman-adv/bridge_loop_avoidance.c
-@@ -65,7 +65,7 @@ batadv_bla_send_announce(struct batadv_priv *bat_priv,
-  */
- static inline u32 batadv_choose_claim(const void *data, u32 size)
- {
--	struct batadv_bla_claim *claim = (struct batadv_bla_claim *)data;
-+	const struct batadv_bla_claim *claim = data;
- 	u32 hash = 0;
+diff --git a/tools/testing/selftests/resctrl/fill_buf.c b/tools/testing/selftests/resctrl/fill_buf.c
+index 51e5cf22632f..56ccbeae0638 100644
+--- a/tools/testing/selftests/resctrl/fill_buf.c
++++ b/tools/testing/selftests/resctrl/fill_buf.c
+@@ -121,8 +121,10 @@ static int fill_cache_read(unsigned char *start_ptr, unsigned char *end_ptr,
  
- 	hash = jhash(&claim->addr, sizeof(claim->addr), hash);
-@@ -86,7 +86,7 @@ static inline u32 batadv_choose_backbone_gw(const void *data, u32 size)
- 	const struct batadv_bla_backbone_gw *gw;
- 	u32 hash = 0;
+ 	/* Consume read result so that reading memory is not optimized out. */
+ 	fp = fopen("/dev/null", "w");
+-	if (!fp)
++	if (!fp) {
+ 		perror("Unable to write to /dev/null");
++		return -1;
++	}
+ 	fprintf(fp, "Sum: %d ", ret);
+ 	fclose(fp);
  
--	gw = (struct batadv_bla_backbone_gw *)data;
-+	gw = data;
- 	hash = jhash(&gw->orig, sizeof(gw->orig), hash);
- 	hash = jhash(&gw->vid, sizeof(gw->vid), hash);
- 
-diff --git a/net/batman-adv/translation-table.c b/net/batman-adv/translation-table.c
-index 8478034d3abf..01d30c1e412c 100644
---- a/net/batman-adv/translation-table.c
-+++ b/net/batman-adv/translation-table.c
-@@ -103,10 +103,10 @@ static bool batadv_compare_tt(const struct hlist_node *node, const void *data2)
-  */
- static inline u32 batadv_choose_tt(const void *data, u32 size)
- {
--	struct batadv_tt_common_entry *tt;
-+	const struct batadv_tt_common_entry *tt;
- 	u32 hash = 0;
- 
--	tt = (struct batadv_tt_common_entry *)data;
-+	tt = data;
- 	hash = jhash(&tt->addr, ETH_ALEN, hash);
- 	hash = jhash(&tt->vid, sizeof(tt->vid), hash);
- 
-@@ -2766,7 +2766,7 @@ static void batadv_tt_tvlv_generate(struct batadv_priv *bat_priv,
- 	u32 i;
- 
- 	tt_tot = batadv_tt_entries(tt_len);
--	tt_change = (struct batadv_tvlv_tt_change *)tvlv_buff;
-+	tt_change = tvlv_buff;
- 
- 	if (!valid_cb)
- 		return;
-@@ -3994,7 +3994,7 @@ static void batadv_tt_tvlv_ogm_handler_v1(struct batadv_priv *bat_priv,
- 	if (tvlv_value_len < sizeof(*tt_data))
- 		return;
- 
--	tt_data = (struct batadv_tvlv_tt_data *)tvlv_value;
-+	tt_data = tvlv_value;
- 	tvlv_value_len -= sizeof(*tt_data);
- 
- 	num_vlan = ntohs(tt_data->num_vlan);
-@@ -4037,7 +4037,7 @@ static int batadv_tt_tvlv_unicast_handler_v1(struct batadv_priv *bat_priv,
- 	if (tvlv_value_len < sizeof(*tt_data))
- 		return NET_RX_SUCCESS;
- 
--	tt_data = (struct batadv_tvlv_tt_data *)tvlv_value;
-+	tt_data = tvlv_value;
- 	tvlv_value_len -= sizeof(*tt_data);
- 
- 	tt_vlan_len = sizeof(struct batadv_tvlv_tt_vlan_data);
-@@ -4129,7 +4129,7 @@ static int batadv_roam_tvlv_unicast_handler_v1(struct batadv_priv *bat_priv,
- 		goto out;
- 
- 	batadv_inc_counter(bat_priv, BATADV_CNT_TT_ROAM_ADV_RX);
--	roaming_adv = (struct batadv_tvlv_roam_adv *)tvlv_value;
-+	roaming_adv = tvlv_value;
- 
- 	batadv_dbg(BATADV_DBG_TT, bat_priv,
- 		   "Received ROAMING_ADV from %pM (client %pM)\n",
 -- 
-2.25.1
+2.35.1
 
