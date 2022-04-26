@@ -2,112 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A554CC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Apr 2022 12:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6521FC4332F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Apr 2022 12:59:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347924AbiDZM2o (ORCPT
+        id S1349694AbiDZNCM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 26 Apr 2022 08:28:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54110 "EHLO
+        Tue, 26 Apr 2022 09:02:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245146AbiDZM2m (ORCPT
+        with ESMTP id S1350476AbiDZNCG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 26 Apr 2022 08:28:42 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3596666AC9;
-        Tue, 26 Apr 2022 05:25:34 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id y21so11099303wmi.2;
-        Tue, 26 Apr 2022 05:25:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AEGDxEoZo4Owm1HQ+h+bYb/0LtcFO1Dwja4aXVPVeOE=;
-        b=iwLyqGtidwR4gF1oF0MSpetu/hE/KigWy9ZiBW3FhLFPnVcCGv7nc3W58WS+tCNgr8
-         2lnYmmkS0dBw4gjOBu67C02VFF5/Bv1ERcP5J+fMpSyJiT254cdKVNRluh2k4kluLVFz
-         RhYC6xO/O88/sb+H+8O38JTlfidJ3CmYuoTDhjv22cTaqK54t0iS7O15R6ixYzcHO3Lt
-         J9lttcMeLhP3iqgIAdvSJO3PrH7tBQ99lWsh7fCGFOpZhtPOaU1BsoxfwSekS36iyS7T
-         L+tvhg9ExbA88vmpERVYPoOWC2IM0AK/OzcP+1cThYZpNxCmhPuJu890lXZqqumjJH28
-         r1NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AEGDxEoZo4Owm1HQ+h+bYb/0LtcFO1Dwja4aXVPVeOE=;
-        b=EQ/jXWxeLN/+vx4Hkl6CiIbLTYK6/Q3YI5otIaavJDFnPQXIDbQ8h+0IQ0UuTKunPX
-         raELdtHj6PhGWSK71AaDeoJISmOfBci9C09BtOQfw+FUyGwYElsA/qq5JDR6G81auIEr
-         ECkg/u4NCrvaDHsVnP/FVV+mOnvYThGlxVzK+3opABh8h9DcH6BPjq9Hn6lSMTh5OClb
-         0we3OxASmgoFlI37qNFqiIoCgh7C0P4iQBUBd92YZ4P/MvGuZfXtzVx68oSUxDK4ZWja
-         qgngczgnUXxAwKBhy/fEUCE/Z49QY3uaB89P3hv9Ne3168VAYnhUaZzhcxbwnt9NMMXo
-         FHKA==
-X-Gm-Message-State: AOAM532sFb2bsGTipjSS8dlrAlRLTLmJKvwDb6mnLn4Rf1xzdYIGmqiK
-        vI1PiBUKOVqqCK8bTd2hZ/s=
-X-Google-Smtp-Source: ABdhPJwWzZt/8S2psE8et87L+MMPxiSEMyaRtYt7FZ21rmoYGjJxFMtbPsGM8oc2Rp1taF5F0mWt5w==
-X-Received: by 2002:a05:600c:3c86:b0:392:990b:ae29 with SMTP id bg6-20020a05600c3c8600b00392990bae29mr30016938wmb.105.1650975932670;
-        Tue, 26 Apr 2022 05:25:32 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id c13-20020adfa30d000000b0020adc82de11sm4848195wrb.26.2022.04.26.05.25.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Apr 2022 05:25:32 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Fenghua Yu <fenghua.yu@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Babu Moger <babu.moger@amd.com>,
-        linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][V2] selftests/resctrl: Fix null pointer dereference on open failed
-Date:   Tue, 26 Apr 2022 13:25:31 +0100
-Message-Id: <20220426122531.1506634-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Tue, 26 Apr 2022 09:02:06 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DFAB180712;
+        Tue, 26 Apr 2022 05:58:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=KMQsvzJ5VuMOPuBnH+dQf/vlRQxi5wCpYK/os3PuYGs=; b=X5amV1/S6PMGm9SMCIZJLYLDnm
+        yMnFdUCZ/ukuBffqkdybr3YCGePmMWZv2vSIGIzHIpebAyX2utmufI9clXjGlphf8G0iFaaDJ7Flx
+        Lo2pgSk93kvzWusWONBgx02kXzkRCzeB3QBzkOjV17RpW4XmgTi49hoAuiYVcFlwip9Y7DoFjAYtv
+        dWjCjFBuodSPgNvBCQ7iQUoPRxEZO5LDn8vgtUDJuf5g58MFvewO4mIubwBg5aThxEBZAUOM1E2Vp
+        6twuj2brt6kmx0aS+Hne/dSfYTmC2tSqHvqO6oyNXkHyj/YVaqE5ANSbLt9FmnG7uSusMFe1z3ix4
+        S9hrqQOg==;
+Received: from [165.90.126.25] (helo=mail.igalia.com)
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+        id 1njKmC-0004lu-8R; Tue, 26 Apr 2022 14:58:44 +0200
+Date:   Tue, 26 Apr 2022 11:58:30 -0100
+From:   Melissa Wen <mwen@igalia.com>
+To:     Juan =?utf-8?Q?A=2E_Su=C3=A1rez?= <jasuarez@igalia.com>
+Cc:     Colin Ian King <colin.i.king@gmail.com>,
+        Emma Anholt <emma@anholt.net>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/v3d: Fix null pointer dereference of pointer perfmon
+Message-ID: <20220426125749.5i5nbtlcvwvmhzfh@mail.igalia.com>
+References: <20220424183512.1365683-1-colin.i.king@gmail.com>
+ <890f6416ab37e40c929d95a8b4dcc8feb3dfb4d1.camel@igalia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="du4ctwa34t2th2i2"
+Content-Disposition: inline
+In-Reply-To: <890f6416ab37e40c929d95a8b4dcc8feb3dfb4d1.camel@igalia.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Currently if opening /dev/null fails to open then file pointer fp
-is null and further access to fp via fprintf will cause a null
-pointer dereference. Fix this by returning a negative error value
-when a null fp is detected.
 
-Detected using cppcheck static analysis:
-tools/testing/selftests/resctrl/fill_buf.c:124:6: note: Assuming
-that condition '!fp' is not redundant
- if (!fp)
-     ^
-tools/testing/selftests/resctrl/fill_buf.c:126:10: note: Null
-pointer dereference
- fprintf(fp, "Sum: %d ", ret);
+--du4ctwa34t2th2i2
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: a2561b12fe39 ("selftests/resctrl: Add built in benchmark")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
+On 04/25, Juan A. Su=E1rez wrote:
+> On Sun, 2022-04-24 at 19:35 +0100, Colin Ian King wrote:
+> > In the unlikely event that pointer perfmon is null the WARN_ON return
+> > path
+> > occurs after the pointer has already been deferenced. Fix this by
+> > only
+> > dereferencing perfmon after it has been null checked.
+> >=20
+>=20
+> Good catch!
+>=20
+> Reviewed-by: Juan A. Suarez <jasuarez@igalia.com>
 
-V2: Add cppcheck analysis information
+Applied to drm-misc-next.
 
----
- tools/testing/selftests/resctrl/fill_buf.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Thanks,
 
-diff --git a/tools/testing/selftests/resctrl/fill_buf.c b/tools/testing/selftests/resctrl/fill_buf.c
-index 51e5cf22632f..56ccbeae0638 100644
---- a/tools/testing/selftests/resctrl/fill_buf.c
-+++ b/tools/testing/selftests/resctrl/fill_buf.c
-@@ -121,8 +121,10 @@ static int fill_cache_read(unsigned char *start_ptr, unsigned char *end_ptr,
- 
- 	/* Consume read result so that reading memory is not optimized out. */
- 	fp = fopen("/dev/null", "w");
--	if (!fp)
-+	if (!fp) {
- 		perror("Unable to write to /dev/null");
-+		return -1;
-+	}
- 	fprintf(fp, "Sum: %d ", ret);
- 	fclose(fp);
- 
--- 
-2.35.1
+Melissa
+>=20
+>=20
+> 	J.A.
+>=20
 
+--du4ctwa34t2th2i2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEd8WOo/JViG+Tu+XIwqF3j0dLehwFAmJn7HYACgkQwqF3j0dL
+ehy8tQ/+Ky3MiJludVLn1UxomYXaF+PMsaoMN6FFFM0mRo9oXAhI3iftu3gDNxwv
+ukhuJncOwu6Vdrz4PYK5ZkawyU9LoQH8fgMHOw+Pm7viMAV/6aGrB9jnrwRvoYZQ
+q6FPBa7rKQyvuZujQkm4+vkNr4jSJCDiwdLR2VVSPsLpCm4ttNKPPTaAx8mR9QVB
+k+4XFMluWtiqkX8eU61Igi43WavCuc/OS1XaiVrS/43DLSMIx2BpsMALFygWmplo
+mZ1N8aiJfO1IoQpmv0TgB/8XOC6s6VkQ7l0yekEwPto1TJrDlc3xY3He+sLAjq08
+m/FF+zYJ72BCFK5pEaf5LCeQfnptVQVScfkiGkSYC2w+gPC9wmV/ZCbCZHPZ8JVp
+c1cMqaNzJq0edkBoa4wnWVeftZykddN51JyjGnE3uS4wxeO70OXbgFBX97tAL3F8
+XNruI80NdPpoSjT+9BcOBqpZHqRe/ODrnXTeKlITeFEstNQagknuqtVHBT2idHX7
+ntJxJWQitefSx0meBsk1dvxJgCpEvoY+HEvSZT+127WjTbVnCxP8J1bvthCU/O5l
+dnN5QoTzQJr67WVK2O+xCvA9e20srRnPEcnUjRK2F0+GGqbi2Dv8FM1Exh/iR56/
+WOfHk5CD8+ofK4H90XLF/VjWZTE+2HzfBa7yZOGb40Xq7lEiiI4=
+=WLJW
+-----END PGP SIGNATURE-----
+
+--du4ctwa34t2th2i2--
