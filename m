@@ -2,104 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6521FC4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Apr 2022 12:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67CF7C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Apr 2022 13:10:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349694AbiDZNCM (ORCPT
+        id S1350678AbiDZNNi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 26 Apr 2022 09:02:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48832 "EHLO
+        Tue, 26 Apr 2022 09:13:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350476AbiDZNCG (ORCPT
+        with ESMTP id S1350684AbiDZNNg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 26 Apr 2022 09:02:06 -0400
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DFAB180712;
-        Tue, 26 Apr 2022 05:58:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=KMQsvzJ5VuMOPuBnH+dQf/vlRQxi5wCpYK/os3PuYGs=; b=X5amV1/S6PMGm9SMCIZJLYLDnm
-        yMnFdUCZ/ukuBffqkdybr3YCGePmMWZv2vSIGIzHIpebAyX2utmufI9clXjGlphf8G0iFaaDJ7Flx
-        Lo2pgSk93kvzWusWONBgx02kXzkRCzeB3QBzkOjV17RpW4XmgTi49hoAuiYVcFlwip9Y7DoFjAYtv
-        dWjCjFBuodSPgNvBCQ7iQUoPRxEZO5LDn8vgtUDJuf5g58MFvewO4mIubwBg5aThxEBZAUOM1E2Vp
-        6twuj2brt6kmx0aS+Hne/dSfYTmC2tSqHvqO6oyNXkHyj/YVaqE5ANSbLt9FmnG7uSusMFe1z3ix4
-        S9hrqQOg==;
-Received: from [165.90.126.25] (helo=mail.igalia.com)
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-        id 1njKmC-0004lu-8R; Tue, 26 Apr 2022 14:58:44 +0200
-Date:   Tue, 26 Apr 2022 11:58:30 -0100
-From:   Melissa Wen <mwen@igalia.com>
-To:     Juan =?utf-8?Q?A=2E_Su=C3=A1rez?= <jasuarez@igalia.com>
-Cc:     Colin Ian King <colin.i.king@gmail.com>,
-        Emma Anholt <emma@anholt.net>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/v3d: Fix null pointer dereference of pointer perfmon
-Message-ID: <20220426125749.5i5nbtlcvwvmhzfh@mail.igalia.com>
-References: <20220424183512.1365683-1-colin.i.king@gmail.com>
- <890f6416ab37e40c929d95a8b4dcc8feb3dfb4d1.camel@igalia.com>
+        Tue, 26 Apr 2022 09:13:36 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4BDF3BFAF;
+        Tue, 26 Apr 2022 06:10:27 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id j15so12159488wrb.2;
+        Tue, 26 Apr 2022 06:10:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6GOK8GOxXZjvCSWzpBpj5pKZ6Fq3fZcQydXRFhVyOtw=;
+        b=mGxUFcSaBFGsCVExojhT7A540W1WOiCl4vceovmyDaNamYZ7gYsZxRuUON05MLN8f6
+         cXiLpQ1uZwSj804vGUbUmEeJpcPKoc34agS4/HO+Hs5drDJaU2HhV0DZartzpuqawVeE
+         7M62D9eUSEM3jh9Q118e95VpQ7D+CeXXCt8P0yxSYEhzbIL8lUPaizr9268qscrccgas
+         XOXrezVsitALJ67ra5pR3tZMxhT1hI2fdrBk69/PLjvCJkHj4706tsngiwLHKcauAC07
+         tboo/cy2vTcj4gqq0EltbeX3PFnVv2CSzs5daImV/8jlsiFMf8tludYB3LUcVRlRx+3e
+         HvGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6GOK8GOxXZjvCSWzpBpj5pKZ6Fq3fZcQydXRFhVyOtw=;
+        b=iMrvlvwjtTbcTZqIGact6lRW08r3/MxlR8WJd3Hh0a43D50ssQRmrrqQgmn43i+shg
+         ongH7wYJLDYpD0m+SL9+s99677bE5EdFkHV/gUP1ZuCJaR1Cy7Rcojg6jcG+l/fc+KmP
+         t+VvdFeCGnJxflAZnLWCNrPP34ZNg+UpjzK0q/8/tLuHBGiw0srFqg9Mm7O1MRR5bCoT
+         ccIzh/Gsx/zm4Rrfc69zLy+yXASt9XKLV0DhAfsTn0wj+dD29GVv/4Wp8CjWYVcjEQ48
+         k1uRZVq2JjwgA0QZSVfc0xseT60SkBcW0RGXmvuld1DincN9oGRz3JltoRkdIJ4MX8pr
+         hTQw==
+X-Gm-Message-State: AOAM531scPaS7OibXdR4KK7GV0tMJ+yd/iVetctkcOczObFECNWkS/Qv
+        wreGrZqP7VoX0TjDybvjLO4=
+X-Google-Smtp-Source: ABdhPJxkDJylNOaYYHkPyUlYZ9T2/Zn+9hpCgk1NWN0UYJ1It5pVUFOpyduFn52DBNw8FEwZaS7aeg==
+X-Received: by 2002:a5d:6dab:0:b0:20a:8684:cbc1 with SMTP id u11-20020a5d6dab000000b0020a8684cbc1mr18216057wrs.482.1650978625869;
+        Tue, 26 Apr 2022 06:10:25 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id e9-20020a056000178900b0020a9f995a3csm12057830wrg.24.2022.04.26.06.10.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Apr 2022 06:10:25 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Len Brown <lenb@kernel.org>, linux-pm@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] tools/power turbostat: replace strncmp with single character compare
+Date:   Tue, 26 Apr 2022 14:10:24 +0100
+Message-Id: <20220426131024.1519440-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="du4ctwa34t2th2i2"
-Content-Disposition: inline
-In-Reply-To: <890f6416ab37e40c929d95a8b4dcc8feb3dfb4d1.camel@igalia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Using strncmp for a single character comparison is overly complicated,
+just use a simpler single character comparison instead. Also stops
+static analyzers (such as cppcheck) from complaining about strncmp on
+non-null terminated strings.
 
---du4ctwa34t2th2i2
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/power/x86/turbostat/turbostat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 04/25, Juan A. Su=E1rez wrote:
-> On Sun, 2022-04-24 at 19:35 +0100, Colin Ian King wrote:
-> > In the unlikely event that pointer perfmon is null the WARN_ON return
-> > path
-> > occurs after the pointer has already been deferenced. Fix this by
-> > only
-> > dereferencing perfmon after it has been null checked.
-> >=20
->=20
-> Good catch!
->=20
-> Reviewed-by: Juan A. Suarez <jasuarez@igalia.com>
+diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
+index ede31a4287a0..e6779f599a8e 100644
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -2976,7 +2976,7 @@ int get_thread_siblings(struct cpu_topology *thiscpu)
+ 				}
+ 			}
+ 		}
+-	} while (!strncmp(&character, ",", 1));
++	} while (character == ',');
+ 	fclose(filep);
+ 
+ 	return CPU_COUNT_S(size, thiscpu->put_ids);
+-- 
+2.35.1
 
-Applied to drm-misc-next.
-
-Thanks,
-
-Melissa
->=20
->=20
-> 	J.A.
->=20
-
---du4ctwa34t2th2i2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEd8WOo/JViG+Tu+XIwqF3j0dLehwFAmJn7HYACgkQwqF3j0dL
-ehy8tQ/+Ky3MiJludVLn1UxomYXaF+PMsaoMN6FFFM0mRo9oXAhI3iftu3gDNxwv
-ukhuJncOwu6Vdrz4PYK5ZkawyU9LoQH8fgMHOw+Pm7viMAV/6aGrB9jnrwRvoYZQ
-q6FPBa7rKQyvuZujQkm4+vkNr4jSJCDiwdLR2VVSPsLpCm4ttNKPPTaAx8mR9QVB
-k+4XFMluWtiqkX8eU61Igi43WavCuc/OS1XaiVrS/43DLSMIx2BpsMALFygWmplo
-mZ1N8aiJfO1IoQpmv0TgB/8XOC6s6VkQ7l0yekEwPto1TJrDlc3xY3He+sLAjq08
-m/FF+zYJ72BCFK5pEaf5LCeQfnptVQVScfkiGkSYC2w+gPC9wmV/ZCbCZHPZ8JVp
-c1cMqaNzJq0edkBoa4wnWVeftZykddN51JyjGnE3uS4wxeO70OXbgFBX97tAL3F8
-XNruI80NdPpoSjT+9BcOBqpZHqRe/ODrnXTeKlITeFEstNQagknuqtVHBT2idHX7
-ntJxJWQitefSx0meBsk1dvxJgCpEvoY+HEvSZT+127WjTbVnCxP8J1bvthCU/O5l
-dnN5QoTzQJr67WVK2O+xCvA9e20srRnPEcnUjRK2F0+GGqbi2Dv8FM1Exh/iR56/
-WOfHk5CD8+ofK4H90XLF/VjWZTE+2HzfBa7yZOGb40Xq7lEiiI4=
-=WLJW
------END PGP SIGNATURE-----
-
---du4ctwa34t2th2i2--
