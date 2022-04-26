@@ -2,89 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5FE6C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Apr 2022 13:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E112FC433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Apr 2022 14:32:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346415AbiDZNmn (ORCPT
+        id S1347726AbiDZOgD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 26 Apr 2022 09:42:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44496 "EHLO
+        Tue, 26 Apr 2022 10:36:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239468AbiDZNml (ORCPT
+        with ESMTP id S239628AbiDZOgD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 26 Apr 2022 09:42:41 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09A2A66AE6;
-        Tue, 26 Apr 2022 06:39:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1650980374; x=1682516374;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7fuoHjFYh58bCMLDeH91TfTPQ3w0G2M79t/dH46cWVM=;
-  b=kk55sE6m9ngH5zhZlN111jJef38ZLzfv5FlpLa3wXk/eaTmdeWxfHChL
-   xQUTRX38IL78SDBiIZ9xIZ3QXUhSV6LL7I9IkNWmqPdt1J0wGRaKCrPaY
-   Uh9aBFJEIpotgaWJcKgG0bRBd55X2qcPpX8ijPagbESMlI/uXpF3B7huC
-   dpExB89eB1unPmgwo0xbk4vZYlCad05KFFgACmT6PJoHcExEVN/IUmiF/
-   xGei0lYlG/hP2fxwmZquqiS9JqtTBmDxAc3jQLT/Y/U1PLJNIdX61PyBA
-   XrCZfxxP5tEc1jkYH23m9hjGJnyCYiZyt0bGbnySP0IcME9mDXYriRThK
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10328"; a="252955802"
-X-IronPort-AV: E=Sophos;i="5.90,291,1643702400"; 
-   d="scan'208";a="252955802"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2022 06:39:33 -0700
-X-IronPort-AV: E=Sophos;i="5.90,290,1643702400"; 
-   d="scan'208";a="579898754"
-Received: from dongyiyu-mobl1.ccr.corp.intel.com (HELO chenyu5-mobl1) ([10.249.173.93])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2022 06:39:30 -0700
-Date:   Tue, 26 Apr 2022 21:39:26 +0800
-From:   Chen Yu <yu.c.chen@intel.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Len Brown <lenb@kernel.org>, linux-pm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools/power turbostat: Fix file pointer leak
-Message-ID: <20220426133926.GA33188@chenyu5-mobl1>
-References: <20220426131607.1520483-1-colin.i.king@gmail.com>
+        Tue, 26 Apr 2022 10:36:03 -0400
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9ADE2B716A;
+        Tue, 26 Apr 2022 07:32:55 -0700 (PDT)
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1njMFK-0004FF-03; Tue, 26 Apr 2022 16:32:54 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id 5D5FAC01C7; Tue, 26 Apr 2022 16:32:01 +0200 (CEST)
+Date:   Tue, 26 Apr 2022 16:32:01 +0200
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-mips@vger.kernel.org
+Subject: Re: [PATCH] MIPS: SGI-IP27: Free some unused memory
+Message-ID: <20220426143201.GD18291@alpha.franken.de>
+References: <9bc24670be4b1386c9b5c60f158c6acd7b723e72.1650720222.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220426131607.1520483-1-colin.i.king@gmail.com>
+In-Reply-To: <9bc24670be4b1386c9b5c60f158c6acd7b723e72.1650720222.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Apr 26, 2022 at 02:16:07PM +0100, Colin Ian King wrote:
-> Currently if a fscanf fails then an early return leaks an open
-> file pointer. Fix this by fclosing the file before the return.
-> Detected using static analysis with cppcheck:
+On Sat, Apr 23, 2022 at 03:24:03PM +0200, Christophe JAILLET wrote:
+> platform_device_add_data() duplicates the memory it is passed. So we can
+> free some memory to save a few bytes that would remain unused otherwise.
 > 
-> tools/power/x86/turbostat/turbostat.c:2039:3: error: Resource leak: fp [resourceLeak]
-> 
-> Fixes: eae97e053fe3 ("tools/power turbostat: Support thermal throttle count print")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  tools/power/x86/turbostat/turbostat.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  arch/mips/sgi-ip27/ip27-xtalk.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
-> index e6779f599a8e..db431b31c4df 100644
-> --- a/tools/power/x86/turbostat/turbostat.c
-> +++ b/tools/power/x86/turbostat/turbostat.c
-> @@ -2035,9 +2035,9 @@ int get_core_throt_cnt(int cpu, unsigned long long *cnt)
->  	if (!fp)
->  		return -1;
->  	ret = fscanf(fp, "%lld", &tmp);
-> +	fclose(fp);
->  	if (ret != 1)
->  		return -1;
-> -	fclose(fp);
->  	*cnt = tmp;
+> diff --git a/arch/mips/sgi-ip27/ip27-xtalk.c b/arch/mips/sgi-ip27/ip27-xtalk.c
+> index 000ede156bdc..e762886d1dda 100644
+> --- a/arch/mips/sgi-ip27/ip27-xtalk.c
+> +++ b/arch/mips/sgi-ip27/ip27-xtalk.c
+> @@ -53,6 +53,8 @@ static void bridge_platform_create(nasid_t nasid, int widget, int masterwid)
+>  	}
+>  	platform_device_add_resources(pdev, &w1_res, 1);
+>  	platform_device_add_data(pdev, wd, sizeof(*wd));
+> +	/* platform_device_add_data() duplicates the data */
+> +	kfree(wd);
+>  	platform_device_add(pdev);
 >  
->  	return 0;
-Acked-by: Chen Yu <yu.c.chen@intel.com>
+>  	bd = kzalloc(sizeof(*bd), GFP_KERNEL);
+> @@ -83,6 +85,8 @@ static void bridge_platform_create(nasid_t nasid, int widget, int masterwid)
+>  	bd->io_offset	= offset;
+>  
+>  	platform_device_add_data(pdev, bd, sizeof(*bd));
+> +	/* platform_device_add_data() duplicates the data */
+> +	kfree(bd);
+>  	platform_device_add(pdev);
+>  	pr_info("xtalk:n%d/%x bridge widget\n", nasid, widget);
+>  	return;
+> -- 
+> 2.32.0
 
-Thanks for fixing it.
+applied to mips-next.
 
+Thomas.
 
-Chenyu
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
