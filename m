@@ -2,80 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E6BDC433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon,  2 May 2022 08:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91076C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  2 May 2022 09:33:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383864AbiEBImN (ORCPT
+        id S1384234AbiEBJhQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 2 May 2022 04:42:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54528 "EHLO
+        Mon, 2 May 2022 05:37:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383870AbiEBImK (ORCPT
+        with ESMTP id S1380009AbiEBJhP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 2 May 2022 04:42:10 -0400
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6FE944772;
-        Mon,  2 May 2022 01:38:38 -0700 (PDT)
-Received: by mail-qt1-f180.google.com with SMTP id p4so10060909qtq.12;
-        Mon, 02 May 2022 01:38:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2nIzQZnMpTAmjQQOkm7iT5MX1+3DBposIe0eGJZB2fQ=;
-        b=cRbKx3/+M9WlbABbBUCHQszesjhhvIYryBaKFV5ctYla7wLTlM8ob04N9RoCQs/CIl
-         U0zye1YvAzkEHwKshhfjw7qpry8NE6zMGxpFltLy2TF9ad3mQRW9rQjtRyyze1buG6ep
-         7OGRYFbMlw78Z+7iOI0qIsA5+LLC0ssTi2tpP4yh44pXkscvk7FYJ8clnv4bIrCqyZdN
-         2x5m7oiX6TPgozu7mFE3WHb9wi69vy8vGf9AZa6GVXUQ6DV+gbnlt/HpY0ZAkr73iaWu
-         rN/WQbin8NQ7Prxjp4Lo2eqQYZUH+5NP2AFHWIZfMlaqUA7/A2SxIn4utu1/ca41Lm0p
-         Ow4w==
-X-Gm-Message-State: AOAM532l3TbJ/8rLWKFXqG2LkcjKF1q4hriBGS+7D37uNv/wL3F4s7AX
-        lAv+ikDRYtrtyvAaDMdyIxHPXKgQfb2p9Q==
-X-Google-Smtp-Source: ABdhPJwr2719fQ6pAC3tDrB11fGRCbhIipwNS96ZYJUjW7WZ+k61suTavwAjzzh6pu6lH4yMjH6V9g==
-X-Received: by 2002:ac8:5943:0:b0:2f3:a0cc:56fc with SMTP id 3-20020ac85943000000b002f3a0cc56fcmr5855747qtz.170.1651480717674;
-        Mon, 02 May 2022 01:38:37 -0700 (PDT)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
-        by smtp.gmail.com with ESMTPSA id b19-20020a05620a0f9300b0069fc13ce1e8sm3904925qkn.25.2022.05.02.01.38.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 May 2022 01:38:37 -0700 (PDT)
-Received: by mail-yb1-f169.google.com with SMTP id y76so24908651ybe.1;
-        Mon, 02 May 2022 01:38:37 -0700 (PDT)
-X-Received: by 2002:a05:6902:120e:b0:634:6f29:6b84 with SMTP id
- s14-20020a056902120e00b006346f296b84mr9787048ybu.604.1651480717160; Mon, 02
- May 2022 01:38:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220430191122.8667-4-Julia.Lawall@inria.fr>
-In-Reply-To: <20220430191122.8667-4-Julia.Lawall@inria.fr>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 2 May 2022 10:38:25 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVnbbURooc7bePQX4E0FZVPO+eiKd8kYW2cz0mx3r82ZA@mail.gmail.com>
-Message-ID: <CAMuHMdVnbbURooc7bePQX4E0FZVPO+eiKd8kYW2cz0mx3r82ZA@mail.gmail.com>
-Subject: Re: [PATCH] m68k: fix typos in comments
+        Mon, 2 May 2022 05:37:15 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80070205CA;
+        Mon,  2 May 2022 02:33:42 -0700 (PDT)
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2426uAci021772;
+        Mon, 2 May 2022 09:33:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=jJ+GRxrt2xk4FMHKuOBnNoDWz8NuV0uvK28Gl9JJRio=;
+ b=ohjp1Qgnm6w3qHWMmk/MhRYJF7HiYy47DJBtO+kyEhhR1B5xeWivG0qaiNEpDNS1opeK
+ 0ffdHP6vLqna+WL1sfPsQTsQaLyvt7R3Tiq6NGG4BCxDOmv2IyX9aHuv9nR47TtzEpLa
+ kA2cHvGjMAxC+WtoYvLx3fTBvgLibzBjEsBRweTH83TQqlOSsgHcdj8YDhJTHJ8tjQXG
+ dJru2N9PJNSr6JfN0luVSO9NO2lBZ1rj1Ic2YNx/ldRz+dDETU+A/c730GSMdp8HYmmB
+ L9Ns+FllmMXkiOWnRZWuCfMgdBhDgDYv43ehO1uxcOCZYzbqVP7p5jaBjM0EmBQoPhzX IQ== 
+Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3ftafd2qgd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 02 May 2022 09:33:33 +0000
+Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
+        by ppma01fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2429SDqi030594;
+        Mon, 2 May 2022 09:33:31 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma01fra.de.ibm.com with ESMTP id 3frvr8t1bb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 02 May 2022 09:33:31 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2429XSx554067692
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 2 May 2022 09:33:28 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8AD5C11C050;
+        Mon,  2 May 2022 09:33:28 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1963011C04A;
+        Mon,  2 May 2022 09:33:28 +0000 (GMT)
+Received: from osiris (unknown [9.145.172.68])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon,  2 May 2022 09:33:28 +0000 (GMT)
+Date:   Mon, 2 May 2022 11:33:26 +0200
+From:   Heiko Carstens <hca@linux.ibm.com>
 To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     Greg Ungerer <gerg@linux-m68k.org>,
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
         kernel-janitors@vger.kernel.org,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "David S. Miller" <davem@davemloft.net>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] s390/crypto: fix typos in comments
+Message-ID: <Ym+lZoRbROC9H4Vb@osiris>
+References: <20220430191122.8667-2-Julia.Lawall@inria.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220430191122.8667-2-Julia.Lawall@inria.fr>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: HkY-HNJVB82HBxsZl0GLKfS-uQ51MqZi
+X-Proofpoint-GUID: HkY-HNJVB82HBxsZl0GLKfS-uQ51MqZi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
+ definitions=2022-05-02_03,2022-04-28_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0 mlxlogscore=707
+ suspectscore=0 clxscore=1011 spamscore=0 bulkscore=0 malwarescore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2205020074
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Apr 30, 2022 at 9:11 PM Julia Lawall <Julia.Lawall@inria.fr> wrote:
+On Sat, Apr 30, 2022 at 09:11:16PM +0200, Julia Lawall wrote:
 > Various spelling mistakes in comments.
 > Detected with the help of Coccinelle.
->
+> 
 > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> 
+> ---
+>  arch/s390/crypto/des_s390.c |    2 +-
+>  arch/s390/crypto/prng.c     |    2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Applied, thanks.
