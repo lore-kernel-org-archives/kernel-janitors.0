@@ -2,91 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8184FC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 May 2022 15:55:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E27A2C4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed,  4 May 2022 18:45:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352911AbiEDP7U (ORCPT
+        id S1355483AbiEDStN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 4 May 2022 11:59:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57064 "EHLO
+        Wed, 4 May 2022 14:49:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352921AbiEDP7O (ORCPT
+        with ESMTP id S1377304AbiEDStL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 4 May 2022 11:59:14 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0627CB847;
-        Wed,  4 May 2022 08:55:38 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id v12so2615467wrv.10;
-        Wed, 04 May 2022 08:55:37 -0700 (PDT)
+        Wed, 4 May 2022 14:49:11 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60231101C7
+        for <kernel-janitors@vger.kernel.org>; Wed,  4 May 2022 11:45:34 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id q76so1830544pgq.10
+        for <kernel-janitors@vger.kernel.org>; Wed, 04 May 2022 11:45:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wtP9hXDTn2yxCxN0X3of+jxBUyJ3pPE1spLSBo0Vj30=;
-        b=qqXa9svwL8NMhVK1Gy+nfEs6AsyyPj8v3ldoTOGdWz6T7rM9N+70zCY8ogsxibCHLh
-         6awoBFNjZXrfw6ZN4DGr71lSRCULT2WjFh+UcVjUjBZcy2SFdaE+R3K3+8ZJVBYVCV9t
-         ESvoJaKYDq/eeFRdics70hAMrc1ri9IPZu2ioz63ukeJGse/F3+2P3urmhmT707I2h1R
-         Fa1J5WZ/Rw7mi4kntJUDjTQBfj9KL79ANJtIOqollDoch0qutO8iKRcdzWlOcJLeMnVJ
-         jzhQC9Xp5jk5rGTnjYdMTQ2sL28rtULpMZd9YbIf7faFF2taVbzUndHYThXOfj6PdvQR
-         aAcg==
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=FuAOc+wNIC5DOVBIAgkTsyelE5cgK01ek6zoAdzRvTk=;
+        b=AZj0/ZHqXNuRK2uYtcC5j3klOWUuvIgC5dicdjXTF9pLrIj+jqWYXDsimJKMRUbnuX
+         u3kU4GyhX8SXUXBHlcObDNCW2/t3LnxSTby/9rPiJamuyRGdKICMnfpg1a+AjFeQ+Ewe
+         c5UI+PkvtT/l5u+QYnFoBl3jL0Ae9shZsWdSQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=wtP9hXDTn2yxCxN0X3of+jxBUyJ3pPE1spLSBo0Vj30=;
-        b=JnXf/w9sHgHDUnHMZgA+pvCbLwf7aw0M3pyCjjeAojKG5i/mRisyVwEWmolYPlbQ38
-         q5t2Q4n9bHBrNCwpJyeydVvsxD1MmaiqEnAuP5Kh1Yz7eNsjDt0F2SARmA7+XYWTT6Wy
-         L+MNLgVIdHJc/Lze1JqWrxbGLu7KhBvskdR2YYv5naheLkzPbtWDyAvXSPB4QkdIt60N
-         EYe7TL9ptPTsaWX/ws7U66RUCvQldUUclg4D5clip0tfSmdg/bWFVvivkFPHPSR4O9Lz
-         y7kvxIj+x8jRHrpMeAK8J/ONU/SxBHfLoUhIcK9Fj8BEH9PQtMHc6QnLf8N9fyyhsEMy
-         1Dmg==
-X-Gm-Message-State: AOAM5318eVm7swomehxpuFuq6IZDQgBI0c4uEIHtowwbUVRLdx12xXJy
-        WQerS+X+GjH3mWlfS514C80=
-X-Google-Smtp-Source: ABdhPJyAO2ajDWK9KtBeiYVElkB0jr1JpnrWYOLIIW+ZDM2z1WSjOl3K/EKnkLOcao/sWhat3JyTkA==
-X-Received: by 2002:a5d:6c68:0:b0:20c:7246:a86 with SMTP id r8-20020a5d6c68000000b0020c72460a86mr7360076wrz.283.1651679736508;
-        Wed, 04 May 2022 08:55:36 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id bg3-20020a05600c3c8300b003942a244ed2sm5085334wmb.23.2022.05.04.08.55.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 May 2022 08:55:35 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Kees Cook <keescook@chromium.org>,
+        bh=FuAOc+wNIC5DOVBIAgkTsyelE5cgK01ek6zoAdzRvTk=;
+        b=eQJP7cik/QCMYiSjRkEY5rqPL+rudedQ1X+Hjr5Eoe0/xsQgq2IdlVUQyWU5f/dUka
+         zc57DjzuI6CiTGpGiIfB64BwXgcJwT4ENF/L9LCtMoL2AjqjcSYEN5TiuCLRvQZsl3zC
+         NgbzfYouzv0Du8DnSC8XwCDuXl9SWetR8Ui98N8Me+X401hdobshfDO43MxDXZKl2bM8
+         9JpsvIOH6HAjtpagtC2XHzGW0Je6aw7wFanYCRbo0XVS5T2TVpyfwm2uNUk2yAA+KGgD
+         Yofr42XPpTMKW6kn+tm8fMqpAi3M5IrSgVuGYickVWt0fWQgOPX9YTItBwSnROvXm3iM
+         nQlw==
+X-Gm-Message-State: AOAM5327t4NFYgq3+mki3s19ijkNQ3lNkdW8NfVz8S/+yo2kdjgDTX7L
+        V8lEZgKg+bZlYQJF/3hdr4410Q==
+X-Google-Smtp-Source: ABdhPJyPye6nL1nzMC2VY8GBKj09rnbsOJtsUkSsAuM0pZxQ+xALJkMM2Nq52jbHfhfB7B1Pfc1xbg==
+X-Received: by 2002:a63:81c6:0:b0:3ab:616b:35b with SMTP id t189-20020a6381c6000000b003ab616b035bmr19183626pgd.256.1651689933870;
+        Wed, 04 May 2022 11:45:33 -0700 (PDT)
+Received: from [192.168.120.250] (wsip-70-166-189-147.ph.ph.cox.net. [70.166.189.147])
+        by smtp.gmail.com with ESMTPSA id t9-20020a17090340c900b0015e8d4eb222sm8533218pld.108.2022.05.04.11.45.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 May 2022 11:45:33 -0700 (PDT)
+Subject: Re: [PATCH][next] selftests/seccomp: Fix spelling mistake "Coud" ->
+ "Could"
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
         Andy Lutomirski <luto@amacapital.net>,
         Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
         linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
         bpf@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] selftests/seccomp: Fix spelling mistake "Coud" -> "Could"
-Date:   Wed,  4 May 2022 16:55:35 +0100
-Message-Id: <20220504155535.239180-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <20220504155535.239180-1-colin.i.king@gmail.com>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <f2dc58e6-0cda-581f-f026-64099494509f@linuxfoundation.org>
+Date:   Wed, 4 May 2022 12:45:31 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220504155535.239180-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in an error message. Fix it.
+On 5/4/22 9:55 AM, Colin Ian King wrote:
+> There is a spelling mistake in an error message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>   tools/testing/selftests/seccomp/seccomp_bpf.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+> index 29c973f606b2..136df5b76319 100644
+> --- a/tools/testing/selftests/seccomp/seccomp_bpf.c
+> +++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+> @@ -4320,7 +4320,7 @@ static ssize_t get_nth(struct __test_metadata *_metadata, const char *path,
+>   
+>   	f = fopen(path, "r");
+>   	ASSERT_NE(f, NULL) {
+> -		TH_LOG("Coud not open %s: %s", path, strerror(errno));
+> +		TH_LOG("Could not open %s: %s", path, strerror(errno));
+>   	}
+>   
+>   	for (i = 0; i < position; i++) {
+> 
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/seccomp/seccomp_bpf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you. I will pull this for Linux 5.19-rc1
 
-diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
-index 29c973f606b2..136df5b76319 100644
---- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-+++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-@@ -4320,7 +4320,7 @@ static ssize_t get_nth(struct __test_metadata *_metadata, const char *path,
- 
- 	f = fopen(path, "r");
- 	ASSERT_NE(f, NULL) {
--		TH_LOG("Coud not open %s: %s", path, strerror(errno));
-+		TH_LOG("Could not open %s: %s", path, strerror(errno));
- 	}
- 
- 	for (i = 0; i < position; i++) {
--- 
-2.35.1
-
+thanks,
+-- Shuah
