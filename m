@@ -2,82 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93656C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  4 May 2022 14:06:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8184FC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  4 May 2022 15:55:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351227AbiEDOJi (ORCPT
+        id S1352911AbiEDP7U (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 4 May 2022 10:09:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55592 "EHLO
+        Wed, 4 May 2022 11:59:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351216AbiEDOJ0 (ORCPT
+        with ESMTP id S1352921AbiEDP7O (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 4 May 2022 10:09:26 -0400
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 955444131A
-        for <kernel-janitors@vger.kernel.org>; Wed,  4 May 2022 07:05:49 -0700 (PDT)
-Received: (qmail 1122953 invoked by uid 1000); 4 May 2022 10:05:48 -0400
-Date:   Wed, 4 May 2022 10:05:48 -0400
-From:   Alan Stern <stern@rowland.harvard.edu>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH][next] USB: gadget: Fix return of -EBUSY
-Message-ID: <YnKIPNtZ0wuPy7oS@rowland.harvard.edu>
-References: <20220504135840.232209-1-colin.i.king@gmail.com>
+        Wed, 4 May 2022 11:59:14 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0627CB847;
+        Wed,  4 May 2022 08:55:38 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id v12so2615467wrv.10;
+        Wed, 04 May 2022 08:55:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wtP9hXDTn2yxCxN0X3of+jxBUyJ3pPE1spLSBo0Vj30=;
+        b=qqXa9svwL8NMhVK1Gy+nfEs6AsyyPj8v3ldoTOGdWz6T7rM9N+70zCY8ogsxibCHLh
+         6awoBFNjZXrfw6ZN4DGr71lSRCULT2WjFh+UcVjUjBZcy2SFdaE+R3K3+8ZJVBYVCV9t
+         ESvoJaKYDq/eeFRdics70hAMrc1ri9IPZu2ioz63ukeJGse/F3+2P3urmhmT707I2h1R
+         Fa1J5WZ/Rw7mi4kntJUDjTQBfj9KL79ANJtIOqollDoch0qutO8iKRcdzWlOcJLeMnVJ
+         jzhQC9Xp5jk5rGTnjYdMTQ2sL28rtULpMZd9YbIf7faFF2taVbzUndHYThXOfj6PdvQR
+         aAcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wtP9hXDTn2yxCxN0X3of+jxBUyJ3pPE1spLSBo0Vj30=;
+        b=JnXf/w9sHgHDUnHMZgA+pvCbLwf7aw0M3pyCjjeAojKG5i/mRisyVwEWmolYPlbQ38
+         q5t2Q4n9bHBrNCwpJyeydVvsxD1MmaiqEnAuP5Kh1Yz7eNsjDt0F2SARmA7+XYWTT6Wy
+         L+MNLgVIdHJc/Lze1JqWrxbGLu7KhBvskdR2YYv5naheLkzPbtWDyAvXSPB4QkdIt60N
+         EYe7TL9ptPTsaWX/ws7U66RUCvQldUUclg4D5clip0tfSmdg/bWFVvivkFPHPSR4O9Lz
+         y7kvxIj+x8jRHrpMeAK8J/ONU/SxBHfLoUhIcK9Fj8BEH9PQtMHc6QnLf8N9fyyhsEMy
+         1Dmg==
+X-Gm-Message-State: AOAM5318eVm7swomehxpuFuq6IZDQgBI0c4uEIHtowwbUVRLdx12xXJy
+        WQerS+X+GjH3mWlfS514C80=
+X-Google-Smtp-Source: ABdhPJyAO2ajDWK9KtBeiYVElkB0jr1JpnrWYOLIIW+ZDM2z1WSjOl3K/EKnkLOcao/sWhat3JyTkA==
+X-Received: by 2002:a5d:6c68:0:b0:20c:7246:a86 with SMTP id r8-20020a5d6c68000000b0020c72460a86mr7360076wrz.283.1651679736508;
+        Wed, 04 May 2022 08:55:36 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id bg3-20020a05600c3c8300b003942a244ed2sm5085334wmb.23.2022.05.04.08.55.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 May 2022 08:55:35 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] selftests/seccomp: Fix spelling mistake "Coud" -> "Could"
+Date:   Wed,  4 May 2022 16:55:35 +0100
+Message-Id: <20220504155535.239180-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220504135840.232209-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, May 04, 2022 at 02:58:40PM +0100, Colin Ian King wrote:
-> Currently when driver->match_existing_only is true, the error return is
-> set to -EBUSY however ret is then set to 0 at the end of the if/else
-> statement. I believe the ret = 0 statement should be set in the else
-> part of the if statement and not at the end to ensure -EBUSY is being
-> returned correctly.
-> 
-> Detected by clang scan:
-> drivers/usb/gadget/udc/core.c:1558:4: warning: Value stored to 'ret' is
-> never read [deadcode.DeadStores]
-> 
-> Fixes: fc274c1e9973 ("USB: gadget: Add a new bus for gadgets")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
+There is a spelling mistake in an error message. Fix it.
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/testing/selftests/seccomp/seccomp_bpf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Don't know how I missed that.  Thanks for fixing it.
+diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+index 29c973f606b2..136df5b76319 100644
+--- a/tools/testing/selftests/seccomp/seccomp_bpf.c
++++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+@@ -4320,7 +4320,7 @@ static ssize_t get_nth(struct __test_metadata *_metadata, const char *path,
+ 
+ 	f = fopen(path, "r");
+ 	ASSERT_NE(f, NULL) {
+-		TH_LOG("Coud not open %s: %s", path, strerror(errno));
++		TH_LOG("Could not open %s: %s", path, strerror(errno));
+ 	}
+ 
+ 	for (i = 0; i < position; i++) {
+-- 
+2.35.1
 
-In fact, since it's guaranteed that ret is already 0 before the 
-driver->match_existing_only test, you could eliminate the assignment 
-entirely.  But moving it into the second branch of the "if" statement is 
-probably more clear.
-
-Alan Stern
-
->  drivers/usb/gadget/udc/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
-> index 61790592b2c8..3281d8a3dae7 100644
-> --- a/drivers/usb/gadget/udc/core.c
-> +++ b/drivers/usb/gadget/udc/core.c
-> @@ -1559,8 +1559,8 @@ int usb_gadget_register_driver_owner(struct usb_gadget_driver *driver,
->  		} else {
->  			pr_info("%s: couldn't find an available UDC\n",
->  					driver->function);
-> +			ret = 0;
->  		}
-> -		ret = 0;
->  	}
->  	mutex_unlock(&udc_lock);
->  
-> -- 
-> 2.35.1
-> 
