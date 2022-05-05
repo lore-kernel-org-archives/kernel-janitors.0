@@ -2,93 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C91BDC433FE
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 May 2022 11:10:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1208CC433FE
+	for <kernel-janitors@archiver.kernel.org>; Thu,  5 May 2022 11:50:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356660AbiEELO2 (ORCPT
+        id S1355269AbiEELxs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 5 May 2022 07:14:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48196 "EHLO
+        Thu, 5 May 2022 07:53:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356687AbiEELO0 (ORCPT
+        with ESMTP id S231582AbiEELxr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 5 May 2022 07:14:26 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7136E43AD2;
-        Thu,  5 May 2022 04:10:47 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id c190-20020a1c35c7000000b0038e37907b5bso4900785wma.0;
-        Thu, 05 May 2022 04:10:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7fZe7ZuhkcHkphV8RgWm+aqXThfc6HEs1D3+w7fnW1E=;
-        b=SF6NsgMh/aI7dxvNSm4J0F8dduL8PgQFBddrpPStEMC88whboFowO6an+39Xec59dR
-         cialT9GTdpTTBlnhpUM3FJSMNcMenDRq9vxT4AhKLE3FnWOfGvhKUzv0XPRX4S9unHyq
-         SJn01UIX7/0ppvj+tlyfSojkTUi5skbGGPe9dk8NaZoZdBQX9dYZ530f4HegVXm4Qjce
-         4WoZ0Qoa/0mHf/bMvlgoA1/dkJSg9rWKe90SPua56pGHGvs7cDaJzGPwL7fBTageCK/X
-         GnR+nS2Nf9KkS2HbQuhuIIJb9/NIPZKcM9hVS65VZ5Z+yNCJMxuXjicKlW+QD0DVUUP3
-         RmMA==
+        Thu, 5 May 2022 07:53:47 -0400
+Received: from us-smtp-delivery-74.mimecast.com (us-smtp-delivery-74.mimecast.com [170.10.129.74])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 83FEF541A4
+        for <kernel-janitors@vger.kernel.org>; Thu,  5 May 2022 04:50:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1651751407;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=i67tjVaHB78cF63WCGFJ3CI1nO+ngKMIoetrGgmJHsE=;
+        b=V1hPzsD/jysvk4A0+nwNEQq26G3nhHKHG045vABEkWDexxrd4o9VZivz5NG4GqPP46KfyX
+        R2Aeva4W7GhaVE2H4rK8L7BaY+pdd4XNxmDdkjZBjo5Dh9fRb+J+S20u0Qa7R+EZk8KFeE
+        VBDaa5ueF2Vp6y3Yn+jFQBQ5R5qk7P4=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-591-S9M_O5tEP66x6MjAyivFbA-1; Thu, 05 May 2022 07:50:06 -0400
+X-MC-Unique: S9M_O5tEP66x6MjAyivFbA-1
+Received: by mail-qk1-f198.google.com with SMTP id a5-20020ae9e805000000b006a034b31384so424922qkg.8
+        for <kernel-janitors@vger.kernel.org>; Thu, 05 May 2022 04:50:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7fZe7ZuhkcHkphV8RgWm+aqXThfc6HEs1D3+w7fnW1E=;
-        b=KgAfkD8+xBBhU7Bqpb463SlDDAofqRL4O1B56hWNjRz42tCb288ELICSgvqU5WDvQ6
-         UICrO/v73BmGh6WkdauyRvls291cWxcd7kjYnws7idXfI9Dt1OOu5cRS9+liGoER2D1a
-         Y/vrHPp8cskAOaZoBjn0yydflUQpIAIfy/ClfrXMP7Yujxoivy7abjHUWwDHphUZIcEP
-         lj9OfWdy7wtzdgI0GytvTqKp/2S5izNuC1mMyyJIRSx01TCbCWHDYTCDTdIjiWdeHKYI
-         YjNEkPCnncETUMYwNEW7duJfGfLG3wIHspzuUcQT1AaNkVRm0MZVRAdpRD8qmtEHggRZ
-         3lvg==
-X-Gm-Message-State: AOAM530jR958ilYr3EcGtRRS+938GEFITD/nwQT21MmkPGUID7fh264R
-        2uLmqEDCGwCGvPnpcC/88bM=
-X-Google-Smtp-Source: ABdhPJx/+pEPKFamTmmbN/plSGNtO72hEEKl6yTB7HoNEk+TwL9rhZ7ovl3RzseVO64gCmaWJwIfCg==
-X-Received: by 2002:a05:600c:2045:b0:394:2457:9c36 with SMTP id p5-20020a05600c204500b0039424579c36mr4002675wmg.76.1651749045827;
-        Thu, 05 May 2022 04:10:45 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id z7-20020a5d4d07000000b0020c5253d920sm1122934wrt.108.2022.05.05.04.10.45
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=i67tjVaHB78cF63WCGFJ3CI1nO+ngKMIoetrGgmJHsE=;
+        b=YoHG5WKvUkamt/DGyVF4hlGAe3Dzzw+zpUQ5tzZ7Tyr91Ye7Cd0Q10TZegyo4bzHB/
+         hwGtw3Oyg4v8QxrZe4D7DHzz3hcjdo2MpzQ10U3jEwM0ITkuEXfUXak9RibexRfrXCOO
+         YmkTFCujQwtCoAj61aXAF5AowmYsyC8s0sz+QvaNpy9htp6hMus19CEdebcdv+azTn+u
+         yEzvkeSvbfsKGOTS1SeL4dbrNqfiv7GEKVqsZayQshRzICEerb/lalQVj3wSjJ5IPn+u
+         Cma/TmJrl0VuGaAduVE51oBEVsY6fDp4Rxv5IM35rw/9ur5MagPAQjQAgADWFc68+6dY
+         EvTg==
+X-Gm-Message-State: AOAM531OOP4OdaZdzN2i14SrtW5tQyzk5jBVy51KihI4nc6FRbvSaPlK
+        aXkVdPPCenCe7IeUf4nmPeUz7K0h077ruTo9G4KWhWi9VVMq7KFKpuC6CoaqqW2pRVq06Bdcxy+
+        qI7rAU+3S/DbYouQnzEeJlK+X3yqj
+X-Received: by 2002:a05:622a:c6:b0:2f3:bc21:6618 with SMTP id p6-20020a05622a00c600b002f3bc216618mr2180835qtw.581.1651751405823;
+        Thu, 05 May 2022 04:50:05 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyOTBe3w3XwO/LTDfuNLb9fUejFkDt19134p1Vhe3E4XGpHcM00tYTmOmxXiDwwWATyL/GdXw==
+X-Received: by 2002:a05:622a:c6:b0:2f3:bc21:6618 with SMTP id p6-20020a05622a00c600b002f3bc216618mr2180819qtw.581.1651751405564;
+        Thu, 05 May 2022 04:50:05 -0700 (PDT)
+Received: from gerbillo.redhat.com (146-241-115-66.dyn.eolo.it. [146.241.115.66])
+        by smtp.gmail.com with ESMTPSA id b10-20020a05620a270a00b0069fc13ce202sm656175qkp.51.2022.05.05.04.50.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 May 2022 04:10:45 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/rockchip: Fix spelling mistake "aligened" -> "aligned"
-Date:   Thu,  5 May 2022 12:10:44 +0100
-Message-Id: <20220505111044.374174-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        Thu, 05 May 2022 04:50:05 -0700 (PDT)
+Message-ID: <0606e0fede42a16c93231498d23c9afd5c05e26e.camel@redhat.com>
+Subject: Re: [PATCH net-next] mptcp: fix deadlock in mptcp_close()
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        Geliang Tang <geliang.tang@suse.com>
+Cc:     Matthieu Baerts <matthieu.baerts@tessares.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        mptcp@lists.linux.dev, kernel-janitors@vger.kernel.org
+Date:   Thu, 05 May 2022 13:50:01 +0200
+In-Reply-To: <YnOu5xlGgE2Ln7lj@kili>
+References: <YnOu5xlGgE2Ln7lj@kili>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a drm_err message. Fix it.
+On Thu, 2022-05-05 at 14:03 +0300, Dan Carpenter wrote:
+> The mptcp_data_lock/unlock(sk) functions are taking the same spin lock
+> as the lock_sock()/release_sock() functions.  So we're already holding
+> the lock at this point and taking it again will lead to a deadlock.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Note that lock_sock() (and release_sock()) releases the relevant
+spinlock before completion. AFAICs the above deadlock is not possible.
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-index 0b49fed16535..04e8e22a8640 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-@@ -1202,7 +1202,7 @@ static void vop2_plane_atomic_update(struct drm_plane *plane,
- 		 */
- 		stride = (fb->pitches[0] << 3) / bpp;
- 		if ((stride & 0x3f) && (xmirror || rotate_90 || rotate_270))
--			drm_err(vop2->drm, "vp%d %s stride[%d] not 64 pixel aligened\n",
-+			drm_err(vop2->drm, "vp%d %s stride[%d] not 64 pixel aligned\n",
- 				vp->id, win->data->name, stride);
- 
- 		rb_swap = vop2_afbc_rb_swap(fb->format->format);
--- 
-2.35.1
+Still I think we can revert commit 4293248c6704, I don't see why we
+need the addtional spin lock ?!? 
+
+Thanks!
+
+Paolo
 
