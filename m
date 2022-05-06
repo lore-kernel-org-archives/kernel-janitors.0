@@ -2,155 +2,166 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4458C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 May 2022 18:25:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F12C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 May 2022 21:32:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241395AbiEFS3Y (ORCPT
+        id S1444500AbiEFVgf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 6 May 2022 14:29:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48296 "EHLO
+        Fri, 6 May 2022 17:36:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230050AbiEFS3W (ORCPT
+        with ESMTP id S1444524AbiEFVgb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 6 May 2022 14:29:22 -0400
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam07on2064.outbound.protection.outlook.com [40.107.95.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 874EB4616C;
-        Fri,  6 May 2022 11:25:38 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=X5j50jCCfFRUYSBgpWRo8WYINllHB5FQF3eBv2HCsZgu20EAotq0SzwrRX+8Y7PxaEnRntpFQVcOK0wCI9EgeCc7itaE/7+oX7CoUW16ewNoa9r4ZxOb4ZsvH729ffjvqgmubPzWJlEua7TUYqJel1ziNumHv1kYagjKbP1RyjRyyT0RqQq+Ae1EzHS3KTS+RHloLy2U459kVpmUlYG+Zu82ZJTysqa/dE0FKHg00aXS4CfK2EqqqrT+rqOKxTb3RnAWnjyvzBXVq+eUP3Eq3tqC5posGZMaLl++o9xpgKgK9yRopqj2ZpPHSEbWKmi6mUFO0ll3CVGWXCOTCerqqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=brOoYI9LbTbK9ZeyRCKEf7LQPxCcXKDBLcFWVioCF0s=;
- b=WgZxYMAN+y/xK6FKL7oowDmGx1TcEWOAkexgOKGMLV+XL5XyBERXMdNAhPYeOPfNM5NNP+dZMQHw4I+ImpSI6kmHuG9TdpB+DuEEWbxesneOuUYI8X00db0s0lqwswi2OZ0F3dUo2CTsWLZBm4sF0/hR0ypAad+92VaFn1bLwFTTu/E/UCHdLNkT9CZUnEe8rtuxFCCnLiENXgep4Hu69GhngdEb8SFoyT8BXCspJ3573fSVZGMn58bGh7jVUDpEFmXXLahB8HaJlk8+1BZtuVXTctfV9qGOZD939TOqgntcjMEPYFQgg8E797mPbHKHyAX5awjsmbIqcdvmOvxK6g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=brOoYI9LbTbK9ZeyRCKEf7LQPxCcXKDBLcFWVioCF0s=;
- b=VbrTfiXAr4bX5S8mDrqXQpA0IEg3kv2Gy2jzMGBKLjlL3lI29n0hBE13s6FGJke0zO3WaE0NTOaz43grTe036iohgt0ySohpdJlC1plUPw3vtEmL82Su7j//ttx6ihvXpHE8uPq/XC+dJNXaj54iXlf3lcX8rxw150b+fLOO7G6sXAqzweEoA27YjPulkBrEfNKbY+0VIrjowmb4G8D4872dIJFhB3un/z5KHGQMx8VlaaVOURmCtWY53rBouZ9iDZPlhwCcDCYP0pMAbICq2gsdi4cEWaTyqj8Ya04Pw48m2g53O8T5SQlC/Y0MBNkVLAhRCyvCoASs0M9x65NRyQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
- by CH2PR12MB4053.namprd12.prod.outlook.com (2603:10b6:610:7c::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5206.24; Fri, 6 May
- 2022 18:25:34 +0000
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::b998:eed3:9088:780c]) by BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::b998:eed3:9088:780c%9]) with mapi id 15.20.5206.028; Fri, 6 May 2022
- 18:25:29 +0000
-Message-ID: <6e5ae4c2-abe2-048a-21b5-783f1c77bb08@nvidia.com>
-Date:   Fri, 6 May 2022 11:25:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 1/2] hte: fix off by one in hte_push_ts_ns()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Thierry Reding <treding@nvidia.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <YnU2gHe+QZOAuNyV@kili>
-From:   Dipen Patel <dipenp@nvidia.com>
-In-Reply-To: <YnU2gHe+QZOAuNyV@kili>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BY3PR10CA0007.namprd10.prod.outlook.com
- (2603:10b6:a03:255::12) To BY5PR12MB4116.namprd12.prod.outlook.com
- (2603:10b6:a03:210::13)
+        Fri, 6 May 2022 17:36:31 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BF0576F4A8
+        for <kernel-janitors@vger.kernel.org>; Fri,  6 May 2022 14:32:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1651872765;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=dJbJbWsoyM+Ik6q37wpw5Oa4Nh86YRow8ddVHHmJk08=;
+        b=JK5FwrLry48xN+2TqybW4GjhX2pOCgz2U1HcaIrFukFni3wSBzGaLxnvSdCioSo+K9Pmex
+        wrxB7D5YpfxGbQsGxnXcd3UsKw8bQ+VxrFquU7FiJoiVQIUcb+ACUxOIsEIw+wR9c5ESSh
+        Q/3fcZAnCKYfsEyLziiKXVLb5xkH4G0=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-615-9D8w21BkOuOqamYqwXBRXA-1; Fri, 06 May 2022 17:32:44 -0400
+X-MC-Unique: 9D8w21BkOuOqamYqwXBRXA-1
+Received: by mail-qt1-f200.google.com with SMTP id w21-20020a05622a135500b002f3b801f51eso7043861qtk.23
+        for <kernel-janitors@vger.kernel.org>; Fri, 06 May 2022 14:32:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:organization:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=dJbJbWsoyM+Ik6q37wpw5Oa4Nh86YRow8ddVHHmJk08=;
+        b=Dz6qjF15e7311d2EO80ZaHs16LHHYyYfeb1Sn1IIUDBcBFjDQJs7lF0oD8Ar0cgmCr
+         ZNeV0W5YBgUNC38Z9xTaPuak1+iIGEbnYAHZw38YzClxyahtQ1gI5VgniZWSBY87vcLf
+         7ZGZhytbfm8Ry1bGk4YMYIdOvHSii6M8oyFKvC5dY4ZPjLBn9pVfKVsdVN4rG/jbExfK
+         aCn9/tmh+Z5wOGRQktO/mwJrftvJm7dwMkb/yp/w5/wfJcmqJ/TixO9FUlXdXyY8J1UH
+         KWDFkQeMu27QZ81aGmeqLG0r8q3zfACL3MRutHAuFTJC1P7ckzgSDwfN5eqBfZQucZ6j
+         d5Vg==
+X-Gm-Message-State: AOAM533lXv16n/sM58hXlM5vcTOWSm7ViZcqV+jpQsI2dogq0/7OsYns
+        YW8XVVV8AVFc3wjld6geZBdOTavxNBWYt2jKOX7HX7MEvYe9GyisnqKzJQfQsBbkPHTMOINiWwJ
+        TVMJ4H/z+MNN5qf620e7D5JFis7eX
+X-Received: by 2002:a0c:ab09:0:b0:443:95d9:140c with SMTP id h9-20020a0cab09000000b0044395d9140cmr4170797qvb.84.1651872764246;
+        Fri, 06 May 2022 14:32:44 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwK5FWqqA+iA50nH6ppws5HNXmaCdaMsh8I0itmM43LaQ06P84wOxCI5Gl5CmLPygLNpGGy8Q==
+X-Received: by 2002:a0c:ab09:0:b0:443:95d9:140c with SMTP id h9-20020a0cab09000000b0044395d9140cmr4170789qvb.84.1651872763988;
+        Fri, 06 May 2022 14:32:43 -0700 (PDT)
+Received: from [192.168.8.138] (static-71-184-137-158.bstnma.ftas.verizon.net. [71.184.137.158])
+        by smtp.gmail.com with ESMTPSA id b3-20020ac85403000000b002f39b99f6adsm3164237qtq.71.2022.05.06.14.32.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 May 2022 14:32:43 -0700 (PDT)
+Message-ID: <9b7eab5df5e63e3fe899bca9ea35f4be8bbff98c.camel@redhat.com>
+Subject: Re: [PATCH] drm/nouveau: Fix a potential theorical leak in
+ nouveau_get_backlight_name()
+From:   Lyude Paul <lyude@redhat.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Karol Herbst <kherbst@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Pierre Moreau <pierre.morrow@free.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Date:   Fri, 06 May 2022 17:32:42 -0400
+In-Reply-To: <9ba85bca59df6813dc029e743a836451d5173221.1644386541.git.christophe.jaillet@wanadoo.fr>
+References: <9ba85bca59df6813dc029e743a836451d5173221.1644386541.git.christophe.jaillet@wanadoo.fr>
+Organization: Red Hat Inc.
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c6bbad61-b4ff-4318-386d-08da2f8dcc16
-X-MS-TrafficTypeDiagnostic: CH2PR12MB4053:EE_
-X-Microsoft-Antispam-PRVS: <CH2PR12MB405351003D179285355A2F85AEC59@CH2PR12MB4053.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 5nKrvkYLIm2mctLhygkRIxJCpcZBEfis5h2/Wd4nby76za+KUZmYMcmcuyKVXRJp9taBEAEOsShsSi3w4/UbuwQ4HvyEn6HFBcyU2rR+J16jn7WW2yaarJc7zp6BP3DTPy5OWN42W3UWu+VrQ+qQTacDrrUGnluxFQfcCVzp0EWcVPDuMuluqUwqonFu41i0Pc4OxpnoFvmwbKy6gy4AoQraBIi7HA5XLHfFTbxi7+alkg86rJUJWw3J5NZfXyuxqptHEG5Ghata3jkB1l0MPcUUOnvuHBKkNMsjT39rJC2nb6VNJ34hnMr9E3NUI1TQVD24gpKvP/Mt9XVs1ekMRTprjVH77QS9fLOkhINPFfNZbk6jqSj0q2ob0vcGiS4jugxNBU1HwMNUArHnjJg+A+mOg19LRSUl/Bf0AMpEzLIMF0Jo1UVyUUS+0e/uZUfSYOPp5IhJ9ngjDAghZnAg+OuxhbtyHfSzIneKOgA/vFKm+x/eUiYdkk4BUEr//JPpmCRCD6/6Hm4PQvKaHehCYBBPjuLcdikxJ/9X1tri4DLLZdJ/Q0Kdo1Pr6iSvqqRJSYvBxiZfyUNqCxNXIDFPG30nTRWM63uezgBGz7o192TSIRjd/F1itsj53dm00mS3lQQmqOSCH8wUg1Gwa682e07BGcDKFXWjxCmgnaTMvyUIY4SmbGpfDOzCD7NpPpkQnyquVyFQG9lm4n4QPPFz5elwFADg4bYSPwttsKRk7MIgRiNCx9DVwfgeMJAFQomf
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(8936002)(66556008)(66946007)(26005)(4744005)(86362001)(8676002)(4326008)(66476007)(31686004)(6486002)(2906002)(6512007)(36756003)(53546011)(316002)(6916009)(6506007)(508600001)(2616005)(83380400001)(5660300002)(38100700002)(31696002)(186003)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TDRYVXEwUWVvQ1BUZE9iZVdCaXhYYXJOdUlMTStGRWtoMW91TkZuclZUVGZr?=
- =?utf-8?B?eUxsU0xWOTl1MEV1cWE1VS94WGNVYmlKbFdUZGhuZkl2WDdPM3ZSak40bkFO?=
- =?utf-8?B?UUwycDh2cTFrdFZOWE91anBGT2o0bjVnY1BGM0N1cjFPeEhYOUdBdVV3aTY5?=
- =?utf-8?B?d0trNVFsN3NDazVXLy82M29XMzQ1Z3hybUhneTJiRXdPSGVCLzlSV2NXSFMv?=
- =?utf-8?B?RmY1Yk0wbDhuUFE4YzVHN3l5eTBrdWFHcXpHTnByalh6QnRZSEJFV0JkbTVL?=
- =?utf-8?B?ODl6SkM0S2xVdnFoQXpVNExHQjMzNDNreHVqVzRSWDRSTkVoeFZ2bU8zS0NH?=
- =?utf-8?B?Y1c2dHhMVEU3MloxbVlvY0l0aFpVdkNZMmREOGpuOTR6bW1XMHUxRlVja1hG?=
- =?utf-8?B?WFZpR3Y0d2ZBeHU0TExKRmk2Y0ZQTHJiNW9laUtqNWlLUjgzYWs3K210TXZF?=
- =?utf-8?B?OGI5N2xhZW5aeVV1M2wvMWhEcDhCb3lPTERDbms3YXZCT0FWNk05di9ITUJO?=
- =?utf-8?B?VDMrdEs0RFpQTkJOaUtybGpBUUxXVEl1b2diUmlabTRrVFNHVStoQnVXbHhi?=
- =?utf-8?B?M282eEtEaVhjWVlrRnlKN2kzUU5xRU1JZTdScVA0UXZvTmRBcUNLRTIwMy9t?=
- =?utf-8?B?Y0FldVhWY0hodmR0dWx1OVdudEFhK2d5TUJyNjYwWkFiOExBeWpiVUVDTTdE?=
- =?utf-8?B?bGpjRjNoREtlNzR6NFFNa3hMUElSeWJocWVyclJUNW1PcGpBVEwwYTlQSWda?=
- =?utf-8?B?UWd5azBVeGRDYW03T0x3bHlnN0ZoVnFuUUFVLzBQcjlKZTBMdWRQajBpWGRm?=
- =?utf-8?B?MG1VVGMxbTc4K3kzNWFMdXlUcEs3Z250OTF1VmZXMmgrM0xLdjFvRDVwV2xZ?=
- =?utf-8?B?K2V4cDJXLy8xS1RYdzBDMXdDeUNmcWVTdFhDeGRzQWxyRFJ3VmdUalRFN2Np?=
- =?utf-8?B?OTg5ZU5PRjE2eENudUorbjl4ajQzRDVKc3h5SThzNUpLaUw0MVN6UVErVVB3?=
- =?utf-8?B?dVdmZjZKSE5uRGNHbTlsK0dFSGk1aWR3NDQrS1Zzb0o2ZE1aNVNhTjVEQk1m?=
- =?utf-8?B?Q3Fra0lYSnNxTFA2dWl2Q0thei9jaVpxZnAxbUdmTDJEL2h4ZVFNM1liYk5r?=
- =?utf-8?B?UjBBay9YaGF3Y3BvZG9ZbWlkYk9RaWxyVkhvSTR5Q3NHNnM3a2kzc1k0OXpH?=
- =?utf-8?B?K2FNdTJvL0NVN3h3cE1rdEZnMHI5OVhRdjZwRUhqSTFpMmJGbStSaGxDTWQv?=
- =?utf-8?B?K2dDdWJ3anF0SWNzdUpzVmdSbUg3bEJxTzdNalNiZnFld3RNakxKSWVhQW52?=
- =?utf-8?B?YnFWUFBRVFdUeTdrUm5Ta2V1NUhBd0VIMmJuR3o4U25PZk1SblhzUFFmWG1u?=
- =?utf-8?B?V21ZanRYRXBaN0RqRW9tZ1RCZWFWdytHTUdLM3NGQUNRZTI3RFkwQ3QvM2Rk?=
- =?utf-8?B?RzZRbUhZd2REUHhPM2pXdXhzQjFIRkl1ZTR2aEQ3RldiVThVTi81a1lkQjFQ?=
- =?utf-8?B?SS9xU3hzb0dnYlB1aEkySFlUd3BhVEpqK3kyMC95YjZXUjFKSjhLNU8yTWhV?=
- =?utf-8?B?WnpOMnBka2oybTVmaW9Uck9Hc0ZaSTRaK2FZVTNxRG96N2xLQXBkYlVaUnFp?=
- =?utf-8?B?a3ZBSW04dGVoVVlzSW0rcTdWZEFheEJqWnZXcWVRb2tlVVhCTHEvWVpWam1q?=
- =?utf-8?B?dUV1SVF1eTN5bzAzM2ZROS9XS2FDemVSd2g5UjBURXlHQU5QV3J5ZmVxK2hM?=
- =?utf-8?B?MGRKRXZ4MlhsRFhPZzJ0Zk43NHVqWGhxOXpQV3U3U1dKVGV4am9TYzZXQmkx?=
- =?utf-8?B?OGNLU0ppcC93ZUlZbzBFR3h0R1E1dXRNUEl2cEQyQm91MWpRTnJpaDdvZ3ZQ?=
- =?utf-8?B?ZCtTdjdHY0V3MEthT2c2QjFubGZTTkFlRDB5b3JGQnNtMWZpMm9VTVZIZWph?=
- =?utf-8?B?OGp2bCtQNnppbkdoTnd6OStLY0tRRDlsM0dNUkxzUUMyK0FsQS9FWC9XWlFU?=
- =?utf-8?B?TVlPNGNaaWVmY2pQT29ndWFmZ1M2aUVlVWNFcm9uOTJURDZhSG9iQVo1VGc4?=
- =?utf-8?B?Ni85a1ZmL1JwSkF1ejU5dWN1Nm9FYWw2YUpPSEpKV2RaTlJXVmt2L3BwQ3Bj?=
- =?utf-8?B?S1pGZmtXTXE0UHh1d0NTTTRiN3dVT2lxWi9NY1dzZXBHL1ZIdXNPUUJPT3dW?=
- =?utf-8?B?L2Nna1dVYmhuVG1NTlBRNXR0S0hxWkhRVEptRWpNcWd3RERCblJMYno3R3RP?=
- =?utf-8?B?QkJXU1dKTUcxSE9xcjYwcjJQYllNNWszc1JLazlpN1RicWQyM0dESFB3T0Qw?=
- =?utf-8?B?UGo5MjRiMStVMnZneVl5MEtEVHVrS0FmOU9LTy9sajNrbllCRXlvZz09?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6bbad61-b4ff-4318-386d-08da2f8dcc16
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2022 18:25:28.8811
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mrRQoljztsT6pG8Zduc7i76nfsZLXYADQHbkwjyl/1nUBIGGtVbLZHCno1c9KYXv0vT7dT/KpaJa2TppshQ2yg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4053
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-good catch. Thanks.
+Sorry I totally missed this patch up until now, noticed it while going through
+unread emails today. This is:
 
-Reviewed-by: Dipen Patel
+Reviewed-by: Lyude Paul <lyude@redhat.com>
 
-Acked-by: Dipen Patel
+FWIW, if there's something you need reviews on that hasn't gotten looked at
+after a few weeks feel free to poke the nouveau list/me.
 
-On 5/6/22 7:53 AM, Dan Carpenter wrote:
-> The &chip->gdev->ei[] array has chip->nlines elements so this >
-> comparison needs to be >= to prevent an out of bounds access. The
-> gdev->ei[] array is allocated in hte_register_chip().
->
-> Fixes: 31ab09b42188 ("drivers: Add hardware timestamp engine (HTE) subsystem")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Anyway, I will go ahead and push this to drm-misc-fixes in a moment. Thanks!
+
+On Wed, 2022-02-09 at 07:03 +0100, Christophe JAILLET wrote:
+> If successful ida_simple_get() calls are not undone when needed, some
+> additional memory may be allocated and wasted.
+> 
+> Here, an ID between 0 and MAX_INT is required. If this ID is >=100, it is
+> not taken into account and is wasted. It should be released.
+> 
+> Instead of calling ida_simple_remove(), take advantage of the 'max'
+> parameter to require the ID not to be too big. Should it be too big, it
+> is not allocated and don't need to be freed.
+> 
+> While at it, use ida_alloc_xxx()/ida_free() instead to
+> ida_simple_get()/ida_simple_remove().
+> The latter is deprecated and more verbose.
+> 
+> Fixes: db1a0ae21461 ("drm/nouveau/bl: Assign different names to interfaces")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/hte/hte.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/hte/hte.c b/drivers/hte/hte.c
-> index 891b98ad609e..a14c5bf290ff 100644
-> --- a/drivers/hte/hte.c
-> +++ b/drivers/hte/hte.c
-> @@ -811,7 +811,7 @@ int hte_push_ts_ns(const struct hte_chip *chip, u32 xlated_id,
->  	if (!chip || !data || !chip->gdev)
->  		return -EINVAL;
->  
-> -	if (xlated_id > chip->nlines)
-> +	if (xlated_id >= chip->nlines)
->  		return -EINVAL;
->  
->  	ei = &chip->gdev->ei[xlated_id];
+> This patch is more a clean-up than a fix.
+> It is unlikely than >= 100 backlight devices will be registered, and the
+> over allocation would occur even much later when the underlying xarray is
+> full.
+> 
+> I also think that the 'if (bl->id >= 0)' before the ida_simple_remove()
+> calls are useless. We don't store the id if a negative (i.e. error) is
+> returned by ida_simple_get().
+> 
+> Finally, having a '#define BL_MAX_MINORS 99' could be better than a
+> magic number in the code.
+> ---
+>  drivers/gpu/drm/nouveau/nouveau_backlight.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_backlight.c
+> b/drivers/gpu/drm/nouveau/nouveau_backlight.c
+> index ae2f2abc8f5a..ccd080ba30bf 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_backlight.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_backlight.c
+> @@ -46,8 +46,8 @@ static bool
+>  nouveau_get_backlight_name(char backlight_name[BL_NAME_SIZE],
+>                            struct nouveau_backlight *bl)
+>  {
+> -       const int nb = ida_simple_get(&bl_ida, 0, 0, GFP_KERNEL);
+> -       if (nb < 0 || nb >= 100)
+> +       const int nb = ida_alloc_max(&bl_ida, 99, GFP_KERNEL);
+> +       if (nb < 0)
+>                 return false;
+>         if (nb > 0)
+>                 snprintf(backlight_name, BL_NAME_SIZE, "nv_backlight%d",
+> nb);
+> @@ -414,7 +414,7 @@ nouveau_backlight_init(struct drm_connector *connector)
+>                                             nv_encoder, ops, &props);
+>         if (IS_ERR(bl->dev)) {
+>                 if (bl->id >= 0)
+> -                       ida_simple_remove(&bl_ida, bl->id);
+> +                       ida_free(&bl_ida, bl->id);
+>                 ret = PTR_ERR(bl->dev);
+>                 goto fail_alloc;
+>         }
+> @@ -442,7 +442,7 @@ nouveau_backlight_fini(struct drm_connector *connector)
+>                 return;
+>  
+>         if (bl->id >= 0)
+> -               ida_simple_remove(&bl_ida, bl->id);
+> +               ida_free(&bl_ida, bl->id);
+>  
+>         backlight_device_unregister(bl->dev);
+>         nv_conn->backlight = NULL;
+
+-- 
+Cheers,
+ Lyude Paul (she/her)
+ Software Engineer at Red Hat
+
