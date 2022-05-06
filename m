@@ -2,75 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7556C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  5 May 2022 21:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB31C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri,  6 May 2022 04:28:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1386105AbiEEV6Z (ORCPT
+        id S1343831AbiEFEcb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 5 May 2022 17:58:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48094 "EHLO
+        Fri, 6 May 2022 00:32:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385943AbiEEV6Y (ORCPT
+        with ESMTP id S233200AbiEFEca (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 5 May 2022 17:58:24 -0400
-Received: from mail-yw1-x112f.google.com (mail-yw1-x112f.google.com [IPv6:2607:f8b0:4864:20::112f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC20D5EDD2
-        for <kernel-janitors@vger.kernel.org>; Thu,  5 May 2022 14:54:43 -0700 (PDT)
-Received: by mail-yw1-x112f.google.com with SMTP id 00721157ae682-2ec42eae76bso63165567b3.10
-        for <kernel-janitors@vger.kernel.org>; Thu, 05 May 2022 14:54:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MCoDgmddTtLI0GdQtfmKUixQsE6y5QSv0lEy17c3ipQ=;
-        b=lu6mB205lEz4Wg1BqujKbELrVRbwubcWwzgfdPgmVjlSIGNeqVjtkWF+FObQNiaz98
-         dycvzgpN8F2gnP7KVop+Gue3xaE0k8b8zPlaIeQaAm+Et5W0Uzd6cV+qCKIcW3PGzcPY
-         WTsrJx6SKQUiKSpx07cO21m+c7p5f3S/9b8PTFJ5WYT+Sh1+zjemHtVlFG+Y6wGaiyLw
-         fGBF4On5MHDwT/MaJgQSA8dIzSmED/cyUKtDx+kI+esrpNRt38LYF5v+Ov+W3WilJXmi
-         HDuxTURVly1cdX4MqbcXnXM9soJds3OThmXzHcH1TsW0GUYA6dRco2rEQuiCUn6pIuLU
-         9weA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MCoDgmddTtLI0GdQtfmKUixQsE6y5QSv0lEy17c3ipQ=;
-        b=pUCXlsYLeBUBYom8NJA08vD9n+BvEutO5hEJCOW0ym3Fedl80UtxMvjdfT5XFjdQyn
-         YiJigdtmtM0hkbG9vILHUS/hAqn8f0xTpcL8HRNmu9UEPNYpgDMoe+o4zh1BugK2Td5S
-         4OEUdIQYgILG3f8OjFnwFFgrL0ZFaA8crits4lDu5KpaGMsk+m3DWX7SfuDkldJKDmUy
-         2AJVJIZHBcVkaBKmWGW3X5+6MqYSymS4I2zcG39hg2d31XCPJhgWI/E/WGkGMkg7Fjdb
-         hqzSwoBMYdZrf4vQek3fTHs697hKEc3ro3cpn9SHDXNANUqU/nWc2N0621yO+sMyfj1A
-         PWtQ==
-X-Gm-Message-State: AOAM530QiwebxBozFp8oQkqfVvjSuuSE3HJHujvIiPNZSfVjP+xr2VIM
-        a42gsnX2VxeF4CYdJo1ePzou2uEGemUDg8jYZNGYVQ==
-X-Google-Smtp-Source: ABdhPJy7/124+1LI10Jlw8d6t97wM8daplTn9Eb7OgCD2ZOkd1qQO0Zvn53MloyRf2+Dr/cFkj/pJF6YdBjUseWWSFE=
-X-Received: by 2002:a81:1d48:0:b0:2f1:8ebf:25f3 with SMTP id
- d69-20020a811d48000000b002f18ebf25f3mr184278ywd.118.1651787682943; Thu, 05
- May 2022 14:54:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220318103729.157574-29-Julia.Lawall@inria.fr>
-In-Reply-To: <20220318103729.157574-29-Julia.Lawall@inria.fr>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 5 May 2022 23:54:31 +0200
-Message-ID: <CACRpkdYyAhQ2MQQmBsGs9PfTEw8H8bcr4ii8WC1gMehQXr+DqQ@mail.gmail.com>
-Subject: Re: [PATCH] ARM: gemini: fix typos in comments
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+        Fri, 6 May 2022 00:32:30 -0400
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B31B13A;
+        Thu,  5 May 2022 21:28:48 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4KvcyM6Cjmz4xR1;
+        Fri,  6 May 2022 14:28:43 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+        s=201909; t=1651811324;
+        bh=kPmBrmNZRI4k4ASBVGcaxanjDSU0xGdjd9PCFOJYtKU=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=VRYLyktyEbBTVMln6AL6zD9QNUWfb4mauaOnmx31I2SGV10dKbGbEg4YMxgEoOd5u
+         lBTYUprHkM36PGPopTZ0ExHzCGb+ANY9PTnv+Lwg5JlP8IWQ/yQkzeeeNIVbuyKUoE
+         bRO1rTdA1wTizwM+sqaAg+Z0OtP6CmgpsXXCNuuXfn7gV7r7bLI4IvZh5XFsJ4U26i
+         3bvZKOA9nMzWavUkkfRzwWNtbY8UqqvSvnFmbH4l35aC8Hk7272rJNiFHb/dRYOnWC
+         4XYqVqSNO09Rv2/6rvNh5tVUshPJiQcczQ5VwHsoucl8OkuBWHLMLtmgVP6OBHy6Ww
+         Ig7dnNUeJIY2A==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Julia Lawall <julia.lawall@inria.fr>, Joel Stanley <joel@jms.id.au>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
         kernel-janitors@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] powerpc: fix typos in comments
+In-Reply-To: <alpine.DEB.2.22.394.2205050949150.2425@hadrien>
+References: <20220430185654.5855-1-Julia.Lawall@inria.fr>
+ <CACPK8XdT3MNnArMhdz4X1GcSvXwnV9gLOrxJ8ZKRkT03LahW_A@mail.gmail.com>
+ <alpine.DEB.2.22.394.2205050949150.2425@hadrien>
+Date:   Fri, 06 May 2022 14:28:39 +1000
+Message-ID: <87o80bthc8.fsf@mpe.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Mar 18, 2022 at 11:37 AM Julia Lawall <Julia.Lawall@inria.fr> wrote:
-
-> Various spelling mistakes in comments.
-> Detected with the help of Coccinelle.
+Julia Lawall <julia.lawall@inria.fr> writes:
+> On Thu, 5 May 2022, Joel Stanley wrote:
+>> On Sat, 30 Apr 2022 at 18:58, Julia Lawall <Julia.Lawall@inria.fr> wrote:
+>> > Various spelling mistakes in comments.
+>> > Detected with the help of Coccinelle.
+>> >
+>> > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+>>
+>> I read the patch and it appears that all of the corrections are good.
+>> Thanks for sending it Julia.
+>>
+>> I'm not sure that one mega patch is the right way to go or not, so
+>> I'll leave that to mpe.
 >
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> I tried some other options, but wasn't satisfied with any of them.  But
+> just let me know if you want something else (by file? by subdirectory?)
 
-Patch applied!
+This was fine, I've picked it up (in my next-test branch).
 
-Yours,
-Linus Walleij
+There were a few conflicts, but I fixed them up, and there would still
+be a few conflicts even if it was split into multiple patches.
+
+cheers
