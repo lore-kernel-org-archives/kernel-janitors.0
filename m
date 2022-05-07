@@ -2,108 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E83C433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri,  6 May 2022 21:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 966A7C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat,  7 May 2022 18:03:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1444545AbiEFVhr (ORCPT
+        id S1446762AbiEGSGx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 6 May 2022 17:37:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56014 "EHLO
+        Sat, 7 May 2022 14:06:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239538AbiEFVhp (ORCPT
+        with ESMTP id S1446748AbiEGSGw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 6 May 2022 17:37:45 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 874086F4A7
-        for <kernel-janitors@vger.kernel.org>; Fri,  6 May 2022 14:34:01 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id y32so14634451lfa.6
-        for <kernel-janitors@vger.kernel.org>; Fri, 06 May 2022 14:34:01 -0700 (PDT)
+        Sat, 7 May 2022 14:06:52 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 252892CE11;
+        Sat,  7 May 2022 11:03:05 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id e2so14042102wrh.7;
+        Sat, 07 May 2022 11:03:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Hu54ovJHRyaSZ9Bj4QI31tKxj0E0gusmTA9CouWhVWs=;
-        b=E6ubfehEot+x8OIJN5C7LyAh0NxnQYP+RE9/EESVDWl69ZQaV/yxIOwei4gYpMgp9u
-         KYGp1mJ19wh4ZbLDI2xwgyR6S0de2pOwrp0ci37vT2JsSZgS2FeN3mfYUZEd/twNI0Uo
-         8oUUsnFxi4/8IaLTiOMsbpepGLLSgZABHFSO/557vUiup9JZiPbmIE8FS4tcZePNQJEU
-         KJq/NzyOxrQRZnztocLanqCG019/CrdaIDCj7/umEZYOSbLokeOvFfuTfjmE6SKhIJF1
-         D4lRuJe51mSe7wTT6KFUmKGmltxmO0g+dsLrToFHKXgK0VVu9PAWaLeqzpi2g+gL5diJ
-         h6Aw==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=D7VtlgOsRgbFduqgmvE9B7kMfxFi0Jdh2MT6Sj/9wbU=;
+        b=UXpTm9/8iVMwJ68tlYJQAFO4W4iNPNHGqWu7c1aOkfbiiI7sXHjvZSrk77C+ozGT3h
+         X4lJlemZ5JkEcfIux7W6wGoKbllqParKp/8FTMGpzWQYzCoUfaieR9F8KngSBBt5x9Ki
+         5+tzPLGITvCVuVCkjg7LZ+wsa6+Xsse5nbJCwRADQMcWikk3f2CHDWsTlKUX2/DTtGqh
+         u5ugstVN1Gcfo9EtYDoxS5gA/vC6YMcN0AS02X6vFoiMRK6QbFiAV4JaEm/OU7Fjd0Zi
+         WqhHoFZeXRkpyN4TWMJq/PTJAzwQjU3c5nKAvHNsYpxSZfyorqRFCrz1zKmGxb60an6w
+         irHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=Hu54ovJHRyaSZ9Bj4QI31tKxj0E0gusmTA9CouWhVWs=;
-        b=cAQxT8cD2HVYgSdb9JWbd+mpaz9YC4wc/2ldzcL5nySlWuQHddy1z4MFmWVUr1slCu
-         oHeCkhKagSxpRi1GXXnPl8cMkiPQxxd6VMUAPLYTVnoVJ1jlGOmrenGt18adHoVWqW/E
-         pv631+SE4XhZXT/Ob5tv7Wu5G8lwCwrwhDJqoPhLJAjjYWKbnBSGxr6CTZcVXFUv2YqK
-         t4ALA9UgwGmyPz6HwOxY80U2Zra5ULG88iUh+KP6dJ2ut9FAy7gbQ6t6ZjRNY55egJ8H
-         nQjOM1EiChRD3frQI8b3TNOh7tr50nwEE0UIIkAPt392JSzz8022beF5msL/+7I10Kht
-         46BA==
-X-Gm-Message-State: AOAM533CO0BdLVmyECJOscmyXoI3WgKhPAwa9WjwAv5c8izY48Jcs6p+
-        O+cgpUsYb4hCnOgLoKKAHSiuug==
-X-Google-Smtp-Source: ABdhPJyIx7HcnaKtjeqHbF+57hQVC9kVqNcgwjcSjUaE5fY6FOVbRp1itaMTMdwdoIAzxxj0m6KmKw==
-X-Received: by 2002:a05:6512:3b28:b0:473:b9ec:187e with SMTP id f40-20020a0565123b2800b00473b9ec187emr3774357lfv.536.1651872839945;
-        Fri, 06 May 2022 14:33:59 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id h8-20020a05651211c800b0047255d211dfsm826080lfr.270.2022.05.06.14.33.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 May 2022 14:33:59 -0700 (PDT)
-Message-ID: <a78b160a-a173-41c3-0c9a-d7cb7244af98@linaro.org>
-Date:   Sat, 7 May 2022 00:33:59 +0300
+        bh=D7VtlgOsRgbFduqgmvE9B7kMfxFi0Jdh2MT6Sj/9wbU=;
+        b=0BMIty//4ANqlY3FjYQkv+OpbMlVDvXDEjlJsj8B5yAiism7e5b8AqjGRU1FmteWnC
+         fQoMC7mBIN8Ewao5Rn60cBtkwP94pabqc2y6GB+XHVD/L2dnV4GFep+g6sY/o21CB4gF
+         +DlcYYMMogG/V8VEykx6ho1guSjyNNf8wkfuyQMIGciz4l+5Vsmp9m6w05SXqAEsNjlx
+         ukGKNiGWUzaiiVgSev3F4SZd50MbGXjkJSLL4kt748LjG4I3wKKN5kX+WF7ZYhMmVD+y
+         aEvq7h74Jjp0ftuSJVbtQrIA7CNkKa7xkv+U4C+y45nL5AmAJdhSFwSRUz6AcwYKVHc6
+         grCA==
+X-Gm-Message-State: AOAM532s4xsT/ugdxrNXYXoZnSaDntx+OuIFwBGGtoQvr6RROoXV55HV
+        Dyc4kQiXC5MhzBUc/SA5SD/HEbY0+Jo=
+X-Google-Smtp-Source: ABdhPJzG5ttqjWeUlkVS2RItfVD/Q6KF+SDkvOoT5ySwDBUpkUOHyPJzih+GFjsN6KYpRD4014eJMw==
+X-Received: by 2002:adf:e60a:0:b0:20a:c402:6810 with SMTP id p10-20020adfe60a000000b0020ac4026810mr7856140wrm.45.1651946583586;
+        Sat, 07 May 2022 11:03:03 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id n18-20020a05600c4f9200b003942a244f57sm3176153wmq.48.2022.05.07.11.03.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 May 2022 11:03:03 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: tuners: mxl5005s: make array static const, reduces object code size
+Date:   Sat,  7 May 2022 19:03:02 +0100
+Message-Id: <20220507180302.25853-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH] drm/msm: return an error pointer in
- msm_gem_prime_get_sg_table()
-Content-Language: en-GB
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Rob Clark <robdclark@gmail.com>
-Cc:     Sean Paul <sean@poorly.run>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        kernel-janitors@vger.kernel.org
-References: <YnOmtS5tfENywR9m@kili>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <YnOmtS5tfENywR9m@kili>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 05/05/2022 13:28, Dan Carpenter wrote:
-> The msm_gem_prime_get_sg_table() needs to return error pointers on
-> error.  This is called from drm_gem_map_dma_buf() and returning a
-> NULL will lead to a crash in that function.
-> 
-> Fixes: ac45146733b0 ("drm/msm: fix msm_gem_prime_get_sg_table()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Don't populate the array RegAddr on the stack, instead make it static
+const. Also makes the object code smaller.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/media/tuners/mxl5005s.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->   drivers/gpu/drm/msm/msm_gem_prime.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/msm_gem_prime.c b/drivers/gpu/drm/msm/msm_gem_prime.c
-> index e8f1b7a2ca9c..94ab705e9b8a 100644
-> --- a/drivers/gpu/drm/msm/msm_gem_prime.c
-> +++ b/drivers/gpu/drm/msm/msm_gem_prime.c
-> @@ -17,7 +17,7 @@ struct sg_table *msm_gem_prime_get_sg_table(struct drm_gem_object *obj)
->   	int npages = obj->size >> PAGE_SHIFT;
->   
->   	if (WARN_ON(!msm_obj->pages))  /* should have already pinned! */
-> -		return NULL;
-> +		return ERR_PTR(-ENOMEM);
->   
->   	return drm_prime_pages_to_sg(obj->dev, msm_obj->pages, npages);
->   }
-
-
+diff --git a/drivers/media/tuners/mxl5005s.c b/drivers/media/tuners/mxl5005s.c
+index ab4c43df9d18..3a509038c8df 100644
+--- a/drivers/media/tuners/mxl5005s.c
++++ b/drivers/media/tuners/mxl5005s.c
+@@ -3637,7 +3637,7 @@ static u16 MXL_GetCHRegister_ZeroIF(struct dvb_frontend *fe, u8 *RegNum,
+ 	u16 status = 0;
+ 	int i;
+ 
+-	u8 RegAddr[] = {43, 136};
++	static const u8 RegAddr[] = {43, 136};
+ 
+ 	*count = ARRAY_SIZE(RegAddr);
+ 
 -- 
-With best wishes
-Dmitry
+2.35.1
+
