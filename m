@@ -2,60 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 966A7C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat,  7 May 2022 18:03:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD82C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat,  7 May 2022 18:34:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1446762AbiEGSGx (ORCPT
+        id S1384539AbiEGSiH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 7 May 2022 14:06:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44580 "EHLO
+        Sat, 7 May 2022 14:38:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1446748AbiEGSGw (ORCPT
+        with ESMTP id S230521AbiEGSiF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 7 May 2022 14:06:52 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 252892CE11;
-        Sat,  7 May 2022 11:03:05 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id e2so14042102wrh.7;
-        Sat, 07 May 2022 11:03:05 -0700 (PDT)
+        Sat, 7 May 2022 14:38:05 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 056302FFF2;
+        Sat,  7 May 2022 11:34:17 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id x18so14138553wrc.0;
+        Sat, 07 May 2022 11:34:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=D7VtlgOsRgbFduqgmvE9B7kMfxFi0Jdh2MT6Sj/9wbU=;
-        b=UXpTm9/8iVMwJ68tlYJQAFO4W4iNPNHGqWu7c1aOkfbiiI7sXHjvZSrk77C+ozGT3h
-         X4lJlemZ5JkEcfIux7W6wGoKbllqParKp/8FTMGpzWQYzCoUfaieR9F8KngSBBt5x9Ki
-         5+tzPLGITvCVuVCkjg7LZ+wsa6+Xsse5nbJCwRADQMcWikk3f2CHDWsTlKUX2/DTtGqh
-         u5ugstVN1Gcfo9EtYDoxS5gA/vC6YMcN0AS02X6vFoiMRK6QbFiAV4JaEm/OU7Fjd0Zi
-         WqhHoFZeXRkpyN4TWMJq/PTJAzwQjU3c5nKAvHNsYpxSZfyorqRFCrz1zKmGxb60an6w
-         irHw==
+        bh=KQVod+LIsL2dmZvlmndlBF3HF+IRF2gal3cYOuUcsuc=;
+        b=gg9+N19hUZK3SAO4/zkjI2MpjxT8l7+NWmXgp6ZIrrIliOLEmfkhEp2njPbvxW3HXP
+         5RgqjdntbRCvqxXSjgpS+N5ncB0a90TkZ6dNXFZWXjnLWBhYYXyNmRCJ+Nk0VSfbtJqr
+         4kOXP4DctvbayOMWwdeeGvriYKLxnTuIhhNCNdmVzPuFIvBK17CEXew3eeS91z0lw7Nf
+         6bX0YVuf76r+h7/ybhvAyjBK+QBMQv3AHK+KzqxP9iioRPziS9Dh6d1MkIPBoBo9bvyh
+         uYqreKxigjgO+srtGQaFVZIa7A+jedUVZlQ+qw2j/8HgVQkn3dOVdDDdHYVXLpDiUsxV
+         bMdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=D7VtlgOsRgbFduqgmvE9B7kMfxFi0Jdh2MT6Sj/9wbU=;
-        b=0BMIty//4ANqlY3FjYQkv+OpbMlVDvXDEjlJsj8B5yAiism7e5b8AqjGRU1FmteWnC
-         fQoMC7mBIN8Ewao5Rn60cBtkwP94pabqc2y6GB+XHVD/L2dnV4GFep+g6sY/o21CB4gF
-         +DlcYYMMogG/V8VEykx6ho1guSjyNNf8wkfuyQMIGciz4l+5Vsmp9m6w05SXqAEsNjlx
-         ukGKNiGWUzaiiVgSev3F4SZd50MbGXjkJSLL4kt748LjG4I3wKKN5kX+WF7ZYhMmVD+y
-         aEvq7h74Jjp0ftuSJVbtQrIA7CNkKa7xkv+U4C+y45nL5AmAJdhSFwSRUz6AcwYKVHc6
-         grCA==
-X-Gm-Message-State: AOAM532s4xsT/ugdxrNXYXoZnSaDntx+OuIFwBGGtoQvr6RROoXV55HV
-        Dyc4kQiXC5MhzBUc/SA5SD/HEbY0+Jo=
-X-Google-Smtp-Source: ABdhPJzG5ttqjWeUlkVS2RItfVD/Q6KF+SDkvOoT5ySwDBUpkUOHyPJzih+GFjsN6KYpRD4014eJMw==
-X-Received: by 2002:adf:e60a:0:b0:20a:c402:6810 with SMTP id p10-20020adfe60a000000b0020ac4026810mr7856140wrm.45.1651946583586;
-        Sat, 07 May 2022 11:03:03 -0700 (PDT)
+        bh=KQVod+LIsL2dmZvlmndlBF3HF+IRF2gal3cYOuUcsuc=;
+        b=t1MHRc6z/yTo4OYv1RuwjHP1mIZgmqvAYrZ3zGNXzvZZsy7C1Bv43dqWugqIoy7ilD
+         rgX7khhDerRVZCqDiOd2VCzflioJcvm12nXO9Y4gcI/HRo/fdyCrSi4plE8NpbARdx+S
+         4riVZ13TXPHChgE+SNCV/o0ZuPNevqk++tmHKA7tAtOYzKonWPp5tCAb+8Btri48+dRV
+         3kP+Sf1+xnqVx3yhGXuULj+7yVHkoVm5IP04TKFfn71vLP/fzidlUemsKYSvkuK6d4eD
+         CutqaUglBR4n+CMjb4SOaYRMP1gy1374ewpguo3/aozFshNJ/JgZvEEdGVYzmahT5ee9
+         LOYw==
+X-Gm-Message-State: AOAM533qO5M9U6rg3qS5KrRB9zq2j41EVeGXDhNZ0MN98El1VmceYhDy
+        BdGZQl514/SLCuN3V+bXot4=
+X-Google-Smtp-Source: ABdhPJx3Q40DD0GCOXiXnFeZWHGSMIzWaLXzzWc0Le3e9YjapKmr+0+wCmccOvPBxyqn0axEooEe6w==
+X-Received: by 2002:a5d:5846:0:b0:20c:7407:5fa1 with SMTP id i6-20020a5d5846000000b0020c74075fa1mr7368426wrf.116.1651948455622;
+        Sat, 07 May 2022 11:34:15 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id n18-20020a05600c4f9200b003942a244f57sm3176153wmq.48.2022.05.07.11.03.02
+        by smtp.gmail.com with ESMTPSA id n18-20020a05600c465200b003942a244f4esm11726417wmo.39.2022.05.07.11.34.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 May 2022 11:03:03 -0700 (PDT)
+        Sat, 07 May 2022 11:34:15 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-staging@lists.linux.dev
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: tuners: mxl5005s: make array static const, reduces object code size
-Date:   Sat,  7 May 2022 19:03:02 +0100
-Message-Id: <20220507180302.25853-1-colin.i.king@gmail.com>
+Subject: [PATCH] staging: rtl8192u: make const array queuetopipe const, reduces object code size
+Date:   Sat,  7 May 2022 19:34:14 +0100
+Message-Id: <20220507183414.26633-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,27 +64,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the array RegAddr on the stack, instead make it static
-const. Also makes the object code smaller.
+Don't populate the const array queuetopipe on the stack, instead make it
+static.  Also makes the object code smaller.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/media/tuners/mxl5005s.c | 2 +-
+ drivers/staging/rtl8192u/r8192U_core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/tuners/mxl5005s.c b/drivers/media/tuners/mxl5005s.c
-index ab4c43df9d18..3a509038c8df 100644
---- a/drivers/media/tuners/mxl5005s.c
-+++ b/drivers/media/tuners/mxl5005s.c
-@@ -3637,7 +3637,7 @@ static u16 MXL_GetCHRegister_ZeroIF(struct dvb_frontend *fe, u8 *RegNum,
- 	u16 status = 0;
- 	int i;
+diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
+index ce807c9d4219..2ca925f35830 100644
+--- a/drivers/staging/rtl8192u/r8192U_core.c
++++ b/drivers/staging/rtl8192u/r8192U_core.c
+@@ -2537,7 +2537,7 @@ static short rtl8192_init(struct net_device *dev)
+ 	}
+ #else
+ 	{
+-		const u8 queuetopipe[] = {3, 2, 1, 0, 4, 4, 0, 4, 4};
++		static const u8 queuetopipe[] = {3, 2, 1, 0, 4, 4, 0, 4, 4};
  
--	u8 RegAddr[] = {43, 136};
-+	static const u8 RegAddr[] = {43, 136};
- 
- 	*count = ARRAY_SIZE(RegAddr);
- 
+ 		memcpy(priv->txqueue_to_outpipemap, queuetopipe, 9);
+ 	}
 -- 
 2.35.1
 
