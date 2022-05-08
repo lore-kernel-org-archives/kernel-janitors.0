@@ -2,107 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E901C433FE
-	for <kernel-janitors@archiver.kernel.org>; Sun,  8 May 2022 21:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BFB1C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  8 May 2022 23:39:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233265AbiEHVs6 (ORCPT
+        id S233477AbiEHXnk (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 8 May 2022 17:48:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53678 "EHLO
+        Sun, 8 May 2022 19:43:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233276AbiEHVsy (ORCPT
+        with ESMTP id S229583AbiEHXnj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 8 May 2022 17:48:54 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D56506445;
-        Sun,  8 May 2022 14:45:02 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 1-20020a05600c248100b00393fbf11a05so9763420wms.3;
-        Sun, 08 May 2022 14:45:02 -0700 (PDT)
+        Sun, 8 May 2022 19:43:39 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5D67767D
+        for <kernel-janitors@vger.kernel.org>; Sun,  8 May 2022 16:39:43 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id s16so528903pgs.3
+        for <kernel-janitors@vger.kernel.org>; Sun, 08 May 2022 16:39:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sz9yDMbWolCR5CSm2J/3vC7zIKazVJISgiLAk/Sxmjk=;
-        b=odEgRES1w3ohIoQJFJMZIgwiqx0w9ikZ5ahO6mKSOCp5MV2nmKdXmMa7ejQCzBEk4V
-         6R1CSUB6tZptfCRhrKnB1vNWbOLi64YT2Hi+c0HL9+oYjINMASi5tDhYdw1fCJODPbC0
-         10rOjcK0UOKfoJ9Xc2hOCRXvC4k93g2wuIfbmyvn8OAYISHIKxVyzlFQ6Z5BC1EeRkS8
-         TNbylN5WqYiOAPbiz7hubby5HgaJazQtdpHYw8dsoEzhyXIqBJQyR2QLMLXiSuU4ogmj
-         mHCIC/h9Ee/4LheQ8KaApm5E5dDQkinwP02y2XvlLjowe5BZWJZSU3awpGaNzlP1y1Or
-         98Hw==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=0Fk9q2wfMTU5E0RXXO2TYgguLljwQ6xqMwEk6TDsdlU=;
+        b=wY3J39TPH39dOxnwLSzrS/92AyWzYfqZpW2VUeWFYChy6h2i1JZT9Imd9TNmAn75cJ
+         bwXaMix/3uigiF1YkTMA5Q419t2mS4f/5PsSVD8u3VftrI++rOLNvmIp61sqZnMC5ESX
+         KGmYS0T7/Q0q3EeOCSmkBE1cMrPM2hE91glin3Vzo8B5kSIm1PjDGD2WoeoPqwh93E6c
+         x4mV8p8e0wIuBavS20Tniv1H7KL1/0os+kBTkq4iWVbZ41QMS2wWBhdh4Dfmp8Avk8zW
+         y/Cj74FzBJYZC96wKCJc/wBStmUwcVIy5UBfxRxZIsorwwTvgkwwskrcEmPtN6B/LB+H
+         yhXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=sz9yDMbWolCR5CSm2J/3vC7zIKazVJISgiLAk/Sxmjk=;
-        b=3Kwd00JdbKJTfx+8mGkVFSgKQt3KkMQTdvSPXVj8Oot83KtMKlt5MxEzRF5uxLpH89
-         uM1KoSopDNokwGuWVr8cW0kwUI/eO/ROSIyzOR9w9qVHI1NyQ9sXxYD3B0WLnxyFYZur
-         ggKk/TRO+tqfpgpqWR5lbN8O1hNSw/1UyoyT2r1DJBwlaFG0oNnoKpfHQt0AhYwRDruA
-         l08bhi/z3V41cdICvSlM9isFjgyeKRRNODYEHSxGLaAF8bmH6rwPB/Q00HAXZaWtyV0m
-         dgS/DpANONSNDHD9EM0i5eiFVMmfFrh2/NUqm3/6s5BKw2fc2FdKJZ0O3zJl1ZCyQ1cb
-         moKA==
-X-Gm-Message-State: AOAM533zBDHKzO1RDGSHKNcr2BkQgCZTBSvL6CjrikhbPo1PHu/WY+yk
-        7dh0TnAER4NjiyXAUTzYI10=
-X-Google-Smtp-Source: ABdhPJzsQei1PUBRbz+zo5dt6pV/R1IwS6bibqDjpiffCWMdTH92R5BM6ZHxo9cYWaGnJYzDCUJvbw==
-X-Received: by 2002:a05:600c:4187:b0:394:4cf8:7c61 with SMTP id p7-20020a05600c418700b003944cf87c61mr13164229wmh.119.1652046301468;
-        Sun, 08 May 2022 14:45:01 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id l17-20020adff491000000b0020c6a524fe0sm9283123wro.98.2022.05.08.14.45.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 May 2022 14:45:01 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Martin Schiller <ms@dev.tdt.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-x25@vger.kernel.org,
-        netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] x25: remove redundant pointer dev
-Date:   Sun,  8 May 2022 22:45:00 +0100
-Message-Id: <20220508214500.60446-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        bh=0Fk9q2wfMTU5E0RXXO2TYgguLljwQ6xqMwEk6TDsdlU=;
+        b=WlAE+LY7BeaUQUneZJifanmPrk0QHSIGLRpeGSu2oFjdSZAildiA5AJocMmpNgduhf
+         s/ZEJIi7NTrN5qniO4BT+lwaBTGp9JqRS8SpyX8Nby0/nQM6cXOCcZWV+odx7hitzG+Y
+         EC1mtXINjSRtYha4+3P2iw/mFsxvmbyBUpvlpGVHnkD0ZHvbo5eO7o13ji3HxIzOSNlb
+         GarLmrD9heiarEw5+qJl1DNu+EGZ7CQmRrij5FQzJve/HXopq41MUSan9TbnKDU6mjsZ
+         tLgtEeXhpXibPGBPXDKb/PGoC/+QVQmhrqmDlnBRKNpczqArg9zyeqygWLp6JBJ4NbIy
+         kAYA==
+X-Gm-Message-State: AOAM531i4a6bRf4VOapDRtEbklKG7RSqeiiA/OhZRpHGPUMa+ZGv3fcr
+        LbbcKD5THPXuD0KsL7xMXLphk1ariLHnsn+L
+X-Google-Smtp-Source: ABdhPJyptYpvZmOl7i/ADERhsb3D3uvcKnTFigv/RxTHQ8pSCp7y+lltJmAHuLhY8s0FDPMd2Og6+Q==
+X-Received: by 2002:a65:6e0d:0:b0:3c6:12af:15b4 with SMTP id bd13-20020a656e0d000000b003c612af15b4mr11094141pgb.338.1652053183261;
+        Sun, 08 May 2022 16:39:43 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id m7-20020a1709026bc700b0015e8d4eb1f0sm5639687plt.58.2022.05.08.16.39.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 May 2022 16:39:42 -0700 (PDT)
+Message-ID: <1e4264e6-55ed-7681-0aff-ce1dd9d6fd9a@kernel.dk>
+Date:   Sun, 8 May 2022 17:39:41 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH] relay: remove redundant assignment to pointer buf
+Content-Language: en-US
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     kernel-janitors@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+References: <20220508212152.58753-1-colin.i.king@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220508212152.58753-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Pointer dev is being assigned a value that is never used, the assignment
-and the variable are redundant and can be removed. Also replace null check
-with the preferred !ptr idiom.
+On 5/8/22 3:21 PM, Colin Ian King wrote:
+> Pointer buf is being assigned a value that is not being read, buf
+> is being re-assigned in the next starement. The assignment is
+> redundant and can be removed.
+> 
+> Cleans up clang scan build warning:
+> kernel/relay.c:443:8: warning: Although the value stored to 'buf' is
+> used in the enclosing expression, the value is never actually read
+> from 'buf' [deadcode.DeadStores]
 
-Cleans up clang scan warning:
-net/x25/x25_proc.c:94:26: warning: Although the value stored to 'dev' is
-used in the enclosing expression, the value is never actually read
-from 'dev' [deadcode.DeadStores]
+Andrew, I'm assuming you'll pick this up?
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- net/x25/x25_proc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
-diff --git a/net/x25/x25_proc.c b/net/x25/x25_proc.c
-index 3bddcbdf2e40..91a2aade3960 100644
---- a/net/x25/x25_proc.c
-+++ b/net/x25/x25_proc.c
-@@ -79,7 +79,6 @@ static int x25_seq_socket_show(struct seq_file *seq, void *v)
- {
- 	struct sock *s;
- 	struct x25_sock *x25;
--	struct net_device *dev;
- 	const char *devname;
- 
- 	if (v == SEQ_START_TOKEN) {
-@@ -91,7 +90,7 @@ static int x25_seq_socket_show(struct seq_file *seq, void *v)
- 	s = sk_entry(v);
- 	x25 = x25_sk(s);
- 
--	if (!x25->neighbour || (dev = x25->neighbour->dev) == NULL)
-+	if (!x25->neighbour || !x25->neighbour->dev)
- 		devname = "???";
- 	else
- 		devname = x25->neighbour->dev->name;
 -- 
-2.35.1
+Jens Axboe
 
