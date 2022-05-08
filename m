@@ -2,59 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1839C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun,  8 May 2022 21:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E901C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sun,  8 May 2022 21:45:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233173AbiEHVko (ORCPT
+        id S233265AbiEHVs6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 8 May 2022 17:40:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50922 "EHLO
+        Sun, 8 May 2022 17:48:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233098AbiEHVkn (ORCPT
+        with ESMTP id S233276AbiEHVsy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 8 May 2022 17:40:43 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CDD0DF51;
-        Sun,  8 May 2022 14:36:52 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id b19so16993192wrh.11;
-        Sun, 08 May 2022 14:36:52 -0700 (PDT)
+        Sun, 8 May 2022 17:48:54 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D56506445;
+        Sun,  8 May 2022 14:45:02 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id 1-20020a05600c248100b00393fbf11a05so9763420wms.3;
+        Sun, 08 May 2022 14:45:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=wdczpGExok8Ixspg0oBG1+Qe9W34SUYs1C1W6f+vXrI=;
-        b=oGF0bN61PfJfTgwyb85UN9/mN+5cBHzaSsAq4JaZr5Lnj9d4+yr7Ses6/Y0szkeLFG
-         jt1b+dA6F9SIYk2umoBWlGiG048+2O3Cvt0gcWgIQxcAsop5IpLTfZ6ZKxFOsAnYCdfo
-         6Mk33BSjN6IxcTZf9aCYOIAJpPw/MrE5XaDwHm2RcqstJGF0OYmDeHzEXn5IxMT1qyXL
-         vus/x5z7ZH7vN4avKQ1Tczjx4OQ6/SrBNHNNINo+cPebJmKKQCfHQdlPqFp74/kSdC+z
-         76HkA0in7EFjRupZVbl4L2LHFsXVlDVRFLOm7ei/3rImyw04zEYFZSv/zeq/oYfBtUY+
-         y9tQ==
+        bh=sz9yDMbWolCR5CSm2J/3vC7zIKazVJISgiLAk/Sxmjk=;
+        b=odEgRES1w3ohIoQJFJMZIgwiqx0w9ikZ5ahO6mKSOCp5MV2nmKdXmMa7ejQCzBEk4V
+         6R1CSUB6tZptfCRhrKnB1vNWbOLi64YT2Hi+c0HL9+oYjINMASi5tDhYdw1fCJODPbC0
+         10rOjcK0UOKfoJ9Xc2hOCRXvC4k93g2wuIfbmyvn8OAYISHIKxVyzlFQ6Z5BC1EeRkS8
+         TNbylN5WqYiOAPbiz7hubby5HgaJazQtdpHYw8dsoEzhyXIqBJQyR2QLMLXiSuU4ogmj
+         mHCIC/h9Ee/4LheQ8KaApm5E5dDQkinwP02y2XvlLjowe5BZWJZSU3awpGaNzlP1y1Or
+         98Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=wdczpGExok8Ixspg0oBG1+Qe9W34SUYs1C1W6f+vXrI=;
-        b=lDX3eknoh7ksX9aotQENYO0XZ7Kse6F25NkKKwfEszvcR8rbraF9gPH5u7j8W0UIWB
-         Pw48b/GIC6NUDmJhkIropiuU2D7giTwUOaJklJ0+5HE99HheuATHq7+gb0Jfnvf+4hfu
-         HKeQMp1LmznGrxqgvDH43zKXLNW5yHwrXJqUcQQ6eHeT/YrJK4ElMmWFt9aJ45ezElY2
-         q0bcDhbECt2k17ahJ7iV1pkroelmb5ssFVba9jWLClZ1qIlVIKJaQknKwudPO/nH1lqK
-         FzYhU82oMKwzp++J6Z56p5GMML3UDgz31sw1jJOC5bsTQtc7ay/qC8l1woIVXQHg7nZu
-         2JmQ==
-X-Gm-Message-State: AOAM533jnpj8Y5i+JBpsgTpppEu6DNAWGTz9f/9jZ+7dcXqCm3qEFz8G
-        1m8dDTeHKhzNrhuESr0t7aE=
-X-Google-Smtp-Source: ABdhPJy+tZJg1yGfkKl+/YN9+AStJ+NXLb/i6afFYek3TlrQgairXFovQpVPIWCsMZ/kX7v0sZ3iNw==
-X-Received: by 2002:adf:ef01:0:b0:20a:8068:ca5e with SMTP id e1-20020adfef01000000b0020a8068ca5emr11211848wro.661.1652045810835;
-        Sun, 08 May 2022 14:36:50 -0700 (PDT)
+        bh=sz9yDMbWolCR5CSm2J/3vC7zIKazVJISgiLAk/Sxmjk=;
+        b=3Kwd00JdbKJTfx+8mGkVFSgKQt3KkMQTdvSPXVj8Oot83KtMKlt5MxEzRF5uxLpH89
+         uM1KoSopDNokwGuWVr8cW0kwUI/eO/ROSIyzOR9w9qVHI1NyQ9sXxYD3B0WLnxyFYZur
+         ggKk/TRO+tqfpgpqWR5lbN8O1hNSw/1UyoyT2r1DJBwlaFG0oNnoKpfHQt0AhYwRDruA
+         l08bhi/z3V41cdICvSlM9isFjgyeKRRNODYEHSxGLaAF8bmH6rwPB/Q00HAXZaWtyV0m
+         dgS/DpANONSNDHD9EM0i5eiFVMmfFrh2/NUqm3/6s5BKw2fc2FdKJZ0O3zJl1ZCyQ1cb
+         moKA==
+X-Gm-Message-State: AOAM533zBDHKzO1RDGSHKNcr2BkQgCZTBSvL6CjrikhbPo1PHu/WY+yk
+        7dh0TnAER4NjiyXAUTzYI10=
+X-Google-Smtp-Source: ABdhPJzsQei1PUBRbz+zo5dt6pV/R1IwS6bibqDjpiffCWMdTH92R5BM6ZHxo9cYWaGnJYzDCUJvbw==
+X-Received: by 2002:a05:600c:4187:b0:394:4cf8:7c61 with SMTP id p7-20020a05600c418700b003944cf87c61mr13164229wmh.119.1652046301468;
+        Sun, 08 May 2022 14:45:01 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id z8-20020a1cf408000000b003942a244ecdsm11161445wma.18.2022.05.08.14.36.50
+        by smtp.gmail.com with ESMTPSA id l17-20020adff491000000b0020c6a524fe0sm9283123wro.98.2022.05.08.14.45.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 May 2022 14:36:50 -0700 (PDT)
+        Sun, 08 May 2022 14:45:01 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>
+To:     Martin Schiller <ms@dev.tdt.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-x25@vger.kernel.org,
+        netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] hpfs: remove redundant variable r
-Date:   Sun,  8 May 2022 22:36:49 +0100
-Message-Id: <20220508213649.59917-1-colin.i.king@gmail.com>
+Subject: [PATCH] x25: remove redundant pointer dev
+Date:   Sun,  8 May 2022 22:45:00 +0100
+Message-Id: <20220508214500.60446-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -63,33 +68,41 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable r is being assigned a value that is never used, the assignment
-and the variable are redundant and can be removed.
+Pointer dev is being assigned a value that is never used, the assignment
+and the variable are redundant and can be removed. Also replace null check
+with the preferred !ptr idiom.
 
 Cleans up clang scan warning:
-fs/hpfs/namei.c:560:8: warning: Although the value stored to 'r' is
+net/x25/x25_proc.c:94:26: warning: Although the value stored to 'dev' is
 used in the enclosing expression, the value is never actually read
-from 'r' [deadcode.DeadStores]
+from 'dev' [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/hpfs/namei.c | 3 +--
+ net/x25/x25_proc.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/hpfs/namei.c b/fs/hpfs/namei.c
-index 15fc63276caa..d4a57e476013 100644
---- a/fs/hpfs/namei.c
-+++ b/fs/hpfs/namei.c
-@@ -556,8 +556,7 @@ static int hpfs_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
- 	de.hidden = new_name[0] == '.';
+diff --git a/net/x25/x25_proc.c b/net/x25/x25_proc.c
+index 3bddcbdf2e40..91a2aade3960 100644
+--- a/net/x25/x25_proc.c
++++ b/net/x25/x25_proc.c
+@@ -79,7 +79,6 @@ static int x25_seq_socket_show(struct seq_file *seq, void *v)
+ {
+ 	struct sock *s;
+ 	struct x25_sock *x25;
+-	struct net_device *dev;
+ 	const char *devname;
  
- 	if (new_inode) {
--		int r;
--		if ((r = hpfs_remove_dirent(old_dir, dno, dep, &qbh, 1)) != 2) {
-+		if (hpfs_remove_dirent(old_dir, dno, dep, &qbh, 1) != 2) {
- 			if ((nde = map_dirent(new_dir, hpfs_i(new_dir)->i_dno, new_name, new_len, NULL, &qbh1))) {
- 				clear_nlink(new_inode);
- 				copy_de(nde, &de);
+ 	if (v == SEQ_START_TOKEN) {
+@@ -91,7 +90,7 @@ static int x25_seq_socket_show(struct seq_file *seq, void *v)
+ 	s = sk_entry(v);
+ 	x25 = x25_sk(s);
+ 
+-	if (!x25->neighbour || (dev = x25->neighbour->dev) == NULL)
++	if (!x25->neighbour || !x25->neighbour->dev)
+ 		devname = "???";
+ 	else
+ 		devname = x25->neighbour->dev->name;
 -- 
 2.35.1
 
