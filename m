@@ -2,61 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F86C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun,  8 May 2022 21:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CEE4C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  8 May 2022 21:28:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232970AbiEHVZt (ORCPT
+        id S233098AbiEHVcO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 8 May 2022 17:25:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45732 "EHLO
+        Sun, 8 May 2022 17:32:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbiEHVZr (ORCPT
+        with ESMTP id S232648AbiEHVcN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 8 May 2022 17:25:47 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB48E64F3;
-        Sun,  8 May 2022 14:21:55 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id b19so16966128wrh.11;
-        Sun, 08 May 2022 14:21:55 -0700 (PDT)
+        Sun, 8 May 2022 17:32:13 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA940DEDC;
+        Sun,  8 May 2022 14:28:21 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id c190-20020a1c35c7000000b0038e37907b5bso9782995wma.0;
+        Sun, 08 May 2022 14:28:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=iX+5Jc2rBzWBZS5PHHZcSGkidLaVy9RRBK1X3Ez2/O8=;
-        b=Sx0x3tuqDNRY4wuNNNG6oNFM7QqWpxIs7L0kMWbtVyrli8zh2rm55fN8VwLcKyg0Gb
-         l3KewF73FZjPO/QqKF/nL0erOhLJOfho6inZNdUpHRBU/JhXe4VBC+Mx7l82robY2VUN
-         BucBCnlPYJYrE7MXVASe1rIE9wIkaYSS3wH/NPAhO98MWlvgzKHWYgvxUvCHtOidxPHg
-         oDGvRFyxWw/P8g87Wj40dVxaxiVFxeDKfPLWmxHtJQCY6Lgm8AzUlL1tLKZ4TTMiP5Z2
-         euFMy60VMtqdkIz9kmZXYtXNjM+JBP4SyB5mJhS7vK83A5UrvuPBDc0TPmMyAWK9ECN3
-         6x/w==
+        bh=A/zOqb4x/q8KxE0MrgpQFzG6bfh8WIATxK/7TnCd/GM=;
+        b=dmpe+mmUEqO2Bi7E0HKUyAPX4i5aQHML9SA2Cp9S+SbSeywomzxtHiPKhBP3T5/+/Y
+         WupsVLsHiANQprLBxqlj7xuQHXCa36j9ZmowYYq9se+XIqg1/rvNDIS0PVevvIf6vwxr
+         mavAVUPp2V3+QqtTCi/bsIVIyE4i0vXPOuinZx1TzVMTB4wfFO7N8rTu2NIfToO1EVDQ
+         Da4+MtG+VxzPKOzwZ1BHXCz7LifXdxjXJr4GWpMXHvJ6WCVXnOzK4k6G+RdJNZQIk/b9
+         584u425A8UsTxSBeiGZGIjGjU+v8EZ4ndodQqRBtm6o54J1IhMFW41PbOvsp9Dh7Qxg8
+         yBvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=iX+5Jc2rBzWBZS5PHHZcSGkidLaVy9RRBK1X3Ez2/O8=;
-        b=KrWVM7kNUJI6aPmOUzd2DzC6emPLysjNtA66Q+S0kWVDO7utKXDporLzudgypKGAmE
-         04yrG8/ufDZ/qCqL+lxG8k47bnVCK4MflzDELSAEyA9iH34mDolTexMRDDfaPOxYG3VO
-         Xf+tj5BeMA+tcPIr9jFIRRAlfpuRqnINsV+bxjpdxMYoXiVCwre6zjgu5dxB9B5ZEHIJ
-         wVuYybpsyQbj1bxKPeQMavizsZCaALLscBQ+2bHvihlAzcuFJ2y2+L5HQHE8bF87LZZh
-         AeiDcOMKrYihx1VR9sVFgnv2gS5iglJo4psuZZoL/qNjeM+wXoxmlxJjHVq9pWiADq+A
-         0ebw==
-X-Gm-Message-State: AOAM532DkZCK4THV/UsKRIQ8ckoFLsBCHGQcLoTn0xyJKRxZBlOYENbW
-        BjS6mVJsKRX1XZpFJCZYQduVzeNZLg8=
-X-Google-Smtp-Source: ABdhPJxEXEVf07UXVcV4iAOZiY4edUaDEgg4TUK59avsk8p+89ui2UPJEzGSjUq/AvsFNKQl2PB/2w==
-X-Received: by 2002:a5d:404a:0:b0:20a:eb17:559 with SMTP id w10-20020a5d404a000000b0020aeb170559mr11010583wrp.602.1652044914316;
-        Sun, 08 May 2022 14:21:54 -0700 (PDT)
+        bh=A/zOqb4x/q8KxE0MrgpQFzG6bfh8WIATxK/7TnCd/GM=;
+        b=rrO+Ynf/yK0sVjZ4p0B7V7EmBKMBrpkTYem/onXLEJORsy3nR3adUZXu38CM9yIce5
+         9BGtnHdncDP4tjkfWiW1P7kmTOvFAOZWkFY4f75cLHrRheyPfRrq5m6OQjw6VO8qsZPD
+         71XCkSdpq+zp+5JUWVWtAxcFNhi8nFVdpcWEhHN/drbeXdwFMSylHIQgOZoIalvi1slf
+         R6c7Jm7WCQ8N1RpGqUhWoa3560rMwl38X0/yKGdYExpgK0JmNJLzlSQsTh3hXNCk3Za+
+         3A6la0aV2eZL2vEu/b8lwvP8Bbp+4+3x8oH/glT9FDA9nmTx1asOVgiJbYxT0NK9N0ka
+         2/2w==
+X-Gm-Message-State: AOAM532Fo9D6qb0h34sdBrsndpAEG3EExkMTlSGLUmz2BxRzNvxShGmP
+        ye89/aoyOyKGsBsE8OiGMG8=
+X-Google-Smtp-Source: ABdhPJzl/qff/sBxuFnWUAx+AW81h6wIqQ6XCu4smjK1s4+YK0vM34kUo20wHmx1AuGHCQI/j0apqg==
+X-Received: by 2002:a7b:c8c3:0:b0:394:547c:e5af with SMTP id f3-20020a7bc8c3000000b00394547ce5afmr19608805wml.202.1652045300405;
+        Sun, 08 May 2022 14:28:20 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id z18-20020adff1d2000000b0020c77f36b13sm9271504wro.100.2022.05.08.14.21.53
+        by smtp.gmail.com with ESMTPSA id x4-20020adfffc4000000b0020c5253d922sm9253047wrs.110.2022.05.08.14.28.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 May 2022 14:21:53 -0700 (PDT)
+        Sun, 08 May 2022 14:28:20 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     kernel-janitors@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Kalle Valo <kvalo@codeaurora.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] relay: remove redundant assignment to pointer buf
-Date:   Sun,  8 May 2022 22:21:52 +0100
-Message-Id: <20220508212152.58753-1-colin.i.king@gmail.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: hdsp: remove redundant assignment to pointer kctl
+Date:   Sun,  8 May 2022 22:28:19 +0100
+Message-Id: <20220508212819.59188-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -65,33 +64,33 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Pointer buf is being assigned a value that is not being read, buf
-is being re-assigned in the next starement. The assignment is
-redundant and can be removed.
+Pointer kctl is being assigned a value that is not being read, buf
+is being re-assigned later. The assignment is redundant and can be
+removed.
 
 Cleans up clang scan build warning:
-kernel/relay.c:443:8: warning: Although the value stored to 'buf' is
-used in the enclosing expression, the value is never actually read
-from 'buf' [deadcode.DeadStores]
+sound/pci/rme9652/hdsp.c:3317:28: warning: Although the value stored
+to 'kctl' is used in the enclosing expression, the value is never
+actually read from 'kctl' [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- kernel/relay.c | 2 +-
+ sound/pci/rme9652/hdsp.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/relay.c b/kernel/relay.c
-index d1a67fbb819d..6a611e779e95 100644
---- a/kernel/relay.c
-+++ b/kernel/relay.c
-@@ -440,7 +440,7 @@ int relay_prepare_cpu(unsigned int cpu)
- 
- 	mutex_lock(&relay_channels_mutex);
- 	list_for_each_entry(chan, &relay_channels, list) {
--		if ((buf = *per_cpu_ptr(chan->buf, cpu)))
-+		if (*per_cpu_ptr(chan->buf, cpu))
- 			continue;
- 		buf = relay_open_buf(chan, cpu);
- 		if (!buf) {
+diff --git a/sound/pci/rme9652/hdsp.c b/sound/pci/rme9652/hdsp.c
+index 3db641318d3a..dcc43a81ae0e 100644
+--- a/sound/pci/rme9652/hdsp.c
++++ b/sound/pci/rme9652/hdsp.c
+@@ -3314,7 +3314,7 @@ static int snd_hdsp_create_controls(struct snd_card *card, struct hdsp *hdsp)
+ 	if (hdsp->io_type == RPM) {
+ 		/* RPM Bypass, Disconnect and Input switches */
+ 		for (idx = 0; idx < ARRAY_SIZE(snd_hdsp_rpm_controls); idx++) {
+-			err = snd_ctl_add(card, kctl = snd_ctl_new1(&snd_hdsp_rpm_controls[idx], hdsp));
++			err = snd_ctl_add(card, snd_ctl_new1(&snd_hdsp_rpm_controls[idx], hdsp));
+ 			if (err < 0)
+ 				return err;
+ 		}
 -- 
 2.35.1
 
