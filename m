@@ -2,133 +2,139 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F6AAC4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon,  9 May 2022 17:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 651ECC433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  9 May 2022 22:37:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239559AbiEIRMS (ORCPT
+        id S231933AbiEIWlE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 9 May 2022 13:12:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33230 "EHLO
+        Mon, 9 May 2022 18:41:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239600AbiEIRMP (ORCPT
+        with ESMTP id S229510AbiEIWkv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 9 May 2022 13:12:15 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 041EE1C3467;
-        Mon,  9 May 2022 10:08:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652116097; x=1683652097;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jTndZMzOHisiaEyuPzpUVJ/C4tzpGgGs5GoCbyf0aqY=;
-  b=Z3V4tyy08rg4IrSJeYC6TJeQlSf4qOyg67mClIXZKwodOQN7gMY74XQA
-   kvehsqxcBKzeJWM2GAV9bs+9GEUEYESL0pBrSCvPoX9KbLgaOsMq+6P03
-   tZR/Zu4CDXcx7qZ+OALa0khDduEPQ7nZZuiR2lceAbjw1PplTiFswxBYR
-   F4rBRFcGBoWhqJ6r7KFB+H5Fcj3hiDLtRDqAtTdQtFMo/nR6V+eXoOdhR
-   d0TYmcPRTjFZsNkUa0ZukT7nwWtXIHueLDopn8lxA7pOn4W/1DXQlwhaf
-   INSUJq2V8UP22GRoZppfXZn6s2jdAiHZ8uOGeu/KP56vgWhVBeaOpmCM2
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10342"; a="355539505"
-X-IronPort-AV: E=Sophos;i="5.91,211,1647327600"; 
-   d="scan'208";a="355539505"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2022 10:08:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,211,1647327600"; 
-   d="scan'208";a="592908580"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.135])
-  by orsmga008.jf.intel.com with ESMTP; 09 May 2022 10:08:12 -0700
-Date:   Tue, 10 May 2022 01:00:15 +0800
-From:   Xu Yilun <yilun.xu@intel.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Moritz Fischer <mdf@kernel.org>,
-        Nava kishore Manne <nava.manne@xilinx.com>,
-        Wu Hao <hao.wu@intel.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-fpga@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fpga: zynq: fix zynq_fpga_has_sync()
-Message-ID: <20220509170015.GC470015@yilunxu-OptiPlex-7050>
-References: <YnkE8AbimDa7sfN8@kili>
+        Mon, 9 May 2022 18:40:51 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E94E1F35FD;
+        Mon,  9 May 2022 15:36:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=PZmP1cM/c+8QGucBjjYm6BgXSDyzdF3V//pAMnScE4Q=; b=jNg3toyUZcapZZcG6PXU3WHgsC
+        gwvC44L7AK2D/8EVuckSRBbyxGYZYFW0p/9EXQwoMMDaqqMtPwUFpO0Qr5Uh3A+MIO3wW+ZX2v1dE
+        7qkaJ3OI/FycKPh5gXDsQt23E25SYM0GXiwaDKUho3mmbHjH4f/VRnmOFzKKuGii5ZgRrb+NAwgFJ
+        srRnHUaji4kdrGBL+ajqB6Rb8cpysB//JlJz6C1u20+jmba71Jn8zLGCl9e05l3UUhIaKKpxDisSF
+        aoRMGe5PsbJ5xOgiqGE14hg+Ojj7JGIzd6PywlDxZqi7O0yKeStX6ME0WCP6+w6+kuaz5olkuTavc
+        89iVUi+A==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1noBzp-00GaoX-Ql; Mon, 09 May 2022 22:36:53 +0000
+Date:   Mon, 9 May 2022 15:36:53 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Russ Weight <russell.h.weight@intel.com>,
+        Tianfei zhang <tianfei.zhang@intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Shawn Guo <shawn.guo@linaro.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] test_firmware: fix end of loop test in upload_read_show()
+Message-ID: <YnmXhaSMqi5k7KV7@bombadil.infradead.org>
+References: <YnOm+9tEN+xerpov@kili>
+ <YnPFh6ULhhPloue2@bombadil.infradead.org>
+ <20220505130251.GV4031@kadam>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YnkE8AbimDa7sfN8@kili>
+In-Reply-To: <20220505130251.GV4031@kadam>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, May 09, 2022 at 03:11:28PM +0300, Dan Carpenter wrote:
-> The type needs to be u8.  The type was accidentally changed to char as
-> a cleanup.  Unfortunately, that meant that the zynq_fpga_has_sync()
-> function never returns true.  This bug was detected by Smatch and Clang:
-> 
-> drivers/fpga/zynq-fpga.c:245 zynq_fpga_has_sync() warn: impossible condition '(buf[2] == 153) => ((-128)-127 == 153)'
-> drivers/fpga/zynq-fpga.c:246 zynq_fpga_has_sync() warn: impossible condition '(buf[3] == 170) => ((-128)-127 == 170)'
-> 
-> drivers/fpga/zynq-fpga.c:246:14: warning: result of comparison of
-> constant 170 with expression of type 'const char' is always false
-> [-Wtautological-constant-out-of-range-compare]
->                        buf[3] == 0xaa)
->                        ~~~~~~ ^  ~~~~
-> drivers/fpga/zynq-fpga.c:245:50: warning: result of comparison of
-> constant 153 with expression of type 'const char' is always false
-> [-Wtautological-constant-out-of-range-compare]
->                    if (buf[0] == 0x66 && buf[1] == 0x55 && buf[2] == 0x99 &&
->                                                            ~~~~~~ ^  ~~~~
-> 
-> Fixes: ada14a023a64 ("fpga: zynq: Fix incorrect variable type")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> The ada14a023a64 ("fpga: zynq: Fix incorrect variable type") patch went
-> through six of revisions.  The kbuild bug found this bug early on
-> but the author ingored kbuild-bot and kept resending the buggy patch
-> anyway.
-> 
-> After the patch was merged then I sent a separate bug report and Xu
-> Yilun asked about why only the author was on the CC list for the first
-> bug reports.  A valid question, definitely.  I will poke the kbuild
-> devs about this.
-> 
-> Hm...  Actually looking through the list there have been a bunch of bug
-> reports about this because both Smatch and Clang complain so kbuild
-> sends duplicate warnings for this type of bug.  And then kbuild
-> sends another to say "This issue is still remaining" warning.  And then
-> Xu Yilun sent an email "Kbuild-bot is still complaining.  Please don't
-> forget to fix this."  So that's at least four public emails about this
-> and one or two private emails directly from kbuild-bot to the author.
-> 
-> The kbuild-bot wanted to send *another* warning today, but I decided to
-> send a fix instead.
-> 
-> LOL.
-> 
->  drivers/fpga/zynq-fpga.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/fpga/zynq-fpga.c b/drivers/fpga/zynq-fpga.c
-> index 6beaba9dfe97..426aa34c6a0d 100644
-> --- a/drivers/fpga/zynq-fpga.c
-> +++ b/drivers/fpga/zynq-fpga.c
-> @@ -239,7 +239,7 @@ static irqreturn_t zynq_fpga_isr(int irq, void *data)
->   * the correct byte order, and be dword aligned. The input is a Xilinx .bin
->   * file with every 32 bit quantity swapped.
->   */
-> -static bool zynq_fpga_has_sync(const char *buf, size_t count)
-> +static bool zynq_fpga_has_sync(const u8 *buf, size_t count)
+On Thu, May 05, 2022 at 04:02:51PM +0300, Dan Carpenter wrote:
+> The patch applies to today's, May 5, linux-next just fine but I think
+> I need to re-write the commit message to make the bug more clear.
 
-Hi Dan & Moritz:
+Odd not for me.
 
-Thanks for the patch. But it actually reverts Nava's patch. Since Nava's
-patch is not pushed to linux-next yet, could we just drop it from
-linux-fpga?
+> On Thu, May 05, 2022 at 05:39:35AM -0700, Luis Chamberlain wrote:
+> > On Thu, May 05, 2022 at 01:29:15PM +0300, Dan Carpenter wrote:
+> > > If we iterate through a loop using list_for_each_entry() without
+> > > hitting a break, then the iterator points to bogus memory.  The
+> > > if (tst->name != test_fw_config->upload_name) { will likely still work
+> > > but technically it's an out of bounds read.
+> > > 
+> > > Fixes: a31ad463b72d ("test_firmware: Add test support for firmware upload")
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > > ---
+> > >  lib/test_firmware.c | 11 +++++++----
+> > >  1 file changed, 7 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/lib/test_firmware.c b/lib/test_firmware.c
+> > > index 76115c1a2629..c82b65947ce6 100644
+> > > --- a/lib/test_firmware.c
+> > > +++ b/lib/test_firmware.c
+> > > @@ -1392,7 +1392,8 @@ static ssize_t upload_read_show(struct device *dev,
+> > >  				struct device_attribute *attr,
+> > >  				char *buf)
+> > >  {
+> > > -	struct test_firmware_upload *tst;
+> > > +	struct test_firmware_upload *tst = NULL;
+> > > +	struct test_firmware_upload *tst_iter;
+> > >  	int ret = -EINVAL;
+> > >  
+> > >  	if (!test_fw_config->upload_name) {
+> > > @@ -1401,11 +1402,13 @@ static ssize_t upload_read_show(struct device *dev,
+> > >  	}
+> > >  
+> > >  	mutex_lock(&test_fw_mutex);
+> > 
+> > Note the mutex lock.
+> > 
+> 
+> This lock is fine.
+> 
+> > > -	list_for_each_entry(tst, &test_upload_list, node)
+> > > -		if (tst->name == test_fw_config->upload_name)
+> > > +	list_for_each_entry(tst_iter, &test_upload_list, node)
+> > 
+> > If a lock is held I can't see how the premise of this patch is
+> > correct and we ensure we don't remove entries while holdingg
+> > the lock.
+> > 
+> > Generalizing this problem seems like a bigger issue, no?
+> > 
+> 
+> It has nothing to do with the look.  The problem is using the list
+> iterator outside of the loop.
 
-Thanks,
-Yilun
+Ah the new infamous list iterator violation bug..
 
->  {
->  	for (; count >= 4; buf += 4, count -= 4)
->  		if (buf[0] == 0x66 && buf[1] == 0x55 && buf[2] == 0x99 &&
-> -- 
-> 2.35.1
+> > Additionally this patch doesn't apply at all on linux-next.
+> > 
+> >   Luis
+> > 
+> > > +		if (tst_iter->name == test_fw_config->upload_name) {
+> > > +			tst = tst_iter;
+> > >  			break;
+> > > +		}
+> > >  
+> > > -	if (tst->name != test_fw_config->upload_name) {
+> > > +	if (!tst) {
+> 
+> This test is reading out of bounds.  Another fix would be to write it
+> as:
+> 
+> 	if (list_entry_is_head(tst, &test_upload_list, node)) {
+> 
+> But there is a desire to make it impossible to access the list iterator
+> outside the loop.  Linus was drafting alternative list macros but I
+> don't know the status of that.
+
+Fine to get these fixes merged, but it would seem test firmware
+would be low on the list of places to fix. Either way I'm happy
+for this to go in.
+
+Greg, want to pick it up?
+
+  Luis
