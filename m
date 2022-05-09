@@ -2,118 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C95C4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon,  9 May 2022 01:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E58C433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon,  9 May 2022 09:11:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232858AbiEIBdl (ORCPT
+        id S236212AbiEIJNN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 8 May 2022 21:33:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48716 "EHLO
+        Mon, 9 May 2022 05:13:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236006AbiEIBBq (ORCPT
+        with ESMTP id S237683AbiEIIrD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 8 May 2022 21:01:46 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32573BE0C
-        for <kernel-janitors@vger.kernel.org>; Sun,  8 May 2022 17:57:53 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id p26so7995607lfh.10
-        for <kernel-janitors@vger.kernel.org>; Sun, 08 May 2022 17:57:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uk2GCo4tzO2z68A4aXi5qgjOdRQLhbqgNbxwMMvi8jk=;
-        b=Nql1Yjsic1g62x+3t7bP9sHcXY0u/gU5tmXaF5KQZzfGTru2e4lVe0MtlZA0k3imjr
-         YJxXKkTCdME5QT1vex+PZQooBQh5O0iISkVhcWdtmTb504b90IqPn944ijh9S2yR++u1
-         IQ1fIJlmWrCDlpWRNr+iMvB8UtpS7SN/swZmg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uk2GCo4tzO2z68A4aXi5qgjOdRQLhbqgNbxwMMvi8jk=;
-        b=dILx05mCyHAI4UUABi6fziSUNwc4iIokzv9gCNFpWuJZElzW0MdXW/5QIlO7m/IeHU
-         Hdteh2fA617Vv1oMbSr3INFHZqspfxOEVHSg8LIrpx3Utwx0UhNIcL18P1nQKTEis3Ym
-         XG0eoANdjEe5uBmbyOxPjigaHO0mRV0J/Obg8tpj3BJ+XBRrW0ATALkpiOTWB1el9Us6
-         MKwwkZXEFxdrdmSzTEQVTDILAWF/UGUMsJPhY7AaC9i3GAI/MSvsLhKAKrQjoYMKVNp4
-         Y2+9yBfkErlWhOUxjCVXxET3s3Bfg0OulAPZwVjo0Ua3tFSJy9Z/oi1mGYxtjYPfnKsE
-         Y2CQ==
-X-Gm-Message-State: AOAM531I+VwsDtR2SoxTn0rwlETzLJD5pnHG9NyvyDVBGlHXJeCHKswf
-        AoUW6fdgDLPqKVPhPCI1sE4uFnhvNBdtNNE1dOhXwg==
-X-Google-Smtp-Source: ABdhPJxYBGZN3P6DUr9QO720p7L7DYzFc6NRLCCRB9YrdPE8dAs6b+kSAN+4GFnljqurF4eRVhDm4HNiVEwm+vNJoIs=
-X-Received: by 2002:a05:6512:220d:b0:473:9ee1:660d with SMTP id
- h13-20020a056512220d00b004739ee1660dmr11065115lfu.326.1652057870802; Sun, 08
- May 2022 17:57:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220508214500.60446-1-colin.i.king@gmail.com>
-In-Reply-To: <20220508214500.60446-1-colin.i.king@gmail.com>
-From:   Ozgur <ozgurk@ieee.org>
-Date:   Mon, 9 May 2022 04:57:40 +0400
-Message-ID: <CAADfD8wApw_v+uDTijY1K89WRJ_f7tkHmz=6LR086yMjEU4mWQ@mail.gmail.com>
-Subject: Re: [PATCH] x25: remove redundant pointer dev
+        Mon, 9 May 2022 04:47:03 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 247081C196C;
+        Mon,  9 May 2022 01:43:08 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id A957A21BA8;
+        Mon,  9 May 2022 08:43:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1652085787; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=4fP40eSvF34iHipeWPs64su+UfsOQc7xa/5u//Nm++E=;
+        b=ITLzDwznAxOYPqTy41JoGTKG+v0edPIP0By/fktrWFAshuA+WpFlpj3+R0WIPT81rTEHyL
+        MMUDVuMYXOHKET57pu4W4RZjo1xwwlvSm0heY5ZIHeSuBiTHGk398aNQnDZqVEv/gg3hUs
+        uTOomNZImpQR8nsTwDxCnXkbjWNBA1o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1652085787;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=4fP40eSvF34iHipeWPs64su+UfsOQc7xa/5u//Nm++E=;
+        b=buLvgq0UIGTEf49offxL6DOTTL+OwyuyXDtvho47b5RpYigc9W0x9/gOe5gG/MKc0Qm4mS
+        cG4JvaBIOElIlWDg==
+Received: from alsa1.suse.de (alsa1.suse.de [10.160.4.42])
+        by relay2.suse.de (Postfix) with ESMTP id 90DF82C141;
+        Mon,  9 May 2022 08:43:07 +0000 (UTC)
+Date:   Mon, 09 May 2022 10:43:07 +0200
+Message-ID: <s5hh75zm6zo.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
 To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Martin Schiller <ms@dev.tdt.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-x25@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: hdsp: remove redundant assignment to pointer kctl
+In-Reply-To: <20220508212819.59188-1-colin.i.king@gmail.com>
+References: <20220508212819.59188-1-colin.i.king@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, May 9, 2022 at 1:45 AM Colin Ian King <colin.i.king@gmail.com> wrote:
->
-> Pointer dev is being assigned a value that is never used, the assignment
-> and the variable are redundant and can be removed. Also replace null check
-> with the preferred !ptr idiom.
->
-
-Hello,
-
-*dev pointer is device assign global linked list and shouldnt be
-touched by the driver so *dev wont get any value right?
-Also seems to use this while network interface is initializing because
-some activation information and stats information is also kept here,
-for example, open *dev will call when ifconfig is called from.
-
-route, link, forward these inital activate and move all values with
-net_device *dev?
-
-Regards
-
-> Cleans up clang scan warning:
-> net/x25/x25_proc.c:94:26: warning: Although the value stored to 'dev' is
-> used in the enclosing expression, the value is never actually read
-> from 'dev' [deadcode.DeadStores]
->
+On Sun, 08 May 2022 23:28:19 +0200,
+Colin Ian King wrote:
+> 
+> Pointer kctl is being assigned a value that is not being read, buf
+> is being re-assigned later. The assignment is redundant and can be
+> removed.
+> 
+> Cleans up clang scan build warning:
+> sound/pci/rme9652/hdsp.c:3317:28: warning: Although the value stored
+> to 'kctl' is used in the enclosing expression, the value is never
+> actually read from 'kctl' [deadcode.DeadStores]
+> 
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  net/x25/x25_proc.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/net/x25/x25_proc.c b/net/x25/x25_proc.c
-> index 3bddcbdf2e40..91a2aade3960 100644
-> --- a/net/x25/x25_proc.c
-> +++ b/net/x25/x25_proc.c
-> @@ -79,7 +79,6 @@ static int x25_seq_socket_show(struct seq_file *seq, void *v)
->  {
->         struct sock *s;
->         struct x25_sock *x25;
-> -       struct net_device *dev;
->         const char *devname;
->
->         if (v == SEQ_START_TOKEN) {
-> @@ -91,7 +90,7 @@ static int x25_seq_socket_show(struct seq_file *seq, void *v)
->         s = sk_entry(v);
->         x25 = x25_sk(s);
->
-> -       if (!x25->neighbour || (dev = x25->neighbour->dev) == NULL)
-> +       if (!x25->neighbour || !x25->neighbour->dev)
->                 devname = "???";
->         else
->                 devname = x25->neighbour->dev->name;
-> --
-> 2.35.1
->
+
+Thanks, applied.
+
+
+Takashi
