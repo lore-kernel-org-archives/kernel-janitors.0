@@ -2,89 +2,118 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BFB1C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun,  8 May 2022 23:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C95C4332F
+	for <kernel-janitors@archiver.kernel.org>; Mon,  9 May 2022 01:29:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233477AbiEHXnk (ORCPT
+        id S232858AbiEIBdl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 8 May 2022 19:43:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56758 "EHLO
+        Sun, 8 May 2022 21:33:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229583AbiEHXnj (ORCPT
+        with ESMTP id S236006AbiEIBBq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 8 May 2022 19:43:39 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5D67767D
-        for <kernel-janitors@vger.kernel.org>; Sun,  8 May 2022 16:39:43 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id s16so528903pgs.3
-        for <kernel-janitors@vger.kernel.org>; Sun, 08 May 2022 16:39:43 -0700 (PDT)
+        Sun, 8 May 2022 21:01:46 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32573BE0C
+        for <kernel-janitors@vger.kernel.org>; Sun,  8 May 2022 17:57:53 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id p26so7995607lfh.10
+        for <kernel-janitors@vger.kernel.org>; Sun, 08 May 2022 17:57:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=0Fk9q2wfMTU5E0RXXO2TYgguLljwQ6xqMwEk6TDsdlU=;
-        b=wY3J39TPH39dOxnwLSzrS/92AyWzYfqZpW2VUeWFYChy6h2i1JZT9Imd9TNmAn75cJ
-         bwXaMix/3uigiF1YkTMA5Q419t2mS4f/5PsSVD8u3VftrI++rOLNvmIp61sqZnMC5ESX
-         KGmYS0T7/Q0q3EeOCSmkBE1cMrPM2hE91glin3Vzo8B5kSIm1PjDGD2WoeoPqwh93E6c
-         x4mV8p8e0wIuBavS20Tniv1H7KL1/0os+kBTkq4iWVbZ41QMS2wWBhdh4Dfmp8Avk8zW
-         y/Cj74FzBJYZC96wKCJc/wBStmUwcVIy5UBfxRxZIsorwwTvgkwwskrcEmPtN6B/LB+H
-         yhXg==
+        d=ieee.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uk2GCo4tzO2z68A4aXi5qgjOdRQLhbqgNbxwMMvi8jk=;
+        b=Nql1Yjsic1g62x+3t7bP9sHcXY0u/gU5tmXaF5KQZzfGTru2e4lVe0MtlZA0k3imjr
+         YJxXKkTCdME5QT1vex+PZQooBQh5O0iISkVhcWdtmTb504b90IqPn944ijh9S2yR++u1
+         IQ1fIJlmWrCDlpWRNr+iMvB8UtpS7SN/swZmg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=0Fk9q2wfMTU5E0RXXO2TYgguLljwQ6xqMwEk6TDsdlU=;
-        b=WlAE+LY7BeaUQUneZJifanmPrk0QHSIGLRpeGSu2oFjdSZAildiA5AJocMmpNgduhf
-         s/ZEJIi7NTrN5qniO4BT+lwaBTGp9JqRS8SpyX8Nby0/nQM6cXOCcZWV+odx7hitzG+Y
-         EC1mtXINjSRtYha4+3P2iw/mFsxvmbyBUpvlpGVHnkD0ZHvbo5eO7o13ji3HxIzOSNlb
-         GarLmrD9heiarEw5+qJl1DNu+EGZ7CQmRrij5FQzJve/HXopq41MUSan9TbnKDU6mjsZ
-         tLgtEeXhpXibPGBPXDKb/PGoC/+QVQmhrqmDlnBRKNpczqArg9zyeqygWLp6JBJ4NbIy
-         kAYA==
-X-Gm-Message-State: AOAM531i4a6bRf4VOapDRtEbklKG7RSqeiiA/OhZRpHGPUMa+ZGv3fcr
-        LbbcKD5THPXuD0KsL7xMXLphk1ariLHnsn+L
-X-Google-Smtp-Source: ABdhPJyptYpvZmOl7i/ADERhsb3D3uvcKnTFigv/RxTHQ8pSCp7y+lltJmAHuLhY8s0FDPMd2Og6+Q==
-X-Received: by 2002:a65:6e0d:0:b0:3c6:12af:15b4 with SMTP id bd13-20020a656e0d000000b003c612af15b4mr11094141pgb.338.1652053183261;
-        Sun, 08 May 2022 16:39:43 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id m7-20020a1709026bc700b0015e8d4eb1f0sm5639687plt.58.2022.05.08.16.39.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 May 2022 16:39:42 -0700 (PDT)
-Message-ID: <1e4264e6-55ed-7681-0aff-ce1dd9d6fd9a@kernel.dk>
-Date:   Sun, 8 May 2022 17:39:41 -0600
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uk2GCo4tzO2z68A4aXi5qgjOdRQLhbqgNbxwMMvi8jk=;
+        b=dILx05mCyHAI4UUABi6fziSUNwc4iIokzv9gCNFpWuJZElzW0MdXW/5QIlO7m/IeHU
+         Hdteh2fA617Vv1oMbSr3INFHZqspfxOEVHSg8LIrpx3Utwx0UhNIcL18P1nQKTEis3Ym
+         XG0eoANdjEe5uBmbyOxPjigaHO0mRV0J/Obg8tpj3BJ+XBRrW0ATALkpiOTWB1el9Us6
+         MKwwkZXEFxdrdmSzTEQVTDILAWF/UGUMsJPhY7AaC9i3GAI/MSvsLhKAKrQjoYMKVNp4
+         Y2+9yBfkErlWhOUxjCVXxET3s3Bfg0OulAPZwVjo0Ua3tFSJy9Z/oi1mGYxtjYPfnKsE
+         Y2CQ==
+X-Gm-Message-State: AOAM531I+VwsDtR2SoxTn0rwlETzLJD5pnHG9NyvyDVBGlHXJeCHKswf
+        AoUW6fdgDLPqKVPhPCI1sE4uFnhvNBdtNNE1dOhXwg==
+X-Google-Smtp-Source: ABdhPJxYBGZN3P6DUr9QO720p7L7DYzFc6NRLCCRB9YrdPE8dAs6b+kSAN+4GFnljqurF4eRVhDm4HNiVEwm+vNJoIs=
+X-Received: by 2002:a05:6512:220d:b0:473:9ee1:660d with SMTP id
+ h13-20020a056512220d00b004739ee1660dmr11065115lfu.326.1652057870802; Sun, 08
+ May 2022 17:57:50 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH] relay: remove redundant assignment to pointer buf
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     kernel-janitors@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>,
-        linux-kernel@vger.kernel.org
-References: <20220508212152.58753-1-colin.i.king@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220508212152.58753-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220508214500.60446-1-colin.i.king@gmail.com>
+In-Reply-To: <20220508214500.60446-1-colin.i.king@gmail.com>
+From:   Ozgur <ozgurk@ieee.org>
+Date:   Mon, 9 May 2022 04:57:40 +0400
+Message-ID: <CAADfD8wApw_v+uDTijY1K89WRJ_f7tkHmz=6LR086yMjEU4mWQ@mail.gmail.com>
+Subject: Re: [PATCH] x25: remove redundant pointer dev
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Martin Schiller <ms@dev.tdt.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-x25@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 5/8/22 3:21 PM, Colin Ian King wrote:
-> Pointer buf is being assigned a value that is not being read, buf
-> is being re-assigned in the next starement. The assignment is
-> redundant and can be removed.
-> 
-> Cleans up clang scan build warning:
-> kernel/relay.c:443:8: warning: Although the value stored to 'buf' is
+On Mon, May 9, 2022 at 1:45 AM Colin Ian King <colin.i.king@gmail.com> wrote:
+>
+> Pointer dev is being assigned a value that is never used, the assignment
+> and the variable are redundant and can be removed. Also replace null check
+> with the preferred !ptr idiom.
+>
+
+Hello,
+
+*dev pointer is device assign global linked list and shouldnt be
+touched by the driver so *dev wont get any value right?
+Also seems to use this while network interface is initializing because
+some activation information and stats information is also kept here,
+for example, open *dev will call when ifconfig is called from.
+
+route, link, forward these inital activate and move all values with
+net_device *dev?
+
+Regards
+
+> Cleans up clang scan warning:
+> net/x25/x25_proc.c:94:26: warning: Although the value stored to 'dev' is
 > used in the enclosing expression, the value is never actually read
-> from 'buf' [deadcode.DeadStores]
-
-Andrew, I'm assuming you'll pick this up?
-
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
-
--- 
-Jens Axboe
-
+> from 'dev' [deadcode.DeadStores]
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  net/x25/x25_proc.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/net/x25/x25_proc.c b/net/x25/x25_proc.c
+> index 3bddcbdf2e40..91a2aade3960 100644
+> --- a/net/x25/x25_proc.c
+> +++ b/net/x25/x25_proc.c
+> @@ -79,7 +79,6 @@ static int x25_seq_socket_show(struct seq_file *seq, void *v)
+>  {
+>         struct sock *s;
+>         struct x25_sock *x25;
+> -       struct net_device *dev;
+>         const char *devname;
+>
+>         if (v == SEQ_START_TOKEN) {
+> @@ -91,7 +90,7 @@ static int x25_seq_socket_show(struct seq_file *seq, void *v)
+>         s = sk_entry(v);
+>         x25 = x25_sk(s);
+>
+> -       if (!x25->neighbour || (dev = x25->neighbour->dev) == NULL)
+> +       if (!x25->neighbour || !x25->neighbour->dev)
+>                 devname = "???";
+>         else
+>                 devname = x25->neighbour->dev->name;
+> --
+> 2.35.1
+>
