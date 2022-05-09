@@ -2,187 +2,167 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C59C43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F86C4167E
 	for <kernel-janitors@archiver.kernel.org>; Mon,  9 May 2022 09:12:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236675AbiEIJNP (ORCPT
+        id S237584AbiEIJNU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 9 May 2022 05:13:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43660 "EHLO
+        Mon, 9 May 2022 05:13:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237750AbiEIIrp (ORCPT
+        with ESMTP id S238533AbiEIJLP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 9 May 2022 04:47:45 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D5191D8B72;
-        Mon,  9 May 2022 01:43:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1652085824;
-        bh=S9Y7+ltJPNDfDjv0EbiDnYCt9f7uMciPO9hctM/+Pk0=;
-        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=HQrX+gXBarVJHgo5GZlnGQPUW0BL5Z/kFl/j3wXNu3Ms0pE1T7Dg7I2F2faqW5Tg5
-         +wUn+11hI84/L2gEnN0pP/0wCowThj9EMENu9c/HQg1kSe374LzcjC6mfcsg3L9vXn
-         34JoxlzViAZOobO/zJSoR120iMa7N1bDkZwOO4+c=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [192.168.20.60] ([92.116.155.173]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MWAOW-1nHUgv4C5q-00XZp3; Mon, 09
- May 2022 10:43:44 +0200
-Message-ID: <6f1d8ce6-4ad1-e07e-d864-46f374282539@gmx.de>
-Date:   Mon, 9 May 2022 10:43:42 +0200
+        Mon, 9 May 2022 05:11:15 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC9E7F68B3
+        for <kernel-janitors@vger.kernel.org>; Mon,  9 May 2022 02:07:21 -0700 (PDT)
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2498JwCR022574;
+        Mon, 9 May 2022 09:06:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : content-type : mime-version; s=corp-2021-07-09;
+ bh=qHKKHJWiHmyBLmPeBQsZ5yWs5TPVwW7ARCEk4srpoW0=;
+ b=wNCXZGmZ21EjExly2sef1vcizf4pmjbLDMYOO8xOve7molBB20Bgu1yszlFLk4WMsCl1
+ Q9iAoFProXGByGnaXBoFjSHgsTuP/OFUzQKSbg67ZB9jHca+XiFoIhBqj7RnR9NWoatN
+ OVXD6lOeJD/s14PIBoWsGm6cZkXMrOKemn5LeCr917D0OTdEwZ4EO7b8EBUXl0Z18+cw
+ 5Z9bVLwoKbKLMgh0Mq0xMhJgZMXQswmiQIjb0i+dn4xyZvbtDZeRVVOtnqeETHMHEV4F
+ rpdu5sJAllmWpduGA7Q/lfB71V4K/wFppR3PZ7j4UqVoTYtjhpQFwKtONyFd7PQSvjxy pA== 
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3fwhatapsu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 09 May 2022 09:06:59 +0000
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 24995LCH024922;
+        Mon, 9 May 2022 09:06:58 GMT
+Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam08lp2048.outbound.protection.outlook.com [104.47.74.48])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3fwf70prrh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 09 May 2022 09:06:58 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KPVWu6DBpTdIdP8kh/ztb5dcHYKgmPgCJ0jDcVJEBp4qYfL8m2jkyW46ArfpgpRu0aNB1DvHFIV6k0JXLV47eVC5Gd92KJD1JgSS1a9MF0hTla4AizkMGjh5tQc6b/H4jeP2gFMaQq9zuUlKiZVwhyEsSIHCvvYq8zx624Et4sepLJ+GoJ9ajeMSYXges3uHmyew3Wtq03Ib0pT5cJ7iW0blR2k3fuFAij92OrCaEZ72z6gzmiiE0H4Qn915V33J9AinbwWLLua4ezuzO/r3u8wcjbZEGWqOUZVJhFSo7jqzTlz0CWkgA29WU7owtm1+0wZbjaPvolAW6RCaMDD8tg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qHKKHJWiHmyBLmPeBQsZ5yWs5TPVwW7ARCEk4srpoW0=;
+ b=SKpEsr44rteT3Wns3K0Q8NdZHNiw6LcEsQQ4MSQOfjyEwB6P2nwQtZ/3VgWlZlVKMO/djoDUBJIbN7cL5KseV4J8wfle6oUBpMw1Y3f6kZBBeFXU6puoOP9tNwlmtcWcKL1nl41Ybi+/muigFee0P6eRsRoLJCAgcMeiz9gn9xomfDw/412AxSJNFAGXSZOQqg1WKLC3TY4+6BuGJS+VSkc39wUjF/5uFudzqtOj0KGkAxwkrp2Jy+uxR46ec3rzYKZniJfIrj29vxUUi1K8pe4dZ3k+1Oq0vkULheKD7bbtR/jIyhvnSPYjahl9luM+oGtJ3QRZ5OBinV36M0HIMg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qHKKHJWiHmyBLmPeBQsZ5yWs5TPVwW7ARCEk4srpoW0=;
+ b=XYbus5HLlr/dIOZdXe70YUZp3P9sh2qmYz+tbsWAtRnY2ShkJN9jT/OE/hdcJBj/kdk4D6W0iLK0wjZ3M4Hudb+f4ndj9NRNdsY7LHq/wGw+fPGcf8ykgKGKNTXTsI2h/l5K7oETolZ4Q0Lkxe3HuYY9Ea/WkUOwv2i+acPWsVI=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by SJ0PR10MB4542.namprd10.prod.outlook.com
+ (2603:10b6:a03:2da::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.21; Mon, 9 May
+ 2022 09:06:56 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::c053:117c:bd99:89ba]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::c053:117c:bd99:89ba%5]) with mapi id 15.20.5227.020; Mon, 9 May 2022
+ 09:06:56 +0000
+Date:   Mon, 9 May 2022 12:06:42 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Keith Busch <kbusch@kernel.org>,
+        Kanchan Joshi <joshi.k@samsung.com>
+Cc:     Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Anuj Gupta <anuj20.g@samsung.com>,
+        linux-nvme@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] nvme: uninitialized return in nvme_ns_head_chr_uring_cmd()
+Message-ID: <YnjZovrfnF0YYuvN@kili>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-ClientProxiedBy: ZR0P278CA0192.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:44::16) To MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH] parisc: fix typos in comments
-Content-Language: en-US
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     kernel-janitors@vger.kernel.org,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220430190718.8046-1-Julia.Lawall@inria.fr>
-From:   Helge Deller <deller@gmx.de>
-In-Reply-To: <20220430190718.8046-1-Julia.Lawall@inria.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:KupA7zcW0QKMS/XEPJyyMug2Fq0P+WnD96vvpnor4HRFkaXghYY
- 3RoocBN0lAd6qH2FNpFaXn1XPl+3t7H/Tcuc17TJm5HGwxqpSw2Va5711ISnDJNITpmZIXz
- Xo6ZuSGGxy4kjNx7ST5pShw6nlo+lt5TOgXyjUCsBZpZVNltvKQQIzbI2QoD3H9cIwEJCm8
- vcpvoacb4b66paeJxiMwA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:7tT3/gYg15U=:MigBqemwFIOJ4QRsfYY6hQ
- Cwtj3BZLpOMZkeqH66z9Hnc9e9GXKncbO/5mTNZe1vlBQivobHJ+YzJFFWW5wVtSTeJ7LdXqf
- qwELzuos18gnLMrWgFmxKSVyjXgZMZ3g/jbbrkuujiy+DmeoeFEeHEvKOF1VF/sNpkMRvErlG
- YtxJkVkUm3/i90E7JFaFy0GWBDBmlQB1K822XhRLiUu1WLMbSd4HTLMu931XxibHfvV63EV7C
- eMkDHSoLqXx1shUkJ0xOeSFurVuEbXrK+Eoj9e/nRf9DbSnzPELE5aWh22QPeQrkqdeDqsZz1
- T566yy57IVpXXsfMtLqO44KsOO7EgQOIAG27KkvvgvRYtzFsnvKQ7zYwM9g9itxyEiC8iq9Ms
- JRPd2V+tEVz0490QTqzCey0ndyDWct39M667BSiC2dnXESoEt4PntQcDgmutpBLCIPZXf7lnp
- vcnSRsNEts286+48jcJCPNYzKw6KmAdYtYcI3WiVviQa15nJiPRaQBGqveJWtCVBYV69cxWBJ
- Gn/C7KgKd0S+8xNa9fclnPMJ/hlAVGw8niNUypcoAeByNGT/4Lk11cvZhaZOzIxNleCEcHlcg
- yaWnJQoSpeui7BGiuzor5Q9g5grYaDTLKb7i7wekvAjlk5i7Qm5khXxuHUbEFZ6/Yn2oD/ksb
- 1vGgn8/jCzGA3OOaM3TEknKt4BgnLl+yrfR/uS/H0Iames8XAwSMVYJv6i16D8JXNi09GS06V
- juYyvXzeSjhnBwxc4NrJagkjUeW+htekDipxMhD5eCeOlVkt6OzG/KK8cASTI8uarcULZRV4o
- d1SdA/tFO58GyXQysusYs3891PBTfgD+e70mV1GdJE7/lnSUFShqTHuJwrjgKNfOwnBclKV8q
- ePiJcIapFhR9KFplJBrIzk44z3XBaVO0zth5HiBpF5xWwSV5PvAJIGhSH4xI0PuYqUsPC6/R4
- sc1wp5Vdf8/40fuR1B+y+o01TuJ9nPaVkPWPWEo7pH75LcZGYJsTnt9uykOYWy/vP853/ASu7
- JPo9D10c7xMT7o4uZQNsTpxhyjwNMr1pPq9zZNI4Fr0q9QmIL+gS3DB/FftTTA+OFCeiDOYfQ
- zHQuGGz/6YFVms=
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7b4372eb-bdf1-40c8-e4ff-08da319b4444
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB4542:EE_
+X-Microsoft-Antispam-PRVS: <SJ0PR10MB45423165CB9CA7C047F128C58EC69@SJ0PR10MB4542.namprd10.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 21lnURvPJvUK49OI363/yaqElzCY4CVt6RwiauiXptBoy0jIKfSxwLpGkNtl7jF7h0cqsRZXP2Wyu604UsK+wMqD9V58bQ/yymZTTx2Q9e08xtfmhQTn03JVlQXGDE2Rf+6Wk+f4oLyg4aRwUj8Qgty7EhoHArBzupxQTktqYxAyoq6E8tJ05UftBIx8j93VcP0gZl4RWrzDgoNHIOHt078qOoW5jibeVSFwBVNsEORE3ZiEDUqFyzjSbOAHDiY8iPy7eOddE0qu6FZbuO9kveJz+18QzMY4fvphFcABhAfLOfuhTKuhzmhKwI/W/UERRmKqYXNZAlqBD5c8o7bTEgdpqVviZ4D5Fj7FS4BYvT5PdMRJfm84DluJAy0LNykgM44rrC6UACvpt572Mh3d+aXpTLFAZ3MyuJjGfKvaajVus0hchbTaXrDvodCqNFfwI5pieNRuVzo1o1JzhOhp5xrN4ci+yMGRs20B/FvzJ9tKQsuwjs7mVEl/lkosTzcJ01jfRA0/3oj5BsTZpqm/JvaVLS6FZyhl34fLS0XeHv7pBu+5aQfkL1DxKaiE6iIjczrAJVF9AWgqSVwcTH8Hsg1R9YNdXRIV3snJcgSWVC75pS2MyOJs1ddHrW2guuE6Zh6cHRstyQ/b8LCngz8uf3CuUy4gCelMlrhHZXDWq/e1zVIdO0i4YL8NmjgNx8eASqYUnLqeQHMEHFH8beREug==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(366004)(33716001)(38350700002)(38100700002)(110136005)(5660300002)(83380400001)(8936002)(6506007)(86362001)(66556008)(44832011)(9686003)(508600001)(4744005)(6512007)(6666004)(26005)(66946007)(6486002)(316002)(66476007)(4326008)(54906003)(8676002)(186003)(52116002)(2906002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?AEV9KfIAq2JMmTWiANE60JFAbt4/oKFWwB9nd1Vp6kIfZQIiFjYs6FjUVjeE?=
+ =?us-ascii?Q?v9WPLk4fIvD6ZkuT/KOh6a7cYslMf6pbUH/sGQFGaMmnZ+2bDmZd6XJhFYWz?=
+ =?us-ascii?Q?+KAcK+maAFeqXkEtCO7+KQy/GFYcrKLyMKHPfqbFkLZyfZDbZZNe8oC8cumZ?=
+ =?us-ascii?Q?pYHGnRCUeXRaH3V0bv/E15rrcqNE9Vy96sF8ZUxmDcr5mazVvLDcNx69Y+Jx?=
+ =?us-ascii?Q?SheXPLhHvmwrqbZwBHsszieDAOYC5LJMn7SpaQNBDgxhEu6RoMD5Whk/LNKd?=
+ =?us-ascii?Q?frfC/as7rTLN6MuPam7yxu9vXu5d+bBHHNzqSuQkFgp4YnmaUdwkmUJAIxiK?=
+ =?us-ascii?Q?+ymJ1tIInbGNBWPHXZm0XHdv3sUmA7yM9ToKj78tB0FrGM5HzpaH8bX7d5W0?=
+ =?us-ascii?Q?rvVYTZ6LOQ+CopwfYfY0b/S0gVsCWonYonY6MzkrCwz4tBfvksXbbzmQFwjq?=
+ =?us-ascii?Q?royVmWjKP+9tV7sY5TR+ok1+tk1s6IUxUMVYdl9cl4tDBeY9IpV7oZNQyo1e?=
+ =?us-ascii?Q?7kkAHIKVDAaJL5QsBPCmt/nvdvUxytZWTGfd5c4079Vg6FGqXZFBcrswhvlo?=
+ =?us-ascii?Q?ds/nYJ51YW50OyonCfcfFajstjD4mbGQLqtNqRNxi6qlqmp71ynQ5KNk7qzU?=
+ =?us-ascii?Q?yDRo/TYXrwERlfT8QzVUZJRJL2ZLT2cLYt0yLw1MOM5m7I4pNKpULmMzCbK5?=
+ =?us-ascii?Q?gDzIiBlNDpfh0hCthrpdtcVfmh5AP8eRxR4ik9n8WYarBSJ2ogPyGBCzOuBj?=
+ =?us-ascii?Q?jGOG9LlZzokTtlPtClRXxmHutFnTIke3PBm061Nt+QvEpCQrzfGdTn6+/jLx?=
+ =?us-ascii?Q?HSqiSiWREYfxu3ztBwwwXzvZhTjJjXGmB1c+XPzRtwxe98h9/bR+/UC4d7/J?=
+ =?us-ascii?Q?mTwuL2adAtGCic/Z2wwKngluBGLYnX8qtWKkHN5WHaFY2wLRfikHMy1EheRE?=
+ =?us-ascii?Q?ZJkGeqPH6UnoquDJFU6PVY5hxYRCOsNHBP1kDAjnIfjHT+5LnRJ2ACcUWcMR?=
+ =?us-ascii?Q?ejbfi4cmESZjglRBdvVk45LxsKIXzBuVkfUMXbeZkf032hCxifrdineCgi6S?=
+ =?us-ascii?Q?6ZY0kpAksbwaQIZrkU2CPPD0Qx+pbqP2pY6Yzz+zyeSGu1Lb2WWv2VhGEnmJ?=
+ =?us-ascii?Q?X7NX5k3idvjyjHDViKZf/G4kxPWuyLzJrObKFLJjGp/cP8WuuTInysYtB5Ii?=
+ =?us-ascii?Q?aHKswEMCkmbLQZavmuH+En5fodCwuRXrLZvb1CM26wmVfmW/BCl8qtRTSoqi?=
+ =?us-ascii?Q?mS8dhP4Cil5dGzOESoQ2kfAacx+1wxry6PO5r3XK0j8DQ9295q44hmLktoeX?=
+ =?us-ascii?Q?sQeqEpEC5RLJ/nFh8OEQJjJcPIoHzl4w1UUxoLLA6s6dSs+7v7JRWQnSvas3?=
+ =?us-ascii?Q?XjHL7fIstVBW+ERm/NwuccG+pSugV3uPrDwR8tKwykTly+ePluuC2d4UvK73?=
+ =?us-ascii?Q?gWR2i/5zoQsPfwNvEl4KlsaXQvx5XYyZDAqBE/llRdYCB2me4PCnwZnk752H?=
+ =?us-ascii?Q?1qI0KY51715B1PwZVENZTlb0hiogLJPII/VmGm8ikvM+8Twa8rw/+D9Wq1dc?=
+ =?us-ascii?Q?roIzXJAiW4q8O7/eRL3D+EF3P3HSPGxXfeEoAsdG9lOipsNZClTXPTKbnTFX?=
+ =?us-ascii?Q?1t9uS/tAqnHdzDFehI1T+SlivHJrtjM76uBNNdsdSlgwLH1rg5L8PI+MKqnb?=
+ =?us-ascii?Q?QYYXEkZ9FWwPp8k/1xw7l2gufbTsnzsbl+ZPeQb8G9bcE0lT1UJ9Z3W7MJxW?=
+ =?us-ascii?Q?7Gdw7D9FH2BeTYfCrXUaRw8AlmfsMGg=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b4372eb-bdf1-40c8-e4ff-08da319b4444
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2022 09:06:56.6872
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: d8ZTFIjUvP+ro782it1uDRzLYdl1xWMBTlXSzPX6v/8Nxpo0gasrY0D73oU5ioQYcWqDaDDAI7jAWwwza5H1cj5EvRhMKcQh/QF3XMn5pGc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4542
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.486,18.0.858
+ definitions=2022-05-09_02:2022-05-09,2022-05-09 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0
+ adultscore=0 bulkscore=0 malwarescore=0 mlxscore=0 mlxlogscore=999
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2205090052
+X-Proofpoint-GUID: HEshBcKVCKgQ8Ej17ImtKCZrHCHvr_Xp
+X-Proofpoint-ORIG-GUID: HEshBcKVCKgQ8Ej17ImtKCZrHCHvr_Xp
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 4/30/22 21:07, Julia Lawall wrote:
-> Various spelling mistakes in comments.
-> Detected with the help of Coccinelle.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+The "ret" value is not set if "ns" is zero.
 
-applied.
+Fixes: 86116c2f6fee ("nvme: wire-up uring-cmd support for io-passthru on char-device.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/nvme/host/ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-Helge
-
->
-> ---
->  arch/parisc/kernel/kprobes.c |    2 +-
->  arch/parisc/kernel/time.c    |    2 +-
->  arch/parisc/kernel/traps.c   |    2 +-
->  arch/parisc/math-emu/dfadd.c |    2 +-
->  arch/parisc/math-emu/dfsub.c |    2 +-
->  arch/parisc/math-emu/sfadd.c |    2 +-
->  arch/parisc/math-emu/sfsub.c |    2 +-
->  7 files changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/parisc/kernel/kprobes.c b/arch/parisc/kernel/kprobes.c
-> index 3343d2fb7889..6e0b86652f30 100644
-> --- a/arch/parisc/kernel/kprobes.c
-> +++ b/arch/parisc/kernel/kprobes.c
-> @@ -152,7 +152,7 @@ int __kprobes parisc_kprobe_ss_handler(struct pt_reg=
-s *regs)
->  	/* for absolute branch instructions we can copy iaoq_b. for relative
->  	 * branch instructions we need to calculate the new address based on t=
-he
->  	 * difference between iaoq_f and iaoq_b. We cannot use iaoq_b without
-> -	 * modificationt because it's based on our ainsn.insn address.
-> +	 * modifications because it's based on our ainsn.insn address.
->  	 */
->
->  	if (p->post_handler)
-> diff --git a/arch/parisc/kernel/time.c b/arch/parisc/kernel/time.c
-> index bb27dfeeddfc..cafd3ad20272 100644
-> --- a/arch/parisc/kernel/time.c
-> +++ b/arch/parisc/kernel/time.c
-> @@ -251,7 +251,7 @@ void __init time_init(void)
->  static int __init init_cr16_clocksource(void)
->  {
->  	/*
-> -	 * The cr16 interval timers are not syncronized across CPUs, even if
-> +	 * The cr16 interval timers are not synchronized across CPUs, even if
->  	 * they share the same socket.
->  	 */
->  	if (num_online_cpus() > 1 && !running_on_qemu) {
-> diff --git a/arch/parisc/kernel/traps.c b/arch/parisc/kernel/traps.c
-> index a6e61cf2cad0..b78f1b9d45c1 100644
-> --- a/arch/parisc/kernel/traps.c
-> +++ b/arch/parisc/kernel/traps.c
-> @@ -469,7 +469,7 @@ void parisc_terminate(char *msg, struct pt_regs *reg=
-s, int code, unsigned long o
->  	 * panic notifiers, and we should call panic
->  	 * directly from the location that we wish.
->  	 * e.g. We should not call panic from
-> -	 * parisc_terminate, but rather the oter way around.
-> +	 * parisc_terminate, but rather the other way around.
->  	 * This hack works, prints the panic message twice,
->  	 * and it enables reboot timers!
->  	 */
-> diff --git a/arch/parisc/math-emu/dfadd.c b/arch/parisc/math-emu/dfadd.c
-> index ec487e07f004..00e561d4aa55 100644
-> --- a/arch/parisc/math-emu/dfadd.c
-> +++ b/arch/parisc/math-emu/dfadd.c
-> @@ -253,7 +253,7 @@ dbl_fadd(
->  	    return(NOEXCEPTION);
->  	    }
->  	right_exponent =3D 1;	/* Set exponent to reflect different bias
-> -				 * with denomalized numbers. */
-> +				 * with denormalized numbers. */
->  	}
->      else
->  	{
-> diff --git a/arch/parisc/math-emu/dfsub.c b/arch/parisc/math-emu/dfsub.c
-> index c4f30acf2d48..4f03782284bd 100644
-> --- a/arch/parisc/math-emu/dfsub.c
-> +++ b/arch/parisc/math-emu/dfsub.c
-> @@ -256,7 +256,7 @@ dbl_fsub(
->  	    return(NOEXCEPTION);
->  	    }
->  	right_exponent =3D 1;	/* Set exponent to reflect different bias
-> -				 * with denomalized numbers. */
-> +				 * with denormalized numbers. */
->  	}
->      else
->  	{
-> diff --git a/arch/parisc/math-emu/sfadd.c b/arch/parisc/math-emu/sfadd.c
-> index 838758279d5b..9b98c874dfac 100644
-> --- a/arch/parisc/math-emu/sfadd.c
-> +++ b/arch/parisc/math-emu/sfadd.c
-> @@ -249,7 +249,7 @@ sgl_fadd(
->  	    return(NOEXCEPTION);
->  	    }
->  	right_exponent =3D 1;	/* Set exponent to reflect different bias
-> -				 * with denomalized numbers. */
-> +				 * with denormalized numbers. */
->  	}
->      else
->  	{
-> diff --git a/arch/parisc/math-emu/sfsub.c b/arch/parisc/math-emu/sfsub.c
-> index 583d3ace4634..29d9eed09d12 100644
-> --- a/arch/parisc/math-emu/sfsub.c
-> +++ b/arch/parisc/math-emu/sfsub.c
-> @@ -252,7 +252,7 @@ sgl_fsub(
->  	    return(NOEXCEPTION);
->  	    }
->  	right_exponent =3D 1;	/* Set exponent to reflect different bias
-> -				 * with denomalized numbers. */
-> +				 * with denormalized numbers. */
->  	}
->      else
->  	{
->
+diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
+index 4b91e452768b..c118559d47f0 100644
+--- a/drivers/nvme/host/ioctl.c
++++ b/drivers/nvme/host/ioctl.c
+@@ -688,7 +688,7 @@ int nvme_ns_head_chr_uring_cmd(struct io_uring_cmd *ioucmd,
+ 	struct nvme_ns_head *head = container_of(cdev, struct nvme_ns_head, cdev);
+ 	int srcu_idx = srcu_read_lock(&head->srcu);
+ 	struct nvme_ns *ns = nvme_find_path(head);
+-	int ret;
++	int ret = 0;
+ 
+ 	if (ns)
+ 		ret = nvme_ns_uring_cmd(ns, ioucmd, issue_flags);
+-- 
+2.35.1
 
