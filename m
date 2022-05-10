@@ -2,185 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F36B0C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 10 May 2022 15:13:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 496E5C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 10 May 2022 16:34:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345091AbiEJPRK (ORCPT
+        id S1347484AbiEJQib (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 10 May 2022 11:17:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56888 "EHLO
+        Tue, 10 May 2022 12:38:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345333AbiEJPPa (ORCPT
+        with ESMTP id S1347479AbiEJQi2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 10 May 2022 11:15:30 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2393C26CC70;
-        Tue, 10 May 2022 07:50:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652194239; x=1683730239;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kuBWY9TEKTGdwQx+mxQIXLEMUra6xrQy6VM9kB3SEok=;
-  b=nNl1qZyO//+iCcFyMgKyF3xotE9tlwItLaOvNtv71/A9MCyh0IlWLdhB
-   4DP4cFoCqNFnKs+ZjkKTUUbYi46/aJpjFtaohBjvaJ44vOcvmNzDKqSk0
-   Md/HtD06AI9LFrIlqHOB8HqyY0QuNnCAldf+4TEQBDlUG6N37On7iH+HI
-   iTeRs1KUJFEWyAuSpY+tWykX5OHdtWJ9rIm6cBEjiJwDOqspr290zycwP
-   CJYHWIn9pqG2GL2wD8bfgj+YfP8pfB3Wd2no9I349W+zhlK+92LMkzxWE
-   hiWFd9EIafqHyshyb83QTN79lQ+ObFzAxN0yezfLj5NxTVccpRrIblv+j
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10342"; a="251444269"
-X-IronPort-AV: E=Sophos;i="5.91,214,1647327600"; 
-   d="scan'208";a="251444269"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2022 07:50:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,214,1647327600"; 
-   d="scan'208";a="519786276"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.135])
-  by orsmga003.jf.intel.com with ESMTP; 10 May 2022 07:50:36 -0700
-Date:   Tue, 10 May 2022 22:42:38 +0800
-From:   Xu Yilun <yilun.xu@intel.com>
-To:     Tom Rix <trix@redhat.com>
-Cc:     Nava kishore Manne <navam@xilinx.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>,
-        Michal Simek <michals@xilinx.com>,
-        "linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] fpga: zynq: fix zynq_fpga_has_sync()
-Message-ID: <20220510144238.GA481427@yilunxu-OptiPlex-7050>
-References: <YnkE8AbimDa7sfN8@kili>
- <b1448881-4a68-0bc4-b828-0b9c79ffdf11@redhat.com>
- <SN6PR02MB4576F78E793E7C0EE2A0A4FDC2C69@SN6PR02MB4576.namprd02.prod.outlook.com>
- <0668a373-1101-5c34-31f1-d8435c59680d@redhat.com>
+        Tue, 10 May 2022 12:38:28 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B64452A4A0A;
+        Tue, 10 May 2022 09:34:29 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7BBA2B81E1F;
+        Tue, 10 May 2022 16:34:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7204C385C2;
+        Tue, 10 May 2022 16:34:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652200467;
+        bh=VODkbTVf3Dt1eFAC0XK/q51ZYmsgxWsx2okbVq533/I=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=FMONo6rKpM/kM/FTdTbOVzHXvhfPaCSQuBlJA6PJDkdaTs5h3XnyCI+NkpUOL5Bcf
+         6vqZbmrkamiTOK2a+wLItHL4hdgi34UVt8c7bxF07yVlQe73/VZJFHq3nYCdf3Ju5J
+         5LC6RZ5TcfWOu5qonumaSY+ck3IYMAClNwk6WOSgjjVDcZFCtnE1IMB1vn0Xd319kv
+         Dzl9BdvB8Ix8x70doQsw4iwzE25cfc0Ryh6fqclmmTXCvHLzLwM6Yn7xwusH41eZSx
+         wbHpHgWkZ8pQxys3c+v7ecTUqDzx4Nhevx3x9Qu7esxtmxW+zOV932j/ciFsM5aIAb
+         fBbUbrKzCu7rw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0668a373-1101-5c34-31f1-d8435c59680d@redhat.com>
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ath11k: remove redundant assignment to variables vht_mcs
+ and
+ he_mcs
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20220507184155.26939-1-colin.i.king@gmail.com>
+References: <20220507184155.26939-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, ath11k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <165220046267.6768.5493678781221358887.kvalo@kernel.org>
+Date:   Tue, 10 May 2022 16:34:24 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, May 10, 2022 at 05:21:59AM -0700, Tom Rix wrote:
+Colin Ian King <colin.i.king@gmail.com> wrote:
+
+> The variables vht_mcs and he_mcs are being initialized in the
+> start of for-loops however they are re-assigned new values in
+> the loop and not used outside the loop. The initializations
+> are redundant and can be removed.
 > 
-> On 5/9/22 8:15 AM, Nava kishore Manne wrote:
-> > Hi Tom,
-> > 
-> > 	Please find my response inline.
-> > 
-> > > -----Original Message-----
-> > > From: Tom Rix <trix@redhat.com>
-> > > Sent: Monday, May 9, 2022 6:14 PM
-> > > To: Dan Carpenter <dan.carpenter@oracle.com>; Moritz Fischer
-> > > <mdf@kernel.org>; Nava kishore Manne <navam@xilinx.com>; Xu Yilun
-> > > <yilun.xu@intel.com>; Wu Hao <hao.wu@intel.com>
-> > > Cc: Michal Simek <michals@xilinx.com>; linux-fpga@vger.kernel.org; kernel-
-> > > janitors@vger.kernel.org
-> > > Subject: Re: [PATCH] fpga: zynq: fix zynq_fpga_has_sync()
-> > > 
-> > > 
-> > > On 5/9/22 5:11 AM, Dan Carpenter wrote:
-> > > > The type needs to be u8.  The type was accidentally changed to char as
-> > > > a cleanup.  Unfortunately, that meant that the zynq_fpga_has_sync()
-> > > > function never returns true.  This bug was detected by Smatch and Clang:
-> > > > 
-> > > > drivers/fpga/zynq-fpga.c:245 zynq_fpga_has_sync() warn: impossible
-> > > condition '(buf[2] == 153) => ((-128)-127 == 153)'
-> > > > drivers/fpga/zynq-fpga.c:246 zynq_fpga_has_sync() warn: impossible
-> > > condition '(buf[3] == 170) => ((-128)-127 == 170)'
-> > > > drivers/fpga/zynq-fpga.c:246:14: warning: result of comparison of
-> > > > constant 170 with expression of type 'const char' is always false
-> > > > [-Wtautological-constant-out-of-range-compare]
-> > > >                          buf[3] == 0xaa)
-> > > >                          ~~~~~~ ^  ~~~~
-> > > > drivers/fpga/zynq-fpga.c:245:50: warning: result of comparison of
-> > > > constant 153 with expression of type 'const char' is always false
-> > > > [-Wtautological-constant-out-of-range-compare]
-> > > >                      if (buf[0] == 0x66 && buf[1] == 0x55 && buf[2] == 0x99 &&
-> > > >                                                              ~~~~~~ ^
-> > > > ~~~~
-> > > > 
-> > > > Fixes: ada14a023a64 ("fpga: zynq: Fix incorrect variable type")
-> > > > Reported-by: kernel test robot <lkp@intel.com>
-> > > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > > > ---
-> > > > The ada14a023a64 ("fpga: zynq: Fix incorrect variable type") patch
-> > > > went through six of revisions.  The kbuild bug found this bug early on
-> > > > but the author ingored kbuild-bot and kept resending the buggy patch
-> > > > anyway.
-> > > > 
-> > > > After the patch was merged then I sent a separate bug report and Xu
-> > > > Yilun asked about why only the author was on the CC list for the first
-> > > > bug reports.  A valid question, definitely.  I will poke the kbuild
-> > > > devs about this.
-> > > > 
-> > > > Hm...  Actually looking through the list there have been a bunch of
-> > > > bug reports about this because both Smatch and Clang complain so
-> > > > kbuild sends duplicate warnings for this type of bug.  And then kbuild
-> > > > sends another to say "This issue is still remaining" warning.  And
-> > > > then Xu Yilun sent an email "Kbuild-bot is still complaining.  Please
-> > > > don't forget to fix this."  So that's at least four public emails
-> > > > about this and one or two private emails directly from kbuild-bot to the
-> > > author.
-> > > > The kbuild-bot wanted to send *another* warning today, but I decided
-> > > > to send a fix instead.
-> > > > 
-> > > > LOL.
-> > > > 
-> > > >    drivers/fpga/zynq-fpga.c | 2 +-
-> > > >    1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/fpga/zynq-fpga.c b/drivers/fpga/zynq-fpga.c index
-> > > > 6beaba9dfe97..426aa34c6a0d 100644
-> > > > --- a/drivers/fpga/zynq-fpga.c
-> > > > +++ b/drivers/fpga/zynq-fpga.c
-> > > > @@ -239,7 +239,7 @@ static irqreturn_t zynq_fpga_isr(int irq, void *data)
-> > > >     * the correct byte order, and be dword aligned. The input is a Xilinx .bin
-> > > >     * file with every 32 bit quantity swapped.
-> > > >     */
-> > > > -static bool zynq_fpga_has_sync(const char *buf, size_t count)
-> > > > +static bool zynq_fpga_has_sync(const u8 *buf, size_t count)
-> > > This is called from zynq_fpga_ops_write_init, a fpga_manager_ops function
-> > > that
-> > > 
-> > > uses 'const char *' as a type for its write() buf's.
-> > > 
-> > > I think const u8 * would be a better type for all of the fpga_manager
-> > > instances.
-> > > 
-> > > If folks agree, I'll make the change.
-> > > 
-> > I agree, please change it to u8
+> Cleans up clang scan warnings:
 > 
-> I was hoping one of the fpga/ maintainers would chime in.
-
-As I said before, I think const char *buf for write_init() is OK.
-
+> warning: Although the value stored to 'vht_mcs' is used in the
+> enclosing expression, the value is never actually read from
+> 'vht_mcs' [deadcode.DeadStores]
 > 
-> Though it seems obvious that the type-specifier should be unsigned, this is
-> a general interface change to the subsystem.
-
-Searching over all kernel code, we can find many const char *buf/buf[], and
-also many const u8 *buf/buf[], const unsigned char *buf/buf[]. I think
-they are all good. They are just a block of data and people don't care
-about their format. So signed or unsigned is not important.
-
-If a specific driver have its own understanding of the data block and
-want to parse it, just type casting it as needed to u8/s8/u16/s16 ...
-
-So const char/u8/unsigned char * are all good to me, but for now I don't see
-the necessity changing to one another for all fpga drivers.
-
-Thanks,
-Yilun
-
+> warning: Although the value stored to 'he_mcs' is used in the
+> enclosing expression, the value is never actually read from
+> 'he_mcs' [deadcode.DeadStores]
 > 
-> I would rather have buy in before spending a couple of days doing the change
-> and having it rejected.
-> 
-> Tom
-> 
-> > 
-> > Regards,
-> > Nava kishore.
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+
+Patch applied to ath-next branch of ath.git, thanks.
+
+25c321e8534e ath11k: remove redundant assignment to variables vht_mcs and he_mcs
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20220507184155.26939-1-colin.i.king@gmail.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
