@@ -2,93 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA6F4C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 11 May 2022 09:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1FEAC433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 11 May 2022 10:44:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233604AbiEKJXv (ORCPT
+        id S229940AbiEKKoz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 11 May 2022 05:23:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38938 "EHLO
+        Wed, 11 May 2022 06:44:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229795AbiEKJXs (ORCPT
+        with ESMTP id S229475AbiEKKow (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 11 May 2022 05:23:48 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5C247A826;
-        Wed, 11 May 2022 02:23:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652261027; x=1683797027;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=u6yh7Cvn3xBGfrM5loS9SQLU9qTOgpc2tg+3GitS5t8=;
-  b=R+VgVMidwpWyJapmpOPFWRm+UKIXN9S2H3D9Q9cpA52t+U7CDK/6l601
-   JAv2n50XlySFGVtmTphvv3uMG9fxj3zocVJIMVVyX+HgSJi0ngaoLfhMZ
-   A/6i/IDoYIJjvUAbkblpEu3B4iLCJldNJ+IkdamGzWzaLN3pxXedyj/3I
-   MkCHlobFwSFxnzXr9nnH7e1IrlpFzDzPMQJ5PUXOeSWbz5j4gauUZS5fc
-   tOFOUPwKqw4hv7gOXvnC/4wqtfnheggD+MfkW/dwVLmXyllcWgjICBxrt
-   SzZDw1m+Kkmy5pl0V+NXq8QeraD/3InAfhHKgTfFkUIr7yw0dJkDkOhho
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10343"; a="257186975"
-X-IronPort-AV: E=Sophos;i="5.91,216,1647327600"; 
-   d="scan'208";a="257186975"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2022 02:23:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,216,1647327600"; 
-   d="scan'208";a="520443318"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.135])
-  by orsmga003.jf.intel.com with ESMTP; 11 May 2022 02:23:37 -0700
-Date:   Wed, 11 May 2022 17:15:39 +0800
-From:   Xu Yilun <yilun.xu@intel.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Moritz Fischer <mdf@kernel.org>,
-        Nava kishore Manne <nava.manne@xilinx.com>,
-        Wu Hao <hao.wu@intel.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-fpga@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fpga: zynq: fix zynq_fpga_has_sync()
-Message-ID: <20220511091539.GB487046@yilunxu-OptiPlex-7050>
-References: <YnkE8AbimDa7sfN8@kili>
- <20220509170015.GC470015@yilunxu-OptiPlex-7050>
- <20220511083329.GN4031@kadam>
- <20220511084838.GA487393@yilunxu-OptiPlex-7050>
- <20220511091718.GQ4031@kadam>
+        Wed, 11 May 2022 06:44:52 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63BBD25A;
+        Wed, 11 May 2022 03:44:51 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id c190-20020a1c35c7000000b0038e37907b5bso2969720wma.0;
+        Wed, 11 May 2022 03:44:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sSANPAJEcLApaNo9JQsHkO1TMkxVWZ0hRpqjKUJDwiU=;
+        b=J2uIr9J3ZBKzU2GQGiMLPp17ZHBWsGTy+hlqS06Gg7ufytIF+2hD7+NsdirvYjvOxU
+         t7opLzS6zOcLDtSO0u/Qr3ofmCuRQLpi3rrCxb3DhM5qi2TluLdd+eyX74OxNixQpKTB
+         p+wtVCxAyqwnAUwekAMWmB1cQ6hXTye8GQ7V/jBZhSUImnAilcZz32hBILwLz3FBqrbR
+         ZMYGSP/9RvZGNtQ5NQ68NLywY9/KLpVvX6q82dMbcABgBmx3AbEai6CToVRXIy+PHSxK
+         LS9E27lx/LC3mYIVvhWnri1Awg0zFlGM3fBpMJkZt0xjNLNfJaWIJiQsSvtRP4tmx2co
+         WX0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sSANPAJEcLApaNo9JQsHkO1TMkxVWZ0hRpqjKUJDwiU=;
+        b=AcS5s7hJmZVMMd6z1WHfVZPWbmEzLT/7ThqExz7JuUjz132RLyaqz07cRhlR3Zhy9Y
+         Yld4dsbnpv7Pkj0P3YFB8jWOupMDY6Z7Yv3fQwdN3pzBDmEWX6zAvVmiuS40ie2W5RX6
+         77FlU4MblX6ug0gEK76I3McS9mqGnE0cNt2GW61OF+E/rIB7oBUpBDZ6BU2uoT9ddfbX
+         Gjsi/wj1J60DMIw1jnfDvJoLKXGsawf9PqxPioXlOjUMst6wgFVttVKBDw8pSxWbQa+6
+         dmHASmZR+O7hYeYyLeaPD8bFct7fHCmNoWkgbVpSyKOHqRadig8NKAsD5ofQbfUeZFQi
+         DvfA==
+X-Gm-Message-State: AOAM5331UgGvPhEYO5m1wkAbKxMZioMqvLu/O5vcUL6HM5zjwp4qi3/d
+        mtHr9R1RHPr8zflNF7DMjnK9Zt377YHTUw==
+X-Google-Smtp-Source: ABdhPJxJVetvp4dl7ChKMxe08Vd94vwV8ycZYPR3kb+dqAjW/maTyX0FPO1OtEUZvyP8RUhSnvY1dQ==
+X-Received: by 2002:a7b:c0c3:0:b0:394:70a2:89d1 with SMTP id s3-20020a7bc0c3000000b0039470a289d1mr4172421wmh.12.1652265889835;
+        Wed, 11 May 2022 03:44:49 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id a22-20020a1cf016000000b003942a244f4esm4954134wmb.39.2022.05.11.03.44.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 May 2022 03:44:49 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Wells Lu <wellslutw@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] net: ethernet: SP7021: Fix spelling mistake "Interrput" -> "Interrupt"
+Date:   Wed, 11 May 2022 11:44:48 +0100
+Message-Id: <20220511104448.150800-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220511091718.GQ4031@kadam>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, May 11, 2022 at 12:17:18PM +0300, Dan Carpenter wrote:
-> On Wed, May 11, 2022 at 04:48:38PM +0800, Xu Yilun wrote:
-> > On Wed, May 11, 2022 at 11:33:29AM +0300, Dan Carpenter wrote:
-> > > On Tue, May 10, 2022 at 01:00:15AM +0800, Xu Yilun wrote:
-> > > > 
-> > > > Hi Dan & Moritz:
-> > > > 
-> > > > Thanks for the patch. But it actually reverts Nava's patch. Since Nava's
-> > > > patch is not pushed to linux-next yet, could we just drop it from
-> > > > linux-fpga?
-> > > 
-> > > I don't know if you meant linux-next.  It's pushed to linux-next.  But
-> > > linux-next is rebased every day so reverting is fine as far as linux-next
-> > > goes.
-> > 
-> > Thanks for the info. I was not aware of that and may mess up something.
-> > I force pushed the linux-fpga yesterday for this patchset, then linux-next
-> > would be conflict with linux-fpga, is it?
-> > 
-> > If it is the case, how could I remedy?
-> 
-> No.  Don't worry about linux-next.  Stephen rebuilds it from scratch
-> every day.  It's fine if you rebase.  There are quite a few trees which
-> rebase.
+There is a spelling mistake in a dev_dbg message. Fix it.
 
-That's good new! Thanks again.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/ethernet/sunplus/spl2sw_int.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> regards,
-> dan carpenter
+diff --git a/drivers/net/ethernet/sunplus/spl2sw_int.c b/drivers/net/ethernet/sunplus/spl2sw_int.c
+index 95ce096d1543..69b1e2e0271e 100644
+--- a/drivers/net/ethernet/sunplus/spl2sw_int.c
++++ b/drivers/net/ethernet/sunplus/spl2sw_int.c
+@@ -215,7 +215,7 @@ irqreturn_t spl2sw_ethernet_interrupt(int irq, void *dev_id)
+ 
+ 	status = readl(comm->l2sw_reg_base + L2SW_SW_INT_STATUS_0);
+ 	if (unlikely(!status)) {
+-		dev_dbg(&comm->pdev->dev, "Interrput status is null!\n");
++		dev_dbg(&comm->pdev->dev, "Interrupt status is null!\n");
+ 		goto spl2sw_ethernet_int_out;
+ 	}
+ 	writel(status, comm->l2sw_reg_base + L2SW_SW_INT_STATUS_0);
+-- 
+2.35.1
+
