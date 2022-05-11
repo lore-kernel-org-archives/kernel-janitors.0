@@ -2,92 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D633C4332F
-	for <kernel-janitors@archiver.kernel.org>; Wed, 11 May 2022 16:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92916C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 11 May 2022 17:38:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344970AbiEKQqv (ORCPT
+        id S1345681AbiEKRiF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 11 May 2022 12:46:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33052 "EHLO
+        Wed, 11 May 2022 13:38:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344955AbiEKQqs (ORCPT
+        with ESMTP id S236299AbiEKRiC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 11 May 2022 12:46:48 -0400
-Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E749C48E46
-        for <kernel-janitors@vger.kernel.org>; Wed, 11 May 2022 09:46:47 -0700 (PDT)
-Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-ed8a3962f8so3500565fac.4
-        for <kernel-janitors@vger.kernel.org>; Wed, 11 May 2022 09:46:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mW0tZMhSaetyG4D+/2DPQZ0SVjaxvyIVnvfCsq7/P10=;
-        b=nPnln1EM6IFKFYOjU2Gck+lGStnIUKlvR+OkEkTwXYJYcz07fJSnnI+xt33uLCuPjU
-         WYGpBMLkYyjsBU3z2pINn/fMt9Lus3bsbv96/BQxSQZ5fEz9YIybVOHYbZPymqslkHDl
-         qaxny3KOnp7Xdc6qfEMQoFA9IRvhAgJw/0pfQ4FaknDpE/WpvNd2bbG95usy1JqPMnd8
-         2QN+QPOM+sNJTXVp3SJ8TA+hmp7TNBC3G9pA6l3wVWtvwlAC9R+K2psiwceQcQgl6n1e
-         RdfFtdYGAPxN1ku4mLWwVq4ZDyj1YmZYKPvy45K7IdKg8yxqikpHsB/FsKFKSbPfLbEL
-         hv1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mW0tZMhSaetyG4D+/2DPQZ0SVjaxvyIVnvfCsq7/P10=;
-        b=ts9ZQzygU7NTokt5pTfzoXgHjvXIMMxk8/ow6R1z8vkK/yc8YYKZLfh4Bjmubc8EuV
-         sFaXYvTWxN8qWC2buiaTLgoJXceITZKdOK426rHwh9aHLo4U5BueYasWbYE8DhCSgM+y
-         TcznCjL6qWa7G+dNHL1QAF1pAK6ri52K721IEX8StZ3CViN8KLJAtb0vyRPy9ywAxt7b
-         EdfYUt1TupgawZ74Z3CLWp8zNMXWVip3rpFax9pvbQam0EHS0o3aZfN1eUYhf07ib9SC
-         T3Go+nlkzGAluYgsZfZwjDAMTtVRhxxiVELKfEW8BC87ZHtkwZigilpO6icBn9+FcZxq
-         xAnQ==
-X-Gm-Message-State: AOAM530/fxFDDVzFfzPXUQoKKRyaFB3DMFb/XBQ3ATyRJ12RfOfhdtIn
-        i2dyfVM2YpJTmGWlL5rXt8pmDXbJfXQxH9lNarjiL6KGhrI=
-X-Google-Smtp-Source: ABdhPJzRj5A2cmCGUSIH06kXpMBYZbCT3UffjWY0qh676mZulcSqQOqyD4pfEIrkuMiQlQGkTeh5ImDkdVjVVMojL0A=
-X-Received: by 2002:a05:6870:9725:b0:f1:1c3a:4a56 with SMTP id
- n37-20020a056870972500b000f11c3a4a56mr1039784oaq.112.1652287607142; Wed, 11
- May 2022 09:46:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <Ynu4CGiqiU4l2vdf@kili>
-In-Reply-To: <Ynu4CGiqiU4l2vdf@kili>
-From:   Daeho Jeong <daehojeong@google.com>
-Date:   Wed, 11 May 2022 09:46:11 -0700
-Message-ID: <CABdZyexoAEhiHF8aGZvfxjmRo7kFN7-ZPapEzd3zmKvUtm7KqA@mail.gmail.com>
-Subject: Re: [PATCH] f2fs: fix error code in f2fs_ioc_start_atomic_write()
+        Wed, 11 May 2022 13:38:02 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA6D1692AC
+        for <kernel-janitors@vger.kernel.org>; Wed, 11 May 2022 10:38:01 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 767E3B82153
+        for <kernel-janitors@vger.kernel.org>; Wed, 11 May 2022 17:38:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DBBAC340EE;
+        Wed, 11 May 2022 17:37:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652290679;
+        bh=aCdJZ9j/PdDH2n+Soo73CJM408N6OH2MVsuqlRgTyUY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CcCUfm40CzRZ1Y6C96F/ZLkrgWClKU80ytqM1L6OU/pKGGDj5qyDlaRd06MG1OQA1
+         DnwUFFuzFcmuCOT/Ot3+GJ6cqqrHLIt/bWZVRkK4EyJDr8xlt9S2ReMHPRZk51EJ+e
+         3KLD9r1fQHa3k3XR9VQZehsHwT8LHOIFHNQCrT/sMfLmdr4mVvGv8aeiqIYeVykz6+
+         WEC0CvZd3Xd0br0at88Vf7aLP3dppquz5X9U7T+vsqUsXg04r6vT3Utm8fXuMZQP4F
+         KvNN6vSYjo7BE/pTN4MwqVsmCXLxH2hV/BtBOzsg4WCf1AAP+muEcRoiK9zTWgLkkW
+         fd2Cpf93nk+VQ==
+Date:   Wed, 11 May 2022 10:37:57 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+Cc:     Daeho Jeong <daehojeong@google.com>, Chao Yu <chao@kernel.org>,
         linux-f2fs-devel@lists.sourceforge.net,
         kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] f2fs: fix error code in f2fs_ioc_start_atomic_write()
+Message-ID: <Ynv0ddBz91EoyWwl@google.com>
+References: <Ynu4CGiqiU4l2vdf@kili>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Ynu4CGiqiU4l2vdf@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Oh, right. Thanks~!
+Hi Dan,
 
+Thank you for the fix. If you don't mind, can I integrate this fix into
+the original patch which is in -next?
 
-On Wed, May 11, 2022 at 6:20 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
+Thanks,
+
+On 05/11, Dan Carpenter wrote:
 > Return an error code if f2fs_iget() fails.  Currently it returns
 > success.
->
+> 
 > Fixes: 3d7ad9c30607 ("f2fs: change the current atomic write way")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
 >  fs/f2fs/file.c | 1 +
 >  1 file changed, 1 insertion(+)
->
+> 
 > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
 > index 79d1a20fbda9..cd768fadfd67 100644
 > --- a/fs/f2fs/file.c
 > +++ b/fs/f2fs/file.c
 > @@ -2047,6 +2047,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
->         pinode = f2fs_iget(inode->i_sb, fi->i_pino);
->         if (IS_ERR(pinode)) {
->                 f2fs_up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> +               ret = PTR_ERR(pinode);
->                 goto out;
->         }
->
-> --
+>  	pinode = f2fs_iget(inode->i_sb, fi->i_pino);
+>  	if (IS_ERR(pinode)) {
+>  		f2fs_up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> +		ret = PTR_ERR(pinode);
+>  		goto out;
+>  	}
+>  
+> -- 
 > 2.35.1
->
