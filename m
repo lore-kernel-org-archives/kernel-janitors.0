@@ -2,160 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4309C4332F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 13 May 2022 13:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 811D8C433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 13 May 2022 13:54:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378456AbiEMNSK (ORCPT
+        id S229788AbiEMNyd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 13 May 2022 09:18:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56108 "EHLO
+        Fri, 13 May 2022 09:54:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380643AbiEMNSE (ORCPT
+        with ESMTP id S1347101AbiEMNyS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 13 May 2022 09:18:04 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B51CE0FF
-        for <kernel-janitors@vger.kernel.org>; Fri, 13 May 2022 06:17:31 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id D97C421A92;
-        Fri, 13 May 2022 13:17:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1652447849; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Hvc2URgoxyyZ40UQD6MT1ao7dS96jkJ3swx4DTMXyRI=;
-        b=HpYUetYJCP00D6RFj+d4HxtZe1zH6vBdbzfh9WBf6jIY9zerl+T7R4KWsAwEay9kVGDyvl
-        yrzp6Ft4jrxNB70tlfPhg/PoBFJIXo2QVseoFuyn/501BOBdnk5nzTOnM5uIKrXLf0Q544
-        PcuJdrW/7z3vgFr34OPq7/ukRemwJb0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1652447849;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Hvc2URgoxyyZ40UQD6MT1ao7dS96jkJ3swx4DTMXyRI=;
-        b=KKMjgASLgn7NB2bSQ62BKXZTVu/JP66FUoyKGkou2+Rmcq+23NOgEv0qyuUljS+it0ZTiY
-        u/pBp6qura+sXhCA==
-Received: from ggherdovich.udp.ovpn1.nue.suse.de (unknown [10.163.29.78])
-        by relay2.suse.de (Postfix) with ESMTP id C18CC2C141;
-        Fri, 13 May 2022 13:17:29 +0000 (UTC)
-Message-ID: <aed5505a1ae9ec9aab1978ad36c46b1e0acd2aeb.camel@suse.cz>
-Subject: Re: [bug report] x86, sched: Bail out of frequency invariance if
- turbo frequency is unknown
-From:   Giovanni Gherdovich <ggherdovich@suse.cz>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     kernel-janitors@vger.kernel.org
-Date:   Fri, 13 May 2022 15:17:24 +0200
-In-Reply-To: <YnN3MwU5lPoNXhWU@kili>
-References: <YnN3MwU5lPoNXhWU@kili>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Fri, 13 May 2022 09:54:18 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98AF05A597;
+        Fri, 13 May 2022 06:53:44 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id u3so11586738wrg.3;
+        Fri, 13 May 2022 06:53:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7fZe7ZuhkcHkphV8RgWm+aqXThfc6HEs1D3+w7fnW1E=;
+        b=c8pvij0fZVSEifHuKb4ntHQFJbaoWeF16rwR0TUUzsGtGA4msQL9RdM3IaImMp0HAJ
+         QybhumSZY9ZmpjDfK/fwoZnyzH3wD712NJ8c6u6ePfCDoEDZBz7biWzeFeDbVQFjRqOK
+         izQcfAhhn3OGdfF1r1Z5Y3v1DI5xkS7k7cuUNUBvyTtuqDNSjLeVJNZx4KAZeIvO27cg
+         zHbge6ihXS69wXl3rGwOcBwzz/jumGXO/LNhxp0A1FqdwCenAty2cAih7XJMp2hu4r4Y
+         jocIg7tcpjXOeKeUPLiYGzz78K/M4ZYMC6cDamRbPwOW+Q+NEU7Xt+8lg2+zHdOweNd+
+         RQlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7fZe7ZuhkcHkphV8RgWm+aqXThfc6HEs1D3+w7fnW1E=;
+        b=5rPQcxDVF79X17qaTh9WBXafluLaVc2u2L7/Va17QdtwfXKeHGM+s6aTP11fNZG7qG
+         PptCoig29tDStvCJthkPd9lw/PEFUhX3eb41UJMTdmuE9lJp+IPlfchJJ3Thgrpcx/KA
+         IwUbafz2o2HRJjYfGFie4eIyxEQ/Hk60d2uDZnEWlvo3vpKXJJ2SkOutEWaGM1oNvRiN
+         rTFJuBZcHFL1PeUcUsqLr87wlzBwUbEGo+ViM0Um0BNZ+DWZ9qLT/FkK6ZAjkf9r6alS
+         qj6aZ+eUmcEjx7FEyXdQIP1EMMZFiswyEEIfSoCuNbD0yA9EIo/l64EGyPRrBW3Nvm2w
+         iNVA==
+X-Gm-Message-State: AOAM5307NLw5eFT+7GbdJvvAwu/YyMo/yXbc0MPMFdIxuBUsb7wfGgCW
+        kHHxnFxaiw2oRmoAXC1lTbo=
+X-Google-Smtp-Source: ABdhPJy+EwUp69L0cz2uBqQcXBfzCCAdTcl2Tk4p9WOhncRmnlPiaIfBKRewmbH8Fj20a+w1hQxW0w==
+X-Received: by 2002:adf:e449:0:b0:20c:d56a:6020 with SMTP id t9-20020adfe449000000b0020cd56a6020mr4067091wrm.425.1652450023108;
+        Fri, 13 May 2022 06:53:43 -0700 (PDT)
+Received: from localhost (245.218.125.91.dyn.plus.net. [91.125.218.245])
+        by smtp.gmail.com with ESMTPSA id l6-20020adfa386000000b0020c5253d903sm2161229wrb.79.2022.05.13.06.53.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 May 2022 06:53:42 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/rockchip: Fix spelling mistake "aligened" -> "aligned"
+Date:   Fri, 13 May 2022 14:53:41 +0100
+Message-Id: <20220513135341.290289-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 2022-05-05 at 10:05 +0300, Dan Carpenter wrote:
-> Hello Giovanni Gherdovich,
-> 
-> The patch 51beea8862a3: "x86, sched: Bail out of frequency invariance
-> if turbo frequency is unknown" from May 31, 2020, leads to the
-> following Smatch static checker warning:
-> 
-> 	arch/x86/kernel/cpu/aperfmperf.c:274 intel_set_max_freq_ratio()
-> 	error: uninitialized symbol 'turbo_freq'.
-> 
-> arch/x86/kernel/cpu/aperfmperf.c
->     242 static bool __init intel_set_max_freq_ratio(void)
->     243 {
->     244         u64 base_freq, turbo_freq;
->     245         u64 turbo_ratio;
->     246 
->     247         if (slv_set_max_freq_ratio(&base_freq, &turbo_freq))
->                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 
-> Imagine this fails.
-> 
->     248                 goto out;
+There is a spelling mistake in a drm_err message. Fix it.
 
-I think this is a false positive of the static checker; I'll send the patch
-to initialize the variables anyway as it looks better.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-When slv_set_max_freq_ratio() fails, it returns false, and we move on to the
-next "if" statement. "goto out" is executed only if slv_set_max_freq_ratio()
-succeeds (returns true), and writes data in its input parameters.
-
-I give you that the code looks wrong, because apparently when people (and
-static analyzers) read that, they think "if (problem) goto error;" but this
-function is written like "if (it_works) goto the_end;".
-
-When I received your report I thought the code was wrong, too.
-You already sent me this report two years ago,
-https://www.spinics.net/lists/linux-kernel-janitors/msg51372.html
-and I didn't reply (I should have).
-
->     249 
->     250         if (x86_match_cpu(has_glm_turbo_ratio_limits) &&
->     251             skx_set_max_freq_ratio(&base_freq, &turbo_freq, 1))
->     252                 goto out;
->     253 
->     254         if (x86_match_cpu(has_knl_turbo_ratio_limits) &&
->     255             knl_set_max_freq_ratio(&base_freq, &turbo_freq, 1))
->     256                 goto out;
->     257 
->     258         if (x86_match_cpu(has_skx_turbo_ratio_limits) &&
->     259             skx_set_max_freq_ratio(&base_freq, &turbo_freq, 4))
->     260                 goto out;
->     261 
->     262         if (core_set_max_freq_ratio(&base_freq, &turbo_freq))
->     263                 goto out;
->     264 
->     265         return false;
-
-The "return false" above is what happens if none of the "if" matched, and this
-is when base_freq and turbo_freq are uninitialized.
-
->     266 
->     267 out:
->     268         /*
->     269          * Some hypervisors advertise X86_FEATURE_APERFMPERF
->     270          * but then fill all MSR's with zeroes.
->     271          * Some CPUs have turbo boost but don't declare any turbo ratio
->     272          * in MSR_TURBO_RATIO_LIMIT.
->     273          */
-> --> 274         if (!base_freq || !turbo_freq) {
->                     ^^^^^^^^^^^^^^^^^^^^^^^^^
-> Uninitialized.
-
-I know it looks sketchy (and makes you think I forgot the initialization), but
-the condition here is checking for when a *_set_max_freq_ratio() above
-matched, but received zeroes from reading the corresponding MSR.
-
-Anyways, patch incoming to make this look better, but I don't think it's a
-"fixes: [...]".
-
-> Although I notice that base_freq is also unintialized
-> and that predates your patch...  So I should probably send this bug
-> report to someone else...  Sorry?
->
->     275                 pr_debug("Couldn't determine cpu base or turbo frequency, necessary for scale-invariant accounting.\n");
->     276                 return false;
->     277         }
->     278 
->     279         turbo_ratio = div_u64(turbo_freq * SCHED_CAPACITY_SCALE, base_freq);
->     280         if (!turbo_ratio) {
->     281                 pr_debug("Non-zero turbo and base frequencies led to a 0 ratio.\n");
->     282                 return false;
->     283         }
->     284 
->     285         arch_turbo_freq_ratio = turbo_ratio;
->     286         arch_set_max_freq_ratio(turbo_disabled());
->     287 
->     288         return true;
->     289 }
-> 
-> regards,
-> dan carpenter
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+index 0b49fed16535..04e8e22a8640 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+@@ -1202,7 +1202,7 @@ static void vop2_plane_atomic_update(struct drm_plane *plane,
+ 		 */
+ 		stride = (fb->pitches[0] << 3) / bpp;
+ 		if ((stride & 0x3f) && (xmirror || rotate_90 || rotate_270))
+-			drm_err(vop2->drm, "vp%d %s stride[%d] not 64 pixel aligened\n",
++			drm_err(vop2->drm, "vp%d %s stride[%d] not 64 pixel aligned\n",
+ 				vp->id, win->data->name, stride);
+ 
+ 		rb_swap = vop2_afbc_rb_swap(fb->format->format);
+-- 
+2.35.1
 
