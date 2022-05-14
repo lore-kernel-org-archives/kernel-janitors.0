@@ -2,81 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE20BC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 14 May 2022 10:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0722C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 14 May 2022 12:01:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231748AbiENKiz (ORCPT
+        id S232056AbiENMBj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 14 May 2022 06:38:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60164 "EHLO
+        Sat, 14 May 2022 08:01:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230011AbiENKiz (ORCPT
+        with ESMTP id S232183AbiENMBg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 14 May 2022 06:38:55 -0400
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 646E4EAB;
-        Sat, 14 May 2022 03:38:50 -0700 (PDT)
-Received: from p508fd4ce.dip0.t-ipconnect.de ([80.143.212.206] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1nppAa-0006cU-CP; Sat, 14 May 2022 12:38:44 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Sandy Huang <hjc@rock-chips.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        Colin Ian King <colin.i.king@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/rockchip: Fix spelling mistake "aligened" -> "aligned"
-Date:   Sat, 14 May 2022 12:38:42 +0200
-Message-ID: <5595180.aeNJFYEL58@phil>
-In-Reply-To: <20220513135341.290289-1-colin.i.king@gmail.com>
-References: <20220513135341.290289-1-colin.i.king@gmail.com>
+        Sat, 14 May 2022 08:01:36 -0400
+Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 171D63895
+        for <kernel-janitors@vger.kernel.org>; Sat, 14 May 2022 05:01:33 -0700 (PDT)
+Received: from pop-os.home ([86.243.180.246])
+        by smtp.orange.fr with ESMTPA
+        id pqSgnpJ0Kpmc6pqShnl8Uu; Sat, 14 May 2022 14:01:32 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sat, 14 May 2022 14:01:32 +0200
+X-ME-IP: 86.243.180.246
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-btrfs@vger.kernel.org
+Subject: [PATCH] btrfs: Fix an error handling path in btrfs_read_sys_array()
+Date:   Sat, 14 May 2022 14:01:29 +0200
+Message-Id: <d915ceb4d459aff89c0264113db21592a6806db1.1652517184.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
+If alloc_dummy_extent_buffer() we should return an error code, not 0 that
+would mean success.
 
-Am Freitag, 13. Mai 2022, 15:53:41 CEST schrieb Colin Ian King:
-> There is a spelling mistake in a drm_err message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Fixes: a1fc41ac28d3 ("btrfs: use dummy extent buffer for super block sys chunk array read")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ fs/btrfs/volumes.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-didn't you sent the same patch some days ago already?
-Which is applied to drm-misc-next in [0].
-
-Just want to make sure I didn't miss anything.
-
-Thanks
-Heiko
-
-[0] https://cgit.freedesktop.org/drm/drm-misc/commit/?id=f0eaf60c67738da8aae786bda74a2fffeca6d7cc
-
-> ---
->  drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-> index 0b49fed16535..04e8e22a8640 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-> @@ -1202,7 +1202,7 @@ static void vop2_plane_atomic_update(struct drm_plane *plane,
->  		 */
->  		stride = (fb->pitches[0] << 3) / bpp;
->  		if ((stride & 0x3f) && (xmirror || rotate_90 || rotate_270))
-> -			drm_err(vop2->drm, "vp%d %s stride[%d] not 64 pixel aligened\n",
-> +			drm_err(vop2->drm, "vp%d %s stride[%d] not 64 pixel aligned\n",
->  				vp->id, win->data->name, stride);
->  
->  		rb_swap = vop2_afbc_rb_swap(fb->format->format);
-> 
-
-
-
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index b2d5a54ea172..9c20049d1fec 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -7359,7 +7359,7 @@ int btrfs_read_sys_array(struct btrfs_fs_info *fs_info)
+ 	 */
+ 	sb = alloc_dummy_extent_buffer(fs_info, BTRFS_SUPER_INFO_OFFSET);
+ 	if (!sb)
+-		return PTR_ERR(sb);
++		return -ENOMEM;
+ 	set_extent_buffer_uptodate(sb);
+ 
+ 	write_extent_buffer(sb, super_copy, 0, BTRFS_SUPER_INFO_SIZE);
+-- 
+2.34.1
 
