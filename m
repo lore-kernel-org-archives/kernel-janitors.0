@@ -2,84 +2,56 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44130C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 15 May 2022 18:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF62C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 15 May 2022 20:07:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237992AbiEOSHK (ORCPT
+        id S233724AbiEOUHx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 15 May 2022 14:07:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56710 "EHLO
+        Sun, 15 May 2022 16:07:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229585AbiEOSHJ (ORCPT
+        with ESMTP id S230473AbiEOUHt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 15 May 2022 14:07:09 -0400
-Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D15A727FDC
-        for <kernel-janitors@vger.kernel.org>; Sun, 15 May 2022 11:07:07 -0700 (PDT)
-Received: from pop-os.home ([86.243.180.246])
-        by smtp.orange.fr with ESMTPA
-        id qIdznd1gjdIhAqIdzn03U9; Sun, 15 May 2022 20:07:05 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 15 May 2022 20:07:05 +0200
-X-ME-IP: 86.243.180.246
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     GR-Linux-NIC-Dev@marvell.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        akpm@osdl.org, ron.mercer@qlogic.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] net/qla3xxx: Fix a test in ql_reset_work()
-Date:   Sun, 15 May 2022 20:07:02 +0200
-Message-Id: <80e73e33f390001d9c0140ffa9baddf6466a41a2.1652637337.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sun, 15 May 2022 16:07:49 -0400
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57960F588
+        for <kernel-janitors@vger.kernel.org>; Sun, 15 May 2022 13:07:46 -0700 (PDT)
+Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=phil.lan)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1nqKWh-00069N-AL; Sun, 15 May 2022 22:07:39 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Sandy Huang <hjc@rock-chips.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org,
+        dri-devel@lists.freedesktop.org,
+        Andy Yan <andy.yan@rock-chips.com>,
+        kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        linux-arm-kernel@lists.infradead.org,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [PATCH] drm/rockchip: vop2: unlock on error path in vop2_crtc_atomic_enable()
+Date:   Sun, 15 May 2022 22:07:37 +0200
+Message-Id: <165264524621.2584623.18007054358707398354.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <YnjZQRV9lpub2ET8@kili>
+References: <YnjZQRV9lpub2ET8@kili>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-test_bit() tests if one bit is set or not.
-Here the logic seems to check of bit QL_RESET_PER_SCSI (i.e. 4) OR bit
-QL_RESET_START (i.e. 3) is set.
+On Mon, 9 May 2022 12:05:05 +0300, Dan Carpenter wrote:
+> This error path needs an unlock before returning.
 
-In fact, it checks if bit 7 (4 | 3 = 7) is set, that is to say
-QL_ADAPTER_UP.
+Applied, thanks!
 
-This looks harmless, because this bit is likely be set, and when the
-ql_reset_work() delayed work is scheduled in ql3xxx_isr() (the only place
-that schedule this work), QL_RESET_START or QL_RESET_PER_SCSI is set.
+[1/1] drm/rockchip: vop2: unlock on error path in vop2_crtc_atomic_enable()
+      commit: 98526c5bbe3267d447ddd076b685439e3e1396c6
 
-This has been spotted by smatch.
-
-Fixes: 5a4faa873782 ("[PATCH] qla3xxx NIC driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is speculative and should certainly be tested by s.o. with the
-needed hardware.
-
-Maybe, the whole 'if (test_bit(...)' test should be removed because it is
-always true. If it is really the case, this would save 1 level of
-indentation.
----
- drivers/net/ethernet/qlogic/qla3xxx.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/qlogic/qla3xxx.c b/drivers/net/ethernet/qlogic/qla3xxx.c
-index b30589a135c2..70241faaa841 100644
---- a/drivers/net/ethernet/qlogic/qla3xxx.c
-+++ b/drivers/net/ethernet/qlogic/qla3xxx.c
-@@ -3614,7 +3614,8 @@ static void ql_reset_work(struct work_struct *work)
- 		qdev->mem_map_registers;
- 	unsigned long hw_flags;
- 
--	if (test_bit((QL_RESET_PER_SCSI | QL_RESET_START), &qdev->flags)) {
-+	if (test_bit((QL_RESET_PER_SCSI), &qdev->flags) ||
-+	    test_bit((QL_RESET_START), &qdev->flags)) {
- 		clear_bit(QL_LINK_MASTER, &qdev->flags);
- 
- 		/*
+Best regards,
 -- 
-2.34.1
-
+Heiko Stuebner <heiko@sntech.de>
