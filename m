@@ -2,41 +2,37 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ABD6C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 15 May 2022 17:02:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44130C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 15 May 2022 18:07:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237837AbiEORCI (ORCPT
+        id S237992AbiEOSHK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 15 May 2022 13:02:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47646 "EHLO
+        Sun, 15 May 2022 14:07:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229580AbiEORCG (ORCPT
+        with ESMTP id S229585AbiEOSHJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 15 May 2022 13:02:06 -0400
-Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FF7512A91
-        for <kernel-janitors@vger.kernel.org>; Sun, 15 May 2022 10:02:02 -0700 (PDT)
+        Sun, 15 May 2022 14:07:09 -0400
+Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D15A727FDC
+        for <kernel-janitors@vger.kernel.org>; Sun, 15 May 2022 11:07:07 -0700 (PDT)
 Received: from pop-os.home ([86.243.180.246])
         by smtp.orange.fr with ESMTPA
-        id qHd0n1JemFyeGqHd0n8uTs; Sun, 15 May 2022 19:02:00 +0200
+        id qIdznd1gjdIhAqIdzn03U9; Sun, 15 May 2022 20:07:05 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 15 May 2022 19:02:00 +0200
+X-ME-Date: Sun, 15 May 2022 20:07:05 +0200
 X-ME-IP: 86.243.180.246
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org
-Subject: [PATCH] net: systemport: Fix an error handling path in bcm_sysport_probe()
-Date:   Sun, 15 May 2022 19:01:56 +0200
-Message-Id: <99d70634a81c229885ae9e4ee69b2035749f7edc.1652634040.git.christophe.jaillet@wanadoo.fr>
+To:     GR-Linux-NIC-Dev@marvell.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        akpm@osdl.org, ron.mercer@qlogic.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] net/qla3xxx: Fix a test in ql_reset_work()
+Date:   Sun, 15 May 2022 20:07:02 +0200
+Message-Id: <80e73e33f390001d9c0140ffa9baddf6466a41a2.1652637337.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -44,34 +40,46 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-if devm_clk_get_optional() fails, we still need to go through the error
-handling path.
+test_bit() tests if one bit is set or not.
+Here the logic seems to check of bit QL_RESET_PER_SCSI (i.e. 4) OR bit
+QL_RESET_START (i.e. 3) is set.
 
-Add the missing goto.
+In fact, it checks if bit 7 (4 | 3 = 7) is set, that is to say
+QL_ADAPTER_UP.
 
-Fixes: 6328a126896ea ("net: systemport: Manage Wake-on-LAN clock")
+This looks harmless, because this bit is likely be set, and when the
+ql_reset_work() delayed work is scheduled in ql3xxx_isr() (the only place
+that schedule this work), QL_RESET_START or QL_RESET_PER_SCSI is set.
+
+This has been spotted by smatch.
+
+Fixes: 5a4faa873782 ("[PATCH] qla3xxx NIC driver")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/broadcom/bcmsysport.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+This patch is speculative and should certainly be tested by s.o. with the
+needed hardware.
 
-diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
-index f1805fb857c5..47fc8e6963d5 100644
---- a/drivers/net/ethernet/broadcom/bcmsysport.c
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-@@ -2581,8 +2581,10 @@ static int bcm_sysport_probe(struct platform_device *pdev)
- 		device_set_wakeup_capable(&pdev->dev, 1);
+Maybe, the whole 'if (test_bit(...)' test should be removed because it is
+always true. If it is really the case, this would save 1 level of
+indentation.
+---
+ drivers/net/ethernet/qlogic/qla3xxx.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qla3xxx.c b/drivers/net/ethernet/qlogic/qla3xxx.c
+index b30589a135c2..70241faaa841 100644
+--- a/drivers/net/ethernet/qlogic/qla3xxx.c
++++ b/drivers/net/ethernet/qlogic/qla3xxx.c
+@@ -3614,7 +3614,8 @@ static void ql_reset_work(struct work_struct *work)
+ 		qdev->mem_map_registers;
+ 	unsigned long hw_flags;
  
- 	priv->wol_clk = devm_clk_get_optional(&pdev->dev, "sw_sysportwol");
--	if (IS_ERR(priv->wol_clk))
--		return PTR_ERR(priv->wol_clk);
-+	if (IS_ERR(priv->wol_clk)) {
-+		ret = PTR_ERR(priv->wol_clk);
-+		goto err_deregister_fixed_link;
-+	}
+-	if (test_bit((QL_RESET_PER_SCSI | QL_RESET_START), &qdev->flags)) {
++	if (test_bit((QL_RESET_PER_SCSI), &qdev->flags) ||
++	    test_bit((QL_RESET_START), &qdev->flags)) {
+ 		clear_bit(QL_LINK_MASTER, &qdev->flags);
  
- 	/* Set the needed headroom once and for all */
- 	BUILD_BUG_ON(sizeof(struct bcm_tsb) != 8);
+ 		/*
 -- 
 2.34.1
 
