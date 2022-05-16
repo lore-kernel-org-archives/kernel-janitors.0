@@ -2,64 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF15C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 May 2022 18:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96DD6C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 May 2022 21:19:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345012AbiEPSmT (ORCPT
+        id S1349228AbiEPVTC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 16 May 2022 14:42:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56950 "EHLO
+        Mon, 16 May 2022 17:19:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344840AbiEPSmS (ORCPT
+        with ESMTP id S1349310AbiEPVS2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 16 May 2022 14:42:18 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3D553E0FE;
-        Mon, 16 May 2022 11:42:17 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id g6so30402587ejw.1;
-        Mon, 16 May 2022 11:42:17 -0700 (PDT)
+        Mon, 16 May 2022 17:18:28 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 962592C10D;
+        Mon, 16 May 2022 14:17:48 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id ch13so30965855ejb.12;
+        Mon, 16 May 2022 14:17:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=zD2cmGDI0QDaqSfgSS+PWLZ7wv6vJ0pT7+KKvGrmgP0=;
-        b=Dk2VcD6Ob6Wxl0s29Saxdiyu0Qu3p694+/N78XobvJrelMJB8BXXDiRmVSmBmwvDYE
-         IojUp80BBI6A97IKXY7uqG30Ny5AtPNdQF1/QdLOmgf/9o4KMS+5DP0JRxsiOz2t+3XY
-         rw7wIFgLQdwKnPt5X6jU6mniNq27Rb0h9SwQ6heZC+Ovsf1xjpaiNbIE3F1TfDV2GghW
-         Ktu8ECff5J6EiGGPUH90iZ1zASj2F7W7SHOaWyQB7t/MWVmQdV7mRTMe8qIYFjtUbkzU
-         XLyKnjsYG4401GkbW9txkTQh5+RD3LUsfnJxJMLEo31MEfWDcpWtiHQnA+Ga2E+Y5vPQ
-         b/CA==
+        bh=35KXda5OBFCKkvBxWwkGiybmXmDjKw5ss0Rm54TgqYY=;
+        b=i+OOwp8a+Ns6JmA3zecraa7xhvF4SrBt9OxonU3zgxIMLqIuQq+1wJn0rPRt8mJN4o
+         LMO0yQRcFwtjM0saYriQhamE4Fw0YEtk5t3TQ/RM1Vi0r1O3pCyeXRunEEq8TcH6OFso
+         vkGt7LDjqxEHo/VZUby/scvLGyC2tDiX63Gsst9+OA1R4gAs1CbduRu5CCe5/wXuhVGm
+         9f94pIi+pVT9OaQLr0JmyoLwRKd/D0pc7O0eRi18BOa40zDJjqM1lVzkEBD6yAyeSphI
+         Zm9caVX9cBt5sds1QEuRnfXbFigfQZpxfErvR9dhBy7JUfAf1n9hARzxRl0oXFES8wz7
+         2nGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=zD2cmGDI0QDaqSfgSS+PWLZ7wv6vJ0pT7+KKvGrmgP0=;
-        b=msjOucJFbi1sbI4o+QpJTHE6T1x+lVHkDIUg/UcceB280edBT03gAjQ4rkJ77mKVop
-         ETGh0iHAKz9nuEE5wU1be79XbItW99MiCnrGo6BTI+f0aLhb1AT3zjU8AZGetqkd/oaT
-         RUDdGIqZsTirczGb2if5cUTRZQ9YA7elqc0bjGIsz0gUHjztGWgT4kCiJ23OzkZKU2fn
-         PWKu8W8I2BA5wSaG1cIYGGnWHMEgXUGgOXMQS2kpDj5+WqmDslzGdRsa9IqT/q33aaDi
-         IbzkVWiX2F2dZMDCT4MtJF2abSbEcg6AnRye+DXfFY5FPK93uJ6m3WF7pfF0mBVtMm4X
-         RsXw==
-X-Gm-Message-State: AOAM53072B3J1MoWRT7uMs9Zh8XcCCsa6eXzwgHf8wEqfr1ei+Hb88Zp
-        SZNEOubTR2FPPZUUw6+5vyw=
-X-Google-Smtp-Source: ABdhPJzb1nqIQPTNpO3v0ie6TXYdW89dGFEy1HflmPgEo6VRypohARbg8nRbkKkYvK0t2yIAENCBHg==
-X-Received: by 2002:a17:907:3da3:b0:6f4:4292:6d6 with SMTP id he35-20020a1709073da300b006f4429206d6mr16584110ejc.162.1652726536490;
-        Mon, 16 May 2022 11:42:16 -0700 (PDT)
+        bh=35KXda5OBFCKkvBxWwkGiybmXmDjKw5ss0Rm54TgqYY=;
+        b=vEgKjUs/P+vw3OGYzdM97g4xX9ENfL6j4SHwHvfi1ZQvYrrA8mGXj8LQdcmiyhyOLm
+         Ej2ePVEJPXAfMt90riX6zpT9uFp/zM4rMuv2ZQzacEK5A+0SRKzyTQqjV0j4kuCva5VH
+         62tp8O0msEiLIn5BCrvW/8nxl7+FV+6KcbBk6n6CexNERIVt1BjsoCC7UaDAYj3s4dSa
+         RiE/yEH6COpJhWVw3aPgLiTTY0s9jgadAClCPdRbO8FS+sZr1IPQbYjHMBRnvInsVx8L
+         ANa7bIToOisGrDOupfjQ5hqY6KfO01HcyQbQplp6I4QfKmkUUYMuc91g+G3sIOjurs47
+         aOWw==
+X-Gm-Message-State: AOAM531v3rp1RguKtqi4AYYJD5uKyJwdPvCjh5A9hZbRWVkI+Fmpvzsd
+        7wKS6EJiR3TXz51SAyreoKKJOcrClwsWsXfC
+X-Google-Smtp-Source: ABdhPJz+c4SIyaDIRS17VWMsh5DYkuYDVpureeE7lY55lFd4fmJuYT5KuXvj3NnifMvVo2q76fvdHw==
+X-Received: by 2002:a17:907:e91:b0:6f4:d1e7:417d with SMTP id ho17-20020a1709070e9100b006f4d1e7417dmr17216724ejc.123.1652735867100;
+        Mon, 16 May 2022 14:17:47 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id eo10-20020a1709069b0a00b006f3ef214e36sm45823ejc.156.2022.05.16.11.42.15
+        by smtp.gmail.com with ESMTPSA id a23-20020a1709063e9700b006f3ef214dc5sm198147ejj.43.2022.05.16.14.17.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 May 2022 11:42:15 -0700 (PDT)
+        Mon, 16 May 2022 14:17:46 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        linux-kernel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org
-Subject: [PATCH] x86/sev: remove duplicated assignment to variable info
-Date:   Mon, 16 May 2022 19:42:15 +0100
-Message-Id: <20220516184215.51841-1-colin.i.king@gmail.com>
+To:     David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: asymmetric_keys: remove redundant pointer secs
+Date:   Mon, 16 May 2022 22:17:45 +0100
+Message-Id: <20220516211745.55382-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -68,34 +66,41 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable info is being assigned the same value twice, remove the
-redundant duplicate. Also assign variable v in the declaration.
+Pointer secs is being assigned a value that is never read. The pointer
+is redundant and can be removed.
 
-Cleans up clang scan warning:
-warning: Value stored to 'info' during its initialization is never
-read [deadcode.DeadStores]
+Cleans up clang-scan build warning:
+warning: Although the value stored to 'secs' is used in the enclosing
+expression, the value is never actually read from 'secs'
+[deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- arch/x86/kernel/sev-shared.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ crypto/asymmetric_keys/verify_pefile.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/sev-shared.c b/arch/x86/kernel/sev-shared.c
-index 2b4270d5559e..b478edf43bec 100644
---- a/arch/x86/kernel/sev-shared.c
-+++ b/arch/x86/kernel/sev-shared.c
-@@ -201,10 +201,7 @@ static enum es_result verify_exception_info(struct ghcb *ghcb, struct es_em_ctxt
+diff --git a/crypto/asymmetric_keys/verify_pefile.c b/crypto/asymmetric_keys/verify_pefile.c
+index 7553ab18db89..a660e4d68d50 100644
+--- a/crypto/asymmetric_keys/verify_pefile.c
++++ b/crypto/asymmetric_keys/verify_pefile.c
+@@ -28,7 +28,7 @@ static int pefile_parse_binary(const void *pebuf, unsigned int pelen,
+ 	const struct pe32plus_opt_hdr *pe64;
+ 	const struct data_directory *ddir;
+ 	const struct data_dirent *dde;
+-	const struct section_header *secs, *sec;
++	const struct section_header *sec;
+ 	size_t cursor, datalen = pelen;
  
- 	if (ret == 1) {
- 		u64 info = ghcb->save.sw_exit_info_2;
--		unsigned long v;
--
--		info = ghcb->save.sw_exit_info_2;
--		v = info & SVM_EVTINJ_VEC_MASK;
-+		unsigned long v = info & SVM_EVTINJ_VEC_MASK;
+ 	kenter("");
+@@ -110,7 +110,7 @@ static int pefile_parse_binary(const void *pebuf, unsigned int pelen,
+ 	ctx->n_sections = pe->sections;
+ 	if (ctx->n_sections > (ctx->header_size - cursor) / sizeof(*sec))
+ 		return -ELIBBAD;
+-	ctx->secs = secs = pebuf + cursor;
++	ctx->secs = pebuf + cursor;
  
- 		/* Check if exception information from hypervisor is sane. */
- 		if ((info & SVM_EVTINJ_VALID) &&
+ 	return 0;
+ }
 -- 
 2.35.1
 
