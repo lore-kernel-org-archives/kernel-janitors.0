@@ -2,106 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95368C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 May 2022 15:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E17DFC433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 May 2022 17:42:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244977AbiEPPG3 (ORCPT
+        id S1344382AbiEPRmc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 16 May 2022 11:06:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55640 "EHLO
+        Mon, 16 May 2022 13:42:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244941AbiEPPGJ (ORCPT
+        with ESMTP id S1344147AbiEPRma (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 16 May 2022 11:06:09 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E51D03B020;
-        Mon, 16 May 2022 08:06:07 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 9F00421FEA;
-        Mon, 16 May 2022 15:06:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1652713566;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=c+0GsqPsSThaO2MnPpjoOsweO+GYaCoEg31L+IwHhqg=;
-        b=lKfTMpyCVoWa0JJn/rnPzzTlVHx2ecJ0azO4Oq8wJ918JZPwvcWiiwqptLzYfsfvHOcvva
-        eVKYcq2zMputu65NcBAD/BZxd32XuV4kL1bQPo4YcbyAmorFWXRa4KrC4saRreDnu2vpLQ
-        qSfuwKGQ4yAD8j7VmcEwQ2hgTQWYzRk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1652713566;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=c+0GsqPsSThaO2MnPpjoOsweO+GYaCoEg31L+IwHhqg=;
-        b=KUJhBgqvq8Nn18KvbQkJlvarVwEdcKV7K3hS0z2sv/TIdtUHzz4hHoz90zQ8V2mTb1xCeD
-        ficdnjVImsf/EiAA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5404813ADC;
-        Mon, 16 May 2022 15:06:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 7FWcE15ogmLfKQAAMHmgww
-        (envelope-from <dsterba@suse.cz>); Mon, 16 May 2022 15:06:06 +0000
-Date:   Mon, 16 May 2022 17:01:48 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Qu Wenruo <quwenruo.btrfs@gmx.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
+        Mon, 16 May 2022 13:42:30 -0400
+Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DC3A377C6
+        for <kernel-janitors@vger.kernel.org>; Mon, 16 May 2022 10:42:27 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.180.246])
+        by smtp.orange.fr with ESMTPA
+        id qejfnDLFJpmc6qejfntg18; Mon, 16 May 2022 19:42:25 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Mon, 16 May 2022 19:42:25 +0200
+X-ME-IP: 86.243.180.246
+Message-ID: <bbabdbba-9700-2cb6-beac-6566fd84ee3d@wanadoo.fr>
+Date:   Mon, 16 May 2022 19:42:23 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
 Subject: Re: [PATCH] btrfs: Fix an error handling path in
  btrfs_read_sys_array()
-Message-ID: <20220516150148.GX18596@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Dan Carpenter <dan.carpenter@oracle.com>,
-        Qu Wenruo <quwenruo.btrfs@gmx.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+Content-Language: en-US
+To:     dsterba@suse.cz, Dan Carpenter <dan.carpenter@oracle.com>,
+        Qu Wenruo <quwenruo.btrfs@gmx.com>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-btrfs@vger.kernel.org
 References: <d915ceb4d459aff89c0264113db21592a6806db1.1652517184.git.christophe.jaillet@wanadoo.fr>
- <120e4c34-da48-7d86-4a50-c31a3804600d@gmx.com>
- <20220516135407.GM4009@kadam>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220516135407.GM4009@kadam>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+ <120e4c34-da48-7d86-4a50-c31a3804600d@gmx.com> <20220516135407.GM4009@kadam>
+ <20220516150148.GX18596@twin.jikos.cz>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20220516150148.GX18596@twin.jikos.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, May 16, 2022 at 04:54:07PM +0300, Dan Carpenter wrote:
-> On Sun, May 15, 2022 at 06:57:25AM +0800, Qu Wenruo wrote:
-> > 
-> > 
-> > On 2022/5/14 20:01, Christophe JAILLET wrote:
-> > > If alloc_dummy_extent_buffer() we should return an error code, not 0 that
-> > > would mean success.
-> > > 
-> > > Fixes: a1fc41ac28d3 ("btrfs: use dummy extent buffer for super block sys chunk array read")
-> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > 
-> > Reviewed-by: Qu Wenruo <wqu@suse.com>
-> > 
-> > All my fault, thanks for catching it.
-> > Qu
-> > 
-> 
-> I sent this patch in January and David was going to fold it into the
-> original patch but it got lost.  Thanks, Christophe!
+Le 16/05/2022 à 17:01, David Sterba a écrit :
+> On Mon, May 16, 2022 at 04:54:07PM +0300, Dan Carpenter wrote:
+>> On Sun, May 15, 2022 at 06:57:25AM +0800, Qu Wenruo wrote:
+>>>
+>>>
+>>> On 2022/5/14 20:01, Christophe JAILLET wrote:
+>>>> If alloc_dummy_extent_buffer() we should return an error code, not 0 that
+>>>> would mean success.
+>>>>
+>>>> Fixes: a1fc41ac28d3 ("btrfs: use dummy extent buffer for super block sys chunk array read")
+>>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>>>
+>>> Reviewed-by: Qu Wenruo <wqu@suse.com>
+>>>
+>>> All my fault, thanks for catching it.
+>>> Qu
+>>>
+>>
+>> I sent this patch in January and David was going to fold it into the
+>> original patch but it got lost.  Thanks, Christophe!
 
-I found my reply to your fix that I folded the fixup, but then it got
-lost for some reason. Probably because I picked the patchset from
-mailing list again and did not take the local branch. I'll fold the fix
-again as it' still in the unmerged branch. Thanks.
+Hi,
+
+Not exactly.
+Your patch was:
+-	if (IS_ERR(sb))
+-		return PTR_ERR(sb);
++	if (!sb)
++		return -ENOMEM;
+
+Mine is only:
+-		return PTR_ERR(sb);
++		return -ENOMEM;
+
+So for some reason, what you had reported was just half applied. (or 
+half fixed by someone else)
+
+> 
+> I found my reply to your fix that I folded the fixup, but then it got
+> lost for some reason. Probably because I picked the patchset from
+> mailing list again and did not take the local branch. I'll fold the fix
+> again as it' still in the unmerged branch. Thanks.
+> 
+
+just in case, the Fixes tag in Dan's patch leads to:
+      "Notice: this object is not reachable from any branch."
+
+I don't think that it is of any importance if the fix in folded, but in 
+case, I let you know.
+
+CJ
