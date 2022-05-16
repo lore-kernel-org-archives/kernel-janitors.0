@@ -2,100 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E17DFC433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 16 May 2022 17:42:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF15C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 16 May 2022 18:42:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344382AbiEPRmc (ORCPT
+        id S1345012AbiEPSmT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 16 May 2022 13:42:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54364 "EHLO
+        Mon, 16 May 2022 14:42:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344147AbiEPRma (ORCPT
+        with ESMTP id S1344840AbiEPSmS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 16 May 2022 13:42:30 -0400
-Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DC3A377C6
-        for <kernel-janitors@vger.kernel.org>; Mon, 16 May 2022 10:42:27 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.180.246])
-        by smtp.orange.fr with ESMTPA
-        id qejfnDLFJpmc6qejfntg18; Mon, 16 May 2022 19:42:25 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 16 May 2022 19:42:25 +0200
-X-ME-IP: 86.243.180.246
-Message-ID: <bbabdbba-9700-2cb6-beac-6566fd84ee3d@wanadoo.fr>
-Date:   Mon, 16 May 2022 19:42:23 +0200
+        Mon, 16 May 2022 14:42:18 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3D553E0FE;
+        Mon, 16 May 2022 11:42:17 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id g6so30402587ejw.1;
+        Mon, 16 May 2022 11:42:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zD2cmGDI0QDaqSfgSS+PWLZ7wv6vJ0pT7+KKvGrmgP0=;
+        b=Dk2VcD6Ob6Wxl0s29Saxdiyu0Qu3p694+/N78XobvJrelMJB8BXXDiRmVSmBmwvDYE
+         IojUp80BBI6A97IKXY7uqG30Ny5AtPNdQF1/QdLOmgf/9o4KMS+5DP0JRxsiOz2t+3XY
+         rw7wIFgLQdwKnPt5X6jU6mniNq27Rb0h9SwQ6heZC+Ovsf1xjpaiNbIE3F1TfDV2GghW
+         Ktu8ECff5J6EiGGPUH90iZ1zASj2F7W7SHOaWyQB7t/MWVmQdV7mRTMe8qIYFjtUbkzU
+         XLyKnjsYG4401GkbW9txkTQh5+RD3LUsfnJxJMLEo31MEfWDcpWtiHQnA+Ga2E+Y5vPQ
+         b/CA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zD2cmGDI0QDaqSfgSS+PWLZ7wv6vJ0pT7+KKvGrmgP0=;
+        b=msjOucJFbi1sbI4o+QpJTHE6T1x+lVHkDIUg/UcceB280edBT03gAjQ4rkJ77mKVop
+         ETGh0iHAKz9nuEE5wU1be79XbItW99MiCnrGo6BTI+f0aLhb1AT3zjU8AZGetqkd/oaT
+         RUDdGIqZsTirczGb2if5cUTRZQ9YA7elqc0bjGIsz0gUHjztGWgT4kCiJ23OzkZKU2fn
+         PWKu8W8I2BA5wSaG1cIYGGnWHMEgXUGgOXMQS2kpDj5+WqmDslzGdRsa9IqT/q33aaDi
+         IbzkVWiX2F2dZMDCT4MtJF2abSbEcg6AnRye+DXfFY5FPK93uJ6m3WF7pfF0mBVtMm4X
+         RsXw==
+X-Gm-Message-State: AOAM53072B3J1MoWRT7uMs9Zh8XcCCsa6eXzwgHf8wEqfr1ei+Hb88Zp
+        SZNEOubTR2FPPZUUw6+5vyw=
+X-Google-Smtp-Source: ABdhPJzb1nqIQPTNpO3v0ie6TXYdW89dGFEy1HflmPgEo6VRypohARbg8nRbkKkYvK0t2yIAENCBHg==
+X-Received: by 2002:a17:907:3da3:b0:6f4:4292:6d6 with SMTP id he35-20020a1709073da300b006f4429206d6mr16584110ejc.162.1652726536490;
+        Mon, 16 May 2022 11:42:16 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id eo10-20020a1709069b0a00b006f3ef214e36sm45823ejc.156.2022.05.16.11.42.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 May 2022 11:42:15 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        linux-kernel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org
+Subject: [PATCH] x86/sev: remove duplicated assignment to variable info
+Date:   Mon, 16 May 2022 19:42:15 +0100
+Message-Id: <20220516184215.51841-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH] btrfs: Fix an error handling path in
- btrfs_read_sys_array()
-Content-Language: en-US
-To:     dsterba@suse.cz, Dan Carpenter <dan.carpenter@oracle.com>,
-        Qu Wenruo <quwenruo.btrfs@gmx.com>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-References: <d915ceb4d459aff89c0264113db21592a6806db1.1652517184.git.christophe.jaillet@wanadoo.fr>
- <120e4c34-da48-7d86-4a50-c31a3804600d@gmx.com> <20220516135407.GM4009@kadam>
- <20220516150148.GX18596@twin.jikos.cz>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20220516150148.GX18596@twin.jikos.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 16/05/2022 à 17:01, David Sterba a écrit :
-> On Mon, May 16, 2022 at 04:54:07PM +0300, Dan Carpenter wrote:
->> On Sun, May 15, 2022 at 06:57:25AM +0800, Qu Wenruo wrote:
->>>
->>>
->>> On 2022/5/14 20:01, Christophe JAILLET wrote:
->>>> If alloc_dummy_extent_buffer() we should return an error code, not 0 that
->>>> would mean success.
->>>>
->>>> Fixes: a1fc41ac28d3 ("btrfs: use dummy extent buffer for super block sys chunk array read")
->>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>>
->>> Reviewed-by: Qu Wenruo <wqu@suse.com>
->>>
->>> All my fault, thanks for catching it.
->>> Qu
->>>
->>
->> I sent this patch in January and David was going to fold it into the
->> original patch but it got lost.  Thanks, Christophe!
+Variable info is being assigned the same value twice, remove the
+redundant duplicate. Also assign variable v in the declaration.
 
-Hi,
+Cleans up clang scan warning:
+warning: Value stored to 'info' during its initialization is never
+read [deadcode.DeadStores]
 
-Not exactly.
-Your patch was:
--	if (IS_ERR(sb))
--		return PTR_ERR(sb);
-+	if (!sb)
-+		return -ENOMEM;
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ arch/x86/kernel/sev-shared.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Mine is only:
--		return PTR_ERR(sb);
-+		return -ENOMEM;
+diff --git a/arch/x86/kernel/sev-shared.c b/arch/x86/kernel/sev-shared.c
+index 2b4270d5559e..b478edf43bec 100644
+--- a/arch/x86/kernel/sev-shared.c
++++ b/arch/x86/kernel/sev-shared.c
+@@ -201,10 +201,7 @@ static enum es_result verify_exception_info(struct ghcb *ghcb, struct es_em_ctxt
+ 
+ 	if (ret == 1) {
+ 		u64 info = ghcb->save.sw_exit_info_2;
+-		unsigned long v;
+-
+-		info = ghcb->save.sw_exit_info_2;
+-		v = info & SVM_EVTINJ_VEC_MASK;
++		unsigned long v = info & SVM_EVTINJ_VEC_MASK;
+ 
+ 		/* Check if exception information from hypervisor is sane. */
+ 		if ((info & SVM_EVTINJ_VALID) &&
+-- 
+2.35.1
 
-So for some reason, what you had reported was just half applied. (or 
-half fixed by someone else)
-
-> 
-> I found my reply to your fix that I folded the fixup, but then it got
-> lost for some reason. Probably because I picked the patchset from
-> mailing list again and did not take the local branch. I'll fold the fix
-> again as it' still in the unmerged branch. Thanks.
-> 
-
-just in case, the Fixes tag in Dan's patch leads to:
-      "Notice: this object is not reachable from any branch."
-
-I don't think that it is of any importance if the fix in folded, but in 
-case, I let you know.
-
-CJ
