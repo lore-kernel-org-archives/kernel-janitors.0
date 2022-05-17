@@ -2,57 +2,47 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7EA6C433F5
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 May 2022 20:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E1D8C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 17 May 2022 20:12:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350528AbiEQUMg (ORCPT
+        id S1352893AbiEQUMq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 May 2022 16:12:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47098 "EHLO
+        Tue, 17 May 2022 16:12:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352028AbiEQUMd (ORCPT
+        with ESMTP id S1350965AbiEQUMj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 May 2022 16:12:33 -0400
-Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 614FC3EF13
-        for <kernel-janitors@vger.kernel.org>; Tue, 17 May 2022 13:12:31 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.180.246])
-        by smtp.orange.fr with ESMTPA
-        id r3YRnwureghzAr3YRn1yRW; Tue, 17 May 2022 22:12:29 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Tue, 17 May 2022 22:12:29 +0200
-X-ME-IP: 86.243.180.246
-Message-ID: <f59200c5-c720-fe66-f395-31ea096dc300@wanadoo.fr>
-Date:   Tue, 17 May 2022 22:12:26 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
+        Tue, 17 May 2022 16:12:39 -0400
+Received: from ciao.gmane.io (ciao.gmane.io [116.202.254.214])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60ED43ED27
+        for <kernel-janitors@vger.kernel.org>; Tue, 17 May 2022 13:12:37 -0700 (PDT)
+Received: from list by ciao.gmane.io with local (Exim 4.92)
+        (envelope-from <glkj-kernel-janitors-2@m.gmane-mx.org>)
+        id 1nr3YX-00028E-5c
+        for kernel-janitors@vger.kernel.org; Tue, 17 May 2022 22:12:33 +0200
+X-Injected-Via-Gmane: http://gmane.org/
+To:     kernel-janitors@vger.kernel.org
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Subject: Re: [PATCH 2/2] octeon_ep: Fix irq releasing in the error handling
  path of octep_request_irqs()
-Content-Language: en-US
-To:     Paolo Abeni <pabeni@redhat.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Veerasenareddy Burru <vburru@marvell.com>,
-        Abhijit Ayarekar <aayarekar@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Satananda Burla <sburla@marvell.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org
-Newsgroups: gmane.linux.kernel.janitors,gmane.linux.kernel,gmane.linux.network
+Date:   Tue, 17 May 2022 22:12:26 +0200
+Message-ID: <f59200c5-c720-fe66-f395-31ea096dc300@wanadoo.fr>
 References: <cover.1652629833.git.christophe.jaillet@wanadoo.fr>
  <a1b6f082fff4e68007914577961113bc452c8030.1652629833.git.christophe.jaillet@wanadoo.fr>
  <20220517052859.GN4009@kadam>
  <eec880be771e75d60ead01cbf71d83fe070ccde8.camel@redhat.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <eec880be771e75d60ead01cbf71d83fe070ccde8.camel@redhat.com>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Content-Language: en-US
+In-Reply-To: <eec880be771e75d60ead01cbf71d83fe070ccde8.camel@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
+Message-ID: <20220517201226.4BHU4KHAnknXsBm7LH6RGBvAgaEEr9Ii1oq1XHz0nzs@z>
 
 Le 17/05/2022 à 10:35, Paolo Abeni a écrit :
 > On Tue, 2022-05-17 at 08:28 +0300, Dan Carpenter wrote:
@@ -124,4 +114,5 @@ CJ
 > Paolo
 > 
 > 
+
 
