@@ -2,59 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 323F4C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 18 May 2022 08:45:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB864C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 18 May 2022 08:55:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233446AbiERIpm (ORCPT
+        id S233653AbiERIz0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 18 May 2022 04:45:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37936 "EHLO
+        Wed, 18 May 2022 04:55:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230513AbiERIpk (ORCPT
+        with ESMTP id S233637AbiERIzW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 18 May 2022 04:45:40 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C277E133277;
-        Wed, 18 May 2022 01:45:39 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id k30so1650804wrd.5;
-        Wed, 18 May 2022 01:45:39 -0700 (PDT)
+        Wed, 18 May 2022 04:55:22 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D622D13B8FF;
+        Wed, 18 May 2022 01:55:10 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id t6so1696239wra.4;
+        Wed, 18 May 2022 01:55:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=cajtq/WCCYY+Uzv177x/wTfPz35hSuCd8u3Ec2e4AOQ=;
-        b=aHTdStFe5NRbSQREHiQSU+A6Q7nqKkqfDryBo32bfI2egWwMPE0X3YHRWU9Kjrmxk+
-         7MFCPuN24HBjFAKgkvcySKE7dAPrUYtYeqAj7NyFaSzjNqmnygt8YuqP+BeNryvLs1M0
-         Oh2RU3o1tXXrye7A22ihl1SNcHD74N6fXtHIlEAKjLusGQx1V/MJOQA1QVXD4i+/n7rv
-         2WoKzuKW72yUpasATnk9zqBPDl6pXC6ozrSAblkZMISNuCfxY1tWzdD4WzMogLGkxS3J
-         0GVwlwnZNKoZ0vTwtgd0QyJYyiWulCqqhQKNM1pU+xFClwPETPxBfJVvYnR6KjlTjqaK
-         wQUg==
+        bh=HCEO+iL8PzcVcziic8Uodsq5+0pyHWr11hT8on+eWZ4=;
+        b=gFBh5Nf3KOSLsXC5/R9dO3VK6UrYrkWgVeOW12JiCAkUSNZOeAhn3Jh8gvAebC+xFz
+         aTw2U1NwsFCHRtIYCMISIIzg6sBB/JCIK6e+A7pDK6ZVmp4WvTr2lwHeCxjhp8QX4OjQ
+         kyONU/gXHGsOYK5whNQuAwVko9+r93bLV6HyMZ6aIRDeT23GcSGk01N80HWhoMMLKcvF
+         LFlBo7xViunwknipyEARQ7/skDBOLxpZrhBNd5GjfrCGy4b5khijeXCIPrfJDQkrntul
+         WayVmdD2qeWEY+bknZSqBzECSswhyuBUro0hzkcqTmuSRw6/i7BPYSX2sHoC7B89x0S8
+         a2cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=cajtq/WCCYY+Uzv177x/wTfPz35hSuCd8u3Ec2e4AOQ=;
-        b=Twl97t+FLmyOq2zWzFtY2sRwqHmKXxHQz+dJv7cBi0cGP4/5caFMuUjff/ZguUVEGZ
-         1xkHUmgOyitUblDtw/9VO4gTtGgyCPw0WuFEsU8dUN9RtQ5y0OTx2gEm6dBENnCCEBzZ
-         HKIUGHUFiYl5P1labVqxB+lNb0N+BzWPNRRxyrrsh0nPX87isk0+C2iqzmhXto6ZysRI
-         I8LphDrYUK4GS7MydkiggDz2v2VFj4CzCG4gItLUHAmUQNvuDnm9CrhDtVEoMyydPoG4
-         hBeHh2dPZJ+O8zIpcRjEePbumCaR3GP05wik76mYC1a3HyOt+UQAmCXKK/k8dbiisdf7
-         dsAA==
-X-Gm-Message-State: AOAM531Y88KsUooUSSUtEbbr8bDFSks3q1jL9nxNOoPh503lasoaiWNp
-        wAT4oQ2XO9VN6hf9uOBJZGE=
-X-Google-Smtp-Source: ABdhPJy+jzxaUQm1PdxdFGCsAK/RXRQls9XoisZOu97pRzrOPADdNoGvXXMtH5aa16qydr9vPPjWPQ==
-X-Received: by 2002:a05:6000:2a2:b0:20c:734f:d38a with SMTP id l2-20020a05600002a200b0020c734fd38amr22705633wry.417.1652863538304;
-        Wed, 18 May 2022 01:45:38 -0700 (PDT)
+        bh=HCEO+iL8PzcVcziic8Uodsq5+0pyHWr11hT8on+eWZ4=;
+        b=60H3BaMAzq+Wx0E/hxOb3It4oJF4uMs+KzfAjicuZ5bJzYAIfWNyhx+hq+MlKQ6+3P
+         DNbyDSmvfbniRbxrUmWHygLCMtNwJhZ0QPXBzIIAMelt81VVMsh173nSxkeDmUkTuqDY
+         R/tPDgT6tR/8xE4ixKSRGUwbabkKvASL/IpKhWImqLQMo9r+It2TP8L9x3GOcKqN79Hg
+         0XHLJA2ZP9mAvWrzw34IoKE1C3uIFOxi9oUQRyqOfCzxrpgsm+8xIpx2/gRJjPDPb7XZ
+         kn7ly/c0h9YQblWWcKYWA42tyHK1DI2f+lS4f6fdi1o4CMKusbjmq/SlJvcC9k21rGoI
+         53lg==
+X-Gm-Message-State: AOAM530Dax4MhzjgHfRySQ4rOdpze+FnN3GZykm6UN2s3FsvjLVltYyT
+        1Q7xLsaAHJPbg9MaAthXrUxPMGjd2vV4P0PD
+X-Google-Smtp-Source: ABdhPJwKra1tYkJP29iu9Ix2hAARIM9jf8t+ktsW+NhHHwzVbJmrFTptuDqdfpAd/A9Whq8jrU79FA==
+X-Received: by 2002:a5d:6c65:0:b0:20c:5230:f145 with SMTP id r5-20020a5d6c65000000b0020c5230f145mr21454248wrz.337.1652864109461;
+        Wed, 18 May 2022 01:55:09 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id d28-20020adfa41c000000b0020e5b4ebaecsm1431579wra.4.2022.05.18.01.45.37
+        by smtp.gmail.com with ESMTPSA id o3-20020a05600002c300b0020c547f75easm1579622wry.101.2022.05.18.01.55.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 May 2022 01:45:37 -0700 (PDT)
+        Wed, 18 May 2022 01:55:09 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org
+To:     Jeff Layton <jlayton@kernel.org>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] powercap: intel_rapl: remove redundant store to value after multiply
-Date:   Wed, 18 May 2022 09:45:36 +0100
-Message-Id: <20220518084536.508514-1-colin.i.king@gmail.com>
+Subject: [PATCH] ceph: remove redundant variable ino
+Date:   Wed, 18 May 2022 09:55:08 +0100
+Message-Id: <20220518085508.509104-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -63,32 +64,41 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is no need to store the result of the multiply back to variable value
-after the multiplication. The store is redundant, replace *= with just *.
+Variable ino is being assigned a value that is never read. The variable
+and assignment are redundant, remove it.
 
 Cleans up clang scan build warning:
-warning: Although the value stored to 'value' is used in the enclosing
-expression, the value is never actually read from 'value'
+warning: Although the value stored to 'ino' is used in the enclosing
+expression, the value is never actually read from 'ino'
 [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/powercap/intel_rapl_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ceph/mds_client.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/powercap/intel_rapl_common.c b/drivers/powercap/intel_rapl_common.c
-index 83da499dd6ec..70e38278986d 100644
---- a/drivers/powercap/intel_rapl_common.c
-+++ b/drivers/powercap/intel_rapl_common.c
-@@ -1010,7 +1010,7 @@ static u64 rapl_compute_time_window_atom(struct rapl_package *rp, u64 value,
- 	 * where time_unit is default to 1 sec. Never 0.
- 	 */
- 	if (!to_raw)
--		return (value) ? value *= rp->time_unit : rp->time_unit;
-+		return (value) ? value * rp->time_unit : rp->time_unit;
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 00c3de177dd6..20197f05faec 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -437,7 +437,7 @@ static int ceph_parse_deleg_inos(void **p, void *end,
+ 	ceph_decode_32_safe(p, end, sets, bad);
+ 	dout("got %u sets of delegated inodes\n", sets);
+ 	while (sets--) {
+-		u64 start, len, ino;
++		u64 start, len;
  
- 	value = div64_u64(value, rp->time_unit);
- 
+ 		ceph_decode_64_safe(p, end, start, bad);
+ 		ceph_decode_64_safe(p, end, len, bad);
+@@ -449,7 +449,7 @@ static int ceph_parse_deleg_inos(void **p, void *end,
+ 			continue;
+ 		}
+ 		while (len--) {
+-			int err = xa_insert(&s->s_delegated_inos, ino = start++,
++			int err = xa_insert(&s->s_delegated_inos, start++,
+ 					    DELEGATED_INO_AVAILABLE,
+ 					    GFP_KERNEL);
+ 			if (!err) {
 -- 
-2.36.1
+2.35.1
 
