@@ -2,104 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95AB6C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed, 18 May 2022 10:21:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47EACC433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 18 May 2022 14:09:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235112AbiERKVL (ORCPT
+        id S238485AbiEROJE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 18 May 2022 06:21:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35500 "EHLO
+        Wed, 18 May 2022 10:09:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235044AbiERKVJ (ORCPT
+        with ESMTP id S238471AbiEROJC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 18 May 2022 06:21:09 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F7F7245AF;
-        Wed, 18 May 2022 03:21:07 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id p189so855335wmp.3;
-        Wed, 18 May 2022 03:21:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eUUlK8gFbeLL/gYwSjFGB469B2p9AZAbiDBrzDvrtBo=;
-        b=fsf86z7GL8uF7oZ5/oy9mXJ6AULhTE6lCbK45kPP/MAeFwfZ93zHQhHHqEo/CFsHsf
-         VwnnkepekExon2JWjTKDoW77pOOFU/NTFA7VcM9vSy1ZhcOddPr/ZcUfD6qV7xZzxcYI
-         iSTe4Dp9qLyqM2t5VrPqBbdkptiRvF5YZZHKduRHT3B4LlHjCAkFrl2H6yyK/9ZOfhk6
-         /7Qt7rhvuloB47St1MzDb0d3NnR/2JOBJlGVUKIH8NHzAn7kQlJUBdeAfEQqYIW0jl6m
-         QDZqYuGnkLOPCFkJ4P+aHqRO6ZtrbCu/mIMd2VI3kUxhlMS57qHtl8csewvsxZ3cL5t/
-         QvfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eUUlK8gFbeLL/gYwSjFGB469B2p9AZAbiDBrzDvrtBo=;
-        b=XB/iMeivhP5YEpQsOKMjsnNyVWGwEUwg/8uwEHwsWN/Ta7ahcTt4MNYNDZF6LCjCHX
-         ZaqnS0fn4nCU3r3EA8ZQnPbEnruVIqEnufV6Z9ICDHtz8vC6j2Ef+f1/LLMqeXH2UDTS
-         5AAiKX9ZKQdK8GXXOX7CksWsQvwr7+WckN8/9FFaDkygE09kJq1OYsoNEEDAILUAGAU/
-         YH4BlPejmuDhhvnS2R6kmz0MCRXNC8H8tQZRoZKcwWNK2hwqgTZoBjLdXEUwS1Iy8JPs
-         cwkj2Ck/krjHMaXYi/TgiIIiiWFDNb1tXmGmUfFKB/WCTYHkEmF1GA5fv58twWbiiqMf
-         YsdQ==
-X-Gm-Message-State: AOAM531bRhB+yh2b10qy6bApX6ENopujVdTYgi7gvYk1xGbHEu3rThWr
-        OI43c0N3qChHktbJCPQEaOUvhoCjGqM8cGiy
-X-Google-Smtp-Source: ABdhPJw0Vi8wDw1/SK4QCP1kbEUaMv4b2Gmx0J3BodCQOZvKsbN5fZv2CUpVSJGGsMFA+UDfXbzX8g==
-X-Received: by 2002:a05:600c:3490:b0:394:5616:ac78 with SMTP id a16-20020a05600c349000b003945616ac78mr25610460wmq.80.1652869265875;
-        Wed, 18 May 2022 03:21:05 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id v9-20020a056000144900b0020c5253d8d8sm2039780wrx.36.2022.05.18.03.21.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 May 2022 03:21:04 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Michael Reed <mdr@sgi.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
+        Wed, 18 May 2022 10:09:02 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07BA8187DAB;
+        Wed, 18 May 2022 07:09:02 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C5345B820E3;
+        Wed, 18 May 2022 14:09:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5CB2C385A9;
+        Wed, 18 May 2022 14:08:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652882939;
+        bh=wzcmu1G8koPCKQdM0ZCd6UshnHAiOZecGxolrNIwL74=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=uonAdrzpNQs0HZTXpIpLdX8qhNybyA2I8BAjHtcgbCyjVTtckOyeozTcDn1EY7/bm
+         EE/uctpitm3Z9adKxutnMwDfIG3hKVSWZnOLqV/JbKTZzmcE7HF1klsCju0kZvFLPc
+         6DPnrgwgeGbXPGYG4Z1k/4YyfPhHhgQgaYey7n0JfRGjVjxPGm74IXbzm1z2NNEP5o
+         VG536SGup0BqYbwN2l34VYRv4eK6qGIY9Ec0eihbTfw69qSQUMRQFSx1dv9H16d/IQ
+         FFt/nYUnjIrYM3XGtIH4xql59GfB+5Iac79oAPws0W57zli3jYH8xXWfRXibcwgSlg
+         f3WaOR57tA88Q==
+Message-ID: <9e6761899e81c8b7d91091403b5aab6e628e605a.camel@kernel.org>
+Subject: Re: [PATCH] ceph: remove redundant variable ino
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: qla1280: remove redundant variable toke
-Date:   Wed, 18 May 2022 11:21:03 +0100
-Message-Id: <20220518102103.514701-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+Date:   Wed, 18 May 2022 10:08:57 -0400
+In-Reply-To: <20220518085508.509104-1-colin.i.king@gmail.com>
+References: <20220518085508.509104-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.1 (3.44.1-1.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable toke is being assigned a value that is never read. The variable
-is redundant, remove it.
+On Wed, 2022-05-18 at 09:55 +0100, Colin Ian King wrote:
+> Variable ino is being assigned a value that is never read. The variable
+> and assignment are redundant, remove it.
+>=20
+> Cleans up clang scan build warning:
+> warning: Although the value stored to 'ino' is used in the enclosing
+> expression, the value is never actually read from 'ino'
+> [deadcode.DeadStores]
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  fs/ceph/mds_client.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 00c3de177dd6..20197f05faec 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -437,7 +437,7 @@ static int ceph_parse_deleg_inos(void **p, void *end,
+>  	ceph_decode_32_safe(p, end, sets, bad);
+>  	dout("got %u sets of delegated inodes\n", sets);
+>  	while (sets--) {
+> -		u64 start, len, ino;
+> +		u64 start, len;
+> =20
+>  		ceph_decode_64_safe(p, end, start, bad);
+>  		ceph_decode_64_safe(p, end, len, bad);
+> @@ -449,7 +449,7 @@ static int ceph_parse_deleg_inos(void **p, void *end,
+>  			continue;
+>  		}
+>  		while (len--) {
+> -			int err =3D xa_insert(&s->s_delegated_inos, ino =3D start++,
+> +			int err =3D xa_insert(&s->s_delegated_inos, start++,
+>  					    DELEGATED_INO_AVAILABLE,
+>  					    GFP_KERNEL);
+>  			if (!err) {
 
-Cleans up clang scan build warning:
-warning: Although the value stored to 'toke' is used in the enclosing
-expression, the value is never actually read from 'toke'
-[deadcode.DeadStores]
-
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/scsi/qla1280.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/scsi/qla1280.c b/drivers/scsi/qla1280.c
-index 0ab595c0870a..1e7f4d138e06 100644
---- a/drivers/scsi/qla1280.c
-+++ b/drivers/scsi/qla1280.c
-@@ -4037,7 +4037,6 @@ qla1280_setup(char *s)
- {
- 	char *cp, *ptr;
- 	unsigned long val;
--	int toke;
- 
- 	cp = s;
- 
-@@ -4052,7 +4051,7 @@ qla1280_setup(char *s)
- 		} else
- 			val = simple_strtoul(ptr, &ptr, 0);
- 
--		switch ((toke = qla1280_get_token(cp))) {
-+		switch (qla1280_get_token(cp)) {
- 		case TOKEN_NVRAM:
- 			if (!val)
- 				driver_setup.no_nvram = 1;
--- 
-2.35.1
-
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
