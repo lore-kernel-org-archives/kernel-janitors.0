@@ -2,127 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE87C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 17 May 2022 21:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07458C4332F
+	for <kernel-janitors@archiver.kernel.org>; Wed, 18 May 2022 00:40:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353136AbiEQVAL (ORCPT
+        id S232742AbiERAkQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 17 May 2022 17:00:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59522 "EHLO
+        Tue, 17 May 2022 20:40:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353125AbiEQVAG (ORCPT
+        with ESMTP id S232725AbiERAkP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 17 May 2022 17:00:06 -0400
-Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15A1D532D5
-        for <kernel-janitors@vger.kernel.org>; Tue, 17 May 2022 14:00:04 -0700 (PDT)
-Received: from pop-os.home ([86.243.180.246])
-        by smtp.orange.fr with ESMTPA
-        id r4ISnP1h2JXxRr4ISnYTVj; Tue, 17 May 2022 23:00:03 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Tue, 17 May 2022 23:00:03 +0200
-X-ME-IP: 86.243.180.246
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     vburru@marvell.com, aayarekar@marvell.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        sburla@marvell.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2 2/2] octeon_ep: Fix irq releasing in the error handling path of octep_request_irqs()
-Date:   Tue, 17 May 2022 22:59:59 +0200
-Message-Id: <d2fb2830e65081e2d15780bb5a5e1fb5d3602061.1652819974.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1652819974.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1652819974.git.christophe.jaillet@wanadoo.fr>
+        Tue, 17 May 2022 20:40:15 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F4E53D1CA;
+        Tue, 17 May 2022 17:40:14 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3C5C0B81D99;
+        Wed, 18 May 2022 00:40:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id F31A1C34116;
+        Wed, 18 May 2022 00:40:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652834412;
+        bh=cXcmOxyB5b3qaFF0Us2S/2kRrZZ+zgv6w74wxsm8ZUk=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=O1/MxTzLciw7w1CMQH9q8dTY82xaMyBN5BClFv844HRUjNdtvi47k8hFUYDswIIIG
+         prNN7DPQdJGU7V0Qbzdnmi/gIWTeXDxcdSeAzeplJNp+D0/azig7T7JoGb54H3PdkR
+         hPKXxYtacQ3VLH8hLYYdg5EHmy996fKwL+QByKTm82Wm5ywgRw10Mvf7+AaMhY6Eun
+         +GMPGeQeE/aBA/HHsUxZgYwvW0T95mM+AitKs5bAzjl1PVZo7/57Jv7g3bslP9sqdX
+         udqk0PmgdlfnmVjvtHv0Cla/sceUnBTSl9cibGtWj11IPBSkIZpIiJHYSNu5D54kZ4
+         Fk2KK4aR9zLEA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D468CF0383D;
+        Wed, 18 May 2022 00:40:11 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net/qla3xxx: Fix a test in ql_reset_work()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <165283441186.18628.4616423734096658366.git-patchwork-notify@kernel.org>
+Date:   Wed, 18 May 2022 00:40:11 +0000
+References: <80e73e33f390001d9c0140ffa9baddf6466a41a2.1652637337.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <80e73e33f390001d9c0140ffa9baddf6466a41a2.1652637337.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     GR-Linux-NIC-Dev@marvell.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        akpm@osdl.org, ron.mercer@qlogic.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-When taken, the error handling path does not undo correctly what has
-already been allocated.
+Hello:
 
-Introduce a new loop index, 'j', in order to simplify the error handling
-path and rewrite part of it.
-It is now written with the same logic and intermediate variables used
-when resources are allocated. This is much more straightforward.
+This patch was applied to netdev/net.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Fixes: 37d79d059606 ("octeon_ep: add Tx/Rx processing and interrupt support")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-v2: Introduce 'j' and use it in the 2nd for loop
-    Rewrite the error handling path (Dan Carpenter)
+On Sun, 15 May 2022 20:07:02 +0200 you wrote:
+> test_bit() tests if one bit is set or not.
+> Here the logic seems to check of bit QL_RESET_PER_SCSI (i.e. 4) OR bit
+> QL_RESET_START (i.e. 3) is set.
+> 
+> In fact, it checks if bit 7 (4 | 3 = 7) is set, that is to say
+> QL_ADAPTER_UP.
+> 
+> [...]
 
-v1:
-    https://lore.kernel.org/all/a1b6f082fff4e68007914577961113bc452c8030.1652629833.git.christophe.jaillet@wanadoo.fr/
----
- .../ethernet/marvell/octeon_ep/octep_main.c   | 25 +++++++++++--------
- 1 file changed, 14 insertions(+), 11 deletions(-)
+Here is the summary with links:
+  - net/qla3xxx: Fix a test in ql_reset_work()
+    https://git.kernel.org/netdev/net/c/5361448e45fa
 
-diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_main.c b/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
-index 6b60a03574a0..a9b82d221780 100644
---- a/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
-+++ b/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
-@@ -202,7 +202,7 @@ static int octep_request_irqs(struct octep_device *oct)
- 	struct msix_entry *msix_entry;
- 	char **non_ioq_msix_names;
- 	int num_non_ioq_msix;
--	int ret, i;
-+	int ret, i, j;
- 
- 	num_non_ioq_msix = CFG_GET_NON_IOQ_MSIX(oct->conf);
- 	non_ioq_msix_names = CFG_GET_NON_IOQ_MSIX_NAMES(oct->conf);
-@@ -233,23 +233,23 @@ static int octep_request_irqs(struct octep_device *oct)
- 	}
- 
- 	/* Request IRQs for Tx/Rx queues */
--	for (i = 0; i < oct->num_oqs; i++) {
--		ioq_vector = oct->ioq_vector[i];
--		msix_entry = &oct->msix_entries[i + num_non_ioq_msix];
-+	for (j = 0; j < oct->num_oqs; j++) {
-+		ioq_vector = oct->ioq_vector[j];
-+		msix_entry = &oct->msix_entries[j + num_non_ioq_msix];
- 
- 		snprintf(ioq_vector->name, sizeof(ioq_vector->name),
--			 "%s-q%d", netdev->name, i);
-+			 "%s-q%d", netdev->name, j);
- 		ret = request_irq(msix_entry->vector,
- 				  octep_ioq_intr_handler, 0,
- 				  ioq_vector->name, ioq_vector);
- 		if (ret) {
- 			netdev_err(netdev,
- 				   "request_irq failed for Q-%d; err=%d",
--				   i, ret);
-+				   j, ret);
- 			goto ioq_irq_err;
- 		}
- 
--		cpumask_set_cpu(i % num_online_cpus(),
-+		cpumask_set_cpu(j % num_online_cpus(),
- 				&ioq_vector->affinity_mask);
- 		irq_set_affinity_hint(msix_entry->vector,
- 				      &ioq_vector->affinity_mask);
-@@ -257,10 +257,13 @@ static int octep_request_irqs(struct octep_device *oct)
- 
- 	return 0;
- ioq_irq_err:
--	while (i > num_non_ioq_msix) {
--		--i;
--		irq_set_affinity_hint(oct->msix_entries[i].vector, NULL);
--		free_irq(oct->msix_entries[i].vector, oct->ioq_vector[i]);
-+	while (j) {
-+		--j;
-+		ioq_vector = oct->ioq_vector[j];
-+		msix_entry = &oct->msix_entries[j + num_non_ioq_msix];
-+
-+		irq_set_affinity_hint(msix_entry->vector, NULL);
-+		free_irq(msix_entry->vector, ioq_vector);
- 	}
- non_ioq_irq_err:
- 	while (i) {
+You are awesome, thank you!
 -- 
-2.34.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
