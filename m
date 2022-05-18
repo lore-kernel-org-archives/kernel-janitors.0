@@ -2,63 +2,59 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E40C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 18 May 2022 08:32:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 323F4C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed, 18 May 2022 08:45:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233234AbiERIcY (ORCPT
+        id S233446AbiERIpm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 18 May 2022 04:32:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46486 "EHLO
+        Wed, 18 May 2022 04:45:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233120AbiERIcX (ORCPT
+        with ESMTP id S230513AbiERIpk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 18 May 2022 04:32:23 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 856ED4EA10;
-        Wed, 18 May 2022 01:32:22 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id n6so707586wms.0;
-        Wed, 18 May 2022 01:32:22 -0700 (PDT)
+        Wed, 18 May 2022 04:45:40 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C277E133277;
+        Wed, 18 May 2022 01:45:39 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id k30so1650804wrd.5;
+        Wed, 18 May 2022 01:45:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=+z+PQb5MQz4Hi46TApUGBFaL5pik2KHkz+IdCi2pk9E=;
-        b=nY5N7FCiiLTLIDrAVVBNIomteMVrETYaVXuYS6S6dWlVkrDwFrzMMCy5pZRw1FpyLb
-         lXvOLdTFOPDufB1lDxHXiNeCc4voonWSxAyhbdIogQCX8LWGNHkdJa+GBnORF97VIDHq
-         Pkn65y9YJkCKnNZ469oZZAJtaVT9HFFPSgCkdUtjiPa0zET/KOPV8NUPlWH44wEUt6L2
-         AkgRMSgAn+PYPsBFIhoKlMTP46fKDPzI5UUlxI1MqNYM8ScXfPUxbpwqdAzHh/EaS59h
-         NDHaUcsiYR8A6HI/7Wfd6Cgzl135bPI7I70l7n0Dz1AfAmCjOW+SrY9XxkTWV5Jl1taG
-         shcg==
+        bh=cajtq/WCCYY+Uzv177x/wTfPz35hSuCd8u3Ec2e4AOQ=;
+        b=aHTdStFe5NRbSQREHiQSU+A6Q7nqKkqfDryBo32bfI2egWwMPE0X3YHRWU9Kjrmxk+
+         7MFCPuN24HBjFAKgkvcySKE7dAPrUYtYeqAj7NyFaSzjNqmnygt8YuqP+BeNryvLs1M0
+         Oh2RU3o1tXXrye7A22ihl1SNcHD74N6fXtHIlEAKjLusGQx1V/MJOQA1QVXD4i+/n7rv
+         2WoKzuKW72yUpasATnk9zqBPDl6pXC6ozrSAblkZMISNuCfxY1tWzdD4WzMogLGkxS3J
+         0GVwlwnZNKoZ0vTwtgd0QyJYyiWulCqqhQKNM1pU+xFClwPETPxBfJVvYnR6KjlTjqaK
+         wQUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=+z+PQb5MQz4Hi46TApUGBFaL5pik2KHkz+IdCi2pk9E=;
-        b=IVdsHasFRr48lerTqkabr8wT+WDhxTEs7eqojPUSwqHrLjMFfRsLdnxFGEFh1shp0v
-         av+TIIK/FEphwQS4pQDg4DaMcJ8qEC3lc1N6Q5oPlDqQW7VGBz/BLoGnX1vD8v5tqFUi
-         RFho4LTpwUPLNC6fuU08hIxfcYGlgNpew6nXiope/kfzkx8kjqsTNljsZOwSwentP+Gz
-         A+DTPnUBeLcgO1SEtdqIEIw7yeyS6j9Zyc2uH9nn9z1dqE16x9l2dCiuUX2u06PXXoQ2
-         r8yhLPXUlSKX40gfOQ6PYEdKrCizt3DYHCn2FtRniPtFARU8s37wkgNy69tJ3Z/kKKZZ
-         iNKg==
-X-Gm-Message-State: AOAM5316bnsoGlhmXd3mi6GgI+nsrCTBjzQTErkSEGciUqGKKabvYpT8
-        zQnIXc9BL7lCAbNdSaqlDvgxqxw+jtOpgZ8t
-X-Google-Smtp-Source: ABdhPJzXrAx8whtDX8CJHaQ830Cxos71neUjKQZK3vabF5JDnUvkzjkhqIlJ4DYqBPqGl4C/Op+VsQ==
-X-Received: by 2002:a05:600c:4fd4:b0:394:8e96:6d3b with SMTP id o20-20020a05600c4fd400b003948e966d3bmr24819426wmq.180.1652862740991;
-        Wed, 18 May 2022 01:32:20 -0700 (PDT)
+        bh=cajtq/WCCYY+Uzv177x/wTfPz35hSuCd8u3Ec2e4AOQ=;
+        b=Twl97t+FLmyOq2zWzFtY2sRwqHmKXxHQz+dJv7cBi0cGP4/5caFMuUjff/ZguUVEGZ
+         1xkHUmgOyitUblDtw/9VO4gTtGgyCPw0WuFEsU8dUN9RtQ5y0OTx2gEm6dBENnCCEBzZ
+         HKIUGHUFiYl5P1labVqxB+lNb0N+BzWPNRRxyrrsh0nPX87isk0+C2iqzmhXto6ZysRI
+         I8LphDrYUK4GS7MydkiggDz2v2VFj4CzCG4gItLUHAmUQNvuDnm9CrhDtVEoMyydPoG4
+         hBeHh2dPZJ+O8zIpcRjEePbumCaR3GP05wik76mYC1a3HyOt+UQAmCXKK/k8dbiisdf7
+         dsAA==
+X-Gm-Message-State: AOAM531Y88KsUooUSSUtEbbr8bDFSks3q1jL9nxNOoPh503lasoaiWNp
+        wAT4oQ2XO9VN6hf9uOBJZGE=
+X-Google-Smtp-Source: ABdhPJy+jzxaUQm1PdxdFGCsAK/RXRQls9XoisZOu97pRzrOPADdNoGvXXMtH5aa16qydr9vPPjWPQ==
+X-Received: by 2002:a05:6000:2a2:b0:20c:734f:d38a with SMTP id l2-20020a05600002a200b0020c734fd38amr22705633wry.417.1652863538304;
+        Wed, 18 May 2022 01:45:38 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id j35-20020a05600c1c2300b00397220a9354sm611048wms.30.2022.05.18.01.32.20
+        by smtp.gmail.com with ESMTPSA id d28-20020adfa41c000000b0020e5b4ebaecsm1431579wra.4.2022.05.18.01.45.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 May 2022 01:32:20 -0700 (PDT)
+        Wed, 18 May 2022 01:45:37 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
+To:     "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: platform: exynos-gsc: remove redundant initializations of f_chk_len and f_chk_addr
-Date:   Wed, 18 May 2022 09:32:19 +0100
-Message-Id: <20220518083219.507716-1-colin.i.king@gmail.com>
+Subject: [PATCH] powercap: intel_rapl: remove redundant store to value after multiply
+Date:   Wed, 18 May 2022 09:45:36 +0100
+Message-Id: <20220518084536.508514-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -67,30 +63,32 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variables f_chk_len and f_chk_addr are being initialized to zero and
-then being re-assigned in the next statement. The initializations are
-redundant and can be removed. Also initialize s_chk_addr and s_chk_len
-at the declaration statement.
+There is no need to store the result of the multiply back to variable value
+after the multiplication. The store is redundant, replace *= with just *.
+
+Cleans up clang scan build warning:
+warning: Although the value stored to 'value' is used in the enclosing
+expression, the value is never actually read from 'value'
+[deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/media/platform/samsung/exynos-gsc/gsc-core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/powercap/intel_rapl_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/samsung/exynos-gsc/gsc-core.c b/drivers/media/platform/samsung/exynos-gsc/gsc-core.c
-index e3559b047092..b147c645ae0b 100644
---- a/drivers/media/platform/samsung/exynos-gsc/gsc-core.c
-+++ b/drivers/media/platform/samsung/exynos-gsc/gsc-core.c
-@@ -339,8 +339,7 @@ static int get_plane_info(struct gsc_frame *frm, u32 addr, u32 *index, u32 *ret_
+diff --git a/drivers/powercap/intel_rapl_common.c b/drivers/powercap/intel_rapl_common.c
+index 83da499dd6ec..70e38278986d 100644
+--- a/drivers/powercap/intel_rapl_common.c
++++ b/drivers/powercap/intel_rapl_common.c
+@@ -1010,7 +1010,7 @@ static u64 rapl_compute_time_window_atom(struct rapl_package *rp, u64 value,
+ 	 * where time_unit is default to 1 sec. Never 0.
+ 	 */
+ 	if (!to_raw)
+-		return (value) ? value *= rp->time_unit : rp->time_unit;
++		return (value) ? value * rp->time_unit : rp->time_unit;
  
- void gsc_set_prefbuf(struct gsc_dev *gsc, struct gsc_frame *frm)
- {
--	u32 f_chk_addr, f_chk_len, s_chk_addr, s_chk_len;
--	f_chk_addr = f_chk_len = s_chk_addr = s_chk_len = 0;
-+	u32 f_chk_addr, f_chk_len, s_chk_addr = 0, s_chk_len = 0;
+ 	value = div64_u64(value, rp->time_unit);
  
- 	f_chk_addr = frm->addr.y;
- 	f_chk_len = frm->payload[0];
 -- 
-2.35.1
+2.36.1
 
