@@ -2,99 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E239C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 May 2022 00:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DF8C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 May 2022 03:10:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232259AbiESAz4 (ORCPT
+        id S232897AbiESDKU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 18 May 2022 20:55:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49142 "EHLO
+        Wed, 18 May 2022 23:10:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232107AbiESAzy (ORCPT
+        with ESMTP id S233125AbiESDKS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 18 May 2022 20:55:54 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D57A2C4F;
-        Wed, 18 May 2022 17:55:51 -0700 (PDT)
+        Wed, 18 May 2022 23:10:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2AB8DE312;
+        Wed, 18 May 2022 20:10:14 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id A6843CE229B;
-        Thu, 19 May 2022 00:55:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF0BAC385A5;
-        Thu, 19 May 2022 00:55:47 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0681F61920;
+        Thu, 19 May 2022 03:10:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 60966C36AE3;
+        Thu, 19 May 2022 03:10:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652921747;
-        bh=+w7bxSwboW1VzAC18RChvyM/QQVFk/VXGDrhCmYTkKM=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=sj33+a6eM/yrurgd05V1SCh9AA7YADFweeVAmx8tNxRPqzYEtQwcpd08oK+zQiX9H
-         cVvMKMf1JnETwr8FhftPgWe38RNC/q4Da18MJNZzOxbevDGjx45BuX1OQgWyeLPLOj
-         s4qBg1QdmS0vHtXE8UlmTYzt/7pRYyX6ogsN+pvkJ2xeg6h9qQUifiaPm8P4+Soo8o
-         bHaHZjtcz/600JCQFnMpmSCCRU9iM/ImuEjn6/+vd4WCN7EC6ZU2H5s76M8jAoilYd
-         XbdwGhI0+HktrUnM+Gz/AJ6LOb/pRwemUVp50kWkeyL/bbQHr6laC0z8wT/musQMu9
-         y0UltHu10rmBA==
-Received: by mail-wr1-f45.google.com with SMTP id r23so4986919wrr.2;
-        Wed, 18 May 2022 17:55:47 -0700 (PDT)
-X-Gm-Message-State: AOAM5329j3KPSYLvAptok23PhE5TCAPIUVnBimyRFXsRt3Ys6BpwC4eN
-        FLzNM2BR7cNNZLqsvhSxIYXp9ivD8mhQH9RRNrs=
-X-Google-Smtp-Source: ABdhPJzUNgRO6DvQuX8+CsnYTnp5W7tYne/MYsgi00ftQrYYON5+oXvWIDFqia9QsujGG30+jmTKALuqGOP6lqY+cHg=
-X-Received: by 2002:a5d:584a:0:b0:20c:5bad:11c1 with SMTP id
- i10-20020a5d584a000000b0020c5bad11c1mr1831044wrf.62.1652921746214; Wed, 18
- May 2022 17:55:46 -0700 (PDT)
+        s=k20201202; t=1652929813;
+        bh=LvuANKic4Swt7hf04ETk8GqSz0khQp/gzpNDBzz91YQ=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=jIECwSeZDDaMQ2PZ2ktRdZxueTuPmmZWn5xkQrgkNSOELdxCQt3ghFyDcKD3vWWhk
+         MAVxjx3EQwFq7ohm7nurzeLCFQ7MLIvJd3+IHAPvcl62hD/esEWII34vFx5/5idz3g
+         4d8PbCoPWaomVed9cVI4wE3Lcrf30LoeVLYt5amXr8Ipg+6UHoJSK28CyLr5WWGvod
+         kzD9amjGbx7xWLa5CibBKdAYr+nUBuaPfUQ4Hqjj46DT3wKD9LyEzWpH1DmK/pTtMV
+         cN8RqCTAPa1RNxV0UfynAKcIxH1ECuhPzZ4ODmZD2E9mReAxB8NSCkpey2bDZ2uVyp
+         XtT8Wo5OVNqhA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 438F8F0392C;
+        Thu, 19 May 2022 03:10:13 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Received: by 2002:adf:f344:0:0:0:0:0 with HTTP; Wed, 18 May 2022 17:55:45
- -0700 (PDT)
-In-Reply-To: <YnjY58EpRzaZP+YC@kili>
-References: <YnjY58EpRzaZP+YC@kili>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Thu, 19 May 2022 09:55:45 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8qxUTJLnah1Yu46j-esGKCaOb6aM-CUPNf-bvFn_e5uQ@mail.gmail.com>
-Message-ID: <CAKYAXd8qxUTJLnah1Yu46j-esGKCaOb6aM-CUPNf-bvFn_e5uQ@mail.gmail.com>
-Subject: Re: [PATCH] fs/ntfs3: Don't clear upper bits accidentally in log_replay()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Kari Argillander <kari.argillander@stargateuniverse.net>,
-        Kari Argillander <kari.argillander@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 0/2] octeon_ep: Fix the error handling path of
+ octep_request_irqs()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <165292981327.2906.8358628971940512633.git-patchwork-notify@kernel.org>
+Date:   Thu, 19 May 2022 03:10:13 +0000
+References: <cover.1652819974.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1652819974.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     vburru@marvell.com, aayarekar@marvell.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        sburla@marvell.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-2022-05-09 18:03 GMT+09:00, Dan Carpenter <dan.carpenter@oracle.com>:
-> The "vcn" variable is a 64 bit.  The "log->clst_per_page" variable is a
-> u32.  This means that the mask accidentally clears out the high 32 bits
-> when it was only supposed to clear some low bits.  Fix this by adding a
-> cast to u64.
->
-> Fixes: b46acd6a6a62 ("fs/ntfs3: Add NTFS journal")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Namjae Jeon <linkinjeon@kernel.org>
+Hello:
 
-> ---
-> Why am I getting new Smatch warnings in old ntfs3 code?  It is a mystery.
->
->  fs/ntfs3/fslog.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/ntfs3/fslog.c b/fs/ntfs3/fslog.c
-> index 915f42cf07bc..0da339fda2f4 100644
-> --- a/fs/ntfs3/fslog.c
-> +++ b/fs/ntfs3/fslog.c
-> @@ -5057,7 +5057,7 @@ int log_replay(struct ntfs_inode *ni, bool
-> *initialized)
->  		goto add_allocated_vcns;
->
->  	vcn = le64_to_cpu(lrh->target_vcn);
-> -	vcn &= ~(log->clst_per_page - 1);
-> +	vcn &= ~(u64)(log->clst_per_page - 1);
->
->  add_allocated_vcns:
->  	for (i = 0, vcn = le64_to_cpu(lrh->target_vcn),
-> --
-> 2.35.1
->
->
->
+This series was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 17 May 2022 22:59:43 +0200 you wrote:
+> I send a small serie to ease review and because I'm sighly less confident with
+> the 2nd patch.
+> 
+> They are related to the same Fixes: tag, so they obviously could be merged if
+> it is preferred.
+> 
+> Details on modification of this v2 are given in each patch.
+> 
+> [...]
+
+Here is the summary with links:
+  - [v2,1/2] octeon_ep: Fix a memory leak in the error handling path of octep_request_irqs()
+    https://git.kernel.org/netdev/net-next/c/4d3bf6fb5334
+  - [v2,2/2] octeon_ep: Fix irq releasing in the error handling path of octep_request_irqs()
+    https://git.kernel.org/netdev/net-next/c/3588c189e45a
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
