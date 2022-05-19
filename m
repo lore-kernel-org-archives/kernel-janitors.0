@@ -2,80 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0342C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 19 May 2022 17:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE83AC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 May 2022 17:51:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241870AbiESRg4 (ORCPT
+        id S243017AbiESRv1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 May 2022 13:36:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56564 "EHLO
+        Thu, 19 May 2022 13:51:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242656AbiESRgz (ORCPT
+        with ESMTP id S243466AbiESRuK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 May 2022 13:36:55 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DBB060D8D;
-        Thu, 19 May 2022 10:36:52 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 90543B8277B;
-        Thu, 19 May 2022 17:36:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0477C385AA;
-        Thu, 19 May 2022 17:36:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1652981810;
-        bh=tomQ0qDGj4ULRGU5hAAEzRh9FfcnE05twNEaADV8Vc8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YVBJxjDge+rULCmuCAuXyO7D1T/FassimWpQdsrFKh88haTw4yMWD9uf/DxVGJdFQ
-         pmLhEko51YkTA0RVT4rZdHBXdyUccfNps8k3t3fJ4mUAs9gjCcgn15HPsn3hQY7IeC
-         78sRSE1hbUDwTr7MjiaHIPKUZSwvVUUZGzccshJs=
-Date:   Thu, 19 May 2022 19:36:47 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Denis Efremov <denis.e.efremov@oracle.com>,
-        Larry.Finger@lwfinger.net, phil@philpotter.co.uk,
-        straube.linux@gmail.com, linux-staging@lists.linux.dev,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        stable <stable@vger.kernel.org>
-Subject: Re: [PATCH] staging: r8188eu: prevent ->Ssid overflow in
- rtw_wx_set_scan()
-Message-ID: <YoaAL2+blNORtC4V@kroah.com>
-References: <YEHymwsnHewzoam7@mwanda>
- <20220518070052.108287-1-denis.e.efremov@oracle.com>
- <YoZmG98rI7oK5qgf@kroah.com>
- <20220519171628.GW4009@kadam>
+        Thu, 19 May 2022 13:50:10 -0400
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E503CEBAAC;
+        Thu, 19 May 2022 10:49:33 -0700 (PDT)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-2ff53d86abbso45358577b3.8;
+        Thu, 19 May 2022 10:49:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BX+badLi7qx6lRSHCK1/33oE5/AYvYHWEehVljXyvsk=;
+        b=6Gy/D+KP2Wb3kkNT9BOWsWAnwdu1xInuc5DK5zkp3LZB1Z10SVj8AJh3pWf1Y2XFDo
+         v6zn7RjRg6nvjlFMYKQJ83C//6PCKDuqM0jadCZLDgf4tQxZQSCBc9wvMR1k7+pFuMgQ
+         tMUUYDA2kxCYgOvkC0sfM4tcTr66PBBsxrO+RX6bocAmHrd4eDN5wkkpJitCUCGuMqL2
+         N7894QnySrCdYz+HchxofbJPNC6TuNyHuIOLb3y7LaHiCtbGPvYwaMDQUI9OtFKGHnTn
+         ayqX19M8pQO00ZnU0vClHhjT3r9rYvWZC75zKeKi09g9sidf77ZsAoDW83eDna5jUiZw
+         MgAg==
+X-Gm-Message-State: AOAM532cqtIqwrCvSv5YiYsRTFq2JDEvlfCeHzoU1pvVc2YDUTzl6jtd
+        fnXZVcV8l1QBakrhmVcsE7hD7qoXmIRHxKDmook=
+X-Google-Smtp-Source: ABdhPJxYaasrq1E+VvRksv4sPkVJnJRsukLKV9yMoT8yVJhv3kTUKh59QRR/CEDvkY439wQmeqE3d42FxG0MzNuL5iY=
+X-Received: by 2002:a81:1b97:0:b0:2db:640f:49d8 with SMTP id
+ b145-20020a811b97000000b002db640f49d8mr5769634ywb.326.1652982573217; Thu, 19
+ May 2022 10:49:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220519171628.GW4009@kadam>
+References: <20220518084536.508514-1-colin.i.king@gmail.com>
+In-Reply-To: <20220518084536.508514-1-colin.i.king@gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 19 May 2022 19:49:22 +0200
+Message-ID: <CAJZ5v0jTXo7fhBVhYiE8SceHqbT4U6b26ku8p+BKHBWTEmb6wA@mail.gmail.com>
+Subject: Re: [PATCH] powercap: intel_rapl: remove redundant store to value
+ after multiply
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, May 19, 2022 at 08:16:28PM +0300, Dan Carpenter wrote:
-> On Thu, May 19, 2022 at 05:45:31PM +0200, Greg KH wrote:
-> > On Wed, May 18, 2022 at 11:00:52AM +0400, Denis Efremov wrote:
-> > > This code has a check to prevent read overflow but it needs another
-> > > check to prevent writing beyond the end of the ->Ssid[] array.
-> > > 
-> > > Fixes: 2b42bd58b321 ("staging: r8188eu: introduce new os_dep dir for RTL8188eu driver")
-> > > Cc: stable <stable@vger.kernel.org>
-> > > Signed-off-by: Denis Efremov <denis.e.efremov@oracle.com>
-> > > ---
-> > > 
-> > > This patch is a copy of Dan's 74b6b20df8cf (CVE-2021-28660).
-> > > Drivers r8188eu and rtl8188eu share the same code.
-> > 
-> > This does not apply to my tree at all. This file is not present anymore,
-> > what tree did you make it against?
-> > 
-> 
-> That's weird.  It applies fine for me on today's linux-next.
+On Wed, May 18, 2022 at 10:45 AM Colin Ian King <colin.i.king@gmail.com> wrote:
+>
+> There is no need to store the result of the multiply back to variable value
+> after the multiplication. The store is redundant, replace *= with just *.
+>
+> Cleans up clang scan build warning:
+> warning: Although the value stored to 'value' is used in the enclosing
+> expression, the value is never actually read from 'value'
+> [deadcode.DeadStores]
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/powercap/intel_rapl_common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/powercap/intel_rapl_common.c b/drivers/powercap/intel_rapl_common.c
+> index 83da499dd6ec..70e38278986d 100644
+> --- a/drivers/powercap/intel_rapl_common.c
+> +++ b/drivers/powercap/intel_rapl_common.c
+> @@ -1010,7 +1010,7 @@ static u64 rapl_compute_time_window_atom(struct rapl_package *rp, u64 value,
+>          * where time_unit is default to 1 sec. Never 0.
+>          */
+>         if (!to_raw)
+> -               return (value) ? value *= rp->time_unit : rp->time_unit;
+> +               return (value) ? value * rp->time_unit : rp->time_unit;
+>
+>         value = div64_u64(value, rp->time_unit);
+>
+> --
 
-Ok, really wierd, it worked this time.  I'll blame my email setup
-somehow, I was churning through lots of patches at once...
-
-thanks for checking.
-
-greg k-h
+Applied as 5.19 material, thanks!
