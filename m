@@ -2,163 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34FFEC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 18 May 2022 17:58:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E239C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 19 May 2022 00:56:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233094AbiERR6p (ORCPT
+        id S232259AbiESAz4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 18 May 2022 13:58:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35388 "EHLO
+        Wed, 18 May 2022 20:55:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241300AbiERR6n (ORCPT
+        with ESMTP id S232107AbiESAzy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 18 May 2022 13:58:43 -0400
-Received: from mail-oa1-x2c.google.com (mail-oa1-x2c.google.com [IPv6:2001:4860:4864:20::2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79D228CCC2
-        for <kernel-janitors@vger.kernel.org>; Wed, 18 May 2022 10:58:40 -0700 (PDT)
-Received: by mail-oa1-x2c.google.com with SMTP id 586e51a60fabf-d39f741ba0so3665932fac.13
-        for <kernel-janitors@vger.kernel.org>; Wed, 18 May 2022 10:58:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6ELERMRaIpmuhHySx2YSWo9zl1auoeO0zCJspkCGUb8=;
-        b=WztX6FXpVxtEwvPsejPooMiIoLzU5fwON21vwGO/t9GQ5IX6M+jUyx5uffisTEX1Pq
-         dQYSiuFVdV10a8Sse1XFrWfWumnpbgYj67B66TlXz80YMGEKLNwgnfGa6qnaHPMeN977
-         U11G1Qs9KGZqvSpcG+J8OrT4Ir2WMLItMpYG/Aobv/KjAZkdMzUpRne36BGJOvACMfbh
-         f81OqNzW/bbewiK7OfmnWoafIglQyVU2EUh+6Yjv9890N62kgPYDjYt7VuuTohpsrTyJ
-         J2T3YLrR/IQ+u6YbJM84I3IC2KHhdj64ULmp5LPruE+iwJ7OrB5ehHuekkZlDIrQz6Xg
-         X3/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6ELERMRaIpmuhHySx2YSWo9zl1auoeO0zCJspkCGUb8=;
-        b=lg9X8jlP61vIAUaRLty6lC/2OtHPS549Aw83hy9QCHflmive9Sw4s/UcuE8ni0iuH5
-         bpYPBMFjCWdfMk16p+gGGwBRZrBPbfDyZn+pkUMu8XFa0lisVJz8hpVhc24f54oe2nbe
-         TjWmJ9yGNgvPU65guL07nZdM2+JqrjjV2xlLfOvRaT+Wr4Bx1YeaJ1LW/kK6cgSBeryr
-         BlRZoqDB40yW4WGhYXhzbuMRfPD5cfTIygyGFmfv1JvbkLw6z99hjKemcf/tEpyENqcX
-         +nOamRNFXnl9lx8cfg+PfLQtOU8B/YemoTSXPINc4wDsKpkVb+pfOQ+dqnBNgHKYNoh1
-         jArw==
-X-Gm-Message-State: AOAM531HKG81j0X+Q199kvyJLUQ1w1qIHzr6Gup8Qfd6fsL+X8jEMGGy
-        9ON9GSk8dCrhQwqPGueZxi7tyYV7dOaAdkwAgwI=
-X-Google-Smtp-Source: ABdhPJwLIMGVcH8SUnqAp+plnUhiQH/D9DfJg9ao0cuQSwu7T8lNFtFU+MFNDxfWDF4oY0zwWaBjr83L75Ph9eL2dNc=
-X-Received: by 2002:a05:6870:d683:b0:de:eaa2:3550 with SMTP id
- z3-20020a056870d68300b000deeaa23550mr402709oap.253.1652896719840; Wed, 18 May
- 2022 10:58:39 -0700 (PDT)
+        Wed, 18 May 2022 20:55:54 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D57A2C4F;
+        Wed, 18 May 2022 17:55:51 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id A6843CE229B;
+        Thu, 19 May 2022 00:55:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF0BAC385A5;
+        Thu, 19 May 2022 00:55:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652921747;
+        bh=+w7bxSwboW1VzAC18RChvyM/QQVFk/VXGDrhCmYTkKM=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=sj33+a6eM/yrurgd05V1SCh9AA7YADFweeVAmx8tNxRPqzYEtQwcpd08oK+zQiX9H
+         cVvMKMf1JnETwr8FhftPgWe38RNC/q4Da18MJNZzOxbevDGjx45BuX1OQgWyeLPLOj
+         s4qBg1QdmS0vHtXE8UlmTYzt/7pRYyX6ogsN+pvkJ2xeg6h9qQUifiaPm8P4+Soo8o
+         bHaHZjtcz/600JCQFnMpmSCCRU9iM/ImuEjn6/+vd4WCN7EC6ZU2H5s76M8jAoilYd
+         XbdwGhI0+HktrUnM+Gz/AJ6LOb/pRwemUVp50kWkeyL/bbQHr6laC0z8wT/musQMu9
+         y0UltHu10rmBA==
+Received: by mail-wr1-f45.google.com with SMTP id r23so4986919wrr.2;
+        Wed, 18 May 2022 17:55:47 -0700 (PDT)
+X-Gm-Message-State: AOAM5329j3KPSYLvAptok23PhE5TCAPIUVnBimyRFXsRt3Ys6BpwC4eN
+        FLzNM2BR7cNNZLqsvhSxIYXp9ivD8mhQH9RRNrs=
+X-Google-Smtp-Source: ABdhPJzUNgRO6DvQuX8+CsnYTnp5W7tYne/MYsgi00ftQrYYON5+oXvWIDFqia9QsujGG30+jmTKALuqGOP6lqY+cHg=
+X-Received: by 2002:a5d:584a:0:b0:20c:5bad:11c1 with SMTP id
+ i10-20020a5d584a000000b0020c5bad11c1mr1831044wrf.62.1652921746214; Wed, 18
+ May 2022 17:55:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <YoUvHGsEaMtloBXN@kili>
-In-Reply-To: <YoUvHGsEaMtloBXN@kili>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Wed, 18 May 2022 13:58:28 -0400
-Message-ID: <CADnq5_OhtcD71Ne9uqXRNSe+_Eui=DNg8tcQeL40Ymf9C_EsMQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu/pm: smu_v13_0_4: delete duplicate condition
+Received: by 2002:adf:f344:0:0:0:0:0 with HTTP; Wed, 18 May 2022 17:55:45
+ -0700 (PDT)
+In-Reply-To: <YnjY58EpRzaZP+YC@kili>
+References: <YnjY58EpRzaZP+YC@kili>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Thu, 19 May 2022 09:55:45 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8qxUTJLnah1Yu46j-esGKCaOb6aM-CUPNf-bvFn_e5uQ@mail.gmail.com>
+Message-ID: <CAKYAXd8qxUTJLnah1Yu46j-esGKCaOb6aM-CUPNf-bvFn_e5uQ@mail.gmail.com>
+Subject: Re: [PATCH] fs/ntfs3: Don't clear upper bits accidentally in log_replay()
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Evan Quan <evan.quan@amd.com>, Tim Huang <tim.huang@amd.com>,
-        Xiaomeng Hou <Xiaomeng.Hou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        kernel-janitors@vger.kernel.org, Aaron Liu <aaron.liu@amd.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Huang Rui <ray.huang@amd.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Kari Argillander <kari.argillander@stargateuniverse.net>,
+        Kari Argillander <kari.argillander@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
-
-Alex
-
-On Wed, May 18, 2022 at 1:39 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+2022-05-09 18:03 GMT+09:00, Dan Carpenter <dan.carpenter@oracle.com>:
+> The "vcn" variable is a 64 bit.  The "log->clst_per_page" variable is a
+> u32.  This means that the mask accidentally clears out the high 32 bits
+> when it was only supposed to clear some low bits.  Fix this by adding a
+> cast to u64.
 >
-> There is no need to check if "clock_ranges' is non-NULL.  It is checked
-> already on the line before.
->
+> Fixes: b46acd6a6a62 ("fs/ntfs3: Add NTFS journal")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Namjae Jeon <linkinjeon@kernel.org>
+
 > ---
->  .../drm/amd/pm/swsmu/smu13/smu_v13_0_4_ppt.c  | 62 +++++++++----------
->  1 file changed, 30 insertions(+), 32 deletions(-)
+> Why am I getting new Smatch warnings in old ntfs3 code?  It is a mystery.
 >
-> diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_4_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_4_ppt.c
-> index 7d6ff141b43f..5a17b51aa0f9 100644
-> --- a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_4_ppt.c
-> +++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_4_ppt.c
-> @@ -644,42 +644,40 @@ static int smu_v13_0_4_set_watermarks_table(struct smu_context *smu,
->         if (!table || !clock_ranges)
->                 return -EINVAL;
+>  fs/ntfs3/fslog.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> -       if (clock_ranges) {
-> -               if (clock_ranges->num_reader_wm_sets > NUM_WM_RANGES ||
-> -                       clock_ranges->num_writer_wm_sets > NUM_WM_RANGES)
-> -                       return -EINVAL;
-> -
-> -               for (i = 0; i < clock_ranges->num_reader_wm_sets; i++) {
-> -                       table->WatermarkRow[WM_DCFCLK][i].MinClock =
-> -                               clock_ranges->reader_wm_sets[i].min_drain_clk_mhz;
-> -                       table->WatermarkRow[WM_DCFCLK][i].MaxClock =
-> -                               clock_ranges->reader_wm_sets[i].max_drain_clk_mhz;
-> -                       table->WatermarkRow[WM_DCFCLK][i].MinMclk =
-> -                               clock_ranges->reader_wm_sets[i].min_fill_clk_mhz;
-> -                       table->WatermarkRow[WM_DCFCLK][i].MaxMclk =
-> -                               clock_ranges->reader_wm_sets[i].max_fill_clk_mhz;
-> -
-> -                       table->WatermarkRow[WM_DCFCLK][i].WmSetting =
-> -                               clock_ranges->reader_wm_sets[i].wm_inst;
-> -               }
-> +       if (clock_ranges->num_reader_wm_sets > NUM_WM_RANGES ||
-> +               clock_ranges->num_writer_wm_sets > NUM_WM_RANGES)
-> +               return -EINVAL;
+> diff --git a/fs/ntfs3/fslog.c b/fs/ntfs3/fslog.c
+> index 915f42cf07bc..0da339fda2f4 100644
+> --- a/fs/ntfs3/fslog.c
+> +++ b/fs/ntfs3/fslog.c
+> @@ -5057,7 +5057,7 @@ int log_replay(struct ntfs_inode *ni, bool
+> *initialized)
+>  		goto add_allocated_vcns;
 >
-> -               for (i = 0; i < clock_ranges->num_writer_wm_sets; i++) {
-> -                       table->WatermarkRow[WM_SOCCLK][i].MinClock =
-> -                               clock_ranges->writer_wm_sets[i].min_fill_clk_mhz;
-> -                       table->WatermarkRow[WM_SOCCLK][i].MaxClock =
-> -                               clock_ranges->writer_wm_sets[i].max_fill_clk_mhz;
-> -                       table->WatermarkRow[WM_SOCCLK][i].MinMclk =
-> -                               clock_ranges->writer_wm_sets[i].min_drain_clk_mhz;
-> -                       table->WatermarkRow[WM_SOCCLK][i].MaxMclk =
-> -                               clock_ranges->writer_wm_sets[i].max_drain_clk_mhz;
-> -
-> -                       table->WatermarkRow[WM_SOCCLK][i].WmSetting =
-> -                               clock_ranges->writer_wm_sets[i].wm_inst;
-> -               }
-> +       for (i = 0; i < clock_ranges->num_reader_wm_sets; i++) {
-> +               table->WatermarkRow[WM_DCFCLK][i].MinClock =
-> +                       clock_ranges->reader_wm_sets[i].min_drain_clk_mhz;
-> +               table->WatermarkRow[WM_DCFCLK][i].MaxClock =
-> +                       clock_ranges->reader_wm_sets[i].max_drain_clk_mhz;
-> +               table->WatermarkRow[WM_DCFCLK][i].MinMclk =
-> +                       clock_ranges->reader_wm_sets[i].min_fill_clk_mhz;
-> +               table->WatermarkRow[WM_DCFCLK][i].MaxMclk =
-> +                       clock_ranges->reader_wm_sets[i].max_fill_clk_mhz;
-> +
-> +               table->WatermarkRow[WM_DCFCLK][i].WmSetting =
-> +                       clock_ranges->reader_wm_sets[i].wm_inst;
-> +       }
+>  	vcn = le64_to_cpu(lrh->target_vcn);
+> -	vcn &= ~(log->clst_per_page - 1);
+> +	vcn &= ~(u64)(log->clst_per_page - 1);
 >
-> -               smu->watermarks_bitmap |= WATERMARKS_EXIST;
-> +       for (i = 0; i < clock_ranges->num_writer_wm_sets; i++) {
-> +               table->WatermarkRow[WM_SOCCLK][i].MinClock =
-> +                       clock_ranges->writer_wm_sets[i].min_fill_clk_mhz;
-> +               table->WatermarkRow[WM_SOCCLK][i].MaxClock =
-> +                       clock_ranges->writer_wm_sets[i].max_fill_clk_mhz;
-> +               table->WatermarkRow[WM_SOCCLK][i].MinMclk =
-> +                       clock_ranges->writer_wm_sets[i].min_drain_clk_mhz;
-> +               table->WatermarkRow[WM_SOCCLK][i].MaxMclk =
-> +                       clock_ranges->writer_wm_sets[i].max_drain_clk_mhz;
-> +
-> +               table->WatermarkRow[WM_SOCCLK][i].WmSetting =
-> +                       clock_ranges->writer_wm_sets[i].wm_inst;
->         }
->
-> +       smu->watermarks_bitmap |= WATERMARKS_EXIST;
-> +
->         /* pass data to smu controller */
->         if ((smu->watermarks_bitmap & WATERMARKS_EXIST) &&
->              !(smu->watermarks_bitmap & WATERMARKS_LOADED)) {
+>  add_allocated_vcns:
+>  	for (i = 0, vcn = le64_to_cpu(lrh->target_vcn),
 > --
 > 2.35.1
+>
+>
 >
