@@ -2,89 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E6AC433FE
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 May 2022 03:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C40ABC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 May 2022 14:39:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231720AbiETD6B (ORCPT
+        id S1350337AbiETOjR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 May 2022 23:58:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39806 "EHLO
+        Fri, 20 May 2022 10:39:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229816AbiETD6A (ORCPT
+        with ESMTP id S1350399AbiETOjP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 May 2022 23:58:00 -0400
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFE62B41FB;
-        Thu, 19 May 2022 20:57:59 -0700 (PDT)
-Received: by mail-wm1-f44.google.com with SMTP id bg25so3885533wmb.4;
-        Thu, 19 May 2022 20:57:59 -0700 (PDT)
+        Fri, 20 May 2022 10:39:15 -0400
+Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04D03170663
+        for <kernel-janitors@vger.kernel.org>; Fri, 20 May 2022 07:39:15 -0700 (PDT)
+Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-e93bbb54f9so10482353fac.12
+        for <kernel-janitors@vger.kernel.org>; Fri, 20 May 2022 07:39:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3AATNQ/IdLv7D+IZQaJo6R0yqMY6O4deWWVsnQKrYJs=;
+        b=fPEPwNR4QO06ts/eTnUsek4bIVrwDoYxJLDoR71u5qHdJiV8sbreebVmFGTuZ7jRor
+         dHOnetfnplxqxtHKFp7nUVfO7t88ASJFCfU4oGBfsUcEhmwC/+MYzdt3P2hDTLu08ox2
+         KC5MJ9CfkZy4Huv5jJFoa5wLQAtiQensckNYy7dcdyKwOTAoXqjWteozN5PET34Z4sjY
+         R7Tu1GfIbm9Or9RuSkEgwcXi0p921MFClfnY2wNxFP8vRUIM0Bpu63vw92n7htx6jjwV
+         yKMt1EHhU8VreAsaIXsbU97q/BfeWUQKaSbazcE9qXa9clYk/G3+k8/lrfrnT5IHEtwX
+         0Bhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pNHvSj7Qlaisn5x9H/7CDWdcNlvF8ouTuEdsvQFM/ZA=;
-        b=8ImggjWuyOVusKMfYPBklOm88M8uLHN9SLGFLfPTA93qT1VQjQPWma7pxmWZ5jfnPi
-         p2jHeGoKIJj7oRD3F+KwIbJBfI4K7TEbxzlF7NNIXkYV99sZLXZlB1dG6XvUhYtYsR6q
-         QAdLKFOlAPLwnrYXNcH7t1JSMERxQIyCocVwsXBns4JCIe5rd654O4XOcejq7AwtvGwI
-         CMjj3v2ECaUTHK3SMK4Qce/E4j0Gv+ibRmEDdaluHJnoGau/daH/GsXAgCwxxpf80TeO
-         okZS/d6sdCVP+F3oQx7GP5Sb8dAgOaCY4k/6PMyFGxyEbDZMneRGmsdiRwpQ1if3gzTg
-         x2mw==
-X-Gm-Message-State: AOAM5304Be7pA1lfP1VJudrsBLL9SwMJm3GjNowQZQZKgECNzzSbll6z
-        uujJicNRLw8HAzEv/2+lBDS1ZvOfW3w=
-X-Google-Smtp-Source: ABdhPJwEnqc3qcnxLHbZP1A2PzFVsK+V1WqW5Vkp1tqMoVO29pwCKaxpouzu2iQPE6xw046SLF/fTw==
-X-Received: by 2002:a05:600c:3b0a:b0:394:6373:6c45 with SMTP id m10-20020a05600c3b0a00b0039463736c45mr6731690wms.69.1653019078230;
-        Thu, 19 May 2022 20:57:58 -0700 (PDT)
-Received: from localhost.localdomain ([94.205.35.240])
-        by smtp.googlemail.com with ESMTPSA id z17-20020a05600c03d100b0039732f1b4a3sm1146878wmd.14.2022.05.19.20.57.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 May 2022 20:57:57 -0700 (PDT)
-From:   "Denis Efremov (Oracle)" <efremov@linux.com>
-To:     gregkh@linuxfoundation.org
-Cc:     "Denis Efremov (Oracle)" <efremov@linux.com>,
-        Larry.Finger@lwfinger.net, phil@philpotter.co.uk,
-        dan.carpenter@oracle.com, straube.linux@gmail.com,
-        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, stable <stable@vger.kernel.org>
-Subject: [PATCH v5.10] staging: rtl8723bs: prevent ->Ssid overflow in rtw_wx_set_scan()
-Date:   Fri, 20 May 2022 07:57:30 +0400
-Message-Id: <20220520035730.5533-1-efremov@linux.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <YoZk3YLEDYKGG5xe@kroah.com>
-References: <YoZk3YLEDYKGG5xe@kroah.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3AATNQ/IdLv7D+IZQaJo6R0yqMY6O4deWWVsnQKrYJs=;
+        b=vLx4Z3r/gZ/JC1O9FaJcE0Teg2NUQBIcjn3bOIxCrh1aRvJnF4empAxcV/htGoGN31
+         WxWq85Mo3kPOnROcl9bSRxltezcGR0Ot8/Sl5YwpPV4zdKRoh5HgvKqzeI58rvhYm2s+
+         WGjpuSt+7107mHSJzerOrRvrh52jgeYwNd6YKA4JsF6f5TYrChBOoe50Svh52uJvZNaL
+         9vhBM9kbgZHRbHe8hXW60cQdlfcMgflrISwevU2EniHBLYLGmWbAexOxCqNZk8dcDJG/
+         bamD73i6IBMb5N6a+mLHEs52R3xUCpXPmFu4JtN54bq1xPr37XcxY5YdosGUGvZ1hXHA
+         AZ+Q==
+X-Gm-Message-State: AOAM532/+jk0BvMkf1lyhCbv91wkGqL0DAmT9fWzqbJtZWjUwOrhpgnY
+        Tl8SuwGJkotq0FNke7HSFd+YoLGN3+OKmltUsY0=
+X-Google-Smtp-Source: ABdhPJxXGBZos0xve04f14jjuTfOUmCA6aeT9fL+zJFXKckfadmgwVvr+8V/rC1CpwzLipEJQhU+Q+OW05mb1u4Ife8=
+X-Received: by 2002:a05:6870:311d:b0:de:9b6c:362b with SMTP id
+ v29-20020a056870311d00b000de9b6c362bmr5969606oaa.200.1653057553749; Fri, 20
+ May 2022 07:39:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <YoH3zD7umruSyPms@kili> <b54971f1-e0d2-35a2-f3cf-0486569b63f5@amd.com>
+In-Reply-To: <b54971f1-e0d2-35a2-f3cf-0486569b63f5@amd.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Fri, 20 May 2022 10:39:02 -0400
+Message-ID: <CADnq5_MwJ4YO+oZKEkZndu5dDRVyRSkT_dgK06v6m1Fm67k9xg@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: Off by one in dm_dmub_outbox1_low_irq()
+To:     Harry Wentland <harry.wentland@amd.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Jude Shih <shenshih@amd.com>, kernel-janitors@vger.kernel.org,
+        Leo Li <sunpeng.li@amd.com>, Simon Ser <contact@emersion.fr>,
+        Qingqing Zhuo <qingqing.zhuo@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+        Roman Li <Roman.Li@amd.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Wayne Lin <Wayne.Lin@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This code has a check to prevent read overflow but it needs another
-check to prevent writing beyond the end of the ->Ssid[] array.
+Applied.  Thanks!
 
-Fixes: 554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Denis Efremov (Oracle) <efremov@linux.com>
----
- drivers/staging/rtl8723bs/os_dep/ioctl_linux.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Alex
 
-diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-index 902ac8169948..083ff72976cf 100644
---- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-+++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-@@ -1351,9 +1351,11 @@ static int rtw_wx_set_scan(struct net_device *dev, struct iw_request_info *a,
- 
- 					sec_len = *(pos++); len -= 1;
- 
--					if (sec_len > 0 && sec_len <= len) {
-+					if (sec_len > 0 &&
-+					    sec_len <= len &&
-+					    sec_len <= 32) {
- 						ssid[ssid_index].SsidLength = sec_len;
--						memcpy(ssid[ssid_index].Ssid, pos, ssid[ssid_index].SsidLength);
-+						memcpy(ssid[ssid_index].Ssid, pos, sec_len);
- 						/* DBG_871X("%s COMBO_SCAN with specific ssid:%s, %d\n", __func__ */
- 						/* 	, ssid[ssid_index].Ssid, ssid[ssid_index].SsidLength); */
- 						ssid_index++;
--- 
-2.35.3
-
+On Thu, May 19, 2022 at 4:53 PM Harry Wentland <harry.wentland@amd.com> wrote:
+>
+> On 2022-05-16 03:05, Dan Carpenter wrote:
+> > The > ARRAY_SIZE() should be >= ARRAY_SIZE() to prevent an out of bounds
+> > access.
+> >
+> > Fixes: e27c41d5b068 ("drm/amd/display: Support for DMUB HPD interrupt handling")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+>
+> Harry
+>
+> > ---
+> >  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> > index 6edfc0963dab..c4f122c6faec 100644
+> > --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> > +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> > @@ -770,7 +770,7 @@ static void dm_dmub_outbox1_low_irq(void *interrupt_params)
+> >
+> >               do {
+> >                       dc_stat_get_dmub_notification(adev->dm.dc, &notify);
+> > -                     if (notify.type > ARRAY_SIZE(dm->dmub_thread_offload)) {
+> > +                     if (notify.type >= ARRAY_SIZE(dm->dmub_thread_offload)) {
+> >                               DRM_ERROR("DM: notify type %d invalid!", notify.type);
+> >                               continue;
+> >                       }
+>
