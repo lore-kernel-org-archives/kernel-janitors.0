@@ -2,85 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0057FC433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 May 2022 16:42:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1676EC433F5
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 May 2022 16:53:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351753AbiETQmB (ORCPT
+        id S1351887AbiETQxU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 20 May 2022 12:42:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47578 "EHLO
+        Fri, 20 May 2022 12:53:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351760AbiETQl6 (ORCPT
+        with ESMTP id S1351873AbiETQxT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 20 May 2022 12:41:58 -0400
+        Fri, 20 May 2022 12:53:19 -0400
 Received: from smtp.smtpout.orange.fr (smtp02.smtpout.orange.fr [80.12.242.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE19C17DDF8
-        for <kernel-janitors@vger.kernel.org>; Fri, 20 May 2022 09:41:46 -0700 (PDT)
-Received: from pop-os.home ([86.243.180.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E531A149156
+        for <kernel-janitors@vger.kernel.org>; Fri, 20 May 2022 09:53:17 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.180.246])
         by smtp.orange.fr with ESMTPA
-        id s5h8n8HpQgoLGs5h8nsi7u; Fri, 20 May 2022 18:41:44 +0200
-X-ME-Helo: pop-os.home
+        id s5sEnGEDBYaC7s5sEnOR8j; Fri, 20 May 2022 18:53:16 +0200
+X-ME-Helo: [192.168.1.18]
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Fri, 20 May 2022 18:41:44 +0200
+X-ME-Date: Fri, 20 May 2022 18:53:16 +0200
 X-ME-IP: 86.243.180.246
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Liang Yang <liang.yang@amlogic.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH] mtd: rawnand: meson: Fix a potential double free issue
-Date:   Fri, 20 May 2022 18:41:40 +0200
-Message-Id: <ec15c358b8063f7c50ff4cd628cf0d2e14e43f49.1653064877.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+Message-ID: <7b1b26e4-cc8e-3375-788c-56b5b548367d@wanadoo.fr>
+Date:   Fri, 20 May 2022 18:53:10 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v2] mtd: rawnand: cafe: fix drivers probe/remove methods
+Content-Language: en-GB
+To:     Peng Wu <wupeng58@huawei.com>, miquel.raynal@bootlin.com,
+        richard@nod.at, vigneshr@ti.com
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, liwei391@huawei.com,
+        Kernel Janitors <kernel-janitors@vger.kernel.org>
+References: <20220520084425.116686-1-wupeng58@huawei.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20220520084425.116686-1-wupeng58@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-When meson_nfc_nand_chip_cleanup() is called, it will call:
-	meson_nfc_free_buffer(&meson_chip->nand);
-	nand_cleanup(&meson_chip->nand);
+Le 20/05/2022 à 10:44, Peng Wu a écrit :
+> Driver should call pci_disable_device() if it returns from
+> cafe_nand_probe() with error.
+> 
+> Meanwhile, the driver calls pci_enable_device() in
+> cafe_nand_probe(), but never calls pci_disable_device()
+> during removal.
+> 
+> Signed-off-by: Peng Wu <wupeng58@huawei.com>
+> ---
+> v2:
+> - fix the subject prefix with "mtd: ranwnand: cafe:"
+> ---
+>   drivers/mtd/nand/raw/cafe_nand.c | 9 +++++++--
+>   1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/cafe_nand.c b/drivers/mtd/nand/raw/cafe_nand.c
+> index 9dbf031716a6..af119e376352 100644
+> --- a/drivers/mtd/nand/raw/cafe_nand.c
+> +++ b/drivers/mtd/nand/raw/cafe_nand.c
+> @@ -679,8 +679,10 @@ static int cafe_nand_probe(struct pci_dev *pdev,
+>   	pci_set_master(pdev);
+>   
+>   	cafe = kzalloc(sizeof(*cafe), GFP_KERNEL);
+> -	if (!cafe)
+> -		return  -ENOMEM;
+> +	if (!cafe) {
+> +		err = -ENOMEM;
+> +		goto out_disable_device;
+> +	}
+>   
+>   	mtd = nand_to_mtd(&cafe->nand);
+>   	mtd->dev.parent = &pdev->dev;
+> @@ -801,6 +803,8 @@ static int cafe_nand_probe(struct pci_dev *pdev,
+>   	pci_iounmap(pdev, cafe->mmio);
+>    out_free_mtd:
+>   	kfree(cafe);
+> + out_disable_device:
+> +	pci_disable_device(pdev);
+>    out:
+>   	return err;
+>   }
+> @@ -822,6 +826,7 @@ static void cafe_nand_remove(struct pci_dev *pdev)
+>   	pci_iounmap(pdev, cafe->mmio);
+>   	dma_free_coherent(&cafe->pdev->dev, 2112, cafe->dmabuf, cafe->dmaaddr);
 
-nand_cleanup() in turn will call nand_detach() which calls the
-.detach_chip() which is here meson_nand_detach_chip().
+Hi,
 
-meson_nand_detach_chip() already calls meson_nfc_free_buffer(), so we
-could double free some memory.
+Not related to this patch , but I wonder if this dma_free_coherent() is 
+needed.
+It is already part of cafe_nand_detach_chip() which is a .detach_chip() 
+function.
 
-Fix it by removing the unneeded explicit call to meson_nfc_free_buffer().
+Is this .detach_chip() function already called (by nand_cleanup()) 
+somewhere in the removal process?
 
-Fixes: 8fae856c5350 ("mtd: rawnand: meson: add support for Amlogic NAND flash controller")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is speculative, so review with care.
----
- drivers/mtd/nand/raw/meson_nand.c | 1 -
- 1 file changed, 1 deletion(-)
+CJ
 
-diff --git a/drivers/mtd/nand/raw/meson_nand.c b/drivers/mtd/nand/raw/meson_nand.c
-index ac3be92872d0..032180183339 100644
---- a/drivers/mtd/nand/raw/meson_nand.c
-+++ b/drivers/mtd/nand/raw/meson_nand.c
-@@ -1307,7 +1307,6 @@ static int meson_nfc_nand_chip_cleanup(struct meson_nfc *nfc)
- 		if (ret)
- 			return ret;
- 
--		meson_nfc_free_buffer(&meson_chip->nand);
- 		nand_cleanup(&meson_chip->nand);
- 		list_del(&meson_chip->node);
- 	}
--- 
-2.34.1
+
+>   	kfree(cafe);
+> +	pci_disable_device(pdev);
+>   }
+>   
+>   static const struct pci_device_id cafe_nand_tbl[] = {
 
