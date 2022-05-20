@@ -2,80 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 624DEC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 May 2022 01:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C39BC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 May 2022 01:09:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344184AbiETBAU (ORCPT
+        id S1344274AbiETBJl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 May 2022 21:00:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36512 "EHLO
+        Thu, 19 May 2022 21:09:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232272AbiETBAP (ORCPT
+        with ESMTP id S1344238AbiETBJ2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 May 2022 21:00:15 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5042132776;
-        Thu, 19 May 2022 18:00:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 67D7CB82227;
-        Fri, 20 May 2022 01:00:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1091DC34116;
-        Fri, 20 May 2022 01:00:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653008412;
-        bh=4ZIIEfoyvYX4fEoBiZJ364AXKQ8T4GQkaQ0V60+PgMQ=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=gyuZK3CQo8iaQhx4JTHMJtfM+2nfKe/seigk1hs6Uw/4tLiv8hOuZuUmuASKRecaL
-         g1hqmPQuo68cvg7P5WGwDw41Q5P8pYjBlr0JX4XJuuYCp2Mcv4VtJJ2+kpunYdONuF
-         GDl/s6g9A/xdnQnBSlj2W0U/I4b19IlHOEIdgBbszcYSpkAOXqTvYmUHZVEGt9rCt7
-         CmA4W0fh+bRXU84LbTMUH4xHPUxr4yusukpetybk2B47vV15IL2etdeOuAZy7ov8/G
-         dIncXzsH/VESdXVZWBs+WcOgYiHiG8x8bAMirZML9RPyKFcJ2t4OLesCapXC1NGGP/
-         UMK2DkGFr4cVA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D83F8F03937;
-        Fri, 20 May 2022 01:00:11 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 19 May 2022 21:09:28 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18426129EE2;
+        Thu, 19 May 2022 18:09:27 -0700 (PDT)
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24K0InVw015728;
+        Fri, 20 May 2022 01:09:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2021-07-09;
+ bh=SZA4D5fb4zhb1fURFuh0/2y47Ul0fRkvE4KGE56d4DA=;
+ b=FySo+CZFoeQDUwW2NzB3jKJw5L2d4QXUFStHzgwIBNe6czODs72+oVKF8o+sVIUcfweq
+ /a6sVmg0L/k/KQ+Bu2KDaO/fxX4HQbdhK4k/Gt/7xnj8GuByofP8MmIlh66YPU/+u3lm
+ GR3x3YZJdm6G+GYm4Pl5GQcevWiDSyIj8w5orGXnebRdy+LVzFgeSjHxO3iNiVEvRc3k
+ H76IfTlGuGyPOY6VusiTc2+UHcde7wwtuOvMjchPiDDroeH8cTHImQeYQifxJ5WKaDSX
+ hjBIhDZdGzvlCB2Lc09wHmrhuLWR3jb3A7l+geE5Apr/UXsI2X67uM8JcgrPEEJSy+yD Eg== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3g23726147-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 May 2022 01:09:24 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 24K15nGg020186;
+        Fri, 20 May 2022 01:09:23 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3g37crytn0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 May 2022 01:09:23 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 24K19GKF030710;
+        Fri, 20 May 2022 01:09:22 GMT
+Received: from ca-mkp.mkp.ca.oracle.com (ca-mkp.ca.oracle.com [10.156.108.201])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3g37crythd-6;
+        Fri, 20 May 2022 01:09:22 +0000
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     linux-scsi@vger.kernel.org,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        Javed Hasan <jhasan@marvell.com>,
+        Saurav Kashyap <skashyap@marvell.com>,
+        Colin Ian King <colin.i.king@gmail.com>,
+        GR-QLogic-Storage-Upstream@marvell.com
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: qedf: remove redundant variable op
+Date:   Thu, 19 May 2022 21:09:05 -0400
+Message-Id: <165300891232.11465.2010695834416245270.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.35.2
+In-Reply-To: <20220517092518.93159-1-colin.i.king@gmail.com>
+References: <20220517092518.93159-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: ethernet: SP7021: fix a use after free of
- skb->len
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <165300841188.14248.497025533676573302.git-patchwork-notify@kernel.org>
-Date:   Fri, 20 May 2022 01:00:11 +0000
-References: <YoUuy4iTjFAcSn03@kili>
-In-Reply-To: <YoUuy4iTjFAcSn03@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     wellslutw@gmail.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, andrew@lunn.ch,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+X-Proofpoint-GUID: psllGO-Rt0uEUHCVpQC5YSs9tzwSMfHV
+X-Proofpoint-ORIG-GUID: psllGO-Rt0uEUHCVpQC5YSs9tzwSMfHV
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+On Tue, 17 May 2022 10:25:18 +0100, Colin Ian King wrote:
 
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 18 May 2022 20:37:15 +0300 you wrote:
-> The netif_receive_skb() function frees "skb" so store skb->len before
-> it is freed.
+> The variable op is assigned a value and is never read. The variable
+> is not used and is redundant, remove it.
 > 
-> Fixes: fd3040b9394c ("net: ethernet: Add driver for Sunplus SP7021")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/net/ethernet/sunplus/spl2sw_int.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
 
-Here is the summary with links:
-  - [net-next] net: ethernet: SP7021: fix a use after free of skb->len
-    https://git.kernel.org/netdev/net-next/c/df98714e432a
+Applied to 5.19/scsi-queue, thanks!
 
-You are awesome, thank you!
+[1/1] scsi: qedf: remove redundant variable op
+      https://git.kernel.org/mkp/scsi/c/fc65df48c88e
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Martin K. Petersen	Oracle Linux Engineering
