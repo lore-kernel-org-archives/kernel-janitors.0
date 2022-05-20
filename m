@@ -2,85 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A2AC433F5
-	for <kernel-janitors@archiver.kernel.org>; Fri, 20 May 2022 01:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E6AC433FE
+	for <kernel-janitors@archiver.kernel.org>; Fri, 20 May 2022 03:58:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344333AbiETBJr (ORCPT
+        id S231720AbiETD6B (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 19 May 2022 21:09:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57442 "EHLO
+        Thu, 19 May 2022 23:58:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344283AbiETBJn (ORCPT
+        with ESMTP id S229816AbiETD6A (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 19 May 2022 21:09:43 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3020B13325B;
-        Thu, 19 May 2022 18:09:34 -0700 (PDT)
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24K0J3Nn003574;
-        Fri, 20 May 2022 01:09:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2021-07-09;
- bh=twlSiCVktEMVFkg0yLeZ2e21MvQSw4k82dnQDHeH+/g=;
- b=rYR2rVKi2tTm2GZPmqihbDjX+IwZZyZvPvhDJ4KDCuBXbM7GnRlXlk4Pyx8JSpv3YzD7
- Le+5ES/JZF0nD2uOrYWY734+8GfAGsBpdLjTuGkh4vZAhDx1U8GQjmy8USlAz1+kvOM+
- YSwc6W7VeRsvbRn6Trjt+Je1PMv889gC0p2fDDm8Ob2rbUfmgveGA7YYAh1BqGuVuUDq
- zsIwj3vk/4vxDWruN44ZUtdJhz+EG2hBxxgTrujofxmMH6brRdeajUrGHsRKpLzwjwHH
- UXq19EUWUgzfKZJO8mGCXxODQh+DFNdW4NJ68MxBgQI28hyZoal1lXpAXtQFrV+rCRc6 5A== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3g24ytwu9e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 20 May 2022 01:09:27 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 24K15nCZ020204;
-        Fri, 20 May 2022 01:09:26 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3g37crytpn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 20 May 2022 01:09:26 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 24K19GKJ030710;
-        Fri, 20 May 2022 01:09:26 GMT
-Received: from ca-mkp.mkp.ca.oracle.com (ca-mkp.ca.oracle.com [10.156.108.201])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3g37crythd-8;
-        Fri, 20 May 2022 01:09:25 +0000
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-To:     Sumit Saxena <sumit.saxena@broadcom.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org,
-        Kashyap Desai <kashyap.desai@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        mpi3mr-linuxdrv.pdl@broadcom.com, kernel-janitors@vger.kernel.org,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-        Himanshu Madhani <himanshu.madhani@oracle.com>
-Subject: Re: [PATCH] scsi: mpi3mr: Return error if dma_alloc_coherent() fails
-Date:   Thu, 19 May 2022 21:09:07 -0400
-Message-Id: <165300891230.11465.14769224499541486681.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.35.2
-In-Reply-To: <YnOmMGHqCOtUCYQ1@kili>
-References: <YnOmMGHqCOtUCYQ1@kili>
+        Thu, 19 May 2022 23:58:00 -0400
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFE62B41FB;
+        Thu, 19 May 2022 20:57:59 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id bg25so3885533wmb.4;
+        Thu, 19 May 2022 20:57:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=pNHvSj7Qlaisn5x9H/7CDWdcNlvF8ouTuEdsvQFM/ZA=;
+        b=8ImggjWuyOVusKMfYPBklOm88M8uLHN9SLGFLfPTA93qT1VQjQPWma7pxmWZ5jfnPi
+         p2jHeGoKIJj7oRD3F+KwIbJBfI4K7TEbxzlF7NNIXkYV99sZLXZlB1dG6XvUhYtYsR6q
+         QAdLKFOlAPLwnrYXNcH7t1JSMERxQIyCocVwsXBns4JCIe5rd654O4XOcejq7AwtvGwI
+         CMjj3v2ECaUTHK3SMK4Qce/E4j0Gv+ibRmEDdaluHJnoGau/daH/GsXAgCwxxpf80TeO
+         okZS/d6sdCVP+F3oQx7GP5Sb8dAgOaCY4k/6PMyFGxyEbDZMneRGmsdiRwpQ1if3gzTg
+         x2mw==
+X-Gm-Message-State: AOAM5304Be7pA1lfP1VJudrsBLL9SwMJm3GjNowQZQZKgECNzzSbll6z
+        uujJicNRLw8HAzEv/2+lBDS1ZvOfW3w=
+X-Google-Smtp-Source: ABdhPJwEnqc3qcnxLHbZP1A2PzFVsK+V1WqW5Vkp1tqMoVO29pwCKaxpouzu2iQPE6xw046SLF/fTw==
+X-Received: by 2002:a05:600c:3b0a:b0:394:6373:6c45 with SMTP id m10-20020a05600c3b0a00b0039463736c45mr6731690wms.69.1653019078230;
+        Thu, 19 May 2022 20:57:58 -0700 (PDT)
+Received: from localhost.localdomain ([94.205.35.240])
+        by smtp.googlemail.com with ESMTPSA id z17-20020a05600c03d100b0039732f1b4a3sm1146878wmd.14.2022.05.19.20.57.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 May 2022 20:57:57 -0700 (PDT)
+From:   "Denis Efremov (Oracle)" <efremov@linux.com>
+To:     gregkh@linuxfoundation.org
+Cc:     "Denis Efremov (Oracle)" <efremov@linux.com>,
+        Larry.Finger@lwfinger.net, phil@philpotter.co.uk,
+        dan.carpenter@oracle.com, straube.linux@gmail.com,
+        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, stable <stable@vger.kernel.org>
+Subject: [PATCH v5.10] staging: rtl8723bs: prevent ->Ssid overflow in rtw_wx_set_scan()
+Date:   Fri, 20 May 2022 07:57:30 +0400
+Message-Id: <20220520035730.5533-1-efremov@linux.com>
+X-Mailer: git-send-email 2.35.3
+In-Reply-To: <YoZk3YLEDYKGG5xe@kroah.com>
+References: <YoZk3YLEDYKGG5xe@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: HCoQnjS5qc2SjeoNADpigxepp3FibgAr
-X-Proofpoint-ORIG-GUID: HCoQnjS5qc2SjeoNADpigxepp3FibgAr
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 5 May 2022 13:25:52 +0300, Dan Carpenter wrote:
+This code has a check to prevent read overflow but it needs another
+check to prevent writing beyond the end of the ->Ssid[] array.
 
-> Return -ENOMEM instead of success if dma_alloc_coherent() fails.
-> 
-> 
+Fixes: 554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Denis Efremov (Oracle) <efremov@linux.com>
+---
+ drivers/staging/rtl8723bs/os_dep/ioctl_linux.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Applied to 5.19/scsi-queue, thanks!
-
-[1/1] scsi: mpi3mr: Return error if dma_alloc_coherent() fails
-      https://git.kernel.org/mkp/scsi/c/bc7896d31a92
-
+diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+index 902ac8169948..083ff72976cf 100644
+--- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
++++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+@@ -1351,9 +1351,11 @@ static int rtw_wx_set_scan(struct net_device *dev, struct iw_request_info *a,
+ 
+ 					sec_len = *(pos++); len -= 1;
+ 
+-					if (sec_len > 0 && sec_len <= len) {
++					if (sec_len > 0 &&
++					    sec_len <= len &&
++					    sec_len <= 32) {
+ 						ssid[ssid_index].SsidLength = sec_len;
+-						memcpy(ssid[ssid_index].Ssid, pos, ssid[ssid_index].SsidLength);
++						memcpy(ssid[ssid_index].Ssid, pos, sec_len);
+ 						/* DBG_871X("%s COMBO_SCAN with specific ssid:%s, %d\n", __func__ */
+ 						/* 	, ssid[ssid_index].Ssid, ssid[ssid_index].SsidLength); */
+ 						ssid_index++;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.35.3
+
