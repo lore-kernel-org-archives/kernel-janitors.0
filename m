@@ -2,44 +2,44 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB92C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 11:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B84DC433FE
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 11:16:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345754AbiEULQL (ORCPT
+        id S1354942AbiEULQO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 May 2022 07:16:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51590 "EHLO
+        Sat, 21 May 2022 07:16:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354926AbiEULM5 (ORCPT
+        with ESMTP id S1354912AbiEULM5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
         Sat, 21 May 2022 07:12:57 -0400
 Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 891A190CCB;
-        Sat, 21 May 2022 04:12:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63B5158E7D;
+        Sat, 21 May 2022 04:12:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=xYRDzENhcBEuFr81DrVcFNYvESNY7pY0uh+ZFfsrubc=;
-  b=mwi8F52nRAJS/SCf5EATUYUfIAI6y/v0GfB0UGgdxVwjI/Kjmo4navwg
-   smYeKb71pADASm2LiGK4wqZCH9huQffnINw//0bTCygwO5wb4sOBs3xw2
-   AWaKaIksjC0ogK0+eELj5y7K0LN1AhaOHdDSA0jdHodqQSoP0aN8jpkjF
+  bh=pu1drDPJcuRzcx4hdCBsCPeAOUcFnWUW89aYshD8b18=;
+  b=fGafI63a/j5PKe/dI1MdqJwKz9GGIBOcyCfTyp9leoSQqbct5i6ET123
+   HUtS5LyLWXPR3yZUIdW+SfAY3t+Nlj1Luq2VlwZwsnz2L+N/lR825C/tM
+   vabeS87n78mSY0oFPRtBf8N1K5n8STl4Lp4TNU88rjDxZKwWfMB5xcFgq
    U=;
 Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.91,242,1647298800"; 
-   d="scan'208";a="14727981"
+   d="scan'208";a="14727977"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2022 13:12:05 +0200
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2022 13:12:04 +0200
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Simon Horman <simon.horman@corigine.com>
-Cc:     kernel-janitors@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>, oss-drivers@corigine.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] nfp: flower: fix typo in comment
-Date:   Sat, 21 May 2022 13:11:23 +0200
-Message-Id: <20220521111145.81697-73-Julia.Lawall@inria.fr>
+To:     Manish Chopra <manishc@marvell.com>
+Cc:     kernel-janitors@vger.kernel.org, GR-Linux-NIC-Dev@marvell.com,
+        Coiby Xu <coiby.xu@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        netdev@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: qlge: fix typo in comment
+Date:   Sat, 21 May 2022 13:11:20 +0200
+Message-Id: <20220521111145.81697-70-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -53,20 +53,20 @@ Detected with the help of Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/net/ethernet/netronome/nfp/flower/lag_conf.c |    2 +-
+ drivers/staging/qlge/qlge_main.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/netronome/nfp/flower/lag_conf.c b/drivers/net/ethernet/netronome/nfp/flower/lag_conf.c
-index 63907aeb3884..ede90e086b28 100644
---- a/drivers/net/ethernet/netronome/nfp/flower/lag_conf.c
-+++ b/drivers/net/ethernet/netronome/nfp/flower/lag_conf.c
-@@ -576,7 +576,7 @@ nfp_fl_lag_changeupper_event(struct nfp_fl_lag *lag,
- 	group->dirty = true;
- 	group->slave_cnt = slave_count;
- 
--	/* Group may have been on queue for removal but is now offfloable. */
-+	/* Group may have been on queue for removal but is now offloable. */
- 	group->to_remove = false;
- 	mutex_unlock(&lag->lock);
- 
+diff --git a/drivers/staging/qlge/qlge_main.c b/drivers/staging/qlge/qlge_main.c
+index 113a3efd12e9..8c35d4c4b851 100644
+--- a/drivers/staging/qlge/qlge_main.c
++++ b/drivers/staging/qlge/qlge_main.c
+@@ -1976,7 +1976,7 @@ static unsigned long qlge_process_mac_rx_intr(struct qlge_adapter *qdev,
+ 					 vlan_id);
+ 	} else {
+ 		/* Non-TCP/UDP large frames that span multiple buffers
+-		 * can be processed corrrectly by the split frame logic.
++		 * can be processed correctly by the split frame logic.
+ 		 */
+ 		qlge_process_mac_split_rx_intr(qdev, rx_ring, ib_mac_rsp,
+ 					       vlan_id);
 
