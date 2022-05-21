@@ -2,102 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F7EC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 11:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A381C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 12:06:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343969AbiEULeL (ORCPT
+        id S241248AbiEUMGV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 May 2022 07:34:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43562 "EHLO
+        Sat, 21 May 2022 08:06:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354870AbiEULd4 (ORCPT
+        with ESMTP id S243700AbiEUMGS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 21 May 2022 07:33:56 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B044036140;
-        Sat, 21 May 2022 04:33:47 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DD22960C84;
-        Sat, 21 May 2022 11:33:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83905C385A9;
-        Sat, 21 May 2022 11:33:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653132826;
-        bh=l9by86nw6iePCzOmDkZQU5SCVcvIjg3rIH78FcJrxnk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vPBjUecgsVVV+Rur5PY4bm1PRiEojRK9gCAXChl0pEH0hJWeZmRyT3qqPCpz+F06W
-         zatZylozBgQY8aDCI9OmrH6IhfKNry2gjURTt1yfKqaVGvmYiDQbt1/g3kCx/1l+UL
-         DKryVlwuLKerKaa0GTpbevegruq4iHjs01lcyUwV7Jz2pqu0c9bzVmRdXGmwwJoRyU
-         yzl4pVSKJOhlHR+W+GANr0K6QrL+gQHSY4w5jI18DjEpwadJHgJxCBqujzqmghupO2
-         SzN6U+ywJBfMPyAVnmNw9kZ2Q24yLgWg+HhkDE6yrlDqrdEwJutbYxRVDPsbMBXrS5
-         JRAeXkua22QSQ==
-Date:   Sat, 21 May 2022 13:33:42 +0200
-From:   Wolfram Sang <wsa@kernel.org>
+        Sat, 21 May 2022 08:06:18 -0400
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75B421CB36
+        for <kernel-janitors@vger.kernel.org>; Sat, 21 May 2022 05:06:17 -0700 (PDT)
+Received: by mail-pg1-x52f.google.com with SMTP id j21so9616572pga.13
+        for <kernel-janitors@vger.kernel.org>; Sat, 21 May 2022 05:06:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=173FUsw6tLIJBxwMxWbaXPAVuBn6Pqyry82161LO+5o=;
+        b=t7th7/O7T+GQeFuDwYpInw+m79Nf9NcWcLo49bsR0eUYI8sBkzCFs80bwuythG6L+m
+         hQTVY4+XcWPk7VQFLj7yw0tVrwwWpMqrYKZkR+THOIt2o7DKmHxJc/7v0FFYKhr5IK6Z
+         HpVMl4PKViTGMhoMGXsfsFuz5U4HH8WsRPpuMmZwJz6xBB+OJNWEsIv8YDwSoo7corb5
+         kb5iMIwEjtsTUxWvkd7pEmZUB7R48721v+yddyIbXui2D/s6jsKSDXyOtt/1zYBqgMxX
+         5brk/nFW9snvzOfQQ++A8s/7bvmweeB101z1qlPM4mpddYGwKeMNu5tV4Jxn4LWWsR1p
+         Y3gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=173FUsw6tLIJBxwMxWbaXPAVuBn6Pqyry82161LO+5o=;
+        b=bX/HQvxHbWQK9mDFY5gbW7CNdeHK/BBT8RQAN4Tz4xSxiFR9jx4Ly4CDQ0+u2VKf8b
+         w9sAbrUEmwu7HBgrUi9xCe0jimJ81b0Er5N1hHUsFZ5DeKQZgG0fbtg6JjD0REmML4uT
+         q90hj38FiAGOU8SWOnoARHu5qEhOoQE9LfYmeq6mtoo4JZw3L6yCPLBwE4SaRsrqnD0T
+         rt3qeLFycv2eFterPkY33yXKVzcsLVe0TxZivk+n6bWk5vfv7/Z/f+v9jGKrmrMKdNvL
+         88fdWLWC9XoC/IIsNksrOh/AbF0uv8g9llSOm6yn07Ef06aHdDm2slmH2eb+pRtuuseN
+         6E0Q==
+X-Gm-Message-State: AOAM531siFs7Z0BLfn8ZqQKYXOI4S/yiH+idbsTVyrRr0izdjMsWI304
+        hQ6ISxCqV2Xib1B5fK+hU8LroQ==
+X-Google-Smtp-Source: ABdhPJxKSfGRT8m0D3bvpo8J9qYc7ZkBmclnsMk5PYLCp1cn0OI4MWpkCsZWpL6K+oJOckoMolhItg==
+X-Received: by 2002:a63:202:0:b0:3f2:75a7:cd28 with SMTP id 2-20020a630202000000b003f275a7cd28mr12480723pgc.537.1653134776979;
+        Sat, 21 May 2022 05:06:16 -0700 (PDT)
+Received: from localhost ([139.177.225.250])
+        by smtp.gmail.com with ESMTPSA id m4-20020a655304000000b003f9eacd0684sm1264323pgq.3.2022.05.21.05.06.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 May 2022 05:06:16 -0700 (PDT)
+Date:   Sat, 21 May 2022 20:06:13 +0800
+From:   Muchun Song <songmuchun@bytedance.com>
 To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        kernel-janitors@vger.kernel.org,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: meson: fix typo in comment
-Message-ID: <YojOFtmzkQ9IH8UE@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Julia Lawall <Julia.Lawall@inria.fr>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        kernel-janitors@vger.kernel.org,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20220521111145.81697-53-Julia.Lawall@inria.fr>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        kernel-janitors@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ksm: fix typo in comment
+Message-ID: <YojVtbCiQ47+Aoq1@FVFYT0MHHV2J.usts.net>
+References: <20220521111145.81697-94-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="fYqSdqxjDeDE3M9G"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220521111145.81697-53-Julia.Lawall@inria.fr>
+In-Reply-To: <20220521111145.81697-94-Julia.Lawall@inria.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
---fYqSdqxjDeDE3M9G
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, May 21, 2022 at 01:11:03PM +0200, Julia Lawall wrote:
+On Sat, May 21, 2022 at 01:11:44PM +0200, Julia Lawall wrote:
 > Spelling mistake (triple letters) in comment.
 > Detected with the help of Coccinelle.
->=20
+> 
 > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
->=20
 
-Applied to for-next, thanks!
-
-
---fYqSdqxjDeDE3M9G
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmKIzhYACgkQFA3kzBSg
-KbZP+Q/+M2eKB9fBFm0ki/BdRKVvwXbqZBQHMvjPeORijOnWqLSUqY8b/bGmFxaP
-Bzjii2CgLl059ir58BeYWUCawy9uRK3aeHONPD1ZtiN8XQRiJ3dAgHZSFUOYc6YX
-pZwftv7y3c1XmSCZtsZy3liAwbKrk9RK2s8lLpEl3IrI1+Za3PpMX3jbO0WJILpl
-LAD7X9dEsJ+HkjwvSs1trMwn3Xfun2wQBV84R/1ZqhrCxPnmroomfI3YJUrF6L78
-yVvc4x/rJ0dLFKzy/FnHBu01ifUm3BwGxwWnntT3jOwfUufy4E65gsHiC+qf9xU6
-q4XEqqZPC5lXyL5c0uelcQn9KxrNwHqoNkRR32xputrN5B4TPzDmaVUphg6XVTme
-1v6ykpneJOkb6LYwHHx9mw1386C14hUQHH82ByFLMggVmbOOrXbYbqh3zuala8bN
-X1sPNYJKSo6oyKiWYzIj3mODcftyqV+Dn9Rn1MpsFK1nzHu6rR6dT+XyKK6zOTa5
-5oxp2Bd9qWSAZ/WH9N2LJm1qRJDX1Hk+6oG0cqbqkQSCFbqnIi6bEYnOKSstI06E
-lEwCNheKDK6HpMAIkzIRWYbwqkkTVF2UDzOQSY7Ojhy9dGwzwbAlmuUk3ABn2Fbr
-MywuhDhGO68vdD3e2tpgg7X9k5/qMHbXs+G16G4TPbvKDYCYQqM=
-=YTwd
------END PGP SIGNATURE-----
-
---fYqSdqxjDeDE3M9G--
+Reviewed-by: Muchun Song <songmuchun@bytedance.com>
+ 
