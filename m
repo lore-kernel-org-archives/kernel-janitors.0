@@ -2,41 +2,44 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D85C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 11:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7674EC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 11:16:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235385AbiEULQC (ORCPT
+        id S1349933AbiEULQF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 May 2022 07:16:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51054 "EHLO
+        Sat, 21 May 2022 07:16:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354936AbiEULM7 (ORCPT
+        with ESMTP id S1354946AbiEULM7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
         Sat, 21 May 2022 07:12:59 -0400
 Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02B7E2AE22;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFE5CCEBBC;
         Sat, 21 May 2022 04:12:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=rMKMMl4ihKpnbEEt18X3rlVUd1mf+9F9wh4MmnsL4og=;
-  b=S5D4ZzoqiDR1hKQ8lyF25jk02dyp9KlyesV4iAmLzuQO7QQKbeE6PtZR
-   ml4eiOQwnq6dmtjybm/XuWywHezEaZ2orGYHSpJMhb3Wirxh9nEDhbjDQ
-   G/B0xrqoW+fVWupcuEtijX3q55qBSmeZZW77m8U4koA1SSURzpvifLtWF
-   0=;
+  bh=YnnUMA5VHqoqMuN0yfzZQ/Plpe6oSBxoCFVFs0qsS9M=;
+  b=RER8Zah9jk4RlcgdMtHdFtncxNo2GhAaFoPGiuR/a4Wc5/wT9+Izr7Xx
+   GEbqumPPbaJ0Qv34JSDpXvYes46HuXhaG6bxGavrsSWH7BqaDwSPkQ3bF
+   8qE1RWg2e/bR2wuWawRjM9OIlUaEJa1Uj6hWCO2fUC5mjmdbmWf1l5lvr
+   8=;
 Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.91,242,1647298800"; 
-   d="scan'208";a="14727985"
+   d="scan'208";a="14727983"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2022 13:12:05 +0200
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] nl80211: fix typo in comment
-Date:   Sat, 21 May 2022 13:11:27 +0200
-Message-Id: <20220521111145.81697-77-Julia.Lawall@inria.fr>
+To:     Saurav Kashyap <skashyap@marvell.com>
+Cc:     kernel-janitors@vger.kernel.org, Javed Hasan <jhasan@marvell.com>,
+        GR-QLogic-Storage-Upstream@marvell.com,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: qedf: fix typo in comment
+Date:   Sat, 21 May 2022 13:11:25 +0200
+Message-Id: <20220521111145.81697-75-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -50,20 +53,20 @@ Detected with the help of Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- include/uapi/linux/nl80211.h |    2 +-
+ drivers/scsi/qedf/qedf_io.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/uapi/linux/nl80211.h b/include/uapi/linux/nl80211.h
-index d9490e3062a7..98f905f16411 100644
---- a/include/uapi/linux/nl80211.h
-+++ b/include/uapi/linux/nl80211.h
-@@ -5874,7 +5874,7 @@ enum nl80211_ap_sme_features {
-  * @NL80211_FEATURE_INACTIVITY_TIMER: This driver takes care of freeing up
-  *	the connected inactive stations in AP mode.
-  * @NL80211_FEATURE_CELL_BASE_REG_HINTS: This driver has been tested
-- *	to work properly to suppport receiving regulatory hints from
-+ *	to work properly to support receiving regulatory hints from
-  *	cellular base stations.
-  * @NL80211_FEATURE_P2P_DEVICE_NEEDS_CHANNEL: (no longer available, only
-  *	here to reserve the value for API/ABI compatibility)
+diff --git a/drivers/scsi/qedf/qedf_io.c b/drivers/scsi/qedf/qedf_io.c
+index e57cc22453d0..4750ec5789a8 100644
+--- a/drivers/scsi/qedf/qedf_io.c
++++ b/drivers/scsi/qedf/qedf_io.c
+@@ -893,7 +893,7 @@ int qedf_post_io_req(struct qedf_rport *fcport, struct qedf_ioreq *io_req)
+ 		return -EINVAL;
+ 	}
+ 
+-	/* Record LUN number for later use if we neeed them */
++	/* Record LUN number for later use if we need them */
+ 	io_req->lun = (int)sc_cmd->device->lun;
+ 
+ 	/* Obtain free SQE */
 
