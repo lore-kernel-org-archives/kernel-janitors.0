@@ -2,54 +2,41 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBFB1C433FE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 11:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3D8C4332F
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 11:16:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354581AbiEULQn (ORCPT
+        id S1355081AbiEULQo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 May 2022 07:16:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49994 "EHLO
+        Sat, 21 May 2022 07:16:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354797AbiEULOB (ORCPT
+        with ESMTP id S1355032AbiEULOH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 21 May 2022 07:14:01 -0400
+        Sat, 21 May 2022 07:14:07 -0400
 Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 743E412B01F;
-        Sat, 21 May 2022 04:12:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCDF334647;
+        Sat, 21 May 2022 04:12:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=Jt4fa4YJrVj8M3pPplByGC4sCX+AxOeZAa6Dq52fmPQ=;
-  b=mcuS3coBhVGW3U5Ek0P5OMCciiBMFoRJuaa4h0PzR7tKhMKTD6DKTYJA
-   gH2ExqTNaA2kD2qvVyF2ypsQc4bT/AsGTPGvGxrmiq2k3n7K3k0VY6DY3
-   HJ2bkVD6JyKHV29V/9oUk/kSCgfu77g+nkuvxbqsYX81+9mPdPiQfdpAe
-   s=;
+  bh=TN/j615y2tkYA0srFihzWLP+GjLIX6UQauDVbNDVzTk=;
+  b=HZcq6RDsXGGZgT2GMpbx+k0znTTWtUngBgdaZC+QskSN2Mo78eDk0kGO
+   bkLsh+chX0bb5x1S6AR0MleYwDGq8paFjnemsLRis0U5lCyJq+eC98XBV
+   zDuWjdQuy4SUH/YHEP4DBN/CVsahWllvWTFuVN0V9DFPmrCY1phwl9JK1
+   4=;
 Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.91,242,1647298800"; 
-   d="scan'208";a="14727992"
+   d="scan'208";a="14727996"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2022 13:12:07 +0200
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2022 13:12:08 +0200
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Ilya Leoshkevich <iii@linux.ibm.com>
-Cc:     kernel-janitors@vger.kernel.org,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-s390@vger.kernel.org,
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] s390/bpf: fix typo in comment
-Date:   Sat, 21 May 2022 13:11:34 +0200
-Message-Id: <20220521111145.81697-84-Julia.Lawall@inria.fr>
+Subject: [PATCH] slimbus: messaging: fix typos in comments
+Date:   Sat, 21 May 2022 13:11:38 +0200
+Message-Id: <20220521111145.81697-88-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -57,26 +44,35 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Spelling mistake (triple letters) in comment.
+Spelling mistakes (triple letters) in comments.
 Detected with the help of Coccinelle.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- arch/s390/net/bpf_jit_comp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/slimbus/messaging.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/s390/net/bpf_jit_comp.c b/arch/s390/net/bpf_jit_comp.c
-index aede9a3ca3f7..af35052d06ed 100644
---- a/arch/s390/net/bpf_jit_comp.c
-+++ b/arch/s390/net/bpf_jit_comp.c
-@@ -1809,7 +1809,7 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *fp)
- 	/*
- 	 * Three initial passes:
- 	 *   - 1/2: Determine clobbered registers
--	 *   - 3:   Calculate program size and addrs arrray
-+	 *   - 3:   Calculate program size and addrs array
- 	 */
- 	for (pass = 1; pass <= 3; pass++) {
- 		if (bpf_jit_prog(&jit, fp, extra_pass, stack_depth)) {
+diff --git a/drivers/slimbus/messaging.c b/drivers/slimbus/messaging.c
+index e5ae26227bdb..4ce0cb61e481 100644
+--- a/drivers/slimbus/messaging.c
++++ b/drivers/slimbus/messaging.c
+@@ -79,7 +79,7 @@ int slim_alloc_txn_tid(struct slim_controller *ctrl, struct slim_msg_txn *txn)
+ EXPORT_SYMBOL_GPL(slim_alloc_txn_tid);
+ 
+ /**
+- * slim_free_txn_tid() - Freee tid of txn
++ * slim_free_txn_tid() - Free tid of txn
+  *
+  * @ctrl: Controller handle
+  * @txn: transaction whose tid should be freed
+@@ -101,7 +101,7 @@ EXPORT_SYMBOL_GPL(slim_free_txn_tid);
+  * @txn: Transaction to be sent over SLIMbus
+  *
+  * Called by controller to transmit messaging transactions not dealing with
+- * Interface/Value elements. (e.g. transmittting a message to assign logical
++ * Interface/Value elements. (e.g. transmitting a message to assign logical
+  * address to a slave device
+  *
+  * Return: -ETIMEDOUT: If transmission of this message timed out
 
