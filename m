@@ -2,102 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6647AC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 13:45:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB1CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 14:06:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243833AbiEUNpA (ORCPT
+        id S1354870AbiEUOG4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 May 2022 09:45:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34558 "EHLO
+        Sat, 21 May 2022 10:06:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238598AbiEUNo6 (ORCPT
+        with ESMTP id S1353019AbiEUOGz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 21 May 2022 09:44:58 -0400
-Received: from mail-oa1-x2a.google.com (mail-oa1-x2a.google.com [IPv6:2001:4860:4864:20::2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6A2E7DE29;
-        Sat, 21 May 2022 06:44:57 -0700 (PDT)
-Received: by mail-oa1-x2a.google.com with SMTP id 586e51a60fabf-f189b07f57so13243384fac.1;
-        Sat, 21 May 2022 06:44:57 -0700 (PDT)
+        Sat, 21 May 2022 10:06:55 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ED9859962
+        for <kernel-janitors@vger.kernel.org>; Sat, 21 May 2022 07:06:53 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id f4so18559027lfu.12
+        for <kernel-janitors@vger.kernel.org>; Sat, 21 May 2022 07:06:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=81spVghcZ1b5INr6qvaKCcFhE6aDceL23pFyCnpeyd8=;
-        b=cFb/+uZVt5A2eDRFqr6mbDYCejXwBZGT/Sx0wVvFw+Rp+PZ1C+eEv36CdOPLCR6xaN
-         Rwph8NqLVvjx1YRR3R7qyH96aPSQcoOs8CPZL2bnlaAUlp3TkGS9T8SR0trwss9RJcU8
-         tQkL9w/njja8xuOceNQamMMf9c1jl183krYYXQMMU/qYB5oSWpXUBrTPiW32tQPsIrGa
-         pgHLJdPYvrnBCGGYDdLoYaiOv09s4R9/P3bztYKm5+CmJa6400tiWfYehOBgnKH9cZG2
-         Ni4fxwQmWXAJMQ+K7zvyGpO4aCe+SG+aDq5btVVBw/35aYSm1/glEWo2MCdT46hSbdpt
-         Iadw==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=G/JiRdkydlLW6miQGBKIde5cpkPs5X1Fjry1L1VttZ8=;
+        b=kyB5ACp5DuAfVmlH0VGXRH77XLo8B/mgLfzsfy8jooXJhmFYVW81Oja6/l3xtcOTa8
+         MM0A/6I5qcbB+I3JU/nsraWIB5cYHPZa3iw13NBrxS67gV3dFCghgpj9i2xuahlWbrIC
+         gBKWxBLL6aoVwoIFDpahsY+rTT5ek7sLMfMZ3wZ7zuz+EXgcXVV56rzw3sGAHiUjJCk6
+         gEy+UDsYF77Gig16w/+57VmWd+zpmiPQCXU9OlH7mqPLRGBoswRYE92/sB3+4oExf2kF
+         TfvkcF37exSKXoC0e6xeaBrloQmxW8z2u42+XhGtadIPZH1hnteqxxZWAOPgWiwrc5al
+         VzcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
-         :subject:content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=81spVghcZ1b5INr6qvaKCcFhE6aDceL23pFyCnpeyd8=;
-        b=w7JBG3e/YHErFE8oVHxxslDgEt1RDtbiVTv/RpB+cHGwdjk4DJ2f9mdq+nc1J+vIz6
-         K2TuzqSucPSP2azM/WuQe6zXNXFw1rjLuC9U9+CpKjHzJ8fTFUKL2x/0r/syMuGHXfs4
-         sTXnZP2jV+/miDlAhfav1b2VLG8pevNRMPRz/ZTrHTR9u12YTd4A1xSNSssN4upGTHPE
-         y24T9uIxH5AVBO3rcjh0CSMouYa7zLhBU8CCuSajfKRzs8HQflIuM102E9GyEGBhyvvu
-         4l0rD8OAAJb1k10WtAWeJoMkUzS0N7H+MeUp5VFkNmXEWuMRs9q5V6kBR0kp6nqO4DZH
-         /Nrw==
-X-Gm-Message-State: AOAM530uILJZDp1QKjyUbVCYdkSHB24DweHjnJnVIH7OFX9XsYuOkA5C
-        woDB8Ac/4CNE55O9kES/X1IVEZ4fAz55ww==
-X-Google-Smtp-Source: ABdhPJwcWAm8eF8epLhg82PB80IgXiUiv7K412i+CXEqjbI/LZyUKUt13QvLtk0c7IZqR6QKuLPF3w==
-X-Received: by 2002:a05:6870:f149:b0:dd:f3b0:986d with SMTP id l9-20020a056870f14900b000ddf3b0986dmr8671712oac.148.1653140697050;
-        Sat, 21 May 2022 06:44:57 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 184-20020aca05c1000000b0032698578409sm2284562oif.38.2022.05.21.06.44.55
+        bh=G/JiRdkydlLW6miQGBKIde5cpkPs5X1Fjry1L1VttZ8=;
+        b=eOpgiVexqkFV1avEf5PHnG7MX6/yiUFDXNxejMV3JsqUyDqeUQQFCv60AN6cDu9/2T
+         HGPgEOX/eu7w/Qg4xXqUzihT61CDRDhqKiYMvFA/Xrh66E0xjPuSa0iXRCTz8h8eN1Tc
+         mLFdavk/eYQ+8g6/QPgpAJwF7CnG2gbt207hTPpCEtNYH9oZ/5DOOBXB56Txv+0ksY5E
+         Oz6SU5QdlPoORvKDMlKvw6kSuZ04KR4awK4RWyGIC7ck/pRUSopUtNcEw5xY88ZToNJR
+         NwqjC92fbRuCq/C3SnY4VRhV5l5funaQJrT0dpeySCKp9+mSgaAo6AuSTZgjvDez7WMV
+         wivg==
+X-Gm-Message-State: AOAM530Hr44iXjUxAyEKQ2/lTJK8rbkqIfPWet5l2c9mufCztcDvkz1b
+        E/SlAvkLIEePvu4mfk1KgVZhGw==
+X-Google-Smtp-Source: ABdhPJwXkIO/E6VJ/I8iMFuOXFk5pyRswYiniF2BoI2fFc5koe9Rg/H/T076e7mIyPPEs68Svxv3eg==
+X-Received: by 2002:a05:6512:b83:b0:44a:9fb7:784b with SMTP id b3-20020a0565120b8300b0044a9fb7784bmr10379431lfv.547.1653142011456;
+        Sat, 21 May 2022 07:06:51 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id o28-20020ac2495c000000b0047255d211c4sm1065940lfi.243.2022.05.21.07.06.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 21 May 2022 06:44:56 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <2cecb83a-ebf2-0f48-e542-8d099c92048d@roeck-us.net>
-Date:   Sat, 21 May 2022 06:44:54 -0700
+        Sat, 21 May 2022 07:06:50 -0700 (PDT)
+Message-ID: <4db8d4df-9cab-a53e-ddd4-84479af46ba8@linaro.org>
+Date:   Sat, 21 May 2022 16:06:49 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.1
-Subject: Re: [PATCH] usb: typec: tcpm: fix typo in comment
+Subject: Re: [PATCH] dmaengine: s3c24xx: fix typo in comment
 Content-Language: en-US
 To:     Julia Lawall <Julia.Lawall@inria.fr>
 Cc:     kernel-janitors@vger.kernel.org,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220521111145.81697-52-Julia.Lawall@inria.fr>
-From:   Guenter Roeck <linux@roeck-us.net>
-In-Reply-To: <20220521111145.81697-52-Julia.Lawall@inria.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20220521111145.81697-46-Julia.Lawall@inria.fr>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220521111145.81697-46-Julia.Lawall@inria.fr>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 5/21/22 04:11, Julia Lawall wrote:
+On 21/05/2022 13:10, Julia Lawall wrote:
 > Spelling mistake (triple letters) in comment.
 > Detected with the help of Coccinelle.
 > 
 > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-> 
-> ---
->   drivers/usb/typec/tcpm/tcpm.c |    2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-> index 3bc2f4ebd1fe..7039383eac6d 100644
-> --- a/drivers/usb/typec/tcpm/tcpm.c
-> +++ b/drivers/usb/typec/tcpm/tcpm.c
-> @@ -471,7 +471,7 @@ struct tcpm_port {
->   
->   	/*
->   	 * When set, port requests PD_P_SNK_STDBY_MW upon entering SNK_DISCOVERY and
-> -	 * the actual currrent limit after RX of PD_CTRL_PSRDY for PD link,
-> +	 * the actual current limit after RX of PD_CTRL_PSRDY for PD link,
->   	 * SNK_READY for non-pd link.
->   	 */
->   	bool slow_charger_loop;
-> 
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
+
+Best regards,
+Krzysztof
