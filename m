@@ -2,43 +2,42 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 225E4C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 11:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 890DCC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 11:14:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354996AbiEULOA (ORCPT
+        id S1355051AbiEULOL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 May 2022 07:14:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48542 "EHLO
+        Sat, 21 May 2022 07:14:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354858AbiEULMp (ORCPT
+        with ESMTP id S1354869AbiEULMp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
         Sat, 21 May 2022 07:12:45 -0400
 Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35C252B18B;
-        Sat, 21 May 2022 04:12:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6586152E69;
+        Sat, 21 May 2022 04:12:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=FijcdnWeNJHGkmGIXKvwmM4MTGHZdgWDIgV1eJ838sw=;
-  b=HLWioN3D7KOIrKtH4lHd6OUnJLBBrp1vadDwRoGPWJKu9oUED85+q9kV
-   tqgb0tuy46WU1Sr+AjRpPA4ZHAv1GnsdabNFfHAmxScFuF7d7ngXm8nuE
-   A5k29y821XahNM3iJceVcTKt47A6DFvA5OAsqNYVgW2kN0ThF/5AnojrD
-   8=;
+  bh=Wk99mUaqxnYUEW+NwKnfH1fDCRBwfV2xeiTwVtMOshw=;
+  b=LQlSNRFHL8ShKiBVUAAQfEELy6DglLWMyM6yheDVfaH0ETbKfljZ9hYs
+   TAdPeiwz+fVl9CqdpFj8GYM7s9IEK3DyHBFlWvVg8NuagIKYvkdUzOxVN
+   1XCUM0RxMo1McRIwONzKTjbyw+vResV4ZsU8fdFShX7qulvzHPIxh/SE7
+   k=;
 Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.91,242,1647298800"; 
-   d="scan'208";a="14727966"
+   d="scan'208";a="14727973"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2022 13:12:03 +0200
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2022 13:12:04 +0200
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Sean Wang <sean.wang@mediatek.com>
-Cc:     kernel-janitors@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dmaengine: mediatek-cqdma: fix typo in comment
-Date:   Sat, 21 May 2022 13:11:11 +0200
-Message-Id: <20220521111145.81697-61-Julia.Lawall@inria.fr>
+To:     Will Deacon <will@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] perf/arm-cci: fix typo in comment
+Date:   Sat, 21 May 2022 13:11:17 +0200
+Message-Id: <20220521111145.81697-67-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -52,20 +51,20 @@ Detected with the help of Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/dma/mediatek/mtk-cqdma.c |    2 +-
+ drivers/perf/arm-cci.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/mediatek/mtk-cqdma.c b/drivers/dma/mediatek/mtk-cqdma.c
-index f8847c48ba03..9ae92b8940ef 100644
---- a/drivers/dma/mediatek/mtk-cqdma.c
-+++ b/drivers/dma/mediatek/mtk-cqdma.c
-@@ -373,7 +373,7 @@ static void mtk_cqdma_tasklet_cb(struct tasklet_struct *t)
+diff --git a/drivers/perf/arm-cci.c b/drivers/perf/arm-cci.c
+index 96e09fa40909..16a272c8d4b3 100644
+--- a/drivers/perf/arm-cci.c
++++ b/drivers/perf/arm-cci.c
+@@ -1139,7 +1139,7 @@ static void cci_pmu_start(struct perf_event *event, int pmu_flags)
  
- 		/*
- 		 * free child CVD after completion.
--		 * the parent CVD would be freeed with desc_free by user.
-+		 * the parent CVD would be freed with desc_free by user.
- 		 */
- 		if (cvd->parent != cvd)
- 			kfree(cvd);
+ 	/*
+ 	 * To handle interrupt latency, we always reprogram the period
+-	 * regardlesss of PERF_EF_RELOAD.
++	 * regardless of PERF_EF_RELOAD.
+ 	 */
+ 	if (pmu_flags & PERF_EF_RELOAD)
+ 		WARN_ON_ONCE(!(hwc->state & PERF_HES_UPTODATE));
 
