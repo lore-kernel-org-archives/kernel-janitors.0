@@ -2,99 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC5F3C433FE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 15:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC42C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 15:28:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348621AbiEUPXD (ORCPT
+        id S239767AbiEUP2f (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 May 2022 11:23:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53288 "EHLO
+        Sat, 21 May 2022 11:28:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239672AbiEUPXC (ORCPT
+        with ESMTP id S235234AbiEUP2d (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 21 May 2022 11:23:02 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E84FA5DD31;
-        Sat, 21 May 2022 08:23:00 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id w4so14990253wrg.12;
-        Sat, 21 May 2022 08:23:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JvR8EfMneLH17KDR7mkxGH6ytw5t2KWJ1oGbwHLRP+I=;
-        b=BE7C1sg9dwzS9wigMsHqlYA7qZQXESfP/NvFZo+4WS6FP3c/O0C/8Ysg6l3Xl5JHlb
-         H0n9t9ts/9kvykGHTILqJFh8Y5wMUns6Jx0LKO3ccTQitCPAFC7jrpHOc53TrCdEvrEl
-         1Qdf4B3/wr6rCHn6hF7TA4OiD9UJZfsshwT1JMXrNpM/MfIe72xSyPCtIfuRlU/uPqHJ
-         GMEsIFoPEVfqsZ0nXmdk/5frWRkyUKOLMzfl+8b+y8z18S27vVxMg/uXEbNdT7cwHuw8
-         XWzYUW8/Uszu/HSs+t2SpLO8RiYRpE3CgjNwrXjvSTQVkKKGFK09W5Dg6qcVBF/wO0Qr
-         cVog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JvR8EfMneLH17KDR7mkxGH6ytw5t2KWJ1oGbwHLRP+I=;
-        b=I2jWe9hMww56LVTzntATmAV6u99OnGpt9wkYdzHNAvt2ex6xB8oWtdwMA7eUqQJa1I
-         lojdYVU19bXYD5doVdVXBlE1vz90cXv8qbews9LMHOze+vjn80wvsAFWOEA5ILXl1Sm+
-         8V9hD8OqAORDWfj/PM2VzuszRQU+QUKIy4a6G3lWdBOu2o+Jl/RqaUO5wxLNHZH0pPDJ
-         rA/4IjnRAVcLGr5D+N1tQXl7dM3h/fSDJxJczwJreg/kyxWbQpsMgYQWMzshAuHDpgLL
-         fGAQpeRtXFnCh14BzAAkIvVU8W83r++GJbM3yu31zFrfwOqLyk27x7cJgvSm3q6n1VR1
-         83Fg==
-X-Gm-Message-State: AOAM531jrt2GQEPq0dyiE0PkWGCYH1Tdm1ku/5/z3jOcO8ZV3REhBCMm
-        PLaDjVjos8EqCYRCy0Cz9eaQf8oWKJTmD1NH8NM=
-X-Google-Smtp-Source: ABdhPJy2otIU6LY2zRIkW7mIAELe35y0IXHfO2ziBmZjskvQSLFDXG9FhwC+MgwvPK6BWB/YN5t8Bs47fz7TL91u8xg=
-X-Received: by 2002:a5d:4892:0:b0:20c:d4eb:1886 with SMTP id
- g18-20020a5d4892000000b0020cd4eb1886mr13053812wrq.96.1653146579366; Sat, 21
- May 2022 08:22:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220521111145.81697-36-Julia.Lawall@inria.fr>
-In-Reply-To: <20220521111145.81697-36-Julia.Lawall@inria.fr>
-From:   Vasily Khoruzhick <anarsoul@gmail.com>
-Date:   Sat, 21 May 2022 08:22:32 -0700
-Message-ID: <CA+E=qVc-_NbBhybRs8aAU324_GMYAokmZT3mQZN796x6u090oQ@mail.gmail.com>
-Subject: Re: [PATCH] thermal: sun8i: fix typo in comment
+        Sat, 21 May 2022 11:28:33 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FEF36161B;
+        Sat, 21 May 2022 08:28:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8368E60DD4;
+        Sat, 21 May 2022 15:28:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06D1EC385A5;
+        Sat, 21 May 2022 15:28:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653146910;
+        bh=AIDLIbiM3xgYCLX2XEeSflOaYYKL7d+10fkOYwkK2EU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=K+WxHnneXjL/20w2aIWiw+f4dHin6WyiZNiBWel/jpsprVdcTELFSzyhYkDszCqIb
+         JhgtBt4XEzekfBJxYA79GDXD3CmDWQSJ26U7xb0AAtybduaULJI8knRLfpiILH6uGz
+         Px2IAUNlqCXVRsZWUGI0gLdU3Ar5gVH2K6StZmMdCBAGnOy0e1QJAJCti3fc3mxxVK
+         P+FFyB3WN6ihtY0HHVgO5YEs3S/reug6I3vRAO6xfMwLt7BxRODZzsMXXe/Im2262y
+         3j3HKK6EyqRYSVkhPPth34PB+RE+M6WTg4N5s8J7pQA9ZEwW8HZPSuaUHAk5OXQKU2
+         Wtv5OtRU/DP2A==
+Date:   Sun, 22 May 2022 00:28:26 +0900
+From:   Masami Hiramatsu (Google) <mhiramat@kernel.org>
 To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     kernel-janitors@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        arm-linux <linux-arm-kernel@lists.infradead.org>,
-        linux-sunxi@lists.linux.dev,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+        kernel-janitors@vger.kernel.org,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kprobes: fix typo in comment
+Message-Id: <20220522002826.b1afffb4d70b0be5c0dce363@kernel.org>
+In-Reply-To: <20220521111145.81697-63-Julia.Lawall@inria.fr>
+References: <20220521111145.81697-63-Julia.Lawall@inria.fr>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, May 21, 2022 at 4:11 AM Julia Lawall <Julia.Lawall@inria.fr> wrote:
->
+On Sat, 21 May 2022 13:11:13 +0200
+Julia Lawall <Julia.Lawall@inria.fr> wrote:
+
 > Spelling mistake (triple letters) in comment.
 > Detected with the help of Coccinelle.
->
+> 
 > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Acked-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Looks good to me.
 
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thank you!
+
+> 
 > ---
->  drivers/thermal/sun8i_thermal.c |    2 +-
+>  kernel/kprobes.c |    2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/thermal/sun8i_thermal.c b/drivers/thermal/sun8i_thermal.c
-> index d9cd23cbb671..212c87e63a66 100644
-> --- a/drivers/thermal/sun8i_thermal.c
-> +++ b/drivers/thermal/sun8i_thermal.c
-> @@ -237,7 +237,7 @@ static int sun50i_h6_ths_calibrate(struct ths_device *tmdev,
->          * The calibration data on the H6 is the ambient temperature and
->          * sensor values that are filled during the factory test stage.
->          *
-> -        * The unit of stored FT temperature is 0.1 degreee celusis.
-> +        * The unit of stored FT temperature is 0.1 degree celsius.
->          *
->          * We need to calculate a delta between measured and caluclated
->          * register values and this will become a calibration offset.
->
+> 
+> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> index dd58c0be9ce2..4721b76e61a1 100644
+> --- a/kernel/kprobes.c
+> +++ b/kernel/kprobes.c
+> @@ -651,7 +651,7 @@ void wait_for_kprobe_optimizer(void)
+>  	while (!list_empty(&optimizing_list) || !list_empty(&unoptimizing_list)) {
+>  		mutex_unlock(&kprobe_mutex);
+>  
+> -		/* This will also make 'optimizing_work' execute immmediately */
+> +		/* This will also make 'optimizing_work' execute immediately */
+>  		flush_delayed_work(&optimizing_work);
+>  		/* 'optimizing_work' might not have been queued yet, relax */
+>  		cpu_relax();
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
