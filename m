@@ -2,93 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5487CC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 10:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A406FC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 11:12:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231629AbiEUK3A (ORCPT
+        id S240282AbiEULL7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 May 2022 06:29:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36920 "EHLO
+        Sat, 21 May 2022 07:11:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229725AbiEUK26 (ORCPT
+        with ESMTP id S232785AbiEULL5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 21 May 2022 06:28:58 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13A1D1053C9;
-        Sat, 21 May 2022 03:28:57 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A0EF961211;
-        Sat, 21 May 2022 10:28:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CA57C385A9;
-        Sat, 21 May 2022 10:28:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653128936;
-        bh=RSUo/hdb+FVQEL0K3q6Q4nfnWm+qkD2uvJI2Uca9Bmc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Q/x0Npmn5VBdfdFRbsRtt93IVd4doEfqU4LqXBlkij4A+F8XXJejgO96kpyeQ6Som
-         4nXO8YaPBXAMalAdGEoYUzFDDR+KbbSUTC+vDXDRJ17DgagO7NKSLshT8DdPU3YbkU
-         xmV7E/HJH4PF3l+RN2eto2cBE8hHnZnX/061aRvD++t4UmI/LrrDYnEbjOc2t5viui
-         0e10A7+CuoLUYD311APZSLsDVwk/nm/QZB7lmWDOMDSQJPQ7thDAf5yNUpzWzSIam0
-         iUaCFuGOCblfudHGaNQDVJirh+356OniEbdbOPpJJPjz+8kevMb7xPR05ueviM45IH
-         TfM1frIYT83Yg==
-Date:   Sat, 21 May 2022 12:28:52 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Andy Gross <agross@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] i2c: qcom-geni: remove unnecessary conditions
-Message-ID: <Yoi+5Fkn7+8whKcm@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Andy Gross <agross@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20220307125603.GB16710@kili>
+        Sat, 21 May 2022 07:11:57 -0400
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB33E28E33;
+        Sat, 21 May 2022 04:11:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=PEU9affgeZhDX6UaeMjpJBFgyNsPGkNFADvJNRiJsFc=;
+  b=sFmnco1F3VWho/jp4jaBC3UgzNj3K3YMQcdkAXiKIuzTNs3Sux+iJX1X
+   urFBJ+YjkQQ4poNViGRDHl/8rbhnWezUjTDW/D9sor9DvOMlxtfEDux8f
+   /3U8joXWv0rYRGz4CZx5DP+HMepa8hUxzl+Fkf6vZnakxRTjI40/RKnJj
+   I=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="5.91,242,1647298800"; 
+   d="scan'208";a="14727888"
+Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2022 13:11:52 +0200
+From:   Julia Lawall <Julia.Lawall@inria.fr>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org
+Subject: [PATCH] panic: fix typo in comment
+Date:   Sat, 21 May 2022 13:10:12 +0200
+Message-Id: <20220521111145.81697-2-Julia.Lawall@inria.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="folh36nxpehRSWJR"
-Content-Disposition: inline
-In-Reply-To: <20220307125603.GB16710@kili>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Spelling mistake (triple letters) in comment.
+Detected with the help of Coccinelle.
 
---folh36nxpehRSWJR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-On Mon, Mar 07, 2022 at 03:56:03PM +0300, Dan Carpenter wrote:
-> We know that "ret" is a negative error code at this point so there is
-> no need to check.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ kernel/panic.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to for-next, thanks!
+diff --git a/kernel/panic.c b/kernel/panic.c
+index a3c758dba15a..98963c52b608 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -340,7 +340,7 @@ void panic(const char *fmt, ...)
+ 	 * buffer.  Try to acquire the lock then release it regardless of the
+ 	 * result.  The release will also print the buffers out.  Locks debug
+ 	 * should be disabled to avoid reporting bad unlock balance when
+-	 * panic() is not being callled from OOPS.
++	 * panic() is not being called from OOPS.
+ 	 */
+ 	debug_locks_off();
+ 	console_flush_on_panic(CONSOLE_FLUSH_PENDING);
 
-
---folh36nxpehRSWJR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmKIvuQACgkQFA3kzBSg
-KbZK/BAAiV6DDTVatgnvmW6bM4q0wIlQsq4rML0w0tmthyskSmhOFki/OFEH4hoW
-s3Z8Rrsfm9O4vEVf3YrqyASdfSVFxKxCVKBy5mUHrozBfZa5pbymoBnRnuQTf98/
-OVFXje9iDr9GysNSW4E6PWBnyjs4qvsAbQGLLmvDFcokEoJ4dFV4rFz2OMtailFT
-XexidptGh04+8twSu4v/8IE10OF2liXrrbCOVVQTY/IOvwy979ILSHtFbn8FMVyY
-T/jQ7mLmwOpHProQI8YeVJpd6tXp7X8VJ3HAafLXqfpd393mlHZj3K8Sebf/nqTz
-jcA3OkOUrq3FsBw30ObZ7R+2AnHUWkbDtTj74drL9tF925a3zCKUo16lr2IwGUdL
-j/6c5zUjIxhkYpPdSRxkZeaAbVKTQBTijP31EqtDcP1oBqPH9pacB7JbdpePznNB
-ck3okQ4tHYZqFie+k5oDNdvHJbOp4JUeEM6DK3koEjrDIIJRXJOlBLlWoEPLNsYu
-i5QoIR4MDvaVmVXkM/JHXul0/Bd2F/bGW5kc51A7o6CHln+2ucqUTvpG0fx26Kqe
-+thWi3Iq+AIsOoOscASu0nJ2tfyt5AXF8Fqg6OGWTckJho8n4bckFJJjQJ7hnFeV
-8K7HQqMQTYrNpmMyIgA8U/AR0gsa1AClg/5qqmvUt5sqDe5JWO8=
-=QWMR
------END PGP SIGNATURE-----
-
---folh36nxpehRSWJR--
