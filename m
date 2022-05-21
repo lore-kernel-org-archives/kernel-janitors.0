@@ -2,50 +2,44 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDCD7C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 11:16:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB92C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 11:16:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244732AbiEULQJ (ORCPT
+        id S1345754AbiEULQL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 May 2022 07:16:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47808 "EHLO
+        Sat, 21 May 2022 07:16:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354945AbiEULM7 (ORCPT
+        with ESMTP id S1354926AbiEULM5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 21 May 2022 07:12:59 -0400
+        Sat, 21 May 2022 07:12:57 -0400
 Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DFF5D0287;
-        Sat, 21 May 2022 04:12:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 891A190CCB;
+        Sat, 21 May 2022 04:12:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=d94EiU7I4dYEf/e8AGlSALnSLNIwuUWhlAtOJ2fj7AE=;
-  b=Oz3S4nFWXWBAM+iu7fkLDRrlzwyi5PJ5WLqB+yoQt/IBI3R8CAgCAIB8
-   zAVDkXmGNSb4IrZG1h4zI30RnSV9+vaiu+mXkOFtBKPA5gup9+5cGG4/q
-   1W3DLvh/aPLl/qgUr7tGM4VC1W5JEyaJETifgRGeKh9/sO2qtDrWpOGd0
-   8=;
+  bh=xYRDzENhcBEuFr81DrVcFNYvESNY7pY0uh+ZFfsrubc=;
+  b=mwi8F52nRAJS/SCf5EATUYUfIAI6y/v0GfB0UGgdxVwjI/Kjmo4navwg
+   smYeKb71pADASm2LiGK4wqZCH9huQffnINw//0bTCygwO5wb4sOBs3xw2
+   AWaKaIksjC0ogK0+eELj5y7K0LN1AhaOHdDSA0jdHodqQSoP0aN8jpkjF
+   U=;
 Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.91,242,1647298800"; 
-   d="scan'208";a="14727984"
+   d="scan'208";a="14727981"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2022 13:12:05 +0200
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Olivier Moysan <olivier.moysan@foss.st.com>
-Cc:     kernel-janitors@vger.kernel.org,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        alsa-devel@alsa-project.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: stm32: dfsdm: fix typo in comment
-Date:   Sat, 21 May 2022 13:11:26 +0200
-Message-Id: <20220521111145.81697-76-Julia.Lawall@inria.fr>
+To:     Simon Horman <simon.horman@corigine.com>
+Cc:     kernel-janitors@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>, oss-drivers@corigine.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] nfp: flower: fix typo in comment
+Date:   Sat, 21 May 2022 13:11:23 +0200
+Message-Id: <20220521111145.81697-73-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -59,20 +53,20 @@ Detected with the help of Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- sound/soc/stm/stm32_adfsdm.c |    2 +-
+ drivers/net/ethernet/netronome/nfp/flower/lag_conf.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/stm/stm32_adfsdm.c b/sound/soc/stm/stm32_adfsdm.c
-index 6ee714542b84..122805160e70 100644
---- a/sound/soc/stm/stm32_adfsdm.c
-+++ b/sound/soc/stm/stm32_adfsdm.c
-@@ -296,7 +296,7 @@ static int stm32_adfsdm_pcm_new(struct snd_soc_component *component,
- static int stm32_adfsdm_dummy_cb(const void *data, void *private)
- {
- 	/*
--	 * This dummmy callback is requested by iio_channel_get_all_cb() API,
-+	 * This dummy callback is requested by iio_channel_get_all_cb() API,
- 	 * but the stm32_dfsdm_get_buff_cb() API is used instead, to optimize
- 	 * DMA transfers.
- 	 */
+diff --git a/drivers/net/ethernet/netronome/nfp/flower/lag_conf.c b/drivers/net/ethernet/netronome/nfp/flower/lag_conf.c
+index 63907aeb3884..ede90e086b28 100644
+--- a/drivers/net/ethernet/netronome/nfp/flower/lag_conf.c
++++ b/drivers/net/ethernet/netronome/nfp/flower/lag_conf.c
+@@ -576,7 +576,7 @@ nfp_fl_lag_changeupper_event(struct nfp_fl_lag *lag,
+ 	group->dirty = true;
+ 	group->slave_cnt = slave_count;
+ 
+-	/* Group may have been on queue for removal but is now offfloable. */
++	/* Group may have been on queue for removal but is now offloable. */
+ 	group->to_remove = false;
+ 	mutex_unlock(&lag->lock);
+ 
 
