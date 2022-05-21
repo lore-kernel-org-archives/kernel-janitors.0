@@ -2,92 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E1E1C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 14:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC5F3C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 15:23:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244336AbiEUOUj (ORCPT
+        id S1348621AbiEUPXD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 May 2022 10:20:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57982 "EHLO
+        Sat, 21 May 2022 11:23:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237800AbiEUOUh (ORCPT
+        with ESMTP id S239672AbiEUPXC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 21 May 2022 10:20:37 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98ADF63385
-        for <kernel-janitors@vger.kernel.org>; Sat, 21 May 2022 07:20:36 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nsPy0-0007em-SO; Sat, 21 May 2022 16:20:28 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nsPy0-003hyM-58; Sat, 21 May 2022 16:20:26 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nsPxy-00BCXz-4p; Sat, 21 May 2022 16:20:26 +0200
-Date:   Sat, 21 May 2022 16:20:23 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pwm: atmel-tcb: fix typo in comment
-Message-ID: <20220521142023.qbk4s2gydpox7c2w@pengutronix.de>
-References: <20220521111145.81697-22-Julia.Lawall@inria.fr>
+        Sat, 21 May 2022 11:23:02 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E84FA5DD31;
+        Sat, 21 May 2022 08:23:00 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id w4so14990253wrg.12;
+        Sat, 21 May 2022 08:23:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JvR8EfMneLH17KDR7mkxGH6ytw5t2KWJ1oGbwHLRP+I=;
+        b=BE7C1sg9dwzS9wigMsHqlYA7qZQXESfP/NvFZo+4WS6FP3c/O0C/8Ysg6l3Xl5JHlb
+         H0n9t9ts/9kvykGHTILqJFh8Y5wMUns6Jx0LKO3ccTQitCPAFC7jrpHOc53TrCdEvrEl
+         1Qdf4B3/wr6rCHn6hF7TA4OiD9UJZfsshwT1JMXrNpM/MfIe72xSyPCtIfuRlU/uPqHJ
+         GMEsIFoPEVfqsZ0nXmdk/5frWRkyUKOLMzfl+8b+y8z18S27vVxMg/uXEbNdT7cwHuw8
+         XWzYUW8/Uszu/HSs+t2SpLO8RiYRpE3CgjNwrXjvSTQVkKKGFK09W5Dg6qcVBF/wO0Qr
+         cVog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JvR8EfMneLH17KDR7mkxGH6ytw5t2KWJ1oGbwHLRP+I=;
+        b=I2jWe9hMww56LVTzntATmAV6u99OnGpt9wkYdzHNAvt2ex6xB8oWtdwMA7eUqQJa1I
+         lojdYVU19bXYD5doVdVXBlE1vz90cXv8qbews9LMHOze+vjn80wvsAFWOEA5ILXl1Sm+
+         8V9hD8OqAORDWfj/PM2VzuszRQU+QUKIy4a6G3lWdBOu2o+Jl/RqaUO5wxLNHZH0pPDJ
+         rA/4IjnRAVcLGr5D+N1tQXl7dM3h/fSDJxJczwJreg/kyxWbQpsMgYQWMzshAuHDpgLL
+         fGAQpeRtXFnCh14BzAAkIvVU8W83r++GJbM3yu31zFrfwOqLyk27x7cJgvSm3q6n1VR1
+         83Fg==
+X-Gm-Message-State: AOAM531jrt2GQEPq0dyiE0PkWGCYH1Tdm1ku/5/z3jOcO8ZV3REhBCMm
+        PLaDjVjos8EqCYRCy0Cz9eaQf8oWKJTmD1NH8NM=
+X-Google-Smtp-Source: ABdhPJy2otIU6LY2zRIkW7mIAELe35y0IXHfO2ziBmZjskvQSLFDXG9FhwC+MgwvPK6BWB/YN5t8Bs47fz7TL91u8xg=
+X-Received: by 2002:a5d:4892:0:b0:20c:d4eb:1886 with SMTP id
+ g18-20020a5d4892000000b0020cd4eb1886mr13053812wrq.96.1653146579366; Sat, 21
+ May 2022 08:22:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="tnsdnebowjixthkb"
-Content-Disposition: inline
-In-Reply-To: <20220521111145.81697-22-Julia.Lawall@inria.fr>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+References: <20220521111145.81697-36-Julia.Lawall@inria.fr>
+In-Reply-To: <20220521111145.81697-36-Julia.Lawall@inria.fr>
+From:   Vasily Khoruzhick <anarsoul@gmail.com>
+Date:   Sat, 21 May 2022 08:22:32 -0700
+Message-ID: <CA+E=qVc-_NbBhybRs8aAU324_GMYAokmZT3mQZN796x6u090oQ@mail.gmail.com>
+Subject: Re: [PATCH] thermal: sun8i: fix typo in comment
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     kernel-janitors@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        arm-linux <linux-arm-kernel@lists.infradead.org>,
+        linux-sunxi@lists.linux.dev,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
---tnsdnebowjixthkb
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, May 21, 2022 at 01:10:32PM +0200, Julia Lawall wrote:
+On Sat, May 21, 2022 at 4:11 AM Julia Lawall <Julia.Lawall@inria.fr> wrote:
+>
 > Spelling mistake (triple letters) in comment.
 > Detected with the help of Coccinelle.
->=20
+>
 > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+Acked-by: Vasily Khoruzhick <anarsoul@gmail.com>
 
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---tnsdnebowjixthkb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEyBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmKI9SQACgkQwfwUeK3K
-7An1EQf3bDnHc/rwmXW/hxQYgjXTU66lI9Zhkw5vRZWJgMerGFoWG5K5cyNNv/5Y
-iq5MHhKURCOHVHyRfICTKuOOzpYrWanJajIbgYEB+N8shtt9dixlkFwDzWhqDIUj
-ceBdQQfZInYER2tWakDdkJgt6JndTwdJcQrMEB8NEIS5f+jJZNN22BtiGdqpmgrH
-zwinSNDCtnnOID3LPDmKhk3TgHlQZElkesUJtfyX6if55mI+mQbcCUd7TjnFzHIL
-0nJ4WwGDwO4hLfYe1iU4whJ63ETLyW5nt9NUZ7f5Wi5qgD5dAv9SawPvOTamGwSs
-G1nyZXV+f/OkfBsuepRQHgsYEPYJ
-=o9OB
------END PGP SIGNATURE-----
-
---tnsdnebowjixthkb--
+> ---
+>  drivers/thermal/sun8i_thermal.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/thermal/sun8i_thermal.c b/drivers/thermal/sun8i_thermal.c
+> index d9cd23cbb671..212c87e63a66 100644
+> --- a/drivers/thermal/sun8i_thermal.c
+> +++ b/drivers/thermal/sun8i_thermal.c
+> @@ -237,7 +237,7 @@ static int sun50i_h6_ths_calibrate(struct ths_device *tmdev,
+>          * The calibration data on the H6 is the ambient temperature and
+>          * sensor values that are filled during the factory test stage.
+>          *
+> -        * The unit of stored FT temperature is 0.1 degreee celusis.
+> +        * The unit of stored FT temperature is 0.1 degree celsius.
+>          *
+>          * We need to calculate a delta between measured and caluclated
+>          * register values and this will become a calibration offset.
+>
