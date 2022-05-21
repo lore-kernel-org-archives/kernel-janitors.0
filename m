@@ -2,93 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D3BC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 09:04:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5487CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 10:29:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241409AbiEUJEt (ORCPT
+        id S231629AbiEUK3A (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 May 2022 05:04:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47870 "EHLO
+        Sat, 21 May 2022 06:29:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232591AbiEUJEq (ORCPT
+        with ESMTP id S229725AbiEUK26 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 21 May 2022 05:04:46 -0400
-Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC381D6808
-        for <kernel-janitors@vger.kernel.org>; Sat, 21 May 2022 02:04:44 -0700 (PDT)
-Received: from pop-os.home ([86.243.180.246])
-        by smtp.orange.fr with ESMTPA
-        id sL2Nnv20T4LtqsL2NnX8nM; Sat, 21 May 2022 11:04:42 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 21 May 2022 11:04:42 +0200
-X-ME-IP: 86.243.180.246
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     dan.carpenter@oracle.com, Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-kbuild@vger.kernel.org
-Subject: [RFC PATCH] kbuild: Add an option to enable -O1 and speed-up compilation time
-Date:   Sat, 21 May 2022 11:04:29 +0200
-Message-Id: <23e0ba7863d51ab629498762a97d477645aeafea.1653123744.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sat, 21 May 2022 06:28:58 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13A1D1053C9;
+        Sat, 21 May 2022 03:28:57 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A0EF961211;
+        Sat, 21 May 2022 10:28:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CA57C385A9;
+        Sat, 21 May 2022 10:28:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653128936;
+        bh=RSUo/hdb+FVQEL0K3q6Q4nfnWm+qkD2uvJI2Uca9Bmc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Q/x0Npmn5VBdfdFRbsRtt93IVd4doEfqU4LqXBlkij4A+F8XXJejgO96kpyeQ6Som
+         4nXO8YaPBXAMalAdGEoYUzFDDR+KbbSUTC+vDXDRJ17DgagO7NKSLshT8DdPU3YbkU
+         xmV7E/HJH4PF3l+RN2eto2cBE8hHnZnX/061aRvD++t4UmI/LrrDYnEbjOc2t5viui
+         0e10A7+CuoLUYD311APZSLsDVwk/nm/QZB7lmWDOMDSQJPQ7thDAf5yNUpzWzSIam0
+         iUaCFuGOCblfudHGaNQDVJirh+356OniEbdbOPpJJPjz+8kevMb7xPR05ueviM45IH
+         TfM1frIYT83Yg==
+Date:   Sat, 21 May 2022 12:28:52 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Andy Gross <agross@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] i2c: qcom-geni: remove unnecessary conditions
+Message-ID: <Yoi+5Fkn7+8whKcm@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Andy Gross <agross@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20220307125603.GB16710@kili>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="folh36nxpehRSWJR"
+Content-Disposition: inline
+In-Reply-To: <20220307125603.GB16710@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Add a new compilation option which speeds-up compilation time.
-This can be useful when using static checker such as smatch or build-bots.
-In such cases, the speed and quality of the generated code is not
-important.
 
-Using -O0 would be even better, but unfortunately, building fails with
-this option.
+--folh36nxpehRSWJR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- Makefile     | 5 ++++-
- init/Kconfig | 8 ++++++++
- 2 files changed, 12 insertions(+), 1 deletion(-)
+On Mon, Mar 07, 2022 at 03:56:03PM +0300, Dan Carpenter wrote:
+> We know that "ret" is a negative error code at this point so there is
+> no need to check.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-diff --git a/Makefile b/Makefile
-index 1f8bef92868f..14467386f947 100644
---- a/Makefile
-+++ b/Makefile
-@@ -817,7 +817,10 @@ KBUILD_CFLAGS	+= $(call cc-disable-warning, format-truncation)
- KBUILD_CFLAGS	+= $(call cc-disable-warning, format-overflow)
- KBUILD_CFLAGS	+= $(call cc-disable-warning, address-of-packed-member)
- 
--ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
-+ifdef CONFIG_CC_OPTIMIZE_FOR_COMPILATION_SPEED
-+KBUILD_CFLAGS += -O1
-+KBUILD_RUSTFLAGS_OPT_LEVEL_MAP := 1
-+else ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
- KBUILD_CFLAGS += -O2
- KBUILD_RUSTFLAGS_OPT_LEVEL_MAP := 2
- else ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3
-diff --git a/init/Kconfig b/init/Kconfig
-index a96776a9b080..3177a1830c9a 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1384,6 +1384,14 @@ choice
- 	prompt "Compiler optimization level"
- 	default CC_OPTIMIZE_FOR_PERFORMANCE
- 
-+config CC_OPTIMIZE_FOR_COMPILATION_SPEED
-+	bool "Optimize for compilation speed (-O1)"
-+	help
-+	  This option can be useful when running a static checker such as smatch
-+	  or a build-bot.
-+	  Compilation time is slighly faster than -O2 and it requires less
-+	  memory.
-+
- config CC_OPTIMIZE_FOR_PERFORMANCE
- 	bool "Optimize for performance (-O2)"
- 	help
--- 
-2.34.1
+Applied to for-next, thanks!
 
+
+--folh36nxpehRSWJR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmKIvuQACgkQFA3kzBSg
+KbZK/BAAiV6DDTVatgnvmW6bM4q0wIlQsq4rML0w0tmthyskSmhOFki/OFEH4hoW
+s3Z8Rrsfm9O4vEVf3YrqyASdfSVFxKxCVKBy5mUHrozBfZa5pbymoBnRnuQTf98/
+OVFXje9iDr9GysNSW4E6PWBnyjs4qvsAbQGLLmvDFcokEoJ4dFV4rFz2OMtailFT
+XexidptGh04+8twSu4v/8IE10OF2liXrrbCOVVQTY/IOvwy979ILSHtFbn8FMVyY
+T/jQ7mLmwOpHProQI8YeVJpd6tXp7X8VJ3HAafLXqfpd393mlHZj3K8Sebf/nqTz
+jcA3OkOUrq3FsBw30ObZ7R+2AnHUWkbDtTj74drL9tF925a3zCKUo16lr2IwGUdL
+j/6c5zUjIxhkYpPdSRxkZeaAbVKTQBTijP31EqtDcP1oBqPH9pacB7JbdpePznNB
+ck3okQ4tHYZqFie+k5oDNdvHJbOp4JUeEM6DK3koEjrDIIJRXJOlBLlWoEPLNsYu
+i5QoIR4MDvaVmVXkM/JHXul0/Bd2F/bGW5kc51A7o6CHln+2ucqUTvpG0fx26Kqe
++thWi3Iq+AIsOoOscASu0nJ2tfyt5AXF8Fqg6OGWTckJho8n4bckFJJjQJ7hnFeV
+8K7HQqMQTYrNpmMyIgA8U/AR0gsa1AClg/5qqmvUt5sqDe5JWO8=
+=QWMR
+-----END PGP SIGNATURE-----
+
+--folh36nxpehRSWJR--
