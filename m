@@ -2,41 +2,43 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3AA7C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 11:16:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B25C9C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 11:16:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229726AbiEULQY (ORCPT
+        id S1354232AbiEULQ1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 May 2022 07:16:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53034 "EHLO
+        Sat, 21 May 2022 07:16:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354882AbiEULNd (ORCPT
+        with ESMTP id S231415AbiEULNn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 21 May 2022 07:13:33 -0400
+        Sat, 21 May 2022 07:13:43 -0400
 Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FD3DFD343;
-        Sat, 21 May 2022 04:12:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E63BED7BC;
+        Sat, 21 May 2022 04:12:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=pWoCUGdviuZI5iODDD1JF7dkvDTJv+5eX8iN8NQct24=;
-  b=K28lkGiaOe5KEVzwtoRzMjs8mJixl0TNpMEoax6CmaSF6VwjJaL5zM+4
-   4tWYS44QfuCYv6332Qyl/fW8XwFxFTd8+xrHGFtboM34H9uFFHQwKPb+D
-   PPzeZWszzPtQKFKgwqH+JMbR79g1wFr+PvDtYyfDU1dzWQuWWMoK+Hwmf
-   I=;
+  bh=D055PQLkjddNqPyjiz+oZSg3+qohn0RJAVU0RfJ3zO8=;
+  b=D1DYV78fCgx2bJAjVsccQuSTWgCm1Tp8hYqxlyeysjBjvuNrzOWBrRQN
+   vfB/DGNaSQR3mf9pRqHzwrxdD4JSEJs6a8nukC7d/5Xjdw452Zh5dHgXa
+   h2+Y9sax3ICIC38MbzjcBsD9edg9KKz1Rnop57kU1Fn+/BZnGCHvZ5JuP
+   U=;
 Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.91,242,1647298800"; 
-   d="scan'208";a="14727989"
+   d="scan'208";a="14727987"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2022 13:12:06 +0200
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     kernel-janitors@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+To:     Liam Girdwood <lgirdwood@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] ftrace: fix typo in comment
-Date:   Sat, 21 May 2022 13:11:31 +0200
-Message-Id: <20220521111145.81697-81-Julia.Lawall@inria.fr>
+Subject: [PATCH] ASoC: amd: acp: fix typo in comment
+Date:   Sat, 21 May 2022 13:11:29 +0200
+Message-Id: <20220521111145.81697-79-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -50,20 +52,20 @@ Detected with the help of Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- kernel/trace/ftrace.c |    2 +-
+ sound/soc/amd/acp/acp-pdm.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index c12bcd26cb17..500c469144d5 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -119,7 +119,7 @@ struct ftrace_ops __rcu *ftrace_ops_list __read_mostly = &ftrace_list_end;
- ftrace_func_t ftrace_trace_function __read_mostly = ftrace_stub;
- struct ftrace_ops global_ops;
+diff --git a/sound/soc/amd/acp/acp-pdm.c b/sound/soc/amd/acp/acp-pdm.c
+index 424c6e0bb9d6..7a0b26a30051 100644
+--- a/sound/soc/amd/acp/acp-pdm.c
++++ b/sound/soc/amd/acp/acp-pdm.c
+@@ -174,7 +174,7 @@ static void acp_dmic_dai_shutdown(struct snd_pcm_substream *substream,
+ 	struct acp_dev_data *adata = dev_get_drvdata(dev);
+ 	u32 ext_int_ctrl;
  
--/* Defined by vmlinux.lds.h see the commment above arch_ftrace_ops_list_func for details */
-+/* Defined by vmlinux.lds.h see the comment above arch_ftrace_ops_list_func for details */
- void ftrace_ops_list_func(unsigned long ip, unsigned long parent_ip,
- 			  struct ftrace_ops *op, struct ftrace_regs *fregs);
- 
+-	/* Disable DMIC interrrupts */
++	/* Disable DMIC interrupts */
+ 	ext_int_ctrl = readl(adata->acp_base + ACP_EXTERNAL_INTR_CNTL);
+ 	ext_int_ctrl |= ~PDM_DMA_INTR_MASK;
+ 	writel(ext_int_ctrl, adata->acp_base + ACP_EXTERNAL_INTR_CNTL);
 
