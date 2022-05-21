@@ -2,40 +2,35 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBB8C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 06:57:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 755DBC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 06:59:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240511AbiEUG5X (ORCPT
+        id S240562AbiEUG7q (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 May 2022 02:57:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43328 "EHLO
+        Sat, 21 May 2022 02:59:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240395AbiEUG5V (ORCPT
+        with ESMTP id S235451AbiEUG7o (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 21 May 2022 02:57:21 -0400
-Received: from smtp.smtpout.orange.fr (smtp01.smtpout.orange.fr [80.12.242.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D643F17996C
-        for <kernel-janitors@vger.kernel.org>; Fri, 20 May 2022 23:57:19 -0700 (PDT)
+        Sat, 21 May 2022 02:59:44 -0400
+Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB55A17EC38
+        for <kernel-janitors@vger.kernel.org>; Fri, 20 May 2022 23:59:42 -0700 (PDT)
 Received: from pop-os.home ([86.243.180.246])
         by smtp.orange.fr with ESMTPA
-        id sJ34n96Lf3JPEsJ34n8Vfn; Sat, 21 May 2022 08:57:17 +0200
+        id sJ5QntxL2dfessJ5QnlRCH; Sat, 21 May 2022 08:59:41 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 21 May 2022 08:57:17 +0200
+X-ME-Date: Sat, 21 May 2022 08:59:41 +0200
 X-ME-IP: 86.243.180.246
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jesse Brandeburg <jesse.brandeburg@intel.com>,
-        Tony Nguyen <anthony.l.nguyen@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
+To:     Mark Brown <broonie@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Subject: [PATCH] ice: Use correct order for the parameters of devm_kcalloc()
-Date:   Sat, 21 May 2022 08:57:13 +0200
-Message-Id: <627df513c3acf65f9aa5f43ca2bf7826a73c0c7b.1653116222.git.christophe.jaillet@wanadoo.fr>
+        linux-spi@vger.kernel.org
+Subject: [PATCH] spi: intel: Use correct order for the parameters of devm_kcalloc()
+Date:   Sat, 21 May 2022 08:59:35 +0200
+Message-Id: <d114558dd0351b863ced8cc01b31754a5a4b960d.1653116362.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -47,36 +42,26 @@ We should have 'n', then 'size', not the opposite.
 This is harmless because the 2 values are just multiplied, but having
 the correct order silence a (unpublished yet) smatch warning.
 
-While at it use '*tun_seg' instead '*seg'. The both variable have the same
-type, so the result is the same, but it lokks more logical.
-
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c | 4 ++--
+ drivers/spi/spi-intel.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c b/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
-index 5d10c4f84a36..ead6d50fc0ad 100644
---- a/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
-+++ b/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
-@@ -852,7 +852,7 @@ ice_create_init_fdir_rule(struct ice_pf *pf, enum ice_fltr_ptype flow)
- 	if (!seg)
+diff --git a/drivers/spi/spi-intel.c b/drivers/spi/spi-intel.c
+index 50f42983b950..66063687ae27 100644
+--- a/drivers/spi/spi-intel.c
++++ b/drivers/spi/spi-intel.c
+@@ -1236,8 +1236,8 @@ static int intel_spi_populate_chip(struct intel_spi *ispi)
  		return -ENOMEM;
  
--	tun_seg = devm_kcalloc(dev, sizeof(*seg), ICE_FD_HW_SEG_MAX,
-+	tun_seg = devm_kcalloc(dev, ICE_FD_HW_SEG_MAX, sizeof(*tun_seg),
- 			       GFP_KERNEL);
- 	if (!tun_seg) {
- 		devm_kfree(dev, seg);
-@@ -1214,7 +1214,7 @@ ice_cfg_fdir_xtrct_seq(struct ice_pf *pf, struct ethtool_rx_flow_spec *fsp,
- 	if (!seg)
+ 	pdata->nr_parts = 1;
+-	pdata->parts = devm_kcalloc(ispi->dev, sizeof(*pdata->parts),
+-				    pdata->nr_parts, GFP_KERNEL);
++	pdata->parts = devm_kcalloc(ispi->dev, pdata->nr_parts,
++				    sizeof(*pdata->parts), GFP_KERNEL);
+ 	if (!pdata->parts)
  		return -ENOMEM;
  
--	tun_seg = devm_kcalloc(dev, sizeof(*seg), ICE_FD_HW_SEG_MAX,
-+	tun_seg = devm_kcalloc(dev, ICE_FD_HW_SEG_MAX, sizeof(*tun_seg),
- 			       GFP_KERNEL);
- 	if (!tun_seg) {
- 		devm_kfree(dev, seg);
 -- 
 2.34.1
 
