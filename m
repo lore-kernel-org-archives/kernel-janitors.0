@@ -2,118 +2,148 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0A52C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 15:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A712CC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 15:49:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239780AbiEUPow (ORCPT
+        id S244866AbiEUPtQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 May 2022 11:44:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34886 "EHLO
+        Sat, 21 May 2022 11:49:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230091AbiEUPou (ORCPT
+        with ESMTP id S230091AbiEUPtP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 21 May 2022 11:44:50 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7533F5DBDF;
-        Sat, 21 May 2022 08:44:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=N2cvmr5qgix9dsJyM3EfaeMcwlENDUG0UMFYTRsjfQ4=; b=CLKUW997PJmzXpkLm8NkNDEmp3
-        finCe4jD1sKqY1neC9/6XkIiPNSsxDy0iBsVPQwzSWlltXaeh7nhLFxziihweE+QzM8wS9R2wLPKb
-        /N/FNPVabP5+g0pY9VT4+6PRMxJOL66gkwobhTz0t1Cry2ccrs+sG143dimrT18QYfD1RFHquN3WH
-        VsNhe9mmCxGCnWUERc7cLv6p4fhBPQ33RK+WoHVPmTpIzlQOlW5KiBHGO2YbRYFu9wUB3o29PESiu
-        zns3936IaAkjg65aj0w440+XrUERAZ9AZJTPc2u46m7tFNRASa5vdeJJB2oEIyLU9YKeid1qAwFB0
-        o2P1KDXQ==;
-Received: from [2601:1c0:6280:3f0::aa0b]
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nsRHZ-00Ek1R-7r; Sat, 21 May 2022 15:44:45 +0000
-Message-ID: <a728cf17-4866-1151-0740-56b06257c917@infradead.org>
-Date:   Sat, 21 May 2022 08:44:41 -0700
+        Sat, 21 May 2022 11:49:15 -0400
+X-Greylist: delayed 226 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 21 May 2022 08:49:10 PDT
+Received: from condef-05.nifty.com (condef-05.nifty.com [202.248.20.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9808C674FB
+        for <kernel-janitors@vger.kernel.org>; Sat, 21 May 2022 08:49:10 -0700 (PDT)
+Received: from conssluserg-01.nifty.com ([10.126.8.80])by condef-05.nifty.com with ESMTP id 24LFdMQe025847
+        for <kernel-janitors@vger.kernel.org>; Sun, 22 May 2022 00:39:22 +0900
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id 24LFcxRn020449;
+        Sun, 22 May 2022 00:38:59 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com 24LFcxRn020449
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1653147539;
+        bh=E7Am5Nb9a8KomAfL0DWSpMGcRuyvDbO2H0enFw86lac=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Mmss+paMa26fLx30DM4uAjXe+hi1m5UbvsADimGmzr7IWvQyc6/ycCqMbIK6Sn8xm
+         T8VwUVO3Eb1qe8Ct//Bc39+yvk+sWAe9GrN4+miP74KPs7FZWo/AWwG2sSzz8rp6YJ
+         OjAWhOOp6Q7/c1cINOoO8uIqMg3jqxM3Cu8HIlLWrRtdpdT9kS0Z9w3vPlWHVnmuhw
+         vY83rN/VIt3qDm1xePB8sQeGYLmXCE8l6aaeAP3VzyO6rWCc00bN41VzyhIO3SKIwM
+         ROjBLWIkgYW6pr89ytbBmjv53x9OjiLIRYTXGphXiw5fqg4rgR7YU9rK6X5rkZe/dq
+         KwU/UWjM4qW6A==
+X-Nifty-SrcIP: [209.85.210.173]
+Received: by mail-pf1-f173.google.com with SMTP id w200so10053813pfc.10;
+        Sat, 21 May 2022 08:38:59 -0700 (PDT)
+X-Gm-Message-State: AOAM533x//zvxN8lLJ3Zh6SQEJZBrqiYTOR0w3wLftJ5RwjoxCr+zImk
+        W710Y5drRv2OGQ2OhSKti1HqxJZEhkzyhHbydIg=
+X-Google-Smtp-Source: ABdhPJwqVIczKOUbexuJjN8ztbp6Eewxf8TjPCHhzKdG58dczONSDGOjuexLGdkEJyZqRUMX15iTRwYrfw5DZUuNY9A=
+X-Received: by 2002:a63:9043:0:b0:3f9:6c36:3de3 with SMTP id
+ a64-20020a639043000000b003f96c363de3mr5866156pge.616.1653147535087; Sat, 21
+ May 2022 08:38:55 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v5] crc-itu-t: Fix typo in CRC ITU-T polynom comment
-Content-Language: en-US
-To:     Roger Knecht <roger@norberthealth.com>,
-        linux-kernel@vger.kernel.org, Ivo van Doorn <IvDoorn@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-doc@vger.kernel.org,
-        Kristian Hoegsberg <krh@redhat.com>,
-        Stefan Richter <stefanr@s5r6.in-berlin.de>
-References: <20220521124745.8747-1-roger@norberthealth.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20220521124745.8747-1-roger@norberthealth.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <23e0ba7863d51ab629498762a97d477645aeafea.1653123744.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <23e0ba7863d51ab629498762a97d477645aeafea.1653123744.git.christophe.jaillet@wanadoo.fr>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Sun, 22 May 2022 00:38:17 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASHGyzKS-d+S1GYz_L0pBxxSwk05YfvV+LK4ghZ5xx=cA@mail.gmail.com>
+Message-ID: <CAK7LNASHGyzKS-d+S1GYz_L0pBxxSwk05YfvV+LK4ghZ5xx=cA@mail.gmail.com>
+Subject: Re: [RFC PATCH] kbuild: Add an option to enable -O1 and speed-up
+ compilation time
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Changbin Du <changbin.du@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Roger,
+(+CC: Arnd, Changbin Du)
 
-On 5/21/22 05:47, Roger Knecht wrote:
-> The code comment says that the polynom is x^16 + x^12 + x^15 + 1, but the
-> correct polynom is x^16 + x^12 + x^5 + 1.
-> 
-> Quote from page 2 in the ITU-T V.41 specification:
->   "2 Encoding and checking process
-> 
->   The service bits and information bits, taken in conjunction, correspond
->   to the coefficients of a message polynomial having terms from x^(n-1)
->   (n = total number of bits in a block or sequence) down to x^16. This
->   polynomial is divided, modulo 2, by the generating polynomial
->   x^16 + x^12 + x^5 + 1. [...]"
-> 
-> Source: https://www.itu.int/rec/T-REC-V.41-198811-I/en)
-> The hex polynom 0x1021 and CRC code implementation are correct.
-> 
-> Signed-off-by: Roger Knecht <roger@norberthealth.com>
-> Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
-I don't know which maintainer will merge this since no one is Cc:ed on it.
-You will probably need to choose some maintainer to send the patch to.
+If -O1 support does not require additional effort,
+I have no objection to this patch.
 
-But let's add the people who merged the header file in the first place
-for their comments/review. (done)
+(but I do not have enough insight about
+the compiler's inlining heuristic)
 
+
+
+BTW, when we attempted to add the -Og support,
+we fixed various parts, and Linus rejected it.
+
+https://lore.kernel.org/linux-kbuild/CAK7LNARQggM3aKEPRKJqa4tunFAfmfErMZuS-rrnRv6UB1VpPQ@mail.gmail.com/
+
+
+
+
+
+
+
+On Sat, May 21, 2022 at 6:04 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> Add a new compilation option which speeds-up compilation time.
+> This can be useful when using static checker such as smatch or build-bots.
+> In such cases, the speed and quality of the generated code is not
+> important.
+>
+> Using -O0 would be even better, but unfortunately, building fails with
+> this option.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
-> Changes:
-> v5: Clean up patch description and added acked-by
-> v4: Changed comment from /** to /* (the comment is not a kernel doc comment)
-> v3: Moved "changes and thanks" out of the commit message.
-> v2: Extended patch description
-> 
->  include/linux/crc-itu-t.h | 2 +-
->  lib/crc-itu-t.c           | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/crc-itu-t.h b/include/linux/crc-itu-t.h
-> index a4367051e192..2f991a427ade 100644
-> --- a/include/linux/crc-itu-t.h
-> +++ b/include/linux/crc-itu-t.h
-> @@ -4,7 +4,7 @@
->   *
->   * Implements the standard CRC ITU-T V.41:
->   *   Width 16
-> - *   Poly  0x1021 (x^16 + x^12 + x^15 + 1)
-> + *   Poly  0x1021 (x^16 + x^12 + x^5 + 1)
->   *   Init  0
->   */
->  
-> diff --git a/lib/crc-itu-t.c b/lib/crc-itu-t.c
-> index 1974b355c148..1d26a1647da5 100644
-> --- a/lib/crc-itu-t.c
-> +++ b/lib/crc-itu-t.c
-> @@ -7,7 +7,7 @@
->  #include <linux/module.h>
->  #include <linux/crc-itu-t.h>
->  
-> -/** CRC table for the CRC ITU-T V.41 0x1021 (x^16 + x^12 + x^15 + 1) */
-> +/* CRC table for the CRC ITU-T V.41 0x1021 (x^16 + x^12 + x^5 + 1) */
->  const u16 crc_itu_t_table[256] = {
->  	0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7,
->  	0x8108, 0x9129, 0xa14a, 0xb16b, 0xc18c, 0xd1ad, 0xe1ce, 0xf1ef,
+>  Makefile     | 5 ++++-
+>  init/Kconfig | 8 ++++++++
+>  2 files changed, 12 insertions(+), 1 deletion(-)
+>
+> diff --git a/Makefile b/Makefile
+> index 1f8bef92868f..14467386f947 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -817,7 +817,10 @@ KBUILD_CFLAGS      += $(call cc-disable-warning, format-truncation)
+>  KBUILD_CFLAGS  += $(call cc-disable-warning, format-overflow)
+>  KBUILD_CFLAGS  += $(call cc-disable-warning, address-of-packed-member)
+>
+> -ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
+> +ifdef CONFIG_CC_OPTIMIZE_FOR_COMPILATION_SPEED
+> +KBUILD_CFLAGS += -O1
+> +KBUILD_RUSTFLAGS_OPT_LEVEL_MAP := 1
+> +else ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
+>  KBUILD_CFLAGS += -O2
+>  KBUILD_RUSTFLAGS_OPT_LEVEL_MAP := 2
+>  else ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3
+> diff --git a/init/Kconfig b/init/Kconfig
+> index a96776a9b080..3177a1830c9a 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -1384,6 +1384,14 @@ choice
+>         prompt "Compiler optimization level"
+>         default CC_OPTIMIZE_FOR_PERFORMANCE
+>
+> +config CC_OPTIMIZE_FOR_COMPILATION_SPEED
+> +       bool "Optimize for compilation speed (-O1)"
+> +       help
+> +         This option can be useful when running a static checker such as smatch
+> +         or a build-bot.
+> +         Compilation time is slighly faster than -O2 and it requires less
+> +         memory.
+> +
+>  config CC_OPTIMIZE_FOR_PERFORMANCE
+>         bool "Optimize for performance (-O2)"
+>         help
+> --
+> 2.34.1
+>
+
 
 -- 
-~Randy
+Best Regards
+Masahiro Yamada
