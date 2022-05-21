@@ -2,41 +2,42 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84F68C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99DA3C433FE
 	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 11:17:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354910AbiEULRJ (ORCPT
+        id S1354909AbiEULRI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 May 2022 07:17:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52932 "EHLO
+        Sat, 21 May 2022 07:17:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345255AbiEULOq (ORCPT
+        with ESMTP id S1350723AbiEULOq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
         Sat, 21 May 2022 07:14:46 -0400
 Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F106C13F40C;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0EBA13F1F4;
         Sat, 21 May 2022 04:12:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=p6V465uNmAq3ubAdDfHRwMfcpCXCnpd+OVHaaTb/7SY=;
-  b=HTdGOvLkh+wLeztuLh8IdUohECUnPC6qV+wCCvjPMqpfHQb2lVSB/IhS
-   pK/FN7b1hRuvEkr/SdvCHAKe/3x6f33XlX8PfmFIDeQeaCrkfQIXM4SpH
-   vd4IF+HvcsZXkTf0giDOSwJnZGq6D4D1hDEx69dRQsZHCeOsz+bMXWsJ5
-   g=;
+  bh=pMvuUQk6ouYyUeDfElzILUZqqWZeqbowbmPLFy/cJ/8=;
+  b=mC8JPiuRm/CgG18mq1ahIyGansXq/h1tacvZ5ZyqOzHKIPLuGtoPPJlH
+   DYz7Lq5I8iO0WTGe0+sanpt2BFgE13gVeaNTCiL+o78Dod4+j9sEBreKO
+   WhVpmTsJ5w8SoqBFVBiO8Th+a10nsjoZtojXDl1h2JJBp4sz/yuX2JLsp
+   E=;
 Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.91,242,1647298800"; 
-   d="scan'208";a="14728002"
+   d="scan'208";a="14728001"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2022 13:12:08 +0200
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-mm@kvack.org,
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org, Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] ksm: fix typo in comment
-Date:   Sat, 21 May 2022 13:11:44 +0200
-Message-Id: <20220521111145.81697-94-Julia.Lawall@inria.fr>
+Subject: [PATCH] f2fs: fix typo in comment
+Date:   Sat, 21 May 2022 13:11:43 +0200
+Message-Id: <20220521111145.81697-93-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -50,20 +51,20 @@ Detected with the help of Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- mm/ksm.c |    2 +-
+ fs/f2fs/f2fs.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 9ee82c9bce94..54f78c9eecae 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -1590,7 +1590,7 @@ static struct page *stable_tree_search(struct page *page)
- 		 * the rbtree instead as a regular stable_node (in
- 		 * order to collapse the stable_node chain if a single
- 		 * stable_node dup was found in it). In such case the
--		 * stable_node is overwritten by the calleee to point
-+		 * stable_node is overwritten by the callee to point
- 		 * to the stable_node_dup that was collapsed in the
- 		 * stable rbtree and stable_node will be equal to
- 		 * stable_node_dup like if the chain never existed.
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 154ba142a04d..84a27d5ed039 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1758,7 +1758,7 @@ struct f2fs_sb_info {
+ 	unsigned int data_io_flag;
+ 	unsigned int node_io_flag;
+ 
+-	/* For sysfs suppport */
++	/* For sysfs support */
+ 	struct kobject s_kobj;			/* /sys/fs/f2fs/<devname> */
+ 	struct completion s_kobj_unregister;
+ 
 
