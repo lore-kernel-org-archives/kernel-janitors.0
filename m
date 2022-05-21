@@ -2,41 +2,44 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1185C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 11:15:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 288E6C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 11:16:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354873AbiEULPt (ORCPT
+        id S1355015AbiEULOC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 May 2022 07:15:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50582 "EHLO
+        Sat, 21 May 2022 07:14:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354922AbiEULM5 (ORCPT
+        with ESMTP id S1354861AbiEULMp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 21 May 2022 07:12:57 -0400
+        Sat, 21 May 2022 07:12:45 -0400
 Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF46D5A086;
-        Sat, 21 May 2022 04:12:22 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3593C2A270;
+        Sat, 21 May 2022 04:12:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=w7hJktkYy1nPJm1PuXRlTI+vaMUH9n0G0hCiI9rXtb4=;
-  b=XPY41ZCIl9pjXL/9xxvT7DoNQpIU82DFg6/UwKomvLRcXWeKb+9iwftm
-   xBppXj9wesweEz44aVLxLVmM6+lpSHw4gJqQ7kez8fQ67+LJCs4WRE5iE
-   anR5WEImHDCMP4uikqOZPYNUuLsZRIsWScv877cJEqo2qEVoecqoPFZF1
-   U=;
+  bh=BK6Vmpz92Mp58PwfqNFHqCi3DvEwbmPq0uYuOzk9oGM=;
+  b=uStK9+XO5xRUrB/kd4X2HVrkc+z62LfcJBSG/Qg3CgVjjINSbRDatP3Z
+   28MNcHc3FuuwGlah1rdx0WuhHX7RjnncASO7W4rlr+LVgTH+1YR8UvumI
+   Yc4xqm6lwC0kk5jGUr9xKq+Iz74kxPakh2r5LNX4GpNPThOSb4rl9uVjb
+   A=;
 Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.91,242,1647298800"; 
-   d="scan'208";a="14727980"
+   d="scan'208";a="14727965"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2022 13:12:04 +0200
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2022 13:12:02 +0200
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] xfs: fix typo in comment
-Date:   Sat, 21 May 2022 13:11:22 +0200
-Message-Id: <20220521111145.81697-72-Julia.Lawall@inria.fr>
+To:     "K. Y. Srinivasan" <kys@microsoft.com>
+Cc:     kernel-janitors@vger.kernel.org,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Drivers: hv: vmbus: fix typo in comment
+Date:   Sat, 21 May 2022 13:11:10 +0200
+Message-Id: <20220521111145.81697-60-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -50,20 +53,20 @@ Detected with the help of Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- fs/xfs/libxfs/xfs_symlink_remote.c |    2 +-
+ drivers/hv/channel_mgmt.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/xfs/libxfs/xfs_symlink_remote.c b/fs/xfs/libxfs/xfs_symlink_remote.c
-index f0b38f4aba80..8b9bd178a487 100644
---- a/fs/xfs/libxfs/xfs_symlink_remote.c
-+++ b/fs/xfs/libxfs/xfs_symlink_remote.c
-@@ -213,7 +213,7 @@ xfs_symlink_shortform_verify(
- 
+diff --git a/drivers/hv/channel_mgmt.c b/drivers/hv/channel_mgmt.c
+index 97d8f5646778..b60f13481bdc 100644
+--- a/drivers/hv/channel_mgmt.c
++++ b/drivers/hv/channel_mgmt.c
+@@ -443,7 +443,7 @@ void hv_process_channel_removal(struct vmbus_channel *channel)
  	/*
- 	 * Zero length symlinks should never occur in memory as they are
--	 * never alllowed to exist on disk.
-+	 * never allowed to exist on disk.
+ 	 * Upon suspend, an in-use hv_sock channel is removed from the array of
+ 	 * channels and the relid is invalidated.  After hibernation, when the
+-	 * user-space appplication destroys the channel, it's unnecessary and
++	 * user-space application destroys the channel, it's unnecessary and
+ 	 * unsafe to remove the channel from the array of channels.  See also
+ 	 * the inline comments before the call of vmbus_release_relid() below.
  	 */
- 	if (!size)
- 		return __this_address;
 
