@@ -2,83 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F95C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 14:08:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E1E1C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 14:20:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354873AbiEUOIF (ORCPT
+        id S244336AbiEUOUj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 May 2022 10:08:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41886 "EHLO
+        Sat, 21 May 2022 10:20:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232626AbiEUOIE (ORCPT
+        with ESMTP id S237800AbiEUOUh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 21 May 2022 10:08:04 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [5.9.137.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D060120B4;
-        Sat, 21 May 2022 07:07:58 -0700 (PDT)
-Received: from zn.tnic (p200300ea97465730329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:9746:5730:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 30D741EC0373;
-        Sat, 21 May 2022 16:07:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1653142073;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=NE6tLwMswcU3YeCTFhumZzQzJ0LL7mkMq97jiJPMw98=;
-        b=fHZkclpNo6CRrawrtbze/WCiFbqqj8xynscCVive1NQFgDydMd9t77HNlSEfVyNeZ1NoMe
-        eutAZInHk+rGHuZblzrZXm+koixCitwZc2E5C0izORQzFlnUF3wGHUYD/YfleSxFyHKoOq
-        28DtD+ZKVo5S76JRXjGLuCr+pyN1kq4=
-Date:   Sat, 21 May 2022 16:07:48 +0200
-From:   Borislav Petkov <bp@alien8.de>
+        Sat, 21 May 2022 10:20:37 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98ADF63385
+        for <kernel-janitors@vger.kernel.org>; Sat, 21 May 2022 07:20:36 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nsPy0-0007em-SO; Sat, 21 May 2022 16:20:28 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nsPy0-003hyM-58; Sat, 21 May 2022 16:20:26 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nsPxy-00BCXz-4p; Sat, 21 May 2022 16:20:26 +0200
+Date:   Sat, 21 May 2022 16:20:23 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     Khuong Dinh <khuong@os.amperecomputing.com>,
-        kernel-janitors@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Robert Richter <rric@kernel.org>, linux-edac@vger.kernel.org,
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        kernel-janitors@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] EDAC/xgene: fix typo in comment
-Message-ID: <YojyNDM5BJP3rpbC@zn.tnic>
-References: <20220521111145.81697-39-Julia.Lawall@inria.fr>
+Subject: Re: [PATCH] pwm: atmel-tcb: fix typo in comment
+Message-ID: <20220521142023.qbk4s2gydpox7c2w@pengutronix.de>
+References: <20220521111145.81697-22-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="tnsdnebowjixthkb"
 Content-Disposition: inline
-In-Reply-To: <20220521111145.81697-39-Julia.Lawall@inria.fr>
+In-Reply-To: <20220521111145.81697-22-Julia.Lawall@inria.fr>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, May 21, 2022 at 01:10:49PM +0200, Julia Lawall wrote:
+
+--tnsdnebowjixthkb
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, May 21, 2022 at 01:10:32PM +0200, Julia Lawall wrote:
 > Spelling mistake (triple letters) in comment.
 > Detected with the help of Coccinelle.
-> 
+>=20
 > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
->  drivers/edac/xgene_edac.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/edac/xgene_edac.c b/drivers/edac/xgene_edac.c
-> index 7197f9fa0245..54081403db4f 100644
-> --- a/drivers/edac/xgene_edac.c
-> +++ b/drivers/edac/xgene_edac.c
-> @@ -501,7 +501,7 @@ static int xgene_edac_mc_remove(struct xgene_edac_mc_ctx *mcu)
->  #define MEMERR_L2C_L2ESRA_PAGE_OFFSET		0x0804
->  
->  /*
-> - * Processor Module Domain (PMD) context - Context for a pair of processsors.
-> + * Processor Module Domain (PMD) context - Context for a pair of processors.
->   * Each PMD consists of 2 CPUs and a shared L2 cache. Each CPU consists of
->   * its own L1 cache.
->   */
 
-Applied, thanks.
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
 
--- 
-Regards/Gruss,
-    Boris.
+Best regards
+Uwe
 
-https://people.kernel.org/tglx/notes-about-netiquette
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--tnsdnebowjixthkb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEyBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmKI9SQACgkQwfwUeK3K
+7An1EQf3bDnHc/rwmXW/hxQYgjXTU66lI9Zhkw5vRZWJgMerGFoWG5K5cyNNv/5Y
+iq5MHhKURCOHVHyRfICTKuOOzpYrWanJajIbgYEB+N8shtt9dixlkFwDzWhqDIUj
+ceBdQQfZInYER2tWakDdkJgt6JndTwdJcQrMEB8NEIS5f+jJZNN22BtiGdqpmgrH
+zwinSNDCtnnOID3LPDmKhk3TgHlQZElkesUJtfyX6if55mI+mQbcCUd7TjnFzHIL
+0nJ4WwGDwO4hLfYe1iU4whJ63ETLyW5nt9NUZ7f5Wi5qgD5dAv9SawPvOTamGwSs
+G1nyZXV+f/OkfBsuepRQHgsYEPYJ
+=o9OB
+-----END PGP SIGNATURE-----
+
+--tnsdnebowjixthkb--
