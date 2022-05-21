@@ -2,44 +2,47 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 288E6C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 475AEC433FE
 	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 11:16:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355015AbiEULOC (ORCPT
+        id S1352991AbiEULPw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 May 2022 07:14:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50580 "EHLO
+        Sat, 21 May 2022 07:15:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354861AbiEULMp (ORCPT
+        with ESMTP id S1354921AbiEULM5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 21 May 2022 07:12:45 -0400
+        Sat, 21 May 2022 07:12:57 -0400
 Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3593C2A270;
-        Sat, 21 May 2022 04:12:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF5CB5A0A3;
+        Sat, 21 May 2022 04:12:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=BK6Vmpz92Mp58PwfqNFHqCi3DvEwbmPq0uYuOzk9oGM=;
-  b=uStK9+XO5xRUrB/kd4X2HVrkc+z62LfcJBSG/Qg3CgVjjINSbRDatP3Z
-   28MNcHc3FuuwGlah1rdx0WuhHX7RjnncASO7W4rlr+LVgTH+1YR8UvumI
-   Yc4xqm6lwC0kk5jGUr9xKq+Iz74kxPakh2r5LNX4GpNPThOSb4rl9uVjb
-   A=;
+  bh=vki7c+Z/XcQTedYYjJ9Z0HiIFJR55lVzHQlQz/ICUmA=;
+  b=AePPL+2rg5Fzf39quers+bpIAxjl2WaizQ6BU0sMPrYyzt+/p589nV/t
+   gnKH3S/XeEH2Pvqs3xffsreaWCdK+ughutTD20g9D2Yoe3nym2weVkogr
+   VbFle9whGw6JqibuwhXFY5ey6/5ILOTADthgl4ukAdXX7HECKOF1Fc4Be
+   Y=;
 Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.91,242,1647298800"; 
-   d="scan'208";a="14727965"
+   d="scan'208";a="14727979"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2022 13:12:02 +0200
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2022 13:12:04 +0200
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     "K. Y. Srinivasan" <kys@microsoft.com>
+To:     Alexei Starovoitov <ast@kernel.org>
 Cc:     kernel-janitors@vger.kernel.org,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Drivers: hv: vmbus: fix typo in comment
-Date:   Sat, 21 May 2022 13:11:10 +0200
-Message-Id: <20220521111145.81697-60-Julia.Lawall@inria.fr>
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] libbpf: fix typo in comment
+Date:   Sat, 21 May 2022 13:11:21 +0200
+Message-Id: <20220521111145.81697-71-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -53,20 +56,20 @@ Detected with the help of Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/hv/channel_mgmt.c |    2 +-
+ tools/lib/bpf/libbpf.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hv/channel_mgmt.c b/drivers/hv/channel_mgmt.c
-index 97d8f5646778..b60f13481bdc 100644
---- a/drivers/hv/channel_mgmt.c
-+++ b/drivers/hv/channel_mgmt.c
-@@ -443,7 +443,7 @@ void hv_process_channel_removal(struct vmbus_channel *channel)
- 	/*
- 	 * Upon suspend, an in-use hv_sock channel is removed from the array of
- 	 * channels and the relid is invalidated.  After hibernation, when the
--	 * user-space appplication destroys the channel, it's unnecessary and
-+	 * user-space application destroys the channel, it's unnecessary and
- 	 * unsafe to remove the channel from the array of channels.  See also
- 	 * the inline comments before the call of vmbus_release_relid() below.
- 	 */
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index ef7f302e542f..e89cc9c885b3 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -6873,7 +6873,7 @@ static int bpf_object_load_prog_instance(struct bpf_object *obj, struct bpf_prog
+ 	}
+ 
+ retry_load:
+-	/* if log_level is zero, we don't request logs initiallly even if
++	/* if log_level is zero, we don't request logs initially even if
+ 	 * custom log_buf is specified; if the program load fails, then we'll
+ 	 * bump log_level to 1 and use either custom log_buf or we'll allocate
+ 	 * our own and retry the load to get details on what failed
 
