@@ -2,41 +2,44 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82040C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 11:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1C9C43219
+	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 11:12:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242796AbiEULMK (ORCPT
+        id S242356AbiEULMD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 May 2022 07:12:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46786 "EHLO
+        Sat, 21 May 2022 07:12:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238785AbiEULL7 (ORCPT
+        with ESMTP id S237544AbiEULL7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
         Sat, 21 May 2022 07:11:59 -0400
 Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C06F2980F;
-        Sat, 21 May 2022 04:11:55 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A28229811;
+        Sat, 21 May 2022 04:11:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=D6SwVHgxTU4ivyQqfknWUgj4ctP9444wxZqjMMPa57o=;
-  b=qUM+9N+5ijPFA+dMeia8QG24Ly9urjs4c+yCv2jr3dWe0TkVwdoM1i2l
-   9ipL7ZgZHmwbisYJRQyw/Khzembp0EcTZFFxAGsLNyhZI7VcDZ1LuBlpd
-   diSZyEnV7YyvPEYPuoJTDfpZOd7FPxpx2AcReq9RR2HFEPSrTF6fszq+N
-   8=;
+  bh=J1A0HT4A9+XSBl1+bJCGAWkhJ4mLksjBOsLJ1lWapH8=;
+  b=E900oxFFw5U5KgtQAPIqWydJb+bYQDEmKkV50GhoyfSLPckysek5Z1k2
+   ZUq0yR3BOKnRpA/8/g/FH8XSqVct6wSjraWkRHK91CWGNdg2yeAOjsGh0
+   9LlZVqF+L9yaBwhxnZcR3JwrusOPsYv2w40Ctq61bsO23RLhe6B5iLP/P
+   M=;
 Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="5.91,242,1647298800"; 
-   d="scan'208";a="14727889"
+   d="scan'208";a="14727891"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2022 13:11:52 +0200
 From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ACPI: CPPC: fix typo in comment
-Date:   Sat, 21 May 2022 13:10:13 +0200
-Message-Id: <20220521111145.81697-3-Julia.Lawall@inria.fr>
+To:     Sagi Grimberg <sagi@grimberg.me>
+Cc:     kernel-janitors@vger.kernel.org,
+        Max Gurtovoy <mgurtovoy@nvidia.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] IB/iser: fix typo in comment
+Date:   Sat, 21 May 2022 13:10:14 +0200
+Message-Id: <20220521111145.81697-4-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -50,20 +53,20 @@ Detected with the help of Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/acpi/cppc_acpi.c |    2 +-
+ drivers/infiniband/ulp/iser/iscsi_iser.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-index bc1454789a06..e6c1df0b3cc4 100644
---- a/drivers/acpi/cppc_acpi.c
-+++ b/drivers/acpi/cppc_acpi.c
-@@ -305,7 +305,7 @@ static int send_pcc_cmd(int pcc_ss_id, u16 cmd)
- 		goto end;
- 	}
- 
--	/* wait for completion and check for PCC errro bit */
-+	/* wait for completion and check for PCC error bit */
- 	ret = check_pcc_chan(pcc_ss_id, true);
- 
- 	if (pcc_ss_data->pcc_mrtt)
+diff --git a/drivers/infiniband/ulp/iser/iscsi_iser.h b/drivers/infiniband/ulp/iser/iscsi_iser.h
+index 7e4faf9c5e9e..dee8c97ff056 100644
+--- a/drivers/infiniband/ulp/iser/iscsi_iser.h
++++ b/drivers/infiniband/ulp/iser/iscsi_iser.h
+@@ -363,7 +363,7 @@ struct iser_fr_pool {
+  * @cq:                  Connection completion queue
+  * @cq_size:             The number of max outstanding completions
+  * @device:              reference to iser device
+- * @fr_pool:             connection fast registration poool
++ * @fr_pool:             connection fast registration pool
+  * @pi_support:          Indicate device T10-PI support
+  * @reg_cqe:             completion handler
+  */
 
