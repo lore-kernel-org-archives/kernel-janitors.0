@@ -2,37 +2,38 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C482FC433FE
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 13:14:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E82C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 13:25:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343729AbiEVNOf (ORCPT
+        id S1345599AbiEVNZQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 22 May 2022 09:14:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47048 "EHLO
+        Sun, 22 May 2022 09:25:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237772AbiEVNOc (ORCPT
+        with ESMTP id S1345198AbiEVNZP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 22 May 2022 09:14:32 -0400
-Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5B132CE25
-        for <kernel-janitors@vger.kernel.org>; Sun, 22 May 2022 06:14:29 -0700 (PDT)
+        Sun, 22 May 2022 09:25:15 -0400
+Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B59937AAD
+        for <kernel-janitors@vger.kernel.org>; Sun, 22 May 2022 06:25:12 -0700 (PDT)
 Received: from pop-os.home ([86.243.180.246])
         by smtp.orange.fr with ESMTPA
-        id slPcnkcVJZDzUslPcn67gX; Sun, 22 May 2022 15:14:28 +0200
+        id sla2n9Iqx26JCsla2nXCYh; Sun, 22 May 2022 15:25:11 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 22 May 2022 15:14:28 +0200
+X-ME-Date: Sun, 22 May 2022 15:25:11 +0200
 X-ME-IP: 86.243.180.246
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     dan.carpenter@oracle.com, Aleksa Savic <savicaleksa83@gmail.com>,
-        Jack Doan <me@jackdoan.com>, Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>
+To:     dan.carpenter@oracle.com, Zhu Yanjun <zyjzyj2000@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>,
+        Bob Pearson <rpearsonhpe@gmail.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-hwmon@vger.kernel.org
-Subject: [PATCH] hwmon: (aquacomputer_d5next) Fix an error handling path in aqc_probe()
-Date:   Sun, 22 May 2022 15:14:23 +0200
-Message-Id: <be6b955d50de140fcc96bd116150b435021bf567.1653225250.git.christophe.jaillet@wanadoo.fr>
+        linux-rdma@vger.kernel.org
+Subject: [PATCH] RDMA/rxe: Fix an error handling path in rxe_get_mcg()
+Date:   Sun, 22 May 2022 15:25:08 +0200
+Message-Id: <fe137cd8b1f17593243aa73d59c18ea71ab9ee36.1653225896.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -40,32 +41,33 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If no memory can be allocated, some resources still need to be released as
-already done in the other error handling paths.
+The commit in the Fixes tag has shuffled some code.
+Now 'mcg_num' is incremented before the kzalloc(). So if the memory
+allocation fails, this increment must be undone.
 
-Fixes: 752b927951ea ("hwmon: (aquacomputer_d5next) Add support for Aquacomputer Octo")
+Fixes: a926a903b7dc ("RDMA/rxe: Do not call dev_mc_add/del() under a spinlock")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/hwmon/aquacomputer_d5next.c | 6 ++++--
+ drivers/infiniband/sw/rxe/rxe_mcast.c | 6 ++++--
  1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hwmon/aquacomputer_d5next.c b/drivers/hwmon/aquacomputer_d5next.c
-index 7d2e7279abfb..a0e69f7ece36 100644
---- a/drivers/hwmon/aquacomputer_d5next.c
-+++ b/drivers/hwmon/aquacomputer_d5next.c
-@@ -783,8 +783,10 @@ static int aqc_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 	priv->name = aqc_device_names[priv->kind];
+diff --git a/drivers/infiniband/sw/rxe/rxe_mcast.c b/drivers/infiniband/sw/rxe/rxe_mcast.c
+index 873a9b10307c..86cc2e18a7fd 100644
+--- a/drivers/infiniband/sw/rxe/rxe_mcast.c
++++ b/drivers/infiniband/sw/rxe/rxe_mcast.c
+@@ -206,8 +206,10 @@ static struct rxe_mcg *rxe_get_mcg(struct rxe_dev *rxe, union ib_gid *mgid)
  
- 	priv->buffer = devm_kzalloc(&hdev->dev, priv->buffer_size, GFP_KERNEL);
--	if (!priv->buffer)
--		return -ENOMEM;
-+	if (!priv->buffer) {
-+		ret = -ENOMEM;
-+		goto fail_and_close;
+ 	/* speculative alloc of new mcg */
+ 	mcg = kzalloc(sizeof(*mcg), GFP_KERNEL);
+-	if (!mcg)
+-		return ERR_PTR(-ENOMEM);
++	if (!mcg) {
++		err = -ENOMEM;
++		goto err_dec;
 +	}
  
- 	mutex_init(&priv->mutex);
- 
+ 	spin_lock_bh(&rxe->mcg_lock);
+ 	/* re-check to see if someone else just added it */
 -- 
 2.34.1
 
