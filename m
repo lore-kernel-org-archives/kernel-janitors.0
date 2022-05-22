@@ -2,98 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C306AC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 20:11:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81223C4332F
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 20:50:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350963AbiEVULJ (ORCPT
+        id S1351314AbiEVUuR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 22 May 2022 16:11:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36532 "EHLO
+        Sun, 22 May 2022 16:50:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230015AbiEVULH (ORCPT
+        with ESMTP id S233462AbiEVUuQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 22 May 2022 16:11:07 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4363AD126
-        for <kernel-janitors@vger.kernel.org>; Sun, 22 May 2022 13:11:05 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id f9so24910557ejc.0
-        for <kernel-janitors@vger.kernel.org>; Sun, 22 May 2022 13:11:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XbAugljicpY/y7Zy1EEXCv1U3t4omHv8RYC64W6lHFg=;
-        b=RH0617/a3hE57yA5bfOEtRbVlvoZZ/lXnbDnJEPXIt4AA5RqWlPA8AhxizHNehnYEI
-         YhDsy1R2t7aHOEHZ8RPC0I2e+4DkQA6GSy6+AdnIbqpMX92LrT6ob6V7sLyJNVzzrBeW
-         fl256B2WWJjVctMBQH2g/aJ67jKbnboB4TjlOYDZUIgKIlLf3FlL9oQt5WCdulj2j7W+
-         aF2ePVq9DTprxl44nfKSOG0z7mFieHUXQBWwcH7Ni1JjdEBhRZiojUh6w9iowhhmBPOG
-         Vd1+hz7bhxSUsUB1FTRByyv+K5CPSVQuhIUe395ppH037CkQIy1xp8Ug4SRC7Icu7Rre
-         wbYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XbAugljicpY/y7Zy1EEXCv1U3t4omHv8RYC64W6lHFg=;
-        b=1zF5PLLfrEmduqYJE1l0FY4NJAih/ziCSyhcbMk954HCddh712DDa+l+4LwlfmwbSm
-         k0zYxCKAvUa7ODj/0+ECkuMNL63dEB2zmRP1xnq8NzM3BJEbGYpOkofn10fkA869AgjO
-         +wU6DXpVDIbq1H+sZgPD+m6OgSxSd/EyKnKt51UOP3bnMh+/CV/z3abNQRr1y9y7LVN5
-         CzaMVHaG15+XdbYIQ0NUNf3rtNCtJdYSYJlInY0AHlVV/feqFL1/b06B77vGE2fLjcOp
-         MVrLEHWEczWODTvzWmRbIZJEmuvtQwDvWhAusQNMSbE76BZaFY2BBdgTPT1o4PQ+zys3
-         PzaA==
-X-Gm-Message-State: AOAM5311/Y3CuV5h5JAkLIxw7MwYOO5bipj+PJvZyn6tyi3MhtR77Jxb
-        l+9NRkqkjaUx1ggtHVpawBlXq4jMschpVfK9Bf2I9A==
-X-Google-Smtp-Source: ABdhPJzc5GUR9U9Il0WUoTYcgZGdj3P4tfGqlFhaPWz4WKm4XeGYOe7uuIWsUJWHY2Wr50WmK05jU4mkxgrUi5D4x1Y=
-X-Received: by 2002:a17:907:6eab:b0:6fe:b5e2:7b0e with SMTP id
- sh43-20020a1709076eab00b006feb5e27b0emr9939588ejc.736.1653250263841; Sun, 22
- May 2022 13:11:03 -0700 (PDT)
+        Sun, 22 May 2022 16:50:16 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B2732A70E;
+        Sun, 22 May 2022 13:50:14 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id AA5E2B80DDF;
+        Sun, 22 May 2022 20:50:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5C7DAC34117;
+        Sun, 22 May 2022 20:50:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653252612;
+        bh=ldi8O1qtRDuAXHyPh8pT4rq6MRpTr/ScwezZRlp4TSk=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=H9JTA4drh76PmwyrxuFsVHZ8RgypvxtG7AEs0iEdpid8I6SRA6Gf3TIZoWYMOhoha
+         Q2ZH8IBxki/lokJ9dbHqjdg7Onqw1DTrt3AqI3xA5iSaYrGoHvvVzYG5qDdzKMbHDN
+         yOulo664SFTMYu24+VWuGAbhcPgsJFTPCpujVQNYH/B5YugBWpAv+7YzXvgzBJcz3C
+         zQTcXr9RYY2WY1pftDWaRTgup1UiCOFNr6q/xe+RAb7GcGrL486w72ObTFLAGVXQ+q
+         dry/b6NL+RcgD03SZGrh1bWGqv35GVnulbAL9wNGAfqSf4Cim9AoriJJJkggbqrdi9
+         5HPj/YeYlqaFA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 39572E8DBDA;
+        Sun, 22 May 2022 20:50:12 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <dde628b73ca95e3e7598cb755cf2350a8e9e4796.1653074495.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <dde628b73ca95e3e7598cb755cf2350a8e9e4796.1653074495.git.christophe.jaillet@wanadoo.fr>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Sun, 22 May 2022 22:10:52 +0200
-Message-ID: <CAMRc=McR+=55XooEikdee5vCfsLyfPKuc_pvAdfDwvn_dfnc7Q@mail.gmail.com>
-Subject: Re: [PATCH] gpio: sim: Use correct order for the parameters of devm_kcalloc()
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] hinic: Avoid some over memory allocation
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <165325261223.21066.1974036506521817731.git-patchwork-notify@kernel.org>
+Date:   Sun, 22 May 2022 20:50:12 +0000
+References: <b9eb43e831e71b38d4d428dd7a8f4153608a4df6.1653114759.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <b9eb43e831e71b38d4d428dd7a8f4153608a4df6.1653114759.git.christophe.jaillet@wanadoo.fr>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, aviad.krawczyk@huawei.com, zhaochen6@huawei.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, May 20, 2022 at 9:21 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> We should have 'n', then 'size', not the opposite.
-> This is harmless because the 2 values are just multiplied, but having
-> the correct order silence a (unpublished yet) smatch warning.
->
+Hello:
+
+This patch was applied to netdev/net.git (master)
+by David S. Miller <davem@davemloft.net>:
+
+On Sat, 21 May 2022 08:33:01 +0200 you wrote:
+> 'prod_idx' (atomic_t) is larger than 'shadow_idx' (u16), so some memory is
+> over-allocated.
+> 
+> Fixes: b15a9f37be2b ("net-next/hinic: Add wq")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/gpio/gpio-sim.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
-> index 41c31b10ae84..98109839102f 100644
-> --- a/drivers/gpio/gpio-sim.c
-> +++ b/drivers/gpio/gpio-sim.c
-> @@ -314,8 +314,8 @@ static int gpio_sim_setup_sysfs(struct gpio_sim_chip *chip)
->
->         for (i = 0; i < num_lines; i++) {
->                 attr_group = devm_kzalloc(dev, sizeof(*attr_group), GFP_KERNEL);
-> -               attrs = devm_kcalloc(dev, sizeof(*attrs),
-> -                                    GPIO_SIM_NUM_ATTRS, GFP_KERNEL);
-> +               attrs = devm_kcalloc(dev, GPIO_SIM_NUM_ATTRS, sizeof(*attrs),
-> +                                    GFP_KERNEL);
->                 val_attr = devm_kzalloc(dev, sizeof(*val_attr), GFP_KERNEL);
->                 pull_attr = devm_kzalloc(dev, sizeof(*pull_attr), GFP_KERNEL);
->                 if (!attr_group || !attrs || !val_attr || !pull_attr)
-> --
-> 2.34.1
->
+>  drivers/net/ethernet/huawei/hinic/hinic_hw_wq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied with an added Fixes tag.
+Here is the summary with links:
+  - hinic: Avoid some over memory allocation
+    https://git.kernel.org/netdev/net/c/15d221d0c345
 
-Bart
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
