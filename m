@@ -2,76 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A1FDC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 04:36:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4630AC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 07:33:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236202AbiEVEgh (ORCPT
+        id S241371AbiEVHdO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 22 May 2022 00:36:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47402 "EHLO
+        Sun, 22 May 2022 03:33:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233151AbiEVEge (ORCPT
+        with ESMTP id S1344951AbiEVHdN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 22 May 2022 00:36:34 -0400
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C29C13587F;
-        Sat, 21 May 2022 21:36:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-        s=42; h=From:Cc:To:Date:Message-ID;
-        bh=C/l6AnCrNdM0sxAoPiPcgRGGIIZVhapGBcAM8SyyoWU=; b=sA8UXMyyD6nH9C8x74BoU4iwZx
-        4J+yjV/KR5UwrGsTlHW8QuxKW+rs6w5TCF0Szpnff1ziG15AxkSAqPKs8Cdy5WkeOyFVp0fCCk/an
-        qc4e2FJYoQsKnhTy0ihUzInALzpUL0CXwD6c94Ftybp/jjcz2SJz6qZf/aNMFXIoSDyZl/PX2QPUG
-        4fJjLinn8z1wZwCh6XgnnVZcgXHBhUHWYK6siGxm9PJBMSc8p+8s6kpFAxSvEpSg4HpDVoOPVYIOU
-        EyJ375gkaX2FP9yur9RcJW1DMdyh4l3FyGfBt4AqScrZWab68unBRxpardRuDevympjdRznW97kGr
-        YOUd3m7gVyDqdKjC21l5iPYe8FATuj05k5cNvrGQHw2vJq/pyKfAJnMW6kjaDbcLexrAYuQOp+i8Q
-        FgcRW73HJpixVKLXF7RL4hkj7TtuPHczzeRazfSZ5dVil2YMmftoXmQRIgn9iyj58PW+wyKLVJv7T
-        QqtJ6hvVan7wFRf0rkXNyiuN;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-        (Exim)
-        id 1nsdKO-001xvK-9f; Sun, 22 May 2022 04:36:28 +0000
-Message-ID: <c530769a-cdbc-eb33-3931-a8fd64e683c7@samba.org>
-Date:   Sat, 21 May 2022 23:36:26 -0500
+        Sun, 22 May 2022 03:33:13 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 352713CA70;
+        Sun, 22 May 2022 00:33:07 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id gh17so9789515ejc.6;
+        Sun, 22 May 2022 00:33:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Q56IvgxavWJhsEkcadDqcZc6FJeimEL1lZJWPor8auE=;
+        b=oIiyK58kipbrNJ6GQaCjqXXreZvXCvVHjcytBE/FyzVM+VNOTvCLY9FgQAbTRnNQaw
+         3ucvfITxTcnGiCU+HpEs9caByTp2IZrMetTUCkQ32agmMhas4iT8pkIgIqXpgXauf+Su
+         QY0G/53zn+mjJUpwQt1y5LJ5fS4hfXc4jsC+2Pf/PzUWRKKyinlGb2b25puWwo/X7bDE
+         FT++CTBo+jSorDuKzLAkowO8jVDCa50w6IAfA8MWGwIz6v8uq8caLkIscISKHMAqHv9+
+         CYpaAlYlc4RBOqL204PQb/8Tmf9+Pn9SF3B6ozmHMdzXhoCMUwwcisKgI1SntF4zjFO9
+         YV1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Q56IvgxavWJhsEkcadDqcZc6FJeimEL1lZJWPor8auE=;
+        b=H43+eCS4Q3ClnNc1RzYZ6jJhDKESxRdkVZYpdfqAjlcC1ka/YX94hOS8JAaC15uDih
+         W9QoxG5Kaoplc239nubyBS8KVPqJnutYkPJa81fyNE76/7x0ZowI8NXxrDdEEjfF6iZr
+         VxAyyVG0/rIsx6ETV/dhLx2OoRH9/ren2lck0i7LAi+r9rx44E8vrWl2LPv+TISQ0TpC
+         z1g51ccvMUEG7nY9Kg3TEQFvrjQ5lDGynhnWLynehxUkkeevFXVfYy1leDxrTqcBTapm
+         V9WTgDOB1jbMT9fAh/8gyuyfcpSERQznsLm25AxTKvKxuJwHQX/WxeM2IaQQ3e3+ivZx
+         LIJQ==
+X-Gm-Message-State: AOAM533wYKT7ocjHOD3HfhR8epnNdRT6sn3woz4iYuEtQkOTIM5AJjp6
+        +cShUfVhQeFV+sXATeT9/NI=
+X-Google-Smtp-Source: ABdhPJxlBx3vwsBGbu+xb+kNECnqZsU7ogBTgwifDfJ1SRjFeixrkga7Y7gf13mVgboWIf8yJHFEKQ==
+X-Received: by 2002:a17:906:d193:b0:6fe:9a92:6c4d with SMTP id c19-20020a170906d19300b006fe9a926c4dmr13355170ejz.49.1653204785589;
+        Sun, 22 May 2022 00:33:05 -0700 (PDT)
+Received: from jernej-laptop.localnet (89-212-118-115.static.t-2.net. [89.212.118.115])
+        by smtp.gmail.com with ESMTPSA id ej23-20020a056402369700b0042a2d9af0f8sm6696800edb.79.2022.05.22.00.33.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 May 2022 00:33:05 -0700 (PDT)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To:     Vasily Khoruzhick <anarsoul@gmail.com>,
+        Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     kernel-janitors@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>, Chen-Yu Tsai <wens@csie.org>,
+        Samuel Holland <samuel@sholland.org>, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] thermal: sun8i: fix typo in comment
+Date:   Sun, 22 May 2022 09:33:03 +0200
+Message-ID: <2629117.mvXUDI8C0e@jernej-laptop>
+In-Reply-To: <20220521111145.81697-36-Julia.Lawall@inria.fr>
+References: <20220521111145.81697-36-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH] cifs: smbd: fix typo in comment
-Content-Language: en-US
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     kernel-janitors@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
-References: <20220521111145.81697-69-Julia.Lawall@inria.fr>
-From:   Steven French <sfrench@samba.org>
-In-Reply-To: <20220521111145.81697-69-Julia.Lawall@inria.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-merged into cifs-2.6.git for-next
-
-On 5/21/22 06:11, Julia Lawall wrote:
+Dne sobota, 21. maj 2022 ob 13:10:46 CEST je Julia Lawall napisal(a):
 > Spelling mistake (triple letters) in comment.
 > Detected with the help of Coccinelle.
->
+> 
 > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
->
+
+Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+
+Best regards,
+Jernej
+
+> 
 > ---
->   fs/cifs/smbdirect.c |    2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
-> index b3a1265711cc..c3278db1cade 100644
-> --- a/fs/cifs/smbdirect.c
-> +++ b/fs/cifs/smbdirect.c
-> @@ -1350,7 +1350,7 @@ void smbd_destroy(struct TCP_Server_Info *server)
->   	wait_event(info->wait_send_pending,
->   		atomic_read(&info->send_pending) == 0);
->   
-> -	/* It's not posssible for upper layer to get to reassembly */
-> +	/* It's not possible for upper layer to get to reassembly */
->   	log_rdma_event(INFO, "drain the reassembly queue\n");
->   	do {
->   		spin_lock_irqsave(&info->reassembly_queue_lock, flags);
->
+>  drivers/thermal/sun8i_thermal.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/thermal/sun8i_thermal.c
+> b/drivers/thermal/sun8i_thermal.c index d9cd23cbb671..212c87e63a66 100644
+> --- a/drivers/thermal/sun8i_thermal.c
+> +++ b/drivers/thermal/sun8i_thermal.c
+> @@ -237,7 +237,7 @@ static int sun50i_h6_ths_calibrate(struct ths_device
+> *tmdev, * The calibration data on the H6 is the ambient temperature and *
+> sensor values that are filled during the factory test stage.
+>  	 *
+> -	 * The unit of stored FT temperature is 0.1 degreee celusis.
+> +	 * The unit of stored FT temperature is 0.1 degree celsius.
+>  	 *
+>  	 * We need to calculate a delta between measured and caluclated
+>  	 * register values and this will become a calibration offset.
+
+
+
+
