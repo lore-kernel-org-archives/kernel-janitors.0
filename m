@@ -2,64 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4CCFC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 10:06:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B289BC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 10:46:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235505AbiEVKGf (ORCPT
+        id S231797AbiEVKqC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 22 May 2022 06:06:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34318 "EHLO
+        Sun, 22 May 2022 06:46:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230244AbiEVKGd (ORCPT
+        with ESMTP id S236524AbiEVKp5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 22 May 2022 06:06:33 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 802FD36175;
-        Sun, 22 May 2022 03:06:31 -0700 (PDT)
+        Sun, 22 May 2022 06:45:57 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4ED6A19F;
+        Sun, 22 May 2022 03:45:53 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0CE1CB80AC0;
-        Sun, 22 May 2022 10:06:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A62A4C385AA;
-        Sun, 22 May 2022 10:06:27 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 1C62CCE0AF7;
+        Sun, 22 May 2022 10:45:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED660C385AA;
+        Sun, 22 May 2022 10:45:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653213988;
-        bh=UPbiNgGAwL5aqC80FZUlkF31vbhQbeH7p2NfiK7RD2M=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=eA61M92tHgqSHqaH2+zWhVTbhBium3ZcdMEvpGQ2mcCdkiV08IntwH/YZspjp9Y6p
-         l77Ybc5invmaeox5YhBnkU/2tDJHj2cncl+YbuxTshEaZ+N6GINcx49jQsdTWe1NR4
-         XYDq3wSJH2EqNJd1zRAWsoDSsAlSFCkpqeZMqOI+9qSkU7NtluM+Iee7bibENAYuaC
-         pI4xjE4EWVvCDlPBGKaXFkskkpsoFyzNg7MsN7KowN/tFErtrwCzsGimQT77RUGAPI
-         0pmfvuiGnjRRsCUGDwf0uPhz8j3sxgS35sQSbBDFmrqEs7wKFhm55JSHTrFxYEle8w
-         Kb5FTKuQm3M4Q==
-Message-ID: <30ab0c63-4576-a9a1-8dd2-aa0e79ddd59f@kernel.org>
-Date:   Sun, 22 May 2022 18:06:25 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH] f2fs: fix typo in comment
-Content-Language: en-US
-To:     Julia Lawall <Julia.Lawall@inria.fr>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
+        s=k20201202; t=1653216350;
+        bh=kwD3mtm4Hvanzvn5hDWN2epjuaFZqIjGopPobIPCHiU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=X0y0X3jIBWbYu4AL6d8N1vK//G5SPnCYZMs0Eye/ktWqePA81oqMTixK1CS4N4xFg
+         qFW67nhRnrqVBoeMo4gS14V6CUj1E8tvS03GfwU2cQ7nK+x/1Gssu31D9Ir/zJiHcd
+         zR1F0VZoMp2PDRdqkpuDuv72oH0eNBwrOeSLqSCygRtM/jI1Dv6J2UOxFjXjzkgIpj
+         0F1ZyDVp+8gh23KDxxxN4sMe/PinYX+omBCfmTZh62Qk2mPhFrURcj/mm4y3EQrfUR
+         nN1l1BXtVKrRqtA0qAI3VbXUkB02akSYdbaWB6LaNj4h2EdFjLF5ONzwX3XGdx4rC+
+         yk+n/ZSqJ8eiA==
+Date:   Sun, 22 May 2022 11:54:36 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Julia Lawall <Julia.Lawall@inria.fr>
 Cc:     kernel-janitors@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-References: <20220521111145.81697-93-Julia.Lawall@inria.fr>
-From:   Chao Yu <chao@kernel.org>
-In-Reply-To: <20220521111145.81697-93-Julia.Lawall@inria.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Lars-Peter Clausen <lars@metafoo.de>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: chemical: bme680: fix typo in comment
+Message-ID: <20220522115436.267704d6@jic23-huawei>
+In-Reply-To: <20220521111145.81697-68-Julia.Lawall@inria.fr>
+References: <20220521111145.81697-68-Julia.Lawall@inria.fr>
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2022/5/21 19:11, Julia Lawall wrote:
+On Sat, 21 May 2022 13:11:18 +0200
+Julia Lawall <Julia.Lawall@inria.fr> wrote:
+
 > Spelling mistake (triple letters) in comment.
 > Detected with the help of Coccinelle.
 > 
 > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
-Reviewed-by: Chao Yu <chao@kernel.org>
+Applied for 5.20.
 
 Thanks,
+
+Jonathan
+
+> 
+> ---
+>  drivers/iio/chemical/bme680_core.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
+> index 16ff7a98c9f0..ef5e0e46fd34 100644
+> --- a/drivers/iio/chemical/bme680_core.c
+> +++ b/drivers/iio/chemical/bme680_core.c
+> @@ -638,7 +638,7 @@ static int bme680_read_temp(struct bme680_data *data, int *val)
+>  	comp_temp = bme680_compensate_temp(data, adc_temp);
+>  	/*
+>  	 * val might be NULL if we're called by the read_press/read_humid
+> -	 * routine which is callled to get t_fine value used in
+> +	 * routine which is called to get t_fine value used in
+>  	 * compensate_press/compensate_humid to get compensated
+>  	 * pressure/humidity readings.
+>  	 */
+> 
+
