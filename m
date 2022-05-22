@@ -2,38 +2,44 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C7C2C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 13:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D552C433FE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 14:19:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345123AbiEVN7H (ORCPT
+        id S240313AbiEVOTF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 22 May 2022 09:59:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59922 "EHLO
+        Sun, 22 May 2022 10:19:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242145AbiEVN7G (ORCPT
+        with ESMTP id S1346674AbiEVOTE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 22 May 2022 09:59:06 -0400
-Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 741593B016
-        for <kernel-janitors@vger.kernel.org>; Sun, 22 May 2022 06:59:05 -0700 (PDT)
+        Sun, 22 May 2022 10:19:04 -0400
+Received: from smtp.smtpout.orange.fr (smtp01.smtpout.orange.fr [80.12.242.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9DBD393F4
+        for <kernel-janitors@vger.kernel.org>; Sun, 22 May 2022 07:18:59 -0700 (PDT)
 Received: from pop-os.home ([86.243.180.246])
         by smtp.orange.fr with ESMTPA
-        id sm6onkpsUxzw2sm6oniSvB; Sun, 22 May 2022 15:59:04 +0200
+        id smQ0ncTUqeg3psmQ1nn8Nq; Sun, 22 May 2022 16:18:57 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 22 May 2022 15:59:04 +0200
+X-ME-Date: Sun, 22 May 2022 16:18:57 +0200
 X-ME-IP: 86.243.180.246
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     dan.carpenter@oracle.com, "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Gautam Dawar <gautam.dawar@xilinx.com>
+To:     dan.carpenter@oracle.com, Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Shakeel Butt <shakeelb@google.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        David Vernet <void@manifault.com>,
+        Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org
-Subject: [PATCH] vhost-vdpa: Fix some error handling path in vhost_vdpa_process_iotlb_msg()
-Date:   Sun, 22 May 2022 15:59:01 +0200
-Message-Id: <89ef0ae4c26ac3cfa440c71e97e392dcb328ac1b.1653227924.git.christophe.jaillet@wanadoo.fr>
+        cgroups@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH] cgroup: Fix an error handling path in alloc_pagecache_max_30M()
+Date:   Sun, 22 May 2022 16:18:51 +0200
+Message-Id: <628312312eb40e0e39463a2c06415fde5295c716.1653229120.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -41,50 +47,28 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In the error paths introduced by the commit in the Fixes tag, a mutex may
-be left locked.
-Add the correct goto instead of a direct return.
+If the first goto is taken, 'fd' is not opened yet (and is un-initialized).
+So a direct return is safer.
 
-Fixes: a1468175bb17 ("vhost-vdpa: support ASID based IOTLB API")
+Fixes: c1a31a2f7a9c ("cgroup: fix racy check in alloc_pagecache_max_30M() helper function")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-WARNING: This patch only fixes the goto vs return mix-up in this function.
-However, the 2nd hunk looks really spurious to me. I think that the:
--		return -EINVAL;
-+		r = -EINVAL;
-+		goto unlock;
-should be done only in the 'if (!iotlb)' block.
+ tools/testing/selftests/cgroup/test_memcontrol.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-As I don't know this code, I just leave it as-is but draw your attention
-in case this is another bug lurking.
----
- drivers/vhost/vdpa.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-index 1f1d1c425573..3e86080041fc 100644
---- a/drivers/vhost/vdpa.c
-+++ b/drivers/vhost/vdpa.c
-@@ -1000,7 +1000,8 @@ static int vhost_vdpa_process_iotlb_msg(struct vhost_dev *dev, u32 asid,
- 		if (!as) {
- 			dev_err(&v->dev, "can't find and alloc asid %d\n",
- 				asid);
--			return -EINVAL;
-+			r = -EINVAL;
-+			goto unlock;
- 		}
- 		iotlb = &as->iotlb;
- 	} else
-@@ -1013,7 +1014,8 @@ static int vhost_vdpa_process_iotlb_msg(struct vhost_dev *dev, u32 asid,
- 		}
- 		if (!iotlb)
- 			dev_err(&v->dev, "no iotlb for asid %d\n", asid);
--		return -EINVAL;
-+		r = -EINVAL;
-+		goto unlock;
- 	}
+diff --git a/tools/testing/selftests/cgroup/test_memcontrol.c b/tools/testing/selftests/cgroup/test_memcontrol.c
+index c3d0d5f7b19c..8833359556f3 100644
+--- a/tools/testing/selftests/cgroup/test_memcontrol.c
++++ b/tools/testing/selftests/cgroup/test_memcontrol.c
+@@ -448,7 +448,7 @@ static int alloc_pagecache_max_30M(const char *cgroup, void *arg)
+ 	high = cg_read_long(cgroup, "memory.high");
+ 	max = cg_read_long(cgroup, "memory.max");
+ 	if (high != MB(30) && max != MB(30))
+-		goto cleanup;
++		return -1;
  
- 	switch (msg->type) {
+ 	fd = get_temp_fd();
+ 	if (fd < 0)
 -- 
 2.34.1
 
