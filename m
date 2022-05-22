@@ -2,98 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3390AC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 23:00:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ACC7C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 23:27:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231400AbiEVXAR (ORCPT
+        id S242917AbiEVX1t (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 22 May 2022 19:00:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38932 "EHLO
+        Sun, 22 May 2022 19:27:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231364AbiEVXAP (ORCPT
+        with ESMTP id S240460AbiEVX1r (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 22 May 2022 19:00:15 -0400
-Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97D7238DB0;
-        Sun, 22 May 2022 16:00:14 -0700 (PDT)
-Received: by mail-vs1-xe29.google.com with SMTP id z6so13207151vsp.0;
-        Sun, 22 May 2022 16:00:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SF8GydDc0GrVQnk8HXDQAYHPmkcAYm0hZkZSE4F+/Mk=;
-        b=lm6jR8+5QtZGNHO23qu0pS/uTGBdJ2p35Nn8Z9bH9jQ8UyxD6ID9QrQ805maUkbdpu
-         ydZlalnPYIQm7CHX4GqxdFIgDcZPiJwxaEGGz2PzPdC9WjfgLqYYYXUpJfgJI6+dEONr
-         KuAFLY1sp0WJmhuWo37nmVtdtSbRYrY+cKQpPLGJEuglOB11GxW+dtqxvBycMJljkT8s
-         G8yZJvyhfPnVkJ3U9sWmswQhvlD6GIpVz1pC0XyFfAjVmxV4tN6UQ85SeAiz9Qth1YnF
-         1enGrNGSs7YTuep8oIdgFIQivYCQKWyyHh76xcgjpdanOZTNO3ECitixu6kD4GPSt+Bk
-         34sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SF8GydDc0GrVQnk8HXDQAYHPmkcAYm0hZkZSE4F+/Mk=;
-        b=YFkvDdR9Zs9bgLeXbR8HrI5mkapTOACqG/c71Htl12z4Sf5bbIQzwn1toEEVz7xnFZ
-         84/n4LtszfkhYbrxOr7q3dkb8o2NT93gIGmCqZ+4eiQZYZfBNB0cnkXhd8qf/ukOMNRP
-         lNmp84k1fnyWp/tJCYqCpZT85KKx+EIyh0mXL6vTx6Xi/HYEwzzhnbfC5tecGVwv6Cdm
-         M++5XBx+pWSWsexJh0SfUJH4qqJgTTqkaIAE8aeVPB62Q1LxuRNFgWHwP5q4BHYXUnx0
-         PcknXq3wDleuKyWEzQGaZk2ognJbG2s0GNEkd+31phJ/uHwJCH6q/UKJR0mazM6V5I+u
-         3iDg==
-X-Gm-Message-State: AOAM531ILwSBDXNBO7nz5kfmxKwJzxjHe3tJsGq4lyMOrAPlVawQJJ3O
-        Z44+vF/VGe79tMOMThP09DZLXsfHW7FYzSxam7Xwlb84
-X-Google-Smtp-Source: ABdhPJyWO8zf5D/YhtV5FcffI/x394ipbzxX+5SQUfl7UuxsZe4dKs6EW3pHTnZHlQaVb72Vj4c9jNDoPjE2A7uE2ao=
-X-Received: by 2002:a05:6102:3a0e:b0:337:ab1f:3a8c with SMTP id
- b14-20020a0561023a0e00b00337ab1f3a8cmr1272232vsu.61.1653260413547; Sun, 22
- May 2022 16:00:13 -0700 (PDT)
+        Sun, 22 May 2022 19:27:47 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C67B9393C2;
+        Sun, 22 May 2022 16:27:46 -0700 (PDT)
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24MG0jNr028069;
+        Sun, 22 May 2022 23:27:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=uhatlG44LuLy3MCoK1IRgxV3dpIc5fWswvYkARfgpmc=;
+ b=es6rCSmX7IC7bacQtK7BcaZOFCfNTN7nGzb37EuWPGKE86Z/I7/Js2JHYwVDCzitVNrX
+ L7JGPrLElPtfbOPmEIuLPt6o9RJqDVo926XP3VTAG0UHtISW4wzdqQ9SO+s7SL+tynXE
+ xXxKnG1ZvLZ+X9oWqH+XNyiC87/2sLeYc3+5cHAxNUpomYlGeR+u5p0hNCSbtSsBsnA1
+ 7si4tOsZtfSuMrX2yADrdeC1sUoxn5MMVR5jkOrs4tBYD4t+N9bUD+yB8N4sGMeLt3xc
+ LN3QGHRsD8dA7okGo1PgsftFFCMMZwXNjxgfYY6rj4avvALLdxN3T7J95nmpPooyXfA+ KA== 
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3g7a55y70e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 22 May 2022 23:27:39 +0000
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 24MNE0U6005404;
+        Sun, 22 May 2022 23:27:37 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma03fra.de.ibm.com with ESMTP id 3g6qq99k1g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 22 May 2022 23:27:37 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 24MNRZTZ29622770
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 22 May 2022 23:27:35 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EED0052052;
+        Sun, 22 May 2022 23:27:34 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 998285204F;
+        Sun, 22 May 2022 23:27:34 +0000 (GMT)
+Received: from [9.43.199.84] (unknown [9.43.199.84])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id A8C0960306;
+        Mon, 23 May 2022 09:27:27 +1000 (AEST)
+Message-ID: <2835d67e-8ca0-cc2d-b86e-b2ac254428ab@linux.ibm.com>
+Date:   Mon, 23 May 2022 09:27:21 +1000
 MIME-Version: 1.0
-References: <20220521111145.81697-69-Julia.Lawall@inria.fr>
-In-Reply-To: <20220521111145.81697-69-Julia.Lawall@inria.fr>
-From:   Steve French <smfrench@gmail.com>
-Date:   Sun, 22 May 2022 18:00:01 -0500
-Message-ID: <CAH2r5msEi=DrdQfJ0LJmft_w2rMio8e2hn+qznOHuywV_2iSqw@mail.gmail.com>
-Subject: Re: [PATCH] cifs: smbd: fix typo in comment
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     Steve French <sfrench@samba.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH] cxl: fix typo in comment
+Content-Language: en-US
+To:     Julia Lawall <Julia.Lawall@inria.fr>,
+        Frederic Barrat <fbarrat@linux.ibm.com>
+Cc:     kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+References: <20220521111145.81697-82-Julia.Lawall@inria.fr>
+From:   Andrew Donnellan <ajd@linux.ibm.com>
+In-Reply-To: <20220521111145.81697-82-Julia.Lawall@inria.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: dGD28rSE-G8y-fS7dML_ec3SVkgIkwBZ
+X-Proofpoint-GUID: dGD28rSE-G8y-fS7dML_ec3SVkgIkwBZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.486,FMLib:17.11.64.514
+ definitions=2022-05-22_12,2022-05-20_02,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ lowpriorityscore=0 clxscore=1011 mlxlogscore=851 malwarescore=0
+ suspectscore=0 priorityscore=1501 impostorscore=0 mlxscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2205220148
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-merged into cifs-2.6.git for-next
-
-On Sun, May 22, 2022 at 2:51 PM Julia Lawall <Julia.Lawall@inria.fr> wrote:
->
+On 21/5/22 21:11, Julia Lawall wrote:
 > Spelling mistake (triple letters) in comment.
 > Detected with the help of Coccinelle.
->
+> 
 > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
->
-> ---
->  fs/cifs/smbdirect.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
-> index b3a1265711cc..c3278db1cade 100644
-> --- a/fs/cifs/smbdirect.c
-> +++ b/fs/cifs/smbdirect.c
-> @@ -1350,7 +1350,7 @@ void smbd_destroy(struct TCP_Server_Info *server)
->         wait_event(info->wait_send_pending,
->                 atomic_read(&info->send_pending) == 0);
->
-> -       /* It's not posssible for upper layer to get to reassembly */
-> +       /* It's not possible for upper layer to get to reassembly */
->         log_rdma_event(INFO, "drain the reassembly queue\n");
->         do {
->                 spin_lock_irqsave(&info->reassembly_queue_lock, flags);
->
+
+Acked-by: Andrew Donnellan <ajd@linux.ibm.com>
 
 
 -- 
-Thanks,
-
-Steve
+Andrew Donnellan              OzLabs, ADL Canberra
+ajd@linux.ibm.com             IBM Australia Limited
