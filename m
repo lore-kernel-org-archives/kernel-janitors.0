@@ -2,88 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2202C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 18:53:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09607C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 19:46:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350035AbiEVSxO (ORCPT
+        id S1350212AbiEVTq2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 22 May 2022 14:53:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59158 "EHLO
+        Sun, 22 May 2022 15:46:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229913AbiEVSxO (ORCPT
+        with ESMTP id S230252AbiEVTq0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 22 May 2022 14:53:14 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02C1C289B7;
-        Sun, 22 May 2022 11:53:13 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id gi33so16108408ejc.3;
-        Sun, 22 May 2022 11:53:12 -0700 (PDT)
+        Sun, 22 May 2022 15:46:26 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3392D2A275;
+        Sun, 22 May 2022 12:46:25 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id w4so18313074wrg.12;
+        Sun, 22 May 2022 12:46:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=AXF5cjgLABmGiDD3jbseFHxdx24aXW4ewbn3+cYg/Bs=;
-        b=YEkQ15WgaS8kX2AYmYZ1sb1eK1vG3/cGLKdonSEOdkCLMSMTEjfTtUAiZIDE2aRepV
-         FnnAkvYPTzEdFXoBLnhd4eARXFfna798yKUl4H4UXuu5N11eKjO6Hxpcf1bDRhSAB99O
-         TGaHu/J+hfNlxHkUc0f2N95lIyiyUGrsN0J4eKnQF6sFE13P2yLW6Fzesi36o5Zt1W1G
-         21TAx2f2ihMhVsna2OFgjGcGX63kYB5/WVBBa35kLsuWOH0b/XKLG+eLNy1F6hoyUfGM
-         /OvfoSXw77+aYeQn9tka3wtT1pFa8qs94JIy/qOffZ0WpoXHooeb/Z54tYEGfb4kJvdX
-         lxuQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CHiuUqPQofXVNtOmlbKgS9gvW1ZOU+ziWXGacGyqfnU=;
+        b=Wqw7ixDSCQiUlqiBUjLbcdlqFgG0D1NMrx5wJDqD1NENo2MoEihGvDTEgBeA0n9cKy
+         BGCBmuCQJPD7pL5i6gwGmdc774TAduxuheQTaL+3qdQuYRnWoq1jRmOktknLWiilOJvK
+         7iniCUhbCJdsYMGXDcgbRNEsMWN+xP9VNDOnp7jUBEKCbxfFDUh0wCw1purbeG/GQrv8
+         wq2ExyqLN+eWJ+w2sFaGGKx8+RzapyAHh3Bl4wyvPPMFyyMj2ox6YTa3aJV59hVDwL0Y
+         F+FEeG4Gc3GrjIGNELtjcEDm1zW7oAvkLrt4u6fWcO8sGfbpRzrnH5Q7agCZzuvLK9rD
+         1N6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=AXF5cjgLABmGiDD3jbseFHxdx24aXW4ewbn3+cYg/Bs=;
-        b=cXkVHAz+hWYL5mJVCt1TilEpPM0t6i0e2ndBuBbk93/PNa1eumQXSkuf4vbUAX9nOn
-         CL63gBM6iEPy749EhBrfSCZO3V+My1t2J+IFZyRHnnlgG0Jy3msFikvfyoXP0Sz7Q3Xc
-         VPD8Xz6aYQTBeHs+zd8za4Kr5kIt0GoQKqTbRh1m0pzc067+rfEHFVdIR3SSlvPQDYGH
-         nz6FT2GZxkQwnzhxykPHlSrQwWjrnm5sYI5El+F9Jk4VnkdadhiAttiQHCnIFW9Y0Odk
-         xXeh2wlFRgB7UbrWH06TjCMbn7S7VP+Myjy/hI2Ml6yiYrJ94QlPlysEL0Igf5XNjLKx
-         NtcQ==
-X-Gm-Message-State: AOAM5319aj7A9eXpj06oVuZGguKDtdrYQITxFJkWyvSGf56jhk3N9bpD
-        2RZi0+o84cteeIqpb2gloxA=
-X-Google-Smtp-Source: ABdhPJz7KfUzOw11j4aYWCASH49EDChI8fGECAhn4Mm+/sq8xGo0/4cxkmCNLVWVm+yxtEshipeCXQ==
-X-Received: by 2002:a17:907:3e04:b0:6f5:1132:59de with SMTP id hp4-20020a1709073e0400b006f5113259demr17563112ejc.755.1653245591527;
-        Sun, 22 May 2022 11:53:11 -0700 (PDT)
-Received: from DESKTOP-A98GP49 (cable-178-148-254-8.dynamic.sbb.rs. [178.148.254.8])
-        by smtp.gmail.com with ESMTPSA id k16-20020a1709067ad000b006fed8dfcf78sm695815ejo.225.2022.05.22.11.53.10
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CHiuUqPQofXVNtOmlbKgS9gvW1ZOU+ziWXGacGyqfnU=;
+        b=AoO0lYWO1HF4jxLQT3dQUB2W0jPMX3ML2W8qdQ6R4LZXgZPmMQ780TGNZWEcHkMFbS
+         IZ21jqQ29dKTuHNGCOj3Ef9MeR7t33k2cy9L0q8KpwV4/1kIwjuywDn1tMLJllWomGPI
+         miTHa8S8x7wD3Gc4Ce7I4yux4oN3BwcbMpgAloVL8T4j6+TxG2IRGY7ipHQpv8OJau7I
+         Bv8szeNkQJcUg7jSSaXDautsq0zNPxQ8wot0PSWQOB4kzGd+y3b4wII8ZYI5q8szchoJ
+         +AUdeb0L5s132QIMlMG/PbuokW/6+F4qsshDxiGZfN3VnI68/m3jP3ZQSQ/VgWSUQbiS
+         MNdQ==
+X-Gm-Message-State: AOAM533dtMxZYA33+4iAfuFY6/qMPCmAvGle1StiSaCAov1Nvu1hXzBr
+        Rp7IJg3IatqD0NZe7sGuauPCqE5y3SI=
+X-Google-Smtp-Source: ABdhPJz7m1zS1+0VOawboYY3emg62RWneM0bmRRFX9ocb8dLbKQ9xmTU/3SxCxxx4fzKvoa61b3wYQ==
+X-Received: by 2002:a05:6000:168a:b0:20f:d6e8:a5b with SMTP id y10-20020a056000168a00b0020fd6e80a5bmr2831116wrd.41.1653248783731;
+        Sun, 22 May 2022 12:46:23 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id h19-20020adfaa93000000b0020c5253d8f7sm8217026wrc.67.2022.05.22.12.46.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 May 2022 11:53:11 -0700 (PDT)
-Date:   Sun, 22 May 2022 20:53:08 +0200
-From:   Aleksa Savic <savicaleksa83@gmail.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        dan.carpenter@oracle.com, Jack Doan <me@jackdoan.com>,
-        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (aquacomputer_d5next) Fix an error handling path
- in aqc_probe()
-Message-ID: <YoqGlLIORBqsrAqW@DESKTOP-A98GP49>
-References: <be6b955d50de140fcc96bd116150b435021bf567.1653225250.git.christophe.jaillet@wanadoo.fr>
- <YoqCKdfYQKyrFtxN@DESKTOP-A98GP49>
- <e2a64cca-add2-7fcd-0327-5d217f1d3762@roeck-us.net>
+        Sun, 22 May 2022 12:46:23 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Evgeniy Polyakov <zbr@ioremap.net>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] w1: ds2438: remove redundant initialization of variable crc
+Date:   Sun, 22 May 2022 20:46:22 +0100
+Message-Id: <20220522194622.13277-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e2a64cca-add2-7fcd-0327-5d217f1d3762@roeck-us.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, May 22, 2022 at 11:37:52AM -0700, Guenter Roeck wrote:
-> On 5/22/22 11:34, Aleksa Savic wrote:
-> > Thank you Christophe!
-> > 
-> > Aleksa
-> 
-> A Reviewed-by: tag would be useful.
->
-> Thanks,
-> Guenter
+Variable crc is being initialized with a value that is never read,
+it is being re-assigned later on. The initialization is redundant
+and can be removed.
 
-Right - that slipped my mind, sorry. For the patch:
+Cleans up clang scan build warning:
+warning: Value stored to 'crc' is never read [deadcode.DeadStores]
 
-Reviewed-by: Aleksa Savic <savicaleksa83@gmail.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/w1/slaves/w1_ds2438.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Thanks,
-Aleksa
+diff --git a/drivers/w1/slaves/w1_ds2438.c b/drivers/w1/slaves/w1_ds2438.c
+index ca64f99c8f3d..e008c27b3db9 100644
+--- a/drivers/w1/slaves/w1_ds2438.c
++++ b/drivers/w1/slaves/w1_ds2438.c
+@@ -66,8 +66,6 @@ static int w1_ds2438_get_page(struct w1_slave *sl, int pageno, u8 *buf)
+ 	size_t count;
+ 
+ 	while (retries--) {
+-		crc = 0;
+-
+ 		if (w1_reset_select_slave(sl))
+ 			continue;
+ 		w1_buf[0] = W1_DS2438_RECALL_MEMORY;
+-- 
+2.35.3
+
