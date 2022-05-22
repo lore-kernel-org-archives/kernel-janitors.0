@@ -2,92 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09607C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 19:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9400EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 19:50:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350212AbiEVTq2 (ORCPT
+        id S1350635AbiEVTua (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 22 May 2022 15:46:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50928 "EHLO
+        Sun, 22 May 2022 15:50:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230252AbiEVTq0 (ORCPT
+        with ESMTP id S1350799AbiEVTuS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 22 May 2022 15:46:26 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3392D2A275;
-        Sun, 22 May 2022 12:46:25 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id w4so18313074wrg.12;
-        Sun, 22 May 2022 12:46:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CHiuUqPQofXVNtOmlbKgS9gvW1ZOU+ziWXGacGyqfnU=;
-        b=Wqw7ixDSCQiUlqiBUjLbcdlqFgG0D1NMrx5wJDqD1NENo2MoEihGvDTEgBeA0n9cKy
-         BGCBmuCQJPD7pL5i6gwGmdc774TAduxuheQTaL+3qdQuYRnWoq1jRmOktknLWiilOJvK
-         7iniCUhbCJdsYMGXDcgbRNEsMWN+xP9VNDOnp7jUBEKCbxfFDUh0wCw1purbeG/GQrv8
-         wq2ExyqLN+eWJ+w2sFaGGKx8+RzapyAHh3Bl4wyvPPMFyyMj2ox6YTa3aJV59hVDwL0Y
-         F+FEeG4Gc3GrjIGNELtjcEDm1zW7oAvkLrt4u6fWcO8sGfbpRzrnH5Q7agCZzuvLK9rD
-         1N6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CHiuUqPQofXVNtOmlbKgS9gvW1ZOU+ziWXGacGyqfnU=;
-        b=AoO0lYWO1HF4jxLQT3dQUB2W0jPMX3ML2W8qdQ6R4LZXgZPmMQ780TGNZWEcHkMFbS
-         IZ21jqQ29dKTuHNGCOj3Ef9MeR7t33k2cy9L0q8KpwV4/1kIwjuywDn1tMLJllWomGPI
-         miTHa8S8x7wD3Gc4Ce7I4yux4oN3BwcbMpgAloVL8T4j6+TxG2IRGY7ipHQpv8OJau7I
-         Bv8szeNkQJcUg7jSSaXDautsq0zNPxQ8wot0PSWQOB4kzGd+y3b4wII8ZYI5q8szchoJ
-         +AUdeb0L5s132QIMlMG/PbuokW/6+F4qsshDxiGZfN3VnI68/m3jP3ZQSQ/VgWSUQbiS
-         MNdQ==
-X-Gm-Message-State: AOAM533dtMxZYA33+4iAfuFY6/qMPCmAvGle1StiSaCAov1Nvu1hXzBr
-        Rp7IJg3IatqD0NZe7sGuauPCqE5y3SI=
-X-Google-Smtp-Source: ABdhPJz7m1zS1+0VOawboYY3emg62RWneM0bmRRFX9ocb8dLbKQ9xmTU/3SxCxxx4fzKvoa61b3wYQ==
-X-Received: by 2002:a05:6000:168a:b0:20f:d6e8:a5b with SMTP id y10-20020a056000168a00b0020fd6e80a5bmr2831116wrd.41.1653248783731;
-        Sun, 22 May 2022 12:46:23 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id h19-20020adfaa93000000b0020c5253d8f7sm8217026wrc.67.2022.05.22.12.46.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 May 2022 12:46:23 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Evgeniy Polyakov <zbr@ioremap.net>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] w1: ds2438: remove redundant initialization of variable crc
-Date:   Sun, 22 May 2022 20:46:22 +0100
-Message-Id: <20220522194622.13277-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.3
-MIME-Version: 1.0
+        Sun, 22 May 2022 15:50:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 937F039BA8;
+        Sun, 22 May 2022 12:50:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 30D4561132;
+        Sun, 22 May 2022 19:50:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7EDB5C34118;
+        Sun, 22 May 2022 19:50:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653249012;
+        bh=Ub+IOYnJnxk/eYgoRrTOwYMEFkGfwHU1mKG3My/XPaw=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=SRCKIwN4qWks6m+4dUJH0SAzd6j6I0sGiyWLSuULAlaQZtSJK9YplLG2iLzhUOXzl
+         bIF4rCnEuIIGP9UbBmovetDlZEeUtNOL+lmNZ3xmtekQh30hvNISBdr6clVtgFuRmj
+         Wf/dmEsj2xGIycbigrY5kDhgRuYKGEzz2KIy17pye8CgbXO0eSnKXd2j168Fk2Jekf
+         Rv0GgTujKFJl5GPWrkCNa8Lks+CMetIyZN6cvuO2lRM7QgLK0FkHFvW/DOSmbpvZyG
+         Wxz/ReoZlX3pK2RNfW+T1TV7DP5pCjHhUQsyjfDUgJD8rNPHIZRFe7OVlZTHCZD3L4
+         8AMx6gTuKG24w==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 63D4AF03944;
+        Sun, 22 May 2022 19:50:12 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] cirrus: cs89x0: fix typo in comment
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <165324901240.28407.16150306909965262726.git-patchwork-notify@kernel.org>
+Date:   Sun, 22 May 2022 19:50:12 +0000
+References: <20220521111145.81697-47-Julia.Lawall@inria.fr>
+In-Reply-To: <20220521111145.81697-47-Julia.Lawall@inria.fr>
+To:     Julia Lawall <julia.lawall@inria.fr>
+Cc:     davem@davemloft.net, kernel-janitors@vger.kernel.org,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable crc is being initialized with a value that is never read,
-it is being re-assigned later on. The initialization is redundant
-and can be removed.
+Hello:
 
-Cleans up clang scan build warning:
-warning: Value stored to 'crc' is never read [deadcode.DeadStores]
+This patch was applied to netdev/net-next.git (master)
+by David S. Miller <davem@davemloft.net>:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/w1/slaves/w1_ds2438.c | 2 --
- 1 file changed, 2 deletions(-)
+On Sat, 21 May 2022 13:10:57 +0200 you wrote:
+> Spelling mistake (triple letters) in comment.
+> Detected with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> 
+> ---
+>  drivers/net/ethernet/cirrus/cs89x0.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/w1/slaves/w1_ds2438.c b/drivers/w1/slaves/w1_ds2438.c
-index ca64f99c8f3d..e008c27b3db9 100644
---- a/drivers/w1/slaves/w1_ds2438.c
-+++ b/drivers/w1/slaves/w1_ds2438.c
-@@ -66,8 +66,6 @@ static int w1_ds2438_get_page(struct w1_slave *sl, int pageno, u8 *buf)
- 	size_t count;
- 
- 	while (retries--) {
--		crc = 0;
--
- 		if (w1_reset_select_slave(sl))
- 			continue;
- 		w1_buf[0] = W1_DS2438_RECALL_MEMORY;
+Here is the summary with links:
+  - cirrus: cs89x0: fix typo in comment
+    https://git.kernel.org/netdev/net-next/c/3f660c1820f7
+
+You are awesome, thank you!
 -- 
-2.35.3
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
