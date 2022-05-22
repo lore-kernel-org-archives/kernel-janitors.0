@@ -2,62 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E51C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 21 May 2022 20:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A1FDC433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 04:36:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239953AbiEUUD5 (ORCPT
+        id S236202AbiEVEgh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 21 May 2022 16:03:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35254 "EHLO
+        Sun, 22 May 2022 00:36:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241478AbiEUUDz (ORCPT
+        with ESMTP id S233151AbiEVEge (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 21 May 2022 16:03:55 -0400
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61E505AA62;
-        Sat, 21 May 2022 13:03:54 -0700 (PDT)
-Received: by mail-wm1-f46.google.com with SMTP id k126-20020a1ca184000000b003943fd07180so6029077wme.3;
-        Sat, 21 May 2022 13:03:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-        b=bGSAKxQngDkXRyhhOs/u+FK3sUGPbu5OG43AWydY3Rhw/PWi74C/Me9CpUAsCAh5I5
-         5gFQtvgKA8TYdQx/R/Sas6HISD40EdDwK2x8uJtN2UTS/3FYYga6PUG+Vjx4W541FBQu
-         o3VM9V/9fYWv8F4kjHrqfnLyRxZXVkaH2V6hR5fyz1u+9L7ElX2b36bTWZEAHdBNtWU4
-         pn0ibJZCtQFYe/epHZdBQhdhlBLRY+tu+WbjP3/tg9eGfC+mwl9ZD+EGM9+iJWnhN6i3
-         PxksMu8vp2Hxh684r7zfZRIOpNLuy4SxhGFHfZ+MUw1mI17XTtDQc6bx2lMnrVRybwyr
-         vfiA==
-X-Gm-Message-State: AOAM532mkK3n+5cMCLHnV8Avw09LJH994dyQf6J/5Td9Kk1xr2dP65Iw
-        wevIWF5agwmJcwEjDrghV7E=
-X-Google-Smtp-Source: ABdhPJyZW5ziM6UlBJG70zl3q7Tkspea+ORr/TPPzygduyFNRkAiu/KjwAjKQLRTSHiV2m0n2eTG0g==
-X-Received: by 2002:a05:600c:4fd3:b0:394:7fa6:2584 with SMTP id o19-20020a05600c4fd300b003947fa62584mr13376627wmq.177.1653163432813;
-        Sat, 21 May 2022 13:03:52 -0700 (PDT)
-Received: from [10.100.102.14] (46-117-125-14.bb.netvision.net.il. [46.117.125.14])
-        by smtp.gmail.com with ESMTPSA id d7-20020adfa347000000b0020d098935dbsm5758822wrb.58.2022.05.21.13.03.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 21 May 2022 13:03:52 -0700 (PDT)
-Message-ID: <db25e5ad-37c3-8b77-2774-cac27b989781@grimberg.me>
-Date:   Sat, 21 May 2022 23:03:50 +0300
+        Sun, 22 May 2022 00:36:34 -0400
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C29C13587F;
+        Sat, 21 May 2022 21:36:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+        s=42; h=From:Cc:To:Date:Message-ID;
+        bh=C/l6AnCrNdM0sxAoPiPcgRGGIIZVhapGBcAM8SyyoWU=; b=sA8UXMyyD6nH9C8x74BoU4iwZx
+        4J+yjV/KR5UwrGsTlHW8QuxKW+rs6w5TCF0Szpnff1ziG15AxkSAqPKs8Cdy5WkeOyFVp0fCCk/an
+        qc4e2FJYoQsKnhTy0ihUzInALzpUL0CXwD6c94Ftybp/jjcz2SJz6qZf/aNMFXIoSDyZl/PX2QPUG
+        4fJjLinn8z1wZwCh6XgnnVZcgXHBhUHWYK6siGxm9PJBMSc8p+8s6kpFAxSvEpSg4HpDVoOPVYIOU
+        EyJ375gkaX2FP9yur9RcJW1DMdyh4l3FyGfBt4AqScrZWab68unBRxpardRuDevympjdRznW97kGr
+        YOUd3m7gVyDqdKjC21l5iPYe8FATuj05k5cNvrGQHw2vJq/pyKfAJnMW6kjaDbcLexrAYuQOp+i8Q
+        FgcRW73HJpixVKLXF7RL4hkj7TtuPHczzeRazfSZ5dVil2YMmftoXmQRIgn9iyj58PW+wyKLVJv7T
+        QqtJ6hvVan7wFRf0rkXNyiuN;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+        (Exim)
+        id 1nsdKO-001xvK-9f; Sun, 22 May 2022 04:36:28 +0000
+Message-ID: <c530769a-cdbc-eb33-3931-a8fd64e683c7@samba.org>
+Date:   Sat, 21 May 2022 23:36:26 -0500
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.1
-Subject: Re: [PATCH] nvmet: fix typo in comment
+Subject: Re: [PATCH] cifs: smbd: fix typo in comment
 Content-Language: en-US
-To:     Julia Lawall <Julia.Lawall@inria.fr>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     kernel-janitors@vger.kernel.org,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20220521111145.81697-26-Julia.Lawall@inria.fr>
-From:   Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <20220521111145.81697-26-Julia.Lawall@inria.fr>
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     kernel-janitors@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
+References: <20220521111145.81697-69-Julia.Lawall@inria.fr>
+From:   Steven French <sfrench@samba.org>
+In-Reply-To: <20220521111145.81697-69-Julia.Lawall@inria.fr>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+merged into cifs-2.6.git for-next
+
+On 5/21/22 06:11, Julia Lawall wrote:
+> Spelling mistake (triple letters) in comment.
+> Detected with the help of Coccinelle.
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+>
+> ---
+>   fs/cifs/smbdirect.c |    2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
+> index b3a1265711cc..c3278db1cade 100644
+> --- a/fs/cifs/smbdirect.c
+> +++ b/fs/cifs/smbdirect.c
+> @@ -1350,7 +1350,7 @@ void smbd_destroy(struct TCP_Server_Info *server)
+>   	wait_event(info->wait_send_pending,
+>   		atomic_read(&info->send_pending) == 0);
+>   
+> -	/* It's not posssible for upper layer to get to reassembly */
+> +	/* It's not possible for upper layer to get to reassembly */
+>   	log_rdma_event(INFO, "drain the reassembly queue\n");
+>   	do {
+>   		spin_lock_irqsave(&info->reassembly_queue_lock, flags);
+>
