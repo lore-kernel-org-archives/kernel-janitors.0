@@ -2,41 +2,38 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F3D7C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 13:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA293C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 13:44:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240397AbiEVN1y (ORCPT
+        id S1346046AbiEVNo0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 22 May 2022 09:27:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37568 "EHLO
+        Sun, 22 May 2022 09:44:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232369AbiEVN1y (ORCPT
+        with ESMTP id S240597AbiEVNoZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 22 May 2022 09:27:54 -0400
-Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E8EB3B029
-        for <kernel-janitors@vger.kernel.org>; Sun, 22 May 2022 06:27:52 -0700 (PDT)
+        Sun, 22 May 2022 09:44:25 -0400
+Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9721618366
+        for <kernel-janitors@vger.kernel.org>; Sun, 22 May 2022 06:44:22 -0700 (PDT)
 Received: from pop-os.home ([86.243.180.246])
         by smtp.orange.fr with ESMTPA
-        id slcXnke9qxzw2slcYniP6N; Sun, 22 May 2022 15:27:50 +0200
+        id slsYnY5CQ5ohRslsYnnhLI; Sun, 22 May 2022 15:44:21 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 22 May 2022 15:27:50 +0200
+X-ME-Date: Sun, 22 May 2022 15:44:21 +0200
 X-ME-IP: 86.243.180.246
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     dan.carpenter@oracle.com, Steve Wahl <steve.wahl@hpe.com>,
-        Mike Travis <mike.travis@hpe.com>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Russ Anderson <russ.anderson@hpe.com>,
+To:     dan.carpenter@oracle.com, Huacai Chen <chenhuacai@kernel.org>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>
+        Marc Zyngier <maz@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] x86/platform/uv: Add a missing tab to fix alignment
-Date:   Sun, 22 May 2022 15:27:44 +0200
-Message-Id: <32ae1218d752e4543acde20c5d7964e5578319ad.1653226051.git.christophe.jaillet@wanadoo.fr>
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-mips@vger.kernel.org
+Subject: [PATCH] irqchip/loongson-liointc: Fix an error handling path in liointc_init()
+Date:   Sun, 22 May 2022 15:44:17 +0200
+Message-Id: <1c4e81eda5f9651f581f1554629d334f1afda841.1653227039.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -44,27 +41,33 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-A tab is missing and the code looks odd. Add the missing tab.
-Spotetd by smatch.
+If a of_property_match_string() call fails, we still need to release some
+resources.
+Add the corresponding goto instead of a direct return.
 
+Fixes: 807e93d0ecbb ("irqchip/loongson-liointc: Add ACPI init support")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/x86/kernel/apic/x2apic_uv_x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/irqchip/irq-loongson-liointc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
-index 482855227964..bdf7b2756dd3 100644
---- a/arch/x86/kernel/apic/x2apic_uv_x.c
-+++ b/arch/x86/kernel/apic/x2apic_uv_x.c
-@@ -108,7 +108,7 @@ static void __init early_get_pnodeid(void)
- 	} else if (UVH_RH_GAM_ADDR_MAP_CONFIG) {
- 		union uvh_rh_gam_addr_map_config_u  m_n_config;
+diff --git a/drivers/irqchip/irq-loongson-liointc.c b/drivers/irqchip/irq-loongson-liointc.c
+index ff3cb5b05710..2227b702a81d 100644
+--- a/drivers/irqchip/irq-loongson-liointc.c
++++ b/drivers/irqchip/irq-loongson-liointc.c
+@@ -185,8 +185,10 @@ static int liointc_init(phys_addr_t addr, unsigned long size, int revision,
+ 			int index = of_property_match_string(node,
+ 					"reg-names", core_reg_names[i]);
  
--	m_n_config.v = uv_early_read_mmr(UVH_RH_GAM_ADDR_MAP_CONFIG);
-+		m_n_config.v = uv_early_read_mmr(UVH_RH_GAM_ADDR_MAP_CONFIG);
- 		uv_cpuid.n_skt = m_n_config.s.n_skt;
- 		if (is_uv(UV3))
- 			uv_cpuid.m_skt = m_n_config.s3.m_skt;
+-			if (index < 0)
+-				return -EINVAL;
++			if (index < 0) {
++				err = -EINVAL;
++				goto out_iounmap;
++			}
+ 
+ 			priv->core_isr[i] = of_iomap(node, index);
+ 		}
 -- 
 2.34.1
 
