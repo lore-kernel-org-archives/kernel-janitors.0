@@ -2,38 +2,38 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA293C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 13:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C7C2C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 22 May 2022 13:59:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346046AbiEVNo0 (ORCPT
+        id S1345123AbiEVN7H (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 22 May 2022 09:44:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33600 "EHLO
+        Sun, 22 May 2022 09:59:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240597AbiEVNoZ (ORCPT
+        with ESMTP id S242145AbiEVN7G (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 22 May 2022 09:44:25 -0400
-Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9721618366
-        for <kernel-janitors@vger.kernel.org>; Sun, 22 May 2022 06:44:22 -0700 (PDT)
+        Sun, 22 May 2022 09:59:06 -0400
+Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 741593B016
+        for <kernel-janitors@vger.kernel.org>; Sun, 22 May 2022 06:59:05 -0700 (PDT)
 Received: from pop-os.home ([86.243.180.246])
         by smtp.orange.fr with ESMTPA
-        id slsYnY5CQ5ohRslsYnnhLI; Sun, 22 May 2022 15:44:21 +0200
+        id sm6onkpsUxzw2sm6oniSvB; Sun, 22 May 2022 15:59:04 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 22 May 2022 15:44:21 +0200
+X-ME-Date: Sun, 22 May 2022 15:59:04 +0200
 X-ME-IP: 86.243.180.246
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     dan.carpenter@oracle.com, Huacai Chen <chenhuacai@kernel.org>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>
+To:     dan.carpenter@oracle.com, "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Gautam Dawar <gautam.dawar@xilinx.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-mips@vger.kernel.org
-Subject: [PATCH] irqchip/loongson-liointc: Fix an error handling path in liointc_init()
-Date:   Sun, 22 May 2022 15:44:17 +0200
-Message-Id: <1c4e81eda5f9651f581f1554629d334f1afda841.1653227039.git.christophe.jaillet@wanadoo.fr>
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org
+Subject: [PATCH] vhost-vdpa: Fix some error handling path in vhost_vdpa_process_iotlb_msg()
+Date:   Sun, 22 May 2022 15:59:01 +0200
+Message-Id: <89ef0ae4c26ac3cfa440c71e97e392dcb328ac1b.1653227924.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -41,33 +41,50 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If a of_property_match_string() call fails, we still need to release some
-resources.
-Add the corresponding goto instead of a direct return.
+In the error paths introduced by the commit in the Fixes tag, a mutex may
+be left locked.
+Add the correct goto instead of a direct return.
 
-Fixes: 807e93d0ecbb ("irqchip/loongson-liointc: Add ACPI init support")
+Fixes: a1468175bb17 ("vhost-vdpa: support ASID based IOTLB API")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/irqchip/irq-loongson-liointc.c | 6 ++++--
+WARNING: This patch only fixes the goto vs return mix-up in this function.
+However, the 2nd hunk looks really spurious to me. I think that the:
+-		return -EINVAL;
++		r = -EINVAL;
++		goto unlock;
+should be done only in the 'if (!iotlb)' block.
+
+As I don't know this code, I just leave it as-is but draw your attention
+in case this is another bug lurking.
+---
+ drivers/vhost/vdpa.c | 6 ++++--
  1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/irqchip/irq-loongson-liointc.c b/drivers/irqchip/irq-loongson-liointc.c
-index ff3cb5b05710..2227b702a81d 100644
---- a/drivers/irqchip/irq-loongson-liointc.c
-+++ b/drivers/irqchip/irq-loongson-liointc.c
-@@ -185,8 +185,10 @@ static int liointc_init(phys_addr_t addr, unsigned long size, int revision,
- 			int index = of_property_match_string(node,
- 					"reg-names", core_reg_names[i]);
- 
--			if (index < 0)
--				return -EINVAL;
-+			if (index < 0) {
-+				err = -EINVAL;
-+				goto out_iounmap;
-+			}
- 
- 			priv->core_isr[i] = of_iomap(node, index);
+diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+index 1f1d1c425573..3e86080041fc 100644
+--- a/drivers/vhost/vdpa.c
++++ b/drivers/vhost/vdpa.c
+@@ -1000,7 +1000,8 @@ static int vhost_vdpa_process_iotlb_msg(struct vhost_dev *dev, u32 asid,
+ 		if (!as) {
+ 			dev_err(&v->dev, "can't find and alloc asid %d\n",
+ 				asid);
+-			return -EINVAL;
++			r = -EINVAL;
++			goto unlock;
  		}
+ 		iotlb = &as->iotlb;
+ 	} else
+@@ -1013,7 +1014,8 @@ static int vhost_vdpa_process_iotlb_msg(struct vhost_dev *dev, u32 asid,
+ 		}
+ 		if (!iotlb)
+ 			dev_err(&v->dev, "no iotlb for asid %d\n", asid);
+-		return -EINVAL;
++		r = -EINVAL;
++		goto unlock;
+ 	}
+ 
+ 	switch (msg->type) {
 -- 
 2.34.1
 
