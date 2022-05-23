@@ -2,79 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 813AAC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 May 2022 20:26:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A02C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 May 2022 20:31:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233032AbiEWU0I (ORCPT
+        id S233059AbiEWUbs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 May 2022 16:26:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50990 "EHLO
+        Mon, 23 May 2022 16:31:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233150AbiEWU0H (ORCPT
+        with ESMTP id S233036AbiEWUbq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 May 2022 16:26:07 -0400
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82F8325FE;
-        Mon, 23 May 2022 13:26:06 -0700 (PDT)
-Received: by mail-io1-xd32.google.com with SMTP id i74so9787123ioa.4;
-        Mon, 23 May 2022 13:26:06 -0700 (PDT)
+        Mon, 23 May 2022 16:31:46 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 776E762124
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 May 2022 13:31:45 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id 1so5220819ljh.8
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 May 2022 13:31:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=google.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=3BLAGqefFcKnKvrDQkzzllfdtEJDFmKt1hLfJEqkgnw=;
-        b=DtD1+J6MZV3anfLnN976u1SvMRB4p3Dv+GFIL2oz2VSCrPQcQszE9qmG45a+XMQz3x
-         LBbsWr8WJxvhuFUtvkNLPt3PegpxtJr4gAVZimKb96TyytKTD/gz6wfy5VHS3LwtuNTV
-         jX2WvinoI665o4G/AOZz7+6xfaKBT6g8miAdJGjLZB3Cazi3wNXwg7hpl3gA0zzbGtn4
-         ysRilot8XAIkQlk7RvSFkp1Ya5PJFx+41DG3NctQbJXAUOAHkUVztYwEa6Qert5CnGQ1
-         einJtgHT/+Zd9T59hQde59zDNlAgaTIX1lroraSCp0ail3Put4Z2+W3JpKSWVvCWPR+/
-         H7GQ==
+        bh=wBaaj+XJRciWuzeB12Uou/3sT9TB3e1izvK2J/BvnGE=;
+        b=dtDiRK5Zbt91iRXg8l3N/Bq0yx4h9NH0DItyIk9C5xS6kqHq8CLQx+mmxFi0hXgqAL
+         CUICgTrYsIWayHyaEMwt/8nKiRqvWGh6ElUuzikGk/nuJp63SJJGiBkjChNAtKA5gdLB
+         tA0mA8WqTpxsiHeCTA1vE0+VPWLunSHT74gIsw6GXKgqp426nxGAWMdb9TBCYXym4WxT
+         tXUurH+EwydB+SxWnXDVTXLWbZwhHkziQ4ji51+bWD2JgDPoE5XbTlqdy9BQtmz2YTNZ
+         Bj6tTJ3CymcZ6d6o07quXCIkFwBozaA22XGbl9jXu0TCtfY1ie0TdoVndMhFKEYPuWy0
+         O7MQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3BLAGqefFcKnKvrDQkzzllfdtEJDFmKt1hLfJEqkgnw=;
-        b=l/9nll5kdOo4z3hrBl4s5r4XSezyWrpXubdHB4ZUBstK/BsHl6FXk9IJeIzbkV8Amt
-         LvWGmrd3mF1E1dGU+veeWm6jkLi+7nmK4i3wz8BrkAYGzqnp7ZnWwdK4lhqoZsXJgP0D
-         uDcw0USvL4XNAZfexWZt/EkmDqe4zBzvUmhxJEBn3bOJ32gffvRWaHP5ZZDjSN9/a5ch
-         5ZNjFKVJ8bpZFOgFxsqbYGkq4uZAwAIWw1pvB/Uwe/mrpaRKl4OU7QznVN+6SPWIbBzg
-         iQ/6RGiSn0WFYHQGF/zG4YogosBgdpp1XBlIuhPk9oN6zld/aGtt4HOX1RNlaS+SRaGL
-         1gqw==
-X-Gm-Message-State: AOAM5320GH3vSPM+i2OVVSY/axnz4H9E7w3PHO1XttWcarm4VlYnWCnK
-        DiRgmDb//HMYEJCKhsQGVpKhMLFmbyy2f9Snlk0=
-X-Google-Smtp-Source: ABdhPJyCkvOTLidTHrw62Wg9JHrwDBE4wyrSaTiPgYgmFPwwAAXuPSf9xiIV/Qgb+mPgIIU99uUs8vla9Hn77s+n27I=
-X-Received: by 2002:a05:6638:16cf:b0:32b:6ee7:8d7d with SMTP id
- g15-20020a05663816cf00b0032b6ee78d7dmr12242004jat.256.1653337566001; Mon, 23
- May 2022 13:26:06 -0700 (PDT)
+        bh=wBaaj+XJRciWuzeB12Uou/3sT9TB3e1izvK2J/BvnGE=;
+        b=qmXkOxOeXhLUvTpr7Kk92PSMi5LXoTDf6fgC6MSTeVg+c/6RUohIh5mBe+eDY5CfLk
+         UijFC10/pFU3+Sl0N0ddpc7pEb9yhwftMgv54Jl2EuTV5jFqzgd4PYhy1EFyT7e/PsXp
+         /BrQirTSKakYX9dlfht/+UAcUuM9Qrk+DTBLNraXsPd8n1Y7s+G+fCr8NB3R23SzF5OE
+         1p6R87vXXaynaDjye51A+tNa/BXQBG9Q/gjZNOHprKx+usnZU8xSSj5CgmqlBTVYw/vf
+         lp09lpid+bR/s83WSSTQr+ZuutzzSXwOULyhYx0pLF4FdUPZuLNPGGfsoStGdOOlxLp2
+         KWUw==
+X-Gm-Message-State: AOAM533EYovX3KN8oU5GcdDglQaq/TiZy6qBOU/ZA7A8LPIvZQZkcRFw
+        nJA/v5tqR4edlykP6BWMVtSFD4ucnl/+mgld//iQuw==
+X-Google-Smtp-Source: ABdhPJzAEfRy1Ql25Px8odBfL4/7wsYQ6fbK1gT9iKKGTlkCS+cnyVcBWexyK6Mk7k89J7yDzcV723I9mipNjQQxmOM=
+X-Received: by 2002:a2e:98d0:0:b0:253:e3a3:ec6c with SMTP id
+ s16-20020a2e98d0000000b00253e3a3ec6cmr7088089ljj.493.1653337903584; Mon, 23
+ May 2022 13:31:43 -0700 (PDT)
 MIME-Version: 1.0
 References: <23e0ba7863d51ab629498762a97d477645aeafea.1653123744.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <23e0ba7863d51ab629498762a97d477645aeafea.1653123744.git.christophe.jaillet@wanadoo.fr>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Mon, 23 May 2022 22:25:55 +0200
-Message-ID: <CANiq72=GZs5CmAMGAMaHrp1yJ8b7nv3HrsWNeQ42kfy0z5uuAg@mail.gmail.com>
+ <CAKwvOdneqUvq+Nz_zPmJmuPFfAvWQgnzrw1AJt=WqQF2hThF-A@mail.gmail.com> <00061a71-4d7c-0605-80b5-3d909fc3dfaa@wanadoo.fr>
+In-Reply-To: <00061a71-4d7c-0605-80b5-3d909fc3dfaa@wanadoo.fr>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 23 May 2022 13:31:32 -0700
+Message-ID: <CAKwvOdnDvrYo_PtMa+JW0FhmkZVDp7eVpR_BV9L2Om-jXPbBog@mail.gmail.com>
 Subject: Re: [RFC PATCH] kbuild: Add an option to enable -O1 and speed-up
  compilation time
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Dan <dan.carpenter@oracle.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
+Cc:     dan.carpenter@oracle.com, Masahiro Yamada <masahiroy@kernel.org>,
         Michal Marek <michal.lkml@markovi.net>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
-
-On Mon, May 23, 2022 at 9:11 AM Christophe JAILLET
+On Mon, May 23, 2022 at 1:16 PM Christophe JAILLET
 <christophe.jaillet@wanadoo.fr> wrote:
 >
-> +KBUILD_RUSTFLAGS_OPT_LEVEL_MAP := 1
+> Thanks for taking time for a full review, even on something you are not
+> fan on. This is really appreciated.
 
-The patch seems based on linux-next -- is this intended? Thanks!
-
-Cheers,
-Miguel
+Of course! It's still a question worth asking, and having a lore link
+to refer back to should the question arise again in the future. Thanks
+for asking.
+-- 
+Thanks,
+~Nick Desaulniers
