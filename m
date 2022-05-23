@@ -2,81 +2,155 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A06B3C4332F
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 May 2022 20:10:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EBC1C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 May 2022 20:16:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232416AbiEWUKP (ORCPT
+        id S232550AbiEWUQ2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 May 2022 16:10:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39534 "EHLO
+        Mon, 23 May 2022 16:16:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231847AbiEWUKO (ORCPT
+        with ESMTP id S233376AbiEWUQM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 May 2022 16:10:14 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5A9F9858C;
-        Mon, 23 May 2022 13:10:13 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 90427B815C3;
-        Mon, 23 May 2022 20:10:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 49CF4C385A9;
-        Mon, 23 May 2022 20:10:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653336611;
-        bh=t9ed7xwBhw3HzY0r4U+A4ALzGc8ApH2AjH9dQPtOGUI=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=MdefCYG1oiwzFjXK5Mn04e3xtjZ8uIaM5MdwBLAtUzhEEEpvHUXtIxhRlM2roiXRH
-         WnC4XP/sCvCRn+FUopdfBjacmiZraEuyMH8SVfLqMo6uHu4f73hD4Xu3idaPxmlAU7
-         /9UHhWdw4YLnVUJKRbfBzbZEHJFybD3GLA0YgWrRQzgN6BFQIZ4sXVob1tWIJ2XLjq
-         lshvLo56LJ8NnFJ10vUqMOiIRuPwiiM09LcZM3xN2znD6NVRTJrwAXMIQc6Mcv5a6L
-         EkubBBbJcVvfYcGd/5dw3I9kPIbcChpZfxd/Y6McC+VPp9LyYinsdi6HU9BchCOuBf
-         GPTub+sHBebYA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2AEB1F03938;
-        Mon, 23 May 2022 20:10:11 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 23 May 2022 16:16:12 -0400
+Received: from smtp.smtpout.orange.fr (smtp04.smtpout.orange.fr [80.12.242.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F5B01057F
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 May 2022 13:16:08 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.180.246])
+        by smtp.orange.fr with ESMTPA
+        id tETGnTFRzAym2tETGnHes4; Mon, 23 May 2022 22:16:07 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Mon, 23 May 2022 22:16:07 +0200
+X-ME-IP: 86.243.180.246
+Message-ID: <00061a71-4d7c-0605-80b5-3d909fc3dfaa@wanadoo.fr>
+Date:   Mon, 23 May 2022 22:16:05 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [RFC PATCH] kbuild: Add an option to enable -O1 and speed-up
+ compilation time
+Content-Language: en-GB
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     dan.carpenter@oracle.com, Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>
+References: <23e0ba7863d51ab629498762a97d477645aeafea.1653123744.git.christophe.jaillet@wanadoo.fr>
+ <CAKwvOdneqUvq+Nz_zPmJmuPFfAvWQgnzrw1AJt=WqQF2hThF-A@mail.gmail.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <CAKwvOdneqUvq+Nz_zPmJmuPFfAvWQgnzrw1AJt=WqQF2hThF-A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] selftests/bpf: Fix spelling mistake: "unpriviliged" ->
- "unprivileged"
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <165333661117.30857.3574938614262437532.git-patchwork-notify@kernel.org>
-Date:   Mon, 23 May 2022 20:10:11 +0000
-References: <20220523115604.49942-1-colin.i.king@gmail.com>
-In-Reply-To: <20220523115604.49942-1-colin.i.king@gmail.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     shuah@kernel.org, ast@kernel.org, daniel@iogearbox.net,
-        andrii@kernel.org, kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
-        john.fastabend@gmail.com, kpsingh@kernel.org,
-        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to bpf/bpf-next.git (master)
-by Daniel Borkmann <daniel@iogearbox.net>:
-
-On Mon, 23 May 2022 12:56:04 +0100 you wrote:
-> There are spelling mistakes in ASSERT messages. Fix these.
+Le 23/05/2022 à 20:26, Nick Desaulniers a écrit :
+> On Sat, May 21, 2022 at 2:04 AM Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+>>
+>> Add a new compilation option which speeds-up compilation time.
+>> This can be useful when using static checker such as smatch or build-bots.
+>> In such cases, the speed and quality of the generated code is not
+>> important.
+>>
+>> Using -O0 would be even better, but unfortunately, building fails with
+>> this option.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  tools/testing/selftests/bpf/prog_tests/unpriv_bpf_disabled.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Which is a tragedy.
+> 
+> As with the Rust series, I'm not a fan of this (or
+> CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3):
+> https://lore.kernel.org/lkml/CAKwvOd=7QTUH69+ZbT7e8einvgcosTbDkyohmPaUBv6_y8RfrQ@mail.gmail.com/
+> 
+> These feel more like attempts to wrap every conceivable command line
+> flag in a kconfig option, which makes me think of that meme from
+> Jurassic Park: "your scientists were so preoccupied with whether or
+> not they could, they didn't stop to think if they should."
+> Not a fan.  I'd ask for measurements, but that would be a request for
+> a "rock fetching quest" for something I still wouldn't be a fan of.
 
-Here is the summary with links:
-  - [next] selftests/bpf: Fix spelling mistake: "unpriviliged" -> "unprivileged"
-    https://git.kernel.org/bpf/bpf-next/c/f9a3eca4bc04
+Hi,
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+some preliminary tests gave roughly a 5% build time speed-up with -O1.
+That is to say that the impact seems quite limited, after all.
+This was done on building /drivers/net/ or /drivers/net/ethernet/ only.
 
+I don't have numbers for the impact on memory consumption.
+
+Given the feedbacks on -O1 which is unlikely to be able to build a full 
+kernel and your position on yet another option for a very specific use 
+case, I won't push the idea further.
+
+I'll keep it in my own tree for (small) build time improvement when 
+running smatch.
+
+The idea of turning off a subset of -O2 options would just be some too 
+fine tuning. I'll certainly try it for my own use, but it would end to 
+an un-understandable list of flags in Makefile.
+-O1 (or -O0) was simple. A more complex solution is way too much.
+
+
+Thanks for your feedbacks.
+
+CJ
+
+> 
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>   Makefile     | 5 ++++-
+>>   init/Kconfig | 8 ++++++++
+>>   2 files changed, 12 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Makefile b/Makefile
+>> index 1f8bef92868f..14467386f947 100644
+>> --- a/Makefile
+>> +++ b/Makefile
+>> @@ -817,7 +817,10 @@ KBUILD_CFLAGS      += $(call cc-disable-warning, format-truncation)
+>>   KBUILD_CFLAGS  += $(call cc-disable-warning, format-overflow)
+>>   KBUILD_CFLAGS  += $(call cc-disable-warning, address-of-packed-member)
+>>
+>> -ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
+>> +ifdef CONFIG_CC_OPTIMIZE_FOR_COMPILATION_SPEED
+>> +KBUILD_CFLAGS += -O1
+>> +KBUILD_RUSTFLAGS_OPT_LEVEL_MAP := 1
+>> +else ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
+>>   KBUILD_CFLAGS += -O2
+>>   KBUILD_RUSTFLAGS_OPT_LEVEL_MAP := 2
+>>   else ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3
+>> diff --git a/init/Kconfig b/init/Kconfig
+>> index a96776a9b080..3177a1830c9a 100644
+>> --- a/init/Kconfig
+>> +++ b/init/Kconfig
+>> @@ -1384,6 +1384,14 @@ choice
+>>          prompt "Compiler optimization level"
+>>          default CC_OPTIMIZE_FOR_PERFORMANCE
+>>
+>> +config CC_OPTIMIZE_FOR_COMPILATION_SPEED
+>> +       bool "Optimize for compilation speed (-O1)"
+>> +       help
+>> +         This option can be useful when running a static checker such as smatch
+>> +         or a build-bot.
+>> +         Compilation time is slighly faster than -O2 and it requires less
+> 
+> s/slighly/slightly/
+
+Thanks for taking time for a full review, even on something you are not 
+fan on. This is really appreciated.
+
+CJ
+
+> 
+>> +         memory.
+>> +
+>>   config CC_OPTIMIZE_FOR_PERFORMANCE
+>>          bool "Optimize for performance (-O2)"
+>>          help
+>> --
+>> 2.34.1
+>>
+> 
+> 
 
