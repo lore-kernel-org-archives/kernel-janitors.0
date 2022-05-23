@@ -2,69 +2,70 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BEF3C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 May 2022 08:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B47B0C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 May 2022 09:31:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232012AbiEWIlr (ORCPT
+        id S232939AbiEWJa6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 May 2022 04:41:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34206 "EHLO
+        Mon, 23 May 2022 05:30:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232005AbiEWIlp (ORCPT
+        with ESMTP id S232868AbiEWJa5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 May 2022 04:41:45 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9960F18E0D;
-        Mon, 23 May 2022 01:41:41 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: kholk11)
-        with ESMTPSA id D76C31F42CC6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1653295300;
-        bh=0P46duBDuz2b5CE/o2n56812oMHke0Ez/vRylcz7E8w=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=DnbM3Sz+hSQk0SLXivU4I4uVTqNsW6Afi3aXHedtSkumaqlwPyJt63SeARySgkWhU
-         V0bX58p4FClZRwXaMagpvPdcnexlvyUQzwHcdoyDM9FP3wzGJy8BSKlBOBnLr5j+Gc
-         vynWi3U5cSwtRMtT621qLvUSJIvzp0Mz+HUtOvZzxCokHVmSohEjaK84FkDEZNZA+L
-         Is5i9p8pDEBkr+jWHCQO4ezFkWE+OohHFCF/KWproX8j2MYcLIlDABfAc+FcE1acjB
-         c+W92jSNmEJ59Rgudk99ODg8/JxxqS0oiXqcyNjkj99WoSvmpvE5iTbFtg9zvrO4KW
-         xnPVw4t4ABqUA==
-Message-ID: <e6d5bf20-4ed2-2d98-438e-315a9ed6b71a@collabora.com>
-Date:   Mon, 23 May 2022 10:41:37 +0200
+        Mon, 23 May 2022 05:30:57 -0400
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6BEF749908;
+        Mon, 23 May 2022 02:30:56 -0700 (PDT)
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1nt4Or-0001Pn-01; Mon, 23 May 2022 11:30:53 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id C3125C02F4; Mon, 23 May 2022 11:16:28 +0200 (CEST)
+Date:   Mon, 23 May 2022 11:16:28 +0200
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     kernel-janitors@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MIPS: Octeon: fix typo in comment
+Message-ID: <20220523091628.GB5069@alpha.franken.de>
+References: <20220521111145.81697-65-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH] i2c: mediatek: Fix an error handling path in
- mtk_i2c_probe()
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        dan.carpenter@oracle.com, Qii Wang <qii.wang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Wolfram Sang <wsa@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <8001bcdbee9f8afc85118c99b8166eb6473dcba5.1653222111.git.christophe.jaillet@wanadoo.fr>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <8001bcdbee9f8afc85118c99b8166eb6473dcba5.1653222111.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220521111145.81697-65-Julia.Lawall@inria.fr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Il 22/05/22 14:22, Christophe JAILLET ha scritto:
-> The clsk are prepared, enabled, then disabled. So if an error occurs after
-> the disable step, they are still prepared.
+On Sat, May 21, 2022 at 01:11:15PM +0200, Julia Lawall wrote:
+> Spelling mistake (triple letters) in comment.
+> Detected with the help of Coccinelle.
 > 
-> Add an error handling path to unprepare the clks in such a case, as already
-> done in the .remove function.
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 > 
-> Fixes: 8b4fc246c3ff ("i2c: mediatek: Optimize master_xfer() and avoid circular locking")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  arch/mips/pci/pcie-octeon.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/mips/pci/pcie-octeon.c b/arch/mips/pci/pcie-octeon.c
+> index 50a3394a9d25..c9edd3fb380d 100644
+> --- a/arch/mips/pci/pcie-octeon.c
+> +++ b/arch/mips/pci/pcie-octeon.c
+> @@ -895,7 +895,7 @@ static int __cvmx_pcie_rc_initialize_gen1(int pcie_port)
+>  	mem_access_subid.s.nsw = 0;	/* Enable Snoop for Writes. */
+>  	mem_access_subid.s.ror = 0;	/* Disable Relaxed Ordering for Reads. */
+>  	mem_access_subid.s.row = 0;	/* Disable Relaxed Ordering for Writes. */
+> -	mem_access_subid.s.ba = 0;	/* PCIe Adddress Bits <63:34>. */
+> +	mem_access_subid.s.ba = 0;	/* PCIe Address Bits <63:34>. */
+>  
+>  	/*
+>  	 * Setup mem access 12-15 for port 0, 16-19 for port 1,
 
-Thanks!
+applied to mips-next.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Thomas.
 
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
