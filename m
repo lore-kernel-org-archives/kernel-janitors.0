@@ -2,155 +2,135 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EBC1C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 May 2022 20:16:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 303B8C433F5
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 May 2022 20:17:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232550AbiEWUQ2 (ORCPT
+        id S232816AbiEWURR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 May 2022 16:16:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52382 "EHLO
+        Mon, 23 May 2022 16:17:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233376AbiEWUQM (ORCPT
+        with ESMTP id S232918AbiEWURG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 May 2022 16:16:12 -0400
-Received: from smtp.smtpout.orange.fr (smtp04.smtpout.orange.fr [80.12.242.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F5B01057F
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 May 2022 13:16:08 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.180.246])
-        by smtp.orange.fr with ESMTPA
-        id tETGnTFRzAym2tETGnHes4; Mon, 23 May 2022 22:16:07 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 23 May 2022 22:16:07 +0200
-X-ME-IP: 86.243.180.246
-Message-ID: <00061a71-4d7c-0605-80b5-3d909fc3dfaa@wanadoo.fr>
-Date:   Mon, 23 May 2022 22:16:05 +0200
+        Mon, 23 May 2022 16:17:06 -0400
+Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C66C6941AA;
+        Mon, 23 May 2022 13:16:56 -0700 (PDT)
+Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-e5e433d66dso19847230fac.5;
+        Mon, 23 May 2022 13:16:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=039/Q2AZDShC4cyR0ddlH/eUG3odzlEnwcuXrDMGe4g=;
+        b=ozdSJJMUIKWXk58MINckgl2jY3Z70UCArhlPG8akBVn45Lo1OKbzhd+iiYTQgxgSov
+         ttTLYVO422DGVP6TIA4i9bUQBs5/7JdzC3dRQG0sXHQi4PlhyOLmRvjkcdy1OJs3F/A6
+         Zj8bx6wJDHfGS6hEHmgv2drWd4mphIk8dTMhCdJ0yi2fh9CCWlyHS1hHK9ZdyqmSpJuy
+         vEbpb+MNTAgOj3yHkpuw8kEJMDHrtlMeBs/ve0ejcAbFRFGGUCDeElzbTxViEoz/z/PZ
+         uhfBKKWWALl1+PfA4XOANV8E4H54v5kXIPBLeUAmsB3yS11kLTm1r84BSI6jXTy7SDXx
+         XGVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=039/Q2AZDShC4cyR0ddlH/eUG3odzlEnwcuXrDMGe4g=;
+        b=KJnXiwPbhz9bdAnYcbWhxvDtDbhPR1YK/J9E/YXl/i4c94JkoUsHQAFKWgO+LOpT/7
+         R/W+8iav3FtBiS1EdINO6VcXrx5qgCFAqdCeG3rb4ETWbFWFdroYPWhrBfUS2rgDOnyd
+         KBhELMJDB3OWTbrFxE35i3eCOqOHeynzDnEURd5OX8oPRQxMAYbi19LnfyPKArCJhuP5
+         N4TAdaP3uvSoqCII+26SUQo1MCjzIVgGbRVC1cQDQYmwoBb4ouOPoVyTXbzEjROIkVlv
+         jNxELJcONFzhqxHx8mBbnmJ4HDRbq5wYQ473t1mRWaNT3kQm7rge/dr461ZV1V1eu4GO
+         xKgw==
+X-Gm-Message-State: AOAM530l3XfsJanxINypY0pfZ+39iPIeKqMN+JMdFAa0LHmoKlzFjWIV
+        hVnds4IhjsnR28hvUYxTgdzvrvxF48N77m8gtKg=
+X-Google-Smtp-Source: ABdhPJxfyiY9/f8uwqjjKiNK+axja1wE9SKzm/To6uvgNb57tvVlaqYEVifVWkoHs8ZnkdFpD7+KqQu3lp9PzJiBG0M=
+X-Received: by 2002:a05:6870:d683:b0:de:eaa2:3550 with SMTP id
+ z3-20020a056870d68300b000deeaa23550mr460362oap.253.1653337015741; Mon, 23 May
+ 2022 13:16:55 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [RFC PATCH] kbuild: Add an option to enable -O1 and speed-up
- compilation time
-Content-Language: en-GB
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     dan.carpenter@oracle.com, Masahiro Yamada <masahiroy@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>
-References: <23e0ba7863d51ab629498762a97d477645aeafea.1653123744.git.christophe.jaillet@wanadoo.fr>
- <CAKwvOdneqUvq+Nz_zPmJmuPFfAvWQgnzrw1AJt=WqQF2hThF-A@mail.gmail.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <CAKwvOdneqUvq+Nz_zPmJmuPFfAvWQgnzrw1AJt=WqQF2hThF-A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20220521111145.81697-64-Julia.Lawall@inria.fr>
+In-Reply-To: <20220521111145.81697-64-Julia.Lawall@inria.fr>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Mon, 23 May 2022 16:16:44 -0400
+Message-ID: <CADnq5_POfEC8QgmbhR0UXZfHfYehUkLN8yMTjZ-vjARbpw+hZw@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu/gfx: fix typos in comments
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 23/05/2022 à 20:26, Nick Desaulniers a écrit :
-> On Sat, May 21, 2022 at 2:04 AM Christophe JAILLET
-> <christophe.jaillet@wanadoo.fr> wrote:
->>
->> Add a new compilation option which speeds-up compilation time.
->> This can be useful when using static checker such as smatch or build-bots.
->> In such cases, the speed and quality of the generated code is not
->> important.
->>
->> Using -O0 would be even better, but unfortunately, building fails with
->> this option.
-> 
-> Which is a tragedy.
-> 
-> As with the Rust series, I'm not a fan of this (or
-> CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3):
-> https://lore.kernel.org/lkml/CAKwvOd=7QTUH69+ZbT7e8einvgcosTbDkyohmPaUBv6_y8RfrQ@mail.gmail.com/
-> 
-> These feel more like attempts to wrap every conceivable command line
-> flag in a kconfig option, which makes me think of that meme from
-> Jurassic Park: "your scientists were so preoccupied with whether or
-> not they could, they didn't stop to think if they should."
-> Not a fan.  I'd ask for measurements, but that would be a request for
-> a "rock fetching quest" for something I still wouldn't be a fan of.
+Applied.  Thanks!
 
-Hi,
+Alex
 
-some preliminary tests gave roughly a 5% build time speed-up with -O1.
-That is to say that the impact seems quite limited, after all.
-This was done on building /drivers/net/ or /drivers/net/ethernet/ only.
-
-I don't have numbers for the impact on memory consumption.
-
-Given the feedbacks on -O1 which is unlikely to be able to build a full 
-kernel and your position on yet another option for a very specific use 
-case, I won't push the idea further.
-
-I'll keep it in my own tree for (small) build time improvement when 
-running smatch.
-
-The idea of turning off a subset of -O2 options would just be some too 
-fine tuning. I'll certainly try it for my own use, but it would end to 
-an un-understandable list of flags in Makefile.
--O1 (or -O0) was simple. A more complex solution is way too much.
-
-
-Thanks for your feedbacks.
-
-CJ
-
-> 
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   Makefile     | 5 ++++-
->>   init/Kconfig | 8 ++++++++
->>   2 files changed, 12 insertions(+), 1 deletion(-)
->>
->> diff --git a/Makefile b/Makefile
->> index 1f8bef92868f..14467386f947 100644
->> --- a/Makefile
->> +++ b/Makefile
->> @@ -817,7 +817,10 @@ KBUILD_CFLAGS      += $(call cc-disable-warning, format-truncation)
->>   KBUILD_CFLAGS  += $(call cc-disable-warning, format-overflow)
->>   KBUILD_CFLAGS  += $(call cc-disable-warning, address-of-packed-member)
->>
->> -ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
->> +ifdef CONFIG_CC_OPTIMIZE_FOR_COMPILATION_SPEED
->> +KBUILD_CFLAGS += -O1
->> +KBUILD_RUSTFLAGS_OPT_LEVEL_MAP := 1
->> +else ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
->>   KBUILD_CFLAGS += -O2
->>   KBUILD_RUSTFLAGS_OPT_LEVEL_MAP := 2
->>   else ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3
->> diff --git a/init/Kconfig b/init/Kconfig
->> index a96776a9b080..3177a1830c9a 100644
->> --- a/init/Kconfig
->> +++ b/init/Kconfig
->> @@ -1384,6 +1384,14 @@ choice
->>          prompt "Compiler optimization level"
->>          default CC_OPTIMIZE_FOR_PERFORMANCE
->>
->> +config CC_OPTIMIZE_FOR_COMPILATION_SPEED
->> +       bool "Optimize for compilation speed (-O1)"
->> +       help
->> +         This option can be useful when running a static checker such as smatch
->> +         or a build-bot.
->> +         Compilation time is slighly faster than -O2 and it requires less
-> 
-> s/slighly/slightly/
-
-Thanks for taking time for a full review, even on something you are not 
-fan on. This is really appreciated.
-
-CJ
-
-> 
->> +         memory.
->> +
->>   config CC_OPTIMIZE_FOR_PERFORMANCE
->>          bool "Optimize for performance (-O2)"
->>          help
->> --
->> 2.34.1
->>
-> 
-> 
-
+On Sat, May 21, 2022 at 7:12 AM Julia Lawall <Julia.Lawall@inria.fr> wrote:
+>
+> Spelling mistakes (triple letters) in comments.
+> Detected with the help of Coccinelle.
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c |    2 +-
+>  drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c  |    4 ++--
+>  drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c  |    2 +-
+>  3 files changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+> index 02754ee86c81..c5f46d264b23 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+> @@ -5111,7 +5111,7 @@ static void gfx_v10_0_init_compute_vmid(struct amdgpu_device *adev)
+>         mutex_unlock(&adev->srbm_mutex);
+>
+>         /* Initialize all compute VMIDs to have no GDS, GWS, or OA
+> -          acccess. These should be enabled by FW for target VMIDs. */
+> +          access. These should be enabled by FW for target VMIDs. */
+>         for (i = adev->vm_manager.first_kfd_vmid; i < AMDGPU_NUM_VMID; i++) {
+>                 WREG32_SOC15_OFFSET(GC, 0, mmGDS_VMID0_BASE, 2 * i, 0);
+>                 WREG32_SOC15_OFFSET(GC, 0, mmGDS_VMID0_SIZE, 2 * i, 0);
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+> index fb9302910742..7f0b18b0d4c4 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+> @@ -3714,7 +3714,7 @@ static void gfx_v8_0_init_compute_vmid(struct amdgpu_device *adev)
+>         mutex_unlock(&adev->srbm_mutex);
+>
+>         /* Initialize all compute VMIDs to have no GDS, GWS, or OA
+> -          acccess. These should be enabled by FW for target VMIDs. */
+> +          access. These should be enabled by FW for target VMIDs. */
+>         for (i = adev->vm_manager.first_kfd_vmid; i < AMDGPU_NUM_VMID; i++) {
+>                 WREG32(amdgpu_gds_reg_offset[i].mem_base, 0);
+>                 WREG32(amdgpu_gds_reg_offset[i].mem_size, 0);
+> @@ -5815,7 +5815,7 @@ static void gfx_v8_0_update_coarse_grain_clock_gating(struct amdgpu_device *adev
+>                 /* wait for RLC_SERDES_CU_MASTER & RLC_SERDES_NONCU_MASTER idle */
+>                 gfx_v8_0_wait_for_rlc_serdes(adev);
+>
+> -               /* write cmd to Set CGCG Overrride */
+> +               /* write cmd to Set CGCG Override */
+>                 gfx_v8_0_send_serdes_cmd(adev, BPM_REG_CGCG_OVERRIDE, SET_BPM_SERDES_CMD);
+>
+>                 /* wait for RLC_SERDES_CU_MASTER & RLC_SERDES_NONCU_MASTER idle */
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+> index f12ae6e2359a..5349ca4d19e3 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+> @@ -2535,7 +2535,7 @@ static void gfx_v9_0_init_compute_vmid(struct amdgpu_device *adev)
+>         mutex_unlock(&adev->srbm_mutex);
+>
+>         /* Initialize all compute VMIDs to have no GDS, GWS, or OA
+> -          acccess. These should be enabled by FW for target VMIDs. */
+> +          access. These should be enabled by FW for target VMIDs. */
+>         for (i = adev->vm_manager.first_kfd_vmid; i < AMDGPU_NUM_VMID; i++) {
+>                 WREG32_SOC15_OFFSET(GC, 0, mmGDS_VMID0_BASE, 2 * i, 0);
+>                 WREG32_SOC15_OFFSET(GC, 0, mmGDS_VMID0_SIZE, 2 * i, 0);
+>
