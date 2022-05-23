@@ -2,88 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A823C433FE
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 May 2022 15:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22507C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 May 2022 16:33:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238085AbiEWPkn (ORCPT
+        id S238937AbiEWQdI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 May 2022 11:40:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44194 "EHLO
+        Mon, 23 May 2022 12:33:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238041AbiEWPkk (ORCPT
+        with ESMTP id S238919AbiEWQdH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 May 2022 11:40:40 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93CE630556;
-        Mon, 23 May 2022 08:40:39 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 06B071F94B;
-        Mon, 23 May 2022 15:40:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1653320438; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=q5xW2MKLZ0PrcQXBC+W3LnvI90dAc7ovuM4CkEA4Lvg=;
-        b=Y1LwZxCcd+BtLUakYzp4wzLW0BBUNVSub2UJFXcsFvmVouyrkeG9mDeOh5+EjHDfcpGcBJ
-        JlBiJa+/r2W2Z7+s354N2eRlzj+ee1oG/kBL5VvoHuI3rISJvM8iRZq+sUR/hA7V0Nd9Us
-        OtiB+FSt/599nPDQSa9ZSvr0MOWXvuw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1653320438;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=q5xW2MKLZ0PrcQXBC+W3LnvI90dAc7ovuM4CkEA4Lvg=;
-        b=X3mOtteHh3d677lIh5HDjfJ3KW/llpzhi+JtCZyalPmmFdK+HBkSlqi3EZQRtl4UZKxyL2
-        TyPIdO2w5R1c9jBQ==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id D0A3B2C141;
-        Mon, 23 May 2022 15:40:37 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id CFF21A0632; Mon, 23 May 2022 17:40:36 +0200 (CEST)
-Date:   Mon, 23 May 2022 17:40:36 +0200
-From:   Jan Kara <jack@suse.cz>
+        Mon, 23 May 2022 12:33:07 -0400
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 736894A3EF
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 May 2022 09:33:04 -0700 (PDT)
+Received: from submission (posteo.de [185.67.36.169]) 
+        by mout01.posteo.de (Postfix) with ESMTPS id 98A7124002D
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 May 2022 18:33:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
+        t=1653323582; bh=E6iZA4QlAEqZYtAGHcnkUWkJeE0/rqfh0rH2XYscpAQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ozh1QoMER5nXrKBy1vPesgFS/Tr2uEFDx7yT+vJZ1RGSXs2r0fpU1+RYQRd/cw6K2
+         ud1S2ZBZUKE0hCjD8Iy368KLE0OjAr8FrzbaIYYfz9Sf8WD3newzuNfS8s2w5OjOZF
+         bcgeQ+AfRtQBkOaV+w15pcp1WiHLqOveFXZ/OOgCZSTYlkQ1Bm5YYfuufzWRqEUthQ
+         yl4l+gI4uJ8PlUmEBOyXVoUZD+QJAAmgt+U6XY3MGIyGrF9N/wMSrS+ayCjSYKTi8H
+         cK4v+KFHPvW1sXk/eeG6gD+PcTG1QQXqLr7oJBHhMdYzKx/2WVi6Xhp+s5RDU5juYK
+         rdwxaFNp9XAYA==
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 4L6ND84p99z6tmK;
+        Mon, 23 May 2022 18:32:55 +0200 (CEST)
+Date:   Mon, 23 May 2022 16:32:52 +0000
+From:   Daniel =?utf-8?Q?M=C3=BCller?= <deso@posteo.net>
 To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] writeback: fix typo in comment
-Message-ID: <20220523154036.uj2lpngyjswgurog@quack3.lan>
-References: <20220521111145.81697-32-Julia.Lawall@inria.fr>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] libbpf: fix typo in comment
+Message-ID: <20220523163030.uvauyhslqenc7m44@muellerd-fedora-MJ0AC3F3>
+References: <20220521111145.81697-71-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20220521111145.81697-32-Julia.Lawall@inria.fr>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220521111145.81697-71-Julia.Lawall@inria.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat 21-05-22 13:10:42, Julia Lawall wrote:
+On Sat, May 21, 2022 at 01:11:21PM +0200, Julia Lawall wrote:
 > Spelling mistake (triple letters) in comment.
 > Detected with the help of Coccinelle.
 > 
 > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
-Thanks. I've taken the fix to my tree.
-
-								Honza
-
-
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index a1074a26e784..a21d8f1a56d1 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -738,7 +738,7 @@ EXPORT_SYMBOL_GPL(wbc_attach_and_unlock_inode);
->   * incorrectly attributed).
->   *
->   * To resolve this issue, cgroup writeback detects the majority dirtier of
-> - * an inode and transfers the ownership to it.  To avoid unnnecessary
-> + * an inode and transfers the ownership to it.  To avoid unnecessary
->   * oscillation, the detection mechanism keeps track of history and gives
->   * out the switch verdict only if the foreign usage pattern is stable over
->   * a certain amount of time and/or writeback attempts.
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> ---
+>  tools/lib/bpf/libbpf.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> index ef7f302e542f..e89cc9c885b3 100644
+> --- a/tools/lib/bpf/libbpf.c
+> +++ b/tools/lib/bpf/libbpf.c
+> @@ -6873,7 +6873,7 @@ static int bpf_object_load_prog_instance(struct bpf_object *obj, struct bpf_prog
+>  	}
+>  
+>  retry_load:
+> -	/* if log_level is zero, we don't request logs initiallly even if
+> +	/* if log_level is zero, we don't request logs initially even if
+>  	 * custom log_buf is specified; if the program load fails, then we'll
+>  	 * bump log_level to 1 and use either custom log_buf or we'll allocate
+>  	 * our own and retry the load to get details on what failed
+> 
+
+Looks good to me, thanks!
+
+Acked-by: Daniel Müller <deso@posteo.net>
