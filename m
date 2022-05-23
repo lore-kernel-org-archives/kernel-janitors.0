@@ -2,113 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 505EBC433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 May 2022 16:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C452DC433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 May 2022 17:54:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238889AbiEWQrh (ORCPT
+        id S242011AbiEWRx6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 May 2022 12:47:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53984 "EHLO
+        Mon, 23 May 2022 13:53:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238868AbiEWQrf (ORCPT
+        with ESMTP id S244896AbiEWRwm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 May 2022 12:47:35 -0400
-Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0974726CB
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 May 2022 09:47:35 -0700 (PDT)
-Received: by mail-vs1-xe34.google.com with SMTP id a127so15670666vsa.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 May 2022 09:47:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=80S8PctliGOeW9sdmtk62ftvrGXBeuID8tBu3II0AtQ=;
-        b=QLFTfJxJAcj0vuVPdjG7/2oNQcI4B55nhUKl0e57e/VCkr+UGv1PcDJK5EmLaFCVQ2
-         R/BP4hb32JPOLe9GjyQVCjiL/pLDR8CNlot+jh65KF5Lt9nvtSeVMPYiWBwOM1bWgW/+
-         2Mzr9axl2uS32Wzsct8LDbwBYaAW/2lVuxxEtl79X2SzvUqvVQaoOUvm0L0ag/ts9ry5
-         H8PD7/qLEKJG2AnO+TDllQDpKYFQ8zXextCOLXEounaAiAfBIsU+mro63woWX7n8nEK1
-         X2sC+wlF+X5Nh4Mn3AsPfhzvDA7ob+g0UC/TINJRwedLhMMXfI6nlLDFnJmENXhyaa9J
-         SPbQ==
+        Mon, 23 May 2022 13:52:42 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 996545D5C9;
+        Mon, 23 May 2022 10:41:58 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id u3so22435638wrg.3;
+        Mon, 23 May 2022 10:41:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=80S8PctliGOeW9sdmtk62ftvrGXBeuID8tBu3II0AtQ=;
-        b=qatk9mnymZD9H6djVI9pvJwHx3eTQn6qrPCMu1j+XRW8z3WgWDbn4pumedTaGhHGlx
-         /p4TtwvDnqipptkGr0L8eNHC5UCp6acID1n1gwpiSoPMcuL2cMCUTSIBTbKoxHnmkTFv
-         kmFXNvyGh25zXPA93wvnxrufAHbgwiofbTnqFmxt9TAdSbdbSI5s5SlRr4dpwS4UGDLM
-         SP3ydzf+DQshh5r1PKt5fmVtLn6U2E6OzkBGwmPuwfjM24ncRR0mhTEz3CHwoMDI9ej4
-         flreZRk6uXnz7F850/E7H/XlOG3MARkHjUUHqiJ3nFq09CdcZVMvK5qTw41giXogJ+va
-         Cu7A==
-X-Gm-Message-State: AOAM531fa5ykpXJuxPIWM7WHDO1O/EdLux5xP2geHaTst7JEfof2mDTY
-        2lVuNW4etAcZCZV09twUJqN9c/zCXPDY2SKRgdki
-X-Google-Smtp-Source: ABdhPJwqtmK7aM4Q4deJfPW2cZGIcvXkBikK5NrznWed0II6tLlTEkYtSSzfjEZ8CHLO5dUR1QKGOpmqDeagd5cSjCY=
-X-Received: by 2002:a05:6102:32c6:b0:333:bdd3:14f6 with SMTP id
- o6-20020a05610232c600b00333bdd314f6mr9042054vss.19.1653324453954; Mon, 23 May
- 2022 09:47:33 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Ua1KG5+18UaDCNZFTJYl8j8EfhH8Jue+YMkQxpze3FM=;
+        b=Sdz2gbs7o9fmuAj7XPQKKfEVW+WF2BtEoCvdTcZXSOCVyvuqfPCQYBWcMDJ3jRT6JV
+         6Uu0Pc5R/37kWFz5guNRCA8Xtzx5VF6dpcTPguyHafKHMDrR6ybS5um+YTFAt38mVU96
+         RRwhnnts4z3QOAAn4/V6MjlGqn2As7r208T4DHvlJq5bd0eWxS9d3kXAeIDqhr/sH7uM
+         ECjJs6+SK5CnE9mG9xIb/1NkHBg4awuxG8lzvCBNG/FNEl8Drq8gyCsX7yoqiGZteSD5
+         Ykl8DzPXfKrnENYc1E64cIggTTU+QFJaWUJ1g5pXHMyoe850xO8MePojCXv9VQvSkKTd
+         8ygQ==
+X-Gm-Message-State: AOAM531a8bLtVhBz9pjnIeXdm4jWHo6TzFYmhnwn7O+bDkNFwIHMBL2c
+        B0GUy0dX/qaDHJI6b0rEKtU=
+X-Google-Smtp-Source: ABdhPJxCnDyHcwKiqN87su/K7JV25u7QznK3u4WJ7C556Si7ECVW2PYU+dvPeWktzLbqMV+ExD3CUg==
+X-Received: by 2002:a05:6000:18ab:b0:20c:8d82:52c3 with SMTP id b11-20020a05600018ab00b0020c8d8252c3mr19720747wri.701.1653327611353;
+        Mon, 23 May 2022 10:40:11 -0700 (PDT)
+Received: from localhost.localdomain ([94.205.35.240])
+        by smtp.googlemail.com with ESMTPSA id o8-20020a1c7508000000b003942a244f2fsm9444242wmc.8.2022.05.23.10.40.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 May 2022 10:40:10 -0700 (PDT)
+From:   "Denis Efremov (Oracle)" <efremov@linux.com>
+To:     gregkh@linuxfoundation.org
+Cc:     "Denis Efremov (Oracle)" <efremov@linux.com>,
+        Larry.Finger@lwfinger.net, phil@philpotter.co.uk,
+        dan.carpenter@oracle.com, straube.linux@gmail.com,
+        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, stable <stable@vger.kernel.org>
+Subject: [PATCH v5.4-v4.14] staging: rtl8723bs: prevent ->Ssid overflow in rtw_wx_set_scan()
+Date:   Mon, 23 May 2022 21:39:43 +0400
+Message-Id: <20220523173943.12486-1-efremov@linux.com>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <YoZk3YLEDYKGG5xe@kroah.com>
+References: <YoZk3YLEDYKGG5xe@kroah.com>
 MIME-Version: 1.0
-References: <d7fc85736adee02ce52ee88a54fa7477fbd18ed2.1653236802.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <d7fc85736adee02ce52ee88a54fa7477fbd18ed2.1653236802.git.christophe.jaillet@wanadoo.fr>
-From:   John Stultz <jstultz@google.com>
-Date:   Mon, 23 May 2022 09:47:23 -0700
-Message-ID: <CANDhNCqPH5SQR6YhZjqHF0BvC-Wo+epCkxmFKqzFSj7+POMWZA@mail.gmail.com>
-Subject: Re: [RFC PATCH] timers: Optimize usleep_range()
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     dan.carpenter@oracle.com, Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, May 22, 2022 at 9:38 AM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
-> diff --git a/include/linux/delay.h b/include/linux/delay.h
-> index 039e7e0c7378..e84e7f9c1a47 100644
-> --- a/include/linux/delay.h
-> +++ b/include/linux/delay.h
-> @@ -61,10 +61,23 @@ void msleep(unsigned int msecs);
->  unsigned long msleep_interruptible(unsigned int msecs);
->  void usleep_range_state(unsigned long min, unsigned long max,
->                         unsigned int state);
-> +void __nsleep_range_delta_state(u64 min, u64 delta, unsigned int state);
->
->  static inline void usleep_range(unsigned long min, unsigned long max)
->  {
-> -       usleep_range_state(min, max, TASK_UNINTERRUPTIBLE);
-> +       /*
-> +        * Most of the time min and max are constant, so the time delta and the
-> +        * convertion to ns can be computed at compile time.
-> +        */
-> +       if (__builtin_constant_p(min) &&
-> +           __builtin_constant_p(max)) {
-> +               u64 delta = (u64)(max - min) * NSEC_PER_USEC;
-> +
-> +               __nsleep_range_delta_state(min * NSEC_PER_USEC, delta,
-> +                                          TASK_UNINTERRUPTIBLE);
-> +       } else {
-> +               usleep_range_state(min, max, TASK_UNINTERRUPTIBLE);
-> +       }
->  }
+This code has a check to prevent read overflow but it needs another
+check to prevent writing beyond the end of the ->Ssid[] array.
 
-It seems the key optimization is just moving the multiplication to the
-inlined header function, so rather than duplicating most of
-usleep_range_state() in __nsleep_range_delta_state(), could you not
-switch all uses of usleep_range_state() to use the
-__nsleep_range_delta_state()?  Then you don't need the
-__buildint_constant_p() checks since the compiler can decide on its
-own, no?
+Fixes: 554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Denis Efremov (Oracle) <efremov@linux.com>
+---
+ drivers/staging/rtl8723bs/os_dep/ioctl_linux.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+index d8d44fd9a92f..ea2fd3a73c3a 100644
+--- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
++++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+@@ -1351,9 +1351,11 @@ static int rtw_wx_set_scan(struct net_device *dev, struct iw_request_info *a,
+ 
+ 					sec_len = *(pos++); len-= 1;
+ 
+-					if (sec_len>0 && sec_len<=len) {
++					if (sec_len > 0 &&
++					    sec_len <= len &&
++					    sec_len <= 32) {
+ 						ssid[ssid_index].SsidLength = sec_len;
+-						memcpy(ssid[ssid_index].Ssid, pos, ssid[ssid_index].SsidLength);
++						memcpy(ssid[ssid_index].Ssid, pos, sec_len);
+ 						/* DBG_871X("%s COMBO_SCAN with specific ssid:%s, %d\n", __func__ */
+ 						/* 	, ssid[ssid_index].Ssid, ssid[ssid_index].SsidLength); */
+ 						ssid_index++;
+-- 
+2.36.1
 
-> +/**
-> + * __nsleep_range_delta_state - Sleep for an approximate time in a given state
-> + * @min:       Minimum time in nsecs to sleep
-> + * @delta:     Maximum time in nsecs to sleep
-
-I don't think that's the right value description here. Maybe this
-should be the slack value?
-
-
-thanks
--john
