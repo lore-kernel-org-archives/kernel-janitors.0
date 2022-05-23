@@ -2,175 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16027C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 May 2022 12:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 553C0C433FE
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 May 2022 12:38:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235461AbiEWMex (ORCPT
+        id S235665AbiEWMir (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 May 2022 08:34:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44022 "EHLO
+        Mon, 23 May 2022 08:38:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235417AbiEWMev (ORCPT
+        with ESMTP id S235677AbiEWMiq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 May 2022 08:34:51 -0400
-Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CF2743EEF;
-        Mon, 23 May 2022 05:34:47 -0700 (PDT)
-Received: by mail-qk1-x72a.google.com with SMTP id p123so2486282qke.5;
-        Mon, 23 May 2022 05:34:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=zWW6thDJ98/KzWOHjOmZlsh4+inUgZI3sNPxS+N5zm4=;
-        b=Fb+2IhZRT4kRSIPikn+2vrZ3ASxWPm9JevY9AyDxBmT0f96Tnjg97FewA8Z2eOHV9d
-         3q6EtAFe80QFNOneuVVUOiPoyMHFCfKDdJfI99TA8S8/00y3BM0i+RAy/DTMamwLdVx3
-         LivEDJxlb54BM4jD+44FiMjqRvcC1m4a0vQr/7D/dKXQFxovELDKdyRS3Yd28qPvyfs/
-         z5fsbg4+TG+DgU+1p3W/Rl8KNKTucF/5+P5cMVxJSxoXxA28yYkJ5Eksnb4YX/3MFNb+
-         78tTvvlsUHn7MoUdk/K6sw00DibL6xOgbTxAJMEETVsd3ExtbZ0ILhwN15M7LwQWyu4h
-         iOsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=zWW6thDJ98/KzWOHjOmZlsh4+inUgZI3sNPxS+N5zm4=;
-        b=kglG3W6T+/KJUZL2ee0Xs0viHQocBwigspQDWJJivBMy73TbfbIfCtOkPEuh36at4g
-         eE/KHm4LZTJ4BCwqc84n5TrTudrdB9qHTpvYfTPoFd4//7WK399Wa8etjcaL98GCBZRQ
-         1DByv294wlXCxzzoP0+ppT1gVcVD4ZhqcYjRsNveV7Kp9aj5PYW1O2NCNzjot4s426zf
-         zhaZRklgD72MlEKovku6tu3opLV/xNy4b59adAIZ6wNb2g0L9CnueagY9YXfUlwTSmJD
-         LW4PC0nhPKHY1cWB4eJL71ERH7bGlYWiclnGA4YnQZzl4ZfXqDyun5jyj9S2goT7qAy7
-         QQfA==
-X-Gm-Message-State: AOAM532Y8uZnWKXOF09L4dXhksT4xfF/Rna/tsBKc9NiyYVtPQg5GXxT
-        04C64TC0cUVNlOghGb0rpeI=
-X-Google-Smtp-Source: ABdhPJx6mxt2vccLVo+P6//wIKgsooq5eK5qasPIND7jHo2crxR3T9d9UlTX2rziojU63P7oPRzm9w==
-X-Received: by 2002:a37:a74e:0:b0:6a3:95f5:48f8 with SMTP id q75-20020a37a74e000000b006a395f548f8mr2585829qke.126.1653309286500;
-        Mon, 23 May 2022 05:34:46 -0700 (PDT)
-Received: from mail.google.com ([207.246.89.135])
-        by smtp.gmail.com with ESMTPSA id 9-20020a370809000000b006a346e0f653sm4374569qki.15.2022.05.23.05.34.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 May 2022 05:34:46 -0700 (PDT)
-Date:   Mon, 23 May 2022 20:34:36 +0800
-From:   Changbin Du <changbin.du@gmail.com>
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mon, 23 May 2022 08:38:46 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F25824EF72
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 May 2022 05:38:45 -0700 (PDT)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mkl@pengutronix.de>)
+        id 1nt7KY-0005ze-8S; Mon, 23 May 2022 14:38:38 +0200
+Received: from pengutronix.de (unknown [IPv6:2a01:4f8:1c1c:29e9:22:41ff:fe00:1400])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        (Authenticated sender: mkl-all@blackshift.org)
+        by smtp.blackshift.org (Postfix) with ESMTPSA id 65D7A844E9;
+        Mon, 23 May 2022 12:38:36 +0000 (UTC)
+Date:   Mon, 23 May 2022 14:38:35 +0200
+From:   Marc Kleine-Budde <mkl@pengutronix.de>
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     Wolfgang Grandegger <wg@grandegger.com>,
         kernel-janitors@vger.kernel.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Changbin Du <changbin.du@gmail.com>
-Subject: Re: [RFC PATCH] kbuild: Add an option to enable -O1 and speed-up
- compilation time
-Message-ID: <20220523123436.b5gwj55xacc2hxcv@mail.google.com>
-References: <23e0ba7863d51ab629498762a97d477645aeafea.1653123744.git.christophe.jaillet@wanadoo.fr>
- <CAK7LNASHGyzKS-d+S1GYz_L0pBxxSwk05YfvV+LK4ghZ5xx=cA@mail.gmail.com>
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] can: peak_usb: fix typo in comment
+Message-ID: <20220523123835.66rliknnve2fcvxf@pengutronix.de>
+References: <20220521111145.81697-24-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="6tfwm2abi6tnm2pi"
 Content-Disposition: inline
-In-Reply-To: <CAK7LNASHGyzKS-d+S1GYz_L0pBxxSwk05YfvV+LK4ghZ5xx=cA@mail.gmail.com>
+In-Reply-To: <20220521111145.81697-24-Julia.Lawall@inria.fr>
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, May 22, 2022 at 12:38:17AM +0900, Masahiro Yamada wrote:
-> (+CC: Arnd, Changbin Du)
-> 
-> 
-> If -O1 support does not require additional effort,
-> I have no objection to this patch.
-> 
-> (but I do not have enough insight about
-> the compiler's inlining heuristic)
-> 
-> 
-> 
-> BTW, when we attempted to add the -Og support,
-> we fixed various parts, and Linus rejected it.
-> 
-> https://lore.kernel.org/linux-kbuild/CAK7LNARQggM3aKEPRKJqa4tunFAfmfErMZuS-rrnRv6UB1VpPQ@mail.gmail.com/
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-I am afraid that '-O1' has the same situation with '-Og'. As described in GCC
-mannual:
 
-Like -O0, -Og completely disables a number of optimization passes so that 
-individual options controlling them have no effect. Otherwise -Og enables all
--O1 optimization flags except for those that may interfere with debugging:
- -fbranch-count-reg  -fdelayed-branch 
- -fdse  -fif-conversion  -fif-conversion2  
- -finline-functions-called-once 
- -fmove-loop-invariants  -fmove-loop-stores  -fssa-phiopt 
- -ftree-bit-ccp  -ftree-dse  -ftree-pta  -ftree-sra
+--6tfwm2abi6tnm2pi
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On 21.05.2022 13:10:34, Julia Lawall wrote:
+> Spelling mistake (triple letters) in comment.
+> Detected with the help of Coccinelle.
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-> On Sat, May 21, 2022 at 6:04 PM Christophe JAILLET
-> <christophe.jaillet@wanadoo.fr> wrote:
-> >
-> > Add a new compilation option which speeds-up compilation time.
-> > This can be useful when using static checker such as smatch or build-bots.
-> > In such cases, the speed and quality of the generated code is not
-> > important.
-> >
-> > Using -O0 would be even better, but unfortunately, building fails with
-> > this option.
-> >
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> >  Makefile     | 5 ++++-
-> >  init/Kconfig | 8 ++++++++
-> >  2 files changed, 12 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Makefile b/Makefile
-> > index 1f8bef92868f..14467386f947 100644
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -817,7 +817,10 @@ KBUILD_CFLAGS      += $(call cc-disable-warning, format-truncation)
-> >  KBUILD_CFLAGS  += $(call cc-disable-warning, format-overflow)
-> >  KBUILD_CFLAGS  += $(call cc-disable-warning, address-of-packed-member)
-> >
-> > -ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
-> > +ifdef CONFIG_CC_OPTIMIZE_FOR_COMPILATION_SPEED
-> > +KBUILD_CFLAGS += -O1
-> > +KBUILD_RUSTFLAGS_OPT_LEVEL_MAP := 1
-> > +else ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
-> >  KBUILD_CFLAGS += -O2
-> >  KBUILD_RUSTFLAGS_OPT_LEVEL_MAP := 2
-> >  else ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3
-> > diff --git a/init/Kconfig b/init/Kconfig
-> > index a96776a9b080..3177a1830c9a 100644
-> > --- a/init/Kconfig
-> > +++ b/init/Kconfig
-> > @@ -1384,6 +1384,14 @@ choice
-> >         prompt "Compiler optimization level"
-> >         default CC_OPTIMIZE_FOR_PERFORMANCE
-> >
-> > +config CC_OPTIMIZE_FOR_COMPILATION_SPEED
-> > +       bool "Optimize for compilation speed (-O1)"
-> > +       help
-> > +         This option can be useful when running a static checker such as smatch
-> > +         or a build-bot.
-> > +         Compilation time is slighly faster than -O2 and it requires less
-> > +         memory.
-> > +
-> >  config CC_OPTIMIZE_FOR_PERFORMANCE
-> >         bool "Optimize for performance (-O2)"
-> >         help
-> > --
-> > 2.34.1
-> >
-> 
-> 
-> -- 
-> Best Regards
-> Masahiro Yamada
+Applied to linux-can-next/testing.
 
--- 
-Cheers,
-Changbin Du
+Thanks,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde           |
+Embedded Linux                   | https://www.pengutronix.de  |
+Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
+
+--6tfwm2abi6tnm2pi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEBsvAIBsPu6mG7thcrX5LkNig010FAmKLgEkACgkQrX5LkNig
+012IxQf/aRf4MSg/hFbjtTdruurxnVyu2AwYiFKbZd+ePVLX5kS6TmNhHyYgbcwX
+uT0EviEdh/i0isJGE9/avs+e57qdZQfSVDRmr4wKCW4TzfJ4aGLBmZAQ75ieQPLa
+hUneN+BHSuD6WZ9I2AzNLJQjmZ/CokegYRC73TPRZhhAHhO+k9qtiZ5r7xD8RTap
+CrX1uylgNtBH3neHr4d2B4Pjgy52DhdBGE3HlhBr8TruqhqLS+H6DbbpM+TRFAKG
+QyEmi+cCtzj1vdqr0F3AEyTdAe78stfaFKllc4Vbey/T0Tp4BpUuEqaCP3LAI3Gi
+u9A6EGzJZyqji3nki1ld0JGAs3G5ZA==
+=KXF5
+-----END PGP SIGNATURE-----
+
+--6tfwm2abi6tnm2pi--
