@@ -2,135 +2,120 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A35B9C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 May 2022 04:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC84EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 May 2022 05:24:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243580AbiEWElZ (ORCPT
+        id S243805AbiEWFYo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 May 2022 00:41:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42774 "EHLO
+        Mon, 23 May 2022 01:24:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229838AbiEWElX (ORCPT
+        with ESMTP id S230049AbiEWFYn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 May 2022 00:41:23 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C55806477
-        for <kernel-janitors@vger.kernel.org>; Sun, 22 May 2022 21:41:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1653280879;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=08y9EJtcz+7a/JcW5CAQJh1vaSn+lYtCa1y1S5/rUOM=;
-        b=dOTxSxS1WagJmeEityGz2xpT572VJvoCT4WbLvvORnu5BDY6jQISUTPYdIrYH4AYuXUUO8
-        N1LIuyNtz8szUiV6eVVA9lrPQ7kOmH/mYLV9kIs+EiA07gjrG1Xx7WEuGY01ehA8GSKnK+
-        8xTBU9F8TGmXOpQrYvaRAnOwh04x8+w=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-581-grpm03g2MNSf0qcX_yjKbA-1; Mon, 23 May 2022 00:41:18 -0400
-X-MC-Unique: grpm03g2MNSf0qcX_yjKbA-1
-Received: by mail-lf1-f69.google.com with SMTP id bu3-20020a056512168300b0047791fb1d68so7082526lfb.23
-        for <kernel-janitors@vger.kernel.org>; Sun, 22 May 2022 21:41:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=08y9EJtcz+7a/JcW5CAQJh1vaSn+lYtCa1y1S5/rUOM=;
-        b=1nzYdJBWv4UdTBQZSDbkcp3FaPP8xDZh786PYJFzxv57R1hD2YSL+dv6EMjWxnKn6L
-         UVmV4LOyaXchoC81sV99IIhYyqWvEpuobQYKFBhzwlUCS6dV7OIdi4HS4y91czvEuYSy
-         /Jttm9NGllpkm3X6ELEFvjJ+PR8s/S50ryfjIz3DpADZ7A15zSWiPdzw5TfqZacIzY8b
-         yWNol/pZYShIffUvXnl2Y5irkrjsQ2fXu1JnMmUv3NgVPa7N+LcrC4Gzn3fNe13lc4jr
-         q8EVWlVaztDjvWt68oplq7RmirLg36nvTEpcYwht+h0GuygjFhsoMc9H9OkhiOC3sxcE
-         u3pw==
-X-Gm-Message-State: AOAM533OaBx/qM+kfurPUU1R2USXi4W1hBXCVDJFwbFhQ/BTxW0D6sC2
-        zkQkfCbz02WiOrksF7ESj4m9JLmubtA1LvnOca7xxAvzGxnDk8rL8+pM8nCQBR+7qeopiaBUy2T
-        1iKpydGyNeJeRGRRfidJyNEs7usionvcQHMx3/iiSJ9PQ
-X-Received: by 2002:a05:6512:1588:b0:477:a556:4ab2 with SMTP id bp8-20020a056512158800b00477a5564ab2mr15008563lfb.376.1653280875764;
-        Sun, 22 May 2022 21:41:15 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxqRetp33JcfidVaUk+iFKExKrB3v7QK7jBSPRLyLJwJHS8cGFd1P5dpWd3xCNGBT0hiuY9YQ5gpi2GOTwnZdI=
-X-Received: by 2002:a05:6512:1588:b0:477:a556:4ab2 with SMTP id
- bp8-20020a056512158800b00477a5564ab2mr15008553lfb.376.1653280875600; Sun, 22
- May 2022 21:41:15 -0700 (PDT)
+        Mon, 23 May 2022 01:24:43 -0400
+Received: from mx1.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3865215800;
+        Sun, 22 May 2022 22:24:40 -0700 (PDT)
+Received: from [192.168.0.6] (ip5f5aedde.dynamic.kabel-deutschland.de [95.90.237.222])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 4D2C061EA1928;
+        Mon, 23 May 2022 07:24:37 +0200 (CEST)
+Message-ID: <71292e14-fe6c-f475-009d-1ea8cde0ea46@molgen.mpg.de>
+Date:   Mon, 23 May 2022 07:24:36 +0200
 MIME-Version: 1.0
-References: <89ef0ae4c26ac3cfa440c71e97e392dcb328ac1b.1653227924.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <89ef0ae4c26ac3cfa440c71e97e392dcb328ac1b.1653227924.git.christophe.jaillet@wanadoo.fr>
-From:   Jason Wang <jasowang@redhat.com>
-Date:   Mon, 23 May 2022 12:41:03 +0800
-Message-ID: <CACGkMEtvgL+MxBmhWZ-Hn-QjfS-MBm7gvLoQHhazOiwrLxxUJA@mail.gmail.com>
-Subject: Re: [PATCH] vhost-vdpa: Fix some error handling path in vhost_vdpa_process_iotlb_msg()
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Gautam Dawar <gautam.dawar@xilinx.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, kvm <kvm@vger.kernel.org>,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        netdev <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [Intel-wired-lan] [PATCH] drivers/net/ethernet/intel: fix typos
+ in comments
+Content-Language: en-US
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Tony Nguyen <anthony.l.nguyen@intel.com>,
+        intel-wired-lan@lists.osuosl.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+References: <20220521111145.81697-50-Julia.Lawall@inria.fr>
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20220521111145.81697-50-Julia.Lawall@inria.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, May 22, 2022 at 9:59 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> In the error paths introduced by the commit in the Fixes tag, a mutex may
-> be left locked.
-> Add the correct goto instead of a direct return.
->
-> Fixes: a1468175bb17 ("vhost-vdpa: support ASID based IOTLB API")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Dear Julia,
+
+
+Thank you for your patch.
+
+I noticed, that the maintainer Tony wasn’t in the Cc: list.
+
+Am 21.05.22 um 13:11 schrieb Julia Lawall:
+> Spelling mistakes (triple letters) in comments.
+> Detected with the help of Coccinelle.
+
+I’d be interested in the script you used.
+
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> 
+
+Nit: One unneeded blank line.
+
 > ---
-> WARNING: This patch only fixes the goto vs return mix-up in this function.
-> However, the 2nd hunk looks really spurious to me. I think that the:
-> -               return -EINVAL;
-> +               r = -EINVAL;
-> +               goto unlock;
-> should be done only in the 'if (!iotlb)' block.
+>   drivers/net/ethernet/intel/fm10k/fm10k_mbx.c   |    2 +-
+>   drivers/net/ethernet/intel/ice/ice_lib.c       |    2 +-
+>   drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c |    2 +-
+>   3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/fm10k/fm10k_mbx.c b/drivers/net/ethernet/intel/fm10k/fm10k_mbx.c
+> index 30ca9ee1900b..f2fba6e1d0f7 100644
+> --- a/drivers/net/ethernet/intel/fm10k/fm10k_mbx.c
+> +++ b/drivers/net/ethernet/intel/fm10k/fm10k_mbx.c
+> @@ -1825,7 +1825,7 @@ static void fm10k_sm_mbx_process_error(struct fm10k_mbx_info *mbx)
+>   		fm10k_sm_mbx_connect_reset(mbx);
+>   		break;
+>   	case FM10K_STATE_CONNECT:
+> -		/* try connnecting at lower version */
+> +		/* try connecting at lower version */
+>   		if (mbx->remote) {
+>   			while (mbx->local > 1)
+>   				mbx->local--;
+> diff --git a/drivers/net/ethernet/intel/ice/ice_lib.c b/drivers/net/ethernet/intel/ice/ice_lib.c
+> index 454e01ae09b9..70961c0343e7 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_lib.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_lib.c
+> @@ -2403,7 +2403,7 @@ static void ice_set_agg_vsi(struct ice_vsi *vsi)
+>   				agg_id);
+>   			return;
+>   		}
+> -		/* aggregator node is created, store the neeeded info */
+> +		/* aggregator node is created, store the needed info */
+>   		agg_node->valid = true;
+>   		agg_node->agg_id = agg_id;
+>   	}
+> diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c
+> index 3e74ab82868b..3f5ef5269bb2 100644
+> --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c
+> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c
+> @@ -77,7 +77,7 @@ static int __ixgbe_enable_sriov(struct ixgbe_adapter *adapter,
+>   	IXGBE_WRITE_REG(hw, IXGBE_PFDTXGSWC, IXGBE_PFDTXGSWC_VT_LBEN);
+>   	adapter->bridge_mode = BRIDGE_MODE_VEB;
+>   
+> -	/* limit trafffic classes based on VFs enabled */
+> +	/* limit traffic classes based on VFs enabled */
+>   	if ((adapter->hw.mac.type == ixgbe_mac_82599EB) && (num_vfs < 16)) {
+>   		adapter->dcb_cfg.num_tcs.pg_tcs = MAX_TRAFFIC_CLASS;
+>   		adapter->dcb_cfg.num_tcs.pfc_tcs = MAX_TRAFFIC_CLASS;
 
-It should be fine, the error happen if
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
 
-1) the batched ASID based request is not equal (the first if)
-2) there's no IOTLB for this ASID (the second if)
 
-But I agree the code could be tweaked to use two different if instead
-of using a or condition here.
+Kind regards,
 
-Acked-by: Jason Wang <jasowang@redhat.com>
-
->
-> As I don't know this code, I just leave it as-is but draw your attention
-> in case this is another bug lurking.
-> ---
->  drivers/vhost/vdpa.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-> index 1f1d1c425573..3e86080041fc 100644
-> --- a/drivers/vhost/vdpa.c
-> +++ b/drivers/vhost/vdpa.c
-> @@ -1000,7 +1000,8 @@ static int vhost_vdpa_process_iotlb_msg(struct vhost_dev *dev, u32 asid,
->                 if (!as) {
->                         dev_err(&v->dev, "can't find and alloc asid %d\n",
->                                 asid);
-> -                       return -EINVAL;
-> +                       r = -EINVAL;
-> +                       goto unlock;
->                 }
->                 iotlb = &as->iotlb;
->         } else
-> @@ -1013,7 +1014,8 @@ static int vhost_vdpa_process_iotlb_msg(struct vhost_dev *dev, u32 asid,
->                 }
->                 if (!iotlb)
->                         dev_err(&v->dev, "no iotlb for asid %d\n", asid);
-> -               return -EINVAL;
-> +               r = -EINVAL;
-> +               goto unlock;
->         }
->
->         switch (msg->type) {
-> --
-> 2.34.1
->
-
+Paul
