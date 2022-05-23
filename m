@@ -2,86 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0FA6C433F5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 23 May 2022 13:55:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A352C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 23 May 2022 15:26:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236608AbiEWNzU (ORCPT
+        id S237910AbiEWP0R (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 23 May 2022 09:55:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50734 "EHLO
+        Mon, 23 May 2022 11:26:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236402AbiEWNzS (ORCPT
+        with ESMTP id S237876AbiEWP0Q (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 23 May 2022 09:55:18 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD31256F89
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 May 2022 06:55:16 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id nr2-20020a17090b240200b001df2b1bfc40so17585598pjb.5
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 May 2022 06:55:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Df9yWQ/aDxzNckvtabHN6S/25VXwYOsM+nyYbdaI3a8=;
-        b=TzTbXf5jrW5oQ4yIsnoZCjia8f/YM/jmgfc1tLNqZmzCb3k08ZDczecDygA0fXzxW0
-         M81MuFj8NK6DtCT/7OVTIJAv3BhESb+ZGlV+g6JnG+cYwI4CMLm02QiKYbzV39WLLSMS
-         komvx0Xcb0OjEcfD56VP8GFPwyRc8+XD62mjfdTjYLgCGwqfkwDFeTyxa0gvcwRln5V/
-         eppJDWhh1gIYIIsgZb6SvwT1JFJc8Rc2PSnfcYkaYqyCR0LGr7wqnJA8xusq60qOrKuG
-         qGuAxRsk7r+MPmY10Dyd8BT8HZLGxWoTa7CzLg8N/e+uS1IVHCPP3SOQTgQY7OVwOhG9
-         40mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Df9yWQ/aDxzNckvtabHN6S/25VXwYOsM+nyYbdaI3a8=;
-        b=fjnpZeiE1l0FLAgFSH72hc8QIIAyjq4ZRIi4p9gjEagxDhJsHAGWKU1phaS+zGgx/F
-         IZ7vJ2voFPvjXyXuZpHgpfRNixfmmuIMl49ph80jaRdLiiV7MNZbzILJkO5hLUruwVFD
-         erDDZ1/3UCGaLcf2n0K1AyQKIJ7SaLbMB2Y0GjuKUnW5L7HiN88u9hsrzwHkX3Peq17t
-         Vlvm5OnT8R4rzuCLA/brWRctZq5zKMX37tdVP6O3omJlS8PIo6H+Q/yJ4xKyZi3rU9Wx
-         BkLrVJv3x9IaOgBA/s0h8uALC+nWHkCKKYTg62KIZweNzlfebUmFPtvxJnNJPSMhIGuz
-         JFbg==
-X-Gm-Message-State: AOAM531L7bN4zpFggTE5qdZfYIISkt3/AfYON7933/q+eD1Cnyq01i5i
-        HSTzXuRp/Ry3mmkMEOdDY9vB7gX9JzTy0g==
-X-Google-Smtp-Source: ABdhPJzTAKPyvsoV7ZaiJUcH3STTBACV6avvux7V/4Wgew6Anu+8+y7upkEqa6ojZ1VZGLBk9Poqrg==
-X-Received: by 2002:a17:902:a413:b0:156:15b:524a with SMTP id p19-20020a170902a41300b00156015b524amr23014244plq.106.1653314116404;
-        Mon, 23 May 2022 06:55:16 -0700 (PDT)
-Received: from localhost ([2408:8207:18da:2310:2c28:f36b:423b:6bc6])
-        by smtp.gmail.com with ESMTPSA id a15-20020a170902eccf00b0016170bb6528sm5211384plh.113.2022.05.23.06.55.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 May 2022 06:55:15 -0700 (PDT)
-Date:   Mon, 23 May 2022 21:55:10 +0800
-From:   Muchun Song <songmuchun@bytedance.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     dan.carpenter@oracle.com, Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Shakeel Butt <shakeelb@google.com>, Tejun Heo <tj@kernel.org>,
-        Zefan Li <lizefan.x@bytedance.com>,
-        Shuah Khan <shuah@kernel.org>,
-        David Vernet <void@manifault.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH] cgroup: Fix an error handling path in
- alloc_pagecache_max_30M()
-Message-ID: <YouSPobNcFH/cuuu@FVFYT0MHHV2J.usts.net>
-References: <628312312eb40e0e39463a2c06415fde5295c716.1653229120.git.christophe.jaillet@wanadoo.fr>
+        Mon, 23 May 2022 11:26:16 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D089532FF;
+        Mon, 23 May 2022 08:26:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id BF605B81014;
+        Mon, 23 May 2022 15:26:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EC89C385A9;
+        Mon, 23 May 2022 15:26:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1653319572;
+        bh=Tn18BFV/rU6iBwpcbPUyBxptSd3tEtMVOtluoy49Yi0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=xSpPWAZsmg72NIc2h88A/wShFKIanQjFYWsbA6cspbAR46ED9hMchHbtVsuR/Bvib
+         nZwp+S/JSnFUeONrEVJ5Dl2JVlIaDLq8XywanIcRMvGimAQvUl9Mc/El00hQRoWUQg
+         laC0SUpyAVSveesmiS8xPBPS23AH0vh5etZh7tP4=
+Date:   Mon, 23 May 2022 17:26:09 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     "Denis Efremov (Oracle)" <efremov@linux.com>
+Cc:     Larry.Finger@lwfinger.net, phil@philpotter.co.uk,
+        dan.carpenter@oracle.com, straube.linux@gmail.com,
+        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, stable <stable@vger.kernel.org>
+Subject: Re: [PATCH v5.10] staging: rtl8723bs: prevent ->Ssid overflow in
+ rtw_wx_set_scan()
+Message-ID: <YounkTGwmcQns3vy@kroah.com>
+References: <YoZk3YLEDYKGG5xe@kroah.com>
+ <20220520035730.5533-1-efremov@linux.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <628312312eb40e0e39463a2c06415fde5295c716.1653229120.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20220520035730.5533-1-efremov@linux.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, May 22, 2022 at 04:18:51PM +0200, Christophe JAILLET wrote:
-> If the first goto is taken, 'fd' is not opened yet (and is un-initialized).
-> So a direct return is safer.
+On Fri, May 20, 2022 at 07:57:30AM +0400, Denis Efremov (Oracle) wrote:
+> This code has a check to prevent read overflow but it needs another
+> check to prevent writing beyond the end of the ->Ssid[] array.
 > 
-> Fixes: c1a31a2f7a9c ("cgroup: fix racy check in alloc_pagecache_max_30M() helper function")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Fixes: 554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
+> Cc: stable <stable@vger.kernel.org>
+> Signed-off-by: Denis Efremov (Oracle) <efremov@linux.com>
+> ---
+>  drivers/staging/rtl8723bs/os_dep/ioctl_linux.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
-Acked-by: Muchun Song <songmuchun@bytedance.com>
+And only 5.10 needs this?  What about all other kernel branches?
 
-Thanks.
+thanks,
+
+greg k-h
