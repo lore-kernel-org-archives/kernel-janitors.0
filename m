@@ -2,86 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98C54C4332F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 May 2022 18:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F51C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 May 2022 23:22:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240292AbiEXSML (ORCPT
+        id S242569AbiEXXWw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 May 2022 14:12:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56204 "EHLO
+        Tue, 24 May 2022 19:22:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240241AbiEXSMB (ORCPT
+        with ESMTP id S239604AbiEXXWu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 May 2022 14:12:01 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6169606F9;
-        Tue, 24 May 2022 11:12:00 -0700 (PDT)
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24OHnlBZ024134;
-        Tue, 24 May 2022 18:11:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2021-07-09;
- bh=Y88LhOs828No2W/gspVvrN1GuqbQd9SVe0gokG2Lir0=;
- b=tWjvPI/zYsSwbUDmm+3g3hk3oU0+3xTVwgsabGjDkga38jsu2t0fHJKptwq+56tiGvge
- 2ry0bsR1JOOr3ZfSaz+S4sYBHOnIneuSrm3b5NK4ErTcUKKnJ6v9YUzyz/1gefNEcadJ
- Q7p5dPrUnWfe0JvN4quMpsgc8EBYUVmYAE6yczexIR//eBE+x6rcZKQ4LTsuMMZGBAiC
- 2Uuo/c9aEs9S7akQ5F9MFJAd/hVDEUNn+c2OuT2F9ls9/2bJEPLCoWZvkalhDvrMAxux
- uFICwsbshsMJzl/fhTug8Zqoi2pOR4QoG4OcecF3pYnPDZJd3l5HgEDeRMZCtzQ7OY6h xw== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3g93tbr3gn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 May 2022 18:11:50 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 24OHoItP016357;
-        Tue, 24 May 2022 18:11:49 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3g93x50s6e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 May 2022 18:11:49 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 24OIAvnC039045;
-        Tue, 24 May 2022 18:11:48 GMT
-Received: from ca-mkp.mkp.ca.oracle.com (ca-mkp.ca.oracle.com [10.156.108.201])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3g93x50s3r-10;
-        Tue, 24 May 2022 18:11:48 +0000
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-To:     Julia Lawall <Julia.Lawall@inria.fr>,
-        "K. Y. Srinivasan" <kys@microsoft.com>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dexuan Cui <decui@microsoft.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Wei Liu <wei.liu@kernel.org>, linux-hyperv@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>
-Subject: Re: [PATCH] scsi: storvsc: fix typo in comment
-Date:   Tue, 24 May 2022 14:11:42 -0400
-Message-Id: <165341587529.22286.16208036407094767293.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.35.2
-In-Reply-To: <20220521111145.81697-12-Julia.Lawall@inria.fr>
-References: <20220521111145.81697-12-Julia.Lawall@inria.fr>
+        Tue, 24 May 2022 19:22:50 -0400
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 196B95C879;
+        Tue, 24 May 2022 16:22:48 -0700 (PDT)
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id AA0B840002;
+        Tue, 24 May 2022 23:22:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1653434567;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=TpOhdQdmfWIeiF+2SheY+AZfeTF6hnE2HG99ek4+4A8=;
+        b=JYrX3SOp2+aqW6WTG6quDDSCC4kitSB4Ytgq2jAUVBfIyS/NZsfr97FWYRBaEGsUwlY7Xd
+        dp7F5fotpyxBZFG6ubn8mCrgb2Fmzg6tmmw+bE65hBudbty2VkPcrdfdRshqfkSWGtTufi
+        139jFftSEegkkZMtcfqeWhv0E+Gh9tyAathOxt3KqkpK9EO1RTB2ECaZOFhQtgc/dw2Hx7
+        MWJceecZYYU+MuUUs+04ZRqZwuLC/KClNnclss/MeXqb6UM/2hQ2C8QANK4hrBjQ8xALbP
+        70ARLyGbLJOh5KYVcFmid3W31Yg/1wnIFSMIIX0ms5S51juyucKfOSZdooTbIg==
+Date:   Wed, 25 May 2022 01:22:46 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] rtc: rzn1: Fix error code in probe
+Message-ID: <165343454397.80986.4832495351710090018.b4-ty@bootlin.com>
+References: <YoZMg1dmHHSJEfE9@kili>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: ws_kJOuBhbqcOwfGA_gInFEpgvlxfw3g
-X-Proofpoint-ORIG-GUID: ws_kJOuBhbqcOwfGA_gInFEpgvlxfw3g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YoZMg1dmHHSJEfE9@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 21 May 2022 13:10:22 +0200, Julia Lawall wrote:
-
-> Spelling mistake (triple letters) in comment.
-> Detected with the help of Coccinelle.
+On Thu, 19 May 2022 16:56:19 +0300, Dan Carpenter wrote:
+> There is a copy and paste error so this code returns the wrong variable.
 > 
 > 
 
-Applied to 5.19/scsi-queue, thanks!
+Applied, thanks!
 
-[1/1] scsi: storvsc: fix typo in comment
-      https://git.kernel.org/mkp/scsi/c/5445e08e1159
+[1/1] rtc: rzn1: Fix error code in probe
+      commit: 0b6da785130d9e8cf33d001a7bf08a979c87d019
+
+Best regards,
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
