@@ -2,87 +2,136 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B0BAC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 May 2022 10:54:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F888C433F5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 May 2022 11:03:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236459AbiEXKyU (ORCPT
+        id S236001AbiEXLDj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 May 2022 06:54:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42630 "EHLO
+        Tue, 24 May 2022 07:03:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232919AbiEXKyQ (ORCPT
+        with ESMTP id S232964AbiEXLDi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 May 2022 06:54:16 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1537B69713;
-        Tue, 24 May 2022 03:54:09 -0700 (PDT)
+        Tue, 24 May 2022 07:03:38 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F85D74DE7;
+        Tue, 24 May 2022 04:03:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1653389649; x=1684925649;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fH9O4UdqFEL6xKyH3yJM1r2FmPTgxb1CDCnokkfH+pE=;
-  b=IO+2zlSDlODm3oQq6ZW4HOm9kL68pWDfbzEYjlyCIedDodQPWsYXBTfA
-   f7D1IjpelL3w2TGv840IIpMI+1CSF0dUW9zkdvIc+OGursVXGilk/ckpg
-   oDTO9fIzpUrKXRm2j8rAu3m55lzgHadzHRnkuS3WCA+vceHPfjGaUdHkX
-   4nmUTw/XhnHbin4WA2sJ5AUSNKFtx3ukTeUirW0B/HwMJIN04mUwfQDiE
-   6hq7BzKUT7vIqo4DnDz1E/+mBopLVfn+dcW8EbpXGgmuxIkE1zUb5cjDm
-   pe4Ag63nTgoHlkX7fpfs2qVwKpZgY3GW5tTN0Py5sNCWH7Tm4ctnkS2qg
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10356"; a="273222378"
+  t=1653390217; x=1684926217;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=CntG2zT79s+rUqc/RwF4HmNc6O2cBy1aTPUYDsYRjjE=;
+  b=dh2PDazC+Hias72hL+YjkQm+4NV8DToFrS9UKRxKmiS3wgYrkk72n1tB
+   4HB9DvustuCf75leTsWV2XTHhp/g+hpBKnjrdGuwzenebYvPq94XzybWQ
+   s1zPvooRPuxUqQc58hHj1Cq7cjoBqvpzVDjfb98Wbo4j8xSw5I9hLE9wb
+   tRHKJV2SdjpVuqjKnF7vHEArIBNa7kuAcpq7eJf2rKGc5fr5CAZ5dQyk1
+   VdQKcyihYFN9IuqXbLDzGRljMC7A+9nwHXaUA/KRi9xsK8iRezZJCDrWe
+   y61FScKe9PRfstwWtCrQcDW0AHHOXQVMLSQa0AVm+V4d3ZYUIquxtL5Bu
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10356"; a="273611125"
 X-IronPort-AV: E=Sophos;i="5.91,248,1647327600"; 
-   d="scan'208";a="273222378"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2022 03:54:08 -0700
-X-ExtLoop1: 1
+   d="scan'208";a="273611125"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2022 04:03:37 -0700
 X-IronPort-AV: E=Sophos;i="5.91,248,1647327600"; 
-   d="scan'208";a="717121870"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by fmsmga001.fm.intel.com with SMTP; 24 May 2022 03:54:05 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 24 May 2022 13:54:05 +0300
-Date:   Tue, 24 May 2022 13:54:04 +0300
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+   d="scan'208";a="745175110"
+Received: from zychseba-mobl.ger.corp.intel.com (HELO localhost) ([10.249.136.104])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2022 04:03:33 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
 To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        kernel-janitors@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: tcpm: fix typo in comment
-Message-ID: <Yoy5TDJBLMaNUUvl@kuha.fi.intel.com>
-References: <20220521111145.81697-52-Julia.Lawall@inria.fr>
+Cc:     kernel-janitors@vger.kernel.org,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/i915: fix typos in comments
+In-Reply-To: <20220521111145.81697-90-Julia.Lawall@inria.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20220521111145.81697-90-Julia.Lawall@inria.fr>
+Date:   Tue, 24 May 2022 14:03:29 +0300
+Message-ID: <87ee0jw5tq.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220521111145.81697-52-Julia.Lawall@inria.fr>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, May 21, 2022 at 01:11:02PM +0200, Julia Lawall wrote:
-> Spelling mistake (triple letters) in comment.
+On Sat, 21 May 2022, Julia Lawall <Julia.Lawall@inria.fr> wrote:
+> Spelling mistakes (triple letters) in comments.
 > Detected with the help of Coccinelle.
-> 
+>
 > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Thanks, pushed to drm-intel-next.
 
+BR,
+Jani.
+
+>
 > ---
->  drivers/usb/typec/tcpm/tcpm.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-> index 3bc2f4ebd1fe..7039383eac6d 100644
-> --- a/drivers/usb/typec/tcpm/tcpm.c
-> +++ b/drivers/usb/typec/tcpm/tcpm.c
-> @@ -471,7 +471,7 @@ struct tcpm_port {
->  
+>  drivers/gpu/drm/i915/display/intel_color.c           |    2 +-
+>  drivers/gpu/drm/i915/display/intel_pps.c             |    2 +-
+>  drivers/gpu/drm/i915/gt/intel_execlists_submission.c |    2 +-
+>  drivers/gpu/drm/i915/gt/uc/intel_guc_log.c           |    2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/i915/display/intel_color.c b/drivers/gpu/drm/i915/display/intel_color.c
+> index 34128c9c635c..a27ce874a9e8 100644
+> --- a/drivers/gpu/drm/i915/display/intel_color.c
+> +++ b/drivers/gpu/drm/i915/display/intel_color.c
+> @@ -1638,7 +1638,7 @@ static u32 icl_gamma_mode(const struct intel_crtc_state *crtc_state)
 >  	/*
->  	 * When set, port requests PD_P_SNK_STDBY_MW upon entering SNK_DISCOVERY and
-> -	 * the actual currrent limit after RX of PD_CTRL_PSRDY for PD link,
-> +	 * the actual current limit after RX of PD_CTRL_PSRDY for PD link,
->  	 * SNK_READY for non-pd link.
+>  	 * Enable 10bit gamma for D13
+>  	 * ToDo: Extend to Logarithmic Gamma once the new UAPI
+> -	 * is acccepted and implemented by a userspace consumer
+> +	 * is accepted and implemented by a userspace consumer
 >  	 */
->  	bool slow_charger_loop;
+>  	else if (DISPLAY_VER(i915) >= 13)
+>  		gamma_mode |= GAMMA_MODE_MODE_10BIT;
+> diff --git a/drivers/gpu/drm/i915/display/intel_pps.c b/drivers/gpu/drm/i915/display/intel_pps.c
+> index 5a598dd06039..4bc0563dde92 100644
+> --- a/drivers/gpu/drm/i915/display/intel_pps.c
+> +++ b/drivers/gpu/drm/i915/display/intel_pps.c
+> @@ -509,7 +509,7 @@ static void wait_panel_power_cycle(struct intel_dp *intel_dp)
+>  
+>  	drm_dbg_kms(&i915->drm, "Wait for panel power cycle\n");
+>  
+> -	/* take the difference of currrent time and panel power off time
+> +	/* take the difference of current time and panel power off time
+>  	 * and then make panel wait for t11_t12 if needed. */
+>  	panel_power_on_time = ktime_get_boottime();
+>  	panel_power_off_duration = ktime_ms_delta(panel_power_on_time, intel_dp->pps.panel_power_off_time);
+> diff --git a/drivers/gpu/drm/i915/gt/intel_execlists_submission.c b/drivers/gpu/drm/i915/gt/intel_execlists_submission.c
+> index 86f7a9ac1c39..aa0d2bbbbcc4 100644
+> --- a/drivers/gpu/drm/i915/gt/intel_execlists_submission.c
+> +++ b/drivers/gpu/drm/i915/gt/intel_execlists_submission.c
+> @@ -1350,7 +1350,7 @@ static void execlists_dequeue(struct intel_engine_cs *engine)
+>  			 * submission. If we don't cancel the timer now,
+>  			 * we will see that the timer has expired and
+>  			 * reschedule the tasklet; continually until the
+> -			 * next context switch or other preeemption event.
+> +			 * next context switch or other preemption event.
+>  			 *
+>  			 * Since we have decided to reschedule based on
+>  			 * consumption of this timeslice, if we submit the
+> diff --git a/drivers/gpu/drm/i915/gt/uc/intel_guc_log.c b/drivers/gpu/drm/i915/gt/uc/intel_guc_log.c
+> index 78d2989fe917..02311ad90264 100644
+> --- a/drivers/gpu/drm/i915/gt/uc/intel_guc_log.c
+> +++ b/drivers/gpu/drm/i915/gt/uc/intel_guc_log.c
+> @@ -588,7 +588,7 @@ int intel_guc_log_relay_open(struct intel_guc_log *log)
+>  	/*
+>  	 * We require SSE 4.1 for fast reads from the GuC log buffer and
+>  	 * it should be present on the chipsets supporting GuC based
+> -	 * submisssions.
+> +	 * submissions.
+>  	 */
+>  	if (!i915_has_memcpy_from_wc()) {
+>  		ret = -ENXIO;
+>
 
 -- 
-heikki
+Jani Nikula, Intel Open Source Graphics Center
