@@ -2,123 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05837C433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 May 2022 10:48:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B0BAC433FE
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 May 2022 10:54:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236335AbiEXKsi (ORCPT
+        id S236459AbiEXKyU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 May 2022 06:48:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35162 "EHLO
+        Tue, 24 May 2022 06:54:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233418AbiEXKsh (ORCPT
+        with ESMTP id S232919AbiEXKyQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 May 2022 06:48:37 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD63D606D5;
-        Tue, 24 May 2022 03:48:35 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8BF27B8175D;
-        Tue, 24 May 2022 10:48:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D898C34116;
-        Tue, 24 May 2022 10:48:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653389313;
-        bh=+C41sXPIy1muiAhd9BjbS005yqo35L82+zf83HNOtmc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=eVlz8pi5H8IL3/TMtdbjw1D1PcGrdtofMB9DBlMyvSwUv5WWm7DGG6oY8O+/EQ1p8
-         zLvcEREYhJIuSYWy1O7d76KrvCyaFm0yCCTsEVm8YOJ/OB4Ow0ovxLZqkVAhUhG4yv
-         K9tY4f7WXsit7O+JsJfluDl+DO9GvHrk77boAzjH/co4LmmqBQvuMC7VHZJ4y17m1G
-         tM5SVrkN9APSaJgzAajzEyFDPuFPcGGTQEqCksQHtROS+nmMsQmU891AD7ObirRBka
-         n2uCA9CmA9ab+lR+F4TPeWzlm3pqnlVguRnBsKtVJpWAygWvw7eBgZtLliQHpZqJ6M
-         mcYPl9MAWD1Tw==
-Received: by mail-ua1-f49.google.com with SMTP id 90so6117352uam.8;
-        Tue, 24 May 2022 03:48:33 -0700 (PDT)
-X-Gm-Message-State: AOAM5320bRoNn0GEfQwnMHTZIGJxupLQU+SA8qUynTfUdvFbWNnZ49Vu
-        yU1VKX1mhngAsCUZhvpVzhWt37SUcUHIOmM+jII=
-X-Google-Smtp-Source: ABdhPJzHtt/cupLGwCUKXn8e5lITotXXxcAA1U0tC1JRX9ojisuSaem2Smms7m/djCJeebElmURJu5FzYeugI0JQQl0=
-X-Received: by 2002:a9f:354f:0:b0:368:c2c0:f2b5 with SMTP id
- o73-20020a9f354f000000b00368c2c0f2b5mr8746708uao.96.1653389312187; Tue, 24
- May 2022 03:48:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <1c4e81eda5f9651f581f1554629d334f1afda841.1653227039.git.christophe.jaillet@wanadoo.fr>
- <CAAhV-H73Gj-KDjLuqCtasX5dtBRTHe_8s51wR1mrd=_rBF_XZA@mail.gmail.com>
- <CAAhV-H4Z4Ujif3UcSeSUMdT6SR0hVQnLCCzdGhg27mrtW4OvnQ@mail.gmail.com> <c939b102-6e96-5be2-e41d-9ef028e5a50e@xen0n.name>
-In-Reply-To: <c939b102-6e96-5be2-e41d-9ef028e5a50e@xen0n.name>
-From:   Huacai Chen <chenhuacai@kernel.org>
-Date:   Tue, 24 May 2022 18:48:25 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6k=xC-fDYnwsqSeoj7QPPn8RAcR+waQMa8yTs5J-XOSg@mail.gmail.com>
-Message-ID: <CAAhV-H6k=xC-fDYnwsqSeoj7QPPn8RAcR+waQMa8yTs5J-XOSg@mail.gmail.com>
-Subject: Re: [PATCH] irqchip/loongson-liointc: Fix an error handling path in liointc_init()
-To:     WANG Xuerui <kernel@xen0n.name>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        dan.carpenter@oracle.com, Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+        Tue, 24 May 2022 06:54:16 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1537B69713;
+        Tue, 24 May 2022 03:54:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1653389649; x=1684925649;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fH9O4UdqFEL6xKyH3yJM1r2FmPTgxb1CDCnokkfH+pE=;
+  b=IO+2zlSDlODm3oQq6ZW4HOm9kL68pWDfbzEYjlyCIedDodQPWsYXBTfA
+   f7D1IjpelL3w2TGv840IIpMI+1CSF0dUW9zkdvIc+OGursVXGilk/ckpg
+   oDTO9fIzpUrKXRm2j8rAu3m55lzgHadzHRnkuS3WCA+vceHPfjGaUdHkX
+   4nmUTw/XhnHbin4WA2sJ5AUSNKFtx3ukTeUirW0B/HwMJIN04mUwfQDiE
+   6hq7BzKUT7vIqo4DnDz1E/+mBopLVfn+dcW8EbpXGgmuxIkE1zUb5cjDm
+   pe4Ag63nTgoHlkX7fpfs2qVwKpZgY3GW5tTN0Py5sNCWH7Tm4ctnkS2qg
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10356"; a="273222378"
+X-IronPort-AV: E=Sophos;i="5.91,248,1647327600"; 
+   d="scan'208";a="273222378"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2022 03:54:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,248,1647327600"; 
+   d="scan'208";a="717121870"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by fmsmga001.fm.intel.com with SMTP; 24 May 2022 03:54:05 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 24 May 2022 13:54:05 +0300
+Date:   Tue, 24 May 2022 13:54:04 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
         kernel-janitors@vger.kernel.org,
-        "open list:MIPS" <linux-mips@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: tcpm: fix typo in comment
+Message-ID: <Yoy5TDJBLMaNUUvl@kuha.fi.intel.com>
+References: <20220521111145.81697-52-Julia.Lawall@inria.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220521111145.81697-52-Julia.Lawall@inria.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi, Xuerui,
+On Sat, May 21, 2022 at 01:11:02PM +0200, Julia Lawall wrote:
+> Spelling mistake (triple letters) in comment.
+> Detected with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-On Tue, May 24, 2022 at 1:41 PM WANG Xuerui <kernel@xen0n.name> wrote:
->
-> Hi Huacai,
->
-> On 5/24/22 11:47, Huacai Chen wrote:
-> > Hi, Christophe,
-> >
-> > On Tue, May 24, 2022 at 10:50 AM Huacai Chen <chenhuacai@kernel.org> wrote:
-> >> Hi, Christophe,
-> >>
-> >> On Sun, May 22, 2022 at 9:44 PM Christophe JAILLET
-> >> <christophe.jaillet@wanadoo.fr> wrote:
-> >>> If a of_property_match_string() call fails, we still need to release some
-> >>> resources.
-> >>> Add the corresponding goto instead of a direct return.
-> >> Your patch is correct, but 807e93d0ecbb hasn't been upstream, I don't
-> >> know how to handle it.
-> >>
-> >> Huacai
-> >>> Fixes: 807e93d0ecbb ("irqchip/loongson-liointc: Add ACPI init support")
-> >>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> >>> ---
-> >>>   drivers/irqchip/irq-loongson-liointc.c | 6 ++++--
-> >>>   1 file changed, 4 insertions(+), 2 deletions(-)
-> >>>
-> >>> diff --git a/drivers/irqchip/irq-loongson-liointc.c b/drivers/irqchip/irq-loongson-liointc.c
-> >>> index ff3cb5b05710..2227b702a81d 100644
-> >>> --- a/drivers/irqchip/irq-loongson-liointc.c
-> >>> +++ b/drivers/irqchip/irq-loongson-liointc.c
-> >>> @@ -185,8 +185,10 @@ static int liointc_init(phys_addr_t addr, unsigned long size, int revision,
-> >>>                          int index = of_property_match_string(node,
-> >>>                                          "reg-names", core_reg_names[i]);
-> >>>
-> >>> -                       if (index < 0)
-> >>> -                               return -EINVAL;
-> >>> +                       if (index < 0) {
-> >>> +                               err = -EINVAL;
-> >>> +                               goto out_iounmap;
-> >>> +                       }
-> > Just goto out_iounmap is OK, because it returns -EINVAL at last.
-> > I've squash your patch to the original one and add a Co-developed-by:,
-> > not sure it is the best solution. Thanks.
-> You could also "Reported-by" and/or "Suggested-by", to give proper
-> credit. Mention of this mail thread (link to lore.kernel.org archive
-> maybe) in the commit message is good too.
-I think "Reported-by" is used for a bugfix patch, not suitable for the
-original patch. And maybe "Suggested-by" is the best.
+Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Huacai
-> >
-> > Huacai
-> >>>                          priv->core_isr[i] = of_iomap(node, index);
-> >>>                  }
-> >>> --
-> >>> 2.34.1
-> >>>
+> ---
+>  drivers/usb/typec/tcpm/tcpm.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+> index 3bc2f4ebd1fe..7039383eac6d 100644
+> --- a/drivers/usb/typec/tcpm/tcpm.c
+> +++ b/drivers/usb/typec/tcpm/tcpm.c
+> @@ -471,7 +471,7 @@ struct tcpm_port {
+>  
+>  	/*
+>  	 * When set, port requests PD_P_SNK_STDBY_MW upon entering SNK_DISCOVERY and
+> -	 * the actual currrent limit after RX of PD_CTRL_PSRDY for PD link,
+> +	 * the actual current limit after RX of PD_CTRL_PSRDY for PD link,
+>  	 * SNK_READY for non-pd link.
+>  	 */
+>  	bool slow_charger_loop;
+
+-- 
+heikki
