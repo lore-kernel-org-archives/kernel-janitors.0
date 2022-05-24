@@ -2,107 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F5DC433FE
-	for <kernel-janitors@archiver.kernel.org>; Tue, 24 May 2022 05:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0139BC433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 24 May 2022 05:58:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234560AbiEXFrf (ORCPT
+        id S232801AbiEXF6I (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 24 May 2022 01:47:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39702 "EHLO
+        Tue, 24 May 2022 01:58:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231663AbiEXFre (ORCPT
+        with ESMTP id S234710AbiEXF6G (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 24 May 2022 01:47:34 -0400
-X-Greylist: delayed 381 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 23 May 2022 22:47:32 PDT
-Received: from mailbox.box.xen0n.name (mail.xen0n.name [115.28.160.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81EF555487;
-        Mon, 23 May 2022 22:47:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xen0n.name; s=mail;
-        t=1653370867; bh=GWUSG80uMKJQGJDBdWfDSlGvhK3zw5IeGPqEh98zoes=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=lsi6UHkbt8rN1g9x3EgAClnd00T9TZ+dY46ZTuKqiaryvOLwhOLmk6NvhMBNFqqy6
-         mEomqDvW8LbNhptiUcpEFIE6FufFZKDKgJ/0mESmsXVHaP6VWHoyvbYunF1ia5UIEu
-         mzle4fkEtOTW2xeDYCBPuTpqFD9QoIHOe5lfCyJU=
-Received: from [192.168.9.172] (unknown [101.88.28.48])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mailbox.box.xen0n.name (Postfix) with ESMTPSA id BCD2A60074;
-        Tue, 24 May 2022 13:41:07 +0800 (CST)
-Message-ID: <c939b102-6e96-5be2-e41d-9ef028e5a50e@xen0n.name>
-Date:   Tue, 24 May 2022 13:41:07 +0800
+        Tue, 24 May 2022 01:58:06 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7C44424975
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 May 2022 22:58:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1653371884;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=iRsHIOR007k/L1XQpNezvwZ0qtxHfPjrnmZz0DariKE=;
+        b=Dc2BKNdjFKZKCEwvTdATLoIXX4JwCBnUFFjjqoXjMV1bS1V17R3EHojohhPSDZQX5pec3F
+        v6hfzmLpx6KF9rMRmAGttIfltt1Eg44s7w96eNUP0VtotZ4Ai2tTRR7CkJDfMvRG1DFf1E
+        1yoC9//BrdL8CM5GdpEM6iqnVTSCR6g=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-86-hl9tqK0EM6KYlfJPPYEnJw-1; Tue, 24 May 2022 01:58:00 -0400
+X-MC-Unique: hl9tqK0EM6KYlfJPPYEnJw-1
+Received: by mail-lj1-f199.google.com with SMTP id y20-20020a05651c021400b00253f0227639so744639ljn.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 May 2022 22:58:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iRsHIOR007k/L1XQpNezvwZ0qtxHfPjrnmZz0DariKE=;
+        b=MrmacuWJ5jrbEYZ6tzaKUbEy5xNWbZKe+vHti+AAi+JLThdLIHvjSkOcV7euRZkO4k
+         JkcM8OxTiGGEVRM1UWplHcwqc8Q6cZwoH1TEcApHpg5eJwMcXaEWXd+JEfX5SG/nfdsc
+         jkZMeAM8EE1ntGMmZ/TELrh6x6DUYcfGbQ12cx45GHLoZfXUGJSznj1rCcQyHy5e4Lup
+         sxnZbCQj5cgrbTFJqYJv63XerVYdhQzN0itMttWlwNj/c+WSjGmaoVz3tgQyWYL/XOhO
+         15IKmUsy9UzOEI7ppKsK4AaL5U3jw3pfO8U+Ko/lqXjv0pSv7zJ7k/YotSY9QiiYP1Bg
+         clAA==
+X-Gm-Message-State: AOAM530EV9/GS62GGcwPtY7qY9OrfqixAj40+c8p/JfdL5dj1xh1Bpnp
+        5wSbpnNqID8/BU/Jh2uAhFE+CHSIlzjNwZsfGEu1v6Nq9IKhnmMC1n2M+lAtB2WbUFPhzQL283x
+        AJw5R8aBplQ06DpjB30zQM6GwS0I9bjesFeRxatzOqtJa
+X-Received: by 2002:a05:6512:a95:b0:478:82fb:7783 with SMTP id m21-20020a0565120a9500b0047882fb7783mr2719317lfu.471.1653371878643;
+        Mon, 23 May 2022 22:57:58 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxdIOa1D3s+m3Tp1eQDuX1Gh0Mpm9SPH0wyM3HX3XlwtkdZpXZEMGlf2l4NS4ke0tLB60DGtq+EgfSWK3afyAE=
+X-Received: by 2002:a05:6512:a95:b0:478:82fb:7783 with SMTP id
+ m21-20020a0565120a9500b0047882fb7783mr2719307lfu.471.1653371878497; Mon, 23
+ May 2022 22:57:58 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.0a1
-Subject: Re: [PATCH] irqchip/loongson-liointc: Fix an error handling path in
- liointc_init()
-To:     Huacai Chen <chenhuacai@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     dan.carpenter@oracle.com, Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        "open list:MIPS" <linux-mips@vger.kernel.org>
-References: <1c4e81eda5f9651f581f1554629d334f1afda841.1653227039.git.christophe.jaillet@wanadoo.fr>
- <CAAhV-H73Gj-KDjLuqCtasX5dtBRTHe_8s51wR1mrd=_rBF_XZA@mail.gmail.com>
- <CAAhV-H4Z4Ujif3UcSeSUMdT6SR0hVQnLCCzdGhg27mrtW4OvnQ@mail.gmail.com>
-Content-Language: en-US
-From:   WANG Xuerui <kernel@xen0n.name>
-In-Reply-To: <CAAhV-H4Z4Ujif3UcSeSUMdT6SR0hVQnLCCzdGhg27mrtW4OvnQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <YotGQU1q224RKZR8@kili>
+In-Reply-To: <YotGQU1q224RKZR8@kili>
+From:   Jason Wang <jasowang@redhat.com>
+Date:   Tue, 24 May 2022 13:57:47 +0800
+Message-ID: <CACGkMEsgkTWsCsNa+igLCoKm0uVNV=RywB_nVOKiXb3Hu4yUQg@mail.gmail.com>
+Subject: Re: [PATCH] vdpasim: Off by one in vdpasim_set_group_asid()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Gautam Dawar <gautam.dawar@xilinx.com>,
+        Xie Yongji <xieyongji@bytedance.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Eli Cohen <elic@nvidia.com>,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Huacai,
+On Mon, May 23, 2022 at 4:31 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> The > comparison needs to be >= to prevent an out of bounds access
+> of the vdpasim->iommu[] array.  The vdpasim->iommu[] is allocated in
+> vdpasim_create() and it has vdpasim->dev_attr.nas elements.
+>
+> Fixes: 87e5afeac247 ("vdpasim: control virtqueue support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On 5/24/22 11:47, Huacai Chen wrote:
-> Hi, Christophe,
+Acked-by: Jason Wang <jasowang@redhat.com>
+
+> ---
+>  drivers/vdpa/vdpa_sim/vdpa_sim.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> On Tue, May 24, 2022 at 10:50 AM Huacai Chen <chenhuacai@kernel.org> wrote:
->> Hi, Christophe,
->>
->> On Sun, May 22, 2022 at 9:44 PM Christophe JAILLET
->> <christophe.jaillet@wanadoo.fr> wrote:
->>> If a of_property_match_string() call fails, we still need to release some
->>> resources.
->>> Add the corresponding goto instead of a direct return.
->> Your patch is correct, but 807e93d0ecbb hasn't been upstream, I don't
->> know how to handle it.
->>
->> Huacai
->>> Fixes: 807e93d0ecbb ("irqchip/loongson-liointc: Add ACPI init support")
->>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>> ---
->>>   drivers/irqchip/irq-loongson-liointc.c | 6 ++++--
->>>   1 file changed, 4 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/irqchip/irq-loongson-liointc.c b/drivers/irqchip/irq-loongson-liointc.c
->>> index ff3cb5b05710..2227b702a81d 100644
->>> --- a/drivers/irqchip/irq-loongson-liointc.c
->>> +++ b/drivers/irqchip/irq-loongson-liointc.c
->>> @@ -185,8 +185,10 @@ static int liointc_init(phys_addr_t addr, unsigned long size, int revision,
->>>                          int index = of_property_match_string(node,
->>>                                          "reg-names", core_reg_names[i]);
->>>
->>> -                       if (index < 0)
->>> -                               return -EINVAL;
->>> +                       if (index < 0) {
->>> +                               err = -EINVAL;
->>> +                               goto out_iounmap;
->>> +                       }
-> Just goto out_iounmap is OK, because it returns -EINVAL at last.
-> I've squash your patch to the original one and add a Co-developed-by:,
-> not sure it is the best solution. Thanks.
-You could also "Reported-by" and/or "Suggested-by", to give proper 
-credit. Mention of this mail thread (link to lore.kernel.org archive 
-maybe) in the commit message is good too.
+> diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim.c b/drivers/vdpa/vdpa_sim/vdpa_sim.c
+> index 50d721072beb..0f2865899647 100644
+> --- a/drivers/vdpa/vdpa_sim/vdpa_sim.c
+> +++ b/drivers/vdpa/vdpa_sim/vdpa_sim.c
+> @@ -567,7 +567,7 @@ static int vdpasim_set_group_asid(struct vdpa_device *vdpa, unsigned int group,
+>         if (group > vdpasim->dev_attr.ngroups)
+>                 return -EINVAL;
 >
-> Huacai
->>>                          priv->core_isr[i] = of_iomap(node, index);
->>>                  }
->>> --
->>> 2.34.1
->>>
+> -       if (asid > vdpasim->dev_attr.nas)
+> +       if (asid >= vdpasim->dev_attr.nas)
+>                 return -EINVAL;
+>
+>         iommu = &vdpasim->iommu[asid];
+> --
+> 2.35.1
+>
+
