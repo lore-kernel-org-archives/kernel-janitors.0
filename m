@@ -2,99 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D01FC433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed, 25 May 2022 15:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACBFBC433FE
+	for <kernel-janitors@archiver.kernel.org>; Wed, 25 May 2022 17:56:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234936AbiEYPNd (ORCPT
+        id S241725AbiEYR4B (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 25 May 2022 11:13:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50430 "EHLO
+        Wed, 25 May 2022 13:56:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245147AbiEYPNY (ORCPT
+        with ESMTP id S236773AbiEYR4A (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 25 May 2022 11:13:24 -0400
-Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CB11B2257
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 May 2022 08:13:21 -0700 (PDT)
-Received: by mail-il1-x12e.google.com with SMTP id j15so1183344ilo.5
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 May 2022 08:13:21 -0700 (PDT)
+        Wed, 25 May 2022 13:56:00 -0400
+Received: from mail-qt1-x834.google.com (mail-qt1-x834.google.com [IPv6:2607:f8b0:4864:20::834])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7201ADE9B
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 May 2022 10:55:59 -0700 (PDT)
+Received: by mail-qt1-x834.google.com with SMTP id h9so13069184qtx.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 May 2022 10:55:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=GdVXDiBTvDsGSp4gN7P3+qWOHyyVf7qzlb5UHFgMfDQ=;
-        b=b4wHeygbsIeo4NVYzDdomfgzLiq/t/x5cyEzlGM6NAz1ILFgOtx9BtuNP861SjtiDx
-         nd/T3BZbDVrpQLQR10r4IgScjxztwfsRk126/1HGktqLvFD4pRgpad52yH1Bwq2aL3Qz
-         JAgAnsp2jjHnawnIlW8F51Tj8iRrEZr+f8gnA=
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=MOVhGv8nvnJAMgaPQNE7u1253LKLy/xiNdpEsmTDTbE=;
+        b=WJCkihoeiXVWiX/SOtblOOlzlu3o2aHAt1gN1TX6lFhU8avW+lxELbdDcwL1aKNICn
+         I+sG6kM3hlZkIK/zhfi6fmyoAA1eLW6pnPKaVuK2//ToSFxelpB0Jbah+xMdBTz5PtGs
+         +DZmD9eWzcnj2s0NE9AP8o9BY2ChUHncv+JnL6Vp3zvFl0o5aAXMJuBHPfoFsUrO3Amj
+         SlFL5+ZxdrWQuWVIICw4I+TnV2u1cJyhDqwN7lqoz3ovho1ITmjF0SvG9EjL4AqSSrqj
+         TPnpfFhUcH927BpTvBYK7uuBhT3q/dvWW+Bw1xUSKaZuEnJZ2DCG1eLBhaaNln0iQnCV
+         Smww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GdVXDiBTvDsGSp4gN7P3+qWOHyyVf7qzlb5UHFgMfDQ=;
-        b=LalsbXttI7/38XQ725xiI5A19H5bU+B0UIU0bDbLiAKZkgaR3Bf0r5pdDxqDJfcvnE
-         60s/p8yCHXRUFgRozbdJiOnq+lRcLIWak2asH8s1gEYFcEhgKNtAQ2EgyyrbTRmq7sCc
-         9Tt6k53/fpl6HBuG5DmC/rtDAPTM9wFZfs7S0LvChc/fvrzMej4Zq+KFzyg74MoSeWpB
-         u6t0INsg6WtDBM35VYdOl330jR/Smx8sxJ4eEgS8kXPBDYaKCr863mGxDUUQuibyudVF
-         f1q8lhba2C8kdIQZfDIDOfryDTe21j9A3Xlj7Y5VseVxysT/haj+GwhCy8/ObU6WRLKl
-         gogw==
-X-Gm-Message-State: AOAM530xQV44KF/Hn3FR04Q4XHMA0cy02O8SKcjDgoIIg7FZPpGVGgMF
-        RkNua87ddo/CxivVwuVN41ybhQ==
-X-Google-Smtp-Source: ABdhPJw7noa1HtR4Ak6KYzkBU2fFGxwdHHwQ2YkMao3TZhxjvPlXMjXcupLi+OzrR1Dd7utepFGtJg==
-X-Received: by 2002:a92:cbd0:0:b0:2d1:48cb:1739 with SMTP id s16-20020a92cbd0000000b002d148cb1739mr16227573ilq.10.1653491601136;
-        Wed, 25 May 2022 08:13:21 -0700 (PDT)
-Received: from [192.168.1.128] ([38.15.45.1])
-        by smtp.gmail.com with ESMTPSA id o30-20020a056602125e00b0065dc93eae5dsm5725027iou.7.2022.05.25.08.13.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 May 2022 08:13:20 -0700 (PDT)
-Subject: Re: [PATCH] usbip: vudc: Don't enable IRQs prematurely
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Valentina Manea <valentina.manea.m@gmail.com>,
-        Igor Kotrasinski <i.kotrasinsk@samsung.com>
-Cc:     Shuah Khan <shuah@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <Yo4hVWcZNYzKEkIQ@kili>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <3f9926ac-9586-522e-e70b-d524b7cd19cd@linuxfoundation.org>
-Date:   Wed, 25 May 2022 09:13:19 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=MOVhGv8nvnJAMgaPQNE7u1253LKLy/xiNdpEsmTDTbE=;
+        b=x27TLc4/ljNpvvJttTScn58M6i0n/tIgYLZwThr73hxeW+EvaBDmECJJZ+u4Cujvkn
+         M0s9O4NTGDJRHeio+jdaa4guoIm1pDCjrypGCe900t9yIBCvr5hwPZdVW99FKU4RDkAN
+         tA1r0vUTEoNYtQcIewVeNtyBRDNE+FtGOJqX/Ays+bEAXQquMEBlzToQ8ojiRv9qpdkE
+         URTkBoOFW5k+ONJEw4dFjwHChzoNsO+x9IANoZhO1rrJGrEXWS5lUFfOe05tQESFYdbe
+         bQ8i9YHT2vLHBc7jRmT5oK1OrpeM3QToK+78Uw1UNZ9M7Wei7z2S92zFA8h1ODGJXFUb
+         Ep4g==
+X-Gm-Message-State: AOAM530Ji2duUN3b/dSiZPn5XiTrpiU02GbSvqYj+9Wpkt+U2EJaWfwe
+        WWMnrpZAfQaS/dV1GuUrrog7wQ==
+X-Google-Smtp-Source: ABdhPJzdp2VNn9pnKNHbOndGMfw8RXNIILILr87XVT4fV8PNUxZ0CjncskKdcvVSzb75m4dSk6LUgw==
+X-Received: by 2002:a05:622a:1181:b0:2f9:3050:ec82 with SMTP id m1-20020a05622a118100b002f93050ec82mr15696118qtk.202.1653501358620;
+        Wed, 25 May 2022 10:55:58 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-162-113-129.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.129])
+        by smtp.gmail.com with ESMTPSA id l19-20020a05622a051300b002f933204688sm2018521qtx.4.2022.05.25.10.54.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 May 2022 10:55:18 -0700 (PDT)
+Received: from jgg by mlx with local (Exim 4.94)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1ntvDV-00BuDB-GC; Wed, 25 May 2022 14:54:41 -0300
+Date:   Wed, 25 May 2022 14:54:41 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     "Saleem, Shiraz" <shiraz.saleem@intel.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        "Ismail, Mustafa" <mustafa.ismail@intel.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] RDMA/irdma: Initialize struct members in
+ irdma_reg_user_mr()
+Message-ID: <20220525175441.GD2661880@ziepe.ca>
+References: <Yoz4iXtRJ8jw6IeD@kili>
+ <20220524153600.GB2661880@ziepe.ca>
+ <MWHPR11MB0029F37D40D9D4A993F8F549E9D79@MWHPR11MB0029.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <Yo4hVWcZNYzKEkIQ@kili>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <MWHPR11MB0029F37D40D9D4A993F8F549E9D79@MWHPR11MB0029.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 5/25/22 6:30 AM, Dan Carpenter wrote:
-> This code does:
+On Tue, May 24, 2022 at 04:53:46PM +0000, Saleem, Shiraz wrote:
+> > Subject: Re: [PATCH] RDMA/irdma: Initialize struct members in
+> > irdma_reg_user_mr()
+> > 
+> > On Tue, May 24, 2022 at 06:23:53PM +0300, Dan Carpenter wrote:
+> > > The ib_copy_from_udata() function does not always initialize the whole
+> > > struct.  It depends on the value of udata->inlen.  So initialize it to
+> > > zero at the start.
+> > >
+> > > Fixes: b48c24c2d710 ("RDMA/irdma: Implement device supported verb
+> > > APIs")
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com> What I know is
+> > > that RDMA takes fast paths very seriously.
+> > >
+> > > This is probably a fast path so you may want to implement a different
+> > > solution.  If you want to do something else then, just feel free to do
+> > > that and give me a Reported-by tag.
+> > 
+> > This isn't fast path..
+> > 
+> > But the bug here is not validating inlen properly and should be fixed there, not by
+> > zero-initing and allowing userspace to pass in an invalid inlen..
+> > 
+> Hi Jason -
 > 
-> 	spin_unlock_irq(&udc->ud.lock);
-> 	spin_unlock_irqrestore(&udc->lock, flags);
-> 
-> which does not make sense.  In theory, the first unlock could enable
-> IRQs and then the second _irqrestore could disable them again.  There
-> would be a brief momemt where IRQs were enabled improperly.
-> 
-> In real life, however, this function is always called with IRQs enabled
-> and the bug does not affect runtime.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> An alternative fix would be to make changes below and also change the
-> outside _irqsave/_irqrestore() to just _irq().  However, that's more
-> invasive and riskier with no upside.
-> 
+> So something like this is appropriate?
 
-Thank you for the patch.
+Yes
 
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-
-Greg, please pick this up.
-
-thanks,
--- Shuah
+Jason
