@@ -2,84 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6928C433F5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 May 2022 09:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E36C433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 May 2022 10:01:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240812AbiEZJuU (ORCPT
+        id S238817AbiEZKBa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 26 May 2022 05:50:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56686 "EHLO
+        Thu, 26 May 2022 06:01:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237035AbiEZJuR (ORCPT
+        with ESMTP id S229593AbiEZKB3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 26 May 2022 05:50:17 -0400
-X-Greylist: delayed 455 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 26 May 2022 02:50:16 PDT
-Received: from relay4.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37CC3558B
-        for <kernel-janitors@vger.kernel.org>; Thu, 26 May 2022 02:50:15 -0700 (PDT)
-Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
-        by unirelay08.hostedemail.com (Postfix) with ESMTP id B976720544;
-        Thu, 26 May 2022 09:42:38 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf07.hostedemail.com (Postfix) with ESMTPA id 021252003D;
-        Thu, 26 May 2022 09:42:35 +0000 (UTC)
-Message-ID: <c6ef4c847aecbe12cc2bd71509c0359aade18fcc.camel@perches.com>
-Subject: Re: [PATCH] sched: change printk(KERN_<LEVEL>.. to pr_<level>()
-From:   Joe Perches <joe@perches.com>
-To:     Yu Zhe <yuzhe@nfschina.com>, mingo@redhat.com,
-        peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        liqiong@nfschina.com
-Date:   Thu, 26 May 2022 02:42:35 -0700
-In-Reply-To: <20220526091031.3741819-1-yuzhe@nfschina.com>
-References: <20220526091031.3741819-1-yuzhe@nfschina.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.4-1ubuntu2 
+        Thu, 26 May 2022 06:01:29 -0400
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF885AF337;
+        Thu, 26 May 2022 03:01:27 -0700 (PDT)
+Received: by mail-wr1-f44.google.com with SMTP id j25so1496757wrb.6;
+        Thu, 26 May 2022 03:01:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=lx3v91MKvNWw13VryX1BqqQ6vGw8LXT68T6Hr6cGD/U=;
+        b=wdL7JbaZbyBKl/3Aq036klTHs0Ox+aIiNlXy3n8zjiL3Srcumz5kpBCgVHcvfIP7Vs
+         U459arqbw067Ib0UTJneGKbxQTdYfXWK3pUL2k6yD4VgHxBXkVBSGFAxeviVAgG9RXLE
+         2D2Qy6OmagpPd44gMZuyksJCmImZkpSt6s9M+yO9+Z1scM6sSHfTE831Bjwdp5L/AkpN
+         SYIyJDCz6swY80c2DMdTGBcnFX8+RfdUzepjWZgxpKHdFtTD+ghdXaXSBPopGJvnkqk+
+         GFa1SO0bJ5ZRd9qKpiK3L1WoIvsLWoaS/7deqTs+pzc8KRIK3UpKa/wB1H0bB+/qeqyR
+         EQBw==
+X-Gm-Message-State: AOAM533PKU0x4CkKFIShTyW1p7yaU1DqhgtR9kMFLjT4FnW2LNonPRBI
+        hiEaKYavOGoh7thbvfGp+4A=
+X-Google-Smtp-Source: ABdhPJw6nZtBMTl2VZyXuSX2JE0sT/DXGau2hXPz7tFQ09pul8FdKLkJNBKjvjDTn20p9KIeHuB3Xw==
+X-Received: by 2002:adf:f889:0:b0:210:3c2:2be3 with SMTP id u9-20020adff889000000b0021003c22be3mr4647874wrp.147.1653559286392;
+        Thu, 26 May 2022 03:01:26 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([51.145.34.42])
+        by smtp.gmail.com with ESMTPSA id p14-20020a056000018e00b0020fe7f7129fsm1237717wrx.100.2022.05.26.03.01.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 May 2022 03:01:25 -0700 (PDT)
+Date:   Thu, 26 May 2022 10:01:23 +0000
+From:   Wei Liu <wei.liu@kernel.org>
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     "K. Y. Srinivasan" <kys@microsoft.com>,
+        kernel-janitors@vger.kernel.org,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Drivers: hv: vmbus: fix typo in comment
+Message-ID: <20220526100123.427zdetsv4n2pirc@liuwe-devbox-debian-v2>
+References: <20220521111145.81697-60-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 4uf7udqbm87wddzbw3h8mwznh4j9xm41
-X-Rspamd-Server: rspamout02
-X-Rspamd-Queue-Id: 021252003D
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX19/TJyW95qAsdXhHiBoregiLp5IybD9cZ8=
-X-HE-Tag: 1653558155-406124
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220521111145.81697-60-Julia.Lawall@inria.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 2022-05-26 at 02:10 -0700, Yu Zhe wrote:
-> Prefer pr_<level>(...  to printk(KERN_<LEVEL> ..., change them.
+On Sat, May 21, 2022 at 01:11:10PM +0200, Julia Lawall wrote:
+> Spelling mistake (triple letters) in comment.
+> Detected with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> 
 
-Do remember that checkpatch is just a guide and isn't always correct.
+Applied to hyperv-next. Thanks.
 
-You are responsible for verifying that anything it suggests is
-converted properly.
-
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-[]
-> @@ -9370,7 +9370,7 @@ static void dump_rq_tasks(struct rq *rq, const char *loglvl)
->  
->  	lockdep_assert_rq_held(rq);
->  
-> -	printk("%sCPU%d enqueued tasks (%u total):\n", loglvl, cpu, rq->nr_running);
-> +	pr_warn("%sCPU%d enqueued tasks (%u total):\n", loglvl, cpu, rq->nr_running);
-
-This is _not_ a good change.
-
-Do please look to see what loglvl is and if this change is appropriate.
-
->  	for_each_process_thread(g, p) {
->  		if (task_cpu(p) != cpu)
->  			continue;
-> @@ -9378,7 +9378,7 @@ static void dump_rq_tasks(struct rq *rq, const char *loglvl)
->  		if (!task_on_rq_queued(p))
->  			continue;
->  
-> -		printk("%s\tpid: %d, name: %s\n", loglvl, p->pid, p->comm);
-> +		pr_warn("%s\tpid: %d, name: %s\n", loglvl, p->pid, p->comm);
-
-here too.
-
-
+> ---
+>  drivers/hv/channel_mgmt.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hv/channel_mgmt.c b/drivers/hv/channel_mgmt.c
+> index 97d8f5646778..b60f13481bdc 100644
+> --- a/drivers/hv/channel_mgmt.c
+> +++ b/drivers/hv/channel_mgmt.c
+> @@ -443,7 +443,7 @@ void hv_process_channel_removal(struct vmbus_channel *channel)
+>  	/*
+>  	 * Upon suspend, an in-use hv_sock channel is removed from the array of
+>  	 * channels and the relid is invalidated.  After hibernation, when the
+> -	 * user-space appplication destroys the channel, it's unnecessary and
+> +	 * user-space application destroys the channel, it's unnecessary and
+>  	 * unsafe to remove the channel from the array of channels.  See also
+>  	 * the inline comments before the call of vmbus_release_relid() below.
+>  	 */
+> 
