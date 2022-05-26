@@ -2,87 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D732C433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 26 May 2022 11:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D193DC433F5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 26 May 2022 12:05:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347150AbiEZLbO (ORCPT
+        id S236919AbiEZMFp (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 26 May 2022 07:31:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40094 "EHLO
+        Thu, 26 May 2022 08:05:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230031AbiEZLbN (ORCPT
+        with ESMTP id S229826AbiEZMFo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 26 May 2022 07:31:13 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3A0C13E;
-        Thu, 26 May 2022 04:31:10 -0700 (PDT)
-X-UUID: 26b53d3b7a1f4518a0f63cdbff470c0a-20220526
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.5,REQID:2f6ca814-f091-4121-8f79-491224de18c3,OB:0,LO
-        B:0,IP:0,URL:5,TC:0,Content:0,EDM:0,RT:0,SF:51,FILE:0,RULE:Release_Ham,ACT
-        ION:release,TS:56
-X-CID-INFO: VERSION:1.1.5,REQID:2f6ca814-f091-4121-8f79-491224de18c3,OB:0,LOB:
-        0,IP:0,URL:5,TC:0,Content:0,EDM:0,RT:0,SF:51,FILE:0,RULE:Release_Ham,ACTIO
-        N:release,TS:56
-X-CID-META: VersionHash:2a19b09,CLOUDID:3d6c9647-4fb1-496b-8f1d-39e733fed1ea,C
-        OID:c7650db43784,Recheck:0,SF:28|17|19|48,TC:nil,Content:0,EDM:-3,IP:nil,U
-        RL:1,File:nil,QS:0,BEC:nil
-X-UUID: 26b53d3b7a1f4518a0f63cdbff470c0a-20220526
-Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw01.mediatek.com
-        (envelope-from <qii.wang@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1325560879; Thu, 26 May 2022 19:31:03 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.3;
- Thu, 26 May 2022 19:31:02 +0800
-Received: from mhfsdcap04 (10.17.3.154) by mtkmbs11n2.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.792.3 via Frontend
- Transport; Thu, 26 May 2022 19:31:01 +0800
-Message-ID: <016ea54b7474b71f2995e4c3a10fe2d3efc2b641.camel@mediatek.com>
-Subject: Re: [PATCH] i2c: mediatek: Fix an error handling path in
- mtk_i2c_probe()
-From:   Qii Wang <qii.wang@mediatek.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        <dan.carpenter@oracle.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Wolfram Sang <wsa@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Date:   Thu, 26 May 2022 19:31:01 +0800
-In-Reply-To: <8001bcdbee9f8afc85118c99b8166eb6473dcba5.1653222111.git.christophe.jaillet@wanadoo.fr>
-References: <8001bcdbee9f8afc85118c99b8166eb6473dcba5.1653222111.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        Thu, 26 May 2022 08:05:44 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E311D02A2;
+        Thu, 26 May 2022 05:05:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DC21560C52;
+        Thu, 26 May 2022 12:05:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3182C385A9;
+        Thu, 26 May 2022 12:05:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1653566739;
+        bh=EZ83Wu0JIwui5tEnq9zsFh1J1HyLzUwNJ/Dy+pO3xvA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fPMbA5axeabY/ZFxS5rXuKPt7XWp+0mcWg2WC6lVFuvYINemHq5i+oKy9KK0Ni1em
+         1DwXq0tblKIBK/yrgHoHB0Z6wZ8DflmvuNsHdkMm7/nKr4u6ItwVgpZ0/KZGLEUTXF
+         bffFTjnx5WVhBb8RP8cOYiMmQq95qAN71k7EofXU=
+Date:   Thu, 26 May 2022 14:05:36 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Denis Efremov <efremov@linux.com>
+Cc:     Larry.Finger@lwfinger.net, phil@philpotter.co.uk,
+        dan.carpenter@oracle.com, straube.linux@gmail.com,
+        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, stable <stable@vger.kernel.org>
+Subject: Re: [PATCH v5.10] staging: rtl8723bs: prevent ->Ssid overflow in
+ rtw_wx_set_scan()
+Message-ID: <Yo9tEA6AXBg9CV8y@kroah.com>
+References: <YoZk3YLEDYKGG5xe@kroah.com>
+ <20220520035730.5533-1-efremov@linux.com>
+ <YounkTGwmcQns3vy@kroah.com>
+ <22589460-930c-b307-acf0-2a49f5f5261f@linux.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22589460-930c-b307-acf0-2a49f5f5261f@linux.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 2022-05-22 at 14:22 +0200, Christophe JAILLET wrote:
-> The clsk are prepared, enabled, then disabled. So if an error occurs
-> after
-> the disable step, they are still prepared.
+On Mon, May 23, 2022 at 09:41:09PM +0400, Denis Efremov wrote:
+> Hi,
 > 
-> Add an error handling path to unprepare the clks in such a case, as
-> already
-> done in the .remove function.
+> On 5/23/22 19:26, Greg KH wrote:
+> > On Fri, May 20, 2022 at 07:57:30AM +0400, Denis Efremov (Oracle) wrote:
+> >> This code has a check to prevent read overflow but it needs another
+> >> check to prevent writing beyond the end of the ->Ssid[] array.
+> >>
+> >> Fixes: 554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
+> >> Cc: stable <stable@vger.kernel.org>
+> >> Signed-off-by: Denis Efremov (Oracle) <efremov@linux.com>
+> >> ---
+> >>  drivers/staging/rtl8723bs/os_dep/ioctl_linux.c | 6 ++++--
+> >>  1 file changed, 4 insertions(+), 2 deletions(-)
+> > 
+> > And only 5.10 needs this?  What about all other kernel branches?
+> > 
 > 
-> Fixes: 8b4fc246c3ff ("i2c: mediatek: Optimize master_xfer() and avoid
-> circular locking")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Reviewed-by: Qii Wang <qii.wang@mediatek.com>
-
-> ---
->  drivers/i2c/busses/i2c-mt65xx.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
+> >From 5.10, 5.4, 4.19, to 4.14.
 > 
+> There is a small spaces conflict in 5.4-4.14 kernels because of
+> c77761d660a6 staging: rtl8723bs: Fix spacing issues
+> 
+> I sent another patch to handle it.
 
+Thanks, all now queued up.
 
+greg k-h
