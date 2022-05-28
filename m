@@ -2,98 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9022C433FE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 28 May 2022 10:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7EBC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 28 May 2022 13:00:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233584AbiE1KG3 (ORCPT
+        id S1354190AbiE1NAs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 28 May 2022 06:06:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54914 "EHLO
+        Sat, 28 May 2022 09:00:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233615AbiE1KG2 (ORCPT
+        with ESMTP id S1344012AbiE1NAr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 28 May 2022 06:06:28 -0400
-Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C81E6389C
-        for <kernel-janitors@vger.kernel.org>; Sat, 28 May 2022 03:06:25 -0700 (PDT)
-Received: from [192.168.1.18] ([90.11.191.102])
-        by smtp.orange.fr with ESMTPA
-        id utKwngSjFZDzUutKwnSoQU; Sat, 28 May 2022 12:06:23 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 28 May 2022 12:06:23 +0200
-X-ME-IP: 90.11.191.102
-Message-ID: <ef7cd76e-b4bf-359d-08eb-848764de75f7@wanadoo.fr>
-Date:   Sat, 28 May 2022 12:06:22 +0200
+        Sat, 28 May 2022 09:00:47 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB4C0C2A;
+        Sat, 28 May 2022 06:00:45 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id h189-20020a1c21c6000000b0039aa4d054e2so76164wmh.1;
+        Sat, 28 May 2022 06:00:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=VWS0F56t0fOBh5xypCh8zjIFc6hxsrgivcZl7H9F6LA=;
+        b=PrzcA+325+sgBUeqcHDmn4L7QnwPAbf1zUi8X9B3wbQZJnC2E/vNpDjRj9yQ2+/M6X
+         hVZA9Y+2MxJCv7KC1+xrDmknqCIqW3gJtSRZAS2Qzec2WmmQD8x50tHxowFpb3Etn4ba
+         Zj+s/97+ZBQSoRMH7FZzNJG8PVPcI8aqEhiY+P3fLEeKV0cIcMmSLFNcTrzos88B0AY4
+         0eZyGiZM/sva55q2UjkvlcIQIfZNO5ODCZZJrDhmOuv8TwX3rUlmzk8FE3H4Pc+RdzFb
+         TuodlU/HaWAatNwwByVVIk8+jlDlvpwJ6CUK0JUIkasUQ5iMnHAdNhtriE7gJFy79oiv
+         Zrvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=VWS0F56t0fOBh5xypCh8zjIFc6hxsrgivcZl7H9F6LA=;
+        b=vpcTU1m/Nwi4DfC/YqL6orMs+eBc0ojz3vf2gkUrF9aMwdycjO5IZPowpK0ZziF4LJ
+         w41vCAmfakIfb5sP7c050EFWT8wkJqvEHsOVtH4EucvTnMdEt1GpksTRhWeWT4TyfAa4
+         DvSKpCMGeFejyWwTwP6Q70VmasxViNn58dPKnlc8IvaSc7OJv/lyEyTmzYSQ+oUD2Eyo
+         gXjxQLzqZrQBGMfGJ1vxsB5vgm0dID819f/rfnohlCeJwpNNFFqejZevBOdxCZI9pIjb
+         oUIRE+WuwAS4Mix5c9SCjBw2WwPPDYt1hi3U57ZPdy6Rae3iFhHL1ZnU49jXkxTu4YMc
+         as5w==
+X-Gm-Message-State: AOAM532XVFTcWfF54dO+70/LJNxx0vbWnMvhrsw9N8LGi/DLOf1DtlfW
+        AZw923bOMZiV2F2sH4u6S7c+xjgqrws=
+X-Google-Smtp-Source: ABdhPJzO+5nhwDzTELUOeEMSSdR1F7EwBlN2PhikUDajX3eKDowkhtLyBlk+UYucTI1HfWnQh0SAZA==
+X-Received: by 2002:a7b:c4d0:0:b0:397:4636:6bc1 with SMTP id g16-20020a7bc4d0000000b0039746366bc1mr11065865wmk.48.1653742844347;
+        Sat, 28 May 2022 06:00:44 -0700 (PDT)
+Received: from Red ([2a01:cb1d:3d5:a100:264b:feff:fe03:2806])
+        by smtp.googlemail.com with ESMTPSA id bw30-20020a0560001f9e00b0020ffa2799f4sm4045530wrb.73.2022.05.28.06.00.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 May 2022 06:00:44 -0700 (PDT)
+Date:   Sat, 28 May 2022 15:00:40 +0200
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        linux-crypto@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] crypto: sun8i-ss - fix error codes in allocate_flows()
+Message-ID: <YpIc+FtQIOdm9Ub+@Red>
+References: <YoUt+LNsM8qFZYgL@kili>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] dmaengine: ti: Fix a potential under memory allocation
- issue in edma_setup_from_hw()
-Content-Language: en-US
-To:     =?UTF-8?Q?P=c3=a9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>,
-        dan.carpenter@oracle.com, Vinod Koul <vkoul@kernel.org>,
-        Joel Fernandes <joelf@ti.com>, Sekhar Nori <nsekhar@ti.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        dmaengine@vger.kernel.org
-References: <8c95c485be294e64457606089a2a56e68e2ebd1a.1653153959.git.christophe.jaillet@wanadoo.fr>
- <6e750770-fcda-d157-21d1-872a611c3bf2@gmail.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <6e750770-fcda-d157-21d1-872a611c3bf2@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <YoUt+LNsM8qFZYgL@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 28/05/2022 à 11:33, Péter Ujfalusi a écrit :
+Le Wed, May 18, 2022 at 08:33:44PM +0300, Dan Carpenter a �crit :
+> These failure paths should return -ENOMEM.  Currently they return
+> success.
 > 
-> 
-> On 21/05/2022 20:26, Christophe JAILLET wrote:
->> If the 'queue_priority_mapping' is not provided, we need to allocate the
->> correct amount of memory. Each entry takes 2 s8, so actually less memory
->> than needed is allocated.
->>
->> Update the size of each entry when the memory is devm_kcalloc'ed.
->>
->> Fixes: 6d10c3950bf4 ("ARM: edma: Get IP configuration from HW (number of channels, tc, etc)")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Note that the devm_kcalloc() in edma_xbar_event_map() looks also spurious.
->> However, this looks fine to me because of the 'nelm >>= 1;' before the
->> 'for' loop.
-> 
-> This has been deprecated ever since we have moved to dma router to
-> handle the xbar for various TI platforms, but by the looks it kida looks
-> bogus in a same way.
+> Fixes: 359e893e8af4 ("crypto: sun8i-ss - rework handling of IV")
+> Fixes: 8eec4563f152 ("crypto: sun8i-ss - do not allocate memory when handling hash requests")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-This one is correct, IIUC.
+Acked-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+Tested-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+Tested-on: sun8i-a83t-bananapi-m3
 
-There is an extra ">> 1" before the loop. (see [1]).
-
-CJ
-
-[1]: 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/dma/ti/edma.c#n2173
-
-> 
->> ---
->>   drivers/dma/ti/edma.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/dma/ti/edma.c b/drivers/dma/ti/edma.c
->> index 3ea8ef7f57df..f313e2cf542c 100644
->> --- a/drivers/dma/ti/edma.c
->> +++ b/drivers/dma/ti/edma.c
->> @@ -2121,7 +2121,7 @@ static int edma_setup_from_hw(struct device *dev, struct edma_soc_info *pdata,
->>   	 * priority. So Q0 is the highest priority queue and the last queue has
->>   	 * the lowest priority.
->>   	 */
->> -	queue_priority_map = devm_kcalloc(dev, ecc->num_tc + 1, sizeof(s8),
->> +	queue_priority_map = devm_kcalloc(dev, ecc->num_tc + 1, sizeof(s8) * 2,
->>   					  GFP_KERNEL);
->>   	if (!queue_priority_map)
->>   		return -ENOMEM;
-> 
-
+Thanks
