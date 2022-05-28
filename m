@@ -2,44 +2,41 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A5AC433FE
-	for <kernel-janitors@archiver.kernel.org>; Sat, 28 May 2022 14:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CB64C433F5
+	for <kernel-janitors@archiver.kernel.org>; Sat, 28 May 2022 15:14:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233875AbiE1O7i (ORCPT
+        id S237228AbiE1POO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 28 May 2022 10:59:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44120 "EHLO
+        Sat, 28 May 2022 11:14:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236916AbiE1O7h (ORCPT
+        with ESMTP id S237198AbiE1POO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 28 May 2022 10:59:37 -0400
-Received: from smtp.smtpout.orange.fr (smtp01.smtpout.orange.fr [80.12.242.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B421763A4
-        for <kernel-janitors@vger.kernel.org>; Sat, 28 May 2022 07:59:34 -0700 (PDT)
+        Sat, 28 May 2022 11:14:14 -0400
+Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03B74EE23
+        for <kernel-janitors@vger.kernel.org>; Sat, 28 May 2022 08:14:11 -0700 (PDT)
 Received: from pop-os.home ([90.11.191.102])
         by smtp.orange.fr with ESMTPA
-        id uxucnzi3ok3ICuxucniOfF; Sat, 28 May 2022 16:59:32 +0200
+        id uy8mnuDxQ6rrEuy8mnJluk; Sat, 28 May 2022 17:14:10 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 28 May 2022 16:59:32 +0200
+X-ME-Date: Sat, 28 May 2022 17:14:10 +0200
 X-ME-IP: 90.11.191.102
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To:     tglx@linutronix.de,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Johan Hovold <johan@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
+        Oliver Neukum <oneukum@suse.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Johan Hovold <johan@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH] USB: Follow-up to SPDX identifiers addition - remove now useless comments
-Date:   Sat, 28 May 2022 16:59:17 +0200
-Message-Id: <0266c8467148794219b69b7bf8a8dd968a89ad24.1653749875.git.christophe.jaillet@wanadoo.fr>
+        linux-usb@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH] USB: Follow-up to SPDX GPL-2.0+ identifiers addition - remove now useless comments
+Date:   Sat, 28 May 2022 17:13:56 +0200
+Message-Id: <5c6c58772ada0fd95434c669b79428bd610c0084.1653750820.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -50,149 +47,144 @@ below.
 
 When the SPDX-License-Identifier: has been added, the corresponding text at
 the beginning of the files has not been deleted.
-All these texts are about GPL-2.0, with different variation in the wording.
+All these texts are about GPL-2.0+, with different variation in the
+wording.
 
 Remove these now useless lines to save some LoC.
 
 Fixes: 5fd54ace4721 ("USB: add SPDX identifiers to all remaining files in drivers/usb/")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- include/linux/usb/audio-v2.h      |  3 ---
- include/linux/usb/audio.h         |  3 ---
- include/linux/usb/cdc-wdm.h       |  4 ----
- include/linux/usb/cdc.h           |  4 ----
- include/linux/usb/gadget.h        |  2 --
- include/linux/usb/input.h         |  4 ----
- include/linux/usb/isp1301.h       | 10 ----------
- include/linux/usb/m66592.h        | 14 --------------
- include/linux/usb/of.h            |  2 --
- include/linux/usb/r8a66597.h      | 14 --------------
- include/linux/usb/serial.h        |  5 -----
- include/linux/usb/storage.h       |  2 --
- include/linux/usb/tegra_usb_phy.h | 10 ----------
- include/linux/usb/ulpi.h          |  4 ----
- include/linux/usb/xhci-dbgp.h     |  4 ----
- 15 files changed, 85 deletions(-)
+ include/linux/usb/c67x00.h        | 15 ---------------
+ include/linux/usb/composite.h     | 14 --------------
+ include/linux/usb/ehci_def.h      | 14 --------------
+ include/linux/usb/ehci_pdriver.h  | 14 --------------
+ include/linux/usb/g_hid.h         | 14 --------------
+ include/linux/usb/hcd.h           | 14 --------------
+ include/linux/usb/musb-ux500.h    | 10 ----------
+ include/linux/usb/net2280.h       | 14 --------------
+ include/linux/usb/ohci_pdriver.h  | 14 --------------
+ include/linux/usb/otg-fsm.h       | 17 ++---------------
+ include/linux/usb/phy_companion.h | 10 ----------
+ include/linux/usb/rndis_host.h    | 14 --------------
+ include/linux/usb/usb338x.h       | 11 -----------
+ include/linux/usb/usbnet.h        | 14 --------------
+ 14 files changed, 2 insertions(+), 187 deletions(-)
 
-diff --git a/include/linux/usb/audio-v2.h b/include/linux/usb/audio-v2.h
-index 8fc2abd7aecb..ca796dc1a984 100644
---- a/include/linux/usb/audio-v2.h
-+++ b/include/linux/usb/audio-v2.h
-@@ -2,9 +2,6 @@
- /*
-  * Copyright (c) 2010 Daniel Mack <daniel@caiaq.de>
+diff --git a/include/linux/usb/c67x00.h b/include/linux/usb/c67x00.h
+index 2fc39e3b7281..45e0757e58f3 100644
+--- a/include/linux/usb/c67x00.h
++++ b/include/linux/usb/c67x00.h
+@@ -3,21 +3,6 @@
+  * usb_c67x00.h: platform definitions for the Cypress C67X00 USB chip
   *
-- * This software is distributed under the terms of the GNU General Public
-- * License ("GPL") version 2, as published by the Free Software Foundation.
+  * Copyright (C) 2006-2008 Barco N.V.
 - *
-  * This file holds USB constants and structures defined
-  * by the USB Device Class Definition for Audio Devices in version 2.0.
-  * Comments below reference relevant sections of the documents contained
-diff --git a/include/linux/usb/audio.h b/include/linux/usb/audio.h
-index 170acd500ea1..0747b24a1a7c 100644
---- a/include/linux/usb/audio.h
-+++ b/include/linux/usb/audio.h
-@@ -6,9 +6,6 @@
-  * Developed for Thumtronics by Grey Innovation
-  * Ben Williamson <ben.williamson@greyinnovation.com>
-  *
-- * This software is distributed under the terms of the GNU General Public
-- * License ("GPL") version 2, as published by the Free Software Foundation.
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
 - *
-  * This file holds USB constants and structures defined
-  * by the USB Device Class Definition for Audio Devices.
-  * Comments below reference relevant sections of that document:
-diff --git a/include/linux/usb/cdc-wdm.h b/include/linux/usb/cdc-wdm.h
-index 9f5a51f79ba5..85417f00a89a 100644
---- a/include/linux/usb/cdc-wdm.h
-+++ b/include/linux/usb/cdc-wdm.h
-@@ -3,10 +3,6 @@
-  * USB CDC Device Management subdriver
-  *
-  * Copyright (c) 2012  Bjørn Mork <bjorn@mork.no>
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
 - *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * version 2 as published by the Free Software Foundation.
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+- * MA  02110-1301  USA.
   */
  
- #ifndef __LINUX_USB_CDC_WDM_H
-diff --git a/include/linux/usb/cdc.h b/include/linux/usb/cdc.h
-index 35d784cf32a4..0af0db51bc89 100644
---- a/include/linux/usb/cdc.h
-+++ b/include/linux/usb/cdc.h
-@@ -3,10 +3,6 @@
-  * USB CDC common helpers
+ #ifndef _LINUX_USB_C67X00_H
+diff --git a/include/linux/usb/composite.h b/include/linux/usb/composite.h
+index 9d2762279286..43ac3fa760db 100644
+--- a/include/linux/usb/composite.h
++++ b/include/linux/usb/composite.h
+@@ -3,20 +3,6 @@
+  * composite.h -- framework for usb gadgets which are composite devices
   *
-  * Copyright (c) 2015 Oliver Neukum <oneukum@suse.com>
+  * Copyright (C) 2006-2008 David Brownell
 - *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * version 2 as published by the Free Software Foundation.
-  */
- #ifndef __LINUX_USB_CDC_H
- #define __LINUX_USB_CDC_H
-diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
-index 3ad58b7a0824..dc3092cea99e 100644
---- a/include/linux/usb/gadget.h
-+++ b/include/linux/usb/gadget.h
-@@ -10,8 +10,6 @@
-  *
-  * (C) Copyright 2002-2004 by David Brownell
-  * All Rights Reserved.
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
 - *
-- * This software is licensed under the GNU GPL version 2.
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   */
  
- #ifndef __LINUX_USB_GADGET_H
-diff --git a/include/linux/usb/input.h b/include/linux/usb/input.h
-index 974befa72ac0..5e759b2cf551 100644
---- a/include/linux/usb/input.h
-+++ b/include/linux/usb/input.h
-@@ -1,10 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
+ #ifndef	__LINUX_USB_COMPOSITE_H
+diff --git a/include/linux/usb/ehci_def.h b/include/linux/usb/ehci_def.h
+index c892c5bc6638..fbabadd3b372 100644
+--- a/include/linux/usb/ehci_def.h
++++ b/include/linux/usb/ehci_def.h
+@@ -1,20 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0+
  /*
-  * Copyright (C) 2005 Dmitry Torokhov
+  * Copyright (c) 2001-2002 by David Brownell
 - *
 - * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published by
-- * the Free Software Foundation.
+- * under the terms of the GNU General Public License as published by the
+- * Free Software Foundation; either version 2 of the License, or (at your
+- * option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+- * for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software Foundation,
+- * Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
   */
  
- #ifndef __LINUX_USB_INPUT_H
-diff --git a/include/linux/usb/isp1301.h b/include/linux/usb/isp1301.h
-index dedb3b2473e8..fa986b926a12 100644
---- a/include/linux/usb/isp1301.h
-+++ b/include/linux/usb/isp1301.h
-@@ -3,16 +3,6 @@
-  * NXP ISP1301 USB transceiver driver
-  *
-  * Copyright (C) 2012 Roland Stigge <stigge@antcom.de>
+ #ifndef __LINUX_USB_EHCI_DEF_H
+diff --git a/include/linux/usb/ehci_pdriver.h b/include/linux/usb/ehci_pdriver.h
+index 89fc901e778f..0f1b166f5aa0 100644
+--- a/include/linux/usb/ehci_pdriver.h
++++ b/include/linux/usb/ehci_pdriver.h
+@@ -1,20 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0+
+ /*
+  * Copyright (C) 2012 Hauke Mehrtens <hauke@hauke-m.de>
 - *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms of the GNU General Public License as published by the
+- * Free Software Foundation; either version 2 of the License, or (at your
+- * option) any later version.
 - *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+- * for more details.
 - *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software Foundation,
+- * Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
   */
  
- #ifndef __LINUX_USB_ISP1301_H
-diff --git a/include/linux/usb/m66592.h b/include/linux/usb/m66592.h
-index 2dfe68183495..5f04de2b47fd 100644
---- a/include/linux/usb/m66592.h
-+++ b/include/linux/usb/m66592.h
+ #ifndef __USB_CORE_EHCI_PDRIVER_H
+diff --git a/include/linux/usb/g_hid.h b/include/linux/usb/g_hid.h
+index 7581e488c237..d56bfedeb079 100644
+--- a/include/linux/usb/g_hid.h
++++ b/include/linux/usb/g_hid.h
 @@ -3,20 +3,6 @@
-  * M66592 driver platform data
+  * g_hid.h -- Header file for USB HID gadget driver
   *
-  * Copyright (C) 2009  Renesas Solutions Corp.
+  * Copyright (C) 2010 Fabien Chouteau <fabien.chouteau@barco.com>
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
 - *
 - * This program is distributed in the hope that it will be useful,
 - * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -201,90 +193,146 @@ index 2dfe68183495..5f04de2b47fd 100644
 - *
 - * You should have received a copy of the GNU General Public License
 - * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-- *
+- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
   */
  
- #ifndef __LINUX_USB_M66592_H
-diff --git a/include/linux/usb/of.h b/include/linux/usb/of.h
-index dba55ccb9b53..98487fd7ab11 100644
---- a/include/linux/usb/of.h
-+++ b/include/linux/usb/of.h
-@@ -1,8 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
+ #ifndef __LINUX_USB_G_HID_H
+diff --git a/include/linux/usb/hcd.h b/include/linux/usb/hcd.h
+index 2c1fc9212cf2..37ccb31b1d40 100644
+--- a/include/linux/usb/hcd.h
++++ b/include/linux/usb/hcd.h
+@@ -1,20 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0+
  /*
-  * OF helpers for usb devices.
+  * Copyright (c) 2001-2002 by David Brownell
 - *
-- * This file is released under the GPLv2
-  */
- 
- #ifndef __LINUX_USB_OF_H
-diff --git a/include/linux/usb/r8a66597.h b/include/linux/usb/r8a66597.h
-index c0753d026bbf..f0fa7ddadbaa 100644
---- a/include/linux/usb/r8a66597.h
-+++ b/include/linux/usb/r8a66597.h
-@@ -5,20 +5,6 @@
-  * Copyright (C) 2009  Renesas Solutions Corp.
-  *
-  * Author : Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms of the GNU General Public License as published by the
+- * Free Software Foundation; either version 2 of the License, or (at your
+- * option) any later version.
 - *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+- * for more details.
 - *
 - * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-- *
+- * along with this program; if not, write to the Free Software Foundation,
+- * Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
   */
  
- #ifndef __LINUX_USB_R8A66597_H
-diff --git a/include/linux/usb/serial.h b/include/linux/usb/serial.h
-index 16ea5a4cc586..8ea319f89e1f 100644
---- a/include/linux/usb/serial.h
-+++ b/include/linux/usb/serial.h
-@@ -4,11 +4,6 @@
-  *
-  *	Copyright (C) 1999 - 2012
-  *	    Greg Kroah-Hartman (greg@kroah.com)
-- *
-- *	This program is free software; you can redistribute it and/or modify
-- *	it under the terms of the GNU General Public License as published by
-- *	the Free Software Foundation; version 2 of the License.
-- *
-  */
- 
- #ifndef __LINUX_USB_SERIAL_H
-diff --git a/include/linux/usb/storage.h b/include/linux/usb/storage.h
-index e0240f864548..2827ce72e502 100644
---- a/include/linux/usb/storage.h
-+++ b/include/linux/usb/storage.h
-@@ -9,8 +9,6 @@
-  *
-  * This file contains definitions taken from the
-  * USB Mass Storage Class Specification Overview
-- *
-- * Distributed under the terms of the GNU GPL, version two.
-  */
- 
- /* Storage subclass codes */
-diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
-index d3e65eb9e16f..46e73584b6e6 100644
---- a/include/linux/usb/tegra_usb_phy.h
-+++ b/include/linux/usb/tegra_usb_phy.h
+ #ifndef __USB_CORE_HCD_H
+diff --git a/include/linux/usb/musb-ux500.h b/include/linux/usb/musb-ux500.h
+index c4b7ad9850ca..d60dcfc56b5a 100644
+--- a/include/linux/usb/musb-ux500.h
++++ b/include/linux/usb/musb-ux500.h
 @@ -1,16 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
+ // SPDX-License-Identifier: GPL-2.0+
  /*
-  * Copyright (C) 2010 Google, Inc.
+  * Copyright (C) 2013 ST-Ericsson AB
 - *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #ifndef __MUSB_UX500_H__
+diff --git a/include/linux/usb/net2280.h b/include/linux/usb/net2280.h
+index 08b85caecfaf..f29fe6a1f415 100644
+--- a/include/linux/usb/net2280.h
++++ b/include/linux/usb/net2280.h
+@@ -5,20 +5,6 @@
+  *
+  * Copyright (C) 2002 NetChip Technology, Inc. (http://www.netchip.com)
+  * Copyright (C) 2003 David Brownell
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  */
+ 
+ #ifndef __LINUX_USB_NET2280_H
+diff --git a/include/linux/usb/ohci_pdriver.h b/include/linux/usb/ohci_pdriver.h
+index 7eb16cf587ee..2447c78b1766 100644
+--- a/include/linux/usb/ohci_pdriver.h
++++ b/include/linux/usb/ohci_pdriver.h
+@@ -1,20 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0+
+ /*
+  * Copyright (C) 2012 Hauke Mehrtens <hauke@hauke-m.de>
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms of the GNU General Public License as published by the
+- * Free Software Foundation; either version 2 of the License, or (at your
+- * option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+- * for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software Foundation,
+- * Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+  */
+ 
+ #ifndef __USB_CORE_OHCI_PDRIVER_H
+diff --git a/include/linux/usb/otg-fsm.h b/include/linux/usb/otg-fsm.h
+index 784659d4dc99..6135d076c53d 100644
+--- a/include/linux/usb/otg-fsm.h
++++ b/include/linux/usb/otg-fsm.h
+@@ -1,19 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0+
+-/* Copyright (C) 2007,2008 Freescale Semiconductor, Inc.
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * General Public License for more details.
+- *
+- * You should have received a copy of the  GNU General Public License along
+- * with this program; if not, write  to the Free Software Foundation, Inc.,
+- * 675 Mass Ave, Cambridge, MA 02139, USA.
++/*
++ * Copyright (C) 2007,2008 Freescale Semiconductor, Inc.
+  */
+ 
+ #ifndef __LINUX_USB_OTG_FSM_H
+diff --git a/include/linux/usb/phy_companion.h b/include/linux/usb/phy_companion.h
+index 263196f05015..862aaeca2319 100644
+--- a/include/linux/usb/phy_companion.h
++++ b/include/linux/usb/phy_companion.h
+@@ -3,18 +3,8 @@
+  * phy-companion.h -- phy companion to indicate the comparator part of PHY
+  *
+  * Copyright (C) 2012 Texas Instruments Incorporated - https://www.ti.com
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+  *
+  * Author: Kishon Vijay Abraham I <kishon@ti.com>
 - *
 - * This program is distributed in the hope that it will be useful,
 - * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -293,37 +341,79 @@ index d3e65eb9e16f..46e73584b6e6 100644
 - *
   */
  
- #ifndef __TEGRA_USB_PHY_H
-diff --git a/include/linux/usb/ulpi.h b/include/linux/usb/ulpi.h
-index 36c2982780ad..5050f502c1ed 100644
---- a/include/linux/usb/ulpi.h
-+++ b/include/linux/usb/ulpi.h
-@@ -3,10 +3,6 @@
-  * ulpi.h -- ULPI defines and function prorotypes
-  *
-  * Copyright (C) 2010 Nokia Corporation
-- *
-- * This software is distributed under the terms of the GNU General
-- * Public License ("GPL") as published by the Free Software Foundation,
-- * version 2 of that License.
-  */
- 
- #ifndef __LINUX_USB_ULPI_H
-diff --git a/include/linux/usb/xhci-dbgp.h b/include/linux/usb/xhci-dbgp.h
-index 01fe768873f9..171fd74b1cfc 100644
---- a/include/linux/usb/xhci-dbgp.h
-+++ b/include/linux/usb/xhci-dbgp.h
-@@ -5,10 +5,6 @@
-  * Copyright (C) 2016 Intel Corporation
-  *
-  * Author: Lu Baolu <baolu.lu@linux.intel.com>
+ #ifndef __DRIVERS_PHY_COMPANION_H
+diff --git a/include/linux/usb/rndis_host.h b/include/linux/usb/rndis_host.h
+index cc42db51bbba..489cfb1d00f6 100644
+--- a/include/linux/usb/rndis_host.h
++++ b/include/linux/usb/rndis_host.h
+@@ -2,20 +2,6 @@
+ /*
+  * Host Side support for RNDIS Networking Links
+  * Copyright (C) 2005 by David Brownell
 - *
 - * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
   */
  
- #ifndef __LINUX_XHCI_DBGP_H
+ #ifndef	__LINUX_USB_RNDIS_HOST_H
+diff --git a/include/linux/usb/usb338x.h b/include/linux/usb/usb338x.h
+index 20020c1336d5..70a7e3cdb3c9 100644
+--- a/include/linux/usb/usb338x.h
++++ b/include/linux/usb/usb338x.h
+@@ -6,17 +6,6 @@
+  * Copyright (C) 2002 NetChip Technology, Inc. (http://www.netchip.com)
+  * Copyright (C) 2003 David Brownell
+  * Copyright (C) 2014 Ricardo Ribalda - Qtechnology/AS
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+  */
+ 
+ #ifndef __LINUX_USB_USB338X_H
+diff --git a/include/linux/usb/usbnet.h b/include/linux/usb/usbnet.h
+index 1b4d72d5e891..4f5608cbd9ab 100644
+--- a/include/linux/usb/usbnet.h
++++ b/include/linux/usb/usbnet.h
+@@ -4,20 +4,6 @@
+  *
+  * Copyright (C) 2000-2005 by David Brownell <dbrownell@users.sourceforge.net>
+  * Copyright (C) 2003-2005 David Hollis <dhollis@davehollis.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  */
+ 
+ #ifndef	__LINUX_USB_USBNET_H
 -- 
 2.34.1
 
