@@ -2,81 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A188FC433F5
-	for <kernel-janitors@archiver.kernel.org>; Sat, 28 May 2022 19:57:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 297CFC433FE
+	for <kernel-janitors@archiver.kernel.org>; Sun, 29 May 2022 06:32:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229563AbiE1T5w (ORCPT
+        id S229547AbiE2GcF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 28 May 2022 15:57:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54410 "EHLO
+        Sun, 29 May 2022 02:32:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229556AbiE1T53 (ORCPT
+        with ESMTP id S229510AbiE2GcE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 28 May 2022 15:57:29 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC7254474B;
-        Sat, 28 May 2022 12:53:28 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3495660C84;
-        Sat, 28 May 2022 19:30:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8CD4EC34117;
-        Sat, 28 May 2022 19:30:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653766211;
-        bh=LE5Pmj9FFmU1ckt7mZgAQoT947XRJVaEXYAznCha/NQ=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=uzafZ4lhX1hDFn0JtQMswHl+cX/lxJlJzABcR23Qil2E26AZS7avImz8NsB02feu/
-         uz6aTpig9NpCThihMUtrVPGlSfXCFcGOw0SBQGTrblfeqJnTTUxY9Iqn1HSIMK4a27
-         fFC2enrm1NTCXyCs1N5ClaN2T1IFwzsgGns8kAb0iYJsSt1kN5Kg0O7ZojvwEhRI4h
-         9NcmN0Oyh7ISvUZK4Pw6nUJVfk28yexA1rQPeNF2JFi8WmwHrbEAEETYf/I7E+uU3o
-         pG/nuNs5NM4/URJYsomKOnEuqDpwJ7G/rUOLfJxjb5TkD20DrbKk196BcNQAPSZiB2
-         f6dRou4Ym/Dyw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 717FDF03944;
-        Sat, 28 May 2022 19:30:11 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Sun, 29 May 2022 02:32:04 -0400
+Received: from smtp.smtpout.orange.fr (smtp01.smtpout.orange.fr [80.12.242.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 862361834A
+        for <kernel-janitors@vger.kernel.org>; Sat, 28 May 2022 23:32:01 -0700 (PDT)
+Received: from pop-os.home ([90.11.191.102])
+        by smtp.orange.fr with ESMTPA
+        id vCSxn3NPl3JPEvCSxnMxa6; Sun, 29 May 2022 08:31:59 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sun, 29 May 2022 08:31:59 +0200
+X-ME-IP: 90.11.191.102
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Mark Brown <broonie@kernel.org>,
+        Matthew Gerlach <matthew.gerlach@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-spi@vger.kernel.org
+Subject: [PATCH] spi: spi-altera-dfl: Fix an error handling path
+Date:   Sun, 29 May 2022 08:31:53 +0200
+Message-Id: <0607bb59f4073f86abe5c585d35245aef0b045c6.1653805901.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: enetc: Use pci_release_region() to release some
- resources
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <165376621146.15448.670456967245992093.git-patchwork-notify@kernel.org>
-Date:   Sat, 28 May 2022 19:30:11 +0000
-References: <b0dcb6124717d13900e48b2f1fa697b922f672b2.1653643529.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <b0dcb6124717d13900e48b2f1fa697b922f672b2.1653643529.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     claudiu.manoil@nxp.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, andrew@lunn.ch,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+The spi_alloc_master() call is not undone in all error handling paths.
+Moreover, there is no .remove function to release the allocated memory.
 
-This patch was applied to netdev/net.git (master)
-by David S. Miller <davem@davemloft.net>:
+In order to fix both this issues, switch to devm_spi_alloc_master().
 
-On Fri, 27 May 2022 11:25:47 +0200 you wrote:
-> Some resources are allocated using pci_request_region().
-> It is more straightforward to release them with pci_release_region().
-> 
-> Fixes: 231ece36f50d ("enetc: Add mdio bus driver for the PCIe MDIO endpoint")
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> [...]
+This allows further simplification of the probe.
 
-Here is the summary with links:
-  - net: enetc: Use pci_release_region() to release some resources
-    https://git.kernel.org/netdev/net/c/18eeb4dea65c
+Fixes: ba2fc167e944 ("spi: altera: Add DFL bus driver for Altera API Controller")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/spi/spi-altera-dfl.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-You are awesome, thank you!
+diff --git a/drivers/spi/spi-altera-dfl.c b/drivers/spi/spi-altera-dfl.c
+index ca40923258af..596e181ae136 100644
+--- a/drivers/spi/spi-altera-dfl.c
++++ b/drivers/spi/spi-altera-dfl.c
+@@ -128,9 +128,9 @@ static int dfl_spi_altera_probe(struct dfl_device *dfl_dev)
+ 	struct spi_master *master;
+ 	struct altera_spi *hw;
+ 	void __iomem *base;
+-	int err = -ENODEV;
++	int err;
+ 
+-	master = spi_alloc_master(dev, sizeof(struct altera_spi));
++	master = devm_spi_alloc_master(dev, sizeof(struct altera_spi));
+ 	if (!master)
+ 		return -ENOMEM;
+ 
+@@ -159,10 +159,9 @@ static int dfl_spi_altera_probe(struct dfl_device *dfl_dev)
+ 	altera_spi_init_master(master);
+ 
+ 	err = devm_spi_register_master(dev, master);
+-	if (err) {
+-		dev_err(dev, "%s failed to register spi master %d\n", __func__, err);
+-		goto exit;
+-	}
++	if (err)
++		return dev_err_probe(dev, err, "%s failed to register spi master\n",
++				     __func__);
+ 
+ 	if (dfl_dev->revision == FME_FEATURE_REV_MAX10_SPI_N5010)
+ 		strscpy(board_info.modalias, "m10-n5010", SPI_NAME_SIZE);
+@@ -179,9 +178,6 @@ static int dfl_spi_altera_probe(struct dfl_device *dfl_dev)
+ 	}
+ 
+ 	return 0;
+-exit:
+-	spi_master_put(master);
+-	return err;
+ }
+ 
+ static const struct dfl_device_id dfl_spi_altera_ids[] = {
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
