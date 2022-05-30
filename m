@@ -2,75 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11B96C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 30 May 2022 11:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5641C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 30 May 2022 11:21:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234580AbiE3LRn (ORCPT
+        id S235652AbiE3LVE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 30 May 2022 07:17:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37342 "EHLO
+        Mon, 30 May 2022 07:21:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230417AbiE3LRm (ORCPT
+        with ESMTP id S232837AbiE3LVC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 30 May 2022 07:17:42 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B6081EC48;
-        Mon, 30 May 2022 04:17:42 -0700 (PDT)
+        Mon, 30 May 2022 07:21:02 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF80F1EC48;
+        Mon, 30 May 2022 04:21:01 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B444560F34;
-        Mon, 30 May 2022 11:17:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02F60C385B8;
-        Mon, 30 May 2022 11:17:39 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 89E2F60FF6;
+        Mon, 30 May 2022 11:21:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C879C385B8;
+        Mon, 30 May 2022 11:20:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653909461;
-        bh=aXeqGwfpDsm+9V51ELwmKYr8ivzqMiNTDnRJlO+qDCM=;
+        s=k20201202; t=1653909661;
+        bh=UqyPEInCEPXI76RocK9+Or7vaLi+1BthGegONWtDbSk=;
         h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=fvpYTaaIe4XjPNNpCgh3qZZo//VWQ/wCZNQuk8Bma72jOnbIOblldzV9g/JC8tukG
-         w77bJqpztVa6AuJApCWfag4j6vAy7KTd33FmqHNbyK2ZEmM+1+187RM5I5Ihl7w3aP
-         3hdtCKUk6LUvSsQkhp/vzTZDHNaZ1PrUnNMr3hXRzlr+N4Zmu6yXeNgX+ubdrld0Qn
-         vOpmvsBqIcPYzpUuYVh8N183Z4qTJD7KMkywdbt/mwfx78eANwJuYYcjEplw4g04G7
-         we6drBIjlAbezbEyXxV+ssP+ki4vssYmnONN1B1N9GrRPWtclA9DfE+4mgsScRGJGR
-         XF1ZIyw0TCwBg==
+        b=CndpQp9lYSCKugc9kfd7Ls2RKaDL/Y3O2dIDYaeVc3EjSkBcQ/6zHYtklQl63I7M4
+         ykCLFihhpQNcXmoKOr8K9OICZyTfbtAucDG5OlahOtCa/L4ahmuoD29vI+D/J++SCS
+         yos0QGvMUhUfbLEHxqccwsJUW6+057+U9LMgqsOdI+4KijG6h5zyFNCV9TVp1aDQQN
+         juFMxrM+3gDJCck7oX1ZV8qvol+cihoS0EsV5PtspGITaV5I7vA1QJN+d/c/5G1j9X
+         qarizZysQG5S9TjYVGAr9VQPRexsr6fpZVcHi8sa7hYw/TnGVGtNZ8lIvHu1kSSp1e
+         1hr5W5y7kntxg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Subject: Re: wifi: rtlwifi: fix error codes in rtl_debugfs_set_write_h2c()
+Subject: Re: [PATCH] ath6kl: fix typo in comment
 From:   Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <YoOLnDkHgVltyXK7@kili>
-References: <YoOLnDkHgVltyXK7@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Ping-Ke Shih <pkshih@realtek.com>, Paolo Abeni <pabeni@redhat.com>,
-        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <20220521111145.81697-14-Julia.Lawall@inria.fr>
+References: <20220521111145.81697-14-Julia.Lawall@inria.fr>
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     kernel-janitors@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <165390945770.29197.8369000797188953316.kvalo@kernel.org>
-Date:   Mon, 30 May 2022 11:17:39 +0000 (UTC)
+Message-ID: <165390965375.3436.6595451115191931176.kvalo@kernel.org>
+Date:   Mon, 30 May 2022 11:20:58 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+Julia Lawall <Julia.Lawall@inria.fr> wrote:
 
-> If the copy_from_user() fails or the user gives invalid date then the
-> correct thing to do is to return a negative error code.  (Currently it
-> returns success).
+> Spelling mistake (triple letters) in comment.
+> Detected with the help of Coccinelle.
 > 
-> I made a copy additional related cleanups:
-> 1) There is no need to check "buffer" for NULL.  That's handled by
-> copy_from_user().
-> 2) The "h2c_len" variable cannot be negative because it is unsigned
-> and because sscanf() does not return negative error codes.
-> 
-> Fixes: 610247f46feb ("rtlwifi: Improve debugging by using debugfs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
 
-Patch applied to wireless-next.git, thanks.
+Patch applied to ath-next branch of ath.git, thanks.
 
-b88d28146c30 wifi: rtlwifi: fix error codes in rtl_debugfs_set_write_h2c()
+9f855efd9a7b ath6kl: fix typo in comment
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/YoOLnDkHgVltyXK7@kili/
+https://patchwork.kernel.org/project/linux-wireless/patch/20220521111145.81697-14-Julia.Lawall@inria.fr/
 
 https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
