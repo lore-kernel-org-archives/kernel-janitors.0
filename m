@@ -2,80 +2,75 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53D92C433F5
-	for <kernel-janitors@archiver.kernel.org>; Sun, 29 May 2022 07:17:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11B96C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 30 May 2022 11:17:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229645AbiE2HRR (ORCPT
+        id S234580AbiE3LRn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 29 May 2022 03:17:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57176 "EHLO
+        Mon, 30 May 2022 07:17:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229566AbiE2HRQ (ORCPT
+        with ESMTP id S230417AbiE3LRm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 29 May 2022 03:17:16 -0400
-Received: from smtp.smtpout.orange.fr (smtp09.smtpout.orange.fr [80.12.242.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30E7E19013
-        for <kernel-janitors@vger.kernel.org>; Sun, 29 May 2022 00:17:14 -0700 (PDT)
-Received: from [192.168.1.18] ([90.11.191.102])
-        by smtp.orange.fr with ESMTPA
-        id vDAjnJygkOXCyvDAjnpj0X; Sun, 29 May 2022 09:17:12 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 29 May 2022 09:17:12 +0200
-X-ME-IP: 90.11.191.102
-Message-ID: <097dca7f-12ba-ddbc-7380-05f3278fe40b@wanadoo.fr>
-Date:   Sun, 29 May 2022 09:17:09 +0200
+        Mon, 30 May 2022 07:17:42 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B6081EC48;
+        Mon, 30 May 2022 04:17:42 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B444560F34;
+        Mon, 30 May 2022 11:17:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02F60C385B8;
+        Mon, 30 May 2022 11:17:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653909461;
+        bh=aXeqGwfpDsm+9V51ELwmKYr8ivzqMiNTDnRJlO+qDCM=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=fvpYTaaIe4XjPNNpCgh3qZZo//VWQ/wCZNQuk8Bma72jOnbIOblldzV9g/JC8tukG
+         w77bJqpztVa6AuJApCWfag4j6vAy7KTd33FmqHNbyK2ZEmM+1+187RM5I5Ihl7w3aP
+         3hdtCKUk6LUvSsQkhp/vzTZDHNaZ1PrUnNMr3hXRzlr+N4Zmu6yXeNgX+ubdrld0Qn
+         vOpmvsBqIcPYzpUuYVh8N183Z4qTJD7KMkywdbt/mwfx78eANwJuYYcjEplw4g04G7
+         we6drBIjlAbezbEyXxV+ssP+ki4vssYmnONN1B1N9GrRPWtclA9DfE+4mgsScRGJGR
+         XF1ZIyw0TCwBg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] spi: rockchip: Fix a resource that is put twice in
- rockchip_spi_remove()
-Content-Language: fr
-To:     Mark Brown <broonie@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
-        addy ke <addy.ke@rock-chips.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Mark Brown <broonie@linaro.org>, linux-spi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-References: <df2f4ae902474574ccdb0a8696ce51db39fbd239.1653808056.git.christophe.jaillet@wanadoo.fr>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <df2f4ae902474574ccdb0a8696ce51db39fbd239.1653808056.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Subject: Re: wifi: rtlwifi: fix error codes in rtl_debugfs_set_write_h2c()
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <YoOLnDkHgVltyXK7@kili>
+References: <YoOLnDkHgVltyXK7@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Ping-Ke Shih <pkshih@realtek.com>, Paolo Abeni <pabeni@redhat.com>,
+        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <165390945770.29197.8369000797188953316.kvalo@kernel.org>
+Date:   Mon, 30 May 2022 11:17:39 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 29/05/2022 à 09:07, Christophe JAILLET a écrit :
-> spi_controller_put() is already called as part of
-> spi_unregister_controller(). The latter is called automatically because
-> the controller has been registered with the devm_ function.
-> 
-> Remove the duplicate call.
-> 
-> Fixes: 64e36824b32b ("spi/rockchip: add driver for Rockchip RK3xxx SoCs integrated SPI")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->   drivers/spi/spi-rockchip.c | 2 --
->   1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
-> index a08215eb9e14..70777731b20e 100644
-> --- a/drivers/spi/spi-rockchip.c
-> +++ b/drivers/spi/spi-rockchip.c
-> @@ -963,8 +963,6 @@ static int rockchip_spi_remove(struct platform_device *pdev)
->   	if (ctlr->dma_rx)
->   		dma_release_channel(ctlr->dma_rx);
->   
-> -	spi_controller_put(ctlr);
-> -
->   	return 0;
->   }
->   
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-NAK.
+> If the copy_from_user() fails or the user gives invalid date then the
+> correct thing to do is to return a negative error code.  (Currently it
+> returns success).
+> 
+> I made a copy additional related cleanups:
+> 1) There is no need to check "buffer" for NULL.  That's handled by
+> copy_from_user().
+> 2) The "h2c_len" variable cannot be negative because it is unsigned
+> and because sscanf() does not return negative error codes.
+> 
+> Fixes: 610247f46feb ("rtlwifi: Improve debugging by using debugfs")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-There is a spi_controller_get() call a few lines above, so this 
-additional spi_controller_put() is needed.
+Patch applied to wireless-next.git, thanks.
 
-CJ
+b88d28146c30 wifi: rtlwifi: fix error codes in rtl_debugfs_set_write_h2c()
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/YoOLnDkHgVltyXK7@kili/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
