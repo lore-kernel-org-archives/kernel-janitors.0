@@ -2,99 +2,43 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE7AC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 11:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C2BC433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 11:57:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351381AbiFALvm (ORCPT
+        id S1351502AbiFAL5r (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Jun 2022 07:51:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33564 "EHLO
+        Wed, 1 Jun 2022 07:57:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231983AbiFALvh (ORCPT
+        with ESMTP id S1349196AbiFAL5q (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Jun 2022 07:51:37 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A175B737AC;
-        Wed,  1 Jun 2022 04:51:34 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id me5so2692801ejb.2;
-        Wed, 01 Jun 2022 04:51:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=5Sf0h7Bia9lnN+oCGwH1nTYxUI7tju/WCO7FgYY7WtA=;
-        b=F9OCHUYrm8F3KCIynre/u87EXofbbUJjRVxGaQEffNcIYtDndY2zJR+AMifZH1XdVT
-         2fBbbfRsgMhk/caMTuo+MYWdUcgUy1h94FB5zBU/Dr5IWTwyb7F7Utkr2TICnbRuQiAt
-         D8acvbH58mKCZVc1J5beW3RNP9XuY07BWQyZbV06NnX69/Dc0YvPmQh6BhdI8hkisdrV
-         JzipDKV3eDCeGfYg2rB5QA5JL/6Vm3Qy5tB/JwC7bxPSbhV1kZYUBjAAe5jsWGtHdEVd
-         +ZPjuUTKtMpMePfnDHpBqm1QqsFi46O2g4cpZrAwfyYg89xecu8iAwwT4VDRXa3t34hs
-         ZMrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=5Sf0h7Bia9lnN+oCGwH1nTYxUI7tju/WCO7FgYY7WtA=;
-        b=duJszSTVe368hYqj1B+FuoCjknarFdZ6dysP4K90X996hcBG5Q8z+LJDtOvjCcrv+Q
-         zBDSED/mxuyw5Tavzh39VKmUPcpYmsAdoVnQjT9UiEjT9UsOq0My28tv406WO62E7QCB
-         22Bmzf+/5AoSoc8dyTAFeXszbKjRvhi3XxBbUOpLsdofC92qeJcyQdhzzI91bAAm9JkP
-         B1Ye6WzXEENtOo/vGIZl9sIaQOFY5rOrVHjTq7Iz2YamelJnQjI/HzSOZADkC+5cg4uj
-         5Py88DGj37ksJIKZcg846vucDFAEUYnLw2iZwO3/VB/CSCdchxxTWikZK7P9V0u39gT6
-         25iQ==
-X-Gm-Message-State: AOAM532MZoxGDOew09w3qp3gzJ7H1UHE4uaGeeEVqSUzZ3tDYnqCAIvA
-        UKWlKCrdulZaB6HJN/sVPQY=
-X-Google-Smtp-Source: ABdhPJzKKgbTzWxfv8Vv6APAutBncHQ1tS1uL4fFMHnQALj6o1qRuhucNOOifGR86lJqaSUiWhha+A==
-X-Received: by 2002:a17:907:7284:b0:6ff:16b8:3073 with SMTP id dt4-20020a170907728400b006ff16b83073mr30728569ejc.196.1654084292852;
-        Wed, 01 Jun 2022 04:51:32 -0700 (PDT)
-Received: from felia.fritz.box (200116b82620c00028af88788fa7d286.dip.versatel-1u1.de. [2001:16b8:2620:c000:28af:8878:8fa7:d286])
-        by smtp.gmail.com with ESMTPSA id v4-20020aa7dbc4000000b0042de38b8c49sm864889edt.34.2022.06.01.04.51.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jun 2022 04:51:32 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Peter Jones <pjones@redhat.com>, Ard Biesheuvel <ardb@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] efi: x86: Fix config name for setting the NX-compatibility flag in the PE header
-Date:   Wed,  1 Jun 2022 13:50:43 +0200
-Message-Id: <20220601115043.7678-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 1 Jun 2022 07:57:46 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2231286DD;
+        Wed,  1 Jun 2022 04:57:44 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 4E1C168AA6; Wed,  1 Jun 2022 13:57:41 +0200 (CEST)
+Date:   Wed, 1 Jun 2022 13:57:41 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: refurbish SWIOTLB SUBSYSTEM sections
+ after refactoring
+Message-ID: <20220601115741.GA12174@lst.de>
+References: <20220601075613.28245-1-lukas.bulwahn@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220601075613.28245-1-lukas.bulwahn@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 21b68da7bf4a ("efi: x86: Set the NX-compatibility flag in the PE
-header") intends to set the compatibility flag, i.e.,
-IMAGE_DLL_CHARACTERISTICS_NX_COMPAT, but this ifdef is actually dead as the
-CONFIG_DXE_MEM_ATTRIBUTES does not exist.
+On Wed, Jun 01, 2022 at 09:56:13AM +0200, Lukas Bulwahn wrote:
+> +F:	arch/x86/kernel/pci-dma.c
 
-The config is actually called EFI_DXE_MEM_ATTRIBUTES. Adjust the ifdef to
-use the intended config name.
-
-The issue was identified with ./scripts/checkkconfigsymbols.py.
-
-Fixes: 21b68da7bf4a ("efi: x86: Set the NX-compatibility flag in the PE header")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Peter, please review and ack.
-Ard, please pick this fix-up patch.
-
- arch/x86/boot/header.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
-index 0352e4589efa..f912d7770130 100644
---- a/arch/x86/boot/header.S
-+++ b/arch/x86/boot/header.S
-@@ -163,7 +163,7 @@ extra_header_fields:
- 	.long	0x200				# SizeOfHeaders
- 	.long	0				# CheckSum
- 	.word	IMAGE_SUBSYSTEM_EFI_APPLICATION	# Subsystem (EFI application)
--#ifdef CONFIG_DXE_MEM_ATTRIBUTES
-+#ifdef CONFIG_EFI_DXE_MEM_ATTRIBUTES
- 	.word	IMAGE_DLL_CHARACTERISTICS_NX_COMPAT	# DllCharacteristics
- #else
- 	.word	0				# DllCharacteristics
--- 
-2.17.1
-
+I think this file is better left for the x86 maintainers.
