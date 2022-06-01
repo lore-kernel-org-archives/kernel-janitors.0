@@ -2,104 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE731C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 12:03:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B716C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 13:20:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238607AbiFAMDK (ORCPT
+        id S1351730AbiFANUR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Jun 2022 08:03:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52970 "EHLO
+        Wed, 1 Jun 2022 09:20:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230377AbiFAMDJ (ORCPT
+        with ESMTP id S1349877AbiFANUO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Jun 2022 08:03:09 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2A3948391;
-        Wed,  1 Jun 2022 05:03:07 -0700 (PDT)
+        Wed, 1 Jun 2022 09:20:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1AAA427D5;
+        Wed,  1 Jun 2022 06:20:13 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 59C9DB8182A;
-        Wed,  1 Jun 2022 12:03:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C777CC3411D;
-        Wed,  1 Jun 2022 12:03:04 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2FCCC61597;
+        Wed,  1 Jun 2022 13:20:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8FAFDC3411D;
+        Wed,  1 Jun 2022 13:20:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654084984;
-        bh=k96TRxFWoTI0+pe4xgkBtX3CcQGxEIISgLgYiWg5ftQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=pw4iQw9RujggxeHvT5jW3uGEvNt9BOQZ2qziHxDVfhUh8yR4Z/ha3a4e+EoAf4A2U
-         9amncn8T+lMyu9yqE1KXS3K5A+nmENjLaVdi267pfZ0rkqlFpIVaUZYGlmJJczO+rR
-         yJ3DF8tSJPMEbhCU1Xfpq9VktMpbn9q4r8ouKZ1nMAIfzlUr95x8NWCZMyTxMkONHn
-         ZMoUksK0vThirBwazgBeHQKGWQRErzeNXgC2nk99JSIt98WiVf/qq7RGyMAUhwqwrL
-         GwHpHjjQMfU13fBkuEOWVExjJC7lxEHDCASYjiejwMsnFmnIpdZ768CIquRefqfFmr
-         IRbLvGWBBUNDQ==
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-e93bbb54f9so2353985fac.12;
-        Wed, 01 Jun 2022 05:03:04 -0700 (PDT)
-X-Gm-Message-State: AOAM5325d1B3D2FLpe+Gr6Tv2YZWympFGwvXQZW6EomXKsR8FKNFpAYo
-        lg0/KrIwezyuI4D2KgNNQrylZQMfEWe8LZpRQiA=
-X-Google-Smtp-Source: ABdhPJxsDEm4Kj8i+6O9VszubDDfztWwsZConIjwAKEe0j82b8SG4QP9QcviGwe12IHPwBVkSz/yM0OAE+oKR0M2qco=
-X-Received: by 2002:a05:6871:5c8:b0:f3:3c1c:126f with SMTP id
- v8-20020a05687105c800b000f33c1c126fmr8157003oan.126.1654084983910; Wed, 01
- Jun 2022 05:03:03 -0700 (PDT)
+        s=k20201202; t=1654089612;
+        bh=xFLEubiyifM6V8QcdqT81e+dQpNxVYM6vnU7/+58nZ8=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=h9CCbuCM737rNDvyFsbiqlMxGnYWwVs4dJzE1GNE1JpOQEfCddYPCZJN4Ium74SKT
+         QebeE5yrGqlIQcSXHwwuyGmjhktw1FNLvxJC7dka6E08HM/CP+q65Zl8oPglplo79V
+         TYbqHli6XjvClR6UYBqKLRdFuJx0gfZKg/Tx+Dvbr1eyvywnE6y0hfmVsDen1nxfTt
+         4DXoFxb3Po5C61Zl8faDL6fOOS8U6As7q83FTVdkiyxQfMGTD/u5iEQWWl1Aco+tVv
+         Vntq/Zv1iZN867rl2Vzj4cENPWwzecyCm0nqdB1PdVHK3bXraKG2BWSbCMgIcVH5kP
+         nZfGsobO/SYQA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 70D07F03944;
+        Wed,  1 Jun 2022 13:20:12 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20220601115043.7678-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20220601115043.7678-1-lukas.bulwahn@gmail.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Wed, 1 Jun 2022 14:02:52 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFkU=FvP2rN0sD6+YMg6Dep_HBSG6WDiGvhci13AA6kkw@mail.gmail.com>
-Message-ID: <CAMj1kXFkU=FvP2rN0sD6+YMg6Dep_HBSG6WDiGvhci13AA6kkw@mail.gmail.com>
-Subject: Re: [PATCH] efi: x86: Fix config name for setting the
- NX-compatibility flag in the PE header
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Peter Jones <pjones@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        X86 ML <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net/sched: act_api: fix error code in
+ tcf_ct_flow_table_fill_tuple_ipv6()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <165408961245.18360.13013856288748164007.git-patchwork-notify@kernel.org>
+Date:   Wed, 01 Jun 2022 13:20:12 +0000
+References: <YpYFnbDxFl6tQ3Bn@kili>
+In-Reply-To: <YpYFnbDxFl6tQ3Bn@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     jhs@mojatatu.com, toshiaki.makita1@gmail.com,
+        xiyou.wangcong@gmail.com, jiri@resnulli.us, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        paulb@nvidia.com, pablo@netfilter.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 1 Jun 2022 at 13:51, Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->
-> Commit 21b68da7bf4a ("efi: x86: Set the NX-compatibility flag in the PE
-> header") intends to set the compatibility flag, i.e.,
-> IMAGE_DLL_CHARACTERISTICS_NX_COMPAT, but this ifdef is actually dead as the
-> CONFIG_DXE_MEM_ATTRIBUTES does not exist.
->
-> The config is actually called EFI_DXE_MEM_ATTRIBUTES. Adjust the ifdef to
-> use the intended config name.
->
-> The issue was identified with ./scripts/checkkconfigsymbols.py.
->
-> Fixes: 21b68da7bf4a ("efi: x86: Set the NX-compatibility flag in the PE header")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Peter, please review and ack.
-> Ard, please pick this fix-up patch.
->
+Hello:
 
-Thanks, Lukas, I'll queue this up.
+This patch was applied to netdev/net.git (master)
+by Paolo Abeni <pabeni@redhat.com>:
 
->  arch/x86/boot/header.S | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
-> index 0352e4589efa..f912d7770130 100644
-> --- a/arch/x86/boot/header.S
-> +++ b/arch/x86/boot/header.S
-> @@ -163,7 +163,7 @@ extra_header_fields:
->         .long   0x200                           # SizeOfHeaders
->         .long   0                               # CheckSum
->         .word   IMAGE_SUBSYSTEM_EFI_APPLICATION # Subsystem (EFI application)
-> -#ifdef CONFIG_DXE_MEM_ATTRIBUTES
-> +#ifdef CONFIG_EFI_DXE_MEM_ATTRIBUTES
->         .word   IMAGE_DLL_CHARACTERISTICS_NX_COMPAT     # DllCharacteristics
->  #else
->         .word   0                               # DllCharacteristics
-> --
-> 2.17.1
->
+On Tue, 31 May 2022 15:10:05 +0300 you wrote:
+> The tcf_ct_flow_table_fill_tuple_ipv6() function is supposed to return
+> false on failure.  It should not return negatives because that means
+> succes/true.
+> 
+> Fixes: fcb6aa86532c ("act_ct: Support GRE offload")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> [...]
+
+Here is the summary with links:
+  - [net] net/sched: act_api: fix error code in tcf_ct_flow_table_fill_tuple_ipv6()
+    https://git.kernel.org/netdev/net/c/86360030cc51
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
