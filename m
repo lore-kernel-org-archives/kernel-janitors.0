@@ -2,108 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BF0C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 10:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD69FC433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 10:51:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352160AbiFAKoQ (ORCPT
+        id S1345991AbiFAKvA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Jun 2022 06:44:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48932 "EHLO
+        Wed, 1 Jun 2022 06:51:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244283AbiFAKoM (ORCPT
+        with ESMTP id S236563AbiFAKu7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Jun 2022 06:44:12 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEF3F7C14D
-        for <kernel-janitors@vger.kernel.org>; Wed,  1 Jun 2022 03:44:10 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id v9so1503934lja.12
-        for <kernel-janitors@vger.kernel.org>; Wed, 01 Jun 2022 03:44:10 -0700 (PDT)
+        Wed, 1 Jun 2022 06:50:59 -0400
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B65D2640B;
+        Wed,  1 Jun 2022 03:50:58 -0700 (PDT)
+Received: by mail-yb1-xb36.google.com with SMTP id z186so2197264ybz.3;
+        Wed, 01 Jun 2022 03:50:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fnL1OLV1PY9lMlL4F1psml7tqA7a4raxuISBfgJIhpI=;
-        b=JPQamR7LzqBH0jJ27Q0Lo1OAV/I4In+aj2UdcEhnFoer7CxhD2/6Th9So1GleiVW0s
-         UDhN164xgDIrzm42dhqzlmg6PmzohB3bxkZxWrHWgUV1R/hoQc3TNkLapmDN/NanpCh6
-         GOlLZmqx2w4nUKpsIb9EcLaWMr3+f3yw5x03SXud+iPX6FRxo7JTxHv9GKmrdY99uvIi
-         Eq4JaXgQscOudi91YWYXiFf0VE3WyAAJ8KiMt9Ne1Khmwu5NcwkN6jhk1o2dYXZTO1H7
-         unCPHAkLVQ/vH579QAadTf3eteQfjHt/FW0uDbdh3eGRUuqWtk1vETB2+SxNo6odo0XH
-         6nQw==
+        d=gmail.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=fIMlY+QoAuZ+nDSyG0fbX2WbHP3uq76m2tMk5hKhLWQ=;
+        b=pUfGZFEeC+FWcpciJw/HZD5Y1YnlA+xI+24jgJWkRGfE/3ufQqRkE+QG+sg7Yvnvia
+         WFZcAU2lpg3x7GHxwhBKg9elSgHLYcaw8eOy7crChf3Zf8lY/wo5oGwMcumipKNVRS4H
+         dYw/ELUE/LAVaRaSfiTk7J9tq22IScYPrRPgEGjR6en1b8Tq1SuJ3FdrdxyW3MI0JTsO
+         /+pe4zYeFDaSyHdL1pKVv8DpmMFU+r1HRVcNHHAQACriCEzh/VwC6vreesq4zuJcvDyb
+         u6NOf84uwsitWcZyYpw3JSSeVpugdLZD/m9JuyPFbC6dtBFqSxdWxkneKcZC0dQph2Gb
+         X7IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fnL1OLV1PY9lMlL4F1psml7tqA7a4raxuISBfgJIhpI=;
-        b=zVXeGg2KR3l5xJToWDbi7VkFL/PI1bMKnDLJyXm90tYccIvktkWkM73bXHuUlY+qgd
-         E8Kh6HX08VtNXR0s5n/+02QtFYYRkS+12eIwxdob6T80FKODtNDhy15B6sZmtC6zWCRu
-         vkCxNtJEisMWz0M9IBYwvKshUpEle42sKRoLu3PPKzirrQ4L7CiV3Ux/LteZuVjeclqc
-         sFxCtWYlAPhHJUVcEaZyVXTjkucT4WNqIs8MvY1KpMjAHMnNE/cBuLoFulGEmcyTTGC3
-         p1Skf04BE8dUmDUa0np3mUFutHaMy/UEsNNQYtbJRtPtX0igxdrhkL037p8AsUU+T40/
-         rNHw==
-X-Gm-Message-State: AOAM533Ka/GxMJ6xAyqgiJXRBNKqZJlXk9ymT1w0s22WrCdNOhSosLc5
-        5POtKisGf/N8EKKZ4vyuvkb3Yx7wSQQ5iChyTtwBHg==
-X-Google-Smtp-Source: ABdhPJzL6Hm338xmLjdt+tFgPO2JQEu2i6HOMaY+iApQ+fEFRrz+yOa5Wgm+FzcqjSzhM0e9sGs9ibkQ9ZNYB+uvycE=
-X-Received: by 2002:a2e:9216:0:b0:255:6834:dcae with SMTP id
- k22-20020a2e9216000000b002556834dcaemr2925927ljg.466.1654080249243; Wed, 01
- Jun 2022 03:44:09 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=fIMlY+QoAuZ+nDSyG0fbX2WbHP3uq76m2tMk5hKhLWQ=;
+        b=VmgHoAPU0mV2feVzdCxP8BKlxKF6IX9WEohz2uU5eY2C/3cSxv5iBPJk1VACm+nrrX
+         NgvJGtusMBGccTWGyKy/ncqmJXM+bSMAh9cxISavXQSvdYub1QGy958Qmfjdi+gwQHDY
+         InZcTi/D0rpMr90ctDQ9Zbz8TOLncsCBthlLBI9pSsNiv03xObMk9hJohQ/LMMaM/W+X
+         5f0qR9GsoFlldSN+5oxxRfBMBH4SCZ+3shkaTPXVgfLu0LinFVlkHEBDKZZa9TQ6T2Fi
+         cekhhoO1Z4XrcgTGNTYYXEklHV6QMHjyBt+eSDIf9hxA64r9tscpBv83rLdySRpX3Kqv
+         MKhg==
+X-Gm-Message-State: AOAM5337u/dvE0QWZBRYPuoIAtLqADJVBj+SyBanzLzTs9rtX47FOFx2
+        6xlT3R+4Fqfa4tYzPZOn4HO7mXGxbYIbTGpseTENx7qOp458Lg==
+X-Google-Smtp-Source: ABdhPJyxQ1AAjbJ94OpwPdV1j+wlWRSxUxVrz6TB9cVkfpM6nqA7QOdTAyHNnYuAzgphhvebBLF49a1lt0FbnJawG3w=
+X-Received: by 2002:a25:4705:0:b0:65d:43f8:5652 with SMTP id
+ u5-20020a254705000000b0065d43f85652mr7100942yba.389.1654080657937; Wed, 01
+ Jun 2022 03:50:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220601085122.28176-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20220601085122.28176-1-lukas.bulwahn@gmail.com>
-From:   Anup Patel <apatel@ventanamicro.com>
-Date:   Wed, 1 Jun 2022 16:13:57 +0530
-Message-ID: <CAK9=C2WB2eoiFQfvSeQkioqcMuSLhP5eVKrd+eaTbuNMAXaG2w@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Limit KVM RISC-V entry to existing selftests
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Anup Patel <anup@brainfault.org>,
-        Atish Patra <atishp@atishpatra.org>,
-        KVM General <kvm@vger.kernel.org>,
-        kvm-riscv@lists.infradead.org,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        kernel-janitors@vger.kernel.org,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Wed, 1 Jun 2022 12:50:47 +0200
+Message-ID: <CAKXUXMwyf5jbfKCh0k+G=begmqXQo-q-qGfAVmecoKUiSnOYWA@mail.gmail.com>
+Subject: Reference to non-existing config X86_SMAP in config UBSAN_UNREACHABLE
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Borislav Petkov <bp@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jun 1, 2022 at 2:21 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->
-> Commit fed9b26b2501 ("MAINTAINERS: Update KVM RISC-V entry to cover
-> selftests support") optimistically adds a file entry for
-> tools/testing/selftests/kvm/riscv/, but this directory does not exist.
->
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference. The script is very useful to keep MAINTAINERS up to date
-> and MAINTAINERS can be kept in a state where the script emits no warning.
->
-> So, just drop the non-matching file entry rather than starting to collect
-> exceptions of entries that may match in some close or distant future.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Anup, please consider to pick this minor clean-up patch.
+Dear Josh,
 
-Sure, I will include this as fix for 5.19-rcX
+Commit dbae0a934f09 ("x86/cpu: Remove CONFIG_X86_SMAP and "nosmap"")
+from Borislav removes the config X86_SMAP and makes smap on x86
+default.
 
-Thanks,
-Anup
+Josh, your commit 03f16cd020eb ("objtool: Add CONFIG_OBJTOOL") makes
+config UBSAN_UNREACHABLE in lib/Kconfig.ubsan refer to this
+non-existing config X86_SMAP.
 
->
->  MAINTAINERS | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 36eab5ae237d..a8eee9d2aea5 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10863,7 +10863,6 @@ F:      arch/riscv/include/asm/kvm*
->  F:     arch/riscv/include/uapi/asm/kvm*
->  F:     arch/riscv/kvm/
->  F:     tools/testing/selftests/kvm/*/riscv/
-> -F:     tools/testing/selftests/kvm/riscv/
->
->  KERNEL VIRTUAL MACHINE for s390 (KVM/s390)
->  M:     Christian Borntraeger <borntraeger@linux.ibm.com>
-> --
-> 2.17.1
->
+See this hunk in lib/Kconfig.ubsan:
+
+diff --git a/lib/Kconfig.ubsan b/lib/Kconfig.ubsan
+index f3c57ed51838..c4fe15d38b60 100644
+--- a/lib/Kconfig.ubsan
++++ b/lib/Kconfig.ubsan
+@@ -94,7 +94,7 @@ config UBSAN_UNREACHABLE
+        bool "Perform checking for unreachable code"
+        # objtool already handles unreachable checking and gets angry about
+        # seeing UBSan instrumentation located in unreachable places.
+-       depends on !STACK_VALIDATION
++       depends on !(OBJTOOL && (STACK_VALIDATION || UNWINDER_ORC || X86_SMAP))
+        depends on $(cc-option,-fsanitize=unreachable)
+        help
+          This option enables -fsanitize=unreachable which checks for control
+
+I think X86_SMAP can just be dropped in this line, but I leave it up
+to you to change, as I am not completely certain on the needed change
+and if that just breaks the config dependencies for stack validation.
+
+By the way, this issue was identified with the script
+./scripts/checkkconfigsymbols.py
+
+Best regards,
+
+Lukas
