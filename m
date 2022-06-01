@@ -2,120 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 236BBC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 08:47:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D73C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 08:51:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350814AbiFAIrn (ORCPT
+        id S1349557AbiFAIvh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Jun 2022 04:47:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46124 "EHLO
+        Wed, 1 Jun 2022 04:51:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243559AbiFAIrj (ORCPT
+        with ESMTP id S1345084AbiFAIvg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Jun 2022 04:47:39 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 179E5E000;
-        Wed,  1 Jun 2022 01:47:37 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D6709ED1;
-        Wed,  1 Jun 2022 01:47:36 -0700 (PDT)
-Received: from donnerap.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0F6DC3F73D;
-        Wed,  1 Jun 2022 01:47:34 -0700 (PDT)
-Date:   Wed, 1 Jun 2022 09:47:30 +0100
-From:   Andre Przywara <andre.przywara@arm.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        James Wang <james.qian.wang@arm.com>,
-        Mihail Atanassov <mihail.atanassov@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, malidp@foss.arm.com,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: rectify entries for ARM DRM DRIVERS after
- dt conversion
-Message-ID: <20220601094730.1fca69c1@donnerap.cambridge.arm.com>
-In-Reply-To: <20220601041746.22986-1-lukas.bulwahn@gmail.com>
-References: <20220601041746.22986-1-lukas.bulwahn@gmail.com>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 1 Jun 2022 04:51:36 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5867569729;
+        Wed,  1 Jun 2022 01:51:35 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id h19so1254547edj.0;
+        Wed, 01 Jun 2022 01:51:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=U/4uwHbN3kTeOBlqC9MtcT8Zh6UZytYx1qP79LPgSd4=;
+        b=KplaBvFsTVLv0IqD9M3SRA1T8uWUDOy/owGLewCaeOD9l1E+4/5fI72BAzMypMEyCr
+         mFkrCA0pmXVxT4hgvHYsWrkDEk/mIE16NkQIj/BZecW8IdHJ59IUx7VegWouURPucjIU
+         yLHHSmqqY6JmZn5XW6Y4YJqcus2G0No89u0ImXeEbNmQrx0gqXVTHTMn2ZnX1cUptsFM
+         wFt/Xsrgss5kgU0yEPame4MuS1AAO8V+e4a/Q/ETlpXxapTsPvMH6sIoScfeMO2DjJ/u
+         6jeaTAjz9xU8xL2V/g+EpI7gtLieQIxBa8FwPeQ0GF7nzfgRuR5IJL78EQWW/i/dTVAu
+         S1xQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=U/4uwHbN3kTeOBlqC9MtcT8Zh6UZytYx1qP79LPgSd4=;
+        b=5ZsX7VBfzcdP4NNmXcALKnqgrDNpkTHiJEbOOCwtiVypMtg/T3Kfnv3mstnTJ6WVMk
+         wqWbcib565S61hLpCq4z75aESIAxrVUZGezBOmJLgVIMDKiWgfKB/ULhNfxlgeSaZnyx
+         BnAWDV0mpPoPmx6Ul1zpxSdvpc9DT2OGGKUnci/82jmOMH/MJifl3WrkyplciM8ZfSTS
+         pxshv3VvYoO1on0MXUOgDG0wEAV6+XlTMRN0DzgRJ2UijCLVa3B0fvXIlZG1nzJHS6iP
+         zefPZo4jn7AODc2umtnShWegWJot94RC+h04c6B1L7A5JW4R3tdxuP6ZhUNDjlLMy1Pv
+         fftw==
+X-Gm-Message-State: AOAM533G97UCgtnOcht2cZ5zR30I4V/62aYYbCe7NiSRz9SVv68onDnN
+        7PzvW31tDdpOlkYgDkPw9Fw=
+X-Google-Smtp-Source: ABdhPJzi3J/9s2Bj4RLOaibco+6hWCvjhIAHxvfi6zd/54MSyh/912AMfWa6u4p7Qpatl1i5Wzw1sQ==
+X-Received: by 2002:a50:fc10:0:b0:42d:cbd2:4477 with SMTP id i16-20020a50fc10000000b0042dcbd24477mr18330933edr.363.1654073493766;
+        Wed, 01 Jun 2022 01:51:33 -0700 (PDT)
+Received: from felia.fritz.box (200116b82620c00028af88788fa7d286.dip.versatel-1u1.de. [2001:16b8:2620:c000:28af:8878:8fa7:d286])
+        by smtp.gmail.com with ESMTPSA id fg16-20020a1709069c5000b006fe8d8c54a7sm447918ejc.87.2022.06.01.01.51.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Jun 2022 01:51:33 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Anup Patel <anup@brainfault.org>,
+        Atish Patra <atishp@atishpatra.org>, kvm@vger.kernel.org,
+        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: Limit KVM RISC-V entry to existing selftests
+Date:   Wed,  1 Jun 2022 10:51:22 +0200
+Message-Id: <20220601085122.28176-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed,  1 Jun 2022 06:17:46 +0200
-Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+Commit fed9b26b2501 ("MAINTAINERS: Update KVM RISC-V entry to cover
+selftests support") optimistically adds a file entry for
+tools/testing/selftests/kvm/riscv/, but this directory does not exist.
 
-Hi Lukas,
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference. The script is very useful to keep MAINTAINERS up to date
+and MAINTAINERS can be kept in a state where the script emits no warning.
 
-> The three commits:
-> 
->   36fd2a65bcaf ("dt-bindings: display: convert Arm HDLCD to DT schema")
->   0f6983509ea1 ("dt-bindings: display: convert Arm Komeda to DT schema")
->   2c8b082a3ab1 ("dt-bindings: display: convert Arm Mali-DP to DT schema")
-> 
-> convert the arm display dt-bindings, arm,*.txt to arm,*.yaml, but miss to
-> adjust its reference in MAINTAINERS.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
-> broken references.
-> 
-> Repair these file references in ARM HDLCD DRM DRIVER, ARM KOMEDA DRM-KMS
-> DRIVER and ARM MALI-DP DRM DRIVER.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+So, just drop the non-matching file entry rather than starting to collect
+exceptions of entries that may match in some close or distant future.
 
-Thanks for taking care!
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Anup, please consider to pick this minor clean-up patch.
 
-Acked-by: Andre Przywara <andre.przywara@arm.com>
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
-Cheers,
-Andre
-
-> ---
-> Andre, please ack.
-> Rob, Krzysztof, please pick this minor non-urgent clean-up patch in
-> your -next dt tree.
-> 
->  MAINTAINERS | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index ae685aaf8850..58e751b9346e 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1510,7 +1510,7 @@ F:	drivers/clocksource/arm_arch_timer.c
->  ARM HDLCD DRM DRIVER
->  M:	Liviu Dudau <liviu.dudau@arm.com>
->  S:	Supported
-> -F:	Documentation/devicetree/bindings/display/arm,hdlcd.txt
-> +F:	Documentation/devicetree/bindings/display/arm,hdlcd.yaml
->  F:	drivers/gpu/drm/arm/hdlcd_*
->  
->  ARM INTEGRATOR, VERSATILE AND REALVIEW SUPPORT
-> @@ -1545,7 +1545,7 @@ M:	Mihail Atanassov <mihail.atanassov@arm.com>
->  L:	Mali DP Maintainers <malidp@foss.arm.com>
->  S:	Supported
->  T:	git git://anongit.freedesktop.org/drm/drm-misc
-> -F:	Documentation/devicetree/bindings/display/arm,komeda.txt
-> +F:	Documentation/devicetree/bindings/display/arm,komeda.yaml
->  F:	Documentation/gpu/komeda-kms.rst
->  F:	drivers/gpu/drm/arm/display/include/
->  F:	drivers/gpu/drm/arm/display/komeda/
-> @@ -1567,7 +1567,7 @@ M:	Brian Starkey <brian.starkey@arm.com>
->  L:	Mali DP Maintainers <malidp@foss.arm.com>
->  S:	Supported
->  T:	git git://anongit.freedesktop.org/drm/drm-misc
-> -F:	Documentation/devicetree/bindings/display/arm,malidp.txt
-> +F:	Documentation/devicetree/bindings/display/arm,malidp.yaml
->  F:	Documentation/gpu/afbc.rst
->  F:	drivers/gpu/drm/arm/
->  
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 36eab5ae237d..a8eee9d2aea5 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10863,7 +10863,6 @@ F:	arch/riscv/include/asm/kvm*
+ F:	arch/riscv/include/uapi/asm/kvm*
+ F:	arch/riscv/kvm/
+ F:	tools/testing/selftests/kvm/*/riscv/
+-F:	tools/testing/selftests/kvm/riscv/
+ 
+ KERNEL VIRTUAL MACHINE for s390 (KVM/s390)
+ M:	Christian Borntraeger <borntraeger@linux.ibm.com>
+-- 
+2.17.1
 
