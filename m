@@ -2,94 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0D5C433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 04:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EBDBC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 04:57:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349547AbiFAEpG (ORCPT
+        id S1349597AbiFAE5y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Jun 2022 00:45:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42960 "EHLO
+        Wed, 1 Jun 2022 00:57:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349551AbiFAEpC (ORCPT
+        with ESMTP id S1347921AbiFAE5x (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Jun 2022 00:45:02 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 736549E9E8;
-        Tue, 31 May 2022 21:45:01 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id r129so285405wmr.3;
-        Tue, 31 May 2022 21:45:01 -0700 (PDT)
+        Wed, 1 Jun 2022 00:57:53 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C662369CB;
+        Tue, 31 May 2022 21:57:51 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id c5-20020a1c3505000000b0038e37907b5bso2339049wma.0;
+        Tue, 31 May 2022 21:57:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id;
-        bh=UxpRbsB4fW9Es2lqL888yJ7QXf4l6YrZ20jfoXVDxLw=;
-        b=q4b8Tjk8UpQ2TXQp9YxJBSMKTh3uotCktHoVhjGzV/CodlyiLmqmQ1pGuw00XOiq3K
-         4FpmUFoWVmEtOuQkfqcWxzRaeT8ZTzXsa9WPZ5G9iyc4ySa6oUrfRxRkl0aohhcgrbzQ
-         kgZi4ft8/ZEeGo9b4I9p6n7MXFrlPwMBoBDK3N3PlCJnj00MfpGPg5jBj0LgglYvIJnd
-         DJ6+pbP1ELdopkCtifkoXaJvl5gYwrbyCeidF9mJ3kdN/wQ2hgNFRPv9YDJMwKu4QHrA
-         LGUD2mSGjcQBr43d7E3nQzGvt4CO20TJm2K+GNj+DPE8DWbEe16LG5WYvEmCOykU7aul
-         VqIw==
+        bh=l/WpQ47qC66FQkGPOa6v5NluTq5zQ5/G7omwoIbA6Tc=;
+        b=d6p6RSKWoGa4vbJhb/Ddqm/C2B6MjpoOy78vjoGpdh63ppuCLqeBTuaNA8QREaaOWw
+         kvhq+lJzy3kL7fj57Sv/kBgwZW3wYlqJp0KnlSqgzwDF5g2q/ySOMQhoW2TjUJbqOmhk
+         yGKcsR9QO2xKVEjNDmelo2/10Y/HCvrDQi539ShiJ8GA2utsMBqC4EWK4w9lRXe37qb9
+         XrbQP/7eGm8lAL27Ud+iG7n8edsP2iR5vk6taacS3e87OddCFh289RA2hQYFBB2QgA89
+         0IUmrWoezUFs0KeCpo0cZODyhx628wHqH/zZc9ZVVlfsOE9dPVWos0Xx25VZvdIQ8Rk+
+         1rUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=UxpRbsB4fW9Es2lqL888yJ7QXf4l6YrZ20jfoXVDxLw=;
-        b=4SlTKumCDjnSgt5M9qHPEvsCjeO1OWixtr1yJSE3WwnooycUhOF+cYUgqmW6E9PUDC
-         RuirEf3/nKjXWd8jIGumFHpBdtK50hNi3T6BbVWAFE2NDqEjibI5GpFSmFGhCR3NOPyM
-         iC417+BSRBBb5tliL/iFY59RvF22noBA01R//dXcILkTVoZ2/XNGTHJQbxjye61SlUkM
-         RLQsFO2xawFyIjztt9AYG4OdDefYTdozaaSlz7dOLufZcyxNeEK3QrPuRxx23eQQliMM
-         eSdSk9NHRhWBvbcHlZ246Tiooe4vttKxsgg7KBpIl/h01cSghEdsjR65BFRux3EF+OM1
-         ketQ==
-X-Gm-Message-State: AOAM533TTQ9kKdBttGNjIuw8AeHTml7O4k+uOiPPG+mbB25FQyjh3uyO
-        qL3QcDKlIAHyCw+7Bc3OIr0=
-X-Google-Smtp-Source: ABdhPJzpHyayVSJDL7wlT5GxcWKpvoD+twBMaZRJ+1JROIQ2naE3mChhbKYDbvR++VsJb9EI8hi6fA==
-X-Received: by 2002:a05:600c:3d8e:b0:397:73e3:8c83 with SMTP id bi14-20020a05600c3d8e00b0039773e38c83mr26213646wmb.29.1654058699805;
-        Tue, 31 May 2022 21:44:59 -0700 (PDT)
+        bh=l/WpQ47qC66FQkGPOa6v5NluTq5zQ5/G7omwoIbA6Tc=;
+        b=6KPwkcIbUK0qIvv+ub7THDUZIyzRTCkXGdl4yeOzJQOmKispj8TXb2jxX7BCpLX8eQ
+         ZIrTWSXojyrfaLR7HGOiVCGmTvYlsnfsb/ijEpjtbl9G+VsJ042T5/Owot3BULIgLJJ4
+         178cM3yefTWh9N5C7Y7Gkfl7940+KDxpHUghTu7QMiFtusybQpAKt79nmJpIneN7DBm3
+         YUZ7Xlc5ICuMG0aXQJKzTGwhG4Zf9dl4ckKHWxElEXvrqAfKy1Bmra8bSHtF5ZEw5d/B
+         Z5LXvZTNA75wUWsO6uec21wcCdzJ5Hm5lnTbxoDxEWm0fpbWCwbZmOg63dqHNCsqhAKC
+         TEhg==
+X-Gm-Message-State: AOAM533lQ3aTA/3fc9Xg86cdZP0kwqfaGUNguYqu5866JYaddn7nWxY2
+        83W9JCxKBUyRLck38hy6W2E=
+X-Google-Smtp-Source: ABdhPJyhzfkkwWM99a36mxqyxLyHI0ThAxMU6LO/2L2usEKWdjTIoUp/aSohfy2cIs0zkBdUdbqKnA==
+X-Received: by 2002:a05:600c:3595:b0:399:fd8f:2c00 with SMTP id p21-20020a05600c359500b00399fd8f2c00mr17660148wmq.97.1654059469983;
+        Tue, 31 May 2022 21:57:49 -0700 (PDT)
 Received: from felia.fritz.box (200116b82620c00028af88788fa7d286.dip.versatel-1u1.de. [2001:16b8:2620:c000:28af:8878:8fa7:d286])
-        by smtp.gmail.com with ESMTPSA id a5-20020adffac5000000b0021023877ac5sm390427wrs.107.2022.05.31.21.44.58
+        by smtp.gmail.com with ESMTPSA id u18-20020a5d5152000000b0020cdcb0efa2sm443372wrt.34.2022.05.31.21.57.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 May 2022 21:44:59 -0700 (PDT)
+        Tue, 31 May 2022 21:57:49 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Leon Romanovsky <leonro@nvidia.com>
+Cc:     Boris Pismenny <borisp@nvidia.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] media: MAINTAINERS: rectify entry for DONGWOON DW9807 LENS VOICE COIL DRIVER
-Date:   Wed,  1 Jun 2022 06:44:45 +0200
-Message-Id: <20220601044445.11943-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: adjust MELLANOX ETHERNET INNOVA DRIVERS to TLS support removal
+Date:   Wed,  1 Jun 2022 06:57:38 +0200
+Message-Id: <20220601045738.19608-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit a1f4626b282d ("media: dt-bindings: Convert Dongwoon dw9807-vcm
-bindings to json-schema") converts dongwoon,dw9807-vcm.txt to yaml, but
+Commit 40379a0084c2 ("net/mlx5_fpga: Drop INNOVA TLS support") removes all
+files in the directory drivers/net/ethernet/mellanox/mlx5/core/accel/, but
 misses to adjust its reference in MAINTAINERS.
 
 Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
 broken reference.
 
-Repair this file reference in DONGWOON DW9807 LENS VOICE COIL DRIVER.
+Remove the file entry to the removed directory in MELLANOX ETHERNET INNOVA
+DRIVERS.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Mauro, please pick this minor non-urgent clean-up patch for media-next.
+Leon, please pick this minor non-urgent clean-up patch on top of the commit
+above.
 
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index e0f5895feb6b..88fdf39e6bb4 100644
+index 88fdf39e6bb4..8ccdd7727840 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -6078,7 +6078,7 @@ M:	Sakari Ailus <sakari.ailus@linux.intel.com>
- L:	linux-media@vger.kernel.org
- S:	Maintained
- T:	git git://linuxtv.org/media_tree.git
--F:	Documentation/devicetree/bindings/media/i2c/dongwoon,dw9807-vcm.txt
-+F:	Documentation/devicetree/bindings/media/i2c/dongwoon,dw9807-vcm.yaml
- F:	drivers/media/i2c/dw9807-vcm.c
- 
- DOUBLETALK DRIVER
+@@ -12695,7 +12695,6 @@ L:	netdev@vger.kernel.org
+ S:	Supported
+ W:	http://www.mellanox.com
+ Q:	https://patchwork.kernel.org/project/netdevbpf/list/
+-F:	drivers/net/ethernet/mellanox/mlx5/core/accel/*
+ F:	drivers/net/ethernet/mellanox/mlx5/core/en_accel/*
+ F:	drivers/net/ethernet/mellanox/mlx5/core/fpga/*
+ F:	include/linux/mlx5/mlx5_ifc_fpga.h
 -- 
 2.17.1
 
