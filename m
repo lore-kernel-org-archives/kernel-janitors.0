@@ -2,95 +2,176 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D73C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 08:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC52EC433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 09:04:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349557AbiFAIvh (ORCPT
+        id S1344506AbiFAJEv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Jun 2022 04:51:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48742 "EHLO
+        Wed, 1 Jun 2022 05:04:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345084AbiFAIvg (ORCPT
+        with ESMTP id S244708AbiFAJEu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Jun 2022 04:51:36 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5867569729;
-        Wed,  1 Jun 2022 01:51:35 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id h19so1254547edj.0;
-        Wed, 01 Jun 2022 01:51:35 -0700 (PDT)
+        Wed, 1 Jun 2022 05:04:50 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1F6B8E1BF;
+        Wed,  1 Jun 2022 02:04:48 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id k19so1383830wrd.8;
+        Wed, 01 Jun 2022 02:04:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id;
-        bh=U/4uwHbN3kTeOBlqC9MtcT8Zh6UZytYx1qP79LPgSd4=;
-        b=KplaBvFsTVLv0IqD9M3SRA1T8uWUDOy/owGLewCaeOD9l1E+4/5fI72BAzMypMEyCr
-         mFkrCA0pmXVxT4hgvHYsWrkDEk/mIE16NkQIj/BZecW8IdHJ59IUx7VegWouURPucjIU
-         yLHHSmqqY6JmZn5XW6Y4YJqcus2G0No89u0ImXeEbNmQrx0gqXVTHTMn2ZnX1cUptsFM
-         wFt/Xsrgss5kgU0yEPame4MuS1AAO8V+e4a/Q/ETlpXxapTsPvMH6sIoScfeMO2DjJ/u
-         6jeaTAjz9xU8xL2V/g+EpI7gtLieQIxBa8FwPeQ0GF7nzfgRuR5IJL78EQWW/i/dTVAu
-         S1xQ==
+        bh=wtRkBI0Hmgo17iTt9HbMbkovhjGDzKXn4k4Ag8EmbDs=;
+        b=T9Jr30mV5o1fZ7eMzur41l8EhcmpgIPdBv+q33WhNs2fEKVUPIB5j5nWZrYp2WrO86
+         UfGGszHKPJ5yYdbRLC57TflFi0LD2KPDyC3B27J3jDCJr5FJ2oh54Qvqh4Yhjk22T+xk
+         opbwMtMlp729F4Eicp066HeW5L8woINBY7uQHHUpBL1eY4sdEZeS/ImdWD9n6H+2H/nM
+         204OfFqY4OPRohx8Qsa8vp7P3/RB/yh4r70xZVHCLiO8io1JxvKJUHQyyd9JjS7FwAeo
+         bEjEM7cqZQDkTjuuj0QFlHdGF4ajthX4RF2zn3M0uXbkixzvAdAtgoOQd+1/RMHrloy9
+         r36A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=U/4uwHbN3kTeOBlqC9MtcT8Zh6UZytYx1qP79LPgSd4=;
-        b=5ZsX7VBfzcdP4NNmXcALKnqgrDNpkTHiJEbOOCwtiVypMtg/T3Kfnv3mstnTJ6WVMk
-         wqWbcib565S61hLpCq4z75aESIAxrVUZGezBOmJLgVIMDKiWgfKB/ULhNfxlgeSaZnyx
-         BnAWDV0mpPoPmx6Ul1zpxSdvpc9DT2OGGKUnci/82jmOMH/MJifl3WrkyplciM8ZfSTS
-         pxshv3VvYoO1on0MXUOgDG0wEAV6+XlTMRN0DzgRJ2UijCLVa3B0fvXIlZG1nzJHS6iP
-         zefPZo4jn7AODc2umtnShWegWJot94RC+h04c6B1L7A5JW4R3tdxuP6ZhUNDjlLMy1Pv
-         fftw==
-X-Gm-Message-State: AOAM533G97UCgtnOcht2cZ5zR30I4V/62aYYbCe7NiSRz9SVv68onDnN
-        7PzvW31tDdpOlkYgDkPw9Fw=
-X-Google-Smtp-Source: ABdhPJzi3J/9s2Bj4RLOaibco+6hWCvjhIAHxvfi6zd/54MSyh/912AMfWa6u4p7Qpatl1i5Wzw1sQ==
-X-Received: by 2002:a50:fc10:0:b0:42d:cbd2:4477 with SMTP id i16-20020a50fc10000000b0042dcbd24477mr18330933edr.363.1654073493766;
-        Wed, 01 Jun 2022 01:51:33 -0700 (PDT)
+        bh=wtRkBI0Hmgo17iTt9HbMbkovhjGDzKXn4k4Ag8EmbDs=;
+        b=72SoNtOMLNJUXG5GZlN3c6DGZF/YJH2KCF2XXekT4oyJKZbFUEzMaBvOqBqx+aTUMA
+         aeuMll9CEv71Us2EdTsFfmJezFiw3ircEsKAhZgjijo7ksGb/BkUUrnLSchQlRq8wCLX
+         okpK+LxWDR0MSrSowQL9RTXzX6ZD9+KfpyHwxxSfU9gMjYLzp+D5+w3RP+v716Zldi2g
+         wmFapNX0lTSPsS2pLf1Qf5N5zkOKDPIOyNceH2YqksI961CyT2LhPBXHLavu9HEhkyM2
+         oGZK7ZVGY5jmJanSL/pLDSZZHA79LFQfJx+NuS+s7eeyJFQteg+spmtzo0358V/qiTDF
+         RSmQ==
+X-Gm-Message-State: AOAM531/1PrsvsmqEkgDBSqh1QudErGkFLvSklTv2S4/pIdo5quH+3Cl
+        BTjShS7g9xqJWzfta2jw1Qs=
+X-Google-Smtp-Source: ABdhPJzw4+VssDVUfhNUnSXMWr3ktT/G2G5DrywiGpRcQRiNV7zxmOhjBFlm4Dremch2DVHG/302TQ==
+X-Received: by 2002:a05:6000:1812:b0:210:2eb1:4606 with SMTP id m18-20020a056000181200b002102eb14606mr14551109wrh.593.1654074287103;
+        Wed, 01 Jun 2022 02:04:47 -0700 (PDT)
 Received: from felia.fritz.box (200116b82620c00028af88788fa7d286.dip.versatel-1u1.de. [2001:16b8:2620:c000:28af:8878:8fa7:d286])
-        by smtp.gmail.com with ESMTPSA id fg16-20020a1709069c5000b006fe8d8c54a7sm447918ejc.87.2022.06.01.01.51.33
+        by smtp.gmail.com with ESMTPSA id i23-20020a1c5417000000b00394708a3d7dsm4528458wmb.15.2022.06.01.02.04.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jun 2022 01:51:33 -0700 (PDT)
+        Wed, 01 Jun 2022 02:04:46 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Anup Patel <anup@brainfault.org>,
-        Atish Patra <atishp@atishpatra.org>, kvm@vger.kernel.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org
+To:     Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: Limit KVM RISC-V entry to existing selftests
-Date:   Wed,  1 Jun 2022 10:51:22 +0200
-Message-Id: <20220601085122.28176-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: update file entries after arm multi-platform rework
+Date:   Wed,  1 Jun 2022 11:04:29 +0200
+Message-Id: <20220601090429.4697-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit fed9b26b2501 ("MAINTAINERS: Update KVM RISC-V entry to cover
-selftests support") optimistically adds a file entry for
-tools/testing/selftests/kvm/riscv/, but this directory does not exist.
+In the work of Arnd's arm multi-platform support, various files in arch/arm
+are moved:
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference. The script is very useful to keep MAINTAINERS up to date
-and MAINTAINERS can be kept in a state where the script emits no warning.
+  Files in arch/arm/mach-ep93xx/include/mach/ are made local:
+    arch/arm/{mach-ep93xx/include/mach/uncompress.h => boot/compressed/misc-ep93xx.h}
+    arch/arm/mach-ep93xx/{include/mach => }/ep93xx-regs.h
+    arch/arm/mach-ep93xx/{include/mach => }/mach/irqs.h
 
-So, just drop the non-matching file entry rather than starting to collect
-exceptions of entries that may match in some close or distant future.
+  Files in arch/arm/mach-vexpress/ are moved to mach-versatile.
+
+  Files in arch/arm/plat-omap/ are split into arch/arm/mach-omap{1,2}/.
+
+  Files in arch/arm/mach-pxa/include/mach/ are made local.
+
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about some
+broken references.
+
+Correct all those references accordingly after this refactoring.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Anup, please consider to pick this minor clean-up patch.
+Arnd, please pick this minor non-urgent clean-up patch.
 
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+ MAINTAINERS | 24 ++++++++----------------
+ 1 file changed, 8 insertions(+), 16 deletions(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 36eab5ae237d..a8eee9d2aea5 100644
+index a8eee9d2aea5..1d0249e2acfc 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -10863,7 +10863,6 @@ F:	arch/riscv/include/asm/kvm*
- F:	arch/riscv/include/uapi/asm/kvm*
- F:	arch/riscv/kvm/
- F:	tools/testing/selftests/kvm/*/riscv/
--F:	tools/testing/selftests/kvm/riscv/
+@@ -1952,8 +1952,8 @@ M:	Hartley Sweeten <hsweeten@visionengravers.com>
+ M:	Alexander Sverdlin <alexander.sverdlin@gmail.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
++F:	arch/arm/boot/compressed/misc-ep93xx.h
+ F:	arch/arm/mach-ep93xx/
+-F:	arch/arm/mach-ep93xx/include/mach/
  
- KERNEL VIRTUAL MACHINE for s390 (KVM/s390)
- M:	Christian Borntraeger <borntraeger@linux.ibm.com>
+ ARM/CLKDEV SUPPORT
+ M:	Russell King <linux@armlinux.org.uk>
+@@ -2114,8 +2114,7 @@ M:	Philipp Zabel <philipp.zabel@gmail.com>
+ M:	Paul Parsons <lost.distance@yahoo.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+-F:	arch/arm/mach-pxa/hx4700.c
+-F:	arch/arm/mach-pxa/include/mach/hx4700.h
++F:	arch/arm/mach-pxa/hx4700.[ch]
+ F:	sound/soc/pxa/hx4700.c
+ 
+ ARM/HISILICON SOC SUPPORT
+@@ -2508,14 +2507,11 @@ M:	Marek Vasut <marek.vasut@gmail.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+ W:	http://hackndev.com
+-F:	arch/arm/mach-pxa/include/mach/palmld.h
+-F:	arch/arm/mach-pxa/include/mach/palmtc.h
+-F:	arch/arm/mach-pxa/include/mach/palmtx.h
+-F:	arch/arm/mach-pxa/palmld.c
++F:	arch/arm/mach-pxa/palmld.*
+ F:	arch/arm/mach-pxa/palmt5.*
+-F:	arch/arm/mach-pxa/palmtc.c
++F:	arch/arm/mach-pxa/palmtc.*
+ F:	arch/arm/mach-pxa/palmte2.*
+-F:	arch/arm/mach-pxa/palmtx.c
++F:	arch/arm/mach-pxa/palmtx.*
+ 
+ ARM/PALMZ72 SUPPORT
+ M:	Sergey Lapin <slapin@ossfans.org>
+@@ -2968,7 +2964,7 @@ S:	Maintained
+ F:	*/*/*/vexpress*
+ F:	*/*/vexpress*
+ F:	arch/arm/boot/dts/vexpress*
+-F:	arch/arm/mach-vexpress/
++F:	arch/arm/mach-versatile/
+ F:	arch/arm64/boot/dts/arm/
+ F:	drivers/clk/versatile/clk-vexpress-osc.c
+ F:	drivers/clocksource/timer-versatile.c
+@@ -2985,8 +2981,7 @@ ARM/VOIPAC PXA270 SUPPORT
+ M:	Marek Vasut <marek.vasut@gmail.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+-F:	arch/arm/mach-pxa/include/mach/vpac270.h
+-F:	arch/arm/mach-pxa/vpac270.c
++F:	arch/arm/mach-pxa/vpac270*
+ 
+ ARM/VT8500 ARM ARCHITECTURE
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+@@ -3009,8 +3004,7 @@ ARM/ZIPIT Z2 SUPPORT
+ M:	Marek Vasut <marek.vasut@gmail.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+-F:	arch/arm/mach-pxa/include/mach/z2.h
+-F:	arch/arm/mach-pxa/z2.c
++F:	arch/arm/mach-pxa/z2.[ch]
+ 
+ ARM/ZYNQ ARCHITECTURE
+ M:	Michal Simek <michal.simek@xilinx.com>
+@@ -14554,7 +14548,6 @@ Q:	http://patchwork.kernel.org/project/linux-omap/list/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git
+ F:	arch/arm/configs/omap1_defconfig
+ F:	arch/arm/mach-omap1/
+-F:	arch/arm/plat-omap/
+ F:	drivers/i2c/busses/i2c-omap.c
+ F:	include/linux/platform_data/ams-delta-fiq.h
+ F:	include/linux/platform_data/i2c-omap.h
+@@ -14569,7 +14562,6 @@ Q:	http://patchwork.kernel.org/project/linux-omap/list/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git
+ F:	arch/arm/configs/omap2plus_defconfig
+ F:	arch/arm/mach-omap2/
+-F:	arch/arm/plat-omap/
+ F:	drivers/bus/ti-sysc.c
+ F:	drivers/i2c/busses/i2c-omap.c
+ F:	drivers/irqchip/irq-omap-intc.c
 -- 
 2.17.1
 
