@@ -2,96 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD69FC433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 10:51:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE7AC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 11:51:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345991AbiFAKvA (ORCPT
+        id S1351381AbiFALvm (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Jun 2022 06:51:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34664 "EHLO
+        Wed, 1 Jun 2022 07:51:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236563AbiFAKu7 (ORCPT
+        with ESMTP id S231983AbiFALvh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Jun 2022 06:50:59 -0400
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B65D2640B;
-        Wed,  1 Jun 2022 03:50:58 -0700 (PDT)
-Received: by mail-yb1-xb36.google.com with SMTP id z186so2197264ybz.3;
-        Wed, 01 Jun 2022 03:50:58 -0700 (PDT)
+        Wed, 1 Jun 2022 07:51:37 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A175B737AC;
+        Wed,  1 Jun 2022 04:51:34 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id me5so2692801ejb.2;
+        Wed, 01 Jun 2022 04:51:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=fIMlY+QoAuZ+nDSyG0fbX2WbHP3uq76m2tMk5hKhLWQ=;
-        b=pUfGZFEeC+FWcpciJw/HZD5Y1YnlA+xI+24jgJWkRGfE/3ufQqRkE+QG+sg7Yvnvia
-         WFZcAU2lpg3x7GHxwhBKg9elSgHLYcaw8eOy7crChf3Zf8lY/wo5oGwMcumipKNVRS4H
-         dYw/ELUE/LAVaRaSfiTk7J9tq22IScYPrRPgEGjR6en1b8Tq1SuJ3FdrdxyW3MI0JTsO
-         /+pe4zYeFDaSyHdL1pKVv8DpmMFU+r1HRVcNHHAQACriCEzh/VwC6vreesq4zuJcvDyb
-         u6NOf84uwsitWcZyYpw3JSSeVpugdLZD/m9JuyPFbC6dtBFqSxdWxkneKcZC0dQph2Gb
-         X7IA==
+        h=from:to:cc:subject:date:message-id;
+        bh=5Sf0h7Bia9lnN+oCGwH1nTYxUI7tju/WCO7FgYY7WtA=;
+        b=F9OCHUYrm8F3KCIynre/u87EXofbbUJjRVxGaQEffNcIYtDndY2zJR+AMifZH1XdVT
+         2fBbbfRsgMhk/caMTuo+MYWdUcgUy1h94FB5zBU/Dr5IWTwyb7F7Utkr2TICnbRuQiAt
+         D8acvbH58mKCZVc1J5beW3RNP9XuY07BWQyZbV06NnX69/Dc0YvPmQh6BhdI8hkisdrV
+         JzipDKV3eDCeGfYg2rB5QA5JL/6Vm3Qy5tB/JwC7bxPSbhV1kZYUBjAAe5jsWGtHdEVd
+         +ZPjuUTKtMpMePfnDHpBqm1QqsFi46O2g4cpZrAwfyYg89xecu8iAwwT4VDRXa3t34hs
+         ZMrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=fIMlY+QoAuZ+nDSyG0fbX2WbHP3uq76m2tMk5hKhLWQ=;
-        b=VmgHoAPU0mV2feVzdCxP8BKlxKF6IX9WEohz2uU5eY2C/3cSxv5iBPJk1VACm+nrrX
-         NgvJGtusMBGccTWGyKy/ncqmJXM+bSMAh9cxISavXQSvdYub1QGy958Qmfjdi+gwQHDY
-         InZcTi/D0rpMr90ctDQ9Zbz8TOLncsCBthlLBI9pSsNiv03xObMk9hJohQ/LMMaM/W+X
-         5f0qR9GsoFlldSN+5oxxRfBMBH4SCZ+3shkaTPXVgfLu0LinFVlkHEBDKZZa9TQ6T2Fi
-         cekhhoO1Z4XrcgTGNTYYXEklHV6QMHjyBt+eSDIf9hxA64r9tscpBv83rLdySRpX3Kqv
-         MKhg==
-X-Gm-Message-State: AOAM5337u/dvE0QWZBRYPuoIAtLqADJVBj+SyBanzLzTs9rtX47FOFx2
-        6xlT3R+4Fqfa4tYzPZOn4HO7mXGxbYIbTGpseTENx7qOp458Lg==
-X-Google-Smtp-Source: ABdhPJyxQ1AAjbJ94OpwPdV1j+wlWRSxUxVrz6TB9cVkfpM6nqA7QOdTAyHNnYuAzgphhvebBLF49a1lt0FbnJawG3w=
-X-Received: by 2002:a25:4705:0:b0:65d:43f8:5652 with SMTP id
- u5-20020a254705000000b0065d43f85652mr7100942yba.389.1654080657937; Wed, 01
- Jun 2022 03:50:57 -0700 (PDT)
-MIME-Version: 1.0
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=5Sf0h7Bia9lnN+oCGwH1nTYxUI7tju/WCO7FgYY7WtA=;
+        b=duJszSTVe368hYqj1B+FuoCjknarFdZ6dysP4K90X996hcBG5Q8z+LJDtOvjCcrv+Q
+         zBDSED/mxuyw5Tavzh39VKmUPcpYmsAdoVnQjT9UiEjT9UsOq0My28tv406WO62E7QCB
+         22Bmzf+/5AoSoc8dyTAFeXszbKjRvhi3XxBbUOpLsdofC92qeJcyQdhzzI91bAAm9JkP
+         B1Ye6WzXEENtOo/vGIZl9sIaQOFY5rOrVHjTq7Iz2YamelJnQjI/HzSOZADkC+5cg4uj
+         5Py88DGj37ksJIKZcg846vucDFAEUYnLw2iZwO3/VB/CSCdchxxTWikZK7P9V0u39gT6
+         25iQ==
+X-Gm-Message-State: AOAM532MZoxGDOew09w3qp3gzJ7H1UHE4uaGeeEVqSUzZ3tDYnqCAIvA
+        UKWlKCrdulZaB6HJN/sVPQY=
+X-Google-Smtp-Source: ABdhPJzKKgbTzWxfv8Vv6APAutBncHQ1tS1uL4fFMHnQALj6o1qRuhucNOOifGR86lJqaSUiWhha+A==
+X-Received: by 2002:a17:907:7284:b0:6ff:16b8:3073 with SMTP id dt4-20020a170907728400b006ff16b83073mr30728569ejc.196.1654084292852;
+        Wed, 01 Jun 2022 04:51:32 -0700 (PDT)
+Received: from felia.fritz.box (200116b82620c00028af88788fa7d286.dip.versatel-1u1.de. [2001:16b8:2620:c000:28af:8878:8fa7:d286])
+        by smtp.gmail.com with ESMTPSA id v4-20020aa7dbc4000000b0042de38b8c49sm864889edt.34.2022.06.01.04.51.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Jun 2022 04:51:32 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Wed, 1 Jun 2022 12:50:47 +0200
-Message-ID: <CAKXUXMwyf5jbfKCh0k+G=begmqXQo-q-qGfAVmecoKUiSnOYWA@mail.gmail.com>
-Subject: Reference to non-existing config X86_SMAP in config UBSAN_UNREACHABLE
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Borislav Petkov <bp@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To:     Peter Jones <pjones@redhat.com>, Ard Biesheuvel <ardb@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] efi: x86: Fix config name for setting the NX-compatibility flag in the PE header
+Date:   Wed,  1 Jun 2022 13:50:43 +0200
+Message-Id: <20220601115043.7678-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dear Josh,
+Commit 21b68da7bf4a ("efi: x86: Set the NX-compatibility flag in the PE
+header") intends to set the compatibility flag, i.e.,
+IMAGE_DLL_CHARACTERISTICS_NX_COMPAT, but this ifdef is actually dead as the
+CONFIG_DXE_MEM_ATTRIBUTES does not exist.
 
-Commit dbae0a934f09 ("x86/cpu: Remove CONFIG_X86_SMAP and "nosmap"")
-from Borislav removes the config X86_SMAP and makes smap on x86
-default.
+The config is actually called EFI_DXE_MEM_ATTRIBUTES. Adjust the ifdef to
+use the intended config name.
 
-Josh, your commit 03f16cd020eb ("objtool: Add CONFIG_OBJTOOL") makes
-config UBSAN_UNREACHABLE in lib/Kconfig.ubsan refer to this
-non-existing config X86_SMAP.
+The issue was identified with ./scripts/checkkconfigsymbols.py.
 
-See this hunk in lib/Kconfig.ubsan:
+Fixes: 21b68da7bf4a ("efi: x86: Set the NX-compatibility flag in the PE header")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Peter, please review and ack.
+Ard, please pick this fix-up patch.
 
-diff --git a/lib/Kconfig.ubsan b/lib/Kconfig.ubsan
-index f3c57ed51838..c4fe15d38b60 100644
---- a/lib/Kconfig.ubsan
-+++ b/lib/Kconfig.ubsan
-@@ -94,7 +94,7 @@ config UBSAN_UNREACHABLE
-        bool "Perform checking for unreachable code"
-        # objtool already handles unreachable checking and gets angry about
-        # seeing UBSan instrumentation located in unreachable places.
--       depends on !STACK_VALIDATION
-+       depends on !(OBJTOOL && (STACK_VALIDATION || UNWINDER_ORC || X86_SMAP))
-        depends on $(cc-option,-fsanitize=unreachable)
-        help
-          This option enables -fsanitize=unreachable which checks for control
+ arch/x86/boot/header.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I think X86_SMAP can just be dropped in this line, but I leave it up
-to you to change, as I am not completely certain on the needed change
-and if that just breaks the config dependencies for stack validation.
+diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
+index 0352e4589efa..f912d7770130 100644
+--- a/arch/x86/boot/header.S
++++ b/arch/x86/boot/header.S
+@@ -163,7 +163,7 @@ extra_header_fields:
+ 	.long	0x200				# SizeOfHeaders
+ 	.long	0				# CheckSum
+ 	.word	IMAGE_SUBSYSTEM_EFI_APPLICATION	# Subsystem (EFI application)
+-#ifdef CONFIG_DXE_MEM_ATTRIBUTES
++#ifdef CONFIG_EFI_DXE_MEM_ATTRIBUTES
+ 	.word	IMAGE_DLL_CHARACTERISTICS_NX_COMPAT	# DllCharacteristics
+ #else
+ 	.word	0				# DllCharacteristics
+-- 
+2.17.1
 
-By the way, this issue was identified with the script
-./scripts/checkkconfigsymbols.py
-
-Best regards,
-
-Lukas
