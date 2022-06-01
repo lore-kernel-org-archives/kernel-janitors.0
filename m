@@ -2,63 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E77FFCCA473
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 15:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3542EC43334
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 16:40:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355606AbiFAPeo (ORCPT
+        id S1354160AbiFAQkO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Jun 2022 11:34:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57790 "EHLO
+        Wed, 1 Jun 2022 12:40:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354131AbiFAPen (ORCPT
+        with ESMTP id S242316AbiFAQkN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Jun 2022 11:34:43 -0400
-Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ED4FA309A
-        for <kernel-janitors@vger.kernel.org>; Wed,  1 Jun 2022 08:34:42 -0700 (PDT)
-Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
+        Wed, 1 Jun 2022 12:40:13 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A43E86FD03;
+        Wed,  1 Jun 2022 09:40:12 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id E98C4723;
-        Wed,  1 Jun 2022 15:34:40 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E98C4723
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-        t=1654097681; bh=AMNnxu+yFDxeOhiDrKZjLH3xOBEGLJL3HDWk2TyQV8w=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=iLnHdmITIUmdrHQkV3R9TVwF4RLXbY6OE/G4kOBO10emFIMPGwYGoPet/nbR8SuSQ
-         mUZOa7vEynqCS/tuKtXIRL1XRPoqnOiIuqESVJhrGuNXnkrCKLWb8A1ycmmBdjm2cF
-         CkvKeDn1I9Er7LpodUphZ4EW6RCMMzyuvd1VLGfVJOHnY+YMXjT/1vvgLHGNSk5K/g
-         p5VqklZ0Nx7Bt5pOK9zZ6k5S1C7b7TYfBghhOwingSmOQwDYr8xw8HCQVWEmx67lxh
-         ALI6U/7WNh3R3yGE2W6KKWi9x77tkuvWsmzXDXAvfjQJhTJ0wkIMeIYr/z2UZ6Ebdl
-         hovbNSXXztpWQ==
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Nelson Penn <nelsonapenn@protonmail.com>
-Cc:     linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nelson Penn <nelsonapenn@protonmail.com>
-Subject: Re: [PATCH] documentation: Format button_dev as a pointer.
-In-Reply-To: <20220522194953.12097-1-nelsonapenn@protonmail.com>
-References: <20220522194953.12097-1-nelsonapenn@protonmail.com>
-Date:   Wed, 01 Jun 2022 09:34:50 -0600
-Message-ID: <87wne04cth.fsf@meer.lwn.net>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 61273B81747;
+        Wed,  1 Jun 2022 16:40:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2E35C385A5;
+        Wed,  1 Jun 2022 16:40:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654101610;
+        bh=ngWabIAgFRbmBczx0Ejy4RsHzpCNzNviJplGolvHT0c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HnAjj9VXETvo30txPzcJ4+0j/fYt5VhwG+7ZqNtCyTOYs96QDdelxNJfI0hEljfEv
+         R2hFfUZnSF/qTCxuK8IAH1R4Y2ou8npXxQFY5GAsHBiSmy0YfPsXql4WiShxYczI+a
+         kAC7BDnKZorjSdiOQBTMPFTJpe5FFTabQ9uezl3fLHa09bbVSD7VQcPyektYArxfde
+         gdd4rbP9IjHRaKdMSa2/xnpndYIIuwBLbVK6dhei9pL+F71VBEkihqEe4b376deyvC
+         nK6lb4m4/2MuCob1V2JbpNvaSkMEmx3kZrKmp41zj54c8GhlwnEs9rQdEgrH+/H/aK
+         K68jEw3Q9QJ7g==
+Date:   Wed, 1 Jun 2022 09:40:06 -0700
+From:   Josh Poimboeuf <jpoimboe@kernel.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>, Borislav Petkov <bp@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Reference to non-existing config X86_SMAP in config
+ UBSAN_UNREACHABLE
+Message-ID: <20220601164006.2f34nr6a7wgx25ja@treble>
+References: <CAKXUXMwyf5jbfKCh0k+G=begmqXQo-q-qGfAVmecoKUiSnOYWA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAKXUXMwyf5jbfKCh0k+G=begmqXQo-q-qGfAVmecoKUiSnOYWA@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Nelson Penn <nelsonapenn@protonmail.com> writes:
+On Wed, Jun 01, 2022 at 12:50:47PM +0200, Lukas Bulwahn wrote:
+> Dear Josh,
+> 
+> Commit dbae0a934f09 ("x86/cpu: Remove CONFIG_X86_SMAP and "nosmap"")
+> from Borislav removes the config X86_SMAP and makes smap on x86
+> default.
+> 
+> Josh, your commit 03f16cd020eb ("objtool: Add CONFIG_OBJTOOL") makes
+> config UBSAN_UNREACHABLE in lib/Kconfig.ubsan refer to this
+> non-existing config X86_SMAP.
+> 
+> See this hunk in lib/Kconfig.ubsan:
+> 
+> diff --git a/lib/Kconfig.ubsan b/lib/Kconfig.ubsan
+> index f3c57ed51838..c4fe15d38b60 100644
+> --- a/lib/Kconfig.ubsan
+> +++ b/lib/Kconfig.ubsan
+> @@ -94,7 +94,7 @@ config UBSAN_UNREACHABLE
+>         bool "Perform checking for unreachable code"
+>         # objtool already handles unreachable checking and gets angry about
+>         # seeing UBSan instrumentation located in unreachable places.
+> -       depends on !STACK_VALIDATION
+> +       depends on !(OBJTOOL && (STACK_VALIDATION || UNWINDER_ORC || X86_SMAP))
+>         depends on $(cc-option,-fsanitize=unreachable)
+>         help
+>           This option enables -fsanitize=unreachable which checks for control
+> 
+> I think X86_SMAP can just be dropped in this line, but I leave it up
+> to you to change, as I am not completely certain on the needed change
+> and if that just breaks the config dependencies for stack validation.
+> 
+> By the way, this issue was identified with the script
+> ./scripts/checkkconfigsymbols.py
 
-> The docs on creating an input device driver have an example in which
-> button_dev is a pointer to an input_dev struct. However, in two code
-> snippets below, button_dev is used as if it is not a pointer. Make these
-> occurrences of button_dev reflect that it is a pointer.
->
-> Signed-off-by: Nelson Penn <nelsonapenn@protonmail.com>
-> ---
->  Documentation/input/input-programming.rst | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+Hi Lukas,
 
-Applied, thanks.
+Thanks for reporting this.  I'll post a fix shortly.
 
-jon
+-- 
+Josh
