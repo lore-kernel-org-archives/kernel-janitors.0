@@ -2,81 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB04AC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 20:42:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA5A0C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 20:51:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229642AbiFAUmi (ORCPT
+        id S229961AbiFAUvS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Jun 2022 16:42:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39122 "EHLO
+        Wed, 1 Jun 2022 16:51:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229534AbiFAUmh (ORCPT
+        with ESMTP id S231688AbiFAUuw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Jun 2022 16:42:37 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE33F1D5030;
-        Wed,  1 Jun 2022 13:23:30 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 296806167C;
-        Wed,  1 Jun 2022 19:26:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38913C385A5;
-        Wed,  1 Jun 2022 19:26:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654111579;
-        bh=kjzuy5OLcjNnr7n1+E35W4+dixKa9+A7A847BOlSHXQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=My9EOlOPXw6b1JIbY5dKxbfR4SKtNunO75fcat7yYSD2rPvReQ/OHt/WbAHOi4OiE
-         Jx7AEOsPKjE0VbDYtDvqCJr9saTAsCzjkDHFku5pQCBrvoQR0FcngJsHS89EYo1MlG
-         LYGG2hroi0tRrrLp5JAAxM2875plaZrnilWzm7piLsCi+e8IXBQ5m86+EEqVEuzgTc
-         ErfwqXxF+cIYudObD1Xqyp7W+78doqYtwqG4NXqQwnwgyIpForpKygIw6P9btdwlzd
-         qypamayShc3ATF0zx35OZfWhV+GoFZthqvSvscQMxGpIXIsI+gT3YvSiUzxy4EpDXh
-         3gkt8rNruVcjQ==
-Date:   Wed, 1 Jun 2022 12:26:18 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Leon Romanovsky <leonro@nvidia.com>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Boris Pismenny <borisp@nvidia.com>, <netdev@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Saeed Mahameed" <saeedm@nvidia.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust MELLANOX ETHERNET INNOVA DRIVERS to
- TLS support removal
-Message-ID: <20220601122618.78b93038@kernel.org>
-In-Reply-To: <YperBiCh1rkKDmSR@unreal>
-References: <20220601045738.19608-1-lukas.bulwahn@gmail.com>
-        <Ypc85O47YoNzUTr5@unreal>
-        <20220601103032.28d14fc4@kicinski-fedora-PC1C0HJN>
-        <YperBiCh1rkKDmSR@unreal>
+        Wed, 1 Jun 2022 16:50:52 -0400
+Received: from relay10.mail.gandi.net (relay10.mail.gandi.net [IPv6:2001:4b98:dc4:8::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D29C2985A8;
+        Wed,  1 Jun 2022 13:49:12 -0700 (PDT)
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id CBF68240006;
+        Wed,  1 Jun 2022 20:48:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1654116534;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=itBnDuOydygpxjCTl5U2crygqhbKNBZcw4zJX+3JOeM=;
+        b=TsBwKSbimpLK5rCjTlX94Fw0+B3J8r1te1bYddmkru5waQjZuzQkvfU3aQy2s+Ko/tLB2W
+        zzqBkehSz8OFphOsaQKIGdZUk+n35R9AiF0oU70VKsVPO+YJAF9hrmCVAaKqf0k7nNDdhN
+        iAOBI7vUcojEU0+wRg6TDr+UCd8G6krYLF4Q+tZ7SWdKbIKPXe5QThybzznRakuphWmnUA
+        t9Z1kdcK990L8irO6INMsnbtsnUAhRIQRH6OOyap/E42KyTZkmvIlnnHL+3o1QVVd7sahi
+        lTiZflofjKc0KiT3GmhNLnzkldt28HlbWbXBEt0ouK4V47kiqURU7KEGycvFQw==
+Date:   Wed, 1 Jun 2022 22:48:53 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        linux-i3c@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: rectify entries for some i3c drivers after
+ dt conversion
+Message-ID: <165411647849.792060.10768725309583825997.b4-ty@bootlin.com>
+References: <20220601074212.19984-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220601074212.19984-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 1 Jun 2022 21:08:06 +0300 Leon Romanovsky wrote:
-> On Wed, Jun 01, 2022 at 10:30:39AM -0700, Jakub Kicinski wrote:
-> > > Thanks, we will submit it once net-next will be open.  
-> > 
-> > It should go via net FWIW.  
+On Wed, 1 Jun 2022 09:42:12 +0200, Lukas Bulwahn wrote:
+> Commit 4bd69ecfa672 ("dt-bindings: i3c: Convert cdns,i3c-master to DT
+> schema") and commit 6742ca620bd9 ("dt-bindings: i3c: Convert
+> snps,dw-i3c-master to DT schema") convert some i3c dt-bindings to yaml,
+> but miss to adjust its reference in MAINTAINERS.
 > 
-> I'm slightly confused here.
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
+> broken references.
 > 
-> According to net policy, the patches that goes there should have Fixes
-> line, but Fixes lines are added for bugs [1].
-> 
-> This forgotten line in MAINTAINERS doesn't cause to any harm to
-> users/developers.
+> [...]
 
-Fair, maybe I worded it too strongly. I should have said something like
-"FWIW it's okay for MAINTAINERS updates to go via net".
+Applied, thanks!
 
-Documentation/ patches and MAINTAINERS are special, they can go into
-net without a Fixes tag so that changes to get_maintainer output and
-https://www.kernel.org/doc/html/latest/ propagate quickly.
+[1/1] MAINTAINERS: rectify entries for some i3c drivers after dt conversion
+      commit: 66ed42caf286a7aaeb6f1db4b2995dd9416226c2
 
-> So when should I put Fixes line in netdev?
-> 
-> [1] https://lore.kernel.org/netdev/20211208070842.0ace6747@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com/
+Best regards,
 
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
