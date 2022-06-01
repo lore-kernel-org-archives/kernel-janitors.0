@@ -2,176 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC52EC433F5
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 09:04:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD2BC433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 10:00:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344506AbiFAJEv (ORCPT
+        id S1351370AbiFAKAV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Jun 2022 05:04:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32974 "EHLO
+        Wed, 1 Jun 2022 06:00:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244708AbiFAJEu (ORCPT
+        with ESMTP id S1351664AbiFAKAR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Jun 2022 05:04:50 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1F6B8E1BF;
-        Wed,  1 Jun 2022 02:04:48 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id k19so1383830wrd.8;
-        Wed, 01 Jun 2022 02:04:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=wtRkBI0Hmgo17iTt9HbMbkovhjGDzKXn4k4Ag8EmbDs=;
-        b=T9Jr30mV5o1fZ7eMzur41l8EhcmpgIPdBv+q33WhNs2fEKVUPIB5j5nWZrYp2WrO86
-         UfGGszHKPJ5yYdbRLC57TflFi0LD2KPDyC3B27J3jDCJr5FJ2oh54Qvqh4Yhjk22T+xk
-         opbwMtMlp729F4Eicp066HeW5L8woINBY7uQHHUpBL1eY4sdEZeS/ImdWD9n6H+2H/nM
-         204OfFqY4OPRohx8Qsa8vp7P3/RB/yh4r70xZVHCLiO8io1JxvKJUHQyyd9JjS7FwAeo
-         bEjEM7cqZQDkTjuuj0QFlHdGF4ajthX4RF2zn3M0uXbkixzvAdAtgoOQd+1/RMHrloy9
-         r36A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wtRkBI0Hmgo17iTt9HbMbkovhjGDzKXn4k4Ag8EmbDs=;
-        b=72SoNtOMLNJUXG5GZlN3c6DGZF/YJH2KCF2XXekT4oyJKZbFUEzMaBvOqBqx+aTUMA
-         aeuMll9CEv71Us2EdTsFfmJezFiw3ircEsKAhZgjijo7ksGb/BkUUrnLSchQlRq8wCLX
-         okpK+LxWDR0MSrSowQL9RTXzX6ZD9+KfpyHwxxSfU9gMjYLzp+D5+w3RP+v716Zldi2g
-         wmFapNX0lTSPsS2pLf1Qf5N5zkOKDPIOyNceH2YqksI961CyT2LhPBXHLavu9HEhkyM2
-         oGZK7ZVGY5jmJanSL/pLDSZZHA79LFQfJx+NuS+s7eeyJFQteg+spmtzo0358V/qiTDF
-         RSmQ==
-X-Gm-Message-State: AOAM531/1PrsvsmqEkgDBSqh1QudErGkFLvSklTv2S4/pIdo5quH+3Cl
-        BTjShS7g9xqJWzfta2jw1Qs=
-X-Google-Smtp-Source: ABdhPJzw4+VssDVUfhNUnSXMWr3ktT/G2G5DrywiGpRcQRiNV7zxmOhjBFlm4Dremch2DVHG/302TQ==
-X-Received: by 2002:a05:6000:1812:b0:210:2eb1:4606 with SMTP id m18-20020a056000181200b002102eb14606mr14551109wrh.593.1654074287103;
-        Wed, 01 Jun 2022 02:04:47 -0700 (PDT)
-Received: from felia.fritz.box (200116b82620c00028af88788fa7d286.dip.versatel-1u1.de. [2001:16b8:2620:c000:28af:8878:8fa7:d286])
-        by smtp.gmail.com with ESMTPSA id i23-20020a1c5417000000b00394708a3d7dsm4528458wmb.15.2022.06.01.02.04.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jun 2022 02:04:46 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: update file entries after arm multi-platform rework
-Date:   Wed,  1 Jun 2022 11:04:29 +0200
-Message-Id: <20220601090429.4697-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 1 Jun 2022 06:00:17 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40D21633BF;
+        Wed,  1 Jun 2022 03:00:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E522FB81879;
+        Wed,  1 Jun 2022 10:00:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 88FB5C3411D;
+        Wed,  1 Jun 2022 10:00:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654077613;
+        bh=SUNGJJJsc37BnKZCLFH/YDYDT5gfEd5kdxzwC12leT4=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=Te/VTC/JCD/soRG1TYrWBQyOGZ6KdMN7BILWsbMhGBArNMuBvGuZkEv9JpVEyr5Xa
+         M1gG6k2/I4YuSQB6LLh3qx6S3xnVL9D/yHQDu03d2Rr85MHhT985o4zMij/GxAMtEr
+         BkXSJcPizmpY33l6nQwmEddmBJ8C36bLW6ZfCoOUaxiczYNfU+x6B62qNtzNlVCzGV
+         748QAlaHYDcgg528sOWwYBCTQI7kaX25u9yswslQ/LVprBnbGp+jq8vVtMyAMCuBCb
+         4bquPX6dHl42DRVfS+hX+IUtmfJJO3ZYZM4oeU1+yUVA4teajslFS57YubR/voMuqC
+         CdK3YjYAtBRgA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 70E8BF0394E;
+        Wed,  1 Jun 2022 10:00:13 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] octeontx2-af: fix error code in is_valid_offset()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <165407761345.1365.5840991906743453184.git-patchwork-notify@kernel.org>
+Date:   Wed, 01 Jun 2022 10:00:13 +0000
+References: <YpXDrTPb8qV01JSP@kili>
+In-Reply-To: <YpXDrTPb8qV01JSP@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
+        jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, schalla@marvell.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In the work of Arnd's arm multi-platform support, various files in arch/arm
-are moved:
+Hello:
 
-  Files in arch/arm/mach-ep93xx/include/mach/ are made local:
-    arch/arm/{mach-ep93xx/include/mach/uncompress.h => boot/compressed/misc-ep93xx.h}
-    arch/arm/mach-ep93xx/{include/mach => }/ep93xx-regs.h
-    arch/arm/mach-ep93xx/{include/mach => }/mach/irqs.h
+This patch was applied to netdev/net.git (master)
+by Paolo Abeni <pabeni@redhat.com>:
 
-  Files in arch/arm/mach-vexpress/ are moved to mach-versatile.
+On Tue, 31 May 2022 10:28:45 +0300 you wrote:
+> The is_valid_offset() function returns success/true if the call to
+> validate_and_get_cpt_blkaddr() fails.
+> 
+> Fixes: ecad2ce8c48f ("octeontx2-af: cn10k: Add mailbox to configure reassembly timeout")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/net/ethernet/marvell/octeontx2/af/rvu_cpt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-  Files in arch/arm/plat-omap/ are split into arch/arm/mach-omap{1,2}/.
+Here is the summary with links:
+  - [net] octeontx2-af: fix error code in is_valid_offset()
+    https://git.kernel.org/netdev/net/c/f3d671c71109
 
-  Files in arch/arm/mach-pxa/include/mach/ are made local.
-
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about some
-broken references.
-
-Correct all those references accordingly after this refactoring.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Arnd, please pick this minor non-urgent clean-up patch.
-
- MAINTAINERS | 24 ++++++++----------------
- 1 file changed, 8 insertions(+), 16 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a8eee9d2aea5..1d0249e2acfc 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1952,8 +1952,8 @@ M:	Hartley Sweeten <hsweeten@visionengravers.com>
- M:	Alexander Sverdlin <alexander.sverdlin@gmail.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
-+F:	arch/arm/boot/compressed/misc-ep93xx.h
- F:	arch/arm/mach-ep93xx/
--F:	arch/arm/mach-ep93xx/include/mach/
- 
- ARM/CLKDEV SUPPORT
- M:	Russell King <linux@armlinux.org.uk>
-@@ -2114,8 +2114,7 @@ M:	Philipp Zabel <philipp.zabel@gmail.com>
- M:	Paul Parsons <lost.distance@yahoo.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
--F:	arch/arm/mach-pxa/hx4700.c
--F:	arch/arm/mach-pxa/include/mach/hx4700.h
-+F:	arch/arm/mach-pxa/hx4700.[ch]
- F:	sound/soc/pxa/hx4700.c
- 
- ARM/HISILICON SOC SUPPORT
-@@ -2508,14 +2507,11 @@ M:	Marek Vasut <marek.vasut@gmail.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- W:	http://hackndev.com
--F:	arch/arm/mach-pxa/include/mach/palmld.h
--F:	arch/arm/mach-pxa/include/mach/palmtc.h
--F:	arch/arm/mach-pxa/include/mach/palmtx.h
--F:	arch/arm/mach-pxa/palmld.c
-+F:	arch/arm/mach-pxa/palmld.*
- F:	arch/arm/mach-pxa/palmt5.*
--F:	arch/arm/mach-pxa/palmtc.c
-+F:	arch/arm/mach-pxa/palmtc.*
- F:	arch/arm/mach-pxa/palmte2.*
--F:	arch/arm/mach-pxa/palmtx.c
-+F:	arch/arm/mach-pxa/palmtx.*
- 
- ARM/PALMZ72 SUPPORT
- M:	Sergey Lapin <slapin@ossfans.org>
-@@ -2968,7 +2964,7 @@ S:	Maintained
- F:	*/*/*/vexpress*
- F:	*/*/vexpress*
- F:	arch/arm/boot/dts/vexpress*
--F:	arch/arm/mach-vexpress/
-+F:	arch/arm/mach-versatile/
- F:	arch/arm64/boot/dts/arm/
- F:	drivers/clk/versatile/clk-vexpress-osc.c
- F:	drivers/clocksource/timer-versatile.c
-@@ -2985,8 +2981,7 @@ ARM/VOIPAC PXA270 SUPPORT
- M:	Marek Vasut <marek.vasut@gmail.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
--F:	arch/arm/mach-pxa/include/mach/vpac270.h
--F:	arch/arm/mach-pxa/vpac270.c
-+F:	arch/arm/mach-pxa/vpac270*
- 
- ARM/VT8500 ARM ARCHITECTURE
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-@@ -3009,8 +3004,7 @@ ARM/ZIPIT Z2 SUPPORT
- M:	Marek Vasut <marek.vasut@gmail.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
--F:	arch/arm/mach-pxa/include/mach/z2.h
--F:	arch/arm/mach-pxa/z2.c
-+F:	arch/arm/mach-pxa/z2.[ch]
- 
- ARM/ZYNQ ARCHITECTURE
- M:	Michal Simek <michal.simek@xilinx.com>
-@@ -14554,7 +14548,6 @@ Q:	http://patchwork.kernel.org/project/linux-omap/list/
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git
- F:	arch/arm/configs/omap1_defconfig
- F:	arch/arm/mach-omap1/
--F:	arch/arm/plat-omap/
- F:	drivers/i2c/busses/i2c-omap.c
- F:	include/linux/platform_data/ams-delta-fiq.h
- F:	include/linux/platform_data/i2c-omap.h
-@@ -14569,7 +14562,6 @@ Q:	http://patchwork.kernel.org/project/linux-omap/list/
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git
- F:	arch/arm/configs/omap2plus_defconfig
- F:	arch/arm/mach-omap2/
--F:	arch/arm/plat-omap/
- F:	drivers/bus/ti-sysc.c
- F:	drivers/i2c/busses/i2c-omap.c
- F:	drivers/irqchip/irq-omap-intc.c
+You are awesome, thank you!
 -- 
-2.17.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
