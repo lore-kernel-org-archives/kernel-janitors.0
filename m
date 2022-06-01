@@ -2,127 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7060C433FE
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 04:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0D5C433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 04:45:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234714AbiFAESb (ORCPT
+        id S1349547AbiFAEpG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Jun 2022 00:18:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57578 "EHLO
+        Wed, 1 Jun 2022 00:45:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235163AbiFAESa (ORCPT
+        with ESMTP id S1349551AbiFAEpC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Jun 2022 00:18:30 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00DBB5931F;
-        Tue, 31 May 2022 21:18:28 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id gi33so1238007ejc.3;
-        Tue, 31 May 2022 21:18:27 -0700 (PDT)
+        Wed, 1 Jun 2022 00:45:02 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 736549E9E8;
+        Tue, 31 May 2022 21:45:01 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id r129so285405wmr.3;
+        Tue, 31 May 2022 21:45:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id;
-        bh=RSw8k1d0PMD6wj66n+1hU8B9FRDPkW1CFpjiF9rIWpo=;
-        b=TrjwgnTl3ploNX8zp6ORq5aPD3FqDvLo44Q/ZISeWjgM9LzKROEkGRYve2Aw1eG9i0
-         bSsVkwTt3Q/6UxVCLBY3LvzMdzxs7gGQBwE8zZx4/g5BcYgS1tZNun5uhrmI+J/rGAsY
-         Hpgcezyg6qs7qwlyvuf5l8c0UaJdiN9e+YItj1Z7MvD1UOVjQY1ZQbTqk5YlFvMulQai
-         cQRtbuvXCwZZTYBpJ8cpL24BqRqj2flVyj6FgcEjJdpoyam20SSW0WqWT4RXOxsOGqsi
-         gfYoTo45CiLzohoTeFnVcEzE9/YlcnSjis36EqgKLPvQmgDzXKtYGPDGg2w48IlD9OGq
-         CvRA==
+        bh=UxpRbsB4fW9Es2lqL888yJ7QXf4l6YrZ20jfoXVDxLw=;
+        b=q4b8Tjk8UpQ2TXQp9YxJBSMKTh3uotCktHoVhjGzV/CodlyiLmqmQ1pGuw00XOiq3K
+         4FpmUFoWVmEtOuQkfqcWxzRaeT8ZTzXsa9WPZ5G9iyc4ySa6oUrfRxRkl0aohhcgrbzQ
+         kgZi4ft8/ZEeGo9b4I9p6n7MXFrlPwMBoBDK3N3PlCJnj00MfpGPg5jBj0LgglYvIJnd
+         DJ6+pbP1ELdopkCtifkoXaJvl5gYwrbyCeidF9mJ3kdN/wQ2hgNFRPv9YDJMwKu4QHrA
+         LGUD2mSGjcQBr43d7E3nQzGvt4CO20TJm2K+GNj+DPE8DWbEe16LG5WYvEmCOykU7aul
+         VqIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=RSw8k1d0PMD6wj66n+1hU8B9FRDPkW1CFpjiF9rIWpo=;
-        b=1iJitOcItwMo7LD9WBwymqbAGz5/xMx/HlNnmWewgx4okfrXzXJ2p7XZrHaQ2t549h
-         /ASS/bjmB+Xvs4n+wFpw1TSA95DEm37o/FiwjZT0qBQtXARgRBUCVF4T5osABi9xPERW
-         JftddGlUx6XAca8uk5yU2vElAzSHdOMAjDMpaIgqooHxaC4OPO1q4NOiDmnyOvW6l9Tu
-         lREKYHbBNhSoWV8bG6EmQMagFlKIA04MQS3ujDFuFE355arubzZhx7QYYkQ01YnevGQd
-         WSqk5kxJjNX0LqtfjzIL24ceRdWyPTRH8uzHjErx4RBYqHw6zUUlxuSrF1crmijYTr3e
-         fGWw==
-X-Gm-Message-State: AOAM531rMUlpbNcuci1626HA4tZ+NuATUuuRXHmuudFnzXuSKab7nikT
-        H3YV2yvlWaoZTc0VcykgqiY=
-X-Google-Smtp-Source: ABdhPJwgyhU+ZXDOZckYUwEphewTltQH7fIGAK729jV57SMSjG84XZZdUm4VashgG42xtDimZYYf/A==
-X-Received: by 2002:a17:906:9749:b0:6f5:38d:d4d8 with SMTP id o9-20020a170906974900b006f5038dd4d8mr57000119ejy.405.1654057106397;
-        Tue, 31 May 2022 21:18:26 -0700 (PDT)
+        bh=UxpRbsB4fW9Es2lqL888yJ7QXf4l6YrZ20jfoXVDxLw=;
+        b=4SlTKumCDjnSgt5M9qHPEvsCjeO1OWixtr1yJSE3WwnooycUhOF+cYUgqmW6E9PUDC
+         RuirEf3/nKjXWd8jIGumFHpBdtK50hNi3T6BbVWAFE2NDqEjibI5GpFSmFGhCR3NOPyM
+         iC417+BSRBBb5tliL/iFY59RvF22noBA01R//dXcILkTVoZ2/XNGTHJQbxjye61SlUkM
+         RLQsFO2xawFyIjztt9AYG4OdDefYTdozaaSlz7dOLufZcyxNeEK3QrPuRxx23eQQliMM
+         eSdSk9NHRhWBvbcHlZ246Tiooe4vttKxsgg7KBpIl/h01cSghEdsjR65BFRux3EF+OM1
+         ketQ==
+X-Gm-Message-State: AOAM533TTQ9kKdBttGNjIuw8AeHTml7O4k+uOiPPG+mbB25FQyjh3uyO
+        qL3QcDKlIAHyCw+7Bc3OIr0=
+X-Google-Smtp-Source: ABdhPJzpHyayVSJDL7wlT5GxcWKpvoD+twBMaZRJ+1JROIQ2naE3mChhbKYDbvR++VsJb9EI8hi6fA==
+X-Received: by 2002:a05:600c:3d8e:b0:397:73e3:8c83 with SMTP id bi14-20020a05600c3d8e00b0039773e38c83mr26213646wmb.29.1654058699805;
+        Tue, 31 May 2022 21:44:59 -0700 (PDT)
 Received: from felia.fritz.box (200116b82620c00028af88788fa7d286.dip.versatel-1u1.de. [2001:16b8:2620:c000:28af:8878:8fa7:d286])
-        by smtp.gmail.com with ESMTPSA id t4-20020a056402020400b0042ab1735552sm279952edv.66.2022.05.31.21.18.24
+        by smtp.gmail.com with ESMTPSA id a5-20020adffac5000000b0021023877ac5sm390427wrs.107.2022.05.31.21.44.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 May 2022 21:18:25 -0700 (PDT)
+        Tue, 31 May 2022 21:44:59 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Andre Przywara <andre.przywara@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Liviu Dudau <liviu.dudau@arm.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        James Wang <james.qian.wang@arm.com>,
-        Mihail Atanassov <mihail.atanassov@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, malidp@foss.arm.com,
-        kernel-janitors@vger.kernel.org,
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: rectify entries for ARM DRM DRIVERS after dt conversion
-Date:   Wed,  1 Jun 2022 06:17:46 +0200
-Message-Id: <20220601041746.22986-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] media: MAINTAINERS: rectify entry for DONGWOON DW9807 LENS VOICE COIL DRIVER
+Date:   Wed,  1 Jun 2022 06:44:45 +0200
+Message-Id: <20220601044445.11943-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The three commits:
+Commit a1f4626b282d ("media: dt-bindings: Convert Dongwoon dw9807-vcm
+bindings to json-schema") converts dongwoon,dw9807-vcm.txt to yaml, but
+misses to adjust its reference in MAINTAINERS.
 
-  36fd2a65bcaf ("dt-bindings: display: convert Arm HDLCD to DT schema")
-  0f6983509ea1 ("dt-bindings: display: convert Arm Komeda to DT schema")
-  2c8b082a3ab1 ("dt-bindings: display: convert Arm Mali-DP to DT schema")
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
-convert the arm display dt-bindings, arm,*.txt to arm,*.yaml, but miss to
-adjust its reference in MAINTAINERS.
-
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
-broken references.
-
-Repair these file references in ARM HDLCD DRM DRIVER, ARM KOMEDA DRM-KMS
-DRIVER and ARM MALI-DP DRM DRIVER.
+Repair this file reference in DONGWOON DW9807 LENS VOICE COIL DRIVER.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Andre, please ack.
-Rob, Krzysztof, please pick this minor non-urgent clean-up patch in
-your -next dt tree.
+Mauro, please pick this minor non-urgent clean-up patch for media-next.
 
- MAINTAINERS | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index ae685aaf8850..58e751b9346e 100644
+index e0f5895feb6b..88fdf39e6bb4 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -1510,7 +1510,7 @@ F:	drivers/clocksource/arm_arch_timer.c
- ARM HDLCD DRM DRIVER
- M:	Liviu Dudau <liviu.dudau@arm.com>
- S:	Supported
--F:	Documentation/devicetree/bindings/display/arm,hdlcd.txt
-+F:	Documentation/devicetree/bindings/display/arm,hdlcd.yaml
- F:	drivers/gpu/drm/arm/hdlcd_*
+@@ -6078,7 +6078,7 @@ M:	Sakari Ailus <sakari.ailus@linux.intel.com>
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ T:	git git://linuxtv.org/media_tree.git
+-F:	Documentation/devicetree/bindings/media/i2c/dongwoon,dw9807-vcm.txt
++F:	Documentation/devicetree/bindings/media/i2c/dongwoon,dw9807-vcm.yaml
+ F:	drivers/media/i2c/dw9807-vcm.c
  
- ARM INTEGRATOR, VERSATILE AND REALVIEW SUPPORT
-@@ -1545,7 +1545,7 @@ M:	Mihail Atanassov <mihail.atanassov@arm.com>
- L:	Mali DP Maintainers <malidp@foss.arm.com>
- S:	Supported
- T:	git git://anongit.freedesktop.org/drm/drm-misc
--F:	Documentation/devicetree/bindings/display/arm,komeda.txt
-+F:	Documentation/devicetree/bindings/display/arm,komeda.yaml
- F:	Documentation/gpu/komeda-kms.rst
- F:	drivers/gpu/drm/arm/display/include/
- F:	drivers/gpu/drm/arm/display/komeda/
-@@ -1567,7 +1567,7 @@ M:	Brian Starkey <brian.starkey@arm.com>
- L:	Mali DP Maintainers <malidp@foss.arm.com>
- S:	Supported
- T:	git git://anongit.freedesktop.org/drm/drm-misc
--F:	Documentation/devicetree/bindings/display/arm,malidp.txt
-+F:	Documentation/devicetree/bindings/display/arm,malidp.yaml
- F:	Documentation/gpu/afbc.rst
- F:	drivers/gpu/drm/arm/
- 
+ DOUBLETALK DRIVER
 -- 
 2.17.1
 
