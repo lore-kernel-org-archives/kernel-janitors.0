@@ -2,108 +2,113 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F196FC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 07:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F2AC433F5
+	for <kernel-janitors@archiver.kernel.org>; Wed,  1 Jun 2022 07:56:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346393AbiFAHmh (ORCPT
+        id S1347965AbiFAH4g (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 1 Jun 2022 03:42:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37562 "EHLO
+        Wed, 1 Jun 2022 03:56:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346125AbiFAHme (ORCPT
+        with ESMTP id S1347240AbiFAH4e (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 1 Jun 2022 03:42:34 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72AFD23BF3;
-        Wed,  1 Jun 2022 00:42:31 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id m32-20020a05600c3b2000b0039756bb41f2so556770wms.3;
-        Wed, 01 Jun 2022 00:42:31 -0700 (PDT)
+        Wed, 1 Jun 2022 03:56:34 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BAB093451;
+        Wed,  1 Jun 2022 00:56:30 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id u3so1163751wrg.3;
+        Wed, 01 Jun 2022 00:56:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=grT2FadLkZhaPhNWlxLPz+bbGoKf4X6gH2fwHZzC5Ic=;
-        b=NWF07lD0qvP5uxnFwih1JU76Y1m7R4fAY3/kx+7nYtTziG+sPDXwZmmHMbqh7ehIDc
-         lk0vGkxu3P94kCWWYPm/6atvt95KupXtMNDeUk1UcPR0BJKuxpt7GSGTRR7+gxFIJwvj
-         +QxmwxOmO0NkpRTsLhXvW4W/lE0jJfCtwPmHqK7jweJSUIKWtVD9eeArGUZcjnYVmqz3
-         6DjwKVlfH6qEaGC0MqpFDZ7AJ/05m9E1ICVO09s1N8Mr6OQ/29VIXc2r45KMvhEpO5H1
-         jdhlT+rWmv3ZkITNvCd3BYE8sFe1p9ryI7mPUMJfnfx/ULi9msTzAXAmzBU5zKYPnsdo
-         L+VA==
+        h=from:to:cc:subject:date:message-id;
+        bh=Ckm/CNVIe8mJbLbjc1YMyZFHXRScklb7wbzs7EWiK/E=;
+        b=Yzat/dwf/AM2htMHXoX8ZrBghDOu9mKHXzc5MFAu5+QDok8BgPTIYAjFXOR2OXZDA4
+         6fa7lTHTG7f2t11AkCCBD7C6HFRrIz20d7/BuIDbX/DuWcYL0S0wkh0EGJi5jBc6ktkj
+         m0FB/tvuT3D5ZxHrmq26AsXChgNqViQh4a0TkeT/PxgCZ1aj74xvQ4+EhLosRsd7HbhT
+         Naw233YPyrpt61pYVfUczchi/g5OBG0Lt7mZ9QOkpvbZJAxXZ2oLiIu8ZbSvyTICQgTf
+         F8zBDcFRL4GW7Te3LOqFkserLUHzvltgfeTWq57alR3KAImTN0UwZA1IU+9ma7eQlOT4
+         Tb3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=grT2FadLkZhaPhNWlxLPz+bbGoKf4X6gH2fwHZzC5Ic=;
-        b=hfn+FmKst13yHob5wWlPGyaHiM8EusVpU5KUzF890vUWoWgXR1ShrM6ct9N9j0ah/P
-         eai/nXe/mBUSDOblhYkKui8soRilQFn/o9goahaDvSuwZHq7cD61iOAMIi8xf4t3uEGs
-         vKOdDTOhn9Tq68D1c3lCs0+/hThYOLmIC6u13vvhv7LfTDRZabMam8uE66gEMZQa1GP0
-         61n9e2H/QGDAVgvghCOPeDUDP24MY2YNbuVfiuiY4Vsi2AFDh1X/o2CDaHAu+FTwP6I9
-         slR/r4skMw2cpIZ+i06cFE7x6OQp9r8QyzS/JbMAph3+LwxghuiSDrqBPxrH+SU6rHNw
-         nYDQ==
-X-Gm-Message-State: AOAM531r/58l/o2KHwnbxGhTvW8jVZlt/gZwR/ItJv1EfJf3cebxyOw4
-        64xJT0XyQaISaSRGiHBpCa8=
-X-Google-Smtp-Source: ABdhPJxWSI5Hu27RaAgeQen5YZHQV4HIoaXVBAtRm51mH+bCPZ8WwU4rFyGDajF7hlBNz+EtHDOHCw==
-X-Received: by 2002:a05:600c:4fce:b0:397:84e3:2297 with SMTP id o14-20020a05600c4fce00b0039784e32297mr25276014wmq.197.1654069349847;
-        Wed, 01 Jun 2022 00:42:29 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Ckm/CNVIe8mJbLbjc1YMyZFHXRScklb7wbzs7EWiK/E=;
+        b=1jwS9UjCNmcpfSwYI9OhUnuU5ZXg6ry9QMlo2b5aWnOA09afrFOgzeTruFudNiwKeK
+         6TKSBOqLnpXTrZkV3FTE30rWs7Jmh5My2ef0tSrzveSZPumoQBAfdsN4U9bnVXnhbAw+
+         5WbXy0H04558/CFLW9t8a1Rq1oRIm/6k0jCcoZMXLaedQkuh6vNcYpudxXN+3l/MfNmA
+         QyKHrza13xDpYBSyACfUiFhjiEcpvXn1rZrCm+c4z7+VMm9V+D8QAIUCb9OkOWcmXrNX
+         9D2+8ej74hVRxWizlnzfym8nwcO127S7VfD7ujT1pZZkFyHdymDDfiKtMRe5bCaHMR6B
+         m4pg==
+X-Gm-Message-State: AOAM533LWjYwdhC53ngqnkdstJaaGrHRrft3kpFeFP+AqIHa3weN6hkC
+        RslJk3LfkLykrxFAkH0Jdss=
+X-Google-Smtp-Source: ABdhPJw3jqa+s4fKLgdH9oRW96bVnODow/HsEpnjT5TE5pv0Rn52ACPvxIFOieMcuj+vYFblfcImlw==
+X-Received: by 2002:a5d:4e86:0:b0:210:1f1d:978e with SMTP id e6-20020a5d4e86000000b002101f1d978emr19751278wru.172.1654070189022;
+        Wed, 01 Jun 2022 00:56:29 -0700 (PDT)
 Received: from felia.fritz.box (200116b82620c00028af88788fa7d286.dip.versatel-1u1.de. [2001:16b8:2620:c000:28af:8878:8fa7:d286])
-        by smtp.gmail.com with ESMTPSA id v19-20020a1cf713000000b0039c18d3fe27sm1034656wmh.19.2022.06.01.00.42.29
+        by smtp.gmail.com with ESMTPSA id o18-20020a05600c4fd200b0039744bd664esm4686686wmq.13.2022.06.01.00.56.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jun 2022 00:42:29 -0700 (PDT)
+        Wed, 01 Jun 2022 00:56:28 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-i3c@lists.infradead.org
-Cc:     Rob Herring <robh+dt@kernel.org>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org
+Cc:     Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: rectify entries for some i3c drivers after dt conversion
-Date:   Wed,  1 Jun 2022 09:42:12 +0200
-Message-Id: <20220601074212.19984-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: refurbish SWIOTLB SUBSYSTEM sections after refactoring
+Date:   Wed,  1 Jun 2022 09:56:13 +0200
+Message-Id: <20220601075613.28245-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 4bd69ecfa672 ("dt-bindings: i3c: Convert cdns,i3c-master to DT
-schema") and commit 6742ca620bd9 ("dt-bindings: i3c: Convert
-snps,dw-i3c-master to DT schema") convert some i3c dt-bindings to yaml,
-but miss to adjust its reference in MAINTAINERS.
+Commit 78013eaadf69 ("x86: remove the IOMMU table infrastructure")
+refactored the generic swiotlb/swiotlb-xen setup into pci-dma.c, but
+misses to adjust MAINTAINERS.
 
 Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
 broken references.
 
-Repair these file references in I3C DRIVER FOR CADENCE I3C MASTER IP and
-I3C DRIVER FOR SYNOPSYS DESIGNWARE.
+Update the SWIOTLB SUBSYSTEM to include arch/x86/kernel/pci-dma.c, which
+contains the swiotlb setup now and drop the file pattern that does not
+match any files.
+
+Further, update the XEN SWIOTLB SUBSYSTEM to include all swiotlb-xen
+headers and replace the pattern in drivers with the specific one file that
+matches this pattern.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Alexandre, please pick this minor non-urgent clean-up patch. Thanks.
+Christoph, please pick this minor non-urgent clean-up patch for swiotlb.
 
- MAINTAINERS | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ MAINTAINERS | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 01e276fa6476..d5ea4ef223f8 100644
+index d5ea4ef223f8..cc12a3aaad45 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -9354,13 +9354,13 @@ F:	drivers/i2c/i2c-stub.c
- I3C DRIVER FOR CADENCE I3C MASTER IP
- M:	Przemysław Gaj <pgaj@cadence.com>
- S:	Maintained
--F:	Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt
-+F:	Documentation/devicetree/bindings/i3c/cdns,i3c-master.yaml
- F:	drivers/i3c/master/i3c-master-cdns.c
+@@ -19166,7 +19166,7 @@ L:	iommu@lists.linux-foundation.org
+ S:	Supported
+ W:	http://git.infradead.org/users/hch/dma-mapping.git
+ T:	git git://git.infradead.org/users/hch/dma-mapping.git
+-F:	arch/*/kernel/pci-swiotlb.c
++F:	arch/x86/kernel/pci-dma.c
+ F:	include/linux/swiotlb.h
+ F:	kernel/dma/swiotlb.c
  
- I3C DRIVER FOR SYNOPSYS DESIGNWARE
- M:	Vitor Soares <vitor.soares@synopsys.com>
- S:	Maintained
--F:	Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
-+F:	Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.yaml
- F:	drivers/i3c/master/dw*
+@@ -21831,8 +21831,10 @@ M:	Stefano Stabellini <sstabellini@kernel.org>
+ L:	xen-devel@lists.xenproject.org (moderated for non-subscribers)
+ L:	iommu@lists.linux-foundation.org
+ S:	Supported
+-F:	arch/x86/xen/*swiotlb*
+-F:	drivers/xen/*swiotlb*
++F:	arch/*/include/asm/xen/swiotlb-xen.h
++F:	drivers/xen/swiotlb-xen.c
++F:	include/xen/arm/swiotlb-xen.h
++F:	include/xen/swiotlb-xen.h
  
- I3C SUBSYSTEM
+ XFS FILESYSTEM
+ C:	irc://irc.oftc.net/xfs
 -- 
 2.17.1
 
