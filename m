@@ -2,78 +2,149 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0075AC43334
-	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Jun 2022 08:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DCB8C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri,  3 Jun 2022 09:47:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242783AbiFCIUi (ORCPT
+        id S243195AbiFCJro (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 3 Jun 2022 04:20:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57996 "EHLO
+        Fri, 3 Jun 2022 05:47:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242805AbiFCIUf (ORCPT
+        with ESMTP id S235321AbiFCJrm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 3 Jun 2022 04:20:35 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A34A1AF3D
-        for <kernel-janitors@vger.kernel.org>; Fri,  3 Jun 2022 01:20:34 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id v5-20020a17090a7c0500b001df84fa82f8so6693089pjf.5
-        for <kernel-janitors@vger.kernel.org>; Fri, 03 Jun 2022 01:20:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=norberthealth-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=D4NXs0gM6EmWNl9SZtPfrcFL6Z+go5/snO+sCnoTH3o=;
-        b=OJVPOaSK5wJTmLCMhuJyeLXIlXkwAYg5vYpjvrV87ZVWAzh4cSaT6wr/ggQuS7LBKj
-         SFRu4wk1Waz92BT/Utiz2+hcY/6cI2Y5mYyu+smntCrAfKCi9HxZvtWN04I8wznOrCyw
-         7am54LTnDKZ6O7A3JPJeUzkc9ydHffkYzx3oS6+dLE1ooMYoIQ3fDv3QGR8W+q5WUz2+
-         B8tJpbVoJBIblSD8uTt0lDqlgKnVtErwPVBrwXmtZf1eHzs0cv0f/F+96gFGmqdcPE9l
-         ka+PNtLZZaRI/9ZNyZ5TkClEnZPWZCi5bSOP9R9Xoml/NUGVTVHsfwEkon7Es14bu+yS
-         IqdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=D4NXs0gM6EmWNl9SZtPfrcFL6Z+go5/snO+sCnoTH3o=;
-        b=fFN6R6/GING4q3Hj/2b7isQefMKiToMqK88VKGn0xU1UOzNKnP5uSDQTKvTijtcWIY
-         WBQAvIY3mMNfA2TKAeD3gU/M4xzSZWI6opaeyFsx+dPIfcf3EllYx4TBOeaY9bXfFHBV
-         zZlgLWGTmqPuWu8pMo1EzmmNrNSxz1SohpH5X5el2fpwR9GXEKKsGQ3+lVCl4Lu9LXjc
-         N3+DYgpBSqOYMOYnD32Ihr0eWTGADjeDUX460Fzmd84lt5q0JtKDTJ6yVgB1mGvx/IQQ
-         6w77j7XylFAnpA2+bXgxhvpl1ejE4Es1QWUgTMUIFVp9/0i1+lS0v7Z1Lu0yBuZUaPVv
-         8fOA==
-X-Gm-Message-State: AOAM531UN33F0Sc0e10uQdR7vimSkPqnS+aBWm+gBG2q+Ee52lh0fkAu
-        FVOKgTZcbgFgtwdp7GgAeHdY81SgTDW/+GIwk0oDdQ==
-X-Google-Smtp-Source: ABdhPJwvMSX7bJ0sMwvdFp20lychh+sXCuA4C/mut7/HEWAGVctaQxnXeAwtCZxAMkeOUv+YHq4v2qAr7hpIJA5Njmw=
-X-Received: by 2002:a17:903:130d:b0:164:17f5:9de5 with SMTP id
- iy13-20020a170903130d00b0016417f59de5mr9406413plb.132.1654244433615; Fri, 03
- Jun 2022 01:20:33 -0700 (PDT)
+        Fri, 3 Jun 2022 05:47:42 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBB0D1263B
+        for <kernel-janitors@vger.kernel.org>; Fri,  3 Jun 2022 02:47:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1654249661; x=1685785661;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=WQz1P93jqawAYhPsWpCHv9lCqsm69nzliCcknvez5jY=;
+  b=Cof4rLFid8kyKF09TINi+5yiNyLrGCXOitpCGhjiKEmwOboGtDht/hZK
+   lH6tiPfayRygFz8taiw7gEHJexmxxzNhXt8zY5+mvB2yLAloFWaITDqWI
+   5qcCA4gZsI5motPlaLz4Jf/oP5zkH1/pL+TzSoqHp5WXloqeCReOv1Oyr
+   b16fB5LRkGq1qIrQAeeqM9J/FszCnarJN6FxfZM4IoEfkldUxdd5Lck9f
+   6sjwF6uceU/d9Oukqf2UNn0jlhXdyhcN3fIF0afxbavCEAcivB6HEBBMC
+   F/CwzLWFSKLiNrsvG6+wwB2x0YtV0ijjNxJz4I7pt0GaRddU6u30fMRRg
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10366"; a="263861257"
+X-IronPort-AV: E=Sophos;i="5.91,274,1647327600"; 
+   d="scan'208";a="263861257"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2022 02:47:41 -0700
+X-IronPort-AV: E=Sophos;i="5.91,274,1647327600"; 
+   d="scan'208";a="721689695"
+Received: from nmoazzen-mobl2.amr.corp.intel.com (HELO [10.251.214.119]) ([10.251.214.119])
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2022 02:47:37 -0700
+Message-ID: <c756fc79-281e-9c41-6070-c79ca6eb7c32@linux.intel.com>
+Date:   Fri, 3 Jun 2022 12:48:13 +0300
 MIME-Version: 1.0
-References: <20220521124745.8747-1-roger@norberthealth.com>
- <a728cf17-4866-1151-0740-56b06257c917@infradead.org> <CAO_iFwrHcSWJm17fL-Q83DZ5i1xr+_dkEjh5Yt3Hxso0VtnzZw@mail.gmail.com>
- <47a68855-4547-49dd-d7eb-8ef83630552c@infradead.org> <Ypjwh5f6ByoZl5YE@zx2c4.com>
-In-Reply-To: <Ypjwh5f6ByoZl5YE@zx2c4.com>
-From:   Roger Knecht <roger@norberthealth.com>
-Date:   Fri, 3 Jun 2022 10:20:22 +0200
-Message-ID: <CAO_iFwrAm-bqRgkD+1QSW8JwjV+Whp_BfNz9Bv1-9XOwy2poFw@mail.gmail.com>
-Subject: Re: [PATCH v5] crc-itu-t: Fix typo in CRC ITU-T polynom comment
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
-        Ivo van Doorn <IvDoorn@gmail.com>,
-        kernel-janitors@vger.kernel.org, linux-doc@vger.kernel.org,
-        Kristian Hoegsberg <krh@redhat.com>,
-        Stefan Richter <stefanr@s5r6.in-berlin.de>,
-        akpm@linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Firefox/91.0 Thunderbird/91.9.1
+Subject: Re: [PATCH 1/2] ASoC: SOF: ipc-msg-injector: Propagate write errors
+ correctly
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Bard Liao <yung-chuan.liao@linux.intel.com>,
+        Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        Rander Wang <rander.wang@intel.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        sound-open-firmware@alsa-project.org
+References: <Yph+Cd+JrfOH0i7z@kili>
+From:   =?UTF-8?Q?P=c3=a9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
+In-Reply-To: <Yph+Cd+JrfOH0i7z@kili>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jun 2, 2022 at 7:17 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> On Thu, Jun 02, 2022 at 09:31:24AM -0700, Randy Dunlap wrote:
-> > Yes, Andrew can merge it.
-> > Or possibly Jason (also Cc-ed).
->
-> Sure, I can take this.
->
-> Jason
 
-Great, thanks Jason
+
+On 02/06/2022 12:08, Dan Carpenter wrote:
+> This code is supposed to propagate errors from simple_write_to_buffer()
+> or return -EFAULT if "size != count".  However "size" needs to be signed
+> for the code to work correctly and the case where "size == 0" is not
+> handled correctly.
+
+Thanks Dan!
+
+Acked-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+
+> Fixes: 066c67624d8c ("ASoC: SOF: ipc-msg-injector: Add support for IPC4 messages")
+> Fixes: 2f0b1b013bbc ("ASoC: SOF: debug: Add support for IPC message injection")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  sound/soc/sof/sof-client-ipc-msg-injector.c | 16 +++++++++++-----
+>  1 file changed, 11 insertions(+), 5 deletions(-)
+> 
+> diff --git a/sound/soc/sof/sof-client-ipc-msg-injector.c b/sound/soc/sof/sof-client-ipc-msg-injector.c
+> index 03490a4d4ae7..030cb97d7713 100644
+> --- a/sound/soc/sof/sof-client-ipc-msg-injector.c
+> +++ b/sound/soc/sof/sof-client-ipc-msg-injector.c
+> @@ -150,7 +150,7 @@ static ssize_t sof_msg_inject_dfs_write(struct file *file, const char __user *bu
+>  {
+>  	struct sof_client_dev *cdev = file->private_data;
+>  	struct sof_msg_inject_priv *priv = cdev->data;
+> -	size_t size;
+> +	ssize_t size;
+>  	int ret;
+>  
+>  	if (*ppos)
+> @@ -158,8 +158,10 @@ static ssize_t sof_msg_inject_dfs_write(struct file *file, const char __user *bu
+>  
+>  	size = simple_write_to_buffer(priv->tx_buffer, priv->max_msg_size,
+>  				      ppos, buffer, count);
+> +	if (size < 0)
+> +		return size;
+>  	if (size != count)
+> -		return size > 0 ? -EFAULT : size;
+> +		return -EFAULT;
+>  
+>  	memset(priv->rx_buffer, 0, priv->max_msg_size);
+>  
+> @@ -179,7 +181,7 @@ static ssize_t sof_msg_inject_ipc4_dfs_write(struct file *file,
+>  	struct sof_client_dev *cdev = file->private_data;
+>  	struct sof_msg_inject_priv *priv = cdev->data;
+>  	struct sof_ipc4_msg *ipc4_msg = priv->tx_buffer;
+> -	size_t size;
+> +	ssize_t size;
+>  	int ret;
+>  
+>  	if (*ppos)
+> @@ -192,8 +194,10 @@ static ssize_t sof_msg_inject_ipc4_dfs_write(struct file *file,
+>  	size = simple_write_to_buffer(&ipc4_msg->header_u64,
+>  				      sizeof(ipc4_msg->header_u64),
+>  				      ppos, buffer, count);
+> +	if (size < 0)
+> +		return size;
+>  	if (size != sizeof(ipc4_msg->header_u64))
+> -		return size > 0 ? -EFAULT : size;
+> +		return -EFAULT;
+>  
+>  	count -= size;
+>  	if (!count) {
+> @@ -201,8 +205,10 @@ static ssize_t sof_msg_inject_ipc4_dfs_write(struct file *file,
+>  		size = simple_write_to_buffer(ipc4_msg->data_ptr,
+>  					      priv->max_msg_size, ppos, buffer,
+>  					      count);
+> +		if (size < 0)
+> +			return size;
+>  		if (size != count)
+> -			return size > 0 ? -EFAULT : size;
+> +			return -EFAULT;
+>  	}
+>  
+>  	ipc4_msg->data_size = count;
+
+-- 
+Péter
