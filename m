@@ -2,33 +2,29 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C1E3CCA477
-	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Jun 2022 06:15:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A359C43334
+	for <kernel-janitors@archiver.kernel.org>; Sat,  4 Jun 2022 06:54:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348144AbiFDGPc (ORCPT
+        id S233085AbiFDGy3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 4 Jun 2022 02:15:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60122 "EHLO
+        Sat, 4 Jun 2022 02:54:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232644AbiFDGPa (ORCPT
+        with ESMTP id S233019AbiFDGy2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 4 Jun 2022 02:15:30 -0400
-Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 258342B1B8
-        for <kernel-janitors@vger.kernel.org>; Fri,  3 Jun 2022 23:15:28 -0700 (PDT)
+        Sat, 4 Jun 2022 02:54:28 -0400
+Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34C70369C3
+        for <kernel-janitors@vger.kernel.org>; Fri,  3 Jun 2022 23:54:27 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id xN4FnQRFZvNzHxN4Fn48zT; Sat, 04 Jun 2022 08:15:26 +0200
+        id xNfynMlgS5ohRxNfynOp1G; Sat, 04 Jun 2022 08:54:25 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 04 Jun 2022 08:15:26 +0200
+X-ME-Date: Sat, 04 Jun 2022 08:54:25 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Woojung Huh <woojung.huh@microchip.com>,
-        UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
+To:     Joyce Ooi <joyce.ooi@intel.com>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
@@ -36,9 +32,9 @@ To:     Woojung Huh <woojung.huh@microchip.com>,
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         netdev@vger.kernel.org
-Subject: [PATCH] net: dsa: microchip: ksz8xxx: Replace kernel.h with the necessary inclusions
-Date:   Sat,  4 Jun 2022 08:15:21 +0200
-Message-Id: <41d99ef8629e1db03d4f2662f5556611e0b94652.1654323308.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] net: altera: Replace kernel.h with the necessary inclusions
+Date:   Sat,  4 Jun 2022 08:54:20 +0200
+Message-Id: <18731e4f6430100d6500d6c4732ee028a729c085.1654325651.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -51,25 +47,32 @@ especially when there are circular dependencies are involved.
 
 Replace kernel.h inclusion with the list of what is really being used.
 
+While at it, move these includes below the include guard.
+
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/dsa/microchip/ksz8.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/altera/altera_utils.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/dsa/microchip/ksz8.h b/drivers/net/dsa/microchip/ksz8.h
-index 03da369675c6..cae76f5e7787 100644
---- a/drivers/net/dsa/microchip/ksz8.h
-+++ b/drivers/net/dsa/microchip/ksz8.h
-@@ -7,7 +7,8 @@
+diff --git a/drivers/net/ethernet/altera/altera_utils.h b/drivers/net/ethernet/altera/altera_utils.h
+index b7d772f2dcbb..3c2e32fb7389 100644
+--- a/drivers/net/ethernet/altera/altera_utils.h
++++ b/drivers/net/ethernet/altera/altera_utils.h
+@@ -3,11 +3,12 @@
+  * Copyright (C) 2014 Altera Corporation. All rights reserved
+  */
  
- #ifndef __KSZ8XXX_H
- #define __KSZ8XXX_H
 -#include <linux/kernel.h>
-+
-+#include <linux/types.h>
+-
+ #ifndef __ALTERA_UTILS_H__
+ #define __ALTERA_UTILS_H__
  
- enum ksz_regs {
- 	REG_IND_CTRL_0,
++#include <linux/compiler.h>
++#include <linux/types.h>
++
+ void tse_set_bit(void __iomem *ioaddr, size_t offs, u32 bit_mask);
+ void tse_clear_bit(void __iomem *ioaddr, size_t offs, u32 bit_mask);
+ int tse_bit_is_set(void __iomem *ioaddr, size_t offs, u32 bit_mask);
 -- 
 2.34.1
 
