@@ -2,115 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C14C43334
-	for <kernel-janitors@archiver.kernel.org>; Sun,  5 Jun 2022 10:06:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA90DC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  5 Jun 2022 17:41:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245121AbiFEKGK (ORCPT
+        id S1346492AbiFERlu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 5 Jun 2022 06:06:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58944 "EHLO
+        Sun, 5 Jun 2022 13:41:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229956AbiFEKGI (ORCPT
+        with ESMTP id S236198AbiFERls (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 5 Jun 2022 06:06:08 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A98E3443EB;
-        Sun,  5 Jun 2022 03:06:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4DCCDB80C94;
-        Sun,  5 Jun 2022 10:06:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECF7AC385A5;
-        Sun,  5 Jun 2022 10:06:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654423562;
-        bh=UkhK0iXmipOKdrh664jQXMz5mV/hcSj5hRpVu1jSBfw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=k4Mfn/8QAnGV2O6X6jv2u4l1y+rYDmyzCwa1D/UI0PNyWd2UCZMaDCrehF9YZIv/O
-         OWsvUw6kTYR6zB1CoS9JgKqzox2KMf3r7jVf/VTZ6XWtwOCMdENBzK4jmsOtvmxjzS
-         CDyWCPNdt8mT7etbrkSQVZ66U+SE1C46ntkO7E2B5kd/R5i9AeL1EdKcva4qhtvJeH
-         CVWQomn4DbnO1gA5iWP2fVwX7axawIXOpPkR4Akzva2F9qXHpdtBj/DD4Fotxhfwh2
-         83z8tKgsvzdLNG+AXJR2dJJ7/QsVhfXe1qQefbcGHkWvANEEPVY/4IiMIyjkUp3OUj
-         /Qa6Wskn3bJTw==
-Received: by mail-yb1-f170.google.com with SMTP id a30so2265888ybj.3;
-        Sun, 05 Jun 2022 03:06:01 -0700 (PDT)
-X-Gm-Message-State: AOAM533sIpkutbhKsPHh+HUfQ2GWYaEWVIxYX0A9owlvp5Wh/Isy6mvK
-        D/doEVq6mRn5OfH6e38SoBO7nKj3Z4hW5D4VxMU=
-X-Google-Smtp-Source: ABdhPJw3j6eaxny1petObshdCU3O7C4LdZnpOgx/3q928/0gteNHzH6VQv4VdRzBF2oStDnzp8/BKitGQSxu3iaGd7s=
-X-Received: by 2002:a05:6902:514:b0:65c:b28c:f9f8 with SMTP id
- x20-20020a056902051400b0065cb28cf9f8mr18935548ybs.403.1654423561012; Sun, 05
- Jun 2022 03:06:01 -0700 (PDT)
+        Sun, 5 Jun 2022 13:41:48 -0400
+Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E56D255BE;
+        Sun,  5 Jun 2022 10:41:47 -0700 (PDT)
+Received: by mail-ot1-x332.google.com with SMTP id w19-20020a9d6393000000b0060aeb359ca8so9279164otk.6;
+        Sun, 05 Jun 2022 10:41:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=7l/0M+AyIL2wnAka/pYwjkcVwlKV7EVM6kl4mjgKPgk=;
+        b=lIvhUe2v5nPGbZQxPsw9vndoiGZXXXHYM+zmEsw17VXLnq9A0R/TXZOX6glfKv7rxZ
+         CWLw2Z8AkhJpR/Y0+aqkDmEA1F3U6WBw+V/cL1wwy0SYqIkJmuQbNmP7irheuh94FzZG
+         PHzua9I8mTsouXby8W98ILGAXog662U5Xu1zG0MhR5lV8trNId6lXYdR9J6/6+OPpDok
+         /L6O2Zicxv45bT6bz7RZfndUtyxXIr4NSUHZYsW41fcdL9ZGHKmD1yyjiO1Pl3hBiUa+
+         XWGzFhnC9Ea1qx8hR3O79hQZAtMpglmE0GIREavEZhojm1IHaL+xLzKIGeNfiy7a2MHz
+         KHSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=7l/0M+AyIL2wnAka/pYwjkcVwlKV7EVM6kl4mjgKPgk=;
+        b=IkM7R6S0YGH1nrTg2TxZMF7uMT7+bObrCelyKdhTB1iblTZDSGcUYoNlSZF5ehAInS
+         kOneanSKgF9GdShDx5sCambA1E/dT17qrQaex8aOBzekMXoE8lh/ijQlUS8lpJsLbi8a
+         +/BBm8nSCY8Nsnn6BDBFCfUpROcSebvnLI3YvWKd+UUu44qWzyilziTHAv1M9G4hjr9m
+         L+BdjP/Y8sNsQTWrFEVWPVE8ZfmGh6vxTroskhxbWqQnB5R4kkGqaoorlUVeO81QQ/sf
+         5YI9hkYkD0J4HCXLI4Plf/D8+474Yp37iy+eujjBKB4U7EYgDPkb9k2wRsZFkV+t2UGH
+         qfwA==
+X-Gm-Message-State: AOAM532kMpknMcknZKAbcFWFvC4DmJXGUHZv8aIiKYf486oETcStU3eU
+        yjw1NK1Ob/LSbvR5rBzWjy0=
+X-Google-Smtp-Source: ABdhPJxmaRLj+7zzLqVcDkzwFxqgbTe23/4pYuhEqn9iYIhaE0+Vj2dIWoSPRT7IcRvTF+87CWBKQA==
+X-Received: by 2002:a05:6830:1bee:b0:60b:25bc:d8e1 with SMTP id k14-20020a0568301bee00b0060b25bcd8e1mr8448582otb.164.1654450906757;
+        Sun, 05 Jun 2022 10:41:46 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id p25-20020a056830131900b0060bde07e2d3sm3143701otq.77.2022.06.05.10.41.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Jun 2022 10:41:46 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Sun, 5 Jun 2022 10:41:44 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (lm75) Replace kernel.h with the necessary
+ inclusions
+Message-ID: <20220605174144.GA3144639@roeck-us.net>
+References: <4e07ed43274ad912d4efcfc04f673f25e8f89fdc.1654289489.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-References: <Yo4gIobpIlRmxqtH@kili>
-In-Reply-To: <Yo4gIobpIlRmxqtH@kili>
-From:   Oded Gabbay <ogabbay@kernel.org>
-Date:   Sun, 5 Jun 2022 13:05:33 +0300
-X-Gmail-Original-Message-ID: <CAFCwf12QOxB4HJJAjJLknsEBiSAbaDgbna5L3JFhCcr36Rqc9w@mail.gmail.com>
-Message-ID: <CAFCwf12QOxB4HJJAjJLknsEBiSAbaDgbna5L3JFhCcr36Rqc9w@mail.gmail.com>
-Subject: Re: [PATCH] habanalabs: fix double unlock on error in map_device_va()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Ohad Sharabi <osharabi@habana.ai>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yuri Nudelman <ynudelman@habana.ai>,
-        Ofir Bitton <obitton@habana.ai>,
-        farah kassabri <fkassabri@habana.ai>,
-        Tomer Tayar <ttayar@habana.ai>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4e07ed43274ad912d4efcfc04f673f25e8f89fdc.1654289489.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, May 25, 2022 at 3:25 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> If hl_mmu_prefetch_cache_range() fails then this code calls
-> mutex_unlock(&ctx->mmu_lock) when it's no longer holding the mutex.
->
-> Fixes: 9e495e24003e ("habanalabs: do MMU prefetch as deferred work")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/misc/habanalabs/common/memory.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/misc/habanalabs/common/memory.c b/drivers/misc/habanalabs/common/memory.c
-> index 663dd7e589d4..d5e6500f8a1f 100644
-> --- a/drivers/misc/habanalabs/common/memory.c
-> +++ b/drivers/misc/habanalabs/common/memory.c
-> @@ -1245,16 +1245,16 @@ static int map_device_va(struct hl_ctx *ctx, struct hl_mem_in *args, u64 *device
->         rc = map_phys_pg_pack(ctx, ret_vaddr, phys_pg_pack);
->         if (rc) {
->                 dev_err(hdev->dev, "mapping page pack failed for handle %u\n", handle);
-> +               mutex_unlock(&ctx->mmu_lock);
->                 goto map_err;
->         }
->
->         rc = hl_mmu_invalidate_cache_range(hdev, false, *vm_type | MMU_OP_SKIP_LOW_CACHE_INV,
->                                 ctx->asid, ret_vaddr, phys_pg_pack->total_size);
-> +       mutex_unlock(&ctx->mmu_lock);
->         if (rc)
->                 goto map_err;
->
-> -       mutex_unlock(&ctx->mmu_lock);
-> -
->         /*
->          * prefetch is done upon user's request. it is performed in WQ as and so can
->          * be outside the MMU lock. the operation itself is already protected by the mmu lock
-> @@ -1283,8 +1283,6 @@ static int map_device_va(struct hl_ctx *ctx, struct hl_mem_in *args, u64 *device
->         return rc;
->
->  map_err:
-> -       mutex_unlock(&ctx->mmu_lock);
-> -
->         if (add_va_block(hdev, va_range, ret_vaddr,
->                                 ret_vaddr + phys_pg_pack->total_size - 1))
->                 dev_warn(hdev->dev,
-> --
-> 2.35.1
->
+On Fri, Jun 03, 2022 at 10:51:46PM +0200, Christophe JAILLET wrote:
+> When kernel.h is used in the headers it adds a lot into dependency hell,
+> especially when there are circular dependencies are involved.
+> 
+> Replace kernel.h inclusion with the list of what is really being used.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Reviewed-by: Oded Gabbay <ogabbay@kernel.org>
-Applied to -next.
+Applied to hwmon-next.
+
 Thanks,
-Oded
+Guenter
+
+> ---
+>  drivers/hwmon/lm75.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hwmon/lm75.h b/drivers/hwmon/lm75.h
+> index a398171162a8..b803ada5e3c9 100644
+> --- a/drivers/hwmon/lm75.h
+> +++ b/drivers/hwmon/lm75.h
+> @@ -11,7 +11,8 @@
+>   * which contains this code, we don't worry about the wasted space.
+>   */
+>  
+> -#include <linux/kernel.h>
+> +#include <linux/minmax.h>
+> +#include <linux/types.h>
+>  
+>  /* straight from the datasheet */
+>  #define LM75_TEMP_MIN (-55000)
