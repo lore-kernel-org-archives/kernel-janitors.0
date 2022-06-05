@@ -2,199 +2,115 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DBD0C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun,  5 Jun 2022 09:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C14C43334
+	for <kernel-janitors@archiver.kernel.org>; Sun,  5 Jun 2022 10:06:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350918AbiFEJ2T (ORCPT
+        id S245121AbiFEKGK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 5 Jun 2022 05:28:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32922 "EHLO
+        Sun, 5 Jun 2022 06:06:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229816AbiFEJ2S (ORCPT
+        with ESMTP id S229956AbiFEKGI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 5 Jun 2022 05:28:18 -0400
-Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E41AE252BC
-        for <kernel-janitors@vger.kernel.org>; Sun,  5 Jun 2022 02:28:15 -0700 (PDT)
-Received: by mail-yb1-xb35.google.com with SMTP id e184so20913460ybf.8
-        for <kernel-janitors@vger.kernel.org>; Sun, 05 Jun 2022 02:28:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PJh7eAeTyEepHUjF+o8qLkBn+qnfxoHavWIpDTbWSw0=;
-        b=AolG2yjW78mnNQ4SDucddB9ZTza8NrBHKiQXZ86Ddu/wkVpVR9IQ1xwnoST/aM/CAu
-         FwpuMxqqBhsVYUTPhAjbD93mrBLXBUUWlh3Cux+oOpjXfi8cgLDMkGntrKT8HDNvzJ7b
-         sW21PcQHdAmsv97YF/XrKlHvx4YsuI0iDIt470OmJEGdZ0RK2QeMMwPAmYl2fH5VlCu5
-         8ujCZtSQaq6gEMLe0wN2t3yc7bxYyLYRBta1Daf0dCV8aEMOzHZdHYzxDB94raOgUagV
-         577lYBcAmSBgOYKf3r6+I/MaOP7JLxxW3IMUhTnjYHCO8K0GHJAPMdRO5Gh0vsS+Q+pk
-         XnbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PJh7eAeTyEepHUjF+o8qLkBn+qnfxoHavWIpDTbWSw0=;
-        b=NJllxm2Gol9CjYgH9pDjX6pRTeuifbM33YH8qssat4lqDccXFeXmOM5Sv4ei0B1pC6
-         6/NZbgTh+MKUnZlspit42tVLQL0CiHtiaN10Q/sNH09d+/IZXVHmdnx3qMZHdAMK2StF
-         OvP4iVq/xYPW3XR6S5iDZru80fovK+2AwPmHzdBmxHalbaVDa8q0j/KOad2zgoyp3FrE
-         wKMMT9XM0usEPRV3ezlpWBokkaM4YQflPTxYqaaRvium5RfaA9s9qexhleHl34aNVUbg
-         g0fBp2jixUkCu8jpLwrVx2f+KgS9cNmm55T8X2bW4/bfPrVfFxR6pDHbiC0fGHqKlPin
-         mflw==
-X-Gm-Message-State: AOAM532AJix7InjqtSXDZhFD9zwJSA7BlDK68asausYVO0MhfaF+E32D
-        W9oAmMvt2fVEqLRy9HewpAZu7cs1jnzzh68oewN1Ws19AfcAvA==
-X-Google-Smtp-Source: ABdhPJxIpu+7nOnKCvQNuCGSo6KkrZDGKZH81SL5cAItz4zO8CGHm6Onr+mogj4WaKNEmJp49qMEM7j7/4rIaIpe4iI=
+        Sun, 5 Jun 2022 06:06:08 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A98E3443EB;
+        Sun,  5 Jun 2022 03:06:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4DCCDB80C94;
+        Sun,  5 Jun 2022 10:06:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECF7AC385A5;
+        Sun,  5 Jun 2022 10:06:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654423562;
+        bh=UkhK0iXmipOKdrh664jQXMz5mV/hcSj5hRpVu1jSBfw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=k4Mfn/8QAnGV2O6X6jv2u4l1y+rYDmyzCwa1D/UI0PNyWd2UCZMaDCrehF9YZIv/O
+         OWsvUw6kTYR6zB1CoS9JgKqzox2KMf3r7jVf/VTZ6XWtwOCMdENBzK4jmsOtvmxjzS
+         CDyWCPNdt8mT7etbrkSQVZ66U+SE1C46ntkO7E2B5kd/R5i9AeL1EdKcva4qhtvJeH
+         CVWQomn4DbnO1gA5iWP2fVwX7axawIXOpPkR4Akzva2F9qXHpdtBj/DD4Fotxhfwh2
+         83z8tKgsvzdLNG+AXJR2dJJ7/QsVhfXe1qQefbcGHkWvANEEPVY/4IiMIyjkUp3OUj
+         /Qa6Wskn3bJTw==
+Received: by mail-yb1-f170.google.com with SMTP id a30so2265888ybj.3;
+        Sun, 05 Jun 2022 03:06:01 -0700 (PDT)
+X-Gm-Message-State: AOAM533sIpkutbhKsPHh+HUfQ2GWYaEWVIxYX0A9owlvp5Wh/Isy6mvK
+        D/doEVq6mRn5OfH6e38SoBO7nKj3Z4hW5D4VxMU=
+X-Google-Smtp-Source: ABdhPJw3j6eaxny1petObshdCU3O7C4LdZnpOgx/3q928/0gteNHzH6VQv4VdRzBF2oStDnzp8/BKitGQSxu3iaGd7s=
 X-Received: by 2002:a05:6902:514:b0:65c:b28c:f9f8 with SMTP id
- x20-20020a056902051400b0065cb28cf9f8mr18824365ybs.403.1654421295079; Sun, 05
- Jun 2022 02:28:15 -0700 (PDT)
+ x20-20020a056902051400b0065cb28cf9f8mr18935548ybs.403.1654423561012; Sun, 05
+ Jun 2022 03:06:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <Yo9InUoXy3ISDQUd@kili>
-In-Reply-To: <Yo9InUoXy3ISDQUd@kili>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Sun, 5 Jun 2022 12:27:48 +0300
-Message-ID: <CAFCwf10n4N_BQVngXeL4eb-SHxXSmbnxfKOQTLUsb62DdS=2cA@mail.gmail.com>
-Subject: Re: [bug report] habanalabs: add gaudi asic-dependent code
+References: <Yo4gIobpIlRmxqtH@kili>
+In-Reply-To: <Yo4gIobpIlRmxqtH@kili>
+From:   Oded Gabbay <ogabbay@kernel.org>
+Date:   Sun, 5 Jun 2022 13:05:33 +0300
+X-Gmail-Original-Message-ID: <CAFCwf12QOxB4HJJAjJLknsEBiSAbaDgbna5L3JFhCcr36Rqc9w@mail.gmail.com>
+Message-ID: <CAFCwf12QOxB4HJJAjJLknsEBiSAbaDgbna5L3JFhCcr36Rqc9w@mail.gmail.com>
+Subject: Re: [PATCH] habanalabs: fix double unlock on error in map_device_va()
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     kernel-janitors@vger.kernel.org
+Cc:     Ohad Sharabi <osharabi@habana.ai>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Yuri Nudelman <ynudelman@habana.ai>,
+        Ofir Bitton <obitton@habana.ai>,
+        farah kassabri <fkassabri@habana.ai>,
+        Tomer Tayar <ttayar@habana.ai>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, May 26, 2022 at 12:30 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On Wed, May 25, 2022 at 3:25 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 >
-> Hello Oded Gabbay,
+> If hl_mmu_prefetch_cache_range() fails then this code calls
+> mutex_unlock(&ctx->mmu_lock) when it's no longer holding the mutex.
 >
-> The patch ac0ae6a96aa5: "habanalabs: add gaudi asic-dependent code"
-> from May 11, 2020, leads to the following Smatch static checker
-> warning:
+> Fixes: 9e495e24003e ("habanalabs: do MMU prefetch as deferred work")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/misc/habanalabs/common/memory.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 >
->         drivers/misc/habanalabs/gaudi/gaudi.c:5568 gaudi_parse_cb_mmu()
->         error: 'parser->user_cb_size' from user is not capped properly
+> diff --git a/drivers/misc/habanalabs/common/memory.c b/drivers/misc/habanalabs/common/memory.c
+> index 663dd7e589d4..d5e6500f8a1f 100644
+> --- a/drivers/misc/habanalabs/common/memory.c
+> +++ b/drivers/misc/habanalabs/common/memory.c
+> @@ -1245,16 +1245,16 @@ static int map_device_va(struct hl_ctx *ctx, struct hl_mem_in *args, u64 *device
+>         rc = map_phys_pg_pack(ctx, ret_vaddr, phys_pg_pack);
+>         if (rc) {
+>                 dev_err(hdev->dev, "mapping page pack failed for handle %u\n", handle);
+> +               mutex_unlock(&ctx->mmu_lock);
+>                 goto map_err;
+>         }
 >
-> drivers/misc/habanalabs/gaudi/gaudi.c
->     5526 static int gaudi_parse_cb_mmu(struct hl_device *hdev,
->     5527                 struct hl_cs_parser *parser)
->     5528 {
->     5529         u64 handle;
->     5530         u32 patched_cb_size;
->     5531         struct hl_cb *user_cb;
->     5532         int rc;
->     5533
->     5534         /*
->     5535          * The new CB should have space at the end for two MSG_PROT pkt:
->     5536          * 1. A packet that will act as a completion packet
->     5537          * 2. A packet that will generate MSI interrupt
->     5538          */
->     5539         if (parser->completion)
->     5540                 parser->patched_cb_size = parser->user_cb_size +
->     5541                                 sizeof(struct packet_msg_prot) * 2;
->     5542         else
->     5543                 parser->patched_cb_size = parser->user_cb_size;
->     5544
->     5545         rc = hl_cb_create(hdev, &hdev->kernel_mem_mgr, hdev->kernel_ctx,
->     5546                                 parser->patched_cb_size, false, false,
->     5547                                 &handle);
->     5548
->     5549         if (rc) {
->     5550                 dev_err(hdev->dev,
->     5551                         "Failed to allocate patched CB for DMA CS %d\n",
->     5552                         rc);
->     5553                 return rc;
->     5554         }
->     5555
->     5556         parser->patched_cb = hl_cb_get(&hdev->kernel_mem_mgr, handle);
->     5557         /* hl_cb_get should never fail */
->     5558         if (!parser->patched_cb) {
->     5559                 dev_crit(hdev->dev, "DMA CB handle invalid 0x%llx\n", handle);
->     5560                 rc = -EFAULT;
->     5561                 goto out;
->     5562         }
->     5563
->     5564         /*
->     5565          * The check that parser->user_cb_size <= parser->user_cb->size was done
->     5566          * in validate_queue_index().
+>         rc = hl_mmu_invalidate_cache_range(hdev, false, *vm_type | MMU_OP_SKIP_LOW_CACHE_INV,
+>                                 ctx->asid, ret_vaddr, phys_pg_pack->total_size);
+> +       mutex_unlock(&ctx->mmu_lock);
+>         if (rc)
+>                 goto map_err;
 >
-> We are looking at cs_ioctl_default().
+> -       mutex_unlock(&ctx->mmu_lock);
+> -
+>         /*
+>          * prefetch is done upon user's request. it is performed in WQ as and so can
+>          * be outside the MMU lock. the operation itself is already protected by the mmu lock
+> @@ -1283,8 +1283,6 @@ static int map_device_va(struct hl_ctx *ctx, struct hl_mem_in *args, u64 *device
+>         return rc;
 >
-> This comment is wrong.  There is no check for this in validate_queue_index().
-> There is a check in get_cb_from_cs_chunk() but that function is only
-> called when is_kernel_allocated_cb is true.
+>  map_err:
+> -       mutex_unlock(&ctx->mmu_lock);
+> -
+>         if (add_va_block(hdev, va_range, ret_vaddr,
+>                                 ret_vaddr + phys_pg_pack->total_size - 1))
+>                 dev_warn(hdev->dev,
+> --
+> 2.35.1
 >
-> I feel like we should check if "chunk->cb_size > cb->size" on all user
-> input.  I think it is required.  But even if it's not, it would make the
-> code easier for Smatch to understand.
 
-Hi Dan,
-The code is indeed confusing due to the move between common and
-asic-specific code.
-But actually we are protected, because you will never reach gaudi_parse_cb_mmu()
-if the CB was not allocated by the kernel.
-
-The reason is because for Gaudi, we only parse CBs that go to what we
-call "External Queues",
-which are assigned the queue type QUEUE_TYPE_EXT.
-
-If you will look at validate_queue_index(), it assigns the
-is_kernel_allocated_cb property based
-on the queue type. The logic there is a bit complex because it is
-dependent on the queue
-properties, but what happens is that if the user submitted a work for
-an external queue in Gaudi,
-is_kernel_allocated_cb will be assigned "true" in this function.
-
-And that will cause the get_cb_from_cs_chunk() to check the size. And
-in gaudi_cs_parser(),
-we only call gaudi_parse_cb_mmu() if it is an external queue (In Gaudi
-a queue is either
-QUEUE_TYPE_EXT or QUEUE_TYPE_INT).
-
-So the comment is wrong and I will fix it. But because this is the
-data-plane, I prefer not
-to add an additional check. I hope this makes sense.
-
+Reviewed-by: Oded Gabbay <ogabbay@kernel.org>
+Applied to -next.
 Thanks,
 Oded
-
->
->     5567          */
-> --> 5568         memcpy(parser->patched_cb->kernel_address,
->     5569                 parser->user_cb->kernel_address,
->     5570                 parser->user_cb_size);
->                          ^^^^^^^^^^^^^^^^^^^^
-> Otherwise *boom* user controlled buffer overflow.
->
->     5571
->     5572         patched_cb_size = parser->patched_cb_size;
->     5573
->     5574         /* Validate patched CB instead of user CB */
->     5575         user_cb = parser->user_cb;
->     5576         parser->user_cb = parser->patched_cb;
->     5577         rc = gaudi_validate_cb(hdev, parser, true);
->     5578         parser->user_cb = user_cb;
->     5579
->     5580         if (rc) {
->     5581                 hl_cb_put(parser->patched_cb);
->     5582                 goto out;
->     5583         }
->     5584
->     5585         if (patched_cb_size != parser->patched_cb_size) {
->     5586                 dev_err(hdev->dev, "user CB size mismatch\n");
->     5587                 hl_cb_put(parser->patched_cb);
->     5588                 rc = -EINVAL;
->     5589                 goto out;
->     5590         }
->     5591
->     5592 out:
->     5593         /*
->     5594          * Always call cb destroy here because we still have 1 reference
->     5595          * to it by calling cb_get earlier. After the job will be completed,
->     5596          * cb_put will release it, but here we want to remove it from the
->     5597          * idr
->     5598          */
->     5599         hl_cb_destroy(&hdev->kernel_mem_mgr, handle);
->     5600
->     5601         return rc;
->     5602 }
->
-> regards,
-> dan carpenter
