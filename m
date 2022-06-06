@@ -2,109 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F543C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Jun 2022 10:14:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEDEC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Jun 2022 17:20:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233541AbiFFKOl (ORCPT
+        id S229624AbiFFRUV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 6 Jun 2022 06:14:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50730 "EHLO
+        Mon, 6 Jun 2022 13:20:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233838AbiFFKOU (ORCPT
+        with ESMTP id S230028AbiFFRTY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 6 Jun 2022 06:14:20 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A34FA1498FA
-        for <kernel-janitors@vger.kernel.org>; Mon,  6 Jun 2022 03:11:35 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id k19so19162069wrd.8
-        for <kernel-janitors@vger.kernel.org>; Mon, 06 Jun 2022 03:11:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=SKMeYqCcEfGfSDa+Q181OzEqniNNtYhyJ3KyTSBEY4Y=;
-        b=mlMaVVVH5V5IY6V+cat825TU8tvhR1u2cHimuFiap7iVJSe+XE7uHWFrzj6EnLuQK3
-         mp5evB7Qw3HfmlN8DiU25Fwjf8mORJShAPBg2F8fezIWajhtssceeO53VhlUFNdkmS2U
-         hF/W87/wUfMFCih1tfMiT2RyxlbdwYxdrP9vsKV2QH8fayGpS4/N3h2Y0FF0ORFnFXFd
-         pkdQuCpbMoeY7NTPdPdZgmdF27l9Gm+VSf9fs+hMCjI+oshigc7CoNLaKrYWYvK3x7CK
-         3+fu0fkhw/OmjX9A+TC+O975l7FA3Jz1KvzbcUpkxolykDnEfdH0Y4vvBv5/NPhXnD6X
-         tuzA==
+        Mon, 6 Jun 2022 13:19:24 -0400
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ED882BD;
+        Mon,  6 Jun 2022 10:18:59 -0700 (PDT)
+Received: by mail-il1-f174.google.com with SMTP id y16so12390639ili.13;
+        Mon, 06 Jun 2022 10:18:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=SKMeYqCcEfGfSDa+Q181OzEqniNNtYhyJ3KyTSBEY4Y=;
-        b=02+xxDXmPAW/04WZ4hOz3vsYzi90uDdRC4Q3eGyIEt0GG1Axa97yOLlP4BAXPj55s0
-         dF30kC3oHCvdx+uyNIgarSKjD/7jp3YdAD7dMVe2XBXnjpU6NjJFBFeoiwNzh9LqnmLP
-         Fohq0lrGD3Jh7+AxhQsvOX+diS9bUpcKzkvUcyYfQUQdf4ZfmC9KbtFrTPXB5GThJBpx
-         8TkYBslejXk4e8NvrA6LfJHk8BGT1bwJodw+EQZ6seuCxVG1Z9WaW2mDsEzcBnZc7N8L
-         h1D0Mb53hL3oe1NKfMG5xN0S9Qfl5cr8c7xFwXnbH7wp71YsQi7BckQTvkfGEeu/d6Sd
-         1XMA==
-X-Gm-Message-State: AOAM532T9apWNkuNwX4NSpeebBQ6F7uHPJSxesvB0zVATUPL0CN6TF7A
-        TrwZhh4/HPr66VJL1g8nRjxAQw==
-X-Google-Smtp-Source: ABdhPJzuTMoyD/Jp/baSYmSwhReRg4JOV5WbVbl4L+tU9o+doSR2QFiSxN2MEG6WtjZLPQNyUse1ng==
-X-Received: by 2002:a05:6000:1a88:b0:20e:6eb4:124e with SMTP id f8-20020a0560001a8800b0020e6eb4124emr21566830wry.8.1654510294109;
-        Mon, 06 Jun 2022 03:11:34 -0700 (PDT)
-Received: from [192.168.86.238] (cpc90716-aztw32-2-0-cust825.18-1.cable.virginm.net. [86.26.103.58])
-        by smtp.googlemail.com with ESMTPSA id 186-20020a1c19c3000000b0039c4ec6fdacsm3027736wmz.40.2022.06.06.03.11.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Jun 2022 03:11:33 -0700 (PDT)
-Message-ID: <a8fdaff6-396c-5450-74a8-65acb660de5d@linaro.org>
-Date:   Mon, 6 Jun 2022 11:11:32 +0100
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=oUB1RtAxwcnRE2CEYiw/IkNM/uWyKljTbcTDvBqQ/Ms=;
+        b=GtmxG5HcoFnpvZeANxEFtLL+gyzcKyepunxK/d4Rilj9vxQbVv9OSQnKHavOWFpT+/
+         jF8qo21QrkJwMLdOEj/e8a/sM3XD4n9q6jGoo1VccoKDTU4Jt/Lc4lv9cbnsRXCUsJsm
+         OMjUShSm/Hir+yMGg7Hf4dPtiOOiJB3fbbTHD0mOyKpQnAtFd/ttHeWh6nOPnqVWQOfC
+         sI0MFPugWSPLB9owhpY3zIPqYhMdvgQQLa/604I3U7AIkrv/fSeTyIIrL9DGj1dtXM8r
+         qA1c0Vb9y3KOEN5ReL1vlEDVzd6AMBsddgYc4XkRzdKH+jhImsHYz86VsVEgkYFL9mdD
+         2N7w==
+X-Gm-Message-State: AOAM531febv+2RUWUhSNQEzmN3/9kv/6qtonv5ihg/qo/fcWoUN7tqMu
+        ZF4ff38nI6BdClf6Fm0jWQ==
+X-Google-Smtp-Source: ABdhPJwwqIpJPlfuz1tpdxBnIscqptcD/jrSI7SGTP9v7AyxAyS8obOg7qY7NyGvzBbBtOYBzZmBUg==
+X-Received: by 2002:a05:6e02:1523:b0:2d3:cb16:2d03 with SMTP id i3-20020a056e02152300b002d3cb162d03mr14157340ilu.198.1654535938816;
+        Mon, 06 Jun 2022 10:18:58 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.251])
+        by smtp.gmail.com with ESMTPSA id e1-20020a022101000000b0032b3a78179csm5823216jaa.96.2022.06.06.10.18.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jun 2022 10:18:58 -0700 (PDT)
+Received: (nullmailer pid 912769 invoked by uid 1000);
+        Mon, 06 Jun 2022 17:18:55 -0000
+Date:   Mon, 6 Jun 2022 12:18:55 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, malidp@foss.arm.com,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        kernel-janitors@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Brian Starkey <brian.starkey@arm.com>,
+        Andre Przywara <andre.przywara@arm.com>,
+        James Wang <james.qian.wang@arm.com>,
+        Mihail Atanassov <mihail.atanassov@arm.com>,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] MAINTAINERS: rectify entries for ARM DRM DRIVERS after
+ dt conversion
+Message-ID: <20220606171855.GA912412-robh@kernel.org>
+References: <20220601041746.22986-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] slimbus: messaging: fix typos in comments
-Content-Language: en-US
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-References: <20220521111145.81697-88-Julia.Lawall@inria.fr>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <20220521111145.81697-88-Julia.Lawall@inria.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220601041746.22986-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 21/05/2022 12:11, Julia Lawall wrote:
-> Spelling mistakes (triple letters) in comments.
-> Detected with the help of Coccinelle.
+On Wed, 01 Jun 2022 06:17:46 +0200, Lukas Bulwahn wrote:
+> The three commits:
 > 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+>   36fd2a65bcaf ("dt-bindings: display: convert Arm HDLCD to DT schema")
+>   0f6983509ea1 ("dt-bindings: display: convert Arm Komeda to DT schema")
+>   2c8b082a3ab1 ("dt-bindings: display: convert Arm Mali-DP to DT schema")
 > 
-
-Applied thanks,
-
---srini
+> convert the arm display dt-bindings, arm,*.txt to arm,*.yaml, but miss to
+> adjust its reference in MAINTAINERS.
+> 
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
+> broken references.
+> 
+> Repair these file references in ARM HDLCD DRM DRIVER, ARM KOMEDA DRM-KMS
+> DRIVER and ARM MALI-DP DRM DRIVER.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > ---
->   drivers/slimbus/messaging.c |    4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> Andre, please ack.
+> Rob, Krzysztof, please pick this minor non-urgent clean-up patch in
+> your -next dt tree.
 > 
-> diff --git a/drivers/slimbus/messaging.c b/drivers/slimbus/messaging.c
-> index e5ae26227bdb..4ce0cb61e481 100644
-> --- a/drivers/slimbus/messaging.c
-> +++ b/drivers/slimbus/messaging.c
-> @@ -79,7 +79,7 @@ int slim_alloc_txn_tid(struct slim_controller *ctrl, struct slim_msg_txn *txn)
->   EXPORT_SYMBOL_GPL(slim_alloc_txn_tid);
->   
->   /**
-> - * slim_free_txn_tid() - Freee tid of txn
-> + * slim_free_txn_tid() - Free tid of txn
->    *
->    * @ctrl: Controller handle
->    * @txn: transaction whose tid should be freed
-> @@ -101,7 +101,7 @@ EXPORT_SYMBOL_GPL(slim_free_txn_tid);
->    * @txn: Transaction to be sent over SLIMbus
->    *
->    * Called by controller to transmit messaging transactions not dealing with
-> - * Interface/Value elements. (e.g. transmittting a message to assign logical
-> + * Interface/Value elements. (e.g. transmitting a message to assign logical
->    * address to a slave device
->    *
->    * Return: -ETIMEDOUT: If transmission of this message timed out
+>  MAINTAINERS | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
+
+Applied, thanks!
