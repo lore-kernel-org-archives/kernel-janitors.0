@@ -2,94 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEDEC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Jun 2022 17:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B31BC43334
+	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Jun 2022 20:52:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229624AbiFFRUV (ORCPT
+        id S233188AbiFFUwz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 6 Jun 2022 13:20:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40534 "EHLO
+        Mon, 6 Jun 2022 16:52:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230028AbiFFRTY (ORCPT
+        with ESMTP id S232786AbiFFUwY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 6 Jun 2022 13:19:24 -0400
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ED882BD;
-        Mon,  6 Jun 2022 10:18:59 -0700 (PDT)
-Received: by mail-il1-f174.google.com with SMTP id y16so12390639ili.13;
-        Mon, 06 Jun 2022 10:18:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=oUB1RtAxwcnRE2CEYiw/IkNM/uWyKljTbcTDvBqQ/Ms=;
-        b=GtmxG5HcoFnpvZeANxEFtLL+gyzcKyepunxK/d4Rilj9vxQbVv9OSQnKHavOWFpT+/
-         jF8qo21QrkJwMLdOEj/e8a/sM3XD4n9q6jGoo1VccoKDTU4Jt/Lc4lv9cbnsRXCUsJsm
-         OMjUShSm/Hir+yMGg7Hf4dPtiOOiJB3fbbTHD0mOyKpQnAtFd/ttHeWh6nOPnqVWQOfC
-         sI0MFPugWSPLB9owhpY3zIPqYhMdvgQQLa/604I3U7AIkrv/fSeTyIIrL9DGj1dtXM8r
-         qA1c0Vb9y3KOEN5ReL1vlEDVzd6AMBsddgYc4XkRzdKH+jhImsHYz86VsVEgkYFL9mdD
-         2N7w==
-X-Gm-Message-State: AOAM531febv+2RUWUhSNQEzmN3/9kv/6qtonv5ihg/qo/fcWoUN7tqMu
-        ZF4ff38nI6BdClf6Fm0jWQ==
-X-Google-Smtp-Source: ABdhPJwwqIpJPlfuz1tpdxBnIscqptcD/jrSI7SGTP9v7AyxAyS8obOg7qY7NyGvzBbBtOYBzZmBUg==
-X-Received: by 2002:a05:6e02:1523:b0:2d3:cb16:2d03 with SMTP id i3-20020a056e02152300b002d3cb162d03mr14157340ilu.198.1654535938816;
-        Mon, 06 Jun 2022 10:18:58 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id e1-20020a022101000000b0032b3a78179csm5823216jaa.96.2022.06.06.10.18.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jun 2022 10:18:58 -0700 (PDT)
-Received: (nullmailer pid 912769 invoked by uid 1000);
-        Mon, 06 Jun 2022 17:18:55 -0000
-Date:   Mon, 6 Jun 2022 12:18:55 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, malidp@foss.arm.com,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        kernel-janitors@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Brian Starkey <brian.starkey@arm.com>,
-        Andre Przywara <andre.przywara@arm.com>,
-        James Wang <james.qian.wang@arm.com>,
-        Mihail Atanassov <mihail.atanassov@arm.com>,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] MAINTAINERS: rectify entries for ARM DRM DRIVERS after
- dt conversion
-Message-ID: <20220606171855.GA912412-robh@kernel.org>
-References: <20220601041746.22986-1-lukas.bulwahn@gmail.com>
+        Mon, 6 Jun 2022 16:52:24 -0400
+Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F011F21823
+        for <kernel-janitors@vger.kernel.org>; Mon,  6 Jun 2022 13:42:16 -0700 (PDT)
+Received: from [192.168.1.18] ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id yJY7nohIwJXxRyJY8nmBKa; Mon, 06 Jun 2022 22:42:15 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Mon, 06 Jun 2022 22:42:15 +0200
+X-ME-IP: 90.11.190.129
+Message-ID: <75b293bd-ec8d-8c90-ffe5-afa49d6a218d@wanadoo.fr>
+Date:   Mon, 6 Jun 2022 22:42:07 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220601041746.22986-1-lukas.bulwahn@gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH] stmmac: intel: Fix an error handling path in
+ intel_eth_pci_probe()
+Content-Language: en-US
+To:     Wong Vee Khee <vee.khee.wong@linux.intel.com>
+Cc:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+References: <1ac9b6787b0db83b0095711882c55c77c8ea8da0.1654462241.git.christophe.jaillet@wanadoo.fr>
+ <20220606062650.GA31937@linux.intel.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20220606062650.GA31937@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 01 Jun 2022 06:17:46 +0200, Lukas Bulwahn wrote:
-> The three commits:
+Le 06/06/2022 à 08:26, Wong Vee Khee a écrit :
+> On Sun, Jun 05, 2022 at 10:50:48PM +0200, Christophe JAILLET wrote:
+>> When the managed API is used, there is no need to explicitly call
+>> pci_free_irq_vectors().
+>>
+>> This looks to be a left-over from the commit in the Fixes tag. Only the
+>> .remove() function had been updated.
+>>
+>> So remove this unused function call and update goto label accordingly.
+>>
+>> Fixes: 8accc467758e ("stmmac: intel: use managed PCI function on probe and resume")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>   drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c | 4 +---
+>>   1 file changed, 1 insertion(+), 3 deletions(-)
+>>
 > 
->   36fd2a65bcaf ("dt-bindings: display: convert Arm HDLCD to DT schema")
->   0f6983509ea1 ("dt-bindings: display: convert Arm Komeda to DT schema")
->   2c8b082a3ab1 ("dt-bindings: display: convert Arm Mali-DP to DT schema")
+> LGTM
 > 
-> convert the arm display dt-bindings, arm,*.txt to arm,*.yaml, but miss to
-> adjust its reference in MAINTAINERS.
+> Reviewed-by: Wong Vee Khee <vee.khee.wong@linux.intel.com>
 > 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
-> broken references.
-> 
-> Repair these file references in ARM HDLCD DRM DRIVER, ARM KOMEDA DRM-KMS
-> DRIVER and ARM MALI-DP DRM DRIVER.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Andre, please ack.
-> Rob, Krzysztof, please pick this minor non-urgent clean-up patch in
-> your -next dt tree.
-> 
->  MAINTAINERS | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
 
-Applied, thanks!
+Hi,
+
+I've looked at it again.
+
+I still think that the patch is good, but pcim_release() has changed in 
+5.18 since commit 3f35d2cf9fbc ("PCI/MSI: Decouple MSI[-X] disable from 
+pcim_release()")
+
+I guess that all the mechanic is in place so that everything is 
+registered when needed, but I've not been able to figure it out in the 
+case of dwmac-intel.c.
+
+So, double check :).
+
+CJ
