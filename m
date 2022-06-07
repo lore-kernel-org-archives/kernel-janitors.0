@@ -2,85 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA59FC43334
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Jun 2022 10:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 152A1C43334
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Jun 2022 10:45:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240653AbiFGKKP (ORCPT
+        id S241355AbiFGKpg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Jun 2022 06:10:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55462 "EHLO
+        Tue, 7 Jun 2022 06:45:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239830AbiFGKKO (ORCPT
+        with ESMTP id S241415AbiFGKpY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Jun 2022 06:10:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E7F8A30AE;
-        Tue,  7 Jun 2022 03:10:13 -0700 (PDT)
+        Tue, 7 Jun 2022 06:45:24 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94B1FE64C3;
+        Tue,  7 Jun 2022 03:45:23 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EEBD861372;
-        Tue,  7 Jun 2022 10:10:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5940AC34115;
-        Tue,  7 Jun 2022 10:10:12 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2E7AA61319;
+        Tue,  7 Jun 2022 10:45:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1780BC3411E;
+        Tue,  7 Jun 2022 10:45:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654596612;
-        bh=uxBnGi0lvT4IHjDBL9QfFrsy/vJI+5YmmsBX/iL2cfg=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=bzZs64XsqxOYukKB6buDwq6W4Pejor7a65ovN2xzSrG10sP/mVTKxieqa4bgYP8ND
-         f1pBuFlzMB77VvFKSyZlnRh5w14OPG6OCb43Ku230hyUhvPU5Hjwb1+8RcS7dRhUGF
-         MvSxjqXRBImun85jSONPFz47Kp2Ox5EvCVm1LnoB/dg3ZJc7a/fCOn4wqNHaXO4Nfj
-         FUiJjdJKYnKrZlmrobhgW13NnYWNUeJ2cARiEtri+m8mw554fmuYX69NpmAAH9X8Kq
-         ysZbJjspmv0LEpnO+cWGx+NAY0GoL2D3MbCmHnF2TlV3On0MjyU0mcQwipNz5VuK6u
-         iOwPR05l1BdXw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 3941CE737E8;
-        Tue,  7 Jun 2022 10:10:12 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] stmmac: intel: Fix an error handling path in
- intel_eth_pci_probe()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <165459661222.7137.14626873072976245963.git-patchwork-notify@kernel.org>
-Date:   Tue, 07 Jun 2022 10:10:12 +0000
-References: <1ac9b6787b0db83b0095711882c55c77c8ea8da0.1654462241.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1ac9b6787b0db83b0095711882c55c77c8ea8da0.1654462241.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     peppe.cavallaro@st.com, alexandre.torgue@foss.st.com,
-        joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-        vee.khee.wong@linux.intel.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
+        s=k20201202; t=1654598722;
+        bh=H7439HAhKBiBU5PJ0wEYhH+/aj2uOXs88io1cN6Ww+I=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=IZJSFxF3NIi3cewoR1VlvJQkQVHSUj3nrlHYEWLewWIaLDLl3OCLisXwJk8+U6N7k
+         xAbXEtMyKf/faeh1lawU5kwfT3E6Wy0rTQ5QERHAt6NVjJ1DdVKsNtwmmB4eXkZumX
+         s0qkSMeKyQbAiOT5ozjwAxPlyPDV7Zg+to24SS0nvp7oex+F10NyB+ax9Vn5ShVvzK
+         Z8te27GrRgIwob/Vi5X2zadr+Q2ACUKhB7gIN56o+pBApMCXIO8IYkSbX8jz5zYd0m
+         MMukOD4clitxdcEa2BeAq79ezlu9vZ9bFljGbxJpy3pQ63EFOdkNheKmQL3yMnzbUJ
+         c5nRjaoG4seVw==
+From:   Mark Brown <broonie@kernel.org>
+To:     olivier.moysan@foss.st.com, Julia.Lawall@inria.fr
+Cc:     linux-arm-kernel@lists.infradead.org, arnaud.pouliquen@foss.st.com,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
+        alexandre.torgue@foss.st.com,
         linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
+        mcoquelin.stm32@gmail.com, linux-kernel@vger.kernel.org,
+        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org
+In-Reply-To: <20220521111145.81697-76-Julia.Lawall@inria.fr>
+References: <20220521111145.81697-76-Julia.Lawall@inria.fr>
+Subject: Re: [PATCH] ASoC: stm32: dfsdm: fix typo in comment
+Message-Id: <165459871980.301808.7235614685174421255.b4-ty@kernel.org>
+Date:   Tue, 07 Jun 2022 11:45:19 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net.git (master)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Sun,  5 Jun 2022 22:50:48 +0200 you wrote:
-> When the managed API is used, there is no need to explicitly call
-> pci_free_irq_vectors().
+On Sat, 21 May 2022 13:11:26 +0200, Julia Lawall wrote:
+> Spelling mistake (triple letters) in comment.
+> Detected with the help of Coccinelle.
 > 
-> This looks to be a left-over from the commit in the Fixes tag. Only the
-> .remove() function had been updated.
 > 
-> So remove this unused function call and update goto label accordingly.
-> 
-> [...]
 
-Here is the summary with links:
-  - stmmac: intel: Fix an error handling path in intel_eth_pci_probe()
-    https://git.kernel.org/netdev/net/c/5e74a4b3ec18
+Applied to
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
+Thanks!
 
+[1/1] ASoC: stm32: dfsdm: fix typo in comment
+      commit: 2685d5046962f018b1a155b3eef316562414638b
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
