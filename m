@@ -2,46 +2,46 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE8AACCA47C
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Jun 2022 10:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D0ADCCA47C
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Jun 2022 10:48:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241759AbiFGKsY (ORCPT
+        id S241791AbiFGKsr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Jun 2022 06:48:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43494 "EHLO
+        Tue, 7 Jun 2022 06:48:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241761AbiFGKsB (ORCPT
+        with ESMTP id S241839AbiFGKrb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Jun 2022 06:48:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5732AED7B1;
-        Tue,  7 Jun 2022 03:46:56 -0700 (PDT)
+        Tue, 7 Jun 2022 06:47:31 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08D08ED8F0;
+        Tue,  7 Jun 2022 03:46:40 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E699B6156A;
-        Tue,  7 Jun 2022 10:46:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47B51C3411E;
-        Tue,  7 Jun 2022 10:46:54 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6CB1CB81F0A;
+        Tue,  7 Jun 2022 10:46:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AE1FC385A5;
+        Tue,  7 Jun 2022 10:46:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654598815;
-        bh=tm1TflPGmEDKpwON1qC2bgKQuglKGcgo+mlL9tjn+28=;
+        s=k20201202; t=1654598797;
+        bh=X6+5xiOE4qz4XMcdhWNAGw1qU87NWDS8qS5BzQ/8XE8=;
         h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=LENGS2wVb8Y+9BHDPiC+24SQKag1/003HSb8AxcA53DSzgbcIX1JMId6xZE8Js11n
-         7TNK1mmpSlBg3IHILW63qLKh+AZDCQMxi6SQ3jczaTmrXErUbYBN86e4e+j1SEY0kL
-         LxuE+8joHznqMzsOtfzPDkyWOtIhexnYg582u8P30K8OAr0jtWpEy4eyfJhMRfoD27
-         9OUoWJYAPJAnIGY1TeSL0mj9wcRMujskIJIj4zK8R6JaVAGoelgH+muJrdyL/JomT5
-         EumxoomfejAaJODzZXbyha0r9N8jJR0pKluxC7xdE8iekMzwNrXwNvypmDjby11hn+
-         iXDbbV2Z/CCeA==
+        b=JCgHrS5CDjnhl/jAOf3aQuKjo45BwkzqWGT0qBdLvfCtOjZCnp8pVpryVVMvqs5Xd
+         RIHZeRHacdRAT4H9OjX6jbjz98WFwnaJTw39FWTslAxBDiE0Cfbi+zv07GeqYfoLAQ
+         LYfUg5GMJSkCXhYaMrb1pjLB54NjTTtLt5YrFCAXqtojvTL+Q/TyVPbA7sFsPmB4W6
+         3meYz+OU3W1vYu3iXAAT2MAUbZXfpODvLRuBYR1tU2poisSNdPjfqdcFkYfwY6mvmt
+         SuoJcLz/3+N+hj70knrbroLm/OsDy+GF/YHD+ivwNl3UqR/X+TYUVar+kn4FoK6Ow6
+         CVrwfkeAwvOQg==
 From:   Mark Brown <broonie@kernel.org>
-To:     christophe.jaillet@wanadoo.fr, matthew.gerlach@linux.intel.com
+To:     christophe.jaillet@wanadoo.fr
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-spi@vger.kernel.org
-In-Reply-To: <0607bb59f4073f86abe5c585d35245aef0b045c6.1653805901.git.christophe.jaillet@wanadoo.fr>
-References: <0607bb59f4073f86abe5c585d35245aef0b045c6.1653805901.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] spi: spi-altera-dfl: Fix an error handling path
-Message-Id: <165459881400.302078.16808587662616763292.b4-ty@kernel.org>
-Date:   Tue, 07 Jun 2022 11:46:54 +0100
+In-Reply-To: <d114558dd0351b863ced8cc01b31754a5a4b960d.1653116362.git.christophe.jaillet@wanadoo.fr>
+References: <d114558dd0351b863ced8cc01b31754a5a4b960d.1653116362.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] spi: intel: Use correct order for the parameters of devm_kcalloc()
+Message-Id: <165459879602.302078.11011502384282095003.b4-ty@kernel.org>
+Date:   Tue, 07 Jun 2022 11:46:36 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -49,15 +49,12 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 29 May 2022 08:31:53 +0200, Christophe JAILLET wrote:
-> The spi_alloc_master() call is not undone in all error handling paths.
-> Moreover, there is no .remove function to release the allocated memory.
+On Sat, 21 May 2022 08:59:35 +0200, Christophe JAILLET wrote:
+> We should have 'n', then 'size', not the opposite.
+> This is harmless because the 2 values are just multiplied, but having
+> the correct order silence a (unpublished yet) smatch warning.
 > 
-> In order to fix both this issues, switch to devm_spi_alloc_master().
 > 
-> This allows further simplification of the probe.
-> 
-> [...]
 
 Applied to
 
@@ -65,8 +62,8 @@ Applied to
 
 Thanks!
 
-[1/1] spi: spi-altera-dfl: Fix an error handling path
-      commit: 8e3ca32f46994e74b7f43c57731150b2aedb2630
+[1/1] spi: intel: Use correct order for the parameters of devm_kcalloc()
+      commit: 1f19a2d1d6b9a5796182874eecdd5a67dd94b90c
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
