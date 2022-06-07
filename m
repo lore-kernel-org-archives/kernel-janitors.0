@@ -2,79 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA35C43334
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Jun 2022 09:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38166C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Jun 2022 09:44:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239281AbiFGJkR (ORCPT
+        id S239850AbiFGJoI (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Jun 2022 05:40:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48594 "EHLO
+        Tue, 7 Jun 2022 05:44:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232685AbiFGJkQ (ORCPT
+        with ESMTP id S239841AbiFGJoH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Jun 2022 05:40:16 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 489EDCEBA8;
-        Tue,  7 Jun 2022 02:40:15 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 070A0B81E77;
-        Tue,  7 Jun 2022 09:40:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B45B8C385A5;
-        Tue,  7 Jun 2022 09:40:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654594812;
-        bh=0SyMDivUzEu0tDvgyTj2GJcUW+vtwcWEcGy75q++O74=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=p/OPreIcuOwdsWc/MggVL/2zkf+gFgZldCm3LTmtaH92P5L2/oBEV0AJ7kebIM/ba
-         +8+I6y17KRGwd522dcGxtWf/xpHdeqJBtHMyD4sXe2u0pdZjTc5oZTbTSRqBSxoeBt
-         +2xjvt0wEeMihAgLECaCxHhflEr/74/h3YNvuxyvI/BBA1DNe8C5Fm3DoMrtzhBf22
-         5sIe9r0wi8Ru9NHRD1EwFjOOM5XJalU/GFPsJnJOGwLfs+TEgJMSbdR24JbjRqnuVv
-         XZK52m97u3BR7zTyf1l+XpNfnePZP9HL/PXC9oIxXDTGgdHGmj9JUaPsHrPO+A1xY8
-         k9DSuKnTyAGjw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9BD69E737EE;
-        Tue,  7 Jun 2022 09:40:12 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 7 Jun 2022 05:44:07 -0400
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59295A98B8
+        for <kernel-janitors@vger.kernel.org>; Tue,  7 Jun 2022 02:44:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=WPMIF/ZdRxQluuM5wA7vVcLt76yhP2zJUE48Bx4+TXU=;
+  b=CFEjkSxqSEtZPhwU/wjPGo2Rwuu6at+vNQr+f81sBWgEjQ0b10H7KhT4
+   DrE3M/QY8doV5s9Y6aTp6R9nMbMwAE8fgA7gt26hcTiGuaxhzfoNW2l1M
+   SM7Q02bFLwfggSekvQ/Zwqo1R+Ny78tvEYuUvpRCFop62dlLFWvnSuadi
+   k=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="5.91,283,1647298800"; 
+   d="scan'208";a="39783838"
+Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2022 11:44:02 +0200
+Date:   Tue, 7 Jun 2022 11:44:02 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: julia@hadrien
+To:     =?ISO-8859-15?Q?J=E9r=E9my_LEFAURE?= <jeremy.lefaure@netatmo.com>
+cc:     Nicolas Palix <nicolas.palix@imag.fr>,
+        "cocci@inria.fr" <cocci@inria.fr>,
+        Markus Elfring <Markus.Elfring@web.de>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH v2] coccinelle: ifaddr: Find address test in more complex
+ conditions
+In-Reply-To: <AS8PR03MB760365A0DE3A8522136471BE93A59@AS8PR03MB7603.eurprd03.prod.outlook.com>
+Message-ID: <alpine.DEB.2.22.394.2206071143370.11966@hadrien>
+References: <AS8PR03MB760365A0DE3A8522136471BE93A59@AS8PR03MB7603.eurprd03.prod.outlook.com>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: altera: Replace kernel.h with the necessary inclusions
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <165459481263.20204.14162751087523664869.git-patchwork-notify@kernel.org>
-Date:   Tue, 07 Jun 2022 09:40:12 +0000
-References: <18731e4f6430100d6500d6c4732ee028a729c085.1654325651.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <18731e4f6430100d6500d6c4732ee028a729c085.1654325651.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     joyce.ooi@intel.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: multipart/mixed; boundary="8323329-699005149-1654595042=:11966"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-This patch was applied to netdev/net-next.git (master)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Sat,  4 Jun 2022 08:54:20 +0200 you wrote:
-> When kernel.h is used in the headers it adds a lot into dependency hell,
-> especially when there are circular dependencies are involved.
-> 
-> Replace kernel.h inclusion with the list of what is really being used.
-> 
-> While at it, move these includes below the include guard.
-> 
-> [...]
-
-Here is the summary with links:
-  - net: altera: Replace kernel.h with the necessary inclusions
-    https://git.kernel.org/netdev/net-next/c/12de1ebd2ae3
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+--8323329-699005149-1654595042=:11966
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 
 
+
+On Tue, 7 Jun 2022, Jérémy LEFAURE wrote:
+
+> The test of an expression's address does not necessarily represent the
+> whole condition, it may only be a part of it.
+> This change aims at detecting an address test in more complex conditions.
+>
+> Signed-off-by: Jérémy Lefaure <jeremy.lefaure@netatmo.com>
+> ---
+> v1 -> v2: Moved disjunction on the condition itself instead of being on the if statements
+
+Thanks for the change.  It seems to cover all the cases.
+
+julia
+
+>
+>  scripts/coccinelle/misc/ifaddr.cocci | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/coccinelle/misc/ifaddr.cocci b/scripts/coccinelle/misc/ifaddr.cocci
+> index fc92e8fcbfcb..14dbf3131a3f 100644
+> --- a/scripts/coccinelle/misc/ifaddr.cocci
+> +++ b/scripts/coccinelle/misc/ifaddr.cocci
+> @@ -18,7 +18,7 @@ statement S1,S2;
+>  position p;
+>  @@
+>
+> -*if@p (&x)
+> +*if@p ( \(&x || ... \| &x && ... \) )
+>   S1 else S2
+>
+>  @script:python depends on org@
+> --
+> 2.25.1
+>
+--8323329-699005149-1654595042=:11966--
