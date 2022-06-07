@@ -2,97 +2,169 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC99BC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Jun 2022 06:42:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C4DC43334
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Jun 2022 06:49:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236035AbiFGGmn (ORCPT
+        id S236751AbiFGGts (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Jun 2022 02:42:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52492 "EHLO
+        Tue, 7 Jun 2022 02:49:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229876AbiFGGmm (ORCPT
+        with ESMTP id S232418AbiFGGtq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Jun 2022 02:42:42 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 213F1E20;
-        Mon,  6 Jun 2022 23:42:41 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id l126-20020a1c2584000000b0039c1a10507fso3109916wml.1;
-        Mon, 06 Jun 2022 23:42:41 -0700 (PDT)
+        Tue, 7 Jun 2022 02:49:46 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADC925BE5B
+        for <kernel-janitors@vger.kernel.org>; Mon,  6 Jun 2022 23:49:45 -0700 (PDT)
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2575kc1m011536;
+        Tue, 7 Jun 2022 06:49:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : content-type : mime-version; s=corp-2021-07-09;
+ bh=6qtDwlKvjfK7zKvrNToarR+1YcevBJua6gWRMNVtf74=;
+ b=mDQXek5yNGeoPwz+7BLjxBEQrhAwmrvcdYX9Z4suvcBAUe8/jwxALSV8IMQcEUi0A/mC
+ 8GbQphkBCSGunTZngS25iMnBXGzEc1JKKwmbkewj3dbgdeFn4Ihz2xQbEfIxpMnqUJrf
+ /qQ8rIxuoRrEROMOA+5SaD+B3d75UUHFCGq+WnjgWhIwDbkKXnFCjmU4wgIhDedXWEsT
+ oZyYX0lk2h+zwhOSriHMyP9u3WIQYeK3um1mem4RUUCqueys7EuWK8duwB+HUGYDvzkO
+ L06R8NbTdfPamXGlvQfyRHkf3GLMwDF3W/lGZ7gqz1bjOp4Xv/VDlS+XoFBLz3wXYMxk Xg== 
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3gfyekctt9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 Jun 2022 06:49:40 +0000
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 2576kTZJ032811;
+        Tue, 7 Jun 2022 06:49:39 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2103.outbound.protection.outlook.com [104.47.58.103])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3gfwu274w8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 07 Jun 2022 06:49:39 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Xo0U7iWm5UoTNhCLAJf5yRtHY+KuGfbUa5snjzB/x0ht8HqCh+x2f2qvcZsixgk7DwVMHk3b9BTavFcs4G+0b1eAzglZwQFMSEY9c/y1ZmUnwqTqYlwVxKZ/BImqu1KVyeNWrKBWYWOR09/xPvi/qO/euZB6LdB6Hr7/6STZII5+imCx3/0YZGRrP5dnFkkRt7AtGTDycyJLeurkfK2AucoDiFpPhzrPCr5r5uwKewbneTPUcRgF4Y2o4zft3TnPU8INMtufuhOpOQGmyuXAFBKjWH4JP1NNCJ5IcctNkbLAjVTmA8YgvML6T2Q+1nI0CN4j37byomWKImYY4+ztYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6qtDwlKvjfK7zKvrNToarR+1YcevBJua6gWRMNVtf74=;
+ b=PAkh/mjRZDwV/LFd60xFR0CctwvUYoMDbzauob+QPgUSNP+zPhHIbipNT/AGhR3wuZZS1nBAadjOE+IuyTlMs1+rQ1CG075fcplaligDglnL8KqCb28bxkXAIt4q3qUwCDQGwug9axmO2rZ+oUbjHZatCn8GLcADapm4fxGGjSb3HPT8y3iNOPTjdXczNKEhHsvVBs2NE7lYXwdFFPNzA9aDSeT284QRa6m3dE45wrpvlU02WPwFGNN0rqQvZjfRpPgKwkDnL9ITIg1aPS+hFkDKqwHpzLFPoMtmHnnmwfTL5gR1raU9tyfYpKtVNe46niJ9Zyiz/pV7FMw62mMixw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=c7fXZn7eLWOLLDVLCIffOLeUzZSMZgrh+9NwAae4wD8=;
-        b=q4GUuIQCZxL0eQWg2lcpbiLZoptbLmLs0LH/cRatUYhibi0SzwJAfK/fIZ1TeCJJrC
-         LTGBD+4YM1f0Dd4naLmCmye1QTgWtheU+3E6WRxzodAkZ7EhUjL32XwHf1uB++ieSTYa
-         BjQDJfo8qelAWkEVwKosy11+ZBIfU9L57v8fyP+Q9HqJ76CbMLHucf4MbxvA7zuq/Hfw
-         4OPQ8s2csbO8kHNJgQDHaJVpK8+rBJD8uNGhQOXmUPYPlzMjw9crHAFGgWCHL0fD+PLo
-         eIBtgBE4QItHtHkwImtZhiCPHXPuulXkbS/9GAaeWa8R2X8vu0kFiIB4vkTGplEyX7JH
-         cOXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=c7fXZn7eLWOLLDVLCIffOLeUzZSMZgrh+9NwAae4wD8=;
-        b=jRyhi7dwdeHfYqLfyEiMPyS1B+daEJj7R9nB5yFf6YKN4C8y0AEvQRuBreq5cija1N
-         Pl9FpzAgdnzMN5TmpgAbqxGkd6APlNR9bmDM3cVF56Qb5tq6CTnHJbI3KMqmW5NhhRDc
-         ojWY1naS+7zn4Xz7+CKirIBjjMJ1Jbid00WPlUDBzX7BAHu+m72WRb/qdFGvGw1MaSEa
-         IDRGQeKP0jzRqyPbgQ2ln3uh4ksMDE4KEJG1xg21pbl4afKOHKeLHvs8KktTkOyLsI/7
-         XXuk5KWB7G320qtGLAhPjUx0us7Cah8xLai1x1iAHvqgc7dmUGfgA5k7W5Nl4RMgllLH
-         /pDA==
-X-Gm-Message-State: AOAM531BPpAzbOnyqOlWuWCCVpHCoFDld0UPTPUrUxPQkeZi2XPKqDWp
-        y5/gkKLnZ0XUjE2miLdLakc=
-X-Google-Smtp-Source: ABdhPJyEdwLm2b0emQkuqYzZNx6AsZ6IM/0WAAldI0QWInMs5ioKyUJ2E98qZWGsFWO9qC6NWoMKFA==
-X-Received: by 2002:a05:600c:1908:b0:394:867d:66c4 with SMTP id j8-20020a05600c190800b00394867d66c4mr55368926wmq.152.1654584159534;
-        Mon, 06 Jun 2022 23:42:39 -0700 (PDT)
-Received: from felia.fritz.box (200116b8261d85004489eb5274e8e310.dip.versatel-1u1.de. [2001:16b8:261d:8500:4489:eb52:74e8:e310])
-        by smtp.gmail.com with ESMTPSA id p9-20020adf9d89000000b0020d10a249eesm18444272wre.13.2022.06.06.23.42.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jun 2022 23:42:39 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: rectify file pattern in MICROCHIP OTPC DRIVER
-Date:   Tue,  7 Jun 2022 08:42:20 +0200
-Message-Id: <20220607064220.9296-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6qtDwlKvjfK7zKvrNToarR+1YcevBJua6gWRMNVtf74=;
+ b=t1ALRsbXnaKDOmQYln2ac/VJKdx73jVUhRltO2ubp297H5wbq1vYkSfF6PrClk1YS+SV0UfiwzHSQxMse/AERCHgzoX6MZfosHZ0ajSw1SFtfmo4GOuAIIug/vSH+y5JLCUY7x9hyvroFjaqMEAOCrhqgZzfq/t7XOx/xUGGnWA=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by BYAPR10MB2616.namprd10.prod.outlook.com
+ (2603:10b6:a02:af::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.13; Tue, 7 Jun
+ 2022 06:49:37 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::5020:9b82:5917:40b]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::5020:9b82:5917:40b%6]) with mapi id 15.20.5314.019; Tue, 7 Jun 2022
+ 06:49:37 +0000
+Date:   Tue, 7 Jun 2022 09:49:25 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>, Eli Cohen <elic@nvidia.com>
+Cc:     Jason Wang <jasowang@redhat.com>,
+        Si-Wei Liu <si-wei.liu@oracle.com>,
+        Parav Pandit <parav@nvidia.com>,
+        virtualization@lists.linux-foundation.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH 1/2] vdpa/mlx5: fix error code for deleting vlan
+Message-ID: <Yp709f1g9NcMBCHg@kili>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-ClientProxiedBy: ZR0P278CA0190.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:44::17) To MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: f1172cac-4b93-4371-1344-08da4851e34d
+X-MS-TrafficTypeDiagnostic: BYAPR10MB2616:EE_
+X-Microsoft-Antispam-PRVS: <BYAPR10MB2616B661B4E37F18E4524CC18EA59@BYAPR10MB2616.namprd10.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: sQDDEYX/IbNtHDFZwDh0xNZJi+M3MJa5XLeV+wa91tZgywq1q5Rib1v6glfALavDlQJHPB42gHA9ins2B5XjicFE1WBNeaO/1vitHxmsJomcM2IDU3sQNhiU/OLSBKAicCDnaXM9yYMbLLlz9dcMrj+M69wD/RLgUeYkXuSmiCQ++sUB0A6qolhnwxFRp6/8jfAIjeMfu/8iApAUicfCMMbfIY04+Z1YTn0YzAgk/XCYFoqL4FSakQ+OficIeTXzDdYmyMalBn59b+eQIWpdOu2RFOndAVpyF+7bU5UyyNV/+gjSVBIAig6LkIGeRnjSNmkGB8F/cAb5WS3kd34xRJ40YvADMesJaMULsCLq0GWx60AeCUWSrg8ZAwHGlF98e8n002w3omVJMHMSTNU2r/OcXVVD7FQjYyW8OwmrKLPBc3upZcU/SpsP0Epk0d5s4Pqlivx7QmOFJYubuN4Sw+r7aiYSjtxS1vEiQPnMsSp0XXHQ1rfcewMlsywRJRXogjqHmCj6obuIeb9oGsuZohuk9z+9SN+MDzLKlodIBhBFHPPUqTx+/7aX3a1S8KyjuWQsoFr+SUKSaocV+gmrB5NBjlUHjDJYaiqfYlDBOEmtCD4a16b0Jk96mJpIqry47HAzKP0qhioIhm3zc6pDk3w0nrI8HoJezOGE1uqepir6dEetzjMaPppNFff+CcMApvKFbr0bZx8Sd9FrbyzUFg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(366004)(8936002)(8676002)(83380400001)(4326008)(52116002)(54906003)(110136005)(66946007)(66556008)(6486002)(66476007)(6666004)(316002)(2906002)(4744005)(38350700002)(508600001)(5660300002)(44832011)(6506007)(9686003)(86362001)(6512007)(186003)(26005)(33716001)(38100700002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?XLHJNG6Ai/VO1OO90XYFr4mRLkgcHf4qpOfVEt2IPQfe6rUQVXtObwYm1JNB?=
+ =?us-ascii?Q?P+l33Ig2wJqrqwRDyQQj09Q/TRmEvuWncNElwpdldKEobmC97un/gROw3COx?=
+ =?us-ascii?Q?ojs6j7Kl8IRfyqBjUlS3xgw/qrfpm0G0rzDFiZchlf7/wqYbjaK997LzC7so?=
+ =?us-ascii?Q?UyEwbT7xMb34BT5PMiFik4pZzIOZKwL5kO1aZfkF6Y5XeNDw/o73h2gvckKd?=
+ =?us-ascii?Q?BLN5ltVeOOrkyobXM4a51tncXwEeNmoypM7uJaTFwehgrFQ1VCpKObvZMWFW?=
+ =?us-ascii?Q?iE5dJZyywK5ulfW9n01hlzd7eqH9lsUIWIas85nJS28xWUuUIaCzaNFE4QEg?=
+ =?us-ascii?Q?Un5NBWuG2Wv1HJoHnB0O1yfqsuIm4IctYuQEAg3ITDmIn1sARvU9LPAhC4Vw?=
+ =?us-ascii?Q?tdni2+xrIcAfh57V8mu3a+nT+vwoIuqEcaUPXyezbG+iIkREOiYryI/Tshd6?=
+ =?us-ascii?Q?z8xZVD1rX0aaOv0fhXgLR6Wdtusj8h6XGfRONPcOAOnAR6JjhYIpuqOYvSRU?=
+ =?us-ascii?Q?kidy9uW7CvPdV6/Nxt1peTTxUxgS3pHlJEHerew0WdkaAG2K3lTTrggj3ifK?=
+ =?us-ascii?Q?u1mNB5foK0WwgIq/tWGfwMN9wLaK24IewTEh7ZU+hbam5CKxT53aVCW6S+0x?=
+ =?us-ascii?Q?nNfTokM4Hn2rJXs9Ul6IuMt2NRkizxM7RvtZ0TOHvXAvErtYhCZptYjAgfdi?=
+ =?us-ascii?Q?NKdqbexJdVgdTICHCdXAVSK8kJKzBh9atD/qFkdsKDzAGq93qy/D7DIJZzMv?=
+ =?us-ascii?Q?56wLsR/NvA5yo/TaD8FLfVJYj8+qq3yIgQhc2bsY8Gz82n4E8A+8XYk5L6Oe?=
+ =?us-ascii?Q?DqyYG0NQjXvCp2t6bye+3KbDaoRjgVFt2Wp9+e6kpp6e+5NX7BcizdxsAEa3?=
+ =?us-ascii?Q?ftbiJbS2peBfQpvIWIsxusb1JLT4U7X7V7flc9rWIsa+dKzwHnTi+6rRKaLD?=
+ =?us-ascii?Q?bDapZLcYjxoe5GOT8CZn2RGdrWJbQJOLyCV3vKILJZCQJggvfOgHJrR2VYkY?=
+ =?us-ascii?Q?kJCy8xLji6V0WxD9C0vpbOlGuihdMDg199KTF9lXP30lWkkEVE3YOltfDIjS?=
+ =?us-ascii?Q?c5rrw3xLkUQl00r+O1B0AjeNL/81vyNrErEmGMvzB1Phbxd4ZPNJJq8zMJeV?=
+ =?us-ascii?Q?e3LJoaSUUtgdiMdWngPygTblnNUi0eyALQL+irxrBAKjrwKcvS+1g66nq5f5?=
+ =?us-ascii?Q?M95P2Q/+0JkEqQevKTXlSq8o/oyBdr7/70n8wuCevUHZg4LyNt7h/Bt9atSd?=
+ =?us-ascii?Q?O1+Q+61qxdHDOg806mdmiF3PS2j6gNcty6XytVcghnnwmDW20CqvcHEajK2d?=
+ =?us-ascii?Q?tQP59uUVGGKS+3u7KreZ/r71x2E6AGdnCIifDRc6lIJN0l0w7ZwZcB7rxLov?=
+ =?us-ascii?Q?m1+6lKXJUzt4Lq+8CCSPI3PpHhjikEzg8DFyt+hnijqIJiwM1O8MmRLZ2lyx?=
+ =?us-ascii?Q?LLjbKVOA/3ZKnhc9Zcel/th35MqboKkXBIcZmTrEgVgQbXl1ofkUmN2kPe0k?=
+ =?us-ascii?Q?GaC+XLm7agVdujTR+FELBcv8B6OoSYIZaFyQv1QITNx38Wdlt/Ms9xU7W95g?=
+ =?us-ascii?Q?AXYkRyq07F16MVdYH0pDLE76uMBu3p/31MjUU2ZUknBG+aItx+e+kGHXjLG8?=
+ =?us-ascii?Q?3LQugCzTjTnpzLWPrqJ+Iy+7BKwT+blBEjMxlu5AeAeH1m04TL2K50tl/iWT?=
+ =?us-ascii?Q?rc+GoLynoQw7plZXzx106OdTOrAoIpOLtRkTt2dZO1GE60enXxxr4meZbvXB?=
+ =?us-ascii?Q?CGhl3Co7A1kQFjEOPO4BRA+8HEic3Ck=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1172cac-4b93-4371-1344-08da4851e34d
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2022 06:49:37.1095
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: U92L1E9Dt/Qy15a8zMmFQSTOGC/sCwP0nWbL19NWooh9uqZ1Xm3z82TtbBNKbv3gQjo6TxRHg8jl4MyNJEVZ5//LXh0JLrELx950UMNWn0s=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR10MB2616
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.517,18.0.874
+ definitions=2022-06-07_02:2022-06-02,2022-06-07 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 spamscore=0
+ phishscore=0 mlxscore=0 adultscore=0 suspectscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2204290000
+ definitions=main-2206070027
+X-Proofpoint-GUID: iiHQ4rAbAAwLVuLWoCTR-BDUqZTGrVVk
+X-Proofpoint-ORIG-GUID: iiHQ4rAbAAwLVuLWoCTR-BDUqZTGrVVk
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 6b291610dd57 ("nvmem: microchip-otpc: add support") adds the
-Microchip otpc driver and a corresponding MAINTAINERS section, but slips
-in a slightly wrong file pattern.
+Return success if we were able to delete a vlan.  The current code
+always returns failure.
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
-
-Rectify this file pattern in MICROCHIP OTPC DRIVER.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Fixes: baf2ad3f6a98 ("vdpa/mlx5: Add RX MAC VLAN filter support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-Claudiu, please ack.
+From review.  (Not tested).
 
-Srinivas, please pick this minor non-urgent patch in your -next tree on
-top of the commit above. Thanks.
+ drivers/vdpa/mlx5/net/mlx5_vnet.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 572f50739fb2..288393564abc 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13119,7 +13119,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Supported
- F:	Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml
- F:	drivers/nvmem/microchip-otpc.c
--F:	dt-bindings/nvmem/microchip,sama7g5-otpc.h
-+F:	include/dt-bindings/nvmem/microchip,sama7g5-otpc.h
+diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+index b7a955479156..c964f4161d7f 100644
+--- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
++++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+@@ -1814,6 +1814,7 @@ static virtio_net_ctrl_ack handle_ctrl_vlan(struct mlx5_vdpa_dev *mvdev, u8 cmd)
  
- MICROCHIP PWM DRIVER
- M:	Claudiu Beznea <claudiu.beznea@microchip.com>
+ 		id = mlx5vdpa16_to_cpu(mvdev, vlan);
+ 		mac_vlan_del(ndev, ndev->config.mac, id, true);
++		status = VIRTIO_NET_OK;
+ 		break;
+ 	default:
+ 	break;
 -- 
-2.17.1
+2.35.1
 
