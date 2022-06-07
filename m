@@ -2,92 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B31BC43334
-	for <kernel-janitors@archiver.kernel.org>; Mon,  6 Jun 2022 20:52:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C09BFC43334
+	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Jun 2022 06:39:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233188AbiFFUwz (ORCPT
+        id S237092AbiFGGjS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 6 Jun 2022 16:52:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33250 "EHLO
+        Tue, 7 Jun 2022 02:39:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232786AbiFFUwY (ORCPT
+        with ESMTP id S237051AbiFGGjP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 6 Jun 2022 16:52:24 -0400
-Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F011F21823
-        for <kernel-janitors@vger.kernel.org>; Mon,  6 Jun 2022 13:42:16 -0700 (PDT)
-Received: from [192.168.1.18] ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id yJY7nohIwJXxRyJY8nmBKa; Mon, 06 Jun 2022 22:42:15 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 06 Jun 2022 22:42:15 +0200
-X-ME-IP: 90.11.190.129
-Message-ID: <75b293bd-ec8d-8c90-ffe5-afa49d6a218d@wanadoo.fr>
-Date:   Mon, 6 Jun 2022 22:42:07 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] stmmac: intel: Fix an error handling path in
- intel_eth_pci_probe()
-Content-Language: en-US
-To:     Wong Vee Khee <vee.khee.wong@linux.intel.com>
-Cc:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-References: <1ac9b6787b0db83b0095711882c55c77c8ea8da0.1654462241.git.christophe.jaillet@wanadoo.fr>
- <20220606062650.GA31937@linux.intel.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20220606062650.GA31937@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Tue, 7 Jun 2022 02:39:15 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79F48AFADA;
+        Mon,  6 Jun 2022 23:39:13 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id 25so21353824edw.8;
+        Mon, 06 Jun 2022 23:39:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=DhVbPa5JD/NCAPIDfgE7j6St2qeisk9kSNwgf4Fl99c=;
+        b=GMaEKUFbn+aH2o0C8GzroJhWj06s5tKA/rK8dCUAKGrNaf5UFH6QgYSMQiAteuVjgF
+         yFI5qyq2PjHlTpKb1zE69kTIpJjTPNnQnfE+SijcjQp+U8HWBKQZ/O4gs8iPyTs7uVKI
+         HjFngo1ZzO3pmuuiUUoqMhO6e0oYgdCJs9GW0yQQgEg+jsnFe5ap5Uz2gcJxWg1dpU/T
+         6s7QcHHj6kTbaaPE2Lt55hhvGDWMKKqsPqOKOy/j8+PuDeBsrAcNQz3HAMQCGfieLPRr
+         gkkMcnoAcrBU6mdY683Q8MwOKaJfrW+Czzz5e0uyJaZTWcT/d2rtyFvwpe8xUv+4xZt1
+         wKAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=DhVbPa5JD/NCAPIDfgE7j6St2qeisk9kSNwgf4Fl99c=;
+        b=siNzBXzwuXdfdiZAcD9B0mvI7Dadb78y4na/SQdpAI5kk++y5xTA8GueczjRV7Qp5+
+         tm2Mx2MFvPV2c+/G2TMA4LGGONeavLBbgojKSMbbCryplOvnTq0fdIvqn6E6G3aKQBgh
+         uCBCdh1qpiHL60J7M9Hn3VhBO5rO19i+B1gN4XEcGJKP8jfGf7myjTumsENycbV8B1Pi
+         ldVIKToHm0wfZBc0ALkeKWfwTwjPERlObBJdZdL9L8fR7HzAaybhZi1akmhoBgf+w1ew
+         ePFnU01KKFLp6eOMgA/KrN8HolUj3V4LrGfBtsNMTC19tT69w4fGD+gT9fq+r+nio0Ph
+         zgAw==
+X-Gm-Message-State: AOAM532DS+U/Pzs63phZyq9B6Wf9CypQ/QeuBtcpWmxNCo10B3TrHj/s
+        GtdbSpQsfldB/EaG4U9MkRo=
+X-Google-Smtp-Source: ABdhPJwso8u2gUVGYAfvtXiqZjs3JrvdBEQntAn3TPnL/iDpiO6kkqbnerZdiO7xHOaIV9nSGWhBjQ==
+X-Received: by 2002:a05:6402:1f0f:b0:42d:d4a5:a38c with SMTP id b15-20020a0564021f0f00b0042dd4a5a38cmr30730996edb.140.1654583951528;
+        Mon, 06 Jun 2022 23:39:11 -0700 (PDT)
+Received: from felia.fritz.box (200116b8261d85004489eb5274e8e310.dip.versatel-1u1.de. [2001:16b8:261d:8500:4489:eb52:74e8:e310])
+        by smtp.gmail.com with ESMTPSA id g3-20020aa7dd83000000b0042bc5a536edsm9631538edv.28.2022.06.06.23.39.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jun 2022 23:39:10 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: remove an obvious typo in MAPLE TREE
+Date:   Tue,  7 Jun 2022 08:38:34 +0200
+Message-Id: <20220607063834.7004-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 06/06/2022 à 08:26, Wong Vee Khee a écrit :
-> On Sun, Jun 05, 2022 at 10:50:48PM +0200, Christophe JAILLET wrote:
->> When the managed API is used, there is no need to explicitly call
->> pci_free_irq_vectors().
->>
->> This looks to be a left-over from the commit in the Fixes tag. Only the
->> .remove() function had been updated.
->>
->> So remove this unused function call and update goto label accordingly.
->>
->> Fixes: 8accc467758e ("stmmac: intel: use managed PCI function on probe and resume")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c | 4 +---
->>   1 file changed, 1 insertion(+), 3 deletions(-)
->>
-> 
-> LGTM
-> 
-> Reviewed-by: Wong Vee Khee <vee.khee.wong@linux.intel.com>
-> 
-> 
+Commit c6e2362e9289 ("Maple Tree: add new data structure") adds the maple
+tree and a corresponding MAINTAINERS section, but slips in an obvious typo.
 
-Hi,
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
-I've looked at it again.
+Remove this obvious typo in MAPLE TREE.
 
-I still think that the patch is good, but pcim_release() has changed in 
-5.18 since commit 3f35d2cf9fbc ("PCI/MSI: Decouple MSI[-X] disable from 
-pcim_release()")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Liam, Matthew, please ack.
+Andrew, please pick this minor non-urgent fix into your mm-next tree.
 
-I guess that all the mechanic is in place so that everything is 
-registered when needed, but I've not been able to figure it out in the 
-case of dwmac-intel.c.
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-So, double check :).
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8eaf234d663c..572f50739fb2 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11792,7 +11792,7 @@ F:	include/linux/maple_tree.h
+ F:	include/trace/events/maple_tree.h
+ F:	lib/maple_tree.c
+ F:	lib/test_maple_tree.c
+-F:	tools/testing/_adix-tree/linux/maple_tree.h
++F:	tools/testing/radix-tree/linux/maple_tree.h
+ F:	tools/testing/radix-tree/maple.c
+ 
+ MARDUK (CREATOR CI40) DEVICE TREE SUPPORT
+-- 
+2.17.1
 
-CJ
