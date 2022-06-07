@@ -2,93 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C265FC43334
-	for <kernel-janitors@archiver.kernel.org>; Tue,  7 Jun 2022 16:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E09CCA482
+	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Jun 2022 00:26:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344939AbiFGQWn (ORCPT
+        id S1350957AbiFHAXx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 7 Jun 2022 12:22:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53806 "EHLO
+        Tue, 7 Jun 2022 20:23:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344953AbiFGQWl (ORCPT
+        with ESMTP id S1387487AbiFGWu2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 7 Jun 2022 12:22:41 -0400
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C90AA63B8;
-        Tue,  7 Jun 2022 09:22:34 -0700 (PDT)
-Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 98938255B;
-        Tue,  7 Jun 2022 16:21:55 +0000 (UTC)
+        Tue, 7 Jun 2022 18:50:28 -0400
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 047092B07FC
+        for <kernel-janitors@vger.kernel.org>; Tue,  7 Jun 2022 12:40:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1654618915;
-        bh=irHcnff1wq9PsQ/ooZgwpGjN4eo9539UTqaoXdp+yZM=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=RyjHxpnZI5dvE9YplBk3xvaTo2NI1eh/x14lJCEoBOJVxmqU7PjnKjM9V6LKGPBnj
-         4YzQM7LlXpBE8PzJHVBCh0QKmPmdoEO6ZWjqGbP6C4hNW7zOn8+SKn1dzucoNObJhF
-         1I4Z2gNobFI4cjiCRm0V63wWDX7M8rLpYFSjMRzw=
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id A8B462144;
-        Tue,  7 Jun 2022 16:22:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1654618952;
-        bh=irHcnff1wq9PsQ/ooZgwpGjN4eo9539UTqaoXdp+yZM=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=jlaRx3pBEkdB2/ZiAEJKNHge609MRLnrknR9OgcnwIUIxBx7GHR95VeNcV5FFMYQC
-         IwY3YOmnZY+ZDdO9QZf8il6ZCdDTasUdC9U0jtU9VOzCtciDOc94/Sjz5OyIVou5rz
-         XgTliCaHuKppKheWt3+n/gr4rA7tuv/o7i6uIXZ0=
-Received: from [172.30.8.65] (172.30.8.65) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Tue, 7 Jun 2022 19:22:32 +0300
-Message-ID: <4d81ad89-57c4-88a9-8730-14c0fd9bb075@paragon-software.com>
-Date:   Tue, 7 Jun 2022 19:22:31 +0300
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=w45kGLjbQOGG2zPrLEkD8qtGnwe17q7OpjpvDM2QpZ4=;
+  b=o6WdTjmAqWLkUCCTZApMfvNdVGUKE1HC7kytDE3mM71T406dNXk2OxED
+   uhUbWvhJbVZZaqh8/MvZLKrNZzR3tpSO4Wupm1Ly3G6l1E5S7Dbmlze5J
+   kOhgp63Rqp/U59fc+Y0uTKT+e/pvTsJK5pBiEihgyAEzkfuke4/ijqgS9
+   4=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="5.91,284,1647298800"; 
+   d="scan'208";a="39898193"
+Received: from 245.122.68.85.rev.sfr.net (HELO hadrien) ([85.68.122.245])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2022 21:39:46 +0200
+Date:   Tue, 7 Jun 2022 21:39:46 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: jll@hadrien
+To:     Markus Elfring <Markus.Elfring@web.de>
+cc:     =?ISO-8859-15?Q?J=E9r=E9my_Lefaure?= <jeremy.lefaure@netatmo.com>,
+        cocci@inria.fr, kernel-janitors@vger.kernel.org,
+        Julia Lawall <Julia.Lawall@inria.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>
+Subject: Re: [PATCH v2] coccinelle: ifaddr: Find address test in more complex
+ conditions
+In-Reply-To: <415ca02b-9618-b447-6471-6bcd0e2215e8@web.de>
+Message-ID: <alpine.DEB.2.22.394.2206072138160.2960@hadrien>
+References: <AS8PR03MB760365A0DE3A8522136471BE93A59@AS8PR03MB7603.eurprd03.prod.outlook.com> <415ca02b-9618-b447-6471-6bcd0e2215e8@web.de>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH] fs/ntfs3: remove redundant assignment to variable frame
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>, <ntfs3@lists.linux.dev>
-CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <llvm@lists.linux.dev>
-References: <20211230155952.379721-1-colin.i.king@gmail.com>
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-In-Reply-To: <20211230155952.379721-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.30.8.65]
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+Content-Type: multipart/mixed; boundary="8323329-2051075284-1654630786=:2960"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-2051075284-1654630786=:2960
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
 
-On 12/30/21 18:59, Colin Ian King wrote:
-> Variable frame is assigned a value that is never read. The
-> assignment is redundant and can be removed. Cleans up the
-> clang-scan build warning:
-> 
-> fs/ntfs3/file.c:995:3: warning: Value stored to 'frame' is
-> never read [deadcode.DeadStores]
->                  frame = pos >> frame_bits;
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->   fs/ntfs3/file.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-> index 3bae76930e68..27c32692513c 100644
-> --- a/fs/ntfs3/file.c
-> +++ b/fs/ntfs3/file.c
-> @@ -992,7 +992,6 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
->   		if (bytes > count)
->   			bytes = count;
->   
-> -		frame = pos >> frame_bits;
->   		frame_vbo = pos & ~(frame_size - 1);
->   		index = frame_vbo >> PAGE_SHIFT;
->   
 
-Applied, thanks!
+On Tue, 7 Jun 2022, Markus Elfring wrote:
+
+>
+> > The test of an expression's address does not necessarily represent the
+> > whole condition, it may only be a part of it.
+> > This change aims at detecting an address test in more complex conditions.
+> >
+> > Signed-off-by: Jérémy Lefaure <jeremy.lefaure@netatmo.com>
+> > ---
+> > v1 -> v2: Moved disjunction on the condition itself instead of being on the if statements
+> >
+> >  scripts/coccinelle/misc/ifaddr.cocci | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/scripts/coccinelle/misc/ifaddr.cocci b/scripts/coccinelle/misc/ifaddr.cocci
+> > index fc92e8fcbfcb..14dbf3131a3f 100644
+> > --- a/scripts/coccinelle/misc/ifaddr.cocci
+> > +++ b/scripts/coccinelle/misc/ifaddr.cocci
+> > @@ -18,7 +18,7 @@ statement S1,S2;
+> >  position p;
+> >  @@
+> >
+> > -*if@p (&x)
+> > +*if@p ( \(&x || ... \| &x && ... \) )
+> >   S1 else S2
+> >
+> >  @script:python depends on org@
+>
+>
+> Would you ever dare to adjust the specification another bit for such
+> a source code search approach according to the difference in the selection
+> of the operators “||” (disjunction) and “&&” (conjunction)?
+
+I don't really understand the above, but it made me realize that actually
+the following is sufficient:
+
+@@
+expression x;
+@@
+
+*&x || ...
+
+This forces &x to appear as a test expression.  There can be 0 or more
+occurrences of ||, so eg &x && y is also matched.
+
+julia
+--8323329-2051075284-1654630786=:2960--
