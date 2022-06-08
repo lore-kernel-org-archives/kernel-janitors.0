@@ -2,63 +2,68 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94FF1CCA482
-	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Jun 2022 08:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25AADCCA47F
+	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Jun 2022 09:05:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231790AbiFHI7Y (ORCPT
+        id S234019AbiFHJFY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 8 Jun 2022 04:59:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42776 "EHLO
+        Wed, 8 Jun 2022 05:05:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233475AbiFHI61 (ORCPT
+        with ESMTP id S234331AbiFHJEF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 8 Jun 2022 04:58:27 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 028CD3E864C;
-        Wed,  8 Jun 2022 01:19:17 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id kq6so26870804ejb.11;
-        Wed, 08 Jun 2022 01:19:17 -0700 (PDT)
+        Wed, 8 Jun 2022 05:04:05 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D4BE2BCC81;
+        Wed,  8 Jun 2022 01:23:41 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id d14so483179eda.12;
+        Wed, 08 Jun 2022 01:23:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=oKwjyaH0RghwN0hJKqnq9RMPrTrxsm8tLBDPz0gqc1I=;
-        b=EwCy6VHhTYRZJrodfK0ASZnyaCp8ApVDFmi2lMUB70XrB724PIdPEdrzGgh2AzWQ+U
-         l+kdbomO18EUwN684FRx3mvOP+ucCczjPS+erMmfR+w7KjgmC8FmPLRUhn4h5Ff70j84
-         sUKfpMubQ6IqXKFRLwQWO8Z3y/5XFZCcz7clEYeaFLaCvhWoAbst75xThURqiBfdeqwu
-         0/RzTtLG3IMQ5deQv/l9Btr7zU+QGLzM7bE+MUC3vViODYTVGHI0pCfGsplCJUB87vIV
-         Zb3KnCoNwmap+6ZnaQucozGA34U9esESnZFgRGnunNPFHsYfDVh3L3HFBgbZFhuYOGyD
-         YN8w==
+        bh=gfVSp3scFj4P4guPC4wruDfDMf9c2cvAElZfIMx3LEY=;
+        b=OJ/tH0klk5aBgBXi38k8hIN16orCQvOAI0upfkhUCVxdcz26LvKxPv3BvzUAKAf2oX
+         2LL+TozngPMHrT0yJt7T6njY2izvfu6/wjXSnPiagbggsgq6MQyDlr6xYS+HrkXybkZr
+         CH8zUUg4VSKdy1rWsZgCFIMxtFqpH6cFJnR17zLdgT1EYI0Ybg9qtyBG8qFWhqEixAhb
+         RxhrsH5V26q+WxfV+z8ido1iu9i/dwnB6T/0oYU635S5uLIr4jbqmicDGG2Tscrq4Fzh
+         VpjrJM5ugTBF092XAD/UX+J7X3pvzlmSLaapqMrliD7sIYyO7accRXtbR+3VO1ouLPxz
+         N8aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=oKwjyaH0RghwN0hJKqnq9RMPrTrxsm8tLBDPz0gqc1I=;
-        b=N4zNfCujb80Chh6+hipLsLL5z3ImNbgNP9vYv/YVa9QFDGUrn7rda4eeRhwM942cqA
-         F+HEj+/WXJvivZjbawVgHJZuO4kLgJ6qx/CPEZUG7Jvir4H6FzRc6YLlGR2PNXY9GFa+
-         sIpHbuZW5yFczGSAA2VZC0J8ZpMF3/Oy+OxHvllp698e+N11sItIWtRvXsOUepu8JZpO
-         cvDK5doN+lRsWDOQ0jQRBk29ln4UShhD5PuLYf5FdElo2f15dy2cF42CZguDQCMoS/FK
-         4HaXoU65oEgGNej/LZWi+JM+rZRoT0S6m1jjxdSSrDfvDVvjaFI6fLoFpMM6JeIyIMGu
-         4fDQ==
-X-Gm-Message-State: AOAM530TziMrrTO9tBt0QoTviOrL0HCGVt6KxLQEWxxLzwaCVE+3Mvhn
-        +ggtLBD2/8rzwvR+xJodp4Y=
-X-Google-Smtp-Source: ABdhPJxffay0XJhs8bDRwafqDDC7xdEu2XfWekNGL183hIUb8K95AJZ9EfKBiHPSdOQVwqcJlLazxA==
-X-Received: by 2002:a17:907:3f8b:b0:6ff:4721:3cf3 with SMTP id hr11-20020a1709073f8b00b006ff47213cf3mr29848587ejc.48.1654676354832;
-        Wed, 08 Jun 2022 01:19:14 -0700 (PDT)
+        bh=gfVSp3scFj4P4guPC4wruDfDMf9c2cvAElZfIMx3LEY=;
+        b=b9tcGLRJjMuY33LO+nBVil3o0UjZ/2H1Jz+UjS2b80/Q+mSfE7NH13LFuJVWGKxCyo
+         D3iblWgMENzUZCvGjZzI6VBqaMQE/c7YMQF5EBD4TQg35QZ5kW2iogVVdNyfZ1svLET+
+         YOX/ZlOg0uUtvyPym0RvsvncR6BWJs2ZaDhRZFcJ7/ZZdgGYWaXFsUte8zFIY//s6Bw9
+         jIBzwEtXN2I3kyOvg5OOl/W9eryj1X8QV/SnJJPZVWD5+g9J3MmIW+1EYLtCOq5W3hVv
+         7E1vkWNskT+RgKz5dpWdXPYfcDCjTV5yKeZ3ipTQx1l69kgEwQBaSatIV/bqfWUh+nN3
+         r0gw==
+X-Gm-Message-State: AOAM532YIv/C5gnc/D6xvOQnHXLN5sXhizm3NSO22+7cU0vW536n9eP/
+        gLRs8oUMzcym5l3F3hn+478=
+X-Google-Smtp-Source: ABdhPJxjJ1Ux3SAC4HGYqyivoD6H+CP/FNb5tKHoOonTD8XxJzdvFsTeNrf7nmvzlFISsKOZAnSCUg==
+X-Received: by 2002:a05:6402:3899:b0:42d:d79e:acef with SMTP id fd25-20020a056402389900b0042dd79eacefmr37664268edb.12.1654676619754;
+        Wed, 08 Jun 2022 01:23:39 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id k24-20020aa7c398000000b0042dcac2afc6sm11717403edq.72.2022.06.08.01.19.13
+        by smtp.gmail.com with ESMTPSA id o5-20020aa7c7c5000000b0042ad421574esm11965179eds.33.2022.06.08.01.23.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jun 2022 01:19:13 -0700 (PDT)
+        Wed, 08 Jun 2022 01:23:39 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Jiaxin Yu <jiaxin.yu@mediatek.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] spi: s3c64xx: Fix spelling mistake "hannel" -> "channel"
-Date:   Wed,  8 Jun 2022 09:19:12 +0100
-Message-Id: <20220608081912.2083086-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] ASoC: mediatek: mt8186: Fix a handful of spelling mistakes
+Date:   Wed,  8 Jun 2022 09:23:38 +0100
+Message-Id: <20220608082338.2083456-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -67,26 +72,61 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a dev_err message. Fix it.
+There are several spelling mistakes in dev_err messages. Fix them.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/spi/spi-s3c64xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/mediatek/mt8186/mt8186-afe-gpio.c | 8 ++++----
+ sound/soc/mediatek/mt8186/mt8186-dai-adda.c | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 82558e37c735..f56d9c819a76 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -360,7 +360,7 @@ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
+diff --git a/sound/soc/mediatek/mt8186/mt8186-afe-gpio.c b/sound/soc/mediatek/mt8186/mt8186-afe-gpio.c
+index 5ba28095b7da..255ffba637d3 100644
+--- a/sound/soc/mediatek/mt8186/mt8186-afe-gpio.c
++++ b/sound/soc/mediatek/mt8186/mt8186-afe-gpio.c
+@@ -137,25 +137,25 @@ static int mt8186_afe_gpio_adda_dl(struct device *dev, bool enable)
+ 	if (enable) {
+ 		ret = mt8186_afe_gpio_select(dev, MT8186_AFE_GPIO_CLK_MOSI_ON);
+ 		if (ret) {
+-			dev_err(dev, "%s(), MOSI CLK ON slect fail!\n", __func__);
++			dev_err(dev, "%s(), MOSI CLK ON select fail!\n", __func__);
+ 			return ret;
+ 		}
  
- 	sdd->tx_dma.ch = dma_request_chan(&sdd->pdev->dev, "tx");
- 	if (IS_ERR(sdd->tx_dma.ch)) {
--		dev_err(&sdd->pdev->dev, "Failed to get TX DMA hannel\n");
-+		dev_err(&sdd->pdev->dev, "Failed to get TX DMA channel\n");
- 		dma_release_channel(sdd->rx_dma.ch);
- 		sdd->tx_dma.ch = 0;
- 		sdd->rx_dma.ch = 0;
+ 		ret = mt8186_afe_gpio_select(dev, MT8186_AFE_GPIO_DAT_MOSI_ON);
+ 		if (ret) {
+-			dev_err(dev, "%s(), MOSI DAT ON slect fail!\n", __func__);
++			dev_err(dev, "%s(), MOSI DAT ON select fail!\n", __func__);
+ 			return ret;
+ 		}
+ 	} else {
+ 		ret = mt8186_afe_gpio_select(dev, MT8186_AFE_GPIO_DAT_MOSI_OFF);
+ 		if (ret) {
+-			dev_err(dev, "%s(), MOSI DAT OFF slect fail!\n", __func__);
++			dev_err(dev, "%s(), MOSI DAT OFF select fail!\n", __func__);
+ 			return ret;
+ 		}
+ 
+ 		ret = mt8186_afe_gpio_select(dev, MT8186_AFE_GPIO_CLK_MOSI_OFF);
+ 		if (ret) {
+-			dev_err(dev, "%s(), MOSI CLK ON slect fail!\n", __func__);
++			dev_err(dev, "%s(), MOSI CLK ON select fail!\n", __func__);
+ 			return ret;
+ 		}
+ 	}
+diff --git a/sound/soc/mediatek/mt8186/mt8186-dai-adda.c b/sound/soc/mediatek/mt8186/mt8186-dai-adda.c
+index c66861fd197d..db71b032770d 100644
+--- a/sound/soc/mediatek/mt8186/mt8186-dai-adda.c
++++ b/sound/soc/mediatek/mt8186/mt8186-dai-adda.c
+@@ -341,7 +341,7 @@ static int mtk_adda_mtkaif_cfg_event(struct snd_soc_dapm_widget *w,
+ 				if (afe_priv->mtkaif_chosen_phase[0] < 0 ||
+ 				    afe_priv->mtkaif_chosen_phase[1] < 0) {
+ 					dev_err(afe->dev,
+-						"%s(), skip dealy setting mtkaif_chosen_phase[0/1]:%d/%d\n",
++						"%s(), skip delay setting mtkaif_chosen_phase[0/1]:%d/%d\n",
+ 						__func__,
+ 						afe_priv->mtkaif_chosen_phase[0],
+ 						afe_priv->mtkaif_chosen_phase[1]);
 -- 
 2.35.3
 
