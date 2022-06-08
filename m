@@ -2,160 +2,217 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E60DECCA47B
-	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Jun 2022 10:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 497F4C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Jun 2022 12:04:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237294AbiFHKr2 (ORCPT
+        id S238614AbiFHME6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 8 Jun 2022 06:47:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36384 "EHLO
+        Wed, 8 Jun 2022 08:04:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237461AbiFHKrY (ORCPT
+        with ESMTP id S238611AbiFHME5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 8 Jun 2022 06:47:24 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC7B11B2179
-        for <kernel-janitors@vger.kernel.org>; Wed,  8 Jun 2022 03:47:12 -0700 (PDT)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220608104705epoutp0384b64aa674029d02f4b11d8d44649125~2n3IsHvt_1882218822epoutp034
-        for <kernel-janitors@vger.kernel.org>; Wed,  8 Jun 2022 10:47:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220608104705epoutp0384b64aa674029d02f4b11d8d44649125~2n3IsHvt_1882218822epoutp034
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1654685225;
-        bh=2dU2sAdbeia4z93Pb2uYez3kPuHX+7BlUxRqxtHkiAs=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=qgYRb+ZrRqFuQSInwWyUk62zNGe1Yf87tnux7uBicxQoZZgm6o4sFRaGhv2l5v6lx
-         7Hg84f9kKlzQeabPJ7JqmSQ5gHqw99Lo9GMybtrYd8d4mfpGDi7HdhjHvXiGlP1Evn
-         CibUp4GiVT1VJohlZw53PyixEv61g+33cxqEKTHs=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20220608104705epcas5p1d694985714f56d9701f4aee5fe1ad881~2n3ISYSxZ2064620646epcas5p1-;
-        Wed,  8 Jun 2022 10:47:05 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4LJ3nf3cXjz4x9Q5; Wed,  8 Jun
-        2022 10:47:02 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        13.6E.10063.62E70A26; Wed,  8 Jun 2022 19:47:02 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220608104702epcas5p2525c59a62b884ba03a6671aceedd68a0~2n3FJIfKF1979619796epcas5p2F;
-        Wed,  8 Jun 2022 10:47:02 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220608104701epsmtrp20c59c4ee5bc6ad00878ece679a57263f~2n3FHjN-z1680016800epsmtrp2M;
-        Wed,  8 Jun 2022 10:47:01 +0000 (GMT)
-X-AuditID: b6c32a49-4cbff7000000274f-6d-62a07e2673d1
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8D.3D.08924.52E70A26; Wed,  8 Jun 2022 19:47:01 +0900 (KST)
-Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20220608104700epsmtip27683496ebe4e7dc62ecbe5ac68ce4329~2n3DnBg_e0534805348epsmtip2R;
-        Wed,  8 Jun 2022 10:47:00 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Colin Ian King'" <colin.i.king@gmail.com>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Andi Shyti'" <andi@etezian.org>,
-        "'Mark Brown'" <broonie@kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Cc:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20220608081912.2083086-1-colin.i.king@gmail.com>
-Subject: RE: [PATCH][next] spi: s3c64xx: Fix spelling mistake "hannel" ->
- "channel"
-Date:   Wed, 8 Jun 2022 16:16:59 +0530
-Message-ID: <015701d87b25$15c75120$4155f360$@samsung.com>
-MIME-Version: 1.0
+        Wed, 8 Jun 2022 08:04:57 -0400
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-eopbgr60127.outbound.protection.outlook.com [40.107.6.127])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E5F02584C8
+        for <kernel-janitors@vger.kernel.org>; Wed,  8 Jun 2022 05:04:55 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=C5WKeEfqJoXLYPec+/uLCZpXgwfV4Ez3fMdWixVgeSiu6hxTFprpEj04tAa5kZdP4xRwBzr4yGHdUfHXzDm/fEWY+vOChfm15eJ4O7U7mUCBMQwLaf5rY3rDEs8R4m+GG3i9DRMDeYTNZk2R3kuB6uPcX1/+Jr78+toTrsCvpZ31JxQ6BqwjMkUAxe+l9F5KQkOCIgmZ/k9aCZHLPf+aj865n16wArnKpc0SZRB8APq58YXJRm1A/IsLnJ3VI6t9Ryo9bcZI7etOAUz87/GQFt1rCeH1W/n++REg8LioqoAJR8fPs2GuLPpbaU2cu39rq7QxEUDW12dnFj8ImPQYJQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MpdA8rU/qT4L2Y7wN0b5OUKLSiyNsMsLO7cEUjcnIqE=;
+ b=a+qdGImeuZ5BXJMdXKwhhJwUAaUpo9BMbfNBZBBsuSnfeqVLxgrdQldfp3tGqaF6/pOEJw9NGFcKinEc/cLA2xcYbZr8ACL1+1a8HOFwN98ESY/MLd8/pU5CmyDtoKiiZjnnqqLSlq2sQKJmy4NOqkLyVWIUnbtzDHZL9F8O+kXNqvo0HIhwF77SMH24veWHpQUX4lfeneNziR/XbCyfEl1ukazbjWvj+9XZ4gI1dxNyi4PTqopsnMQhlA69iqvqpJt5MO51eGl7w4ddo7YXqijJRad1fm9uxQQn700wyDrjxwCUfO2FG1DLUpHSR2BzhcR1VBZw/+WxOgDg3tPUKw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=netatmo.com; dmarc=pass action=none header.from=netatmo.com;
+ dkim=pass header.d=netatmo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netatmo.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MpdA8rU/qT4L2Y7wN0b5OUKLSiyNsMsLO7cEUjcnIqE=;
+ b=MqHmlp1ETXAuzqobwVFdj1wI9eHgTA84/3r4OcgH5B0Jy4TyJWYwW7UCPo77iltmv7b+4ZwCBHDzQcVDK54c51/AsQNIs18uanw9SvreXO4Bo7vTKb+6mdSX/fwRFgpfT8T3lySK6RpdCvMWa2DiosXVc12krGhmKwS6EYiwWSs=
+Received: from AS8PR03MB7603.eurprd03.prod.outlook.com (2603:10a6:20b:34e::15)
+ by DB8PR03MB5673.eurprd03.prod.outlook.com (2603:10a6:10:105::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.19; Wed, 8 Jun
+ 2022 12:04:53 +0000
+Received: from AS8PR03MB7603.eurprd03.prod.outlook.com
+ ([fe80::197:874b:24ea:e4d5]) by AS8PR03MB7603.eurprd03.prod.outlook.com
+ ([fe80::197:874b:24ea:e4d5%5]) with mapi id 15.20.5332.011; Wed, 8 Jun 2022
+ 12:04:53 +0000
+From:   =?Windows-1252?Q?J=E9r=E9my_LEFAURE?= <jeremy.lefaure@netatmo.com>
+To:     Julia Lawall <julia.lawall@inria.fr>,
+        Markus Elfring <Markus.Elfring@web.de>
+CC:     "cocci@inria.fr" <cocci@inria.fr>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        Nicolas Palix <nicolas.palix@imag.fr>
+Subject: Re: [PATCH v2] coccinelle: ifaddr: Find address test in more complex
+ conditions
+Thread-Topic: [PATCH v2] coccinelle: ifaddr: Find address test in more complex
+ conditions
+Thread-Index: AQHYek7fHLsMc4LTfk+02uWH++YB5q1ERYKAgAASjwCAARMGRA==
+Date:   Wed, 8 Jun 2022 12:04:52 +0000
+Message-ID: <AS8PR03MB76038B2D2E451F0A07AEE4D093A49@AS8PR03MB7603.eurprd03.prod.outlook.com>
+References: <AS8PR03MB760365A0DE3A8522136471BE93A59@AS8PR03MB7603.eurprd03.prod.outlook.com>
+ <415ca02b-9618-b447-6471-6bcd0e2215e8@web.de>
+ <alpine.DEB.2.22.394.2206072138160.2960@hadrien>
+In-Reply-To: <alpine.DEB.2.22.394.2206072138160.2960@hadrien>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=netatmo.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: d8658a2c-9e90-4308-bc90-08da4947188f
+x-ms-traffictypediagnostic: DB8PR03MB5673:EE_
+x-microsoft-antispam-prvs: <DB8PR03MB5673CA8B98B1C62B50EB6A6B93A49@DB8PR03MB5673.eurprd03.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: RNq4yEBsCl/e4BducuAF1vBB1tv4WhupMpZAmSJeOWVqUxfLAlltc5cOHJmAXdNq6cLBWsHjg/8ISGyuqrVTqFDK6ZCsZeo6inOfqqnk2yQ1P56w6eg/d13uAHL33N6AFQ3/Vce67w/cBFsWDCF2TuI6WNuhyMPM04dkaB4/DvuVUGjq1N/wJK8GLBeZgz/5UozPF96axbWXfscdhSfoL3NDsTa1GRJ6DMOydeqJBUV8ogePUlbcwgEBUmUBhZM0Nl4PL8JPZaeyNS9WzDieIIi0YZoBmwIQZrrX4BR04BEUTYWcjQzX2wFw7TKy2pNEGq8A+0NFtbFulDDB8ixhe0WS1QppilMotIMHowP6Zo1vid7CG+q0bpnfkT/24kg+su3hf/NpFRRzOx3wr2Lvro7SerA5vAhDvZ8/r9SltNo8nuVE50HuFAkjAysHrV1UWOeuGHmXQtmXTTTD+1m16kUEJ5xawOJ9ISerSb3HzSpRz+3UyU4yacXKxI8ZWyapVtwODFP0Bd24ulCOdpQwDjEMbIibyq35lJZYzGaPSIPwHnj9quvaZneixzlgBhCIgs/nrbzR0T5txax1BLWMgVvHxh28bi5ShJGwMbOXe8/qVZD6k2CBAMHv6VQBhajWx2hVs6V+LCB/hodZ8tmmGd7rDpXhI0PnnCIcE7EvibWVafTCnAa4Ja4qL8unCSMuX0pPWZ8mGBXNyYr0lsNYCA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR03MB7603.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(346002)(366004)(39850400004)(136003)(396003)(8676002)(6506007)(66946007)(53546011)(64756008)(38100700002)(66476007)(33656002)(7696005)(76116006)(91956017)(86362001)(4326008)(66574015)(55016003)(5660300002)(55236004)(71200400001)(186003)(2906002)(52536014)(66556008)(66446008)(508600001)(83380400001)(54906003)(9686003)(110136005)(316002)(26005)(122000001)(38070700005)(8936002)(41300700001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?Windows-1252?Q?tanPr7vY5biYx8+/kJddDnXFMFLI/8Nxhprt2QbZguj7/sxJZGAWwSyB?=
+ =?Windows-1252?Q?H+akENWYdHLYA3hTLyN58pwDQ0mNckCI+2t0XeDjxh32OONNLrfFNHdL?=
+ =?Windows-1252?Q?+oj5CUMOJPEFOfwNQoMIKp+VO38Fdr7OYrY7fHAbgxzX7autmi8oKsIv?=
+ =?Windows-1252?Q?EhfwwWPLpbIGbeYFU4HJSscGI148cTMuSOubuOnu5oYV0jPrkdz6/jsJ?=
+ =?Windows-1252?Q?Smq4kktDoZLZFAEzS30I336noLOwa3q/XBooZvaNamZS/MQyWcVagA1D?=
+ =?Windows-1252?Q?/9KLZvMNwcPypcF7IpIk4dLil/O7aoJTbpPQY1kBvwfrYrCr1SENWleH?=
+ =?Windows-1252?Q?rYNdOQ9ff2MkEfnb5wRODSbGzNd3x7L7phlNuI06jl6IRJHvdBXfJSsY?=
+ =?Windows-1252?Q?En5+bZNz7gt6OHMCVN24fUpXugW4U957BjEdWVw2xXNC5gOqd+upRXIo?=
+ =?Windows-1252?Q?OgQ8FE/Q0MZI/m9f9bVahCRCyyfMLk4rTAW4eBG2q/v0uabPSOnVE+QD?=
+ =?Windows-1252?Q?Nv2DI1gYXzf7RTUoum3RlXe8KcQyi8Eh8i5Ho93/stzdAEiIpbknBbbg?=
+ =?Windows-1252?Q?aBI0hx9R16tmUsHe0lU+BZzXVON2ww9PyZWHa3WwxmyNjIM9z9KgBUDx?=
+ =?Windows-1252?Q?2q16yP4taZT3tLRMWKOj3j+lVPtv2e0sNMUaFxXF6iOX9rr8ZtpOaRnp?=
+ =?Windows-1252?Q?Q17vE4mrigzHViIKtSwBVUSY++AagI9XHLdhDyAbAB31aSq1IfDA0JQP?=
+ =?Windows-1252?Q?xkva1Fv/QEBZKdxVMJ/XCqC8jigu4XKZVBw98w7b4y+fVrJElhsizlgd?=
+ =?Windows-1252?Q?undcgzCi0vN5/8fitCiiTaikg0c2vFSBSmvvCZftNwIVTLDT62bKKS4Z?=
+ =?Windows-1252?Q?oempj0qVZMKh+2xHTqNNFbOkyOfe16YejBKPjDaAhRPTKW/pbldll5Zt?=
+ =?Windows-1252?Q?d0iVdD+HmB9AgATb4vZMWHHZ1rUGQr0Qf4JdiDwhi5tp3T2E/ZHVmrjM?=
+ =?Windows-1252?Q?KGhJJCtSxbTaGvbZtNTndG/zKybvgPIKLhyFOjw4F0njLrN6FQgMYYMr?=
+ =?Windows-1252?Q?y2IP0X70w0O93uCVWmBwHUz+I/Hm6mG/mX+wPIAdqflsIDxfeDqje+fj?=
+ =?Windows-1252?Q?YCAX6bNyrW+udAzNhH6FrEAQfTBniDwuR27l0g+IEDILoqCgr4BKiQxA?=
+ =?Windows-1252?Q?CkqtQ1WKJ6N/nD1au2OnVkq1TP09lofxDDOAdvU1i8F1VSaHt1IpGn9P?=
+ =?Windows-1252?Q?7eIm9jFU4keHkQDjH/JgQbo9ZXzFdhr9mj2XLZfa+LIW5LUX8xVeBztj?=
+ =?Windows-1252?Q?R9fVC/pth4H+3JUZ39CnojjOM/TF+rJzyHhFVvz9wry9X8byACLoCg6A?=
+ =?Windows-1252?Q?DNKnLzYRYxCfv7GwindMbv0No7WXnpXKkWgRKyXOn7IE5ytcmuMPcYWv?=
+ =?Windows-1252?Q?D3075QFqdbH14XREzAD8gMsh4Aqbw5nuuAA7k7BrhpEhE/0Va5YWdkVi?=
+ =?Windows-1252?Q?Q2VTf8zBO2HMRmEb54xD7Vgv1P5O5ooBlpAduTMvCCA3jq56bd/IT9Qu?=
+ =?Windows-1252?Q?AXcV8iQd0NLOySrp8kkezEYYYtqKNaV4liJvo3SfeJTSCvEa0SS28G8O?=
+ =?Windows-1252?Q?24kF7Dsqdy5YqSKVcfkx6rZ6s+XY4PD7qNCqQIbi1aD488OjX2oOj0Aj?=
+ =?Windows-1252?Q?F98KA7Kd/YXvTry6US8vFcZ44WsrbQzncucCFOPPgnCxU8peiRAfNxwZ?=
+ =?Windows-1252?Q?TCpkiA5FiSzAO536t45AGnPpBIHpGTrIJ7S1Cgyn5JjMscFJ8b5UlTEm?=
+ =?Windows-1252?Q?9gAV+kRjswS70NwbfbilW4E3/Wihi1mRXoPYn+tY+oUc8JqzvugPeZg4?=
+ =?Windows-1252?Q?ZgzKztJqGMGiEsSX37JVe8Hym5afw7l4evQ=3D?=
+Content-Type: text/plain; charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKhUm8gmV47Tzdc05Wc3hzH2R1CbQJXQw5aq6Dq7IA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKJsWRmVeSWpSXmKPExsWy7bCmuq5a3YIkg5mfxSwW/3jOZDH14RM2
-        i0ntX1gttt6Sttj7eiu7xabH11gtLu+aw2Yx4/w+JovGjzfZHTg9ri/5xOyxc9Zddo9NqzrZ
-        PO5c28PmsXlJvcfnTXIBbFHZNhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJ
-        uam2Si4+AbpumTlANykplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVSC1JyCkwK9IoTc4tL
-        89L18lJLrAwNDIxMgQoTsjPeTnjMWvCAu+JQwzmmBsZ5XF2MnBwSAiYSr8+uZAWxhQR2M0rs
-        umTdxcgFZH9ilHi7fwULhPOZUeL3u2ssMB19X+4xQXTsYpR4v1ITwn7JKPFvuxeIzSagK7Fj
-        cRsbSLOIwEImif5L99hBEswCrhJ3ztwDW8cpYCfxpOErmC0sECoxe+N+sBoWARWJaa8nMILY
-        vAKWEi8/QCzmFRCUODnzCQvEHG2JZQtfM0McpCDx8+kysDkiAlYSH/+0MUPUiEu8PHqEHeQI
-        CYGlHBJnvn1lh2hwkTj6ejUjhC0s8er4Fqi4lMTnd3uBruYAsj0kFv2RgghnSLxdvh6q3F7i
-        wJU5LCAlzAKaEut36UOs4pPo/f2ECaKTV6KjTQiiWlWi+d1VaLBJS0zs7maFsD0kpi+8wj6B
-        UXEWksdmIXlsFpIHZiEsW8DIsopRMrWgODc9tdi0wDAvtRwe28n5uZsYwelVy3MH490HH/QO
-        MTJxMB5ilOBgVhLhlQyfnyTEm5JYWZValB9fVJqTWnyI0RQY2hOZpUST84EJPq8k3tDE0sDE
-        zMzMxNLYzFBJnFfgf2OSkEB6YklqdmpqQWoRTB8TB6dUA1MOr7bGdHXnki8Pei+6LL94X76r
-        y9lt4Vexwlvqu5mibxhs2tN4/3iL279V8Ryfr+zdpMH1aJvEDQO/zAcNOTvOqmsUWNhX9DSd
-        tLhoMSNzdllOvGla5SLBVO2rS1neGPx9LibUyLnp0fpol6/xnOceP1nCFpOfEioYVWDPlbLX
-        MPby8kDWR09lQw11Dvyf/7NX8/G2l/87yjg7DZfkMRt9tvN2jTK3k1nAzvdWed5T7zMsz/J2
-        ztL0fTXzNeurUyxbdux40b62fPbUlfNmn3x4UdHqb9x02epF8UYnp3FZv/4g29NywS58p5me
-        dSYvV0gW57w9D+Xs4qbwqPxU3bVJKvpzSP6k2mcPX87XiFNiKc5INNRiLipOBADnpYV8OAQA
-        AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIIsWRmVeSWpSXmKPExsWy7bCSvK5q3YIkgwsvTC0W/3jOZDH14RM2
-        i0ntX1gttt6Sttj7eiu7xabH11gtLu+aw2Yx4/w+JovGjzfZHTg9ri/5xOyxc9Zddo9NqzrZ
-        PO5c28PmsXlJvcfnTXIBbFFcNimpOZllqUX6dglcGUs/dDIVzOau2H3zIlsD43XOLkZODgkB
-        E4m+L/eYQGwhgR2MEjd380PEpSWub5zADmELS6z89xzI5gKqec4o0f98ClgDm4CuxI7FbWwg
-        CRGB5UwSW/+uZwZJMAu4S0xr2skI0dHPKPH+5lZWkASngJ3Ek4avYLawQLDEjKfXwWwWARWJ
-        aa8nMILYvAKWEi8/XGOBsAUlTs58wgIxVFui92ErI4y9bOFrZojzFCR+Pl0GNkdEwEri4582
-        qCPEJV4ePcI+gVF4FpJRs5CMmoVk1CwkLQsYWVYxSqYWFOem5xYbFhjlpZbrFSfmFpfmpesl
-        5+duYgTHmpbWDsY9qz7oHWJk4mA8xCjBwawkwisZPj9JiDclsbIqtSg/vqg0J7X4EKM0B4uS
-        OO+FrpPxQgLpiSWp2ampBalFMFkmDk6pBqZ5l7c+Kev4WfY9VancOnXJ+anLkxo2ZKUKu/2z
-        XNbqHbd9idcEts9pHxO9m4JPuXZ8LZd549l76xo709pZtzcee/rDPnmz8d/C2iflv4/uvySR
-        dO7VrCX774eei595WfRgNc/Th62XKuLl1XqmdV+Ys7Kift/knGqu/8xMT41X/rwd9Vy2xU7v
-        9ZutkxxNMk+HvVu/ZKvig6dv3svkWt+OC935aWqAWdwvV1/2C0vyHHPfJMvZz7vx4u/KjhtZ
-        Wz7LX5j2yOlDyk1lzZLWY9GJ/4wPnv+kszTmyouiTZ7ZYjckzrFc3ramR//z3Zjp85n2+y1d
-        +iRQ+MSm1Es79VcLLXP0scm4vu3qRoepLBeZWpRYijMSDbWYi4oTAXaoUDwkAwAA
-X-CMS-MailID: 20220608104702epcas5p2525c59a62b884ba03a6671aceedd68a0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220608081916epcas5p2c35a76a868edcb8ec14d3a83edb00ee6
-References: <CGME20220608081916epcas5p2c35a76a868edcb8ec14d3a83edb00ee6@epcas5p2.samsung.com>
-        <20220608081912.2083086-1-colin.i.king@gmail.com>
+MIME-Version: 1.0
+X-OriginatorOrg: netatmo.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR03MB7603.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d8658a2c-9e90-4308-bc90-08da4947188f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jun 2022 12:04:52.9613
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4528446a-2666-441f-95cd-cc2cbd9f2c49
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: JQlJYyCXZwjerrjUxtYQ/bPtGcukt6gfvwHZhJAsgLikALAMY/eN7glUKIEfFtbU5eA64cRiaAQYgeTT7/B++39sejEuty8nh4HL/Ic+Hxw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR03MB5673
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
->-----Original Message-----
->From: Colin Ian King =5Bmailto:colin.i.king=40gmail.com=5D
->Sent: Wednesday, June 8, 2022 1:49 PM
->To: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>; Andi Shyti
-><andi=40etezian.org>; Mark Brown <broonie=40kernel.org>; Alim Akhtar
-><alim.akhtar=40samsung.com>; linux-spi=40vger.kernel.org; linux-samsung-
->soc=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org
->Cc: kernel-janitors=40vger.kernel.org; linux-kernel=40vger.kernel.org
->Subject: =5BPATCH=5D=5Bnext=5D spi: s3c64xx: Fix spelling mistake =22hanne=
-l=22 -> =22channel=22
+> I don't really understand the above, but it made me realize that actually
+> the following is sufficient:
 >
->There is a spelling mistake in a dev_err message. Fix it.
+> @@
+> expression x;
+> @@
 >
->Signed-off-by: Colin Ian King <colin.i.king=40gmail.com>
->---
-
-Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
-
-> drivers/spi/spi-s3c64xx.c =7C 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
+> *&x || ...
 >
->diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c index
->82558e37c735..f56d9c819a76 100644
->--- a/drivers/spi/spi-s3c64xx.c
->+++ b/drivers/spi/spi-s3c64xx.c
->=40=40 -360,7 +360,7 =40=40 static int s3c64xx_spi_prepare_transfer(struct
->spi_master *spi)
+> This forces &x to appear as a test expression. There can be 0 or more
+> occurrences of ||, so eg &x && y is also matched.
+
+That's indeed better because it allows to catch issues in tests that
+are not in if statements (such as loops). Is it ok to rename this file
+to test_addr.cocci in the next version of the patch to give it a more
+appropriated name?
+
+It also gives a better line indication for conditions split on several
+lines.
+
+I also noticed that with this change the semantic patch catches tests of
+addresses in if statements when likely/unlikely is used, for example
+if (likely(&a)). This was not the case with my previous patch nor with
+the current semantic patch version on master even though the isomorphism
+unlikely(E) <=3D> likely(E) =3D> E is in the standard.iso file. I don't get
+this behavior change, do you have any idea why it didn't work?
+
+
+Thank you!
+J=E9r=E9my
+
+________________________________________
+From: Julia Lawall <julia.lawall@inria.fr>
+Sent: Tuesday, June 7, 2022 21:39
+To: Markus Elfring
+Cc: J=E9r=E9my LEFAURE; cocci@inria.fr; kernel-janitors@vger.kernel.org; Ju=
+lia Lawall; Nicolas Palix
+Subject: Re: [PATCH v2] coccinelle: ifaddr: Find address test in more compl=
+ex conditions
+
+
+
+On Tue, 7 Jun 2022, Markus Elfring wrote:
+
 >
-> 	sdd->tx_dma.ch =3D dma_request_chan(&sdd->pdev->dev, =22tx=22);
-> 	if (IS_ERR(sdd->tx_dma.ch)) =7B
->-		dev_err(&sdd->pdev->dev, =22Failed to get TX DMA hannel=5Cn=22);
->+		dev_err(&sdd->pdev->dev, =22Failed to get TX DMA
->channel=5Cn=22);
-> 		dma_release_channel(sdd->rx_dma.ch);
-> 		sdd->tx_dma.ch =3D 0;
-> 		sdd->rx_dma.ch =3D 0;
->--
->2.35.3
+> > The test of an expression's address does not necessarily represent the
+> > whole condition, it may only be a part of it.
+> > This change aims at detecting an address test in more complex condition=
+s.
+> >
+> > Signed-off-by: J=E9r=E9my Lefaure <jeremy.lefaure@netatmo.com>
+> > ---
+> > v1 -> v2: Moved disjunction on the condition itself instead of being on=
+ the if statements
+> >
+> >  scripts/coccinelle/misc/ifaddr.cocci | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/scripts/coccinelle/misc/ifaddr.cocci b/scripts/coccinelle/=
+misc/ifaddr.cocci
+> > index fc92e8fcbfcb..14dbf3131a3f 100644
+> > --- a/scripts/coccinelle/misc/ifaddr.cocci
+> > +++ b/scripts/coccinelle/misc/ifaddr.cocci
+> > @@ -18,7 +18,7 @@ statement S1,S2;
+> >  position p;
+> >  @@
+> >
+> > -*if@p (&x)
+> > +*if@p ( \(&x || ... \| &x && ... \) )
+> >   S1 else S2
+> >
+> >  @script:python depends on org@
+>
+>
+> Would you ever dare to adjust the specification another bit for such
+> a source code search approach according to the difference in the selectio=
+n
+> of the operators =93||=94 (disjunction) and =93&&=94 (conjunction)?
 
+I don't really understand the above, but it made me realize that actually
+the following is sufficient:
 
+@@
+expression x;
+@@
+
+*&x || ...
+
+This forces &x to appear as a test expression.  There can be 0 or more
+occurrences of ||, so eg &x && y is also matched.
+
+julia
