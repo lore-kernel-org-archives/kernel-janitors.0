@@ -2,84 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4E0DC43334
-	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Jun 2022 15:31:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5261FCCA481
+	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Jun 2022 17:14:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244377AbiFHPa4 (ORCPT
+        id S231773AbiFHRO3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 8 Jun 2022 11:30:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46818 "EHLO
+        Wed, 8 Jun 2022 13:14:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344151AbiFHP3p (ORCPT
+        with ESMTP id S231760AbiFHROR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 8 Jun 2022 11:29:45 -0400
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3197BDDD;
-        Wed,  8 Jun 2022 08:28:52 -0700 (PDT)
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 5B3571D78;
-        Wed,  8 Jun 2022 15:28:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1654702092;
-        bh=ZIn5ncpNxC8T/c1MmFgaJnj+dvlJ1abmWAeW+JUsdto=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=LR5mbVmS7J/+r4oKJTo8vi0yNSt3z7ohVTUkK53WvHvhgMWK6Pyg9x242XSGZqjw4
-         XnsuqNMogYV39PIzaZbyckB10YgqySZwAZ0fHIJklBU9CW+qzLCxiL5rfl54uIbcAC
-         4Qj5/0mVa1X2T/KvR22/1XSg75E19KieKc/3jX5E=
-Received: from [172.30.8.65] (172.30.8.65) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Wed, 8 Jun 2022 18:28:49 +0300
-Message-ID: <d8ff3d09-ac85-da53-c638-30135c9eb6c2@paragon-software.com>
-Date:   Wed, 8 Jun 2022 18:28:49 +0300
+        Wed, 8 Jun 2022 13:14:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE2CF26F493;
+        Wed,  8 Jun 2022 10:00:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4314061AC2;
+        Wed,  8 Jun 2022 17:00:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 93825C341C4;
+        Wed,  8 Jun 2022 17:00:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654707614;
+        bh=c+pSFOSKgq+o8Np9gz0lvRNLx1ALeem3eivA1a8z8jE=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=eLIGEyf5MJZ4RTE/LWnL/qAC0jwutZZsd2pZtYDqbVA6U2Vc2f4xR1MAaaDhjEng8
+         9DkKnDevDeS9Xl4bTdIbey95aSVhCuPirj/k4dA6pQhKO6mS5I3Qu9yUtwZn+CXTu5
+         nlwgV93me9/3JEyPI8FyF+AfusE4yQt2icGxqLuEnp+BGIsoS4McOwshLZMT+3nZXQ
+         5F4iHxVbPi4B/D5JdXpvZALUVjhfznQ4R09qisWfwcuuUBrm2p6b3JvlxLdItjl0j4
+         pdf0xHq5Hu4oheQR5of50qJ+m5vG4IjtsbANTUykn1Pr+rF0n4zQVVg94XiWx5Jx3L
+         MPcURne+lZG+g==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 7B1F9E737FE;
+        Wed,  8 Jun 2022 17:00:14 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH] fs/ntfs3: remove redundant assignment to variable vcn
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>, <ntfs3@lists.linux.dev>
-CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <llvm@lists.linux.dev>
-References: <20220418140038.82843-1-colin.i.king@gmail.com>
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-In-Reply-To: <20220418140038.82843-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.30.8.65]
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] Bluetooth: fix an error code in hci_register_dev()
+From:   patchwork-bot+bluetooth@kernel.org
+Message-Id: <165470761450.24378.7406795822626176055.git-patchwork-notify@kernel.org>
+Date:   Wed, 08 Jun 2022 17:00:14 +0000
+References: <YqCoJXuRV8MIDS2M@kili>
+In-Reply-To: <YqCoJXuRV8MIDS2M@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     marcel@holtmann.org, abhishekpandit@chromium.org,
+        johan.hedberg@gmail.com, luiz.dentz@gmail.com, pabeni@redhat.com,
+        linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hello:
 
+This patch was applied to bluetooth/bluetooth-next.git (master)
+by Marcel Holtmann <marcel@holtmann.org>:
 
-On 4/18/22 17:00, Colin Ian King wrote:
-> Variable vcn is being assigned a value that is never read, it is
-> being re-assigned again in the initialization of a for-loop.  The
-> assignment is redundant and can be removed.
+On Wed, 8 Jun 2022 16:46:13 +0300 you wrote:
+> Preserve the error code from hci_register_suspend_notifier().  Don't
+> return success.
 > 
-> Cleans up clang scan build warning:
-> fs/ntfs3/attrib.c:1176:7: warning: Value stored to 'vcn' during its
-> initialization is never read [deadcode.DeadStores]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Fixes: d6bb2a91f95b ("Bluetooth: Unregister suspend with userchannel")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->   fs/ntfs3/attrib.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ntfs3/attrib.c b/fs/ntfs3/attrib.c
-> index e8c00dda42ad..fc0623b029e6 100644
-> --- a/fs/ntfs3/attrib.c
-> +++ b/fs/ntfs3/attrib.c
-> @@ -1173,7 +1173,7 @@ int attr_load_runs_range(struct ntfs_inode *ni, enum ATTR_TYPE type,
->   {
->   	struct ntfs_sb_info *sbi = ni->mi.sbi;
->   	u8 cluster_bits = sbi->cluster_bits;
-> -	CLST vcn = from >> cluster_bits;
-> +	CLST vcn;
->   	CLST vcn_last = (to - 1) >> cluster_bits;
->   	CLST lcn, clen;
->   	int err;
+>  net/bluetooth/hci_core.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks for patch, applied!
+Here is the summary with links:
+  - Bluetooth: fix an error code in hci_register_dev()
+    https://git.kernel.org/bluetooth/bluetooth-next/c/ad564394b3db
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
