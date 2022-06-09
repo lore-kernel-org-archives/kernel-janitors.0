@@ -2,101 +2,126 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3CCEC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Jun 2022 04:09:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37BF9C43334
+	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Jun 2022 05:11:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237248AbiFIEJd (ORCPT
+        id S238092AbiFIFLV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 9 Jun 2022 00:09:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32798 "EHLO
+        Thu, 9 Jun 2022 01:11:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235185AbiFIEJc (ORCPT
+        with ESMTP id S236825AbiFIFLU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 9 Jun 2022 00:09:32 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D6FF4130E
-        for <kernel-janitors@vger.kernel.org>; Wed,  8 Jun 2022 21:09:29 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id m26so19231798wrb.4
-        for <kernel-janitors@vger.kernel.org>; Wed, 08 Jun 2022 21:09:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qr3m2Yddcj/9rkP9P1MqPdJ/Rr6E/RCde4JzQwq0ygk=;
-        b=jjA7kaTwlPG+8lAJw8aS2qYkTELSRhTtioIkasP3Ua7Ncb8/Um8F1OEZyiGbMI6SeO
-         ETd1KmKAR6a+w/PaNJyt8tzy4HP7ptThXmSP4ZLLdG/HPw9N535qzDqZ/aaVsB6mpgs4
-         ekokUA+HBIacx6iBplvxFX5b4YM3ZxJ9X0ffgyTEb8LkEJlwYpfaYJOrYnc5ZaefX82u
-         xXximfYvyQtlDROih7T+K0lvuvtzvkPaB9YyinAkRhhjbudH7UkKve6UtSpzaLWj3IEH
-         PgmYE6GWpSDDrFh2H+0Anhh0sjG9TVGHn0ycyusXPfTXgQT5l5+hSgm3wUfg3mh0tas3
-         xbXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qr3m2Yddcj/9rkP9P1MqPdJ/Rr6E/RCde4JzQwq0ygk=;
-        b=kCrf436GMb6ngqM+HILGv6gDdJcqcaCc3YtH/TAQhvTdbcRwSE5SrNxx7KLLDdRV8W
-         fko05DMzmkr/iC2fajx0weq5lNF3OH9JL9WdegVsEM8/U0vJZwHIEgJmTjSiDI3rSVCD
-         AD4z1RSdUJhL3jOZq+mXC8HI+IlNASXBqeBjHufJ3eHJdeozs+4nzRFsmEL5UBRURhXA
-         eCk617jJXrTh+drJ744DRr3qDWzQC13S7/e7Ve1LV6C7cn/N87WmcDn8tfFPxXyubhho
-         H3y+99g+fzMDsanYqaLNtp0X++vnbJTw0l+Hg4sLKUKVEmzgi8q6PU8dnm5TeghmlvoY
-         M63w==
-X-Gm-Message-State: AOAM532Ikf1aIc30MAjPKYyyHOKL6M5e3sR4pSwD7laLe2ByBuGrCQsT
-        deDxyiodMKjHvKH9m2Brtg5cVMYWeJj9ecSjvKqn0SIXGos=
-X-Google-Smtp-Source: ABdhPJzATZGYNXOEfNeC1xjFpQoXzH0chk3Mdxdc6eyXuvY61inSv66u7opI40j6F9/vdCRh2cJ/4vUkZLFYNZGRkY8=
-X-Received: by 2002:a5d:6c6b:0:b0:1ea:77ea:dde8 with SMTP id
- r11-20020a5d6c6b000000b001ea77eadde8mr36664559wrz.690.1654747767939; Wed, 08
- Jun 2022 21:09:27 -0700 (PDT)
+        Thu, 9 Jun 2022 01:11:20 -0400
+Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 336D81A82C
+        for <kernel-janitors@vger.kernel.org>; Wed,  8 Jun 2022 22:11:17 -0700 (PDT)
+Received: from [192.168.1.18] ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id zARunuQ5DJcJLzARunCJhr; Thu, 09 Jun 2022 07:11:15 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Thu, 09 Jun 2022 07:11:15 +0200
+X-ME-IP: 90.11.190.129
+Message-ID: <0ad7ff2c-a5ad-1e5f-b186-0a43ce55057c@wanadoo.fr>
+Date:   Thu, 9 Jun 2022 07:11:14 +0200
 MIME-Version: 1.0
-References: <20220430191122.8667-6-Julia.Lawall@inria.fr>
-In-Reply-To: <20220430191122.8667-6-Julia.Lawall@inria.fr>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Thu, 9 Jun 2022 09:39:15 +0530
-Message-ID: <CAAhSdy1kEPYJQdK+f-6Dkb92ScV9fG2m0J2rJSeWjfNFUtjVwA@mail.gmail.com>
-Subject: Re: [PATCH] RISC-V: fix typos in comments
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     kernel-janitors@vger.kernel.org,
-        Atish Patra <atishp@atishpatra.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        KVM General <kvm@vger.kernel.org>,
-        "open list:KERNEL VIRTUAL MACHINE FOR RISC-V (KVM/riscv)" 
-        <kvm-riscv@lists.infradead.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v2 2/2] nfp: flower: Remove usage of the deprecated
+ ida_simple_xxx API
+Content-Language: en-US
+To:     Simon Horman <simon.horman@corigine.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        oss-drivers@corigine.com, netdev@vger.kernel.org
+References: <4acb805751f2cf5de8d69e9602a88ec39feff9fc.1644532467.git.christophe.jaillet@wanadoo.fr>
+ <721abecd2f40bed319ab9fb3feebbea8431b73ed.1644532467.git.christophe.jaillet@wanadoo.fr>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <721abecd2f40bed319ab9fb3feebbea8431b73ed.1644532467.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, May 1, 2022 at 12:41 AM Julia Lawall <Julia.Lawall@inria.fr> wrote:
->
-> Various spelling mistakes in comments.
-> Detected with the help of Coccinelle.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
-I have included this patch for 5.19-rc fixes
-
-Thanks,
-Anup
-
->
+Le 10/02/2022 à 23:35, Christophe JAILLET a écrit :
+> Use ida_alloc_xxx()/ida_free() instead to
+> ida_simple_get()/ida_simple_remove().
+> The latter is deprecated and more verbose.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  arch/riscv/kvm/vmid.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/kvm/vmid.c b/arch/riscv/kvm/vmid.c
-> index 2fa4f7b1813d..4a2178c60b5d 100644
-> --- a/arch/riscv/kvm/vmid.c
-> +++ b/arch/riscv/kvm/vmid.c
-> @@ -92,7 +92,7 @@ void kvm_riscv_stage2_vmid_update(struct kvm_vcpu *vcpu)
->                  * We ran out of VMIDs so we increment vmid_version and
->                  * start assigning VMIDs from 1.
->                  *
-> -                * This also means existing VMIDs assignement to all Guest
-> +                * This also means existing VMIDs assignment to all Guest
->                  * instances is invalid and we have force VMID re-assignement
->                  * for all Guest instances. The Guest instances that were not
->                  * running will automatically pick-up new VMIDs because will
->
+>   .../net/ethernet/netronome/nfp/flower/tunnel_conf.c    | 10 +++++-----
+>   1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c b/drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c
+> index 9244b35e3855..c71bd555f482 100644
+> --- a/drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c
+> +++ b/drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c
+> @@ -942,8 +942,8 @@ nfp_tunnel_add_shared_mac(struct nfp_app *app, struct net_device *netdev,
+>   	if (!nfp_mac_idx) {
+>   		/* Assign a global index if non-repr or MAC is now shared. */
+>   		if (entry || !port) {
+> -			ida_idx = ida_simple_get(&priv->tun.mac_off_ids, 0,
+> -						 NFP_MAX_MAC_INDEX, GFP_KERNEL);
+> +			ida_idx = ida_alloc_max(&priv->tun.mac_off_ids,
+> +						NFP_MAX_MAC_INDEX, GFP_KERNEL);
+>   			if (ida_idx < 0)
+>   				return ida_idx;
+>   
+> @@ -998,7 +998,7 @@ nfp_tunnel_add_shared_mac(struct nfp_app *app, struct net_device *netdev,
+>   	kfree(entry);
+>   err_free_ida:
+>   	if (ida_idx != -1)
+> -		ida_simple_remove(&priv->tun.mac_off_ids, ida_idx);
+> +		ida_free(&priv->tun.mac_off_ids, ida_idx);
+>   
+>   	return err;
+>   }
+> @@ -1061,7 +1061,7 @@ nfp_tunnel_del_shared_mac(struct nfp_app *app, struct net_device *netdev,
+>   		}
+>   
+>   		ida_idx = nfp_tunnel_get_ida_from_global_mac_idx(entry->index);
+> -		ida_simple_remove(&priv->tun.mac_off_ids, ida_idx);
+> +		ida_free(&priv->tun.mac_off_ids, ida_idx);
+>   		entry->index = nfp_mac_idx;
+>   		return 0;
+>   	}
+> @@ -1081,7 +1081,7 @@ nfp_tunnel_del_shared_mac(struct nfp_app *app, struct net_device *netdev,
+>   	/* If MAC has global ID then extract and free the ida entry. */
+>   	if (nfp_tunnel_is_mac_idx_global(nfp_mac_idx)) {
+>   		ida_idx = nfp_tunnel_get_ida_from_global_mac_idx(entry->index);
+> -		ida_simple_remove(&priv->tun.mac_off_ids, ida_idx);
+> +		ida_free(&priv->tun.mac_off_ids, ida_idx);
+>   	}
+>   
+>   	kfree(entry);
+
+Hi,
+
+This has been merged in -next in commit 432509013f66 but for some reason 
+I looked at it again.
+
+
+I just wanted to point out that this patch DOES change the behavior of 
+the driver because ida_simple_get() is exclusive of the upper bound, 
+while ida_alloc_max() is inclusive.
+
+So, knowing that NFP_MAX_MAC_INDEX = 0xff = 255, with the previous code 
+'ida_idx' was 0 ... 254.
+Now it is 0 ... 255.
+
+This still looks good to me, because NFP_MAX_MAC_INDEX is still not a 
+power of 2.
+
+
+But if 255 is a reserved value for whatever reason, then this patch has 
+introduced a bug (apologies for it).
+
+The change of behavior should have been mentioned in the commit 
+description. So I wanted to make sure you was aware in case a follow-up 
+fix is needed.
+
+CJ
