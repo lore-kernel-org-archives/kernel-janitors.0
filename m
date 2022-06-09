@@ -2,87 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C65F6C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  8 Jun 2022 21:21:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB6F7C43334
+	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Jun 2022 03:00:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233750AbiFHVVn (ORCPT
+        id S237122AbiFIDAP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 8 Jun 2022 17:21:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49904 "EHLO
+        Wed, 8 Jun 2022 23:00:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229534AbiFHVVj (ORCPT
+        with ESMTP id S232220AbiFIDAL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 8 Jun 2022 17:21:39 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DFD3193205;
-        Wed,  8 Jun 2022 14:21:38 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 4573921CC2;
-        Wed,  8 Jun 2022 21:21:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1654723297;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=JPQSNYVYuyX5wkVekdO26jBNz62RUnnaOM9OdZ/QR2E=;
-        b=McR/F3OYfPDhMfhfSbySUD8/nSqdT9CFuy7QZh4f1D6DA6TJhOwX0BUApJkPjutvzjh4Pn
-        77m78p+fuofK4E3za+7U6jmGw53j+COKrezyoFlkR0LBD2/PvdCe13o8WlGr5YRaPFcq9W
-        qqZjZ7U6YRAb1Erb0yjAG3qKTaFBAlY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1654723297;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=JPQSNYVYuyX5wkVekdO26jBNz62RUnnaOM9OdZ/QR2E=;
-        b=Lw38qH18Jb/8lqBoI4SqZmmKPm6aNU76o7zVFoYrApRYpe1pdeMZECa+W7binSeV2WVRBp
-        J8DUNtmgdDsCgYBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E6B8E13A15;
-        Wed,  8 Jun 2022 21:21:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id y7jhNuASoWKiDQAAMHmgww
-        (envelope-from <dsterba@suse.cz>); Wed, 08 Jun 2022 21:21:36 +0000
-Date:   Wed, 8 Jun 2022 23:17:05 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Stefan Roesch <shr@fb.com>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Nick Terrell <terrelln@fb.com>, linux-btrfs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH -next] btrfs: sysfs: fix return value check in
- btrfs_force_chunk_alloc_s()
-Message-ID: <20220608211705.GQ20633@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Wei Yongjun <weiyongjun1@huawei.com>,
-        Stefan Roesch <shr@fb.com>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-        Nick Terrell <terrelln@fb.com>, linux-btrfs@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
-References: <20220608021252.990374-1-weiyongjun1@huawei.com>
+        Wed, 8 Jun 2022 23:00:11 -0400
+Received: from out30-44.freemail.mail.aliyun.com (out30-44.freemail.mail.aliyun.com [115.124.30.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9F1F91;
+        Wed,  8 Jun 2022 20:00:09 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R401e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046060;MF=chengyou@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0VFpXHXO_1654743606;
+Received: from 30.43.106.59(mailfrom:chengyou@linux.alibaba.com fp:SMTPD_---0VFpXHXO_1654743606)
+          by smtp.aliyun-inc.com;
+          Thu, 09 Jun 2022 11:00:07 +0800
+Message-ID: <604ea67b-fa8e-0e36-0adf-2940facfe4ee@linux.alibaba.com>
+Date:   Thu, 9 Jun 2022 11:00:03 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220608021252.990374-1-weiyongjun1@huawei.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.10.0
+Subject: Re: [PATCH] RDMA/erdma: signedness bug in erdma_request_vectors()
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Kai Shen <kaishen@linux.alibaba.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <YqCoWrAXeGHPvTfO@kili>
+From:   Cheng Xu <chengyou@linux.alibaba.com>
+In-Reply-To: <YqCoWrAXeGHPvTfO@kili>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jun 08, 2022 at 02:12:52AM +0000, Wei Yongjun wrote:
-> In case of error, the function btrfs_start_transaction() returns
-> ERR_PTR() and never returns NULL. The NULL test in the return value
-> check should be replaced with IS_ERR().
-> 
-> Fixes: 46e1bce0ac34 ("btrfs: sysfs: add force_chunk_alloc trigger to force allocation")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Thanks, fix folded to the patch as it's still in the development branch.
+
+On 6/8/22 9:47 PM, Dan Carpenter wrote:
+> The dev->attrs.irq_num variable is a u32 so the error handling won't
+> work.  In this code we are passing "1" as the minimum number of IRQs and
+> if it cannot allocate the minimum number of IRQs then the function
+> returns -ENOSPC.  This means that it cannot return 0 here.
+> 
+> Fix the signedness bug by using a "int ret;" and preserve the error
+> code instead of always returning -ENOSPC.
+> 
+> Fixes: d4d7a22521c9 ("RDMA/erdma: Add the erdma module")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Since this bug is found in the initial upstream patch of our new
+driver, I would squash your changes into the relevant patch in our next
+version patch set to make the commit history cleaner.
+
+Thanks,
+Cheng Xu
