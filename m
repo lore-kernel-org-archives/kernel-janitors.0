@@ -2,82 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5150AC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Jun 2022 12:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D23CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Jun 2022 15:41:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244926AbiFIMog (ORCPT
+        id S1344587AbiFIPlU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 9 Jun 2022 08:44:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45568 "EHLO
+        Thu, 9 Jun 2022 11:41:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343783AbiFIMoX (ORCPT
+        with ESMTP id S236178AbiFIPlU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 9 Jun 2022 08:44:23 -0400
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1F5152B0C;
-        Thu,  9 Jun 2022 05:44:21 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 85FE840008;
-        Thu,  9 Jun 2022 12:44:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1654778660;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=punjJeFPlmRDX9hAGHT1aIOyQoqMIzoy0YlqW9TJhb4=;
-        b=GUIeGMCJ/TpP5lolE/xpASVDI30ycU3EKxyOyBXRY8SxkfGoHAOmoPxM/4WlL5LfUvnGoz
-        pPbC/daIZfrRJECTdHXkfTJq5kGE+APPmEq00Hsx0Wundptu5og1SAU/L5LxV0qtVrcNHL
-        1fKYEvEfbtOWlUSufANRJKzt83xCHTdjB/RtyH1NcHA+/5mMZwaMAoLXfEVpqi8Ag0PHwV
-        GNg76ZZkBi6b1GwZ3cMEWY7Vnq7rY/ichOxSKAecQu6FVAzvZlNFZL6k5YHSKL1mX8o2g5
-        OtmH0I58JTaJBfz+sILr7KG6laP1kUsR5GfMXu5BT3yk9O/ikGqMD9FOtsS81g==
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH] mtd: rawnand: meson: Fix a potential double free issue
-Date:   Thu,  9 Jun 2022 14:44:18 +0200
-Message-Id: <20220609124418.209251-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To:  <ec15c358b8063f7c50ff4cd628cf0d2e14e43f49.1653064877.git.christophe.jaillet@wanadoo.fr>
-References: 
+        Thu, 9 Jun 2022 11:41:20 -0400
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D86942424A0
+        for <kernel-janitors@vger.kernel.org>; Thu,  9 Jun 2022 08:41:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=pgG0eA2vc/1dAlCwvkKaeMSKAA9qNytf28HYhRuJL28=;
+  b=rSUp77YvJ63LjttEXhuoyMEEveSbwVdbTCIAjYtP7yfjdqZ1fRymRhdc
+   yrYKHCHaAWOfqbDPd0CL5/U9XoRBk84q1vT59iCQLWoDI2b+tuNMdi9KB
+   waYrqBEbGu+U9nf75Ih0VSdbPwNKlJr9a+Hjnd+mJcsmTkIPwKoSASdao
+   4=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="5.91,287,1647298800"; 
+   d="scan'208";a="16348258"
+Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2022 17:41:15 +0200
+Date:   Thu, 9 Jun 2022 17:41:14 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: julia@hadrien
+To:     Markus Elfring <Markus.Elfring@web.de>
+cc:     =?ISO-8859-15?Q?J=E9r=E9my_Lefaure?= <jeremy.lefaure@netatmo.com>,
+        cocci@inria.fr, kernel-janitors@vger.kernel.org,
+        Nicolas Palix <nicolas.palix@imag.fr>
+Subject: Re: coccinelle: ifaddr: Find address test in more complex
+ conditions
+In-Reply-To: <15a253a6-469b-9632-8c7d-983554604451@web.de>
+Message-ID: <alpine.DEB.2.22.394.2206091740520.2380@hadrien>
+References: <AS8PR03MB760365A0DE3A8522136471BE93A59@AS8PR03MB7603.eurprd03.prod.outlook.com> <415ca02b-9618-b447-6471-6bcd0e2215e8@web.de> <alpine.DEB.2.22.394.2206072138160.2960@hadrien> <15a253a6-469b-9632-8c7d-983554604451@web.de>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'ec0da06337751b18f6dee06b6526e0f0d6e80369'
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323329-267814770-1654789275=:2380"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 2022-05-20 at 16:41:40 UTC, Christophe JAILLET wrote:
-> When meson_nfc_nand_chip_cleanup() is called, it will call:
-> 	meson_nfc_free_buffer(&meson_chip->nand);
-> 	nand_cleanup(&meson_chip->nand);
-> 
-> nand_cleanup() in turn will call nand_detach() which calls the
-> .detach_chip() which is here meson_nand_detach_chip().
-> 
-> meson_nand_detach_chip() already calls meson_nfc_free_buffer(), so we
-> could double free some memory.
-> 
-> Fix it by removing the unneeded explicit call to meson_nfc_free_buffer().
-> 
-> Fixes: 8fae856c5350 ("mtd: rawnand: meson: add support for Amlogic NAND flash controller")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Acked-by: Liang Yang <liang.yang@amlogic.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
+--8323329-267814770-1654789275=:2380
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-Miquel
+
+
+On Thu, 9 Jun 2022, Markus Elfring wrote:
+
+>
+> I don't really understand the above, but it made me realize that actually
+> the following is sufficient:
+>
+> @@
+> expression x;
+> @@
+>
+> *&x || ...
+>
+> This forces &x to appear as a test expression.  There can be 0 or more
+> occurrences of ||, so eg &x && y is also matched.
+>
+>
+> How does this promising feedback fit to the following information from
+> the software “Coccinelle 1.1.1” (OCaml 4.14.0)?
+>
+> Markus_Elfring@Sonne:/home/altes_Heim2/elfring/Projekte/Coccinelle/Probe> spatch --parse-cocci show_address_determination_in_checks-20220609.cocci
+> …
+> @display@
+> expression x;
+> @@
+>
+>
+> (
+> *&*x *|| *...
+> |
+> *&*x *!= *NULL *|| *...
+> |
+> *&*x *|| *...
+> |
+> *NULL *!= *&*x *|| *...
+> )
+>
+>
+> No grep query
+>
+>
+> Would another transformation be needed for the omission of trailing binary operators
+> (according to the shown combinations with SmPL ellipses)?
+
+I don't know what you mean.  How about trying an example?
+
+julia
+--8323329-267814770-1654789275=:2380--
