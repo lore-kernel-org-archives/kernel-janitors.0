@@ -2,126 +2,169 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37BF9C43334
-	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Jun 2022 05:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C1B1C43334
+	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Jun 2022 06:59:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238092AbiFIFLV (ORCPT
+        id S236993AbiFIG7X (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 9 Jun 2022 01:11:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47042 "EHLO
+        Thu, 9 Jun 2022 02:59:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236825AbiFIFLU (ORCPT
+        with ESMTP id S232933AbiFIG7S (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 9 Jun 2022 01:11:20 -0400
-Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 336D81A82C
-        for <kernel-janitors@vger.kernel.org>; Wed,  8 Jun 2022 22:11:17 -0700 (PDT)
-Received: from [192.168.1.18] ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id zARunuQ5DJcJLzARunCJhr; Thu, 09 Jun 2022 07:11:15 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 09 Jun 2022 07:11:15 +0200
-X-ME-IP: 90.11.190.129
-Message-ID: <0ad7ff2c-a5ad-1e5f-b186-0a43ce55057c@wanadoo.fr>
-Date:   Thu, 9 Jun 2022 07:11:14 +0200
+        Thu, 9 Jun 2022 02:59:18 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0052C344E6;
+        Wed,  8 Jun 2022 23:59:16 -0700 (PDT)
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2595k2B9019513;
+        Thu, 9 Jun 2022 06:59:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2021-07-09;
+ bh=qREC/8sAsKI/sbA+2kpUQ48vQ08TB+tkVnyLMVNFPEE=;
+ b=JStEkUS151vXnf+c6t++O1Z4Wv3BgIVGQvRyewNIHEYoE9kALjPjLQX1AZC0saKM8zXT
+ OCK+ohh6XBwYHllJrbRzkNuoHGE7jVRS2H6x/xCt7MW1KYVCzhwKBOJRBDeKWT0/CN71
+ agkSxMOKEwaZcSd/+aEaXSOdnhBnGEFV1eUVXe7OWrwgOCqbQd8S1ibNjjpgPnlBea9y
+ FNV6JbI2h4kWtW93uQKz6yNv32mijSiLAmlP9iPsiwxpVh4YNTS3CakNVmEXe8SvN2js
+ kPYXuti6hWk8gr2fY72wSSrasi7LSJA6YpS2veAFtFTTJPVto67rJQo+JPFtMsoQwzuM Sg== 
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ggvxn0ehq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 09 Jun 2022 06:59:09 +0000
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 2596uXrt033778;
+        Thu, 9 Jun 2022 06:59:08 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2109.outbound.protection.outlook.com [104.47.55.109])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3gfwu4as0u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 09 Jun 2022 06:59:08 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ingEsuDwA7yHDKiEyvcZBvknjvm1ogI/Nue0GAGokYYC8OMencs7eGXnJ2bEGKyzsxOJWw6RAaRfwUw9lQM75Ax7KMgrR5J9xu4GuW0sDuxZdE2zUvarBMnW/YXrUoS1M8ukjS77mVxUs3U+g0+EXt9vKdhNtq5qsfJv0r3mq7XHH7NvjkIVVysU9iBrjflIkVSYoQqRBjXF39mJSaU6R+UdFLZMXN1l5VKTnpJ0S1tZHJ12t/gM0xqewfLt/feiuZ/GSwCq6s9Svvzb2x5F8N/5a0U9QGb4Sup+miL6Y2B1Czb6q445tDrAY6rmpC6nH/wmP4Bq+RCBrN7ZWng3WQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qREC/8sAsKI/sbA+2kpUQ48vQ08TB+tkVnyLMVNFPEE=;
+ b=hHyBFN7+AQ64WOlS28MBmagZUyc/pS4pC8kFfcR1DChUQYoXAD5ZljunBKdub//Kdmu3bvnGKa33omiS/wl+vddftD1QAzoIV0NYiyJiiw4Y4HSdH1edwG25J2ElFXZbZHnIdn2Fw8GyNv/6gQnTK2/X9Rc2rzbAe66TIoLtyPAM2owlzcd8mCrQuoViFH/MmNBwYD+UgD0X0sSJFJw3BRS7wwruYNDUd0GKe4+B2R7/x1C4S+c2V9ztBJld19rTn3nUAredxX3UPDsjPk6Ha+Kwdx8qiuC7QpBTieMU81/ixqbjr+2k4QtgVVS1J4aNrF9eP7KES+XE+6qvr9LGRg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qREC/8sAsKI/sbA+2kpUQ48vQ08TB+tkVnyLMVNFPEE=;
+ b=C1oyRetBMHRBxPDX6nHzDQF3rojgHEpJm0LimTP37xZRdfIcfZoTkV5oCf8HBdyzdjCeB+A2NHAXhVQUo9Oud0aG2aGtAkf12H7B08pNENmXJ+2CS5ns0IJ8Fl6h6lMncZ6Vx6QGueo2z91hlnoaNCc0MfyxGgmpheHX+GYGY70=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by BLAPR10MB5043.namprd10.prod.outlook.com
+ (2603:10b6:208:332::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.13; Thu, 9 Jun
+ 2022 06:59:06 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::5020:9b82:5917:40b]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::5020:9b82:5917:40b%6]) with mapi id 15.20.5314.019; Thu, 9 Jun 2022
+ 06:59:06 +0000
+Date:   Thu, 9 Jun 2022 09:58:57 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Cheng Xu <chengyou@linux.alibaba.com>
+Cc:     Kai Shen <kaishen@linux.alibaba.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] RDMA/erdma: signedness bug in erdma_request_vectors()
+Message-ID: <20220609065856.GV2168@kadam>
+References: <YqCoWrAXeGHPvTfO@kili>
+ <604ea67b-fa8e-0e36-0adf-2940facfe4ee@linux.alibaba.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <604ea67b-fa8e-0e36-0adf-2940facfe4ee@linux.alibaba.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: MR2P264CA0178.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501::17)
+ To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v2 2/2] nfp: flower: Remove usage of the deprecated
- ida_simple_xxx API
-Content-Language: en-US
-To:     Simon Horman <simon.horman@corigine.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        oss-drivers@corigine.com, netdev@vger.kernel.org
-References: <4acb805751f2cf5de8d69e9602a88ec39feff9fc.1644532467.git.christophe.jaillet@wanadoo.fr>
- <721abecd2f40bed319ab9fb3feebbea8431b73ed.1644532467.git.christophe.jaillet@wanadoo.fr>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <721abecd2f40bed319ab9fb3feebbea8431b73ed.1644532467.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0669d696-f8a5-4910-634d-08da49e58b56
+X-MS-TrafficTypeDiagnostic: BLAPR10MB5043:EE_
+X-Microsoft-Antispam-PRVS: <BLAPR10MB504371212D2E1184CE1E1EDA8EA79@BLAPR10MB5043.namprd10.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 58sxvbNX5McNv9O84lpaTWN5jBRTu9SIb1/Wk3FGnwFWuvcFwVYJXHay9dXipnWQB3FJIIZdJKtxcf6IraL+yyxYRvCbwpMkVBKCPes9jVIyGupM0t4G+M4DARuugN9FguVrSSvIOdvrvAZE2PS5cz0h0nELMs9u3O9O1a5GvNTJiKUMtgQk/IP7Dr9F7gS0kupdNjEGXf4xzw9NCB65hm457SlbFgYolmcQDixfMbqZgsRfpYT2sityCYFZ9NJCzHKwLi76cAU22W+6N3cu4YpCDZQwxvmTFjSEzubtDpHlhLo3WhaNOqBsirgFaPoaqikIRq15YrGXXprwAExft9zELSBTtozx1vrDjXPJN0JNrUwj2SY3DhSQvwZ+Ry6OrAKYC9UFSwjhKLJEjyvgjqMbByjilNdHC/CFx+A5DKsCc65YT/6DpNz6VGqst6Y8XvucLIQZznVHaf4cxtpllPp085nUijQc5EjKA+/2J7WEd7LFnV35tCD0FbU8CCeDlQQxm85XoWNWwohu55xt35ShRjzRsMuL0GRh9SLJ70OCbMh9Fu63LkerWu7kmiRTqLVAFdAc4vyGH+Nec/K/scpZls5NZoP9cEK0w/ZT7CdgZZRuc2OUoyam5mzW1WJ1DO5NOMg7FZzZHoresbLYNzKTGFHSoTqN1scbAH8ZV+47SscTB/kxhr1yHO9LRrlG9wxx0CiB9Hvo7q40fXuItA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(366004)(52116002)(4326008)(316002)(33656002)(8676002)(5660300002)(8936002)(66476007)(66946007)(66556008)(6512007)(6506007)(9686003)(26005)(33716001)(1076003)(6486002)(186003)(508600001)(38100700002)(6666004)(53546011)(44832011)(86362001)(4744005)(6916009)(38350700002)(54906003)(2906002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?pocOj97mmuWA4tucLxhXLn7uyYRsieWulytMh7NXMA7xz9W1E3+qWx6sEVDi?=
+ =?us-ascii?Q?7TrJvQzLNQUiiB/SQVn0BzHUXVnP2tBLKwOEpwKhV06XUqbfjfUhPSwyaJ3c?=
+ =?us-ascii?Q?BC1IJKmAD8cvjPHEyjqOBwfqOmCZmby9EG1hfBkXbn+xZ8Mh0XP6wx6m7lVz?=
+ =?us-ascii?Q?ZB0OV3Dcwiqk8d/xMBrvQj+wdNmfwsrTVlQvXM9+nt9D9V8hPn8psMlTtw+N?=
+ =?us-ascii?Q?85q7Pp5WzEwo45Jc66hzyj/nEQ8S4BwR2epb+QbP/NTech92nU9ubSjf6WuH?=
+ =?us-ascii?Q?YR3MlXLCAFZNQvI3b8PcUhsKQaSDBmqLVgQmvZ70CNnE/86I3kufY8jse8ii?=
+ =?us-ascii?Q?8445MRMTt8D0q4O9Q/K4lgW5IaCalJHRd636yrF3PASkxaXlxS8+Rj1An4Az?=
+ =?us-ascii?Q?z+9+g7gzheS5LkFgbPe/gG3XHduBUjIMcB/CRzgUDBVZgRo9jIpcEJqERZK1?=
+ =?us-ascii?Q?dkWpD2OLzE6EgK0c7b4Bau9kcGqbWeCSwCeCCNCfRCVQtRJ6Wqv9iNIbmu/G?=
+ =?us-ascii?Q?txUejU5xJ8AJ3eV8dtupRYml4MKrY85YGUbYJFuHyAxpK/3lBLysKklwcslr?=
+ =?us-ascii?Q?3m1R6IZhwosugDZxTmqG0j040ZkpFyZwat1qZdIM/lg1wKvC49+TeVFQQ+tP?=
+ =?us-ascii?Q?+oMqwAQ0AOi5jXvYOxKUdrRB7Qy6luK7iTzeA61MYEwKB2jJoItnKKqv43km?=
+ =?us-ascii?Q?fpNqCGQHTeXdiN60WHuaKCc7O/N2pnf/mcTKhdLc8bKN52bkcS+xoskYsODB?=
+ =?us-ascii?Q?jNibzoj6KLEfQ3edZlyQeGOMqqr48/SlI1VaHVK9q9bhglqe4REOkV682x23?=
+ =?us-ascii?Q?0iTdYoffoKLUAdPSsvfJPcCkUSfmP7u+epSNZFTGOa/8c7XsjB85eZ/MDiaQ?=
+ =?us-ascii?Q?BhN0LM+7S78OzpMimrVJE3J2OS8mSwb+ov60/COpxutQenUxQPUTCPpFqYbN?=
+ =?us-ascii?Q?zA09YCKW0HrYC1jS3m3aNGMUoEbREhC+luG7bGDHV+rBy6stFRs4TmXLcplr?=
+ =?us-ascii?Q?3A7zy1seT3I63gaye2/X2dfhCbAVzQ8dpBj3k/9etP4bhfEfvHKoHALvkrDA?=
+ =?us-ascii?Q?us4oLbB+BCsAjT4648JO4qu8CkJtC68RLtuRLDyKIl94qB+buEphNSIYARW+?=
+ =?us-ascii?Q?lLzv+G29Islhjjeyriq2S9Ou/Yd7v9si/zWKjf4JmVBrNBm+3FycUqgENFjC?=
+ =?us-ascii?Q?LwA0TbIcjT87zLMj7Uffg339++GVlt8e3ULnLbctbkqcGA+vlT7yhxpi5I+I?=
+ =?us-ascii?Q?B2ayB9rqipMGWrJrTCz5qBXLPLmlIVgNhEqA/RnMAMVpH3QH1F3WvT5WPDP2?=
+ =?us-ascii?Q?IvBbHUE989yJahz3IVVSr1rfg2hP90eQKQJEMSBOkOvANAiyHgmhTrCgOk9r?=
+ =?us-ascii?Q?zSN7HcFZbo1neFykk0pQ6gvQLlmZwhv4zQheL3fic+bonblx32Ctp2tCfVqB?=
+ =?us-ascii?Q?/4herltm+vhgh87LyuJhuUH7rZgEce5ppn+4hGlf9y6ZPAc7eFJ7Pc2z/+XS?=
+ =?us-ascii?Q?XjgqHqcBys1+t2cvfQxn+Ll2By2nUxOZWdwEtHZnAQYZrH2vWP5WWwNFRz1j?=
+ =?us-ascii?Q?Mfnwua2fE10BLaVFYjh0dRvJcmHczQnbe0YMMusBqEc+uJGuSmBBNoBOLruw?=
+ =?us-ascii?Q?Jp4tryQoqCOZCAG+WeOK+1VhqnVEgxsbfeuHwQBVVPvJtru7QNMoHNtA7KFm?=
+ =?us-ascii?Q?ahKDYR7pYCFHepSvKt715cBF9g3Gmxk7TEPId+UUl824B/BOzCSUgwkEzzfS?=
+ =?us-ascii?Q?MOgvGOPkvuu7bh6qbto9wJFGU7xFvCw=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0669d696-f8a5-4910-634d-08da49e58b56
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2022 06:59:06.2566
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Cc8XZe2J3uYU1C801m/ua6OhuU8M/4Z7qYqqVwNfdJ5oxb5vs/TFYdwtlVFE00g5tSJUNWFG7yN3GKaU7xZ4KpgoVrEmax6mUTb+XKyB6UQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB5043
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.517,18.0.874
+ definitions=2022-06-09_07:2022-06-07,2022-06-09 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 spamscore=0
+ phishscore=0 mlxscore=0 adultscore=0 suspectscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2204290000
+ definitions=main-2206090027
+X-Proofpoint-GUID: S-s7lS8VHnShCLLuwob8zJUik1zqcgML
+X-Proofpoint-ORIG-GUID: S-s7lS8VHnShCLLuwob8zJUik1zqcgML
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 10/02/2022 à 23:35, Christophe JAILLET a écrit :
-> Use ida_alloc_xxx()/ida_free() instead to
-> ida_simple_get()/ida_simple_remove().
-> The latter is deprecated and more verbose.
+On Thu, Jun 09, 2022 at 11:00:03AM +0800, Cheng Xu wrote:
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->   .../net/ethernet/netronome/nfp/flower/tunnel_conf.c    | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c b/drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c
-> index 9244b35e3855..c71bd555f482 100644
-> --- a/drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c
-> +++ b/drivers/net/ethernet/netronome/nfp/flower/tunnel_conf.c
-> @@ -942,8 +942,8 @@ nfp_tunnel_add_shared_mac(struct nfp_app *app, struct net_device *netdev,
->   	if (!nfp_mac_idx) {
->   		/* Assign a global index if non-repr or MAC is now shared. */
->   		if (entry || !port) {
-> -			ida_idx = ida_simple_get(&priv->tun.mac_off_ids, 0,
-> -						 NFP_MAX_MAC_INDEX, GFP_KERNEL);
-> +			ida_idx = ida_alloc_max(&priv->tun.mac_off_ids,
-> +						NFP_MAX_MAC_INDEX, GFP_KERNEL);
->   			if (ida_idx < 0)
->   				return ida_idx;
->   
-> @@ -998,7 +998,7 @@ nfp_tunnel_add_shared_mac(struct nfp_app *app, struct net_device *netdev,
->   	kfree(entry);
->   err_free_ida:
->   	if (ida_idx != -1)
-> -		ida_simple_remove(&priv->tun.mac_off_ids, ida_idx);
-> +		ida_free(&priv->tun.mac_off_ids, ida_idx);
->   
->   	return err;
->   }
-> @@ -1061,7 +1061,7 @@ nfp_tunnel_del_shared_mac(struct nfp_app *app, struct net_device *netdev,
->   		}
->   
->   		ida_idx = nfp_tunnel_get_ida_from_global_mac_idx(entry->index);
-> -		ida_simple_remove(&priv->tun.mac_off_ids, ida_idx);
-> +		ida_free(&priv->tun.mac_off_ids, ida_idx);
->   		entry->index = nfp_mac_idx;
->   		return 0;
->   	}
-> @@ -1081,7 +1081,7 @@ nfp_tunnel_del_shared_mac(struct nfp_app *app, struct net_device *netdev,
->   	/* If MAC has global ID then extract and free the ida entry. */
->   	if (nfp_tunnel_is_mac_idx_global(nfp_mac_idx)) {
->   		ida_idx = nfp_tunnel_get_ida_from_global_mac_idx(entry->index);
-> -		ida_simple_remove(&priv->tun.mac_off_ids, ida_idx);
-> +		ida_free(&priv->tun.mac_off_ids, ida_idx);
->   	}
->   
->   	kfree(entry);
+> On 6/8/22 9:47 PM, Dan Carpenter wrote:
+> > The dev->attrs.irq_num variable is a u32 so the error handling won't
+> > work.  In this code we are passing "1" as the minimum number of IRQs and
+> > if it cannot allocate the minimum number of IRQs then the function
+> > returns -ENOSPC.  This means that it cannot return 0 here.
+> > 
+> > Fix the signedness bug by using a "int ret;" and preserve the error
+> > code instead of always returning -ENOSPC.
+> > 
+> > Fixes: d4d7a22521c9 ("RDMA/erdma: Add the erdma module")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> Since this bug is found in the initial upstream patch of our new
+> driver, I would squash your changes into the relevant patch in our next
+> version patch set to make the commit history cleaner.
 
-Hi,
+Sure, no problem.
 
-This has been merged in -next in commit 432509013f66 but for some reason 
-I looked at it again.
+regards,
+dan carpenter
 
-
-I just wanted to point out that this patch DOES change the behavior of 
-the driver because ida_simple_get() is exclusive of the upper bound, 
-while ida_alloc_max() is inclusive.
-
-So, knowing that NFP_MAX_MAC_INDEX = 0xff = 255, with the previous code 
-'ida_idx' was 0 ... 254.
-Now it is 0 ... 255.
-
-This still looks good to me, because NFP_MAX_MAC_INDEX is still not a 
-power of 2.
-
-
-But if 255 is a reserved value for whatever reason, then this patch has 
-introduced a bug (apologies for it).
-
-The change of behavior should have been mentioned in the commit 
-description. So I wanted to make sure you was aware in case a follow-up 
-fix is needed.
-
-CJ
