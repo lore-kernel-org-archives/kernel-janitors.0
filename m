@@ -2,118 +2,113 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 431DBC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Jun 2022 16:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB830C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu,  9 Jun 2022 19:30:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343733AbiFIQuZ (ORCPT
+        id S244709AbiFITaF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 9 Jun 2022 12:50:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47266 "EHLO
+        Thu, 9 Jun 2022 15:30:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243444AbiFIQuY (ORCPT
+        with ESMTP id S244078AbiFITaB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 9 Jun 2022 12:50:24 -0400
-Received: from smtp.smtpout.orange.fr (smtp10.smtpout.orange.fr [80.12.242.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8B2F4F1F3
-        for <kernel-janitors@vger.kernel.org>; Thu,  9 Jun 2022 09:50:20 -0700 (PDT)
-Received: from [192.168.1.18] ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id zLMKnvUPC2ovCzLMKnxhmD; Thu, 09 Jun 2022 18:50:18 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 09 Jun 2022 18:50:18 +0200
-X-ME-IP: 90.11.190.129
-Message-ID: <5cf8ad88-629c-e75a-df99-e893b8af967f@wanadoo.fr>
-Date:   Thu, 9 Jun 2022 18:50:12 +0200
+        Thu, 9 Jun 2022 15:30:01 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C97682342A8;
+        Thu,  9 Jun 2022 12:29:57 -0700 (PDT)
+Received: from mercury (unknown [185.209.196.172])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: sre)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 880C96601606;
+        Thu,  9 Jun 2022 20:29:56 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1654802996;
+        bh=jIKg3D8DJOlIR1nY1tGy/3dvTFvVhUu36vgdLhgBwfI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=U25b6jRGh3VD+/puEHl45HnreMP8F9hQAtQ4eOdLYvajY4hOGUylCobxm1SjY2DVM
+         +jp0IoHAyCTIPd9FIAzxcmTLWo96jFWs8RZ5HVHXvMvlcSTj8Pl/XRzZzrEWjDWEOS
+         Ruc0DbYO2rDb4tQFT6wbXriW04DAwIKThICQT6brg3TT0WcUOoesTRo/W/GqxATOwj
+         3+6UVrLooJm0FPkK5tZSLK9xYgbstqDGfSghFymPvofd7Ohy2F9memjCHAC8SkHn/0
+         J2q8ytMeCsG+wyjlCZ+vrX7L5+oZ49AaSNc17UmNzRXm5neakLnXHg7GdaJC191ldk
+         fwgXs6Ek5k35g==
+Received: by mercury (Postfix, from userid 1000)
+        id E779D10605B9; Thu,  9 Jun 2022 21:29:53 +0200 (CEST)
+Date:   Thu, 9 Jun 2022 21:29:53 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] power: supply: lp8788: fix typo in comment
+Message-ID: <20220609192953.kwf5wcyv2qjfnwhj@mercury.elektranox.org>
+References: <20220521111145.81697-25-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] crypto: x86/camellia - Replace kernel.h with the
- necessary inclusions
-Content-Language: en-CA
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-crypto@vger.kernel.org
-References: <65634fb748cc0ce2cc5bafaf904cb5f76bd4edc4.1654414362.git.christophe.jaillet@wanadoo.fr>
- <YqHIPE0MlZLP8C5I@gondor.apana.org.au>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <YqHIPE0MlZLP8C5I@gondor.apana.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="lymlb2ckzehdom4u"
+Content-Disposition: inline
+In-Reply-To: <20220521111145.81697-25-Julia.Lawall@inria.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 09/06/2022 à 12:15, Herbert Xu a écrit :
-> On Sun, Jun 05, 2022 at 09:32:53AM +0200, Christophe JAILLET wrote:
->> When kernel.h is used in the headers it adds a lot into dependency hell,
->> especially when there are circular dependencies are involved.
->>
->> Replace kernel.h inclusion with the list of what is really being used.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   arch/x86/crypto/camellia.h | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/x86/crypto/camellia.h b/arch/x86/crypto/camellia.h
->> index 1dcea79e8f8e..547fb7e30928 100644
->> --- a/arch/x86/crypto/camellia.h
->> +++ b/arch/x86/crypto/camellia.h
->> @@ -4,7 +4,7 @@
->>   
->>   #include <crypto/b128ops.h>
->>   #include <linux/crypto.h>
->> -#include <linux/kernel.h>
->> +#include <linux/types.h>
->>   
->>   #define CAMELLIA_MIN_KEY_SIZE	16
->>   #define CAMELLIA_MAX_KEY_SIZE	32
-> 
-> This is not sufficient.  For example, asmlinkage isn't explicitly
-> defined by any of these header files so it would be relying on an
-> implicit inclusion which is prone to breakage.
 
-Agreed, I missed that.
+--lymlb2ckzehdom4u
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Did you audit the entire file?
+Hi,
 
-Yes, but I missed the asmlinkage.
+On Sat, May 21, 2022 at 01:10:35PM +0200, Julia Lawall wrote:
+> Spelling mistake (triple letters) in comment.
+> Detected with the help of Coccinelle.
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> ---
 
-In fact, I've sent a few "obvious" (but nothing is never obvious at the 
-end...) patches like that to see the interest.
+Thanks, queued.
 
-I've spotted a few .h file with "easy to check" content.
-Mostly #define, function declarations, a few u<something> datatypes.
+-- Sebastian
 
-Then, I made the #include simplification and compile tested the change.
+>  drivers/power/supply/lp8788-charger.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/power/supply/lp8788-charger.c b/drivers/power/supply=
+/lp8788-charger.c
+> index 397e5a03b7d9..56c57529c228 100644
+> --- a/drivers/power/supply/lp8788-charger.c
+> +++ b/drivers/power/supply/lp8788-charger.c
+> @@ -376,7 +376,7 @@ static int lp8788_update_charger_params(struct platfo=
+rm_device *pdev,
+>  		return 0;
+>  	}
+> =20
+> -	/* settting charging parameters */
+> +	/* setting charging parameters */
+>  	for (i =3D 0; i < pdata->num_chg_params; i++) {
+>  		param =3D pdata->chg_params + i;
+> =20
+>=20
 
-If it worked, I consider that the patch looks fine.
+--lymlb2ckzehdom4u
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-In this particular case, I guess that the 'asmlinkage' should come from 
-another #include when "camellia.h" is used.
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmKiSjEACgkQ2O7X88g7
++po7PRAAqNR01HKBfkw69TI0hdhqDRZfRNFVEG4ts0R9jkXYjg4rYy0+jVYf+KAd
+q3pM2hvblEz4weQKxY5oJcSg7hLYOyMH4SSOE5xrKaKONolquvW5eHLXRuuM0dOT
+9lJThCYf4JLuYVnOQvAUehFJbvQ0R0kriFA45oszNm+8Lt8PK3MpH8gyoWSLRZ/y
+q7eyo/DkrBAQ1xD5NVvCFdg+c4qOi61OemxrY0jTY/Gez47Ax1QyWILo2r4rcPts
+aImdMbie1wAtZq9Mge8815c8A0H7nX3nnqdO8sxNpkpnnGPtRU5QITwPZbizprYX
+7MDNSkb0F3ztAgeFcZgEoGeMvdXwlsTr4shzgbVyoXgtGy/Fd9L89NUWc+x/1Dsz
+OMjSqYeGchNb+bqKQ4mrOcXaV99dZhGH85sPi5+lE48nIvVpsGGroQmJv4pqyOkX
+yUs+pXrLnx8WzRRbZsP4xuqglokJwfkVHxtBZ8HWQ+EvZpu6PRs/if2KA+Kp8mn1
+E2BUr9+mgcPs+MzE4hb5UQ/1d87RjmvOZD2HUjDhUh4Y65pfpteZyv4Dsu21LNPV
+BCaTdQbWrlC7E24CIdAURz5VXXTpBAP5ycHVAsC/8Ac0yhGcfepAiYZqYUOBVu/r
+9k3R/q7frlbIe9Q3cgrYCuFvOhM1eCiwmFVlsgh7QuUwklsWWjY=
+=97dU
+-----END PGP SIGNATURE-----
 
-My goal was not to introduce some new hidden constraints related to the 
-order of the included .h. I just wanted to make them explicit (and 
-complete) and start to simplify things.
-
-
-As said, nothing is never obvious, and I'll stay away from this kind of 
-changes :)
-
-
-Thanks a lot for the review.
-
-CJ
-
-
-
-> 
-> Cheers,
-
+--lymlb2ckzehdom4u--
