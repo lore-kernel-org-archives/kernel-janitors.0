@@ -2,80 +2,57 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12EBFC43334
-	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Jun 2022 05:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31116CCA47E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Jun 2022 09:15:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346333AbiFJF5B (ORCPT
+        id S1348681AbiFJJPQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 10 Jun 2022 01:57:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39422 "EHLO
+        Fri, 10 Jun 2022 05:15:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239380AbiFJF5A (ORCPT
+        with ESMTP id S1347867AbiFJJOx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 10 Jun 2022 01:57:00 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B65883968E;
-        Thu,  9 Jun 2022 22:56:59 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 53A9C61E74;
-        Fri, 10 Jun 2022 05:56:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 628A2C34114;
-        Fri, 10 Jun 2022 05:56:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654840618;
-        bh=tqa2qEghji7NeZCEwmQNGRGe3Peh47Szj8Wj0xWJipk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=SA4yX79lC4gBdjrAJmZHSkoJIB6XmnYR9Dkv3xys+wkMOaqA3IcKBiN31i1Va8/QI
-         TNQJLAbLyJJl53jh8SU+ScDaJU8XZqikRq+2eVt2AvnvCUjIDhiNurQyZozib7oQo2
-         aGgfy0gdQb6tH/qGTzcXkz/MCMUS8woh/6U2uWvldKMGyL8jgIQCHYDGLhujXaLaTn
-         mUygU67M7OMfK9y2Eq+1csaf4HYwJrp+/EVuW9mnXATtPaHPAhnahTNVUFvob+/UbK
-         edv+auyUSAYYA7V6tXXK6gpBWq/chCkbGb62jDfPuVvAuHfmilS+PGxOnixl/Dv9hO
-         NBkn8KJOHsWOw==
-Date:   Thu, 9 Jun 2022 22:56:57 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Saeed Mahameed <saeedm@nvidia.com>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>, leonro@nvidia.com,
-        borisp@nvidia.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: adjust MELLANOX ETHERNET INNOVA DRIVERS to
- TLS support removal
-Message-ID: <20220609225657.299278f7@kernel.org>
-In-Reply-To: <165483841435.4442.11942577289291510346.git-patchwork-notify@kernel.org>
-References: <20220601045738.19608-1-lukas.bulwahn@gmail.com>
-        <165483841435.4442.11942577289291510346.git-patchwork-notify@kernel.org>
+        Fri, 10 Jun 2022 05:14:53 -0400
+Received: from fornost.hmeau.com (helcar.hmeau.com [216.24.177.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAED92449C7;
+        Fri, 10 Jun 2022 02:14:29 -0700 (PDT)
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
+        by fornost.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
+        id 1nzaif-005MTJ-FD; Fri, 10 Jun 2022 19:14:18 +1000
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 10 Jun 2022 17:14:17 +0800
+Date:   Fri, 10 Jun 2022 17:14:17 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        linux-crypto@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] crypto: sun8i-ss - Fix error codes for
+ dma_mapping_error()
+Message-ID: <YqMLabu/Xtf2nGxq@gondor.apana.org.au>
+References: <YoUuAsJndw7aLn+S@kili>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YoUuAsJndw7aLn+S@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 10 Jun 2022 05:20:14 +0000 patchwork-bot+netdevbpf@kernel.org
-wrote:
-> Hello:
+On Wed, May 18, 2022 at 08:33:54PM +0300, Dan Carpenter wrote:
+> If there is a dma_mapping_error() then return negative error codes.
+> Currently this code returns success.
 > 
-> This patch was applied to netdev/net.git (master)
-> by Saeed Mahameed <saeedm@nvidia.com>:
-> 
-> On Wed,  1 Jun 2022 06:57:38 +0200 you wrote:
-> > Commit 40379a0084c2 ("net/mlx5_fpga: Drop INNOVA TLS support") removes all
-> > files in the directory drivers/net/ethernet/mellanox/mlx5/core/accel/, but
-> > misses to adjust its reference in MAINTAINERS.
-> > 
-> > Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> > broken reference.
-> > 
-> > [...]  
-> 
-> Here is the summary with links:
->   - MAINTAINERS: adjust MELLANOX ETHERNET INNOVA DRIVERS to TLS support removal
->     https://git.kernel.org/netdev/net/c/ed872f92fd09
+> Fixes: 801b7d572c0a ("crypto: sun8i-ss - add hmac(sha1)")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/crypto/allwinner/sun8i-ss/sun8i-ss-hash.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
-What luck. I was trying to see if pw-bot will respond to the PR rather
-than the series if I mark the series as accepted first but apparently
-it found this random posting and replied to it instead :S
-
-That's a roundabout way of saying that I pulled "mlx5 fixes 2022-06-08",
-thanks!
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
