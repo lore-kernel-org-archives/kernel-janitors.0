@@ -2,79 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D4DC43334
-	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Jun 2022 05:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12EBFC43334
+	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Jun 2022 05:57:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345972AbiFJFUV (ORCPT
+        id S1346333AbiFJF5B (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 10 Jun 2022 01:20:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34898 "EHLO
+        Fri, 10 Jun 2022 01:57:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345615AbiFJFUS (ORCPT
+        with ESMTP id S239380AbiFJF5A (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 10 Jun 2022 01:20:18 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CA883B021;
-        Thu,  9 Jun 2022 22:20:17 -0700 (PDT)
+        Fri, 10 Jun 2022 01:57:00 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B65883968E;
+        Thu,  9 Jun 2022 22:56:59 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C1CCBB8311D;
-        Fri, 10 Jun 2022 05:20:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 74E3AC3411C;
-        Fri, 10 Jun 2022 05:20:14 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 53A9C61E74;
+        Fri, 10 Jun 2022 05:56:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 628A2C34114;
+        Fri, 10 Jun 2022 05:56:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654838414;
-        bh=DurdnlAAMqFaYaBBGXevS8TYgbJ+7qLdTEzauXAvU8Q=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=HfdB+/G7hvObLFPBkF/2aAJ1Jpb0X8fA7PnuLzcpB2b4ijK/Fdircx+YgWg0tTp/4
-         NduyVjRgd0DkcmCuXxDWxUrtdw54+Rg+UrT7gBX9heiSB8N7JcRZsuVG5PBiMrHSnv
-         bLdW3BqIB6raddFg8kmQTxbEL2C9qm43aee8bAXQYUxz3S1aUdxdY39f+dyHay5lfD
-         kZ0id9ha2lGOB9vadB9fLxdFynUv2hS1wn+3UQ0fOeTpCakcVby0hY1p+UlxiBqdES
-         bfya9WrMFZnybqXQ+WBhfAf9qtbUfxiBvHXyOdro6WmfBgNSEOWMMuFRGW3AAmBQc4
-         ijhDXKdNoQMiQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 58345E737EE;
-        Fri, 10 Jun 2022 05:20:14 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] MAINTAINERS: adjust MELLANOX ETHERNET INNOVA DRIVERS to TLS
- support removal
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <165483841435.4442.11942577289291510346.git-patchwork-notify@kernel.org>
-Date:   Fri, 10 Jun 2022 05:20:14 +0000
-References: <20220601045738.19608-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20220601045738.19608-1-lukas.bulwahn@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     leonro@nvidia.com, borisp@nvidia.com, netdev@vger.kernel.org,
+        s=k20201202; t=1654840618;
+        bh=tqa2qEghji7NeZCEwmQNGRGe3Peh47Szj8Wj0xWJipk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SA4yX79lC4gBdjrAJmZHSkoJIB6XmnYR9Dkv3xys+wkMOaqA3IcKBiN31i1Va8/QI
+         TNQJLAbLyJJl53jh8SU+ScDaJU8XZqikRq+2eVt2AvnvCUjIDhiNurQyZozib7oQo2
+         aGgfy0gdQb6tH/qGTzcXkz/MCMUS8woh/6U2uWvldKMGyL8jgIQCHYDGLhujXaLaTn
+         mUygU67M7OMfK9y2Eq+1csaf4HYwJrp+/EVuW9mnXATtPaHPAhnahTNVUFvob+/UbK
+         edv+auyUSAYYA7V6tXXK6gpBWq/chCkbGb62jDfPuVvAuHfmilS+PGxOnixl/Dv9hO
+         NBkn8KJOHsWOw==
+Date:   Thu, 9 Jun 2022 22:56:57 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Saeed Mahameed <saeedm@nvidia.com>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>, leonro@nvidia.com,
+        borisp@nvidia.com, netdev@vger.kernel.org,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: adjust MELLANOX ETHERNET INNOVA DRIVERS to
+ TLS support removal
+Message-ID: <20220609225657.299278f7@kernel.org>
+In-Reply-To: <165483841435.4442.11942577289291510346.git-patchwork-notify@kernel.org>
+References: <20220601045738.19608-1-lukas.bulwahn@gmail.com>
+        <165483841435.4442.11942577289291510346.git-patchwork-notify@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net.git (master)
-by Saeed Mahameed <saeedm@nvidia.com>:
-
-On Wed,  1 Jun 2022 06:57:38 +0200 you wrote:
-> Commit 40379a0084c2 ("net/mlx5_fpga: Drop INNOVA TLS support") removes all
-> files in the directory drivers/net/ethernet/mellanox/mlx5/core/accel/, but
-> misses to adjust its reference in MAINTAINERS.
+On Fri, 10 Jun 2022 05:20:14 +0000 patchwork-bot+netdevbpf@kernel.org
+wrote:
+> Hello:
 > 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
+> This patch was applied to netdev/net.git (master)
+> by Saeed Mahameed <saeedm@nvidia.com>:
 > 
-> [...]
+> On Wed,  1 Jun 2022 06:57:38 +0200 you wrote:
+> > Commit 40379a0084c2 ("net/mlx5_fpga: Drop INNOVA TLS support") removes all
+> > files in the directory drivers/net/ethernet/mellanox/mlx5/core/accel/, but
+> > misses to adjust its reference in MAINTAINERS.
+> > 
+> > Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> > broken reference.
+> > 
+> > [...]  
+> 
+> Here is the summary with links:
+>   - MAINTAINERS: adjust MELLANOX ETHERNET INNOVA DRIVERS to TLS support removal
+>     https://git.kernel.org/netdev/net/c/ed872f92fd09
 
-Here is the summary with links:
-  - MAINTAINERS: adjust MELLANOX ETHERNET INNOVA DRIVERS to TLS support removal
-    https://git.kernel.org/netdev/net/c/ed872f92fd09
+What luck. I was trying to see if pw-bot will respond to the PR rather
+than the series if I mark the series as accepted first but apparently
+it found this random posting and replied to it instead :S
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+That's a roundabout way of saying that I pulled "mlx5 fixes 2022-06-08",
+thanks!
