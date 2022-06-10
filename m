@@ -2,85 +2,146 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A54C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Jun 2022 16:21:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C4DCCA47B
+	for <kernel-janitors@archiver.kernel.org>; Fri, 10 Jun 2022 17:43:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349495AbiFJQVi (ORCPT
+        id S1347115AbiFJRnD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 10 Jun 2022 12:21:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60212 "EHLO
+        Fri, 10 Jun 2022 13:43:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229571AbiFJQVe (ORCPT
+        with ESMTP id S1345719AbiFJRnC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 10 Jun 2022 12:21:34 -0400
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDB9B3A3903;
-        Fri, 10 Jun 2022 09:21:31 -0700 (PDT)
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 911C91D99;
-        Fri, 10 Jun 2022 16:20:49 +0000 (UTC)
+        Fri, 10 Jun 2022 13:43:02 -0400
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C842C5521E
+        for <kernel-janitors@vger.kernel.org>; Fri, 10 Jun 2022 10:43:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1654878049;
-        bh=ioFgM6y+XdcF78saLPERgD1M4sbpP2D6QZPHFDZ9vvM=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=Jvmkrgx162jlNF4axBM0VM7hdMFogDadVe78W2/U6nIUULF1a9PVKdVlVLRfieBO+
-         MrGGkX1zIh/bk8yx4gXZqT2uR0SLgJBZJLkDo2DoHMc09sB4k769MJZwWDNZOOYTH3
-         CCi7I0BhjvNaL11AOtTwvTxmU/3bfF5FTnik8wRM=
-Received: from [172.30.8.65] (172.30.8.65) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Fri, 10 Jun 2022 19:21:29 +0300
-Message-ID: <01e2f814-1fcf-bc0c-b580-e3879eda85b6@paragon-software.com>
-Date:   Fri, 10 Jun 2022 19:21:28 +0300
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=sx99y017Mbr/u4MrxYOwu0nBx0MKx0T3gawN+zYL69g=;
+  b=aBjcDI9Aepxx6mWx3qGWjO8fmTUEa9WyhCtukZ03MYzcuSPyEYT089uU
+   tNdLrE1IQUr8nsp0gA7ECKQD5HlAXF1oHd5MnC8aCeoqztRoTEwBm1ZpI
+   oKLSF5MOduOuSZAmvlJU0WKiFncCquCfuKtbc0BAb0KAj+knXx9mJnTXx
+   w=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="5.91,291,1647298800"; 
+   d="scan'208";a="16454914"
+Received: from 245.122.68.85.rev.sfr.net (HELO hadrien) ([85.68.122.245])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2022 19:42:59 +0200
+Date:   Fri, 10 Jun 2022 19:42:58 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: jll@hadrien
+To:     Markus Elfring <Markus.Elfring@web.de>
+cc:     =?ISO-8859-15?Q?J=E9r=E9my_Lefaure?= <jeremy.lefaure@netatmo.com>,
+        cocci@inria.fr, kernel-janitors@vger.kernel.org,
+        Nicolas Palix <nicolas.palix@imag.fr>
+Subject: Re: [PATCH v3] coccinelle: Extend address test from ifaddr to every
+ test expression
+In-Reply-To: <a8c3479c-c8f1-da57-23fe-657c2f13872b@web.de>
+Message-ID: <alpine.DEB.2.22.394.2206101941520.2946@hadrien>
+References: <AS8PR03MB76033CF2848D03651D6E189093A69@AS8PR03MB7603.eurprd03.prod.outlook.com> <a8c3479c-c8f1-da57-23fe-657c2f13872b@web.de>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH] fs/ntfs3: Don't clear upper bits accidentally in
- log_replay()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     <ntfs3@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <YnjY58EpRzaZP+YC@kili>
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-In-Reply-To: <YnjY58EpRzaZP+YC@kili>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.30.8.65]
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+Content-Type: multipart/mixed; boundary="8323329-1673147012-1654882979=:2946"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-1673147012-1654882979=:2946
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
 
-On 5/9/22 12:03, Dan Carpenter wrote:
-> The "vcn" variable is a 64 bit.  The "log->clst_per_page" variable is a
-> u32.  This means that the mask accidentally clears out the high 32 bits
-> when it was only supposed to clear some low bits.  Fix this by adding a
-> cast to u64.
-> 
-> Fixes: b46acd6a6a62 ("fs/ntfs3: Add NTFS journal")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Why am I getting new Smatch warnings in old ntfs3 code?  It is a mystery.
-> 
->   fs/ntfs3/fslog.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ntfs3/fslog.c b/fs/ntfs3/fslog.c
-> index 915f42cf07bc..0da339fda2f4 100644
-> --- a/fs/ntfs3/fslog.c
-> +++ b/fs/ntfs3/fslog.c
-> @@ -5057,7 +5057,7 @@ int log_replay(struct ntfs_inode *ni, bool *initialized)
->   		goto add_allocated_vcns;
->   
->   	vcn = le64_to_cpu(lrh->target_vcn);
-> -	vcn &= ~(log->clst_per_page - 1);
-> +	vcn &= ~(u64)(log->clst_per_page - 1);
->   
->   add_allocated_vcns:
->   	for (i = 0, vcn = le64_to_cpu(lrh->target_vcn),
 
-Thanks for patch, applied!
+On Fri, 10 Jun 2022, Markus Elfring wrote:
+
+>
+> > The test of an expression's address does not necessarily represent the
+> > whole condition, it may only be a part of it. Also, an expression's
+> > address is likely to be non-zero in every test expression, not only in
+> > if statements.
+> >
+> > This change aims at detecting an address test in more complex conditions
+> > for every test expression.
+> >
+> > Signed-off-by: Jérémy Lefaure <jeremy.lefaure@netatmo.com>
+> > ---
+> > v2 -> v3: Apply Julia's suggestion to have a more generic solution + adapt commit message and file
+> >           name to this new solution.
+> > v1 -> v2: Moved disjunction on the condition itself instead of being on the
+> >           if statements.
+> >
+> >  scripts/coccinelle/misc/{ifaddr.cocci => test_addr.cocci} | 4 +---
+> >  1 file changed, 1 insertion(+), 3 deletions(-)
+> >  rename scripts/coccinelle/misc/{ifaddr.cocci => test_addr.cocci} (94%)
+> >
+> > diff --git a/scripts/coccinelle/misc/ifaddr.cocci b/scripts/coccinelle/misc/test_addr.cocci
+> > similarity index 94%
+> > rename from scripts/coccinelle/misc/ifaddr.cocci
+> > rename to scripts/coccinelle/misc/test_addr.cocci
+> > index fc92e8fcbfcb..2d0ec86d1701 100644
+> > --- a/scripts/coccinelle/misc/ifaddr.cocci
+> > +++ b/scripts/coccinelle/misc/test_addr.cocci
+> > @@ -14,12 +14,10 @@ virtual context
+> >
+> >  @r@
+> >  expression x;
+> > -statement S1,S2;
+> >  position p;
+> >  @@
+> >
+> > -*if@p (&x)
+> > - S1 else S2
+> > +*&x@p || ...
+> >
+> >  @script:python depends on org@
+> >  p << r.p;
+>
+> A)
+> I would like to point out once more that no questionable places were marked
+> by the software “Coccinelle 1.1.1” (OCaml 4.14.0) in the following source code.
+> https://lore.kernel.org/cocci/da86bc36-36af-7bd7-6bee-861e160ba6a4@web.de/
+> https://sympa.inria.fr/sympa/arc/cocci/2022-06/msg00017.html
+>
+>
+> void check(void)
+> {
+> int s = 1;
+> bool t = (&s);
+> }
+>
+>
+> Thus I propose to add another case distinction by the means of
+> a SmPL disjunction.
+>
+>
+> *\( &x || ... \| &x \)
+>
+>
+> Will any more adjustments become helpful for the handling of optional code
+> according to SmPL ellipses?
+
+Did you actually try this?  Because it will match every occurrence of &x.
+
+I don't think that your example represents a real problem.
+
+julia
+
+>
+>
+>
+> B)
+> I imagine that generated diff output should be wrapped by a source block
+> for the operation mode “org”.
+> https://orgmode.org/quickstart.html#blocks
+>
+>
+> Regards,
+> Markus
+>
+--8323329-1673147012-1654882979=:2946--
