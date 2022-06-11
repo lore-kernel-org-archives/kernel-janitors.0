@@ -2,35 +2,38 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CDE1C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 11 Jun 2022 08:37:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F09BC43334
+	for <kernel-janitors@archiver.kernel.org>; Sat, 11 Jun 2022 08:42:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231577AbiFKIhr (ORCPT
+        id S231628AbiFKImY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 11 Jun 2022 04:37:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37262 "EHLO
+        Sat, 11 Jun 2022 04:42:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231563AbiFKIhq (ORCPT
+        with ESMTP id S231468AbiFKImW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 11 Jun 2022 04:37:46 -0400
-Received: from smtp.smtpout.orange.fr (smtp04.smtpout.orange.fr [80.12.242.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55B505523A
-        for <kernel-janitors@vger.kernel.org>; Sat, 11 Jun 2022 01:37:45 -0700 (PDT)
+        Sat, 11 Jun 2022 04:42:22 -0400
+Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AAC221E10
+        for <kernel-janitors@vger.kernel.org>; Sat, 11 Jun 2022 01:42:11 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id zwconTI58QKuazwconvOZh; Sat, 11 Jun 2022 10:37:43 +0200
+        id zwh5n1Hfbxzw2zwh5nr9xK; Sat, 11 Jun 2022 10:42:10 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 11 Jun 2022 10:37:43 +0200
+X-ME-Date: Sat, 11 Jun 2022 10:42:10 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] perf/marvell_cn10k: Remove useless license text when SPDX-License-Identifier is already used
-Date:   Sat, 11 Jun 2022 10:37:40 +0200
-Message-Id: <4a8016a6da9cc6815cfa0f97ae8d3dd862797bda.1654936653.git.christophe.jaillet@wanadoo.fr>
+        linux-serial@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: [PATCH] serial: sifive: Remove useless license text when SPDX-License-Identifier is already used
+Date:   Sat, 11 Jun 2022 10:42:06 +0200
+Message-Id: <dbc54eff6f4e077d9126054f395d5bc5b3405917.1654936915.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -43,24 +46,30 @@ duplicate part of the corresponding license.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/perf/marvell_cn10k_tad_pmu.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/tty/serial/sifive.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/drivers/perf/marvell_cn10k_tad_pmu.c b/drivers/perf/marvell_cn10k_tad_pmu.c
-index 282d3a071a67..3d4b6d381783 100644
---- a/drivers/perf/marvell_cn10k_tad_pmu.c
-+++ b/drivers/perf/marvell_cn10k_tad_pmu.c
-@@ -2,10 +2,6 @@
- /* Marvell CN10K LLC-TAD perf driver
+diff --git a/drivers/tty/serial/sifive.c b/drivers/tty/serial/sifive.c
+index c0869b080cc3..5c3a07546a58 100644
+--- a/drivers/tty/serial/sifive.c
++++ b/drivers/tty/serial/sifive.c
+@@ -4,16 +4,6 @@
+  * Copyright (C) 2018 Paul Walmsley <paul@pwsan.com>
+  * Copyright (C) 2018-2019 SiFive
   *
-  * Copyright (C) 2021 Marvell
-- *
 - * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- #define pr_fmt(fmt) "tad_pmu: " fmt
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+  * Based partially on:
+  * - drivers/tty/serial/pxa.c
+  * - drivers/tty/serial/amba-pl011.c
 -- 
 2.34.1
 
