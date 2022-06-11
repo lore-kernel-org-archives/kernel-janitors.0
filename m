@@ -2,110 +2,70 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A566C43334
-	for <kernel-janitors@archiver.kernel.org>; Sat, 11 Jun 2022 09:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD14CCA47F
+	for <kernel-janitors@archiver.kernel.org>; Sat, 11 Jun 2022 10:22:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232278AbiFKJUW (ORCPT
+        id S231467AbiFKKW1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 11 Jun 2022 05:20:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51426 "EHLO
+        Sat, 11 Jun 2022 06:22:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229616AbiFKJUW (ORCPT
+        with ESMTP id S231393AbiFKKW0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 11 Jun 2022 05:20:22 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 981AE13F83
-        for <kernel-janitors@vger.kernel.org>; Sat, 11 Jun 2022 02:20:19 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id x17so1346190wrg.6
-        for <kernel-janitors@vger.kernel.org>; Sat, 11 Jun 2022 02:20:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=conchuod.ie; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=SN97VSJ1ccdaEz1KGuxxY4a0gyyHuUYZhfE4f2SEekI=;
-        b=S4DZUmlE5di6YR+DIoUPQ2ra/KrGSonq34VzOmzlnMhnJ/HxCDBB68C8ftHGJHzwpl
-         ZnkzQYPD3yYx9aij7Tjx83Zi6b8LbA+G007vdFsANw+kvjwuN5REGSdx9YCPnAhmROKA
-         lrlSy34tfbKpOPTv8g/e4gxOivAwh9+midL5kcBmzjxVmRhaG/bWaJ54Zhs3ETeeE/7T
-         qjyR8+VK4pjaAv895bKEbHQFdN2E4b0h27o8K/Od9CQj/89/m7SD3DLDQLvhTW1DsP95
-         GeWzuds6Allhjh8Ks5c/BPdJdk8MGxEXZseC7QutKINlRk7WKAdR5P4yE0mwI20SNSDf
-         Mneg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=SN97VSJ1ccdaEz1KGuxxY4a0gyyHuUYZhfE4f2SEekI=;
-        b=et/bp74uJyZhS0ouCyOcmmPeDH9Q1KhzX8+gKTC09jZN4+WVGtxlQFVVRcU4lbxhex
-         ScVTLpU3+lJsPicxlJk+G/0H6SLzYGSmahiFpUziKFW1GfBqvZ0c2zgWZeRHHdZErDH3
-         9dvekpGNWqs2Q7lcVqcnL++6ng0KauBtHWFWLF411V7AZlHA5HK6GYbCQ+T3G1w/L33e
-         egO2QSLCV9+fEQABwGUv9RFD/DEspZyNeTztCI73Tujt4LpzlgDgltvwD8rac6HQtCZ2
-         xytGC0BqAz0OyrMCvgJeuLTIc1EBakI8vF8jH2A+Vimak7Qezrbh/8sMUbm29WD7GEbf
-         HqvQ==
-X-Gm-Message-State: AOAM531666isgY77q5pgOfCW+ietA1IrvryoMU7Le1UWQtw0FIQmEple
-        R0lsl0gITXjFsGDBs7+w/OZVKg==
-X-Google-Smtp-Source: ABdhPJyRht1sUkgMy4Z++odCZ2gsBir+F4UaeNv5bYzwGOOPas4d2NSfZ359qCB4ZMWqCE1OFKkt7w==
-X-Received: by 2002:a5d:4f92:0:b0:214:c773:d615 with SMTP id d18-20020a5d4f92000000b00214c773d615mr41098127wru.525.1654939217948;
-        Sat, 11 Jun 2022 02:20:17 -0700 (PDT)
-Received: from [192.168.2.222] ([51.37.234.167])
-        by smtp.gmail.com with ESMTPSA id p14-20020a5d48ce000000b002183cedbf34sm1949282wrs.73.2022.06.11.02.20.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Jun 2022 02:20:17 -0700 (PDT)
-Message-ID: <50540bda-ffaa-1141-b077-197ac64fcdd1@conchuod.ie>
-Date:   Sat, 11 Jun 2022 10:20:14 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] spi: microchip-core: Fix the error handling path in
- mchp_corespi_probe()
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Mark Brown <broonie@kernel.org>,
-        Daire McNamara <daire.mcnamara@microchip.com>
+        Sat, 11 Jun 2022 06:22:26 -0400
+Received: from smtp.smtpout.orange.fr (smtp02.smtpout.orange.fr [80.12.242.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CE172F9
+        for <kernel-janitors@vger.kernel.org>; Sat, 11 Jun 2022 03:22:17 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id zyFxnNqvYgoLGzyFxn1o94; Sat, 11 Jun 2022 12:22:15 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sat, 11 Jun 2022 12:22:15 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Lewis Hanly <lewis.hanly@microchip.com>,
-        linux-riscv@lists.infradead.org, linux-spi@vger.kernel.org
-References: <a90bec10dec43719b12afdb967e87526c4bc849a.1654933052.git.christophe.jaillet@wanadoo.fr>
-From:   Conor Dooley <mail@conchuod.ie>
-In-Reply-To: <a90bec10dec43719b12afdb967e87526c4bc849a.1654933052.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] media: rcar_drif: Remove useless license text when SPDX-License-Identifier is already used
+Date:   Sat, 11 Jun 2022 12:22:12 +0200
+Message-Id: <4dcd5c4ef92318dfa3298eb0c03945a8ce9b5833.1654942925.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+An SPDX-License-Identifier is already in place. There is no need to
+duplicate part of the corresponding license.
 
+This is a left-over from commit adeb69705682 ("media: rcar_drif: convert to
+SPDX identifiers")
 
-On 11/06/2022 08:37, Christophe JAILLET wrote:
-> clk_prepare_enable() is called instead of clk_disable_unprepare() in the
-> error handling path of the probe function.
-> 
-> Change the function that is called so that resources are released
-> correctly.
-> 
-> Fixes: 9ac8d17694b6 ("spi: add support for microchip fpga spi controllers")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/media/platform/renesas/rcar_drif.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-Hey Christophe,
-Peng Wu already sent a patch for this, but thanks for trying
-to clean up after me anyway.
-Thanks,
-Conor.
+diff --git a/drivers/media/platform/renesas/rcar_drif.c b/drivers/media/platform/renesas/rcar_drif.c
+index 9a0982fa5c6b..49e4c15a02cc 100644
+--- a/drivers/media/platform/renesas/rcar_drif.c
++++ b/drivers/media/platform/renesas/rcar_drif.c
+@@ -3,11 +3,6 @@
+  * R-Car Gen3 Digital Radio Interface (DRIF) driver
+  *
+  * Copyright (C) 2017 Renesas Electronics Corporation
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ /*
+-- 
+2.34.1
 
-> ---
->  drivers/spi/spi-microchip-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/spi/spi-microchip-core.c b/drivers/spi/spi-microchip-core.c
-> index 5b2aee30fa04..bf6847d95fe3 100644
-> --- a/drivers/spi/spi-microchip-core.c
-> +++ b/drivers/spi/spi-microchip-core.c
-> @@ -580,7 +580,7 @@ static int mchp_corespi_probe(struct platform_device *pdev)
->  
->  error_release_hardware:
->  	mchp_corespi_disable(spi);
-> -	clk_prepare_enable(spi->clk);
-> +	clk_disable_unprepare(spi->clk);
->  error_release_master:
->  	spi_master_put(master);
->  
