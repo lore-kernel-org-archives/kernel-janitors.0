@@ -2,60 +2,63 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC987C43334
-	for <kernel-janitors@archiver.kernel.org>; Sun, 12 Jun 2022 20:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B35CACCA473
+	for <kernel-janitors@archiver.kernel.org>; Sun, 12 Jun 2022 20:34:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234863AbiFLU1N (ORCPT
+        id S234973AbiFLUed (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 12 Jun 2022 16:27:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52132 "EHLO
+        Sun, 12 Jun 2022 16:34:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231891AbiFLU1M (ORCPT
+        with ESMTP id S231891AbiFLUec (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 12 Jun 2022 16:27:12 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AC071CFFD;
-        Sun, 12 Jun 2022 13:27:11 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id a15so4859567wrh.2;
-        Sun, 12 Jun 2022 13:27:11 -0700 (PDT)
+        Sun, 12 Jun 2022 16:34:32 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7445331213;
+        Sun, 12 Jun 2022 13:34:31 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id h19so1630226wrc.12;
+        Sun, 12 Jun 2022 13:34:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=xvxzy223FFQJfshyxjElH9L36mSmmC81px6ACmnLyK8=;
-        b=CZxkQSy7UoHTCD4dneKKa+nLhgsUf6WHxNQ7ny3hMnYPuqHYG9gj1IHlYrwb6Yy9Xr
-         EnqQ6GwO8w6MoCEK9UMajyiM59RWdg61hC/B+rQXUIV+YwZBogMeCdA5uOtZqPoWv0OG
-         VuvSzy0c9q3/WUcGklPgeZ9FlsNSRDadjfS420dhp9/S4Ti1a1sdVfnSPjmhtJE+3ZBw
-         YPtt5CvNNtd8m6F1qCOM+Oxya9LXhVSD4ZyyRtI+BF1GYtvrofGrGfiEh1UHXzEcY1cS
-         5btNAbkIlKWE2qUNIP3dHTj0yOEF6HV4WU6qvMlu/Z1wCum/uOMD48OUima4rOX0suXM
-         2lag==
+        bh=pLO4+liZettN7NhTXRO4r2yJBN1H2FVkqYbOicYerBo=;
+        b=X5OBdH28x9HgFoBcWsY3ulpULpoUF3jFjFVlEFMpFgUx3IREZW/hJYT/c1iQaKfxeq
+         ndL1X8IFDh05l0q3leMTlePr/vGN8J4dEo8G+CyygvfkLz2o7s4amu4W2jQtVS+l/+u3
+         NyvQqX6LDPRcdgV4mvF2uUchiySoVVwzxWGSLQqHaI7zPvUHqoQKt3DJdxyhBRI8hlmL
+         doKoD3lVtTzZiJMkNHOQWQMo5R3/7bdvwG7hKlSw2IIZ9jq77ku8z9/xjLrxbvX4ElfV
+         QWFetwJJlZQjHNiar2TR1PWGQ9VjKsKQZ5t+95CF2b9gbmDJ/HFSFo8KxDtJ+xSEmNmL
+         E6QQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=xvxzy223FFQJfshyxjElH9L36mSmmC81px6ACmnLyK8=;
-        b=kDfs2fv8WqNmuz7eHTETEhAN4fd5NQWbt8pKwVvENPc32bG2ed1eNMsJRnA1YPaipH
-         kR1rzbsKkvBduZOV57JbgFkmUOcR+bEckhIpn93LlMeluTzpB7C9dq3q77uJsJs+6vmT
-         Hl3uRDzRAyRZz/GkL476p7A858wAVU1UVJet1BY4uITe8yuutS4uzR2OeAl2KzmjCj4Z
-         drgvy82FAAvR5a1a9XUfF0eYwxGnh1vber0ql1SkJmq2qzpbhp3vF+dDk7ovtGNQOK4Z
-         DI9nM/vfo4+GqdpV/ocHsTO/022XLIcdUks65l26t7FT6TRRi5jtr54Ty35OvjTm0baC
-         A2ag==
-X-Gm-Message-State: AOAM531mHqOtkHkVHz28KIuTfYUbiWqYYNQT0RC408xP6NGfW8+1W8iQ
-        OjcT0xr4BC5iaxpcPIpaZcM=
-X-Google-Smtp-Source: ABdhPJwU3NQ70vtIxzoTKWKSW7xmb948Lxhl6faZc7H2PRpuMapE/NaKLkv0PWTQkMWEelZsNk26Fg==
-X-Received: by 2002:a05:6000:184b:b0:219:bee5:6b75 with SMTP id c11-20020a056000184b00b00219bee56b75mr16118671wri.80.1655065629975;
-        Sun, 12 Jun 2022 13:27:09 -0700 (PDT)
+        bh=pLO4+liZettN7NhTXRO4r2yJBN1H2FVkqYbOicYerBo=;
+        b=yy50jzTzyzKPN3uPFqRTW/zjIJavrERh40GeVMGaY9UayUuv0kFUPctCNQHGW4sBIU
+         0ynWzrlXXM4Qh5CnbZ63DSE5rmid+p8lUqRreR/FB0b3+xGPF8c9VC3shQERFlEuEVng
+         UUi0s8psLfnjTJIKYwnT9gjQBXtajXDuyjJxAkNkLZl7r+f3SJEWjjd0LSPY3swZPTm7
+         MguiV3yFpo/xCIY7HLwitWgoT/LdHzgLVAp7yK3b2pJpEcVnOaUj/ehiUz128VHzLwMG
+         tRdiFF3eVLsRqsN85Ag+jmm2MyMlOCyEe8U6jeS6FnYoZ1O0nQOpFHIGMv80CwPbTqwg
+         TzRw==
+X-Gm-Message-State: AOAM531ELvHnr9ASbADmKwPGyXsMZ4YunDG5cVyGZtXTxScLcUxvJVFA
+        hcbVXXJwrDbztONvoyVnHjn0YgLZbn6vUg==
+X-Google-Smtp-Source: ABdhPJzUlKOUvC8cBsTg326yD2TNlhEPA2C1hFzYli75wU1R8FclFOC5cNtWRhXNszJsuzDOQrKDfQ==
+X-Received: by 2002:adf:fb05:0:b0:20a:e113:8f3f with SMTP id c5-20020adffb05000000b0020ae1138f3fmr53765523wrr.534.1655066069955;
+        Sun, 12 Jun 2022 13:34:29 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id a10-20020a056000100a00b0020d106c0386sm6347382wrx.89.2022.06.12.13.27.08
+        by smtp.gmail.com with ESMTPSA id e10-20020a5d4e8a000000b00210320d9fbfsm7706817wru.18.2022.06.12.13.34.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Jun 2022 13:27:08 -0700 (PDT)
+        Sun, 12 Jun 2022 13:34:29 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] lkdtm: cfi: use NULL for a null pointer rather than zero
-Date:   Sun, 12 Jun 2022 21:27:08 +0100
-Message-Id: <20220612202708.2754270-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] spi: s3c64xx: set pointers to null using NULL rather than 0
+Date:   Sun, 12 Jun 2022 21:34:28 +0100
+Message-Id: <20220612203428.2754823-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,29 +67,48 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a pointer being initialized with a zero, use NULL instead.
-
-Cleans up sparse warning:
-drivers/misc/lkdtm/cfi.c:100:27: warning: Using plain integer as NULL pointer
+There are pointers being set to null using use. Use NULL instead.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/misc/lkdtm/cfi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-s3c64xx.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/misc/lkdtm/cfi.c b/drivers/misc/lkdtm/cfi.c
-index 666a7f4bc137..71483cb1e422 100644
---- a/drivers/misc/lkdtm/cfi.c
-+++ b/drivers/misc/lkdtm/cfi.c
-@@ -97,7 +97,7 @@ static volatile int force_check;
- static void lkdtm_CFI_BACKWARD(void)
- {
- 	/* Use calculated gotos to keep labels addressable. */
--	void *labels[] = {0, &&normal, &&redirected, &&check_normal, &&check_redirected};
-+	void *labels[] = { NULL, &&normal, &&redirected, &&check_normal, &&check_redirected };
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 0ce58105dbac..819b660dae82 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -354,7 +354,7 @@ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
+ 	sdd->rx_dma.ch = dma_request_chan(&sdd->pdev->dev, "rx");
+ 	if (IS_ERR(sdd->rx_dma.ch)) {
+ 		dev_err(&sdd->pdev->dev, "Failed to get RX DMA channel\n");
+-		sdd->rx_dma.ch = 0;
++		sdd->rx_dma.ch = NULL;
+ 		return 0;
+ 	}
  
- 	pr_info("Attempting unchecked stack return address redirection ...\n");
+@@ -362,8 +362,8 @@ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
+ 	if (IS_ERR(sdd->tx_dma.ch)) {
+ 		dev_err(&sdd->pdev->dev, "Failed to get TX DMA channel\n");
+ 		dma_release_channel(sdd->rx_dma.ch);
+-		sdd->tx_dma.ch = 0;
+-		sdd->rx_dma.ch = 0;
++		sdd->tx_dma.ch = NULL;
++		sdd->rx_dma.ch = NULL;
+ 		return 0;
+ 	}
  
+@@ -808,8 +808,8 @@ static int s3c64xx_spi_transfer_one(struct spi_master *master,
+ 	if (sdd->rx_dma.ch && sdd->tx_dma.ch) {
+ 		dma_release_channel(sdd->rx_dma.ch);
+ 		dma_release_channel(sdd->tx_dma.ch);
+-		sdd->rx_dma.ch = 0;
+-		sdd->tx_dma.ch = 0;
++		sdd->rx_dma.ch = NULL;
++		sdd->tx_dma.ch = NULL;
+ 	}
+ 
+ 	return status;
 -- 
 2.35.3
 
