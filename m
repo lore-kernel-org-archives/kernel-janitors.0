@@ -2,86 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A6E3C43334
-	for <kernel-janitors@archiver.kernel.org>; Sun, 12 Jun 2022 19:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC987C43334
+	for <kernel-janitors@archiver.kernel.org>; Sun, 12 Jun 2022 20:27:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234744AbiFLTzG (ORCPT
+        id S234863AbiFLU1N (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 12 Jun 2022 15:55:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45182 "EHLO
+        Sun, 12 Jun 2022 16:27:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234719AbiFLTzF (ORCPT
+        with ESMTP id S231891AbiFLU1M (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 12 Jun 2022 15:55:05 -0400
-Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9A8D5A0AF
-        for <kernel-janitors@vger.kernel.org>; Sun, 12 Jun 2022 12:55:03 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id 0TfnoXfr5OOQ10TfooLdpb; Sun, 12 Jun 2022 21:55:01 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 12 Jun 2022 21:55:01 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Christian Lamparter <chunkeey@googlemail.com>,
-        Kalle Valo <kvalo@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "John W. Linville" <linville@tuxdriver.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Christian Lamparter <chunkeey@web.de>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH] p54: Fix an error handling path in p54spi_probe()
-Date:   Sun, 12 Jun 2022 21:54:58 +0200
-Message-Id: <41d88dff4805800691bf4909b14c6122755f7e28.1655063685.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sun, 12 Jun 2022 16:27:12 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AC071CFFD;
+        Sun, 12 Jun 2022 13:27:11 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id a15so4859567wrh.2;
+        Sun, 12 Jun 2022 13:27:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xvxzy223FFQJfshyxjElH9L36mSmmC81px6ACmnLyK8=;
+        b=CZxkQSy7UoHTCD4dneKKa+nLhgsUf6WHxNQ7ny3hMnYPuqHYG9gj1IHlYrwb6Yy9Xr
+         EnqQ6GwO8w6MoCEK9UMajyiM59RWdg61hC/B+rQXUIV+YwZBogMeCdA5uOtZqPoWv0OG
+         VuvSzy0c9q3/WUcGklPgeZ9FlsNSRDadjfS420dhp9/S4Ti1a1sdVfnSPjmhtJE+3ZBw
+         YPtt5CvNNtd8m6F1qCOM+Oxya9LXhVSD4ZyyRtI+BF1GYtvrofGrGfiEh1UHXzEcY1cS
+         5btNAbkIlKWE2qUNIP3dHTj0yOEF6HV4WU6qvMlu/Z1wCum/uOMD48OUima4rOX0suXM
+         2lag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xvxzy223FFQJfshyxjElH9L36mSmmC81px6ACmnLyK8=;
+        b=kDfs2fv8WqNmuz7eHTETEhAN4fd5NQWbt8pKwVvENPc32bG2ed1eNMsJRnA1YPaipH
+         kR1rzbsKkvBduZOV57JbgFkmUOcR+bEckhIpn93LlMeluTzpB7C9dq3q77uJsJs+6vmT
+         Hl3uRDzRAyRZz/GkL476p7A858wAVU1UVJet1BY4uITe8yuutS4uzR2OeAl2KzmjCj4Z
+         drgvy82FAAvR5a1a9XUfF0eYwxGnh1vber0ql1SkJmq2qzpbhp3vF+dDk7ovtGNQOK4Z
+         DI9nM/vfo4+GqdpV/ocHsTO/022XLIcdUks65l26t7FT6TRRi5jtr54Ty35OvjTm0baC
+         A2ag==
+X-Gm-Message-State: AOAM531mHqOtkHkVHz28KIuTfYUbiWqYYNQT0RC408xP6NGfW8+1W8iQ
+        OjcT0xr4BC5iaxpcPIpaZcM=
+X-Google-Smtp-Source: ABdhPJwU3NQ70vtIxzoTKWKSW7xmb948Lxhl6faZc7H2PRpuMapE/NaKLkv0PWTQkMWEelZsNk26Fg==
+X-Received: by 2002:a05:6000:184b:b0:219:bee5:6b75 with SMTP id c11-20020a056000184b00b00219bee56b75mr16118671wri.80.1655065629975;
+        Sun, 12 Jun 2022 13:27:09 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id a10-20020a056000100a00b0020d106c0386sm6347382wrx.89.2022.06.12.13.27.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Jun 2022 13:27:08 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] lkdtm: cfi: use NULL for a null pointer rather than zero
+Date:   Sun, 12 Jun 2022 21:27:08 +0100
+Message-Id: <20220612202708.2754270-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If an error occurs after a successful call to p54spi_request_firmware(), it
-must be undone by a corresponding release_firmware() as already done in
-the error handling path of p54spi_request_firmware() and in the .remove()
-function.
+There is a pointer being initialized with a zero, use NULL instead.
 
-Add the missing call in the error handling path and update some goto
-label accordingly.
+Cleans up sparse warning:
+drivers/misc/lkdtm/cfi.c:100:27: warning: Using plain integer as NULL pointer
 
-Fixes: cd8d3d321285 ("p54spi: p54spi driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/net/wireless/intersil/p54/p54spi.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/misc/lkdtm/cfi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/intersil/p54/p54spi.c b/drivers/net/wireless/intersil/p54/p54spi.c
-index f99b7ba69fc3..679ac164c994 100644
---- a/drivers/net/wireless/intersil/p54/p54spi.c
-+++ b/drivers/net/wireless/intersil/p54/p54spi.c
-@@ -650,14 +650,16 @@ static int p54spi_probe(struct spi_device *spi)
+diff --git a/drivers/misc/lkdtm/cfi.c b/drivers/misc/lkdtm/cfi.c
+index 666a7f4bc137..71483cb1e422 100644
+--- a/drivers/misc/lkdtm/cfi.c
++++ b/drivers/misc/lkdtm/cfi.c
+@@ -97,7 +97,7 @@ static volatile int force_check;
+ static void lkdtm_CFI_BACKWARD(void)
+ {
+ 	/* Use calculated gotos to keep labels addressable. */
+-	void *labels[] = {0, &&normal, &&redirected, &&check_normal, &&check_redirected};
++	void *labels[] = { NULL, &&normal, &&redirected, &&check_normal, &&check_redirected };
  
- 	ret = p54spi_request_eeprom(hw);
- 	if (ret)
--		goto err_free_common;
-+		goto err_release_firmaware;
+ 	pr_info("Attempting unchecked stack return address redirection ...\n");
  
- 	ret = p54_register_common(hw, &priv->spi->dev);
- 	if (ret)
--		goto err_free_common;
-+		goto err_release_firmaware;
- 
- 	return 0;
- 
-+err_release_firmaware:
-+	release_firmware(priv->firmware);
- err_free_common:
- 	free_irq(gpio_to_irq(p54spi_gpio_irq), spi);
- err_free_gpio_irq:
 -- 
-2.34.1
+2.35.3
 
