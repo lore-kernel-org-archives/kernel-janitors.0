@@ -2,90 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6C4CCA47C
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Jun 2022 15:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6032C43334
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Jun 2022 16:56:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242462AbiFMPVN (ORCPT
+        id S240969AbiFMQ4Q (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Jun 2022 11:21:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43948 "EHLO
+        Mon, 13 Jun 2022 12:56:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244271AbiFMPU7 (ORCPT
+        with ESMTP id S241392AbiFMQ4A (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Jun 2022 11:20:59 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3B5B12E33B;
-        Mon, 13 Jun 2022 05:46:59 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id e5so2916891wma.0;
-        Mon, 13 Jun 2022 05:46:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=uZn86I/QpaNWIanURTy2oUxTuFO8ontc206QYMJD6nw=;
-        b=aQjJsfvXRZL16rd57OHG7LhT60WRoqn0F6J2oW3ksJnO7zxx2Gi+i86/PHMWZsY5u7
-         8CLR5XziRZxDc60zPngqGA8675DIhsQY3x4L8BBJPOjeckuzr6Va31Hiog93AzeYu934
-         A64+XwXGHCaHTLtQTIwhai4XLQfjOvqiaAhY18Gvnh8mtOE7hRg43dLK+wWoNyRaSura
-         2RNdG2nbNu8JzyjGx7dc/MipLDcbC3KvSVCdmu+swYb9UDLES5Wq1hITfii9hgvfpxzz
-         cfwn916QgHXdinQPL1vi7sX0/6g9Gg/3GDTUOtBLwP27dyPldwDazi4CzmSVfKYC3hB5
-         rxKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=uZn86I/QpaNWIanURTy2oUxTuFO8ontc206QYMJD6nw=;
-        b=X589EG/AZgx/t85dhScRf9k1XrBNBQcJ6b7T0OY5hoChCtXLT5ADo9J7GHCywuLB/j
-         EmjqtzEvkxIiv++Z1pi51Av+2YP1UW50ybxmFoUoUGy1TPe5/JIi1kIOhDzGlM56SdHB
-         ai2sfv0X8MM5t6mENsUlTb/1+y0W+B+wo3zrdRrBI+XbSnETdhI3Nz9d22DopYCeMkGw
-         zxwC3kk3EFjODA9hifa7i9ZLmeKCW9VPIcxmANAf3/lhBv7tcJ5mMt6MCpP1+jYkrMB7
-         MAVOtv0uAL7KHoFqGlQlIvu2HWXPaCW5rYfTLq76vosuJAEuCDkAZvsB3InryFWLNbI+
-         w2dA==
-X-Gm-Message-State: AOAM533ewlKzpZxRVd6Ey6a3ZcUi05EnpsadlIetroVVDEf2G5TKL7jc
-        A9fRTSA/3wlZQDExEOzLtEc=
-X-Google-Smtp-Source: ABdhPJw+qzU9/HjjCnxQbIJ0dzec17ovt8hi7cNWVHrRvPSQzc1d+4qSZU2fSwq9fu5XCgk3h0EPhg==
-X-Received: by 2002:a7b:c856:0:b0:39c:3b44:7ab0 with SMTP id c22-20020a7bc856000000b0039c3b447ab0mr14531641wml.117.1655124418303;
-        Mon, 13 Jun 2022 05:46:58 -0700 (PDT)
-Received: from felia.fritz.box (200116b8260df50011e978c0f780de03.dip.versatel-1u1.de. [2001:16b8:260d:f500:11e9:78c0:f780:de03])
-        by smtp.gmail.com with ESMTPSA id h7-20020a05600016c700b0020c7ec0fdf4sm9985404wrf.117.2022.06.13.05.46.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jun 2022 05:46:57 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: add include/dt-bindings/usb to USB SUBSYSTEM
-Date:   Mon, 13 Jun 2022 14:46:47 +0200
-Message-Id: <20220613124647.32019-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 13 Jun 2022 12:56:00 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 824311FBF4D;
+        Mon, 13 Jun 2022 07:42:54 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E62E6612DF;
+        Mon, 13 Jun 2022 14:42:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A49B6C34114;
+        Mon, 13 Jun 2022 14:42:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655131373;
+        bh=6RUtcC2ezgxpX0fcc7bhWT61oNaYVTXSim1tOI9z8ZI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SJ/loUNhH/OFKFpMUaBwV6LdfZLnQhohXNWEWhWZZgygtBSiW13RgUyaulpl8BmEi
+         ucPy0xYLklhNYOPl20R5wBljMzm5+DPKd9qfAP+6fZJyz1RzVt8VlhaH5Cx3X09b2p
+         mICq8nY+LSElP8mXQq8CXjhBfqMPeoHprkcE3LGoi4aAo9voiryR52k4jDDdYSI/m4
+         t7+xI1CgIawQ+0m6dNriXcNvoiWOX/ZczXSysNWJKop+wagu7qvPLSlBhoJNZae5bs
+         KhQthrat/tTrKrlaR47jO0tfyzpybTeXfD4XoA7l3cR/pfxEMZKpVrsk35Izc26kGu
+         +ln4q3PXv3Jgg==
+Date:   Mon, 13 Jun 2022 16:42:49 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Conor Dooley <conor.dooley@microchip.com>,
+        linux-i2c@vger.kernel.org, Peter Korsgaard <peter@korsgaard.com>,
+        Andrew Lunn <andrew@lunn.ch>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: Rectify entry for OPENCORES I2C BUS DRIVER
+Message-ID: <YqdM6TAFKAQAyGrA@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        linux-i2c@vger.kernel.org, Peter Korsgaard <peter@korsgaard.com>,
+        Andrew Lunn <andrew@lunn.ch>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20220610105154.2358-1-lukas.bulwahn@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Humb4uRqxbTH4IS/"
+Content-Disposition: inline
+In-Reply-To: <20220610105154.2358-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Maintainers of the directory Documentation/devicetree/bindings/usb
-are also the maintainers of the corresponding directory
-include/dt-bindings/usb.
 
-Add the file entry for include/dt-bindings/usb to the appropriate
-section in MAINTAINERS.
+--Humb4uRqxbTH4IS/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Greg, please pick this MAINTAINERS addition to your section.
+On Fri, Jun 10, 2022 at 12:51:54PM +0200, Lukas Bulwahn wrote:
+> Commit 8ad69f490516 ("dt-bindings: i2c: convert ocores binding to yaml")
+> converts i2c-ocores.txt to opencores,i2c-ocores.yaml, but then adjust its
+> reference in MAINTAINERS to a slightly wrong new filename.
+>=20
+> Hence, ./scripts/get_maintainer.pl --self-test=3Dpatterns complains about=
+ a
+> broken reference.
+>=20
+> Repair this file reference in OPENCORES I2C BUS DRIVER.
+>=20
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Applied to for-next, thanks!
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4fd2c1080aa5..b84ef4091535 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20801,6 +20801,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
- F:	Documentation/devicetree/bindings/usb/
- F:	Documentation/usb/
- F:	drivers/usb/
-+F:	include/dt-bindings/usb/
- F:	include/linux/usb.h
- F:	include/linux/usb/
- 
--- 
-2.17.1
 
+--Humb4uRqxbTH4IS/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmKnTOUACgkQFA3kzBSg
+KbYCzQ/8CnVbVX/n9OOuxdaPSvaelEt7wJ7ti1XWUYHrqBjQ5Jf8d5Duy70IoW3G
+/2o0k7BUxaCMVbLjwiVHBXQai+5ms1jca0qtu3vd0KbtcGMyLvNL0m1/Eoeb2hFH
+7o1buKsv5dbuZvGf3QwgvE2BbvQ/dIg3e0OfsKqu/2yAMu3UBz3bbaA3iuva4QbK
+ODXGRUsJn3ZmoLGrTaIc9/R6g4gMjKulDefWuF+Mx0uFkfjtOMcf3ggTNDaTu+0s
+w0Sh1OulFx2+2gQZ2ebLJcUXFrqSxaTX2rjcHf8f9UoCoLGOLA3L/bKNNmzJgsrq
+Ng1inbdMbWsHmys88y2MxTyVvvU0pd2qCOrVt8duhaoIj0BsyRlQT1K4JCl0Q06Y
+vBybjZiEgGs7d9uVvZy7a4g8AvTp9n+QIeZcecjNvPEmM5gN/28edIshrx5ODtnJ
+3Ek66WPsXnY+y6uPCHbAvt0LirFM3q3tVbawWCKLQMqOQFXceNmUFhytofPzJh34
+o/8JXsxE4fs1SFGN88mRbsUOSjrQTBGJM1gurSee6ZrU58DqrSFLT64/VHEWfe3G
+er86rmAv1Tq7iWvN0Al1H0zC7xCsmUjtIoL/QxFh2pdCH7UgYusfYuY4eXMD8dA+
+vVWufqGZaYl1GiJrLCW5rPRDVYw/1HcslRcdA/ThJxhY+HROgb8=
+=wLIF
+-----END PGP SIGNATURE-----
+
+--Humb4uRqxbTH4IS/--
