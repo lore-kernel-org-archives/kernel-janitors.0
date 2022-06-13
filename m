@@ -2,90 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 918A9CCA47B
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Jun 2022 12:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B786AC43334
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Jun 2022 14:26:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355099AbiFMMuP (ORCPT
+        id S1383135AbiFMO0C (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Jun 2022 08:50:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40632 "EHLO
+        Mon, 13 Jun 2022 10:26:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357833AbiFMMtO (ORCPT
+        with ESMTP id S1384004AbiFMOY1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Jun 2022 08:49:14 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57A3462CDC;
-        Mon, 13 Jun 2022 04:12:02 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id q15so6640895wrc.11;
-        Mon, 13 Jun 2022 04:12:02 -0700 (PDT)
+        Mon, 13 Jun 2022 10:24:27 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33351638D;
+        Mon, 13 Jun 2022 04:46:28 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id r187-20020a1c44c4000000b0039c76434147so4423518wma.1;
+        Mon, 13 Jun 2022 04:46:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id;
-        bh=nxBz3qHkVn2TwJLFD/O8ZWBNECKB6JOYIpB2txAlnTU=;
-        b=DrGP1C9s7uVfit5Le9fV3MmRwt2245ivNh58+VZ0oaL9Hp1DulHdqq4Hz1BUXlvxSC
-         MS+EyknGcz/KHctth0hQ/x0wy2P5xutUx5M0gFOxTtGDRV5S9oQwbq/56Hl8tlYTWV4z
-         Wr+vVnkGko2KthawDQPYmpspI3t4oAbrLqlA8VNIURbjoLTbZlDu9EqaI4inJYOjw1Uk
-         vRTprBydqfAery66VWcZMr7vZmFYDyhfGFrYpgu8qnv7PdAhNmzuU+rQ+5gccJM9wuzR
-         V7w0gx/0g6s6F/GF+BuvE+Ip9pAaEPFEL4+d8dPIhlPhueBuYireIIH8r7gZpZBI3sFf
-         t/Xg==
+        bh=nzaFuqeqvJmB+vA6LsJ/YIozE1oz1rXm/JebgazMuEU=;
+        b=IAqpgc2xZnZ+91W8mYh0XvQIRGp7yMZMBwyhb3u+Foh3q0B0bl3569VjsdWwxgV1nj
+         dkjaEnc6Lo/OTbaFFBXlL8YFHq9t6cRKOyuMFNl1MN9DEfPWnutQUnNVaBo9YAyYOIhT
+         SRWhSrwSOpalMGtmb9GmtEZVWnrrvIp+pyespACJtJVsqxE1idVR9f2HIMOYtN9rdg21
+         Y3RQ5qRUb1jwV0sEqTh4VXOOs+RfdiQSUSF40nSEPqVtanfgr8NjRUp2WRgvoEu8wuMI
+         etlVQkzv43kwRfLEaHqS7SvUarzl/24SJ+wddjBtA8lB4U/75QsRV6gnXlY3FX0a24ho
+         aU3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=nxBz3qHkVn2TwJLFD/O8ZWBNECKB6JOYIpB2txAlnTU=;
-        b=eoJO6rVgwoWz5hnzh4EUoqZ8MheJmCkJ6YveCCIlcLPRkQytDnF5V18/nSK+l/ahIf
-         N1V7p+ccD29Qir2xRd9uOYP/C/MyxJzXEPi97Drx3xS3p/5ssB9LNbVQltvEtB4Ychky
-         goPef+/FVSypy57VuXd4C1MDMkSQ/aVGxmSj1f8uAySJfaHWvK0BXjHNKHK7MtMuGQbN
-         NwA4dAYVkeCLR28oMjFs6DgWTsQlb8e+Evz9NLyJMFXizbYyMCzQ18rgq5lsW7Svra82
-         YUHbisyPpx1o7q4GMTS75HG0guZg1GjrF1ibBWACQ5ghgs9UeJycgS+gvbaEchL1TAAq
-         Bnzg==
-X-Gm-Message-State: AOAM530YRFQBL9b1dRh2UlmTugE1QKJuMpNf19LIuAVuFw0LOCMpfy8l
-        Uf6IstkEFJSZz0bloWsgfuKC+2Kd05U=
-X-Google-Smtp-Source: ABdhPJzsO86n6LAzIIMT88E+TEl1yUE6wGss027Tmux12Ii5dPWmcpVt6cO+Ky1tm6z2dIr759m0Gg==
-X-Received: by 2002:adf:9cca:0:b0:210:2f76:93fe with SMTP id h10-20020adf9cca000000b002102f7693femr55161804wre.12.1655118717149;
-        Mon, 13 Jun 2022 04:11:57 -0700 (PDT)
-Received: from felia.fritz.box (200116b8260df50089ef6db2443adc92.dip.versatel-1u1.de. [2001:16b8:260d:f500:89ef:6db2:443a:dc92])
-        by smtp.gmail.com with ESMTPSA id l15-20020a05600c4f0f00b003942a244f39sm16933349wmq.18.2022.06.13.04.11.56
+        bh=nzaFuqeqvJmB+vA6LsJ/YIozE1oz1rXm/JebgazMuEU=;
+        b=RXIwHMvnZ78kmVn55Zbb1P9cL5O9YRGx2ncD0zhcClmwNsmuKPLDyVlUV5OPYiADBb
+         os9i8OTHvfbzFFuEQT6VVRFIRfVuB/uUkdv1G4h7GpMP5ASLVNozuCTxjAI7vMFTrpQ1
+         1EzyTmSLkJXoCdpoNQORjx31Q0m8NBdTYVs1cI6bBY2j12EvbZo2kfDgsmBzbgP2G0yO
+         vwoBta2MOuyU/hutw9GfKw4Ei2pPU66hu0nVZO2/kAEBqXezxL64PUMJfq2kl231x1+Y
+         0HpBV3/rUuFmM0FU4zRn16bcfGTfwbAcTisELPYpfvBOSWgNVpY3D/XvgvELOtmbLSQG
+         Qg1w==
+X-Gm-Message-State: AOAM532foy959KKaWgbv19tPgsBTmuW8TvVy04dRPVeSG6ps/Q0k6giB
+        Qc3qMq0q3iL9GyQ+g0llxbVD0voJNQw=
+X-Google-Smtp-Source: ABdhPJy0C/teHFxhSocotTFSMCKEjUpwHCBJ3epDSRMMDU5ZO7byMB8eGZhDeIBmW+HpQDRdVu4C8A==
+X-Received: by 2002:a7b:c404:0:b0:39c:4389:5834 with SMTP id k4-20020a7bc404000000b0039c43895834mr14333606wmi.70.1655120787320;
+        Mon, 13 Jun 2022 04:46:27 -0700 (PDT)
+Received: from felia.fritz.box (200116b8260df50011e978c0f780de03.dip.versatel-1u1.de. [2001:16b8:260d:f500:11e9:78c0:f780:de03])
+        by smtp.gmail.com with ESMTPSA id q16-20020a5d5750000000b0020e63ab5d78sm8263311wrw.26.2022.06.13.04.46.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jun 2022 04:11:56 -0700 (PDT)
+        Mon, 13 Jun 2022 04:46:26 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
+To:     Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: add include/dt-bindings/gpio to GPIO SUBSYSTEM
-Date:   Mon, 13 Jun 2022 13:11:34 +0200
-Message-Id: <20220613111134.23255-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: add include/dt-bindings/i2c to I2C SUBSYSTEM HOST DRIVERS
+Date:   Mon, 13 Jun 2022 13:46:14 +0200
+Message-Id: <20220613114614.21510-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Maintainers of the directory Documentation/devicetree/bindings/gpio
+Maintainers of the directory Documentation/devicetree/bindings/i2c
 are also the maintainers of the corresponding directory
-include/dt-bindings/gpio.
+include/dt-bindings/i2c.
 
-Add the file entry for include/dt-bindings/gpio to the appropriate
+Add the file entry for include/dt-bindings/i2c to the appropriate
 section in MAINTAINERS.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Linus, Bartosz, please pick this MAINTAINERS addition to your section.
+Wolfram, please pick this MAINTAINERS addition to the I2C HOST DRIVERS.
 
  MAINTAINERS | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 1adf8767422b..d04e74ade88a 100644
+index d04e74ade88a..2b8aec742e6e 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -8517,6 +8517,7 @@ F:	Documentation/devicetree/bindings/gpio/
- F:	Documentation/driver-api/gpio/
- F:	drivers/gpio/
- F:	include/asm-generic/gpio.h
-+F:	include/dt-bindings/gpio/
- F:	include/linux/gpio.h
- F:	include/linux/gpio/
- F:	include/linux/of_gpio.h
+@@ -9331,6 +9331,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git
+ F:	Documentation/devicetree/bindings/i2c/
+ F:	drivers/i2c/algos/
+ F:	drivers/i2c/busses/
++F:	include/dt-bindings/i2c/
+ 
+ I2C-TAOS-EVM DRIVER
+ M:	Jean Delvare <jdelvare@suse.com>
 -- 
 2.17.1
 
