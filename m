@@ -2,90 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF6F4C43334
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Jun 2022 08:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53361C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Jun 2022 09:53:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240260AbiFMIvn (ORCPT
+        id S240764AbiFMJxJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Jun 2022 04:51:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43012 "EHLO
+        Mon, 13 Jun 2022 05:53:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240558AbiFMIvl (ORCPT
+        with ESMTP id S240295AbiFMJxH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Jun 2022 04:51:41 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 547DEB1DD;
-        Mon, 13 Jun 2022 01:51:40 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id x5so6165931edi.2;
-        Mon, 13 Jun 2022 01:51:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=3rvOcjBqs1stdMUxQr8PedtmVi6/pRZU8HZK/5D9mX0=;
-        b=jeybOxuqIIOR+8rj1ITlZhxbNOJ7NpncY4wTlVF4S+WdfBPfdn5KF4/XiAhyiEnAVt
-         uqWGKsIVz/7jLISM/+OIZKgg/zz8Oe2V8g4LnKe22dm5J3OgTBGEBuQ/+vv5gdp4X5Cr
-         UXYZ/LsTwtngw8W3twsx8J15f9V2JnV5TZ5abxjoxIncQsf33tx1IYXPRsqIsFJu2nWk
-         TpC8Ry8qJkPsHj9V/Lut9jnTitKGhSTyAnuBm//jevuXmFLSrcXXos/FwXYUJ7dc9Oco
-         UTgC8tQQHqBkjb2dwCIZky5QunFnwZ2/KW9OWiYoXxmyNEariCeT/C4z52Gd8OwWm97N
-         q/pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=3rvOcjBqs1stdMUxQr8PedtmVi6/pRZU8HZK/5D9mX0=;
-        b=U1gAI7/NKDUg7OO8TFemkQzDgDzDXd8Ae0Lt7GgJtI6ShwuAi/sxuuMzPey1FvLaQx
-         ko148OFZK8436MDWMQTvRd7X6D6pk1l72z2KBIhJJ6MC8Ae3nG19+RpfjytVKxsHpAQv
-         5n0+WmDEtBYeJfmqAv70OOPu9Oc8DzLLRjXQV1DWzV3o2iZ8I9fK6EVYOTig6w7e2joN
-         eaRqtt/r4FBiAL3wE/XyPo3VXdwJjv+lbtlWD7UZlATiE2O5Aq7MsviGEgJtE7ERH9nV
-         6bFA1OQCkhb9zyVkytcrxi9p5XkSS6cYsg2mRenmPUBcoBCnTC76uDdvYLSTkBve0zLf
-         ePkQ==
-X-Gm-Message-State: AOAM530WMFk9b7R7hOxNZBrU1FiWDBWnIPz2AmZQgy6OfAtBgNkeqSTB
-        aVgGGaHtmuWvhJek2g633uDxfVdbblY=
-X-Google-Smtp-Source: ABdhPJxvbKo+0ZKTIuYmeCYp3MTRhPEPP1M9mite+BnQUo4qt7+h9LN39t7ONWltk2NywAvSyLUJVw==
-X-Received: by 2002:a05:6402:2789:b0:42d:ce10:1d6 with SMTP id b9-20020a056402278900b0042dce1001d6mr64339618ede.188.1655110298718;
-        Mon, 13 Jun 2022 01:51:38 -0700 (PDT)
-Received: from felia.fritz.box (200116b8260df50089ef6db2443adc92.dip.versatel-1u1.de. [2001:16b8:260d:f500:89ef:6db2:443a:dc92])
-        by smtp.gmail.com with ESMTPSA id q8-20020a056402040800b0042dd4f9c464sm4477714edv.84.2022.06.13.01.51.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jun 2022 01:51:38 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: add include/dt-bindings/clock to COMMON CLK FRAMEWORK
-Date:   Mon, 13 Jun 2022 10:51:00 +0200
-Message-Id: <20220613085100.402-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 13 Jun 2022 05:53:07 -0400
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C03F7D92;
+        Mon, 13 Jun 2022 02:53:06 -0700 (PDT)
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25D9gJ3S020604;
+        Mon, 13 Jun 2022 04:52:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=NGC2Z2sscpSeQkxNL27luBtXi1J0TvS4+58h8uzMCak=;
+ b=epPQcRnx4ouGRVPhpSqMsRjcaO8u+tX57ehE3mT+UpKQz54TYUxiZk6vepFvGHyqYUCH
+ 73fTDjHE/8f4OeZzPplnCXjY8cytnmlcVwYTOKdg/vYoRDdz858TML4iUJ58tj3uv87b
+ ceiN2e51Xrmv3Lj38bpYdFhqTSRbckE57+LnmF1rOu0VV+SvCcVhTL2lZDmCuPPiN/3W
+ +4ouBcOcqx8EuY2JAPj5eoOWOTJqSg2WMC8zq9yzfZo63wP44VzERstD13fEstlHF3pv
+ u/UJ0LkVqABO4xAYp1Fhq9HI3w19Wgn2los633QtVDKoqR7ZIKTWKfw8u631tZW0y0sb VQ== 
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3gmqfq1qv2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Mon, 13 Jun 2022 04:52:52 -0500
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Mon, 13 Jun
+ 2022 10:52:50 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.28 via Frontend
+ Transport; Mon, 13 Jun 2022 10:52:50 +0100
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 7039046C;
+        Mon, 13 Jun 2022 09:52:50 +0000 (UTC)
+Date:   Mon, 13 Jun 2022 09:52:50 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Joe Perches <joe@perches.com>,
+        <linux-clk@vger.kernel.org>, Luca Ceresoli <luca@lucaceresoli.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        <devicetree@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Move lochnagar.h to
+ dt-bindings/clock
+Message-ID: <20220613095250.GA38351@ediswmail.ad.cirrus.com>
+References: <20220613081632.2159-1-lukas.bulwahn@gmail.com>
+ <20220613081632.2159-2-lukas.bulwahn@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20220613081632.2159-2-lukas.bulwahn@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-ORIG-GUID: UKe1Lc-PQs_M3STC455nabt6Y3fQj0bV
+X-Proofpoint-GUID: UKe1Lc-PQs_M3STC455nabt6Y3fQj0bV
+X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Maintainers of the directory Documentation/devicetree/bindings/clock
-are also the maintainers of the corresponding directory in
-include/dt-bindings/clock.
+On Mon, Jun 13, 2022 at 10:16:31AM +0200, Lukas Bulwahn wrote:
+> Most of the clock-related dt-binding header files are located in
+> include/dt-bindings/clock. It would be good to keep all the similar
+> header files at a single location.
+> 
+> This was discovered while investigating the state of ownership of the files
+> in include/dt-bindings/ according to the MAINTAINERS file.
+> 
+> This change here is similar to commit 8e28918a85a0 ("dt-bindings: clock:
+> Move ti-dra7-atl.h to dt-bindings/clock") and commit 35d35aae8177
+> ("dt-bindings: clock: Move at91.h to dt-bindigs/clock").
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
 
-Add the file entry for include/dt-bindings/clock to the appropriate
-section in MAINTAINERS.
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Michael, Stephen, please pick this MAINTAINERS addition to your section.
-
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 475e28365385..2e7d1e885aed 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4970,6 +4970,7 @@ Q:	http://patchwork.kernel.org/project/linux-clk/list/
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
- F:	Documentation/devicetree/bindings/clock/
- F:	drivers/clk/
-+F:	include/dt-bindings/clock/
- F:	include/linux/clk-pr*
- F:	include/linux/clk/
- F:	include/linux/of_clk.h
--- 
-2.17.1
-
+Thanks,
+Charles
