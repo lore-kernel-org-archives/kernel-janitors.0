@@ -2,92 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 965A4C43334
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Jun 2022 17:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B3C2C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Jun 2022 18:29:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241523AbiFMR1p (ORCPT
+        id S245343AbiFMS3q (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Jun 2022 13:27:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38232 "EHLO
+        Mon, 13 Jun 2022 14:29:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232375AbiFMR1X (ORCPT
+        with ESMTP id S245636AbiFMS3W (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Jun 2022 13:27:23 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44D9549242;
-        Mon, 13 Jun 2022 05:43:23 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id s1so6966666wra.9;
-        Mon, 13 Jun 2022 05:43:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=gWZ2iuIrN0ujnQkPHV+TXRlSbNOjanWQAKWTOlhoEcw=;
-        b=m77Tk6N3ACPMUA59bi65hTpTPrRkAmreeEkyPDG3GSgXJ4ZskPgxVFTCgLrtL3XMIN
-         ptdPRIejAHUs/msgd9kwUcXEjXH9h7iZTcPwQxmlBnAUS7pH5Fm0NyuuqMXMP7CiLvVO
-         A9X9U3iJN+KG2ON0S31rL3jMCzil1eJebmUdSlTO0cApaAKzK6aiS/YCtN5nqUvbdiWe
-         gIf7Zmiz6VM37j6dsu/XmcwtVHHpYInnIywvwAg1s0q6KNVE7YG/xv2O93IgV/yg+P7Q
-         s2pNHc1o5iLoQm+lbRaHYNVnObrF+/BXhSd9zlqbOuRTur8kUpI7PWlWdET9InW86Eqd
-         fw+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=gWZ2iuIrN0ujnQkPHV+TXRlSbNOjanWQAKWTOlhoEcw=;
-        b=5UXfS2fjCGSQkFlZKZMLo7c5axWa4m3Kt3jmYQXnhZE0ixUw/JXD/7+twL8O1TLAJN
-         fysoJ3KT6V4UlbZf/Guyheg0iyQ0QiS4Mt7heHEUw42PNDNNa2SrbwsiYMsFONH1jTTw
-         jCeAOjVXDp8RQeHeTySsRgLehHkBBcsBfy5IFQb+gi1ZWrm3i2SAR3BeRsCJXEx/Pl0p
-         RKbgtvHTK+oCOKrL0cn2sdZFbVNRQq6tSOZZUyeeG2PYuYKaYno/nQnAf/X3/pUgzgXu
-         r/77B0XdUgSXATWzNqMGiCvHR2BKKKmOB0/YTVFpjSWCnV4+I83C0sZtqBTe/K5fQ04x
-         PSnw==
-X-Gm-Message-State: AOAM530OEGRwbAcENhZcw5qSn79f/IVpN5gEzMcpo7Isd7uiWQu9DIm3
-        xygdv/9i86k6axmXGHGjHpg=
-X-Google-Smtp-Source: ABdhPJxmRpI3gbTnGIrNNYzB/skcfriE8YOSY4phl7jCU0+HLVMzMpV8RT5xLa1lCuYOs16Wh9CFCA==
-X-Received: by 2002:a5d:6c62:0:b0:218:3e13:4b17 with SMTP id r2-20020a5d6c62000000b002183e134b17mr38913538wrz.673.1655124201670;
-        Mon, 13 Jun 2022 05:43:21 -0700 (PDT)
-Received: from felia.fritz.box (200116b8260df50011e978c0f780de03.dip.versatel-1u1.de. [2001:16b8:260d:f500:11e9:78c0:f780:de03])
-        by smtp.gmail.com with ESMTPSA id y3-20020adfd083000000b002103cfd2fbasm8383940wrh.65.2022.06.13.05.43.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jun 2022 05:43:21 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     "Rafael J . Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: add include/dt-bindings/thermal to THERMAL
-Date:   Mon, 13 Jun 2022 14:43:09 +0200
-Message-Id: <20220613124309.28790-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 13 Jun 2022 14:29:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9031FB227E;
+        Mon, 13 Jun 2022 07:44:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CA76B61363;
+        Mon, 13 Jun 2022 14:44:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85710C34114;
+        Mon, 13 Jun 2022 14:44:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655131474;
+        bh=mVPcnBqff4Qg8JmFyDlY5tck7ujgQlmYljTopZhsfwA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=npBL6noPLhOvqurAUFEXI06PVTFaowFh/a1v2bfo0Vhw+B1slp+Dnnj4lvQs79T6X
+         AjC24IR/OAJcjmJe822xBWn2hBBLxKE094kCn5JPa+Enqw8rWaQ+5z3XBuNHeG+qyk
+         IxnjO0S23IAU1LiHKcMRLaGfGCWJF2aZZPk4VVW+qHskXyqPAh9TbS3QaQJdt0tMHi
+         d9d1WfAhe0uGInHm2u/QYz3Gp5/eV8zmiZvvR6kkprYfdQZZoGuETNcYoMAM3bPtAk
+         aZXtqWRzHByo9LPNNrU6Epwl+4SZSLR70CvLFWdGk3CWR94CnXC/UwNYPm604Jw64j
+         ajGguXDVI04fg==
+Date:   Mon, 13 Jun 2022 16:44:30 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: add include/dt-bindings/i2c to I2C
+ SUBSYSTEM HOST DRIVERS
+Message-ID: <YqdNTgCNGT0Y5y2T@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-i2c@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220613114614.21510-1-lukas.bulwahn@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="3qqK9zQnklREXAWN"
+Content-Disposition: inline
+In-Reply-To: <20220613114614.21510-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Maintainers of the directory Documentation/devicetree/bindings/thermal
-are also the maintainers of the corresponding directory
-include/dt-bindings/thermal.
 
-Add the file entry for include/dt-bindings/thermal to the appropriate
-section in MAINTAINERS.
+--3qqK9zQnklREXAWN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Rafael, Daniel, please pick this MAINTAINERS addition to your section.
+On Mon, Jun 13, 2022 at 01:46:14PM +0200, Lukas Bulwahn wrote:
+> Maintainers of the directory Documentation/devicetree/bindings/i2c
+> are also the maintainers of the corresponding directory
+> include/dt-bindings/i2c.
+>=20
+> Add the file entry for include/dt-bindings/i2c to the appropriate
+> section in MAINTAINERS.
+>=20
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Applied to for-current, thanks!
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ec2e764a22ee..4fd2c1080aa5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19858,6 +19858,7 @@ F:	Documentation/ABI/testing/sysfs-class-thermal
- F:	Documentation/devicetree/bindings/thermal/
- F:	Documentation/driver-api/thermal/
- F:	drivers/thermal/
-+F:	include/dt-bindings/thermal/
- F:	include/linux/cpu_cooling.h
- F:	include/linux/thermal.h
- F:	include/uapi/linux/thermal.h
--- 
-2.17.1
 
+--3qqK9zQnklREXAWN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmKnTU4ACgkQFA3kzBSg
+KbbBHA/+Mb15/3R9zbn9P90XoGh7h9cFJqnCEDQELBlPGUXBfErYrpLpNeH2wnee
+2nXy9uZX/DZSNTCmPOzpzvb+DbZeF82xqf1XJohVFs+6NyWQxjETu9+/ink5UAet
+plEeZVBSLvhjXl/kC55cJTxMKa94pNx5isIYfG7gaXBMpFqt+Pm6ecqkUe2WxFu5
+h8T/PIw8QzjsKI+Z7Oap53QzrdomAu5GHfU+O/PjRVmL+DDTIbzJKyw9Oq4QB4S5
+h0zyIrgl2WZBjioX0GKO92H8tRiWLzyLSB5OLcff9H3WkNt7iOhEtlU1nMO9jzyg
+6Bk1872XyT0WR653s/yH27nC3aFvA0ggz4mU9YNLxdzuUwbrRhNXpHM0+340RNNL
+F8budrCM2EbepLjG8qBt6kQUKowamTOVyOSSr3E0PVmDvQryzliJ/HbSoBIE0+2J
+sCnNdzSBreQ17hOShTHkiKkENrSILErFvd+DHKbw5wRLyTnlGu60+QK0BSX8dR7m
+Q3dGbZgVZMdHmX/MQuphIARJU7X3lcunObFvbpV4HZUigKB0gNRPivmb2yvwVenB
+aQ4NnVMK2HEm4BSLmOG/Ddvc6Jowpof7kzq+AUz+z46C6EojK0sWDPA8v6Eh428j
+nOToyzaj+B+lndhZqATTfGFUMEDSpnUlgQCXTODZiZWV7+MHLbA=
+=YW+Z
+-----END PGP SIGNATURE-----
+
+--3qqK9zQnklREXAWN--
