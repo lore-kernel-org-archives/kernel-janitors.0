@@ -2,90 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53361C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Jun 2022 09:53:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07721CCA482
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Jun 2022 12:06:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240764AbiFMJxJ (ORCPT
+        id S1358261AbiFMMGE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Jun 2022 05:53:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56496 "EHLO
+        Mon, 13 Jun 2022 08:06:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240295AbiFMJxH (ORCPT
+        with ESMTP id S1358580AbiFMMEU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Jun 2022 05:53:07 -0400
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C03F7D92;
-        Mon, 13 Jun 2022 02:53:06 -0700 (PDT)
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25D9gJ3S020604;
-        Mon, 13 Jun 2022 04:52:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=NGC2Z2sscpSeQkxNL27luBtXi1J0TvS4+58h8uzMCak=;
- b=epPQcRnx4ouGRVPhpSqMsRjcaO8u+tX57ehE3mT+UpKQz54TYUxiZk6vepFvGHyqYUCH
- 73fTDjHE/8f4OeZzPplnCXjY8cytnmlcVwYTOKdg/vYoRDdz858TML4iUJ58tj3uv87b
- ceiN2e51Xrmv3Lj38bpYdFhqTSRbckE57+LnmF1rOu0VV+SvCcVhTL2lZDmCuPPiN/3W
- +4ouBcOcqx8EuY2JAPj5eoOWOTJqSg2WMC8zq9yzfZo63wP44VzERstD13fEstlHF3pv
- u/UJ0LkVqABO4xAYp1Fhq9HI3w19Wgn2los633QtVDKoqR7ZIKTWKfw8u631tZW0y0sb VQ== 
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3gmqfq1qv2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Mon, 13 Jun 2022 04:52:52 -0500
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Mon, 13 Jun
- 2022 10:52:50 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.2375.28 via Frontend
- Transport; Mon, 13 Jun 2022 10:52:50 +0100
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 7039046C;
-        Mon, 13 Jun 2022 09:52:50 +0000 (UTC)
-Date:   Mon, 13 Jun 2022 09:52:50 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Joe Perches <joe@perches.com>,
-        <linux-clk@vger.kernel.org>, Luca Ceresoli <luca@lucaceresoli.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        <devicetree@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Move lochnagar.h to
- dt-bindings/clock
-Message-ID: <20220613095250.GA38351@ediswmail.ad.cirrus.com>
-References: <20220613081632.2159-1-lukas.bulwahn@gmail.com>
- <20220613081632.2159-2-lukas.bulwahn@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20220613081632.2159-2-lukas.bulwahn@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-ORIG-GUID: UKe1Lc-PQs_M3STC455nabt6Y3fQj0bV
-X-Proofpoint-GUID: UKe1Lc-PQs_M3STC455nabt6Y3fQj0bV
-X-Proofpoint-Spam-Reason: safe
+        Mon, 13 Jun 2022 08:04:20 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 304084A919;
+        Mon, 13 Jun 2022 03:57:34 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id r187-20020a1c44c4000000b0039c76434147so4350889wma.1;
+        Mon, 13 Jun 2022 03:57:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=I+mQAAdlRxYZRH/29vXWOhrYvOZ8KHnvV5uZ0Clui7o=;
+        b=YpyLEN1/a2T0NyREDZwDbs+wwokpx38lbbSATmCX92bFRmpSoXUwuShVVr19qfrMiP
+         7F3ltt35cRIHX3QT4MeuSbOD1WmTgOZGiB65n3BeqKUWihgcFmMxTr+/mtjH8qdOHI6p
+         susamQxk8bGDNiMihDzG+2GSzABq9j9JNZ0ufsis9uU/bJbyG40nZchW3JrfGsdsKAM3
+         9vuKtElkiOlRcIwdBf707wuBUrCAsGuSWfZvcNGurFK+LWmnSD1P0fobCc2q5v6pMSmq
+         FBZEZJ3NpZLRhwZI53sn8TSIkkGrhzsbTyCDrhsaniB0DAiUe9EzGMpqfLOXfvMoWYXK
+         ccXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=I+mQAAdlRxYZRH/29vXWOhrYvOZ8KHnvV5uZ0Clui7o=;
+        b=nOYOc+YXe2/gVjP1zU7YZFQiEdD4ZMH8SEefZrR/2AdQfcZ1SW/jY4K6CKeFaUkP+W
+         UvtP23ycbggBPV4MH/uxLvFr9JrKrQXU0eW5HBZgDMRyT8fCOp660xTxDSMhuF6G0d/t
+         E7fi9Z8PayF2eumZ3Op2b7UtfKVYb8nh/IFELXcn8FLSW90a3PpyMLYDvwMq8uiUAsmr
+         O9K6kj+amBc3RTAyXLLpN5Clflk2m+QgE2XIXkzXotdFWIDoOXMthK0TbNvLV6XqIO1S
+         Kjlhm9mXLS7fkU2XXiuAxb2yLMPOqkAqHWvg4vE4ad8sghw9+gSfTVcONJk+C5/Xp6pK
+         iDjg==
+X-Gm-Message-State: AOAM533MWBgmqYfzzlVyEDBysfF5LvPX2ZoT3/pCIb3D27hhEu4UCBGo
+        PRl9fnMZOeG9xKdj36y67cA=
+X-Google-Smtp-Source: ABdhPJyx101r3sLv5Q1UW6EdzWAxoF2lKwCmcCsohkETQk9BiO9huRU/LN+nbnRLzzeYjq3k6dfGGg==
+X-Received: by 2002:a05:600c:34cf:b0:39c:4dfb:1398 with SMTP id d15-20020a05600c34cf00b0039c4dfb1398mr14043917wmq.133.1655117852610;
+        Mon, 13 Jun 2022 03:57:32 -0700 (PDT)
+Received: from felia.fritz.box (200116b8260df50089ef6db2443adc92.dip.versatel-1u1.de. [2001:16b8:260d:f500:89ef:6db2:443a:dc92])
+        by smtp.gmail.com with ESMTPSA id e5-20020a05600c4e4500b0039c4ff5e0a7sm9008225wmq.38.2022.06.13.03.57.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jun 2022 03:57:32 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: add include/dt-bindings/display to DRM DRIVERS
+Date:   Mon, 13 Jun 2022 12:57:15 +0200
+Message-Id: <20220613105715.13578-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jun 13, 2022 at 10:16:31AM +0200, Lukas Bulwahn wrote:
-> Most of the clock-related dt-binding header files are located in
-> include/dt-bindings/clock. It would be good to keep all the similar
-> header files at a single location.
-> 
-> This was discovered while investigating the state of ownership of the files
-> in include/dt-bindings/ according to the MAINTAINERS file.
-> 
-> This change here is similar to commit 8e28918a85a0 ("dt-bindings: clock:
-> Move ti-dra7-atl.h to dt-bindings/clock") and commit 35d35aae8177
-> ("dt-bindings: clock: Move at91.h to dt-bindigs/clock").
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
+Maintainers of the directory Documentation/devicetree/bindings/display
+are also the maintainers of the corresponding directory
+include/dt-bindings/display.
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Add the file entry for include/dt-bindings/display to the appropriate
+section in MAINTAINERS.
 
-Thanks,
-Charles
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+David, Daniel, please pick this MAINTAINERS addition to your section.
+
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2e7d1e885aed..a8d243668992 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6597,6 +6597,7 @@ F:	Documentation/devicetree/bindings/gpu/
+ F:	Documentation/gpu/
+ F:	drivers/gpu/
+ F:	include/drm/
++F:	include/dt-bindings/display/
+ F:	include/linux/vga*
+ F:	include/uapi/drm/
+ 
+-- 
+2.17.1
+
