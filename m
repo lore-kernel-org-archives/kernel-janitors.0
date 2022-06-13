@@ -2,102 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6032C43334
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Jun 2022 16:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BCCDC43334
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Jun 2022 17:04:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240969AbiFMQ4Q (ORCPT
+        id S231440AbiFMRES (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Jun 2022 12:56:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44386 "EHLO
+        Mon, 13 Jun 2022 13:04:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241392AbiFMQ4A (ORCPT
+        with ESMTP id S244014AbiFMRDK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Jun 2022 12:56:00 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 824311FBF4D;
-        Mon, 13 Jun 2022 07:42:54 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E62E6612DF;
-        Mon, 13 Jun 2022 14:42:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A49B6C34114;
-        Mon, 13 Jun 2022 14:42:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655131373;
-        bh=6RUtcC2ezgxpX0fcc7bhWT61oNaYVTXSim1tOI9z8ZI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SJ/loUNhH/OFKFpMUaBwV6LdfZLnQhohXNWEWhWZZgygtBSiW13RgUyaulpl8BmEi
-         ucPy0xYLklhNYOPl20R5wBljMzm5+DPKd9qfAP+6fZJyz1RzVt8VlhaH5Cx3X09b2p
-         mICq8nY+LSElP8mXQq8CXjhBfqMPeoHprkcE3LGoi4aAo9voiryR52k4jDDdYSI/m4
-         t7+xI1CgIawQ+0m6dNriXcNvoiWOX/ZczXSysNWJKop+wagu7qvPLSlBhoJNZae5bs
-         KhQthrat/tTrKrlaR47jO0tfyzpybTeXfD4XoA7l3cR/pfxEMZKpVrsk35Izc26kGu
-         +ln4q3PXv3Jgg==
-Date:   Mon, 13 Jun 2022 16:42:49 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Conor Dooley <conor.dooley@microchip.com>,
-        linux-i2c@vger.kernel.org, Peter Korsgaard <peter@korsgaard.com>,
-        Andrew Lunn <andrew@lunn.ch>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: Rectify entry for OPENCORES I2C BUS DRIVER
-Message-ID: <YqdM6TAFKAQAyGrA@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        linux-i2c@vger.kernel.org, Peter Korsgaard <peter@korsgaard.com>,
-        Andrew Lunn <andrew@lunn.ch>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220610105154.2358-1-lukas.bulwahn@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Humb4uRqxbTH4IS/"
-Content-Disposition: inline
-In-Reply-To: <20220610105154.2358-1-lukas.bulwahn@gmail.com>
+        Mon, 13 Jun 2022 13:03:10 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 328F3E15C9;
+        Mon, 13 Jun 2022 05:02:18 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id m24so6818923wrb.10;
+        Mon, 13 Jun 2022 05:02:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=iAGGMDO3RCjpuDnI12s4tp/U5muUk3K/RmYbixGZ5cY=;
+        b=j+Yp1Y4cfSfJ+AVrsnjA5ETWh4QdGa67V5H3ARF0m2zwsPeGShbVT/A0rxLFgS7AE0
+         B+p6QFJQAaE8fSt1zafzR9UZz4dHWbcKCDUXgl9LvHF+LNUyubjgj1wdxuibfUQVIhks
+         Sb7fIv4nDkYVEy2M3B9oaulLLD4zxcopEk7RNQnVkM/KPcx8zvoacWn8x7a54pyipETU
+         j+eWgGryN0jSxoU510/DRai6znER5XoTmB6XxjZVN0NBL903fgFPzJITO96udsNy2Zd7
+         sqSaHhLeI6KNgmBr1RVXlMqH2015r3QCdktca5AWw+QcpI4UU1BFPEoh+Jwg93RXshlW
+         HP6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=iAGGMDO3RCjpuDnI12s4tp/U5muUk3K/RmYbixGZ5cY=;
+        b=Jw6k0XYQ27MRtYqcQJb9Ddp4MI2hmz6IdJ85QQMEYEDVHy9vlfU2w8Z2xynWn3CMN8
+         sUzzZq+n56BPavFJ/Ygv7e7g9i1jLeUaLMUMeXXVYkmALK8hZW6DEgUSjnI9HnffL6u6
+         fRJ+HWdcMGRltHi8izdjLJZnZjukTtal4O67pqa9dkB/6486mDoDKQKbRm9cETmqeffv
+         ItV9WFZ3hHqwtqDpTy+btQ8Umsy7fz/sUUWHD8eYGsT9OyhzI3nE917S4Uqhnm6JbHmj
+         71fBpFzPFElfLT2GAnIOjz8Y1EV+DL2oKM0RBuoEwGYl9MGoi5hlaG/2BbUIcuNSvSQO
+         RoOQ==
+X-Gm-Message-State: AOAM532ka1v0xT8CLk5iMKNDeDN57NuUrgML3LApC43z3z6U876GTjFS
+        /8anK2GsKdrZ5YTzKO0Trkgh6QyASFo=
+X-Google-Smtp-Source: ABdhPJw6IDp5GNuZncI3s0NeFl8BYG40OMdVjI/u5bAvFe5hXAGcozpvJTybpIK+LUARmdlKWbENOg==
+X-Received: by 2002:a05:6000:12c8:b0:213:584:3d7 with SMTP id l8-20020a05600012c800b00213058403d7mr57282336wrx.125.1655121736420;
+        Mon, 13 Jun 2022 05:02:16 -0700 (PDT)
+Received: from felia.fritz.box (200116b8260df50011e978c0f780de03.dip.versatel-1u1.de. [2001:16b8:260d:f500:11e9:78c0:f780:de03])
+        by smtp.gmail.com with ESMTPSA id q1-20020adff501000000b002117ef160fbsm8437077wro.21.2022.06.13.05.02.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jun 2022 05:02:16 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: add include/dt-bindings/interrupt-controller to IRQCHIP DRIVERS
+Date:   Mon, 13 Jun 2022 14:02:05 +0200
+Message-Id: <20220613120205.31311-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Maintainers of the directory
+Documentation/devicetree/bindings/interrupt-controller are also the
+maintainers of the corresponding directory
+include/dt-bindings/interrupt-controller.
 
---Humb4uRqxbTH4IS/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add the file entry for include/dt-bindings/interrupt-controller to the
+appropriate section in MAINTAINERS.
 
-On Fri, Jun 10, 2022 at 12:51:54PM +0200, Lukas Bulwahn wrote:
-> Commit 8ad69f490516 ("dt-bindings: i2c: convert ocores binding to yaml")
-> converts i2c-ocores.txt to opencores,i2c-ocores.yaml, but then adjust its
-> reference in MAINTAINERS to a slightly wrong new filename.
->=20
-> Hence, ./scripts/get_maintainer.pl --self-test=3Dpatterns complains about=
- a
-> broken reference.
->=20
-> Repair this file reference in OPENCORES I2C BUS DRIVER.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Thomas, Marc, please pick this MAINTAINERS addition to your section.
 
-Applied to for-next, thanks!
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 262ed53d544a..30f80e8fe775 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10490,6 +10490,7 @@ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
+ F:	Documentation/devicetree/bindings/interrupt-controller/
+ F:	drivers/irqchip/
++F:	include/dt-bindings/interrupt-controller/
+ 
+ ISA
+ M:	William Breathitt Gray <vilhelm.gray@gmail.com>
+-- 
+2.17.1
 
---Humb4uRqxbTH4IS/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmKnTOUACgkQFA3kzBSg
-KbYCzQ/8CnVbVX/n9OOuxdaPSvaelEt7wJ7ti1XWUYHrqBjQ5Jf8d5Duy70IoW3G
-/2o0k7BUxaCMVbLjwiVHBXQai+5ms1jca0qtu3vd0KbtcGMyLvNL0m1/Eoeb2hFH
-7o1buKsv5dbuZvGf3QwgvE2BbvQ/dIg3e0OfsKqu/2yAMu3UBz3bbaA3iuva4QbK
-ODXGRUsJn3ZmoLGrTaIc9/R6g4gMjKulDefWuF+Mx0uFkfjtOMcf3ggTNDaTu+0s
-w0Sh1OulFx2+2gQZ2ebLJcUXFrqSxaTX2rjcHf8f9UoCoLGOLA3L/bKNNmzJgsrq
-Ng1inbdMbWsHmys88y2MxTyVvvU0pd2qCOrVt8duhaoIj0BsyRlQT1K4JCl0Q06Y
-vBybjZiEgGs7d9uVvZy7a4g8AvTp9n+QIeZcecjNvPEmM5gN/28edIshrx5ODtnJ
-3Ek66WPsXnY+y6uPCHbAvt0LirFM3q3tVbawWCKLQMqOQFXceNmUFhytofPzJh34
-o/8JXsxE4fs1SFGN88mRbsUOSjrQTBGJM1gurSee6ZrU58DqrSFLT64/VHEWfe3G
-er86rmAv1Tq7iWvN0Al1H0zC7xCsmUjtIoL/QxFh2pdCH7UgYusfYuY4eXMD8dA+
-vVWufqGZaYl1GiJrLCW5rPRDVYw/1HcslRcdA/ThJxhY+HROgb8=
-=wLIF
------END PGP SIGNATURE-----
-
---Humb4uRqxbTH4IS/--
