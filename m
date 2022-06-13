@@ -2,112 +2,135 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D70EC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Jun 2022 19:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C8C1CCA47B
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Jun 2022 20:49:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240327AbiFMTmu (ORCPT
+        id S244065AbiFMUs5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Jun 2022 15:42:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43512 "EHLO
+        Mon, 13 Jun 2022 16:48:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343728AbiFMTm0 (ORCPT
+        with ESMTP id S1351238AbiFMUrQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Jun 2022 15:42:26 -0400
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0677844740
-        for <kernel-janitors@vger.kernel.org>; Mon, 13 Jun 2022 11:11:09 -0700 (PDT)
+        Mon, 13 Jun 2022 16:47:16 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FE9F2A940;
+        Mon, 13 Jun 2022 13:03:12 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id v25so8694588eda.6;
+        Mon, 13 Jun 2022 13:03:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=VqY83WnLw7div7bHBckfXUAQw7tvsKCYYD/az4YNkks=;
-  b=ccto52SXTNLktM2HN5wWPjSk5suoL+b9mSX3/OhvWR/B9cbON+o7ULlY
-   y3xpVrfKgPytt6ZzLB2B9a1rgKbBy6fLElwBqH0stLaxoOmv7qkmz2RC5
-   NBZumE2lXPoQtu9fyHMNLelXWK5TmBHvpT1X4qXuZtYpdYcR9bUShG1IF
-   k=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="5.91,297,1647298800"; 
-   d="scan'208";a="40819465"
-Received: from 245.122.68.85.rev.sfr.net (HELO hadrien) ([85.68.122.245])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2022 20:11:08 +0200
-Date:   Mon, 13 Jun 2022 20:11:08 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To:     =?ISO-8859-15?Q?J=E9r=E9my_LEFAURE?= <jeremy.lefaure@netatmo.com>
-cc:     Markus Elfring <Markus.Elfring@web.de>,
-        "cocci@inria.fr" <cocci@inria.fr>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        Nicolas Palix <nicolas.palix@imag.fr>
-Subject: Re: [PATCH v3] coccinelle: Extend address test from ifaddr to every
- test expression
-In-Reply-To: <AS8PR03MB76031920B2F9E7A0A7A6A97893AB9@AS8PR03MB7603.eurprd03.prod.outlook.com>
-Message-ID: <alpine.DEB.2.22.394.2206132010200.2902@hadrien>
-References: <AS8PR03MB76033CF2848D03651D6E189093A69@AS8PR03MB7603.eurprd03.prod.outlook.com> <a8c3479c-c8f1-da57-23fe-657c2f13872b@web.de> <AS8PR03MB76031920B2F9E7A0A7A6A97893AB9@AS8PR03MB7603.eurprd03.prod.outlook.com>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=O2td3YP3JdUJuU07d3g8dndjMkX/4E+coAFBXOpD16E=;
+        b=JMkGk63f6veModCTgkLMWMKyGEaydw5MgeRkLBOCjl+edkC8l6swYd6lK5XvGB1uDI
+         C6j2NjFSj1Y+VNJoX+K3fXxfv4BCldHpQP1G4DF6WAPjgMWTtwk2A+iD5j8/2f70X4Zl
+         PL6VeYes3d1ImWkIkEL8JK081lUKcpvfIOlyonY2g8oorwEKgKoh/f3RpfcT4Y86wZkh
+         AR5rzkq41X9KEy5t18yxRzj9Q9jr29jMJGCILcWUk3tLjS7apGXFwRqDJ2fxiQdlLdff
+         RcnJn3/nQogPSbr6nF03vZ2dB4WyJYeznggeZ1FX92Laz/D1R2959Up9yIBOrNysZH5p
+         Hoew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=O2td3YP3JdUJuU07d3g8dndjMkX/4E+coAFBXOpD16E=;
+        b=kTXLS/DzElqRoIzpjzxwqA8X0ZBGGvgQsmrpjjjVzkgdiTQnUFmvSrbGAOKjEhk6WC
+         D2YWKwT3yLuhjx9SiA6yvIGyEWZ1k9Bvfpn6StXGa2SMpazwFZmDwEyjI8tHfknIOM99
+         vmzTnSVU1FFIfrnmsYK2oOYa87kOHVv88Ef0y1eVInzUST5JZhOUAf5VFpcVWmxok2HO
+         b3OPDjY56UClgcUiuzW1fJxzikk8q8cp5nueU2iUbMORgmaHLbGDjLTqMiRGXoFn0wpS
+         Nvn3bTelscIgniZNelSUehtpOLHXuCKvJSmK5BBpm8PAT+tux4yJAgklWXc/p2/+ivvq
+         iuxQ==
+X-Gm-Message-State: AOAM533L2VHfrx9OLBtQ+7FC+WO4+43/5FAmPOfnke6HzE90Dg/KR7Zw
+        D9x8Ay0i8pi7nn6tonJ6nWlRjBfDt3zKzM7BN64NmhFD+l8=
+X-Google-Smtp-Source: ABdhPJw2yRloQpbm6sxa+GrLKvGbTyCPyWW+lcJOlNOcBAd9ZPR5hEzRjfBokj5OwA6RXjIWWGTL3Pfzc7umGHPa950=
+X-Received: by 2002:a05:6402:3546:b0:42e:2f58:2c90 with SMTP id
+ f6-20020a056402354600b0042e2f582c90mr1710971edd.84.1655150590514; Mon, 13 Jun
+ 2022 13:03:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1457815613-1655143868=:2902"
+References: <297d2547ff2ee627731662abceeab9dbdaf23231.1655068321.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <297d2547ff2ee627731662abceeab9dbdaf23231.1655068321.git.christophe.jaillet@wanadoo.fr>
+From:   Christian Lamparter <chunkeey@gmail.com>
+Date:   Mon, 13 Jun 2022 22:02:58 +0200
+Message-ID: <CAAd0S9DgctqyRx+ppfT6dNntUR-cpySnsYaL=unboQ+qTK2wGQ@mail.gmail.com>
+Subject: Re: [PATCH v2] p54: Fix an error handling path in p54spi_probe()
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Kalle Valo <kvalo@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "John W. Linville" <linville@tuxdriver.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Christian Lamparter <chunkeey@web.de>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323329-1457815613-1655143868=:2902
-Content-Type: text/plain; charset=Windows-1252
-Content-Transfer-Encoding: 8BIT
-
-
-
-On Mon, 13 Jun 2022, Jérémy LEFAURE wrote:
-
-> > A)
-> > I would like to point out once more that no questionable places were marked
-> > by the software “Coccinelle 1.1.1” (OCaml 4.14.0) in the following source code.
-> > https://lore.kernel.org/cocci/da86bc36-36af-7bd7-6bee-861e160ba6a4@web.de/
-> > https://sympa.inria.fr/sympa/arc/cocci/2022-06/msg00017.html
-> >
-> >
-> > void check(void)
-> > {
-> > int s = 1;
-> > bool t = (&s);
-> > }
-> >
-> >
-> > Thus I propose to add another case distinction by the means of
-> > a SmPL disjunction.
-> >
-> >
-> > *\( &x || ... \| &x \)
-> >
+On Sun, Jun 12, 2022 at 11:12 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 >
-> Unfortunately this creates false positives as it matches address-of
-> operator outside of test expressions such as in this code:
+> If an error occurs after a successful call to p54spi_request_firmware(), it
+> must be undone by a corresponding release_firmware() as already done in
+> the error handling path of p54spi_request_firmware() and in the .remove()
+> function.
 >
-> void foo(int *a);
->
-> void call_foo(int a)
-> {
->   foo(&a);
-> }
->
->
-> > B)
-> > I imagine that generated diff output should be wrapped by a source block
-> > for the operation mode “org”.
-> > https://orgmode.org/quickstart.html#blocks
->
-> This patch does not change the "org" mode output, it only changes the
-> matching part. Anyway, I am not sure that coccilib supports blocks, I
-> did not find any reference to block in the code [1]. Do you have an
-> example were it is used?
->
-> [1]: https://gitlab.inria.fr/coccinelle/coccinelle/-/blob/master/python/coccilib/org.py
+> Add the missing call in the error handling path and remove it from
+> p54spi_request_firmware() now that it is the responsibility of the caller
+> to release the firmawre
 
-No, I don't think that blocks are supported and the org mode code should
-be fine as it is.  In any case, it's not relevant to this patch.
+that last word hast a typo:  firmware. (maybe Kalle can fix this in post).
 
-julia
+> Fixes: cd8d3d321285 ("p54spi: p54spi driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Christian Lamparter <chunkeey@gmail.com>
+(Though, v1 was fine too.)
+> ---
+> v2: reduce diffstat and take advantage on the fact that release_firmware()
+> checks for NULL
 
---8323329-1457815613-1655143868=:2902--
+Heh, ok ;) . Now that I see it,  the "ret = p54_parse_firmware(...); ... "
+could have been replaced with "return p54_parse_firmware(dev, priv->firmware);"
+so the p54spi.c could shrink another 5-6 lines.
+
+I think leaving p54spi_request_firmware() callee to deal with
+releasing the firmware
+in the error case as well is nicer because it gets rid of a "but in
+this case" complexity.
+
+(I still have hope for the devres-firmware to hit some day).
+
+Cheers
+Christian
+
+> ---
+>  drivers/net/wireless/intersil/p54/p54spi.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/wireless/intersil/p54/p54spi.c b/drivers/net/wireless/intersil/p54/p54spi.c
+> index f99b7ba69fc3..19152fd449ba 100644
+> --- a/drivers/net/wireless/intersil/p54/p54spi.c
+> +++ b/drivers/net/wireless/intersil/p54/p54spi.c
+> @@ -164,7 +164,7 @@ static int p54spi_request_firmware(struct ieee80211_hw *dev)
+>
+>         ret = p54_parse_firmware(dev, priv->firmware);
+>         if (ret) {
+> -               release_firmware(priv->firmware);
+> +               /* the firmware is released by the caller */
+>                 return ret;
+>         }
+>
+> @@ -659,6 +659,7 @@ static int p54spi_probe(struct spi_device *spi)
+>         return 0;
+>
+>  err_free_common:
+> +       release_firmware(priv->firmware);
+>         free_irq(gpio_to_irq(p54spi_gpio_irq), spi);
+>  err_free_gpio_irq:
+>         gpio_free(p54spi_gpio_irq);
+> --
+> 2.34.1
+>
