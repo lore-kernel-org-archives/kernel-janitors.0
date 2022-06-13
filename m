@@ -2,90 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3851CC43334
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Jun 2022 15:07:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1274FCCA47B
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Jun 2022 15:08:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1385831AbiFMPH6 (ORCPT
+        id S1386444AbiFMPI4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Jun 2022 11:07:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60326 "EHLO
+        Mon, 13 Jun 2022 11:08:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242851AbiFMPHr (ORCPT
+        with ESMTP id S1386784AbiFMPIh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Jun 2022 11:07:47 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8DDE53A68;
-        Mon, 13 Jun 2022 05:14:13 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id o7so10810383eja.1;
-        Mon, 13 Jun 2022 05:14:13 -0700 (PDT)
+        Mon, 13 Jun 2022 11:08:37 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 676BC55352;
+        Mon, 13 Jun 2022 05:18:40 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id l126-20020a1c2584000000b0039c1a10507fso2987952wml.1;
+        Mon, 13 Jun 2022 05:18:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id;
-        bh=ZOSb9pg1CC7QiA6hpPCF1GAL0i7t8dmmtte682l7O5g=;
-        b=aEDGa3kWtRRvzYp+rcI42ukVWyZtgRs6xli28Pg17OiS+14bbfLbvcpNZyBXlOBy4a
-         Shl6VbaReFerfActKevQ8vxfh/kGbp+raKiJo9THOkPTf4nrC/9upPrni0UtVxJ6AbeF
-         6+2T6beOnxnONkX82dPAMeIgHEx8cYGW0pweHB0wH0y30jmkhVrHwsxXPfmAXsuQgOKG
-         aAj/nfiIgeWjwPcrXKWOq07xUUtJEzfcdhO1r5L5BS+njZ6fVXZONWOZe8wGjeeSsCwQ
-         ENxV2aNa7IVLVMQdMkn1PFOfhxMwSFPrJ/QkhrAnXYSvjsbyA6TcGmwQRdMzDNfxZ6uj
-         Z4jQ==
+        bh=EjcXvUgbV0BizKDV5ZMAaJIOCl44q9DK9phUniCJ9WA=;
+        b=Z5oC8Q4vDMBhEWSeQHy+BSVKYHI7MQ69iAAp9fQTqZMqRBt2L8hODjEtRWS53kK3sC
+         ayiAQSjdm1/wdhzIX/U8QAspFT3o9f4mleLRTJABYMDHGtku1FxrWhXaAp6HR74ADtgb
+         KHods7pStS1QO5zgpbzXeIR+XuXJ2tUk2lsiWsgxqTrBTTChVrFoJtkD6I+3xzKR2BRN
+         +YXU800PEL77ekt+GrhBd8ZeSeWHm47ueAy9DIYvh7OvksbFstFcPsKth0ngsWaC0ksz
+         sc1IYsA5dMzwCC4Us7vkMOjzMZ0Ud14JaVZTscsYFwQpYh3VNtx7QUFi+p8QX8qQgcdC
+         M3nQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ZOSb9pg1CC7QiA6hpPCF1GAL0i7t8dmmtte682l7O5g=;
-        b=IUwCak5EdiSp8a/OOdmxNGe91Ib93NL8qNBkmuHpsPI4OOrogAgRfCQHktUYw/PgmB
-         Gx1dmBELtffw/XlE4/LVb7wnq0KfCXKeXZfYVzsgcvjUrYli4ns//5CqUaewIROZEQv/
-         dcnZU9CnYt/ClgggqI22oYEP4BdE1uavH9MJatNa3i6Jhq03pBLZjiq/LoaIficJpI5j
-         ZpmQhi2/v9C3Or+IDHONg88kQDXRPhH0ugV9by4nJtG+7VbtZgWMlYkJ4hoVm0T6c/vb
-         NfXhoFZLACSeuS+xRfMbIiZNvk/w77pY3ZHDJGr4nI9X6gCm3je6JMcywvZNE7gDDMXA
-         eNQQ==
-X-Gm-Message-State: AOAM532KDfhpowykxgKnmOKpfGgRBWo/2ixyApEbIzOrpFtoPTn2jcxd
-        3yXDjWjaFCsgSqz6kN1Motg=
-X-Google-Smtp-Source: ABdhPJynhA0seghy2iemorEdB5BqNwm/BCYUfhCKm4Nq0gOgRaYKyRMEEsqwAQD7c02TgDJr4f08vA==
-X-Received: by 2002:a17:906:5189:b0:712:1017:8ce7 with SMTP id y9-20020a170906518900b0071210178ce7mr18384106ejk.196.1655122452179;
-        Mon, 13 Jun 2022 05:14:12 -0700 (PDT)
+        bh=EjcXvUgbV0BizKDV5ZMAaJIOCl44q9DK9phUniCJ9WA=;
+        b=ZOqDGaSQS3P6jdUdxFhwPjOewiD7rBP4rR6Vri+icjdclKP0BgzsOQRWE9qbov89E3
+         YR1GOxQeLw3XkEfeNE9rl8JGnIYOkQ3imtvfNhs7IQJNLQQPan/VYgYr+wq0qqe/zrmF
+         hJLNSYzoyTv6qq2nD55yiVmXtrxe6Q6fkbVrMSltnj9XaozmxE04FsKdcBss2+Yda9v+
+         FSYzKDvH3gXCV91OE/f6pBkhRH8VIhVA6bJiR6cCUKjpK5KUR023WEw8N32rc5+5QfAy
+         SLkP7Rca7cVpXj45ORFoN0NkurMKuH+0sLU2rFrY1Ta+HS2keOBT2WP0cAFXfKIaowQe
+         dqiA==
+X-Gm-Message-State: AOAM531p5qFjRUb5NbDf041v7513JmmI5uTmTtZMfQPoQOs0r0yBWfTC
+        47W+G9xNsi0xQrFkeRt6Bag=
+X-Google-Smtp-Source: ABdhPJzkW71et/oNTf9zQrLlteUGEe7q964KCfykwMojUNjG/zlIoi1TNyv3IJfHsijBCiVrOlzrbQ==
+X-Received: by 2002:a05:600c:511e:b0:397:60e4:8ceb with SMTP id o30-20020a05600c511e00b0039760e48cebmr14650103wms.204.1655122718827;
+        Mon, 13 Jun 2022 05:18:38 -0700 (PDT)
 Received: from felia.fritz.box (200116b8260df50011e978c0f780de03.dip.versatel-1u1.de. [2001:16b8:260d:f500:11e9:78c0:f780:de03])
-        by smtp.gmail.com with ESMTPSA id u26-20020a170906951a00b00709e786c7b2sm3751900ejx.213.2022.06.13.05.14.11
+        by smtp.gmail.com with ESMTPSA id h9-20020a05600c350900b0039c4d022a44sm9833413wmq.1.2022.06.13.05.18.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jun 2022 05:14:11 -0700 (PDT)
+        Mon, 13 Jun 2022 05:18:38 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-mips@vger.kernel.org
+To:     "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: add include/dt-bindings/mips to MIPS
-Date:   Mon, 13 Jun 2022 14:14:08 +0200
-Message-Id: <20220613121408.8786-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: add include/dt-bindings/net to NETWORKING DRIVERS
+Date:   Mon, 13 Jun 2022 14:18:26 +0200
+Message-Id: <20220613121826.11484-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Maintainers of the directory Documentation/devicetree/bindings/mips
+Maintainers of the directory Documentation/devicetree/bindings/net
 are also the maintainers of the corresponding directory
-include/dt-bindings/mips.
+include/dt-bindings/net.
 
-Add the file entry for include/dt-bindings/mips to the appropriate
+Add the file entry for include/dt-bindings/net to the appropriate
 section in MAINTAINERS.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Thomas, please pick this MAINTAINERS addition to your section.
+David, Eric, Jakub, Paolo, please pick this MAINTAINERS addition to your section.
 
  MAINTAINERS | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 1b30f6b69477..6bf0c0ff935f 100644
+index 6bf0c0ff935f..42fe1352137e 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -13362,6 +13362,7 @@ F:	Documentation/devicetree/bindings/mips/
- F:	Documentation/mips/
- F:	arch/mips/
- F:	drivers/platform/mips/
-+F:	include/dt-bindings/mips/
- 
- MIPS BOSTON DEVELOPMENT BOARD
- M:	Paul Burton <paulburton@kernel.org>
+@@ -13868,6 +13868,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+ F:	Documentation/devicetree/bindings/net/
+ F:	drivers/connector/
+ F:	drivers/net/
++F:	include/dt-bindings/net/
+ F:	include/linux/etherdevice.h
+ F:	include/linux/fcdevice.h
+ F:	include/linux/fddidevice.h
 -- 
 2.17.1
 
