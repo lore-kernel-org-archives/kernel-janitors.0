@@ -2,87 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A92BCCA47D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Jun 2022 17:07:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85567C43334
+	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Jun 2022 17:20:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233335AbiFMRHP (ORCPT
+        id S241179AbiFMRUE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Jun 2022 13:07:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52188 "EHLO
+        Mon, 13 Jun 2022 13:20:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239560AbiFMRGi (ORCPT
+        with ESMTP id S241079AbiFMRTj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Jun 2022 13:06:38 -0400
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35DB12559B;
-        Mon, 13 Jun 2022 05:05:56 -0700 (PDT)
-Received: by mail-qk1-f182.google.com with SMTP id l192so1663867qke.13;
-        Mon, 13 Jun 2022 05:05:56 -0700 (PDT)
+        Mon, 13 Jun 2022 13:19:39 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECCCA286FE;
+        Mon, 13 Jun 2022 05:30:08 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id g25so10838345ejh.9;
+        Mon, 13 Jun 2022 05:30:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=B8BwMYVvC8BQc7LNFzLo5v93X9Yq8XucGXAjmnMlByk=;
+        b=XQlPd903MYJVrjP4lIVH5ujucf95qpOh4AdpWxpDh4cwOKwMOOAIW4cC118V06hJ9a
+         T3TMQMJmES8fKi/7UThbnCQFj5EKvQcr7HejKhf2wNul6gyvsT3+Ge7twVgdeKP1nWEv
+         uwIbzMKWOKiP47tE0UgB6G5mhSHeYxLwODTM/RexPGqVmE39/30z5Pulr120htYUU8ux
+         sEEy+KmLgmXNwTufYry6X3EUNE71bBAGSz0JdGZSEANDqW6cZQ88epfU4NjllmeEfRMM
+         4jYOB1Hr46qvNWLdIZVKVJ/+NowzsCp3sqLzYk34mTl+HndThd4pmqkPV8v+i82aHkdp
+         Imsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cwLyOilx9WOqvNt/3Yiyfo9fY3D0D5JL9svjFDzxcJc=;
-        b=mirG+pXYdWmT/wWIEW46KPdRMH8MivKaZ/dKt1JgRO4IcipqNlZQ2fZ+lvJssw66K9
-         kZCeOmE02qq1pT/JNuUZOu4KUo15Psce3yKzggqVi4b5QVxin9vPhWbOZC6t63c3MUv4
-         NqTHZlyocexLMKY3KjjTXcsxJGvVnDN+c+CwhcYNcdlX94ZGvcvZvEIhYVO9/SaLbpxr
-         Snqw13uQY7lDllq0/K5/9gbDyKQvGUATXyrqxCII6zdUedpYp+ogfa5DBwc2WoEwJ23J
-         rj6fRmY7d2qR4WjRRgfjmaF6gfmFmmwjpyyTci7tfzindOYDw+RlFPC4kXBtNXB5rlaq
-         rolw==
-X-Gm-Message-State: AOAM533EyBjxxtZPjbdXEB4TZeVC2nQVnM5O5p59Af+zByw3vXqzxK/S
-        k3KRcny8Q05L7HVNy4j+XyO0o11rij4z1Q==
-X-Google-Smtp-Source: ABdhPJyG1Z+ss0PDfZyxXSVEb2nP2BBLomzlw8szdGzyWol2HPyjMMZZUVT5aABs6ygf5y2cuJmc3w==
-X-Received: by 2002:ae9:f107:0:b0:69c:232b:bf39 with SMTP id k7-20020ae9f107000000b0069c232bbf39mr38809443qkg.310.1655121954596;
-        Mon, 13 Jun 2022 05:05:54 -0700 (PDT)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
-        by smtp.gmail.com with ESMTPSA id ca21-20020a05622a1f1500b00304e5839734sm4874647qtb.55.2022.06.13.05.05.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jun 2022 05:05:54 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-30c143c41e5so49016067b3.3;
-        Mon, 13 Jun 2022 05:05:54 -0700 (PDT)
-X-Received: by 2002:a0d:d481:0:b0:30c:44f1:2721 with SMTP id
- w123-20020a0dd481000000b0030c44f12721mr64775617ywd.283.1655121953732; Mon, 13
- Jun 2022 05:05:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <4dcd5c4ef92318dfa3298eb0c03945a8ce9b5833.1654942925.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <4dcd5c4ef92318dfa3298eb0c03945a8ce9b5833.1654942925.git.christophe.jaillet@wanadoo.fr>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 13 Jun 2022 14:05:41 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWT+sFoa9spFk1FYZb=Kyck8gPL4gRU5E8YOhdmmGAZxA@mail.gmail.com>
-Message-ID: <CAMuHMdWT+sFoa9spFk1FYZb=Kyck8gPL4gRU5E8YOhdmmGAZxA@mail.gmail.com>
-Subject: Re: [PATCH] media: rcar_drif: Remove useless license text when
- SPDX-License-Identifier is already used
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=B8BwMYVvC8BQc7LNFzLo5v93X9Yq8XucGXAjmnMlByk=;
+        b=rkePbMlV0ncON3ykhB3nZhrQ7NH/0OxsAm2i7/jark/m1kCH9DeP3fTcCIczEcs5++
+         v6n/Rkdg/PWncpcb/qubTIeW4xWUCKUbfpkh3IlGz5BjU2clM7WFfri6kvW45Txa0FAN
+         FUt8RMtKtDza+Qgut2UuWeYZRmhdM9lsX2J7z5bIq4M8WqaoR5ofVDdA6E+SjqBaHHeP
+         YnP79TmO3+gDQQoTSvpUHOzota7iB2dPtDtsSZWIEolnTqNt9aZUPSJeH54Bk9JskxmU
+         kWyuHVeAiEi9N6eYkxQYuJ8WbqKTXrY0YPrOWape7E1opQB2S4Qrw8jaiIO4OWdqMO3U
+         2A8g==
+X-Gm-Message-State: AOAM533yn+NhFR8SRRyBPhfMMXnvaCMunaeJ0jlWNagWDp/BD1Eo5B6s
+        8PHUYv4ZIsZHml4b/gv6eCaAsvPDpcrLPA==
+X-Google-Smtp-Source: ABdhPJw0skCSkAMQnGEqFEAS/7uy8MwoJr18K9YU6RpZOacew9XsDqMzZMDbn4MbVTU7h3be90VoWA==
+X-Received: by 2002:a17:906:7254:b0:6fe:5637:cbe6 with SMTP id n20-20020a170906725400b006fe5637cbe6mr51977016ejk.612.1655123407428;
+        Mon, 13 Jun 2022 05:30:07 -0700 (PDT)
+Received: from felia.fritz.box (200116b8260df50011e978c0f780de03.dip.versatel-1u1.de. [2001:16b8:260d:f500:11e9:78c0:f780:de03])
+        by smtp.gmail.com with ESMTPSA id f12-20020a056402068c00b0042a2d9af0f8sm4812513edy.79.2022.06.13.05.30.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jun 2022 05:30:07 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: add include/dt-bindings/pinctrl to PIN CONTROL SUBSYSTEM
+Date:   Mon, 13 Jun 2022 14:29:55 +0200
+Message-Id: <20220613122955.20714-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Jun 11, 2022 at 12:28 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
-> An SPDX-License-Identifier is already in place. There is no need to
-> duplicate part of the corresponding license.
->
-> This is a left-over from commit adeb69705682 ("media: rcar_drif: convert to
-> SPDX identifiers")
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Maintainers of the directory Documentation/devicetree/bindings/pinctrl
+are also the maintainers of the corresponding directory
+include/dt-bindings/pinctrl.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add the file entry for include/dt-bindings/pinctrl to the appropriate
+section in MAINTAINERS.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Linus, please pick this MAINTAINERS addition to your section.
 
-                        Geert
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7a4c3e811262..9c67cd163cbb 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15787,6 +15787,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+ F:	Documentation/devicetree/bindings/pinctrl/
+ F:	Documentation/driver-api/pin-control.rst
+ F:	drivers/pinctrl/
++F:	include/dt-bindings/pinctrl/
+ F:	include/linux/pinctrl/
+ 
+ PIN CONTROLLER - AMD
+-- 
+2.17.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
