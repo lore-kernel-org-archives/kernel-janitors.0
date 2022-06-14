@@ -2,116 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB7BC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Jun 2022 19:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A25A5CCA47A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Jun 2022 20:15:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238913AbiFNT3H (ORCPT
+        id S1358157AbiFNUP6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Jun 2022 15:29:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40498 "EHLO
+        Tue, 14 Jun 2022 16:15:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234654AbiFNT3G (ORCPT
+        with ESMTP id S1359115AbiFNUPl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Jun 2022 15:29:06 -0400
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF7D611465
-        for <kernel-janitors@vger.kernel.org>; Tue, 14 Jun 2022 12:29:05 -0700 (PDT)
-Received: by mail-pg1-x52d.google.com with SMTP id l4so8309749pgh.13
-        for <kernel-janitors@vger.kernel.org>; Tue, 14 Jun 2022 12:29:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=m8sRbdjaWLngut7z7gVlgUwSBUU63aye8jnOzp6qH2M=;
-        b=XgMzpWyS3GjTNjevMNPR6KHcV1KnEtzYTsTPCzt2HHnoRzI5Gxvo6rArgXxftkImB8
-         5+XgxUWNBlFrNVbfPzyO/XWLXROuSLIJ8MpRYoUffONgcpPtsJpL6BYXq6k2BXbBeZ+7
-         YX7RfGu5IgOZRN9mhVB1XXhgx9+i0tKZ0PENvVSKUhGhFYUiVqnCJBszGSWmd+vZ8Iq5
-         0xFRwFZdxTgIEAaotIQftpbtFAWZNXK8v8aX/ix2/WEYrYV+biOz3rEn1++aebyy85EC
-         PvpqUHPVXwLRjvkwttP/kfbSwEpfscSpDTvtvmhLMz3OkFH1JLLLgxsyxo2+0NK5SYk9
-         DW9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=m8sRbdjaWLngut7z7gVlgUwSBUU63aye8jnOzp6qH2M=;
-        b=1DZPqWui/YYR4qMxicpFHj9A0FbcHvrguabBnNUdQteEaEDJ+/GcQBmnFrTPl4sXXI
-         nwo+Ros4kOeSIRACty0bJLb/NNLDI6peKH+x1Bbhg+H97R/Ixj/Abl21d0QsNAlKh62X
-         Ka5a7ACZZ4TLmCKzZLsNpHunP3okUFAkBZhIVVHocywzdBCUwMLRhWPUXM/VQ+or+b6T
-         VEqwAeeMZeIrikyLKa7vkTlQg8Y8zMe5Yvtd+NSLVhZ0rUbBXn90pVbdwYjX/kZX2Atu
-         fRUIUDPAwvAixFdnkp2jkldqr9nYq5SfbhfCWyMtYK9ZrduLCEsfmm/enFSNzdF5r4w8
-         qyYQ==
-X-Gm-Message-State: AOAM533j8iTFKoet+SNAHqspl4ySgKvKB+Erphi+19L+ZvbQWIR/3S/W
-        BFEuC3rUyL+qwn85o/6ajQONpA==
-X-Google-Smtp-Source: ABdhPJzixjJR7IV+cO3qB/NPWSKaVfHJnhwUbB+QxeJXWqo4cRUqxA3i998JbaHyIfQwna+qI6BoyA==
-X-Received: by 2002:a63:6a06:0:b0:3fd:5a1d:85c5 with SMTP id f6-20020a636a06000000b003fd5a1d85c5mr5876118pgc.130.1655234945184;
-        Tue, 14 Jun 2022 12:29:05 -0700 (PDT)
-Received: from [192.168.2.1] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id w14-20020a1709029a8e00b001676f87473fsm7590691plp.302.2022.06.14.12.29.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Jun 2022 12:29:04 -0700 (PDT)
-Message-ID: <475873e3-4166-4e34-7ccc-363dd8963cce@linaro.org>
-Date:   Tue, 14 Jun 2022 21:28:57 +0200
+        Tue, 14 Jun 2022 16:15:41 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7164722B0B;
+        Tue, 14 Jun 2022 13:12:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 54237B81882;
+        Tue, 14 Jun 2022 20:12:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E3FCC3411F;
+        Tue, 14 Jun 2022 20:12:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655237556;
+        bh=K5sMYcQa8KcOJXSCKfv+sFO+l852HartgdnTcv4p7so=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=f3BmAGBn6NGciCmPlQayj2yDq9jL2NaTEe/GRV2ekXUGGZAM/MJsq7FdEVj+21EgB
+         k2abiF7N9LvGSWcmr3Ymx/F1yo5VTktL44TSyZVG/QCjvdi1vecgXCRaCYrOsOSSrc
+         RXwyoSHObgEPZTTSFHabkqMuFsHfYvj3DET5kw9QKSmuzOlRKsMOgeUJWsdo5InnUV
+         N6rERiBymHuvCZp3UA3q6ZiFkyjqEf+p0Aevb85pNWXgUeqGGJwNNynQ9eQL52yuKl
+         nADPCjAz9GdoAyEkMXS6x6FLslDQ4WiqVEOAlc9PeeasgwqVocSmBTYnap0uk2Fchk
+         D6jfQaRBg695w==
+Date:   Tue, 14 Jun 2022 22:12:32 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     dan.carpenter@oracle.com, Qii Wang <qii.wang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] i2c: mediatek: Fix an error handling path in
+ mtk_i2c_probe()
+Message-ID: <YqjrsJLXEyAJU40B@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        dan.carpenter@oracle.com, Qii Wang <qii.wang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+References: <8001bcdbee9f8afc85118c99b8166eb6473dcba5.1653222111.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] MAINTAINERS: adjust ARM/INTEL IXP4XX ARM ARCHITECTURE to
- ixp4xx clean-up
-Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khalasa@piap.pl>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220601050200.22213-1-lukas.bulwahn@gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20220601050200.22213-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="LPJ/UywH79b/GoGa"
+Content-Disposition: inline
+In-Reply-To: <8001bcdbee9f8afc85118c99b8166eb6473dcba5.1653222111.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 01/06/2022 07:02, Lukas Bulwahn wrote:
-> Commit c83227a5d05e ("irq/gpio: ixp4xx: Drop boardfile probe path") and
-> commit 155e4306107f ("clocksource/drivers/ixp4xx: Drop boardfile probe
-> path") remove files include/linux/irqchip/irq-ixp4xx.h and
-> include/linux/platform_data/timer-ixp4xx.h, but miss to adjust MAINTAINERS.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
-> broken references.
-> 
-> Remove file entries for those files in ARM/INTEL IXP4XX ARM ARCHITECTURE.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+--LPJ/UywH79b/GoGa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ---
-> Linus, please pick this minor non-urgent clean-up patch for ixp4xx arm.
-> 
->   MAINTAINERS | 2 --
->   1 file changed, 2 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 58e751b9346e..e0f5895feb6b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2196,8 +2196,6 @@ F:	drivers/clocksource/timer-ixp4xx.c
->   F:	drivers/crypto/ixp4xx_crypto.c
->   F:	drivers/gpio/gpio-ixp4xx.c
->   F:	drivers/irqchip/irq-ixp4xx.c
-> -F:	include/linux/irqchip/irq-ixp4xx.h
-> -F:	include/linux/platform_data/timer-ixp4xx.h
->   
->   ARM/INTEL KEEMBAY ARCHITECTURE
->   M:	Paul J. Murphy <paul.j.murphy@intel.com>
+On Sun, May 22, 2022 at 02:22:07PM +0200, Christophe JAILLET wrote:
+> The clsk are prepared, enabled, then disabled. So if an error occurs after
+> the disable step, they are still prepared.
+>=20
+> Add an error handling path to unprepare the clks in such a case, as alrea=
+dy
+> done in the .remove function.
+>=20
+> Fixes: 8b4fc246c3ff ("i2c: mediatek: Optimize master_xfer() and avoid cir=
+cular locking")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Applied to for-current, thanks!
 
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+--LPJ/UywH79b/GoGa
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmKo67AACgkQFA3kzBSg
+KbYsUQ//RC/VArnR3VlNNgSKRNoCEEel97zMSxrWxq65CjNsnO8W3zD/9DyqzyQS
+cJyDJkxEdKcDK8EQSF+iW0qLRPg4HLCs6WBoOsdgcSCmxv5YiTOmluHkO+kGP7ne
+tYYUuvhihoHqLAOtYXYYWi9kNH0cFOvIur0h2J/EHno/2LA+6fJEGMSI942PNbV8
+o6vTD9i7xhMIa8wpGE/Bwg0vMB7aBzuR2MfHoMmRTVJd/EsSNOLY+Eb6si+1mQLt
+3g8JsGEKiU7yRPcQBUl6aWQjT6OrHRHI0z6JCcFsDibkVn0W8FyKw6HG+xQo9ZZy
+lgfNdquCbZcs2fVnCTgXTtj4S/NRxYrDqN1KC3H76EmwouJ5ha7C0R+Yh+6Se8/f
+V463JjPsZWzQhIHTYcZ87bfte3w5/4iTgGhGMkddmKTRFv4WYkJZxDbX84f15ktB
+HTngGpZqNx/25++2fiZ+32V3NlPL9tRf/h2CXw9rFATe+72SbXKvNGVLgKvC0EfM
+nSdZJg9lXsD49Ds2/UtYnBXtCQ0yYiGsSbvAzP/CC6tHn/vwGcVVqJixGAE7bUUu
+M/S60KHdu3GP6m400nWh4r+C2TWzL9QFZML2X+gYuWxWD9Xubx72EqdzXoGKwDZU
+NZjihxOZB2V5KDIJ7unDrC/octpmuAMLGE+ZMxFgJL9hadYZGrA=
+=SD9T
+-----END PGP SIGNATURE-----
+
+--LPJ/UywH79b/GoGa--
