@@ -2,93 +2,97 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70288CCA47A
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Jun 2022 18:40:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 202F6C43334
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Jun 2022 18:55:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244677AbiFNSkK (ORCPT
+        id S1358266AbiFNSzC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Jun 2022 14:40:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57128 "EHLO
+        Tue, 14 Jun 2022 14:55:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244259AbiFNSkJ (ORCPT
+        with ESMTP id S1358265AbiFNSyr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Jun 2022 14:40:09 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7651846642
-        for <kernel-janitors@vger.kernel.org>; Tue, 14 Jun 2022 11:40:08 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id y13-20020a17090a154d00b001eaaa3b9b8dso6998388pja.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 14 Jun 2022 11:40:08 -0700 (PDT)
+        Tue, 14 Jun 2022 14:54:47 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFF1F289A9;
+        Tue, 14 Jun 2022 11:48:03 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id x6-20020a1c7c06000000b003972dfca96cso5279903wmc.4;
+        Tue, 14 Jun 2022 11:48:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=VMRLILcAuZfWHWL4+u5qy2fvXJUzHg7ML+JvyBdPww8=;
-        b=LPePoEAd2RE5ad+qpang/x6MBZQqe8c+MY+oskJDKl0FP/nK6/UyH3T057+2dwVI3y
-         jrBBsALPsRmcs+oI38K2y3wHudZ5VZg5K5mP9B0b57TJQ02kbio5YVm4Av5UWlW8Y569
-         oddEFhMmMWOSO/CMHBNLXqr7HG+5V4wktBFzbDZ13TxmMOeDSyfrtOMoZitQzBUHTozt
-         M1KNFkFERB9TFGK47pGCCxTGN+WS2E85nbhjZ7hSt/pll+OsxuZTX3Vx/MxH5uAlNVL6
-         8wgZY8rIEydCd4lRTcMWHE6o8kiIt0sT76aCWth48oJzRMsFiVP9pUbCHQY6FwOLV9A8
-         n/aA==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZGq6EoefxPbFtF1LY8I5mjem8e38X9O1LMTR9lksIbU=;
+        b=eKBKM9FNockAANSZ38+BfFdCvxvuc7vP7DTowuFFVSb/Z3814bLCJz/mn4QVASzwZE
+         Jofzjg1eglWhZBYCtnQqsI9C8/gI2oFX7sMVNHe2wa6X+9gE+SAINpsJxkE2H4zuuaen
+         Tvc+RhplEeh4mJPviyY9JbbeSixBKrHQQAT0FymDNyo7BcF1rmykEN5OlXyICJFWskWu
+         0aac9qOBqpRru9+AOVaM14bA2Hf1blQfOeWjWyhFrIJf7jPq6Fn+v4XMoSFYp/8c1IdM
+         gx2ytXQZwgaZW2wj2je0uLjBB8gh/vVBl2e0UY7sVdy9x48N72Ndq67t1bassygknDUo
+         r74w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=VMRLILcAuZfWHWL4+u5qy2fvXJUzHg7ML+JvyBdPww8=;
-        b=phKEDYl8pbwoG2DkAw44i2NgG/vVfg3S2E3zHZsqMOnC/DoXtvq/p05fle9cX2Db5L
-         cfiT2AL+LAfDMzN+R+MVtPHiJA9G4RKJlgVnciQ39aqrffh30pZSxj2GodrL7LOBlsmx
-         U7GcPvGnc1fklft4Pi6IKrzGN4Sv0b772AWJitJ7H+zupnKdm55sNt+E7uOz6ZBzOOqh
-         QH/RLDytsh+WkRwz+uumN8JMe9rd7S1pduUmOleVepbuCNshaflsKOsDE09i3ZoWB1W6
-         YY5AsDi88ePj5D/cCTgiUgY6fuB2CAhHWfjNfFlfkW4usY1lhfwgvG7SplxwZlWLS6GK
-         zgfw==
-X-Gm-Message-State: AJIora+ODF4kkP2MIGsoGDTMa/Mjl4xRQqrhp6fhkq+X91vkGm6wVoD9
-        APmh+oYBFsnglBZrUQgmn4fanA==
-X-Google-Smtp-Source: AGRyM1vbSe14m+2wgDQc5pjjUBxKw2CUwxdD7eoFuL4AQSdHu3ZD+H5HuZM3i7A/ctCS9wllK48y/w==
-X-Received: by 2002:a17:903:32c4:b0:163:e765:5071 with SMTP id i4-20020a17090332c400b00163e7655071mr5579647plr.153.1655232007923;
-        Tue, 14 Jun 2022 11:40:07 -0700 (PDT)
-Received: from [192.168.2.1] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id y9-20020a170902864900b00168c1668a49sm7584558plt.85.2022.06.14.11.40.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Jun 2022 11:40:06 -0700 (PDT)
-Message-ID: <d427ed94-facf-e0ed-50b4-f4471fd0adfb@linaro.org>
-Date:   Tue, 14 Jun 2022 20:40:00 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] MAINTAINERS: add include/dt-bindings/thermal to THERMAL
-Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org
+        bh=ZGq6EoefxPbFtF1LY8I5mjem8e38X9O1LMTR9lksIbU=;
+        b=nXnCjoU0Xl4tnn3vKGjJHQoFDP/UV2iHyuYPlKHKquYlKzNXSGS/b4IZfBfAhPbpH9
+         AGjNvaRk7tIBEmY2dcnhHiV85qFvaSpY4qWgFKeInQ56ozNexfqyWxo6HGqSwbM5TKI1
+         hPF2ZUnWEPXBC3VW9A41SGn4bRP/TOPqfabOgQzRRyZNQcHTZZaFRSMp2opoioUEQChV
+         UQcrILCXXoLRuPBSU6n6i/GmTPk6Sinx4Xf5cCRNPXYzbnnCSaJi7131XKXgO4zBkGVb
+         LY/KSjR1OXU2oq6a8sCCh/hcSqJPBn5JY7vPxSMk4UxnIVUGf4rrZy6V/mHfnownd+BI
+         Op3A==
+X-Gm-Message-State: AOAM531XBnYRnY9UX5IGA3KH1IL3J7FbqMERmcrE60gHphICslU56Fxl
+        LMIn+D8terGAur9ixHy+1Y0=
+X-Google-Smtp-Source: ABdhPJyN/hZcupEtYYhdwsR7sUr2cuKzMaSiadhh38ZplgCRxmrsH6p5MaUDlH8mYoDwJKflzZQVaQ==
+X-Received: by 2002:a05:600c:58a:b0:39c:80ed:68be with SMTP id o10-20020a05600c058a00b0039c80ed68bemr5624291wmd.150.1655232481288;
+        Tue, 14 Jun 2022 11:48:01 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id d34-20020a05600c4c2200b0039c5b4ab1b0sm12960218wmp.48.2022.06.14.11.47.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jun 2022 11:48:00 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Vinod Koul <vkoul@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        dmaengine@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220613124309.28790-1-lukas.bulwahn@gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20220613124309.28790-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: [PATCH] dmaengine: fsl-edma: remove redundant assignment to pointer last_sg
+Date:   Tue, 14 Jun 2022 19:47:59 +0100
+Message-Id: <20220614184759.164379-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 13/06/2022 14:43, Lukas Bulwahn wrote:
-> Maintainers of the directory Documentation/devicetree/bindings/thermal
-> are also the maintainers of the corresponding directory
-> include/dt-bindings/thermal.
-> 
-> Add the file entry for include/dt-bindings/thermal to the appropriate
-> section in MAINTAINERS.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Rafael, Daniel, please pick this MAINTAINERS addition to your section.
+The pointer last_sg is being assigned a value at the start of a loop
+however it is never read and is being re-assigned later on in both
+brances of an if-statement. The assignment is redundant and can be
+removed.
 
-Applied, thanks
+Cleans up clang scan-build warning:
+drivers/dma/fsl-edma-common.c:563:3: warning: Value stored to 'last_sg'
+is never read [deadcode.DeadStores]
 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/dma/fsl-edma-common.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
+diff --git a/drivers/dma/fsl-edma-common.c b/drivers/dma/fsl-edma-common.c
+index 3ae05d1446a5..a06a1575a2a5 100644
+--- a/drivers/dma/fsl-edma-common.c
++++ b/drivers/dma/fsl-edma-common.c
+@@ -559,9 +559,6 @@ struct dma_async_tx_descriptor *fsl_edma_prep_slave_sg(
+ 	}
+ 
+ 	for_each_sg(sgl, sg, sg_len, i) {
+-		/* get next sg's physical address */
+-		last_sg = fsl_desc->tcd[(i + 1) % sg_len].ptcd;
+-
+ 		if (direction == DMA_MEM_TO_DEV) {
+ 			src_addr = sg_dma_address(sg);
+ 			dst_addr = fsl_chan->dma_dev_addr;
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+2.35.3
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
