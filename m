@@ -2,90 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B5FDC43334
-	for <kernel-janitors@archiver.kernel.org>; Mon, 13 Jun 2022 21:40:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B77DDC43334
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Jun 2022 06:15:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343693AbiFMVkc (ORCPT
+        id S238738AbiFNGPl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 13 Jun 2022 17:40:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45866 "EHLO
+        Tue, 14 Jun 2022 02:15:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234145AbiFMVkb (ORCPT
+        with ESMTP id S229937AbiFNGPj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 13 Jun 2022 17:40:31 -0400
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BF9526DF;
-        Mon, 13 Jun 2022 14:40:31 -0700 (PDT)
-Received: by mail-qk1-x736.google.com with SMTP id l192so2907819qke.13;
-        Mon, 13 Jun 2022 14:40:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=UlM+CjsQsvnlIzI7YJk0mgvDOIWQBkpMOR1+7OF1hHk=;
-        b=VoS6foXu6pPH+uNF4FO1/2Kj2D0fU4up4Ag89DxC1cgBHdtd+xhTNGW8WiiUHNRRHR
-         39ENvgeUZF4nSJeuOUXvuWJzCdV8dmcnk+eiyc0SpFjFWWwZnXYm2G2fVTd6f2OGAWvg
-         FIoY30Z8Lfn1EDAcLkGei3+Xz2y1KQ0TlA18AorOPy6Mf+HCCMlVUMqlDZmtpT7xUa4U
-         dZcKQ1ZTIHHj51akLGQn4LOMZQY0H20b3cdlocbSrgmS5Md26ArwyaGnZUz/uLsetRlS
-         dDhYp66032OHqufLh/hI4ZOScAxP9g/t7rWSskpTy9KwHzMtMO2FETpm06RAdOOoqQac
-         c5TA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=UlM+CjsQsvnlIzI7YJk0mgvDOIWQBkpMOR1+7OF1hHk=;
-        b=h6oFGlZNrCGl1hRgohndzaEE0li45RzgthwRD1d2uCOmOaraRVBpXA7ewtc/SGQpo8
-         DTaevQbLbtKRxU5ZBkYNkeHRU3Fko7kO19ABKuEs50EGclu3zZ3WwtFxkdGtaBo9mfhE
-         t32Rn6CC4gV0zJ3ET95qRsP4dsEF1htL2NQ9QRjtHhkHLccFLFFR1Y+bMkx2U25vv/bO
-         tQUOeY4uWVNyyqNBD39sa02NMt/1kZaVgaVjbh0JxQ2ih72z+oAVtDeh1B1sImdQNSMu
-         yFkSo3f8/8vFHJDg8D5ltKKgTotCX3Qg6YGTFgpDtpY0SFb3qz2wiyrtdFDBJBap8Pte
-         ZF9Q==
-X-Gm-Message-State: AOAM530S1ThlRpFhYuv8xYFgcBGNzWiRC3Fj0R/LZ6L7wUZJFlONIwp1
-        FNB0k6yy6LePcejrsQw2LgE=
-X-Google-Smtp-Source: ABdhPJwyEVaKmQX/qbSw6rap8a7P4wMumpVUdU6UeAYUevHyF5Ku6BkvK8tVjJLtP84AZRb0VGz3/Q==
-X-Received: by 2002:a05:620a:22d3:b0:6a7:2202:62ba with SMTP id o19-20020a05620a22d300b006a7220262bamr1725887qki.148.1655156430164;
-        Mon, 13 Jun 2022 14:40:30 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id r145-20020a37a897000000b006a760640118sm7130943qke.27.2022.06.13.14.40.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jun 2022 14:40:29 -0700 (PDT)
-Message-ID: <d970c122-4b1b-d30e-8781-2227340b85c3@gmail.com>
-Date:   Mon, 13 Jun 2022 14:39:58 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] net: bgmac: Fix an erroneous kfree() in bgmac_remove()
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
+        Tue, 14 Jun 2022 02:15:39 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 436D3377CF;
+        Mon, 13 Jun 2022 23:15:38 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id A6661CE182F;
+        Tue, 14 Jun 2022 06:15:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4AB6C3411B;
+        Tue, 14 Jun 2022 06:15:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655187335;
+        bh=vo5JOYkEPeFEWpKNIvUVh541SRQIp5YhW0KwaowC1TE=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=EN9q83UhlB8dhqZIow1gnV9jnq1wtW6JSaaGpbPQFx1jpcnu9pWLvl/Ot00hUA5wz
+         RJUDzPVu8bhWqMOjbaytQW1tBJYkzaiO2R4EMYyE9ckYuS3TJxtiUfT5mbDe9FE1c6
+         uCnE7cS3inwzREhYL1LOR1A45ULHJJOdk+G0r9iPi34UU7PHEBL0RlVOorQObAydno
+         llQcgPxq3WUbPPzbiT6WQRGBehDIqXuO+7PSQVzpv9kJX4XnRLc6Femx/AAZXTsmEQ
+         3M8pTbe1A94HsYPT5DMqRPpd0HLaZGpYlahy8IhzIBtdHB6LQx+SLGJWz0tXJ+d2rM
+         vhZulZ2tLmKFA==
+From:   Kalle Valo <kvalo@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Christian Lamparter <chunkeey@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <a026153108dd21239036a032b95c25b5cece253b.1655153616.git.christophe.jaillet@wanadoo.fr>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <a026153108dd21239036a032b95c25b5cece253b.1655153616.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        "John W. Linville" <linville@tuxdriver.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Christian Lamparter <chunkeey@web.de>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>
+Subject: Re: [PATCH v2] p54: Fix an error handling path in p54spi_probe()
+References: <297d2547ff2ee627731662abceeab9dbdaf23231.1655068321.git.christophe.jaillet@wanadoo.fr>
+        <CAAd0S9DgctqyRx+ppfT6dNntUR-cpySnsYaL=unboQ+qTK2wGQ@mail.gmail.com>
+        <f13c3976-2ba0-e16d-0853-5b5b1be16d11@wanadoo.fr>
+Date:   Tue, 14 Jun 2022 09:15:28 +0300
+In-Reply-To: <f13c3976-2ba0-e16d-0853-5b5b1be16d11@wanadoo.fr> (Christophe
+        JAILLET's message of "Mon, 13 Jun 2022 22:57:25 +0200")
+Message-ID: <871qvrrcsf.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 6/13/22 13:53, Christophe JAILLET wrote:
-> 'bgmac' is part of a managed resource allocated with bgmac_alloc(). It
-> should not be freed explicitly.
-> 
-> Remove the erroneous kfree() from the .remove() function.
-> 
-> Fixes: 34a5102c3235 ("net: bgmac: allocate struct bgmac just once & don't copy it"
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+> Le 13/06/2022 =C3=A0 22:02, Christian Lamparter a =C3=A9crit=C2=A0:
+>> On Sun, Jun 12, 2022 at 11:12 PM Christophe JAILLET
+>> <christophe.jaillet@wanadoo.fr> wrote:
+>>>
+>>> If an error occurs after a successful call to p54spi_request_firmware()=
+, it
+>>> must be undone by a corresponding release_firmware() as already done in
+>>> the error handling path of p54spi_request_firmware() and in the .remove=
+()
+>>> function.
+>>>
+>>> Add the missing call in the error handling path and remove it from
+>>> p54spi_request_firmware() now that it is the responsibility of the call=
+er
+>>> to release the firmawre
+>>
+>> that last word hast a typo:  firmware. (maybe Kalle can fix this in post=
+).
+>
+> More or less the same typo twice in a row... _Embarrassed_
+
+No worries, I can fix the typo.
+
+--=20
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
+hes
