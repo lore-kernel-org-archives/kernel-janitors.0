@@ -2,114 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C3CBC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Jun 2022 18:38:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70288CCA47A
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Jun 2022 18:40:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241861AbiFNSiO (ORCPT
+        id S244677AbiFNSkK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Jun 2022 14:38:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55786 "EHLO
+        Tue, 14 Jun 2022 14:40:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232018AbiFNSiN (ORCPT
+        with ESMTP id S244259AbiFNSkJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Jun 2022 14:38:13 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D59B6340F5;
-        Tue, 14 Jun 2022 11:38:12 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id q15so12370908wrc.11;
-        Tue, 14 Jun 2022 11:38:12 -0700 (PDT)
+        Tue, 14 Jun 2022 14:40:09 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7651846642
+        for <kernel-janitors@vger.kernel.org>; Tue, 14 Jun 2022 11:40:08 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id y13-20020a17090a154d00b001eaaa3b9b8dso6998388pja.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 14 Jun 2022 11:40:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WsJ5u2umY9+S+mCev0i/Sc2pgxCFrn1uJHhSVkU6Img=;
-        b=nrg+QsCKmHI0Bt8jlxnugL6kmmj7Q2M/0Oqzm6eeYPqd6Xq/8Eno1RgjevR4EWVzTq
-         kLeQcpw1i7J8QXjOlwrrPSVJHubL920hzCbb1L8Ijo5UZtcIDk4OL5VLpQsxnuDFHM9I
-         wxx69E18GZJPZpPBOUwOLmBMevbA4DSUJE2BESoR0bp2s109g8RRLpOWqS+zOOYoUeEZ
-         GHy0K39iuSb5G0dYXcQvLJhJQ0G6FJwXZDyvx0kyhac4OudcP0Se19obqIQ2jr8KgyUG
-         cYakpuFk5ncN8Jp5a0WTegYE3ZrICStS+X6ZxdWtn6IWcrYPGEE9oBspB3Le0l/1ymC+
-         Lptg==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=VMRLILcAuZfWHWL4+u5qy2fvXJUzHg7ML+JvyBdPww8=;
+        b=LPePoEAd2RE5ad+qpang/x6MBZQqe8c+MY+oskJDKl0FP/nK6/UyH3T057+2dwVI3y
+         jrBBsALPsRmcs+oI38K2y3wHudZ5VZg5K5mP9B0b57TJQ02kbio5YVm4Av5UWlW8Y569
+         oddEFhMmMWOSO/CMHBNLXqr7HG+5V4wktBFzbDZ13TxmMOeDSyfrtOMoZitQzBUHTozt
+         M1KNFkFERB9TFGK47pGCCxTGN+WS2E85nbhjZ7hSt/pll+OsxuZTX3Vx/MxH5uAlNVL6
+         8wgZY8rIEydCd4lRTcMWHE6o8kiIt0sT76aCWth48oJzRMsFiVP9pUbCHQY6FwOLV9A8
+         n/aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=WsJ5u2umY9+S+mCev0i/Sc2pgxCFrn1uJHhSVkU6Img=;
-        b=x7sKL11ugHFPDDbgz2duISxMfOVjIT9bRbZ2/o4bd3J+v2JSI7zbnA213PoxLiIqCd
-         1s6EqaDMdMtQGG5ZAufgU6SpUCbQqCAEhz7nLebd4mt4Wh35OpzWofW8iMY8a/6wJFYI
-         UXmLSJ6OhMPaEmyhWd3deQ4ERWsiyiANkIljkOzwVVA2DdA6Na1kEs8txbQFTXFq42JJ
-         C9kk9Mwgv+JFSOPQa8+0MJvxgU2gJqV9jXXYCSeIaunDOktoWc5PiauFvQDZ0dq2/b2W
-         ntzvEFYzIvXXIpYQ8wK2i0prqLHK+IYGiyPrDUl6XtZmVAPYbGMdlX3sCO5cjJayUIsj
-         gzrw==
-X-Gm-Message-State: AJIora8Dn9Q+L3geECpV4IYSUMvwyNolqgkA016FwNahjiMjQhz0ClLL
-        7gvuIeBYpC9ozyNQ/q/GQESaLKOy70RZIu7W
-X-Google-Smtp-Source: AGRyM1uAsMJfnYLUOIdK4OUtkl30vxeZBgEqqzIgFwWK3F8AHsx9AfxTYTNGfrwUzmhPuq6IWdl1sg==
-X-Received: by 2002:a05:6000:1f8b:b0:219:bee5:6b77 with SMTP id bw11-20020a0560001f8b00b00219bee56b77mr6103544wrb.658.1655231891386;
-        Tue, 14 Jun 2022 11:38:11 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id a4-20020adff7c4000000b0021033caa332sm12928303wrq.42.2022.06.14.11.38.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jun 2022 11:38:10 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-        Bard Liao <yung-chuan.liao@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: Intel: Skylake: remove redundant re-assignments to pointer array
-Date:   Tue, 14 Jun 2022 19:38:09 +0100
-Message-Id: <20220614183809.163531-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.3
+        bh=VMRLILcAuZfWHWL4+u5qy2fvXJUzHg7ML+JvyBdPww8=;
+        b=phKEDYl8pbwoG2DkAw44i2NgG/vVfg3S2E3zHZsqMOnC/DoXtvq/p05fle9cX2Db5L
+         cfiT2AL+LAfDMzN+R+MVtPHiJA9G4RKJlgVnciQ39aqrffh30pZSxj2GodrL7LOBlsmx
+         U7GcPvGnc1fklft4Pi6IKrzGN4Sv0b772AWJitJ7H+zupnKdm55sNt+E7uOz6ZBzOOqh
+         QH/RLDytsh+WkRwz+uumN8JMe9rd7S1pduUmOleVepbuCNshaflsKOsDE09i3ZoWB1W6
+         YY5AsDi88ePj5D/cCTgiUgY6fuB2CAhHWfjNfFlfkW4usY1lhfwgvG7SplxwZlWLS6GK
+         zgfw==
+X-Gm-Message-State: AJIora+ODF4kkP2MIGsoGDTMa/Mjl4xRQqrhp6fhkq+X91vkGm6wVoD9
+        APmh+oYBFsnglBZrUQgmn4fanA==
+X-Google-Smtp-Source: AGRyM1vbSe14m+2wgDQc5pjjUBxKw2CUwxdD7eoFuL4AQSdHu3ZD+H5HuZM3i7A/ctCS9wllK48y/w==
+X-Received: by 2002:a17:903:32c4:b0:163:e765:5071 with SMTP id i4-20020a17090332c400b00163e7655071mr5579647plr.153.1655232007923;
+        Tue, 14 Jun 2022 11:40:07 -0700 (PDT)
+Received: from [192.168.2.1] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id y9-20020a170902864900b00168c1668a49sm7584558plt.85.2022.06.14.11.40.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Jun 2022 11:40:06 -0700 (PDT)
+Message-ID: <d427ed94-facf-e0ed-50b4-f4471fd0adfb@linaro.org>
+Date:   Tue, 14 Jun 2022 20:40:00 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH] MAINTAINERS: add include/dt-bindings/thermal to THERMAL
+Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220613124309.28790-1-lukas.bulwahn@gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20220613124309.28790-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are two occurrences where the pointer array is being assigned a value
-that is never read, the pointer gets updated in the next iteration of a
-loop. These assignments are redundant and can be removed.
+On 13/06/2022 14:43, Lukas Bulwahn wrote:
+> Maintainers of the directory Documentation/devicetree/bindings/thermal
+> are also the maintainers of the corresponding directory
+> include/dt-bindings/thermal.
+> 
+> Add the file entry for include/dt-bindings/thermal to the appropriate
+> section in MAINTAINERS.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Rafael, Daniel, please pick this MAINTAINERS addition to your section.
 
-Cleans up clang scan-build warnings:
-sound/soc/intel/skylake/skl-topology.c:2953:3: warning: Value stored to
-'array' is never read [deadcode.DeadStores]
-sound/soc/intel/skylake/skl-topology.c:3602:3: warning: Value stored to
-'array' is never read [deadcode.DeadStores]
+Applied, thanks
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- sound/soc/intel/skylake/skl-topology.c | 6 ------
- 1 file changed, 6 deletions(-)
 
-diff --git a/sound/soc/intel/skylake/skl-topology.c b/sound/soc/intel/skylake/skl-topology.c
-index 9bdf020a2b64..e06eac592da1 100644
---- a/sound/soc/intel/skylake/skl-topology.c
-+++ b/sound/soc/intel/skylake/skl-topology.c
-@@ -2950,9 +2950,6 @@ static int skl_tplg_get_pvt_data(struct snd_soc_tplg_dapm_widget *tplg_w,
- 		block_size = ret;
- 		off += array->size;
- 
--		array = (struct snd_soc_tplg_vendor_array *)
--			(tplg_w->priv.data + off);
--
- 		data = (tplg_w->priv.data + off);
- 
- 		if (block_type == SKL_TYPE_TUPLE) {
-@@ -3599,9 +3596,6 @@ static int skl_tplg_get_manifest_data(struct snd_soc_tplg_manifest *manifest,
- 		block_size = ret;
- 		off += array->size;
- 
--		array = (struct snd_soc_tplg_vendor_array *)
--			(manifest->priv.data + off);
--
- 		data = (manifest->priv.data + off);
- 
- 		if (block_type == SKL_TYPE_TUPLE) {
 -- 
-2.35.3
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
