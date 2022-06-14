@@ -2,93 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B77DDC43334
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Jun 2022 06:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D665DC433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Jun 2022 06:46:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238738AbiFNGPl (ORCPT
+        id S1351660AbiFNGqx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Jun 2022 02:15:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48522 "EHLO
+        Tue, 14 Jun 2022 02:46:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229937AbiFNGPj (ORCPT
+        with ESMTP id S232702AbiFNGqv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Jun 2022 02:15:39 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 436D3377CF;
-        Mon, 13 Jun 2022 23:15:38 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id A6661CE182F;
-        Tue, 14 Jun 2022 06:15:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4AB6C3411B;
-        Tue, 14 Jun 2022 06:15:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655187335;
-        bh=vo5JOYkEPeFEWpKNIvUVh541SRQIp5YhW0KwaowC1TE=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=EN9q83UhlB8dhqZIow1gnV9jnq1wtW6JSaaGpbPQFx1jpcnu9pWLvl/Ot00hUA5wz
-         RJUDzPVu8bhWqMOjbaytQW1tBJYkzaiO2R4EMYyE9ckYuS3TJxtiUfT5mbDe9FE1c6
-         uCnE7cS3inwzREhYL1LOR1A45ULHJJOdk+G0r9iPi34UU7PHEBL0RlVOorQObAydno
-         llQcgPxq3WUbPPzbiT6WQRGBehDIqXuO+7PSQVzpv9kJX4XnRLc6Femx/AAZXTsmEQ
-         3M8pTbe1A94HsYPT5DMqRPpd0HLaZGpYlahy8IhzIBtdHB6LQx+SLGJWz0tXJ+d2rM
-         vhZulZ2tLmKFA==
-From:   Kalle Valo <kvalo@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Christian Lamparter <chunkeey@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        Tue, 14 Jun 2022 02:46:51 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 189E53914B;
+        Mon, 13 Jun 2022 23:46:51 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id j5-20020a05600c1c0500b0039c5dbbfa48so5662818wms.5;
+        Mon, 13 Jun 2022 23:46:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6tcu5eAwoOyzRfW5zLo655OGJsCRzmBD09HjOYtJ02Y=;
+        b=Zsdkp8SftJ+6ZISPstVg6W7XbMt8pikCWv9ykdo7e3/UbvdjegvnDe21C13EiuATqv
+         Kj1SvendYDpzEsm3lVmeWeSqSmV+nSWTzppZZDp+jpx9sDuVvzswkLa1zaBoOyWKg8+S
+         RZ5KUpGtSfaZWeC1ZtXGAaCwlhD4AHz8QzYZ1ugZWvkTAQTLNZWl0SBlgGF9o2ugbdky
+         tXyY+de0MojejV9P6lhQC9x7GFkAyUYfyyBae6JBFJyj1Bzu7G32pFg8sCAdxLv3ljip
+         LMeEwbYUjeGd5RP7qNK0Vw90gHteA3B3Pz9nN0wgyeROQcuAynQSQRLPVGyrcLXUW0AZ
+         yWMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6tcu5eAwoOyzRfW5zLo655OGJsCRzmBD09HjOYtJ02Y=;
+        b=QHzW69jCWAJXdq0+YEP745jXqzkPAyyGcfAkVarhGPyjMmTqEcMV3yoFAeUtMz4aWC
+         OFICdTWfuVEwee16zf8BnPcGWEcfh+UB/a6MfVF6hh4bjLBK5GRfsR2TGunnerJD5I6w
+         EIzVZNVkyIY9wqiYos2aSVLw+CiSw+iORgcpx+pkfioLR5HjRcRmtAcsPyqHRqZOWR2I
+         OdxXVCiLXKare8KWVzXlg4J8IAKEF5cz8o8tDZAj0FusZG3xbtAgU81TB+Eoezg03q/W
+         9jizm0u3VZeswYEfyjRt0uaBK7bP1CJnRHEXtaC/EFsd3fsdSp1p3Qi7G8GaFYSXzChH
+         hRRw==
+X-Gm-Message-State: AOAM533AIxdq3/VQYYIkGm0tlB19ayhzCScZnHWKqt9pvPuDWUfeunKQ
+        iDdeqgsd+tmXG+mXP8d35nc=
+X-Google-Smtp-Source: ABdhPJyK9ueeuJL7iGVp7NyZ3QeK/ETBQMghVR/ae3lle2IFQ35LU6YzakGR1belXE94IhM7t5WNVg==
+X-Received: by 2002:a05:600c:4e51:b0:39c:4f18:4c29 with SMTP id e17-20020a05600c4e5100b0039c4f184c29mr2499224wmq.101.1655189209490;
+        Mon, 13 Jun 2022 23:46:49 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id e16-20020adffd10000000b00210396b2eaesm12865044wrr.45.2022.06.13.23.46.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jun 2022 23:46:48 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
-        "John W. Linville" <linville@tuxdriver.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Christian Lamparter <chunkeey@web.de>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>
-Subject: Re: [PATCH v2] p54: Fix an error handling path in p54spi_probe()
-References: <297d2547ff2ee627731662abceeab9dbdaf23231.1655068321.git.christophe.jaillet@wanadoo.fr>
-        <CAAd0S9DgctqyRx+ppfT6dNntUR-cpySnsYaL=unboQ+qTK2wGQ@mail.gmail.com>
-        <f13c3976-2ba0-e16d-0853-5b5b1be16d11@wanadoo.fr>
-Date:   Tue, 14 Jun 2022 09:15:28 +0300
-In-Reply-To: <f13c3976-2ba0-e16d-0853-5b5b1be16d11@wanadoo.fr> (Christophe
-        JAILLET's message of "Mon, 13 Jun 2022 22:57:25 +0200")
-Message-ID: <871qvrrcsf.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Michal Simek <michal.simek@xilinx.com>, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] net: axienet: Fix spelling mistake "archecture" -> "architecture"
+Date:   Tue, 14 Jun 2022 07:46:47 +0100
+Message-Id: <20220614064647.47598-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
+There is a spelling mistake in a dev_err message. Fix it.
 
-> Le 13/06/2022 =C3=A0 22:02, Christian Lamparter a =C3=A9crit=C2=A0:
->> On Sun, Jun 12, 2022 at 11:12 PM Christophe JAILLET
->> <christophe.jaillet@wanadoo.fr> wrote:
->>>
->>> If an error occurs after a successful call to p54spi_request_firmware()=
-, it
->>> must be undone by a corresponding release_firmware() as already done in
->>> the error handling path of p54spi_request_firmware() and in the .remove=
-()
->>> function.
->>>
->>> Add the missing call in the error handling path and remove it from
->>> p54spi_request_firmware() now that it is the responsibility of the call=
-er
->>> to release the firmawre
->>
->> that last word hast a typo:  firmware. (maybe Kalle can fix this in post=
-).
->
-> More or less the same typo twice in a row... _Embarrassed_
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-No worries, I can fix the typo.
+diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+index fa7bcd2c1892..87a620073031 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
++++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+@@ -2038,7 +2038,7 @@ static int axienet_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 	if (!IS_ENABLED(CONFIG_64BIT) && lp->features & XAE_FEATURE_DMA_64BIT) {
+-		dev_err(&pdev->dev, "64-bit addressable DMA is not compatible with 32-bit archecture\n");
++		dev_err(&pdev->dev, "64-bit addressable DMA is not compatible with 32-bit architecture\n");
+ 		goto cleanup_clk;
+ 	}
+ 
+-- 
+2.35.3
 
---=20
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
-hes
