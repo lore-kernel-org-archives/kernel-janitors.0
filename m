@@ -2,65 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D665DC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Jun 2022 06:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B17C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 14 Jun 2022 06:49:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351660AbiFNGqx (ORCPT
+        id S1352611AbiFNGtR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 14 Jun 2022 02:46:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49970 "EHLO
+        Tue, 14 Jun 2022 02:49:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232702AbiFNGqv (ORCPT
+        with ESMTP id S1352520AbiFNGtN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 14 Jun 2022 02:46:51 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 189E53914B;
-        Mon, 13 Jun 2022 23:46:51 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id j5-20020a05600c1c0500b0039c5dbbfa48so5662818wms.5;
-        Mon, 13 Jun 2022 23:46:50 -0700 (PDT)
+        Tue, 14 Jun 2022 02:49:13 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86DAC396AE;
+        Mon, 13 Jun 2022 23:49:12 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id m16-20020a7bca50000000b0039c8a224c95so3334912wml.2;
+        Mon, 13 Jun 2022 23:49:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=6tcu5eAwoOyzRfW5zLo655OGJsCRzmBD09HjOYtJ02Y=;
-        b=Zsdkp8SftJ+6ZISPstVg6W7XbMt8pikCWv9ykdo7e3/UbvdjegvnDe21C13EiuATqv
-         Kj1SvendYDpzEsm3lVmeWeSqSmV+nSWTzppZZDp+jpx9sDuVvzswkLa1zaBoOyWKg8+S
-         RZ5KUpGtSfaZWeC1ZtXGAaCwlhD4AHz8QzYZ1ugZWvkTAQTLNZWl0SBlgGF9o2ugbdky
-         tXyY+de0MojejV9P6lhQC9x7GFkAyUYfyyBae6JBFJyj1Bzu7G32pFg8sCAdxLv3ljip
-         LMeEwbYUjeGd5RP7qNK0Vw90gHteA3B3Pz9nN0wgyeROQcuAynQSQRLPVGyrcLXUW0AZ
-         yWMQ==
+        bh=rK2JBezORIHT404/AnKcTtSy2/jIHZfS+t0GGJ0+ABY=;
+        b=WcIWyHKlRAS26Z8EoLw6XLKzEPXqlPumRldCWWOKPHE60ySBl3cfry6pTEZK8vrxSX
+         KEq8iqRSaZUDNgr0sf6uYKhyNaMpdp1d1ALsC2BHLxW+R/p1sLkmlZiG2jTgKWnC6r6M
+         wm2CAj+7ewzCvE8yvadPNbiyAYROdGt8+Ccw4jXeewwH2rAdRtbOZ8+l/ryvDupbkgq+
+         C0dFBq+ehpIgGJgrf8sAAmy0CLNnoFphd+vN4PKFJsStzMdThDPse7VRf7I036178AIn
+         6lby+hWvwbDnQA+hoUlmYub2T329n1TcmdFDFnRJs+V2oSFLDJZxtT/2CK4Dwb+T/8tC
+         9tMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=6tcu5eAwoOyzRfW5zLo655OGJsCRzmBD09HjOYtJ02Y=;
-        b=QHzW69jCWAJXdq0+YEP745jXqzkPAyyGcfAkVarhGPyjMmTqEcMV3yoFAeUtMz4aWC
-         OFICdTWfuVEwee16zf8BnPcGWEcfh+UB/a6MfVF6hh4bjLBK5GRfsR2TGunnerJD5I6w
-         EIzVZNVkyIY9wqiYos2aSVLw+CiSw+iORgcpx+pkfioLR5HjRcRmtAcsPyqHRqZOWR2I
-         OdxXVCiLXKare8KWVzXlg4J8IAKEF5cz8o8tDZAj0FusZG3xbtAgU81TB+Eoezg03q/W
-         9jizm0u3VZeswYEfyjRt0uaBK7bP1CJnRHEXtaC/EFsd3fsdSp1p3Qi7G8GaFYSXzChH
-         hRRw==
-X-Gm-Message-State: AOAM533AIxdq3/VQYYIkGm0tlB19ayhzCScZnHWKqt9pvPuDWUfeunKQ
-        iDdeqgsd+tmXG+mXP8d35nc=
-X-Google-Smtp-Source: ABdhPJyK9ueeuJL7iGVp7NyZ3QeK/ETBQMghVR/ae3lle2IFQ35LU6YzakGR1belXE94IhM7t5WNVg==
-X-Received: by 2002:a05:600c:4e51:b0:39c:4f18:4c29 with SMTP id e17-20020a05600c4e5100b0039c4f184c29mr2499224wmq.101.1655189209490;
-        Mon, 13 Jun 2022 23:46:49 -0700 (PDT)
+        bh=rK2JBezORIHT404/AnKcTtSy2/jIHZfS+t0GGJ0+ABY=;
+        b=FPQLHzF5QK5ZrRuW9FfOG3HVyH8RzlxAcWK5fGf7K60w+AJS3ydokhsmZp0dxBVsgp
+         f/v+j9plAiTIwsgZQVpcmfiPo15E63b1cKvAmuPjKv/K/HGcNNAk8oMZwXtZS2JFi8ps
+         swsplDbrFpV6Ps7sez0UuUP++54Ske1eslwzWHmWAB1XS1uFpAzQqRfiNt+2SJpvADnA
+         /d6Nm48W16osD3z/Oi0+3zHT7B9bH00jZUMjYnTJriTZWlFzXkhwUNpvCc41uJ+/ZuZz
+         quBqZr7mF679otjbF7u+eoaGrTLMefhCtXftSady0sNHjzRAAhQilT3DHERthLl/Y8wu
+         n1yw==
+X-Gm-Message-State: AOAM532dE808gcG3j133q/sJvPWmtSz0Ss0NCWqAntt7d/i2lRaOzSN6
+        vFrx0sR3yoaA4/aOL3Ny3B4=
+X-Google-Smtp-Source: ABdhPJxKDEf3IT/FOvko39kZHApTNB9iNglrdPDScj/yimRsC18KrDoK3lWb1n7NeK9351mDqeOwVg==
+X-Received: by 2002:a05:600c:6020:b0:39c:96ec:5014 with SMTP id az32-20020a05600c602000b0039c96ec5014mr2426943wmb.57.1655189351116;
+        Mon, 13 Jun 2022 23:49:11 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id e16-20020adffd10000000b00210396b2eaesm12865044wrr.45.2022.06.13.23.46.48
+        by smtp.gmail.com with ESMTPSA id bg23-20020a05600c3c9700b0039c15861001sm18549655wmb.21.2022.06.13.23.49.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jun 2022 23:46:48 -0700 (PDT)
+        Mon, 13 Jun 2022 23:49:10 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Michal Simek <michal.simek@xilinx.com>, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
+To:     Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        chrome-platform@lists.linux.dev
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net: axienet: Fix spelling mistake "archecture" -> "architecture"
-Date:   Tue, 14 Jun 2022 07:46:47 +0100
-Message-Id: <20220614064647.47598-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] platform/chrome: Fix spelling mistake "unknwon" -> "unknown"
+Date:   Tue, 14 Jun 2022 07:49:09 +0100
+Message-Id: <20220614064909.47804-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -69,24 +65,24 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a dev_err message. Fix it.
+There is a spelling mistake in a dev_dbg message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 2 +-
+ drivers/platform/chrome/cros_ec_proto.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index fa7bcd2c1892..87a620073031 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -2038,7 +2038,7 @@ static int axienet_probe(struct platform_device *pdev)
- 		}
- 	}
- 	if (!IS_ENABLED(CONFIG_64BIT) && lp->features & XAE_FEATURE_DMA_64BIT) {
--		dev_err(&pdev->dev, "64-bit addressable DMA is not compatible with 32-bit archecture\n");
-+		dev_err(&pdev->dev, "64-bit addressable DMA is not compatible with 32-bit architecture\n");
- 		goto cleanup_clk;
+diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
+index 1bd567244f8e..6923ea4401e5 100644
+--- a/drivers/platform/chrome/cros_ec_proto.c
++++ b/drivers/platform/chrome/cros_ec_proto.c
+@@ -346,7 +346,7 @@ static int cros_ec_get_proto_info(struct cros_ec_device *ec_dev, int devidx)
+ 		dev_dbg(ec_dev->dev, "found PD chip\n");
+ 		break;
+ 	default:
+-		dev_dbg(ec_dev->dev, "unknwon passthru index: %d\n", devidx);
++		dev_dbg(ec_dev->dev, "unknown passthru index: %d\n", devidx);
+ 		break;
  	}
  
 -- 
