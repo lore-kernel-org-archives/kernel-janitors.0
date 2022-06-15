@@ -2,96 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D79C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Jun 2022 21:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48F35C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Jun 2022 21:50:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345630AbiFOVnF (ORCPT
+        id S244672AbiFOVuu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 15 Jun 2022 17:43:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35998 "EHLO
+        Wed, 15 Jun 2022 17:50:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239542AbiFOVnD (ORCPT
+        with ESMTP id S239852AbiFOVut (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 15 Jun 2022 17:43:03 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4917C30F42
-        for <kernel-janitors@vger.kernel.org>; Wed, 15 Jun 2022 14:43:03 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id g16-20020a17090a7d1000b001ea9f820449so3382204pjl.5
-        for <kernel-janitors@vger.kernel.org>; Wed, 15 Jun 2022 14:43:03 -0700 (PDT)
+        Wed, 15 Jun 2022 17:50:49 -0400
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D08DA377C4
+        for <kernel-janitors@vger.kernel.org>; Wed, 15 Jun 2022 14:50:47 -0700 (PDT)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-3176b6ed923so948837b3.11
+        for <kernel-janitors@vger.kernel.org>; Wed, 15 Jun 2022 14:50:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=WcjULP+xvRapFxRv0FaC6VPZV20BCthIO92kKFiQ9M0=;
-        b=B0XNk6D8/gn8a9uQq6IA6wE3unW212NQNc1cQ7qD+JTjkn1rfYHx6zE0/3HjpiSkCg
-         rkBrcV1VIEFW9BDgH3rI+yyJ6H0DNqc3yHSSy0SNBw1dCOMt9z1F/Hgek1me+rIr27IE
-         +jrW4QVidiYd361KRdfwHeez+SO0MONybOf4004hnfcLT3P/4gmT7iEXkX+NbONX7xA2
-         OR9FbegnF4PL9LZziDzPQaCytJfqj74oN6cEQh9iZhqlnVBBtZg6f2ZbL1G0sU3urVF/
-         w9RbvMqy0gH+GAbxBRWj+9CAz9L2SnU2UMjZFVJsJP6QagspO5iu1laFW7/rvX4OhhJ8
-         cZoQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4Ni2+Z4+FaOrYaNl57ZOrcI8cGb5LUVcfY4BS8e4nlo=;
+        b=mp0HpJP8UE2fb0XRQO3zKlah6eEzCXVh044OB/QP6MB05Fpq09DUqH6TUogHVp9cKy
+         IbM7+vCQemOiCaPMWWc+wUB2foSdxCLhimA33Lamy537FVIvAVfRS8SDyb/5wtaHu+Jo
+         RJLY2j/dsY+oU4Okqv0FyiECbKeWNDopstSLEUNGZ6q6s4CzmpB5v9yyIWsO++IV2spb
+         CuPnF2wamKmHT4qBiuh5bUSQWDJzJvwwxwR3tvZ+VKXlqRmZGZLbax27a1j6nNoq6wNN
+         VyL4UHSP8kV2vqyo/QcaBGj22IxNK6ZbTC7a/QxCA8JT6sxuytktLjrX55166xTMsVc4
+         FW+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=WcjULP+xvRapFxRv0FaC6VPZV20BCthIO92kKFiQ9M0=;
-        b=C9mYd/5JN0F8n8nUgvQUlULLXecWJeJdlQyYNUZrEuDZ6jch+CjzM5X/XdSSQulkqM
-         gP5BoS25ArlNxmGJBBjBIItXTIctLIvQ8aeVX+/DBqBMIiHEMxlw2m9en8EOYPcZzkZX
-         1KUprdZds0mggjow3lPYAuhtYhkuI+IFn7hfqQ+9Bb4CZaS4g0T8aJ/AJGn9PCjJcWHQ
-         D/EMS3VdTHT0i9GDzzvfu5fp1hTHVtyomLw/7w2Rx+Jk65WNW60Wet6Q35TBuXHtdvEP
-         5HFQbVWQHFppv7tl392rWBYLiwss5jpakw9zKOimqGk2fn5J7vtFv2w4tubTgcWaf2Av
-         Si4g==
-X-Gm-Message-State: AJIora9rshXLqA1KRwlzSQQQ+tMUIh7FCMc9hRwvBMIoH1m73TAyf62i
-        H2DlBBQDxaV3/3gt5htkut/Mr7u2VO0VweOq
-X-Google-Smtp-Source: AGRyM1vjV11bUqYxz/GH9vFdp7a7E9IJbTAEzFfMt7oHG+sL5zQpKHckTKh0WHupOxdErb81fpFqeQ==
-X-Received: by 2002:a17:903:28c:b0:167:6127:ed99 with SMTP id j12-20020a170903028c00b001676127ed99mr1369342plr.94.1655329382784;
-        Wed, 15 Jun 2022 14:43:02 -0700 (PDT)
-Received: from google.com ([192.77.111.2])
-        by smtp.gmail.com with ESMTPSA id z15-20020aa7948f000000b0050dc7628178sm111221pfk.82.2022.06.15.14.43.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jun 2022 14:43:02 -0700 (PDT)
-Date:   Wed, 15 Jun 2022 22:43:00 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: adjust file entry for max77693 dt after
- merge conflict mess-up
-Message-ID: <YqpSZPr0a1raTRm6@google.com>
-References: <20220601073511.15721-1-lukas.bulwahn@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4Ni2+Z4+FaOrYaNl57ZOrcI8cGb5LUVcfY4BS8e4nlo=;
+        b=SaBAxuArkab4DevBuXGi57V7tW1776PGv4Zfy/enPq7KT7tPFzsmCUEN+dLYcpUBMH
+         6ol8QSX4HqJexnuRz3Z9oXBiL/P0Lnf0rhxsvpFd2Gotlj8hcT0RPO+Lb5J3U3VsaXO8
+         FFxcPEURZS5gNz4e/6vwnr+9h1KEtlSltJz8686/RSr/L6WdMKbmTYyyJeV81NCVJPyo
+         oj/xSCd0DE2d4o2+x2TVhmbnbdb91+XOnXN/sDlg0S8ZtjWcvfi0WgTReNhUC4EMy0s7
+         ZKnd0pFNKQWZTLr1s9ry9YsXCuxsYYT8BmddDfZ8MJW13ICd7GSUdf1iSlD98UqnMXiI
+         eGCw==
+X-Gm-Message-State: AJIora/Q/5CD8keaaMTnjz7pUbgGc4h/GM295xJwT1V7UPOCBhSHjRGh
+        84LNaQ+90StRXgp8RCfjewQ/UXLOv6+dMFiJ6CqkfCRSF1Q=
+X-Google-Smtp-Source: AGRyM1tPI14LkQ/YvBg6NCQBgZzoaWvTWprhy0E9Xqj/xLnij0vQRJL/A1uMejKt8IaEDtT6RUxPtyH5EIOpWXxJ+uE=
+X-Received: by 2002:a81:830f:0:b0:313:3918:5cf with SMTP id
+ t15-20020a81830f000000b00313391805cfmr2079347ywf.126.1655329847132; Wed, 15
+ Jun 2022 14:50:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220601073511.15721-1-lukas.bulwahn@gmail.com>
+References: <YqmXmsTX7dD+5HjN@kili>
+In-Reply-To: <YqmXmsTX7dD+5HjN@kili>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 15 Jun 2022 23:50:35 +0200
+Message-ID: <CACRpkdbStsAF2Jngohh7Lsg6xs0Vsc-v_SR3WC3ndbZEhx9tEg@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: btbcm: Use strreplace() in btbcm_get_board_name()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 01 Jun 2022, Lukas Bulwahn wrote:
+On Wed, Jun 15, 2022 at 10:26 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-> Commit b38213c6118b ("dt-bindings: mfd: maxim,max77693: Convert to
-> dtschema") converts max77693.txt to maxim,max77693.yaml and adjusts the
-> file entry in MAINTAINERS accordingly.
-> 
-> Unfortunately, the merge commit afb67df31a8c ("Merge branches [...] into
-> ibs-for-mfd-merged") resolves some conflict in MAINTAINERS in such a way
-> that the file entry for the converted text file max77693.txt, removed in
-> the commit above, is added back into MAINTAINERS.
-> 
-> Remove the file entry to this converted text file in MAXIM PMIC AND MUIC
-> DRIVERS FOR EXYNOS BASED BOARDS.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Lee, please pick this minor non-urgent clean-up patch. Thanks.
-> 
->  MAINTAINERS | 1 -
->  1 file changed, 1 deletion(-)
+> The original code works but it's a bit iffy.  The end of loop test
+> should be something like "board_type[i] != '\0'" but instead it is
+> is "i < board_type[i]".  Fortunately, those two tests are equivalent so
+> long as the "board_type" is not an empty string.
+>
+> It's much simpler to just call strreplace() instead.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Applied, thanks.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
--- 
-Lee Jones [李琼斯]
-Principal Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+I think I just copied this code from the BRCM wifi driver for the combo
+chip, did you patch that too?
+
+Yours,
+Linus Walleij
