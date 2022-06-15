@@ -2,74 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77901C43334
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Jun 2022 21:12:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D79C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Jun 2022 21:43:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348191AbiFOVMb (ORCPT
+        id S1345630AbiFOVnF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 15 Jun 2022 17:12:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37436 "EHLO
+        Wed, 15 Jun 2022 17:43:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347544AbiFOVMa (ORCPT
+        with ESMTP id S239542AbiFOVnD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 15 Jun 2022 17:12:30 -0400
-Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 075132AEB;
-        Wed, 15 Jun 2022 14:12:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-        Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-        Resent-Cc:Resent-Message-ID; bh=TuYd7bPPv39NtXUsAgfJVAbOsOrZSsepyiGBkvfwiIY=;
-        t=1655327549; x=1656537149; b=cTjTEsqTs1UNCY/xWnQ7IQS3WLEXnjKbrslRqb9NzM/vCM0
-        gCI6HSvbolCF076VfT4kLTgTLDz48pBa/j4VAL8jyfYbUeQcDOo6W0nMqSUowbKvr+DYQgtW/8+2T
-        Ps82/RWaF0OH5Xi2DdD7f5m0jKMpRw/nsn4q6tUernjSujxorIJHfKEj9lE56L43RiUOnHMbjR2EU
-        wtDjlgAXx3Zqlk2wwTWRifie41M1aP84ejUn1MAx2teIUm9OA+dZ5cjWC2w4yZ4tZrMPbsGjFAjJg
-        JsJmBzPscD165BvkYQrSM4hOhmObrVG60B23Yqb+lCdVlghRuXEwNaB8K9srQJUA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-        (Exim 4.95)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1o1aJA-006eMg-28;
-        Wed, 15 Jun 2022 23:12:12 +0200
-Message-ID: <e38a63a26d893239d0f82021265fb16c3441786c.camel@sipsolutions.net>
-Subject: Re: [PATCH v2] p54: Fix an error handling path in p54spi_probe()
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Christian Lamparter <chunkeey@gmail.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Kalle Valo <kvalo@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "John W. Linville" <linville@tuxdriver.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Christian Lamparter <chunkeey@web.de>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>
-Date:   Wed, 15 Jun 2022 23:12:11 +0200
-In-Reply-To: <df6b487b-b8b7-44fc-7c2d-e6fd15072c14@gmail.com>
-References: <297d2547ff2ee627731662abceeab9dbdaf23231.1655068321.git.christophe.jaillet@wanadoo.fr>
-         <CAAd0S9DgctqyRx+ppfT6dNntUR-cpySnsYaL=unboQ+qTK2wGQ@mail.gmail.com>
-         <f13c3976-2ba0-e16d-0853-5b5b1be16d11@wanadoo.fr>
-         <df6b487b-b8b7-44fc-7c2d-e6fd15072c14@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.2 (3.44.2-1.fc36) 
+        Wed, 15 Jun 2022 17:43:03 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4917C30F42
+        for <kernel-janitors@vger.kernel.org>; Wed, 15 Jun 2022 14:43:03 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id g16-20020a17090a7d1000b001ea9f820449so3382204pjl.5
+        for <kernel-janitors@vger.kernel.org>; Wed, 15 Jun 2022 14:43:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=WcjULP+xvRapFxRv0FaC6VPZV20BCthIO92kKFiQ9M0=;
+        b=B0XNk6D8/gn8a9uQq6IA6wE3unW212NQNc1cQ7qD+JTjkn1rfYHx6zE0/3HjpiSkCg
+         rkBrcV1VIEFW9BDgH3rI+yyJ6H0DNqc3yHSSy0SNBw1dCOMt9z1F/Hgek1me+rIr27IE
+         +jrW4QVidiYd361KRdfwHeez+SO0MONybOf4004hnfcLT3P/4gmT7iEXkX+NbONX7xA2
+         OR9FbegnF4PL9LZziDzPQaCytJfqj74oN6cEQh9iZhqlnVBBtZg6f2ZbL1G0sU3urVF/
+         w9RbvMqy0gH+GAbxBRWj+9CAz9L2SnU2UMjZFVJsJP6QagspO5iu1laFW7/rvX4OhhJ8
+         cZoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=WcjULP+xvRapFxRv0FaC6VPZV20BCthIO92kKFiQ9M0=;
+        b=C9mYd/5JN0F8n8nUgvQUlULLXecWJeJdlQyYNUZrEuDZ6jch+CjzM5X/XdSSQulkqM
+         gP5BoS25ArlNxmGJBBjBIItXTIctLIvQ8aeVX+/DBqBMIiHEMxlw2m9en8EOYPcZzkZX
+         1KUprdZds0mggjow3lPYAuhtYhkuI+IFn7hfqQ+9Bb4CZaS4g0T8aJ/AJGn9PCjJcWHQ
+         D/EMS3VdTHT0i9GDzzvfu5fp1hTHVtyomLw/7w2Rx+Jk65WNW60Wet6Q35TBuXHtdvEP
+         5HFQbVWQHFppv7tl392rWBYLiwss5jpakw9zKOimqGk2fn5J7vtFv2w4tubTgcWaf2Av
+         Si4g==
+X-Gm-Message-State: AJIora9rshXLqA1KRwlzSQQQ+tMUIh7FCMc9hRwvBMIoH1m73TAyf62i
+        H2DlBBQDxaV3/3gt5htkut/Mr7u2VO0VweOq
+X-Google-Smtp-Source: AGRyM1vjV11bUqYxz/GH9vFdp7a7E9IJbTAEzFfMt7oHG+sL5zQpKHckTKh0WHupOxdErb81fpFqeQ==
+X-Received: by 2002:a17:903:28c:b0:167:6127:ed99 with SMTP id j12-20020a170903028c00b001676127ed99mr1369342plr.94.1655329382784;
+        Wed, 15 Jun 2022 14:43:02 -0700 (PDT)
+Received: from google.com ([192.77.111.2])
+        by smtp.gmail.com with ESMTPSA id z15-20020aa7948f000000b0050dc7628178sm111221pfk.82.2022.06.15.14.43.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jun 2022 14:43:02 -0700 (PDT)
+Date:   Wed, 15 Jun 2022 22:43:00 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry for max77693 dt after
+ merge conflict mess-up
+Message-ID: <YqpSZPr0a1raTRm6@google.com>
+References: <20220601073511.15721-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220601073511.15721-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 2022-06-15 at 23:03 +0200, Christian Lamparter wrote:
->=20
-> A driver usually loads the firmware in .probe(). It stays around because
-> of .suspend()+.resume()
->=20
+On Wed, 01 Jun 2022, Lukas Bulwahn wrote:
 
-Does it, though? the firmware cache thing is a bit odd, it sometimes
-seems to me that it only re-requests/loads the firmware when suspending,
-and drops the cache when resumed, just in case it's requested inbetween.
+> Commit b38213c6118b ("dt-bindings: mfd: maxim,max77693: Convert to
+> dtschema") converts max77693.txt to maxim,max77693.yaml and adjusts the
+> file entry in MAINTAINERS accordingly.
+> 
+> Unfortunately, the merge commit afb67df31a8c ("Merge branches [...] into
+> ibs-for-mfd-merged") resolves some conflict in MAINTAINERS in such a way
+> that the file entry for the converted text file max77693.txt, removed in
+> the commit above, is added back into MAINTAINERS.
+> 
+> Remove the file entry to this converted text file in MAXIM PMIC AND MUIC
+> DRIVERS FOR EXYNOS BASED BOARDS.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Lee, please pick this minor non-urgent clean-up patch. Thanks.
+> 
+>  MAINTAINERS | 1 -
+>  1 file changed, 1 deletion(-)
 
-johannes
+Applied, thanks.
+
+-- 
+Lee Jones [李琼斯]
+Principal Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
