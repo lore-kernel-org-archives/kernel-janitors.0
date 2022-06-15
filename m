@@ -2,80 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B9BC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Jun 2022 05:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70BA5C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Jun 2022 07:35:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242436AbiFOFkP (ORCPT
+        id S245355AbiFOHfY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 15 Jun 2022 01:40:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33740 "EHLO
+        Wed, 15 Jun 2022 03:35:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229595AbiFOFkO (ORCPT
+        with ESMTP id S245205AbiFOHfW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 15 Jun 2022 01:40:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6211248E67;
-        Tue, 14 Jun 2022 22:40:13 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EEFF5616C4;
-        Wed, 15 Jun 2022 05:40:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4E8CFC3411B;
-        Wed, 15 Jun 2022 05:40:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655271612;
-        bh=/VUFfwdAz5D+vWMY4vZrXF3RLilJ/K4ApW15+UIs4HE=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=WlKy8oSZXO2zwqWD6OEBcWAyp1wCCNJikwNkmNbCEcdAAU1Unp1M+mfd7HjBSg4g5
-         JsQKlTnAbsiQqNbY5yHqbnsHxbabWnnFBsn32m96/2n/f+MWQs2pqTB2tK9rkNDDgA
-         UCbhSKPL1PZL23DgozIUPrHGojfKoDMROHUQryTIT5KTTocVvJUlagYhvCYkYZHRgm
-         XQeSZk7RDjx4BzPHKwgcTfiMJRCMb7kJzU0bRUdKMawdI4x0UoZay1gyPi/AtdZx1w
-         JVjPXXEk0OUFtGdBkzyOGwonWjnidtTjscwFmGyNTD7SA28KyPALEZKsPakm1OUNfo
-         w79FbQu0IENIg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 33594E73856;
-        Wed, 15 Jun 2022 05:40:12 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 15 Jun 2022 03:35:22 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2433F4756E;
+        Wed, 15 Jun 2022 00:35:21 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id j5-20020a05600c1c0500b0039c5dbbfa48so611343wms.5;
+        Wed, 15 Jun 2022 00:35:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6231YElwpY0EMQw/jVrtaouMPdsWUXcvBmdiLPb1PQ4=;
+        b=YQiPihd7vfYxTOea4eaxk6vyRopNf5N4OX8VEVZW9Fw7eCPaaCqHGtFLvvCJBB9xiW
+         +EPPQbDSQ/wjQjzo3tpHCC88vX0TwD7lYgbIL4PHfR3Lq+wl6lR7mx/HwhXhJ0jOkI+G
+         ancgT5HSvQ3NXGBNOS/EmXaOafJWmxgaruoOmCXsGeXJNrNuPdSI5UfSwXKiDvEmf41b
+         qqRBRXynxr9t3F2RCvq1z5QBX8AiTtbacCj/H4f/NRIfZ4jHabwBbmyHvE108rmMM2wz
+         XmE+PSUZo+8oOXmM+veBs66DFSyrtenU5aWWCNKbkYzcB6wB0HiNJXYcs6/VWZN4cI8q
+         vfaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6231YElwpY0EMQw/jVrtaouMPdsWUXcvBmdiLPb1PQ4=;
+        b=1Z48Api1k7kb+FV482jj0d46sqcfV8OtAfjcrZCBhgKJuytMEpKC1p2F9kB8uamgC4
+         x6dkMSMMO3bcoNsmR0QcRaIWbMfXr2tIvtr0d1X9npUrFODhkXvEjq25UMU/tv4DrTl0
+         vxdk97s6fauoU7CdiIuwSrSZIsERRbPdPQfFgqsxy6ZfNJQmdJnvxmvcto5TR40/c2hi
+         pMuenYJ9MtYL9OdIxuSs6dqaeyYJk0xIdCdpsDBmPC8iv/zO0cMDXkkHY/vkfLUiHmIj
+         cKaefpnnAzJfi5T9XsnnILHEnvRyX2uir4ls1aViIHm0SBLvzyzoargLIMrnVRJ2dsWO
+         U+kg==
+X-Gm-Message-State: AOAM531uAfT2roFh7DttIcWAStukLCRZJrZWhBQYaF8EodSKg37b7xIJ
+        mh9unOZWn95PSGpXV0RYjOCesmUBNGIQCfPG
+X-Google-Smtp-Source: ABdhPJxh39A5lnBvRYI/2TeMwxhzEyOmO3E10gV5vCOnbG6aQ091rRCB9B4vaiuLlJlnkIUtCS6w+w==
+X-Received: by 2002:a05:600c:1d1f:b0:39c:5350:c5a3 with SMTP id l31-20020a05600c1d1f00b0039c5350c5a3mr8084676wms.136.1655278519588;
+        Wed, 15 Jun 2022 00:35:19 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id m17-20020adfc591000000b0020fff0ea0a3sm14224612wrg.116.2022.06.15.00.35.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jun 2022 00:35:18 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Neal Liu <neal_liu@aspeedtech.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        linux-aspeed@lists.ozlabs.org, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] usb: gadget: ast2600: Fix a couple of spelling mistakes
+Date:   Wed, 15 Jun 2022 08:35:18 +0100
+Message-Id: <20220615073518.192827-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] MAINTAINERS: add include/dt-bindings/net to NETWORKING
- DRIVERS
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <165527161220.30672.4060128437193370686.git-patchwork-notify@kernel.org>
-Date:   Wed, 15 Jun 2022 05:40:12 +0000
-References: <20220613121826.11484-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20220613121826.11484-1-lukas.bulwahn@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+There are a couple of spelling mistakes, one in a dev_warn message
+and another in a SETUP_DBG message. Fix these and remove an extraneous
+white space too.
 
-This patch was applied to netdev/net.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/usb/gadget/udc/aspeed_udc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Mon, 13 Jun 2022 14:18:26 +0200 you wrote:
-> Maintainers of the directory Documentation/devicetree/bindings/net
-> are also the maintainers of the corresponding directory
-> include/dt-bindings/net.
-> 
-> Add the file entry for include/dt-bindings/net to the appropriate
-> section in MAINTAINERS.
-> 
-> [...]
-
-Here is the summary with links:
-  - MAINTAINERS: add include/dt-bindings/net to NETWORKING DRIVERS
-    https://git.kernel.org/netdev/net/c/b60377de7790
-
-You are awesome, thank you!
+diff --git a/drivers/usb/gadget/udc/aspeed_udc.c b/drivers/usb/gadget/udc/aspeed_udc.c
+index 1fc15228ff15..05cfcc4812b8 100644
+--- a/drivers/usb/gadget/udc/aspeed_udc.c
++++ b/drivers/usb/gadget/udc/aspeed_udc.c
+@@ -904,7 +904,7 @@ static void ast_udc_epn_handle_desc(struct ast_udc_dev *udc, u16 ep_num)
+ 	int i;
+ 
+ 	if (list_empty(&ep->queue)) {
+-		dev_warn(dev, "%s reqest queue empty !\n", ep->ep.name);
++		dev_warn(dev, "%s request queue empty!\n", ep->ep.name);
+ 		return;
+ 	}
+ 
+@@ -1036,7 +1036,7 @@ static void ast_udc_ep0_handle_setup(struct ast_udc_dev *udc)
+ 
+ 	memcpy_fromio(&crq, udc->creq, sizeof(crq));
+ 
+-	SETUP_DBG(udc, "SETEUP packet: %02x/%02x/%04x/%04x/%04x\n",
++	SETUP_DBG(udc, "SETUP packet: %02x/%02x/%04x/%04x/%04x\n",
+ 		  crq.bRequestType, crq.bRequest, le16_to_cpu(crq.wValue),
+ 		  le16_to_cpu(crq.wIndex), le16_to_cpu(crq.wLength));
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.35.3
 
