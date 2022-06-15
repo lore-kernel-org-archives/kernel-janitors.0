@@ -2,63 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1220AC43334
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Jun 2022 08:35:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA220CCA473
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Jun 2022 09:06:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241977AbiFOIfU (ORCPT
+        id S241256AbiFOJGq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 15 Jun 2022 04:35:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38896 "EHLO
+        Wed, 15 Jun 2022 05:06:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239154AbiFOIfT (ORCPT
+        with ESMTP id S235935AbiFOJGo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 15 Jun 2022 04:35:19 -0400
-X-Greylist: delayed 1084 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 15 Jun 2022 01:35:18 PDT
-Received: from mail.forindustry.pl (mail.forindustry.pl [37.187.225.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CB4E11C17
-        for <kernel-janitors@vger.kernel.org>; Wed, 15 Jun 2022 01:35:18 -0700 (PDT)
-Received: by mail.forindustry.pl (Postfix, from userid 1002)
-        id 697ACA8442; Wed, 15 Jun 2022 08:06:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=forindustry.pl;
-        s=mail; t=1655280525;
-        bh=Vw5jk5D1DE7WK/GNf/MxRQNyAyPYcC0rMJLibxKTj58=;
-        h=Date:From:To:Subject:From;
-        b=i2qWh/JHceUbiF8PvpSpoxCJSNx8aJqL0di8kodkK/3KhSyvL+eh6ORYlhNzMxbTk
-         8mRo6TcEJEpRjbgUu9LuBuWHpkq5MHkV1AJRpdj5lrBdAdsQ9VfJ6O6jmFsh2aZYu+
-         C8phuOcFNHUQVvVoavSqrKUnPUVF49wk+f5AYbPLOdecV97eJH5c7m7XwQ/UVXuUMT
-         F29Y8qapyR0i0Tdn3YeCe25ohU7enMIr5P4AFu2/8WjqscWaGWjgfCadcvPJmDDtPq
-         2MQKuQ7ytcZRfrAGCI6nSVL9w7rTpQHtcetP+Vs4+BWWgWAbpufQFioZiKcVA7C3pi
-         DKPtshyyX4o+Q==
-Received: by mail.forindustry.pl for <kernel-janitors@vger.kernel.org>; Wed, 15 Jun 2022 08:05:58 GMT
-Message-ID: <20220615064500-0.1.3u.tozf.0.bsfra8bel6@forindustry.pl>
-Date:   Wed, 15 Jun 2022 08:05:58 GMT
-From:   =?UTF-8?Q? "Arkadiusz_Soko=C5=82owski" ?= 
-        <arkadiusz.sokolowski@forindustry.pl>
-To:     <kernel-janitors@vger.kernel.org>
-Subject: Koszty instalacji fotowoltaicznej
-X-Mailer: mail.forindustry.pl
+        Wed, 15 Jun 2022 05:06:44 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 026A83A739;
+        Wed, 15 Jun 2022 02:06:44 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id v11-20020a17090a4ecb00b001e2c5b837ccso1493358pjl.3;
+        Wed, 15 Jun 2022 02:06:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CXhk1iX0j0cRqg2v0/nsYGsi9fNJeaTXvM2J8kFqgnw=;
+        b=WO8UeaeHx+RhZcSEPzoaksikiXQ9T7WphV+R1vGRRs3nlkWoc5v4wulx/FNc8t3pP8
+         XuTkj6FgHuPaVqR6MoGRmTHN4s/l+VvZoZlBT/Mz+48tkA3cQ4FmhGsaLTSlfakAu9Pt
+         7nAI8YlZEFr6szqo8htQ9ckwMilAH4klEhKLCt414X1vDZgbSylJOEgHbvE75CCrpZuQ
+         KnHhLNHyYf4tWFYIvtdU/IHuTz/DfACAAdBTUqZTHnG+36pEmTprmzjmoW6RCvab0keB
+         R/Zndm5RoqphpRT9MLeykyYaW28D4AZIHqqxg6iv47N9UDo7qyBSBXMMO6hZi29RVqHy
+         t9/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CXhk1iX0j0cRqg2v0/nsYGsi9fNJeaTXvM2J8kFqgnw=;
+        b=l+ExGAU0Q51pb51dP1mxqQyctfduPHEJ87h4jzwPwisEdASOvWAKlCO7NP/Bes50Xl
+         vUOt8f7xgbgI0qnqKEIzI3TKY73WTWnTLedcLKrSxrphNuVgqjHXMnzGCze+eC/hZDfX
+         axnXrUZ5OUnOVYoc6xczl/xvnXjtdywyM1c2oezNRFmzuFJJYHj8EzAPjLegyF19iEPq
+         omSbXLbZJNfXUzzX8qtiNalitY1FAgeF1sFmSuaUZfr1lmPa/eN28jI6ColRq778Pvl3
+         eewe9eXcQsxQhmaiHBiwfJcCaoTEGKlUtNvCoRjuwqzgnniu6BhPDAoFeIdcI8lS+2IJ
+         B41g==
+X-Gm-Message-State: AJIora9VVZtXFGgEWIRjHprpl7w4Nt78htWCoO1keueSzKAY6pU1rfMA
+        7OX7LHueCz+YCSrTXf9DEdE=
+X-Google-Smtp-Source: AGRyM1sU0k3W0fNgy4AXqClk96xssdjDtPCRN9ULmCaXODsIJrzLySWTaMsU/e4EIMNIu1dSxiNjVQ==
+X-Received: by 2002:a17:902:f64c:b0:156:7ceb:b579 with SMTP id m12-20020a170902f64c00b001567cebb579mr8327611plg.73.1655284003404;
+        Wed, 15 Jun 2022 02:06:43 -0700 (PDT)
+Received: from localhost.localdomain ([203.205.141.111])
+        by smtp.gmail.com with ESMTPSA id p10-20020a62b80a000000b0050dc76281aasm9227748pfe.132.2022.06.15.02.06.41
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 15 Jun 2022 02:06:42 -0700 (PDT)
+From:   korantwork@gmail.com
+To:     dave.hansen@linux.intel.com, tglx@linutronix.de
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        trivial@kernel.org, Xinghui Li <korantli@tencent.com>
+Subject: [PATCH] x86,iommu:cleanup misleading comment about SWIOTLB turned off by IOMMU
+Date:   Wed, 15 Jun 2022 17:06:39 +0800
+Message-Id: <20220615090639.34402-1-korantwork@gmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dzie=C5=84 dobry,
+From: Xinghui Li <korantli@tencent.com>
 
-stworzyli=C5=9Bmy specjaln=C4=85 ofert=C4=99 dla firm, na kompleksow=C4=85=
- obs=C5=82ug=C4=99 inwestycji w fotowoltaik=C4=99.
+According to commit 327d5b2fee91 ("iommu/vt-d: Allow 32bit devices to
+uses DMA domain"), SWIOTLB could be enable even IOMMU exist.This comment
+could mislead developer that there is an error enabling SWIOTLB when
+they enable IOMMU.
 
-Specjalizujemy si=C4=99 w zakresie doboru, monta=C5=BCu i serwisie instal=
-acji fotowoltaicznych, dysponujemy najnowocze=C5=9Bniejszymi rozwi=C4=85z=
-ania, kt=C3=B3re zapewni=C4=85 Pa=C5=84stwu oczekiwane rezultaty.
+Signed-off-by: Xinghui Li <korantli@tencent.com>
+---
+ arch/x86/kernel/pci-dma.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Mo=C5=BCemy przygotowa=C4=87 dla Pa=C5=84stwa wst=C4=99pn=C4=85 kalkulacj=
-=C4=99 i przeanalizowa=C4=87 efekty mo=C5=BCliwe do osi=C4=85gni=C4=99cia=
-=2E
+diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
+index 30bbe4abb5d6..c0434abf7e09 100644
+--- a/arch/x86/kernel/pci-dma.c
++++ b/arch/x86/kernel/pci-dma.c
+@@ -193,7 +193,6 @@ static int __init pci_iommu_init(void)
+ 	x86_init.iommu.iommu_init();
+ 
+ #ifdef CONFIG_SWIOTLB
+-	/* An IOMMU turned us off. */
+ 	if (x86_swiotlb_enable) {
+ 		pr_info("PCI-DMA: Using software bounce buffering for IO (SWIOTLB)\n");
+ 		swiotlb_print_info();
+-- 
+2.25.1
 
-Czy s=C4=85 Pa=C5=84stwo otwarci na wst=C4=99pn=C4=85 rozmow=C4=99 w tym =
-temacie?
-
-Pozdrawiam,
-Arkadiusz Soko=C5=82owski
