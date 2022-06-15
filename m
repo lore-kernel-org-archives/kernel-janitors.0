@@ -2,100 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 904D6C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Jun 2022 17:34:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48225C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 15 Jun 2022 19:44:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345181AbiFOReB (ORCPT
+        id S1350287AbiFOTou (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 15 Jun 2022 13:34:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46172 "EHLO
+        Wed, 15 Jun 2022 15:44:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349742AbiFORdG (ORCPT
+        with ESMTP id S244636AbiFOTos (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 15 Jun 2022 13:33:06 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB6DAE9B
-        for <kernel-janitors@vger.kernel.org>; Wed, 15 Jun 2022 10:33:02 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id d18so14096377ljc.4
-        for <kernel-janitors@vger.kernel.org>; Wed, 15 Jun 2022 10:33:02 -0700 (PDT)
+        Wed, 15 Jun 2022 15:44:48 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 874773CFF2;
+        Wed, 15 Jun 2022 12:44:46 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id y19so25255434ejq.6;
+        Wed, 15 Jun 2022 12:44:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Pn84S9DZzXxuly9v146DUPCGGjqgx99QTtCb7s6xuUs=;
-        b=NFIV6fKm7Y9uSgvDnJB+dClVCg5cH8LbPheNuIlMpEInJU/Uqhcp+J8Y9PlgjkfjeP
-         4yCbYyX0WeMNUQjeJbiFilRt7njH25a3ObFEPKG/OgDdzb/9nTQavwgPZQmIYkJq29o9
-         cA1M4US1DoTNT2ePaURbfvZ6M4VAgPKwOORogeFGaYg/GJ4eMicg61E/avW6MFEtI6nh
-         wTpHoSwqUnpSS2b7ZZEibAh5pPSO+J9vQQ9R5/52wkxlxryZRpyJ8Oesl4yWNZqJEI98
-         qjK3TrX/SvMBqUf8vmjf37f0wBem4JOV5+gol04Rqk4RHMaF7Ee2AUS/sgLo2elMWfAL
-         AOCg==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=767OJrCK8HUadii808hVEy3GxcnvixklGPCO6V3YD5M=;
+        b=jFT/VeSc63iFgMPMb2xRcBbUCqXUnEZl1E1MVx1Yd2xAmk3ax4Uy65On/y29eZkoe2
+         EPvPLMkZIFEBJbO/DrmTsslXpsOfH14CWV/xGigqff7/K3B/BKmC5+61MIvtfT+WZpjS
+         RMqvC0cMMqe3uUD7OFBaas6cXGWaO+EzMk6KMymXcRzGsE2Ww5xjysjW4+PrZDjsV9tO
+         FyodoLXWhR4ioUoNG6krEdVinHpphmZO+IZVKrD8eX7Le1gfbzgMifUy58g6drBSSZ2S
+         x61qQcs/hRho1FhiO1lqm+d0Zm+1hEgLk1/ro/pRLJUSHwdfNL+b8dGXulEQO0kLlMeF
+         JTgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Pn84S9DZzXxuly9v146DUPCGGjqgx99QTtCb7s6xuUs=;
-        b=EJuxx0s1p0d7phSbhv/Gm8L1wcOwIdLmyUjFj6Ef9YTBzL2IHvF2jXYo4OYAoAMCRc
-         16CR2tQLiFdlEIqQPt/zxJRqI9mUwuZfojuBY9iaP0uCkN+Jqbb9n2OyfZ0k+fMR4ME0
-         6+re0qEK8IbhAB3XghSnDxMhJ+KaEZjufIsCCyZlsp2tnsCj3j8rTvvj8oW3RM9gS8n2
-         6xCMF5E8MXg1z0rOFtG6OoDIP3Qw/2pZC27mA2lhuE9h1KVyE1KB3dKDH0FwNpKPhf/S
-         TLwM34IvDomkpmqzTPlhBIX4qjsAQv1aIp7OP1l3tlCVq5WtBt7g0F98t2FEHSPgFF/5
-         HaTw==
-X-Gm-Message-State: AJIora+tsVXdnd2xKi7f/K9+EUxTIrNV2Lj+UHbaOTDmgZhyVReHwI/h
-        qbNC2erFd6aeuZXH1+1ICY+F0sGbjDSOhM10KwDAmQ==
-X-Google-Smtp-Source: AGRyM1txepgaizMwVw73ONVyUnmhvFi3eeueNr1BNnbmn6/tCWPAL2c1jjq1+2UsozQMb4jMoAzAccnZApQZiPMWBIg=
-X-Received: by 2002:a05:651c:1a1e:b0:258:f021:8020 with SMTP id
- by30-20020a05651c1a1e00b00258f0218020mr440285ljb.273.1655314381160; Wed, 15
- Jun 2022 10:33:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220608090152.179395-1-weiyongjun1@huawei.com>
-In-Reply-To: <20220608090152.179395-1-weiyongjun1@huawei.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 15 Jun 2022 10:32:23 -0700
-Message-ID: <CAPDyKFqkLCmYLvOfPUMpw=GObGGMaCVEeYYgDDuLWp2wpNgBfg@mail.gmail.com>
-Subject: Re: [PATCH -next] mmc: debugfs: Fix file release memory leak
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Liangliang Lu <quic_luliang@quicinc.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        "Bao D. Nguyen" <quic_nguyenb@quicinc.com>,
-        Sayali Lokhande <quic_sayalil@quicinc.com>,
-        Shaik Sajida Bhanu <quic_c_sbhanu@quicinc.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=767OJrCK8HUadii808hVEy3GxcnvixklGPCO6V3YD5M=;
+        b=JTmCa6eiGmslLdPSH13yTsPqBSFxejnZGs3LDQDP3lvNlwQRvKZD8JoqpjIUKIyJ8J
+         TWjP/KiVMvIg6At1lFJqBaUDf5p20iIOL7X9Dk0j0V/YIuZfLP+fDz8s0WBg1SN//UQ4
+         RoHYxwUkbSEu+1WM/ofEtW+sbYvm9cUspjsYPhQ0k6RwcLWRwFnP8Luo1HEKyu+JhKwD
+         fCelDcnl91ljatE7WsSJqTgjeDIImEp8sa92eONoriTRBXfXFuDvTpJVE/8ZfeIdNhpu
+         sdEo+xgchPj8CcYoj3sCBzkmi660gxESY7boB6n6PjhMomHWorrI5jn86Hfm8MFVhauJ
+         D3zQ==
+X-Gm-Message-State: AJIora/XOIE4tDxeWB68p3NvAKJRl4H7Ug64vRw9SP6rcvKMx6TAX2pf
+        gwk5FlB+xIOWQCNMgF4lmzomSot8muE=
+X-Google-Smtp-Source: AGRyM1sgGqJHUeVw3u3W7rE3sqf5Kp8zpWdfvFHOMgDNOhP8CojDYKciFvgC5O7XXJFBkGcWqg0OLw==
+X-Received: by 2002:a17:907:c71b:b0:718:d0a2:a447 with SMTP id ty27-20020a170907c71b00b00718d0a2a447mr1266043ejc.157.1655322284933;
+        Wed, 15 Jun 2022 12:44:44 -0700 (PDT)
+Received: from felia.fritz.box (200116b826878200b4eabc3163d51ca4.dip.versatel-1u1.de. [2001:16b8:2687:8200:b4ea:bc31:63d5:1ca4])
+        by smtp.gmail.com with ESMTPSA id i24-20020a05640200d800b0042dcac2afc6sm29565edu.72.2022.06.15.12.44.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jun 2022 12:44:44 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Neal Liu <neal_liu@aspeedtech.com>, linux-aspeed@lists.ozlabs.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: Repair file entry in ASPEED USB UDC DRIVER
+Date:   Wed, 15 Jun 2022 21:44:09 +0200
+Message-Id: <20220615194409.11875-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 8 Jun 2022 at 01:43, Wei Yongjun <weiyongjun1@huawei.com> wrote:
->
-> When using single_open() for opening, single_release() should be
-> used instead of seq_release(), otherwise there is a memory leak.
->
-> Fixes: c835a6debf06 ("mmc: debugfs: Add debug fs entry for mmc driver")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Commit 055276c13205 ("usb: gadget: add Aspeed ast2600 udc driver") adds
+the section ASPEED USB UDC DRIVER with a file entry to aspeed,udc.yaml,
+but then, commit 0dde9a46a2cf ("dt-bindings: usb: add documentation for
+aspeed udc") actually adds a device tree binding aspeed,ast2600-udc.yaml.
 
-Applied for next, thanks!
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
-Kind regards
-Uffe
+Repair the reference to the actually added file in ASPEED USB UDC DRIVER.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Neal, please ack.
+Greg, please pick this minor non-urgent clean-up patch in your usb-next tree.
 
-> ---
->  drivers/mmc/core/debugfs.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/mmc/core/debugfs.c b/drivers/mmc/core/debugfs.c
-> index 75e98ec88fb9..fe6808771bc7 100644
-> --- a/drivers/mmc/core/debugfs.c
-> +++ b/drivers/mmc/core/debugfs.c
-> @@ -295,6 +295,7 @@ static const struct file_operations mmc_err_stats_fops = {
->         .open   = mmc_err_stats_open,
->         .read   = seq_read,
->         .write  = mmc_err_stats_write,
-> +       .release = single_release,
->  };
->
->  void mmc_add_host_debugfs(struct mmc_host *host)
->
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d9c3576b082f..8830d1adb23b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3144,7 +3144,7 @@ ASPEED USB UDC DRIVER
+ M:	Neal Liu <neal_liu@aspeedtech.com>
+ L:	linux-aspeed@lists.ozlabs.org (moderated for non-subscribers)
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/usb/aspeed,udc.yaml
++F:	Documentation/devicetree/bindings/usb/aspeed,ast2600-udc.yaml
+ F:	drivers/usb/gadget/udc/aspeed_udc.c
+ 
+ ASUS NOTEBOOKS AND EEEPC ACPI/WMI EXTRAS DRIVERS
+-- 
+2.17.1
+
