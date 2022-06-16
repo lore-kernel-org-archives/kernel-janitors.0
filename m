@@ -2,63 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A3B3CCA47E
-	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Jun 2022 14:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDB2C43334
+	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Jun 2022 15:14:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377403AbiFPOAr (ORCPT
+        id S237737AbiFPPOb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 16 Jun 2022 10:00:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38302 "EHLO
+        Thu, 16 Jun 2022 11:14:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377456AbiFPOAo (ORCPT
+        with ESMTP id S237142AbiFPPOa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 16 Jun 2022 10:00:44 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6815F1117D;
-        Thu, 16 Jun 2022 07:00:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 03E4961D1C;
-        Thu, 16 Jun 2022 14:00:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D194C34114;
-        Thu, 16 Jun 2022 14:00:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655388043;
-        bh=pKgQ77f7AWoe2hHXLYJ53r5cbt+P7h1gE3OFfrvcHWM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UmsqnIA/2brT0/MV1yKq7bDBTYUlh8sqkw6sE5iUqQdZTaF1HEgnnMWDzKeZ4CrXG
-         XNAjlyfCiJdvjvUh+SlWhp6fNARA3rfpw2lbNQJxYSXD1vaUdF5k+xaqxtdAbPnADo
-         5pMdH2ZSt0zXnoRDQmO32Dbihl8g9Fv4RyxZKb8mItBBJ4nxrkOkJIFPkkq0y4zHzf
-         0pBOOF+wcRL95h9UhYzym744AvbpiskjhTI2JsXJ/FKQEOFdgO++tPxYR6tOa0UXvZ
-         iSdmmLPRdZ/efgaNhF6sX9hedcbMkSPLKgZSEQ7ifZrhnwibb2dBcrEW6AxBOAm7Et
-         6GI/jl5uLSXqw==
-Date:   Thu, 16 Jun 2022 07:00:42 -0700
-From:   Vinod Koul <vkoul@kernel.org>
+        Thu, 16 Jun 2022 11:14:30 -0400
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90AA831529;
+        Thu, 16 Jun 2022 08:14:29 -0700 (PDT)
+Received: by mail-il1-f182.google.com with SMTP id r3so1124507ilt.8;
+        Thu, 16 Jun 2022 08:14:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=SHTgK05tyQDk/p4I1IuzEx4HHbym5o2z7SW1D/t5csQ=;
+        b=z3gZ1RHATaH1duxXzfT+dXxzsQgKBh7VkI5ek7PmriQaoPaJsLbWiiorPIvKBu3alp
+         XEzCSr/PevYl72fG74jW3GnsLh4UNsFngwQVC8qH3PN6dIYViO7ESOoSi/nXl/6wVfJq
+         EMh5sR006hQ/wa8Bzfxv+uSdnSwFRL9/CyBYpuk6BjPeDJGjE/LOYPu7EiaJtcPT9E6W
+         cpWw/ovcjFQn6N9gMHlwRnqE3DN5MJn7bGU5vJqN9kqnZOafKXK6Awvv3yLs2uhyGPZn
+         PHstG5KxQaeXvxAaKZIJ+z+v2YlEM/0wFn2YFqh+my/OYFJP905PV7ylrJetQCMmfNI/
+         961A==
+X-Gm-Message-State: AJIora++IW53umMdu8hs/z1yiCNhMOhunE72O635HdDJX9XWr9o/Dtf7
+        HJ78Ivhdtczi+61uonxstg==
+X-Google-Smtp-Source: AGRyM1seksdmYC/rsKfzOtS0UIDbEz+8IFwb6rVjipUAuQlJZLhmJey7HBdaGWD11yJHAU3pJY8grA==
+X-Received: by 2002:a05:6e02:1788:b0:2d1:ed04:88df with SMTP id y8-20020a056e02178800b002d1ed0488dfmr3212770ilu.226.1655392468841;
+        Thu, 16 Jun 2022 08:14:28 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.251])
+        by smtp.gmail.com with ESMTPSA id o14-20020a056e0214ce00b002cc20b48163sm1112539ilk.3.2022.06.16.08.14.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jun 2022 08:14:28 -0700 (PDT)
+Received: (nullmailer pid 3487684 invoked by uid 1000);
+        Thu, 16 Jun 2022 15:14:26 -0000
+Date:   Thu, 16 Jun 2022 09:14:26 -0600
+From:   Rob Herring <robh@kernel.org>
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: add include/dt-bindings/dma to DMA GENERIC
- OFFLOAD ENGINE SUBSYSTEM
-Message-ID: <Yqs3ikEB+ZYWyv1c@matsya>
-References: <20220613110326.18126-1-lukas.bulwahn@gmail.com>
+Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Joe Perches <joe@perches.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        patches@opensource.cirrus.com, Stephen Boyd <sboyd@kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Move lochnagar.h to
+ dt-bindings/clock
+Message-ID: <20220616151426.GA3487574-robh@kernel.org>
+References: <20220613081632.2159-1-lukas.bulwahn@gmail.com>
+ <20220613081632.2159-2-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220613110326.18126-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220613081632.2159-2-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 13-06-22, 13:03, Lukas Bulwahn wrote:
-> Maintainers of the directory Documentation/devicetree/bindings/dma
-> are also the maintainers of the corresponding directory
-> include/dt-bindings/dma.
+On Mon, 13 Jun 2022 10:16:31 +0200, Lukas Bulwahn wrote:
+> Most of the clock-related dt-binding header files are located in
+> include/dt-bindings/clock. It would be good to keep all the similar
+> header files at a single location.
 > 
-> Add the file entry for include/dt-bindings/dma to the appropriate
-> section in MAINTAINERS.
+> This was discovered while investigating the state of ownership of the files
+> in include/dt-bindings/ according to the MAINTAINERS file.
+> 
+> This change here is similar to commit 8e28918a85a0 ("dt-bindings: clock:
+> Move ti-dra7-atl.h to dt-bindings/clock") and commit 35d35aae8177
+> ("dt-bindings: clock: Move at91.h to dt-bindigs/clock").
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/mfd/cirrus,lochnagar.yaml | 2 +-
+>  MAINTAINERS                                                 | 2 +-
+>  drivers/clk/clk-lochnagar.c                                 | 2 +-
+>  include/dt-bindings/{clk => clock}/lochnagar.h              | 0
+>  4 files changed, 3 insertions(+), 3 deletions(-)
+>  rename include/dt-bindings/{clk => clock}/lochnagar.h (100%)
+> 
 
-Applied, thanks
-
--- 
-~Vinod
+Acked-by: Rob Herring <robh@kernel.org>
