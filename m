@@ -2,65 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A38EC43334
-	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Jun 2022 00:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0105DC43334
+	for <kernel-janitors@archiver.kernel.org>; Thu, 16 Jun 2022 00:38:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348354AbiFPATZ (ORCPT
+        id S1347428AbiFPAiO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 15 Jun 2022 20:19:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57186 "EHLO
+        Wed, 15 Jun 2022 20:38:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349246AbiFPATS (ORCPT
+        with ESMTP id S241061AbiFPAiO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 15 Jun 2022 20:19:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B87C5641C;
-        Wed, 15 Jun 2022 17:19:09 -0700 (PDT)
+        Wed, 15 Jun 2022 20:38:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97F3F13D3B;
+        Wed, 15 Jun 2022 17:38:13 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1742461AC7;
-        Thu, 16 Jun 2022 00:19:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F726C3411B;
-        Thu, 16 Jun 2022 00:19:08 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 24D1761B1D;
+        Thu, 16 Jun 2022 00:38:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2240AC3411A;
+        Thu, 16 Jun 2022 00:38:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655338748;
-        bh=UtEwv1cvA9jVYc99dH2c2BoSn4oeWV5L7afw2w1hvyc=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=W82xxpQTO0aDgAUM+Oz/HYqVu85BHy4aCF1bFj5xBC9SQyOUTJVBmKWr/KUMXDPJs
-         8nkLDkvddQbaBWBJHbSP78z8ZUB0uc4GqWT7yxG+ENk90Ou2GtoxMZOaLhkJEPmq1h
-         UQYYUKha6FPI/vOCGAa342hoFEFQaKN2pOwlsorjoXFui+5O4tcV2qVeaBqae3IYZO
-         hVdlSioBDF9Obpop3DOX/Ic2YcPXieb9Y+oS+Lvw9te1OVMghrhJY8qIZxgBPjEcWd
-         XWApCRmTeu2/AJ+SaoNTamNkqJQ8cEUgZcmVuC3l8UT59NbOOiQZVwqvPWwsNnH/3c
-         56+V3/xn98HbA==
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1655339892;
+        bh=cWWAkAmTLB5aFZm061WYGM85uXQwNZYKsHtM7mOFquY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=rMBUm1fNr+ABKQ2bugrj26iqTnyjiYlDnvPEAg8Exu9o2QK00GmZ9PRuHckQaW9lc
+         FBrzASEcqIOr8E2TCBoYaVNrz3XQ37ko6RSSCFB6OpzTHpy0jbpllPXkF0CpsFL/UR
+         wk3qxSknjzXtIvzrktY7ZxCoDna/vtir85WQj1K2FJ6ZJge7ZFNqmyI0+0+dgONZSI
+         oP2GNWtH0Tj7YZKQmFaZPf2oT0FntBBlmWpGZeUXm7s+tM/4QWCH5dVvT2aL9yQ72d
+         Wf8J6YihvVT0yXXqCZ1v73/sgBspqfrPR71iQeV61F0ESY/acw8SdfoyPB1aj+oHaq
+         FVu5V8m0M/M0g==
+Date:   Wed, 15 Jun 2022 17:38:11 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Michal Simek <michal.simek@xilinx.com>, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] net: axienet: Fix spelling mistake "archecture"
+ -> "architecture"
+Message-ID: <20220615173811.52dbd496@kernel.org>
+In-Reply-To: <20220614064647.47598-1-colin.i.king@gmail.com>
+References: <20220614064647.47598-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220613085100.402-1-lukas.bulwahn@gmail.com>
-References: <20220613085100.402-1-lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: add include/dt-bindings/clock to COMMON CLK FRAMEWORK
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-Date:   Wed, 15 Jun 2022 17:19:06 -0700
-User-Agent: alot/0.10
-Message-Id: <20220616001908.6F726C3411B@smtp.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Quoting Lukas Bulwahn (2022-06-13 01:51:00)
-> Maintainers of the directory Documentation/devicetree/bindings/clock
-> are also the maintainers of the corresponding directory in
-> include/dt-bindings/clock.
->=20
-> Add the file entry for include/dt-bindings/clock to the appropriate
-> section in MAINTAINERS.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
+On Tue, 14 Jun 2022 07:46:47 +0100 Colin Ian King wrote:
+> There is a spelling mistake in a dev_err message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Applied to clk-fixes
+Did not apply to net-next, please respin/
