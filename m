@@ -2,36 +2,37 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 568DDC43334
-	for <kernel-janitors@archiver.kernel.org>; Sat, 18 Jun 2022 14:52:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3EC8C43334
+	for <kernel-janitors@archiver.kernel.org>; Sat, 18 Jun 2022 15:26:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234386AbiFROwT (ORCPT
+        id S234641AbiFRP0P (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 18 Jun 2022 10:52:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49650 "EHLO
+        Sat, 18 Jun 2022 11:26:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbiFROwS (ORCPT
+        with ESMTP id S230082AbiFRP0N (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 18 Jun 2022 10:52:18 -0400
+        Sat, 18 Jun 2022 11:26:13 -0400
 Received: from smtp.smtpout.orange.fr (smtp02.smtpout.orange.fr [80.12.242.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C08B17E1D
-        for <kernel-janitors@vger.kernel.org>; Sat, 18 Jun 2022 07:52:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B0F460CA
+        for <kernel-janitors@vger.kernel.org>; Sat, 18 Jun 2022 08:26:12 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id 2Zo6oiD0NYaC72Zo6oysXB; Sat, 18 Jun 2022 16:52:15 +0200
+        id 2aKvolTjCEMbD2aKvouZnU; Sat, 18 Jun 2022 17:26:11 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 18 Jun 2022 16:52:15 +0200
+X-ME-Date: Sat, 18 Jun 2022 17:26:11 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+To:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-input@vger.kernel.org
-Subject: [PATCH] HID: cp2112: Remove some dead code
-Date:   Sat, 18 Jun 2022 16:52:12 +0200
-Message-Id: <6ee2132c415db2fc90e7fa2106db427a914cc566.1655563907.git.christophe.jaillet@wanadoo.fr>
+        virtualization@lists.linux-foundation.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH] drm/bochs: Fix some error handling paths in bochs_pci_probe()
+Date:   Sat, 18 Jun 2022 17:26:08 +0200
+Message-Id: <0e676e4d56ab5b10fcf22860081414445611dfa7.1655565953.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -39,106 +40,62 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 13de9cca514e ("HID: cp2112: add IRQ chip handling") has introduced
-cp2112_allocate_irq() that seems to be unused since 2016.
+The remove() function calls bochs_hw_fini() but this function is not called
+in the error handling of the probe.
 
-Remove it, remove the associated resources and part of the remove()
-function that frees the resources allocated in cp2112_allocate_irq().
+This call releases the resources allocated by bochs_hw_init() used in
+bochs_load().
+
+Update the probe and bochs_load() to call bochs_hw_fini() if an error
+occurs after a successful bochs_hw_init() call.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Compile tested only.
-
-Maybe the issue is completely elsewhere and the probe() should call
-cp2112_allocate_irq() in some cases.
+I've not been able to find a Fixes: tag because of code re-arrangement
+done in 796c3e35ac16.
 ---
- drivers/hid/hid-cp2112.c | 52 ----------------------------------------
- 1 file changed, 52 deletions(-)
+ drivers/gpu/drm/tiny/bochs.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hid/hid-cp2112.c b/drivers/hid/hid-cp2112.c
-index 1e16b0fa310d..67a5ac6be922 100644
---- a/drivers/hid/hid-cp2112.c
-+++ b/drivers/hid/hid-cp2112.c
-@@ -167,7 +167,6 @@ struct cp2112_device {
- 	u8 *in_out_buffer;
- 	struct mutex lock;
+diff --git a/drivers/gpu/drm/tiny/bochs.c b/drivers/gpu/drm/tiny/bochs.c
+index 4f8bf86633df..d7a34ed4be3e 100644
+--- a/drivers/gpu/drm/tiny/bochs.c
++++ b/drivers/gpu/drm/tiny/bochs.c
+@@ -581,13 +581,17 @@ static int bochs_load(struct drm_device *dev)
  
--	struct gpio_desc *desc[8];
- 	bool gpio_poll;
- 	struct delayed_work gpio_poll_worker;
- 	unsigned long irq_mask;
-@@ -1183,51 +1182,6 @@ static int cp2112_gpio_irq_type(struct irq_data *d, unsigned int type)
+ 	ret = drmm_vram_helper_init(dev, bochs->fb_base, bochs->fb_size);
+ 	if (ret)
+-		return ret;
++		goto err_hw_fini;
+ 
+ 	ret = bochs_kms_init(bochs);
+ 	if (ret)
+-		return ret;
++		goto err_hw_fini;
+ 
  	return 0;
++
++err_hw_fini:
++	bochs_hw_fini(dev);
++	return ret;
  }
  
--static int __maybe_unused cp2112_allocate_irq(struct cp2112_device *dev,
--					      int pin)
--{
--	int ret;
--
--	if (dev->desc[pin])
--		return -EINVAL;
--
--	dev->desc[pin] = gpiochip_request_own_desc(&dev->gc, pin,
--						   "HID/I2C:Event",
--						   GPIO_ACTIVE_HIGH,
--						   GPIOD_IN);
--	if (IS_ERR(dev->desc[pin])) {
--		dev_err(dev->gc.parent, "Failed to request GPIO\n");
--		return PTR_ERR(dev->desc[pin]);
--	}
--
--	ret = cp2112_gpio_direction_input(&dev->gc, pin);
--	if (ret < 0) {
--		dev_err(dev->gc.parent, "Failed to set GPIO to input dir\n");
--		goto err_desc;
--	}
--
--	ret = gpiochip_lock_as_irq(&dev->gc, pin);
--	if (ret) {
--		dev_err(dev->gc.parent, "Failed to lock GPIO as interrupt\n");
--		goto err_desc;
--	}
--
--	ret = gpiod_to_irq(dev->desc[pin]);
--	if (ret < 0) {
--		dev_err(dev->gc.parent, "Failed to translate GPIO to IRQ\n");
--		goto err_lock;
--	}
--
--	return ret;
--
--err_lock:
--	gpiochip_unlock_as_irq(&dev->gc, pin);
--err_desc:
--	gpiochip_free_own_desc(dev->desc[pin]);
--	dev->desc[pin] = NULL;
--	return ret;
--}
--
- static int cp2112_probe(struct hid_device *hdev, const struct hid_device_id *id)
- {
- 	struct cp2112_device *dev;
-@@ -1388,7 +1342,6 @@ static int cp2112_probe(struct hid_device *hdev, const struct hid_device_id *id)
- static void cp2112_remove(struct hid_device *hdev)
- {
- 	struct cp2112_device *dev = hid_get_drvdata(hdev);
--	int i;
+ DEFINE_DRM_GEM_FOPS(bochs_fops);
+@@ -662,11 +666,13 @@ static int bochs_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent
  
- 	sysfs_remove_group(&hdev->dev.kobj, &cp2112_attr_group);
- 	i2c_del_adapter(&dev->adap);
-@@ -1398,11 +1351,6 @@ static void cp2112_remove(struct hid_device *hdev)
- 		cancel_delayed_work_sync(&dev->gpio_poll_worker);
- 	}
+ 	ret = drm_dev_register(dev, 0);
+ 	if (ret)
+-		goto err_free_dev;
++		goto err_hw_fini;
  
--	for (i = 0; i < ARRAY_SIZE(dev->desc); i++) {
--		gpiochip_unlock_as_irq(&dev->gc, i);
--		gpiochip_free_own_desc(dev->desc[i]);
--	}
--
- 	gpiochip_remove(&dev->gc);
- 	/* i2c_del_adapter has finished removing all i2c devices from our
- 	 * adapter. Well behaved devices should no longer call our cp2112_xfer
+ 	drm_fbdev_generic_setup(dev, 32);
+ 	return ret;
+ 
++err_hw_fini:
++	bochs_hw_fini(dev);
+ err_free_dev:
+ 	drm_dev_put(dev);
+ 	return ret;
 -- 
 2.34.1
 
