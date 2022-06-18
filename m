@@ -2,100 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3EC8C43334
-	for <kernel-janitors@archiver.kernel.org>; Sat, 18 Jun 2022 15:26:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20DC7C43334
+	for <kernel-janitors@archiver.kernel.org>; Sat, 18 Jun 2022 16:23:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234641AbiFRP0P (ORCPT
+        id S236061AbiFRQXn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 18 Jun 2022 11:26:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39116 "EHLO
+        Sat, 18 Jun 2022 12:23:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230082AbiFRP0N (ORCPT
+        with ESMTP id S231496AbiFRQXm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 18 Jun 2022 11:26:13 -0400
-Received: from smtp.smtpout.orange.fr (smtp02.smtpout.orange.fr [80.12.242.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B0F460CA
-        for <kernel-janitors@vger.kernel.org>; Sat, 18 Jun 2022 08:26:12 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id 2aKvolTjCEMbD2aKvouZnU; Sat, 18 Jun 2022 17:26:11 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 18 Jun 2022 17:26:11 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        virtualization@lists.linux-foundation.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/bochs: Fix some error handling paths in bochs_pci_probe()
-Date:   Sat, 18 Jun 2022 17:26:08 +0200
-Message-Id: <0e676e4d56ab5b10fcf22860081414445611dfa7.1655565953.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sat, 18 Jun 2022 12:23:42 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A5E81055C;
+        Sat, 18 Jun 2022 09:23:41 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0D15260F30;
+        Sat, 18 Jun 2022 16:23:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCC72C3411D;
+        Sat, 18 Jun 2022 16:23:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655569420;
+        bh=5gCzLzShuvKNoQCaZ1sv/yrWTlcGBOdeQ8QzK85FSlc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=NKH5l1D1rPjlFfn5omKPx3cZXmXkEgzJVJ1UwuGfQN0StipvMHELXKllUc3XbLLTL
+         4AmhiiHUqKjHabJYLjHB65goIkW39Isw0oBWWEk+S4LwzhHsYIxVdYExuRU6ApgHyv
+         wOa8dEyMzRixeeJeCzl89cOkwP5paayixD7/jALYqIuwf4QAMv7aq9sIUKBEte1Lp+
+         PWv9dMo/dS/cFouC5BZAtugH/4pSDx7XnJre34MFIYwV8Lb6/DlaljrivmPFTfQPIc
+         /m+4Qo/4L7qvvlpF9zUJ31GU9EXS6WnALqxgtrX60uYaRF5qKVQTGXdkv7Y49G0hz3
+         8NKfQOaCeQS3w==
+Date:   Sat, 18 Jun 2022 17:32:58 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: add include/dt-bindings/iio to IIO
+ SUBSYSTEM AND DRIVERS
+Message-ID: <20220618173258.4be9882b@jic23-huawei>
+In-Reply-To: <20220613115045.24326-1-lukas.bulwahn@gmail.com>
+References: <20220613115045.24326-1-lukas.bulwahn@gmail.com>
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The remove() function calls bochs_hw_fini() but this function is not called
-in the error handling of the probe.
+On Mon, 13 Jun 2022 13:50:45 +0200
+Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 
-This call releases the resources allocated by bochs_hw_init() used in
-bochs_load().
+> Maintainers of the directory Documentation/devicetree/bindings/iio
+> are also the maintainers of the corresponding directory
+> include/dt-bindings/iio.
+> 
+> Add the file entry for include/dt-bindings/iio to the appropriate
+> section in MAINTAINERS.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Update the probe and bochs_load() to call bochs_hw_fini() if an error
-occurs after a successful bochs_hw_init() call.
+Applied,
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-I've not been able to find a Fixes: tag because of code re-arrangement
-done in 796c3e35ac16.
----
- drivers/gpu/drm/tiny/bochs.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+Thanks,
 
-diff --git a/drivers/gpu/drm/tiny/bochs.c b/drivers/gpu/drm/tiny/bochs.c
-index 4f8bf86633df..d7a34ed4be3e 100644
---- a/drivers/gpu/drm/tiny/bochs.c
-+++ b/drivers/gpu/drm/tiny/bochs.c
-@@ -581,13 +581,17 @@ static int bochs_load(struct drm_device *dev)
- 
- 	ret = drmm_vram_helper_init(dev, bochs->fb_base, bochs->fb_size);
- 	if (ret)
--		return ret;
-+		goto err_hw_fini;
- 
- 	ret = bochs_kms_init(bochs);
- 	if (ret)
--		return ret;
-+		goto err_hw_fini;
- 
- 	return 0;
-+
-+err_hw_fini:
-+	bochs_hw_fini(dev);
-+	return ret;
- }
- 
- DEFINE_DRM_GEM_FOPS(bochs_fops);
-@@ -662,11 +666,13 @@ static int bochs_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent
- 
- 	ret = drm_dev_register(dev, 0);
- 	if (ret)
--		goto err_free_dev;
-+		goto err_hw_fini;
- 
- 	drm_fbdev_generic_setup(dev, 32);
- 	return ret;
- 
-+err_hw_fini:
-+	bochs_hw_fini(dev);
- err_free_dev:
- 	drm_dev_put(dev);
- 	return ret;
--- 
-2.34.1
+Jonathan
+
+> ---
+> Jonathan, Lars-Peter, please pick this MAINTAINERS addition to your section.
+> 
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 2b8aec742e6e..503b8042784e 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -9656,6 +9656,7 @@ F:	Documentation/ABI/testing/sysfs-bus-iio*
+>  F:	Documentation/devicetree/bindings/iio/
+>  F:	drivers/iio/
+>  F:	drivers/staging/iio/
+> +F:	include/dt-bindings/iio/
+>  F:	include/linux/iio/
+>  F:	tools/iio/
+>  
 
