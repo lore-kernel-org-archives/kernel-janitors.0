@@ -2,79 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 594A4CCA47A
-	for <kernel-janitors@archiver.kernel.org>; Sun, 19 Jun 2022 18:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01498CCA47A
+	for <kernel-janitors@archiver.kernel.org>; Sun, 19 Jun 2022 19:47:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232786AbiFSSLl (ORCPT
+        id S234955AbiFSTr2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 19 Jun 2022 14:11:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40650 "EHLO
+        Sun, 19 Jun 2022 15:47:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231223AbiFSSLj (ORCPT
+        with ESMTP id S234310AbiFSTr1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 19 Jun 2022 14:11:39 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFB8F630D;
-        Sun, 19 Jun 2022 11:11:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=Pf+/bzAlHO/VrwENCvse1zb98qX5FPX+pGZeFKAOgTA=; b=aAOhZeAxKogvb6thHN54MHf00x
-        IivC5jM+WxnmYZiHxLNPFdc8v6jL7XBgxWidfluMa5Zqzwyg82iHOuTibV4eF36DGQSBlUABEjDw1
-        aI/DKtEpw8prID48k5UY8i4qvkLqtYJ9Eg/QEdZuuuN9v6n5k3auVDdEh4AAtDiHv7LQ2hXmvVVRs
-        KmKHONJM/uf1jLwVAjitySk38spVQuF2xmm43zgRI8zxcWLg06+wu0rkUhgx4YAKLOL+wn5ItFeOu
-        x9G+7B2WYM1sZ0FU9q9ywea1KCzamcNHGhjE69Ohl1qKfrewKEj54uyXf6yyT/vIlcTtBUk4Q4wuj
-        +DdmNQXA==;
-Received: from [2601:1c0:6280:3f0::aa0b]
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1o2zOW-004WgE-PS; Sun, 19 Jun 2022 18:11:33 +0000
-Message-ID: <8a4828ca-5eb4-45a6-bcf1-d9ad7cfcf2af@infradead.org>
-Date:   Sun, 19 Jun 2022 11:11:26 -0700
+        Sun, 19 Jun 2022 15:47:27 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 278FE62C0
+        for <kernel-janitors@vger.kernel.org>; Sun, 19 Jun 2022 12:47:25 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1o30tG-0006Ao-FN; Sun, 19 Jun 2022 21:47:22 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1o30tE-001VO6-1I; Sun, 19 Jun 2022 21:47:21 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1o30tE-00HR5y-SA; Sun, 19 Jun 2022 21:47:20 +0200
+Date:   Sun, 19 Jun 2022 21:47:17 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>, linux-pwm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: add include/dt-bindings/pwm to PWM SUBSYSTEM
+Message-ID: <20220619194717.oey6dfhrcs6h4btv@pengutronix.de>
+References: <20220613123319.22964-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] MIPS: PCI: Remove leading space in info message
-Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-mips@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220619174326.28743-1-colin.i.king@gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20220619174326.28743-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2g4jtthgkkpixmm2"
+Content-Disposition: inline
+In-Reply-To: <20220613123319.22964-1-lukas.bulwahn@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
 
-On 6/19/22 10:43, Colin Ian King wrote:
-> There is an info message with an extraneous leading space. Remove it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  arch/mips/pci/fixup-lemote2f.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/mips/pci/fixup-lemote2f.c b/arch/mips/pci/fixup-lemote2f.c
-> index 632ff2daa338..790d674cd80a 100644
-> --- a/arch/mips/pci/fixup-lemote2f.c
-> +++ b/arch/mips/pci/fixup-lemote2f.c
-> @@ -80,7 +80,7 @@ int pcibios_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
->  		}
->  		return dev->irq;
->  	} else {
-> -		printk(KERN_INFO " strange pci slot number.\n");
-> +		printk(KERN_INFO "strange pci slot number.\n");
+--2g4jtthgkkpixmm2
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Preferably	                          PCI
+On Mon, Jun 13, 2022 at 02:33:19PM +0200, Lukas Bulwahn wrote:
+> Maintainers of the directory Documentation/devicetree/bindings/pwm
+> are also the maintainers of the corresponding directory
+> include/dt-bindings/pwm.
+>=20
+> Add the file entry for include/dt-bindings/pwm to the appropriate
+> section in MAINTAINERS.
+>=20
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
->  		return 0;
->  	}
->  }
+LGTM
 
--- 
-~Randy
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--2g4jtthgkkpixmm2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmKvfUMACgkQwfwUeK3K
+7AkJgAf/T3lLqj8kvK25QYv3SAiiRwrGq1t1sXlWYbCYKqcDP/xDbfw7LW4qwAy4
+0aTtEgcdKez76ZcxkE/qWdcjU8GhpWV7HodBDBDNTwFzHWhZiBg7qIoUz1ah1CnV
+2PQtUFdnValY41EAClM8EL/V9/EqyLMupeKvkILkeksP2PXbHpL5AK9R9pv5W5sQ
+qo5qHWtw42WDj7r/K9DW6idqdJ/USk1SjcRw2+6H2fYvAwaC++INLTOEitUHAMS0
+w8DfH0E5uoVl/tWK+6tTJnreaKIo4dqTWcxkc6Vd0uUgfZKIJh40/nFLEsjUYVZL
+OXFsHGO3JI1sS7trHtvFculX6zDrGQ==
+=dlHo
+-----END PGP SIGNATURE-----
+
+--2g4jtthgkkpixmm2--
