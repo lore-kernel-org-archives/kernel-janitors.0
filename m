@@ -2,80 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D36CC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Jun 2022 05:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59406C43334
+	for <kernel-janitors@archiver.kernel.org>; Mon, 20 Jun 2022 11:55:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238244AbiFTFcB (ORCPT
+        id S241903AbiFTLz4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 20 Jun 2022 01:32:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53436 "EHLO
+        Mon, 20 Jun 2022 07:55:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233962AbiFTFcA (ORCPT
+        with ESMTP id S232170AbiFTLzz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 20 Jun 2022 01:32:00 -0400
-Received: from smtp.smtpout.orange.fr (smtp10.smtpout.orange.fr [80.12.242.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE24F9FC4
-        for <kernel-janitors@vger.kernel.org>; Sun, 19 Jun 2022 22:31:57 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id 3A0woCV0J0JIm3A0xoG8j4; Mon, 20 Jun 2022 07:31:55 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 20 Jun 2022 07:31:55 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Zheyu Ma <zheyuma97@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-media@vger.kernel.org
-Subject: [PATCH v2] media: tw686x: Fix an error handling path in tw686x_probe()
-Date:   Mon, 20 Jun 2022 07:31:53 +0200
-Message-Id: <d72feaa655944420d052e4157bc1d804bd214a66.1655673905.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Mon, 20 Jun 2022 07:55:55 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4337F26DC;
+        Mon, 20 Jun 2022 04:55:54 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id p6-20020a05600c1d8600b0039c630b8d96so6360971wms.1;
+        Mon, 20 Jun 2022 04:55:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Am5xMYkn5ju4qtsoURmMkGdCrSP1fkjrG6XDnZXvhTc=;
+        b=VdYcvoBGG1Q2lTNzlHp6tzbLLJNX5oS+z/1p2Zt0Nj+ejsttBBerQz5mxvfQ6AnDtH
+         IhFQxGn9GJqWCJa+Htk6udZJYlSRIH1MMi6/TxngTM1pKOZuFvvEd8uMwh5+PFZvCR1D
+         aALEDY3xwe52AfcJuLagSaZmWoebbrsxrFEURMs6MFRo7loJsIoq5qCgMXAc3PHf/J5C
+         d2beVXXrWlvP/N6uiUxH32vgPE39fH3UDoHI0CROLQopgg62CHsXp2r4h8W6MrDe0yiu
+         /tb9x7KNtVfnWYIFAe6DkFhluxxCjP4aY4gwolrSSjWern3ECK3jlLlwZSuO2eF8nVHP
+         ykNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Am5xMYkn5ju4qtsoURmMkGdCrSP1fkjrG6XDnZXvhTc=;
+        b=wM0EM/FrXng8oYUnd1oy3fG5VJdY4Cz9fKkoIAXo9DTET+Y5H58IMrJ1FyWxZfxmem
+         qozA608tpCMftJHHRHPHq/CzNhKJjVjYGheso8+1HA+lCIEJf3uxW51pGjAmd5WrRLCv
+         PQdmV3YW3vC34gW9pc0feEk+ktfohkeUtuk7B/le/VVc77WKU4dWdjhR08Uq5nH1oRQv
+         L9NAiKmybqhRT16tY640AZiukVrHmYdhQ/L30K7rEfpcSZJAufkXatuyYF+NK10rsHPO
+         D2LlcV35hiU2lX+IPixKDFSwbzI5yuKg3TLmcO+WsDuL9j+IGVQ7IVvSUKo/9w0FBRfq
+         NxgQ==
+X-Gm-Message-State: AOAM530LZ7aULrm+12O9/+RIvld+xOAr0M5cJkm8hDYiY4DYKmsuVaMy
+        Z5m6TaSoydLk8KgTNTo1o2c=
+X-Google-Smtp-Source: ABdhPJw3A6VGbMslJyKdy4iTFNkB/vUldHGTrHqLm/EmQLv7HlTnujXGficGtspKXibONcod6llshA==
+X-Received: by 2002:a05:600c:1906:b0:39c:7f82:3090 with SMTP id j6-20020a05600c190600b0039c7f823090mr34741869wmq.152.1655726151676;
+        Mon, 20 Jun 2022 04:55:51 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id m15-20020a05600c4f4f00b0039748be12dbsm19816862wmq.47.2022.06.20.04.55.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jun 2022 04:55:51 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-mips@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][V2] MIPS: PCI: Remove leading space in info message, rename pci
+Date:   Mon, 20 Jun 2022 12:55:49 +0100
+Message-Id: <20220620115549.39177-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The commit in Fixes: is incomplete. It has moved some code in the probe but
-not all error handling paths have been updated.
+There is an info message with an extraneous leading space. Remove it.
+Also rename pci to PCI.
 
-Now, if request_irq() fails, we must release some resources.
-
-Fixes: c8946454ed96 ("media: tw686x: Register the irq at the end of probe")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-v2: Fix a typo in the log message
-    Fix a typo in the label s/868/686/
+V2: make pci uppercase
 ---
- drivers/media/pci/tw686x/tw686x-core.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/mips/pci/fixup-lemote2f.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/tw686x/tw686x-core.c b/drivers/media/pci/tw686x/tw686x-core.c
-index 384d38754a4b..af83ebf8eea4 100644
---- a/drivers/media/pci/tw686x/tw686x-core.c
-+++ b/drivers/media/pci/tw686x/tw686x-core.c
-@@ -337,12 +337,15 @@ static int tw686x_probe(struct pci_dev *pci_dev,
- 			  dev->name, dev);
- 	if (err < 0) {
- 		dev_err(&pci_dev->dev, "unable to request interrupt\n");
--		goto iounmap;
-+		goto tw686x_free;
+diff --git a/arch/mips/pci/fixup-lemote2f.c b/arch/mips/pci/fixup-lemote2f.c
+index 632ff2daa338..790d674cd80a 100644
+--- a/arch/mips/pci/fixup-lemote2f.c
++++ b/arch/mips/pci/fixup-lemote2f.c
+@@ -80,7 +80,7 @@ int pcibios_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+ 		}
+ 		return dev->irq;
+ 	} else {
+-		printk(KERN_INFO " strange pci slot number.\n");
++		printk(KERN_INFO "strange PCI slot number.\n");
+ 		return 0;
  	}
- 
- 	pci_set_drvdata(pci_dev, dev);
- 	return 0;
- 
-+tw686x_free:
-+	tw686x_video_free(dev);
-+	tw686x_audio_free(dev);
- iounmap:
- 	pci_iounmap(pci_dev, dev->mmio);
- free_region:
+ }
 -- 
-2.34.1
+2.35.3
 
