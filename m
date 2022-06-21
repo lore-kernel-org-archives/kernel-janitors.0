@@ -2,91 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3562C43334
-	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Jun 2022 09:47:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD3B3CCA480
+	for <kernel-janitors@archiver.kernel.org>; Tue, 21 Jun 2022 10:24:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349541AbiFUJrl (ORCPT
+        id S1348090AbiFUKYC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 21 Jun 2022 05:47:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60172 "EHLO
+        Tue, 21 Jun 2022 06:24:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349266AbiFUJrk (ORCPT
+        with ESMTP id S229497AbiFUKYA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 21 Jun 2022 05:47:40 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F3E827B37;
-        Tue, 21 Jun 2022 02:47:39 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id c130-20020a1c3588000000b0039c6fd897b4so9012134wma.4;
-        Tue, 21 Jun 2022 02:47:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=K3ZCR9iVeq6ZAfU5TRz3a90s4e4BlA0vDBwbjjM5RfY=;
-        b=dkpM687CjGEtZhDZ8rCYb6sL/az4iSWToMOUg+fg5uLqGa7P6ahCru2Owl3HEpvPwX
-         Oi2/89PQEieIpg84jOUXJ6Y5Cpwan5pt5ljmadId3m5MbuBe8aDrPUBRkLJ1DwUs5vWH
-         Hb+UNstb7VY6U0dpCsXJ8mzrWHs2oKbbg8uQq2dSWJgaYjKUILISHN5l90u7VVYrZw7C
-         a2mbYQ1UCK2dxrxyamx/HQWb7akAs/5Zn1dBqO/ju2XEVFLnj1ttNHBVNzIpyuQmuUrS
-         xXmDCobmZKLeuP1mQInRZKtYBvlasJyz9NP6QUtJxDPiAIjJHGxG1fITu5HgBGY7Aj+h
-         2EiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=K3ZCR9iVeq6ZAfU5TRz3a90s4e4BlA0vDBwbjjM5RfY=;
-        b=J3PisXJDyU3cpslpTuV/iLVzz79t1L/2OSOkwPLl5WhYlbKBm18JFGGd78OE8adv6J
-         aGjWz6Lqdl0jUz/YAshZaeA+L27WAqGyXMYyPqU8DDPRQ5ozDv9I7xtYlNgizWVsy7mx
-         MmN9Nn8wIqZbFi1QZ2oCs0fzPaS2yHdcfFuqGguSiX/9WuxC4e8vUbwW8VTSLwMJl4T2
-         I0IjF0GVh4aJJIf6ep8AH8JNZcZcGUOeM0KCP4ezhUvSb8osZYB+O/z2agOOvyPUkDBd
-         K1KV2be+cWR419SiHPdrbj02UsvhfrYmGOl1URKJWacWW8EFetjBHv746ST7c6YBZ8+a
-         OTZQ==
-X-Gm-Message-State: AJIora/h9uSw+iDYUK1zvI3KxYuFmWcpWYBZJ5ayh8wsmVjK6ZBV7zYU
-        FGn1zWuctY6PxFar26L9YLw=
-X-Google-Smtp-Source: AGRyM1sjQlqfYgzhZtmD5KyrTu1rLV5cg8wZwFoDW7+iQXmmb5YxwYnxnBrasq/IQhB/AjTjOu85qQ==
-X-Received: by 2002:a05:600c:3505:b0:39c:93d4:5eec with SMTP id h5-20020a05600c350500b0039c93d45eecmr28551855wmq.179.1655804857770;
-        Tue, 21 Jun 2022 02:47:37 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id r15-20020adff70f000000b002185d79dc7fsm15323739wrp.75.2022.06.21.02.47.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jun 2022 02:47:37 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] iio: adc: qcom-spmi-rradc: Fix spelling mistake "coherrency" -> "coherency"
-Date:   Tue, 21 Jun 2022 10:47:36 +0100
-Message-Id: <20220621094736.90436-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.3
+        Tue, 21 Jun 2022 06:24:00 -0400
+Received: from mail.marcansoft.com (marcansoft.com [IPv6:2a01:298:fe:f::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 225942873D
+        for <kernel-janitors@vger.kernel.org>; Tue, 21 Jun 2022 03:24:00 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: marcan@marcan.st)
+        by mail.marcansoft.com (Postfix) with ESMTPSA id 7E1F641E41;
+        Tue, 21 Jun 2022 10:23:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=marcan.st; s=default;
+        t=1655807036; bh=or2jYBTvHc5DC00QfKzgpoKQ0q2+qSrljcosOMp58s0=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=nNp6hEF5OMRy6s8WXZshEwtAOMi+5ztEyZCTyFxJoNg7qV3PsXc9xDZ4OvF8Etvss
+         I6dWT4ArvPtiLu0qobyMWnvsu49cj8lv1RwqsAeEIdtT6kJCl01z/TKXzYS2CcALak
+         6v/1vAzkzm3nbZgtBYitB2hfRORXC4WSe1fEYSd+LlDC9zMfu0Xnn9EW4wzpnkVRfj
+         UTxiVXYbXMFxdLtxlibCJEB4X79tbEqN3OVm+WVXpyb5rIPqMYHD9EfPesVxgf5GxM
+         PyK/Yso6z62NCxd1Vaycxj2Ch5oGTpd6/NcoesEWjr/2aSDuUGNH4ELq9zRDe/5Ze8
+         cT4Mly7yoVuMQ==
+Message-ID: <6644a632-9f63-b2a7-15fb-92e7c7613e1b@marcan.st>
+Date:   Tue, 21 Jun 2022 19:23:52 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH -next] irqchip/apple-aic: Make symbol 'use_fast_ipi'
+ static
+Content-Language: es-ES
+To:     Wei Yongjun <weiyongjun1@huawei.com>,
+        Sven Peter <sven@svenpeter.dev>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Hulk Robot <hulkci@huawei.com>
+References: <20220618072824.562350-1-weiyongjun1@huawei.com>
+From:   Hector Martin <marcan@marcan.st>
+In-Reply-To: <20220618072824.562350-1-weiyongjun1@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a dev_err message. Fix it.
+On 18/06/2022 16.28, Wei Yongjun wrote:
+> The sparse tool complains as follows:
+> 
+> drivers/irqchip/irq-apple-aic.c:231:1: warning:
+>  symbol 'use_fast_ipi' was not declared. Should it be static?
+> 
+> This symbol is not used outside of irq-apple-aic.c, so marks it static.
+> 
+> Fixes: 2cf68211664a ("irqchip/apple-aic: Add Fast IPI support")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/irqchip/irq-apple-aic.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/irqchip/irq-apple-aic.c b/drivers/irqchip/irq-apple-aic.c
+> index 5ac83185ff47..1c2813ad8bbe 100644
+> --- a/drivers/irqchip/irq-apple-aic.c
+> +++ b/drivers/irqchip/irq-apple-aic.c
+> @@ -228,7 +228,7 @@
+>  #define AIC_TMR_EL02_PHYS	AIC_TMR_GUEST_PHYS
+>  #define AIC_TMR_EL02_VIRT	AIC_TMR_GUEST_VIRT
+>  
+> -DEFINE_STATIC_KEY_TRUE(use_fast_ipi);
+> +static DEFINE_STATIC_KEY_TRUE(use_fast_ipi);
+>  
+>  struct aic_info {
+>  	int version;
+> 
+> 
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/iio/adc/qcom-spmi-rradc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Hector Martin <marcan@marcan.st>
 
-diff --git a/drivers/iio/adc/qcom-spmi-rradc.c b/drivers/iio/adc/qcom-spmi-rradc.c
-index 87f349782108..56a713766954 100644
---- a/drivers/iio/adc/qcom-spmi-rradc.c
-+++ b/drivers/iio/adc/qcom-spmi-rradc.c
-@@ -295,7 +295,7 @@ static int rradc_read(struct rradc_chip *chip, u16 addr, __le16 *buf, int len)
- 	}
- 
- 	if (retry_cnt == RR_ADC_COHERENT_CHECK_RETRY)
--		dev_err(chip->dev, "Retry exceeded for coherrency check\n");
-+		dev_err(chip->dev, "Retry exceeded for coherency check\n");
- 
- 	return ret;
- }
 -- 
-2.35.3
-
+Hector Martin (marcan@marcan.st)
+Public Key: https://mrcn.st/pub
