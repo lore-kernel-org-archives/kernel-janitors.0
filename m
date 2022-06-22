@@ -2,115 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14EB9C43334
-	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Jun 2022 13:34:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF81CCA47D
+	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Jun 2022 14:42:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349856AbiFVNe4 (ORCPT
+        id S1354289AbiFVOm5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 22 Jun 2022 09:34:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56112 "EHLO
+        Wed, 22 Jun 2022 10:42:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348154AbiFVNez (ORCPT
+        with ESMTP id S1358469AbiFVOmz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 22 Jun 2022 09:34:55 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4905B2FE43;
-        Wed, 22 Jun 2022 06:34:54 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id ay16so14928344ejb.6;
-        Wed, 22 Jun 2022 06:34:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OeK/8QdFp7wFBFgH/EC0/Ik73wju5RsZbcSGwadd7AI=;
-        b=Cf8RC6oOqOGUqPeFjJriOh4Ys1+puSMMmg/5DMxhlajdhnHGOQFtRPfVxzmmgoLYIU
-         yz97RrPSOhFvuxElbuuFWgGkrTZpMpSAW2oA5vAurihaLg7awS+zY129QDE8+PIgGBi5
-         v1ndxqg0Y/MDTLG1OkaVVu004y3s46HBOcQZ2SLl+APxoPufF7WwA88Jt/+gkYwT2h4s
-         u0Hr6bCrUoptFNhjIw0N1/c4py3CktWBBjDCXbMFxb1Do/8PcBgQLEiK5FMfbRCLFvjz
-         beuV8Tmh4wKVlZ8KFWR+w2oiSw8EMMbgB0LDVHEhhKNfHzP+f7rHIgeZk8OlLlJaM/o7
-         xn3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OeK/8QdFp7wFBFgH/EC0/Ik73wju5RsZbcSGwadd7AI=;
-        b=HnzMzzThyEBv0dk5cj4XglWpxU8Oqactz5C373OuZ2TkOHoCV/cQ8VWguneRB0R7Bt
-         emis9PCFdtiF4OpEiwYNctUb5yuE7DXV8ED0vmmHJ6Alsg+ZpwwG6xXmWAHmFa4egz5n
-         L/D2gR2VIU4mA11QP9VcX5IWz451Dshz/haIehCvB+Q+/JkoajZkfouStCe4RxUnih0c
-         yNLl0U7FsnW2j4iTkPYGjdMQ8fLpXuOkybKi7d1g8OwWr3kI8yanC0L/9uWFHUPorfYe
-         8VcLeZtkuoah+A3KLT6vw/j/qbj/RaoIFbBuI331oJbXL0Ok7iu06BueeoySMQQ5ydHa
-         9OUQ==
-X-Gm-Message-State: AJIora+zkaoE7nzNjVCKxTbq0tlCzFs5i7852QhW/Tv1gnZjMFedlLjF
-        g8GrK1zSATfGhiwbv/9AEniWIDN8Svk=
-X-Google-Smtp-Source: AGRyM1tVL0H123jCdNzFWhBVQeF6U20wV28IcfaXChbqrFTFqTls17qIHZlfxgqyTYxATv2WJfQLoQ==
-X-Received: by 2002:a17:906:c10:b0:6f4:6c70:b00f with SMTP id s16-20020a1709060c1000b006f46c70b00fmr3180634ejf.660.1655904892723;
-        Wed, 22 Jun 2022 06:34:52 -0700 (PDT)
-Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id eq20-20020a056402299400b0042deea0e961sm14467142edb.67.2022.06.22.06.34.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jun 2022 06:34:51 -0700 (PDT)
-Date:   Wed, 22 Jun 2022 15:34:49 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     kernel-janitors@vger.kernel.org,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pwm: atmel-tcb: fix typo in comment
-Message-ID: <YrMaeYDPaoG/VkXz@orome>
-References: <20220521111145.81697-22-Julia.Lawall@inria.fr>
+        Wed, 22 Jun 2022 10:42:55 -0400
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEB76B9
+        for <kernel-janitors@vger.kernel.org>; Wed, 22 Jun 2022 07:42:51 -0700 (PDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.west.internal (Postfix) with ESMTP id 222BC3200564;
+        Wed, 22 Jun 2022 10:42:48 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Wed, 22 Jun 2022 10:42:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm1; t=1655908967; x=
+        1655995367; bh=cbLMw3N8GUrZQk0a1DLFYHdSrm5fnAWrW3eMjhJA0ZU=; b=N
+        EbPZqWc+/YOtdNgqEU2/o06trWoeX3GH5UgC7MPRYfixA/LA8Gs0svk9mz4bUBoD
+        KeW3nI7S+04K1++hC7rWtmu05Y9Y9kRHLuHC3W9ADAwtkHqd192iJQ6RlGptceeL
+        JZoUph17dGefcacsnHUOfS5SvBVeya1VovWaAzMpISG0CFe+Eaj/hctPdzMNbyWk
+        5SzIIL8LN4FHnHcWs0xobBkihcPSsDi44jgfUQkdJbO7bD1iAh97qjnejhxdIG/D
+        gQDvMkedyjb243hKBH/03g1jvReWUEktlPp8j0BEIfgaM2QiGVvmq/UDu16Av5JR
+        aeD7rUm74SIngtU5tWJlA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1655908967; x=
+        1655995367; bh=cbLMw3N8GUrZQk0a1DLFYHdSrm5fnAWrW3eMjhJA0ZU=; b=V
+        idgRKlHsldbVRGTvbxsLau/6nptiCvfEanjLUmw6fgIovoUzfzNUs3OjC27HouXs
+        TfzkR+wMhlN6CDSqCQjluHTEF+ZKuGMBb5yz+DE3uNG+SCDRTAdifEAvvxqddi+z
+        3CutDezfKFVHD2iLZcL1PuGKQSdbQrJS8Zwr6I0tODq+fJLMuX5wq2Ck1htPmCKH
+        Or9pqclIR3cVkx3wDEaYWhWD+xCpJvIoIhP7VPKKYvc8v2b1c1z27j7OrVzAMfv+
+        T3YBT7Wgq3KPo1vYpqXS8oHDV15B8+2pP+udQgSZTrTyn7oydWFcNTwwjfWcpj9e
+        djB17nmHrWa5FYlSvFbig==
+X-ME-Sender: <xms:ZyqzYjVEN4rc_Zd3rnCx4VRbjz8mzpl6RLRB6kojnmOcYtgDQWKJYw>
+    <xme:ZyqzYrnEoZ_Y4Fung-N9c_4LMx1p_4gXUpkSi8bou5m7raZ2BTgY4X_TlBXd_8XZq
+    IRcR-o42_ueROXCOxM>
+X-ME-Received: <xmr:ZyqzYvZQiw4RwtZBrhdCSN5oyGBkVrGpb1CKm2HSOEJn1yEMarvPF9cUusHW-T3tyEQCEUM0RusLB_qHlTDNMfpt2z6Wb3A3Fk2t9HI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudefhedgjeelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfgggtgfesth
+    ekredtredtjeenucfhrhhomhepofgrgihimhgvucftihhprghrugcuoehmrgigihhmvges
+    tggvrhhnohdrthgvtghhqeenucggtffrrghtthgvrhhnpeeuieeggffhffffieefheduie
+    euvdetgeeufeffvefgtedvffehheekffevudefieenucevlhhushhtvghrufhiiigvpedt
+    necurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:ZyqzYuXouZfCVX8e98z0h4-Ald9twU_WUKOogzj4B70fyuMgq6zbSg>
+    <xmx:ZyqzYtmrxSYPUFmK7uuUx3WtWR38rz99x6yfS7pRrRZgEnA9dFCsPQ>
+    <xmx:ZyqzYre9gTUSDRjQoQrpPl5Q7d-o5tvwjYidh6ANlSg3R9su_DOxTw>
+    <xmx:ZyqzYjXv2UHiX-F7pxuhktgeVef749z5h80CS8lyvhUSjP4HYXTJ9Q>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 22 Jun 2022 10:42:46 -0400 (EDT)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     dan.carpenter@oracle.com, mripard@kernel.org, emma@anholt.net
+Cc:     Maxime Ripard <maxime@cerno.tech>, daniel@ffwll.ch,
+        kernel-janitors@vger.kernel.org, mwen@igalia.com, airlied@linux.ie,
+        dri-devel@lists.freedesktop.org
+Subject: Re: (subset) [PATCH] drm/vc4: fix error code in vc4_check_tex_size()
+Date:   Wed, 22 Jun 2022 16:42:43 +0200
+Message-Id: <165590895783.604863.3284375984657879373.b4-ty@cerno.tech>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <YrMKK89/viQiaiAg@kili>
+References: <YrMKK89/viQiaiAg@kili>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="AC9xZouUaILMuz1s"
-Content-Disposition: inline
-In-Reply-To: <20220521111145.81697-22-Julia.Lawall@inria.fr>
-User-Agent: Mutt/2.2.4 (c3baa83e) (2022-04-30)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Wed, 22 Jun 2022 15:25:15 +0300, Dan Carpenter wrote:
+> The vc4_check_tex_size() function is supposed to return false on error
+> but this error path accidentally returns -ENODEV (which means true).
+> 
+> 
 
---AC9xZouUaILMuz1s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to drm/drm-misc (drm-misc-fixes).
 
-On Sat, May 21, 2022 at 01:10:32PM +0200, Julia Lawall wrote:
-> Spelling mistake (triple letters) in comment.
-> Detected with the help of Coccinelle.
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
->=20
-> ---
->  drivers/pwm/pwm-atmel-tcb.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Applied, thanks.
-
-Thierry
-
---AC9xZouUaILMuz1s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmKzGnkACgkQ3SOs138+
-s6FEdhAAnmBZFckEPHQ96OmAcrUUC/cjkJx3kAY8USDthta28AyTCiPsXXUYvYwh
-yZZJ5/6ooHcsNnT21np02G8MQxkfICDmCrjPXeqRGYDp+VyLyjDUnhahdz88suxO
-O7PpKAETxwFVmx6nT4P6PprNoON1VmdymUOGtCryE9RWrHL6idBqt4J39R/ewmfm
-vcgWXKV/MQ5iC1vzCKDxBi5AbWKaVoJTeOVsE99F2c9HGXu+IqtaxKuXTDJuPskP
-7gCE9N4qAQzuRy2DCrtJFJ++rpXl00uD3jtCBYpAQa6Xf8My9Z4tgsWof9yERcQn
-rBxIoxu0Kfpp0NR9PO6DRmhce8xUsp7Muo3KlfnrW4xzEMW2xQ8nBFRDP4ROsEUz
-RDnv9KGyb7iKirKkvUYBsr1Jb8offt0pVBi5Is65VCv61fZnGLm6iNQ7a3fAGwGj
-/XNFvoZwBzkTxhDLhS/rQasK0QWKu2BO2uO4k3RCmF7bjKxTCe8rhmx7VNVX8LLx
-gO0zoP/WAr9FFktyP/afbCe6GFZXB7q+BhaPpjlbdbMDe2Vuu9RnIUfCD3AFgLDG
-v3YKEHoXNZLiJSBlsmDLV3GHA72HZ9jy46H3B+CdkmgAFvhuoNzXx5siFs1zIV3x
-isEeJOipiHTwmGgWjHPp6AmQ+YPl3WBlbpVDDey3DjdIr4JzyVY=
-=DKem
------END PGP SIGNATURE-----
-
---AC9xZouUaILMuz1s--
+Thanks!
+Maxime
