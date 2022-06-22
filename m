@@ -2,142 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66586C43334
-	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Jun 2022 10:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8933DCCA47D
+	for <kernel-janitors@archiver.kernel.org>; Wed, 22 Jun 2022 11:34:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354615AbiFVKYw (ORCPT
+        id S1357475AbiFVLeH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 22 Jun 2022 06:24:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45636 "EHLO
+        Wed, 22 Jun 2022 07:34:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354697AbiFVKYa (ORCPT
+        with ESMTP id S233017AbiFVLeG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 22 Jun 2022 06:24:30 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 97F503BA57
-        for <kernel-janitors@vger.kernel.org>; Wed, 22 Jun 2022 03:24:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1655893442;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=5Os74LkYyLCMXIIdSPNx/FWApMAFK2xK/N4YdMkWG4k=;
-        b=Ekwq2zAMpTev/fgfIgONwc2iUY6rwl2owLLcq2ZniCdgv1t56IGoDthOQQgUlbEB28WadN
-        ePmFCxf4P/LEtxewU99aIG74dkxtntwT2R17SQn2Ofn4TOsJbJ9F9JO5i/RGP74hTAPTCY
-        O+TUTf1YbNIeLu3yoLmaAO6sCMkQk4g=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-461-Isbzf-mkNjWtSa83z4NcGA-1; Wed, 22 Jun 2022 06:24:01 -0400
-X-MC-Unique: Isbzf-mkNjWtSa83z4NcGA-1
-Received: by mail-ej1-f70.google.com with SMTP id hq41-20020a1709073f2900b00722e5ad076cso2006683ejc.20
-        for <kernel-janitors@vger.kernel.org>; Wed, 22 Jun 2022 03:24:01 -0700 (PDT)
+        Wed, 22 Jun 2022 07:34:06 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1C823B3F9;
+        Wed, 22 Jun 2022 04:34:05 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id x6-20020a1c7c06000000b003972dfca96cso8771890wmc.4;
+        Wed, 22 Jun 2022 04:34:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=haqf5GAD+rBGZmKx8o4rvCABso31NnBIfgcGxz1iBNs=;
+        b=AWN4YMhKAoutEapQGnWeMke/rKPJlCaCezrIfmxIpkWd396JJxnKIZkHh2B59yrVvq
+         utQsmdA1jRNOYDi5Lk/ktS/lUlMWhOg0XaBtqbYbdDQoqxC6GBqxJ6ULmY9NDeEOaMzw
+         Yrcy//rngcpVE9SrSd5e/WCHXkAn7U9ywLMemDtgQr6rBh54xiidrf50UPiOWRuotUY1
+         Vin4oFYDUDvduOFGjmxgDKhUjs/1hRU+VkbRnxY4W7d0kTFq1q3NSPhW2tPKp+6NhPT7
+         Sj5oabOuY+/MKWJiA4DlXgd9MmSG/45VMAC+pEOiUPJVdUIbd1pZ1PNQviBFqj9EeEkz
+         CBKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=5Os74LkYyLCMXIIdSPNx/FWApMAFK2xK/N4YdMkWG4k=;
-        b=u92vZ+TUz4KXTsEMwYK3bwHRbdxMUO6BR15tFsSeNFdo9/sAHP3mPirfo9UbyEdQLz
-         2sNxCyO4cS8XZe5qAdec4aYJDzVoWIhHfgS5QgCmhMCKp+DQXzURMSognbYGUnSo3jHr
-         u33sQoQ3b+TsHMxdLow24AvYcstD4Q9yyC2Fe1jX++Uoz35e92iP2jnuBgweNcm2qKtk
-         LCBL1lbQuYEn12SbHBkMEe7R53+hpDdVD/sPjHXXXBsXFTWgbCvPUnkK9Pl7iflbhscl
-         2TqYlU1I8G27pJRdtGC0a09BOuhspMehG/iYtq1MnBGJmmItTkPeFL1+e7ts93mR5WJ/
-         l1Zw==
-X-Gm-Message-State: AJIora+tGxyfFALdPw+n7C2GJcuS11f0DXxXWO0pB0qIZrEA16I0BNkj
-        lqE7HvMXZrfGaJYcrGG19y+NNYaSNiBiiKsX2bRokJSyeZwRl2sc+2hjN3RCQmwrusLq3pT3kZ3
-        HvNr9AhjHrTX90CIq8VF925Rtm9M2
-X-Received: by 2002:a05:6402:2806:b0:431:87c8:b45e with SMTP id h6-20020a056402280600b0043187c8b45emr3371515ede.130.1655893440266;
-        Wed, 22 Jun 2022 03:24:00 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1vm3DnB+9uZytnD7Hup1u9qPvqVbizMuaBQt6JqOBBJut6qc5nipsyUROtz0To51miRbdVkjg==
-X-Received: by 2002:a05:6402:2806:b0:431:87c8:b45e with SMTP id h6-20020a056402280600b0043187c8b45emr3371500ede.130.1655893440093;
-        Wed, 22 Jun 2022 03:24:00 -0700 (PDT)
-Received: from [192.168.43.127] ([109.37.135.195])
-        by smtp.gmail.com with ESMTPSA id f23-20020a170906825700b0070ad296e4b0sm8935604ejx.186.2022.06.22.03.23.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Jun 2022 03:23:59 -0700 (PDT)
-Message-ID: <8a325309-a64c-d5c6-0164-9d626ff62e41@redhat.com>
-Date:   Wed, 22 Jun 2022 12:23:58 +0200
+        bh=haqf5GAD+rBGZmKx8o4rvCABso31NnBIfgcGxz1iBNs=;
+        b=H6Xp/PHe6SYta0Pa36fFREnkoIr1HGeRoggAqdn0cuYJMYX+7BDeCNwAf4GT1wUpBw
+         OrgiBnbs8CNDSZ6nyiHp1I7AG8Z/FaoKDKKaVkVHG/0kqjP+XWMfniGFL1lBU0Wq79yO
+         w7K7zKdOn649rEV2Xc+UMZ/5b6LQ1aEz095NbZcaqKT9zANjKLkowq7S/h1wKzlNb6/b
+         PKBu+TVGuJ+/PIDtHob79wm+hDNvTU/ftFq4HvOySAtkgU6dVpaQ3qvnEZ7iIUo5N6P3
+         OWjUv6J38BrB9dnGsc/urTE3gdzj72vEQXc5bi0aJsfbSlcdrxbUwpceXeqtJTeKgTHt
+         yNcw==
+X-Gm-Message-State: AOAM5327vSKnKaCbo3wLmtz8IIIuGcvS6s1biUmghAn8io9oTjXS9jMB
+        jiXFJ6dvsIpfCIutoJ7zPDs=
+X-Google-Smtp-Source: ABdhPJwi79hEQgvXjW2FpgFPTTrDBh6WNF6EFxEzmfTuRlQu3v4bPDHcV5K4z9/nw5GoUjrI8CY/Rg==
+X-Received: by 2002:a1c:5444:0:b0:39c:3761:ac37 with SMTP id p4-20020a1c5444000000b0039c3761ac37mr47051687wmi.144.1655897644234;
+        Wed, 22 Jun 2022 04:34:04 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id l12-20020a056000022c00b0021a3daef45esm20279297wrz.63.2022.06.22.04.34.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jun 2022 04:34:03 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Amitkumar Karwar <amitkarwar@gmail.com>,
+        Siva Rebbagondla <siva8118@gmail.com>,
+        Kalle Valo <kvalo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] wifi: mac80211: remove redundant pointer bss
+Date:   Wed, 22 Jun 2022 12:34:02 +0100
+Message-Id: <20220622113402.16969-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH] platform/mellanox: nvsw-sn2201: fix error code in
- nvsw_sn2201_create_static_devices()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Michael Shych <michaelsh@nvidia.com>
-Cc:     Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        platform-driver-x86@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <YqmUGwmPK7cPolk/@kili>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <YqmUGwmPK7cPolk/@kili>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
+The pointer bss is being assigned a value that is never read, the
+pointer is redundant and can be removed.
 
-On 6/15/22 10:11, Dan Carpenter wrote:
-> This should return PTR_ERR() instead of IS_ERR().  Also "dev->client"
-> has been set to NULL by this point so it returns 0/success so preserve
-> the error code earlier.
-> 
-> Fixes: 662f24826f95 ("platform/mellanox: Add support for new SN2201 system")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cleans up clang scan-build warning:
+drivers/net/wireless/rsi/rsi_91x_hal.c:362:2: warning: Value stored
+to 'bss' is never read [deadcode.DeadStores]
 
-Thank you for your patch, I've applied this patch to my review-hans 
-branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/wireless/rsi/rsi_91x_hal.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Note it will show up in my review-hans branch once I've pushed my
-local branch there, which might take a while.
-
-Once I've run some tests on this branch the patches there will be
-added to the platform-drivers-x86/for-next branch and eventually
-will be included in the pdx86 pull-request to Linus for the next
-merge-window.
-
-Regards,
-
-Hans
-
-
-> ---
->  drivers/platform/mellanox/nvsw-sn2201.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/mellanox/nvsw-sn2201.c b/drivers/platform/mellanox/nvsw-sn2201.c
-> index 0bcdc7c75007..217e22e81c1a 100644
-> --- a/drivers/platform/mellanox/nvsw-sn2201.c
-> +++ b/drivers/platform/mellanox/nvsw-sn2201.c
-> @@ -890,6 +890,7 @@ nvsw_sn2201_create_static_devices(struct nvsw_sn2201 *nvsw_sn2201,
->  				  int size)
->  {
->  	struct mlxreg_hotplug_device *dev = devs;
-> +	int ret;
->  	int i;
->  
->  	/* Create I2C static devices. */
-> @@ -901,6 +902,7 @@ nvsw_sn2201_create_static_devices(struct nvsw_sn2201 *nvsw_sn2201,
->  				dev->nr, dev->brdinfo->addr);
->  
->  			dev->adapter = NULL;
-> +			ret = PTR_ERR(dev->client);
->  			goto fail_create_static_devices;
->  		}
->  	}
-> @@ -914,7 +916,7 @@ nvsw_sn2201_create_static_devices(struct nvsw_sn2201 *nvsw_sn2201,
->  		dev->client = NULL;
->  		dev->adapter = NULL;
->  	}
-> -	return IS_ERR(dev->client);
-> +	return ret;
->  }
->  
->  static void nvsw_sn2201_destroy_static_devices(struct nvsw_sn2201 *nvsw_sn2201,
+diff --git a/drivers/net/wireless/rsi/rsi_91x_hal.c b/drivers/net/wireless/rsi/rsi_91x_hal.c
+index 40f9a31f9ca7..c61f83a7333b 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_hal.c
++++ b/drivers/net/wireless/rsi/rsi_91x_hal.c
+@@ -334,7 +334,6 @@ int rsi_send_mgmt_pkt(struct rsi_common *common,
+ 		      struct sk_buff *skb)
+ {
+ 	struct rsi_hw *adapter = common->priv;
+-	struct ieee80211_bss_conf *bss;
+ 	struct ieee80211_hdr *wh;
+ 	struct ieee80211_tx_info *info;
+ 	struct skb_info *tx_params;
+@@ -359,7 +358,6 @@ int rsi_send_mgmt_pkt(struct rsi_common *common,
+ 		return status;
+ 	}
+ 
+-	bss = &info->control.vif->bss_conf;
+ 	wh = (struct ieee80211_hdr *)&skb->data[header_size];
+ 	mgmt_desc = (struct rsi_mgmt_desc *)skb->data;
+ 	xtend_desc = (struct rsi_xtended_desc *)&skb->data[FRAME_DESC_SZ];
+-- 
+2.35.3
 
