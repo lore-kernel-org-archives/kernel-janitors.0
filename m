@@ -2,104 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5570CCCA47C
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Jun 2022 14:30:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4BBC43334
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Jun 2022 15:31:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230503AbiFWOab (ORCPT
+        id S231218AbiFWPbM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Jun 2022 10:30:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58654 "EHLO
+        Thu, 23 Jun 2022 11:31:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230295AbiFWOaa (ORCPT
+        with ESMTP id S230329AbiFWPbL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Jun 2022 10:30:30 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24DA43B2B2
-        for <kernel-janitors@vger.kernel.org>; Thu, 23 Jun 2022 07:30:29 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id e2so17884307edv.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 23 Jun 2022 07:30:29 -0700 (PDT)
+        Thu, 23 Jun 2022 11:31:11 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4AA334B90
+        for <kernel-janitors@vger.kernel.org>; Thu, 23 Jun 2022 08:31:10 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id q18so7034730pld.13
+        for <kernel-janitors@vger.kernel.org>; Thu, 23 Jun 2022 08:31:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3FqgQSdckr3OdNUbYCmdpzsVtzVQYCqYvXjlPe3jt2g=;
-        b=K40v64solAooVxeHtoh68eeXXDCpTf4IVCfUdTc3gLmgaD1d+8LG8dd1DcKhsE3U2+
-         eltq4RSYfUwYXY78KixRbCIcWlyWKXaPhMLzTepOoxMn1DRa8Da5neE4xN9GoPCexboz
-         1nttK+6LN6M4/lVROsOqhNBQ8Je966WVdoIrTPMBmIZHMbcnpxL4NkvEGnONDLle1C3W
-         lhlP4J4k3A6YhL6zWlTbhlhKo1VVHwpYs11JEh0XzSIlHO7iCh0PVZVgvBnua2yMpQrE
-         l0E2Yc95YNqIyvjYN4fU3WBHC/X8EqooSxI8hVY1NxOunjm1wSvm4Ra7rKtfbHOBH9lX
-         rSyw==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=nF21AMsePORR8NSmiZC16+IO4b1x+xGFURv4Jfcr2KU=;
+        b=MDikssTDJBivrf7MFu7wpENpKEqs1bTYneb/uSPr6/bVznvDeaadv73nvz7RNbRzsw
+         YNBf3+zs2d1SLbGCrxa9joc6OLHsp27hbQJo2dknl4ktkrI8E8dxtjB57TmwmZsJzo/g
+         vc37yYKahKwVwA/TB+2doCjr/aDr7/3UZH9Ak=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3FqgQSdckr3OdNUbYCmdpzsVtzVQYCqYvXjlPe3jt2g=;
-        b=tVnXTk4AXK23BJQE1WbaEp1bjgVb1AYCxya6R2L8DjblyKaRLDIUiOEoed8OXGrsem
-         POUM/Zqsj8+r1p21KTGNLIAM37WIB/Yzn2fqg6sEhJTnjIz0BxMTqDGKTOIf1wMTaSX2
-         4+oYntDz6Vqht5a0PVjLy31kf3aunlPR7IvN6EWWEvCLSp9mHNw1iBTv41bTOuCu6I1i
-         GAMSMPxOxEbLmI4KS/XkuGeSvweE2kM5xhOEPB1AcXd4Pjcy7K2qWc0oBUuCqo9rFlR4
-         xjUTyYyLOcuTSS18KKqzTTuFkZ8ZLw6WQAvtAU+ydtIuJrE20erySvCAJWnSLTtWLdyU
-         hFwQ==
-X-Gm-Message-State: AJIora9+Bkx/63ET9IY5VVkigxDLXOtVRSxh/Pn58sXdijBhIqVviEbp
-        Z+UmG2bhooMZFG56gNdzwqmwFBnCG4KDeDJFY/YQ/j6DB8+wtQ==
-X-Google-Smtp-Source: AGRyM1s1vCdehuZoBSyt1SZuQzboeTxZY5Ghl6aMY2Vf7vd7oVHFM4kF0yullI0Wj3aV1Bhz4PleNU/GBe4E+Ul7efc=
-X-Received: by 2002:aa7:cb94:0:b0:435:9054:db5 with SMTP id
- r20-20020aa7cb94000000b0043590540db5mr11079105edt.29.1655994627724; Thu, 23
- Jun 2022 07:30:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <YrQkfBuIHArxHSNr@kili>
-In-Reply-To: <YrQkfBuIHArxHSNr@kili>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 23 Jun 2022 16:30:17 +0200
-Message-ID: <CAMRc=Me95xJspeUkdmKNowWY+Z-r02zDc-CUuQ8xF5taiTxUgQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: winbond: Fix error code in winbond_gpio_get()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=nF21AMsePORR8NSmiZC16+IO4b1x+xGFURv4Jfcr2KU=;
+        b=WuUZYR5Fl9H/RiIJ22GVLi8qHdvg7pewC18r/hgAx+txh4MalxTGpLlaQ0AhhTPxKt
+         MnE+hA9r3EWS+gbk87I5Bt/LwkCR8tQwh6Mkdb8mKeMuiJPGI3Y33IZd9C/2WOxClIcC
+         U51Isw4jvJ5wbvFYjaTt5MfEbNdQYQKmsnvv5iAZI+XCKe7lBY3WPPrbHgNu1xiMlqpG
+         KFW1IyKJCdWxOQqtWIESovR45L5y++72SK5hVIiZ7mrajmfBD0WX2f4wX0xE8upbl6sB
+         sunjgJFOXLdZJBbRZKs0/7HpriaRzCUltQCBjtQ91AYrirDoMpvXZMG1jTaNzFTWGc6Z
+         wnyQ==
+X-Gm-Message-State: AJIora9GNVuEGf4qgrbshJeaiTNpGx8bRdfpKJj+oRlIpkY+HwPFtH+u
+        Qocw+fXkDS2yWavvTTWLSCaDIg==
+X-Google-Smtp-Source: AGRyM1vveulzuiFHa0EJS+9PSYlmSmxndXMHB2Wzv5EZgFG7b48WcVfPSKdw4vEPYTcOozUThiNu8w==
+X-Received: by 2002:a17:90a:1c09:b0:1ea:91d4:5a7f with SMTP id s9-20020a17090a1c0900b001ea91d45a7fmr4610861pjs.232.1655998270378;
+        Thu, 23 Jun 2022 08:31:10 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id x67-20020a627c46000000b0052549cc3416sm3917955pfc.175.2022.06.23.08.31.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jun 2022 08:31:10 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     dan.carpenter@oracle.com, gmpy.liaowx@gmail.com
+Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        anton@enomsg.org, ccross@android.com,
+        Tony Luck <tony.luck@intel.com>,
         kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] pstore/zone: cleanup "rcnt" type
+Date:   Thu, 23 Jun 2022 08:31:05 -0700
+Message-Id: <165599826298.1932382.1524111439094870680.b4-ty@chromium.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <YrRtPSFHDVJzV6d+@kili>
+References: <YrRtPSFHDVJzV6d+@kili>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jun 23, 2022 at 10:30 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> This error path returns 1, but it should instead propagate the negative
-> error code from winbond_sio_enter().
->
-> Fixes: a0d65009411c ("gpio: winbond: Add driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/gpio/gpio-winbond.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-winbond.c b/drivers/gpio/gpio-winbond.c
-> index 7f8f5b02e31d..4b61d975cc0e 100644
-> --- a/drivers/gpio/gpio-winbond.c
-> +++ b/drivers/gpio/gpio-winbond.c
-> @@ -385,12 +385,13 @@ static int winbond_gpio_get(struct gpio_chip *gc, unsigned int offset)
->         unsigned long *base = gpiochip_get_data(gc);
->         const struct winbond_gpio_info *info;
->         bool val;
-> +       int ret;
->
->         winbond_gpio_get_info(&offset, &info);
->
-> -       val = winbond_sio_enter(*base);
-> -       if (val)
-> -               return val;
-> +       ret = winbond_sio_enter(*base);
-> +       if (ret)
-> +               return ret;
->
->         winbond_sio_select_logical(*base, info->dev);
->
-> --
-> 2.35.1
->
+On Thu, 23 Jun 2022 16:40:13 +0300, Dan Carpenter wrote:
+> The info->read() function returns ssize_t.  That means that info->read()
+> either returns either negative error codes or a positive number
+> representing the bytes read.
+> 
+> The "rcnt" variable should be declared as ssize_t as well.  Most places
+> do this correctly but psz_kmsg_recover_meta() needed to be fixed.
+> 
+> [...]
 
-Applied, thanks!
+Applied to for-next/pstore, thanks!
 
-Bart
+[1/1] pstore/zone: cleanup "rcnt" type
+      https://git.kernel.org/kees/c/2c09d1443b9b
+
+-- 
+Kees Cook
+
