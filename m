@@ -2,108 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A00DCCCA47F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Jun 2022 16:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F5B2C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Jun 2022 17:10:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232570AbiFWQ6o (ORCPT
+        id S231424AbiFWRJ5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Jun 2022 12:58:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58138 "EHLO
+        Thu, 23 Jun 2022 13:09:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233014AbiFWQ5T (ORCPT
+        with ESMTP id S234105AbiFWRIq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Jun 2022 12:57:19 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F358E3EA9B;
-        Thu, 23 Jun 2022 09:53:10 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id ge10so10810521ejb.7;
-        Thu, 23 Jun 2022 09:53:10 -0700 (PDT)
+        Thu, 23 Jun 2022 13:08:46 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33B5C55353;
+        Thu, 23 Jun 2022 09:57:24 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id o16-20020a05600c379000b003a02eaea815so1367183wmr.0;
+        Thu, 23 Jun 2022 09:57:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dB/YUbV33gsASlwt43eLvtTGgD7GHgvcm51jFsSmolg=;
-        b=OLTlxLjQoiKVo4r81x0/z/I7oucCUFZni1cb0k5NlrcBRvxKWxjqv9rTthbcj93dOg
-         eba4VzI94/Fy0biC52sVeAeRaY6XNZPGlAdBXPVC30RP2SqMUFR7huF1rGoq5ERK28u1
-         jED+gu01s/HrlMFrbgoZP+gPNRwmpU0+V9d50RqLdhncoLtz32NP7+g6+hia3lTtQBNJ
-         ZajluoYSjGZb3B9f8pBh0/p6kMnzNn0rRW+/AD9yd/+a7qNEtYNotgXb5Sh3w5Grj2gm
-         UlH5g/aqt5DEJkVEyN4nT5zfOxm53uWJT9qJ5JETF+P9Zbvq+j7gfgd3NnEDicxXH9fI
-         9brA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=e3U0JvexK71NTNZkmX0NIsRWRyI4BPMxyMDkrutu/XI=;
+        b=PlGKEfs2QZJui/v+gDPXf87JqHxXFHLJ1YzIZsM5GVST3Fym+W4HJLW7lSGfKRzNh5
+         s5LxljZzyQCDtTVTk5WQ5SMXJbkPzJ+408oUftaJ2zskfP0ilQIezQ/hEnRF0LYvTHD8
+         prQo+p6LaPhWsJcAW8r1jj1NqF/s2A3J2gprJJTPFTF/jqmWeRbeGOqKWrSQYebwEXnH
+         FLTz5x5QgqmEX/1UREMMBGR/f6EceUGn8C4Lo2A8l7npCYnQdWoXkrA+dXChs+OexcpF
+         BdYqJn7CQMtZT+/pBJuPIUUz6Gttfu/EmBU96WixCQVByRUTdUPGDnaVNBFXaUjZrnVx
+         br+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dB/YUbV33gsASlwt43eLvtTGgD7GHgvcm51jFsSmolg=;
-        b=6lF6uF+lWzPrNlgWCTIjhuK5Qudghhlg8j4M8kykicg/ifoCc1KsQbzTzZxhHXBE82
-         tcwfF3mapzmgISHO7zG+hpffcDvlsOccoK+d1+No3Pa7m8av9/KJZ3IWSedVRkz3zoUG
-         GByDSfTRF7HRaasMPJNx5xAz5uLR+pCZKsDU6fRo2bTRotDHXLWVmZv25Svz/FsJm0aq
-         UmglO8bK+bV06AeGcpOE3kDecTIkrwxQQv1coMr0jGVCojBwxZeBcN3SVb2TFi/F47iS
-         GBcQjecJVNv4jbFObL8+9mezu5XXEPeYyjRxuykMLBCnNM0nW56vBjpdRb3FyAwHsAl0
-         xLaA==
-X-Gm-Message-State: AJIora9Kd+VrJ3DRN8SfI6l6E3D77Pv1bu/4lBuJ3fPmXA7hhpPBi/RA
-        AHCyUePBWMQ0TQJBa8BiKB95DmErI56W3wi+8xw=
-X-Google-Smtp-Source: AGRyM1v7UCi/dybJ7a8Hu2QcGEODPFGhdz3he6dGZwqW7M53CtDeoODvjoD1bZCwhJ+OPsCkP81b3cYZrPNQEbnMpX4=
-X-Received: by 2002:a17:906:5253:b0:711:ee52:764e with SMTP id
- y19-20020a170906525300b00711ee52764emr8998144ejm.171.1656003189377; Thu, 23
- Jun 2022 09:53:09 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=e3U0JvexK71NTNZkmX0NIsRWRyI4BPMxyMDkrutu/XI=;
+        b=Bnlf1B/lnUngkZjN0TKzLOPOsysTOrHnoXEOWyuHpwpUruY6wV0DTqn7cSIGDUpj64
+         kxgzN7UswXEkSZaiLotj4Y6z+Bh0oZOvWtlDt+Zltwbjxa/OhLQf+4kLsaiVZmcV6x5w
+         9PFBPTiZ2QYju98kbrOLPtyMdsqd5oIoKhijuJ8dOnXoOMkEU4oVGgEtwz5PAUAmNDLj
+         rBTp4qGo6zKhQHXp/tlCtXxcbQ3kJUAgXp82Bm9eF78Ki5AYKbKPEfZbdFheTjaprrrF
+         3lyjh3WQweD6130AnHq4mXKr3h5osF1Rr3W0zyvKOFBnyY224bZ97zy253VdlPsk85ok
+         9ppA==
+X-Gm-Message-State: AJIora/XMJulfNMCPkxMmtcKMP1wxFNojOzfTaKKAyTQVxdkIul9K4Dg
+        GYSciN78FHACVHBEl2kbjyQ=
+X-Google-Smtp-Source: AGRyM1vOnY+XPrdkmfg3FiuwdduapQjCO/zQGdKRk02eOow6Z1ktaEfsJfb1f/ZWqebxM5JEn8htBw==
+X-Received: by 2002:a1c:f213:0:b0:39b:ad32:5e51 with SMTP id s19-20020a1cf213000000b0039bad325e51mr5107372wmc.72.1656003430485;
+        Thu, 23 Jun 2022 09:57:10 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id m25-20020a7bca59000000b0039746638d6esm3602006wml.33.2022.06.23.09.57.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jun 2022 09:57:09 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jon Mason <jdmason@kudzu.us>, Frank Li <Frank.Li@nxp.com>,
+        linux-pci@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] NTB: EPF: set pointer addr to null using NULL rather than 0
+Date:   Thu, 23 Jun 2022 17:57:09 +0100
+Message-Id: <20220623165709.77229-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-References: <20220623080946.19116-1-colin.i.king@gmail.com> <d3218391-de1f-d64d-bda7-0042473e9833@amd.com>
-In-Reply-To: <d3218391-de1f-d64d-bda7-0042473e9833@amd.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Thu, 23 Jun 2022 12:52:57 -0400
-Message-ID: <CADnq5_MiZvJdR43Ook1F359CtfSUq+aBWvOOfyv+1EKLGwK9ug@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amdgpu/display: Fix spelling mistake
- "supporing" -> "supporting"
-To:     Harry Wentland <harry.wentland@amd.com>
-Cc:     Colin Ian King <colin.i.king@gmail.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        xinhui pan <Xinhui.Pan@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
+The pointer addr is being set to null using 0. Use NULL instead.
 
-Alex
+Cleans up sparse warning:
+warning: Using plain integer as NULL pointer
 
-On Thu, Jun 23, 2022 at 10:20 AM Harry Wentland <harry.wentland@amd.com> wrote:
->
->
->
-> On 2022-06-23 04:09, Colin Ian King wrote:
-> > There is a spelling mistake in a dml_print message. Fix it.
-> >
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
->
-> Reviewed-by: Harry Wentland <harry.wentland@amd.com>
->
-> Harry
->
-> > ---
-> >  drivers/gpu/drm/amd/display/dc/dml/dcn32/display_mode_vba_32.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn32/display_mode_vba_32.c b/drivers/gpu/drm/amd/display/dc/dml/dcn32/display_mode_vba_32.c
-> > index 7f144adb1e36..7d536c2f4477 100644
-> > --- a/drivers/gpu/drm/amd/display/dc/dml/dcn32/display_mode_vba_32.c
-> > +++ b/drivers/gpu/drm/amd/display/dc/dml/dcn32/display_mode_vba_32.c
-> > @@ -1098,7 +1098,7 @@ static void DISPCLKDPPCLKDCFCLKDeepSleepPrefetchParametersWatermarksAndPerforman
-> >                               if (mode_lib->vba.ImmediateFlipRequirement[k] != dm_immediate_flip_not_required && v->ImmediateFlipSupportedForPipe[k] == false) {
-> >                                       v->ImmediateFlipSupported = false;
-> >  #ifdef __DML_VBA_DEBUG__
-> > -                                     dml_print("DML::%s: Pipe %0d not supporing iflip\n", __func__, k);
-> > +                                     dml_print("DML::%s: Pipe %0d not supporting iflip\n", __func__, k);
-> >  #endif
-> >                               }
-> >                       }
->
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/pci/endpoint/functions/pci-epf-vntb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/endpoint/functions/pci-epf-vntb.c
+index ebf7e243eefa..fb31c868af6a 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
++++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
+@@ -605,7 +605,7 @@ static int epf_ntb_mw_bar_init(struct epf_ntb *ntb)
+ 
+ 		ntb->epf->bar[barno].barno = barno;
+ 		ntb->epf->bar[barno].size = size;
+-		ntb->epf->bar[barno].addr = 0;
++		ntb->epf->bar[barno].addr = NULL;
+ 		ntb->epf->bar[barno].phys_addr = 0;
+ 		ntb->epf->bar[barno].flags |= upper_32_bits(size) ?
+ 				PCI_BASE_ADDRESS_MEM_TYPE_64 :
+-- 
+2.35.3
+
