@@ -2,102 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E420C43334
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Jun 2022 09:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7233BC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Jun 2022 10:45:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231374AbiFWJ4J (ORCPT
+        id S230125AbiFWKpg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Jun 2022 05:56:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57582 "EHLO
+        Thu, 23 Jun 2022 06:45:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231365AbiFWJ4G (ORCPT
+        with ESMTP id S229970AbiFWKpf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Jun 2022 05:56:06 -0400
+        Thu, 23 Jun 2022 06:45:35 -0400
 Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F78C4615F;
-        Thu, 23 Jun 2022 02:56:05 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id s1so27142426wra.9;
-        Thu, 23 Jun 2022 02:56:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E45034B1C9;
+        Thu, 23 Jun 2022 03:45:33 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id e10so440706wra.11;
+        Thu, 23 Jun 2022 03:45:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id;
-        bh=6Cgf9hVSkM/EuU/G5NtEggFm/5gYU2/ohft6Hi2iUoM=;
-        b=DLmoXC2LYtmMgIH+URO1IHtjbJCkAlV59T4EGENzDuHw84VK8aoJRf91/NSWhHmkLq
-         la7BekdDXIMQn5158NIifoyNSxZ8rOGLI4tmMtNQuFu09+Je2Cxuo7h8SQQMIVXThZMs
-         8VT/86TI0kDnTa4ob3cL1JI/mU9v/1Gz51zfzHYQ8A/8LW2xVMxzdv4Ob9qaA8GOv6xS
-         Yi4R3/5NY9nOtFNzri5fKyCDwKG0PRRndmIRvK8O17szrd38RoIwjZMS2x+ZesVzcP2F
-         5+3Gn513loHRpcMpd3PgraUPt+wVBI+8OrOXqaF5u2M7VX29rSW+A5iNjl/6PBL0wYKs
-         dCIQ==
+        bh=yo+6S0bVZFj15xUOaX5n49aCMwaG4HuXlgCxrBpq27U=;
+        b=ndcxBl5Qp9eJ5nzkxN5EDiysnSYxHsPzzxVtTBrzCAXf7gHChskFXfTA/lgd3652Ec
+         J5tvhQv0JKa3eBxOhvHArneOqOo2Xl5azPCn7cMXMIjtyy9+KtOGbLJ3f++OcvZgDAio
+         U7OYIVJ8iRlAdQ7jY9WXKCysFb+/Ds2rc1L0bSjiSHTJELOZWL2ZmhKH4rPvRKOB70pG
+         AfdjDE/xYQpcbWSSp3R1F8LWoLi+PACi70QEat6livKlUbkTzEdaurjK1vptIxiPERrK
+         OeFidGna+Y1fiRxq3h0wdOjrYI+UvijOW7QIGEkA34SoKvYc9GIZ54bVWWKIwXq2igWv
+         TsSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6Cgf9hVSkM/EuU/G5NtEggFm/5gYU2/ohft6Hi2iUoM=;
-        b=b+qEexuLvQEmLtIUFiBRosWADih45Zu3iIzuFMVrd5QltGgsOgjb5/So4aKXFbxXRB
-         Kz006KsYPjWWsy2LO3HYCt4bY9a2E89EpaNPUvM76ypHaST1vHOuY9SqjJXceD6tCX4+
-         gnlFWWzbGi3xTZFYSkRule/nW6VdX2EShd0zQd0tfXSDGr+NooszkvEqRUiZeZNOhnV8
-         fOT2kJnGasLpVpYToDUz4FKpGohIlEkaI1Nq3INbA3Ra9N4NhVmETFdpphHD2cWYygDL
-         68pizVV7pNWzcIeTGHBWw6RTE6tZO/8qgB6eTtoAng4zjRY4XAegtfywAoS7/QBcHsqx
-         MRnw==
-X-Gm-Message-State: AJIora/kK6BMb9aCxttFJ1inNR4V1ArynBGPKnRQBtkh+wmJr/R8cBx0
-        n1AGCaOUZG2znNdWsCvHB/sy7L/M4zI=
-X-Google-Smtp-Source: AGRyM1vZrhIfv6R1QkV1NYPXd8xWwai/oZGPfNY5LyQaTGsyWgUNU53R1OmMZyCCfCJniSdsnvSlzA==
-X-Received: by 2002:a05:6000:1a89:b0:21b:83a9:aa6f with SMTP id f9-20020a0560001a8900b0021b83a9aa6fmr7545833wry.33.1655978163774;
-        Thu, 23 Jun 2022 02:56:03 -0700 (PDT)
+        bh=yo+6S0bVZFj15xUOaX5n49aCMwaG4HuXlgCxrBpq27U=;
+        b=wwNeEZP2wBErSjaofm+QKgoLBiPZBncBi/0k2+NsAh3v6DPGGeO0xmSm0qciG/NDEw
+         25tbkLRw5Ui4rwp+9UIeuun+a+8isMI/2Y2+eJH9mFpudsrJyAgvWgPb0luglm/4kByD
+         A8zIZPV6FqE3DxxHc6rDtN8gomFkvqmCY3PNu9rrK7vwy6FF8G3tjGfLC2xoXKo5H8lq
+         fAvRtnWW863NhozZBcByvMpPnItIA+Bv1KDy3mipYYWOLNgi7cPPiIeYvqqyReI5G6RG
+         Qqa4r2k65RYHLWo+G+tb0gI3kXKtnnhRJTa/CAsBC7ZqpFrJCo4wgqn1hBAr/B0Unba7
+         90ZQ==
+X-Gm-Message-State: AJIora/c1hQW8y6Dg5tGgJgacCSG/LkkBCbTSxtXkjtWkv9AgkgmXZK0
+        009D2lowGAPmb/3lA/5VIMM=
+X-Google-Smtp-Source: AGRyM1vEQj2z1+nh+K5QWnNPP8grCm8e9ggnCkbXxCVsOjntLeecur3FWso/i01QzH0STWsbvgykCg==
+X-Received: by 2002:adf:e104:0:b0:21b:9938:b07a with SMTP id t4-20020adfe104000000b0021b9938b07amr7798958wrz.682.1655981132441;
+        Thu, 23 Jun 2022 03:45:32 -0700 (PDT)
 Received: from felia.fritz.box (200116b826a89a00b5a52346a320d486.dip.versatel-1u1.de. [2001:16b8:26a8:9a00:b5a5:2346:a320:d486])
-        by smtp.gmail.com with ESMTPSA id bp17-20020a5d5a91000000b0021b9870049dsm7938326wrb.82.2022.06.23.02.56.02
+        by smtp.gmail.com with ESMTPSA id l35-20020a05600c1d2300b0039c95b31e66sm2760949wms.31.2022.06.23.03.45.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jun 2022 02:56:03 -0700 (PDT)
+        Thu, 23 Jun 2022 03:45:31 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Conor Dooley <conor.dooley@microchip.com>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     Support Opensource <support.opensource@diasemi.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: rectify entry for NVIDIA TEGRA DRM and VIDEO DRIVER
-Date:   Thu, 23 Jun 2022 11:54:52 +0200
-Message-Id: <20220623095452.30745-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: repair pattern in DIALOG SEMICONDUCTOR DRIVERS
+Date:   Thu, 23 Jun 2022 12:44:56 +0200
+Message-Id: <20220623104456.27144-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit fd27de58b0ad ("dt-bindings: display: tegra: Convert to json-schema")
-converts nvidia,tegra20-host1x.txt to yaml, but missed to adjust its
-references in MAINTAINERS.
+Commit 441613662db7 ("dt-bindings: mfd: Convert da9063 to yaml") converts
+da9063.txt to dlg,da9063.yaml and adds a new file pattern in MAINTAINERS.
+Unfortunately, the file pattern matches da90*.yaml, but the yaml file is
+prefixed with dlg,da90.
 
 Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
+broken file pattern.
 
-Repair these file references in NVIDIA TEGRA DRM and VIDEO DRIVER.
+Repair this file pattern in DIALOG SEMICONDUCTOR DRIVERS.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Thierry, please pick this minor non-urgent clean-up on top of the commit above.
+Conor, please ack.
+Lee, pleae pick this minor non-urgent clean-up patch.
 
- MAINTAINERS | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 1e99a4249dba..f84dba7ee301 100644
+index f84dba7ee301..4b08464abb1b 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -6767,7 +6767,7 @@ L:	dri-devel@lists.freedesktop.org
- L:	linux-tegra@vger.kernel.org
- S:	Supported
- T:	git git://anongit.freedesktop.org/tegra/linux.git
--F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-+F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
- F:	Documentation/devicetree/bindings/gpu/host1x/
- F:	drivers/gpu/drm/tegra/
- F:	drivers/gpu/host1x/
-@@ -19757,7 +19757,7 @@ M:	Sowjanya Komatineni <skomatineni@nvidia.com>
- L:	linux-media@vger.kernel.org
- L:	linux-tegra@vger.kernel.org
- S:	Maintained
--F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-+F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
- F:	drivers/staging/media/tegra-video/
- 
- TEGRA XUSB PADCTL DRIVER
+@@ -5876,7 +5876,7 @@ W:	http://www.dialog-semiconductor.com/products
+ F:	Documentation/devicetree/bindings/input/da90??-onkey.txt
+ F:	Documentation/devicetree/bindings/input/dlg,da72??.txt
+ F:	Documentation/devicetree/bindings/mfd/da90*.txt
+-F:	Documentation/devicetree/bindings/mfd/da90*.yaml
++F:	Documentation/devicetree/bindings/mfd/dlg,da90*.yaml
+ F:	Documentation/devicetree/bindings/regulator/dlg,da9*.yaml
+ F:	Documentation/devicetree/bindings/regulator/da92*.txt
+ F:	Documentation/devicetree/bindings/regulator/slg51000.txt
 -- 
 2.17.1
 
