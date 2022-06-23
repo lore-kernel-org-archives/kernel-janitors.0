@@ -2,104 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8FBCC43334
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Jun 2022 09:54:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E420C43334
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Jun 2022 09:56:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231210AbiFWJym (ORCPT
+        id S231374AbiFWJ4J (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Jun 2022 05:54:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56694 "EHLO
+        Thu, 23 Jun 2022 05:56:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229592AbiFWJyl (ORCPT
+        with ESMTP id S231365AbiFWJ4G (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Jun 2022 05:54:41 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D806D2B27E;
-        Thu, 23 Jun 2022 02:54:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1655978080; x=1687514080;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=s9GG/sY6wixWx6Kt3EOgPjnu6ifIHWLBKr6/jZ+J2kc=;
-  b=IITV4DWRuYjDMX+DzJYsiSTcYCDNqm2xHBdymjGRcv/DW/n/dgKOGnHx
-   DUnrO3nAFsN96lba2guO0wGPJruWZ9aj7fDkLWj6kXDA/xadvSpW+hDeE
-   4qb/3h+7eoZIbl/HnJXDHW0mnuWt/kJIG5XGeaDnEXYg0RXpcCG45hKgZ
-   UkJo9LD/oyESJXFE8z/hZD3bql3348j152X3nYQH5ZYYcWY0ScVoaq5Kd
-   egAWPCQ8Wnf3VaFB0CwKeY4rNSelZXlI5PQLGXcuO8ZaDtwWk3cwaIKSJ
-   fpWRuBu+Pn/D4GZ74OagS6fxk0IVtMT2Iaz9QFnAcUr9L2sqXp+Emh+Od
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10386"; a="306136383"
-X-IronPort-AV: E=Sophos;i="5.92,215,1650956400"; 
-   d="scan'208";a="306136383"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2022 02:54:40 -0700
-X-IronPort-AV: E=Sophos;i="5.92,215,1650956400"; 
-   d="scan'208";a="563387365"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2022 02:54:38 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1o4JXn-000t1W-Hf;
-        Thu, 23 Jun 2022 12:54:35 +0300
-Date:   Thu, 23 Jun 2022 12:54:35 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] gpio: winbond: Fix error code in winbond_gpio_get()
-Message-ID: <YrQ4WwSzhpai0aPc@smile.fi.intel.com>
-References: <YrQkfBuIHArxHSNr@kili>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YrQkfBuIHArxHSNr@kili>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        Thu, 23 Jun 2022 05:56:06 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F78C4615F;
+        Thu, 23 Jun 2022 02:56:05 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id s1so27142426wra.9;
+        Thu, 23 Jun 2022 02:56:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=6Cgf9hVSkM/EuU/G5NtEggFm/5gYU2/ohft6Hi2iUoM=;
+        b=DLmoXC2LYtmMgIH+URO1IHtjbJCkAlV59T4EGENzDuHw84VK8aoJRf91/NSWhHmkLq
+         la7BekdDXIMQn5158NIifoyNSxZ8rOGLI4tmMtNQuFu09+Je2Cxuo7h8SQQMIVXThZMs
+         8VT/86TI0kDnTa4ob3cL1JI/mU9v/1Gz51zfzHYQ8A/8LW2xVMxzdv4Ob9qaA8GOv6xS
+         Yi4R3/5NY9nOtFNzri5fKyCDwKG0PRRndmIRvK8O17szrd38RoIwjZMS2x+ZesVzcP2F
+         5+3Gn513loHRpcMpd3PgraUPt+wVBI+8OrOXqaF5u2M7VX29rSW+A5iNjl/6PBL0wYKs
+         dCIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6Cgf9hVSkM/EuU/G5NtEggFm/5gYU2/ohft6Hi2iUoM=;
+        b=b+qEexuLvQEmLtIUFiBRosWADih45Zu3iIzuFMVrd5QltGgsOgjb5/So4aKXFbxXRB
+         Kz006KsYPjWWsy2LO3HYCt4bY9a2E89EpaNPUvM76ypHaST1vHOuY9SqjJXceD6tCX4+
+         gnlFWWzbGi3xTZFYSkRule/nW6VdX2EShd0zQd0tfXSDGr+NooszkvEqRUiZeZNOhnV8
+         fOT2kJnGasLpVpYToDUz4FKpGohIlEkaI1Nq3INbA3Ra9N4NhVmETFdpphHD2cWYygDL
+         68pizVV7pNWzcIeTGHBWw6RTE6tZO/8qgB6eTtoAng4zjRY4XAegtfywAoS7/QBcHsqx
+         MRnw==
+X-Gm-Message-State: AJIora/kK6BMb9aCxttFJ1inNR4V1ArynBGPKnRQBtkh+wmJr/R8cBx0
+        n1AGCaOUZG2znNdWsCvHB/sy7L/M4zI=
+X-Google-Smtp-Source: AGRyM1vZrhIfv6R1QkV1NYPXd8xWwai/oZGPfNY5LyQaTGsyWgUNU53R1OmMZyCCfCJniSdsnvSlzA==
+X-Received: by 2002:a05:6000:1a89:b0:21b:83a9:aa6f with SMTP id f9-20020a0560001a8900b0021b83a9aa6fmr7545833wry.33.1655978163774;
+        Thu, 23 Jun 2022 02:56:03 -0700 (PDT)
+Received: from felia.fritz.box (200116b826a89a00b5a52346a320d486.dip.versatel-1u1.de. [2001:16b8:26a8:9a00:b5a5:2346:a320:d486])
+        by smtp.gmail.com with ESMTPSA id bp17-20020a5d5a91000000b0021b9870049dsm7938326wrb.82.2022.06.23.02.56.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jun 2022 02:56:03 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: rectify entry for NVIDIA TEGRA DRM and VIDEO DRIVER
+Date:   Thu, 23 Jun 2022 11:54:52 +0200
+Message-Id: <20220623095452.30745-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jun 23, 2022 at 11:29:48AM +0300, Dan Carpenter wrote:
-> This error path returns 1, but it should instead propagate the negative
-> error code from winbond_sio_enter().
+Commit fd27de58b0ad ("dt-bindings: display: tegra: Convert to json-schema")
+converts nvidia,tegra20-host1x.txt to yaml, but missed to adjust its
+references in MAINTAINERS.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
-> Fixes: a0d65009411c ("gpio: winbond: Add driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/gpio/gpio-winbond.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-winbond.c b/drivers/gpio/gpio-winbond.c
-> index 7f8f5b02e31d..4b61d975cc0e 100644
-> --- a/drivers/gpio/gpio-winbond.c
-> +++ b/drivers/gpio/gpio-winbond.c
-> @@ -385,12 +385,13 @@ static int winbond_gpio_get(struct gpio_chip *gc, unsigned int offset)
->  	unsigned long *base = gpiochip_get_data(gc);
->  	const struct winbond_gpio_info *info;
->  	bool val;
-> +	int ret;
->  
->  	winbond_gpio_get_info(&offset, &info);
->  
-> -	val = winbond_sio_enter(*base);
-> -	if (val)
-> -		return val;
-> +	ret = winbond_sio_enter(*base);
-> +	if (ret)
-> +		return ret;
->  
->  	winbond_sio_select_logical(*base, info->dev);
->  
-> -- 
-> 2.35.1
-> 
+Repair these file references in NVIDIA TEGRA DRM and VIDEO DRIVER.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Thierry, please pick this minor non-urgent clean-up on top of the commit above.
+
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1e99a4249dba..f84dba7ee301 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6767,7 +6767,7 @@ L:	dri-devel@lists.freedesktop.org
+ L:	linux-tegra@vger.kernel.org
+ S:	Supported
+ T:	git git://anongit.freedesktop.org/tegra/linux.git
+-F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
++F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
+ F:	Documentation/devicetree/bindings/gpu/host1x/
+ F:	drivers/gpu/drm/tegra/
+ F:	drivers/gpu/host1x/
+@@ -19757,7 +19757,7 @@ M:	Sowjanya Komatineni <skomatineni@nvidia.com>
+ L:	linux-media@vger.kernel.org
+ L:	linux-tegra@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
++F:	Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
+ F:	drivers/staging/media/tegra-video/
+ 
+ TEGRA XUSB PADCTL DRIVER
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.17.1
 
