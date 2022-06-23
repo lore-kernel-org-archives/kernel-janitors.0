@@ -2,95 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C74BFCCA481
-	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Jun 2022 16:47:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 735F3C43334
+	for <kernel-janitors@archiver.kernel.org>; Thu, 23 Jun 2022 16:52:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231838AbiFWQrq (ORCPT
+        id S231879AbiFWQwc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 23 Jun 2022 12:47:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48744 "EHLO
+        Thu, 23 Jun 2022 12:52:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231425AbiFWQrO (ORCPT
+        with ESMTP id S233822AbiFWQvm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 23 Jun 2022 12:47:14 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DAE448E74;
-        Thu, 23 Jun 2022 09:47:13 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id k22so22336533wrd.6;
-        Thu, 23 Jun 2022 09:47:12 -0700 (PDT)
+        Thu, 23 Jun 2022 12:51:42 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9070449B73;
+        Thu, 23 Jun 2022 09:49:56 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id fi2so1372635ejb.9;
+        Thu, 23 Jun 2022 09:49:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=LoGByHoinwWKmK7sKKr5zQ+TOBzY+lDROmS+zPuNPuQ=;
-        b=qb+HzyVV6rzz0uzZEAwhfY2wMX1sIDClwtbrpGTwx5r6PcFBeSY3Xkh3ea0Rkz4woU
-         t7qi7aUVfcTiLHzjvMIiBoFebHIbnLCcWqSq6RofKoNLiu+oKzb74oZrPVo0X1VWUOOH
-         Ooqsxh9ArStzoR5aOb2jrFgP82FAVCRmz4FzY1Mqtn8hWTozzo5iR9WnmGGuIpWcpS5t
-         GA80Y5Hoq3SPwXReg66RGRIPjonKyoBRYC5Ft6pGfn1fRXFstkm83vmlN2NcetW8bGM3
-         3ooNGpzLWVS/WObq54t/yKiElB/Hv7bRMH7pixGq+1nkNSulMyJG+6YgoJsDQ0uFU6ZK
-         h6/Q==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cjEjIMVpFKkpJVehI/aJ5UY5mrtzDxsDBQICm682E9Y=;
+        b=BqKIz1efy1+h8YOmoVs8tp1ydIkrBFWeeNuPWfOumpbddM0BsHwFLyHX6FkCw2a71v
+         rHIT9opyg3Zb8EbCd0qiYM57HStieQtTkfpD3iPLD4+gvcoP68HDq7HhGbVRv/DQ5fuW
+         ux/GWxAySlCqACAhc7oAHiJDJnycqPtHTqe4ATf5HEh5dl5g67vGiuNA5IjiPjWaLH5/
+         TRCnOjhhtkhvS/CDSCt7tKP9dIAAiiL6N1ZYHG2wefr426L8aGfzsVGnkTpXdvpNBXwz
+         egOdpcKWLoxQGH/qQrAa3jUXsgtzxCJ9C3LWZuV80FTrD1oRV7QkYTLfjD48hEFOgkCv
+         UIjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=LoGByHoinwWKmK7sKKr5zQ+TOBzY+lDROmS+zPuNPuQ=;
-        b=W+m3M0/ln0api/sn3MBvEmoyYk6DZzOv5lv/o/fKN1LX1V0+m12rTwbF4MyGSqYyIl
-         L2ZrMK4J4wQ+tGbh4KomTrivL63qSYuMuJwJIlhdWDIpuce96VG2ZFBZugngacGh51Ww
-         PxMm5+t1LQLPCzVP55c/OjL/RXNBi5U4BfGzGK1hgxlnFkyt+R37W3WS8mTcmUXab7P3
-         PGSDgVKbM97KWGm7EsSRLg7TjP9IVW5F44tzUihQ9nJ+hW56BDV6iNesRPLdsr2Zpzkj
-         0cbS5olaM7udAsFTAnX7TIwuj02MsDAmik3QihteodtwP2DtmOVu/SN+vDQ4vmpF/hHJ
-         1KLw==
-X-Gm-Message-State: AJIora8GcZFF4Opg9ChRIjXwFzKh9dJ5Oq+/0XEqmazEkPH231kIsS7Q
-        Nzn9U45oA6Yw0xu7okrr1OQ=
-X-Google-Smtp-Source: AGRyM1tPybK6ZDZa9VdKMulI3WNE9tB5TDYMgoeNQAhJ5kJav+ER8mtHt/DBUyR6iX6ft1HyFReJEA==
-X-Received: by 2002:a5d:64aa:0:b0:218:4287:3c98 with SMTP id m10-20020a5d64aa000000b0021842873c98mr9084399wrp.453.1656002831560;
-        Thu, 23 Jun 2022 09:47:11 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id o1-20020adfeac1000000b0021b8c554196sm13786318wrn.29.2022.06.23.09.47.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jun 2022 09:47:10 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Hannes Reinecke <hare@suse.de>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: fcoe: remove redundant assignment to variable wlen
-Date:   Thu, 23 Jun 2022 17:47:10 +0100
-Message-Id: <20220623164710.76831-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.3
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cjEjIMVpFKkpJVehI/aJ5UY5mrtzDxsDBQICm682E9Y=;
+        b=Bc984AIw1NdoDxIcieH4t2vEFhRa7iQ8diVxh4+PEmSaDYWapCy2YKg8+uAMB+kcxy
+         O7fbNx1WkhMkPR8Hj2bDGfJ7fdVwvQVE79d8c1nNaO7OausKuHG94GqLhXWoh++d9qC/
+         aiRGz1z4LT+cVDaEX2RJSbqq3kOwdg1ZKjeZiLB816z3uLu//gx36vIND1t/21QJcswg
+         wYmKQ74xOD+RiMlrOpbRmKKGJGDwlMZ5vta+uBx2JhVh5hq7TDHjEpI1107oBY2w1a5n
+         Vas9pgGd2ikz92OZoHv/BVDEdHjDoLaTgz40FkRRiVbnIfclpRn5ZvE4PRDlpVUWbxZV
+         52Iw==
+X-Gm-Message-State: AJIora/HRKr3mxZggEEbOVQQolRGnoQuFdT/iHGZOQ2IvewmPxxpd4xA
+        ZRyj9ffECnMTh3e72gvsAa/2HYmWzC7pyUaiHW0=
+X-Google-Smtp-Source: AGRyM1uaSUJVbc37IMzq/a1fXRHbBuAS/aDG6Y2UKBXKWbSS+Ay8oik1w9PjnZTmiC3pyesEFZc+Qox1JbgXoS6aWL4=
+X-Received: by 2002:a17:906:74c2:b0:722:e1e2:edea with SMTP id
+ z2-20020a17090674c200b00722e1e2edeamr9175341ejl.658.1656002995049; Thu, 23
+ Jun 2022 09:49:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20220623081219.19291-1-colin.i.king@gmail.com>
+In-Reply-To: <20220623081219.19291-1-colin.i.king@gmail.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Thu, 23 Jun 2022 12:49:42 -0400
+Message-ID: <CADnq5_M1MueAv1SJ99Z6Ly2+27bDLWZKpJZrCmCpXgOGd4q-3Q@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/amdkfd: Fix spelling mistake "mechanim" -> "mechanism"
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        xinhui pan <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable wlen is being assigned a value that is never read, it is
-being re-assigned with a different value later on. The assignment
-is redundant and can be removed.
+Applied.  Thanks!
 
-Cleans up clang scan build warning:
-drivers/scsi/fcoe/fcoe.c:1491:2: warning: Value stored to 'wlen'
-is never read [deadcode.DeadStores]
+Alex
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/scsi/fcoe/fcoe.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
-index c2a59109857a..6ec296321ffc 100644
---- a/drivers/scsi/fcoe/fcoe.c
-+++ b/drivers/scsi/fcoe/fcoe.c
-@@ -1488,7 +1488,6 @@ static int fcoe_xmit(struct fc_lport *lport, struct fc_frame *fp)
- 
- 	fh = fc_frame_header_get(fp);
- 	skb = fp_skb(fp);
--	wlen = skb->len / FCOE_WORD_TO_BYTE;
- 
- 	if (!lport->link_up) {
- 		kfree_skb(skb);
--- 
-2.35.3
-
+On Thu, Jun 23, 2022 at 4:12 AM Colin Ian King <colin.i.king@gmail.com> wrote:
+>
+> There is a spelling mistake in a pr_debug message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
+> index 8805bd1eed37..f5f1368c0c54 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
+> @@ -914,7 +914,7 @@ static int kfd_mem_attach(struct amdgpu_device *adev, struct kgd_mem *mem,
+>                         ret = kfd_mem_attach_dmabuf(adev, mem, &bo[i]);
+>                         if (ret)
+>                                 goto unwind;
+> -                       pr_debug("Employ DMABUF mechanim to enable peer GPU access\n");
+> +                       pr_debug("Employ DMABUF mechanism to enable peer GPU access\n");
+>                 } else {
+>                         WARN_ONCE(true, "Handling invalid ATTACH request");
+>                         ret = -EINVAL;
+> --
+> 2.35.3
+>
