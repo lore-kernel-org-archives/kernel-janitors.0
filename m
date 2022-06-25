@@ -2,81 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 853C5C43334
-	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Jun 2022 13:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9939DC43334
+	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Jun 2022 23:01:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233014AbiFYNNK (ORCPT
+        id S233738AbiFYXB1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 25 Jun 2022 09:13:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59278 "EHLO
+        Sat, 25 Jun 2022 19:01:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231982AbiFYNNJ (ORCPT
+        with ESMTP id S233574AbiFYXB0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 25 Jun 2022 09:13:09 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 144692622;
-        Sat, 25 Jun 2022 06:13:09 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A0B34612B4;
-        Sat, 25 Jun 2022 13:13:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99B1FC3411C;
-        Sat, 25 Jun 2022 13:13:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656162787;
-        bh=6PYmcT6tZFnN80dEHugRgJOLCEYpA5+gGU6FfiYeZIo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Ttx9MosP+bLFHAtIczywCko67Q/MxBrHrXwCcXlwjfYMoHIX6+f5BGGZo1CCC4nc7
-         GYfQuylOZPEo3H5Z4i19R8CBHb5HvhgHGLpHdchc1FSr7lzGzbMeF5CLHWAmcW1Ll9
-         4SEHXQ1u64fECzn/+Zd6iz24ntMVApKQzfqCxFlhBxPclYMUNkg1U8geJjgKfR5CDK
-         GFeHJYZwxjBB29/7A8wxSh/U5CnbmxnNoLKV1KhyoJNVNgVVFcmPcPH6aJGIxBd+Nq
-         B8QIFoVRfyOvEhPpo1RXgnZQLCe0kvzRk8/W27d+aiu9QAxkOQvcgQ82uhdSJL0oFR
-         3q8fo0p5OM3gg==
-Date:   Sat, 25 Jun 2022 14:22:34 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] iio: adc: qcom-spmi-rradc: Fix spelling mistake
- "coherrency" -> "coherency"
-Message-ID: <20220625142234.3f4a6ee1@jic23-huawei>
-In-Reply-To: <20220621094736.90436-1-colin.i.king@gmail.com>
-References: <20220621094736.90436-1-colin.i.king@gmail.com>
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-pc-linux-gnu)
+        Sat, 25 Jun 2022 19:01:26 -0400
+Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7275314080
+        for <kernel-janitors@vger.kernel.org>; Sat, 25 Jun 2022 16:01:25 -0700 (PDT)
+Received: by mail-yb1-xb2d.google.com with SMTP id l11so10528450ybu.13
+        for <kernel-janitors@vger.kernel.org>; Sat, 25 Jun 2022 16:01:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PwbpiGb/oD8HIRJr2SFQWUk8LsGUtaqCnJOZxvy/+o0=;
+        b=V+yhpskio4hPlK8rjes/emBa2rjzvau3LUHIdAcBCJR3RO0/NLbqI+anJji3SQxOw2
+         BBC4fMCRVdvY/C8a2G9acKeUAA9YUUPl0g+XM9HYbISGUVd4DXW3exEv55z7lYSoAvZJ
+         VErONOGzTxFaFuSao0Sl+II4MZ3yUIUJe2l+3E82zPfBUpU1mSMQgOCA+/CU/XGk64du
+         YWjVA7s7a2/s6unqh1LdglB1GXPMwlAqkpYjqG5yfd/+koPvJ9YudXhB/DwdJevQh2Qn
+         S01GSqJBKvOG4PCHQ3EL4oxrL5tyUhDQ7Lo6iMotnR9SQV3e+Bhk/4ua8YXcB08cLyu/
+         fjyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PwbpiGb/oD8HIRJr2SFQWUk8LsGUtaqCnJOZxvy/+o0=;
+        b=T5hpTNl4XXzU+p95tahEJ2y7NblVDolUeQUiy4K0VUBKgBPQkCDuTBLyLReA9XMyxr
+         mJhbA1fDUXU1oTLUp5USzRQp+BYKxFgOgM/pG6iDpoxpwKnzs+ADyD9hQ7pcNA5H43W/
+         5+KLO8mnvpWW3bSomc76p7uIpTD4jvS6a3pLLhtxyxM+gMgpWTgqPgH0ROi0Dq00XrL5
+         ijxCW5Mh/OMSe4RxpkWjFFUfn1QweRauiV2MXXbXDPS5CkyvnxHyvMBUHplsSJWS1Gpr
+         ye4aGtXgy/jDs+mGBSAO8fonqIG6693X0GbflYpl7hY3LtRPpE4KM7Lm7LH/sgw3Nplo
+         kLhg==
+X-Gm-Message-State: AJIora8dHpCsZbyrDrTGpl8ZgGRB+GwFadDqUZ/x3F8X8bS2NDSIJnmQ
+        005er+tAf6E9Po6vUQ2LcXJB2fQ2sp0dJoUrRrkDMA==
+X-Google-Smtp-Source: AGRyM1ugdsOA7x4YN7zvSVE7L9XjNnzE//OLJLQO6gD+BWDuV1BmbFIqcseR3ErrjUKM40mN4Ppck9IVQDTKfo2rGEY=
+X-Received: by 2002:a25:8403:0:b0:66c:a405:a01e with SMTP id
+ u3-20020a258403000000b0066ca405a01emr490833ybk.369.1656198084729; Sat, 25 Jun
+ 2022 16:01:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20220613122955.20714-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220613122955.20714-1-lukas.bulwahn@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sun, 26 Jun 2022 01:01:13 +0200
+Message-ID: <CACRpkdZhzxxnqGrTkcekky5BCmHWegNMeTOKf-bafNb1A0DZYw@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: add include/dt-bindings/pinctrl to PIN
+ CONTROL SUBSYSTEM
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 21 Jun 2022 10:47:36 +0100
-Colin Ian King <colin.i.king@gmail.com> wrote:
+On Mon, Jun 13, 2022 at 2:30 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 
-> There is a spelling mistake in a dev_err message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-Applied. Thanks,
-
+> Maintainers of the directory Documentation/devicetree/bindings/pinctrl
+> are also the maintainers of the corresponding directory
+> include/dt-bindings/pinctrl.
+>
+> Add the file entry for include/dt-bindings/pinctrl to the appropriate
+> section in MAINTAINERS.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > ---
->  drivers/iio/adc/qcom-spmi-rradc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/qcom-spmi-rradc.c b/drivers/iio/adc/qcom-spmi-rradc.c
-> index 87f349782108..56a713766954 100644
-> --- a/drivers/iio/adc/qcom-spmi-rradc.c
-> +++ b/drivers/iio/adc/qcom-spmi-rradc.c
-> @@ -295,7 +295,7 @@ static int rradc_read(struct rradc_chip *chip, u16 addr, __le16 *buf, int len)
->  	}
->  
->  	if (retry_cnt == RR_ADC_COHERENT_CHECK_RETRY)
-> -		dev_err(chip->dev, "Retry exceeded for coherrency check\n");
-> +		dev_err(chip->dev, "Retry exceeded for coherency check\n");
->  
->  	return ret;
->  }
+> Linus, please pick this MAINTAINERS addition to your section.
 
+OK then, challenge accepted, patch applied.
+
+Yours,
+Linus Walleij
