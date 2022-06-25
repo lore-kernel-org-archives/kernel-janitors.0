@@ -2,81 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B7DC43334
-	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Jun 2022 05:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08778C43334
+	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Jun 2022 07:40:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231865AbiFYFaS (ORCPT
+        id S232077AbiFYHkj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 25 Jun 2022 01:30:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39518 "EHLO
+        Sat, 25 Jun 2022 03:40:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231672AbiFYFaP (ORCPT
+        with ESMTP id S230115AbiFYHki (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 25 Jun 2022 01:30:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E29C250B04;
-        Fri, 24 Jun 2022 22:30:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 63B226136A;
-        Sat, 25 Jun 2022 05:30:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 793F8C341C7;
-        Sat, 25 Jun 2022 05:30:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656135013;
-        bh=z0cluZQlh0hiD7cXsYiqKYRRvibJSMQQGBh5L3ooxlw=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=rBWoD7etR3r1q6AtWKByDYKK03v38c4BrQHaifSefIUU0V+fJ3o/U06zWCZVjzG8h
-         PjpdXCByDmeFHDz5HxiDTIlo1LWuC9BdX1Z+RsNn/MNZZJyioMUaX3jFa0Xp8X/OLJ
-         0Ue3IxLL7n08hnfi1QqdC2mGhXmFvHn9CCUytpPrupMwZaYHLOC/unzeug+frqxWAj
-         hMEGfDsx+1FqcFNOO9ZxjFWolM8BuEcRKWNbqSaz+v18Xza2a4EpZlRaXQpIMbtPgt
-         JKXYUU06wur/9DPUvkAJD7PlvBxpb4Ey5O6BKnTpCUG4pX6uJi/IAfIa6pTYcLoFkf
-         fIZ2QdJUznU3Q==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 62821E85C6D;
-        Sat, 25 Jun 2022 05:30:13 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Sat, 25 Jun 2022 03:40:38 -0400
+Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3EFF4578D
+        for <kernel-janitors@vger.kernel.org>; Sat, 25 Jun 2022 00:40:36 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id 50PBoAAE5xzw250PBoeVPs; Sat, 25 Jun 2022 09:40:34 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sat, 25 Jun 2022 09:40:34 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-sh@vger.kernel.org
+Subject: [PATCH] sh: sq: Use the bitmap API when applicable
+Date:   Sat, 25 Jun 2022 09:40:31 +0200
+Message-Id: <521788e22ad8f7a5058c154f068b061525321841.1656142814.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: fix IFF_TX_SKB_NO_LINEAR definition
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <165613501339.30344.5019258234819055049.git-patchwork-notify@kernel.org>
-Date:   Sat, 25 Jun 2022 05:30:13 +0000
-References: <YrRrcGttfEVnf85Q@kili>
-In-Reply-To: <YrRrcGttfEVnf85Q@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     davem@davemloft.net, xuanzhuo@linux.alibaba.com,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        daniel@iogearbox.net, john.fastabend@gmail.com, alobakin@pm.me,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Using the bitmap API is less verbose than hand writing them.
+It also improves the semantic.
 
-This patch was applied to netdev/net.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+I don't cross compile, so this patch is NOT compile-tested.
+---
+ arch/sh/kernel/cpu/sh4/sq.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-On Thu, 23 Jun 2022 16:32:32 +0300 you wrote:
-> The "1<<31" shift has a sign extension bug so IFF_TX_SKB_NO_LINEAR is
-> 0xffffffff80000000 instead of 0x0000000080000000.
-> 
-> Fixes: c2ff53d8049f ("net: Add priv_flags for allow tx skb without linear")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> Before IFF_CHANGE_PROTO_DOWN was added then this issue was not so bad.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net] net: fix IFF_TX_SKB_NO_LINEAR definition
-    https://git.kernel.org/netdev/net/c/3b89b511ea0c
-
-You are awesome, thank you!
+diff --git a/arch/sh/kernel/cpu/sh4/sq.c b/arch/sh/kernel/cpu/sh4/sq.c
+index a76b94e41e91..c3101427d9a9 100644
+--- a/arch/sh/kernel/cpu/sh4/sq.c
++++ b/arch/sh/kernel/cpu/sh4/sq.c
+@@ -372,7 +372,6 @@ static struct subsys_interface sq_interface = {
+ static int __init sq_api_init(void)
+ {
+ 	unsigned int nr_pages = 0x04000000 >> PAGE_SHIFT;
+-	unsigned int size = (nr_pages + (BITS_PER_LONG - 1)) / BITS_PER_LONG;
+ 	int ret = -ENOMEM;
+ 
+ 	printk(KERN_NOTICE "sq: Registering store queue API.\n");
+@@ -382,7 +381,7 @@ static int __init sq_api_init(void)
+ 	if (unlikely(!sq_cache))
+ 		return ret;
+ 
+-	sq_bitmap = kzalloc(size, GFP_KERNEL);
++	sq_bitmap = bitmap_zalloc(nr_pages, GFP_KERNEL);
+ 	if (unlikely(!sq_bitmap))
+ 		goto out;
+ 
+@@ -393,7 +392,7 @@ static int __init sq_api_init(void)
+ 	return 0;
+ 
+ out:
+-	kfree(sq_bitmap);
++	bitmap_free(sq_bitmap);
+ 	kmem_cache_destroy(sq_cache);
+ 
+ 	return ret;
+@@ -402,7 +401,7 @@ static int __init sq_api_init(void)
+ static void __exit sq_api_exit(void)
+ {
+ 	subsys_interface_unregister(&sq_interface);
+-	kfree(sq_bitmap);
++	bitmap_free(sq_bitmap);
+ 	kmem_cache_destroy(sq_cache);
+ }
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
