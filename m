@@ -2,36 +2,38 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08778C43334
-	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Jun 2022 07:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFD6C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Jun 2022 09:49:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232077AbiFYHkj (ORCPT
+        id S232438AbiFYJtl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 25 Jun 2022 03:40:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52210 "EHLO
+        Sat, 25 Jun 2022 05:49:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230115AbiFYHki (ORCPT
+        with ESMTP id S232285AbiFYJtk (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 25 Jun 2022 03:40:38 -0400
+        Sat, 25 Jun 2022 05:49:40 -0400
 Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3EFF4578D
-        for <kernel-janitors@vger.kernel.org>; Sat, 25 Jun 2022 00:40:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD241393E2
+        for <kernel-janitors@vger.kernel.org>; Sat, 25 Jun 2022 02:49:38 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id 50PBoAAE5xzw250PBoeVPs; Sat, 25 Jun 2022 09:40:34 +0200
+        id 52Q2oyvoAP8Ap52Q2oqOnW; Sat, 25 Jun 2022 11:49:36 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 25 Jun 2022 09:40:34 +0200
+X-ME-Date: Sat, 25 Jun 2022 11:49:36 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-sh@vger.kernel.org
-Subject: [PATCH] sh: sq: Use the bitmap API when applicable
-Date:   Sat, 25 Jun 2022 09:40:31 +0200
-Message-Id: <521788e22ad8f7a5058c154f068b061525321841.1656142814.git.christophe.jaillet@wanadoo.fr>
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH] powerpc/xive: Fix some incorrect memory allocation
+Date:   Sat, 25 Jun 2022 11:49:31 +0200
+Message-Id: <2ebb28e9de76d35b75c137f9944c2dfd893d34fa.1656150559.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -39,55 +41,42 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Using the bitmap API is less verbose than hand writing them.
-It also improves the semantic.
+'xibm->count' really looks like a number of bits (see how it is used in
+__xive_irq_bitmap_alloc()), so use the bitmap API to allocate and free this
+bitmap.
 
+This improves semantic and potentially avoids some over memory allocation.
+
+Fixes: eac1e731b59e ("powerpc/xive: guest exploitation of the XIVE interrupt controller")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 I don't cross compile, so this patch is NOT compile-tested.
 ---
- arch/sh/kernel/cpu/sh4/sq.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ arch/powerpc/sysdev/xive/spapr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/sh/kernel/cpu/sh4/sq.c b/arch/sh/kernel/cpu/sh4/sq.c
-index a76b94e41e91..c3101427d9a9 100644
---- a/arch/sh/kernel/cpu/sh4/sq.c
-+++ b/arch/sh/kernel/cpu/sh4/sq.c
-@@ -372,7 +372,6 @@ static struct subsys_interface sq_interface = {
- static int __init sq_api_init(void)
- {
- 	unsigned int nr_pages = 0x04000000 >> PAGE_SHIFT;
--	unsigned int size = (nr_pages + (BITS_PER_LONG - 1)) / BITS_PER_LONG;
- 	int ret = -ENOMEM;
+diff --git a/arch/powerpc/sysdev/xive/spapr.c b/arch/powerpc/sysdev/xive/spapr.c
+index 7d5128676e83..fdbebb14b7de 100644
+--- a/arch/powerpc/sysdev/xive/spapr.c
++++ b/arch/powerpc/sysdev/xive/spapr.c
+@@ -57,7 +57,7 @@ static int __init xive_irq_bitmap_add(int base, int count)
+ 	spin_lock_init(&xibm->lock);
+ 	xibm->base = base;
+ 	xibm->count = count;
+-	xibm->bitmap = kzalloc(xibm->count, GFP_KERNEL);
++	xibm->bitmap = bitmap_zalloc(xibm->count, GFP_KERNEL);
+ 	if (!xibm->bitmap) {
+ 		kfree(xibm);
+ 		return -ENOMEM;
+@@ -75,7 +75,7 @@ static void xive_irq_bitmap_remove_all(void)
  
- 	printk(KERN_NOTICE "sq: Registering store queue API.\n");
-@@ -382,7 +381,7 @@ static int __init sq_api_init(void)
- 	if (unlikely(!sq_cache))
- 		return ret;
- 
--	sq_bitmap = kzalloc(size, GFP_KERNEL);
-+	sq_bitmap = bitmap_zalloc(nr_pages, GFP_KERNEL);
- 	if (unlikely(!sq_bitmap))
- 		goto out;
- 
-@@ -393,7 +392,7 @@ static int __init sq_api_init(void)
- 	return 0;
- 
- out:
--	kfree(sq_bitmap);
-+	bitmap_free(sq_bitmap);
- 	kmem_cache_destroy(sq_cache);
- 
- 	return ret;
-@@ -402,7 +401,7 @@ static int __init sq_api_init(void)
- static void __exit sq_api_exit(void)
- {
- 	subsys_interface_unregister(&sq_interface);
--	kfree(sq_bitmap);
-+	bitmap_free(sq_bitmap);
- 	kmem_cache_destroy(sq_cache);
+ 	list_for_each_entry_safe(xibm, tmp, &xive_irq_bitmaps, list) {
+ 		list_del(&xibm->list);
+-		kfree(xibm->bitmap);
++		bitmap_free(xibm->bitmap);
+ 		kfree(xibm);
+ 	}
  }
- 
 -- 
 2.34.1
 
