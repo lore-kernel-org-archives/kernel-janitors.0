@@ -2,81 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFD6C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Jun 2022 09:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09726C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sat, 25 Jun 2022 12:48:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232438AbiFYJtl (ORCPT
+        id S232813AbiFYMsG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 25 Jun 2022 05:49:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47572 "EHLO
+        Sat, 25 Jun 2022 08:48:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232285AbiFYJtk (ORCPT
+        with ESMTP id S232846AbiFYMsB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 25 Jun 2022 05:49:40 -0400
-Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD241393E2
-        for <kernel-janitors@vger.kernel.org>; Sat, 25 Jun 2022 02:49:38 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id 52Q2oyvoAP8Ap52Q2oqOnW; Sat, 25 Jun 2022 11:49:36 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 25 Jun 2022 11:49:36 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH] powerpc/xive: Fix some incorrect memory allocation
-Date:   Sat, 25 Jun 2022 11:49:31 +0200
-Message-Id: <2ebb28e9de76d35b75c137f9944c2dfd893d34fa.1656150559.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sat, 25 Jun 2022 08:48:01 -0400
+X-Greylist: delayed 4196 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 25 Jun 2022 05:47:57 PDT
+Received: from 1.mo552.mail-out.ovh.net (1.mo552.mail-out.ovh.net [178.32.96.117])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD72963CC
+        for <kernel-janitors@vger.kernel.org>; Sat, 25 Jun 2022 05:47:57 -0700 (PDT)
+Received: from mxplan5.mail.ovh.net (unknown [10.109.143.118])
+        by mo552.mail-out.ovh.net (Postfix) with ESMTPS id 2B89624A8F;
+        Sat, 25 Jun 2022 11:29:37 +0000 (UTC)
+Received: from kaod.org (37.59.142.107) by DAG4EX1.mxp5.local (172.16.2.31)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.9; Sat, 25 Jun
+ 2022 13:29:36 +0200
+Authentication-Results: garm.ovh; auth=pass (GARM-107S001e52cdebf-f225-43ef-b594-73954c12a390,
+                    4F3A6162F3CBF85AFED954EB26FB80209C915413) smtp.auth=clg@kaod.org
+X-OVh-ClientIp: 82.64.250.170
+Message-ID: <d48bcb6b-41f7-8243-6094-cf80beffe68a@kaod.org>
+Date:   Sat, 25 Jun 2022 13:29:35 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH] powerpc/xive: Fix some incorrect memory allocation
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>
+References: <2ebb28e9de76d35b75c137f9944c2dfd893d34fa.1656150559.git.christophe.jaillet@wanadoo.fr>
+From:   =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
+In-Reply-To: <2ebb28e9de76d35b75c137f9944c2dfd893d34fa.1656150559.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [37.59.142.107]
+X-ClientProxiedBy: DAG6EX2.mxp5.local (172.16.2.52) To DAG4EX1.mxp5.local
+ (172.16.2.31)
+X-Ovh-Tracer-GUID: 8095d44e-4afb-4333-bd47-84e426c9d3f6
+X-Ovh-Tracer-Id: 17411197634755070825
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvfedrudeguddggedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgihesthejredttdefjeenucfhrhhomhepveorughrihgtpgfnvggpifhorghtvghruceotghlgheskhgrohgurdhorhhgqeenucggtffrrghtthgvrhhnpeeifeehtdevfeeuhfelheekkeefieeivdfhgeevueeijeetjeekueeggedujeeiieenucffohhmrghinhepohiilhgrsghsrdhorhhgnecukfhppedtrddtrddtrddtpdefjedrheelrddugedvrddutdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopehmgihplhgrnhehrdhmrghilhdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomheptghlgheskhgrohgurdhorhhgpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugihpphgtqdguvghvsehlihhsthhsrdhoiihlrggsshdrohhrghdpoffvtefjohhsthepmhhoheehvd
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'xibm->count' really looks like a number of bits (see how it is used in
-__xive_irq_bitmap_alloc()), so use the bitmap API to allocate and free this
-bitmap.
+Hello Christophe,
 
-This improves semantic and potentially avoids some over memory allocation.
+On 6/25/22 11:49, Christophe JAILLET wrote:
+> 'xibm->count' really looks like a number of bits (see how it is used in
+> __xive_irq_bitmap_alloc()), so use the bitmap API to allocate and free this
+> bitmap.
+> 
+> This improves semantic and potentially avoids some over memory allocation.
 
-Fixes: eac1e731b59e ("powerpc/xive: guest exploitation of the XIVE interrupt controller")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-I don't cross compile, so this patch is NOT compile-tested.
----
- arch/powerpc/sysdev/xive/spapr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This is correct and
+  
+> Fixes: eac1e731b59e ("powerpc/xive: guest exploitation of the XIVE interrupt controller")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> I don't cross compile, so this patch is NOT compile-tested.
 
-diff --git a/arch/powerpc/sysdev/xive/spapr.c b/arch/powerpc/sysdev/xive/spapr.c
-index 7d5128676e83..fdbebb14b7de 100644
---- a/arch/powerpc/sysdev/xive/spapr.c
-+++ b/arch/powerpc/sysdev/xive/spapr.c
-@@ -57,7 +57,7 @@ static int __init xive_irq_bitmap_add(int base, int count)
- 	spin_lock_init(&xibm->lock);
- 	xibm->base = base;
- 	xibm->count = count;
--	xibm->bitmap = kzalloc(xibm->count, GFP_KERNEL);
-+	xibm->bitmap = bitmap_zalloc(xibm->count, GFP_KERNEL);
- 	if (!xibm->bitmap) {
- 		kfree(xibm);
- 		return -ENOMEM;
-@@ -75,7 +75,7 @@ static void xive_irq_bitmap_remove_all(void)
- 
- 	list_for_each_entry_safe(xibm, tmp, &xive_irq_bitmaps, list) {
- 		list_del(&xibm->list);
--		kfree(xibm->bitmap);
-+		bitmap_free(xibm->bitmap);
- 		kfree(xibm);
- 	}
- }
--- 
-2.34.1
+
+Nathan provided a fix for it already :
+
+  http://patchwork.ozlabs.org/project/linuxppc-dev/patch/20220623182509.3985625-1-nathanl@linux.ibm.com/
+
+Thanks,
+
+C.
+
+> ---
+>   arch/powerpc/sysdev/xive/spapr.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/powerpc/sysdev/xive/spapr.c b/arch/powerpc/sysdev/xive/spapr.c
+> index 7d5128676e83..fdbebb14b7de 100644
+> --- a/arch/powerpc/sysdev/xive/spapr.c
+> +++ b/arch/powerpc/sysdev/xive/spapr.c
+> @@ -57,7 +57,7 @@ static int __init xive_irq_bitmap_add(int base, int count)
+>   	spin_lock_init(&xibm->lock);
+>   	xibm->base = base;
+>   	xibm->count = count;
+> -	xibm->bitmap = kzalloc(xibm->count, GFP_KERNEL);
+> +	xibm->bitmap = bitmap_zalloc(xibm->count, GFP_KERNEL);
+>   	if (!xibm->bitmap) {
+>   		kfree(xibm);
+>   		return -ENOMEM;
+> @@ -75,7 +75,7 @@ static void xive_irq_bitmap_remove_all(void)
+>   
+>   	list_for_each_entry_safe(xibm, tmp, &xive_irq_bitmaps, list) {
+>   		list_del(&xibm->list);
+> -		kfree(xibm->bitmap);
+> +		bitmap_free(xibm->bitmap);
+>   		kfree(xibm);
+>   	}
+>   }
 
