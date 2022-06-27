@@ -2,86 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F6AC43334
-	for <kernel-janitors@archiver.kernel.org>; Sun, 26 Jun 2022 16:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C27F1C43334
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Jun 2022 01:33:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230366AbiFZQ1z (ORCPT
+        id S229732AbiF0Bdr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 26 Jun 2022 12:27:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42540 "EHLO
+        Sun, 26 Jun 2022 21:33:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230013AbiFZQ1y (ORCPT
+        with ESMTP id S229603AbiF0Bdq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 26 Jun 2022 12:27:54 -0400
-Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5EF8BC34
-        for <kernel-janitors@vger.kernel.org>; Sun, 26 Jun 2022 09:27:50 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id 5V6xoYQJBm7vs5V6xoSSv7; Sun, 26 Jun 2022 18:27:48 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 26 Jun 2022 18:27:48 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org
-Subject: [PATCH] hinic: Use the bitmap API when applicable
-Date:   Sun, 26 Jun 2022 18:27:45 +0200
-Message-Id: <6ff7b7d21414240794a77dc2456914412718a145.1656260842.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sun, 26 Jun 2022 21:33:46 -0400
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 716EE2673;
+        Sun, 26 Jun 2022 18:33:45 -0700 (PDT)
+Received: from ip6-localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 25R1UGbi027657;
+        Sun, 26 Jun 2022 20:30:18 -0500
+Message-ID: <c960c2e02ddeacd527442e0b3b0db532c9017e1b.camel@kernel.crashing.org>
+Subject: Re: [PATCH] usb: gadget: aspeed_udc: fix handling of tx_len == 0
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Neal Liu <neal_liu@aspeedtech.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        "balbi@kernel.org" <balbi@kernel.org>
+Date:   Mon, 27 Jun 2022 11:30:15 +1000
+In-Reply-To: <HK0PR06MB32024B6C49E2C958185E005280B49@HK0PR06MB3202.apcprd06.prod.outlook.com>
+References: <YrMsU9HvdBm5YrRH@kili>
+         <HK0PR06MB32023259EBD6B4C649C62E8280B59@HK0PR06MB3202.apcprd06.prod.outlook.com>
+         <20220623064320.GN16517@kadam>
+         <e0b1c201bec2ccb68d1779ea8e9cfdf27563dd73.camel@amazon.com>
+         <20220624063457.GG11460@kadam>
+         <46f88070d8f6f47f55310e964a4576cadbc810f4.camel@kernel.crashing.org>
+         <HK0PR06MB32024B6C49E2C958185E005280B49@HK0PR06MB3202.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-'vlan_bitmap' is a bitmap and is used as such. So allocate it with
-devm_bitmap_zalloc() and its explicit bit size (i.e. VLAN_N_VID).
+On Fri, 2022-06-24 at 07:46 +0000, Neal Liu wrote:
+> > 
+> Hi Ben, This UDC is the independent IP. The ast2600 board can run
+> aspeed-vhub & aspeed_udc simultaneously with different USB port.
+> I think it's no need to restruct the code in vhub.
 
-This avoids the need of the VLAN_BITMAP_SIZE macro which:
-   - needlessly has a 'nic_dev' parameter
-   - should be "long" (and not byte) aligned, so that the bitmap semantic
-     is respected
+But is it a copy of the same base IP block ? IE, is the fundamental HW
+interface of the independent UDC operating the same way with the same
+register layout as one of the ports of the vHUB ?
 
-This is in fact not an issue because VLAN_N_VID is 4096 at the time
-being, but devm_bitmap_zalloc() is less verbose and easier to understand.
+I don't like having multiple drivers for the same hardware... if it's
+different enough, then let's keep it separate, but if not, we should
+definitely split the udc from the existing vhub code so that the same
+driver can operate standalone or beneath a vhub. 
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/net/ethernet/huawei/hinic/hinic_main.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_main.c b/drivers/net/ethernet/huawei/hinic/hinic_main.c
-index 05329292d940..56a89793f47d 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_main.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_main.c
-@@ -62,8 +62,6 @@ MODULE_PARM_DESC(rx_weight, "Number Rx packets for NAPI budget (default=64)");
- 
- #define HINIC_LRO_RX_TIMER_DEFAULT	16
- 
--#define VLAN_BITMAP_SIZE(nic_dev)       (ALIGN(VLAN_N_VID, 8) / 8)
--
- #define work_to_rx_mode_work(work)      \
- 		container_of(work, struct hinic_rx_mode_work, work)
- 
-@@ -1242,9 +1240,8 @@ static int nic_dev_init(struct pci_dev *pdev)
- 	u64_stats_init(&tx_stats->syncp);
- 	u64_stats_init(&rx_stats->syncp);
- 
--	nic_dev->vlan_bitmap = devm_kzalloc(&pdev->dev,
--					    VLAN_BITMAP_SIZE(nic_dev),
--					    GFP_KERNEL);
-+	nic_dev->vlan_bitmap = devm_bitmap_zalloc(&pdev->dev, VLAN_N_VID,
-+						  GFP_KERNEL);
- 	if (!nic_dev->vlan_bitmap) {
- 		err = -ENOMEM;
- 		goto err_vlan_bitmap;
--- 
-2.34.1
+Cheers,
+Ben.
 
