@@ -2,133 +2,132 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C9FC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Jun 2022 08:53:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 222D3CCA481
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Jun 2022 15:19:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233555AbiF0Ixz (ORCPT
+        id S237830AbiF0PTZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Jun 2022 04:53:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47558 "EHLO
+        Mon, 27 Jun 2022 11:19:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233180AbiF0Ixy (ORCPT
+        with ESMTP id S237289AbiF0PTS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Jun 2022 04:53:54 -0400
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 786666350;
-        Mon, 27 Jun 2022 01:53:52 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id 463B15C01EE;
-        Mon, 27 Jun 2022 04:53:49 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Mon, 27 Jun 2022 04:53:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm1; t=1656320029; x=
-        1656406429; bh=YbjaBfcwxsEJTLjjrwiaw6MoYuL/h+89W5hA8G79W4Q=; b=K
-        rnsdYJ7Gtd1gaPgHQgJ7CYrrdpgLodOOteQgjDXDuR/Gy4bWi31+C2S1zlWj/RsW
-        TPXPsN1BeYYYDs3GhntWmb8QnICNDcawD1BpWyuv+IYjxoniipRC9bAyiZIkfugl
-        4FKtvLzSArJvoZx3617q5dc0k7ea6qUaIWyLa1yhjq+4VqDr8GPNv4PXSZhv56fC
-        9JryqKy4CcZhKMUwPbQqFh2c+UO/0p8sX2hxRLS1mMly4v6Q/bD9JXywKrmHgSw9
-        GVClFImLMg2rs1g8TA68/HYBo8A8NldyABiUTVmgwLqvOefe+MGo/7gK8kfaFx95
-        oIwAXin58tJl7Bkj7HKkQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1656320029; x=
-        1656406429; bh=YbjaBfcwxsEJTLjjrwiaw6MoYuL/h+89W5hA8G79W4Q=; b=x
-        job176r5evUQOCs+fa4Qn0RiRtHHSnr7r8qv2q54xaYcSJ34sEuCQXMGQl2oWNSn
-        3o6BWPUEMB3EebOdcDWhfambt8Q8IxMiMkHuPkRvMO4GDgeHcRH7v7QCjt2L8zYa
-        6gCGOOKF2zBILFeOe9tZvFIQa/dJznMaepmNM875oFuy9vhJHVVIDjvgYpoFL0pg
-        B1qDVNoaNnosvfRdu1hibqXmrQ2AcxwVyCID6f+3NDuTo4+Y8XYczHV48IYYp+gq
-        //IhV+GT6/Ip42Ir6REwezI4yibDxiD1AYjE1AkX90FAqCiF63uaOIV1gvL8kb88
-        158iYLkKKw9P2cJbH3S+g==
-X-ME-Sender: <xms:HHC5Yr6A370a_bV83zQbm-AC2gHCt23tCoeey9NSFmU78bRuD3wj7w>
-    <xme:HHC5Yg6h8mB-zjZ5HjkTPKZZHH74PHh8JBMAsgl_jBAsFTdcmwJzSD1UirHPGyWSs
-    t_U2f9IZaCUGpxB310>
-X-ME-Received: <xmr:HHC5Yid_Sdj0a5X99v9sRtgh3coU4JXi_a6GErhqJIMm0lUYErxs1dluFgRIYIo-b8Bm5YKA3t9EHL4vA2SMNgnckDdNCUDZ4r5Y5VY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudeghedgtdekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggugfgjsehtqhertddttddvnecuhfhrohhmpeforgig
-    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
-    grthhtvghrnheptefgleeggfegkeekgffgleduieduffejffegveevkeejudektdduueet
-    feetfefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:HHC5YsKZX24XRkV0TM-u-WX4Yj5_Clj2e1hYiUvyLyM25rSrPGFt6A>
-    <xmx:HHC5YvKH9BnYDaaAUNfMyooMbY_PneaCqLGSTrkSf0tUeW7dlZLT7w>
-    <xmx:HHC5YlzqP2-zgZj2zGU5hkuOLbD50XZwDnOBjC7KkFL6vv0Vel--1g>
-    <xmx:HXC5Ylh_QdmJd7Cm39OxlS8TFFPoTZlsgHZ4JKc6VEELSPYchLFWZQ>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 27 Jun 2022 04:53:48 -0400 (EDT)
-Date:   Mon, 27 Jun 2022 10:53:46 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm: logicvc: Fix uninitialized variable in probe
-Message-ID: <20220627085346.6fnzgygajdu7wncc@houat>
-References: <Yqh6OfSiPFuVrGo4@kili>
- <YrXLrVUIavGWC4sx@aptenodytes>
- <20220624143717.tykkcznvzq5e5qz2@houat>
- <YrXOTAR6koA1b8XJ@aptenodytes>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <YrXOTAR6koA1b8XJ@aptenodytes>
+        Mon, 27 Jun 2022 11:19:18 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D437613CC2;
+        Mon, 27 Jun 2022 08:19:16 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id ay16so19897617ejb.6;
+        Mon, 27 Jun 2022 08:19:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=qrkTtNr9vkVoaS0GaHbwE3GT2+MGnjzP/retpDU/T28=;
+        b=C5YbhQ6t4T37vQSfyF0SsFwnVBI9Lxc+Ze7LKYxlG9iQvUmwZ9nQatsceaJLaKk7yO
+         bBI+c39nTx2kQPlPmWJIRf/S/yz+k+g2GkxxnCTuHXITXzB/26zD7v+VOesTs4rF9ZBh
+         rfNpKizsJXfBZmWZfP6l+ULE+Fqy79ZjH5R23wuK79fbBy2N3R9FpqXBUc4RXPv/hI9u
+         Hr8ER+wmwLnHY7VXi3csS6XGmSTpLOljer5uThNytHeOzskq2RRXM5mSPeGEL8sEXo7R
+         gCDS42iUmgCTkrwSQX9xOZ+c3HxX+cFWzT8qnT5Zz6e/WV7B9GsoCVhcH3K3skI/v2wE
+         81fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=qrkTtNr9vkVoaS0GaHbwE3GT2+MGnjzP/retpDU/T28=;
+        b=TpBpV8vq4CN2E+6BNbZG8XtBH5o1qkmI1RQtn3COc/RNK8d1iQvdDYN0djNw2kewvQ
+         6Vlm9F8FGgLJdUyZwsa2eg5qJwzznNnsowpS5PrnM86GhqCDV8VHeGPep0CGNNLiYtfE
+         ExUzfpAynBQyyASFeFTutoQKfqy+YdSpVJY/6v+ER0DEAZjm7RgndnQRPUKX92kJT5rJ
+         Cwj5NXblkvFNs0WQLrZpmok1jSpHHM1OeRWhCQxo0uirzVzYploxdI3HwERCIDqg3b9c
+         541lK+3krkjLGSM+YTH5g7vasUG5BPfGuIeCWWU8XYQbOIvO4D3fJP1ISXteBbwkB7b1
+         9Aww==
+X-Gm-Message-State: AJIora/qHWzbKiCiWKo5RtDFtAdmySHNZBnLp49s9cYqAi60FDYjFy1u
+        qVzxc5hoZ/4Jf0m9L+w+PFc=
+X-Google-Smtp-Source: AGRyM1v0cHWaAH7E7lpWyIGSvwk+KfIIt13RPQoT9EnesD65eWN+G6gYFpk4GD6jpVqj/y3ES5w2cQ==
+X-Received: by 2002:a17:907:9805:b0:726:96cf:2bd2 with SMTP id ji5-20020a170907980500b0072696cf2bd2mr9059635ejc.119.1656343155283;
+        Mon, 27 Jun 2022 08:19:15 -0700 (PDT)
+Received: from felia.fritz.box (200116b826511b0021a0c74157938809.dip.versatel-1u1.de. [2001:16b8:2651:1b00:21a0:c741:5793:8809])
+        by smtp.gmail.com with ESMTPSA id z8-20020a170906434800b00722f2a0944fsm5076901ejm.107.2022.06.27.08.19.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jun 2022 08:19:14 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Federico Vaga <federico.vaga@vaga.pv.it>,
+        Alex Shi <alexs@kernel.org>,
+        Yanteng Si <siyanteng@loongson.cn>,
+        Hu Haowen <src.res@email.cn>, linux-doc@vger.kernel.org,
+        linux-doc-tw-discuss@lists.sourceforge.net
+Cc:     Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [RFC PATCH 01/11] docs: kernel-docs: order reference from newest to oldest
+Date:   Mon, 27 Jun 2022 17:18:09 +0200
+Message-Id: <20220627151819.22694-2-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220627151819.22694-1-lukas.bulwahn@gmail.com>
+References: <20220627151819.22694-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jun 24, 2022 at 04:46:36PM +0200, Paul Kocialkowski wrote:
-> Hi,
->=20
-> On Fri 24 Jun 22, 16:37, Maxime Ripard wrote:
-> > Hi,
-> >=20
-> > On Fri, Jun 24, 2022 at 04:35:25PM +0200, Paul Kocialkowski wrote:
-> > > On Tue 14 Jun 22, 15:08, Dan Carpenter wrote:
-> > > > The "regmap" is supposed to be initialized to NULL but it's used
-> > > > without being initialized.
-> > > >=20
-> > > > Fixes: efeeaefe9be5 ("drm: Add support for the LogiCVC display cont=
-roller")
-> > > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > >=20
-> > > Nice catch, thanks a lot!
-> > >=20
-> > > Acked-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> >=20
-> > Since you have the commit rights to drm-misc, you should apply it
->=20
-> Absolutely, I'm on my way to doing that.
->=20
-> Do I need to reply to the emails with a message indicating that I merged =
-them
-> or is using the tool sufficient?
+The documents on each section of this document are ordered by its
+published date, from the newest to the oldest.
 
-Going back on this, but it's fairly easy with b4 to generate the
-messages that you applied them.
+In the kernel-docs.rst, the references on each section of this document
+are intended to be ordered by its published date, from the newest to the
+oldest. The Linux Kernel Module Programming Guide was published in 2021;
+so, it is placed at the top as the most recent publication after the
+rolling-version "Linux Kernel Mailing List Glossary" reference.
 
-For example, I'm using:
+Fixes: 630c8fa02f9a ("Documentation: Update details of The Linux Kernel Module Programming Guide")
 
-cat mail | b4 am -t --no-cover -o - -P _ | dim apply-branch drm-misc-fixes
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ Documentation/process/kernel-docs.rst | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-b4 am will retrieve the last version of the patch from lore (and only
-the current patch with --no-cover -P _), add the tags (-t) and output it
-on stdout (-o -) and pass it to dim apply-branch
+diff --git a/Documentation/process/kernel-docs.rst b/Documentation/process/kernel-docs.rst
+index da9527502ef0..b4d98f6f797a 100644
+--- a/Documentation/process/kernel-docs.rst
++++ b/Documentation/process/kernel-docs.rst
+@@ -83,6 +83,18 @@ On-line docs
+         Finally this trace-log is used as base for more a exact conceptual
+         exploration and description of the Linux TCP/IP implementation.*
+ 
++    * Title: **The Linux Kernel Module Programming Guide**
++
++      :Author: Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram,
++        Jim Huang.
++      :URL: https://sysprog21.github.io/lkmpg/
++      :Date: 2021
++      :Keywords: modules, GPL book, /proc, ioctls, system calls,
++        interrupt handlers .
++      :Description: A very nice GPL book on the topic of modules
++        programming. Lots of examples. Currently the new version is being
++        actively maintained at https://github.com/sysprog21/lkmpg.
++
+     * Title: **On submitting kernel Patches**
+ 
+       :Author: Andi Kleen
+@@ -126,18 +138,6 @@ On-line docs
+         describes how to write user-mode utilities for communicating with
+         Card Services.
+ 
+-    * Title: **The Linux Kernel Module Programming Guide**
+-
+-      :Author: Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram,
+-        Jim Huang.
+-      :URL: https://sysprog21.github.io/lkmpg/
+-      :Date: 2021
+-      :Keywords: modules, GPL book, /proc, ioctls, system calls,
+-        interrupt handlers .
+-      :Description: A very nice GPL book on the topic of modules
+-        programming. Lots of examples. Currently the new version is being
+-        actively maintained at https://github.com/sysprog21/lkmpg.
+-
+     * Title: **Global spinlock list and usage**
+ 
+       :Author: Rick Lindsley.
+-- 
+2.17.1
 
-Then, you can do
-
-b4 ty -a && git send-email *.thanks && rm *.thanks
-
-And it will send a mail for every patch you applied in the current branch
-
-Maxime
