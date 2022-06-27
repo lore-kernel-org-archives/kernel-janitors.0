@@ -2,90 +2,133 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E61CCA47E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Jun 2022 08:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C9FC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Jun 2022 08:53:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233395AbiF0IOp (ORCPT
+        id S233555AbiF0Ixz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Jun 2022 04:14:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46674 "EHLO
+        Mon, 27 Jun 2022 04:53:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232059AbiF0IOl (ORCPT
+        with ESMTP id S233180AbiF0Ixy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Jun 2022 04:14:41 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91C82626A;
-        Mon, 27 Jun 2022 01:14:40 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id t17-20020a1c7711000000b003a0434b0af7so2561626wmi.0;
-        Mon, 27 Jun 2022 01:14:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WyN53yBSmQaV4TeUGBbUPb+3S/pfbZP5il80wSTCxhM=;
-        b=c+gNmopgqqlXia7kaKocEy4i9B2JPmOowTmB2blMf2xrRncGGgUl8gpCeBf0H40Oz7
-         +QHISV7kgnDatz4jww2TjO0zaODQGGrqkhuXjSLcKRMYasEIElykfijvIMc/gYGsHaC6
-         IecFOHQqcpNEWQOHndfnNf4TBik1nBl6wd12fAH3EupB425kxQZP4I/JvYwL6NII11oa
-         l0psqXDa/PKcS7tj5LpRNDl2Paa5p+yatSZGjHJTSrXlV7T5SFnrpddlSGCUFH7MUGhH
-         47cLSdhb8/7s/11xDOVl9v3nC1s/lpPSPUSGlCxwfxXq/f8M/VNX0BEgogrO39rmDbTu
-         MyGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WyN53yBSmQaV4TeUGBbUPb+3S/pfbZP5il80wSTCxhM=;
-        b=UEvKK42+cTWblQ84GZbNZ0+LNednnaA/zq7eFwBbZI3a0sidYkA0X4oQGVEz2C7y8N
-         rE3fqpS/aNahj3cY8onnOVNoKQOWtv9Ef7iU0q0xPeFRHdgjUS8Oh2G2yNxmDPMjwgSi
-         WbtH4Wgy9Y2dqGruHzNpXQmMLKI3V4xLWC/Jw0wDd61MsT0IQSYiZlTFeI+Tzw8UG+p8
-         k4r64hQ57fCu4Ftq9GkcXsPknVe1aNf/NhYaWbM9gzivKwIqxckpRHeaqGL+XPUIObSx
-         Mtrw7GX60YiYcF6WDzkThHbU9ua6Hm2/qhpvFFux40nAJaRGHKJy11SXunI5+9pSn+6X
-         ZhRA==
-X-Gm-Message-State: AJIora84qIHoXZsK5O++ucr/zt9EKd7PFWamh6k6J/BgYye0hwj+YZi1
-        euTBVd2WsMAuka0067D7oZE=
-X-Google-Smtp-Source: AGRyM1sceMx/DaP27aAYpPGx8T4w604aPmcuj3WhO/jldAzYHXK1NMmX4D+KDMta7QlEXFljLyTfhA==
-X-Received: by 2002:a05:600c:2e14:b0:3a0:3ba0:143c with SMTP id o20-20020a05600c2e1400b003a03ba0143cmr17497223wmf.99.1656317678991;
-        Mon, 27 Jun 2022 01:14:38 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id v15-20020a5d43cf000000b0021badf3cb26sm11569623wrr.63.2022.06.27.01.14.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jun 2022 01:14:38 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        David Matlack <dmatlack@google.com>,
-        Ben Gardon <bgardon@google.com>, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] KVM: selftests: Fix spelling mistake "miliseconds" -> "milliseconds"
-Date:   Mon, 27 Jun 2022 09:14:37 +0100
-Message-Id: <20220627081437.45732-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.3
+        Mon, 27 Jun 2022 04:53:54 -0400
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 786666350;
+        Mon, 27 Jun 2022 01:53:52 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 463B15C01EE;
+        Mon, 27 Jun 2022 04:53:49 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Mon, 27 Jun 2022 04:53:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm1; t=1656320029; x=
+        1656406429; bh=YbjaBfcwxsEJTLjjrwiaw6MoYuL/h+89W5hA8G79W4Q=; b=K
+        rnsdYJ7Gtd1gaPgHQgJ7CYrrdpgLodOOteQgjDXDuR/Gy4bWi31+C2S1zlWj/RsW
+        TPXPsN1BeYYYDs3GhntWmb8QnICNDcawD1BpWyuv+IYjxoniipRC9bAyiZIkfugl
+        4FKtvLzSArJvoZx3617q5dc0k7ea6qUaIWyLa1yhjq+4VqDr8GPNv4PXSZhv56fC
+        9JryqKy4CcZhKMUwPbQqFh2c+UO/0p8sX2hxRLS1mMly4v6Q/bD9JXywKrmHgSw9
+        GVClFImLMg2rs1g8TA68/HYBo8A8NldyABiUTVmgwLqvOefe+MGo/7gK8kfaFx95
+        oIwAXin58tJl7Bkj7HKkQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1656320029; x=
+        1656406429; bh=YbjaBfcwxsEJTLjjrwiaw6MoYuL/h+89W5hA8G79W4Q=; b=x
+        job176r5evUQOCs+fa4Qn0RiRtHHSnr7r8qv2q54xaYcSJ34sEuCQXMGQl2oWNSn
+        3o6BWPUEMB3EebOdcDWhfambt8Q8IxMiMkHuPkRvMO4GDgeHcRH7v7QCjt2L8zYa
+        6gCGOOKF2zBILFeOe9tZvFIQa/dJznMaepmNM875oFuy9vhJHVVIDjvgYpoFL0pg
+        B1qDVNoaNnosvfRdu1hibqXmrQ2AcxwVyCID6f+3NDuTo4+Y8XYczHV48IYYp+gq
+        //IhV+GT6/Ip42Ir6REwezI4yibDxiD1AYjE1AkX90FAqCiF63uaOIV1gvL8kb88
+        158iYLkKKw9P2cJbH3S+g==
+X-ME-Sender: <xms:HHC5Yr6A370a_bV83zQbm-AC2gHCt23tCoeey9NSFmU78bRuD3wj7w>
+    <xme:HHC5Yg6h8mB-zjZ5HjkTPKZZHH74PHh8JBMAsgl_jBAsFTdcmwJzSD1UirHPGyWSs
+    t_U2f9IZaCUGpxB310>
+X-ME-Received: <xmr:HHC5Yid_Sdj0a5X99v9sRtgh3coU4JXi_a6GErhqJIMm0lUYErxs1dluFgRIYIo-b8Bm5YKA3t9EHL4vA2SMNgnckDdNCUDZ4r5Y5VY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudeghedgtdekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtqhertddttddvnecuhfhrohhmpeforgig
+    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
+    grthhtvghrnheptefgleeggfegkeekgffgleduieduffejffegveevkeejudektdduueet
+    feetfefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:HHC5YsKZX24XRkV0TM-u-WX4Yj5_Clj2e1hYiUvyLyM25rSrPGFt6A>
+    <xmx:HHC5YvKH9BnYDaaAUNfMyooMbY_PneaCqLGSTrkSf0tUeW7dlZLT7w>
+    <xmx:HHC5YlzqP2-zgZj2zGU5hkuOLbD50XZwDnOBjC7KkFL6vv0Vel--1g>
+    <xmx:HXC5Ylh_QdmJd7Cm39OxlS8TFFPoTZlsgHZ4JKc6VEELSPYchLFWZQ>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 27 Jun 2022 04:53:48 -0400 (EDT)
+Date:   Mon, 27 Jun 2022 10:53:46 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm: logicvc: Fix uninitialized variable in probe
+Message-ID: <20220627085346.6fnzgygajdu7wncc@houat>
+References: <Yqh6OfSiPFuVrGo4@kili>
+ <YrXLrVUIavGWC4sx@aptenodytes>
+ <20220624143717.tykkcznvzq5e5qz2@houat>
+ <YrXOTAR6koA1b8XJ@aptenodytes>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <YrXOTAR6koA1b8XJ@aptenodytes>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in the -p option help text. Fix it.
+On Fri, Jun 24, 2022 at 04:46:36PM +0200, Paul Kocialkowski wrote:
+> Hi,
+>=20
+> On Fri 24 Jun 22, 16:37, Maxime Ripard wrote:
+> > Hi,
+> >=20
+> > On Fri, Jun 24, 2022 at 04:35:25PM +0200, Paul Kocialkowski wrote:
+> > > On Tue 14 Jun 22, 15:08, Dan Carpenter wrote:
+> > > > The "regmap" is supposed to be initialized to NULL but it's used
+> > > > without being initialized.
+> > > >=20
+> > > > Fixes: efeeaefe9be5 ("drm: Add support for the LogiCVC display cont=
+roller")
+> > > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > >=20
+> > > Nice catch, thanks a lot!
+> > >=20
+> > > Acked-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> >=20
+> > Since you have the commit rights to drm-misc, you should apply it
+>=20
+> Absolutely, I'm on my way to doing that.
+>=20
+> Do I need to reply to the emails with a message indicating that I merged =
+them
+> or is using the tool sufficient?
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Going back on this, but it's fairly easy with b4 to generate the
+messages that you applied them.
 
-diff --git a/tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c b/tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c
-index cc6421716400..58876ec4ee51 100644
---- a/tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c
-@@ -218,7 +218,7 @@ static void help(char *name)
- 	puts("");
- 	printf("usage: %s [-h] [-p period_ms] [-t token]\n", name);
- 	puts("");
--	printf(" -p: The NX reclaim period in miliseconds.\n");
-+	printf(" -p: The NX reclaim period in milliseconds.\n");
- 	printf(" -t: The magic token to indicate environment setup is done.\n");
- 	printf(" -r: The test has reboot permissions and can disable NX huge pages.\n");
- 	puts("");
--- 
-2.35.3
+For example, I'm using:
 
+cat mail | b4 am -t --no-cover -o - -P _ | dim apply-branch drm-misc-fixes
+
+b4 am will retrieve the last version of the patch from lore (and only
+the current patch with --no-cover -P _), add the tags (-t) and output it
+on stdout (-o -) and pass it to dim apply-branch
+
+Then, you can do
+
+b4 ty -a && git send-email *.thanks && rm *.thanks
+
+And it will send a mail for every patch you applied in the current branch
+
+Maxime
