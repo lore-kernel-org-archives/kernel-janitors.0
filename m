@@ -2,60 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D11C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Jun 2022 21:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FCD6C43334
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Jun 2022 21:32:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230354AbiF1VZa (ORCPT
+        id S230454AbiF1Vcg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Jun 2022 17:25:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37180 "EHLO
+        Tue, 28 Jun 2022 17:32:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229814AbiF1VZ3 (ORCPT
+        with ESMTP id S230498AbiF1Vce (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Jun 2022 17:25:29 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AF273A730;
-        Tue, 28 Jun 2022 14:25:29 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id f190so7847319wma.5;
-        Tue, 28 Jun 2022 14:25:28 -0700 (PDT)
+        Tue, 28 Jun 2022 17:32:34 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D63783AA7B;
+        Tue, 28 Jun 2022 14:32:33 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id i67-20020a1c3b46000000b003a03567d5e9so8577696wma.1;
+        Tue, 28 Jun 2022 14:32:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=ggP20+YtDR/ba9ZGcccJ7AMV2oMsWGgviBSb7C0BwSo=;
-        b=L7DkmGA4vHMTLK7wq4lGxEi16hlAS20VwFe7CLrCWR6U4pAUNC1xYKXrwv+CBExbM7
-         dLCc4ng70SF2VHI26CY+JAfKM7CMlcV6xn0tGiCjVqpINZ5aZeUXVztJ24xUCqarR07Q
-         F39K7Qj3A0lGD+5GdKhTzloNYYA8LxiJyOCYrwieL6nxMGdhCAbvKkw/gZZbw7w7mmZN
-         iNZZKrUYEHzNg8Iyeo0+O6jNRuarL15dAfWWWmO/Vd/OzvFSzttOTlcb1va26M94PrTH
-         Up0hNH1bVMqqsbDS02QAy9pfoM6Qtl5jukgt/y3+uhJse+XuI7ea2eDVqVJgiHnhSGwD
-         e1AQ==
+        bh=e5o0RO1o3C2mILdamTa9jqoyqij/R5DqmgtFxZkmgvw=;
+        b=Drpq6Jf622qVqtSLedzPOxD+wUODaRpZDIhCGppz8csCq4zAI7/cEo1l672ZkxgTiz
+         YoF/6VKbiIbYc+3WgO/Hh3s0s4ALEIWGkghEKPMvsArtenCrct2kCP7bAn9eTGSFxEA1
+         9EYgOhbwxfVvUd4ZbR9pV9aQNwB6gVWNFn2uUbtjFbw/2stSok1f69wjN5iv2tDs+/QU
+         aJgwskEzDZ2tZBJztzeQ4qosRs6qWbr5ZmrdDl2se1KJ8o57R/5syVElbhUm6ra5KKo5
+         OW/QsLaif+Hrkyq4BwcswkLzw3l7uJRc9bPDr54UwEwdAQ/UGUOtJX1IUDh/ilF4AcwH
+         1gPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=ggP20+YtDR/ba9ZGcccJ7AMV2oMsWGgviBSb7C0BwSo=;
-        b=8Gk5xUmPLY41eeyhudOr1/YQKY4YvteH+5ITf++F3rucRLLUNbx79skoKWzIIO8b6w
-         nRO/sVYf0CKXUO0gQhd/IC1iNH0Ezg7n4/gjztglLUNjFg6CibF42PnJ6JgYYTFe52Fa
-         ksdrRaI0IT+oju5CsJaUH9BbQ2TVg2IJ563LxCKDNyjfj96tkXF+Q8627wD8n43R/7fW
-         QE+1HMex9RBFtz/pfj63DF79OdIIdjNdJEF0aXlgSRQ4jjgnzux1kmL82PU63+M1ctBw
-         BrBW2aeeYnfMCBdx5+LlK/B86JletxfJUrfU9xFu3g8xSBO59uj5dsCaOsfCXE2gmLXL
-         4nUg==
-X-Gm-Message-State: AJIora9UHODRC1ln4x0fpFtD0hKI88ZxhMqN6OZ64FL9bcmT5HUbCQob
-        e7f7QnioKt+q5DrEMnKqtjk=
-X-Google-Smtp-Source: AGRyM1sX6vcWI+ufYs2TQWTtdp6s5a2mtPPCla3n2TrP+X81JVA2O9xRgbPhB7B8f4ygrqldae+ezQ==
-X-Received: by 2002:a05:600c:3c83:b0:39c:9039:852c with SMTP id bg3-20020a05600c3c8300b0039c9039852cmr1785941wmb.187.1656451527504;
-        Tue, 28 Jun 2022 14:25:27 -0700 (PDT)
+        bh=e5o0RO1o3C2mILdamTa9jqoyqij/R5DqmgtFxZkmgvw=;
+        b=6WEulTvATxQWYdhnQTrzdxas3xV0odx12xQpVeHEZW9EtOy/ELAVIljEO8IDBBMYLN
+         GTacmdebRZs+w7lhd57SoBHVppJR2YzR19gs/qXZ9B/mbwlUpX10UY4rSUNgy2ySzWhr
+         qaLXbfrEbdZOajptuJzsF+IG6iT16GkGPNplbhedXx/X21cczuzdKhIr5cl2MMptDdKw
+         rO2hCBzf+hU/46kB6Xrsy4JxX/zuonM/4FzxUyuSY+eDW8p96u4/VL+Jm8VbexQMH0c/
+         DZ0lnOnydl9e05zP+KsLYOriS6xY/DK/XsywiTTpiqpPNe/yAjbBvriV4XaSrz1XLTJc
+         GdDA==
+X-Gm-Message-State: AJIora+Cv2fmoQYca0NkGxIdkebCV3BmWVGqEl+jNYJTD+RT/cX6cQ0A
+        MAXB7qA2iSZXCcjh85DDUoRqseJsbRyrMb8MCxM=
+X-Google-Smtp-Source: AGRyM1vhq0vdwiaKnwcWI+wpOY5hAe08ANlKQlH12nQAhOH/I4LRm+G9d+QWw/hSUh+0Zs1ozUM7xQ==
+X-Received: by 2002:a05:600c:3c8a:b0:3a0:4ad8:d3c4 with SMTP id bg10-20020a05600c3c8a00b003a04ad8d3c4mr1816767wmb.43.1656451952303;
+        Tue, 28 Jun 2022 14:32:32 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id bg11-20020a05600c3c8b00b003a04a9504b0sm966567wmb.40.2022.06.28.14.25.26
+        by smtp.gmail.com with ESMTPSA id h5-20020a5d4305000000b00210bac248c8sm14672384wrq.11.2022.06.28.14.32.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jun 2022 14:25:26 -0700 (PDT)
+        Tue, 28 Jun 2022 14:32:31 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Chuck Lever <chuck.lever@oracle.com>,
-        Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org
+To:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] nfsd: remove redundant assignment to variable len
-Date:   Tue, 28 Jun 2022 22:25:25 +0100
-Message-Id: <20220628212525.353730-1-colin.i.king@gmail.com>
+Subject: [PATCH] cifs: remove redundant initialization to variable mnt_sign_enabled
+Date:   Tue, 28 Jun 2022 22:32:29 +0100
+Message-Id: <20220628213229.354032-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,30 +64,32 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable len is being assigned a value zero and this is never
-read, it is being re-assigned later. The assignment is redundant
-and can be removed.
+Variable mnt_sign_enabled is being initialized with a value that
+is never read, it is being reassigned later on with a different
+value. The initialization is redundant and can be removed.
 
 Cleans up clang scan-build warning:
-fs/nfsd/nfsctl.c:636:2: warning: Value stored to 'len' is never read
+fs/cifs/cifssmb.c:465:7: warning: Value stored to 'mnt_sign_enabled
+ during its initialization is never read
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/nfsd/nfsctl.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/cifs/cifssmb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-index 0621c2faf242..66c352bf61b1 100644
---- a/fs/nfsd/nfsctl.c
-+++ b/fs/nfsd/nfsctl.c
-@@ -633,7 +633,6 @@ static ssize_t __write_versions(struct file *file, char *buf, size_t size)
- 	}
+diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
+index 6371b9eebdad..9ed21752f2df 100644
+--- a/fs/cifs/cifssmb.c
++++ b/fs/cifs/cifssmb.c
+@@ -462,7 +462,7 @@ cifs_enable_signing(struct TCP_Server_Info *server, bool mnt_sign_required)
+ {
+ 	bool srv_sign_required = server->sec_mode & server->vals->signing_required;
+ 	bool srv_sign_enabled = server->sec_mode & server->vals->signing_enabled;
+-	bool mnt_sign_enabled = global_secflags & CIFSSEC_MAY_SIGN;
++	bool mnt_sign_enabled;
  
- 	/* Now write current state into reply buffer */
--	len = 0;
- 	sep = "";
- 	remaining = SIMPLE_TRANSACTION_LIMIT;
- 	for (num=2 ; num <= 4 ; num++) {
+ 	/*
+ 	 * Is signing required by mnt options? If not then check
 -- 
 2.35.3
 
