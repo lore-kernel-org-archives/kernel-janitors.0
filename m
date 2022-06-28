@@ -2,94 +2,189 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FCD6C43334
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Jun 2022 21:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5771AC43334
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Jun 2022 22:17:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230454AbiF1Vcg (ORCPT
+        id S231913AbiF1WRX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Jun 2022 17:32:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42048 "EHLO
+        Tue, 28 Jun 2022 18:17:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230498AbiF1Vce (ORCPT
+        with ESMTP id S231480AbiF1WPi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Jun 2022 17:32:34 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D63783AA7B;
-        Tue, 28 Jun 2022 14:32:33 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id i67-20020a1c3b46000000b003a03567d5e9so8577696wma.1;
-        Tue, 28 Jun 2022 14:32:33 -0700 (PDT)
+        Tue, 28 Jun 2022 18:15:38 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F28E83A1A3;
+        Tue, 28 Jun 2022 15:15:02 -0700 (PDT)
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25SLn8Uk016550;
+        Tue, 28 Jun 2022 22:14:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=corp-2021-07-09;
+ bh=e41d1RcqoaNZcNRgyF75WS3CUpPTKjRa76NitT7Gr1Y=;
+ b=qLAusV7wmheG5/NcOvhJrSlmymKqI+ti3zh750aolgc5OZdBEMNGQdog58bcaAYquWMZ
+ wvjx5ttIBP+j4FZh1bpzQqrzaSsyKkIov0xW0YrHdtG9rQ3aR48UPOGSMqvl35XPN0wY
+ yLPGzNtx40yIQQECvgHWHPxB1PVgCqcdxzCH2Bnm4mSr7EGg2TZ5QPAOsjJdMLatSVoh
+ UzA3XSK4Rddg+j+u4lN4R5zfxvP56fg50nUlnP6bCkpu2RlKoba5dj05OgA5AdIMwMlp
+ k+1P62ubzRGY1fwHKUpT3v605SAywBcllvGvt8Vp6b/y2qwWhjj/84zXxWV7UZtm5oy6 Zw== 
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3gwrscfdj6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Jun 2022 22:14:58 +0000
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 25SM4pdI016720;
+        Tue, 28 Jun 2022 22:14:57 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2106.outbound.protection.outlook.com [104.47.55.106])
+        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3gwrt2ry1t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Jun 2022 22:14:57 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bA96Sz8AINX/pUjQEf2Xntfk/rlViWpAP/p4liqkmQgHoKNUhrm2cl4MNmLb6e2jBufpgQKz0g/Pw2aejoDHgpPP1C7ekawdtdxffVEa7JBCGOHzdwdlxrQ/PPZY8ehOBsg+4u/KEvsOcrfa/4eVbIoziGoy9vJAkp121b7mj9ThcPRzmoZjh8cohawF/0+QkZKCLlC1Ta3Env7v5jvEoztZ5/bVGJceclBgNZCAMcMqTWDBaVl/p4xZ7eNYG3W6d92hE7SKTobWpadu0K0uv/xZMTQY2KwARb/AUily53Cr6UbOsM3AJ3jh94fk+MSgFR4jKDacg5ZFhs/QsBsbGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=e41d1RcqoaNZcNRgyF75WS3CUpPTKjRa76NitT7Gr1Y=;
+ b=CAoJ8lPUodUxNwz2O0j93G5AcmlzcG5spCKlCi9bVsc2uGTqJPqZC7T2jLcOER+s3/RI56yMD8b8ejHkKhfE75v/8LdcUEHW/m/mCGnp4fUJUUw0/iaFlhjG/I8QVrWsPEcTws5m6y0+RpF8O/n55QfEA3vcKCha9kF8+rp8fpzJxjGFmD42UMPnbhU4+Tz8gkjXi6LmAW3qBSeCI1NZnVqnvQ5uzayjjK3bYiLZ0WYGojdofDy9/Tz03u3esCKPMwYdrO+63h8bUQ6QupC5oCLwXJME+IWk0udBwAOlRsT1qwKfRw8wukvc9Pk6/PEgTBY4YNub8gC8kXc8JzZh4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=e5o0RO1o3C2mILdamTa9jqoyqij/R5DqmgtFxZkmgvw=;
-        b=Drpq6Jf622qVqtSLedzPOxD+wUODaRpZDIhCGppz8csCq4zAI7/cEo1l672ZkxgTiz
-         YoF/6VKbiIbYc+3WgO/Hh3s0s4ALEIWGkghEKPMvsArtenCrct2kCP7bAn9eTGSFxEA1
-         9EYgOhbwxfVvUd4ZbR9pV9aQNwB6gVWNFn2uUbtjFbw/2stSok1f69wjN5iv2tDs+/QU
-         aJgwskEzDZ2tZBJztzeQ4qosRs6qWbr5ZmrdDl2se1KJ8o57R/5syVElbhUm6ra5KKo5
-         OW/QsLaif+Hrkyq4BwcswkLzw3l7uJRc9bPDr54UwEwdAQ/UGUOtJX1IUDh/ilF4AcwH
-         1gPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=e5o0RO1o3C2mILdamTa9jqoyqij/R5DqmgtFxZkmgvw=;
-        b=6WEulTvATxQWYdhnQTrzdxas3xV0odx12xQpVeHEZW9EtOy/ELAVIljEO8IDBBMYLN
-         GTacmdebRZs+w7lhd57SoBHVppJR2YzR19gs/qXZ9B/mbwlUpX10UY4rSUNgy2ySzWhr
-         qaLXbfrEbdZOajptuJzsF+IG6iT16GkGPNplbhedXx/X21cczuzdKhIr5cl2MMptDdKw
-         rO2hCBzf+hU/46kB6Xrsy4JxX/zuonM/4FzxUyuSY+eDW8p96u4/VL+Jm8VbexQMH0c/
-         DZ0lnOnydl9e05zP+KsLYOriS6xY/DK/XsywiTTpiqpPNe/yAjbBvriV4XaSrz1XLTJc
-         GdDA==
-X-Gm-Message-State: AJIora+Cv2fmoQYca0NkGxIdkebCV3BmWVGqEl+jNYJTD+RT/cX6cQ0A
-        MAXB7qA2iSZXCcjh85DDUoRqseJsbRyrMb8MCxM=
-X-Google-Smtp-Source: AGRyM1vhq0vdwiaKnwcWI+wpOY5hAe08ANlKQlH12nQAhOH/I4LRm+G9d+QWw/hSUh+0Zs1ozUM7xQ==
-X-Received: by 2002:a05:600c:3c8a:b0:3a0:4ad8:d3c4 with SMTP id bg10-20020a05600c3c8a00b003a04ad8d3c4mr1816767wmb.43.1656451952303;
-        Tue, 28 Jun 2022 14:32:32 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id h5-20020a5d4305000000b00210bac248c8sm14672384wrq.11.2022.06.28.14.32.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jun 2022 14:32:31 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] cifs: remove redundant initialization to variable mnt_sign_enabled
-Date:   Tue, 28 Jun 2022 22:32:29 +0100
-Message-Id: <20220628213229.354032-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.3
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=e41d1RcqoaNZcNRgyF75WS3CUpPTKjRa76NitT7Gr1Y=;
+ b=Xq9f+d7mi/M+UJ981wx4x7AQOqvGa8Uqm+QwOjfwevZwYoaCqgrMZXJz7AiZFkIsJsdxFGxiaVcMLRXruPeKLXicNhbRTeqrOBOTrywhedrWI8+dpSvIk/DVcHXjCluWKOylLlHizckRcxNaiYOibbUKWOeS3bya5MAVPOnyWT8=
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
+ by BN7PR10MB2449.namprd10.prod.outlook.com (2603:10b6:406:cd::30) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5373.16; Tue, 28 Jun
+ 2022 22:14:56 +0000
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::9920:1ac4:2d14:e703]) by BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::9920:1ac4:2d14:e703%5]) with mapi id 15.20.5373.018; Tue, 28 Jun 2022
+ 22:14:56 +0000
+From:   Chuck Lever III <chuck.lever@oracle.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+CC:     Jeff Layton <jlayton@kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] nfsd: remove redundant assignment to variable len
+Thread-Topic: [PATCH] nfsd: remove redundant assignment to variable len
+Thread-Index: AQHYizWZNXdLxoX3hUaViRLsHbHsZa1lYpKA
+Date:   Tue, 28 Jun 2022 22:14:56 +0000
+Message-ID: <75A2391D-B69B-4078-84F9-FB499A0A29B1@oracle.com>
+References: <20220628212525.353730-1-colin.i.king@gmail.com>
+In-Reply-To: <20220628212525.353730-1-colin.i.king@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3696.100.31)
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 61cad3df-6182-429e-7055-08da5953a206
+x-ms-traffictypediagnostic: BN7PR10MB2449:EE_
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 6mNfsl/dsJY9ScXO4DPZHZmsJM/kKgfkTsyaqH9Ilv1L2fOhLdWOmM/wtLA8prDNUrIjCJpDNzKk4yR/qooDPSUZxuBPIPpxqW/I0kOBFpxxzxjIUJMuAjmy3Erc3dIW2NbjXV90AKAvKJftZ1S5FC3vinXyChVoP+FePtouWLrvhF81TxJb8T7NLP9yraR525JrzObjFu/UJlHUomkUBjBY3Xhxgw7pGKBL8kgPjWZle01wUDM+FYRa6FEVHBDyPwmp1r7FetkOibYx69/clqXnJT80hxOxNcmE+jdRMRsePrvbKqDomKk1aJCAvc+T1D7TElgRqZzJyg5dvIhn7G0GXwsIIU2TlI1MX0po7IwwC8necg6ZecBMJ5xVqKDfAED+K9cp/5Wa653ZrpdOv9iK0yOS8Y56bv0O2HPO1k/ctc97gv2+4BPchKoxEbf168Z3twPwx2IVElQ61A1Yj734czjf4a3GTt5WlyPY1TOcDwWiLqueubJz5Ys9El8xt0C22EoULXZMi8LvJIAz72QcNM+1hURayoddNQW1KQO6Giw2PS6YXH0Cx5VFRZWcjOlAuNFOVFMUq6Zj+eEeZexMR5SrNAo5hItzy4lyxXfLazwq04Y+mDlDQfJZLi1dRm5im0nyivPB/FbtYEIQV887ytmdF5ZL5VsaN7yxPsGRMHaU4yUicZIrFSTW8UPEH9KMbnwv6a0OPUJ6c6pdcKywNUemGR9bngu+YUdLB7/uRvsTXLgdoEAeITJm5G7XX3KQ2RV9iFxNY+BVXv8Id/2bB8AA//1aU07NnbvxHJIuJYOLe2ilxqJ1X4rpPIO2BlkxhmaXT9CbfkAdkJ6qiQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(396003)(366004)(376002)(346002)(136003)(39860400002)(2616005)(38100700002)(4744005)(54906003)(83380400001)(316002)(122000001)(2906002)(186003)(66476007)(5660300002)(76116006)(8936002)(6916009)(66946007)(66556008)(64756008)(38070700005)(6506007)(53546011)(66446008)(4326008)(91956017)(8676002)(41300700001)(478600001)(71200400001)(6486002)(33656002)(26005)(36756003)(86362001)(6512007)(45980500001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?u8w62O5PnQ9OQ94Vpjkdrq2FlTrFREn6ArkauHVlEx+NmlkMb1To5qF1Wrse?=
+ =?us-ascii?Q?sVfVniD080LH8bXX/iOAJ990yKLxi9FtnbRDxXtAt0T5o9pZtHHusYsvP4fe?=
+ =?us-ascii?Q?VkpPQyD9VeRKqW0stOcnFbSztGmuYHkAu6mpyciHdCXf9J0ySNz31Zh2dFKZ?=
+ =?us-ascii?Q?6cLpUJgoCFhHfcfq1prh/vCYyyx9J9cjZkUo3LTiu9jJuGNCcQvMFji/KnYV?=
+ =?us-ascii?Q?jQIT4LJ3KgMa4MnvgBR7E1GjcGsRjfZnW1vgpMKo2iAmmiNTs4q057OskuXB?=
+ =?us-ascii?Q?nYf5ZokHTplAVCL2ajoBqRLa4Hjj7HIRUIb/SxoX+d5j51TzV9I8v1FJYRAd?=
+ =?us-ascii?Q?FX5Q9OYN9j/NWBmR6h2gAfeQXP6DlTcRrAZLu8LZ43CuaBIQZxIRlf3zZF+4?=
+ =?us-ascii?Q?eedSnDrZ4je/OaLZbdb7utmc0guP2DL++ejI33NJX83g+oNT5L5bdh9qp1IE?=
+ =?us-ascii?Q?7WAD5sJooxzzQdwuKcYmPXp+Bz5raV82DyK8aiz9ABqZfZ11hpTHybD2W8xE?=
+ =?us-ascii?Q?WCYcSTzIcyUXe0NmdiUHKRqJ4JRKJvGWgHurdwdJoykgjBMZUj3ZfjZnC0vW?=
+ =?us-ascii?Q?9goXB4H1XJS2MRNIZde0xMTTPmrSZO6oHlJbMnsNePAzrLV4k0UDCghZvxSd?=
+ =?us-ascii?Q?lpiXNn69uUNv1M8fpOe8mV25+xCU0wU0URwqEzVmnjVb7eg2Bk+Zc4TB16yT?=
+ =?us-ascii?Q?5fAgYUfTaydht+FSpLQw+SeiT8KLmzfN8dyKha+cBpa9fukyPGpewmzx9780?=
+ =?us-ascii?Q?wIVj9Z+PAazktxi+hbX5cV27phoCOCbO5XAZ3lB9hDOr6aPADW1e3Lg2V83p?=
+ =?us-ascii?Q?rzj9C7hIf7oD3Srl6gxXmlrbLBg6uiCBhbpNwMlYBOe6un5gp0SINFCvL3Rp?=
+ =?us-ascii?Q?4xxQUidb7YxX83Wmh7p57Ba9cu8W9crDSxpMy6oAxmgaHWD65WT1dzPmrzbE?=
+ =?us-ascii?Q?dvWpAy3gRLrFcr0PIDcPGvq202ht7PDhVDLRPnNNHAJKncHVQf0FgIXm++Fx?=
+ =?us-ascii?Q?kzP6jrIpX0L5THEMspbCFC8/NGfidm32uBz/cduPlvuq0xnhfWjTjK6k+Exq?=
+ =?us-ascii?Q?nNF0BFhzRPRoi3CzitYBh8U6WTBcbhFpAGbfoHAChaC+8Xvv3ZY6ekw5315Z?=
+ =?us-ascii?Q?8lquGtHe+CjnuX6AhI95VEzyco/sJRgd6HCVeAH+C382ldA+hp7lBGKAvqfK?=
+ =?us-ascii?Q?3yhK6Xc0yyeOKEarrZV3ILxvUbcMzmx2QUwRZfySbdJqOl6W50J5manRBEN1?=
+ =?us-ascii?Q?/RaEzaTGy7lwUwcAb/cEKqAn3c0kifAbENKQOmsqM/0x7igeiF1gM4a+LOO0?=
+ =?us-ascii?Q?BCLzZcLlA4lUXCX1Wt7KP2uvlMmn06q6gr97fFRS+f5YK5vWuusSW4R3V3y7?=
+ =?us-ascii?Q?8P3S2mMFTW+tZG99W4XIbpfs7jfn5KEoHGU4xKhG5NVpsMCN61T89WIbnAaf?=
+ =?us-ascii?Q?z4HCqckoogzLubbzqu4q0c2FkcjmD6kVwHIH2cfpIkUgmGux1zOFkAOb92RW?=
+ =?us-ascii?Q?WiuT3lALhA5GQWhH3KGD4eAKsR8d4cgrQwxrUezzhOj+3rLI8MeggQuIQOwf?=
+ =?us-ascii?Q?gJG/g9pOOYQd8kCFLbA96YfIdkXGnTH5e0P8NVolhkUywwXTiS5pyxttSLCe?=
+ =?us-ascii?Q?aA=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <EA108E6733CA994AB0B9824D59645F56@namprd10.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 61cad3df-6182-429e-7055-08da5953a206
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jun 2022 22:14:56.1678
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 5LFzPxiNya/bIQXMQ51Lrpyg2LPljnbTkcDd6FZowPio8agrRSsJKD+xZP1STyldc3UMTf5LRMW1xaKEj28yuQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR10MB2449
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.517,18.0.883
+ definitions=2022-06-28_11:2022-06-28,2022-06-28 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 mlxlogscore=999 adultscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2204290000
+ definitions=main-2206280087
+X-Proofpoint-ORIG-GUID: V_b1nQiE0NJO_lCgjsR5L7PFZ9UiBRNe
+X-Proofpoint-GUID: V_b1nQiE0NJO_lCgjsR5L7PFZ9UiBRNe
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable mnt_sign_enabled is being initialized with a value that
-is never read, it is being reassigned later on with a different
-value. The initialization is redundant and can be removed.
 
-Cleans up clang scan-build warning:
-fs/cifs/cifssmb.c:465:7: warning: Value stored to 'mnt_sign_enabled
- during its initialization is never read
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/cifs/cifssmb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On Jun 28, 2022, at 5:25 PM, Colin Ian King <colin.i.king@gmail.com> wrot=
+e:
+>=20
+> Variable len is being assigned a value zero and this is never
+> read, it is being re-assigned later. The assignment is redundant
+> and can be removed.
+>=20
+> Cleans up clang scan-build warning:
+> fs/nfsd/nfsctl.c:636:2: warning: Value stored to 'len' is never read
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
-index 6371b9eebdad..9ed21752f2df 100644
---- a/fs/cifs/cifssmb.c
-+++ b/fs/cifs/cifssmb.c
-@@ -462,7 +462,7 @@ cifs_enable_signing(struct TCP_Server_Info *server, bool mnt_sign_required)
- {
- 	bool srv_sign_required = server->sec_mode & server->vals->signing_required;
- 	bool srv_sign_enabled = server->sec_mode & server->vals->signing_enabled;
--	bool mnt_sign_enabled = global_secflags & CIFSSEC_MAY_SIGN;
-+	bool mnt_sign_enabled;
- 
- 	/*
- 	 * Is signing required by mnt options? If not then check
--- 
-2.35.3
+Thanks, applied to the NFSD for-next branch.
+
+
+> ---
+> fs/nfsd/nfsctl.c | 1 -
+> 1 file changed, 1 deletion(-)
+>=20
+> diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+> index 0621c2faf242..66c352bf61b1 100644
+> --- a/fs/nfsd/nfsctl.c
+> +++ b/fs/nfsd/nfsctl.c
+> @@ -633,7 +633,6 @@ static ssize_t __write_versions(struct file *file, ch=
+ar *buf, size_t size)
+> 	}
+>=20
+> 	/* Now write current state into reply buffer */
+> -	len =3D 0;
+> 	sep =3D "";
+> 	remaining =3D SIMPLE_TRANSACTION_LIMIT;
+> 	for (num=3D2 ; num <=3D 4 ; num++) {
+> --=20
+> 2.35.3
+>=20
+
+--
+Chuck Lever
+
+
 
