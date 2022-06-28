@@ -2,91 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC723C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Jun 2022 05:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F444C43334
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Jun 2022 05:40:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245068AbiF1FfP (ORCPT
+        id S244897AbiF1FkY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Jun 2022 01:35:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47794 "EHLO
+        Tue, 28 Jun 2022 01:40:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245043AbiF1FfM (ORCPT
+        with ESMTP id S244825AbiF1FkS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Jun 2022 01:35:12 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B5A627179;
-        Mon, 27 Jun 2022 22:35:08 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id i1so11465616wrb.11;
-        Mon, 27 Jun 2022 22:35:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=dTA90lOxgIQa7DSNgHRMqmr5kjIWrAUMbJ6Fyb/GRMc=;
-        b=bY5f5tFedfpsQKz1aQmaceJv6zFDOLQqCGAazVWhHE8Xn5Lll0Gc/8UIjvRUTJtwCY
-         QL2cX0G2hIpoz4mIRi7CLMBoqxXzr9oknenx16HBcihBdJWOQzak6zt6vRPj0WvRo6U0
-         LaejvQNs2AhEmMIb7YU+977cOzzwm5zrzb2TGtPr0DvoT1qQV34NsYJ9iKhVITO5x+LT
-         nZouZzinwoUqYQ8D3PlXeeayF3hGIhmQanrxScuUfJo4xcqU8jL91IBVbNHb4D9J6Hat
-         eAtc75xaKJm3kNxe1WfZLh0iJRFaZzF34Dvgr8cfr6rC503ZUkFz3NqvWMudTXd+SsYp
-         RHpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=dTA90lOxgIQa7DSNgHRMqmr5kjIWrAUMbJ6Fyb/GRMc=;
-        b=wPOOd9FcAkrGd/Aa5peXilvQ7Bi55xwsn+p7dllVzr3QoP80yNOlFRvxlHGUZIgW/B
-         XgBVA9OFxMyp/T8bVnb3LfkIvDNkPz1EihEfLWMYR241tYxx7ilQMPtbxurWmvN59MgX
-         ZYvdk3j3957abgiNLd1nRBrsz8Nnv8F4yl6AVCWJO8dgBg/ZGyZsUxASG2iGTVj0vKbT
-         ig6FA5A6NX9l7CABVBToDIhV0KortsZCRXwe90iPz3D85pIYsIaCDI1N6GltV8gOMoN1
-         h7IJvavxv5Y7BrBetYt4VAKRBf85x1o0/Sa2llaaAhlki+3NfrCZjozdwRu3K6z9vqmo
-         EDyg==
-X-Gm-Message-State: AJIora/MhCmRuIp8I70zwaTpzGoiS7XqodRYraSsdf9t6fjtvJqWRaGQ
-        zw+S3x2HJR3w20fS8FixvHlW2KvUxG8=
-X-Google-Smtp-Source: AGRyM1vLAMJ+61yUhFEg9AbQGG5npHVsKB5g4gkTqpyARgo8j4Sx5eAmyy4kf0WSC/KsZsOZioG+qQ==
-X-Received: by 2002:a5d:5581:0:b0:20f:fc51:7754 with SMTP id i1-20020a5d5581000000b0020ffc517754mr16224632wrv.413.1656394506441;
-        Mon, 27 Jun 2022 22:35:06 -0700 (PDT)
-Received: from felia.fritz.box (200116b8267a9e00e50a985511ee89f7.dip.versatel-1u1.de. [2001:16b8:267a:9e00:e50a:9855:11ee:89f7])
-        by smtp.gmail.com with ESMTPSA id u16-20020a05600c441000b0039c4d022a44sm16293928wmn.1.2022.06.27.22.35.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jun 2022 22:35:06 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Chanwoo Choi <cw00.choi@samsung.com>, linux-pm@vger.kernel.org
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] PM / devfreq: passive: revert an editing accident in SPDX-License line
-Date:   Tue, 28 Jun 2022 07:34:11 +0200
-Message-Id: <20220628053411.22438-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 28 Jun 2022 01:40:18 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00BEA13F01;
+        Mon, 27 Jun 2022 22:40:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A20DCB81CA6;
+        Tue, 28 Jun 2022 05:40:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 31FC3C341D0;
+        Tue, 28 Jun 2022 05:40:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656394815;
+        bh=wYg95DEfcH0ElPKCDzBwX9DTkFfLdKl71XXLK5FZYOg=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=MHhjTKnQ80MOmq9CK+HGY9C35PfnxRDqbkRr2QHAfUeysF0Fgz+q2852bO/3k5ja8
+         1666mxhCSz9SaKIScUcARdIysQabfdpPAoDA4xfWzloJXhAMDDGRaDoAQYIL4YNAJU
+         S1PMYv60z7MdU/5lWF84aJ3vdg+QYPCHFknSPA2sGX/7F4J3CXvihp80LnXYb9nQZY
+         PQJ7Zxj+lFp97wXqTyYLEpzVGafsNBJ1rsi6tWOfeGSXvh9Z0dlYT6GNH5MmpWsQfa
+         +F196yzSQQXVEANtiKaEw9KWmt67f49rHUruMZFoFKOzKQlMSR7cNIIEvd3NMrZNY/
+         fspQujHO7DmOQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1581BE49FA2;
+        Tue, 28 Jun 2022 05:40:15 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] hinic: Use the bitmap API when applicable
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <165639481508.10558.14591530550875326234.git-patchwork-notify@kernel.org>
+Date:   Tue, 28 Jun 2022 05:40:15 +0000
+References: <6ff7b7d21414240794a77dc2456914412718a145.1656260842.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <6ff7b7d21414240794a77dc2456914412718a145.1656260842.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 26984d9d581e ("PM / devfreq: passive: Keep cpufreq_policy for
-possible cpus") reworked governor_passive.c, and accidently added a
-tab in the first line, i.e., the SPDX-License-Identifier line.
+Hello:
 
-The checkpatch script warns with the SPDX_LICENSE_TAG warning, and hence
-pointed this issue out while investigating checkpatch warnings.
+This patch was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Revert this editing accident. No functional change.
+On Sun, 26 Jun 2022 18:27:45 +0200 you wrote:
+> 'vlan_bitmap' is a bitmap and is used as such. So allocate it with
+> devm_bitmap_zalloc() and its explicit bit size (i.e. VLAN_N_VID).
+> 
+> This avoids the need of the VLAN_BITMAP_SIZE macro which:
+>    - needlessly has a 'nic_dev' parameter
+>    - should be "long" (and not byte) aligned, so that the bitmap semantic
+>      is respected
+> 
+> [...]
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Chanwoo, please pick this minor non-urgent fix to your latest change above.
+Here is the summary with links:
+  - hinic: Use the bitmap API when applicable
+    https://git.kernel.org/netdev/net-next/c/7c2c57263af4
 
- drivers/devfreq/governor_passive.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governor_passive.c
-index 72c67979ebe1..326482a68986 100644
---- a/drivers/devfreq/governor_passive.c
-+++ b/drivers/devfreq/governor_passive.c
-@@ -1,4 +1,4 @@
--	// SPDX-License-Identifier: GPL-2.0-only
-+// SPDX-License-Identifier: GPL-2.0-only
- /*
-  * linux/drivers/devfreq/governor_passive.c
-  *
+You are awesome, thank you!
 -- 
-2.17.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
