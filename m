@@ -2,62 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2410BC43334
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Jun 2022 15:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D11C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Jun 2022 21:25:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347852AbiF1PY7 (ORCPT
+        id S230354AbiF1VZa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Jun 2022 11:24:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56056 "EHLO
+        Tue, 28 Jun 2022 17:25:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347827AbiF1PYy (ORCPT
+        with ESMTP id S229814AbiF1VZ3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Jun 2022 11:24:54 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EADB27FFB;
-        Tue, 28 Jun 2022 08:24:53 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id u12-20020a05600c210c00b003a02b16d2b8so7809274wml.2;
-        Tue, 28 Jun 2022 08:24:53 -0700 (PDT)
+        Tue, 28 Jun 2022 17:25:29 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AF273A730;
+        Tue, 28 Jun 2022 14:25:29 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id f190so7847319wma.5;
+        Tue, 28 Jun 2022 14:25:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=WcFMAgdziIll53iZkb94h130Il19T6Y6bJm+DbymwFQ=;
-        b=JWdJ7nbLyzMBpijhEbXM7MypI0Qlwif+4xUbm0g9g+V/YVYSQIr0HmZpbz0eQcrndB
-         mI2sAXvt/7l4TRY8ta671E+/2mL5XMGpL6BwPmet6b5Fb9JOZp+b9w3Bu++slccELRS2
-         IcwWVvLlGH7Z/03Hip3s7OmCQialQeepCw7V5W4Uz3c48QUEV7hNO0vyVJP9dZTzfUT2
-         zxzWbVANWZSglzHw9Yj8nBHWbXeK7A0AVb3PEgGMABpE85vPtf+LW7Z3/PeBDuMMzN71
-         sl+tyLIpNadpjeyYTWTAefP80ypI+HVbHB8PuuMg0MxCz4ee9TaTAUaHHuT/2SIXuMnW
-         D4mw==
+        bh=ggP20+YtDR/ba9ZGcccJ7AMV2oMsWGgviBSb7C0BwSo=;
+        b=L7DkmGA4vHMTLK7wq4lGxEi16hlAS20VwFe7CLrCWR6U4pAUNC1xYKXrwv+CBExbM7
+         dLCc4ng70SF2VHI26CY+JAfKM7CMlcV6xn0tGiCjVqpINZ5aZeUXVztJ24xUCqarR07Q
+         F39K7Qj3A0lGD+5GdKhTzloNYYA8LxiJyOCYrwieL6nxMGdhCAbvKkw/gZZbw7w7mmZN
+         iNZZKrUYEHzNg8Iyeo0+O6jNRuarL15dAfWWWmO/Vd/OzvFSzttOTlcb1va26M94PrTH
+         Up0hNH1bVMqqsbDS02QAy9pfoM6Qtl5jukgt/y3+uhJse+XuI7ea2eDVqVJgiHnhSGwD
+         e1AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=WcFMAgdziIll53iZkb94h130Il19T6Y6bJm+DbymwFQ=;
-        b=7Rkq3vQHrdKZSYJZFRp/AOOQhdg9ysMrP82P7Z8s/gXSVYxIkZzLv38iaN+NU/lwzm
-         ur6IvFANwJkT/nSHSgIRHOe0avcTbu8Ei9i+dlyUUKtlKU3CRUM+k2amHfvcvR5fW2BG
-         n31/KOSaoeBddEAIk3Z4rg/U3fYZIaXIx8e5WBlRzE5LX8SQphSEFzMMFCWM5BqCuV1w
-         Nkqcr5JYV6evJx1ciORqRJBgFft/5JM0yunEg+GfNraM5bShh/0SS2zI9n75v9apAFMX
-         MVtdxJBA1JEhZ6EzMi6HWqEgKtTjkE7c9JpVK4+r1sKSwnQ/zF7KHA9u93Rq60yTjxgK
-         0O2A==
-X-Gm-Message-State: AJIora86WNUZpUrNbtus/tMm9lxLfCqfJKcpwnc6Cgi4Ti+CndNdy9an
-        zCnIwX5NKBkRHjEBuvGZfK0=
-X-Google-Smtp-Source: AGRyM1s/PznpZYnHETKAA6z+rPhfFUEY5Vbrhkca4T46fq9s4fRBlaZnd3AovhnmDAp0qaQq/vgLbQ==
-X-Received: by 2002:a1c:ac83:0:b0:39c:87fc:5797 with SMTP id v125-20020a1cac83000000b0039c87fc5797mr162568wme.13.1656429892193;
-        Tue, 28 Jun 2022 08:24:52 -0700 (PDT)
+        bh=ggP20+YtDR/ba9ZGcccJ7AMV2oMsWGgviBSb7C0BwSo=;
+        b=8Gk5xUmPLY41eeyhudOr1/YQKY4YvteH+5ITf++F3rucRLLUNbx79skoKWzIIO8b6w
+         nRO/sVYf0CKXUO0gQhd/IC1iNH0Ezg7n4/gjztglLUNjFg6CibF42PnJ6JgYYTFe52Fa
+         ksdrRaI0IT+oju5CsJaUH9BbQ2TVg2IJ563LxCKDNyjfj96tkXF+Q8627wD8n43R/7fW
+         QE+1HMex9RBFtz/pfj63DF79OdIIdjNdJEF0aXlgSRQ4jjgnzux1kmL82PU63+M1ctBw
+         BrBW2aeeYnfMCBdx5+LlK/B86JletxfJUrfU9xFu3g8xSBO59uj5dsCaOsfCXE2gmLXL
+         4nUg==
+X-Gm-Message-State: AJIora9UHODRC1ln4x0fpFtD0hKI88ZxhMqN6OZ64FL9bcmT5HUbCQob
+        e7f7QnioKt+q5DrEMnKqtjk=
+X-Google-Smtp-Source: AGRyM1sX6vcWI+ufYs2TQWTtdp6s5a2mtPPCla3n2TrP+X81JVA2O9xRgbPhB7B8f4ygrqldae+ezQ==
+X-Received: by 2002:a05:600c:3c83:b0:39c:9039:852c with SMTP id bg3-20020a05600c3c8300b0039c9039852cmr1785941wmb.187.1656451527504;
+        Tue, 28 Jun 2022 14:25:27 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id 3-20020a05600c230300b003973c54bd69sm21564221wmo.1.2022.06.28.08.24.51
+        by smtp.gmail.com with ESMTPSA id bg11-20020a05600c3c8b00b003a04a9504b0sm966567wmb.40.2022.06.28.14.25.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jun 2022 08:24:51 -0700 (PDT)
+        Tue, 28 Jun 2022 14:25:26 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-media@vger.kernel.org, linux-staging@lists.linux.dev
+To:     Chuck Lever <chuck.lever@oracle.com>,
+        Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: atomisp: clean up for-loop, remove redundant assignment to variable i
-Date:   Tue, 28 Jun 2022 16:24:51 +0100
-Message-Id: <20220628152451.184416-1-colin.i.king@gmail.com>
+Subject: [PATCH] nfsd: remove redundant assignment to variable len
+Date:   Tue, 28 Jun 2022 22:25:25 +0100
+Message-Id: <20220628212525.353730-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -66,29 +64,30 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a for-loop that initializes variable i but does not use it; the
-assignment is redundant and can be removed. The proceeding assignment to
-pointer fw can also be moved into the for-loop to clean up the code.
+Variable len is being assigned a value zero and this is never
+read, it is being re-assigned later. The assignment is redundant
+and can be removed.
+
+Cleans up clang scan-build warning:
+fs/nfsd/nfsctl.c:636:2: warning: Value stored to 'len' is never read
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/staging/media/atomisp/pci/sh_css.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/nfsd/nfsctl.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/staging/media/atomisp/pci/sh_css.c b/drivers/staging/media/atomisp/pci/sh_css.c
-index 1d605e533e29..576dffa9d2cb 100644
---- a/drivers/staging/media/atomisp/pci/sh_css.c
-+++ b/drivers/staging/media/atomisp/pci/sh_css.c
-@@ -3510,8 +3510,7 @@ create_host_acc_pipeline(struct ia_css_pipe *pipe)
- 	if (pipe->config.acc_extension)
- 		pipe->pipeline.pipe_qos_config = 0;
+diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+index 0621c2faf242..66c352bf61b1 100644
+--- a/fs/nfsd/nfsctl.c
++++ b/fs/nfsd/nfsctl.c
+@@ -633,7 +633,6 @@ static ssize_t __write_versions(struct file *file, char *buf, size_t size)
+ 	}
  
--	fw = pipe->vf_stage;
--	for (i = 0; fw; fw = fw->next) {
-+	for (fw = pipe->vf_stage; fw; fw = fw->next) {
- 		err = sh_css_pipeline_add_acc_stage(&pipe->pipeline, fw);
- 		if (err)
- 			goto ERR;
+ 	/* Now write current state into reply buffer */
+-	len = 0;
+ 	sep = "";
+ 	remaining = SIMPLE_TRANSACTION_LIMIT;
+ 	for (num=2 ; num <= 4 ; num++) {
 -- 
 2.35.3
 
