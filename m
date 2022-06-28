@@ -2,105 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D76C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Jun 2022 05:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC723C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Jun 2022 05:35:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244715AbiF1FZf (ORCPT
+        id S245068AbiF1FfP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Jun 2022 01:25:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40792 "EHLO
+        Tue, 28 Jun 2022 01:35:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244711AbiF1FZd (ORCPT
+        with ESMTP id S245043AbiF1FfM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Jun 2022 01:25:33 -0400
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E133B1F;
-        Mon, 27 Jun 2022 22:25:32 -0700 (PDT)
-Received: by mail-pg1-x533.google.com with SMTP id z14so11173461pgh.0;
-        Mon, 27 Jun 2022 22:25:32 -0700 (PDT)
+        Tue, 28 Jun 2022 01:35:12 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B5A627179;
+        Mon, 27 Jun 2022 22:35:08 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id i1so11465616wrb.11;
+        Mon, 27 Jun 2022 22:35:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:to:cc:references:subject
-         :content-language:from:in-reply-to:content-transfer-encoding;
-        bh=pgonluzyL1h+kykYHqoeMzba6ZA6ttg4BlJry44nex8=;
-        b=Y8M8fifZYgvmkexdtyaLShnQcaD3jHHKHf7dssYushX0hW0f8wBgxiV++I1pxCx4lV
-         83c9fOw5M6Xwmyorz6eoee18QdevPjxGcEjsA81ltXTIYV5ZaRxV4kSIMOSE3qRtnRM8
-         YRMV3TVLvFVDtYimxf9s++pcAwdGKDXoo7jnKVPbc5pztyUdmR5Hy9OyxZtsz0SYQroK
-         5zLo2z2ueUVg7xbY2+ocmiCx7VdiljWbk/f7dUwT3ubL585I/Ca1I+OAeIR7FE7M1C8W
-         94Q5S1K9+0D02ZqUnuipaYFlz4bIeO/uYFoXmHkZvh62f0R5WCRDjar4X49mAjFZgr3R
-         ZkeA==
+        h=from:to:cc:subject:date:message-id;
+        bh=dTA90lOxgIQa7DSNgHRMqmr5kjIWrAUMbJ6Fyb/GRMc=;
+        b=bY5f5tFedfpsQKz1aQmaceJv6zFDOLQqCGAazVWhHE8Xn5Lll0Gc/8UIjvRUTJtwCY
+         QL2cX0G2hIpoz4mIRi7CLMBoqxXzr9oknenx16HBcihBdJWOQzak6zt6vRPj0WvRo6U0
+         LaejvQNs2AhEmMIb7YU+977cOzzwm5zrzb2TGtPr0DvoT1qQV34NsYJ9iKhVITO5x+LT
+         nZouZzinwoUqYQ8D3PlXeeayF3hGIhmQanrxScuUfJo4xcqU8jL91IBVbNHb4D9J6Hat
+         eAtc75xaKJm3kNxe1WfZLh0iJRFaZzF34Dvgr8cfr6rC503ZUkFz3NqvWMudTXd+SsYp
+         RHpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:to:cc
-         :references:subject:content-language:from:in-reply-to
-         :content-transfer-encoding;
-        bh=pgonluzyL1h+kykYHqoeMzba6ZA6ttg4BlJry44nex8=;
-        b=JoG6YGu/E4SdP2IvBUiBS7UiHx3rlcsCLr/ZOKBo8QatsMvFEA4OmTz5n4/Y850x43
-         IvPSvIETku70YoO0+FAozDEGO+cQe3wT1ho6baKEmsoH2+Xx5isBWXb4nPl4vhjFf+KY
-         ePy7DppXncG61Tniqw0rPwa2V1yB80OSCzUrBxu/q0D19B4WdcgzLxGJFwLDAMVoxpfp
-         qCKF8UdH925TpW5Dyh6xrl69D5kK0xqdZMV5JLxAQL8nbBtb4DmChebJfa5NJxwtAwLa
-         IgVpKHs/1NNZX6wX2o3NT/F9+tyGKlbX/zGncvuYQtTvpEkwCD2NZIEDH6Pk2JpJz3jq
-         Q/Sg==
-X-Gm-Message-State: AJIora92hBD4HIil8jsSzDgd3ve2aMYbkSbTZAC2OdNJhERzYSJ42Rcc
-        /qzTxjAdsaJBxdSWAuHQT2k=
-X-Google-Smtp-Source: AGRyM1saugDpzmQnPjMdIM+x5hsbK7gOzY4bjoUJU98ivxmGXPnWENN/xbgWqWBrUPP3CiYfXqo0yA==
-X-Received: by 2002:aa7:9258:0:b0:525:4214:e937 with SMTP id 24-20020aa79258000000b005254214e937mr1680782pfp.15.1656393931921;
-        Mon, 27 Jun 2022 22:25:31 -0700 (PDT)
-Received: from [192.168.11.5] (KD106167171201.ppp-bb.dion.ne.jp. [106.167.171.201])
-        by smtp.gmail.com with ESMTPSA id q2-20020a170902f34200b0016a2a8c7e8fsm8174595ple.143.2022.06.27.22.25.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jun 2022 22:25:31 -0700 (PDT)
-Message-ID: <a2be48e5-e559-17d7-5ae7-d1205a737ea4@gmail.com>
-Date:   Tue, 28 Jun 2022 14:25:26 +0900
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     alexs@kernel.org, corbet@lwn.net, federico.vaga@vaga.pv.it,
-        jdelvare@suse.com, kernel-janitors@vger.kernel.org,
-        linux-doc-tw-discuss@lists.sourceforge.net,
-        linux-doc@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux@roeck-us.net,
-        siyanteng@loongson.cn, src.res@email.cn,
-        Akira Yokosawa <akiyks@gmail.com>
-References: <20220627151819.22694-9-lukas.bulwahn@gmail.com>
-Subject: Re: [RFC PATCH 08/11] docs: ja_JP: howto: remove reference to removed
- submitting-drivers
-Content-Language: en-US
-From:   Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <20220627151819.22694-9-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=dTA90lOxgIQa7DSNgHRMqmr5kjIWrAUMbJ6Fyb/GRMc=;
+        b=wPOOd9FcAkrGd/Aa5peXilvQ7Bi55xwsn+p7dllVzr3QoP80yNOlFRvxlHGUZIgW/B
+         XgBVA9OFxMyp/T8bVnb3LfkIvDNkPz1EihEfLWMYR241tYxx7ilQMPtbxurWmvN59MgX
+         ZYvdk3j3957abgiNLd1nRBrsz8Nnv8F4yl6AVCWJO8dgBg/ZGyZsUxASG2iGTVj0vKbT
+         ig6FA5A6NX9l7CABVBToDIhV0KortsZCRXwe90iPz3D85pIYsIaCDI1N6GltV8gOMoN1
+         h7IJvavxv5Y7BrBetYt4VAKRBf85x1o0/Sa2llaaAhlki+3NfrCZjozdwRu3K6z9vqmo
+         EDyg==
+X-Gm-Message-State: AJIora/MhCmRuIp8I70zwaTpzGoiS7XqodRYraSsdf9t6fjtvJqWRaGQ
+        zw+S3x2HJR3w20fS8FixvHlW2KvUxG8=
+X-Google-Smtp-Source: AGRyM1vLAMJ+61yUhFEg9AbQGG5npHVsKB5g4gkTqpyARgo8j4Sx5eAmyy4kf0WSC/KsZsOZioG+qQ==
+X-Received: by 2002:a5d:5581:0:b0:20f:fc51:7754 with SMTP id i1-20020a5d5581000000b0020ffc517754mr16224632wrv.413.1656394506441;
+        Mon, 27 Jun 2022 22:35:06 -0700 (PDT)
+Received: from felia.fritz.box (200116b8267a9e00e50a985511ee89f7.dip.versatel-1u1.de. [2001:16b8:267a:9e00:e50a:9855:11ee:89f7])
+        by smtp.gmail.com with ESMTPSA id u16-20020a05600c441000b0039c4d022a44sm16293928wmn.1.2022.06.27.22.35.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jun 2022 22:35:06 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>, linux-pm@vger.kernel.org
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] PM / devfreq: passive: revert an editing accident in SPDX-License line
+Date:   Tue, 28 Jun 2022 07:34:11 +0200
+Message-Id: <20220628053411.22438-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-SGkgTHVrYXMsDQoNCk9uIE1vbiwgMjcgSnVuIDIwMjIgMTc6MTg6MTYgKzAyMDAsIEx1a2Fz
-IEJ1bHdhaG4gd3JvdGU6DQo+IFRoZSBkb2N1bWVudCBzdWJtaXR0aW5nLWRyaXZlcnMucnN0
-IHdhcyBkZWxldGVkLiBUaGlzIHJlbW92ZXMgdGhlDQo+IGNvcnJlc3BvbmRpbmcgcmVmZXJl
-bmNlIGluIHRoZSBKYXBhbmVzZSB0cmFuc2xhdGlvbiBvZiB0aGUgaG93dG8uDQo+IA0KPiBT
-aWduZWQtb2ZmLWJ5OiBMdWthcyBCdWx3YWhuIDxsdWthcy5idWx3YWhuQGdtYWlsLmNvbT4N
-Cg0KU2VlIGJlbG93IGZvciBzdWdnZXN0aW9uIG9mIHBsdXJhbCB0byBzaW5ndWxhciBjaGFu
-Z2UuDQoNCj4gLS0tDQo+ICBEb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy9qYV9KUC9ob3d0
-by5yc3QgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVs
-ZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9u
-cy9qYV9KUC9ob3d0by5yc3QgYi9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy9qYV9KUC9o
-b3d0by5yc3QNCj4gaW5kZXggMzhmZWQ2ZmU2MmZlLi4wM2IyMDc5ZTRkNWQgMTAwNjQ0DQo+
-IC0tLSBhL0RvY3VtZW50YXRpb24vdHJhbnNsYXRpb25zL2phX0pQL2hvd3RvLnJzdA0KPiAr
-KysgYi9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy9qYV9KUC9ob3d0by5yc3QNCj4gQEAg
-LTEyOSw3ICsxMjksNyBAQCBsaW51eC1hcGlAdmdlci5rZXJuZWwub3JnIOOBq+mAgeOCi+OB
-k+OBqOOCkuWLp+OCgeOBvuOBmeOAgg0KPiAgICAgIOODq+OBq+W+k+OBo+OBpuOBhOOCi+OC
-guOBruOBoOOBkeOCkuWPl+OBkeS7mOOBkeOAgeWkmuOBj+OBruS6uuOBr+ato+OBl+OBhOOC
-ueOCv+OCpOODq+OBruOCs+ODvOODiQ0KPiAgICAgIOOBoOOBkeOCkuODrOODk+ODpeODvOOB
-l+OBvuOBmeOAgg0KPiAgDQo+IC0gIDpyZWY6YERvY3VtZW50YXRpb24vcHJvY2Vzcy9zdWJt
-aXR0aW5nLXBhdGNoZXMucnN0IDxjb2RpbmdzdHlsZT5gIOOBqCA6cmVmOmBEb2N1bWVudGF0
-aW9uL3Byb2Nlc3Mvc3VibWl0dGluZy1kcml2ZXJzLnJzdCA8c3VibWl0dGluZ2RyaXZlcnM+
-YA0KPiArICA6cmVmOmBEb2N1bWVudGF0aW9uL3Byb2Nlc3Mvc3VibWl0dGluZy1wYXRjaGVz
-LnJzdCA8Y29kaW5nc3R5bGU+YA0KPiAgICAgIOOBk+OCjOOCieOBruODleOCoeOCpOODq+OB
-q+OBr+OAgeOBqeOBhuOChOOBo+OBpuOBhuOBvuOBj+ODkeODg+ODgeOCkuS9nOOBo+OBpuaK
-leeov+OBmeOCi+OBi+OBq+OBpA0KDQogICAgICAg44GT44Gu44OV44Kh44Kk44Or44Gr44Gv
-44CB44Gp44GG44KE44Gj44Gm44GG44G+44GP44OR44OD44OB44KS5L2c44Gj44Gm5oqV56i/
-44GZ44KL44GL44Gr44GkDQoNCj4gICAgICDjgYTjgabpnZ7luLjjgavoqbPjgZfjgY/mm7jj
-gYvjgozjgabjgYrjgorjgIHku6XkuIvjgpLlkKvjgb/jgb7jgZkgKOOBk+OCjOOBoOOBkeOB
-q+mZkOOCieOBquOBhA0KPiAgICAgIOOBkeOCjOOBqeOCgikNCj4gLS0gDQo+IDIuMTcuMQ0K
-DQogICAgICAgIFRoYW5rcywgQWtpcmENCg0K
+Commit 26984d9d581e ("PM / devfreq: passive: Keep cpufreq_policy for
+possible cpus") reworked governor_passive.c, and accidently added a
+tab in the first line, i.e., the SPDX-License-Identifier line.
+
+The checkpatch script warns with the SPDX_LICENSE_TAG warning, and hence
+pointed this issue out while investigating checkpatch warnings.
+
+Revert this editing accident. No functional change.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Chanwoo, please pick this minor non-urgent fix to your latest change above.
+
+ drivers/devfreq/governor_passive.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governor_passive.c
+index 72c67979ebe1..326482a68986 100644
+--- a/drivers/devfreq/governor_passive.c
++++ b/drivers/devfreq/governor_passive.c
+@@ -1,4 +1,4 @@
+-	// SPDX-License-Identifier: GPL-2.0-only
++// SPDX-License-Identifier: GPL-2.0-only
+ /*
+  * linux/drivers/devfreq/governor_passive.c
+  *
+-- 
+2.17.1
+
