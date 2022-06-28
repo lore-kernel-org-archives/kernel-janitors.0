@@ -2,130 +2,154 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 753A0CCA47B
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Jun 2022 01:21:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F24EC43334
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Jun 2022 02:49:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243039AbiF1BVH (ORCPT
+        id S1343848AbiF1CtA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Jun 2022 21:21:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44812 "EHLO
+        Mon, 27 Jun 2022 22:49:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240999AbiF1BVF (ORCPT
+        with ESMTP id S1343843AbiF1CsU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Jun 2022 21:21:05 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 809BB1CFE0;
-        Mon, 27 Jun 2022 18:21:04 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id x20so4097661plx.6;
-        Mon, 27 Jun 2022 18:21:04 -0700 (PDT)
+        Mon, 27 Jun 2022 22:48:20 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99508B99;
+        Mon, 27 Jun 2022 19:45:50 -0700 (PDT)
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25S12tUl013227;
+        Tue, 28 Jun 2022 02:45:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : message-id : references : date : in-reply-to : content-type :
+ mime-version; s=corp-2021-07-09;
+ bh=Afju7h507uuFImYSwYAhmSDdpfDt+/zrV2pUAEPiAAs=;
+ b=F1U33rFAHWEpkpoeS3i5Bi/KGj2KkB5VgtL1jokcYPfhB9br+z9kwYnooxj/UvSOpYff
+ R/xk8v6LWA1ivJMiHzh2Lk19tYW+FtZIIJKQ8IgCM0hU7Wdt5aBqe7hn6vrxjTpVTjdE
+ PAvYYduuejRJngyjlI/9yh+DzrfaJbZPGpt+76NfjI+YXH4CDB7i5ZkzbYDT+Z9HPSyG
+ N63wuLILI4nXSvrfRDlIYs30WworcWUjo/1MwEclQZmyq6NeFBEg8d2z6yAilG1OYKP9
+ LPtWckP34+9M5vu9Z8Z4WwvsiWadv31eDzMZkcnO/ooQevywEFb0dbqTXkAjHWKORoe2 Bg== 
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3gwtwu4tst-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Jun 2022 02:45:44 +0000
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 25S2KM35018864;
+        Tue, 28 Jun 2022 02:45:43 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2105.outbound.protection.outlook.com [104.47.55.105])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3gwrt1tcrg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Jun 2022 02:45:43 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DD/ZFMDXGo9fn5o3WZb+encJr/l6T7osMssMR688TZixION4GYW/WCMMrrkd5C1jXWbO8m9poNs48ztpPXLnfJKoS2ossKHknrdaQQRJJx/ut5rlf/UYNXtw448JOcVYpvZdH2SubbvHe78ffLHdZD4LmLyZOBf7LjsNTbSLaUCwletQy/QFqAoP4qUlSexyrbCOK3caqhCOhWrEomscCscN2j/ixP5IcX8WWvK7hBFhfPF0G1qSaopCc4hwVJKRDV4SUe9qSNlJ1g+0T+Y6Febj8ulVl4f7p5JHouzdNH0DbdhZIad6v9dm84B3JNJwompCbiBzshtA5VzAYGC4Sg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Afju7h507uuFImYSwYAhmSDdpfDt+/zrV2pUAEPiAAs=;
+ b=ZZ2p+vqDkYnmgQoakXhimhQtE9WaQO+qDafS4my3okLpLbZZ+bhrx+yD0TokFRXNXF1S0lBefWRRuZlZAjjx6KPiyvX1QQ04k20c4GjBU0h1aKuwaqSaAPx02f05VuI1X9wrGZYTQOuDMrDC6dqNoFYOKx655rgPqQZp6nH6ZEcBS01a9QuJAAVIiGgQVafeSYSxBINQdlLZhP7bEh/GTLHbr1DdJclKY4w5XWtCLuSkcnC11wt4XUz7rR6djohudfA0yoOSIS9xgtkBrZe+kA09kWvKemuys6x4yNrEgSKrF9nJGmYQlCEI50nMX2Wq/5mPm7gl5G8hPOa+zvTwVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=/OM7p2xmgcLKvrCC4aR5bM7KnQIk44Oxh3ZTj61eUw0=;
-        b=hb270D/YuXBN9rdMINPybXWvsxPWW54PdpujAxfPoZTib4Dc4NiJwZAEKXtbSkyNcq
-         uEK5RgTrKHhASICLGIuE2Nxs+PFwlcKOKe2YJWfwoIQhAaUfmU2NLaTVnSvKYg3ESioo
-         mO0Ri4+NYsV6jDkgsUNJa36AdmUVvHZxzaaPuJFL/yMeCW8n1DrC+iR/l1/atePvzqJM
-         Ct/xfrNfbOL3ZWiLnXAtfj4iIvTukb9WsZWC86NAEFnnIr/JtmZDaWzhs54f6eLCXsZf
-         3J9dWwYwxvocO6cN3BOgFuVzR4LSn0S2bhWSV25QUaWRrEtbotWgwObsrbejhQdhjTY1
-         DmsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=/OM7p2xmgcLKvrCC4aR5bM7KnQIk44Oxh3ZTj61eUw0=;
-        b=fP8Qm3wSyJNX14KdmMCGgrDuJaTi3kt9OXQ+w4XQFLXoOVAVW1hbIlPfCRXKzfc9Y+
-         6np1iQUzoRl5kRuR5h5/H5VKNsYCFdyJNkDwvXGuq/AqIErboUERMykri2+qLYbnGPJ1
-         9Sw+xZmWcVCyAxjwt7eY3Ja/8Jyfxp8jSiGTk5SLeuSxQCmkttjEB5Kklm8DiVDOEy4K
-         g9hojLKiALDO8nxd+Q4tTwQvliZGFSbMBzrmxbY/k7ZXkG7g7aeY5opKMC25FXEAonbm
-         TTyULqyJNZBa1EMWrtF6zVJ/8vy21QtRrVqYcS0tk0sMxPbdsvBk/V5z6LH9X3oFihyR
-         CorQ==
-X-Gm-Message-State: AJIora9JHGXJ8CDb61xBXPmeicFW7Cm4wvTxYZxbhqbpvtEyGfG7ocfy
-        syGkd5yN+M3kd5zkKLuBEepO5ZJjrro=
-X-Google-Smtp-Source: AGRyM1vtFKI769HEoE3iMPmPbjYiqTEoKyKL1RWA//bv2hGcT8xrkpnuRlfL7sT7pu6CN8L7XwHjJQ==
-X-Received: by 2002:a17:90b:4b0e:b0:1ec:dd93:5113 with SMTP id lx14-20020a17090b4b0e00b001ecdd935113mr23734613pjb.12.1656379263107;
-        Mon, 27 Jun 2022 18:21:03 -0700 (PDT)
-Received: from [192.168.43.80] (subs28-116-206-12-39.three.co.id. [116.206.12.39])
-        by smtp.gmail.com with ESMTPSA id 21-20020aa79115000000b0050dc7628171sm7884690pfh.75.2022.06.27.18.20.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jun 2022 18:21:02 -0700 (PDT)
-Message-ID: <bd2957f4-3793-d876-8b1f-1dbb9cf160d1@gmail.com>
-Date:   Tue, 28 Jun 2022 08:20:56 +0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [RFC PATCH 06/11] docs: process: remove outdated
- submitting-drivers.rst
-Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Federico Vaga <federico.vaga@vaga.pv.it>,
-        Alex Shi <alexs@kernel.org>,
-        Yanteng Si <siyanteng@loongson.cn>,
-        Hu Haowen <src.res@email.cn>, linux-doc@vger.kernel.org,
-        linux-doc-tw-discuss@lists.sourceforge.net
-Cc:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Afju7h507uuFImYSwYAhmSDdpfDt+/zrV2pUAEPiAAs=;
+ b=nyHDZ2R3uivsCiILoXnEAfsMkF/4HBJr0RkyVqrpkj2WDVMAZYt5GCIcBvLLsjQlyAYjccRmSKes/rErXDBa0HuXeeBP8Q0Z0aFBv7yGoLW5r/7+zKglEoyHCrY5Xtjr486ww70fOnYvppMpr+1Gmduo/acZsUKF4hm3+0MqqOU=
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
+ by MN2PR10MB3981.namprd10.prod.outlook.com (2603:10b6:208:183::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5373.18; Tue, 28 Jun
+ 2022 02:45:40 +0000
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::6516:e908:d2bd:ca45]) by PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::6516:e908:d2bd:ca45%5]) with mapi id 15.20.5373.018; Tue, 28 Jun 2022
+ 02:45:40 +0000
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Hannes Reinecke <hare@suse.de>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20220627151819.22694-1-lukas.bulwahn@gmail.com>
- <20220627151819.22694-7-lukas.bulwahn@gmail.com>
-From:   Bagas Sanjaya <bagasdotme@gmail.com>
-In-Reply-To: <20220627151819.22694-7-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] scsi: fcoe: remove redundant assignment to variable wlen
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <yq1lethh5fc.fsf@ca-mkp.ca.oracle.com>
+References: <20220623164710.76831-1-colin.i.king@gmail.com>
+Date:   Mon, 27 Jun 2022 22:45:37 -0400
+In-Reply-To: <20220623164710.76831-1-colin.i.king@gmail.com> (Colin Ian King's
+        message of "Thu, 23 Jun 2022 17:47:10 +0100")
+Content-Type: text/plain
+X-ClientProxiedBy: SN7PR04CA0023.namprd04.prod.outlook.com
+ (2603:10b6:806:f2::28) To PH0PR10MB4759.namprd10.prod.outlook.com
+ (2603:10b6:510:3d::12)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 15695d81-9fc3-4ff9-9905-08da58b049f4
+X-MS-TrafficTypeDiagnostic: MN2PR10MB3981:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: METL9ZzEsV2BK3gyKvmDQMRzyLdQmI0qOmpnV8WJgUrrHHUs6AD7yPQ5Eiq1Auud48sT2r47X/cWnOMTpbBDDVXyWtOrg1Mk/78zSE1sgm9QT2DtHGRLiZASLc7NQiVZ70fDHpIWvonST7bogsyx0JWcn5cXpJtHtUneRXrXgAs5ocDXvcv37PLed3akP2FfFKpbSYJuJ5OOWJD6kFNgW3hvc7HZL1GQyX2M8Ki/CZZH5nJR4SLNtGBeNGAHbOTlIZIVFecO3zPo7WqkJw4AQdTm0tCE567XdC46XphRpibYa2XvHzWfzIh1+E8FA/+8y4jXBRfQFIkd3y7b+1+fN8zcmvq3s0CEA2Piruiqi5iz5KlTSeeoGKksC9vLU0eelkkm8yZ9koE+fQ2+oFg7Olktw2HyhGNO3IBjALcv4xFe1cdoGmUEYdh7loa24KX1StVeOvdL7t/FczPm9uSifTLPxPprY2A1v7XyaC4OgubDYHEJci9oVUpJr3lt1B6m+XB5Uqx8lSTFBfTdpFhfrXqLLjSr48suKSrlvfvIo7izStUHQurkXu4Og03emGXzMvaeTaARTT10+YwZMQSR/Z28Z6Ng9PoEwuNWwttg35TaCg68KvMRxjZMDOAiFcuF+8fwilgKGgJ9uoL0X0992qVqi1x4PqVbBJ3P3xqHuUSkvkbvLdLvBSKBGinDFP06x4t15J9dwJZCESRA47Iu8RvwjK1/jy9QH9XDtpEQkc40SjBgQZ3b8GDhlLU5Pxv6AsvkWUitM4PVuz2LVrdmkp3hTN35zGVS0aCe8AgIYF0=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(346002)(136003)(366004)(376002)(396003)(39860400002)(558084003)(86362001)(66476007)(316002)(4326008)(8936002)(6486002)(5660300002)(38100700002)(2906002)(36916002)(52116002)(478600001)(66556008)(66946007)(8676002)(54906003)(6666004)(41300700001)(6916009)(6506007)(186003)(26005)(38350700002)(6512007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?7Bvjsoi4aoHPHwYllm6wJYRKGMwH1nJvqnzMGhjDaTD2kXtukNu9N8tBMJUd?=
+ =?us-ascii?Q?A3zUFqtySeDzlHIoCS1JchbWow2dwqL7VRh5fG1iS2JVCNdG2fAjWIicyqll?=
+ =?us-ascii?Q?tRPYNrUrRBZDshN5+UCpvDLw0P+KLnrPhp0TkjZ8A+IbSEkjg5u6ApI5e4pm?=
+ =?us-ascii?Q?qXj+LYNzmXv77szEt+wEW6mgO+5dHY74mFKJtIG5gXWcMPg9UMqTayIyCxT0?=
+ =?us-ascii?Q?kGbCi3KmI7pSIeQ5EKeZPeR5hvm4kehI63unNlNbPBwDOa1igdfrJ7yYaoW9?=
+ =?us-ascii?Q?qWK5ojvlNH+/GJTCS5zP0AvuJ9QTM+GSVPKknzJ+MlU05L/xss7YdpNi4Uq6?=
+ =?us-ascii?Q?NGkGDyBFhBp8J0/jy9j7Zto1ZiSOELHts1h7Ao4ke9spjTgXSXrNYBzFEK6m?=
+ =?us-ascii?Q?Il0wCadm5ylYeqMXvlOt5Ez9nK1hs49LBDRRmXk9/Sw4Nm7YawviioRDCUqt?=
+ =?us-ascii?Q?pcMM723gsDQC9zQrlpL7KWzxQg+DP1Mrr8QDg1k9bGqjTPsHqbCDP8Xetwtu?=
+ =?us-ascii?Q?QOuNO7yB2bulKNrwPzTGkIrRoCP/P+rK3m7oGN0612HHn5T+xdksZVXTGBan?=
+ =?us-ascii?Q?ssbOaaKSkRd5UDLEUauK8ZPBATvSwdsVe2+ihsCanhEbLGbD7rY//l1vuKEf?=
+ =?us-ascii?Q?pjD1DuJ/6IunhUKq7XhrLOsWp0sftLbxdi99yC2iIhTVCdQ+6re1Q1T7mjKa?=
+ =?us-ascii?Q?dKfl5xZXQE8eNY/9ET5ASF5VmT7w+S92hkEIPBR8CEy4n2onoPsmCbCSOpO5?=
+ =?us-ascii?Q?LUW7s55WtrdOhZPgvMkf8CDZCLBzPPq8l2p7RT04AXCOeWr93qbQTBFaa58z?=
+ =?us-ascii?Q?haX0oSzIwP3H5ytuHhcFRaxBKhYMV72kTvTFNDJ6TRbTPS4Asa1FvItnn/IY?=
+ =?us-ascii?Q?9v7g6xeUXl2FvCSt8ePEJny7otjcrsIesfn+I6g2gfqYZqyDpDsCaFhCr4KK?=
+ =?us-ascii?Q?GQBHEwaQqzafVP3YqNeR36B9yQE0AxGXGrNt10nowcDwBq6dUPLHiUa15V21?=
+ =?us-ascii?Q?LNYbMVW40xzP+i0Hfd1EcNrdTIslUa03od+kvH+PQA5IR2XrxSD4dEhJlrTL?=
+ =?us-ascii?Q?dZOWEMK583dfHnwj8zRBnZUexAYvHo/rCzVWjnxjWtwutHm9u/mvB3CPKu0A?=
+ =?us-ascii?Q?AiWrNXoCtEe4KskcUyoQGK8a3fOl7Tb4fzs0SHzbg6Phrp3v2+NU9jhI5ztQ?=
+ =?us-ascii?Q?dH9r5PFIyVGFY1JbaKkXlhme8LZWV0tV32ZFn//wP8C2gQXD9dzClGtDBQXG?=
+ =?us-ascii?Q?5RbDfb+/T7UxwNOMdVI6IZPxdiP8wrzADIjbIYpMjyFyIWYMjhcMEn9XkL+E?=
+ =?us-ascii?Q?bX2/DKLsjmeo94Bqh5cqpkEJZy6DNA80XA+TEyZv0XgX0Q0yCmR7RynwGuLO?=
+ =?us-ascii?Q?qQdZi83ozFyyu04zeJSpEN6PTcck9NZ1p61qEx8OfTSJXjW8hxduZGJooP4O?=
+ =?us-ascii?Q?5Bxn1bM/XzI3CIaPvUBY9ZgycDf37g/UovfH5JtYkMtP+1PIHez+J9jJg5oN?=
+ =?us-ascii?Q?QLlMg1iO2mPMR3CrlDmTzOmcgU1yX1N0Z79UHpjoXhLlEGiuND5FdmbC6gOV?=
+ =?us-ascii?Q?il2qf26rZnEhgyFWYowwDwK6nyZ4P6Xlne5Hfomvk4bZ3L7W3oHLZnTVgLml?=
+ =?us-ascii?Q?sA=3D=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15695d81-9fc3-4ff9-9905-08da58b049f4
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2022 02:45:40.6163
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sS0ijYXIaSbO2ljFqaUV4NLeKGjaOnH44JJvvT8ok/LxnLLxQBv9Io/qZ5ao0jQVhcXhba8vVPCcukVQ7l4IlIDNi8G6nIbX8x+1+mAQuNc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR10MB3981
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.517,18.0.883
+ definitions=2022-06-27_06:2022-06-24,2022-06-27 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0 phishscore=0
+ malwarescore=0 mlxlogscore=816 spamscore=0 adultscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2204290000
+ definitions=main-2206280009
+X-Proofpoint-ORIG-GUID: n6DZTIsvIDn3ejwMuagjw6TtYtonH6X5
+X-Proofpoint-GUID: n6DZTIsvIDn3ejwMuagjw6TtYtonH6X5
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 6/27/22 22:18, Lukas Bulwahn wrote:
->  There are numerous sources of information on Linux kernel development and
->  related topics.  First among those will always be the Documentation
-> -directory found in the kernel source distribution.  The top-level :ref:`process/howto.rst <process_howto>`
-> -file is an important starting point; :ref:`process/submitting-patches.rst <submittingpatches>`
-> -and :ref:`process/submitting-drivers.rst  <submittingdrivers>`
-> -are also something which all kernel developers should
-> -read.  Many internal kernel APIs are documented using the kerneldoc
-> -mechanism; "make htmldocs" or "make pdfdocs" can be used to generate those
-> -documents in HTML or PDF format (though the version of TeX shipped by some
-> -distributions runs into internal limits and fails to process the documents
-> -properly).
-> +directory found in the kernel source distribution.  Start with the
-> +top-level :ref:`process/howto.rst <process_howto>`; also read
-> +:ref:`process/submitting-patches.rst <submittingpatches>`. Many internal
-> +kernel APIs are documented using the kerneldoc mechanism; "make htmldocs"
-> +or "make pdfdocs" can be used to generate those documents in HTML or PDF
-> +format (though the version of TeX shipped by some distributions runs into
-> +internal limits and fails to process the documents properly).
->
 
-Did you mean "beware that TeX distribution version as shipped by distributions
-may fail to properly generate the documents"? I have never tried pdfdocs,
-since the dependency requirement can be huge (hundreds of MB needed to
-download packages), so I can't tell whether the phrase is relevant.
- 
-> -  :ref:`Documentation/process/submitting-patches.rst <submittingpatches>` and :ref:`Documentation/process/submitting-drivers.rst <submittingdrivers>`
-> -    These files describe in explicit detail how to successfully create
-> +  :ref:`Documentation/process/submitting-patches.rst <submittingpatches>`
-> +    This file describes in explicit detail how to successfully create
->      and send a patch, including (but not limited to):
->  
+Colin,
 
-Maybe "This document" instead of file?
+> Variable wlen is being assigned a value that is never read, it is
+> being re-assigned with a different value later on. The assignment is
+> redundant and can be removed.
 
-> @@ -12,9 +12,8 @@ This document contains a large number of suggestions in a relatively terse
->  format.  For detailed information on how the kernel development process
->  works, see Documentation/process/development-process.rst. Also, read
->  Documentation/process/submit-checklist.rst
-> -for a list of items to check before submitting code.  If you are submitting
-> -a driver, also read Documentation/process/submitting-drivers.rst; for device
-> -tree binding patches, read
-> +for a list of items to check before submitting code.
-> +For device tree binding patches, read
->  Documentation/devicetree/bindings/submitting-patches.rst.
-
-The hunk above is OK.
+Applied to 5.20/scsi-staging, thanks!
 
 -- 
-An old man doll... just what I always wanted! - Clara
+Martin K. Petersen	Oracle Linux Engineering
