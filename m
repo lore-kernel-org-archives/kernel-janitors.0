@@ -2,97 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77DB6C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Jun 2022 14:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6EB5C43334
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Jun 2022 15:04:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347469AbiF1OyO (ORCPT
+        id S1347749AbiF1PEu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 28 Jun 2022 10:54:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32958 "EHLO
+        Tue, 28 Jun 2022 11:04:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347459AbiF1OyK (ORCPT
+        with ESMTP id S1347720AbiF1PEt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 28 Jun 2022 10:54:10 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3E5139A;
-        Tue, 28 Jun 2022 07:54:08 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id b26so5688765wrc.2;
-        Tue, 28 Jun 2022 07:54:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=l1D/ej0/nC978gwemE1J7bKjwax9zdRenELB/Dp44DU=;
-        b=RoVm6ZFftFHJ6zdKmNct/gRFxbvhEkOzLe2D4OjqmZfWV3M+tREP7LTjheZB5zLD91
-         XYJIXFgAxfP1EMttzqvhFO6CDk9Q5qB10MCLJHZNo7vjnPkFxAMZgWPlqVGB0HA/xWT6
-         ghKCUKqFUYwDjZ4adnlo84bC3gD14irFPfVqOazICHXwe/Pga3pfj22+inrCth/YeCBI
-         M6VkNkzBfw8gpn1VU6L/2xvIKYiTFBuSaOiKdBW84KAE9IMdCJszboMsWbzomU8a6AJ9
-         iW6V1NaPXFDy/KjqZ+Obikr5oWmsUmt0dRw/3dTyx1B6tEXLXlC3cKddoushEKNAJ5R1
-         U2TA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=l1D/ej0/nC978gwemE1J7bKjwax9zdRenELB/Dp44DU=;
-        b=FE2MgyfQhx0Kh5k5J3YuyoQqKDPbn/wMZFk7soJ8IYLBpFiXtdiQ1XMOQ4cYh8hx7R
-         OkY0PXkvH1qSFakRutZA4PNr1GR4wb4CHxpVs0yHTw/EqYI4Ty+JBJqtnfFF+gcg1QKZ
-         YDghrKCrmuWk6JFgQEHQBiHObwiBtxKrTKFKoaveNwCAnt/6OIim+OqagI0K2u1pFpHj
-         IwRYps4IavP8xyur/Ec3z7IDJvZfk5hlk1YpyRp4+tZBqdWTn26gbhTImDEDEj1OD+ZE
-         iZKk2cOfWccOd81DawnvlYAo+HLwGlhTCYvesL0Gu2IEZyeVNHLIQno0bsHEtiXikNLe
-         7TKg==
-X-Gm-Message-State: AJIora+Kl8+URZlRMYwVytNUIwTiV7PLVsltW4/FZvlpjNglLUGb/Iuo
-        4Tg897baz5PvE8JXF6Zm3NA=
-X-Google-Smtp-Source: AGRyM1vGxRWsvkAmvpjpn8Iv/sQN4WzcqVkLccsIZJQeipUSFtnc/I9qAUSc37nBPH7uqwSXq++W4Q==
-X-Received: by 2002:a05:6000:1869:b0:21b:933c:7e2 with SMTP id d9-20020a056000186900b0021b933c07e2mr19221735wri.252.1656428047332;
-        Tue, 28 Jun 2022 07:54:07 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id r21-20020a05600c35d500b003a02f957245sm22038617wmq.26.2022.06.28.07.54.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jun 2022 07:54:06 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     "David S . Miller" <davem@davemloft.net>,
+        Tue, 28 Jun 2022 11:04:49 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29EB91D301;
+        Tue, 28 Jun 2022 08:04:49 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D2CC2B81E39;
+        Tue, 28 Jun 2022 15:04:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F5CFC3411D;
+        Tue, 28 Jun 2022 15:04:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656428686;
+        bh=ENgejiw+sgjk1N/1PkHBRhDYnDtcy5LgtLT6/pcL9XY=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=UDGL8Qieu0VRAUh2s/g6/HiBTtvuzwhPkwtmcs4kHRCf1smoNrrqiZtbsGG4AFrxX
+         neBuBEhnWXf9WhUNNSlOX2F6+YVBoLYclb8tO/s/E39ava4dXeRqSzjq7BYk7JrM+F
+         bn4t/cEtK+djEniP4h6ZJlcmP0JvXUadmBvTlZYSDBBYysDQXbWyBrTJDnCiqdQ16n
+         8MhfcECywObJV14zwWVWutmWlI0lkpWnrGdDyWW1B3NPKE2oeNqDyg3K6S1JvYSmnY
+         TYBHiOXBbFezIO0IH4110YIbwgLXCsbl8baEeGkvwVnFVp1KSukdPfawmEEBTktKzL
+         UBszwnFWdOPPQ==
+Message-ID: <002f8deb-f664-cc1b-53e6-b4297c8c6b49@kernel.org>
+Date:   Tue, 28 Jun 2022 09:04:42 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.10.0
+Subject: Re: [PATCH] ipv6: remove redundant store to value after addition
+Content-Language: en-US
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        David Ahern <dsahern@kernel.org>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ipv6: remove redundant store to value after addition
-Date:   Tue, 28 Jun 2022 15:54:06 +0100
-Message-Id: <20220628145406.183527-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.3
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20220628145406.183527-1-colin.i.king@gmail.com>
+From:   David Ahern <dsahern@kernel.org>
+In-Reply-To: <20220628145406.183527-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is no need to store the result of the addition back to variable count
-after the addition. The store is redundant, replace += with just +
+On 6/28/22 8:54 AM, Colin Ian King wrote:
+> There is no need to store the result of the addition back to variable count
+> after the addition. The store is redundant, replace += with just +
+> 
+> Cleans up clang scan build warning:
+> warning: Although the value stored to 'count' is used in the enclosing
+> expression, the value is never actually read from 'count'
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  net/ipv6/route.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Cleans up clang scan build warning:
-warning: Although the value stored to 'count' is used in the enclosing
-expression, the value is never actually read from 'count'
-
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- net/ipv6/route.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/ipv6/route.c b/net/ipv6/route.c
-index 0be01a4d48c1..1d6f75eef4bd 100644
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -5934,7 +5934,7 @@ int rt6_dump_route(struct fib6_info *rt, void *p_arg, unsigned int skip)
- 		rcu_read_unlock();
- 
- 		if (err)
--			return count += w.count;
-+			return count + w.count;
- 	}
- 
- 	return -1;
--- 
-2.35.3
+Reviewed-by: David Ahern <dsahern@kernel.org>
 
