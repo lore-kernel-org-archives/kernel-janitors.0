@@ -2,86 +2,130 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69575C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 27 Jun 2022 20:29:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 753A0CCA47B
+	for <kernel-janitors@archiver.kernel.org>; Tue, 28 Jun 2022 01:21:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240666AbiF0U3U (ORCPT
+        id S243039AbiF1BVH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 27 Jun 2022 16:29:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52040 "EHLO
+        Mon, 27 Jun 2022 21:21:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241346AbiF0U3F (ORCPT
+        with ESMTP id S240999AbiF1BVF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 27 Jun 2022 16:29:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CBBD110F;
-        Mon, 27 Jun 2022 13:29:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EE0B36176A;
-        Mon, 27 Jun 2022 20:29:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E6C5C34115;
-        Mon, 27 Jun 2022 20:29:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656361740;
-        bh=nMxs8Nw/BcSltBccXR04SvWCkdWBXpnOIAzxfKoZJu4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=vH/JVG4fH1kNDyOgKtfw+e+iM5yy4rmJr6ULbnYzduzZRfHOBlPJgAm1t2cZyFHSC
-         dQLlfz+Irh+rPvNsWocB9kieI6qgfW3Fzbn7CSERTvFMGVviySnzZnFtEosPMh7Nuf
-         dW2HEuHSk1lmR10CSi3WEMDXpCwK+dHzQ+dizwNFnNCg/YRXOpH7Ot8tnhHLPDyJ+7
-         izr3OIyxJNMvrvmAZfec93O4pTXRAvNg0PcWuWYw93Al9ncaEfKI4iRR8sziTzEs77
-         7Gp94ch+pXs45+UJeMTFeTbfMJW65OJotb2M2t1l6OoLn5A48Rt720r2G6uEE5qBMw
-         7yxHL76LT+H0g==
-Date:   Mon, 27 Jun 2022 15:28:58 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Jon Mason <jdmason@kudzu.us>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Frank Li <Frank.Li@nxp.com>, linux-pci@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] NTB: EPF: set pointer addr to null using NULL
- rather than 0
-Message-ID: <20220627202858.GA1776067@bhelgaas>
+        Mon, 27 Jun 2022 21:21:05 -0400
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 809BB1CFE0;
+        Mon, 27 Jun 2022 18:21:04 -0700 (PDT)
+Received: by mail-pl1-x62f.google.com with SMTP id x20so4097661plx.6;
+        Mon, 27 Jun 2022 18:21:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=/OM7p2xmgcLKvrCC4aR5bM7KnQIk44Oxh3ZTj61eUw0=;
+        b=hb270D/YuXBN9rdMINPybXWvsxPWW54PdpujAxfPoZTib4Dc4NiJwZAEKXtbSkyNcq
+         uEK5RgTrKHhASICLGIuE2Nxs+PFwlcKOKe2YJWfwoIQhAaUfmU2NLaTVnSvKYg3ESioo
+         mO0Ri4+NYsV6jDkgsUNJa36AdmUVvHZxzaaPuJFL/yMeCW8n1DrC+iR/l1/atePvzqJM
+         Ct/xfrNfbOL3ZWiLnXAtfj4iIvTukb9WsZWC86NAEFnnIr/JtmZDaWzhs54f6eLCXsZf
+         3J9dWwYwxvocO6cN3BOgFuVzR4LSn0S2bhWSV25QUaWRrEtbotWgwObsrbejhQdhjTY1
+         DmsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=/OM7p2xmgcLKvrCC4aR5bM7KnQIk44Oxh3ZTj61eUw0=;
+        b=fP8Qm3wSyJNX14KdmMCGgrDuJaTi3kt9OXQ+w4XQFLXoOVAVW1hbIlPfCRXKzfc9Y+
+         6np1iQUzoRl5kRuR5h5/H5VKNsYCFdyJNkDwvXGuq/AqIErboUERMykri2+qLYbnGPJ1
+         9Sw+xZmWcVCyAxjwt7eY3Ja/8Jyfxp8jSiGTk5SLeuSxQCmkttjEB5Kklm8DiVDOEy4K
+         g9hojLKiALDO8nxd+Q4tTwQvliZGFSbMBzrmxbY/k7ZXkG7g7aeY5opKMC25FXEAonbm
+         TTyULqyJNZBa1EMWrtF6zVJ/8vy21QtRrVqYcS0tk0sMxPbdsvBk/V5z6LH9X3oFihyR
+         CorQ==
+X-Gm-Message-State: AJIora9JHGXJ8CDb61xBXPmeicFW7Cm4wvTxYZxbhqbpvtEyGfG7ocfy
+        syGkd5yN+M3kd5zkKLuBEepO5ZJjrro=
+X-Google-Smtp-Source: AGRyM1vtFKI769HEoE3iMPmPbjYiqTEoKyKL1RWA//bv2hGcT8xrkpnuRlfL7sT7pu6CN8L7XwHjJQ==
+X-Received: by 2002:a17:90b:4b0e:b0:1ec:dd93:5113 with SMTP id lx14-20020a17090b4b0e00b001ecdd935113mr23734613pjb.12.1656379263107;
+        Mon, 27 Jun 2022 18:21:03 -0700 (PDT)
+Received: from [192.168.43.80] (subs28-116-206-12-39.three.co.id. [116.206.12.39])
+        by smtp.gmail.com with ESMTPSA id 21-20020aa79115000000b0050dc7628171sm7884690pfh.75.2022.06.27.18.20.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Jun 2022 18:21:02 -0700 (PDT)
+Message-ID: <bd2957f4-3793-d876-8b1f-1dbb9cf160d1@gmail.com>
+Date:   Tue, 28 Jun 2022 08:20:56 +0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220623165709.77229-1-colin.i.king@gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [RFC PATCH 06/11] docs: process: remove outdated
+ submitting-drivers.rst
+Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Federico Vaga <federico.vaga@vaga.pv.it>,
+        Alex Shi <alexs@kernel.org>,
+        Yanteng Si <siyanteng@loongson.cn>,
+        Hu Haowen <src.res@email.cn>, linux-doc@vger.kernel.org,
+        linux-doc-tw-discuss@lists.sourceforge.net
+Cc:     Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20220627151819.22694-1-lukas.bulwahn@gmail.com>
+ <20220627151819.22694-7-lukas.bulwahn@gmail.com>
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+In-Reply-To: <20220627151819.22694-7-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jun 23, 2022 at 05:57:09PM +0100, Colin Ian King wrote:
-> The pointer addr is being set to null using 0. Use NULL instead.
-> 
-> Cleans up sparse warning:
-> warning: Using plain integer as NULL pointer
+On 6/27/22 22:18, Lukas Bulwahn wrote:
+>  There are numerous sources of information on Linux kernel development and
+>  related topics.  First among those will always be the Documentation
+> -directory found in the kernel source distribution.  The top-level :ref:`process/howto.rst <process_howto>`
+> -file is an important starting point; :ref:`process/submitting-patches.rst <submittingpatches>`
+> -and :ref:`process/submitting-drivers.rst  <submittingdrivers>`
+> -are also something which all kernel developers should
+> -read.  Many internal kernel APIs are documented using the kerneldoc
+> -mechanism; "make htmldocs" or "make pdfdocs" can be used to generate those
+> -documents in HTML or PDF format (though the version of TeX shipped by some
+> -distributions runs into internal limits and fails to process the documents
+> -properly).
+> +directory found in the kernel source distribution.  Start with the
+> +top-level :ref:`process/howto.rst <process_howto>`; also read
+> +:ref:`process/submitting-patches.rst <submittingpatches>`. Many internal
+> +kernel APIs are documented using the kerneldoc mechanism; "make htmldocs"
+> +or "make pdfdocs" can be used to generate those documents in HTML or PDF
+> +format (though the version of TeX shipped by some distributions runs into
+> +internal limits and fails to process the documents properly).
+>
 
-Another one for Jon; fixes this commit:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=ff32fac00d97
-
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/pci/endpoint/functions/pci-epf-vntb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/endpoint/functions/pci-epf-vntb.c
-> index ebf7e243eefa..fb31c868af6a 100644
-> --- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
-> +++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
-> @@ -605,7 +605,7 @@ static int epf_ntb_mw_bar_init(struct epf_ntb *ntb)
+Did you mean "beware that TeX distribution version as shipped by distributions
+may fail to properly generate the documents"? I have never tried pdfdocs,
+since the dependency requirement can be huge (hundreds of MB needed to
+download packages), so I can't tell whether the phrase is relevant.
+ 
+> -  :ref:`Documentation/process/submitting-patches.rst <submittingpatches>` and :ref:`Documentation/process/submitting-drivers.rst <submittingdrivers>`
+> -    These files describe in explicit detail how to successfully create
+> +  :ref:`Documentation/process/submitting-patches.rst <submittingpatches>`
+> +    This file describes in explicit detail how to successfully create
+>      and send a patch, including (but not limited to):
 >  
->  		ntb->epf->bar[barno].barno = barno;
->  		ntb->epf->bar[barno].size = size;
-> -		ntb->epf->bar[barno].addr = 0;
-> +		ntb->epf->bar[barno].addr = NULL;
->  		ntb->epf->bar[barno].phys_addr = 0;
->  		ntb->epf->bar[barno].flags |= upper_32_bits(size) ?
->  				PCI_BASE_ADDRESS_MEM_TYPE_64 :
-> -- 
-> 2.35.3
-> 
+
+Maybe "This document" instead of file?
+
+> @@ -12,9 +12,8 @@ This document contains a large number of suggestions in a relatively terse
+>  format.  For detailed information on how the kernel development process
+>  works, see Documentation/process/development-process.rst. Also, read
+>  Documentation/process/submit-checklist.rst
+> -for a list of items to check before submitting code.  If you are submitting
+> -a driver, also read Documentation/process/submitting-drivers.rst; for device
+> -tree binding patches, read
+> +for a list of items to check before submitting code.
+> +For device tree binding patches, read
+>  Documentation/devicetree/bindings/submitting-patches.rst.
+
+The hunk above is OK.
+
+-- 
+An old man doll... just what I always wanted! - Clara
