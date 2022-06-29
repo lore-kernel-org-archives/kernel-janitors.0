@@ -2,103 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48F5EC43334
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Jun 2022 19:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31BC8C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Jun 2022 19:45:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230419AbiF2TeM (ORCPT
+        id S231293AbiF2Tpb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 29 Jun 2022 15:34:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42976 "EHLO
+        Wed, 29 Jun 2022 15:45:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229948AbiF2TeK (ORCPT
+        with ESMTP id S230281AbiF2Tpa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 29 Jun 2022 15:34:10 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22DC322B12;
-        Wed, 29 Jun 2022 12:34:10 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id 73-20020a17090a0fcf00b001eaee69f600so464067pjz.1;
-        Wed, 29 Jun 2022 12:34:10 -0700 (PDT)
+        Wed, 29 Jun 2022 15:45:30 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73C1D25C46;
+        Wed, 29 Jun 2022 12:45:30 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id x138so13366158pfc.3;
+        Wed, 29 Jun 2022 12:45:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=YYCqzzmao2nkKWy6jAkVvj4l8v/TmTYQQPXuNAPJEaI=;
-        b=qS10neaoML1jirwTEWwcNgQ+OR4PuGQr0cAfF7KIHricCWzZSJUe64bckBQTl73nfx
-         JV0C4uT2/1IPu6WNQ0cxXu+5XOTekrydSTiS3fDfW9/+HOuTdJgUDQtov84IxPBxbgqL
-         6rEQwjLKUZc3g6vyWICyo5YitPtJrj377vrMFqwT5b5JNCupJtxmECMiG5/LiJZvPCus
-         urpY7d0Ra/ifM16jx5mEIPwuaE4vbVslphfEhqSTm1rhS9EoLOPruZuyGvxpCon0s3IS
-         XEc8Lsd8zHmBBDkxUmxeMa3UWX9ZyWfZXasM/CPiytj0gPFmgqaObO/c/znbMnBgViLu
-         F2Eg==
+        bh=zX93b4uo7r2zzM20H0vNMZpGBveIXWgxPACeOg4RsOo=;
+        b=oi24oy8pB5I5ioF84ISCdNpuTo7TCnpI6ZmcooU6WiEr8PStnOU7pOwqXU/KD3DCvw
+         onhUjkKKusDKbSWuLaHrRe5QZv+lsQTR+rbd0O2w7eExewrDZQjg8WVpRvUXtUtwo8i0
+         NvrHU6UuipcewkCfCCZZEJiSuFgjDhxlduRkQ4Nzub9aZhjDdmPqVjgGqtWRKyAjj6ZG
+         MgdZzudjoS4/q+yUhfw6sRst7Hy3oiCKD9ifiZ2a6dLienB+uwlxubFG/IzfGbRKUMag
+         wa6ceJcYw/RLdZpbARhWKZWe6VnL06G6eJPcUqxmeYyMuQuF15mD4HKTkOdSVlN7wxhV
+         ZjhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=YYCqzzmao2nkKWy6jAkVvj4l8v/TmTYQQPXuNAPJEaI=;
-        b=11sVb8FGtf6yXNXHAnzFg7TtvueN948AdvTnFY2wYEphSGghxGRxHHCSMKterGX5I/
-         VKs3QVUIf5tXgu3FWEcOZMjsloOxFYv+/98AwCZdKbEIWibTBXhzjrUw0D+MZgZMahJ6
-         3w6I4itj0ZNh52ouUCaVSo2DzUoSPUtZs3K6wXsMLpkZ6sHZmlAY668I66Kb6BemI07L
-         T2aaBskezTz9tuRBAUWiOyS7mn1k+iqjwz7B4poQ+YNlsleq0kQUq2CZgfKDzhrKv07q
-         l6BBS0q6aS8YDfxYjFNYzdb8XicaIkBU1resWndLA1WRIjg5ch8kz7+4Jrf1XdgQ/66x
-         KgMQ==
-X-Gm-Message-State: AJIora/M4crjOWYLzCyruGbSDe+gLdl5mzfrtE0TCRE7NQ2vFLwcqEI5
-        llO7O1XWEo0tU2OYauOpi6rjoR0WwYE=
-X-Google-Smtp-Source: AGRyM1srYx29S6gzu8JZbBQlxGDNK8Oa6fpbSwnqiJMdielPgTUcIu6i5r1elXEFNT+LsePbSZi/pA==
-X-Received: by 2002:a17:903:2347:b0:16a:33cd:5308 with SMTP id c7-20020a170903234700b0016a33cd5308mr10479936plh.122.1656531249629;
-        Wed, 29 Jun 2022 12:34:09 -0700 (PDT)
+        bh=zX93b4uo7r2zzM20H0vNMZpGBveIXWgxPACeOg4RsOo=;
+        b=r5WohLB1NZ2fwPPHrQGLwWpJFf9fYGo9lTHn6zyvleYpP/Gw0UhpeTbHpLltL27EsF
+         MqdewiSGqtsrOHvXGrLpShJonlw8ClnKEc1orh1ufTODTiK3DeGlwiD4pugBLdNz5LEY
+         5qCZeevXUIeWhzwbs+GHVOh3kl6yBl8ITYojwd3mlN8KKuZro8OP7t+UH+iNS0v1W8O5
+         GhD/fvcUQ0E9Tce5/L92odX41sBsTMQfZoJZzUA1HZgytgWaGUsTpE6BgaY+eCd6uw8W
+         J7BbsIf367DWw9IKRg/lv46Z60OtSH2nvswuiD9SNxWpHVE6ju3h112/zLFKWum6R4/x
+         FTuQ==
+X-Gm-Message-State: AJIora9YQeSNgEEKML3rUthYhEV8DClAFDDyOAcLKDHgmrRHw79rmyMM
+        oMJgPGPz66JnPhllIXCKdl0=
+X-Google-Smtp-Source: AGRyM1vhnun+Dx/Iat4x3HGNWqaZwBKHI4Xr3keeaJWM7+Gp+HWhYaNAyqHh7y97JFLA0sm9Wf6etg==
+X-Received: by 2002:a63:242:0:b0:401:b84a:6008 with SMTP id 63-20020a630242000000b00401b84a6008mr4183776pgc.100.1656531929988;
+        Wed, 29 Jun 2022 12:45:29 -0700 (PDT)
 Received: from [172.30.1.37] ([14.32.163.5])
-        by smtp.gmail.com with ESMTPSA id ij26-20020a170902ab5a00b0016a1b60b19dsm11789007plb.91.2022.06.29.12.34.07
+        by smtp.gmail.com with ESMTPSA id c15-20020a170902c2cf00b0016a268563ecsm11867517pla.23.2022.06.29.12.45.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Jun 2022 12:34:09 -0700 (PDT)
-Message-ID: <0f1fd530-7764-a465-0b02-0027fc9a1383@gmail.com>
-Date:   Thu, 30 Jun 2022 04:34:05 +0900
+        Wed, 29 Jun 2022 12:45:29 -0700 (PDT)
+Message-ID: <2e9d3702-595d-20e3-9e8c-c9723384b3a9@gmail.com>
+Date:   Thu, 30 Jun 2022 04:45:24 +0900
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
-Subject: Re: [PATCH] PM / devfreq: passive: revert an editing accident in
- SPDX-License line
+Subject: Re: [PATCH] PM / devfreq: imx-bus: use NULL to pass a null pointer
+ rather than zero
 Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>, linux-pm@vger.kernel.org
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220628053411.22438-1-lukas.bulwahn@gmail.com>
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220623180054.79687-1-colin.i.king@gmail.com>
 From:   Chanwoo Choi <cwchoi00@gmail.com>
-In-Reply-To: <20220628053411.22438-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220623180054.79687-1-colin.i.king@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 22. 6. 28. 14:34, Lukas Bulwahn wrote:
-> Commit 26984d9d581e ("PM / devfreq: passive: Keep cpufreq_policy for
-> possible cpus") reworked governor_passive.c, and accidently added a
-> tab in the first line, i.e., the SPDX-License-Identifier line.
+On 22. 6. 24. 03:00, Colin Ian King wrote:
+> The 3rd argument to the function of_get_property is a pointer and it is
+> being passed using 0. Use NULL instead.
 > 
-> The checkpatch script warns with the SPDX_LICENSE_TAG warning, and hence
-> pointed this issue out while investigating checkpatch warnings.
+> Cleans up sparse warning:
+> warning: Using plain integer as NULL pointer
 > 
-> Revert this editing accident. No functional change.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
-> Chanwoo, please pick this minor non-urgent fix to your latest change above.
-> 
->  drivers/devfreq/governor_passive.c | 2 +-
+>  drivers/devfreq/imx-bus.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governor_passive.c
-> index 72c67979ebe1..326482a68986 100644
-> --- a/drivers/devfreq/governor_passive.c
-> +++ b/drivers/devfreq/governor_passive.c
-> @@ -1,4 +1,4 @@
-> -	// SPDX-License-Identifier: GPL-2.0-only
-> +// SPDX-License-Identifier: GPL-2.0-only
->  /*
->   * linux/drivers/devfreq/governor_passive.c
->   *
+> diff --git a/drivers/devfreq/imx-bus.c b/drivers/devfreq/imx-bus.c
+> index f3f6e25053ed..f87067fc574d 100644
+> --- a/drivers/devfreq/imx-bus.c
+> +++ b/drivers/devfreq/imx-bus.c
+> @@ -59,7 +59,7 @@ static int imx_bus_init_icc(struct device *dev)
+>  	struct imx_bus *priv = dev_get_drvdata(dev);
+>  	const char *icc_driver_name;
+>  
+> -	if (!of_get_property(dev->of_node, "#interconnect-cells", 0))
+> +	if (!of_get_property(dev->of_node, "#interconnect-cells", NULL))
+>  		return 0;
+>  	if (!IS_ENABLED(CONFIG_INTERCONNECT_IMX)) {
+>  		dev_warn(dev, "imx interconnect drivers disabled\n");
 
 Applied it. Thanks.
 
