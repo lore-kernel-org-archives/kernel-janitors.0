@@ -2,91 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04FBAC43334
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Jun 2022 07:39:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10799CCA47C
+	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Jun 2022 10:28:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232042AbiF2Hjn (ORCPT
+        id S230523AbiF2K2N (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 29 Jun 2022 03:39:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55058 "EHLO
+        Wed, 29 Jun 2022 06:28:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231143AbiF2Hjm (ORCPT
+        with ESMTP id S233349AbiF2K2E (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 29 Jun 2022 03:39:42 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51E69248EB;
-        Wed, 29 Jun 2022 00:39:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1656488382; x=1688024382;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xGQsMjXyyiPl0THGayv1e3wyuAKEHlcjzN/mbTlnUmo=;
-  b=cggK1qxgaB9A+tpirpZpB/3OjYjzUhoeiZzkKBKDqBmX5xtXmLxK4mQZ
-   biCUH5aGirxQYMzeHgAQldmPSnq3cNKPEtSVluEjTEN9bjezI9QA/1NFS
-   KrAE516rX2zsFS1sBcL/dwBQS9CE4zNRIt6qdcElRisxlsmf+V6p8ycBq
-   QoepG+sMVIHcQypTXX/lbpiGgxnIUaq53Lj5CQ0RzbcSkvaNsL5bwYRcD
-   D9NvBtU8xzqJp1eKoLe1iN3keLPuQ1k/haYK2GlItVIci3beNIO/Bl7Hq
-   fkr2dVBfXSJj235nlc0lJjgv4yewQUDPC9LPLfAYDHMd8Elz5Mgz8YP7g
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10392"; a="368266535"
-X-IronPort-AV: E=Sophos;i="5.92,230,1650956400"; 
-   d="scan'208";a="368266535"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2022 00:39:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,230,1650956400"; 
-   d="scan'208";a="680395139"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by FMSMGA003.fm.intel.com with ESMTP; 29 Jun 2022 00:39:40 -0700
-Date:   Wed, 29 Jun 2022 15:31:24 +0800
-From:   Xu Yilun <yilun.xu@intel.com>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>,
-        Tom Rix <trix@redhat.com>, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH][next] fpga: fpga-mgr: Fix spelling mistake "bitsream" ->
- "bitstream"
-Message-ID: <20220629073124.GA2628780@yilunxu-OptiPlex-7050>
-References: <20220624081409.14760-1-colin.i.king@gmail.com>
+        Wed, 29 Jun 2022 06:28:04 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A03C43DDC2;
+        Wed, 29 Jun 2022 03:27:48 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id v14so21718887wra.5;
+        Wed, 29 Jun 2022 03:27:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Hg8Agbq4mVHkuTg7yeofSNYUTSRLwIyIHLfG6qwLBeg=;
+        b=C2+TpVRiRBe2BxVymZqGsxLurT1OGPL4h9CO7oXcP10zEMb9H+IkUGNt009IJBTPIl
+         JuaPnxje+CkdkVqBA4DT0qFHjEWuLcYsRtmtri7KMZMoJeMDBTKtBDI6wSiiy9d+N9Kl
+         wl677uKYKqdlFB1f0a6Yp2tRuesScdWfAGt1StvCbFTwl7+b+CTBoV6BonSeD/6A5ocG
+         cQaPgSQ8QXadw70bCmjkeqpNp78DhvHiqy4uBhfra3whguxCyfv8/CAdwtA2HHolYwaS
+         KKwkzdZnHPY4h5CjbD7/UKWWHDpoSP1tK+K54DPPxBAUicXxwDOU1gLI9EcKlXrBPkJJ
+         ChMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Hg8Agbq4mVHkuTg7yeofSNYUTSRLwIyIHLfG6qwLBeg=;
+        b=RJuIDeAO2GgJj2psUPIPdQrdvMoy8NIH9KS+3c/fOUkew3q3QW9nITL5bYIlyo0oq2
+         p+NqiKS6q8paiF/XtIvq9OJWEYhs7k1ay5q/+fxqaTpLrOnIMqo66Nn4Yxn3JsEFISPq
+         vp6OcOMMe8peygr9kDInpWg11xodVvC78rVQ73wtKOxuqk2aViGOBaWNi0GKV8kLIxTM
+         3iTFg8VZ0037vuqqry96cEv8biWykxL8RY7afl0HYPRMuF7crA2q745udtrVNuI77FEU
+         shHQnF+fXUvuezgPNnrhzSvRkPxtOvOXI9ccmtoHQryn1QYyHAydsOvBsx0iDK2Z+8jv
+         ZGNQ==
+X-Gm-Message-State: AJIora+0HS5Vn+CNTm8edixcYSVHGaHQeS02rnxqbcoIEdTrpcSl5MvW
+        ibpZEfV/2HXZ//FbtOOFIHg=
+X-Google-Smtp-Source: AGRyM1ufw2P/OIzIfF6EchFfqB3P0dWO5nbggmQs0aSA+PHDT+se1HLVPrFSvZuGO2P//WpKNJCfFQ==
+X-Received: by 2002:a5d:43cd:0:b0:21b:8e53:befe with SMTP id v13-20020a5d43cd000000b0021b8e53befemr2397726wrr.255.1656498467106;
+        Wed, 29 Jun 2022 03:27:47 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id q13-20020adfcd8d000000b00219b391c2d2sm19268969wrj.36.2022.06.29.03.27.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jun 2022 03:27:46 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: wavefront: remove redundant assignment to pointer end
+Date:   Wed, 29 Jun 2022 11:27:43 +0100
+Message-Id: <20220629102744.139673-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220624081409.14760-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jun 24, 2022 at 09:14:09AM +0100, Colin Ian King wrote:
-> There is an spelling mistake in a dev_err message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/fpga/fpga-mgr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/fpga/fpga-mgr.c b/drivers/fpga/fpga-mgr.c
-> index a0fa0a2cb8af..8efa67620e21 100644
-> --- a/drivers/fpga/fpga-mgr.c
-> +++ b/drivers/fpga/fpga-mgr.c
-> @@ -158,7 +158,7 @@ static int fpga_mgr_parse_header_mapped(struct fpga_manager *mgr,
->  	ret = fpga_mgr_parse_header(mgr, info, buf, count);
->  
->  	if (info->header_size + info->data_size > count) {
-> -		dev_err(&mgr->dev, "Bitsream data outruns FPGA image\n");
-> +		dev_err(&mgr->dev, "Bitstream data outruns FPGA image\n");
->  		ret = -EINVAL;
->  	}
+Pointer end is being re-assigned the same value as it was initialized
+with in the previous statement. The re-assignment is redundant and
+can be removed.
 
-Adds the Fixes tag
+Cleans up clang scan-build warning:
+sound/isa/wavefront/wavefront_synth.c:582:17: warning: Value stored
+to 'end' during its initialization is never read
 
-  Fixes: 3cc624beba63 ("fpga: fpga-mgr: support bitstream offset in image buffer")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/isa/wavefront/wavefront_synth.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-and applied to for-next
+diff --git a/sound/isa/wavefront/wavefront_synth.c b/sound/isa/wavefront/wavefront_synth.c
+index 2aaaa6807174..13ce96148fa3 100644
+--- a/sound/isa/wavefront/wavefront_synth.c
++++ b/sound/isa/wavefront/wavefront_synth.c
+@@ -581,8 +581,6 @@ demunge_buf (unsigned char *src, unsigned char *dst, unsigned int src_bytes)
+ 	int i;
+ 	unsigned char *end = src + src_bytes;
+     
+-	end = src + src_bytes;
+-
+ 	/* NOTE: src and dst *CAN* point to the same address */
+ 
+ 	for (i = 0; src != end; i++) {
+-- 
+2.35.3
 
-Thanks,
-Yilun
-
->  
-> -- 
-> 2.35.3
