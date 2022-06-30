@@ -2,111 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31BC8C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 29 Jun 2022 19:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26821C433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Jun 2022 02:22:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231293AbiF2Tpb (ORCPT
+        id S231389AbiF3CW2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 29 Jun 2022 15:45:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50500 "EHLO
+        Wed, 29 Jun 2022 22:22:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230281AbiF2Tpa (ORCPT
+        with ESMTP id S229480AbiF3CW1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 29 Jun 2022 15:45:30 -0400
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73C1D25C46;
-        Wed, 29 Jun 2022 12:45:30 -0700 (PDT)
-Received: by mail-pf1-x42e.google.com with SMTP id x138so13366158pfc.3;
-        Wed, 29 Jun 2022 12:45:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=zX93b4uo7r2zzM20H0vNMZpGBveIXWgxPACeOg4RsOo=;
-        b=oi24oy8pB5I5ioF84ISCdNpuTo7TCnpI6ZmcooU6WiEr8PStnOU7pOwqXU/KD3DCvw
-         onhUjkKKusDKbSWuLaHrRe5QZv+lsQTR+rbd0O2w7eExewrDZQjg8WVpRvUXtUtwo8i0
-         NvrHU6UuipcewkCfCCZZEJiSuFgjDhxlduRkQ4Nzub9aZhjDdmPqVjgGqtWRKyAjj6ZG
-         MgdZzudjoS4/q+yUhfw6sRst7Hy3oiCKD9ifiZ2a6dLienB+uwlxubFG/IzfGbRKUMag
-         wa6ceJcYw/RLdZpbARhWKZWe6VnL06G6eJPcUqxmeYyMuQuF15mD4HKTkOdSVlN7wxhV
-         ZjhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=zX93b4uo7r2zzM20H0vNMZpGBveIXWgxPACeOg4RsOo=;
-        b=r5WohLB1NZ2fwPPHrQGLwWpJFf9fYGo9lTHn6zyvleYpP/Gw0UhpeTbHpLltL27EsF
-         MqdewiSGqtsrOHvXGrLpShJonlw8ClnKEc1orh1ufTODTiK3DeGlwiD4pugBLdNz5LEY
-         5qCZeevXUIeWhzwbs+GHVOh3kl6yBl8ITYojwd3mlN8KKuZro8OP7t+UH+iNS0v1W8O5
-         GhD/fvcUQ0E9Tce5/L92odX41sBsTMQfZoJZzUA1HZgytgWaGUsTpE6BgaY+eCd6uw8W
-         J7BbsIf367DWw9IKRg/lv46Z60OtSH2nvswuiD9SNxWpHVE6ju3h112/zLFKWum6R4/x
-         FTuQ==
-X-Gm-Message-State: AJIora9YQeSNgEEKML3rUthYhEV8DClAFDDyOAcLKDHgmrRHw79rmyMM
-        oMJgPGPz66JnPhllIXCKdl0=
-X-Google-Smtp-Source: AGRyM1vhnun+Dx/Iat4x3HGNWqaZwBKHI4Xr3keeaJWM7+Gp+HWhYaNAyqHh7y97JFLA0sm9Wf6etg==
-X-Received: by 2002:a63:242:0:b0:401:b84a:6008 with SMTP id 63-20020a630242000000b00401b84a6008mr4183776pgc.100.1656531929988;
-        Wed, 29 Jun 2022 12:45:29 -0700 (PDT)
-Received: from [172.30.1.37] ([14.32.163.5])
-        by smtp.gmail.com with ESMTPSA id c15-20020a170902c2cf00b0016a268563ecsm11867517pla.23.2022.06.29.12.45.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Jun 2022 12:45:29 -0700 (PDT)
-Message-ID: <2e9d3702-595d-20e3-9e8c-c9723384b3a9@gmail.com>
-Date:   Thu, 30 Jun 2022 04:45:24 +0900
+        Wed, 29 Jun 2022 22:22:27 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85A0436B61
+        for <kernel-janitors@vger.kernel.org>; Wed, 29 Jun 2022 19:22:26 -0700 (PDT)
+Received: from canpemm500006.china.huawei.com (unknown [172.30.72.56])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4LYMVb0wMhzhYws;
+        Thu, 30 Jun 2022 10:20:07 +0800 (CST)
+Received: from [10.174.179.200] (10.174.179.200) by
+ canpemm500006.china.huawei.com (7.192.105.130) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Thu, 30 Jun 2022 10:22:24 +0800
+Subject: Re: [cocci] scripts/coccinelle/free: add NULL test before dev_{put,
+ hold} functions
+To:     Markus Elfring <Markus.Elfring@web.de>, <cocci@inria.fr>,
+        <kernel-janitors@vger.kernel.org>
+CC:     Julia Lawall <Julia.Lawall@inria.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Fabian Frederick <fabf@skynet.be>,
+        Yajun Deng <yajun.deng@linux.dev>,
+        "David S. Miller" <davem@davemloft.net>,
+        Phil Edworthy <phil.edworthy@renesas.com>
+References: <20220616013253.520310-1-william.xuanziyang@huawei.com>
+ <32da2d32-9554-de90-62ca-c4be456ad31a@web.de>
+ <6b3eac2c-6e24-46e0-c548-dc87f666709b@huawei.com>
+ <0e3d2713-ab8a-2ce5-5423-a72ba36ac1ff@web.de>
+From:   "Ziyang Xuan (William)" <william.xuanziyang@huawei.com>
+Message-ID: <224eeed0-5429-6dc3-7fe7-e4ff820ccb27@huawei.com>
+Date:   Thu, 30 Jun 2022 10:22:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] PM / devfreq: imx-bus: use NULL to pass a null pointer
- rather than zero
+In-Reply-To: <0e3d2713-ab8a-2ce5-5423-a72ba36ac1ff@web.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220623180054.79687-1-colin.i.king@gmail.com>
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-In-Reply-To: <20220623180054.79687-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.179.200]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ canpemm500006.china.huawei.com (7.192.105.130)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 22. 6. 24. 03:00, Colin Ian King wrote:
-> The 3rd argument to the function of_get_property is a pointer and it is
-> being passed using 0. Use NULL instead.
-> 
-> Cleans up sparse warning:
-> warning: Using plain integer as NULL pointer
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/devfreq/imx-bus.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/devfreq/imx-bus.c b/drivers/devfreq/imx-bus.c
-> index f3f6e25053ed..f87067fc574d 100644
-> --- a/drivers/devfreq/imx-bus.c
-> +++ b/drivers/devfreq/imx-bus.c
-> @@ -59,7 +59,7 @@ static int imx_bus_init_icc(struct device *dev)
->  	struct imx_bus *priv = dev_get_drvdata(dev);
->  	const char *icc_driver_name;
->  
-> -	if (!of_get_property(dev->of_node, "#interconnect-cells", 0))
-> +	if (!of_get_property(dev->of_node, "#interconnect-cells", NULL))
->  		return 0;
->  	if (!IS_ENABLED(CONFIG_INTERCONNECT_IMX)) {
->  		dev_warn(dev, "imx interconnect drivers disabled\n");
+>>> I find the patch subject improvable.
+>>> You would like to detect the remaining usage of redundant null pointer checks
+>>> before selected function calls.
+>>> Thus it would be nice if the corresponding description can become clearer
+>>> another bit, wouldn't it?
+>> Sorry, I did not get your mean.
+>
+> How do you think about a wording like the following?
+>
+> Commit subject:
+> [PATCH] coccinelle: Add detection for redundant null pointer checks before dev_{put,hold} function calls
+>
+> Commit description:
+> The information “Add the case if dev is NULL in dev_{put, hold},
+> so the caller doesn't need to care whether dev is NULL or not.”
+> was provided by the commit b37a466837393af72fe8bcb8f1436410f3f173f3
+> ("netdevice: add the case if dev is NULL").
+> Thus extend source code analyses and corresponding transformations
+> by the means of the semantic patch language so that null pointer checks
+> which became unnecessary at other places because of the mentioned input
+> parameter validation.
 
-Applied it. Thanks.
+Patch title looks like better. And I think the main destination of the description is
 
--- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+to tell others what you want to do. If it can, I think it's OK. After all, everyone's style
+
+is different. But I will refer to your suggestions. Thank you!
+
+>
+>>> Did you order the case distinctions in the SmPL disjunction according to
+>>> the call frequencies of the mentioned function names?
+>> No, no any special, just list the related functions.
+> Will this view influence the selection which SmPL code variant
+> will be preferred finally?
+>
+>
+> Do you get further software development ideas from a data processing approach
+> which I published before?
+> https://build.opensuse.org/package/show/home:elfring:semantic_patching:Deletion_of_checks_before_specific_function_calls/Deletion_of_checks_before_specific_function_calls_in_Linux_source_files
+
+Sorry, I didn't learn about these. I learn about coccinelle recently by coccinelle scripts in Linux
+
+kernel and coccinelle official website. Now I get more resources. Thank you!
+
+
+I will give the v2 patch with your suggestions. Thank you!
+
+> Regards,
+> Markus
+> .
