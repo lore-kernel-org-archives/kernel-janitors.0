@@ -2,98 +2,120 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71DECC43334
-	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Jul 2022 12:20:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F669C43334
+	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Jul 2022 12:44:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235241AbiGAMUH (ORCPT
+        id S234250AbiGAMo5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 1 Jul 2022 08:20:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54104 "EHLO
+        Fri, 1 Jul 2022 08:44:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231420AbiGAMUG (ORCPT
+        with ESMTP id S231298AbiGAMoz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 1 Jul 2022 08:20:06 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B48314D39;
-        Fri,  1 Jul 2022 05:20:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1656678005; x=1688214005;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=L28F0IQuGJkDXQWYuN+rHaYbWwAfIFpmSFRtOHDrx1g=;
-  b=IijNPyZF4A1ieGaPQ+tCG3NINQiJGa8wPfc6CsxybkWZ8p+YRn7d5OPC
-   lkbn8ld/KIGmpVhwo9L55OI0bu1yGlRCQqRcEqD4DnAdpQAni8IjE1bCz
-   pRmZdY91t67uJH/jQsYSAbwxIbf+YdVO7PmyPf7zhzumpnWfcGLnSJ1GI
-   BOJm6kTJvXcznenjeCw94EGwVrwXUAE0fSZrkZ+4Jq0pyTU9dn8B1a7u8
-   TyIpqPwiCFSGOogkSd1BmL70GLM40sS2/Wck5rCrnXqynwFfNUiCD7lyV
-   SXzy3phFsuYB5FeMOz5cvTpD9f+cHooa+jS7SZCKl8So/bksT5Ix7UBNn
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10394"; a="282670256"
-X-IronPort-AV: E=Sophos;i="5.92,237,1650956400"; 
-   d="scan'208";a="282670256"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2022 05:20:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,237,1650956400"; 
-   d="scan'208";a="596242291"
-Received: from boxer.igk.intel.com (HELO boxer) ([10.102.20.173])
-  by fmsmga007.fm.intel.com with ESMTP; 01 Jul 2022 05:20:03 -0700
-Date:   Fri, 1 Jul 2022 14:20:02 +0200
-From:   Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Andrii Nakryiko <andrii@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: adjust XDP SOCKETS after file movement
-Message-ID: <Yr7mcjRq57laZGEY@boxer>
-References: <20220701042810.26362-1-lukas.bulwahn@gmail.com>
+        Fri, 1 Jul 2022 08:44:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A6FD633A3F
+        for <kernel-janitors@vger.kernel.org>; Fri,  1 Jul 2022 05:44:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1656679493;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=I+o5MyxcdFm69IVhspSeG0AkjywTJdVF99yclwN4/5Q=;
+        b=Ijld7IVESORa/lyTsNOrWiwkyb1GdP/A/t2iP2tDe4iVQTSFfB2B/147LO/QdgqcwtDG+2
+        7NXsNy6olrtmoGdQesMLa+D4Lf/hkJu0azO6PfpGhfXcBmOGFhnnILWRgdqbzHZZ3IVC/i
+        KSF+kZJudyie1ovZ6rzAjtE2q4p2PZw=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-394-aijdqvkZOCqqA0DmP84BPw-1; Fri, 01 Jul 2022 08:44:52 -0400
+X-MC-Unique: aijdqvkZOCqqA0DmP84BPw-1
+Received: by mail-qk1-f199.google.com with SMTP id m15-20020a05620a290f00b006a74cf760b2so2028651qkp.20
+        for <kernel-janitors@vger.kernel.org>; Fri, 01 Jul 2022 05:44:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=I+o5MyxcdFm69IVhspSeG0AkjywTJdVF99yclwN4/5Q=;
+        b=LH2w+G0YO0yuKhddK8twEKw0q+cEG6UmCbwpbo1aDOO9QE7LCkZZPsWfL/G4oeqz1Y
+         VVMyGvQxtvg1EwQiirGUG26mYxDD3oMBLH84CQSUtjXgADrWMs06XL5f12b+QR30jirB
+         ZGicSw5LMZ0u0e11AFSCekoKJfptj8AkkFynM5PMIlUpmCWpWyrwJcL6BcLQd9haIuDB
+         XiP+MpueXK95f65PDvht5nr5KnOP+mSIVR5nkpili30O/QN6wlxtA+uPk7nqfXAcFG8z
+         hS7EJmZcv4jAy5ReVpphs3c5D1LnnMbxU0ITq0U9kNLZTTuVneWOWLnj+d4Z4wwsy/D6
+         1+Bg==
+X-Gm-Message-State: AJIora++dZEq8xLqdHXTFn55+96AjOkn0kkL1gkf5w/ADMD5UutCY5li
+        tCa7G4InS304NqJofzpitISvxvGhtl32QuXF7au/+n7JjiKAibsHMCZa+CQIQOj/8OtAmp5PvsH
+        Na7ozYkU1fRCtGS5wAw5m1KgCKAbf
+X-Received: by 2002:ad4:5bc2:0:b0:470:4c7d:db56 with SMTP id t2-20020ad45bc2000000b004704c7ddb56mr15998251qvt.90.1656679492048;
+        Fri, 01 Jul 2022 05:44:52 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1viqT6xeFd0NMURnXk6opeDjr9vD5bRyRLn8iOY+Kor2kuqlGnPO3IzIZsmjH53M8mj5JDEUA==
+X-Received: by 2002:ad4:5bc2:0:b0:470:4c7d:db56 with SMTP id t2-20020ad45bc2000000b004704c7ddb56mr15998236qvt.90.1656679491792;
+        Fri, 01 Jul 2022 05:44:51 -0700 (PDT)
+Received: from localhost.localdomain (024-205-208-113.res.spectrum.com. [24.205.208.113])
+        by smtp.gmail.com with ESMTPSA id bl34-20020a05620a1aa200b006af34a1a897sm11029924qkb.65.2022.07.01.05.44.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Jul 2022 05:44:51 -0700 (PDT)
+Subject: Re: [PATCH] HID: core: remove unneeded assignment in
+ hid_process_report()
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org
+Cc:     Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        llvm@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20220701112720.13452-1-lukas.bulwahn@gmail.com>
+From:   Tom Rix <trix@redhat.com>
+Message-ID: <fd94d2dc-04ed-f041-f148-8f361f215441@redhat.com>
+Date:   Fri, 1 Jul 2022 05:44:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220701042810.26362-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220701112720.13452-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jul 01, 2022 at 06:28:10AM +0200, Lukas Bulwahn wrote:
-> Commit f36600634282 ("libbpf: move xsk.{c,h} into selftests/bpf") moves
-> files tools/{lib => testing/selftests}/bpf/xsk.[ch], but misses to adjust
-> the XDP SOCKETS (AF_XDP) section in MAINTAINERS.
-> 
-> Adjust the file entry after this file movement.
-> 
+
+On 7/1/22 4:27 AM, Lukas Bulwahn wrote:
+> Commit bebcc522fbee ("HID: core: for input reports, process the usages by
+> priority list") split the iteration into two distinct loops in
+> hid_process_report().
+>
+> After this change, the variable field is only used while iterating in the
+> second loop and the assignment of values to this variable in the first loop
+> is simply not needed.
+>
+> Remove the unneeded assignment during retrieval. No functional change and
+> no change in the resulting object code.
+>
+> This was discovered as a dead store with clang-analyzer.
+>
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > ---
-> Andrii, please ack.
-> 
-> Alexei, please pick this minor non-urgent clean-up on top of the commit above.
-> 
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index fa4bfa3d10bf..27d9e65b9a85 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -22042,7 +22042,7 @@ F:	include/uapi/linux/xdp_diag.h
->  F:	include/net/netns/xdp.h
->  F:	net/xdp/
->  F:	samples/bpf/xdpsock*
-> -F:	tools/lib/bpf/xsk*
-> +F:	tools/testing/selftests/bpf/xsk*
+> Benjamin, Jiri, please pick this minor non-urgent clean-up patch.
+>
+>   drivers/hid/hid-core.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+> index 00154a1cd2d8..b7f5566e338d 100644
+> --- a/drivers/hid/hid-core.c
+> +++ b/drivers/hid/hid-core.c
+> @@ -1662,7 +1662,7 @@ static void hid_process_report(struct hid_device *hid,
+>   
+>   	/* first retrieve all incoming values in data */
+>   	for (a = 0; a < report->maxfield; a++)
+> -		hid_input_fetch_field(hid, field = report->field[a], data);
+> +		hid_input_fetch_field(hid, report->field[a], data);
+>   
+>   	if (!list_empty(&report->field_entry_list)) {
+>   		/* INPUT_REPORT, we have a priority list of fields */
+Reviewed-by: Tom Rix <trix@redhat.com>
 
-Magnus, this doesn't cover xdpxceiver.
-How about we move the lib part and xdpxceiver part to a dedicated
-directory? Or would it be too nested from main dir POV?
-
->  
->  XEN BLOCK SUBSYSTEM
->  M:	Roger Pau Monné <roger.pau@citrix.com>
-> -- 
-> 2.17.1
-> 
