@@ -2,113 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5AD9CCA479
-	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Jul 2022 13:13:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44469C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Jul 2022 13:24:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236775AbiGANNx (ORCPT
+        id S231897AbiGANYt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 1 Jul 2022 09:13:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43388 "EHLO
+        Fri, 1 Jul 2022 09:24:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232001AbiGANNw (ORCPT
+        with ESMTP id S229816AbiGANYs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 1 Jul 2022 09:13:52 -0400
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12EBF44A1D;
-        Fri,  1 Jul 2022 06:13:49 -0700 (PDT)
-Received: by mail-pg1-x529.google.com with SMTP id g4so2396079pgc.1;
-        Fri, 01 Jul 2022 06:13:49 -0700 (PDT)
+        Fri, 1 Jul 2022 09:24:48 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDE6C65D72;
+        Fri,  1 Jul 2022 06:24:46 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id m184so1321271wme.1;
+        Fri, 01 Jul 2022 06:24:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=uuZ9PUmfOj4BndQIme+wRqpcIrzyVDnqBNHxIE6tjL0=;
-        b=jK8Kdgwm6UeOa8FHlIgXUuXCakQLgPoeST98OFJQk6zqp2XC86OJ5bz7hHn90Bh7n6
-         LofWkaARprzyu4hFUapMGVjIJS5RrzE6pQ1GTIlgmblf6VAh8sjqT4N95dq/avI/rNvM
-         6z0HIIo9P/GgTieOWMQeQShkM3bwNEQTlDeMdXR2xaixTiRR9Qis+mpHNieTesmdJSct
-         XsgeD/y8j/koVIwFJYwtwobUolY0L3Qw27mZDM9ZH3vPU8usbfX+5EStRpuxgvbfu5uM
-         zthEEz5HGRpcNeI5QdchfJlhLMTtmZHPhOtL3cgapgYzLeUXwLrHjdNFzzbVzVpbO6if
-         CUYw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yCsu5nTltZvrxQcakbJG/TYyfcvUxSLQOPrTEC979XE=;
+        b=hPXw9wi45Jq+arDVBkzYXEDYk149c2YgiBFmxmolwDpQG3zJhXd+AFLEg1BsuUo0cJ
+         otgEsiQQ4ehJ1SeAkJkv6lkusnCrewY5MF4ZBJlWalxY+AneBmvtGxOIJlO5Jb/qHEZ/
+         4tkImjo7eFp79ufFTp5ktdidum76Mo6+yaLOzMF18hFt4M/ySkV8AxCgdvENYHAk3+SH
+         0aXKMQA9MMKHb4MIBTUF/GOWpfGPzp+OrZZn1XgYhFGyGN2Ser6Z+hOZnXYpOw2ZR+Ii
+         eAM6kAZcM4ve83RyMOMLVD1E/gngo2RJjZ6H4ApFwTMNf2V32LTRvCkjCqDDjjB4qr4x
+         bVJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=uuZ9PUmfOj4BndQIme+wRqpcIrzyVDnqBNHxIE6tjL0=;
-        b=HOM8Ydmf/4aF6VBkS9K/JH+C+DD6hu0dKSSBZR7GBUZeYxltv0eCXbuS3oCDNsH9fn
-         AZe5vqOEGCQ+B1BOsV3ahD4Df6L+klStPnjgI1LQu0FT4gzm89kDwSdKjhdYIQ//j9Nh
-         Bs3CVPGM+riy3ooY0/VgkQ4d+XA6jzIO+eL4q5LV3AOVEQLv6Jr9BwhdlucE1mQDdQNh
-         5P+bILfHloxw8lNYEUl1JZ27CAkIhrhL/c9Yfu83vuMJnZ2C5hI3fE909w0HOUulrl2X
-         jf+gR6qaLjidWxjWwAmd0hDVFAJqwq/GPwTDHssv3bGHasKvT8akM85fI35GV/lrXkj8
-         h8ng==
-X-Gm-Message-State: AJIora/44FntjIHxm5VhUPOkXuPwqY/lMsTObmHwHDHgIbC16rZpLAeb
-        993/8WlooZESbCNpNUTcpIaGxHEwSw9VcsxOE0g=
-X-Google-Smtp-Source: AGRyM1veESKzjKxU/8xARq15ZnhaDZr0aHpCdrEm4ggqP5YOwHEp2FsOJBnzNpOf3ozSSZULi7Kss7gR15qLuEYPBzo=
-X-Received: by 2002:aa7:999a:0:b0:525:6023:8c03 with SMTP id
- k26-20020aa7999a000000b0052560238c03mr21204987pfh.86.1656681228125; Fri, 01
- Jul 2022 06:13:48 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yCsu5nTltZvrxQcakbJG/TYyfcvUxSLQOPrTEC979XE=;
+        b=qt6c8LoTnRMCyei0LJg68HqS+IXfi+Q2IPzfYJ1pX8g6LOAijTLro/XzEERQaBwZDn
+         C8d8F6l92Vq0KpxE3kpOWVAcLPQHHV+8q7kmPuDmf0E3p/c4mHp7Dmk7ocXScZvmYhGF
+         hxJmzJpKuXVN3qiQb0jObXYTfOS+Jyhbz+N81tlS2RRqSCthwJzSPq6+gGUqI5Gffh6G
+         3RkZXrwbDBvyy3ClqTfZCyYZwKaQU+sBVw5IBQztB4raXSN+Z1bmE+guiNym3vxAqic/
+         fjzv6Gmp7mMEBKnWCSae3VVbgWDh/IVNTnIWzZ6XPXgi4p4SNW3mh8z2XdoTqBSgC0wf
+         3WcQ==
+X-Gm-Message-State: AJIora++p/twAA9f+wrR0RhL2Q9TK5kYh1omm+Z0G6dh16pJLlHkgJFJ
+        Mmj8loS5q7DUMMvSbNPlgI8=
+X-Google-Smtp-Source: AGRyM1tl2dPEcNdZXVz8rQKwcLanUvAu52ufPOsF58HfkiGvT3YbFZVCoT/I4ainVOwie0UuR+a50A==
+X-Received: by 2002:a05:600c:6020:b0:39c:96ec:5014 with SMTP id az32-20020a05600c602000b0039c96ec5014mr18722775wmb.57.1656681884316;
+        Fri, 01 Jul 2022 06:24:44 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id j18-20020a05600c191200b003973ea7e725sm8669247wmq.0.2022.07.01.06.24.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Jul 2022 06:24:43 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: Fix repeated use of "the the" in Kconfig
+Date:   Fri,  1 Jul 2022 14:24:43 +0100
+Message-Id: <20220701132443.364906-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-References: <20220701042810.26362-1-lukas.bulwahn@gmail.com> <Yr7mcjRq57laZGEY@boxer>
-In-Reply-To: <Yr7mcjRq57laZGEY@boxer>
-From:   Magnus Karlsson <magnus.karlsson@gmail.com>
-Date:   Fri, 1 Jul 2022 15:13:36 +0200
-Message-ID: <CAJ8uoz16yGJqYX2xOcczTGKFnG4joh8+f1uPGMAP4rmm3feYDQ@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust XDP SOCKETS after file movement
-To:     Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Network Development <netdev@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, kernel-janitors@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jul 1, 2022 at 2:38 PM Maciej Fijalkowski
-<maciej.fijalkowski@intel.com> wrote:
->
-> On Fri, Jul 01, 2022 at 06:28:10AM +0200, Lukas Bulwahn wrote:
-> > Commit f36600634282 ("libbpf: move xsk.{c,h} into selftests/bpf") moves
-> > files tools/{lib =3D> testing/selftests}/bpf/xsk.[ch], but misses to ad=
-just
-> > the XDP SOCKETS (AF_XDP) section in MAINTAINERS.
-> >
-> > Adjust the file entry after this file movement.
-> >
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > ---
-> > Andrii, please ack.
-> >
-> > Alexei, please pick this minor non-urgent clean-up on top of the commit=
- above.
-> >
-> >  MAINTAINERS | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index fa4bfa3d10bf..27d9e65b9a85 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -22042,7 +22042,7 @@ F:    include/uapi/linux/xdp_diag.h
-> >  F:   include/net/netns/xdp.h
-> >  F:   net/xdp/
-> >  F:   samples/bpf/xdpsock*
-> > -F:   tools/lib/bpf/xsk*
-> > +F:   tools/testing/selftests/bpf/xsk*
->
-> Magnus, this doesn't cover xdpxceiver.
-> How about we move the lib part and xdpxceiver part to a dedicated
-> directory? Or would it be too nested from main dir POV?
+Fix a couple of uses of "the the" in the Kconfig, replace with "the"
 
-Or we can just call everything we add xsk* something?
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ arch/arm/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> >
-> >  XEN BLOCK SUBSYSTEM
-> >  M:   Roger Pau Monn=C3=A9 <roger.pau@citrix.com>
-> > --
-> > 2.17.1
-> >
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index e86948d66415..56a52496fc62 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1637,7 +1637,7 @@ config ARM_ATAG_DTB_COMPAT_CMDLINE_EXTEND
+ 	bool "Extend with bootloader kernel arguments"
+ 	help
+ 	  The command-line arguments provided by the boot loader will be
+-	  appended to the the device tree bootargs property.
++	  appended to the device tree bootargs property.
+ 
+ endchoice
+ 
+@@ -1795,7 +1795,7 @@ config DMI
+ 	  continue to boot on existing non-UEFI platforms.
+ 
+ 	  NOTE: This does *NOT* enable or encourage the use of DMI quirks,
+-	  i.e., the the practice of identifying the platform via DMI to
++	  i.e., the practice of identifying the platform via DMI to
+ 	  decide whether certain workarounds for buggy hardware and/or
+ 	  firmware need to be enabled. This would require the DMI subsystem
+ 	  to be enabled much earlier than we do on ARM, which is non-trivial.
+-- 
+2.35.3
+
