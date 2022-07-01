@@ -2,120 +2,113 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F669C43334
-	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Jul 2022 12:44:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5AD9CCA479
+	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Jul 2022 13:13:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234250AbiGAMo5 (ORCPT
+        id S236775AbiGANNx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 1 Jul 2022 08:44:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42996 "EHLO
+        Fri, 1 Jul 2022 09:13:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231298AbiGAMoz (ORCPT
+        with ESMTP id S232001AbiGANNw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 1 Jul 2022 08:44:55 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A6FD633A3F
-        for <kernel-janitors@vger.kernel.org>; Fri,  1 Jul 2022 05:44:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1656679493;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=I+o5MyxcdFm69IVhspSeG0AkjywTJdVF99yclwN4/5Q=;
-        b=Ijld7IVESORa/lyTsNOrWiwkyb1GdP/A/t2iP2tDe4iVQTSFfB2B/147LO/QdgqcwtDG+2
-        7NXsNy6olrtmoGdQesMLa+D4Lf/hkJu0azO6PfpGhfXcBmOGFhnnILWRgdqbzHZZ3IVC/i
-        KSF+kZJudyie1ovZ6rzAjtE2q4p2PZw=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-394-aijdqvkZOCqqA0DmP84BPw-1; Fri, 01 Jul 2022 08:44:52 -0400
-X-MC-Unique: aijdqvkZOCqqA0DmP84BPw-1
-Received: by mail-qk1-f199.google.com with SMTP id m15-20020a05620a290f00b006a74cf760b2so2028651qkp.20
-        for <kernel-janitors@vger.kernel.org>; Fri, 01 Jul 2022 05:44:52 -0700 (PDT)
+        Fri, 1 Jul 2022 09:13:52 -0400
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12EBF44A1D;
+        Fri,  1 Jul 2022 06:13:49 -0700 (PDT)
+Received: by mail-pg1-x529.google.com with SMTP id g4so2396079pgc.1;
+        Fri, 01 Jul 2022 06:13:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=uuZ9PUmfOj4BndQIme+wRqpcIrzyVDnqBNHxIE6tjL0=;
+        b=jK8Kdgwm6UeOa8FHlIgXUuXCakQLgPoeST98OFJQk6zqp2XC86OJ5bz7hHn90Bh7n6
+         LofWkaARprzyu4hFUapMGVjIJS5RrzE6pQ1GTIlgmblf6VAh8sjqT4N95dq/avI/rNvM
+         6z0HIIo9P/GgTieOWMQeQShkM3bwNEQTlDeMdXR2xaixTiRR9Qis+mpHNieTesmdJSct
+         XsgeD/y8j/koVIwFJYwtwobUolY0L3Qw27mZDM9ZH3vPU8usbfX+5EStRpuxgvbfu5uM
+         zthEEz5HGRpcNeI5QdchfJlhLMTtmZHPhOtL3cgapgYzLeUXwLrHjdNFzzbVzVpbO6if
+         CUYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=I+o5MyxcdFm69IVhspSeG0AkjywTJdVF99yclwN4/5Q=;
-        b=LH2w+G0YO0yuKhddK8twEKw0q+cEG6UmCbwpbo1aDOO9QE7LCkZZPsWfL/G4oeqz1Y
-         VVMyGvQxtvg1EwQiirGUG26mYxDD3oMBLH84CQSUtjXgADrWMs06XL5f12b+QR30jirB
-         ZGicSw5LMZ0u0e11AFSCekoKJfptj8AkkFynM5PMIlUpmCWpWyrwJcL6BcLQd9haIuDB
-         XiP+MpueXK95f65PDvht5nr5KnOP+mSIVR5nkpili30O/QN6wlxtA+uPk7nqfXAcFG8z
-         hS7EJmZcv4jAy5ReVpphs3c5D1LnnMbxU0ITq0U9kNLZTTuVneWOWLnj+d4Z4wwsy/D6
-         1+Bg==
-X-Gm-Message-State: AJIora++dZEq8xLqdHXTFn55+96AjOkn0kkL1gkf5w/ADMD5UutCY5li
-        tCa7G4InS304NqJofzpitISvxvGhtl32QuXF7au/+n7JjiKAibsHMCZa+CQIQOj/8OtAmp5PvsH
-        Na7ozYkU1fRCtGS5wAw5m1KgCKAbf
-X-Received: by 2002:ad4:5bc2:0:b0:470:4c7d:db56 with SMTP id t2-20020ad45bc2000000b004704c7ddb56mr15998251qvt.90.1656679492048;
-        Fri, 01 Jul 2022 05:44:52 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1viqT6xeFd0NMURnXk6opeDjr9vD5bRyRLn8iOY+Kor2kuqlGnPO3IzIZsmjH53M8mj5JDEUA==
-X-Received: by 2002:ad4:5bc2:0:b0:470:4c7d:db56 with SMTP id t2-20020ad45bc2000000b004704c7ddb56mr15998236qvt.90.1656679491792;
-        Fri, 01 Jul 2022 05:44:51 -0700 (PDT)
-Received: from localhost.localdomain (024-205-208-113.res.spectrum.com. [24.205.208.113])
-        by smtp.gmail.com with ESMTPSA id bl34-20020a05620a1aa200b006af34a1a897sm11029924qkb.65.2022.07.01.05.44.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Jul 2022 05:44:51 -0700 (PDT)
-Subject: Re: [PATCH] HID: core: remove unneeded assignment in
- hid_process_report()
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org
-Cc:     Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        llvm@lists.linux.dev, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220701112720.13452-1-lukas.bulwahn@gmail.com>
-From:   Tom Rix <trix@redhat.com>
-Message-ID: <fd94d2dc-04ed-f041-f148-8f361f215441@redhat.com>
-Date:   Fri, 1 Jul 2022 05:44:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=uuZ9PUmfOj4BndQIme+wRqpcIrzyVDnqBNHxIE6tjL0=;
+        b=HOM8Ydmf/4aF6VBkS9K/JH+C+DD6hu0dKSSBZR7GBUZeYxltv0eCXbuS3oCDNsH9fn
+         AZe5vqOEGCQ+B1BOsV3ahD4Df6L+klStPnjgI1LQu0FT4gzm89kDwSdKjhdYIQ//j9Nh
+         Bs3CVPGM+riy3ooY0/VgkQ4d+XA6jzIO+eL4q5LV3AOVEQLv6Jr9BwhdlucE1mQDdQNh
+         5P+bILfHloxw8lNYEUl1JZ27CAkIhrhL/c9Yfu83vuMJnZ2C5hI3fE909w0HOUulrl2X
+         jf+gR6qaLjidWxjWwAmd0hDVFAJqwq/GPwTDHssv3bGHasKvT8akM85fI35GV/lrXkj8
+         h8ng==
+X-Gm-Message-State: AJIora/44FntjIHxm5VhUPOkXuPwqY/lMsTObmHwHDHgIbC16rZpLAeb
+        993/8WlooZESbCNpNUTcpIaGxHEwSw9VcsxOE0g=
+X-Google-Smtp-Source: AGRyM1veESKzjKxU/8xARq15ZnhaDZr0aHpCdrEm4ggqP5YOwHEp2FsOJBnzNpOf3ozSSZULi7Kss7gR15qLuEYPBzo=
+X-Received: by 2002:aa7:999a:0:b0:525:6023:8c03 with SMTP id
+ k26-20020aa7999a000000b0052560238c03mr21204987pfh.86.1656681228125; Fri, 01
+ Jul 2022 06:13:48 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20220701112720.13452-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20220701042810.26362-1-lukas.bulwahn@gmail.com> <Yr7mcjRq57laZGEY@boxer>
+In-Reply-To: <Yr7mcjRq57laZGEY@boxer>
+From:   Magnus Karlsson <magnus.karlsson@gmail.com>
+Date:   Fri, 1 Jul 2022 15:13:36 +0200
+Message-ID: <CAJ8uoz16yGJqYX2xOcczTGKFnG4joh8+f1uPGMAP4rmm3feYDQ@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust XDP SOCKETS after file movement
+To:     Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Fri, Jul 1, 2022 at 2:38 PM Maciej Fijalkowski
+<maciej.fijalkowski@intel.com> wrote:
+>
+> On Fri, Jul 01, 2022 at 06:28:10AM +0200, Lukas Bulwahn wrote:
+> > Commit f36600634282 ("libbpf: move xsk.{c,h} into selftests/bpf") moves
+> > files tools/{lib =3D> testing/selftests}/bpf/xsk.[ch], but misses to ad=
+just
+> > the XDP SOCKETS (AF_XDP) section in MAINTAINERS.
+> >
+> > Adjust the file entry after this file movement.
+> >
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > ---
+> > Andrii, please ack.
+> >
+> > Alexei, please pick this minor non-urgent clean-up on top of the commit=
+ above.
+> >
+> >  MAINTAINERS | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index fa4bfa3d10bf..27d9e65b9a85 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -22042,7 +22042,7 @@ F:    include/uapi/linux/xdp_diag.h
+> >  F:   include/net/netns/xdp.h
+> >  F:   net/xdp/
+> >  F:   samples/bpf/xdpsock*
+> > -F:   tools/lib/bpf/xsk*
+> > +F:   tools/testing/selftests/bpf/xsk*
+>
+> Magnus, this doesn't cover xdpxceiver.
+> How about we move the lib part and xdpxceiver part to a dedicated
+> directory? Or would it be too nested from main dir POV?
 
-On 7/1/22 4:27 AM, Lukas Bulwahn wrote:
-> Commit bebcc522fbee ("HID: core: for input reports, process the usages by
-> priority list") split the iteration into two distinct loops in
-> hid_process_report().
->
-> After this change, the variable field is only used while iterating in the
-> second loop and the assignment of values to this variable in the first loop
-> is simply not needed.
->
-> Remove the unneeded assignment during retrieval. No functional change and
-> no change in the resulting object code.
->
-> This was discovered as a dead store with clang-analyzer.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Benjamin, Jiri, please pick this minor non-urgent clean-up patch.
->
->   drivers/hid/hid-core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-> index 00154a1cd2d8..b7f5566e338d 100644
-> --- a/drivers/hid/hid-core.c
-> +++ b/drivers/hid/hid-core.c
-> @@ -1662,7 +1662,7 @@ static void hid_process_report(struct hid_device *hid,
->   
->   	/* first retrieve all incoming values in data */
->   	for (a = 0; a < report->maxfield; a++)
-> -		hid_input_fetch_field(hid, field = report->field[a], data);
-> +		hid_input_fetch_field(hid, report->field[a], data);
->   
->   	if (!list_empty(&report->field_entry_list)) {
->   		/* INPUT_REPORT, we have a priority list of fields */
-Reviewed-by: Tom Rix <trix@redhat.com>
+Or we can just call everything we add xsk* something?
 
+> >
+> >  XEN BLOCK SUBSYSTEM
+> >  M:   Roger Pau Monn=C3=A9 <roger.pau@citrix.com>
+> > --
+> > 2.17.1
+> >
