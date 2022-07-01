@@ -2,94 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC616C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Jul 2022 13:27:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 929A7C43334
+	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Jul 2022 13:52:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229673AbiGAN1W (ORCPT
+        id S232016AbiGANwy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 1 Jul 2022 09:27:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52796 "EHLO
+        Fri, 1 Jul 2022 09:52:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbiGAN1U (ORCPT
+        with ESMTP id S230214AbiGANwx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 1 Jul 2022 09:27:20 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07C15675AD;
-        Fri,  1 Jul 2022 06:27:20 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id h14-20020a1ccc0e000000b0039eff745c53so1573611wmb.5;
-        Fri, 01 Jul 2022 06:27:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PiEsJL8yTGRaR6BypYru3DcmE6Hz88byGdoQrU5Jb64=;
-        b=V9IFoOhb7HIcFf+VkX1WVn344401WuIlqq39BjlIME9VHDg6iaFH9OgPYbcH8B+mIn
-         9mGoFE+Qi+0fvPdBQdHRafJ4MrmCo4oNMFrlYBHiFWXzIDMz9ClDO4jupwghv3Vdtkdp
-         tiXy0VayfPt1JpUNfDRjvuLAJyvg6cOASGqGdlcvgTlEkPiJmABBs9CB2bwW5JaEaoXo
-         dNoXFP5Jk4g5oxRnqWqf7JvFbbkn5uwrhOCyCftcVHTkDMwzhCHETLtNeWuL4E7m+ERD
-         WvAuoCaoumPz+4FV/bVw1u8u+o+M1Ltcx8ABtceYkAXwMDdmfW6nMAlXHtGn9S5vRXln
-         rpWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PiEsJL8yTGRaR6BypYru3DcmE6Hz88byGdoQrU5Jb64=;
-        b=tdmlVXLMYw8NSvF1TpnHYayMN4anlFHLUrVKIbLDBgIMOkURDpMsSMxOb2bqO/0bns
-         wjipf/1UUEIL7FM8Dh/oLRal4pRKfdQVbntMkYzIr0Q86DMIFyxzoxlgeH8nW04cdXaj
-         Z24PPw2A08yGGpSv7tKovsWIG1et/mXAKBk3XfM5v8RqO9x65pEwMj8WK95sagZhsQ7W
-         10K0tr4rjN62FXRKY7XMIw7ckJ1dTBIfEFAah+w6d3kVYve8ZLZ/CyTpkz6zYPsuMnZp
-         7EYKAAdCo7hECl2L4bdPjWi+0jsWg0flKXS5KWsqcchnDRNsFT66nZiQjxa+JBeorbFA
-         iSUw==
-X-Gm-Message-State: AJIora8Hov+QraZVy4vQ27/TR9p0GmZimIwpByinhdnHWifSduVdd1aF
-        frMvt5X97Ro84kBGAcmzAk9YFqFq8Pee9Q==
-X-Google-Smtp-Source: AGRyM1ubbohkRaNFj0nCZBBQzaIgjbfDgLDsV2OMNwfUG7xx4VNrgdDYLuGd1w4Fdyc8li/2GAfW8g==
-X-Received: by 2002:a05:600c:1c27:b0:3a0:5098:c8b6 with SMTP id j39-20020a05600c1c2700b003a05098c8b6mr16904060wms.69.1656682038490;
-        Fri, 01 Jul 2022 06:27:18 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id 18-20020a05600c269200b003a03a8475bfsm6186456wmt.16.2022.07.01.06.27.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Jul 2022 06:27:18 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jassi Brar <jassisinghbrar@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mailbox: Fix repeated use of "the the" in Kconfig
-Date:   Fri,  1 Jul 2022 14:27:17 +0100
-Message-Id: <20220701132717.365238-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.3
+        Fri, 1 Jul 2022 09:52:53 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E766B286ED;
+        Fri,  1 Jul 2022 06:52:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1656683572; x=1688219572;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=hU5wtGG6cfmkysoPoL41jEdZ2gEmdJViRKm4NPb0bgE=;
+  b=EPv9QJTRepvHoM7RXJmoPC5ZR27AzQALETHdqoOUviwUbxg0lG6oWoIf
+   7M2gL+VrXfoRv8iKiG3m3vVuWM9aRkosYgJq90ZTP4AmkYq5z4iJ55E4Y
+   lWk3nofR4Kd4Lh+aCu3bsmqEaFdfAK+ni6wKlFntltEiJBcRAJM0OMk39
+   K5p3+GV30anucBwafxKe+bz0wG1SBJcDd3mVaCKYfYz4wyo1PVYU6hv30
+   nxe7sG5zC3sXuQruNX8mEAW/zhF53X23As4GoqNbolOqRVjG61JT0Mqdc
+   RE3A6ahiex3I/ykaxOZxe1ziSJyRIQR+Ra5QjQsSvW3SOHtryJNmtKt0y
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10394"; a="280207482"
+X-IronPort-AV: E=Sophos;i="5.92,237,1650956400"; 
+   d="scan'208";a="280207482"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2022 06:52:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,237,1650956400"; 
+   d="scan'208";a="694515095"
+Received: from boxer.igk.intel.com (HELO boxer) ([10.102.20.173])
+  by fmsmga002.fm.intel.com with ESMTP; 01 Jul 2022 06:52:50 -0700
+Date:   Fri, 1 Jul 2022 15:52:49 +0200
+From:   Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+To:     Magnus Karlsson <magnus.karlsson@gmail.com>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: adjust XDP SOCKETS after file movement
+Message-ID: <Yr78Md1Nqpj+peO0@boxer>
+References: <20220701042810.26362-1-lukas.bulwahn@gmail.com>
+ <Yr7mcjRq57laZGEY@boxer>
+ <CAJ8uoz16yGJqYX2xOcczTGKFnG4joh8+f1uPGMAP4rmm3feYDQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJ8uoz16yGJqYX2xOcczTGKFnG4joh8+f1uPGMAP4rmm3feYDQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Fix use of "the the" in the Kconfig, replace with "the" and reformat
-the text.
+On Fri, Jul 01, 2022 at 03:13:36PM +0200, Magnus Karlsson wrote:
+> On Fri, Jul 1, 2022 at 2:38 PM Maciej Fijalkowski
+> <maciej.fijalkowski@intel.com> wrote:
+> >
+> > On Fri, Jul 01, 2022 at 06:28:10AM +0200, Lukas Bulwahn wrote:
+> > > Commit f36600634282 ("libbpf: move xsk.{c,h} into selftests/bpf") moves
+> > > files tools/{lib => testing/selftests}/bpf/xsk.[ch], but misses to adjust
+> > > the XDP SOCKETS (AF_XDP) section in MAINTAINERS.
+> > >
+> > > Adjust the file entry after this file movement.
+> > >
+> > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > > ---
+> > > Andrii, please ack.
+> > >
+> > > Alexei, please pick this minor non-urgent clean-up on top of the commit above.
+> > >
+> > >  MAINTAINERS | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index fa4bfa3d10bf..27d9e65b9a85 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -22042,7 +22042,7 @@ F:    include/uapi/linux/xdp_diag.h
+> > >  F:   include/net/netns/xdp.h
+> > >  F:   net/xdp/
+> > >  F:   samples/bpf/xdpsock*
+> > > -F:   tools/lib/bpf/xsk*
+> > > +F:   tools/testing/selftests/bpf/xsk*
+> >
+> > Magnus, this doesn't cover xdpxceiver.
+> > How about we move the lib part and xdpxceiver part to a dedicated
+> > directory? Or would it be too nested from main dir POV?
+> 
+> Or we can just call everything we add xsk* something?
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/mailbox/Kconfig | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+No strong feelings. test_xsk.sh probably also needs to be addressed.
+That's why I proposed dedicated dir.
 
-diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-index 05d6fae800e3..15ecbede3128 100644
---- a/drivers/mailbox/Kconfig
-+++ b/drivers/mailbox/Kconfig
-@@ -66,10 +66,10 @@ config ARMADA_37XX_RWTM_MBOX
- 	depends on ARCH_MVEBU || COMPILE_TEST
- 	depends on OF
- 	help
--	  Mailbox implementation for communication with the the firmware
--	  running on the Cortex-M3 rWTM secure processor of the Armada 37xx
--	  SOC. Say Y here if you are building for such a device (for example
--	  the Turris Mox router).
-+	  Mailbox implementation for communication with the firmware running
-+	  on the Cortex-M3 rWTM secure processor of the Armada 37xx SOC. Say
-+	  Y here if you are building for such a device (for example the
-+	  Turris Mox router).
- 
- config OMAP2PLUS_MBOX
- 	tristate "OMAP2+ Mailbox framework support"
--- 
-2.35.3
-
+> 
+> > >
+> > >  XEN BLOCK SUBSYSTEM
+> > >  M:   Roger Pau Monné <roger.pau@citrix.com>
+> > > --
+> > > 2.17.1
+> > >
