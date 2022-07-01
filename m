@@ -2,88 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CF3CCA482
-	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Jul 2022 16:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74448CCA479
+	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Jul 2022 17:47:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230133AbiGAQj1 (ORCPT
+        id S230124AbiGARrL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 1 Jul 2022 12:39:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34200 "EHLO
+        Fri, 1 Jul 2022 13:47:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230296AbiGAQj1 (ORCPT
+        with ESMTP id S229535AbiGARrJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 1 Jul 2022 12:39:27 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8821E28E0A;
-        Fri,  1 Jul 2022 09:39:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 23130625B8;
-        Fri,  1 Jul 2022 16:39:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E80F4C3411E;
-        Fri,  1 Jul 2022 16:39:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656693565;
-        bh=5dv6pNQwTsKSW23B5WZKeacfI6JiNPybRZTNk2LY2Cc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OpTDUp8aSk+6UdxNAIN6FXp6zlWYIPap4hpx9m2aPGdU6nHvElsLj+vCRqCRQS9rn
-         ooMeZp5wkbzD+l4fkDbxjlGJCpA2xC75aS2+o0ddhBunGwGNVaE9Z2/VBawpKvECKA
-         XKmwfqKwKfeDcvW+q02HEtrb3C4pqKHBuakgnp0nnYf9qEQgI9qkitJHayZvXofbnn
-         9yidD6T4zx5c0ZJB+F+HelRdNuz7ogMsNYaoS7c76NWH1bul7L9Hv2i2N933X4dolm
-         2NfilV5YogqZRtuCdxBOYYF8673e9y39rJudx7OZjCIo/5NCPvzID7leAkWEbDmdnX
-         rTqkj6u4csg2g==
-Date:   Fri, 1 Jul 2022 22:09:21 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Nathan Chancellor <nathan@kernel.org>, dmaengine@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: fsl-edma: remove redundant assignment to
- pointer last_sg
-Message-ID: <Yr8jObY3T/9tsQfh@matsya>
-References: <20220614184759.164379-1-colin.i.king@gmail.com>
+        Fri, 1 Jul 2022 13:47:09 -0400
+Received: from smtp.smtpout.orange.fr (smtp04.smtpout.orange.fr [80.12.242.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51587369FA
+        for <kernel-janitors@vger.kernel.org>; Fri,  1 Jul 2022 10:47:07 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id 7KjPoZtgDQKua7KjPo0b6V; Fri, 01 Jul 2022 19:47:05 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Fri, 01 Jul 2022 19:47:05 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Ed Brindley <kernel@maidavale.org>,
+        Denis Pauk <pauk.denis@gmail.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-hwmon@vger.kernel.org
+Subject: [PATCH] hwmon: (asus_wmi_sensors) Save a few bytes of memory
+Date:   Fri,  1 Jul 2022 19:47:02 +0200
+Message-Id: <3a494f7049f4f9a169477d872bab0c8a7c7ec48c.1656697596.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220614184759.164379-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 14-06-22, 19:47, Colin Ian King wrote:
-> The pointer last_sg is being assigned a value at the start of a loop
-> however it is never read and is being re-assigned later on in both
-> brances of an if-statement. The assignment is redundant and can be
-> removed.
+The first 'for' loop of asus_wmi_configure_sensor_setup() only computes
+the number and type of sensors that exist in the system.
 
-Applied, thanks
+Here, the 'temp_sensor' structure is only used to store the data collected
+by asus_wmi_sensor_info(). There is no point in using a devm_ variant for
+this first allocation and it can be freed just after this initial loop.
 
-> 
-> Cleans up clang scan-build warning:
-> drivers/dma/fsl-edma-common.c:563:3: warning: Value stored to 'last_sg'
-> is never read [deadcode.DeadStores]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/dma/fsl-edma-common.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/dma/fsl-edma-common.c b/drivers/dma/fsl-edma-common.c
-> index 3ae05d1446a5..a06a1575a2a5 100644
-> --- a/drivers/dma/fsl-edma-common.c
-> +++ b/drivers/dma/fsl-edma-common.c
-> @@ -559,9 +559,6 @@ struct dma_async_tx_descriptor *fsl_edma_prep_slave_sg(
->  	}
->  
->  	for_each_sg(sgl, sg, sg_len, i) {
-> -		/* get next sg's physical address */
-> -		last_sg = fsl_desc->tcd[(i + 1) % sg_len].ptcd;
-> -
->  		if (direction == DMA_MEM_TO_DEV) {
->  			src_addr = sg_dma_address(sg);
->  			dst_addr = fsl_chan->dma_dev_addr;
-> -- 
-> 2.35.3
+So use kzalloc()/kfree() to save a few bytes of memory that would be kept
+allocated for no good reason otherwise.
 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/hwmon/asus_wmi_sensors.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/hwmon/asus_wmi_sensors.c b/drivers/hwmon/asus_wmi_sensors.c
+index 9e935e34c998..4873edad4996 100644
+--- a/drivers/hwmon/asus_wmi_sensors.c
++++ b/drivers/hwmon/asus_wmi_sensors.c
+@@ -514,14 +514,16 @@ static int asus_wmi_configure_sensor_setup(struct device *dev,
+ 	int i, idx;
+ 	int err;
+ 
+-	temp_sensor = devm_kcalloc(dev, 1, sizeof(*temp_sensor), GFP_KERNEL);
++	temp_sensor = kzalloc(sizeof(*temp_sensor), GFP_KERNEL);
+ 	if (!temp_sensor)
+ 		return -ENOMEM;
+ 
+ 	for (i = 0; i < sensor_data->wmi.sensor_count; i++) {
+ 		err = asus_wmi_sensor_info(i, temp_sensor);
+-		if (err)
++		if (err) {
++			kfree(temp_sensor);
+ 			return err;
++		}
+ 
+ 		switch (temp_sensor->data_type) {
+ 		case TEMPERATURE_C:
+@@ -536,6 +538,7 @@ static int asus_wmi_configure_sensor_setup(struct device *dev,
+ 			break;
+ 		}
+ 	}
++	kfree(temp_sensor);
+ 
+ 	if (nr_count[hwmon_temp])
+ 		nr_count[hwmon_chip]++, nr_types++;
 -- 
-~Vinod
+2.34.1
+
