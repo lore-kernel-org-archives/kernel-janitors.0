@@ -2,98 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF42CCA47B
-	for <kernel-janitors@archiver.kernel.org>; Thu, 30 Jun 2022 17:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC17EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri,  1 Jul 2022 04:29:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235974AbiF3R0p (ORCPT
+        id S234081AbiGAE3B (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 30 Jun 2022 13:26:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50348 "EHLO
+        Fri, 1 Jul 2022 00:29:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235280AbiF3R0p (ORCPT
+        with ESMTP id S229549AbiGAE3A (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 30 Jun 2022 13:26:45 -0400
-Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74D4D3EA9A;
-        Thu, 30 Jun 2022 10:26:44 -0700 (PDT)
-Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 3DF194B7;
-        Thu, 30 Jun 2022 17:26:43 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 3DF194B7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-        t=1656610003; bh=ei+caOvlg/2HIJ6D0lCC+JmQefKHErSrMXRIWXCQdbE=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=jHNm3o3pk7EiO4OrBrWRB7786IghQ2dk2tbsU9B16XhyTn3vTWOnzzmV1vavgpN2f
-         9ntM0ufTApzemzX5rObg2X9VE685rLMXuMcfIzUpGt9PLiwSJlEskA9Ak/fQI+v9Aa
-         sJgrXl68rvlWlr+ox157+ZpKRVRgc2XFRm0KgJmaaAPf8O81O/Gui8VYOwJSWikHbi
-         nDDs9MqCgs0oM5T7c+fr47d/oxeWcS2igAHoQu/pwjYa+VevP5RExMt3+bDLgHsaL0
-         cALqRXPij2k3HkVEri+xJivdHATF7a5Ft9CRXU9eP/GP2UkkyoWrcc03AsCq+UIF55
-         5wCSxrfwtpI8g==
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Federico Vaga <federico.vaga@vaga.pv.it>,
-        Alex Shi <alexs@kernel.org>,
-        Yanteng Si <siyanteng@loongson.cn>,
-        Hu Haowen <src.res@email.cn>, linux-doc@vger.kernel.org,
-        linux-doc-tw-discuss@lists.sourceforge.net
-Cc:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        Fri, 1 Jul 2022 00:29:00 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8373D58FDD;
+        Thu, 30 Jun 2022 21:28:58 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id cf14so1420450edb.8;
+        Thu, 30 Jun 2022 21:28:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0O4/oNbZ3YRoOmSuse2orABsjwO93HDgN0c9nygzXkg=;
+        b=fx0uLrcSQjZTXvB8Hu09bD0L2czFcKCI1dhTczw2jK//jpIFIOw9zrjIG4Ekl3fDyg
+         tsL8YBSJEeTLOHoKvqu6m5E9DdNlfBVoib6TBMnFAuEkdc0ENq0Ck0NCfnRxRx9gcO+1
+         JIikryE5KvK84hE00FXdGwLWDJnGlYaLICN4vG/07bBvYxRtLZyd25f66gXGxII9SsT/
+         tPNEW6OaaL/Uf+g90g1mikLHkU/VrZWyynVW3ixRiqJHU+rHkNJudhFH5/f+R98yWVFx
+         5uKDF7R4AiXRhjZUajMN47RNbeXi1tmNgV1d6/2ym28LeZU9IUm11P61VEfKzbTLhCoo
+         XfAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0O4/oNbZ3YRoOmSuse2orABsjwO93HDgN0c9nygzXkg=;
+        b=luBelySV2JtcU3G2lnCzkwozJkZhdgsOvZ+Sb660zSroeTahSSdmbbNRQLFJTlus70
+         0MhEd8pWWhRBRg01eTeoctNkVL6JmW9giJtqRF+IbiisG7zDQs4boqlPUBrfY32MmbF5
+         2zAghRcgnDbMG+ZrYIEWK/BR1DcjqD0NoubWV0IQ8rs+R0Jx88CA0lSJ7OqGm/pphow7
+         OMvz6nqdxiaaW54nbwpXbu3GlMPCGY0a/sV1FLILx2kj2Sq1pFmD8OBhpjv2A+nLxOQO
+         Ihgep8Vo2pwywkd9sIdlZ8ZCEVlDfKotuHwEeIsbMgpNmnG+s+jlySuxmyKKP/pSR+N+
+         QuJQ==
+X-Gm-Message-State: AJIora+VmHBZS+wf9xJVotik/KtK/FXRuAKprCBolhmvjhoepXo4SkmF
+        vTSq+UVQHgn4yXuea66jSaw=
+X-Google-Smtp-Source: AGRyM1veiW2EfEXKBX9p8FXLTR5ucjbaZny9cnQElotgkUzW71FChR9E1mXGinabKbKZoVmPsdt4gA==
+X-Received: by 2002:a05:6402:524d:b0:437:8d2e:c675 with SMTP id t13-20020a056402524d00b004378d2ec675mr16771826edd.65.1656649737098;
+        Thu, 30 Jun 2022 21:28:57 -0700 (PDT)
+Received: from felia.fritz.box (200116b826fa4e008c7f8ad93cf12391.dip.versatel-1u1.de. [2001:16b8:26fa:4e00:8c7f:8ad9:3cf1:2391])
+        by smtp.gmail.com with ESMTPSA id b27-20020a17090630db00b0072a72b0fe72sm1130850ejb.111.2022.06.30.21.28.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jun 2022 21:28:56 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Andrii Nakryiko <andrii@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>
+Cc:     =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [RFC PATCH 00/11] docs: remove submitting-drivers.rst
-In-Reply-To: <20220627151819.22694-1-lukas.bulwahn@gmail.com>
-References: <20220627151819.22694-1-lukas.bulwahn@gmail.com>
-Date:   Thu, 30 Jun 2022 11:26:42 -0600
-Message-ID: <87y1xenju5.fsf@meer.lwn.net>
+Subject: [PATCH] MAINTAINERS: adjust XDP SOCKETS after file movement
+Date:   Fri,  1 Jul 2022 06:28:10 +0200
+Message-Id: <20220701042810.26362-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
+Commit f36600634282 ("libbpf: move xsk.{c,h} into selftests/bpf") moves
+files tools/{lib => testing/selftests}/bpf/xsk.[ch], but misses to adjust
+the XDP SOCKETS (AF_XDP) section in MAINTAINERS.
 
-> Dear Jonathan, dear Federico, dear Alex, dear Yanteng, dear Hu,
->
-> Here is an attempt to delete submitting-drivers with some improvements
-> and clean-up in other documentation places to convince ourselves that
-> nothing valuable is lost when deleting this checklist.
+Adjust the file entry after this file movement.
 
-I am totally in favor of doing this; that document has not served any
-real purpose for a long time.  Resend with the translation tweaks and
-such, and I'll happily apply it.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Andrii, please ack.
 
-> As future work---with this one submitting checklist gone---I see the harder
-> follow-up task to synchronize and clean up the various submission hints/
-> guidelines/checklists in the remaining kernel documentation that partly
-> overlap and differ in detail, their structure (unstructured, unordered
-> lists vs. sections and subsections) and their state of being outdated:
->
->   Documentation/process/submit-checklist.rst
->   Documentation/process/submitting-patches.rst
->   MAINTAINERS#Tips for patch submitters
->
-> My next task at hand is to read through all three documents, figure out
-> what still applies and what is outdated, determine a good common structure
-> for all three documents, include cross-links and make them to some extent
-> follow a clear consistent policy. E.g., one document is a more detailed
-> description of everything mentioned in the short list of another document.
-> I will try to work through that in the next months or motivate and guide
-> some colleague or mentee to work together with me on that.
+Alexei, please pick this minor non-urgent clean-up on top of the commit above.
 
-This seems like a good exercise as well.  I think the MAINTAINERS text
-should go away entirely, that's not really an appropriate place for it.
-submit-checklist.rst hasn't seen any real attention for some time; I'm
-not sure how useful it really is.
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-What I would *really* like is a version of submitting-patches.rst that
-is not a "War and Peace" sort of reading experience.  That is a lot for
-somebody to get through before they can send their first patch...but
-it's not easy to make it shorter without losing important stuff.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fa4bfa3d10bf..27d9e65b9a85 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22042,7 +22042,7 @@ F:	include/uapi/linux/xdp_diag.h
+ F:	include/net/netns/xdp.h
+ F:	net/xdp/
+ F:	samples/bpf/xdpsock*
+-F:	tools/lib/bpf/xsk*
++F:	tools/testing/selftests/bpf/xsk*
+ 
+ XEN BLOCK SUBSYSTEM
+ M:	Roger Pau Monné <roger.pau@citrix.com>
+-- 
+2.17.1
 
-Thanks,
-
-jon
