@@ -2,94 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D7BC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat,  2 Jul 2022 06:06:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8499C43334
+	for <kernel-janitors@archiver.kernel.org>; Sat,  2 Jul 2022 10:21:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231933AbiGBGGB (ORCPT
+        id S231502AbiGBKVs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 2 Jul 2022 02:06:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53418 "EHLO
+        Sat, 2 Jul 2022 06:21:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231866AbiGBGGA (ORCPT
+        with ESMTP id S229838AbiGBKVr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 2 Jul 2022 02:06:00 -0400
-Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76E2E19289
-        for <kernel-janitors@vger.kernel.org>; Fri,  1 Jul 2022 23:05:58 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id 7WGRoyJevP8Ap7WGRoBEgh; Sat, 02 Jul 2022 08:05:56 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 02 Jul 2022 08:05:56 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Ed Brindley <kernel@maidavale.org>,
-        Denis Pauk <pauk.denis@gmail.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-hwmon@vger.kernel.org
-Subject: [PATCH v2] hwmon: (asus_wmi_sensors) Save a few bytes of memory
-Date:   Sat,  2 Jul 2022 08:05:54 +0200
-Message-Id: <e23cea6c489fabb109a61e8a33d146a6b74c0529.1656741926.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sat, 2 Jul 2022 06:21:47 -0400
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C02A419020
+        for <kernel-janitors@vger.kernel.org>; Sat,  2 Jul 2022 03:21:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=UsZKiKV/tLyXxBQrmVe1mHzEtBIEY9Vg2bmiTIyH8FY=;
+  b=geIwh3hSE/rVQTdKY2/vFCnS+KiOamBoaWJz5yFi8eN0fm1Tq+dPCHRm
+   /fHNc4pCkar3ewsHprnFIOr8WxzToJ9ZO/E+gfGOpw4PccQOCk98QpZbk
+   jad9DeqhjLCqoBKvrsQIrMYullEtqq78nViachCCLnwkcBF9+d/7s9TGo
+   c=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="5.92,239,1650924000"; 
+   d="scan'208";a="18363920"
+Received: from 252.75.68.85.rev.sfr.net (HELO hadrien) ([85.68.75.252])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2022 12:21:41 +0200
+Date:   Sat, 2 Jul 2022 12:21:39 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: jll@hadrien
+To:     Markus Elfring <Markus.Elfring@web.de>
+cc:     =?ISO-8859-15?Q?J=E9r=E9my_Lefaure?= <jeremy.lefaure@netatmo.com>,
+        cocci@inria.fr, kernel-janitors@vger.kernel.org,
+        Nicolas Palix <nicolas.palix@imag.fr>
+Subject: Re: [PATCH v5] coccinelle: Extend address test from ifaddr semantic
+ patch to test expressions
+In-Reply-To: <51130aa6-1a1b-51fb-c4b7-c0dcda1d78d1@web.de>
+Message-ID: <alpine.DEB.2.22.394.2207021218550.2882@hadrien>
+References: <AS8PR03MB7603EE9F885BA2573CD56CF993BD9@AS8PR03MB7603.eurprd03.prod.outlook.com> <632c81ca-3d53-4ff5-505e-f8da998e47db@web.de> <alpine.DEB.2.22.394.2207011647580.4779@hadrien> <51130aa6-1a1b-51fb-c4b7-c0dcda1d78d1@web.de>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323329-40877702-1656757300=:2882"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The first 'for' loop of asus_wmi_configure_sensor_setup() only computes
-the number and type of sensors that exist in the system.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Here, the 'temp_sensor' structure is only used to store the data collected
-by asus_wmi_sensor_info(). There is no point in using a devm_ variant for
-this allocation. This wastes some memory for no good reason.
+--8323329-40877702-1656757300=:2882
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-Use the stack instead.
+It seems that your resoning is "I wish Coccinelle would work this way, so
+I will suggest an "improvement" to a proposed semantic patch that actually
+currently has inferior behavior as compared to the original one (but not
+mention that at all in the message), and hope that the Coccinelle
+developers will think that adding the functionality that you hope for is a
+very important priority".  If you want a feature to be added, ask for the
+feature.  But please stop confusing the discussion about semantic patches
+that are proposed by other people.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-v1 -> v2: Use the stack instead of kmalloc/kfree to simplify even more the
-          code (Guenter Roeck)
----
- drivers/hwmon/asus_wmi_sensors.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+julia
 
-diff --git a/drivers/hwmon/asus_wmi_sensors.c b/drivers/hwmon/asus_wmi_sensors.c
-index 9e935e34c998..6e8a908171f0 100644
---- a/drivers/hwmon/asus_wmi_sensors.c
-+++ b/drivers/hwmon/asus_wmi_sensors.c
-@@ -514,22 +514,20 @@ static int asus_wmi_configure_sensor_setup(struct device *dev,
- 	int i, idx;
- 	int err;
- 
--	temp_sensor = devm_kcalloc(dev, 1, sizeof(*temp_sensor), GFP_KERNEL);
--	if (!temp_sensor)
--		return -ENOMEM;
--
- 	for (i = 0; i < sensor_data->wmi.sensor_count; i++) {
--		err = asus_wmi_sensor_info(i, temp_sensor);
-+		struct asus_wmi_sensor_info sensor;
-+
-+		err = asus_wmi_sensor_info(i, &sensor);
- 		if (err)
- 			return err;
- 
--		switch (temp_sensor->data_type) {
-+		switch (sensor.data_type) {
- 		case TEMPERATURE_C:
- 		case VOLTAGE:
- 		case CURRENT:
- 		case FAN_RPM:
- 		case WATER_FLOW:
--			type = asus_data_types[temp_sensor->data_type];
-+			type = asus_data_types[sensor.data_type];
- 			if (!nr_count[type])
- 				nr_types++;
- 			nr_count[type]++;
--- 
-2.34.1
+On Sat, 2 Jul 2022, Markus Elfring wrote:
 
+>
+> > The whole point of the proposed change is to trigger some isomorphisms.
+> > I really doubt that any isomorphisms will be triggered with this suggestion.
+>
+>
+> Such expectations are interesting for further clarification, aren't they?
+>
+> Will any extensions become relevant also for the handling of isomorphisms
+> by the Coccinelle software?
+>
+> Would you like to extend the following SmPL code variant anyhow
+> so that more case distinctions will be taken better into account?
+>
+> @display@
+> statement is, es;
+> expression x;
+> binary operator bo;
+> @@
+> (
+> *if (&x)
+>     is
+>  else
+>     es
+> |
+> * &x bo NULL
+> |
+> * NULL bo &x
+> |
+> * !(&x)
+> )
+>
+>
+> Regards,
+> Markus
+>
+--8323329-40877702-1656757300=:2882--
