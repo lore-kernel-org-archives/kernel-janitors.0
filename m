@@ -2,73 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78E05C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat,  2 Jul 2022 19:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC63C43334
+	for <kernel-janitors@archiver.kernel.org>; Sat,  2 Jul 2022 19:42:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230468AbiGBTh7 (ORCPT
+        id S231292AbiGBTmJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 2 Jul 2022 15:37:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46888 "EHLO
+        Sat, 2 Jul 2022 15:42:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229998AbiGBTh6 (ORCPT
+        with ESMTP id S231243AbiGBTmJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 2 Jul 2022 15:37:58 -0400
-Received: from ciao.gmane.io (ciao.gmane.io [116.202.254.214])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E967A460
-        for <kernel-janitors@vger.kernel.org>; Sat,  2 Jul 2022 12:37:58 -0700 (PDT)
-Received: from list by ciao.gmane.io with local (Exim 4.92)
-        (envelope-from <glkj-kernel-janitors-2@m.gmane-mx.org>)
-        id 1o7iwF-0004ry-Vq
-        for kernel-janitors@vger.kernel.org; Sat, 02 Jul 2022 21:37:55 +0200
-X-Injected-Via-Gmane: http://gmane.org/
-To:     kernel-janitors@vger.kernel.org
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH 2/4] fs/ntfs3: Rename bitmap_size() as ntfs3_bitmap_size()
-Date:   Sat, 2 Jul 2022 21:37:51 +0200
-Message-ID: <39e65450-eea6-8498-1dcc-a40699b49457@wanadoo.fr>
-References: <cover.1656785856.git.christophe.jaillet@wanadoo.fr>
- <56a3cb896ec446ca24e4756042d9f0829afc671a.1656785856.git.christophe.jaillet@wanadoo.fr>
- <YsCVW5Dt3YcE3TLL@smile.fi.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Sat, 2 Jul 2022 15:42:09 -0400
+Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB894BF5E
+        for <kernel-janitors@vger.kernel.org>; Sat,  2 Jul 2022 12:42:07 -0700 (PDT)
+Received: from [192.168.1.18] ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id 7j0Fovq0J26JC7j0Fox7ym; Sat, 02 Jul 2022 21:42:06 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sat, 02 Jul 2022 21:42:06 +0200
+X-ME-IP: 90.11.190.129
+Message-ID: <62d3cfcd-a32e-59d1-c376-c95e8da1049f@wanadoo.fr>
+Date:   Sat, 2 Jul 2022 21:42:02 +0200
+MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
+Subject: Re: [PATCH 1/4] s390/cio: Rename bitmap_size() as idset_bitmap_size()
 Content-Language: en-US
-In-Reply-To: <YsCVW5Dt3YcE3TLL@smile.fi.intel.com>
-Cc:     dm-devel@redhat.com, linux-kernel@vger.kernel.org
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     agk@redhat.com, snitzer@kernel.org, dm-devel@redhat.com,
+        vneethv@linux.ibm.com, oberpar@linux.ibm.com, hca@linux.ibm.com,
+        gor@linux.ibm.com, agordeev@linux.ibm.com,
+        borntraeger@linux.ibm.com, svens@linux.ibm.com,
+        almaz.alexandrovich@paragon-software.com, yury.norov@gmail.com,
+        linux@rasmusvillemoes.dk, linux-s390@vger.kernel.org,
+        ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Newsgroups: gmane.linux.kernel.janitors,gmane.linux.kernel.device-mapper.devel,gmane.linux.kernel
+References: <cover.1656785856.git.christophe.jaillet@wanadoo.fr>
+ <3f2ad7fb91948525f6c52e0d36ec223cd3049c88.1656785856.git.christophe.jaillet@wanadoo.fr>
+ <YsCUW6vT7LlAv2UE@smile.fi.intel.com>
+ <6063ee97-1bbe-2391-78cb-57572851a52c@wanadoo.fr>
+ <YsCdSkzSbVz9gnci@smile.fi.intel.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <YsCdSkzSbVz9gnci@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
-Message-ID: <20220702193751.D8UtA87UNpwJ6Ujt33EVtne6sCJisP88xYIQaIs9ozE@z>
 
-Le 02/07/2022 à 20:58, Andy Shevchenko a écrit :
-> On Sat, Jul 02, 2022 at 08:29:27PM +0200, Christophe JAILLET wrote:
->> In order to introduce a bitmap_size() function in the bitmap API, we have
->> to rename functions with a similar name.
+Le 02/07/2022 à 21:32, Andy Shevchenko a écrit :
+> On Sat, Jul 02, 2022 at 09:24:24PM +0200, Christophe JAILLET wrote:
+>> Le 02/07/2022 à 20:54, Andy Shevchenko a écrit :
+>>> On Sat, Jul 02, 2022 at 08:29:09PM +0200, Christophe JAILLET wrote:
 > 
 > ...
 > 
->>   /* NTFS uses quad aligned bitmaps. */
->> -static inline size_t bitmap_size(size_t bits)
->> +static inline size_t ntfs3_bitmap_size(size_t bits)
->>   {
->>   	return ALIGN((bits + 7) >> 3, 8);
+>>>> -		memset(set->bitmap, 0, bitmap_size(num_ssid, num_id));
+>>>> +		memset(set->bitmap, 0, idset_bitmap_size(num_ssid, num_id));
+>>>
+>>> Why not to use bitmap_zero()?
 > 
-> It would be easier to understand in a way
+> ...
 > 
-> 	return BITS_TO_BYTES(ALIGN(bits, 64));
+>>>> -	memset(set->bitmap, 0xff, bitmap_size(set->num_ssid, set->num_id));
+>>>> +	memset(set->bitmap, 0xff, idset_bitmap_size(set->num_ssid, set->num_id));
+>>>
+>>> Why not to use bitmap_fill() ?
+> 
+>> For this initial step, I wanted to keep changes as minimal as possible (i.e
+>> just function renaming)
+>>
+>> In fact, I plan to send a follow-up patch on this file.
+>> This would remove the newly renamed idset_bitmap_size() function, use the
+>> bitmap API directly (as you pointed-out) with
+>> "set->num_ssid * set->num_id" as size.
+>>
+>> It is already done this way in idset_is_empty(), so it would be more
+>> consistent.
+>>
+>> If the serie needs a v2 (or if required), I can add an additional 5th patch
+>> for it. Otherwise it will send separatly later.
+> 
+> If you use bitmap APIs as I suggested above as the first patch, the rest will
+> have less unneeded churn, no?
+> 
+> 
 
-This purpose of the patch was only to rename a function, not to modify 
-the code itself, even if both version also looks equivalent to me.
+Makes sense.
 
-So I'll leave it to you or anyone else to change it.
+I'll wait for some other potential comments 1 day or 2 and send a v2 
+with the simplification you propose as an initial step.
+
+Thanks for your feed-back.
 
 CJ
-
-> 
->>   }
-> 
-
-
-
