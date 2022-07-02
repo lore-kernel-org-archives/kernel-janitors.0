@@ -2,56 +2,47 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC63C43334
-	for <kernel-janitors@archiver.kernel.org>; Sat,  2 Jul 2022 19:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06313C43334
+	for <kernel-janitors@archiver.kernel.org>; Sat,  2 Jul 2022 19:45:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231292AbiGBTmJ (ORCPT
+        id S230463AbiGBTpE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 2 Jul 2022 15:42:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49164 "EHLO
+        Sat, 2 Jul 2022 15:45:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231243AbiGBTmJ (ORCPT
+        with ESMTP id S229620AbiGBTpE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 2 Jul 2022 15:42:09 -0400
-Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB894BF5E
-        for <kernel-janitors@vger.kernel.org>; Sat,  2 Jul 2022 12:42:07 -0700 (PDT)
-Received: from [192.168.1.18] ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id 7j0Fovq0J26JC7j0Fox7ym; Sat, 02 Jul 2022 21:42:06 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 02 Jul 2022 21:42:06 +0200
-X-ME-IP: 90.11.190.129
-Message-ID: <62d3cfcd-a32e-59d1-c376-c95e8da1049f@wanadoo.fr>
-Date:   Sat, 2 Jul 2022 21:42:02 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
+        Sat, 2 Jul 2022 15:45:04 -0400
+Received: from ciao.gmane.io (ciao.gmane.io [116.202.254.214])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E11ED11D
+        for <kernel-janitors@vger.kernel.org>; Sat,  2 Jul 2022 12:45:03 -0700 (PDT)
+Received: from list by ciao.gmane.io with local (Exim 4.92)
+        (envelope-from <glkj-kernel-janitors-2@m.gmane-mx.org>)
+        id 1o7j37-0002AU-T0
+        for kernel-janitors@vger.kernel.org; Sat, 02 Jul 2022 21:45:01 +0200
+X-Injected-Via-Gmane: http://gmane.org/
+To:     kernel-janitors@vger.kernel.org
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Subject: Re: [PATCH 1/4] s390/cio: Rename bitmap_size() as idset_bitmap_size()
-Content-Language: en-US
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     agk@redhat.com, snitzer@kernel.org, dm-devel@redhat.com,
-        vneethv@linux.ibm.com, oberpar@linux.ibm.com, hca@linux.ibm.com,
-        gor@linux.ibm.com, agordeev@linux.ibm.com,
-        borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        almaz.alexandrovich@paragon-software.com, yury.norov@gmail.com,
-        linux@rasmusvillemoes.dk, linux-s390@vger.kernel.org,
-        ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Newsgroups: gmane.linux.kernel.janitors,gmane.linux.kernel.device-mapper.devel,gmane.linux.kernel
+Date:   Sat, 2 Jul 2022 21:42:02 +0200
+Message-ID: <62d3cfcd-a32e-59d1-c376-c95e8da1049f@wanadoo.fr>
 References: <cover.1656785856.git.christophe.jaillet@wanadoo.fr>
  <3f2ad7fb91948525f6c52e0d36ec223cd3049c88.1656785856.git.christophe.jaillet@wanadoo.fr>
  <YsCUW6vT7LlAv2UE@smile.fi.intel.com>
  <6063ee97-1bbe-2391-78cb-57572851a52c@wanadoo.fr>
  <YsCdSkzSbVz9gnci@smile.fi.intel.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <YsCdSkzSbVz9gnci@smile.fi.intel.com>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Content-Language: en-US
+In-Reply-To: <YsCdSkzSbVz9gnci@smile.fi.intel.com>
+Cc:     dm-devel@redhat.com, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
+Message-ID: <20220702194202.EzzS_PfgU8OEsAATGHx0gEBPE6wMH-xkd7zjp4PVxoA@z>
 
 Le 02/07/2022 à 21:32, Andy Shevchenko a écrit :
 > On Sat, Jul 02, 2022 at 09:24:24PM +0200, Christophe JAILLET wrote:
@@ -99,3 +90,4 @@ with the simplification you propose as an initial step.
 Thanks for your feed-back.
 
 CJ
+
