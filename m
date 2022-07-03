@@ -2,98 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A054FC43334
-	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Jul 2022 07:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D8EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Jul 2022 11:11:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231874AbiGCHm4 (ORCPT
+        id S232561AbiGCLLr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 3 Jul 2022 03:42:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50798 "EHLO
+        Sun, 3 Jul 2022 07:11:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230181AbiGCHmz (ORCPT
+        with ESMTP id S232547AbiGCLLq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 3 Jul 2022 03:42:55 -0400
-Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B99664CD
-        for <kernel-janitors@vger.kernel.org>; Sun,  3 Jul 2022 00:42:54 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id 7uFmo6kcZP8Ap7uFmoDLDw; Sun, 03 Jul 2022 09:42:52 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 03 Jul 2022 09:42:52 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>,
-        Roland Dreier <rolandd@cisco.com>,
-        Ralph Campbell <ralph.campbell@qlogic.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Sun, 3 Jul 2022 07:11:46 -0400
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 363FD9FCD;
+        Sun,  3 Jul 2022 04:11:45 -0700 (PDT)
+Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=phil.lan)
+        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <heiko@sntech.de>)
+        id 1o7xVi-00047D-JN; Sun, 03 Jul 2022 13:11:30 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Daniel Vetter <daniel@ffwll.ch>,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-rdma@vger.kernel.org
-Subject: [PATCH] RDMA/qib: Use the bitmap API when applicable
-Date:   Sun,  3 Jul 2022 09:42:48 +0200
-Message-Id: <33d8992586d382bec8b8efd83e4729fb7feaf89e.1656834106.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sandy Huang <hjc@rock-chips.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        David Airlie <airlied@linux.ie>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH] drm/rockchip: Fix an error handling path rockchip_dp_probe()
+Date:   Sun,  3 Jul 2022 13:11:27 +0200
+Message-Id: <165684667536.1187961.10202917102569434363.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <b719d9061bb97eb85145fbd3c5e63f4549f2e13e.1655572071.git.christophe.jaillet@wanadoo.fr>
+References: <b719d9061bb97eb85145fbd3c5e63f4549f2e13e.1655572071.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Using the bitmap API is less verbose than hand writing them.
-It also improves the semantic.
+On Sat, 18 Jun 2022 19:08:05 +0200, Christophe JAILLET wrote:
+> Should component_add() fail, we should call analogix_dp_remove() in the
+> error handling path, as already done in the remove function.
 
-While at it, initialize the bitmaps. It can't hurt.
+Applied, thanks!
 
-Fixes: f931551bafe1 ("IB/qib: Add new qib driver for QLogic PCIe InfiniBand adapters")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/infiniband/hw/qib/qib_iba7322.c | 23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
+[1/1] drm/rockchip: Fix an error handling path rockchip_dp_probe()
+      commit: 5074376822fe99fa4ce344b851c5016d00c0444f
 
-diff --git a/drivers/infiniband/hw/qib/qib_iba7322.c b/drivers/infiniband/hw/qib/qib_iba7322.c
-index ceed302cf6a0..6861c6384f18 100644
---- a/drivers/infiniband/hw/qib/qib_iba7322.c
-+++ b/drivers/infiniband/hw/qib/qib_iba7322.c
-@@ -2850,9 +2850,9 @@ static void qib_setup_7322_cleanup(struct qib_devdata *dd)
- 
- 	qib_7322_free_irq(dd);
- 	kfree(dd->cspec->cntrs);
--	kfree(dd->cspec->sendchkenable);
--	kfree(dd->cspec->sendgrhchk);
--	kfree(dd->cspec->sendibchk);
-+	bitmap_free(dd->cspec->sendchkenable);
-+	bitmap_free(dd->cspec->sendgrhchk);
-+	bitmap_free(dd->cspec->sendibchk);
- 	kfree(dd->cspec->msix_entries);
- 	for (i = 0; i < dd->num_pports; i++) {
- 		unsigned long flags;
-@@ -6383,18 +6383,11 @@ static int qib_init_7322_variables(struct qib_devdata *dd)
- 	features = qib_7322_boardname(dd);
- 
- 	/* now that piobcnt2k and 4k set, we can allocate these */
--	sbufcnt = dd->piobcnt2k + dd->piobcnt4k +
--		NUM_VL15_BUFS + BITS_PER_LONG - 1;
--	sbufcnt /= BITS_PER_LONG;
--	dd->cspec->sendchkenable =
--		kmalloc_array(sbufcnt, sizeof(*dd->cspec->sendchkenable),
--			      GFP_KERNEL);
--	dd->cspec->sendgrhchk =
--		kmalloc_array(sbufcnt, sizeof(*dd->cspec->sendgrhchk),
--			      GFP_KERNEL);
--	dd->cspec->sendibchk =
--		kmalloc_array(sbufcnt, sizeof(*dd->cspec->sendibchk),
--			      GFP_KERNEL);
-+	sbufcnt = dd->piobcnt2k + dd->piobcnt4k + NUM_VL15_BUFS;
-+
-+	dd->cspec->sendchkenable = bitmap_zalloc(sbufcnt, GFP_KERNEL);
-+	dd->cspec->sendgrhchk = bitmap_zalloc(sbufcnt, GFP_KERNEL);
-+	dd->cspec->sendibchk = bitmap_zalloc(sbufcnt, GFP_KERNEL);
- 	if (!dd->cspec->sendchkenable || !dd->cspec->sendgrhchk ||
- 		!dd->cspec->sendibchk) {
- 		ret = -ENOMEM;
+Best regards,
 -- 
-2.34.1
-
+Heiko Stuebner <heiko@sntech.de>
