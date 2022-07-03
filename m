@@ -2,100 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 404D6C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Jul 2022 15:21:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61499C433EF
+	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Jul 2022 16:05:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232618AbiGCPVD (ORCPT
+        id S232749AbiGCQFv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 3 Jul 2022 11:21:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35106 "EHLO
+        Sun, 3 Jul 2022 12:05:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230446AbiGCPVD (ORCPT
+        with ESMTP id S232552AbiGCQFu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 3 Jul 2022 11:21:03 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2F408F;
-        Sun,  3 Jul 2022 08:21:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1656861662; x=1688397662;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=jXW12Ga9G65nqsGYdHBdlWQ5IJhoQ1DN2e8R+iyO4VE=;
-  b=hk/DyHciJM43sj1vk/J/swjmBjYo7E5A2DOKeMwRRGO2NiDWKNbzGitB
-   TpMXFuqxNrpgWQmhbplFPN1uxQgRQbTZHTzzvek/3JZe2PiWRbfhLVmB1
-   FsxA5BVa0+gwSLkVMZ1EZRWyQJ8Y8zUU1nLmq92EwAHqqkTBOX1EzhXXw
-   X6h5Os2mURtjstKAmNEdYw8114nF0ve2LJaceQ4jr8isKGXb4lN3QDGoD
-   N1Z+11C4X5jEjybf4fMq27Z4CJWRx8u3L3RTZXnUJp/CjuJIpVBcd4M4Y
-   ngZ2VJR3Yz23HV5f+Y/4I6+/iwfsaM/Z2Vi4d3KVfCQBkVLLI4Z4GhYfX
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10397"; a="344639160"
-X-IronPort-AV: E=Sophos;i="5.92,241,1650956400"; 
-   d="scan'208";a="344639160"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2022 08:21:01 -0700
-X-IronPort-AV: E=Sophos;i="5.92,241,1650956400"; 
-   d="scan'208";a="542233739"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jul 2022 08:20:57 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1o81P4-0014Px-0j;
-        Sun, 03 Jul 2022 18:20:54 +0300
-Date:   Sun, 3 Jul 2022 18:20:53 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Yury Norov <yury.norov@gmail.com>, agk@redhat.com,
-        snitzer@kernel.org, dm-devel@redhat.com, vneethv@linux.ibm.com,
-        oberpar@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, almaz.alexandrovich@paragon-software.com,
-        linux@rasmusvillemoes.dk, linux-s390@vger.kernel.org,
-        ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 3/4] bitmap: Introduce bitmap_size()
-Message-ID: <YsGz1Xp0RDM5ZhVY@smile.fi.intel.com>
-References: <cover.1656785856.git.christophe.jaillet@wanadoo.fr>
- <98f5d3d855a9c687ccc035edf62016b02a6876b7.1656785856.git.christophe.jaillet@wanadoo.fr>
- <YsC0GpltMVaCPhkJ@yury-laptop>
- <4dc5d50a-2291-1d3a-efac-3f6378a15d69@wanadoo.fr>
+        Sun, 3 Jul 2022 12:05:50 -0400
+Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78741558D
+        for <kernel-janitors@vger.kernel.org>; Sun,  3 Jul 2022 09:05:47 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id 826ToL9zNWo1m826TovmZ7; Sun, 03 Jul 2022 18:05:46 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sun, 03 Jul 2022 18:05:46 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-block@vger.kernel.org
+Subject: [PATCH] block: null_blk: Use the bitmap API to allocate bitmaps
+Date:   Sun,  3 Jul 2022 18:05:43 +0200
+Message-Id: <7c4d3116ba843fc4a8ae557dd6176352a6cd0985.1656864320.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <4dc5d50a-2291-1d3a-efac-3f6378a15d69@wanadoo.fr>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Jul 03, 2022 at 08:50:19AM +0200, Christophe JAILLET wrote:
-> Le 02/07/2022 à 23:09, Yury Norov a écrit :
-> > On Sat, Jul 02, 2022 at 08:29:36PM +0200, Christophe JAILLET wrote:
+Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
 
-...
+It is less verbose and it improves the semantic.
 
-> > This should be dropped, for sure, and kmalloc() at line 128 should be
-> > replaced with bitmap_alloc().
-> 
-> This kmalloc() is for a structure and a flexible array.
-> 
-> You mean re-arranging the code to allocate the structure alone at first,
-> then the bitmap?
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/block/null_blk/main.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-It's one way, but it will increase fragmentation of memory. The other one
-as it seems to me is to name a new API properly, i.e. bitmap_size_to_bytes().
-
-In such case you won't need renames to begin with. And then would be able
-to convert driver-by-driver in cases of duplicated code.
-
-I think that's what confused Yuri and I kinda agree that bitmap_size() should
-return bits, and not bytes. Also argument for pure bitmap_size() would be
-bitmap itself, but we have no way to detect the length of bitmap because we
-are using POD and not a specific data structure for it.
-
+diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
+index d695ea29efa6..f76fedf64449 100644
+--- a/drivers/block/null_blk/main.c
++++ b/drivers/block/null_blk/main.c
+@@ -1656,7 +1656,7 @@ static blk_status_t null_queue_rq(struct blk_mq_hw_ctx *hctx,
+ 
+ static void cleanup_queue(struct nullb_queue *nq)
+ {
+-	kfree(nq->tag_map);
++	bitmap_free(nq->tag_map);
+ 	kfree(nq->cmds);
+ }
+ 
+@@ -1783,14 +1783,13 @@ static const struct block_device_operations null_rq_ops = {
+ static int setup_commands(struct nullb_queue *nq)
+ {
+ 	struct nullb_cmd *cmd;
+-	int i, tag_size;
++	int i;
+ 
+ 	nq->cmds = kcalloc(nq->queue_depth, sizeof(*cmd), GFP_KERNEL);
+ 	if (!nq->cmds)
+ 		return -ENOMEM;
+ 
+-	tag_size = ALIGN(nq->queue_depth, BITS_PER_LONG) / BITS_PER_LONG;
+-	nq->tag_map = kcalloc(tag_size, sizeof(unsigned long), GFP_KERNEL);
++	nq->tag_map = bitmap_zalloc(nq->queue_depth, GFP_KERNEL);
+ 	if (!nq->tag_map) {
+ 		kfree(nq->cmds);
+ 		return -ENOMEM;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
