@@ -2,37 +2,39 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10671C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Jul 2022 16:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B27A5C43334
+	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Jul 2022 16:46:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232625AbiGCQJx (ORCPT
+        id S232648AbiGCQqo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 3 Jul 2022 12:09:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54720 "EHLO
+        Sun, 3 Jul 2022 12:46:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229879AbiGCQJv (ORCPT
+        with ESMTP id S230082AbiGCQqo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 3 Jul 2022 12:09:51 -0400
-Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39DE660EE
-        for <kernel-janitors@vger.kernel.org>; Sun,  3 Jul 2022 09:09:50 -0700 (PDT)
+        Sun, 3 Jul 2022 12:46:44 -0400
+Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B468626B
+        for <kernel-janitors@vger.kernel.org>; Sun,  3 Jul 2022 09:46:41 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id 82ANo4WMq5ohR82ANo6E2q; Sun, 03 Jul 2022 18:09:48 +0200
+        id 82k2oH5heZDzU82k2oQODa; Sun, 03 Jul 2022 18:46:39 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 03 Jul 2022 18:09:48 +0200
+X-ME-Date: Sun, 03 Jul 2022 18:46:39 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>
+To:     Raju Rangoju <rajur@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-mtd@lists.infradead.org
-Subject: [PATCH] mtd: nand: bbt: Use the bitmap API to allocate bitmaps
-Date:   Sun,  3 Jul 2022 18:09:45 +0200
-Message-Id: <b18c2b6711b8930f0dfb8318b5d19ef6e41f0f9a.1656864573.git.christophe.jaillet@wanadoo.fr>
+        netdev@vger.kernel.org
+Subject: [PATCH] cxgb4: Use the bitmap API to allocate bitmaps
+Date:   Sun,  3 Jul 2022 18:46:36 +0200
+Message-Id: <8a2168ef9871bd9c4f1cf19b8d5f7530662a5d15.1656866770.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -44,36 +46,157 @@ Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
 
 It is less verbose and it improves the semantic.
 
+While at it, remove a useless bitmap_zero(). The bitmap is already zeroed
+when allocated.
+
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/mtd/nand/bbt.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ .../ethernet/chelsio/cxgb4/cxgb4_debugfs.c    |  6 ++---
+ .../ethernet/chelsio/cxgb4/cxgb4_ethtool.c    |  8 +++---
+ .../net/ethernet/chelsio/cxgb4/cxgb4_main.c   | 27 ++++++++-----------
+ 3 files changed, 17 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/mtd/nand/bbt.c b/drivers/mtd/nand/bbt.c
-index 64af6898131d..db4f93a903e4 100644
---- a/drivers/mtd/nand/bbt.c
-+++ b/drivers/mtd/nand/bbt.c
-@@ -24,11 +24,8 @@ int nanddev_bbt_init(struct nand_device *nand)
- {
- 	unsigned int bits_per_block = fls(NAND_BBT_BLOCK_NUM_STATUS);
- 	unsigned int nblocks = nanddev_neraseblocks(nand);
--	unsigned int nwords = DIV_ROUND_UP(nblocks * bits_per_block,
--					   BITS_PER_LONG);
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
+index 7d49fd4edc9e..14e0d989c3ba 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
+@@ -3429,18 +3429,18 @@ static ssize_t blocked_fl_write(struct file *filp, const char __user *ubuf,
+ 	unsigned long *t;
+ 	struct adapter *adap = filp->private_data;
  
--	nand->bbt.cache = kcalloc(nwords, sizeof(*nand->bbt.cache),
--				  GFP_KERNEL);
-+	nand->bbt.cache = bitmap_zalloc(nblocks * bits_per_block, GFP_KERNEL);
- 	if (!nand->bbt.cache)
+-	t = kcalloc(BITS_TO_LONGS(adap->sge.egr_sz), sizeof(long), GFP_KERNEL);
++	t = bitmap_zalloc(adap->sge.egr_sz, GFP_KERNEL);
+ 	if (!t)
  		return -ENOMEM;
  
-@@ -44,7 +41,7 @@ EXPORT_SYMBOL_GPL(nanddev_bbt_init);
-  */
- void nanddev_bbt_cleanup(struct nand_device *nand)
- {
--	kfree(nand->bbt.cache);
-+	bitmap_free(nand->bbt.cache);
+ 	err = bitmap_parse_user(ubuf, count, t, adap->sge.egr_sz);
+ 	if (err) {
+-		kfree(t);
++		bitmap_free(t);
+ 		return err;
+ 	}
+ 
+ 	bitmap_copy(adap->sge.blocked_fl, t, adap->sge.egr_sz);
+-	kfree(t);
++	bitmap_free(t);
+ 	return count;
  }
- EXPORT_SYMBOL_GPL(nanddev_bbt_cleanup);
+ 
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c
+index 6c790af92170..77897edd2bc0 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c
+@@ -2227,7 +2227,7 @@ void cxgb4_cleanup_ethtool_filters(struct adapter *adap)
+ 	if (eth_filter_info) {
+ 		for (i = 0; i < adap->params.nports; i++) {
+ 			kvfree(eth_filter_info[i].loc_array);
+-			kfree(eth_filter_info[i].bmap);
++			bitmap_free(eth_filter_info[i].bmap);
+ 		}
+ 		kfree(eth_filter_info);
+ 	}
+@@ -2270,9 +2270,7 @@ int cxgb4_init_ethtool_filters(struct adapter *adap)
+ 			goto free_eth_finfo;
+ 		}
+ 
+-		eth_filter->port[i].bmap = kcalloc(BITS_TO_LONGS(nentries),
+-						   sizeof(unsigned long),
+-						   GFP_KERNEL);
++		eth_filter->port[i].bmap = bitmap_zalloc(nentries, GFP_KERNEL);
+ 		if (!eth_filter->port[i].bmap) {
+ 			ret = -ENOMEM;
+ 			goto free_eth_finfo;
+@@ -2284,7 +2282,7 @@ int cxgb4_init_ethtool_filters(struct adapter *adap)
+ 
+ free_eth_finfo:
+ 	while (i-- > 0) {
+-		kfree(eth_filter->port[i].bmap);
++		bitmap_free(eth_filter->port[i].bmap);
+ 		kvfree(eth_filter->port[i].loc_array);
+ 	}
+ 	kfree(eth_filter_info);
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+index 0c78c0db8937..d0061921529f 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+@@ -5047,28 +5047,24 @@ static int adap_init0(struct adapter *adap, int vpd_skip)
+ 	/* Allocate the memory for the vaious egress queue bitmaps
+ 	 * ie starving_fl, txq_maperr and blocked_fl.
+ 	 */
+-	adap->sge.starving_fl =	kcalloc(BITS_TO_LONGS(adap->sge.egr_sz),
+-					sizeof(long), GFP_KERNEL);
++	adap->sge.starving_fl = bitmap_zalloc(adap->sge.egr_sz, GFP_KERNEL);
+ 	if (!adap->sge.starving_fl) {
+ 		ret = -ENOMEM;
+ 		goto bye;
+ 	}
+ 
+-	adap->sge.txq_maperr = kcalloc(BITS_TO_LONGS(adap->sge.egr_sz),
+-				       sizeof(long), GFP_KERNEL);
++	adap->sge.txq_maperr = bitmap_zalloc(adap->sge.egr_sz, GFP_KERNEL);
+ 	if (!adap->sge.txq_maperr) {
+ 		ret = -ENOMEM;
+ 		goto bye;
+ 	}
+ 
+ #ifdef CONFIG_DEBUG_FS
+-	adap->sge.blocked_fl = kcalloc(BITS_TO_LONGS(adap->sge.egr_sz),
+-				       sizeof(long), GFP_KERNEL);
++	adap->sge.blocked_fl = bitmap_zalloc(adap->sge.egr_sz, GFP_KERNEL);
+ 	if (!adap->sge.blocked_fl) {
+ 		ret = -ENOMEM;
+ 		goto bye;
+ 	}
+-	bitmap_zero(adap->sge.blocked_fl, adap->sge.egr_sz);
+ #endif
+ 
+ 	params[0] = FW_PARAM_PFVF(CLIP_START);
+@@ -5417,10 +5413,10 @@ static int adap_init0(struct adapter *adap, int vpd_skip)
+ 	adap_free_hma_mem(adap);
+ 	kfree(adap->sge.egr_map);
+ 	kfree(adap->sge.ingr_map);
+-	kfree(adap->sge.starving_fl);
+-	kfree(adap->sge.txq_maperr);
++	bitmap_free(adap->sge.starving_fl);
++	bitmap_free(adap->sge.txq_maperr);
+ #ifdef CONFIG_DEBUG_FS
+-	kfree(adap->sge.blocked_fl);
++	bitmap_free(adap->sge.blocked_fl);
+ #endif
+ 	if (ret != -ETIMEDOUT && ret != -EIO)
+ 		t4_fw_bye(adap, adap->mbox);
+@@ -5854,8 +5850,7 @@ static int alloc_msix_info(struct adapter *adap, u32 num_vec)
+ 	if (!msix_info)
+ 		return -ENOMEM;
+ 
+-	adap->msix_bmap.msix_bmap = kcalloc(BITS_TO_LONGS(num_vec),
+-					    sizeof(long), GFP_KERNEL);
++	adap->msix_bmap.msix_bmap = bitmap_zalloc(num_vec, GFP_KERNEL);
+ 	if (!adap->msix_bmap.msix_bmap) {
+ 		kfree(msix_info);
+ 		return -ENOMEM;
+@@ -5870,7 +5865,7 @@ static int alloc_msix_info(struct adapter *adap, u32 num_vec)
+ 
+ static void free_msix_info(struct adapter *adap)
+ {
+-	kfree(adap->msix_bmap.msix_bmap);
++	bitmap_free(adap->msix_bmap.msix_bmap);
+ 	kfree(adap->msix_info);
+ }
+ 
+@@ -6189,10 +6184,10 @@ static void free_some_resources(struct adapter *adapter)
+ 	cxgb4_cleanup_ethtool_filters(adapter);
+ 	kfree(adapter->sge.egr_map);
+ 	kfree(adapter->sge.ingr_map);
+-	kfree(adapter->sge.starving_fl);
+-	kfree(adapter->sge.txq_maperr);
++	bitmap_free(adapter->sge.starving_fl);
++	bitmap_free(adapter->sge.txq_maperr);
+ #ifdef CONFIG_DEBUG_FS
+-	kfree(adapter->sge.blocked_fl);
++	bitmap_free(adapter->sge.blocked_fl);
+ #endif
+ 	disable_msi(adapter);
  
 -- 
 2.34.1
