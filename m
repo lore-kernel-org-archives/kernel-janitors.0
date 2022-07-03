@@ -2,54 +2,45 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF26C43334
-	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Jul 2022 06:50:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA40CCA480
+	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Jul 2022 06:50:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231352AbiGCGub (ORCPT
+        id S231372AbiGCGud (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 3 Jul 2022 02:50:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56138 "EHLO
+        Sun, 3 Jul 2022 02:50:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231319AbiGCGu3 (ORCPT
+        with ESMTP id S231308AbiGCGuc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 3 Jul 2022 02:50:29 -0400
-Received: from smtp.smtpout.orange.fr (smtp02.smtpout.orange.fr [80.12.242.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2F8B657F
-        for <kernel-janitors@vger.kernel.org>; Sat,  2 Jul 2022 23:50:24 -0700 (PDT)
-Received: from [192.168.1.18] ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id 7tQyovloGEMbD7tQyoi3Jm; Sun, 03 Jul 2022 08:50:22 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 03 Jul 2022 08:50:22 +0200
-X-ME-IP: 90.11.190.129
-Message-ID: <4dc5d50a-2291-1d3a-efac-3f6378a15d69@wanadoo.fr>
-Date:   Sun, 3 Jul 2022 08:50:19 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
+        Sun, 3 Jul 2022 02:50:32 -0400
+Received: from ciao.gmane.io (ciao.gmane.io [116.202.254.214])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EA906589
+        for <kernel-janitors@vger.kernel.org>; Sat,  2 Jul 2022 23:50:26 -0700 (PDT)
+Received: from list by ciao.gmane.io with local (Exim 4.92)
+        (envelope-from <glkj-kernel-janitors-2@m.gmane-mx.org>)
+        id 1o7tR2-00047P-8z
+        for kernel-janitors@vger.kernel.org; Sun, 03 Jul 2022 08:50:24 +0200
+X-Injected-Via-Gmane: http://gmane.org/
+To:     kernel-janitors@vger.kernel.org
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Subject: Re: [PATCH 3/4] bitmap: Introduce bitmap_size()
-Content-Language: en-US
-To:     Yury Norov <yury.norov@gmail.com>
-Cc:     agk@redhat.com, snitzer@kernel.org, dm-devel@redhat.com,
-        vneethv@linux.ibm.com, oberpar@linux.ibm.com, hca@linux.ibm.com,
-        gor@linux.ibm.com, agordeev@linux.ibm.com,
-        borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        almaz.alexandrovich@paragon-software.com,
-        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
-        linux-s390@vger.kernel.org, ntfs3@lists.linux.dev,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Newsgroups: gmane.linux.kernel.janitors,gmane.linux.kernel.device-mapper.devel,gmane.linux.kernel
+Date:   Sun, 3 Jul 2022 08:50:19 +0200
+Message-ID: <4dc5d50a-2291-1d3a-efac-3f6378a15d69@wanadoo.fr>
 References: <cover.1656785856.git.christophe.jaillet@wanadoo.fr>
  <98f5d3d855a9c687ccc035edf62016b02a6876b7.1656785856.git.christophe.jaillet@wanadoo.fr>
  <YsC0GpltMVaCPhkJ@yury-laptop>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <YsC0GpltMVaCPhkJ@yury-laptop>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Content-Language: en-US
+In-Reply-To: <YsC0GpltMVaCPhkJ@yury-laptop>
+Cc:     dm-devel@redhat.com, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
+Message-ID: <20220703065019.fHqCFHD90prty1WErbRm8FAFkPMuMsC0qnUOYlo0qdI@z>
 
 Le 02/07/2022 à 23:09, Yury Norov a écrit :
 > On Sat, Jul 02, 2022 at 08:29:36PM +0200, Christophe JAILLET wrote:
@@ -137,4 +128,5 @@ CJ
 >> -- 
 >> 2.34.1
 > 
+
 
