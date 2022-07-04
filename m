@@ -2,39 +2,37 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D8BC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Jul 2022 19:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D02AC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Jul 2022 20:23:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233455AbiGDTjO (ORCPT
+        id S232113AbiGDUXZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 4 Jul 2022 15:39:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46262 "EHLO
+        Mon, 4 Jul 2022 16:23:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230195AbiGDTjN (ORCPT
+        with ESMTP id S229641AbiGDUXW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 4 Jul 2022 15:39:13 -0400
+        Mon, 4 Jul 2022 16:23:22 -0400
 Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2445DFE1
-        for <kernel-janitors@vger.kernel.org>; Mon,  4 Jul 2022 12:39:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7714B287
+        for <kernel-janitors@vger.kernel.org>; Mon,  4 Jul 2022 13:23:21 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id 8RuXoGYv726JC8RuXo2g1W; Mon, 04 Jul 2022 21:39:11 +0200
+        id 8SbGooXMG4Ltq8SbGotLem; Mon, 04 Jul 2022 22:23:19 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 04 Jul 2022 21:39:11 +0200
+X-ME-Date: Mon, 04 Jul 2022 22:23:19 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Nilesh Javali <njavali@marvell.com>,
-        Manish Rangankar <mrangankar@marvell.com>,
-        GR-QLogic-Storage-Upstream@marvell.com,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     Robin Holt <robinmholt@gmail.com>, Steve Wahl <steve.wahl@hpe.com>,
+        Mike Travis <mike.travis@hpe.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-scsi@vger.kernel.org
-Subject: [PATCH] scsi: qedi: Use the bitmap API to allocate bitmaps
-Date:   Mon,  4 Jul 2022 21:39:08 +0200
-Message-Id: <ff249726a25755d4ae5e1099b04712fe79df7672.1656963540.git.christophe.jaillet@wanadoo.fr>
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] sgi-xp: Use the bitmap API to allocate bitmaps
+Date:   Mon,  4 Jul 2022 22:23:17 +0200
+Message-Id: <ef49726d60f6a531428609f60a2398b6c3d9a26e.1656966181.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -46,33 +44,65 @@ Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
 
 It is less verbose and it improves the semantic.
 
+While at it, remove a useless cast in a bitmap_empty() call.
+
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/scsi/qedi/qedi_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/misc/sgi-xp/xpnet.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
-index cecfb2cb4c7b..06c7dd620b46 100644
---- a/drivers/scsi/qedi/qedi_main.c
-+++ b/drivers/scsi/qedi/qedi_main.c
-@@ -535,7 +535,7 @@ static int qedi_init_id_tbl(struct qedi_portid_tbl *id_tbl, u16 size,
- 	id_tbl->max = size;
- 	id_tbl->next = next;
- 	spin_lock_init(&id_tbl->lock);
--	id_tbl->table = kcalloc(BITS_TO_LONGS(size), sizeof(long), GFP_KERNEL);
-+	id_tbl->table = bitmap_zalloc(size, GFP_KERNEL);
- 	if (!id_tbl->table)
+diff --git a/drivers/misc/sgi-xp/xpnet.c b/drivers/misc/sgi-xp/xpnet.c
+index 50644f83e78c..2396ba3b03bd 100644
+--- a/drivers/misc/sgi-xp/xpnet.c
++++ b/drivers/misc/sgi-xp/xpnet.c
+@@ -285,7 +285,7 @@ xpnet_connection_activity(enum xp_retval reason, short partid, int channel,
+ 		__clear_bit(partid, xpnet_broadcast_partitions);
+ 		spin_unlock_bh(&xpnet_broadcast_lock);
+ 
+-		if (bitmap_empty((unsigned long *)xpnet_broadcast_partitions,
++		if (bitmap_empty(xpnet_broadcast_partitions,
+ 				 xp_max_npartitions)) {
+ 			netif_carrier_off(xpnet_device);
+ 		}
+@@ -522,9 +522,8 @@ xpnet_init(void)
+ 
+ 	dev_info(xpnet, "registering network device %s\n", XPNET_DEVICE_NAME);
+ 
+-	xpnet_broadcast_partitions = kcalloc(BITS_TO_LONGS(xp_max_npartitions),
+-					     sizeof(long),
+-					     GFP_KERNEL);
++	xpnet_broadcast_partitions = bitmap_zalloc(xp_max_npartitions,
++						   GFP_KERNEL);
+ 	if (xpnet_broadcast_partitions == NULL)
  		return -ENOMEM;
  
-@@ -544,7 +544,7 @@ static int qedi_init_id_tbl(struct qedi_portid_tbl *id_tbl, u16 size,
+@@ -535,7 +534,7 @@ xpnet_init(void)
+ 	xpnet_device = alloc_netdev(0, XPNET_DEVICE_NAME, NET_NAME_UNKNOWN,
+ 				    ether_setup);
+ 	if (xpnet_device == NULL) {
+-		kfree(xpnet_broadcast_partitions);
++		bitmap_free(xpnet_broadcast_partitions);
+ 		return -ENOMEM;
+ 	}
  
- static void qedi_free_id_tbl(struct qedi_portid_tbl *id_tbl)
- {
--	kfree(id_tbl->table);
-+	bitmap_free(id_tbl->table);
- 	id_tbl->table = NULL;
+@@ -574,7 +573,7 @@ xpnet_init(void)
+ 	result = register_netdev(xpnet_device);
+ 	if (result != 0) {
+ 		free_netdev(xpnet_device);
+-		kfree(xpnet_broadcast_partitions);
++		bitmap_free(xpnet_broadcast_partitions);
+ 	}
+ 
+ 	return result;
+@@ -590,7 +589,7 @@ xpnet_exit(void)
+ 
+ 	unregister_netdev(xpnet_device);
+ 	free_netdev(xpnet_device);
+-	kfree(xpnet_broadcast_partitions);
++	bitmap_free(xpnet_broadcast_partitions);
  }
  
+ module_exit(xpnet_exit);
 -- 
 2.34.1
 
