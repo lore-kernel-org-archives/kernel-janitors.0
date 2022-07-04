@@ -2,157 +2,166 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C83CCA480
-	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Jul 2022 10:53:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F00EC43334
+	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Jul 2022 10:55:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233059AbiGDKxM (ORCPT
+        id S231709AbiGDKz6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 4 Jul 2022 06:53:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44734 "EHLO
+        Mon, 4 Jul 2022 06:55:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231418AbiGDKxL (ORCPT
+        with ESMTP id S230390AbiGDKz5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 4 Jul 2022 06:53:11 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAC5CBE2C;
-        Mon,  4 Jul 2022 03:53:10 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id u12-20020a05600c210c00b003a02b16d2b8so5420566wml.2;
-        Mon, 04 Jul 2022 03:53:10 -0700 (PDT)
+        Mon, 4 Jul 2022 06:55:57 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78D5E2F9
+        for <kernel-janitors@vger.kernel.org>; Mon,  4 Jul 2022 03:55:54 -0700 (PDT)
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2648Q3CS006304;
+        Mon, 4 Jul 2022 10:55:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : content-type : mime-version; s=corp-2021-07-09;
+ bh=rKWKFgZCTlsm7UOXDBp+ZRWo2mW1/S9hQREhLCz9Vzo=;
+ b=b9HQ5n7Qar6P0s0JwopLYfPi37Hzw56O6TbNz5xba86HbQ7bSqzPn6YTpQ7Q/rk2Lvah
+ HzW7mehpEBrTEOIPsgEnXau+zyyR+XHbakiZvtMfyIZUUQOmpscp2D/28RTe8eNc2J1D
+ TV7Pqlvq2G0fswGLGDzo3qrQcWp/ybtX9C5Pc7/E8RWhaf0lO95QmZAaDn4dNeT8B3Ab
+ e1CzzraVALo7qJvYNSZSc0zdkgj7vt/KYPkHA7T86PrwVQBHThpj6+fcqdaFISveulG1
+ kgWOiOJCv8Pom4z9MCnVQXaXFq2a0wrwu1WnQzbqVUCkkGLX5Df7jYWBHbwTYFaTkH+v xw== 
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3h2cm0k8t6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 04 Jul 2022 10:55:30 +0000
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 264AtLul004161;
+        Mon, 4 Jul 2022 10:55:29 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2173.outbound.protection.outlook.com [104.47.57.173])
+        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3h2cf7npmk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 04 Jul 2022 10:55:29 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hD9IhmUYUcdmMT8e/Himt/kYeA+Yed5xRDt1+DbmOaQvtBiXNriHCvpE7csBzznrGiQvx6ps3d1uwvuF6BO9QSSxR2W13q4C7jla/h7vc55ueDfAGdBjPfAPSERO/GZ0Ru6Fe58lNrfWhja5ktLoVnPEiZGi6YkCJnjERdNt5RZk7nGOjikzb8MGAQC8UV9re2ICPol87iD9i6fbAzVTja8hNMmdHztbmwLd6wbzZ06Se2U6vGtZl17lM9RzIJ+K/apEhQiszYutaiWgveLVHcByogBDI4LfHuNPvvc1tudPcaBz+2vKcxRRI09mKfq6uiTDF96ZT7KO8jn5D6NWYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rKWKFgZCTlsm7UOXDBp+ZRWo2mW1/S9hQREhLCz9Vzo=;
+ b=A+2M7Pl3bo4nbAgloVJikPhEgPNsDHwgEige+LgsuFPCeu+hTeA41tmZEtLoxfSZK2qoH4XYWreBoOUKrrKF3KuBEETG8aeoy03q/DLTUlnxgNDTX7nQdg2oYrRVK0Z5N0NWxp6uxdf0AozjV10NCzC378DQya8uYBwY72guHh/J7CH7csHKWC7hgLz9If4xYrw8p9dYfUIyESqAsuNMo/Q8kdeRfy9DASvgFNvChcz/2jTJvfOK2tCbaAJCJ047jdgJrASQOSeHfxNEpGJlMAHcEBIJ89VMg++LdvoCwnC2WniGhcaUDnWAPlyzZR45JXDVaBX8mVRfA5+N7ztq5A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4weMpjvNiH7V9U3sbXbzJxXZClEc9I2GMKVTP6AA2c0=;
-        b=P/c9/IGQEPreCQ0nHotpRmWlzk39e7XMKW9T1rPAbMMpTnQ47CZMILeQACoGFMJqXj
-         XqtSTeHGSTDhG21kzL36QiDSkWLlqw0l3u/wHq535AB+7dEIByE6VaRgseGxScnqzu3a
-         AynlarYdZFNfiVu9g8fw1POFreKLUKD+tTkT+baijQlbwAMytXb8Ye7LUyNOchS4Yak7
-         l7Dwawiw/vOv0Cw+muKgJmPI2Wpx/MONt1B82xSSAXi7euyoPQwEfgHhRun+sLzMIZrJ
-         rbR/fcrwD1D+hmje51P59xSsw5xq/0AMNGa/4PlyV12zRbhTchJcOfYVxFgotRPgNINp
-         XX1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4weMpjvNiH7V9U3sbXbzJxXZClEc9I2GMKVTP6AA2c0=;
-        b=cNKhajcd5udmuBSv1g9UZgfznw79zqfwuBJiA3v3iTm50j9jJBH71LpBlWFdYz9Pjm
-         y1hxsfreMuT9MdS2pzkbbvcKhBasOiOCTcDNE0QGKf1BN/Xx4k6wiKe+CFUSnFxOk44t
-         bdxdXG2dcT52Pko8MW6hn2k2ZxDviXjFQduEKaQDqxeKB69hqfoz+ERfVgBmg51GiKB2
-         w1NYS8fgqFfdIv4TswLqsC5MMgS9cRqfvvdiOOqqI0kKPRmJFWgBDlraPcgkw2Vkgjh3
-         W/o1SMpNEOrBX2Pwdf+5n913eJt2qfPv2j2lRkgjFAqgtHdgyS9+VZ2A3H8F7UlaMA8C
-         9tBQ==
-X-Gm-Message-State: AJIora/H4hsrYhUYvjoXQrQKzOd560YGboJ2MCNb9XlumDtTjGEXafbe
-        FSmgoK2sxcTycCFCeCrNFv8vj7e9n8r1dk9x
-X-Google-Smtp-Source: AGRyM1v3rotBr0o2IFPa2Oszpyd49EUK6GjimhNUEb5xJaX04pIc3hhz3Bnr2maVLeqLXFi2YAsyXQ==
-X-Received: by 2002:a7b:c410:0:b0:3a0:2d7d:732a with SMTP id k16-20020a7bc410000000b003a02d7d732amr32454903wmi.113.1656931989088;
-        Mon, 04 Jul 2022 03:53:09 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id j31-20020a05600c1c1f00b003a18d352893sm10907140wms.42.2022.07.04.03.53.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Jul 2022 03:53:08 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-amlogic@lists.infradead.org
-Subject: [PATCH] dt-bindings: Fix spelling mistakes in documentation yaml files "is is" -> "is"
-Date:   Mon,  4 Jul 2022 11:53:07 +0100
-Message-Id: <20220704105307.552247-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.3
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rKWKFgZCTlsm7UOXDBp+ZRWo2mW1/S9hQREhLCz9Vzo=;
+ b=LGGCPI0K5w3exo83qxCg0bpziWhX6pr/gRzP6qbNvDSW60WxIHLrFqTYTGEftMr/ysqP0aJR7Zv+SoX7k98yAWT/R7wxTcM/ihu6fk8sP1F9EeWIiD3rYmSqjVTFfuvKr06WXUGYJmIorN6LutBQOQD3kE/s3jXPceMK9jLWSZg=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by DM6PR10MB3563.namprd10.prod.outlook.com
+ (2603:10b6:5:154::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.15; Mon, 4 Jul
+ 2022 10:55:27 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::5020:9b82:5917:40b]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::5020:9b82:5917:40b%6]) with mapi id 15.20.5395.021; Mon, 4 Jul 2022
+ 10:55:21 +0000
+Date:   Mon, 4 Jul 2022 13:55:04 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Li Yang <leoyang.li@nxp.com>, Michael Walle <michael@walle.cc>
+Cc:     Shawn Guo <shawnguo@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] soc: fsl: guts: fix IS_ERR() vs NULL bug
+Message-ID: <YsLHCE/ttyl/OeHs@kili>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-ClientProxiedBy: ZR0P278CA0018.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:16::28) To MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ff6e8ae5-8649-425a-869d-08da5dabafed
+X-MS-TrafficTypeDiagnostic: DM6PR10MB3563:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: YV5LEkJafSiWkSiQY/5VjkktZOssm1R3wTlzZOfh9iVi8VMgyV2XCNjDVkkCNuq1TQZ2ir1XSFU+cDcGlHcCUaIXKi+xVf3SdNcK1DE80DX56MCxF/2soinlOdJRPjzDAnt/wB7r+blKqTceDeYiZ8rJvfp1m+BlZ7nZPDozkW0IJBBnvq7ZlARPvB6KEueziCewrdX0FIxIo7WPSXXv7vcQ3JSrIPavR64RUkT7lG4HVTdzMF1shMeTrAKdBM7f1QahVKKoKso0S7ANEDCVA0vhe1yEoBXrmffGAFDAbERiWVAP/fd3+W2Eic1+HbRL9cOf8M+YT3KEnAC3b0GXVSgbVioobFhCywW0DTOGcRrD5nRIXPLt1xQZHkXlWnPJKhKvgja8wYJJrMZRv2p9Z91TovsxlntyS9wZYahFe9F2Em4WD4uTjs4ExH25f4FHzZRsldgkYPgDz4EyvFrMDfNonVWJVwZJhn0Fcyy5XL5kQGBH81DJqAZcjPd7WS4ep3NFlBf0GL9tiyTXH/zl9HZyNP3cbYwA/unUVOKMJLM2/mj7Caqo7bfj5si60QWaM2xj+8RZgVGnsHiRIjBaewoWvUCjCY66lejs50J7nC4mcpB1qNKwcmhSnxXsCRXYcVpu/nhZtIWlXK53zULp7KyWTihrQl+CuZ/Nxdf61JVhQV7m/n1LQVqPEhmtz668EA5HaFyv2pxlmtIeOcDi+cdCM0fIPVr3yASj9AsMsuvE+t0f54frhC2oHO+3oBjIqluNWxC1BSBIkhKAE7DCEmRVoQe9fG5mjW/e+e0Zapu95AmrRkozVzBQEIby5CRN
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(7916004)(346002)(366004)(376002)(136003)(396003)(39860400002)(110136005)(66556008)(478600001)(6486002)(38350700002)(86362001)(66946007)(6666004)(41300700001)(66476007)(26005)(9686003)(52116002)(186003)(54906003)(6506007)(38100700002)(4326008)(316002)(8676002)(33716001)(6512007)(2906002)(4744005)(44832011)(5660300002)(8936002)(83380400001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?mEA9xdUzqenbkSNCa7jNFfIdTBY+MotUGFgsciZGBYRtEHwkf6UvfR0BoINA?=
+ =?us-ascii?Q?kfXZB1lxm5qfrdHeOaqmZwNOqWrk4zNcDb702J+ANAr+BPI8DMIznVzzn3xu?=
+ =?us-ascii?Q?iVRs2HydsNy54N2T3KbnI3+MCShQ/UhDdtjKJN5PbSBqrCM2/u/xLJg2IVnl?=
+ =?us-ascii?Q?lAZDWtI+OtNz0lyN7vkSSq/gAVaHObyeSOEGYZPcD0Iq3vtGoSppzvJN+Yfz?=
+ =?us-ascii?Q?sxQjxPlT7Lr3dLkMI8kfua266atGvhLfWoGfwevms8KQrCrFGK6RbyxcxW6v?=
+ =?us-ascii?Q?bp1MpRDZ7spgWKT3FLlbq1QJnFThO0vMZfYxfOhSC98EewPOWhKrddxJR87f?=
+ =?us-ascii?Q?RdvtqnziSMi2Ib9Knhtx6ciEvGtUVtnufwopqC+LpjIDQWzuqPhlfc+AZvkw?=
+ =?us-ascii?Q?6dNMHzhuMHMxUg4z9F6MrOcJ6jmgpNcG3wYo2ogRKhQ8yOIuds6vTQC2wf5v?=
+ =?us-ascii?Q?i/Ewx1MUieS7jALFf6pE0NM+POLGWZyldJJVhdXLe3fLC3YfS7+Qtgl5JlNu?=
+ =?us-ascii?Q?c566E7YlUQh8HlfurGbtUnuMDmMl1lOPzAwES+1irbNNJGoK6T2Nl+gj/bcy?=
+ =?us-ascii?Q?l9QWUBfp6/D/ukzfhOYVjByM+NCWwQCTjImAVyupA6l9mS/Vgibvw7VRqfpZ?=
+ =?us-ascii?Q?T/ZNqJYTpDieXmXs5c4ijICpDHreXGK/6yhj55EhL+v5dKAgwLrfXRXOROIu?=
+ =?us-ascii?Q?G6bRI8ywgdv8VEypLpGItMASuvI26cMqU2Zhvb81eCikvcmM7+GcHn7fHqJg?=
+ =?us-ascii?Q?w1ewezfrNI86D/sHhGMAWWcXXdZSwx3AsPQnklyw4oaJ5Ys0dDsquY2E/yCz?=
+ =?us-ascii?Q?BZsnUOqp5Dy3cKeyl16OCabzOTyDr0JtnZlXivi7vIykytspEn4oeyzCk+2I?=
+ =?us-ascii?Q?SNEb4tsPTF8arIdzM2gHQ7z6Rl4P1+zf8GlYAMUcxEs//frf7/yTqLuMqLd6?=
+ =?us-ascii?Q?TeDnIFm19c2WZKvfZqee+GAutA3wESSAQE/GtBdRPIvWqZriJtp+hjo/KfAf?=
+ =?us-ascii?Q?cnIXpKrUs7Ye39aMQkrNIipNvxrjD6LcNA7jLYYqkxvkMX6sM5P6VqIdPh3U?=
+ =?us-ascii?Q?QFYuO+/xBWEBDyt/adhDdO2bQRIoBhJGQJ45mUZj8hyikzDncFB79wBkKU53?=
+ =?us-ascii?Q?loWoXBnfwRuctwyeXadpnhRAqrrytdrW5i6y+3XODwGOw7fF0zlsw5X3MKkC?=
+ =?us-ascii?Q?m6prTPtXP/hIvQZkuW1JX0I5DW5AAhDa3P4sVNUu/RPicdFz1HVEpX8Ew1Rd?=
+ =?us-ascii?Q?x43ZSO+nPQ6pI8UQtad1ouyI+w5mWtX+ByO2GxfqDoWAQIidbT2sVqpfCkJX?=
+ =?us-ascii?Q?MbgWwf1t9BhqfA3cG2cDz6LpBzCOtL5/bbljtNRoHdzZM/ZOafTTYIy+o3DC?=
+ =?us-ascii?Q?jfa3yMHE6HRNJh90fx7SCqYHJveX2MGPl8CAMdClx4zCHMWnb7wUYApCVQt5?=
+ =?us-ascii?Q?0FPTwrdYq9k1WQ7Mjgi2rIkOYZfeJXgsGZJgkwzwJrPJu89umAMgvyJYtSh2?=
+ =?us-ascii?Q?0MdWxEI0teLXwman9vv/2GzErbIV2yxWDLgCoWl44OAsMiH7+5HA+c76638c?=
+ =?us-ascii?Q?4bbkGFc/Xj3Kjwerx/pkLJcSO+pHeidFVaLDX5bi?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff6e8ae5-8649-425a-869d-08da5dabafed
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2022 10:55:21.0278
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FQ3zKZSaY9xpDdOkhpM+xlppeWgUWWus2lFIhY1K5IleymyJQv7Q99wtGJjWt0vyHr8xHbu/NoXRKRE/gIBVM9t23QDFElPttjCYtb1kQ4A=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR10MB3563
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.517,18.0.883
+ definitions=2022-07-04_09:2022-06-28,2022-07-04 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 suspectscore=0
+ malwarescore=0 bulkscore=0 mlxlogscore=999 phishscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2204290000
+ definitions=main-2207040047
+X-Proofpoint-GUID: 1B6VlqVfRgqzMmP96YQArdv7ZlJ9j5cN
+X-Proofpoint-ORIG-GUID: 1B6VlqVfRgqzMmP96YQArdv7ZlJ9j5cN
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are several occurrances of duplicated words "is" on the documentation
-yaml files. Fix these.
+The of_iomap() function returns NULL on failure, it never returns
+error pointers.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Fixes: ab4988d6a393 ("soc: fsl: guts: embed fsl_guts_get_svr() in probe()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml   | 2 +-
- Documentation/devicetree/bindings/mfd/ti,lp87524-q1.yaml       | 2 +-
- Documentation/devicetree/bindings/mfd/ti,lp87561-q1.yaml       | 2 +-
- Documentation/devicetree/bindings/mfd/ti,lp87565-q1.yaml       | 2 +-
- Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/soc/fsl/guts.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml b/Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml
-index a4b4452afc1d..a04882e101f3 100644
---- a/Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml
-+++ b/Documentation/devicetree/bindings/arm/arm,vexpress-juno.yaml
-@@ -139,7 +139,7 @@ patternProperties:
-       the connection between the motherboard and any tiles. Sometimes the
-       compatible is placed directly under this node, sometimes it is placed
-       in a subnode named "motherboard-bus". Sometimes the compatible includes
--      "arm,vexpress,v2?-p1" sometimes (on software models) is is just
-+      "arm,vexpress,v2?-p1" sometimes (on software models) is just
-       "simple-bus". If the compatible is placed in the "motherboard-bus" node,
-       it is stricter and always has two compatibles.
-     type: object
-diff --git a/Documentation/devicetree/bindings/mfd/ti,lp87524-q1.yaml b/Documentation/devicetree/bindings/mfd/ti,lp87524-q1.yaml
-index f6cac4b1079c..3549a32452ec 100644
---- a/Documentation/devicetree/bindings/mfd/ti,lp87524-q1.yaml
-+++ b/Documentation/devicetree/bindings/mfd/ti,lp87524-q1.yaml
-@@ -26,7 +26,7 @@ properties:
-   '#gpio-cells':
-     description:
-       The first cell is the pin number.
--      The second cell is is used to specify flags.
-+      The second cell is used to specify flags.
-       See ../gpio/gpio.txt for more information.
-     const: 2
+diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
+index 27035de062f8..8038c599ad83 100644
+--- a/drivers/soc/fsl/guts.c
++++ b/drivers/soc/fsl/guts.c
+@@ -195,9 +195,9 @@ static int __init fsl_guts_init(void)
+ 	soc_data = match->data;
  
-diff --git a/Documentation/devicetree/bindings/mfd/ti,lp87561-q1.yaml b/Documentation/devicetree/bindings/mfd/ti,lp87561-q1.yaml
-index dc5a29b5ef7d..43a3f7ccaf36 100644
---- a/Documentation/devicetree/bindings/mfd/ti,lp87561-q1.yaml
-+++ b/Documentation/devicetree/bindings/mfd/ti,lp87561-q1.yaml
-@@ -26,7 +26,7 @@ properties:
-   '#gpio-cells':
-     description:
-       The first cell is the pin number.
--      The second cell is is used to specify flags.
-+      The second cell is used to specify flags.
-       See ../gpio/gpio.txt for more information.
-     const: 2
+ 	regs = of_iomap(np, 0);
+-	if (IS_ERR(regs)) {
++	if (!regs) {
+ 		of_node_put(np);
+-		return PTR_ERR(regs);
++		return -ENOMEM;
+ 	}
  
-diff --git a/Documentation/devicetree/bindings/mfd/ti,lp87565-q1.yaml b/Documentation/devicetree/bindings/mfd/ti,lp87565-q1.yaml
-index 012d25111054..373c4f89c4ea 100644
---- a/Documentation/devicetree/bindings/mfd/ti,lp87565-q1.yaml
-+++ b/Documentation/devicetree/bindings/mfd/ti,lp87565-q1.yaml
-@@ -28,7 +28,7 @@ properties:
-   '#gpio-cells':
-     description:
-       The first cell is the pin number.
--      The second cell is is used to specify flags.
-+      The second cell is used to specify flags.
-       See ../gpio/gpio.txt for more information.
-     const: 2
- 
-diff --git a/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml b/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
-index 608e1d62bed5..3eb0513d824c 100644
---- a/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
-+++ b/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
-@@ -149,7 +149,7 @@ properties:
-       - description:
-           The first register range should be the one of the DWMAC controller
-       - description:
--          The second range is is for the Amlogic specific configuration
-+          The second range is for the Amlogic specific configuration
-           (for example the PRG_ETHERNET register range on Meson8b and newer)
- 
- required:
+ 	little_endian = of_property_read_bool(np, "little-endian");
 -- 
-2.35.3
+2.35.1
 
