@@ -2,88 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4031EC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Jul 2022 19:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD0F5C43334
+	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Jul 2022 19:16:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234552AbiGDTLv (ORCPT
+        id S234707AbiGDTQR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 4 Jul 2022 15:11:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60338 "EHLO
+        Mon, 4 Jul 2022 15:16:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232141AbiGDTLu (ORCPT
+        with ESMTP id S234366AbiGDTQO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 4 Jul 2022 15:11:50 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01CB81E4;
-        Mon,  4 Jul 2022 12:11:50 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id l40-20020a05600c1d2800b003a18adff308so6239613wms.5;
-        Mon, 04 Jul 2022 12:11:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nYJdC2yjixYZ+kyoc4OE/b9ZX8JV+K3bG8EqjiFuHfE=;
-        b=fje1ujhgj4n/NClwNNLHrpiSj15S0MbR6wPpKmARyWcCqj7LnSnL192M+mQGvNyp1K
-         eZn+EjTBF/itc620E6fFsD0nau4Jlj4KhWv/HrRCYAYxwM4i5LTDj9sO3mbANvEVTRgi
-         zpLog+Yu5gRu2dZX7ASksMXWC31cdaFwl8R1qRhIzat35MWDvmhq6fHl12zIYGfAgP17
-         OasHWEyHzyyfxjvJBKllakT4ieCOTjaProgiMtiZQZWCIaTW32YD5OHa+FDNZ4plWfCB
-         gz58FwamG9Iv4FiyngWPEn3h2G3NDmOUGIYG3dVAhqh1/KBdexoTGeQFhbDiB8hLhvwe
-         uxpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nYJdC2yjixYZ+kyoc4OE/b9ZX8JV+K3bG8EqjiFuHfE=;
-        b=6BLTfviJgioaOy7jozc+CbMXHSpV5Ch0J99X1o2AWslxHC4jf7bluNbaIFSNvjRtwb
-         uufoAyfKrJwjAhbEzySJim1/iBkQsPkBvEDYqmrIVebqirGLvSmIAvVJpxNjN+3ca6VB
-         MJcuudn4LP9JNlWjMlyekaDYjGpHZ2iV3xYdOJz4Idj8BkDuDUuthae8N9vGJ3SPAAlw
-         yccZrxw0KZhOwl0e7wvfcA34Fy5OBWXtY/VjJoDmHP+QuqX5PMquErXeqXyjeKYFGCbS
-         0CWE26uFwk5ThShB8MuJa8M+6WiYLXj06z1lJXfL6E3m43iTJcMtXziSmqQtYj4ezmJN
-         oqEg==
-X-Gm-Message-State: AJIora9IuU1wGi+k/eIgD6QMSQkvuDobKcx1Mg1b+nKFdRxDpIrZrhik
-        +zcsFpqPk6ASs4CPTnXoMubItqreeQ+WSw==
-X-Google-Smtp-Source: AGRyM1sAc/Upb3IqdwlY5v1NzPeFFGkBDLEmAeR9nyVvA46bGnSTXTLOAUBZR/2RGb8Mfc+m9opcgQ==
-X-Received: by 2002:a05:600c:1d0e:b0:3a0:50bb:55e0 with SMTP id l14-20020a05600c1d0e00b003a050bb55e0mr33718555wms.89.1656961908597;
-        Mon, 04 Jul 2022 12:11:48 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id o4-20020a05600c378400b003a2b708c26dsm122983wmr.40.2022.07.04.12.11.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Jul 2022 12:11:48 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     David Airlie <airlied@linux.ie>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/amd_nb: remove redundant initialization of variable i
-Date:   Mon,  4 Jul 2022 20:11:47 +0100
-Message-Id: <20220704191147.594032-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.3
+        Mon, 4 Jul 2022 15:16:14 -0400
+Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC0E9DF1C
+        for <kernel-janitors@vger.kernel.org>; Mon,  4 Jul 2022 12:16:13 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id 8RYIoSrT0ZDzU8RYJoUC9X; Mon, 04 Jul 2022 21:16:12 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Mon, 04 Jul 2022 21:16:12 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH] wifi: mac80211: Use the bitmap API to allocate bitmaps
+Date:   Mon,  4 Jul 2022 21:16:09 +0200
+Message-Id: <dfb438a6a199ee4c95081fa01bd758fd30e50931.1656962156.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable i is initialized with a value and then re-assigned with
-the same value in the following for-loop. The first initialization
-is redundant and can be removed.
+Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+It is less verbose and it improves the semantic.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/char/agp/amd64-agp.c | 1 -
- 1 file changed, 1 deletion(-)
+ net/mac80211/mesh_plink.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/char/agp/amd64-agp.c b/drivers/char/agp/amd64-agp.c
-index 84a4aa9312cf..c7bf2c4bc0b0 100644
---- a/drivers/char/agp/amd64-agp.c
-+++ b/drivers/char/agp/amd64-agp.c
-@@ -333,7 +333,6 @@ static int cache_nbs(struct pci_dev *pdev, u32 cap_ptr)
- 	if (!amd_nb_has_feature(AMD_NB_GART))
- 		return -ENODEV;
+diff --git a/net/mac80211/mesh_plink.c b/net/mac80211/mesh_plink.c
+index 55bed9ce98fe..d67011745048 100644
+--- a/net/mac80211/mesh_plink.c
++++ b/net/mac80211/mesh_plink.c
+@@ -477,8 +477,7 @@ static int mesh_allocate_aid(struct ieee80211_sub_if_data *sdata)
+ 	unsigned long *aid_map;
+ 	int aid;
  
--	i = 0;
- 	for (i = 0; i < amd_nb_num(); i++) {
- 		struct pci_dev *dev = node_to_amd_nb(i)->misc;
- 		if (fix_northbridge(dev, pdev, cap_ptr) < 0) {
+-	aid_map = kcalloc(BITS_TO_LONGS(IEEE80211_MAX_AID + 1),
+-			  sizeof(*aid_map), GFP_KERNEL);
++	aid_map = bitmap_zalloc(IEEE80211_MAX_AID + 1, GFP_KERNEL);
+ 	if (!aid_map)
+ 		return -ENOMEM;
+ 
+@@ -491,7 +490,7 @@ static int mesh_allocate_aid(struct ieee80211_sub_if_data *sdata)
+ 	rcu_read_unlock();
+ 
+ 	aid = find_first_zero_bit(aid_map, IEEE80211_MAX_AID + 1);
+-	kfree(aid_map);
++	bitmap_free(aid_map);
+ 
+ 	if (aid > IEEE80211_MAX_AID)
+ 		return -ENOBUFS;
 -- 
-2.35.3
+2.34.1
 
