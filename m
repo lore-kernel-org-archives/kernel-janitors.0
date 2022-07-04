@@ -2,35 +2,35 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5419C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Jul 2022 18:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA33C43334
+	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Jul 2022 19:04:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233637AbiGDS47 (ORCPT
+        id S234350AbiGDTEJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 4 Jul 2022 14:56:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50430 "EHLO
+        Mon, 4 Jul 2022 15:04:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231963AbiGDS47 (ORCPT
+        with ESMTP id S234341AbiGDTDz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 4 Jul 2022 14:56:59 -0400
-Received: from smtp.smtpout.orange.fr (smtp04.smtpout.orange.fr [80.12.242.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72FE810FEC
-        for <kernel-janitors@vger.kernel.org>; Mon,  4 Jul 2022 11:56:56 -0700 (PDT)
+        Mon, 4 Jul 2022 15:03:55 -0400
+Received: from smtp.smtpout.orange.fr (smtp01.smtpout.orange.fr [80.12.242.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D003712A87
+        for <kernel-janitors@vger.kernel.org>; Mon,  4 Jul 2022 12:03:31 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id 8RFdoQHoiIaWO8RFeo2rr9; Mon, 04 Jul 2022 20:56:54 +0200
+        id 8RM0oVexLeg3p8RM0oCUri; Mon, 04 Jul 2022 21:03:29 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 04 Jul 2022 20:56:54 +0200
+X-ME-Date: Mon, 04 Jul 2022 21:03:29 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         linux-mips@vger.kernel.org
-Subject: [PATCH] MIPS: math-emu: Use the bitmap API to allocate bitmaps
-Date:   Mon,  4 Jul 2022 20:56:52 +0200
-Message-Id: <dd954ccb2472019c64da0dd3a90d7b39a2fadc98.1656960999.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] MIPS: mm: Use the bitmap API to allocate bitmaps
+Date:   Mon,  4 Jul 2022 21:03:27 +0200
+Message-Id: <4b6493bfee4f1c2d30193df01e67052922703b95.1656961396.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -42,38 +42,37 @@ Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
 
 It is less verbose and it improves the semantic.
 
+While at it, turn a bitmap_clear() into an equivalent bitmap_zero(). It is
+also less verbose.
+
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/mips/math-emu/dsemul.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ arch/mips/mm/context.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/mips/math-emu/dsemul.c b/arch/mips/math-emu/dsemul.c
-index e2d46cb93ca9..e02bd20b60a6 100644
---- a/arch/mips/math-emu/dsemul.c
-+++ b/arch/mips/math-emu/dsemul.c
-@@ -82,11 +82,8 @@ static int alloc_emuframe(void)
+diff --git a/arch/mips/mm/context.c b/arch/mips/mm/context.c
+index b25564090939..966f40066f03 100644
+--- a/arch/mips/mm/context.c
++++ b/arch/mips/mm/context.c
+@@ -67,7 +67,7 @@ static void flush_context(void)
+ 	int cpu;
  
- 	/* Ensure we have an allocation bitmap */
- 	if (!mm_ctx->bd_emupage_allocmap) {
--		mm_ctx->bd_emupage_allocmap =
--			kcalloc(BITS_TO_LONGS(emupage_frame_count),
--					      sizeof(unsigned long),
--				GFP_ATOMIC);
--
-+		mm_ctx->bd_emupage_allocmap = bitmap_zalloc(emupage_frame_count,
-+							    GFP_ATOMIC);
- 		if (!mm_ctx->bd_emupage_allocmap) {
- 			idx = BD_EMUFRAME_NONE;
- 			goto out_unlock;
-@@ -206,7 +203,7 @@ void dsemul_mm_cleanup(struct mm_struct *mm)
- {
- 	mm_context_t *mm_ctx = &mm->context;
+ 	/* Update the list of reserved MMIDs and the MMID bitmap */
+-	bitmap_clear(mmid_map, 0, num_mmids);
++	bitmap_zero(mmid_map, num_mmids);
  
--	kfree(mm_ctx->bd_emupage_allocmap);
-+	bitmap_free(mm_ctx->bd_emupage_allocmap);
- }
+ 	/* Reserve an MMID for kmap/wired entries */
+ 	__set_bit(MMID_KERNEL_WIRED, mmid_map);
+@@ -277,8 +277,7 @@ static int mmid_init(void)
+ 	WARN_ON(num_mmids <= num_possible_cpus());
  
- int mips_dsemul(struct pt_regs *regs, mips_instruction ir,
+ 	atomic64_set(&mmid_version, asid_first_version(0));
+-	mmid_map = kcalloc(BITS_TO_LONGS(num_mmids), sizeof(*mmid_map),
+-			   GFP_KERNEL);
++	mmid_map = bitmap_zalloc(num_mmids, GFP_KERNEL);
+ 	if (!mmid_map)
+ 		panic("Failed to allocate bitmap for %u MMIDs\n", num_mmids);
+ 
 -- 
 2.34.1
 
