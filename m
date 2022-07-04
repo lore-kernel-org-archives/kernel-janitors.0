@@ -2,99 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C42E6C43334
-	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Jul 2022 18:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD40EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Jul 2022 18:53:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231224AbiGDSqI (ORCPT
+        id S231817AbiGDSxY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 4 Jul 2022 14:46:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46056 "EHLO
+        Mon, 4 Jul 2022 14:53:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229622AbiGDSqH (ORCPT
+        with ESMTP id S229674AbiGDSxX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 4 Jul 2022 14:46:07 -0400
-Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 123B9BC1C
-        for <kernel-janitors@vger.kernel.org>; Mon,  4 Jul 2022 11:46:06 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id 8R57ovKj1E80K8R58oOSoK; Mon, 04 Jul 2022 20:46:03 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 04 Jul 2022 20:46:03 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-mtd@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ubi: fastmap: Use the bitmap API to allocate bitmaps
-Date:   Mon,  4 Jul 2022 20:46:00 +0200
-Message-Id: <64cde893efca8f4dc381184cd7f6e5a54cd000f9.1656960335.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Mon, 4 Jul 2022 14:53:23 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 635ABFC9;
+        Mon,  4 Jul 2022 11:53:22 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id l40-20020a05600c1d2800b003a18adff308so6218222wms.5;
+        Mon, 04 Jul 2022 11:53:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=T1YetwhZb3OgibIUGFFuv352SwQk2UY8NZnYhEM765U=;
+        b=lNmrkBXzGPjuvDVI9s8mP5gy3z8tuSbD3fF5goEhL+xcTBkDvxLphfho2IGzOMVnFE
+         PRS4P3AwX8EKEkrn5c9JBZX7JrNoc0o2mKo8QFgx/CTByvzT282a6O5kjKgRyOAqx/rl
+         Iepu4fPVQ1F7LnhPqKkuYTowGsthDaO4IE7nGUtszRw5+x3Wfz3yJA2eb1LoHb/GmBzi
+         7GIvfxBSrRgw+l3YG3dV8+Mn29s/ewYutcOlpfAVPI6Ss5SyrFXrAy0jYtPMSmrvmR7O
+         EXNaMbXXzPcgf4Q0khCAgh9C+poLbndlE1zaveKYow1JLUsBpRU42bcDdrwS994bYRy+
+         sAKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=T1YetwhZb3OgibIUGFFuv352SwQk2UY8NZnYhEM765U=;
+        b=Azr0QlJfld3Ub6pU8qziTQLZ/+9V1yZuOVeWjXFcBJ8QNR9C9cMpfunCPqY6hWiazy
+         XKIDTBvvYyvDHR6ZoDccNIMgMKqAZ0ToOtugyfEc2nUyrnEpOBX9MvfBUZYd4nai822/
+         k4BuA+GO11aLtgpAaFY+Ri6lKJ4wiIsOvobe7DoY3BYAU4wpWXozYS27/6C4uSFLELYj
+         eNN/ixEFLgalMe3kdDCHzg0KZqCkMPa1FIy2lwslOaPEhscrWA0JfSHuJA6eqI07Rpgi
+         U+3KoPRgyt+ZWguNflBjvX4eiZUFiOaADMhsnaFUcfwxQEKcdR70RBExl+wRgXxKyn6d
+         GzhA==
+X-Gm-Message-State: AJIora/zq4AWcZeaos0iGetkOTVLi8HwwTZJ4QbgYE1Zyn5Qg+iwuHHM
+        DluxySeyEx80pGR86HqANbw=
+X-Google-Smtp-Source: AGRyM1vrBQHyhEqZZoyA4hn6r7CWyFalKKLaQYe4c6q+MWprWZDioffoMIe1RQn59/cE20iBV1Leyg==
+X-Received: by 2002:a05:600c:2315:b0:3a1:772e:b9a6 with SMTP id 21-20020a05600c231500b003a1772eb9a6mr29213575wmo.34.1656960800853;
+        Mon, 04 Jul 2022 11:53:20 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id by13-20020a056000098d00b0021b89f8662esm7273877wrb.13.2022.07.04.11.53.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Jul 2022 11:53:20 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        ntfs3@lists.linux.dev
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] fs/ntfs3: remove duplicated assignment to variable r
+Date:   Mon,  4 Jul 2022 19:53:19 +0100
+Message-Id: <20220704185319.592631-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
+The assignment to variable r is duplicated, the second assignment
+is redundant and can be removed.
 
-It is less verbose and it improves the semantic.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/mtd/ubi/fastmap.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ fs/ntfs3/run.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/mtd/ubi/fastmap.c b/drivers/mtd/ubi/fastmap.c
-index 6e95c4b1473e..ca2d9efe62c3 100644
---- a/drivers/mtd/ubi/fastmap.c
-+++ b/drivers/mtd/ubi/fastmap.c
-@@ -20,8 +20,7 @@ static inline unsigned long *init_seen(struct ubi_device *ubi)
- 	if (!ubi_dbg_chk_fastmap(ubi))
- 		return NULL;
+diff --git a/fs/ntfs3/run.c b/fs/ntfs3/run.c
+index 7609d45a2d72..aba8ab1b9fcb 100644
+--- a/fs/ntfs3/run.c
++++ b/fs/ntfs3/run.c
+@@ -563,7 +563,6 @@ bool run_insert_range(struct runs_tree *run, CLST vcn, CLST len)
+ 	e = run->runs + run->count;
+ 	r = run->runs + index;
  
--	ret = kcalloc(BITS_TO_LONGS(ubi->peb_count), sizeof(unsigned long),
--		      GFP_KERNEL);
-+	ret = bitmap_zalloc(ubi->peb_count, GFP_KERNEL);
- 	if (!ret)
- 		return ERR_PTR(-ENOMEM);
+-	r = run->runs + index;
+ 	if (vcn > r->vcn)
+ 		r += 1;
  
-@@ -34,7 +33,7 @@ static inline unsigned long *init_seen(struct ubi_device *ubi)
-  */
- static inline void free_seen(unsigned long *seen)
- {
--	kfree(seen);
-+	bitmap_free(seen);
- }
- 
- /**
-@@ -1108,8 +1107,7 @@ int ubi_fastmap_init_checkmap(struct ubi_volume *vol, int leb_count)
- 	if (!ubi->fast_attach)
- 		return 0;
- 
--	vol->checkmap = kcalloc(BITS_TO_LONGS(leb_count), sizeof(unsigned long),
--				GFP_KERNEL);
-+	vol->checkmap = bitmap_zalloc(leb_count, GFP_KERNEL);
- 	if (!vol->checkmap)
- 		return -ENOMEM;
- 
-@@ -1118,7 +1116,7 @@ int ubi_fastmap_init_checkmap(struct ubi_volume *vol, int leb_count)
- 
- void ubi_fastmap_destroy_checkmap(struct ubi_volume *vol)
- {
--	kfree(vol->checkmap);
-+	bitmap_free(vol->checkmap);
- }
- 
- /**
 -- 
-2.34.1
+2.35.3
 
