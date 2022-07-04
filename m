@@ -2,85 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D07C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Jul 2022 11:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D80EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Jul 2022 11:48:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233910AbiGDLBz (ORCPT
+        id S230319AbiGDLso (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 4 Jul 2022 07:01:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51708 "EHLO
+        Mon, 4 Jul 2022 07:48:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233132AbiGDLBy (ORCPT
+        with ESMTP id S233629AbiGDLsd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 4 Jul 2022 07:01:54 -0400
-Received: from ssl.serverraum.org (ssl.serverraum.org [IPv6:2a01:4f8:151:8464::1:2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAA3025E2
-        for <kernel-janitors@vger.kernel.org>; Mon,  4 Jul 2022 04:01:52 -0700 (PDT)
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        Mon, 4 Jul 2022 07:48:33 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEEB830D;
+        Mon,  4 Jul 2022 04:48:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 22F3822175;
-        Mon,  4 Jul 2022 13:01:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1656932510;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=YQ6ksug+BFKh++5Gf6JtccDKmV45FwkQCtJw+Ho6+7I=;
-        b=eVA+r2uMcnvEZrknZFnpGoaqFS7xi/I6Av9OEWnpK2O887FU9x7Ylu6qfgvtZWUU1Izn/T
-        n+VJwLAm1ebGB7vcIenlScVEcS+yqAX0YwoHEz4fExBqOi3Vv/LztU90HwpDIwTVemU5I7
-        LrVur+PGovBjzewrn5IToAoJVC5JmK0=
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A38B660AE0;
+        Mon,  4 Jul 2022 11:48:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C587C341CF;
+        Mon,  4 Jul 2022 11:48:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656935309;
+        bh=lEhyQTPqbnb0qaLyB8fV9ShNcZX9KnoEMwg8oP3XPXo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=fJZcg2YIEpiEHrl3wUjKcpxH28YXBcPnLdS5XvkAxnYcmpCQ1+6v1D0WjcA2ITQ1P
+         Fc/PIfLE3WguvQ+rGB8hTh09C6gsXeyolZJeLnqQbjEzLuSAaJu7TkM6nGVfaAR0JY
+         Q2usMLbx2u8Uo1JssJAVR63yMQC29W0c2ye0Zz2NXHQMbCC3lXezQRPZVhTrgHeeap
+         5Nn2gk1e4/FiQ28Tnm4va47K61FIxeCchdNoQIBFRSVhw8ZkD93QbUjQTc6gLmlc3B
+         hxBl9TzDNuJmr3Ayg7lSit67PqeDTjYXAzwRGDuewpInqRSsVSodN5qAAW7GL9CSWJ
+         8dv4NoK4VEt7w==
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-31c89653790so28528077b3.13;
+        Mon, 04 Jul 2022 04:48:28 -0700 (PDT)
+X-Gm-Message-State: AJIora9UPfu+pItcA2eh/gFvmbBBAq78sNd1skZa6KiEqX9Vjw5NrF+L
+        I4qEYmSb3XdqnqC09oaLIcWyTwcTaFGm2P3RcNc=
+X-Google-Smtp-Source: AGRyM1tzspPjx1oBGlRK+b4v7HjFxhNVeLwzzvyBnf7TghUn5Qa2tYmn1MZVvuYvvCpUtENB9jxcfuAz5b0rnz2nEZk=
+X-Received: by 2002:a0d:fec3:0:b0:31b:c2d6:34ea with SMTP id
+ o186-20020a0dfec3000000b0031bc2d634eamr32642370ywf.62.1656935308108; Mon, 04
+ Jul 2022 04:48:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 04 Jul 2022 13:01:46 +0200
-From:   Michael Walle <michael@walle.cc>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Li Yang <leoyang.li@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org,
+References: <7112242cb741443d6abc18ebc210431f0c4ffa18.1656880577.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <7112242cb741443d6abc18ebc210431f0c4ffa18.1656880577.git.christophe.jaillet@wanadoo.fr>
+From:   Oded Gabbay <ogabbay@kernel.org>
+Date:   Mon, 4 Jul 2022 14:48:01 +0300
+X-Gmail-Original-Message-ID: <CAFCwf10SQ6E85Vyyx4P=pq-CwYrH874vPp73J5EdObFZ4=YNwA@mail.gmail.com>
+Message-ID: <CAFCwf10SQ6E85Vyyx4P=pq-CwYrH874vPp73J5EdObFZ4=YNwA@mail.gmail.com>
+Subject: Re: [PATCH] habanalabs: Use the bitmap API to allocate bitmaps
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
         kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] soc: fsl: guts: fix IS_ERR() vs NULL bug
-In-Reply-To: <YsLHCE/ttyl/OeHs@kili>
-References: <YsLHCE/ttyl/OeHs@kili>
-User-Agent: Roundcube Webmail/1.4.13
-Message-ID: <9d3033f1ddaa224a792849fdf952587f@walle.cc>
-X-Sender: michael@walle.cc
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Am 2022-07-04 12:55, schrieb Dan Carpenter:
-> The of_iomap() function returns NULL on failure, it never returns
-> error pointers.
-> 
-> Fixes: ab4988d6a393 ("soc: fsl: guts: embed fsl_guts_get_svr() in 
-> probe()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Sun, Jul 3, 2022 at 11:36 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
+>
+> It is less verbose and it improves the semantic.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/soc/fsl/guts.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
-> index 27035de062f8..8038c599ad83 100644
-> --- a/drivers/soc/fsl/guts.c
-> +++ b/drivers/soc/fsl/guts.c
-> @@ -195,9 +195,9 @@ static int __init fsl_guts_init(void)
->  	soc_data = match->data;
-> 
->  	regs = of_iomap(np, 0);
-> -	if (IS_ERR(regs)) {
-> +	if (!regs) {
->  		of_node_put(np);
-> -		return PTR_ERR(regs);
-> +		return -ENOMEM;
->  	}
-> 
->  	little_endian = of_property_read_bool(np, "little-endian");
+>  drivers/misc/habanalabs/common/asid.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/misc/habanalabs/common/asid.c b/drivers/misc/habanalabs/common/asid.c
+> index ede04c032b6e..c9c2619cc43d 100644
+> --- a/drivers/misc/habanalabs/common/asid.c
+> +++ b/drivers/misc/habanalabs/common/asid.c
+> @@ -11,8 +11,7 @@
+>
+>  int hl_asid_init(struct hl_device *hdev)
+>  {
+> -       hdev->asid_bitmap = kcalloc(BITS_TO_LONGS(hdev->asic_prop.max_asid),
+> -                                       sizeof(*hdev->asid_bitmap), GFP_KERNEL);
+> +       hdev->asid_bitmap = bitmap_zalloc(hdev->asic_prop.max_asid, GFP_KERNEL);
+>         if (!hdev->asid_bitmap)
+>                 return -ENOMEM;
+>
+> @@ -27,7 +26,7 @@ int hl_asid_init(struct hl_device *hdev)
+>  void hl_asid_fini(struct hl_device *hdev)
+>  {
+>         mutex_destroy(&hdev->asid_mutex);
+> -       kfree(hdev->asid_bitmap);
+> +       bitmap_free(hdev->asid_bitmap);
+>  }
+>
+>  unsigned long hl_asid_alloc(struct hl_device *hdev)
+> --
+> 2.34.1
+>
 
-There was already a patch for this:
-https://lore.kernel.org/lkml/20220628140249.1073809-1-yangyingliang@huawei.com/
-
--michael
+Thanks!
+This patch is
+Reviewed-by: Oded Gabbay <ogabbay@kernel.org>
+Applied to -next.
+Oded
