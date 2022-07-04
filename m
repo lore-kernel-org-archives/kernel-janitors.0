@@ -2,116 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8462BC43334
-	for <kernel-janitors@archiver.kernel.org>; Sun,  3 Jul 2022 20:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2081C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Jul 2022 01:52:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231952AbiGCUlf (ORCPT
+        id S232728AbiGDBwN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 3 Jul 2022 16:41:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46712 "EHLO
+        Sun, 3 Jul 2022 21:52:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231438AbiGCUld (ORCPT
+        with ESMTP id S229604AbiGDBwM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 3 Jul 2022 16:41:33 -0400
-Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0CCF1152
-        for <kernel-janitors@vger.kernel.org>; Sun,  3 Jul 2022 13:41:32 -0700 (PDT)
-Received: from [192.168.1.18] ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id 86PIo6R3j5ohR86PIo6kvF; Sun, 03 Jul 2022 22:41:30 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 03 Jul 2022 22:41:30 +0200
-X-ME-IP: 90.11.190.129
-Message-ID: <effcd39c-7f86-5f69-0663-4b81015cfc7c@wanadoo.fr>
-Date:   Sun, 3 Jul 2022 22:41:27 +0200
+        Sun, 3 Jul 2022 21:52:12 -0400
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34570265C
+        for <kernel-janitors@vger.kernel.org>; Sun,  3 Jul 2022 18:52:08 -0700 (PDT)
+Received: by mail-pl1-x62f.google.com with SMTP id c13so3569845pla.6
+        for <kernel-janitors@vger.kernel.org>; Sun, 03 Jul 2022 18:52:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:in-reply-to:references:subject:message-id:date
+         :mime-version:content-transfer-encoding;
+        bh=jlzlpgII0GMrAAcd80jEjz8oGoZ5GrnU6PvVA1R8yiU=;
+        b=MYYXsp8jAC2jQkXxVBBk2SO7EwRKNcTY7kYo7/skmDGuXmdwyAT0gvwHZWCXje7cAC
+         B6nnjFQHlUGvudlJXhvdVlqP6Nsp4Kew/8mAJYyBOc1p+/q7bzbpK4W3il/2Y3+t5S03
+         LWyanopNF5HwXVqFtX1qjj6OXrrt3NfD2OCHcUn3dOpz3ZzAvyVRE6zC/hUvbqVgQqVm
+         KAVhBRF4DTmKZomm8A2Tm8Q4Rx+U6fkp2PBURN3VITgCS3vNf0D54WbKQiI1bTxc8uFb
+         dqaR9Mr57/QaVSxA+/8iLn+UfdF5Z/D2r0LYBEL/Bp7UNVRP+mQPTdDzjL6XgWkMvQWu
+         QqlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=jlzlpgII0GMrAAcd80jEjz8oGoZ5GrnU6PvVA1R8yiU=;
+        b=caNNdis0QDj5v4WHLE6nEMnkP3IiFWeegPLhtD6pYN0z+STVXcp/OVpMRgN1AflHuW
+         0Mt7QFSxY0tjt6qZ9FfSpNZxLEsol+KBpvRjVcDVB1cMWz68tzVWQzWOFd7eQNJwuQOO
+         z4FHbzJyZ0i/Dc94x935YTfSovIppImPzKO2E8pMAHXi0Ner0AIdzniDwjS9ZXY3ux/Z
+         X1w/EqbF8rxDZCk7kbWOEqh8dA6MZoRGtOJb+BjDlerBH3UyxZoEI95B231DdiLMBto2
+         pnDMsgUc4lwE0dyyOVoXT/pHqzTve6j1KNZ0xDu8qMh5vJFmUYg1NmrYYZC+lsDWDwIx
+         5owA==
+X-Gm-Message-State: AJIora9KE6Amm5tZG0fy9+8zNEuG9jGN+5fl5XZelCjRDDJgzGFRjnQm
+        OwlqAqEJxqWj4dSyHINemlk628aph6IVww==
+X-Google-Smtp-Source: AGRyM1tRZqWWSoA7w5kCfY6RHZ4HXSesoWpucMZNeORgv0J2Ql9G6MZYfmR/ZucTXPWg8lBczHzA1A==
+X-Received: by 2002:a17:90a:db96:b0:1ef:8c86:eb09 with SMTP id h22-20020a17090adb9600b001ef8c86eb09mr735043pjv.22.1656899527674;
+        Sun, 03 Jul 2022 18:52:07 -0700 (PDT)
+Received: from [127.0.1.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 14-20020a17090a174e00b001ef8397571asm1609430pjm.35.2022.07.03.18.52.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Jul 2022 18:52:07 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     christophe.jaillet@wanadoo.fr
+Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+In-Reply-To: <7c4d3116ba843fc4a8ae557dd6176352a6cd0985.1656864320.git.christophe.jaillet@wanadoo.fr>
+References: <7c4d3116ba843fc4a8ae557dd6176352a6cd0985.1656864320.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] block: null_blk: Use the bitmap API to allocate bitmaps
+Message-Id: <165689952697.1306443.9051111172793553499.b4-ty@kernel.dk>
+Date:   Sun, 03 Jul 2022 19:52:06 -0600
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH 3/4] bitmap: Introduce bitmap_size()
-Content-Language: en-US
-To:     Yury Norov <yury.norov@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     agk@redhat.com, snitzer@kernel.org, dm-devel@redhat.com,
-        vneethv@linux.ibm.com, oberpar@linux.ibm.com, hca@linux.ibm.com,
-        gor@linux.ibm.com, agordeev@linux.ibm.com,
-        borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        almaz.alexandrovich@paragon-software.com, linux@rasmusvillemoes.dk,
-        linux-s390@vger.kernel.org, ntfs3@lists.linux.dev,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <cover.1656785856.git.christophe.jaillet@wanadoo.fr>
- <98f5d3d855a9c687ccc035edf62016b02a6876b7.1656785856.git.christophe.jaillet@wanadoo.fr>
- <YsC0GpltMVaCPhkJ@yury-laptop>
- <4dc5d50a-2291-1d3a-efac-3f6378a15d69@wanadoo.fr>
- <YsGz1Xp0RDM5ZhVY@smile.fi.intel.com> <YsHqRDfCQVwyA2m1@yury-laptop>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <YsHqRDfCQVwyA2m1@yury-laptop>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 03/07/2022 à 21:13, Yury Norov a écrit :
-> On Sun, Jul 03, 2022 at 06:20:53PM +0300, Andy Shevchenko wrote:
->> On Sun, Jul 03, 2022 at 08:50:19AM +0200, Christophe JAILLET wrote:
->>> Le 02/07/2022 à 23:09, Yury Norov a écrit :
->>>> On Sat, Jul 02, 2022 at 08:29:36PM +0200, Christophe JAILLET wrote:
->>
->> ...
->>
->>>> This should be dropped, for sure, and kmalloc() at line 128 should be
->>>> replaced with bitmap_alloc().
->>>
->>> This kmalloc() is for a structure and a flexible array.
->>>
->>> You mean re-arranging the code to allocate the structure alone at first,
->>> then the bitmap?
+On Sun, 3 Jul 2022 18:05:43 +0200, Christophe JAILLET wrote:
+> Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
 > 
-> We can change struct primes to:
->          struct primes {
->                  struct rcu_head rcu;
->                  unsigned long last, sz;
->                  unsigned long *primes;
->          };
+> It is less verbose and it improves the semantic.
 > 
-> And then either allocate twice:
->          new = kmalloc(sizeof(struct primes);
->          new->primes = bitmap_alloc(sz);
 > 
-> Or keep the same struct primes for all expansions, and just allocate
-> new bitmap for ->primes when needed. This is what I meant.
-> 
-> This a bit deeper rework, but it addresses Andy's concern about excessive
-> fragmentation. (Did anyone before complain? Is it measurable?)
-> 
->> It's one way, but it will increase fragmentation of memory. The other one
->> as it seems to me is to name a new API properly, i.e. bitmap_size_to_bytes().
->>
->> In such case you won't need renames to begin with. And then would be able
->> to convert driver-by-driver in cases of duplicated code.
->>
->> I think that's what confused Yuri and I kinda agree that bitmap_size() should
->> return bits, and not bytes. Also argument for pure bitmap_size() would be
->> bitmap itself, but we have no way to detect the length of bitmap because we
->> are using POD and not a specific data structure for it.
-> 
-> bitmap_size_to_bytes() sounds better. How many places in the kernel
-> do we have where we can't simply use bitmap_alloc(), and need this
-> machinery? If this is the only one, I'd prefer to switch it to
-> bitmap_alloc() instead.
 
-I'll spot some places that would require a bitmap_size_to_bytes().
+Applied, thanks!
 
-This way, we'll have some more information to decide if:
-    - bitmap_size_to_bytes() makes sense or not
-    - other helper functions are better suited
-    - these places need some rework to use the existing API
+[1/1] block: null_blk: Use the bitmap API to allocate bitmaps
+      commit: aa516a92584eabad397f0a47597b20754521c876
 
-CJ
+Best regards,
+-- 
+Jens Axboe
 
-> 
-> Thanks,
-> Yury
-> 
 
