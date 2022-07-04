@@ -2,90 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75463C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Jul 2022 19:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C77C43334
+	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Jul 2022 19:07:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232488AbiGDTFB (ORCPT
+        id S233637AbiGDTHJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 4 Jul 2022 15:05:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56136 "EHLO
+        Mon, 4 Jul 2022 15:07:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229674AbiGDTFA (ORCPT
+        with ESMTP id S234271AbiGDTGv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 4 Jul 2022 15:05:00 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CA7D9F;
-        Mon,  4 Jul 2022 12:05:00 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id r14so8847379wrg.1;
-        Mon, 04 Jul 2022 12:05:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QEBSbyyAriJ3axcxzTJOLoEF87twdXMhPEB9eDVIr3U=;
-        b=JN7kMXbpqSYP8XlB6hY6/vmJLbzYxjT3ky1kqpqyPBmg+fk2a0vanwxn2qykBhVdE8
-         9TZW7U1AG/yeP/orQPhRoMNbc56jcROPqAIDicIvrTgO5Ms6kwKFBcPjJv81A9VI3zYn
-         VeF1JXQvWgFscEZRIlbhj/RhFZiwLNBsh2Z552vaBV0t9qwysIZBIPCsxeDmwuuUgFqR
-         Wk01HoigCItp7/QccbAooLbigWRwXkUmgBA1HQTc+wuqlpF7mUtIOBbaEzeUkFbHaRH/
-         /Gc3RjG8whX6vTZ8U0KqlPXt+Vz09/R1qej9ChBq1qzH+KMpupvRdlL4tXipKvvMVjPN
-         ryEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QEBSbyyAriJ3axcxzTJOLoEF87twdXMhPEB9eDVIr3U=;
-        b=ygz8+wGHOYitNJIUaGTKkyaFbVKcy3tdQDw3C6x39nAyCAE/G98DUw1jhHp7Ztd5a3
-         S+n0AAP0lKky8ZvDvKgFRrnI5bWyFGoOaCSH5263DsoLB42lLzwVqTi5cTwxc4OMf4bx
-         aWk8jXPw79VSrFLipWUUm29qjsb4q4X5v6mfOYf6JPcUgahMq8XhQV4JEWj4yGhR9vCQ
-         vYnwAv50lcKJyrgj8t6elw1eijPImHrDw5LosXGtAUa8PkTwrVtkN5RXiuBVUZ1u7PEb
-         6gwFfXsTCFDiUlZmwcx7qp4L7LWeaMPqFHbXo9TKhCCBpuWtHJLDNF7lo2fq2+1jO98U
-         xdwg==
-X-Gm-Message-State: AJIora9Li6n5NgE5iSw+Jz5nW+hSQyVcqeNwJza5tscKyX78BqglQJZJ
-        Oc6d6ngMey/toh/QsYd8bBA=
-X-Google-Smtp-Source: AGRyM1selk9vQO874eIZGtcdX8d03YdOesjs/jdxQk+lZrli65FVjoppNiuB0CjDD2uoA31Smellsg==
-X-Received: by 2002:a5d:6d46:0:b0:21b:933d:7950 with SMTP id k6-20020a5d6d46000000b0021b933d7950mr28313024wri.679.1656961498051;
-        Mon, 04 Jul 2022 12:04:58 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id bv13-20020a0560001f0d00b002101ed6e70fsm12243662wrb.37.2022.07.04.12.04.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Jul 2022 12:04:57 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Zhu Lingshan <lingshan.zhu@intel.com>,
-        virtualization@lists.linux-foundation.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] vDPA/ifcvf: remove duplicated assignment to pointer cfg
-Date:   Mon,  4 Jul 2022 20:04:56 +0100
-Message-Id: <20220704190456.593464-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.3
+        Mon, 4 Jul 2022 15:06:51 -0400
+Received: from smtp.smtpout.orange.fr (smtp01.smtpout.orange.fr [80.12.242.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 103F3214
+        for <kernel-janitors@vger.kernel.org>; Mon,  4 Jul 2022 12:06:50 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id 8RPEoGXnX6LCV8RPEo6YRC; Mon, 04 Jul 2022 21:06:48 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Mon, 04 Jul 2022 21:06:48 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Guo Ren <guoren@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-csky@vger.kernel.org
+Subject: [PATCH] csky: Use the bitmap API to allocate bitmaps
+Date:   Mon,  4 Jul 2022 21:06:46 +0200
+Message-Id: <07685c3184d2d9e3ee3b83e8f608e3a178cfabe3.1656961592.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The assignment to pointer cfg is duplicated, the second assignment
-is redundant and can be removed.
+Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+It is less verbose and it improves the semantic.
+
+While at it, turn a bitmap_clear() into an equivalent bitmap_zero(). It is
+also less verbose.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/vdpa/ifcvf/ifcvf_base.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/csky/mm/asid.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/vdpa/ifcvf/ifcvf_base.c b/drivers/vdpa/ifcvf/ifcvf_base.c
-index 48c4dadb0c7c..47b94091733c 100644
---- a/drivers/vdpa/ifcvf/ifcvf_base.c
-+++ b/drivers/vdpa/ifcvf/ifcvf_base.c
-@@ -29,7 +29,6 @@ u16 ifcvf_set_config_vector(struct ifcvf_hw *hw, int vector)
- {
- 	struct virtio_pci_common_cfg __iomem *cfg = hw->common_cfg;
+diff --git a/arch/csky/mm/asid.c b/arch/csky/mm/asid.c
+index b2e914745c1d..7fb6c417bbac 100644
+--- a/arch/csky/mm/asid.c
++++ b/arch/csky/mm/asid.c
+@@ -27,7 +27,7 @@ static void flush_context(struct asid_info *info)
+ 	u64 asid;
  
--	cfg = hw->common_cfg;
- 	vp_iowrite16(vector,  &cfg->msix_config);
+ 	/* Update the list of reserved ASIDs and the ASID bitmap. */
+-	bitmap_clear(info->map, 0, NUM_CTXT_ASIDS(info));
++	bitmap_zero(info->map, NUM_CTXT_ASIDS(info));
  
- 	return vp_ioread16(&cfg->msix_config);
+ 	for_each_possible_cpu(i) {
+ 		asid = atomic64_xchg_relaxed(&active_asid(info, i), 0);
+@@ -178,8 +178,7 @@ int asid_allocator_init(struct asid_info *info,
+ 	 */
+ 	WARN_ON(NUM_CTXT_ASIDS(info) - 1 <= num_possible_cpus());
+ 	atomic64_set(&info->generation, ASID_FIRST_VERSION(info));
+-	info->map = kcalloc(BITS_TO_LONGS(NUM_CTXT_ASIDS(info)),
+-			    sizeof(*info->map), GFP_KERNEL);
++	info->map = bitmap_zalloc(NUM_CTXT_ASIDS(info), GFP_KERNEL);
+ 	if (!info->map)
+ 		return -ENOMEM;
+ 
 -- 
-2.35.3
+2.34.1
 
