@@ -2,140 +2,191 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D457C43334
-	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Jul 2022 16:31:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7CDDC43334
+	for <kernel-janitors@archiver.kernel.org>; Mon,  4 Jul 2022 17:28:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233772AbiGDQbP (ORCPT
+        id S234787AbiGDR2R (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 4 Jul 2022 12:31:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37006 "EHLO
+        Mon, 4 Jul 2022 13:28:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233028AbiGDQbL (ORCPT
+        with ESMTP id S234072AbiGDR2Q (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 4 Jul 2022 12:31:11 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62C496404;
-        Mon,  4 Jul 2022 09:31:10 -0700 (PDT)
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 264G2wcS023517;
-        Mon, 4 Jul 2022 16:30:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=pp1; bh=gJnL/G7O20Rd6U2Rbs8HerMEoRfqGWgNBlHNnsoKfbE=;
- b=Kl8uHM6iasT3vuqppIAyjB4nBDdSIbUAoddnUZFhpqnVZSGqoFsmjT+tgZVkxoku2sG4
- qQd4NbDpqiJLl/rdvYoZI2FXFHCsF4H872bPrGtVGSytOJ8rPfzyWfwNQq62r40Ofkc5
- 1y57ob/MmM3vtlpswvDHol6XBUWqpghj88H/kFxB1KQ7yrCBBQ9tOBUjwAQx6DV2yuvJ
- Czp4U7Q5oG+ZcowYxRl5Idzr0OF+r+iaMtLrRh8y95iIx4JRQvIfRDqCCFb6wRyPgpw+
- wSyVlXvK9oPxKzcPmAtVOmtUaN6kn+NYEou8yV7qPDzFj5YqpmaehZceGe1Jf7036tuO bA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3h43cu0hs6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 04 Jul 2022 16:30:57 +0000
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 264G3tlW026793;
-        Mon, 4 Jul 2022 16:30:56 GMT
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3h43cu0hrh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 04 Jul 2022 16:30:56 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 264GMC97008512;
-        Mon, 4 Jul 2022 16:30:54 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma06ams.nl.ibm.com with ESMTP id 3h2d9jaxbt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 04 Jul 2022 16:30:54 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 264GTdaw20054430
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 4 Jul 2022 16:29:39 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 42A4A11C050;
-        Mon,  4 Jul 2022 16:30:52 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3422611C04A;
-        Mon,  4 Jul 2022 16:30:51 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.145.191.226])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon,  4 Jul 2022 16:30:51 +0000 (GMT)
-Date:   Mon, 4 Jul 2022 19:30:49 +0300
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>, llvm@lists.linux.dev,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] secretmem: drop unneeded initialization in
- secretmem_file_create()
-Message-ID: <YsMVuVBoCVWUawsq@linux.ibm.com>
-References: <20220704092605.19604-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220704092605.19604-1-lukas.bulwahn@gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: eHOg46GdlyEixKN991psQ6ZIf0VubMuc
-X-Proofpoint-ORIG-GUID: gIlQ0z65uu7v642PDYHSFqXRCZenWHWt
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Mon, 4 Jul 2022 13:28:16 -0400
+Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88D4D120B0
+        for <kernel-janitors@vger.kernel.org>; Mon,  4 Jul 2022 10:28:15 -0700 (PDT)
+Received: by mail-qt1-x831.google.com with SMTP id ay10so10631127qtb.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 04 Jul 2022 10:28:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=message-id:date:mime-version:user-agent:subject:to:cc:references
+         :from:in-reply-to;
+        bh=m5EZhDFTXRNQdfm6krYPh50v9c+4Y0JKXjXUvLR29Bc=;
+        b=BqsRZdr3HdHZRr5Te0sFlqnyU8hzDwy4dGMm9COC5taid+kHHZFqzBlGbnAohCs9Xq
+         /an5ttA1wL9RSyn5dK3r8MtxeePNsgV39CZ8VB69Rpq6MPEzcui1Kb+NI0Bpq3/w2/xB
+         hC0goP1M/7IR/GzAZR0ApT22yblxHEs1OPRXY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :to:cc:references:from:in-reply-to;
+        bh=m5EZhDFTXRNQdfm6krYPh50v9c+4Y0JKXjXUvLR29Bc=;
+        b=1r/5EHOzXJsKF5Ix/mkt2zIn5T+dGJUneBsvFSV6ate/Nn2aG/dAZmAUmdq5yFS3gG
+         ungQZImRhif2IZfwvak3gZ+Ue/BHADko2fHsXPkBrEgcPyq4rpFtcxXgyChDyVmGyFi9
+         TOAscWsPxH2CHC7V1ngS3G10TU+WYzQ7TNy/FMKN86Ck0FkrSXDI/HRoRQA/pzrIckeB
+         HwWV8e9O6eWKqznEPeEnqJtbEu0WofbWo/waftcCSJG8q81aW2W7j/P72U7MTTT/ul59
+         GeOmksw1GGYeqkAq8glM52a3Dy42douUZ92CzczTD3Q/09fA1uVD3PGnvbQ+0C+9WQy9
+         vS9g==
+X-Gm-Message-State: AJIora8NSVq5kTNeOI5pgVjavPTHc8ipQI3YnzW8OSzOhzBkF/UW2BqO
+        ZmI/opHpoKQoEq9RhqXzOVm4fw==
+X-Google-Smtp-Source: AGRyM1sspPtcCMTP83J31a/0vinQJLI41Uz99PoFSBKoSS5WNaoG6xScw4Ba9vuRyXp+BcIO51hTVA==
+X-Received: by 2002:ac8:7f41:0:b0:31d:3454:6dfa with SMTP id g1-20020ac87f41000000b0031d34546dfamr18178530qtk.14.1656955694400;
+        Mon, 04 Jul 2022 10:28:14 -0700 (PDT)
+Received: from [10.136.8.240] ([192.19.161.248])
+        by smtp.gmail.com with ESMTPSA id n4-20020a05620a294400b006b24d912ab7sm10369102qkp.46.2022.07.04.10.28.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Jul 2022 10:28:13 -0700 (PDT)
+Message-ID: <745e96ba-0632-141e-ae11-a59c00f63ab7@broadcom.com>
+Date:   Mon, 4 Jul 2022 10:28:10 -0700
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-07-04_16,2022-06-28_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- phishscore=0 priorityscore=1501 suspectscore=0 lowpriorityscore=0
- clxscore=1011 mlxlogscore=999 adultscore=0 mlxscore=0 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2204290000 definitions=main-2207040069
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] PCI: iproc: Use the bitmap API to allocate bitmaps
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <d839a951358ceb447226dc776590a2a38f3e3f9d.1656940469.git.christophe.jaillet@wanadoo.fr>
+From:   Ray Jui <ray.jui@broadcom.com>
+In-Reply-To: <d839a951358ceb447226dc776590a2a38f3e3f9d.1656940469.git.christophe.jaillet@wanadoo.fr>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="00000000000099e38305e2fe0fa3"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Lukas,
+--00000000000099e38305e2fe0fa3
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 04, 2022 at 11:26:05AM +0200, Lukas Bulwahn wrote:
-> Drop the unneeded initialization of the local variable file in function
-> secretmem_file_create().
+
+
+On 7/4/2022 6:15 AM, Christophe JAILLET wrote:
+> Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
 > 
-> No functional change and no change in the resulting object code.
+> It is less verbose and it improves the semantic.
 > 
-> This unneeded initialization was already introduced with the introduction
-> of secretmem in commit 1507f51255c9 ("mm: introduce memfd_secret system
-> call to create "secret" memory areas"). This minor code-stylistic issue
-> was discovered as a dead store with clang-analyzer.
-
-You are right and in the current code the initialization is unneeded, but
-there's a pending patch that relies of this initialization:
-
-https://lore.kernel.org/all/Yr1jKwz2+SGxjcuW@kernel.org/
-
-Let's wait and see how that fix develops.
-
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
-> Mike, please ack.
+>  drivers/pci/controller/pcie-iproc-msi.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Andrew, please pick this minor stylistic clean-up patch. Thanks.
-> 
->  mm/secretmem.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/secretmem.c b/mm/secretmem.c
-> index 7584aab54d20..46b431d62761 100644
-> --- a/mm/secretmem.c
-> +++ b/mm/secretmem.c
-> @@ -171,7 +171,7 @@ static struct vfsmount *secretmem_mnt;
+> diff --git a/drivers/pci/controller/pcie-iproc-msi.c b/drivers/pci/controller/pcie-iproc-msi.c
+> index 757b7fbcdc59..fee036b07cd4 100644
+> --- a/drivers/pci/controller/pcie-iproc-msi.c
+> +++ b/drivers/pci/controller/pcie-iproc-msi.c
+> @@ -589,8 +589,8 @@ int iproc_msi_init(struct iproc_pcie *pcie, struct device_node *node)
+>  		msi->has_inten_reg = true;
 >  
->  static struct file *secretmem_file_create(unsigned long flags)
->  {
-> -	struct file *file = ERR_PTR(-ENOMEM);
-> +	struct file *file;
->  	struct inode *inode;
->  	const char *anon_name = "[secretmem]";
->  	const struct qstr qname = QSTR_INIT(anon_name, strlen(anon_name));
-> -- 
-> 2.17.1
-> 
+>  	msi->nr_msi_vecs = msi->nr_irqs * EQ_LEN;
+> -	msi->bitmap = devm_kcalloc(pcie->dev, BITS_TO_LONGS(msi->nr_msi_vecs),
+> -				   sizeof(*msi->bitmap), GFP_KERNEL);
+> +	msi->bitmap = devm_bitmap_zalloc(pcie->dev, msi->nr_msi_vecs,
+> +					 GFP_KERNEL);
+>  	if (!msi->bitmap)
+>  		return -ENOMEM;
+>  
 
--- 
-Sincerely yours,
-Mike.
+Improvement looks fine to me. Thanks.
+
+Acked-by: Ray Jui <ray.jui@broadcom.com>
+
+--00000000000099e38305e2fe0fa3
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+Pi3DQoJNNR5cV1dw3cNMKQyHRziEjFTVmILshClu9AljdXzCUoHXDUbge8TIJ/fK36qTGCYWwA01
+rTB3drVX3FZq/Uqo0JnVcyP1dtYVzQIDAQABo4IB1TCCAdEwDgYDVR0PAQH/BAQDAgWgMIGjBggr
+BgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9j
+YWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8v
+b2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBE
+MEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20v
+cmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2Jh
+bHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNybDAfBgNVHREEGDAWgRRyYXku
+anVpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdb
+NHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQU5E1VdIocTRYIpXh6e6OnGvwfrEgwDQYJKoZIhvcNAQEL
+BQADggEBADcZteuA4mZVmXNzp/tJky+9TS87L/xAogg4z+0bFDomA2JdNGKjraV7jE3LKHUyCQzU
+Bvp8xXjxCndLBgltr+2Fn/Dna/f29iAs4mPBxgPKhqnqpQuTo2DLID2LWU1SLI9ewIlROY57UCvO
+B6ni+9NcOot0MbKF2A1TnzJjWyd127CVyU5vL3un1/tbtmjiT4Ku8ZDoBEViuuWyhdB6TTEQiwDo
+2NxZdezRkkkq+RoNek6gmtl8IKmXsmr1dKIsRBtLQ0xu+kdX+zYJbAQymI1mkq8qCmFAe5aJkrNM
+NbsYBZGZlcox4dHWayCpn4sK+41xyJsmGrygY3zghqBuHPUxggJtMIICaQIBATBrMFsxCzAJBgNV
+BAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdD
+QyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgxnTAexrtwIst251kUwDQYJYIZIAWUDBAIBBQCg
+gdQwLwYJKoZIhvcNAQkEMSIEIArOE+ju3AXuK9jgPquHfcgHK7hJ+TV9fDgMF8+fpycfMBgGCSqG
+SIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIyMDcwNDE3MjgxNFowaQYJKoZI
+hvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG
+9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEF
+AASCAQB2vXRF3cX5xZUXMF6uSTzRQIwfvm+quE3itRbOq89BWKh0eQe5QhYosdOTvdxyD6a0Gbg7
+/MGErYo0hTpiMgclBglFRh2KYY6bLmiM9+csYNLAxZn3g8CkmZtWa5bHyqvopyzRtYrpMFwWfATJ
+CYqCJdaO0yhf7XPqgW/snVQAJk6h1nD6m1j9XhvOep7zelV530+qxz+pqw5c/3KWzAt8H0w26X82
+7c6q7Syyy1z7kynRKjZ3mhknxLOGBElAlm0S02m2CiAzoRTsZzpkjA9V3zpU/ZTaVU4fgOYj4tI5
+UCovnbSJS/IbTcsLHMt3z3xkPGvRPEBgNq/nulq0DYAT
+--00000000000099e38305e2fe0fa3--
