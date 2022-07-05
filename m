@@ -2,103 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA73EC43334
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Jul 2022 10:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ADF1CCA47C
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Jul 2022 10:40:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231150AbiGEKdE (ORCPT
+        id S232149AbiGEKkr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Jul 2022 06:33:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57052 "EHLO
+        Tue, 5 Jul 2022 06:40:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231395AbiGEKdB (ORCPT
+        with ESMTP id S231162AbiGEKkq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Jul 2022 06:33:01 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FF031572A;
-        Tue,  5 Jul 2022 03:32:59 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id lw20so20873195ejb.4;
-        Tue, 05 Jul 2022 03:32:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=jY5FjsixWEcU8zWWnoT9i17TwQs6gwoN4AcRetl459A=;
-        b=CLXsjGhps7gMkknzEejhsqeXGH97V6MUc8+1rvRng+RCUolyNyxRSjRnpe0IclsK5e
-         YYRN5JHrfj7XOXa9vWKxCbw7mEDKJSaR/ywYKw0jIEGtRY8S/LayzRbvfvKX3csZR36f
-         Br6uh63jmTgncimGaDumlZAhkZBWplIsKCz7Toi32BLIGHz8hIvBJEDHnxkCFp5+Zp6f
-         ZKzVQfSoAW0rPlVYOSeRthMhkh3iLJBPHoWVRtBYp/0KBi5BQQR3fjWNnieqXOjFWGZt
-         e7UwHoDELvPxzOhhiWbA4dHPGA4rguCmnAkZEJnjk3iHcvg0yfW6jYTuy1u1HyuOMVrW
-         FeeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=jY5FjsixWEcU8zWWnoT9i17TwQs6gwoN4AcRetl459A=;
-        b=PEdcYYkbcVXrs2A4Q89egtU8i6k4FOv4R4Ar0RysERRLe+wMpTyMktanuJcCHrWNS1
-         Ac3w/GJXdNnmnfvI0rG29ppBLD3Rt0c6y8WX0oP56o8X05KHDml99ehzoTChXr4yybcp
-         WZ1s30nZfS3TgJEjSIjprPDb5igdkkWngA++Lk4urpFer0Ogt62uWr/BUA4R4crbmmz6
-         0iSKL7ZgIfcQqniF8hw7ZKoEsbVdoDU1d/UKZ2tpM0WfHJFGTroI6OPOsPZSEg42BYeO
-         8baYUxW2euSPVchYtSMIUxNWKC5UrpOIZwvuktcMpGwZBbXyXwdaMRjESRSxQ1KyhZ/Y
-         iMBw==
-X-Gm-Message-State: AJIora/w4r5V2LjCXr4cKiiWgL5envH70OSEO8q/3zdk84c4eCc5U3Z/
-        7EeYct1wtsC5h0tgo05r5bI=
-X-Google-Smtp-Source: AGRyM1vbRqvZJ1bJMfKQceJ+JeD7Wl2liAwNwopQ2x8qJrxF1kBDubDhMTHNKcVUtXWF2qb02ic21A==
-X-Received: by 2002:a17:907:271b:b0:72a:72bb:6f47 with SMTP id w27-20020a170907271b00b0072a72bb6f47mr26019412ejk.634.1657017177777;
-        Tue, 05 Jul 2022 03:32:57 -0700 (PDT)
-Received: from felia.fritz.box (200116b82698ad00a9019cf0f015ae6b.dip.versatel-1u1.de. [2001:16b8:2698:ad00:a901:9cf0:f015:ae6b])
-        by smtp.gmail.com with ESMTPSA id p19-20020aa7cc93000000b0042bdb6a3602sm22540880edt.69.2022.07.05.03.32.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Jul 2022 03:32:57 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
-        <amadeuszx.slawinski@linux.intel.com>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-        Bard Liao <yung-chuan.liao@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] ASoC: Intel: avs: correct config reference for I2S test board
-Date:   Tue,  5 Jul 2022 12:32:38 +0200
-Message-Id: <20220705103238.7484-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 5 Jul 2022 06:40:46 -0400
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6427215730;
+        Tue,  5 Jul 2022 03:40:44 -0700 (PDT)
+Received: from uucp (helo=alpha)
+        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
+        id 1o8fz0-0002Jv-02; Tue, 05 Jul 2022 12:40:42 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+        id 04C64C0230; Tue,  5 Jul 2022 12:23:29 +0200 (CEST)
+Date:   Tue, 5 Jul 2022 12:23:28 +0200
+From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     linux-mips@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: add include/dt-bindings/mips to MIPS
+Message-ID: <20220705102328.GF9951@alpha.franken.de>
+References: <20220613121408.8786-1-lukas.bulwahn@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220613121408.8786-1-lukas.bulwahn@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit e39acc4cfd92 ("ASoC: Intel: avs: Add I2S-test machine board") adds
-the config "SND_SOC_INTEL_AVS_MACH_I2S_TEST", but in the Makefile refers
-to  config "SND_SOC_INTEL_AVS_MACH_i2s_TEST" (notice the uppercase and
-lowercase difference).
+On Mon, Jun 13, 2022 at 02:14:08PM +0200, Lukas Bulwahn wrote:
+> Maintainers of the directory Documentation/devicetree/bindings/mips
+> are also the maintainers of the corresponding directory
+> include/dt-bindings/mips.
+> 
+> Add the file entry for include/dt-bindings/mips to the appropriate
+> section in MAINTAINERS.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Thomas, please pick this MAINTAINERS addition to your section.
+> 
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 1b30f6b69477..6bf0c0ff935f 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13362,6 +13362,7 @@ F:	Documentation/devicetree/bindings/mips/
+>  F:	Documentation/mips/
+>  F:	arch/mips/
+>  F:	drivers/platform/mips/
+> +F:	include/dt-bindings/mips/
+>  
+>  MIPS BOSTON DEVELOPMENT BOARD
+>  M:	Paul Burton <paulburton@kernel.org>
+> -- 
+> 2.17.1
 
-Adjust the Makefile to refer to the actual existing config.
+applied to mips-next.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Amadeusz, Cezary, please ack.
+Thomas.
 
-Mark, please pick this minor build config fix.
-
- sound/soc/intel/avs/boards/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/intel/avs/boards/Makefile b/sound/soc/intel/avs/boards/Makefile
-index 25e8c4bb07db..bc75376d58c2 100644
---- a/sound/soc/intel/avs/boards/Makefile
-+++ b/sound/soc/intel/avs/boards/Makefile
-@@ -16,7 +16,7 @@ snd-soc-avs-ssm4567-objs := ssm4567.o
- obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_DA7219) += snd-soc-avs-da7219.o
- obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_DMIC) += snd-soc-avs-dmic.o
- obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_HDAUDIO) += snd-soc-avs-hdaudio.o
--obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_i2s_TEST) += snd-soc-avs-i2s-test.o
-+obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_I2S_TEST) += snd-soc-avs-i2s-test.o
- obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_MAX98357A) += snd-soc-avs-max98357a.o
- obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_MAX98373) += snd-soc-avs-max98373.o
- obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_NAU8825) += snd-soc-avs-nau8825.o
 -- 
-2.17.1
-
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
