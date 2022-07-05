@@ -2,100 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A347DC43334
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Jul 2022 03:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 768AAC433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Jul 2022 06:05:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234260AbiGEDPQ (ORCPT
+        id S229563AbiGEGFo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 4 Jul 2022 23:15:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47402 "EHLO
+        Tue, 5 Jul 2022 02:05:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233898AbiGEDPP (ORCPT
+        with ESMTP id S229549AbiGEGFn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 4 Jul 2022 23:15:15 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7F1FDEE13
-        for <kernel-janitors@vger.kernel.org>; Mon,  4 Jul 2022 20:15:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1656990912;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=MPiLYuaQHJ/dNIyImBUJeFklEe+TyW/wfcZITbRD1eI=;
-        b=YI2rSS0aZkJKff79sKa8cJsbhM9xSs5ZFvATUpJh9Y43HKEL7Xr2bw4kk0QNw8RfJ1b61i
-        5SouEEYvZDnacIOGuaeyhmUhu+oQoNugMNB3FDYFoH0hTlhjpSUpCrVB096fSexxyUeXT4
-        Z7Okt2y8wgOSyr7aHc2hKdVY7S+/lvk=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-198-upAf-EDPMWqKbkqWgMRJcg-1; Mon, 04 Jul 2022 23:15:11 -0400
-X-MC-Unique: upAf-EDPMWqKbkqWgMRJcg-1
-Received: by mail-lf1-f69.google.com with SMTP id o7-20020a056512230700b004810a865709so3450056lfu.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 04 Jul 2022 20:15:11 -0700 (PDT)
+        Tue, 5 Jul 2022 02:05:43 -0400
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4B8D26F2;
+        Mon,  4 Jul 2022 23:05:42 -0700 (PDT)
+Received: by mail-yb1-xb31.google.com with SMTP id 64so10786129ybt.12;
+        Mon, 04 Jul 2022 23:05:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nbyECK3263/RIOlKgtKBVow3c3mI3lDCcZ6/fs9YY58=;
+        b=hUSvlWnsXGp49fhdQXPLiewzuIeH3gUpLWCml+qlfxHOvACIfZbvr6lsB201e8WSAi
+         UwQK+Vci+BYYv853VVQkXU9pAUe0ry/wra4/twDbkFodaD0MJG5p1zycPrsb02IVaDG1
+         PltFpOtfltb8XEvhn2NpnzTl1L+FL4ar9AGsv5jOxuZr49jIIoTrOFApr24g6KeUtlPV
+         Kuj//wE/SJvvy2O8C5iYWp6exCPJtHyzjqWu64AC8zUKFgtF/v3Eenfbx7AKxOMd4PZS
+         GGRE0QOXBl9n5PulF+SV69GscIEdlSK2m6BXA4INmNHptkmH3zKXQQdPpj8EISkbbOFk
+         hBLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=MPiLYuaQHJ/dNIyImBUJeFklEe+TyW/wfcZITbRD1eI=;
-        b=H7tJO7a0cnG/b/Q+lOsgGxjNpDx2e7fhEzIS8K0MgeCbu2Q9LYNhktna6JAaaH2Iok
-         v1YTv4RaMzW8swAeLgKev6N9yYkPuj0Vbyil2EvyI2Yduf5mummrBqHhXnwKx60bev8N
-         dTwZZEmggfpKT1QLHIcWiVBJRKZF9fwryQfqE7AAdLcmmTsWy9/EgpoEi04Zd/hbb0Zg
-         2OvnfkA4RCesGEr3vfnV2DJ/W4ABvHYJ6RljElcscXGBlArkVjuqo1YH4R9wHEEcEjuA
-         YuXk1eXJoeybjLSAbOalYuoHJX9s5eT6ud+It9SZmYHxi9bpnWoXu/Qju8n/+HSpXUyj
-         PC3g==
-X-Gm-Message-State: AJIora+L104axbmLPaOOVA4LamEYnZTI+gxg/VHHVLH2vz4ZML4yW6oa
-        Fp5lKQ9HgImjOHrkFWjIvN7DeqzoTG5DV84lc9PKfgeJoowSHeAs/RGuj120RgJqxExWJJfkeFd
-        vCBNXUaE21ypfdL1f+xNiboei0cY+DReYIqOcf2lBza4X
-X-Received: by 2002:a05:6512:3f0f:b0:47f:6f89:326 with SMTP id y15-20020a0565123f0f00b0047f6f890326mr19728903lfa.124.1656990909242;
-        Mon, 04 Jul 2022 20:15:09 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1tza1pmpMAWjNhoieZO4QqKWL1/YPqUOvpoVjPyKy0BY4OsaLw+4a3jzDRxrl7JkPP/xB1zCm2drjENV6/171U=
-X-Received: by 2002:a05:6512:3f0f:b0:47f:6f89:326 with SMTP id
- y15-20020a0565123f0f00b0047f6f890326mr19728895lfa.124.1656990909097; Mon, 04
- Jul 2022 20:15:09 -0700 (PDT)
+        bh=nbyECK3263/RIOlKgtKBVow3c3mI3lDCcZ6/fs9YY58=;
+        b=1W+sxwSrUAq/z5qnddTdspSOp9rf5ovE6HbZBNrOC5j4s/7rnrELs05yULJ96l9IPg
+         Ng4XWqc/y8SVVc7M09qeOa6Sptro/ryPo6En5jJAArJJEdzju7kgJIhl8zNuJe9lo2r0
+         JzBRFliisps48666eVlQrTZz3y7nQretzC9AviGcyT74uf0cCSG+O76ein85X76ijPuE
+         Ig6nuHEq7y0Ha6BapBE9yFyQqNpprJCkxl9QXB6lR7cGsjiSDxhS/Ess9mntQTFP1Zg/
+         foi4oZ74swy+CWmtKVJKm9MchJ9/Fsg/uTs8DXoI4VpZpW7mL74LxkMRubzLvJ5GnP8l
+         CbTQ==
+X-Gm-Message-State: AJIora+YgNbdYWQ4j2kfUIVY8ItQ0lZBF7lNVWcOACuRCiOYQa9MHpEj
+        jYenIzgzNXzrLanFFf2XwxruLugvFX/QD0c0Bv0=
+X-Google-Smtp-Source: AGRyM1sDgPankvWElsMSV8lRoPFYUbJgM7WBumAixEKK/3jPU65pIsxYEOanVPial5z8nYD2qd/+j1eVDIfJ/ncUvow=
+X-Received: by 2002:a25:8d8d:0:b0:66d:e087:4f2c with SMTP id
+ o13-20020a258d8d000000b0066de0874f2cmr22896512ybl.389.1657001141710; Mon, 04
+ Jul 2022 23:05:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220704190456.593464-1-colin.i.king@gmail.com>
-In-Reply-To: <20220704190456.593464-1-colin.i.king@gmail.com>
-From:   Jason Wang <jasowang@redhat.com>
-Date:   Tue, 5 Jul 2022 11:14:58 +0800
-Message-ID: <CACGkMEsEZjmG8JV6hz4=a=hWLFxeGom6sGs7LSYzTZnoC-M7jQ@mail.gmail.com>
-Subject: Re: [PATCH] vDPA/ifcvf: remove duplicated assignment to pointer cfg
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
-        Zhu Lingshan <lingshan.zhu@intel.com>,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        kernel-janitors@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20220704092605.19604-1-lukas.bulwahn@gmail.com> <YsMVuVBoCVWUawsq@linux.ibm.com>
+In-Reply-To: <YsMVuVBoCVWUawsq@linux.ibm.com>
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Tue, 5 Jul 2022 08:05:31 +0200
+Message-ID: <CAKXUXMwzKQxw7sbUaZ924PFwMjxZo5HrN4HetiL8ww6r5_OObQ@mail.gmail.com>
+Subject: Re: [PATCH] secretmem: drop unneeded initialization in secretmem_file_create()
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>, llvm@lists.linux.dev,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jul 5, 2022 at 3:05 AM Colin Ian King <colin.i.king@gmail.com> wrote:
+On Mon, Jul 4, 2022 at 6:30 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
 >
-> The assignment to pointer cfg is duplicated, the second assignment
-> is redundant and can be removed.
+> Hi Lukas,
 >
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-
-Acked-by: Jason Wang <jasowang@redhat.com>
-
-> ---
->  drivers/vdpa/ifcvf/ifcvf_base.c | 1 -
->  1 file changed, 1 deletion(-)
+> On Mon, Jul 04, 2022 at 11:26:05AM +0200, Lukas Bulwahn wrote:
+> > Drop the unneeded initialization of the local variable file in function
+> > secretmem_file_create().
+> >
+> > No functional change and no change in the resulting object code.
+> >
+> > This unneeded initialization was already introduced with the introduction
+> > of secretmem in commit 1507f51255c9 ("mm: introduce memfd_secret system
+> > call to create "secret" memory areas"). This minor code-stylistic issue
+> > was discovered as a dead store with clang-analyzer.
 >
-> diff --git a/drivers/vdpa/ifcvf/ifcvf_base.c b/drivers/vdpa/ifcvf/ifcvf_base.c
-> index 48c4dadb0c7c..47b94091733c 100644
-> --- a/drivers/vdpa/ifcvf/ifcvf_base.c
-> +++ b/drivers/vdpa/ifcvf/ifcvf_base.c
-> @@ -29,7 +29,6 @@ u16 ifcvf_set_config_vector(struct ifcvf_hw *hw, int vector)
->  {
->         struct virtio_pci_common_cfg __iomem *cfg = hw->common_cfg;
+> You are right and in the current code the initialization is unneeded, but
+> there's a pending patch that relies of this initialization:
 >
-> -       cfg = hw->common_cfg;
->         vp_iowrite16(vector,  &cfg->msix_config);
+> https://lore.kernel.org/all/Yr1jKwz2+SGxjcuW@kernel.org/
 >
->         return vp_ioread16(&cfg->msix_config);
-> --
-> 2.35.3
+> Let's wait and see how that fix develops.
 >
 
+Agree. I will continue tracking the evolution of this function and
+resend my patch if this patch above does not land in the next six
+months. For now, this clean-up patch here can be ignored.
+
+Lukas
