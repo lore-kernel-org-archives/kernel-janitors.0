@@ -2,41 +2,40 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F873C43334
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Jul 2022 19:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C923C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Jul 2022 19:34:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233143AbiGETBn (ORCPT
+        id S231717AbiGETeQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Jul 2022 15:01:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34228 "EHLO
+        Tue, 5 Jul 2022 15:34:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231869AbiGETBl (ORCPT
+        with ESMTP id S229525AbiGETeO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Jul 2022 15:01:41 -0400
-Received: from smtp.smtpout.orange.fr (smtp02.smtpout.orange.fr [80.12.242.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E60F210562
-        for <kernel-janitors@vger.kernel.org>; Tue,  5 Jul 2022 12:01:39 -0700 (PDT)
+        Tue, 5 Jul 2022 15:34:14 -0400
+Received: from smtp.smtpout.orange.fr (smtp10.smtpout.orange.fr [80.12.242.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8EEE1261E
+        for <kernel-janitors@vger.kernel.org>; Tue,  5 Jul 2022 12:34:13 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id 8nniozMgNgoLG8nnioHgwV; Tue, 05 Jul 2022 21:01:37 +0200
+        id 8oJGowQqjsiIK8oJGosnsD; Tue, 05 Jul 2022 21:34:12 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Tue, 05 Jul 2022 21:01:37 +0200
+X-ME-Date: Tue, 05 Jul 2022 21:34:12 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>
+To:     Edward Cree <ecree.xilinx@gmail.com>,
+        Martin Habets <habetsm.xilinx@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-perf-users@vger.kernel.org
-Subject: [PATCH] uprobes: Use the bitmap API to allocate bitmaps
-Date:   Tue,  5 Jul 2022 21:01:33 +0200
-Message-Id: <90858b515127a99d0bcb989a16b5d88829abfce2.1657047672.git.christophe.jaillet@wanadoo.fr>
+        netdev@vger.kernel.org
+Subject: [PATCH] sfc/siena: Use the bitmap API to allocate bitmaps
+Date:   Tue,  5 Jul 2022 21:34:08 +0200
+Message-Id: <717ba530215f4d7ce9fedcc73d98dba1f70d7f71.1657049636.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -50,50 +49,33 @@ It is less verbose and it improves the semantic.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Out of curiosity, is it normal to have __free_page() in the error handling
-path of __create_xol_area() and put_page() in uprobe_clear_state()?
+ drivers/net/ethernet/sfc/siena/farch.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-uprobe_clear_state() seems to release the resources allocated in
-__create_xol_area(), but the implementation of __free_page() and of
-put_page() look quite different.
-
-This is maybe perfectly correct, but looks odd to me.
----
- kernel/events/uprobes.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 401bc2d24ce0..83fb62eed9c6 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -1485,8 +1485,7 @@ static struct xol_area *__create_xol_area(unsigned long vaddr)
- 	if (unlikely(!area))
- 		goto out;
+diff --git a/drivers/net/ethernet/sfc/siena/farch.c b/drivers/net/ethernet/sfc/siena/farch.c
+index cce23803c652..89ccd65c978b 100644
+--- a/drivers/net/ethernet/sfc/siena/farch.c
++++ b/drivers/net/ethernet/sfc/siena/farch.c
+@@ -2778,7 +2778,7 @@ void efx_farch_filter_table_remove(struct efx_nic *efx)
+ 	enum efx_farch_filter_table_id table_id;
  
--	area->bitmap = kcalloc(BITS_TO_LONGS(UINSNS_PER_PAGE), sizeof(long),
--			       GFP_KERNEL);
-+	area->bitmap = bitmap_zalloc(UINSNS_PER_PAGE, GFP_KERNEL);
- 	if (!area->bitmap)
- 		goto free_area;
- 
-@@ -1510,7 +1509,7 @@ static struct xol_area *__create_xol_area(unsigned long vaddr)
- 
- 	__free_page(area->pages[0]);
-  free_bitmap:
--	kfree(area->bitmap);
-+	bitmap_free(area->bitmap);
-  free_area:
- 	kfree(area);
-  out:
-@@ -1551,7 +1550,7 @@ void uprobe_clear_state(struct mm_struct *mm)
- 		return;
- 
- 	put_page(area->pages[0]);
--	kfree(area->bitmap);
-+	bitmap_free(area->bitmap);
- 	kfree(area);
- }
- 
+ 	for (table_id = 0; table_id < EFX_FARCH_FILTER_TABLE_COUNT; table_id++) {
+-		kfree(state->table[table_id].used_bitmap);
++		bitmap_free(state->table[table_id].used_bitmap);
+ 		vfree(state->table[table_id].spec);
+ 	}
+ 	kfree(state);
+@@ -2822,9 +2822,7 @@ int efx_farch_filter_table_probe(struct efx_nic *efx)
+ 		table = &state->table[table_id];
+ 		if (table->size == 0)
+ 			continue;
+-		table->used_bitmap = kcalloc(BITS_TO_LONGS(table->size),
+-					     sizeof(unsigned long),
+-					     GFP_KERNEL);
++		table->used_bitmap = bitmap_zalloc(table->size, GFP_KERNEL);
+ 		if (!table->used_bitmap)
+ 			goto fail;
+ 		table->spec = vzalloc(array_size(sizeof(*table->spec),
 -- 
 2.34.1
 
