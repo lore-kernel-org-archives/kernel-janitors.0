@@ -2,100 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD00C43334
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Jul 2022 10:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8B5C43334
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Jul 2022 10:50:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231280AbiGEKtD (ORCPT
+        id S232790AbiGEKuu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Jul 2022 06:49:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41054 "EHLO
+        Tue, 5 Jul 2022 06:50:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbiGEKtC (ORCPT
+        with ESMTP id S232711AbiGEKuW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Jul 2022 06:49:02 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC4D36544;
-        Tue,  5 Jul 2022 03:49:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657018141; x=1688554141;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=QnsS4su8H/mLvQ9+z8N/c0onNmc9ZJSNjEmEX8UUb4g=;
-  b=GMTcJFFmVwqt/LRB47SPq56SvzeD8SMrgIlWaOw65PW2KJviLywVNVzG
-   tAxL3rEm4jTfO7EY8J/oQWRrr2H6bfGFyiQYNXsr6g32n2N2sKhSEyWSX
-   phyL7/neeO2nPmEnKtIU05IEn8svojln4wY/7rdjHIcxZGybu4wkxlGxX
-   WSU1KxF629IbqhDQ9BZHpwuoJZvuRPgaOlObPK3vv8jZ8UKuQO3ejEtv/
-   pebb3UmUKzdcPpx4pQmvpT5J4BLMBzfrBx4lF9NHdDfH3hlm140kpF1cL
-   frt3TlP6XcoytdeX3TcEG0pQgS3GyM0kQNtnxc02XsQdxO/+loWmrEdYD
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10398"; a="266346749"
-X-IronPort-AV: E=Sophos;i="5.92,245,1650956400"; 
-   d="scan'208";a="266346749"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2022 03:49:01 -0700
-X-IronPort-AV: E=Sophos;i="5.92,245,1650956400"; 
-   d="scan'208";a="919669342"
-Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.99.241.103]) ([10.99.241.103])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2022 03:48:58 -0700
-Message-ID: <6727e426-7135-3ecc-955f-e60487bfd963@linux.intel.com>
-Date:   Tue, 5 Jul 2022 12:48:56 +0200
+        Tue, 5 Jul 2022 06:50:22 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 913CC1571A;
+        Tue,  5 Jul 2022 03:50:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A4D4AB817A4;
+        Tue,  5 Jul 2022 10:50:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 64E86C341CE;
+        Tue,  5 Jul 2022 10:50:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657018213;
+        bh=Zju8PgWdr7J2dERf9vdpnSRo6wsOxov7rQt6c/MOlSA=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=P5F47ZOfJ2bwK3QVtwpDCr/kwh/YFQgrKuA40mRGMD0YnBU8Mka0kqUSpd1kbSEEa
+         26T+2m46IBW2sB3fnl1hNfKdCsoiN34dU7AG33x35oJ5ETqBt5+gYE8fVrf/yhD9cN
+         DwDEbWXMxMYqci6vUfWX/47vya2C6Pd/0jHikH0DuUz38c/JtGxWHbH/B4vUFxWHVy
+         3LGj0V4MbpypJo47OJHJU8MVjvAFzZJm8bIdlvrB5vbf7FhOe+mFgLCDWXlzDRJOGl
+         NkJDG7qEjdcWyOPDVWaBuFvmNFL9Bs4zaxfnDgPzeX+7I112RYL5SatDNfxcoqe42M
+         ZW0MTDDqYlH3A==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 49DF1E45BDD;
+        Tue,  5 Jul 2022 10:50:13 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] ASoC: Intel: avs: correct config reference for I2S test
- board
-Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
-Cc:     Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Bard Liao <yung-chuan.liao@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-References: <20220705103238.7484-1-lukas.bulwahn@gmail.com>
-From:   =?UTF-8?Q?Amadeusz_S=c5=82awi=c5=84ski?= 
-        <amadeuszx.slawinski@linux.intel.com>
-In-Reply-To: <20220705103238.7484-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] cxgb4: Use the bitmap API to allocate bitmaps
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <165701821329.25151.17504921483027163278.git-patchwork-notify@kernel.org>
+Date:   Tue, 05 Jul 2022 10:50:13 +0000
+References: <8a2168ef9871bd9c4f1cf19b8d5f7530662a5d15.1656866770.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <8a2168ef9871bd9c4f1cf19b8d5f7530662a5d15.1656866770.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     rajur@chelsio.com, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 7/5/2022 12:32 PM, Lukas Bulwahn wrote:
-> Commit e39acc4cfd92 ("ASoC: Intel: avs: Add I2S-test machine board") adds
-> the config "SND_SOC_INTEL_AVS_MACH_I2S_TEST", but in the Makefile refers
-> to  config "SND_SOC_INTEL_AVS_MACH_i2s_TEST" (notice the uppercase and
-> lowercase difference).
-> 
-> Adjust the Makefile to refer to the actual existing config.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Amadeusz, Cezary, please ack.
-> 
-> Mark, please pick this minor build config fix.
-> 
->   sound/soc/intel/avs/boards/Makefile | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/intel/avs/boards/Makefile b/sound/soc/intel/avs/boards/Makefile
-> index 25e8c4bb07db..bc75376d58c2 100644
-> --- a/sound/soc/intel/avs/boards/Makefile
-> +++ b/sound/soc/intel/avs/boards/Makefile
-> @@ -16,7 +16,7 @@ snd-soc-avs-ssm4567-objs := ssm4567.o
->   obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_DA7219) += snd-soc-avs-da7219.o
->   obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_DMIC) += snd-soc-avs-dmic.o
->   obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_HDAUDIO) += snd-soc-avs-hdaudio.o
-> -obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_i2s_TEST) += snd-soc-avs-i2s-test.o
-> +obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_I2S_TEST) += snd-soc-avs-i2s-test.o
->   obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_MAX98357A) += snd-soc-avs-max98357a.o
->   obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_MAX98373) += snd-soc-avs-max98373.o
->   obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_NAU8825) += snd-soc-avs-nau8825.o
+Hello:
 
-Reviewed-by: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
+This patch was applied to netdev/net-next.git (master)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Sun,  3 Jul 2022 18:46:36 +0200 you wrote:
+> Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
+> 
+> It is less verbose and it improves the semantic.
+> 
+> While at it, remove a useless bitmap_zero(). The bitmap is already zeroed
+> when allocated.
+> 
+> [...]
+
+Here is the summary with links:
+  - cxgb4: Use the bitmap API to allocate bitmaps
+    https://git.kernel.org/netdev/net-next/c/ec53d77ae3d5
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
