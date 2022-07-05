@@ -2,95 +2,107 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 768AAC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Jul 2022 06:05:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82BD7C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Jul 2022 07:04:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229563AbiGEGFo (ORCPT
+        id S229900AbiGEHEA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Jul 2022 02:05:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33624 "EHLO
+        Tue, 5 Jul 2022 03:04:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229549AbiGEGFn (ORCPT
+        with ESMTP id S229727AbiGEHD7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Jul 2022 02:05:43 -0400
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4B8D26F2;
-        Mon,  4 Jul 2022 23:05:42 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id 64so10786129ybt.12;
-        Mon, 04 Jul 2022 23:05:42 -0700 (PDT)
+        Tue, 5 Jul 2022 03:03:59 -0400
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9892512D07;
+        Tue,  5 Jul 2022 00:03:57 -0700 (PDT)
+Received: by mail-pl1-x62f.google.com with SMTP id y18so2241279plb.2;
+        Tue, 05 Jul 2022 00:03:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nbyECK3263/RIOlKgtKBVow3c3mI3lDCcZ6/fs9YY58=;
-        b=hUSvlWnsXGp49fhdQXPLiewzuIeH3gUpLWCml+qlfxHOvACIfZbvr6lsB201e8WSAi
-         UwQK+Vci+BYYv853VVQkXU9pAUe0ry/wra4/twDbkFodaD0MJG5p1zycPrsb02IVaDG1
-         PltFpOtfltb8XEvhn2NpnzTl1L+FL4ar9AGsv5jOxuZr49jIIoTrOFApr24g6KeUtlPV
-         Kuj//wE/SJvvy2O8C5iYWp6exCPJtHyzjqWu64AC8zUKFgtF/v3Eenfbx7AKxOMd4PZS
-         GGRE0QOXBl9n5PulF+SV69GscIEdlSK2m6BXA4INmNHptkmH3zKXQQdPpj8EISkbbOFk
-         hBLg==
+        h=message-id:date:mime-version:user-agent:to:cc:references:subject
+         :content-language:from:in-reply-to:content-transfer-encoding;
+        bh=2ufLS6mmfGLjwF9pxsw1TQp1kLjrOVbI80R+vNoRSvk=;
+        b=PX8gc5mIejixPJCgPu0KBUXlOXb+wzKfs6yxAOjWuKajPAVu/Uo8igsaQ4uYjFaAoE
+         2OhpLmyfX7k7gQH2/vPnqc2KB0DVcSUqan3DGUMpiJjvrs84XVLn/XN42fMcrtMZqTIB
+         3MrsFxvUcpskmMJdOVZmdYavsFRvchrpwk1ENUuorkOlwk2/FwKrOXZeoXkEO9t1xShE
+         qvX148aymfVztwC65QfoPFkSsK4vDLU1nlJpgYn8DuU2SbU2pRItVhCKmGPmQuhtDrFU
+         A7luZn0sxeWf262qZiu9Ywb0zmRaBZYpEVjF5Q9W+jSDg2hIQ2ybgvDNH24lpvX3rIdG
+         2R9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nbyECK3263/RIOlKgtKBVow3c3mI3lDCcZ6/fs9YY58=;
-        b=1W+sxwSrUAq/z5qnddTdspSOp9rf5ovE6HbZBNrOC5j4s/7rnrELs05yULJ96l9IPg
-         Ng4XWqc/y8SVVc7M09qeOa6Sptro/ryPo6En5jJAArJJEdzju7kgJIhl8zNuJe9lo2r0
-         JzBRFliisps48666eVlQrTZz3y7nQretzC9AviGcyT74uf0cCSG+O76ein85X76ijPuE
-         Ig6nuHEq7y0Ha6BapBE9yFyQqNpprJCkxl9QXB6lR7cGsjiSDxhS/Ess9mntQTFP1Zg/
-         foi4oZ74swy+CWmtKVJKm9MchJ9/Fsg/uTs8DXoI4VpZpW7mL74LxkMRubzLvJ5GnP8l
-         CbTQ==
-X-Gm-Message-State: AJIora+YgNbdYWQ4j2kfUIVY8ItQ0lZBF7lNVWcOACuRCiOYQa9MHpEj
-        jYenIzgzNXzrLanFFf2XwxruLugvFX/QD0c0Bv0=
-X-Google-Smtp-Source: AGRyM1sDgPankvWElsMSV8lRoPFYUbJgM7WBumAixEKK/3jPU65pIsxYEOanVPial5z8nYD2qd/+j1eVDIfJ/ncUvow=
-X-Received: by 2002:a25:8d8d:0:b0:66d:e087:4f2c with SMTP id
- o13-20020a258d8d000000b0066de0874f2cmr22896512ybl.389.1657001141710; Mon, 04
- Jul 2022 23:05:41 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:to:cc
+         :references:subject:content-language:from:in-reply-to
+         :content-transfer-encoding;
+        bh=2ufLS6mmfGLjwF9pxsw1TQp1kLjrOVbI80R+vNoRSvk=;
+        b=50RRAnnDyIuD4u8UGfkrNUiRNYAvsYbL8eWItpy/Q88FwsFFkJXKt6TtWVLR5XEP19
+         XDflcRhWSCvZ1S19Tbgx3Sogf8pvQps4m8iyO6rd+w2Y1x2fMP0FuMTEi6tRp4cpc7Dr
+         V7eNEL+ecLtjoL0nRUm6TGeXE0idz5uXkk+xhuzciLaos5sVklaIxsaqhH4fLRTNdBq2
+         6hB1oDYsfNP8WXKxJkbY4UqfvBWqlDvDuoskQxaRvoRB+P+6lbcxaSDhrtVdw9SEUqKh
+         /3OZIQ7jpMF+GDj+xmMlqv3Z6kK6XS9JXuxNFFMS0RfdReT1+D+x4i83o/j3WyZ2K5RD
+         fszw==
+X-Gm-Message-State: AJIora+qVVv7JzyD5S1Q/lnERj/Soi+340NPtQPX7rBHRKBEq4s340RE
+        eNzgijAoUFDXlQqTTHMGm+k=
+X-Google-Smtp-Source: AGRyM1vmviWyx2o7pqRKS6HpNTGuLHcvSoMidTGwEgDcYRIXJPxrH9DF8ootL62hBguKuP8VvRxifw==
+X-Received: by 2002:a17:902:7616:b0:16b:b48d:1ae7 with SMTP id k22-20020a170902761600b0016bb48d1ae7mr26067064pll.73.1657004637129;
+        Tue, 05 Jul 2022 00:03:57 -0700 (PDT)
+Received: from [192.168.11.9] (KD106167171201.ppp-bb.dion.ne.jp. [106.167.171.201])
+        by smtp.gmail.com with ESMTPSA id t13-20020a6549cd000000b0040ced958e8fsm21786055pgs.80.2022.07.05.00.03.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Jul 2022 00:03:56 -0700 (PDT)
+Message-ID: <3b1c6414-276a-0b4a-91b3-607cfae1ec60@gmail.com>
+Date:   Tue, 5 Jul 2022 16:03:51 +0900
 MIME-Version: 1.0
-References: <20220704092605.19604-1-lukas.bulwahn@gmail.com> <YsMVuVBoCVWUawsq@linux.ibm.com>
-In-Reply-To: <YsMVuVBoCVWUawsq@linux.ibm.com>
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Tue, 5 Jul 2022 08:05:31 +0200
-Message-ID: <CAKXUXMwzKQxw7sbUaZ924PFwMjxZo5HrN4HetiL8ww6r5_OObQ@mail.gmail.com>
-Subject: Re: [PATCH] secretmem: drop unneeded initialization in secretmem_file_create()
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>, llvm@lists.linux.dev,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     alexs@kernel.org, corbet@lwn.net, federico.vaga@vaga.pv.it,
+        jdelvare@suse.com, kernel-janitors@vger.kernel.org,
+        linux-doc-tw-discuss@lists.sourceforge.net,
+        linux-doc@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux@roeck-us.net,
+        siyanteng@loongson.cn, src.res@email.cn,
+        Akira Yokosawa <akiyks@gmail.com>
+References: <20220704122537.3407-9-lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH 08/11] docs: ja_JP: howto: remove reference to removed
+ submitting-drivers
+Content-Language: en-US
+From:   Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <20220704122537.3407-9-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jul 4, 2022 at 6:30 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
->
-> Hi Lukas,
->
-> On Mon, Jul 04, 2022 at 11:26:05AM +0200, Lukas Bulwahn wrote:
-> > Drop the unneeded initialization of the local variable file in function
-> > secretmem_file_create().
-> >
-> > No functional change and no change in the resulting object code.
-> >
-> > This unneeded initialization was already introduced with the introduction
-> > of secretmem in commit 1507f51255c9 ("mm: introduce memfd_secret system
-> > call to create "secret" memory areas"). This minor code-stylistic issue
-> > was discovered as a dead store with clang-analyzer.
->
-> You are right and in the current code the initialization is unneeded, but
-> there's a pending patch that relies of this initialization:
->
-> https://lore.kernel.org/all/Yr1jKwz2+SGxjcuW@kernel.org/
->
-> Let's wait and see how that fix develops.
->
-
-Agree. I will continue tracking the evolution of this function and
-resend my patch if this patch above does not land in the next six
-months. For now, this clean-up patch here can be ignored.
-
-Lukas
+T24gTW9uLCAgNCBKdWwgMjAyMiAxNDoyNTozNCArMDIwMCwgTHVrYXMgQnVsd2FobiB3cm90
+ZToNCj4gVGhlIGRvY3VtZW50IHN1Ym1pdHRpbmctZHJpdmVycy5yc3Qgd2FzIGRlbGV0ZWQu
+IFRoaXMgcmVtb3ZlcyB0aGUNCj4gY29ycmVzcG9uZGluZyByZWZlcmVuY2UgaW4gdGhlIEph
+cGFuZXNlIHRyYW5zbGF0aW9uIG9mIHRoZSBob3d0bywNCj4gd2l0aCBzb21lIGFzc2lzdGFu
+Y2UgZnJvbSBBa2lyYSBZb2thc2F3YS4NCj4gDQo+IExpbms6IGh0dHBzOi8vbG9yZS5rZXJu
+ZWwub3JnL2xpbnV4LWRvYy9hMmJlNDhlNS1lNTU5LTE3ZDctNWFlNy1kMTIwNWE3MzdlYTRA
+Z21haWwuY29tLw0KPiBTaWduZWQtb2ZmLWJ5OiBMdWthcyBCdWx3YWhuIDxsdWthcy5idWx3
+YWhuQGdtYWlsLmNvbT4NCg0KUmV2aWV3ZWQtYnk6IEFraXJhIFlva29zYXdhIDxha2l5a3NA
+Z21haWwuY29tPg0KDQogICAgICAgIFRoYW5rcywgQWtpcmENCg0KPiAtLS0NCj4gIERvY3Vt
+ZW50YXRpb24vdHJhbnNsYXRpb25zL2phX0pQL2hvd3RvLnJzdCB8IDQgKystLQ0KPiAgMSBm
+aWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRp
+ZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy9qYV9KUC9ob3d0by5yc3Qg
+Yi9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy9qYV9KUC9ob3d0by5yc3QNCj4gaW5kZXgg
+MzhmZWQ2ZmU2MmZlLi42NDllMmZmMmE0MDcgMTAwNjQ0DQo+IC0tLSBhL0RvY3VtZW50YXRp
+b24vdHJhbnNsYXRpb25zL2phX0pQL2hvd3RvLnJzdA0KPiArKysgYi9Eb2N1bWVudGF0aW9u
+L3RyYW5zbGF0aW9ucy9qYV9KUC9ob3d0by5yc3QNCj4gQEAgLTEyOSw4ICsxMjksOCBAQCBs
+aW51eC1hcGlAdmdlci5rZXJuZWwub3JnIOOBq+mAgeOCi+OBk+OBqOOCkuWLp+OCgeOBvuOB
+meOAgg0KPiAgICAgIOODq+OBq+W+k+OBo+OBpuOBhOOCi+OCguOBruOBoOOBkeOCkuWPl+OB
+keS7mOOBkeOAgeWkmuOBj+OBruS6uuOBr+ato+OBl+OBhOOCueOCv+OCpOODq+OBruOCs+OD
+vOODiQ0KPiAgICAgIOOBoOOBkeOCkuODrOODk+ODpeODvOOBl+OBvuOBmeOAgg0KPiAgDQo+
+IC0gIDpyZWY6YERvY3VtZW50YXRpb24vcHJvY2Vzcy9zdWJtaXR0aW5nLXBhdGNoZXMucnN0
+IDxjb2RpbmdzdHlsZT5gIOOBqCA6cmVmOmBEb2N1bWVudGF0aW9uL3Byb2Nlc3Mvc3VibWl0
+dGluZy1kcml2ZXJzLnJzdCA8c3VibWl0dGluZ2RyaXZlcnM+YA0KPiAtICAgIOOBk+OCjOOC
+ieOBruODleOCoeOCpOODq+OBq+OBr+OAgeOBqeOBhuOChOOBo+OBpuOBhuOBvuOBj+ODkeOD
+g+ODgeOCkuS9nOOBo+OBpuaKleeov+OBmeOCi+OBi+OBq+OBpA0KPiArICA6cmVmOmBEb2N1
+bWVudGF0aW9uL3Byb2Nlc3Mvc3VibWl0dGluZy1wYXRjaGVzLnJzdCA8Y29kaW5nc3R5bGU+
+YA0KPiArICAgIOOBk+OBruODleOCoeOCpOODq+OBq+OBr+OAgeOBqeOBhuOChOOBo+OBpuOB
+huOBvuOBj+ODkeODg+ODgeOCkuS9nOOBo+OBpuaKleeov+OBmeOCi+OBi+OBq+OBpA0KPiAg
+ICAgIOOBhOOBpumdnuW4uOOBq+ips+OBl+OBj+abuOOBi+OCjOOBpuOBiuOCiuOAgeS7peS4
+i+OCkuWQq+OBv+OBvuOBmSAo44GT44KM44Gg44GR44Gr6ZmQ44KJ44Gq44GEDQo+ICAgICAg
+44GR44KM44Gp44KCKQ0KPiAgDQo+IC0tIA0KPiAyLjE3LjENCg==
