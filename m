@@ -2,94 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B317C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Jul 2022 08:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06472C43334
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Jul 2022 08:32:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230271AbiGEIMw (ORCPT
+        id S230389AbiGEIcj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Jul 2022 04:12:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59210 "EHLO
+        Tue, 5 Jul 2022 04:32:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230170AbiGEIMv (ORCPT
+        with ESMTP id S229892AbiGEIci (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Jul 2022 04:12:51 -0400
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A114713DE9;
-        Tue,  5 Jul 2022 01:12:48 -0700 (PDT)
-Received: from [192.168.1.103] (31.173.87.24) by msexch01.omp.ru (10.188.4.12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.986.14; Tue, 5 Jul 2022
- 11:12:38 +0300
-Subject: Re: [PATCH] MIPS: mm: Use the bitmap API to allocate bitmaps
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <linux-mips@vger.kernel.org>
-References: <4b6493bfee4f1c2d30193df01e67052922703b95.1656961396.git.christophe.jaillet@wanadoo.fr>
-From:   Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <4f6901f8-2cf3-bd96-d7d2-cdc6af4245f3@omp.ru>
-Date:   Tue, 5 Jul 2022 11:12:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Tue, 5 Jul 2022 04:32:38 -0400
+Received: from mailbox.box.xen0n.name (mail.xen0n.name [115.28.160.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C7139D;
+        Tue,  5 Jul 2022 01:32:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xen0n.name; s=mail;
+        t=1657009953; bh=EV/+FK0A80HVNjbe/Kswv8enUhc6feszv49QHR3ih80=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=kbwBT7oePB/btU9gL35wABbCrXjx7kHq5BcaO8yQnvhel10BaRGjLqO66DRk41vQx
+         /dzOscml65oeFYpiG1uZo4qDvHbwKHGRUPs2XaUGgn1L5JmM1Fz2z+tzw9Ldy2hxzx
+         Sz0RdB1sDddHoV8DjR8CsAnfA46oSLbU0UxnZdzY=
+Received: from [100.100.57.190] (unknown [220.248.53.61])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mailbox.box.xen0n.name (Postfix) with ESMTPSA id EB62C60114;
+        Tue,  5 Jul 2022 16:32:32 +0800 (CST)
+Message-ID: <f84bb217-7e2e-7919-6213-4a25ea76bf4f@xen0n.name>
+Date:   Tue, 5 Jul 2022 16:32:32 +0800
 MIME-Version: 1.0
-In-Reply-To: <4b6493bfee4f1c2d30193df01e67052922703b95.1656961396.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:104.0)
+ Gecko/20100101 Thunderbird/104.0a1
+Subject: Re: [PATCH] LoongArch: drop these obsolete selects in Kconfig
 Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220705073405.29618-1-lukas.bulwahn@gmail.com>
+From:   WANG Xuerui <kernel@xen0n.name>
+In-Reply-To: <20220705073405.29618-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [31.173.87.24]
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 5.9.20, Database issued on: 07/05/2022 07:42:48
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 171552 [Jul 05 2022]
-X-KSE-AntiSpam-Info: Version: 5.9.20.0
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 492 492 b40b958bfe450bd24190c42292f139f738a48226
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.87.24 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info: d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1;127.0.0.199:7.1.2
-X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.87.24
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 07/05/2022 07:46:00
-X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 7/5/2022 7:09:00 AM
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello!
+On 2022/7/5 15:34, Lukas Bulwahn wrote:
+> Commit fa96b57c1490 ("LoongArch: Add build infrastructure") adds the new
+> file arch/loongarch/Kconfig.
+>
+> As the work on LoongArch was probably quite some time under development,
+> various config symbols have changed and disappeared from the time of
+> initial writing of the Kconfig file and its inclusion in the repository.
+>
+> The following four commits:
+>
+>    commit c126a53c2760 ("arch: remove GENERIC_FIND_FIRST_BIT entirely")
+>    commit 140c8180eb7c ("arch: remove HAVE_COPY_THREAD_TLS")
+>    commit aca52c398389 ("mm: remove CONFIG_HAVE_MEMBLOCK")
+>    commit 3f08a302f533 ("mm: remove CONFIG_HAVE_MEMBLOCK_NODE_MAP option")
+>
+> remove the mentioned config symbol, and enable the intended setup by
+> default without configuration.
+>
+> Drop these obsolete selects in loongarch's Kconfig.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Huacai Chen, please pick this minor clean-up patch.
+>
+>   arch/loongarch/Kconfig | 4 ----
+>   1 file changed, 4 deletions(-)
+>
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index 2dee595bf4b6..9be4d0eef299 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -54,7 +54,6 @@ config LOONGARCH
+>   	select GENERIC_CMOS_UPDATE
+>   	select GENERIC_CPU_AUTOPROBE
+>   	select GENERIC_ENTRY
+> -	select GENERIC_FIND_FIRST_BIT
+>   	select GENERIC_GETTIMEOFDAY
+>   	select GENERIC_IRQ_MULTI_HANDLER
+>   	select GENERIC_IRQ_PROBE
+> @@ -77,7 +76,6 @@ config LOONGARCH
+>   	select HAVE_ARCH_TRANSPARENT_HUGEPAGE
+>   	select HAVE_ASM_MODVERSIONS
+>   	select HAVE_CONTEXT_TRACKING_USER
+> -	select HAVE_COPY_THREAD_TLS
+>   	select HAVE_DEBUG_STACKOVERFLOW
+>   	select HAVE_DMA_CONTIGUOUS
+>   	select HAVE_EXIT_THREAD
+> @@ -86,8 +84,6 @@ config LOONGARCH
+>   	select HAVE_IOREMAP_PROT
+>   	select HAVE_IRQ_EXIT_ON_IRQ_STACK
+>   	select HAVE_IRQ_TIME_ACCOUNTING
+> -	select HAVE_MEMBLOCK
+> -	select HAVE_MEMBLOCK_NODE_MAP
+>   	select HAVE_MOD_ARCH_SPECIFIC
+>   	select HAVE_NMI
+>   	select HAVE_PERF_EVENTS
 
-On 7/4/22 10:03 PM, Christophe JAILLET wrote:
+Looks good to me, thanks for the cleanup!
 
-> Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
+Reviewed-by: WANG Xuerui <git@xen0n.name>
 
-   You don't use bitmap_free() in this patch...
-
-> It is less verbose and it improves the semantic.
-> 
-> While at it, turn a bitmap_clear() into an equivalent bitmap_zero(). It is
-> also less verbose.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-[...]
-
-MBR, Sergey
