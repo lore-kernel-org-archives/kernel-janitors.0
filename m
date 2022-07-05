@@ -2,100 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDF7C43334
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Jul 2022 10:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA73EC43334
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Jul 2022 10:33:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232349AbiGEKVp (ORCPT
+        id S231150AbiGEKdE (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Jul 2022 06:21:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44322 "EHLO
+        Tue, 5 Jul 2022 06:33:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232322AbiGEKVf (ORCPT
+        with ESMTP id S231395AbiGEKdB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Jul 2022 06:21:35 -0400
-X-Greylist: delayed 600 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 05 Jul 2022 03:21:32 PDT
-Received: from mg.ssi.bg (mg.ssi.bg [193.238.174.37])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6147E140C7;
-        Tue,  5 Jul 2022 03:21:32 -0700 (PDT)
-Received: from mg.ssi.bg (localhost [127.0.0.1])
-        by mg.ssi.bg (Proxmox) with ESMTP id 804B728C44;
-        Tue,  5 Jul 2022 13:06:01 +0300 (EEST)
-Received: from ink.ssi.bg (unknown [193.238.174.40])
-        by mg.ssi.bg (Proxmox) with ESMTP id 1D85628BBA;
-        Tue,  5 Jul 2022 13:05:58 +0300 (EEST)
-Received: from ja.ssi.bg (unknown [178.16.129.10])
-        by ink.ssi.bg (Postfix) with ESMTPS id 23C2E3C0437;
-        Tue,  5 Jul 2022 13:05:56 +0300 (EEST)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-        by ja.ssi.bg (8.17.1/8.16.1) with ESMTP id 265A5tFs007839;
-        Tue, 5 Jul 2022 13:05:56 +0300
-Date:   Tue, 5 Jul 2022 13:05:54 +0300 (EEST)
-From:   Julian Anastasov <ja@ssi.bg>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-cc:     Simon Horman <horms@verge.net.au>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
-        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org
-Subject: Re: [PATCH] netfilter: ipvs: Use the bitmap API to allocate
- bitmaps
-In-Reply-To: <420d8b70560e8711726ff639f0a55364e212ff26.1656962678.git.christophe.jaillet@wanadoo.fr>
-Message-ID: <b69d7ba1-22f8-80c3-c870-debd7aaf4cea@ssi.bg>
-References: <420d8b70560e8711726ff639f0a55364e212ff26.1656962678.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 5 Jul 2022 06:33:01 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FF031572A;
+        Tue,  5 Jul 2022 03:32:59 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id lw20so20873195ejb.4;
+        Tue, 05 Jul 2022 03:32:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=jY5FjsixWEcU8zWWnoT9i17TwQs6gwoN4AcRetl459A=;
+        b=CLXsjGhps7gMkknzEejhsqeXGH97V6MUc8+1rvRng+RCUolyNyxRSjRnpe0IclsK5e
+         YYRN5JHrfj7XOXa9vWKxCbw7mEDKJSaR/ywYKw0jIEGtRY8S/LayzRbvfvKX3csZR36f
+         Br6uh63jmTgncimGaDumlZAhkZBWplIsKCz7Toi32BLIGHz8hIvBJEDHnxkCFp5+Zp6f
+         ZKzVQfSoAW0rPlVYOSeRthMhkh3iLJBPHoWVRtBYp/0KBi5BQQR3fjWNnieqXOjFWGZt
+         e7UwHoDELvPxzOhhiWbA4dHPGA4rguCmnAkZEJnjk3iHcvg0yfW6jYTuy1u1HyuOMVrW
+         FeeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=jY5FjsixWEcU8zWWnoT9i17TwQs6gwoN4AcRetl459A=;
+        b=PEdcYYkbcVXrs2A4Q89egtU8i6k4FOv4R4Ar0RysERRLe+wMpTyMktanuJcCHrWNS1
+         Ac3w/GJXdNnmnfvI0rG29ppBLD3Rt0c6y8WX0oP56o8X05KHDml99ehzoTChXr4yybcp
+         WZ1s30nZfS3TgJEjSIjprPDb5igdkkWngA++Lk4urpFer0Ogt62uWr/BUA4R4crbmmz6
+         0iSKL7ZgIfcQqniF8hw7ZKoEsbVdoDU1d/UKZ2tpM0WfHJFGTroI6OPOsPZSEg42BYeO
+         8baYUxW2euSPVchYtSMIUxNWKC5UrpOIZwvuktcMpGwZBbXyXwdaMRjESRSxQ1KyhZ/Y
+         iMBw==
+X-Gm-Message-State: AJIora/w4r5V2LjCXr4cKiiWgL5envH70OSEO8q/3zdk84c4eCc5U3Z/
+        7EeYct1wtsC5h0tgo05r5bI=
+X-Google-Smtp-Source: AGRyM1vbRqvZJ1bJMfKQceJ+JeD7Wl2liAwNwopQ2x8qJrxF1kBDubDhMTHNKcVUtXWF2qb02ic21A==
+X-Received: by 2002:a17:907:271b:b0:72a:72bb:6f47 with SMTP id w27-20020a170907271b00b0072a72bb6f47mr26019412ejk.634.1657017177777;
+        Tue, 05 Jul 2022 03:32:57 -0700 (PDT)
+Received: from felia.fritz.box (200116b82698ad00a9019cf0f015ae6b.dip.versatel-1u1.de. [2001:16b8:2698:ad00:a901:9cf0:f015:ae6b])
+        by smtp.gmail.com with ESMTPSA id p19-20020aa7cc93000000b0042bdb6a3602sm22540880edt.69.2022.07.05.03.32.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Jul 2022 03:32:57 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
+        <amadeuszx.slawinski@linux.intel.com>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+        Bard Liao <yung-chuan.liao@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] ASoC: Intel: avs: correct config reference for I2S test board
+Date:   Tue,  5 Jul 2022 12:32:38 +0200
+Message-Id: <20220705103238.7484-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Commit e39acc4cfd92 ("ASoC: Intel: avs: Add I2S-test machine board") adds
+the config "SND_SOC_INTEL_AVS_MACH_I2S_TEST", but in the Makefile refers
+to  config "SND_SOC_INTEL_AVS_MACH_i2s_TEST" (notice the uppercase and
+lowercase difference).
 
-	Hello,
+Adjust the Makefile to refer to the actual existing config.
 
-On Mon, 4 Jul 2022, Christophe JAILLET wrote:
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Amadeusz, Cezary, please ack.
 
-> Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
-> 
-> It is less verbose and it improves the semantic.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Mark, please pick this minor build config fix.
 
-	Looks good to me for -next! Thanks!
+ sound/soc/intel/avs/boards/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Julian Anastasov <ja@ssi.bg>
-
-> ---
->  net/netfilter/ipvs/ip_vs_mh.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/net/netfilter/ipvs/ip_vs_mh.c b/net/netfilter/ipvs/ip_vs_mh.c
-> index da0280cec506..e3d7f5c879ce 100644
-> --- a/net/netfilter/ipvs/ip_vs_mh.c
-> +++ b/net/netfilter/ipvs/ip_vs_mh.c
-> @@ -174,8 +174,7 @@ static int ip_vs_mh_populate(struct ip_vs_mh_state *s,
->  		return 0;
->  	}
->  
-> -	table = kcalloc(BITS_TO_LONGS(IP_VS_MH_TAB_SIZE),
-> -			sizeof(unsigned long), GFP_KERNEL);
-> +	table = bitmap_zalloc(IP_VS_MH_TAB_SIZE, GFP_KERNEL);
->  	if (!table)
->  		return -ENOMEM;
->  
-> @@ -227,7 +226,7 @@ static int ip_vs_mh_populate(struct ip_vs_mh_state *s,
->  	}
->  
->  out:
-> -	kfree(table);
-> +	bitmap_free(table);
->  	return 0;
->  }
->  
-> -- 
-> 2.34.1
-
-Regards
-
---
-Julian Anastasov <ja@ssi.bg>
+diff --git a/sound/soc/intel/avs/boards/Makefile b/sound/soc/intel/avs/boards/Makefile
+index 25e8c4bb07db..bc75376d58c2 100644
+--- a/sound/soc/intel/avs/boards/Makefile
++++ b/sound/soc/intel/avs/boards/Makefile
+@@ -16,7 +16,7 @@ snd-soc-avs-ssm4567-objs := ssm4567.o
+ obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_DA7219) += snd-soc-avs-da7219.o
+ obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_DMIC) += snd-soc-avs-dmic.o
+ obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_HDAUDIO) += snd-soc-avs-hdaudio.o
+-obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_i2s_TEST) += snd-soc-avs-i2s-test.o
++obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_I2S_TEST) += snd-soc-avs-i2s-test.o
+ obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_MAX98357A) += snd-soc-avs-max98357a.o
+ obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_MAX98373) += snd-soc-avs-max98373.o
+ obj-$(CONFIG_SND_SOC_INTEL_AVS_MACH_NAU8825) += snd-soc-avs-nau8825.o
+-- 
+2.17.1
 
