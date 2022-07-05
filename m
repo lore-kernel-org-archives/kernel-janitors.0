@@ -2,101 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76EB2C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Jul 2022 18:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53035C43334
+	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Jul 2022 18:52:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232431AbiGESGx (ORCPT
+        id S232854AbiGESw1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Jul 2022 14:06:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50010 "EHLO
+        Tue, 5 Jul 2022 14:52:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231971AbiGESGw (ORCPT
+        with ESMTP id S232836AbiGESwZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Jul 2022 14:06:52 -0400
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EE181AF30
-        for <kernel-janitors@vger.kernel.org>; Tue,  5 Jul 2022 11:06:51 -0700 (PDT)
-Received: by mail-qk1-x733.google.com with SMTP id f14so9359042qkm.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 05 Jul 2022 11:06:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=NBfVoJSUJjdQQlb25uPxwtrVG2zP5XJD8q80sb5lV4A=;
-        b=QbXbIjGWJFR+vFj17KgXaWRRm9RVaUzey5ETHrNx1L1E4Y6/IIPUz6tWo/LsvxFUEr
-         4sFAAU1qp1ba2RESZKKr8qk1sqglr8vWSJMskPCRS4d6dqav4StSexv3Yz1Wpu9d42T9
-         sx5vqagJhApayuqVLlqblgUhC9atwJF7xReaVTKbE007GkuyOi9am0XjnV0SLOj4megt
-         tdOzfWNqnwJXJs8m6EFjBAXznAczO6SgooHn0073jjOTupESoQRFlbDCj55ZoCnTkhnZ
-         Zyc1OZNDoYSDFs4h01UNG7ay5CAcM3i+qvf/pd9geSTMoAXBNE23C2xssZzj4ha/PUvN
-         cwoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=NBfVoJSUJjdQQlb25uPxwtrVG2zP5XJD8q80sb5lV4A=;
-        b=bHOZI6u7DfDz+Z57US4CB1APv1LkQR2hxwhQEmGOGbU+KfEK4dSDYzHj1O4+PFoq5l
-         fEaDISYyPmC9CvMNge2OmA5mIQJQ3IgM3crf9ebNuzaNkT8Ix1W2Z6QZ1oyfQYPrWSrZ
-         I6OMr7zIoj1okD8VSofYqnOsHf7r70gN5/efmi4+2yOyNhimqE3UC8y0YTTN5k1XZT8B
-         20zC9tzDPyJ+Bgais6+oVAEIdC9+E6Koy4Cn0iHslYEdCjT/tz/kHlp99wG9orQGF/F/
-         Tyu1WIK58QwVeUTCJIZR97nmlJ/5nat0pIUnrQ8rDBz2eUIMNLZ13r3+FcQvXzuT5QiD
-         mP7w==
-X-Gm-Message-State: AJIora+YEAlP5CNotyfQIfgWj9UlCcQs4JgLY24EMspIG1hvrkl0sMtX
-        iHxGvtfP88WtMw4VRGw105HxMw==
-X-Google-Smtp-Source: AGRyM1sz5Y2Ey5Cegzao8aWSyWOyIu98uEGQKAoalzRTmZGcTM98fT2ExQGr6cRp/IkcMKw3R7WcZw==
-X-Received: by 2002:a05:620a:7f6:b0:6af:2bef:2f67 with SMTP id k22-20020a05620a07f600b006af2bef2f67mr24446278qkk.595.1657044410618;
-        Tue, 05 Jul 2022 11:06:50 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-162-113-129.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.129])
-        by smtp.gmail.com with ESMTPSA id bm14-20020a05620a198e00b006b2849cdd37sm7277258qkb.113.2022.07.05.11.06.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Jul 2022 11:06:50 -0700 (PDT)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1o8mwj-006aGy-Kt; Tue, 05 Jul 2022 15:06:49 -0300
-Date:   Tue, 5 Jul 2022 15:06:49 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Longfang Liu <liulongfang@huawei.com>,
-        Yishai Hadas <yishaih@nvidia.com>,
-        Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] vfio: hisi_acc_vfio_pci: fix integer overflow check in
- hisi_acc_vf_resume_write()
-Message-ID: <20220705180649.GI23621@ziepe.ca>
-References: <YsP+2CWqMudArkqF@kili>
+        Tue, 5 Jul 2022 14:52:25 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A7091CFE0;
+        Tue,  5 Jul 2022 11:52:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1A03FB8182F;
+        Tue,  5 Jul 2022 18:52:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 303C5C341C7;
+        Tue,  5 Jul 2022 18:52:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657047141;
+        bh=yI0MSQYt/2idYq5077oft4Ko3AKuq2lB9fmiQNZBdv0=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=rfzbtF7es33J4ZWS3ihPhg0w1qCtpvFpMU/qDwjfwbnzcFn8lTwXPBom3UWuLTSqY
+         Gogb/BCK0IvwTzQtNyStAvLafvyeWLg5cF2i6E3RO2WMFcd0gYu5UrGWXB+NWTUtdQ
+         rOTPuEIlKtdgM3VdlACvJhmP6CDdR4yS6gspxdvbQ6mYX+/ctTiSJ5v+MlAILbF3Wn
+         5ntLlLvx2rWJZ37RW8GIAafECM01nX7vi8JhwklRRNDpkQBKswdKb/8UjjznaeCRqD
+         5o+Wnf9+x8R1dpiBxW2n6t2j/Xvngrui2suJ/9b2ZH1KsEiOizC4igzVJeGUs9Xm/q
+         XkweOITeQ/hhA==
+From:   Mark Brown <broonie@kernel.org>
+To:     amadeuszx.slawinski@linux.intel.com, lukas.bulwahn@gmail.com,
+        cezary.rojewski@intel.com, alsa-devel@alsa-project.org
+Cc:     peter.ujfalusi@linux.intel.com, liam.r.girdwood@linux.intel.com,
+        pierre-louis.bossart@linux.intel.com,
+        ranjani.sridharan@linux.intel.com, yung-chuan.liao@linux.intel.com,
+        tiwai@suse.com, linux-kernel@vger.kernel.org, perex@perex.cz,
+        kernel-janitors@vger.kernel.org, kai.vehmanen@linux.intel.com
+In-Reply-To: <20220705103238.7484-1-lukas.bulwahn@gmail.com>
+References: <20220705103238.7484-1-lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] ASoC: Intel: avs: correct config reference for I2S test board
+Message-Id: <165704713892.1050281.16411314466657755512.b4-ty@kernel.org>
+Date:   Tue, 05 Jul 2022 19:52:18 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YsP+2CWqMudArkqF@kili>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jul 05, 2022 at 12:05:28PM +0300, Dan Carpenter wrote:
-> The casting on this makes the integer overflow check slightly wrong.
-> "len" is an unsigned long. "*pos" and "requested_length" are signed
-> long longs.  Imagine "len" is ULONG_MAX and "*pos" is 2.
-> "ULONG_MAX + 2 = 1". 
-
-I wonder if this can happen, len is a kernel controlled value bounded
-by a memory allocation..
-
-> Fixes: b0eed085903e ("hisi_acc_vfio_pci: Add support for VFIO live migration")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-
-This code was copy and pasted from drivers/vfio/pci/mlx5/main.c, so it
-should be fixed too
-
-> It is strange that we are doing:
+On Tue, 5 Jul 2022 12:32:38 +0200, Lukas Bulwahn wrote:
+> Commit e39acc4cfd92 ("ASoC: Intel: avs: Add I2S-test machine board") adds
+> the config "SND_SOC_INTEL_AVS_MACH_I2S_TEST", but in the Makefile refers
+> to  config "SND_SOC_INTEL_AVS_MACH_i2s_TEST" (notice the uppercase and
+> lowercase difference).
 > 
-> 	pos = &filp->f_pos;
->
-> instead of using the passed in value of pos.  
+> Adjust the Makefile to refer to the actual existing config.
+> 
+> [...]
 
-IIRC the way we have the struct file configured the pos argument is
-NULL.
+Applied to
 
-Jason
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: Intel: avs: correct config reference for I2S test board
+      commit: f4ba35b79bd0104f00e8e21e400b980bfaa2f17e
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
