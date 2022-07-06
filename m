@@ -2,79 +2,124 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 616D2C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue,  5 Jul 2022 20:57:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F8BC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Jul 2022 00:46:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230301AbiGEU5o (ORCPT
+        id S229511AbiGFAqw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 5 Jul 2022 16:57:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35272 "EHLO
+        Tue, 5 Jul 2022 20:46:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232371AbiGEU5I (ORCPT
+        with ESMTP id S229493AbiGFAqw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 5 Jul 2022 16:57:08 -0400
-Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDDF61902B
-        for <kernel-janitors@vger.kernel.org>; Tue,  5 Jul 2022 13:57:02 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id 8pbPoGbFuNUm18pbPooK5u; Tue, 05 Jul 2022 22:57:00 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Tue, 05 Jul 2022 22:57:00 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-mips@vger.kernel.org
-Subject: [PATCH v2] MIPS: mm: Use the bitmap API to allocate bitmaps
-Date:   Tue,  5 Jul 2022 22:56:51 +0200
-Message-Id: <4b64934fe14f1c2d30193df01e67a52022703b95.1656961396.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Tue, 5 Jul 2022 20:46:52 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2696312A9B;
+        Tue,  5 Jul 2022 17:46:50 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id AA4CCB81A4C;
+        Wed,  6 Jul 2022 00:46:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ADDBC341C8;
+        Wed,  6 Jul 2022 00:46:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657068408;
+        bh=Jj3FwQ4HBpuobPyZ832SIAC1FCJMY+cubble0ym22lU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=paD2SriR9dq0LeSQzHUkus7DS1R1cDpKzYiazgLLHb0TapI2S28vHj7Ac+Eovwkdz
+         5SSRAtU3snJJnjkwRA2ENSY59EUnSz1dnEOSIVvjgNFrSxvjxRPRDZ6Ji+WUeKObPn
+         4YUEwgwZf/fUeyxDdmZJ1+N/D9msZ+MuyQwKPhws74WEiL8mfutVvLiF1luRDAbFxj
+         s977SrJ3v7Vusf3rx8g7KnN4VJ4dz724e7+JPS6vr9SXrsnG9EINJMOJTy/JzNgDQJ
+         gCOEJphamsF/ui6GNotMfbeFllru1eY0p2AKtKUYBnX2CY54wubtShaP2jhhdKuum4
+         QrwqJabKPYE9w==
+Received: by mail-vk1-f182.google.com with SMTP id d6so280849vko.11;
+        Tue, 05 Jul 2022 17:46:48 -0700 (PDT)
+X-Gm-Message-State: AJIora+frteOSTquZ0SeIUABUfaBglzATy0B+kfIfFe2QK9FRVa0aaZo
+        ntT3ExrdLeJTdyt3rhu0zvrjiwoGIhLowWxaFuw=
+X-Google-Smtp-Source: AGRyM1vvuIe+qf8xo4fOT9nX4g9oGlyOV4noxQuTgIoficxPhRAT9xdDT8InaTVVk/i+GPr16viVr4OgIgFCQhrAX9o=
+X-Received: by 2002:a1f:2a86:0:b0:370:8ff3:d5f with SMTP id
+ q128-20020a1f2a86000000b003708ff30d5fmr18265507vkq.35.1657068407238; Tue, 05
+ Jul 2022 17:46:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220705073405.29618-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220705073405.29618-1-lukas.bulwahn@gmail.com>
+From:   Huacai Chen <chenhuacai@kernel.org>
+Date:   Wed, 6 Jul 2022 08:46:34 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5s4gZf+vU=Vs1uGAqXMC+fBSRbNJdUgqkgmGNCdwxhxw@mail.gmail.com>
+Message-ID: <CAAhV-H5s4gZf+vU=Vs1uGAqXMC+fBSRbNJdUgqkgmGNCdwxhxw@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: drop these obsolete selects in Kconfig
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use bitmap_zalloc() instead of hand-writing them.
+Queued for loongarch-fixes, thanks.
 
-It is less verbose and it improves the semantic.
+Huacai
 
-While at it, turn a bitmap_clear() into an equivalent bitmap_zero(). It is
-also less verbose.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-v1 --> v2: don't speak about bitmap_free() in the log message (Sergey Shtylyov)
----
- arch/mips/mm/context.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/arch/mips/mm/context.c b/arch/mips/mm/context.c
-index b25564090939..966f40066f03 100644
---- a/arch/mips/mm/context.c
-+++ b/arch/mips/mm/context.c
-@@ -67,7 +67,7 @@ static void flush_context(void)
- 	int cpu;
- 
- 	/* Update the list of reserved MMIDs and the MMID bitmap */
--	bitmap_clear(mmid_map, 0, num_mmids);
-+	bitmap_zero(mmid_map, num_mmids);
- 
- 	/* Reserve an MMID for kmap/wired entries */
- 	__set_bit(MMID_KERNEL_WIRED, mmid_map);
-@@ -277,8 +277,7 @@ static int mmid_init(void)
- 	WARN_ON(num_mmids <= num_possible_cpus());
- 
- 	atomic64_set(&mmid_version, asid_first_version(0));
--	mmid_map = kcalloc(BITS_TO_LONGS(num_mmids), sizeof(*mmid_map),
--			   GFP_KERNEL);
-+	mmid_map = bitmap_zalloc(num_mmids, GFP_KERNEL);
- 	if (!mmid_map)
- 		panic("Failed to allocate bitmap for %u MMIDs\n", num_mmids);
- 
--- 
-2.34.1
-
+On Tue, Jul 5, 2022 at 3:35 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> Commit fa96b57c1490 ("LoongArch: Add build infrastructure") adds the new
+> file arch/loongarch/Kconfig.
+>
+> As the work on LoongArch was probably quite some time under development,
+> various config symbols have changed and disappeared from the time of
+> initial writing of the Kconfig file and its inclusion in the repository.
+>
+> The following four commits:
+>
+>   commit c126a53c2760 ("arch: remove GENERIC_FIND_FIRST_BIT entirely")
+>   commit 140c8180eb7c ("arch: remove HAVE_COPY_THREAD_TLS")
+>   commit aca52c398389 ("mm: remove CONFIG_HAVE_MEMBLOCK")
+>   commit 3f08a302f533 ("mm: remove CONFIG_HAVE_MEMBLOCK_NODE_MAP option")
+>
+> remove the mentioned config symbol, and enable the intended setup by
+> default without configuration.
+>
+> Drop these obsolete selects in loongarch's Kconfig.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Huacai Chen, please pick this minor clean-up patch.
+>
+>  arch/loongarch/Kconfig | 4 ----
+>  1 file changed, 4 deletions(-)
+>
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index 2dee595bf4b6..9be4d0eef299 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -54,7 +54,6 @@ config LOONGARCH
+>         select GENERIC_CMOS_UPDATE
+>         select GENERIC_CPU_AUTOPROBE
+>         select GENERIC_ENTRY
+> -       select GENERIC_FIND_FIRST_BIT
+>         select GENERIC_GETTIMEOFDAY
+>         select GENERIC_IRQ_MULTI_HANDLER
+>         select GENERIC_IRQ_PROBE
+> @@ -77,7 +76,6 @@ config LOONGARCH
+>         select HAVE_ARCH_TRANSPARENT_HUGEPAGE
+>         select HAVE_ASM_MODVERSIONS
+>         select HAVE_CONTEXT_TRACKING_USER
+> -       select HAVE_COPY_THREAD_TLS
+>         select HAVE_DEBUG_STACKOVERFLOW
+>         select HAVE_DMA_CONTIGUOUS
+>         select HAVE_EXIT_THREAD
+> @@ -86,8 +84,6 @@ config LOONGARCH
+>         select HAVE_IOREMAP_PROT
+>         select HAVE_IRQ_EXIT_ON_IRQ_STACK
+>         select HAVE_IRQ_TIME_ACCOUNTING
+> -       select HAVE_MEMBLOCK
+> -       select HAVE_MEMBLOCK_NODE_MAP
+>         select HAVE_MOD_ARCH_SPECIFIC
+>         select HAVE_NMI
+>         select HAVE_PERF_EVENTS
+> --
+> 2.17.1
+>
+>
