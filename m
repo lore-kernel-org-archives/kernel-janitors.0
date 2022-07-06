@@ -2,99 +2,159 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3321C43334
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Jul 2022 09:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5A8CC43334
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Jul 2022 09:27:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232842AbiGFJUR (ORCPT
+        id S231831AbiGFJ1O (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 6 Jul 2022 05:20:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34950 "EHLO
+        Wed, 6 Jul 2022 05:27:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232505AbiGFJUP (ORCPT
+        with ESMTP id S231173AbiGFJ1M (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 6 Jul 2022 05:20:15 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E1D2215A2B;
-        Wed,  6 Jul 2022 02:20:14 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0E64515DB;
-        Wed,  6 Jul 2022 02:20:15 -0700 (PDT)
-Received: from [10.57.10.18] (unknown [10.57.10.18])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 24ED13F66F;
-        Wed,  6 Jul 2022 02:20:11 -0700 (PDT)
-Message-ID: <33aafc05-daa1-50e0-00ab-dab97bb8a879@arm.com>
-Date:   Wed, 6 Jul 2022 10:20:05 +0100
+        Wed, 6 Jul 2022 05:27:12 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38BA01D0D2
+        for <kernel-janitors@vger.kernel.org>; Wed,  6 Jul 2022 02:27:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1657099631; x=1688635631;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=OqoSbqDwwOzRRi8jeyun12rYrQP6dVrQCq0Pp8SDvgk=;
+  b=aWlAfmUyoVsjjsSTehlWvjtG6Oi9O399yPdUOgbAHPgwzhB3YH3JBSrP
+   MosDfYN8HA+PfHCSMsHKxFNbUrNQOaHYXAw09L7seo3DmVRJ2qbf8xy+U
+   5TnpbFUeEzCNvQgglJHGj1kYPphpmM1gbrdF/jjrpiacTjXGM6It8TxcT
+   K0gZhCfuzharUI7OEd2l90V3EKs3/1MgrBWNj6z5FwRbM0bPfik0KYIyQ
+   sdSIuOsqamDc6BoZsS5DXjYyjteK+Erx0u8k21cdqwCrRDbxFKd7DZ8/l
+   EDqtR9zVI4DLXEuyR2VFZbk3ToqokuhXgiV2h2cFnKFTOgpB8SpCxQnem
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10399"; a="266722351"
+X-IronPort-AV: E=Sophos;i="5.92,249,1650956400"; 
+   d="scan'208";a="266722351"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2022 02:27:06 -0700
+X-IronPort-AV: E=Sophos;i="5.92,249,1650956400"; 
+   d="scan'208";a="920089289"
+Received: from gguerra-mobl1.ger.corp.intel.com (HELO [10.249.254.46]) ([10.249.254.46])
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2022 02:27:02 -0700
+Message-ID: <2d7bb9f7-a316-16d8-b290-e0cae9b28127@linux.intel.com>
+Date:   Wed, 6 Jul 2022 12:27:49 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] KVM: arm64: Use the bitmap API to allocate bitmaps
+ Firefox/91.0 Thunderbird/91.10.0
+Subject: Re: [PATCH 2/2] ASoC: SOF: sof-client-probes: cleanup
+ tokenize_input()
 Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Marc Zyngier <maz@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Alexandru Elisei <alexandru.elisei@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Oliver Upton <oliver.upton@linux.dev>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
-References: <a93d3e94be2003922c7e9652b57e96261cc47641.1656961792.git.christophe.jaillet@wanadoo.fr>
-From:   Vladimir Murzin <vladimir.murzin@arm.com>
-In-Reply-To: <a93d3e94be2003922c7e9652b57e96261cc47641.1656961792.git.christophe.jaillet@wanadoo.fr>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Bard Liao <yung-chuan.liao@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        sound-open-firmware@alsa-project.org, alsa-devel@alsa-project.org,
+        kernel-janitors@vger.kernel.org
+References: <YsU4zCpaV7GBpHci@kili>
+From:   =?UTF-8?Q?P=c3=a9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
+In-Reply-To: <YsU4zCpaV7GBpHci@kili>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 7/4/22 20:10, Christophe JAILLET wrote:
-> Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
-> 
-> It is less verbose and it improves the semantic.
-> 
-> While at it, turn a bitmap_clear() into an equivalent bitmap_zero(). It is
-> also less verbose.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+
+On 06/07/2022 10:25, Dan Carpenter wrote:
+> The tokenize_input() function is cleaner if it uses strndup_user()
+> instead of simple_write_to_buffer().  The way it's written now, if
+> *ppos is non-zero then it returns -EIO but normally we would return
+> 0 in that case.  It's easier to handle that in the callers.
+
+This patch breaks the probe point settings:
+
+# echo 52,1,0 > /sys/kernel/debug/sof/probe_points
+-bash: echo: write error: Invalid argument
+
+I did not looked for the exact reason, but something is not correct.
+
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  arch/arm64/kvm/vmid.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+>  sound/soc/sof/sof-client-probes.c | 27 +++++++++++++--------------
+>  1 file changed, 13 insertions(+), 14 deletions(-)
 > 
-> diff --git a/arch/arm64/kvm/vmid.c b/arch/arm64/kvm/vmid.c
-> index d78ae63d7c15..f4612cdb60ff 100644
-> --- a/arch/arm64/kvm/vmid.c
-> +++ b/arch/arm64/kvm/vmid.c
-> @@ -47,7 +47,7 @@ static void flush_context(void)
->  	int cpu;
->  	u64 vmid;
->  
-> -	bitmap_clear(vmid_map, 0, NUM_USER_VMIDS);
-> +	bitmap_zero(vmid_map, NUM_USER_VMIDS);
->  
->  	for_each_possible_cpu(cpu) {
->  		vmid = atomic64_xchg_relaxed(&per_cpu(active_vmids, cpu), 0);
-> @@ -182,8 +182,7 @@ int kvm_arm_vmid_alloc_init(void)
->  	 */
->  	WARN_ON(NUM_USER_VMIDS - 1 <= num_possible_cpus());
->  	atomic64_set(&vmid_generation, VMID_FIRST_VERSION);
-> -	vmid_map = kcalloc(BITS_TO_LONGS(NUM_USER_VMIDS),
-> -			   sizeof(*vmid_map), GFP_KERNEL);
-> +	vmid_map = bitmap_zalloc(NUM_USER_VMIDS, GFP_KERNEL);
->  	if (!vmid_map)
->  		return -ENOMEM;
->  
-> @@ -192,5 +191,5 @@ int kvm_arm_vmid_alloc_init(void)
->  
->  void kvm_arm_vmid_alloc_free(void)
->  {
-> -	kfree(vmid_map);
-> +	bitmap_free(vmid_map);
+> diff --git a/sound/soc/sof/sof-client-probes.c b/sound/soc/sof/sof-client-probes.c
+> index 679bc7d371fc..6c922b683f67 100644
+> --- a/sound/soc/sof/sof-client-probes.c
+> +++ b/sound/soc/sof/sof-client-probes.c
+> @@ -461,24 +461,17 @@ static int strsplit_u32(char *buf, const char *delim, u32 **tkns, size_t *num_tk
 >  }
+>  
+>  static int tokenize_input(const char __user *from, size_t count,
+> -			  loff_t *ppos, u32 **tkns, size_t *num_tkns)
+> +			  u32 **tkns, size_t *num_tkns)
+>  {
+>  	char *buf;
+>  	int ret;
+>  
+> -	buf = kmalloc(count + 1, GFP_KERNEL);
+> -	if (!buf)
+> -		return -ENOMEM;
+> -
+> -	ret = simple_write_to_buffer(buf, count, ppos, from, count);
+> -	if (ret != count) {
+> -		ret = ret >= 0 ? -EIO : ret;
+> -		goto exit;
+> -	}
+> +	buf = strndup_user(from, count + 1);
+> +	if (IS_ERR(buf))
+> +		return PTR_ERR(buf);
+>  
+> -	buf[count] = '\0';
+>  	ret = strsplit_u32(buf, ",", tkns, num_tkns);
+> -exit:
+> +
+>  	kfree(buf);
+>  	return ret;
+>  }
+> @@ -552,12 +545,15 @@ sof_probes_dfs_points_write(struct file *file, const char __user *from,
+>  	u32 *tkns;
+>  	int ret, err;
+>  
+> +	if (*ppos)
+> +		return 0;
+> +
+>  	if (priv->extractor_stream_tag == SOF_PROBES_INVALID_NODE_ID) {
+>  		dev_warn(dev, "no extractor stream running\n");
+>  		return -ENOENT;
+>  	}
+>  
+> -	ret = tokenize_input(from, count, ppos, &tkns, &num_tkns);
+> +	ret = tokenize_input(from, count, &tkns, &num_tkns);
+>  	if (ret < 0)
+>  		return ret;
+>  	bytes = sizeof(*tkns) * num_tkns;
+> @@ -607,12 +603,15 @@ sof_probes_dfs_points_remove_write(struct file *file, const char __user *from,
+>  	u32 *tkns;
+>  	int ret, err;
+>  
+> +	if (*ppos)
+> +		return 0;
+> +
+>  	if (priv->extractor_stream_tag == SOF_PROBES_INVALID_NODE_ID) {
+>  		dev_warn(dev, "no extractor stream running\n");
+>  		return -ENOENT;
+>  	}
+>  
+> -	ret = tokenize_input(from, count, ppos, &tkns, &num_tkns);
+> +	ret = tokenize_input(from, count, &tkns, &num_tkns);
+>  	if (ret < 0)
+>  		return ret;
+>  	if (!num_tkns) {
 
-FWIW
-
-Reviewed-by: Vladimir Murzin <vladimir.murzin@arm.com>
-
-Cheers
-Vladimir
+-- 
+Péter
