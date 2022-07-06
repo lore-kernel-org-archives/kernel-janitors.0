@@ -2,124 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECFD8CCA48E
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Jul 2022 09:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3321C43334
+	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Jul 2022 09:20:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233006AbiGFJHw (ORCPT
+        id S232842AbiGFJUR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 6 Jul 2022 05:07:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46508 "EHLO
+        Wed, 6 Jul 2022 05:20:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233133AbiGFJHc (ORCPT
+        with ESMTP id S232505AbiGFJUP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 6 Jul 2022 05:07:32 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25B9B255B9
-        for <kernel-janitors@vger.kernel.org>; Wed,  6 Jul 2022 02:05:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657098324; x=1688634324;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=RfpzoH4hfqwhAmi1U0DrZ8kMnGeJ0kLgO1VmGWYJIK4=;
-  b=Yxe8bUJpNXFJDZEDCxdyBrB4XE+1iZQrTC7nQe3MfSGL9rOnWdyD/rRt
-   lMdu6jYfB3rOrZZqn9PEn8/RornP7S8/wws303zIZfGh11wPmgtjY02Mi
-   i8bLkI5vITRE4jRB9PShbR1bTXdhwOMmk/f0cTymH/aSI/8/LeZOQyDRo
-   qe1im2TIqN+eULTLsjVte1h1codHyxVeanbhAzfhAY1Il6Op0nugM+JE2
-   3EOJyQ3sn+LYgmFVvUedMZrlse26GURG0hLPMrIcMwPtMlSD5+foGCTvG
-   2iq45NzIdB+Ktuk7XaMMWjXZyQfbJogINt2kKT4ZqDQOIejMH/270jMpz
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10399"; a="370007231"
-X-IronPort-AV: E=Sophos;i="5.92,249,1650956400"; 
-   d="scan'208";a="370007231"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2022 02:04:54 -0700
-X-IronPort-AV: E=Sophos;i="5.92,249,1650956400"; 
-   d="scan'208";a="920080488"
-Received: from gguerra-mobl1.ger.corp.intel.com (HELO [10.249.254.46]) ([10.249.254.46])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2022 02:04:50 -0700
-Message-ID: <26db7e60-51d1-444a-7620-8225239ad7bf@linux.intel.com>
-Date:   Wed, 6 Jul 2022 12:05:37 +0300
+        Wed, 6 Jul 2022 05:20:15 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E1D2215A2B;
+        Wed,  6 Jul 2022 02:20:14 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0E64515DB;
+        Wed,  6 Jul 2022 02:20:15 -0700 (PDT)
+Received: from [10.57.10.18] (unknown [10.57.10.18])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 24ED13F66F;
+        Wed,  6 Jul 2022 02:20:11 -0700 (PDT)
+Message-ID: <33aafc05-daa1-50e0-00ab-dab97bb8a879@arm.com>
+Date:   Wed, 6 Jul 2022 10:20:05 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Firefox/91.0 Thunderbird/91.10.0
-Subject: Re: [PATCH 1/2] ASoC: SOF: sof-client-probes: fix error codes in
- sof_probes_compr_copy()
+ Thunderbird/91.9.1
+Subject: Re: [PATCH] KVM: arm64: Use the bitmap API to allocate bitmaps
 Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Bard Liao <yung-chuan.liao@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        sound-open-firmware@alsa-project.org, alsa-devel@alsa-project.org,
-        kernel-janitors@vger.kernel.org
-References: <YsU4dYXYYVsfs92J@kili>
-From:   =?UTF-8?Q?P=c3=a9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
-In-Reply-To: <YsU4dYXYYVsfs92J@kili>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Marc Zyngier <maz@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Alexandru Elisei <alexandru.elisei@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Oliver Upton <oliver.upton@linux.dev>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
+References: <a93d3e94be2003922c7e9652b57e96261cc47641.1656961792.git.christophe.jaillet@wanadoo.fr>
+From:   Vladimir Murzin <vladimir.murzin@arm.com>
+In-Reply-To: <a93d3e94be2003922c7e9652b57e96261cc47641.1656961792.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 06/07/2022 10:23, Dan Carpenter wrote:
-> This function tries to return the number of bytes that it was able to
-> copy to the user.  However, because there are multiple calls to
-> copy_to_user() in a row that means the bytes are not necessarily
-> consecutive so it's not useful.  Just return -EFAULT instead.
-
-The function is copying data from a circular buffer to a use buffer.
-The single copy_to_user() is used when we don't have wrapping, the
-'double' copy_to_user() is when we wrap, so first copy is from the end
-of the buffer then we copy the data from the start of the buffer to get
-all data.
-
-> Fixes: 3dc0d7091778 ("ASoC: SOF: Convert the generic probe support to SOF client")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  sound/soc/sof/sof-client-probes.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+On 7/4/22 20:10, Christophe JAILLET wrote:
+> Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
 > 
-> diff --git a/sound/soc/sof/sof-client-probes.c b/sound/soc/sof/sof-client-probes.c
-> index 1f1ea93a7fbf..679bc7d371fc 100644
-> --- a/sound/soc/sof/sof-client-probes.c
-> +++ b/sound/soc/sof/sof-client-probes.c
-> @@ -385,7 +385,6 @@ static int sof_probes_compr_copy(struct snd_soc_component *component,
->  	struct snd_compr_runtime *rtd = cstream->runtime;
->  	unsigned int offset, n;
->  	void *ptr;
-> -	int ret;
+> It is less verbose and it improves the semantic.
+> 
+> While at it, turn a bitmap_clear() into an equivalent bitmap_zero(). It is
+> also less verbose.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  arch/arm64/kvm/vmid.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/vmid.c b/arch/arm64/kvm/vmid.c
+> index d78ae63d7c15..f4612cdb60ff 100644
+> --- a/arch/arm64/kvm/vmid.c
+> +++ b/arch/arm64/kvm/vmid.c
+> @@ -47,7 +47,7 @@ static void flush_context(void)
+>  	int cpu;
+>  	u64 vmid;
 >  
->  	if (count > rtd->buffer_size)
->  		count = rtd->buffer_size;
-> @@ -395,14 +394,15 @@ static int sof_probes_compr_copy(struct snd_soc_component *component,
->  	n = rtd->buffer_size - offset;
+> -	bitmap_clear(vmid_map, 0, NUM_USER_VMIDS);
+> +	bitmap_zero(vmid_map, NUM_USER_VMIDS);
 >  
->  	if (count < n) {
-> -		ret = copy_to_user(buf, ptr, count);
-> +		if (copy_to_user(buf, ptr, count))
-> +			return -EFAULT;
->  	} else {
-> -		ret = copy_to_user(buf, ptr, n);
-> -		ret += copy_to_user(buf + n, rtd->dma_area, count - n);
-> +		if (copy_to_user(buf, ptr, n))
-> +			return -EFAULT;
-> +		if (copy_to_user(buf + n, rtd->dma_area, count - n))
-> +			return -EFAULT;
->  	}
+>  	for_each_possible_cpu(cpu) {
+>  		vmid = atomic64_xchg_relaxed(&per_cpu(active_vmids, cpu), 0);
+> @@ -182,8 +182,7 @@ int kvm_arm_vmid_alloc_init(void)
+>  	 */
+>  	WARN_ON(NUM_USER_VMIDS - 1 <= num_possible_cpus());
+>  	atomic64_set(&vmid_generation, VMID_FIRST_VERSION);
+> -	vmid_map = kcalloc(BITS_TO_LONGS(NUM_USER_VMIDS),
+> -			   sizeof(*vmid_map), GFP_KERNEL);
+> +	vmid_map = bitmap_zalloc(NUM_USER_VMIDS, GFP_KERNEL);
+>  	if (!vmid_map)
+>  		return -ENOMEM;
 >  
-> -	if (ret)
-> -		return count - ret;
->  	return count;
+> @@ -192,5 +191,5 @@ int kvm_arm_vmid_alloc_init(void)
+>  
+>  void kvm_arm_vmid_alloc_free(void)
+>  {
+> -	kfree(vmid_map);
+> +	bitmap_free(vmid_map);
 >  }
->  
 
--- 
-Péter
+FWIW
+
+Reviewed-by: Vladimir Murzin <vladimir.murzin@arm.com>
+
+Cheers
+Vladimir
