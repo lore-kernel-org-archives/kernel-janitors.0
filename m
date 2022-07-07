@@ -2,74 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1CB1C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed,  6 Jul 2022 16:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B0FC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Jul 2022 03:00:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232948AbiGFQun (ORCPT
+        id S234910AbiGGDAT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 6 Jul 2022 12:50:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44550 "EHLO
+        Wed, 6 Jul 2022 23:00:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229632AbiGFQum (ORCPT
+        with ESMTP id S234815AbiGGDAR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 6 Jul 2022 12:50:42 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B752F2A420;
-        Wed,  6 Jul 2022 09:50:41 -0700 (PDT)
+        Wed, 6 Jul 2022 23:00:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 646A12F67F;
+        Wed,  6 Jul 2022 20:00:15 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7678BB81E31;
-        Wed,  6 Jul 2022 16:50:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FF57C341CA;
-        Wed,  6 Jul 2022 16:50:37 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 786306215D;
+        Thu,  7 Jul 2022 03:00:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DBA4AC341CA;
+        Thu,  7 Jul 2022 03:00:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657126239;
-        bh=Wy1TRTUE8gVOdUd024/IZBro8SbqAM+LXn9G77s0fk4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uqTJBrNtL3EeI6QP04OGhJlyQ3OVpR9NXXJGDUWnbrHUbgxZeNGS1SL9XeY7mZLub
-         bdS8IY5BNzwy/HI0UyQLsKsQDlNMp1G4rBIFcM21LqQORJyNJ8j3DxEjPj5GECIwha
-         tp6/dMEz8MvkAKcO7OMq1oChb1FTIW+0o4F3Gy5SM+HDO21DmzsOgdp+QvL+ugDYMc
-         BOtaLlPPCXlMYMy2nmko+uVVdVkoiMjzgjEHhqixdhZUL58wcB6vXSB9jslLiNNGng
-         HGKtYPsfwBG8cDBDQWGPG5sXk1kh9vNl11uIycFD/ps7Rrr4yzDnj3qZ3QLHhYzWdg
-         rAifXCv3md9oA==
-From:   Will Deacon <will@kernel.org>
-To:     Mark Rutland <mark.rutland@arm.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     catalin.marinas@arm.com, kernel-team@android.com,
-        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] perf/arm-cci: Use the bitmap API to allocate bitmaps
-Date:   Wed,  6 Jul 2022 17:50:29 +0100
-Message-Id: <165710177848.2545023.16989792085835227804.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <fbde85a5e8ae99b10a2115d8ea1e69320a62947f.1657084786.git.christophe.jaillet@wanadoo.fr>
-References: <fbde85a5e8ae99b10a2115d8ea1e69320a62947f.1657084786.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
+        s=k20201202; t=1657162814;
+        bh=P0K6fp2IA+jZVSlzemEv5qVoKwTnr0GFLmMPri8B4/k=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=RUsNlXe2WsnK+RhQfV8e7bqZxpR7vMWdMg6+r1/ngcMgSgRis7Yf5QBYbbrGiVgB7
+         KQHRyiX2nrqwaTQlbRqDbrf9LY9u+TqyamOeYxYicBi8/3XfYW2y5ctpWwcIbA9P3D
+         +IdQPkFkayOCevmJP4Gu6i1dBlBailXdCp4jyF/INzBL5U5Q6YdDndpD7ceIVaEK1F
+         Tpp6IkfVhjZPwFsCL+l3OtlC3EY6M5Dikjb4FabJIFzfjS2oyYVT+meB6w9wIq8x1G
+         6P84doGL2DeEQJS/fXM6if98v623MlDYXuOmBRrZMdvMYMOD4VjzGz83hGJ3pSVkEl
+         pU9WeFSUGa/XA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C79C4E45BDE;
+        Thu,  7 Jul 2022 03:00:14 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] sfc: falcon: Use the bitmap API to allocate bitmaps
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <165716281481.11165.15348245264221582052.git-patchwork-notify@kernel.org>
+Date:   Thu, 07 Jul 2022 03:00:14 +0000
+References: <c62c1774e6a34bc64323ce526b385aa87c1ca575.1657049799.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <c62c1774e6a34bc64323ce526b385aa87c1ca575.1657049799.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     ecree.xilinx@gmail.com, habetsm.xilinx@gmail.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 6 Jul 2022 07:20:15 +0200, Christophe JAILLET wrote:
-> Use devm_bitmap_zalloc() instead of hand-writing it.
+Hello:
+
+This patch was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue,  5 Jul 2022 21:36:51 +0200 you wrote:
+> Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
+> 
 > It is less verbose and it improves the semantic.
 > 
-> While at it, use bitmap_zero() instead of hand-writing it.
-> 
-> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/net/ethernet/sfc/falcon/farch.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 
-Applied to will (for-next/perf), thanks!
+Here is the summary with links:
+  - sfc: falcon: Use the bitmap API to allocate bitmaps
+    https://git.kernel.org/netdev/net-next/c/ee4c0c5d2593
 
-[1/1] perf/arm-cci: Use the bitmap API to allocate bitmaps
-      https://git.kernel.org/will/c/0e35850b341e
-
-Cheers,
+You are awesome, thank you!
 -- 
-Will
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
+
