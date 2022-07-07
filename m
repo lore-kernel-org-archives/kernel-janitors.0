@@ -2,87 +2,139 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 692E3C43334
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Jul 2022 13:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7950CCA479
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Jul 2022 14:41:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235381AbiGGNRe (ORCPT
+        id S235804AbiGGOlh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Jul 2022 09:17:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40392 "EHLO
+        Thu, 7 Jul 2022 10:41:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235098AbiGGNRd (ORCPT
+        with ESMTP id S235933AbiGGOla (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Jul 2022 09:17:33 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A2662F3BC;
-        Thu,  7 Jul 2022 06:17:32 -0700 (PDT)
-Received: from mail-yb1-f171.google.com ([209.85.219.171]) by
- mrelayeu.kundenserver.de (mreue009 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MQvH5-1numNx1zxX-00NwU8; Thu, 07 Jul 2022 15:17:30 +0200
-Received: by mail-yb1-f171.google.com with SMTP id 136so649075ybl.5;
-        Thu, 07 Jul 2022 06:17:30 -0700 (PDT)
-X-Gm-Message-State: AJIora9wVMgSkeYa2Fw1xQvY0SFiYMk4V9+IKUHeyrSWpFDHcdk1GB5Z
-        Y6Th2gPSHMFmfUIqxL3FaTCQw+c7GJ6oEUvRH3I=
-X-Google-Smtp-Source: AGRyM1sIVP+sKzdVYFj+QYsC1OY+fEPgMo3nlsTTen8lbyAjHTJh0NZ0UhttkuKcfl2p0A0KvTfiIntFQ2qrS/pVGTs=
-X-Received: by 2002:a25:9f87:0:b0:669:4345:a8c0 with SMTP id
- u7-20020a259f87000000b006694345a8c0mr49906358ybq.472.1657199849284; Thu, 07
- Jul 2022 06:17:29 -0700 (PDT)
+        Thu, 7 Jul 2022 10:41:30 -0400
+Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 696773190D;
+        Thu,  7 Jul 2022 07:41:29 -0700 (PDT)
+Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-31bf3656517so171608217b3.12;
+        Thu, 07 Jul 2022 07:41:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e5bjrIIk4MXIN8C31qiFXOS3/fG2/z8CmTSANmVxdy8=;
+        b=kmWYMaUMp2mRClBKlIj7qLT5zJaCjwENeyNTjiQSNrIIRkJfTvFvh2WWMa6PAyijFV
+         aU0AIDpaSpv3DPCNoEKYmqOMND86p2POEJX2rqKTOeJRPeB9X8I0f74xiRgljzu7tapS
+         uIcVwArIYwk25FopRMaItDjuT0uN5EaAZQ/xJ2SCvSg12v3i/5n8a5mqTOOyQxOEo6jW
+         ZQvmi7WnA/CsW6y2pziC9JVgpBdvfR1oUGlWX4S7DsvrIpUM9dPt7dWw/h86fH2LUsCI
+         UPOBoZOQRx+ZLscbfduFYEZ4vqN3MmBkIFVtryHPHgANKOGb2IdC8YpppE1Ybnsopu63
+         oH+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e5bjrIIk4MXIN8C31qiFXOS3/fG2/z8CmTSANmVxdy8=;
+        b=n9gEx5MO2niFaoGo0t90jdWMPDc/lgcQ57sG6qouranT4BFcUk9SjH4COW9+OIX+a8
+         nPBQYE3zhDWZNb+lHq7kWtNBik5EHzV8Z9/wdsPykJpyTm9SbYubOWbUGO9ZdAJwEIFV
+         rJqS1O8/gNqa6tpwR++2BzkCajgJ7lPv5sy2W2aUmXechflGSDDsMXoAPwFWxs1PaWiP
+         Ei4Hy+sPyIOQig/w3BE2ICNvcO3cOnNZMFdpc0GhGhwuJqaG9wa0P8FYdFM0u+7IdavB
+         1RCAOvVajgxIG/2XS29pE+3yJXv6F/YzYXYalXjPZWRzkrHKyfd3kDaaKxFZzX/stM0x
+         UBGA==
+X-Gm-Message-State: AJIora84ac/4x2euN5wsA91/LddqPqRQzlN980Wj5Mf5/qOUzOSMqh0g
+        5sIK8oQS8ZtsS8vhZBrgSBSfunaYmMVpMvUYaSQ=
+X-Google-Smtp-Source: AGRyM1uJk4/jKvboenu61bK22XlgMlaJz0THOLxslPfUwFNnE4t0l44/11LtiP6JadK+sxElCUXALnelrhc0K8+Ii7Y=
+X-Received: by 2002:a81:cf02:0:b0:2d0:b68c:cf30 with SMTP id
+ u2-20020a81cf02000000b002d0b68ccf30mr52305330ywi.510.1657204888328; Thu, 07
+ Jul 2022 07:41:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220707112645.5147-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20220707112645.5147-1-lukas.bulwahn@gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 7 Jul 2022 15:17:12 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a3f0H2gnZFCah_HiNTdwyp4pLKd4w=yN6-0FxrF2+3ihA@mail.gmail.com>
-Message-ID: <CAK8P3a3f0H2gnZFCah_HiNTdwyp4pLKd4w=yN6-0FxrF2+3ihA@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: mark ARM/PALM TREO SUPPORT orphan
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
+References: <CAK8P3a12-atmqjtjqi-RhFXH2Kwa-hxYcxy3Ftz2YjY5yyPHqg@mail.gmail.com>
+ <mhng-f5938c9b-7fc1-4b0c-9449-7dd1431f5446@palmerdabbelt-glaptop>
+ <CAKXUXMzpWsdKYbcu5MxvrAEMLHv4_2OGv2bRYEsQaze5trUSiQ@mail.gmail.com>
+ <CAK8P3a32m42gT9qz+Ldvr8okYGOc=kKeoJTGNWyYT71N8tJfEA@mail.gmail.com>
+ <4ff47e50-8702-1177-612b-73d9700e47c5@microchip.com> <CAK8P3a01x_ETchX2Vwm9oNaFJDhVZEu+G-2vRwegqKkMe54m6g@mail.gmail.com>
+In-Reply-To: <CAK8P3a01x_ETchX2Vwm9oNaFJDhVZEu+G-2vRwegqKkMe54m6g@mail.gmail.com>
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Thu, 7 Jul 2022 16:41:17 +0200
+Message-ID: <CAKXUXMxOUs31SkGb0JD=nmHxgFy4tQ5vn6yD6ivgRpbSAxm7mA@mail.gmail.com>
+Subject: Re: [PATCH] asm-generic: correct reference to GENERIC_LIB_DEVMEM_IS_ALLOWED
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Conor Dooley <Conor.Dooley@microchip.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Palmer Dabbelt <palmerdabbelt@google.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
         kernel-janitors <kernel-janitors@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:6u4FdKJKUiHlASxckZ1Jifeq3AQjDM5G0/ugNCBj8mgO+YqCLel
- v58mLglqbrK/wJiI4tX2JHbGrc8//2LvSwyzBtWRUUOYAeshZ5CSTw+pfdBrZbIwS02vIq5
- Dv22moH2R/ROiZvhHRJ2ycAgytl4nCil+1hwxbGpyxMWOQPFkXfGaG/hI/UtxW+PyLO6jul
- 6WuxKTQ4X67dWXC1N8K+g==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:5Qf4fi8A2iU=:A9WWyXSH+HP8nUgm7HFrO6
- CLVT6IcAToedOH9/oA8sn8opuqqlRhNykUaTqShbM1LF9d0aZRo77Jlro/v6KjBe1gJ49oLkT
- Sffkn4Oze0iBOgg5FPCyZwUaQRAGs5IntOK06LghbwwnkuaOLU2Lp3p7fIfgMahUyWzMMSAbE
- fCXHurvFQlg7Ot1cZM2EFx4h3soI+AAt0430+cxKjhG/MZ/Su0vorPnYX9ZQeuh7/rs4dgHMp
- TGEgX6wPbJOsC1eyjjT4a7rUPK7xlQqOQCzahnPTky2v1+/Ur08AoLDzbN6cFvSXN/10RVmAG
- 1BWe1OswUZYGzJ9BpBYG115wvqxQRAxFTAch9rNJksNRxYU76R6yUtLlDdutLb/foGaK+Y6jd
- HcAZBgbA9EizGw9nq29Jq932hydDhbGgfLXHE/WaA69TgJlQBj4IT4KAghWbSzwfXGcM2ouRI
- 2no2JBt/n7dmpTSEvnkU/dcvu7Vg3TzVk4upLsYDth9HWfd8+e89GuhtKx8DeCXSCoTjwwxLm
- tcaT2zp2IXcOxGHkhTFDe3+6P+bnLEYtkQwWl19HM8HOWa2ibdhoi71o7JdsuaDn751u8DH9e
- a+2RcH+g65OXRJE3w+z8VMLMftz9LMsp5+uIspcuHCVHKZVxi1JdTyfa3T1sEkraOC4OJOfNR
- dgePqkNRn8/lbKOKqNvtqAtpYbhK/ay89rDH5jHP+JcgZFhX1zjlC2E830dxQgtoQjrXlFO6l
- h/OKF+Kq5OKQd1YUgqwtJ5rACaOBiyoZY0MWDRHH5UdB96UMzPjzqzC2sUBDMn5aS4/jyCnqU
- bZsrZt0tLQQVhD9zqF/WemLgipgyoHyoSdx/B7zV0w66q1sNZtbPM/WJphoTI5Ill+08kOwF8
- C4rK0MTWKz9ICOmZyyTri4T8NJGNmYnES0WbV9ris=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jul 7, 2022 at 1:26 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+On Thu, Jul 7, 2022 at 3:07 PM Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> The email address sleep_walker@suse.com and the url http://hackndev.com/,
-> provided in the ARM/PALM TREO SUPPORT section, are not reachable anymore.
+> On Thu, Jul 7, 2022 at 2:20 PM <Conor.Dooley@microchip.com> wrote:
+> > On 07/07/2022 13:13, Arnd Bergmann wrote:
+> > > On Thu, Jul 7, 2022 at 1:40 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> > >>
+> > >> On Wed, Oct 6, 2021 at 6:52 PM Palmer Dabbelt <palmerdabbelt@google.com> wrote:
+> > >>>
+> > >>> On Wed, 06 Oct 2021 08:17:38 PDT (-0700), Arnd Bergmann wrote:
+> > >>>> On Wed, Oct 6, 2021 at 5:00 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> > >>>>>
+> > >>>>> Commit 527701eda5f1 ("lib: Add a generic version of devmem_is_allowed()")
+> > >>>>> introduces the config symbol GENERIC_LIB_DEVMEM_IS_ALLOWED, but then
+> > >>>>> falsely refers to CONFIG_GENERIC_DEVMEM_IS_ALLOWED (note the missing LIB
+> > >>>>> in the reference) in ./include/asm-generic/io.h.
+> > >>>>>
+> > >>>>> Luckily, ./scripts/checkkconfigsymbols.py warns on non-existing configs:
+> > >>>>>
+> > >>>>> GENERIC_DEVMEM_IS_ALLOWED
+> > >>>>> Referencing files: include/asm-generic/io.h
+> > >>>>>
+> > >>>>> Correct the name of the config to the intended one.
+> > >>>>>
+> > >>>>> Fixes: 527701eda5f1 ("lib: Add a generic version of devmem_is_allowed()")
+> > >>>>> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > >>>>
+> > >>>> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> > >>>
+> > >>> Reviewed-by: Palmer Dabbelt <palmerdabbelt@google.com>
+> > >>> Acked-by: Palmer Dabbelt <palmerdabbelt@google.com>
+> > >>>
+> > >>> Thanks.  I'm going to assume this is going in through some other tree,
+> > >>> but IIUC I sent the buggy patch up so LMK if you're expecting it to go
+> > >>> through mine.
+> > >>
+> > >> Palmer, Arnd,
+> > >>
+> > >> the patch in this mail thread got lost and was not picked up yet.
+> > >>
+> > >> MAINTAINERS suggests that Arnd takes patches to include/asm-generic/,
+> > >> since commit 1527aab617af ("asm-generic: list Arnd as asm-generic
+> > >> maintainer") in 2009, but maybe the responsibility for those files has
+> > >> actually moved on to somebody (or nobody) else and we just did not
+> > >> record that yet in MAINTAINERS.
+> > >>
+> > >> Arnd, will you pick this patch and provide it further to Linus Torvalds?
+> > >>
+> > >> Otherwise, Palmer already suggested picking it up himself.
+> > >>
+> > >
+> > > I've applied it to the asm-generic tree and can send it as a bugfix
+> > > pull request. I don't have any other fixer for that branch at the moment,
+> > > so if Palmer has other fixes for the riscv tree already, it would
+> > > save me making a pull request if he picks it up there.
 >
-> Make this machine support orphan, and give somebody the chance to step up.
-> Move the maintainer into CREDITS to keep the attribution to his work.
+> lkft just found a build failure:
 >
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> RFC patch: https://lore.kernel.org/all/20211229191828.21317-1-lukas.bulwahn@gmail.com/
->   - received no comments
+> https://gitlab.com/Linaro/lkft/users/arnd.bergmann/asm-generic/-/jobs/2691154818
 >
-> Russell, please pick this minor update to MAINTAINERS.
+> I have not investigated what went wrong, but it does look like an actual
+> regression, so I'll wait for Lukas to follow up with a new version of the patch.
 
-I usually take the platform specific MAINTAINERS updates through the soc tree.
+Thanks for your testing. I will look into it. Probably it is due to
+some more rigor during builds (-Werror and new warning types in the
+default build) since I proposed the patch in October 2021. That should
+be easy to fix, but let us see. I will send a PATCH v2 soon.
 
-Applied to the arm/fixes branch there.
-
-       Arnd
+Lukas
