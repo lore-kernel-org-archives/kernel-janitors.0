@@ -2,49 +2,49 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B0FC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Jul 2022 03:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB346CCA481
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Jul 2022 03:00:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234910AbiGGDAT (ORCPT
+        id S234916AbiGGDAV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 6 Jul 2022 23:00:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60470 "EHLO
+        Wed, 6 Jul 2022 23:00:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234815AbiGGDAR (ORCPT
+        with ESMTP id S234895AbiGGDAR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
         Wed, 6 Jul 2022 23:00:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 646A12F67F;
-        Wed,  6 Jul 2022 20:00:15 -0700 (PDT)
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 648382FFC4;
+        Wed,  6 Jul 2022 20:00:16 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 786306215D;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A5B5C62162;
         Thu,  7 Jul 2022 03:00:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DBA4AC341CA;
-        Thu,  7 Jul 2022 03:00:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 12327C341D2;
+        Thu,  7 Jul 2022 03:00:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657162814;
-        bh=P0K6fp2IA+jZVSlzemEv5qVoKwTnr0GFLmMPri8B4/k=;
+        s=k20201202; t=1657162815;
+        bh=eQg95j9MS8oSrF+FZix091yuv4/xQ7WMtBdaRKbDzXY=;
         h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=RUsNlXe2WsnK+RhQfV8e7bqZxpR7vMWdMg6+r1/ngcMgSgRis7Yf5QBYbbrGiVgB7
-         KQHRyiX2nrqwaTQlbRqDbrf9LY9u+TqyamOeYxYicBi8/3XfYW2y5ctpWwcIbA9P3D
-         +IdQPkFkayOCevmJP4Gu6i1dBlBailXdCp4jyF/INzBL5U5Q6YdDndpD7ceIVaEK1F
-         Tpp6IkfVhjZPwFsCL+l3OtlC3EY6M5Dikjb4FabJIFzfjS2oyYVT+meB6w9wIq8x1G
-         6P84doGL2DeEQJS/fXM6if98v623MlDYXuOmBRrZMdvMYMOD4VjzGz83hGJ3pSVkEl
-         pU9WeFSUGa/XA==
+        b=ke7l0Kv8+4CE63vq9BphytQ61Yqjj2/2+DiAXkLc3AZ3HDk3NcpN4jfG4Eva07L3q
+         VN193mKLwp8ngETbp07HWChhQV3+nHzhKen6bA4WJNbgaIbutmlPoPE8ncqyAFmOv6
+         Q21eeW/mjGpzOxvpwq3/vkxkuZ+Zbh5nSpXcab6/9baW+ikoF1oW23sJv21qo0zXVb
+         m/ZikDsSQ+QUb7w7iddwIqcaWyGnvYtQdBYlfgp6mK8f5wxZmrcvEVceHh3RJeKLuM
+         v5B+8Jq0RGkMi4ZNhI/lF03354QZ10YE3p15tccSxaXsg0Mso2438TWH0C8HOW4PPv
+         wqVfYfqxxUbJA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C79C4E45BDE;
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id EDDBBE45BE1;
         Thu,  7 Jul 2022 03:00:14 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] sfc: falcon: Use the bitmap API to allocate bitmaps
+Subject: Re: [PATCH] sfc/siena: Use the bitmap API to allocate bitmaps
 From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <165716281481.11165.15348245264221582052.git-patchwork-notify@kernel.org>
+Message-Id: <165716281497.11165.11472596147049333164.git-patchwork-notify@kernel.org>
 Date:   Thu, 07 Jul 2022 03:00:14 +0000
-References: <c62c1774e6a34bc64323ce526b385aa87c1ca575.1657049799.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <c62c1774e6a34bc64323ce526b385aa87c1ca575.1657049799.git.christophe.jaillet@wanadoo.fr>
+References: <717ba530215f4d7ce9fedcc73d98dba1f70d7f71.1657049636.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <717ba530215f4d7ce9fedcc73d98dba1f70d7f71.1657049636.git.christophe.jaillet@wanadoo.fr>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc:     ecree.xilinx@gmail.com, habetsm.xilinx@gmail.com,
         davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
@@ -59,19 +59,19 @@ Hello:
 This patch was applied to netdev/net-next.git (master)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue,  5 Jul 2022 21:36:51 +0200 you wrote:
+On Tue,  5 Jul 2022 21:34:08 +0200 you wrote:
 > Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
 > 
 > It is less verbose and it improves the semantic.
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/net/ethernet/sfc/falcon/farch.c | 6 ++----
+>  drivers/net/ethernet/sfc/siena/farch.c | 6 ++----
 >  1 file changed, 2 insertions(+), 4 deletions(-)
 
 Here is the summary with links:
-  - sfc: falcon: Use the bitmap API to allocate bitmaps
-    https://git.kernel.org/netdev/net-next/c/ee4c0c5d2593
+  - sfc/siena: Use the bitmap API to allocate bitmaps
+    https://git.kernel.org/netdev/net-next/c/820aceb53c75
 
 You are awesome, thank you!
 -- 
