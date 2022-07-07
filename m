@@ -2,103 +2,117 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2622DC43334
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Jul 2022 11:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C993EC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Jul 2022 12:13:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235750AbiGGL7I (ORCPT
+        id S234737AbiGGMN3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Jul 2022 07:59:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38512 "EHLO
+        Thu, 7 Jul 2022 08:13:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236180AbiGGL6s (ORCPT
+        with ESMTP id S231343AbiGGMN1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Jul 2022 07:58:48 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31A2960520;
-        Thu,  7 Jul 2022 04:56:28 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id n4so12711997ejz.10;
-        Thu, 07 Jul 2022 04:56:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=2rCng+c6+Ic3ugn7usdk1Bb1bCGkkTmVKqnPhZXSPqk=;
-        b=FE1lOsq1SvOf0A7puhlFa8iv0gg261tT/ojI+wPTpodjibJR7/N/37HnPQ0TJ8lu5W
-         OfOA5oXX+8JfILRl+YzcvfbyTsolsSYGbvFxXGbImRqFyBOeaoriicR7Ac4x43PIac9L
-         ngBNSGsSI1Iz+9QGe5wL2MLKL1wASOhlROtPkfujryvtREu+lCTurM/1IxQMzroNgNY4
-         T8RnNSiXBCHXGD6+KRa05dNDDYYHeM4XVvNYwpNwzxn8xfvGsCmlMyNfiOp5YgwdNqDG
-         FT8cDqW9F9Y3u7cb8bWeTA8XiBAUmxQam/GTBlGLqqqx8vhoEuLUGvyMWYCd4VqOAvpl
-         zAsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=2rCng+c6+Ic3ugn7usdk1Bb1bCGkkTmVKqnPhZXSPqk=;
-        b=Y+4nufCjkB+qDOe+a2Mpo+dC4+9rn9P6VIM7DNp2snrzupjeg/E9LqKIqd4oTqL1UT
-         BUEJNjBzmSl/86pODIhmUfaiOiUL1DG5V16RrLX5K20M0wElZUJG20aeRPR4iu1dCPxA
-         ZiVDotjFIPCFVNWonGJvD48FROndCzCTuqFDJPtx2olRSgLYHolXuSX/rwsd+Uw7GNBQ
-         g622Gr/YoZwrICc0w9pjQWKbLhceF2gZ3srcjjl+58YWFjfiaeVaezcmli//ENS+1LHf
-         38j/lZwPtBc3xzdx8192fzxNylBl9c9qKyIFF6RliX298YTKBt1yy/Sap2QrVnicJH1m
-         1RaQ==
-X-Gm-Message-State: AJIora8oIop3uiWaMO77dXKnJsVzj6/XuGZAMBaqFUXoP83Ns7Oh9FOV
-        hGoTuncyQAJd3UTBPi5rMSnIHOuYNso=
-X-Google-Smtp-Source: AGRyM1t6B+Y8Zy+zmKbmWqwBGZPp/d+cPAdaYLN//Bp16hveKRBbcKnTN5OLLQqyKEAyZj/CqSIlWg==
-X-Received: by 2002:a17:906:4fd4:b0:722:f223:8d86 with SMTP id i20-20020a1709064fd400b00722f2238d86mr44652077ejw.558.1657194985535;
-        Thu, 07 Jul 2022 04:56:25 -0700 (PDT)
-Received: from felia.fritz.box (200116b826df3d00599ec68d191c47fa.dip.versatel-1u1.de. [2001:16b8:26df:3d00:599e:c68d:191c:47fa])
-        by smtp.gmail.com with ESMTPSA id 21-20020a170906301500b00728f6d4d0d7sm12078708ejz.67.2022.07.07.04.56.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jul 2022 04:56:25 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH RESEND] x86: mm: refer to the intended config STRICT_DEVMEM in a comment
-Date:   Thu,  7 Jul 2022 13:54:42 +0200
-Message-Id: <20220707115442.21107-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 7 Jul 2022 08:13:27 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E30D65721A;
+        Thu,  7 Jul 2022 05:13:22 -0700 (PDT)
+Received: from mail-yw1-f177.google.com ([209.85.128.177]) by
+ mrelayeu.kundenserver.de (mreue010 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1MHXWL-1oMwu94Ak5-00DVYb; Thu, 07 Jul 2022 14:13:21 +0200
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-317a66d62dfso167940137b3.7;
+        Thu, 07 Jul 2022 05:13:20 -0700 (PDT)
+X-Gm-Message-State: AJIora8CQlfh5jzBkohQCquTnvDQtwpNZZ/PLumOtErfs0nKblNAkwTG
+        h5MvPjdU8EPWAaXI3o/N4/cmr2oTfcTdtcwEfFo=
+X-Google-Smtp-Source: AGRyM1tV/DrF7ycXM3ug40hQQx3lr8bWg0MpBEk4G23+AfClxifxNOoCzy63rJK/JM88aL8UcFxTAzCzt8zqWWCvBBY=
+X-Received: by 2002:a81:f82:0:b0:31c:f1ae:1ed6 with SMTP id
+ 124-20020a810f82000000b0031cf1ae1ed6mr8719242ywp.249.1657195999598; Thu, 07
+ Jul 2022 05:13:19 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAK8P3a12-atmqjtjqi-RhFXH2Kwa-hxYcxy3Ftz2YjY5yyPHqg@mail.gmail.com>
+ <mhng-f5938c9b-7fc1-4b0c-9449-7dd1431f5446@palmerdabbelt-glaptop> <CAKXUXMzpWsdKYbcu5MxvrAEMLHv4_2OGv2bRYEsQaze5trUSiQ@mail.gmail.com>
+In-Reply-To: <CAKXUXMzpWsdKYbcu5MxvrAEMLHv4_2OGv2bRYEsQaze5trUSiQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 7 Jul 2022 14:13:02 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a32m42gT9qz+Ldvr8okYGOc=kKeoJTGNWyYT71N8tJfEA@mail.gmail.com>
+Message-ID: <CAK8P3a32m42gT9qz+Ldvr8okYGOc=kKeoJTGNWyYT71N8tJfEA@mail.gmail.com>
+Subject: Re: [PATCH] asm-generic: correct reference to GENERIC_LIB_DEVMEM_IS_ALLOWED
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Palmer Dabbelt <palmerdabbelt@google.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:y52jjYOeb8evCJVCb5GPlS8PD3mNk7Rl/98+o9yukeYkRQmbpvw
+ ix5q9v9/qPmrzHFoc4szA2n5Nwqrt2jtQzoFaD3RvO9nn/Jum2GdQHZFDBUohnq5JvnC9f8
+ uLIlczj4Y9SsfAF+yG6m5wfDm/3fxm+SFhRx+6a5T0bWQS0J+Uf2ETppa8c0nJjQVGTaSvE
+ iQrvZE1HxvxSoPXzKG88A==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:izA6gWP3DDQ=:4/Ax1o5QZ1i74hAOv3jMfN
+ SI2GsWbL4XI9xYsiIk4/dcHrPRdXz3F//fh7kiijBjnt5pxpoYvFeukfs574SSjkNG2TuXadf
+ pvulI1yKVzFS7E8jbzmbf5/OWuoRLvewRWhTSpyFMcRtZHA217dW9/ImnA5qkN44iMGsoPcPc
+ 77i7n+V4di2PZ3wFP2gBADcExaAXUxRCLh+z9ix0/tpKZ/gV41Zz/gl1T6dV+0cD+Ca5zpcNr
+ NfEToICEBmshRxpICf0keZaCHmhLXun5SD/7i8Nwrc53tyDdyhO5GVh2hp3gK74/g0dzqLdvC
+ CLy50aYdZ194D/UAjxZE6sP3OdWWXEDqs1SxxqV8yK0XWpxuhWtgDEZp4yH57bd7y0yb+uCLL
+ ZLLzEN6+nm/kA8OI3aLGPjDYoAdPsIcQfErZXZD1i2BcwMXPwaEdVYuQbpZ293WKBo2CTuG3m
+ IQ+ryzTug5Moq3tDVi9M28ofqbCqWW+5ftQbtJnQOE8fdbWf6WTE451SytS5z5wgtvGwT8O0W
+ 7u8rfnWX8rIl9tdZS9Yo2QgzrNi74isPCpYeGp70XnCs5/IZHkzGAGO3L17RJnKlbcyn9N7Yb
+ IWpnxqECb6bIicuA6ulBKmioil9zIIxZ5zejIvLxqWfU0wly2FPVgilm7d+rfsnihVHHiB8Mi
+ +4BTG4Xt3EsddpgC4lQFD9xaaz4uG2fRBRsvMmPhOzsh00mgP+1ZblvY7O+27AXXpQdSuPsKn
+ WuK9fVm0neJA90vx6Xr/rAUZkp+Wu0eQ7s8TgQ==
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit a4866aa81251 ("mm: Tighten x86 /dev/mem with zeroing reads") adds a
-comment to the function devmem_is_allowed() referring to a non-existing
-config STRICT_IOMEM, whereas the comment very likely intended to refer to
-the config STRICT_DEVMEM, as the commit adds some behavior for the config
-STRICT_DEVMEM.
+On Thu, Jul 7, 2022 at 1:40 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> On Wed, Oct 6, 2021 at 6:52 PM Palmer Dabbelt <palmerdabbelt@google.com> wrote:
+> >
+> > On Wed, 06 Oct 2021 08:17:38 PDT (-0700), Arnd Bergmann wrote:
+> > > On Wed, Oct 6, 2021 at 5:00 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> > >>
+> > >> Commit 527701eda5f1 ("lib: Add a generic version of devmem_is_allowed()")
+> > >> introduces the config symbol GENERIC_LIB_DEVMEM_IS_ALLOWED, but then
+> > >> falsely refers to CONFIG_GENERIC_DEVMEM_IS_ALLOWED (note the missing LIB
+> > >> in the reference) in ./include/asm-generic/io.h.
+> > >>
+> > >> Luckily, ./scripts/checkkconfigsymbols.py warns on non-existing configs:
+> > >>
+> > >> GENERIC_DEVMEM_IS_ALLOWED
+> > >> Referencing files: include/asm-generic/io.h
+> > >>
+> > >> Correct the name of the config to the intended one.
+> > >>
+> > >> Fixes: 527701eda5f1 ("lib: Add a generic version of devmem_is_allowed()")
+> > >> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > >
+> > > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> >
+> > Reviewed-by: Palmer Dabbelt <palmerdabbelt@google.com>
+> > Acked-by: Palmer Dabbelt <palmerdabbelt@google.com>
+> >
+> > Thanks.  I'm going to assume this is going in through some other tree,
+> > but IIUC I sent the buggy patch up so LMK if you're expecting it to go
+> > through mine.
+>
+> Palmer, Arnd,
+>
+> the patch in this mail thread got lost and was not picked up yet.
+>
+> MAINTAINERS suggests that Arnd takes patches to include/asm-generic/,
+> since commit 1527aab617af ("asm-generic: list Arnd as asm-generic
+> maintainer") in 2009, but maybe the responsibility for those files has
+> actually moved on to somebody (or nobody) else and we just did not
+> record that yet in MAINTAINERS.
+>
+> Arnd, will you pick this patch and provide it further to Linus Torvalds?
+>
+> Otherwise, Palmer already suggested picking it up himself.
+>
 
-Most of the initial analysis was actually done by Dave Hansen in the
-email thread below (see Link).
+I've applied it to the asm-generic tree and can send it as a bugfix
+pull request. I don't have any other fixer for that branch at the moment,
+so if Palmer has other fixes for the riscv tree already, it would
+save me making a pull request if he picks it up there.
 
-Refer to the intended and existing config STRICT_DEVMEM.
-
-Link: https://lore.kernel.org/r/f9074e8d-9314-9d7d-7bf5-5b5538c8be8d@intel.com/
-
-Suggested-by: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-v1: https://lore.kernel.org/all/20211222125347.13054-1-lukas.bulwahn@gmail.com/
- 
- arch/x86/mm/init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index d8cfce221275..5d747a1923cb 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -846,7 +846,7 @@ int devmem_is_allowed(unsigned long pagenr)
- 
- 	/*
- 	 * This must follow RAM test, since System RAM is considered a
--	 * restricted resource under CONFIG_STRICT_IOMEM.
-+	 * restricted resource under CONFIG_STRICT_DEVMEM.
- 	 */
- 	if (iomem_is_exclusive(pagenr << PAGE_SHIFT)) {
- 		/* Low 1MB bypasses iomem restrictions. */
--- 
-2.17.1
-
+       Arnd
