@@ -2,116 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1598DC43334
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Jul 2022 11:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 879BBC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Jul 2022 11:40:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234737AbiGGL2y (ORCPT
+        id S235192AbiGGLku (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Jul 2022 07:28:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39884 "EHLO
+        Thu, 7 Jul 2022 07:40:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230020AbiGGL2x (ORCPT
+        with ESMTP id S235158AbiGGLks (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Jul 2022 07:28:53 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFE832F00D;
-        Thu,  7 Jul 2022 04:28:51 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id u15so7441020ejx.9;
-        Thu, 07 Jul 2022 04:28:51 -0700 (PDT)
+        Thu, 7 Jul 2022 07:40:48 -0400
+Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79BD04F1A1;
+        Thu,  7 Jul 2022 04:40:47 -0700 (PDT)
+Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-31c89111f23so116824687b3.0;
+        Thu, 07 Jul 2022 04:40:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=m5PYfIp3y7G55Xw9BSK+oFXneOri6BhsxpMkd6GW0qo=;
-        b=EJfOtU5spY6XTXJWNfaP8bnujKcmZDrO+oflo0+0LMfVyY1Ourz9zntnsO8dRuZn7V
-         H9kmtAh7Uo7NLMYNgM1Ii0rr7cQDdxsax7F7VGMXL+VbG39gr5NmTQAwtbk1yXA9ezkV
-         mgq42B1cYu087uk3NLRvh2Oe17lh05C+1muvr8EmETgJKXs0ujLBLM+cs6E4SNnWhljt
-         nXalygWZ/czeoOjlkvi4w3zrZbWxZ1abhEgiN0klvEwUQIE7tOUI6UY5EIqI1dc+AP3G
-         dMcMsTu5ZwUBcjULfaftwtLGzOfYeiv/iNZKWW2LSa2HFxC3SBEhcZlw1meMnMz3YCnL
-         oxwA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sYBPqS4xY3Iy/t1wJ0RdNMmpzpw8+/2pWaPNwwQsS0k=;
+        b=NHANB1zb7QW09jcvhMhHqZ1vX+OHZF2oNO9oEeZoL9D0QuxrC7CSh8ps8YDiMjstUi
+         oG3E2WinJqR1Nwvf3AzASdEqVgO5UBLmKe+otVgFvAPmQQi7LIbpteG2atULmpr29yGQ
+         /blSer7nVC0TSb8ms8lYN0vYbQ+6GzQrOdNPPZ9r1lOE6GcjLUUv1GAu3bdlaSMiz3MO
+         Ks5UavL5VLiFdw3VTFaBH8PUjEqq4klxaXmzv9QJwYY4hUrIFOqrFr0ttbp4ku5g6ryZ
+         VhNmEBv4od4gFgKVAP0EJ8WED2u4z6IPuy95QIevTjbh5J708fKC7MJzgjX333DO55gh
+         p36Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=m5PYfIp3y7G55Xw9BSK+oFXneOri6BhsxpMkd6GW0qo=;
-        b=jcgxqr+WTKkzHkfQfqvbx0rKLLlJBHsZLAHd2piPIw3vk8W8GAW8R/j0zOpsLqhGDS
-         6sCuRHJuEvQ843Gdsnd37y+uDLca93WjQVqPOU0pYTHuDZLpCSdS3a/PQeqANJ5Gd443
-         zXHzZ7JyxlHsnch67fGlSZhatfCYbbFzOiYrgkZK7O3WOVNI0P4JKEr8Kg9dYuIMxZ+2
-         XVBTc5eeuhFDxE1X41T4In6rNNT/3aSPCXmQW8f2xdelgt+XWyynnbBova6IV2N11XSY
-         2Szrsvc91+yHiZAwCq0O2c/mN8x8Y3raFOJCvtxJcfpJrDA7ucUwNLwnPv30ACp/GE5e
-         qZLg==
-X-Gm-Message-State: AJIora/xArXqUdTUKfvGN+50fedAIwLEej4rXLbfh35lQA91lf49+vHn
-        /JgN8dEcfBqRM8KB1b1fo9a+L3oI+2s=
-X-Google-Smtp-Source: AGRyM1sCeMKb/87R0NYQT4DEJ42/TBDB2kYDNSIKTYv53GoGBgwRKFWdbEZx2gE4jszsucPFprN1VA==
-X-Received: by 2002:a17:906:2001:b0:6f3:bd7f:d878 with SMTP id 1-20020a170906200100b006f3bd7fd878mr43048732ejo.133.1657193330498;
-        Thu, 07 Jul 2022 04:28:50 -0700 (PDT)
-Received: from felia.fritz.box (200116b826df3d00599ec68d191c47fa.dip.versatel-1u1.de. [2001:16b8:26df:3d00:599e:c68d:191c:47fa])
-        by smtp.gmail.com with ESMTPSA id hz11-20020a1709072ceb00b00722fc014e8csm18574315ejc.104.2022.07.07.04.28.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jul 2022 04:28:49 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sYBPqS4xY3Iy/t1wJ0RdNMmpzpw8+/2pWaPNwwQsS0k=;
+        b=kepodHVgZQ9OU3jKMsM0+H9SBlPbD9UQWRDVxugZE6tszAOow4RAtPYcCed1hUobZR
+         NWqHhEugKubuUXch6ZGUl5CQJXt1p/zu7OP1o4PhRhe3E555ubfaFbOnd8vhshd9g8Om
+         hDslkr3sNhaX/5rY5hCFvL/ml4r3Ab15plArQygJetqOd02fDgh+4rA45qPyeY9dhtKx
+         AhicvZfFN2SAyICOtXqgyy+WDpAMI0GG5seuLE5o6qtA/UhplYgFIs3y0xp5Ic9vVn/Q
+         em1nSXiH6SkQ77iof75IhAOv35UHvkeGleFQ/0bmxUTI7xKG4pnnLKws9DQedTabCD5O
+         Yj4g==
+X-Gm-Message-State: AJIora+ZCDgk2Jy23eBY5dYWuCFpGw2KpjEHz5lyXmumajk0VlIjcW93
+        ao9R4F41O/oCfmD29aSy68G8qeM/vOmpOURLtyISzny8BfY=
+X-Google-Smtp-Source: AGRyM1v8pkh1WCxZyLS5NpCQgpNIQQxFyxGl9Kmab697g5gxlfPnLIs2hr7Ou7DItJjkbPIUuG+2JKOfOjNVSw7prWo=
+X-Received: by 2002:a0d:dec2:0:b0:31c:a9dc:b372 with SMTP id
+ h185-20020a0ddec2000000b0031ca9dcb372mr21129907ywe.481.1657194046634; Thu, 07
+ Jul 2022 04:40:46 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAK8P3a12-atmqjtjqi-RhFXH2Kwa-hxYcxy3Ftz2YjY5yyPHqg@mail.gmail.com>
+ <mhng-f5938c9b-7fc1-4b0c-9449-7dd1431f5446@palmerdabbelt-glaptop>
+In-Reply-To: <mhng-f5938c9b-7fc1-4b0c-9449-7dd1431f5446@palmerdabbelt-glaptop>
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: mark ARM/PALM TREO SUPPORT orphan
-Date:   Thu,  7 Jul 2022 13:26:45 +0200
-Message-Id: <20220707112645.5147-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+Date:   Thu, 7 Jul 2022 13:40:36 +0200
+Message-ID: <CAKXUXMzpWsdKYbcu5MxvrAEMLHv4_2OGv2bRYEsQaze5trUSiQ@mail.gmail.com>
+Subject: Re: [PATCH] asm-generic: correct reference to GENERIC_LIB_DEVMEM_IS_ALLOWED
+To:     Palmer Dabbelt <palmerdabbelt@google.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The email address sleep_walker@suse.com and the url http://hackndev.com/,
-provided in the ARM/PALM TREO SUPPORT section, are not reachable anymore.
+On Wed, Oct 6, 2021 at 6:52 PM Palmer Dabbelt <palmerdabbelt@google.com> wrote:
+>
+> On Wed, 06 Oct 2021 08:17:38 PDT (-0700), Arnd Bergmann wrote:
+> > On Wed, Oct 6, 2021 at 5:00 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> >>
+> >> Commit 527701eda5f1 ("lib: Add a generic version of devmem_is_allowed()")
+> >> introduces the config symbol GENERIC_LIB_DEVMEM_IS_ALLOWED, but then
+> >> falsely refers to CONFIG_GENERIC_DEVMEM_IS_ALLOWED (note the missing LIB
+> >> in the reference) in ./include/asm-generic/io.h.
+> >>
+> >> Luckily, ./scripts/checkkconfigsymbols.py warns on non-existing configs:
+> >>
+> >> GENERIC_DEVMEM_IS_ALLOWED
+> >> Referencing files: include/asm-generic/io.h
+> >>
+> >> Correct the name of the config to the intended one.
+> >>
+> >> Fixes: 527701eda5f1 ("lib: Add a generic version of devmem_is_allowed()")
+> >> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> >
+> > Acked-by: Arnd Bergmann <arnd@arndb.de>
+>
+> Reviewed-by: Palmer Dabbelt <palmerdabbelt@google.com>
+> Acked-by: Palmer Dabbelt <palmerdabbelt@google.com>
+>
+> Thanks.  I'm going to assume this is going in through some other tree,
+> but IIUC I sent the buggy patch up so LMK if you're expecting it to go
+> through mine.
 
-Make this machine support orphan, and give somebody the chance to step up.
-Move the maintainer into CREDITS to keep the attribution to his work.
+Palmer, Arnd,
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-RFC patch: https://lore.kernel.org/all/20211229191828.21317-1-lukas.bulwahn@gmail.com/
-  - received no comments
+the patch in this mail thread got lost and was not picked up yet.
 
-Russell, please pick this minor update to MAINTAINERS.
+MAINTAINERS suggests that Arnd takes patches to include/asm-generic/,
+since commit 1527aab617af ("asm-generic: list Arnd as asm-generic
+maintainer") in 2009, but maybe the responsibility for those files has
+actually moved on to somebody (or nobody) else and we just did not
+record that yet in MAINTAINERS.
 
+Arnd, will you pick this patch and provide it further to Linus Torvalds?
 
- CREDITS     | 4 ++++
- MAINTAINERS | 4 +---
- 2 files changed, 5 insertions(+), 3 deletions(-)
+Otherwise, Palmer already suggested picking it up himself.
 
-diff --git a/CREDITS b/CREDITS
-index 7e85a53b6a88..40d3c655b567 100644
---- a/CREDITS
-+++ b/CREDITS
-@@ -627,6 +627,10 @@ S: 48287 Sawleaf
- S: Fremont, California 94539
- S: USA
- 
-+N: Tomas Cech
-+E: sleep_walker@suse.com
-+D: arm/palm treo support
-+
- N: Florent Chabaud
- E: florent.chabaud@polytechnique.org
- D: software suspend
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 36a2c8a9aaea..ffe0c587f9d0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2510,10 +2510,8 @@ F:	drivers/power/reset/oxnas-restart.c
- N:	oxnas
- 
- ARM/PALM TREO SUPPORT
--M:	Tomas Cech <sleep_walker@suse.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
--S:	Maintained
--W:	http://hackndev.com
-+S:	Orphan
- F:	arch/arm/mach-pxa/palmtreo.*
- 
- ARM/PALMTX,PALMT5,PALMLD,PALMTE2,PALMTC SUPPORT
--- 
-2.17.1
+Thanks and best regards,
 
+Lukas
