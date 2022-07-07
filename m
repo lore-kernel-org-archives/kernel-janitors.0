@@ -2,132 +2,87 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69373CCA479
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Jul 2022 13:07:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 692E3C43334
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Jul 2022 13:17:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235625AbiGGNHd (ORCPT
+        id S235381AbiGGNRe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Jul 2022 09:07:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33660 "EHLO
+        Thu, 7 Jul 2022 09:17:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235608AbiGGNHc (ORCPT
+        with ESMTP id S235098AbiGGNRd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Jul 2022 09:07:32 -0400
+        Thu, 7 Jul 2022 09:17:33 -0400
 Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB93230551;
-        Thu,  7 Jul 2022 06:07:29 -0700 (PDT)
-Received: from mail-yb1-f180.google.com ([209.85.219.180]) by
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A2662F3BC;
+        Thu,  7 Jul 2022 06:17:32 -0700 (PDT)
+Received: from mail-yb1-f171.google.com ([209.85.219.171]) by
  mrelayeu.kundenserver.de (mreue009 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MbRXd-1ncZNe3bGj-00btSj; Thu, 07 Jul 2022 15:07:28 +0200
-Received: by mail-yb1-f180.google.com with SMTP id h132so1680379ybb.4;
-        Thu, 07 Jul 2022 06:07:27 -0700 (PDT)
-X-Gm-Message-State: AJIora8R72R7HjT8KgED1EU4OYMq+pMxMHwG3MAOICMue5e0cgr9CtrO
-        LwwQLbPVd0lSlKQkJI0Z+VxPFJwLbLH4sZwEsS4=
-X-Google-Smtp-Source: AGRyM1tDLI1o8/Y0A+kLC4sBFmobSnsX0dpLPEdqGjJbIqO9YhhuY84UIc4kb1l5oqjp2OMrL8CPptOCmOlr92ZWup4=
+ 1MQvH5-1numNx1zxX-00NwU8; Thu, 07 Jul 2022 15:17:30 +0200
+Received: by mail-yb1-f171.google.com with SMTP id 136so649075ybl.5;
+        Thu, 07 Jul 2022 06:17:30 -0700 (PDT)
+X-Gm-Message-State: AJIora9wVMgSkeYa2Fw1xQvY0SFiYMk4V9+IKUHeyrSWpFDHcdk1GB5Z
+        Y6Th2gPSHMFmfUIqxL3FaTCQw+c7GJ6oEUvRH3I=
+X-Google-Smtp-Source: AGRyM1sIVP+sKzdVYFj+QYsC1OY+fEPgMo3nlsTTen8lbyAjHTJh0NZ0UhttkuKcfl2p0A0KvTfiIntFQ2qrS/pVGTs=
 X-Received: by 2002:a25:9f87:0:b0:669:4345:a8c0 with SMTP id
- u7-20020a259f87000000b006694345a8c0mr49857681ybq.472.1657199246218; Thu, 07
- Jul 2022 06:07:26 -0700 (PDT)
+ u7-20020a259f87000000b006694345a8c0mr49906358ybq.472.1657199849284; Thu, 07
+ Jul 2022 06:17:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAK8P3a12-atmqjtjqi-RhFXH2Kwa-hxYcxy3Ftz2YjY5yyPHqg@mail.gmail.com>
- <mhng-f5938c9b-7fc1-4b0c-9449-7dd1431f5446@palmerdabbelt-glaptop>
- <CAKXUXMzpWsdKYbcu5MxvrAEMLHv4_2OGv2bRYEsQaze5trUSiQ@mail.gmail.com>
- <CAK8P3a32m42gT9qz+Ldvr8okYGOc=kKeoJTGNWyYT71N8tJfEA@mail.gmail.com> <4ff47e50-8702-1177-612b-73d9700e47c5@microchip.com>
-In-Reply-To: <4ff47e50-8702-1177-612b-73d9700e47c5@microchip.com>
+References: <20220707112645.5147-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220707112645.5147-1-lukas.bulwahn@gmail.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 7 Jul 2022 15:07:09 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a01x_ETchX2Vwm9oNaFJDhVZEu+G-2vRwegqKkMe54m6g@mail.gmail.com>
-Message-ID: <CAK8P3a01x_ETchX2Vwm9oNaFJDhVZEu+G-2vRwegqKkMe54m6g@mail.gmail.com>
-Subject: Re: [PATCH] asm-generic: correct reference to GENERIC_LIB_DEVMEM_IS_ALLOWED
-To:     Conor Dooley <Conor.Dooley@microchip.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Palmer Dabbelt <palmerdabbelt@google.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
+Date:   Thu, 7 Jul 2022 15:17:12 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3f0H2gnZFCah_HiNTdwyp4pLKd4w=yN6-0FxrF2+3ihA@mail.gmail.com>
+Message-ID: <CAK8P3a3f0H2gnZFCah_HiNTdwyp4pLKd4w=yN6-0FxrF2+3ihA@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: mark ARM/PALM TREO SUPPORT orphan
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
         kernel-janitors <kernel-janitors@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:6GE+clHrGvNzl04i8kcAIR3zFF2F8809ljPATS5+RhKOVPkVLep
- +QzEVU5Mh5xDAhGn+iYd+H8N2mpvqIVBdia+eufN/Dqcv3K3vy5/hLx/zaKOCacBTLo3dcc
- Ab6xrjYkLJ9O8ort+l6IUOhqDY2nqU30EZAk3uuCC8wZGBtfLDsrPFucP/dKyZUq68PscmE
- nif3CpFju8svLvnQTXbCw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:tvthlhlazMY=:a4X17KeL0MVHY10lRgV0a0
- P9mhqRXkxUFHYWkfFZ77jE6Hubx81lJmwxH80sD+vCS1p1x2mfUSJWyo7zYTtSRlh3XjO/njw
- kCQFGHtDenBcIYnn6fGGfO4BNaJo26qfVlf4d+fnR7TVKodStOmgx/4+Xtmy0KQobI9Vvr2qM
- FgawDfIeDwSBDIQ8ySECbVZJNVv1kUcXKjTzGTffBLpxNMRx4j7PeFm9/1/qyAmSDoFuCACy3
- yfxkLedP5s/fZ+SogUP5hlHiimPb/sGK3PJfht4woFg8ivNSDjzCiSbRFqamVtNXeybs6+LlU
- PTyqOUMLY79DQlP4tDrkf6Tj+t5Z2aTmsiVFn9OfWzSDydgIK1U55j/g0zGGgvNMVar0g7zfV
- VmxRRXfVotZt1y9do7zfiIu+15GfsuULoQ8ype9/oPIGaFTAFxMesBNp0Zk7rLSUc7+xoF8rx
- hFW8TZooYyM2//WhQPLRZ2Mix1dt6BIfknThrE/HHrLNYm5loazJv5MaILuN4cDEox+2f1241
- ffcImF5D4QjH9sYxHbeiTbn+Arxaupeyt7kGYY6CL+JY9shg8hkHXYl8jlX4smDeXlPC6YgYs
- XZZzfCflXmmTvdpJZ077YufF92q+KfJP8/U3UPsTa+y68PoxbvhRxP1pkCzDeKSsjjBwHtANr
- uncfNmiKEcvmrpjGlDOD3ZtlvpOoKk3/TQD/t/psUKA5hnhsiSpSHgN6i3megBuZa76CNTsQf
- aoKy7dvIfAWSODVWLyu+Yy+MKlrGzwlm+04vWu+w0iT+gyJcTcla0Dw/4jWWmFKVPFltIFhqB
- dwu2n/jmgPhF3gv3B/U6N+JbRatTiHX6LE1ukBvf+5rYuAjT0W9qRVQeKwYUfj0m+hJO+YmuN
- gvrofGegVTbGILZjbE3nCjmxVB/mqq1SCC4e12F74=
+X-Provags-ID: V03:K1:6u4FdKJKUiHlASxckZ1Jifeq3AQjDM5G0/ugNCBj8mgO+YqCLel
+ v58mLglqbrK/wJiI4tX2JHbGrc8//2LvSwyzBtWRUUOYAeshZ5CSTw+pfdBrZbIwS02vIq5
+ Dv22moH2R/ROiZvhHRJ2ycAgytl4nCil+1hwxbGpyxMWOQPFkXfGaG/hI/UtxW+PyLO6jul
+ 6WuxKTQ4X67dWXC1N8K+g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:5Qf4fi8A2iU=:A9WWyXSH+HP8nUgm7HFrO6
+ CLVT6IcAToedOH9/oA8sn8opuqqlRhNykUaTqShbM1LF9d0aZRo77Jlro/v6KjBe1gJ49oLkT
+ Sffkn4Oze0iBOgg5FPCyZwUaQRAGs5IntOK06LghbwwnkuaOLU2Lp3p7fIfgMahUyWzMMSAbE
+ fCXHurvFQlg7Ot1cZM2EFx4h3soI+AAt0430+cxKjhG/MZ/Su0vorPnYX9ZQeuh7/rs4dgHMp
+ TGEgX6wPbJOsC1eyjjT4a7rUPK7xlQqOQCzahnPTky2v1+/Ur08AoLDzbN6cFvSXN/10RVmAG
+ 1BWe1OswUZYGzJ9BpBYG115wvqxQRAxFTAch9rNJksNRxYU76R6yUtLlDdutLb/foGaK+Y6jd
+ HcAZBgbA9EizGw9nq29Jq932hydDhbGgfLXHE/WaA69TgJlQBj4IT4KAghWbSzwfXGcM2ouRI
+ 2no2JBt/n7dmpTSEvnkU/dcvu7Vg3TzVk4upLsYDth9HWfd8+e89GuhtKx8DeCXSCoTjwwxLm
+ tcaT2zp2IXcOxGHkhTFDe3+6P+bnLEYtkQwWl19HM8HOWa2ibdhoi71o7JdsuaDn751u8DH9e
+ a+2RcH+g65OXRJE3w+z8VMLMftz9LMsp5+uIspcuHCVHKZVxi1JdTyfa3T1sEkraOC4OJOfNR
+ dgePqkNRn8/lbKOKqNvtqAtpYbhK/ay89rDH5jHP+JcgZFhX1zjlC2E830dxQgtoQjrXlFO6l
+ h/OKF+Kq5OKQd1YUgqwtJ5rACaOBiyoZY0MWDRHH5UdB96UMzPjzqzC2sUBDMn5aS4/jyCnqU
+ bZsrZt0tLQQVhD9zqF/WemLgipgyoHyoSdx/B7zV0w66q1sNZtbPM/WJphoTI5Ill+08kOwF8
+ C4rK0MTWKz9ICOmZyyTri4T8NJGNmYnES0WbV9ris=
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jul 7, 2022 at 2:20 PM <Conor.Dooley@microchip.com> wrote:
-> On 07/07/2022 13:13, Arnd Bergmann wrote:
-> > On Thu, Jul 7, 2022 at 1:40 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> >>
-> >> On Wed, Oct 6, 2021 at 6:52 PM Palmer Dabbelt <palmerdabbelt@google.com> wrote:
-> >>>
-> >>> On Wed, 06 Oct 2021 08:17:38 PDT (-0700), Arnd Bergmann wrote:
-> >>>> On Wed, Oct 6, 2021 at 5:00 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> >>>>>
-> >>>>> Commit 527701eda5f1 ("lib: Add a generic version of devmem_is_allowed()")
-> >>>>> introduces the config symbol GENERIC_LIB_DEVMEM_IS_ALLOWED, but then
-> >>>>> falsely refers to CONFIG_GENERIC_DEVMEM_IS_ALLOWED (note the missing LIB
-> >>>>> in the reference) in ./include/asm-generic/io.h.
-> >>>>>
-> >>>>> Luckily, ./scripts/checkkconfigsymbols.py warns on non-existing configs:
-> >>>>>
-> >>>>> GENERIC_DEVMEM_IS_ALLOWED
-> >>>>> Referencing files: include/asm-generic/io.h
-> >>>>>
-> >>>>> Correct the name of the config to the intended one.
-> >>>>>
-> >>>>> Fixes: 527701eda5f1 ("lib: Add a generic version of devmem_is_allowed()")
-> >>>>> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> >>>>
-> >>>> Acked-by: Arnd Bergmann <arnd@arndb.de>
-> >>>
-> >>> Reviewed-by: Palmer Dabbelt <palmerdabbelt@google.com>
-> >>> Acked-by: Palmer Dabbelt <palmerdabbelt@google.com>
-> >>>
-> >>> Thanks.  I'm going to assume this is going in through some other tree,
-> >>> but IIUC I sent the buggy patch up so LMK if you're expecting it to go
-> >>> through mine.
-> >>
-> >> Palmer, Arnd,
-> >>
-> >> the patch in this mail thread got lost and was not picked up yet.
-> >>
-> >> MAINTAINERS suggests that Arnd takes patches to include/asm-generic/,
-> >> since commit 1527aab617af ("asm-generic: list Arnd as asm-generic
-> >> maintainer") in 2009, but maybe the responsibility for those files has
-> >> actually moved on to somebody (or nobody) else and we just did not
-> >> record that yet in MAINTAINERS.
-> >>
-> >> Arnd, will you pick this patch and provide it further to Linus Torvalds?
-> >>
-> >> Otherwise, Palmer already suggested picking it up himself.
-> >>
-> >
-> > I've applied it to the asm-generic tree and can send it as a bugfix
-> > pull request. I don't have any other fixer for that branch at the moment,
-> > so if Palmer has other fixes for the riscv tree already, it would
-> > save me making a pull request if he picks it up there.
+On Thu, Jul 7, 2022 at 1:26 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> The email address sleep_walker@suse.com and the url http://hackndev.com/,
+> provided in the ARM/PALM TREO SUPPORT section, are not reachable anymore.
+>
+> Make this machine support orphan, and give somebody the chance to step up.
+> Move the maintainer into CREDITS to keep the attribution to his work.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> RFC patch: https://lore.kernel.org/all/20211229191828.21317-1-lukas.bulwahn@gmail.com/
+>   - received no comments
+>
+> Russell, please pick this minor update to MAINTAINERS.
 
-lkft just found a build failure:
+I usually take the platform specific MAINTAINERS updates through the soc tree.
 
-https://gitlab.com/Linaro/lkft/users/arnd.bergmann/asm-generic/-/jobs/2691154818
-
-I have not investigated what went wrong, but it does look like an actual
-regression, so I'll wait for Lukas to follow up with a new version of the patch.
+Applied to the arm/fixes branch there.
 
        Arnd
