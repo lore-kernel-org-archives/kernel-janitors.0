@@ -2,129 +2,116 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81966CCA479
-	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Jul 2022 09:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1598DC43334
+	for <kernel-janitors@archiver.kernel.org>; Thu,  7 Jul 2022 11:28:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234837AbiGGJNH (ORCPT
+        id S234737AbiGGL2y (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 7 Jul 2022 05:13:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54132 "EHLO
+        Thu, 7 Jul 2022 07:28:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231545AbiGGJNG (ORCPT
+        with ESMTP id S230020AbiGGL2x (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 7 Jul 2022 05:13:06 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 549FA27B05;
-        Thu,  7 Jul 2022 02:13:05 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id v12so9695426edc.10;
-        Thu, 07 Jul 2022 02:13:05 -0700 (PDT)
+        Thu, 7 Jul 2022 07:28:53 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFE832F00D;
+        Thu,  7 Jul 2022 04:28:51 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id u15so7441020ejx.9;
+        Thu, 07 Jul 2022 04:28:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=x+63eUrjXUS+FoLmYUnXUsHGEfQ+CC/XntxoPecjWQY=;
-        b=MZSl682fLdY5iXGZZoTOwJ/2sZL5DCelmQ9ACkQCf9eXeXxmEo7j93wyWmcpKINfRu
-         XbyS9U9t9bE/kGVT/NBlYlFkJf6CpCkWo68pTY5j3dgWwzW564NCmsbX4ULon0D5WuW1
-         tRaZMZ1EPnxbAnVxCbPgAzX2cEoSXt2/eiR240jY2pIryUebGuEgTS94+SKf4HPTgbLP
-         mguGaQtE+T0ounVqFWMK/CV6RA6M7hNqipiSLxPyyIcM31pxmvANtkBWaXt6JBWlafrS
-         s+e8ZeyjS19IBk9l7YgDh5u6CnfgyogFltZwFJBpKhbRYLa953ItBdO39iUzn3Lg5fTx
-         JrPg==
+        h=from:to:cc:subject:date:message-id;
+        bh=m5PYfIp3y7G55Xw9BSK+oFXneOri6BhsxpMkd6GW0qo=;
+        b=EJfOtU5spY6XTXJWNfaP8bnujKcmZDrO+oflo0+0LMfVyY1Ourz9zntnsO8dRuZn7V
+         H9kmtAh7Uo7NLMYNgM1Ii0rr7cQDdxsax7F7VGMXL+VbG39gr5NmTQAwtbk1yXA9ezkV
+         mgq42B1cYu087uk3NLRvh2Oe17lh05C+1muvr8EmETgJKXs0ujLBLM+cs6E4SNnWhljt
+         nXalygWZ/czeoOjlkvi4w3zrZbWxZ1abhEgiN0klvEwUQIE7tOUI6UY5EIqI1dc+AP3G
+         dMcMsTu5ZwUBcjULfaftwtLGzOfYeiv/iNZKWW2LSa2HFxC3SBEhcZlw1meMnMz3YCnL
+         oxwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=x+63eUrjXUS+FoLmYUnXUsHGEfQ+CC/XntxoPecjWQY=;
-        b=sacVKz/oDnsyX6hcAy4FUbZVqJ6psdQhPJZaHJ4mswtSgwVbtLaATETxp8wyqb1bLb
-         5cWUay5c30ylnDsUqwNgaceflG9Gpcc5IBAALGwMq+ljCyAohu20bmmILU93ArcYGah7
-         K/P0StM5nV4cPdGtGKEKRlSCVb4Uv1COOzr1xw/44Sce2IPwLL54F74KUZjC880MvkNi
-         qeznJf7m3nmY/AXbVdmz+A+/VClHiPMrbJI1PuHcJjKTmoui990eoS91mW8KhUhpukvM
-         oVDJm4HQ1bTLxORwzeP/dGBwRFudTKEND/cz/ba5e2wZz9+B59xICXpDYQbDT/VNmDBD
-         5uGQ==
-X-Gm-Message-State: AJIora8Hn3gX8Qcj73dLAAZkTw0oRXlr4euwbqNVaISio+BZJBv+3Zm+
-        JHHzQH1s2xdpPOsp3j/xZUw=
-X-Google-Smtp-Source: AGRyM1tYBw5UwvRzB1BekPXgl8hXIyXb25xvzrpMxlE3LhiqtZQ/kkB01z6WGG45sSJVN4TuEjaKwA==
-X-Received: by 2002:a05:6402:34c5:b0:43a:8f90:e643 with SMTP id w5-20020a05640234c500b0043a8f90e643mr8925308edc.88.1657185183791;
-        Thu, 07 Jul 2022 02:13:03 -0700 (PDT)
-Received: from debian64.daheim (pd9e295da.dip0.t-ipconnect.de. [217.226.149.218])
-        by smtp.gmail.com with ESMTPSA id b7-20020a17090630c700b0072aebed5937sm3385767ejb.221.2022.07.07.02.13.03
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=m5PYfIp3y7G55Xw9BSK+oFXneOri6BhsxpMkd6GW0qo=;
+        b=jcgxqr+WTKkzHkfQfqvbx0rKLLlJBHsZLAHd2piPIw3vk8W8GAW8R/j0zOpsLqhGDS
+         6sCuRHJuEvQ843Gdsnd37y+uDLca93WjQVqPOU0pYTHuDZLpCSdS3a/PQeqANJ5Gd443
+         zXHzZ7JyxlHsnch67fGlSZhatfCYbbFzOiYrgkZK7O3WOVNI0P4JKEr8Kg9dYuIMxZ+2
+         XVBTc5eeuhFDxE1X41T4In6rNNT/3aSPCXmQW8f2xdelgt+XWyynnbBova6IV2N11XSY
+         2Szrsvc91+yHiZAwCq0O2c/mN8x8Y3raFOJCvtxJcfpJrDA7ucUwNLwnPv30ACp/GE5e
+         qZLg==
+X-Gm-Message-State: AJIora/xArXqUdTUKfvGN+50fedAIwLEej4rXLbfh35lQA91lf49+vHn
+        /JgN8dEcfBqRM8KB1b1fo9a+L3oI+2s=
+X-Google-Smtp-Source: AGRyM1sCeMKb/87R0NYQT4DEJ42/TBDB2kYDNSIKTYv53GoGBgwRKFWdbEZx2gE4jszsucPFprN1VA==
+X-Received: by 2002:a17:906:2001:b0:6f3:bd7f:d878 with SMTP id 1-20020a170906200100b006f3bd7fd878mr43048732ejo.133.1657193330498;
+        Thu, 07 Jul 2022 04:28:50 -0700 (PDT)
+Received: from felia.fritz.box (200116b826df3d00599ec68d191c47fa.dip.versatel-1u1.de. [2001:16b8:26df:3d00:599e:c68d:191c:47fa])
+        by smtp.gmail.com with ESMTPSA id hz11-20020a1709072ceb00b00722fc014e8csm18574315ejc.104.2022.07.07.04.28.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jul 2022 02:13:03 -0700 (PDT)
-Received: from localhost.daheim ([127.0.0.1])
-        by debian64.daheim with esmtp (Exim 4.96)
-        (envelope-from <chunkeey@gmail.com>)
-        id 1o9NZH-00084J-0W;
-        Thu, 07 Jul 2022 11:13:03 +0200
-Message-ID: <1e1c7c7e-ef86-e4c9-92cc-f28bf6ec6b8a@gmail.com>
-Date:   Thu, 7 Jul 2022 11:13:03 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [RESEND] [PATCH] p54: Use the bitmap API to allocate bitmaps
-Content-Language: de-DE
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Christian Lamparter <chunkeey@googlemail.com>,
-        Kalle Valo <kvalo@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-References: <2755b8b7d85a2db0663d39ea6df823f94f3401b3.1656939750.git.christophe.jaillet@wanadoo.fr>
-From:   Christian Lamparter <chunkeey@gmail.com>
-In-Reply-To: <2755b8b7d85a2db0663d39ea6df823f94f3401b3.1656939750.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Thu, 07 Jul 2022 04:28:49 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: mark ARM/PALM TREO SUPPORT orphan
+Date:   Thu,  7 Jul 2022 13:26:45 +0200
+Message-Id: <20220707112645.5147-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi,
+The email address sleep_walker@suse.com and the url http://hackndev.com/,
+provided in the ARM/PALM TREO SUPPORT section, are not reachable anymore.
 
-I'm sending this again because Android added HTML. Sorry for that.
+Make this machine support orphan, and give somebody the chance to step up.
+Move the maintainer into CREDITS to keep the attribution to his work.
 
-On 04/07/2022 15:02, Christophe JAILLET wrote:
-> Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
-> 
-> It is less verbose and it improves the semantic.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Acked-by: Christian Lamparter <chunkeey@gmail.com>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+RFC patch: https://lore.kernel.org/all/20211229191828.21317-1-lukas.bulwahn@gmail.com/
+  - received no comments
 
-> ---
->   drivers/net/wireless/intersil/p54/fwio.c | 6 ++----
->   drivers/net/wireless/intersil/p54/main.c | 2 +-
->   2 files changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/intersil/p54/fwio.c b/drivers/net/wireless/intersil/p54/fwio.c
-> index bece14e4ff0d..b52cce38115d 100644
-> --- a/drivers/net/wireless/intersil/p54/fwio.c
-> +++ b/drivers/net/wireless/intersil/p54/fwio.c
-> @@ -173,10 +173,8 @@ int p54_parse_firmware(struct ieee80211_hw *dev, const struct firmware *fw)
->   		 * keeping a extra list for uploaded keys.
->   		 */
->   
-> -		priv->used_rxkeys = kcalloc(BITS_TO_LONGS(priv->rx_keycache_size),
-> -					    sizeof(long),
-> -					    GFP_KERNEL);
-> -
-> +		priv->used_rxkeys = bitmap_zalloc(priv->rx_keycache_size,
-> +						  GFP_KERNEL);
->   		if (!priv->used_rxkeys)
->   			return -ENOMEM;
->   	}
-> diff --git a/drivers/net/wireless/intersil/p54/main.c b/drivers/net/wireless/intersil/p54/main.c
-> index 115be1f3f33d..c1e1711382a7 100644
-> --- a/drivers/net/wireless/intersil/p54/main.c
-> +++ b/drivers/net/wireless/intersil/p54/main.c
-> @@ -830,7 +830,7 @@ void p54_free_common(struct ieee80211_hw *dev)
->   	kfree(priv->output_limit);
->   	kfree(priv->curve_data);
->   	kfree(priv->rssi_db);
-> -	kfree(priv->used_rxkeys);
-> +	bitmap_free(priv->used_rxkeys);
->   	kfree(priv->survey);
->   	priv->iq_autocal = NULL;
->   	priv->output_limit = NULL;
+Russell, please pick this minor update to MAINTAINERS.
+
+
+ CREDITS     | 4 ++++
+ MAINTAINERS | 4 +---
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/CREDITS b/CREDITS
+index 7e85a53b6a88..40d3c655b567 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -627,6 +627,10 @@ S: 48287 Sawleaf
+ S: Fremont, California 94539
+ S: USA
+ 
++N: Tomas Cech
++E: sleep_walker@suse.com
++D: arm/palm treo support
++
+ N: Florent Chabaud
+ E: florent.chabaud@polytechnique.org
+ D: software suspend
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 36a2c8a9aaea..ffe0c587f9d0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2510,10 +2510,8 @@ F:	drivers/power/reset/oxnas-restart.c
+ N:	oxnas
+ 
+ ARM/PALM TREO SUPPORT
+-M:	Tomas Cech <sleep_walker@suse.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+-S:	Maintained
+-W:	http://hackndev.com
++S:	Orphan
+ F:	arch/arm/mach-pxa/palmtreo.*
+ 
+ ARM/PALMTX,PALMT5,PALMLD,PALMTE2,PALMTC SUPPORT
+-- 
+2.17.1
 
