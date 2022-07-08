@@ -2,189 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF9AFC433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Jul 2022 09:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 754E0C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Jul 2022 11:46:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237608AbiGHJl1 (ORCPT
+        id S238005AbiGHLqQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 8 Jul 2022 05:41:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60394 "EHLO
+        Fri, 8 Jul 2022 07:46:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237222AbiGHJlZ (ORCPT
+        with ESMTP id S237731AbiGHLqP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 8 Jul 2022 05:41:25 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1F177392C
-        for <kernel-janitors@vger.kernel.org>; Fri,  8 Jul 2022 02:41:24 -0700 (PDT)
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2689T5t4000347;
-        Fri, 8 Jul 2022 09:41:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : content-type : mime-version; s=corp-2021-07-09;
- bh=z8xswaOTT9HAgJvkIl6MiCTfbgmlNUfPSsNptN4GApo=;
- b=NXDQYDZwQxNzBbJXK2u4mwO4f4XYMG1vUChK1NZP6lbz335Kc//9jcXbTmLbUOVpaZz7
- KKMAimQjZ2RPMfLXXvz1gOnYd51AQneize79eTabQBp2VNN9cc9bZzOqv3UXcgxNtbaP
- qE5IC7RHJq47sLBHLjf6v21FvX4meQccgYfJrFELPyUpA2T0JDf5yMjOXe7Si/OWFYR0
- kMR3Fsxx/KrQDzWANnGa3XLiEyUhvVceUKG86pNX3Yu3nA8uW+h1DNYc/8H6eqXtV2nL
- LJvKXeV4uKgbwOf3GLNnfJgy0lu+TwVynku+sOvEVMv7tGeKFgGJ1dDwV2JHv8HkZk9I JA== 
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3h4ubyfajq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 08 Jul 2022 09:41:20 +0000
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 2689a7gP032099;
-        Fri, 8 Jul 2022 09:41:19 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2177.outbound.protection.outlook.com [104.47.59.177])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3h4ud9pnsg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 08 Jul 2022 09:41:19 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mNZVM2B6KmQVZ9/TAgpY40fKr3tdc2B5qGsXuj49uqlSUb/kyx+mgzGz4c3cJHF4kQpK1eCXQD2GFVgE8yGzP6/7c/jEZkLKLEX+BSgI+i05C5JdtEoOtI6tWzd05JnaeboezsxZhBR9UyR+ZCuHNBubndzrKe4feaIWX/MjqXjDbpaFz9wV5qQ+Gr3O4SnBsmS1DOQbCH7m3pVgWyR4i7m4k6MIWowkwhOhKpp1U//a+t6lLqSHKdQiaFVlzXOWB9ZQJxvvWQgnKP/aCsvfA7b/k7rhQIFOfPnhuM9wXsN74xY+Dh3MxKYVgyfFFSJSd9gqzKwHhpEfcPxN1MP6wA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z8xswaOTT9HAgJvkIl6MiCTfbgmlNUfPSsNptN4GApo=;
- b=O/nlbxnm6F2yJfBD49g3/DsZRbPeWYVejk6nypHDY95O1Iw1I/5kbaLs0KCo96y+V2P0PC4DHZRABKFykBID0w/BnMmTOFvaDMDALThzantNdbpibVciIYDedfBTAf9UKNwLdRQuMr+4JRo2MQ/lzdtlzfxVGpHMo4YtfeROG0RdjKPQr0Z8XtgX6YsMTjeypbhp45uoIZWwCWsPdFe6moF9aXpPZHFG1Y9B8dZuX3ziypbtcxPMmD8V72SQUGIsryxMoluS1xCxJX12f0CxFamVGUjbeDEN+FOumknmrOe08fYNfuO+IAG6mQY6f19RJzdJMrYCO9AFfD//Qn5xbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z8xswaOTT9HAgJvkIl6MiCTfbgmlNUfPSsNptN4GApo=;
- b=ffIn8tFR1azfRgY0kXXCCtAPTlQMr7MkA8I14I5xhUd2sFdri4l1yGQSoZB+NgY21hAaDpJL+G6itZwPhGrnJ6vKGJ3pzERF0yFM7Ufkf5rw5VQYn88bbxn9JByCsAuUAOOefD5WrNWka6BrKlrURt6GDWZPu8k8YA9HVEVGkws=
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28) by BN6PR10MB2002.namprd10.prod.outlook.com
- (2603:10b6:404:100::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.16; Fri, 8 Jul
- 2022 09:41:17 +0000
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::5020:9b82:5917:40b]) by MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::5020:9b82:5917:40b%6]) with mapi id 15.20.5417.016; Fri, 8 Jul 2022
- 09:41:17 +0000
-Date:   Fri, 8 Jul 2022 12:41:04 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Chris Wilson <chris.p.wilson@intel.com>
-Cc:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Ramalingam C <ramalingam.c@intel.com>,
-        Matt Roper <matthew.d.roper@intel.com>,
-        Matthew Auld <matthew.auld@intel.com>,
-        Akeem G Abodunrin <akeem.g.abodunrin@intel.com>,
-        =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>,
-        Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
-        intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] drm/i915/selftests: fix a couple IS_ERR() vs NULL tests
-Message-ID: <20220708094104.GL2316@kadam>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: MR1P264CA0171.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:501:55::12) To MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28)
+        Fri, 8 Jul 2022 07:46:15 -0400
+Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABFDA7D1F3
+        for <kernel-janitors@vger.kernel.org>; Fri,  8 Jul 2022 04:46:13 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 936BF320091A;
+        Fri,  8 Jul 2022 07:46:09 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Fri, 08 Jul 2022 07:46:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm2; t=1657280769; x=
+        1657367169; bh=uJhQFXinp9Lni5IJ8sAkt+I0l3m5bC1LyqjjXBVNxNo=; b=q
+        W4XPt0es32MpZAv91q6hOrh1hhjIganhoddKhWU4dvAqgcoS5CUOW46x+tkyi8Ch
+        q+BqC5e+Tl21Zk/ZN3spR3WP1DqxfgdmM/2W/3D9kyX9F6zJ9Mb++2Liql29HuSu
+        +ID+7A4/febGPfT6zphl0TsrlDanl4YCkLVTT8Ng1ed560XKInSxVBhny9fjuWL7
+        hG8w5sOTSCd0F4gA5j2Jeq75afnAfZusqK1AfUDG0Lv8mP1WUJpa3x6q7bTXYE5B
+        LtjgSVbILnWx72qSqr5PAKipCkxK/yN14RnlFiLJw1ocL+7lY2j/6/mnu0xsVaEo
+        LqvdetnENL4/1gO78ubrw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1657280769; x=
+        1657367169; bh=uJhQFXinp9Lni5IJ8sAkt+I0l3m5bC1LyqjjXBVNxNo=; b=L
+        dR6UGB9aHfgTI0oSjqOUdVyOPCtHdUZ1uH7hwp0uCTatEXlEF5qofSZJUTrojgrT
+        NWuOMTrflEYwr5iX7X1/6nyFXVBhDBmrgg0s6Ti8jRfccyxJnSRbXdUJFUtpDeHG
+        3yiFyKsLMSYV4JeURo3QgfHVw6nqb58YQ7geR9Qn5MgSviXqfYqGzLR3wEKIcWx7
+        W4OlT82sccrg+PGCLVivzKytl8/UknDzaoazk1Z3qzfbi/ogoU2gejukfOXMYp56
+        w8E/0Pfk9M0NT3YG1kaE+cGd5t6d8HckGa125cWHDPCyolflZwxLt862+bkmjwWx
+        mrbWd90gG/v5UX4XDZi2g==
+X-ME-Sender: <xms:ABnIYsD3FaHl1YxLCgyVbAG4apzrzOXhNTvbWq2NZrfUyHtd9Vm1Gg>
+    <xme:ABnIYugY53-KVz8B4XVnp3cT8W4cLntionQeeGUpGRRxEd9v8UmDuThxMnvkoGurQ
+    U0xNVvWthbeQmHNrqM>
+X-ME-Received: <xmr:ABnIYvliBjNSbKmhsUQvsPJHKxbqutIdkOXWwHwUC-Ee8S8lZnNbNdCKAiN7KrluKxpfhGUFUQ8NKu_30w2QYlt5TNH032t-HuF71mM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudeijedggeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfgggtgfesth
+    ekredtredtjeenucfhrhhomhepofgrgihimhgvucftihhprghrugcuoehmrgigihhmvges
+    tggvrhhnohdrthgvtghhqeenucggtffrrghtthgvrhhnpeeuieeggffhffffieefheduie
+    euvdetgeeufeffvefgtedvffehheekffevudefieenucevlhhushhtvghrufhiiigvpedt
+    necurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:ABnIYixGE-dxeDBMqAdu5G1P_JcREGz1ZPbuVX8OiHC3Z2y1el8qzQ>
+    <xmx:ABnIYhQtFMmmknZmKcXHWAhXBq9IsJUelJKZXu5naDBYeBFFZVfdAQ>
+    <xmx:ABnIYtbFbSUFmvLyfGyvx_RsXvAshfpJcRYIXMp8pH0EC4HDLNgP1A>
+    <xmx:ARnIYmIs8LN1sx4784WF6myb-jYKmz7J3NUwsUZI3Erx4UL257Feuw>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 8 Jul 2022 07:46:07 -0400 (EDT)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     boris.brezillon@collabora.com, maarten.lankhorst@linux.intel.com,
+        dan.carpenter@oracle.com
+Cc:     Maxime Ripard <maxime@cerno.tech>, narmstrong@baylibre.com,
+        airlied@linux.ie, tzimmermann@suse.de, mripard@kernel.org,
+        jernej.skrabec@gmail.com, dri-devel@lists.freedesktop.org,
+        daniel@ffwll.ch, kernel-janitors@vger.kernel.org
+Subject: Re: (subset) [PATCH v2] drm/bridge: Avoid uninitialized variable warning
+Date:   Fri,  8 Jul 2022 13:46:03 +0200
+Message-Id: <165728076204.379115.16118851103019344227.b4-ty@cerno.tech>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <YrrIs3hoGcPVmXc5@kili>
+References: <YrrIs3hoGcPVmXc5@kili>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6af734ea-71e7-46ea-4c32-08da60c60147
-X-MS-TrafficTypeDiagnostic: BN6PR10MB2002:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 2td2YViZG3U7Nj4va7euTpP3l4N1ayRV+NilkbBwKXKvm5YFkx7UzKvmZPyIDfqMV/Donn5QOsNKKRCavVEu06vNm2wRMzoAymVPe+P5BFZpjqyJ4AwDbEhem0upL8ATu4f3xhRqbUPzmgTBedUQXQBuy/pUqREFiQC6qm2yp2IFforEnvljdxLkPPlxVjRcgwZO7dhMPBAEHlll5Pz0SFee2ATRAMdqjW6RUIfGafLsSpXLdgH5+iwiccEVinPfTQRTQY6ZQtCAit1nniPFAMt80OBWcBw9OMAK+14bRb/LUouELzD/fPtblX7mPiFksbO1Ws+myuwta2XR07T00HLj5nfVh8Jj61nwfYz7toRHeWPNWKRTsSPCbsew+GSqf7ht7PivWRx3LrvZsemu3lvWNndp0D3zLQdR+ayQPFqZMRlkV1sOrMggLIlaDXH8KduRevXUsvn660D/NsvjE3MH3zA0PvjuIPTQjlqHvHUScmTdGyuW35hZke7W6pTSTcWaMdygAmLJ00PwmvMoqjcFe7OKqb7P1ezOeVGs8ISMmgxvC5axHMmaDQH+A9ELiHXRZDoqcwfhu0UrfITg7SrtwDh6hvFxEHcKjWVfff2cb1iNT2k37iD1J2TV7pkY839vUV+TTcFkhI0LBn7mv4AzGBMy8T9mbwTG3olN7nQKFvysdDzM7bVI1nIZa++Bg39Bfl0Fdj2Ho+g4kYMzMtE4E2t+e70qmjNAvvfXFUDN4Vn24GH0YiIPHojq6Zer+tQzoL4gzpMAG5ZCsc8btusOmQLIwOVANhTU746KUB+EMAycp9NFR/o5vh68Hsso
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(7916004)(376002)(39860400002)(346002)(396003)(366004)(136003)(4326008)(6506007)(54906003)(38100700002)(110136005)(86362001)(478600001)(6486002)(26005)(66946007)(6512007)(52116002)(6666004)(41300700001)(33656002)(9686003)(316002)(8676002)(66556008)(186003)(1076003)(38350700002)(66476007)(7416002)(33716001)(2906002)(44832011)(8936002)(5660300002)(83380400001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?UWi+PYXHzxzWB/RFClG/1YvajCWBkSx5NZAfvH+pl5Gq337BWGKkva6srcC8?=
- =?us-ascii?Q?ujnJzTY4oE+bOYcJgQYQwPTc13mH76XjTlsgqkkOEXJ1vQYuy9Qy3fITVbMi?=
- =?us-ascii?Q?Xv8NHlAdhkKzb5y2vTFVROEhrkkpMKBnwars6IH3kUJFqVmagH+5GyM23oeB?=
- =?us-ascii?Q?RcPqsW3Xqkdt7KfOVTuIE+KfscsgXDIFWKWv8SEQQfCV7qvElPNLLhxut714?=
- =?us-ascii?Q?3sFYtjnZgrKA+/vAIfAVIUPftN/IN365J5mwM8uXMX/xXHBwWNHgxIVZvvcG?=
- =?us-ascii?Q?EgawGn9LoHTU7oibZdnTGUHiaMzlAl4Fgkfvm2ApGGhDjxNXw+K+ABhrMpuf?=
- =?us-ascii?Q?16+dLjyFpUtBGJ3PTOE6APvOiIY4UWbnnPO8Nb+zVx42EofxDrxMUeRccMhy?=
- =?us-ascii?Q?lUlbNKCu4U2Q8wAXIMLcqK8/rFZnnLe3VL4cIPYh0/PFTBtOTjp7mE0JWrgt?=
- =?us-ascii?Q?mGeFjv2LxdwNvEOXtxoFYV3b1+oRNSUAmQexOqc/xHwzcBPVOfXE6GYdm/tb?=
- =?us-ascii?Q?S7eKm3hTFxCYK38FaiUbfveL6hcMtvLyA/VdBQAYtTftY/3MsYK5JaFbX62D?=
- =?us-ascii?Q?rvTUnLR2cJGhLDfimrTBTcghp3wrShYcO/ATvgSZSWlqhD5kwASlrzq4HVcI?=
- =?us-ascii?Q?iYwm6yPnqEueFnS5rc0smSfoOK7qoVWzxAgALWoP4z+XwB9nA1KTowHDvz+D?=
- =?us-ascii?Q?qAf+auGWNlkAINXgkCJmXk1/XJhnkJ3rCObZ6V/MhAQ1U0ksiCi9Iu//sJCI?=
- =?us-ascii?Q?5yF4GByYZDGNnHRb0/pJ/RdAMWWPUXGHL06urWGzTz9WH3/fRpHZeNkfR1pg?=
- =?us-ascii?Q?DvnyDk96c8WeSdX8nUENu0wj4kRkxUigUYMECqaL3Q4wH+z5eAcRgoV+mi7T?=
- =?us-ascii?Q?GYqqTHbHJQRi/hA+yUuXeCpU3GyKnnbsHMTe6zrfyQ5FtSUk+MZAWepxRYr5?=
- =?us-ascii?Q?Zb34/aGTumkUl8mxkacOxUnDYG1X66wyv1OX4Um4XiDe5iNXlKhupnejAWsa?=
- =?us-ascii?Q?f4shiFemQ9vqv5v+xy5iuOyaro/sTAjtWwmvPP4G94DCqxEW82sLHmLmvDjg?=
- =?us-ascii?Q?JPM4uQnJSn5Kxw6QYe/BwXRZLOgc99olzVyOipHLk23Dt6eSXnjqtnNsb6m0?=
- =?us-ascii?Q?qu8U33G7CsGEeaNIWelxjRU5Z/ven0f0ty98XrmkHg1oOdJ7l0uEGwTmBSFp?=
- =?us-ascii?Q?KK7J0h18eoekNo5brzGbIioK8sR7GesVS01w+0K5LWrGUhEHuyeM+9QeH5rU?=
- =?us-ascii?Q?pqi/1CzKuM6fOb6dD6rZ+Wum4itVjfXGjjt/Nl/2kaM6XY1huU2ALfMVNKRE?=
- =?us-ascii?Q?9PllTK+7H0T9x4Ug4FEmHUGAz9AhiFOhhbbafbTZpawzLXfdH46390I2INL3?=
- =?us-ascii?Q?hhyHhWIhcT6RqZcfSGhwMWf1AjPGnNe6gIbatShhyoYDa8D0L/yTDieGc2hQ?=
- =?us-ascii?Q?TRM0zIfkpNGUBIbskLcMbehdMdBylY+MaHzi7sKYmthdyKsSmEqZ/lDGgXeU?=
- =?us-ascii?Q?G8q4cr5Pp82XZJIFB/wnRDnIMIOgtsYfL7gV8Mjd2tNyVZp4wRxTL0JZYhfV?=
- =?us-ascii?Q?DY2zX4gI+qrm+0NMP6iJXHh4R+40uFzZO71ajsQHYtf/02QetR+A4955dd7V?=
- =?us-ascii?Q?fQ=3D=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6af734ea-71e7-46ea-4c32-08da60c60147
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2022 09:41:16.8837
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bcVW5DVBIHeuxVzT8lDkbAcUQICcFWSLQzR7HtIj+B5bBapBwqjV5BGFozeQL4dSynFDrbWQmrsSVglxdT53T/D9oiNvHQvyhQFXOpv+Hew=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR10MB2002
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.517,18.0.883
- definitions=2022-07-08_08:2022-06-28,2022-07-08 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 malwarescore=0
- mlxscore=0 spamscore=0 suspectscore=0 adultscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2206140000
- definitions=main-2207080035
-X-Proofpoint-GUID: PKmpBeBMirUG6eUrxVawYE-SebzZ-897
-X-Proofpoint-ORIG-GUID: PKmpBeBMirUG6eUrxVawYE-SebzZ-897
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The shmem_pin_map() function doesn't return error pointers, it returns
-NULL.
+On Mon, 4 Jul 2022 13:55:40 +0300, Dan Carpenter wrote:
+> This code works, but technically it uses "num_in_bus_fmts" before it
+> has been initialized so it leads to static checker warnings and probably
+> KMEMsan warnings at run time.  Initialize the variable to zero to
+> silence the warning.
+> 
+> 
 
-Fixes: be1cb55a07bf ("drm/i915/gt: Keep a no-frills swappable copy of the default context state")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Matthew Auld <matthew.auld@intel.com>
----
-v2: Correct the Fixes tag.  Add Matthew's reviewed-by tag.
+Applied to drm/drm-misc (drm-misc-next).
 
- drivers/gpu/drm/i915/gt/selftest_lrc.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/gt/selftest_lrc.c b/drivers/gpu/drm/i915/gt/selftest_lrc.c
-index 8b2c11dbe354..1109088fe8f6 100644
---- a/drivers/gpu/drm/i915/gt/selftest_lrc.c
-+++ b/drivers/gpu/drm/i915/gt/selftest_lrc.c
-@@ -176,8 +176,8 @@ static int live_lrc_layout(void *arg)
- 			continue;
- 
- 		hw = shmem_pin_map(engine->default_state);
--		if (IS_ERR(hw)) {
--			err = PTR_ERR(hw);
-+		if (!hw) {
-+			err = -ENOMEM;
- 			break;
- 		}
- 		hw += LRC_STATE_OFFSET / sizeof(*hw);
-@@ -365,8 +365,8 @@ static int live_lrc_fixed(void *arg)
- 			continue;
- 
- 		hw = shmem_pin_map(engine->default_state);
--		if (IS_ERR(hw)) {
--			err = PTR_ERR(hw);
-+		if (!hw) {
-+			err = -ENOMEM;
- 			break;
- 		}
- 		hw += LRC_STATE_OFFSET / sizeof(*hw);
--- 
-2.35.1
+Thanks!
+Maxime
