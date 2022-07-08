@@ -2,78 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49EF0C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Jul 2022 17:45:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F765C43334
+	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Jul 2022 17:49:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238702AbiGHRo7 (ORCPT
+        id S239053AbiGHRt2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 8 Jul 2022 13:44:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46548 "EHLO
+        Fri, 8 Jul 2022 13:49:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238259AbiGHRo6 (ORCPT
+        with ESMTP id S239058AbiGHRt1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 8 Jul 2022 13:44:58 -0400
-X-Greylist: delayed 450 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 08 Jul 2022 10:44:57 PDT
-Received: from smtp.smtpout.orange.fr (smtp-12.smtpout.orange.fr [80.12.242.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AE9CA6050E
-        for <kernel-janitors@vger.kernel.org>; Fri,  8 Jul 2022 10:44:57 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id 9ruuoDchN3JPE9ruuoQx6z; Fri, 08 Jul 2022 19:37:26 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Fri, 08 Jul 2022 19:37:26 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Cheng Xu <chengyou@linux.alibaba.com>,
-        Kai Shen <kaishen@linux.alibaba.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-rdma@vger.kernel.org
-Subject: [PATCH 2/2] RDMA/erdma: Use the non-atomic bitmap API when applicable
-Date:   Fri,  8 Jul 2022 19:37:22 +0200
-Message-Id: <3f311a4ebfff657c3e9ccbe754baf8be6ece4306.1657301795.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <2764b6e204b32ef8c198a5efaf6c6bc4119f7665.1657301795.git.christophe.jaillet@wanadoo.fr>
-References: <2764b6e204b32ef8c198a5efaf6c6bc4119f7665.1657301795.git.christophe.jaillet@wanadoo.fr>
+        Fri, 8 Jul 2022 13:49:27 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5729186EE
+        for <kernel-janitors@vger.kernel.org>; Fri,  8 Jul 2022 10:49:25 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id b2so16913289plx.7
+        for <kernel-janitors@vger.kernel.org>; Fri, 08 Jul 2022 10:49:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=iaX4oMlkYQaiZNZlnSZLy4aO15Umt0DimrsKT0WBN94=;
+        b=AOnrCKW4iRtrjhFIeI1XHMgJsdJUZJpyMRA6aXnS03bzhFgINeXZon8QLvblOR2zaa
+         XxGtuFxfBPK5rsPIxtEeLP59wE9GyCGAsF/oRdYQrWE64LL4haYYlMJzMLL0gsIMqllC
+         eft0gu3zpVh2JXhP3BVcHuNVBsF08pvH0PS0k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=iaX4oMlkYQaiZNZlnSZLy4aO15Umt0DimrsKT0WBN94=;
+        b=0yfqqBZ0z3KyxD6iTHnBBxDEizEX3rQ4/1LVBUBdtn62fzaEhyGpVfBHJie9O5Ximp
+         E+oA2gCOQNe23QErozh3P8qFfytHuV3cNn+MRiir6zga5L7B4mkndRQqYrRKhNVv8RFE
+         CSZ/dSctYNDK3yJbMaXesYOICRR3zT6c7If11AmGR/ItMFHsjOtqfMjSYkaEq4eyuO48
+         sLakETdmlGk+qKBzJFdzUMSBev/mBzu2H74hOx2V/aDEYWSlw9kP+A5VLVuQifA2GU7i
+         4GakwP/5BoHKVflef4tJjuSMiqIruAJ26hCRa6NY62fRl1hb00OlOkuPdJS478PY1Ccg
+         12Zg==
+X-Gm-Message-State: AJIora8YQi9rGtVA0CWCMIYF24hmtpvh2QnqIzyHvG7+WxLxlVqt5oTt
+        1IS3FC1Ov1GHnYGluQ9AklFixg==
+X-Google-Smtp-Source: AGRyM1vP2QB4szrzMUbieQDDUsxXoTfCV6IPBMycttXyZLt/UI3+U2cpbLeu9G0A2lhBL8CygjgDKw==
+X-Received: by 2002:a17:903:185:b0:16a:6113:c01 with SMTP id z5-20020a170903018500b0016a61130c01mr4938266plg.113.1657302565221;
+        Fri, 08 Jul 2022 10:49:25 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id m11-20020a170902768b00b001637997d0d4sm30099069pll.206.2022.07.08.10.49.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Jul 2022 10:49:24 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     lukas.bulwahn@gmail.com, dave.hansen@linux.intel.com
+Cc:     Kees Cook <keescook@chromium.org>, kernel-janitors@vger.kernel.org,
+        bp@alien8.de, peterz@infradead.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, tglx@linutronix.de, x86@kernel.org,
+        hpa@zytor.com, luto@kernel.org
+Subject: Re: [PATCH RESEND] x86: mm: refer to the intended config STRICT_DEVMEM in a comment
+Date:   Fri,  8 Jul 2022 10:49:20 -0700
+Message-Id: <165730255765.3882379.9761346871433228288.b4-ty@chromium.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220707115442.21107-1-lukas.bulwahn@gmail.com>
+References: <20220707115442.21107-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Usages of the 'comp_wait_bitmap' bitmap is protected with a spinlock, so
-non-atomic functions can be used to set/clear bits.
+On Thu, 7 Jul 2022 13:54:42 +0200, Lukas Bulwahn wrote:
+> Commit a4866aa81251 ("mm: Tighten x86 /dev/mem with zeroing reads") adds a
+> comment to the function devmem_is_allowed() referring to a non-existing
+> config STRICT_IOMEM, whereas the comment very likely intended to refer to
+> the config STRICT_DEVMEM, as the commit adds some behavior for the config
+> STRICT_DEVMEM.
+> 
+> Most of the initial analysis was actually done by Dave Hansen in the
+> email thread below (see Link).
+> 
+> [...]
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/infiniband/hw/erdma/erdma_cmdq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Applied to for-next/hardening, thanks!
 
-diff --git a/drivers/infiniband/hw/erdma/erdma_cmdq.c b/drivers/infiniband/hw/erdma/erdma_cmdq.c
-index 0489838d9717..e3d426668788 100644
---- a/drivers/infiniband/hw/erdma/erdma_cmdq.c
-+++ b/drivers/infiniband/hw/erdma/erdma_cmdq.c
-@@ -47,7 +47,7 @@ static struct erdma_comp_wait *get_comp_wait(struct erdma_cmdq *cmdq)
- 		return ERR_PTR(-ENOMEM);
- 	}
- 
--	set_bit(comp_idx, cmdq->comp_wait_bitmap);
-+	__set_bit(comp_idx, cmdq->comp_wait_bitmap);
- 	spin_unlock(&cmdq->lock);
- 
- 	return &cmdq->wait_pool[comp_idx];
-@@ -60,7 +60,7 @@ static void put_comp_wait(struct erdma_cmdq *cmdq,
- 
- 	cmdq->wait_pool[comp_wait->ctx_id].cmd_status = ERDMA_CMD_STATUS_INIT;
- 	spin_lock(&cmdq->lock);
--	used = test_and_clear_bit(comp_wait->ctx_id, cmdq->comp_wait_bitmap);
-+	used = __test_and_clear_bit(comp_wait->ctx_id, cmdq->comp_wait_bitmap);
- 	spin_unlock(&cmdq->lock);
- 
- 	WARN_ON(!used);
+[1/1] x86: mm: refer to the intended config STRICT_DEVMEM in a comment
+      https://git.kernel.org/kees/c/c09327d5673e
+
 -- 
-2.34.1
+Kees Cook
 
