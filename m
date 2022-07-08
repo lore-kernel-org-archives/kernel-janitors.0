@@ -2,122 +2,68 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03BC4C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Jul 2022 19:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCCDEC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Jul 2022 19:23:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239387AbiGHTFo (ORCPT
+        id S231511AbiGHTXz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 8 Jul 2022 15:05:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52788 "EHLO
+        Fri, 8 Jul 2022 15:23:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238560AbiGHTFn (ORCPT
+        with ESMTP id S239561AbiGHTXx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 8 Jul 2022 15:05:43 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE82D25E94;
-        Fri,  8 Jul 2022 12:05:42 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id a11so26962048ljb.5;
-        Fri, 08 Jul 2022 12:05:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=jlzZcoQi6N5H04cLMBPt4y2hPNxixoZVDelp6FruGTQ=;
-        b=Yy9dxNDW6VCVo0JeJAUXbcpMXJU3WNA8x8Eurlve66sY8Labx20UJt7Y8lU8yJga+O
-         XqyZb0YsikufpwjcPouvWIsRKbokRQixp9MejCu/LiovWBcemrZBI9Ac9uyVhMJH8AhC
-         vjzItyuuAlEJNxJU/pSgizH/ZaMaapghYVNuz/g6GsDVWU72D7n+lX50dhodYKKQoFFz
-         IBlhQfcjFQoeWxOOGsSnPs1V4FxIdPNiFPiX0UKKu1bzRmzEetHALvGnJoJI+MNm2W+5
-         KGz+e0LwvyqaZoTEl98mEpYOVQ5VSiE0xD4EfDhC0ey0iLux3oWwLzocf/mn+BpOu5Y8
-         +J7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=jlzZcoQi6N5H04cLMBPt4y2hPNxixoZVDelp6FruGTQ=;
-        b=yznE11+V+sLPEeUQ1fR+VJkulKz4vz5XOI8hdqRnFU0EzoPschNPdSPxUH4ycjmJ8f
-         /b2q/ZV3vPudso/X2L7UjBtwS9YkHNHAahiw8JpyOjk1Z3K3W28L+GCJLyvbnvtRDyv3
-         UtRtK0DLf4d6mUAFQNKE9x8jDbPSw/8IapzEOLALG4Iqe6lqbqex6fWb8lgn8sGJFBz7
-         t81FlsdT7bT37ROQJJQxRROzDXqLQKYs+THm9x4yTy/5I2+DDTDTkF0ukhiV6Ff6Fqfl
-         5ma1VbRIS8gf9nIg9sxRtiPqdIm0q0qNh7jEpIicjp7OHy/moV3v/jOEG711i5FF7CVh
-         wBgg==
-X-Gm-Message-State: AJIora8pYWi/6l4ftJIp7vuatbTUdwNaQ4G0limLKclbeUykX0Q0Eb5j
-        xyZ2YfFLwuX5sjy5Ef264C03fmILRPkj2Q==
-X-Google-Smtp-Source: AGRyM1ubzaBSG6JaOfhQXw9+L4Ab4ssaj5D7vaysboibw3wo1V12sHckfhM7w0lVIZcP9rSxpd22Kw==
-X-Received: by 2002:a2e:9004:0:b0:25a:7c03:eb73 with SMTP id h4-20020a2e9004000000b0025a7c03eb73mr2696654ljg.470.1657307141097;
-        Fri, 08 Jul 2022 12:05:41 -0700 (PDT)
-Received: from mobilestation ([95.79.140.178])
-        by smtp.gmail.com with ESMTPSA id z19-20020a056512371300b0047fa16f71e6sm7555446lfr.30.2022.07.08.12.05.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Jul 2022 12:05:40 -0700 (PDT)
-Date:   Fri, 8 Jul 2022 22:05:38 +0300
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] eeprom: idt_89hpesx: uninitialized data in
- idt_dbgfs_csr_write()
-Message-ID: <20220708190538.asdkcgmlxwqxjpbx@mobilestation>
-References: <Ysg1Pu/nzSMe3r1q@kili>
+        Fri, 8 Jul 2022 15:23:53 -0400
+Received: from smtp.smtpout.orange.fr (smtp04.smtpout.orange.fr [80.12.242.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEEB01EAC6
+        for <kernel-janitors@vger.kernel.org>; Fri,  8 Jul 2022 12:23:50 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id 9tZroHmKEEhCQ9tZrokYfy; Fri, 08 Jul 2022 21:23:48 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Fri, 08 Jul 2022 21:23:48 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/2] firmware: ti_sci: Use the bitmap API to allocate bitmaps
+Date:   Fri,  8 Jul 2022 21:23:46 +0200
+Message-Id: <3ee11e9e83f7c1552d237f5c28f554319fcbbf1f.1657308216.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Ysg1Pu/nzSMe3r1q@kili>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jul 08, 2022 at 04:46:38PM +0300, Dan Carpenter wrote:
-> The simple_write_to_buffer() function will return positive/success if it
-> is able to write a single byte anywhere within the buffer.  However that
-> potentially leaves a lot of the buffer uninitialized.
-> 
-> In this code it's better to return 0 if the offset is non-zero.  This
-> code is not written to support partial writes.  And then return -EFAULT
-> if the buffer is not completely initialized.
-> 
-> Fixes: cfad6425382e ("eeprom: Add IDT 89HPESx EEPROM/CSR driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Use devm_bitmap_zalloc() instead of hand-writing them.
 
-Seems reasonable. Thanks.
+It is less verbose and it improves the semantic.
 
-Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/firmware/ti_sci.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
--Sergey
+diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+index ebc32bbd9b83..522be2b75ce1 100644
+--- a/drivers/firmware/ti_sci.c
++++ b/drivers/firmware/ti_sci.c
+@@ -3201,9 +3201,8 @@ devm_ti_sci_get_resource_sets(const struct ti_sci_handle *handle,
+ 
+ 		valid_set = true;
+ 		res_count = res->desc[i].num + res->desc[i].num_sec;
+-		res->desc[i].res_map =
+-			devm_kzalloc(dev, BITS_TO_LONGS(res_count) *
+-				     sizeof(*res->desc[i].res_map), GFP_KERNEL);
++		res->desc[i].res_map = devm_bitmap_zalloc(dev, res_count,
++							  GFP_KERNEL);
+ 		if (!res->desc[i].res_map)
+ 			return ERR_PTR(-ENOMEM);
+ 	}
+-- 
+2.34.1
 
-> ---
-> v2: In v1, I tried to be fancy and use strndup_user().  That potentially
-> breaks the user space API.  I cannot test this code so it's better to be
-> conservative.
-> 
->  drivers/misc/eeprom/idt_89hpesx.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/misc/eeprom/idt_89hpesx.c b/drivers/misc/eeprom/idt_89hpesx.c
-> index b0cff4b152da..7f430742ce2b 100644
-> --- a/drivers/misc/eeprom/idt_89hpesx.c
-> +++ b/drivers/misc/eeprom/idt_89hpesx.c
-> @@ -909,14 +909,18 @@ static ssize_t idt_dbgfs_csr_write(struct file *filep, const char __user *ubuf,
->  	u32 csraddr, csrval;
->  	char *buf;
->  
-> +	if (*offp)
-> +		return 0;
-> +
->  	/* Copy data from User-space */
->  	buf = kmalloc(count + 1, GFP_KERNEL);
->  	if (!buf)
->  		return -ENOMEM;
->  
-> -	ret = simple_write_to_buffer(buf, count, offp, ubuf, count);
-> -	if (ret < 0)
-> +	if (copy_from_user(buf, ubuf, count)) {
-> +		ret = -EFAULT;
->  		goto free_buf;
-> +	}
->  	buf[count] = 0;
->  
->  	/* Find position of colon in the buffer */
-> -- 
-> 2.35.1
-> 
