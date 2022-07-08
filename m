@@ -2,79 +2,67 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B27AC43334
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Jul 2022 19:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F0C0C43334
+	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Jul 2022 19:31:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239599AbiGHTYJ (ORCPT
+        id S239813AbiGHTbD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 8 Jul 2022 15:24:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35806 "EHLO
+        Fri, 8 Jul 2022 15:31:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239580AbiGHTYG (ORCPT
+        with ESMTP id S239889AbiGHTav (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 8 Jul 2022 15:24:06 -0400
-Received: from smtp.smtpout.orange.fr (smtp09.smtpout.orange.fr [80.12.242.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5687627CF7
-        for <kernel-janitors@vger.kernel.org>; Fri,  8 Jul 2022 12:24:02 -0700 (PDT)
+        Fri, 8 Jul 2022 15:30:51 -0400
+Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE2F4796B5
+        for <kernel-janitors@vger.kernel.org>; Fri,  8 Jul 2022 12:30:08 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id 9ta1o86XNV0xU9ta1oRIrR; Fri, 08 Jul 2022 21:24:00 +0200
+        id 9tfuo7mRnJXxR9tfvojggV; Fri, 08 Jul 2022 21:30:07 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Fri, 08 Jul 2022 21:24:00 +0200
+X-ME-Date: Fri, 08 Jul 2022 21:30:07 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>
+To:     Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2] firmware: ti_sci: Use the non-atomic bitmap API when applicable
-Date:   Fri,  8 Jul 2022 21:23:56 +0200
-Message-Id: <fb7edc555b6fa7c74707f13e422196693a834bc8.1657308216.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] firmware: arm_scmi: Use the bitmap API to allocate bitmaps
+Date:   Fri,  8 Jul 2022 21:30:01 +0200
+Message-Id: <c073b1607ada34d5bde6ce1009179cf15bbf0da3.1657308593.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <3ee11e9e83f7c1552d237f5c28f554319fcbbf1f.1657308216.git.christophe.jaillet@wanadoo.fr>
-References: <3ee11e9e83f7c1552d237f5c28f554319fcbbf1f.1657308216.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Usages of the 'res_map' bitmap is protected with a spinlock, so non-atomic
-functions can be used to set/clear bits.
+Use devm_bitmap_zalloc() instead of hand-writing them.
+
+It is less verbose and it improves the semantic.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/firmware/ti_sci.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/firmware/arm_scmi/driver.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-index 522be2b75ce1..49677533f376 100644
---- a/drivers/firmware/ti_sci.c
-+++ b/drivers/firmware/ti_sci.c
-@@ -3096,7 +3096,7 @@ u16 ti_sci_get_free_resource(struct ti_sci_resource *res)
+diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+index 609ebedee9cb..b1265732d83a 100644
+--- a/drivers/firmware/arm_scmi/driver.c
++++ b/drivers/firmware/arm_scmi/driver.c
+@@ -1911,8 +1911,8 @@ static int __scmi_xfer_info_init(struct scmi_info *sinfo,
+ 	hash_init(info->pending_xfers);
  
- 		free_bit = find_first_zero_bit(desc->res_map, res_count);
- 		if (free_bit != res_count) {
--			set_bit(free_bit, desc->res_map);
-+			__set_bit(free_bit, desc->res_map);
- 			raw_spin_unlock_irqrestore(&res->lock, flags);
+ 	/* Allocate a bitmask sized to hold MSG_TOKEN_MAX tokens */
+-	info->xfer_alloc_table = devm_kcalloc(dev, BITS_TO_LONGS(MSG_TOKEN_MAX),
+-					      sizeof(long), GFP_KERNEL);
++	info->xfer_alloc_table = devm_bitmap_zalloc(dev, MSG_TOKEN_MAX,
++						    GFP_KERNEL);
+ 	if (!info->xfer_alloc_table)
+ 		return -ENOMEM;
  
- 			if (desc->num && free_bit < desc->num)
-@@ -3127,10 +3127,10 @@ void ti_sci_release_resource(struct ti_sci_resource *res, u16 id)
- 
- 		if (desc->num && desc->start <= id &&
- 		    (desc->start + desc->num) > id)
--			clear_bit(id - desc->start, desc->res_map);
-+			__clear_bit(id - desc->start, desc->res_map);
- 		else if (desc->num_sec && desc->start_sec <= id &&
- 			 (desc->start_sec + desc->num_sec) > id)
--			clear_bit(id - desc->start_sec, desc->res_map);
-+			__clear_bit(id - desc->start_sec, desc->res_map);
- 	}
- 	raw_spin_unlock_irqrestore(&res->lock, flags);
- }
 -- 
 2.34.1
 
