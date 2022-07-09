@@ -2,40 +2,42 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FCEFC43334
-	for <kernel-janitors@archiver.kernel.org>; Sat,  9 Jul 2022 14:10:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 350DBC43334
+	for <kernel-janitors@archiver.kernel.org>; Sat,  9 Jul 2022 14:24:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229616AbiGIOK6 (ORCPT
+        id S229525AbiGIOYw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 9 Jul 2022 10:10:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42842 "EHLO
+        Sat, 9 Jul 2022 10:24:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbiGIOK5 (ORCPT
+        with ESMTP id S229454AbiGIOYv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 9 Jul 2022 10:10:57 -0400
-Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 107EA13F70
-        for <kernel-janitors@vger.kernel.org>; Sat,  9 Jul 2022 07:10:56 -0700 (PDT)
+        Sat, 9 Jul 2022 10:24:51 -0400
+Received: from smtp.smtpout.orange.fr (smtp09.smtpout.orange.fr [80.12.242.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F69512616
+        for <kernel-janitors@vger.kernel.org>; Sat,  9 Jul 2022 07:24:50 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id ABAboLYuOvNzHABAbo543e; Sat, 09 Jul 2022 16:10:54 +0200
+        id ABO2oJ7IeV0xUABO2oTBqZ; Sat, 09 Jul 2022 16:24:48 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 09 Jul 2022 16:10:54 +0200
+X-ME-Date: Sat, 09 Jul 2022 16:24:48 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
+To:     Kurt Kanzenbach <kurt@linutronix.de>, Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vladimir Oltean <olteanv@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-pci@vger.kernel.org
-Subject: [PATCH] PCI: dwc: Use the bitmap API to allocate bitmaps
-Date:   Sat,  9 Jul 2022 16:10:52 +0200
-Message-Id: <bc6586a603abc0db7d4531308b698fbe7a6d7083.1657375829.git.christophe.jaillet@wanadoo.fr>
+        netdev@vger.kernel.org
+Subject: [PATCH] net: dsa: hellcreek: Use the bitmap API to allocate bitmaps
+Date:   Sat,  9 Jul 2022 16:24:45 +0200
+Message-Id: <8306e2ae69a5d8553691f5d10a86a4390daf594b.1657376651.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -49,34 +51,26 @@ It is less verbose and it improves the semantic.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/pci/controller/dwc/pcie-designware-ep.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ drivers/net/dsa/hirschmann/hellcreek.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-index fb887495f53e..ad54aaa71a02 100644
---- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-@@ -721,17 +721,13 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
- 	ep->phys_base = res->start;
- 	ep->addr_size = resource_size(res);
+diff --git a/drivers/net/dsa/hirschmann/hellcreek.c b/drivers/net/dsa/hirschmann/hellcreek.c
+index ac1f3b3a7040..01f90994dedd 100644
+--- a/drivers/net/dsa/hirschmann/hellcreek.c
++++ b/drivers/net/dsa/hirschmann/hellcreek.c
+@@ -1894,11 +1894,8 @@ static int hellcreek_probe(struct platform_device *pdev)
+ 		if (!port->counter_values)
+ 			return -ENOMEM;
  
--	ep->ib_window_map = devm_kcalloc(dev,
--					 BITS_TO_LONGS(pci->num_ib_windows),
--					 sizeof(long),
--					 GFP_KERNEL);
-+	ep->ib_window_map = devm_bitmap_zalloc(dev, pci->num_ib_windows,
-+					       GFP_KERNEL);
- 	if (!ep->ib_window_map)
- 		return -ENOMEM;
- 
--	ep->ob_window_map = devm_kcalloc(dev,
--					 BITS_TO_LONGS(pci->num_ob_windows),
--					 sizeof(long),
--					 GFP_KERNEL);
-+	ep->ob_window_map = devm_bitmap_zalloc(dev, pci->num_ob_windows,
-+					       GFP_KERNEL);
- 	if (!ep->ob_window_map)
- 		return -ENOMEM;
+-		port->vlan_dev_bitmap =
+-			devm_kcalloc(dev,
+-				     BITS_TO_LONGS(VLAN_N_VID),
+-				     sizeof(unsigned long),
+-				     GFP_KERNEL);
++		port->vlan_dev_bitmap = devm_bitmap_zalloc(dev, VLAN_N_VID,
++							   GFP_KERNEL);
+ 		if (!port->vlan_dev_bitmap)
+ 			return -ENOMEM;
  
 -- 
 2.34.1
