@@ -2,37 +2,40 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB61C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri,  8 Jul 2022 19:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FCEFC43334
+	for <kernel-janitors@archiver.kernel.org>; Sat,  9 Jul 2022 14:10:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239833AbiGHThl (ORCPT
+        id S229616AbiGIOK6 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 8 Jul 2022 15:37:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45102 "EHLO
+        Sat, 9 Jul 2022 10:10:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239867AbiGHTha (ORCPT
+        with ESMTP id S229593AbiGIOK5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 8 Jul 2022 15:37:30 -0400
-Received: from smtp.smtpout.orange.fr (smtp04.smtpout.orange.fr [80.12.242.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A66C86B247
-        for <kernel-janitors@vger.kernel.org>; Fri,  8 Jul 2022 12:37:29 -0700 (PDT)
+        Sat, 9 Jul 2022 10:10:57 -0400
+Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 107EA13F70
+        for <kernel-janitors@vger.kernel.org>; Sat,  9 Jul 2022 07:10:56 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id 9tn4oHtmUEhCQ9tn4okZcQ; Fri, 08 Jul 2022 21:37:28 +0200
+        id ABAboLYuOvNzHABAbo543e; Sat, 09 Jul 2022 16:10:54 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Fri, 08 Jul 2022 21:37:28 +0200
+X-ME-Date: Sat, 09 Jul 2022 16:10:54 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Emma Anholt <emma@anholt.net>, Maxime Ripard <mripard@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
+To:     Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/vc4: Use the bitmap API to allocate bitmaps
-Date:   Fri,  8 Jul 2022 21:37:25 +0200
-Message-Id: <fdc12cbbb573482ce5a4f344b3a31bc9b6ef2ec1.1657309035.git.christophe.jaillet@wanadoo.fr>
+        linux-pci@vger.kernel.org
+Subject: [PATCH] PCI: dwc: Use the bitmap API to allocate bitmaps
+Date:   Sat,  9 Jul 2022 16:10:52 +0200
+Message-Id: <bc6586a603abc0db7d4531308b698fbe7a6d7083.1657375829.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -40,46 +43,41 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
+Use devm_bitmap_zalloc() instead of hand-writing them.
 
 It is less verbose and it improves the semantic.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/gpu/drm/vc4/vc4_validate_shaders.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/pci/controller/dwc/pcie-designware-ep.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/vc4/vc4_validate_shaders.c b/drivers/gpu/drm/vc4/vc4_validate_shaders.c
-index e315aeb5fef5..d074d2014be4 100644
---- a/drivers/gpu/drm/vc4/vc4_validate_shaders.c
-+++ b/drivers/gpu/drm/vc4/vc4_validate_shaders.c
-@@ -795,9 +795,8 @@ vc4_validate_shader(struct drm_gem_cma_object *shader_obj)
+diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+index fb887495f53e..ad54aaa71a02 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-ep.c
++++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+@@ -721,17 +721,13 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+ 	ep->phys_base = res->start;
+ 	ep->addr_size = resource_size(res);
  
- 	reset_validation_state(&validation_state);
+-	ep->ib_window_map = devm_kcalloc(dev,
+-					 BITS_TO_LONGS(pci->num_ib_windows),
+-					 sizeof(long),
+-					 GFP_KERNEL);
++	ep->ib_window_map = devm_bitmap_zalloc(dev, pci->num_ib_windows,
++					       GFP_KERNEL);
+ 	if (!ep->ib_window_map)
+ 		return -ENOMEM;
  
--	validation_state.branch_targets =
--		kcalloc(BITS_TO_LONGS(validation_state.max_ip),
--			sizeof(unsigned long), GFP_KERNEL);
-+	validation_state.branch_targets = bitmap_zalloc(validation_state.max_ip,
-+							GFP_KERNEL);
- 	if (!validation_state.branch_targets)
- 		goto fail;
+-	ep->ob_window_map = devm_kcalloc(dev,
+-					 BITS_TO_LONGS(pci->num_ob_windows),
+-					 sizeof(long),
+-					 GFP_KERNEL);
++	ep->ob_window_map = devm_bitmap_zalloc(dev, pci->num_ob_windows,
++					       GFP_KERNEL);
+ 	if (!ep->ob_window_map)
+ 		return -ENOMEM;
  
-@@ -939,12 +938,12 @@ vc4_validate_shader(struct drm_gem_cma_object *shader_obj)
- 		(validated_shader->uniforms_size +
- 		 4 * validated_shader->num_texture_samples);
- 
--	kfree(validation_state.branch_targets);
-+	bitmap_free(validation_state.branch_targets);
- 
- 	return validated_shader;
- 
- fail:
--	kfree(validation_state.branch_targets);
-+	bitmap_free(validation_state.branch_targets);
- 	if (validated_shader) {
- 		kfree(validated_shader->uniform_addr_offsets);
- 		kfree(validated_shader->texture_samples);
 -- 
 2.34.1
 
