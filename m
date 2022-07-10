@@ -2,38 +2,39 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5813DC433EF
-	for <kernel-janitors@archiver.kernel.org>; Sat,  9 Jul 2022 16:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A4ABC43334
+	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Jul 2022 12:13:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229379AbiGIQQ5 (ORCPT
+        id S229535AbiGJMM7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 9 Jul 2022 12:16:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50508 "EHLO
+        Sun, 10 Jul 2022 08:12:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229495AbiGIQQ4 (ORCPT
+        with ESMTP id S229491AbiGJMM6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 9 Jul 2022 12:16:56 -0400
-Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E03B12D1CD
-        for <kernel-janitors@vger.kernel.org>; Sat,  9 Jul 2022 09:16:54 -0700 (PDT)
+        Sun, 10 Jul 2022 08:12:58 -0400
+Received: from smtp.smtpout.orange.fr (smtp09.smtpout.orange.fr [80.12.242.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2670513D51
+        for <kernel-janitors@vger.kernel.org>; Sun, 10 Jul 2022 05:12:57 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id AD8SokbspL5fDAD8SoxgQs; Sat, 09 Jul 2022 18:16:53 +0200
+        id AVnvoW3X8V0xUAVnwoV0dy; Sun, 10 Jul 2022 14:12:55 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 09 Jul 2022 18:16:53 +0200
+X-ME-Date: Sun, 10 Jul 2022 14:12:55 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Yang Shen <shenyang39@huawei.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
+To:     Boris Brezillon <bbrezillon@kernel.org>,
+        Arnaud Ebalard <arno@natisbad.org>,
+        Srujana Challa <schalla@marvell.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         "David S. Miller" <davem@davemloft.net>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         linux-crypto@vger.kernel.org
-Subject: [PATCH] crypto: hisilicon/zip: Use the bitmap API to allocate bitmaps
-Date:   Sat,  9 Jul 2022 18:16:46 +0200
-Message-Id: <49a1b5bf6e8f7c2ad06a0e2dbc35e00169d4ebe2.1657383385.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 1/3] crypto: marvell/octeontx: Simplify bitmap declaration
+Date:   Sun, 10 Jul 2022 14:12:50 +0200
+Message-Id: <eb4dc7930c66b659718555edcf7fc1bbea6f5298.1657455082.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -41,51 +42,39 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
+'OTX_CPT_ENGS_BITMASK_LEN' is only used to allocate a bitmap. This macro
+only works because OTX_CPT_MAX_ENGINES is 64. BITS_TO_LONGS() should be
+used to compute the correct size.
 
-It is less verbose and it improves the semantic.
+In order to simplify the code, remove OTX_CPT_ENGS_BITMASK_LEN and use
+DECLARE_BITMAP to declare the 'bits' bitmap.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/crypto/hisilicon/zip/zip_crypto.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/crypto/marvell/octeontx/otx_cptpf_ucode.h | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/crypto/hisilicon/zip/zip_crypto.c b/drivers/crypto/hisilicon/zip/zip_crypto.c
-index 67869513e48c..7bf53877e508 100644
---- a/drivers/crypto/hisilicon/zip/zip_crypto.c
-+++ b/drivers/crypto/hisilicon/zip/zip_crypto.c
-@@ -606,8 +606,7 @@ static int hisi_zip_create_req_q(struct hisi_zip_ctx *ctx)
- 		req_q = &ctx->qp_ctx[i].req_q;
- 		req_q->size = QM_Q_DEPTH;
+diff --git a/drivers/crypto/marvell/octeontx/otx_cptpf_ucode.h b/drivers/crypto/marvell/octeontx/otx_cptpf_ucode.h
+index 8620ac87a447..e7e9d1a9a0db 100644
+--- a/drivers/crypto/marvell/octeontx/otx_cptpf_ucode.h
++++ b/drivers/crypto/marvell/octeontx/otx_cptpf_ucode.h
+@@ -39,8 +39,6 @@
+ /* Maximum number of supported engines/cores on OcteonTX 83XX platform */
+ #define OTX_CPT_MAX_ENGINES		64
  
--		req_q->req_bitmap = kcalloc(BITS_TO_LONGS(req_q->size),
--					    sizeof(long), GFP_KERNEL);
-+		req_q->req_bitmap = bitmap_zalloc(req_q->size, GFP_KERNEL);
- 		if (!req_q->req_bitmap) {
- 			ret = -ENOMEM;
- 			if (i == 0)
-@@ -631,11 +630,11 @@ static int hisi_zip_create_req_q(struct hisi_zip_ctx *ctx)
- 	return 0;
+-#define OTX_CPT_ENGS_BITMASK_LEN	(OTX_CPT_MAX_ENGINES/(BITS_PER_BYTE * \
+-					 sizeof(unsigned long)))
  
- err_free_loop1:
--	kfree(ctx->qp_ctx[HZIP_QPC_DECOMP].req_q.req_bitmap);
-+	bitmap_free(ctx->qp_ctx[HZIP_QPC_DECOMP].req_q.req_bitmap);
- err_free_loop0:
- 	kfree(ctx->qp_ctx[HZIP_QPC_COMP].req_q.q);
- err_free_bitmap:
--	kfree(ctx->qp_ctx[HZIP_QPC_COMP].req_q.req_bitmap);
-+	bitmap_free(ctx->qp_ctx[HZIP_QPC_COMP].req_q.req_bitmap);
- 	return ret;
- }
+ /* Microcode types */
+ enum otx_cpt_ucode_type {
+@@ -54,7 +52,7 @@ enum otx_cpt_ucode_type {
+ };
  
-@@ -645,7 +644,7 @@ static void hisi_zip_release_req_q(struct hisi_zip_ctx *ctx)
- 
- 	for (i = 0; i < HZIP_CTX_Q_NUM; i++) {
- 		kfree(ctx->qp_ctx[i].req_q.q);
--		kfree(ctx->qp_ctx[i].req_q.req_bitmap);
-+		bitmap_free(ctx->qp_ctx[i].req_q.req_bitmap);
- 	}
- }
+ struct otx_cpt_bitmap {
+-	unsigned long bits[OTX_CPT_ENGS_BITMASK_LEN];
++	DECLARE_BITMAP(bits, OTX_CPT_MAX_ENGINES);
+ 	int size;
+ };
  
 -- 
 2.34.1
