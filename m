@@ -2,69 +2,130 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 079B2C433EF
-	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Jul 2022 12:19:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB506C43334
+	for <kernel-janitors@archiver.kernel.org>; Sun, 10 Jul 2022 12:37:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229601AbiGJMTl (ORCPT
+        id S229793AbiGJMhU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 10 Jul 2022 08:19:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51454 "EHLO
+        Sun, 10 Jul 2022 08:37:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229523AbiGJMTk (ORCPT
+        with ESMTP id S229770AbiGJMhI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 10 Jul 2022 08:19:40 -0400
-Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50AA4B7DE
-        for <kernel-janitors@vger.kernel.org>; Sun, 10 Jul 2022 05:19:39 -0700 (PDT)
+        Sun, 10 Jul 2022 08:37:08 -0400
+Received: from smtp.smtpout.orange.fr (smtp10.smtpout.orange.fr [80.12.242.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11D1013F8A
+        for <kernel-janitors@vger.kernel.org>; Sun, 10 Jul 2022 05:36:41 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id AVuQotAaQ6rrEAVuQoiB3Q; Sun, 10 Jul 2022 14:19:37 +0200
+        id AWAhoAvD20JImAWAho6ELU; Sun, 10 Jul 2022 14:36:24 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 10 Jul 2022 14:19:37 +0200
+X-ME-Date: Sun, 10 Jul 2022 14:36:24 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Boris Brezillon <bbrezillon@kernel.org>,
-        Arnaud Ebalard <arno@natisbad.org>,
-        Srujana Challa <schalla@marvell.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
+To:     Saeed Mahameed <saeedm@nvidia.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-crypto@vger.kernel.org
-Subject: [PATCH 3/3] crypto: octeontx2: Avoid some useless memory initialization
-Date:   Sun, 10 Jul 2022 14:19:33 +0200
-Message-Id: <d23bb174321f48dbc4ca2d325a57c616a2fafb8b.1657455515.git.christophe.jaillet@wanadoo.fr>
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: [PATCH] net/mlx5: Use the bitmap API to allocate bitmaps
+Date:   Sun, 10 Jul 2022 14:36:22 +0200
+Message-Id: <ca036ba3d0c2ee307e1d8cc94aaaab1686ebf1c9.1657456513.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <a9fa76b5091f1626fa19e8e5650a95d8b2257eda.1657455515.git.christophe.jaillet@wanadoo.fr>
-References: <a9fa76b5091f1626fa19e8e5650a95d8b2257eda.1657455515.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In otx2_cpt_eng_grp_info(), 'tmp_bmap' is zero'ed at each iteration in the
-first 'for' loop.
+Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
+
+It is less verbose and it improves the semantic.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../net/ethernet/mellanox/mlx5/core/lib/dm.c  | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c b/drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c
-index a28a310090e9..b14a8f6dae63 100644
---- a/drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c
-+++ b/drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c
-@@ -848,7 +848,7 @@ static int eng_grp_update_masks(struct device *dev,
- 				struct otx2_cpt_eng_grp_info *eng_grp)
- {
- 	struct otx2_cpt_engs_rsvd *engs, *mirrored_engs;
--	struct otx2_cpt_bitmap tmp_bmap = { {0} };
-+	struct otx2_cpt_bitmap tmp_bmap;
- 	int i, j, cnt, max_cnt;
- 	int bit;
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/dm.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/dm.c
+index 7e02cbe8c3b9..9482e51ac82a 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/lib/dm.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/dm.c
+@@ -38,8 +38,7 @@ struct mlx5_dm *mlx5_dm_create(struct mlx5_core_dev *dev)
+ 			    MLX5_LOG_SW_ICM_BLOCK_SIZE(dev));
  
+ 		dm->steering_sw_icm_alloc_blocks =
+-			kcalloc(BITS_TO_LONGS(steering_icm_blocks),
+-				sizeof(unsigned long), GFP_KERNEL);
++			bitmap_zalloc(steering_icm_blocks, GFP_KERNEL);
+ 		if (!dm->steering_sw_icm_alloc_blocks)
+ 			goto err_steering;
+ 	}
+@@ -50,8 +49,7 @@ struct mlx5_dm *mlx5_dm_create(struct mlx5_core_dev *dev)
+ 			    MLX5_LOG_SW_ICM_BLOCK_SIZE(dev));
+ 
+ 		dm->header_modify_sw_icm_alloc_blocks =
+-			kcalloc(BITS_TO_LONGS(header_modify_icm_blocks),
+-				sizeof(unsigned long), GFP_KERNEL);
++			bitmap_zalloc(header_modify_icm_blocks, GFP_KERNEL);
+ 		if (!dm->header_modify_sw_icm_alloc_blocks)
+ 			goto err_modify_hdr;
+ 	}
+@@ -66,8 +64,7 @@ struct mlx5_dm *mlx5_dm_create(struct mlx5_core_dev *dev)
+ 			    MLX5_LOG_SW_ICM_BLOCK_SIZE(dev));
+ 
+ 		dm->header_modify_pattern_sw_icm_alloc_blocks =
+-			kcalloc(BITS_TO_LONGS(header_modify_pattern_icm_blocks),
+-				sizeof(unsigned long), GFP_KERNEL);
++			bitmap_zalloc(header_modify_pattern_icm_blocks, GFP_KERNEL);
+ 		if (!dm->header_modify_pattern_sw_icm_alloc_blocks)
+ 			goto err_pattern;
+ 	}
+@@ -75,10 +72,10 @@ struct mlx5_dm *mlx5_dm_create(struct mlx5_core_dev *dev)
+ 	return dm;
+ 
+ err_pattern:
+-	kfree(dm->header_modify_sw_icm_alloc_blocks);
++	bitmap_free(dm->header_modify_sw_icm_alloc_blocks);
+ 
+ err_modify_hdr:
+-	kfree(dm->steering_sw_icm_alloc_blocks);
++	bitmap_free(dm->steering_sw_icm_alloc_blocks);
+ 
+ err_steering:
+ 	kfree(dm);
+@@ -97,7 +94,7 @@ void mlx5_dm_cleanup(struct mlx5_core_dev *dev)
+ 		WARN_ON(!bitmap_empty(dm->steering_sw_icm_alloc_blocks,
+ 				      BIT(MLX5_CAP_DEV_MEM(dev, log_steering_sw_icm_size) -
+ 					  MLX5_LOG_SW_ICM_BLOCK_SIZE(dev))));
+-		kfree(dm->steering_sw_icm_alloc_blocks);
++		bitmap_free(dm->steering_sw_icm_alloc_blocks);
+ 	}
+ 
+ 	if (dm->header_modify_sw_icm_alloc_blocks) {
+@@ -105,7 +102,7 @@ void mlx5_dm_cleanup(struct mlx5_core_dev *dev)
+ 				      BIT(MLX5_CAP_DEV_MEM(dev,
+ 							   log_header_modify_sw_icm_size) -
+ 				      MLX5_LOG_SW_ICM_BLOCK_SIZE(dev))));
+-		kfree(dm->header_modify_sw_icm_alloc_blocks);
++		bitmap_free(dm->header_modify_sw_icm_alloc_blocks);
+ 	}
+ 
+ 	if (dm->header_modify_pattern_sw_icm_alloc_blocks) {
+@@ -113,7 +110,7 @@ void mlx5_dm_cleanup(struct mlx5_core_dev *dev)
+ 				      BIT(MLX5_CAP_DEV_MEM(dev,
+ 							   log_header_modify_pattern_sw_icm_size) -
+ 					  MLX5_LOG_SW_ICM_BLOCK_SIZE(dev))));
+-		kfree(dm->header_modify_pattern_sw_icm_alloc_blocks);
++		bitmap_free(dm->header_modify_pattern_sw_icm_alloc_blocks);
+ 	}
+ 
+ 	kfree(dm);
 -- 
 2.34.1
 
