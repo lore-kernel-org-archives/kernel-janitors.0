@@ -2,70 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B4DCC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Jul 2022 19:15:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE5B9C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Jul 2022 19:21:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230097AbiGKTO6 (ORCPT
+        id S231377AbiGKTVq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 11 Jul 2022 15:14:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55346 "EHLO
+        Mon, 11 Jul 2022 15:21:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231727AbiGKTOz (ORCPT
+        with ESMTP id S230169AbiGKTVo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 11 Jul 2022 15:14:55 -0400
-Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0845761B2B
-        for <kernel-janitors@vger.kernel.org>; Mon, 11 Jul 2022 12:14:53 -0700 (PDT)
+        Mon, 11 Jul 2022 15:21:44 -0400
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D705776EB5
+        for <kernel-janitors@vger.kernel.org>; Mon, 11 Jul 2022 12:21:43 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id AyrqoouphN260AyrqoBJrn; Mon, 11 Jul 2022 21:14:52 +0200
+        id AyyToa9r026JCAyyToNQOs; Mon, 11 Jul 2022 21:21:42 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 11 Jul 2022 21:14:52 +0200
+X-ME-Date: Mon, 11 Jul 2022 21:21:42 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Frederic Barrat <fbarrat@linux.ibm.com>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Mustafa Ismail <mustafa.ismail@intel.com>,
+        Shiraz Saleem <shiraz.saleem@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 2/2] cxl: Fix a memory leak in an error handling path
-Date:   Mon, 11 Jul 2022 21:14:48 +0200
-Message-Id: <ce5869418f5838187946eb6b11a52715a93ece3d.1657566849.git.christophe.jaillet@wanadoo.fr>
+        linux-rdma@vger.kernel.org
+Subject: [PATCH] RDMA/irdma: Use the bitmap API to allocate bitmaps
+Date:   Mon, 11 Jul 2022 21:21:39 +0200
+Message-Id: <1f671b1af5881723ee265a0a12809c92950e58aa.1657567269.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <59010cc7c62443030c69cb1ce0b2b62c5d47e064.1657566849.git.christophe.jaillet@wanadoo.fr>
-References: <59010cc7c62443030c69cb1ce0b2b62c5d47e064.1657566849.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-A bitmap_zalloc() must be balanced by a corresponding bitmap_free() in the
-error handling path of afu_allocate_irqs().
+Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
+
+It is less verbose and it improves the semantic.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-The error handling path should be done in the reversed order but it should
-work as-is.
----
- drivers/misc/cxl/irq.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/infiniband/hw/irdma/hw.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/misc/cxl/irq.c b/drivers/misc/cxl/irq.c
-index 0ce91d99aead..b730e022a48e 100644
---- a/drivers/misc/cxl/irq.c
-+++ b/drivers/misc/cxl/irq.c
-@@ -349,6 +349,7 @@ int afu_allocate_irqs(struct cxl_context *ctx, u32 count)
+diff --git a/drivers/infiniband/hw/irdma/hw.c b/drivers/infiniband/hw/irdma/hw.c
+index dd3943d22dc6..675b138e8ef0 100644
+--- a/drivers/infiniband/hw/irdma/hw.c
++++ b/drivers/infiniband/hw/irdma/hw.c
+@@ -1543,7 +1543,7 @@ static void irdma_del_init_mem(struct irdma_pci_f *rf)
+ 			  rf->obj_mem.pa);
+ 	rf->obj_mem.va = NULL;
+ 	if (rf->rdma_ver != IRDMA_GEN_1) {
+-		kfree(rf->allocated_ws_nodes);
++		bitmap_free(rf->allocated_ws_nodes);
+ 		rf->allocated_ws_nodes = NULL;
+ 	}
+ 	kfree(rf->ceqlist);
+@@ -1972,9 +1972,8 @@ u32 irdma_initialize_hw_rsrc(struct irdma_pci_f *rf)
+ 	u32 ret;
  
- out:
- 	cxl_ops->release_irq_ranges(&ctx->irqs, ctx->afu->adapter);
-+	bitmap_free(ctx->irq_bitmap);
- 	afu_irq_name_free(ctx);
- 	return -ENOMEM;
- }
+ 	if (rf->rdma_ver != IRDMA_GEN_1) {
+-		rf->allocated_ws_nodes =
+-			kcalloc(BITS_TO_LONGS(IRDMA_MAX_WS_NODES),
+-				sizeof(unsigned long), GFP_KERNEL);
++		rf->allocated_ws_nodes = bitmap_zalloc(IRDMA_MAX_WS_NODES,
++						       GFP_KERNEL);
+ 		if (!rf->allocated_ws_nodes)
+ 			return -ENOMEM;
+ 
+@@ -2023,7 +2022,7 @@ u32 irdma_initialize_hw_rsrc(struct irdma_pci_f *rf)
+ 	return 0;
+ 
+ mem_rsrc_kzalloc_fail:
+-	kfree(rf->allocated_ws_nodes);
++	bitmap_free(rf->allocated_ws_nodes);
+ 	rf->allocated_ws_nodes = NULL;
+ 
+ 	return ret;
 -- 
 2.34.1
 
