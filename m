@@ -2,133 +2,161 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC3CEC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Jul 2022 12:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FEE3C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Jul 2022 12:08:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231269AbiGKMCw (ORCPT
+        id S231517AbiGKMIf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 11 Jul 2022 08:02:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56782 "EHLO
+        Mon, 11 Jul 2022 08:08:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231391AbiGKMCn (ORCPT
+        with ESMTP id S231492AbiGKMI3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 11 Jul 2022 08:02:43 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE01A3DBF9;
-        Mon, 11 Jul 2022 05:02:41 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id e15so5951848edj.2;
-        Mon, 11 Jul 2022 05:02:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=BWPy1/wLCTu6ilQ4qUtHXwXwf7Z3gLlHQb6cz3/Ocik=;
-        b=Km4YSWpymZHkGx1rK7YmaWp5bO7T4ldo5feo4/eotjCLPx0cA4uhJ7EFb+nHLoMc0z
-         n8a8f6Sd0JTo4jq+fK7He9B0gtwTn0AfeNcEpUHCkdozbEmU1gSBLDGkrZzehRLd4XSR
-         HaM1NjnsXectLRiGhKY1Wd2EZOJznd3w2/v2zSlwUgtUZ3/ODINZUOi9XUpQxWUPgGIO
-         YUxQH4CI6H/cSxO7DydgPsEVvvf6UN1B/8mh2tfxWuS+3XJFIJHdmoRLyYwSRL8HZ3Hc
-         3A4KhZpWMItX33PeoMcCpKDbJjw7vONygOQag9qg7V91/nwFbdBJnNgqxqJ9yqAycdlF
-         SQbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=BWPy1/wLCTu6ilQ4qUtHXwXwf7Z3gLlHQb6cz3/Ocik=;
-        b=wvjTTMri/Tqc4SAE2Syn50ivvlPP+hQLZbIXoZKZKT1Q8BZ6Soe5aDhRLtpN7rbDYq
-         lYheLCH57qJJrfSJvIEs/WZYrn/adnEZ3mMYJrrVdhCJ/G8tWsrxqO9hC101n+6rOjvo
-         0Gk7uTT0iis+nmCFX0oClvhLeHW4AP3JXcXqrABDz/TSyAHePAQMeOPrR5DU2+/gh6y+
-         GRotX+bTqzmAtRHXPbaPl4ibHn1TNyWI8HqqtlQB/i1C575+kqzxQbzK5+9Jb93jeg5p
-         LDXwg1C+N+xIMPXs72sHChE7Wktw6QQcLR9Wg5hJHwOzCRBVEP34GbYRLTzeRHArOIoX
-         49Yg==
-X-Gm-Message-State: AJIora9LktsDEG3UeJHwq6Swrrip5+1chIeNvps1ycC9vfmZbUYNLjhS
-        olvN/ik+y68/i0mBKU/o+yM=
-X-Google-Smtp-Source: AGRyM1ve4fGvpX//Ha5C48qcrSCWGYrkCUCqWsQMWsnGm5i1oa0340q2eUVYe7/+FksBdB/Z3Ta2eQ==
-X-Received: by 2002:a05:6402:84f:b0:437:6293:d264 with SMTP id b15-20020a056402084f00b004376293d264mr23916942edz.317.1657540960468;
-        Mon, 11 Jul 2022 05:02:40 -0700 (PDT)
-Received: from felia.fritz.box (200116b8266e42009c70ae84c5cabc2b.dip.versatel-1u1.de. [2001:16b8:266e:4200:9c70:ae84:c5ca:bc2b])
-        by smtp.gmail.com with ESMTPSA id hx24-20020a170906847800b00722fadc4279sm2608036ejc.124.2022.07.11.05.02.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Jul 2022 05:02:39 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Sekhar Nori <nsekhar@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH SECOND RESEND] arm: davinci: remove reference to obsolete BLK_DEV_PALMCHIP_BK3710
-Date:   Mon, 11 Jul 2022 14:02:29 +0200
-Message-Id: <20220711120229.30806-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 11 Jul 2022 08:08:29 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2110.outbound.protection.outlook.com [40.107.220.110])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6264245046;
+        Mon, 11 Jul 2022 05:08:27 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hOT0ZWhTd2HMNpviItGzusGAtFmN7ru3YtceEpq9aYKcJN35h0FKKie9M7xcdVZOnXjVhWNko7pU9/EhjV1KJHFezKFV7WWl23tozC5mmOFRCrZOsmz86G3+uZalkwAlBdc9ML8z8aQ8TFMrskx0RCqHuGHGzM79CMq0ugtdrQKSdSx4rFED/eGpRu9bJcFP+McDG606bCuC0B2cYrMyLxE4hPGlMEbFP0v+kvwrzWRpqDSpkv5bxk2auzizIlo1OjgzOoq6A4WuMmFVg2tmjZDUVDMWgfQ05k4b7rfxG2dwEyRK0Ayh3d77klEHrp79EDwB6cmZg9DBjBHSjT0TNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=t/jS2/UZT4bHRkqCW/hjmeFyzj/muosh5gA1AzzmIsw=;
+ b=Ye9RF5nE/zE2LUgrZyIE2PxTRGYQdS+oGi+kfZtBt666iWnywB1zkS8OWz4DjuhK3vhuTr7F3FXbi+GpljfFpWY1djpK85k22cS2lIBS8fnLszpTav8mSh9fHJoOQgz1BcztDpFdonRfv5oAJo4rdAQ0oiUPI+CIVzCsaMpnsmUTjno/9uYFwL9GxU28u49RGPb7dHTfOx1OZYXB4XY4qkhj1bu69G0hyD2YHld70/zI8Jr5VBzV0BS1X9069a/f4OOS1dHjGw1gEoG0kMKbzfPj6wL6JRtLT83AIBsBS/YwjCIXK6D9WbhMZHHeE/495XQHwOBuoUoyh2UhLt3K+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cornelisnetworks.com; dmarc=pass action=none
+ header.from=cornelisnetworks.com; dkim=pass header.d=cornelisnetworks.com;
+ arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cornelisnetworks.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t/jS2/UZT4bHRkqCW/hjmeFyzj/muosh5gA1AzzmIsw=;
+ b=Fsv02phgvzl2Stjr3vV2IxcqWiuzrTzwFmeKBccFQ0WW1Dsd3SG+hzoHE0OBzxAwgmka/fGwalhv6KWijvSM5ikjs3So++S3TA8u422Qjrx71w0yQBWKgfsEKv1qxl7w6WDNNeZYvhwIIKu29bQTv/CbNsRZh9Ib7F0G76J2zUJtTu3U5yK7b5GXvlFIaKnwV0VzXuK4nHgF9CUhKK1bQmjMLwO7BLA1PmeFbcmt8MvaVLmLKhhjNqwesExiYIGmGihVyVz0LF5dBW1DirPt5X2kXLs34x3UL6TLkbgTkl2ukzraDjeOpGNyfFPwf3pm9gfsCPg3RPGQe3ndBcW3tw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cornelisnetworks.com;
+Received: from PH0PR01MB6439.prod.exchangelabs.com (2603:10b6:510:d::22) by
+ MN0PR01MB7804.prod.exchangelabs.com (2603:10b6:208:37f::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5417.26; Mon, 11 Jul 2022 12:08:24 +0000
+Received: from PH0PR01MB6439.prod.exchangelabs.com
+ ([fe80::4000:7ba9:d4a:c339]) by PH0PR01MB6439.prod.exchangelabs.com
+ ([fe80::4000:7ba9:d4a:c339%7]) with mapi id 15.20.5417.026; Mon, 11 Jul 2022
+ 12:08:24 +0000
+Message-ID: <e4084801-0295-84c1-1bc1-dbf94483d542@cornelisnetworks.com>
+Date:   Mon, 11 Jul 2022 08:08:21 -0400
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.11.0
+Subject: Re: [PATCH] RDMA/qib: Use the bitmap API to allocate bitmaps
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+References: <f7a8588447679e80a438b6188b0603c1a11ad877.1657300671.git.christophe.jaillet@wanadoo.fr>
+From:   Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>
+In-Reply-To: <f7a8588447679e80a438b6188b0603c1a11ad877.1657300671.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BL1PR13CA0070.namprd13.prod.outlook.com
+ (2603:10b6:208:2b8::15) To PH0PR01MB6439.prod.exchangelabs.com
+ (2603:10b6:510:d::22)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7b1798f2-0372-41ca-21ee-08da63360e02
+X-MS-TrafficTypeDiagnostic: MN0PR01MB7804:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: NA5lz/RLhpX1yErcJ+eXKL6CHpjIWM3t2xKqGLJ6LxhHuOI+AHwltLh57ZlnQUmSbhPuow3CX7spYYLXEHUVT0uoqnhdn3t/RV7y7OP97nW0JdkUi9q/WbBW3CCnRdmFB6+cjDrD2ByBajcLsuRHMoe5Of+o/b9/WTDuHFTLlrIr7AQojl4Z6ARfDT7jGxK+mlPHCTlbadetNqJbiz7NBkDcUAo4feekFuVS55N/pRXjENIM7xPm3k07Za3aUe078kiTBlbYC+abkRcF3ExhUEzxlAuQ/hi28mtWUSigwTCAIz85RFZVSqEB1ZYap2Vj/p+zCZke9k2AYwP2ggocSVmlfsIaL0nDvVtsirLcfJBfVvONBQOTuivkTc97+a6siOJQVa9NjVxA34sZ7va6j6EBqPqHqtxB5G4MrYMZFYz9g4BdaR0zbQC3vDfGkzmf9W9s7rXfzy5lWkPDne0hY7gbuOZLsWc686EMeOIlTEiEzawHmeeTYkxggbgb5ugUZpKT+Muc+iQZy5bRiOqgkUd3e/udoHvNdGkIfSsGQqjz9YXg0tEZzo6+FrgNikheGL71g/koxV8W9K+5DqdWehgNE869R2LGchDTjt4uc2DSZfuI2g1M3Vh66dGHdDV2HmOMKTYRXgC3gl2WZKa1BCp1OEES3jTPQisTPlBeBhrQJATbGvmZDNtyiSDJU+zBeqZ/o0YPpA5BP4uJGw7RvITgD994kmMtDv2dPUuELNmav936wQMflzi9iIOb4n+qtoi9k4o4RWRxku+BcWAMYCQd7Sai57mf4YWRpEY21CkcINDjxFwv7YHvstr3bmjex9wUF2JaBldfU/jU8F0vQeMRrtBAXCvIzwhhLU7NXq0=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR01MB6439.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(136003)(376002)(366004)(396003)(39830400003)(346002)(66946007)(66476007)(66556008)(6512007)(86362001)(8676002)(186003)(6666004)(53546011)(52116002)(6506007)(478600001)(4326008)(26005)(31696002)(6486002)(2616005)(110136005)(41300700001)(38100700002)(316002)(38350700002)(5660300002)(2906002)(31686004)(36756003)(44832011)(83380400001)(8936002)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SlYzZkwrNDBvcko2b0tRQnVYTGU1eFg3bmxMdHFVUnVDTDltT0p2UGxvUlpE?=
+ =?utf-8?B?aHU5KzNKeWV2MkM5empvZ28xZTFFallXc2NlQjljYm84cE9mdFBHMlRRUWtm?=
+ =?utf-8?B?djdBdDM3d1d1MjZycys4em9td0VQU2xBME1XRlZEUm1VR3gwaHlmdzY0ZmtL?=
+ =?utf-8?B?QmhvaytORTAxTWMwb3VabUVUZTBGcXlvVmdiTm9MZEVUTzNCTzF0U1N5QkQr?=
+ =?utf-8?B?VXp0Q04zcU5GWUIzRmJ3MkhrZEhCMFN3K01VTW13anREcjVDRnVQbkg3WXhl?=
+ =?utf-8?B?NFdjVkNyQUhaUjFydmxJV21SNERoVlNjQk9wbGREdE5PbWZ5ekdJZmo4RlZ0?=
+ =?utf-8?B?cDA0Y3UyZTJCVWM0K25ZUE9xbHg3ZEpJTFZIak1kR3hDVUZxRTE5ZFBXbXBr?=
+ =?utf-8?B?bkt3cTdzVE04V2Nvd29rZW92WllOSkJCV2d0WFQ2a2lJRFNSRUVjOUo5a2k4?=
+ =?utf-8?B?dFJrV0xJVzI0aTg2Sis5L2RsOGFEWWIxUElzRUZmaE5TQWhzR2hWaFRtZjFY?=
+ =?utf-8?B?YThWdXZ5YWNIbzlUNkFPaVBFeHRteU5RaU04QVpaM29yejFHSFJKYWd2cWg3?=
+ =?utf-8?B?Zjkrc1hBWnJTYSsvYVIrR1N6RHE5NjhyT3g5Mi9BcUJTVE9CdldaSFFlNG40?=
+ =?utf-8?B?S2JjWFhaUnVvZ29BS1JFcUVlL1pJRHFqSi9zdlAvOEd3VWxNOHphYmZYNEc1?=
+ =?utf-8?B?blljVnNPU29vdWhPb2U4blFMU1lVemluekVLemN3eHFaS1JrOFN0VmZVUFpE?=
+ =?utf-8?B?SE9WVEFrazdNOG02ZXQxR3l5VUxzb0llWElDUUJoalBKMU45aVpRa1Q3amww?=
+ =?utf-8?B?akxta0lHRFl4V3ZtUnJFNzFzNFV5aUUxanhGUDdISlNibUovWHJiYk1PY0dx?=
+ =?utf-8?B?RUM5aSs2UDdTM0pCYkxiR2ZBRHZrUmdzdFY4eERXbXdTVmxDSDVkelpMdmlE?=
+ =?utf-8?B?aGpacFczM2NhTW5EUEN1dVJHWHphaDJ3bUhMK3dkWnJlaHBpRG0ySzhpYTcx?=
+ =?utf-8?B?cDRta1c2Y0FweW8zRThKc1lUbFd6TXZvdUtKOVMzY1hEaDNqNlhXY2N1azkr?=
+ =?utf-8?B?NnNRUWJ5Q2xYUjhpYWhhWm9RYXA4enprSjEzN29sL2VwNXdGNkt6eUNYeEsy?=
+ =?utf-8?B?TEdDdWJVaUw3VmNNQnVDN25qcy9iMUtuSDFuSnBjeVFKRmxBd2pBNEZIdHhL?=
+ =?utf-8?B?eldhWTBtVmlweWRPRzVtRlNzYWRJTGVzVDNreG1kUkVoN0pBUlRXdzdta1JJ?=
+ =?utf-8?B?ZEd2VmxhcDVJVGRic1Z2ejgyQzhNNVJtaFJuUjJ5eVNxRmxtQjMrSXk1RUdo?=
+ =?utf-8?B?WVNLQzVBUUpCTTNTbCtKWmRrQWxhQWk5ZFh4NXJhZEVJL01qUHF4ZFY4U0dm?=
+ =?utf-8?B?cVovTnc4a0Y5a2FXN2FubzN3R1Vab3Z5Z3BobjRjMC8yYzZzVEtIcGtpZUlE?=
+ =?utf-8?B?Ui9PYXgzM21GSHk1eGtlLzRiOXBCL0VyUWsyOTFBa3pscnA1L0JwcWhibXgy?=
+ =?utf-8?B?ZXBCQVVDZ1dnQmc2dm4wVDU1WGRsVU9pcysyOVpLeWNDd2Z5YlNGRVNoUzhO?=
+ =?utf-8?B?cWo3amR4YXc1L0JWUGZ1VTgzc1hPYWNzZ1lFZGNlOEFOeE41Ukt1WXpTUFJr?=
+ =?utf-8?B?NUhDSFViRkdtRHN3c3JRV1FXMElheEJpcG5nYjJEYW0xWnd3cmZrOVJqejNv?=
+ =?utf-8?B?NFBTZzlPcWt2WVF3TXduQUxZUm51cWJkNnc1ajBrYVAzMFg2NGI3Uy9Rd040?=
+ =?utf-8?B?NmZuTTBDZWtVVTJyYlQ2MWpWWjJ1V3VZbTZTbVVUQTJKZEd3Z1ZDREI5STJT?=
+ =?utf-8?B?YjRqRmxId2locVA1VjcrUHllKzd6QlVRVHQyZndJWWd3cjNJTjlkdk1ndkNH?=
+ =?utf-8?B?OTFHQzdFOXl3MUJiNU1wblBPRnhJRUJCWXkzMmkxNjRRcmx6MmY0bUk2UUc0?=
+ =?utf-8?B?SzFiT2RzY3RuWkRhWmVkcTM0Sk43YnBkdmtMM0VCWnV6V0NZOHN1VVh4bXVs?=
+ =?utf-8?B?WFhpWjhISTB0Mytmdjh3YnRGWHNCVFNRSm51Q1ppY0dFS0lTNXVQRkJTWUZ6?=
+ =?utf-8?B?L1pEL2hhay9NdkFqV1Y4alFpSjRZSzFXczlWQzRORndJR01SQmdiSWY4N2Jx?=
+ =?utf-8?B?UkJ4WWpTMW9EUTc2alBOcFU2ZXFOTUpOb0txcmRWTlE4bldiKzJWQms2NUVU?=
+ =?utf-8?Q?6o47N2DTUv9HVgMQJHrIMVo=3D?=
+X-OriginatorOrg: cornelisnetworks.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b1798f2-0372-41ca-21ee-08da63360e02
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR01MB6439.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2022 12:08:24.2468
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4dbdb7da-74ee-4b45-8747-ef5ce5ebe68a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cDz4zLZ7j3ZX13Rhy5EMZMipr5BdlOLAsceFJDTq7lAbW0LbbkC+1CTCuSUnp+tfiZpkMJAtb2hZlipOeAab1JXfLeFE5P3Dk2i3ntSuRvJXowoh1yGdmRvDLZ/j7dQZ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR01MB7804
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit b7fb14d3ac63 ("ide: remove the legacy ide driver") removes the
-definition of the config BLK_DEV_PALMCHIP_BK3710.
+On 7/8/22 1:20 PM, Christophe JAILLET wrote:
+> Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
+> 
+> It is less verbose and it improves the semantic.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/infiniband/hw/qib/qib_init.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/infiniband/hw/qib/qib_init.c b/drivers/infiniband/hw/qib/qib_init.c
+> index d1a72e89e297..45211008449f 100644
+> --- a/drivers/infiniband/hw/qib/qib_init.c
+> +++ b/drivers/infiniband/hw/qib/qib_init.c
+> @@ -1106,8 +1106,7 @@ struct qib_devdata *qib_alloc_devdata(struct pci_dev *pdev, size_t extra)
+>  	if (!qib_cpulist_count) {
+>  		u32 count = num_online_cpus();
+>  
+> -		qib_cpulist = kcalloc(BITS_TO_LONGS(count), sizeof(long),
+> -				      GFP_KERNEL);
+> +		qib_cpulist = bitmap_zalloc(count, GFP_KERNEL);
+>  		if (qib_cpulist)
+>  			qib_cpulist_count = count;
+>  	}
+> @@ -1279,7 +1278,7 @@ static void __exit qib_ib_cleanup(void)
+>  #endif
+>  
+>  	qib_cpulist_count = 0;
+> -	kfree(qib_cpulist);
+> +	bitmap_free(qib_cpulist);
+>  
+>  	WARN_ON(!xa_empty(&qib_dev_table));
+>  	qib_dev_cleanup();
 
-So, remove the obsolete references in the mach-davinci architecture.
+Looks OK to me.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
----
-first send:
-  https://lore.kernel.org/linux-arm-kernel/20210804123426.16947-3-lukas.bulwahn@gmail.com/
-
-first resend:
-  https://lore.kernel.org/linux-arm-kernel/20211011063624.12269-2-lukas.bulwahn@gmail.com/
-
-another resend (as part of a larger series):
-  https://lore.kernel.org/linux-arm-kernel/20211028141938.3530-6-lukas.bulwahn@gmail.com/
-  
-addition now in second resend:
-  - added Arnd's Reviewed-by tag from
-    https://lore.kernel.org/linux-arm-kernel/CAK8P3a2GGbik3r5BCKE2ZCkpFyzv8Q54z_iV84ZJ+kNXYUTMzw@mail.gmail.com/
-
- arch/arm/mach-davinci/board-dm644x-evm.c  | 3 +--
- arch/arm/mach-davinci/board-dm646x-evm.c  | 3 +--
- arch/arm/mach-davinci/board-neuros-osd2.c | 3 +--
- 3 files changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
-index ebdd5c334ac1..4cde283f7f03 100644
---- a/arch/arm/mach-davinci/board-dm644x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm644x-evm.c
-@@ -828,8 +828,7 @@ static int davinci_phy_fixup(struct phy_device *phydev)
- 	return 0;
- }
- 
--#define HAS_ATA		(IS_ENABLED(CONFIG_BLK_DEV_PALMCHIP_BK3710) || \
--			 IS_ENABLED(CONFIG_PATA_BK3710))
-+#define HAS_ATA		IS_ENABLED(CONFIG_PATA_BK3710)
- 
- #define HAS_NOR		IS_ENABLED(CONFIG_MTD_PHYSMAP)
- 
-diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
-index 28861fee493b..151e246c99b8 100644
---- a/arch/arm/mach-davinci/board-dm646x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm646x-evm.c
-@@ -146,8 +146,7 @@ static struct platform_device davinci_aemif_device = {
- 	.num_resources	= ARRAY_SIZE(davinci_aemif_resources),
- };
- 
--#define HAS_ATA		(IS_ENABLED(CONFIG_BLK_DEV_PALMCHIP_BK3710) || \
--			 IS_ENABLED(CONFIG_PATA_BK3710))
-+#define HAS_ATA		IS_ENABLED(CONFIG_PATA_BK3710)
- 
- #ifdef CONFIG_I2C
- /* CPLD Register 0 bits to control ATA */
-diff --git a/arch/arm/mach-davinci/board-neuros-osd2.c b/arch/arm/mach-davinci/board-neuros-osd2.c
-index 9748a2c12cc4..3b2298d686d5 100644
---- a/arch/arm/mach-davinci/board-neuros-osd2.c
-+++ b/arch/arm/mach-davinci/board-neuros-osd2.c
-@@ -160,8 +160,7 @@ static struct davinci_mmc_config davinci_ntosd2_mmc_config = {
- 	.wires		= 4,
- };
- 
--#define HAS_ATA		(IS_ENABLED(CONFIG_BLK_DEV_PALMCHIP_BK3710) || \
--			 IS_ENABLED(CONFIG_PATA_BK3710))
-+#define HAS_ATA		IS_ENABLED(CONFIG_PATA_BK3710)
- 
- #define HAS_NAND	IS_ENABLED(CONFIG_MTD_NAND_DAVINCI)
- 
--- 
-2.17.1
-
+Reviewed-by: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>
