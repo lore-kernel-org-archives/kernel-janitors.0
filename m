@@ -2,115 +2,116 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED47C43334
-	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Jul 2022 04:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2165CCA481
+	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Jul 2022 05:50:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229724AbiGKEsT (ORCPT
+        id S229560AbiGKFu3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 11 Jul 2022 00:48:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42268 "EHLO
+        Mon, 11 Jul 2022 01:50:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229779AbiGKEsE (ORCPT
+        with ESMTP id S229470AbiGKFu2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 11 Jul 2022 00:48:04 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DF0E1900F;
-        Sun, 10 Jul 2022 21:47:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657514878; x=1689050878;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=MjNTYLGdvhEIt8nnujq9JqluQ/hMJx3/KNyjN4wrhg8=;
-  b=LR2lBk1SC9wzmVE/6izMsOqYEJwjhYEN+45dqOiPysDb7I6vbapJT2wi
-   BwJCD9bKmLsGhip0A+Z49QcTvNJ0886Ycudu1t2Z7JJ9aaw6KeD5y4HBX
-   jAXrKujxgVa3MVqurXic6LUQN8dNziDs57r0njAzOieczW3bqJo1Eh5ut
-   qRknzprfCVFlJLBvm++nbZn9YoPtKyQUzCugXKXmG+xAIW6QIpFNzNhJF
-   SIejrc/8bg99IBxSbkfaJG1FIrxtO58KKV+S/MfIPnr2ES+IRZtTk5fg0
-   rdzp5wJ8HQ1MuK1IR1Qc9paBULOzn0U9LzQdv3xVbrESioE1pHItG9Q+8
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10404"; a="282125172"
-X-IronPort-AV: E=Sophos;i="5.92,262,1650956400"; 
-   d="asc'?scan'208";a="282125172"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2022 21:47:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,262,1650956400"; 
-   d="asc'?scan'208";a="598910490"
-Received: from zhen-hp.sh.intel.com (HELO zhen-hp) ([10.239.159.108])
-  by fmsmga007.fm.intel.com with ESMTP; 10 Jul 2022 21:47:54 -0700
-Date:   Mon, 11 Jul 2022 12:24:30 +0800
-From:   Zhenyu Wang <zhenyuw@linux.intel.com>
-To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        David Airlie <airlied@linux.ie>,
-        intel-gfx@lists.freedesktop.org,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        intel-gvt-dev@lists.freedesktop.org,
-        Zhi Wang <zhi.a.wang@intel.com>
-Subject: Re: [PATCH] drm/i915/gvt: fix typo in comment
-Message-ID: <20220711042430.GR1089@zhen-hp.sh.intel.com>
-Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
-References: <20220521111145.81697-49-Julia.Lawall@inria.fr>
+        Mon, 11 Jul 2022 01:50:28 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F20CF15FD6
+        for <kernel-janitors@vger.kernel.org>; Sun, 10 Jul 2022 22:50:26 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id a39so4946606ljq.11
+        for <kernel-janitors@vger.kernel.org>; Sun, 10 Jul 2022 22:50:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=igel-co-jp.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=gZzDKZH4l/zsGGLg21sfARYm6tZRtnVyVNYZn/4KXR4=;
+        b=1hDk7+kuuy4xkNR/AJ47KK9L6gFkbe+P4ejAU8gm3Zqu2dw7Xt1E50de++3YyKQehQ
+         mK2w4ujcycEdkMNnAjZmDO3qJI5Bs2kS0oDp9uiKLmyzFkBJTLW6BXBQyNWzvbbcF7Se
+         9yvfErNl5BX3yceFj+nZELYw7Frs6tfAl+aU5CI8Cnk49TMLs7ozDJc/atmlHiATwY8p
+         OIElJMElMCMItvrdPWO8N2vKI0yasyjqRy9LliXGUTKNdzoGKCavwA8hhi2G0nqEKv0N
+         yEW2vxtGbJEXL/4KjInVv0A5qm1IgxQPdyMvbFWTEAMyNW7EBJXMrlpxCS8lmZOR6U3/
+         mr/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=gZzDKZH4l/zsGGLg21sfARYm6tZRtnVyVNYZn/4KXR4=;
+        b=ItBwqPDMabAQoVcOMSgwCYKSiCxqaX12Cq/+6LVH+qV7USEXEqxQ83WiOyiG/uMy0Z
+         4+3dmHToVVV09/QIzflmaqYyYJZ2UYWmBPVo7tQ/jZwvezuoErQkHqsQvEW4ZCiVQnO4
+         CbQctwHoAHt9rS9snFD/dTkg8Q0PtKqpdgERlr9u0/DXRYEO84qia72cq3nNRw43HW/0
+         SexU7Z7p0k/RVCNFBkGTpL5kM36fsOelh7O0lgedjfz2ghjinoeYbfIwmq+oD6aLdBuG
+         CMZm+iAj6hvkSQeNW2FhV+xwNAqBKhKEsxWh8g4x9q55MudlGrvUaqdHYOaXWYws+yHU
+         bKHQ==
+X-Gm-Message-State: AJIora8NpkoM+j793WHH5SpwJDROOl/nLBVILPPOtzRzNVfRnahn1Tga
+        YDFAl7uVYCltbxe/CZdq4lycB7IU6BMA104IxhYrzA==
+X-Google-Smtp-Source: AGRyM1ujJTpRlpUQbWJjcXD2sNPu0r92UkySH6kWufJZIc0hIlEnQAxHUS5q1rkeIrLqyrpDmVo7cvubpJ/rts8z07U=
+X-Received: by 2002:a2e:6a0e:0:b0:25d:6930:d00f with SMTP id
+ f14-20020a2e6a0e000000b0025d6930d00fmr2785666ljc.134.1657518625320; Sun, 10
+ Jul 2022 22:50:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="+dH9khzwljbvYE07"
-Content-Disposition: inline
-In-Reply-To: <20220521111145.81697-49-Julia.Lawall@inria.fr>
+References: <YsftwaVowtU9/pgn@kili>
+In-Reply-To: <YsftwaVowtU9/pgn@kili>
+From:   Shunsuke Mie <mie@igel.co.jp>
+Date:   Mon, 11 Jul 2022 14:50:14 +0900
+Message-ID: <CANXvt5rK98-cEMgpzopY9POOK8a5=VDib8uKPLgJakOG=hRfwQ@mail.gmail.com>
+Subject: Re: [PATCH] PCI: endpoint: IS_ERR() vs NULL bug in pci_epf_test_init_dma_chan()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Frank Li <Frank.Li@nxp.com>, dmaengine@vger.kernel.org,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+        Li Chen <lchen@ambarella.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+This patch changes for a tx dma channel. There is a similar problem for a
+ rx one too. The code doesn't cause an error, but it is likely better to
+change to just NULL checking.
 
---+dH9khzwljbvYE07
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+2022=E5=B9=B47=E6=9C=888=E6=97=A5(=E9=87=91) 17:41 Dan Carpenter <dan.carpe=
+nter@oracle.com>:
 
-On 2022.05.21 13:10:59 +0200, Julia Lawall wrote:
-> Spelling mistake (triple letters) in comment.
-> Detected with the help of Coccinelle.
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
->=20
+>
+> The dma_request_channel() function doesn't return error pointers, it
+> returns NULL.
+>
+> Fixes: fff86dfbbf82 ("PCI: endpoint: Enable DMA tests for endpoints with =
+DMA capabilities")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  drivers/gpu/drm/i915/gvt/gtt.c |    2 +-
+> It's surprising and unfortunate that dma_request_channel() returns NULL
+> while dma_request_chan_by_mask() returns error pointers.  These days
+> static checkers will catch this so it's not as bad as it could be but
+> still not ideal.
+>
+>  drivers/pci/endpoint/functions/pci-epf-test.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/i915/gvt/gtt.c b/drivers/gpu/drm/i915/gvt/gt=
-t.c
-> index 9c5cc2800975..c919f14c4fcb 100644
-> --- a/drivers/gpu/drm/i915/gvt/gtt.c
-> +++ b/drivers/gpu/drm/i915/gvt/gtt.c
-> @@ -2341,7 +2341,7 @@ static int emulate_ggtt_mmio_write(struct intel_vgp=
-u *vgpu, unsigned int off,
->  			gvt_vgpu_err("fail to populate guest ggtt entry\n");
->  			/* guest driver may read/write the entry when partial
->  			 * update the entry in this situation p2m will fail
-> -			 * settting the shadow entry to point to a scratch page
-> +			 * setting the shadow entry to point to a scratch page
->  			 */
->  			ops->set_pfn(&m, gvt->gtt.scratch_mfn);
->  		} else
->=20
+>
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/=
+endpoint/functions/pci-epf-test.c
+> index 34aac220dd4c..eed6638ab71d 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> @@ -221,7 +221,7 @@ static int pci_epf_test_init_dma_chan(struct pci_epf_=
+test *epf_test)
+>         filter.dma_mask =3D BIT(DMA_MEM_TO_DEV);
+>         dma_chan =3D dma_request_channel(mask, epf_dma_filter_fn, &filter=
+);
+>
+> -       if (IS_ERR(dma_chan)) {
+> +       if (!dma_chan) {
+>                 dev_info(dev, "Failed to get private DMA tx channel. Fall=
+ing back to generic one\n");
+>                 goto fail_back_rx;
+>         }
+> --
+> 2.35.1
+>
 
-Sorry for late reply!
-
-Acked-by: Zhenyu Wang <zhenyuw@linux.intel.com>
-
-
---+dH9khzwljbvYE07
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCYsul9QAKCRCxBBozTXgY
-J9ExAJ4niV+SwtyX80S7SJNTbxCAfj8fXgCfXvmZBkMeJzbCX9v2ScqDY08D2io=
-=hUis
------END PGP SIGNATURE-----
-
---+dH9khzwljbvYE07--
+Thanks,
+Shunsuke.
