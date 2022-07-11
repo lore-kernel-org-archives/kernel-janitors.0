@@ -2,122 +2,115 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 699B6C43334
-	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Jul 2022 03:21:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED47C43334
+	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Jul 2022 04:48:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229591AbiGKDVh (ORCPT
+        id S229724AbiGKEsT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 10 Jul 2022 23:21:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60884 "EHLO
+        Mon, 11 Jul 2022 00:48:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229463AbiGKDVg (ORCPT
+        with ESMTP id S229779AbiGKEsE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 10 Jul 2022 23:21:36 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B072313F16
-        for <kernel-janitors@vger.kernel.org>; Sun, 10 Jul 2022 20:21:35 -0700 (PDT)
+        Mon, 11 Jul 2022 00:48:04 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DF0E1900F;
+        Sun, 10 Jul 2022 21:47:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657509695; x=1689045695;
+  t=1657514878; x=1689050878;
   h=date:from:to:cc:subject:message-id:reply-to:references:
    mime-version:in-reply-to;
-  bh=2qp4YipWUX/C4jVXBnzl+RaM7ZAO0S2pUK4iM5GtZHM=;
-  b=HefH25yemoo43Vl2Z7PAjKgtMSs5lwZrI7AVuz+7gStEgWT/4Fd8oB0k
-   +nqwviH9q9s7r7kDkoQYdqhp8Ed24BMau37UPHAD+3pETWMIrRVnepxwQ
-   lFYo1zxIG6ggA5ZN2CQ87JV3vAhj6/O0hNkC04IiCUJ74f7Y88YIHxaBY
-   HaSwYzoc0xIxpEc593lZZMTe0+eCc5bo5pU7KkwlNK9AnzKoy2OJWVBD8
-   4js++d5tIDr8fHqoFdEKStqvVIyXpTcxaS/0gF0isJRpdwWE9Kriv9s/C
-   UDdiZuGeW8rkHiTh5XRTVIkKCyMrvQoxh5NSdGcvsy3jVrXaqtJ8czsRj
+  bh=MjNTYLGdvhEIt8nnujq9JqluQ/hMJx3/KNyjN4wrhg8=;
+  b=LR2lBk1SC9wzmVE/6izMsOqYEJwjhYEN+45dqOiPysDb7I6vbapJT2wi
+   BwJCD9bKmLsGhip0A+Z49QcTvNJ0886Ycudu1t2Z7JJ9aaw6KeD5y4HBX
+   jAXrKujxgVa3MVqurXic6LUQN8dNziDs57r0njAzOieczW3bqJo1Eh5ut
+   qRknzprfCVFlJLBvm++nbZn9YoPtKyQUzCugXKXmG+xAIW6QIpFNzNhJF
+   SIejrc/8bg99IBxSbkfaJG1FIrxtO58KKV+S/MfIPnr2ES+IRZtTk5fg0
+   rdzp5wJ8HQ1MuK1IR1Qc9paBULOzn0U9LzQdv3xVbrESioE1pHItG9Q+8
    A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10404"; a="285309889"
+X-IronPort-AV: E=McAfee;i="6400,9594,10404"; a="282125172"
 X-IronPort-AV: E=Sophos;i="5.92,262,1650956400"; 
-   d="asc'?scan'208";a="285309889"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2022 20:21:35 -0700
+   d="asc'?scan'208";a="282125172"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2022 21:47:57 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.92,262,1650956400"; 
-   d="asc'?scan'208";a="652287059"
+   d="asc'?scan'208";a="598910490"
 Received: from zhen-hp.sh.intel.com (HELO zhen-hp) ([10.239.159.108])
-  by fmsmga008.fm.intel.com with ESMTP; 10 Jul 2022 20:21:32 -0700
-Date:   Mon, 11 Jul 2022 10:58:08 +0800
+  by fmsmga007.fm.intel.com with ESMTP; 10 Jul 2022 21:47:54 -0700
+Date:   Mon, 11 Jul 2022 12:24:30 +0800
 From:   Zhenyu Wang <zhenyuw@linux.intel.com>
-To:     Andrzej Hajda <andrzej.hajda@intel.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Zhenyu Wang <zhenyuw@linux.intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
         David Airlie <airlied@linux.ie>,
-        intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        intel-gvt-dev@lists.freedesktop.org
-Subject: Re: [Intel-gfx] [PATCH] drm/i915/gvt: IS_ERR() vs NULL bug in
- intel_gvt_update_reg_whitelist()
-Message-ID: <20220711025808.GQ1089@zhen-hp.sh.intel.com>
+        intel-gvt-dev@lists.freedesktop.org,
+        Zhi Wang <zhi.a.wang@intel.com>
+Subject: Re: [PATCH] drm/i915/gvt: fix typo in comment
+Message-ID: <20220711042430.GR1089@zhen-hp.sh.intel.com>
 Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
-References: <Ysftoia2BPUyqVcD@kili>
- <01c7440e-8198-878c-cfb6-b54468b1dca5@intel.com>
+References: <20220521111145.81697-49-Julia.Lawall@inria.fr>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="EDT6MSV0B3GxyNyZ"
+        protocol="application/pgp-signature"; boundary="+dH9khzwljbvYE07"
 Content-Disposition: inline
-In-Reply-To: <01c7440e-8198-878c-cfb6-b54468b1dca5@intel.com>
+In-Reply-To: <20220521111145.81697-49-Julia.Lawall@inria.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
---EDT6MSV0B3GxyNyZ
+--+dH9khzwljbvYE07
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On 2022.07.08 10:55:52 +0200, Andrzej Hajda wrote:
-> On 08.07.2022 10:41, Dan Carpenter wrote:
-> > The shmem_pin_map() function returns NULL, it doesn't return error
-> > pointers.
-> >=20
-> > Fixes: 97ea656521c8 ("drm/i915/gvt: Parse default state to update reg w=
-hitelist")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On 2022.05.21 13:10:59 +0200, Julia Lawall wrote:
+> Spelling mistake (triple letters) in comment.
+> Detected with the help of Coccinelle.
 >=20
-> Reviewed-by: Andrzej Hajda <andrzej.hajda@intel.com>
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 >=20
+> ---
+>  drivers/gpu/drm/i915/gvt/gtt.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/i915/gvt/gtt.c b/drivers/gpu/drm/i915/gvt/gt=
+t.c
+> index 9c5cc2800975..c919f14c4fcb 100644
+> --- a/drivers/gpu/drm/i915/gvt/gtt.c
+> +++ b/drivers/gpu/drm/i915/gvt/gtt.c
+> @@ -2341,7 +2341,7 @@ static int emulate_ggtt_mmio_write(struct intel_vgp=
+u *vgpu, unsigned int off,
+>  			gvt_vgpu_err("fail to populate guest ggtt entry\n");
+>  			/* guest driver may read/write the entry when partial
+>  			 * update the entry in this situation p2m will fail
+> -			 * settting the shadow entry to point to a scratch page
+> +			 * setting the shadow entry to point to a scratch page
+>  			 */
+>  			ops->set_pfn(&m, gvt->gtt.scratch_mfn);
+>  		} else
+>=20
+
+Sorry for late reply!
 
 Acked-by: Zhenyu Wang <zhenyuw@linux.intel.com>
 
-Thanks! Will push to -fixes.
 
->=20
-> > ---
-> >   drivers/gpu/drm/i915/gvt/cmd_parser.c | 6 +++---
-> >   1 file changed, 3 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/i915/gvt/cmd_parser.c b/drivers/gpu/drm/i9=
-15/gvt/cmd_parser.c
-> > index b9eb75a2b400..1c35a41620ae 100644
-> > --- a/drivers/gpu/drm/i915/gvt/cmd_parser.c
-> > +++ b/drivers/gpu/drm/i915/gvt/cmd_parser.c
-> > @@ -3117,9 +3117,9 @@ void intel_gvt_update_reg_whitelist(struct intel_=
-vgpu *vgpu)
-> >   			continue;
-> >   		vaddr =3D shmem_pin_map(engine->default_state);
-> > -		if (IS_ERR(vaddr)) {
-> > -			gvt_err("failed to map %s->default state, err:%zd\n",
-> > -				engine->name, PTR_ERR(vaddr));
-> > +		if (!vaddr) {
-> > +			gvt_err("failed to map %s->default state\n",
-> > +				engine->name);
-> >   			return;
-> >   		}
->=20
-
---EDT6MSV0B3GxyNyZ
+--+dH9khzwljbvYE07
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCYsuRtgAKCRCxBBozTXgY
-J5q6AJ9VkM3j3Eu+FNObxEPkc6ZadRVuRACgkMngUibSKyZb9TIVSM9YGpiNsqg=
-=CzlW
+iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCYsul9QAKCRCxBBozTXgY
+J9ExAJ4niV+SwtyX80S7SJNTbxCAfj8fXgCfXvmZBkMeJzbCX9v2ScqDY08D2io=
+=hUis
 -----END PGP SIGNATURE-----
 
---EDT6MSV0B3GxyNyZ--
+--+dH9khzwljbvYE07--
