@@ -2,141 +2,133 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48134C43334
-	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Jul 2022 11:23:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC3CEC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Jul 2022 12:02:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231184AbiGKLXf (ORCPT
+        id S231269AbiGKMCw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 11 Jul 2022 07:23:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33228 "EHLO
+        Mon, 11 Jul 2022 08:02:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229518AbiGKLWv (ORCPT
+        with ESMTP id S231391AbiGKMCn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 11 Jul 2022 07:22:51 -0400
+        Mon, 11 Jul 2022 08:02:43 -0400
 Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DD3533A27;
-        Mon, 11 Jul 2022 03:50:06 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id t3so5475049edd.0;
-        Mon, 11 Jul 2022 03:50:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE01A3DBF9;
+        Mon, 11 Jul 2022 05:02:41 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id e15so5951848edj.2;
+        Mon, 11 Jul 2022 05:02:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id;
-        bh=zfyolTFID8xhViXE+u1/8e+Wzla73AuvDzsmwKE1sQ4=;
-        b=GXF1fwSaKTgvV8DBW/wKTIAjMbvQyia0ceCdUfz+jo+fA40QBzTk3GOxKUq2d4UXPp
-         Lki7csV6vSyLyT5HidpiSbOooGJR/VkF3W6Tc/bRvH2x9ijmeGfWM+cYgjQKbLZBdGvU
-         mBzTnWgZh9WCR6Xtjwzm4SagzynWkaOvdMr2eqnRcpZ+8coEmdpsT6MqS6R1V1bYytbn
-         +hmHJ3oUJDO04HFMiT40M1GesGL57FQzDqEVQ6IMqdlJFiEoVJrd5SKtvpATVBe8NHWp
-         Srt0kfuhPXBZbKU4OSHPEJ94HUWwSPrPQtHLKXxhHmJQxYADN1lt6nadP1f2ha3/41OL
-         R15g==
+        bh=BWPy1/wLCTu6ilQ4qUtHXwXwf7Z3gLlHQb6cz3/Ocik=;
+        b=Km4YSWpymZHkGx1rK7YmaWp5bO7T4ldo5feo4/eotjCLPx0cA4uhJ7EFb+nHLoMc0z
+         n8a8f6Sd0JTo4jq+fK7He9B0gtwTn0AfeNcEpUHCkdozbEmU1gSBLDGkrZzehRLd4XSR
+         HaM1NjnsXectLRiGhKY1Wd2EZOJznd3w2/v2zSlwUgtUZ3/ODINZUOi9XUpQxWUPgGIO
+         YUxQH4CI6H/cSxO7DydgPsEVvvf6UN1B/8mh2tfxWuS+3XJFIJHdmoRLyYwSRL8HZ3Hc
+         3A4KhZpWMItX33PeoMcCpKDbJjw7vONygOQag9qg7V91/nwFbdBJnNgqxqJ9yqAycdlF
+         SQbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=zfyolTFID8xhViXE+u1/8e+Wzla73AuvDzsmwKE1sQ4=;
-        b=EaNPbcdjwewbtpNBneUDdiVSeMOvuNuEXEtGZKdQ4tK/rtP4ke3t77pXpd0Rf2VL4y
-         casVNotEnkHYjdAjRF/j7XvcaxvPCWbMo+CVzZArfypM5nJg5srZCcWzQWdnHo1vwU8C
-         q2SalOtzKSw+u8Ta/0kahxsw608J3LiFW3LTpZvr78MP+2fsq0kxqiNfpkuM3fxDL8nE
-         J8Jr9aV5vjlw0ikqvtPzqvumxw9Ib5aMmnvDTE0EVWbN9TyTyJXE+29r5uqBSBYHyXU+
-         za30vt0XuUt9G7dDojV8zxZalTc0vDRf1ToQvy0lERW+Xs2lQLjYWJDr2usXg4qi3fOi
-         p6gg==
-X-Gm-Message-State: AJIora8kvoXrtxOpWgeT0Bl6hJS0DqEMeLS03dGP7QIegMwVWdfxPohj
-        K71HJhehkhculeeBo/Mm86U=
-X-Google-Smtp-Source: AGRyM1uImai7zOCOj1ESgSTujQz6aYcaSMlx0EZle9YmsPYF5MVaqsF03Ttpz6jXBOxKqNUtQuljpw==
-X-Received: by 2002:a05:6402:22b5:b0:43a:8e9f:f495 with SMTP id cx21-20020a05640222b500b0043a8e9ff495mr23119816edb.324.1657536604557;
-        Mon, 11 Jul 2022 03:50:04 -0700 (PDT)
+        bh=BWPy1/wLCTu6ilQ4qUtHXwXwf7Z3gLlHQb6cz3/Ocik=;
+        b=wvjTTMri/Tqc4SAE2Syn50ivvlPP+hQLZbIXoZKZKT1Q8BZ6Soe5aDhRLtpN7rbDYq
+         lYheLCH57qJJrfSJvIEs/WZYrn/adnEZ3mMYJrrVdhCJ/G8tWsrxqO9hC101n+6rOjvo
+         0Gk7uTT0iis+nmCFX0oClvhLeHW4AP3JXcXqrABDz/TSyAHePAQMeOPrR5DU2+/gh6y+
+         GRotX+bTqzmAtRHXPbaPl4ibHn1TNyWI8HqqtlQB/i1C575+kqzxQbzK5+9Jb93jeg5p
+         LDXwg1C+N+xIMPXs72sHChE7Wktw6QQcLR9Wg5hJHwOzCRBVEP34GbYRLTzeRHArOIoX
+         49Yg==
+X-Gm-Message-State: AJIora9LktsDEG3UeJHwq6Swrrip5+1chIeNvps1ycC9vfmZbUYNLjhS
+        olvN/ik+y68/i0mBKU/o+yM=
+X-Google-Smtp-Source: AGRyM1ve4fGvpX//Ha5C48qcrSCWGYrkCUCqWsQMWsnGm5i1oa0340q2eUVYe7/+FksBdB/Z3Ta2eQ==
+X-Received: by 2002:a05:6402:84f:b0:437:6293:d264 with SMTP id b15-20020a056402084f00b004376293d264mr23916942edz.317.1657540960468;
+        Mon, 11 Jul 2022 05:02:40 -0700 (PDT)
 Received: from felia.fritz.box (200116b8266e42009c70ae84c5cabc2b.dip.versatel-1u1.de. [2001:16b8:266e:4200:9c70:ae84:c5ca:bc2b])
-        by smtp.gmail.com with ESMTPSA id q21-20020a17090676d500b006fe8a4ec62fsm2541775ejn.4.2022.07.11.03.50.02
+        by smtp.gmail.com with ESMTPSA id hx24-20020a170906847800b00722fadc4279sm2608036ejc.124.2022.07.11.05.02.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Jul 2022 03:50:03 -0700 (PDT)
+        Mon, 11 Jul 2022 05:02:39 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Sekhar Nori <nsekhar@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH v2] mfd: ab8500: clean up definitions in header after debugfs removal
-Date:   Mon, 11 Jul 2022 12:48:29 +0200
-Message-Id: <20220711104829.17940-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH SECOND RESEND] arm: davinci: remove reference to obsolete BLK_DEV_PALMCHIP_BK3710
+Date:   Mon, 11 Jul 2022 14:02:29 +0200
+Message-Id: <20220711120229.30806-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 3d4d1266597c ("mfd: ab8500: Drop debugfs module") removes the config
-AB8500_DEBUG in drivers/mfd/Kconfig, but missed a reference to this config
-in include/linux/mfd/abx500/ab8500.h.
+Commit b7fb14d3ac63 ("ide: remove the legacy ide driver") removes the
+definition of the config BLK_DEV_PALMCHIP_BK3710.
 
-The functions ab8500_dump_all_banks() and ab8500_debug_register_interrupt()
-in the ab8500 header, previously with definitions conditioned on
-AB8500_DEBUG, are now completely needless to define and handle at all.
-
-The function ab8500_debug_register_interrupt() is not used at all and can
-just be removed.
-
-The function ab8500_dump_all_banks() is just registered in the abx500_ops
-struct in the dump_all_banks field, but this is then not further referenced
-anywhere else at all. So, safely drop the dump_all_banks field from
-abx500_ops and delete the ab8500_dump_all_banks() definition.
+So, remove the obsolete references in the mach-davinci architecture.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 ---
-Lee, please pick this minor clean-up patch.
+first send:
+  https://lore.kernel.org/linux-arm-kernel/20210804123426.16947-3-lukas.bulwahn@gmail.com/
 
-v1:
-  https://lore.kernel.org/all/20220311145209.17346-1-lukas.bulwahn@gmail.com/
+first resend:
+  https://lore.kernel.org/linux-arm-kernel/20211011063624.12269-2-lukas.bulwahn@gmail.com/
 
-v1 -> v2:
-  - leave "," in as requested in https://lore.kernel.org/all/Yi8BtWlhWjiUOADk@google.com/
-  - add Reviewed-by tag from Linus W. from 
-    https://lore.kernel.org/all/CACRpkdbjy2Cpzs7j6=iWw+wnJxBHkaxgcO2SOx6DeTLeF4ogPw@mail.gmail.com/ 
+another resend (as part of a larger series):
+  https://lore.kernel.org/linux-arm-kernel/20211028141938.3530-6-lukas.bulwahn@gmail.com/
+  
+addition now in second resend:
+  - added Arnd's Reviewed-by tag from
+    https://lore.kernel.org/linux-arm-kernel/CAK8P3a2GGbik3r5BCKE2ZCkpFyzv8Q54z_iV84ZJ+kNXYUTMzw@mail.gmail.com/
 
- drivers/mfd/ab8500-core.c         | 1 -
- include/linux/mfd/abx500.h        | 1 -
- include/linux/mfd/abx500/ab8500.h | 9 ---------
- 3 files changed, 11 deletions(-)
+ arch/arm/mach-davinci/board-dm644x-evm.c  | 3 +--
+ arch/arm/mach-davinci/board-dm646x-evm.c  | 3 +--
+ arch/arm/mach-davinci/board-neuros-osd2.c | 3 +--
+ 3 files changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mfd/ab8500-core.c b/drivers/mfd/ab8500-core.c
-index 9d9e9787d5e8..eb11caadb801 100644
---- a/drivers/mfd/ab8500-core.c
-+++ b/drivers/mfd/ab8500-core.c
-@@ -329,7 +329,6 @@ static struct abx500_ops ab8500_ops = {
- 	.mask_and_set_register = ab8500_mask_and_set_register,
- 	.event_registers_startup_state_get = NULL,
- 	.startup_irq_enabled = NULL,
--	.dump_all_banks = ab8500_dump_all_banks,
+diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
+index ebdd5c334ac1..4cde283f7f03 100644
+--- a/arch/arm/mach-davinci/board-dm644x-evm.c
++++ b/arch/arm/mach-davinci/board-dm644x-evm.c
+@@ -828,8 +828,7 @@ static int davinci_phy_fixup(struct phy_device *phydev)
+ 	return 0;
+ }
+ 
+-#define HAS_ATA		(IS_ENABLED(CONFIG_BLK_DEV_PALMCHIP_BK3710) || \
+-			 IS_ENABLED(CONFIG_PATA_BK3710))
++#define HAS_ATA		IS_ENABLED(CONFIG_PATA_BK3710)
+ 
+ #define HAS_NOR		IS_ENABLED(CONFIG_MTD_PHYSMAP)
+ 
+diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
+index 28861fee493b..151e246c99b8 100644
+--- a/arch/arm/mach-davinci/board-dm646x-evm.c
++++ b/arch/arm/mach-davinci/board-dm646x-evm.c
+@@ -146,8 +146,7 @@ static struct platform_device davinci_aemif_device = {
+ 	.num_resources	= ARRAY_SIZE(davinci_aemif_resources),
  };
  
- static void ab8500_irq_lock(struct irq_data *data)
-diff --git a/include/linux/mfd/abx500.h b/include/linux/mfd/abx500.h
-index 7f07cfe44753..507e3d2f062f 100644
---- a/include/linux/mfd/abx500.h
-+++ b/include/linux/mfd/abx500.h
-@@ -63,7 +63,6 @@ struct abx500_ops {
- 	int (*mask_and_set_register) (struct device *, u8, u8, u8, u8);
- 	int (*event_registers_startup_state_get) (struct device *, u8 *);
- 	int (*startup_irq_enabled) (struct device *, unsigned int);
--	void (*dump_all_banks) (struct device *);
+-#define HAS_ATA		(IS_ENABLED(CONFIG_BLK_DEV_PALMCHIP_BK3710) || \
+-			 IS_ENABLED(CONFIG_PATA_BK3710))
++#define HAS_ATA		IS_ENABLED(CONFIG_PATA_BK3710)
+ 
+ #ifdef CONFIG_I2C
+ /* CPLD Register 0 bits to control ATA */
+diff --git a/arch/arm/mach-davinci/board-neuros-osd2.c b/arch/arm/mach-davinci/board-neuros-osd2.c
+index 9748a2c12cc4..3b2298d686d5 100644
+--- a/arch/arm/mach-davinci/board-neuros-osd2.c
++++ b/arch/arm/mach-davinci/board-neuros-osd2.c
+@@ -160,8 +160,7 @@ static struct davinci_mmc_config davinci_ntosd2_mmc_config = {
+ 	.wires		= 4,
  };
  
- int abx500_register_ops(struct device *core_dev, struct abx500_ops *ops);
-diff --git a/include/linux/mfd/abx500/ab8500.h b/include/linux/mfd/abx500/ab8500.h
-index 302a330c5c84..42fd5da7d8a7 100644
---- a/include/linux/mfd/abx500/ab8500.h
-+++ b/include/linux/mfd/abx500/ab8500.h
-@@ -503,13 +503,4 @@ static inline int is_ab9540_2p0_or_earlier(struct ab8500 *ab)
+-#define HAS_ATA		(IS_ENABLED(CONFIG_BLK_DEV_PALMCHIP_BK3710) || \
+-			 IS_ENABLED(CONFIG_PATA_BK3710))
++#define HAS_ATA		IS_ENABLED(CONFIG_PATA_BK3710)
  
- void ab8500_override_turn_on_stat(u8 mask, u8 set);
+ #define HAS_NAND	IS_ENABLED(CONFIG_MTD_NAND_DAVINCI)
  
--#ifdef CONFIG_AB8500_DEBUG
--extern int prcmu_abb_read(u8 slave, u8 reg, u8 *value, u8 size);
--void ab8500_dump_all_banks(struct device *dev);
--void ab8500_debug_register_interrupt(int line);
--#else
--static inline void ab8500_dump_all_banks(struct device *dev) {}
--static inline void ab8500_debug_register_interrupt(int line) {}
--#endif
--
- #endif /* MFD_AB8500_H */
 -- 
 2.17.1
 
