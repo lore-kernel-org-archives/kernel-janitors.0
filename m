@@ -2,106 +2,120 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA23AC433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Jul 2022 13:04:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E32C433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Jul 2022 19:14:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229811AbiGKNEv (ORCPT
+        id S231671AbiGKTOr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 11 Jul 2022 09:04:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39440 "EHLO
+        Mon, 11 Jul 2022 15:14:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229698AbiGKNEu (ORCPT
+        with ESMTP id S231661AbiGKTOq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 11 Jul 2022 09:04:50 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 689862E6AB;
-        Mon, 11 Jul 2022 06:04:48 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id l23so8698499ejr.5;
-        Mon, 11 Jul 2022 06:04:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=crNzBSeJ7lK9mknHlFCoUyGG/CrQDaWglIgpkcg1zVQ=;
-        b=avg8K6vlxl5NYKO0Z+EFrgmOcbeCjZ9uVNqnllKQZSoBzaakQbS1Bd3fSVS7BO9MC8
-         WpAfbNsCHarPAGLWWmUx1jhiGVCywWp67Xh5BUzIhoaRp+SiS1aeyO9NHXmwiiwBDf+t
-         +m7NeocZolYuzgThpwmpSL7TXOQCShHq8ErBXg3FFq6F6W2j0ngRAldUibXF67AQWoW9
-         e+6v+DuWYKIAREnBoH+yss6xdcFRHOWEIlQxsYuCsn5uiGPK9dRzOmtm3TAWmXEr5cld
-         /gNtSVj+TyhaSE4K/rPblpH/Vlh55/B/KesnmqkQC5f/wQpHIeICAuwVLKMniHh3D+nD
-         VCPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=crNzBSeJ7lK9mknHlFCoUyGG/CrQDaWglIgpkcg1zVQ=;
-        b=nW4U3ehlznFXZTMK/8xfb7pP5zR/LvuSfCdrPupZKtarInI8Bu/4ZnZ0h+HWgg6wXZ
-         zT7NuIlnuBjiw5rTt9LKrCABGcB0LDz6tppmCUG5QkTCr/ZYciTTDBzXMzjgm3Cgmv52
-         N9iQyPpdTPck44RsGfDLcDUJHAbHSJHJs/BErl0Gd+veM03i3njNQqpmSFMCmM8lPMnS
-         /m2w8a4ZTvbHcrKvWnxiOEd7+u1OizBsbHoe7LC3Xi80hcG3raVMySXc8RST1aB1vKuD
-         zaEr5+wnvYc7nA1HXv7a0VnWeLHk9+C+3TcJMD3i2LDjryt1GJZW7yr1k5nrTdAouKWx
-         Iv+g==
-X-Gm-Message-State: AJIora9hfodkS/Dj9l0zEeay66aQkNhPjMo59/mwbSF3fVE0DTHsJxdL
-        17Y40+GxUyil3yjxJBtCTpk=
-X-Google-Smtp-Source: AGRyM1sLlJLWsvUk72znMxivUzcTmtDNr4UpMHhxFdg57+JaMCuxbs1vlEUFhgd4zUynCIpR2NyJ9A==
-X-Received: by 2002:a17:907:7781:b0:6fe:4398:47b3 with SMTP id ky1-20020a170907778100b006fe439847b3mr18633439ejc.513.1657544686868;
-        Mon, 11 Jul 2022 06:04:46 -0700 (PDT)
-Received: from felia.fritz.box (200116b8266e42009c70ae84c5cabc2b.dip.versatel-1u1.de. [2001:16b8:266e:4200:9c70:ae84:c5ca:bc2b])
-        by smtp.gmail.com with ESMTPSA id r11-20020a170906a20b00b0072b2378027csm2634507ejy.26.2022.07.11.06.04.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Jul 2022 06:04:46 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Russell King <linux@armlinux.org.uk>,
-        Taichi Sugaya <sugaya.taichi@socionext.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] arm: milbeaut: remove select of non-existing PINCTRL_MILBEAUT
-Date:   Mon, 11 Jul 2022 15:04:32 +0200
-Message-Id: <20220711130432.1135-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 11 Jul 2022 15:14:46 -0400
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 530A426576
+        for <kernel-janitors@vger.kernel.org>; Mon, 11 Jul 2022 12:14:45 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id AyrgoNRqsm7vsAyrhoPkTU; Mon, 11 Jul 2022 21:14:42 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Mon, 11 Jul 2022 21:14:42 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 1/2] cxl: Use the bitmap API to allocate bitmaps
+Date:   Mon, 11 Jul 2022 21:14:38 +0200
+Message-Id: <59010cc7c62443030c69cb1ce0b2b62c5d47e064.1657566849.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The patch series "Add basic support for Socionext Milbeaut M10V SoC" (see
-Link) introduced the config ARCH_MILBEAUT_M10V "Milbeaut SC2000/M10V
-platform" in ./arch/arm/mach-milbeaut/ and intended to introduce timer,
-clock, pinctrl and serial controller drivers.
+Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
 
-However, during patch submission in March 2019, the introduction of the
-milbeaut pinctrl driver was dropped from v2 to v3 of the patch series.
-Since then, there was no further patch series to add this pinctrl driver
-later on.
+It is less verbose and it improves the semantic.
 
-Hence, selecting PINCTRL_MILBEAUT in config is simply dangling and
-referring to a non-existing config symbols.
-Fortunately, ./scripts/checkkconfigsymbols.py warns:
-
-PINCTRL_MILBEAUT
-Referencing files: arch/arm/mach-milbeaut/Kconfig
-
-Remove this select of the non-existing PINCTRL_MILBEAUT for now.
-
-Link: https://lore.kernel.org/linux-arm-kernel/1551243056-10521-1-git-send-email-sugaya.taichi@socionext.com/
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Russell, please pick this minor non-urgent clean-up patch.
+ drivers/misc/cxl/context.c | 2 +-
+ drivers/misc/cxl/guest.c   | 2 +-
+ drivers/misc/cxl/irq.c     | 3 +--
+ drivers/misc/cxl/of.c      | 5 ++---
+ 4 files changed, 5 insertions(+), 7 deletions(-)
 
- arch/arm/mach-milbeaut/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/arm/mach-milbeaut/Kconfig b/arch/arm/mach-milbeaut/Kconfig
-index 6a576fd8521e..f9d1006f9442 100644
---- a/arch/arm/mach-milbeaut/Kconfig
-+++ b/arch/arm/mach-milbeaut/Kconfig
-@@ -13,7 +13,6 @@ config ARCH_MILBEAUT_M10V
- 	select ARM_ARCH_TIMER
- 	select MILBEAUT_TIMER
- 	select PINCTRL
--	select PINCTRL_MILBEAUT
- 	help
- 	  Support for Socionext's MILBEAUT M10V based systems
+diff --git a/drivers/misc/cxl/context.c b/drivers/misc/cxl/context.c
+index e627b4056623..acaa44809c58 100644
+--- a/drivers/misc/cxl/context.c
++++ b/drivers/misc/cxl/context.c
+@@ -331,7 +331,7 @@ static void reclaim_ctx(struct rcu_head *rcu)
+ 		__free_page(ctx->ff_page);
+ 	ctx->sstp = NULL;
  
+-	kfree(ctx->irq_bitmap);
++	bitmap_free(ctx->irq_bitmap);
+ 
+ 	/* Drop ref to the afu device taken during cxl_context_init */
+ 	cxl_afu_put(ctx->afu);
+diff --git a/drivers/misc/cxl/guest.c b/drivers/misc/cxl/guest.c
+index 3321c014913c..375f692ae9d6 100644
+--- a/drivers/misc/cxl/guest.c
++++ b/drivers/misc/cxl/guest.c
+@@ -1053,7 +1053,7 @@ static void free_adapter(struct cxl *adapter)
+ 		if (adapter->guest->irq_avail) {
+ 			for (i = 0; i < adapter->guest->irq_nranges; i++) {
+ 				cur = &adapter->guest->irq_avail[i];
+-				kfree(cur->bitmap);
++				bitmap_free(cur->bitmap);
+ 			}
+ 			kfree(adapter->guest->irq_avail);
+ 		}
+diff --git a/drivers/misc/cxl/irq.c b/drivers/misc/cxl/irq.c
+index 5f0e2dcebb34..0ce91d99aead 100644
+--- a/drivers/misc/cxl/irq.c
++++ b/drivers/misc/cxl/irq.c
+@@ -319,8 +319,7 @@ int afu_allocate_irqs(struct cxl_context *ctx, u32 count)
+ 	}
+ 
+ 	ctx->irq_count = count;
+-	ctx->irq_bitmap = kcalloc(BITS_TO_LONGS(count),
+-				  sizeof(*ctx->irq_bitmap), GFP_KERNEL);
++	ctx->irq_bitmap = bitmap_zalloc(count, GFP_KERNEL);
+ 	if (!ctx->irq_bitmap)
+ 		goto out;
+ 
+diff --git a/drivers/misc/cxl/of.c b/drivers/misc/cxl/of.c
+index 1cfecba42d01..25ce725035e7 100644
+--- a/drivers/misc/cxl/of.c
++++ b/drivers/misc/cxl/of.c
+@@ -308,8 +308,7 @@ static int read_adapter_irq_config(struct cxl *adapter, struct device_node *np)
+ 		cur = &adapter->guest->irq_avail[i];
+ 		cur->offset = be32_to_cpu(ranges[i * 2]);
+ 		cur->range  = be32_to_cpu(ranges[i * 2 + 1]);
+-		cur->bitmap = kcalloc(BITS_TO_LONGS(cur->range),
+-				sizeof(*cur->bitmap), GFP_KERNEL);
++		cur->bitmap = bitmap_zalloc(cur->range, GFP_KERNEL);
+ 		if (cur->bitmap == NULL)
+ 			goto err;
+ 		if (cur->offset < adapter->guest->irq_base_offset)
+@@ -326,7 +325,7 @@ static int read_adapter_irq_config(struct cxl *adapter, struct device_node *np)
+ err:
+ 	for (i--; i >= 0; i--) {
+ 		cur = &adapter->guest->irq_avail[i];
+-		kfree(cur->bitmap);
++		bitmap_free(cur->bitmap);
+ 	}
+ 	kfree(adapter->guest->irq_avail);
+ 	adapter->guest->irq_avail = NULL;
 -- 
-2.17.1
+2.34.1
 
