@@ -2,114 +2,141 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09755C43334
-	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Jul 2022 10:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48134C43334
+	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Jul 2022 11:23:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229811AbiGKK5M (ORCPT
+        id S231184AbiGKLXf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 11 Jul 2022 06:57:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41326 "EHLO
+        Mon, 11 Jul 2022 07:23:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229771AbiGKK45 (ORCPT
+        with ESMTP id S229518AbiGKLWv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 11 Jul 2022 06:56:57 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAC7FFFE02
-        for <kernel-janitors@vger.kernel.org>; Mon, 11 Jul 2022 03:02:04 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id va17so8009177ejb.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 11 Jul 2022 03:02:04 -0700 (PDT)
+        Mon, 11 Jul 2022 07:22:51 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DD3533A27;
+        Mon, 11 Jul 2022 03:50:06 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id t3so5475049edd.0;
+        Mon, 11 Jul 2022 03:50:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wGvgUoEpgRoFdw5xB3ByPDZ/Z4C3Oec3OA9m4e/7zr0=;
-        b=RSgSJPGfw4G/qutpiBewn0jq3S+XphrS/nSQldk+zB5jc6SNG8BxH9gtyCt31mxMv2
-         oFN/E92Iu6kUuYasX4qE1vwxnsrS6rsW9XS9HaKp2j5hSWLKACY+5Y0RnDzYL1vDfZUr
-         Y4zo4jJ1CbgQdJCqjgjTo6/1lYCsgeB+9xLhRAL4bWzEBn5tENPcU8udqd3DNZxIJwYP
-         MK3PTfEigpvND3GsN13ZGfI4lDjQxQEWHY72T7bXff0JD+5fP+ua4D2MEcPRKBP/HYmX
-         m7RAaehwlsir7ffzRR4pswlInHpW6hvYC3ZKdGfzSrXN4ZRu9KmRl4fMxi6g1trSpdNT
-         GqaQ==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=zfyolTFID8xhViXE+u1/8e+Wzla73AuvDzsmwKE1sQ4=;
+        b=GXF1fwSaKTgvV8DBW/wKTIAjMbvQyia0ceCdUfz+jo+fA40QBzTk3GOxKUq2d4UXPp
+         Lki7csV6vSyLyT5HidpiSbOooGJR/VkF3W6Tc/bRvH2x9ijmeGfWM+cYgjQKbLZBdGvU
+         mBzTnWgZh9WCR6Xtjwzm4SagzynWkaOvdMr2eqnRcpZ+8coEmdpsT6MqS6R1V1bYytbn
+         +hmHJ3oUJDO04HFMiT40M1GesGL57FQzDqEVQ6IMqdlJFiEoVJrd5SKtvpATVBe8NHWp
+         Srt0kfuhPXBZbKU4OSHPEJ94HUWwSPrPQtHLKXxhHmJQxYADN1lt6nadP1f2ha3/41OL
+         R15g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wGvgUoEpgRoFdw5xB3ByPDZ/Z4C3Oec3OA9m4e/7zr0=;
-        b=uQoSN2/97PTUQ0uPzXA5eI6VKu1/QEd+TvB/KH2iSqcsYaWroaynfyVtPMr1ANGWCx
-         So0gJCWy4IMivyCWQRuOJGsLOMKJZUnnJ5FYoQb5Jr44kvZjoiA9hBbaIw485EynK12K
-         uxjlXWo/r7w95CnXP1CiH35MriGCXwzr8bQp0WpeCGe4x/MoyuKqUYKkS74T+zyyEna5
-         Ns+tb76PBVHEAp28eSywhUuEFx42WeOLUMUguk3oaT1Ot0Y+ObT+kqP0fpC+7/dwTX2W
-         cvKesXKrnauDo5y/yk7gpzPTwT4dUsLdEehtf1i3lhf2/w9KxO4jj7WIKsayeAP6SR1t
-         fNrg==
-X-Gm-Message-State: AJIora9HKasgyKz+OTnpay7qXSHkM90ON6aKcsB+i7cNZGeR1a0fBTVb
-        Fle/tmgEKzuxFTSdcok/O0Q9x9NNf7K85TIoaXLMxA==
-X-Google-Smtp-Source: AGRyM1vafSCHUmSjW+hMdfrXxS7hOwpJ9tY3psQHMQaljV4Evx72JF9q90YXl+Rpw/+ZgPbrzliXxhhDryKeNeHi9yQ=
-X-Received: by 2002:a17:906:8462:b0:72b:4e05:a8c1 with SMTP id
- hx2-20020a170906846200b0072b4e05a8c1mr6181720ejc.443.1657533723516; Mon, 11
- Jul 2022 03:02:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <ca9c5c8301d76d60de34640568b3db0d4401d050.1657298747.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <ca9c5c8301d76d60de34640568b3db0d4401d050.1657298747.git.christophe.jaillet@wanadoo.fr>
-From:   Jinpu Wang <jinpu.wang@ionos.com>
-Date:   Mon, 11 Jul 2022 12:01:53 +0200
-Message-ID: <CAMGffEk46vD2d-GCR5VPYiAQi3268sz9PiH6Zvuru8zUW03eXQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] RDMA/rtrs-clt: Use the bitmap API to allocate bitmaps
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=zfyolTFID8xhViXE+u1/8e+Wzla73AuvDzsmwKE1sQ4=;
+        b=EaNPbcdjwewbtpNBneUDdiVSeMOvuNuEXEtGZKdQ4tK/rtP4ke3t77pXpd0Rf2VL4y
+         casVNotEnkHYjdAjRF/j7XvcaxvPCWbMo+CVzZArfypM5nJg5srZCcWzQWdnHo1vwU8C
+         q2SalOtzKSw+u8Ta/0kahxsw608J3LiFW3LTpZvr78MP+2fsq0kxqiNfpkuM3fxDL8nE
+         J8Jr9aV5vjlw0ikqvtPzqvumxw9Ib5aMmnvDTE0EVWbN9TyTyJXE+29r5uqBSBYHyXU+
+         za30vt0XuUt9G7dDojV8zxZalTc0vDRf1ToQvy0lERW+Xs2lQLjYWJDr2usXg4qi3fOi
+         p6gg==
+X-Gm-Message-State: AJIora8kvoXrtxOpWgeT0Bl6hJS0DqEMeLS03dGP7QIegMwVWdfxPohj
+        K71HJhehkhculeeBo/Mm86U=
+X-Google-Smtp-Source: AGRyM1uImai7zOCOj1ESgSTujQz6aYcaSMlx0EZle9YmsPYF5MVaqsF03Ttpz6jXBOxKqNUtQuljpw==
+X-Received: by 2002:a05:6402:22b5:b0:43a:8e9f:f495 with SMTP id cx21-20020a05640222b500b0043a8e9ff495mr23119816edb.324.1657536604557;
+        Mon, 11 Jul 2022 03:50:04 -0700 (PDT)
+Received: from felia.fritz.box (200116b8266e42009c70ae84c5cabc2b.dip.versatel-1u1.de. [2001:16b8:266e:4200:9c70:ae84:c5ca:bc2b])
+        by smtp.gmail.com with ESMTPSA id q21-20020a17090676d500b006fe8a4ec62fsm2541775ejn.4.2022.07.11.03.50.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Jul 2022 03:50:03 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH v2] mfd: ab8500: clean up definitions in header after debugfs removal
+Date:   Mon, 11 Jul 2022 12:48:29 +0200
+Message-Id: <20220711104829.17940-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jul 8, 2022 at 6:47 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
->
-> It is less verbose and it improves the semantic.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Acked-by: Jack Wang <jinpu.wang@ionos.com>
-Thx!
-> ---
->  drivers/infiniband/ulp/rtrs/rtrs-clt.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/infiniband/ulp/rtrs/rtrs-clt.c b/drivers/infiniband/ulp/rtrs/rtrs-clt.c
-> index 9809c3883979..06c27a3d83f5 100644
-> --- a/drivers/infiniband/ulp/rtrs/rtrs-clt.c
-> +++ b/drivers/infiniband/ulp/rtrs/rtrs-clt.c
-> @@ -1403,8 +1403,7 @@ static int alloc_permits(struct rtrs_clt_sess *clt)
->         unsigned int chunk_bits;
->         int err, i;
->
-> -       clt->permits_map = kcalloc(BITS_TO_LONGS(clt->queue_depth),
-> -                                  sizeof(long), GFP_KERNEL);
-> +       clt->permits_map = bitmap_zalloc(clt->queue_depth, GFP_KERNEL);
->         if (!clt->permits_map) {
->                 err = -ENOMEM;
->                 goto out_err;
-> @@ -1426,7 +1425,7 @@ static int alloc_permits(struct rtrs_clt_sess *clt)
->         return 0;
->
->  err_map:
-> -       kfree(clt->permits_map);
-> +       bitmap_free(clt->permits_map);
->         clt->permits_map = NULL;
->  out_err:
->         return err;
-> @@ -1440,7 +1439,7 @@ static void free_permits(struct rtrs_clt_sess *clt)
->                 wait_event(clt->permits_wait,
->                            find_first_bit(clt->permits_map, sz) >= sz);
->         }
-> -       kfree(clt->permits_map);
-> +       bitmap_free(clt->permits_map);
->         clt->permits_map = NULL;
->         kfree(clt->permits);
->         clt->permits = NULL;
-> --
-> 2.34.1
->
+Commit 3d4d1266597c ("mfd: ab8500: Drop debugfs module") removes the config
+AB8500_DEBUG in drivers/mfd/Kconfig, but missed a reference to this config
+in include/linux/mfd/abx500/ab8500.h.
+
+The functions ab8500_dump_all_banks() and ab8500_debug_register_interrupt()
+in the ab8500 header, previously with definitions conditioned on
+AB8500_DEBUG, are now completely needless to define and handle at all.
+
+The function ab8500_debug_register_interrupt() is not used at all and can
+just be removed.
+
+The function ab8500_dump_all_banks() is just registered in the abx500_ops
+struct in the dump_all_banks field, but this is then not further referenced
+anywhere else at all. So, safely drop the dump_all_banks field from
+abx500_ops and delete the ab8500_dump_all_banks() definition.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+---
+Lee, please pick this minor clean-up patch.
+
+v1:
+  https://lore.kernel.org/all/20220311145209.17346-1-lukas.bulwahn@gmail.com/
+
+v1 -> v2:
+  - leave "," in as requested in https://lore.kernel.org/all/Yi8BtWlhWjiUOADk@google.com/
+  - add Reviewed-by tag from Linus W. from 
+    https://lore.kernel.org/all/CACRpkdbjy2Cpzs7j6=iWw+wnJxBHkaxgcO2SOx6DeTLeF4ogPw@mail.gmail.com/ 
+
+ drivers/mfd/ab8500-core.c         | 1 -
+ include/linux/mfd/abx500.h        | 1 -
+ include/linux/mfd/abx500/ab8500.h | 9 ---------
+ 3 files changed, 11 deletions(-)
+
+diff --git a/drivers/mfd/ab8500-core.c b/drivers/mfd/ab8500-core.c
+index 9d9e9787d5e8..eb11caadb801 100644
+--- a/drivers/mfd/ab8500-core.c
++++ b/drivers/mfd/ab8500-core.c
+@@ -329,7 +329,6 @@ static struct abx500_ops ab8500_ops = {
+ 	.mask_and_set_register = ab8500_mask_and_set_register,
+ 	.event_registers_startup_state_get = NULL,
+ 	.startup_irq_enabled = NULL,
+-	.dump_all_banks = ab8500_dump_all_banks,
+ };
+ 
+ static void ab8500_irq_lock(struct irq_data *data)
+diff --git a/include/linux/mfd/abx500.h b/include/linux/mfd/abx500.h
+index 7f07cfe44753..507e3d2f062f 100644
+--- a/include/linux/mfd/abx500.h
++++ b/include/linux/mfd/abx500.h
+@@ -63,7 +63,6 @@ struct abx500_ops {
+ 	int (*mask_and_set_register) (struct device *, u8, u8, u8, u8);
+ 	int (*event_registers_startup_state_get) (struct device *, u8 *);
+ 	int (*startup_irq_enabled) (struct device *, unsigned int);
+-	void (*dump_all_banks) (struct device *);
+ };
+ 
+ int abx500_register_ops(struct device *core_dev, struct abx500_ops *ops);
+diff --git a/include/linux/mfd/abx500/ab8500.h b/include/linux/mfd/abx500/ab8500.h
+index 302a330c5c84..42fd5da7d8a7 100644
+--- a/include/linux/mfd/abx500/ab8500.h
++++ b/include/linux/mfd/abx500/ab8500.h
+@@ -503,13 +503,4 @@ static inline int is_ab9540_2p0_or_earlier(struct ab8500 *ab)
+ 
+ void ab8500_override_turn_on_stat(u8 mask, u8 set);
+ 
+-#ifdef CONFIG_AB8500_DEBUG
+-extern int prcmu_abb_read(u8 slave, u8 reg, u8 *value, u8 size);
+-void ab8500_dump_all_banks(struct device *dev);
+-void ab8500_debug_register_interrupt(int line);
+-#else
+-static inline void ab8500_dump_all_banks(struct device *dev) {}
+-static inline void ab8500_debug_register_interrupt(int line) {}
+-#endif
+-
+ #endif /* MFD_AB8500_H */
+-- 
+2.17.1
+
