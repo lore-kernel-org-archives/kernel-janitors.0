@@ -2,86 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1159ECCA485
-	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Jul 2022 08:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0CCCC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Jul 2022 10:01:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230432AbiGKIlG (ORCPT
+        id S234314AbiGKKBX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 11 Jul 2022 04:41:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46422 "EHLO
+        Mon, 11 Jul 2022 06:01:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230240AbiGKIkr (ORCPT
+        with ESMTP id S234290AbiGKKAR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 11 Jul 2022 04:40:47 -0400
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D401B21E2E;
-        Mon, 11 Jul 2022 01:40:07 -0700 (PDT)
-Received: from uucp (helo=alpha)
-        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
-        id 1oAoxa-0006eA-00; Mon, 11 Jul 2022 10:40:06 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id 95B8DC0344; Mon, 11 Jul 2022 10:37:35 +0200 (CEST)
-Date:   Mon, 11 Jul 2022 10:37:35 +0200
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-mips@vger.kernel.org
-Subject: Re: [PATCH] MIPS: math-emu: Use the bitmap API to allocate bitmaps
-Message-ID: <20220711083735.GA6084@alpha.franken.de>
-References: <dd954ccb2472019c64da0dd3a90d7b39a2fadc98.1656960999.git.christophe.jaillet@wanadoo.fr>
+        Mon, 11 Jul 2022 06:00:17 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58C20B7D7F
+        for <kernel-janitors@vger.kernel.org>; Mon, 11 Jul 2022 02:28:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1657531691; x=1689067691;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=6kUqRpT1oVjf83SPNw1oqSkNlJoRSr7PKWZJfs4a+gg=;
+  b=UaEmL+CJpnhYkxuWmB8lhCr7Q3tWbMVRQxfyGXWDZIycZyTwNtFi1y7z
+   UqUxMd75Xu0XQaqkU9iwwmAUprLz8thls02iZRnrKXkzYXKiyQZCyCxfY
+   Y61dNYA2g8X+5nb98m/8HMitOXS/ILJ4+N8Zz9SyYq1iq/9naZdd71aCT
+   svmA+mseqKjv2gmIXd/2XABOLDrdPYZl57quyNdNp3EK6r31oemFbgsUn
+   eyyznVHY2YgNQSrlN839ky46N2Spr0HGT27X5YXo5YHSFtcvBDUzEZWUX
+   MuiFhUEEprvXdebN46/S2NyLozioUFDdZ6yg6NJAtbhh93LC8+DYqdtNs
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10404"; a="265026825"
+X-IronPort-AV: E=Sophos;i="5.92,262,1650956400"; 
+   d="scan'208";a="265026825"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2022 02:28:10 -0700
+X-IronPort-AV: E=Sophos;i="5.92,262,1650956400"; 
+   d="scan'208";a="594815550"
+Received: from roniellx-mobl.ger.corp.intel.com (HELO [10.213.211.225]) ([10.213.211.225])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2022 02:28:06 -0700
+Message-ID: <575a6b06-9d0b-6866-1569-d30359c9a280@intel.com>
+Date:   Mon, 11 Jul 2022 10:28:04 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dd954ccb2472019c64da0dd3a90d7b39a2fadc98.1656960999.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Firefox/91.0 Thunderbird/91.11.0
+Subject: Re: [PATCH v2] drm/i915/selftests: fix a couple IS_ERR() vs NULL
+ tests
+Content-Language: en-GB
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Chris Wilson <chris.p.wilson@intel.com>
+Cc:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Ramalingam C <ramalingam.c@intel.com>,
+        Matt Roper <matthew.d.roper@intel.com>,
+        Akeem G Abodunrin <akeem.g.abodunrin@intel.com>,
+        =?UTF-8?Q?Micha=c5=82_Winiarski?= <michal.winiarski@intel.com>,
+        Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
+        intel-gfx@lists.freedesktop.org, kernel-janitors@vger.kernel.org
+References: <20220708094104.GL2316@kadam>
+From:   Matthew Auld <matthew.auld@intel.com>
+In-Reply-To: <20220708094104.GL2316@kadam>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jul 04, 2022 at 08:56:52PM +0200, Christophe JAILLET wrote:
-> Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
+On 08/07/2022 10:41, Dan Carpenter wrote:
+> The shmem_pin_map() function doesn't return error pointers, it returns
+> NULL.
 > 
-> It is less verbose and it improves the semantic.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Fixes: be1cb55a07bf ("drm/i915/gt: Keep a no-frills swappable copy of the default context state")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Reviewed-by: Matthew Auld <matthew.auld@intel.com>
+
+Pushed to drm-intel-gt-next. Thanks for the fix.
+
 > ---
->  arch/mips/math-emu/dsemul.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
+> v2: Correct the Fixes tag.  Add Matthew's reviewed-by tag.
 > 
-> diff --git a/arch/mips/math-emu/dsemul.c b/arch/mips/math-emu/dsemul.c
-> index e2d46cb93ca9..e02bd20b60a6 100644
-> --- a/arch/mips/math-emu/dsemul.c
-> +++ b/arch/mips/math-emu/dsemul.c
-> @@ -82,11 +82,8 @@ static int alloc_emuframe(void)
->  
->  	/* Ensure we have an allocation bitmap */
->  	if (!mm_ctx->bd_emupage_allocmap) {
-> -		mm_ctx->bd_emupage_allocmap =
-> -			kcalloc(BITS_TO_LONGS(emupage_frame_count),
-> -					      sizeof(unsigned long),
-> -				GFP_ATOMIC);
-> -
-> +		mm_ctx->bd_emupage_allocmap = bitmap_zalloc(emupage_frame_count,
-> +							    GFP_ATOMIC);
->  		if (!mm_ctx->bd_emupage_allocmap) {
->  			idx = BD_EMUFRAME_NONE;
->  			goto out_unlock;
-> @@ -206,7 +203,7 @@ void dsemul_mm_cleanup(struct mm_struct *mm)
->  {
->  	mm_context_t *mm_ctx = &mm->context;
->  
-> -	kfree(mm_ctx->bd_emupage_allocmap);
-> +	bitmap_free(mm_ctx->bd_emupage_allocmap);
->  }
->  
->  int mips_dsemul(struct pt_regs *regs, mips_instruction ir,
-> -- 
-> 2.34.1
-
-applied to mips-next.
-
-Thomas.
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+>   drivers/gpu/drm/i915/gt/selftest_lrc.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/gt/selftest_lrc.c b/drivers/gpu/drm/i915/gt/selftest_lrc.c
+> index 8b2c11dbe354..1109088fe8f6 100644
+> --- a/drivers/gpu/drm/i915/gt/selftest_lrc.c
+> +++ b/drivers/gpu/drm/i915/gt/selftest_lrc.c
+> @@ -176,8 +176,8 @@ static int live_lrc_layout(void *arg)
+>   			continue;
+>   
+>   		hw = shmem_pin_map(engine->default_state);
+> -		if (IS_ERR(hw)) {
+> -			err = PTR_ERR(hw);
+> +		if (!hw) {
+> +			err = -ENOMEM;
+>   			break;
+>   		}
+>   		hw += LRC_STATE_OFFSET / sizeof(*hw);
+> @@ -365,8 +365,8 @@ static int live_lrc_fixed(void *arg)
+>   			continue;
+>   
+>   		hw = shmem_pin_map(engine->default_state);
+> -		if (IS_ERR(hw)) {
+> -			err = PTR_ERR(hw);
+> +		if (!hw) {
+> +			err = -ENOMEM;
+>   			break;
+>   		}
+>   		hw += LRC_STATE_OFFSET / sizeof(*hw);
