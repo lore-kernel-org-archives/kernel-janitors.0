@@ -2,38 +2,36 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE5B9C433EF
-	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Jul 2022 19:21:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6BCDC43334
+	for <kernel-janitors@archiver.kernel.org>; Mon, 11 Jul 2022 19:41:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231377AbiGKTVq (ORCPT
+        id S229996AbiGKTlY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 11 Jul 2022 15:21:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32936 "EHLO
+        Mon, 11 Jul 2022 15:41:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230169AbiGKTVo (ORCPT
+        with ESMTP id S229892AbiGKTlX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 11 Jul 2022 15:21:44 -0400
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D705776EB5
-        for <kernel-janitors@vger.kernel.org>; Mon, 11 Jul 2022 12:21:43 -0700 (PDT)
+        Mon, 11 Jul 2022 15:41:23 -0400
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92849564D4
+        for <kernel-janitors@vger.kernel.org>; Mon, 11 Jul 2022 12:41:22 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id AyyToa9r026JCAyyToNQOs; Mon, 11 Jul 2022 21:21:42 +0200
+        id AzHUoaJcY26JCAzHUoNSUF; Mon, 11 Jul 2022 21:41:20 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Mon, 11 Jul 2022 21:21:42 +0200
+X-ME-Date: Mon, 11 Jul 2022 21:41:20 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Mustafa Ismail <mustafa.ismail@intel.com>,
-        Shiraz Saleem <shiraz.saleem@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-rdma@vger.kernel.org
-Subject: [PATCH] RDMA/irdma: Use the bitmap API to allocate bitmaps
-Date:   Mon, 11 Jul 2022 21:21:39 +0200
-Message-Id: <1f671b1af5881723ee265a0a12809c92950e58aa.1657567269.git.christophe.jaillet@wanadoo.fr>
+        linux-input@vger.kernel.org
+Subject: [PATCH] HID: multitouch: Use the bitmap API to allocate bitmaps
+Date:   Mon, 11 Jul 2022 21:41:18 +0200
+Message-Id: <3ff2b491c397ba4f763fd2fbcb6795f0c33da2f3.1657568452.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -47,43 +45,27 @@ It is less verbose and it improves the semantic.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/infiniband/hw/irdma/hw.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/hid/hid-multitouch.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/infiniband/hw/irdma/hw.c b/drivers/infiniband/hw/irdma/hw.c
-index dd3943d22dc6..675b138e8ef0 100644
---- a/drivers/infiniband/hw/irdma/hw.c
-+++ b/drivers/infiniband/hw/irdma/hw.c
-@@ -1543,7 +1543,7 @@ static void irdma_del_init_mem(struct irdma_pci_f *rf)
- 			  rf->obj_mem.pa);
- 	rf->obj_mem.va = NULL;
- 	if (rf->rdma_ver != IRDMA_GEN_1) {
--		kfree(rf->allocated_ws_nodes);
-+		bitmap_free(rf->allocated_ws_nodes);
- 		rf->allocated_ws_nodes = NULL;
- 	}
- 	kfree(rf->ceqlist);
-@@ -1972,9 +1972,8 @@ u32 irdma_initialize_hw_rsrc(struct irdma_pci_f *rf)
- 	u32 ret;
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 2e72922e36f5..2b19938e0fb8 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -1300,10 +1300,9 @@ static int mt_touch_input_configured(struct hid_device *hdev,
+ 	if (td->is_buttonpad)
+ 		__set_bit(INPUT_PROP_BUTTONPAD, input->propbit);
  
- 	if (rf->rdma_ver != IRDMA_GEN_1) {
--		rf->allocated_ws_nodes =
--			kcalloc(BITS_TO_LONGS(IRDMA_MAX_WS_NODES),
--				sizeof(unsigned long), GFP_KERNEL);
-+		rf->allocated_ws_nodes = bitmap_zalloc(IRDMA_MAX_WS_NODES,
-+						       GFP_KERNEL);
- 		if (!rf->allocated_ws_nodes)
- 			return -ENOMEM;
+-	app->pending_palm_slots = devm_kcalloc(&hi->input->dev,
+-					       BITS_TO_LONGS(td->maxcontacts),
+-					       sizeof(long),
+-					       GFP_KERNEL);
++	app->pending_palm_slots = devm_bitmap_zalloc(&hi->input->dev,
++						     td->maxcontacts,
++						     GFP_KERNEL);
+ 	if (!app->pending_palm_slots)
+ 		return -ENOMEM;
  
-@@ -2023,7 +2022,7 @@ u32 irdma_initialize_hw_rsrc(struct irdma_pci_f *rf)
- 	return 0;
- 
- mem_rsrc_kzalloc_fail:
--	kfree(rf->allocated_ws_nodes);
-+	bitmap_free(rf->allocated_ws_nodes);
- 	rf->allocated_ws_nodes = NULL;
- 
- 	return ret;
 -- 
 2.34.1
 
