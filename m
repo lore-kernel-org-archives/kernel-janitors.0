@@ -2,81 +2,185 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C618DCCA47F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Jul 2022 05:50:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5241EC43334
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Jul 2022 06:01:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230482AbiGLFuZ (ORCPT
+        id S231308AbiGLGBQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 12 Jul 2022 01:50:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56544 "EHLO
+        Tue, 12 Jul 2022 02:01:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230139AbiGLFuT (ORCPT
+        with ESMTP id S229515AbiGLGBP (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 12 Jul 2022 01:50:19 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAD198FD7A;
-        Mon, 11 Jul 2022 22:50:18 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4BAB7B8112C;
-        Tue, 12 Jul 2022 05:50:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A6BC0C341CD;
-        Tue, 12 Jul 2022 05:50:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657605015;
-        bh=bPJIT5VhJx+b0g2ZRQgpP++MkjQYWo/c8K00hajgNFU=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=rKKNy/UgQP9OAFp2OcLU5QddCGF3WP7XZJLA1YGQyJjinzbs2BFpnHXhp9+a76ATa
-         1jyodTNplgYBXHaJKTflxaFMIGKzlRmW7u4JT6ICr2FO32GveO33FPHNdYi48ei07Q
-         4v1TJ/hdc0dI8pkyh7IyII7BwUcJqxSP6dHRCO6hdWfXiT16My6FdYVqBd7j9LvYpa
-         F/XGno0WXFtM2/ji7d+fPzJKCgw6YRIFCbrpLmQSDkekt/rIfgEJvYVSmibtQ37DHF
-         xGVLsGvPMwE8zV3F8sGkFMqAEYfgauRAw6LDOC+fBcpDafv1EnWcI8YKiBgBLlqqfw
-         s5Mjrjet0Lngw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 86ADCE4522C;
-        Tue, 12 Jul 2022 05:50:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 12 Jul 2022 02:01:15 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56A8B31DE4;
+        Mon, 11 Jul 2022 23:01:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1657605674; x=1689141674;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=niSDj7COpCoIbSKZJ94NOMMTydgv1jKW5ap9HCOE6ds=;
+  b=ScRPWeh6QhuO5JW2FZN8s+9k8g4iycDVm81o7oKcroWOJjz8CV3fs7dB
+   7xva8a2DPvpTIv+pDHvUa+XRUUi5eFMNQQ1ZOqHSxoPlMxRSefjSKUyVs
+   TtELhwTmeS5al12WrCnMCtuwVB5LGZrE2fisVewNNQ7BhMfom/PeHS8po
+   H7qrHXh5trtXBsScUxTU56O+iwyUcJFUmR1Mnb+dEidCm3w4/X6pk1pnC
+   fRMZTEeQUQlesD/IURO037WX/y8KE1K78StKafjmTeill2zTua9jx+Mq7
+   MqVE3RgmXzzaSFk8HGVVs1Etv+IKcua1VFCu13ucCGP3xVYw/wD48+rxg
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10405"; a="285588889"
+X-IronPort-AV: E=Sophos;i="5.92,264,1650956400"; 
+   d="scan'208";a="285588889"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2022 23:01:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,264,1650956400"; 
+   d="scan'208";a="627773540"
+Received: from lkp-server02.sh.intel.com (HELO 8708c84be1ad) ([10.239.97.151])
+  by orsmga001.jf.intel.com with ESMTP; 11 Jul 2022 23:01:01 -0700
+Received: from kbuild by 8708c84be1ad with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1oB8xB-0001n3-6O;
+        Tue, 12 Jul 2022 06:01:01 +0000
+Date:   Tue, 12 Jul 2022 14:00:40 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Dan Carpenter <error27@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        Yishai Hadas <yishaih@nvidia.com>,
+        Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] vfio/mlx5: clean up overflow check
+Message-ID: <202207121350.fs2JOFWt-lkp@intel.com>
+References: <YsbzgQQ4bg6v+iTS@kili>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: dsa: hellcreek: Use the bitmap API to allocate bitmaps
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <165760501554.3229.5901682004621317494.git-patchwork-notify@kernel.org>
-Date:   Tue, 12 Jul 2022 05:50:15 +0000
-References: <8306e2ae69a5d8553691f5d10a86a4390daf594b.1657376651.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <8306e2ae69a5d8553691f5d10a86a4390daf594b.1657376651.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     kurt@linutronix.de, andrew@lunn.ch, vivien.didelot@gmail.com,
-        f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        netdev@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YsbzgQQ4bg6v+iTS@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Hi Dan,
 
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
+Thank you for the patch! Perhaps something to improve:
 
-On Sat,  9 Jul 2022 16:24:45 +0200 you wrote:
-> Use devm_bitmap_zalloc() instead of hand-writing them.
-> 
-> It is less verbose and it improves the semantic.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/net/dsa/hirschmann/hellcreek.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
+[auto build test WARNING on awilliam-vfio/next]
+[also build test WARNING on rdma/for-next linus/master v5.19-rc6 next-20220711]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Here is the summary with links:
-  - net: dsa: hellcreek: Use the bitmap API to allocate bitmaps
-    https://git.kernel.org/netdev/net-next/c/e7bde1c581e4
+url:    https://github.com/intel-lab-lkp/linux/commits/Dan-Carpenter/vfio-mlx5-clean-up-overflow-check/20220707-225657
+base:   https://github.com/awilliam/linux-vfio.git next
+config: i386-allyesconfig (https://download.01.org/0day-ci/archive/20220712/202207121350.fs2JOFWt-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 6ce63e267aab79ca87bf63453d34dd3909ab978d)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/44607f8f3817e1af6622db7d70ad5bc457b8f203
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Dan-Carpenter/vfio-mlx5-clean-up-overflow-check/20220707-225657
+        git checkout 44607f8f3817e1af6622db7d70ad5bc457b8f203
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 SHELL=/bin/bash drivers/hid/ drivers/md/ drivers/vfio/pci/mlx5/
 
-You are awesome, thank you!
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/vfio/pci/mlx5/main.c:282:6: warning: comparison of distinct pointer types ('typeof (len) *' (aka 'unsigned int *') and 'typeof ((unsigned long)*pos) *' (aka 'unsigned long *')) [-Wcompare-distinct-pointer-types]
+               check_add_overflow(len, (unsigned long)*pos, &requested_length))
+               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/overflow.h:67:15: note: expanded from macro 'check_add_overflow'
+           (void) (&__a == &__b);                  \
+                   ~~~~ ^  ~~~~
+>> drivers/vfio/pci/mlx5/main.c:282:6: warning: comparison of distinct pointer types ('typeof (len) *' (aka 'unsigned int *') and 'typeof (&requested_length)' (aka 'unsigned long *')) [-Wcompare-distinct-pointer-types]
+               check_add_overflow(len, (unsigned long)*pos, &requested_length))
+               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/overflow.h:68:15: note: expanded from macro 'check_add_overflow'
+           (void) (&__a == __d);                   \
+                   ~~~~ ^  ~~~
+   2 warnings generated.
+
+
+vim +282 drivers/vfio/pci/mlx5/main.c
+
+   269	
+   270	static ssize_t mlx5vf_resume_write(struct file *filp, const char __user *buf,
+   271					   size_t len, loff_t *pos)
+   272	{
+   273		struct mlx5_vf_migration_file *migf = filp->private_data;
+   274		unsigned long requested_length;
+   275		ssize_t done = 0;
+   276	
+   277		if (pos)
+   278			return -ESPIPE;
+   279		pos = &filp->f_pos;
+   280	
+   281		if (*pos < 0 || *pos > ULONG_MAX ||
+ > 282		    check_add_overflow(len, (unsigned long)*pos, &requested_length))
+   283			return -EINVAL;
+   284	
+   285		if (requested_length > MAX_MIGRATION_SIZE)
+   286			return -ENOMEM;
+   287	
+   288		mutex_lock(&migf->lock);
+   289		if (migf->disabled) {
+   290			done = -ENODEV;
+   291			goto out_unlock;
+   292		}
+   293	
+   294		if (migf->allocated_length < requested_length) {
+   295			done = mlx5vf_add_migration_pages(
+   296				migf,
+   297				DIV_ROUND_UP(requested_length - migf->allocated_length,
+   298					     PAGE_SIZE));
+   299			if (done)
+   300				goto out_unlock;
+   301		}
+   302	
+   303		while (len) {
+   304			size_t page_offset;
+   305			struct page *page;
+   306			size_t page_len;
+   307			u8 *to_buff;
+   308			int ret;
+   309	
+   310			page_offset = (*pos) % PAGE_SIZE;
+   311			page = mlx5vf_get_migration_page(migf, *pos - page_offset);
+   312			if (!page) {
+   313				if (done == 0)
+   314					done = -EINVAL;
+   315				goto out_unlock;
+   316			}
+   317	
+   318			page_len = min_t(size_t, len, PAGE_SIZE - page_offset);
+   319			to_buff = kmap_local_page(page);
+   320			ret = copy_from_user(to_buff + page_offset, buf, page_len);
+   321			kunmap_local(to_buff);
+   322			if (ret) {
+   323				done = -EFAULT;
+   324				goto out_unlock;
+   325			}
+   326			*pos += page_len;
+   327			len -= page_len;
+   328			done += page_len;
+   329			buf += page_len;
+   330			migf->total_length += page_len;
+   331		}
+   332	out_unlock:
+   333		mutex_unlock(&migf->lock);
+   334		return done;
+   335	}
+   336	
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+0-DAY CI Kernel Test Service
+https://01.org/lkp
