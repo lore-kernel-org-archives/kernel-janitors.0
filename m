@@ -2,185 +2,158 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5241EC43334
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Jul 2022 06:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF0FC43334
+	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Jul 2022 07:44:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231308AbiGLGBQ (ORCPT
+        id S232402AbiGLHoC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 12 Jul 2022 02:01:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36252 "EHLO
+        Tue, 12 Jul 2022 03:44:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbiGLGBP (ORCPT
+        with ESMTP id S232330AbiGLHn6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 12 Jul 2022 02:01:15 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56A8B31DE4;
-        Mon, 11 Jul 2022 23:01:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657605674; x=1689141674;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=niSDj7COpCoIbSKZJ94NOMMTydgv1jKW5ap9HCOE6ds=;
-  b=ScRPWeh6QhuO5JW2FZN8s+9k8g4iycDVm81o7oKcroWOJjz8CV3fs7dB
-   7xva8a2DPvpTIv+pDHvUa+XRUUi5eFMNQQ1ZOqHSxoPlMxRSefjSKUyVs
-   TtELhwTmeS5al12WrCnMCtuwVB5LGZrE2fisVewNNQ7BhMfom/PeHS8po
-   H7qrHXh5trtXBsScUxTU56O+iwyUcJFUmR1Mnb+dEidCm3w4/X6pk1pnC
-   fRMZTEeQUQlesD/IURO037WX/y8KE1K78StKafjmTeill2zTua9jx+Mq7
-   MqVE3RgmXzzaSFk8HGVVs1Etv+IKcua1VFCu13ucCGP3xVYw/wD48+rxg
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10405"; a="285588889"
-X-IronPort-AV: E=Sophos;i="5.92,264,1650956400"; 
-   d="scan'208";a="285588889"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2022 23:01:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,264,1650956400"; 
-   d="scan'208";a="627773540"
-Received: from lkp-server02.sh.intel.com (HELO 8708c84be1ad) ([10.239.97.151])
-  by orsmga001.jf.intel.com with ESMTP; 11 Jul 2022 23:01:01 -0700
-Received: from kbuild by 8708c84be1ad with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1oB8xB-0001n3-6O;
-        Tue, 12 Jul 2022 06:01:01 +0000
-Date:   Tue, 12 Jul 2022 14:00:40 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Dan Carpenter <error27@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        Yishai Hadas <yishaih@nvidia.com>,
-        Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] vfio/mlx5: clean up overflow check
-Message-ID: <202207121350.fs2JOFWt-lkp@intel.com>
-References: <YsbzgQQ4bg6v+iTS@kili>
-MIME-Version: 1.0
+        Tue, 12 Jul 2022 03:43:58 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40C6E1658E;
+        Tue, 12 Jul 2022 00:43:57 -0700 (PDT)
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26C4s3XC018645;
+        Tue, 12 Jul 2022 07:43:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2021-07-09;
+ bh=sBZ86Oh7n4TOe8y7mvXePGxbkvyMJ69jCN4pokkXuBQ=;
+ b=W+rzPUsum8bD6SpxeB5BjUj02FKhyB77utqQs2X3Ptwh1nyh3OAbPi3Aye3Ml9EUOsTi
+ kMICsU9HV9rp9dT9uwAHNzCXoq0Uviq9Y7XPoKu5eqERTzSrCvHuk+rNsyl/1KDpM7dj
+ V5o+vXaHOIYEaRSpz6l7Dw3LSSRdLg6m0jEebcXZ/+I9S4o7TdISPXB5eKV2DmsK1RVt
+ YGy/gui5KWOd0aygMAJADQn9Cu+EXRfWhm5Ht0GuxBupmHOE9dlvZEZ+4LGMO+5sBUZG
+ FMT1Ddrp8Wu7zIHNJ4EKYbHdR+HUtoUIjqoPROZdVj8WNT0THQ1SyJG/LRQe3ImDUxSO 3Q== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3h727sdw9j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Jul 2022 07:43:45 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 26C7fZ15019689;
+        Tue, 12 Jul 2022 07:43:44 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2040.outbound.protection.outlook.com [104.47.66.40])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3h70432bkk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Jul 2022 07:43:44 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=e5V45/Rq7vO7nxudWC01EQiSdl4dVNcriUSwAXlStZthrkGaaQL5u/Z/Zia0LPr/FhL9ddQBAe2OugiAZrnbVaWTWI67/grgyg4l2ilY8QjVsiye5ALyCu1PORUJZzdwbLoZMNxcK4HeUHWAyNEsSbBra/eZLYhrXrUJTCUF9Wn1CwMPBLdkXHhh0BdQ9d8CMWRKjmmgKXrTl8smvpH/Gc5RaXrHfQLZm0O5gabt7/H3iDPPM1onZP6tQZFiA+wRDfkruBTsTvCwp5zO3sH3KAjXw0CLKNq9k9Q1/ERQh9XqNjeq0+cwxc3ziLXNY7PQ89ifvFWpppYp0i4b3ooncQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sBZ86Oh7n4TOe8y7mvXePGxbkvyMJ69jCN4pokkXuBQ=;
+ b=fT+lpj6XEmBMbD0MFXrsT+c2Mf6TEQLQZhhaFJigRG1lfL5OYCfr/H63RKilMmsMSxiglucWOSFECxd0Huf1m/0kuF2J0p8j7+KmmI1zqCmSwseDlyHsNlXhUKJdsWjV6lkfLMUb325WiYDb62qImPKyMTeijTqvbIlU/CXXs+YAVb99r+4l02lSqMzhjF1MNJx5yYAdCRUbgSFvTUboYFq51N5kH16th+jLFf5vHIc8t7DqWGued+0ninxtN9tVd0btA9ixFVwxG+HoSID9CIrgtI08+xZ92RsraZWsdJRewJ0KcEF70bSuDXfUReOLd8JE1q0oK5lJfRDiC1wlvg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sBZ86Oh7n4TOe8y7mvXePGxbkvyMJ69jCN4pokkXuBQ=;
+ b=l7sXG0CNAy7s/4hXdyHtABE4f3Btsku/GPFfC4RlCowWOcWtg6Kw1sTTDvM0VP8HbxjIM+5gu85lb5lGACKNSU0rUrhj1GHEDa1r+c84/oGPKzHsJHGApk8WqRxTRSOH0+/4/el9LOblrEjW3RNrzoHK76o3F1niEQ700BC1r5U=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by CO6PR10MB5569.namprd10.prod.outlook.com
+ (2603:10b6:303:144::5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.25; Tue, 12 Jul
+ 2022 07:43:42 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::5020:9b82:5917:40b]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::5020:9b82:5917:40b%6]) with mapi id 15.20.5417.026; Tue, 12 Jul 2022
+ 07:43:42 +0000
+Date:   Tue, 12 Jul 2022 10:43:16 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Shunsuke Mie <mie@igel.co.jp>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Frank Li <Frank.Li@nxp.com>, dmaengine@vger.kernel.org,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+        Li Chen <lchen@ambarella.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] PCI: endpoint: IS_ERR() vs NULL bug in
+ pci_epf_test_init_dma_chan()
+Message-ID: <20220712074316.GK2338@kadam>
+References: <YsftwaVowtU9/pgn@kili>
+ <CANXvt5rK98-cEMgpzopY9POOK8a5=VDib8uKPLgJakOG=hRfwQ@mail.gmail.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YsbzgQQ4bg6v+iTS@kili>
+In-Reply-To: <CANXvt5rK98-cEMgpzopY9POOK8a5=VDib8uKPLgJakOG=hRfwQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: JN2P275CA0017.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:3::29)
+ To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 9eaa9de8-3f04-459b-bc57-08da63da3da2
+X-MS-TrafficTypeDiagnostic: CO6PR10MB5569:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: V8sUxhVZzHJNwsab7iMFcpvXyTU586Q/BtXhvsaSiDGC+lXIYxBpcxKeluKJvtiRPWICcKUZCv5qAUNOrj3Z7Yh8Sj/GsI8617i9wZ/6FlbwXAuWwwvEAuKShfBa2mr/jP5RQfhPpEWffBep4XFcpaZqPs3foG8zqnqOAbcCtONo3OCcsZhmvSW/+QxFjSsEx9XX3Jydgk0Unph0u42XYCVNV98MTvN83Bg42g2AQdvYZjjdchJiAmbQCY1p46C9K4FMMnAVKmjjASrpDzyvEXUcr5Ix/ztBQN6uuRRJxn6hpQCsTH463nPTsouKzKGes0DN5UoTGkbOlyzhtN58VRUpiKqK++dmXLpwYRifQcCfq9GqGogTqae2y53PcEgrmRdPs2uxKMzdzYrbIOEhd8urEci3Xn90P0CRlgR+w7hDvHqu7trw2fFWYGmz/SveoW8Bl5Y8JXOb5CO25fYHXX3B6B5WMLjjvXjWwpd9Qvpx2ol4lE1leaWQaMe64DGHfzQZJ+M1JWFrloVCROKNpO+HFSKBbbkutJzwHKENNArSkc8Cvl6xUzbXmn+IL5UNGNm/uvM2eZqDA3Sd3bDKJqfo6ED7w4PvKnaVvT5hHpY1qX9uY8R77nCa4kOIZ3pn3eePhrRz9xAwfkrhRaH3c9Q2ntPGT5XtrUD29ltAk2g9h/z3uzhEChteo+61ou0Vj8t3cp4IJYNZtKsHr05ukN20dvqzigr4UwrMPwhUJsVgDxyZpHq4Ae9a5hGTX44Y2NZcGPGrNugMDGUEl0HZTyYytRSC8w1Zufst7jRNDQVPEUXKpaRac1u4Vno3Lanl
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(7916004)(136003)(376002)(346002)(366004)(396003)(39860400002)(558084003)(6666004)(38100700002)(86362001)(6486002)(33656002)(33716001)(5660300002)(7416002)(8936002)(38350700002)(478600001)(316002)(9686003)(41300700001)(66556008)(2906002)(1076003)(54906003)(4326008)(6916009)(44832011)(66946007)(66476007)(26005)(6512007)(6506007)(8676002)(52116002)(186003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?vBxX8nlJ3JMu9Q5rOWMPoJAYGapuhWkF+E6rOR09CZo4nSuf9VApFOdcTbDx?=
+ =?us-ascii?Q?PCKwk0MAyii/0BRukhHarhlbZOp3dJ1hsgSwWvU6BF/Z7IzAmsmTEuJkjpQC?=
+ =?us-ascii?Q?Dz0sgQyDQtOINAgYsNOsP3PjOTzZk5imrI4UIURx6iuxvM0l61sx2Wo5Da3s?=
+ =?us-ascii?Q?q7sd5kK9NDL00j1douN7NTz14cHk40UzqJ28gA3LRwD7KZr2Xye/VGswCu1c?=
+ =?us-ascii?Q?RiofvlS7yr/qc/cnRzaSI49syR5QIPJ2XP3e4Z/TsxSuEKVwPIFZUlfOPVr8?=
+ =?us-ascii?Q?JPrfy6r1W0G7IPHTwJ0fAyFcxIsM6VL0UWtIJyHy2w3TuLGkKaFpEXb3kwNG?=
+ =?us-ascii?Q?R4m31Ym2g97wyxNvLavcR4FZjQu0weUH8/VOjLuov7aS4BnQumuN6SqVIn3U?=
+ =?us-ascii?Q?jqBb4VBp5N8Hp03RBmZhM0R7FoUG1x6HX05Wpod3H9HgXZ7BQs0DfdKAQd1r?=
+ =?us-ascii?Q?53SlukR+mT4+fkK0VFKSfVcNTy1JunM/LQnajZextxtuNGG7cGHuHakohFkT?=
+ =?us-ascii?Q?e8RTAY+wjDZ2005YwNB2o7hDqpxENI6xIMCiaUP8ppqiKM3E8Kl04BhmuQjf?=
+ =?us-ascii?Q?laDreWFHrmuFUV6mnG8xLn9KXiycHmBk58XaSepEZQrNMegskrBTSbefVYgi?=
+ =?us-ascii?Q?kbyKsopEM9qjHkVy7FTe6YYOjNd1vpwqZOqnjQ/e6seWV8Q/8u0QAcZVoDEv?=
+ =?us-ascii?Q?rFk0t3URYWCCbd/4eeWy5wOzx0hieYD/tff3VambYnQcJOMYR/9iDElReJ49?=
+ =?us-ascii?Q?Jo47wZ4ZF8NVedEa6Hn20Eo26A/E8QOZWiaIkO7dAXX8xx9Zvs5DzATxT625?=
+ =?us-ascii?Q?n1jZ+64TaSmDXtnbmNzph4yA+z2be5gNYyilXeQJUXIRjyIvqF44k20Gk2s1?=
+ =?us-ascii?Q?YxE/X6JkoYE38QwmBpP/tHF9dQl/NrbzH9ZzT7kkcvUdYUx1ASuFq0TzgqyE?=
+ =?us-ascii?Q?FOYYulb11l79phVE/4KXvo/FxC43WSfqsA7UqXnrZi0jcOIm9ewG7lEboRTM?=
+ =?us-ascii?Q?icgdP7iuok0P3hTP3erIohY7bXz/qLtSEgZcFNcfm4BqVayBuioX1P4bsNN0?=
+ =?us-ascii?Q?G9E8TF0sHiy50ciVjHXDpWty5cvo+7Yxsod8f84Y6WKHazUjfofY8b/5VYVn?=
+ =?us-ascii?Q?qCkgP/9pR+SCrJ+8gn5S5BbxCUu3zHLe9ClLEHitKpEJy9gvXInzvp8uo5MI?=
+ =?us-ascii?Q?b5cvuW1Ww6af/WkoBKIfZNR58tmKvXtNVfKp7TdW/ydMBj9urEAOAoJ1Jcd9?=
+ =?us-ascii?Q?Va25ny10t2G7+oDSh50MHzjhWxLG0oqkNghdkJ6rW2xq7YLSKpS3AVFtLhaL?=
+ =?us-ascii?Q?5tVmUUjxMs0QULpHwwgSenzsIo4PWuuJzOEZTjE6pica4PBHmFvWB58W04fn?=
+ =?us-ascii?Q?mZtOVozMQwWcIwttq1+uFvV2OVZbtgHQoYk0Bibiqu9Sq2wUdfMk3Wyvopyk?=
+ =?us-ascii?Q?wq2asRvC8/GPGtXbEZ/odnMg5R5EVlr/D+ePXHKb//7gRxQsI/9qnCoJd3Rl?=
+ =?us-ascii?Q?fl1o4w+0BBBj4QtvEyiH7buJPzydS5WzyU8dg8ZTyuVAtcJ2jLgF5rf7232n?=
+ =?us-ascii?Q?pypWqRT1PQsOqfD+vEnU0cWqtsHjTn6si1yyEPNR?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9eaa9de8-3f04-459b-bc57-08da63da3da2
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2022 07:43:41.9441
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5JMnJ41OBIpSwm05oK8mGL3sAMI2VZNjS6ah0IcTmzFMNOpB79wuAOBo86BWymwLu+XklRp1zxdevXNH4FQ5LuebV4fd6VFcMrl/EKyqBU4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR10MB5569
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.517,18.0.883
+ definitions=2022-07-12_05:2022-07-08,2022-07-12 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
+ suspectscore=0 mlxlogscore=861 mlxscore=0 spamscore=0 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2206140000 definitions=main-2207120031
+X-Proofpoint-ORIG-GUID: 9QPkdz6EUohUDb7D7Zb6kt2jf6h8vm_9
+X-Proofpoint-GUID: 9QPkdz6EUohUDb7D7Zb6kt2jf6h8vm_9
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+On Mon, Jul 11, 2022 at 02:50:14PM +0900, Shunsuke Mie wrote:
+> This patch changes for a tx dma channel. There is a similar problem for a
+>  rx one too. The code doesn't cause an error, but it is likely better to
+> change to just NULL checking.
+> 
 
-Thank you for the patch! Perhaps something to improve:
+Yep.  Thanks.  I will resend.
 
-[auto build test WARNING on awilliam-vfio/next]
-[also build test WARNING on rdma/for-next linus/master v5.19-rc6 next-20220711]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+regards,
+dan carpenter
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dan-Carpenter/vfio-mlx5-clean-up-overflow-check/20220707-225657
-base:   https://github.com/awilliam/linux-vfio.git next
-config: i386-allyesconfig (https://download.01.org/0day-ci/archive/20220712/202207121350.fs2JOFWt-lkp@intel.com/config)
-compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 6ce63e267aab79ca87bf63453d34dd3909ab978d)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/44607f8f3817e1af6622db7d70ad5bc457b8f203
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Dan-Carpenter/vfio-mlx5-clean-up-overflow-check/20220707-225657
-        git checkout 44607f8f3817e1af6622db7d70ad5bc457b8f203
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 SHELL=/bin/bash drivers/hid/ drivers/md/ drivers/vfio/pci/mlx5/
-
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-
-All warnings (new ones prefixed by >>):
-
->> drivers/vfio/pci/mlx5/main.c:282:6: warning: comparison of distinct pointer types ('typeof (len) *' (aka 'unsigned int *') and 'typeof ((unsigned long)*pos) *' (aka 'unsigned long *')) [-Wcompare-distinct-pointer-types]
-               check_add_overflow(len, (unsigned long)*pos, &requested_length))
-               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/overflow.h:67:15: note: expanded from macro 'check_add_overflow'
-           (void) (&__a == &__b);                  \
-                   ~~~~ ^  ~~~~
->> drivers/vfio/pci/mlx5/main.c:282:6: warning: comparison of distinct pointer types ('typeof (len) *' (aka 'unsigned int *') and 'typeof (&requested_length)' (aka 'unsigned long *')) [-Wcompare-distinct-pointer-types]
-               check_add_overflow(len, (unsigned long)*pos, &requested_length))
-               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/overflow.h:68:15: note: expanded from macro 'check_add_overflow'
-           (void) (&__a == __d);                   \
-                   ~~~~ ^  ~~~
-   2 warnings generated.
-
-
-vim +282 drivers/vfio/pci/mlx5/main.c
-
-   269	
-   270	static ssize_t mlx5vf_resume_write(struct file *filp, const char __user *buf,
-   271					   size_t len, loff_t *pos)
-   272	{
-   273		struct mlx5_vf_migration_file *migf = filp->private_data;
-   274		unsigned long requested_length;
-   275		ssize_t done = 0;
-   276	
-   277		if (pos)
-   278			return -ESPIPE;
-   279		pos = &filp->f_pos;
-   280	
-   281		if (*pos < 0 || *pos > ULONG_MAX ||
- > 282		    check_add_overflow(len, (unsigned long)*pos, &requested_length))
-   283			return -EINVAL;
-   284	
-   285		if (requested_length > MAX_MIGRATION_SIZE)
-   286			return -ENOMEM;
-   287	
-   288		mutex_lock(&migf->lock);
-   289		if (migf->disabled) {
-   290			done = -ENODEV;
-   291			goto out_unlock;
-   292		}
-   293	
-   294		if (migf->allocated_length < requested_length) {
-   295			done = mlx5vf_add_migration_pages(
-   296				migf,
-   297				DIV_ROUND_UP(requested_length - migf->allocated_length,
-   298					     PAGE_SIZE));
-   299			if (done)
-   300				goto out_unlock;
-   301		}
-   302	
-   303		while (len) {
-   304			size_t page_offset;
-   305			struct page *page;
-   306			size_t page_len;
-   307			u8 *to_buff;
-   308			int ret;
-   309	
-   310			page_offset = (*pos) % PAGE_SIZE;
-   311			page = mlx5vf_get_migration_page(migf, *pos - page_offset);
-   312			if (!page) {
-   313				if (done == 0)
-   314					done = -EINVAL;
-   315				goto out_unlock;
-   316			}
-   317	
-   318			page_len = min_t(size_t, len, PAGE_SIZE - page_offset);
-   319			to_buff = kmap_local_page(page);
-   320			ret = copy_from_user(to_buff + page_offset, buf, page_len);
-   321			kunmap_local(to_buff);
-   322			if (ret) {
-   323				done = -EFAULT;
-   324				goto out_unlock;
-   325			}
-   326			*pos += page_len;
-   327			len -= page_len;
-   328			done += page_len;
-   329			buf += page_len;
-   330			migf->total_length += page_len;
-   331		}
-   332	out_unlock:
-   333		mutex_unlock(&migf->lock);
-   334		return done;
-   335	}
-   336	
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
