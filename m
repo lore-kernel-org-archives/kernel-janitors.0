@@ -2,107 +2,122 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB8ECCA47C
-	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Jul 2022 19:55:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3B9C43334
+	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Jul 2022 22:23:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236938AbiGMTz0 (ORCPT
+        id S237330AbiGMWXO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 13 Jul 2022 15:55:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34658 "EHLO
+        Wed, 13 Jul 2022 18:23:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236481AbiGMTzZ (ORCPT
+        with ESMTP id S229895AbiGMWXN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 13 Jul 2022 15:55:25 -0400
-Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A514E2C10B;
-        Wed, 13 Jul 2022 12:55:24 -0700 (PDT)
-Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id E53A42DC;
-        Wed, 13 Jul 2022 19:55:23 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E53A42DC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-        t=1657742124; bh=kWuy+rhA64DMuaeB8TXkfZuZB3wkP5La509m4dy0efY=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=mArs6LEWNaAk+iHmyQSAl69AaESH+41g2IDJbSWgJgpuSYtYxyBoaYvKDtFGGUixl
-         Dzuf22cFyz32w9jrysA4i+iVXRq9WDjxAp7ScW2+y648C0HyVF6JAp+kUzfPcwZcGx
-         l+Sib19W+wht/f8KWBKxML2qiXsCLa3eBX02W5RPaYNxn51t+qhrn+RII7U3v5V+gj
-         cGmoaW1IaeeF0ppkXWWfJKei7/BHfSjFfeCE9b94gqahyr8mtpV7KQSnD5C4YFgaol
-         Sh8q5KIRJH5HSKZWtap5yAZy7C78fte2CsGh3cDt6Sz4GHHvmySC+EK11ob/VCN1aU
-         vrXsmdV1nsLsA==
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Federico Vaga <federico.vaga@vaga.pv.it>,
-        Alex Shi <alexs@kernel.org>,
-        Yanteng Si <siyanteng@loongson.cn>,
-        Hu Haowen <src.res@email.cn>, linux-doc@vger.kernel.org,
-        linux-doc-tw-discuss@lists.sourceforge.net
-Cc:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH 00/11] docs: remove submitting-drivers.rst
-In-Reply-To: <20220704122537.3407-1-lukas.bulwahn@gmail.com>
-References: <20220704122537.3407-1-lukas.bulwahn@gmail.com>
-Date:   Wed, 13 Jul 2022 13:55:23 -0600
-Message-ID: <87sfn44wk4.fsf@meer.lwn.net>
+        Wed, 13 Jul 2022 18:23:13 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2078.outbound.protection.outlook.com [40.107.243.78])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53E914B0CF;
+        Wed, 13 Jul 2022 15:23:12 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SGyXgqXJdBU7oImO8s22LfomWWDNcOkmRcUM5NBnD0iqi0q9aUpl7K8ZwBHevc75EAGgVSPkTPBclh1s37tvaiW1O9uNrd7+JiDlIIfjWEOAvds44jejCgdzqNLqEwafZCttyOnCF1590vGZlQYXRj9NKXmz0uwhRCd18guPpBBWG7qtNQokkzj0EZLv5hoMWcsgt9bVnqGV0KLPgtad+I3XyBa2yGFTlpEH3eODLNmTZHHSECxVMZI3pTJABwEJP4/4+zs6iabZjE8i5qaYqiTWtS6BEEpogWlDNGukaQN+nD8qkdd5Fzu6wtEMTzcUbBIJgurk1n+LkhCM0tbLTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IyDVF7++TsXEpLnS7TfWVZLisxH/8DLB/NoFGOjrCKE=;
+ b=k2GY34UJZWrZKD77Nx1y34ebNH1vL0iV3yHl9O7QTPjfIHQSbGrn0G/Bm083bV1g2FdBiYt/AvNZaJN4h8vkfPvAjQbNYPl/ht3fcLlj0/8+SzT/Q0UDJgqnB2jzf587mgDn+98gxNEVKBuhbqtxzmYyOBXxUWVc9dAaf1cOS21zPL5XyO1YuAvHXBkQ52hPYKCU/KubjNPPKrjWjFR8P1kH4LPzPM6IWho0uJrvKM7NnPMB8HAZ1yK9oZPzzGbmr1S6vQQPEbFXo/h/bjkaJ2hWhrOxJAN6KwJBAh45s5UISsAOiRSzTJ0TWnaOx3RYuWxtufDK1jhUpW3Dq2/PCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IyDVF7++TsXEpLnS7TfWVZLisxH/8DLB/NoFGOjrCKE=;
+ b=CeSlA8+5cbrZY2eTsZLq2Bi49ho+EyQiO4Yx7oFk6x21r5Sc8d9Te5XLL/FE6rFM+ulPoT2q7n2WD1nOuXY700wvgCVaW2mKAlcNAah4QN2GmhS9s7cx2iywTN9jCDmgA+OfwRF1ZfMRgRiOVc+GDouh72bqmShuh4VaSzpeLArJdccA/R1JMxfeUKhXYVfiqgTAllqMeiHYB1TO0SjdSqPxERU77ivVOwadlEbbNV89xwVn2tNqyLR8ArI7wXGW808CAbI003egkA+gPlevh4cOLoCPDq5OtBbtL6lRDcPsFRBdDnN2xSyR0t5r0rWTY8YpZk8J7aUCteRYnrzHKA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4209.namprd12.prod.outlook.com (2603:10b6:a03:20d::22)
+ by IA1PR12MB6161.namprd12.prod.outlook.com (2603:10b6:208:3eb::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.26; Wed, 13 Jul
+ 2022 22:23:10 +0000
+Received: from BY5PR12MB4209.namprd12.prod.outlook.com
+ ([fe80::900e:a8f9:4d99:1cb1]) by BY5PR12MB4209.namprd12.prod.outlook.com
+ ([fe80::900e:a8f9:4d99:1cb1%4]) with mapi id 15.20.5438.013; Wed, 13 Jul 2022
+ 22:23:10 +0000
+Date:   Wed, 13 Jul 2022 15:23:08 -0700
+From:   Saeed Mahameed <saeedm@nvidia.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Subject: Re: [PATCH] net/mlx5: Use the bitmap API to allocate bitmaps
+Message-ID: <20220713222308.6sqcsom4duvbe3pk@sx1>
+References: <ca036ba3d0c2ee307e1d8cc94aaaab1686ebf1c9.1657456513.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <ca036ba3d0c2ee307e1d8cc94aaaab1686ebf1c9.1657456513.git.christophe.jaillet@wanadoo.fr>
+X-ClientProxiedBy: SJ0PR03CA0389.namprd03.prod.outlook.com
+ (2603:10b6:a03:3a1::34) To BY5PR12MB4209.namprd12.prod.outlook.com
+ (2603:10b6:a03:20d::22)
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 1045b5f4-a6f6-4e0b-8943-08da651e44a7
+X-MS-TrafficTypeDiagnostic: IA1PR12MB6161:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: MSqU4BbQu5i+kHiTQaJbbp5KtIu9Q8xKdtyIO2MrayKeUd+m0T+2UJNLbcmZPTPxfJw3Q6kLigORkqpwGnzuenAKDJK+xLTiDPfF2Oaa9yLZ3JZgaohWtQFU6N2keLpZxinVFGi5M23AdmolItgzTUAOEKQYc5B7nuB3fWvnMt94CBHYUqYM4kM1RhkknynyAbdjPPstX8fUaE8YaJRd7WNOQwyb0cI0SlRhOKAeQQdfZG/9Hi8QyfURDlZyFpw3047g9r7HfvcFXCW8sqWCzYbizo67S3HFi4nrVoW0ZVw0tkBrmI3lbIkn8q9GWKVKQBioaXdRbobK1Tjv/h39hnchIiNgJqlfDfm0AKuGy2p9AsHMeg3YlA9LB2rpIcPFVVe/M2T1rct1GbiSN5K6/2wUDN0Ix2eQPTocriZS6aGpxHNUdV7pUJoA5q9vnWQsP+ZOeRR7f5MPiAih+gQHwKOdYwKDaJvmJ0ZoVi7XWZb26c55nhog1/OgT+mtexiWEj+plcbjnGiYB7YiM1cVMf6ms2Tnj0S9HOPrCEQn1uMT4LdH5AKrpL8Fl1ocyQgvNS40THmFYM5X2HvNoLRtzfW1LrtU2WlJCWP8AhyIBWrImECCKyepUs77jXrGRLtAsvGz+ePJitwvWMIJn4gEYIKCowDI5ZN3RItaDNe4fs/koY2wgbh/YQ39e0Eipx8mq4jm4eadQ15ZzXqFhdf24Tlpbrcg0A6Yq/ACAuKb/80L4G1swvTv4SHF6ZOiSSAO0pl1UFAI2XEPg0PvhMFlpA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4209.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(7916004)(4636009)(396003)(136003)(366004)(39860400002)(346002)(376002)(4326008)(9686003)(8676002)(5660300002)(66476007)(186003)(6512007)(6916009)(7416002)(66946007)(26005)(33716001)(66556008)(2906002)(1076003)(558084003)(86362001)(6486002)(478600001)(6506007)(54906003)(316002)(41300700001)(38100700002)(8936002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?nZBKQj8rr68xfFjYLrPFi973dluJPNzf0QkjGtdRi5gvAIAOcMv19V9lkuhf?=
+ =?us-ascii?Q?KmJXJVdD1dIsPflu9u4Ums48Ae0NMZo17J3niEjOixCOSiYL7UouHoKwJGw9?=
+ =?us-ascii?Q?MqWsy5zLFa9kcxdbLoQYn0ZAgI6UTrvY3zQL7MfyrCrPL/O6sEjOmWpKqGh2?=
+ =?us-ascii?Q?Ebqz5uAiAvQDQKjrCsJ3TeNXCwjQVRWd6dgko8FTEOgMOppwUig+SsztYOxv?=
+ =?us-ascii?Q?UGfLPk/fKecKYX+spw1cRmld6EMgB2SZucMVxmD/1R/IrxpD8IQCKofoirKF?=
+ =?us-ascii?Q?L4BuyeHWJTX68Dk9rDu561OvSNJD6YypzOlsLlbmSPBQDlwsuy1/16dK6huK?=
+ =?us-ascii?Q?jtloeh3SZdZxk6LX9cxkZg0NyRZPHcumJ1mgTvCzmRxlLl3BHbhY4/P4JSev?=
+ =?us-ascii?Q?BzqQKGT56BSu3SkwvnwwWUGGQLG2sR3p+VLmqDrZ8xBYyXLRRvig8ZlmK9F6?=
+ =?us-ascii?Q?4ImnqhxrQG74v4Lhj+b7GxZz8F7RsWawOveiverJ+UeEGrepLi6qghWLdWJo?=
+ =?us-ascii?Q?ZFhl6spXz7qKumd6IHy/GHt+BE7Ndia6V+2n7xvQ/nPJJa5l/x341Kfj4m5H?=
+ =?us-ascii?Q?BjkOLBI7CtBdYp3++EaqsUjb8mXZP1N33cbt4LjwleBJXHarsL0fU4ExaX7P?=
+ =?us-ascii?Q?uy4wkt/fVNKHGvgJ4IPNEE8hxBcgnA6S2R/R3uDbTKKJKX1784aAdSuXyx+Y?=
+ =?us-ascii?Q?3uqwjU1YVs3HREpb/+7zULpCj575d2TqHDbwTtyJNpADEifzEoaAjGOyKifa?=
+ =?us-ascii?Q?jJISM53/JWI5XkfmlvWZ22GpGO7+naYzCNgR/uIV6+XJKIYRK/H2drcTBhsD?=
+ =?us-ascii?Q?OyuRt3tCSyGxm+QBjTd9jRVXhFRLj6+m8b6YjWfy5kXlCP463Hz1anieaY2b?=
+ =?us-ascii?Q?K8kcjQRmwP+jZ/W+HdBiDn9ag1IkYpuqoJXDVOqOMHLlvgA2J3u73qKm1pXJ?=
+ =?us-ascii?Q?ViY3dKbun/haLsa4c7UB0KJqTFraWiVrTIU/YiIf/c6PmwjkG+mTotmCyA6B?=
+ =?us-ascii?Q?IRmRpaI5PZzoJnoV8zebROJrbBRF9gJGK4kDEbLBfqR5nUIIZQsaDtvAn86P?=
+ =?us-ascii?Q?xfBNkgIlbIri/oSbX+UYb1w5i+6XCmh/iv6hQqRhfy6PYiXqkJGBJxsFqO2/?=
+ =?us-ascii?Q?RNjbbl0EziVhYA+ONcN2oo/OsMKzoJ4xqFfsOtg4DfBWghmJ7XP5vSY80fAS?=
+ =?us-ascii?Q?lZNcy6soZjN9sSRJBmKFrV0V2C8cTOs4jLMR725X0RB/gO10lnKVnCobudTu?=
+ =?us-ascii?Q?j4NjFnXTVb5W5gQk+mRvNsXYu8gQQjs+YsVRYYqjqWgi8MS1I/qyjenWDS4B?=
+ =?us-ascii?Q?LFf4NHsUSS/We6nJkV+cXbortR4dVuXzyd7vMEnSbVgM/61ShZMYVfURJImZ?=
+ =?us-ascii?Q?oA678u/k9ZOd3UiU+n7X1aV0qOn1Ag0eLiBifnqErxEm9xYDaBbc/xFuuJx7?=
+ =?us-ascii?Q?MhlgYLUx3xiv/cuLplcW7LxpV1kFuP47o/S/cyBUQuruQbj2BT6j7v1HcTVE?=
+ =?us-ascii?Q?hxu7PXhh4zaghpcSztBf5HvzW50KYep5bXP5lQtvN5Fz0dmCWu3iU+S/RJCu?=
+ =?us-ascii?Q?xQxvpb21aIKkaPFHjUqIrzzvkUVg34udxTjaE0Tl?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1045b5f4-a6f6-4e0b-8943-08da651e44a7
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4209.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2022 22:23:10.2382
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 27Ek/uKQjhz/IBYG37Cqy0h1VbC/KRvG4AFHLDfpRXhdtXkpRsIVp9b8xMosTq9nA5O5C3d1tNkMJhSKbRfMhw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6161
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
-
-> Dear Jonathan, dear Federico, dear Alex, dear Yanteng, dear Hu,
+On 10 Jul 14:36, Christophe JAILLET wrote:
+>Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
 >
-> Here is an attempt to delete submitting-drivers with some improvements
-> and clean-up in other documentation places to convince ourselves that
-> nothing valuable is lost when deleting this checklist.
-
-So my purpose today was to go ahead and apply these patches, but ...
-
-> Patch 1, 2 and 3 is just basic clean-up before adding a new reference (see
-> Patch 4). Patch 4 adds the one reference from submitting-drivers, not
-> already mentioned elsewhere in the repository. Patch 5 updates a confusing
-> statement in devices.rst from earlier .txt/.tex distinction times to the
-> new state now with Sphinx & .rst.
+>It is less verbose and it improves the semantic.
 >
-> Patch 6 finally deletes the outdated document, with a cross-check what is
-> covered elsewhere and few open questions (see below).
->
-> Patch 7 and 8 have been reworked with the native-speaking doc maintainers;
-> they cause no new warnings and are ready to pick,
->
-> Patch 9 to 11 are weak attempts to adjust the translation, but they need
-> to be taken further by others due to my lack of knowledge on the other
-> languages.  They would currently also cause new warnings in the doc-build
-> right now. They should not be picked if there is no one to continue
-> to adjust the text and fix the warnings on broken references.
->
-> I hope that patches 1 to 8 can be picked into doc-next, and then we see
-> how to fix up the translations as well.
+>Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-...even if I do that I get warnings:
-
-  Documentation/translations/zh_CN/process/howto.rst:98: WARNING:
-  undefined label: submittingdrivers (if the link has no caption the
-  label must precede a section header)
-
-it's actually better if I apply the full series, but there's still a few
-of them.  I *really* don't want to add more warnings to the docs build,
-so I've backed off for now.
-
-Alex, can you fix the remaining references in zh_CN?
-
-For zh_TW I'm wondering ... that is increasingly looking like an
-unmaintained drive-by submission.  I suppose we can just brute-force
-remove the references, but I once again find myself wondering about the
-value of this translation.  Is there anybody out there who cares about
-it who could fix this up properly?
-
-Thanks,
-
-jon
+applied to net-next-mlx5
