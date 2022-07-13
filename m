@@ -2,97 +2,94 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E81BCC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Jul 2022 04:09:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E92A9C43334
+	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Jul 2022 04:17:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230003AbiGMEJg (ORCPT
+        id S231423AbiGMERz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 13 Jul 2022 00:09:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48006 "EHLO
+        Wed, 13 Jul 2022 00:17:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229568AbiGMEJf (ORCPT
+        with ESMTP id S231269AbiGMERw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 13 Jul 2022 00:09:35 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 104BA2F011;
-        Tue, 12 Jul 2022 21:09:34 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id fd6so12546012edb.5;
-        Tue, 12 Jul 2022 21:09:33 -0700 (PDT)
+        Wed, 13 Jul 2022 00:17:52 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF985D9E16;
+        Tue, 12 Jul 2022 21:17:51 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id va17so17806469ejb.0;
+        Tue, 12 Jul 2022 21:17:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id;
-        bh=uwhVGOtXVEbD4bfgEJTYjAAgvUjp7mu9HgJ6ft1n1lA=;
-        b=dn9V3qRoGTvfRYbOmPA4I39IFupZn2Yi//Pycls2RbWE66Q3nQlNOk7b4HsJn11M2I
-         S3A6ShIGZt0yTTvRK5UOzCsJofKBZ7748n1jnhaXhPs9zmd0Why9GnSme8ynZwqsPl+J
-         Ag7nDDxPJLFyPEH5FmI0dDXJPoR+wZwqfomULLR2i2eubl9CuDbr0I7KDu8bDaZPes9R
-         KCgBWh4weQGTU4nh+rFYIKbMBD04VSgVUTwMXZZF2rQ1IuwZf1fUTfxPzWoBU9boWi4g
-         46h0O4FBC2VG5IHvXIFzo01pna9Fzk+oteZ0DgHarkqS/XZ0PSzZBFEQiAcPDIwy6zov
-         91YA==
+        bh=MAwaURqcRpusNRl3AIB3mDLAkAjWXQjGjCMsVfkKjiM=;
+        b=SHAihmGvWkE8qpEv25473rAGVNxGa61bY8JpoBaWp+8MeHkBmpu1xaKFY4tD1zGApG
+         HVtsvWZIVpYhHUlpGPhYS2VSECPp50yZaeq1+fAV/JQn493YrOb0G3YjRIQ5x5kwByoc
+         ytPA/ogIvjCE9VQaYcV5eWpv6EwC81oPLVgFZ0yc0dfYIDbI80HTZcv65W6iZT58+5u6
+         +7AlQnsR11xU8Q1KEu5ZRP8sBf32dKlm1QvtILh2kkX6BDqwaRHK4MP+4eXoRMnbqDV+
+         eI8vTDzz6mJTU+a0//MHiAzSSEmjuUL004Xgl1o1pyyMAIOxoq4Mk7Jw+xicTMAH+xZu
+         fwIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=uwhVGOtXVEbD4bfgEJTYjAAgvUjp7mu9HgJ6ft1n1lA=;
-        b=gRIzLH6pnPNTSXtPaeaY7jF1860uRrx0J/07GQQtgFmz2ERF/dZq+rDIZLQm8UaEP6
-         EeIrAiEn8S47M5r3pjWr0rfE3ANKhyKqDXnh9R3t2GnPEVr4xHEm7wZjpbl2NGQzbdw3
-         kN69OnZz1RRKn7MoiA3hEpno/W9Xpx5QONqtzfjNQnCdxGc50odu3SvN5qS/npeSuLXT
-         h4VOSjtolyqCZ7a1QhYiIiI2NwNtgEcTQ33wupjWhX7XSLZnbYHY2y7d4AuanfrcjWsQ
-         bOPsxehnx+ISQDqKpA9yIKrdqdAvxLZH6o8QPNd3DW0NX9SwDOYkkSInahUX4PnGrgAu
-         TJYw==
-X-Gm-Message-State: AJIora/6pcKNohzxTkfxF2WEmO9sHdu4kLYTkqhzVopt4wbtIHK6O8/S
-        cxu/gFlVUTAU7+xz+YWN2DM=
-X-Google-Smtp-Source: AGRyM1svfhRgGyYmYm3IXekdiv6FmTJelab6KJb7XWuX7JK0UalwiBGbHKZvA7AUrAShTyzfe1NW8Q==
-X-Received: by 2002:a05:6402:3041:b0:43a:d8b1:8b5 with SMTP id bs1-20020a056402304100b0043ad8b108b5mr2017165edb.242.1657685372505;
-        Tue, 12 Jul 2022 21:09:32 -0700 (PDT)
+        bh=MAwaURqcRpusNRl3AIB3mDLAkAjWXQjGjCMsVfkKjiM=;
+        b=1Yt4UY/sEa8+Hm8VrIOG7ii912Vs7VDwT1fjOBgQ92fHPXQd5YEYqEhnpCLLM9/34m
+         /ey6nCtqXmDW9sIclhe+Uku2V8NGu5L0GNhEJCDHy18Y+UC0c+GqFT27OVgd0dxVRbqn
+         gxhFn3LuAa3gpbq+E6Pzql3PT/Wv8nPRprTMQ8sCMld4jgSLua8E/4DWMwNCLJk9D8tK
+         RrCOAwe6xULaNeAHmlxiW19m26B+xf+snXiYTwkFOYqeo8/zYRHrj+5uoceIhIDZwE8b
+         aJLxLBY0NlmQLmgiuJc2rbUfCIKR13DQcD8Ili8UXs3rNrX1psZIi71rsP08dMye7mTx
+         E9OA==
+X-Gm-Message-State: AJIora++sEGBlS0JiUZkyZ+YbJ6OHzOnx06kIs1gifRkNEFpRD6LtZyk
+        LywE6vWyd4nPkqDfAJ86HTQ=
+X-Google-Smtp-Source: AGRyM1vC7+7aeJHF+wLpsnF+8rObPlM9ui7JrN3XWlslx+0t/pBXJyqA6DX74NdxdrAjc/baJm81MA==
+X-Received: by 2002:a17:907:6091:b0:72b:88c5:2a2f with SMTP id ht17-20020a170907609100b0072b88c52a2fmr1384552ejc.715.1657685870242;
+        Tue, 12 Jul 2022 21:17:50 -0700 (PDT)
 Received: from felia.fritz.box (200116b826b4e8009cf80f75265d524b.dip.versatel-1u1.de. [2001:16b8:26b4:e800:9cf8:f75:265d:524b])
-        by smtp.gmail.com with ESMTPSA id kb13-20020a1709070f8d00b00718e4e64b7bsm4447829ejc.79.2022.07.12.21.09.31
+        by smtp.gmail.com with ESMTPSA id kw11-20020a170907770b00b006f3ef214e27sm4539772ejc.141.2022.07.12.21.17.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Jul 2022 21:09:32 -0700 (PDT)
+        Tue, 12 Jul 2022 21:17:49 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Maximilian Luz <luzmaximilian@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        platform-driver-x86@vger.kernel.org
+To:     Russell King <linux@armlinux.org.uk>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: repair file entry in MICROSOFT SURFACE AGGREGATOR TABLET-MODE SWITCH
-Date:   Wed, 13 Jul 2022 06:09:16 +0200
-Message-Id: <20220713040916.1767-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH RESEND] MAINTAINERS: drop entry to removed file in ARM/RISCPC ARCHITECTURE
+Date:   Wed, 13 Jul 2022 06:17:27 +0200
+Message-Id: <20220713041727.8087-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 9f794056db5b ("platform/surface: Add KIP/POS tablet-mode switch
-driver") adds the section MICROSOFT SURFACE AGGREGATOR TABLET-MODE SWITCH
-with a file entry, but the file that is added with this commit is actually
-named slightly differently.
-
-  file entry name: drivers/platform/surface/surface_aggregator_tablet_switch.c
-  added file name: drivers/platform/surface/surface_aggregator_tabletsw.c
+Commit c1fe8d054c0a ("ARM: riscpc: use GENERIC_IRQ_MULTI_HANDLER") removes
+arch/arm/include/asm/hardware/entry-macro-iomd.S, but missed to adjust
+MAINTAINERS.
 
 Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
 broken reference.
 
-Repair this file entry to the actual file name added with the commit above.
+Drop the file entry to the removed file in ARM/RISCPC ARCHITECTURE.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+PATCH v1: https://lore.kernel.org/linux-arm-kernel/20220311130957.17884-1-lukas.bulwahn@gmail.com/
+
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 9bfd69e2b83d..9ec738419526 100644
+index b5aeaddc9539..a783ef8f58a3 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -13440,7 +13440,7 @@ MICROSOFT SURFACE AGGREGATOR TABLET-MODE SWITCH
- M:	Maximilian Luz <luzmaximilian@gmail.com>
- L:	platform-driver-x86@vger.kernel.org
+@@ -2652,7 +2652,6 @@ M:	Russell King <linux@armlinux.org.uk>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
  S:	Maintained
--F:	drivers/platform/surface/surface_aggregator_tablet_switch.c
-+F:	drivers/platform/surface/surface_aggregator_tabletsw.c
- 
- MICROSOFT SURFACE BATTERY AND AC DRIVERS
- M:	Maximilian Luz <luzmaximilian@gmail.com>
+ W:	http://www.armlinux.org.uk/
+-F:	arch/arm/include/asm/hardware/entry-macro-iomd.S
+ F:	arch/arm/include/asm/hardware/ioc.h
+ F:	arch/arm/include/asm/hardware/iomd.h
+ F:	arch/arm/include/asm/hardware/memc.h
 -- 
 2.17.1
 
