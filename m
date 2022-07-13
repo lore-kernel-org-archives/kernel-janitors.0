@@ -2,100 +2,97 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 602E7C43334
-	for <kernel-janitors@archiver.kernel.org>; Tue, 12 Jul 2022 19:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E81BCC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Jul 2022 04:09:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233414AbiGLTto (ORCPT
+        id S230003AbiGMEJg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 12 Jul 2022 15:49:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60300 "EHLO
+        Wed, 13 Jul 2022 00:09:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233970AbiGLTsa (ORCPT
+        with ESMTP id S229568AbiGMEJf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 12 Jul 2022 15:48:30 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A620BD6A0;
-        Tue, 12 Jul 2022 12:41:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 032E1B81BD0;
-        Tue, 12 Jul 2022 19:41:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F76CC3411E;
-        Tue, 12 Jul 2022 19:41:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657654883;
-        bh=A8IHI6uBF4PEsAf4qntIS6Lk50a5/zGqa5XnyLKFtf8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=sB1J0NLa0XjUbBeirYQ2QSsa5I6dnLPfNBFn334MLKmsYwlD564iE2yVRni0ms8UW
-         l2t5IQ50TlaS7YUTftiL/z6Cd0hTSSlLKPt1A//m8zBolHVpnw78D+la5BFMq0zK8/
-         ZRYtfHH5VrTnK7dMrvwRnMLfDwWT2yn5bBqIdmtuJJ2McEU+YTvKOu89phZO1LSFXZ
-         odQqanGVuU4U4QeH99Hya3FT/dyDczK701un2lMRWRFmcGjX4WNr/WCOEZZlc2+DEb
-         TkZ83VdIylNl82C19AwwPIx2khtnvDbfBDtcno+Wvb8M9rWqWmCJEULpCR+baqMHyZ
-         NZ2v0FFLZ86yg==
-Date:   Tue, 12 Jul 2022 14:41:21 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-pci@vger.kernel.org,
-        Serge Semin <Sergey.Semin@baikalelectronics.ru>
-Subject: Re: [PATCH] PCI: dwc: Use the bitmap API to allocate bitmaps
-Message-ID: <20220712194121.GA789611@bhelgaas>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bc6586a603abc0db7d4531308b698fbe7a6d7083.1657375829.git.christophe.jaillet@wanadoo.fr>
+        Wed, 13 Jul 2022 00:09:35 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 104BA2F011;
+        Tue, 12 Jul 2022 21:09:34 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id fd6so12546012edb.5;
+        Tue, 12 Jul 2022 21:09:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=uwhVGOtXVEbD4bfgEJTYjAAgvUjp7mu9HgJ6ft1n1lA=;
+        b=dn9V3qRoGTvfRYbOmPA4I39IFupZn2Yi//Pycls2RbWE66Q3nQlNOk7b4HsJn11M2I
+         S3A6ShIGZt0yTTvRK5UOzCsJofKBZ7748n1jnhaXhPs9zmd0Why9GnSme8ynZwqsPl+J
+         Ag7nDDxPJLFyPEH5FmI0dDXJPoR+wZwqfomULLR2i2eubl9CuDbr0I7KDu8bDaZPes9R
+         KCgBWh4weQGTU4nh+rFYIKbMBD04VSgVUTwMXZZF2rQ1IuwZf1fUTfxPzWoBU9boWi4g
+         46h0O4FBC2VG5IHvXIFzo01pna9Fzk+oteZ0DgHarkqS/XZ0PSzZBFEQiAcPDIwy6zov
+         91YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=uwhVGOtXVEbD4bfgEJTYjAAgvUjp7mu9HgJ6ft1n1lA=;
+        b=gRIzLH6pnPNTSXtPaeaY7jF1860uRrx0J/07GQQtgFmz2ERF/dZq+rDIZLQm8UaEP6
+         EeIrAiEn8S47M5r3pjWr0rfE3ANKhyKqDXnh9R3t2GnPEVr4xHEm7wZjpbl2NGQzbdw3
+         kN69OnZz1RRKn7MoiA3hEpno/W9Xpx5QONqtzfjNQnCdxGc50odu3SvN5qS/npeSuLXT
+         h4VOSjtolyqCZ7a1QhYiIiI2NwNtgEcTQ33wupjWhX7XSLZnbYHY2y7d4AuanfrcjWsQ
+         bOPsxehnx+ISQDqKpA9yIKrdqdAvxLZH6o8QPNd3DW0NX9SwDOYkkSInahUX4PnGrgAu
+         TJYw==
+X-Gm-Message-State: AJIora/6pcKNohzxTkfxF2WEmO9sHdu4kLYTkqhzVopt4wbtIHK6O8/S
+        cxu/gFlVUTAU7+xz+YWN2DM=
+X-Google-Smtp-Source: AGRyM1svfhRgGyYmYm3IXekdiv6FmTJelab6KJb7XWuX7JK0UalwiBGbHKZvA7AUrAShTyzfe1NW8Q==
+X-Received: by 2002:a05:6402:3041:b0:43a:d8b1:8b5 with SMTP id bs1-20020a056402304100b0043ad8b108b5mr2017165edb.242.1657685372505;
+        Tue, 12 Jul 2022 21:09:32 -0700 (PDT)
+Received: from felia.fritz.box (200116b826b4e8009cf80f75265d524b.dip.versatel-1u1.de. [2001:16b8:26b4:e800:9cf8:f75:265d:524b])
+        by smtp.gmail.com with ESMTPSA id kb13-20020a1709070f8d00b00718e4e64b7bsm4447829ejc.79.2022.07.12.21.09.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Jul 2022 21:09:32 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Maximilian Luz <luzmaximilian@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        platform-driver-x86@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: repair file entry in MICROSOFT SURFACE AGGREGATOR TABLET-MODE SWITCH
+Date:   Wed, 13 Jul 2022 06:09:16 +0200
+Message-Id: <20220713040916.1767-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-[+cc Serge]
+Commit 9f794056db5b ("platform/surface: Add KIP/POS tablet-mode switch
+driver") adds the section MICROSOFT SURFACE AGGREGATOR TABLET-MODE SWITCH
+with a file entry, but the file that is added with this commit is actually
+named slightly differently.
 
-On Sat, Jul 09, 2022 at 04:10:52PM +0200, Christophe JAILLET wrote:
-> Use devm_bitmap_zalloc() instead of hand-writing them.
-> 
-> It is less verbose and it improves the semantic.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+  file entry name: drivers/platform/surface/surface_aggregator_tablet_switch.c
+  added file name: drivers/platform/surface/surface_aggregator_tabletsw.c
 
-Applied to pci/ctrl/dwc for v5.20, thanks!
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
-> ---
->  drivers/pci/controller/dwc/pcie-designware-ep.c | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> index fb887495f53e..ad54aaa71a02 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> @@ -721,17 +721,13 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
->  	ep->phys_base = res->start;
->  	ep->addr_size = resource_size(res);
->  
-> -	ep->ib_window_map = devm_kcalloc(dev,
-> -					 BITS_TO_LONGS(pci->num_ib_windows),
-> -					 sizeof(long),
-> -					 GFP_KERNEL);
-> +	ep->ib_window_map = devm_bitmap_zalloc(dev, pci->num_ib_windows,
-> +					       GFP_KERNEL);
->  	if (!ep->ib_window_map)
->  		return -ENOMEM;
->  
-> -	ep->ob_window_map = devm_kcalloc(dev,
-> -					 BITS_TO_LONGS(pci->num_ob_windows),
-> -					 sizeof(long),
-> -					 GFP_KERNEL);
-> +	ep->ob_window_map = devm_bitmap_zalloc(dev, pci->num_ob_windows,
-> +					       GFP_KERNEL);
->  	if (!ep->ob_window_map)
->  		return -ENOMEM;
->  
-> -- 
-> 2.34.1
-> 
+Repair this file entry to the actual file name added with the commit above.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9bfd69e2b83d..9ec738419526 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13440,7 +13440,7 @@ MICROSOFT SURFACE AGGREGATOR TABLET-MODE SWITCH
+ M:	Maximilian Luz <luzmaximilian@gmail.com>
+ L:	platform-driver-x86@vger.kernel.org
+ S:	Maintained
+-F:	drivers/platform/surface/surface_aggregator_tablet_switch.c
++F:	drivers/platform/surface/surface_aggregator_tabletsw.c
+ 
+ MICROSOFT SURFACE BATTERY AND AC DRIVERS
+ M:	Maximilian Luz <luzmaximilian@gmail.com>
+-- 
+2.17.1
+
