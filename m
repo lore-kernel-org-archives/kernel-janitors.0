@@ -2,52 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E5DC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Jul 2022 10:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D1DC43334
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Jul 2022 11:00:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238494AbiGNKs3 (ORCPT
+        id S238378AbiGNLAW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Jul 2022 06:48:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56572 "EHLO
+        Thu, 14 Jul 2022 07:00:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238483AbiGNKsZ (ORCPT
+        with ESMTP id S237669AbiGNLAV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Jul 2022 06:48:25 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B106651406;
-        Thu, 14 Jul 2022 03:48:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=XohSnVoV4/1lapZbhGBzX2/x+DHxkPY5UG2ab+3neEw=; b=MziSggPty3ej2uD1YfMBwconmS
-        1f1LjggwlXHkmCjf8EvrkcJMFYuZfMo5gyndLt+GS3m29klzYZ5UB8iwXY3bwd9GkrpLlh8iwg+Qh
-        PIGGXMO84HlmxCTwDm4slMY9WEM+2rzr4a8ROntmdlPdm9n/30UL90FzecQW2wvgOBgMvGHHGNUu4
-        ZL1x0+aiMDgDqx7DEBpcsHJQ0PutUzPfUBzRJ+JQO7ek+fLfsRIASxtvBX1eTyoMMotaTM2+V2mQ5
-        dZ7wtIpu1dE2GtcyQzLlMWfYG6fFK5jq8biA/YFvZutry/xjboDsRCCT5BQ2eqOcCw64h8dgd2/La
-        br7+6K5w==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=worktop.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oBwOI-003oqI-VN; Thu, 14 Jul 2022 10:48:19 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E26E6980120; Thu, 14 Jul 2022 12:48:17 +0200 (CEST)
-Date:   Thu, 14 Jul 2022 12:48:17 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Josh Poimboeuf <jpoimboe@kernel.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] objtool: Fix spelling mistake "teh " -> "the"
-Message-ID: <Ys/0cXFRssinOqRE@worktop.programming.kicks-ass.net>
-References: <20220714102856.22512-1-colin.i.king@gmail.com>
+        Thu, 14 Jul 2022 07:00:21 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C506F564EE;
+        Thu, 14 Jul 2022 04:00:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6401560C1C;
+        Thu, 14 Jul 2022 11:00:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBD83C34114;
+        Thu, 14 Jul 2022 11:00:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657796419;
+        bh=d7dJzHy3R4d3efKnyqF1Bs4i3d1AFlB+D2NT0p1gevU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=mIMm8UuymYGzasiWrapSwDV3BiJoF1yRtWQMqJJ5cqYVEOqF2xjIzfbD36CAzxyYt
+         NrEDpwQNhh9tbxqYRMu887wgzprhX8SwYgd2tt6B9C5bo77b+ybDEUwI7uuweLVQTO
+         tVhJSf7tsinQEcd+Rj+D6xELXiQSnnCB2pHqVejQ5jvmLvuxD1aTKqgK1IwBWzm5dx
+         bbhEyMf3pmi25tCnuC8MpjBUjgdMuvqw6SCv7xbfE8CxGnTyLZRScWjQas7togxw+k
+         a8Vw4WNL/7qBewkR0iP157GyKKBP7UK+Wku44rHE9Hz7/5NXaf/tF+lGwiAQJMR0zT
+         lvmkuBLic7Q7w==
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-31caffa4a45so13150227b3.3;
+        Thu, 14 Jul 2022 04:00:19 -0700 (PDT)
+X-Gm-Message-State: AJIora8X0M6GQJew/D9SnxKql0w+vaqAHCbTrAiLf3NVlwB8NYmgLk+c
+        6c7sC66veykK9EPU9kegnfMS6WHmgrlzxMEx+lE=
+X-Google-Smtp-Source: AGRyM1v8B84SNAdGfOI4zRumWOHG4tF3fWc5HBtUKpdHnhrTodjFGxXFqWCe2mA6l8aeAzCy9c7C96Np8oZnHoxYPK4=
+X-Received: by 2002:a81:1608:0:b0:31c:925f:c52c with SMTP id
+ 8-20020a811608000000b0031c925fc52cmr9171091yww.93.1657796418888; Thu, 14 Jul
+ 2022 04:00:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220714102856.22512-1-colin.i.king@gmail.com>
+References: <20220714103119.22927-1-colin.i.king@gmail.com>
+In-Reply-To: <20220714103119.22927-1-colin.i.king@gmail.com>
+From:   Oded Gabbay <ogabbay@kernel.org>
+Date:   Thu, 14 Jul 2022 13:59:52 +0300
+X-Gmail-Original-Message-ID: <CAFCwf13ppoKUGtVRUc93EySHOVsXF-3XkfHUvC0K1O2adVDpFQ@mail.gmail.com>
+Message-ID: <CAFCwf13ppoKUGtVRUc93EySHOVsXF-3XkfHUvC0K1O2adVDpFQ@mail.gmail.com>
+Subject: Re: [PATCH][next] habanalabs: Fix spelling mistake "Scrubing" -> "Scrubbing"
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kernel-janitors@vger.kernel.org,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jul 14, 2022 at 11:28:56AM +0100, Colin Ian King wrote:
-> There is a spelling mistake in a WARN_FUNC message. Fix it.
-
-That was so on purpose... :-)
+On Thu, Jul 14, 2022 at 1:31 PM Colin Ian King <colin.i.king@gmail.com> wrote:
+>
+> There is a spelling mistake in a dev_dbg message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/misc/habanalabs/gaudi/gaudi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/misc/habanalabs/gaudi/gaudi.c b/drivers/misc/habanalabs/gaudi/gaudi.c
+> index cb2988e2c7a8..05dd5e13f13e 100644
+> --- a/drivers/misc/habanalabs/gaudi/gaudi.c
+> +++ b/drivers/misc/habanalabs/gaudi/gaudi.c
+> @@ -4723,7 +4723,7 @@ static int gaudi_scrub_device_mem(struct hl_device *hdev)
+>         addr = prop->sram_user_base_address;
+>         size = hdev->pldm ? 0x10000 : prop->sram_size - SRAM_USER_BASE_OFFSET;
+>
+> -       dev_dbg(hdev->dev, "Scrubing SRAM: 0x%09llx - 0x%09llx val: 0x%llx\n",
+> +       dev_dbg(hdev->dev, "Scrubbing SRAM: 0x%09llx - 0x%09llx val: 0x%llx\n",
+>                         addr, addr + size, val);
+>         rc = gaudi_memset_device_memory(hdev, addr, size, val);
+>         if (rc) {
+> --
+> 2.35.3
+>
+Reviewed-by: Oded Gabbay <ogabbay@kernel.org>
+Applied to -next.
+Thanks,
+Oded
