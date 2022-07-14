@@ -2,100 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A28CCA47B
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Jul 2022 05:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD67CCCA481
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Jul 2022 05:46:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231173AbiGNFWP (ORCPT
+        id S232500AbiGNFqG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Jul 2022 01:22:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34970 "EHLO
+        Thu, 14 Jul 2022 01:46:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229546AbiGNFWO (ORCPT
+        with ESMTP id S230024AbiGNFqF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Jul 2022 01:22:14 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4CC71EED4;
-        Wed, 13 Jul 2022 22:22:12 -0700 (PDT)
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26E4vwAZ032275;
-        Thu, 14 Jul 2022 05:22:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=pp1; bh=NkP6/TaGwATjr+2vsaWbX9IwYyVELWKQtaZF3PZCS6A=;
- b=FqWw7hZMXiZm9uiOCVC9Liyg9nArnsd7wvZtLV/5UWbDgUHtNfq4h9cksdHJXkZzNUGa
- wdsdACv0NKLkb4bcoB7xTea4InD1gwqx9pwOCfBwOsdwIAZpLZbOT5B4Fw4MIbEpMmEM
- 3iKJr4LkOuGYSHMCauRM6pDeEABWRzyK1cmO3IqlUK4aYc2858pnFxMPAegKPsrBGzLY
- lKWTdp7uflEUPC6gZhFVboaGfMyN0vimqftBSZeV4aViBz2H6ctWNwWexOwcEF66AEbs
- pJv2sQZikaLQvdNEFjRriq9nnQeSos26qvN6+fbbmFp0xOUFtzR2tD1lOBA3O+s3g12+ Nw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3hack20jb9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 14 Jul 2022 05:22:12 +0000
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 26E559IH026392;
-        Thu, 14 Jul 2022 05:22:11 GMT
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3hack20jan-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 14 Jul 2022 05:22:11 +0000
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 26E5KlmS012809;
-        Thu, 14 Jul 2022 05:22:09 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma05fra.de.ibm.com with ESMTP id 3ha19s0g7e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 14 Jul 2022 05:22:09 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 26E5M5Hv8323488
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Jul 2022 05:22:05 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D170BA4054;
-        Thu, 14 Jul 2022 05:22:05 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 54242A405B;
-        Thu, 14 Jul 2022 05:22:05 +0000 (GMT)
-Received: from li-4a3a4a4c-28e5-11b2-a85c-a8d192c6f089.ibm.com (unknown [9.145.47.210])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 14 Jul 2022 05:22:05 +0000 (GMT)
-Date:   Thu, 14 Jul 2022 07:22:03 +0200
-From:   Alexander Gordeev <agordeev@linux.ibm.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Niklas Schnelle <schnelle@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH] s390/pci: Use the bitmap API to allocate bitmaps
-Message-ID: <Ys+n+wU8GyQzR+xk@li-4a3a4a4c-28e5-11b2-a85c-a8d192c6f089.ibm.com>
-References: <8d35e482f710889a45d46f808155738ef87d46c4.1657383052.git.christophe.jaillet@wanadoo.fr>
+        Thu, 14 Jul 2022 01:46:05 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE5C02AC73;
+        Wed, 13 Jul 2022 22:46:03 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id bf9so1039226lfb.13;
+        Wed, 13 Jul 2022 22:46:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vafiOnArmMbdFkw12ZkX8srj9GjEXyE3zEfZk0yyph8=;
+        b=iscXerRkiLLlWMBAYhA8TXE3h5olodsXQDUzlHDh96YOfEf9JHeUR+yq2hn7Jw8R+o
+         +x0HBvlToMU1Z0tcb5vFSAq+GeNVPnsQ3bLdfsHvHjbd63WfPatdE9fqKOUh6PuS6vzI
+         GphVb+HXRxyzKuR9NQiE50Maoti75bkQJ5hT2pI/rC38aOZJxveWEmorzhD2HgznRnwz
+         1PbKIfBtF1dB3yv15M04ZNafaJLYTYip2kwpyq+HoUPTLZjjLv52Dy0taETre4Trom62
+         Mjt++h/NXMnQu/osLBh5kJ3XyfzTYO75O8bnDtRVMJzE14lSkPN17Bq8t9wY11r2uZkL
+         ABrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vafiOnArmMbdFkw12ZkX8srj9GjEXyE3zEfZk0yyph8=;
+        b=1fWE8NC9CVrMImU2SJ/RNAvgJW2SY4vPqtPNQClx2NaIyqJ1VPlRImETzza5vsWHn/
+         erhrJHUQcYANUFRnkJ2JeJ34scQwnsUuww4qc188/IOElnH9uut6AU7sTF8p0eK6kTRN
+         olGDVk56xgVRSyhM0+V07vWVqHO7b2jZuiXDEPgYeHLgtbUNAzsZCeSQc4X8iWqF/lyN
+         p/AIXW0HBhX5s/PXlt7IWiCvrB1fyUzB9Snp1wHl5I85FHe3FRk1dtgDrR9kT12xzOdj
+         zmQu5ukFT4hDjKrclgV6rF4k9wIr88kfehobL8J/xMAtsFFyX72IPD9YTxzuxSdxTvUa
+         l5pQ==
+X-Gm-Message-State: AJIora+hec+euTJmG6AxsnM1tbCk9Nrh4jrOVpQ14cdJ4P7iCWwbaTlv
+        wp95nDVx0C6nmOfInXf1J9yWWeiGFU7hkx0JU4fpbVZKG5fblw==
+X-Google-Smtp-Source: AGRyM1vuz7AcEk7yBbzuHjGT3m6seyH+2XU8NoxGTDIkTqbgJg+QqUcC/DHrl4m2eAzwLfUoHy7fWhQUUwenxJxrSa8=
+X-Received: by 2002:a05:6512:3c98:b0:489:dee3:51d0 with SMTP id
+ h24-20020a0565123c9800b00489dee351d0mr4038695lfv.606.1657777562004; Wed, 13
+ Jul 2022 22:46:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8d35e482f710889a45d46f808155738ef87d46c4.1657383052.git.christophe.jaillet@wanadoo.fr>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: OQJiWbFacoPO-GpP64fN_84b3r11AaBn
-X-Proofpoint-GUID: 1xcfCk05vUKkzVngbdQN__0jLnYlpDrW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-07-14_02,2022-07-13_03,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 phishscore=0 clxscore=1011 mlxscore=0 spamscore=0
- mlxlogscore=806 bulkscore=0 lowpriorityscore=0 malwarescore=0
- impostorscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2206140000 definitions=main-2207140022
+References: <20220704122537.3407-1-lukas.bulwahn@gmail.com> <87sfn44wk4.fsf@meer.lwn.net>
+In-Reply-To: <87sfn44wk4.fsf@meer.lwn.net>
+From:   Alex Shi <seakeel@gmail.com>
+Date:   Thu, 14 Jul 2022 13:45:25 +0800
+Message-ID: <CAJy-AmnkRRqC25N1imgqRCHymh8J4ZE=LYx=-3tG4bhAggViSA@mail.gmail.com>
+Subject: Re: [PATCH 00/11] docs: remove submitting-drivers.rst
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Federico Vaga <federico.vaga@vaga.pv.it>,
+        Alex Shi <alexs@kernel.org>,
+        Yanteng Si <siyanteng@loongson.cn>,
+        Hu Haowen <src.res@email.cn>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-doc-tw-discuss@lists.sourceforge.net,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Jul 09, 2022 at 06:11:28PM +0200, Christophe JAILLET wrote:
-> I don't know why commit c506fff3d3a8 ("s390/pci: resize iomap") has turned
-> this bitmap from a statically defined bitmap to a runtime-allocated one.
+> Alex, can you fix the remaining references in zh_CN?
+>
+> For zh_TW I'm wondering ... that is increasingly looking like an
+> unmaintained drive-by submission.  I suppose we can just brute-force
+> remove the references, but I once again find myself wondering about the
+> value of this translation.  Is there anybody out there who cares about
+> it who could fix this up properly?
 
-c506fff3d3a8 commit message:
+Hi Jon,
 
-    This reduces the size of the iomap from 256K to less than 4K
-    (using the defconfig).
+Both zh_CN and zh_TW were fixed on
+https://lore.kernel.org/linux-doc/20220714054013.214031-1-alexs@kernel.org/T/#u
+
+Sorry for the issue
+
+Thanks
+Alex
