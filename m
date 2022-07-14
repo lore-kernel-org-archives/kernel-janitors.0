@@ -2,93 +2,52 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B733C43334
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Jul 2022 10:34:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E5DC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Jul 2022 10:48:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237998AbiGNKec (ORCPT
+        id S238494AbiGNKs3 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Jul 2022 06:34:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43564 "EHLO
+        Thu, 14 Jul 2022 06:48:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230049AbiGNKeb (ORCPT
+        with ESMTP id S238483AbiGNKsZ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Jul 2022 06:34:31 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06AA74B497;
-        Thu, 14 Jul 2022 03:34:30 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id be14-20020a05600c1e8e00b003a04a458c54so941043wmb.3;
-        Thu, 14 Jul 2022 03:34:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pC66SMISxswpCgrA0kH+9OIYYeRJxezyms4h+DmQEVU=;
-        b=WYO169N6L97QHmWqgss2/YWVR6YdUUzTbwOhAJSVFU1PEQ8kMqZBDicC68o07P9q28
-         EEmuC/mKE53/poe+vlYtxqMaZ+PGZyrZbq2eRvdu5aRT6bArMjBK06GnSwCI1PkYV8x7
-         UVCaVzMlf3W+ycBWFVoF9L83DY5tT97R24OrEMBDW5VZsJeqwuye8oTIOqHSGq714blI
-         Wk/JILDt14y+ugO98wHXHVOtXlAw+wfAhbECEKwfxHSbKek2VkQuyXmSWmHG/m0aETRg
-         pYgtSHJavQ5/qFeqk+bzDe5Q5xU4RXUi4MDpWF2WSdlG1KEgTcQheOshDYdeDck/jLyt
-         lK6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pC66SMISxswpCgrA0kH+9OIYYeRJxezyms4h+DmQEVU=;
-        b=mHPRDvGzib8rk7CnXXVtJRY6nElmqlbfDb8I5hsRAu1dz6VxdNq2qlawmTSrtP+L93
-         DS9Mpz00yILWIdcqxLXBLmGNq5tYgLD7h5cY0yfSXwuT4GW7Zv7aTvM7nushpRzdraYR
-         CIPIE8nk6h4TNg2omm6EdJb2jRl9EpsMjtN0cl4S5RVEBJOmej8ZL3d1dyksxxPpEQiC
-         +myYM744IpoiUHTZESObIePZERVdc9ca0/iHtqrTkxIJmtqXMLVAL1SKEuf9NENu+vCU
-         5JdoT+gTMrWKNbHwvhhgsJ59q4qvwhFEumtuQ6Yja3np+oU0+IIQBVRTgIWP62+rI7Jz
-         Du6g==
-X-Gm-Message-State: AJIora/FrAbDkU3gAyn1notGMAk3AplJSKeloq6YkZQjiNbhec1cRuZa
-        3QgqoF0vOEI7np4o55S5pF4D3pHZiHNdRg==
-X-Google-Smtp-Source: AGRyM1tzgGbSFb97riqzZ4HULy1PRelNWUuo0QfgWlU5yTDw80hM5eCb4WBNauTxsQxuKHokkxRFQA==
-X-Received: by 2002:a05:600c:3506:b0:3a2:feb0:9f8e with SMTP id h6-20020a05600c350600b003a2feb09f8emr5482096wmq.42.1657794868604;
-        Thu, 14 Jul 2022 03:34:28 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id d16-20020a05600c049000b0039c96b97359sm1386358wme.37.2022.07.14.03.34.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Jul 2022 03:34:28 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Xinhui.Pan@amd.com, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amd/display: Fix spelling mistake "supporing" -> "supporting"
-Date:   Thu, 14 Jul 2022 11:34:27 +0100
-Message-Id: <20220714103427.23255-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.3
+        Thu, 14 Jul 2022 06:48:25 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B106651406;
+        Thu, 14 Jul 2022 03:48:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=XohSnVoV4/1lapZbhGBzX2/x+DHxkPY5UG2ab+3neEw=; b=MziSggPty3ej2uD1YfMBwconmS
+        1f1LjggwlXHkmCjf8EvrkcJMFYuZfMo5gyndLt+GS3m29klzYZ5UB8iwXY3bwd9GkrpLlh8iwg+Qh
+        PIGGXMO84HlmxCTwDm4slMY9WEM+2rzr4a8ROntmdlPdm9n/30UL90FzecQW2wvgOBgMvGHHGNUu4
+        ZL1x0+aiMDgDqx7DEBpcsHJQ0PutUzPfUBzRJ+JQO7ek+fLfsRIASxtvBX1eTyoMMotaTM2+V2mQ5
+        dZ7wtIpu1dE2GtcyQzLlMWfYG6fFK5jq8biA/YFvZutry/xjboDsRCCT5BQ2eqOcCw64h8dgd2/La
+        br7+6K5w==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=worktop.programming.kicks-ass.net)
+        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1oBwOI-003oqI-VN; Thu, 14 Jul 2022 10:48:19 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E26E6980120; Thu, 14 Jul 2022 12:48:17 +0200 (CEST)
+Date:   Thu, 14 Jul 2022 12:48:17 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Josh Poimboeuf <jpoimboe@kernel.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] objtool: Fix spelling mistake "teh " -> "the"
+Message-ID: <Ys/0cXFRssinOqRE@worktop.programming.kicks-ass.net>
+References: <20220714102856.22512-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220714102856.22512-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a dml_print message. Fix it.
+On Thu, Jul 14, 2022 at 11:28:56AM +0100, Colin Ian King wrote:
+> There is a spelling mistake in a WARN_FUNC message. Fix it.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- .../gpu/drm/amd/display/dc/dml/dcn314/display_mode_vba_314.c    | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn314/display_mode_vba_314.c b/drivers/gpu/drm/amd/display/dc/dml/dcn314/display_mode_vba_314.c
-index 6101c962ab0a..fc4d7474c111 100644
---- a/drivers/gpu/drm/amd/display/dc/dml/dcn314/display_mode_vba_314.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml/dcn314/display_mode_vba_314.c
-@@ -2994,7 +2994,7 @@ static void DISPCLKDPPCLKDCFCLKDeepSleepPrefetchParametersWatermarksAndPerforman
- 			for (k = 0; k < v->NumberOfActivePlanes; ++k) {
- 				if (v->ImmediateFlipSupportedForPipe[k] == false) {
- #ifdef __DML_VBA_DEBUG__
--					dml_print("DML::%s: Pipe %0d not supporing iflip\n", __func__, k);
-+					dml_print("DML::%s: Pipe %0d not supporting iflip\n", __func__, k);
- #endif
- 					v->ImmediateFlipSupported = false;
- 				}
--- 
-2.35.3
-
+That was so on purpose... :-)
