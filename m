@@ -2,94 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A909DC43334
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Jul 2022 14:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B3BEC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Jul 2022 16:31:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239572AbiGNObQ (ORCPT
+        id S238579AbiGNQbg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Jul 2022 10:31:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44012 "EHLO
+        Thu, 14 Jul 2022 12:31:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239080AbiGNObL (ORCPT
+        with ESMTP id S231649AbiGNQbf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Jul 2022 10:31:11 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C951864E15
-        for <kernel-janitors@vger.kernel.org>; Thu, 14 Jul 2022 07:31:09 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5D3ED61CBB
-        for <kernel-janitors@vger.kernel.org>; Thu, 14 Jul 2022 14:31:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59DC2C34115;
-        Thu, 14 Jul 2022 14:31:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657809068;
-        bh=ZSVTTrbfOqs8s1xfYshXY9NDywr8b9nAJWhikYqRPNI=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=Y+iZ+2DYzoJZ5mtIpykj5shVub/8lsAQYXtt3K4EBoJY87XKOtqh9wMtmw4gAgnab
-         qxy9jV8hT0GeGeGZ7oDFWHWnpNvY4OnPr1UVwcrWXwyZQIsEMXChK8tzEwm/ra9uaA
-         q1+onVKtkPqvLK4/9563LBPNOG5LZrG6cR9YuL5ofuPfa1c5ooaOYEHl7qUfzw0ujB
-         qNZ1KYz9zvQGOgrFfnr3AXcHvtuBkHxmOC9NWez1LTpLI1tPJQgDn0itA6RnI0lpLX
-         0Zq7PT5cbAC7K34Ijp5PxgHuKPHvi/6Ojsibv9F8LPngikdv1O2sAR/rN1E5HHqVLD
-         PUxlFcfMrJTmw==
-From:   Mark Brown <broonie@kernel.org>
-To:     dan.carpenter@oracle.com, pierre-louis.bossart@linux.intel.com
-Cc:     alsa-devel@alsa-project.org, yung-chuan.liao@linux.intel.com,
-        daniel.baluta@nxp.com, tiwai@suse.com, perex@perex.cz,
-        kernel-janitors@vger.kernel.org, peter.ujfalusi@linux.intel.com,
-        sound-open-firmware@alsa-project.org, lgirdwood@gmail.com,
-        ranjani.sridharan@linux.intel.com, kai.vehmanen@linux.intel.com
-In-Reply-To: <Ysg1tB2FKLnRMsel@kili>
-References: <Ysg1tB2FKLnRMsel@kili>
-Subject: Re: [PATCH v2] ASoC: SOF: ipc-msg-injector: fix copy in sof_msg_inject_ipc4_dfs_write()
-Message-Id: <165780906607.93789.3415889455075951387.b4-ty@kernel.org>
-Date:   Thu, 14 Jul 2022 15:31:06 +0100
+        Thu, 14 Jul 2022 12:31:35 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD73433410;
+        Thu, 14 Jul 2022 09:31:34 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id e15so3132388edj.2;
+        Thu, 14 Jul 2022 09:31:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yhoWI4qXoHsRxXejZ4bDxx8rPwc5PrEne0xLbfw7b3c=;
+        b=TMtVpRdxuzY+GFOrJzgXJjS7PgzhBL4YjbaEAWduBAB5qc6UjWHULm5HpSJXOScbnh
+         qWEGguzru0OxloGviNMBCEMELWtL87lhZPUrXd+lwmq5MeGAhuz8/wSDdWnagZVMSXO6
+         Iwaz2MgUYZWYEk9HwPUn238XUQEyvW4/F89ZSvxYnsnQYfyRDpqB+PlRlQAGkT1Gdv/S
+         7UGkeO2D281Yu7wnsy3YzxsgczEQJjmqgHVCwX+fKFpQGejBv1EsHLWb4EyJYtlmOQbW
+         H6nYg2W1YS7Rf0gA3nIdJo6HQTUivxtXB2m4D73Sd4ofi6gJ6i/aJNKJz3lQyySfJioN
+         fbKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yhoWI4qXoHsRxXejZ4bDxx8rPwc5PrEne0xLbfw7b3c=;
+        b=JMmOqoluSyMRkw2sRC0j92DEwTJWTo2F3h9aWR7uJOMNwhKM2E+Zi4k0v7y0a6XjCa
+         Lm2Y5iudvmZzqtCX0oXsWtQNW+nRwdfXSIvtBvq9DvJaBOPzamPyCFwbG0pfa35oFuFE
+         inCLkwtV98enPJYjYCaF2a4iaTxu4EogKl5V1oIk+Nr90eT7TBr2zHYFcJdENntnkn2e
+         pvamQO0nO4CRkxMOySLpfDHCUI99BLQ9mQ1EqAW+ugWsAq3UhwS1eBVY5uDYa/dhCovi
+         i011/5TNLRi3AaiZ+opMnZgUq9f4FTYzXh955VhHU8nSvtIuaEMXW/4Zsn3CZ+x6X2kI
+         M3ng==
+X-Gm-Message-State: AJIora9Mh83uUbx2HUtzqO46WjwlgeO/xlfi+GSZZb0aWV3cvhgBW2GS
+        5talQ05kTc7+4AG86vMJyr9fJfEAqI/6XQPUJ1E=
+X-Google-Smtp-Source: AGRyM1vlBR6f4juYCV/yCZg3RjA87tp7VDETKIK9iYx5gzzUL4ZdyFIJbjjXw8MVnaPdQX+oNlbMl0PPVfnIXBNwT48=
+X-Received: by 2002:a05:6402:2895:b0:43b:1e47:c132 with SMTP id
+ eg21-20020a056402289500b0043b1e47c132mr7007574edb.425.1657816293374; Thu, 14
+ Jul 2022 09:31:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20220714103427.23255-1-colin.i.king@gmail.com>
+In-Reply-To: <20220714103427.23255-1-colin.i.king@gmail.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Thu, 14 Jul 2022 12:31:21 -0400
+Message-ID: <CADnq5_PO79-dzPy0VVG2fuyQ0wX0GcWHbcvyyy_bUrF2JwQSOQ@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/amd/display: Fix spelling mistake "supporing"
+ -> "supporting"
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        xinhui pan <Xinhui.Pan@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, 8 Jul 2022 16:48:36 +0300, Dan Carpenter wrote:
-> There are two bugs that have to do with when we copy the payload:
-> 
-> 	size = simple_write_to_buffer(ipc4_msg->data_ptr,
-> 			      priv->max_msg_size, ppos, buffer,
-> 			      count);
-> 
-> The value of "*ppos" was supposed to be zero but it is
-> sizeof(ipc4_msg->header_u64) so it will copy the data into the middle of
-> the "ipc4_msg->data_ptr" buffer instead of to the start.  The second
-> problem is "buffer" should be "buffer + sizeof(ipc4_msg->header_u64)".
-> 
-> [...]
+Applied.  Thanks!
 
-Applied to
+Alex
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: SOF: ipc-msg-injector: fix copy in sof_msg_inject_ipc4_dfs_write()
-      commit: fa9b878ff86f4adccddf62492a5894fbdb04f97d
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+On Thu, Jul 14, 2022 at 6:34 AM Colin Ian King <colin.i.king@gmail.com> wrote:
+>
+> There is a spelling mistake in a dml_print message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  .../gpu/drm/amd/display/dc/dml/dcn314/display_mode_vba_314.c    | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn314/display_mode_vba_314.c b/drivers/gpu/drm/amd/display/dc/dml/dcn314/display_mode_vba_314.c
+> index 6101c962ab0a..fc4d7474c111 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml/dcn314/display_mode_vba_314.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dml/dcn314/display_mode_vba_314.c
+> @@ -2994,7 +2994,7 @@ static void DISPCLKDPPCLKDCFCLKDeepSleepPrefetchParametersWatermarksAndPerforman
+>                         for (k = 0; k < v->NumberOfActivePlanes; ++k) {
+>                                 if (v->ImmediateFlipSupportedForPipe[k] == false) {
+>  #ifdef __DML_VBA_DEBUG__
+> -                                       dml_print("DML::%s: Pipe %0d not supporing iflip\n", __func__, k);
+> +                                       dml_print("DML::%s: Pipe %0d not supporting iflip\n", __func__, k);
+>  #endif
+>                                         v->ImmediateFlipSupported = false;
+>                                 }
+> --
+> 2.35.3
+>
