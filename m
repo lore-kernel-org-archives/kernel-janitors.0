@@ -2,60 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D27EC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Jul 2022 10:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B733C43334
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Jul 2022 10:34:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237605AbiGNKbY (ORCPT
+        id S237998AbiGNKec (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Jul 2022 06:31:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40320 "EHLO
+        Thu, 14 Jul 2022 06:34:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229981AbiGNKbX (ORCPT
+        with ESMTP id S230049AbiGNKeb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Jul 2022 06:31:23 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5310B47B9B;
-        Thu, 14 Jul 2022 03:31:22 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id v16so1919180wrd.13;
-        Thu, 14 Jul 2022 03:31:22 -0700 (PDT)
+        Thu, 14 Jul 2022 06:34:31 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06AA74B497;
+        Thu, 14 Jul 2022 03:34:30 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id be14-20020a05600c1e8e00b003a04a458c54so941043wmb.3;
+        Thu, 14 Jul 2022 03:34:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=8EOlh3v/6xBJDZv6ZGOpt/dvzibJ1078WTnbe9Z7a3s=;
-        b=l4/H1maNxLSK6atZSaqo6hrRGoHzgnLUji0fudW+DyAgJ8cecLEgzj4Zw6ef+HPhC8
-         9YB9FwRjVuAz1IE9NLY5Cz1smNkrCmHRw1cygKimrKhxNmg0XAFeh5yUp8cvb3rxnRqS
-         zdE0K1aIrp1aLRSL1AMuaqo9rhM6D4WbA1H0/YbHyq+gLU3PsqyVIttm42N7sqLn+MKV
-         NUnS7Jrqt3udztLKS23XMZP1pNYlb+Y6TxAkvn4mcCOAIYvyAA+edqukgJr2ClG2qlIy
-         JomiyuwXe+cGIvsgt0hYh+7c+EB4Fk/9nIz5lxorZUtwE5rRlMy4sH0WI7u9AWXhTRYy
-         ZAiw==
+        bh=pC66SMISxswpCgrA0kH+9OIYYeRJxezyms4h+DmQEVU=;
+        b=WYO169N6L97QHmWqgss2/YWVR6YdUUzTbwOhAJSVFU1PEQ8kMqZBDicC68o07P9q28
+         EEmuC/mKE53/poe+vlYtxqMaZ+PGZyrZbq2eRvdu5aRT6bArMjBK06GnSwCI1PkYV8x7
+         UVCaVzMlf3W+ycBWFVoF9L83DY5tT97R24OrEMBDW5VZsJeqwuye8oTIOqHSGq714blI
+         Wk/JILDt14y+ugO98wHXHVOtXlAw+wfAhbECEKwfxHSbKek2VkQuyXmSWmHG/m0aETRg
+         pYgtSHJavQ5/qFeqk+bzDe5Q5xU4RXUi4MDpWF2WSdlG1KEgTcQheOshDYdeDck/jLyt
+         lK6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=8EOlh3v/6xBJDZv6ZGOpt/dvzibJ1078WTnbe9Z7a3s=;
-        b=yjfa8w3WPZLRkvB8YIUx0/4bh1bnoiva5xwBNNG6i2jEKxD8tqJ1XGlNlDzAhiwbQx
-         u1zeiUU9X9wAqS5D1oaWSRv9Q71w1cuXhKI12GZQDRhu7XYyRgxg/I55SydXTaXWR0Y1
-         dSJKX6rz8Nv040N8tSCzej0u7Yvm5LFxr6yTyeRvgHaPtzPwIf8aIh3wCCSTlT2NXj2A
-         uzACB/8+po27bfg8LekXxH/8w6Deta+Rz40JIi1n1KrP3XIdDaXshlqaIEC3tUasH44N
-         cYiDl3EoCVGl9r5xwyy9pv0IShrOx7TEqwEnNxtnLG0gJ6Ec6NdIL26aWaHGaSo01yvu
-         kS+g==
-X-Gm-Message-State: AJIora/r/lQqWSmWoQCgtjQHqSwCzfeQBOcrQt23DnDbKRH7f4nxdpQY
-        h34BmoR86Lp/cQSE3zq8dNIobYiLxOzqzA==
-X-Google-Smtp-Source: AGRyM1vnKESpQu4b4WNRNs2rw6wijJCfL2aCPeDMXT676QjKQeC/CpvLv4w0DYo0UZjP/38xo+75zQ==
-X-Received: by 2002:a05:6000:178c:b0:21d:b6d0:11a8 with SMTP id e12-20020a056000178c00b0021db6d011a8mr7445192wrg.547.1657794680941;
-        Thu, 14 Jul 2022 03:31:20 -0700 (PDT)
+        bh=pC66SMISxswpCgrA0kH+9OIYYeRJxezyms4h+DmQEVU=;
+        b=mHPRDvGzib8rk7CnXXVtJRY6nElmqlbfDb8I5hsRAu1dz6VxdNq2qlawmTSrtP+L93
+         DS9Mpz00yILWIdcqxLXBLmGNq5tYgLD7h5cY0yfSXwuT4GW7Zv7aTvM7nushpRzdraYR
+         CIPIE8nk6h4TNg2omm6EdJb2jRl9EpsMjtN0cl4S5RVEBJOmej8ZL3d1dyksxxPpEQiC
+         +myYM744IpoiUHTZESObIePZERVdc9ca0/iHtqrTkxIJmtqXMLVAL1SKEuf9NENu+vCU
+         5JdoT+gTMrWKNbHwvhhgsJ59q4qvwhFEumtuQ6Yja3np+oU0+IIQBVRTgIWP62+rI7Jz
+         Du6g==
+X-Gm-Message-State: AJIora/FrAbDkU3gAyn1notGMAk3AplJSKeloq6YkZQjiNbhec1cRuZa
+        3QgqoF0vOEI7np4o55S5pF4D3pHZiHNdRg==
+X-Google-Smtp-Source: AGRyM1tzgGbSFb97riqzZ4HULy1PRelNWUuo0QfgWlU5yTDw80hM5eCb4WBNauTxsQxuKHokkxRFQA==
+X-Received: by 2002:a05:600c:3506:b0:3a2:feb0:9f8e with SMTP id h6-20020a05600c350600b003a2feb09f8emr5482096wmq.42.1657794868604;
+        Thu, 14 Jul 2022 03:34:28 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id d20-20020a05600c34d400b003a18de85a64sm1591785wmq.24.2022.07.14.03.31.20
+        by smtp.gmail.com with ESMTPSA id d16-20020a05600c049000b0039c96b97359sm1386358wme.37.2022.07.14.03.34.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Jul 2022 03:31:20 -0700 (PDT)
+        Thu, 14 Jul 2022 03:34:28 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Oded Gabbay <ogabbay@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Xinhui.Pan@amd.com, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] habanalabs: Fix spelling mistake "Scrubing" -> "Scrubbing"
-Date:   Thu, 14 Jul 2022 11:31:19 +0100
-Message-Id: <20220714103119.22927-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] drm/amd/display: Fix spelling mistake "supporing" -> "supporting"
+Date:   Thu, 14 Jul 2022 11:34:27 +0100
+Message-Id: <20220714103427.23255-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -64,26 +69,26 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a dev_dbg message. Fix it.
+There is a spelling mistake in a dml_print message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/misc/habanalabs/gaudi/gaudi.c | 2 +-
+ .../gpu/drm/amd/display/dc/dml/dcn314/display_mode_vba_314.c    | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/misc/habanalabs/gaudi/gaudi.c b/drivers/misc/habanalabs/gaudi/gaudi.c
-index cb2988e2c7a8..05dd5e13f13e 100644
---- a/drivers/misc/habanalabs/gaudi/gaudi.c
-+++ b/drivers/misc/habanalabs/gaudi/gaudi.c
-@@ -4723,7 +4723,7 @@ static int gaudi_scrub_device_mem(struct hl_device *hdev)
- 	addr = prop->sram_user_base_address;
- 	size = hdev->pldm ? 0x10000 : prop->sram_size - SRAM_USER_BASE_OFFSET;
- 
--	dev_dbg(hdev->dev, "Scrubing SRAM: 0x%09llx - 0x%09llx val: 0x%llx\n",
-+	dev_dbg(hdev->dev, "Scrubbing SRAM: 0x%09llx - 0x%09llx val: 0x%llx\n",
- 			addr, addr + size, val);
- 	rc = gaudi_memset_device_memory(hdev, addr, size, val);
- 	if (rc) {
+diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn314/display_mode_vba_314.c b/drivers/gpu/drm/amd/display/dc/dml/dcn314/display_mode_vba_314.c
+index 6101c962ab0a..fc4d7474c111 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml/dcn314/display_mode_vba_314.c
++++ b/drivers/gpu/drm/amd/display/dc/dml/dcn314/display_mode_vba_314.c
+@@ -2994,7 +2994,7 @@ static void DISPCLKDPPCLKDCFCLKDeepSleepPrefetchParametersWatermarksAndPerforman
+ 			for (k = 0; k < v->NumberOfActivePlanes; ++k) {
+ 				if (v->ImmediateFlipSupportedForPipe[k] == false) {
+ #ifdef __DML_VBA_DEBUG__
+-					dml_print("DML::%s: Pipe %0d not supporing iflip\n", __func__, k);
++					dml_print("DML::%s: Pipe %0d not supporting iflip\n", __func__, k);
+ #endif
+ 					v->ImmediateFlipSupported = false;
+ 				}
 -- 
 2.35.3
 
