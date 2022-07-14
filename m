@@ -2,122 +2,252 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3B9C43334
-	for <kernel-janitors@archiver.kernel.org>; Wed, 13 Jul 2022 22:23:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5381C43334
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Jul 2022 03:25:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237330AbiGMWXO (ORCPT
+        id S232671AbiGNDZO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 13 Jul 2022 18:23:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57622 "EHLO
+        Wed, 13 Jul 2022 23:25:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229895AbiGMWXN (ORCPT
+        with ESMTP id S232847AbiGNDZJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 13 Jul 2022 18:23:13 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2078.outbound.protection.outlook.com [40.107.243.78])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53E914B0CF;
-        Wed, 13 Jul 2022 15:23:12 -0700 (PDT)
+        Wed, 13 Jul 2022 23:25:09 -0400
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D39F325C58
+        for <kernel-janitors@vger.kernel.org>; Wed, 13 Jul 2022 20:25:05 -0700 (PDT)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+        by mx0a-0016f401.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26DNXEA2006791
+        for <kernel-janitors@vger.kernel.org>; Wed, 13 Jul 2022 20:25:05 -0700
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3h9d0mehx6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <kernel-janitors@vger.kernel.org>; Wed, 13 Jul 2022 20:25:05 -0700
+Received: from m0045849.ppops.net (m0045849.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 26E3Argt014842
+        for <kernel-janitors@vger.kernel.org>; Wed, 13 Jul 2022 20:25:05 -0700
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2175.outbound.protection.outlook.com [104.47.55.175])
+        by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3h9d0mehx4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 13 Jul 2022 20:25:05 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SGyXgqXJdBU7oImO8s22LfomWWDNcOkmRcUM5NBnD0iqi0q9aUpl7K8ZwBHevc75EAGgVSPkTPBclh1s37tvaiW1O9uNrd7+JiDlIIfjWEOAvds44jejCgdzqNLqEwafZCttyOnCF1590vGZlQYXRj9NKXmz0uwhRCd18guPpBBWG7qtNQokkzj0EZLv5hoMWcsgt9bVnqGV0KLPgtad+I3XyBa2yGFTlpEH3eODLNmTZHHSECxVMZI3pTJABwEJP4/4+zs6iabZjE8i5qaYqiTWtS6BEEpogWlDNGukaQN+nD8qkdd5Fzu6wtEMTzcUbBIJgurk1n+LkhCM0tbLTg==
+ b=LdupO9kEd0rHBm0RY5K6ovxPuwZMKoe4lbtrvaGku46+n0wiHbrgdXuQhxRCz4vVvDouvhME4xb7GuapA3umPIEVwvJXLEWBpFrPqS/uxNr7q74ZT2GWTXDQ5H9I1OhmW4L28RRVIcDBbpX+KbWjMl7+pprNHBEXcvFcKjZrV7GvL50/BFOO/8wNlTfUuxkYbkA7XhNcCvlo3A+UazRt9+JozoOaK4pXGaF0JftpxKhoEXQrK6aGJjVrowH365+GL0aJ9CCi1tMGnIiC8nPbLYhNMn+pk/X5iutCR0SqdFygbOlpqx5nR7IYRucyHpuz3HY/Z5krhulEo0vmim4bSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IyDVF7++TsXEpLnS7TfWVZLisxH/8DLB/NoFGOjrCKE=;
- b=k2GY34UJZWrZKD77Nx1y34ebNH1vL0iV3yHl9O7QTPjfIHQSbGrn0G/Bm083bV1g2FdBiYt/AvNZaJN4h8vkfPvAjQbNYPl/ht3fcLlj0/8+SzT/Q0UDJgqnB2jzf587mgDn+98gxNEVKBuhbqtxzmYyOBXxUWVc9dAaf1cOS21zPL5XyO1YuAvHXBkQ52hPYKCU/KubjNPPKrjWjFR8P1kH4LPzPM6IWho0uJrvKM7NnPMB8HAZ1yK9oZPzzGbmr1S6vQQPEbFXo/h/bjkaJ2hWhrOxJAN6KwJBAh45s5UISsAOiRSzTJ0TWnaOx3RYuWxtufDK1jhUpW3Dq2/PCA==
+ bh=jk0zZg4/6d6T5kLdkuxZW2xeFRX0BkEYJ/Fu8igTs2E=;
+ b=J/oc4/O5zNwEuDSXsDuSq5XQ1L0IAueENpzuLmzWToyWycs1358TPeGQoJeyU95u1LwKREb1oTVfrWYGgEHVeAP6SAAZVjJAySTqp9iblNCI77U4p8EyUoklcHGmzsaFojFnLorlWYUQ6FE8QQFDmUNs9qWkEMoBXIYJO/MxlI56RuxqdmYz/RnWCN+NkKQ2R2OhzrTGI3ROB+TYqJg6jKh/ORAooP8ivY9VeqC7xO9OizdoGsJtRCwd4IfsVUeeN5YOt5cl/J7Ki0IISds3MQR+z/2qesUbYpQ2VKH0E4mQgO3mAlc9/6ESdlkExAw0+cvN0pr/3/mm5irumDoQmQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=marvell.onmicrosoft.com; s=selector1-marvell-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IyDVF7++TsXEpLnS7TfWVZLisxH/8DLB/NoFGOjrCKE=;
- b=CeSlA8+5cbrZY2eTsZLq2Bi49ho+EyQiO4Yx7oFk6x21r5Sc8d9Te5XLL/FE6rFM+ulPoT2q7n2WD1nOuXY700wvgCVaW2mKAlcNAah4QN2GmhS9s7cx2iywTN9jCDmgA+OfwRF1ZfMRgRiOVc+GDouh72bqmShuh4VaSzpeLArJdccA/R1JMxfeUKhXYVfiqgTAllqMeiHYB1TO0SjdSqPxERU77ivVOwadlEbbNV89xwVn2tNqyLR8ArI7wXGW808CAbI003egkA+gPlevh4cOLoCPDq5OtBbtL6lRDcPsFRBdDnN2xSyR0t5r0rWTY8YpZk8J7aUCteRYnrzHKA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4209.namprd12.prod.outlook.com (2603:10b6:a03:20d::22)
- by IA1PR12MB6161.namprd12.prod.outlook.com (2603:10b6:208:3eb::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.26; Wed, 13 Jul
- 2022 22:23:10 +0000
-Received: from BY5PR12MB4209.namprd12.prod.outlook.com
- ([fe80::900e:a8f9:4d99:1cb1]) by BY5PR12MB4209.namprd12.prod.outlook.com
- ([fe80::900e:a8f9:4d99:1cb1%4]) with mapi id 15.20.5438.013; Wed, 13 Jul 2022
- 22:23:10 +0000
-Date:   Wed, 13 Jul 2022 15:23:08 -0700
-From:   Saeed Mahameed <saeedm@nvidia.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH] net/mlx5: Use the bitmap API to allocate bitmaps
-Message-ID: <20220713222308.6sqcsom4duvbe3pk@sx1>
-References: <ca036ba3d0c2ee307e1d8cc94aaaab1686ebf1c9.1657456513.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <ca036ba3d0c2ee307e1d8cc94aaaab1686ebf1c9.1657456513.git.christophe.jaillet@wanadoo.fr>
-X-ClientProxiedBy: SJ0PR03CA0389.namprd03.prod.outlook.com
- (2603:10b6:a03:3a1::34) To BY5PR12MB4209.namprd12.prod.outlook.com
- (2603:10b6:a03:20d::22)
+ bh=jk0zZg4/6d6T5kLdkuxZW2xeFRX0BkEYJ/Fu8igTs2E=;
+ b=iYJeEgPS9Y+FPdxqzp1WJMOBSG4xX0lG3IpZ/en+ZEz1BH8ob39uFJIvWIUArJRJTMtpFXMVVxe64XjnDpJvvIiI9wHrA0/GrfGoYra/tHwyE3hJMHrEODRY0Q+uV5uDxUhrP5vPHY5kEiacz3vnf8glCcw7DBo0oHrcNILhZFw=
+Received: from MWHPR1801MB1918.namprd18.prod.outlook.com
+ (2603:10b6:301:68::33) by BYAPR18MB2856.namprd18.prod.outlook.com
+ (2603:10b6:a03:10e::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.26; Thu, 14 Jul
+ 2022 03:25:02 +0000
+Received: from MWHPR1801MB1918.namprd18.prod.outlook.com
+ ([fe80::b489:f25f:d89c:ff0a]) by MWHPR1801MB1918.namprd18.prod.outlook.com
+ ([fe80::b489:f25f:d89c:ff0a%7]) with mapi id 15.20.5417.026; Thu, 14 Jul 2022
+ 03:25:02 +0000
+From:   Ratheesh Kannoth <rkannoth@marvell.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [EXT] [bug report] octeontx2-af: Drop rules for NPC MCAM
+Thread-Topic: [EXT] [bug report] octeontx2-af: Drop rules for NPC MCAM
+Thread-Index: AQHYlqxJWM8kY8KuHkC3Nu7VZoMTia18XtLg
+Date:   Thu, 14 Jul 2022 03:25:02 +0000
+Message-ID: <MWHPR1801MB19186110DDA1663479B6E6AED3889@MWHPR1801MB1918.namprd18.prod.outlook.com>
+References: <Ys6tO+/RAH7WEDH7@kili>
+In-Reply-To: <Ys6tO+/RAH7WEDH7@kili>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0396e1af-8a66-4961-bf79-08da65487059
+x-ms-traffictypediagnostic: BYAPR18MB2856:EE_
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: wequOQiKHI6gKIqWQCzziVNJ9QJYhd4G28iTiS2HRcdAHmqS6jXpSo6ontP+y7hUyO/QU6mHFDFtwvkCO0mIMPfaSe64edJp96zG62qH1UFBBE0ObLXVPi0YGc0LBJYe5ddvFFhqGZWrUZQdjQGb24S+wBGkeNFNTIVtqs1KIFzo+7DAnVMeIwW3eFhLj2KuBAt5J7ibt+Y969iftRF5RTzR4QVO0JYhzqHs58nrf/GEljwSZDX/QDQx66KhsfSaUe7X/s1GOt1cnJRGJ0q3QgsRUKrSslOR2RJDj/Tmq1mP09TdIyiOzmNQwifY9qhFlaUdUdNmACBPUZDpVQOf6bjjLlyxHNiVpPTklhU9Ae8hp8I1WGApp6LREsUtaq+fpLafbWEMrUtROrzpl+3qe26aQnRu3wIH9pr1ZM1LZjnNWhQqDR+RqVGxQhnZcwvn9q/PA9D6tUhYPqEaKzekmFlttcewvt461fgg0WkO7/g5fGaS+bX2VVCRWhX229JjF0Y/J5fqT+Slv8NCInXpJMSVstPVCKEf6I9lHnDV70tpxDA0sNfZga9iPXIrPo+NQdALVkJqkVKmCQsayZQuZBvZ0+PjeNbWbf4ElSamp9K1B+3WOp/0yA2nr2m/yrzyx+/7YNvXjkBqMenWFCDPKnuQcYjYEWplPzRnTKxfZKfoyqe+cFXE7pVRAAVbVFlQI0W5HixXd0ZJXqkWFWdj7LBJ+rzJX6SRGSynTlMyAJQMmu0RQVcp5o08FE87VplU9lMP3+rsgoU3IqU0XZgySU0UhMDimnFO9K+Co5RbLEFRpqi2QW2WoiFxZGuhxNoZ
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1801MB1918.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(346002)(376002)(366004)(136003)(396003)(39860400002)(6506007)(316002)(478600001)(71200400001)(7696005)(41300700001)(66946007)(6916009)(2906002)(9686003)(8676002)(66556008)(55016003)(52536014)(8936002)(66476007)(66446008)(64756008)(5660300002)(76116006)(26005)(4326008)(83380400001)(86362001)(38070700005)(122000001)(186003)(38100700002)(33656002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?G1GHTPuwAU/L+e5UhNLTpO0sronDDpCZJG7bFrYnjnyO9+4zpRFocrjHxZQ7?=
+ =?us-ascii?Q?FPigHbMMjoM3cMZhMIZIL0W+1G87PurD1mdQMNPz+UI0PPH4GKLnPq2XXGno?=
+ =?us-ascii?Q?sdzOYO9rP4KmdDuOfibTGbzgmSoL0nMNSeUSANego8hCPrmGizQ97JX6JZbN?=
+ =?us-ascii?Q?K2bJrxEUYeT43CphHvio0n9Tg1oZy4jZdypYq6vL9vco7Eii5CVFd6o/YjvF?=
+ =?us-ascii?Q?mP3d5h/PCJPBplA378XwmauibMlhe6gf3W4nxu+Vlne1j86QFv6UESW6NEmO?=
+ =?us-ascii?Q?MUwVLVwmDPyqXi973W6uc/RqOFN1Yn3mJtBwbR8C9qAMGhG4fVCpSsIRlwxb?=
+ =?us-ascii?Q?xhil7AqCYR+WtP4MkbnIpudhR9CDF+SR9/NUb+xVcTYQXn4Ydg6ahg528aBy?=
+ =?us-ascii?Q?WIzJLD3WAD2667OXox1XjUr61ia8mFrwnrNVQwtBsFVhx/61MTeJcbX8FjDc?=
+ =?us-ascii?Q?TZW54DnaJi0/OW/TQEV1I9HkIoBuvfNLbhkbieESmT6UYkwl9l+V19RLO2eM?=
+ =?us-ascii?Q?XQa4h6POsuRtDk80DRrze6qzG4dxKgz7J53tzE8jfKfzU/q/Zmua3Vnyb9AU?=
+ =?us-ascii?Q?G9j6/ykogfFmJ725vOX2EU3Qi6eQUF5HBqLRNQCBTwuZzIR0WzSZA6LBYMMD?=
+ =?us-ascii?Q?halMMtyZF8ozk/S9dSIfNww949K5YwuNxMXckTZhvQ75nevB3vui05B0tGKD?=
+ =?us-ascii?Q?jrVTFk9lmurszS0J3SYAmfzl66t6jkMUvdkdosMLHXSukNGEzjzv0zUP8446?=
+ =?us-ascii?Q?v4comkAbt1YYsuwwrsclrB7tR2m9Q8FkkUTflA2Wi3kbMn3NXU56Ny6TFB5l?=
+ =?us-ascii?Q?0ICmy4Kj6Lo1B3AI/BkhfcA1e27Bvh+6PThxTmwdUPBMLMAqy2abR4/HGBeY?=
+ =?us-ascii?Q?DzYfY/nxqzMXfHB5adsmYu0Mw1mnjAZPV+jhWCqO/v9FKDrLJ3Jp2C7wQfY9?=
+ =?us-ascii?Q?o2lyrnnf5EHyZeleMrDEggWmJpG+PxPID2oIvUvFyHKmmYRnJokfSa/9vePN?=
+ =?us-ascii?Q?2TH16hZuXVlwDo7+JNgS8FkeeYlN2E3DUPYpksCysZGIvMurBb9rGEBKt/zy?=
+ =?us-ascii?Q?M6+Qq1GxcRFPahpthE4BXSGukXlG3xtIEInjEny+SuV8A5J5EoMC9YhXhyyb?=
+ =?us-ascii?Q?P47VEVnIPmhJu51UH58Xy5WQgDESqlsfni+6Vq5EWEqDR7KmMQZSGHhokD3m?=
+ =?us-ascii?Q?sdtErF69h1l7VWnH2a83SfcoASYBme+rtGSw3Y/uUHp8CSNxlCfmE0e01asJ?=
+ =?us-ascii?Q?/yHOful0Ce6Sz8tqzqOaFUuSOhauUHziKPzwKj42dqUALJ/mHmLlQNT1iwoz?=
+ =?us-ascii?Q?Zs5OghwiGGFhPJfmdUAIX65IiMRLdPmbDVTCeMGq97adgulMQ5OpxNzbbbQF?=
+ =?us-ascii?Q?iAByph1MIB2D2EpCVuNS9omkgrgnkdvtDgVTeDs6/T8pwFPa69ajQ1ggjSOQ?=
+ =?us-ascii?Q?RAeDvIP35HH8Ha2/xOoSCNw0zUn3e/e3WOsIqqPsq+3gNdHz9olQfXMdm8lD?=
+ =?us-ascii?Q?Dv4St9vAu3bFOGFNHYakkpR5W0Xyj07QQ+25w10DRJ510ZD+Dlf2D4iGaCD7?=
+ =?us-ascii?Q?aUJA3Fibxiv3WB6gzdUh4PaNXXWsoUkiA/0rH5/3?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 1045b5f4-a6f6-4e0b-8943-08da651e44a7
-X-MS-TrafficTypeDiagnostic: IA1PR12MB6161:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: MSqU4BbQu5i+kHiTQaJbbp5KtIu9Q8xKdtyIO2MrayKeUd+m0T+2UJNLbcmZPTPxfJw3Q6kLigORkqpwGnzuenAKDJK+xLTiDPfF2Oaa9yLZ3JZgaohWtQFU6N2keLpZxinVFGi5M23AdmolItgzTUAOEKQYc5B7nuB3fWvnMt94CBHYUqYM4kM1RhkknynyAbdjPPstX8fUaE8YaJRd7WNOQwyb0cI0SlRhOKAeQQdfZG/9Hi8QyfURDlZyFpw3047g9r7HfvcFXCW8sqWCzYbizo67S3HFi4nrVoW0ZVw0tkBrmI3lbIkn8q9GWKVKQBioaXdRbobK1Tjv/h39hnchIiNgJqlfDfm0AKuGy2p9AsHMeg3YlA9LB2rpIcPFVVe/M2T1rct1GbiSN5K6/2wUDN0Ix2eQPTocriZS6aGpxHNUdV7pUJoA5q9vnWQsP+ZOeRR7f5MPiAih+gQHwKOdYwKDaJvmJ0ZoVi7XWZb26c55nhog1/OgT+mtexiWEj+plcbjnGiYB7YiM1cVMf6ms2Tnj0S9HOPrCEQn1uMT4LdH5AKrpL8Fl1ocyQgvNS40THmFYM5X2HvNoLRtzfW1LrtU2WlJCWP8AhyIBWrImECCKyepUs77jXrGRLtAsvGz+ePJitwvWMIJn4gEYIKCowDI5ZN3RItaDNe4fs/koY2wgbh/YQ39e0Eipx8mq4jm4eadQ15ZzXqFhdf24Tlpbrcg0A6Yq/ACAuKb/80L4G1swvTv4SHF6ZOiSSAO0pl1UFAI2XEPg0PvhMFlpA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4209.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(7916004)(4636009)(396003)(136003)(366004)(39860400002)(346002)(376002)(4326008)(9686003)(8676002)(5660300002)(66476007)(186003)(6512007)(6916009)(7416002)(66946007)(26005)(33716001)(66556008)(2906002)(1076003)(558084003)(86362001)(6486002)(478600001)(6506007)(54906003)(316002)(41300700001)(38100700002)(8936002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?nZBKQj8rr68xfFjYLrPFi973dluJPNzf0QkjGtdRi5gvAIAOcMv19V9lkuhf?=
- =?us-ascii?Q?KmJXJVdD1dIsPflu9u4Ums48Ae0NMZo17J3niEjOixCOSiYL7UouHoKwJGw9?=
- =?us-ascii?Q?MqWsy5zLFa9kcxdbLoQYn0ZAgI6UTrvY3zQL7MfyrCrPL/O6sEjOmWpKqGh2?=
- =?us-ascii?Q?Ebqz5uAiAvQDQKjrCsJ3TeNXCwjQVRWd6dgko8FTEOgMOppwUig+SsztYOxv?=
- =?us-ascii?Q?UGfLPk/fKecKYX+spw1cRmld6EMgB2SZucMVxmD/1R/IrxpD8IQCKofoirKF?=
- =?us-ascii?Q?L4BuyeHWJTX68Dk9rDu561OvSNJD6YypzOlsLlbmSPBQDlwsuy1/16dK6huK?=
- =?us-ascii?Q?jtloeh3SZdZxk6LX9cxkZg0NyRZPHcumJ1mgTvCzmRxlLl3BHbhY4/P4JSev?=
- =?us-ascii?Q?BzqQKGT56BSu3SkwvnwwWUGGQLG2sR3p+VLmqDrZ8xBYyXLRRvig8ZlmK9F6?=
- =?us-ascii?Q?4ImnqhxrQG74v4Lhj+b7GxZz8F7RsWawOveiverJ+UeEGrepLi6qghWLdWJo?=
- =?us-ascii?Q?ZFhl6spXz7qKumd6IHy/GHt+BE7Ndia6V+2n7xvQ/nPJJa5l/x341Kfj4m5H?=
- =?us-ascii?Q?BjkOLBI7CtBdYp3++EaqsUjb8mXZP1N33cbt4LjwleBJXHarsL0fU4ExaX7P?=
- =?us-ascii?Q?uy4wkt/fVNKHGvgJ4IPNEE8hxBcgnA6S2R/R3uDbTKKJKX1784aAdSuXyx+Y?=
- =?us-ascii?Q?3uqwjU1YVs3HREpb/+7zULpCj575d2TqHDbwTtyJNpADEifzEoaAjGOyKifa?=
- =?us-ascii?Q?jJISM53/JWI5XkfmlvWZ22GpGO7+naYzCNgR/uIV6+XJKIYRK/H2drcTBhsD?=
- =?us-ascii?Q?OyuRt3tCSyGxm+QBjTd9jRVXhFRLj6+m8b6YjWfy5kXlCP463Hz1anieaY2b?=
- =?us-ascii?Q?K8kcjQRmwP+jZ/W+HdBiDn9ag1IkYpuqoJXDVOqOMHLlvgA2J3u73qKm1pXJ?=
- =?us-ascii?Q?ViY3dKbun/haLsa4c7UB0KJqTFraWiVrTIU/YiIf/c6PmwjkG+mTotmCyA6B?=
- =?us-ascii?Q?IRmRpaI5PZzoJnoV8zebROJrbBRF9gJGK4kDEbLBfqR5nUIIZQsaDtvAn86P?=
- =?us-ascii?Q?xfBNkgIlbIri/oSbX+UYb1w5i+6XCmh/iv6hQqRhfy6PYiXqkJGBJxsFqO2/?=
- =?us-ascii?Q?RNjbbl0EziVhYA+ONcN2oo/OsMKzoJ4xqFfsOtg4DfBWghmJ7XP5vSY80fAS?=
- =?us-ascii?Q?lZNcy6soZjN9sSRJBmKFrV0V2C8cTOs4jLMR725X0RB/gO10lnKVnCobudTu?=
- =?us-ascii?Q?j4NjFnXTVb5W5gQk+mRvNsXYu8gQQjs+YsVRYYqjqWgi8MS1I/qyjenWDS4B?=
- =?us-ascii?Q?LFf4NHsUSS/We6nJkV+cXbortR4dVuXzyd7vMEnSbVgM/61ShZMYVfURJImZ?=
- =?us-ascii?Q?oA678u/k9ZOd3UiU+n7X1aV0qOn1Ag0eLiBifnqErxEm9xYDaBbc/xFuuJx7?=
- =?us-ascii?Q?MhlgYLUx3xiv/cuLplcW7LxpV1kFuP47o/S/cyBUQuruQbj2BT6j7v1HcTVE?=
- =?us-ascii?Q?hxu7PXhh4zaghpcSztBf5HvzW50KYep5bXP5lQtvN5Fz0dmCWu3iU+S/RJCu?=
- =?us-ascii?Q?xQxvpb21aIKkaPFHjUqIrzzvkUVg34udxTjaE0Tl?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1045b5f4-a6f6-4e0b-8943-08da651e44a7
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4209.namprd12.prod.outlook.com
+X-OriginatorOrg: marvell.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2022 22:23:10.2382
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1801MB1918.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0396e1af-8a66-4961-bf79-08da65487059
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jul 2022 03:25:02.3014
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 27Ek/uKQjhz/IBYG37Cqy0h1VbC/KRvG4AFHLDfpRXhdtXkpRsIVp9b8xMosTq9nA5O5C3d1tNkMJhSKbRfMhw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6161
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4Ms64T3Clk+JdeKpGuQTjYCNVCXB5AEsgLSuvLgdL9bixZTT/kyzGwQQPhwswBCBtZmglSbuZzBqqIu4cDpfGA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR18MB2856
+X-Proofpoint-GUID: jUiLpGmXTf_BajtOPg2xNsDHaPuqv7w_
+X-Proofpoint-ORIG-GUID: ZgmkSRhaGS0MfB6AqdLUURlyu2XToTT2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-07-14_02,2022-07-13_03,2022-06-22_01
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 10 Jul 14:36, Christophe JAILLET wrote:
->Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
->
->It is less verbose and it improves the semantic.
->
->Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>-----Original Message-----
+>From: Dan Carpenter <dan.carpenter@oracle.com>=20
+>Sent: Wednesday, July 13, 2022 5:02 PM
+>To: Ratheesh Kannoth <rkannoth@marvell.com>
+>Cc: kernel-janitors@vger.kernel.org
+>Subject: [EXT] [bug report] octeontx2-af: Drop rules for NPC MCAM
 
-applied to net-next-mlx5
+>External Email
+
+----------------------------------------------------------------------
+>Hello Ratheesh Kannoth,
+
+>The patch 3571fe07a090: "octeontx2-af: Drop rules for NPC MCAM" from Jul 8=
+, 2022, leads to the following Smatch static checker warning:
+Dan,
+Thanks !!
+
+I tried to run smatch tool and could not see any of these errors ? Am I mis=
+sing any step ?
+=3D=3D=3D
+./smatch-master/smatch_scripts/kchecker drivers/net/ethernet/marvell/octeon=
+tx2/
+
+  CHECK   drivers/net/ethernet/marvell/octeontx2/af/rvu_sdp.c
+  CC      drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_hash.o
+  CHECK   drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_hash.c
+  AR      drivers/net/ethernet/marvell/octeontx2/af/built-in.a
+  CHECK   drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+  CHECK   drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
+=3D=3D=3D=3D
+
+
+>drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_hash.c:1964 rvu_npc_exac=
+t_init()
+>error: uninitialized symbol 'err'.
+
+>drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_hash.c
+ >  1953=20
+  >  1954                 dev_dbg(rvu->dev,
+  >  1955                         "%s:Drop rule cgx=3D%d lmac=3D%d chan(val=
+=3D0x%llx, mask=3D0x%llx\n",
+   > 1956                         __func__, cgx_id, lmac_id, chan_val, chan=
+_mask);
+>    1957=20
+ >   1958                 rc =3D rvu_npc_exact_save_drop_rule_chan_and_mask=
+(rvu, table->num_drop_rules,
+ >   1959                                                                 c=
+han_val, chan_mask, pcifunc);
+ >   1960                 if (!rc) {
+  >  1961                         dev_err(rvu->dev,
+   > 1962                                 "%s: failed to set drop info for =
+cgx=3D%d, lmac=3D%d, chan=3D%llx\n",
+  >  1963                                 __func__, cgx_id, lmac_id, chan_v=
+al);
+--> 1964                         return err;
+
+
+>"err" is uninitialized.  This should be return -EINVAL or something.
+
+Fixed by 6a605eb1d71ea8cec50bdf7151c772c599a5fb70 commit.=20
+
+>Let me just send the whole list.  The rest are mostly caused by no error c=
+hecking.  It's possibly deliberate.  Hard to tell without knowing the subsy=
+stem more deeply.
+
+>drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_hash.c:1232 rvu_npc_exac=
+t_del_table_entry_by_id() error: uninitialized symbol 'drop_mcam_idx'.
+>drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_hash.c:1312 rvu_npc_exac=
+t_add_table_entry() error: uninitialized symbol 'drop_mcam_idx'.
+>drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_hash.c:1391 rvu_npc_exac=
+t_update_table_entry() error: uninitialized symbol 'hash_index'.
+>drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_hash.c:1428 rvu_npc_exac=
+t_promisc_disable() error: uninitialized symbol 'drop_mcam_idx'.
+>drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_hash.c:1473 rvu_npc_exac=
+t_promisc_enable() error: uninitialized symbol 'drop_mcam_idx'.
+Will fix and post patch.
+
+>drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_hash.c:1964 rvu_npc_exac=
+t_init() error: uninitialized symbol 'err'.
+Fixed by 6a605eb1d71ea8cec50bdf7151c772c599a5fb70 commit.
+
+>drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h:735 otx2_mbox_all=
+oc_msg_npc_get_secret_key() warn: struct type mismatch 'mbox_msghdr vs npc_=
+get_secret_key_req'
+I don't see any issue in the code.=20
+
+>drivers/net/ethernet/marvell/octeontx2/nic/otx2_dmac_flt.c:191 otx2_dmacfl=
+t_update() error: 'rsp' dereferencing possible ERR_PTR()
+>drivers/net/ethernet/marvell/octeontx2/nic/otx2_dmac_flt.c:60 otx2_dmacflt=
+_add_pfmac() error: 'rsp' dereferencing possible ERR_PTR()
+Fixed. Will post new patch.
+
+
+
+    1965                 }
+    1966=20
+    1967                 err =3D npc_install_mcam_drop_rule(rvu, *drop_mcam=
+_idx,
+    1968                                                  &table->counter_i=
+dx[*drop_mcam_idx],
+    1969                                                  chan_val, chan_ma=
+sk,
+    1970                                                  exact_val, exact_=
+mask,
+    1971                                                  bcast_mcast_val, =
+bcast_mcast_mask);
+    1972                 if (err) {
+    1973                         dev_err(rvu->dev,
+    1974                                 "failed to configure drop rule (cg=
+x=3D%d lmac=3D%d)\n",
+    1975                                 cgx_id, lmac_id);
+    1976                         return err;
+    1977                 }
+    1978=20
+    1979                 (*drop_mcam_idx)++;
+    1980         }
+    1981=20
+    1982         dev_info(rvu->dev, "initialized exact match table successf=
+ully\n");
+    1983         return 0;
+    1984 }
+
+regards,
+dan carpenter
