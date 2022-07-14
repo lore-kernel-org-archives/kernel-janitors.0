@@ -2,89 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D1DC43334
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Jul 2022 11:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D55D6C43334
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Jul 2022 12:52:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238378AbiGNLAW (ORCPT
+        id S239585AbiGNMwe (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Jul 2022 07:00:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40978 "EHLO
+        Thu, 14 Jul 2022 08:52:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237669AbiGNLAV (ORCPT
+        with ESMTP id S239603AbiGNMwc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Jul 2022 07:00:21 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C506F564EE;
-        Thu, 14 Jul 2022 04:00:20 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6401560C1C;
-        Thu, 14 Jul 2022 11:00:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBD83C34114;
-        Thu, 14 Jul 2022 11:00:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657796419;
-        bh=d7dJzHy3R4d3efKnyqF1Bs4i3d1AFlB+D2NT0p1gevU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mIMm8UuymYGzasiWrapSwDV3BiJoF1yRtWQMqJJ5cqYVEOqF2xjIzfbD36CAzxyYt
-         NrEDpwQNhh9tbxqYRMu887wgzprhX8SwYgd2tt6B9C5bo77b+ybDEUwI7uuweLVQTO
-         tVhJSf7tsinQEcd+Rj+D6xELXiQSnnCB2pHqVejQ5jvmLvuxD1aTKqgK1IwBWzm5dx
-         bbhEyMf3pmi25tCnuC8MpjBUjgdMuvqw6SCv7xbfE8CxGnTyLZRScWjQas7togxw+k
-         a8Vw4WNL/7qBewkR0iP157GyKKBP7UK+Wku44rHE9Hz7/5NXaf/tF+lGwiAQJMR0zT
-         lvmkuBLic7Q7w==
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-31caffa4a45so13150227b3.3;
-        Thu, 14 Jul 2022 04:00:19 -0700 (PDT)
-X-Gm-Message-State: AJIora8X0M6GQJew/D9SnxKql0w+vaqAHCbTrAiLf3NVlwB8NYmgLk+c
-        6c7sC66veykK9EPU9kegnfMS6WHmgrlzxMEx+lE=
-X-Google-Smtp-Source: AGRyM1v8B84SNAdGfOI4zRumWOHG4tF3fWc5HBtUKpdHnhrTodjFGxXFqWCe2mA6l8aeAzCy9c7C96Np8oZnHoxYPK4=
-X-Received: by 2002:a81:1608:0:b0:31c:925f:c52c with SMTP id
- 8-20020a811608000000b0031c925fc52cmr9171091yww.93.1657796418888; Thu, 14 Jul
- 2022 04:00:18 -0700 (PDT)
+        Thu, 14 Jul 2022 08:52:32 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2A9A459A0;
+        Thu, 14 Jul 2022 05:52:31 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id v67-20020a1cac46000000b003a1888b9d36so3046247wme.0;
+        Thu, 14 Jul 2022 05:52:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=u4ugeqgS8oNiEPmK0faxgp+6Xv1PdPQ5ncM+QcXUeqE=;
+        b=fqIP8onwSrBMK89r1MWPkBmOktzH1hgpq8N8F0ThwMUvw8mAnD5jDItek2DQx6dFbC
+         HlaWZ9gumc4Wj0Udnpb7pI3C6jcPyueIP97oTabU5ZdmDLRSuOPh/aM+fN/Xz91TYcvP
+         Ue1qIjY8ijhDuBwGvhC/rQ2dy7lKVfdhK9Y4ifS6M84ImucYN6cF9MQdjBfvL2S+s0bY
+         9k2gDEtsRGXe6KGw+cI66H3KrJA4zsd+vAdQfmCtgihl8T+tK7gU/PafOV9XlDzwOdrM
+         Ekf+NjdM/g+rswZBwlIkoHm1pVy7SePhyrpM1q3vhX5NQaqrrc8o3m5eTIe/diRlqxXB
+         lkDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=u4ugeqgS8oNiEPmK0faxgp+6Xv1PdPQ5ncM+QcXUeqE=;
+        b=GbXYRSRblxpzdldnJEbrBMqxDq1bi6AwjLw/+A03mKmib2M3CvhJGU/Syt6lirYhwF
+         Z7w4IRE3k0ZjnNNlQEkP3/bIggJ8ZLQWBVjBTUhkovsT2oWYUE+l/hM4WsEfKwbLKpzU
+         DRgkceZbmK6kKyxN9J+f8JgdcsjIPlIKvK8PAIvhBbvOj+WM7gPnDghV7nBAvIUhyBVm
+         c7ZaHqkgx8yASy8sr3iRWI3e1UrxW6Z56ZRsgxbvViILqShIZXVXOgA9qUL4TCVddSz0
+         SzZhKJQ4A0xtPmTsdLNZuqZ3M8g5S2YUqJUMPuJRzek1AJYj/yyazg/dSgw1oeRIXU2V
+         dZLQ==
+X-Gm-Message-State: AJIora9nGalP/2ul7wJM6++bbIwmGpdEDqJf9oAJ0oNjT4leQo7tKXxV
+        kW15qyKLCCDzZydI6ERc68wxqjPipvdVmw==
+X-Google-Smtp-Source: AGRyM1vJE04BUonkgSjBWmTmQJsaZEMB+yKaEMVvvJmBlJ2tnOkQuR1cQ4E0E8haEL9G76P5zaPIJA==
+X-Received: by 2002:a05:600c:1e8a:b0:3a2:ee8a:bbc9 with SMTP id be10-20020a05600c1e8a00b003a2ee8abbc9mr14186371wmb.6.1657803150334;
+        Thu, 14 Jul 2022 05:52:30 -0700 (PDT)
+Received: from [192.168.0.209] (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.googlemail.com with ESMTPSA id o42-20020a05600c512a00b0039c457cea21sm1962415wms.34.2022.07.14.05.52.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Jul 2022 05:52:29 -0700 (PDT)
+Message-ID: <d6aa0c5f-9a7c-7534-1825-d0f4adae5170@gmail.com>
+Date:   Thu, 14 Jul 2022 13:52:28 +0100
 MIME-Version: 1.0
-References: <20220714103119.22927-1-colin.i.king@gmail.com>
-In-Reply-To: <20220714103119.22927-1-colin.i.king@gmail.com>
-From:   Oded Gabbay <ogabbay@kernel.org>
-Date:   Thu, 14 Jul 2022 13:59:52 +0300
-X-Gmail-Original-Message-ID: <CAFCwf13ppoKUGtVRUc93EySHOVsXF-3XkfHUvC0K1O2adVDpFQ@mail.gmail.com>
-Message-ID: <CAFCwf13ppoKUGtVRUc93EySHOVsXF-3XkfHUvC0K1O2adVDpFQ@mail.gmail.com>
-Subject: Re: [PATCH][next] habanalabs: Fix spelling mistake "Scrubing" -> "Scrubbing"
-To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kernel-janitors@vger.kernel.org,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH] objtool: Fix spelling mistake "teh " -> "the"
+Content-Language: en-US
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Josh Poimboeuf <jpoimboe@kernel.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220714102856.22512-1-colin.i.king@gmail.com>
+ <Ys/0cXFRssinOqRE@worktop.programming.kicks-ass.net>
+From:   "Colin King (gmail)" <colin.i.king@gmail.com>
+In-Reply-To: <Ys/0cXFRssinOqRE@worktop.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jul 14, 2022 at 1:31 PM Colin Ian King <colin.i.king@gmail.com> wrote:
->
-> There is a spelling mistake in a dev_dbg message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/misc/habanalabs/gaudi/gaudi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/misc/habanalabs/gaudi/gaudi.c b/drivers/misc/habanalabs/gaudi/gaudi.c
-> index cb2988e2c7a8..05dd5e13f13e 100644
-> --- a/drivers/misc/habanalabs/gaudi/gaudi.c
-> +++ b/drivers/misc/habanalabs/gaudi/gaudi.c
-> @@ -4723,7 +4723,7 @@ static int gaudi_scrub_device_mem(struct hl_device *hdev)
->         addr = prop->sram_user_base_address;
->         size = hdev->pldm ? 0x10000 : prop->sram_size - SRAM_USER_BASE_OFFSET;
->
-> -       dev_dbg(hdev->dev, "Scrubing SRAM: 0x%09llx - 0x%09llx val: 0x%llx\n",
-> +       dev_dbg(hdev->dev, "Scrubbing SRAM: 0x%09llx - 0x%09llx val: 0x%llx\n",
->                         addr, addr + size, val);
->         rc = gaudi_memset_device_memory(hdev, addr, size, val);
->         if (rc) {
-> --
-> 2.35.3
->
-Reviewed-by: Oded Gabbay <ogabbay@kernel.org>
-Applied to -next.
-Thanks,
-Oded
+On 14/07/2022 11:48, Peter Zijlstra wrote:
+> On Thu, Jul 14, 2022 at 11:28:56AM +0100, Colin Ian King wrote:
+>> There is a spelling mistake in a WARN_FUNC message. Fix it.
+> 
+> That was so on purpose... :-)
+
+Oh, my spelling checker tool is not advanced enough to figure out the 
+nuances of bad spelling humor. :-)
