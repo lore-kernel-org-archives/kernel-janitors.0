@@ -2,112 +2,131 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE78CCA47B
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Jul 2022 16:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70464C43334
+	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Jul 2022 19:49:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232389AbiGNQhS (ORCPT
+        id S240744AbiGNTtL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Jul 2022 12:37:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34738 "EHLO
+        Thu, 14 Jul 2022 15:49:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229608AbiGNQhR (ORCPT
+        with ESMTP id S240780AbiGNTtJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Jul 2022 12:37:17 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D487D5B046
-        for <kernel-janitors@vger.kernel.org>; Thu, 14 Jul 2022 09:37:16 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id oy13so4437660ejb.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 14 Jul 2022 09:37:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xGhBTp6XRPi0txSgTZlfvtDUPgpddOrc4ZKc5VVIM6s=;
-        b=e0uLLMIncFBbTwGIjIl1+bMVa6Sd78yc9uhbKc4xWxYJSuOISxjql2JxSbSokgAher
-         T21hOslTSYyidI7/bIkAG0mp/9ZNhXTOdWXd7VPHfYtYqWJxa2uusobA0tEJBTCmMlrx
-         Gt1RIlt0gFq4FB7TrPXQ4AD0saxWVXBFAR4xmycyhVB7bI0PAqz9UQKuCP8IHETcesBv
-         OVbOIGe8vVn4I0AoOPaFlg0L2a+514xo87I2/eA1MwoLL8zm9t/8ryAqyPNhBp2UW/rX
-         PlRsV4/4H84qomx2nhKufYlK4sC1UXTFheNIwSM4cpzz1Wpd55TxHMfdfcHWzviQG8s1
-         Wi0g==
+        Thu, 14 Jul 2022 15:49:09 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AFAEC2A710
+        for <kernel-janitors@vger.kernel.org>; Thu, 14 Jul 2022 12:49:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1657828146;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=iO6/U5jvOEkMN6+5jOvymgFCuk9/AsH1Vqtm0cSdhzI=;
+        b=Ii0ARlZ6xk1nrF4/5KnEGFOpBnr7xUgUpOXm5afNXNAhsVKSybLRBxyZf4g/DcDIDyQhPw
+        OMsD+u4XM0AnnnIfOC5uy3knZ8sNoLptwnDTObnpD4aUvuOv9Z9w9hBjApEeRI7uFgsOGG
+        kf4i83eHzRxkjDnH4DNuq/et04a5who=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-307-awZW7aJPMS-WCxeKESfosA-1; Thu, 14 Jul 2022 15:49:05 -0400
+X-MC-Unique: awZW7aJPMS-WCxeKESfosA-1
+Received: by mail-ed1-f69.google.com with SMTP id w15-20020a056402268f00b0043ac600a6bcso2052706edd.6
+        for <kernel-janitors@vger.kernel.org>; Thu, 14 Jul 2022 12:49:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xGhBTp6XRPi0txSgTZlfvtDUPgpddOrc4ZKc5VVIM6s=;
-        b=4Cf56XwK9kqJpxvhqfYRbWlV6TsWXI4grkOdzrAdu1hhMsLSp1CtkZ7tVqtm64hjnm
-         CRCryeW6/bKHkJIDUGgvRqGTvDKNeNeWD3V6p/u+600JNCd9zWS0BA51hAoknD9WFqZy
-         flm5G6UxpV0whmXrWgfXz4oEe3GPU1i0Qxl5trj358gAIV+4wuHQsSdVh1QbKFTC+0Lb
-         ncfuC1LB5jlAmysgBHle4+/X4/rf1leE7MjlvJGSi4bXqTeB8q9UjJWqG8sjATls5vlu
-         qRFG1ngbLROP4O4p9O48Luubvgx+W5LBAw/I/r73WUHy33t9siffKf5hun65G87nRct6
-         U0Rw==
-X-Gm-Message-State: AJIora+gDwyEcqfCXLDhNIhZGRM5XUVd6vsG8ez1mjbSGjG7tSUkJXPZ
-        lbtVBd/0BTsPIkkb0Cp7q+nD5lt+om6JVaSiYUA=
-X-Google-Smtp-Source: AGRyM1v967M0anZhzBLm5GeEj5JA0DjTdKE/5DdEQ+hfX+QapVqZpyYibDMwZrZ/ei0QNlQWKcXiTfDn2+2GhjdCExk=
-X-Received: by 2002:a17:906:4fc5:b0:72b:9943:6f10 with SMTP id
- i5-20020a1709064fc500b0072b99436f10mr9816539ejw.722.1657816635413; Thu, 14
- Jul 2022 09:37:15 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=iO6/U5jvOEkMN6+5jOvymgFCuk9/AsH1Vqtm0cSdhzI=;
+        b=GYR228XXqfy7xEHtVEMgBa8fu1bs1rKUGjR+jWDjDEO7KL0/RKhI4RYPDkpSE9HseS
+         Y3Z6Hv071ltxs5OV5we4fsd8m4f31QQatWLJ+B0Si8iEBV+7XWBFcVa6c75fyTK2agUF
+         ALtOUe8RK6AlOrmpArrWSsLMBYv9u+XiWoun2h7YlGkqvdnIoAKlPUSq1CQ8Rax52qh1
+         /gL9vvhScCRei+gh3iPn+O0eV/cCQpzkhsl8WOrAGikGX7T4V3zYUIfJ3fsgxjS9yJR2
+         SLlS5tv/ZlQVgkqKoLFQW6mWdf5O0QCZtciYiFzGnjGxxJ+H1PfP+WDvS9hYpMa1dKAn
+         oh1w==
+X-Gm-Message-State: AJIora9J02gTdGEfP+a8snehaA97jrbCggaFeMM1iTOARps5jD4uLJcA
+        BM4WzQumZSkgCSZApV5nxENWw/JXLw7M1ziAvDBi/9niF0uwNKucNHqeY5ebYFhzC1q8KmR2plj
+        8hGscK2AyXA6TfwsCoRDeC1fo//V+
+X-Received: by 2002:a05:6402:2b93:b0:43a:5aad:73c2 with SMTP id fj19-20020a0564022b9300b0043a5aad73c2mr14541019edb.300.1657828144208;
+        Thu, 14 Jul 2022 12:49:04 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1t6OV1MCd6iZ5F7vvMF70fnIVQq31vYx/5mlv1ubca/PFvaEM7yPGw1QWqENjFZz6d/CKYr4w==
+X-Received: by 2002:a05:6402:2b93:b0:43a:5aad:73c2 with SMTP id fj19-20020a0564022b9300b0043a5aad73c2mr14541003edb.300.1657828143987;
+        Thu, 14 Jul 2022 12:49:03 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c1e:bf00:d69d:5353:dba5:ee81? (2001-1c00-0c1e-bf00-d69d-5353-dba5-ee81.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:d69d:5353:dba5:ee81])
+        by smtp.gmail.com with ESMTPSA id a8-20020a056402168800b00435726bd375sm1596009edv.57.2022.07.14.12.49.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Jul 2022 12:49:03 -0700 (PDT)
+Message-ID: <2c7d7615-9861-2b1c-d086-2c3eae3e6f82@redhat.com>
+Date:   Thu, 14 Jul 2022 21:49:02 +0200
 MIME-Version: 1.0
-References: <Ys6tkVXQeJcgeZn0@kili>
-In-Reply-To: <Ys6tkVXQeJcgeZn0@kili>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Thu, 14 Jul 2022 12:37:03 -0400
-Message-ID: <CADnq5_OHKTsoXN1Oic+dFovWyWBFkVXDixX7WtERnOTns+1WzQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/display: Remove unnecessary NULL check in commit_planes_for_stream()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Harry Wentland <harry.wentland@amd.com>,
-        Joshua Aberback <joshua.aberback@amd.com>,
-        kernel-janitors@vger.kernel.org, Alex Hung <alex.hung@amd.com>,
-        Leo Li <sunpeng.li@amd.com>, Wenjing Liu <wenjing.liu@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        Meenakshikumar Somasundaram <meenakshikumar.somasundaram@amd.com>,
-        David Airlie <airlied@linux.ie>, Roy Chan <roy.chan@amd.com>,
-        Michael Strauss <michael.strauss@amd.com>,
-        Alvin Lee <Alvin.Lee2@amd.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Martin Leung <martin.leung@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Jun Lei <Jun.Lei@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Jimmy Kizito <Jimmy.Kizito@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] MAINTAINERS: repair file entry in MICROSOFT SURFACE
+ AGGREGATOR TABLET-MODE SWITCH
+Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Mark Gross <markgross@kernel.org>,
+        platform-driver-x86@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220713040916.1767-1-lukas.bulwahn@gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20220713040916.1767-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Applied.  Thanks!
+Hi,
 
-Alex
+On 7/13/22 06:09, Lukas Bulwahn wrote:
+> Commit 9f794056db5b ("platform/surface: Add KIP/POS tablet-mode switch
+> driver") adds the section MICROSOFT SURFACE AGGREGATOR TABLET-MODE SWITCH
+> with a file entry, but the file that is added with this commit is actually
+> named slightly differently.
+> 
+>   file entry name: drivers/platform/surface/surface_aggregator_tablet_switch.c
+>   added file name: drivers/platform/surface/surface_aggregator_tabletsw.c
+> 
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken reference.
+> 
+> Repair this file entry to the actual file name added with the commit above.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-On Wed, Jul 13, 2022 at 7:34 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> Smatch complains that:
->
->     drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc.c:3369 commit_planes_for_stream()
->     warn: variable dereferenced before check 'stream' (see line 3114)
->
-> The 'stream' pointer cannot be NULL and the check can be removed.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Thank you for your patch, I've applied this patch to my review-hans 
+branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+
+With the requested Fixes tag added.
+
+Once I've run some tests on this branch the patches there will be
+added to the platform-drivers-x86/for-next branch and eventually
+will be included in the pdx86 pull-request to Linus for the next
+merge-window.
+
+Regards,
+
+Hans
+
 > ---
->  drivers/gpu/drm/amd/display/dc/core/dc.c | 2 +-
+>  MAINTAINERS | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
-> index dc2c59995a19..76f9af2c5e19 100644
-> --- a/drivers/gpu/drm/amd/display/dc/core/dc.c
-> +++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
-> @@ -3366,7 +3366,7 @@ static void commit_planes_for_stream(struct dc *dc,
->                                         top_pipe_to_program->stream_res.tg,
->                                         CRTC_STATE_VACTIVE);
->
-> -                       if (stream && should_use_dmub_lock(stream->link)) {
-> +                       if (should_use_dmub_lock(stream->link)) {
->                                 union dmub_hw_lock_flags hw_locks = { 0 };
->                                 struct dmub_hw_lock_inst_flags inst_flags = { 0 };
->
-> --
-> 2.35.1
->
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9bfd69e2b83d..9ec738419526 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13440,7 +13440,7 @@ MICROSOFT SURFACE AGGREGATOR TABLET-MODE SWITCH
+>  M:	Maximilian Luz <luzmaximilian@gmail.com>
+>  L:	platform-driver-x86@vger.kernel.org
+>  S:	Maintained
+> -F:	drivers/platform/surface/surface_aggregator_tablet_switch.c
+> +F:	drivers/platform/surface/surface_aggregator_tabletsw.c
+>  
+>  MICROSOFT SURFACE BATTERY AND AC DRIVERS
+>  M:	Maximilian Luz <luzmaximilian@gmail.com>
+
