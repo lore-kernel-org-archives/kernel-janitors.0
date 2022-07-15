@@ -2,75 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A252C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Jul 2022 08:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9723C43334
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Jul 2022 08:49:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232385AbiGOIdg (ORCPT
+        id S232049AbiGOItW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 15 Jul 2022 04:33:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56688 "EHLO
+        Fri, 15 Jul 2022 04:49:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229560AbiGOIdf (ORCPT
+        with ESMTP id S230258AbiGOItV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 15 Jul 2022 04:33:35 -0400
+        Fri, 15 Jul 2022 04:49:21 -0400
 Received: from fornost.hmeau.com (helcar.hmeau.com [216.24.177.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92CCD1E8;
-        Fri, 15 Jul 2022 01:33:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0E2525F5;
+        Fri, 15 Jul 2022 01:49:20 -0700 (PDT)
 Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
         by fornost.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
-        id 1oCGl9-000ndq-8p; Fri, 15 Jul 2022 18:33:16 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 15 Jul 2022 16:33:15 +0800
-Date:   Fri, 15 Jul 2022 16:33:15 +0800
+        id 1oCH09-000nut-Kc; Fri, 15 Jul 2022 18:48:47 +1000
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 15 Jul 2022 16:48:45 +0800
+Date:   Fri, 15 Jul 2022 16:48:45 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Yang Shen <shenyang39@huawei.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-crypto@vger.kernel.org
-Subject: Re: [PATCH] crypto: hisilicon/zip: Use the bitmap API to allocate
- bitmaps
-Message-ID: <YtEmS//eV3Ok08BD@gondor.apana.org.au>
-References: <49a1b5bf6e8f7c2ad06a0e2dbc35e00169d4ebe2.1657383385.git.christophe.jaillet@wanadoo.fr>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, linux-crypto@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: x86/blowfish: remove redundant assignment to
+ variable nytes
+Message-ID: <YtEp7Ubl+fnCBePR@gondor.apana.org.au>
+References: <20220707080546.151730-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <49a1b5bf6e8f7c2ad06a0e2dbc35e00169d4ebe2.1657383385.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20220707080546.151730-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Jul 09, 2022 at 06:16:46PM +0200, Christophe JAILLET wrote:
-> Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
+On Thu, Jul 07, 2022 at 09:05:46AM +0100, Colin Ian King wrote:
+> Variable nbytes is being assigned a value that is never read, it is
+> being re-assigned in the next statement in the while-loop. The
+> assignment is redundant and can be removed.
 > 
-> It is less verbose and it improves the semantic.
+> Cleans up clang scan-build warnings, e.g.:
+> arch/x86/crypto/blowfish_glue.c:147:10: warning: Although the value
+> stored to 'nbytes' is used in the enclosing expression, the value
+> is never actually read from 'nbytes'
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  drivers/crypto/hisilicon/zip/zip_crypto.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/crypto/hisilicon/zip/zip_crypto.c b/drivers/crypto/hisilicon/zip/zip_crypto.c
-> index 67869513e48c..7bf53877e508 100644
-> --- a/drivers/crypto/hisilicon/zip/zip_crypto.c
-> +++ b/drivers/crypto/hisilicon/zip/zip_crypto.c
-> @@ -606,8 +606,7 @@ static int hisi_zip_create_req_q(struct hisi_zip_ctx *ctx)
->  		req_q = &ctx->qp_ctx[i].req_q;
->  		req_q->size = QM_Q_DEPTH;
->  
-> -		req_q->req_bitmap = kcalloc(BITS_TO_LONGS(req_q->size),
-> -					    sizeof(long), GFP_KERNEL);
-> +		req_q->req_bitmap = bitmap_zalloc(req_q->size, GFP_KERNEL);
->  		if (!req_q->req_bitmap) {
->  			ret = -ENOMEM;
->  			if (i == 0)
+>  arch/x86/crypto/blowfish_glue.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-You should add an include for linux/bitmap.h instead of relying
-on implicit inclusion through some random header file.
-
-The same goes for all your other patches too.
-
-Thanks,
+Patch applied.  Thanks.
 -- 
 Email: Herbert Xu <herbert@gondor.apana.org.au>
 Home Page: http://gondor.apana.org.au/~herbert/
