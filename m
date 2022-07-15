@@ -2,83 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1870C43334
-	for <kernel-janitors@archiver.kernel.org>; Thu, 14 Jul 2022 22:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D82C43334
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Jul 2022 05:20:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240970AbiGNWAd (ORCPT
+        id S229674AbiGOFU0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 14 Jul 2022 18:00:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52590 "EHLO
+        Fri, 15 Jul 2022 01:20:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232682AbiGNWAb (ORCPT
+        with ESMTP id S229492AbiGOFUY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 14 Jul 2022 18:00:31 -0400
-Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E29C16717F;
-        Thu, 14 Jul 2022 15:00:30 -0700 (PDT)
-Received: by mail-vs1-xe2b.google.com with SMTP id w188so2563842vsb.6;
-        Thu, 14 Jul 2022 15:00:30 -0700 (PDT)
+        Fri, 15 Jul 2022 01:20:24 -0400
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05BF3796A3;
+        Thu, 14 Jul 2022 22:20:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=uqejFrrJQVrbf4+FczBPWjgqVBbsgKFGlzQ/n7XaL+o=;
-        b=NTBavKrnx6m3woTqnQo5hRe7P2v2aO74raMvzzh7stWSrpiCJ83EzlympvdjZm8d/m
-         3yznsW9R8LWrRn50menrhA24+Wp9/PmFw3rzkpiNLQmM04N7s55REOQ6C6bgPMcaaQkj
-         v61IlqBR7Ekiu/Izu2oFBr0BMuQFwc8ao86eUCLQ549VjrdwfMolX5CI8jDz+ylXKwd3
-         eD6vBjYQngGX93RmUY7y/jjam/wpBsZNyU9DiD3WRQ0O+/HcJjpuuz1wJa1rq81qoB+/
-         x26m9Q3sgSTv6/4o6OGXGyjx9fxW+LWd/0X/c0UcREZjqvJPGrRMrukqv3s9/E5ihLIY
-         HBOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=uqejFrrJQVrbf4+FczBPWjgqVBbsgKFGlzQ/n7XaL+o=;
-        b=zkdvX0bzo02b5NqF7kLQQchqposFHcywSQ1nggyKGVbvKQtigvx6ftXmvWzFczqny0
-         FH7Jwl8824jaNFu3dVQt+7QOhnVHIVwJgRI0TXoKtqnkBVmuZaQUIzhb3fRaoLZtFZiD
-         CHES62QO5WbitKudM4rTGzkWzFlAc9iHHe2VBJtQcnzlIQxnsVIF+llxARnqPHn3ICTr
-         QoiR2OYcED1E6r0P+9DlMqAzSH7cu9XqimNnMtA6J8ETA4GEPFbojxNt3x/PCfvkvgC+
-         ZcblvZMw0iyprQTNHnyNI8kRi1pCotOeZv0w5hRYR1wkksyZoGcz+vnLSwd4QOcvgp8E
-         BQVQ==
-X-Gm-Message-State: AJIora8IEKv0s9kL8mrXa7GYYf+qZ9MrQg/A1jZoe0R9u2KD1IpglcCy
-        667ROZI+cW6X63RvrJTNTRjahYwKDwzzHLsVdN7Vnl9GTAS1+Q==
-X-Google-Smtp-Source: AGRyM1ttwjuU60+tMG8wmAHau//VSxupOkTakmOd/lYTN4MTpnx1ZfjU/hL6KefoeZYPT9YhJYzgSThaqTOaSkpLT/k=
-X-Received: by 2002:a67:6d86:0:b0:357:3d99:ec77 with SMTP id
- i128-20020a676d86000000b003573d99ec77mr4596119vsc.6.1657836029630; Thu, 14
- Jul 2022 15:00:29 -0700 (PDT)
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=zO43hikXt0XV2hT6fYiuYzmsqvmr44gi7YAHVOdw6qY=;
+  b=Ujpob+adTWG6OU7Rjosi+l0EP6AZRUFKPAvJG9QJnPKKLflW7e5U8Lve
+   xsfqeF/zLzruSSAYdlKuG84punOx5Jw8zDC9lPwdzpOWjwn5gNTc9l4fX
+   JFKbwj9GVh3hxIQAaXjqFXx5TiXlcQS5BiOGoS/4AyV3LK9+VP/GaMnHO
+   Q=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="5.92,272,1650924000"; 
+   d="scan'208";a="19373232"
+Received: from 150.122.68.85.rev.sfr.net (HELO hadrien) ([85.68.122.150])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2022 07:20:21 +0200
+Date:   Fri, 15 Jul 2022 07:20:19 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: jll@hadrien
+To:     Steve French <smfrench@gmail.com>
+cc:     LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Yu Zhe <yuzhe@nfschina.com>
+Subject: Re: Is casting a void ptr to something else considered bad kernel
+ coding style
+In-Reply-To: <CAH2r5msuc3-1V+dh5NdwnE6uBoN+7_cf=m6kwrFrTnwArND0LQ@mail.gmail.com>
+Message-ID: <alpine.DEB.2.22.394.2207150717570.3006@hadrien>
+References: <CAH2r5msuc3-1V+dh5NdwnE6uBoN+7_cf=m6kwrFrTnwArND0LQ@mail.gmail.com>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 MIME-Version: 1.0
-From:   Steve French <smfrench@gmail.com>
-Date:   Thu, 14 Jul 2022 17:00:19 -0500
-Message-ID: <CAH2r5msuc3-1V+dh5NdwnE6uBoN+7_cf=m6kwrFrTnwArND0LQ@mail.gmail.com>
-Subject: Is casting a void ptr to something else considered bad kernel coding style
-To:     LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>
-Cc:     Yu Zhe <yuzhe@nfschina.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-For examples like this where a pointer which is (void *) is cast to
-something else, is this considered bad coding style in kernel C
-programming?
 
-It may be that leaving the (unnecessary) cast in, although it is not
-required for C, makes the code clearer in some cases.
 
-Any opinions on changes to remove casts of void pointers for kernel
-code (which I have recently seen suggested)?
+On Thu, 14 Jul 2022, Steve French wrote:
 
-for example:
+> For examples like this where a pointer which is (void *) is cast to
+> something else, is this considered bad coding style in kernel C
+> programming?
+>
+> It may be that leaving the (unnecessary) cast in, although it is not
+> required for C, makes the code clearer in some cases.
+>
+> Any opinions on changes to remove casts of void pointers for kernel
+> code (which I have recently seen suggested)?
+>
+> for example:
+>
+> --- a/fs/cifs/smb2pdu.c
+> +++ b/fs/cifs/smb2pdu.c
+> @@ -354,7 +354,7 @@ fill_small_buf(__le16 smb2_command, struct cifs_tcon *tcon,
+>                void *buf,
+>                unsigned int *total_len)
+>  {
+> -       struct smb2_pdu *spdu = (struct smb2_pdu *)buf;
+> +       struct smb2_pdu *spdu = buf;
 
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -354,7 +354,7 @@ fill_small_buf(__le16 smb2_command, struct cifs_tcon *tcon,
-               void *buf,
-               unsigned int *total_len)
- {
--       struct smb2_pdu *spdu = (struct smb2_pdu *)buf;
-+       struct smb2_pdu *spdu = buf;
+There would seem to be not much point to this (the original cast), since
+the type is immediately explicit in the variable declaration.
 
--- 
-Thanks,
+It would also make for tiresome editing if the type should change, and it
+reduces readability by adding a lot of characters that don't give useful
+information.
 
-Steve
+julia
