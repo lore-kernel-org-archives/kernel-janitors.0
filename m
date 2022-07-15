@@ -2,82 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA36C43334
-	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Jul 2022 11:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80BBFC43334
+	for <kernel-janitors@archiver.kernel.org>; Fri, 15 Jul 2022 13:24:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232710AbiGOLKY (ORCPT
+        id S234698AbiGONYR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 15 Jul 2022 07:10:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34048 "EHLO
+        Fri, 15 Jul 2022 09:24:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231589AbiGOLKT (ORCPT
+        with ESMTP id S229436AbiGONYR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 15 Jul 2022 07:10:19 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5C1686890;
-        Fri, 15 Jul 2022 04:10:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 17284CE2EA1;
-        Fri, 15 Jul 2022 11:10:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4C2D6C3411E;
-        Fri, 15 Jul 2022 11:10:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657883414;
-        bh=6OjJ1qdAgBKDuBgy+3gDvP8Eq67yBuAeZucLUnONSSM=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=fEvzptblu7MkQEOKZHK9NqSEIon7if8e4AwJp4B6NXDL7AYleI2YXFN/f3xrODjj2
-         jjYb4f1f1AgsA//SjlA+58sE8FDXWgfvUL+n4oXysE49yG4Zwefsr0DDQ/EanlxSoH
-         HC8JuaWDehMrp6kxCN3gDF1cCubC4mQ0Qh6SeZxUlOv3SvL1QKT/iOhsNVa0IAZBb+
-         I7Yc8eqijXXwWFIe+h+77l0ccSNQ9wvci9UG+1O/o9ZfT85AOxQdpaCKxwM9Q5Ldog
-         CzJJeMEYbrkDG/wyuBe8LsE1MSHr2XNa6hDHhqM3fvAGKcx0Sd5120ybOPHDFg3yeC
-         p8idZtFHLf+Pw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 26388E45223;
-        Fri, 15 Jul 2022 11:10:14 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 15 Jul 2022 09:24:17 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D78F785BB;
+        Fri, 15 Jul 2022 06:24:16 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id x23-20020a05600c179700b003a30e3e7989so835279wmo.0;
+        Fri, 15 Jul 2022 06:24:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zJhQUMYCZEmFeAJVf4TYYWzusKGcCiCwl6yCYU1DmkY=;
+        b=lTCwIrTi40aVylTJM0ugG97hRPG08sXGUP/QN1brdfq3yxnZGSmx5Q/jQi/x5SEVZ9
+         d69rqOCiOuS3dkNvbolerb+f8/K9qZIrqfC0LMlHQnkYEDBJR5katfwScceaJRDHJ8np
+         sDlUo7FE/btrwmbzrSxLpSMzxZMIH6xLAuC2ieJiR3ljj+f0n1RCTQBBw+3qFDWxk2vX
+         amrM/VM/S+Tv7DaEAqqcJALDUHkBcCzwwYusndJl1O9UUVdCyVE6Yx1VpeYv+EvXOtWy
+         0z9ebp+r2lY4wxxAc6XMLN4mhFlyNgyiD7Tws33bEstvTxWMrl2SwBDbk8BcuMv55Z96
+         WzQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zJhQUMYCZEmFeAJVf4TYYWzusKGcCiCwl6yCYU1DmkY=;
+        b=jUKKdgO4P+qGZTkIoCJQkPe2pksyMrUr3WZ8lfrFAqsRObVfJr1910LFhEnxcccJJu
+         /pR4JmuJqfHyPJD2yc6g+Bdf18Lb+Nonm+IBHb/iLLA54CBma8ngHn+wlBo/x4//Wo+R
+         Jcycg0qAtWLzjbF+L5os48xyCnVRkIp1AExQDzE1+WNxgjRv6e/xazXHt494FEzU0eDZ
+         IxY41g83Cn/TnwBk5b1PuRn2o5zXlWWUL+6c2L50chXmz5Rphhj8gn0kLoDI0Q3Ie86F
+         8/MXRtbFf2wI14QKLOYEV7WbqMEwNJY7fDKhof1Sn4T9YpANE/2homZtpXc/VRqEUtYj
+         EXXw==
+X-Gm-Message-State: AJIora8bzK2N1c98CpF2EI7QyKa3wyZ68bO9PjNNlRjZKtRExrXUlIGD
+        qbMcYgSYhk0Epk0th4QdySs=
+X-Google-Smtp-Source: AGRyM1tmaQIYhbcwqUbI5/O4ZkgdwAVDAQWlsKB3fIw8jJG87a/FlVQrnB/cibtVidZE7ukUvpMpsg==
+X-Received: by 2002:a05:600c:19ca:b0:3a1:9897:410e with SMTP id u10-20020a05600c19ca00b003a19897410emr14708128wmq.88.1657891454598;
+        Fri, 15 Jul 2022 06:24:14 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id o3-20020adfeac3000000b0021d6ac977fasm3823636wrn.69.2022.07.15.06.24.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Jul 2022 06:24:13 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Hannes Reinecke <hare@suse.de>, linux-nvme@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] nvmet-auth: Fix a couple of spelling mistakes
+Date:   Fri, 15 Jul 2022 14:24:13 +0100
+Message-Id: <20220715132413.301017-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [net-next PATCH] octeontx2-af: Fixes static warnings
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <165788341415.15583.8636883844564216314.git-patchwork-notify@kernel.org>
-Date:   Fri, 15 Jul 2022 11:10:14 +0000
-References: <20220714042843.250537-1-rkannoth@marvell.com>
-In-Reply-To: <20220714042843.250537-1-rkannoth@marvell.com>
-To:     Ratheesh Kannoth <rkannoth@marvell.com>
-Cc:     kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sgoutham@marvell.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, kbuild-all@lists.01.org,
-        dan.carpenter@oracle.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+There are a couple of spelling mistakes in pr_warn and pr_debug messages.
+Fix them.
 
-This patch was applied to netdev/net-next.git (master)
-by David S. Miller <davem@davemloft.net>:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/nvme/common/auth.c | 2 +-
+ drivers/nvme/target/auth.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-On Thu, 14 Jul 2022 09:58:43 +0530 you wrote:
-> Fixes smatch static tool warning reported by smatch tool.
-> 
-> rvu_npc_hash.c:1232 rvu_npc_exact_del_table_entry_by_id() error:
-> uninitialized symbol 'drop_mcam_idx'.
-> 
-> rvu_npc_hash.c:1312 rvu_npc_exact_add_table_entry() error:
-> uninitialized symbol 'drop_mcam_idx'.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next] octeontx2-af: Fixes static warnings
-    https://git.kernel.org/netdev/net-next/c/da92e03c7fbf
-
-You are awesome, thank you!
+diff --git a/drivers/nvme/common/auth.c b/drivers/nvme/common/auth.c
+index 0c86ebce59d2..f93d369b8850 100644
+--- a/drivers/nvme/common/auth.c
++++ b/drivers/nvme/common/auth.c
+@@ -346,7 +346,7 @@ int nvme_auth_augmented_challenge(u8 hmac_id, u8 *skey, size_t skey_len,
+ 
+ 	hmac_name = nvme_auth_hmac_name(hmac_id);
+ 	if (!hmac_name) {
+-		pr_warn("%s: invalid hash algoritm %d\n",
++		pr_warn("%s: invalid hash algorithm %d\n",
+ 			__func__, hmac_id);
+ 		ret = -EINVAL;
+ 		goto out_free_key;
+diff --git a/drivers/nvme/target/auth.c b/drivers/nvme/target/auth.c
+index bf92435c783c..b41c7bbcc436 100644
+--- a/drivers/nvme/target/auth.c
++++ b/drivers/nvme/target/auth.c
+@@ -515,7 +515,7 @@ int nvmet_auth_ctrl_sesskey(struct nvmet_req *req,
+ 					  req->sq->dhchap_skey,
+ 					  req->sq->dhchap_skey_len);
+ 	if (ret)
+-		pr_debug("failed to compute shared secred, err %d\n", ret);
++		pr_debug("failed to compute shared secret, err %d\n", ret);
+ 	else
+ 		pr_debug("%s: shared secret %*ph\n", __func__,
+ 			 (int)req->sq->dhchap_skey_len,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.35.3
 
