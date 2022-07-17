@@ -2,103 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28788C43334
-	for <kernel-janitors@archiver.kernel.org>; Sat, 16 Jul 2022 17:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58EBBC43334
+	for <kernel-janitors@archiver.kernel.org>; Sun, 17 Jul 2022 18:05:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231810AbiGPRoh (ORCPT
+        id S230403AbiGQSFf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 16 Jul 2022 13:44:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48616 "EHLO
+        Sun, 17 Jul 2022 14:05:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229501AbiGPRog (ORCPT
+        with ESMTP id S229487AbiGQSFf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 16 Jul 2022 13:44:36 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21A531D31D;
-        Sat, 16 Jul 2022 10:44:36 -0700 (PDT)
+        Sun, 17 Jul 2022 14:05:35 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95D6713EA5;
+        Sun, 17 Jul 2022 11:05:34 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 89F9CB80B06;
-        Sat, 16 Jul 2022 17:44:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B68F8C34114;
-        Sat, 16 Jul 2022 17:44:31 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3405B6127D;
+        Sun, 17 Jul 2022 18:05:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D587DC3411E;
+        Sun, 17 Jul 2022 18:05:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657993473;
-        bh=hbTBbW6QwYIosLKzqWUQvgF2opXvpQpGWz92NfHdu/g=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ftvWLqkC1SsT+mR7qoZ+TTUNRME6Izlsd4lTzWN2vl3Vze+diH7gtzKby47xsGDx7
-         QIanX/EDgzCmwpKMM7qn5+j1Aiw03xOHLucZ1y/tw7wsy3+sDnQboA/ssgAhkK2TTB
-         yRYEN+0mlqjkhaFV610/QLyzVmy1fWYwg/jlkguV8UVnr9Hr1ljC2BkjlwPSXMGjGL
-         YkzguM3p5BCIGTJa+ZitFSHqOre8gcZSjQOMIojzXVKBQlMIWfc01npXivnnDRz5qo
-         y2lxLTaTUvr2ytq0rdIQ3A4xSGqPoKcRRbQtQRd05gJqnS2MIF0v4LStkqWT+T8mT2
-         xToVhzkHRd18g==
-Date:   Sat, 16 Jul 2022 18:54:27 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
-        linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: max1027: unlock on error path in
- max1027_read_single_value()
-Message-ID: <20220716185427.21f2d660@jic23-huawei>
-In-Reply-To: <YsbztVuAXnau2cIZ@kili>
-References: <YsbztVuAXnau2cIZ@kili>
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-pc-linux-gnu)
+        s=k20201202; t=1658081133;
+        bh=OveqWUgi0AmC0J0iuerYjT0uIe2S6FiKww44J3sg0Uk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NtodxQeW/x+mZd+fvNwO23NuUt/XHJFIylsKrZcEgErNZJNU0MTOEppHTn1GFdZgW
+         g4rTWreiy/iGVMip/WGw0Sf81OIhoGI0XhIuhX7aAcgSD5NsmxXokxEZHWTkGJevYy
+         zjCq6K0NIat+zSWii+bVKvBt4yFO4qVL2PrciscduX8vx8p33S4WD6r6uBH4O/WP//
+         QR9U9TubNokesBfVj3btFKAqFEyWK2+vHpwH3eTVN0d8Yty+DL4HI6UD0o22LvBuQK
+         0YUSZHesBHrOPBu/pgVAk3jRWJjxyRc9fZlokoUAVlzwB03wQaNkZnw1tjE5xuf+Tg
+         UlMhxrlUdb0Ng==
+Date:   Sun, 17 Jul 2022 21:05:29 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Roland Dreier <rolandd@cisco.com>,
+        Ralph Campbell <ralph.campbell@qlogic.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Subject: Re: [PATCH] RDMA/qib: Use the bitmap API when applicable
+Message-ID: <YtRPaSNV0UPn/nMk@unreal>
+References: <33d8992586d382bec8b8efd83e4729fb7feaf89e.1656834106.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <33d8992586d382bec8b8efd83e4729fb7feaf89e.1656834106.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 7 Jul 2022 17:54:45 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
-
-> If max1027_wait_eoc() fails then call iio_device_release_direct_mode()
-> before returning.
+On Sun, Jul 03, 2022 at 09:42:48AM +0200, Christophe JAILLET wrote:
+> Using the bitmap API is less verbose than hand writing them.
+> It also improves the semantic.
 > 
-> Fixes: a0e831653ef9 ("iio: adc: max1027: Introduce an end of conversion helper")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Queued up on a special
-fixes-togreg-post-5.20-rc1 branch in iio.git as I don't think I'll get another
-pull request out for this in time to intercept the merge window.
-
-Thanks,
-
-Jonathan
-
+> While at it, initialize the bitmaps. It can't hurt.
+> 
+> Fixes: f931551bafe1 ("IB/qib: Add new qib driver for QLogic PCIe InfiniBand adapters")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/iio/adc/max1027.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  drivers/infiniband/hw/qib/qib_iba7322.c | 23 ++++++++---------------
+>  1 file changed, 8 insertions(+), 15 deletions(-)
 > 
-> diff --git a/drivers/iio/adc/max1027.c b/drivers/iio/adc/max1027.c
-> index b725d012625c..136fcf753837 100644
-> --- a/drivers/iio/adc/max1027.c
-> +++ b/drivers/iio/adc/max1027.c
-> @@ -349,8 +349,7 @@ static int max1027_read_single_value(struct iio_dev *indio_dev,
->  	if (ret < 0) {
->  		dev_err(&indio_dev->dev,
->  			"Failed to configure conversion register\n");
-> -		iio_device_release_direct_mode(indio_dev);
-> -		return ret;
-> +		goto release;
->  	}
->  
->  	/*
-> @@ -360,11 +359,12 @@ static int max1027_read_single_value(struct iio_dev *indio_dev,
->  	 */
->  	ret = max1027_wait_eoc(indio_dev);
->  	if (ret)
-> -		return ret;
-> +		goto release;
->  
->  	/* Read result */
->  	ret = spi_read(st->spi, st->buffer, (chan->type == IIO_TEMP) ? 4 : 2);
->  
-> +release:
->  	iio_device_release_direct_mode(indio_dev);
->  
->  	if (ret < 0)
 
+I removed the Fixes line as there is no bug in changed code, just update
+to use better in-kernel API.
+
+Thanks, applied.
