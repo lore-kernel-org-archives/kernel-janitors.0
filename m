@@ -2,81 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A925DC43334
-	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Jul 2022 11:36:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE91CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Jul 2022 11:51:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234213AbiGRLgW (ORCPT
+        id S234555AbiGRLva (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 18 Jul 2022 07:36:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56364 "EHLO
+        Mon, 18 Jul 2022 07:51:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232158AbiGRLgV (ORCPT
+        with ESMTP id S233740AbiGRLv2 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 18 Jul 2022 07:36:21 -0400
-Received: from out30-44.freemail.mail.aliyun.com (out30-44.freemail.mail.aliyun.com [115.124.30.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1CB9DF24
-        for <kernel-janitors@vger.kernel.org>; Mon, 18 Jul 2022 04:36:19 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046049;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VJjf4Le_1658144174;
-Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VJjf4Le_1658144174)
-          by smtp.aliyun-inc.com;
-          Mon, 18 Jul 2022 19:36:16 +0800
-Date:   Mon, 18 Jul 2022 19:36:14 +0800
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
-        Yue Hu <huyue2@coolpad.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        linux-erofs@lists.ozlabs.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] erofs: clean up a loop
-Message-ID: <YtVFrpFdaR2Iwf2x@B-P7TQMD6M-0146.local>
-References: <YtVB6GBWHVSc6fbU@kili>
+        Mon, 18 Jul 2022 07:51:28 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5385D21E1A;
+        Mon, 18 Jul 2022 04:51:28 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D50A5613EF;
+        Mon, 18 Jul 2022 11:51:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A7EEC341C0;
+        Mon, 18 Jul 2022 11:51:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658145087;
+        bh=4peZeccaMY4buj1NfRubWz/kj288jrOowXgp/5FpdAU=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=Eb1Kz3aQ5KvS9rBQgafr069Y+8mU0zhtwVJh7mQ0shGm0Q1XK7pIOAjUi1nPA0aN2
+         wFmKnTrsnxsvs/J/guKJacl/aFUjLA6qrU5dtsSOsbIS59MZM9I5MeE6sfzXL+ywqd
+         NLxn17Qn7OwhdDgNi17tVo14djv71O9O15B7PTUQf8eCsgLoBfGKHVtfT0WxP+jn7R
+         1pFcQvOWFEPQFGC5oz9qF0oIDTJ9adeXeggxByJosbx6TvQhR3p5rmYYKqkS3DqLBS
+         8GaWXmQZyArMhzyHZPWpm8KwKRuHKLVMuUv3UUn+40O2SbSsswJxD2CygVl91oKLbm
+         /6QiywjcIEwoA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YtVB6GBWHVSc6fbU@kili>
+Content-Transfer-Encoding: 7bit
+Subject: Re: [v2] wifi: p54: Fix an error handling path in p54spi_probe()
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <297d2547ff2ee627731662abceeab9dbdaf23231.1655068321.git.christophe.jaillet@wanadoo.fr>
+References: <297d2547ff2ee627731662abceeab9dbdaf23231.1655068321.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Christian Lamparter <chunkeey@googlemail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "John W. Linville" <linville@tuxdriver.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Christian Lamparter <chunkeey@web.de>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <165814507884.17539.1869457653160342905.kvalo@kernel.org>
+Date:   Mon, 18 Jul 2022 11:51:24 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-On Mon, Jul 18, 2022 at 02:20:08PM +0300, Dan Carpenter wrote:
-> It's easier to see what this loop is doing when the decrement is in
-> the normal place.
+> If an error occurs after a successful call to p54spi_request_firmware(), it
+> must be undone by a corresponding release_firmware() as already done in
+> the error handling path of p54spi_request_firmware() and in the .remove()
+> function.
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  fs/erofs/zdata.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Add the missing call in the error handling path and remove it from
+> p54spi_request_firmware() now that it is the responsibility of the caller
+> to release the firmware
 > 
-> diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-> index 601cfcb07c50..2691100eb231 100644
-> --- a/fs/erofs/zdata.c
-> +++ b/fs/erofs/zdata.c
-> @@ -419,8 +419,8 @@ static bool z_erofs_try_inplace_io(struct z_erofs_decompress_frontend *fe,
->  {
->  	struct z_erofs_pcluster *const pcl = fe->pcl;
->  
-> -	while (fe->icur > 0) {
-> -		if (!cmpxchg(&pcl->compressed_bvecs[--fe->icur].page,
-> +	while (fe->icur--) {
+> Fixes: cd8d3d321285 ("p54spi: p54spi driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Acked-by: Christian Lamparter <chunkeey@gmail.com>
 
-Thanks for your patch!
-Yet at a quick glance, on my side, that doesn't equal
-to be honest...
+Patch applied to wireless-next.git, thanks.
 
-.. What we're trying to do here is to find a free slot
-for inplace i/o, but also need to leave fe->icur as 0
-when going out the loop since z_erofs_try_inplace_io()
-can be called again the next time when attaching
-another page but it will overflow then...
+83781f0162d0 wifi: p54: Fix an error handling path in p54spi_probe()
 
-Thanks,
-Gao Xiang
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/297d2547ff2ee627731662abceeab9dbdaf23231.1655068321.git.christophe.jaillet@wanadoo.fr/
 
-> +		if (!cmpxchg(&pcl->compressed_bvecs[fe->icur].page,
->  			     NULL, bvec->page)) {
->  			pcl->compressed_bvecs[fe->icur] = *bvec;
->  			return true;
-> -- 
-> 2.35.1
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
