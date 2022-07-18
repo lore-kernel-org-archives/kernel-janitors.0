@@ -2,88 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D771ACCA479
-	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Jul 2022 15:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B897FC433EF
+	for <kernel-janitors@archiver.kernel.org>; Mon, 18 Jul 2022 17:16:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235532AbiGRP3R (ORCPT
+        id S233607AbiGRRQn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 18 Jul 2022 11:29:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43804 "EHLO
+        Mon, 18 Jul 2022 13:16:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235630AbiGRP3O (ORCPT
+        with ESMTP id S233100AbiGRRQm (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 18 Jul 2022 11:29:14 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04E17BA9;
-        Mon, 18 Jul 2022 08:29:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1658158155; x=1689694155;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=yH2iAt7Nak/S2cxw66iqqC0mytMna35OO1GjNSnHyFo=;
-  b=Iq0O5rreNmIynoPU/qpnN2x9ipQ1aOY7v+5yFu3a2so0hpMXU4KzAN4X
-   iCfMBOo1/V+XESlU6XHZ2Ji6pnQgfbllir5sbL89m7dlRgFlfMunko8kT
-   JU7v1ME++muFOw0lIsKEaPX2A2bwozkExYcOIrokrA8NV01Vrvv+zJxOW
-   25IWSNTsnn8BHPADDVFzCraLIbGf359c+hLc7tnZtivvA87OZpj0m0mvr
-   aaQBw59TSkcWAKeXCnuukiJD39czSD20mU7HjJdXicauGKIItWFD32hM6
-   7hvDe+dQMv/S4tt49UCs4RLJz0zrrsAYlWPLyeU2GTmLWStbgjX4lUDcL
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10412"; a="347938874"
-X-IronPort-AV: E=Sophos;i="5.92,281,1650956400"; 
-   d="scan'208";a="347938874"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2022 08:29:15 -0700
-X-IronPort-AV: E=Sophos;i="5.92,281,1650956400"; 
-   d="scan'208";a="572449344"
-Received: from jwconnol-mobl1.amr.corp.intel.com (HELO spandruv-desk1.amr.corp.intel.com) ([10.209.102.92])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2022 08:29:13 -0700
-Message-ID: <4d30ed8d43d0db93c5f550bb69931f288285aa2b.camel@linux.intel.com>
-Subject: Re: [PATCH] tools/power/x86/intel-speed-select: Fix off by one check
-From:   srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+        Mon, 18 Jul 2022 13:16:42 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13F942C12D;
+        Mon, 18 Jul 2022 10:16:42 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9501E61582;
+        Mon, 18 Jul 2022 17:16:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C28F3C341C0;
+        Mon, 18 Jul 2022 17:16:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658164600;
+        bh=d6KscDVDrA9I+4PRxjkUn0b5XrvScwDW2osOQpnQ+Bo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MyhWEdauYWHUif85Fr9+YI50paUINVAGUmbWkG/jkMAAuMNX7OTsCK7EKr8xwTsg5
+         sCW/PsdcWfsBKxP5XsIZ0ldDLyJUjN5cf1uxBY7PclGgySBbMYA0Pnadw45TFTEYoP
+         jgyVNL7oed9ykgEgZEDRK5m6rPENqOJDZyl56cqfJABXQUONYC6ar2Dt/ehGI7Vn6E
+         9sZvTrq3KZCvDqmzuWNeLEe+wMys8M2KSvs/bwqe4DkdNxqwcaqE1yhEgKC6STJgiJ
+         6OZz5eftGZs4JnqNRdhwxocO0E58Ex9gfEk5+m7ZMrbPLMcALIG13EsBYsN18jMKJ9
+         F9VGhWmlfxjDA==
+Date:   Mon, 18 Jul 2022 10:16:40 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Date:   Mon, 18 Jul 2022 08:29:13 -0700
-In-Reply-To: <YtVdXen0K8KH0kwu@kili>
-References: <YtVdXen0K8KH0kwu@kili>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
+Cc:     Dave Chinner <dchinner@redhat.com>,
+        Chandan Babu R <chandan.babu@oracle.com>,
+        Allison Henderson <allison.henderson@oracle.com>,
+        linux-xfs@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] xfs: delete unnecessary NULL checks
+Message-ID: <YtWVeOjhL5R+CEJQ@magnolia>
+References: <YtVCOtQ7PCRfjXY6@kili>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YtVCOtQ7PCRfjXY6@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, 2022-07-18 at 16:17 +0300, Dan Carpenter wrote:
-> Change > MAX_DIE_PER_PACKAGE to >= MAX_DIE_PER_PACKAGE to prevent
-> accessing one element beyond the end of the array.
+On Mon, Jul 18, 2022 at 02:21:30PM +0300, Dan Carpenter wrote:
+> These NULL check are no long needed after commit 2ed5b09b3e8f ("xfs:
+> make inode attribute forks a permanent part of struct xfs_inode").
 > 
-> Fixes: 7fd786dfbd2c ("tools/power/x86/intel-speed-select: OOB daemon
-> mode")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Thanks. I will add to PULL request.
 
+Looks correct,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+--D
 
 > ---
->  tools/power/x86/intel-speed-select/isst-daemon.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  fs/xfs/libxfs/xfs_inode_fork.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> diff --git a/tools/power/x86/intel-speed-select/isst-daemon.c
-> b/tools/power/x86/intel-speed-select/isst-daemon.c
-> index dd372924bc82..d0400c6684ba 100644
-> --- a/tools/power/x86/intel-speed-select/isst-daemon.c
-> +++ b/tools/power/x86/intel-speed-select/isst-daemon.c
-> @@ -41,7 +41,7 @@ void process_level_change(int cpu)
->         time_t tm;
->         int ret;
->  
-> -       if (pkg_id >= MAX_PACKAGE_COUNT || die_id >
-> MAX_DIE_PER_PACKAGE) {
-> +       if (pkg_id >= MAX_PACKAGE_COUNT || die_id >=
-> MAX_DIE_PER_PACKAGE) {
->                 debug_printf("Invalid package/die info for cpu:%d\n",
-> cpu);
->                 return;
->         }
-
+> diff --git a/fs/xfs/libxfs/xfs_inode_fork.c b/fs/xfs/libxfs/xfs_inode_fork.c
+> index 7c34184448e6..fa699f3792bf 100644
+> --- a/fs/xfs/libxfs/xfs_inode_fork.c
+> +++ b/fs/xfs/libxfs/xfs_inode_fork.c
+> @@ -724,8 +724,7 @@ xfs_ifork_verify_local_attr(
+>  
+>  	if (fa) {
+>  		xfs_inode_verifier_error(ip, -EFSCORRUPTED, "attr fork",
+> -				ifp ? ifp->if_u1.if_data : NULL,
+> -				ifp ? ifp->if_bytes : 0, fa);
+> +				ifp->if_u1.if_data, ifp->if_bytes, fa);
+>  		return -EFSCORRUPTED;
+>  	}
+>  
+> -- 
+> 2.35.1
+> 
