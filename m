@@ -2,160 +2,186 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE2BC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Jul 2022 13:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF66C43334
+	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Jul 2022 14:09:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236012AbiGSNsZ (ORCPT
+        id S231365AbiGSOJh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 19 Jul 2022 09:48:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51028 "EHLO
+        Tue, 19 Jul 2022 10:09:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238595AbiGSNsD (ORCPT
+        with ESMTP id S238318AbiGSOIf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 19 Jul 2022 09:48:03 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D82867E307;
-        Tue, 19 Jul 2022 06:01:55 -0700 (PDT)
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26JBB9km032511;
-        Tue, 19 Jul 2022 13:01:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : content-type : in-reply-to :
- mime-version; s=corp-2022-7-12;
- bh=Tz4Phtc02C5x7X3qkO3iDTgA1dK20pGbSFpnYXi+J6Q=;
- b=e/QL42NGI+1f2Yqbhd3ASBao6Q9hf9GlJJ/oeD4eizPd+OwhzJEjKsc3v4KC0zlTfn3F
- q91GoN9mhOzbGlvVn95o4lG1CLVbmDhC079Jic5O1Wd9MGGErFK3rfEMtNbC1VnupxUB
- b8VzovXaPEXTAjp3RfVUk9xzG/BMOdpZ5/6mlMBdQQlJxyp1XFwm7n5CwDbe+aux7sY1
- RIkME4tnhy6B0CuX0g4eyiWkLLtyUwpWX8K9oOG3cHAHOpKJO/PffDTMPLQvDOXinAKw
- P8/UEqAjuQKvNXBhbpGlU/cctBh0rUbnPNTSXCRa7CdC3XQSjTM9bLKdUgpZsPQ558Po Ow== 
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3hbkx0x9tx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Jul 2022 13:01:39 +0000
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 26JBBGhA022260;
-        Tue, 19 Jul 2022 13:01:37 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3hc1hrvas0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Jul 2022 13:01:37 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iID0DA1z2gnljcEgN58Ar5Bw3RTNe3JQQpd3bXCYFSm9ElOaO8mWbrIer1E38egb67yBDdSAnBAv58u+R8zza0gEXYDdOPrabzsUXUxJ73VTHmpgheWn2BH/HdegEWQHO40mBYOtHnAs010hoSONA7Fjg+L3gOYwZHntA+IqO6W7OCoN07rWJzKaYO49gyRJmslQ5AKGZBzysb9Re0cUEo0qoFSR88Is0aLsYjtIBLBzyldemNuCWnJkhrx9iuBaLOh2AbKshyKwEY4cdEXuxLEjZiARYPXJkfBAjiWYtpTXQMmvcus0Il2s/2CbqOdcGNlJ3RV6RkXXoqPPIlk5Cw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Tz4Phtc02C5x7X3qkO3iDTgA1dK20pGbSFpnYXi+J6Q=;
- b=QcVTfhoOAxCNQT1Xf2SG7k47Dld6h9Q+Bs3lc2LWzo7owToqYXCzE06zvmyOhbULECLeCYn2LI0imEgAc6ykzip/oozHze4l4Uzc6d9xgx/lt6LUqAFEXMKuDOWDg0sVxvWpuGJuyvwlm60+8Cc52CVqZulbj13P5QE6TdTl1iaRoxSKkivI951uGX0Wob9COLpz+Fmukmh+Jd6SoMlqrtQkce2byVM9nVMx7XXww7caSknUitQYITtxn7uFBx4rZzmrrwvQxg3YHWZX2e0sXdoiFFp+51jPEarDGhOxvR3CAq8/W6kWg6pT1MCFh1LOZBU8+maw42eLUTDyCrh6Xg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Tz4Phtc02C5x7X3qkO3iDTgA1dK20pGbSFpnYXi+J6Q=;
- b=FfkOrTHtVhjaoDI9mgmJxHTy0uba1NIvxTL3klvHJZyWwKISnp59/IVwZC7lwNiksaS/Xs0bZSlEVjjWdonyd2ZV1xQRzK8feeIE2b3sPegmckfXLQxD5Gz8BcU34sExIksyUsgfmpkNfZwG3LT2bmSQiCuLgufZXKxwJwv2DMY=
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28) by DM4PR10MB6278.namprd10.prod.outlook.com
- (2603:10b6:8:b8::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5438.23; Tue, 19 Jul
- 2022 13:01:36 +0000
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::5020:9b82:5917:40b]) by MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::5020:9b82:5917:40b%6]) with mapi id 15.20.5438.024; Tue, 19 Jul 2022
- 13:01:36 +0000
-Date:   Tue, 19 Jul 2022 16:01:25 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Cheng Xu <chengyou@linux.alibaba.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Kai Shen <kaishen@linux.alibaba.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH 1/2] RDMA/erdma: Use the bitmap API to allocate bitmaps
-Message-ID: <20220719130125.GB2316@kadam>
-References: <2764b6e204b32ef8c198a5efaf6c6bc4119f7665.1657301795.git.christophe.jaillet@wanadoo.fr>
- <670c57a2-6432-80c9-cdc0-496d836d7bf0@linux.alibaba.com>
- <20220712090110.GL2338@kadam>
- <20220719125434.GG5049@ziepe.ca>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220719125434.GG5049@ziepe.ca>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: MR1P264CA0129.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:501:51::17) To MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28)
+        Tue, 19 Jul 2022 10:08:35 -0400
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68FBB4F643
+        for <kernel-janitors@vger.kernel.org>; Tue, 19 Jul 2022 06:25:18 -0700 (PDT)
+Received: from [192.168.1.18] ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id DnDrouVrVAeI9DnDro6WTl; Tue, 19 Jul 2022 15:25:16 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Tue, 19 Jul 2022 15:25:16 +0200
+X-ME-IP: 90.11.190.129
+Message-ID: <29c3fbdd-7695-46c5-bb75-fe358c574ab3@wanadoo.fr>
+Date:   Tue, 19 Jul 2022 15:25:11 +0200
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a42e2bb2-f396-42bc-b8af-08da6986cfb8
-X-MS-TrafficTypeDiagnostic: DM4PR10MB6278:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: K4BLnrrdUOKf5L8uqPV4E1iP4Mao0ZIyIVr1Mh6xnPBQyw5HlZktZifTGRWTB/WK6b1ZZCm8aCVhiscoTHd5ojZwV50GlKDnV6GifOvGg/xvEo85l+nKpHcpvH2r/k6wIjv5q3Gzjy4F8Tmgrsk4FVTSPqSnT9yM0PQbPM+t27+vrGWhf01jxMsz/T8IlTJzRZJeCru/o46eLwsBw87lF5A7an4sTd10nh6rA2k0vnFJy502suV6oQtwYRAYB/+rubPZ+pxBo/PAauxVhWGLANt147qm6mR8jsuv7i2RiCC3e5MNEa//HSLH+dJjAefDUEhxKjldtnfroyatduLAftVAphX2at3CRqZREqhH4X4OENiw6cE1OtfN+Y9g3EyrxlqljWR7O/nk6BXsBkSKzk14s7kMtgsRHyL2EbIxEEYxYgV8dA6cAmPYa7/BxM2B2L9aDWlhxE5TmzZ7ANnNTcMBehFttVztheMRPuZIuzXaJOCXh45oXblDdU5tIfosJmu6K9oG2PHWJcAap7AgctAfUiuhCFY3fqkjpUQpy69KnS1xWJ3WqEMn9rsY4hhTjr9cB8Tv3sKlaaQ8zz3fmJIyoqPy/k42Gs9bhNqUWWfowpbiaFyurOUDhOKaRxOUppOC9051xzBN5+crYEH17251OASoDY12ibwdNPeq3Xvq8HUvH60MOWAfVgu3YyU3+sdOggJrAln3IxkEaSmvRVMmuLcyZHHhjCrKmtti+tCHS8V9KfNg7OEcmmbOBqTXys00k417Y++mEpHJ9VPRUFSdDhLH0N08xrDWUtIsgqoKJOYhg4Vnkop1FfgY1bWQ
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(7916004)(396003)(376002)(136003)(366004)(346002)(39860400002)(2906002)(316002)(44832011)(8936002)(5660300002)(66556008)(86362001)(4326008)(66946007)(186003)(8676002)(66476007)(4744005)(33656002)(9686003)(54906003)(478600001)(41300700001)(33716001)(6916009)(26005)(6506007)(1076003)(6486002)(52116002)(6512007)(38100700002)(38350700002)(6666004);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?J4PHoOzhdN0zZnGjlFSFjBUzw7n+jIW6CAQNGdg8MU/E+IfNnYFHUxbpCtyv?=
- =?us-ascii?Q?D1G+4vdq2sv1j6XRKS8HaA6ewLC4Ph6JUjiIqp0zTfhdf0793mP00yShb+ie?=
- =?us-ascii?Q?vpVIpecpVnOfEqG/dmZnY4QGmxUgB1hu17WaTTNyswtEWarfkCuBqSnnaCpR?=
- =?us-ascii?Q?/cCmvLYfdp+pCli8WeeyCKLNs9M8qzrx+jnbJkCttjl4ecB3GESQJzdO+XxM?=
- =?us-ascii?Q?B+WznrUA+x2FMJXJBlIzFmy0ozACFAzs4zYzT/sDalNgQ0UWcYd3e9VLWne+?=
- =?us-ascii?Q?ynshBShcv8aCwk2JFtooIxls2FOjVLvcY1qfYsFsUC67lC2fPBwbjnI8Howp?=
- =?us-ascii?Q?dLwPLNGQOdMUfxzIc1x76Kc/bohNZmJ7iP8mCsKGkmME4ENfFPX+0ltElT1x?=
- =?us-ascii?Q?bSRk8Fk8zqpyQOVtR1YbM1IOwYcDlNucsJwaq1+G7andPHUYlb0p6kfAbDzj?=
- =?us-ascii?Q?1jGDa7b8UK7Ks6VqEj8RDQi7MwNWkSpCZWBhkAszXw5jT5f/3q8GiOQmM6o5?=
- =?us-ascii?Q?ZrVXUJdtvOzGWd+KozLlG/gJSgASD3GSQRldTDPOkTUNNsxhhimOwa1xo+/M?=
- =?us-ascii?Q?w4Jw0NRxpix+RkEUmfZHL1VByFQJvFCOab/wHMsPlGBZrHulEJULVECPVzjj?=
- =?us-ascii?Q?ED+ul2HOCuBoGHnNHkv0gfWTc9DD6JjGj5Gtb5KWEWLdc3+bkTEm+k/KFHje?=
- =?us-ascii?Q?PUwGysEMl1vWYZSfzOr0Px6ajuIbvFvgp+eunzOWi/zmAzZ5SOHB5/71Twik?=
- =?us-ascii?Q?lFCPojM9DCs4UFwsFk3ZYL/rSJrZRVGan++ZmOSD/Z3XY8WuVyBJAN5Duy9c?=
- =?us-ascii?Q?QLkXIOQ3KdbBRqn9PE9EjV+CKV9FdYdzhFvJQgMhMqDiVJxSuuZzWznZmIHV?=
- =?us-ascii?Q?BRFAWRX4fY2qrEqS29bJqxfLskCzKJdP/zlXOzMoDdMIf4rHDEids7Ce7Ms3?=
- =?us-ascii?Q?YItuHV47mLh7jIuYouQ9s6XWPvH2P+jY/E7GjHmxDdlX9iMt4SzEWSoDrZVK?=
- =?us-ascii?Q?KJy9NIYMBWtM3V/tfkqocECSOZL5VIEAVdUQbHK7F/gTBCe55zbDZ1y+u/rt?=
- =?us-ascii?Q?nhqMMDK2vepUuBMCIsJPdCmhO0twHrwryK4D8P1doeshWtqvW20jOyrCFw8s?=
- =?us-ascii?Q?G+PmEWHnTzMxbI3oASfPtqd+b4caf4ZbseACgNtSU7g8f4MGAXT9hz7r54ce?=
- =?us-ascii?Q?ZG1vPDVeR7xNUFlnbLL7w0xweUC/c98VrQfo2t28D4YiSR2rTx2CdKk1VrUX?=
- =?us-ascii?Q?e6K4RuX2vuMtL9GequJc//k8VyJXOqdxNjFdHl0u6GYOWXnpXJ6Z3lMU5bXU?=
- =?us-ascii?Q?MDXsiHpck8ZEyWO/m1gu8g6+mFAOO4ouYdshmM35ubCEDgaonN1skZMH4AV5?=
- =?us-ascii?Q?sILFEQFifKTuwYZqulw2QQi0tPgTBrYWV8O1wkudJFScK64GK+5213Hvxwov?=
- =?us-ascii?Q?kotyjQsv1vndkaAeRaIRbQDS7nuIZOfD+iMGgrY9qQhgwSFgV4FIFzPyKCUp?=
- =?us-ascii?Q?H9EGxgbLKT8loqDfguGuPFhnlthG0gfA5sEeNyKR1KX1dB+LlOMJcLKuAjnE?=
- =?us-ascii?Q?4id3tmYExLasY6CDQTeEKPDdrepLzgrrubSNsXoZD1JLVv5tUyVPxVOzHDMK?=
- =?us-ascii?Q?GQ=3D=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a42e2bb2-f396-42bc-b8af-08da6986cfb8
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2022 13:01:35.9588
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: x8wc/4+EfYlqKaIlEUwwO0To68FZW7vhNUAaIav+IEIv+hHyxk5d8ajvYT6QAnAAjEZPXWNS++symvrzLOHEjcBflJ7c1TMJOPpVFq4San8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB6278
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-07-19_02,2022-07-19_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 malwarescore=0
- mlxscore=0 phishscore=0 mlxlogscore=746 suspectscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2206140000
- definitions=main-2207190055
-X-Proofpoint-GUID: z4W_vfBI9idlnc4ZlDxGdBoLsG8LPx7v
-X-Proofpoint-ORIG-GUID: z4W_vfBI9idlnc4ZlDxGdBoLsG8LPx7v
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH 2/3] ocfs2: Remove a useless spinlock
+Content-Language: en-US
+To:     David Laight <David.Laight@ACULAB.COM>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>
+References: <bd6796635e58f9c47cf857573c3b9474a00ce26a.1658224839.git.christophe.jaillet@wanadoo.fr>
+ <8ba7004d330cbe5f626539a8a3bff696d0c4285e.1658224839.git.christophe.jaillet@wanadoo.fr>
+ <7b644e5d32d74d3d90dfc5b1786ae5b9@AcuMS.aculab.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <7b644e5d32d74d3d90dfc5b1786ae5b9@AcuMS.aculab.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jul 19, 2022 at 09:54:34AM -0300, Jason Gunthorpe wrote:
-> On Tue, Jul 12, 2022 at 12:01:10PM +0300, Dan Carpenter wrote:
+Le 19/07/2022 à 12:24, David Laight a écrit :
+> From: Christophe JAILLET
+>> Sent: 19 July 2022 11:02
+>>
+>> 'node_map_lock' is a spinlock only used to protect calls to set_bit(),
+>> clear_bit() and test_bit().
+>>
+>> {set|clear}_bit() are already atomic and don't need this extra spinlock.
+>> test_bit() only reads the bitmap for a given bit.
+>>
+>> Remove this useless spinlock.
 > 
-> > Best not to use any auto-formatting tools.  They are all bad.
+> It looks to me like the calling code is racy
+> unless there is another lock in the callers.
+
+The call chains are:
+   ocfs2_recover_orphans()
+     ocfs2_mark_recovering_orphan_dir()
+       spin_lock(&osb->osb_lock);		<-- osb_lock spinlock
+       ocfs2_node_map_set_bit()			<-- uses node_map_lock
+       ...
+       spin_unlock(&osb->osb_lock);
+     ...
+     ocfs2_clear_recovering_orphan_dir()
+       ocfs2_node_map_clear_bit()		<-- uses node_map_lock
+						    osb_lock is NOT taken
+
+
+   ocfs2_check_orphan_recovery_state()
+     spin_lock(&osb->osb_lock);			<-- osb_lock spinlock
+     ...
+     ocfs2_node_map_test_bit()			<-- uses node_map_lock
+     ...
+     spin_unlock(&osb->osb_lock);
+
+
+So the code looks already protected by the 'osb_lock' spinlock, but I 
+don't know this code and ocfs2_mark_recovering_orphan_dir() looks tricky 
+to me. (so some other eyes are much welcome)
+
+> While map->map is protected, the result of test_bit()
+> is stale - so can't be used for much.
 > 
-> Have you tried clang-format? I wouldn't call it bad..
 
-I prefered Christophe's formatting to clang's.  ;)
+Anyway, should there be a locking issue, it is there with or without my 
+patch, right?
 
-regards,
-dan carpenter
+CJ
+
+
+> 	David
+> 
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> test_bit() is NOT documented as an atomic function. However, I can't see
+>> how it could return a wrong result here.
+>>
+>> So review with care. There is maybe something I don't think about that is
+>> lurking here.
+>> ---
+>>   fs/ocfs2/heartbeat.c | 11 ++++-------
+>>   fs/ocfs2/ocfs2.h     |  2 --
+>>   2 files changed, 4 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/fs/ocfs2/heartbeat.c b/fs/ocfs2/heartbeat.c
+>> index 1d72e0788943..4863ad35c242 100644
+>> --- a/fs/ocfs2/heartbeat.c
+>> +++ b/fs/ocfs2/heartbeat.c
+>> @@ -35,7 +35,6 @@ static void ocfs2_node_map_init(struct ocfs2_node_map *map)
+>>
+>>   void ocfs2_init_node_maps(struct ocfs2_super *osb)
+>>   {
+>> -	spin_lock_init(&osb->node_map_lock);
+>>   	ocfs2_node_map_init(&osb->osb_recovering_orphan_dirs);
+>>   }
+>>
+>> @@ -67,9 +66,8 @@ void ocfs2_node_map_set_bit(struct ocfs2_super *osb,
+>>   	if (bit==-1)
+>>   		return;
+>>   	BUG_ON(bit >= map->num_nodes);
+>> -	spin_lock(&osb->node_map_lock);
+>> +
+>>   	set_bit(bit, map->map);
+>> -	spin_unlock(&osb->node_map_lock);
+>>   }
+>>
+>>   void ocfs2_node_map_clear_bit(struct ocfs2_super *osb,
+>> @@ -79,9 +77,8 @@ void ocfs2_node_map_clear_bit(struct ocfs2_super *osb,
+>>   	if (bit==-1)
+>>   		return;
+>>   	BUG_ON(bit >= map->num_nodes);
+>> -	spin_lock(&osb->node_map_lock);
+>> +
+>>   	clear_bit(bit, map->map);
+>> -	spin_unlock(&osb->node_map_lock);
+>>   }
+>>
+>>   int ocfs2_node_map_test_bit(struct ocfs2_super *osb,
+>> @@ -89,13 +86,13 @@ int ocfs2_node_map_test_bit(struct ocfs2_super *osb,
+>>   			    int bit)
+>>   {
+>>   	int ret;
+>> +
+>>   	if (bit >= map->num_nodes) {
+>>   		mlog(ML_ERROR, "bit=%d map->num_nodes=%d\n", bit, map->num_nodes);
+>>   		BUG();
+>>   	}
+>> -	spin_lock(&osb->node_map_lock);
+>> +
+>>   	ret = test_bit(bit, map->map);
+>> -	spin_unlock(&osb->node_map_lock);
+>>   	return ret;
+>>   }
+>>
+>> diff --git a/fs/ocfs2/ocfs2.h b/fs/ocfs2/ocfs2.h
+>> index 740b64238312..1df193b97c30 100644
+>> --- a/fs/ocfs2/ocfs2.h
+>> +++ b/fs/ocfs2/ocfs2.h
+>> @@ -302,8 +302,6 @@ struct ocfs2_super
+>>
+>>   	u32 *slot_recovery_generations;
+>>
+>> -	spinlock_t node_map_lock;
+>> -
+>>   	u64 root_blkno;
+>>   	u64 system_dir_blkno;
+>>   	u64 bitmap_blkno;
+>> --
+>> 2.34.1
+> 
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+> Registration No: 1397386 (Wales)
+> 
+> 
 
