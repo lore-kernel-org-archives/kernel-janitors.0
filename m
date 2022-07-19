@@ -2,87 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D3AC433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Jul 2022 14:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E384FC43334
+	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Jul 2022 14:30:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239187AbiGSOUZ (ORCPT
+        id S236840AbiGSOa5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 19 Jul 2022 10:20:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59876 "EHLO
+        Tue, 19 Jul 2022 10:30:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235604AbiGSOTg (ORCPT
+        with ESMTP id S234277AbiGSOad (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 19 Jul 2022 10:19:36 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B7E32631;
-        Tue, 19 Jul 2022 06:59:01 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E00676EE;
-        Tue, 19 Jul 2022 15:58:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1658239139;
-        bh=irTaZmM+ObM/f2jHCsgtAKiX+yda+twRdLB2IFOgxSI=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=m0W1Eq7cMs4nXdLxm3MHugqOAdtAjR6abOfl51aE1R6wXYqKoXK2TrKJqHf3qM1JE
-         o0AdEEz+Cx4AiJDg/O1ZIht+1ctqmvSc9nSEcXEfM2vvbZeU9NM6UqQikIDnQMrUSL
-         ZQKC0bmMQKbFUTydZBcFT8qXtvRsnX07zt/CuKEU=
-Content-Type: text/plain; charset="utf-8"
+        Tue, 19 Jul 2022 10:30:33 -0400
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A4E2C638C
+        for <kernel-janitors@vger.kernel.org>; Tue, 19 Jul 2022 07:19:12 -0700 (PDT)
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-191-waRYl-RDNsiysdWy-ANi1Q-1; Tue, 19 Jul 2022 15:19:09 +0100
+X-MC-Unique: waRYl-RDNsiysdWy-ANi1Q-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
+ Server (TLS) id 15.0.1497.36; Tue, 19 Jul 2022 15:19:08 +0100
+Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
+ AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
+ 15.00.1497.036; Tue, 19 Jul 2022 15:19:08 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Christophe JAILLET' <christophe.jaillet@wanadoo.fr>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>
+Subject: RE: [PATCH 2/3] ocfs2: Remove a useless spinlock
+Thread-Topic: [PATCH 2/3] ocfs2: Remove a useless spinlock
+Thread-Index: AQHYm1a23J7AKlhcsUK1MlCgSmBBPK2Fe4YggAAi+oCAAB+pQA==
+Date:   Tue, 19 Jul 2022 14:19:08 +0000
+Message-ID: <fe6c86050b3447758c09e1881582405f@AcuMS.aculab.com>
+References: <bd6796635e58f9c47cf857573c3b9474a00ce26a.1658224839.git.christophe.jaillet@wanadoo.fr>
+ <8ba7004d330cbe5f626539a8a3bff696d0c4285e.1658224839.git.christophe.jaillet@wanadoo.fr>
+ <7b644e5d32d74d3d90dfc5b1786ae5b9@AcuMS.aculab.com>
+ <29c3fbdd-7695-46c5-bb75-fe358c574ab3@wanadoo.fr>
+In-Reply-To: <29c3fbdd-7695-46c5-bb75-fe358c574ab3@wanadoo.fr>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <Yta15OckATLKf6DF@kili>
-References: <Yta15OckATLKf6DF@kili>
-Subject: Re: [PATCH] media: vimc: fix an error code in vimc_create_links()
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Yunke Cao <yunkec@google.com>
-Date:   Tue, 19 Jul 2022 14:58:56 +0100
-Message-ID: <165823913604.2021905.13300600564840687711@Monstersaurus>
-User-Agent: alot/0.10
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Dan,
+RnJvbTogQ2hyaXN0b3BoZSBKQUlMTEVUDQo+IFNlbnQ6IDE5IEp1bHkgMjAyMiAxNDoyNQ0KPiAN
+Cj4gTGUgMTkvMDcvMjAyMiDDoCAxMjoyNCwgRGF2aWQgTGFpZ2h0IGEgw6ljcml0wqA6DQo+ID4g
+RnJvbTogQ2hyaXN0b3BoZSBKQUlMTEVUDQo+ID4+IFNlbnQ6IDE5IEp1bHkgMjAyMiAxMTowMg0K
+PiA+Pg0KPiA+PiAnbm9kZV9tYXBfbG9jaycgaXMgYSBzcGlubG9jayBvbmx5IHVzZWQgdG8gcHJv
+dGVjdCBjYWxscyB0byBzZXRfYml0KCksDQo+ID4+IGNsZWFyX2JpdCgpIGFuZCB0ZXN0X2JpdCgp
+Lg0KPiA+Pg0KPiA+PiB7c2V0fGNsZWFyfV9iaXQoKSBhcmUgYWxyZWFkeSBhdG9taWMgYW5kIGRv
+bid0IG5lZWQgdGhpcyBleHRyYSBzcGlubG9jay4NCj4gPj4gdGVzdF9iaXQoKSBvbmx5IHJlYWRz
+IHRoZSBiaXRtYXAgZm9yIGEgZ2l2ZW4gYml0Lg0KPiA+Pg0KPiA+PiBSZW1vdmUgdGhpcyB1c2Vs
+ZXNzIHNwaW5sb2NrLg0KPiA+DQo+ID4gSXQgbG9va3MgdG8gbWUgbGlrZSB0aGUgY2FsbGluZyBj
+b2RlIGlzIHJhY3kNCj4gPiB1bmxlc3MgdGhlcmUgaXMgYW5vdGhlciBsb2NrIGluIHRoZSBjYWxs
+ZXJzLg0KPiANCj4gVGhlIGNhbGwgY2hhaW5zIGFyZToNCj4gICAgb2NmczJfcmVjb3Zlcl9vcnBo
+YW5zKCkNCj4gICAgICBvY2ZzMl9tYXJrX3JlY292ZXJpbmdfb3JwaGFuX2RpcigpDQo+ICAgICAg
+ICBzcGluX2xvY2soJm9zYi0+b3NiX2xvY2spOwkJPC0tIG9zYl9sb2NrIHNwaW5sb2NrDQo+ICAg
+ICAgICBvY2ZzMl9ub2RlX21hcF9zZXRfYml0KCkJCQk8LS0gdXNlcyBub2RlX21hcF9sb2NrDQo+
+ICAgICAgICAuLi4NCj4gICAgICAgIHNwaW5fdW5sb2NrKCZvc2ItPm9zYl9sb2NrKTsNCj4gICAg
+ICAuLi4NCj4gICAgICBvY2ZzMl9jbGVhcl9yZWNvdmVyaW5nX29ycGhhbl9kaXIoKQ0KPiAgICAg
+ICAgb2NmczJfbm9kZV9tYXBfY2xlYXJfYml0KCkJCTwtLSB1c2VzIG5vZGVfbWFwX2xvY2sNCj4g
+CQkJCQkJICAgIG9zYl9sb2NrIGlzIE5PVCB0YWtlbg0KPiANCj4gDQo+ICAgIG9jZnMyX2NoZWNr
+X29ycGhhbl9yZWNvdmVyeV9zdGF0ZSgpDQo+ICAgICAgc3Bpbl9sb2NrKCZvc2ItPm9zYl9sb2Nr
+KTsJCQk8LS0gb3NiX2xvY2sgc3BpbmxvY2sNCj4gICAgICAuLi4NCj4gICAgICBvY2ZzMl9ub2Rl
+X21hcF90ZXN0X2JpdCgpCQkJPC0tIHVzZXMgbm9kZV9tYXBfbG9jaw0KPiAgICAgIC4uLg0KPiAg
+ICAgIHNwaW5fdW5sb2NrKCZvc2ItPm9zYl9sb2NrKTsNCj4gDQo+IA0KPiBTbyB0aGUgY29kZSBs
+b29rcyBhbHJlYWR5IHByb3RlY3RlZCBieSB0aGUgJ29zYl9sb2NrJyBzcGlubG9jaywgYnV0IEkN
+Cj4gZG9uJ3Qga25vdyB0aGlzIGNvZGUgYW5kIG9jZnMyX21hcmtfcmVjb3ZlcmluZ19vcnBoYW5f
+ZGlyKCkgbG9va3MgdHJpY2t5DQo+IHRvIG1lLiAoc28gc29tZSBvdGhlciBleWVzIGFyZSBtdWNo
+IHdlbGNvbWUpDQo+IA0KPiA+IFdoaWxlIG1hcC0+bWFwIGlzIHByb3RlY3RlZCwgdGhlIHJlc3Vs
+dCBvZiB0ZXN0X2JpdCgpDQo+ID4gaXMgc3RhbGUgLSBzbyBjYW4ndCBiZSB1c2VkIGZvciBtdWNo
+Lg0KPiA+DQo+IA0KPiBBbnl3YXksIHNob3VsZCB0aGVyZSBiZSBhIGxvY2tpbmcgaXNzdWUsIGl0
+IGlzIHRoZXJlIHdpdGggb3Igd2l0aG91dCBteQ0KPiBwYXRjaCwgcmlnaHQ/DQoNCkluZGVlZC4N
+Cg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2Fk
+LCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5v
+OiAxMzk3Mzg2IChXYWxlcykNCg==
 
-Quoting Dan Carpenter (2022-07-19 14:47:16)
-> Use the correct "ret_link" variable instead of "link".
->=20
-> Fixes: d534b9520a12 ("media: vimc: add ancillary lens")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Thanks for the patch, but it's been preceeded twice now.
-
-[0] https://lore.kernel.org/linux-media/4fd23b1c-8a0a-1691-a4f9-526ec99bd19=
-3@xs4all.nl/
-[1] https://lore.kernel.org/linux-media/20220719071721.703986-1-yangyinglia=
-ng@huawei.com/
-
---
-Kieran
-
-
-> ---
->  drivers/media/test-drivers/vimc/vimc-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/media/test-drivers/vimc/vimc-core.c b/drivers/media/=
-test-drivers/vimc/vimc-core.c
-> index c73f91947f44..2ae7a0f11ebf 100644
-> --- a/drivers/media/test-drivers/vimc/vimc-core.c
-> +++ b/drivers/media/test-drivers/vimc/vimc-core.c
-> @@ -211,7 +211,7 @@ static int vimc_create_links(struct vimc_device *vimc)
->                         media_create_ancillary_link(ved_primary->ent, ved=
-_ancillary->ent);
-> =20
->                 if (IS_ERR(ret_link)) {
-> -                       ret =3D PTR_ERR(link);
-> +                       ret =3D PTR_ERR(ret_link);
->                         goto err_rm_links;
->                 }
->         }
-> --=20
-> 2.35.1
->
