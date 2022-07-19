@@ -2,96 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E384FC43334
-	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Jul 2022 14:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF66C43334
+	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Jul 2022 15:36:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236840AbiGSOa5 (ORCPT
+        id S237083AbiGSPgo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 19 Jul 2022 10:30:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46646 "EHLO
+        Tue, 19 Jul 2022 11:36:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234277AbiGSOad (ORCPT
+        with ESMTP id S234397AbiGSPgn (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 19 Jul 2022 10:30:33 -0400
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A4E2C638C
-        for <kernel-janitors@vger.kernel.org>; Tue, 19 Jul 2022 07:19:12 -0700 (PDT)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-191-waRYl-RDNsiysdWy-ANi1Q-1; Tue, 19 Jul 2022 15:19:09 +0100
-X-MC-Unique: waRYl-RDNsiysdWy-ANi1Q-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.36; Tue, 19 Jul 2022 15:19:08 +0100
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.036; Tue, 19 Jul 2022 15:19:08 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Christophe JAILLET' <christophe.jaillet@wanadoo.fr>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>
-Subject: RE: [PATCH 2/3] ocfs2: Remove a useless spinlock
-Thread-Topic: [PATCH 2/3] ocfs2: Remove a useless spinlock
-Thread-Index: AQHYm1a23J7AKlhcsUK1MlCgSmBBPK2Fe4YggAAi+oCAAB+pQA==
-Date:   Tue, 19 Jul 2022 14:19:08 +0000
-Message-ID: <fe6c86050b3447758c09e1881582405f@AcuMS.aculab.com>
-References: <bd6796635e58f9c47cf857573c3b9474a00ce26a.1658224839.git.christophe.jaillet@wanadoo.fr>
- <8ba7004d330cbe5f626539a8a3bff696d0c4285e.1658224839.git.christophe.jaillet@wanadoo.fr>
- <7b644e5d32d74d3d90dfc5b1786ae5b9@AcuMS.aculab.com>
- <29c3fbdd-7695-46c5-bb75-fe358c574ab3@wanadoo.fr>
-In-Reply-To: <29c3fbdd-7695-46c5-bb75-fe358c574ab3@wanadoo.fr>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 19 Jul 2022 11:36:43 -0400
+Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4A74422D5
+        for <kernel-janitors@vger.kernel.org>; Tue, 19 Jul 2022 08:36:40 -0700 (PDT)
+Received: from [192.168.1.18] ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id DpH2oh7Z2sKAkDpH2oqpnh; Tue, 19 Jul 2022 17:36:39 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Tue, 19 Jul 2022 17:36:39 +0200
+X-ME-IP: 90.11.190.129
+Message-ID: <7075158a-64c1-8f69-7de1-9a60ee914f05@wanadoo.fr>
+Date:   Tue, 19 Jul 2022 17:36:36 +0200
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH 1/2] RDMA/erdma: Use the bitmap API to allocate bitmaps
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+To:     Cheng Xu <chengyou@linux.alibaba.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Kai Shen <kaishen@linux.alibaba.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+References: <2764b6e204b32ef8c198a5efaf6c6bc4119f7665.1657301795.git.christophe.jaillet@wanadoo.fr>
+ <670c57a2-6432-80c9-cdc0-496d836d7bf0@linux.alibaba.com>
+ <20220712090110.GL2338@kadam> <20220719125434.GG5049@ziepe.ca>
+ <20220719130125.GB2316@kadam>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20220719130125.GB2316@kadam>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-RnJvbTogQ2hyaXN0b3BoZSBKQUlMTEVUDQo+IFNlbnQ6IDE5IEp1bHkgMjAyMiAxNDoyNQ0KPiAN
-Cj4gTGUgMTkvMDcvMjAyMiDDoCAxMjoyNCwgRGF2aWQgTGFpZ2h0IGEgw6ljcml0wqA6DQo+ID4g
-RnJvbTogQ2hyaXN0b3BoZSBKQUlMTEVUDQo+ID4+IFNlbnQ6IDE5IEp1bHkgMjAyMiAxMTowMg0K
-PiA+Pg0KPiA+PiAnbm9kZV9tYXBfbG9jaycgaXMgYSBzcGlubG9jayBvbmx5IHVzZWQgdG8gcHJv
-dGVjdCBjYWxscyB0byBzZXRfYml0KCksDQo+ID4+IGNsZWFyX2JpdCgpIGFuZCB0ZXN0X2JpdCgp
-Lg0KPiA+Pg0KPiA+PiB7c2V0fGNsZWFyfV9iaXQoKSBhcmUgYWxyZWFkeSBhdG9taWMgYW5kIGRv
-bid0IG5lZWQgdGhpcyBleHRyYSBzcGlubG9jay4NCj4gPj4gdGVzdF9iaXQoKSBvbmx5IHJlYWRz
-IHRoZSBiaXRtYXAgZm9yIGEgZ2l2ZW4gYml0Lg0KPiA+Pg0KPiA+PiBSZW1vdmUgdGhpcyB1c2Vs
-ZXNzIHNwaW5sb2NrLg0KPiA+DQo+ID4gSXQgbG9va3MgdG8gbWUgbGlrZSB0aGUgY2FsbGluZyBj
-b2RlIGlzIHJhY3kNCj4gPiB1bmxlc3MgdGhlcmUgaXMgYW5vdGhlciBsb2NrIGluIHRoZSBjYWxs
-ZXJzLg0KPiANCj4gVGhlIGNhbGwgY2hhaW5zIGFyZToNCj4gICAgb2NmczJfcmVjb3Zlcl9vcnBo
-YW5zKCkNCj4gICAgICBvY2ZzMl9tYXJrX3JlY292ZXJpbmdfb3JwaGFuX2RpcigpDQo+ICAgICAg
-ICBzcGluX2xvY2soJm9zYi0+b3NiX2xvY2spOwkJPC0tIG9zYl9sb2NrIHNwaW5sb2NrDQo+ICAg
-ICAgICBvY2ZzMl9ub2RlX21hcF9zZXRfYml0KCkJCQk8LS0gdXNlcyBub2RlX21hcF9sb2NrDQo+
-ICAgICAgICAuLi4NCj4gICAgICAgIHNwaW5fdW5sb2NrKCZvc2ItPm9zYl9sb2NrKTsNCj4gICAg
-ICAuLi4NCj4gICAgICBvY2ZzMl9jbGVhcl9yZWNvdmVyaW5nX29ycGhhbl9kaXIoKQ0KPiAgICAg
-ICAgb2NmczJfbm9kZV9tYXBfY2xlYXJfYml0KCkJCTwtLSB1c2VzIG5vZGVfbWFwX2xvY2sNCj4g
-CQkJCQkJICAgIG9zYl9sb2NrIGlzIE5PVCB0YWtlbg0KPiANCj4gDQo+ICAgIG9jZnMyX2NoZWNr
-X29ycGhhbl9yZWNvdmVyeV9zdGF0ZSgpDQo+ICAgICAgc3Bpbl9sb2NrKCZvc2ItPm9zYl9sb2Nr
-KTsJCQk8LS0gb3NiX2xvY2sgc3BpbmxvY2sNCj4gICAgICAuLi4NCj4gICAgICBvY2ZzMl9ub2Rl
-X21hcF90ZXN0X2JpdCgpCQkJPC0tIHVzZXMgbm9kZV9tYXBfbG9jaw0KPiAgICAgIC4uLg0KPiAg
-ICAgIHNwaW5fdW5sb2NrKCZvc2ItPm9zYl9sb2NrKTsNCj4gDQo+IA0KPiBTbyB0aGUgY29kZSBs
-b29rcyBhbHJlYWR5IHByb3RlY3RlZCBieSB0aGUgJ29zYl9sb2NrJyBzcGlubG9jaywgYnV0IEkN
-Cj4gZG9uJ3Qga25vdyB0aGlzIGNvZGUgYW5kIG9jZnMyX21hcmtfcmVjb3ZlcmluZ19vcnBoYW5f
-ZGlyKCkgbG9va3MgdHJpY2t5DQo+IHRvIG1lLiAoc28gc29tZSBvdGhlciBleWVzIGFyZSBtdWNo
-IHdlbGNvbWUpDQo+IA0KPiA+IFdoaWxlIG1hcC0+bWFwIGlzIHByb3RlY3RlZCwgdGhlIHJlc3Vs
-dCBvZiB0ZXN0X2JpdCgpDQo+ID4gaXMgc3RhbGUgLSBzbyBjYW4ndCBiZSB1c2VkIGZvciBtdWNo
-Lg0KPiA+DQo+IA0KPiBBbnl3YXksIHNob3VsZCB0aGVyZSBiZSBhIGxvY2tpbmcgaXNzdWUsIGl0
-IGlzIHRoZXJlIHdpdGggb3Igd2l0aG91dCBteQ0KPiBwYXRjaCwgcmlnaHQ/DQoNCkluZGVlZC4N
-Cg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2Fk
-LCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5v
-OiAxMzk3Mzg2IChXYWxlcykNCg==
+Le 19/07/2022 à 15:01, Dan Carpenter a écrit :
+> On Tue, Jul 19, 2022 at 09:54:34AM -0300, Jason Gunthorpe wrote:
+>> On Tue, Jul 12, 2022 at 12:01:10PM +0300, Dan Carpenter wrote:
+>>
+>>> Best not to use any auto-formatting tools.  They are all bad.
+>>
+>> Have you tried clang-format? I wouldn't call it bad..
+> 
+> I prefered Christophe's formatting to clang's.  ;)
+> 
+> regards,
+> dan carpenter
+> 
+> 
 
+Hi,
+
+checkpatch.pl only gives hints and should not blindly be taken as THE 
+reference, but:
+
+   ./scripts/checkpatch.pl -f --strict 
+drivers/infiniband/hw/erdma/erdma_cmdq.c
+
+gives:
+   CHECK: Lines should not end with a '('
+   #81: FILE: drivers/infiniband/hw/erdma/erdma_cmdq.c:81:
+   +	cmdq->comp_wait_bitmap = devm_bitmap_zalloc(
+
+   total: 0 errors, 0 warnings, 1 checks, 493 lines checked
+
+(some other files in the same directory also have some checkpatch 
+warning/error)
+
+
+
+Don't know if it may be an issue for maintainers.
+
+CJ
