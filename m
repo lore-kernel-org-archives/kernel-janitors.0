@@ -2,162 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 428A1C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Jul 2022 10:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A94ACCA47F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Jul 2022 11:06:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234465AbiGSKYr convert rfc822-to-8bit (ORCPT
+        id S237411AbiGSLG4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 19 Jul 2022 06:24:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47966 "EHLO
+        Tue, 19 Jul 2022 07:06:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235239AbiGSKYq (ORCPT
+        with ESMTP id S230098AbiGSLGz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 19 Jul 2022 06:24:46 -0400
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6B4FB1A3AD
-        for <kernel-janitors@vger.kernel.org>; Tue, 19 Jul 2022 03:24:45 -0700 (PDT)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-209-3JDAf-T3MjuitJ0ZtV96nw-1; Tue, 19 Jul 2022 11:24:42 +0100
-X-MC-Unique: 3JDAf-T3MjuitJ0ZtV96nw-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.36; Tue, 19 Jul 2022 11:24:41 +0100
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.036; Tue, 19 Jul 2022 11:24:41 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Christophe JAILLET' <christophe.jaillet@wanadoo.fr>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>
-Subject: RE: [PATCH 2/3] ocfs2: Remove a useless spinlock
-Thread-Topic: [PATCH 2/3] ocfs2: Remove a useless spinlock
-Thread-Index: AQHYm1a23J7AKlhcsUK1MlCgSmBBPK2Fe4Yg
-Date:   Tue, 19 Jul 2022 10:24:41 +0000
-Message-ID: <7b644e5d32d74d3d90dfc5b1786ae5b9@AcuMS.aculab.com>
-References: <bd6796635e58f9c47cf857573c3b9474a00ce26a.1658224839.git.christophe.jaillet@wanadoo.fr>
- <8ba7004d330cbe5f626539a8a3bff696d0c4285e.1658224839.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <8ba7004d330cbe5f626539a8a3bff696d0c4285e.1658224839.git.christophe.jaillet@wanadoo.fr>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 19 Jul 2022 07:06:55 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED6892F02C;
+        Tue, 19 Jul 2022 04:06:51 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id h17so21113597wrx.0;
+        Tue, 19 Jul 2022 04:06:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uYg14oNiGrfGWkj/lM06y2kVPbkDb3pZlFZT7zIN7Mg=;
+        b=W4HzHF6zb6Vv5K1FjCCqrmQ/oFtlgLrQN/6YyyYahENb2Q78zJeTpHVaQavFUqR96W
+         w54kqwFIzeZOzb9qcDRyYliKQ27F6tPDoxDQ6bcXnBhN3wwLkxssOf54NctyfuDDUAdN
+         jDynmK2RoSlnUuS88Omn3TEtXZFpx0vMldkZQQEgxoPcOwzG6F1ruHv8iBl/IT8QWqam
+         bPaMK7B9vAQ6ITcLplHeboI8ccd5cZVj2x3K51gjWT1tJruUmIaYmaj+xpiP1CzH8sVg
+         46LT1dwxXEt6WU1xJ0W+zEd2I1SyOPyQ9i67/bjfh5CkqyeOaDT8tqY6gNM0M1hOcZdT
+         dd3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uYg14oNiGrfGWkj/lM06y2kVPbkDb3pZlFZT7zIN7Mg=;
+        b=Yrmc6tHfWDBj4y3copP7klJumwc1EITc1VN/99ueXH/KGSe2vxndmZLCtcxYBdzpPp
+         4a4A5Jn0CADXHh6pt3TmLOtIpVENujCZUQRPuFey/6dhUINO1VVSb6vuFekKXd/c+i6+
+         FDnnrVUUomn4iBIhGqIGEBtglLU9gPhR6/gmNgb/WGqfthXAR1WAThme+ospg/9b2vYd
+         HqfhXJ8dsqsrTHV6d6aPdF1/bPRoD/oJg+R2s3fnvfJaIG5v/f+q/EwX27gn1uUzhue7
+         fctcCo9AH4qiDH4zVVvXoTR1YnUZjJm4hOeK7tMzqx2fLIsLujadF/8lLzJIYMXgyHCS
+         Vjug==
+X-Gm-Message-State: AJIora+B9XlAEj8YRw6IK/k69AuiitheU2VvrclKnuSS+LSry/bik7d4
+        zLs5+bTM/0mJLPRciwrtqDp1tLEzlZAv5g==
+X-Google-Smtp-Source: AGRyM1sc6wqunKQZaY9vburbZEeqwvmVqDs+wuAdswpOPkYI8Ux5VRsIuwjTsk1Z+bNGpvTY4QhQAw==
+X-Received: by 2002:adf:eace:0:b0:21d:6e90:2bf8 with SMTP id o14-20020adfeace000000b0021d6e902bf8mr24895959wrn.349.1658228810543;
+        Tue, 19 Jul 2022 04:06:50 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id a6-20020adfdd06000000b0021b970a68f9sm12936873wrm.26.2022.07.19.04.06.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Jul 2022 04:06:49 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Bean Huo <beanhuo@micron.com>, linux-scsi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] scsi: ufs: core: Fix spelling mistake "Cannnot" -> "Cannot"
+Date:   Tue, 19 Jul 2022 12:06:49 +0100
+Message-Id: <20220719110649.759821-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-From: Christophe JAILLET
-> Sent: 19 July 2022 11:02
-> 
-> 'node_map_lock' is a spinlock only used to protect calls to set_bit(),
-> clear_bit() and test_bit().
-> 
-> {set|clear}_bit() are already atomic and don't need this extra spinlock.
-> test_bit() only reads the bitmap for a given bit.
-> 
-> Remove this useless spinlock.
+There is a spelling mistake in a dev_dbg message. Fix it.
 
-It looks to me like the calling code is racy
-unless there is another lock in the callers.
-While map->map is protected, the result of test_bit()
-is stale - so can't be used for much.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/ufs/core/ufshcd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	David
-
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> test_bit() is NOT documented as an atomic function. However, I can't see
-> how it could return a wrong result here.
-> 
-> So review with care. There is maybe something I don't think about that is
-> lurking here.
-> ---
->  fs/ocfs2/heartbeat.c | 11 ++++-------
->  fs/ocfs2/ocfs2.h     |  2 --
->  2 files changed, 4 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/ocfs2/heartbeat.c b/fs/ocfs2/heartbeat.c
-> index 1d72e0788943..4863ad35c242 100644
-> --- a/fs/ocfs2/heartbeat.c
-> +++ b/fs/ocfs2/heartbeat.c
-> @@ -35,7 +35,6 @@ static void ocfs2_node_map_init(struct ocfs2_node_map *map)
-> 
->  void ocfs2_init_node_maps(struct ocfs2_super *osb)
->  {
-> -	spin_lock_init(&osb->node_map_lock);
->  	ocfs2_node_map_init(&osb->osb_recovering_orphan_dirs);
->  }
-> 
-> @@ -67,9 +66,8 @@ void ocfs2_node_map_set_bit(struct ocfs2_super *osb,
->  	if (bit==-1)
->  		return;
->  	BUG_ON(bit >= map->num_nodes);
-> -	spin_lock(&osb->node_map_lock);
-> +
->  	set_bit(bit, map->map);
-> -	spin_unlock(&osb->node_map_lock);
->  }
-> 
->  void ocfs2_node_map_clear_bit(struct ocfs2_super *osb,
-> @@ -79,9 +77,8 @@ void ocfs2_node_map_clear_bit(struct ocfs2_super *osb,
->  	if (bit==-1)
->  		return;
->  	BUG_ON(bit >= map->num_nodes);
-> -	spin_lock(&osb->node_map_lock);
-> +
->  	clear_bit(bit, map->map);
-> -	spin_unlock(&osb->node_map_lock);
->  }
-> 
->  int ocfs2_node_map_test_bit(struct ocfs2_super *osb,
-> @@ -89,13 +86,13 @@ int ocfs2_node_map_test_bit(struct ocfs2_super *osb,
->  			    int bit)
->  {
->  	int ret;
-> +
->  	if (bit >= map->num_nodes) {
->  		mlog(ML_ERROR, "bit=%d map->num_nodes=%d\n", bit, map->num_nodes);
->  		BUG();
->  	}
-> -	spin_lock(&osb->node_map_lock);
-> +
->  	ret = test_bit(bit, map->map);
-> -	spin_unlock(&osb->node_map_lock);
->  	return ret;
->  }
-> 
-> diff --git a/fs/ocfs2/ocfs2.h b/fs/ocfs2/ocfs2.h
-> index 740b64238312..1df193b97c30 100644
-> --- a/fs/ocfs2/ocfs2.h
-> +++ b/fs/ocfs2/ocfs2.h
-> @@ -302,8 +302,6 @@ struct ocfs2_super
-> 
->  	u32 *slot_recovery_generations;
-> 
-> -	spinlock_t node_map_lock;
-> -
->  	u64 root_blkno;
->  	u64 system_dir_blkno;
->  	u64 bitmap_blkno;
-> --
-> 2.34.1
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index ddab087dd0bc..581d88af07ab 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -8550,7 +8550,7 @@ static enum ufs_ref_clk_freq ufshcd_parse_ref_clk_property(struct ufs_hba *hba)
+ 	int ret = device_property_read_u32(hba->dev, "ref-clk-freq", &freq);
+ 
+ 	if (ret) {
+-		dev_dbg(hba->dev, "Cannnot query 'ref-clk-freq' property = %d", ret);
++		dev_dbg(hba->dev, "Cannot query 'ref-clk-freq' property = %d", ret);
+ 		return REF_CLK_FREQ_INVAL;
+ 	}
+ 
+-- 
+2.35.3
 
