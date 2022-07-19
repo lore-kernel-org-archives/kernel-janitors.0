@@ -2,67 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A00C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Jul 2022 05:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE868C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Jul 2022 06:00:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234338AbiGSFw7 (ORCPT
+        id S236777AbiGSGAs (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 19 Jul 2022 01:52:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55446 "EHLO
+        Tue, 19 Jul 2022 02:00:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234182AbiGSFw6 (ORCPT
+        with ESMTP id S236290AbiGSGAr (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 19 Jul 2022 01:52:58 -0400
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0C4F3A48B
-        for <kernel-janitors@vger.kernel.org>; Mon, 18 Jul 2022 22:52:57 -0700 (PDT)
+        Tue, 19 Jul 2022 02:00:47 -0400
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E11A437F94
+        for <kernel-janitors@vger.kernel.org>; Mon, 18 Jul 2022 23:00:46 -0700 (PDT)
 Received: from [192.168.1.18] ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id DgABomHIq5qT4DgABojGE8; Tue, 19 Jul 2022 07:52:56 +0200
+        id DgHgoxPJ53kbdDgHgotvMM; Tue, 19 Jul 2022 08:00:45 +0200
 X-ME-Helo: [192.168.1.18]
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Tue, 19 Jul 2022 07:52:56 +0200
+X-ME-Date: Tue, 19 Jul 2022 08:00:45 +0200
 X-ME-IP: 90.11.190.129
-Message-ID: <d573956a-c257-0bda-b78b-75d8e0a1c982@wanadoo.fr>
-Date:   Tue, 19 Jul 2022 07:52:55 +0200
+Message-ID: <00da8a58-e4d0-40c9-0b4a-011ca0754c77@wanadoo.fr>
+Date:   Tue, 19 Jul 2022 08:00:40 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
-Subject: Re: [PATCH] s390/pci: Use the bitmap API to allocate bitmaps
-Content-Language: fr
-To:     Alexander Gordeev <agordeev@linux.ibm.com>
-Cc:     Niklas Schnelle <schnelle@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
+Subject: Re: [PATCH] crypto: hisilicon/zip: Use the bitmap API to allocate
+ bitmaps
+Content-Language: en-US
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Yang Shen <shenyang39@huawei.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        "David S. Miller" <davem@davemloft.net>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-s390@vger.kernel.org
-References: <8d35e482f710889a45d46f808155738ef87d46c4.1657383052.git.christophe.jaillet@wanadoo.fr>
- <Ys+n+wU8GyQzR+xk@li-4a3a4a4c-28e5-11b2-a85c-a8d192c6f089.ibm.com>
+        linux-crypto@vger.kernel.org
+References: <49a1b5bf6e8f7c2ad06a0e2dbc35e00169d4ebe2.1657383385.git.christophe.jaillet@wanadoo.fr>
+ <YtEmS//eV3Ok08BD@gondor.apana.org.au>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <Ys+n+wU8GyQzR+xk@li-4a3a4a4c-28e5-11b2-a85c-a8d192c6f089.ibm.com>
+In-Reply-To: <YtEmS//eV3Ok08BD@gondor.apana.org.au>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 14/07/2022 à 07:22, Alexander Gordeev a écrit :
-> On Sat, Jul 09, 2022 at 06:11:28PM +0200, Christophe JAILLET wrote:
->> I don't know why commit c506fff3d3a8 ("s390/pci: resize iomap") has turned
->> this bitmap from a statically defined bitmap to a runtime-allocated one.
+Le 15/07/2022 à 10:33, Herbert Xu a écrit :
+> On Sat, Jul 09, 2022 at 06:16:46PM +0200, Christophe JAILLET wrote:
+>> Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
+>>
+>> It is less verbose and it improves the semantic.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>   drivers/crypto/hisilicon/zip/zip_crypto.c | 9 ++++-----
+>>   1 file changed, 4 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/crypto/hisilicon/zip/zip_crypto.c b/drivers/crypto/hisilicon/zip/zip_crypto.c
+>> index 67869513e48c..7bf53877e508 100644
+>> --- a/drivers/crypto/hisilicon/zip/zip_crypto.c
+>> +++ b/drivers/crypto/hisilicon/zip/zip_crypto.c
+>> @@ -606,8 +606,7 @@ static int hisi_zip_create_req_q(struct hisi_zip_ctx *ctx)
+>>   		req_q = &ctx->qp_ctx[i].req_q;
+>>   		req_q->size = QM_Q_DEPTH;
+>>   
+>> -		req_q->req_bitmap = kcalloc(BITS_TO_LONGS(req_q->size),
+>> -					    sizeof(long), GFP_KERNEL);
+>> +		req_q->req_bitmap = bitmap_zalloc(req_q->size, GFP_KERNEL);
+>>   		if (!req_q->req_bitmap) {
+>>   			ret = -ENOMEM;
+>>   			if (i == 0)
 > 
-> c506fff3d3a8 commit message:
-> 
->      This reduces the size of the iomap from 256K to less than 4K
->      (using the defconfig).
-> 
+> You should add an include for linux/bitmap.h instead of relying
+> on implicit inclusion through some random header file.
 
-Hi,
+Hi, most of the patches are accepted as-is, so I will not resend all of 
+them.
+I'll only add the #include if a v2 is needed or for new patches.
 
-IIUC, going from ZPCI_IOMAP_MAX_ENTRIES to ZPCI_IOMAP_ENTRIES reduced 
-the size, not going from DECLARE_BITMAP() to kcalloc().
+Thanks for the review and comment.
 
 CJ
+
+> 
+> The same goes for all your other patches too.
+> 
+> Thanks,
+
