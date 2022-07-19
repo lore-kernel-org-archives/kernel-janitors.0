@@ -2,26 +2,26 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08288C433EF
-	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Jul 2022 10:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D33C433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Jul 2022 10:02:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237527AbiGSKCB (ORCPT
+        id S237524AbiGSKCR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 19 Jul 2022 06:02:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56418 "EHLO
+        Tue, 19 Jul 2022 06:02:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237467AbiGSKBn (ORCPT
+        with ESMTP id S237470AbiGSKCB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 19 Jul 2022 06:01:43 -0400
-Received: from smtp.smtpout.orange.fr (smtp01.smtpout.orange.fr [80.12.242.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCA07371BA
-        for <kernel-janitors@vger.kernel.org>; Tue, 19 Jul 2022 03:01:31 -0700 (PDT)
+        Tue, 19 Jul 2022 06:02:01 -0400
+Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E55563B970
+        for <kernel-janitors@vger.kernel.org>; Tue, 19 Jul 2022 03:01:42 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id Dk2foAsyDdt6qDk2foOVNb; Tue, 19 Jul 2022 12:01:30 +0200
+        id Dk2qo321pxaQ2Dk2roiSAR; Tue, 19 Jul 2022 12:01:41 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Tue, 19 Jul 2022 12:01:30 +0200
+X-ME-Date: Tue, 19 Jul 2022 12:01:41 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
@@ -29,86 +29,101 @@ To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         ocfs2-devel@oss.oracle.com
-Subject: [PATCH 1/3] ocfs2: Remove some useless functions
-Date:   Tue, 19 Jul 2022 12:01:23 +0200
-Message-Id: <bd6796635e58f9c47cf857573c3b9474a00ce26a.1658224839.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 2/3] ocfs2: Remove a useless spinlock
+Date:   Tue, 19 Jul 2022 12:01:35 +0200
+Message-Id: <8ba7004d330cbe5f626539a8a3bff696d0c4285e.1658224839.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <bd6796635e58f9c47cf857573c3b9474a00ce26a.1658224839.git.christophe.jaillet@wanadoo.fr>
+References: <bd6796635e58f9c47cf857573c3b9474a00ce26a.1658224839.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-__ocfs2_node_map_set_bit() and __ocfs2_node_map_set_bit() are just
-wrapper around set_bit() and clear_bit().
+'node_map_lock' is a spinlock only used to protect calls to set_bit(),
+clear_bit() and test_bit().
 
-The leading __ also makes think that these functions are non-atomic just
-like __set_bit() and __clear_bit().
+{set|clear}_bit() are already atomic and don't need this extra spinlock.
+test_bit() only reads the bitmap for a given bit.
 
-So, just remove these wrappers and call set_bit() and clear_bit()
-directly.
+Remove this useless spinlock.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- fs/ocfs2/heartbeat.c | 21 ++-------------------
- 1 file changed, 2 insertions(+), 19 deletions(-)
+test_bit() is NOT documented as an atomic function. However, I can't see
+how it could return a wrong result here.
+
+So review with care. There is maybe something I don't think about that is
+lurking here.
+---
+ fs/ocfs2/heartbeat.c | 11 ++++-------
+ fs/ocfs2/ocfs2.h     |  2 --
+ 2 files changed, 4 insertions(+), 9 deletions(-)
 
 diff --git a/fs/ocfs2/heartbeat.c b/fs/ocfs2/heartbeat.c
-index 9099d8fc7599..1d72e0788943 100644
+index 1d72e0788943..4863ad35c242 100644
 --- a/fs/ocfs2/heartbeat.c
 +++ b/fs/ocfs2/heartbeat.c
-@@ -24,11 +24,6 @@
+@@ -35,7 +35,6 @@ static void ocfs2_node_map_init(struct ocfs2_node_map *map)
  
- #include "buffer_head_io.h"
- 
--static inline void __ocfs2_node_map_set_bit(struct ocfs2_node_map *map,
--					    int bit);
--static inline void __ocfs2_node_map_clear_bit(struct ocfs2_node_map *map,
--					      int bit);
--
- /* special case -1 for now
-  * TODO: should *really* make sure the calling func never passes -1!!  */
- static void ocfs2_node_map_init(struct ocfs2_node_map *map)
-@@ -65,12 +60,6 @@ void ocfs2_do_node_down(int node_num, void *data)
- 	ocfs2_recovery_thread(osb, node_num);
+ void ocfs2_init_node_maps(struct ocfs2_super *osb)
+ {
+-	spin_lock_init(&osb->node_map_lock);
+ 	ocfs2_node_map_init(&osb->osb_recovering_orphan_dirs);
  }
  
--static inline void __ocfs2_node_map_set_bit(struct ocfs2_node_map *map,
--					    int bit)
--{
--	set_bit(bit, map->map);
--}
--
- void ocfs2_node_map_set_bit(struct ocfs2_super *osb,
- 			    struct ocfs2_node_map *map,
- 			    int bit)
-@@ -79,16 +68,10 @@ void ocfs2_node_map_set_bit(struct ocfs2_super *osb,
+@@ -67,9 +66,8 @@ void ocfs2_node_map_set_bit(struct ocfs2_super *osb,
+ 	if (bit==-1)
  		return;
  	BUG_ON(bit >= map->num_nodes);
- 	spin_lock(&osb->node_map_lock);
--	__ocfs2_node_map_set_bit(map, bit);
-+	set_bit(bit, map->map);
- 	spin_unlock(&osb->node_map_lock);
+-	spin_lock(&osb->node_map_lock);
++
+ 	set_bit(bit, map->map);
+-	spin_unlock(&osb->node_map_lock);
  }
  
--static inline void __ocfs2_node_map_clear_bit(struct ocfs2_node_map *map,
--					      int bit)
--{
--	clear_bit(bit, map->map);
--}
--
  void ocfs2_node_map_clear_bit(struct ocfs2_super *osb,
- 			      struct ocfs2_node_map *map,
- 			      int bit)
-@@ -97,7 +80,7 @@ void ocfs2_node_map_clear_bit(struct ocfs2_super *osb,
+@@ -79,9 +77,8 @@ void ocfs2_node_map_clear_bit(struct ocfs2_super *osb,
+ 	if (bit==-1)
  		return;
  	BUG_ON(bit >= map->num_nodes);
- 	spin_lock(&osb->node_map_lock);
--	__ocfs2_node_map_clear_bit(map, bit);
-+	clear_bit(bit, map->map);
- 	spin_unlock(&osb->node_map_lock);
+-	spin_lock(&osb->node_map_lock);
++
+ 	clear_bit(bit, map->map);
+-	spin_unlock(&osb->node_map_lock);
  }
  
+ int ocfs2_node_map_test_bit(struct ocfs2_super *osb,
+@@ -89,13 +86,13 @@ int ocfs2_node_map_test_bit(struct ocfs2_super *osb,
+ 			    int bit)
+ {
+ 	int ret;
++
+ 	if (bit >= map->num_nodes) {
+ 		mlog(ML_ERROR, "bit=%d map->num_nodes=%d\n", bit, map->num_nodes);
+ 		BUG();
+ 	}
+-	spin_lock(&osb->node_map_lock);
++
+ 	ret = test_bit(bit, map->map);
+-	spin_unlock(&osb->node_map_lock);
+ 	return ret;
+ }
+ 
+diff --git a/fs/ocfs2/ocfs2.h b/fs/ocfs2/ocfs2.h
+index 740b64238312..1df193b97c30 100644
+--- a/fs/ocfs2/ocfs2.h
++++ b/fs/ocfs2/ocfs2.h
+@@ -302,8 +302,6 @@ struct ocfs2_super
+ 
+ 	u32 *slot_recovery_generations;
+ 
+-	spinlock_t node_map_lock;
+-
+ 	u64 root_blkno;
+ 	u64 system_dir_blkno;
+ 	u64 bitmap_blkno;
 -- 
 2.34.1
 
