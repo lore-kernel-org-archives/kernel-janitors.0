@@ -2,108 +2,160 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EDCEC43334
-	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Jul 2022 13:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE2BC433EF
+	for <kernel-janitors@archiver.kernel.org>; Tue, 19 Jul 2022 13:48:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238256AbiGSNrA (ORCPT
+        id S236012AbiGSNsZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 19 Jul 2022 09:47:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50904 "EHLO
+        Tue, 19 Jul 2022 09:48:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237387AbiGSNqn (ORCPT
+        with ESMTP id S238595AbiGSNsD (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 19 Jul 2022 09:46:43 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CB2D54F640
-        for <kernel-janitors@vger.kernel.org>; Tue, 19 Jul 2022 05:59:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1658235570;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Iige8/LVm6VVY2/ZBSwmWyk6JzLbyvYk5pU1/kh9Fs8=;
-        b=MGqfqhoQnzFSXqSosM67DISvKbSghIa/Psu4R2+MJK3IfO/I5B1qKGoxnVp3GnUvmpKvta
-        8r7Z0C2aVTcErfiiB5ZlOJI0QJLMimwQU7katIokQWvUe577fu7lj+zqxLWXIcfkDeOqbg
-        /7+nFjVOxuZV5Xn3/FOcMlRbXKEZ7ks=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-10-TiIM78aQPSuqZ3Z-JPNyTg-1; Tue, 19 Jul 2022 08:59:29 -0400
-X-MC-Unique: TiIM78aQPSuqZ3Z-JPNyTg-1
-Received: by mail-ed1-f69.google.com with SMTP id x21-20020a05640226d500b0043abb7ac086so9861928edd.14
-        for <kernel-janitors@vger.kernel.org>; Tue, 19 Jul 2022 05:59:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Iige8/LVm6VVY2/ZBSwmWyk6JzLbyvYk5pU1/kh9Fs8=;
-        b=ftqB7GMd+9EsPptI/AX/Wj+w1BMb+BvG6pY+DYr2UhABy6NyM04XkcBolC1zelZx5J
-         WPPxPgesYYpwqk4Li3d6Wruo8AfoK0l2kygSHYVdTRkyurHJBupAQYme+XOc6JNdub7P
-         IBHIf/Apx+OltI6wm0O2YbkKTb/vkSVMrsW5gAfRQV35RXQFD+v2NZgaVC5ssEI0Fbq6
-         Vmx+l6WOXnRJX3r/01bo0wzCCC6BEbmsr/8cvUmEndMBjGy5rxjMccrbPH/amNwasA91
-         5ORQBVDZWKdLqV5FJn/8KjrMITze6e5sTMqahHjmoc32Jof0AJABOnMo7cOevvF74vpv
-         uJWA==
-X-Gm-Message-State: AJIora/El9V1ztfrtx2OM3BOpUcbfMT4zJ24MUYzwGh623J60kYI7hOF
-        GgIjuWML3bhIKBVzf8NB9QkjIQdeoLUXKSPcHLoTplky5SRdQYP3jNaA5lsATl+SoMKxRTzZ9gp
-        ISiMwqh3Esfw9LDrxOJPPHbCjfH1u
-X-Received: by 2002:a17:907:a06e:b0:72b:2cba:da35 with SMTP id ia14-20020a170907a06e00b0072b2cbada35mr30253419ejc.358.1658235568236;
-        Tue, 19 Jul 2022 05:59:28 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1ucBpxGGw0oeFdDnqSzMzwRP5NnWN8dyfASt8XvpZCKrqNEiQIraMSzMUU7yVcJJ46ejvHV7w==
-X-Received: by 2002:a17:907:a06e:b0:72b:2cba:da35 with SMTP id ia14-20020a170907a06e00b0072b2cbada35mr30253405ejc.358.1658235568008;
-        Tue, 19 Jul 2022 05:59:28 -0700 (PDT)
-Received: from ?IPV6:2001:b07:6468:f312:9af8:e5f5:7516:fa89? ([2001:b07:6468:f312:9af8:e5f5:7516:fa89])
-        by smtp.googlemail.com with ESMTPSA id wc23-20020a170907125700b0072b41776dd1sm6622559ejb.24.2022.07.19.05.59.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Jul 2022 05:59:27 -0700 (PDT)
-Message-ID: <e51fb350-265f-7123-c0e5-38df64734e9c@redhat.com>
-Date:   Tue, 19 Jul 2022 14:59:26 +0200
+        Tue, 19 Jul 2022 09:48:03 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D82867E307;
+        Tue, 19 Jul 2022 06:01:55 -0700 (PDT)
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26JBB9km032511;
+        Tue, 19 Jul 2022 13:01:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2022-7-12;
+ bh=Tz4Phtc02C5x7X3qkO3iDTgA1dK20pGbSFpnYXi+J6Q=;
+ b=e/QL42NGI+1f2Yqbhd3ASBao6Q9hf9GlJJ/oeD4eizPd+OwhzJEjKsc3v4KC0zlTfn3F
+ q91GoN9mhOzbGlvVn95o4lG1CLVbmDhC079Jic5O1Wd9MGGErFK3rfEMtNbC1VnupxUB
+ b8VzovXaPEXTAjp3RfVUk9xzG/BMOdpZ5/6mlMBdQQlJxyp1XFwm7n5CwDbe+aux7sY1
+ RIkME4tnhy6B0CuX0g4eyiWkLLtyUwpWX8K9oOG3cHAHOpKJO/PffDTMPLQvDOXinAKw
+ P8/UEqAjuQKvNXBhbpGlU/cctBh0rUbnPNTSXCRa7CdC3XQSjTM9bLKdUgpZsPQ558Po Ow== 
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3hbkx0x9tx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Jul 2022 13:01:39 +0000
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 26JBBGhA022260;
+        Tue, 19 Jul 2022 13:01:37 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101])
+        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3hc1hrvas0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Jul 2022 13:01:37 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iID0DA1z2gnljcEgN58Ar5Bw3RTNe3JQQpd3bXCYFSm9ElOaO8mWbrIer1E38egb67yBDdSAnBAv58u+R8zza0gEXYDdOPrabzsUXUxJ73VTHmpgheWn2BH/HdegEWQHO40mBYOtHnAs010hoSONA7Fjg+L3gOYwZHntA+IqO6W7OCoN07rWJzKaYO49gyRJmslQ5AKGZBzysb9Re0cUEo0qoFSR88Is0aLsYjtIBLBzyldemNuCWnJkhrx9iuBaLOh2AbKshyKwEY4cdEXuxLEjZiARYPXJkfBAjiWYtpTXQMmvcus0Il2s/2CbqOdcGNlJ3RV6RkXXoqPPIlk5Cw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Tz4Phtc02C5x7X3qkO3iDTgA1dK20pGbSFpnYXi+J6Q=;
+ b=QcVTfhoOAxCNQT1Xf2SG7k47Dld6h9Q+Bs3lc2LWzo7owToqYXCzE06zvmyOhbULECLeCYn2LI0imEgAc6ykzip/oozHze4l4Uzc6d9xgx/lt6LUqAFEXMKuDOWDg0sVxvWpuGJuyvwlm60+8Cc52CVqZulbj13P5QE6TdTl1iaRoxSKkivI951uGX0Wob9COLpz+Fmukmh+Jd6SoMlqrtQkce2byVM9nVMx7XXww7caSknUitQYITtxn7uFBx4rZzmrrwvQxg3YHWZX2e0sXdoiFFp+51jPEarDGhOxvR3CAq8/W6kWg6pT1MCFh1LOZBU8+maw42eLUTDyCrh6Xg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Tz4Phtc02C5x7X3qkO3iDTgA1dK20pGbSFpnYXi+J6Q=;
+ b=FfkOrTHtVhjaoDI9mgmJxHTy0uba1NIvxTL3klvHJZyWwKISnp59/IVwZC7lwNiksaS/Xs0bZSlEVjjWdonyd2ZV1xQRzK8feeIE2b3sPegmckfXLQxD5Gz8BcU34sExIksyUsgfmpkNfZwG3LT2bmSQiCuLgufZXKxwJwv2DMY=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by DM4PR10MB6278.namprd10.prod.outlook.com
+ (2603:10b6:8:b8::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5438.23; Tue, 19 Jul
+ 2022 13:01:36 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::5020:9b82:5917:40b]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::5020:9b82:5917:40b%6]) with mapi id 15.20.5438.024; Tue, 19 Jul 2022
+ 13:01:36 +0000
+Date:   Tue, 19 Jul 2022 16:01:25 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Cheng Xu <chengyou@linux.alibaba.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Kai Shen <kaishen@linux.alibaba.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Subject: Re: [PATCH 1/2] RDMA/erdma: Use the bitmap API to allocate bitmaps
+Message-ID: <20220719130125.GB2316@kadam>
+References: <2764b6e204b32ef8c198a5efaf6c6bc4119f7665.1657301795.git.christophe.jaillet@wanadoo.fr>
+ <670c57a2-6432-80c9-cdc0-496d836d7bf0@linux.alibaba.com>
+ <20220712090110.GL2338@kadam>
+ <20220719125434.GG5049@ziepe.ca>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220719125434.GG5049@ziepe.ca>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: MR1P264CA0129.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:501:51::17) To MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH] KVM: selftests: fix bit test in is_steal_time_supported()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Sean Christopherson <seanjc@google.com>
-Cc:     Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <YtZ/Rnrm8Y+uPjDq@kili>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-In-Reply-To: <YtZ/Rnrm8Y+uPjDq@kili>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: a42e2bb2-f396-42bc-b8af-08da6986cfb8
+X-MS-TrafficTypeDiagnostic: DM4PR10MB6278:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: K4BLnrrdUOKf5L8uqPV4E1iP4Mao0ZIyIVr1Mh6xnPBQyw5HlZktZifTGRWTB/WK6b1ZZCm8aCVhiscoTHd5ojZwV50GlKDnV6GifOvGg/xvEo85l+nKpHcpvH2r/k6wIjv5q3Gzjy4F8Tmgrsk4FVTSPqSnT9yM0PQbPM+t27+vrGWhf01jxMsz/T8IlTJzRZJeCru/o46eLwsBw87lF5A7an4sTd10nh6rA2k0vnFJy502suV6oQtwYRAYB/+rubPZ+pxBo/PAauxVhWGLANt147qm6mR8jsuv7i2RiCC3e5MNEa//HSLH+dJjAefDUEhxKjldtnfroyatduLAftVAphX2at3CRqZREqhH4X4OENiw6cE1OtfN+Y9g3EyrxlqljWR7O/nk6BXsBkSKzk14s7kMtgsRHyL2EbIxEEYxYgV8dA6cAmPYa7/BxM2B2L9aDWlhxE5TmzZ7ANnNTcMBehFttVztheMRPuZIuzXaJOCXh45oXblDdU5tIfosJmu6K9oG2PHWJcAap7AgctAfUiuhCFY3fqkjpUQpy69KnS1xWJ3WqEMn9rsY4hhTjr9cB8Tv3sKlaaQ8zz3fmJIyoqPy/k42Gs9bhNqUWWfowpbiaFyurOUDhOKaRxOUppOC9051xzBN5+crYEH17251OASoDY12ibwdNPeq3Xvq8HUvH60MOWAfVgu3YyU3+sdOggJrAln3IxkEaSmvRVMmuLcyZHHhjCrKmtti+tCHS8V9KfNg7OEcmmbOBqTXys00k417Y++mEpHJ9VPRUFSdDhLH0N08xrDWUtIsgqoKJOYhg4Vnkop1FfgY1bWQ
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(7916004)(396003)(376002)(136003)(366004)(346002)(39860400002)(2906002)(316002)(44832011)(8936002)(5660300002)(66556008)(86362001)(4326008)(66946007)(186003)(8676002)(66476007)(4744005)(33656002)(9686003)(54906003)(478600001)(41300700001)(33716001)(6916009)(26005)(6506007)(1076003)(6486002)(52116002)(6512007)(38100700002)(38350700002)(6666004);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?J4PHoOzhdN0zZnGjlFSFjBUzw7n+jIW6CAQNGdg8MU/E+IfNnYFHUxbpCtyv?=
+ =?us-ascii?Q?D1G+4vdq2sv1j6XRKS8HaA6ewLC4Ph6JUjiIqp0zTfhdf0793mP00yShb+ie?=
+ =?us-ascii?Q?vpVIpecpVnOfEqG/dmZnY4QGmxUgB1hu17WaTTNyswtEWarfkCuBqSnnaCpR?=
+ =?us-ascii?Q?/cCmvLYfdp+pCli8WeeyCKLNs9M8qzrx+jnbJkCttjl4ecB3GESQJzdO+XxM?=
+ =?us-ascii?Q?B+WznrUA+x2FMJXJBlIzFmy0ozACFAzs4zYzT/sDalNgQ0UWcYd3e9VLWne+?=
+ =?us-ascii?Q?ynshBShcv8aCwk2JFtooIxls2FOjVLvcY1qfYsFsUC67lC2fPBwbjnI8Howp?=
+ =?us-ascii?Q?dLwPLNGQOdMUfxzIc1x76Kc/bohNZmJ7iP8mCsKGkmME4ENfFPX+0ltElT1x?=
+ =?us-ascii?Q?bSRk8Fk8zqpyQOVtR1YbM1IOwYcDlNucsJwaq1+G7andPHUYlb0p6kfAbDzj?=
+ =?us-ascii?Q?1jGDa7b8UK7Ks6VqEj8RDQi7MwNWkSpCZWBhkAszXw5jT5f/3q8GiOQmM6o5?=
+ =?us-ascii?Q?ZrVXUJdtvOzGWd+KozLlG/gJSgASD3GSQRldTDPOkTUNNsxhhimOwa1xo+/M?=
+ =?us-ascii?Q?w4Jw0NRxpix+RkEUmfZHL1VByFQJvFCOab/wHMsPlGBZrHulEJULVECPVzjj?=
+ =?us-ascii?Q?ED+ul2HOCuBoGHnNHkv0gfWTc9DD6JjGj5Gtb5KWEWLdc3+bkTEm+k/KFHje?=
+ =?us-ascii?Q?PUwGysEMl1vWYZSfzOr0Px6ajuIbvFvgp+eunzOWi/zmAzZ5SOHB5/71Twik?=
+ =?us-ascii?Q?lFCPojM9DCs4UFwsFk3ZYL/rSJrZRVGan++ZmOSD/Z3XY8WuVyBJAN5Duy9c?=
+ =?us-ascii?Q?QLkXIOQ3KdbBRqn9PE9EjV+CKV9FdYdzhFvJQgMhMqDiVJxSuuZzWznZmIHV?=
+ =?us-ascii?Q?BRFAWRX4fY2qrEqS29bJqxfLskCzKJdP/zlXOzMoDdMIf4rHDEids7Ce7Ms3?=
+ =?us-ascii?Q?YItuHV47mLh7jIuYouQ9s6XWPvH2P+jY/E7GjHmxDdlX9iMt4SzEWSoDrZVK?=
+ =?us-ascii?Q?KJy9NIYMBWtM3V/tfkqocECSOZL5VIEAVdUQbHK7F/gTBCe55zbDZ1y+u/rt?=
+ =?us-ascii?Q?nhqMMDK2vepUuBMCIsJPdCmhO0twHrwryK4D8P1doeshWtqvW20jOyrCFw8s?=
+ =?us-ascii?Q?G+PmEWHnTzMxbI3oASfPtqd+b4caf4ZbseACgNtSU7g8f4MGAXT9hz7r54ce?=
+ =?us-ascii?Q?ZG1vPDVeR7xNUFlnbLL7w0xweUC/c98VrQfo2t28D4YiSR2rTx2CdKk1VrUX?=
+ =?us-ascii?Q?e6K4RuX2vuMtL9GequJc//k8VyJXOqdxNjFdHl0u6GYOWXnpXJ6Z3lMU5bXU?=
+ =?us-ascii?Q?MDXsiHpck8ZEyWO/m1gu8g6+mFAOO4ouYdshmM35ubCEDgaonN1skZMH4AV5?=
+ =?us-ascii?Q?sILFEQFifKTuwYZqulw2QQi0tPgTBrYWV8O1wkudJFScK64GK+5213Hvxwov?=
+ =?us-ascii?Q?kotyjQsv1vndkaAeRaIRbQDS7nuIZOfD+iMGgrY9qQhgwSFgV4FIFzPyKCUp?=
+ =?us-ascii?Q?H9EGxgbLKT8loqDfguGuPFhnlthG0gfA5sEeNyKR1KX1dB+LlOMJcLKuAjnE?=
+ =?us-ascii?Q?4id3tmYExLasY6CDQTeEKPDdrepLzgrrubSNsXoZD1JLVv5tUyVPxVOzHDMK?=
+ =?us-ascii?Q?GQ=3D=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a42e2bb2-f396-42bc-b8af-08da6986cfb8
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2022 13:01:35.9588
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: x8wc/4+EfYlqKaIlEUwwO0To68FZW7vhNUAaIav+IEIv+hHyxk5d8ajvYT6QAnAAjEZPXWNS++symvrzLOHEjcBflJ7c1TMJOPpVFq4San8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB6278
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-07-19_02,2022-07-19_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 malwarescore=0
+ mlxscore=0 phishscore=0 mlxlogscore=746 suspectscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2206140000
+ definitions=main-2207190055
+X-Proofpoint-GUID: z4W_vfBI9idlnc4ZlDxGdBoLsG8LPx7v
+X-Proofpoint-ORIG-GUID: z4W_vfBI9idlnc4ZlDxGdBoLsG8LPx7v
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 7/19/22 11:54, Dan Carpenter wrote:
-> The KVM_FEATURE_STEAL_TIME (5) define is the BIT() value so we need to
-> do shift for this to work correctly.
+On Tue, Jul 19, 2022 at 09:54:34AM -0300, Jason Gunthorpe wrote:
+> On Tue, Jul 12, 2022 at 12:01:10PM +0300, Dan Carpenter wrote:
 > 
-> Fixes: 998016048221 ("KVM: selftests: Convert steal_time away from VCPU_ID")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->   tools/testing/selftests/kvm/steal_time.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> > Best not to use any auto-formatting tools.  They are all bad.
 > 
-> diff --git a/tools/testing/selftests/kvm/steal_time.c b/tools/testing/selftests/kvm/steal_time.c
-> index d122f1e05cdd..b89f0cfa2dc3 100644
-> --- a/tools/testing/selftests/kvm/steal_time.c
-> +++ b/tools/testing/selftests/kvm/steal_time.c
-> @@ -62,7 +62,7 @@ static bool is_steal_time_supported(struct kvm_vcpu *vcpu)
->   {
->   	struct kvm_cpuid_entry2 *cpuid = kvm_get_supported_cpuid_entry(KVM_CPUID_FEATURES);
->   
-> -	return cpuid && (cpuid->eax & KVM_FEATURE_STEAL_TIME);
-> +	return cpuid && (cpuid->eax & (1 << KVM_FEATURE_STEAL_TIME));
->   }
->   
->   static void steal_time_init(struct kvm_vcpu *vcpu, uint32_t i)
+> Have you tried clang-format? I wouldn't call it bad..
 
-This is already fixed in kvm/queue, but also actually the Fixes tag 
-would have to date back to commit 94c4b76b88d4 ("KVM: selftests: 
-Introduce steal-time test", 2020-03-16).
+I prefered Christophe's formatting to clang's.  ;)
 
-Paolo
+regards,
+dan carpenter
 
