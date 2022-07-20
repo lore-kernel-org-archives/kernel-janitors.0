@@ -2,106 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09EE7C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 11:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 441E2C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 12:05:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240076AbiGTLjd (ORCPT
+        id S236755AbiGTMFD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Jul 2022 07:39:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50316 "EHLO
+        Wed, 20 Jul 2022 08:05:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239720AbiGTLjc (ORCPT
+        with ESMTP id S229554AbiGTMFC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Jul 2022 07:39:32 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9D8A71BDC;
-        Wed, 20 Jul 2022 04:39:31 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 61E2B33F64;
-        Wed, 20 Jul 2022 11:39:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1658317170; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RCe2TPU9LUFhoFV6W5YhCg+pI/RXtQ+1Mlh93H/op3s=;
-        b=brz1gVTaifMcXXbNkLEyUhtoworyKdlkxCk2J9bDnyHgsrlnQRAX6qMehh4oS21IA9BPt1
-        7AnuyP5IqAY7CZi1tNvBKY0l+aJ/pPXU5DTyfj92P3d8Toj6Ge7ADpYVrL/R/8DJfQfk1N
-        p4pi1sdI4Swt7rZb50MYSOr4u4arGEQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1658317170;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RCe2TPU9LUFhoFV6W5YhCg+pI/RXtQ+1Mlh93H/op3s=;
-        b=BAGq1G93Yesa+YgZdJgR9n8g2e1baneV3S2NlLLA/5rfKCuI+8eD4PVYJ7QByimRJCoF5Z
-        5YsgawL3J9A9IyDg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4318C13AA1;
-        Wed, 20 Jul 2022 11:39:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id s0W1D3Lp12K4SwAAMHmgww
-        (envelope-from <hare@suse.de>); Wed, 20 Jul 2022 11:39:30 +0000
-Message-ID: <1f8867c6-1bdf-0614-aeed-d39e328fda82@suse.de>
-Date:   Wed, 20 Jul 2022 13:39:29 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] nvmet-auth: select the intended CRYPTO_DH_RFC7919_GROUPS
-Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        linux-nvme@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220720113717.31854-1-lukas.bulwahn@gmail.com>
-From:   Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20220720113717.31854-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Wed, 20 Jul 2022 08:05:02 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5D4D6B74E;
+        Wed, 20 Jul 2022 05:05:00 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id a5so25787402wrx.12;
+        Wed, 20 Jul 2022 05:05:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=wpY8Fn5dD5ki3izlk7rpyV14VYuNyQSG8TlGbXhx8No=;
+        b=E1yjOeYEWLfJi/4H5c4TezE+AA1j/db/ERei6jUfneCjFxtZ5eq/tgZqAsg6lyTHy9
+         NWKwPHBrkVSB/ow8jBMNCTJbW56JYv4iDWxyQJzkdZewQmKa+LJaeqIRydoy7CMll2A8
+         +HfyVR+DmLsWNOXxst+zhPjZFg4/Tm2YBMxUtFHxmxn337we06kWQGhS6thzNCUs5Kgh
+         tdqpRW2bLvRkO/kd8S4s4e60x2NFQ31n3XgjA1DAIPtas1GPAKRFZq7UfOQ1Eng0VDxf
+         wmPGp/uRWx/s27Lib1fQb3mFlD00vprSrj2+JW0BjdJefZUlm0gXdONB1Xcu3hHqjFFa
+         0pUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=wpY8Fn5dD5ki3izlk7rpyV14VYuNyQSG8TlGbXhx8No=;
+        b=zJveaJOawcwgCBvQr7JHsof6n2uXgp2IKxQF5pWOpjo3qAcO6LgiKEM+Y1sitOH8mh
+         fAZ9TFDXjfS/NIR5ERE4VBWXZzN/EkbXui4PYXkyZfjr9s7cEbfhvJaikWrvq+ZVz/xY
+         cm/FpDzX5xtb8wmOFjuNrR1Xl/9skQP2MDw6p54aBZbr9J+VCLabYd5tkXfZhm/zEXn9
+         CewKGfBLhu3sjWjoANziyvRQO15Zuh4bfTXTHyUVAbXmEYc9C70f7MkN/9NTkFFBJWtC
+         mjCin1oS63a6SmKXwsX+gEvPR1z/fjn8CPULZkMyYsYA2AKceuqr1Hpig8jNjEso470N
+         6qzw==
+X-Gm-Message-State: AJIora/Q9/YvKqwypntVHQ3ozYhM3Pao5c53aQKV38e8/bsyXKZviL49
+        cVjZ9eEJSwKz9QgsxYP7iYyGKSBrjuI=
+X-Google-Smtp-Source: AGRyM1sWSLteQUScsqfZ5Bz9P7W9wCqZ6Bc9liATh6PJxssCgIl6il4d8JhIZC8unswcIy7qtIR40Q==
+X-Received: by 2002:adf:fcca:0:b0:21d:68ff:2e5a with SMTP id f10-20020adffcca000000b0021d68ff2e5amr31936301wrs.453.1658318699075;
+        Wed, 20 Jul 2022 05:04:59 -0700 (PDT)
+Received: from felia.fritz.box (200116b826a11f008020c2fc6e115b3e.dip.versatel-1u1.de. [2001:16b8:26a1:1f00:8020:c2fc:6e11:5b3e])
+        by smtp.gmail.com with ESMTPSA id n5-20020a1c2705000000b003a1980d55c4sm2177090wmn.47.2022.07.20.05.04.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Jul 2022 05:04:58 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
+        linux-security-module@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] apparmor: correct config reference to intended one
+Date:   Wed, 20 Jul 2022 14:04:43 +0200
+Message-Id: <20220720120443.16518-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 7/20/22 13:37, Lukas Bulwahn wrote:
-> Commit 71ebe3842ebe ("nvmet-auth: Diffie-Hellman key exchange support")
-> intends to select 'Support for RFC 7919 FFDHE group parameters' for using
-> FFDHE groups for NVMe In-Band Authentication.
-> 
-> It however selects CRYPTO_DH_GROUPS_RFC7919, instead of the intended
-> CRYPTO_DH_RFC7919_GROUPS; notice the swapping of words here.
-> 
-> Correct the select to the intended config option.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->   drivers/nvme/target/Kconfig | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/nvme/target/Kconfig b/drivers/nvme/target/Kconfig
-> index f0c91f7686a3..79fc64035ee3 100644
-> --- a/drivers/nvme/target/Kconfig
-> +++ b/drivers/nvme/target/Kconfig
-> @@ -93,7 +93,7 @@ config NVME_TARGET_AUTH
->   	select CRYPTO_SHA256
->   	select CRYPTO_SHA512
->   	select CRYPTO_DH
-> -	select CRYPTO_DH_GROUPS_RFC7919
-> +	select CRYPTO_DH_RFC7919_GROUPS
->   	help
->   	  This enables support for NVMe over Fabrics In-band Authentication
->   
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+Commit 5bfcbd22ee4e ("apparmor: Enable tuning of policy paranoid load for
+embedded systems") introduces the config SECURITY_APPARMOR_PARANOID_LOAD,
+but then refers in the code to SECURITY_PARANOID_LOAD; note the missing
+APPARMOR in the middle.
 
-Cheers,
+Correct this to the introduced and intended config option.
 
-Hannes
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ security/apparmor/lsm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 090a20805664..e29cade7b662 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1402,7 +1402,7 @@ module_param_named(path_max, aa_g_path_max, aauint, S_IRUSR);
+  * DEPRECATED: read only as strict checking of load is always done now
+  * that none root users (user namespaces) can load policy.
+  */
+-bool aa_g_paranoid_load = IS_ENABLED(CONFIG_SECURITY_PARANOID_LOAD);
++bool aa_g_paranoid_load = IS_ENABLED(CONFIG_SECURITY_APPARMOR_PARANOID_LOAD);
+ module_param_named(paranoid_load, aa_g_paranoid_load, aabool, S_IRUGO);
+ 
+ static int param_get_aaintbool(char *buffer, const struct kernel_param *kp);
+-- 
+2.17.1
+
