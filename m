@@ -2,111 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A59FEC43334
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 09:49:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E599BC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 10:51:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238397AbiGTJtB (ORCPT
+        id S237979AbiGTKvC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Jul 2022 05:49:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48034 "EHLO
+        Wed, 20 Jul 2022 06:51:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231826AbiGTJtA (ORCPT
+        with ESMTP id S234060AbiGTKvB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Jul 2022 05:49:00 -0400
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D834965D7C;
-        Wed, 20 Jul 2022 02:48:58 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R461e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046050;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VJwWVRl_1658310535;
-Received: from 30.227.66.165(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0VJwWVRl_1658310535)
-          by smtp.aliyun-inc.com;
-          Wed, 20 Jul 2022 17:48:55 +0800
-Message-ID: <65e6bbcb-2c33-2e43-1826-a62387572310@linux.alibaba.com>
-Date:   Wed, 20 Jul 2022 17:48:55 +0800
+        Wed, 20 Jul 2022 06:51:01 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C68E325E90;
+        Wed, 20 Jul 2022 03:50:59 -0700 (PDT)
+Received: from mail-yb1-f180.google.com ([209.85.219.180]) by
+ mrelayeu.kundenserver.de (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MHWvH-1oIGA43Cs5-00Dafe; Wed, 20 Jul 2022 12:50:57 +0200
+Received: by mail-yb1-f180.google.com with SMTP id r3so31448676ybr.6;
+        Wed, 20 Jul 2022 03:50:57 -0700 (PDT)
+X-Gm-Message-State: AJIora+rwUUhLfsdlNMZTpRQq11LFFPG82naYolx5uDazs1RlnRXiYsT
+        qtK4LzSUF5JGwLn6tFNp5ZqdSbTpXcXbqY+D/3w=
+X-Google-Smtp-Source: AGRyM1tBRMTZAOLkCSrWeM9lOgL7tKWZk8rYWNHxclKHzsaDcuczmA0/1wZXc39YCwugw2C0ZMWGEXKaZjRPuqvwfh8=
+X-Received: by 2002:a25:808c:0:b0:670:7d94:f2a with SMTP id
+ n12-20020a25808c000000b006707d940f2amr8739178ybk.452.1658314256329; Wed, 20
+ Jul 2022 03:50:56 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.11.0
-Subject: Re: [PATCH 2/3] ocfs2: Remove a useless spinlock
-Content-Language: en-US
-To:     Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     David.Laight@ACULAB.COM, jlbec@evilplan.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mark@fasheh.com, ocfs2-devel@oss.oracle.com
-References: <bd6796635e58f9c47cf857573c3b9474a00ce26a.1658224839.git.christophe.jaillet@wanadoo.fr>
- <8ba7004d330cbe5f626539a8a3bff696d0c4285e.1658224839.git.christophe.jaillet@wanadoo.fr>
- <7b644e5d32d74d3d90dfc5b1786ae5b9@AcuMS.aculab.com>
- <29c3fbdd-7695-46c5-bb75-fe358c574ab3@wanadoo.fr>
- <07c924de-78bf-c993-ce73-635af71f4edd@linux.alibaba.com>
- <f313cb6f-de75-2447-eebc-5c240bc243a2@wanadoo.fr>
-From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <f313cb6f-de75-2447-eebc-5c240bc243a2@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CAK8P3a12-atmqjtjqi-RhFXH2Kwa-hxYcxy3Ftz2YjY5yyPHqg@mail.gmail.com>
+ <mhng-f5938c9b-7fc1-4b0c-9449-7dd1431f5446@palmerdabbelt-glaptop>
+ <CAKXUXMzpWsdKYbcu5MxvrAEMLHv4_2OGv2bRYEsQaze5trUSiQ@mail.gmail.com>
+ <CAK8P3a32m42gT9qz+Ldvr8okYGOc=kKeoJTGNWyYT71N8tJfEA@mail.gmail.com>
+ <4ff47e50-8702-1177-612b-73d9700e47c5@microchip.com> <CAK8P3a01x_ETchX2Vwm9oNaFJDhVZEu+G-2vRwegqKkMe54m6g@mail.gmail.com>
+ <CAKXUXMxOUs31SkGb0JD=nmHxgFy4tQ5vn6yD6ivgRpbSAxm7mA@mail.gmail.com>
+In-Reply-To: <CAKXUXMxOUs31SkGb0JD=nmHxgFy4tQ5vn6yD6ivgRpbSAxm7mA@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 20 Jul 2022 12:50:39 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3K8PnPF7KEEVb=hquZsjXiatCkyXe9B_RLBcse2jU5LQ@mail.gmail.com>
+Message-ID: <CAK8P3a3K8PnPF7KEEVb=hquZsjXiatCkyXe9B_RLBcse2jU5LQ@mail.gmail.com>
+Subject: Re: [PATCH] asm-generic: correct reference to GENERIC_LIB_DEVMEM_IS_ALLOWED
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Conor Dooley <Conor.Dooley@microchip.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Palmer Dabbelt <palmerdabbelt@google.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:jsHCyT7O6w8Ky7eqhBbCVdvUyGL4mEFwt0463REio7LBL3eCrQF
+ nIuxtY/OYl630VCjUk7E9bdirZVUQSK2aXFGssXGvQx3yw8E7ixhENIwvuSY2CK927AplQL
+ jWnfdr/7G/RWq99tCUxGzqjDnmAFXjT0PnABZKuf61vZtGx8wkbJQIWuNCsDX7JrpZx7kxx
+ EvMjSjj//sq94QcTtIkyw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:agORFtKC/Jo=:drMgcuJRGEM+NRWS5yLfgh
+ sK0xOLbpTV/2skp90XEyrNxcISsXa0mT+QPOKVEksjpYCpiBMaALBrZjbW6ZUED2qRX44fhzd
+ 3XK45uCo6rj0VAaExcoAtOnLSk8dd+B1Gn96uNnmocBV35O+/2MrBwTj5leDPH8TAqVdj22Bz
+ eKjJv5Judc3OYblnmAKXKEO8TD3o2WXqBO66kmVodS4fyqcpa/24vRLARyyRCUP0VE2YwkaaU
+ 4mUjshmdPpAsM5w/rcL7PFU4E3gYxh/jG91yTEVr/gGJgGbmPL1FpCZzG3e7+LaaOOqpOs1Tz
+ VuPfECflF5R1OGPGH07ghZbpDk+Kk67WHnLZ5R6IZvefmXaP9+G1amjL8lLmBM2JuSLpk/5th
+ J7R1Nnob+MPdhUuIAhQzpO1Hxtyf2h0lBukm2G4EfuzJtR/Pwrf/ci8W91r5zl42169cQ2md0
+ r24hF/4YZWnw73Zj0wbWW9B1spHgT+7dUVEEtaBuk/i2uKjcitRgz2NhMU+AQgCnIjL+cYknr
+ Ug+mXuA7yyz6HY60hKKpyzmnRKnQEdvC1jtVmeFFM6V2IFy0L7p/0AuwPqrc1bt225q7oikGs
+ 20aIvcCpEuhKwy3HirUpB1RoUtA+z3epfq2LsfUa6TURrpgOtT0ulAlriTxnrEf8DMGlfsIFz
+ TlFwP/ITNyfwNy4QAjNd1MA/5hPnvZzFbiaoJJPeeLJ5+sWs6rdq74UIL62c3DdjmraaI3SEi
+ TThFrxQGTJuyNk1WcPEwDyIh4f6Wj3Blf0kRWg==
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Thu, Jul 7, 2022 at 4:41 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> On Thu, Jul 7, 2022 at 3:07 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Thu, Jul 7, 2022 at 2:20 PM <Conor.Dooley@microchip.com> wrote:
 
+> > lkft just found a build failure:
+> >
+> > https://gitlab.com/Linaro/lkft/users/arnd.bergmann/asm-generic/-/jobs/2691154818
+> >
+> > I have not investigated what went wrong, but it does look like an actual
+> > regression, so I'll wait for Lukas to follow up with a new version of the patch.
+>
+> Thanks for your testing. I will look into it. Probably it is due to
+> some more rigor during builds (-Werror and new warning types in the
+> default build) since I proposed the patch in October 2021. That should
+> be easy to fix, but let us see. I will send a PATCH v2 soon.
 
-On 7/20/22 4:26 PM, Marion & Christophe JAILLET wrote:
-> 
-> Le 20/07/2022 à 03:59, Joseph Qi a écrit :
->>
->> On 7/19/22 9:25 PM, Christophe JAILLET wrote:
->>> Le 19/07/2022 à 12:24, David Laight a écrit :
->>>> From: Christophe JAILLET
->>>>> Sent: 19 July 2022 11:02
->>>>>
->>>>> 'node_map_lock' is a spinlock only used to protect calls to set_bit(),
->>>>> clear_bit() and test_bit().
->>>>>
->>>>> {set|clear}_bit() are already atomic and don't need this extra spinlock.
->>>>> test_bit() only reads the bitmap for a given bit.
->>>>>
->>>>> Remove this useless spinlock.
->>>> It looks to me like the calling code is racy
->>>> unless there is another lock in the callers.
->>> The call chains are:
->>>    ocfs2_recover_orphans()
->>>      ocfs2_mark_recovering_orphan_dir()
->>>        spin_lock(&osb->osb_lock);        <-- osb_lock spinlock
->>>        ocfs2_node_map_set_bit()            <-- uses node_map_lock
->>>        ...
->>>        spin_unlock(&osb->osb_lock);
->>>      ...
->>>      ocfs2_clear_recovering_orphan_dir()
->>>        ocfs2_node_map_clear_bit()        <-- uses node_map_lock
->>>                              osb_lock is NOT taken
->>>
->>>
->>>    ocfs2_check_orphan_recovery_state()
->>>      spin_lock(&osb->osb_lock);            <-- osb_lock spinlock
->>>      ...
->>>      ocfs2_node_map_test_bit()            <-- uses node_map_lock
->>>      ...
->>>      spin_unlock(&osb->osb_lock);
->>>
->>>
->>> So the code looks already protected by the 'osb_lock' spinlock, but I don't know this code and ocfs2_mark_recovering_orphan_dir() looks tricky to me. (so some other eyes are much welcome)
->>   osb_lock is to protect osb filed such as 'osb_orphan_wipes', while
->> node_map_lock is to protect the node map 'osb_recovering_orphan_dirs'
->> specifically.
-> 
-> Thanks for this explanation.
-> 
-> But does "node_map_lock" really protects anything?
-> It is just around some atomic function calls which shouldn't need any, right?
-> 
-> test_bit() is not documented as atomic, but {clear|set}_bit() could be executed just before or just after it with the current locking mechanism, so I don't really see how it would make a difference.
-> 
-> I don't understand the logic of this lock here.
-> 
-> Can you elaborate?
+Any update on this? I have another bugfix for asm-generic now and was planning
+to send a pull request with both. If you don't have the updated patch
+ready yet, this
+will have to go into 5.21 instead.
 
-These code are introduced long time ago...
-Refer to commit b4df6ed8db0c "[PATCH] ocfs2: fix orphan recovery
-deadlock", I guess it plays a role 'barrier' and make sure test node map
-is executed prior than signal orphan recovery thread. In other words, to
-serialize evict inode and orphan recovery.
-
-Thanks,
-Joseph
+      Arnd
