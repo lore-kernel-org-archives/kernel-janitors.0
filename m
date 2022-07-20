@@ -2,30 +2,30 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F474C43334
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 02:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D6B3C43334
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 02:06:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235385AbiGTCDu (ORCPT
+        id S232720AbiGTCGV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 19 Jul 2022 22:03:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60386 "EHLO
+        Tue, 19 Jul 2022 22:06:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229690AbiGTCDt (ORCPT
+        with ESMTP id S229690AbiGTCGU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 19 Jul 2022 22:03:49 -0400
-Received: from out30-43.freemail.mail.aliyun.com (out30-43.freemail.mail.aliyun.com [115.124.30.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8F1C4D156;
-        Tue, 19 Jul 2022 19:03:47 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VJuib0B_1658282623;
-Received: from 30.227.66.165(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0VJuib0B_1658282623)
+        Tue, 19 Jul 2022 22:06:20 -0400
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C56AB509E2;
+        Tue, 19 Jul 2022 19:06:18 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R381e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045170;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VJukRdZ_1658282775;
+Received: from 30.227.66.165(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0VJukRdZ_1658282775)
           by smtp.aliyun-inc.com;
-          Wed, 20 Jul 2022 10:03:44 +0800
-Message-ID: <d49c6cca-2980-41b1-0f59-32ddcbb1dfa2@linux.alibaba.com>
-Date:   Wed, 20 Jul 2022 10:03:43 +0800
+          Wed, 20 Jul 2022 10:06:16 +0800
+Message-ID: <e6c41a71-7649-a182-bdcd-678803efd6cb@linux.alibaba.com>
+Date:   Wed, 20 Jul 2022 10:06:15 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
  Gecko/20100101 Thunderbird/91.11.0
-Subject: Re: [PATCH 1/3] ocfs2: Remove some useless functions
+Subject: Re: [PATCH 3/3] ocfs2: use the bitmap API to simplify code
 Content-Language: en-US
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         Mark Fasheh <mark@fasheh.com>,
@@ -34,8 +34,9 @@ To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         ocfs2-devel@oss.oracle.com
 References: <bd6796635e58f9c47cf857573c3b9474a00ce26a.1658224839.git.christophe.jaillet@wanadoo.fr>
+ <0a0d6e9bf9d10f67b7a0c1cdd6176cdd0ad2e1f6.1658224839.git.christophe.jaillet@wanadoo.fr>
 From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <bd6796635e58f9c47cf857573c3b9474a00ce26a.1658224839.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <0a0d6e9bf9d10f67b7a0c1cdd6176cdd0ad2e1f6.1658224839.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -44,78 +45,38 @@ X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
 
-On 7/19/22 6:01 PM, Christophe JAILLET wrote:
-> __ocfs2_node_map_set_bit() and __ocfs2_node_map_set_bit() are just
-> wrapper around set_bit() and clear_bit().
+On 7/19/22 6:05 PM, Christophe JAILLET wrote:
+> Use bitmap_zero() instead of hand-writing it.
+> It is less verbose.
 > 
-> The leading __ also makes think that these functions are non-atomic just
-> like __set_bit() and __clear_bit().
-> 
-> So, just remove these wrappers and call set_bit() and clear_bit()
-> directly.
+> While at it, add an explicit #include <linux/bitmap.h>.
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Looks good.
 Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-
 > ---
->  fs/ocfs2/heartbeat.c | 21 ++-------------------
->  1 file changed, 2 insertions(+), 19 deletions(-)
+>  fs/ocfs2/heartbeat.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
 > diff --git a/fs/ocfs2/heartbeat.c b/fs/ocfs2/heartbeat.c
-> index 9099d8fc7599..1d72e0788943 100644
+> index 4863ad35c242..e243cd99e63f 100644
 > --- a/fs/ocfs2/heartbeat.c
 > +++ b/fs/ocfs2/heartbeat.c
-> @@ -24,11 +24,6 @@
+> @@ -8,6 +8,7 @@
+>   * Copyright (C) 2002, 2004 Oracle.  All rights reserved.
+>   */
 >  
->  #include "buffer_head_io.h"
->  
-> -static inline void __ocfs2_node_map_set_bit(struct ocfs2_node_map *map,
-> -					    int bit);
-> -static inline void __ocfs2_node_map_clear_bit(struct ocfs2_node_map *map,
-> -					      int bit);
-> -
->  /* special case -1 for now
->   * TODO: should *really* make sure the calling func never passes -1!!  */
+> +#include <linux/bitmap.h>
+>  #include <linux/fs.h>
+>  #include <linux/types.h>
+>  #include <linux/highmem.h>
+> @@ -29,8 +30,7 @@
 >  static void ocfs2_node_map_init(struct ocfs2_node_map *map)
-> @@ -65,12 +60,6 @@ void ocfs2_do_node_down(int node_num, void *data)
->  	ocfs2_recovery_thread(osb, node_num);
+>  {
+>  	map->num_nodes = OCFS2_NODE_MAP_MAX_NODES;
+> -	memset(map->map, 0, BITS_TO_LONGS(OCFS2_NODE_MAP_MAX_NODES) *
+> -	       sizeof(unsigned long));
+> +	bitmap_zero(map->map, OCFS2_NODE_MAP_MAX_NODES);
 >  }
 >  
-> -static inline void __ocfs2_node_map_set_bit(struct ocfs2_node_map *map,
-> -					    int bit)
-> -{
-> -	set_bit(bit, map->map);
-> -}
-> -
->  void ocfs2_node_map_set_bit(struct ocfs2_super *osb,
->  			    struct ocfs2_node_map *map,
->  			    int bit)
-> @@ -79,16 +68,10 @@ void ocfs2_node_map_set_bit(struct ocfs2_super *osb,
->  		return;
->  	BUG_ON(bit >= map->num_nodes);
->  	spin_lock(&osb->node_map_lock);
-> -	__ocfs2_node_map_set_bit(map, bit);
-> +	set_bit(bit, map->map);
->  	spin_unlock(&osb->node_map_lock);
->  }
->  
-> -static inline void __ocfs2_node_map_clear_bit(struct ocfs2_node_map *map,
-> -					      int bit)
-> -{
-> -	clear_bit(bit, map->map);
-> -}
-> -
->  void ocfs2_node_map_clear_bit(struct ocfs2_super *osb,
->  			      struct ocfs2_node_map *map,
->  			      int bit)
-> @@ -97,7 +80,7 @@ void ocfs2_node_map_clear_bit(struct ocfs2_super *osb,
->  		return;
->  	BUG_ON(bit >= map->num_nodes);
->  	spin_lock(&osb->node_map_lock);
-> -	__ocfs2_node_map_clear_bit(map, bit);
-> +	clear_bit(bit, map->map);
->  	spin_unlock(&osb->node_map_lock);
->  }
->  
+>  void ocfs2_init_node_maps(struct ocfs2_super *osb)
