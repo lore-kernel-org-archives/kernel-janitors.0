@@ -2,89 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EBCCC43334
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 20:24:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD94C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 21:26:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229505AbiGTUYl (ORCPT
+        id S230293AbiGTV0l (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Jul 2022 16:24:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46496 "EHLO
+        Wed, 20 Jul 2022 17:26:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbiGTUYl (ORCPT
+        with ESMTP id S230012AbiGTV0l (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Jul 2022 16:24:41 -0400
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0504B4A820;
-        Wed, 20 Jul 2022 13:24:39 -0700 (PDT)
-Received: from [192.168.192.83] (unknown [50.126.114.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id B9FFD3F3C0;
-        Wed, 20 Jul 2022 20:24:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1658348678;
-        bh=2Y97BB6vjKwhsIP/n0mmC5lKGsgfc1sWpUPesvKpSUs=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=BkHvcOoTUxNqlPN6hRu6IhlmX/H22u5RTBiCWqXmvS4tR+w1w2JCEOrMCciawX516
-         keEJTKastKE5xCQIbR3C5sUSt6YZClBVAnWLskC/fRFmrnzahoeel6ErhhLVSqDZoD
-         Priuv9JFPA/JzOUcKAnKH3yyM26SGZOfpy86FvShyprVvMUcmoOgefroPRRBDC6L7p
-         74CPbbeuY8WMU0q9bJW7gfehEHcoV+SoCihf6eTOcSgSAjUgRzGDivzkQf145GY91D
-         A/Flm1SMM2Jqn9MUWY2IachSuWNPlFNIKSYzClXaKHZRvxts4bKCvGRA6O2NnubjC0
-         jK3vvPsSzsLWA==
-Message-ID: <847ef193-71a7-9714-be20-2cbb654e9c09@canonical.com>
-Date:   Wed, 20 Jul 2022 13:24:34 -0700
+        Wed, 20 Jul 2022 17:26:41 -0400
+Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7E034D4EB
+        for <kernel-janitors@vger.kernel.org>; Wed, 20 Jul 2022 14:26:39 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id EHDJogmrO0UP7EHDJomVbt; Wed, 20 Jul 2022 23:26:38 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Wed, 20 Jul 2022 23:26:38 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] devres: Slightly optimize alloc_dr()
+Date:   Wed, 20 Jul 2022 23:26:36 +0200
+Message-Id: <d255bd871484e63cdd628e819f929e2df59afb02.1658352383.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] apparmor: correct config reference to intended one
-Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
-        linux-security-module@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220720120443.16518-1-lukas.bulwahn@gmail.com>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-In-Reply-To: <20220720120443.16518-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 7/20/22 05:04, Lukas Bulwahn wrote:
-> Commit 5bfcbd22ee4e ("apparmor: Enable tuning of policy paranoid load for
-> embedded systems") introduces the config SECURITY_APPARMOR_PARANOID_LOAD,
-> but then refers in the code to SECURITY_PARANOID_LOAD; note the missing
-> APPARMOR in the middle.
-> 
-> Correct this to the introduced and intended config option.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+If the gfp flag used for the memory allocation already has __GFP_ZERO,
+then there is no need to explicitly clear the "struct devres_node". It is
+already zeroed.
 
-thanks, I have pulled this into apparmor-next
+This saves a few cycles when using devm_zalloc() and co.
 
-Acked-by: John Johansen <john.johansen@canonical.com>
+In the case of devres_alloc() (which calls __devres_alloc_node()), the
+compiler could remove the test and the memset() because it should be able
+to see that the __GFP_ZERO flag is set.
+So this would make the code both faster and smaller.
 
-> ---
->   security/apparmor/lsm.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index 090a20805664..e29cade7b662 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -1402,7 +1402,7 @@ module_param_named(path_max, aa_g_path_max, aauint, S_IRUSR);
->    * DEPRECATED: read only as strict checking of load is always done now
->    * that none root users (user namespaces) can load policy.
->    */
-> -bool aa_g_paranoid_load = IS_ENABLED(CONFIG_SECURITY_PARANOID_LOAD);
-> +bool aa_g_paranoid_load = IS_ENABLED(CONFIG_SECURITY_APPARMOR_PARANOID_LOAD);
->   module_param_named(paranoid_load, aa_g_paranoid_load, aabool, S_IRUGO);
->   
->   static int param_get_aaintbool(char *buffer, const struct kernel_param *kp);
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/base/devres.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+index 864d0b3f566e..4ab2b50ee38f 100644
+--- a/drivers/base/devres.c
++++ b/drivers/base/devres.c
+@@ -117,7 +117,9 @@ static __always_inline struct devres * alloc_dr(dr_release_t release,
+ 	if (unlikely(!dr))
+ 		return NULL;
+ 
+-	memset(dr, 0, offsetof(struct devres, data));
++	/* No need to clear memory twice */
++	if (!(gfp & __GFP_ZERO))
++		memset(dr, 0, offsetof(struct devres, data));
+ 
+ 	INIT_LIST_HEAD(&dr->node.entry);
+ 	dr->node.release = release;
+-- 
+2.34.1
 
