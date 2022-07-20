@@ -2,121 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F7DCC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 09:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A59FEC43334
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 09:49:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232385AbiGTJgk (ORCPT
+        id S238397AbiGTJtB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Jul 2022 05:36:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38326 "EHLO
+        Wed, 20 Jul 2022 05:49:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231868AbiGTJgj (ORCPT
+        with ESMTP id S231826AbiGTJtA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Jul 2022 05:36:39 -0400
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9670B62A61
-        for <kernel-janitors@vger.kernel.org>; Wed, 20 Jul 2022 02:36:29 -0700 (PDT)
-Received: from [192.168.1.18] ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id E67zo5xjSgtndE67zohBES; Wed, 20 Jul 2022 11:36:27 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Wed, 20 Jul 2022 11:36:27 +0200
-X-ME-IP: 90.11.190.129
-Message-ID: <9cef7bd3-62ed-6438-8508-617ff7872af6@wanadoo.fr>
-Date:   Wed, 20 Jul 2022 11:36:22 +0200
+        Wed, 20 Jul 2022 05:49:00 -0400
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D834965D7C;
+        Wed, 20 Jul 2022 02:48:58 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R461e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046050;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VJwWVRl_1658310535;
+Received: from 30.227.66.165(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0VJwWVRl_1658310535)
+          by smtp.aliyun-inc.com;
+          Wed, 20 Jul 2022 17:48:55 +0800
+Message-ID: <65e6bbcb-2c33-2e43-1826-a62387572310@linux.alibaba.com>
+Date:   Wed, 20 Jul 2022 17:48:55 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] crypto: ccree - Remove a useless dma_supported() call
-Content-Language: fr
-To:     Gilad Ben-Yossef <gilad@benyossef.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>
-References: <ef6f884ef144390f152c34d2f549b1f50303b7b1.1658262447.git.christophe.jaillet@wanadoo.fr>
- <CAOtvUMdvXZ8s43ZetZZ8VwCtpDoJy5Ajk4yA=7xZS4OafmsjAw@mail.gmail.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <CAOtvUMdvXZ8s43ZetZZ8VwCtpDoJy5Ajk4yA=7xZS4OafmsjAw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.11.0
+Subject: Re: [PATCH 2/3] ocfs2: Remove a useless spinlock
+Content-Language: en-US
+To:     Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     David.Laight@ACULAB.COM, jlbec@evilplan.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mark@fasheh.com, ocfs2-devel@oss.oracle.com
+References: <bd6796635e58f9c47cf857573c3b9474a00ce26a.1658224839.git.christophe.jaillet@wanadoo.fr>
+ <8ba7004d330cbe5f626539a8a3bff696d0c4285e.1658224839.git.christophe.jaillet@wanadoo.fr>
+ <7b644e5d32d74d3d90dfc5b1786ae5b9@AcuMS.aculab.com>
+ <29c3fbdd-7695-46c5-bb75-fe358c574ab3@wanadoo.fr>
+ <07c924de-78bf-c993-ce73-635af71f4edd@linux.alibaba.com>
+ <f313cb6f-de75-2447-eebc-5c240bc243a2@wanadoo.fr>
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <f313cb6f-de75-2447-eebc-5c240bc243a2@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 20/07/2022 à 11:24, Gilad Ben-Yossef a écrit :
-> Hi Christophe,
-> 
-> Thank you for the patch!
-> 
-> 
-> On Tue, Jul 19, 2022 at 11:27 PM Christophe JAILLET
-> <christophe.jaillet@wanadoo.fr> wrote:
->>
->> There is no point in calling dma_supported() before calling
->> dma_set_coherent_mask(). This function already calls dma_supported() and
->> returns an error (-EIO) if it fails.
->>
->> So remove the superfluous dma_supported() call.
->>
->> While at it, fix the name of the function reported in a dev_err().
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> Acked-by: Gilad Ben-Yossef <gilad@benyossef.com>
-> 
->> ---
->> I guess that the whole while loop could be removed, but I don't remind the
->> thread with the corresponding explanation, so leave it as-is :(
-> 
-> I would be happy to ack a patch that does this if you care to write it...
 
-I will send a v2.
 
-Don't bother with this patch.
+On 7/20/22 4:26 PM, Marion & Christophe JAILLET wrote:
+> 
+> Le 20/07/2022 à 03:59, Joseph Qi a écrit :
+>>
+>> On 7/19/22 9:25 PM, Christophe JAILLET wrote:
+>>> Le 19/07/2022 à 12:24, David Laight a écrit :
+>>>> From: Christophe JAILLET
+>>>>> Sent: 19 July 2022 11:02
+>>>>>
+>>>>> 'node_map_lock' is a spinlock only used to protect calls to set_bit(),
+>>>>> clear_bit() and test_bit().
+>>>>>
+>>>>> {set|clear}_bit() are already atomic and don't need this extra spinlock.
+>>>>> test_bit() only reads the bitmap for a given bit.
+>>>>>
+>>>>> Remove this useless spinlock.
+>>>> It looks to me like the calling code is racy
+>>>> unless there is another lock in the callers.
+>>> The call chains are:
+>>>    ocfs2_recover_orphans()
+>>>      ocfs2_mark_recovering_orphan_dir()
+>>>        spin_lock(&osb->osb_lock);        <-- osb_lock spinlock
+>>>        ocfs2_node_map_set_bit()            <-- uses node_map_lock
+>>>        ...
+>>>        spin_unlock(&osb->osb_lock);
+>>>      ...
+>>>      ocfs2_clear_recovering_orphan_dir()
+>>>        ocfs2_node_map_clear_bit()        <-- uses node_map_lock
+>>>                              osb_lock is NOT taken
+>>>
+>>>
+>>>    ocfs2_check_orphan_recovery_state()
+>>>      spin_lock(&osb->osb_lock);            <-- osb_lock spinlock
+>>>      ...
+>>>      ocfs2_node_map_test_bit()            <-- uses node_map_lock
+>>>      ...
+>>>      spin_unlock(&osb->osb_lock);
+>>>
+>>>
+>>> So the code looks already protected by the 'osb_lock' spinlock, but I don't know this code and ocfs2_mark_recovering_orphan_dir() looks tricky to me. (so some other eyes are much welcome)
+>>   osb_lock is to protect osb filed such as 'osb_orphan_wipes', while
+>> node_map_lock is to protect the node map 'osb_recovering_orphan_dirs'
+>> specifically.
+> 
+> Thanks for this explanation.
+> 
+> But does "node_map_lock" really protects anything?
+> It is just around some atomic function calls which shouldn't need any, right?
+> 
+> test_bit() is not documented as atomic, but {clear|set}_bit() could be executed just before or just after it with the current locking mechanism, so I don't really see how it would make a difference.
+> 
+> I don't understand the logic of this lock here.
+> 
+> Can you elaborate?
 
-CJ
+These code are introduced long time ago...
+Refer to commit b4df6ed8db0c "[PATCH] ocfs2: fix orphan recovery
+deadlock", I guess it plays a role 'barrier' and make sure test node map
+is executed prior than signal orphan recovery thread. In other words, to
+serialize evict inode and orphan recovery.
 
-> 
-> Gilad
-> 
->> ---
->>   drivers/crypto/ccree/cc_driver.c | 12 ++++++------
->>   1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
->> index 7d1bee86d581..99f8bda718fe 100644
->> --- a/drivers/crypto/ccree/cc_driver.c
->> +++ b/drivers/crypto/ccree/cc_driver.c
->> @@ -373,16 +373,16 @@ static int init_cc_resources(struct platform_device *plat_dev)
->>
->>          dma_mask = DMA_BIT_MASK(DMA_BIT_MASK_LEN);
->>          while (dma_mask > 0x7fffffffUL) {
->> -               if (dma_supported(dev, dma_mask)) {
->> -                       rc = dma_set_coherent_mask(dev, dma_mask);
->> -                       if (!rc)
->> -                               break;
->> -               }
->> +               rc = dma_set_coherent_mask(dev, dma_mask);
->> +               if (!rc)
->> +                       break;
->> +
->>                  dma_mask >>= 1;
->>          }
->>
->>          if (rc) {
->> -               dev_err(dev, "Failed in dma_set_mask, mask=%llx\n", dma_mask);
->> +               dev_err(dev, "Failed in dma_set_coherent_mask, mask=%llx\n",
->> +                       dma_mask);
->>                  return rc;
->>          }
->>
->> --
->> 2.34.1
->>
-> 
-> 
-
+Thanks,
+Joseph
