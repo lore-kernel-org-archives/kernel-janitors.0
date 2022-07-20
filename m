@@ -2,552 +2,193 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9878CCCA480
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 08:30:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB061C433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 09:12:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240478AbiGTIaP (ORCPT
+        id S235953AbiGTJMC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Jul 2022 04:30:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42772 "EHLO
+        Wed, 20 Jul 2022 05:12:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240466AbiGTIaM (ORCPT
+        with ESMTP id S229744AbiGTJMB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Jul 2022 04:30:12 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E6D255AA;
-        Wed, 20 Jul 2022 01:30:06 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id bk26so25049525wrb.11;
-        Wed, 20 Jul 2022 01:30:06 -0700 (PDT)
+        Wed, 20 Jul 2022 05:12:01 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D80B31202;
+        Wed, 20 Jul 2022 02:12:00 -0700 (PDT)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26K7I1tY003844;
+        Wed, 20 Jul 2022 09:11:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2022-7-12;
+ bh=OU8aSZ5MI4a6FFzceAFcB2XV4gFAzKv/17sBE0WVWx8=;
+ b=0Vup+2hu83UE4/9jOaP5na7D31KWE71n/XFz8BR+rjIvAC6fw4mYiRIwcB8JggDE8wzb
+ npXuA9H9Zg9pCSS6eOUfhUUtJrLqyieRqkD/kqgdpn1dlSv4KEtBYpzNFTMex2cDZ14m
+ jtosFrqkmrGoyzAmVs9FMDrrPvIexejHOL/CYPHIK00iTqy8GDdogTLAjd8gDWe6Mcd6
+ k7Ll8MQvZFj/aaKC1TF7PXF9FGuKpsiXJauqJhEtC7oW8kH/BXm1P0DVMP3dZddJycnS
+ QPM0mL3NtHgqpy/sE1luiroZvM8vhUXXc9JS+wDB5lePAoseIgEO9eWDq9hbXRyWYd5a qA== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3hbmxs8vn0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Jul 2022 09:11:38 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 26K6WjDg007868;
+        Wed, 20 Jul 2022 09:11:37 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam07lp2046.outbound.protection.outlook.com [104.47.51.46])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3hc1k44bnc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Jul 2022 09:11:37 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Bd0mUMfyygr3GUOHbUMHr8Bag4rPKgXPk+w07SVhKlmjWJLaOmArPz7m443FR1/4Y6/GGQ4IUzsOPKlR33stNT3MfTii4XYJ4amKsTpuZeHr6JV7gtD1cgCxEfAPlHh+sg7yYs1Z5mclI3yU0BVDugYOKb0gy/DJdgzCG4nVpuPV18ucfTi7aAGMIWKNvrY1LJtzvtD95bxtP9S3at3Ysd9XxiijAWrXMiUoNMaigwnpuP5IqyNghfAHvxbwnM6+3nCY+JZgV7ZdP9yP5fKc71fYFoh2EkED5OUC7DvpWO0s/JCQr2o/oK7C4JWfocMHjRJm4o3UHSvd3I223exSgg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OU8aSZ5MI4a6FFzceAFcB2XV4gFAzKv/17sBE0WVWx8=;
+ b=DnrnTnWxZk2SNlKlSBa8DQRtMOf8BjKJk8krCtdrSJNtYv2wIxRiRXRypLiwjJf21ol3bjp3Jb32+0pLJOr1usUCjxTUX/DU5K4rKUiEr1NqXodX3wfmdLvZqT9N9JRAsnIwS9PJCdhvcrwCE96mHl9lwDExTZCqbD8m3xSIHO5U6r8bsHoWP/GEgvXkioVUNMLcUX+0w8hPttfN5QSfV8MGWgpurRTSSpGM0F0NworiYFjiaJR+bz3a+XWTFxWa7YIpeOwApFmKpihy0VntDrZSVz7rX9/N0Sdn9PF7CHaHvVaSOsmvV7ZFvxryzl3oNHME98ju3wgS2bbaDQnnxg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=uKG/UctqGb2V52Df+n3QlVuOQMNoPoMOajDotCE3VRE=;
-        b=W99qqI4pdzYZCWt86trdweIozTOMKVgbT/rfgjPRKnXnW6lsbQQRDhcCVX79zdtrWP
-         3IT4yhCGrN4JK5Jqby7qyxkJO+n3f/T2POJPHmUBQQ9IE78cv3spmewFz6ZHMTt02xT2
-         UGQM6RPgLi82gMjH2ACe9o76M3rY9Pa0vUyCxra7kk2DlWXoNb2aZkSIrnAiUma+PuVT
-         VYqdPJkVUnqVGppI3rgRoVlMr72lLROo/ngq9Suv3zPHuUsxRfXsXo58LPcxY6cSxcGc
-         v2tUzVWgVGCA8zkSuClbhDhqolMfhNpofWFwXE99ldqJytCK53FF+p+WxXBJXUYRajJx
-         Pk+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=uKG/UctqGb2V52Df+n3QlVuOQMNoPoMOajDotCE3VRE=;
-        b=SmXLkC/rYG2fhCL/sWFAgi+pGtOGrxzEX5AwFM7AU435ZJi5+WyTlJm7OU7wIv+oiR
-         dnpMg0RdGAq7N2QOtMlGQF1bdvBE9zkb8Q54vAca4P5Y2vYXT26fKWXHQbZG04DqUL9O
-         YvoLorFkYCutGjs/2n2Rzqq8LDL/dvvGNT6oQTamhwU0aQEfuUJmbnUxAC6CYFvmDWNt
-         fFDvsMbwml9EASP9oIF6g6FSTTvynZXrz24m/vn+lojT3yl7Z01HCI1a4FlB78b6WYtF
-         yK8dal/PUOzTC1OiHcaP/NcfOlxx9z+anY7DxzQUvw4hPIlsqvGTegatO3UgbRP8ZkWG
-         lHYA==
-X-Gm-Message-State: AJIora8+oXo8NHLWrNQ1hzIpaD9t6D7f75HCRoM07RcqgmvROwnGkT6I
-        0bJnOh6/3YIuEiIAIucuSdA=
-X-Google-Smtp-Source: AGRyM1tlNI73CEfXgkHrinL57I4wxKWgklxrddU+MhPjj4diceJjuiTd9BPrSV2OtlrXz9IM2LYHhQ==
-X-Received: by 2002:a05:6000:18d2:b0:21d:6661:60b5 with SMTP id w18-20020a05600018d200b0021d666160b5mr29708412wrq.475.1658305804491;
-        Wed, 20 Jul 2022 01:30:04 -0700 (PDT)
-Received: from felia.fritz.box (200116b826a11f008020c2fc6e115b3e.dip.versatel-1u1.de. [2001:16b8:26a1:1f00:8020:c2fc:6e11:5b3e])
-        by smtp.gmail.com with ESMTPSA id u16-20020a05600c00d000b003a31c4f6f74sm1734547wmm.32.2022.07.20.01.30.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Jul 2022 01:30:03 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     David Lechner <david@lechnology.com>, Sekhar Nori <nsekhar@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] clk: davinci: remove PLL and PSC clocks for DaVinci DM644x and DM646x
-Date:   Wed, 20 Jul 2022 10:29:34 +0200
-Message-Id: <20220720082934.17741-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OU8aSZ5MI4a6FFzceAFcB2XV4gFAzKv/17sBE0WVWx8=;
+ b=O/6jX4ItwWHKnpDzz6PXh9RH7r7Cqec4V2aHTCEJ9ddX+GzcvZr2qmoe2PrUUczU+cEPQIDPcxCOALGpwAWuCMwRGOGZDVfJFWSmMhAbbnH+tvqkqrMmPS2X4AnPumO1IDhNRoi65GzE9AOBqu8LSyWdZRr24yStHbLHLUJ0wnc=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by DM5PR10MB1577.namprd10.prod.outlook.com
+ (2603:10b6:3:10::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5438.21; Wed, 20 Jul
+ 2022 09:11:36 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::24dc:9f9a:c139:5c97]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::24dc:9f9a:c139:5c97%4]) with mapi id 15.20.5458.018; Wed, 20 Jul 2022
+ 09:11:35 +0000
+Date:   Wed, 20 Jul 2022 12:11:21 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Martin KaFai Lau <kafai@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alan Maguire <alan.maguire@oracle.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        bpf <bpf@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] libbpf: fix str_has_sfx()
+Message-ID: <20220720091121.GH2338@kadam>
+References: <YtZ+/dAA195d99ak@kili>
+ <20220719171902.37gvquchuwf5e4gh@kafai-mbp.dhcp.thefacebook.com>
+ <20220719175048.GC2316@kadam>
+ <CAADnVQ+5rZv4ZeuXuMwiXBmnPkbM4qXTx3-otheErDY971kgfA@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAADnVQ+5rZv4ZeuXuMwiXBmnPkbM4qXTx3-otheErDY971kgfA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: MRXP264CA0046.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:500:14::34) To MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7ed15df1-bb10-453d-ed7b-08da6a2fd7e9
+X-MS-TrafficTypeDiagnostic: DM5PR10MB1577:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 75nr2lgqgsRAgG6gtm/AK41zbTUbvHoLWj1pou0NKXoIj2a6Voa9lN/c7dutIaEiaQbqcVBPvoaD0EVmrEN60I2CEaT+LgkVaYysI9bS9cCpuR1eGj7oM2RstVbHjHI1lwzyZfAbayIk38FHHToKplDnhuMMRKIRCrepUxgXOVSBBpd1MPmbGcCsZgNy44WbYGAK9PwiNixQ5Y0803lEm0glbP9b3wt56HeyJ4lwWasU/d4DUmL7o91yeNBfR/SWUT/AYVQ9xXM4Xmc9jiBxFngnzWliltu7DQSXFetydhu+asssrsg7pW5jfyl751NTWT8uqwFDHUYvtxojLHnbiLqLLndPQEYSaz3jZyjQBUb9Y5hSV36OY1/oUh0LyBklHV5J4wHrC+Qc86MuAegnooKdD7ywsel5MORj6aRapZIs+tFX/w1DmbcTE4W+Ugtp99DCImLwqYJXHVNUMYNodplM/l40Pfe+njCVCPNU54Eu1ZRmHTasfmKLaxWUScvDj8m6c1aexMA8fIX8fF8AHv/HokMUsolDVqrshBrO2fbkNYrn32rVFIV0RheOyqfaT5tfaYjmbwrHz7R6yDWoQj1+cMI4IJ88JwI9SKyshCTjvvUTu22WyA1RQ807u3SyKD8Aq2E8q+Vfu3PqL8Fc+SbD2c5+cHMUR7xLhFATl4b5H3E/clJfLe7bMGV1SwzsvXvkFtSZS2qCFULMghcB3PnbLvQwgHAXX3rLDut8napSNMcrMtR9XU6GsaDtLLw7B2/DfsTxV/SV6D3rVQzt8OlapaZVSnJ0uCxLLrsiBZc=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(7916004)(39860400002)(136003)(376002)(346002)(396003)(366004)(1076003)(41300700001)(6666004)(33716001)(186003)(9686003)(44832011)(26005)(7416002)(6512007)(2906002)(83380400001)(6486002)(478600001)(5660300002)(66476007)(8936002)(86362001)(33656002)(4326008)(8676002)(66556008)(54906003)(6916009)(52116002)(316002)(53546011)(38350700002)(38100700002)(66946007)(6506007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?L0NDO9JASR7dLpo0abXPT1RGHlr/6VSdBj/zXSd28Zr/mG1i6ZrqKnSyZDEf?=
+ =?us-ascii?Q?rngN5bBQKJ5D/E+JA4iLWz6d6lXYF7a2mO2SO0dBh1HftWF8ATBStCarUdgi?=
+ =?us-ascii?Q?KOBP2zQhER1k0jWrPRFhVfjV54Ixa8G3JxBsUebxUw9o8e6NQyuXocFnH3XM?=
+ =?us-ascii?Q?9A+n2tFRt+zUMrVUogMzP7b/QAhIsC5fWbb2LP466sqN3NhkdSYmKHUwfGqN?=
+ =?us-ascii?Q?h/+D5OF/HOvi7kF71c+Ex2J++NM5y8XBJet0zWx52o4sBE6uJAA1es3VhSfM?=
+ =?us-ascii?Q?D7StL4VqU9PcOyPH+EsPxLFs5MmaaLpxCVDzz/gvLB//H4N2YQSMsIxR5SKq?=
+ =?us-ascii?Q?XTjE0v0vmTp3vPU/PulRLyE87z8R6+HJsOG3j8/k3KalYnvOUDx+FrQMcY+H?=
+ =?us-ascii?Q?sYLzytZVZShEnxUHv2ftWq/gh3pbl8WGT8yWQHHpbbH6CLupbdkeoY4asGwj?=
+ =?us-ascii?Q?klI67lE8znVAlq6e1f/iAp2iNsUN/sA/4c+E6mBdlUhyWBtRet5b81oiGLx/?=
+ =?us-ascii?Q?2tRrowDGTZuqHDtvEyPHoeYTsuZI2cX7M3bvTJrmjrhYLfzN6mb4jw5DGtQ3?=
+ =?us-ascii?Q?DIoo/lRjLMM1phURHeNCzf41oD+S2I50EgzNbPcstoIIFXs3Si6XjEx0gID4?=
+ =?us-ascii?Q?YJY5Q2k3Q9iIMoa4xneO4GxJlHm5aFPuiu8JvQIlVU7EaJDTSKBAPUUw+eXj?=
+ =?us-ascii?Q?JCgG2wUJCwb283iiLHCYXa6X1+O8372TluRHs6yuXIdCfG0+9bMQwmfXFr0/?=
+ =?us-ascii?Q?ARMNxW/Vvls94UXp2HkYX0wdx+E3fpOAnlwtSfufSDCIk1z5/hCvh5snc+kQ?=
+ =?us-ascii?Q?UQIDfLGs83E/i68pK82yZyqGxqi74MuxrCHWiaDz8R3JOGm77rMFu0uzgQeB?=
+ =?us-ascii?Q?6rpD288u9DW6Zsa7jZUe6Vr6ceRyHhE+vW3m2vRSxq8wtiHoAxdcu4MnKoPc?=
+ =?us-ascii?Q?+Ombh/JZxYcz1R4L3CdvVNTWfMadRG0Hpj/CCkwJ4ApHzjelMzvoiLmfNtRv?=
+ =?us-ascii?Q?/htK1zswJ/4elFh8epaI96i9BzIpN2mPgD5/fH3VpbBhaz0Ax0YNBh3527Bl?=
+ =?us-ascii?Q?3tqKxEm6J33vykFtj0+ZlxhMLIiaMNs9EhHsXhW+g/S+WaDWBWnHg2qBPuK8?=
+ =?us-ascii?Q?HAxqkjtQ9fsX+FjqSsb0MIRDC35Psvyi9ezRLFCv4rFZI9kaDM45GH2Dfgnf?=
+ =?us-ascii?Q?8FcBsagM2b/AiwrSHjQK5VX5gWyG29++c6Z9pnb1BsLCZzTCf2HExxmxAz4G?=
+ =?us-ascii?Q?XdAFMlJ+LOHJ0L5hgyF/LWIDFwQM3mKwsuqEyP+/I9YLfNxzgwFCG1nvkKmW?=
+ =?us-ascii?Q?Glp8dRIBrizWkRueAmTUp2jf3WZWryPk/7lQ8kctcJfuueRf2qPn1JmLtpWA?=
+ =?us-ascii?Q?eN1SNXnhVTYMj2ZnoaaE94fH4fJuipnnJ4TMYZ0XhB8IwwXSsId8C78Mx0zP?=
+ =?us-ascii?Q?DGLkxlQwTAatBcMXIyK6KgYoJNkxSrVLFjiduzCcQoQUL4IVkJr+PtDoZ2bp?=
+ =?us-ascii?Q?nZbAW94NzMfaj/Ali2s0PViW0t8yv6zIKdebW/GOwyiI5jqo8OiVrZo0dFQ6?=
+ =?us-ascii?Q?DEwnyYTjLc43EU+0kVAgMYFbYoWgFIclz033KXa4uiL/r/ACsLRmWY6qjaAC?=
+ =?us-ascii?Q?/Q=3D=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ed15df1-bb10-453d-ed7b-08da6a2fd7e9
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jul 2022 09:11:35.8222
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PaUnAOukWIvQAAuux+lZzQbhxPrQamqKW0h/OZjI5ncMJ6fLk2bR2I+K84hVcsndYIf1G+Q5j8TEvlXJyyFmSzVbKOJlsrwOyveu68vkmXk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR10MB1577
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-07-20_05,2022-07-19_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 phishscore=0
+ mlxlogscore=999 spamscore=0 malwarescore=0 bulkscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2206140000
+ definitions=main-2207200038
+X-Proofpoint-GUID: n_Oj3-JOYBeR6r8n2EhYleCm-XLOkmrv
+X-Proofpoint-ORIG-GUID: n_Oj3-JOYBeR6r8n2EhYleCm-XLOkmrv
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 7dd33764486d ("ARM: davinci: Delete DM644x board files") and commit
-b4aed01de486 ("ARM: davinci: Delete DM646x board files") removes the
-support for DaVinci DM644x and DM646x boards.
+On Tue, Jul 19, 2022 at 10:54:13AM -0700, Alexei Starovoitov wrote:
+> On Tue, Jul 19, 2022 at 10:51 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> >
+> > On Tue, Jul 19, 2022 at 10:19:02AM -0700, Martin KaFai Lau wrote:
+> > > > @@ -108,9 +108,9 @@ static inline bool str_has_sfx(const char *str, const char *sfx)
+> > > >     size_t str_len = strlen(str);
+> > > >     size_t sfx_len = strlen(sfx);
+> > > >
+> > > > -   if (sfx_len <= str_len)
+> > > > -           return strcmp(str + str_len - sfx_len, sfx);
+> > > > -   return false;
+> > > > +   if (sfx_len > str_len)
+> > > > +           return false;
+> > > > +   return strcmp(str + str_len - sfx_len, sfx) == 0;
+> > > Please tag the subject with "bpf" next time.
+> >
+> > I always work against linux-next.  Would it help if I put that in the
+> > subject?
+> >
+> > Otherwise I don't have a way to figure this stuff out.  I kind of know
+> > networking tree but not 100% and that is a massive pain in the butt.
+> > Until there is an automated way that then those kind of requests are
+> > not reasonable.
+> 
+> Dan,
+> 
+> you were told multiple times to follow the rules.
+> bpf patches should target bpf of bpf-next trees only.
+> If you send against linux-next you're taking a random chance
+> that they will pass CI.
+> In turn making everyone waste time.
+> Please follow the simple rules.
 
-Hence, remove the PLL and PSC clock descriptions for those boards as well.
+That's true.  We have this discussion every time and I always tell you
+that the rules are untenable.  I'm just going to send bug reports to
+whoever introduces bug and they can deal with it.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- drivers/clk/davinci/Makefile     |  4 --
- drivers/clk/davinci/pll-dm644x.c | 81 ------------------------------
- drivers/clk/davinci/pll-dm646x.c | 85 --------------------------------
- drivers/clk/davinci/pll.c        |  8 ---
- drivers/clk/davinci/pll.h        |  6 ---
- drivers/clk/davinci/psc-dm644x.c | 85 --------------------------------
- drivers/clk/davinci/psc-dm646x.c | 82 ------------------------------
- drivers/clk/davinci/psc.c        |  6 ---
- drivers/clk/davinci/psc.h        |  6 ---
- include/linux/clk/davinci.h      |  8 ---
- 10 files changed, 371 deletions(-)
- delete mode 100644 drivers/clk/davinci/pll-dm644x.c
- delete mode 100644 drivers/clk/davinci/pll-dm646x.c
- delete mode 100644 drivers/clk/davinci/psc-dm644x.c
- delete mode 100644 drivers/clk/davinci/psc-dm646x.c
-
-diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-index 11178b79b483..be6f55d37b49 100644
---- a/drivers/clk/davinci/Makefile
-+++ b/drivers/clk/davinci/Makefile
-@@ -8,14 +8,10 @@ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
- obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
- obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= pll-dm355.o
- obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= pll-dm365.o
--obj-$(CONFIG_ARCH_DAVINCI_DM644x)	+= pll-dm644x.o
--obj-$(CONFIG_ARCH_DAVINCI_DM646x)	+= pll-dm646x.o
- 
- obj-y += psc.o
- obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= psc-da830.o
- obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= psc-da850.o
- obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= psc-dm355.o
- obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= psc-dm365.o
--obj-$(CONFIG_ARCH_DAVINCI_DM644x)	+= psc-dm644x.o
--obj-$(CONFIG_ARCH_DAVINCI_DM646x)	+= psc-dm646x.o
- endif
-diff --git a/drivers/clk/davinci/pll-dm644x.c b/drivers/clk/davinci/pll-dm644x.c
-deleted file mode 100644
-index 7650fadfaac8..000000000000
---- a/drivers/clk/davinci/pll-dm644x.c
-+++ /dev/null
-@@ -1,81 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * PLL clock descriptions for TI DM644X
-- *
-- * Copyright (C) 2018 David Lechner <david@lechnology.com>
-- */
--
--#include <linux/bitops.h>
--#include <linux/clk/davinci.h>
--#include <linux/clkdev.h>
--#include <linux/init.h>
--#include <linux/types.h>
--
--#include "pll.h"
--
--static const struct davinci_pll_clk_info dm644x_pll1_info = {
--	.name = "pll1",
--	.pllm_mask = GENMASK(4, 0),
--	.pllm_min = 1,
--	.pllm_max = 32,
--	.pllout_min_rate = 400000000,
--	.pllout_max_rate = 600000000, /* 810MHz @ 1.3V, -810 only */
--	.flags = PLL_HAS_CLKMODE | PLL_HAS_POSTDIV,
--};
--
--SYSCLK(1, pll1_sysclk1, pll1_pllen, 4, SYSCLK_FIXED_DIV);
--SYSCLK(2, pll1_sysclk2, pll1_pllen, 4, SYSCLK_FIXED_DIV);
--SYSCLK(3, pll1_sysclk3, pll1_pllen, 4, SYSCLK_FIXED_DIV);
--SYSCLK(5, pll1_sysclk5, pll1_pllen, 4, SYSCLK_FIXED_DIV);
--
--int dm644x_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
--{
--	struct clk *clk;
--
--	davinci_pll_clk_register(dev, &dm644x_pll1_info, "ref_clk", base, cfgchip);
--
--	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk1, base);
--	clk_register_clkdev(clk, "pll1_sysclk1", "dm644x-psc");
--
--	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk2, base);
--	clk_register_clkdev(clk, "pll1_sysclk2", "dm644x-psc");
--
--	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk3, base);
--	clk_register_clkdev(clk, "pll1_sysclk3", "dm644x-psc");
--
--	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk5, base);
--	clk_register_clkdev(clk, "pll1_sysclk5", "dm644x-psc");
--
--	clk = davinci_pll_auxclk_register(dev, "pll1_auxclk", base);
--	clk_register_clkdev(clk, "pll1_auxclk", "dm644x-psc");
--
--	davinci_pll_sysclkbp_clk_register(dev, "pll1_sysclkbp", base);
--
--	return 0;
--}
--
--static const struct davinci_pll_clk_info dm644x_pll2_info = {
--	.name = "pll2",
--	.pllm_mask = GENMASK(4, 0),
--	.pllm_min = 1,
--	.pllm_max = 32,
--	.pllout_min_rate = 400000000,
--	.pllout_max_rate = 900000000,
--	.flags = PLL_HAS_POSTDIV | PLL_POSTDIV_FIXED_DIV,
--};
--
--SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, 0);
--SYSCLK(2, pll2_sysclk2, pll2_pllen, 4, 0);
--
--int dm644x_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
--{
--	davinci_pll_clk_register(dev, &dm644x_pll2_info, "oscin", base, cfgchip);
--
--	davinci_pll_sysclk_register(dev, &pll2_sysclk1, base);
--
--	davinci_pll_sysclk_register(dev, &pll2_sysclk2, base);
--
--	davinci_pll_sysclkbp_clk_register(dev, "pll2_sysclkbp", base);
--
--	return 0;
--}
-diff --git a/drivers/clk/davinci/pll-dm646x.c b/drivers/clk/davinci/pll-dm646x.c
-deleted file mode 100644
-index 26982970df0e..000000000000
---- a/drivers/clk/davinci/pll-dm646x.c
-+++ /dev/null
-@@ -1,85 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * PLL clock descriptions for TI DM646X
-- *
-- * Copyright (C) 2018 David Lechner <david@lechnology.com>
-- */
--
--#include <linux/clk-provider.h>
--#include <linux/clk/davinci.h>
--#include <linux/clkdev.h>
--#include <linux/init.h>
--#include <linux/types.h>
--
--#include "pll.h"
--
--static const struct davinci_pll_clk_info dm646x_pll1_info = {
--	.name = "pll1",
--	.pllm_mask = GENMASK(4, 0),
--	.pllm_min = 14,
--	.pllm_max = 32,
--	.flags = PLL_HAS_CLKMODE,
--};
--
--SYSCLK(1, pll1_sysclk1, pll1_pllen, 4, SYSCLK_FIXED_DIV);
--SYSCLK(2, pll1_sysclk2, pll1_pllen, 4, SYSCLK_FIXED_DIV);
--SYSCLK(3, pll1_sysclk3, pll1_pllen, 4, SYSCLK_FIXED_DIV);
--SYSCLK(4, pll1_sysclk4, pll1_pllen, 4, 0);
--SYSCLK(5, pll1_sysclk5, pll1_pllen, 4, 0);
--SYSCLK(6, pll1_sysclk6, pll1_pllen, 4, 0);
--SYSCLK(8, pll1_sysclk8, pll1_pllen, 4, 0);
--SYSCLK(9, pll1_sysclk9, pll1_pllen, 4, 0);
--
--int dm646x_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
--{
--	struct clk *clk;
--
--	davinci_pll_clk_register(dev, &dm646x_pll1_info, "ref_clk", base, cfgchip);
--
--	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk1, base);
--	clk_register_clkdev(clk, "pll1_sysclk1", "dm646x-psc");
--
--	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk2, base);
--	clk_register_clkdev(clk, "pll1_sysclk2", "dm646x-psc");
--
--	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk3, base);
--	clk_register_clkdev(clk, "pll1_sysclk3", "dm646x-psc");
--	clk_register_clkdev(clk, NULL, "davinci-wdt");
--
--	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk4, base);
--	clk_register_clkdev(clk, "pll1_sysclk4", "dm646x-psc");
--
--	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk5, base);
--	clk_register_clkdev(clk, "pll1_sysclk5", "dm646x-psc");
--
--	davinci_pll_sysclk_register(dev, &pll1_sysclk6, base);
--
--	davinci_pll_sysclk_register(dev, &pll1_sysclk8, base);
--
--	davinci_pll_sysclk_register(dev, &pll1_sysclk9, base);
--
--	davinci_pll_sysclkbp_clk_register(dev, "pll1_sysclkbp", base);
--
--	davinci_pll_auxclk_register(dev, "pll1_auxclk", base);
--
--	return 0;
--}
--
--static const struct davinci_pll_clk_info dm646x_pll2_info = {
--	.name = "pll2",
--	.pllm_mask = GENMASK(4, 0),
--	.pllm_min = 14,
--	.pllm_max = 32,
--	.flags = 0,
--};
--
--SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, SYSCLK_ALWAYS_ENABLED);
--
--int dm646x_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
--{
--	davinci_pll_clk_register(dev, &dm646x_pll2_info, "oscin", base, cfgchip);
--
--	davinci_pll_sysclk_register(dev, &pll2_sysclk1, base);
--
--	return 0;
--}
-diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-index 0d750433eb42..082206676e73 100644
---- a/drivers/clk/davinci/pll.c
-+++ b/drivers/clk/davinci/pll.c
-@@ -889,14 +889,6 @@ static const struct platform_device_id davinci_pll_id_table[] = {
- #ifdef CONFIG_ARCH_DAVINCI_DM365
- 	{ .name = "dm365-pll1",  .driver_data = (kernel_ulong_t)dm365_pll1_init  },
- 	{ .name = "dm365-pll2",  .driver_data = (kernel_ulong_t)dm365_pll2_init  },
--#endif
--#ifdef CONFIG_ARCH_DAVINCI_DM644x
--	{ .name = "dm644x-pll1", .driver_data = (kernel_ulong_t)dm644x_pll1_init },
--	{ .name = "dm644x-pll2", .driver_data = (kernel_ulong_t)dm644x_pll2_init },
--#endif
--#ifdef CONFIG_ARCH_DAVINCI_DM646x
--	{ .name = "dm646x-pll1", .driver_data = (kernel_ulong_t)dm646x_pll1_init },
--	{ .name = "dm646x-pll2", .driver_data = (kernel_ulong_t)dm646x_pll2_init },
- #endif
- 	{ }
- };
-diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
-index c2a453caa131..1773277bc690 100644
---- a/drivers/clk/davinci/pll.h
-+++ b/drivers/clk/davinci/pll.h
-@@ -130,11 +130,5 @@ int of_da850_pll1_init(struct device *dev, void __iomem *base, struct regmap *cf
- #ifdef CONFIG_ARCH_DAVINCI_DM355
- int dm355_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
- #endif
--#ifdef CONFIG_ARCH_DAVINCI_DM644x
--int dm644x_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
--#endif
--#ifdef CONFIG_ARCH_DAVINCI_DM646x
--int dm646x_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
--#endif
- 
- #endif /* __CLK_DAVINCI_PLL_H___ */
-diff --git a/drivers/clk/davinci/psc-dm644x.c b/drivers/clk/davinci/psc-dm644x.c
-deleted file mode 100644
-index 0cea6e0bd5f0..000000000000
---- a/drivers/clk/davinci/psc-dm644x.c
-+++ /dev/null
-@@ -1,85 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * PSC clock descriptions for TI DaVinci DM644x
-- *
-- * Copyright (C) 2018 David Lechner <david@lechnology.com>
-- */
--
--#include <linux/clk-provider.h>
--#include <linux/clk/davinci.h>
--#include <linux/clk.h>
--#include <linux/clkdev.h>
--#include <linux/init.h>
--#include <linux/kernel.h>
--#include <linux/types.h>
--
--#include "psc.h"
--
--LPSC_CLKDEV1(vpss_master_clkdev,	"master",	"vpss");
--LPSC_CLKDEV1(vpss_slave_clkdev,		"slave",	"vpss");
--LPSC_CLKDEV2(emac_clkdev,		NULL,		"davinci_emac.1",
--					"fck",		"davinci_mdio.0");
--LPSC_CLKDEV1(usb_clkdev,		"usb",		NULL);
--LPSC_CLKDEV1(ide_clkdev,		NULL,		"palm_bk3710");
--LPSC_CLKDEV2(aemif_clkdev,		"aemif",	NULL,
--					NULL,		"ti-aemif");
--LPSC_CLKDEV1(mmcsd_clkdev,		NULL,		"dm6441-mmc.0");
--LPSC_CLKDEV1(asp0_clkdev,		NULL,		"davinci-mcbsp");
--LPSC_CLKDEV1(i2c_clkdev,		NULL,		"i2c_davinci.1");
--LPSC_CLKDEV1(uart0_clkdev,		NULL,		"serial8250.0");
--LPSC_CLKDEV1(uart1_clkdev,		NULL,		"serial8250.1");
--LPSC_CLKDEV1(uart2_clkdev,		NULL,		"serial8250.2");
--/* REVISIT: gpio-davinci.c should be modified to drop con_id */
--LPSC_CLKDEV1(gpio_clkdev,		"gpio",		NULL);
--LPSC_CLKDEV1(timer0_clkdev,		"timer0",	NULL);
--LPSC_CLKDEV1(timer2_clkdev,		NULL,		"davinci-wdt");
--
--static const struct davinci_lpsc_clk_info dm644x_psc_info[] = {
--	LPSC(0,  0, vpss_master, pll1_sysclk3, vpss_master_clkdev, 0),
--	LPSC(1,  0, vpss_slave,  pll1_sysclk3, vpss_slave_clkdev,  0),
--	LPSC(6,  0, emac,        pll1_sysclk5, emac_clkdev,        0),
--	LPSC(9,  0, usb,         pll1_sysclk5, usb_clkdev,         0),
--	LPSC(10, 0, ide,         pll1_sysclk5, ide_clkdev,         0),
--	LPSC(11, 0, vlynq,       pll1_sysclk5, NULL,               0),
--	LPSC(14, 0, aemif,       pll1_sysclk5, aemif_clkdev,       0),
--	LPSC(15, 0, mmcsd,       pll1_sysclk5, mmcsd_clkdev,       0),
--	LPSC(17, 0, asp0,        pll1_sysclk5, asp0_clkdev,        0),
--	LPSC(18, 0, i2c,         pll1_auxclk,  i2c_clkdev,         0),
--	LPSC(19, 0, uart0,       pll1_auxclk,  uart0_clkdev,       0),
--	LPSC(20, 0, uart1,       pll1_auxclk,  uart1_clkdev,       0),
--	LPSC(21, 0, uart2,       pll1_auxclk,  uart2_clkdev,       0),
--	LPSC(22, 0, spi,         pll1_sysclk5, NULL,               0),
--	LPSC(23, 0, pwm0,        pll1_auxclk,  NULL,               0),
--	LPSC(24, 0, pwm1,        pll1_auxclk,  NULL,               0),
--	LPSC(25, 0, pwm2,        pll1_auxclk,  NULL,               0),
--	LPSC(26, 0, gpio,        pll1_sysclk5, gpio_clkdev,        0),
--	LPSC(27, 0, timer0,      pll1_auxclk,  timer0_clkdev,      LPSC_ALWAYS_ENABLED),
--	LPSC(28, 0, timer1,      pll1_auxclk,  NULL,               0),
--	/* REVISIT: why can't this be disabled? */
--	LPSC(29, 0, timer2,      pll1_auxclk,  timer2_clkdev,      LPSC_ALWAYS_ENABLED),
--	LPSC(31, 0, arm,         pll1_sysclk2, NULL,               LPSC_ALWAYS_ENABLED),
--	/* REVISIT how to disable? */
--	LPSC(39, 1, dsp,         pll1_sysclk1, NULL,               LPSC_ALWAYS_ENABLED),
--	/* REVISIT how to disable? */
--	LPSC(40, 1, vicp,        pll1_sysclk2, NULL,               LPSC_ALWAYS_ENABLED),
--	{ }
--};
--
--int dm644x_psc_init(struct device *dev, void __iomem *base)
--{
--	return davinci_psc_register_clocks(dev, dm644x_psc_info, 41, base);
--}
--
--static struct clk_bulk_data dm644x_psc_parent_clks[] = {
--	{ .id = "pll1_sysclk1" },
--	{ .id = "pll1_sysclk2" },
--	{ .id = "pll1_sysclk3" },
--	{ .id = "pll1_sysclk5" },
--	{ .id = "pll1_auxclk"  },
--};
--
--const struct davinci_psc_init_data dm644x_psc_init_data = {
--	.parent_clks		= dm644x_psc_parent_clks,
--	.num_parent_clks	= ARRAY_SIZE(dm644x_psc_parent_clks),
--	.psc_init		= &dm644x_psc_init,
--};
-diff --git a/drivers/clk/davinci/psc-dm646x.c b/drivers/clk/davinci/psc-dm646x.c
-deleted file mode 100644
-index 20012dc7471a..000000000000
---- a/drivers/clk/davinci/psc-dm646x.c
-+++ /dev/null
-@@ -1,82 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * PSC clock descriptions for TI DaVinci DM646x
-- *
-- * Copyright (C) 2018 David Lechner <david@lechnology.com>
-- */
--
--#include <linux/clk-provider.h>
--#include <linux/clk/davinci.h>
--#include <linux/clk.h>
--#include <linux/clkdev.h>
--#include <linux/init.h>
--#include <linux/kernel.h>
--#include <linux/types.h>
--
--#include "psc.h"
--
--LPSC_CLKDEV1(ide_clkdev,	NULL,		"palm_bk3710");
--LPSC_CLKDEV2(emac_clkdev,	NULL,		"davinci_emac.1",
--				"fck",		"davinci_mdio.0");
--LPSC_CLKDEV2(aemif_clkdev,	"aemif",	NULL,
--				NULL,		"ti-aemif");
--LPSC_CLKDEV1(mcasp0_clkdev,	NULL,		"davinci-mcasp.0");
--LPSC_CLKDEV1(mcasp1_clkdev,	NULL,		"davinci-mcasp.1");
--LPSC_CLKDEV1(uart0_clkdev,	NULL,		"serial8250.0");
--LPSC_CLKDEV1(uart1_clkdev,	NULL,		"serial8250.1");
--LPSC_CLKDEV1(uart2_clkdev,	NULL,		"serial8250.2");
--LPSC_CLKDEV1(i2c_clkdev,	NULL,		"i2c_davinci.1");
--/* REVISIT: gpio-davinci.c should be modified to drop con_id */
--LPSC_CLKDEV1(gpio_clkdev,	"gpio",		NULL);
--LPSC_CLKDEV1(timer0_clkdev,	"timer0",	 NULL);
--
--static const struct davinci_lpsc_clk_info dm646x_psc_info[] = {
--	LPSC(0,  0, arm,      pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
--	/* REVISIT how to disable? */
--	LPSC(1,  0, dsp,      pll1_sysclk1, NULL,          LPSC_ALWAYS_ENABLED),
--	LPSC(4,  0, edma_cc,  pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
--	LPSC(5,  0, edma_tc0, pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
--	LPSC(6,  0, edma_tc1, pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
--	LPSC(7,  0, edma_tc2, pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
--	LPSC(8,  0, edma_tc3, pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
--	LPSC(10, 0, ide,      pll1_sysclk4, ide_clkdev,    0),
--	LPSC(14, 0, emac,     pll1_sysclk3, emac_clkdev,   0),
--	LPSC(16, 0, vpif0,    ref_clk,      NULL,          LPSC_ALWAYS_ENABLED),
--	LPSC(17, 0, vpif1,    ref_clk,      NULL,          LPSC_ALWAYS_ENABLED),
--	LPSC(21, 0, aemif,    pll1_sysclk3, aemif_clkdev,  LPSC_ALWAYS_ENABLED),
--	LPSC(22, 0, mcasp0,   pll1_sysclk3, mcasp0_clkdev, 0),
--	LPSC(23, 0, mcasp1,   pll1_sysclk3, mcasp1_clkdev, 0),
--	LPSC(26, 0, uart0,    aux_clkin,    uart0_clkdev,  0),
--	LPSC(27, 0, uart1,    aux_clkin,    uart1_clkdev,  0),
--	LPSC(28, 0, uart2,    aux_clkin,    uart2_clkdev,  0),
--	/* REVIST: disabling hangs system */
--	LPSC(29, 0, pwm0,     pll1_sysclk3, NULL,          LPSC_ALWAYS_ENABLED),
--	/* REVIST: disabling hangs system */
--	LPSC(30, 0, pwm1,     pll1_sysclk3, NULL,          LPSC_ALWAYS_ENABLED),
--	LPSC(31, 0, i2c,      pll1_sysclk3, i2c_clkdev,    0),
--	LPSC(33, 0, gpio,     pll1_sysclk3, gpio_clkdev,   0),
--	LPSC(34, 0, timer0,   pll1_sysclk3, timer0_clkdev, LPSC_ALWAYS_ENABLED),
--	LPSC(35, 0, timer1,   pll1_sysclk3, NULL,          0),
--	{ }
--};
--
--int dm646x_psc_init(struct device *dev, void __iomem *base)
--{
--	return davinci_psc_register_clocks(dev, dm646x_psc_info, 46, base);
--}
--
--static struct clk_bulk_data dm646x_psc_parent_clks[] = {
--	{ .id = "ref_clk"      },
--	{ .id = "aux_clkin"    },
--	{ .id = "pll1_sysclk1" },
--	{ .id = "pll1_sysclk2" },
--	{ .id = "pll1_sysclk3" },
--	{ .id = "pll1_sysclk4" },
--	{ .id = "pll1_sysclk5" },
--};
--
--const struct davinci_psc_init_data dm646x_psc_init_data = {
--	.parent_clks		= dm646x_psc_parent_clks,
--	.num_parent_clks	= ARRAY_SIZE(dm646x_psc_parent_clks),
--	.psc_init		= &dm646x_psc_init,
--};
-diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
-index 7387e7f6276e..42a59dbd49c8 100644
---- a/drivers/clk/davinci/psc.c
-+++ b/drivers/clk/davinci/psc.c
-@@ -516,12 +516,6 @@ static const struct platform_device_id davinci_psc_id_table[] = {
- #endif
- #ifdef CONFIG_ARCH_DAVINCI_DM365
- 	{ .name = "dm365-psc",  .driver_data = (kernel_ulong_t)&dm365_psc_init_data  },
--#endif
--#ifdef CONFIG_ARCH_DAVINCI_DM644x
--	{ .name = "dm644x-psc", .driver_data = (kernel_ulong_t)&dm644x_psc_init_data },
--#endif
--#ifdef CONFIG_ARCH_DAVINCI_DM646x
--	{ .name = "dm646x-psc", .driver_data = (kernel_ulong_t)&dm646x_psc_init_data },
- #endif
- 	{ }
- };
-diff --git a/drivers/clk/davinci/psc.h b/drivers/clk/davinci/psc.h
-index 69070f834391..5e382b675518 100644
---- a/drivers/clk/davinci/psc.h
-+++ b/drivers/clk/davinci/psc.h
-@@ -110,11 +110,5 @@ extern const struct davinci_psc_init_data dm355_psc_init_data;
- #ifdef CONFIG_ARCH_DAVINCI_DM365
- extern const struct davinci_psc_init_data dm365_psc_init_data;
- #endif
--#ifdef CONFIG_ARCH_DAVINCI_DM644x
--extern const struct davinci_psc_init_data dm644x_psc_init_data;
--#endif
--#ifdef CONFIG_ARCH_DAVINCI_DM646x
--extern const struct davinci_psc_init_data dm646x_psc_init_data;
--#endif
- 
- #endif /* __CLK_DAVINCI_PSC_H__ */
-diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
-index 8a7b5cd7eac0..f6ebab6228c2 100644
---- a/include/linux/clk/davinci.h
-+++ b/include/linux/clk/davinci.h
-@@ -28,13 +28,5 @@ int dm365_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgch
- int dm365_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
- int dm365_psc_init(struct device *dev, void __iomem *base);
- #endif
--#ifdef CONFIG_ARCH_DAVINCI_DM644x
--int dm644x_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
--int dm644x_psc_init(struct device *dev, void __iomem *base);
--#endif
--#ifdef CONFIG_ARCH_DAVINCI_DM646x
--int dm646x_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
--int dm646x_psc_init(struct device *dev, void __iomem *base);
--#endif
- 
- #endif /* __LINUX_CLK_DAVINCI_PLL_H___ */
--- 
-2.17.1
+regards,
+dan carpenter
 
