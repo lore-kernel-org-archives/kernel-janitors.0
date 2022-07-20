@@ -2,94 +2,120 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E93EC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 01:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F474C43334
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 02:03:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238382AbiGTB7x (ORCPT
+        id S235385AbiGTCDu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 19 Jul 2022 21:59:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53890 "EHLO
+        Tue, 19 Jul 2022 22:03:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232617AbiGTB7w (ORCPT
+        with ESMTP id S229690AbiGTCDt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 19 Jul 2022 21:59:52 -0400
-Received: from out30-54.freemail.mail.aliyun.com (out30-54.freemail.mail.aliyun.com [115.124.30.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D22DD501A8;
-        Tue, 19 Jul 2022 18:59:51 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R961e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VJuiYTA_1658282387;
-Received: from 30.227.66.165(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0VJuiYTA_1658282387)
+        Tue, 19 Jul 2022 22:03:49 -0400
+Received: from out30-43.freemail.mail.aliyun.com (out30-43.freemail.mail.aliyun.com [115.124.30.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8F1C4D156;
+        Tue, 19 Jul 2022 19:03:47 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VJuib0B_1658282623;
+Received: from 30.227.66.165(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0VJuib0B_1658282623)
           by smtp.aliyun-inc.com;
-          Wed, 20 Jul 2022 09:59:48 +0800
-Message-ID: <07c924de-78bf-c993-ce73-635af71f4edd@linux.alibaba.com>
-Date:   Wed, 20 Jul 2022 09:59:47 +0800
+          Wed, 20 Jul 2022 10:03:44 +0800
+Message-ID: <d49c6cca-2980-41b1-0f59-32ddcbb1dfa2@linux.alibaba.com>
+Date:   Wed, 20 Jul 2022 10:03:43 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
  Gecko/20100101 Thunderbird/91.11.0
-Subject: Re: [PATCH 2/3] ocfs2: Remove a useless spinlock
+Subject: Re: [PATCH 1/3] ocfs2: Remove some useless functions
 Content-Language: en-US
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        akpm <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com
 References: <bd6796635e58f9c47cf857573c3b9474a00ce26a.1658224839.git.christophe.jaillet@wanadoo.fr>
- <8ba7004d330cbe5f626539a8a3bff696d0c4285e.1658224839.git.christophe.jaillet@wanadoo.fr>
- <7b644e5d32d74d3d90dfc5b1786ae5b9@AcuMS.aculab.com>
- <29c3fbdd-7695-46c5-bb75-fe358c574ab3@wanadoo.fr>
 From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <29c3fbdd-7695-46c5-bb75-fe358c574ab3@wanadoo.fr>
+In-Reply-To: <bd6796635e58f9c47cf857573c3b9474a00ce26a.1658224839.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
 
-On 7/19/22 9:25 PM, Christophe JAILLET wrote:
-> Le 19/07/2022 à 12:24, David Laight a écrit :
->> From: Christophe JAILLET
->>> Sent: 19 July 2022 11:02
->>>
->>> 'node_map_lock' is a spinlock only used to protect calls to set_bit(),
->>> clear_bit() and test_bit().
->>>
->>> {set|clear}_bit() are already atomic and don't need this extra spinlock.
->>> test_bit() only reads the bitmap for a given bit.
->>>
->>> Remove this useless spinlock.
->>
->> It looks to me like the calling code is racy
->> unless there is another lock in the callers.
+On 7/19/22 6:01 PM, Christophe JAILLET wrote:
+> __ocfs2_node_map_set_bit() and __ocfs2_node_map_set_bit() are just
+> wrapper around set_bit() and clear_bit().
 > 
-> The call chains are:
->   ocfs2_recover_orphans()
->     ocfs2_mark_recovering_orphan_dir()
->       spin_lock(&osb->osb_lock);        <-- osb_lock spinlock
->       ocfs2_node_map_set_bit()            <-- uses node_map_lock
->       ...
->       spin_unlock(&osb->osb_lock);
->     ...
->     ocfs2_clear_recovering_orphan_dir()
->       ocfs2_node_map_clear_bit()        <-- uses node_map_lock
->                             osb_lock is NOT taken
+> The leading __ also makes think that these functions are non-atomic just
+> like __set_bit() and __clear_bit().
 > 
+> So, just remove these wrappers and call set_bit() and clear_bit()
+> directly.
 > 
->   ocfs2_check_orphan_recovery_state()
->     spin_lock(&osb->osb_lock);            <-- osb_lock spinlock
->     ...
->     ocfs2_node_map_test_bit()            <-- uses node_map_lock
->     ...
->     spin_unlock(&osb->osb_lock);
-> 
-> 
-> So the code looks already protected by the 'osb_lock' spinlock, but I don't know this code and ocfs2_mark_recovering_orphan_dir() looks tricky to me. (so some other eyes are much welcome)
- 
-osb_lock is to protect osb filed such as 'osb_orphan_wipes', while
-node_map_lock is to protect the node map 'osb_recovering_orphan_dirs'
-specifically.
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Thanks,
-Joseph
+Looks good.
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
 
+> ---
+>  fs/ocfs2/heartbeat.c | 21 ++-------------------
+>  1 file changed, 2 insertions(+), 19 deletions(-)
+> 
+> diff --git a/fs/ocfs2/heartbeat.c b/fs/ocfs2/heartbeat.c
+> index 9099d8fc7599..1d72e0788943 100644
+> --- a/fs/ocfs2/heartbeat.c
+> +++ b/fs/ocfs2/heartbeat.c
+> @@ -24,11 +24,6 @@
+>  
+>  #include "buffer_head_io.h"
+>  
+> -static inline void __ocfs2_node_map_set_bit(struct ocfs2_node_map *map,
+> -					    int bit);
+> -static inline void __ocfs2_node_map_clear_bit(struct ocfs2_node_map *map,
+> -					      int bit);
+> -
+>  /* special case -1 for now
+>   * TODO: should *really* make sure the calling func never passes -1!!  */
+>  static void ocfs2_node_map_init(struct ocfs2_node_map *map)
+> @@ -65,12 +60,6 @@ void ocfs2_do_node_down(int node_num, void *data)
+>  	ocfs2_recovery_thread(osb, node_num);
+>  }
+>  
+> -static inline void __ocfs2_node_map_set_bit(struct ocfs2_node_map *map,
+> -					    int bit)
+> -{
+> -	set_bit(bit, map->map);
+> -}
+> -
+>  void ocfs2_node_map_set_bit(struct ocfs2_super *osb,
+>  			    struct ocfs2_node_map *map,
+>  			    int bit)
+> @@ -79,16 +68,10 @@ void ocfs2_node_map_set_bit(struct ocfs2_super *osb,
+>  		return;
+>  	BUG_ON(bit >= map->num_nodes);
+>  	spin_lock(&osb->node_map_lock);
+> -	__ocfs2_node_map_set_bit(map, bit);
+> +	set_bit(bit, map->map);
+>  	spin_unlock(&osb->node_map_lock);
+>  }
+>  
+> -static inline void __ocfs2_node_map_clear_bit(struct ocfs2_node_map *map,
+> -					      int bit)
+> -{
+> -	clear_bit(bit, map->map);
+> -}
+> -
+>  void ocfs2_node_map_clear_bit(struct ocfs2_super *osb,
+>  			      struct ocfs2_node_map *map,
+>  			      int bit)
+> @@ -97,7 +80,7 @@ void ocfs2_node_map_clear_bit(struct ocfs2_super *osb,
+>  		return;
+>  	BUG_ON(bit >= map->num_nodes);
+>  	spin_lock(&osb->node_map_lock);
+> -	__ocfs2_node_map_clear_bit(map, bit);
+> +	clear_bit(bit, map->map);
+>  	spin_unlock(&osb->node_map_lock);
+>  }
+>  
