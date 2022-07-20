@@ -2,114 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D72C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 19:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EBCCC43334
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 20:24:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230178AbiGTTt4 (ORCPT
+        id S229505AbiGTUYl (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Jul 2022 15:49:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53638 "EHLO
+        Wed, 20 Jul 2022 16:24:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229762AbiGTTtz (ORCPT
+        with ESMTP id S229452AbiGTUYl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Jul 2022 15:49:55 -0400
-Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 103F072EEA
-        for <kernel-janitors@vger.kernel.org>; Wed, 20 Jul 2022 12:49:50 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id EFhbo8PoIAeI9EFhbo9xJ4; Wed, 20 Jul 2022 21:49:49 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Wed, 20 Jul 2022 21:49:49 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org
-Subject: [PATCH] caif: Fix bitmap data type in "struct caifsock"
-Date:   Wed, 20 Jul 2022 21:49:46 +0200
-Message-Id: <b7a88272148a30cf2d0a97f2e82260a0dcb370a1.1658346566.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Wed, 20 Jul 2022 16:24:41 -0400
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0504B4A820;
+        Wed, 20 Jul 2022 13:24:39 -0700 (PDT)
+Received: from [192.168.192.83] (unknown [50.126.114.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id B9FFD3F3C0;
+        Wed, 20 Jul 2022 20:24:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1658348678;
+        bh=2Y97BB6vjKwhsIP/n0mmC5lKGsgfc1sWpUPesvKpSUs=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=BkHvcOoTUxNqlPN6hRu6IhlmX/H22u5RTBiCWqXmvS4tR+w1w2JCEOrMCciawX516
+         keEJTKastKE5xCQIbR3C5sUSt6YZClBVAnWLskC/fRFmrnzahoeel6ErhhLVSqDZoD
+         Priuv9JFPA/JzOUcKAnKH3yyM26SGZOfpy86FvShyprVvMUcmoOgefroPRRBDC6L7p
+         74CPbbeuY8WMU0q9bJW7gfehEHcoV+SoCihf6eTOcSgSAjUgRzGDivzkQf145GY91D
+         A/Flm1SMM2Jqn9MUWY2IachSuWNPlFNIKSYzClXaKHZRvxts4bKCvGRA6O2NnubjC0
+         jK3vvPsSzsLWA==
+Message-ID: <847ef193-71a7-9714-be20-2cbb654e9c09@canonical.com>
+Date:   Wed, 20 Jul 2022 13:24:34 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] apparmor: correct config reference to intended one
+Content-Language: en-US
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
+        linux-security-module@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220720120443.16518-1-lukas.bulwahn@gmail.com>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+In-Reply-To: <20220720120443.16518-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Bitmap are "unsigned long", so use it instead of a "u32" to make things
-more explicit.
+On 7/20/22 05:04, Lukas Bulwahn wrote:
+> Commit 5bfcbd22ee4e ("apparmor: Enable tuning of policy paranoid load for
+> embedded systems") introduces the config SECURITY_APPARMOR_PARANOID_LOAD,
+> but then refers in the code to SECURITY_PARANOID_LOAD; note the missing
+> APPARMOR in the middle.
+> 
+> Correct this to the introduced and intended config option.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-While at it, remove some useless cast (and leading spaces) when using the
-bitmap API.
+thanks, I have pulled this into apparmor-next
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- net/caif/caif_socket.c | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-diff --git a/net/caif/caif_socket.c b/net/caif/caif_socket.c
-index 251e666ba9a2..748be7253248 100644
---- a/net/caif/caif_socket.c
-+++ b/net/caif/caif_socket.c
-@@ -47,7 +47,7 @@ enum caif_states {
- struct caifsock {
- 	struct sock sk; /* must be first member */
- 	struct cflayer layer;
--	u32 flow_state;
-+	unsigned long flow_state;
- 	struct caif_connect_request conn_req;
- 	struct mutex readlock;
- 	struct dentry *debugfs_socket_dir;
-@@ -56,38 +56,32 @@ struct caifsock {
- 
- static int rx_flow_is_on(struct caifsock *cf_sk)
- {
--	return test_bit(RX_FLOW_ON_BIT,
--			(void *) &cf_sk->flow_state);
-+	return test_bit(RX_FLOW_ON_BIT, &cf_sk->flow_state);
- }
- 
- static int tx_flow_is_on(struct caifsock *cf_sk)
- {
--	return test_bit(TX_FLOW_ON_BIT,
--			(void *) &cf_sk->flow_state);
-+	return test_bit(TX_FLOW_ON_BIT, &cf_sk->flow_state);
- }
- 
- static void set_rx_flow_off(struct caifsock *cf_sk)
- {
--	 clear_bit(RX_FLOW_ON_BIT,
--		 (void *) &cf_sk->flow_state);
-+	clear_bit(RX_FLOW_ON_BIT, &cf_sk->flow_state);
- }
- 
- static void set_rx_flow_on(struct caifsock *cf_sk)
- {
--	 set_bit(RX_FLOW_ON_BIT,
--			(void *) &cf_sk->flow_state);
-+	set_bit(RX_FLOW_ON_BIT, &cf_sk->flow_state);
- }
- 
- static void set_tx_flow_off(struct caifsock *cf_sk)
- {
--	 clear_bit(TX_FLOW_ON_BIT,
--		(void *) &cf_sk->flow_state);
-+	clear_bit(TX_FLOW_ON_BIT, &cf_sk->flow_state);
- }
- 
- static void set_tx_flow_on(struct caifsock *cf_sk)
- {
--	 set_bit(TX_FLOW_ON_BIT,
--		(void *) &cf_sk->flow_state);
-+	set_bit(TX_FLOW_ON_BIT, &cf_sk->flow_state);
- }
- 
- static void caif_read_lock(struct sock *sk)
--- 
-2.34.1
+> ---
+>   security/apparmor/lsm.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index 090a20805664..e29cade7b662 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -1402,7 +1402,7 @@ module_param_named(path_max, aa_g_path_max, aauint, S_IRUSR);
+>    * DEPRECATED: read only as strict checking of load is always done now
+>    * that none root users (user namespaces) can load policy.
+>    */
+> -bool aa_g_paranoid_load = IS_ENABLED(CONFIG_SECURITY_PARANOID_LOAD);
+> +bool aa_g_paranoid_load = IS_ENABLED(CONFIG_SECURITY_APPARMOR_PARANOID_LOAD);
+>   module_param_named(paranoid_load, aa_g_paranoid_load, aabool, S_IRUGO);
+>   
+>   static int param_get_aaintbool(char *buffer, const struct kernel_param *kp);
 
