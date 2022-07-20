@@ -2,88 +2,116 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB09BCCA480
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 11:00:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A8AC43334
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 11:14:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236691AbiGTLAp (ORCPT
+        id S231282AbiGTLOr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Jul 2022 07:00:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44354 "EHLO
+        Wed, 20 Jul 2022 07:14:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231916AbiGTLAn (ORCPT
+        with ESMTP id S229552AbiGTLOq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Jul 2022 07:00:43 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E42B27CE6;
-        Wed, 20 Jul 2022 04:00:39 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id l23so32393623ejr.5;
-        Wed, 20 Jul 2022 04:00:38 -0700 (PDT)
+        Wed, 20 Jul 2022 07:14:46 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB8E557E16;
+        Wed, 20 Jul 2022 04:14:45 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id y8so23331625eda.3;
+        Wed, 20 Jul 2022 04:14:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id;
-        bh=U/VJk3xiTJFmLuPsj0qzjQ93oE7pWfHrNWLCEYbjvDg=;
-        b=WcG2kQ+C/cIGYX6jixsYc3gLIX1du1R0yJSxyneeyPfSrAbf8+iuxQf3aLq/UjstCS
-         uR+oHsJWKhC3m1LJ0A+r0ZELP2A5cwF/kojt5rH40KLSyTmFt455X/hj2sQNanATD8Gc
-         ZL5+ons8FkHWU99IaW1arNkAI84VNzQLEk3qrRrxzJTk9pmBqIKpyAQeA0Ht29fL2HmS
-         VmBe8x6hKDmvaSW4D0cF7DLRMREoQR+57VVmv3kKin27OiP1MzjgqfUXlyr1vtsLn4nW
-         8Aa6TWhc0qMe7G7nyu8/8YWOGps9sa8dpsFJf3hfBoPDgDZ3891pva5psG53K2uO7CCj
-         Vikg==
+        bh=6fuIJMKJDv+3Plx8Fx6qWnLCEEoGbGCg+Qja+GkKCJs=;
+        b=iJ4ni6ck1e+u/ktiSbJ7gEAgoLM8tAChQrEnqcBJeleznKeWqEzrZTCZUE6VAlIrk7
+         qwJWGzApoK9GCJxqBA3DcubTZQ7zURgO0IJ6mwtY38/NLQadIRNh+gfy2UavYq7LDs6S
+         T0r/QB3FRbbJqGxbbJzg28u8Www4gvPzTZR7fDAV418ZrNTH9k0UWD6qy5Oc8H2NexmR
+         JA+GL5JaVE/RiioqKRdrghKojOokzXRIe1jVI6oZSv/qs/sdq3Rq14jCm2h28YnXI0PY
+         sSI35ltFfWxd7slljLcqzBucpUnKL9XyJ8NZwmEMHNtH1u8/lDPH8j5PiBM0uR2MDNZw
+         nzZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=U/VJk3xiTJFmLuPsj0qzjQ93oE7pWfHrNWLCEYbjvDg=;
-        b=qkElqA4HofT1YDTR+gkSKy5cgEWYlaGyP7jNLP9zg05IUTJ9fUUExihCM4v+6lDmFW
-         3M4+WNoppa2kKHWjIbyYx2NjNNFkmpsI71YedEI6uQKlCjuHvVuilgjw1QD1uxxf3g6G
-         0pxWfq0xi5YoV4G5CA2UWJXaKK4yqicKDuawViTDBwgfzOs/Y7mY+URsr2kozTBdtdzi
-         imTYDjh5b13cc+OUXtxpGFwljvfIQ2AQAkts46T4TZvQQ+QNKMFjO6I+qmycI4qirPHn
-         qjh3DE1CQ5bD76ov+rs84LPDK40+x+8mgW0ZXmnNv6xopPOJjXGWiNfX7JiuPcdm3v9r
-         WHEg==
-X-Gm-Message-State: AJIora+1xVa8/hNDxIqwdKSO2bShUBZwaEK805BiZPlbM0EHZW1iBDnz
-        BpS3eyLwDz+hb+tuh3p84+auu6U5Gmw=
-X-Google-Smtp-Source: AGRyM1utUQRdA/aCctlsBH6LfOpIwJRY5F9OyAFEBaP68KYk+1PdJYEnw8x664ioOtdKq06XEIXX6g==
-X-Received: by 2002:a17:907:a0c6:b0:72f:2293:bd04 with SMTP id hw6-20020a170907a0c600b0072f2293bd04mr16210418ejc.123.1658314837576;
-        Wed, 20 Jul 2022 04:00:37 -0700 (PDT)
+        bh=6fuIJMKJDv+3Plx8Fx6qWnLCEEoGbGCg+Qja+GkKCJs=;
+        b=tE+vZ7B9kI6eJvc1Za+7/yHkhGL2qCsm1MKUmJtvUiajTgIr7R6B4N4ho4cIPY2YWP
+         3i0hDzjiG0DI9VlzXcV1+92sfp6JI45dWuBny/BKxVtDNckNDRKJ7PEjGIoUmyycgULu
+         PuRZ61RO7F3yvYylX6RTTIG2ZWCF2uw61MWNRSIKqg2FEnO54U3tPvNhZRfYLnbSfPTA
+         zypkphUwLCbfs6j3w8s2d5HpEA6fDbtPtoMHJNnwFNmngJbXT/Q5KNNChNYWosrxCc6g
+         /0/9fUYZh9byNIe7XFcUsOE1p6RJnGRrch0Rv2Q/qYAawB22fOJ/2NseLWuurHl/9nnS
+         Hvzw==
+X-Gm-Message-State: AJIora/MyHO/KEM7YruuyIDoe+s9wnEm3mFuS/AD2ECcRvmOFFukWL2z
+        LBm4YU7vAvTXfN9Xq7Phyc41yCZ7XCc=
+X-Google-Smtp-Source: AGRyM1vtLTuhIh6tetw/IB/3DS6kCwS8iCfJGBlL9PAjDfMyOuDeQWHqeMPTFa8n8l0VgTAeOj6AOg==
+X-Received: by 2002:a05:6402:2281:b0:43b:5d77:12d9 with SMTP id cw1-20020a056402228100b0043b5d7712d9mr22457228edb.295.1658315684096;
+        Wed, 20 Jul 2022 04:14:44 -0700 (PDT)
 Received: from felia.fritz.box (200116b826a11f008020c2fc6e115b3e.dip.versatel-1u1.de. [2001:16b8:26a1:1f00:8020:c2fc:6e11:5b3e])
-        by smtp.gmail.com with ESMTPSA id j4-20020a170906474400b0072aed3b2158sm7825842ejs.45.2022.07.20.04.00.36
+        by smtp.gmail.com with ESMTPSA id ec21-20020a0564020d5500b0043ba24a26casm2095165edb.23.2022.07.20.04.14.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Jul 2022 04:00:36 -0700 (PDT)
+        Wed, 20 Jul 2022 04:14:43 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     David Lechner <david@lechnology.com>, Sekhar Nori <nsekhar@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Sekhar Nori <nsekhar@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: add header file to TI DAVINCI SERIES CLOCK DRIVER
-Date:   Wed, 20 Jul 2022 13:00:26 +0200
-Message-Id: <20220720110026.9173-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] arm: davinci: remove CPU type detection for DaVinci DM644x and DM646x
+Date:   Wed, 20 Jul 2022 13:14:32 +0200
+Message-Id: <20220720111432.18321-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-While creating a patch submission on the davinci clock drivers, I noticed
-that the header file include/linux/clk/davinci.h belongs to the section
-TI DAVINCI SERIES CLOCK DRIVER.
+Commit 7dd33764486d ("ARM: davinci: Delete DM644x board files") and commit
+b4aed01de486 ("ARM: davinci: Delete DM646x board files") removes the
+support for DaVinci DM644x and DM646x boards.
 
-Add a file entry for this header file in TI DAVINCI SERIES CLOCK DRIVER.
+Hence, remove the CPU type detection for those boards as well.
 
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-davinci/cputype.h | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 264e7a72afd6..d4e1a6ef552c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20261,6 +20261,7 @@ R:	Sekhar Nori <nsekhar@ti.com>
- S:	Maintained
- F:	Documentation/devicetree/bindings/clock/ti/davinci/
- F:	drivers/clk/davinci/
-+F:	include/linux/clk/davinci.h
+diff --git a/arch/arm/mach-davinci/cputype.h b/arch/arm/mach-davinci/cputype.h
+index 4590afdbe449..4cba566371d6 100644
+--- a/arch/arm/mach-davinci/cputype.h
++++ b/arch/arm/mach-davinci/cputype.h
+@@ -25,8 +25,6 @@ struct davinci_id {
+ };
  
- TI DAVINCI SERIES GPIO DRIVER
- M:	Keerthy <j-keerthy@ti.com>
+ /* Can use lower 16 bits of cpu id  for a variant when required */
+-#define	DAVINCI_CPU_ID_DM6446		0x64460000
+-#define	DAVINCI_CPU_ID_DM6467		0x64670000
+ #define	DAVINCI_CPU_ID_DM355		0x03550000
+ #define	DAVINCI_CPU_ID_DM365		0x03650000
+ #define	DAVINCI_CPU_ID_DA830		0x08300000
+@@ -38,25 +36,11 @@ static inline int is_davinci_ ##type(void)				\
+ 	return (davinci_soc_info.cpu_id == (id));			\
+ }
+ 
+-IS_DAVINCI_CPU(dm644x, DAVINCI_CPU_ID_DM6446)
+-IS_DAVINCI_CPU(dm646x, DAVINCI_CPU_ID_DM6467)
+ IS_DAVINCI_CPU(dm355, DAVINCI_CPU_ID_DM355)
+ IS_DAVINCI_CPU(dm365, DAVINCI_CPU_ID_DM365)
+ IS_DAVINCI_CPU(da830, DAVINCI_CPU_ID_DA830)
+ IS_DAVINCI_CPU(da850, DAVINCI_CPU_ID_DA850)
+ 
+-#ifdef CONFIG_ARCH_DAVINCI_DM644x
+-#define cpu_is_davinci_dm644x() is_davinci_dm644x()
+-#else
+-#define cpu_is_davinci_dm644x() 0
+-#endif
+-
+-#ifdef CONFIG_ARCH_DAVINCI_DM646x
+-#define cpu_is_davinci_dm646x() is_davinci_dm646x()
+-#else
+-#define cpu_is_davinci_dm646x() 0
+-#endif
+-
+ #ifdef CONFIG_ARCH_DAVINCI_DM355
+ #define cpu_is_davinci_dm355() is_davinci_dm355()
+ #else
 -- 
 2.17.1
 
