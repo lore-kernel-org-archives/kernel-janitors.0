@@ -2,68 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 060B3C43334
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 13:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D517DC433EF
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 15:05:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232973AbiGTNcT (ORCPT
+        id S235783AbiGTPFi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Jul 2022 09:32:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57750 "EHLO
+        Wed, 20 Jul 2022 11:05:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230522AbiGTNcS (ORCPT
+        with ESMTP id S229456AbiGTPFg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Jul 2022 09:32:18 -0400
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF75E6590
-        for <kernel-janitors@vger.kernel.org>; Wed, 20 Jul 2022 06:32:17 -0700 (PDT)
-Received: from [192.168.1.18] ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id E9o9ojg4KgXAiE9o9oZBCH; Wed, 20 Jul 2022 15:32:15 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Wed, 20 Jul 2022 15:32:15 +0200
-X-ME-IP: 90.11.190.129
-Message-ID: <a66632a1-9cde-1b3c-afa9-8f63bd4a9cf0@wanadoo.fr>
-Date:   Wed, 20 Jul 2022 15:32:07 +0200
+        Wed, 20 Jul 2022 11:05:36 -0400
+X-Greylist: delayed 251 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 20 Jul 2022 08:05:33 PDT
+Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4279411C14;
+        Wed, 20 Jul 2022 08:05:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ZfQyOsBYMPAchfb9RIgin1ZPAG//moE/GIBgoK5KNGE=; b=dpua5mNPC3u7y1wfwGMhWUHoNf
+        vebV7vrK4KoHi26ZBq2KA64BHl414nnXlIS8VXc3iscCpXSCB4oyGaIgmrp5oMksiOlgg8/mTz/2Y
+        QI4AYJEh0wp9Ubpq2nrN18kQNA/1W6Twf/CumelIwBopXRSmw08dTfUWKX8xpMrbmwXWOo+3mJk9C
+        fKPKg8i9Y2NqayvoJoS3WOc48Quj4uUN6j7x+wAARsBwm+EtG4ZIbgzcxOftjUJdC+ggTRccJCQcA
+        ByH9O+/5TpxbTgxzE7Wtj3NDGCUETIcGN8kUGiSVGXT22u2uiK/Y/+viOieQymH4/u3/ygjUEJrsg
+        Zjz1bmsw==;
+Received: from [2600:1700:4830:1658::fb2] (port=48194)
+        by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.95)
+        (envelope-from <david@lechnology.com>)
+        id 1oEBGM-0003w5-CZ;
+        Wed, 20 Jul 2022 11:05:30 -0400
+Message-ID: <6f72d1ec-6624-8fc3-6848-ece1035e27de@lechnology.com>
+Date:   Wed, 20 Jul 2022 10:05:28 -0500
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
-Subject: Re: [PATCH 2/3] ocfs2: Remove a useless spinlock
+Subject: Re: [PATCH] clk: davinci: remove PLL and PSC clocks for DaVinci
+ DM644x and DM646x
 Content-Language: en-US
-To:     Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc:     David.Laight@ACULAB.COM, jlbec@evilplan.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mark@fasheh.com, ocfs2-devel@oss.oracle.com
-References: <bd6796635e58f9c47cf857573c3b9474a00ce26a.1658224839.git.christophe.jaillet@wanadoo.fr>
- <8ba7004d330cbe5f626539a8a3bff696d0c4285e.1658224839.git.christophe.jaillet@wanadoo.fr>
- <7b644e5d32d74d3d90dfc5b1786ae5b9@AcuMS.aculab.com>
- <29c3fbdd-7695-46c5-bb75-fe358c574ab3@wanadoo.fr>
- <07c924de-78bf-c993-ce73-635af71f4edd@linux.alibaba.com>
- <f313cb6f-de75-2447-eebc-5c240bc243a2@wanadoo.fr>
- <65e6bbcb-2c33-2e43-1826-a62387572310@linux.alibaba.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <65e6bbcb-2c33-2e43-1826-a62387572310@linux.alibaba.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220720082934.17741-1-lukas.bulwahn@gmail.com>
+From:   David Lechner <david@lechnology.com>
+In-Reply-To: <20220720082934.17741-1-lukas.bulwahn@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 20/07/2022 à 11:48, Joseph Qi a écrit :
+On 7/20/22 3:29 AM, Lukas Bulwahn wrote:
+> Commit 7dd33764486d ("ARM: davinci: Delete DM644x board files") and commit
+> b4aed01de486 ("ARM: davinci: Delete DM646x board files") removes the
+> support for DaVinci DM644x and DM646x boards.
 > 
-> These code are introduced long time ago...
-> Refer to commit b4df6ed8db0c "[PATCH] ocfs2: fix orphan recovery
-> deadlock", I guess it plays a role 'barrier' and make sure test node map
-> is executed prior than signal orphan recovery thread. In other words, to
-> serialize evict inode and orphan recovery.
+> Hence, remove the PLL and PSC clock descriptions for those boards as well.
 > 
-> Thanks,
-> Joseph
-> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
 
-Ok, so just leave it as-is.
+Reviewed-by: David Lechner <david@lechnology.com>
 
-Should I resend the serie without this patch, or can 1/3 and 3/3 be 
-applied as-is?
 
-CJ
