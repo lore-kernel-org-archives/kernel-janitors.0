@@ -2,90 +2,68 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D5CC433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 13:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 060B3C43334
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 13:32:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233790AbiGTN3m (ORCPT
+        id S232973AbiGTNcT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Jul 2022 09:29:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54518 "EHLO
+        Wed, 20 Jul 2022 09:32:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232984AbiGTN3g (ORCPT
+        with ESMTP id S230522AbiGTNcS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Jul 2022 09:29:36 -0400
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3F832A41A
-        for <kernel-janitors@vger.kernel.org>; Wed, 20 Jul 2022 06:29:34 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
+        Wed, 20 Jul 2022 09:32:18 -0400
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF75E6590
+        for <kernel-janitors@vger.kernel.org>; Wed, 20 Jul 2022 06:32:17 -0700 (PDT)
+Received: from [192.168.1.18] ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id E9lWoEl0qnm5hE9lXoFeAH; Wed, 20 Jul 2022 15:29:32 +0200
-X-ME-Helo: pop-os.home
+        id E9o9ojg4KgXAiE9o9oZBCH; Wed, 20 Jul 2022 15:32:15 +0200
+X-ME-Helo: [192.168.1.18]
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Wed, 20 Jul 2022 15:29:32 +0200
+X-ME-Date: Wed, 20 Jul 2022 15:32:15 +0200
 X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Gilad Ben-Yossef <gilad@benyossef.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-crypto@vger.kernel.org
-Subject: [PATCH v2] crypto: ccree - Remove a useless dma_supported() call
-Date:   Wed, 20 Jul 2022 15:28:44 +0200
-Message-Id: <f47cdaa7067af0ae2eeeca52cee2176cdc449a22.1658323697.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+Message-ID: <a66632a1-9cde-1b3c-afa9-8f63bd4a9cf0@wanadoo.fr>
+Date:   Wed, 20 Jul 2022 15:32:07 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH 2/3] ocfs2: Remove a useless spinlock
+Content-Language: en-US
+To:     Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc:     David.Laight@ACULAB.COM, jlbec@evilplan.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mark@fasheh.com, ocfs2-devel@oss.oracle.com
+References: <bd6796635e58f9c47cf857573c3b9474a00ce26a.1658224839.git.christophe.jaillet@wanadoo.fr>
+ <8ba7004d330cbe5f626539a8a3bff696d0c4285e.1658224839.git.christophe.jaillet@wanadoo.fr>
+ <7b644e5d32d74d3d90dfc5b1786ae5b9@AcuMS.aculab.com>
+ <29c3fbdd-7695-46c5-bb75-fe358c574ab3@wanadoo.fr>
+ <07c924de-78bf-c993-ce73-635af71f4edd@linux.alibaba.com>
+ <f313cb6f-de75-2447-eebc-5c240bc243a2@wanadoo.fr>
+ <65e6bbcb-2c33-2e43-1826-a62387572310@linux.alibaba.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <65e6bbcb-2c33-2e43-1826-a62387572310@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is no point in calling dma_supported() before calling
-dma_set_coherent_mask(). This function already calls dma_supported() and
-returns an error (-EIO) if it fails.
+Le 20/07/2022 à 11:48, Joseph Qi a écrit :
+> 
+> These code are introduced long time ago...
+> Refer to commit b4df6ed8db0c "[PATCH] ocfs2: fix orphan recovery
+> deadlock", I guess it plays a role 'barrier' and make sure test node map
+> is executed prior than signal orphan recovery thread. In other words, to
+> serialize evict inode and orphan recovery.
+> 
+> Thanks,
+> Joseph
+> 
 
-So remove the superfluous dma_supported() call.
+Ok, so just leave it as-is.
 
-Moreover, setting a larger DMA mask will never fail when setting a smaller
-one will succeed, so the whole "while" loop can be removed as well. (see
-[1])
+Should I resend the serie without this patch, or can 1/3 and 3/3 be 
+applied as-is?
 
-While at it, fix the name of the function reported in a dev_err().
-
-[1]: https://lore.kernel.org/all/YteQ6Vx2C03UtCkG@infradead.org/
-
-Suggested-by: Christoph Hellwig <hch@infradead.org>
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/crypto/ccree/cc_driver.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
-index 7d1bee86d581..cadead18b59e 100644
---- a/drivers/crypto/ccree/cc_driver.c
-+++ b/drivers/crypto/ccree/cc_driver.c
-@@ -372,17 +372,10 @@ static int init_cc_resources(struct platform_device *plat_dev)
- 		dev->dma_mask = &dev->coherent_dma_mask;
- 
- 	dma_mask = DMA_BIT_MASK(DMA_BIT_MASK_LEN);
--	while (dma_mask > 0x7fffffffUL) {
--		if (dma_supported(dev, dma_mask)) {
--			rc = dma_set_coherent_mask(dev, dma_mask);
--			if (!rc)
--				break;
--		}
--		dma_mask >>= 1;
--	}
--
-+	rc = dma_set_coherent_mask(dev, dma_mask);
- 	if (rc) {
--		dev_err(dev, "Failed in dma_set_mask, mask=%llx\n", dma_mask);
-+		dev_err(dev, "Failed in dma_set_coherent_mask, mask=%llx\n",
-+			dma_mask);
- 		return rc;
- 	}
- 
--- 
-2.34.1
-
+CJ
