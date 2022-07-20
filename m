@@ -2,73 +2,47 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD94C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 21:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0183CCA485
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 22:58:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230293AbiGTV0l (ORCPT
+        id S231296AbiGTW6I (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Jul 2022 17:26:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52688 "EHLO
+        Wed, 20 Jul 2022 18:58:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230012AbiGTV0l (ORCPT
+        with ESMTP id S229504AbiGTW6H (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Jul 2022 17:26:41 -0400
-Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7E034D4EB
-        for <kernel-janitors@vger.kernel.org>; Wed, 20 Jul 2022 14:26:39 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id EHDJogmrO0UP7EHDJomVbt; Wed, 20 Jul 2022 23:26:38 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Wed, 20 Jul 2022 23:26:38 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] devres: Slightly optimize alloc_dr()
-Date:   Wed, 20 Jul 2022 23:26:36 +0200
-Message-Id: <d255bd871484e63cdd628e819f929e2df59afb02.1658352383.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Wed, 20 Jul 2022 18:58:07 -0400
+Received: from mail.netfilter.org (mail.netfilter.org [217.70.188.207])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DD2FF58854;
+        Wed, 20 Jul 2022 15:58:06 -0700 (PDT)
+Date:   Thu, 21 Jul 2022 00:58:02 +0200
+From:   Pablo Neira Ayuso <pablo@netfilter.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
+        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org
+Subject: Re: [PATCH] netfilter: ipvs: Use the bitmap API to allocate bitmaps
+Message-ID: <YtiIekld0M+bDXQa@salvia>
+References: <420d8b70560e8711726ff639f0a55364e212ff26.1656962678.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <420d8b70560e8711726ff639f0a55364e212ff26.1656962678.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If the gfp flag used for the memory allocation already has __GFP_ZERO,
-then there is no need to explicitly clear the "struct devres_node". It is
-already zeroed.
+On Mon, Jul 04, 2022 at 09:24:46PM +0200, Christophe JAILLET wrote:
+> Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
+> 
+> It is less verbose and it improves the semantic.
 
-This saves a few cycles when using devm_zalloc() and co.
-
-In the case of devres_alloc() (which calls __devres_alloc_node()), the
-compiler could remove the test and the memset() because it should be able
-to see that the __GFP_ZERO flag is set.
-So this would make the code both faster and smaller.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/base/devres.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-index 864d0b3f566e..4ab2b50ee38f 100644
---- a/drivers/base/devres.c
-+++ b/drivers/base/devres.c
-@@ -117,7 +117,9 @@ static __always_inline struct devres * alloc_dr(dr_release_t release,
- 	if (unlikely(!dr))
- 		return NULL;
- 
--	memset(dr, 0, offsetof(struct devres, data));
-+	/* No need to clear memory twice */
-+	if (!(gfp & __GFP_ZERO))
-+		memset(dr, 0, offsetof(struct devres, data));
- 
- 	INIT_LIST_HEAD(&dr->node.entry);
- 	dr->node.release = release;
--- 
-2.34.1
-
+Applied to nf-next, thanks
