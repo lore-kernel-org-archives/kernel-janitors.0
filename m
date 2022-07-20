@@ -2,78 +2,101 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E24C433EF
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 16:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F32FCCA485
+	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 17:36:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238904AbiGTQUU (ORCPT
+        id S241040AbiGTRgS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Jul 2022 12:20:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50170 "EHLO
+        Wed, 20 Jul 2022 13:36:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232130AbiGTQUT (ORCPT
+        with ESMTP id S241045AbiGTRgJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Jul 2022 12:20:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E32CDED8;
-        Wed, 20 Jul 2022 09:20:18 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 08AE161D73;
-        Wed, 20 Jul 2022 16:20:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 633B4C341D2;
-        Wed, 20 Jul 2022 16:20:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658334017;
-        bh=Eq1CrZBYHVgUb8wkqf7U2YxMfT3RrB/v/kRt/ZdO6a4=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=uqFvl2SIYVZrr50cCP8ivcJgSy8qNpLzifYGLWDtJbiia0m7b7vkCMWaH26/KyxsA
-         GptKiGmbLHnRNGe9AZReKo8aUq2KkS1Ht2oDSYF0OSdlF5vKJA6a6Vl/dc4PijQlWh
-         bBWyM+yRgQyDzU/N6ziqdOuBZsefDCgFW15OIZKrdmCmq3CjIJ+YfjJmKLyHKS7e03
-         2KMHvZTfi2iVdvr49SVIOxr/6Zu2LoHgZLa0D9mGs+nUUD50Ql8hoPfbv4QgEEMt2a
-         9IfbBUA8io1DCijMfmtm4oCij6+kOOMYWmAn+ouycj4PhyLh8MN/zHQFbxhpFwaI+0
-         BxkghESjiKGJg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 47294E45200;
-        Wed, 20 Jul 2022 16:20:17 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 20 Jul 2022 13:36:09 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA527DEC6
+        for <kernel-janitors@vger.kernel.org>; Wed, 20 Jul 2022 10:36:06 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id h8so4410477wrw.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 20 Jul 2022 10:36:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=02lsKOmjymw0+voRSiZssITm3QnQDwCZm++EAm96eVk=;
+        b=AXz4zLK1VM061H4lcJHGjYLvRNfx+YUTCIfw8oq3KgqGXfJomypHgHt+ZjUVjSpkw7
+         ygfdWOTJN6EKqQPYnyG97Yc9pSYo4apVrs685dRj2Lis1r313+yLrAE4zAnyES49TN3Q
+         lNcDBCtRLJFxz8TyiWl0yMv1RoxKjDusQIC6P579ng+zMKgK2gaZPeAdN3puFuuwlnS7
+         HKHcJLtVxhvMvaIqoeeHrzwsR8KA6ih1ZB56OPQc98CikP+vqXQgFD/VuEH63RuvK/sa
+         8WBl+IeOZ4d3hEpU00LbcHvGxvYwKYjFAuzwqdsEXJFfTblyeJv0cGW13ou6DV33hOXv
+         Sw4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=02lsKOmjymw0+voRSiZssITm3QnQDwCZm++EAm96eVk=;
+        b=wZoC21aGpQaOYcYDGE/ZIft3GZOlYXDzKcsd6ucK9ZtfFBMr0pNHalzFaot0A1OEya
+         xCcrk2phRUlYG1VUUQziYXfgTTyJiWjFj5f5Ubcy/LwGGaQcmvGfbEtaUevlmE/g+NbF
+         9WiHHLAnqgMDIvBUCzHkoRSsH6g/0Qc8l6tBvBbhW8GxZ0iGMXQ7UXxzSx9+I7/592UM
+         M2fXARnWm82EMiA5vOa7e/O2MyEhhnoTyUQw86n+WYBxcs2xdh/uzquyq4Wx6kxQaVyo
+         qTM+4kX+cujizb6NL1IysHjTQOq/u+NBDWqV/PuFgHytlDM76ay5Jn3+MSHpt+5iDmkw
+         cIcQ==
+X-Gm-Message-State: AJIora9hPCimm9fyLS6IHMDBhAHMxIalgEVSfbT5wkqOUD/5ukazDsnB
+        UYdsfQjIEayiDgRCWKlbCJsGqIQmilJwt2n7oLeo6A==
+X-Google-Smtp-Source: AGRyM1sVDW8tYnXZDH5GAJtfDD0oKvvEaaIMt0UCdQWhpZMJt6LRZI0HjOnjkG0MNPv2hBnm38VQ0JCEOp4f1ZPH0dQ=
+X-Received: by 2002:a05:6000:156f:b0:21d:887f:8ddf with SMTP id
+ 15-20020a056000156f00b0021d887f8ddfmr31271381wrz.534.1658338565332; Wed, 20
+ Jul 2022 10:36:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] Bluetooth: clean up error pointer checking
-From:   patchwork-bot+bluetooth@kernel.org
-Message-Id: <165833401728.6265.9737720058353472000.git-patchwork-notify@kernel.org>
-Date:   Wed, 20 Jul 2022 16:20:17 +0000
-References: <YtflxRosxskh2CoH@kili>
-In-Reply-To: <YtflxRosxskh2CoH@kili>
+References: <YtZ9Yu6HSQ2sT+O/@kili> <CAJD7tkYCSY1C_iif4dxF9O3dAgZV4u8o9DFGsqeTyaq_FTT+mQ@mail.gmail.com>
+ <20220720092918.GD2316@kadam>
+In-Reply-To: <20220720092918.GD2316@kadam>
+From:   Yosry Ahmed <yosryahmed@google.com>
+Date:   Wed, 20 Jul 2022 10:35:29 -0700
+Message-ID: <CAJD7tkYV60TkgfL2NF2HspJ_j+MB4CuqKNzugrAZ9jtfhicmog@mail.gmail.com>
+Subject: Re: [PATCH] selftests: memcg: uninitialized variable in test_memcg_reclaim()
 To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     marcel@holtmann.org, luiz.dentz@gmail.com, johan.hedberg@gmail.com,
-        linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Shakeel Butt <shakeelb@google.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Cgroups <cgroups@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+        linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+On Wed, Jul 20, 2022 at 2:29 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> On Tue, Jul 19, 2022 at 10:27:36AM -0700, Yosry Ahmed wrote:
+> >
+> > Nit: keep the cleanup_* naming for labels to make it obvious and to be
+> > consistent with the rest of the file (e.g. cleanup_free,
+> > cleanup_memcg, cleanup_file/cleanup_all). See
+> > test_memcg_subtree_control().
+> >
+> > I would honestly have one label to cleanup the memcg. Calling
+> > cg_destroy() on a non-existent memcg should be fine. rmdir() will just
+> > fail silently. All other tests do this and it's easier to read when we
+> > have fewer return paths. My advice would be cleanup_file and
+> > cleanup_memcg labels.
+>
+> One error label handling is very bug prone.  You always end up freeing
+> things which have not been initialized/allocated.  Or dereferencing
+> pointers which are NULL.  Or, since most kernel functions clean up
+> after themselves, you end up double freeing things.
 
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+I am not suggesting a single cleanup label, I said "one label to
+cleanup the memcg", which is separate from cleaning up the file.
+Basically just merging the destroy_memcg and free_memcg labels to be
+consistent with other tests. I don't feel strongly about this anyway
+:)
 
-On Wed, 20 Jul 2022 14:23:49 +0300 you wrote:
-> The bt_skb_sendmsg() function can't return NULL so there is no need to
-> check for that.  Several of these checks were removed previously but
-> this one was missed.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  include/net/bluetooth/bluetooth.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Here is the summary with links:
-  - Bluetooth: clean up error pointer checking
-    https://git.kernel.org/bluetooth/bluetooth-next/c/3c7ec89ab45e
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+>
+> regards,
+> dan carpenter
