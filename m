@@ -2,47 +2,109 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0183CCA485
-	for <kernel-janitors@archiver.kernel.org>; Wed, 20 Jul 2022 22:58:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C84BCC43334
+	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Jul 2022 01:09:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231296AbiGTW6I (ORCPT
+        id S231228AbiGUBJP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Jul 2022 18:58:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49646 "EHLO
+        Wed, 20 Jul 2022 21:09:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbiGTW6H (ORCPT
+        with ESMTP id S231146AbiGUBJM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Jul 2022 18:58:07 -0400
-Received: from mail.netfilter.org (mail.netfilter.org [217.70.188.207])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DD2FF58854;
-        Wed, 20 Jul 2022 15:58:06 -0700 (PDT)
-Date:   Thu, 21 Jul 2022 00:58:02 +0200
-From:   Pablo Neira Ayuso <pablo@netfilter.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
-        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org
-Subject: Re: [PATCH] netfilter: ipvs: Use the bitmap API to allocate bitmaps
-Message-ID: <YtiIekld0M+bDXQa@salvia>
-References: <420d8b70560e8711726ff639f0a55364e212ff26.1656962678.git.christophe.jaillet@wanadoo.fr>
+        Wed, 20 Jul 2022 21:09:12 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25B5E753B0;
+        Wed, 20 Jul 2022 18:09:11 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id l124so338201pfl.8;
+        Wed, 20 Jul 2022 18:09:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0ZYFWzKGzAB8/eYekT+g2mD9inXTQAbnlNbmq03r374=;
+        b=eIkgq02SGpHqjd/pBkcMCeE3520yFITeIMJc/90z8VXljXIo4qfiYkmZ+fMPtYsC6f
+         yV2VPXYh5GaxAlqdp0yq8g3dQvUZJQE8J16G3rV9i5ifGkWifL0M9CrluZqgghrxg6v7
+         XVWbeATRteCsEsl8bPPfUn0OTyXZu5AHGGkDl12f8/dxDggTJwohmNpDyfL6dHidg6yp
+         3PsNs1nb682zBeKHFR89ET4lwto5Qmk6SDa442wFTmcNq2kWCZF57ewHCIFyXygCWbkH
+         fRHbu1z/R2/rSEfcLGBiXB2jRxG9cQpmUTn8Oiz+zPRAowIky0DRmUgLw4oIPCsaYRyc
+         E2qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0ZYFWzKGzAB8/eYekT+g2mD9inXTQAbnlNbmq03r374=;
+        b=VhSMp+4BQxLMJqd7N51md085uvu3dzkyJI0fqPN7S04LxZTXis4jlAlY8Ae6jze+Vk
+         tHAFyjn4FvQKyBi+4ZuctVXsUI1te7G4Za8MCXx4s2ZqJ8em59oVkROHaGy7yydA30Za
+         JoGm6qahbyY81FBfsQAMrS/cRZtD4mDSTmQyewnH90dGcEOsxCpCUpOj21wwix7pcua/
+         6VKRUwMN/ph28l4rCZH4L6gxa78n85sci5/ruDXGDpCwsuVoDMcCTTqYzdI/qCuFh6ue
+         XYREjaP3e0WUOfz+k2E/od/r1faBSaHneObcnRvvftsbK1KkgNMcV2ekv5J05exQaHtA
+         mdFQ==
+X-Gm-Message-State: AJIora/tcSSN/M1iXBr3o9UjkCA+WFr1c301476SYoXJS+z3XjB7s3vP
+        zbDUIGvEUEqXpF7n7vkbXdoJtDbRKSRWInoFtUM=
+X-Google-Smtp-Source: AGRyM1vW48JwMh27yBs++6AUqzAGU9wpphasnTi/izAwOFDJ7JJHNjqPXx5rqT4NmpWrlMi0Y1qjad7oMKi97a8v+iM=
+X-Received: by 2002:a63:481a:0:b0:411:7951:cbcd with SMTP id
+ v26-20020a63481a000000b004117951cbcdmr35813300pga.66.1658365750467; Wed, 20
+ Jul 2022 18:09:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <420d8b70560e8711726ff639f0a55364e212ff26.1656962678.git.christophe.jaillet@wanadoo.fr>
+References: <YtZ8mKJmktA2GaHB@kili>
+In-Reply-To: <YtZ8mKJmktA2GaHB@kili>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Thu, 21 Jul 2022 06:38:59 +0530
+Message-ID: <CAFqt6zY4+=LASCQRCEg_cjEeSw+gJtYMLJtJ1pWL6XPaPB0FOQ@mail.gmail.com>
+Subject: Re: [PATCH] selftests/vm: silence uninitialized variable warning
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>, Linux-MM <linux-mm@kvack.org>,
+        linux-kselftest <linux-kselftest@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jul 04, 2022 at 09:24:46PM +0200, Christophe JAILLET wrote:
-> Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
-> 
-> It is less verbose and it improves the semantic.
+On Tue, Jul 19, 2022 at 3:13 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> This code just reads from memory without caring about the data itself.
 
-Applied to nf-next, thanks
+The caller has put an attempt to at least validate the address read
+from mmap() before
+passing it to read_fault_pages() which looks correct. I think this
+line is not needed.
+
+> However static checkers complain that "tmp" is never properly
+> initialized.  Initialize it to zero and change the name to "dummy" to
+> show that we don't care about the value stored in it.
+>
+> Fixes: c4b6cb884011 ("selftests/vm: add hugetlb madvise MADV_DONTNEED MADV_REMOVE test")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Acked-by: Souptick Joarder (HPE) <jrdr.linux@gmail.com>
+
+> ---
+>  tools/testing/selftests/vm/hugetlb-madvise.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/tools/testing/selftests/vm/hugetlb-madvise.c b/tools/testing/selftests/vm/hugetlb-madvise.c
+> index 6c6af40f5747..3c9943131881 100644
+> --- a/tools/testing/selftests/vm/hugetlb-madvise.c
+> +++ b/tools/testing/selftests/vm/hugetlb-madvise.c
+> @@ -89,10 +89,11 @@ void write_fault_pages(void *addr, unsigned long nr_pages)
+>
+>  void read_fault_pages(void *addr, unsigned long nr_pages)
+>  {
+> -       unsigned long i, tmp;
+> +       unsigned long dummy = 0;
+> +       unsigned long i;
+>
+>         for (i = 0; i < nr_pages; i++)
+> -               tmp += *((unsigned long *)(addr + (i * huge_page_size)));
+> +               dummy += *((unsigned long *)(addr + (i * huge_page_size)));
+>  }
+>
+>  int main(int argc, char **argv)
+> --
+> 2.35.1
+>
+>
