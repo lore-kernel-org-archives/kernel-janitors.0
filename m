@@ -2,72 +2,43 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0610C43334
-	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Jul 2022 01:53:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7683C43334
+	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Jul 2022 05:41:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231304AbiGUBxZ (ORCPT
+        id S230334AbiGUFli (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Jul 2022 21:53:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49118 "EHLO
+        Thu, 21 Jul 2022 01:41:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229906AbiGUBxY (ORCPT
+        with ESMTP id S229569AbiGUFlh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Jul 2022 21:53:24 -0400
-Received: from out30-43.freemail.mail.aliyun.com (out30-43.freemail.mail.aliyun.com [115.124.30.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E61CC13F05;
-        Wed, 20 Jul 2022 18:53:22 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R731e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045170;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VJzMVEo_1658368398;
-Received: from 30.227.74.51(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0VJzMVEo_1658368398)
-          by smtp.aliyun-inc.com;
-          Thu, 21 Jul 2022 09:53:19 +0800
-Message-ID: <20aa3fe4-0ad1-80b6-ca64-b0bcba884b49@linux.alibaba.com>
-Date:   Thu, 21 Jul 2022 09:53:18 +0800
+        Thu, 21 Jul 2022 01:41:37 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95C253B941;
+        Wed, 20 Jul 2022 22:41:35 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id A134B68AFE; Thu, 21 Jul 2022 07:41:32 +0200 (CEST)
+Date:   Thu, 21 Jul 2022 07:41:32 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Hannes Reinecke <hare@suse.de>, Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        linux-nvme@lists.infradead.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvmet-auth: select the intended
+ CRYPTO_DH_RFC7919_GROUPS
+Message-ID: <20220721054132.GB20003@lst.de>
+References: <20220720113717.31854-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.11.0
-Subject: Re: [PATCH 2/3] ocfs2: Remove a useless spinlock
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     David.Laight@ACULAB.COM, jlbec@evilplan.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mark@fasheh.com, ocfs2-devel@oss.oracle.com
-References: <bd6796635e58f9c47cf857573c3b9474a00ce26a.1658224839.git.christophe.jaillet@wanadoo.fr>
- <8ba7004d330cbe5f626539a8a3bff696d0c4285e.1658224839.git.christophe.jaillet@wanadoo.fr>
- <7b644e5d32d74d3d90dfc5b1786ae5b9@AcuMS.aculab.com>
- <29c3fbdd-7695-46c5-bb75-fe358c574ab3@wanadoo.fr>
- <07c924de-78bf-c993-ce73-635af71f4edd@linux.alibaba.com>
- <f313cb6f-de75-2447-eebc-5c240bc243a2@wanadoo.fr>
- <65e6bbcb-2c33-2e43-1826-a62387572310@linux.alibaba.com>
- <a66632a1-9cde-1b3c-afa9-8f63bd4a9cf0@wanadoo.fr>
-From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <a66632a1-9cde-1b3c-afa9-8f63bd4a9cf0@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220720113717.31854-1-lukas.bulwahn@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-
-
-On 7/20/22 9:32 PM, Christophe JAILLET wrote:
-> Le 20/07/2022 à 11:48, Joseph Qi a écrit :
->>
->> These code are introduced long time ago...
->> Refer to commit b4df6ed8db0c "[PATCH] ocfs2: fix orphan recovery
->> deadlock", I guess it plays a role 'barrier' and make sure test node map
->> is executed prior than signal orphan recovery thread. In other words, to
->> serialize evict inode and orphan recovery.
->>
->> Thanks,
->> Joseph
->>
-> 
-> Ok, so just leave it as-is.
-> 
-> Should I resend the serie without this patch, or can 1/3 and 3/3 be applied as-is?
-> 
-
-If you don't mind, please resend with my rvb and involve akpm as well.
-
 Thanks,
-Joseph
+
+applied to nvme-5.20.
