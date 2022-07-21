@@ -2,117 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ECD8CCA479
-	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Jul 2022 06:52:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94ABDC43334
+	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Jul 2022 07:27:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231940AbiGUGwa (ORCPT
+        id S232410AbiGUH1c (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 21 Jul 2022 02:52:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39936 "EHLO
+        Thu, 21 Jul 2022 03:27:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231890AbiGUGwa (ORCPT
+        with ESMTP id S229632AbiGUH1a (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 21 Jul 2022 02:52:30 -0400
-Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A69645986;
-        Wed, 20 Jul 2022 23:52:29 -0700 (PDT)
-Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-2ef5380669cso7485717b3.9;
-        Wed, 20 Jul 2022 23:52:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Jgg9rGf43HqONHkXh2HTUDVIWowHE0j+MEj4elq8HBU=;
-        b=YhYtUggpWoK5/IgnxwPRU86N/OA28sUtY1zsyxQnrWzTtUvthi1I+SuuIcKBxnTpWF
-         7l4/WtdGjmEyQaVJi/lAQ35ISoAKX6USn6QaKtIqjfHUrVCjhOcf/8K0xgUtocKqOJzw
-         R/0NeOjUXy0FF0l9gcIGXTWMZ6Cr8emocvdJfZp74A2yeNawFgKWAvD4Vt1dqemCnnX2
-         ZzwpOGbMAfOhcZpEGJC8r6RLB5lacXSRUpX2RifCMqBp1AJFIdvp694/77bHzr++vp7j
-         WV0Y1psdPbceOFSg7jYe4af16RoFkxb7InoQa3ga3WNjznruhPypz4+9QwtdKDwwGlW0
-         4TVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Jgg9rGf43HqONHkXh2HTUDVIWowHE0j+MEj4elq8HBU=;
-        b=fiyqMNehT5fTo6qNWDTGPerZnXCwlVNG85tRteMYt1k+nmloibxgfkpaYeocl5CXVk
-         BNQD8iZlR7F4bu6GrzjhtAR0mzaTNZ2l4F738CloEXNsQp+Ci8JctcM5wexusN/2BzU4
-         B9V0gVAvpTP7InKqoOxo+qTYjyD7SkR9PX83EOSt5a2d2PHD071LJYELIBmnUaj7nsgy
-         N1CKueVa16YtuHX0n/rUbm+HYjYaML1R5rXBa2+g7GoGmg47hExlHCZIALxXIh3W9DMU
-         UEJAdh0rXha5Qhu3GqDB0lrvTzIA/Qk+LhdIn1jT9oiBNjpGKi95+qShWdNpZWMeRxF+
-         92gQ==
-X-Gm-Message-State: AJIora8cNTg1hGNk1n8FjhrfYfIdf+PWpvaawOTiiRsVbKHXaQ77bQkV
-        D841bCnv0HDRDY2MvounODib+JDvamxBo87IRis=
-X-Google-Smtp-Source: AGRyM1voSX2Y3Y6IgHU5wEb0mgCtOm2aFWUUnYKRxA/BGm1rsVVoyVkGm3nRRMlIxXh8fssuiL8DLA2yON/devKvcIA=
-X-Received: by 2002:a81:1905:0:b0:31e:6a62:ebe6 with SMTP id
- 5-20020a811905000000b0031e6a62ebe6mr6905604ywz.237.1658386348221; Wed, 20 Jul
- 2022 23:52:28 -0700 (PDT)
+        Thu, 21 Jul 2022 03:27:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FBED7C18F;
+        Thu, 21 Jul 2022 00:27:28 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B15CE61E1E;
+        Thu, 21 Jul 2022 07:27:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92EA4C3411E;
+        Thu, 21 Jul 2022 07:27:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658388447;
+        bh=E86sEscD6n6MV3EJ+eMBIPzwz8N7mGyl3gJcNS5o4qk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gMsgaZvA9OzBQVa8Y1PrOISNc5G4qb8fuY93pILVCU7xEm33Y1m3mQR230WSGrJNw
+         QjClB4bR/Ea5SpTrpmWfue53Vu49whzZTdUmjGMavifvp/PjTZE35oYnoOWVnOGAIx
+         McUiSRCeiDxwF63XdWWMqxFN/b47m3zfrkfSy9QeABWKnlwr/C9pUbzjBKs++0xgI4
+         cn5iwQT2G+dIq19e24dBVvcXQtQeIedaSqE2B6zfPWC6bcDRoyBkFV24Qw5F3u5DYe
+         UfvG9CM8PBQ3lSs9opSn+gZGbJ49NOyW+MqRj7mzJrCQ3AywChfJa56FnjmawSKZHR
+         dijjGUtm7gfdA==
+Date:   Thu, 21 Jul 2022 10:27:23 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Cheng Xu <chengyou@linux.alibaba.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Kai Shen <kaishen@linux.alibaba.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Subject: Re: [PATCH 1/2] RDMA/erdma: Use the bitmap API to allocate bitmaps
+Message-ID: <Ytj/27UCySaronBO@unreal>
+References: <2764b6e204b32ef8c198a5efaf6c6bc4119f7665.1657301795.git.christophe.jaillet@wanadoo.fr>
+ <670c57a2-6432-80c9-cdc0-496d836d7bf0@linux.alibaba.com>
+ <20220712090110.GL2338@kadam>
+ <20220719125434.GG5049@ziepe.ca>
+ <20220719130125.GB2316@kadam>
+ <7075158a-64c1-8f69-7de1-9a60ee914f05@wanadoo.fr>
 MIME-Version: 1.0
-References: <CAK8P3a12-atmqjtjqi-RhFXH2Kwa-hxYcxy3Ftz2YjY5yyPHqg@mail.gmail.com>
- <mhng-f5938c9b-7fc1-4b0c-9449-7dd1431f5446@palmerdabbelt-glaptop>
- <CAKXUXMzpWsdKYbcu5MxvrAEMLHv4_2OGv2bRYEsQaze5trUSiQ@mail.gmail.com>
- <CAK8P3a32m42gT9qz+Ldvr8okYGOc=kKeoJTGNWyYT71N8tJfEA@mail.gmail.com>
- <4ff47e50-8702-1177-612b-73d9700e47c5@microchip.com> <CAK8P3a01x_ETchX2Vwm9oNaFJDhVZEu+G-2vRwegqKkMe54m6g@mail.gmail.com>
- <CAKXUXMxOUs31SkGb0JD=nmHxgFy4tQ5vn6yD6ivgRpbSAxm7mA@mail.gmail.com> <CAK8P3a3K8PnPF7KEEVb=hquZsjXiatCkyXe9B_RLBcse2jU5LQ@mail.gmail.com>
-In-Reply-To: <CAK8P3a3K8PnPF7KEEVb=hquZsjXiatCkyXe9B_RLBcse2jU5LQ@mail.gmail.com>
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Thu, 21 Jul 2022 08:52:17 +0200
-Message-ID: <CAKXUXMyEG1Sc18NuhONWHuQWvTfFHNPrn4wJf=v9jMSpLGfP+Q@mail.gmail.com>
-Subject: Re: [PATCH] asm-generic: correct reference to GENERIC_LIB_DEVMEM_IS_ALLOWED
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Conor Dooley <Conor.Dooley@microchip.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Palmer Dabbelt <palmerdabbelt@google.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7075158a-64c1-8f69-7de1-9a60ee914f05@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jul 20, 2022 at 12:50 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Thu, Jul 7, 2022 at 4:41 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> > On Thu, Jul 7, 2022 at 3:07 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > > On Thu, Jul 7, 2022 at 2:20 PM <Conor.Dooley@microchip.com> wrote:
->
-> > > lkft just found a build failure:
-> > >
-> > > https://gitlab.com/Linaro/lkft/users/arnd.bergmann/asm-generic/-/jobs/2691154818
-> > >
-> > > I have not investigated what went wrong, but it does look like an actual
-> > > regression, so I'll wait for Lukas to follow up with a new version of the patch.
-> >
-> > Thanks for your testing. I will look into it. Probably it is due to
-> > some more rigor during builds (-Werror and new warning types in the
-> > default build) since I proposed the patch in October 2021. That should
-> > be easy to fix, but let us see. I will send a PATCH v2 soon.
->
-> Any update on this? I have another bugfix for asm-generic now and was planning
-> to send a pull request with both. If you don't have the updated patch
-> ready yet, this
-> will have to go into 5.21 instead.
->
+On Tue, Jul 19, 2022 at 05:36:36PM +0200, Christophe JAILLET wrote:
+> Le 19/07/2022 à 15:01, Dan Carpenter a écrit :
+> > On Tue, Jul 19, 2022 at 09:54:34AM -0300, Jason Gunthorpe wrote:
+> > > On Tue, Jul 12, 2022 at 12:01:10PM +0300, Dan Carpenter wrote:
+> > > 
+> > > > Best not to use any auto-formatting tools.  They are all bad.
+> > > 
+> > > Have you tried clang-format? I wouldn't call it bad..
+> > 
+> > I prefered Christophe's formatting to clang's.  ;)
+> > 
+> > regards,
+> > dan carpenter
+> > 
+> > 
+> 
+> Hi,
+> 
+> checkpatch.pl only gives hints and should not blindly be taken as THE
+> reference, but:
+> 
+>   ./scripts/checkpatch.pl -f --strict
+> drivers/infiniband/hw/erdma/erdma_cmdq.c
+> 
+> gives:
+>   CHECK: Lines should not end with a '('
+>   #81: FILE: drivers/infiniband/hw/erdma/erdma_cmdq.c:81:
+>   +	cmdq->comp_wait_bitmap = devm_bitmap_zalloc(
+> 
+>   total: 0 errors, 0 warnings, 1 checks, 493 lines checked
+> 
+> (some other files in the same directory also have some checkpatch
+> warning/error)
+> 
+> 
+> 
+> Don't know if it may be an issue for maintainers.
 
-It is still on my TODO list for revisiting, but I had other work on
-patches taking me longer than originally expected. I now moved this
-patch revisiting to the top of my TODO list; so, I will certainly look
-into this today. So far, I have not set up an arm64 build on my local
-machine and have not used tuxbuild (which should simplify all this
-setup)---the typical challenges for a "part-time kernel
-contributor/janitor"...
+We don't run with --strict. It is indeed very subjective.
 
-Arnd, I will certainly let you know by this evening (European time
-zone) how far I got. If that is already too late, it is also perfectly
-fine if this goes in 5.21 instead, but I will try my best to make it
-5.20 material.
+Thanks
 
-Thanks for the patience so far.
-
-
-Best regards,
-
-Lukas
-
->       Arnd
+> 
+> CJ
