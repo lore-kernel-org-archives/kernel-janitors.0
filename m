@@ -2,69 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6FBFC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Jul 2022 20:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2096CC433EF
+	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Jul 2022 20:59:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232658AbiGUUuA (ORCPT
+        id S233608AbiGUU7C (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 21 Jul 2022 16:50:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42110 "EHLO
+        Thu, 21 Jul 2022 16:59:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232691AbiGUUt5 (ORCPT
+        with ESMTP id S232834AbiGUU7C (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 21 Jul 2022 16:49:57 -0400
-Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EE708FD64
-        for <kernel-janitors@vger.kernel.org>; Thu, 21 Jul 2022 13:49:57 -0700 (PDT)
+        Thu, 21 Jul 2022 16:59:02 -0400
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60F46904DC
+        for <kernel-janitors@vger.kernel.org>; Thu, 21 Jul 2022 13:59:01 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id Ed7FomcBioEdDEd7FoD0CQ; Thu, 21 Jul 2022 22:49:55 +0200
+        id EdG2oNF3UGDTnEdG2ovb82; Thu, 21 Jul 2022 22:58:59 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 21 Jul 2022 22:49:55 +0200
+X-ME-Date: Thu, 21 Jul 2022 22:58:59 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     akpm@linux-foundation.org, Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
+To:     Yang Shen <shenyang39@huawei.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        ocfs2-devel@oss.oracle.com
-Subject: [PATCH v2 3/3] ocfs2: Fix a typo in a comment
-Date:   Thu, 21 Jul 2022 22:49:48 +0200
-Message-Id: <4d4a6786e8ad522bfad6d2401b7f6634f8af0e5d.1658436259.git.christophe.jaillet@wanadoo.fr>
+        linux-crypto@vger.kernel.org
+Subject: [PATCH v2] crypto: hisilicon/zip: Use the bitmap API to allocate bitmaps
+Date:   Thu, 21 Jul 2022 22:58:53 +0200
+Message-Id: <456a8b00720d603221c8329c19e38b9f4d96d15a.1658437112.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1658436259.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1658436259.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-s/heartbaet/heartbeat
+Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
+It is less verbose and it improves the semantic.
+
+While at it, add an explicit include <linux/bitmap.h>.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 v1 -> v2
-- this patch is new in the serie
+- add the missing include <linux/bitmap.h>
 ---
- fs/ocfs2/heartbeat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/hisilicon/zip/zip_crypto.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/fs/ocfs2/heartbeat.c b/fs/ocfs2/heartbeat.c
-index dd29d60af154..22da768e65b7 100644
---- a/fs/ocfs2/heartbeat.c
-+++ b/fs/ocfs2/heartbeat.c
-@@ -2,7 +2,7 @@
- /*
-  * heartbeat.c
-  *
-- * Register ourselves with the heartbaet service, keep our node maps
-+ * Register ourselves with the heartbeat service, keep our node maps
-  * up to date, and fire off recovery when needed.
-  *
-  * Copyright (C) 2002, 2004 Oracle.  All rights reserved.
+diff --git a/drivers/crypto/hisilicon/zip/zip_crypto.c b/drivers/crypto/hisilicon/zip/zip_crypto.c
+index 67869513e48c..ad35434a3fdb 100644
+--- a/drivers/crypto/hisilicon/zip/zip_crypto.c
++++ b/drivers/crypto/hisilicon/zip/zip_crypto.c
+@@ -2,6 +2,7 @@
+ /* Copyright (c) 2019 HiSilicon Limited. */
+ #include <crypto/internal/acompress.h>
+ #include <linux/bitfield.h>
++#include <linux/bitmap.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/scatterlist.h>
+ #include "zip.h"
+@@ -606,8 +607,7 @@ static int hisi_zip_create_req_q(struct hisi_zip_ctx *ctx)
+ 		req_q = &ctx->qp_ctx[i].req_q;
+ 		req_q->size = QM_Q_DEPTH;
+ 
+-		req_q->req_bitmap = kcalloc(BITS_TO_LONGS(req_q->size),
+-					    sizeof(long), GFP_KERNEL);
++		req_q->req_bitmap = bitmap_zalloc(req_q->size, GFP_KERNEL);
+ 		if (!req_q->req_bitmap) {
+ 			ret = -ENOMEM;
+ 			if (i == 0)
+@@ -631,11 +631,11 @@ static int hisi_zip_create_req_q(struct hisi_zip_ctx *ctx)
+ 	return 0;
+ 
+ err_free_loop1:
+-	kfree(ctx->qp_ctx[HZIP_QPC_DECOMP].req_q.req_bitmap);
++	bitmap_free(ctx->qp_ctx[HZIP_QPC_DECOMP].req_q.req_bitmap);
+ err_free_loop0:
+ 	kfree(ctx->qp_ctx[HZIP_QPC_COMP].req_q.q);
+ err_free_bitmap:
+-	kfree(ctx->qp_ctx[HZIP_QPC_COMP].req_q.req_bitmap);
++	bitmap_free(ctx->qp_ctx[HZIP_QPC_COMP].req_q.req_bitmap);
+ 	return ret;
+ }
+ 
+@@ -645,7 +645,7 @@ static void hisi_zip_release_req_q(struct hisi_zip_ctx *ctx)
+ 
+ 	for (i = 0; i < HZIP_CTX_Q_NUM; i++) {
+ 		kfree(ctx->qp_ctx[i].req_q.q);
+-		kfree(ctx->qp_ctx[i].req_q.req_bitmap);
++		bitmap_free(ctx->qp_ctx[i].req_q.req_bitmap);
+ 	}
+ }
+ 
 -- 
 2.34.1
 
