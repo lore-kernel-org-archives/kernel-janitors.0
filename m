@@ -2,109 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C84BCC43334
-	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Jul 2022 01:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0610C43334
+	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Jul 2022 01:53:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231228AbiGUBJP (ORCPT
+        id S231304AbiGUBxZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 20 Jul 2022 21:09:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54678 "EHLO
+        Wed, 20 Jul 2022 21:53:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231146AbiGUBJM (ORCPT
+        with ESMTP id S229906AbiGUBxY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 20 Jul 2022 21:09:12 -0400
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25B5E753B0;
-        Wed, 20 Jul 2022 18:09:11 -0700 (PDT)
-Received: by mail-pf1-x42e.google.com with SMTP id l124so338201pfl.8;
-        Wed, 20 Jul 2022 18:09:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0ZYFWzKGzAB8/eYekT+g2mD9inXTQAbnlNbmq03r374=;
-        b=eIkgq02SGpHqjd/pBkcMCeE3520yFITeIMJc/90z8VXljXIo4qfiYkmZ+fMPtYsC6f
-         yV2VPXYh5GaxAlqdp0yq8g3dQvUZJQE8J16G3rV9i5ifGkWifL0M9CrluZqgghrxg6v7
-         XVWbeATRteCsEsl8bPPfUn0OTyXZu5AHGGkDl12f8/dxDggTJwohmNpDyfL6dHidg6yp
-         3PsNs1nb682zBeKHFR89ET4lwto5Qmk6SDa442wFTmcNq2kWCZF57ewHCIFyXygCWbkH
-         fRHbu1z/R2/rSEfcLGBiXB2jRxG9cQpmUTn8Oiz+zPRAowIky0DRmUgLw4oIPCsaYRyc
-         E2qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0ZYFWzKGzAB8/eYekT+g2mD9inXTQAbnlNbmq03r374=;
-        b=VhSMp+4BQxLMJqd7N51md085uvu3dzkyJI0fqPN7S04LxZTXis4jlAlY8Ae6jze+Vk
-         tHAFyjn4FvQKyBi+4ZuctVXsUI1te7G4Za8MCXx4s2ZqJ8em59oVkROHaGy7yydA30Za
-         JoGm6qahbyY81FBfsQAMrS/cRZtD4mDSTmQyewnH90dGcEOsxCpCUpOj21wwix7pcua/
-         6VKRUwMN/ph28l4rCZH4L6gxa78n85sci5/ruDXGDpCwsuVoDMcCTTqYzdI/qCuFh6ue
-         XYREjaP3e0WUOfz+k2E/od/r1faBSaHneObcnRvvftsbK1KkgNMcV2ekv5J05exQaHtA
-         mdFQ==
-X-Gm-Message-State: AJIora/tcSSN/M1iXBr3o9UjkCA+WFr1c301476SYoXJS+z3XjB7s3vP
-        zbDUIGvEUEqXpF7n7vkbXdoJtDbRKSRWInoFtUM=
-X-Google-Smtp-Source: AGRyM1vW48JwMh27yBs++6AUqzAGU9wpphasnTi/izAwOFDJ7JJHNjqPXx5rqT4NmpWrlMi0Y1qjad7oMKi97a8v+iM=
-X-Received: by 2002:a63:481a:0:b0:411:7951:cbcd with SMTP id
- v26-20020a63481a000000b004117951cbcdmr35813300pga.66.1658365750467; Wed, 20
- Jul 2022 18:09:10 -0700 (PDT)
+        Wed, 20 Jul 2022 21:53:24 -0400
+Received: from out30-43.freemail.mail.aliyun.com (out30-43.freemail.mail.aliyun.com [115.124.30.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E61CC13F05;
+        Wed, 20 Jul 2022 18:53:22 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R731e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045170;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VJzMVEo_1658368398;
+Received: from 30.227.74.51(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0VJzMVEo_1658368398)
+          by smtp.aliyun-inc.com;
+          Thu, 21 Jul 2022 09:53:19 +0800
+Message-ID: <20aa3fe4-0ad1-80b6-ca64-b0bcba884b49@linux.alibaba.com>
+Date:   Thu, 21 Jul 2022 09:53:18 +0800
 MIME-Version: 1.0
-References: <YtZ8mKJmktA2GaHB@kili>
-In-Reply-To: <YtZ8mKJmktA2GaHB@kili>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Thu, 21 Jul 2022 06:38:59 +0530
-Message-ID: <CAFqt6zY4+=LASCQRCEg_cjEeSw+gJtYMLJtJ1pWL6XPaPB0FOQ@mail.gmail.com>
-Subject: Re: [PATCH] selftests/vm: silence uninitialized variable warning
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Shuah Khan <shuah@kernel.org>, Linux-MM <linux-mm@kvack.org>,
-        linux-kselftest <linux-kselftest@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.11.0
+Subject: Re: [PATCH 2/3] ocfs2: Remove a useless spinlock
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     David.Laight@ACULAB.COM, jlbec@evilplan.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mark@fasheh.com, ocfs2-devel@oss.oracle.com
+References: <bd6796635e58f9c47cf857573c3b9474a00ce26a.1658224839.git.christophe.jaillet@wanadoo.fr>
+ <8ba7004d330cbe5f626539a8a3bff696d0c4285e.1658224839.git.christophe.jaillet@wanadoo.fr>
+ <7b644e5d32d74d3d90dfc5b1786ae5b9@AcuMS.aculab.com>
+ <29c3fbdd-7695-46c5-bb75-fe358c574ab3@wanadoo.fr>
+ <07c924de-78bf-c993-ce73-635af71f4edd@linux.alibaba.com>
+ <f313cb6f-de75-2447-eebc-5c240bc243a2@wanadoo.fr>
+ <65e6bbcb-2c33-2e43-1826-a62387572310@linux.alibaba.com>
+ <a66632a1-9cde-1b3c-afa9-8f63bd4a9cf0@wanadoo.fr>
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <a66632a1-9cde-1b3c-afa9-8f63bd4a9cf0@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Jul 19, 2022 at 3:13 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> This code just reads from memory without caring about the data itself.
 
-The caller has put an attempt to at least validate the address read
-from mmap() before
-passing it to read_fault_pages() which looks correct. I think this
-line is not needed.
 
-> However static checkers complain that "tmp" is never properly
-> initialized.  Initialize it to zero and change the name to "dummy" to
-> show that we don't care about the value stored in it.
->
-> Fixes: c4b6cb884011 ("selftests/vm: add hugetlb madvise MADV_DONTNEED MADV_REMOVE test")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On 7/20/22 9:32 PM, Christophe JAILLET wrote:
+> Le 20/07/2022 à 11:48, Joseph Qi a écrit :
+>>
+>> These code are introduced long time ago...
+>> Refer to commit b4df6ed8db0c "[PATCH] ocfs2: fix orphan recovery
+>> deadlock", I guess it plays a role 'barrier' and make sure test node map
+>> is executed prior than signal orphan recovery thread. In other words, to
+>> serialize evict inode and orphan recovery.
+>>
+>> Thanks,
+>> Joseph
+>>
+> 
+> Ok, so just leave it as-is.
+> 
+> Should I resend the serie without this patch, or can 1/3 and 3/3 be applied as-is?
+> 
 
-Acked-by: Souptick Joarder (HPE) <jrdr.linux@gmail.com>
+If you don't mind, please resend with my rvb and involve akpm as well.
 
-> ---
->  tools/testing/selftests/vm/hugetlb-madvise.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/testing/selftests/vm/hugetlb-madvise.c b/tools/testing/selftests/vm/hugetlb-madvise.c
-> index 6c6af40f5747..3c9943131881 100644
-> --- a/tools/testing/selftests/vm/hugetlb-madvise.c
-> +++ b/tools/testing/selftests/vm/hugetlb-madvise.c
-> @@ -89,10 +89,11 @@ void write_fault_pages(void *addr, unsigned long nr_pages)
->
->  void read_fault_pages(void *addr, unsigned long nr_pages)
->  {
-> -       unsigned long i, tmp;
-> +       unsigned long dummy = 0;
-> +       unsigned long i;
->
->         for (i = 0; i < nr_pages; i++)
-> -               tmp += *((unsigned long *)(addr + (i * huge_page_size)));
-> +               dummy += *((unsigned long *)(addr + (i * huge_page_size)));
->  }
->
->  int main(int argc, char **argv)
-> --
-> 2.35.1
->
->
+Thanks,
+Joseph
