@@ -2,103 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2096CC433EF
-	for <kernel-janitors@archiver.kernel.org>; Thu, 21 Jul 2022 20:59:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA7BEC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Jul 2022 01:33:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233608AbiGUU7C (ORCPT
+        id S229682AbiGVBd2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 21 Jul 2022 16:59:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49050 "EHLO
+        Thu, 21 Jul 2022 21:33:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232834AbiGUU7C (ORCPT
+        with ESMTP id S229441AbiGVBd1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 21 Jul 2022 16:59:02 -0400
-Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60F46904DC
-        for <kernel-janitors@vger.kernel.org>; Thu, 21 Jul 2022 13:59:01 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id EdG2oNF3UGDTnEdG2ovb82; Thu, 21 Jul 2022 22:58:59 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Thu, 21 Jul 2022 22:58:59 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Yang Shen <shenyang39@huawei.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-crypto@vger.kernel.org
-Subject: [PATCH v2] crypto: hisilicon/zip: Use the bitmap API to allocate bitmaps
-Date:   Thu, 21 Jul 2022 22:58:53 +0200
-Message-Id: <456a8b00720d603221c8329c19e38b9f4d96d15a.1658437112.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Thu, 21 Jul 2022 21:33:27 -0400
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD33915FDB;
+        Thu, 21 Jul 2022 18:33:25 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046060;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VK2qCxt_1658453602;
+Received: from 30.227.66.27(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0VK2qCxt_1658453602)
+          by smtp.aliyun-inc.com;
+          Fri, 22 Jul 2022 09:33:22 +0800
+Message-ID: <9e8b39ec-bfda-2e60-2626-f55ec95bd268@linux.alibaba.com>
+Date:   Fri, 22 Jul 2022 09:33:22 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.11.0
+Subject: Re: [PATCH v2 3/3] ocfs2: Fix a typo in a comment
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        akpm@linux-foundation.org, Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com
+References: <cover.1658436259.git.christophe.jaillet@wanadoo.fr>
+ <4d4a6786e8ad522bfad6d2401b7f6634f8af0e5d.1658436259.git.christophe.jaillet@wanadoo.fr>
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <4d4a6786e8ad522bfad6d2401b7f6634f8af0e5d.1658436259.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use bitmap_zalloc()/bitmap_free() instead of hand-writing them.
-It is less verbose and it improves the semantic.
 
-While at it, add an explicit include <linux/bitmap.h>.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-v1 -> v2
-- add the missing include <linux/bitmap.h>
----
- drivers/crypto/hisilicon/zip/zip_crypto.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+On 7/22/22 4:49 AM, Christophe JAILLET wrote:
+> s/heartbaet/heartbeat
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-diff --git a/drivers/crypto/hisilicon/zip/zip_crypto.c b/drivers/crypto/hisilicon/zip/zip_crypto.c
-index 67869513e48c..ad35434a3fdb 100644
---- a/drivers/crypto/hisilicon/zip/zip_crypto.c
-+++ b/drivers/crypto/hisilicon/zip/zip_crypto.c
-@@ -2,6 +2,7 @@
- /* Copyright (c) 2019 HiSilicon Limited. */
- #include <crypto/internal/acompress.h>
- #include <linux/bitfield.h>
-+#include <linux/bitmap.h>
- #include <linux/dma-mapping.h>
- #include <linux/scatterlist.h>
- #include "zip.h"
-@@ -606,8 +607,7 @@ static int hisi_zip_create_req_q(struct hisi_zip_ctx *ctx)
- 		req_q = &ctx->qp_ctx[i].req_q;
- 		req_q->size = QM_Q_DEPTH;
- 
--		req_q->req_bitmap = kcalloc(BITS_TO_LONGS(req_q->size),
--					    sizeof(long), GFP_KERNEL);
-+		req_q->req_bitmap = bitmap_zalloc(req_q->size, GFP_KERNEL);
- 		if (!req_q->req_bitmap) {
- 			ret = -ENOMEM;
- 			if (i == 0)
-@@ -631,11 +631,11 @@ static int hisi_zip_create_req_q(struct hisi_zip_ctx *ctx)
- 	return 0;
- 
- err_free_loop1:
--	kfree(ctx->qp_ctx[HZIP_QPC_DECOMP].req_q.req_bitmap);
-+	bitmap_free(ctx->qp_ctx[HZIP_QPC_DECOMP].req_q.req_bitmap);
- err_free_loop0:
- 	kfree(ctx->qp_ctx[HZIP_QPC_COMP].req_q.q);
- err_free_bitmap:
--	kfree(ctx->qp_ctx[HZIP_QPC_COMP].req_q.req_bitmap);
-+	bitmap_free(ctx->qp_ctx[HZIP_QPC_COMP].req_q.req_bitmap);
- 	return ret;
- }
- 
-@@ -645,7 +645,7 @@ static void hisi_zip_release_req_q(struct hisi_zip_ctx *ctx)
- 
- 	for (i = 0; i < HZIP_CTX_Q_NUM; i++) {
- 		kfree(ctx->qp_ctx[i].req_q.q);
--		kfree(ctx->qp_ctx[i].req_q.req_bitmap);
-+		bitmap_free(ctx->qp_ctx[i].req_q.req_bitmap);
- 	}
- }
- 
--- 
-2.34.1
-
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+> ---
+> v1 -> v2
+> - this patch is new in the serie
+> ---
+>  fs/ocfs2/heartbeat.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/ocfs2/heartbeat.c b/fs/ocfs2/heartbeat.c
+> index dd29d60af154..22da768e65b7 100644
+> --- a/fs/ocfs2/heartbeat.c
+> +++ b/fs/ocfs2/heartbeat.c
+> @@ -2,7 +2,7 @@
+>  /*
+>   * heartbeat.c
+>   *
+> - * Register ourselves with the heartbaet service, keep our node maps
+> + * Register ourselves with the heartbeat service, keep our node maps
+>   * up to date, and fire off recovery when needed.
+>   *
+>   * Copyright (C) 2002, 2004 Oracle.  All rights reserved.
