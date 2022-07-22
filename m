@@ -2,105 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 041A5C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Jul 2022 15:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A77E9C43334
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Jul 2022 15:58:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235652AbiGVPRf (ORCPT
+        id S231166AbiGVP6L (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Jul 2022 11:17:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36410 "EHLO
+        Fri, 22 Jul 2022 11:58:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235585AbiGVPRe (ORCPT
+        with ESMTP id S229778AbiGVP6L (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Jul 2022 11:17:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC9F713E0A;
-        Fri, 22 Jul 2022 08:17:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4736E62155;
-        Fri, 22 Jul 2022 15:17:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F0B4C341C7;
-        Fri, 22 Jul 2022 15:17:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658503052;
-        bh=jPlHs36zPeUaSc/musyEd34dfiN7dNUrdFQXuCvn1v0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=o7RJwxnIWOilXjEk1yyNHW0M321N+yOFY4bUF08Bme8BE3ALE44JmNqTvgH+0LV2w
-         6Qt3UE2Ia6P8Mx0P2kK3p0XNm4AJIH8jb5am8QrrFhVpQO2+X9EpLPeGZ+/FDV006Y
-         q2dAR+K0OgVwv+FwebxaRuBPTre2H8A/lDkKNJI4uDEGmgcPlQ8kyHL+ih4YmfVTkJ
-         F/d+vGrWwRHwvlLvjD7kymfZAZiSsomZ4LESTwRKTGSrKy0k49wAVrR5TvAjttMoce
-         HL5xvG6nEGPlLsew9X4Sy/qwfU2D1H5hpRfsaKbXoJ5OWOKe+7sGWwoWTrRtXVk4xa
-         6Dwzo19VzWvpQ==
-Received: by mail-ot1-f41.google.com with SMTP id y10-20020a9d634a000000b006167f7ce0c5so3577382otk.0;
-        Fri, 22 Jul 2022 08:17:32 -0700 (PDT)
-X-Gm-Message-State: AJIora/AiaMqSi5KYYwCG6HaNA8/hwDFe+fq/i3UFRNZ4LbxDovvQmTJ
-        CBRJ3BFve5tcFASV3jTqZAoMbxtcjAkp/GWGPpY=
-X-Google-Smtp-Source: AGRyM1u8XGs9hxM+0KOLjDxo+lSQSUWBU2NPa1D02NySMDEqf++3khY3s8HzFnPZFuVcpc8yATJM3ZFBHK9Gwwnt/VQ=
-X-Received: by 2002:a9d:2f2a:0:b0:61c:cc5a:22b with SMTP id
- h39-20020a9d2f2a000000b0061ccc5a022bmr154201otb.71.1658503051701; Fri, 22 Jul
- 2022 08:17:31 -0700 (PDT)
+        Fri, 22 Jul 2022 11:58:11 -0400
+X-Greylist: delayed 2082 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 22 Jul 2022 08:58:07 PDT
+Received: from a1-bg02.venev.name (a1-bg02.venev.name [IPv6:2001:470:20aa::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBF1B3F316
+        for <kernel-janitors@vger.kernel.org>; Fri, 22 Jul 2022 08:58:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=venev.name;
+        s=default; h=Content-Transfer-Encoding:Message-Id:Date:Subject:To:From:
+        Content-Type:Reply-To:Sender; bh=wRzxD5OK0yZmKuNkMhrV09hlvnq/ACuUqTWh/glpdpk=
+        ; b=d75douFD9hLTpbYdz06h3DSfS3E+QtmdhxyJY/kA+po2trXmjTJTCbuTFzw0f9iK75QyCmINF
+        acEVI8p9nL8g5DYIdJjbrxuCGeADA9uCe7+duYao20y2V1M2SWaAlmYW7QQZ039XtOgop3uXj/rrh
+        b0vYfieQT9PzA5uhWLpmXzcY8iYE99gyEF2sPR7rZWmjPWvQ5+bBc+Sk6hXUZebwUNno81ZNGwT57
+        UY5rtorreKMwNiGu62P4sJkzy/iKN00hvmmflOT77Hr5NSEH9cfrGa8f9QBZMX+6xtRXY1/RovyWU
+        2WlC58w1/XCAKD1EdZp7RxcOYU3JAr6AUBOjdVR9zoGGmMV5psJcdv1sL4mYYdmz2gqdayNEvQlB3
+        Qx0U0P1UeL8Mc9uLh4lKe4LDJ1yhX5EQHKYcXxUq9k28r6tkBgnYxKrbnTI9YVFQVVaRtS/N3XCGh
+        BKbgSWaXYkntYjieWCy5W7P39/l7dGZiyHfadLETU4fVQiy16G0KzuOwkSmp+UB7nKXDBvuN3PscG
+        XNu3GDjlhjlFY1jpFLyQeXnRVS4SbHzjdohQjQrbRfusMjTCX7sr4UfV1rRw9ephAeWdH1pBA3EpW
+        ScO+GXUj0zbMC5BlJtKoIkIH8yGGO+X2Qfcf9gIQLKcRgX69wF64EbvNrKdIP7hcRdGlsCg=;
+X-Check-Malware: ok
+Received: from a1-bg02.venev.name ([213.240.239.49] helo=pmx1.venev.name)
+        by a1-bg02.venev.name with esmtps
+        id 1oEuUS-00011t-D6
+        (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+        (envelope-from <hristo@venev.name>);
+        Fri, 22 Jul 2022 15:23:10 +0000
+Received: from venev.name ([213.240.239.49])
+        by pmx1.venev.name with ESMTPSA
+        id 2K0xEc/A2mJ1DwAAdB6GMg
+        (envelope-from <hristo@venev.name>); Fri, 22 Jul 2022 15:22:56 +0000
+From:   Hristo Venev <hristo@venev.name>
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Hristo Venev <hristo@venev.name>
+Subject: [PATCH] be2net: Fix Smatch error
+Date:   Fri, 22 Jul 2022 18:20:52 +0300
+Message-Id: <20220722152050.3752-1-hristo@venev.name>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <YtlIZgG/wQtxpKMh@kili>
+References: <YtlIZgG/wQtxpKMh@kili>
 MIME-Version: 1.0
-References: <20220721100433.18286-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20220721100433.18286-1-lukas.bulwahn@gmail.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Fri, 22 Jul 2022 17:17:20 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEb5sT-KaHMUB1jU8kO69Pf97XG39xW9xDat62yxwZA1Q@mail.gmail.com>
-Message-ID: <CAMj1kXEb5sT-KaHMUB1jU8kO69Pf97XG39xW9xDat62yxwZA1Q@mail.gmail.com>
-Subject: Re: [PATCH] arm64: adjust KASLR relocation after ARCH_RANDOM removal
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 21 Jul 2022 at 12:04, Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->
-> Commit aacd149b6238 ("arm64: head: avoid relocating the kernel twice for
-> KASLR") adds the new file arch/arm64/kernel/pi/kaslr_early.c with a small
-> code part guarded by '#ifdef CONFIG_ARCH_RANDOM'.
->
-> Concurrently, commit 9592eef7c16e ("random: remove CONFIG_ARCH_RANDOM")
-> removes the config CONFIG_ARCH_RANDOM and turns all '#ifdef
-> CONFIG_ARCH_RANDOM' code parts into unconditional code parts, which is
-> generally safe to do.
->
-> Remove a needless ifdef guard after the ARCH_RANDOM removal.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+    drivers/net/ethernet/emulex/benet/be_ethtool.c:1392 be_get_module_eeprom()
+    error: uninitialized symbol 'status'.
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+When `eeprom->len == 0` and `eeprom->offset == PAGE_DATA_LEN`, we end
+up with neither of the pages being read, so `status` is left
+uninitialized.
 
-> ---
->  arch/arm64/kernel/pi/kaslr_early.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/arm64/kernel/pi/kaslr_early.c b/arch/arm64/kernel/pi/kaslr_early.c
-> index 6c3855e69395..17bff6e399e4 100644
-> --- a/arch/arm64/kernel/pi/kaslr_early.c
-> +++ b/arch/arm64/kernel/pi/kaslr_early.c
-> @@ -94,11 +94,9 @@ asmlinkage u64 kaslr_early_init(void *fdt)
->
->         seed = get_kaslr_seed(fdt);
->         if (!seed) {
-> -#ifdef CONFIG_ARCH_RANDOM
-> -                if (!__early_cpu_has_rndr() ||
-> -                    !__arm64_rndr((unsigned long *)&seed))
-> -#endif
-> -               return 0;
-> +               if (!__early_cpu_has_rndr() ||
-> +                   !__arm64_rndr((unsigned long *)&seed))
-> +                       return 0;
->         }
->
->         /*
-> --
-> 2.17.1
->
+While it appears that no caller will actually give `get_module_eeprom`
+a zero length, fixing this issue is trivial.
+
+Fixes: d7241f679a59 ("be2net: Fix buffer overflow in be_get_module_eeprom")
+Signed-off-by: Hristo Venev <hristo@venev.name>
+---
+ drivers/net/ethernet/emulex/benet/be_ethtool.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/emulex/benet/be_ethtool.c b/drivers/net/ethernet/emulex/benet/be_ethtool.c
+index bd0df189d871..2145882d00cc 100644
+--- a/drivers/net/ethernet/emulex/benet/be_ethtool.c
++++ b/drivers/net/ethernet/emulex/benet/be_ethtool.c
+@@ -1361,7 +1361,7 @@ static int be_get_module_eeprom(struct net_device *netdev,
+ 				struct ethtool_eeprom *eeprom, u8 *data)
+ {
+ 	struct be_adapter *adapter = netdev_priv(netdev);
+-	int status;
++	int status = 0;
+ 	u32 begin, end;
+ 
+ 	if (!check_privilege(adapter, MAX_PRIVILEGES))
+-- 
+2.37.1
+
