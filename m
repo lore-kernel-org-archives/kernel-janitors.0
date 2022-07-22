@@ -2,89 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E86C43334
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Jul 2022 12:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3AA2C43334
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Jul 2022 12:50:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235041AbiGVMsO (ORCPT
+        id S234251AbiGVMup (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Jul 2022 08:48:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34298 "EHLO
+        Fri, 22 Jul 2022 08:50:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234930AbiGVMsN (ORCPT
+        with ESMTP id S229832AbiGVMun (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Jul 2022 08:48:13 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B01297A33;
-        Fri, 22 Jul 2022 05:48:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 23F7DB828E4;
-        Fri, 22 Jul 2022 12:48:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC1E3C341C6;
-        Fri, 22 Jul 2022 12:48:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658494089;
-        bh=Ud3fBR4hc4FZQPjJjdty/gcZtKe01RBLo5RSfrJ4kTk=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=l3H0RKwTwMDx67icvsToIO5/v3V3Nmp6Dq3sfF1fTbToHFGdb+86SnzaJpQBt7eyU
-         PSONXtKy58OZBr39XNwDIO7SvzKTEwROvbUOk0gosHsKCdkQEqD/V4okZJ5mCuIN7Z
-         pWW4D/6e2IeYe1jzqCuv64AiW/1o8szC3c8Cxx0sFpTwYCloW5EyKqRiXpEYcreKFr
-         OiYqXBj8pnIAI6TEB5YHBo3r2lSfOvwfVXEOsenfyNgpup33Rc0of3V38pDiEOuyv/
-         vACdshTHIjYML1c6BT7av8oSU/Q6v11YmcybWDl2bQaEMfjbfXjcMqDPoVZMWUzk1y
-         Rb+hvvL+1F59A==
-From:   Mark Brown <broonie@kernel.org>
-To:     Takashi Iwai <tiwai@suse.com>,
-        Banajit Goswami <bgoswami@quicinc.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <0fca3271649736053eb9649d87e1ca01b056be40.1658394124.git.christophe.jaillet@wanadoo.fr>
-References: <0fca3271649736053eb9649d87e1ca01b056be40.1658394124.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] ASoC: qcom: q6dsp: Fix an off-by-one in q6adm_alloc_copp()
-Message-Id: <165849408745.139149.18056511362358872922.b4-ty@kernel.org>
-Date:   Fri, 22 Jul 2022 13:48:07 +0100
+        Fri, 22 Jul 2022 08:50:43 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29A749EC59;
+        Fri, 22 Jul 2022 05:50:41 -0700 (PDT)
+Received: from mail-ot1-f54.google.com ([209.85.210.54]) by
+ mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MQMmF-1ntCON1MCP-00MHYJ; Fri, 22 Jul 2022 14:50:38 +0200
+Received: by mail-ot1-f54.google.com with SMTP id g19-20020a9d1293000000b0061c7bfda5dfso3281281otg.1;
+        Fri, 22 Jul 2022 05:50:38 -0700 (PDT)
+X-Gm-Message-State: AJIora960o8z6v51O0WitO67/Ju5yQ/M0r8HyGl8EViwcdh5YSmn1KcF
+        6Jb8UgKh4d4pzONp7wnrXV7RydBqVedMfOX/8Ik=
+X-Google-Smtp-Source: AGRyM1sDu/TpsmUL03yo2zlYiqADzD7kWYXEumM72Hw0lH5LjdoiFgedlCyyF4Wn3/dsln+XanwsGK9LvhTX5PmDwTw=
+X-Received: by 2002:a05:6830:61cd:b0:618:d560:b787 with SMTP id
+ cc13-20020a05683061cd00b00618d560b787mr184615otb.154.1658494236940; Fri, 22
+ Jul 2022 05:50:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.10.0-dev-d952f
+References: <20220720190208.11270-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220720190208.11270-1-lukas.bulwahn@gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 22 Jul 2022 14:50:20 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a04pfMoTbWDSdUPYXhXi03i3AjWM1B-8j2Z1OJKRmC14A@mail.gmail.com>
+Message-ID: <CAK8P3a04pfMoTbWDSdUPYXhXi03i3AjWM1B-8j2Z1OJKRmC14A@mail.gmail.com>
+Subject: Re: [PATCH] dma-mapping: update comment after dmabounce removal
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:WVpQ7iT7hNCW6OvsQqig5equGMLpq+3Rb9j23SIKG1yoD3fYAA9
+ vTW6bkt7s1A0U6HqStjm+OJuPTlf/O47zcIUa2CRfjkdE2ewIW/wW+cETdFlhPBzLGBHBg/
+ 6aOd7NFm6Zn4vhHFQTC3HyKxRSraEQ5ii1qVUB+oj1AHzzVKlEUDgQFVRYx9ZyUZ3Y/lfOZ
+ vW3UnMs8lcABapbLaZShA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:G2GDVPGCiPo=:31y4G2SnKTXbubWEvhsDSi
+ vZBSCBxXCS2MrHty2S9gdrfFB/hJ0rMOnlkhNoZXLnQhJgqhosvUU1vXwP0nSrnfx3nihbqoD
+ 6BAwF1T9g8OjSBUw3l7t1dAG20jnpyeQRiR2qmQczCVxHAcnpsvaDs3FTbShhdAMMjz1RlRCh
+ F78xlIVmuCRyakdRbJDPqmHcAsTDD8mtTVM7xh1l25ScKVYpTVI1BJPg3HuoFwFz+0ct5z/7v
+ R2l8pmGpSmNw0+MMl8OtLixcsyX5EZ4eKW07V5cUPUgwK55Ko0f+oXvZtER5P5gHK/6JUY1dO
+ 3vno5D0HGgYOQxjbYh/xZNa2OD4vi6fi0sjz2QarNbp8bZUwHTGDKhRqj8Xu8RrtbhwD2hAOQ
+ cI9UioelujwDlLeyJFoyGVBOxMib+xvlssp8E3efN3dzQtot3Sj/KfL74a/ML2g8GKbLS5LDJ
+ kpRixpF2j0lQQ3DqUPkpsCEY3cJYmAX3rm4n5Ppk8C05rom2sk5NcSi/nufVMMIDABHYIkDB3
+ 4rVAN/AsQVsqCiwFUaMqIQTlboLKGFQqF7qZX8ll3i4ND8ED52BdcQNRfbncTzPzLbwYAhgFu
+ BHQlZLkMFsDNEykYF8Xx9fjGNKeFpuJc+XgMSupVVAayI5p9kWJV0asa5jrzJxFL/Gm/Zknc1
+ 72VwBJyLB2J2z/hsCg7UZqPNZ52G6SGNTKGOzk6lT1Ir2PkKv2HNINk1Hag9kFDRmeqyABO3I
+ 1oHuO0zwowYDLJdILU1jOdRzfTZmd1A6ssvTvQ==
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 21 Jul 2022 11:02:22 +0200, Christophe JAILLET wrote:
-> find_first_zero_bit() returns MAX_COPPS_PER_PORT at max here.
-> So 'idx' should be tested with ">=" or the test can't match.
-> 
-> 
-
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+On Wed, Jul 20, 2022 at 9:02 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> Commit e3217540c271 ("ARM/dma-mapping: remove dmabounce") removes the
+> config DMABOUNCE. A comment to the function __dma_page_cpu_to_dev() refers
+> to this removed config DMABOUNCE.
+>
+> Remove the obsolete explanation, but keep the recommendation not to use
+> __dma_page_cpu_to_dev() and use dma_sync_* functions instead.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
 
 Thanks!
 
-[1/1] ASoC: qcom: q6dsp: Fix an off-by-one in q6adm_alloc_copp()
-      commit: 673f58f62ca6fc98979d1cf3fe89c3ff33f29b2e
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+The e3217540c271 commit is only in Christoph's dma-mapping tree, so this would
+ideally get applied on top before the merge window.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+        Arnd
