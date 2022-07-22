@@ -2,68 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE5A1C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Jul 2022 10:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 428D9C433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Jul 2022 10:32:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234772AbiGVKaG (ORCPT
+        id S235155AbiGVKb7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Jul 2022 06:30:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37808 "EHLO
+        Fri, 22 Jul 2022 06:31:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234144AbiGVKaA (ORCPT
+        with ESMTP id S229538AbiGVKb6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Jul 2022 06:30:00 -0400
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6F75BC80
-        for <kernel-janitors@vger.kernel.org>; Fri, 22 Jul 2022 03:29:58 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-31e623a4ff4so43006887b3.4
-        for <kernel-janitors@vger.kernel.org>; Fri, 22 Jul 2022 03:29:58 -0700 (PDT)
+        Fri, 22 Jul 2022 06:31:58 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77D47B504B;
+        Fri, 22 Jul 2022 03:31:57 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id e15so5334281edj.2;
+        Fri, 22 Jul 2022 03:31:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IFnsmnbjcLlYoAr+xu6Ngnb6y3ZV0ANVWM4gMEJHPHs=;
+        b=ODcKD8AKT8ZDFo1Dq1Me1oMI0j3JdBF/BczXgmiYMw21AhSv0qxXSpkVlPAFbQHi3w
+         JcUMMZ+2Z0VrdUZ4t53DgWZDjo0dkP2ECKnmqlb0vaHElM6lMjXhZ2xtP1fLuFhtjIwm
+         li9GhqCYir0h+IoaJ0IEOhpfO6l8enuHGnWR94y2kAlWQrudeiaW6flY4Kx1QT0sCAig
+         262JebI8msFNSZE/iF3Uic+zO4uarea7WPSf6rBSmp7MqZV5lPrwdCgAIjYqAbNbPvai
+         IJXNwlOmaUcCqOUMov2mmvucDBFjIA3MJ3fZLE8Uz+CQvUuzWaErz6x1qYDdjS0RbS03
+         +Aeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h0U7VPj46mlKKUG3XHLhP6jNqAPcz4SSnM1p3/zEY4U=;
-        b=fzwwx2+D0/pWmJxaEPcPe36aE3VpSEp1d7PzHE970/W//P457tQvcGnG1uuhl1zN8R
-         1xXk5+719QoGjj5SUNZFEa67CPFIRGESU7DY5eFeO4LmVaf+WBFAUG0VB0st5XNVG1iW
-         xVFeR//oT66ftIajeHUhJCC2oLGPED9vA5LxQJfWQA82KQ8shGLMT9L6NZU9zKopW69A
-         MZIhCpnqxrXl+qDYMiFrZsCtIS7UbPX30dTOq1U+tHKeHaTU8RJmLxFkhXK0VtFcnDaP
-         IVydOmJrRHRa28+X/hyxm82Le6CCeUjm3muQhHIuQA1hRrEKWhXI+7JNNiMuy2wud1EK
-         dPdw==
-X-Gm-Message-State: AJIora8F+YbtqPaExqFke3nle2gjm6J92iwsi7Q8dDyMYeEWXa3/z6nL
-        wWRZrYcOWQ52sIPpKzTMUwkWUFktSLOJQ1F3iYTV1qpf67NdsA==
-X-Google-Smtp-Source: AGRyM1sJ3dpV6z8Dr0t73x8Blu8qylUiDhydnBVEuvugMFfxARNOkFyJntGnzDmX9k3lDYZXsxv/onAjMMwJRCe0/+I=
-X-Received: by 2002:a81:a42:0:b0:31e:562a:eaab with SMTP id
- 63-20020a810a42000000b0031e562aeaabmr2445150ywk.392.1658485797888; Fri, 22
- Jul 2022 03:29:57 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IFnsmnbjcLlYoAr+xu6Ngnb6y3ZV0ANVWM4gMEJHPHs=;
+        b=VGe9u5PzAx5Q5YHPvJG7oGOQzXHEqY+PhVTJFD8z1kUEvrGD/Nr85Z/aVlMK+bTjqv
+         zfs9qM4GmQq6TBJRy7FlX8h/rVBRjgeeYK5NO8PHiWWgpVawZeJVBL0ZRGaH5GehCPVn
+         Oyf0R2ch+A7jXShoPfABXTL11YyqBiYQFwMbalnzndDSvOxJzKdUxRsQZ88YftLpza4u
+         X5x7UNUjYPTpQCS6ygkwIRPYe/Rb9C4OXNmNa7DPMmziaVgeFKxTE6YB15+pTDY7XG0h
+         UznM+G7V8u62Ho9rLWrOA1lWP9kfeMnC3A7B4z52Vzgm6AX7DxIVqTbGdOu+4K3L2jSD
+         UHvw==
+X-Gm-Message-State: AJIora9aOge5R0e8YbClG+c2abit9a1epmYfioIaR1EktUnaX+h+e98n
+        m/etckYkwwYxELSwb/lPBmM=
+X-Google-Smtp-Source: AGRyM1s4VWxM8kdBPaogcz5EkWQVbnvREQtxatII7yHeZJssaVyWzvpJpywlE5aDi7jeDqYKENptAQ==
+X-Received: by 2002:a05:6402:28c3:b0:43a:6d78:1b64 with SMTP id ef3-20020a05640228c300b0043a6d781b64mr2866830edb.93.1658485915793;
+        Fri, 22 Jul 2022 03:31:55 -0700 (PDT)
+Received: from felia.fritz.box (200116b826e64200edeeb77a6a94b0d2.dip.versatel-1u1.de. [2001:16b8:26e6:4200:edee:b77a:6a94:b0d2])
+        by smtp.gmail.com with ESMTPSA id lu44-20020a170906faec00b006fe9ec4ba9esm1856159ejb.52.2022.07.22.03.31.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Jul 2022 03:31:54 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Tomer Maimon <tmaimon77@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Cc:     Avi Fishman <avifishman70@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: rectify entry for ARM/NUVOTON NPCM ARCHITECTURE
+Date:   Fri, 22 Jul 2022 12:31:29 +0200
+Message-Id: <20220722103129.22998-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <Ytp2xv0jxwv7DBGU@kili>
-In-Reply-To: <Ytp2xv0jxwv7DBGU@kili>
-From:   Vincent MAILHOL <mailhol.vincent@wanadoo.fr>
-Date:   Fri, 22 Jul 2022 19:29:46 +0900
-Message-ID: <CAMZ6RqKQtm2nU2UZfDBUh_LbVBd=9TRH0oGRN-oRJOY3qYkQWg@mail.gmail.com>
-Subject: Re: [bug report] can: pch_can: do not report txerr and rxerr during bus-off
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri. 22 Jul. 2022 at 19:07, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> Hello Vincent Mailhol,
->
-> The patch 3a5c7e4611dd: "can: pch_can: do not report txerr and rxerr
-> during bus-off" from Jul 19, 2022, leads to the following Smatch
-> static checker warning:
->
->         drivers/net/can/pch_can.c:501 pch_can_error()
->         error: uninitialized symbol 'errc'.
+Commit 08e950449c62 ("dt-binding: clk: npcm845: Add binding for Nuvoton
+NPCM8XX Clock") obviously adds nuvoton,npcm845-clk.h, but the file entry in
+MAINTAINERS, added with commit 3670d2ec13ee ("arm64: npcm: Add support for
+Nuvoton NPCM8XX BMC SoC") then refers to nuvoton,npcm8xx-clock.h.
 
-Hi Dan,
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
-Thanks for the report, this bug has already been resolved in below
-commit (already in net-next branch):
-https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/commit/?id=9950f1121133
+Repair this file reference in ARM/NUVOTON NPCM ARCHITECTURE.
 
-Yours sincerely,
-Vincent Mailhol
+Fixes: 3670d2ec13ee ("arm64: npcm: Add support for Nuvoton NPCM8XX BMC SoC")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Arnd, please pick this patch on top of the commits above.
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7d14a446df13..e2734926f6ce 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2488,7 +2488,7 @@ F:	arch/arm64/boot/dts/nuvoton/
+ F:	drivers/*/*npcm*
+ F:	drivers/*/*/*npcm*
+ F:	include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
+-F:	include/dt-bindings/clock/nuvoton,npcm8xx-clock.h
++F:	include/dt-bindings/clock/nuvoton,npcm845-clk.h
+ 
+ ARM/NUVOTON WPCM450 ARCHITECTURE
+ M:	Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+-- 
+2.17.1
+
