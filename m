@@ -2,110 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 428D9C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Jul 2022 10:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF88CCA47F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Jul 2022 11:07:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235155AbiGVKb7 (ORCPT
+        id S232125AbiGVLHa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Jul 2022 06:31:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41038 "EHLO
+        Fri, 22 Jul 2022 07:07:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229538AbiGVKb6 (ORCPT
+        with ESMTP id S229880AbiGVLHa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Jul 2022 06:31:58 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77D47B504B;
-        Fri, 22 Jul 2022 03:31:57 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id e15so5334281edj.2;
-        Fri, 22 Jul 2022 03:31:57 -0700 (PDT)
+        Fri, 22 Jul 2022 07:07:30 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A3E2501B6;
+        Fri, 22 Jul 2022 04:07:29 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id z13so6006021wro.13;
+        Fri, 22 Jul 2022 04:07:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IFnsmnbjcLlYoAr+xu6Ngnb6y3ZV0ANVWM4gMEJHPHs=;
-        b=ODcKD8AKT8ZDFo1Dq1Me1oMI0j3JdBF/BczXgmiYMw21AhSv0qxXSpkVlPAFbQHi3w
-         JcUMMZ+2Z0VrdUZ4t53DgWZDjo0dkP2ECKnmqlb0vaHElM6lMjXhZ2xtP1fLuFhtjIwm
-         li9GhqCYir0h+IoaJ0IEOhpfO6l8enuHGnWR94y2kAlWQrudeiaW6flY4Kx1QT0sCAig
-         262JebI8msFNSZE/iF3Uic+zO4uarea7WPSf6rBSmp7MqZV5lPrwdCgAIjYqAbNbPvai
-         IJXNwlOmaUcCqOUMov2mmvucDBFjIA3MJ3fZLE8Uz+CQvUuzWaErz6x1qYDdjS0RbS03
-         +Aeg==
+        h=from:to:cc:subject:date:message-id;
+        bh=va9r0QVLDrzUBKfwOlAVVXjIk9+Gr+10/tXbE/MbkSw=;
+        b=QJPSqQeNeUS/qsGSgTA78nYzcxlb9VFNzBc0ISV8jX262S799ScyRSkmFq3qyWKJd8
+         Gkry15oWAYgGLktPECDR7KMNKw4AcYK1uUnC3Rf9se0aIuLJ/aUEAcuGtb5b6Mgb8t7F
+         /q8g873gkB9cxZ5tgtlQ8poBpo4hNk8ht5AA0m3/OGy1JKO06w+zynAyaHpR5faO/whW
+         acuyfJTlc71qKjZIWAehu5g1u/siHaTxJdvxr+xMHx3upMv/RAb7EpA285saZXr8BtXZ
+         UPR7ampwTkXuxmuI323H2IR5KhcD3VujGAhMZ+4YyqG33NPUAWtq8FG8WQV9lrYOKJAM
+         T8FA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IFnsmnbjcLlYoAr+xu6Ngnb6y3ZV0ANVWM4gMEJHPHs=;
-        b=VGe9u5PzAx5Q5YHPvJG7oGOQzXHEqY+PhVTJFD8z1kUEvrGD/Nr85Z/aVlMK+bTjqv
-         zfs9qM4GmQq6TBJRy7FlX8h/rVBRjgeeYK5NO8PHiWWgpVawZeJVBL0ZRGaH5GehCPVn
-         Oyf0R2ch+A7jXShoPfABXTL11YyqBiYQFwMbalnzndDSvOxJzKdUxRsQZ88YftLpza4u
-         X5x7UNUjYPTpQCS6ygkwIRPYe/Rb9C4OXNmNa7DPMmziaVgeFKxTE6YB15+pTDY7XG0h
-         UznM+G7V8u62Ho9rLWrOA1lWP9kfeMnC3A7B4z52Vzgm6AX7DxIVqTbGdOu+4K3L2jSD
-         UHvw==
-X-Gm-Message-State: AJIora9aOge5R0e8YbClG+c2abit9a1epmYfioIaR1EktUnaX+h+e98n
-        m/etckYkwwYxELSwb/lPBmM=
-X-Google-Smtp-Source: AGRyM1s4VWxM8kdBPaogcz5EkWQVbnvREQtxatII7yHeZJssaVyWzvpJpywlE5aDi7jeDqYKENptAQ==
-X-Received: by 2002:a05:6402:28c3:b0:43a:6d78:1b64 with SMTP id ef3-20020a05640228c300b0043a6d781b64mr2866830edb.93.1658485915793;
-        Fri, 22 Jul 2022 03:31:55 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=va9r0QVLDrzUBKfwOlAVVXjIk9+Gr+10/tXbE/MbkSw=;
+        b=eAINoVQK19DGXIkAP1xdQh60C9gOWSoVDXHWjVu1PbAp3uoC24UVKR7D9KSMlSvrqC
+         Ek/2iLaP+On3S0R55P4ZdyexwlmpmIlP/b9J2WzDtsQZ63s03E/Cb1bCDwY8QcHwIOA4
+         5XS79G63HnlQ82vvg5RyH6srLEf6awnY3pUlgx4tB4FNY8GFFl3oxp6DkbRXEwlwEMEg
+         X7ARCNaNQN664QwNvepksoFx0sS1q70BLTeRzqi+ZdZ+SCjjTQHjkhLnf5tzfxDySd7g
+         bcBKAbg82l8JnSl8z1jtaId+MKefHjQWqD75sNsPQisnmxTzILbEOPLPDRTHzfo5DPGy
+         jDoA==
+X-Gm-Message-State: AJIora+i7oqPCuwwrGN7l0kK2n37cf8E6PM2PLOI3HYQ/wZIkGS+PquX
+        zlQ3sYmo2X1epjojaajgm/gpvObzLEU=
+X-Google-Smtp-Source: AGRyM1s1DyyQ730C8rTg4zM/Mx1fOod5LKx8nGSMzVjlSyMZyzOz3bay+m3QhU/YTH+4pBys4tClHQ==
+X-Received: by 2002:a05:6000:1888:b0:21d:beeb:785c with SMTP id a8-20020a056000188800b0021dbeeb785cmr2188576wri.34.1658488047525;
+        Fri, 22 Jul 2022 04:07:27 -0700 (PDT)
 Received: from felia.fritz.box (200116b826e64200edeeb77a6a94b0d2.dip.versatel-1u1.de. [2001:16b8:26e6:4200:edee:b77a:6a94:b0d2])
-        by smtp.gmail.com with ESMTPSA id lu44-20020a170906faec00b006fe9ec4ba9esm1856159ejb.52.2022.07.22.03.31.53
+        by smtp.gmail.com with ESMTPSA id g3-20020a5d5543000000b0021e4bc9edbfsm4248964wrw.112.2022.07.22.04.07.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Jul 2022 03:31:54 -0700 (PDT)
+        Fri, 22 Jul 2022 04:07:25 -0700 (PDT)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Tomer Maimon <tmaimon77@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Cc:     Avi Fishman <avifishman70@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To:     Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
+Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: rectify entry for ARM/NUVOTON NPCM ARCHITECTURE
-Date:   Fri, 22 Jul 2022 12:31:29 +0200
-Message-Id: <20220722103129.22998-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH v2] asm-generic: remove a broken and needless ifdef conditional
+Date:   Fri, 22 Jul 2022 13:07:11 +0200
+Message-Id: <20220722110711.16569-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 08e950449c62 ("dt-binding: clk: npcm845: Add binding for Nuvoton
-NPCM8XX Clock") obviously adds nuvoton,npcm845-clk.h, but the file entry in
-MAINTAINERS, added with commit 3670d2ec13ee ("arm64: npcm: Add support for
-Nuvoton NPCM8XX BMC SoC") then refers to nuvoton,npcm8xx-clock.h.
+Commit 527701eda5f1 ("lib: Add a generic version of devmem_is_allowed()")
+introduces the config symbol GENERIC_LIB_DEVMEM_IS_ALLOWED, but then
+falsely refers to CONFIG_GENERIC_DEVMEM_IS_ALLOWED (note the missing LIB
+in the reference) in ./include/asm-generic/io.h.
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
+Luckily, ./scripts/checkkconfigsymbols.py warns on non-existing configs:
 
-Repair this file reference in ARM/NUVOTON NPCM ARCHITECTURE.
+GENERIC_DEVMEM_IS_ALLOWED
+Referencing files: include/asm-generic/io.h
 
-Fixes: 3670d2ec13ee ("arm64: npcm: Add support for Nuvoton NPCM8XX BMC SoC")
+The actual fix, though, is simply to not to make this function declaration
+dependent on any kernel config. For architectures that intend to use
+the generic version, the arch's 'select GENERIC_LIB_DEVMEM_IS_ALLOWED' will
+lead to picking the function definition, and for other architectures, this
+function is simply defined elsewhere.
+
+The wrong '#ifndef' on a non-existing config symbol also always had the
+same effect (although more by mistake than by intent). So, there is no
+functional change.
+
+Remove this broken and needless ifdef conditional.
+
+Fixes: 527701eda5f1 ("lib: Add a generic version of devmem_is_allowed()")
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-Arnd, please pick this patch on top of the commits above.
+v1: https://lore.kernel.org/all/20211006145859.9564-1-lukas.bulwahn@gmail.com/
 
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Arnd, please pick this v2 for your asm-generic branch. 
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7d14a446df13..e2734926f6ce 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2488,7 +2488,7 @@ F:	arch/arm64/boot/dts/nuvoton/
- F:	drivers/*/*npcm*
- F:	drivers/*/*/*npcm*
- F:	include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
--F:	include/dt-bindings/clock/nuvoton,npcm8xx-clock.h
-+F:	include/dt-bindings/clock/nuvoton,npcm845-clk.h
+
+ include/asm-generic/io.h | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/include/asm-generic/io.h b/include/asm-generic/io.h
+index ce4c90601300..a68f8fbf423b 100644
+--- a/include/asm-generic/io.h
++++ b/include/asm-generic/io.h
+@@ -1221,9 +1221,7 @@ static inline void memcpy_toio(volatile void __iomem *addr, const void *buffer,
+ }
+ #endif
  
- ARM/NUVOTON WPCM450 ARCHITECTURE
- M:	Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+-#ifndef CONFIG_GENERIC_DEVMEM_IS_ALLOWED
+ extern int devmem_is_allowed(unsigned long pfn);
+-#endif
+ 
+ #endif /* __KERNEL__ */
+ 
 -- 
 2.17.1
 
