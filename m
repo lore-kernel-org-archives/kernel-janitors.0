@@ -2,95 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75EE8C433EF
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Jul 2022 12:18:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E86C43334
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Jul 2022 12:48:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234328AbiGVMSl (ORCPT
+        id S235041AbiGVMsO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Jul 2022 08:18:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42596 "EHLO
+        Fri, 22 Jul 2022 08:48:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229704AbiGVMSj (ORCPT
+        with ESMTP id S234930AbiGVMsN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Jul 2022 08:18:39 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB0012F01E;
-        Fri, 22 Jul 2022 05:18:37 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id sz17so8273270ejc.9;
-        Fri, 22 Jul 2022 05:18:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=CqpBW1kjZKS5TbNlu9QNscZqjrocfBTKosDo2l0WxdM=;
-        b=JAgTikgqys0BU5lh0gzJigI2XttDfFyTny+eSxF/HE5AC63ff5bU1uaZ0BzoMpP4Xq
-         JijOHnEey6CSg00QFx7kBXCWRoHZJeVGHx7SM6NKU5S411b+gy1U1eHUvAdJDCW67R6g
-         5qLgW/UUf/2xJ6sATptZx8BFVPls9lpCi1B3VwFiIUjuo8YXTQcDVv7sZ6SnpG+cQW4g
-         hLSqT0hw7HCK2otzTaOmjQbWyoSjmAqpQsXGTDOsgYxe0f56KUqaKGfHmGvKVLlq9MXI
-         9QI5hujVJgq5/YQtMUTnX27wHj9gr66lkAAzS/ktZYk8P5rtYeYGdvG5wzNSt3/S73kS
-         sd7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=CqpBW1kjZKS5TbNlu9QNscZqjrocfBTKosDo2l0WxdM=;
-        b=RCUnqUUFuVbP6+49Broo0aBQNhvymUtjnGeEEDrNKxHN7I3iX5tXpl9ZZ4rOYxU+0I
-         sIA10YqXQgbv5RKnVBsA2t/Wei+yaPQL/zVio7BSF87MydunyZYTEvs+UHZkBHhcVE7x
-         nLHfx2Vtizw/4EWU2oqUAcEBMGQC6N49oXvgG0uwF7G5I7Y2oTFKkX1DdueXVqcGyhVS
-         bn3kHAira5T1xeuIJJBA2GZxOfocYU28yIgEdkJZ9HQbp/yCvgcHx9PCH1RQ6w30+ZY8
-         tD1oA0+zGMqq3J9BSQp6G6NM3fe+y6wJAqI093zRmdCCxfcS/JV+3J7RmBz1Txj/2FKO
-         neQA==
-X-Gm-Message-State: AJIora8xrxLs8DfBaImSatWuPsMpQZctSWzDIYGRsC73MHHVNGLzHO4/
-        i+qHyP3V0wZQnG+MUHBCt48=
-X-Google-Smtp-Source: AGRyM1stUIp4zWap+2uKu/60jfi858DmwklKehCGWFlYeBJxwYCna7Sn7KJH6tNiqiCbk9RB9vW9HQ==
-X-Received: by 2002:a17:906:cc52:b0:72b:114e:c56c with SMTP id mm18-20020a170906cc5200b0072b114ec56cmr298824ejb.144.1658492316338;
-        Fri, 22 Jul 2022 05:18:36 -0700 (PDT)
-Received: from felia.fritz.box (200116b826e64200edeeb77a6a94b0d2.dip.versatel-1u1.de. [2001:16b8:26e6:4200:edee:b77a:6a94:b0d2])
-        by smtp.gmail.com with ESMTPSA id f21-20020a17090631d500b0072ee7b51d9asm1964129ejf.39.2022.07.22.05.18.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Jul 2022 05:18:35 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Borislav Petkov <bp@suse.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] x86/configs: update configs in x86_debug.config
-Date:   Fri, 22 Jul 2022 14:18:15 +0200
-Message-Id: <20220722121815.27535-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 22 Jul 2022 08:48:13 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B01297A33;
+        Fri, 22 Jul 2022 05:48:12 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 23F7DB828E4;
+        Fri, 22 Jul 2022 12:48:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC1E3C341C6;
+        Fri, 22 Jul 2022 12:48:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658494089;
+        bh=Ud3fBR4hc4FZQPjJjdty/gcZtKe01RBLo5RSfrJ4kTk=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=l3H0RKwTwMDx67icvsToIO5/v3V3Nmp6Dq3sfF1fTbToHFGdb+86SnzaJpQBt7eyU
+         PSONXtKy58OZBr39XNwDIO7SvzKTEwROvbUOk0gosHsKCdkQEqD/V4okZJ5mCuIN7Z
+         pWW4D/6e2IeYe1jzqCuv64AiW/1o8szC3c8Cxx0sFpTwYCloW5EyKqRiXpEYcreKFr
+         OiYqXBj8pnIAI6TEB5YHBo3r2lSfOvwfVXEOsenfyNgpup33Rc0of3V38pDiEOuyv/
+         vACdshTHIjYML1c6BT7av8oSU/Q6v11YmcybWDl2bQaEMfjbfXjcMqDPoVZMWUzk1y
+         Rb+hvvL+1F59A==
+From:   Mark Brown <broonie@kernel.org>
+To:     Takashi Iwai <tiwai@suse.com>,
+        Banajit Goswami <bgoswami@quicinc.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <0fca3271649736053eb9649d87e1ca01b056be40.1658394124.git.christophe.jaillet@wanadoo.fr>
+References: <0fca3271649736053eb9649d87e1ca01b056be40.1658394124.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] ASoC: qcom: q6dsp: Fix an off-by-one in q6adm_alloc_copp()
+Message-Id: <165849408745.139149.18056511362358872922.b4-ty@kernel.org>
+Date:   Fri, 22 Jul 2022 13:48:07 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.10.0-dev-d952f
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 4675ff05de2d ("kmemcheck: rip it out") removes kmemcheck and its
-corresponding build config KMEMCHECK.
+On Thu, 21 Jul 2022 11:02:22 +0200, Christophe JAILLET wrote:
+> find_first_zero_bit() returns MAX_COPPS_PER_PORT at max here.
+> So 'idx' should be tested with ">=" or the test can't match.
+> 
+> 
 
-Commit 0f620cefd775 ("objtool: Rename "VMLINUX_VALIDATION" ->
-"NOINSTR_VALIDATION"") renamed the debug config option.
+Applied to
 
-Adjust x86_debug.config to those changes in debug configs.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- kernel/configs/x86_debug.config | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Thanks!
 
-diff --git a/kernel/configs/x86_debug.config b/kernel/configs/x86_debug.config
-index dcd86f32f4ed..6fac5b405334 100644
---- a/kernel/configs/x86_debug.config
-+++ b/kernel/configs/x86_debug.config
-@@ -7,12 +7,11 @@ CONFIG_DEBUG_SLAB=y
- CONFIG_DEBUG_KMEMLEAK=y
- CONFIG_DEBUG_PAGEALLOC=y
- CONFIG_SLUB_DEBUG_ON=y
--CONFIG_KMEMCHECK=y
- CONFIG_DEBUG_OBJECTS=y
- CONFIG_DEBUG_OBJECTS_ENABLE_DEFAULT=1
- CONFIG_GCOV_KERNEL=y
- CONFIG_LOCKDEP=y
- CONFIG_PROVE_LOCKING=y
- CONFIG_SCHEDSTATS=y
--CONFIG_VMLINUX_VALIDATION=y
-+CONFIG_NOINSTR_VALIDATION=y
- CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT=y
--- 
-2.17.1
+[1/1] ASoC: qcom: q6dsp: Fix an off-by-one in q6adm_alloc_copp()
+      commit: 673f58f62ca6fc98979d1cf3fe89c3ff33f29b2e
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
