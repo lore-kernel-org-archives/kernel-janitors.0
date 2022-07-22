@@ -2,45 +2,39 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93066C43334
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Jul 2022 15:04:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B2AC433EF
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Jul 2022 15:15:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235393AbiGVPEb (ORCPT
+        id S235681AbiGVPPj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Jul 2022 11:04:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52680 "EHLO
+        Fri, 22 Jul 2022 11:15:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235402AbiGVPEa (ORCPT
+        with ESMTP id S235585AbiGVPPi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Jul 2022 11:04:30 -0400
+        Fri, 22 Jul 2022 11:15:38 -0400
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A1417393B;
-        Fri, 22 Jul 2022 08:04:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD0D752450;
+        Fri, 22 Jul 2022 08:15:37 -0700 (PDT)
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id C96A768AFE; Fri, 22 Jul 2022 17:04:26 +0200 (CEST)
-Date:   Fri, 22 Jul 2022 17:04:26 +0200
+        id C8A4968BEB; Fri, 22 Jul 2022 17:15:34 +0200 (CEST)
+Date:   Fri, 22 Jul 2022 17:15:34 +0200
 From:   Christoph Hellwig <hch@lst.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] dma-mapping: update comment after dmabounce removal
-Message-ID: <20220722150426.GA7275@lst.de>
-References: <20220720190208.11270-1-lukas.bulwahn@gmail.com> <CAK8P3a04pfMoTbWDSdUPYXhXi03i3AjWM1B-8j2Z1OJKRmC14A@mail.gmail.com>
+Message-ID: <20220722151534.GB8096@lst.de>
+References: <20220720190208.11270-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a04pfMoTbWDSdUPYXhXi03i3AjWM1B-8j2Z1OJKRmC14A@mail.gmail.com>
+In-Reply-To: <20220720190208.11270-1-lukas.bulwahn@gmail.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jul 22, 2022 at 02:50:20PM +0200, Arnd Bergmann wrote:
-> The e3217540c271 commit is only in Christoph's dma-mapping tree, so this would
-> ideally get applied on top before the merge window.
-
-I'll pick it up.
+Thanks, applied.
