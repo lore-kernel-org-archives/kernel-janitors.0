@@ -2,84 +2,45 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D73C43334
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Jul 2022 14:54:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93066C43334
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Jul 2022 15:04:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234026AbiGVOy2 (ORCPT
+        id S235393AbiGVPEb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Jul 2022 10:54:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46684 "EHLO
+        Fri, 22 Jul 2022 11:04:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbiGVOy1 (ORCPT
+        with ESMTP id S235402AbiGVPEa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Jul 2022 10:54:27 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DAF295C19;
-        Fri, 22 Jul 2022 07:54:26 -0700 (PDT)
-Received: from zn.tnic (p200300ea97297665329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:9729:7665:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D72031EC04E4;
-        Fri, 22 Jul 2022 16:54:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1658501660;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=mCR4LQOlJZ0Afghe45GGJBA2iWSsio2lR2y8ckrkB7s=;
-        b=cqNhHILaFs4aUzopyZ7JeqcY13E4ZhnfRpMeWD0Cl6aUh2kDSkxaQkrkt3Vvxc/VuvmZp9
-        tdE1Mzb6vnzert1LktwimuOkVwifuyr9KxM8AOtVLRYS42uEMzXiHZXVwNOq6eiym+ns4j
-        AQDXrfUvrKllqOi3Pkhp/7omjh6BbO4=
-Date:   Fri, 22 Jul 2022 16:54:16 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/configs: update configs in x86_debug.config
-Message-ID: <Ytq6GO0JJcqT2gOw@zn.tnic>
-References: <20220722121815.27535-1-lukas.bulwahn@gmail.com>
+        Fri, 22 Jul 2022 11:04:30 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A1417393B;
+        Fri, 22 Jul 2022 08:04:29 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id C96A768AFE; Fri, 22 Jul 2022 17:04:26 +0200 (CEST)
+Date:   Fri, 22 Jul 2022 17:04:26 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dma-mapping: update comment after dmabounce removal
+Message-ID: <20220722150426.GA7275@lst.de>
+References: <20220720190208.11270-1-lukas.bulwahn@gmail.com> <CAK8P3a04pfMoTbWDSdUPYXhXi03i3AjWM1B-8j2Z1OJKRmC14A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220722121815.27535-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <CAK8P3a04pfMoTbWDSdUPYXhXi03i3AjWM1B-8j2Z1OJKRmC14A@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jul 22, 2022 at 02:18:15PM +0200, Lukas Bulwahn wrote:
-> Commit 4675ff05de2d ("kmemcheck: rip it out") removes kmemcheck and its
-> corresponding build config KMEMCHECK.
-> 
-> Commit 0f620cefd775 ("objtool: Rename "VMLINUX_VALIDATION" ->
-> "NOINSTR_VALIDATION"") renamed the debug config option.
-> 
-> Adjust x86_debug.config to those changes in debug configs.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  kernel/configs/x86_debug.config | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/kernel/configs/x86_debug.config b/kernel/configs/x86_debug.config
-> index dcd86f32f4ed..6fac5b405334 100644
-> --- a/kernel/configs/x86_debug.config
-> +++ b/kernel/configs/x86_debug.config
-> @@ -7,12 +7,11 @@ CONFIG_DEBUG_SLAB=y
->  CONFIG_DEBUG_KMEMLEAK=y
->  CONFIG_DEBUG_PAGEALLOC=y
->  CONFIG_SLUB_DEBUG_ON=y
-> -CONFIG_KMEMCHECK=y
+On Fri, Jul 22, 2022 at 02:50:20PM +0200, Arnd Bergmann wrote:
+> The e3217540c271 commit is only in Christoph's dma-mapping tree, so this would
+> ideally get applied on top before the merge window.
 
-While at it, you might also whack the last mention of KMEMCHECK:
-
-$ git grep KMEMCHECK
-kernel/configs/x86_debug.config:10:CONFIG_KMEMCHECK=y
-tools/testing/selftests/wireguard/qemu/debug.config:21:CONFIG_HAVE_ARCH_KMEMCHECK=y
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+I'll pick it up.
