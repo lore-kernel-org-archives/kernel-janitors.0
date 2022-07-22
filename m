@@ -2,83 +2,95 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3AA2C43334
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Jul 2022 12:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63440CCA473
+	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Jul 2022 13:00:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234251AbiGVMup (ORCPT
+        id S234717AbiGVNAB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Jul 2022 08:50:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37512 "EHLO
+        Fri, 22 Jul 2022 09:00:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229832AbiGVMun (ORCPT
+        with ESMTP id S229441AbiGVNAA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Jul 2022 08:50:43 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29A749EC59;
-        Fri, 22 Jul 2022 05:50:41 -0700 (PDT)
-Received: from mail-ot1-f54.google.com ([209.85.210.54]) by
- mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1MQMmF-1ntCON1MCP-00MHYJ; Fri, 22 Jul 2022 14:50:38 +0200
-Received: by mail-ot1-f54.google.com with SMTP id g19-20020a9d1293000000b0061c7bfda5dfso3281281otg.1;
-        Fri, 22 Jul 2022 05:50:38 -0700 (PDT)
-X-Gm-Message-State: AJIora960o8z6v51O0WitO67/Ju5yQ/M0r8HyGl8EViwcdh5YSmn1KcF
-        6Jb8UgKh4d4pzONp7wnrXV7RydBqVedMfOX/8Ik=
-X-Google-Smtp-Source: AGRyM1sDu/TpsmUL03yo2zlYiqADzD7kWYXEumM72Hw0lH5LjdoiFgedlCyyF4Wn3/dsln+XanwsGK9LvhTX5PmDwTw=
-X-Received: by 2002:a05:6830:61cd:b0:618:d560:b787 with SMTP id
- cc13-20020a05683061cd00b00618d560b787mr184615otb.154.1658494236940; Fri, 22
- Jul 2022 05:50:36 -0700 (PDT)
+        Fri, 22 Jul 2022 09:00:00 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3400589E9E;
+        Fri, 22 Jul 2022 05:59:59 -0700 (PDT)
+Received: from mail-oa1-f46.google.com ([209.85.160.46]) by
+ mrelayeu.kundenserver.de (mreue010 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1MPp0l-1nseHW1fVr-00MuPL; Fri, 22 Jul 2022 14:59:57 +0200
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-10d6e8990b9so6196136fac.7;
+        Fri, 22 Jul 2022 05:59:56 -0700 (PDT)
+X-Gm-Message-State: AJIora+6WOhSd7cvJnowuvD68w5wG0UkUeJKAcxr5+48QdNgaFm1Xdms
+        4H2MhASEBaydmp9zy90gNQSjmUXlfB0lkLP6KOI=
+X-Google-Smtp-Source: AGRyM1vMjRHI1IDUKbv+qzBIY07jN7IIb+WM6l11w0OpthFdMwRbJ5FA5xnOLQhwQ+CrcLNxnU4NQipl0zyL1l9OZjU=
+X-Received: by 2002:a05:6870:6114:b0:10c:6bf:542f with SMTP id
+ s20-20020a056870611400b0010c06bf542fmr7505287oae.188.1658494795774; Fri, 22
+ Jul 2022 05:59:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220720190208.11270-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20220720190208.11270-1-lukas.bulwahn@gmail.com>
+References: <20220722103129.22998-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220722103129.22998-1-lukas.bulwahn@gmail.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 22 Jul 2022 14:50:20 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a04pfMoTbWDSdUPYXhXi03i3AjWM1B-8j2Z1OJKRmC14A@mail.gmail.com>
-Message-ID: <CAK8P3a04pfMoTbWDSdUPYXhXi03i3AjWM1B-8j2Z1OJKRmC14A@mail.gmail.com>
-Subject: Re: [PATCH] dma-mapping: update comment after dmabounce removal
+Date:   Fri, 22 Jul 2022 14:59:39 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a2gLvpLMEyejJtg8J5TLPjuPRUc-aJwTK2Og9pLeQT2Ww@mail.gmail.com>
+Message-ID: <CAK8P3a2gLvpLMEyejJtg8J5TLPjuPRUc-aJwTK2Og9pLeQT2Ww@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: rectify entry for ARM/NUVOTON NPCM ARCHITECTURE
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+Cc:     Tomer Maimon <tmaimon77@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
         kernel-janitors <kernel-janitors@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:WVpQ7iT7hNCW6OvsQqig5equGMLpq+3Rb9j23SIKG1yoD3fYAA9
- vTW6bkt7s1A0U6HqStjm+OJuPTlf/O47zcIUa2CRfjkdE2ewIW/wW+cETdFlhPBzLGBHBg/
- 6aOd7NFm6Zn4vhHFQTC3HyKxRSraEQ5ii1qVUB+oj1AHzzVKlEUDgQFVRYx9ZyUZ3Y/lfOZ
- vW3UnMs8lcABapbLaZShA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:G2GDVPGCiPo=:31y4G2SnKTXbubWEvhsDSi
- vZBSCBxXCS2MrHty2S9gdrfFB/hJ0rMOnlkhNoZXLnQhJgqhosvUU1vXwP0nSrnfx3nihbqoD
- 6BAwF1T9g8OjSBUw3l7t1dAG20jnpyeQRiR2qmQczCVxHAcnpsvaDs3FTbShhdAMMjz1RlRCh
- F78xlIVmuCRyakdRbJDPqmHcAsTDD8mtTVM7xh1l25ScKVYpTVI1BJPg3HuoFwFz+0ct5z/7v
- R2l8pmGpSmNw0+MMl8OtLixcsyX5EZ4eKW07V5cUPUgwK55Ko0f+oXvZtER5P5gHK/6JUY1dO
- 3vno5D0HGgYOQxjbYh/xZNa2OD4vi6fi0sjz2QarNbp8bZUwHTGDKhRqj8Xu8RrtbhwD2hAOQ
- cI9UioelujwDlLeyJFoyGVBOxMib+xvlssp8E3efN3dzQtot3Sj/KfL74a/ML2g8GKbLS5LDJ
- kpRixpF2j0lQQ3DqUPkpsCEY3cJYmAX3rm4n5Ppk8C05rom2sk5NcSi/nufVMMIDABHYIkDB3
- 4rVAN/AsQVsqCiwFUaMqIQTlboLKGFQqF7qZX8ll3i4ND8ED52BdcQNRfbncTzPzLbwYAhgFu
- BHQlZLkMFsDNEykYF8Xx9fjGNKeFpuJc+XgMSupVVAayI5p9kWJV0asa5jrzJxFL/Gm/Zknc1
- 72VwBJyLB2J2z/hsCg7UZqPNZ52G6SGNTKGOzk6lT1Ir2PkKv2HNINk1Hag9kFDRmeqyABO3I
- 1oHuO0zwowYDLJdILU1jOdRzfTZmd1A6ssvTvQ==
+X-Provags-ID: V03:K1:vxJmmzc8DRXX+kvwjV07yQQad7WNG7IWbOgiOTVmaIhV5jFvaD9
+ e3JKdxxLKmfJlR5QNgN0enXdF3WCt3KF0vWAhgFoAbm+2oNdBjqF0Z4PfbXxY+5j4L/mlXc
+ kvPoz5xEjy+xfjQDf3WgszkaiwAdGNVuzKgGvrBrL+zfQWpPVJtyzHkw5xSP96njb9rpugm
+ 7tSurz0LB9pUNvXcWzkKA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:OIISGVn7qQ8=:DR3DLaJnztGYHVl2p5yxPH
+ yprnhtwmF5GNvg7JIaNWCNTqjLYNV5bXvt75ngyWoIW9TOZY8SNfSrW2Ek0YbI/NLkBH6xj5T
+ thiRh8tAZPEiuxPJ6dqmMIqPzx81qsulQ3ZdKyTnmf/xIX4QePre0PFFmhPNTWvGNTqb0j9hQ
+ pJni2ARqGjIza/ZjILRFaCyL7PSE9DP0qKCtd5esYjtBLxnLkDyLJHLg0OAPGZIUd7y/B3NVj
+ aYUgvS16tLRAh2+qCeoUq9Xy9hZq+0ZRKzgYKSqBEsE/+uwVv3+IOYlE+XyN1wkUoBHiTWgvp
+ HmYFkso+CFCEUI3kUopO7R0LGdo+Kj2QKAsXscoJt9AW4rTpvd+gOc1+YGQv3oeiKgSGJyy/d
+ waae2Evb4INvvBn2wMlNj7JjY9oloJrcC2xGhfd48aHAIwoo3dBz+K4O2FPMSPBRtMF+ubMyL
+ 9AzJZ5TgCG2UT3FmAGKah3N50vdSF3S7dRXZD9VJzzU+7aVYvfOiD2Qh4zarA0MjCApE/mEzX
+ NUCG9HNgGPJl0eR2z4ZryGxjPw/pvllR32i5EYB0lkGgjmgpHCXZTCbGiiq1eio5WdlAkjH8q
+ 2GslEU8NnUjfWH6yBv9vs4Bn3OjrSPMdaQKoV3bF8SNg1swoYtI5cyo708s/iyHT6jlwvd0ht
+ VypV6zuUGzZmMzWx9slFDoMhEw0s9QXUxmoaj4CiEwnSOgsHW37i1PeU/p8IyRBAaJ7S0v368
+ BeC9YDK2jFSX1us5jPeick/NzziB6cayxQ9dT11F9vBLsPFJwg8BxWWvCJci7V/6KP1DCa+Ei
+ clw3yPZk9ebnfJqAcuq8K5DQPbWNCPG6dojIC/MExeIZn2Al2ubt+MfqFGUkk6T3bKzH1WW3p
+ 3gpxaPJzFtmAnQY2mfQQ==
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Jul 20, 2022 at 9:02 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+On Fri, Jul 22, 2022 at 12:31 PM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 >
-> Commit e3217540c271 ("ARM/dma-mapping: remove dmabounce") removes the
-> config DMABOUNCE. A comment to the function __dma_page_cpu_to_dev() refers
-> to this removed config DMABOUNCE.
+> Commit 08e950449c62 ("dt-binding: clk: npcm845: Add binding for Nuvoton
+> NPCM8XX Clock") obviously adds nuvoton,npcm845-clk.h, but the file entry in
+> MAINTAINERS, added with commit 3670d2ec13ee ("arm64: npcm: Add support for
+> Nuvoton NPCM8XX BMC SoC") then refers to nuvoton,npcm8xx-clock.h.
 >
-> Remove the obsolete explanation, but keep the recommendation not to use
-> __dma_page_cpu_to_dev() and use dma_sync_* functions instead.
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken reference.
 >
+> Repair this file reference in ARM/NUVOTON NPCM ARCHITECTURE.
+>
+> Fixes: 3670d2ec13ee ("arm64: npcm: Add support for Nuvoton NPCM8XX BMC SoC")
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > ---
+> Arnd, please pick this patch on top of the commits above.
 
-Thanks!
+Done, thanks!
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-
-The e3217540c271 commit is only in Christoph's dma-mapping tree, so this would
-ideally get applied on top before the merge window.
-
-        Arnd
+      Arnd
