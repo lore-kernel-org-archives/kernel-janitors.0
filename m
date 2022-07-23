@@ -2,90 +2,57 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A77E9C43334
-	for <kernel-janitors@archiver.kernel.org>; Fri, 22 Jul 2022 15:58:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D98C43334
+	for <kernel-janitors@archiver.kernel.org>; Sat, 23 Jul 2022 04:42:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231166AbiGVP6L (ORCPT
+        id S233053AbiGWEmJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 22 Jul 2022 11:58:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35636 "EHLO
+        Sat, 23 Jul 2022 00:42:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229778AbiGVP6L (ORCPT
+        with ESMTP id S229450AbiGWEmI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 22 Jul 2022 11:58:11 -0400
-X-Greylist: delayed 2082 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 22 Jul 2022 08:58:07 PDT
-Received: from a1-bg02.venev.name (a1-bg02.venev.name [IPv6:2001:470:20aa::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBF1B3F316
-        for <kernel-janitors@vger.kernel.org>; Fri, 22 Jul 2022 08:58:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=venev.name;
-        s=default; h=Content-Transfer-Encoding:Message-Id:Date:Subject:To:From:
-        Content-Type:Reply-To:Sender; bh=wRzxD5OK0yZmKuNkMhrV09hlvnq/ACuUqTWh/glpdpk=
-        ; b=d75douFD9hLTpbYdz06h3DSfS3E+QtmdhxyJY/kA+po2trXmjTJTCbuTFzw0f9iK75QyCmINF
-        acEVI8p9nL8g5DYIdJjbrxuCGeADA9uCe7+duYao20y2V1M2SWaAlmYW7QQZ039XtOgop3uXj/rrh
-        b0vYfieQT9PzA5uhWLpmXzcY8iYE99gyEF2sPR7rZWmjPWvQ5+bBc+Sk6hXUZebwUNno81ZNGwT57
-        UY5rtorreKMwNiGu62P4sJkzy/iKN00hvmmflOT77Hr5NSEH9cfrGa8f9QBZMX+6xtRXY1/RovyWU
-        2WlC58w1/XCAKD1EdZp7RxcOYU3JAr6AUBOjdVR9zoGGmMV5psJcdv1sL4mYYdmz2gqdayNEvQlB3
-        Qx0U0P1UeL8Mc9uLh4lKe4LDJ1yhX5EQHKYcXxUq9k28r6tkBgnYxKrbnTI9YVFQVVaRtS/N3XCGh
-        BKbgSWaXYkntYjieWCy5W7P39/l7dGZiyHfadLETU4fVQiy16G0KzuOwkSmp+UB7nKXDBvuN3PscG
-        XNu3GDjlhjlFY1jpFLyQeXnRVS4SbHzjdohQjQrbRfusMjTCX7sr4UfV1rRw9ephAeWdH1pBA3EpW
-        ScO+GXUj0zbMC5BlJtKoIkIH8yGGO+X2Qfcf9gIQLKcRgX69wF64EbvNrKdIP7hcRdGlsCg=;
-X-Check-Malware: ok
-Received: from a1-bg02.venev.name ([213.240.239.49] helo=pmx1.venev.name)
-        by a1-bg02.venev.name with esmtps
-        id 1oEuUS-00011t-D6
-        (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-        (envelope-from <hristo@venev.name>);
-        Fri, 22 Jul 2022 15:23:10 +0000
-Received: from venev.name ([213.240.239.49])
-        by pmx1.venev.name with ESMTPSA
-        id 2K0xEc/A2mJ1DwAAdB6GMg
-        (envelope-from <hristo@venev.name>); Fri, 22 Jul 2022 15:22:56 +0000
-From:   Hristo Venev <hristo@venev.name>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Hristo Venev <hristo@venev.name>
-Subject: [PATCH] be2net: Fix Smatch error
-Date:   Fri, 22 Jul 2022 18:20:52 +0300
-Message-Id: <20220722152050.3752-1-hristo@venev.name>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <YtlIZgG/wQtxpKMh@kili>
+        Sat, 23 Jul 2022 00:42:08 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B196885F80;
+        Fri, 22 Jul 2022 21:42:07 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1FE7960ABE;
+        Sat, 23 Jul 2022 04:42:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 344D7C341C0;
+        Sat, 23 Jul 2022 04:42:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658551326;
+        bh=rTIYV+dl7+/MDOcVDJkYp5QHCw1B6KZG2M1GwTmtAD0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Sh6z5+0n+jDyz6EK2pANxNaysYX6KCyEvv8bpuEVxDtuu9FkMjKCHBhIKJXFHhT4P
+         7UN2hOs4+R9O2QAm/EbsqmJW3OfKO49sbhJ3AKju7D5zZKSsRagmz2bS+J8d/n79Z/
+         hP2K49o1uMhgRZJulxZYUz0CgoQ6wGQB24Vf/bew+2+vsiKvZ9j4WdCljmuHCCoVYD
+         4kCXssPmcQInmuwNoyBS+WMRC9tSjbezuNUMoKojvsBLs4pxjY1Ek9HE22AOUaLvi/
+         +TBnm14ab5Ow6VgjG2E16VJ5NZZkRyXs0VALv7bfGE/4SU8mu2D2c8olTtJmozhioT
+         vsqyRp/NFicNg==
+Date:   Fri, 22 Jul 2022 21:42:05 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Hristo Venev <hristo@venev.name>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] be2net: Fix Smatch error
+Message-ID: <20220722214205.5e384dbb@kernel.org>
+In-Reply-To: <20220722152050.3752-1-hristo@venev.name>
 References: <YtlIZgG/wQtxpKMh@kili>
+        <20220722152050.3752-1-hristo@venev.name>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-    drivers/net/ethernet/emulex/benet/be_ethtool.c:1392 be_get_module_eeprom()
-    error: uninitialized symbol 'status'.
+On Fri, 22 Jul 2022 18:20:52 +0300 Hristo Venev wrote:
+> Subject: [PATCH] be2net: Fix Smatch error
 
-When `eeprom->len == 0` and `eeprom->offset == PAGE_DATA_LEN`, we end
-up with neither of the pages being read, so `status` is left
-uninitialized.
-
-While it appears that no caller will actually give `get_module_eeprom`
-a zero length, fixing this issue is trivial.
-
-Fixes: d7241f679a59 ("be2net: Fix buffer overflow in be_get_module_eeprom")
-Signed-off-by: Hristo Venev <hristo@venev.name>
----
- drivers/net/ethernet/emulex/benet/be_ethtool.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/emulex/benet/be_ethtool.c b/drivers/net/ethernet/emulex/benet/be_ethtool.c
-index bd0df189d871..2145882d00cc 100644
---- a/drivers/net/ethernet/emulex/benet/be_ethtool.c
-+++ b/drivers/net/ethernet/emulex/benet/be_ethtool.c
-@@ -1361,7 +1361,7 @@ static int be_get_module_eeprom(struct net_device *netdev,
- 				struct ethtool_eeprom *eeprom, u8 *data)
- {
- 	struct be_adapter *adapter = netdev_priv(netdev);
--	int status;
-+	int status = 0;
- 	u32 begin, end;
- 
- 	if (!check_privilege(adapter, MAX_PRIVILEGES))
--- 
-2.37.1
-
+Please describe the problem not the tool that found it, and name the
+target tree in the tag ([PATCH net] in this case).
