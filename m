@@ -2,92 +2,43 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80519C00140
-	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Jul 2022 16:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 755DBC00140
+	for <kernel-janitors@archiver.kernel.org>; Tue, 26 Jul 2022 17:45:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239070AbiGZQzn (ORCPT
+        id S239232AbiGZRpA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 26 Jul 2022 12:55:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35108 "EHLO
+        Tue, 26 Jul 2022 13:45:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229648AbiGZQzl (ORCPT
+        with ESMTP id S229677AbiGZRo7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 26 Jul 2022 12:55:41 -0400
-Received: from a1-bg02.venev.name (a1-bg02.venev.name [IPv6:2001:470:20aa::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2C7795A9;
-        Tue, 26 Jul 2022 09:55:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=venev.name;
-        s=default; h=Content-Transfer-Encoding:Message-Id:Date:Subject:To:From:
-        Content-Type:Reply-To:Sender; bh=DlPu22/HelfnwMZAefYnjzPtyiMpmlvP9Ci1dPmHDMU=
-        ; b=hhsDVJZ3OFr70WMaymkHHeXx5mNEZ3A2XeRRDJcLK3GmFcBq8Nf8jAac4qlMIuU8wqidx99Qh
-        OQ6vIKBXjvJ8fxWDF5HkKsqjGckKC64rw9f5n63KQ59CUQjAkZ0SYL0nSfahqeKRJxU5v3lgJ19Zr
-        2e4kHlOhnPMJUshsmm7Qb5jV0ane5TYpDz5dMjvKEF3QyUhlLhzdlTG8WLQ7bkAuaqZXqXxvQCTMZ
-        9YPkV866cwN+MAF9NQHZh9OTE0Iy6No1N1gLzmRBN4tT0M5vsFnB6PZVLJOzUVEQreKcWhOg7rPmE
-        eSzxMussGey3vEiYynzZdSrpaCIBL+bL2tMRPCL+XzorB7ojhV/xjHkVW13FPPopX5FqUXlSB9z15
-        iOgXsloZOA8+KZfkssROxAkpOEvThLAcJf/iRm4nTr0lwV7384kJLyzV09KspWBr/JjOugVkjwNiz
-        rTq598h2wehJdnPMGKJPujsniVEJzeQbNxCOqySletjPa5ntsO2qKN8Kqg0H6R/ma6Y85t2f/gYny
-        j8Udc6p8k1w2xuWS1WpJgXUG2vbhvVpizzG9d4RwHeV6RLsTHtTBEvEaqWeh0iQHcaVrccRgEaSum
-        epKyWKV4jj07/FdMl0YKIAp5V1IeRoyS1PpSE0bq7Cudu1hLw68O56miavNerAwk134FzFg=;
-X-Check-Malware: ok
-Received: from a1-bg02.venev.name ([213.240.239.49] helo=pmx1.venev.name)
-        by a1-bg02.venev.name with esmtps
-        id 1oGNq6-000WGL-6w
-        (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-        (envelope-from <hristo@venev.name>);
-        Tue, 26 Jul 2022 16:55:21 +0000
-Received: from venev.name ([213.240.239.49])
-        by pmx1.venev.name with ESMTPSA
-        id vOLEBXgc4GJx5AEAdB6GMg
-        (envelope-from <hristo@venev.name>); Tue, 26 Jul 2022 16:55:21 +0000
-From:   Hristo Venev <hristo@venev.name>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Hristo Venev <hristo@venev.name>
-Subject: [PATCH net v2] be2net: Fix uninitialized variable
-Date:   Tue, 26 Jul 2022 19:54:54 +0300
-Message-Id: <20220726165454.123991-1-hristo@venev.name>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220722214205.5e384dbb@kernel.org>
-References: <20220722214205.5e384dbb@kernel.org>
+        Tue, 26 Jul 2022 13:44:59 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4536F1001;
+        Tue, 26 Jul 2022 10:44:58 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id AFD5668AA6; Tue, 26 Jul 2022 19:44:54 +0200 (CEST)
+Date:   Tue, 26 Jul 2022 19:44:54 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ublk_drv: fix double shift bug
+Message-ID: <20220726174454.GA13897@lst.de>
+References: <Yt/2R/+MJf/MSoyl@kili>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yt/2R/+MJf/MSoyl@kili>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The following error is reported by Smatch:
+Looks good:
 
-    drivers/net/ethernet/emulex/benet/be_ethtool.c:1392 be_get_module_eeprom()
-    error: uninitialized symbol 'status'.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-When `eeprom->len == 0` and `eeprom->begin == PAGE_DATA_LEN`, we end
-up with neither of the pages being read, so `status` is left
-uninitialized.
-
-While it appears that no caller will actually give `get_module_eeprom`
-a zero length, fixing this issue is trivial.
-
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Fixes: d7241f679a59 ("be2net: Fix buffer overflow in be_get_module_eeprom")
-Signed-off-by: Hristo Venev <hristo@venev.name>
----
- drivers/net/ethernet/emulex/benet/be_ethtool.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/emulex/benet/be_ethtool.c b/drivers/net/ethernet/emulex/benet/be_ethtool.c
-index bd0df189d871..2145882d00cc 100644
---- a/drivers/net/ethernet/emulex/benet/be_ethtool.c
-+++ b/drivers/net/ethernet/emulex/benet/be_ethtool.c
-@@ -1361,7 +1361,7 @@ static int be_get_module_eeprom(struct net_device *netdev,
- 				struct ethtool_eeprom *eeprom, u8 *data)
- {
- 	struct be_adapter *adapter = netdev_priv(netdev);
--	int status;
-+	int status = 0;
- 	u32 begin, end;
- 
- 	if (!check_privilege(adapter, MAX_PRIVILEGES))
--- 
-2.37.1
-
+although as-is I would not call it a bug yet as we're not going out
+of unsigned long range yet.
