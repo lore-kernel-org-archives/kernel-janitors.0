@@ -2,94 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CACC04A68
-	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Jul 2022 12:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C4BC04A68
+	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Jul 2022 12:51:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232686AbiG0Mld (ORCPT
+        id S232457AbiG0Mvq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 27 Jul 2022 08:41:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54920 "EHLO
+        Wed, 27 Jul 2022 08:51:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232141AbiG0Mlb (ORCPT
+        with ESMTP id S231163AbiG0Mvq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 27 Jul 2022 08:41:31 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D2023C8F7;
-        Wed, 27 Jul 2022 05:41:30 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id v13so16207284wru.12;
-        Wed, 27 Jul 2022 05:41:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VaMuq5v+o4NuavIgBNulbU08tx+K6cDqBuz9Lk6sg3w=;
-        b=iBVIyJur5/3VjBIx9JFnuj322HvaRegxfGLuIapfGP85ujs4yKv0jS3rueb08HIiLE
-         21Bho22PyTObSxBDXl5WaWkidE/DC4j1dzofLrMFk8rnaGWWTf0aou/E3bKVKxyx00lC
-         Od1ZFaFi1F5eN7iAiRfoUSuh2wQfJlZKrZl7zd8AAk5wxFjqd+YojMaTzqo83s3rv6Gg
-         8FfuMWhLDRmKlppEcnFq9Qu7TioucpDirRn60Nk2C7ZL0HjKCMX02IsXtQjBfOQ4NTPx
-         MT9Ja/2RUkQBaDuQjwPYBTGGgsE65fGbeiZwRpWT/k5kBH3U4NEwWyPOWrSsM2A7qxCz
-         JYvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VaMuq5v+o4NuavIgBNulbU08tx+K6cDqBuz9Lk6sg3w=;
-        b=7sIlCisQOoaO30hEHaClm9SRHoUNgBHi5o6wJirbOSLpZegofI45axGFzGnZT2qOxS
-         ktZ8sZmAoazKc8mUrgbyKcPXjUJMY6+ONlzsyPMcmHMj+Ur8WfmNv2hdDp0Q/tFD0m5d
-         rkWO0UbkYRtiZyMFCZe/uyCni6YHN3K1XcZBfbFDZorJIUYjr82edrzZxtoJD4LzqkHj
-         Y5zX55v1Gl62CjcRFgvUMbgHIZjfBxpPEYlnnlFOkMt+oF0IIx0j+EMVskdn9dlMJKd7
-         VSiVJ+yIZkRa5jWWAluug6eGhez/PZQUfWz8KkR7X2/gW9UXDFsA2XZljXDkZF2i2DEh
-         TuZw==
-X-Gm-Message-State: AJIora8Qh3x7cR5st4Hzwy/DvA6iVv0mHVRkr93SS+6+l74i87Pnrdmw
-        Q+Kh03UHrD6mGrVTzRbY4rk=
-X-Google-Smtp-Source: AGRyM1uFCE3S+KoaOaBbuQX61YGuW4CbxHkK6tDvNgw2AJH6uwb6fk3KdJEDqtIQoY+Z2qXEezpZhw==
-X-Received: by 2002:adf:cd86:0:b0:21e:b245:9556 with SMTP id q6-20020adfcd86000000b0021eb2459556mr4243024wrj.151.1658925688731;
-        Wed, 27 Jul 2022 05:41:28 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id l18-20020a05600c1d1200b003a2fb1224d9sm2562153wms.19.2022.07.27.05.41.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Jul 2022 05:41:27 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-perf-users@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] perf kwork: Fix spelling mistake "Captuer" -> "Capture"
-Date:   Wed, 27 Jul 2022 13:41:26 +0100
-Message-Id: <20220727124126.222137-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.3
-MIME-Version: 1.0
+        Wed, 27 Jul 2022 08:51:46 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E9651571F;
+        Wed, 27 Jul 2022 05:51:45 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 7F496CE2277;
+        Wed, 27 Jul 2022 12:51:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55D91C433C1;
+        Wed, 27 Jul 2022 12:51:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658926301;
+        bh=s5kMgiBwQskmWHY4pql5p3R8coIW7YD8Cs3HUXJ0iq4=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=qJchCg2QeN9VxMVvNDG0+IBB5ocdDk7G2LJYgk3TUueWQ4ecKFNbRI4JzK8gsyWq7
+         jQCAGKleDMdxBUnCYjbsOmWqtPfEPNuDpekAJw8gX9BthrYd0eYTi+Hvf2JdPRUjx8
+         6D/YXjot4X92L31o5NMBV5e07LPFQBSlMwuFhPKDmh6Z0GBDwMBjdc2xih48aIrxg/
+         rRQ92a5lBjYX6zfi2YUzhIJ/zmw5Jo3yfVy1KnKhPHgOXqQCJDQJ+TKAAgzbhKqDZX
+         3pPhw4KOoxLXhlgiDKxtgrdhcuUe5OmC5epck3ctJn843j9tRgcG+P6ao0BA4GxYRa
+         ru38Ch09GbkJg==
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: Re: wifi: rsi: remove redundant pointer bss
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20220622113402.16969-1-colin.i.king@gmail.com>
+References: <20220622113402.16969-1-colin.i.king@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Amitkumar Karwar <amitkarwar@gmail.com>,
+        Siva Rebbagondla <siva8118@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <165892629292.11639.18092056778220420918.kvalo@kernel.org>
+Date:   Wed, 27 Jul 2022 12:51:39 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a pr_debug message. Fix it.
+Colin Ian King <colin.i.king@gmail.com> wrote:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/perf/builtin-kwork.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> The pointer bss is being assigned a value that is never read, the
+> pointer is redundant and can be removed.
+> 
+> Cleans up clang scan-build warning:
+> drivers/net/wireless/rsi/rsi_91x_hal.c:362:2: warning: Value stored
+> to 'bss' is never read [deadcode.DeadStores]
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-diff --git a/tools/perf/builtin-kwork.c b/tools/perf/builtin-kwork.c
-index fb8c63656ad8..d5906e939756 100644
---- a/tools/perf/builtin-kwork.c
-+++ b/tools/perf/builtin-kwork.c
-@@ -1447,7 +1447,7 @@ static void sig_handler(int sig)
- 	 * Simply capture termination signal so that
- 	 * the program can continue after pause returns
- 	 */
--	pr_debug("Captuer signal %d\n", sig);
-+	pr_debug("Capture signal %d\n", sig);
- }
- 
- static int perf_kwork__report_bpf(struct perf_kwork *kwork)
+Already fixed in: https://git.kernel.org/netdev/net-next/c/9dd9495d560a
+
+Patch set to Superseded.
+
 -- 
-2.35.3
+https://patchwork.kernel.org/project/linux-wireless/patch/20220622113402.16969-1-colin.i.king@gmail.com/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
