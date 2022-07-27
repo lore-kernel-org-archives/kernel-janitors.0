@@ -2,41 +2,39 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F970C00144
-	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Jul 2022 03:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB243C19F2B
+	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Jul 2022 03:15:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240199AbiG0DAR (ORCPT
+        id S240234AbiG0DPK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 26 Jul 2022 23:00:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35748 "EHLO
+        Tue, 26 Jul 2022 23:15:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240144AbiG0DAP (ORCPT
+        with ESMTP id S240120AbiG0DPI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 26 Jul 2022 23:00:15 -0400
+        Tue, 26 Jul 2022 23:15:08 -0400
 Received: from mail.nfschina.com (unknown [IPv6:2400:dd01:100f:2:72e2:84ff:fe10:5f45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4C9A12603;
-        Tue, 26 Jul 2022 20:00:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 868EB3CBFC;
+        Tue, 26 Jul 2022 20:15:04 -0700 (PDT)
 Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id 0D0EC1E80D8E;
-        Wed, 27 Jul 2022 11:00:25 +0800 (CST)
+        by mail.nfschina.com (Postfix) with ESMTP id 8B8FE1E80D54;
+        Wed, 27 Jul 2022 11:15:15 +0800 (CST)
 X-Virus-Scanned: amavisd-new at test.com
 Received: from mail.nfschina.com ([127.0.0.1])
         by localhost (mail.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ZSFJZEL-oIX6; Wed, 27 Jul 2022 11:00:22 +0800 (CST)
+        with ESMTP id 05eI2f5kp0in; Wed, 27 Jul 2022 11:15:12 +0800 (CST)
 Received: from localhost.localdomain (unknown [180.167.10.98])
         (Authenticated sender: yuzhe@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id 97E001E80D05;
-        Wed, 27 Jul 2022 11:00:21 +0800 (CST)
+        by mail.nfschina.com (Postfix) with ESMTPA id C0AFD1E80D05;
+        Wed, 27 Jul 2022 11:15:11 +0800 (CST)
 From:   Yu Zhe <yuzhe@nfschina.com>
-To:     Felix.Kuehling@amd.com, alexander.deucher@amd.com,
-        christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@linux.ie,
-        daniel@ffwll.ch
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         liqiong@nfschina.com, Yu Zhe <yuzhe@nfschina.com>
-Subject: [PATCH] drm/amdkfd: use time_is_before_jiffies(a + b) to replace "jiffies - a > b"
-Date:   Wed, 27 Jul 2022 10:59:17 +0800
-Message-Id: <20220727025917.22477-1-yuzhe@nfschina.com>
+Subject: [PATCH] x86/aperfmperf: use time_is_before_jiffies(a + b) to replace "jiffies - a > b"
+Date:   Wed, 27 Jul 2022 11:14:05 +0800
+Message-Id: <20220727031405.26892-1-yuzhe@nfschina.com>
 X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
@@ -46,22 +44,22 @@ time_is_before_jiffies deals with timer wrapping correctly.
 
 Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c | 2 +-
+ arch/x86/kernel/cpu/aperfmperf.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c b/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c
-index a9466d154395..6397926e059c 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c
-@@ -156,7 +156,7 @@ static void interrupt_wq(struct work_struct *work)
- 	while (dequeue_ih_ring_entry(dev, ih_ring_entry)) {
- 		dev->device_info.event_interrupt_class->interrupt_wq(dev,
- 								ih_ring_entry);
--		if (jiffies - start_jiffies > HZ) {
-+		if (time_is_before_jiffies(start_jiffies + HZ)) {
- 			/* If we spent more than a second processing signals,
- 			 * reschedule the worker to avoid soft-lockup warnings
- 			 */
+diff --git a/arch/x86/kernel/cpu/aperfmperf.c b/arch/x86/kernel/cpu/aperfmperf.c
+index 1f60a2b27936..22e0bac3fffe 100644
+--- a/arch/x86/kernel/cpu/aperfmperf.c
++++ b/arch/x86/kernel/cpu/aperfmperf.c
+@@ -423,7 +423,7 @@ unsigned int arch_freq_get_on_cpu(int cpu)
+ 	 * Bail on invalid count and when the last update was too long ago,
+ 	 * which covers idle and NOHZ full CPUs.
+ 	 */
+-	if (!mcnt || (jiffies - last) > MAX_SAMPLE_AGE)
++	if (!mcnt || time_is_before_jiffies(last + MAX_SAMPLE_AGE))
+ 		goto fallback;
+ 
+ 	return div64_u64((cpu_khz * acnt), mcnt);
 -- 
 2.11.0
 
