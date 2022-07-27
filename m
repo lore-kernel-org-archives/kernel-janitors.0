@@ -2,123 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E4FAC04A68
-	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Jul 2022 15:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC6EC3F6B0
+	for <kernel-janitors@archiver.kernel.org>; Wed, 27 Jul 2022 16:00:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233621AbiG0PSA (ORCPT
+        id S234475AbiG0QAv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 27 Jul 2022 11:18:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57994 "EHLO
+        Wed, 27 Jul 2022 12:00:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229863AbiG0PR7 (ORCPT
+        with ESMTP id S234458AbiG0QAu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 27 Jul 2022 11:17:59 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70A373C17F;
-        Wed, 27 Jul 2022 08:17:57 -0700 (PDT)
-Received: from mail-wr1-f41.google.com ([209.85.221.41]) by
- mrelayeu.kundenserver.de (mreue011 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MdNse-1nhf5m33VA-00ZQsC; Wed, 27 Jul 2022 17:17:54 +0200
-Received: by mail-wr1-f41.google.com with SMTP id u5so24849011wrm.4;
-        Wed, 27 Jul 2022 08:17:54 -0700 (PDT)
-X-Gm-Message-State: AJIora/uSXDHtBTQ2nPTxn/mhclHjQWuPikEvy8U7y/Vx9C0lTjbqkZ6
-        0fXW+1ePkG6rNGNmMpzO9fHpFsBkgDad7ao883c=
-X-Google-Smtp-Source: AGRyM1vwxJc9gqiCvqq3uZ9PoY1AG2s6ob4gu0k2PJcRXrxC/RKPlF2mjI4dn9XBym1ZTYN/0mzbu7IFwiwjbGrFF8A=
-X-Received: by 2002:a7b:c8da:0:b0:3a2:ffd2:8059 with SMTP id
- f26-20020a7bc8da000000b003a2ffd28059mr3501141wml.169.1658935074324; Wed, 27
- Jul 2022 08:17:54 -0700 (PDT)
+        Wed, 27 Jul 2022 12:00:50 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 610534A836;
+        Wed, 27 Jul 2022 09:00:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=qMrUUBtTVdKIO/818CmIJX7vjH07uHfMlbshxW7VLdA=; b=nIvbupTuXBJpWvBzPBt2Fx6zXm
+        gRJVJy0fXowGNX0j4MGolZVVSD17TQPRl1+ijvtUOyRpRwn+rWnv3MHbtKzOB3QmSFMuxDSY1PMqs
+        k9LNHU2R/ZJqM0mAW8e7VmKCLpnTTUdpZ4TNS1lYTqc05v0ftxapcGOErWHObIH+JdmdYuO0hL4px
+        HElouXjWXQkrbsONRI1jjXnEyg+ZL92+AWHLyR/74GhLk+joY+o/46+Y+0bHZuO9YB8oUXiVVskTO
+        BYVYO7ih//oF6ry8oJkuQBNjemcUJoq7X6eRl+27MLYtsSHR6F9ZWTUk4/IyOPPRZY6b49nmO6xgk
+        XRMCEjRg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=worktop.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1oGjSc-0031u0-Gx; Wed, 27 Jul 2022 16:00:34 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1FC01980403; Wed, 27 Jul 2022 18:00:34 +0200 (CEST)
+Date:   Wed, 27 Jul 2022 18:00:34 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Yu Zhe <yuzhe@nfschina.com>
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        liqiong@nfschina.com
+Subject: Re: [PATCH] x86/aperfmperf: use time_is_before_jiffies(a + b) to
+ replace "jiffies - a > b"
+Message-ID: <YuFhIgsUgNJ+o9xG@worktop.programming.kicks-ass.net>
+References: <20220727031405.26892-1-yuzhe@nfschina.com>
 MIME-Version: 1.0
-References: <20220722110711.16569-1-lukas.bulwahn@gmail.com> <Ytq50u0nhkJ1UV0U@bombadil.infradead.org>
-In-Reply-To: <Ytq50u0nhkJ1UV0U@bombadil.infradead.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 27 Jul 2022 17:17:37 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a33ZApraQ5X+iK4MXtDJADF3AReBUS+GKDfmDhvZc16-w@mail.gmail.com>
-Message-ID: <CAK8P3a33ZApraQ5X+iK4MXtDJADF3AReBUS+GKDfmDhvZc16-w@mail.gmail.com>
-Subject: Re: [PATCH v2] asm-generic: remove a broken and needless ifdef conditional
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:WnOuCcD5NhXL2YQJBk7JvXauH9tZqmVJBGIulmw1T4qoBt4ZMj5
- Ze9lIdQtXXW7i2cf9pRPY3vIxR/HeMRusU/3rljJn+ak5t1nMFbRmlLk4ll2NuCyd6VtJnG
- kaMnpBPhhptQh4zV0474OLR9PVPHqn0MGD1jmNjHEed2+aL81+lZwQzLa3UitbWDIKHBUTI
- 9XbghmMJK3x3gPtVoV1Uw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Ebv59fOqQbI=:3D8TokgQRNTAYyAn+6oJVv
- l2gf+ATB4psdk/Is7A0OA4AwwSNYz/UTPkqU5vQurqrD3kUAStk20ILOo+jVDcszVso/QxGbP
- fgGdYUdO+NOoJBI49TQEWCL6rCEOR0JAu11yGBKb+ejZz7APZ+FBBaws3v2nb+5lGF2hcOksO
- nCm/WM4CCu8FTC8ShW4cxfwYqdmhR3QnBVyx4ktgOF5Dvy3cwhXplRfgQ1g9v/FfJ7d/WZevC
- ctFT2BIgF04r6d3yOWFanrXJOLqiRfEoXgb9YDngkb36zBeesRMw272jnYxp1iZ74EgATjKYf
- m5Xu/5CCWvziUB1s6BfGngfY3CLacKdIcDj72vlpNpIIfF6WeEucIGu0/6UmRV6vJY1N2HSiZ
- yVV9k6uAm86yJnUIiV8jzNywvcGApDVDBm6PkB/HWBQRLMznzSkc+cQNJNyzs8nWv3euXdJup
- Qir7Bag5tHC38Gomly8b5hVt/lHqfcajOvjhxrWwyCTrq+CnwZ/ZAody34yoYKHW+sai/m/ZD
- N/2XvvnAiWC7lsF2FrppMrlnU87xhAQIoKqBC/LAHufyQhiazYrzwaF/SrT/YKd2gjPiXvCc+
- V8LaIi2QdvhBmZ4b/vawAl2vKlF1IR3AkGNhmkKmY2xfrgjTkLHRTB6WxJ9TiVw8L06lVIL5V
- QxJqcpuBvO+kXGslc03G6daGT0oXTc66EFLyKBU9k9psUaxlMeJvtadL++2vxFUC32pGx9a4T
- 8bSYGMdaRVgrnCVzd0wMHH1t7DOgI4vWFfpYoA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220727031405.26892-1-yuzhe@nfschina.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Jul 22, 2022 at 4:53 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
->
-> On Fri, Jul 22, 2022 at 01:07:11PM +0200, Lukas Bulwahn wrote:
-> > Commit 527701eda5f1 ("lib: Add a generic version of devmem_is_allowed()")
-> > introduces the config symbol GENERIC_LIB_DEVMEM_IS_ALLOWED, but then
-> > falsely refers to CONFIG_GENERIC_DEVMEM_IS_ALLOWED (note the missing LIB
-> > in the reference) in ./include/asm-generic/io.h.
-> >
-> > Luckily, ./scripts/checkkconfigsymbols.py warns on non-existing configs:
-> >
-> > GENERIC_DEVMEM_IS_ALLOWED
-> > Referencing files: include/asm-generic/io.h
-> >
-> > The actual fix, though, is simply to not to make this function declaration
-> > dependent on any kernel config. For architectures that intend to use
-> > the generic version, the arch's 'select GENERIC_LIB_DEVMEM_IS_ALLOWED' will
-> > lead to picking the function definition, and for other architectures, this
-> > function is simply defined elsewhere.
-> >
-> > The wrong '#ifndef' on a non-existing config symbol also always had the
-> > same effect (although more by mistake than by intent). So, there is no
-> > functional change.
-> >
-> > Remove this broken and needless ifdef conditional.
-> >
-> > Fixes: 527701eda5f1 ("lib: Add a generic version of devmem_is_allowed()")
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > ---
->
-> There is only one architecture which defines this as a static inline.
-> Should that architecture include asm-generic/io.h, or if it already
-> does, it may end up with a compilation error.
->
-> So if arch/s390/include/asm/page.h can end up including asm-generic/io.h
-> or if any file including for s390 can include its arch page.h and
-> asm-generic/io.h then we'll still need the guard.
->
-> This may compile today for s390 because s390 may not use asm-generic/io.h.
->
+On Wed, Jul 27, 2022 at 11:14:05AM +0800, Yu Zhe wrote:
+> time_is_before_jiffies deals with timer wrapping correctly.
 
-It looks like we never concluded this thread. I double-checked this
-on s390 and confirmed that it has both the inline definition and the
-extern declaration visible and this does not cause problems on any of
-the compilers I tried (gcc-5 and gcc-12).
+Please explain how the current code does not.
 
-Generally speaking there is not really a need to hide extern declarations
-behind an ifdef.
-
-> So why not just keep the guard and correct this as intended?
-
-That was what the original patch from Lukas did, but it caused regressions
-because configurations actually relied on the declaration even when the
-Kconfig option is disabled.
-
-The current version of the patch was in linux-next for a while now without
-causing extra issues, so I'm sending it out in my final fixes pull request
-for 5.19.
-
-      Arnd
+> 
+> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+> ---
+>  arch/x86/kernel/cpu/aperfmperf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/aperfmperf.c b/arch/x86/kernel/cpu/aperfmperf.c
+> index 1f60a2b27936..22e0bac3fffe 100644
+> --- a/arch/x86/kernel/cpu/aperfmperf.c
+> +++ b/arch/x86/kernel/cpu/aperfmperf.c
+> @@ -423,7 +423,7 @@ unsigned int arch_freq_get_on_cpu(int cpu)
+>  	 * Bail on invalid count and when the last update was too long ago,
+>  	 * which covers idle and NOHZ full CPUs.
+>  	 */
+> -	if (!mcnt || (jiffies - last) > MAX_SAMPLE_AGE)
+> +	if (!mcnt || time_is_before_jiffies(last + MAX_SAMPLE_AGE))
+>  		goto fallback;
+>  
+>  	return div64_u64((cpu_khz * acnt), mcnt);
+> -- 
+> 2.11.0
+> 
