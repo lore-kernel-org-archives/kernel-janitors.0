@@ -2,87 +2,114 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A0C2C19F2B
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Jul 2022 15:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D01C19F29
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Jul 2022 17:17:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230483AbiG1P4q (ORCPT
+        id S231573AbiG1RRB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Jul 2022 11:56:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40930 "EHLO
+        Thu, 28 Jul 2022 13:17:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232062AbiG1P4W (ORCPT
+        with ESMTP id S229627AbiG1RQ7 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Jul 2022 11:56:22 -0400
-Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D95061D48
-        for <kernel-janitors@vger.kernel.org>; Thu, 28 Jul 2022 08:56:22 -0700 (PDT)
-Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 6EBDF21F;
-        Thu, 28 Jul 2022 15:56:20 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 6EBDF21F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-        t=1659023780; bh=Fdz/aB00PMrpIGOtZ/f4nnm4cHA+314fJvDTvpvlkbY=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=aO7nC7rNH86DCNoWuAYMNivOT6HBQkFj8b/fK+OtZ7gCUv+1XjcFsZpNfeB7ePNCf
-         2Vm3pzw7efIR+opcI1xOS5s+ONzJmQ8J54oXor/6CwzUuAhMj/Fz0uNU7M1DNgBR6q
-         go97rDcBgU/Q30dXNKtmSrgSvH6qdD7hpSV2+n4aj8gjVY8HkMLEASAv2yqGHAOt/W
-         /6DTT2Fs0m3RcHSDdkJ0ng9cUMoX56kjpNxYLgzPxL3ug3eIiUL6OnLK20mcO9wqTk
-         mDq8qT43QKIQbG4bsfoe+qbDtildb4h1p7FKJ59cXMvenJBbExVo+q0tIR3MeatSSq
-         SSpilxR2LNwpw==
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Thorsten Leemhuis <linux@leemhuis.info>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [RFC PATCH 0/2] Rework the kernel's README.rst
-In-Reply-To: <20220720041325.15693-1-lukas.bulwahn@gmail.com>
-References: <20220720041325.15693-1-lukas.bulwahn@gmail.com>
-Date:   Thu, 28 Jul 2022 09:56:19 -0600
-Message-ID: <87czdpb598.fsf@meer.lwn.net>
+        Thu, 28 Jul 2022 13:16:59 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6E766D2E9;
+        Thu, 28 Jul 2022 10:16:56 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id z18so2974508edb.10;
+        Thu, 28 Jul 2022 10:16:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WFtWtuh4fnkPdW4l+mTBk7hWyaNDh0oxtPhJEC+i/84=;
+        b=mhUHLFc7PT3U4HYxgQFlnVqZTq1Ncla6olvQcGYF/KgGYSydW12nVxFSsvq7lHwMym
+         HaqhYnRgiKoU0XaRRnzLHfxlh9CJZLyAXgREBHnHnUWbsx3CnJBimbJGNe1nm9wooQUi
+         K2AbHh39RvrZUV7w6IxEc4ylqoGjYwdnUhBU5OGhrIHFzKZR56cqqA3YSNhk3tMwHIeb
+         wUPyz+0PzlMocNPTCCR2TL+R1aBaA9OttKhKllwY0EsCeG0iZVAndp8RB/JQg8gUDKrJ
+         zOJjExJ/alzglDemntATfSO5c0eLlJ82VTG52/V6yvRkoDFKh0KIEPaI4fW/QRhUMC4H
+         s3uA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WFtWtuh4fnkPdW4l+mTBk7hWyaNDh0oxtPhJEC+i/84=;
+        b=CsRQenISdjoc9bwboswXAjl9d1XvHBnqLj50W1VGwA1B5MV+TbHHf7CmWkjVw+cc+C
+         sQhuR1h7dVMb4alQXgePIvs/Z2ZcSzlfvMIjuQKbMcgWCttHjbjsS1/rWhRqY5dTpmk3
+         m+2Yu1msW6CdJh5EBp6EO+6q0lsSu3EPfldnMfZw+bRKWQGGqdOiv2ClpJjW3m/5Y4Zq
+         HPDelYvMLc7iZqLSg/o4n4GqoKkxEERHhswfiwdEgk71V3ynXQ5VRPXtoeNGTJTPN3Y9
+         s9MOiTy3evW7uVb+7M3WsRmq29elAye9HaKAbTVtb0w/WwPgJRtCm3X2MCRkeoiOhMA6
+         EMEA==
+X-Gm-Message-State: AJIora+nH3ENNVoBn+0c/MiV7qmrnoVK5y8Dfce32vm11RtRk+dkF+hO
+        aoes0WNho7+3qrX+f7a2cT8XWUAmKCA=
+X-Google-Smtp-Source: AGRyM1tTwXpA/Wc9we8MBkI8tLc76dxU0UXWlwM7ydG/dxXSNEoBbKsnKcvY1iuyxub7SKq6sqiVUA==
+X-Received: by 2002:a05:6402:26ce:b0:43c:e187:881e with SMTP id x14-20020a05640226ce00b0043ce187881emr4212004edd.408.1659028615162;
+        Thu, 28 Jul 2022 10:16:55 -0700 (PDT)
+Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id gw6-20020a170906f14600b0072b2cc08c48sm626801ejb.63.2022.07.28.10.16.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Jul 2022 10:16:53 -0700 (PDT)
+Date:   Thu, 28 Jul 2022 19:16:52 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, linux-pwm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: add include/dt-bindings/pwm to PWM SUBSYSTEM
+Message-ID: <YuLEhGN6xWihUhfj@orome>
+References: <20220613123319.22964-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="J1595YusDGLAFwXx"
+Content-Disposition: inline
+In-Reply-To: <20220613123319.22964-1-lukas.bulwahn@gmail.com>
+User-Agent: Mutt/2.2.6 (2022-06-05)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
 
-> As far as I see, the README.rst file in Documentation/admin-guide/ covers
-> three rather outdated (or subsumed) aspects:
->
->   1. mentioning that it is possible to "run a.out user programs with this kernel"
->
->   2. how to report a kernel bug
->
->   3. the explanations around the use of LILO as a boot loader
->
-> This patch series addressed the first two aspects; the third one simply
-> first needs some more experimenting/experience on my side to update
-> the description of the setup with a GRUB boot loader.
->
-> I am happy if anyone else contributes or helps with this rework task on
-> the third aspect.
->
-> I am also adding Linus as recipient, as he seems to be the original author,
-> i.e., in the text, 'me' refers to Linus.
->
-> Please let me know if you are generally fine with this approach, and
-> if there is something on the other documentation to be done to get this
-> patch accepted.
+--J1595YusDGLAFwXx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The changes seem fine to me; I'll apply them after the merge window if
-nobody objects.
+On Mon, Jun 13, 2022 at 02:33:19PM +0200, Lukas Bulwahn wrote:
+> Maintainers of the directory Documentation/devicetree/bindings/pwm
+> are also the maintainers of the corresponding directory
+> include/dt-bindings/pwm.
+>=20
+> Add the file entry for include/dt-bindings/pwm to the appropriate
+> section in MAINTAINERS.
+>=20
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Thierry, Lee, please pick this MAINTAINERS addition to your section.
+>=20
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
 
-Longer term it's probably worth thinking about what the README.rst file
-is for.  It seems like we should have one starting point for somebody's
-first encounter with the docs; that would likely either be this file or
-Documentation/index.rst but not both.  I keep meaning to try to improve
-the initial documentation experience, but haven't found the time yet...
+Applied, thanks.
 
-Thanks,
+Thierry
 
-jon
+--J1595YusDGLAFwXx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmLixIQACgkQ3SOs138+
+s6Gz4xAAvZ7zh8WZv9Il6FFdSzNueVcjcQVVpdvi8MvCni2fSe48DKgB4gzILHhQ
+4Z+LmXsVHubSm700UiVMZbnRo4G05adlws4Urpr0McwkTsQIP2HHIGl1/6WgBZCe
+YWUVVkgAQF5lJKTkI5qr08aKZvf9veAlsVsnJ2+ootLvY8q3bx/6BY0iVF9L/AgM
+Xm3xKiL3bB+LfJJJkG8dZWilNEjnn2NCfYW93ZEVWx42dnaic/kGmX7JRSrx5yCL
+8kwewFw+718wYPB4DJaPTRLsdZCtzRGexdu0SCnLr9nVfMA+Aemj1fkQvqwCWNfY
+Kk27ErsjUWYa/Wk7GlgBS1Vw6mt2zTA+knpAstmC7rK+aR9l6ozCjvGvg3ojXYhx
+rpzDNA7Q19KmJ0utrLORUB1DASeqakgvqyPK11w5DcZTu2ixbdJ4ckRr/yxm9ghG
+NU6DbkIXVvk+Mdf5hGVAu/elSK3ACE5Z8GwJ94ubt26+B+dESKCZVA3fYA8i98Sd
+OPeTqBLLiH2wH2hbqjOkYb6kUoOlwFWwKgmAeqR8o51Xmix1RJBNd3b9ZwfXMhI4
+dy+2jRCNcVSDjb6LV+bjCv3TZ1pH/kXVt2iC4lxzf9pkC9ilGh1RXSv6C15ci1rN
+EA+97UIhiiS/gYi957y+u0k6jlWcvkO9TKkGXSTIgUs2aWMBYBE=
+=AoyE
+-----END PGP SIGNATURE-----
+
+--J1595YusDGLAFwXx--
