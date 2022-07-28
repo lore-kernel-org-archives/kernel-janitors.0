@@ -2,114 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D01C19F29
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Jul 2022 17:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC209C04A68
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Jul 2022 18:10:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231573AbiG1RRB (ORCPT
+        id S232059AbiG1SKT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Jul 2022 13:17:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56998 "EHLO
+        Thu, 28 Jul 2022 14:10:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229627AbiG1RQ7 (ORCPT
+        with ESMTP id S229631AbiG1SKS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Jul 2022 13:16:59 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6E766D2E9;
-        Thu, 28 Jul 2022 10:16:56 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id z18so2974508edb.10;
-        Thu, 28 Jul 2022 10:16:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WFtWtuh4fnkPdW4l+mTBk7hWyaNDh0oxtPhJEC+i/84=;
-        b=mhUHLFc7PT3U4HYxgQFlnVqZTq1Ncla6olvQcGYF/KgGYSydW12nVxFSsvq7lHwMym
-         HaqhYnRgiKoU0XaRRnzLHfxlh9CJZLyAXgREBHnHnUWbsx3CnJBimbJGNe1nm9wooQUi
-         K2AbHh39RvrZUV7w6IxEc4ylqoGjYwdnUhBU5OGhrIHFzKZR56cqqA3YSNhk3tMwHIeb
-         wUPyz+0PzlMocNPTCCR2TL+R1aBaA9OttKhKllwY0EsCeG0iZVAndp8RB/JQg8gUDKrJ
-         zOJjExJ/alzglDemntATfSO5c0eLlJ82VTG52/V6yvRkoDFKh0KIEPaI4fW/QRhUMC4H
-         s3uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WFtWtuh4fnkPdW4l+mTBk7hWyaNDh0oxtPhJEC+i/84=;
-        b=CsRQenISdjoc9bwboswXAjl9d1XvHBnqLj50W1VGwA1B5MV+TbHHf7CmWkjVw+cc+C
-         sQhuR1h7dVMb4alQXgePIvs/Z2ZcSzlfvMIjuQKbMcgWCttHjbjsS1/rWhRqY5dTpmk3
-         m+2Yu1msW6CdJh5EBp6EO+6q0lsSu3EPfldnMfZw+bRKWQGGqdOiv2ClpJjW3m/5Y4Zq
-         HPDelYvMLc7iZqLSg/o4n4GqoKkxEERHhswfiwdEgk71V3ynXQ5VRPXtoeNGTJTPN3Y9
-         s9MOiTy3evW7uVb+7M3WsRmq29elAye9HaKAbTVtb0w/WwPgJRtCm3X2MCRkeoiOhMA6
-         EMEA==
-X-Gm-Message-State: AJIora+nH3ENNVoBn+0c/MiV7qmrnoVK5y8Dfce32vm11RtRk+dkF+hO
-        aoes0WNho7+3qrX+f7a2cT8XWUAmKCA=
-X-Google-Smtp-Source: AGRyM1tTwXpA/Wc9we8MBkI8tLc76dxU0UXWlwM7ydG/dxXSNEoBbKsnKcvY1iuyxub7SKq6sqiVUA==
-X-Received: by 2002:a05:6402:26ce:b0:43c:e187:881e with SMTP id x14-20020a05640226ce00b0043ce187881emr4212004edd.408.1659028615162;
-        Thu, 28 Jul 2022 10:16:55 -0700 (PDT)
-Received: from orome (p200300e41f12c800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f12:c800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id gw6-20020a170906f14600b0072b2cc08c48sm626801ejb.63.2022.07.28.10.16.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Jul 2022 10:16:53 -0700 (PDT)
-Date:   Thu, 28 Jul 2022 19:16:52 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, linux-pwm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: add include/dt-bindings/pwm to PWM SUBSYSTEM
-Message-ID: <YuLEhGN6xWihUhfj@orome>
-References: <20220613123319.22964-1-lukas.bulwahn@gmail.com>
+        Thu, 28 Jul 2022 14:10:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83CBB1182A;
+        Thu, 28 Jul 2022 11:10:14 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8ABA961DAD;
+        Thu, 28 Jul 2022 18:10:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E1C46C433B5;
+        Thu, 28 Jul 2022 18:10:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1659031814;
+        bh=ppCmYlclJCNj1Oq4JCRie1DNfqM3IDoEheXuO58cvTg=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=eLM26ccgbZnNt0CUIvvwJbBC6poS7oR7/G7lozocJNnsWBDxawsTE6oPYLvcekSPN
+         ovhwHnCYigojA0lNzHgTrDin14WQ/SByLA2OVU7L2NpfhksLivH7MZNJH2J8xeFsfY
+         upCMg0rPvG+0n9X7WTX/mMT9xEfyqLAthPpDj6B+pjyDeG4ARdXrKwLsIMvAkusSjw
+         m+TfAmO8YGLPI68SUg9e5Dz+pdwTFTRUpG4dq/+gx+mL3O8uP1QYGhApfb7oEkBcC1
+         ze5Hje/u8jYLcuTh3tF+WaMTjKeNCb5lvS6x9mArIv0MifFmqvap/ThP+fuXo8Szs3
+         CIOAPxN00q3Qg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C93C6C43143;
+        Thu, 28 Jul 2022 18:10:13 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="J1595YusDGLAFwXx"
-Content-Disposition: inline
-In-Reply-To: <20220613123319.22964-1-lukas.bulwahn@gmail.com>
-User-Agent: Mutt/2.2.6 (2022-06-05)
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] stmmac: dwmac-mediatek: fix resource leak in probe
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <165903181382.2291.8863547537135721463.git-patchwork-notify@kernel.org>
+Date:   Thu, 28 Jul 2022 18:10:13 +0000
+References: <YuJ4aZyMUlG6yGGa@kili>
+In-Reply-To: <YuJ4aZyMUlG6yGGa@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     peppe.cavallaro@st.com, biao.huang@mediatek.com,
+        alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+        matthias.bgg@gmail.com, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hello:
 
---J1595YusDGLAFwXx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch was applied to netdev/net.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On Mon, Jun 13, 2022 at 02:33:19PM +0200, Lukas Bulwahn wrote:
-> Maintainers of the directory Documentation/devicetree/bindings/pwm
-> are also the maintainers of the corresponding directory
-> include/dt-bindings/pwm.
->=20
-> Add the file entry for include/dt-bindings/pwm to the appropriate
-> section in MAINTAINERS.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+On Thu, 28 Jul 2022 14:52:09 +0300 you wrote:
+> If mediatek_dwmac_clks_config() fails, then call stmmac_remove_config_dt()
+> before returning.  Otherwise it is a resource leak.
+> 
+> Fixes: fa4b3ca60e80 ("stmmac: dwmac-mediatek: fix clock issue")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
-> Thierry, Lee, please pick this MAINTAINERS addition to your section.
->=20
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
 
-Applied, thanks.
+Here is the summary with links:
+  - [net] stmmac: dwmac-mediatek: fix resource leak in probe
+    https://git.kernel.org/netdev/net/c/4d3d3a1b244f
 
-Thierry
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
---J1595YusDGLAFwXx
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmLixIQACgkQ3SOs138+
-s6Gz4xAAvZ7zh8WZv9Il6FFdSzNueVcjcQVVpdvi8MvCni2fSe48DKgB4gzILHhQ
-4Z+LmXsVHubSm700UiVMZbnRo4G05adlws4Urpr0McwkTsQIP2HHIGl1/6WgBZCe
-YWUVVkgAQF5lJKTkI5qr08aKZvf9veAlsVsnJ2+ootLvY8q3bx/6BY0iVF9L/AgM
-Xm3xKiL3bB+LfJJJkG8dZWilNEjnn2NCfYW93ZEVWx42dnaic/kGmX7JRSrx5yCL
-8kwewFw+718wYPB4DJaPTRLsdZCtzRGexdu0SCnLr9nVfMA+Aemj1fkQvqwCWNfY
-Kk27ErsjUWYa/Wk7GlgBS1Vw6mt2zTA+knpAstmC7rK+aR9l6ozCjvGvg3ojXYhx
-rpzDNA7Q19KmJ0utrLORUB1DASeqakgvqyPK11w5DcZTu2ixbdJ4ckRr/yxm9ghG
-NU6DbkIXVvk+Mdf5hGVAu/elSK3ACE5Z8GwJ94ubt26+B+dESKCZVA3fYA8i98Sd
-OPeTqBLLiH2wH2hbqjOkYb6kUoOlwFWwKgmAeqR8o51Xmix1RJBNd3b9ZwfXMhI4
-dy+2jRCNcVSDjb6LV+bjCv3TZ1pH/kXVt2iC4lxzf9pkC9ilGh1RXSv6C15ci1rN
-EA+97UIhiiS/gYi957y+u0k6jlWcvkO9TKkGXSTIgUs2aWMBYBE=
-=AoyE
------END PGP SIGNATURE-----
-
---J1595YusDGLAFwXx--
