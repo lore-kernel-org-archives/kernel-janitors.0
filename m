@@ -2,82 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC84C04A68
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Jul 2022 09:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F240C04A68
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Jul 2022 10:30:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235586AbiG1J4F (ORCPT
+        id S235479AbiG1Kaf (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Jul 2022 05:56:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57314 "EHLO
+        Thu, 28 Jul 2022 06:30:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235034AbiG1J4E (ORCPT
+        with ESMTP id S233296AbiG1Kaf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Jul 2022 05:56:04 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 539336390C;
-        Thu, 28 Jul 2022 02:56:03 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E417160CD4;
-        Thu, 28 Jul 2022 09:56:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB0E3C43470;
-        Thu, 28 Jul 2022 09:55:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659002162;
-        bh=nwp57PiOXE/bBj5SQgoSWUC9ZuA/a8ca1u9c4yEW2zU=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=fpfnMaVr51ZVOR3XcN61gHVNcfEMHAd4JMy3bayfzLd3MroiuyTXWU6iWZay4+TnN
-         /fs48i/OonxxamgVsllBJgHH0e01YJ+1Ld2HxSf3BmXfqeS2W5yjcsWFzqxKyMNZ5g
-         K1TNReUIPCtQU4+uykDDasO2DAVBul57/cl9rvm8TIR8s8nNizLFSYbMl6ZJAoRD2/
-         jY1FEF0mT61VGarZWvHL5tOJ/ABemlP8tMOCEnCm4YuxjvfekXWJ0NkMnbKX4Besnt
-         C7rhpDoLfFhlhph8gjubqwUG+g+bkYq1ZQOI+R4nPnL9NRyq5ltsjFX742ADC58kNa
-         HYeJ9B/b40Ajg==
-Content-Type: text/plain; charset="utf-8"
+        Thu, 28 Jul 2022 06:30:35 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2AE7643C;
+        Thu, 28 Jul 2022 03:30:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=U3nI+Dk03TsFhKliasBzCqNdnQznxo+muaRKiNshSuY=; b=DoknfXSTWH6Zj0VygdQvr0QmiU
+        n3MBGvZvhPEFAiDYNcsplITEjAUg8GjB0EjIdovXr9DMAWKceqzB1X00wpuAfOPT0rd14gfho5lej
+        Cea7D/u12vnurMUcIqiJUIVdZ7fxAY2iHbUkSlC4ghl7mLfwL+46das3fo0EemF3c0MCYQaDOoWE/
+        Gpdw7ThlFbzXOJYPg1N8thEeDwUQ/0eOakgSxbfT1lF340nCCBAc1+Oo9XL+StraJ1EeOTvqvwj+S
+        w2bhehT6r2x+aMyEKKmGn2cive6opClxIfPNulf55c6iZfVzSev7RjV84AJaerI1G3Na5uq2NqbC6
+        C7gY0xbA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=worktop.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1oH0mM-003kPI-If; Thu, 28 Jul 2022 10:30:06 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 09FD998040A; Thu, 28 Jul 2022 12:30:05 +0200 (CEST)
+Date:   Thu, 28 Jul 2022 12:30:04 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Yu Zhe <yuzhe@nfschina.com>
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        liqiong@nfschina.com
+Subject: Re: [PATCH] x86/aperfmperf: use time_is_before_jiffies(a + b) to
+ replace "jiffies - a > b"
+Message-ID: <YuJlLK4x9aUuqHQZ@worktop.programming.kicks-ass.net>
+References: <20220727031405.26892-1-yuzhe@nfschina.com>
+ <YuFhIgsUgNJ+o9xG@worktop.programming.kicks-ass.net>
+ <ecd4dcc3-321c-e228-96a3-bac08c56794a@nfschina.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: wifi: brcmfmac: use strreplace() in brcmf_of_probe()
-From:   Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <YqrhsKcjEA7B2pC4@kili>
-References: <YqrhsKcjEA7B2pC4@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Arend van Spriel <aspriel@gmail.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Len Baker <len.baker@gmx.com>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Hector Martin <marcan@marcan.st>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        Linus Walleij <linus.walleij@linaro.org>,
-        kernel-janitors@vger.kernel.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <165900215794.25113.6597202255013388708.kvalo@kernel.org>
-Date:   Thu, 28 Jul 2022 09:55:59 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ecd4dcc3-321c-e228-96a3-bac08c56794a@nfschina.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
-
-> The for loop in brcmf_of_probe() would ideally end with something like
-> "i <= strlen(board_type)" instead of "i < board_type[i]".  But
-> fortunately, the two are equivalent.
+On Thu, Jul 28, 2022 at 10:55:51AM +0800, Yu Zhe wrote:
+> 在 2022年07月28日 00:00, Peter Zijlstra 写道:
 > 
-> Anyway, it's simpler to use strreplace() instead.
+> > On Wed, Jul 27, 2022 at 11:14:05AM +0800, Yu Zhe wrote:
+> > > time_is_before_jiffies deals with timer wrapping correctly.
+> > Please explain how the current code does not.
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Suggested-by: Johannes Berg <johannes@sipsolutions.net>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+> 1. If the timer wrap changes in the future you won't have to alter your code.
+> 
+> 2. unsigned long ut;
+> 
+>    ut = ULONG_MAX + 4;
+> 
+>    printf("time_after(ut, ULONG_MAX), ut:%d, %d --> %d\n", ut,
+>              time_after(ut, ULONG_MAX), (ULONG_MAX - ut) < 0);
+> 
+> 
+>    In this case, time_after returns true, it's correct.
 
-Patch applied to wireless-next.git, thanks.
-
-bef11f1edc40 wifi: brcmfmac: use strreplace() in brcmf_of_probe()
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/YqrhsKcjEA7B2pC4@kili/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Now try the same with the existing code...
