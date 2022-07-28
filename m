@@ -2,88 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DDEDC04A68
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Jul 2022 11:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EDB2C04A68
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Jul 2022 12:10:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235757AbiG1L5K (ORCPT
+        id S237088AbiG1MKt convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Jul 2022 07:57:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33564 "EHLO
+        Thu, 28 Jul 2022 08:10:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229648AbiG1L5J (ORCPT
+        with ESMTP id S237841AbiG1MKo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Jul 2022 07:57:09 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09E4767C92;
-        Thu, 28 Jul 2022 04:57:08 -0700 (PDT)
-Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.53])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Ltptv3W9yzWfWt;
-        Thu, 28 Jul 2022 19:53:11 +0800 (CST)
-Received: from kwepemm600003.china.huawei.com (7.193.23.202) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Thu, 28 Jul 2022 19:57:05 +0800
-Received: from [10.67.111.205] (10.67.111.205) by
- kwepemm600003.china.huawei.com (7.193.23.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Thu, 28 Jul 2022 19:57:04 +0800
-Subject: Re: [PATCH][next] perf kwork: Fix spelling mistake "Captuer" ->
- "Capture"
+        Thu, 28 Jul 2022 08:10:44 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23D5048C8D
+        for <kernel-janitors@vger.kernel.org>; Thu, 28 Jul 2022 05:10:44 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1oH2Li-0004UP-J0; Thu, 28 Jul 2022 14:10:42 +0200
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1oH2Lh-000Ir3-J5; Thu, 28 Jul 2022 14:10:41 +0200
+Received: from pza by lupine with local (Exim 4.94.2)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1oH2Lg-0005lS-Qa; Thu, 28 Jul 2022 14:10:40 +0200
+Message-ID: <7e39f714f6e06c48889dacb35579e7d498e4cf0f.camel@pengutronix.de>
+Subject: Re: [PATCH][next] reset: tps380x: Fix spelling mistake "Voltags" ->
+ "Voltage"
+From:   Philipp Zabel <p.zabel@pengutronix.de>
 To:     Colin Ian King <colin.i.king@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Arnaldo Carvalho de Melo" <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        <linux-perf-users@vger.kernel.org>
-CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20220727124126.222137-1-colin.i.king@gmail.com>
-From:   Yang Jihong <yangjihong1@huawei.com>
-Message-ID: <a4aab976-d930-612c-38cb-b6f413f3654e@huawei.com>
-Date:   Thu, 28 Jul 2022 19:57:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        Marco Felsch <m.felsch@pengutronix.de>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 28 Jul 2022 14:10:40 +0200
+In-Reply-To: <20220728110554.18320-1-colin.i.king@gmail.com>
+References: <20220728110554.18320-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.38.3-1 
 MIME-Version: 1.0
-In-Reply-To: <20220727124126.222137-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.111.205]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemm600003.china.huawei.com (7.193.23.202)
-X-CFilter-Loop: Reflected
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello Colin,
+Hi Colin,
 
-On 2022/7/27 20:41, Colin Ian King wrote:
-> There is a spelling mistake in a pr_debug message. Fix it.
+On Do, 2022-07-28 at 12:05 +0100, Colin Ian King wrote:
+> There is a spelling mistake in the MODULE_DESCRIPTION text. Fix it.
 > 
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->   tools/perf/builtin-kwork.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/reset/reset-tps380x.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/tools/perf/builtin-kwork.c b/tools/perf/builtin-kwork.c
-> index fb8c63656ad8..d5906e939756 100644
-> --- a/tools/perf/builtin-kwork.c
-> +++ b/tools/perf/builtin-kwork.c
-> @@ -1447,7 +1447,7 @@ static void sig_handler(int sig)
->   	 * Simply capture termination signal so that
->   	 * the program can continue after pause returns
->   	 */
-> -	pr_debug("Captuer signal %d\n", sig);
-> +	pr_debug("Capture signal %d\n", sig);
->   }
->   
->   static int perf_kwork__report_bpf(struct perf_kwork *kwork)
+> diff --git a/drivers/reset/reset-tps380x.c b/drivers/reset/reset-tps380x.c
+> index e07f5865fe30..09d511f069ba 100644
+> --- a/drivers/reset/reset-tps380x.c
+> +++ b/drivers/reset/reset-tps380x.c
+> @@ -122,5 +122,5 @@ static struct platform_driver tps380x_reset_driver = {
+>  module_platform_driver(tps380x_reset_driver);
+>  
 > 
-OK, I'll fix in next patch,thanks for your review.
+>  MODULE_AUTHOR("Marco Felsch <kernel@pengutronix.de>");
+> -MODULE_DESCRIPTION("TI TPS380x Supply Voltags Supervisor and Reset Driver");
+> +MODULE_DESCRIPTION("TI TPS380x Supply Voltage Supervisor and Reset Driver");
+>  MODULE_LICENSE("GPL v2");
 
-Regards,
-Jihong
-.
+Thank you, applied to reset/next.
+
+regards
+Philipp
