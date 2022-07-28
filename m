@@ -2,64 +2,82 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B968C3F6B0
-	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Jul 2022 07:22:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC84C04A68
+	for <kernel-janitors@archiver.kernel.org>; Thu, 28 Jul 2022 09:56:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233679AbiG1HWN (ORCPT
+        id S235586AbiG1J4F (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 28 Jul 2022 03:22:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47964 "EHLO
+        Thu, 28 Jul 2022 05:56:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231701AbiG1HWM (ORCPT
+        with ESMTP id S235034AbiG1J4E (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 28 Jul 2022 03:22:12 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1A0732B83;
-        Thu, 28 Jul 2022 00:22:11 -0700 (PDT)
+        Thu, 28 Jul 2022 05:56:04 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 539336390C;
+        Thu, 28 Jul 2022 02:56:03 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 429EECE245D;
-        Thu, 28 Jul 2022 07:22:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDDEEC433D6;
-        Thu, 28 Jul 2022 07:22:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1658992928;
-        bh=DlPj3dy3S3Un6ttCblPeY477OlnRIAOrt4dzCqGnpUg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wQdU9WVH8WsYpLkYAt2QbqCMz+1n4HNHrz0+9pM+3aTBLGSajT0dQSZu2L1T5qUhI
-         tTeJHcy/2d3EnF8a1OfvZknYUQJCT3NR6XtJS3ODqXWnk2ITDBSZuywlazh3boBVcj
-         cl0CQy3XivQ/bmha6TDPPzMWs3/Die86BTCavO9w=
-Date:   Thu, 28 Jul 2022 09:22:05 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Xin Ji <xji@analogixsemi.com>, linux-usb@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: anx7411: Fix error code in
- anx7411_register_partner()
-Message-ID: <YuI5HRzOQ1DYDmwg@kroah.com>
-References: <YuI3DBkC983Y3oZn@kili>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E417160CD4;
+        Thu, 28 Jul 2022 09:56:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB0E3C43470;
+        Thu, 28 Jul 2022 09:55:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1659002162;
+        bh=nwp57PiOXE/bBj5SQgoSWUC9ZuA/a8ca1u9c4yEW2zU=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=fpfnMaVr51ZVOR3XcN61gHVNcfEMHAd4JMy3bayfzLd3MroiuyTXWU6iWZay4+TnN
+         /fs48i/OonxxamgVsllBJgHH0e01YJ+1Ld2HxSf3BmXfqeS2W5yjcsWFzqxKyMNZ5g
+         K1TNReUIPCtQU4+uykDDasO2DAVBul57/cl9rvm8TIR8s8nNizLFSYbMl6ZJAoRD2/
+         jY1FEF0mT61VGarZWvHL5tOJ/ABemlP8tMOCEnCm4YuxjvfekXWJ0NkMnbKX4Besnt
+         C7rhpDoLfFhlhph8gjubqwUG+g+bkYq1ZQOI+R4nPnL9NRyq5ltsjFX742ADC58kNa
+         HYeJ9B/b40Ajg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YuI3DBkC983Y3oZn@kili>
+Content-Transfer-Encoding: 7bit
+Subject: Re: wifi: brcmfmac: use strreplace() in brcmf_of_probe()
+From:   Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <YqrhsKcjEA7B2pC4@kili>
+References: <YqrhsKcjEA7B2pC4@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Arend van Spriel <aspriel@gmail.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Len Baker <len.baker@gmx.com>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Hector Martin <marcan@marcan.st>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        Linus Walleij <linus.walleij@linaro.org>,
+        kernel-janitors@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
+Message-ID: <165900215794.25113.6597202255013388708.kvalo@kernel.org>
+Date:   Thu, 28 Jul 2022 09:55:59 +0000 (UTC)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jul 28, 2022 at 10:13:16AM +0300, Dan Carpenter wrote:
-> This code accidentally return success instead of a negative error code.
+Dan Carpenter <dan.carpenter@oracle.com> wrote:
+
+> The for loop in brcmf_of_probe() would ideally end with something like
+> "i <= strlen(board_type)" instead of "i < board_type[i]".  But
+> fortunately, the two are equivalent.
 > 
-> Fixes: fe6d8a9c8e64 ("usb: typec: anx7411: Add Analogix PD ANX7411 support")
+> Anyway, it's simpler to use strreplace() instead.
+> 
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/usb/typec/anx7411.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> Suggested-by: Johannes Berg <johannes@sipsolutions.net>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
 
-Doesn't apply to my tree anymore, I think this is already fixed.  Let me
-push it out so it shows up in linux-next tomorrow.
+Patch applied to wireless-next.git, thanks.
 
-thanks,
+bef11f1edc40 wifi: brcmfmac: use strreplace() in brcmf_of_probe()
 
-greg k-h
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/YqrhsKcjEA7B2pC4@kili/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
