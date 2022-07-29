@@ -2,97 +2,68 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED04C00144
-	for <kernel-janitors@archiver.kernel.org>; Fri, 29 Jul 2022 05:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92FD5C3F6B0
+	for <kernel-janitors@archiver.kernel.org>; Fri, 29 Jul 2022 06:18:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233956AbiG2FtR (ORCPT
+        id S234632AbiG2GSQ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 29 Jul 2022 01:49:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43188 "EHLO
+        Fri, 29 Jul 2022 02:18:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbiG2FtQ (ORCPT
+        with ESMTP id S234550AbiG2GSQ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 29 Jul 2022 01:49:16 -0400
+        Fri, 29 Jul 2022 02:18:16 -0400
 Received: from mail.nfschina.com (unknown [IPv6:2400:dd01:100f:2:72e2:84ff:fe10:5f45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 390C620BEA;
-        Thu, 28 Jul 2022 22:49:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 059DDD13B;
+        Thu, 28 Jul 2022 23:18:14 -0700 (PDT)
 Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id E42631E80D77;
-        Fri, 29 Jul 2022 13:49:06 +0800 (CST)
+        by mail.nfschina.com (Postfix) with ESMTP id D876A1E80D77;
+        Fri, 29 Jul 2022 14:18:06 +0800 (CST)
 X-Virus-Scanned: amavisd-new at test.com
 Received: from mail.nfschina.com ([127.0.0.1])
         by localhost (mail.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id TcvvCQeC8H69; Fri, 29 Jul 2022 13:49:04 +0800 (CST)
-Received: from [172.30.18.178] (unknown [180.167.10.98])
+        with ESMTP id Qutp7QVS9l_5; Fri, 29 Jul 2022 14:18:04 +0800 (CST)
+Received: from localhost.localdomain (unknown [180.167.10.98])
         (Authenticated sender: yuzhe@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id A59E21E80CF9;
-        Fri, 29 Jul 2022 13:49:03 +0800 (CST)
-Subject: Re: [PATCH] dn_route: use time_is_before_jiffies(a) to replace
- "jiffies - a > 0"
-To:     Paolo Abeni <pabeni@redhat.com>, davem@davemloft.net,
-        kuba@kernel.org
+        by mail.nfschina.com (Postfix) with ESMTPA id B42C41E80CF9;
+        Fri, 29 Jul 2022 14:18:03 +0800 (CST)
+From:   Yu Zhe <yuzhe@nfschina.com>
+To:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com
 Cc:     linux-decnet-user@lists.sourceforge.net, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        liqiong@nfschina.com
+        liqiong@nfschina.com, Yu Zhe <yuzhe@nfschina.com>
+Subject: [PATCH v2] dn_route: replace "jiffies-now>0" with "jiffies!=now"
+Date:   Fri, 29 Jul 2022 14:17:12 +0800
+Message-Id: <20220729061712.22666-1-yuzhe@nfschina.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20220727024600.18413-1-yuzhe@nfschina.com>
 References: <20220727024600.18413-1-yuzhe@nfschina.com>
- <e63e6fc511d9d515fcb8501f48f218192f36afd3.camel@redhat.com>
-From:   Yu Zhe <yuzhe@nfschina.com>
-Message-ID: <98b5da7e-74d2-0350-e0fc-a98ca3cb944c@nfschina.com>
-Date:   Fri, 29 Jul 2022 13:49:09 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <e63e6fc511d9d515fcb8501f48f218192f36afd3.camel@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-在 2022年07月28日 21:11, Paolo Abeni 写道:
+Use "jiffies != now" to replace "jiffies - now > 0" to make
+code more readable.
 
-> On Wed, 2022-07-27 at 10:46 +0800, Yu Zhe wrote:
->> time_is_before_jiffies deals with timer wrapping correctly.
->>
->> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
->> ---
->>   net/decnet/dn_route.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/net/decnet/dn_route.c b/net/decnet/dn_route.c
->> index 552a53f1d5d0..0a4bed0bc2e3 100644
->> --- a/net/decnet/dn_route.c
->> +++ b/net/decnet/dn_route.c
->> @@ -201,7 +201,7 @@ static void dn_dst_check_expire(struct timer_list *unused)
->>   		}
->>   		spin_unlock(&dn_rt_hash_table[i].lock);
->>   
->> -		if ((jiffies - now) > 0)
->> +		if (time_is_before_jiffies(now))
-> Uhmm... it looks like the wrap-around condition can happen only in
-> theory: 'now' is initialized just before entering this loop, and we
-> will break as soon as jiffies increment. The wrap-around could happen
-> only if a single iteration of the loop takes more than LONG_MAX
-> jiffies.
->
-> If that happens, we have a completely different kind of much more
-> serious problem, I think ;)
->
-> So this change is mostly for core readability's sake. I personally find
-> more readable:
->
-> 		if (jiffies != now)
+Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+---
+ net/decnet/dn_route.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I agree and I will send a v2 patch later.
+diff --git a/net/decnet/dn_route.c b/net/decnet/dn_route.c
+index 552a53f1d5d0..ac2ee1689111 100644
+--- a/net/decnet/dn_route.c
++++ b/net/decnet/dn_route.c
+@@ -201,7 +201,7 @@ static void dn_dst_check_expire(struct timer_list *unused)
+ 		}
+ 		spin_unlock(&dn_rt_hash_table[i].lock);
+ 
+-		if ((jiffies - now) > 0)
++		if (jiffies != now)
+ 			break;
+ 	}
+ 
+-- 
+2.11.0
 
->
-> Cheers,
->
-> Paolo
->
-> p.s. given the above I guess this is for the net-next tree, right?
->
-yes
-
->
