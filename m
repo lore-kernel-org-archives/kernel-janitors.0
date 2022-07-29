@@ -2,68 +2,66 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92FD5C3F6B0
-	for <kernel-janitors@archiver.kernel.org>; Fri, 29 Jul 2022 06:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF91EC00144
+	for <kernel-janitors@archiver.kernel.org>; Fri, 29 Jul 2022 10:36:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234632AbiG2GSQ (ORCPT
+        id S231329AbiG2KgH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 29 Jul 2022 02:18:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37738 "EHLO
+        Fri, 29 Jul 2022 06:36:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234550AbiG2GSQ (ORCPT
+        with ESMTP id S229912AbiG2KgH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 29 Jul 2022 02:18:16 -0400
-Received: from mail.nfschina.com (unknown [IPv6:2400:dd01:100f:2:72e2:84ff:fe10:5f45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 059DDD13B;
-        Thu, 28 Jul 2022 23:18:14 -0700 (PDT)
-Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id D876A1E80D77;
-        Fri, 29 Jul 2022 14:18:06 +0800 (CST)
-X-Virus-Scanned: amavisd-new at test.com
-Received: from mail.nfschina.com ([127.0.0.1])
-        by localhost (mail.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Qutp7QVS9l_5; Fri, 29 Jul 2022 14:18:04 +0800 (CST)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        (Authenticated sender: yuzhe@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id B42C41E80CF9;
-        Fri, 29 Jul 2022 14:18:03 +0800 (CST)
-From:   Yu Zhe <yuzhe@nfschina.com>
-To:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com
-Cc:     linux-decnet-user@lists.sourceforge.net, netdev@vger.kernel.org,
+        Fri, 29 Jul 2022 06:36:07 -0400
+Received: from fornost.hmeau.com (helcar.hmeau.com [216.24.177.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18867DF5F;
+        Fri, 29 Jul 2022 03:36:06 -0700 (PDT)
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
+        by fornost.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
+        id 1oHNLJ-005ocA-AS; Fri, 29 Jul 2022 20:35:42 +1000
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 29 Jul 2022 18:35:41 +0800
+Date:   Fri, 29 Jul 2022 18:35:41 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Gilad Ben-Yossef <gilad@benyossef.com>,
+        "David S. Miller" <davem@davemloft.net>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        liqiong@nfschina.com, Yu Zhe <yuzhe@nfschina.com>
-Subject: [PATCH v2] dn_route: replace "jiffies-now>0" with "jiffies!=now"
-Date:   Fri, 29 Jul 2022 14:17:12 +0800
-Message-Id: <20220729061712.22666-1-yuzhe@nfschina.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20220727024600.18413-1-yuzhe@nfschina.com>
-References: <20220727024600.18413-1-yuzhe@nfschina.com>
+        Christoph Hellwig <hch@infradead.org>,
+        linux-crypto@vger.kernel.org
+Subject: Re: [PATCH v2] crypto: ccree - Remove a useless dma_supported() call
+Message-ID: <YuO3/faROPV6p4sU@gondor.apana.org.au>
+References: <f47cdaa7067af0ae2eeeca52cee2176cdc449a22.1658323697.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f47cdaa7067af0ae2eeeca52cee2176cdc449a22.1658323697.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use "jiffies != now" to replace "jiffies - now > 0" to make
-code more readable.
+On Wed, Jul 20, 2022 at 03:28:44PM +0200, Christophe JAILLET wrote:
+> There is no point in calling dma_supported() before calling
+> dma_set_coherent_mask(). This function already calls dma_supported() and
+> returns an error (-EIO) if it fails.
+> 
+> So remove the superfluous dma_supported() call.
+> 
+> Moreover, setting a larger DMA mask will never fail when setting a smaller
+> one will succeed, so the whole "while" loop can be removed as well. (see
+> [1])
+> 
+> While at it, fix the name of the function reported in a dev_err().
+> 
+> [1]: https://lore.kernel.org/all/YteQ6Vx2C03UtCkG@infradead.org/
+> 
+> Suggested-by: Christoph Hellwig <hch@infradead.org>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/crypto/ccree/cc_driver.c | 13 +++----------
+>  1 file changed, 3 insertions(+), 10 deletions(-)
 
-Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
----
- net/decnet/dn_route.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/decnet/dn_route.c b/net/decnet/dn_route.c
-index 552a53f1d5d0..ac2ee1689111 100644
---- a/net/decnet/dn_route.c
-+++ b/net/decnet/dn_route.c
-@@ -201,7 +201,7 @@ static void dn_dst_check_expire(struct timer_list *unused)
- 		}
- 		spin_unlock(&dn_rt_hash_table[i].lock);
- 
--		if ((jiffies - now) > 0)
-+		if (jiffies != now)
- 			break;
- 	}
- 
+Patch applied.  Thanks.
 -- 
-2.11.0
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
