@@ -2,45 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C470C19F2A
-	for <kernel-janitors@archiver.kernel.org>; Sat, 30 Jul 2022 20:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 468F3C3F6B0
+	for <kernel-janitors@archiver.kernel.org>; Sat, 30 Jul 2022 20:30:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235571AbiG3Uau (ORCPT
+        id S235865AbiG3Uaw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 30 Jul 2022 16:30:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49478 "EHLO
+        Sat, 30 Jul 2022 16:30:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235542AbiG3Uat (ORCPT
+        with ESMTP id S235542AbiG3Uav (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 30 Jul 2022 16:30:49 -0400
-Received: from ciao.gmane.io (ciao.gmane.io [116.202.254.214])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8F0BEE1D
-        for <kernel-janitors@vger.kernel.org>; Sat, 30 Jul 2022 13:30:47 -0700 (PDT)
-Received: from list by ciao.gmane.io with local (Exim 4.92)
-        (envelope-from <glkj-kernel-janitors-2@m.gmane-mx.org>)
-        id 1oHt6i-0000wp-PT
-        for kernel-janitors@vger.kernel.org; Sat, 30 Jul 2022 22:30:44 +0200
-X-Injected-Via-Gmane: http://gmane.org/
-To:     kernel-janitors@vger.kernel.org
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH 1/2] stmmac: intel: Add a missing clk_disable_unprepare()
- call in intel_eth_pci_remove()
-Date:   Sat, 30 Jul 2022 22:30:36 +0200
+        Sat, 30 Jul 2022 16:30:51 -0400
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDCCA120B7
+        for <kernel-janitors@vger.kernel.org>; Sat, 30 Jul 2022 13:30:50 -0700 (PDT)
+Received: from [192.168.1.18] ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id Ht6bo0sxd5V1hHt6bojkgf; Sat, 30 Jul 2022 22:30:49 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sat, 30 Jul 2022 22:30:49 +0200
+X-ME-IP: 90.11.190.129
 Message-ID: <e5cbad07-f930-8a66-2579-42f993ca566a@wanadoo.fr>
-References: <b5b44a0c025d0fdddd9b9d23153261363089a06a.1659204745.git.christophe.jaillet@wanadoo.fr>
- <YuWR9I8y9cWlLG3O@smile.fi.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Date:   Sat, 30 Jul 2022 22:30:36 +0200
+MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
+Subject: Re: [PATCH 1/2] stmmac: intel: Add a missing clk_disable_unprepare()
+ call in intel_eth_pci_remove()
 Content-Language: en-US
-In-Reply-To: <YuWR9I8y9cWlLG3O@smile.fi.intel.com>
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     vee.khee.wong@intel.com, weifeng.voon@intel.com,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org
+Newsgroups: gmane.linux.kernel.janitors,gmane.linux.kernel,gmane.linux.network,gmane.linux.ports.arm.kernel
+References: <b5b44a0c025d0fdddd9b9d23153261363089a06a.1659204745.git.christophe.jaillet@wanadoo.fr>
+ <YuWR9I8y9cWlLG3O@smile.fi.intel.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <YuWR9I8y9cWlLG3O@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
+Message-ID: <20220730203036.Q0xQsfXaouqH3SJPSAPlLvZLMvgCu3V3tk_EatYrqa8@z>
 
 Le 30/07/2022 à 22:17, Andy Shevchenko a écrit :
 > On Sat, Jul 30, 2022 at 08:19:47PM +0200, Christophe JAILLET wrote:
@@ -122,5 +138,4 @@ CJ
 >> 2.34.1
 >>
 > 
-
 
