@@ -2,79 +2,216 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CAD0C04A68
-	for <kernel-janitors@archiver.kernel.org>; Sat, 30 Jul 2022 03:30:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5185C04A68
+	for <kernel-janitors@archiver.kernel.org>; Sat, 30 Jul 2022 05:12:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233064AbiG3DaU (ORCPT
+        id S233051AbiG3FMA (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 29 Jul 2022 23:30:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59726 "EHLO
+        Sat, 30 Jul 2022 01:12:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230304AbiG3DaS (ORCPT
+        with ESMTP id S232128AbiG3FLy (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 29 Jul 2022 23:30:18 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB268DEEA;
-        Fri, 29 Jul 2022 20:30:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 57322B82A44;
-        Sat, 30 Jul 2022 03:30:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id EC1AEC433D7;
-        Sat, 30 Jul 2022 03:30:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659151814;
-        bh=q+TzweyM5DIsiCgq3bmQnvgqxwJyoIZRSOESFgj5H0c=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=sRgPw4cMN/gqKItPq043Zx0tK/0bUZd1rJgEJzamSH6Avsf58T5xz3UbsYfwquBmL
-         Ew4V2MtIBCAeV5JSuxVCXvAVQruEsawIV+s851G++xG1XqQVt7hdP0DhjUc12QrjQ9
-         3OWLogGY//q8IJYSHFUqL1x3D0AJ0z+QoTWWkJKOtlEvltHMYGxAX5ecECw8XGrJp/
-         6L1JUgNfaFnrkDvByE9mRv06+eHxCbMBiz7QCayL0mp9IEQKT13LoHvPMhkME+efj+
-         fL7jLyysYvzspDI99+TiS9ZOtam4sDLA455GPLWRTqtcb1+DEjtH9uf2lYcrZNSH4e
-         pVHPYWw1nx7hA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CF80AC43140;
-        Sat, 30 Jul 2022 03:30:13 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Sat, 30 Jul 2022 01:11:54 -0400
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABB0778222
+        for <kernel-janitors@vger.kernel.org>; Fri, 29 Jul 2022 22:11:52 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id HelRobzmhPASQHelRonGwH; Sat, 30 Jul 2022 07:11:50 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sat, 30 Jul 2022 07:11:50 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <jstultz@google.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v3] timers: Optimize usleep_range()
+Date:   Sat, 30 Jul 2022 07:11:44 +0200
+Message-Id: <c146e183a0f0b819f8ec5ab8934905d01a642506.1659126514.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: marvell: prestera: uninitialized variable bug
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <165915181384.2630.12954054467926209688.git-patchwork-notify@kernel.org>
-Date:   Sat, 30 Jul 2022 03:30:13 +0000
-References: <YuKeBBuGtsmd7QdT@kili>
-In-Reply-To: <YuKeBBuGtsmd7QdT@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     tchornyi@marvell.com, oleksandr.mazur@plvision.eu,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, yevhen.orlov@plvision.eu,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Most of the time the 'min' and 'max' parameters of usleep_range() are
+constant. We can take advantage of it to pre-compute at compile time
+some values otherwise computed at run-time in usleep_range_state().
 
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
+Replace usleep_range_state() by a new __nsleep_range_delta_state() function
+that takes as parameters the pre-computed values.
 
-On Thu, 28 Jul 2022 17:32:36 +0300 you wrote:
-> The "ret" variable needs to be initialized at the start.
-> 
-> Fixes: 52323ef75414 ("net: marvell: prestera: add phylink support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/net/ethernet/marvell/prestera/prestera_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+The main benefit is to save a few instructions, especially 2
+multiplications (x1000 when converting us to ns).
 
-Here is the summary with links:
-  - [net-next] net: marvell: prestera: uninitialized variable bug
-    https://git.kernel.org/netdev/net-next/c/71930846b36f
 
-You are awesome, thank you!
+Some hand simplified diff of the generated asm are given below. They were
+produced on a Intel(R) Core(TM) i7-3770, with gcc 11.2.0.
+
+drivers/clk/clk-si514.c (taken as an example)
+-----------------------
+In this driver we have:
+   usleep_range(10000, 12000);
+
+  ea0:	45 85 e4             	test   %r12d,%r12d
+  ea3:	0f 88 f6 fc ff ff    	js     b9f <si514_set_rate+0x9f>
+  ea9:	e8 00 00 00 00       	call   eae <si514_set_rate+0x3ae>
+- eae:	be e0 2e 00 00       	mov    $0x2ee0,%esi             ;     12.000
+- eb3:	bf 10 27 00 00       	mov    $0x2710,%edi             ;     10.000
++ eae:	be 80 84 1e 00       	mov    $0x1e8480,%esi           ;  2.000.000
++ eb3:	bf 80 96 98 00       	mov    $0x989680,%edi           ; 10.000.000
+  eb8:	ba 02 00 00 00       	mov    $0x2,%edx
+  ebd:	e8 00 00 00 00       	call   ec2 <si514_set_rate+0x3c2>
+  ec2:	44 8b 74 24 30       	mov    0x30(%rsp),%r14d
+
+The asm produced in the caller is mostly the same. Only constant values
+passed to usleep_range_state() or __nsleep_range_delta_state() are
+different. No other instructions or whatever is different.
+
+
+kernel/time/timer.c
+-------------------
+-0000000000000000 <usleep_range_state>:
++0000000000000000 <__nsleep_range_delta_state>:
+  f3 0f 1e fa          	endbr64
+  e8 00 00 00 00       	call   ...
+  48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+[...]
+  41 56                	push   %r14
+  49 c7 c6 00 00 00 00 	mov    $0x0,%r14
+  41 55                	push   %r13
+- 41 89 d5             	mov    %edx,%r13d
++ 49 89 f5             	mov    %rsi,%r13
+  41 54                	push   %r12
+- 49 89 f4             	mov    %rsi,%r12
++ 41 89 d4             	mov    %edx,%r12d
+  55                   	push   %rbp
+- 44 89 ed             	mov    %r13d,%ebp
++ 44 89 e5             	mov    %r12d,%ebp
+  53                   	push   %rbx
+  48 89 fb             	mov    %rdi,%rbx
+  81 e5 cc 00 00 00    	and    $0xcc,%ebp
+- 49 29 dc             	sub    %rbx,%r12              ; (max - min)
+- 4d 69 e4 e8 03 00 00 	imul   $0x3e8,%r12,%r12       ; us --> ns (x 1000)
+  48 83 ec 68          	sub    $0x68,%rsp
+  48 c7 44 24 08 b3 8a 	movq   $0x41b58ab3,0x8(%rsp)
+  b5 41
+[...]
+  31 c0                	xor    %eax,%eax
+  e8 00 00 00 00       	call   ...
+  e8 00 00 00 00       	call   ...
+- 49 89 c0             	mov    %rax,%r8
+- 48 69 c3 e8 03 00 00 	imul   $0x3e8,%rbx,%rax       ; us --> ns (x 1000)
++ 48 01 d8             	add    %rbx,%rax
++ 48 89 44 24 28       	mov    %rax,0x28(%rsp)
+  65 48 8b 1c 25 00 00 	mov    %gs:0x0,%rbx
+  00 00
+- 4c 01 c0             	add    %r8,%rax
+- 48 89 44 24 28       	mov    %rax,0x28(%rsp)
+  e8 00 00 00 00       	call   ...
+  31 ff                	xor    %edi,%edi
+  89 ee                	mov    %ebp,%esi
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: John Stultz <jstultz@google.com>
+---
+v1 -> v2
+  - Simplify and avoid use of __buildint_constant_p()  [John Stultz <jstultz@google.com>]
+  - Also update usleep_idle_range()
+  - Axe usleep_range_state()  [John Stultz <jstultz@google.com>]
+  - Fix kerneldoc  [John Stultz <jstultz@google.com>]
+  - Update log message accordingly
+https://lore.kernel.org/all/d7fc85736adee02ce52ee88a54fa7477fbd18ed2.1653236802.git.christophe.jaillet@wanadoo.fr/
+
+v2 -> v3
+  - Fix checkpatch warning/error  [John Stultz <jstultz@google.com>]
+  - Add SoB
+https://lore.kernel.org/all/a896e176f0f0b819f8ec5ab8935355d01a642506.1659126514.git.christophe.jaillet@wanadoo.fr/
+---
+ include/linux/delay.h | 17 +++++++++++++----
+ kernel/time/timer.c   | 17 ++++++++---------
+ 2 files changed, 21 insertions(+), 13 deletions(-)
+
+diff --git a/include/linux/delay.h b/include/linux/delay.h
+index 039e7e0c7378..27938a49c701 100644
+--- a/include/linux/delay.h
++++ b/include/linux/delay.h
+@@ -59,17 +59,26 @@ void calibrate_delay(void);
+ void __attribute__((weak)) calibration_delay_done(void);
+ void msleep(unsigned int msecs);
+ unsigned long msleep_interruptible(unsigned int msecs);
+-void usleep_range_state(unsigned long min, unsigned long max,
+-			unsigned int state);
++void __nsleep_range_delta_state(u64 min, u64 delta, unsigned int state);
+ 
+ static inline void usleep_range(unsigned long min, unsigned long max)
+ {
+-	usleep_range_state(min, max, TASK_UNINTERRUPTIBLE);
++	/*
++	 * Most of the time min and max are constant, so the time delta and the
++	 * conversion to ns will be optimized-out at compile time.
++	 */
++	u64 delta = (u64)(max - min) * NSEC_PER_USEC;
++
++	__nsleep_range_delta_state(min * NSEC_PER_USEC, delta,
++				   TASK_UNINTERRUPTIBLE);
+ }
+ 
+ static inline void usleep_idle_range(unsigned long min, unsigned long max)
+ {
+-	usleep_range_state(min, max, TASK_IDLE);
++	u64 delta = (u64)(max - min) * NSEC_PER_USEC;
++
++	__nsleep_range_delta_state(min * NSEC_PER_USEC, delta,
++				   TASK_IDLE);
+ }
+ 
+ static inline void ssleep(unsigned int seconds)
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index 717fcb9fb14a..475b1c0406d7 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -2109,22 +2109,21 @@ unsigned long msleep_interruptible(unsigned int msecs)
+ EXPORT_SYMBOL(msleep_interruptible);
+ 
+ /**
+- * usleep_range_state - Sleep for an approximate time in a given state
+- * @min:	Minimum time in usecs to sleep
+- * @max:	Maximum time in usecs to sleep
++ * __nsleep_range_delta_state - Sleep for an approximate time in a given state
++ * @min:	Minimum time in nsecs to sleep
++ * @delta:	Duration in nsecs that can be tolerated after @min
+  * @state:	State of the current task that will be while sleeping
+  *
+  * In non-atomic context where the exact wakeup time is flexible, use
+- * usleep_range_state() instead of udelay().  The sleep improves responsiveness
++ * usleep_[idle_]range() instead of udelay().  The sleep improves responsiveness
+  * by avoiding the CPU-hogging busy-wait of udelay(), and the range reduces
+  * power usage by allowing hrtimers to take advantage of an already-
+  * scheduled interrupt instead of scheduling a new one just for this sleep.
+  */
+-void __sched usleep_range_state(unsigned long min, unsigned long max,
+-				unsigned int state)
++void __sched __nsleep_range_delta_state(u64 min, u64 delta,
++					unsigned int state)
+ {
+-	ktime_t exp = ktime_add_us(ktime_get(), min);
+-	u64 delta = (u64)(max - min) * NSEC_PER_USEC;
++	ktime_t exp = ktime_add_ns(ktime_get(), min);
+ 
+ 	for (;;) {
+ 		__set_current_state(state);
+@@ -2133,4 +2132,4 @@ void __sched usleep_range_state(unsigned long min, unsigned long max,
+ 			break;
+ 	}
+ }
+-EXPORT_SYMBOL(usleep_range_state);
++EXPORT_SYMBOL(__nsleep_range_delta_state);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
