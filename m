@@ -2,30 +2,50 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA5CC04A68
-	for <kernel-janitors@archiver.kernel.org>; Sat, 30 Jul 2022 18:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45588C19F2A
+	for <kernel-janitors@archiver.kernel.org>; Sat, 30 Jul 2022 20:07:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235448AbiG3SUS (ORCPT
+        id S235695AbiG3UHZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 30 Jul 2022 14:20:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44926 "EHLO
+        Sat, 30 Jul 2022 16:07:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235064AbiG3SUP (ORCPT
+        with ESMTP id S230003AbiG3UHX (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 30 Jul 2022 14:20:15 -0400
-Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7881B6475
-        for <kernel-janitors@vger.kernel.org>; Sat, 30 Jul 2022 11:20:13 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id Hr4JoicqGgtndHr4JoDTCy; Sat, 30 Jul 2022 20:20:11 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 30 Jul 2022 20:20:11 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     andriy.shevchenko@linux.intel.com, vee.khee.wong@intel.com,
-        weifeng.voon@intel.com,
+        Sat, 30 Jul 2022 16:07:23 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E19D713D4F;
+        Sat, 30 Jul 2022 13:07:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1659211642; x=1690747642;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qVvlkCYGySw576yQ2Em/mAMLb51VdX062dlKlXivK7E=;
+  b=JLfSiS9hb4WmPDHMEu0ZqJEoGYRZcF12vR+nME4XxcNcxWSLY7s+n8HQ
+   KVJGidQCNhzIcTzfNgVdjsnMWDcqYO1doAO9CswdW4FWqw3jmRowLsXCS
+   xrh0JZVuWGhwAZFztyXafTHwZwgRBXDRVr7sutchJzQQsetAWY8BSpqrz
+   dpeuVsufShe40FZP++Nh71K93JAwtC6xLH/nkjeqX3XtPdir48d59jOCc
+   P/obvEWrG2ioDmSwW9Cb/bRp1Muby5W50o/sOIavCwnfcp/sSiRNnH7kA
+   XJaZuUOc36jFGxBVcFFavr3s62YLuaKXPy8XjV7CYcm8KfcUFLMOLOffF
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10424"; a="275837556"
+X-IronPort-AV: E=Sophos;i="5.93,204,1654585200"; 
+   d="scan'208";a="275837556"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2022 13:07:22 -0700
+X-IronPort-AV: E=Sophos;i="5.93,204,1654585200"; 
+   d="scan'208";a="577321545"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2022 13:07:18 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1oHsjz-001fWn-1J;
+        Sat, 30 Jul 2022 23:07:15 +0300
+Date:   Sat, 30 Jul 2022 23:07:15 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     vee.khee.wong@intel.com, weifeng.voon@intel.com,
         Giuseppe Cavallaro <peppe.cavallaro@st.com>,
         Alexandre Torgue <alexandre.torgue@foss.st.com>,
         Jose Abreu <joabreu@synopsys.com>,
@@ -33,52 +53,65 @@ To:     andriy.shevchenko@linux.intel.com, vee.khee.wong@intel.com,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2] stmmac: intel: Simplify intel_eth_pci_remove()
-Date:   Sat, 30 Jul 2022 20:20:02 +0200
-Message-Id: <9f82d58aa4a6c34ec3c734399a4792d3aa23297f.1659204745.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <b5b44a0c025d0fdddd9b9d23153261363089a06a.1659204745.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH 2/2] stmmac: intel: Simplify intel_eth_pci_remove()
+Message-ID: <YuWPc8Flkpm4Yt/z@smile.fi.intel.com>
 References: <b5b44a0c025d0fdddd9b9d23153261363089a06a.1659204745.git.christophe.jaillet@wanadoo.fr>
+ <9f82d58aa4a6c34ec3c734399a4792d3aa23297f.1659204745.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9f82d58aa4a6c34ec3c734399a4792d3aa23297f.1659204745.git.christophe.jaillet@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is no point to call pcim_iounmap_regions() in the remove function,
-this frees a managed resource that would be release by the framework
-anyway.
+On Sat, Jul 30, 2022 at 08:20:02PM +0200, Christophe JAILLET wrote:
+> There is no point to call pcim_iounmap_regions() in the remove function,
+> this frees a managed resource that would be release by the framework
+> anyway.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is speculative.
-Sometimes the order of releasing managed resources is tricky.
+The patch is fully correct in my opinion. The iounmap() is called exactly in
+the same order as if it's done implicitly by managed resources handlers, hence
+no need to explicitly call it.
 
-Just a few drivers have this pattern, while many call pcim_iomap_regions().
-If I'm right and this patch is reviewed and merged, I'll look at the
-other files if they also can be simplified a bit.
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c | 2 --
- 1 file changed, 2 deletions(-)
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
-index 9f38642f86ce..f68d23051557 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
-@@ -1136,8 +1136,6 @@ static void intel_eth_pci_remove(struct pci_dev *pdev)
- 
- 	clk_disable_unprepare(plat->stmmac_clk);
- 	clk_unregister_fixed_rate(priv->plat->stmmac_clk);
--
--	pcim_iounmap_regions(pdev, BIT(0));
- }
- 
- static int __maybe_unused intel_eth_pci_suspend(struct device *dev)
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> This patch is speculative.
+> Sometimes the order of releasing managed resources is tricky.
+> 
+> Just a few drivers have this pattern, while many call pcim_iomap_regions().
+> If I'm right and this patch is reviewed and merged, I'll look at the
+> other files if they also can be simplified a bit.
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
+> index 9f38642f86ce..f68d23051557 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
+> @@ -1136,8 +1136,6 @@ static void intel_eth_pci_remove(struct pci_dev *pdev)
+>  
+>  	clk_disable_unprepare(plat->stmmac_clk);
+>  	clk_unregister_fixed_rate(priv->plat->stmmac_clk);
+> -
+> -	pcim_iounmap_regions(pdev, BIT(0));
+>  }
+>  
+>  static int __maybe_unused intel_eth_pci_suspend(struct device *dev)
+> -- 
+> 2.34.1
+> 
+
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
