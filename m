@@ -2,64 +2,65 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F33C04A68
-	for <kernel-janitors@archiver.kernel.org>; Sat, 30 Jul 2022 12:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB907C04A68
+	for <kernel-janitors@archiver.kernel.org>; Sat, 30 Jul 2022 13:09:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233087AbiG3MpQ (ORCPT
+        id S233313AbiG3NJd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 30 Jul 2022 08:45:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55866 "EHLO
+        Sat, 30 Jul 2022 09:09:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230135AbiG3MpO (ORCPT
+        with ESMTP id S230135AbiG3NJc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 30 Jul 2022 08:45:14 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37CEAFE4;
-        Sat, 30 Jul 2022 05:45:13 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id u14-20020a05600c00ce00b003a323062569so3587847wmm.4;
-        Sat, 30 Jul 2022 05:45:13 -0700 (PDT)
+        Sat, 30 Jul 2022 09:09:32 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13D0715739;
+        Sat, 30 Jul 2022 06:09:28 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id j29-20020a05600c1c1d00b003a2fdafdefbso3606557wms.2;
+        Sat, 30 Jul 2022 06:09:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=5V7yy3Fmup+pYyriDzMsJyQM+/qWSBJZ45fKEFQtWmQ=;
-        b=CWFVOzsiXZ84nOPjSpwH48rFBN9RBU+WsMQEPFg9wdo4V0S/bLEQ5+8jTgtSxWLuAS
-         zMSKcZVRubqBoIfbOQadPra6RtmmEcXpQNrtm5MyK++O4Qcqm1F3+DLOtK3+vyEouBa0
-         h2ExV3rrYmkJ1Ipd597RXJJxd7xhD9SdcAMS4gjvfpqRUpuWYWyslv0hQfQwV197Jdrn
-         lvbwmrM05MqAZ+2A+F5+QCE4/DLbq1W+MnEqwBlCw95OTTK9bwQHPNblv4+o62txMSx9
-         jodkyjgZfW8ZzDIOkqfQG736zXO+sSC45xJmtmkCZhTPg8YdcU2aXYL+5+7f8WLMdi4n
-         5XIA==
+        bh=7kagw9dls/BgBWBfIvyxUVIiQ8+9cpfChvpk4Mixp24=;
+        b=X5kN8s41pxbwVzxYvhnojQZzQOY2OAe0kJWaI9I4Nr3Dp5Rpv9VjXOyW5CbXErckw5
+         eYtLaGA4x4Ibpgtz/s3VqhPRTuhff1+h4k0KrVWpsPMaeR0tuw+4uLZp4wN2MRmdJAli
+         hSvEal/3aqpursRYrdNkVKZsgJpAN3s3pfFsAIHAnVDpdL4cq+bo9EmUh1eCcE4fBVVm
+         sAIuGfaRd2mW/sM5m7J3LDxDSZ2i/wxX7ue/T6ycUZOqUB5rutBtX8mWeFVdtp3nEE2c
+         r8h8EzS/2u+HdBSLwJGVj9XQ3+uu8PwBTBLOIoc1wX0XJrmOKJ3r0QgHSudAYz2jKpN+
+         pQhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=5V7yy3Fmup+pYyriDzMsJyQM+/qWSBJZ45fKEFQtWmQ=;
-        b=udygBWKP16owt7chsvNHgbBYx/G51kaFg0UBoN5VRDEfWH4cZEfqrghGF6oIR2zXt0
-         6KD0BeyEVPFni1Tu8HYrKhM/MTeQa3Fw7IrG1jDazWCJScV6+FToHVVW4+o0bc1BlNXL
-         bOg5WwNZiY7xJIIzIjTrvs4t4DtdkzekVOoi17IcV01ntsj4LvPTOWT0nO8t+gUt8FI2
-         CXoQiwMYmscWtjh80227MHy5kP/Sw/ZDxqB4qthMO7tUIPIhks5fC/u9//x2Mbks6EAZ
-         8z/zHBZqV0Fq3xHwrA6Kb7iukreWgKdjlomjzyOfmJvFGOblRwr8/+9DYtsPPD51tv9G
-         34RA==
-X-Gm-Message-State: AJIora/2MxDWZPZNDfxp3a0irP84op/fJkqdGmRVFBVjzruqBjiHpGbi
-        2ON0Z/G0HLQ0nHioOx0qc08=
-X-Google-Smtp-Source: AGRyM1vEcF6AuiQcryAUY16yJi+dFX5SAzWfBNH9PhOwhqKHDPEaRqSOqCMSICFZLJVhihtlPFkjdw==
-X-Received: by 2002:a05:600c:1c83:b0:3a3:2631:2fec with SMTP id k3-20020a05600c1c8300b003a326312fecmr5291533wms.155.1659185111436;
-        Sat, 30 Jul 2022 05:45:11 -0700 (PDT)
+        bh=7kagw9dls/BgBWBfIvyxUVIiQ8+9cpfChvpk4Mixp24=;
+        b=IQ6pyL6fTzgDFQJ5KHNGJNdvNR49EBOuWNkaECP1mGWC6T0gvU7ZzrU4K4N+eo7HLT
+         UiwEm8GuVPz2iDk4Ut2/PpZryHPs6//n2jC/b9/AXUVv1cD0eJZZi+/fLXMcrsbppvmN
+         M5nwvwYyf8vNu++nszabnsGtBtWdaFjSPVNer8IcUAWIvdDXqM0rIY7KfHvyxGLJ3NE3
+         XjXdlye71iFN9Ce86dJq6JH5LwqN0rFj1773cfVH87MgAS+rNG9kPkRo3xsuNUZ6EOHX
+         K4wrvs2oDq27IKodjsDgRkiQPE03JEmyDsc6Uew+uzJD8Oz3i48EgParH+7/Jk85Y1Kz
+         S/SQ==
+X-Gm-Message-State: AJIora/ixhkWKotTzgnQuTSvw/vA7xCM+5icoHf3TC5jvNFKmBCqqSMh
+        zD4KW9YNOwE/U8Pb5tdsRu2Zq8uIgi/jBg==
+X-Google-Smtp-Source: AGRyM1uP23E0LunR8ANvqJ2/vYfQxzFydvP8EbwxwCuzVZi+Q5/CO7PbbJmGoxJRM3Nv2QUwmiAfFg==
+X-Received: by 2002:a1c:4444:0:b0:3a2:fe56:e8ca with SMTP id r65-20020a1c4444000000b003a2fe56e8camr5255656wma.21.1659186566406;
+        Sat, 30 Jul 2022 06:09:26 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id t11-20020a5d690b000000b0021d65e9d449sm6139659wru.73.2022.07.30.05.45.10
+        by smtp.gmail.com with ESMTPSA id r21-20020a05600c35d500b003a17ab4e7c8sm13076172wmq.39.2022.07.30.06.09.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Jul 2022 05:45:10 -0700 (PDT)
+        Sat, 30 Jul 2022 06:09:25 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Kashyap Desai <kashyap.desai@broadcom.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+To:     Jiri Slaby <jirislaby@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: megaraid_sas: remove redundant variable cmd_type
-Date:   Sat, 30 Jul 2022 13:45:09 +0100
-Message-Id: <20220730124509.148457-1-colin.i.king@gmail.com>
+Subject: [PATCH] mxser: remove redundant assignment to hwid
+Date:   Sat, 30 Jul 2022 14:09:25 +0100
+Message-Id: <20220730130925.150018-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -68,40 +69,32 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable cmd_type is assigned a value but it is never read. The
-variable and the assignment are redundant and can be removed.
+The variable hwid is assigned a value but it is never read. The
+assignment is redundant and can be removed.
 
 Cleans up clang scan build warning:
-drivers/scsi/megaraid/megaraid_sas_fusion.c:3228:10: warning: Although
-the value stored to 'cmd_type' is used in the enclosing expression, the
-value is never actually read from 'cmd_type' [deadcode.DeadStores]
+drivers/tty/mxser.c:401:7: warning: Although the value stored to 'hwid'
+is used in the enclosing expression, the value is never actually read
+from 'hwid' [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/scsi/megaraid/megaraid_sas_fusion.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/tty/mxser.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-index 5b5885d9732b..e48d4261d0bc 100644
---- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-@@ -3199,7 +3199,6 @@ megasas_build_io_fusion(struct megasas_instance *instance,
- 			struct megasas_cmd_fusion *cmd)
- {
- 	int sge_count;
--	u8  cmd_type;
- 	u16 pd_index = 0;
- 	u8 drive_type = 0;
- 	struct MPI2_RAID_SCSI_IO_REQUEST *io_request = cmd->io_request;
-@@ -3225,7 +3224,7 @@ megasas_build_io_fusion(struct megasas_instance *instance,
- 	 */
- 	io_request->IoFlags = cpu_to_le16(scp->cmd_len);
- 
--	switch (cmd_type = megasas_cmd_type(scp)) {
-+	switch (megasas_cmd_type(scp)) {
- 	case READ_WRITE_LDIO:
- 		megasas_build_ldio_fusion(instance, scp, cmd);
- 		break;
+diff --git a/drivers/tty/mxser.c b/drivers/tty/mxser.c
+index 70b982b2c6b2..600c71e5eebc 100644
+--- a/drivers/tty/mxser.c
++++ b/drivers/tty/mxser.c
+@@ -398,7 +398,7 @@ static enum mxser_must_hwid mxser_must_get_hwid(unsigned long io)
+ 	oldmcr = inb(io + UART_MCR);
+ 	outb(0, io + UART_MCR);
+ 	mxser_set_must_xon1_value(io, 0x11);
+-	if ((hwid = inb(io + UART_MCR)) != 0) {
++	if (inb(io + UART_MCR) != 0) {
+ 		outb(oldmcr, io + UART_MCR);
+ 		return MOXA_OTHER_UART;
+ 	}
 -- 
 2.35.3
 
