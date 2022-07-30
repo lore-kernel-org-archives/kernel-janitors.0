@@ -2,64 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2E7C04A68
-	for <kernel-janitors@archiver.kernel.org>; Sat, 30 Jul 2022 11:40:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C752C04A68
+	for <kernel-janitors@archiver.kernel.org>; Sat, 30 Jul 2022 12:23:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233419AbiG3Lkd (ORCPT
+        id S234494AbiG3MXr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 30 Jul 2022 07:40:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49354 "EHLO
+        Sat, 30 Jul 2022 08:23:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230135AbiG3Lkb (ORCPT
+        with ESMTP id S230135AbiG3MXq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 30 Jul 2022 07:40:31 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3D98DF7A;
-        Sat, 30 Jul 2022 04:40:30 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id a18-20020a05600c349200b003a30de68697so5108731wmq.0;
-        Sat, 30 Jul 2022 04:40:30 -0700 (PDT)
+        Sat, 30 Jul 2022 08:23:46 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1F9913F9A;
+        Sat, 30 Jul 2022 05:23:45 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id a11so3705168wmq.3;
+        Sat, 30 Jul 2022 05:23:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=n7XzjcJpXfeDeN0N6bD2rYAtzteaNAW8TEQ70M39WGE=;
-        b=nsvGR89Exucsj6s6UQyamXy53TNOhzxln9vKRIqDxDr0UKXzdeu5WDvTtFYg052SVd
-         hC8m28n4qkzv8CrerqL8Y5zkKggrZg0JGCONh3iitbo+WI7XCTgC44p1M+7hMOWsHRVU
-         5c8NmnuyCxIBZ9Ho1e13XjUW2dOFNEX3bR5nXk/euNZpdEU1TLOvYQXOpSRwdXYGzJ1Q
-         FJAH5pbvXJcPtWTLRZpBcD2SPHAOeamd6TgingwkBm3ebQ5lHqJILYQ37m029ZDlMLwe
-         wSDpbM0Oa8EbrvQF1Mb1h0W7EWnG1kFvZ0Ziks43g0ASQp8n4blxGy7jDfIwsL4wKFCm
-         kVeA==
+        bh=7n8cZxwCZn/Qw/quWKlWrtEv2JQBFb0Bs9/SBswkjjY=;
+        b=kNlJPZ4C4juqjPRrEkoxhK2y+7GMOURfI+mffO0a1obz+7dg2pk7FvJd5E7p+qnGei
+         hmkZbHIwnKxfK2Xf+KfHSlvlm+FP8xCUIyQmIQwuaP6fEg4Qu1Ad0ypc8lut/r5VnOmL
+         c7wi3e0r3X+UZtcIScKBr+vF1x7L7kZbYY/i2k/78JMcH29Z82lKo0XuMB6u219uB0YW
+         yR18wc8ySnNVF0CyIB76DdGv+ir9eYhpBUhDwJqcZaf1nEbucBRIgDTK1zVV/9APRNeL
+         M4jZz5zFj4/8LTpHpu99pthjS8zxEoityxtdJJovfD+ebA+s1vPaeJsJ4YCnGSwecl06
+         nsbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=n7XzjcJpXfeDeN0N6bD2rYAtzteaNAW8TEQ70M39WGE=;
-        b=CPSrqc2yWwxF/2oremBOQjnBE8UsW+35EpZoA3Y/z01JokGmlc/3IXPYcB03hM2xi6
-         S8wFxMT1IVEd+NCHrHz3trAjcrpPIZZRjgweWqPkrOlCuPmUMozat2qYmmpKi/Oo6chm
-         4Pnmyi/C/twElBS5btA+B+jrnHWooFDKwKGmQmkJmRpNOo9rvpKPuzqWpWnlOTXzOL68
-         cra2cuV1Fxx9HE+2iu8Kz13SdtfVJgutbXo1V8MDYV9dxITn4Bg5FULyXP8pdzErXnWT
-         EyHBYnIgk6SpLPXpH4Xt7/GvM1sLhKOCOrtTLMQ0WnSnOdF9lchrSmWQK3Uig3+ceY40
-         cKLg==
-X-Gm-Message-State: AJIora8F3Hv6s1JYECcVtCgY22N03kqRsHsaayS/0KxV9hZyNnsoOfv3
-        uzt5b6qNSFNAr/s/qppDi2k=
-X-Google-Smtp-Source: AGRyM1tAU/z7TliT3qoqSCY9k9rrs7Z1Hvc8puGpUeHnxnyYJg5vVyncTVdsHHbwqFKR74nBUTKPBQ==
-X-Received: by 2002:a05:600c:22c7:b0:3a3:6dfb:49eb with SMTP id 7-20020a05600c22c700b003a36dfb49ebmr5279513wmg.99.1659181229326;
-        Sat, 30 Jul 2022 04:40:29 -0700 (PDT)
+        bh=7n8cZxwCZn/Qw/quWKlWrtEv2JQBFb0Bs9/SBswkjjY=;
+        b=e6YaRmpN9fPJnFg6CdPG2I05DQKWh80offPwzjYq8oOfH3cmAoOoMi2QhEjuak6vod
+         L1Py10oGRq5MeFHPNeg2/h8OaDZR36/6v4cccaWVQT/AZV1rNCF9uiH24EWp2cdqWLvk
+         4I9dIEoklWtBS95twRLMJdQqlrn0aLpCVh8yt0ZJZYOQqL1nDDuKOng5ekxizjrjyUHU
+         x64OPANJpfVASlBiTIko3AIuoC1H1F2Mi7n83p3sE+NcBBvRUQ4KyMsfr8kS5SB3kZVr
+         MoEKkuZelVD0TLjfuIvXMV0NOhxuxSaA+1/jVGtM8z45TQFEfGPvr4yN8SS+OGU2HmrG
+         ymhQ==
+X-Gm-Message-State: AJIora9eZwSTe3RTN4SgRL7l5TmdD1DgXNPPArOimoSV5+gSG1bBSgtl
+        L3ZfYrPpXUPh+aMKoVrwkUdjPzM7ouTgOQ==
+X-Google-Smtp-Source: AGRyM1vl7vLOjBRgfGQHvyC5ORaV/PWltLK0HQ9/OQugol//U+WpHbNX1iiBt9i49ReIbryqQFgRSg==
+X-Received: by 2002:a1c:f001:0:b0:3a3:7de3:1de8 with SMTP id a1-20020a1cf001000000b003a37de31de8mr5712393wmb.119.1659183824148;
+        Sat, 30 Jul 2022 05:23:44 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id b2-20020a5d4b82000000b0021e5bec14basm6278099wrt.5.2022.07.30.04.40.28
+        by smtp.gmail.com with ESMTPSA id bp20-20020a5d5a94000000b002205a6aec0asm1132032wrb.86.2022.07.30.05.23.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Jul 2022 04:40:28 -0700 (PDT)
+        Sat, 30 Jul 2022 05:23:43 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Boris Pismenny <borisp@nvidia.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] tls: rx: Fix less than zero check on unsigned variable sz
-Date:   Sat, 30 Jul 2022 12:40:27 +0100
-Message-Id: <20220730114027.142376-1-colin.i.king@gmail.com>
+Subject: [PATCH] drm/i915/userptr: remove redundation assignment to variable ret
+Date:   Sat, 30 Jul 2022 13:23:42 +0100
+Message-Id: <20220730122342.146475-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -68,39 +68,33 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable sz is declared as an unsigned size_t and is being checked
-for an less than zero error return on a call to tls_rx_msg_size.
-Fix this by making sz an int.
+Variable ret is assigned a value that is never read; it is either
+being re-assigned during the following while-loop or after the loop.
+The assignmnt is redundant and can be removed.
 
-Fixes: 84c61fe1a75b ("tls: rx: do not use the standard strparser")
+Cleans up clang scan build warning:
+drivers/gpu/drm/i915/gem/i915_gem_userptr.c:295:11: warning: Although
+the value stored to 'ret' is used in the enclosing expression, the
+value is never actually read from 'ret' [deadcode.DeadStores]
+
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- net/tls/tls_strp.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/i915/gem/i915_gem_userptr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/tls/tls_strp.c b/net/tls/tls_strp.c
-index b945288c312e..2b9c42b8064c 100644
---- a/net/tls/tls_strp.c
-+++ b/net/tls/tls_strp.c
-@@ -187,7 +187,8 @@ static int tls_strp_copyin(read_descriptor_t *desc, struct sk_buff *in_skb,
- 			   unsigned int offset, size_t in_len)
- {
- 	struct tls_strparser *strp = (struct tls_strparser *)desc->arg.data;
--	size_t sz, len, chunk;
-+	int sz;
-+	size_t len, chunk;
- 	struct sk_buff *skb;
- 	skb_frag_t *frag;
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_userptr.c b/drivers/gpu/drm/i915/gem/i915_gem_userptr.c
+index 8423df021b71..075aef875a07 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_userptr.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_userptr.c
+@@ -292,7 +292,7 @@ int i915_gem_object_userptr_submit_init(struct drm_i915_gem_object *obj)
+ 	if (!i915_gem_object_is_readonly(obj))
+ 		gup_flags |= FOLL_WRITE;
  
-@@ -215,7 +216,7 @@ static int tls_strp_copyin(read_descriptor_t *desc, struct sk_buff *in_skb,
- 
- 		/* We may have over-read, sz == 0 is guaranteed under-read */
- 		if (sz > 0)
--			chunk =	min_t(size_t, chunk, sz - skb->len);
-+			chunk =	min_t(size_t, chunk, (size_t)sz - skb->len);
- 
- 		skb->len += chunk;
- 		skb->data_len += chunk;
+-	pinned = ret = 0;
++	pinned = 0;
+ 	while (pinned < num_pages) {
+ 		ret = pin_user_pages_fast(obj->userptr.ptr + pinned * PAGE_SIZE,
+ 					  num_pages - pinned, gup_flags,
 -- 
 2.35.3
 
