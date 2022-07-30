@@ -2,88 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A15C5C04A68
-	for <kernel-janitors@archiver.kernel.org>; Sat, 30 Jul 2022 16:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B97DFC04A68
+	for <kernel-janitors@archiver.kernel.org>; Sat, 30 Jul 2022 18:19:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235191AbiG3Q0T (ORCPT
+        id S235262AbiG3ST7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 30 Jul 2022 12:26:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51818 "EHLO
+        Sat, 30 Jul 2022 14:19:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234647AbiG3Q0R (ORCPT
+        with ESMTP id S233373AbiG3ST5 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 30 Jul 2022 12:26:17 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE2E412AA8;
-        Sat, 30 Jul 2022 09:26:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1659198376; x=1690734376;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3Q+FWptKRG93qMxrxl+jm48DEZB8pTDjVw3Ayvx0u5I=;
-  b=ZgHYjIUQFpq3/TlBLcou6sxcb2IZSrGt2iNGSZk8VybyQwLNr2MvoNIX
-   lK6N2pF8BTbbJCn+bjkRbRJHp+5O3YNFxCfHuHEQr0WuSOO1+Na0RUBEs
-   t/znM6EURRuAH+gvU30nZC0XBI8Vj+4yCcbbsQBEh3+xcWjaKU3widD6B
-   hAkkxGLYSpXDh9C9r2zA/LGpfufqHbkdaT0z8nPJuwRjIDBDtLOh73T2Z
-   XkkgyZo1Wr67Q6hBhrMlGRdHrVNlYsA5fjHdSl9w8Tvvf7dwRiMpxNvQG
-   +EafG+rpyzKHgPPcF3MTfE4JbmpW4Vz95OD4rReVB8gl9nYwnYrng2RDk
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10424"; a="352932310"
-X-IronPort-AV: E=Sophos;i="5.93,204,1654585200"; 
-   d="scan'208";a="352932310"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2022 09:26:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,204,1654585200"; 
-   d="scan'208";a="669574543"
-Received: from lkp-server01.sh.intel.com (HELO e0eace57cfef) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 30 Jul 2022 09:26:14 -0700
-Received: from kbuild by e0eace57cfef with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oHpI6-000CyZ-0a;
-        Sat, 30 Jul 2022 16:26:14 +0000
-Date:   Sun, 31 Jul 2022 00:25:29 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <jstultz@google.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v3] timers: Optimize usleep_range()
-Message-ID: <202207310022.EWBc4pBK-lkp@intel.com>
-References: <c146e183a0f0b819f8ec5ab8934905d01a642506.1659126514.git.christophe.jaillet@wanadoo.fr>
+        Sat, 30 Jul 2022 14:19:57 -0400
+Received: from smtp.smtpout.orange.fr (smtp01.smtpout.orange.fr [80.12.242.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93DC01583F
+        for <kernel-janitors@vger.kernel.org>; Sat, 30 Jul 2022 11:19:55 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id Hr41oSyrhBDYDHr41oo8rt; Sat, 30 Jul 2022 20:19:53 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sat, 30 Jul 2022 20:19:53 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     andriy.shevchenko@linux.intel.com, vee.khee.wong@intel.com,
+        weifeng.voon@intel.com,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Andrew Lunn <andrew@lunn.ch>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/2] stmmac: intel: Add a missing clk_disable_unprepare() call in intel_eth_pci_remove()
+Date:   Sat, 30 Jul 2022 20:19:47 +0200
+Message-Id: <b5b44a0c025d0fdddd9b9d23153261363089a06a.1659204745.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c146e183a0f0b819f8ec5ab8934905d01a642506.1659126514.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+Commit 09f012e64e4b ("stmmac: intel: Fix clock handling on error and remove
+paths") removed this clk_disable_unprepare()
 
-Thank you for the patch! Perhaps something to improve:
+This was partly revert by commit ac322f86b56c ("net: stmmac: Fix clock
+handling on remove path") which removed this clk_disable_unprepare()
+because:
+"
+   While unloading the dwmac-intel driver, clk_disable_unprepare() is
+   being called twice in stmmac_dvr_remove() and
+   intel_eth_pci_remove(). This causes kernel panic on the second call.
+"
 
-[auto build test WARNING on tip/timers/core]
-[also build test WARNING on linus/master v5.19-rc8 next-20220728]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+However later on, commit 5ec55823438e8 ("net: stmmac: add clocks management
+for gmac driver") has updated stmmac_dvr_remove() which do not call
+clk_disable_unprepare() anymore.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christophe-JAILLET/timers-Optimize-usleep_range/20220730-131330
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git cceeeb6a6d02e7b9a74ddd27a3225013b34174aa
-reproduce: make htmldocs
+So this call should now be called from intel_eth_pci_remove().
 
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
+Fixes: 5ec55823438e8 ("net: stmmac: add clocks management for gmac driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+/!\     This patch is HIGHLY speculative.     /!\
 
-All warnings (new ones prefixed by >>):
+The corresponding clk_disable_unprepare() is still called within the pm
+related stmmac_bus_clks_config() function.
 
->> Documentation/driver-api/basics:36: kernel/time/timer.c:2117: WARNING: Unknown target name: "idle".
+However, with my limited understanding of the pm API, I think it that the
+patch is valid.
+(in other word, does the pm_runtime_put() and/or pm_runtime_disable()
+and/or stmmac_dvr_remove() can end up calling .runtime_suspend())
 
+So please review with care, as I'm not able to test the change by myself.
+
+
+If I'm wrong, maybe a comment explaining why it is safe to have this
+call in the error handling path of the probe and not in the remove function
+would avoid erroneous patches generated from static code analyzer to be
+sent.
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
+index 52f9ed8db9c9..9f38642f86ce 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
+@@ -1134,6 +1134,7 @@ static void intel_eth_pci_remove(struct pci_dev *pdev)
+ 
+ 	stmmac_dvr_remove(&pdev->dev);
+ 
++	clk_disable_unprepare(plat->stmmac_clk);
+ 	clk_unregister_fixed_rate(priv->plat->stmmac_clk);
+ 
+ 	pcim_iounmap_regions(pdev, BIT(0));
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.34.1
+
