@@ -2,64 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C752C04A68
-	for <kernel-janitors@archiver.kernel.org>; Sat, 30 Jul 2022 12:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE18C04A68
+	for <kernel-janitors@archiver.kernel.org>; Sat, 30 Jul 2022 12:33:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234494AbiG3MXr (ORCPT
+        id S233992AbiG3MdN (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 30 Jul 2022 08:23:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44868 "EHLO
+        Sat, 30 Jul 2022 08:33:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230135AbiG3MXq (ORCPT
+        with ESMTP id S230135AbiG3MdM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 30 Jul 2022 08:23:46 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1F9913F9A;
-        Sat, 30 Jul 2022 05:23:45 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id a11so3705168wmq.3;
-        Sat, 30 Jul 2022 05:23:45 -0700 (PDT)
+        Sat, 30 Jul 2022 08:33:12 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3B98B49B;
+        Sat, 30 Jul 2022 05:33:11 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id p10so4575500wru.8;
+        Sat, 30 Jul 2022 05:33:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=7n8cZxwCZn/Qw/quWKlWrtEv2JQBFb0Bs9/SBswkjjY=;
-        b=kNlJPZ4C4juqjPRrEkoxhK2y+7GMOURfI+mffO0a1obz+7dg2pk7FvJd5E7p+qnGei
-         hmkZbHIwnKxfK2Xf+KfHSlvlm+FP8xCUIyQmIQwuaP6fEg4Qu1Ad0ypc8lut/r5VnOmL
-         c7wi3e0r3X+UZtcIScKBr+vF1x7L7kZbYY/i2k/78JMcH29Z82lKo0XuMB6u219uB0YW
-         yR18wc8ySnNVF0CyIB76DdGv+ir9eYhpBUhDwJqcZaf1nEbucBRIgDTK1zVV/9APRNeL
-         M4jZz5zFj4/8LTpHpu99pthjS8zxEoityxtdJJovfD+ebA+s1vPaeJsJ4YCnGSwecl06
-         nsbQ==
+        bh=R1+pa1kvGNZpNFzAbS1R4fdQJbOyeCHM1HfJ0LUvp6M=;
+        b=ApNvXXP4M9DGFzc9cfZvYe9lPKH9uSuVVC/hw3XxiF+6xwWP0eanjqlkVmRY8sirXV
+         epx3DvtBdqBLDWwL+2NTIBLWqbMOWDMPzFTwidILNQh2242bu/dN3SmWgXkEJnL9EagY
+         l03cM9UOFC/T/t+lkSTIUnuClZQII0uK+jYivfDPVTu3m5tpEe1mzInc6TJuegGcqWDW
+         p097uOOKafA2gBuSP43CeKjWi2czUJbvoAIauXAP8Hn5Ry7uGuHMjOP4ajPvuAbEQeuk
+         uIO0o9XM+o+IacXEEhWb61Sgmg/gFZzD0EmjgRuGsG1WKZvEIaaBHoIjkf6t7BPQgot1
+         DKXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=7n8cZxwCZn/Qw/quWKlWrtEv2JQBFb0Bs9/SBswkjjY=;
-        b=e6YaRmpN9fPJnFg6CdPG2I05DQKWh80offPwzjYq8oOfH3cmAoOoMi2QhEjuak6vod
-         L1Py10oGRq5MeFHPNeg2/h8OaDZR36/6v4cccaWVQT/AZV1rNCF9uiH24EWp2cdqWLvk
-         4I9dIEoklWtBS95twRLMJdQqlrn0aLpCVh8yt0ZJZYOQqL1nDDuKOng5ekxizjrjyUHU
-         x64OPANJpfVASlBiTIko3AIuoC1H1F2Mi7n83p3sE+NcBBvRUQ4KyMsfr8kS5SB3kZVr
-         MoEKkuZelVD0TLjfuIvXMV0NOhxuxSaA+1/jVGtM8z45TQFEfGPvr4yN8SS+OGU2HmrG
-         ymhQ==
-X-Gm-Message-State: AJIora9eZwSTe3RTN4SgRL7l5TmdD1DgXNPPArOimoSV5+gSG1bBSgtl
-        L3ZfYrPpXUPh+aMKoVrwkUdjPzM7ouTgOQ==
-X-Google-Smtp-Source: AGRyM1vl7vLOjBRgfGQHvyC5ORaV/PWltLK0HQ9/OQugol//U+WpHbNX1iiBt9i49ReIbryqQFgRSg==
-X-Received: by 2002:a1c:f001:0:b0:3a3:7de3:1de8 with SMTP id a1-20020a1cf001000000b003a37de31de8mr5712393wmb.119.1659183824148;
-        Sat, 30 Jul 2022 05:23:44 -0700 (PDT)
+        bh=R1+pa1kvGNZpNFzAbS1R4fdQJbOyeCHM1HfJ0LUvp6M=;
+        b=5ifWMaTsEdtx2eBdse8t3AQbA7ijeSJWiIxq8gjRDC9mVJBHWpek41jby57VKSn921
+         PFIcP1FTZxHjIx90f5bfH7r8WXMQJStdONkp4BaJ1CO//epxAB7WAl2HxDZpnByv7/oq
+         IHgFStOu2u10LbIx6HABqrLsmqT528NmyrQRcXxm1MQQMQxNjQGPM83UJl5BV54QC3yZ
+         KR/QcmTv1NVYynHzj+GfHirAdtC+eLJUNC33aF9aJYuMDWDR2Bfk1W8e2mTjoA6O03e/
+         ls0ij3xn6WlrOB7vO6t5XezbBoGo481agqlcFAdsffgIM1AIEqebQhVc+XY0qDGIWjuA
+         fe+A==
+X-Gm-Message-State: ACgBeo3vARxvbyZQyzH52tP35WUjtaUzW9vM/R5i64fpPscG8bOk6CKW
+        rh0tKrXcOXMiz+2yspcpJ63839mxWDLOog==
+X-Google-Smtp-Source: AA6agR4uzRDw0YGcSy4u9Z5xNDV8zScaww/uV3GRdlsfYWFdkMBeoeb5I5a6MizUouW45IFIKTO5mQ==
+X-Received: by 2002:adf:e881:0:b0:21f:abb:fc0a with SMTP id d1-20020adfe881000000b0021f0abbfc0amr4789208wrm.103.1659184390305;
+        Sat, 30 Jul 2022 05:33:10 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id bp20-20020a5d5a94000000b002205a6aec0asm1132032wrb.86.2022.07.30.05.23.43
+        by smtp.gmail.com with ESMTPSA id z6-20020a5d6546000000b0021f13097d6csm3947687wrv.16.2022.07.30.05.33.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Jul 2022 05:23:43 -0700 (PDT)
+        Sat, 30 Jul 2022 05:33:09 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        David Airlie <airlied@linux.ie>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To:     Matt Porter <mporter@kernel.crashing.org>,
+        Alexandre Bounine <alex.bou9@gmail.com>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/i915/userptr: remove redundation assignment to variable ret
-Date:   Sat, 30 Jul 2022 13:23:42 +0100
-Message-Id: <20220730122342.146475-1-colin.i.king@gmail.com>
+Subject: [PATCH] drivers/rapidio/rio-scan.c: remove redundant variable tmp
+Date:   Sat, 30 Jul 2022 13:33:09 +0100
+Message-Id: <20220730123309.147307-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -68,33 +64,41 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Variable ret is assigned a value that is never read; it is either
-being re-assigned during the following while-loop or after the loop.
-The assignmnt is redundant and can be removed.
+The variable tmp is assigned a value but it is never read. The
+variable and the assignment are redundant and can be removed.
 
 Cleans up clang scan build warning:
-drivers/gpu/drm/i915/gem/i915_gem_userptr.c:295:11: warning: Although
-the value stored to 'ret' is used in the enclosing expression, the
-value is never actually read from 'ret' [deadcode.DeadStores]
+drivers/rapidio/rio-scan.c:561:10: warning: Although the value
+stored to 'tmp' is used in the enclosing expression, the value
+is never actually read from 'tmp' [deadcode.DeadStores]
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/i915/gem/i915_gem_userptr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rapidio/rio-scan.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_userptr.c b/drivers/gpu/drm/i915/gem/i915_gem_userptr.c
-index 8423df021b71..075aef875a07 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_userptr.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_userptr.c
-@@ -292,7 +292,7 @@ int i915_gem_object_userptr_submit_init(struct drm_i915_gem_object *obj)
- 	if (!i915_gem_object_is_readonly(obj))
- 		gup_flags |= FOLL_WRITE;
+diff --git a/drivers/rapidio/rio-scan.c b/drivers/rapidio/rio-scan.c
+index 19b0c33f4a62..5256e76ab29c 100644
+--- a/drivers/rapidio/rio-scan.c
++++ b/drivers/rapidio/rio-scan.c
+@@ -524,7 +524,6 @@ static int rio_enum_peer(struct rio_net *net, struct rio_mport *port,
+ {
+ 	struct rio_dev *rdev;
+ 	u32 regval;
+-	int tmp;
  
--	pinned = ret = 0;
-+	pinned = 0;
- 	while (pinned < num_pages) {
- 		ret = pin_user_pages_fast(obj->userptr.ptr + pinned * PAGE_SIZE,
- 					  num_pages - pinned, gup_flags,
+ 	if (rio_mport_chk_dev_access(port,
+ 			RIO_ANY_DESTID(port->sys_size), hopcount)) {
+@@ -558,8 +557,7 @@ static int rio_enum_peer(struct rio_net *net, struct rio_mport *port,
+ 	rio_mport_write_config_32(port, RIO_ANY_DESTID(port->sys_size),
+ 				  hopcount,
+ 				  RIO_HOST_DID_LOCK_CSR, port->host_deviceid);
+-	while ((tmp = rio_get_host_deviceid_lock(port, hopcount))
+-	       < port->host_deviceid) {
++	while (rio_get_host_deviceid_lock(port, hopcount) < port->host_deviceid) {
+ 		/* Delay a bit */
+ 		mdelay(1);
+ 		/* Attempt to acquire device lock again */
 -- 
 2.35.3
 
