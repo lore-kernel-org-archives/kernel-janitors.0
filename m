@@ -2,98 +2,137 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C6DC00140
-	for <kernel-janitors@archiver.kernel.org>; Sun, 31 Jul 2022 18:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F26DAC19F2C
+	for <kernel-janitors@archiver.kernel.org>; Sun, 31 Jul 2022 19:24:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232158AbiGaSy4 (ORCPT
+        id S238554AbiGaTYc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 31 Jul 2022 14:54:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44692 "EHLO
+        Sun, 31 Jul 2022 15:24:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230114AbiGaSyz (ORCPT
+        with ESMTP id S238314AbiGaTYR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 31 Jul 2022 14:54:55 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88D1FBC8F
-        for <kernel-janitors@vger.kernel.org>; Sun, 31 Jul 2022 11:54:54 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mkl@pengutronix.de>)
-        id 1oIE5O-0004Up-97; Sun, 31 Jul 2022 20:54:46 +0200
-Received: from pengutronix.de (unknown [IPv6:2a01:4f8:1c1c:29e9:22:41ff:fe00:1400])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        (Authenticated sender: mkl-all@blackshift.org)
-        by smtp.blackshift.org (Postfix) with ESMTPSA id 35CBCBEBCA;
-        Sun, 31 Jul 2022 18:54:45 +0000 (UTC)
-Date:   Sun, 31 Jul 2022 20:54:44 +0200
-From:   Marc Kleine-Budde <mkl@pengutronix.de>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Max Staudt <max@enpas.org>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] can: can327: Fix a broken link to Documentation
-Message-ID: <20220731185444.vzfvbd6hkrrmqfio@pengutronix.de>
-References: <6a54aff884ea4f84b661527d75aabd6632140715.1659249135.git.christophe.jaillet@wanadoo.fr>
+        Sun, 31 Jul 2022 15:24:17 -0400
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ABB01117D
+        for <kernel-janitors@vger.kernel.org>; Sun, 31 Jul 2022 12:22:49 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id IEWKoQwuRsL0zIEWKozPBu; Sun, 31 Jul 2022 21:22:41 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sun, 31 Jul 2022 21:22:41 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev
+Subject: [PATCH 1/2] media: sunxi: Fix some error handling path of sun8i_a83t_mipi_csi2_probe()
+Date:   Sun, 31 Jul 2022 21:22:35 +0200
+Message-Id: <62c0aef8d3b86d8f290bf6787f1b2b41efbb0b55.1659295329.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qxo3ypmddngiucvw"
-Content-Disposition: inline
-In-Reply-To: <6a54aff884ea4f84b661527d75aabd6632140715.1659249135.git.christophe.jaillet@wanadoo.fr>
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Release some resources in the error handling path of the probe and of
+sun8i_a83t_mipi_csi2_resources_setup(), as already done in the remove
+function.
 
---qxo3ypmddngiucvw
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 576d196c522b ("media: sunxi: Add support for the A83T MIPI CSI-2 controller")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+I'm unsure about the phy_exit() call in
+sun8i_a83t_mipi_csi2_resources_cleanup() because no explicit phy_init()
+call is performed.
 
-On 31.07.2022 08:32:52, Christophe JAILLET wrote:
-> Since commit 482a4360c56a ("docs: networking: convert netdevices.txt to
-> ReST"), Documentation/networking/netdevices.txt has been replaced by
-> Documentation/networking/netdevices.rst.
->=20
-> Update the comment accordingly to avoid a 'make htmldocs' warning
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The same code is in sun6i-mipi-csi2/sun6i_mipi_csi2.c, but in this driver
+phy_init() IS called.
 
-Applied to linux-can-next/master.
+I leave it as-is because I don't if it is an issue or not.
+My feeling is that it is a copy'n'paste error and that it should be
+removed.
+---
+ .../sun8i_a83t_mipi_csi2.c                    | 21 ++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
-Thanks,
-Marc
+diff --git a/drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_mipi_csi2.c b/drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_mipi_csi2.c
+index d052ee77ef0a..67c7475d5d10 100644
+--- a/drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_mipi_csi2.c
++++ b/drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_mipi_csi2.c
+@@ -719,13 +719,15 @@ sun8i_a83t_mipi_csi2_resources_setup(struct sun8i_a83t_mipi_csi2_device *csi2_de
+ 	csi2_dev->clock_mipi = devm_clk_get(dev, "mipi");
+ 	if (IS_ERR(csi2_dev->clock_mipi)) {
+ 		dev_err(dev, "failed to acquire mipi clock\n");
+-		return PTR_ERR(csi2_dev->clock_mipi);
++		ret = PTR_ERR(csi2_dev->clock_mipi);
++		goto err_put_clk_rate;
+ 	}
+ 
+ 	csi2_dev->clock_misc = devm_clk_get(dev, "misc");
+ 	if (IS_ERR(csi2_dev->clock_misc)) {
+ 		dev_err(dev, "failed to acquire misc clock\n");
+-		return PTR_ERR(csi2_dev->clock_misc);
++		ret = PTR_ERR(csi2_dev->clock_misc);
++		goto err_put_clk_rate;
+ 	}
+ 
+ 	/* Reset */
+@@ -733,7 +735,8 @@ sun8i_a83t_mipi_csi2_resources_setup(struct sun8i_a83t_mipi_csi2_device *csi2_de
+ 	csi2_dev->reset = devm_reset_control_get_shared(dev, NULL);
+ 	if (IS_ERR(csi2_dev->reset)) {
+ 		dev_err(dev, "failed to get reset controller\n");
+-		return PTR_ERR(csi2_dev->reset);
++		ret = PTR_ERR(csi2_dev->reset);
++		goto err_put_clk_rate;
+ 	}
+ 
+ 	/* D-PHY */
+@@ -741,7 +744,7 @@ sun8i_a83t_mipi_csi2_resources_setup(struct sun8i_a83t_mipi_csi2_device *csi2_de
+ 	ret = sun8i_a83t_dphy_register(csi2_dev);
+ 	if (ret) {
+ 		dev_err(dev, "failed to initialize MIPI D-PHY\n");
+-		return ret;
++		goto err_put_clk_rate;
+ 	}
+ 
+ 	/* Runtime PM */
+@@ -749,6 +752,10 @@ sun8i_a83t_mipi_csi2_resources_setup(struct sun8i_a83t_mipi_csi2_device *csi2_de
+ 	pm_runtime_enable(dev);
+ 
+ 	return 0;
++
++err_put_clk_rate:
++	clk_rate_exclusive_put(csi2_dev->clock_mod);
++	return ret;
+ }
+ 
+ static void
+@@ -778,9 +785,13 @@ static int sun8i_a83t_mipi_csi2_probe(struct platform_device *platform_dev)
+ 
+ 	ret = sun8i_a83t_mipi_csi2_bridge_setup(csi2_dev);
+ 	if (ret)
+-		return ret;
++		goto err_cleanup_resources;
+ 
+ 	return 0;
++
++err_cleanup_resources:
++	sun8i_a83t_mipi_csi2_resources_cleanup(csi2_dev);
++	return ret;
+ }
+ 
+ static int sun8i_a83t_mipi_csi2_remove(struct platform_device *platform_dev)
+-- 
+2.34.1
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde           |
-Embedded Linux                   | https://www.pengutronix.de  |
-Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
-
---qxo3ypmddngiucvw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEBsvAIBsPu6mG7thcrX5LkNig010FAmLmz/EACgkQrX5LkNig
-011I1ggAqDDECmOnJPHI92zr3DChAcs4FvS0hToEExWus5JBiQoaQahSwv9M2Mp7
-ZssuPsRFz2Ew24nwlzxmaPOE+jgU9+QGId8c7SBu0LsSfLjh3c5qqTIMHPTrhoWi
-6esRvMnuZ/CgWo/5sSJxKQWrfPiY8eAHB8Z5ClWk5SogPu0fCf9F08paPTO8bV1Y
-5oG0RGXm03xD10LSLOCfh+cRbGKVjF/a+YfpGSaSC8cl1TNDKjhj3wz3D7p5lN0Y
-BzajR07lHYLII6cpKECQK0RTCq5yQAwoFwtL6M6gW9TFlUbUNZyez16+qE6N7fUv
-pkjQ2Xf4fKLijL8bnr5HstzDkC0sQQ==
-=OuOE
------END PGP SIGNATURE-----
-
---qxo3ypmddngiucvw--
