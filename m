@@ -2,118 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE3BBC19F2C
-	for <kernel-janitors@archiver.kernel.org>; Sun, 31 Jul 2022 19:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C44DC00140
+	for <kernel-janitors@archiver.kernel.org>; Sun, 31 Jul 2022 19:38:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238444AbiGaTYq (ORCPT
+        id S232020AbiGaTiK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 31 Jul 2022 15:24:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33062 "EHLO
+        Sun, 31 Jul 2022 15:38:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238411AbiGaTY1 (ORCPT
+        with ESMTP id S230074AbiGaTiJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 31 Jul 2022 15:24:27 -0400
-Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0290113E84
-        for <kernel-janitors@vger.kernel.org>; Sun, 31 Jul 2022 12:23:01 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id IEWYoK0AjxFTAIEWYok3tY; Sun, 31 Jul 2022 21:22:53 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 31 Jul 2022 21:22:53 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Maxime Ripard <mripard@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev
-Subject: [PATCH 2/2] media: sunxi: Fix some error handling path of sun6i_mipi_csi2_probe()
-Date:   Sun, 31 Jul 2022 21:22:49 +0200
-Message-Id: <9999a30560d0ab8201734cbab0483c6f840402da.1659295329.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <62c0aef8d3b86d8f290bf6787f1b2b41efbb0b55.1659295329.git.christophe.jaillet@wanadoo.fr>
-References: <62c0aef8d3b86d8f290bf6787f1b2b41efbb0b55.1659295329.git.christophe.jaillet@wanadoo.fr>
+        Sun, 31 Jul 2022 15:38:09 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE5691055A;
+        Sun, 31 Jul 2022 12:38:08 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id z2so958715edc.1;
+        Sun, 31 Jul 2022 12:38:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=tAlWO/lfTLeUDFwT+LCah5fdEb9i+2JJs+LfXYTWE5k=;
+        b=D+Ynpx6UO0C6qCacH4JAMUif9xBpMI4CK96S2U9aQddjpAe6KtjcEuy3JKPBB5XRjq
+         xBKeavE9B7NwrRTu4sbyggxV0YXcd4pT6yO6hMmyHWjTuDn0r/ovy9heL0+F+sg0zyqc
+         8Lx6cy4MICQgvpdfOKRw+V6SMVSIVXNHc1B/C/qme9wEvrb5CU2CMtyaUYYDrHqnpYaA
+         XIv04xm0EAPuNEguxUbQ4CfoMLJ7XYZmKatztrKRP1ogIw2dGvc0BB975Ily2tLc0bVQ
+         mppx4tQoQ7oO/6AaTdl1gMBjMYC3G8KJ2bGhFkN5NSYbF5nInQT1Rdmn5NHDXpZvAkbq
+         upaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=tAlWO/lfTLeUDFwT+LCah5fdEb9i+2JJs+LfXYTWE5k=;
+        b=oUHSKHCmNhEBJDwHnMwx1licBs1SxU44epyZVACaIdWzhNnQi6lsx4i0kEKzJ7CwKo
+         XTlHf3bNYqJEw7Wa55BSvSnNAf2dEb0OvxG9hkYqe9uZODJ8PkYwin92cQmUaqRkecQK
+         BvDFaywKhPhrjQZhrhiz9G2uZO1LwBQ9iKSsQ6uNPst/QZE/hkXumHX7+G+9cYg3r68e
+         6DOf6YkkGQFp9/A7zrGFzyrEU0Ubn9K7/aUBctFFk5qDQfLxg4wKij/iFPwXG2wizJy9
+         fSGf673vdB8NZQfNKXaMwLPzZSe4ENrGlUBQyWmIKZrAkD4w0iUGf/z20UxjwX/SQKHs
+         ni0w==
+X-Gm-Message-State: AJIora+TugNVHz8UQeYQqvi0qdTXV9/DOTb7TBJewjCHdxa8wKpCTPdB
+        zz5AtGsSwCaUIBYWQ44qGWd58vfs3UnmyzqXvfg=
+X-Google-Smtp-Source: AGRyM1tV3xZEg2s+6wazTnQy9KDB4hpaoK0WmHFw+cqOQppd1gluJKOpGMWTGnb+lLP8A/GwfunIYraWTqM7t//LfOs=
+X-Received: by 2002:a05:6402:280b:b0:43b:5d75:fcfa with SMTP id
+ h11-20020a056402280b00b0043b5d75fcfamr12394440ede.114.1659296287503; Sun, 31
+ Jul 2022 12:38:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <7c3918d7cce9643414697cef02ef636f05efb003.1659266359.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <7c3918d7cce9643414697cef02ef636f05efb003.1659266359.git.christophe.jaillet@wanadoo.fr>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Sun, 31 Jul 2022 21:37:30 +0200
+Message-ID: <CAHp75VfHBvpy-u766n7A8HYEcWBZGrqsyi2mOnh96oPTSOuVdw@mail.gmail.com>
+Subject: Re: [PATCH] mfd: intel_soc_pmic: Fix an error handling path in intel_soc_pmic_i2c_probe()
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Andy Shevchenko <andy@kernel.org>, Lee Jones <lee@kernel.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Shobhit Kumar <shobhit.kumar@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Release some resources in the error handling path of the probe and of
-sun6i_mipi_csi2_resources_setup(), as already done in the remove
-function.
+On Sun, Jul 31, 2022 at 1:19 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> The commit in Fixes: has added a pwm_add_table() call in the probe() and
+> a pwm_remove_table() call in the remove(), but forget to update the error
+> handling path of the probe.
+>
+> Add the missing pwm_remove_table() call.
 
-Fixes: af54b4f4c17f ("media: sunxi: Add support for the A31 MIPI CSI-2 controller")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- .../sunxi/sun6i-mipi-csi2/sun6i_mipi_csi2.c    | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+...
 
-diff --git a/drivers/media/platform/sunxi/sun6i-mipi-csi2/sun6i_mipi_csi2.c b/drivers/media/platform/sunxi/sun6i-mipi-csi2/sun6i_mipi_csi2.c
-index a4e3f9a6b2ff..1ee8501e25f6 100644
---- a/drivers/media/platform/sunxi/sun6i-mipi-csi2/sun6i_mipi_csi2.c
-+++ b/drivers/media/platform/sunxi/sun6i-mipi-csi2/sun6i_mipi_csi2.c
-@@ -661,7 +661,8 @@ sun6i_mipi_csi2_resources_setup(struct sun6i_mipi_csi2_device *csi2_dev,
- 	csi2_dev->reset = devm_reset_control_get_shared(dev, NULL);
- 	if (IS_ERR(csi2_dev->reset)) {
- 		dev_err(dev, "failed to get reset controller\n");
--		return PTR_ERR(csi2_dev->reset);
-+		ret = PTR_ERR(csi2_dev->reset);
-+		goto err_put_clk_rate;
- 	}
- 
- 	/* D-PHY */
-@@ -669,13 +670,14 @@ sun6i_mipi_csi2_resources_setup(struct sun6i_mipi_csi2_device *csi2_dev,
- 	csi2_dev->dphy = devm_phy_get(dev, "dphy");
- 	if (IS_ERR(csi2_dev->dphy)) {
- 		dev_err(dev, "failed to get MIPI D-PHY\n");
--		return PTR_ERR(csi2_dev->dphy);
-+		ret = PTR_ERR(csi2_dev->dphy);
-+		goto err_put_clk_rate;
- 	}
- 
- 	ret = phy_init(csi2_dev->dphy);
- 	if (ret) {
- 		dev_err(dev, "failed to initialize MIPI D-PHY\n");
--		return ret;
-+		goto err_put_clk_rate;
- 	}
- 
- 	/* Runtime PM */
-@@ -683,6 +685,10 @@ sun6i_mipi_csi2_resources_setup(struct sun6i_mipi_csi2_device *csi2_dev,
- 	pm_runtime_enable(dev);
- 
- 	return 0;
-+
-+err_put_clk_rate:
-+	clk_rate_exclusive_put(csi2_dev->clock_mod);
-+	return ret;
- }
- 
- static void
-@@ -712,9 +718,13 @@ static int sun6i_mipi_csi2_probe(struct platform_device *platform_dev)
- 
- 	ret = sun6i_mipi_csi2_bridge_setup(csi2_dev);
- 	if (ret)
--		return ret;
-+		goto err_cleanup_resources;
- 
- 	return 0;
-+
-+err_cleanup_resources:
-+	sun6i_mipi_csi2_resources_cleanup(csi2_dev);
-+	return ret;
- }
- 
- static int sun6i_mipi_csi2_remove(struct platform_device *platform_dev)
+I guess it should be rebased on top of [1] which I assume will go into v5.20...
+
+[1]: https://lore.kernel.org/lkml/20220718122328.8287-1-andriy.shevchenko@linux.intel.com/
+
 -- 
-2.34.1
-
+With Best Regards,
+Andy Shevchenko
