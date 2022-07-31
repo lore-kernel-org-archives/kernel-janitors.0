@@ -2,75 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C9EC00140
-	for <kernel-janitors@archiver.kernel.org>; Sun, 31 Jul 2022 09:55:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8336AC00140
+	for <kernel-janitors@archiver.kernel.org>; Sun, 31 Jul 2022 11:19:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236736AbiGaJzw (ORCPT
+        id S232709AbiGaLTb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 31 Jul 2022 05:55:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53714 "EHLO
+        Sun, 31 Jul 2022 07:19:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236675AbiGaJzq (ORCPT
+        with ESMTP id S232262AbiGaLTa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 31 Jul 2022 05:55:46 -0400
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DDA4DEE0
-        for <kernel-janitors@vger.kernel.org>; Sun, 31 Jul 2022 02:55:43 -0700 (PDT)
+        Sun, 31 Jul 2022 07:19:30 -0400
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BC8DD102
+        for <kernel-janitors@vger.kernel.org>; Sun, 31 Jul 2022 04:19:29 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id I5ffoCl2cClE7I5ffoBjBq; Sun, 31 Jul 2022 11:55:41 +0200
+        id I6ykoVjnl0UP7I6ykoOcxz; Sun, 31 Jul 2022 13:19:27 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 31 Jul 2022 11:55:41 +0200
+X-ME-Date: Sun, 31 Jul 2022 13:19:27 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Lee Jones <lee@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>,
-        Milo Kim <Milo.Kim@ti.com>
+To:     Andy Shevchenko <andy@kernel.org>, Lee Jones <lee@kernel.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Shobhit Kumar <shobhit.kumar@intel.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/2] mfd: lp8788: Fix an error handling path in lp8788_irq_init() and lp8788_irq_init()
-Date:   Sun, 31 Jul 2022 11:55:38 +0200
-Message-Id: <bcd5a72c9c1c383dd6324680116426e32737655a.1659261275.git.christophe.jaillet@wanadoo.fr>
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH] mfd: intel_soc_pmic: Fix an error handling path in intel_soc_pmic_i2c_probe()
+Date:   Sun, 31 Jul 2022 13:19:24 +0200
+Message-Id: <7c3918d7cce9643414697cef02ef636f05efb003.1659266359.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <18398722da9df9490722d853e4797350189ae79b.1659261275.git.christophe.jaillet@wanadoo.fr>
-References: <18398722da9df9490722d853e4797350189ae79b.1659261275.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-In lp8788_irq_init(), if an error occurs after a successful
-irq_domain_add_linear() call, it must be undone by a corresponding
-irq_domain_remove() call.
+The commit in Fixes: has added a pwm_add_table() call in the probe() and
+a pwm_remove_table() call in the remove(), but forget to update the error
+handling path of the probe.
 
-irq_domain_remove() should also be called in lp8788_irq_exit() for the same
-reason.
+Add the missing pwm_remove_table() call.
 
-Fixes: eea6b7cc53aa ("mfd: Add lp8788 mfd driver")
+Fixes: a3aa9a93df9f ("mfd: intel_soc_pmic_core: ADD PWM lookup table for CRC PMIC based PWM")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/mfd/lp8788-irq.c | 3 +++
- 1 file changed, 3 insertions(+)
+The order of pwm_remove_table() and regmap_del_irq_chip() is not the same
+as the one in the remove function.
+The one in this patch looks more logical to me because things are done in
+the reverse order of allocations...
 
-diff --git a/drivers/mfd/lp8788-irq.c b/drivers/mfd/lp8788-irq.c
-index 348439a3fbbd..39006297f3d2 100644
---- a/drivers/mfd/lp8788-irq.c
-+++ b/drivers/mfd/lp8788-irq.c
-@@ -175,6 +175,7 @@ int lp8788_irq_init(struct lp8788 *lp, int irq)
- 				IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
- 				"lp8788-irq", irqd);
- 	if (ret) {
-+		irq_domain_remove(lp->irqdm);
- 		dev_err(lp->dev, "failed to create a thread for IRQ_N\n");
- 		return ret;
- 	}
-@@ -188,4 +189,6 @@ void lp8788_irq_exit(struct lp8788 *lp)
- {
- 	if (lp->irq)
- 		free_irq(lp->irq, lp->irqdm);
-+	if (lp->irqdm)
-+		irq_domain_remove(lp->irqdm);
+... but in regmap_del_irq_chip() there is irq, and in such a case releasing
+resource is sometime tricky.
+
+Review with care.
+---
+ drivers/mfd/intel_soc_pmic_core.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/mfd/intel_soc_pmic_core.c b/drivers/mfd/intel_soc_pmic_core.c
+index 5e8c94e008ed..85d070bce0e2 100644
+--- a/drivers/mfd/intel_soc_pmic_core.c
++++ b/drivers/mfd/intel_soc_pmic_core.c
+@@ -77,6 +77,7 @@ static int intel_soc_pmic_i2c_probe(struct i2c_client *i2c,
+ 	return 0;
+ 
+ err_del_irq_chip:
++	pwm_remove_table(crc_pwm_lookup, ARRAY_SIZE(crc_pwm_lookup));
+ 	regmap_del_irq_chip(pmic->irq, pmic->irq_chip_data);
+ 	return ret;
  }
 -- 
 2.34.1
