@@ -2,37 +2,41 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8336AC00140
-	for <kernel-janitors@archiver.kernel.org>; Sun, 31 Jul 2022 11:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E4DC00140
+	for <kernel-janitors@archiver.kernel.org>; Sun, 31 Jul 2022 12:06:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232709AbiGaLTb (ORCPT
+        id S236750AbiGaMGg (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 31 Jul 2022 07:19:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36016 "EHLO
+        Sun, 31 Jul 2022 08:06:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232262AbiGaLTa (ORCPT
+        with ESMTP id S236703AbiGaMGf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 31 Jul 2022 07:19:30 -0400
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BC8DD102
-        for <kernel-janitors@vger.kernel.org>; Sun, 31 Jul 2022 04:19:29 -0700 (PDT)
+        Sun, 31 Jul 2022 08:06:35 -0400
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2972811814
+        for <kernel-janitors@vger.kernel.org>; Sun, 31 Jul 2022 05:06:30 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id I6ykoVjnl0UP7I6ykoOcxz; Sun, 31 Jul 2022 13:19:27 +0200
+        id I7iDoiOFNAeI9I7iDoaGld; Sun, 31 Jul 2022 14:06:28 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 31 Jul 2022 13:19:27 +0200
+X-ME-Date: Sun, 31 Jul 2022 14:06:28 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Andy Shevchenko <andy@kernel.org>, Lee Jones <lee@kernel.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Shobhit Kumar <shobhit.kumar@intel.com>
+To:     Lee Jones <lee@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH] mfd: intel_soc_pmic: Fix an error handling path in intel_soc_pmic_i2c_probe()
-Date:   Sun, 31 Jul 2022 13:19:24 +0200
-Message-Id: <7c3918d7cce9643414697cef02ef636f05efb003.1659266359.git.christophe.jaillet@wanadoo.fr>
+        Lee Jones <lee.jones@linaro.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] mfd: fsl-imx25: Fix an error handling path in mx25_tsadc_setup_irq()
+Date:   Sun, 31 Jul 2022 14:06:23 +0200
+Message-Id: <d404e04828fc06bcfddf81f9f3e9b4babbe35415.1659269156.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -40,39 +44,83 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The commit in Fixes: has added a pwm_add_table() call in the probe() and
-a pwm_remove_table() call in the remove(), but forget to update the error
-handling path of the probe.
+If devm_of_platform_populate() fails, some resources need to be
+released.
 
-Add the missing pwm_remove_table() call.
+Introduce a mx25_tsadc_unset_irq() function that undoes
+mx25_tsadc_setup_irq() and call it both from the new error handling path
+of the probe and in the remove function.
 
-Fixes: a3aa9a93df9f ("mfd: intel_soc_pmic_core: ADD PWM lookup table for CRC PMIC based PWM")
+Fixes: a55196eff6d6 ("mfd: fsl-imx25: Use devm_of_platform_populate()")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-The order of pwm_remove_table() and regmap_del_irq_chip() is not the same
-as the one in the remove function.
-The one in this patch looks more logical to me because things are done in
-the reverse order of allocations...
+mx25_tsadc_setup_irq() and mx25_tsadc_unset_irq() are not symetrical.
+One tests for "(irq <= 0)" while the other one tests for "(irq)".
 
-... but in regmap_del_irq_chip() there is irq, and in such a case releasing
-resource is sometime tricky.
+If <0 the probe will fails, so that is fine.
+If ==0, according to doc platform_get_irq() can't return 0, so that should
+be fine as well.
 
-Review with care.
+
+That said, I think that the "if (irq)" in mx25_tsadc_unset_irq() can be
+removed.
 ---
- drivers/mfd/intel_soc_pmic_core.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/mfd/fsl-imx25-tsadc.c | 32 ++++++++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/mfd/intel_soc_pmic_core.c b/drivers/mfd/intel_soc_pmic_core.c
-index 5e8c94e008ed..85d070bce0e2 100644
---- a/drivers/mfd/intel_soc_pmic_core.c
-+++ b/drivers/mfd/intel_soc_pmic_core.c
-@@ -77,6 +77,7 @@ static int intel_soc_pmic_i2c_probe(struct i2c_client *i2c,
+diff --git a/drivers/mfd/fsl-imx25-tsadc.c b/drivers/mfd/fsl-imx25-tsadc.c
+index 37e5e02a1d05..85f7982d26d2 100644
+--- a/drivers/mfd/fsl-imx25-tsadc.c
++++ b/drivers/mfd/fsl-imx25-tsadc.c
+@@ -84,6 +84,19 @@ static int mx25_tsadc_setup_irq(struct platform_device *pdev,
  	return 0;
+ }
  
- err_del_irq_chip:
-+	pwm_remove_table(crc_pwm_lookup, ARRAY_SIZE(crc_pwm_lookup));
- 	regmap_del_irq_chip(pmic->irq, pmic->irq_chip_data);
- 	return ret;
++static int mx25_tsadc_unset_irq(struct platform_device *pdev)
++{
++	struct mx25_tsadc *tsadc = platform_get_drvdata(pdev);
++	int irq = platform_get_irq(pdev, 0);
++
++	if (irq) {
++		irq_set_chained_handler_and_data(irq, NULL, NULL);
++		irq_domain_remove(tsadc->domain);
++	}
++
++	return 0;
++}
++
+ static void mx25_tsadc_setup_clk(struct platform_device *pdev,
+ 				 struct mx25_tsadc *tsadc)
+ {
+@@ -171,18 +184,21 @@ static int mx25_tsadc_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, tsadc);
+ 
+-	return devm_of_platform_populate(dev);
++	ret = devm_of_platform_populate(dev);
++	if (ret)
++		goto err_irq;
++
++	return 0;
++
++err_irq:
++	mx25_tsadc_unset_irq(pdev);
++
++	return ret;
+ }
+ 
+ static int mx25_tsadc_remove(struct platform_device *pdev)
+ {
+-	struct mx25_tsadc *tsadc = platform_get_drvdata(pdev);
+-	int irq = platform_get_irq(pdev, 0);
+-
+-	if (irq) {
+-		irq_set_chained_handler_and_data(irq, NULL, NULL);
+-		irq_domain_remove(tsadc->domain);
+-	}
++	mx25_tsadc_unset_irq(pdev);
+ 
+ 	return 0;
  }
 -- 
 2.34.1
