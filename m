@@ -2,140 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA187C19F2B
-	for <kernel-janitors@archiver.kernel.org>; Sat, 30 Jul 2022 21:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6058C00140
+	for <kernel-janitors@archiver.kernel.org>; Sun, 31 Jul 2022 06:33:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236200AbiG3Vu5 (ORCPT
+        id S236283AbiGaGc7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 30 Jul 2022 17:50:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59782 "EHLO
+        Sun, 31 Jul 2022 02:32:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232779AbiG3Vuy (ORCPT
+        with ESMTP id S231423AbiGaGc6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 30 Jul 2022 17:50:54 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0170238;
-        Sat, 30 Jul 2022 14:50:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1659217853; x=1690753853;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rND8XXV4IHwYTrk9ylOpb5YEXKqPDzYplKhRlcJ1akw=;
-  b=gmdSHBKDan74jpGsUH7NCLUZrzUo2XqELlJmqG5INO5rxtxWhrkoYNK0
-   e/Oi+cp2B2AgbiPV/tEfzPD5p421ahW1Iu8N0hjyf8TCaf4mOftJt71c7
-   zdB3zj449X9457/nyWB6XYnNK9hXAPqRQcH4Wud0MG2hv5xMjXGNDAQO+
-   ij4piwoyQQfoxzmq46c46rE1y2rGaVAo4BOZ3OvXqgihSJUnoxzERxsnT
-   POAsSNlRZYqqCUeHxW+yOI+t0vIeYVV/i4peIeyk0KVUAyj+y+bVTgwbZ
-   jYO5JnHvPKdEkW2iBrlY4aPs7CfOCVNDUauY0bm8rnUBpQgVR/VJkmJRi
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10424"; a="287704991"
-X-IronPort-AV: E=Sophos;i="5.93,205,1654585200"; 
-   d="scan'208";a="287704991"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2022 14:50:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,205,1654585200"; 
-   d="scan'208";a="704554267"
-Received: from lkp-server01.sh.intel.com (HELO e0eace57cfef) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 30 Jul 2022 14:50:49 -0700
-Received: from kbuild by e0eace57cfef with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oHuMC-000DNX-1N;
-        Sat, 30 Jul 2022 21:50:48 +0000
-Date:   Sun, 31 Jul 2022 05:50:22 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        andriy.shevchenko@linux.intel.com, vee.khee.wong@intel.com,
-        weifeng.voon@intel.com,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
+        Sun, 31 Jul 2022 02:32:58 -0400
+Received: from smtp.smtpout.orange.fr (smtp04.smtpout.orange.fr [80.12.242.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B02C1261E
+        for <kernel-janitors@vger.kernel.org>; Sat, 30 Jul 2022 23:32:57 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id I2VRoU6Vf0UP7I2VRoOECa; Sun, 31 Jul 2022 08:32:56 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sun, 31 Jul 2022 08:32:56 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Max Staudt <max@enpas.org>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Joakim Zhang <qiangqing.zhang@nxp.com>,
-        Andrew Lunn <andrew@lunn.ch>
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] stmmac: intel: Add a missing clk_disable_unprepare()
- call in intel_eth_pci_remove()
-Message-ID: <202207310545.hHU5SagS-lkp@intel.com>
-References: <b5b44a0c025d0fdddd9b9d23153261363089a06a.1659204745.git.christophe.jaillet@wanadoo.fr>
+        linux-can@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH] can: can327: Fix a broken link to Documentation
+Date:   Sun, 31 Jul 2022 08:32:52 +0200
+Message-Id: <6a54aff884ea4f84b661527d75aabd6632140715.1659249135.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b5b44a0c025d0fdddd9b9d23153261363089a06a.1659204745.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hi Christophe,
+Since commit 482a4360c56a ("docs: networking: convert netdevices.txt to
+ReST"), Documentation/networking/netdevices.txt has been replaced by
+Documentation/networking/netdevices.rst.
 
-Thank you for the patch! Yet something to improve:
+Update the comment accordingly to avoid a 'make htmldocs' warning
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v5.19-rc8 next-20220728]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/can/can327.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christophe-JAILLET/stmmac-intel-Add-a-missing-clk_disable_unprepare-call-in-intel_eth_pci_remove/20220731-022139
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 620725263f4222b3c94d4ee19846835feec0ad69
-config: x86_64-randconfig-a016 (https://download.01.org/0day-ci/archive/20220731/202207310545.hHU5SagS-lkp@intel.com/config)
-compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 52cd00cabf479aa7eb6dbb063b7ba41ea57bce9e)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/2d1d09034cc62ee19f799b92bb67640ba86ca557
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Christophe-JAILLET/stmmac-intel-Add-a-missing-clk_disable_unprepare-call-in-intel_eth_pci_remove/20220731-022139
-        git checkout 2d1d09034cc62ee19f799b92bb67640ba86ca557
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
->> drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c:1107:24: error: use of undeclared identifier 'plat'
-           clk_disable_unprepare(plat->stmmac_clk);
-                                 ^
-   1 error generated.
-
-
-vim +/plat +1107 drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
-
-  1092	
-  1093	/**
-  1094	 * intel_eth_pci_remove
-  1095	 *
-  1096	 * @pdev: pci device pointer
-  1097	 * Description: this function calls the main to free the net resources
-  1098	 * and releases the PCI resources.
-  1099	 */
-  1100	static void intel_eth_pci_remove(struct pci_dev *pdev)
-  1101	{
-  1102		struct net_device *ndev = dev_get_drvdata(&pdev->dev);
-  1103		struct stmmac_priv *priv = netdev_priv(ndev);
-  1104	
-  1105		stmmac_dvr_remove(&pdev->dev);
-  1106	
-> 1107		clk_disable_unprepare(plat->stmmac_clk);
-  1108		clk_unregister_fixed_rate(priv->plat->stmmac_clk);
-  1109	
-  1110		pcim_iounmap_regions(pdev, BIT(0));
-  1111	}
-  1112	
-
+diff --git a/drivers/net/can/can327.c b/drivers/net/can/can327.c
+index 5da7778d92dc..925e880bf570 100644
+--- a/drivers/net/can/can327.c
++++ b/drivers/net/can/can327.c
+@@ -827,7 +827,7 @@ static netdev_tx_t can327_netdev_start_xmit(struct sk_buff *skb,
+ 	netif_stop_queue(dev);
+ 
+ 	/* BHs are already disabled, so no spin_lock_bh().
+-	 * See Documentation/networking/netdevices.txt
++	 * See Documentation/networking/netdevices.rst
+ 	 */
+ 	spin_lock(&elm->lock);
+ 	can327_send_frame(elm, frame);
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.34.1
+
