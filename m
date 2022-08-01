@@ -2,65 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D789CC00144
-	for <kernel-janitors@archiver.kernel.org>; Mon,  1 Aug 2022 07:54:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 169F3C00144
+	for <kernel-janitors@archiver.kernel.org>; Mon,  1 Aug 2022 08:18:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229716AbiHAHyi (ORCPT
+        id S229952AbiHAISe convert rfc822-to-8bit (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 1 Aug 2022 03:54:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49222 "EHLO
+        Mon, 1 Aug 2022 04:18:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229514AbiHAHyh (ORCPT
+        with ESMTP id S229725AbiHAISc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 1 Aug 2022 03:54:37 -0400
-X-Greylist: delayed 464 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 01 Aug 2022 00:54:35 PDT
-Received: from mail.fadrush.pl (mail.fadrush.pl [54.37.225.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA5AC28E3D
-        for <kernel-janitors@vger.kernel.org>; Mon,  1 Aug 2022 00:54:35 -0700 (PDT)
-Received: by mail.fadrush.pl (Postfix, from userid 1002)
-        id 24DEE2268C; Mon,  1 Aug 2022 07:46:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fadrush.pl; s=mail;
-        t=1659340009; bh=bD6j9gIFU6CLTaCGl0Ow9oeIxtirvTfMeNZSfLEZQ+I=;
-        h=Date:From:To:Subject:From;
-        b=ajoV5r2qQq6gsHQUTcJykFKtJeb9NUZgPx6EdlUt7QPsscCTWebQ/w9O7alEZmcEu
-         HGXKHJXvqH0UsF5Ua+pg409eZE2u2cVxkFNJQWE1s2Ndb767AsNLeHeZ+DhqXlvgkM
-         J3h/O+9IIGVO+PwYLTnk660q8rdYQZ2/XhISK9HElZ2maSLjys1h+2XV8oFUxFGqLi
-         ClVSDFJ4MRxm5Gc9KD7DrsoV+hcyqdcQmfqiNwfY3xqIU6YFmZAucih0OV7iDDFTa5
-         14Ygj1gyJI2ud7MvgMNfur2o/aJGlXrQUFhPwKHDVzGVofmW84+216hlBpanHEenst
-         qUYgRbd7cS3wg==
-Received: by mail.fadrush.pl for <kernel-janitors@vger.kernel.org>; Mon,  1 Aug 2022 07:46:10 GMT
-Message-ID: <20220801064500-0.1.r.53ao.0.2kzbmr1qh6@fadrush.pl>
-Date:   Mon,  1 Aug 2022 07:46:10 GMT
-From:   "Jakub Olejniczak" <jakub.olejniczak@fadrush.pl>
-To:     <kernel-janitors@vger.kernel.org>
-Subject: =?UTF-8?Q?Zwi=C4=99kszenie_p=C5=82ynno=C5=9Bci_finansowej?=
-X-Mailer: mail.fadrush.pl
+        Mon, 1 Aug 2022 04:18:32 -0400
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5D90E3A4A1
+        for <kernel-janitors@vger.kernel.org>; Mon,  1 Aug 2022 01:18:30 -0700 (PDT)
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-90-AvgrXkIoNm6f5CQVlFdnFQ-1; Mon, 01 Aug 2022 09:18:27 +0100
+X-MC-Unique: AvgrXkIoNm6f5CQVlFdnFQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
+ Server (TLS) id 15.0.1497.36; Mon, 1 Aug 2022 09:18:26 +0100
+Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
+ AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
+ 15.00.1497.036; Mon, 1 Aug 2022 09:18:26 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Christophe JAILLET' <christophe.jaillet@wanadoo.fr>,
+        John Stultz <jstultz@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH v2] timers: Optimize usleep_range()
+Thread-Topic: [PATCH v2] timers: Optimize usleep_range()
+Thread-Index: AQHYo4nvkYUHE4pe402s230iY96y4q2ZtPDg
+Date:   Mon, 1 Aug 2022 08:18:26 +0000
+Message-ID: <03c2bbe795fe4ddcab66eb852bae3715@AcuMS.aculab.com>
+References: <a896e176f0f0b819f8ec5ab8935355d01a642506.1659126514.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <a896e176f0f0b819f8ec5ab8935355d01a642506.1659126514.git.christophe.jaillet@wanadoo.fr>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dzie=C5=84 dobry,
+From: Christophe JAILLET
+> Sent: 29 July 2022 21:29
+> 
+> Most of the time the 'min' and 'max' parameters of usleep_range() are
+> constant. We can take advantage of it to pre-compute at compile time
+> some values otherwise computer at run-time in usleep_range_state().
+> 
+> Replace usleep_range_state() by a new __nsleep_range_delta_state() function
+> that takes as parameters the pre-computed values.
+> 
+> The main benefit is to save a few instructions, especially 2
+> multiplications (x1000 when converting us to ns).
+...
+>   53                   	push   %rbx
+>   48 89 fb             	mov    %rdi,%rbx
+>   81 e5 cc 00 00 00    	and    $0xcc,%ebp
+> - 49 29 dc             	sub    %rbx,%r12              ; (max - min)
+> - 4d 69 e4 e8 03 00 00 	imul   $0x3e8,%r12,%r12       ; us --> ns (x 1000)
+>   48 83 ec 68          	sub    $0x68,%rsp
+>   48 c7 44 24 08 b3 8a 	movq   $0x41b58ab3,0x8(%rsp)
+>   b5 41
+> @@ -10721,18 +10719,16 @@
+>   31 c0                	xor    %eax,%eax
+>   e8 00 00 00 00       	call   ...
+>   e8 00 00 00 00       	call   ...
+> - 49 89 c0             	mov    %rax,%r8
+> - 48 69 c3 e8 03 00 00 	imul   $0x3e8,%rbx,%rax       ; us --> ns (x 1000)
+> + 48 01 d8             	add    %rbx,%rax
+> + 48 89 44 24 28       	mov    %rax,0x28(%rsp)
+>   65 48 8b 1c 25 00 00 	mov    %gs:0x0,%rbx
+>   00 00
+> - 4c 01 c0             	add    %r8,%rax
+> - 48 89 44 24 28       	mov    %rax,0x28(%rsp)
+>   e8 00 00 00 00       	call   ...
+...
 
-kontaktuj=C4=99 si=C4=99 z Pa=C5=84stwem, poniewa=C5=BC chcia=C5=82bym za=
-proponowa=C4=87 wygodne rozwi=C4=85zanie, kt=C3=B3re umo=C5=BCliwi Pa=C5=84=
-stwa firmie stabilny rozw=C3=B3j.=20
+Is that really measurable in any test?
+Integer multiply is one clock on almost every modern cpu.
 
-Konkurencyjne otoczenie wymaga ci=C4=85g=C5=82ego ulepszania i poszerzeni=
-a oferty, co z kolei wi=C4=85=C5=BCe si=C4=99 z konieczno=C5=9Bci=C4=85 i=
-nwestowania. Brak odpowiedniego kapita=C5=82u powa=C5=BCnie ogranicza tem=
-po rozwoju firmy.
+By the time you've allowed for superscaler cpu there is
+probably no difference at all on anything except the simplest
+cpus.
 
-Od wielu lat z powodzeniem pomagam firmom w uzyskaniu najlepszej formy fi=
-nansowania z banku oraz UE. Mam sta=C5=82ych Klient=C3=B3w, kt=C3=B3rzy n=
-adal ch=C4=99tnie korzystaj=C4=85 z moich us=C5=82ug, a tak=C5=BCe poleca=
-j=C4=85 je innym.
+	David
 
-Czy chcieliby Pa=C5=84stwo skorzysta=C4=87 z pomocy wykwalifikowanego i d=
-o=C5=9Bwiadczonego doradcy finansowego?
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
-
-Pozdrawiam
-Jakub Olejniczak
