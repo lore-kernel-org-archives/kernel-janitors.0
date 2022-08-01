@@ -2,79 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E592C3F6B0
-	for <kernel-janitors@archiver.kernel.org>; Mon,  1 Aug 2022 19:30:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10166C19F2B
+	for <kernel-janitors@archiver.kernel.org>; Mon,  1 Aug 2022 19:31:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233778AbiHATaV (ORCPT
+        id S234677AbiHATbv (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 1 Aug 2022 15:30:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51026 "EHLO
+        Mon, 1 Aug 2022 15:31:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232622AbiHATaT (ORCPT
+        with ESMTP id S234197AbiHATbu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 1 Aug 2022 15:30:19 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1E072ACC;
-        Mon,  1 Aug 2022 12:30:17 -0700 (PDT)
+        Mon, 1 Aug 2022 15:31:50 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 600A02ED79;
+        Mon,  1 Aug 2022 12:31:45 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id ED8D4CE1882;
-        Mon,  1 Aug 2022 19:30:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3ECA8C433D7;
-        Mon,  1 Aug 2022 19:30:14 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AA06561302;
+        Mon,  1 Aug 2022 19:31:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2EA8C433D6;
+        Mon,  1 Aug 2022 19:31:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659382214;
-        bh=RSdenKgzgDbUZ1xdn72P3IXWtBaRKTopIQ2me2+7W3U=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=pckv6hSar7rbmrQOoTGxdJaoesk9NPjb3lW/xylQYd8b82lLZTEpFn7vc7qY7qOPH
-         0E3WHtrvAbASozW805CQ/AmNCHNPqdSR0rpiIPgWZ8oXqTzTb5lANYCeLmScNWdh4h
-         WKYprdx8hnIF3HMvcSoB1AMI2aYWUZ+4406SNvPCvGPOcyrCiFfVT+IjlRQqRFHfVG
-         +yQWqwpeYeUiEQs6vAVWwcnj7Cce+ZVHQGkfYJj2NnYONZ0AQJtD4maxzTnj7Scvnb
-         N93kIhA4+JwJGYWJEgeEeMW66A/j8B6C5Jp9KcJrXj73O1t36fAjl79/0ADrpEZLR1
-         V8/qosEbSmHxA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 23F8FC43143;
-        Mon,  1 Aug 2022 19:30:14 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        s=k20201202; t=1659382304;
+        bh=stzSfZcFD/Pbjg5V9MaKRmWf+zkGua0ZY7XxloWri/0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=dIXnRSSX3lSa7c7S9EEX/HV1EsFkw5rhu2wFTOubf59jZuo4ZMqcc57wt5aiYiL1A
+         JgIBzo/SuN84td6eJSogDbGeFtDjX8Rn4M5346ltqro4HUjyGFPvH9fB50NNSAhrrf
+         PvnbyOqGZfceGfCa7oPl1vRoz1TTlPBCnXD9yxkdZTmFEwYTW9u8tpOhkA5wu93hed
+         No0PPHygckDyLVdhT9J5tfP47MGzn8i+S9Y+77T6SxCcrzRQrxs68r1l91YeqFSYj7
+         kPbTimUiTTz5JP0GscunhZnDy21HL22N2H1VNySFTEIO2SRxh0R4FONUaqaLOttmlK
+         inK32oNlUNa3Q==
+Date:   Mon, 1 Aug 2022 12:31:42 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     "Jiawen Wu" <jiawenwu@trustnetic.com>
+Cc:     "'Christophe JAILLET'" <christophe.jaillet@wanadoo.fr>,
+        "'David S. Miller'" <davem@davemloft.net>,
+        "'Eric Dumazet'" <edumazet@google.com>,
+        "'Paolo Abeni'" <pabeni@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <netdev@vger.kernel.org>
 Subject: Re: [PATCH] net: txgbe: Fix an error handling path in txgbe_probe()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <165938221414.30942.4902074793645744820.git-patchwork-notify@kernel.org>
-Date:   Mon, 01 Aug 2022 19:30:14 +0000
+Message-ID: <20220801123142.559ca297@kernel.org>
+In-Reply-To: <02a101d8a552$0e704650$2b50d2f0$@trustnetic.com>
 References: <082003d00be1f05578c9c6434272ceb314609b8e.1659285240.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <082003d00be1f05578c9c6434272ceb314609b8e.1659285240.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     jiawenwu@trustnetic.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
+        <02a101d8a552$0e704650$2b50d2f0$@trustnetic.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net-next.git (master)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Sun, 31 Jul 2022 18:34:15 +0200 you wrote:
-> A pci_enable_pcie_error_reporting() should be balanced by a corresponding
-> pci_disable_pcie_error_reporting() call in the error handling path, as
-> already done in the remove function.
+On Mon, 1 Aug 2022 10:54:44 +0800 Jiawen Wu wrote:
+> On Monday, August 1, 2022 12:34 AM, Christophe wrote:
+> > A pci_enable_pcie_error_reporting() should be balanced by a corresponding
+> > pci_disable_pcie_error_reporting() call in the error handling path, as already
+> > done in the remove function.
 > 
-> Fixes: 3ce7547e5b71 ("net: txgbe: Add build support for txgbe")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> [...]
+> Thanks Christophe, it's right.
+> Reviewed-by: Jiawen Wu <jiawenwu@trustnetic.com>
 
-Here is the summary with links:
-  - net: txgbe: Fix an error handling path in txgbe_probe()
-    https://git.kernel.org/netdev/net-next/c/2e8f205d910e
+Your reply did not make it to the list:
+https://lore.kernel.org/r/02a101d8a552$0e704650$2b50d2f0$@trustnetic.com+898582B7F010EAA4/
+not sure why but I wanted to let you know.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thanks for reviewing the fix promptly!
