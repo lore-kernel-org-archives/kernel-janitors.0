@@ -2,85 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D2B6C00140
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Aug 2022 11:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E03D0C19F2C
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Aug 2022 15:38:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236278AbiHBLdD (ORCPT
+        id S229670AbiHBPiW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 2 Aug 2022 07:33:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34992 "EHLO
+        Tue, 2 Aug 2022 11:38:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233167AbiHBLdD (ORCPT
+        with ESMTP id S229645AbiHBPiV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 2 Aug 2022 07:33:03 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C3774D169;
-        Tue,  2 Aug 2022 04:33:02 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id v16-20020a17090abb9000b001f25244c65dso18177209pjr.2;
-        Tue, 02 Aug 2022 04:33:02 -0700 (PDT)
+        Tue, 2 Aug 2022 11:38:21 -0400
+Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9A3C10FEA;
+        Tue,  2 Aug 2022 08:38:20 -0700 (PDT)
+Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-31f443e276fso144872517b3.1;
+        Tue, 02 Aug 2022 08:38:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=OHpxFokX920XOnwkMxfB9CAAUPf2pEttxrq73aPUfwg=;
-        b=TR+KZ687xlxeL7Us1osYLQcbJmjHFeFtJW6JasrwzfHc3ZH78P1VlCyldkQl7zgMLy
-         ToPFQ3ipHuJ7QQHoahQTHU5cWhPARZ1SsF1xUvMQqzoDkhOPSzrBmgHlnesDR8/akR5p
-         +mtah5U9Xpre8ec0h+ojRjlDjLbhB0tCaOtZZM3j2QBf2iyMPLJNredGTX5kD9RsoEug
-         aybnNlGQr4oF9yaqmeCPBT4LN/tW6XenM3iGtR/kORoK9OpIASSsnMAXn5Ru0M1xuYcl
-         wqSWz2J847sZoaleApLZ1HphiMzCReucbcLw4Fu+Wkfl11cDCO88x4tsAbqWOv3hcfp3
-         z0BA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m0b6Z4o9N99dBrxvZIzGAcIl3UdOT7UmGWjcS9K8gvk=;
+        b=Qi3am3BQET1o09/pbzliCWfM0TmZ6chfbhojviwnlEK/icgACHA0ax/O0mb/eIcx/u
+         To64cTh+brgbDk7NohdgpdLwlPEG1R4i1yobwspAdwWLrfpfmbIDHE3gyUU4ClsVM/Dc
+         olqdpQt/04EuOWFVBEWjHbtubRJ2dD6CtjVMzLyHyhzsZykoWXDH2MApMIHjXEJBxcp2
+         Xw7E3fkyeTLFI8WyUhH1BVpVox9fUaaa4r8wkSCc3s7x8GQONIMUU9sfuZlLdO4Jpjzn
+         DchTnIaJOGYwPqTn/1ZR2Uj9FLl/HQDKMgbJs7nFewlcpv6hhqFI6klWNw4SLqZCCcTu
+         kBAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=OHpxFokX920XOnwkMxfB9CAAUPf2pEttxrq73aPUfwg=;
-        b=PqYNjVKelFVNzG+aTBVAZipnxp2CuAZ39Id6mLgCSv1xXGq9DZGQCMbsOmBTatGQtA
-         qm1N6gddJOtCcbQIw+uLsx44I6dLc8A/wlEaj6odGU8VR66x3n7dK7f+KLIQU2o6oQhm
-         h1YZj8+Y1JTkY9RH5mZISnxubPfbntuZa4oxQ9kbqqr4NjQyIhWFBHa1NArlvtcBC+vI
-         ocwLCvTD+RWElSpNjOOxPQFpFDMhZOdHlUqIn76NzFbQ1K1ggw5jEq0rBZtWns0zcGz/
-         zhe3PL6yliBX9pTKWeQXlxNkeRr0c6M57dsvDXDMcciqfzpaMxFH+2blDUihGP4XAZL5
-         ssTw==
-X-Gm-Message-State: ACgBeo0UCjTu/kQtJ6Ua58uiv4HayOsn4K8jRQ/qkfd9JcivNT0i0xpp
-        0MvTMxrkBgS6vADFRIa94DvJc7E6l/lDyMRvdqY=
-X-Google-Smtp-Source: AA6agR62S7sB+RY924boipu5bK5CMwb6VMEmt5c/qUQlI35C+U5LQAoWAwf1rotNC920mX0heJN1DM2OBsKXfdD+aHg=
-X-Received: by 2002:a17:90a:d3d8:b0:1f2:2cd:a1ca with SMTP id
- d24-20020a17090ad3d800b001f202cda1camr24947017pjw.135.1659439981626; Tue, 02
- Aug 2022 04:33:01 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m0b6Z4o9N99dBrxvZIzGAcIl3UdOT7UmGWjcS9K8gvk=;
+        b=Qg7fyfC++hFM0dYBZocpSK1PxoJRBeFppxQOZEmjmgK8ZEIrdmr6xsjkyCd+nB8/H1
+         EiELLg33s8rh1xbO/gVosWstheFUGHkMpVcOb5MUgFQkZaTo1ktuoP3BWR2xvOEvn8Go
+         vu/erGy/WoH+f9nJ7XMvqrRyK9DgXNb7ucchJJBjGcRldHvW85qxffPk5eREILUtahXi
+         lIZEXBNqYaVciPa+GNuuRFb/Vy/CMGt1Zt+jMmcMKWsLQJ40BSUX1rbVRisUQtJ5X64+
+         bRIZNyigmj3kMO/EZmE8eVT8DJPT1nUwYb9SBI6eIpjVcqkbbp0jd2eLffd8p2GxRxUn
+         yfqw==
+X-Gm-Message-State: ACgBeo3CdaBnTCs7Qw5U3OGIryraPB1LUQM4sbZOIoH/V8Els61LT6ce
+        N215r4MN52+5MkUbop0TrtlpUC/Ku+brV+S08dw=
+X-Google-Smtp-Source: AA6agR4RPpRQhvb7LWsXW4yIc4rxDjRbpzkdw0GMMn/85ECVHC2rpuwUUAQ6N31ADZc8T9TOjyOz2lJF1qgthg3xYNw=
+X-Received: by 2002:a0d:ea57:0:b0:31f:4ebd:99f7 with SMTP id
+ t84-20020a0dea57000000b0031f4ebd99f7mr18123450ywe.280.1659454699984; Tue, 02
+ Aug 2022 08:38:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <YuenvTPwQj022P13@kili> <YueoPDOseM1BGiXD@kili>
- <CAFqt6zaLY3_DKC-=NJSrgzePrDS-q-dfUQxrN9puBf0+qVNfUg@mail.gmail.com>
- <20220802110133.GG3460@kadam> <20220802112011.GH3460@kadam>
-In-Reply-To: <20220802112011.GH3460@kadam>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Tue, 2 Aug 2022 17:02:49 +0530
-Message-ID: <CAFqt6zZCwo9XhAUuBdnCqqh-NTZahHQqMFibG0LSV===8uL=dQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] NTB: EPF: Tidy up some bounds checks
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jon Mason <jdmason@kudzu.us>, Frank Li <Frank.Li@nxp.com>,
-        linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <bb1df380b64dd708f480261548fb303046352878.1659296372.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <bb1df380b64dd708f480261548fb303046352878.1659296372.git.christophe.jaillet@wanadoo.fr>
+From:   Jason Gerecke <killertofu@gmail.com>
+Date:   Tue, 2 Aug 2022 08:38:42 -0700
+Message-ID: <CANRwn3RqbhbK-aGa5aAc9gHDU446Qyk_9-HJmN51q=y=HpweNg@mail.gmail.com>
+Subject: Re: [PATCH] HID: wacom: Simplify comments
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Ping Cheng <ping.cheng@wacom.com>,
+        Jason Gerecke <jason.gerecke@wacom.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Input <linux-input@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Aug 2, 2022 at 4:50 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On Sun, Jul 31, 2022 at 12:51 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 >
-> On Tue, Aug 02, 2022 at 02:01:33PM +0300, Dan Carpenter wrote:
-> > It's the same in English, the variable comes first.  "If twelve foot
-> > is greater than the height of the tree then blah blah" vs "if the tree
-> > is less than twelve foot blah blah".
+> Remove a left-over from commit 2874c5fd2842 ("treewide: Replace GPLv2
+> boilerplate/reference with SPDX - rule 152").
+> An empty comment block can be removed.
 >
-> Hehe...  I had a brief momement of panic where I worried that these
-> statements might not be equivalent.  The backwards if is so confusing.
-
-hehe.. Sorry I read the condition wrong with an example value at first.
-
-Acked-by: Souptick Joarder (HPE) <jrdr.linux@gmail.com>
-
+> While at it remove, also remove what is supposed to be the path/filename of
+> the file.
+> This is really low value... and wrong since commit 471d17148c8b
+> ("Input: wacom - move the USB (now hid) Wacom driver in drivers/hid")
 >
-> regards,
-> dan carpenter
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/hid/wacom_sys.c | 5 -----
+>  1 file changed, 5 deletions(-)
+>
+> diff --git a/drivers/hid/wacom_sys.c b/drivers/hid/wacom_sys.c
+> index 194a2e327591..21612fdae9c3 100644
+> --- a/drivers/hid/wacom_sys.c
+> +++ b/drivers/hid/wacom_sys.c
+> @@ -1,13 +1,8 @@
+>  // SPDX-License-Identifier: GPL-2.0-or-later
+>  /*
+> - * drivers/input/tablet/wacom_sys.c
+> - *
+>   *  USB Wacom tablet support - system specific code
+>   */
+>
+> -/*
+> - */
+> -
+>  #include "wacom_wac.h"
+>  #include "wacom.h"
+>  #include <linux/input/mt.h>
+> --
+> 2.34.1
+>
+
+LGTM.
+Reviewed-by: Jason Gerecke <jason.gerecke@wacom.com>
