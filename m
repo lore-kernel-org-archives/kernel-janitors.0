@@ -2,98 +2,127 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E31C00140
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Aug 2022 10:17:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACA1DC00140
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Aug 2022 10:49:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236031AbiHBKRA (ORCPT
+        id S236408AbiHBKtr (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 2 Aug 2022 06:17:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58818 "EHLO
+        Tue, 2 Aug 2022 06:49:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234848AbiHBKQ7 (ORCPT
+        with ESMTP id S233205AbiHBKtq (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 2 Aug 2022 06:16:59 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3333827146;
-        Tue,  2 Aug 2022 03:16:58 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id v16-20020a17090abb9000b001f25244c65dso18002006pjr.2;
-        Tue, 02 Aug 2022 03:16:58 -0700 (PDT)
+        Tue, 2 Aug 2022 06:49:46 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C3A8C50;
+        Tue,  2 Aug 2022 03:49:45 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id q7-20020a17090a7a8700b001f300db8677so14899917pjf.5;
+        Tue, 02 Aug 2022 03:49:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc;
-        bh=K3gMwnYc05dS2NdrTHN5+Ze6CUziePYd96zwweq+t0Q=;
-        b=pjOQTq67jmL+zqlHUy+gwtkhHXJxXaYy6SWRs8Jxf1TcU2sZkUchzPyaBty0YWPeN1
-         MrGK2QdyYSR9/b3zpNTMxPXDMQJFENkU3q7BD7TIyOGvTG7uH3cleCzCLWUE8szLKG8J
-         vYcM89FvbfxU6ye+O79xDTI/4f1czm3x9KKuc8Fmc3Pwgu3i85uBJspqcO26Shhb66NX
-         7xL557CHC3OT6KfCvR5lTOF1S883GGfMS50B5f/QsxMzVWfgrO+JmB8fe1tQTyVgP1aX
-         zRzL9yyg+udr8w3XGP9gxVCWnqZiwgeMssdrp3/PIObahVVBiP5yYOnuIYNQqDZ+TfEf
-         EHXA==
+        bh=W1oxJVUbD6Eo8z4KG5eAwZXphOR7ew3ZEZu8lUBJ+WY=;
+        b=CviIUA8N5sozDRXYGze1xuxDs1rC4dHqmQSKVcfixLwcgIwUnkS5DiV4f+X7BFQg98
+         eTnlJNjr5r4mhRlwzP/HzOKJpmXJzQC35NkvMxr6NQWqOhOR5zcSnkzcRecjy8o773aM
+         RIUwCzfEwMPn+JNHSRvIb4HBaPVH7C7VDJUZF2maaDevC4Ls4mDYcuTH+WqJ2ZjT/4OO
+         WmLj0C/IoeH6zay58m1o4GjPumAegsaJYT/zSd7I+x9a0aKxFWgFmhupmuHm8KkkdtDm
+         xS6ctPMBRf7IeWnTW+PMVmLhnG1uQ+Firh7fAhia9jH8IETS2AxvNDyWPXtWe1ZFx3tS
+         oU6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc;
-        bh=K3gMwnYc05dS2NdrTHN5+Ze6CUziePYd96zwweq+t0Q=;
-        b=kekjNcMthtMM7oNeVZaCsuHf6S2r5oki/GaduaV339Nefo25YYz64f14pTAnlkrJuZ
-         JsuyGXtK2xq9zjjsvBNiaqmDAwvsRcgzmZ+iAK8u6nE/ANnQsrcb2ShZWFbyYau9U5zB
-         o2Pv08RVaLp3iHyQJEu4Fmf7162T6o+6LtIb9g/StVva27+uIDZ+aFrmr9pCOZkLRaV8
-         ZbRPXOTyToDL3w0PIL3Bl+lz1wOMq0CIeiJ38hyfmzd+Gdbbc4Ts9XLx1TNljY8xPLmt
-         3SPeCmfUKXQq6H3KK/nsjv6aSGm+e/uw9hP2q/8FtWCRYK5BW3cd1gaF6BmriqyxeNFF
-         xpEQ==
-X-Gm-Message-State: ACgBeo394tUFK27ACdMlLdYI3i3kzTVyCdoMBnKD2JSpmHBr134EkUbg
-        ItCRqwiRERlKK3VCjtOqEsHDzbQeOhW7RZDgzjA=
-X-Google-Smtp-Source: AA6agR4x5kL7ZKGd39BRS6Q+B0grXI4PMc7cslyieT6sDmoc7/sL0KfzJM8M9AW+kno9K0BscMror7MSWwfHs+uGBRA=
+        bh=W1oxJVUbD6Eo8z4KG5eAwZXphOR7ew3ZEZu8lUBJ+WY=;
+        b=gtx61m9ICcvZ2oBvJo1GkxLV/iXvTWz9Bsh4orROYriUZmvPMNYhOgVPeCVhuAFGX5
+         QrPvmwPu+krkdBVAP2rLIskwX/vfGmQS7/SDPCd6Aq84nbvat2SiS4twFxh4SgVacXP0
+         +Tvi9fUBtKCGa0IfSZ27DiQ3cw6f7epsQa/kGXmZ/HRFVHsGYRnHZp01xvvq6tZDYX6K
+         MND5dOLBRar4i0AY+W9PrbHFudJiJ5g75m7xx02pojIVrm3fbWuhzZ1E3rlydLCyzkhH
+         cxULeu5+VNwEH+GBIQXGNhriBMlA/gEy6AFl0TtN7g//lCApEkev/bw7T+Ze3gztxolm
+         v5xQ==
+X-Gm-Message-State: ACgBeo0tLOo96/gmS53iJXMTjRR5UyTflmCuZyHCmxTmKjfzw3FEgY5R
+        eokdj5K/RgTkkdEpsmStiZPNq7lsCX1hwTg+xzM=
+X-Google-Smtp-Source: AA6agR5AofqthFFU1yTaAa+1I3yxTOPzpDzlkU5YJASn1lZPNnEReWav0hxLHHtw/Ns2608daBdd9yoZX0K9+99BBlk=
 X-Received: by 2002:a17:90b:4b07:b0:1f5:37d3:fb40 with SMTP id
- lx7-20020a17090b4b0700b001f537d3fb40mr125958pjb.12.1659435417606; Tue, 02 Aug
- 2022 03:16:57 -0700 (PDT)
+ lx7-20020a17090b4b0700b001f537d3fb40mr258487pjb.12.1659437384953; Tue, 02 Aug
+ 2022 03:49:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <YuenvTPwQj022P13@kili>
-In-Reply-To: <YuenvTPwQj022P13@kili>
+References: <YuenvTPwQj022P13@kili> <YueoPDOseM1BGiXD@kili>
+In-Reply-To: <YueoPDOseM1BGiXD@kili>
 From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Tue, 2 Aug 2022 15:46:45 +0530
-Message-ID: <CAFqt6zZPduwKr23kFzam12nEiYaVyNe2s=789V_SscDMG2WAPw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] NTB: EPF: Fix error code in epf_ntb_bind()
+Date:   Tue, 2 Aug 2022 16:19:33 +0530
+Message-ID: <CAFqt6zaLY3_DKC-=NJSrgzePrDS-q-dfUQxrN9puBf0+qVNfUg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] NTB: EPF: Tidy up some bounds checks
 To:     Dan Carpenter <dan.carpenter@oracle.com>
 Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Frank Li <Frank.Li@nxp.com>,
         Lorenzo Pieralisi <lpieralisi@kernel.org>,
         =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
-        Jon Mason <jdmason@kudzu.us>, linux-pci@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+        Jon Mason <jdmason@kudzu.us>, Frank Li <Frank.Li@nxp.com>,
+        linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Aug 1, 2022 at 3:45 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+On Mon, Aug 1, 2022 at 3:47 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 >
-> Return an error code if pci_register_driver() fails.  Don't return
-> success.
+> This sscanf() is reading from the filename which was set by the kernel
+> so it should be trust worthy.  Although the data is likely trust worthy
+> there is some bounds checking but unfortunately, it is not complete or
+> consistent.  Additionally, the Smatch static checker marks everything
+> that comes from sscanf() as tainted and so Smatch complains that this
+> code can lead to an out of bounds issue.  Let's clean things up and make
+> Smatch happy.
 >
-> Fixes: da51fd247424 ("NTB: EPF: support NTB transfer between PCI RC and EP connection")
+> The first problem is that there is no bounds checking in the _show()
+> functions.  The _store() and _show() functions are very similar so make
+> the bounds checking the same in both.
+>
+> The second issue is that if "win_no" is zero it leads to an array
+> underflow so add an if (win_no <= 0) check for that.
+>
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Acked-by: Souptick Joarder (HPE) <jrdr.linux@gmail.com>
-
 > ---
->  drivers/pci/endpoint/functions/pci-epf-vntb.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/pci/endpoint/functions/pci-epf-vntb.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
 >
 > diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/endpoint/functions/pci-epf-vntb.c
-> index 111568089d45..cf338f3cf348 100644
+> index cf338f3cf348..a7fe86f43739 100644
 > --- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
 > +++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
-> @@ -1312,7 +1312,8 @@ static int epf_ntb_bind(struct pci_epf *epf)
->
->         epf_set_drvdata(epf, ntb);
->
-> -       if (pci_register_driver(&vntb_pci_driver)) {
-> +       ret = pci_register_driver(&vntb_pci_driver);
-> +       if (ret) {
->                 dev_err(dev, "failure register vntb pci driver\n");
->                 goto err_bar_alloc;
->         }
+> @@ -831,9 +831,16 @@ static ssize_t epf_ntb_##_name##_show(struct config_item *item,            \
+>  {                                                                      \
+>         struct config_group *group = to_config_group(item);             \
+>         struct epf_ntb *ntb = to_epf_ntb(group);                        \
+> +       struct device *dev = &ntb->epf->dev;                            \
+>         int win_no;                                                     \
+>                                                                         \
+> -       sscanf(#_name, "mw%d", &win_no);                                \
+> +       if (sscanf(#_name, "mw%d", &win_no) != 1)                       \
+> +               return -EINVAL;                                         \
+> +                                                                       \
+> +       if (win_no <= 0 || win_no > ntb->num_mws) {                     \
+> +               dev_err(dev, "Invalid num_nws: %d value\n", ntb->num_mws); \
+> +               return -EINVAL;                                         \
+> +       }                                                               \
+>                                                                         \
+>         return sprintf(page, "%lld\n", ntb->mws_size[win_no - 1]);      \
+>  }
+> @@ -856,7 +863,7 @@ static ssize_t epf_ntb_##_name##_store(struct config_item *item,    \
+>         if (sscanf(#_name, "mw%d", &win_no) != 1)                       \
+>                 return -EINVAL;                                         \
+>                                                                         \
+> -       if (ntb->num_mws < win_no) {                                    \
+> +       if (win_no <= 0 || win_no > ntb->num_mws) {                     \
+
+This might change the existing logic. will it be ?
+if (win_no <= 0 || win_no >= ntb->num_mws) {
+
+
+>                 dev_err(dev, "Invalid num_nws: %d value\n", ntb->num_mws); \
+>                 return -EINVAL;                                         \
+>         }                                                               \
 > --
 > 2.35.1
 >
