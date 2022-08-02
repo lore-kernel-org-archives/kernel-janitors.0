@@ -2,69 +2,72 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E03D0C19F2C
-	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Aug 2022 15:38:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 028C1C3F6B0
+	for <kernel-janitors@archiver.kernel.org>; Tue,  2 Aug 2022 18:41:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229670AbiHBPiW (ORCPT
+        id S234734AbiHBSlb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 2 Aug 2022 11:38:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40466 "EHLO
+        Tue, 2 Aug 2022 14:41:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229645AbiHBPiV (ORCPT
+        with ESMTP id S232182AbiHBSl0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 2 Aug 2022 11:38:21 -0400
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9A3C10FEA;
-        Tue,  2 Aug 2022 08:38:20 -0700 (PDT)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-31f443e276fso144872517b3.1;
-        Tue, 02 Aug 2022 08:38:20 -0700 (PDT)
+        Tue, 2 Aug 2022 14:41:26 -0400
+Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8D9D13F97;
+        Tue,  2 Aug 2022 11:41:25 -0700 (PDT)
+Received: by mail-il1-x12f.google.com with SMTP id w16so7458270ilh.0;
+        Tue, 02 Aug 2022 11:41:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=m0b6Z4o9N99dBrxvZIzGAcIl3UdOT7UmGWjcS9K8gvk=;
-        b=Qi3am3BQET1o09/pbzliCWfM0TmZ6chfbhojviwnlEK/icgACHA0ax/O0mb/eIcx/u
-         To64cTh+brgbDk7NohdgpdLwlPEG1R4i1yobwspAdwWLrfpfmbIDHE3gyUU4ClsVM/Dc
-         olqdpQt/04EuOWFVBEWjHbtubRJ2dD6CtjVMzLyHyhzsZykoWXDH2MApMIHjXEJBxcp2
-         Xw7E3fkyeTLFI8WyUhH1BVpVox9fUaaa4r8wkSCc3s7x8GQONIMUU9sfuZlLdO4Jpjzn
-         DchTnIaJOGYwPqTn/1ZR2Uj9FLl/HQDKMgbJs7nFewlcpv6hhqFI6klWNw4SLqZCCcTu
-         kBAA==
+        bh=jzeyAGDUN/5A+HWtk+TkUOMLjgyiHaE5JWRfu9ZYqzc=;
+        b=i8kv/sB2pUO8kWbomr6irJGT80XTy+ZIKQIM0es3wsFaScbFJEfht0LwuJSI76ZDBI
+         otcs31AWbY5bIQQMtsSaTm1NMglVigUzPLlvOX+1CJvyJ6cjF8XlcUQyzkbszMPyyACF
+         yqJ3hWWlInEXFtMdEfa0eEcV/s+jrsGbqQuRs2+KwUv3Y4Pwl7VAx+5dnLqRg7xgR041
+         er6oD9vUYQM3h43RX8drjXslySbk6rJXLCktQ8dqY7KKcWRObNO2pPauKarVbRL2sgrx
+         PGI1spIjdERjT7+aAC4SN8dByFxNb8bhSJPFW5pjuVB1+w72lDnB7ISSxfpP+viuxb5P
+         8AXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=m0b6Z4o9N99dBrxvZIzGAcIl3UdOT7UmGWjcS9K8gvk=;
-        b=Qg7fyfC++hFM0dYBZocpSK1PxoJRBeFppxQOZEmjmgK8ZEIrdmr6xsjkyCd+nB8/H1
-         EiELLg33s8rh1xbO/gVosWstheFUGHkMpVcOb5MUgFQkZaTo1ktuoP3BWR2xvOEvn8Go
-         vu/erGy/WoH+f9nJ7XMvqrRyK9DgXNb7ucchJJBjGcRldHvW85qxffPk5eREILUtahXi
-         lIZEXBNqYaVciPa+GNuuRFb/Vy/CMGt1Zt+jMmcMKWsLQJ40BSUX1rbVRisUQtJ5X64+
-         bRIZNyigmj3kMO/EZmE8eVT8DJPT1nUwYb9SBI6eIpjVcqkbbp0jd2eLffd8p2GxRxUn
-         yfqw==
-X-Gm-Message-State: ACgBeo3CdaBnTCs7Qw5U3OGIryraPB1LUQM4sbZOIoH/V8Els61LT6ce
-        N215r4MN52+5MkUbop0TrtlpUC/Ku+brV+S08dw=
-X-Google-Smtp-Source: AA6agR4RPpRQhvb7LWsXW4yIc4rxDjRbpzkdw0GMMn/85ECVHC2rpuwUUAQ6N31ADZc8T9TOjyOz2lJF1qgthg3xYNw=
-X-Received: by 2002:a0d:ea57:0:b0:31f:4ebd:99f7 with SMTP id
- t84-20020a0dea57000000b0031f4ebd99f7mr18123450ywe.280.1659454699984; Tue, 02
- Aug 2022 08:38:19 -0700 (PDT)
+        bh=jzeyAGDUN/5A+HWtk+TkUOMLjgyiHaE5JWRfu9ZYqzc=;
+        b=06HCQGJD1rWbLaZXMIeowdueJgxv92GiiDYowI/Zn+HOZPQqzAMpR4xSc/o6wOFb7R
+         XgtveP9JcygoOpDlXFHjN5zLoMp8Y7UNSIKEPoWLGotq/rnlEseZDskHwcNxXk9znU2F
+         rOpJJnMZNbWTqEXDTORcZoLbdmmgObNZVM/phtamBsvS6981cPOh+hSVp5D9AVOog9Bi
+         nMdCKHRjMH71Bw+YSnOPLVev7K5hIWn1NRZLDSlqHZEV6j3L57n9xOVUtNrNBjRZ1Qhj
+         Xk0UiohJ3vUrg169qSAZmd9RLv6aSB1cCi4EA54C7lNXFhzMzY/wRtkQ4/SL3M97YgNA
+         nTgg==
+X-Gm-Message-State: AJIora99SNyhoUhLbEjRfPcDIUZZFAVVUpMQx9q6jN6YD9DIEk92mWl5
+        mVJPkjBkMVsXMBWl+zSIxW+igkTFjCuIOlQbN+E=
+X-Google-Smtp-Source: AGRyM1tXNM1HsM8dHkl1eQ4yCXGzTuCCrhzZadT08BpYNirft2Y/dlPEMbRSek/G58DWQ7LJ/W7rCQFykuLRGEdHmd4=
+X-Received: by 2002:a05:6e02:152c:b0:2dc:9b02:b590 with SMTP id
+ i12-20020a056e02152c00b002dc9b02b590mr8645294ilu.320.1659465685089; Tue, 02
+ Aug 2022 11:41:25 -0700 (PDT)
 MIME-Version: 1.0
 References: <bb1df380b64dd708f480261548fb303046352878.1659296372.git.christophe.jaillet@wanadoo.fr>
 In-Reply-To: <bb1df380b64dd708f480261548fb303046352878.1659296372.git.christophe.jaillet@wanadoo.fr>
-From:   Jason Gerecke <killertofu@gmail.com>
-Date:   Tue, 2 Aug 2022 08:38:42 -0700
-Message-ID: <CANRwn3RqbhbK-aGa5aAc9gHDU446Qyk_9-HJmN51q=y=HpweNg@mail.gmail.com>
+From:   Ping Cheng <pinglinux@gmail.com>
+Date:   Tue, 2 Aug 2022 11:41:14 -0700
+Message-ID: <CAF8JNhJBwaxUqWXLEejirRRoFo7mM2y99cPTByCpgba0cDjOFg@mail.gmail.com>
 Subject: Re: [PATCH] HID: wacom: Simplify comments
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc:     Ping Cheng <ping.cheng@wacom.com>,
         Jason Gerecke <jason.gerecke@wacom.com>,
         Jiri Kosina <jikos@kernel.org>,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Input <linux-input@vger.kernel.org>
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-input@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
+
+Hi Christophe,
+
+Thank you for cleaning up the driver code.
 
 On Sun, Jul 31, 2022 at 12:51 PM Christophe JAILLET
 <christophe.jaillet@wanadoo.fr> wrote:
@@ -72,7 +75,14 @@ On Sun, Jul 31, 2022 at 12:51 PM Christophe JAILLET
 > Remove a left-over from commit 2874c5fd2842 ("treewide: Replace GPLv2
 > boilerplate/reference with SPDX - rule 152").
 > An empty comment block can be removed.
->
+
+While you are here, can you update your patch to include the removal
+of the empty comment blocks and paths in the other three files:
+wacom.h, wacom_wac.h, and wacom_wac.c?
+
+Thanks,
+Ping
+
 > While at it remove, also remove what is supposed to be the path/filename of
 > the file.
 > This is really low value... and wrong since commit 471d17148c8b
@@ -104,6 +114,3 @@ On Sun, Jul 31, 2022 at 12:51 PM Christophe JAILLET
 > --
 > 2.34.1
 >
-
-LGTM.
-Reviewed-by: Jason Gerecke <jason.gerecke@wacom.com>
