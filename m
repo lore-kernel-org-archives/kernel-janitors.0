@@ -2,121 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3901C19F2A
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Aug 2022 15:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10367C25B06
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Aug 2022 16:18:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235265AbiHDPE7 (ORCPT
+        id S235226AbiHDQSh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 4 Aug 2022 11:04:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44626 "EHLO
+        Thu, 4 Aug 2022 12:18:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234233AbiHDPE5 (ORCPT
+        with ESMTP id S232087AbiHDQSg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 4 Aug 2022 11:04:57 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC35A52FF0;
-        Thu,  4 Aug 2022 08:04:56 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id bv3so11684864wrb.5;
-        Thu, 04 Aug 2022 08:04:56 -0700 (PDT)
+        Thu, 4 Aug 2022 12:18:36 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D9AE33E2A;
+        Thu,  4 Aug 2022 09:18:35 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id i14so191065ejg.6;
+        Thu, 04 Aug 2022 09:18:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=OZAZOQcdiy06Yu4+hpKMxOPIygFLJTFjIVoiVQXoqPg=;
-        b=WTh0kQtEjcHi8EkyWYns+g/En+cpMJ96AAgg/8oZnNNvn6vKr8vbE7BQUG4BMHqn8s
-         P0KE9+af+/hQyP9cobiSU4F099+NOt1pDVQN1Gd0/f0ZKiY+AJSKZvnyJNFpYlS+RySN
-         ev/KJaYyhhgSCTZPb2mnVTfj5nCe/E1/viKsaBLy+afXVLAzitj+l0IpohNLdvfzQnci
-         B8MxzgloY3Mmk22njhjN9Y7ZG7qPJ70Dih7Y00Wb1PiKg6u3eq0r4TqC76lgx1S/gGE2
-         ZAYVh4bKPOzu2TgsW7zcRvRlRRbjMhiaoTHsnvsY2NDB6S2CqCoDHD6tfijhv+gg/KR4
-         04Rw==
+        h=from:to:cc:subject:date:message-id;
+        bh=JNzjD6Vp5LwUhvOokMc6+3eMyLZefF/Ri/vBtG0eveI=;
+        b=DHQYcgrqa2GwDeeyJeB33wUMV4b/yPgzPGYqUXFZn78l08PGfjX6q6vbCpMF0WS9Xk
+         y3GuUCqRokBLS0lnk7jotp3LMz1xUh3NF35gLYue+YoXCU6PDKFlkIcp+j7Ky4vp6vHM
+         fYApl8xYX9GHI9M46KU2igt9/GmxkvuGUyo8sttmweMTD9W4QZojLdyScpwIieUFiRlJ
+         xRCMNuxcMlEacddEAfn2mPQqq5V9WXyAl0zwvkLDBRezNV0tScv1VuyCgXyQKSRvruzo
+         1O5NqzJDhDVEopkMYPY65RyOkRSxrVblc6wC/th7r8DXqxVKx2+yW6WigDCv9F14ikbh
+         g0bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=OZAZOQcdiy06Yu4+hpKMxOPIygFLJTFjIVoiVQXoqPg=;
-        b=otHlajnWlDqqcWjeBvR8hGu3Tw2pl4tjEgYRJl1nCwVCqMArCrsUS9ujMHoK4vyrOM
-         aHnacTQ1lUXm4WlmLfpmVTS5m/wzxU/HXrDp2GhE+LZgxPMUOqXY0xEC6pTA/wETMo4a
-         u0cIz3LFN/iVOlQaCSjluwXX5+5o1lE0eN0Lo9kO8gjsSS5Blkh9b0Je/6NVLZq1JuQF
-         Qr/5HFeyRH0V9YhXoEeBfltM5hXk90b5xSN9H6oswYHsb94q7uFW/wACKygywVCj+JTY
-         gxOmeyP0OQCPPm96bmZTWhmkG7Hrkyyz2v9PfwAxbApZd9LHN8jxco7yZP32ne7uMB8R
-         DHFQ==
-X-Gm-Message-State: ACgBeo2NCTrQ2aMgmBmD7l5WK7i/RWhYO8npfSs3W/5frJGrOMOjiNjb
-        121E4MDjVSMDg7RFMy016/8=
-X-Google-Smtp-Source: AA6agR6AaMAMV9vkpJOZDZRNryZnnCoaw9cLMQ0voxVvZUZDOCqzSljA35sUZ1JXqmLdSo7cksOsqA==
-X-Received: by 2002:a05:6000:1863:b0:220:6d5f:deb5 with SMTP id d3-20020a056000186300b002206d5fdeb5mr1656018wri.470.1659625495139;
-        Thu, 04 Aug 2022 08:04:55 -0700 (PDT)
-Received: from [192.168.0.104] ([77.126.166.31])
-        by smtp.gmail.com with ESMTPSA id b6-20020a5d6346000000b0022063e5228bsm1385790wrw.93.2022.08.04.08.04.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Aug 2022 08:04:54 -0700 (PDT)
-Message-ID: <2e33b89a-5387-e68c-a0fb-dec2c54f87e2@gmail.com>
-Date:   Thu, 4 Aug 2022 18:04:52 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH net] net/mlx5e: Fix use after free in mlx5e_fs_init()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Tariq Toukan <tariqt@nvidia.com>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Lama Kayal <lkayal@nvidia.com>,
-        Saeed Mahameed <saeedm@nvidia.com>,
-        Tariq Toukan <tariqt@nvidia.com>
-References: <YuvbCRstoxopHi4n@kili>
-From:   Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <YuvbCRstoxopHi4n@kili>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JNzjD6Vp5LwUhvOokMc6+3eMyLZefF/Ri/vBtG0eveI=;
+        b=sOdkzOGaN+/G3y3a7/YfWFqQOIPLmg+cHF0OzSheXs2CXJGDmyxv4au28pCGY+Nj9+
+         PzsGtXVwEjVPWlEiJDFyNGazTnL8ChdEc71iEM0RkchPA0WjklIvgTZ3xYWuXO79HprH
+         TID7Va2+bJpASMwCP4HOdv50vBfoAfjQZXOLHFUWpsxMjjkoG2GNbyp8PONPCgWOdUUi
+         BSNJXWK4bcrySOADfq8IZ4ZkPk/dWubekflonOBY0LDbyuEgZD5p66cUGrZdoSn5RoKs
+         bwMa94aPGKho+NLY4nCX2YENgigDGdnTgALO+0Nuy0zL/u6SfjZIMI54SpD8oL+xIDL9
+         bZ7A==
+X-Gm-Message-State: ACgBeo3wAMldQ8EeDBbuD/O6yk/OZ5gEbA0aJNy5WzUnbaX/0MI3Tg5t
+        LNKZf2eGR/P3Kjvk9rci32c=
+X-Google-Smtp-Source: AA6agR5ZOB8sjiTqaPDAVWzLh5ayOqoz3XnVWJIqWejRe2w8NJ0c2y7Z/5YN8Aqk/ihviXIjdVDbVQ==
+X-Received: by 2002:a17:906:6a0f:b0:730:df34:6ec4 with SMTP id qw15-20020a1709066a0f00b00730df346ec4mr753635ejc.659.1659629913878;
+        Thu, 04 Aug 2022 09:18:33 -0700 (PDT)
+Received: from felia.fritz.box (200116b826aef000cd273e5ddbcf3899.dip.versatel-1u1.de. [2001:16b8:26ae:f000:cd27:3e5d:dbcf:3899])
+        by smtp.gmail.com with ESMTPSA id v18-20020a170906293200b0072b51fb36f7sm471371ejd.196.2022.08.04.09.18.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Aug 2022 09:18:33 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Jean-Marie Verdun <verdun@hpe.com>,
+        Nick Hawkins <nick.hawkins@hpe.com>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: rectify entry for ARM/HPE GXP ARCHITECTURE
+Date:   Thu,  4 Aug 2022 18:18:23 +0200
+Message-Id: <20220804161823.20912-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Commit 8cc35b86546d ("spi: dt-bindings: add documentation for
+hpe,gxp-spifi") adds the spi dt-binding file hpe,gxp-spifi.yaml and commit
+a1848b0fa251 ("MAINTAINERS: add spi support to GXP") adds a file entry
+hpe,gxp-spi.yaml in ARM/HPE GXP ARCHITECTURE. Note the different file name.
 
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
-On 8/4/2022 5:43 PM, Dan Carpenter wrote:
-> Call mlx5e_fs_vlan_free(fs) before kvfree(fs).
-> 
-> Fixes: af8bbf730068 ("net/mlx5e: Convert mlx5e_flow_steering member of mlx5e_priv to pointer")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> This applies to net but I never really understand how mellanox patches
-> work...
-> 
+Repair this file reference in ARM/HPE GXP ARCHITECTURE.
 
-Hi Dan,
-This patch belongs to next kernel (6.0).
-It seems that net-next (or parts of it) is already merged into net as 
-we're in the merge window.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cf7906eaa5ca..a0873a2d7d3d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2177,7 +2177,7 @@ M:	Jean-Marie Verdun <verdun@hpe.com>
+ M:	Nick Hawkins <nick.hawkins@hpe.com>
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/arm/hpe,gxp.yaml
+-F:	Documentation/devicetree/bindings/spi/hpe,gxp-spi.yaml
++F:	Documentation/devicetree/bindings/spi/hpe,gxp-spifi.yaml
+ F:	Documentation/devicetree/bindings/timer/hpe,gxp-timer.yaml
+ F:	arch/arm/boot/dts/hpe-bmc*
+ F:	arch/arm/boot/dts/hpe-gxp*
+-- 
+2.17.1
 
->   drivers/net/ethernet/mellanox/mlx5/core/en_fs.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_fs.c b/drivers/net/ethernet/mellanox/mlx5/core/en_fs.c
-> index e2a9b9be5c1f..e0ce5a233d0b 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_fs.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_fs.c
-> @@ -1395,10 +1395,11 @@ struct mlx5e_flow_steering *mlx5e_fs_init(const struct mlx5e_profile *profile,
->   	}
->   
->   	return fs;
-> -err_free_fs:
-> -	kvfree(fs);
-> +
->   err_free_vlan:
->   	mlx5e_fs_vlan_free(fs);
-> +err_free_fs:
-> +	kvfree(fs);
->   err:
->   	return NULL;
->   }
-
-Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
-
-Thanks for your patch!
