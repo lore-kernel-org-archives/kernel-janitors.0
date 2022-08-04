@@ -2,96 +2,97 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10367C25B06
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Aug 2022 16:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26856C19F2A
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Aug 2022 16:26:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235226AbiHDQSh (ORCPT
+        id S232643AbiHDQ0a (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 4 Aug 2022 12:18:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37360 "EHLO
+        Thu, 4 Aug 2022 12:26:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232087AbiHDQSg (ORCPT
+        with ESMTP id S236735AbiHDQ03 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 4 Aug 2022 12:18:36 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D9AE33E2A;
-        Thu,  4 Aug 2022 09:18:35 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id i14so191065ejg.6;
-        Thu, 04 Aug 2022 09:18:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=JNzjD6Vp5LwUhvOokMc6+3eMyLZefF/Ri/vBtG0eveI=;
-        b=DHQYcgrqa2GwDeeyJeB33wUMV4b/yPgzPGYqUXFZn78l08PGfjX6q6vbCpMF0WS9Xk
-         y3GuUCqRokBLS0lnk7jotp3LMz1xUh3NF35gLYue+YoXCU6PDKFlkIcp+j7Ky4vp6vHM
-         fYApl8xYX9GHI9M46KU2igt9/GmxkvuGUyo8sttmweMTD9W4QZojLdyScpwIieUFiRlJ
-         xRCMNuxcMlEacddEAfn2mPQqq5V9WXyAl0zwvkLDBRezNV0tScv1VuyCgXyQKSRvruzo
-         1O5NqzJDhDVEopkMYPY65RyOkRSxrVblc6wC/th7r8DXqxVKx2+yW6WigDCv9F14ikbh
-         g0bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JNzjD6Vp5LwUhvOokMc6+3eMyLZefF/Ri/vBtG0eveI=;
-        b=sOdkzOGaN+/G3y3a7/YfWFqQOIPLmg+cHF0OzSheXs2CXJGDmyxv4au28pCGY+Nj9+
-         PzsGtXVwEjVPWlEiJDFyNGazTnL8ChdEc71iEM0RkchPA0WjklIvgTZ3xYWuXO79HprH
-         TID7Va2+bJpASMwCP4HOdv50vBfoAfjQZXOLHFUWpsxMjjkoG2GNbyp8PONPCgWOdUUi
-         BSNJXWK4bcrySOADfq8IZ4ZkPk/dWubekflonOBY0LDbyuEgZD5p66cUGrZdoSn5RoKs
-         bwMa94aPGKho+NLY4nCX2YENgigDGdnTgALO+0Nuy0zL/u6SfjZIMI54SpD8oL+xIDL9
-         bZ7A==
-X-Gm-Message-State: ACgBeo3wAMldQ8EeDBbuD/O6yk/OZ5gEbA0aJNy5WzUnbaX/0MI3Tg5t
-        LNKZf2eGR/P3Kjvk9rci32c=
-X-Google-Smtp-Source: AA6agR5ZOB8sjiTqaPDAVWzLh5ayOqoz3XnVWJIqWejRe2w8NJ0c2y7Z/5YN8Aqk/ihviXIjdVDbVQ==
-X-Received: by 2002:a17:906:6a0f:b0:730:df34:6ec4 with SMTP id qw15-20020a1709066a0f00b00730df346ec4mr753635ejc.659.1659629913878;
-        Thu, 04 Aug 2022 09:18:33 -0700 (PDT)
-Received: from felia.fritz.box (200116b826aef000cd273e5ddbcf3899.dip.versatel-1u1.de. [2001:16b8:26ae:f000:cd27:3e5d:dbcf:3899])
-        by smtp.gmail.com with ESMTPSA id v18-20020a170906293200b0072b51fb36f7sm471371ejd.196.2022.08.04.09.18.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Aug 2022 09:18:33 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Jean-Marie Verdun <verdun@hpe.com>,
-        Nick Hawkins <nick.hawkins@hpe.com>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: rectify entry for ARM/HPE GXP ARCHITECTURE
-Date:   Thu,  4 Aug 2022 18:18:23 +0200
-Message-Id: <20220804161823.20912-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 4 Aug 2022 12:26:29 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4CB867152
+        for <kernel-janitors@vger.kernel.org>; Thu,  4 Aug 2022 09:26:25 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0208A481;
+        Thu,  4 Aug 2022 18:26:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1659630384;
+        bh=lk0zj71snkJBEqFGyEjMR+pLpWZT/9z8Ei+uNiLzHSg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CIfqTTAoVpMf4gjGhk9eXeaEMUbwZXSAgoJIFjUVQvSG9FWdJv3d+ullST5gy9ntX
+         51GduWW5UD8/IXlnszfjDI5Tz4acCGuSCSCQULiVvfR6D644E43BNJ5eomqJHs6Q2P
+         OXLv48QqkoBigfcLYHceMOq8IEd6a6PfOW45zb+0=
+Date:   Thu, 4 Aug 2022 19:26:16 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Joerg Roedel <joro@8bytes.org>, Suman Anna <s-anna@ti.com>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iommu/omap: fix buffer overflow in debugfs
+Message-ID: <YuvzKJM66k+ZPD9c@pendragon.ideasonboard.com>
+References: <YuvYh1JbE3v+abd5@kili>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <YuvYh1JbE3v+abd5@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 8cc35b86546d ("spi: dt-bindings: add documentation for
-hpe,gxp-spifi") adds the spi dt-binding file hpe,gxp-spifi.yaml and commit
-a1848b0fa251 ("MAINTAINERS: add spi support to GXP") adds a file entry
-hpe,gxp-spi.yaml in ARM/HPE GXP ARCHITECTURE. Note the different file name.
+Hi Dan,
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
+Thank you for the patch.
 
-Repair this file reference in ARM/HPE GXP ARCHITECTURE.
+On Thu, Aug 04, 2022 at 05:32:39PM +0300, Dan Carpenter wrote:
+> There are two issues here:
+> 
+> 1) The "len" variable needs to be checked before the very first write.
+>    Otherwise if omap2_iommu_dump_ctx() with "bytes" less than 32 it is a
+>    buffer overflow.
+> 2) The snprintf() function returns the number of bytes that *would* have
+>    been copied if there were enough space.  But we want to know the
+>    number of bytes which were *actually* copied so use scnprintf()
+>    instead.
+> 
+> Fixes: bd4396f09a4a ("iommu/omap: Consolidate OMAP IOMMU modules")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/iommu/omap-iommu-debug.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iommu/omap-iommu-debug.c b/drivers/iommu/omap-iommu-debug.c
+> index a99afb5d9011..259f65291d90 100644
+> --- a/drivers/iommu/omap-iommu-debug.c
+> +++ b/drivers/iommu/omap-iommu-debug.c
+> @@ -32,12 +32,12 @@ static inline bool is_omap_iommu_detached(struct omap_iommu *obj)
+>  		ssize_t bytes;						\
+>  		const char *str = "%20s: %08x\n";			\
+>  		const int maxcol = 32;					\
+> -		bytes = snprintf(p, maxcol, str, __stringify(name),	\
+> +		if (len < maxcol)					\
+> +			goto out;					\
+> +		bytes = scnprintf(p, maxcol, str, __stringify(name),	\
+>  				 iommu_read_reg(obj, MMU_##name));	\
+>  		p += bytes;						\
+>  		len -= bytes;						\
+> -		if (len < maxcol)					\
+> -			goto out;					\
+>  	} while (0)
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This could would really benefit from being rewritten using a static
+table of register name and offset and a loop that iterates over it.
+Still, this is a valid bug fix, so
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cf7906eaa5ca..a0873a2d7d3d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2177,7 +2177,7 @@ M:	Jean-Marie Verdun <verdun@hpe.com>
- M:	Nick Hawkins <nick.hawkins@hpe.com>
- S:	Maintained
- F:	Documentation/devicetree/bindings/arm/hpe,gxp.yaml
--F:	Documentation/devicetree/bindings/spi/hpe,gxp-spi.yaml
-+F:	Documentation/devicetree/bindings/spi/hpe,gxp-spifi.yaml
- F:	Documentation/devicetree/bindings/timer/hpe,gxp-timer.yaml
- F:	arch/arm/boot/dts/hpe-bmc*
- F:	arch/arm/boot/dts/hpe-gxp*
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+>  static ssize_t
+
 -- 
-2.17.1
+Regards,
 
+Laurent Pinchart
