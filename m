@@ -2,85 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8393EC19F28
-	for <kernel-janitors@archiver.kernel.org>; Wed,  3 Aug 2022 15:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF8AC00144
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Aug 2022 05:43:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238097AbiHCPnu (ORCPT
+        id S232677AbiHDFnO (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 3 Aug 2022 11:43:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43994 "EHLO
+        Thu, 4 Aug 2022 01:43:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236130AbiHCPnt (ORCPT
+        with ESMTP id S230381AbiHDFnM (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 3 Aug 2022 11:43:49 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34AB2638D;
-        Wed,  3 Aug 2022 08:43:49 -0700 (PDT)
-Received: from fraeml740-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4LybdP0Zn6z67PDP;
-        Wed,  3 Aug 2022 23:39:37 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (7.191.163.240) by
- fraeml740-chm.china.huawei.com (10.206.15.221) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Wed, 3 Aug 2022 17:43:47 +0200
-Received: from localhost (10.202.226.42) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Wed, 3 Aug
- 2022 16:43:46 +0100
-Date:   Wed, 3 Aug 2022 16:43:44 +0100
-From:   Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     Alison Schofield <alison.schofield@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Ben Widawsky <bwidawsk@kernel.org>,
-        "Vishal Verma" <vishal.l.verma@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, <linux-cxl@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] cxl/region: Fix IS_ERR() vs NULL check
-Message-ID: <20220803164344.000064e4@huawei.com>
-In-Reply-To: <Yuo65lq2WtfdGJ0X@kili>
-References: <Yuo65lq2WtfdGJ0X@kili>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.29; i686-w64-mingw32)
+        Thu, 4 Aug 2022 01:43:12 -0400
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E07B3CBFA;
+        Wed,  3 Aug 2022 22:43:11 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id kb8so20385703ejc.4;
+        Wed, 03 Aug 2022 22:43:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=NYGXES9gCdKWriC9iSphplvvC1wAt0B9f4Q6As9d98E=;
+        b=OpEpQ7W9BzqjtWMbDJJhYCnGN8Mx2V2fOMtgmtct+ISva1OzZzZWz5hB30EgUOkxP0
+         2Cx3wL8RV0P+J8oA5kZvNGP4vhw6Km4eKLVKr8Im7W8s+/fjZBwPTvC9qHS+ZRimpMEy
+         lSclgeyK7NgmodDRCLFiMdwwFYjKZjmu4dY3ekl+6wEd/KRzLA5oEgg15ytoqpUe8CCA
+         w7F4zeLtzcUCJ+KR4FHyqb1+RDAz24ZMOzS3OTtiWr3oSFOhR1fQMDpOPlXyYZp+1l9v
+         nOz/JKwrevXH2xUkbLptZM3gY8fkVsWFd/qoUpLh3CemQdZO93KcW+JMpI0HOo1M5XlH
+         akhg==
+X-Gm-Message-State: ACgBeo0Qawcl2vNYVbsidCxLyIaQ741zwkaB+1TeZM31E1ZPQUdsDE6N
+        wmsZIFbPstfDVCapLWggXws=
+X-Google-Smtp-Source: AA6agR7pXBnzpbGeUNWgQq9rq+0ArEBa8bGb6zgH/nuVxjBqL2+JhwFxIrcxaq2AAJs+f0PPzm9nOQ==
+X-Received: by 2002:a17:907:6d1e:b0:72b:4add:75db with SMTP id sa30-20020a1709076d1e00b0072b4add75dbmr165582ejc.717.1659591790111;
+        Wed, 03 Aug 2022 22:43:10 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::70f? ([2a0b:e7c0:0:107::70f])
+        by smtp.gmail.com with ESMTPSA id fj19-20020a0564022b9300b0043bbbaa323dsm143068edb.0.2022.08.03.22.43.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Aug 2022 22:43:09 -0700 (PDT)
+Message-ID: <83c91a99-7fb8-321a-5d52-8f0b4a7cf1cb@kernel.org>
+Date:   Thu, 4 Aug 2022 07:43:08 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] mxser: remove redundant assignment to hwid
+Content-Language: en-US
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220730130925.150018-1-colin.i.king@gmail.com>
+From:   Jiri Slaby <jirislaby@kernel.org>
+In-Reply-To: <20220730130925.150018-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.42]
-X-ClientProxiedBy: lhreml740-chm.china.huawei.com (10.201.108.190) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 3 Aug 2022 12:07:50 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
-
-> The nvdimm_pmem_region_create() function returns NULL on error.  It does
-> not return error pointers.
+On 30. 07. 22, 15:09, Colin Ian King wrote:
+> The variable hwid is assigned a value but it is never read. The
+> assignment is redundant and can be removed.
 > 
-> Fixes: 04ad63f086d1 ("cxl/region: Introduce cxl_pmem_region objects")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-LGTM
+> Cleans up clang scan build warning:
+> drivers/tty/mxser.c:401:7: warning: Although the value stored to 'hwid'
+> is used in the enclosing expression, the value is never actually read
+> from 'hwid' [deadcode.DeadStores]
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Acked-by: Jiri Slaby <jirislaby@kernel.org>
 
 > ---
->  drivers/cxl/pmem.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>   drivers/tty/mxser.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/cxl/pmem.c b/drivers/cxl/pmem.c
-> index e69f99a0747d..7dc0a2fa1a6b 100644
-> --- a/drivers/cxl/pmem.c
-> +++ b/drivers/cxl/pmem.c
-> @@ -525,8 +525,8 @@ static int cxl_pmem_region_probe(struct device *dev)
->  
->  	cxlr_pmem->nd_region =
->  		nvdimm_pmem_region_create(cxl_nvb->nvdimm_bus, &ndr_desc);
-> -	if (IS_ERR(cxlr_pmem->nd_region)) {
-> -		rc = PTR_ERR(cxlr_pmem->nd_region);
-> +	if (!cxlr_pmem->nd_region) {
-> +		rc = -ENOMEM;
->  		goto err;
->  	}
->  
+> diff --git a/drivers/tty/mxser.c b/drivers/tty/mxser.c
+> index 70b982b2c6b2..600c71e5eebc 100644
+> --- a/drivers/tty/mxser.c
+> +++ b/drivers/tty/mxser.c
+> @@ -398,7 +398,7 @@ static enum mxser_must_hwid mxser_must_get_hwid(unsigned long io)
+>   	oldmcr = inb(io + UART_MCR);
+>   	outb(0, io + UART_MCR);
+>   	mxser_set_must_xon1_value(io, 0x11);
+> -	if ((hwid = inb(io + UART_MCR)) != 0) {
+> +	if (inb(io + UART_MCR) != 0) {
 
+Yes, hwid is read later, this was a dummy assignment.
+
+>   		outb(oldmcr, io + UART_MCR);
+>   		return MOXA_OTHER_UART;
+>   	}
+
+thanks,
+-- 
+js
+suse labs
