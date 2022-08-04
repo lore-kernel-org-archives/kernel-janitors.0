@@ -2,86 +2,208 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0716C19F2B
-	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Aug 2022 08:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 071C8C19F2B
+	for <kernel-janitors@archiver.kernel.org>; Thu,  4 Aug 2022 08:35:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237494AbiHDIUy (ORCPT
+        id S239373AbiHDIft (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 4 Aug 2022 04:20:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35122 "EHLO
+        Thu, 4 Aug 2022 04:35:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229665AbiHDIUx (ORCPT
+        with ESMTP id S230038AbiHDIfs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 4 Aug 2022 04:20:53 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 668FA3AB01;
-        Thu,  4 Aug 2022 01:20:52 -0700 (PDT)
-Received: from mail-ed1-f53.google.com ([209.85.208.53]) by
- mrelayeu.kundenserver.de (mreue012 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1N8EdM-1nOIs61twG-014FpX; Thu, 04 Aug 2022 10:20:50 +0200
-Received: by mail-ed1-f53.google.com with SMTP id x21so11612884edd.3;
-        Thu, 04 Aug 2022 01:20:50 -0700 (PDT)
-X-Gm-Message-State: ACgBeo3qCmGHQGzcvgoJdXArzBVHGmnEA1nCoDC73XO80bdiUxotmdZl
-        ig2Hzrl7zhfprhTiDujORZFeobIyrElvkwtKtho=
-X-Google-Smtp-Source: AA6agR7ORd4KG70Wl6o+kC+rp/r699AlqLFWL5ilATI+FmhJqlWv+y3TjEWa+JxU89xcC5qihPbX1bcO7QpZWyS+A3Q=
-X-Received: by 2002:a05:6402:3495:b0:43d:d76e:e9ff with SMTP id
- v21-20020a056402349500b0043dd76ee9ffmr867116edc.227.1659601250156; Thu, 04
- Aug 2022 01:20:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <Yutv/mvLNJRgDtOu@kili>
-In-Reply-To: <Yutv/mvLNJRgDtOu@kili>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 4 Aug 2022 10:20:34 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1ychAteScPbzGymM3UOinxY93rVnGeLsLOggmsRCBB+g@mail.gmail.com>
-Message-ID: <CAK8P3a1ychAteScPbzGymM3UOinxY93rVnGeLsLOggmsRCBB+g@mail.gmail.com>
-Subject: Re: [PATCH] char: mwave: fix return type in ioctl
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thu, 4 Aug 2022 04:35:48 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EA06BCB3;
+        Thu,  4 Aug 2022 01:35:46 -0700 (PDT)
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2748O58B024360;
+        Thu, 4 Aug 2022 08:35:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2022-7-12;
+ bh=/n16GIF6Tcr7jLyzhsXE5gZnfl5TnD7LS3PWvxaWEaQ=;
+ b=ij9u9C6MyBwi3ZuwNyTpHYAFdO1AzRjNe7I4HCcgC2TV6E18EY+OqbrD7wqTMB1U1Qe2
+ ylwBuwTVwixibuvKtXC5dFsytB+xQWXOxSq4fJ+Qt0fjeqYkDuuJgwawa8BBXSDZ4gUV
+ KfSA22/4XT4y6cu4vNTX7HvdAuzewkuPz/RGcIlpCa6yX5n6Ylg97ZLGTIUSUn/Zn5t2
+ 04+PULSBVDeynVpNbmi9tWuD+AfQYPBS686exHYyFUzStMTXyOVpD+uQ84EW/AnZKZLS
+ TpByKH92jbdY45qMmQxllf4q+y8UOLhakK+35B3HCh1AEBI9jriLuAR8UzK3K3u6v4AH zg== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3hmu2cbyme-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 04 Aug 2022 08:35:39 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 27471BCV000860;
+        Thu, 4 Aug 2022 08:35:37 GMT
+Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2042.outbound.protection.outlook.com [104.47.56.42])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3hp57sxtrh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 04 Aug 2022 08:35:37 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UjWnBcvHoEsKdSwYwL4lH6TOWk+yifiOwS2BeNv0KgDU/ddx9qXJtifeCYB0yWgxXPOHaa44yX9vCWC9Rk3nLSDto9Xl4zZWCvLxGd0D/1TcZsusUXP0iAYrbvCj/TmWDwT8PCSb1aPf0dg6e4oCeVDSrNO4cUwflTtSQdD1d5T9lhbrscbcKCwjIsF9dRKff2tr3XvzYha6HheQBAZjbJKVRdL+a/23nhdnLCV3nNVFRi0XKpJ4+4NgMP8JW3ojn/+hV1HxOz9q2kiYH/YwQ+0qGPg6bOzIX0cWmG3V99kr62NZ0ngRwLkj2v4cKaqtDuJqyDaiq7ktNLsLZ9Bwzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/n16GIF6Tcr7jLyzhsXE5gZnfl5TnD7LS3PWvxaWEaQ=;
+ b=Ek6IcGGKIOFgIxY035j4/D+SRs7NiDB+VQKFL6ggrWlDv3/SgKdZRDkX1Rqqn74sM0WnZ/DB4uYmXyqnDTJkmQu8bnxB7Y+UF66dEa82dfPVIZebfRqa8+nQUdkc526NRxnah15+/RF8XUvuHj0gUuY0Fo8KFAhP/n4jSvM8fsC0J2Qqyot24c56SXlHe14TBmXAVOl7qAcUx5vP6lFRuLxI9vDgC22fJKicglW3LKF07Q04VfNi5kvEYc2QK1R4RlK/GFlUVEUUPw3mvWSr4ylam8Qx1/af0zxyN5xHoA7o20it42KOzcSmScNdB4U6tDkZOhj0bIYioZuzIMHDGA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/n16GIF6Tcr7jLyzhsXE5gZnfl5TnD7LS3PWvxaWEaQ=;
+ b=wOF+z1JV9biJ99BgvOn0KMo626sbYYfRqaNQ+s/fNYKSS64SgFhNxZbhkl0qWvFwi97NYUWoS4VlMC3dM7i+0sb80q3GqdqbcnYtT+4m5QreVCcpE0jWABZ0ixwb95EgTdBDhGVzeoopjEd0la4r4TCo2zDFJH1aY3HMB27GjAA=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by PH0PR10MB4424.namprd10.prod.outlook.com
+ (2603:10b6:510:41::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.14; Thu, 4 Aug
+ 2022 08:35:35 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::209e:de4d:68ea:c026]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::209e:de4d:68ea:c026%3]) with mapi id 15.20.5504.014; Thu, 4 Aug 2022
+ 08:35:35 +0000
+Date:   Thu, 4 Aug 2022 11:35:12 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Alan Cox <alan@lxorguk.ukuu.org.uk>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         kernel-janitors <kernel-janitors@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:TN+J7Wq+V2PslLkxNsf8Y78M+zZwnuWMeT/T+ot06rKABXviwbG
- kBkWyHZIRByjeDg5sCOfdwFIn8ceD5cFNKeQK5LCB2QM1cA+lLuLu2Oqcm7VMvz1ozFjMwF
- 4Y1yzoz8OpM3R002wix1DyVoX2elchLD5BXmDPLongTy1iuHdJMTmk31dSz0nYf+Ahne/VG
- gyNE4vEZpgUdGbxZRcjUg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:xgGf8izmgKk=:DJGUoyILIyL6E+UPHoxjmW
- LmGFYAcmUTBRxQafbHO9NxdqJ3VawqkB1tfIBCmmmPQiP5BtpIc1MnG4SeXPHC6kNVGDLWXM6
- HsaGyb7Ioy8Y9Oq3tAfKdekP/kp9FfRv9mZC1JYMidIv3+1H6FSAJpYGleIVXorVTtzLswQ24
- WAjrtG2PeBwcqRKYTOgb6XrV5ojW3bvvvg/8190jHEl++9eafCMArWg4eCqTSD5DgvmhTZgf+
- pUQogNoqpuClvoVQu7l6aNpqfyEf2/L4fJQIkwMpYhA2flbLLekp+HlSzIvJvqfpNiFqPxhP8
- 4ulq36GmEapWA/hSvG5IXydIlepIc+d/Ue7sqaUltGhBSEi5lbSUohUUX+D37BlB2BjNTijc5
- vGUmvLReU/8wWAfPOP0BKNnY+fSVlB5/COaC6J01PepT9YIP3LrY2RpdFiBoCLAKy9cfXyyNI
- xn7zmWmjcrcScwc2Ndx3U9RM9W5wzItL2Q/Sf9meGY8uxR/Rwr8US7qoOLedFB0amG8yEmIMv
- GQCcgW1VqzGCPp4R7mPuK++3FrbOz1BMGaggzUXcMdMTGYS2YB7WWKT5JJzk9t4mgHBHcb9Yk
- 9k+PpauLNBGiYdZLqTQEiehtDy5Fdk1muKoYX5D6WnEATvJ+sloXqEZOAuPMQF7dF0Vl2fVhp
- JHCOWk/+JHDDQwD3t2Ob1BLpswQ0aRC6p7S7XTANaJZxvXrPf5BlMYg1jbYZHhwWr1E5rgH4y
- 06t70wMExJnm7MTLrT/0CAmSck9ONAdt3dSUWUAOvjZNmq2snD7VvXFa8J4XwRigToT5F3EmI
- D1cxDnNYzHbUUxzCp5XJcGB3o+ZFRb5b4uO1SmfQRa+dUMcZbOEAKoskpiIrH07V6mji6Im0l
- E1PkB1FRUeZEi0XTDc2A==
+Subject: Re: [PATCH] char: mwave: fix return type in ioctl
+Message-ID: <20220804083512.GK3460@kadam>
+References: <Yutv/mvLNJRgDtOu@kili>
+ <CAK8P3a1ychAteScPbzGymM3UOinxY93rVnGeLsLOggmsRCBB+g@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a1ychAteScPbzGymM3UOinxY93rVnGeLsLOggmsRCBB+g@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: JNXP275CA0008.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:19::20)
+ To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: fc231d99-0cf7-4f62-cc92-08da75f44c84
+X-MS-TrafficTypeDiagnostic: PH0PR10MB4424:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: LslbhiaQ3xdOlomOKFNAdkGH7NUlbrKCgoa4cDlCs2jiv7dOgm+/OG4J/uZ5dt3EckSwcoekysCa2PV0Ilvy5aP8Xqj86+cY4iXUBN2xNpny1nHU5SFICeNaLR8hgYpugTGnRuWvz5vS3CxeAiAtyllA59kBSTpU1Wbu8DQGMnq9YJEYOYZjuE1Kwkwa10hdYWnkHTVTEvV3ceVV9H913S1/3CuLxuhVSwUIwGjOf/vYmdxdweCB4MCpL90wJw9UV66/Hs6BEguIC8rGssBqsmTQ9kL7EynUE36G/shNcMIr7+uTsQmdzwBqdDM3itGpCecHUKq5YHKp0Tm4D8KVfkM2mPZHfGCKVtw+xvz9uC7SSrpvPvaAvxRmWsfRktquWPEMs0NrVaQs9Ds+i8yZlerriTe649T7AhX8ooySQ4qLNQ1/TaTiTMdy/23lWashUl50O0GUCAfDrjYZefk+lnXXID5Bf+EqYpGs/bw51Jpm2IR5o5aDW4fZUHmtTaGj/YHSpSZHH9dbJLy5sKW7nKOAH90DINV423m+rf6gGIBTMN8b/vxvPeAkciGG0AOGoSacthwIy3zQUXN/j0YxH2k2nsz7a7mvfnCX471Nihwvczux2VyCnsSxVmMUbr2wHkjuox0idCbVWE5UREah06LJHRsDkah4G6c/o5Z3Ud4B6jSvj0xNp5BIMUOMo/MDYP0Daby4evAJn2n/yGnLgftdCjbcVndIkhIi6u+05CRvn1vS7hYewx6v6W+VAAIN1KitC5gGGgOKMTusQYDiL77VfBWJcWBjMnkfKJI0a4CYpsZdy/ganp3nSnakh1w+
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(7916004)(366004)(396003)(39860400002)(136003)(346002)(376002)(41300700001)(6506007)(52116002)(53546011)(9686003)(33656002)(1076003)(2906002)(186003)(26005)(6666004)(86362001)(6512007)(83380400001)(38100700002)(54906003)(33716001)(478600001)(6486002)(316002)(6916009)(66946007)(44832011)(38350700002)(5660300002)(4326008)(66476007)(8676002)(66556008)(8936002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?B58QIOV/LLHSNcxqnnEvvkYsOLsQiTUZfPxWzYvUM7U5Kkxt/ZIRLfvj8s5z?=
+ =?us-ascii?Q?K7tYFIu687MkMcWBVu0PYcPpBmjTse2P48E0f9/9k/g+1nEL/yZOoBN5niF3?=
+ =?us-ascii?Q?ZunvTvcXOs4m+cbn+9uWtc/JBD35ZFN1VMsoM2Qol/3icXzHi6QMw93OuNmO?=
+ =?us-ascii?Q?iQywfEFea0epnAnmBVpRyjINKiC9p+gvqbvwTSu08/HxDZknPZVWboJ2nmdn?=
+ =?us-ascii?Q?YnPdixfIU65zbYrkxeGB0OfUuZDeU3MQE5VrPkwwhhbTlkkaSSzLA7VyFPt7?=
+ =?us-ascii?Q?dcm+UbhdGnvV6NIj4FcIR2iIY5d4ilpNpt3uU+W396mX4MCjWjRlOcmiIcKj?=
+ =?us-ascii?Q?ILSqrPVIi7tw/rajYzmb9txN1IDhfXoz5Gx2/peyqz8yr/TIAau+NddLjcUk?=
+ =?us-ascii?Q?RCj+H2Q3f+3+1pUksqdlKvsJ2gFnQG40gbxCTW2OZUCTqKOIjL7XeOrtdrj3?=
+ =?us-ascii?Q?oOlQs1k9mpkPtvN0PExwQstKt7/++NftnZ0DrxkSGAwbFInFw02AVZsnLBZy?=
+ =?us-ascii?Q?HBszQizE77m2qv949WDLDDSXWqNvkCFBvKxpFMCdLQl73TQe2uYcZZsnJsdD?=
+ =?us-ascii?Q?x/XxeI69agIHcI4wmhdsdcg/Cs7gUEwY5eiEGvZ+6ifrrPJ+FgUVfdICq7pd?=
+ =?us-ascii?Q?DHYvXOcirPApmH9MIcBmVB8/Pk2CLOw28rTQAAoV2acL8ud8GL+DmZnihOFq?=
+ =?us-ascii?Q?E8uzrJiMGujR6Tn4OzJENNMVD1au80XZVDsnXhCYz2m875vdCMH7IistWmmg?=
+ =?us-ascii?Q?Isp5pn1ayt/nplt8Jzr8ZTAlFBtnLeNZXchnY+xcsycsWiN4ZLAh+FE8VcD1?=
+ =?us-ascii?Q?0qOL1fGdAnWPPdaDXtfkPGagd7a7PWqV13Kndk5dNg0iruPbmuyHbo0QYmkS?=
+ =?us-ascii?Q?ocMQAIVcAHIAFceMZo5/c/tIMvyqcLSHJV+xZNofa20ygIQHXsnXSyBPSONs?=
+ =?us-ascii?Q?m5W06uxRlsPoJWMYdDOh7Tr/vbrv8uuMDx5cwfDwJOLnfMVOo+lVuyjDr1oZ?=
+ =?us-ascii?Q?l+EduB7PWySIX8xl+hxzCePwzWFM7srUH/XHplI14QT0/q5l1G5dnvPHfK4V?=
+ =?us-ascii?Q?I5oOShgz0htLSEJId10JO/FnA7nkPNVaD5HufdCz58cd7qBSjwJegDUbNfCA?=
+ =?us-ascii?Q?CAxgbIZs+8vtZxpxalNVYNoC+fwTmEA2egx5k1GwGumf/y4SchWbxBsqvDX3?=
+ =?us-ascii?Q?w0ydE91hAyl5dvudiGFCV2SHG4jOy6pDFtzHRlUCOG/P/qMNN25ZGl+acFOD?=
+ =?us-ascii?Q?TBYLVIim7iOLcgkfPeEhPEhCgeZX9whOTrc8U2GEqk16Q5dR+cDVcQbh9UTc?=
+ =?us-ascii?Q?DWgDMQCXoxtKEQ9EH8GdIkGLFmffB2XwmCO/CModYV3RcfE/UmemHQ9S81PF?=
+ =?us-ascii?Q?O/UH5Dv5f4ASBO/psBtGrSjiKEj0NJ2c/r5qjFrsisppplJ63oZHdLPRLujM?=
+ =?us-ascii?Q?i19bCiEvHJjZyqVhnkk8b4t85Xa0Ktze9S+j3RMhkrooVC2NSjvoqyCnDDL/?=
+ =?us-ascii?Q?4/NRkKnhI9IPxpeKAmmmyruNGIAKEXqZdKE1wNIuDNpH2CxrE8TDa1xyRuIq?=
+ =?us-ascii?Q?BChJEZ9EAF7gIZLo9toPKyw+JNjEQ+hesUDzCCczY0ucXUlS7fkcq5KcqMlV?=
+ =?us-ascii?Q?tw=3D=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc231d99-0cf7-4f62-cc92-08da75f44c84
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2022 08:35:35.3993
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Mq9eLfyDkc1lhioCjBvJ2qhtMZ6ZL66RM9yVHsqy44hpFGTG2MHdFu/QBoMb5J4EKWIhcm3Q/AbaOrCTWxunGR2SwJUMoc58aIwuZbTUohc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4424
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-08-04_03,2022-08-02_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
+ adultscore=0 spamscore=0 bulkscore=0 suspectscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2206140000 definitions=main-2208040036
+X-Proofpoint-GUID: O_hhtKa8NT3Be5eWc1vd_3faFK6CV1H5
+X-Proofpoint-ORIG-GUID: O_hhtKa8NT3Be5eWc1vd_3faFK6CV1H5
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Aug 4, 2022 at 9:06 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> This function is supposed to return zero for success or negative error
-> code on failure.  Unfortunately the "retval" is declared as unsigned int
-> and the function returns type long.  That means that on 64 bit systems
-> it will return positive values on error.
->
-> Fixes: 909d145f0dec ("mwave: ioctl BKL pushdown")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> The Fixes tag is sort of debatable.  "retval" should have always been
-> declared as an int.  But the BKL change is when the return type for
-> the ioctl changed from int to long, so it's when the bug started to
-> affect user space.
+On Thu, Aug 04, 2022 at 10:20:34AM +0200, Arnd Bergmann wrote:
+> On Thu, Aug 4, 2022 at 9:06 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> >
+> > This function is supposed to return zero for success or negative error
+> > code on failure.  Unfortunately the "retval" is declared as unsigned int
+> > and the function returns type long.  That means that on 64 bit systems
+> > it will return positive values on error.
+> >
+> > Fixes: 909d145f0dec ("mwave: ioctl BKL pushdown")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
+> > The Fixes tag is sort of debatable.  "retval" should have always been
+> > declared as an int.  But the BKL change is when the return type for
+> > the ioctl changed from int to long, so it's when the bug started to
+> > affect user space.
+> 
+> Nice catch, I wonder how many other drivers I broke in that series.
+> Have you gone through my BKL commits from that time period
+> to see if any others are affected?
 
-Nice catch, I wonder how many other drivers I broke in that series.
-Have you gone through my BKL commits from that time period
-to see if any others are affected?
+Btw, I meant to thank you for your other email about IRQs.  Thanks!
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Yeah.  This is from static analysis.  There aren't many other bugs.
+It's a combination of storing error codes in unsigned int and returning
+signed long.  The first is kind of a bug even when it doesn't affect
+runtime and the second is not a bug but it's sort of rare.
+
+The one thing that might amuse you as history buff is a preserved bug
+for API reasons:
+
+arch/x86/kernel/ldt.c
+   665  SYSCALL_DEFINE3(modify_ldt, int , func , void __user * , ptr ,
+   666                  unsigned long , bytecount)
+   667  {
+   668          int ret = -ENOSYS;
+   669  
+   670          switch (func) {
+   671          case 0:
+   672                  ret = read_ldt(ptr, bytecount);
+   673                  break;
+   674          case 1:
+   675                  ret = write_ldt(ptr, bytecount, 1);
+   676                  break;
+   677          case 2:
+   678                  ret = read_default_ldt(ptr, bytecount);
+   679                  break;
+   680          case 0x11:
+   681                  ret = write_ldt(ptr, bytecount, 0);
+   682                  break;
+   683          }
+   684          /*
+   685           * The SYSCALL_DEFINE() macros give us an 'unsigned long'
+   686           * return type, but tht ABI for sys_modify_ldt() expects
+   687           * 'int'.  This cast gives us an int-sized value in %rax
+   688           * for the return code.  The 'unsigned' is necessary so
+   689           * the compiler does not try to sign-extend the negative
+   690           * return codes into the high half of the register when
+   691           * taking the value from int->long.
+   692           */
+   693          return (unsigned int)ret;
+   694  }
+
+regards,
+dan carpenter
