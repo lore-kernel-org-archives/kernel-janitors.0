@@ -2,94 +2,208 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD26FC25B0C
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Aug 2022 13:20:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1BA6C00140
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Aug 2022 14:10:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240747AbiHENUy (ORCPT
+        id S240891AbiHEOKj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 Aug 2022 09:20:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39452 "EHLO
+        Fri, 5 Aug 2022 10:10:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240692AbiHENUu (ORCPT
+        with ESMTP id S230095AbiHEOKf (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 Aug 2022 09:20:50 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F17F5FE2;
-        Fri,  5 Aug 2022 06:20:49 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A54AB60A69;
-        Fri,  5 Aug 2022 13:20:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47829C433D7;
-        Fri,  5 Aug 2022 13:20:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659705648;
-        bh=HW5Lw6f9czoMMC+SckAxWTPiwXMoqHH9pzjFaYeb6CU=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=SzmHZZQF1IzJguvnwsVa22pzlcrAgkDAETHC+VZ3y6UYarg1fPLA3TSA/QxYEVn2E
-         qVLOeKIBxTdNrAYA4CGu/IhugVxDUjJU6zPDcpaYXcpXsaPhwoPW//oyt3knZ4W0Ze
-         Kwb2hbnJcjMSLGK5dBvsjmp98HAQgycnRg6vnl2dKBoFdNbCA8HOE00UftF2KbMOFn
-         ToEIowD+f5oEClal6ttxEXnz7urCGyRkGL6XgArm3zAOYR/FXiRtjCJW/j6Cu0T8Ro
-         9K8yG49Q61auFDs9Bvl/aVZAxR0rzpU41V62OSK/owBnVBE20irR4hb0AGjRB/CrlB
-         FWSR9A2Lx6dFg==
-From:   Mark Brown <broonie@kernel.org>
-To:     Nick Hawkins <nick.hawkins@hpe.com>,
-        Jean-Marie Verdun <verdun@hpe.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        linux-spi@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-In-Reply-To: <20220804161823.20912-1-lukas.bulwahn@gmail.com>
-References: <20220804161823.20912-1-lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: rectify entry for ARM/HPE GXP ARCHITECTURE
-Message-Id: <165970564600.1040888.14372925011980629843.b4-ty@kernel.org>
-Date:   Fri, 05 Aug 2022 14:20:46 +0100
+        Fri, 5 Aug 2022 10:10:35 -0400
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3E53558E8;
+        Fri,  5 Aug 2022 07:10:32 -0700 (PDT)
+Received: (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id C1C2BE000C;
+        Fri,  5 Aug 2022 14:10:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1659708631;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vwkQ0qv8d11cIg/eLHddZY+Oe9mA1gFNjKFinhC1Y8M=;
+        b=Y1gyFXYgDm/ZkaFa+HUYy1liTzoVSUHLysu92DcYh1vFOetVC5OCigjwOg1EJ601fO8iHZ
+        mwz27HvzOeoLBrFX1bv/bOd5HIIUlkzrhie3LRcoErS94ZhGHUBsEYkhq8l/fzH/ST3dtb
+        3uNjPFxSo1WyCtvHdhitFluYFvCtRWJcJ9QQALKn1RCjAGggmQEwgNLC+kkS5xLBVrFuJc
+        fECGlIB4YnmVUmqS1r5zxgDqRBhPr0Zb8/rhUYREU5KZad1vAgqBMYTGEFbUFsQxQFunyI
+        leci3TREwFuoLw+BCmfXHLpZ9U4SKNvo0FgL7NectIbI5moe970rgDny7E0Dsw==
+Date:   Fri, 5 Aug 2022 16:10:28 +0200
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH 1/2] media: sunxi: Fix some error handling path of
+ sun8i_a83t_mipi_csi2_probe()
+Message-ID: <Yu0k1ER3jVhGx92u@aptenodytes>
+References: <62c0aef8d3b86d8f290bf6787f1b2b41efbb0b55.1659295329.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.10.0-dev-fe10a
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hqu9GGmQSmzk8QQV"
+Content-Disposition: inline
+In-Reply-To: <62c0aef8d3b86d8f290bf6787f1b2b41efbb0b55.1659295329.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 4 Aug 2022 18:18:23 +0200, Lukas Bulwahn wrote:
-> Commit 8cc35b86546d ("spi: dt-bindings: add documentation for
-> hpe,gxp-spifi") adds the spi dt-binding file hpe,gxp-spifi.yaml and commit
-> a1848b0fa251 ("MAINTAINERS: add spi support to GXP") adds a file entry
-> hpe,gxp-spi.yaml in ARM/HPE GXP ARCHITECTURE. Note the different file name.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
-> 
-> [...]
 
-Applied to
+--hqu9GGmQSmzk8QQV
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Hi Christophe,
+
+On Sun 31 Jul 22, 21:22, Christophe JAILLET wrote:
+> Release some resources in the error handling path of the probe and of
+> sun8i_a83t_mipi_csi2_resources_setup(), as already done in the remove
+> function.
+
+Great finds, thanks! Just some nitpick about the label names to make them
+consistent with other labels (also from the sun6i-csi rework).
+=20
+> Fixes: 576d196c522b ("media: sunxi: Add support for the A83T MIPI CSI-2 c=
+ontroller")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> I'm unsure about the phy_exit() call in
+> sun8i_a83t_mipi_csi2_resources_cleanup() because no explicit phy_init()
+> call is performed.
+>=20
+> The same code is in sun6i-mipi-csi2/sun6i_mipi_csi2.c, but in this driver
+> phy_init() IS called.
+>=20
+> I leave it as-is because I don't if it is an issue or not.
+> My feeling is that it is a copy'n'paste error and that it should be
+> removed.
+> ---
+>  .../sun8i_a83t_mipi_csi2.c                    | 21 ++++++++++++++-----
+>  1 file changed, 16 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t=
+_mipi_csi2.c b/drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t=
+_mipi_csi2.c
+> index d052ee77ef0a..67c7475d5d10 100644
+> --- a/drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_mipi_c=
+si2.c
+> +++ b/drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_mipi_c=
+si2.c
+> @@ -719,13 +719,15 @@ sun8i_a83t_mipi_csi2_resources_setup(struct sun8i_a=
+83t_mipi_csi2_device *csi2_de
+>  	csi2_dev->clock_mipi =3D devm_clk_get(dev, "mipi");
+>  	if (IS_ERR(csi2_dev->clock_mipi)) {
+>  		dev_err(dev, "failed to acquire mipi clock\n");
+> -		return PTR_ERR(csi2_dev->clock_mipi);
+> +		ret =3D PTR_ERR(csi2_dev->clock_mipi);
+> +		goto err_put_clk_rate;
+>  	}
+> =20
+>  	csi2_dev->clock_misc =3D devm_clk_get(dev, "misc");
+>  	if (IS_ERR(csi2_dev->clock_misc)) {
+>  		dev_err(dev, "failed to acquire misc clock\n");
+> -		return PTR_ERR(csi2_dev->clock_misc);
+> +		ret =3D PTR_ERR(csi2_dev->clock_misc);
+> +		goto err_put_clk_rate;
+>  	}
+> =20
+>  	/* Reset */
+> @@ -733,7 +735,8 @@ sun8i_a83t_mipi_csi2_resources_setup(struct sun8i_a83=
+t_mipi_csi2_device *csi2_de
+>  	csi2_dev->reset =3D devm_reset_control_get_shared(dev, NULL);
+>  	if (IS_ERR(csi2_dev->reset)) {
+>  		dev_err(dev, "failed to get reset controller\n");
+> -		return PTR_ERR(csi2_dev->reset);
+> +		ret =3D PTR_ERR(csi2_dev->reset);
+> +		goto err_put_clk_rate;
+>  	}
+> =20
+>  	/* D-PHY */
+> @@ -741,7 +744,7 @@ sun8i_a83t_mipi_csi2_resources_setup(struct sun8i_a83=
+t_mipi_csi2_device *csi2_de
+>  	ret =3D sun8i_a83t_dphy_register(csi2_dev);
+>  	if (ret) {
+>  		dev_err(dev, "failed to initialize MIPI D-PHY\n");
+> -		return ret;
+> +		goto err_put_clk_rate;
+>  	}
+> =20
+>  	/* Runtime PM */
+> @@ -749,6 +752,10 @@ sun8i_a83t_mipi_csi2_resources_setup(struct sun8i_a8=
+3t_mipi_csi2_device *csi2_de
+>  	pm_runtime_enable(dev);
+> =20
+>  	return 0;
+> +
+> +err_put_clk_rate:
+
+Please call this "error_clock_rate_exclusive",
+
+> +	clk_rate_exclusive_put(csi2_dev->clock_mod);
+
+and add a blank line here.
+
+> +	return ret;
+>  }
+> =20
+>  static void
+> @@ -778,9 +785,13 @@ static int sun8i_a83t_mipi_csi2_probe(struct platfor=
+m_device *platform_dev)
+> =20
+>  	ret =3D sun8i_a83t_mipi_csi2_bridge_setup(csi2_dev);
+>  	if (ret)
+> -		return ret;
+> +		goto err_cleanup_resources;
+> =20
+>  	return 0;
+> +
+> +err_cleanup_resources:
+
+Please call this "error_resources",
+
+> +	sun8i_a83t_mipi_csi2_resources_cleanup(csi2_dev);
+
+and add a blank line here.
 
 Thanks!
 
-[1/1] MAINTAINERS: rectify entry for ARM/HPE GXP ARCHITECTURE
-      commit: 706864c99e0e2d301da9e749395909bc309c50a0
+Paul
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+> +	return ret;
+>  }
+> =20
+>  static int sun8i_a83t_mipi_csi2_remove(struct platform_device *platform_=
+dev)
+> --=20
+> 2.34.1
+>=20
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+--=20
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+--hqu9GGmQSmzk8QQV
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
-Mark
+iQEzBAEBCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAmLtJNQACgkQ3cLmz3+f
+v9EKVgf/eJBH4biR6Ppa4WNEg0C3+uaXI4M06qGKmX8fWvyljWZ6L9Q7WoDOt0+P
+lM5SJdnMNd/dDUzm2JZ/U6R+ojz6tmWM4VhEAFQG/VfiTIh0nqFkuqRXcOBL9MSG
+S8ekLSy0MpnVwxP4kWRu6VLAjemciTixmBPLSpxT87+a2kWxRd5AsU7e02y1MkhZ
+eRK1BzErjvpkC2YpoQs+GPWf83Fblns9iDu12Rm4VH8q56WOJ7Rcg6CqIoskQDU7
+ia2fR8anMC0vkA1YCvI4L6MsJhgVWm7hLR1iZN8xGzyUEEwPPPrKmKAWppdQZvCV
+b5c3wioSX4p/hpZ5Ppb+MLZnfQmjwA==
+=dnOM
+-----END PGP SIGNATURE-----
+
+--hqu9GGmQSmzk8QQV--
