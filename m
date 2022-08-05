@@ -2,36 +2,38 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56676C00140
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Aug 2022 20:55:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A26DDC00140
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Aug 2022 21:33:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237744AbiHEUzm (ORCPT
+        id S237545AbiHEVdY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 Aug 2022 16:55:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35786 "EHLO
+        Fri, 5 Aug 2022 17:33:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234587AbiHEUzg (ORCPT
+        with ESMTP id S237373AbiHEVdW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 Aug 2022 16:55:36 -0400
+        Fri, 5 Aug 2022 17:33:22 -0400
 Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EBBB13E3C
-        for <kernel-janitors@vger.kernel.org>; Fri,  5 Aug 2022 13:55:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D79F778210
+        for <kernel-janitors@vger.kernel.org>; Fri,  5 Aug 2022 14:33:21 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id K4M1oAZJDoEdDK4M1o1VPQ; Fri, 05 Aug 2022 22:55:34 +0200
+        id K4wYoXZvugtndK4wZoVbCl; Fri, 05 Aug 2022 23:33:20 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Fri, 05 Aug 2022 22:55:34 +0200
+X-ME-Date: Fri, 05 Aug 2022 23:33:20 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>
+To:     Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Mark Brown <broonie@kernel.org>,
+        Yang Yingliang <yangyingliang@huawei.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2] perf/arm_pmu_platform: Fix an error message related to dev_err_probe() usage
-Date:   Fri,  5 Aug 2022 22:55:30 +0200
-Message-Id: <aaeba9c12ccdb29f48fe19137cb5abeea85fbb24.1659732652.git.christophe.jaillet@wanadoo.fr>
+        linux-riscv@lists.infradead.org, linux-spi@vger.kernel.org
+Subject: [PATCH] spi: microchip-core: Simplify some error message
+Date:   Fri,  5 Aug 2022 23:33:17 +0200
+Message-Id: <fb894ecec68e03fb7fc9353027c8b1a2610833d7.1659735153.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -39,40 +41,38 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-dev_err() is a macro that expand dev_fmt, but dev_err_probe() is a
-function and cannot perform this macro expansion.
+dev_err_probe() already prints the error code in a human readable way, so
+there is no need to duplicate it as a numerical value at the end of the
+message.
 
-So hard code the "hw perfevents: " prefix and dd a comment explaining why.
+Moreover, in the case of devm_clk_get() it would only display '0' because
+'ret' is know to be 0 at this point.
 
-Fixes: 11fa1dc8020a ("perf/arm_pmu_platform: Use dev_err_probe() for IRQ errors")
+Fixes: cdeaf3a99a02 ("spi: microchip-core: switch to use dev_err_probe()")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Untested, but I can't see how it could work.
+ drivers/spi/spi-microchip-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-v1 --> v2
-  - fix a typo in the comment
----
- drivers/perf/arm_pmu_platform.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/perf/arm_pmu_platform.c b/drivers/perf/arm_pmu_platform.c
-index 513de1f54e2d..02cca4b8f0fd 100644
---- a/drivers/perf/arm_pmu_platform.c
-+++ b/drivers/perf/arm_pmu_platform.c
-@@ -101,8 +101,11 @@ static int pmu_parse_irqs(struct arm_pmu *pmu)
- 	struct device *dev = &pdev->dev;
+diff --git a/drivers/spi/spi-microchip-core.c b/drivers/spi/spi-microchip-core.c
+index ce4385330b19..d352844c798c 100644
+--- a/drivers/spi/spi-microchip-core.c
++++ b/drivers/spi/spi-microchip-core.c
+@@ -548,12 +548,12 @@ static int mchp_corespi_probe(struct platform_device *pdev)
+ 			       IRQF_SHARED, dev_name(&pdev->dev), master);
+ 	if (ret)
+ 		return dev_err_probe(&pdev->dev, ret,
+-				     "could not request irq: %d\n", ret);
++				     "could not request irq\n");
  
- 	num_irqs = platform_irq_count(pdev);
--	if (num_irqs < 0)
--		return dev_err_probe(dev, num_irqs, "unable to count PMU IRQs\n");
-+	if (num_irqs < 0) {
-+		/* dev_err_probe() does not handle dev_fmt, so hard-code the prefix */
-+		return dev_err_probe(dev, num_irqs,
-+				     "hw perfevents: unable to count PMU IRQs\n");
-+	}
+ 	spi->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(spi->clk))
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(spi->clk),
+-				     "could not get clk: %d\n", ret);
++				     "could not get clk\n");
  
- 	/*
- 	 * In this case we have no idea which CPUs are covered by the PMU.
+ 	ret = clk_prepare_enable(spi->clk);
+ 	if (ret)
 -- 
 2.34.1
 
