@@ -2,90 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE7DC3F6B0
-	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Aug 2022 17:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFEC9C00140
+	for <kernel-janitors@archiver.kernel.org>; Fri,  5 Aug 2022 17:54:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241130AbiHERsA (ORCPT
+        id S241369AbiHERy2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 5 Aug 2022 13:48:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59202 "EHLO
+        Fri, 5 Aug 2022 13:54:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241194AbiHERr6 (ORCPT
+        with ESMTP id S241364AbiHERy0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 5 Aug 2022 13:47:58 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB1C175395;
-        Fri,  5 Aug 2022 10:47:57 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id p10so3999628wru.8;
-        Fri, 05 Aug 2022 10:47:57 -0700 (PDT)
+        Fri, 5 Aug 2022 13:54:26 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A781E192A2;
+        Fri,  5 Aug 2022 10:54:25 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id h13so4038646wrf.6;
+        Fri, 05 Aug 2022 10:54:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc;
-        bh=CMXqjTqzN3/GMYZY0G1FTjtsQA6rjAka/Y4oyBq7Mkw=;
-        b=VqeBfMED4zcd9FXg0bNrgIkFnYYFN4XCIXaVT5uiQBLWJgDzw7cDq91POmkhCOABJS
-         fLPMh22Q73afMrkg782GWBerauMz0kFzslkx45V3vPkhZlfyuLIO5yZkS9LRvX7Qrmpp
-         Tsu8olhfqFTL8LmSdOf1G2BUYd8dMPB6Kk2t5Sv2Ve/qLFg/DNK3UV5xcreDPTeOBTZi
-         RUV9sQUmk8+FdRcGaF5C8ucoZYtoAkyyivGW7WGjvKLMH2N7AnGMGEtwnJ0Lr8elPStk
-         PYjSs2tf1nQv3A5qHAqgK05SlKLGguiGKbwDBLDRodvPtNvjS9wb3P8rSh+DedbcEhbb
-         Re7A==
+        bh=CY7nj4Dbn5hG1eBgbsltcEsXWXjhhaj6B7nXDjf979E=;
+        b=J3Zfz+3MyGk5EyyiedXaWblx79/zzFn200lbKGskp7tykjV1usM/FZeJXZm143HN9l
+         rtwZUsJtGTQr8tsIsouEGMn1ue8Q0TVXTY2x3ueSOxpRY1WWPXPA73jK4JzG5LhB5GLh
+         kLXa+PoUPofh1IpAu6KBJoAoPwjv32RJK8dfEiOokUBGozp7rmt5MnXQ6oC1DPrMZhls
+         jKhXAsIBQuiEji1KKITNgB2RBzMq3qT1rP8CRUjlM6l/DuRiGYiTAkNOrNkbg1FPk/af
+         NtW7H7EPmDfxNc4QFJlc4tL3WGi0IBO++Umy3dRNt94hPUNI0M+BEfPcvkNFcRnIK7Qy
+         UNSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc;
-        bh=CMXqjTqzN3/GMYZY0G1FTjtsQA6rjAka/Y4oyBq7Mkw=;
-        b=tltsVCD3knqaW3367mKSp8Qpm0hxz2S6dzadugpFfqXi6nJojYjL3MbVTisISp+m7v
-         Z2RoVqa4hcu70dY/GJSD145TZvAIdAT6zDf/6cVzWaWZHfHQYHUJXBblfHtBbZMxYGsC
-         +gK5WFQSbmVFaB/fcQLyPSLoaHurrtebPJV9y5MoKn9sBj9EbDFPVDvf3Gbk75Vh0Q+E
-         jaYD8rVoVLzTkKmMEHz6HI4r00K6ZDUw0ixfo/RBm3W1RA6vC1kMXuTOdCytJfT5vvDm
-         ++IOKtgxsf+NNDlOi6SfGwq8Zifo6KbgDPzNeffAm3F2uYFEqxgjjgPGqIoeawasKd9k
-         zKbg==
-X-Gm-Message-State: ACgBeo0xydYJLEN6gnGpKqW4UjldmezyYmZXbEkJu2gBDiY2FDb+WT/C
-        PA33o07nwhXRlN7uWAs3YSBsAIseQqs6BRcE
-X-Google-Smtp-Source: AA6agR42LpXhy4N7tKpqgAMUqHC84ORU+3zFZn9bMC2KbiFMp+sFVU6BWy506yaLgY/dkkcZ1ynkdg==
-X-Received: by 2002:a05:6000:1541:b0:21d:b298:96be with SMTP id 1-20020a056000154100b0021db29896bemr4764366wry.206.1659721676429;
-        Fri, 05 Aug 2022 10:47:56 -0700 (PDT)
+        bh=CY7nj4Dbn5hG1eBgbsltcEsXWXjhhaj6B7nXDjf979E=;
+        b=AkxUxPqalygayHK0OgFP6GX++QLILLYPjQiOB+SWf8DwCfiQvxvSJH2N8Du1e4mz4N
+         h/JH5Wu/ltI9gXXCgtB8iOMlpmXPYUNy1D2UOa3L5+e5xC515Igit18mx5mGvSM+5wlF
+         Ky2JCruSeIem3dUin4RIbOccXAtPgLvwzvcXj1Z6FhIxjoNI1ioe/8cIKHyjL9d1ZsN9
+         z6B0AHrydvqLx4+omCiN7L1rQEuM3piw+N3Zx3q0NLugAcz5VIPN+oZL0uKAXqlg2RbE
+         2b9fi3Q0bmllR8+D+KKTRq0cz8RWpftK0SUioU4g0eGiMYcFBNR3DDpcuUjs6a+zrRNf
+         lcYg==
+X-Gm-Message-State: ACgBeo08T3zKYVmvkb8yoQkUNtjZ2OFXrHQrbAgCpOS7ca5wWSpDiRe4
+        DChHGqaL6K949ugHeuqwDzo=
+X-Google-Smtp-Source: AA6agR7IiagAGZEP+xy/ZTMuCnaTw0jJTWp9G2mTqeewCjcDgMi6F/ihKED6uVAMwi8rYhLR9Eyyjw==
+X-Received: by 2002:a05:6000:1689:b0:220:8a04:69f6 with SMTP id y9-20020a056000168900b002208a0469f6mr5280368wrd.357.1659722064238;
+        Fri, 05 Aug 2022 10:54:24 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id b13-20020adff90d000000b0021e5adb92desm4299636wrr.60.2022.08.05.10.47.55
+        by smtp.gmail.com with ESMTPSA id w8-20020a5d4b48000000b0021e4edba1e5sm4373353wrs.111.2022.08.05.10.54.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Aug 2022 10:47:55 -0700 (PDT)
+        Fri, 05 Aug 2022 10:54:23 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org
+To:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][V2] Input: applespi: Use correct struct names in comment
-Date:   Fri,  5 Aug 2022 18:47:54 +0100
-Message-Id: <20220805174754.2374473-1-colin.i.king@gmail.com>
+Subject: [PATCH] mtd: devices: docg3: Use correct function names in comment blocks
+Date:   Fri,  5 Aug 2022 18:54:23 +0100
+Message-Id: <20220805175423.2374939-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The incorrect structure name is being used in the comment for struct
-touchpad_info_protocol. Correct it.
+The incorrect function name is being used in the comment for functions
+doc_set_reliable_mode, doc_read_seek and docg3_probe. Correct these
+comments.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-[V2]: Fix commit message
----
- drivers/input/keyboard/applespi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mtd/devices/docg3.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/input/keyboard/applespi.c b/drivers/input/keyboard/applespi.c
-index cbc6c0d4670a..fab5473ae5da 100644
---- a/drivers/input/keyboard/applespi.c
-+++ b/drivers/input/keyboard/applespi.c
-@@ -202,7 +202,7 @@ struct command_protocol_tp_info {
- };
+diff --git a/drivers/mtd/devices/docg3.c b/drivers/mtd/devices/docg3.c
+index 5b0ae5ddad74..a7bddf80751b 100644
+--- a/drivers/mtd/devices/docg3.c
++++ b/drivers/mtd/devices/docg3.c
+@@ -300,7 +300,7 @@ static void doc_write_data_area(struct docg3 *docg3, const void *buf, int len)
+ }
  
  /**
-- * struct touchpad_info - touchpad info response.
-+ * struct touchpad_info_protocol - touchpad info response.
-  * message.type = 0x1020, message.length = 0x006e
+- * doc_set_data_mode - Sets the flash to normal or reliable data mode
++ * doc_set_reliable_mode - Sets the flash to normal or reliable data mode
+  * @docg3: the device
   *
-  * @unknown1:		unknown
+  * The reliable data mode is a bit slower than the fast mode, but less errors
+@@ -442,7 +442,7 @@ static void doc_setup_writeaddr_sector(struct docg3 *docg3, int sector, int ofs)
+ }
+ 
+ /**
+- * doc_seek - Set both flash planes to the specified block, page for reading
++ * doc_read_seek - Set both flash planes to the specified block, page for reading
+  * @docg3: the device
+  * @block0: the first plane block index
+  * @block1: the second plane block index
+@@ -1951,7 +1951,7 @@ static int docg3_suspend(struct platform_device *pdev, pm_message_t state)
+ }
+ 
+ /**
+- * doc_probe - Probe the IO space for a DiskOnChip G3 chip
++ * docg3_probe - Probe the IO space for a DiskOnChip G3 chip
+  * @pdev: platform device
+  *
+  * Probes for a G3 chip at the specified IO space in the platform data
 -- 
 2.35.3
 
