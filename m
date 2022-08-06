@@ -2,98 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5A13C25B06
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Aug 2022 07:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F2AC25B06
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Aug 2022 08:53:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241694AbiHFHx6 (ORCPT
+        id S231222AbiHFIxW (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 6 Aug 2022 03:53:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48440 "EHLO
+        Sat, 6 Aug 2022 04:53:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241526AbiHFHx5 (ORCPT
+        with ESMTP id S229609AbiHFIxV (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 6 Aug 2022 03:53:57 -0400
-Received: from smtp.smtpout.orange.fr (smtp02.smtpout.orange.fr [80.12.242.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6454812A8E
-        for <kernel-janitors@vger.kernel.org>; Sat,  6 Aug 2022 00:53:53 -0700 (PDT)
+        Sat, 6 Aug 2022 04:53:21 -0400
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2B8911C19
+        for <kernel-janitors@vger.kernel.org>; Sat,  6 Aug 2022 01:53:19 -0700 (PDT)
 Received: from [192.168.1.18] ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id KEd3oFnAvsfCIKEd3oQT3U; Sat, 06 Aug 2022 09:53:51 +0200
+        id KFYboXXEJGDTnKFYboaqyZ; Sat, 06 Aug 2022 10:53:18 +0200
 X-ME-Helo: [192.168.1.18]
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 06 Aug 2022 09:53:51 +0200
+X-ME-Date: Sat, 06 Aug 2022 10:53:18 +0200
 X-ME-IP: 90.11.190.129
-Message-ID: <7c03dd48-7e44-11a8-1855-74313874aee7@wanadoo.fr>
-Date:   Sat, 6 Aug 2022 09:53:49 +0200
+Message-ID: <3eacc364-90b7-7a5d-c936-1ed993428ef6@wanadoo.fr>
+Date:   Sat, 6 Aug 2022 10:53:16 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [PATCH] driver core: Define dev_err_probe() as __cold
+X-Mozilla-News-Host: news://news.gmane.org:119
 Content-Language: en-US
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     tglx@linutronix.de, jgg@ziepe.ca, ira.weiny@intel.com,
-        dan.j.williams@intel.com, andriy.shevchenko@linux.intel.com,
-        wonchung@google.com, list@mail.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <0d4391f85d916508dba096caf132b0a973b08800.1659768386.git.christophe.jaillet@wanadoo.fr>
- <Yu4URNSoKRiNWmyj@kroah.com>
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <Yu4URNSoKRiNWmyj@kroah.com>
+Subject: Question: dev_err_probe() vs Printk Index
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Janitors <kernel-janitors@vger.kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 06/08/2022 à 09:12, Greg KH a écrit :
-> On Sat, Aug 06, 2022 at 08:49:23AM +0200, Christophe JAILLET wrote:
->> Give a hint to the compiler that dev_err_probe() is used for error
->> handling. So calling paths are unlikely.
->>
->> >From gcc documentation:
->> 	The paths leading to calls of cold functions within code are marked
->> 	as unlikely by the branch prediction mechanism.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->>   include/linux/device.h | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/include/linux/device.h b/include/linux/device.h
->> index 424b55df0272..4ac16bde9bf7 100644
->> --- a/include/linux/device.h
->> +++ b/include/linux/device.h
->> @@ -1093,7 +1093,7 @@ void device_links_supplier_sync_state_pause(void);
->>   void device_links_supplier_sync_state_resume(void);
->>   
->>   extern __printf(3, 4)
->> -int dev_err_probe(const struct device *dev, int err, const char *fmt, ...);
->> +int __cold dev_err_probe(const struct device *dev, int err, const char *fmt, ...);
-> 
-> As the probe() path is by default "slow", does this actually help
-> anything?  I never recommend using any sort of manual likely/unlikely
-> hints unless the results can be seen, otherwise the compiler and CPU
-> almost always do a better job over time.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+Hi,
 
-Based on a few tests, the generated code is different.
-But it is hard to compare if it looks better or not because many things 
-are shuffled.
+When a driver is using dev_err(), part of it is inlined and it:
+    - takes advantage of dev_fmt()  [1]
+    - implements Printk Index       [2]
 
-My point is that the proposed change is easy and that the hint "should 
-always be correct in this particular case".
-Also _dev_err() and co. functions are already annotated with __cold.
+Printk Index works with some __builtin_constant_p() magic in it.
+In case of a use in a probe, 99.99% of the time the log level and the 
+format will be constant and the logic for Printk Index will be put in place.
 
-But honestly, I agree with your POV.
 
-Sometimes the resulting .o is slightly smaller, sometimes slightly bigger.
+In case dev_err_probe(), the format will be an argument passed to the 
+function and will not be constant, so nothing will be generated in the 
+'printk'_index section.
 
-So, unless s.o. else cares, let leave it as is, timing of probe does not 
-really matter anyway.
 
+In case dev_err_probe(), a potential dev_fmt() defined in the drivers' 
+file can't be taken into consideration.
+(trusting my grep, we never use in files that define dev_fmt() in the .c 
+file. I've not checked if it is true via #include "<something.h>")
+
+
+Even if I've read [3], I don't fully understand the real need of this 
+Printk Index mechanism (at least for my own needs :))
+
+
+My questions are:
+    - is my analysis right?
+    - is the lack of these 2 functionalities (dev_fmt and Printk Index) 
+expected, when dev_err_probe() is used?
+    - if not, is it a issue?
+    - should it be at least documented?
+
+
+(not sure who to put in copy of this mail)
 
 CJ
+
+[1]: 
+https://elixir.bootlin.com/linux/v5.19/source/include/linux/dev_printk.h#L143
+[2]: 
+https://elixir.bootlin.com/linux/v5.19/source/include/linux/dev_printk.h#L107
+[3]: Documentation/core-api/printk-index.rst
