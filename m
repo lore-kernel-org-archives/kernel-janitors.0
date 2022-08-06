@@ -2,38 +2,36 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E814CC19F2D
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Aug 2022 16:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B90E2C19F2D
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Aug 2022 16:15:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231348AbiHFQCn (ORCPT
+        id S231764AbiHFQPP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 6 Aug 2022 12:02:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36550 "EHLO
+        Sat, 6 Aug 2022 12:15:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230211AbiHFQCl (ORCPT
+        with ESMTP id S231479AbiHFQPN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 6 Aug 2022 12:02:41 -0400
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B13DCFD07
-        for <kernel-janitors@vger.kernel.org>; Sat,  6 Aug 2022 09:02:40 -0700 (PDT)
+        Sat, 6 Aug 2022 12:15:13 -0400
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BAB9B53
+        for <kernel-janitors@vger.kernel.org>; Sat,  6 Aug 2022 09:15:11 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id KMG5odKkXgtndKMG5oXOga; Sat, 06 Aug 2022 18:02:38 +0200
+        id KMSCooJPV3uMYKMSCokiFG; Sat, 06 Aug 2022 18:15:09 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 06 Aug 2022 18:02:38 +0200
+X-ME-Date: Sat, 06 Aug 2022 18:15:09 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
+To:     paulmck@kernel.org, vschneid@redhat.com,
+        rafael.j.wysocki@intel.com, nsaenzju@redhat.com,
+        frederic@kernel.org
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        netdev@vger.kernel.org
-Subject: [PATCH] ax88796: Fix some typo in a comment
-Date:   Sat,  6 Aug 2022 18:02:36 +0200
-Message-Id: <7db4b622d2c3e5af58c1d1f32b81836f4af71f18.1659801746.git.christophe.jaillet@wanadoo.fr>
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] cpu_pm: Fix a typo in a comment
+Date:   Sat,  6 Aug 2022 18:15:08 +0200
+Message-Id: <763d2d098793c858887cf8b935dc35bcdb522396.1659802446.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -41,35 +39,30 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-s/by caused/be caused/
-s/ax88786/ax88796/
+s/cpm_pm/cpm_pm/
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-s/ax88786/ax88796/ is a guess based on the surrounding comments and the
-name of the file.
-
-ax88786 (and even 88786) is not part of the kernel, so it really looks
-like a typo to me.
+  kernel/cpu_pm.c            and
+  include/linux/cpu_pm.h
+seem to be orphans in MAINTAINERS. Is it expected?
 ---
- include/net/ax88796.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/cpu_pm.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/net/ax88796.h b/include/net/ax88796.h
-index b658471f97f0..303100f08ab8 100644
---- a/include/net/ax88796.h
-+++ b/include/net/ax88796.h
-@@ -34,8 +34,8 @@ struct ax_plat_data {
- 			const unsigned char *buf, int star_page);
- 	void (*block_input)(struct net_device *dev, int count,
- 			struct sk_buff *skb, int ring_offset);
--	/* returns nonzero if a pending interrupt request might by caused by
--	 * the ax88786. Handles all interrupts if set to NULL
-+	/* returns nonzero if a pending interrupt request might be caused by
-+	 * the ax88796. Handles all interrupts if set to NULL
- 	 */
- 	int (*check_irq)(struct platform_device *pdev);
- };
+diff --git a/include/linux/cpu_pm.h b/include/linux/cpu_pm.h
+index 552b8f9ea05e..e8608ccdc134 100644
+--- a/include/linux/cpu_pm.h
++++ b/include/linux/cpu_pm.h
+@@ -16,7 +16,7 @@
+  * When a CPU goes to a low power state that turns off power to the CPU's
+  * power domain, the contents of some blocks (floating point coprocessors,
+  * interrupt controllers, caches, timers) in the same power domain can
+- * be lost.  The cpm_pm notifiers provide a method for platform idle, suspend,
++ * be lost.  The cpu_pm notifiers provide a method for platform idle, suspend,
+  * and hotplug implementations to notify the drivers for these blocks that
+  * they may be reset.
+  *
 -- 
 2.34.1
 
