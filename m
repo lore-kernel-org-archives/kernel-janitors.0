@@ -2,35 +2,35 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64276C25B0C
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Aug 2022 15:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25326C19F2D
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Aug 2022 15:49:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233015AbiHFPj0 (ORCPT
+        id S232902AbiHFPtV (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 6 Aug 2022 11:39:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53976 "EHLO
+        Sat, 6 Aug 2022 11:49:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232952AbiHFPjZ (ORCPT
+        with ESMTP id S231953AbiHFPtT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 6 Aug 2022 11:39:25 -0400
-Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D80CB7C2
-        for <kernel-janitors@vger.kernel.org>; Sat,  6 Aug 2022 08:39:24 -0700 (PDT)
+        Sat, 6 Aug 2022 11:49:19 -0400
+Received: from smtp.smtpout.orange.fr (smtp09.smtpout.orange.fr [80.12.242.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE125DF24
+        for <kernel-janitors@vger.kernel.org>; Sat,  6 Aug 2022 08:49:18 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id KLtao3ADLbJVVKLtao45Tg; Sat, 06 Aug 2022 17:39:23 +0200
+        id KM39oZntuGDTnKM3AobZvu; Sat, 06 Aug 2022 17:49:17 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 06 Aug 2022 17:39:23 +0200
+X-ME-Date: Sat, 06 Aug 2022 17:49:17 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     pablo@netfilter.org, kadlec@netfilter.org, fw@strlen.de
-Cc:     netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [RESEND (v2) PATCH] netfilter: Fix a typo in a comment
-Date:   Sat,  6 Aug 2022 17:39:20 +0200
-Message-Id: <ad1d4dafc856ace9613050e6ac60c9f297f0a87d.1659799260.git.christophe.jaillet@wanadoo.fr>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        patches@opensource.cirrus.com, alsa-devel@alsa-project.org
+Subject: [PATCH] ASoC: Fix the include guard used for include/sound/wm8904.h
+Date:   Sat,  6 Aug 2022 17:49:14 +0200
+Message-Id: <eff524b78d1f851e3dc42999e68c286492f92b21.1659800938.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -38,34 +38,42 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-s/_IPT_LOG_H/_IP6T_LOG_H/
+__MFD_WM8994_PDATA_H__ is already used for:
+  include/linux/mfd/wm8994/pdata.h
 
-While at it add some surrounding space to ease reading.
+Based on file names, use __MFD_WM8904_PDATA_H__ instead here.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Resend including the netfilter maintainers.
+Not sure of if a Fixes: tag is needed.
+If yes, I would use:
+  9e50108668a7 ("mfd: Add initial WM8994 support")
+which introduced the conflict,
 
-Does MAINTAINERS need some adjustement?
-  ./scripts/get_maintainer.pl --nogit --nogit-fallback --norolestats --nol include/uapi/linux/netfilter_ipv6/ip6t_LOG.h
-doesn't find anything.
+even if:
+ a91eb199e4dc8 ("ASoC: Initial WM8904 CODEC driver")
+which introduced the typo is more logical.
 
-(this a second resend. The Message-Id was the same as the initial message and
-it puzzled ML. Sorry for the noise)
+No strong opinion on it.
 ---
- include/uapi/linux/netfilter_ipv6/ip6t_LOG.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/sound/wm8904.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/uapi/linux/netfilter_ipv6/ip6t_LOG.h b/include/uapi/linux/netfilter_ipv6/ip6t_LOG.h
-index 23e91a9c2583..0b7b16dbdec2 100644
---- a/include/uapi/linux/netfilter_ipv6/ip6t_LOG.h
-+++ b/include/uapi/linux/netfilter_ipv6/ip6t_LOG.h
-@@ -17,4 +17,4 @@ struct ip6t_log_info {
- 	char prefix[30];
- };
+diff --git a/include/sound/wm8904.h b/include/sound/wm8904.h
+index 88ac1870510e..f74293a83a17 100644
+--- a/include/sound/wm8904.h
++++ b/include/sound/wm8904.h
+@@ -7,8 +7,8 @@
+  * Author: Mark Brown <broonie@opensource.wolfsonmicro.com>
+  */
  
--#endif /*_IPT_LOG_H*/
-+#endif /* _IP6T_LOG_H */
+-#ifndef __MFD_WM8994_PDATA_H__
+-#define __MFD_WM8994_PDATA_H__
++#ifndef __MFD_WM8904_PDATA_H__
++#define __MFD_WM8904_PDATA_H__
+ 
+ /* Used to enable configuration of a GPIO to all zeros */
+ #define WM8904_GPIO_NO_CONFIG 0x8000
 -- 
 2.34.1
 
