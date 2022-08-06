@@ -2,36 +2,37 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BDE4C19F2D
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Aug 2022 19:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2741EC19F2D
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Aug 2022 19:57:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232650AbiHFTmj (ORCPT
+        id S233874AbiHFT5I (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 6 Aug 2022 15:42:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60514 "EHLO
+        Sat, 6 Aug 2022 15:57:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231939AbiHFTmj (ORCPT
+        with ESMTP id S233891AbiHFT4a (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 6 Aug 2022 15:42:39 -0400
-Received: from smtp.smtpout.orange.fr (smtp09.smtpout.orange.fr [80.12.242.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44D2D3892
-        for <kernel-janitors@vger.kernel.org>; Sat,  6 Aug 2022 12:42:38 -0700 (PDT)
+        Sat, 6 Aug 2022 15:56:30 -0400
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85AAEDFEF
+        for <kernel-janitors@vger.kernel.org>; Sat,  6 Aug 2022 12:56:16 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id KPgyot1A2sKAkKPgyouG6I; Sat, 06 Aug 2022 21:42:36 +0200
+        id KPuAob2sMGDTnKPuAobw3d; Sat, 06 Aug 2022 21:56:14 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 06 Aug 2022 21:42:36 +0200
+X-ME-Date: Sat, 06 Aug 2022 21:56:14 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
+To:     Diana Craciun <diana.craciun@oss.nxp.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-btrfs@vger.kernel.org
-Subject: [PATCH] btrfs: qgroup: Fix a typo in a comment
-Date:   Sat,  6 Aug 2022 21:42:34 +0200
-Message-Id: <c81a4f359ff8a1443168b9c308dcd621ba24e5c5.1659814948.git.christophe.jaillet@wanadoo.fr>
+        kvm@vger.kernel.org
+Subject: [PATCH] vfio/fsl-mc: Fix a typo in a comment
+Date:   Sat,  6 Aug 2022 21:56:13 +0200
+Message-Id: <2b65bf8d2b4d940cafbafcede07c23c35f042f5a.1659815764.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -39,27 +40,33 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Add a missing 'r'.
-s/qgoup/qgroup/
+L and S are swapped/
+s/VFIO_FLS_MC/VFIO_FSL_MC/
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- fs/btrfs/qgroup.c | 2 +-
+All the dev_ logging functions in the file have the "VFIO_FSL_MC: "
+prefix.
+As they are dev_ function, the driver should already be displayed.
+
+So, does it make sense or could they be all removed?
+---
+ drivers/vfio/fsl-mc/vfio_fsl_mc.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
-index db723c0026bd..6d6eebaed730 100644
---- a/fs/btrfs/qgroup.c
-+++ b/fs/btrfs/qgroup.c
-@@ -275,7 +275,7 @@ static int __add_relation_rb(struct btrfs_qgroup *member, struct btrfs_qgroup *p
- }
+diff --git a/drivers/vfio/fsl-mc/vfio_fsl_mc.c b/drivers/vfio/fsl-mc/vfio_fsl_mc.c
+index 3feff729f3ce..66d01db1d240 100644
+--- a/drivers/vfio/fsl-mc/vfio_fsl_mc.c
++++ b/drivers/vfio/fsl-mc/vfio_fsl_mc.c
+@@ -110,7 +110,7 @@ static void vfio_fsl_mc_close_device(struct vfio_device *core_vdev)
  
- /*
-- * Add relation specified by two qgoup ids.
-+ * Add relation specified by two qgroup ids.
-  *
-  * Must be called with qgroup_lock held.
-  *
+ 	if (WARN_ON(ret))
+ 		dev_warn(&mc_cont->dev,
+-			 "VFIO_FLS_MC: reset device has failed (%d)\n", ret);
++			 "VFIO_FSL_MC: reset device has failed (%d)\n", ret);
+ 
+ 	vfio_fsl_mc_irqs_cleanup(vdev);
+ 
 -- 
 2.34.1
 
