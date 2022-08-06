@@ -2,67 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EEFC19F2D
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Aug 2022 16:20:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 931BFC25B0C
+	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Aug 2022 18:11:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231834AbiHFQUg (ORCPT
+        id S231272AbiHFSLj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 6 Aug 2022 12:20:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45312 "EHLO
+        Sat, 6 Aug 2022 14:11:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231245AbiHFQUf (ORCPT
+        with ESMTP id S229639AbiHFSLi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 6 Aug 2022 12:20:35 -0400
-Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D79E862C5
-        for <kernel-janitors@vger.kernel.org>; Sat,  6 Aug 2022 09:20:34 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id KMXQotp2J09yuKMXRo5kMg; Sat, 06 Aug 2022 18:20:33 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 06 Aug 2022 18:20:33 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     dmitry.torokhov@gmail.com
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] Input: bma150 - Fix a typo in some comments
-Date:   Sat,  6 Aug 2022 18:20:32 +0200
-Message-Id: <a331a6244a1dfbf34dc85f1be6995fa91500c801.1659802757.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sat, 6 Aug 2022 14:11:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2DEADFB5;
+        Sat,  6 Aug 2022 11:11:37 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 409AB611CD;
+        Sat,  6 Aug 2022 18:11:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 437F0C433D6;
+        Sat,  6 Aug 2022 18:11:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1659809496;
+        bh=QVM9KSZRLYkqpS1ouT+Ij9B/WbZhpHmHOeFMoBrXB7s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=n4CbZDbLAvW0jaxY5dIiN3gUprCx0x/Y0b16YE55fmM+RMwVMDRhVqtQo/Hluv68y
+         9D/xWTv+sbFZA6pX/6B3rUW501Eg3eHRMAq9x3dur2nCiSW251rq+LzAU5bfnvcNl0
+         21VkLH51jhe7WuNClzrbQ7Trq61Ljs9bfp+ldR/0Q7j8I/nFfpcVGFg/JZ3URBssdM
+         FKk2ZWZTu8N0EqHv444pobIbwv0OMhKyzIEgtmPpYk1AjCeeHoi3mTHRLcdhJkYfs6
+         8or+KfFwiu0kXrFmERXXMZQlYiv6XrM4DPZu6KkdtHwWLvD0mQGZzyyHofodTUUxrQ
+         gHJt4GzLdN7Sg==
+Date:   Sat, 6 Aug 2022 21:11:33 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Peter Huewe <peterhuewe@gmx.de>,
+        Jiang Liu <jiang.liu@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-integrity@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] tpm/ppi: fix return type in tpm_show_ppi_response()
+Message-ID: <Yu6u1RZb7uZ6rMA6@kernel.org>
+References: <YutwPjef/hseEE31@kili>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YutwPjef/hseEE31@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Remove some extra '0'
+On Thu, Aug 04, 2022 at 10:07:42AM +0300, Dan Carpenter wrote:
+> This "status" is declared as type acpi_status but it is never used to
+> store any acpi_statuses, only int.
+> 
+> The tpm_show_ppi_response() function returns ssize_t (signed long) and
+> acpi_status is unsigned int.  That means that negative error codes will
+> be type promoted to large positive values.
+> 
+> Fixes: 84b1667dea23 ("ACPI / TPM: replace open-coded _DSM code with helper functions")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/char/tpm/tpm_ppi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_ppi.c b/drivers/char/tpm/tpm_ppi.c
+> index 40018a73b3cb..240df925c38c 100644
+> --- a/drivers/char/tpm/tpm_ppi.c
+> +++ b/drivers/char/tpm/tpm_ppi.c
+> @@ -222,7 +222,7 @@ static ssize_t tpm_show_ppi_response(struct device *dev,
+>  				     struct device_attribute *attr,
+>  				     char *buf)
+>  {
+> -	acpi_status status = -EINVAL;
+> +	int status = -EINVAL;
+>  	union acpi_object *obj, *ret_obj;
+>  	u64 req, res;
+>  	struct tpm_chip *chip = to_tpm_chip(dev);
+> -- 
+> 2.35.1
+> 
 
-s/BMA0150_RANGE_xxx/BMA150_RANGE_xxx/
-s/BMA0150_BW_xxx/BMA150_BW_xxx
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- include/linux/bma150.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-diff --git a/include/linux/bma150.h b/include/linux/bma150.h
-index 31c9e323a391..4d4a62d49341 100644
---- a/include/linux/bma150.h
-+++ b/include/linux/bma150.h
-@@ -33,8 +33,8 @@ struct bma150_cfg {
- 	unsigned char lg_hyst;		/* Low-G hysterisis */
- 	unsigned char lg_dur;		/* Low-G duration */
- 	unsigned char lg_thres;		/* Low-G threshold */
--	unsigned char range;		/* one of BMA0150_RANGE_xxx */
--	unsigned char bandwidth;	/* one of BMA0150_BW_xxx */
-+	unsigned char range;		/* one of BMA150_RANGE_xxx */
-+	unsigned char bandwidth;	/* one of BMA150_BW_xxx */
- };
- 
- struct bma150_platform_data {
--- 
-2.34.1
-
+BR, Jarkko
