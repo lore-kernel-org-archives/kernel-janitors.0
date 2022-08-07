@@ -2,100 +2,130 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49257C3F6B0
-	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Aug 2022 14:08:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7AD8C19F2A
+	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Aug 2022 20:19:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233894AbiHGOIU (ORCPT
+        id S231130AbiHGUTC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 7 Aug 2022 10:08:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60944 "EHLO
+        Sun, 7 Aug 2022 16:19:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233849AbiHGOIT (ORCPT
+        with ESMTP id S229645AbiHGUTB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 7 Aug 2022 10:08:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5519A460;
-        Sun,  7 Aug 2022 07:08:18 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4DDE360EE7;
-        Sun,  7 Aug 2022 14:08:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BAE0C433D7;
-        Sun,  7 Aug 2022 14:08:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659881297;
-        bh=vQJxMRNWo4+kR/062cQxsou4ml9ZapoIw81lPoLiEuw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=e6de5Q3lpUx9P8TwlLfMtthooVNj6Uj2FuTy+WGn/b4PfsSxC/pldx7Zmo1Lg7PCc
-         fCcSsiztTZTtW7sJ2Ne1nwPiLvtChtyXpzM1dGS7JP2/VpqEwo3vT9QB5JXkSmKDml
-         nqJu2hS4hX+LtsmxBsCDCFZIL5mWjfDnOWIGabckVSGMvvvXt30kh+J3ymWt7/xrTV
-         obFa4Njfq5WPwr+NkVrVishM3AGBjVTSFFoK/V7P5VIXFltzE3YdrnknB1xH3f9v+e
-         ffy+cly0aYgHFMeSZXrkJE4kPbBfUfw7MtDGUbM0T53tc2fN3XKQqeXmEYUKh9N+11
-         YRRSsbnIOEHDQ==
-Date:   Sun, 7 Aug 2022 15:18:36 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Kevin Tsai <ktsai@capellamicro.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Cai Huoqing <cai.huoqing@linux.dev>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-iio@vger.kernel.org
-Subject: Re: [PATCH] iio: light: cm3605: Fix an error handling path in
- cm3605_probe()
-Message-ID: <20220807151836.5300af2b@jic23-huawei>
-In-Reply-To: <0e186de2c125b3e17476ebf9c54eae4a5d66f994.1659854238.git.christophe.jaillet@wanadoo.fr>
-References: <0e186de2c125b3e17476ebf9c54eae4a5d66f994.1659854238.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-pc-linux-gnu)
+        Sun, 7 Aug 2022 16:19:01 -0400
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C42066163
+        for <kernel-janitors@vger.kernel.org>; Sun,  7 Aug 2022 13:18:59 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id Kmjfo2a6aEkSDKmjfoUec8; Sun, 07 Aug 2022 22:18:57 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sun, 07 Aug 2022 22:18:57 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+        Bard Liao <yung-chuan.liao@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Harsha Priya <harshapriya.n@intel.com>,
+        "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Sriram Periyasamy <sriramx.periyasamy@intel.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        alsa-devel@alsa-project.org
+Subject: [PATCH] ASoC: Intel: kbl_rt5663_max98927: Simplify clk_get() usage
+Date:   Sun,  7 Aug 2022 22:18:54 +0200
+Message-Id: <55e59c4792d64ff6336fcaa85ec15590553e9d63.1659903516.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun,  7 Aug 2022 08:37:43 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+If clk_get() returns -ENOENT, there is no need to defer the driver, -ENOENT
+will be returned the same for each retries.
+So, return the error code directly instead of -EPROBE_DEFER.
 
-> The commit in Fixes also introduced a new error handling path which should
-> goto the existing error handling path.
-> Otherwise some resources leak.
-> 
-> Fixes: 0d31d91e6145 ("iio: light: cm3605: Make use of the helper function dev_err_probe()")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-oops. 
+Remove this special case and use dev_err_probe() to simplify code. It will
+also be less verbose if the clk is really deferred.
 
-Applied to the fixes-togreg branch of iio.git.
+Fixes: f7f61e08fe58 ("ASoC: Intel: kbl: Enable mclk and ssp sclk early")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This is based on my understanding of clk_get().
+Review with care.
 
-I've just move that branch forwards to current char-misc-linus which includes
-Greg's pull requests for this cycle via Linus' tree, but may well
-rebase on rc1 once that's available.
+Not sure the Fixes tag is needed. The patch does not fix anything.
+If devm_clk_get() returns -ENOENT, it will just loop several time until
+the framework gives up.
+If it returns -EPROBE_DEFER, this case is already handled by the
+"return ret;"
 
-Thanks,
+So this patch should be a no-op, just a clean-up.
+---
+ sound/soc/intel/boards/kbl_rt5663_max98927.c | 31 ++++----------------
+ 1 file changed, 6 insertions(+), 25 deletions(-)
 
-Jonathan
-
-> ---
->  drivers/iio/light/cm3605.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/light/cm3605.c b/drivers/iio/light/cm3605.c
-> index c721b69d5095..0b30db77f78b 100644
-> --- a/drivers/iio/light/cm3605.c
-> +++ b/drivers/iio/light/cm3605.c
-> @@ -226,8 +226,10 @@ static int cm3605_probe(struct platform_device *pdev)
->  	}
->  
->  	irq = platform_get_irq(pdev, 0);
-> -	if (irq < 0)
-> -		return dev_err_probe(dev, irq, "failed to get irq\n");
-> +	if (irq < 0) {
-> +		ret = dev_err_probe(dev, irq, "failed to get irq\n");
-> +		goto out_disable_aset;
-> +	}
->  
->  	ret = devm_request_threaded_irq(dev, irq, cm3605_prox_irq,
->  					NULL, 0, "cm3605", indio_dev);
+diff --git a/sound/soc/intel/boards/kbl_rt5663_max98927.c b/sound/soc/intel/boards/kbl_rt5663_max98927.c
+index 2d4224c5b152..07b00af2fa3c 100644
+--- a/sound/soc/intel/boards/kbl_rt5663_max98927.c
++++ b/sound/soc/intel/boards/kbl_rt5663_max98927.c
+@@ -989,7 +989,6 @@ static int kabylake_audio_probe(struct platform_device *pdev)
+ {
+ 	struct kbl_rt5663_private *ctx;
+ 	struct snd_soc_acpi_mach *mach;
+-	int ret;
+ 
+ 	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
+ 	if (!ctx)
+@@ -1009,32 +1008,14 @@ static int kabylake_audio_probe(struct platform_device *pdev)
+ 			&constraints_dmic_2ch : &constraints_dmic_channels;
+ 
+ 	ctx->mclk = devm_clk_get(&pdev->dev, "ssp1_mclk");
+-	if (IS_ERR(ctx->mclk)) {
+-		ret = PTR_ERR(ctx->mclk);
+-		if (ret == -ENOENT) {
+-			dev_info(&pdev->dev,
+-				"Failed to get ssp1_sclk, defer probe\n");
+-			return -EPROBE_DEFER;
+-		}
+-
+-		dev_err(&pdev->dev, "Failed to get ssp1_mclk with err:%d\n",
+-								ret);
+-		return ret;
+-	}
++	if (IS_ERR(ctx->mclk))
++		return dev_err_probe(&pdev->dev, PTR_ERR(ctx->mclk),
++				     "Failed to get ssp1_mclk\n");
+ 
+ 	ctx->sclk = devm_clk_get(&pdev->dev, "ssp1_sclk");
+-	if (IS_ERR(ctx->sclk)) {
+-		ret = PTR_ERR(ctx->sclk);
+-		if (ret == -ENOENT) {
+-			dev_info(&pdev->dev,
+-				"Failed to get ssp1_sclk, defer probe\n");
+-			return -EPROBE_DEFER;
+-		}
+-
+-		dev_err(&pdev->dev, "Failed to get ssp1_sclk with err:%d\n",
+-								ret);
+-		return ret;
+-	}
++	if (IS_ERR(ctx->sclk))
++		return dev_err_probe(&pdev->dev, PTR_ERR(ctx->sclk),
++				     "Failed to get ssp1_sclk\n");
+ 
+ 	return devm_snd_soc_register_card(&pdev->dev, kabylake_audio_card);
+ }
+-- 
+2.34.1
 
