@@ -2,40 +2,38 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D94EC19F2A
-	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Aug 2022 06:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE23C19F2A
+	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Aug 2022 06:43:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233027AbiHGGhx (ORCPT
+        id S233105AbiHGGng (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 7 Aug 2022 02:37:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46542 "EHLO
+        Sun, 7 Aug 2022 02:43:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbiHGGhv (ORCPT
+        with ESMTP id S230129AbiHGGne (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 7 Aug 2022 02:37:51 -0400
-Received: from smtp.smtpout.orange.fr (smtp04.smtpout.orange.fr [80.12.242.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B852DFA4
-        for <kernel-janitors@vger.kernel.org>; Sat,  6 Aug 2022 23:37:50 -0700 (PDT)
+        Sun, 7 Aug 2022 02:43:34 -0400
+Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E3CD10543
+        for <kernel-janitors@vger.kernel.org>; Sat,  6 Aug 2022 23:43:34 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id KZv0oPd4C0UP7KZv0ohzmx; Sun, 07 Aug 2022 08:37:48 +0200
+        id Ka0YohQK6gtndKa0ZoYPTF; Sun, 07 Aug 2022 08:43:32 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sun, 07 Aug 2022 08:37:48 +0200
+X-ME-Date: Sun, 07 Aug 2022 08:43:32 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Kevin Tsai <ktsai@capellamicro.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Cai Huoqing <cai.huoqing@linux.dev>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Daniel Scally <djrscally@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-iio@vger.kernel.org
-Subject: [PATCH] iio: light: cm3605: Fix an error handling path in cm3605_probe()
-Date:   Sun,  7 Aug 2022 08:37:43 +0200
-Message-Id: <0e186de2c125b3e17476ebf9c54eae4a5d66f994.1659854238.git.christophe.jaillet@wanadoo.fr>
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-media@vger.kernel.org
+Subject: [PATCH] media: ov8865: Fix an error handling path in ov8865_probe()
+Date:   Sun,  7 Aug 2022 08:43:29 +0200
+Message-Id: <5f84057db4f6a0d0fc50176a0ea5bf6c8a067cf0.1659854576.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -43,33 +41,38 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The commit in Fixes also introduced a new error handling path which should
+The commit in Fixes also introduced some new error handling which should
 goto the existing error handling path.
 Otherwise some resources leak.
 
-Fixes: 0d31d91e6145 ("iio: light: cm3605: Make use of the helper function dev_err_probe()")
+Fixes: 73dcffeb2ff9 ("media: i2c: Support 19.2MHz input clock in ov8865")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/iio/light/cm3605.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/media/i2c/ov8865.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/iio/light/cm3605.c b/drivers/iio/light/cm3605.c
-index c721b69d5095..0b30db77f78b 100644
---- a/drivers/iio/light/cm3605.c
-+++ b/drivers/iio/light/cm3605.c
-@@ -226,8 +226,10 @@ static int cm3605_probe(struct platform_device *pdev)
+diff --git a/drivers/media/i2c/ov8865.c b/drivers/media/i2c/ov8865.c
+index b8f4f0d3e33d..15d0f79231dd 100644
+--- a/drivers/media/i2c/ov8865.c
++++ b/drivers/media/i2c/ov8865.c
+@@ -3034,11 +3034,13 @@ static int ov8865_probe(struct i2c_client *client)
+ 				       &rate);
+ 	if (!ret && sensor->extclk) {
+ 		ret = clk_set_rate(sensor->extclk, rate);
+-		if (ret)
+-			return dev_err_probe(dev, ret,
+-					     "failed to set clock rate\n");
++		if (ret) {
++			dev_err_probe(dev, ret, "failed to set clock rate\n");
++			goto error_endpoint;
++		}
+ 	} else if (ret && !sensor->extclk) {
+-		return dev_err_probe(dev, ret, "invalid clock config\n");
++		dev_err_probe(dev, ret, "invalid clock config\n");
++		goto error_endpoint;
  	}
  
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0)
--		return dev_err_probe(dev, irq, "failed to get irq\n");
-+	if (irq < 0) {
-+		ret = dev_err_probe(dev, irq, "failed to get irq\n");
-+		goto out_disable_aset;
-+	}
- 
- 	ret = devm_request_threaded_irq(dev, irq, cm3605_prox_irq,
- 					NULL, 0, "cm3605", indio_dev);
+ 	sensor->extclk_rate = rate ? rate : clk_get_rate(sensor->extclk);
 -- 
 2.34.1
 
