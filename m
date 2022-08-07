@@ -2,37 +2,40 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20E4AC19F2D
-	for <kernel-janitors@archiver.kernel.org>; Sat,  6 Aug 2022 20:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D94EC19F2A
+	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Aug 2022 06:37:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231795AbiHFUPH (ORCPT
+        id S233027AbiHGGhx (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 6 Aug 2022 16:15:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49128 "EHLO
+        Sun, 7 Aug 2022 02:37:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230079AbiHFUPH (ORCPT
+        with ESMTP id S229503AbiHGGhv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 6 Aug 2022 16:15:07 -0400
-Received: from smtp.smtpout.orange.fr (smtp01.smtpout.orange.fr [80.12.242.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2B9E30F
-        for <kernel-janitors@vger.kernel.org>; Sat,  6 Aug 2022 13:15:05 -0700 (PDT)
+        Sun, 7 Aug 2022 02:37:51 -0400
+Received: from smtp.smtpout.orange.fr (smtp04.smtpout.orange.fr [80.12.242.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B852DFA4
+        for <kernel-janitors@vger.kernel.org>; Sat,  6 Aug 2022 23:37:50 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id KQCMoiyYg9qatKQCMosYV7; Sat, 06 Aug 2022 22:15:04 +0200
+        id KZv0oPd4C0UP7KZv0ohzmx; Sun, 07 Aug 2022 08:37:48 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
-X-ME-Date: Sat, 06 Aug 2022 22:15:04 +0200
+X-ME-Date: Sun, 07 Aug 2022 08:37:48 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>
+To:     Kevin Tsai <ktsai@capellamicro.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Cai Huoqing <cai.huoqing@linux.dev>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-nvme@lists.infradead.org
-Subject: [PATCH] nvme-fabrics: Fix a typo in an error message
-Date:   Sat,  6 Aug 2022 22:15:01 +0200
-Message-Id: <9cff69b6e880387a420b848b7248dd6e6ad3739a.1659816888.git.christophe.jaillet@wanadoo.fr>
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-iio@vger.kernel.org
+Subject: [PATCH] iio: light: cm3605: Fix an error handling path in cm3605_probe()
+Date:   Sun,  7 Aug 2022 08:37:43 +0200
+Message-Id: <0e186de2c125b3e17476ebf9c54eae4a5d66f994.1659854238.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -40,27 +43,33 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-A 'c' is missing.
-s/fabris/fabrics/
+The commit in Fixes also introduced a new error handling path which should
+goto the existing error handling path.
+Otherwise some resources leak.
 
+Fixes: 0d31d91e6145 ("iio: light: cm3605: Make use of the helper function dev_err_probe()")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/nvme/host/fabrics.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iio/light/cm3605.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvme/host/fabrics.c b/drivers/nvme/host/fabrics.c
-index 5207a2348257..da753d7db563 100644
---- a/drivers/nvme/host/fabrics.c
-+++ b/drivers/nvme/host/fabrics.c
-@@ -1230,7 +1230,7 @@ static int __init nvmf_init(void)
- 	nvmf_device =
- 		device_create(nvmf_class, NULL, MKDEV(0, 0), NULL, "ctl");
- 	if (IS_ERR(nvmf_device)) {
--		pr_err("couldn't create nvme-fabris device!\n");
-+		pr_err("couldn't create nvme-fabrics device!\n");
- 		ret = PTR_ERR(nvmf_device);
- 		goto out_destroy_class;
+diff --git a/drivers/iio/light/cm3605.c b/drivers/iio/light/cm3605.c
+index c721b69d5095..0b30db77f78b 100644
+--- a/drivers/iio/light/cm3605.c
++++ b/drivers/iio/light/cm3605.c
+@@ -226,8 +226,10 @@ static int cm3605_probe(struct platform_device *pdev)
  	}
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0)
+-		return dev_err_probe(dev, irq, "failed to get irq\n");
++	if (irq < 0) {
++		ret = dev_err_probe(dev, irq, "failed to get irq\n");
++		goto out_disable_aset;
++	}
+ 
+ 	ret = devm_request_threaded_irq(dev, irq, cm3605_prox_irq,
+ 					NULL, 0, "cm3605", indio_dev);
 -- 
 2.34.1
 
