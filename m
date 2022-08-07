@@ -2,89 +2,112 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE61C19F2A
-	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Aug 2022 06:58:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A96D8C19F2A
+	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Aug 2022 07:52:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232446AbiHGG6L (ORCPT
+        id S233928AbiHGHwU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 7 Aug 2022 02:58:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56640 "EHLO
+        Sun, 7 Aug 2022 03:52:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231191AbiHGG6H (ORCPT
+        with ESMTP id S233680AbiHGHwT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 7 Aug 2022 02:58:07 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CF619FE6;
-        Sat,  6 Aug 2022 23:58:06 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 13A03CE0A4D;
-        Sun,  7 Aug 2022 06:58:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F015C433D6;
-        Sun,  7 Aug 2022 06:58:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1659855483;
-        bh=XdPD/hTZLSeGJ/2XPd6cihsbI9pncKW8h0z0JEzGYNM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UeWQp+fwgRPLG5XVLIbdeP548dY5u+e0Fetj3U78s11+MEx1EjxHDM3UPx2PaaWzG
-         NI7/YE1LFKtgvDQOEVIurT4bM+ZK7XydIB8MKFO7UROGzxTFTxI791dqyHdbg3rxUT
-         4Kk3GXSS84zuLHWztvKUqzJgxKldyWB8xSV8i2/o=
-Date:   Sun, 7 Aug 2022 08:57:59 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Janitors <kernel-janitors@vger.kernel.org>
-Subject: Re: Question: dev_err_probe() vs Printk Index
-Message-ID: <Yu9id1O98e6or1qm@kroah.com>
-References: <3eacc364-90b7-7a5d-c936-1ed993428ef6@wanadoo.fr>
+        Sun, 7 Aug 2022 03:52:19 -0400
+Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65B4FFD23
+        for <kernel-janitors@vger.kernel.org>; Sun,  7 Aug 2022 00:52:17 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id Kb52oyREZ5V1hKb53o3EZs; Sun, 07 Aug 2022 09:52:15 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Sun, 07 Aug 2022 09:52:15 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH] can: rcar_canfd: Use dev_err_probe() to simplify code and better handle -EPROBE_DEFER
+Date:   Sun,  7 Aug 2022 09:52:11 +0200
+Message-Id: <f5bf0b8f757bd3bc9b391094ece3548cc2f96456.1659858686.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3eacc364-90b7-7a5d-c936-1ed993428ef6@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Aug 06, 2022 at 10:53:16AM +0200, Christophe JAILLET wrote:
-> Hi,
-> 
-> When a driver is using dev_err(), part of it is inlined and it:
->    - takes advantage of dev_fmt()  [1]
->    - implements Printk Index       [2]
-> 
-> Printk Index works with some __builtin_constant_p() magic in it.
-> In case of a use in a probe, 99.99% of the time the log level and the format
-> will be constant and the logic for Printk Index will be put in place.
-> 
-> 
-> In case dev_err_probe(), the format will be an argument passed to the
-> function and will not be constant, so nothing will be generated in the
-> 'printk'_index section.
-> 
-> 
-> In case dev_err_probe(), a potential dev_fmt() defined in the drivers' file
-> can't be taken into consideration.
-> (trusting my grep, we never use in files that define dev_fmt() in the .c
-> file. I've not checked if it is true via #include "<something.h>")
-> 
-> 
-> Even if I've read [3], I don't fully understand the real need of this Printk
-> Index mechanism (at least for my own needs :))
-> 
-> 
-> My questions are:
->    - is my analysis right?
->    - is the lack of these 2 functionalities (dev_fmt and Printk Index)
-> expected, when dev_err_probe() is used?
->    - if not, is it a issue?
->    - should it be at least documented?
+devm_clk_get() can return -EPROBE_DEFER, so use dev_err_probe() instead of
+dev_err() in order to be less verbose in the log.
 
-The printk index stuff is odd, and always seemed like a "check box"
-option that some people wanted for a niche enterprise market.  It's up
-to them to keep that working well if they really need it, driver authors
-should not worry about this.
+This also saves a few LoC.
 
-thanks,
+While at it, turn a "goto fail_dev;" at the beginning of the function into
+a direct return in order to avoid mixing goto and return, which looks
+spurious.
 
-greg k-h
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/can/rcar/rcar_canfd.c | 26 ++++++++++----------------
+ 1 file changed, 10 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
+index 27085b796e75..567620d215f8 100644
+--- a/drivers/net/can/rcar/rcar_canfd.c
++++ b/drivers/net/can/rcar/rcar_canfd.c
+@@ -1880,10 +1880,9 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 
+ 	/* Global controller context */
+ 	gpriv = devm_kzalloc(&pdev->dev, sizeof(*gpriv), GFP_KERNEL);
+-	if (!gpriv) {
+-		err = -ENOMEM;
+-		goto fail_dev;
+-	}
++	if (!gpriv)
++		return -ENOMEM;
++
+ 	gpriv->pdev = pdev;
+ 	gpriv->channels_mask = channels_mask;
+ 	gpriv->fdmode = fdmode;
+@@ -1904,12 +1903,9 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 
+ 	/* Peripheral clock */
+ 	gpriv->clkp = devm_clk_get(&pdev->dev, "fck");
+-	if (IS_ERR(gpriv->clkp)) {
+-		err = PTR_ERR(gpriv->clkp);
+-		dev_err(&pdev->dev, "cannot get peripheral clock, error %d\n",
+-			err);
+-		goto fail_dev;
+-	}
++	if (IS_ERR(gpriv->clkp))
++		return dev_err_probe(&pdev->dev, PTR_ERR(gpriv->clkp),
++				     "cannot get peripheral clock\n");
+ 
+ 	/* fCAN clock: Pick External clock. If not available fallback to
+ 	 * CANFD clock
+@@ -1917,12 +1913,10 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 	gpriv->can_clk = devm_clk_get(&pdev->dev, "can_clk");
+ 	if (IS_ERR(gpriv->can_clk) || (clk_get_rate(gpriv->can_clk) == 0)) {
+ 		gpriv->can_clk = devm_clk_get(&pdev->dev, "canfd");
+-		if (IS_ERR(gpriv->can_clk)) {
+-			err = PTR_ERR(gpriv->can_clk);
+-			dev_err(&pdev->dev,
+-				"cannot get canfd clock, error %d\n", err);
+-			goto fail_dev;
+-		}
++		if (IS_ERR(gpriv->can_clk))
++			return dev_err_probe(&pdev->dev, PTR_ERR(gpriv->can_clk),
++					     "cannot get canfd clock\n");
++
+ 		gpriv->fcan = RCANFD_CANFDCLK;
+ 
+ 	} else {
+-- 
+2.34.1
+
