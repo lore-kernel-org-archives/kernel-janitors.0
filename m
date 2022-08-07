@@ -2,39 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E252C19F2A
-	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Aug 2022 13:58:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49257C3F6B0
+	for <kernel-janitors@archiver.kernel.org>; Sun,  7 Aug 2022 14:08:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232330AbiHGN6b (ORCPT
+        id S233894AbiHGOIU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 7 Aug 2022 09:58:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57574 "EHLO
+        Sun, 7 Aug 2022 10:08:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231190AbiHGN63 (ORCPT
+        with ESMTP id S233849AbiHGOIT (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 7 Aug 2022 09:58:29 -0400
-X-Greylist: delayed 319 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 07 Aug 2022 06:58:25 PDT
-Received: from server.ikt-service.com (server.ikt-service.com [62.116.165.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A18F616B
-        for <kernel-janitors@vger.kernel.org>; Sun,  7 Aug 2022 06:58:25 -0700 (PDT)
-Received: by server.ikt-service.com (Postfix, from userid 10064)
-        id CD79F1838F8; Sun,  7 Aug 2022 15:53:04 +0200 (CEST)
-To:     kernel-janitors@vger.kernel.org
-Subject: =?UTF-8?Q?AQV_Personalleasing_=E2=80=9ETHE_WORLD_FINANCIAL_C?=  =?UTF-8?Q?RISIS_CAN_MAKE_YOU_A_MILLIONAIRE!=E2=80=9C?=
-Date:   Sun, 7 Aug 2022 13:53:04 +0000
-From:   AQV Personalleasing <wordpress@aqv-personal.de>
-Reply-To: holger.czerwonka@ikt-service.com
-Message-ID: <mLRRJeQI13rOUqdJFc5LbFy0wNLHezEAi5WDVycH8@aqv-personal.de>
-X-Mailer: PHPMailer 6.6.0 (https://github.com/PHPMailer/PHPMailer)
+        Sun, 7 Aug 2022 10:08:19 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5519A460;
+        Sun,  7 Aug 2022 07:08:18 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4DDE360EE7;
+        Sun,  7 Aug 2022 14:08:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BAE0C433D7;
+        Sun,  7 Aug 2022 14:08:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1659881297;
+        bh=vQJxMRNWo4+kR/062cQxsou4ml9ZapoIw81lPoLiEuw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=e6de5Q3lpUx9P8TwlLfMtthooVNj6Uj2FuTy+WGn/b4PfsSxC/pldx7Zmo1Lg7PCc
+         fCcSsiztTZTtW7sJ2Ne1nwPiLvtChtyXpzM1dGS7JP2/VpqEwo3vT9QB5JXkSmKDml
+         nqJu2hS4hX+LtsmxBsCDCFZIL5mWjfDnOWIGabckVSGMvvvXt30kh+J3ymWt7/xrTV
+         obFa4Njfq5WPwr+NkVrVishM3AGBjVTSFFoK/V7P5VIXFltzE3YdrnknB1xH3f9v+e
+         ffy+cly0aYgHFMeSZXrkJE4kPbBfUfw7MtDGUbM0T53tc2fN3XKQqeXmEYUKh9N+11
+         YRRSsbnIOEHDQ==
+Date:   Sun, 7 Aug 2022 15:18:36 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Kevin Tsai <ktsai@capellamicro.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Cai Huoqing <cai.huoqing@linux.dev>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-iio@vger.kernel.org
+Subject: Re: [PATCH] iio: light: cm3605: Fix an error handling path in
+ cm3605_probe()
+Message-ID: <20220807151836.5300af2b@jic23-huawei>
+In-Reply-To: <0e186de2c125b3e17476ebf9c54eae4a5d66f994.1659854238.git.christophe.jaillet@wanadoo.fr>
+References: <0e186de2c125b3e17476ebf9c54eae4a5d66f994.1659854238.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Nachrichtentext:
-A FINANCIAL CRISIS CAN MAKE YOU VERY RICH! https://telegra.ph/Cryptocurrency-makes-people-millionaires-at-15-people-per-hour---Page-982840-08-02
+On Sun,  7 Aug 2022 08:37:43 +0200
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
--- 
-Diese E-Mail wurde von einem Kontaktformular von AQV Personalleasing (https://aqv-personal.de) gesendet
+> The commit in Fixes also introduced a new error handling path which should
+> goto the existing error handling path.
+> Otherwise some resources leak.
+> 
+> Fixes: 0d31d91e6145 ("iio: light: cm3605: Make use of the helper function dev_err_probe()")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+oops. 
+
+Applied to the fixes-togreg branch of iio.git.
+
+I've just move that branch forwards to current char-misc-linus which includes
+Greg's pull requests for this cycle via Linus' tree, but may well
+rebase on rc1 once that's available.
+
+Thanks,
+
+Jonathan
+
+> ---
+>  drivers/iio/light/cm3605.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/light/cm3605.c b/drivers/iio/light/cm3605.c
+> index c721b69d5095..0b30db77f78b 100644
+> --- a/drivers/iio/light/cm3605.c
+> +++ b/drivers/iio/light/cm3605.c
+> @@ -226,8 +226,10 @@ static int cm3605_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	irq = platform_get_irq(pdev, 0);
+> -	if (irq < 0)
+> -		return dev_err_probe(dev, irq, "failed to get irq\n");
+> +	if (irq < 0) {
+> +		ret = dev_err_probe(dev, irq, "failed to get irq\n");
+> +		goto out_disable_aset;
+> +	}
+>  
+>  	ret = devm_request_threaded_irq(dev, irq, cm3605_prox_irq,
+>  					NULL, 0, "cm3605", indio_dev);
 
