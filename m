@@ -2,85 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 931F2C25B06
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Aug 2022 09:57:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F000C00140
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Aug 2022 10:33:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235004AbiHHJ5P (ORCPT
+        id S238022AbiHHKdb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 8 Aug 2022 05:57:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56322 "EHLO
+        Mon, 8 Aug 2022 06:33:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242460AbiHHJ5O (ORCPT
+        with ESMTP id S236126AbiHHKd3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 8 Aug 2022 05:57:14 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C1C98BCB2
-        for <kernel-janitors@vger.kernel.org>; Mon,  8 Aug 2022 02:57:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1659952632;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=LqzDiaZZFKLrzeK14Ad4zWfelyZIgkCg5mXEYloBVAQ=;
-        b=N3GbWQDMJi7nNGLsBAOE74NiTkZRgR5GmG7NQxRkrgCIxNhwQwRrCgYBXG9+0E5O/c+H5C
-        JrkoARg7MQAH8JbW7O35ezsUd1VpDDiiM7nDT9AJFtURDP7eODaRJJDjMTfnVDv/em8iqm
-        t0sBiqbUWDDuZXD4LQOrDTskVbDzxtA=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-313-1005c4v5Ndq1-yiUucDn0Q-1; Mon, 08 Aug 2022 05:57:07 -0400
-X-MC-Unique: 1005c4v5Ndq1-yiUucDn0Q-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 69BC93815D26;
-        Mon,  8 Aug 2022 09:57:07 +0000 (UTC)
-Received: from localhost (unknown [10.39.193.46])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 22DA7C15BA1;
-        Mon,  8 Aug 2022 09:57:06 +0000 (UTC)
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Diana Craciun <diana.craciun@oss.nxp.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        kvm@vger.kernel.org
-Subject: Re: [PATCH] vfio/fsl-mc: Fix a typo in a comment
-In-Reply-To: <2b65bf8d2b4d940cafbafcede07c23c35f042f5a.1659815764.git.christophe.jaillet@wanadoo.fr>
-Organization: Red Hat GmbH
-References: <2b65bf8d2b4d940cafbafcede07c23c35f042f5a.1659815764.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Notmuch/0.36 (https://notmuchmail.org)
-Date:   Mon, 08 Aug 2022 11:57:05 +0200
-Message-ID: <87h72ndpn2.fsf@redhat.com>
+        Mon, 8 Aug 2022 06:33:29 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC050FFB;
+        Mon,  8 Aug 2022 03:33:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1659954809; x=1691490809;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TkDQQIVn5gXSOl294qqKK8buwtM+qJn9ROJ7wvLLwAE=;
+  b=cIlwE8fAO7GkrdE3TJWiUXWyOnY8Wq6QmFj9jmBFZaW4aTYC9/A/p8fH
+   b5GdP2OogqNvTcEgNfbt+jh+yGD8Hmk7QPrx7Vwh9yfFdVm3JHIkKzWJ4
+   CVV2CAnrtnKjAcd0iiMWVz/3cpoBzreU96vI+zBuL9GJ2ayYY3TbJIvZl
+   6WH6g+LX7C+g+LWb5NWx7/q6hOZH+fg47hLjZmZRhsDk2AR6K3j5vKVFE
+   OGJYiOxkdEqIqglDaV77NP9poKbDqxpPs3rIQHU/fh4egG7mBz+o05YJe
+   pOBsfjmoDRIrIsBtmJkpIgrElXGdp6xR1VCfZHU05rCF7+IJ2WgWKTM67
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10432"; a="291337267"
+X-IronPort-AV: E=Sophos;i="5.93,222,1654585200"; 
+   d="scan'208";a="291337267"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2022 03:33:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,222,1654585200"; 
+   d="scan'208";a="746583385"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by fmsmga001.fm.intel.com with SMTP; 08 Aug 2022 03:33:24 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 08 Aug 2022 13:33:23 +0300
+Date:   Mon, 8 Aug 2022 13:33:23 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+        linux-usb@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] usb: typec: ucsi: stm32g0: Fix spelling mistake
+ "booloader" -> "bootloader"
+Message-ID: <YvDmc2RXuvCE8rGt@kuha.fi.intel.com>
+References: <20220803123018.913710-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220803123018.913710-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Aug 06 2022, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+On Wed, Aug 03, 2022 at 01:30:18PM +0100, Colin Ian King wrote:
+> There is a spelling mistake in a dev_err_probe message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-$SUBJECT: s/comment/message/
-
-> L and S are swapped/
-> s/VFIO_FLS_MC/VFIO_FSL_MC/
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> All the dev_ logging functions in the file have the "VFIO_FSL_MC: "
-> prefix.
-> As they are dev_ function, the driver should already be displayed.
->
-> So, does it make sense or could they be all removed?
-
-From a quick glance, there seem to be messages for when the device is
-_not_ bound to the fsl-mc driver (e.g. in vfio_fsl_mc_bus_notifier());
-I'd just fix the typo for now.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
 > ---
->  drivers/vfio/fsl-mc/vfio_fsl_mc.c | 2 +-
+>  drivers/usb/typec/ucsi/ucsi_stm32g0.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/ucsi/ucsi_stm32g0.c b/drivers/usb/typec/ucsi/ucsi_stm32g0.c
+> index 061551d464f1..6ced49e4d208 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_stm32g0.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_stm32g0.c
+> @@ -599,7 +599,7 @@ static int ucsi_stm32g0_probe_bootloader(struct ucsi *ucsi)
+>  		g0->i2c_bl = i2c_new_dummy_device(g0->client->adapter, STM32G0_I2C_BL_ADDR);
+>  		if (IS_ERR(g0->i2c_bl)) {
+>  			ret = dev_err_probe(g0->dev, PTR_ERR(g0->i2c_bl),
+> -					    "Failed to register booloader I2C address\n");
+> +					    "Failed to register bootloader I2C address\n");
+>  			return ret;
+>  		}
+>  	}
+> -- 
+> 2.35.3
 
-Acked-by: Cornelia Huck <cohuck@redhat.com>
-
+-- 
+heikki
