@@ -2,98 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20EDAC00140
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Aug 2022 08:35:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 931F2C25B06
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Aug 2022 09:57:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232218AbiHHIfX (ORCPT
+        id S235004AbiHHJ5P (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 8 Aug 2022 04:35:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55150 "EHLO
+        Mon, 8 Aug 2022 05:57:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230127AbiHHIfU (ORCPT
+        with ESMTP id S242460AbiHHJ5O (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 8 Aug 2022 04:35:20 -0400
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48735263D;
-        Mon,  8 Aug 2022 01:35:18 -0700 (PDT)
-X-UUID: e00517e4fe0c42c5a04c3cb478211a06-20220808
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=H1gH13JIdDwMN199QhmpDW0yWKPk/chPlNXobtyICTY=;
-        b=SPMsn3u410SY/PNOGAwVFmZknwYkIS1bxwfPQDcF/nL8jbhHvXARFes1EoMOvqtc2hv6BpP8yWtSKR2f1VFFrLywsPTovgtrJx+FFcqH8sNFtC2uUfQNMAGIRa23JNsRY0mQV1CxppQMIYMvRwLULA5ZyRQtyK/zXgzmy/i+rVo=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.9,REQID:abfee422-2053-4124-b0f4-d4c54eb7abf0,OB:0,LO
-        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_H
-        am,ACTION:release,TS:0
-X-CID-META: VersionHash:3d8acc9,CLOUDID:133135ae-9535-44a6-aa9b-7f62b79b6ff6,C
-        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil
-        ,Bulk:nil,QS:nil,BEC:nil,COL:0
-X-UUID: e00517e4fe0c42c5a04c3cb478211a06-20220808
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1657741834; Mon, 08 Aug 2022 16:35:12 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Mon, 8 Aug 2022 16:35:11 +0800
-Received: from mhfsdcap04 (10.17.3.154) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 8 Aug 2022 16:35:11 +0800
-Message-ID: <63920b2ae09e8f82a9b866cd01ddb63b958fb4e8.camel@mediatek.com>
-Subject: Re: [PATCH] usb: common: usb-conn-gpio: Simplify some error message
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+        Mon, 8 Aug 2022 05:57:14 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C1C98BCB2
+        for <kernel-janitors@vger.kernel.org>; Mon,  8 Aug 2022 02:57:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1659952632;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=LqzDiaZZFKLrzeK14Ad4zWfelyZIgkCg5mXEYloBVAQ=;
+        b=N3GbWQDMJi7nNGLsBAOE74NiTkZRgR5GmG7NQxRkrgCIxNhwQwRrCgYBXG9+0E5O/c+H5C
+        JrkoARg7MQAH8JbW7O35ezsUd1VpDDiiM7nDT9AJFtURDP7eODaRJJDjMTfnVDv/em8iqm
+        t0sBiqbUWDDuZXD4LQOrDTskVbDzxtA=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-313-1005c4v5Ndq1-yiUucDn0Q-1; Mon, 08 Aug 2022 05:57:07 -0400
+X-MC-Unique: 1005c4v5Ndq1-yiUucDn0Q-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 69BC93815D26;
+        Mon,  8 Aug 2022 09:57:07 +0000 (UTC)
+Received: from localhost (unknown [10.39.193.46])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 22DA7C15BA1;
+        Mon,  8 Aug 2022 09:57:06 +0000 (UTC)
+From:   Cornelia Huck <cohuck@redhat.com>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>
-Date:   Mon, 8 Aug 2022 16:35:11 +0800
-In-Reply-To: <7705a9dff8e097070c492d6f4f8aafaaa890f049.1659763173.git.christophe.jaillet@wanadoo.fr>
-References: <7705a9dff8e097070c492d6f4f8aafaaa890f049.1659763173.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        Diana Craciun <diana.craciun@oss.nxp.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        kvm@vger.kernel.org
+Subject: Re: [PATCH] vfio/fsl-mc: Fix a typo in a comment
+In-Reply-To: <2b65bf8d2b4d940cafbafcede07c23c35f042f5a.1659815764.git.christophe.jaillet@wanadoo.fr>
+Organization: Red Hat GmbH
+References: <2b65bf8d2b4d940cafbafcede07c23c35f042f5a.1659815764.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Notmuch/0.36 (https://notmuchmail.org)
+Date:   Mon, 08 Aug 2022 11:57:05 +0200
+Message-ID: <87h72ndpn2.fsf@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 2022-08-06 at 07:19 +0200, Christophe JAILLET wrote:
-> dev_err_probe() already prints the error code in a human readable
-> way, so
-> there is no need to duplicate it as a numerical value at the end of
-> the
-> message.
-> 
-> Fixes: ddaf0d6dc467 ("usb: common: usb-conn-gpio: use dev_err_probe()
-> to print log")
+On Sat, Aug 06 2022, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+
+$SUBJECT: s/comment/message/
+
+> L and S are swapped/
+> s/VFIO_FLS_MC/VFIO_FSL_MC/
+>
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/usb/common/usb-conn-gpio.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/usb/common/usb-conn-gpio.c
-> b/drivers/usb/common/usb-conn-gpio.c
-> index b39c9f1c375d..44c5127175b7 100644
-> --- a/drivers/usb/common/usb-conn-gpio.c
-> +++ b/drivers/usb/common/usb-conn-gpio.c
-> @@ -208,10 +208,9 @@ static int usb_conn_probe(struct platform_device
-> *pdev)
->  	if (PTR_ERR(info->vbus) == -ENODEV)
->  		info->vbus = NULL;
->  
-> -	if (IS_ERR(info->vbus)) {
-> -		ret = PTR_ERR(info->vbus);
-> -		return dev_err_probe(dev, ret, "failed to get vbus
-> :%d\n", ret);
-> -	}
-> +	if (IS_ERR(info->vbus))
-> +		return dev_err_probe(dev, PTR_ERR(info->vbus),
-> +				     "failed to get vbus\n");
-How about putting dev_err_probe() in a single line? it doesn't exceed
-100 chars.
+> All the dev_ logging functions in the file have the "VFIO_FSL_MC: "
+> prefix.
+> As they are dev_ function, the driver should already be displayed.
+>
+> So, does it make sense or could they be all removed?
 
->  
->  	info->role_sw = usb_role_switch_get(dev);
->  	if (IS_ERR(info->role_sw))
+From a quick glance, there seem to be messages for when the device is
+_not_ bound to the fsl-mc driver (e.g. in vfio_fsl_mc_bus_notifier());
+I'd just fix the typo for now.
+
+> ---
+>  drivers/vfio/fsl-mc/vfio_fsl_mc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Acked-by: Cornelia Huck <cohuck@redhat.com>
 
