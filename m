@@ -2,93 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE78C00140
-	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Aug 2022 13:19:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 293DFC00140
+	for <kernel-janitors@archiver.kernel.org>; Mon,  8 Aug 2022 14:58:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243268AbiHHNTn (ORCPT
+        id S243513AbiHHO6R (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 8 Aug 2022 09:19:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60824 "EHLO
+        Mon, 8 Aug 2022 10:58:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243259AbiHHNTl (ORCPT
+        with ESMTP id S243657AbiHHO5s (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 8 Aug 2022 09:19:41 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E08E5617C;
-        Mon,  8 Aug 2022 06:19:40 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7CF6E61214;
-        Mon,  8 Aug 2022 13:19:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F938C433C1;
-        Mon,  8 Aug 2022 13:19:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659964779;
-        bh=eQQG3w7iWYBgQ9L9vR2hhgfaLi4C3wIC0N0XBZUD6UE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UftdXnG9yQF3+pvKzjJvBCeqiOXZSUFohihYVej2PXb3/xiFG3Z6cOmvOK4ckeDvE
-         563QMLfc3HafHPMX6Rno/xPd7LFtf5DbGLqA+K8jsQipl7wsG0dXhGuGnSVGSr9Le0
-         b1PeFCLNF0ChWt1MwA1WHL4DcOCvCTCSF8AN2cxQSNQx2NDLvjKrmFX40alsHxoCHs
-         1vEKg/BKpo5y0cuWg+XtcetqGKvE4nVL7aB/12CRPAziXMko1tMNyCB+AhjQjxeoKk
-         xsj8jrt1ZX6Ga1Sikf5jLlnLiZJpc5RmxaMfrbjLHVfeeviQJRsh3aYkdqv0kisOHx
-         r31tSLiitOv2A==
-Date:   Mon, 8 Aug 2022 14:19:33 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Cezary Rojewski <cezary.rojewski@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-        Bard Liao <yung-chuan.liao@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Harsha Priya <harshapriya.n@intel.com>,
-        "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Sriram Periyasamy <sriramx.periyasamy@intel.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH] ASoC: Intel: kbl_rt5663_max98927: Simplify clk_get()
- usage
-Message-ID: <YvENZULMLWkeaCzO@sirena.org.uk>
-References: <55e59c4792d64ff6336fcaa85ec15590553e9d63.1659903516.git.christophe.jaillet@wanadoo.fr>
+        Mon, 8 Aug 2022 10:57:48 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 054A113D57;
+        Mon,  8 Aug 2022 07:57:45 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 80866ED1;
+        Mon,  8 Aug 2022 07:57:45 -0700 (PDT)
+Received: from [10.57.72.250] (unknown [10.57.72.250])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C71E63F5A1;
+        Mon,  8 Aug 2022 07:57:43 -0700 (PDT)
+Message-ID: <14029916-6037-9248-ddd1-24199e3d3ede@arm.com>
+Date:   Mon, 8 Aug 2022 15:57:39 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="h+2uZ44m+eEzN7zj"
-Content-Disposition: inline
-In-Reply-To: <55e59c4792d64ff6336fcaa85ec15590553e9d63.1659903516.git.christophe.jaillet@wanadoo.fr>
-X-Cookie: Flee at once, all is discovered.
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH v2] perf/arm_pmu_platform: Fix an error message related to
+ dev_err_probe() usage
+Content-Language: en-GB
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <aaeba9c12ccdb29f48fe19137cb5abeea85fbb24.1659732652.git.christophe.jaillet@wanadoo.fr>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <aaeba9c12ccdb29f48fe19137cb5abeea85fbb24.1659732652.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On 2022-08-05 21:55, Christophe JAILLET wrote:
+> dev_err() is a macro that expand dev_fmt, but dev_err_probe() is a
+> function and cannot perform this macro expansion.
+> 
+> So hard code the "hw perfevents: " prefix and dd a comment explaining why.
+> 
+> Fixes: 11fa1dc8020a ("perf/arm_pmu_platform: Use dev_err_probe() for IRQ errors")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Untested, but I can't see how it could work.
+> 
+> v1 --> v2
+>    - fix a typo in the comment
+> ---
+>   drivers/perf/arm_pmu_platform.c | 7 +++++--
+>   1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/perf/arm_pmu_platform.c b/drivers/perf/arm_pmu_platform.c
+> index 513de1f54e2d..02cca4b8f0fd 100644
+> --- a/drivers/perf/arm_pmu_platform.c
+> +++ b/drivers/perf/arm_pmu_platform.c
+> @@ -101,8 +101,11 @@ static int pmu_parse_irqs(struct arm_pmu *pmu)
+>   	struct device *dev = &pdev->dev;
+>   
+>   	num_irqs = platform_irq_count(pdev);
+> -	if (num_irqs < 0)
+> -		return dev_err_probe(dev, num_irqs, "unable to count PMU IRQs\n");
+> +	if (num_irqs < 0) {
+> +		/* dev_err_probe() does not handle dev_fmt, so hard-code the prefix */
+> +		return dev_err_probe(dev, num_irqs,
+> +				     "hw perfevents: unable to count PMU IRQs\n");
 
---h+2uZ44m+eEzN7zj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Why not use dev_fmt directly? But even better, is there any practical 
+reason why this couldn't be fixed at the source by indirecting 
+dev_err_probe() through a macro wrapper just like all its friends:
 
-On Sun, Aug 07, 2022 at 10:18:54PM +0200, Christophe JAILLET wrote:
+#define dev_err_probe(dev, err, fmt, ...) \
+	_dev_err_probe(dev, err, dev_fmt(fmt), ##__VA_ARGS__)
 
-> Not sure the Fixes tag is needed. The patch does not fix anything.
+?
 
-You just answered your own question there...
+Thanks,
+Robin.
 
---h+2uZ44m+eEzN7zj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmLxDWQACgkQJNaLcl1U
-h9AHtgf+NLieJb/NpzO1CTPoNd4n2HBmtAu3jtpeGHaJIGGbQtSKBrjJpibSPV5e
-4rDQjw2jC0NDP6aF66TIko2uT/53ELZXRszH/9+GTRkbgubnMPOymgnEJm7hulDY
-PFgqQLdYkEhiOvUpwFL1J6QrXntpP5hB6DTKr83J95QdgkAaXp1uAshxLZ/2vbh3
-2S9ruT+ROnnmLqkvlxdLEtOP9rYVLLoquDY+zTzWNhWhPC0jYcQNsgHsuHI9pKUm
-xJdE0s9zbEtuaeaPnxlGhwmXPI1Z5kCG9l44YVd/+6BhaUitCqzXe0Dp7Qe5ZFR0
-8W7LTCLphAQMB1vM65di6lrGZNOCTA==
-=1XmB
------END PGP SIGNATURE-----
-
---h+2uZ44m+eEzN7zj--
+> +	}
+>   
+>   	/*
+>   	 * In this case we have no idea which CPUs are covered by the PMU.
