@@ -2,76 +2,69 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 064AEC19F2D
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Aug 2022 20:28:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70BFDC19F2D
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Aug 2022 20:44:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236403AbiHIU25 (ORCPT
+        id S1343515AbiHIUod (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 Aug 2022 16:28:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50388 "EHLO
+        Tue, 9 Aug 2022 16:44:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229958AbiHIU24 (ORCPT
+        with ESMTP id S245740AbiHIUoa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 Aug 2022 16:28:56 -0400
-Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD9D515836
-        for <kernel-janitors@vger.kernel.org>; Tue,  9 Aug 2022 13:28:54 -0700 (PDT)
+        Tue, 9 Aug 2022 16:44:30 -0400
+Received: from smtp.smtpout.orange.fr (smtp02.smtpout.orange.fr [80.12.242.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 700A922B1D
+        for <kernel-janitors@vger.kernel.org>; Tue,  9 Aug 2022 13:44:28 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id LVqKodyw4sL0zLVqKoORai; Tue, 09 Aug 2022 22:28:52 +0200
+        id LW5SoZmsiPMmaLW5SoEzm4; Tue, 09 Aug 2022 22:44:26 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 09 Aug 2022 22:28:52 +0200
+X-ME-Date: Tue, 09 Aug 2022 22:44:26 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH v2] usb: common: usb-conn-gpio: Simplify some error message
-Date:   Tue,  9 Aug 2022 22:28:42 +0200
-Message-Id: <7505a9dfa1e097070c492d6f6f84afa2a490b040.1659763173.git.christophe.jaillet@wanadoo.fr>
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2] cpu_pm: Fix a typo in a comment
+Date:   Tue,  9 Aug 2022 22:44:24 +0200
+Message-Id: <803d5d09a793c85888fcf8b9354c35bc0b512396.1659802446.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-dev_err_probe() already prints the error code in a human readable way, so
-there is no need to duplicate it as a numerical value at the end of the
-message.
+s/cpm_pm/cpu_pm/
 
-Fixes: ddaf0d6dc467 ("usb: common: usb-conn-gpio: use dev_err_probe() to print log")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Change in v2:
-  * keep the message on the same line of dev_err_probe() because the line is
-    still < 100 char   [Chunfeng Yun <chunfeng.yun@mediatek.com>]
----
- drivers/usb/common/usb-conn-gpio.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+  kernel/cpu_pm.c            and
+  include/linux/cpu_pm.h
+seem to be orphans in MAINTAINERS. Is it expected?
 
-diff --git a/drivers/usb/common/usb-conn-gpio.c b/drivers/usb/common/usb-conn-gpio.c
-index b39c9f1c375d..44c5127175b7 100644
---- a/drivers/usb/common/usb-conn-gpio.c
-+++ b/drivers/usb/common/usb-conn-gpio.c
-@@ -208,10 +208,8 @@ static int usb_conn_probe(struct platform_device *pdev)
- 	if (PTR_ERR(info->vbus) == -ENODEV)
- 		info->vbus = NULL;
- 
--	if (IS_ERR(info->vbus)) {
--		ret = PTR_ERR(info->vbus);
--		return dev_err_probe(dev, ret, "failed to get vbus :%d\n", ret);
--	}
-+	if (IS_ERR(info->vbus))
-+		return dev_err_probe(dev, PTR_ERR(info->vbus), "failed to get vbus\n");
- 
- 	info->role_sw = usb_role_switch_get(dev);
- 	if (IS_ERR(info->role_sw))
+Changes in v2:
+  * fix a typo in the changelog explaining that it was fixing a typo :(
+    [Dan Carpenter <dan.carpenter@oracle.com>]
+---
+ include/linux/cpu_pm.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/cpu_pm.h b/include/linux/cpu_pm.h
+index 552b8f9ea05e..e8608ccdc134 100644
+--- a/include/linux/cpu_pm.h
++++ b/include/linux/cpu_pm.h
+@@ -16,7 +16,7 @@
+  * When a CPU goes to a low power state that turns off power to the CPU's
+  * power domain, the contents of some blocks (floating point coprocessors,
+  * interrupt controllers, caches, timers) in the same power domain can
+- * be lost.  The cpm_pm notifiers provide a method for platform idle, suspend,
++ * be lost.  The cpu_pm notifiers provide a method for platform idle, suspend,
+  * and hotplug implementations to notify the drivers for these blocks that
+  * they may be reset.
+  *
 -- 
 2.34.1
 
