@@ -2,59 +2,62 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 862A6C25B07
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Aug 2022 18:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 730D0C25B08
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Aug 2022 18:55:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245306AbiHISmW (ORCPT
+        id S1344930AbiHISz2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 Aug 2022 14:42:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54048 "EHLO
+        Tue, 9 Aug 2022 14:55:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348225AbiHISlz (ORCPT
+        with ESMTP id S1344944AbiHISzA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 Aug 2022 14:41:55 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D57CA46DB5;
-        Tue,  9 Aug 2022 11:15:48 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id n185so6690568wmn.4;
-        Tue, 09 Aug 2022 11:15:48 -0700 (PDT)
+        Tue, 9 Aug 2022 14:55:00 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40FF81EC77;
+        Tue,  9 Aug 2022 11:25:21 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id q1-20020a05600c040100b003a52db97fffso4334655wmb.4;
+        Tue, 09 Aug 2022 11:25:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc;
-        bh=qeKkefaI8rAn6PdLcG/BjASCBCjakKAMrlqG8PzJfoA=;
-        b=RwC/xY4OulFkweCDNYiIDHC75IPHlmscyLW0IFNZlASwaL1YDJssP6ge2AAidgxRkZ
-         n2ipv+eiO4y4YB9hMs9YkZTAO7Uv4qHxO+GHHQZb+uWnRcvBBiLf9PzTjr/cPaX6OdeI
-         9LEAKdypsqmb1z7l0YfE9L9HTn4YJ76MRWkrD4eBTteqn3Yii+6wK+DWFDmqsjvyR04O
-         1ySxFpK/0mHEjHd3o6gpf4IKAa9NSlFbCLKIRz0G+2RrsyI89SmbmP9TE5nmvekfCZ1f
-         a2bX2X4NIwEgNJT9erGmmlaxEw7Ysr2rHuZcfLMcxmth+9cAfSJ/8vlmFCw0O0pAqtwZ
-         jWeg==
+        bh=iR1UBa3fcEjPoYYuaep1Tag2qx+Me802676/JFCG/W8=;
+        b=RlcBaeE0yFOKt3O5Rf1v8YGF4SMX/8chz8AFe0CRJN7MGoARW32+tIrBCiNfcH4/Zz
+         plzS9lCWLSIJh1z19JfG1VYGI9VfX3LhdVW5Xkwh6c3zoBMB9VW3GstRdAGnJBmpF7s9
+         HUke9IV6euF5A6DUD9fV/SHZ9M+yZ3s1El4xyd+VQ1Kad7rjTT40FPrmJqItsyRTsZlP
+         pd5SAPoi1VMuLTXxq++k/T2CTLLDkIe6RglpYABCXc0slfq8lbit6GY0V/8R5A3Tc+BG
+         njXZa0WIG9exg/dDCN1O9V9fbU7XuUXx1kQgkCJVMvS8Zac0rRoa/iS5LTStnhwqd1HD
+         WUYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc;
-        bh=qeKkefaI8rAn6PdLcG/BjASCBCjakKAMrlqG8PzJfoA=;
-        b=ZSIeDk2Vxzk/KCvuPjQ16UOQudPneDKFaxFfw6FTCZR1ndUexuVaVt7TdDrchssXzK
-         CfDkw3w5yDEaZQrXnvZSK19bovmMX9sJN7ZDz3KXeXYb780woXtIOLdExPGrGH++VyFn
-         5xxqxMMnvF/NmCVmeUzxSshRpQXfMvtFkmJ1HFPa48pUZJfrg6o0ZZagF5/eIEWVvshu
-         KhJTDiRaw8uMpZCrx9zNpoaPMF1fFWlcJaAA8ly8AlUw5rHIA7UFk4pZeZG5a4Il/4tU
-         sZXg3aVK5wu9W7LxzNx+zLJQn7hYlAQUCZh2gVI+NgaKtE656lYn8HKjqccz8sUlYsR/
-         CfMQ==
-X-Gm-Message-State: ACgBeo0JHntogmAIUaplzJSH1iih18NJATYz/rnQPIObCzIj1IXgltdQ
-        njqY1xK+S/XgYyRyFBpFj3Y=
-X-Google-Smtp-Source: AA6agR6tWoLJjD3AvKZPvfi984GJjILsxOkx4GUwcfw9X+CWLNACfY6ZAkRPNXFxZEZYAxxvJp/WGg==
-X-Received: by 2002:a05:600c:1e83:b0:3a3:3ecb:52a0 with SMTP id be3-20020a05600c1e8300b003a33ecb52a0mr21965836wmb.44.1660068946370;
-        Tue, 09 Aug 2022 11:15:46 -0700 (PDT)
+        bh=iR1UBa3fcEjPoYYuaep1Tag2qx+Me802676/JFCG/W8=;
+        b=iyntTRJ6MQPgSPD+fdYTkO8jd3oAydPMEiD/FtUjdkmuiVv0eUP6cT8xQrS2nWbkMq
+         Ei19ZxRgn+hU/kSNzeUcbdpeoaZR/yzjysUM0Hz2YKqDK/6iThFyZY3yUdZhu+rKdEmU
+         Wy59BE19SRy7E4k+goYwPVLD/BOIW5udxkKmLmfbtSDneVy1hjWIOezOmGIMOrA6H18b
+         Qn/CtJTHfBijVSWuXaEzGWgmspZVb1c0G8NEj7f7Vbbxi6haR50q/thsGxg2+BLA2orT
+         bTrah3PEJ//Z7+/2NTKsLF5DROts6/a1+hZ4jPbFDXe7N9yBxH2nKZaByzn0MxubQNyx
+         dBOw==
+X-Gm-Message-State: ACgBeo09P2iobFw3JK8MKPa5q8qJxvN95jh9igwhf4SUWwpNM2fVls6R
+        BmSyNZAjuKnbQ8Gub64YotE=
+X-Google-Smtp-Source: AA6agR7uXxer+8UdJWsF72Vp9SYWd/fJgbb6WwTEuzs97Thgx1Iz8Vl/nTOntrGu1D2zsxkDMxO+Ng==
+X-Received: by 2002:a05:600c:4e92:b0:3a3:2a1c:d005 with SMTP id f18-20020a05600c4e9200b003a32a1cd005mr21887281wmq.170.1660069519727;
+        Tue, 09 Aug 2022 11:25:19 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id w5-20020a5d6805000000b0021ea1bcc300sm14272737wru.56.2022.08.09.11.15.45
+        by smtp.gmail.com with ESMTPSA id m6-20020a05600c4f4600b003a4eea0aa48sm18153154wmq.0.2022.08.09.11.25.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Aug 2022 11:15:45 -0700 (PDT)
+        Tue, 09 Aug 2022 11:25:19 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org
+To:     Hannes Reinecke <hare@suse.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: usb-audio: make read-only array marker static const
-Date:   Tue,  9 Aug 2022 19:15:44 +0100
-Message-Id: <20220809181544.3046429-1-colin.i.king@gmail.com>
+Subject: [PATCH] scsi: aic79xx: make read-only array tok_list static const
+Date:   Tue,  9 Aug 2022 19:25:18 +0100
+Message-Id: <20220809182518.3046935-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -63,27 +66,27 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the read-only array marker on the stack but instead make
+Don't populate the read-only array tok_list on the stack but instead make
 it static const. Also makes the object code a little smaller.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- sound/usb/pcm.c | 2 +-
+ drivers/scsi/aic7xxx/aic79xx_osm.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/usb/pcm.c b/sound/usb/pcm.c
-index e692ae04436a..d45d1d7e6664 100644
---- a/sound/usb/pcm.c
-+++ b/sound/usb/pcm.c
-@@ -1269,7 +1269,7 @@ static inline void fill_playback_urb_dsd_dop(struct snd_usb_substream *subs,
- 	unsigned int wrap = subs->buffer_bytes;
- 	u8 *dst = urb->transfer_buffer;
- 	u8 *src = runtime->dma_area;
--	u8 marker[] = { 0x05, 0xfa };
-+	static const u8 marker[] = { 0x05, 0xfa };
- 	unsigned int queued = 0;
+diff --git a/drivers/scsi/aic7xxx/aic79xx_osm.c b/drivers/scsi/aic7xxx/aic79xx_osm.c
+index 928099163f0f..4ed40e6c5522 100644
+--- a/drivers/scsi/aic7xxx/aic79xx_osm.c
++++ b/drivers/scsi/aic7xxx/aic79xx_osm.c
+@@ -1044,7 +1044,7 @@ ahd_parse_brace_option(char *opt_name, char *opt_arg, char *end, int depth,
+ 	int      instance;
+ 	int	 targ;
+ 	int	 done;
+-	char	 tok_list[] = {'.', ',', '{', '}', '\0'};
++	static const char tok_list[] = {'.', ',', '{', '}', '\0'};
  
- 	/*
+ 	/* All options use a ':' name/arg separator */
+ 	if (*opt_arg != ':')
 -- 
 2.35.3
 
