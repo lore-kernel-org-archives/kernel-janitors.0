@@ -2,91 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 730D0C25B08
-	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Aug 2022 18:55:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F6D9C25B08
+	for <kernel-janitors@archiver.kernel.org>; Tue,  9 Aug 2022 20:04:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344930AbiHISz2 (ORCPT
+        id S1345824AbiHIUEz (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 9 Aug 2022 14:55:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60212 "EHLO
+        Tue, 9 Aug 2022 16:04:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344944AbiHISzA (ORCPT
+        with ESMTP id S1344154AbiHIUEv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 9 Aug 2022 14:55:00 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40FF81EC77;
-        Tue,  9 Aug 2022 11:25:21 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id q1-20020a05600c040100b003a52db97fffso4334655wmb.4;
-        Tue, 09 Aug 2022 11:25:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc;
-        bh=iR1UBa3fcEjPoYYuaep1Tag2qx+Me802676/JFCG/W8=;
-        b=RlcBaeE0yFOKt3O5Rf1v8YGF4SMX/8chz8AFe0CRJN7MGoARW32+tIrBCiNfcH4/Zz
-         plzS9lCWLSIJh1z19JfG1VYGI9VfX3LhdVW5Xkwh6c3zoBMB9VW3GstRdAGnJBmpF7s9
-         HUke9IV6euF5A6DUD9fV/SHZ9M+yZ3s1El4xyd+VQ1Kad7rjTT40FPrmJqItsyRTsZlP
-         pd5SAPoi1VMuLTXxq++k/T2CTLLDkIe6RglpYABCXc0slfq8lbit6GY0V/8R5A3Tc+BG
-         njXZa0WIG9exg/dDCN1O9V9fbU7XuUXx1kQgkCJVMvS8Zac0rRoa/iS5LTStnhwqd1HD
-         WUYg==
+        Tue, 9 Aug 2022 16:04:51 -0400
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 393BACF9;
+        Tue,  9 Aug 2022 13:04:51 -0700 (PDT)
+Received: by mail-pj1-f45.google.com with SMTP id gj1so12777087pjb.0;
+        Tue, 09 Aug 2022 13:04:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc;
-        bh=iR1UBa3fcEjPoYYuaep1Tag2qx+Me802676/JFCG/W8=;
-        b=iyntTRJ6MQPgSPD+fdYTkO8jd3oAydPMEiD/FtUjdkmuiVv0eUP6cT8xQrS2nWbkMq
-         Ei19ZxRgn+hU/kSNzeUcbdpeoaZR/yzjysUM0Hz2YKqDK/6iThFyZY3yUdZhu+rKdEmU
-         Wy59BE19SRy7E4k+goYwPVLD/BOIW5udxkKmLmfbtSDneVy1hjWIOezOmGIMOrA6H18b
-         Qn/CtJTHfBijVSWuXaEzGWgmspZVb1c0G8NEj7f7Vbbxi6haR50q/thsGxg2+BLA2orT
-         bTrah3PEJ//Z7+/2NTKsLF5DROts6/a1+hZ4jPbFDXe7N9yBxH2nKZaByzn0MxubQNyx
-         dBOw==
-X-Gm-Message-State: ACgBeo09P2iobFw3JK8MKPa5q8qJxvN95jh9igwhf4SUWwpNM2fVls6R
-        BmSyNZAjuKnbQ8Gub64YotE=
-X-Google-Smtp-Source: AA6agR7uXxer+8UdJWsF72Vp9SYWd/fJgbb6WwTEuzs97Thgx1Iz8Vl/nTOntrGu1D2zsxkDMxO+Ng==
-X-Received: by 2002:a05:600c:4e92:b0:3a3:2a1c:d005 with SMTP id f18-20020a05600c4e9200b003a32a1cd005mr21887281wmq.170.1660069519727;
-        Tue, 09 Aug 2022 11:25:19 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id m6-20020a05600c4f4600b003a4eea0aa48sm18153154wmq.0.2022.08.09.11.25.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Aug 2022 11:25:19 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Hannes Reinecke <hare@suse.com>,
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=bHFnSCpx4s1yF8VGyhgz7QOF0G/eo6MkBMtMb/5y7Kw=;
+        b=E7FMiwb3O8ooXaniJYbylzSC+9kgtUSTuW0xEDXX/lwZlszJeDkEe7T3LTCjs+8QPL
+         lrLjvu7q5fYGW3WDnqeksSjb/h+Iklzk/8+u9eJ50VbSE6n7cLSplCeyUiR6p/1EWgEf
+         JER8bWxEkBTAKpVV1GjZDHpra0lmlGGQf+a5M6bld9btVtZCyz9f3w7inkkRmwbIS77V
+         3qRapLwXTaufaB3WrxhaoDkcnePhIXfZEBY7DDkiZyPqmkQnYG0TXYsETFxuQDx0QMK1
+         f6TMkkyAjjmfT+j2CWo+BAlTFBkIAHf6kQpsFXaXt9aV9BL/bomYPaCyBPAZ6jOXAgey
+         tdCA==
+X-Gm-Message-State: ACgBeo2+LAuKWU2WIDDoXBwneXFBMFivZHaQGDVbd3wbr2hnI5w2dvPu
+        Z7MDGth1r3g7tGZdM0XPpXoLMjTHH/o=
+X-Google-Smtp-Source: AA6agR4UakHoOroAq+rmXZcbVw14rKs+gCvfRNkzhsXuB+C7jxhZoiGGzkFzF563PI2WPYky1xFY5w==
+X-Received: by 2002:a17:90b:3807:b0:1f4:ecf7:5987 with SMTP id mq7-20020a17090b380700b001f4ecf75987mr146310pjb.13.1660075490640;
+        Tue, 09 Aug 2022 13:04:50 -0700 (PDT)
+Received: from ?IPV6:2620:15c:211:201:61e9:2f41:c2d4:73d? ([2620:15c:211:201:61e9:2f41:c2d4:73d])
+        by smtp.gmail.com with ESMTPSA id jn1-20020a170903050100b0016c4fb6e0b2sm4245532plb.55.2022.08.09.13.04.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Aug 2022 13:04:49 -0700 (PDT)
+Message-ID: <70a33138-1981-f639-c371-b1ffb2378a73@acm.org>
+Date:   Tue, 9 Aug 2022 13:04:46 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] scsi: aic79xx: make read-only array tok_list static const
+Content-Language: en-US
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Hannes Reinecke <hare@suse.com>,
         "James E . J . Bottomley" <jejb@linux.ibm.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
         linux-scsi@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: aic79xx: make read-only array tok_list static const
-Date:   Tue,  9 Aug 2022 19:25:18 +0100
-Message-Id: <20220809182518.3046935-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.3
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20220809182518.3046935-1-colin.i.king@gmail.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20220809182518.3046935-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Don't populate the read-only array tok_list on the stack but instead make
-it static const. Also makes the object code a little smaller.
+On 8/9/22 11:25, Colin Ian King wrote:
+> Don't populate the read-only array tok_list on the stack but instead make
+> it static const. Also makes the object code a little smaller.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>   drivers/scsi/aic7xxx/aic79xx_osm.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/aic7xxx/aic79xx_osm.c b/drivers/scsi/aic7xxx/aic79xx_osm.c
+> index 928099163f0f..4ed40e6c5522 100644
+> --- a/drivers/scsi/aic7xxx/aic79xx_osm.c
+> +++ b/drivers/scsi/aic7xxx/aic79xx_osm.c
+> @@ -1044,7 +1044,7 @@ ahd_parse_brace_option(char *opt_name, char *opt_arg, char *end, int depth,
+>   	int      instance;
+>   	int	 targ;
+>   	int	 done;
+> -	char	 tok_list[] = {'.', ',', '{', '}', '\0'};
+> +	static const char tok_list[] = {'.', ',', '{', '}', '\0'};
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/scsi/aic7xxx/aic79xx_osm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Has it been considered to write the above code as follows?
 
-diff --git a/drivers/scsi/aic7xxx/aic79xx_osm.c b/drivers/scsi/aic7xxx/aic79xx_osm.c
-index 928099163f0f..4ed40e6c5522 100644
---- a/drivers/scsi/aic7xxx/aic79xx_osm.c
-+++ b/drivers/scsi/aic7xxx/aic79xx_osm.c
-@@ -1044,7 +1044,7 @@ ahd_parse_brace_option(char *opt_name, char *opt_arg, char *end, int depth,
- 	int      instance;
- 	int	 targ;
- 	int	 done;
--	char	 tok_list[] = {'.', ',', '{', '}', '\0'};
-+	static const char tok_list[] = {'.', ',', '{', '}', '\0'};
- 
- 	/* All options use a ':' name/arg separator */
- 	if (*opt_arg != ':')
--- 
-2.35.3
+static const char tok_list[] = ".,{}";
 
+Thanks,
+
+Bart.
