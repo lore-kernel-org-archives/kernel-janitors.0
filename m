@@ -2,41 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5445C00140
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Aug 2022 14:23:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF45C3F6B0
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Aug 2022 15:10:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231896AbiHJOXU (ORCPT
+        id S232976AbiHJPKK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 10 Aug 2022 10:23:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33732 "EHLO
+        Wed, 10 Aug 2022 11:10:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231961AbiHJOXS (ORCPT
+        with ESMTP id S233015AbiHJPJz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 10 Aug 2022 10:23:18 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74A8812A8E;
-        Wed, 10 Aug 2022 07:23:17 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 8407068AA6; Wed, 10 Aug 2022 16:23:14 +0200 (CEST)
-Date:   Wed, 10 Aug 2022 16:23:14 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH] nvme-fabrics: Fix a typo in an error message
-Message-ID: <20220810142314.GB25801@lst.de>
-References: <9cff69b6e880387a420b848b7248dd6e6ad3739a.1659816888.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9cff69b6e880387a420b848b7248dd6e6ad3739a.1659816888.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        Wed, 10 Aug 2022 11:09:55 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B2D775FD9;
+        Wed, 10 Aug 2022 08:09:53 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id e13so19434529edj.12;
+        Wed, 10 Aug 2022 08:09:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc;
+        bh=f/VOOq8lXSlkiTFVM32cY0BcJPmVEl3q/12bVuDaQYY=;
+        b=asjLVsS+PuxHh0j5TCEjcmVm3HYJxdeJGJroPrQIQBgb2x5Fa7ioKXwgzD1c1VsB6+
+         8EFTRv9KpRFdD7Qr3iTh/AllzWQ3Ztqi0DyeHoUkY3dLLNiMmo/dDq/KFN+RsTVi7JAh
+         ICDbAt4+EdjC5jGtJcbIpyvpjWcPHmCuBIAJdRadvIosOmPODYEqdL/bQwov1Hx2Otku
+         9taFV+pl5wXkPYZ3kSL3c68JBnvsAQzoR14jb1zUARx/DrtMPBc9K5c1SbrB6tyxQ6Ku
+         gyXRsObHyNq6mMonV3SJBf24qaZ/9VEgV0vmRykBemrFd81WG46KFMzoH13b+uEj9yVL
+         XJOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
+        bh=f/VOOq8lXSlkiTFVM32cY0BcJPmVEl3q/12bVuDaQYY=;
+        b=Wpt5gMSvVnDk1Dy14c04dX2ozoXV8P/yqdP4VuaVJ03hAwklx4m8MNWprDSE1t64+C
+         8/x3/VtMkB9uX9lyYvoimkKQIdIZHqSDmTXkSJrgaRpbEKGWGKm8Yu88NcOm8WQNwVLc
+         ohIuGaAox+eh/pxE/YmHSFnFmO+7p7oyPQqzMw0lxk8bQgpnJ4Gt2S5kqjjBnqR50dFe
+         rP0lVnpmi53Wk653TBQwy129FRXOv9YYZxu1RJT+M9t5aHhfeDOTQUHS/QnEHnm5IhYe
+         tOND4ZhnQcVLEf/sExAlyGEKvZMFfGELwm2XJCrXJhJPL3CuYrHq+viZVcCi/TAHLdJE
+         EZjA==
+X-Gm-Message-State: ACgBeo2gqEVMqc0uOR9KAGMHpUDNYUT5jRldZF5SiabLfQGIbq5VCoS/
+        fI2rQoFpqGw+cKjuoVmO5Qvhy8CG/ag=
+X-Google-Smtp-Source: AA6agR7Pi2BX4F2u2k11BqJFlDPz+CrdzSIRcFTEets2ZExEhWdZ16CQAYkc9z8ikshuPNi2SkP6bg==
+X-Received: by 2002:a50:fb99:0:b0:43c:d008:d4f9 with SMTP id e25-20020a50fb99000000b0043cd008d4f9mr26827209edq.13.1660144192117;
+        Wed, 10 Aug 2022 08:09:52 -0700 (PDT)
+Received: from felia.fritz.box (200116b826708900bd59055014c64746.dip.versatel-1u1.de. [2001:16b8:2670:8900:bd59:550:14c6:4746])
+        by smtp.gmail.com with ESMTPSA id p12-20020a1709066a8c00b0072af4af2f46sm2417358ejr.74.2022.08.10.08.09.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Aug 2022 08:09:51 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <zanussi@kernel.org>,
+        Linyu Yuan <quic_linyyuan@quicinc.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] tracing: react to error return from traceprobe_parse_event_name()
+Date:   Wed, 10 Aug 2022 17:09:21 +0200
+Message-Id: <20220810150921.8858-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Thanks,
+The function traceprobe_parse_event_name() may set the first two function
+arguments to a non-null value and still return -EINVAL to indicate an
+unsuccessful completion of the function. Hence, it is not sufficient to
+just check the result of the two function arguments for being not null,
+but the return value also needs to be checked.
 
-applied to nvme-6.0.
+Commit 95c104c378dc ("tracing: Auto generate event name when creating a
+group of events") changed the error-return-value checking of the second
+traceprobe_parse_event_name() invocation in __trace_eprobe_create() and
+removed checking the return value to jump to the error handling case.
+
+Reinstate using the return value in the error-return-value checking.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ kernel/trace/trace_eprobe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/trace/trace_eprobe.c b/kernel/trace/trace_eprobe.c
+index 4a0e9d927443..460d3ec8a256 100644
+--- a/kernel/trace/trace_eprobe.c
++++ b/kernel/trace/trace_eprobe.c
+@@ -883,7 +883,7 @@ static int __trace_eprobe_create(int argc, const char *argv[])
+ 	trace_probe_log_set_index(1);
+ 	sys_event = argv[1];
+ 	ret = traceprobe_parse_event_name(&sys_event, &sys_name, buf2, 0);
+-	if (!sys_event || !sys_name) {
++	if (!ret || !sys_event || !sys_name) {
+ 		trace_probe_log_err(0, NO_EVENT_INFO);
+ 		goto parse_error;
+ 	}
+-- 
+2.17.1
+
