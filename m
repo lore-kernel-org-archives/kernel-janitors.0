@@ -2,72 +2,97 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3599C00140
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Aug 2022 11:18:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4CACC00140
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Aug 2022 11:40:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231971AbiHJLSG (ORCPT
+        id S232016AbiHJLka (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 10 Aug 2022 07:18:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49810 "EHLO
+        Wed, 10 Aug 2022 07:40:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231961AbiHJLSF (ORCPT
+        with ESMTP id S231732AbiHJLk1 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 10 Aug 2022 07:18:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 331FE71BDD;
-        Wed, 10 Aug 2022 04:18:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C345E61217;
-        Wed, 10 Aug 2022 11:18:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2637C433C1;
-        Wed, 10 Aug 2022 11:18:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660130284;
-        bh=X/igtBEfqT0CYUtASMjqgR3fyAytacOaSIyuErvKw9M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HlT0P+nYbwJ2flfFtMbHArKjbtrGs2UfSXkG/90BCvZRZhwItH47p0W56db4hjVLX
-         qOAwfhPAEQXiEufCZS4mddD/cz2+qTOMhzEEZL9DTQsiAPsrIt5wj+BYpbQbofAlmj
-         wqX3yjHG3RV+RUVf3ks8zNgMVzi88wByCEsTX1AVIG0b0ObH2fwN8zGvOguxrZq7ZD
-         qp3GZb9CKUs8MVfp+R3f4IhMp3jGVFOpx3eq148DKWYJAyj6qXl2ofJpWgrBVNEnwR
-         zD9qKN3lXOXE03Ks1jSsU/kaeYCOOA1DpB+E3QmvAMzA1insIbcg8rpTQpUy0u9KmW
-         3H4Y+10QSdHQA==
-Date:   Wed, 10 Aug 2022 12:17:59 +0100
-From:   Lee Jones <lee@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Samuel Ortiz <sameo@linux.intel.com>, Milo Kim <Milo.Kim@ti.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 2/2] mfd: lp8788: Fix an error handling path in
- lp8788_irq_init() and lp8788_irq_init()
-Message-ID: <YvOT5wwHtpm3OGP2@google.com>
-References: <18398722da9df9490722d853e4797350189ae79b.1659261275.git.christophe.jaillet@wanadoo.fr>
- <bcd5a72c9c1c383dd6324680116426e32737655a.1659261275.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bcd5a72c9c1c383dd6324680116426e32737655a.1659261275.git.christophe.jaillet@wanadoo.fr>
+        Wed, 10 Aug 2022 07:40:27 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1237642FE;
+        Wed, 10 Aug 2022 04:40:21 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id dc19so27122841ejb.12;
+        Wed, 10 Aug 2022 04:40:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc;
+        bh=DdJp4UZHmlYx0A4VYaHgo2wRMc0wfMVM5lOUKK2ThO4=;
+        b=Bz3ob9RtssQY/+VrStqxVSL4x5lN7bbl61PFrrY73Et0lNuTTiOR2vflxTmV/gGAGu
+         hk/sGeRPQDy7JQQQ4fHpsGdSze1U6Hgc36NK441s5/sC+QLnyxOTos5GVqXog7HKeLgE
+         jpQffK0TfRZJATt65GZTuMXONlSdTU8y0UZpMnExkSCX9kxyit+7b3DnQ1PHeBF1K46A
+         EbO5S5s5qHaf4m8r3EVBPh6WjsxrlTWub5u5YE2BcSbS4pUqiyGWqp8L+/DJGlrWs9rj
+         88/Ta4hbjAf1paypvJz6kPFuu+mQU8DYFdsoEjGVF5TW6ebz9SQTTVqIUaPjmPPdXySn
+         iESQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
+        bh=DdJp4UZHmlYx0A4VYaHgo2wRMc0wfMVM5lOUKK2ThO4=;
+        b=cTdPNDUAuvd0zZv3zeOAdikI8ovE9DKUERQVzzVzn5Rt3RMAJiXfGI0OjAUDQWGMX5
+         AQImxqOV8oUdxG8gxHhZtivIlZFk1R93chi9Yipn4Cqvz55vUZw+HjcqYxPscDbMmdJ6
+         1zOXzVzku7PvA/t0IWAMduSOV+k9BZ8nIoWLQQtL9/brUUcWnjfoUlF7F1JsFUzivgsr
+         +2ZX9ycP8U7RgEY/i8b2bxxkjCZQnTJChxJzTd2rjUD7PDDPJ0a7dRw3N1YoS3ODA2xO
+         PMIhqU2aKICr9fNPZHvMfQfl+BXrHYgqU9J970Xjqhf2kJ1hP2UyQYCFTUV7JWLNF7gt
+         hxZg==
+X-Gm-Message-State: ACgBeo2C9ufDhDmO4VyI18RfhvXYdoAb4V9l2IDFgGmjEUrtVPZJhypx
+        bvu50xrUwnfIQNpvMZWr78X9ZU/ehX0=
+X-Google-Smtp-Source: AA6agR4hTX2FKtOUU9qMLkpuVYHtU3N3YoJFjdkyuHvvYrlgWecJoyMlHenkzTFbRxSnaYNXYypt8w==
+X-Received: by 2002:a17:907:9605:b0:6f5:c66:7c13 with SMTP id gb5-20020a170907960500b006f50c667c13mr21037817ejc.66.1660131620373;
+        Wed, 10 Aug 2022 04:40:20 -0700 (PDT)
+Received: from felia.fritz.box (200116b826708900bd59055014c64746.dip.versatel-1u1.de. [2001:16b8:2670:8900:bd59:550:14c6:4746])
+        by smtp.gmail.com with ESMTPSA id ec22-20020a170906b6d600b00730560156b0sm2213435ejb.50.2022.08.10.04.40.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Aug 2022 04:40:20 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     ChenXiaoSong <chenxiaosong2@huawei.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] NFS: clean up a needless assignment in nfs_file_write()
+Date:   Wed, 10 Aug 2022 13:40:01 +0200
+Message-Id: <20220810114001.13513-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 31 Jul 2022, Christophe JAILLET wrote:
+Commit 064109db53ec ("NFS: remove redundant code in nfs_file_write()")
+identifies that filemap_fdatawait_range() will always return 0 and removes
+a dead error-handling case in nfs_file_write(). With this change however,
+assigning the return of filemap_fdatawait_range() to the result variable is
+a dead store.
 
-> In lp8788_irq_init(), if an error occurs after a successful
-> irq_domain_add_linear() call, it must be undone by a corresponding
-> irq_domain_remove() call.
-> 
-> irq_domain_remove() should also be called in lp8788_irq_exit() for the same
-> reason.
-> 
-> Fixes: eea6b7cc53aa ("mfd: Add lp8788 mfd driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/mfd/lp8788-irq.c | 3 +++
->  1 file changed, 3 insertions(+)
+Remove this needless assignment.
 
-Applied, thanks.
+No functional change. No change in object code.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ fs/nfs/file.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/nfs/file.c b/fs/nfs/file.c
+index d2bcd4834c0e..f2ad9495ee4a 100644
+--- a/fs/nfs/file.c
++++ b/fs/nfs/file.c
+@@ -658,9 +658,9 @@ ssize_t nfs_file_write(struct kiocb *iocb, struct iov_iter *from)
+ 			goto out;
+ 	}
+ 	if (mntflags & NFS_MOUNT_WRITE_WAIT) {
+-		result = filemap_fdatawait_range(file->f_mapping,
+-						 iocb->ki_pos - written,
+-						 iocb->ki_pos - 1);
++		filemap_fdatawait_range(file->f_mapping,
++					iocb->ki_pos - written,
++					iocb->ki_pos - 1);
+ 	}
+ 	result = generic_write_sync(iocb, written);
+ 	if (result < 0)
 -- 
-Lee Jones [李琼斯]
+2.17.1
+
