@@ -2,97 +2,110 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4CACC00140
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Aug 2022 11:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F7CC00140
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Aug 2022 13:10:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232016AbiHJLka (ORCPT
+        id S232508AbiHJNKd (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 10 Aug 2022 07:40:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39082 "EHLO
+        Wed, 10 Aug 2022 09:10:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231732AbiHJLk1 (ORCPT
+        with ESMTP id S231687AbiHJNKc (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 10 Aug 2022 07:40:27 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1237642FE;
-        Wed, 10 Aug 2022 04:40:21 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id dc19so27122841ejb.12;
-        Wed, 10 Aug 2022 04:40:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc;
-        bh=DdJp4UZHmlYx0A4VYaHgo2wRMc0wfMVM5lOUKK2ThO4=;
-        b=Bz3ob9RtssQY/+VrStqxVSL4x5lN7bbl61PFrrY73Et0lNuTTiOR2vflxTmV/gGAGu
-         hk/sGeRPQDy7JQQQ4fHpsGdSze1U6Hgc36NK441s5/sC+QLnyxOTos5GVqXog7HKeLgE
-         jpQffK0TfRZJATt65GZTuMXONlSdTU8y0UZpMnExkSCX9kxyit+7b3DnQ1PHeBF1K46A
-         EbO5S5s5qHaf4m8r3EVBPh6WjsxrlTWub5u5YE2BcSbS4pUqiyGWqp8L+/DJGlrWs9rj
-         88/Ta4hbjAf1paypvJz6kPFuu+mQU8DYFdsoEjGVF5TW6ebz9SQTTVqIUaPjmPPdXySn
-         iESQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=DdJp4UZHmlYx0A4VYaHgo2wRMc0wfMVM5lOUKK2ThO4=;
-        b=cTdPNDUAuvd0zZv3zeOAdikI8ovE9DKUERQVzzVzn5Rt3RMAJiXfGI0OjAUDQWGMX5
-         AQImxqOV8oUdxG8gxHhZtivIlZFk1R93chi9Yipn4Cqvz55vUZw+HjcqYxPscDbMmdJ6
-         1zOXzVzku7PvA/t0IWAMduSOV+k9BZ8nIoWLQQtL9/brUUcWnjfoUlF7F1JsFUzivgsr
-         +2ZX9ycP8U7RgEY/i8b2bxxkjCZQnTJChxJzTd2rjUD7PDDPJ0a7dRw3N1YoS3ODA2xO
-         PMIhqU2aKICr9fNPZHvMfQfl+BXrHYgqU9J970Xjqhf2kJ1hP2UyQYCFTUV7JWLNF7gt
-         hxZg==
-X-Gm-Message-State: ACgBeo2C9ufDhDmO4VyI18RfhvXYdoAb4V9l2IDFgGmjEUrtVPZJhypx
-        bvu50xrUwnfIQNpvMZWr78X9ZU/ehX0=
-X-Google-Smtp-Source: AA6agR4hTX2FKtOUU9qMLkpuVYHtU3N3YoJFjdkyuHvvYrlgWecJoyMlHenkzTFbRxSnaYNXYypt8w==
-X-Received: by 2002:a17:907:9605:b0:6f5:c66:7c13 with SMTP id gb5-20020a170907960500b006f50c667c13mr21037817ejc.66.1660131620373;
-        Wed, 10 Aug 2022 04:40:20 -0700 (PDT)
-Received: from felia.fritz.box (200116b826708900bd59055014c64746.dip.versatel-1u1.de. [2001:16b8:2670:8900:bd59:550:14c6:4746])
-        by smtp.gmail.com with ESMTPSA id ec22-20020a170906b6d600b00730560156b0sm2213435ejb.50.2022.08.10.04.40.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Aug 2022 04:40:20 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     ChenXiaoSong <chenxiaosong2@huawei.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] NFS: clean up a needless assignment in nfs_file_write()
-Date:   Wed, 10 Aug 2022 13:40:01 +0200
-Message-Id: <20220810114001.13513-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 10 Aug 2022 09:10:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBBC4BEC;
+        Wed, 10 Aug 2022 06:10:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 262176144B;
+        Wed, 10 Aug 2022 13:10:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67138C433D6;
+        Wed, 10 Aug 2022 13:10:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660137029;
+        bh=sXSgjj5+4JsQMk/9Qox6+ZAQuvnEJ/J3+NWYzjJbhPE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ndzHzvgqRms/h4alSGbXbFmh+oce7SiBJ1vt6g2QWH1+sdnF7XALSFmJJE42VKRvx
+         N/+HoxuaZosX9/dOFAD9C9bTOx5GePb8PDejMMGkOfWrGFu4o7yOAmOoe5SR0uGw4z
+         MlnxKCbI1TCW32A5o0yb6QqlBkfyKHFG4Z5ey1olHRV53MslQojlf0mGJg183rjakm
+         XAIetpwJvH2eLw1fJOtRjsa89n6jIXwrfxoV1M82Cbm+Zfx16SoSHWI2kVROBRwKwF
+         tWqR4tdYaQenHKk1oKgCovH67wX3n1kSH7cGAsiqJwtBH3tF0UHpbJL2qARITQkDOH
+         jKTxxEqleyWEw==
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 0877F4035A; Wed, 10 Aug 2022 10:10:27 -0300 (-03)
+Date:   Wed, 10 Aug 2022 10:10:26 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2] perf probe: Fix an error handling path in
+ 'parse_perf_probe_command()'
+Message-ID: <YvOuQnSdT31wSPZ8@kernel.org>
+References: <b71bcb01fa0c7b9778647235c3ab490f699ba278.1659797452.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b71bcb01fa0c7b9778647235c3ab490f699ba278.1659797452.git.christophe.jaillet@wanadoo.fr>
+X-Url:  http://acmel.wordpress.com
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 064109db53ec ("NFS: remove redundant code in nfs_file_write()")
-identifies that filemap_fdatawait_range() will always return 0 and removes
-a dead error-handling case in nfs_file_write(). With this change however,
-assigning the return of filemap_fdatawait_range() to the result variable is
-a dead store.
+Em Sat, Aug 06, 2022 at 04:51:26PM +0200, Christophe JAILLET escreveu:
+> If a memory allocation fail, we should branch to the error handling path in
+> order to free some resources allocated a few lines above.
+> 
+> Fixes: 15354d546986 ("perf probe: Generate event name with line number")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 
-Remove this needless assignment.
 
-No functional change. No change in object code.
+Thanks, applied.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- fs/nfs/file.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+- Arnaldo
 
-diff --git a/fs/nfs/file.c b/fs/nfs/file.c
-index d2bcd4834c0e..f2ad9495ee4a 100644
---- a/fs/nfs/file.c
-+++ b/fs/nfs/file.c
-@@ -658,9 +658,9 @@ ssize_t nfs_file_write(struct kiocb *iocb, struct iov_iter *from)
- 			goto out;
- 	}
- 	if (mntflags & NFS_MOUNT_WRITE_WAIT) {
--		result = filemap_fdatawait_range(file->f_mapping,
--						 iocb->ki_pos - written,
--						 iocb->ki_pos - 1);
-+		filemap_fdatawait_range(file->f_mapping,
-+					iocb->ki_pos - written,
-+					iocb->ki_pos - 1);
- 	}
- 	result = generic_write_sync(iocb, written);
- 	if (result < 0)
+
+> ---
+> Change in v2:
+>  - Synch with latest -next
+>  - Add A-by tag (see link below, it was old!)
+> 
+> v1:
+>  https://lore.kernel.org/all/20200315201259.29190-1-christophe.jaillet@wanadoo.fr/
+> ---
+>  tools/perf/util/probe-event.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+> index 67c12d5303e7..785246ff4179 100644
+> --- a/tools/perf/util/probe-event.c
+> +++ b/tools/perf/util/probe-event.c
+> @@ -1775,8 +1775,10 @@ int parse_perf_probe_command(const char *cmd, struct perf_probe_event *pev)
+>  	if (!pev->event && pev->point.function && pev->point.line
+>  			&& !pev->point.lazy_line && !pev->point.offset) {
+>  		if (asprintf(&pev->event, "%s_L%d", pev->point.function,
+> -			pev->point.line) < 0)
+> -			return -ENOMEM;
+> +			pev->point.line) < 0) {
+> +			ret = -ENOMEM;
+> +			goto out;
+> +		}
+>  	}
+>  
+>  	/* Copy arguments and ensure return probe has no C argument */
+> -- 
+> 2.34.1
+
 -- 
-2.17.1
 
+- Arnaldo
