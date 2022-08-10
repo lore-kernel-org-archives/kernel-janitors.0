@@ -2,98 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF45C3F6B0
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Aug 2022 15:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 339BBC00140
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Aug 2022 16:28:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232976AbiHJPKK (ORCPT
+        id S232632AbiHJQ2C (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 10 Aug 2022 11:10:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52168 "EHLO
+        Wed, 10 Aug 2022 12:28:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233015AbiHJPJz (ORCPT
+        with ESMTP id S232488AbiHJQ2B (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 10 Aug 2022 11:09:55 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B2D775FD9;
-        Wed, 10 Aug 2022 08:09:53 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id e13so19434529edj.12;
-        Wed, 10 Aug 2022 08:09:53 -0700 (PDT)
+        Wed, 10 Aug 2022 12:28:01 -0400
+X-Greylist: delayed 596 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 10 Aug 2022 09:28:00 PDT
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7BAB82745
+        for <kernel-janitors@vger.kernel.org>; Wed, 10 Aug 2022 09:27:59 -0700 (PDT)
+Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
+        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 0DEF91FAD;
+        Wed, 10 Aug 2022 16:16:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc;
-        bh=f/VOOq8lXSlkiTFVM32cY0BcJPmVEl3q/12bVuDaQYY=;
-        b=asjLVsS+PuxHh0j5TCEjcmVm3HYJxdeJGJroPrQIQBgb2x5Fa7ioKXwgzD1c1VsB6+
-         8EFTRv9KpRFdD7Qr3iTh/AllzWQ3Ztqi0DyeHoUkY3dLLNiMmo/dDq/KFN+RsTVi7JAh
-         ICDbAt4+EdjC5jGtJcbIpyvpjWcPHmCuBIAJdRadvIosOmPODYEqdL/bQwov1Hx2Otku
-         9taFV+pl5wXkPYZ3kSL3c68JBnvsAQzoR14jb1zUARx/DrtMPBc9K5c1SbrB6tyxQ6Ku
-         gyXRsObHyNq6mMonV3SJBf24qaZ/9VEgV0vmRykBemrFd81WG46KFMzoH13b+uEj9yVL
-         XJOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=f/VOOq8lXSlkiTFVM32cY0BcJPmVEl3q/12bVuDaQYY=;
-        b=Wpt5gMSvVnDk1Dy14c04dX2ozoXV8P/yqdP4VuaVJ03hAwklx4m8MNWprDSE1t64+C
-         8/x3/VtMkB9uX9lyYvoimkKQIdIZHqSDmTXkSJrgaRpbEKGWGKm8Yu88NcOm8WQNwVLc
-         ohIuGaAox+eh/pxE/YmHSFnFmO+7p7oyPQqzMw0lxk8bQgpnJ4Gt2S5kqjjBnqR50dFe
-         rP0lVnpmi53Wk653TBQwy129FRXOv9YYZxu1RJT+M9t5aHhfeDOTQUHS/QnEHnm5IhYe
-         tOND4ZhnQcVLEf/sExAlyGEKvZMFfGELwm2XJCrXJhJPL3CuYrHq+viZVcCi/TAHLdJE
-         EZjA==
-X-Gm-Message-State: ACgBeo2gqEVMqc0uOR9KAGMHpUDNYUT5jRldZF5SiabLfQGIbq5VCoS/
-        fI2rQoFpqGw+cKjuoVmO5Qvhy8CG/ag=
-X-Google-Smtp-Source: AA6agR7Pi2BX4F2u2k11BqJFlDPz+CrdzSIRcFTEets2ZExEhWdZ16CQAYkc9z8ikshuPNi2SkP6bg==
-X-Received: by 2002:a50:fb99:0:b0:43c:d008:d4f9 with SMTP id e25-20020a50fb99000000b0043cd008d4f9mr26827209edq.13.1660144192117;
-        Wed, 10 Aug 2022 08:09:52 -0700 (PDT)
-Received: from felia.fritz.box (200116b826708900bd59055014c64746.dip.versatel-1u1.de. [2001:16b8:2670:8900:bd59:550:14c6:4746])
-        by smtp.gmail.com with ESMTPSA id p12-20020a1709066a8c00b0072af4af2f46sm2417358ejr.74.2022.08.10.08.09.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Aug 2022 08:09:51 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <zanussi@kernel.org>,
-        Linyu Yuan <quic_linyyuan@quicinc.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] tracing: react to error return from traceprobe_parse_event_name()
-Date:   Wed, 10 Aug 2022 17:09:21 +0200
-Message-Id: <20220810150921.8858-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        d=paragon-software.com; s=mail; t=1660148190;
+        bh=T2NLMxv4OIuyPv3DucWm3v2GwTiPDvFi/cz+rwuWf/E=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=qceRUKQwUTHULIFNTOgCiqtd7kuRXMs2NGM0gOV122TTT5M2OLKVzTonOkZNYgie3
+         twJwtsZ0mvc/Jy9aPlGClbta0CRU6bIWy8QOIw+cs0XQV/bA8a7jnDC9Dx1/vxJlJS
+         btkKQ/9SuClvbxweQ8XmLi5BUOWC4NYPC63JunsE=
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 71299DD;
+        Wed, 10 Aug 2022 16:18:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1660148281;
+        bh=T2NLMxv4OIuyPv3DucWm3v2GwTiPDvFi/cz+rwuWf/E=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=oOS9JoHtsyLaX0QZAQHHGWen4lKrOwipFPrHCZmd1PN9Ph18mzEd0D5rpIKNZ8zu/
+         E9z8FbMFzUTzdiUefugbG8CzJx/nyItmbbY+pAkKDu/4doyslJ95ax1cUNDDtLjxKG
+         dulsiVixj3sYnEavJZjTYweqOgDTay6xcLMzAxsw=
+Received: from [172.30.8.65] (172.30.8.65) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Wed, 10 Aug 2022 19:18:01 +0300
+Message-ID: <fba5803f-ec98-1b63-1518-803567a5d5ef@paragon-software.com>
+Date:   Wed, 10 Aug 2022 19:18:00 +0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] fs/ntfs3: uninitialized variable in ntfs_set_acl_ex()
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+CC:     <ntfs3@lists.linux.dev>, <kernel-janitors@vger.kernel.org>
+References: <YvDKoXqt5GuZNzzN@kili>
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <YvDKoXqt5GuZNzzN@kili>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.30.8.65]
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The function traceprobe_parse_event_name() may set the first two function
-arguments to a non-null value and still return -EINVAL to indicate an
-unsuccessful completion of the function. Hence, it is not sufficient to
-just check the result of the two function arguments for being not null,
-but the return value also needs to be checked.
 
-Commit 95c104c378dc ("tracing: Auto generate event name when creating a
-group of events") changed the error-return-value checking of the second
-traceprobe_parse_event_name() invocation in __trace_eprobe_create() and
-removed checking the return value to jump to the error handling case.
 
-Reinstate using the return value in the error-return-value checking.
+On 8/8/22 11:34, Dan Carpenter wrote:
+> The goto out calls kfree(value) on an uninitialized pointer.  Just
+> return directly as the other error paths do.
+> 
+> Fixes: 460bbf2990b3 ("fs/ntfs3: Do not change mode if ntfs_set_ea failed")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>   fs/ntfs3/xattr.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
+> index 02f6a933ee79..5bdff12a1232 100644
+> --- a/fs/ntfs3/xattr.c
+> +++ b/fs/ntfs3/xattr.c
+> @@ -568,7 +568,7 @@ static noinline int ntfs_set_acl_ex(struct user_namespace *mnt_userns,
+>   			err = posix_acl_update_mode(mnt_userns, inode, &mode,
+>   						    &acl);
+>   			if (err)
+> -				goto out;
+> +				return err;
+>   		}
+>   		name = XATTR_NAME_POSIX_ACL_ACCESS;
+>   		name_len = sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1;
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- kernel/trace/trace_eprobe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/trace/trace_eprobe.c b/kernel/trace/trace_eprobe.c
-index 4a0e9d927443..460d3ec8a256 100644
---- a/kernel/trace/trace_eprobe.c
-+++ b/kernel/trace/trace_eprobe.c
-@@ -883,7 +883,7 @@ static int __trace_eprobe_create(int argc, const char *argv[])
- 	trace_probe_log_set_index(1);
- 	sys_event = argv[1];
- 	ret = traceprobe_parse_event_name(&sys_event, &sys_name, buf2, 0);
--	if (!sys_event || !sys_name) {
-+	if (!ret || !sys_event || !sys_name) {
- 		trace_probe_log_err(0, NO_EVENT_INFO);
- 		goto parse_error;
- 	}
--- 
-2.17.1
-
+Thanks for patch, applied!
