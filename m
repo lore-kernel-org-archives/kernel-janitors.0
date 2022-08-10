@@ -2,68 +2,70 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62964C00140
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Aug 2022 11:16:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3599C00140
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Aug 2022 11:18:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231794AbiHJLQe (ORCPT
+        id S231971AbiHJLSG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 10 Aug 2022 07:16:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47902 "EHLO
+        Wed, 10 Aug 2022 07:18:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbiHJLQd (ORCPT
+        with ESMTP id S231961AbiHJLSF (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 10 Aug 2022 07:16:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96AA36CD19;
-        Wed, 10 Aug 2022 04:16:32 -0700 (PDT)
+        Wed, 10 Aug 2022 07:18:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 331FE71BDD;
+        Wed, 10 Aug 2022 04:18:05 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 32D2A6120C;
-        Wed, 10 Aug 2022 11:16:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15101C433D6;
-        Wed, 10 Aug 2022 11:16:29 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C345E61217;
+        Wed, 10 Aug 2022 11:18:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2637C433C1;
+        Wed, 10 Aug 2022 11:18:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660130191;
-        bh=gX0B7NeBF2fjqE7R6DLYopWVKMMwSFPgZzJvJBXPVJI=;
+        s=k20201202; t=1660130284;
+        bh=X/igtBEfqT0CYUtASMjqgR3fyAytacOaSIyuErvKw9M=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UcBSt5uT9rz/Ry5LlfLlC+0vpFL+ycjKeyQJ5sZIzTMchjj4kaynrmwJxIDqKloDl
-         lPxU6sz1gF2zW5x9Q2wxcPzmK7Xredy3nIvrkjoy87i/xzMmJyGhv4ni7s02wNnucZ
-         pRB+/JEZVd5Q+7RhyGGnl9wCC03dHkdz91mOBLYIMsqTWjgmdVFDQ9PZpQVwrRYwno
-         U93UiQ1UhLahtPo0X0Nd9xD56csS7YTtdW9HmNHk1Gk7XVlXiIr77ZMemmiaGwSJvJ
-         GBN9SQkZBmHH0xOCvjiCJ2dZ2VY8KfCVQbbPNqq5vMRltcuYjIHoA8r11utsgJ9JvH
-         AN/+wV+/JdLYA==
-Date:   Wed, 10 Aug 2022 12:16:26 +0100
+        b=HlT0P+nYbwJ2flfFtMbHArKjbtrGs2UfSXkG/90BCvZRZhwItH47p0W56db4hjVLX
+         qOAwfhPAEQXiEufCZS4mddD/cz2+qTOMhzEEZL9DTQsiAPsrIt5wj+BYpbQbofAlmj
+         wqX3yjHG3RV+RUVf3ks8zNgMVzi88wByCEsTX1AVIG0b0ObH2fwN8zGvOguxrZq7ZD
+         qp3GZb9CKUs8MVfp+R3f4IhMp3jGVFOpx3eq148DKWYJAyj6qXl2ofJpWgrBVNEnwR
+         zD9qKN3lXOXE03Ks1jSsU/kaeYCOOA1DpB+E3QmvAMzA1insIbcg8rpTQpUy0u9KmW
+         3H4Y+10QSdHQA==
+Date:   Wed, 10 Aug 2022 12:17:59 +0100
 From:   Lee Jones <lee@kernel.org>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc:     Samuel Ortiz <sameo@linux.intel.com>, Milo Kim <Milo.Kim@ti.com>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] mfd: lp8788: Fix an error handling path in
- lp8788_probe()
-Message-ID: <YvOTim7i2hhW2cWF@google.com>
+Subject: Re: [PATCH 2/2] mfd: lp8788: Fix an error handling path in
+ lp8788_irq_init() and lp8788_irq_init()
+Message-ID: <YvOT5wwHtpm3OGP2@google.com>
 References: <18398722da9df9490722d853e4797350189ae79b.1659261275.git.christophe.jaillet@wanadoo.fr>
+ <bcd5a72c9c1c383dd6324680116426e32737655a.1659261275.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <18398722da9df9490722d853e4797350189ae79b.1659261275.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <bcd5a72c9c1c383dd6324680116426e32737655a.1659261275.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 On Sun, 31 Jul 2022, Christophe JAILLET wrote:
 
-> Should an error occurs in mfd_add_devices(), some resources need to be
-> released, as already done in the .remove() function.
+> In lp8788_irq_init(), if an error occurs after a successful
+> irq_domain_add_linear() call, it must be undone by a corresponding
+> irq_domain_remove() call.
 > 
-> Add an error handling path and a lp8788_irq_exit() call to undo a previous
-> lp8788_irq_init().
+> irq_domain_remove() should also be called in lp8788_irq_exit() for the same
+> reason.
 > 
 > Fixes: eea6b7cc53aa ("mfd: Add lp8788 mfd driver")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/mfd/lp8788.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
+>  drivers/mfd/lp8788-irq.c | 3 +++
+>  1 file changed, 3 insertions(+)
 
 Applied, thanks.
 
