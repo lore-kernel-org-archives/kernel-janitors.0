@@ -2,107 +2,135 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE7EC00140
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Aug 2022 20:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 065CCC3F6B0
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Aug 2022 23:29:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233044AbiHJUB6 (ORCPT
+        id S233643AbiHJX3c (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 10 Aug 2022 16:01:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57240 "EHLO
+        Wed, 10 Aug 2022 19:29:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231584AbiHJUB5 (ORCPT
+        with ESMTP id S230433AbiHJX3a (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 10 Aug 2022 16:01:57 -0400
-Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4001882748
-        for <kernel-janitors@vger.kernel.org>; Wed, 10 Aug 2022 13:01:54 -0700 (PDT)
-Received: from [192.168.1.18] ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id Lrtkotjn0KOP1LrtkofYFJ; Wed, 10 Aug 2022 22:01:52 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 10 Aug 2022 22:01:52 +0200
-X-ME-IP: 90.11.190.129
-Message-ID: <abad1a2b-f483-e7ae-19d1-13ead5e5148e@wanadoo.fr>
-Date:   Wed, 10 Aug 2022 22:01:48 +0200
+        Wed, 10 Aug 2022 19:29:30 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A22107D7B5;
+        Wed, 10 Aug 2022 16:29:29 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27ANBbf0023102;
+        Wed, 10 Aug 2022 23:29:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=quIGPsqtLqF7aXUBe4lP+sBqoJmFgr07FA5mHK6JcAM=;
+ b=kCVBBFT4TRonS7fhm0QRXdI0UjO9qurXCgUjvYh5y6rqi6tnfqjsdjKQYS+IO7JhGiFh
+ yH3Sz7YlocIdeBPtvdCA6HKmfpCWKORDjw3/848AT2ubCMBMsMxT4FJLXwONL5YvAd9C
+ dakJ8KOCBEoS1cn5ckxDyI5Zf458VSkL3F4IVckLGQZfeYH11/OxvZIR5yVbikLsSwsq
+ feg1Fadr2EdXuXKZgqlfMzBLeAGcyzjA4ih1TT/twIc+cxW9uozkTWs6h9eT2S1cM2aq
+ /HetVCmpqx2VSB+XbtIieQCUUcw+Lpd5+PSTGdrGZttKylb9Nd2zY3Cu6yezAeySRi+D Ww== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3hv95ytg18-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 10 Aug 2022 23:29:20 +0000
+Received: from pps.filterd (NALASPPMTA03.qualcomm.com [127.0.0.1])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 27ANTIPb020777;
+        Wed, 10 Aug 2022 23:29:18 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by NALASPPMTA03.qualcomm.com (PPS) with ESMTPS id 3hshck6uv3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 10 Aug 2022 23:29:18 +0000
+Received: from NALASPPMTA03.qualcomm.com (NALASPPMTA03.qualcomm.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 27ANTI5p020772;
+        Wed, 10 Aug 2022 23:29:18 GMT
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.47.97.222])
+        by NALASPPMTA03.qualcomm.com (PPS) with ESMTPS id 27ANTIIo020771
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 10 Aug 2022 23:29:18 +0000
+Received: from nalasex01b.na.qualcomm.com (10.47.209.197) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Wed, 10 Aug 2022 16:29:18 -0700
+Received: from [10.253.34.2] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Wed, 10 Aug
+ 2022 16:29:17 -0700
+Message-ID: <e6839a7e-d1f4-7d9f-68f4-f99c216f647f@quicinc.com>
+Date:   Thu, 11 Aug 2022 07:28:03 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v2] perf/arm_pmu_platform: Fix an error message related to
- dev_err_probe() usage
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH] tracing: react to error return from
+ traceprobe_parse_event_name()
 Content-Language: en-US
-To:     Robin Murphy <robin.murphy@arm.com>, Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <aaeba9c12ccdb29f48fe19137cb5abeea85fbb24.1659732652.git.christophe.jaillet@wanadoo.fr>
- <14029916-6037-9248-ddd1-24199e3d3ede@arm.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <14029916-6037-9248-ddd1-24199e3d3ede@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <zanussi@kernel.org>
+CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20220810150921.8858-1-lukas.bulwahn@gmail.com>
+From:   Linyu Yuan <quic_linyyuan@quicinc.com>
+In-Reply-To: <20220810150921.8858-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: o7JyeiHgJQYR3zvgatp7QlQDUrb98LN6
+X-Proofpoint-GUID: o7JyeiHgJQYR3zvgatp7QlQDUrb98LN6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-08-10_15,2022-08-10_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 clxscore=1011 adultscore=0 bulkscore=0 impostorscore=0
+ suspectscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2207270000 definitions=main-2208100071
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 08/08/2022 à 16:57, Robin Murphy a écrit :
-> On 2022-08-05 21:55, Christophe JAILLET wrote:
->> dev_err() is a macro that expand dev_fmt, but dev_err_probe() is a
->> function and cannot perform this macro expansion.
->>
->> So hard code the "hw perfevents: " prefix and dd a comment explaining 
->> why.
->>
->> Fixes: 11fa1dc8020a ("perf/arm_pmu_platform: Use dev_err_probe() for 
->> IRQ errors")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Untested, but I can't see how it could work.
->>
->> v1 --> v2
->>    - fix a typo in the comment
->> ---
->>   drivers/perf/arm_pmu_platform.c | 7 +++++--
->>   1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/perf/arm_pmu_platform.c 
->> b/drivers/perf/arm_pmu_platform.c
->> index 513de1f54e2d..02cca4b8f0fd 100644
->> --- a/drivers/perf/arm_pmu_platform.c
->> +++ b/drivers/perf/arm_pmu_platform.c
->> @@ -101,8 +101,11 @@ static int pmu_parse_irqs(struct arm_pmu *pmu)
->>       struct device *dev = &pdev->dev;
->>       num_irqs = platform_irq_count(pdev);
->> -    if (num_irqs < 0)
->> -        return dev_err_probe(dev, num_irqs, "unable to count PMU 
->> IRQs\n");
->> +    if (num_irqs < 0) {
->> +        /* dev_err_probe() does not handle dev_fmt, so hard-code the 
->> prefix */
->> +        return dev_err_probe(dev, num_irqs,
->> +                     "hw perfevents: unable to count PMU IRQs\n");
-> 
-> Why not use dev_fmt directly? But even better, is there any practical 
-> reason why this couldn't be fixed at the source by indirecting 
-> dev_err_probe() through a macro wrapper just like all its friends:
-> 
-> #define dev_err_probe(dev, err, fmt, ...) \
->      _dev_err_probe(dev, err, dev_fmt(fmt), ##__VA_ARGS__)
-> 
-> ?
+hi Lukas,
 
-Looks nice.
+On 8/10/2022 11:09 PM, Lukas Bulwahn wrote:
+> The function traceprobe_parse_event_name() may set the first two function
+> arguments to a non-null value and still return -EINVAL to indicate an
+> unsuccessful completion of the function. Hence, it is not sufficient to
+> just check the result of the two function arguments for being not null,
+> but the return value also needs to be checked.
+>
+> Commit 95c104c378dc ("tracing: Auto generate event name when creating a
+> group of events") changed the error-return-value checking of the second
+> traceprobe_parse_event_name() invocation in __trace_eprobe_create() and
+> removed checking the return value to jump to the error handling case.
+>
+> Reinstate using the return value in the error-return-value checking.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>   kernel/trace/trace_eprobe.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/kernel/trace/trace_eprobe.c b/kernel/trace/trace_eprobe.c
+> index 4a0e9d927443..460d3ec8a256 100644
+> --- a/kernel/trace/trace_eprobe.c
+> +++ b/kernel/trace/trace_eprobe.c
+> @@ -883,7 +883,7 @@ static int __trace_eprobe_create(int argc, const char *argv[])
+>   	trace_probe_log_set_index(1);
+>   	sys_event = argv[1];
+>   	ret = traceprobe_parse_event_name(&sys_event, &sys_name, buf2, 0);
+> -	if (!sys_event || !sys_name) {
+> +	if (!ret || !sys_event || !sys_name) {
 
-I'll propose it in a week or so, unless s.o. does it in the mean-time.
+that's right, miss case sys_event and sys_name are not null, but invalid.
 
-CJ
+it should be  if (ret || ...)  ?
 
-> 
-> Thanks,
-> Robin.
-> 
->> +    }
->>       /*
->>        * In this case we have no idea which CPUs are covered by the PMU.
-> 
 
+>   		trace_probe_log_err(0, NO_EVENT_INFO);
+>   		goto parse_error;
+>   	}
