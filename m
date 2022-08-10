@@ -2,102 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E31C25B0E
-	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Aug 2022 05:08:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4569C25B07
+	for <kernel-janitors@archiver.kernel.org>; Wed, 10 Aug 2022 05:20:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231146AbiHJFII (ORCPT
+        id S230447AbiHJFUT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 10 Aug 2022 01:08:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53332 "EHLO
+        Wed, 10 Aug 2022 01:20:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230164AbiHJFHu (ORCPT
+        with ESMTP id S230428AbiHJFUR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 10 Aug 2022 01:07:50 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A68683F02;
-        Tue,  9 Aug 2022 22:07:49 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id dc19so25623748ejb.12;
-        Tue, 09 Aug 2022 22:07:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc;
-        bh=AYDlJnJ9PdqwWRCOXeLaxSS9GQWnExGZMPNDuuoNCE8=;
-        b=bTfzSFHuqdVV0lFN/lzZnjifaJWhlYjtaAo1Ju6X9xnrzPfdXvNksvX94Xy3RNm4e0
-         Mo9821IeGlN16p7oF4bUNWkUMBEiRDR38mAAkiW2tfLcSgRkWH+IL1kn4ANYCty1o6FO
-         JMDWgAvxgqDhHN+hFR+CCGW6kuN4qer/EH+w2ZizF74vETRMr4fe46dEjzLc96Xb+Hq3
-         adWDwQQXFnqviSrvb4sOEBhnqHqlumBOX2bQxTIsdGaLukSgPKq2vPqQpRd0ggX86e2f
-         HHqjuoTg0lIPNrCr4nqOHYPSmPTrTRLnScYdD7VqPdv9v4IAj6I0dDN+Dx1GyCjxL/je
-         bnpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc;
-        bh=AYDlJnJ9PdqwWRCOXeLaxSS9GQWnExGZMPNDuuoNCE8=;
-        b=SpNwxjjC+JzRuiojvQDkehuD580JLKOhWhI4FWkJDmbS6IyMOgo4k62oCp178YUYBM
-         dME5yN/zKrEKgiitOWxoUcYRiG4W+7VvLHp4DE0JKkne4c8cEKpxVJu+rIaRniM5sCpa
-         sZkK2e5JObwzqdFEpxeTPhka2SQ8apptFZ5tx8rtTHuO3vAL/jNfFIPn2MpcnDlwPzcx
-         kK550tz6HnL5G5cwYcBmJAl2EjPnBdMECYuQeUayUJZ/DS85p4YiV0YlKpUKz7ZOZUuS
-         6dvBhNto2hkYljmNTEhscHen801xafT4lyDgEGSUkf/Y8e+HEIS6MEvMzZaaxDUQH9pe
-         wUdA==
-X-Gm-Message-State: ACgBeo22OuINBFDio5wRzVXaJtPG7xX5MENOssFTWV6dJhA03sQqpuym
-        +d65acpfNCz9JD4N6smvjEcqPhHGwyI=
-X-Google-Smtp-Source: AA6agR7N5grn3FLzeXuLrRUfydMKCMsMWlGBR3iW3evvHqazBms9Xge3hhbgiHz69CDY/9axn9gf4g==
-X-Received: by 2002:a17:906:7950:b0:730:f098:86ce with SMTP id l16-20020a170906795000b00730f09886cemr15915974ejo.390.1660108067589;
-        Tue, 09 Aug 2022 22:07:47 -0700 (PDT)
-Received: from felia.fritz.box (200116b826504800504e9aff21bf95aa.dip.versatel-1u1.de. [2001:16b8:2650:4800:504e:9aff:21bf:95aa])
-        by smtp.gmail.com with ESMTPSA id ew12-20020a056402538c00b0043bbbaa323dsm7009781edb.0.2022.08.09.22.07.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Aug 2022 22:07:47 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-        xen-devel@lists.xenproject.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH 4/4] MAINTAINERS: add xen config fragments to XEN HYPERVISOR sections
-Date:   Wed, 10 Aug 2022 07:07:12 +0200
-Message-Id: <20220810050712.9539-5-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220810050712.9539-1-lukas.bulwahn@gmail.com>
-References: <20220810050712.9539-1-lukas.bulwahn@gmail.com>
+        Wed, 10 Aug 2022 01:20:17 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2899E11827;
+        Tue,  9 Aug 2022 22:20:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id DA1EBB818E3;
+        Wed, 10 Aug 2022 05:20:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7C704C433D7;
+        Wed, 10 Aug 2022 05:20:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660108814;
+        bh=gBo3B78RHSQNX+YsYhLUDdk13eMy2af1OHnfA8ITw0M=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=UlpWvUSkaJI2EFAel2UeJJahuXRAvPWBbAF/mPfNgi9qD27JNxQ47SRI9cRPkHuPn
+         bBs6zQf0Tm2KD+hArVH6lQsMyqj8A15iVER5AEP11NwXQTUD+BgCBXUS3osOuMjcEz
+         apcsliIATyM0O29luzs18DqmDwKaguFohmDInyTeIttqQrCaCAXaFaoWNG4T/wCWlo
+         PnT/d0QINy+ZheyHQEEdn4VH6sn+dEFUvDorUsCL4hhFWLhV7QYc5TGXp+JdnWKrU6
+         DLgMGNcaPbqneOG7uJ06qjEMGqexpVQf4MqgwN00m+1hP1/OUEHJ2J0j9QQ1A5vnyM
+         g1Z83VQ3Qy3FA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 58455C43144;
+        Wed, 10 Aug 2022 05:20:14 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] ax88796: Fix some typo in a comment
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <166010881435.23810.582475083264301054.git-patchwork-notify@kernel.org>
+Date:   Wed, 10 Aug 2022 05:20:14 +0000
+References: <7db4b622d2c3e5af58c1d1f32b81836f4af71f18.1659801746.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <7db4b622d2c3e5af58c1d1f32b81836f4af71f18.1659801746.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Make changes to the xen config fragments reach the XEN HYPERVISOR
-maintainers and mailing list.
+Hello:
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+This patch was applied to netdev/net.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ee2098fc6f7c..6c2516b3da21 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22217,12 +22217,14 @@ F:	drivers/*/xen-*front.c
- F:	drivers/xen/
- F:	include/uapi/xen/
- F:	include/xen/
-+F:	kernel/configs/xen.config
- 
- XEN HYPERVISOR X86
- M:	Juergen Gross <jgross@suse.com>
- R:	Boris Ostrovsky <boris.ostrovsky@oracle.com>
- L:	xen-devel@lists.xenproject.org (moderated for non-subscribers)
- S:	Supported
-+F:	arch/x86/configs/xen.config
- F:	arch/x86/include/asm/pvclock-abi.h
- F:	arch/x86/include/asm/xen/
- F:	arch/x86/platform/pvh/
+On Sat,  6 Aug 2022 18:02:36 +0200 you wrote:
+> s/by caused/be caused/
+> s/ax88786/ax88796/
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> s/ax88786/ax88796/ is a guess based on the surrounding comments and the
+> name of the file.
+> 
+> [...]
+
+Here is the summary with links:
+  - ax88796: Fix some typo in a comment
+    https://git.kernel.org/netdev/net/c/84b709d31063
+
+You are awesome, thank you!
 -- 
-2.17.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
