@@ -2,132 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D66AFC19F2D
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Aug 2022 08:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60B18C19F2A
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Aug 2022 10:47:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234608AbiHKIsl (ORCPT
+        id S234651AbiHKKrh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Aug 2022 04:48:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56050 "EHLO
+        Thu, 11 Aug 2022 06:47:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234588AbiHKIsh (ORCPT
+        with ESMTP id S234645AbiHKKrg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Aug 2022 04:48:37 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ADCE915D1;
-        Thu, 11 Aug 2022 01:48:36 -0700 (PDT)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27B76fFe024681;
-        Thu, 11 Aug 2022 08:48:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=EquYfRqGZXmXb9TGWW8WkU2fAx8SbOKXWJBSgXBhUco=;
- b=nju4AjoCPMW3PJ7yH5Z+t5CFAdLlAu+vjeWFOaqPtS26fbAxDLojsyW50SlVnk2KHWGs
- raOaZPzOCsQEZQ90qf4WmYtnWX3eewzsSIP9H+1UC9bX/ZnPers71NiDg+YC5xVyplXl
- rDGBQbE5Hikn/dBA+xQmUe0h+Piwzv4J6Nx9y6i53N4PUF4YZdAKyulJCi6jiG84174C
- rsbcMAckWE7iVhKoWP2bLpuG0wVs2NxqWBu+HCU1QVW62grZHNTY1i0PR0emc2Z/Uz3J
- PprHctda/FFkYp7Ac//Jc1JSiX9rRj+AjJyk4y8/jsPWuyBhGZueoSN54Wf57iuBMTJZ FA== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3huwr8wbne-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 11 Aug 2022 08:48:31 +0000
-Received: from pps.filterd (NASANPPMTA01.qualcomm.com [127.0.0.1])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 27B8eoYa015481;
-        Thu, 11 Aug 2022 08:48:30 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by NASANPPMTA01.qualcomm.com (PPS) with ESMTPS id 3hshckrmc3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 11 Aug 2022 08:48:30 +0000
-Received: from NASANPPMTA01.qualcomm.com (NASANPPMTA01.qualcomm.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 27B8mUfW028397;
-        Thu, 11 Aug 2022 08:48:30 GMT
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.47.97.222])
-        by NASANPPMTA01.qualcomm.com (PPS) with ESMTPS id 27B8mU6X028392
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 11 Aug 2022 08:48:30 +0000
-Received: from nalasex01b.na.qualcomm.com (10.47.209.197) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Thu, 11 Aug 2022 01:48:29 -0700
-Received: from [10.253.34.2] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Thu, 11 Aug
- 2022 01:48:27 -0700
-Message-ID: <458d93ba-ff78-54e7-5639-bee89e61ce19@quicinc.com>
-Date:   Thu, 11 Aug 2022 16:48:25 +0800
+        Thu, 11 Aug 2022 06:47:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DEB52716D;
+        Thu, 11 Aug 2022 03:47:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0CD7260ED3;
+        Thu, 11 Aug 2022 10:47:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C06AC433D6;
+        Thu, 11 Aug 2022 10:47:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660214854;
+        bh=4WoU4PzTqSWaKAiYjQxMqeztaU+Fg5MuY24q8LVMV78=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aYoM1/Vt15qtgK7KyhfqAX4/Yb0rFlmcFB7dAw2aNMEox9rqxt8EMfPlcNJ0QpfcH
+         dHCDd0nEpUcjZabJF8Uwqd9dlTZnOAP4gyk5yPEihH6/EAj16MJIeG0p2jt112fxk2
+         RO/U8rFO2bu0lYH3Wpunc8Tt14++HrUbamVXLNYTjsvYq+aaLGXHAybzQwT5SJdIe/
+         fRAieTTLS/igvRrWJkjW3k65trDPyWj0axh73bKuh1TZGvD6YRy/SWjg18wHTRmY/T
+         fj7kShu035g5kp6Iy3VczUU7KQA/uqYST4dv0KTTMasskriY/QpBAsm16GjTJXlSoN
+         Tki++/bIG+qFg==
+Date:   Thu, 11 Aug 2022 12:47:27 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        linux-riscv@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: rectify entry for RISC-V/MICROCHIP
+ POLARFIRE SOC SUPPORT
+Message-ID: <YvTePwvp5AigV0Ax@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        linux-riscv@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220811070506.12252-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v2] tracing: react to error return from
- traceprobe_parse_event_name()
-Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <zanussi@kernel.org>
-CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20220811071734.20700-1-lukas.bulwahn@gmail.com>
-From:   Linyu Yuan <quic_linyyuan@quicinc.com>
-In-Reply-To: <20220811071734.20700-1-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: h0YHKHn3NZGGL2u0vRKBU07J-JfREHBj
-X-Proofpoint-ORIG-GUID: h0YHKHn3NZGGL2u0vRKBU07J-JfREHBj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-08-11_04,2022-08-10_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 adultscore=0 suspectscore=0 spamscore=0 clxscore=1015
- priorityscore=1501 mlxscore=0 phishscore=0 mlxlogscore=999 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2207270000 definitions=main-2208110024
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="/Fg/PWpkMsj86wcD"
+Content-Disposition: inline
+In-Reply-To: <20220811070506.12252-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-thanks,
 
-Acked-by: Linyu Yuan <quic_linyyuan@quicinc.com>
+--/Fg/PWpkMsj86wcD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-
-On 8/11/2022 3:17 PM, Lukas Bulwahn wrote:
-> The function traceprobe_parse_event_name() may set the first two function
-> arguments to a non-null value and still return -EINVAL to indicate an
-> unsuccessful completion of the function. Hence, it is not sufficient to
-> just check the result of the two function arguments for being not null,
-> but the return value also needs to be checked.
->
-> Commit 95c104c378dc ("tracing: Auto generate event name when creating a
-> group of events") changed the error-return-value checking of the second
-> traceprobe_parse_event_name() invocation in __trace_eprobe_create() and
-> removed checking the return value to jump to the error handling case.
->
-> Reinstate using the return value in the error-return-value checking.
->
+On Thu, Aug 11, 2022 at 09:05:06AM +0200, Lukas Bulwahn wrote:
+> Commit 3cbd67384677 ("MAINTAINERS: add the Polarfire SoC's i2c driver")
+> adds the file entry for drivers/i2c/busses/i2c-microchip-core.c, but the
+> file is actually named drivers/i2c/busses/i2c-microchip-corei2c.c.
+>=20
+> Repair this file reference in RISC-V/MICROCHIP POLARFIRE SOC SUPPORT.
+>=20
 > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->   kernel/trace/trace_eprobe.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/trace/trace_eprobe.c b/kernel/trace/trace_eprobe.c
-> index 4a0e9d927443..550671985fd1 100644
-> --- a/kernel/trace/trace_eprobe.c
-> +++ b/kernel/trace/trace_eprobe.c
-> @@ -883,7 +883,7 @@ static int __trace_eprobe_create(int argc, const char *argv[])
->   	trace_probe_log_set_index(1);
->   	sys_event = argv[1];
->   	ret = traceprobe_parse_event_name(&sys_event, &sys_name, buf2, 0);
-> -	if (!sys_event || !sys_name) {
-> +	if (ret || !sys_event || !sys_name) {
->   		trace_probe_log_err(0, NO_EVENT_INFO);
->   		goto parse_error;
->   	}
+
+Acked-by: Wolfram Sang <wsa@kernel.org>
+
+
+--/Fg/PWpkMsj86wcD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmL03jsACgkQFA3kzBSg
+Kbb9ug//XvIqb1Vway8MBwrhbNGpzOqOcN4Q2c8JUiZ3oNXlBHxMTik8nRbX+JTq
+fpafbNe7CRZ1SUyIgKcz/bmagZj3dNS+3oeE9vBOi2fWBGb8xMGhTzNQib6Z+q8m
+N6NfsX7y5t7Z/IracHQhhTrVAd8nKRbNnQd9BqQhnGgR/ZJTX6QFzeoF6byhaa3c
+wX+SH46dADmYghkFdPRtNx72TlQElL1raj7Lqb7u9tlGF3NgbVQISjjPYbepx8u3
+LfRMAYanVCXMZO1tUOfXo2yZakquAl5S//Xmfx4nvpO7IU/hcF6LUVjxtGNPoDdQ
+M+n6ctoCtpZkblt/TyExfP7ijZ+cx6bPGsu0fnbiB9KoeU4BcXvPmCHvY8N9B320
+6hRucRjlYEHA6M1Cr7OCL7jikLlJtts3qnJoKO6bB3bfADUID4/KekJfeDB9NqYj
+oWTeKhF8Ekudd7v4W2+QK/QHuDHlTAW4rJuSp0Tk+6QqAFy9W8x55hHIAqu+8gr3
+Jzfb+3Gd+CDT2eXEaPPTBPV3WqX/pSyH9IGfUPSOaQgjVKmLfsda02ZvmBrWoI+b
+v9rSEma+xmrtiupifePbvgQcwM9k6WdxG0WblT0fwnKgZSXOya9/cZTUpy79D/ml
+f9ZkG9s5+t80w0F6KKRQ82z4s5soiVy4nlAtvbLOLx1Q2YfWAb0=
+=edpy
+-----END PGP SIGNATURE-----
+
+--/Fg/PWpkMsj86wcD--
