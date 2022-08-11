@@ -2,114 +2,77 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19CE9C25B07
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Aug 2022 21:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33054C25B06
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Aug 2022 23:12:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234293AbiHKVtG (ORCPT
+        id S236540AbiHKXMb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Aug 2022 17:49:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55108 "EHLO
+        Thu, 11 Aug 2022 19:12:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231131AbiHKVtF (ORCPT
+        with ESMTP id S235651AbiHKXM3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Aug 2022 17:49:05 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4F589F756;
-        Thu, 11 Aug 2022 14:49:04 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id s206so18230808pgs.3;
-        Thu, 11 Aug 2022 14:49:04 -0700 (PDT)
+        Thu, 11 Aug 2022 19:12:29 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7607490C52;
+        Thu, 11 Aug 2022 16:12:28 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id 17so8828714pli.0;
+        Thu, 11 Aug 2022 16:12:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc;
-        bh=UntAa4zFQ3cQGGi1i7kPpZYC1O22iBUgC7sLjjOH6DU=;
-        b=bF7NMduXlaHbQQoBo+nrsUalCGto42gVrOEU29zvWsnSokh+dAL25YmlZ+ctPCucPI
-         JMyLZ6rbz6ETiE0651rYrzldk5C79ps8EM2io91BrOJnk6Mq2/T1GEjYEzMR/uNgzfH4
-         i0HmVtZO3aZiiGW8sI7GabgpnQYLZIKggE2C1S1xriboWXbswPneykDKhz79Yb/oq2ff
-         FI1pV5XCJD2oENsLskz6KoU3LnUg3K+tkadqKNJH1j9M7m3B1MeVnXPk9avMiT8p3ReI
-         37ySPVeoXMNSnPLhPTk2k+Wab/5mKecfdny9S1M/t77HghD5pKofaTYyfdvbg8VRZEyt
-         Am3Q==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=Uy/hk7mGj/R8FD0mj+fG9afG1PTPd5xuoXu3SDIYhR8=;
+        b=oBTsbb69/AKxYZl3cXKQc/xa1T7SFGPBgYekfZcdf1bVH1f2xdTnXX4mGMeOxN9nPf
+         rD0vzyxcSento3mNj8djpq/JkGWgr66UZaE7slDP7vLg11Zj4IaHdvXECOmo/NqZmf8M
+         bhf8WqakZd4mzQ6Sdw8C4ktNW07Uce7shSbJcgH0FPTtZyWHT+V5kkAZFYvOlaAZeDoH
+         OG6e5lCUf6KbLvG45hiYlbsLdLXkMVyNDgibbmWHoteMsvS1BKwzpuQTHy6fS8tAuTXp
+         ddTPstDykfBjYXj5fgMqxaLOTX1YVFjxkDDrOND1GMHLXFWTxYmN6yRs4DAV5h6f/6nP
+         Mq0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc;
-        bh=UntAa4zFQ3cQGGi1i7kPpZYC1O22iBUgC7sLjjOH6DU=;
-        b=YicYk9Ti0eUjoRwRtRcEI4zxPptFbCywwFogHXxWRV4hxr6PUg606S4iV8eg1g+BI7
-         RyZIT9VmTFyDnL006sK1KUzcOCd7CVfGKkVzUYE8LwT3psASiTkh55ifbr7Dk2POXa4y
-         16JxwPwhIZDwwhL430Dv/6dAgTB73llqExkz5XdjgWy7g6MBcJhy4bvukaMTYZWzrJNR
-         OMBBiKCuQkH10ILByjnqxhD9nM8UcNd0wJH35S/xh50pDLgZ1LGk+T7T3VH0wNdTIXoE
-         EJfR9OYSlpBBeQVrqaIX2eozgOV4TKxgYqCQABfqBj/8ur89pe7MIwUUh7erVzMdEHk7
-         PByQ==
-X-Gm-Message-State: ACgBeo1WbhofXZniWyS08tXJsUEqQuBIU06f5u7kUMLQbQVlB8PMX5dk
-        JaM2gdgKlidjZrX67YdsUYY=
-X-Google-Smtp-Source: AA6agR5bvJWvB9X1o9CHJ+49jVkxmG1woDaZJ/jdz52qgqUIN0EdECaLx15L1ZbY/WaAH3UG7wntoQ==
-X-Received: by 2002:a05:6a00:15d2:b0:52e:b5fe:8fa9 with SMTP id o18-20020a056a0015d200b0052eb5fe8fa9mr988582pfu.30.1660254544178;
-        Thu, 11 Aug 2022 14:49:04 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id u1-20020a17090341c100b0016db43e5212sm137909ple.175.2022.08.11.14.49.02
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=Uy/hk7mGj/R8FD0mj+fG9afG1PTPd5xuoXu3SDIYhR8=;
+        b=KTTC7UHWLzFxSbcgov2F3a4ieMn+QuAJ5VjNCgGQNharBJoQtZV91iqRG71bigX4p8
+         A2Kl1Px61lpy5IZFn3LD6zX7kyhCzhcGyXVHxKyjgc5Rr+yowzCOKusXN8IgvUNvh71v
+         raNe+wA11VHLsPt+LV+7EjrBJwN77NZWxo/khazl/qLSVi6/xnMeO41BMC7fqNtOkssZ
+         wcwA21hqxzr62uzqAQrVf9tuVyAck67TULf8sCC+gkiWOKYOFz69OYhkfyzKW0FMxhs1
+         Juxex4YeNS43iaKcKUjkf1CdMH5FzJydipVM3l54F+ZYmKmOpGT6kVy7/TxEJUhZAbeY
+         cKIQ==
+X-Gm-Message-State: ACgBeo1oVBmNL0Y/khlhSnXoofBp7D9iobhlYvKZTOEd+3WwOHdXKCTH
+        oOp38/ottJukWAD+N7CGVvE=
+X-Google-Smtp-Source: AA6agR5SVhQHqXQWIAlU6WTAIHSdgSZe9VoPEVjSaCQKMFxAmw0YNTuHK04Gf5jQCLX+KFuT8gtqJg==
+X-Received: by 2002:a17:903:22c7:b0:171:516d:d2a4 with SMTP id y7-20020a17090322c700b00171516dd2a4mr1324428plg.98.1660259547828;
+        Thu, 11 Aug 2022 16:12:27 -0700 (PDT)
+Received: from google.com ([2620:15c:202:201:c348:229d:7b9:f9dd])
+        by smtp.gmail.com with ESMTPSA id r38-20020a632066000000b00419acadde52sm258097pgm.46.2022.08.11.16.12.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Aug 2022 14:49:02 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Thu, 11 Aug 2022 14:49:01 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] watchdog: ftwdt010_wdt: fix test for platform_get_irq()
- failure
-Message-ID: <20220811214901.GA4089417@roeck-us.net>
-References: <YvTgRk/ABp62/hNA@kili>
- <3f1f9300-1d5e-22f8-f544-475a9840d14c@wanadoo.fr>
+        Thu, 11 Aug 2022 16:12:26 -0700 (PDT)
+Date:   Thu, 11 Aug 2022 16:12:24 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Colin Ian King <colin.i.king@gmail.com>
+Cc:     linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: tc3589x-keypad: Use correct struct names in
+ comment
+Message-ID: <YvWM2Jva7tJz6W7x@google.com>
+References: <20220805174717.2374416-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3f1f9300-1d5e-22f8-f544-475a9840d14c@wanadoo.fr>
+In-Reply-To: <20220805174717.2374416-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Aug 11, 2022 at 10:52:13PM +0200, Christophe JAILLET wrote:
-> Le 11/08/2022 à 12:56, Dan Carpenter a écrit :
-> > This code assumes that platform_get_irq() function returns zero on
-> > failure.  In fact, platform_get_irq() never returns zero.  It returns
-> > negative error codes or positive non-zero values on success.
-> > 
-> > Fixes: eca10ae6000d ("watchdog: add driver for Cortina Gemini watchdog")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >   drivers/watchdog/ftwdt010_wdt.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/watchdog/ftwdt010_wdt.c b/drivers/watchdog/ftwdt010_wdt.c
-> > index 21dcc7765688..02112fc264bd 100644
-> > --- a/drivers/watchdog/ftwdt010_wdt.c
-> > +++ b/drivers/watchdog/ftwdt010_wdt.c
-> > @@ -156,7 +156,7 @@ static int ftwdt010_wdt_probe(struct platform_device *pdev)
-> >   	}
-> >   	irq = platform_get_irq(pdev, 0);
-> > -	if (irq) {
-> > +	if (irq > 0) {
-> >   		ret = devm_request_irq(dev, irq, ftwdt010_wdt_interrupt, 0,
-> >   				       "watchdog bark", gwdt);
-> >   		if (ret)
+On Fri, Aug 05, 2022 at 06:47:17PM +0100, Colin Ian King wrote:
+> The incorrect structure name is being used in the comment for struct
+> tc3589x_keypad_platform_data. Correct it.
 > 
-> Hi,
-> can't platform_get_irq() return 0?
-> All the paths in platform_get_irq() look like 0 is a valid value.
-> 
-> The other patches you just sent are "< 0 ==> error", so ">= 0 ==> valid"
-> 
-> Any reason here for >0?
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-API documentation says:
+Applied, thank you.
 
-* Return: non-zero IRQ number on success, negative error number on failure.
-
-Also, 0 is not a valid interrupt number.
-
-Guenter
+-- 
+Dmitry
