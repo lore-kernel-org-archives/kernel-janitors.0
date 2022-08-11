@@ -2,87 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B13EC19F2A
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Aug 2022 12:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D173FC3F6B0
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Aug 2022 14:56:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235090AbiHKM7l (ORCPT
+        id S235384AbiHKO4U (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Aug 2022 08:59:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45528 "EHLO
+        Thu, 11 Aug 2022 10:56:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233504AbiHKM7i (ORCPT
+        with ESMTP id S233756AbiHKO4S (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Aug 2022 08:59:38 -0400
-X-Greylist: delayed 1801 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 11 Aug 2022 05:59:37 PDT
-Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42D327AC19
-        for <kernel-janitors@vger.kernel.org>; Thu, 11 Aug 2022 05:59:37 -0700 (PDT)
-Received: from martin by viti.kaiser.cx with local (Exim 4.89)
-        (envelope-from <martin@viti.kaiser.cx>)
-        id 1oM7JR-0002kD-2k; Thu, 11 Aug 2022 14:29:21 +0200
-Date:   Thu, 11 Aug 2022 14:29:21 +0200
-From:   Martin Kaiser <martin@kaiser.cx>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Lee Jones <lee@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mfd: fsl-imx25: fix check for platform_get_irq() errors
-Message-ID: <20220811122921.b24tc2xvn2rovzes@viti.kaiser.cx>
-References: <YvTfkbVQWYKMKS/t@kili>
+        Thu, 11 Aug 2022 10:56:18 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFC941A39B;
+        Thu, 11 Aug 2022 07:56:17 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id t2-20020a17090a4e4200b001f21572f3a4so5368668pjl.0;
+        Thu, 11 Aug 2022 07:56:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :sender:from:to:cc;
+        bh=DFNIMFu05tsw3j5rRzMSQ0WodN3OTGaRJRy12XpVg+A=;
+        b=it451sscft1eHt3M5wQgmfK0jVQQ0quYcQZA6dVqf80zeqgw7nxBNi5Vschc3nB56M
+         8kLISTV+shF8w924y9/rNV8L5ypL3fogAOkDghYwHh4QmftEn6kd5rKYJMAIXLQgKm5r
+         /eocvujdb74djrflxicK5dEsd4prMcLclha/PQVhfTgjJ6r/twk+tDYIFDhX4VmAjYbA
+         9QRr3hi1neiZWFyoB4JxU9LraXuifgLGpPoiKeayouSGi4EvK5fGyicTYgMcnj8TnP4u
+         qoQnsMb2+JmtAx6j1diUfMpqDs2JgBQoYodj8LgHzjgqRRgUu07e+kwKAwO+DYGk1zd5
+         I3mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :sender:x-gm-message-state:from:to:cc;
+        bh=DFNIMFu05tsw3j5rRzMSQ0WodN3OTGaRJRy12XpVg+A=;
+        b=6HqmysDD6lZd9HwReqpONbjsgieOHHvwsGIhUl/pWlqnq+nMdA0+quM9BZDvobNODU
+         a/RPef+4igL+5C9RMMIv58TOaiA7H9Pfmj6rfXo0l2AHRt8zWWLlHRrDprws2vyf62YU
+         x2JDY+9btmcQSuMEPZFeuA+h1zLEi1//27fJQZQsBiVNlzHAHcCc0lCmkJWo/qgWZKH2
+         JSqpaWTc/9/kSsmXk2wKTcHb9p74i7WoFCEZ6IwErrKLp01rdnHxX6xFJ3f+xSXnJERZ
+         tnP3ypw2FypNBzVACSdk76ByBvCinl4LQ1hRobOrtF+3B+EPmTfbgxC+LqRFBV4yMxK1
+         DVxg==
+X-Gm-Message-State: ACgBeo3RDMiOesLlmHP+cWubGjyhek/t/U0AGtEkiW2HlPiO+go8eme5
+        Wt5Qe/wtB8QUL6sObm4AYFs=
+X-Google-Smtp-Source: AA6agR7Ry48Zx98bFth0jHSAduY/6Ick8JcGjweQle7VcLcmC14gNBM1N1Msp6mhkTPpeMtJQFewPQ==
+X-Received: by 2002:a17:90a:2b42:b0:1f4:fc9a:be32 with SMTP id y2-20020a17090a2b4200b001f4fc9abe32mr9044867pjc.221.1660229777325;
+        Thu, 11 Aug 2022 07:56:17 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 194-20020a6216cb000000b005286124df03sm4160555pfw.87.2022.08.11.07.56.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Aug 2022 07:56:15 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <58e5401d-262f-a931-cd7d-93a3eefc395e@roeck-us.net>
+Date:   Thu, 11 Aug 2022 07:56:13 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YvTfkbVQWYKMKS/t@kili>
-User-Agent: NeoMutt/20170113 (1.7.2)
-Sender: Martin Kaiser <martin@viti.kaiser.cx>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] watchdog: ftwdt010_wdt: fix test for platform_get_irq()
+ failure
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <YvTgRk/ABp62/hNA@kili>
+From:   Guenter Roeck <linux@roeck-us.net>
+In-Reply-To: <YvTgRk/ABp62/hNA@kili>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Thus wrote Dan Carpenter (dan.carpenter@oracle.com):
-
-> The mx25_tsadc_remove() function assumes all non-zero returns are success
-> but the platform_get_irq() function returns negative on error and
-> positive non-zero values on success.  It never returns zero, but if it
-> did then treat that as a success.
-
-> Fixes: 18f773937968 ("mfd: fsl-imx25: Clean up irq settings during removal")
+On 8/11/22 03:56, Dan Carpenter wrote:
+> This code assumes that platform_get_irq() function returns zero on
+> failure.  In fact, platform_get_irq() never returns zero.  It returns
+> negative error codes or positive non-zero values on success.
+> 
+> Fixes: eca10ae6000d ("watchdog: add driver for Cortina Gemini watchdog")
 > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
 > ---
->  drivers/mfd/fsl-imx25-tsadc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
-> diff --git a/drivers/mfd/fsl-imx25-tsadc.c b/drivers/mfd/fsl-imx25-tsadc.c
-> index 37e5e02a1d05..dfc6da9b4aec 100644
-> --- a/drivers/mfd/fsl-imx25-tsadc.c
-> +++ b/drivers/mfd/fsl-imx25-tsadc.c
-> @@ -69,7 +69,7 @@ static int mx25_tsadc_setup_irq(struct platform_device *pdev,
->  	int irq;
-
->  	irq = platform_get_irq(pdev, 0);
-> -	if (irq <= 0)
-> +	if (irq < 0)
->  		return irq;
-
->  	tsadc->domain = irq_domain_add_simple(np, 2, 0, &mx25_tsadc_domain_ops,
-> @@ -179,7 +179,7 @@ static int mx25_tsadc_remove(struct platform_device *pdev)
->  	struct mx25_tsadc *tsadc = platform_get_drvdata(pdev);
->  	int irq = platform_get_irq(pdev, 0);
-
+>   drivers/watchdog/ftwdt010_wdt.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/watchdog/ftwdt010_wdt.c b/drivers/watchdog/ftwdt010_wdt.c
+> index 21dcc7765688..02112fc264bd 100644
+> --- a/drivers/watchdog/ftwdt010_wdt.c
+> +++ b/drivers/watchdog/ftwdt010_wdt.c
+> @@ -156,7 +156,7 @@ static int ftwdt010_wdt_probe(struct platform_device *pdev)
+>   	}
+>   
+>   	irq = platform_get_irq(pdev, 0);
 > -	if (irq) {
-> +	if (irq >= 0) {
->  		irq_set_chained_handler_and_data(irq, NULL, NULL);
->  		irq_domain_remove(tsadc->domain);
->  	}
-> -- 
-> 2.35.1
+> +	if (irq > 0) {
+>   		ret = devm_request_irq(dev, irq, ftwdt010_wdt_interrupt, 0,
+>   				       "watchdog bark", gwdt);
+>   		if (ret)
 
-Reviewed-by: Martin Kaiser <martin@kaiser.cx>
-
-Thanks,
-
-   Martin
