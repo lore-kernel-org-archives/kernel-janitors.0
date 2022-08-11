@@ -2,132 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3CA1C19F2D
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Aug 2022 07:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 450C8C19F2D
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Aug 2022 07:49:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234413AbiHKHcc (ORCPT
+        id S234250AbiHKHtn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Aug 2022 03:32:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38980 "EHLO
+        Thu, 11 Aug 2022 03:49:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234408AbiHKHcb (ORCPT
+        with ESMTP id S234265AbiHKHtb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Aug 2022 03:32:31 -0400
-Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61AE28E0DE;
-        Thu, 11 Aug 2022 00:32:30 -0700 (PDT)
-Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-32868f43dd6so164864497b3.8;
-        Thu, 11 Aug 2022 00:32:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=6u3hj+Y//vHpQbWemLUBU1B8OjMJneU5QhJwoYuwFe4=;
-        b=iAGICYiTai5WT5ADZ4g/9P8h9qzyXwh/Kivi5/pDrj+yO5M8JbFTZFn/S5TDKTEzAC
-         EZPffeybriTAjUbIe/ch30xzcmjPrfW0VPQGSXc4876uF94MYQNFNXsFOsbMBHCzLwQm
-         Xn3KV2S3w1eqrk+/V2cxPDfSKg3k2mooVwV8sl87bwKqmC5us5e+9YVPuZAvRQkSiPmP
-         izKGxlTbTQUM5c/w+JoBQ6IMZcM1jiuQLCdALal3saSNLL/vUUzO2PuTOQjKKkjbfeP1
-         BGF3U5qEYnOEAJDYgxhSQxu6tByZ/H6dbraRX6kikmtlh4UiHlQlT+7McAs/HXBuUaRS
-         +03w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=6u3hj+Y//vHpQbWemLUBU1B8OjMJneU5QhJwoYuwFe4=;
-        b=TL82tdOYJqsV72CdcipDQ6X//ydN00vbKcUbySj04UXv4aJ7NKVf9iJTpzSACDXdA4
-         b63YZhZpjCn7WOJPeQfWt/TvoZWkJjz4kFyj6TSnj26JFXpXeDY8uf5TyQ5gQQ/sNpFp
-         EZTT6zF84Aa4x6slOjPDtoJOMx8cwoecDh9RIfuC03Wj+c2Ks83VUyZ5g9T2HmZvatQU
-         Q8s5YwRLbZNYMzJF1kQrVo2DwnbKP8T/VoMuzMlrweRplpV9AJ2cUSwJfeG6DrDYH2X8
-         A+cYAATot36x/NcEGbWIyxOUGR9aNj+wpXZvWzzMaKonlthflCY0dDHhJvA+OPEj14CK
-         7FCA==
-X-Gm-Message-State: ACgBeo3rSA+/8BSzGpZ0UsyV18LIQ2zh6M1PnFq3CN/M4o52ybk2BfKN
-        iiCo7zYYfgSEADTO6ZmE46XvszfwDFi4ir+YQOk=
-X-Google-Smtp-Source: AA6agR5TGJLwSsVW06H2UxMeXJYwBpsk1ZgGTLbVxkvQWThby/NO+cLwCc/kVjK14zW+I3WZaeWWW1LqnkiCjwGjFr0=
-X-Received: by 2002:a81:8345:0:b0:323:9a15:7fd6 with SMTP id
- t66-20020a818345000000b003239a157fd6mr28544907ywf.104.1660203149471; Thu, 11
- Aug 2022 00:32:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220811070506.12252-1-lukas.bulwahn@gmail.com> <47742925-2d0d-7313-f811-aa17e35ce81a@microchip.com>
-In-Reply-To: <47742925-2d0d-7313-f811-aa17e35ce81a@microchip.com>
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Thu, 11 Aug 2022 09:32:18 +0200
-Message-ID: <CAKXUXMzaR_503UMXmoRe4CvUuek50VJb+33R6xYf3Op4tw78ZQ@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: rectify entry for RISC-V/MICROCHIP POLARFIRE
- SOC SUPPORT
-To:     Conor Dooley <Conor.Dooley@microchip.com>
-Cc:     Daire.McNamara@microchip.com, linux-riscv@lists.infradead.org,
-        Wolfram Sang <wsa@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Thu, 11 Aug 2022 03:49:31 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFB0B8E9B2;
+        Thu, 11 Aug 2022 00:49:22 -0700 (PDT)
+X-UUID: 2c24c874b51f4c8389e6af48ac0d47ca-20220811
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=61XhcT8p7U2ythcRq1ZKIH+rMJLYKYuleNkS3KVnsl4=;
+        b=FI8Xk3i7iekGIRyWN03AH3pJQ7yzl0IX/GfTz9JjJ23zx29hGGX8yJPt1hFmdmi9wN3rJ9pc9l4qT2k9sq+uIfpJmEHD28ACUBwreFXjNaG3WYJTmlhzfuKiPwUsvJuKmvc5CJu0y99ZSWhtgHnNcSZTJlI2mk0tQGtDyR7ZAcs=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.9,REQID:385dcd3b-2422-426b-ab46-f61ac596c3c8,OB:0,LO
+        B:0,IP:0,URL:5,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_H
+        am,ACTION:release,TS:5
+X-CID-META: VersionHash:3d8acc9,CLOUDID:67715d9c-da39-4e3b-a854-56c7d2111b46,C
+        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:1,File:nil
+        ,Bulk:nil,QS:nil,BEC:nil,COL:0
+X-UUID: 2c24c874b51f4c8389e6af48ac0d47ca-20220811
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 169198960; Thu, 11 Aug 2022 15:49:15 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.792.15; Thu, 11 Aug 2022 15:49:14 +0800
+Received: from mhfsdcap04 (10.17.3.154) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 11 Aug 2022 15:49:13 +0800
+Message-ID: <267e2c23f488756ab3256f787750ef4979398279.camel@mediatek.com>
+Subject: Re: [PATCH v2] usb: common: usb-conn-gpio: Simplify some error
+ message
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Date:   Thu, 11 Aug 2022 15:49:13 +0800
+In-Reply-To: <7505a9dfa1e097070c492d6f6f84afa2a490b040.1659763173.git.christophe.jaillet@wanadoo.fr>
+References: <7505a9dfa1e097070c492d6f6f84afa2a490b040.1659763173.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Aug 11, 2022 at 9:14 AM <Conor.Dooley@microchip.com> wrote:
->
-> On 11/08/2022 08:05, Lukas Bulwahn wrote:
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> >
-> > Commit 3cbd67384677 ("MAINTAINERS: add the Polarfire SoC's i2c driver")
-> > adds the file entry for drivers/i2c/busses/i2c-microchip-core.c, but the
-> > file is actually named drivers/i2c/busses/i2c-microchip-corei2c.c.
-> >
-> > Repair this file reference in RISC-V/MICROCHIP POLARFIRE SOC SUPPORT.
-> >
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > ---
-> > Conor, please ack.
->
-> FFS... Silly mistake from me there, keep getting caught out by
-> the maintainers entries when I do an inter-version rename.
-> Is there something I can add to my build scripts, other than the
-> get_maintainer selftest to catch these?
-> Thanks Lukas.
->
+On Tue, 2022-08-09 at 22:28 +0200, Christophe JAILLET wrote:
+> dev_err_probe() already prints the error code in a human readable
+> way, so
+> there is no need to duplicate it as a numerical value at the end of
+> the
+> message.
+> 
+> Fixes: ddaf0d6dc467 ("usb: common: usb-conn-gpio: use dev_err_probe()
+> to print log")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Change in v2:
+>   * keep the message on the same line of dev_err_probe() because the
+> line is
+>     still < 100 char   [Chunfeng Yun <chunfeng.yun@mediatek.com>]
+> ---
+>  drivers/usb/common/usb-conn-gpio.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/usb/common/usb-conn-gpio.c
+> b/drivers/usb/common/usb-conn-gpio.c
+> index b39c9f1c375d..44c5127175b7 100644
+> --- a/drivers/usb/common/usb-conn-gpio.c
+> +++ b/drivers/usb/common/usb-conn-gpio.c
+> @@ -208,10 +208,8 @@ static int usb_conn_probe(struct platform_device
+> *pdev)
+>  	if (PTR_ERR(info->vbus) == -ENODEV)
+>  		info->vbus = NULL;
+>  
+> -	if (IS_ERR(info->vbus)) {
+> -		ret = PTR_ERR(info->vbus);
+> -		return dev_err_probe(dev, ret, "failed to get vbus
+> :%d\n", ret);
+> -	}
+> +	if (IS_ERR(info->vbus))
+> +		return dev_err_probe(dev, PTR_ERR(info->vbus), "failed
+> to get vbus\n");
+>  
+>  	info->role_sw = usb_role_switch_get(dev);
+>  	if (IS_ERR(info->role_sw))
+Reviewed-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 
-I am not aware of another script. Why do you see the need for another one?
+Thanks
 
-I acknowledge that ./scripts/get_maintainer.pl --self-test=patterns
-does take a few seconds (roughly 30 or so) and it checks the whole
-MAINTAINERS file. Is that just not performant enough?
 
-I usually have a set of patches in a local branch (all those patches
-were sent out, but are pending somewhere) to get to zero warnings from
-this script. In the last few years, I did get to some points in time
-that ./scripts/get_maintainer.pl --self-test=patterns reported zero
-warnings on linux-next, but then new issues were introduced and the
-hunt continued. When we are back at that point of zero warnings, I
-will ask the intel 0-day testing team to include the '
-./scripts/get_maintainer.pl --self-test=patterns' check into their
-patch testing efforts, and hopefully that reduces the chance of
-picking a patch with such an issue and we can keep it almost always at
-zero warnings (wishful thinking on my side).
-
-Lukas
-
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
->
-> >
-> > Arnd, please pick this minor non-urgent clean-up patch.
-> >
-> >   MAINTAINERS | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 9203efedea1e..797fde7e1821 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -17544,7 +17544,7 @@ F:      Documentation/devicetree/bindings/usb/microchip,mpfs-musb.yaml
-> >   F:     arch/riscv/boot/dts/microchip/
-> >   F:     drivers/char/hw_random/mpfs-rng.c
-> >   F:     drivers/clk/microchip/clk-mpfs.c
-> > -F:     drivers/i2c/busses/i2c-microchip-core.c
-> > +F:     drivers/i2c/busses/i2c-microchip-corei2c.c
-> >   F:     drivers/mailbox/mailbox-mpfs.c
-> >   F:     drivers/pci/controller/pcie-microchip-host.c
-> >   F:     drivers/rtc/rtc-mpfs.c
-> > --
-> > 2.17.1
-> >
->
