@@ -2,62 +2,61 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD0FC19F2D
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Aug 2022 07:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3CA1C19F2D
+	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Aug 2022 07:32:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234234AbiHKHVG (ORCPT
+        id S234413AbiHKHcc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Aug 2022 03:21:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56884 "EHLO
+        Thu, 11 Aug 2022 03:32:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233535AbiHKHVF (ORCPT
+        with ESMTP id S234408AbiHKHcb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Aug 2022 03:21:05 -0400
-Received: from mail-yw1-x1130.google.com (mail-yw1-x1130.google.com [IPv6:2607:f8b0:4864:20::1130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65B5088DE3;
-        Thu, 11 Aug 2022 00:21:04 -0700 (PDT)
-Received: by mail-yw1-x1130.google.com with SMTP id 00721157ae682-31f445bd486so164182757b3.13;
-        Thu, 11 Aug 2022 00:21:04 -0700 (PDT)
+        Thu, 11 Aug 2022 03:32:31 -0400
+Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61AE28E0DE;
+        Thu, 11 Aug 2022 00:32:30 -0700 (PDT)
+Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-32868f43dd6so164864497b3.8;
+        Thu, 11 Aug 2022 00:32:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc;
-        bh=7pkrbhvnV/QbSUWqoz2X/keBi7uCVIq8rknW2hVQjeo=;
-        b=a4hJM03D6vxEEiIgVmwB20CYnvppjjbkLhxpLaY50J6vOflarnIZTzn/ox6wwKTJM8
-         f4ccdbI6uHhUeFLJowhbgzMddnByGuDD782jDA6pCdyRHWmz8VzYlrL0JIQezjiCVdLg
-         q8MsoVeq6VnJcurjILgIzT2pXw6e7t+esGTfZGIxm7XgOBJCM/2d9X41r0b1XEwjkaob
-         jsczyD3TSyVQ/SX1keN3eH9ghN9VD9ZOcVqKNzLBhRAEMMuvK+zdwtzcQeN5m8RgWZTa
-         0uoi/tpgib2b2R8rnvhFOfYjr9xOVeo54sLLUwRi/5QOhgiaWpOvRtPka4JLTb6gTwq3
-         g+og==
+        bh=6u3hj+Y//vHpQbWemLUBU1B8OjMJneU5QhJwoYuwFe4=;
+        b=iAGICYiTai5WT5ADZ4g/9P8h9qzyXwh/Kivi5/pDrj+yO5M8JbFTZFn/S5TDKTEzAC
+         EZPffeybriTAjUbIe/ch30xzcmjPrfW0VPQGSXc4876uF94MYQNFNXsFOsbMBHCzLwQm
+         Xn3KV2S3w1eqrk+/V2cxPDfSKg3k2mooVwV8sl87bwKqmC5us5e+9YVPuZAvRQkSiPmP
+         izKGxlTbTQUM5c/w+JoBQ6IMZcM1jiuQLCdALal3saSNLL/vUUzO2PuTOQjKKkjbfeP1
+         BGF3U5qEYnOEAJDYgxhSQxu6tByZ/H6dbraRX6kikmtlh4UiHlQlT+7McAs/HXBuUaRS
+         +03w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc;
-        bh=7pkrbhvnV/QbSUWqoz2X/keBi7uCVIq8rknW2hVQjeo=;
-        b=BFvQIYGheZKOZlpu/93636CxdYYaYQgfE9czb5F9rVjzNwIBWGUqhFuTU+82UhkynV
-         ODcz+Nw14dPaBOJmJLAB/BSQDgWM/qLQwRL/PS9iLIgN1mz0nwF5oPZR4WH3si5TRZRA
-         NdPtvhUv3eXzgOp21YqDKxekmaVwZDLqJJnLUABY13iAIKdQU3yophcSqQr2QuOxnORQ
-         gc8+QALhE7lrYZCgzYVjA2IU3wvRlaNx9JOKDZyv9UscpOGXRLDow4WypIJQjzoK1oXC
-         K+MbhRDVrYmp9Jj7rd4ZvA4A/8mA/w1++9vClrWE80IPG3K3QSrEmcjfqWcWxAGwgDld
-         mXKQ==
-X-Gm-Message-State: ACgBeo0GyzVypUmeIn8oK8ONHM5cAzOqbjyii9gyr0W7SNz3MJu4Fbbj
-        jnlbA3pBimu2w5TZhFF0ytKm2qBJ/lE9DeItJRc=
-X-Google-Smtp-Source: AA6agR7YkeUW6mHWPGyI0rEF4Q6qVH5UaJZye+cchoREuruzAl4pfP2vRvTme3wdSXcmzkdBIpkmYtOq3y/eeY/gEDc=
+        bh=6u3hj+Y//vHpQbWemLUBU1B8OjMJneU5QhJwoYuwFe4=;
+        b=TL82tdOYJqsV72CdcipDQ6X//ydN00vbKcUbySj04UXv4aJ7NKVf9iJTpzSACDXdA4
+         b63YZhZpjCn7WOJPeQfWt/TvoZWkJjz4kFyj6TSnj26JFXpXeDY8uf5TyQ5gQQ/sNpFp
+         EZTT6zF84Aa4x6slOjPDtoJOMx8cwoecDh9RIfuC03Wj+c2Ks83VUyZ5g9T2HmZvatQU
+         Q8s5YwRLbZNYMzJF1kQrVo2DwnbKP8T/VoMuzMlrweRplpV9AJ2cUSwJfeG6DrDYH2X8
+         A+cYAATot36x/NcEGbWIyxOUGR9aNj+wpXZvWzzMaKonlthflCY0dDHhJvA+OPEj14CK
+         7FCA==
+X-Gm-Message-State: ACgBeo3rSA+/8BSzGpZ0UsyV18LIQ2zh6M1PnFq3CN/M4o52ybk2BfKN
+        iiCo7zYYfgSEADTO6ZmE46XvszfwDFi4ir+YQOk=
+X-Google-Smtp-Source: AA6agR5TGJLwSsVW06H2UxMeXJYwBpsk1ZgGTLbVxkvQWThby/NO+cLwCc/kVjK14zW+I3WZaeWWW1LqnkiCjwGjFr0=
 X-Received: by 2002:a81:8345:0:b0:323:9a15:7fd6 with SMTP id
- t66-20020a818345000000b003239a157fd6mr28519265ywf.104.1660202463545; Thu, 11
- Aug 2022 00:21:03 -0700 (PDT)
+ t66-20020a818345000000b003239a157fd6mr28544907ywf.104.1660203149471; Thu, 11
+ Aug 2022 00:32:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220810150921.8858-1-lukas.bulwahn@gmail.com> <e6839a7e-d1f4-7d9f-68f4-f99c216f647f@quicinc.com>
-In-Reply-To: <e6839a7e-d1f4-7d9f-68f4-f99c216f647f@quicinc.com>
+References: <20220811070506.12252-1-lukas.bulwahn@gmail.com> <47742925-2d0d-7313-f811-aa17e35ce81a@microchip.com>
+In-Reply-To: <47742925-2d0d-7313-f811-aa17e35ce81a@microchip.com>
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Date:   Thu, 11 Aug 2022 09:20:52 +0200
-Message-ID: <CAKXUXMxkLZXvJbkKNG9f_9Jog5f4azgjr2XpEgJx1j2A-2OgjQ@mail.gmail.com>
-Subject: Re: [PATCH] tracing: react to error return from traceprobe_parse_event_name()
-To:     Linyu Yuan <quic_linyyuan@quicinc.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <zanussi@kernel.org>,
+Date:   Thu, 11 Aug 2022 09:32:18 +0200
+Message-ID: <CAKXUXMzaR_503UMXmoRe4CvUuek50VJb+33R6xYf3Op4tw78ZQ@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: rectify entry for RISC-V/MICROCHIP POLARFIRE
+ SOC SUPPORT
+To:     Conor Dooley <Conor.Dooley@microchip.com>
+Cc:     Daire.McNamara@microchip.com, linux-riscv@lists.infradead.org,
+        Wolfram Sang <wsa@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
         kernel-janitors <kernel-janitors@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
@@ -65,53 +64,70 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Aug 11, 2022 at 1:29 AM Linyu Yuan <quic_linyyuan@quicinc.com> wrote:
+On Thu, Aug 11, 2022 at 9:14 AM <Conor.Dooley@microchip.com> wrote:
 >
-> hi Lukas,
->
-> On 8/10/2022 11:09 PM, Lukas Bulwahn wrote:
-> > The function traceprobe_parse_event_name() may set the first two function
-> > arguments to a non-null value and still return -EINVAL to indicate an
-> > unsuccessful completion of the function. Hence, it is not sufficient to
-> > just check the result of the two function arguments for being not null,
-> > but the return value also needs to be checked.
+> On 11/08/2022 08:05, Lukas Bulwahn wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
 > >
-> > Commit 95c104c378dc ("tracing: Auto generate event name when creating a
-> > group of events") changed the error-return-value checking of the second
-> > traceprobe_parse_event_name() invocation in __trace_eprobe_create() and
-> > removed checking the return value to jump to the error handling case.
+> > Commit 3cbd67384677 ("MAINTAINERS: add the Polarfire SoC's i2c driver")
+> > adds the file entry for drivers/i2c/busses/i2c-microchip-core.c, but the
+> > file is actually named drivers/i2c/busses/i2c-microchip-corei2c.c.
 > >
-> > Reinstate using the return value in the error-return-value checking.
+> > Repair this file reference in RISC-V/MICROCHIP POLARFIRE SOC SUPPORT.
 > >
 > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > > ---
-> >   kernel/trace/trace_eprobe.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/kernel/trace/trace_eprobe.c b/kernel/trace/trace_eprobe.c
-> > index 4a0e9d927443..460d3ec8a256 100644
-> > --- a/kernel/trace/trace_eprobe.c
-> > +++ b/kernel/trace/trace_eprobe.c
-> > @@ -883,7 +883,7 @@ static int __trace_eprobe_create(int argc, const char *argv[])
-> >       trace_probe_log_set_index(1);
-> >       sys_event = argv[1];
-> >       ret = traceprobe_parse_event_name(&sys_event, &sys_name, buf2, 0);
-> > -     if (!sys_event || !sys_name) {
-> > +     if (!ret || !sys_event || !sys_name) {
+> > Conor, please ack.
 >
-> that's right, miss case sys_event and sys_name are not null, but invalid.
->
-> it should be  if (ret || ...)  ?
+> FFS... Silly mistake from me there, keep getting caught out by
+> the maintainers entries when I do an inter-version rename.
+> Is there something I can add to my build scripts, other than the
+> get_maintainer selftest to catch these?
+> Thanks Lukas.
 >
 
-Linyu, you are right. The visual symmetry tricked me into believing
-the line above was right, but it is clearly wrong if you think about
-it and look at the other invocation.
+I am not aware of another script. Why do you see the need for another one?
 
-I send out a corrected patch v2:
+I acknowledge that ./scripts/get_maintainer.pl --self-test=patterns
+does take a few seconds (roughly 30 or so) and it checks the whole
+MAINTAINERS file. Is that just not performant enough?
 
-https://lore.kernel.org/all/20220811071734.20700-1-lukas.bulwahn@gmail.com/
-
-Please review, ack and pick the patch v2. Thanks.
+I usually have a set of patches in a local branch (all those patches
+were sent out, but are pending somewhere) to get to zero warnings from
+this script. In the last few years, I did get to some points in time
+that ./scripts/get_maintainer.pl --self-test=patterns reported zero
+warnings on linux-next, but then new issues were introduced and the
+hunt continued. When we are back at that point of zero warnings, I
+will ask the intel 0-day testing team to include the '
+./scripts/get_maintainer.pl --self-test=patterns' check into their
+patch testing efforts, and hopefully that reduces the chance of
+picking a patch with such an issue and we can keep it almost always at
+zero warnings (wishful thinking on my side).
 
 Lukas
+
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+>
+> >
+> > Arnd, please pick this minor non-urgent clean-up patch.
+> >
+> >   MAINTAINERS | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 9203efedea1e..797fde7e1821 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -17544,7 +17544,7 @@ F:      Documentation/devicetree/bindings/usb/microchip,mpfs-musb.yaml
+> >   F:     arch/riscv/boot/dts/microchip/
+> >   F:     drivers/char/hw_random/mpfs-rng.c
+> >   F:     drivers/clk/microchip/clk-mpfs.c
+> > -F:     drivers/i2c/busses/i2c-microchip-core.c
+> > +F:     drivers/i2c/busses/i2c-microchip-corei2c.c
+> >   F:     drivers/mailbox/mailbox-mpfs.c
+> >   F:     drivers/pci/controller/pcie-microchip-host.c
+> >   F:     drivers/rtc/rtc-mpfs.c
+> > --
+> > 2.17.1
+> >
+>
