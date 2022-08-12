@@ -2,132 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F582C00140
-	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Aug 2022 14:15:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 556C4C00140
+	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Aug 2022 14:16:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232592AbiHLOPM (ORCPT
+        id S238916AbiHLOQP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 12 Aug 2022 10:15:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35490 "EHLO
+        Fri, 12 Aug 2022 10:16:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238916AbiHLOPK (ORCPT
+        with ESMTP id S238635AbiHLOQN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 12 Aug 2022 10:15:10 -0400
-Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D90C61A83C
-        for <kernel-janitors@vger.kernel.org>; Fri, 12 Aug 2022 07:15:09 -0700 (PDT)
-Received: by mail-qk1-x72c.google.com with SMTP id j6so834713qkl.10
-        for <kernel-janitors@vger.kernel.org>; Fri, 12 Aug 2022 07:15:09 -0700 (PDT)
+        Fri, 12 Aug 2022 10:16:13 -0400
+Received: from mail-qv1-xf32.google.com (mail-qv1-xf32.google.com [IPv6:2607:f8b0:4864:20::f32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 914D36E887
+        for <kernel-janitors@vger.kernel.org>; Fri, 12 Aug 2022 07:16:12 -0700 (PDT)
+Received: by mail-qv1-xf32.google.com with SMTP id b7so700033qvq.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 12 Aug 2022 07:16:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kudzu-us.20210112.gappssmtp.com; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc;
-        bh=gr3xJEF68aIrx2JrDgRpIsSM2UJRf9YlZlmbMyGrjVI=;
-        b=5fMR8J1FQzOJMU3+wziIzIi1w2X4q439RCbF4O4LHcSX3vxuSjX2TO2NZUBDm8NN45
-         JAFvOZtH3Qd7awS0hT+EceW9LpymDL1tpdnzmk9yDMFQt6SwIlaOy1kE8TB4H8ALYTF+
-         6SuQNVkJ50bKCSLFtLrCSCgRBqKIa4r/l1EjlUN3yqDMz9Yp7QimmOdNc/a//o2NsRG6
-         ZHRuWYlqswaPzcWMRH4q1qWezI6d9xAjHpIfBt3OR0mCUG0wVC5BLukMybjQASofAQbr
-         xg1tWgBXVHC8V6GKPdExmnuBNN9dVKBUP7jw3aGgWOZDQdd/+St4yYbfDw/5ox7FPdwE
-         Ob6w==
+        bh=5iPqAfoRqp5oAaE2cpTx+pD0aqojCmJ/R3i8Xb9ioEc=;
+        b=wwkN9qmtdWjmMLF7v96gLIMpOGhnj7vFp9ztCunVDnVsOo8/TPH3mTD3KbYPC6cOb3
+         nvZLPjb0OSWWeUNFqhy+3uuuSZR/khP5KqiXHvUaoHwApTfEPeFkmsRPf/UJc2CYhrfs
+         NITgPt39CV1+XA1XKsO8kWXoNdThNh1ZUB9iInnMAaJkUVJlcHaOVLniJ5lW2wvdWwTZ
+         FjX8V82QGoNDiNjeoW+BTZf4bbEJBQUHMRACy2qEf21R7hdP2u+8joFk4i45x9n4VsJd
+         yrQ+6PeIxRfhrVSvyYVdtcHknnuSD9Oc95aLnlmF59pLiIuFsFpsigI7Ph/YSO4RhJCp
+         F/Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=gr3xJEF68aIrx2JrDgRpIsSM2UJRf9YlZlmbMyGrjVI=;
-        b=EH3IMDraYMyU4dmhqee6g0X0oCkeh9oXKviD47yEHUUNyPa+SZSMnS0WmvzTwoBjdQ
-         sAdi6ENHVDs87cF1Iwqm627w87/t1txx+GQ+S3hjXIWYfamOSfwzBb0jSfSP2ecIqHdg
-         BfhNvDh06lPPR0TB8VFkOmz7bT2+sXqTz6XYZoVa6v8qXjUGCsJtLiWlJjz0AfRIOHNB
-         3pPFmbxzrHMFYb4k4T61kSPRgc9sui1KfIt/uzRdQsqgccEEoYw0MwqGXaBNngkddTSc
-         CFiwZBr1xDBNgfFaOmX35SpkO3PH8wa7dE3At2dj3W2UYCzL8PUnjhMyccMSfAcm32GN
-         iUKQ==
-X-Gm-Message-State: ACgBeo0nPUeI+saw6KAgwDiMoQTr1G56i3BXmM4FRbCv/ehSgVLSUEdp
-        ecQ9ce0NPAEA/+4VOAn+sqoP2A==
-X-Google-Smtp-Source: AA6agR7FZZwGrAEN4EtV30dhUAvcp9V2X7+8/6ETespdtD1NlnyBQS1+LdwSFcbbEm8Ht/g4V5RDAQ==
-X-Received: by 2002:a37:9504:0:b0:6b9:1e2f:e5ca with SMTP id x4-20020a379504000000b006b91e2fe5camr2948625qkd.113.1660313708987;
-        Fri, 12 Aug 2022 07:15:08 -0700 (PDT)
+        bh=5iPqAfoRqp5oAaE2cpTx+pD0aqojCmJ/R3i8Xb9ioEc=;
+        b=AsUVFiuBOfMfutcBaFL8panV6zx1uWwuOfeQG456vY8aXpQaBC1IxFYCyC+fqy0HHF
+         wqrvS3DaadSNU9lMHbvtKNLGdReVKi8eeLgD25CzJkjXovJaIW7/FOWg3KPBMfiuh3fd
+         I6MY7RetEFzzJp0Jg8GV2W+wD37rrSkhixDy1Ec7CiVQ6vcjXUdIn/Ns1brckVY6DPL6
+         7dDn2FPm7snqsLHG2DR5y2ORE680pVzl40aZwgWLkhDO9erEw0/tRDb8/CcydxqSRDQw
+         wF+L2QZ4LXgQmD5UUEU1RV/1McE/QnU6gg8SWyCwfBQVvWDI431u3gNyfx+BfXITGlzp
+         0W0Q==
+X-Gm-Message-State: ACgBeo3NXnzA3pypQgs7X3MhOpK/tFORSxBh73TRxsAXhBwmLkHKxVte
+        Pj+vArvMb1kVp+gOhXT4Y4gUe7X+uBAN7O0OBzI=
+X-Google-Smtp-Source: AA6agR6vWpHbleJHYiOGdDgKcmRxx5rMTEcA6ymOP/9PVk3R2MY2CU/Iddu3fNJxFYZiy2hKUYOweg==
+X-Received: by 2002:a05:6214:1a07:b0:474:6e80:e1e5 with SMTP id fh7-20020a0562141a0700b004746e80e1e5mr3685538qvb.41.1660313771702;
+        Fri, 12 Aug 2022 07:16:11 -0700 (PDT)
 Received: from kudzu.us ([2605:a601:a608:5600::59])
-        by smtp.gmail.com with ESMTPSA id m10-20020a05620a290a00b006b5e50057basm1862058qkp.95.2022.08.12.07.15.08
+        by smtp.gmail.com with ESMTPSA id g16-20020ae9e110000000b006b9576cd060sm1740631qkm.21.2022.08.12.07.16.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Aug 2022 07:15:08 -0700 (PDT)
-Date:   Fri, 12 Aug 2022 10:15:06 -0400
+        Fri, 12 Aug 2022 07:16:11 -0700 (PDT)
+Date:   Fri, 12 Aug 2022 10:16:09 -0400
 From:   Jon Mason <jdmason@kudzu.us>
-To:     Serge Semin <fancer.lancer@gmail.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Allen Hubbe <allenbh@gmail.com>,
-        Dave Jiang <dave.jiang@intel.com>, ntb@lists.linux.dev,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] NTB: ntb_tool: uninitialized heap data in tool_fn_write()
-Message-ID: <YvZgajV4lDVUyh3f@kudzu.us>
-References: <YthJQqfMCb47jHbG@kili>
- <20220728114417.hkhnv4lkqy6uzqq3@mobilestation>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Frank Li <Frank.Li@nxp.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Souptick Joarder (HPE)" <jrdr.linux@gmail.com>,
+        linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] NTB: EPF: Fix error code in epf_ntb_bind()
+Message-ID: <YvZgqRJtGdbzEXo3@kudzu.us>
+References: <YuenvTPwQj022P13@kili>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220728114417.hkhnv4lkqy6uzqq3@mobilestation>
+In-Reply-To: <YuenvTPwQj022P13@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Jul 28, 2022 at 02:44:17PM +0300, Serge Semin wrote:
-> On Wed, Jul 20, 2022 at 09:28:18PM +0300, Dan Carpenter wrote:
-> > The call to:
-> > 
-> > 	ret = simple_write_to_buffer(buf, size, offp, ubuf, size);
-> > 
-> > will return success if it is able to write even one byte to "buf".
-> > The value of "*offp" controls which byte.  This could result in
-> > reading uninitialized data when we do the sscanf() on the next line.
-> > 
-> > This code is not really desigined to handle partial writes where
-> > *offp is non-zero and the "buf" is preserved and re-used between writes.
-> > Just ban partial writes and replace the simple_write_to_buffer() with
-> > copy_from_user().
-> > 
-> > Fixes: 578b881ba9c4 ("NTB: Add tool test client")
+On Mon, Aug 01, 2022 at 01:15:25PM +0300, Dan Carpenter wrote:
+> Return an error code if pci_register_driver() fails.  Don't return
+> success.
 > 
-> Looks good. Thanks.
-> Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
+> Fixes: da51fd247424 ("NTB: EPF: support NTB transfer between PCI RC and EP connection")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/pci/endpoint/functions/pci-epf-vntb.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> -Sergey
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/endpoint/functions/pci-epf-vntb.c
+> index 111568089d45..cf338f3cf348 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
+> @@ -1312,7 +1312,8 @@ static int epf_ntb_bind(struct pci_epf *epf)
+>  
+>  	epf_set_drvdata(epf, ntb);
+>  
+> -	if (pci_register_driver(&vntb_pci_driver)) {
+> +	ret = pci_register_driver(&vntb_pci_driver);
+> +	if (ret) {
+>  		dev_err(dev, "failure register vntb pci driver\n");
+>  		goto err_bar_alloc;
+>  	}
+> -- 
+> 2.35.1
+> 
 
-Sorry for the extremely long delay in response.  This series is in my
+Sorry for the delay in response.  This series is in my
 ntb branch and will be in my pull request for v5.20 which should be
 going out later today.
 
 Thanks,
 Jon
-
-> 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > ---
-> >  drivers/ntb/test/ntb_tool.c | 8 +++++---
-> >  1 file changed, 5 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/ntb/test/ntb_tool.c b/drivers/ntb/test/ntb_tool.c
-> > index b7bf3f863d79..5ee0afa621a9 100644
-> > --- a/drivers/ntb/test/ntb_tool.c
-> > +++ b/drivers/ntb/test/ntb_tool.c
-> > @@ -367,14 +367,16 @@ static ssize_t tool_fn_write(struct tool_ctx *tc,
-> >  	u64 bits;
-> >  	int n;
-> >  
-> > +	if (*offp)
-> > +		return 0;
-> > +
-> >  	buf = kmalloc(size + 1, GFP_KERNEL);
-> >  	if (!buf)
-> >  		return -ENOMEM;
-> >  
-> > -	ret = simple_write_to_buffer(buf, size, offp, ubuf, size);
-> > -	if (ret < 0) {
-> > +	if (copy_from_user(buf, ubuf, size)) {
-> >  		kfree(buf);
-> > -		return ret;
-> > +		return -EFAULT;
-> >  	}
-> >  
-> >  	buf[size] = 0;
-> > -- 
-> > 2.35.1
-> > 
-> > 
