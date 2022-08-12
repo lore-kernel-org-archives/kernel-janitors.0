@@ -2,93 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97036C25B06
-	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Aug 2022 03:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22110C00140
+	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Aug 2022 04:52:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236459AbiHLDLP (ORCPT
+        id S235735AbiHLEwJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Aug 2022 23:11:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41884 "EHLO
+        Fri, 12 Aug 2022 00:52:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231283AbiHLDLL (ORCPT
+        with ESMTP id S233297AbiHLEwI (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Aug 2022 23:11:11 -0400
-Received: from mail.nfschina.com (unknown [IPv6:2400:dd01:100f:2:72e2:84ff:fe10:5f45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 12AB199245;
-        Thu, 11 Aug 2022 20:11:09 -0700 (PDT)
-Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id 3A4231E80D77;
-        Fri, 12 Aug 2022 11:09:00 +0800 (CST)
-X-Virus-Scanned: amavisd-new at test.com
-Received: from mail.nfschina.com ([127.0.0.1])
-        by localhost (mail.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id jdzEI2JOMAJ2; Fri, 12 Aug 2022 11:08:57 +0800 (CST)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        (Authenticated sender: liqiong@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id B80A41E80D0F;
-        Fri, 12 Aug 2022 11:08:56 +0800 (CST)
-From:   Li Qiong <liqiong@nfschina.com>
-To:     Horatiu Vultur <horatiu.vultur@microchip.com>,
-        UNGLinuxDriver@microchip.com,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yuzhe@nfschina.com, renyu@nfschina.com, jiaming@nfschina.com,
-        kernel-janitors@vger.kernel.org, Li Qiong <liqiong@nfschina.com>
-Subject: [PATCH] net: lan966x: fix checking for return value of platform_get_irq_byname()
-Date:   Fri, 12 Aug 2022 11:09:54 +0800
-Message-Id: <20220812030954.24050-1-liqiong@nfschina.com>
-X-Mailer: git-send-email 2.11.0
+        Fri, 12 Aug 2022 00:52:08 -0400
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98F1012A8F
+        for <kernel-janitors@vger.kernel.org>; Thu, 11 Aug 2022 21:52:06 -0700 (PDT)
+Received: from [192.168.1.18] ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id MMeQoMXpzAOp2MMeRohJUk; Fri, 12 Aug 2022 06:52:03 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 12 Aug 2022 06:52:03 +0200
+X-ME-IP: 90.11.190.129
+Message-ID: <f5210302-13b4-a9a2-8b69-469f7d68e370@wanadoo.fr>
+Date:   Fri, 12 Aug 2022 06:52:02 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] scsi: target: Save a few cycles in
+ 'transport_lookup_[cmd|tmr]_lun()'
+Content-Language: en-US
+To:     martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <e4a21bc607c39935cb98d4825cd63ba349820550.1635974637.git.christophe.jaillet@wanadoo.fr>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <e4a21bc607c39935cb98d4825cd63ba349820550.1635974637.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The platform_get_irq_byname() returns non-zero IRQ number
-or negative error number. "if (irq)" always true, chang it
-to "if (irq > 0)"
+Le 03/11/2021 à 22:24, Christophe JAILLET a écrit :
+> Use 'percpu_ref_tryget_live_rcu()' instead of 'percpu_ref_tryget_live()' to
+> save a few cycles when it is known that the rcu lock is already
+> taken/released.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>   drivers/target/target_core_device.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/target/target_core_device.c b/drivers/target/target_core_device.c
+> index 44bb380e7390..bfd5d5606522 100644
+> --- a/drivers/target/target_core_device.c
+> +++ b/drivers/target/target_core_device.c
+> @@ -77,7 +77,7 @@ transport_lookup_cmd_lun(struct se_cmd *se_cmd)
+>   
+>   		se_lun = rcu_dereference(deve->se_lun);
+>   
+> -		if (!percpu_ref_tryget_live(&se_lun->lun_ref)) {
+> +		if (!percpu_ref_tryget_live_rcu(&se_lun->lun_ref)) {
+>   			se_lun = NULL;
+>   			goto out_unlock;
+>   		}
+> @@ -154,7 +154,7 @@ int transport_lookup_tmr_lun(struct se_cmd *se_cmd)
+>   	if (deve) {
+>   		se_lun = rcu_dereference(deve->se_lun);
+>   
+> -		if (!percpu_ref_tryget_live(&se_lun->lun_ref)) {
+> +		if (!percpu_ref_tryget_live_rcu(&se_lun->lun_ref)) {
+>   			se_lun = NULL;
+>   			goto out_unlock;
+>   		}
 
-Signed-off-by: Li Qiong <liqiong@nfschina.com>
----
- drivers/net/ethernet/microchip/lan966x/lan966x_main.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Hi,
+gentle reminder.
 
-diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-index 1d6e3b641b2e..d928b75f3780 100644
---- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-+++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-@@ -710,7 +710,7 @@ static void lan966x_cleanup_ports(struct lan966x *lan966x)
- 	disable_irq(lan966x->xtr_irq);
- 	lan966x->xtr_irq = -ENXIO;
- 
--	if (lan966x->ana_irq) {
-+	if (lan966x->ana_irq > 0) {
- 		disable_irq(lan966x->ana_irq);
- 		lan966x->ana_irq = -ENXIO;
- 	}
-@@ -718,10 +718,10 @@ static void lan966x_cleanup_ports(struct lan966x *lan966x)
- 	if (lan966x->fdma)
- 		devm_free_irq(lan966x->dev, lan966x->fdma_irq, lan966x);
- 
--	if (lan966x->ptp_irq)
-+	if (lan966x->ptp_irq > 0)
- 		devm_free_irq(lan966x->dev, lan966x->ptp_irq, lan966x);
- 
--	if (lan966x->ptp_ext_irq)
-+	if (lan966x->ptp_ext_irq > 0)
- 		devm_free_irq(lan966x->dev, lan966x->ptp_ext_irq, lan966x);
- }
- 
-@@ -1049,7 +1049,7 @@ static int lan966x_probe(struct platform_device *pdev)
- 	}
- 
- 	lan966x->ana_irq = platform_get_irq_byname(pdev, "ana");
--	if (lan966x->ana_irq) {
-+	if (lan966x->ana_irq > 0) {
- 		err = devm_request_threaded_irq(&pdev->dev, lan966x->ana_irq, NULL,
- 						lan966x_ana_irq_handler, IRQF_ONESHOT,
- 						"ana irq", lan966x);
--- 
-2.11.0
+Is this patch useful?
+When I first posted it, percpu_ref_tryget_live_rcu() was really new.
+Now it is part of linux since 5.16.
 
+Saving a few cycles in a function with "lookup" in its name looks always 
+good to me.
+
+CJ
