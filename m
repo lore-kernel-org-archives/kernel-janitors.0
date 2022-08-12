@@ -2,78 +2,74 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7B7C3F6B0
-	for <kernel-janitors@archiver.kernel.org>; Thu, 11 Aug 2022 23:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7061DC25B0F
+	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Aug 2022 01:03:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235421AbiHKXQR (ORCPT
+        id S235632AbiHLBDD (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Aug 2022 19:16:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48344 "EHLO
+        Thu, 11 Aug 2022 21:03:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229524AbiHKXQQ (ORCPT
+        with ESMTP id S231131AbiHLBDC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Aug 2022 19:16:16 -0400
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFABF5C97C;
-        Thu, 11 Aug 2022 16:16:14 -0700 (PDT)
-Received: by mail-pg1-x52e.google.com with SMTP id r22so15971936pgm.5;
-        Thu, 11 Aug 2022 16:16:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc;
-        bh=cMOKYlcYTqw4MjWpy2PHg44DkbIdHSJMfu9lefA+Tg4=;
-        b=I6p+8dV5qOBTOTFSUzQwQjQ21VUKsLNXKlvQlYBLa8lIkHhub/O+D8oBAuZ9GKOgeF
-         fG+HyE1VpO0W8Mc4ciWPTKomDH9vpy/q+kxrhvCiwoGUv6lr8uVwq/HJTibXK9fxd2zi
-         MwG0WQba2Kx4BlKQ2IONZG4o5q0/AQqnYQeCWJM7sdFGGtmPZ4ILzDCwcm+YRCZ49NFX
-         ok9iI43wozqdDwqFYFfZLdq0DEu7hEe87Fxre6k+mgCB3jxLOI2wl7yWgqwQEQDr32rh
-         mqGVyuvKIpWkjF0p4Wpg4wvIi8H7KzxAFbxN/BpTIL6s/A3nuqozT4oE0VNOO+bnPxcy
-         wngQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=cMOKYlcYTqw4MjWpy2PHg44DkbIdHSJMfu9lefA+Tg4=;
-        b=UN3R9V07An7M0cGhyiJsABF6cDKk+po+zUPmygUvKYBFQepC/63pfvE1pb1vLPHsNj
-         pr7cb+JCDQPXWx4lQ+I8R0fxq+TMCyR6UWvWVbnOA5kh2dAya3Ll0rmwVFgQvYIymVXj
-         m0dmlGg0d88wBkbRZ3nquoXDYxjpPAnNftm0yKSkvmjtxAELa04L0lM1wWOwdFo3id6G
-         WSMRjLKoa1NdrgGq5OIHxr2Ju/h04wTQJklQlAXJBBd9TA9GrcM7X00t2a2PUfhAOWCI
-         8BTnTQhf++p12/jwM3TdxzC2qjMcO4IK2rf4Kl3abQxuRF55L1nRsYExmA+UZ2FZW/DS
-         H06g==
-X-Gm-Message-State: ACgBeo2J5T3jY2KG/EIsAc3Yufmm9x2qvOjnk3nVyN+D/7xUTLz3hGZQ
-        IiyXtZIyaMyZ5MVknkOGqKUvCnnrORw=
-X-Google-Smtp-Source: AA6agR5CxOJ9QL20HMaZovY/TZhVpFFp7v8UT8RBOio+AIteD0hz5gzePzY5XWa5ljXEaR9eIJGkwQ==
-X-Received: by 2002:a05:6a00:2195:b0:52e:6157:904d with SMTP id h21-20020a056a00219500b0052e6157904dmr1071533pfi.44.1660259774160;
-        Thu, 11 Aug 2022 16:16:14 -0700 (PDT)
-Received: from google.com ([2620:15c:202:201:c348:229d:7b9:f9dd])
-        by smtp.gmail.com with ESMTPSA id w8-20020a170902a70800b0016d2540c098sm197677plq.231.2022.08.11.16.16.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Aug 2022 16:16:13 -0700 (PDT)
-Date:   Thu, 11 Aug 2022 16:16:10 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] Input: bma150 - Fix a typo in some comments
-Message-ID: <YvWNuiGYfZqYG39A@google.com>
-References: <a331a6244a1dfbf34dc85f1be6995fa91500c801.1659802757.git.christophe.jaillet@wanadoo.fr>
+        Thu, 11 Aug 2022 21:03:02 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2981774DF3;
+        Thu, 11 Aug 2022 18:03:01 -0700 (PDT)
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.53])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4M3lfy5LGkzXdNB;
+        Fri, 12 Aug 2022 08:58:50 +0800 (CST)
+Received: from kwepemm600010.china.huawei.com (7.193.23.86) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Fri, 12 Aug 2022 09:02:58 +0800
+Received: from huawei.com (10.175.127.227) by kwepemm600010.china.huawei.com
+ (7.193.23.86) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Fri, 12 Aug
+ 2022 09:02:57 +0800
+From:   Sun Ke <sunke32@huawei.com>
+To:     <trond.myklebust@hammerspace.com>, <anna@kernel.org>
+CC:     <linux-nfs@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <sunke32@huawei.com>
+Subject: [PATCH] NFS: Fix missing unlock in nfs_unlink()
+Date:   Fri, 12 Aug 2022 09:14:40 +0800
+Message-ID: <20220812011440.3602849-1-sunke32@huawei.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a331a6244a1dfbf34dc85f1be6995fa91500c801.1659802757.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemm600010.china.huawei.com (7.193.23.86)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Aug 06, 2022 at 06:20:32PM +0200, Christophe JAILLET wrote:
-> Remove some extra '0'
-> 
-> s/BMA0150_RANGE_xxx/BMA150_RANGE_xxx/
-> s/BMA0150_BW_xxx/BMA150_BW_xxx
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Add the missing unlock before goto.
 
-Applied, thank you.
+Fixes: 3c59366c207e ("NFS: don't unhash dentry during unlink/rename")
+Signed-off-by: Sun Ke <sunke32@huawei.com>
+---
+ fs/nfs/dir.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
+diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
+index dbab3caa15ed..1b879584d4fe 100644
+--- a/fs/nfs/dir.c
++++ b/fs/nfs/dir.c
+@@ -2484,8 +2484,10 @@ int nfs_unlink(struct inode *dir, struct dentry *dentry)
+ 	 */
+ 	error = -ETXTBSY;
+ 	if (WARN_ON(dentry->d_flags & DCACHE_NFSFS_RENAMED) ||
+-	    WARN_ON(dentry->d_fsdata == NFS_FSDATA_BLOCKED))
++	    WARN_ON(dentry->d_fsdata == NFS_FSDATA_BLOCKED)) {
++		spin_unlock(&dentry->d_lock);
+ 		goto out;
++	}
+ 	if (dentry->d_fsdata)
+ 		/* old devname */
+ 		kfree(dentry->d_fsdata);
 -- 
-Dmitry
+2.31.1
+
