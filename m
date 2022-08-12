@@ -2,108 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA028C00140
-	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Aug 2022 14:05:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F582C00140
+	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Aug 2022 14:15:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238877AbiHLOFv (ORCPT
+        id S232592AbiHLOPM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 12 Aug 2022 10:05:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52398 "EHLO
+        Fri, 12 Aug 2022 10:15:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238692AbiHLOFu (ORCPT
+        with ESMTP id S238916AbiHLOPK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 12 Aug 2022 10:05:50 -0400
-Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C4752A26D
-        for <kernel-janitors@vger.kernel.org>; Fri, 12 Aug 2022 07:05:49 -0700 (PDT)
-Received: by mail-qk1-x735.google.com with SMTP id v27so816693qkj.8
-        for <kernel-janitors@vger.kernel.org>; Fri, 12 Aug 2022 07:05:49 -0700 (PDT)
+        Fri, 12 Aug 2022 10:15:10 -0400
+Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D90C61A83C
+        for <kernel-janitors@vger.kernel.org>; Fri, 12 Aug 2022 07:15:09 -0700 (PDT)
+Received: by mail-qk1-x72c.google.com with SMTP id j6so834713qkl.10
+        for <kernel-janitors@vger.kernel.org>; Fri, 12 Aug 2022 07:15:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kudzu-us.20210112.gappssmtp.com; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc;
-        bh=3Fi1VTtDFgyZAXD5ict/NicDWj9+d/F9avdnvytM5Yo=;
-        b=CqKUxs9HWvgk5EACnCWAc4IABQ81zQ5HxyhhzOwel9K82MNYA5ZpimTG2n/G/CZoj6
-         2biBPqLvZGzKN2QgBG2PshKuMmlgoUKalrEXqoJiew9yNntYLZEydSpxMikj9pMOOJys
-         XkRg28HFxcvZt+BJ/xCbkaKj3xS8nheYn78igbl1YBwN6BI7jV3Pb9uIZEHaHSu6e7TJ
-         FtRUyZe27glwYb/yHjMHO1+kfD2xl6BCSDpP+RcBVWff/GaeKp90oupVNBtu/VY7oJi3
-         8aItvPHy5I1E36ul/9VLB5dM9uGH9wLmJT/Mr4T7l15k40Ep82PClCmYUGEVGTd26Ba3
-         kAhA==
+        bh=gr3xJEF68aIrx2JrDgRpIsSM2UJRf9YlZlmbMyGrjVI=;
+        b=5fMR8J1FQzOJMU3+wziIzIi1w2X4q439RCbF4O4LHcSX3vxuSjX2TO2NZUBDm8NN45
+         JAFvOZtH3Qd7awS0hT+EceW9LpymDL1tpdnzmk9yDMFQt6SwIlaOy1kE8TB4H8ALYTF+
+         6SuQNVkJ50bKCSLFtLrCSCgRBqKIa4r/l1EjlUN3yqDMz9Yp7QimmOdNc/a//o2NsRG6
+         ZHRuWYlqswaPzcWMRH4q1qWezI6d9xAjHpIfBt3OR0mCUG0wVC5BLukMybjQASofAQbr
+         xg1tWgBXVHC8V6GKPdExmnuBNN9dVKBUP7jw3aGgWOZDQdd/+St4yYbfDw/5ox7FPdwE
+         Ob6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=3Fi1VTtDFgyZAXD5ict/NicDWj9+d/F9avdnvytM5Yo=;
-        b=6ga/dnY4RaRG4WdsSP4Kr1FeYRXWGFJ7RnLLqmfxzEkKVZ7eMXH66+M6WkiN+0HJb4
-         Nt100GtAFwPjr1PL0vqB9Gl5AjAm3YDrlHZ59bOO/zMs8YIVbBnMf7h1LS729sIPKnV+
-         wCq14YMlKhq3yA1HMzETy3r+VBK23fBa7Tk9ET6WkeLfaF7MyT8Wdyz3V1Q6Avkt8DkK
-         ngrAtX539pJzf3AkBZu+llhM6fAWvh+rTuQ/L01azg9uOX0k+liOocpBEctdFDHireSB
-         DkHTCwaX0kvRsdRx5hXgDS89YNfgnDYjj/aVxVdGmnf2nQOuEwh589KjkMaJxd8vSGS+
-         svFQ==
-X-Gm-Message-State: ACgBeo2cm8Bdd2Hz9aHDDFqtTd4AbX9oDy97QT7nF+Pe3G8nJaQx//h9
-        rvFnRLssxaR2l10zzlxSReZ/Xw==
-X-Google-Smtp-Source: AA6agR6rVO/mlp2whKyQ+m6Evhgl5o+7HirB+451gg9nOuhJ3xNjn898fYAaT1rtyGmDyk6Q4LMiEA==
-X-Received: by 2002:a37:a853:0:b0:6ba:ceba:9656 with SMTP id r80-20020a37a853000000b006baceba9656mr1704225qke.466.1660313148548;
-        Fri, 12 Aug 2022 07:05:48 -0700 (PDT)
+        bh=gr3xJEF68aIrx2JrDgRpIsSM2UJRf9YlZlmbMyGrjVI=;
+        b=EH3IMDraYMyU4dmhqee6g0X0oCkeh9oXKviD47yEHUUNyPa+SZSMnS0WmvzTwoBjdQ
+         sAdi6ENHVDs87cF1Iwqm627w87/t1txx+GQ+S3hjXIWYfamOSfwzBb0jSfSP2ecIqHdg
+         BfhNvDh06lPPR0TB8VFkOmz7bT2+sXqTz6XYZoVa6v8qXjUGCsJtLiWlJjz0AfRIOHNB
+         3pPFmbxzrHMFYb4k4T61kSPRgc9sui1KfIt/uzRdQsqgccEEoYw0MwqGXaBNngkddTSc
+         CFiwZBr1xDBNgfFaOmX35SpkO3PH8wa7dE3At2dj3W2UYCzL8PUnjhMyccMSfAcm32GN
+         iUKQ==
+X-Gm-Message-State: ACgBeo0nPUeI+saw6KAgwDiMoQTr1G56i3BXmM4FRbCv/ehSgVLSUEdp
+        ecQ9ce0NPAEA/+4VOAn+sqoP2A==
+X-Google-Smtp-Source: AA6agR7FZZwGrAEN4EtV30dhUAvcp9V2X7+8/6ETespdtD1NlnyBQS1+LdwSFcbbEm8Ht/g4V5RDAQ==
+X-Received: by 2002:a37:9504:0:b0:6b9:1e2f:e5ca with SMTP id x4-20020a379504000000b006b91e2fe5camr2948625qkd.113.1660313708987;
+        Fri, 12 Aug 2022 07:15:08 -0700 (PDT)
 Received: from kudzu.us ([2605:a601:a608:5600::59])
-        by smtp.gmail.com with ESMTPSA id h5-20020a05620a400500b006b615cd8c13sm1173685qko.106.2022.08.12.07.05.47
+        by smtp.gmail.com with ESMTPSA id m10-20020a05620a290a00b006b5e50057basm1862058qkp.95.2022.08.12.07.15.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Aug 2022 07:05:48 -0700 (PDT)
-Date:   Fri, 12 Aug 2022 10:05:46 -0400
+        Fri, 12 Aug 2022 07:15:08 -0700 (PDT)
+Date:   Fri, 12 Aug 2022 10:15:06 -0400
 From:   Jon Mason <jdmason@kudzu.us>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Colin Ian King <colin.i.king@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Frank Li <Frank.Li@nxp.com>, linux-pci@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] NTB: EPF: set pointer addr to null using NULL
- rather than 0
-Message-ID: <YvZeOkd1wrdYJXqs@kudzu.us>
-References: <20220623165709.77229-1-colin.i.king@gmail.com>
- <20220627202858.GA1776067@bhelgaas>
+To:     Serge Semin <fancer.lancer@gmail.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Allen Hubbe <allenbh@gmail.com>,
+        Dave Jiang <dave.jiang@intel.com>, ntb@lists.linux.dev,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] NTB: ntb_tool: uninitialized heap data in tool_fn_write()
+Message-ID: <YvZgajV4lDVUyh3f@kudzu.us>
+References: <YthJQqfMCb47jHbG@kili>
+ <20220728114417.hkhnv4lkqy6uzqq3@mobilestation>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220627202858.GA1776067@bhelgaas>
+In-Reply-To: <20220728114417.hkhnv4lkqy6uzqq3@mobilestation>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jun 27, 2022 at 03:28:58PM -0500, Bjorn Helgaas wrote:
-> On Thu, Jun 23, 2022 at 05:57:09PM +0100, Colin Ian King wrote:
-> > The pointer addr is being set to null using 0. Use NULL instead.
+On Thu, Jul 28, 2022 at 02:44:17PM +0300, Serge Semin wrote:
+> On Wed, Jul 20, 2022 at 09:28:18PM +0300, Dan Carpenter wrote:
+> > The call to:
 > > 
-> > Cleans up sparse warning:
-> > warning: Using plain integer as NULL pointer
-> 
-> Another one for Jon; fixes this commit:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=ff32fac00d97
-> 
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> > ---
-> >  drivers/pci/endpoint/functions/pci-epf-vntb.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 	ret = simple_write_to_buffer(buf, size, offp, ubuf, size);
 > > 
-> > diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/endpoint/functions/pci-epf-vntb.c
-> > index ebf7e243eefa..fb31c868af6a 100644
-> > --- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
-> > +++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
-> > @@ -605,7 +605,7 @@ static int epf_ntb_mw_bar_init(struct epf_ntb *ntb)
-> >  
-> >  		ntb->epf->bar[barno].barno = barno;
-> >  		ntb->epf->bar[barno].size = size;
-> > -		ntb->epf->bar[barno].addr = 0;
-> > +		ntb->epf->bar[barno].addr = NULL;
-> >  		ntb->epf->bar[barno].phys_addr = 0;
-> >  		ntb->epf->bar[barno].flags |= upper_32_bits(size) ?
-> >  				PCI_BASE_ADDRESS_MEM_TYPE_64 :
-> > -- 
-> > 2.35.3
+> > will return success if it is able to write even one byte to "buf".
+> > The value of "*offp" controls which byte.  This could result in
+> > reading uninitialized data when we do the sscanf() on the next line.
 > > 
+> > This code is not really desigined to handle partial writes where
+> > *offp is non-zero and the "buf" is preserved and re-used between writes.
+> > Just ban partial writes and replace the simple_write_to_buffer() with
+> > copy_from_user().
+> > 
+> > Fixes: 578b881ba9c4 ("NTB: Add tool test client")
+> 
+> Looks good. Thanks.
+> Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
+> 
+> -Sergey
 
 Sorry for the extremely long delay in response.  This series is in my
 ntb branch and will be in my pull request for v5.20 which should be
@@ -111,3 +96,38 @@ going out later today.
 
 Thanks,
 Jon
+
+> 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > ---
+> >  drivers/ntb/test/ntb_tool.c | 8 +++++---
+> >  1 file changed, 5 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/ntb/test/ntb_tool.c b/drivers/ntb/test/ntb_tool.c
+> > index b7bf3f863d79..5ee0afa621a9 100644
+> > --- a/drivers/ntb/test/ntb_tool.c
+> > +++ b/drivers/ntb/test/ntb_tool.c
+> > @@ -367,14 +367,16 @@ static ssize_t tool_fn_write(struct tool_ctx *tc,
+> >  	u64 bits;
+> >  	int n;
+> >  
+> > +	if (*offp)
+> > +		return 0;
+> > +
+> >  	buf = kmalloc(size + 1, GFP_KERNEL);
+> >  	if (!buf)
+> >  		return -ENOMEM;
+> >  
+> > -	ret = simple_write_to_buffer(buf, size, offp, ubuf, size);
+> > -	if (ret < 0) {
+> > +	if (copy_from_user(buf, ubuf, size)) {
+> >  		kfree(buf);
+> > -		return ret;
+> > +		return -EFAULT;
+> >  	}
+> >  
+> >  	buf[size] = 0;
+> > -- 
+> > 2.35.1
+> > 
+> > 
