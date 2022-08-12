@@ -2,51 +2,50 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69888C00140
-	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Aug 2022 08:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49236C00140
+	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Aug 2022 08:41:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237138AbiHLIhx (ORCPT
+        id S237281AbiHLIlL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 12 Aug 2022 04:37:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48308 "EHLO
+        Fri, 12 Aug 2022 04:41:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229793AbiHLIhw (ORCPT
+        with ESMTP id S237464AbiHLIlE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 12 Aug 2022 04:37:52 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0703B1D30E;
-        Fri, 12 Aug 2022 01:37:50 -0700 (PDT)
+        Fri, 12 Aug 2022 04:41:04 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91A5045F5F;
+        Fri, 12 Aug 2022 01:41:03 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id A7BB95D8BE;
-        Fri, 12 Aug 2022 08:37:49 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 29E765D8C6;
+        Fri, 12 Aug 2022 08:41:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1660293469; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1660293662; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=UbmWpFkpApDPJOHvAwjNrdzDRvMZrYyTIHiHM42vPww=;
-        b=r4YpmcWb6e8hNA4kkJ6h/6/JAuunNt6riec/xa/pEUFUWOtTBN8B9fX4BhVDANh3A8j8n4
-        tcPrMocXWNMKVui0g+IE7wB3HgMx8YbKqPPWG03M0CbZJQ0W2rn5i4/zcLdclGbVN3mg04
-        hgFqCQXvHfMftY2xZgT62iDX8FcIT/Y=
+        bh=lHWGHA6Azxd6lwN/7a75aIRu75opDe/ZR3+gBr6N+xY=;
+        b=dt2brvQHNN660Af1cB2CphyCzGc4KhGItUoAvkknQAvBdiirX4130qS2EltSZgD8L1YZVB
+        ZlyKNJ5OrQ1K0UNU7vjt6CKpay0sM58t8TwDpswuHA7juJjJLTMj3dL+606rlQlBQ3AEo9
+        PcDggJ7tmggeQvpHs2Ek38PZQIXIvNs=
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4980D13305;
-        Fri, 12 Aug 2022 08:37:49 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B8C1E13305;
+        Fri, 12 Aug 2022 08:41:01 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id tuibDl0R9mLaKQAAMHmgww
-        (envelope-from <jgross@suse.com>); Fri, 12 Aug 2022 08:37:49 +0000
-Message-ID: <95f56cca-473f-98fa-86a0-b8bad120755a@suse.com>
-Date:   Fri, 12 Aug 2022 10:37:48 +0200
+        id hDiZKx0S9mJQKwAAMHmgww
+        (envelope-from <jgross@suse.com>); Fri, 12 Aug 2022 08:41:01 +0000
+Message-ID: <1720c5b3-e310-4676-56e9-e9403b481a01@suse.com>
+Date:   Fri, 12 Aug 2022 10:41:01 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [PATCH 4/4] MAINTAINERS: add xen config fragments to XEN
- HYPERVISOR sections
+Subject: Re: [PATCH 2/4] xen: remove XEN_SCRUB_PAGES in xen.config
 Content-Language: en-US
 To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
         Boris Ostrovsky <boris.ostrovsky@oracle.com>,
@@ -59,19 +58,19 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         "H . Peter Anvin" <hpa@zytor.com>, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <20220810050712.9539-1-lukas.bulwahn@gmail.com>
- <20220810050712.9539-5-lukas.bulwahn@gmail.com>
+ <20220810050712.9539-3-lukas.bulwahn@gmail.com>
 From:   Juergen Gross <jgross@suse.com>
-In-Reply-To: <20220810050712.9539-5-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220810050712.9539-3-lukas.bulwahn@gmail.com>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="------------Lcfd6Qatd7zQu01u2KUUv53A"
+ boundary="------------np34PinFKM6YfezFikcTz1pE"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------Lcfd6Qatd7zQu01u2KUUv53A
-Content-Type: multipart/mixed; boundary="------------9j0VkncW8znW7JGdM43kmIKm";
+--------------np34PinFKM6YfezFikcTz1pE
+Content-Type: multipart/mixed; boundary="------------6E6SafVgTYFlX10kdALk9Ltc";
  protected-headers="v1"
 From: Juergen Gross <jgross@suse.com>
 To: Lukas Bulwahn <lukas.bulwahn@gmail.com>,
@@ -83,26 +82,32 @@ Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
  Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
  x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
  kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <95f56cca-473f-98fa-86a0-b8bad120755a@suse.com>
-Subject: Re: [PATCH 4/4] MAINTAINERS: add xen config fragments to XEN
- HYPERVISOR sections
+Message-ID: <1720c5b3-e310-4676-56e9-e9403b481a01@suse.com>
+Subject: Re: [PATCH 2/4] xen: remove XEN_SCRUB_PAGES in xen.config
 References: <20220810050712.9539-1-lukas.bulwahn@gmail.com>
- <20220810050712.9539-5-lukas.bulwahn@gmail.com>
-In-Reply-To: <20220810050712.9539-5-lukas.bulwahn@gmail.com>
+ <20220810050712.9539-3-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220810050712.9539-3-lukas.bulwahn@gmail.com>
 
---------------9j0VkncW8znW7JGdM43kmIKm
-Content-Type: multipart/mixed; boundary="------------aaC30w5mOpNnrvMAtlksEXPX"
+--------------6E6SafVgTYFlX10kdALk9Ltc
+Content-Type: multipart/mixed; boundary="------------Q0YlSQvQUW0uyXUfiy8CMcD6"
 
---------------aaC30w5mOpNnrvMAtlksEXPX
+--------------Q0YlSQvQUW0uyXUfiy8CMcD6
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: base64
 
-T24gMTAuMDguMjIgMDc6MDcsIEx1a2FzIEJ1bHdhaG4gd3JvdGU6DQo+IE1ha2UgY2hhbmdl
-cyB0byB0aGUgeGVuIGNvbmZpZyBmcmFnbWVudHMgcmVhY2ggdGhlIFhFTiBIWVBFUlZJU09S
-DQo+IG1haW50YWluZXJzIGFuZCBtYWlsaW5nIGxpc3QuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5
-OiBMdWthcyBCdWx3YWhuIDxsdWthcy5idWx3YWhuQGdtYWlsLmNvbT4NCg0KUmV2aWV3ZWQt
-Ynk6IEp1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT4NCg0KDQpKdWVyZ2VuDQo=
---------------aaC30w5mOpNnrvMAtlksEXPX
+T24gMTAuMDguMjIgMDc6MDcsIEx1a2FzIEJ1bHdhaG4gd3JvdGU6DQo+IENvbW1pdCAxOTdl
+Y2IzODAyYzAgKCJ4ZW4vYmFsbG9vbjogYWRkIHJ1bnRpbWUgY29udHJvbCBmb3Igc2NydWJi
+aW5nDQo+IGJhbGxvb25lZCBvdXQgcGFnZXMiKSBjaGFuZ2VkIGNvbmZpZyBYRU5fU0NSVUJf
+UEFHRVMgdG8gY29uZmlnDQo+IFhFTl9TQ1JVQl9QQUdFU19ERUZBVUxULiBBcyB4ZW4uY29u
+ZmlnIHNldHMgJ1hFTl9CQUxMT09OPXknIGFuZA0KPiBYRU5fU0NSVUJfUEFHRVNfREVGQVVM
+VCBkZWZhdWx0cyB0byB5ZXMsIHRoZXJlIGlzIG5vIGZ1cnRoZXIgbmVlZCB0byBzZXQNCj4g
+dGhpcyBjb25maWcgaW4gdGhlIHhlbi5jb25maWcgZmlsZS4NCj4gDQo+IFJlbW92ZSBzZXR0
+aW5nIFhFTl9TQ1JVQl9QQUdFUyBpbiB4ZW4uY29uZmlnLCB3aGljaCBpcyB3aXRob3V0DQo+
+IGVmZmVjdCBzaW5jZSB0aGUgY29tbWl0IGFib3ZlIGFueXdheS4NCj4gDQo+IFNpZ25lZC1v
+ZmYtYnk6IEx1a2FzIEJ1bHdhaG4gPGx1a2FzLmJ1bHdhaG5AZ21haWwuY29tPg0KDQpSZXZp
+ZXdlZC1ieTogSnVlcmdlbiBHcm9zcyA8amdyb3NzQHN1c2UuY29tPg0KDQoNCkp1ZXJnZW4N
+Cg==
+--------------Q0YlSQvQUW0uyXUfiy8CMcD6
 Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
 Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
 Content-Description: OpenPGP public key
@@ -160,24 +165,24 @@ jR/i1DG86lem3iBDXzXsZDn8R38=3D
 =3D2wuH
 -----END PGP PUBLIC KEY BLOCK-----
 
---------------aaC30w5mOpNnrvMAtlksEXPX--
+--------------Q0YlSQvQUW0uyXUfiy8CMcD6--
 
---------------9j0VkncW8znW7JGdM43kmIKm--
+--------------6E6SafVgTYFlX10kdALk9Ltc--
 
---------------Lcfd6Qatd7zQu01u2KUUv53A
+--------------np34PinFKM6YfezFikcTz1pE
 Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="OpenPGP_signature"
 
 -----BEGIN PGP SIGNATURE-----
 
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmL2EVwFAwAAAAAACgkQsN6d1ii/Ey9B
-Gwf6As95iY1E1ir/y4X1OTe0Gw/ch4BeRoNjTjKmzRuGEUtU20bHCUOfor3nSEmBV3fjz94nedz4
-bwncAbHyRayQd8E3o7RjFdUroQwaOi+O+2REPinkm5LBQ3mtpuoqOMjaTWAoeGnZX5ya5jGmvb2o
-rBoMq2EVdcN4Z4FjTyskY9pOO4f0S6aGz2VcsO+RloKdKs6DhINMMcHedj+fRHQXe9d7xCcXam+m
-26L/cnTiOxQPziyra7a6WWLhheZhZYNerMjsRMBzeS50maJHc6oaa3TqkgLDyOAZkaHIhw2rZaWY
-BAAR1San9dcMoVvTeBtz4EkF96/TpYUDe12ur7ih9g==
-=MKNj
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmL2Eh0FAwAAAAAACgkQsN6d1ii/Ey8V
+2ggAgvummHJkzpONwPpRrirD3MvI0Sv/HexW/qy4d1LhTrM9eNcGNvp9Lhx9mPfsIY6+Kk6JjVeh
+A7Jclj9jhWewE0ZOAqlT6kkxNLpzSos+jyCqVPibY1+mMmqa6L6rqQxqjQTzq82h7xRtao/ivyfZ
+GYUQsgX7ngKNVup1PJrxWi3Hds4FvZW8YRMYMDJQwfutGxw456+u/zD7xr6krD+yyBlxeMvsfPXn
+yTtyFxUY8s0++OceF2Ia8I8m68L9l9jrlAk/WTDOizsUP2jEot0tN0jqmNB9eV78N6BmqJJlGNpo
+eHV/2qhG9Wt22+JDfMetHsrtb657GyxA7NRDHhwjFw==
+=ctuk
 -----END PGP SIGNATURE-----
 
---------------Lcfd6Qatd7zQu01u2KUUv53A--
+--------------np34PinFKM6YfezFikcTz1pE--
