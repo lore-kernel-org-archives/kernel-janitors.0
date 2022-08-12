@@ -2,74 +2,93 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7061DC25B0F
-	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Aug 2022 01:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97036C25B06
+	for <kernel-janitors@archiver.kernel.org>; Fri, 12 Aug 2022 03:11:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235632AbiHLBDD (ORCPT
+        id S236459AbiHLDLP (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 11 Aug 2022 21:03:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49720 "EHLO
+        Thu, 11 Aug 2022 23:11:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231131AbiHLBDC (ORCPT
+        with ESMTP id S231283AbiHLDLL (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 11 Aug 2022 21:03:02 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2981774DF3;
-        Thu, 11 Aug 2022 18:03:01 -0700 (PDT)
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.53])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4M3lfy5LGkzXdNB;
-        Fri, 12 Aug 2022 08:58:50 +0800 (CST)
-Received: from kwepemm600010.china.huawei.com (7.193.23.86) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Fri, 12 Aug 2022 09:02:58 +0800
-Received: from huawei.com (10.175.127.227) by kwepemm600010.china.huawei.com
- (7.193.23.86) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Fri, 12 Aug
- 2022 09:02:57 +0800
-From:   Sun Ke <sunke32@huawei.com>
-To:     <trond.myklebust@hammerspace.com>, <anna@kernel.org>
-CC:     <linux-nfs@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <sunke32@huawei.com>
-Subject: [PATCH] NFS: Fix missing unlock in nfs_unlink()
-Date:   Fri, 12 Aug 2022 09:14:40 +0800
-Message-ID: <20220812011440.3602849-1-sunke32@huawei.com>
-X-Mailer: git-send-email 2.31.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemm600010.china.huawei.com (7.193.23.86)
-X-CFilter-Loop: Reflected
+        Thu, 11 Aug 2022 23:11:11 -0400
+Received: from mail.nfschina.com (unknown [IPv6:2400:dd01:100f:2:72e2:84ff:fe10:5f45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 12AB199245;
+        Thu, 11 Aug 2022 20:11:09 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by mail.nfschina.com (Postfix) with ESMTP id 3A4231E80D77;
+        Fri, 12 Aug 2022 11:09:00 +0800 (CST)
+X-Virus-Scanned: amavisd-new at test.com
+Received: from mail.nfschina.com ([127.0.0.1])
+        by localhost (mail.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id jdzEI2JOMAJ2; Fri, 12 Aug 2022 11:08:57 +0800 (CST)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        (Authenticated sender: liqiong@nfschina.com)
+        by mail.nfschina.com (Postfix) with ESMTPA id B80A41E80D0F;
+        Fri, 12 Aug 2022 11:08:56 +0800 (CST)
+From:   Li Qiong <liqiong@nfschina.com>
+To:     Horatiu Vultur <horatiu.vultur@microchip.com>,
+        UNGLinuxDriver@microchip.com,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yuzhe@nfschina.com, renyu@nfschina.com, jiaming@nfschina.com,
+        kernel-janitors@vger.kernel.org, Li Qiong <liqiong@nfschina.com>
+Subject: [PATCH] net: lan966x: fix checking for return value of platform_get_irq_byname()
+Date:   Fri, 12 Aug 2022 11:09:54 +0800
+Message-Id: <20220812030954.24050-1-liqiong@nfschina.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Add the missing unlock before goto.
+The platform_get_irq_byname() returns non-zero IRQ number
+or negative error number. "if (irq)" always true, chang it
+to "if (irq > 0)"
 
-Fixes: 3c59366c207e ("NFS: don't unhash dentry during unlink/rename")
-Signed-off-by: Sun Ke <sunke32@huawei.com>
+Signed-off-by: Li Qiong <liqiong@nfschina.com>
 ---
- fs/nfs/dir.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/microchip/lan966x/lan966x_main.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
-index dbab3caa15ed..1b879584d4fe 100644
---- a/fs/nfs/dir.c
-+++ b/fs/nfs/dir.c
-@@ -2484,8 +2484,10 @@ int nfs_unlink(struct inode *dir, struct dentry *dentry)
- 	 */
- 	error = -ETXTBSY;
- 	if (WARN_ON(dentry->d_flags & DCACHE_NFSFS_RENAMED) ||
--	    WARN_ON(dentry->d_fsdata == NFS_FSDATA_BLOCKED))
-+	    WARN_ON(dentry->d_fsdata == NFS_FSDATA_BLOCKED)) {
-+		spin_unlock(&dentry->d_lock);
- 		goto out;
-+	}
- 	if (dentry->d_fsdata)
- 		/* old devname */
- 		kfree(dentry->d_fsdata);
+diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
+index 1d6e3b641b2e..d928b75f3780 100644
+--- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
++++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
+@@ -710,7 +710,7 @@ static void lan966x_cleanup_ports(struct lan966x *lan966x)
+ 	disable_irq(lan966x->xtr_irq);
+ 	lan966x->xtr_irq = -ENXIO;
+ 
+-	if (lan966x->ana_irq) {
++	if (lan966x->ana_irq > 0) {
+ 		disable_irq(lan966x->ana_irq);
+ 		lan966x->ana_irq = -ENXIO;
+ 	}
+@@ -718,10 +718,10 @@ static void lan966x_cleanup_ports(struct lan966x *lan966x)
+ 	if (lan966x->fdma)
+ 		devm_free_irq(lan966x->dev, lan966x->fdma_irq, lan966x);
+ 
+-	if (lan966x->ptp_irq)
++	if (lan966x->ptp_irq > 0)
+ 		devm_free_irq(lan966x->dev, lan966x->ptp_irq, lan966x);
+ 
+-	if (lan966x->ptp_ext_irq)
++	if (lan966x->ptp_ext_irq > 0)
+ 		devm_free_irq(lan966x->dev, lan966x->ptp_ext_irq, lan966x);
+ }
+ 
+@@ -1049,7 +1049,7 @@ static int lan966x_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	lan966x->ana_irq = platform_get_irq_byname(pdev, "ana");
+-	if (lan966x->ana_irq) {
++	if (lan966x->ana_irq > 0) {
+ 		err = devm_request_threaded_irq(&pdev->dev, lan966x->ana_irq, NULL,
+ 						lan966x_ana_irq_handler, IRQF_ONESHOT,
+ 						"ana irq", lan966x);
 -- 
-2.31.1
+2.11.0
 
