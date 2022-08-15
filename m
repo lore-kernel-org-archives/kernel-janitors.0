@@ -2,116 +2,109 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E42C00140
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Aug 2022 10:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E11C3F6B0
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Aug 2022 11:07:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231785AbiHOKWn (ORCPT
+        id S241716AbiHOLHR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 15 Aug 2022 06:22:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42738 "EHLO
+        Mon, 15 Aug 2022 07:07:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230389AbiHOKWm (ORCPT
+        with ESMTP id S242637AbiHOLHC (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 15 Aug 2022 06:22:42 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F30CDF01
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 Aug 2022 03:22:41 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id c28so5984826lfh.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 Aug 2022 03:22:41 -0700 (PDT)
+        Mon, 15 Aug 2022 07:07:02 -0400
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B9F01A381;
+        Mon, 15 Aug 2022 04:06:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=GYPvjChMzihllF6NfylcKZILuIvORrCrmYPLKfqT66Y=;
-        b=ZJUkVZk00qiLqlltF3e13FEMFL6jQ4rjBe5u+0Cq8QogsebiFsttF1uFP0a3Fzcxu3
-         WU4C3HF8pltxTojHnR2ipOjMWWZKP/1if81a7tF3ZHFiBrIh8RQZRGGQoYT1evgLXHZr
-         /r1qd5uiX4A4TI3DMuvz4YVfvdneXM9UHEacGmn81S/cMlg+uYC8w9WQEuYdyYTyKNhU
-         CbZ8W6TDYGQnjqhRoRKqACVyCQMm9Cr4UJfTNQT2YHF9QhaThyAdxYmq09ftfRw+hBOf
-         IXORo02R23c5UQCLckfeS3m3zLMMp/WGDyytEKlutJFz2KRYNsSzar+P6yTFsdZzI0Mo
-         xRjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=GYPvjChMzihllF6NfylcKZILuIvORrCrmYPLKfqT66Y=;
-        b=ziYfa9g9PmKmVJQHS8OA+APV/s1fPU1mcGNCihibTLS60DGXXGEFPEUuVE0LNTlFgP
-         LDjADmi+ONKVtOfE9c7ktJpAXrqcqZVtaMbfsDFycPdqSH4UJ6pPmXD6aPSrAA0BLaqK
-         z1pjf36PDkG9Hwh035wMSN5/iRmHCv8HA7tAgJ2UI6h9f7gBmkHTxVdLm4EoQ44eBejy
-         WAseLDHCv1UrLHREhrhemE3QIETH0a96/T9IfevQcq5USWDpra1GqUu177/XdVlouBiB
-         wRm2tZc8fEbTRmnd3JN4kA2cgUETjwpGMM2JLDjKFT9GiBxrOfJv6wtamxJMrIuX1BWC
-         IoKw==
-X-Gm-Message-State: ACgBeo093aC/cEkBgGB4E8i+jJSVnEjqFSA1MN3wI1Y9pc/5WaZrhI9T
-        yGuGltrM/U2HcOLiPu05elzh37PnwIqRWNQYAeoSuA==
-X-Google-Smtp-Source: AA6agR7kv2rp1ww6/+Efl2vXjiGE20Moxf0J/RImS706rUjnl6INvnrEc5kn9YujRWIO7Qmat79PMOCrfUV2aCAdfOI=
-X-Received: by 2002:ac2:5324:0:b0:48b:9643:3838 with SMTP id
- f4-20020ac25324000000b0048b96433838mr5553561lfh.373.1660558959554; Mon, 15
- Aug 2022 03:22:39 -0700 (PDT)
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1660561599; x=1692097599;
+  h=subject:from:to:cc:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=lR4e/Yj+v+orzNhR6UdlTiIXidtC5q1zi9QQkSuY8HY=;
+  b=brFxTKdozU4ZwKl1vkU4CM8f3SwsAK2meVcSc40IslPqn/RgUo95sOSD
+   ZAH4P/x6qtE+bpqA5D1BgRU74B2E/EcgqY74IjcVC8pqBLHdcVZif4kvE
+   ZJ0HjAL1uMRTgnnk+LtYEkWuYvGn9zOTWTlvit/F3hT0plHszP3PmWcEA
+   2tmTHRZ71M2IUQqI+9obUQEgohI39LQ9O08VhObuyKqIbs1AOHpL1ziXx
+   X1QWujnv7fdPWrLAPzK8urHzI/yfuYqxPDL/BF0F7+cWC4AMp8+M2Kcel
+   VgOqytKSstXSQaxkfDhabdK1ffccJmpCu8tJfHsodsxOU8KDM5GYQC5uv
+   w==;
+X-IronPort-AV: E=Sophos;i="5.93,238,1654552800"; 
+   d="scan'208";a="25604415"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 15 Aug 2022 13:06:37 +0200
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Mon, 15 Aug 2022 13:06:37 +0200
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Mon, 15 Aug 2022 13:06:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1660561597; x=1692097597;
+  h=from:to:cc:date:message-id:in-reply-to:references:
+   mime-version:content-transfer-encoding:subject;
+  bh=lR4e/Yj+v+orzNhR6UdlTiIXidtC5q1zi9QQkSuY8HY=;
+  b=MpSfJWTq+0O7BL6IclojsVsPcaVvdT8LKCxMtCZFiKalaZw73OABEqz7
+   y3X2zOfCcdBOyrszIwAaw7k4JzmC2ezmyFPx2LAYd1EQKqcDRpl5n2APq
+   r9bUMs7uv6ASXhc/NAmd17xRz+48qe82wSaKiRqdgPIZQrySWM5LB5QnF
+   Ng3azSVcRKQoMaRxZLmIlO3LcWQVRSJhYxbL5JkRxeZCXGhUEM6+YRLNr
+   2ykm8EkQM0/PB+0zkekfJTpwaf/2zjuSaH5Xhq7lQYs6iB2tbzHaoQL83
+   UijQKC8oPjF/DvO3yKk8yILgYNtvhdFVYChSomUWy0cmPUPWSGhOTpR92
+   w==;
+X-IronPort-AV: E=Sophos;i="5.93,238,1654552800"; 
+   d="scan'208";a="25604414"
+Subject: Re: [PATCH] spi: lpspi: Simplify some error message
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 15 Aug 2022 13:06:37 +0200
+Received: from steina-w.localnet (unknown [10.123.49.11])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 2501D280056;
+        Mon, 15 Aug 2022 13:06:37 +0200 (CEST)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-spi@vger.kernel.org
+Date:   Mon, 15 Aug 2022 13:06:34 +0200
+Message-ID: <2796602.mvXUDI8C0e@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <253543c462b765eca40ba54c66f4e3fdf4acdeb7.1659735546.git.christophe.jaillet@wanadoo.fr>
+References: <253543c462b765eca40ba54c66f4e3fdf4acdeb7.1659735546.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-References: <bd442556c0094be2c240f070d15ce2061b376c09.1659288898.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <bd442556c0094be2c240f070d15ce2061b376c09.1659288898.git.christophe.jaillet@wanadoo.fr>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 15 Aug 2022 12:22:02 +0200
-Message-ID: <CAPDyKFo24z-n5g5w4SwugySAQGVLAp4j5TGX-SBRLbBNgxBnRw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: dw_mmc-rockchip: Fix the dw_mci_rockchip_remove() function
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Jaehoon Chung <jh80.chung@samsung.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, 31 Jul 2022 at 19:35, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> Having a something_get() function call in a remove function is unusual.
-> A something_put() is more likely.
->
-> More over the remove() function does not match the error handling of the
-> probe().
->
-> Fix the remove() function to match the error handling path of the probe.
->
-> Fixes: f90142683f04 ("mmc: dw_mmc-rockchip: add runtime PM support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Am Freitag, 5. August 2022, 23:39:19 CEST schrieb Christophe JAILLET:
+> dev_err_probe() already prints the error code in a human readable way, so
+> there is no need to duplicate it as a numerical value at the end of the
+> message.
+> 
+> Fixes: 12f62a857c83 ("spi: lpspi: Silence error message upon deferred
+> probe") Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
-> /!\   SPECULATIVE   /!\
->
-> I have a limited knowledge of the pm_ API.
-> However, as said, the error handling path of the probe looks more logical
-> to me.
->
-> Moreover, some more or less similar code can be found in
-> drivers/mmc/host/dw_mmc-exynos.c. This patch also align this rockchip
-> driver to the exynos's one.
->
-> So review with care.
-> ---
->  drivers/mmc/host/dw_mmc-rockchip.c | 2 +-
+>  drivers/spi/spi-fsl-lpspi.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/dw_mmc-rockchip.c b/drivers/mmc/host/dw_mmc-rockchip.c
-> index 2a99f15f527f..b5893c738b4a 100644
-> --- a/drivers/mmc/host/dw_mmc-rockchip.c
-> +++ b/drivers/mmc/host/dw_mmc-rockchip.c
-> @@ -373,8 +373,8 @@ static int dw_mci_rockchip_probe(struct platform_device *pdev)
->
->  static int dw_mci_rockchip_remove(struct platform_device *pdev)
->  {
-> -       pm_runtime_get_sync(&pdev->dev);
->         pm_runtime_disable(&pdev->dev);
-> +       pm_runtime_set_suspended(&pdev->dev);
->         pm_runtime_put_noidle(&pdev->dev);
->
->         dw_mci_pltfm_remove(pdev);
+> 
+> diff --git a/drivers/spi/spi-fsl-lpspi.c b/drivers/spi/spi-fsl-lpspi.c
+> index 19b1f3d881b0..cbbe8bbef90a 100644
+> --- a/drivers/spi/spi-fsl-lpspi.c
+> +++ b/drivers/spi/spi-fsl-lpspi.c
+> @@ -912,7 +912,7 @@ static int fsl_lpspi_probe(struct platform_device *pdev)
+> 
+>  	ret = devm_spi_register_controller(&pdev->dev, controller);
+>  	if (ret < 0) {
+> -		dev_err_probe(&pdev->dev, ret, "spi_register_controller 
+error: %i\n",
+> ret); +		dev_err_probe(&pdev->dev, ret, "spi_register_controller 
+error\n");
+> goto free_dma;
+>  	}
 
-dw_mci_pltfm_remove() needs to be called with an active/powered host
-device. That's why the call to pm_runtime_get_sync() is done, so I
-don't think there is anything wrong with the existing code.
+Acked-By: Alexander Stein <alexander.stein@ew.tq-group.com>
 
-Kind regards
-Uffe
+
