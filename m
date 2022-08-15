@@ -2,78 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A151C282E7
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Aug 2022 04:27:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8308CC282E7
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Aug 2022 04:56:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229828AbiHPE1n (ORCPT
+        id S232421AbiHPE4c (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 Aug 2022 00:27:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38064 "EHLO
+        Tue, 16 Aug 2022 00:56:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229744AbiHPE11 (ORCPT
+        with ESMTP id S233358AbiHPEzO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 Aug 2022 00:27:27 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5964B1A6CD6;
-        Mon, 15 Aug 2022 18:06:10 -0700 (PDT)
-Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.57])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4M6Cb15V6RzmVpd;
-        Tue, 16 Aug 2022 09:03:57 +0800 (CST)
-Received: from kwepemm600010.china.huawei.com (7.193.23.86) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Tue, 16 Aug 2022 09:06:08 +0800
-Received: from [10.174.178.31] (10.174.178.31) by
- kwepemm600010.china.huawei.com (7.193.23.86) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Tue, 16 Aug 2022 09:06:07 +0800
-Subject: Re: [PATCH] NFS: Fix missing unlock in nfs_unlink()
-To:     <trond.myklebust@hammerspace.com>, <anna@kernel.org>
-CC:     <linux-nfs@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <neilb@suse.de>
-References: <20220812011440.3602849-1-sunke32@huawei.com>
-From:   Sun Ke <sunke32@huawei.com>
-Message-ID: <5e947976-0808-1d32-e170-d85ef73972e7@huawei.com>
-Date:   Tue, 16 Aug 2022 09:06:06 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        Tue, 16 Aug 2022 00:55:14 -0400
+Received: from smtp.smtpout.orange.fr (smtp01.smtpout.orange.fr [80.12.242.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81C1C80B59
+        for <kernel-janitors@vger.kernel.org>; Mon, 15 Aug 2022 13:52:28 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id Nh4To0e9HTLjwNh4TowhXt; Mon, 15 Aug 2022 22:52:26 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 15 Aug 2022 22:52:26 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     michael.christie@oracle.com,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
+Subject: [PATCH v2] scsi: target: Save a few cycles in transport_lookup_[cmd|tmr]_lun()
+Date:   Mon, 15 Aug 2022 22:52:24 +0200
+Message-Id: <03705222390bfa3b48ad7658f693fc0fc030b3ae.1660596679.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-In-Reply-To: <20220812011440.3602849-1-sunke32@huawei.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.178.31]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemm600010.china.huawei.com (7.193.23.86)
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-friendly ping...
+Use percpu_ref_tryget_live_rcu() instead of percpu_ref_tryget_live() to
+save a few cycles when it is known that the rcu lock is already
+taken/released.
 
-ÔÚ 2022/8/12 9:14, Sun Ke Ð´µÀ:
-> Add the missing unlock before goto.
-> 
-> Fixes: 3c59366c207e ("NFS: don't unhash dentry during unlink/rename")
-> Signed-off-by: Sun Ke <sunke32@huawei.com>
-> ---
->   fs/nfs/dir.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
-> index dbab3caa15ed..1b879584d4fe 100644
-> --- a/fs/nfs/dir.c
-> +++ b/fs/nfs/dir.c
-> @@ -2484,8 +2484,10 @@ int nfs_unlink(struct inode *dir, struct dentry *dentry)
->   	 */
->   	error = -ETXTBSY;
->   	if (WARN_ON(dentry->d_flags & DCACHE_NFSFS_RENAMED) ||
-> -	    WARN_ON(dentry->d_fsdata == NFS_FSDATA_BLOCKED))
-> +	    WARN_ON(dentry->d_fsdata == NFS_FSDATA_BLOCKED)) {
-> +		spin_unlock(&dentry->d_lock);
->   		goto out;
-> +	}
->   	if (dentry->d_fsdata)
->   		/* old devname */
->   		kfree(dentry->d_fsdata);
-> 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Change in v2:
+  * sync with -next
+
+v1:
+  * https://lore.kernel.org/all/e4a21bc607c39935cb98d4825cd63ba349820550.1635974637.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/target/target_core_device.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/target/target_core_device.c b/drivers/target/target_core_device.c
+index b7f16ee8aa0e..76c6613a1da7 100644
+--- a/drivers/target/target_core_device.c
++++ b/drivers/target/target_core_device.c
+@@ -77,7 +77,7 @@ transport_lookup_cmd_lun(struct se_cmd *se_cmd)
+ 
+ 		se_lun = deve->se_lun;
+ 
+-		if (!percpu_ref_tryget_live(&se_lun->lun_ref)) {
++		if (!percpu_ref_tryget_live_rcu(&se_lun->lun_ref)) {
+ 			se_lun = NULL;
+ 			goto out_unlock;
+ 		}
+@@ -154,7 +154,7 @@ int transport_lookup_tmr_lun(struct se_cmd *se_cmd)
+ 	if (deve) {
+ 		se_lun = deve->se_lun;
+ 
+-		if (!percpu_ref_tryget_live(&se_lun->lun_ref)) {
++		if (!percpu_ref_tryget_live_rcu(&se_lun->lun_ref)) {
+ 			se_lun = NULL;
+ 			goto out_unlock;
+ 		}
+-- 
+2.34.1
+
