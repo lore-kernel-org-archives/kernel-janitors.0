@@ -2,105 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A7BC25B0E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Aug 2022 15:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B60C25B0D
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Aug 2022 16:26:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231976AbiHOP4P (ORCPT
+        id S232761AbiHOQZi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 15 Aug 2022 11:56:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45744 "EHLO
+        Mon, 15 Aug 2022 12:25:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230304AbiHOP4M (ORCPT
+        with ESMTP id S233040AbiHOQZH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 15 Aug 2022 11:56:12 -0400
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9536D12D32;
-        Mon, 15 Aug 2022 08:56:11 -0700 (PDT)
-Received: by mail-wr1-f48.google.com with SMTP id b4so6428671wrn.4;
-        Mon, 15 Aug 2022 08:56:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=Vat6AZoY9+pk6p00nX/E13J/m0/mJwwh8QQBSGedRWI=;
-        b=iYe9lM3I2HfiLa/RejGyvAT1+FOoPhMX+L577RycoUNZOyMrdGNKLhOgNUdK4nTc+/
-         ardycnvQ2omH44g+pJmvHgMuxvOzBae4dffWT+REVO2e92Oj0m/Vpvar5qOeBz08jDcb
-         wmgXH5Gz+mvE35GAbZRS//lvYMNjqgEG1HGYlywhDja3QQ1RL+gxtNFW+cwH9UDA6e+O
-         e4jgwEsH0sGhUoB9WZw4s3Cv5mxDjUlHPoW2OVtfp0K6tB+krrxoZebEYnxUcIBNcbPc
-         50QZ4sSTwWUXg7xrecMma7M9PNgiIoVxxxYVmrGCgDaswKLu451m3HH2FpCQIZ0hV5y9
-         tMFg==
-X-Gm-Message-State: ACgBeo3b4w04HsKUNmFY1U/tJTeYi9LjySPiZxVZR7uWz/LDOVWcc5hR
-        JXoAKulDFBEhdZ6v0kTBX7s=
-X-Google-Smtp-Source: AA6agR6LqwBwhr8IBNtL5BKxuU4r3Y+LjMPMFEeYwRcLmbQKw/Ljf/Ui34QWaaHHynm6D1Y8i9VY5g==
-X-Received: by 2002:a05:6000:1e0e:b0:220:5c9f:a468 with SMTP id bj14-20020a0560001e0e00b002205c9fa468mr8849712wrb.587.1660578970160;
-        Mon, 15 Aug 2022 08:56:10 -0700 (PDT)
-Received: from liuwe-devbox-debian-v2 ([51.145.34.42])
-        by smtp.gmail.com with ESMTPSA id g15-20020a5d488f000000b0022395a63153sm7800412wrq.107.2022.08.15.08.56.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Aug 2022 08:56:09 -0700 (PDT)
-Date:   Mon, 15 Aug 2022 15:56:08 +0000
-From:   Wei Liu <wei.liu@kernel.org>
-To:     "Michael Kelley (LINUX)" <mikelley@microsoft.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Deepak Rawat <drawat.floss@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Wei Liu <wei.liu@kernel.org>
-Subject: Re: [PATCH] drm/hyperv: Fix an error handling path in
- hyperv_vmbus_probe()
-Message-ID: <20220815155608.uekossy5hejqflni@liuwe-devbox-debian-v2>
-References: <7dfa372af3e35fbb1d6f157183dfef2e4512d3be.1659297696.git.christophe.jaillet@wanadoo.fr>
- <PH0PR21MB3025D61C85CD6E724919A9D8D79E9@PH0PR21MB3025.namprd21.prod.outlook.com>
+        Mon, 15 Aug 2022 12:25:07 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A342524F0B
+        for <kernel-janitors@vger.kernel.org>; Mon, 15 Aug 2022 09:23:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 43E04B80FEC
+        for <kernel-janitors@vger.kernel.org>; Mon, 15 Aug 2022 16:23:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB92EC433C1;
+        Mon, 15 Aug 2022 16:22:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660580581;
+        bh=e7z1wZFXKyKTx+/Gp205MIBB5Y2JE/nLNvE5mKdLmXo=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=swWLDFdwixRMFnyIcl35ZTLWeedljORzZDGDlFZh3QvDRfNe6/gmdy6t5vNSOUCMs
+         cFISGVQPxpedO9pFaxqUTBkVeCBDd9eaI83aFsIZwpehtBo00koo7k2f12NZUZPKvy
+         SmcfpEZvylc2uRegQo9l3/Wl6HwIx06MRNmBLp5zar4H1r/mPBQANOCllbgF0Fcjg4
+         rT0d8M16VP0HWqCwV24Mced9oCvNfoPV2ciZw7xFBXfBlUr2gZ6FWsB4+60TPboZsH
+         wz1ffFFcu69E/UwtwCCJugZM5Nlmb6Q26yx6CJ+t6gFvWkANg89rGPfSdwd30gSBEv
+         STpwYIxwladCw==
+From:   Mark Brown <broonie@kernel.org>
+To:     Jiaxin Yu <jiaxin.yu@mediatek.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-mediatek@lists.infradead.org
+In-Reply-To: <Yuo7LGPk8KnBW6ac@kili>
+References: <Yuo7LGPk8KnBW6ac@kili>
+Subject: Re: [PATCH] ASoC: mediatek: mt8186: remove unnecessary NULL check
+Message-Id: <166058057968.769843.14245211698253942822.b4-ty@kernel.org>
+Date:   Mon, 15 Aug 2022 17:22:59 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PH0PR21MB3025D61C85CD6E724919A9D8D79E9@PH0PR21MB3025.namprd21.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.10.0-dev-fe10a
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Aug 05, 2022 at 06:35:01PM +0000, Michael Kelley (LINUX) wrote:
-> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr> Sent: Sunday, July 31, 2022 1:02 PM
-> > 
-> > hyperv_setup_vram() calls vmbus_allocate_mmio().
-> > This must be undone in the error handling path of the probe, as already
-> > done in the remove function.
-> > 
-> > This patch depends on commit a0ab5abced55 ("drm/hyperv : Removing the
-> > restruction of VRAM allocation with PCI bar size").
-> > Without it, something like what is done in commit e048834c209a
-> > ("drm/hyperv: Fix device removal on Gen1 VMs") should be done.
+On Wed, 3 Aug 2022 12:09:00 +0300, Dan Carpenter wrote:
+> The "i2s_priv" pointer cannot be NULL.  Some NULL checks were deleted
+> in commit d7bffbe9cbd3 ("ASoC: mediatek: mt8186: remove unnecessary
+> judgments") but this one was accidentally left behind.
 > 
-> Should the above paragraph be below the '---' as a comment, rather than
-> part of the commit message?  It's more about staging instructions than a
-> long-term record of the actual functional/code change.
 > 
 
-I don't think this paragraph needs to be in the final commit message.
+Applied to
 
-> > 
-> > Fixes: 76c56a5affeb ("drm/hyperv: Add DRM driver for hyperv synthetic video device")
-> 
-> I wonder if the Fixes: dependency should be on a0ab5abced55.  As you noted,
-> this patch won't apply cleanly on stable kernel versions that lack that commit,
-> so we'll need a separate patch for stable if we want to make the fix there.
-> 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-I think a0ab5abced55 is more appropriate.
+Thanks!
 
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> All that said, the fix looks good, so
-> 
-> Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+[1/1] ASoC: mediatek: mt8186: remove unnecessary NULL check
+      commit: b9f0a8ffd6265e7d8c7464a7990330da85ee07ef
 
-I made the two changes listed above and applied this patch to
-hyperv-fixes.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Wei.
+Mark
