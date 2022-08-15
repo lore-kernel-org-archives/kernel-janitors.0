@@ -2,80 +2,71 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8308CC282E7
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Aug 2022 04:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35DDEC25B0F
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Aug 2022 05:07:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232421AbiHPE4c (ORCPT
+        id S233029AbiHPFHG (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 Aug 2022 00:56:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55466 "EHLO
+        Tue, 16 Aug 2022 01:07:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233358AbiHPEzO (ORCPT
+        with ESMTP id S233080AbiHPFGp (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 Aug 2022 00:55:14 -0400
-Received: from smtp.smtpout.orange.fr (smtp01.smtpout.orange.fr [80.12.242.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81C1C80B59
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 Aug 2022 13:52:28 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
+        Tue, 16 Aug 2022 01:06:45 -0400
+Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC4B8E2B
+        for <kernel-janitors@vger.kernel.org>; Mon, 15 Aug 2022 14:06:59 -0700 (PDT)
+Received: from [192.168.1.18] ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id Nh4To0e9HTLjwNh4TowhXt; Mon, 15 Aug 2022 22:52:26 +0200
-X-ME-Helo: pop-os.home
+        id NhIPoUIJz4lbwNhIPoi6UR; Mon, 15 Aug 2022 23:06:56 +0200
+X-ME-Helo: [192.168.1.18]
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 15 Aug 2022 22:52:26 +0200
+X-ME-Date: Mon, 15 Aug 2022 23:06:56 +0200
 X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     michael.christie@oracle.com,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
-Subject: [PATCH v2] scsi: target: Save a few cycles in transport_lookup_[cmd|tmr]_lun()
-Date:   Mon, 15 Aug 2022 22:52:24 +0200
-Message-Id: <03705222390bfa3b48ad7658f693fc0fc030b3ae.1660596679.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+Message-ID: <d9a4321c-efc3-e2b8-1bb7-9e2413940885@wanadoo.fr>
+Date:   Mon, 15 Aug 2022 23:06:49 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] drm/hyperv: Fix an error handling path in
+ hyperv_vmbus_probe()
+Content-Language: fr
+To:     Wei Liu <wei.liu@kernel.org>,
+        "Michael Kelley (LINUX)" <mikelley@microsoft.com>
+Cc:     Deepak Rawat <drawat.floss@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+References: <7dfa372af3e35fbb1d6f157183dfef2e4512d3be.1659297696.git.christophe.jaillet@wanadoo.fr>
+ <PH0PR21MB3025D61C85CD6E724919A9D8D79E9@PH0PR21MB3025.namprd21.prod.outlook.com>
+ <20220815155608.uekossy5hejqflni@liuwe-devbox-debian-v2>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20220815155608.uekossy5hejqflni@liuwe-devbox-debian-v2>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Use percpu_ref_tryget_live_rcu() instead of percpu_ref_tryget_live() to
-save a few cycles when it is known that the rcu lock is already
-taken/released.
+Le 15/08/2022 à 17:56, Wei Liu a écrit :
+>>
+>> All that said, the fix looks good, so
+>>
+>> Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+> 
+> I made the two changes listed above and applied this patch to
+> hyperv-fixes.
+> 
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Change in v2:
-  * sync with -next
+Thanks a lot, that saves me a v2.
 
-v1:
-  * https://lore.kernel.org/all/e4a21bc607c39935cb98d4825cd63ba349820550.1635974637.git.christophe.jaillet@wanadoo.fr/
----
- drivers/target/target_core_device.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+CJ
 
-diff --git a/drivers/target/target_core_device.c b/drivers/target/target_core_device.c
-index b7f16ee8aa0e..76c6613a1da7 100644
---- a/drivers/target/target_core_device.c
-+++ b/drivers/target/target_core_device.c
-@@ -77,7 +77,7 @@ transport_lookup_cmd_lun(struct se_cmd *se_cmd)
- 
- 		se_lun = deve->se_lun;
- 
--		if (!percpu_ref_tryget_live(&se_lun->lun_ref)) {
-+		if (!percpu_ref_tryget_live_rcu(&se_lun->lun_ref)) {
- 			se_lun = NULL;
- 			goto out_unlock;
- 		}
-@@ -154,7 +154,7 @@ int transport_lookup_tmr_lun(struct se_cmd *se_cmd)
- 	if (deve) {
- 		se_lun = deve->se_lun;
- 
--		if (!percpu_ref_tryget_live(&se_lun->lun_ref)) {
-+		if (!percpu_ref_tryget_live_rcu(&se_lun->lun_ref)) {
- 			se_lun = NULL;
- 			goto out_unlock;
- 		}
--- 
-2.34.1
+> Thanks,
+> Wei.
+> 
 
