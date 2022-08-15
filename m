@@ -2,182 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90566C25B06
-	for <kernel-janitors@archiver.kernel.org>; Sun, 14 Aug 2022 08:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D79C00140
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Aug 2022 03:36:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229803AbiHNIil (ORCPT
+        id S230295AbiHODg4 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 14 Aug 2022 04:38:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54466 "EHLO
+        Sun, 14 Aug 2022 23:36:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229565AbiHNIij (ORCPT
+        with ESMTP id S229546AbiHODgz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 14 Aug 2022 04:38:39 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AFCE1CFE6;
-        Sun, 14 Aug 2022 01:38:39 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id DB927206B5;
-        Sun, 14 Aug 2022 08:38:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1660466317; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=jHqyRhU9ZzXcnhm+qvCNtNIFpg9zUQQnGJAx/V7SMnc=;
-        b=mf29xm0Sp7/zBhLZ4rKdwKvbZKqKKRyKQ7PCBtT9DWIeZQu9I6whG4H8r3Qabci0AfP0Nh
-        vcOBxKiCYP14+9pRR4q+zC8Y5YgIhodp4rroUf0/Cp1sGEdsMYwYaeXOOYkvZ0kTOVppV8
-        7Y51nLeijCl3kU497EPVF1I3nnZlRjk=
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7292613AAE;
-        Sun, 14 Aug 2022 08:38:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id ZKhrGo20+GJBNwAAMHmgww
-        (envelope-from <jgross@suse.com>); Sun, 14 Aug 2022 08:38:37 +0000
-Message-ID: <77d23132-2ce4-b0dd-1262-452e13fe1385@suse.com>
-Date:   Sun, 14 Aug 2022 10:38:36 +0200
+        Sun, 14 Aug 2022 23:36:55 -0400
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01CF71180E;
+        Sun, 14 Aug 2022 20:36:54 -0700 (PDT)
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.54])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4M5fy643rpz1M88V;
+        Mon, 15 Aug 2022 11:33:34 +0800 (CST)
+Received: from kwepemm600010.china.huawei.com (7.193.23.86) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Mon, 15 Aug 2022 11:36:52 +0800
+Received: from huawei.com (10.175.127.227) by kwepemm600010.china.huawei.com
+ (7.193.23.86) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Mon, 15 Aug
+ 2022 11:36:51 +0800
+From:   Sun Ke <sunke32@huawei.com>
+To:     <xiang@kernel.org>, <chao@kernel.org>
+CC:     <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, <yinxin.x@bytedance.com>,
+        <sunke32@huawei.com>
+Subject: [PATCH] erofs: fix error return code in erofs_fscache_meta_read_folio and erofs_fscache_read_folio
+Date:   Mon, 15 Aug 2022 11:48:29 +0800
+Message-ID: <20220815034829.3940803-1-sunke32@huawei.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH 4/4] MAINTAINERS: add xen config fragments to XEN
- HYPERVISOR sections
-Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-        xen-devel@lists.xenproject.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220810050712.9539-1-lukas.bulwahn@gmail.com>
- <20220810050712.9539-5-lukas.bulwahn@gmail.com>
-From:   Juergen Gross <jgross@suse.com>
-In-Reply-To: <20220810050712.9539-5-lukas.bulwahn@gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------hQiZNgt0QgRofVP6Q6lskBqy"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm600010.china.huawei.com (7.193.23.86)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------hQiZNgt0QgRofVP6Q6lskBqy
-Content-Type: multipart/mixed; boundary="------------ratlqJlYnvTfXXrwzW3VFuhz";
- protected-headers="v1"
-From: Juergen Gross <jgross@suse.com>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>,
- Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- xen-devel@lists.xenproject.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <77d23132-2ce4-b0dd-1262-452e13fe1385@suse.com>
-Subject: Re: [PATCH 4/4] MAINTAINERS: add xen config fragments to XEN
- HYPERVISOR sections
-References: <20220810050712.9539-1-lukas.bulwahn@gmail.com>
- <20220810050712.9539-5-lukas.bulwahn@gmail.com>
-In-Reply-To: <20220810050712.9539-5-lukas.bulwahn@gmail.com>
+If erofs_fscache_alloc_request fail and then goto out, it will return 0.
+it should return a negative error code instead of 0.
 
---------------ratlqJlYnvTfXXrwzW3VFuhz
-Content-Type: multipart/mixed; boundary="------------CQnc355Rw2ah6ZAwY8IGjnWs"
+Fixes: d435d53228dd ("erofs: change to use asynchronous io for fscache readpage/readahead")
+Signed-off-by: Sun Ke <sunke32@huawei.com>
+---
+ fs/erofs/fscache.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---------------CQnc355Rw2ah6ZAwY8IGjnWs
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
+index 8e01d89c3319..b5fd9d71e67f 100644
+--- a/fs/erofs/fscache.c
++++ b/fs/erofs/fscache.c
+@@ -222,8 +222,10 @@ static int erofs_fscache_meta_read_folio(struct file *data, struct folio *folio)
+ 
+ 	rreq = erofs_fscache_alloc_request(folio_mapping(folio),
+ 				folio_pos(folio), folio_size(folio));
+-	if (IS_ERR(rreq))
++	if (IS_ERR(rreq)) {
++		ret = PTR_ERR(rreq);
+ 		goto out;
++	}
+ 
+ 	return erofs_fscache_read_folios_async(mdev.m_fscache->cookie,
+ 				rreq, mdev.m_pa);
+@@ -301,8 +303,10 @@ static int erofs_fscache_read_folio(struct file *file, struct folio *folio)
+ 
+ 	rreq = erofs_fscache_alloc_request(folio_mapping(folio),
+ 				folio_pos(folio), folio_size(folio));
+-	if (IS_ERR(rreq))
++	if (IS_ERR(rreq)) {
++		ret = PTR_ERR(rreq);
+ 		goto out_unlock;
++	}
+ 
+ 	pstart = mdev.m_pa + (pos - map.m_la);
+ 	return erofs_fscache_read_folios_async(mdev.m_fscache->cookie,
+-- 
+2.31.1
 
-T24gMTAuMDguMjIgMDc6MDcsIEx1a2FzIEJ1bHdhaG4gd3JvdGU6DQo+IE1ha2UgY2hhbmdl
-cyB0byB0aGUgeGVuIGNvbmZpZyBmcmFnbWVudHMgcmVhY2ggdGhlIFhFTiBIWVBFUlZJU09S
-DQo+IG1haW50YWluZXJzIGFuZCBtYWlsaW5nIGxpc3QuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5
-OiBMdWthcyBCdWx3YWhuIDxsdWthcy5idWx3YWhuQGdtYWlsLmNvbT4NCg0KUHVzaGVkIHRv
-IHhlbi90aXAuZ2l0IGZvci1saW51cy02LjANCg0KDQpKdWVyZ2VuDQo=
---------------CQnc355Rw2ah6ZAwY8IGjnWs
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-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
-jR/i1DG86lem3iBDXzXsZDn8R38=3D
-=3D2wuH
------END PGP PUBLIC KEY BLOCK-----
-
---------------CQnc355Rw2ah6ZAwY8IGjnWs--
-
---------------ratlqJlYnvTfXXrwzW3VFuhz--
-
---------------hQiZNgt0QgRofVP6Q6lskBqy
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmL4tI0FAwAAAAAACgkQsN6d1ii/Ey/I
-pAf/e2WW5gR4fer1swT3nX9F4pNGKy3CDm1x9NONmp+sZRdbXCvJw7xt9h87GtDZTz1QktICTERq
-u5nme7e8SkUFGdkJknftKOnkLRLvbgErvDhviX4BgJ65CLs2u+c8lIkJK6HwrLnjUKeaf7BbJN7E
-36ZU5twDa9Lbpf5UhWh5anQzmiYOfn44I7Sjf0bzhjP+OKP3BGzooa9tiOGT/SVtbiRxS4nKjFAa
-VmwqhJAktEh8VuFqRJYC5hKlkWDW3kPxdAXLaSMen/xOzZk56Zw2oTax9KoZZVRphMfuIGIJaN2q
-eAvvVapblkGV4vfWXbGchPsQ4m7hciYBfqdxeJPMfQ==
-=js+/
------END PGP SIGNATURE-----
-
---------------hQiZNgt0QgRofVP6Q6lskBqy--
