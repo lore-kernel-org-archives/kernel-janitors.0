@@ -2,119 +2,106 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B70E3C25B0E
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Aug 2022 16:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1983BC00140
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Aug 2022 18:07:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232887AbiHOQ7f (ORCPT
+        id S232208AbiHOSHK (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 15 Aug 2022 12:59:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48696 "EHLO
+        Mon, 15 Aug 2022 14:07:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229947AbiHOQ7e (ORCPT
+        with ESMTP id S231486AbiHOSHJ (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 15 Aug 2022 12:59:34 -0400
-Received: from smtp.smtpout.orange.fr (smtp02.smtpout.orange.fr [80.12.242.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB752275FC
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 Aug 2022 09:59:32 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id NdQyoIwLGsfCINdQzoj4ur; Mon, 15 Aug 2022 18:59:25 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 15 Aug 2022 18:59:25 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-rtc@vger.kernel.org
-Subject: [PATCH] rtc: mxc: Use devm_clk_get_enabled() helper
-Date:   Mon, 15 Aug 2022 18:59:23 +0200
-Message-Id: <1b5ad1877304b01ddbba73ca615274a52f781aa2.1660582728.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Mon, 15 Aug 2022 14:07:09 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 52F4429C9B
+        for <kernel-janitors@vger.kernel.org>; Mon, 15 Aug 2022 11:07:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1660586825;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ujM9hbtiDvaKcMcqtlXWweFBU3njnJfsdTVS+tJ21g4=;
+        b=Sxj0UZa8pJL/0LlqU26O26zpS/lYUjF8dLiDBVH1nWm4fXLYWw76Ne3lel2HZ84msYMQW9
+        zjK5DSsKz3j4lt2xRAnY/uiKgvnwz/BpZSUiBqBXARsKD14s2+MqCAnPVcoZ0gvnSa8oYH
+        6Mg6x7hTw5+lO2NCGFBg7SK3fHhRLU4=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-14-GftWwSlKO-2_q73CFcKJDg-1; Mon, 15 Aug 2022 14:07:00 -0400
+X-MC-Unique: GftWwSlKO-2_q73CFcKJDg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 895A818A6522;
+        Mon, 15 Aug 2022 18:06:59 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 42117C15BA8;
+        Mon, 15 Aug 2022 18:06:59 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     bcrl@kvack.org, viro@zeniv.linux.org.uk, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] aio: Save a few cycles in 'lookup_ioctx()'
+References: <0c3fcdaec33bb12b2367860dfab7ed4224ea000c.1635974999.git.christophe.jaillet@wanadoo.fr>
+        <a8666743-4dc5-79b8-56c7-23c05fc88d66@wanadoo.fr>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Mon, 15 Aug 2022 14:10:49 -0400
+In-Reply-To: <a8666743-4dc5-79b8-56c7-23c05fc88d66@wanadoo.fr> (Christophe
+        JAILLET's message of "Fri, 12 Aug 2022 06:54:09 +0200")
+Message-ID: <x49czd1xtqu.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The devm_clk_get_enabled() helper:
-   - calls devm_clk_get()
-   - calls clk_prepare_enable() and registers what is needed in order to
-     call clk_disable_unprepare() when needed, as a managed resource.
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
 
-This simplifies the code, the error handling paths and avoid the need of
-a dedicated function used with devm_add_action_or_reset().
+> Le 03/11/2021 =C3=A0 22:31, Christophe JAILLET a =C3=A9crit=C2=A0:
+>> Use 'percpu_ref_tryget_live_rcu()' instead of 'percpu_ref_tryget_live()'=
+ to
+>> save a few cycles when it is known that the rcu lock is already
+>> taken/released.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>>   fs/aio.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/aio.c b/fs/aio.c
+>> index 9c81cf611d65..d189ea13e10a 100644
+>> --- a/fs/aio.c
+>> +++ b/fs/aio.c
+>> @@ -1062,7 +1062,7 @@ static struct kioctx *lookup_ioctx(unsigned long c=
+tx_id)
+>>   	id =3D array_index_nospec(id, table->nr);
+>>   	ctx =3D rcu_dereference(table->table[id]);
+>>   	if (ctx && ctx->user_id =3D=3D ctx_id) {
+>> -		if (percpu_ref_tryget_live(&ctx->users))
+>> +		if (percpu_ref_tryget_live_rcu(&ctx->users))
+>>   			ret =3D ctx;
+>>   	}
+>>   out:
+>
+>
+> Hi,
+> gentle reminder.
+>
+> Is this patch useful?
+> When I first posted it, percpu_ref_tryget_live_rcu() was really new.
+> Now it is part of linux since 5.16.
+>
+> Saving a few cycles in a function with "lookup" in its name looks
+> always good to me.
 
-Based on my test with allyesconfig, this reduces the .o size from:
-   text	   data	    bss	    dec	    hex	filename
-   6705	   1968	      0	   8673	   21e1	drivers/rtc/rtc-mxc.o
-down to:
-   6212	   1968	      0	   8180	   1ff4	drivers/rtc/rtc-mxc.o
+The patch looks fine to me.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-devm_clk_get_enabled() is new and is part of 6.0-rc1
----
- drivers/rtc/rtc-mxc.c | 27 ++-------------------------
- 1 file changed, 2 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/rtc/rtc-mxc.c b/drivers/rtc/rtc-mxc.c
-index 53d4e253e81f..762cf03345f1 100644
---- a/drivers/rtc/rtc-mxc.c
-+++ b/drivers/rtc/rtc-mxc.c
-@@ -291,14 +291,6 @@ static const struct rtc_class_ops mxc_rtc_ops = {
- 	.alarm_irq_enable	= mxc_rtc_alarm_irq_enable,
- };
- 
--static void mxc_rtc_action(void *p)
--{
--	struct rtc_plat_data *pdata = p;
--
--	clk_disable_unprepare(pdata->clk_ref);
--	clk_disable_unprepare(pdata->clk_ipg);
--}
--
- static int mxc_rtc_probe(struct platform_device *pdev)
- {
- 	struct rtc_device *rtc;
-@@ -341,33 +333,18 @@ static int mxc_rtc_probe(struct platform_device *pdev)
- 		rtc->range_max = (1 << 16) * 86400ULL - 1;
- 	}
- 
--	pdata->clk_ipg = devm_clk_get(&pdev->dev, "ipg");
-+	pdata->clk_ipg = devm_clk_get_enabled(&pdev->dev, "ipg");
- 	if (IS_ERR(pdata->clk_ipg)) {
- 		dev_err(&pdev->dev, "unable to get ipg clock!\n");
- 		return PTR_ERR(pdata->clk_ipg);
- 	}
- 
--	ret = clk_prepare_enable(pdata->clk_ipg);
--	if (ret)
--		return ret;
--
--	pdata->clk_ref = devm_clk_get(&pdev->dev, "ref");
-+	pdata->clk_ref = devm_clk_get_enabled(&pdev->dev, "ref");
- 	if (IS_ERR(pdata->clk_ref)) {
--		clk_disable_unprepare(pdata->clk_ipg);
- 		dev_err(&pdev->dev, "unable to get ref clock!\n");
- 		return PTR_ERR(pdata->clk_ref);
- 	}
- 
--	ret = clk_prepare_enable(pdata->clk_ref);
--	if (ret) {
--		clk_disable_unprepare(pdata->clk_ipg);
--		return ret;
--	}
--
--	ret = devm_add_action_or_reset(&pdev->dev, mxc_rtc_action, pdata);
--	if (ret)
--		return ret;
--
- 	rate = clk_get_rate(pdata->clk_ref);
- 
- 	if (rate == 32768)
--- 
-2.34.1
+Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
 
