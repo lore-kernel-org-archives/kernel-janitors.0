@@ -2,52 +2,51 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE947C3F6B0
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Aug 2022 16:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87042C28B2B
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Aug 2022 16:26:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231871AbiHOQ0H (ORCPT
+        id S232245AbiHOQ0J (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 15 Aug 2022 12:26:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41750 "EHLO
+        Mon, 15 Aug 2022 12:26:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232514AbiHOQZT (ORCPT
+        with ESMTP id S232040AbiHOQZe (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 15 Aug 2022 12:25:19 -0400
+        Mon, 15 Aug 2022 12:25:34 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A706C25C7C;
-        Mon, 15 Aug 2022 09:23:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69138275C1
+        for <kernel-janitors@vger.kernel.org>; Mon, 15 Aug 2022 09:23:25 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 63450B80EA5;
-        Mon, 15 Aug 2022 16:23:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C375FC433C1;
-        Mon, 15 Aug 2022 16:23:08 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C819AB80FEC
+        for <kernel-janitors@vger.kernel.org>; Mon, 15 Aug 2022 16:23:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94311C4347C;
+        Mon, 15 Aug 2022 16:23:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660580591;
-        bh=LmpGns7c5wLoId8LSEZ+UEolch41Y3wjGy4mOteOmBE=;
+        s=k20201202; t=1660580602;
+        bh=M48z2KqCHhL953p7b1Jg0Gu4m0TjqNK8KDEbgoo0JM8=;
         h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=IMAiOSv3VHv6/nNPdcMyK5VmhwP5QuIWADxtgV9ax/xQb3nqmUS3h4QniqMkXpSAk
-         zXEiX5DngrWuz8mT+sNsut/FFBGEFRF+XmU3AfR++4P8+tM/Z0fOKPMDEXoolJz0Pv
-         EwII4+u6PoHS/3RuEX8PxT8iczF6n0jryTf5QDs2+Ram8ZhwtCnSyjNAVSEYjTUXtj
-         2zHH9rgAPb/yKy1rigi2YBN15XAUtn03PRNcPcBeh4LBdZZw5XMzMtEXX199GD8EFk
-         0CdfEgpXowpOP1EUVBlxqofhjrJRuc8HDlyDOiAiiCimlMxQAz1MQVDFSkRmTe91+I
-         MUVRnNpu73N3w==
+        b=FXq9TSSYTg7OpDTuH1ZAddk6xdRmPg/M2VqfFMK5gt0bsnL3QVez4AZAZNCyRXiSM
+         NOdlOYS6T4qufeYEdhi6y6C35ew+IOkuT7DiaI67iPHNhfMirG0P8wDi1oVqnuAOFV
+         CsQvZfeZUnvTwJpHn/dL5hdv8Cjg4vu71h10IfzLbpkY9+xnEf5Rr+W9s42HjW5GHy
+         7s4SRipdH7iORl66cbaUSBwqsF2tLqkleK7ni6c5B8P566CA/jpVdFPt6opUcew30n
+         +bwWyp+5vHJCHeyIU07yzpU1fPtox03xyA7pCjbz12wlSgs3ar+Rhjprtuy2TXiLK8
+         Iop3mp0X+d6/A==
 From:   Mark Brown <broonie@kernel.org>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Argus Lin <argus.lin@mediatek.com>,
         Liam Girdwood <lgirdwood@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <fb959b3bda689aa47e1fbe9948de957b77530b24.1659764734.git.christophe.jaillet@wanadoo.fr>
-References: <fb959b3bda689aa47e1fbe9948de957b77530b24.1659764734.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] ASoC: sam9g20_wm8731: Simplify some error message
-Message-Id: <166058058851.769843.12342144572880656518.b4-ty@kernel.org>
-Date:   Mon, 15 Aug 2022 17:23:08 +0100
+Cc:     Jaroslav Kysela <perex@perex.cz>, Liang He <windhl@126.com>,
+        kernel-janitors@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-mediatek@lists.infradead.org
+In-Reply-To: <YvThhr86N3qQM2EO@kili>
+References: <YvThhr86N3qQM2EO@kili>
+Subject: Re: [PATCH] ASoC: mt6359: fix tests for platform_get_irq() failure
+Message-Id: <166058060031.769843.15519074468480649760.b4-ty@kernel.org>
+Date:   Mon, 15 Aug 2022 17:23:20 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -56,10 +55,9 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 6 Aug 2022 07:45:48 +0200, Christophe JAILLET wrote:
-> dev_err_probe() already prints the error code in a human readable way, so
-> there is no need to duplicate it as a numerical value at the end of the
-> message.
+On Thu, 11 Aug 2022 14:01:26 +0300, Dan Carpenter wrote:
+> The platform_get_irq() returns negative error codes.  It can't actually
+> return zero, but if it did that should be treated as success.
 > 
 > 
 
@@ -69,8 +67,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: sam9g20_wm8731: Simplify some error message
-      commit: 7d67657cb472a80d54457362bc421f2b57ee250b
+[1/1] ASoC: mt6359: fix tests for platform_get_irq() failure
+      commit: 51eea3a6fb4d39c2cc71824e6eee5949d7ae4d1c
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
