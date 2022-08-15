@@ -2,52 +2,48 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B60C25B0D
-	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Aug 2022 16:26:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A5CC00140
+	for <kernel-janitors@archiver.kernel.org>; Mon, 15 Aug 2022 16:26:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232761AbiHOQZi (ORCPT
+        id S229835AbiHOQ0G (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 15 Aug 2022 12:25:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40284 "EHLO
+        Mon, 15 Aug 2022 12:26:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233040AbiHOQZH (ORCPT
+        with ESMTP id S233092AbiHOQZS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 15 Aug 2022 12:25:07 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A342524F0B
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 Aug 2022 09:23:04 -0700 (PDT)
+        Mon, 15 Aug 2022 12:25:18 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D84727149;
+        Mon, 15 Aug 2022 09:23:11 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 43E04B80FEC
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 Aug 2022 16:23:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB92EC433C1;
-        Mon, 15 Aug 2022 16:22:59 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9334CB80FEC;
+        Mon, 15 Aug 2022 16:23:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCD97C433D7;
+        Mon, 15 Aug 2022 16:23:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660580581;
-        bh=e7z1wZFXKyKTx+/Gp205MIBB5Y2JE/nLNvE5mKdLmXo=;
+        s=k20201202; t=1660580588;
+        bh=sVw0jX2MDbbtxdw3C7N48E1ZHL6zGdjBiKamZBFLaoA=;
         h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=swWLDFdwixRMFnyIcl35ZTLWeedljORzZDGDlFZh3QvDRfNe6/gmdy6t5vNSOUCMs
-         cFISGVQPxpedO9pFaxqUTBkVeCBDd9eaI83aFsIZwpehtBo00koo7k2f12NZUZPKvy
-         SmcfpEZvylc2uRegQo9l3/Wl6HwIx06MRNmBLp5zar4H1r/mPBQANOCllbgF0Fcjg4
-         rT0d8M16VP0HWqCwV24Mced9oCvNfoPV2ciZw7xFBXfBlUr2gZ6FWsB4+60TPboZsH
-         wz1ffFFcu69E/UwtwCCJugZM5Nlmb6Q26yx6CJ+t6gFvWkANg89rGPfSdwd30gSBEv
-         STpwYIxwladCw==
+        b=o9tAnFaExPSXTyRBiAxWXv+fgfGnQRgJIs4/Y+AT47nw+QMibM9bsfkUSr23qz7i4
+         EpJrNbvhV+sEZdnS3yWNFXDbMYWW5VKphYVIe3Lp2M1dCX98SnW1J5cCnfFFlcG8LU
+         i3Xtnei8VmL0yF9og2KubxN4tgPXY/NwBdQfEZjk3KZ0ALnB+5xhR0XYSP+XKCVqSq
+         j6dqLl2SJG30+ImCqHWIevyheqhSqcv9wyQhzLHklDiX6pYPRbvF6098NlVHSvfpHe
+         Fi0ppRp3S/Ww2eK+pJTNICA1MQvUX47gyNi4vrn5RhySJ2Evu5aOpmhEPuJWyKlSnF
+         RPgTvzlN5cz5A==
 From:   Mark Brown <broonie@kernel.org>
-To:     Jiaxin Yu <jiaxin.yu@mediatek.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
         Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Jaroslav Kysela <perex@perex.cz>, kernel-janitors@vger.kernel.org,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-mediatek@lists.infradead.org
-In-Reply-To: <Yuo7LGPk8KnBW6ac@kili>
-References: <Yuo7LGPk8KnBW6ac@kili>
-Subject: Re: [PATCH] ASoC: mediatek: mt8186: remove unnecessary NULL check
-Message-Id: <166058057968.769843.14245211698253942822.b4-ty@kernel.org>
-Date:   Mon, 15 Aug 2022 17:22:59 +0100
+Cc:     kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <63efe8fe4e25a8ac386762d2d7cfe9bb9482333f.1659814389.git.christophe.jaillet@wanadoo.fr>
+References: <63efe8fe4e25a8ac386762d2d7cfe9bb9482333f.1659814389.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] ASoC: tlv320adcx140: Fix a typo in a comment
+Message-Id: <166058058662.769843.9592183911230477031.b4-ty@kernel.org>
+Date:   Mon, 15 Aug 2022 17:23:06 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -56,10 +52,8 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, 3 Aug 2022 12:09:00 +0300, Dan Carpenter wrote:
-> The "i2s_priv" pointer cannot be NULL.  Some NULL checks were deleted
-> in commit d7bffbe9cbd3 ("ASoC: mediatek: mt8186: remove unnecessary
-> judgments") but this one was accidentally left behind.
+On Sat, 6 Aug 2022 21:33:22 +0200, Christophe JAILLET wrote:
+> s/TLV320ADCX104/TLV320ADCX140/
 > 
 > 
 
@@ -69,8 +63,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: mediatek: mt8186: remove unnecessary NULL check
-      commit: b9f0a8ffd6265e7d8c7464a7990330da85ee07ef
+[1/1] ASoC: tlv320adcx140: Fix a typo in a comment
+      commit: 98c17a01bc5965047890bd30c95966007234e6d1
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
