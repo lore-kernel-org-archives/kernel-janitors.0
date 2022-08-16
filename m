@@ -2,71 +2,53 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35DDEC25B0F
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Aug 2022 05:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C378C32772
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Aug 2022 07:59:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233029AbiHPFHG (ORCPT
+        id S231768AbiHPH7w (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 Aug 2022 01:07:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43576 "EHLO
+        Tue, 16 Aug 2022 03:59:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233080AbiHPFGp (ORCPT
+        with ESMTP id S231431AbiHPH7a (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 Aug 2022 01:06:45 -0400
-Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC4B8E2B
-        for <kernel-janitors@vger.kernel.org>; Mon, 15 Aug 2022 14:06:59 -0700 (PDT)
-Received: from [192.168.1.18] ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id NhIPoUIJz4lbwNhIPoi6UR; Mon, 15 Aug 2022 23:06:56 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 15 Aug 2022 23:06:56 +0200
-X-ME-IP: 90.11.190.129
-Message-ID: <d9a4321c-efc3-e2b8-1bb7-9e2413940885@wanadoo.fr>
-Date:   Mon, 15 Aug 2022 23:06:49 +0200
+        Tue, 16 Aug 2022 03:59:30 -0400
+Received: from out30-56.freemail.mail.aliyun.com (out30-56.freemail.mail.aliyun.com [115.124.30.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2C133ECF6;
+        Mon, 15 Aug 2022 22:16:21 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VMOlAPD_1660626976;
+Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VMOlAPD_1660626976)
+          by smtp.aliyun-inc.com;
+          Tue, 16 Aug 2022 13:16:18 +0800
+Date:   Tue, 16 Aug 2022 13:16:16 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     Sun Ke <sunke32@huawei.com>
+Cc:     xiang@kernel.org, chao@kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        yinxin.x@bytedance.com
+Subject: Re: [PATCH] erofs: fix error return code in
+ erofs_fscache_meta_read_folio and erofs_fscache_read_folio
+Message-ID: <YvsoIFzRlGpqNZKg@B-P7TQMD6M-0146.local>
+References: <20220815034829.3940803-1-sunke32@huawei.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] drm/hyperv: Fix an error handling path in
- hyperv_vmbus_probe()
-Content-Language: fr
-To:     Wei Liu <wei.liu@kernel.org>,
-        "Michael Kelley (LINUX)" <mikelley@microsoft.com>
-Cc:     Deepak Rawat <drawat.floss@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-References: <7dfa372af3e35fbb1d6f157183dfef2e4512d3be.1659297696.git.christophe.jaillet@wanadoo.fr>
- <PH0PR21MB3025D61C85CD6E724919A9D8D79E9@PH0PR21MB3025.namprd21.prod.outlook.com>
- <20220815155608.uekossy5hejqflni@liuwe-devbox-debian-v2>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20220815155608.uekossy5hejqflni@liuwe-devbox-debian-v2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220815034829.3940803-1-sunke32@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Le 15/08/2022 à 17:56, Wei Liu a écrit :
->>
->> All that said, the fix looks good, so
->>
->> Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+On Mon, Aug 15, 2022 at 11:48:29AM +0800, Sun Ke wrote:
+> If erofs_fscache_alloc_request fail and then goto out, it will return 0.
+> it should return a negative error code instead of 0.
 > 
-> I made the two changes listed above and applied this patch to
-> hyperv-fixes.
-> 
+> Fixes: d435d53228dd ("erofs: change to use asynchronous io for fscache readpage/readahead")
+> Signed-off-by: Sun Ke <sunke32@huawei.com>
 
-Thanks a lot, that saves me a v2.
+Minor, I tried to apply this patch by updating the patch title into
+"erofs: fix error return code in erofs_fscache_{meta_,}read_folio"
 
-CJ
+since the original patch title is too long.
 
-> Thanks,
-> Wei.
-> 
-
+Thanks,
+Gao Xiang
