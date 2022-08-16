@@ -2,36 +2,46 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19251C25B0E
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Aug 2022 12:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E97FC25B0E
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Aug 2022 14:24:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231173AbiHPM4t (ORCPT
+        id S235390AbiHPOYL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 Aug 2022 08:56:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51094 "EHLO
+        Tue, 16 Aug 2022 10:24:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234521AbiHPM42 (ORCPT
+        with ESMTP id S230142AbiHPOYK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 Aug 2022 08:56:28 -0400
-Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83ED294112
-        for <kernel-janitors@vger.kernel.org>; Tue, 16 Aug 2022 05:55:52 -0700 (PDT)
+        Tue, 16 Aug 2022 10:24:10 -0400
+Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ACD158B73
+        for <kernel-janitors@vger.kernel.org>; Tue, 16 Aug 2022 07:24:09 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id Nw6mosEtPSMw7Nw6mobXRO; Tue, 16 Aug 2022 14:55:49 +0200
+        id NxU7oTaciBDYDNxU7oNjp3; Tue, 16 Aug 2022 16:24:07 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 16 Aug 2022 14:55:49 +0200
+X-ME-Date: Tue, 16 Aug 2022 16:24:07 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
+To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Andrew Lunn <andrew@lunn.ch>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Robin Murphy <robin.murphy@arm.com>
-Subject: [PATCH] driver core: Have dev_err_probe() handle the dev_fmt() macro
-Date:   Tue, 16 Aug 2022 14:55:34 +0200
-Message-Id: <2cd29680cae15b6b41061dacb16a094ccc20251a.1660654443.git.christophe.jaillet@wanadoo.fr>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 1/2] stmmac: intel: Add a missing clk_disable_unprepare() call in intel_eth_pci_remove()
+Date:   Tue, 16 Aug 2022 16:23:57 +0200
+Message-Id: <d7c8c1dadf40df3a7c9e643f76ffadd0ccc1ad1b.1660659689.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -39,76 +49,57 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-dev_err() and co. functions handle the dev_fmt() macro if it is defined.
-This helps to have a common prefix for all messages generated with this
-API.
+Commit 09f012e64e4b ("stmmac: intel: Fix clock handling on error and remove
+paths") removed this clk_disable_unprepare()
 
-dev_err_probe() looks like dev_err() but, up to now, does not expand the
-dev_fmt() macro.
+This was partly revert by commit ac322f86b56c ("net: stmmac: Fix clock
+handling on remove path") which removed this clk_disable_unprepare()
+because:
+"
+   While unloading the dwmac-intel driver, clk_disable_unprepare() is
+   being called twice in stmmac_dvr_remove() and
+   intel_eth_pci_remove(). This causes kernel panic on the second call.
+"
 
-Add it.
+However later on, commit 5ec55823438e8 ("net: stmmac: add clocks management
+for gmac driver") has updated stmmac_dvr_remove() which do not call
+clk_disable_unprepare() anymore.
 
-Suggested-by: Robin Murphy <robin.murphy@arm.com>
+So this call should now be called from intel_eth_pci_remove().
+
+Fixes: 5ec55823438e8 ("net: stmmac: add clocks management for gmac driver")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
-Example of where it would be useful is discussed at:
-  https://lore.kernel.org/all/aaeba9c12ccdb29f48fe19137cb5abeea85fbb24.1659732652.git.christophe.jaillet@wanadoo.fr/
+Change in v2:
+  * Fix a copy'n'paste typo from the error handling path of the probe to
+    the remove function
+  * Remove the big warning added below the --- in v1 (see link below if
+    needed)
+  * Add Reviewed-by:
+
+v1:
+  https://lore.kernel.org/all/b5b44a0c025d0fdddd9b9d23153261363089a06a.1659204745.git.christophe.jaillet@wanadoo.fr/
 
 
-I've left the kerneldoc in the .c file near _dev_err_probe(). I don't know
-if it should be moved in the .h file close to dev_err_probe().
+Andy proposed another way to fix the issue. See the thread above.
+I won't be able to propose it myself.
 ---
- drivers/base/core.c    | 7 +++++--
- include/linux/device.h | 4 +++-
- 2 files changed, 8 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 753e7cca0f40..89cab273a7b5 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -4830,6 +4830,9 @@ define_dev_printk_level(_dev_info, KERN_INFO);
-  *
-  * 	return dev_err_probe(dev, err, ...);
-  *
-+ * Just as dev_err() does, dev_err_probe() also takes the dev_fmt() macro into
-+ * consideration if it is defined.
-+ *
-  * Note that it is deemed acceptable to use this function for error
-  * prints during probe even if the @err is known to never be -EPROBE_DEFER.
-  * The benefit compared to a normal dev_err() is the standardized format
-@@ -4838,7 +4841,7 @@ define_dev_printk_level(_dev_info, KERN_INFO);
-  * Returns @err.
-  *
-  */
--int dev_err_probe(const struct device *dev, int err, const char *fmt, ...)
-+int _dev_err_probe(const struct device *dev, int err, const char *fmt, ...)
- {
- 	struct va_format vaf;
- 	va_list args;
-@@ -4858,7 +4861,7 @@ int dev_err_probe(const struct device *dev, int err, const char *fmt, ...)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
+index 52f9ed8db9c9..4f2b82a884b9 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
+@@ -1134,6 +1134,7 @@ static void intel_eth_pci_remove(struct pci_dev *pdev)
  
- 	return err;
- }
--EXPORT_SYMBOL_GPL(dev_err_probe);
-+EXPORT_SYMBOL_GPL(_dev_err_probe);
+ 	stmmac_dvr_remove(&pdev->dev);
  
- static inline bool fwnode_is_primary(struct fwnode_handle *fwnode)
- {
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 424b55df0272..412a0ee2d44e 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -1093,7 +1093,9 @@ void device_links_supplier_sync_state_pause(void);
- void device_links_supplier_sync_state_resume(void);
++	clk_disable_unprepare(priv->plat->stmmac_clk);
+ 	clk_unregister_fixed_rate(priv->plat->stmmac_clk);
  
- extern __printf(3, 4)
--int dev_err_probe(const struct device *dev, int err, const char *fmt, ...);
-+int _dev_err_probe(const struct device *dev, int err, const char *fmt, ...);
-+#define dev_err_probe(dev, err, fmt, ...) \
-+	_dev_err_probe(dev, err, dev_fmt(fmt), ##__VA_ARGS__)
- 
- /* Create alias, so I can be autoloaded. */
- #define MODULE_ALIAS_CHARDEV(major,minor) \
+ 	pcim_iounmap_regions(pdev, BIT(0));
 -- 
 2.34.1
 
