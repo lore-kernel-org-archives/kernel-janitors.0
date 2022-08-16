@@ -2,92 +2,76 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A12D1C32771
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Aug 2022 09:24:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 561C0C2BB41
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Aug 2022 09:51:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232739AbiHPJY5 (ORCPT
+        id S231232AbiHPJvH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 Aug 2022 05:24:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42318 "EHLO
+        Tue, 16 Aug 2022 05:51:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232080AbiHPJYb (ORCPT
+        with ESMTP id S231131AbiHPJuj (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 Aug 2022 05:24:31 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2CB98D3ED;
-        Tue, 16 Aug 2022 00:40:10 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id b16so12418972edd.4;
-        Tue, 16 Aug 2022 00:40:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc;
-        bh=D6ovg/4qbTNHMCF0lOjAQ6S2imf27/eFQ09R/uSkCoA=;
-        b=nv3+t0iYnj3pgnrgw/prtnIe6Z/dh4WvgSeFpPH1+E40TVL6LoPG9beQTQLKIZTEBY
-         SdFLR8CQwAm3bagtVtX6kehs94Kls7z9URDyXS+wW9n+isKLwUwm/YHdecbnOt6bb9hz
-         HxnO3T3vsFNwXBiKDIaj0dc1mCTogg2mc5WrnHWVong+K/SAhEmcoYoIySN2hhSLF4K9
-         jVjj5S6993h0eym9nD6+yZdZMq47xr0UCDhE8Kz5DWkjEmNo/pnQyUlJHIugkEysCofR
-         /kWrZa/hBg2JyhlohcFlcpbxyQJBKETNzfhjv1VtUSKqWwtQ95L4Ac60nbUSScXk8J1k
-         KHHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=D6ovg/4qbTNHMCF0lOjAQ6S2imf27/eFQ09R/uSkCoA=;
-        b=Ybg76A4zuS6vVX2irCgeiq11ZBQRwyxy4KFj0pto+DQe0GqlHI9GJguCLTCdnRu4eE
-         frNub/KfGoATbxsLkoOTJJ6BfTLXZQPtFR62rxilctlo1/QZdGR09OlUw4jDaVqekYYs
-         nBRFh58XG/dPu6+7q1JgEEMpvFYPBodEY2vmAmMoWxpFWdoKjMnVY36sMcwhEDQ0VZHp
-         hQtge5LoE5g7d4NhWoYJAD5RBnDFabtfq2jruhREmPx9Pihj7aqWphT4eG1PjrWKezTt
-         Sok/56nZmW9VTrUBZSJXxrsrDg5R1xCjqrtt4lNwKRVFMtfJUlONS6yKAiDqbfTJB+GI
-         vpYQ==
-X-Gm-Message-State: ACgBeo1tnYhuVtt1yfQ9/BYcAeVkGD9LbGxRlHuP5Ztr8G9iJ14N2M1C
-        Ncn5E8kQHEglMeWycdwyehZdJ6DRRK8=
-X-Google-Smtp-Source: AA6agR6FZw/8AxKKuoYH4e0u+CEZIlmzkjrKyfX5w9aIOpYgPmzzWq1Ctslmb5qK2H+7hKEXVy/53A==
-X-Received: by 2002:a50:fc89:0:b0:43c:bf1e:165d with SMTP id f9-20020a50fc89000000b0043cbf1e165dmr17175545edq.161.1660635608927;
-        Tue, 16 Aug 2022 00:40:08 -0700 (PDT)
-Received: from felia.fritz.box (200116b82612cb003523580d29724c22.dip.versatel-1u1.de. [2001:16b8:2612:cb00:3523:580d:2972:4c22])
-        by smtp.gmail.com with ESMTPSA id v20-20020a170906339400b00730b933410csm4977031eja.145.2022.08.16.00.40.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Aug 2022 00:40:08 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: rectify entry for XILINX GPIO DRIVER
-Date:   Tue, 16 Aug 2022 09:39:52 +0200
-Message-Id: <20220816073952.31619-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 16 Aug 2022 05:50:39 -0400
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4D29103C65
+        for <kernel-janitors@vger.kernel.org>; Tue, 16 Aug 2022 01:12:44 -0700 (PDT)
+Received: from [192.168.1.18] ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id NrgXoquoiGDTnNrgXo13bw; Tue, 16 Aug 2022 10:12:26 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 16 Aug 2022 10:12:26 +0200
+X-ME-IP: 90.11.190.129
+Message-ID: <b6025226-4fcd-1d82-60eb-301734cc8e5a@wanadoo.fr>
+Date:   Tue, 16 Aug 2022 10:12:25 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v2] scsi: target: Save a few cycles in
+ transport_lookup_[cmd|tmr]_lun()
+Content-Language: en-US
+To:     Chaitanya Kulkarni <chaitanyak@nvidia.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "michael.christie@oracle.com" <michael.christie@oracle.com>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+References: <03705222390bfa3b48ad7658f693fc0fc030b3ae.1660596679.git.christophe.jaillet@wanadoo.fr>
+ <757f1326-bc70-aa93-b2d3-dfd91698406e@nvidia.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <757f1326-bc70-aa93-b2d3-dfd91698406e@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit ba96b2e7974b ("dt-bindings: gpio: gpio-xilinx: Convert Xilinx axi
-gpio binding to YAML") converts gpio-xilinx.txt to xlnx,gpio-xilinx.yaml,
-but missed to adjust its reference in MAINTAINERS.
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
+Le 16/08/2022 à 08:06, Chaitanya Kulkarni a écrit :
+> On 8/15/22 13:52, Christophe JAILLET wrote:
+>> Use percpu_ref_tryget_live_rcu() instead of percpu_ref_tryget_live() to
+>> save a few cycles when it is known that the rcu lock is already
+>> taken/released.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+> do you have a quantitative data that shows actual savings of cycles?
+>
+> -ck
+>
 
-Repair this file reference in XILINX GPIO DRIVER.
+Some numbers were given for io_uring by the one who introduced 
+percpu_ref_tryget_live_rcu().
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+See [1].
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f69a1c5212bd..7c20a1c9eb78 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22344,7 +22344,7 @@ M:	Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
- R:	Srinivas Neeli <srinivas.neeli@xilinx.com>
- R:	Michal Simek <michal.simek@xilinx.com>
- S:	Maintained
--F:	Documentation/devicetree/bindings/gpio/gpio-xilinx.txt
-+F:	Documentation/devicetree/bindings/gpio/xlnx,gpio-xilinx.yaml
- F:	Documentation/devicetree/bindings/gpio/gpio-zynq.yaml
- F:	drivers/gpio/gpio-xilinx.c
- F:	drivers/gpio/gpio-zynq.c
--- 
-2.17.1
+I don't have specific numbers for the patch against scsi.
+
+CJ
+
+
+[1]: 
+https://lore.kernel.org/linux-kernel/cover.1634822969.git.asml.silence@gmail.com/
 
