@@ -2,144 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC2DC32772
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Aug 2022 08:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A12D1C32771
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Aug 2022 09:24:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232805AbiHPIb0 (ORCPT
+        id S232739AbiHPJY5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 Aug 2022 04:31:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53210 "EHLO
+        Tue, 16 Aug 2022 05:24:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233157AbiHPIaZ (ORCPT
+        with ESMTP id S232080AbiHPJYb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 Aug 2022 04:30:25 -0400
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09B7232045;
-        Mon, 15 Aug 2022 22:51:47 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id b96so12167187edf.0;
-        Mon, 15 Aug 2022 22:51:46 -0700 (PDT)
+        Tue, 16 Aug 2022 05:24:31 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2CB98D3ED;
+        Tue, 16 Aug 2022 00:40:10 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id b16so12418972edd.4;
+        Tue, 16 Aug 2022 00:40:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc;
+        bh=D6ovg/4qbTNHMCF0lOjAQ6S2imf27/eFQ09R/uSkCoA=;
+        b=nv3+t0iYnj3pgnrgw/prtnIe6Z/dh4WvgSeFpPH1+E40TVL6LoPG9beQTQLKIZTEBY
+         SdFLR8CQwAm3bagtVtX6kehs94Kls7z9URDyXS+wW9n+isKLwUwm/YHdecbnOt6bb9hz
+         HxnO3T3vsFNwXBiKDIaj0dc1mCTogg2mc5WrnHWVong+K/SAhEmcoYoIySN2hhSLF4K9
+         jVjj5S6993h0eym9nD6+yZdZMq47xr0UCDhE8Kz5DWkjEmNo/pnQyUlJHIugkEysCofR
+         /kWrZa/hBg2JyhlohcFlcpbxyQJBKETNzfhjv1VtUSKqWwtQ95L4Ac60nbUSScXk8J1k
+         KHHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=1ih+voLW+z6C3I6dHpxHJWJWHtWsfqymODQS01+snEQ=;
-        b=jqCw4c+ZUkAxsXm/a/9uAbggdb7J26pLNQTLhOiGKgKR0AAS7rYPYn3H92fLe/3wQv
-         SX2l7F4ervNC/JFVtrpQ1YD46icvnUaBGf7yxJ6OGKKhVCUov2K/07vMwJqfqrUUAXn/
-         +gfghcW7qJEg+Yz6kgiop3n3fQKcW3gVnaDBDO3MFMdh3G1lbtqmU11eC4AbVHRaSs7c
-         d9wUvLxhbVpuBgAz7MSmHGc28Ne+trJ03xKtuRESVSWCsCzyRb8rDRNA/v1/2IJ9yz3f
-         5B4cdAWJ0QX6T7OKf+haZ/iIkQbwekNY6JTZgI/S3SXLbDK7D44qlGuy1us4v+IeosJH
-         PSTg==
-X-Gm-Message-State: ACgBeo0qyXdtfmM3FOs+KzNPa5pLYbye81K6/l44CCeSE4yjN9+vh5SJ
-        KvME64PczGJQ0jApjD/8JTZ2B/XzrIU=
-X-Google-Smtp-Source: AA6agR7u1/TsaZ9tkBYkoBI/0txZJv80w+vrjmw9Jdz2f/g1MTrWM6q27PsQ06UF3EEydThAd1yOCg==
-X-Received: by 2002:a05:6402:2751:b0:443:d90a:43d4 with SMTP id z17-20020a056402275100b00443d90a43d4mr5588490edd.368.1660629105474;
-        Mon, 15 Aug 2022 22:51:45 -0700 (PDT)
-Received: from ?IPV6:2a0b:e7c0:0:107::70f? ([2a0b:e7c0:0:107::70f])
-        by smtp.gmail.com with ESMTPSA id u19-20020a05640207d300b0043bb8023caesm7836006edy.62.2022.08.15.22.51.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Aug 2022 22:51:45 -0700 (PDT)
-Message-ID: <237679cc-1b1a-ac8d-f277-a75cf582a62a@kernel.org>
-Date:   Tue, 16 Aug 2022 07:51:44 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.0
-Subject: Re: [PATCH] serial: icom: Fix some indentation
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-serial@vger.kernel.org
-References: <037fc7510ff88945e3f0a5756de4cfd135c59849.1660565015.git.christophe.jaillet@wanadoo.fr>
-From:   Jiri Slaby <jirislaby@kernel.org>
-In-Reply-To: <037fc7510ff88945e3f0a5756de4cfd135c59849.1660565015.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
+        bh=D6ovg/4qbTNHMCF0lOjAQ6S2imf27/eFQ09R/uSkCoA=;
+        b=Ybg76A4zuS6vVX2irCgeiq11ZBQRwyxy4KFj0pto+DQe0GqlHI9GJguCLTCdnRu4eE
+         frNub/KfGoATbxsLkoOTJJ6BfTLXZQPtFR62rxilctlo1/QZdGR09OlUw4jDaVqekYYs
+         nBRFh58XG/dPu6+7q1JgEEMpvFYPBodEY2vmAmMoWxpFWdoKjMnVY36sMcwhEDQ0VZHp
+         hQtge5LoE5g7d4NhWoYJAD5RBnDFabtfq2jruhREmPx9Pihj7aqWphT4eG1PjrWKezTt
+         Sok/56nZmW9VTrUBZSJXxrsrDg5R1xCjqrtt4lNwKRVFMtfJUlONS6yKAiDqbfTJB+GI
+         vpYQ==
+X-Gm-Message-State: ACgBeo1tnYhuVtt1yfQ9/BYcAeVkGD9LbGxRlHuP5Ztr8G9iJ14N2M1C
+        Ncn5E8kQHEglMeWycdwyehZdJ6DRRK8=
+X-Google-Smtp-Source: AA6agR6FZw/8AxKKuoYH4e0u+CEZIlmzkjrKyfX5w9aIOpYgPmzzWq1Ctslmb5qK2H+7hKEXVy/53A==
+X-Received: by 2002:a50:fc89:0:b0:43c:bf1e:165d with SMTP id f9-20020a50fc89000000b0043cbf1e165dmr17175545edq.161.1660635608927;
+        Tue, 16 Aug 2022 00:40:08 -0700 (PDT)
+Received: from felia.fritz.box (200116b82612cb003523580d29724c22.dip.versatel-1u1.de. [2001:16b8:2612:cb00:3523:580d:2972:4c22])
+        by smtp.gmail.com with ESMTPSA id v20-20020a170906339400b00730b933410csm4977031eja.145.2022.08.16.00.40.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Aug 2022 00:40:08 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: rectify entry for XILINX GPIO DRIVER
+Date:   Tue, 16 Aug 2022 09:39:52 +0200
+Message-Id: <20220816073952.31619-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 15. 08. 22, 14:05, Christophe JAILLET wrote:
-> checkpatch and smatch report some code alignment issues.
-> 
-> So remove some unneeded leading spaces to fix the warnings.
-> 
-> While at it remove some {} around a single statement and convert some
-> spaces into a tab.
+Commit ba96b2e7974b ("dt-bindings: gpio: gpio-xilinx: Convert Xilinx axi
+gpio binding to YAML") converts gpio-xilinx.txt to xlnx,gpio-xilinx.yaml,
+but missed to adjust its reference in MAINTAINERS.
 
-Looks good, but maintainers don't like the "While at it" part :D.
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
-Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+Repair this file reference in XILINX GPIO DRIVER.
 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->   drivers/tty/serial/icom.c | 27 +++++++++++++--------------
->   1 file changed, 13 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/icom.c b/drivers/tty/serial/icom.c
-> index 45df29947fe8..3ac81622c4fb 100644
-> --- a/drivers/tty/serial/icom.c
-> +++ b/drivers/tty/serial/icom.c
-> @@ -1727,10 +1727,10 @@ static int icom_probe(struct pci_dev *dev,
->   
->   	retval = pci_request_regions(dev, "icom");
->   	if (retval) {
-> -		 dev_err(&dev->dev, "pci_request_regions FAILED\n");
-> -		 pci_disable_device(dev);
-> -		 return retval;
-> -	 }
-> +		dev_err(&dev->dev, "pci_request_regions FAILED\n");
-> +		pci_disable_device(dev);
-> +		return retval;
-> +	}
->   
->   	pci_set_master(dev);
->   
-> @@ -1754,9 +1754,9 @@ static int icom_probe(struct pci_dev *dev,
->   
->   	retval = icom_alloc_adapter(&icom_adapter);
->   	if (retval) {
-> -		 dev_err(&dev->dev, "icom_alloc_adapter FAILED\n");
-> -		 retval = -EIO;
-> -		 goto probe_exit0;
-> +		dev_err(&dev->dev, "icom_alloc_adapter FAILED\n");
-> +		retval = -EIO;
-> +		goto probe_exit0;
->   	}
->   
->   	icom_adapter->base_addr_pci = pci_resource_start(dev, 0);
-> @@ -1778,11 +1778,10 @@ static int icom_probe(struct pci_dev *dev,
->   		goto probe_exit1;
->   	}
->   
-> -	 /* save off irq and request irq line */
-> -	 retval = request_irq(dev->irq, icom_interrupt, IRQF_SHARED, ICOM_DRIVER_NAME, (void *)icom_adapter);
-> -	 if (retval) {
-> -		  goto probe_exit2;
-> -	 }
-> +	/* save off irq and request irq line */
-> +	retval = request_irq(dev->irq, icom_interrupt, IRQF_SHARED, ICOM_DRIVER_NAME, (void *)icom_adapter);
-> +	if (retval)
-> +		goto probe_exit2;
->   
->   	retval = icom_load_ports(icom_adapter);
->   
-> @@ -1798,11 +1797,11 @@ static int icom_probe(struct pci_dev *dev,
->   			icom_port->uart_port.fifosize = 16;
->   			icom_port->uart_port.ops = &icom_ops;
->   			icom_port->uart_port.line =
-> -		        icom_port->port + icom_adapter->index * 4;
-> +			icom_port->port + icom_adapter->index * 4;
->   			if (uart_add_one_port (&icom_uart_driver, &icom_port->uart_port)) {
->   				icom_port->status = ICOM_PORT_OFF;
->   				dev_err(&dev->dev, "Device add failed\n");
-> -			 } else
-> +			} else
->   				dev_info(&dev->dev, "Device added\n");
->   		}
->   	}
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f69a1c5212bd..7c20a1c9eb78 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22344,7 +22344,7 @@ M:	Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+ R:	Srinivas Neeli <srinivas.neeli@xilinx.com>
+ R:	Michal Simek <michal.simek@xilinx.com>
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/gpio/gpio-xilinx.txt
++F:	Documentation/devicetree/bindings/gpio/xlnx,gpio-xilinx.yaml
+ F:	Documentation/devicetree/bindings/gpio/gpio-zynq.yaml
+ F:	drivers/gpio/gpio-xilinx.c
+ F:	drivers/gpio/gpio-zynq.c
 -- 
-js
-suse labs
+2.17.1
 
