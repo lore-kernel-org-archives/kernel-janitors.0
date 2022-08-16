@@ -2,78 +2,113 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B560BC32771
-	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Aug 2022 10:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19251C25B0E
+	for <kernel-janitors@archiver.kernel.org>; Tue, 16 Aug 2022 12:56:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234496AbiHPKf7 (ORCPT
+        id S231173AbiHPM4t (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 16 Aug 2022 06:35:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57144 "EHLO
+        Tue, 16 Aug 2022 08:56:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234849AbiHPKf3 (ORCPT
+        with ESMTP id S234521AbiHPM42 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 16 Aug 2022 06:35:29 -0400
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32B81BBA69;
-        Tue, 16 Aug 2022 02:06:41 -0700 (PDT)
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27G1cRYr013154;
-        Tue, 16 Aug 2022 04:05:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=V7+EmkrSuZ84Bb1gS/wxH1FOr6TUaRrdnHDtztrgSTo=;
- b=hDeJAig6BJnBTD5z4jiBt1IdQiSF3hjYucAxgdiRHbbX9J7cMmMBxy78RMBBQFj4J1O+
- rToQ/FZui015D/7EUuAA/s83U3/Ci89croC9zkjR6NzuvELgsRAluF5vkg+ofgMikp0h
- CI9vVF4KiolPUQqymIcCtNJhyelnl+DOOjhxRIn6Qt8ESg7FGxee9UR5w9nc6Jq7GK9Y
- JyQe6K3vwTCiRBTViHq0/pt8n1GzXaChw/SvNx+Fuft8zbRw4J0JGUPKsZyp5XWnqwhp
- QcwFDv62Q3rlE4Bsp6CEWKALJTuoBaK7NSn8gdNzVUxa1yLdtghmiFB75X8Dez3aif0Y zA== 
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3hx8cpbav1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 16 Aug 2022 04:05:55 -0500
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.9; Tue, 16 Aug
- 2022 04:05:54 -0500
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.2.1118.9 via Frontend
- Transport; Tue, 16 Aug 2022 04:05:54 -0500
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 5A7F57C;
-        Tue, 16 Aug 2022 09:05:54 +0000 (UTC)
-Date:   Tue, 16 Aug 2022 09:05:54 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-CC:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <patches@opensource.cirrus.com>, <alsa-devel@alsa-project.org>
-Subject: Re: [PATCH] ASoC: Fix the include guard used for
- include/sound/wm8904.h
-Message-ID: <20220816090554.GJ92394@ediswmail.ad.cirrus.com>
-References: <eff524b78d1f851e3dc42999e68c286492f92b21.1659800938.git.christophe.jaillet@wanadoo.fr>
+        Tue, 16 Aug 2022 08:56:28 -0400
+Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83ED294112
+        for <kernel-janitors@vger.kernel.org>; Tue, 16 Aug 2022 05:55:52 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id Nw6mosEtPSMw7Nw6mobXRO; Tue, 16 Aug 2022 14:55:49 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 16 Aug 2022 14:55:49 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Robin Murphy <robin.murphy@arm.com>
+Subject: [PATCH] driver core: Have dev_err_probe() handle the dev_fmt() macro
+Date:   Tue, 16 Aug 2022 14:55:34 +0200
+Message-Id: <2cd29680cae15b6b41061dacb16a094ccc20251a.1660654443.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <eff524b78d1f851e3dc42999e68c286492f92b21.1659800938.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-ORIG-GUID: Cv0SVka0lPbtKA-6rDUgNcbQ73hqUg6g
-X-Proofpoint-GUID: Cv0SVka0lPbtKA-6rDUgNcbQ73hqUg6g
-X-Proofpoint-Spam-Reason: safe
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, Aug 06, 2022 at 05:49:14PM +0200, Christophe JAILLET wrote:
-> __MFD_WM8994_PDATA_H__ is already used for:
->   include/linux/mfd/wm8994/pdata.h
-> 
-> Based on file names, use __MFD_WM8904_PDATA_H__ instead here.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+dev_err() and co. functions handle the dev_fmt() macro if it is defined.
+This helps to have a common prefix for all messages generated with this
+API.
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+dev_err_probe() looks like dev_err() but, up to now, does not expand the
+dev_fmt() macro.
 
-Thanks,
-Charles
+Add it.
+
+Suggested-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Example of where it would be useful is discussed at:
+  https://lore.kernel.org/all/aaeba9c12ccdb29f48fe19137cb5abeea85fbb24.1659732652.git.christophe.jaillet@wanadoo.fr/
+
+
+I've left the kerneldoc in the .c file near _dev_err_probe(). I don't know
+if it should be moved in the .h file close to dev_err_probe().
+---
+ drivers/base/core.c    | 7 +++++--
+ include/linux/device.h | 4 +++-
+ 2 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 753e7cca0f40..89cab273a7b5 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -4830,6 +4830,9 @@ define_dev_printk_level(_dev_info, KERN_INFO);
+  *
+  * 	return dev_err_probe(dev, err, ...);
+  *
++ * Just as dev_err() does, dev_err_probe() also takes the dev_fmt() macro into
++ * consideration if it is defined.
++ *
+  * Note that it is deemed acceptable to use this function for error
+  * prints during probe even if the @err is known to never be -EPROBE_DEFER.
+  * The benefit compared to a normal dev_err() is the standardized format
+@@ -4838,7 +4841,7 @@ define_dev_printk_level(_dev_info, KERN_INFO);
+  * Returns @err.
+  *
+  */
+-int dev_err_probe(const struct device *dev, int err, const char *fmt, ...)
++int _dev_err_probe(const struct device *dev, int err, const char *fmt, ...)
+ {
+ 	struct va_format vaf;
+ 	va_list args;
+@@ -4858,7 +4861,7 @@ int dev_err_probe(const struct device *dev, int err, const char *fmt, ...)
+ 
+ 	return err;
+ }
+-EXPORT_SYMBOL_GPL(dev_err_probe);
++EXPORT_SYMBOL_GPL(_dev_err_probe);
+ 
+ static inline bool fwnode_is_primary(struct fwnode_handle *fwnode)
+ {
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 424b55df0272..412a0ee2d44e 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -1093,7 +1093,9 @@ void device_links_supplier_sync_state_pause(void);
+ void device_links_supplier_sync_state_resume(void);
+ 
+ extern __printf(3, 4)
+-int dev_err_probe(const struct device *dev, int err, const char *fmt, ...);
++int _dev_err_probe(const struct device *dev, int err, const char *fmt, ...);
++#define dev_err_probe(dev, err, fmt, ...) \
++	_dev_err_probe(dev, err, dev_fmt(fmt), ##__VA_ARGS__)
+ 
+ /* Create alias, so I can be autoloaded. */
+ #define MODULE_ALIAS_CHARDEV(major,minor) \
+-- 
+2.34.1
+
