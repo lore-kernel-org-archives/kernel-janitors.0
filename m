@@ -2,80 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B1FC25B08
-	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Aug 2022 14:58:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5613DC3F6B0
+	for <kernel-janitors@archiver.kernel.org>; Wed, 17 Aug 2022 15:31:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240355AbiHQO6p (ORCPT
+        id S240119AbiHQPbR (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 17 Aug 2022 10:58:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46144 "EHLO
+        Wed, 17 Aug 2022 11:31:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240068AbiHQO6l (ORCPT
+        with ESMTP id S240840AbiHQPbO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 17 Aug 2022 10:58:41 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58BB149B73;
-        Wed, 17 Aug 2022 07:58:40 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EB9616152A;
-        Wed, 17 Aug 2022 14:58:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94B1CC433D7;
-        Wed, 17 Aug 2022 14:58:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660748319;
-        bh=UukA7zr2GtXoSZlWDUfpBufnEeeEq4BCJXJ2O44v+d4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bl0idNDNtDHk1jVi8tNfuPNsj1odugEpueiUTjHfcUhceIdm1DeS40z+JZFuROjqj
-         yfK4jdo7eLtF1Zde+VIbNJ62dalgWjU2OhApMt3AWgO81w/iboNW8+W1PhhkFM/44q
-         bIjVCW1soZ32wjwxxz/PS4h6rmsP0/o2X98cRKaOwwU4KiLZ+wFFyzfYEPtm+6HQng
-         Ogn7NP6J7pTsGHbEXwzYW00zp/96iCZmt+mfdIl1D/XESXnCncV7GEmRPVEXfSp9wb
-         hQSWpFkkArIEpc1VYhfszhcvSBEBi03QwmuXe9Wwvm7FN2ClVNsv3E5UnSTr9MWPB3
-         CP9O8MV7riXzA==
-From:   Will Deacon <will@kernel.org>
-To:     linux-arm-kernel@lists.infradead.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Ard Biesheuvel <ardb@kernel.org>
-Cc:     kernel-team@android.com, Will Deacon <will@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] arm64: adjust KASLR relocation after ARCH_RANDOM removal
-Date:   Wed, 17 Aug 2022 15:58:32 +0100
-Message-Id: <166074437048.1238547.17932971504421721818.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20220721100433.18286-1-lukas.bulwahn@gmail.com>
-References: <20220721100433.18286-1-lukas.bulwahn@gmail.com>
+        Wed, 17 Aug 2022 11:31:14 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB25D9926E;
+        Wed, 17 Aug 2022 08:31:13 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id f65so12236815pgc.12;
+        Wed, 17 Aug 2022 08:31:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc;
+        bh=oKzPScXM6OjwBLoPDXjdugzEKQj4ZD8Vn9KIxJ4y7IA=;
+        b=hbka5dkjg8rkSbSyeI54ZJETf23SZG8GuxIvflGwBLK34hMlbpEFApPkKI5Kw9yFHr
+         3aV/P+uEEQroh+34+EuBbsum7n29zfob0bcC6av6RBGa6RQC/I+xW+7Qq580cL3PDQd/
+         Fp8fcSNDyteKSrtby3Ca6qpAsGUaue+DeUcm/Cu1qsPUtBQq50DixqLmh7nS6pRgnwLC
+         fqKJqVGB9bH315ps2R3/BPObv+hQSYt2FEWCSvvi+NUSg5m/XI6nVsz139GNQ6BEMIVK
+         w3iOoiYxCgRy5BHgTKT+JT0CMBHCMSbEdzjuMoLUGMA9bdobdlrEMM1rpLd2TQHK3B+V
+         tBKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc;
+        bh=oKzPScXM6OjwBLoPDXjdugzEKQj4ZD8Vn9KIxJ4y7IA=;
+        b=nqv8tQySMTVpADVQeVABn5aJtmDI28cLs2dVvIc04BT4f1EtD/z9zINaSqEPsVBN4r
+         0l+XGrwaEl8sekqdK0yUTJhbEs/UExnykVusQ/xhIj0OaYAjU9uDJQB051j33zd3Jouk
+         +o/MjZaZgMFPA2Dka3r45OBpO+iZ8gy1kpKltwxFOtYmXn0YZKA+4XY8OSB7m7jln33L
+         eFhUcD6yNgfHtkCzBPqA4996s/CbE2OIGmail1Rmw5Av6EJmpcohgN3oYSeoPCW3JyJk
+         GEDdBX1E+xZrUhHw4qQVvMWRibfmcOxlDQXtR7f05XtWKHS04iRrULM+pJipoWuKsjxF
+         ltbg==
+X-Gm-Message-State: ACgBeo0UZfQkeophIEai5O+dqk1p7P6CP3l7KuutIrSMANKmD/V8FA61
+        enIPEO9xXfXJqJ57pMEtrSI=
+X-Google-Smtp-Source: AA6agR41iXoCj3uxN9u9K6zpVYayiQ48GBRaWNbVS2Out6kHHqGz3aytlODtJiPVzYW2cpn6ykmAew==
+X-Received: by 2002:a63:684a:0:b0:421:904f:d38c with SMTP id d71-20020a63684a000000b00421904fd38cmr21894799pgc.238.1660750273269;
+        Wed, 17 Aug 2022 08:31:13 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id bi2-20020a170902bf0200b0017128185043sm41094plb.191.2022.08.17.08.31.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Aug 2022 08:31:11 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Wed, 17 Aug 2022 08:31:10 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (pmbus) Use dev_err_probe() to filter
+ -EPROBE_DEFER error messages
+Message-ID: <20220817153110.GA1333586@roeck-us.net>
+References: <3adf1cea6e32e54c0f71f4604b4e98d992beaa71.1660741419.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3adf1cea6e32e54c0f71f4604b4e98d992beaa71.1660741419.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 21 Jul 2022 12:04:33 +0200, Lukas Bulwahn wrote:
-> Commit aacd149b6238 ("arm64: head: avoid relocating the kernel twice for
-> KASLR") adds the new file arch/arm64/kernel/pi/kaslr_early.c with a small
-> code part guarded by '#ifdef CONFIG_ARCH_RANDOM'.
+On Wed, Aug 17, 2022 at 03:04:00PM +0200, Christophe JAILLET wrote:
+> devm_regulator_register() can return -EPROBE_DEFER, so better use
+> dev_err_probe() instead of dev_err(), it is less verbose in such a case.
 > 
-> Concurrently, commit 9592eef7c16e ("random: remove CONFIG_ARCH_RANDOM")
-> removes the config CONFIG_ARCH_RANDOM and turns all '#ifdef
-> CONFIG_ARCH_RANDOM' code parts into unconditional code parts, which is
-> generally safe to do.
+> It is also more informative, which can't hurt.
 > 
-> [...]
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied to arm64 (for-next/fixes), thanks!
+Applied
 
-[1/1] arm64: adjust KASLR relocation after ARCH_RANDOM removal
-      https://git.kernel.org/arm64/c/ff5900092227
+Thanks,
+Guenter
 
-Cheers,
--- 
-Will
-
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
+> ---
+>  drivers/hwmon/pmbus/pmbus_core.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/hwmon/pmbus/pmbus_core.c b/drivers/hwmon/pmbus/pmbus_core.c
+> index 5541d26e8623..e000674d50df 100644
+> --- a/drivers/hwmon/pmbus/pmbus_core.c
+> +++ b/drivers/hwmon/pmbus/pmbus_core.c
+> @@ -3016,11 +3016,10 @@ static int pmbus_regulator_register(struct pmbus_data *data)
+>  
+>  		rdev = devm_regulator_register(dev, &info->reg_desc[i],
+>  					       &config);
+> -		if (IS_ERR(rdev)) {
+> -			dev_err(dev, "Failed to register %s regulator\n",
+> -				info->reg_desc[i].name);
+> -			return PTR_ERR(rdev);
+> -		}
+> +		if (IS_ERR(rdev))
+> +			return dev_err_probe(dev, PTR_ERR(rdev),
+> +					     "Failed to register %s regulator\n",
+> +					     info->reg_desc[i].name);
+>  	}
+>  
+>  	return 0;
