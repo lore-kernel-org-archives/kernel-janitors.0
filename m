@@ -2,71 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DFE6C00140
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Aug 2022 07:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D291C00140
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Aug 2022 07:55:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243921AbiHRHwm (ORCPT
+        id S243973AbiHRHzo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 Aug 2022 03:52:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39604 "EHLO
+        Thu, 18 Aug 2022 03:55:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241441AbiHRHwl (ORCPT
+        with ESMTP id S239693AbiHRHzl (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 Aug 2022 03:52:41 -0400
-X-Greylist: delayed 388 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 18 Aug 2022 00:52:40 PDT
-Received: from mail.falconstudio.pl (mail.falconstudio.pl [178.18.255.243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D731DAF0D0
-        for <kernel-janitors@vger.kernel.org>; Thu, 18 Aug 2022 00:52:40 -0700 (PDT)
-Received: by mail.falconstudio.pl (Postfix, from userid 1001)
-        id 39290841084; Thu, 18 Aug 2022 09:46:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=falconstudio.pl;
-        s=mail; t=1660808771;
-        bh=SVHkRMieb2SYkFkwFodzjpG3+QU/kTCwAakBMdltNW4=;
-        h=Date:From:To:Subject:From;
-        b=DQBuC5guOjjAmfCupUnWp4a8Lxjrkc2PXqyzT/198QsuNx9hfZiDpvwJNyle7tG/j
-         wbGhGthbO4x/27Ps9tUbrC+PCfm8vBze+2dahsEx1uCrlwKIcRY/5XTvDFByHxgfcw
-         fftSjGkSwyWEKAjKlKfqDlCRRwHbfm5M13LuedDuYaxkv31rMoVAHkLZCE7RGnPN9s
-         bCUiGsUVKV0tnioD6p6AAfrucF2Sg+JwPDsvOZrbvcgrfdnFOV7sxDqqPbS5PZa2l6
-         sclXmSq1I9gM6slEtf/rkrj70AXabPttl4L39GOIxJYDxjXz7NqBhkPCNkW3i2nneB
-         Ru9iwX0L9F0lQ==
-Received: by mail.falconstudio.pl for <kernel-janitors@vger.kernel.org>; Thu, 18 Aug 2022 07:46:00 GMT
-Message-ID: <20220818084503-0.1.1a.3455.0.c6fff2u506@falconstudio.pl>
-Date:   Thu, 18 Aug 2022 07:46:00 GMT
-From:   "Piotr Kazimierczyk" <piotr.kazimierczyk@falconstudio.pl>
-To:     <kernel-janitors@vger.kernel.org>
-Subject: =?UTF-8?Q?Obs=C5=82uga_prawna?=
-X-Mailer: mail.falconstudio.pl
+        Thu, 18 Aug 2022 03:55:41 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B6DA5A89B;
+        Thu, 18 Aug 2022 00:55:40 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id m17-20020a7bce11000000b003a5bedec07bso2193139wmc.0;
+        Thu, 18 Aug 2022 00:55:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=N8163GDxT/V70KLJ/27Rndv21wKXDLINtjwcMLb2kOA=;
+        b=Jdd9X9K+VkVBPE+9TBX1m+lOy5EdIcVIIYm/gJLhd22iEKZTqgyH6JgCSDZumjVMM4
+         orEaVkVr5L/FhKSueIwVQIeghAVaNROoFnjZELWJujqKYJym+eMkT2B0nW2YeX07QHFm
+         yuyy9fY4r8LdDeco3SRyGIwNFdzEd6Q1C8rxa9xVTHaIO/0caJvWOi3ONzkh0v9V63pN
+         /aam/EqPMvUkJEjeu0dYHDkGrwEjifDSDQts5ywuf33kQODKK6ji1xvIcjozoMUzhOQz
+         j4LOAMMsy2elIO0M5lycE+3b7uCLSjmmbKuCKRUm73hdp8SpTVPcJbXe8eI/DRie2RbT
+         rwUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=N8163GDxT/V70KLJ/27Rndv21wKXDLINtjwcMLb2kOA=;
+        b=gtEl+ZvYhiw6iwMhpJkB0z9l/Ey8zvULVD8X9ME8nptXZt8/V+FNVaUxIx0B1VIA//
+         wxOqn6jl5QaIOvpIrbwJP/1yZuQgPU2NYTLmvOHC2kiWixxkDKWDawN1WknnJz6QOXd5
+         CNv29GAwy+JSk/9VKJY5HhpIDp+F3xWuizN+niRhKhwokUM2+H9+k6Q+VRjntgL+4k6M
+         07Ee7xIgRfDOTokxSSXHTMpyWiuy9RmXVfDheKkgSsYUvCRpRTSOpOn/KeFhsdPyNxF5
+         xgWbE40NDJHQYjNlizthPkhlbz2VSwMGtidY2p5Znypa7zOyK380h2f/ivYlU85hlOGx
+         HuZA==
+X-Gm-Message-State: ACgBeo0WxlOMWQHLXWZSo363nWKp/K/6xddxm6BTLp6oEprFJ05w9AWN
+        +wWVHTwhycD/Y3EXDxcMiIk=
+X-Google-Smtp-Source: AA6agR7TsG+ox8UNe7WR1JIRWeyTOZdcW8xXglKJt+5UNt/Tj3yrnuAzIK0GhjF4XKQaRDLerIZthw==
+X-Received: by 2002:a05:600c:2cc5:b0:3a5:4fae:1288 with SMTP id l5-20020a05600c2cc500b003a54fae1288mr4316159wmc.79.1660809338692;
+        Thu, 18 Aug 2022 00:55:38 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id p22-20020a7bcc96000000b003a52969e89csm4448559wma.4.2022.08.18.00.55.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Aug 2022 00:55:38 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] btrfs: Fix spelling mistake "deivce" -> "device"
+Date:   Thu, 18 Aug 2022 08:55:37 +0100
+Message-Id: <20220818075537.117851-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dzie=C5=84 dobry,
+There is a spelling mistake in a btrfs_info message. Fix it.
 
-kontaktuj=C4=99 si=C4=99 z Pa=C5=84stwem, poniewa=C5=BC pomy=C5=9Bla=C5=82=
-em, =C5=BCe by=C4=87 mo=C5=BCe zainteresuje Pa=C5=84stwa wsp=C3=B3=C5=82p=
-raca z profesjonaln=C4=85 kancelari=C4=85 prawn=C4=85.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/btrfs/dev-replace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Jako zesp=C3=B3=C5=82 profesjonalist=C3=B3w, firmom, takim jak Pa=C5=84st=
-wa, zapewniamy nie tylko bezpiecze=C5=84stwo prawne funkcjonowania na ryn=
-ku, ale tak=C5=BCe wsparcie i konsultacje w ka=C5=BCdym obszarze zarz=C4=85=
-dzania (finanse, kadry, sporz=C4=85dzanie um=C3=B3w, itp.).
+diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
+index 7202b76ce59f..773f1caab126 100644
+--- a/fs/btrfs/dev-replace.c
++++ b/fs/btrfs/dev-replace.c
+@@ -167,7 +167,7 @@ int btrfs_init_dev_replace(struct btrfs_fs_info *fs_info)
+ 			btrfs_err(fs_info,
+ 			"replace devid present without an active replace item");
+ 			btrfs_info(fs_info,
+-	"mount after the command 'btrfs deivce scan --forget <devpath-of-id-0>'");
++	"mount after the command 'btrfs device scan --forget <devpath-of-id-0>'");
+ 			ret = -EUCLEAN;
+ 		} else {
+ 			dev_replace->srcdev = NULL;
+-- 
+2.37.1
 
-Bie=C5=BC=C4=85ce doradztwo w ramach wsp=C3=B3=C5=82pracy nie jest obj=C4=
-=99te =C5=BCadnym limitem, a kancelaria jest do Pa=C5=84stwa sta=C5=82ej =
-dyspozycji.=20
-
-Je=C5=9Bli chcieliby Pa=C5=84stwo zoptymalizowa=C4=87 dotychczasowe koszt=
-y obs=C5=82ugi prawnej dla swojej firmy i/lub rozpocz=C4=85=C4=87 trwa=C5=
-=82=C4=85 wsp=C3=B3=C5=82prac=C4=99 - zapraszam do kontaktu. Wsp=C3=B3lni=
-e przeanalizujemy potencja=C5=82 i zakres ewentualnego wsparcia dla Pa=C5=
-=84stwa biznesu.
-
-Czy w najbli=C5=BCszych dniach znajd=C4=85 Pa=C5=84stwo czas na kr=C3=B3t=
-k=C4=85 rozmow=C4=99?
-
-
-Z powa=C5=BCaniem
-Piotr Kazimierczyk
