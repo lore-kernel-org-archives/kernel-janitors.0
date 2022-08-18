@@ -2,73 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F30C00140
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Aug 2022 11:08:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A9AC00140
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Aug 2022 11:14:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244278AbiHRLIH (ORCPT
+        id S244351AbiHRLOc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 Aug 2022 07:08:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32970 "EHLO
+        Thu, 18 Aug 2022 07:14:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243897AbiHRLIG (ORCPT
+        with ESMTP id S244344AbiHRLOa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 Aug 2022 07:08:06 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BD83A284A;
-        Thu, 18 Aug 2022 04:08:04 -0700 (PDT)
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.54])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4M7hrY5YVzznTZC;
-        Thu, 18 Aug 2022 19:05:49 +0800 (CST)
-Received: from kwepemm600010.china.huawei.com (7.193.23.86) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Thu, 18 Aug 2022 19:08:02 +0800
-Received: from huawei.com (10.175.127.227) by kwepemm600010.china.huawei.com
- (7.193.23.86) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Thu, 18 Aug
- 2022 19:08:01 +0800
-From:   Sun Ke <sunke32@huawei.com>
-To:     <dhowells@redhat.com>
-CC:     <linux-cachefs@redhat.com>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <jefflexu@linux.alibaba.com>,
-        <sunke32@huawei.com>
-Subject: [v2] cachefiles: fix error return code in cachefiles_ondemand_copen()
-Date:   Thu, 18 Aug 2022 19:19:35 +0800
-Message-ID: <20220818111935.1683062-1-sunke32@huawei.com>
-X-Mailer: git-send-email 2.31.1
+        Thu, 18 Aug 2022 07:14:30 -0400
+Received: from out30-56.freemail.mail.aliyun.com (out30-56.freemail.mail.aliyun.com [115.124.30.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C5CE422E0;
+        Thu, 18 Aug 2022 04:14:28 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0VMaUvrM_1660821265;
+Received: from 30.227.66.106(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VMaUvrM_1660821265)
+          by smtp.aliyun-inc.com;
+          Thu, 18 Aug 2022 19:14:26 +0800
+Message-ID: <e4e18421-7820-f1e3-6762-5959c2bd7ea4@linux.alibaba.com>
+Date:   Thu, 18 Aug 2022 19:14:24 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemm600010.china.huawei.com (7.193.23.86)
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.12.0
+Subject: Re: [v2] cachefiles: fix error return code in
+ cachefiles_ondemand_copen()
+Content-Language: en-US
+To:     Sun Ke <sunke32@huawei.com>, dhowells@redhat.com
+Cc:     linux-cachefs@redhat.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <20220818111935.1683062-1-sunke32@huawei.com>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20220818111935.1683062-1-sunke32@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If size < 0; open request will fail, but cachefiles_ondemand_copen return 0.
-Fix to return a negative error code.
 
-Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
-Signed-off-by: Sun Ke <sunke32@huawei.com>
----
- fs/cachefiles/ondemand.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
-index 1fee702d5529..ea8a1e8317d9 100644
---- a/fs/cachefiles/ondemand.c
-+++ b/fs/cachefiles/ondemand.c
-@@ -159,7 +159,7 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
- 	/* fail OPEN request if daemon reports an error */
- 	if (size < 0) {
- 		if (!IS_ERR_VALUE(size))
--			size = -EINVAL;
-+			ret = size = -EINVAL;
- 		req->error = size;
- 		goto out;
- 	}
+On 8/18/22 7:19 PM, Sun Ke wrote:
+> If size < 0; open request will fail, but cachefiles_ondemand_copen return 0.
+> Fix to return a negative error code.
+
+Could you please also update the commit log?
+
+Otherwise LGTM.
+
+Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+
+
+BTW, also cc linux-fsdevel@vger.kernel.org
+
+> 
+> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
+> Signed-off-by: Sun Ke <sunke32@huawei.com>
+> ---
+>  fs/cachefiles/ondemand.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+> index 1fee702d5529..ea8a1e8317d9 100644
+> --- a/fs/cachefiles/ondemand.c
+> +++ b/fs/cachefiles/ondemand.c
+> @@ -159,7 +159,7 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
+>  	/* fail OPEN request if daemon reports an error */
+>  	if (size < 0) {
+>  		if (!IS_ERR_VALUE(size))
+> -			size = -EINVAL;
+> +			ret = size = -EINVAL;
+>  		req->error = size;
+>  		goto out;
+>  	}
+
 -- 
-2.31.1
-
+Thanks,
+Jingbo
