@@ -2,86 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D48C32772
-	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Aug 2022 10:47:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F26CAC00140
+	for <kernel-janitors@archiver.kernel.org>; Thu, 18 Aug 2022 11:02:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244135AbiHRKr1 (ORCPT
+        id S244237AbiHRLCy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 18 Aug 2022 06:47:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40548 "EHLO
+        Thu, 18 Aug 2022 07:02:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233816AbiHRKrY (ORCPT
+        with ESMTP id S243220AbiHRLCx (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 18 Aug 2022 06:47:24 -0400
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FFD7816BD;
-        Thu, 18 Aug 2022 03:47:19 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R561e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046056;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0VMabRlS_1660819636;
-Received: from 30.227.66.106(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VMabRlS_1660819636)
-          by smtp.aliyun-inc.com;
-          Thu, 18 Aug 2022 18:47:17 +0800
-Message-ID: <0cc3f6d6-ac89-05f6-23f3-68446a32d8b2@linux.alibaba.com>
-Date:   Thu, 18 Aug 2022 18:47:15 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.12.0
+        Thu, 18 Aug 2022 07:02:53 -0400
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF0D898D09;
+        Thu, 18 Aug 2022 04:02:51 -0700 (PDT)
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.55])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4M7hlJ2JbxzGpc4;
+        Thu, 18 Aug 2022 19:01:16 +0800 (CST)
+Received: from kwepemm600010.china.huawei.com (7.193.23.86) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Thu, 18 Aug 2022 19:02:47 +0800
+Received: from [10.174.178.31] (10.174.178.31) by
+ kwepemm600010.china.huawei.com (7.193.23.86) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Thu, 18 Aug 2022 19:02:47 +0800
 Subject: Re: [PATCH] cachefiles: fix error return code in
  cachefiles_ondemand_copen()
-Content-Language: en-US
-To:     Sun Ke <sunke32@huawei.com>, dhowells@redhat.com
-Cc:     linux-cachefs@redhat.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
+To:     JeffleXu <jefflexu@linux.alibaba.com>, <dhowells@redhat.com>
+CC:     <linux-cachefs@redhat.com>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
 References: <20220818094939.1548183-1-sunke32@huawei.com>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-In-Reply-To: <20220818094939.1548183-1-sunke32@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <0cc3f6d6-ac89-05f6-23f3-68446a32d8b2@linux.alibaba.com>
+From:   Sun Ke <sunke32@huawei.com>
+Message-ID: <1ee8458c-9200-7ad8-8497-a142df2bbe0b@huawei.com>
+Date:   Thu, 18 Aug 2022 19:02:46 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
+MIME-Version: 1.0
+In-Reply-To: <0cc3f6d6-ac89-05f6-23f3-68446a32d8b2@linux.alibaba.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.178.31]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemm600010.china.huawei.com (7.193.23.86)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
 
-On 8/18/22 5:49 PM, Sun Ke wrote:
-> If size < 0; open request will fail, but cachefiles_ondemand_copen return 0.
-
-Hi, this is a deliberate design. The cache_size field of copen is
-specified by the user daemon. If cache_size < 0, then the OPEN request
-is expected to fail, while copen itself shall succeed.
-
-> Fix to return a negative error code.
+在 2022/8/18 18:47, JeffleXu 写道:
 > 
-> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
-> Signed-off-by: Sun Ke <sunke32@huawei.com>
-> ---
->  fs/cachefiles/ondemand.c | 1 +
->  1 file changed, 1 insertion(+)
 > 
-> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
-> index 1fee702d5529..a31d3ff0ce5f 100644
-> --- a/fs/cachefiles/ondemand.c
-> +++ b/fs/cachefiles/ondemand.c
-> @@ -161,6 +161,7 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
->  		if (!IS_ERR_VALUE(size))
->  			size = -EINVAL;
+> On 8/18/22 5:49 PM, Sun Ke wrote:
+>> If size < 0; open request will fail, but cachefiles_ondemand_copen return 0.
+> 
+> Hi, this is a deliberate design. The cache_size field of copen is
+> specified by the user daemon. If cache_size < 0, then the OPEN request
+> is expected to fail, while copen itself shall succeed.
+> 
+>> Fix to return a negative error code.
+>>
+>> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
+>> Signed-off-by: Sun Ke <sunke32@huawei.com>
+>> ---
+>>   fs/cachefiles/ondemand.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+>> index 1fee702d5529..a31d3ff0ce5f 100644
+>> --- a/fs/cachefiles/ondemand.c
+>> +++ b/fs/cachefiles/ondemand.c
+>> @@ -161,6 +161,7 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
+>>   		if (!IS_ERR_VALUE(size))
+>>   			size = -EINVAL;
+> 
+> However, it is indeed unexpected when cache_size is an invalid error
+> code. How about:
+> 
+> 		if (!IS_ERR_VALUE(size))
+> -			size= -EINVAL;
+> +			ret = size = -EINVAL;
+> 		req->error = size;
+> 		goto out;
+> 	}
 
-However, it is indeed unexpected when cache_size is an invalid error
-code. How about:
+OK, I will send a v2 patch.
 
-		if (!IS_ERR_VALUE(size))
--			size= -EINVAL;
-+			ret = size = -EINVAL;
-		req->error = size;
-		goto out;
-	}
-
->  		req->error = size;
-> +		ret = -EINVAL;
->  		goto out;
->  	}
->  
-
--- 
 Thanks,
-Jingbo
+Sun Ke
+> 
+>>   		req->error = size;
+>> +		ret = -EINVAL;
+>>   		goto out;
+>>   	}
+>>   
+> 
