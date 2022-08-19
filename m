@@ -2,102 +2,124 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0980FC32771
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Aug 2022 12:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E14C32771
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Aug 2022 13:44:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348721AbiHSMfB (ORCPT
+        id S1349257AbiHSNn7 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 Aug 2022 08:35:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43030 "EHLO
+        Fri, 19 Aug 2022 09:43:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348513AbiHSMe7 (ORCPT
+        with ESMTP id S231129AbiHSNn6 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 19 Aug 2022 08:34:59 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 396B4D83E5
-        for <kernel-janitors@vger.kernel.org>; Fri, 19 Aug 2022 05:34:57 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a7so8583064ejp.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 19 Aug 2022 05:34:57 -0700 (PDT)
+        Fri, 19 Aug 2022 09:43:58 -0400
+Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F2DD9E132;
+        Fri, 19 Aug 2022 06:43:57 -0700 (PDT)
+Received: by mail-qv1-xf33.google.com with SMTP id q8so3361964qvr.9;
+        Fri, 19 Aug 2022 06:43:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=XZFDaDB8tTHmQs+ge0GoXWvB83xSHTtt9LztyWrp1tM=;
-        b=DEKkpJjZoN83asNH+cT99OF2dl2c3QRLw3RqCJ6SvhZEsaqEjFPGBoSSxd9E9Xv0Ge
-         MXMBp6wNlGdhr8n23P2iSkn1doBUGxR42OWDLvwAJ3hmARiowyPkAXfTXy0nF06ym/+O
-         9HBmNPKP0NtqQqjJfpJVAnhrQotKtj+MQQJTBjRq1HyPKUEkoe/bd5BNBHt1vCPCEhIN
-         nBxpDOVi4ooRpyvkZynuGa0ubm9pG36Tnt+Y2apE4+v/HfkxFHS6QQUwdK75r2RgsF3Z
-         ubEHzmZ8lEdKdBOuFQ7y8ceLMEIzWOxKt3zk7VMliyqi5LXOwhu1Udifz+Tp5eagnll9
-         McOQ==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:from:to:cc;
+        bh=Vgcwh/xwToR0x9zi0fn23Nic/A8650gI91w0C/eBOJc=;
+        b=M/1pP7mXIFkoqpPT3gbF5ajxscbDr9qHoFF9pDH59NN/xWBz4BJ++Pur+YsijNCZvB
+         4Hr+/6E9Nuwq9k83Uc34PCZKHHjHZmbVVvz/HCZXCOa5mbTIxxszd00+1E+VTYw1nn0f
+         0ruU+qI6OgqjloqRFqU0Z5mx5u3rnkfT/vaOcHR4E5ji4axK4fJ/x8yQXJchlMq5IOPX
+         3eNSKS373DMwgG+9ots07yEe+F+32HwLKCJ0eDIUgQJ3qIrtCM4XZ95z1gg/rKhKot+5
+         +UCF3fVi+Hz2HCL/EmK0QXja9+vevgzrdiiXMw7NrlijI4lzJkU3wprFr46XJWOrSJhX
+         ZwWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=XZFDaDB8tTHmQs+ge0GoXWvB83xSHTtt9LztyWrp1tM=;
-        b=o7TMRC9sornxkhJvHsnR9FJQeZ/d2sHAA/+CZAwyQOESrz0JTNhCiakJTXcNpOJc3N
-         4x1skDT9ds1mqZse68laH4jLBbhUnvxiYGT7ovXlCguaGx/tOPJ//uHZckKUTTXp3nfN
-         fyELZ9rhm35v/XUD40/7T3u0SmBOK3B69MHpTAYl/n2poaeDjmN3yx8zp3uPQWeP4Ero
-         9quZFTxW5ooO9XhIoTTjRgNvIGImffHQoqQo9BMGn5iPS2h3uutJNMX85xBHsbA7nkjW
-         PGdlYVwS2jZ24Lf1wdiVR2m/OS5OIaMSNr9/1kZTHllA6yM512VaKJSGrWVopB2k4idI
-         ip7w==
-X-Gm-Message-State: ACgBeo1562XpiNNJSy47GfwQ4z6skQQdnxdbQfkXuEB0XDu2KzSJ4HYh
-        MOLrAvL4R/Rf+NellrnWwcYeHb+CJdETAevazFJ+qw==
-X-Google-Smtp-Source: AA6agR7Iz0vh/NqBU04llNk+iQe95LhnVouGyVj9cXHSEkzRKQCmdHCz3iLMfYGmqpJOkioJOXN0gEhAzdvYSU9mOSQ=
-X-Received: by 2002:a17:907:2722:b0:731:2aeb:7942 with SMTP id
- d2-20020a170907272200b007312aeb7942mr4696285ejl.734.1660912495811; Fri, 19
- Aug 2022 05:34:55 -0700 (PDT)
+        h=content-transfer-encoding:in-reply-to:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:x-gm-message-state:from:to:cc;
+        bh=Vgcwh/xwToR0x9zi0fn23Nic/A8650gI91w0C/eBOJc=;
+        b=JsBcYHkzgFsRvKagdv+F9Gsd2pL50xaenqGqEMRbECD9veJuGAMhzNVriH2qO9IY25
+         v9fAoxO+oGMbM9MiuqRa4Y+dWueHLtPLcgGimJfMNWMtr1dZKUKmFbDtiKhER/8yMNRS
+         5SxLirIA7vJYNVm+R0hIbfa58o87b3pTT/7vtGosMbp5qrCKuD8yzb7ts3q70IyoZG8h
+         157oaaxhx299xnp+tHYyZu3cmwACNvrETL7b9Z2jfCnEVwDtFOnNJdHh8Mg/+JLXfAPj
+         csWThfVcUbmwztddEtiYtr5UcVwK3Ehy1Lmem3t5C6azoKDFK5fU0wgVknSit+6Km+hm
+         N+JQ==
+X-Gm-Message-State: ACgBeo2SnL/RBIlx/q/Uh2KzX4dXQdbCA3VHq7v0V4rkPvT/2hbq5vyE
+        lu1F0NhW+IGtj7SNBzqRkZA=
+X-Google-Smtp-Source: AA6agR7cnpy3VAMI80j5/oa300QG+78q3xTp3Wfd03/jPzB31jlhjVxJkzuTs12SITqHG1e4Qj/zmw==
+X-Received: by 2002:a05:6214:21af:b0:47b:53e7:9f6 with SMTP id t15-20020a05621421af00b0047b53e709f6mr6243820qvc.109.1660916636191;
+        Fri, 19 Aug 2022 06:43:56 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c0a8:1102::1244? ([2620:10d:c091:480::5b12])
+        by smtp.gmail.com with ESMTPSA id m9-20020a05620a24c900b006af0ce13499sm3987767qkn.115.2022.08.19.06.43.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Aug 2022 06:43:54 -0700 (PDT)
+From:   Jes Sorensen <jes.sorensen@gmail.com>
+X-Google-Original-From: Jes Sorensen <Jes.Sorensen@gmail.com>
+Message-ID: <bd6d437e-6dfc-bb7f-d74e-84714e952a8e@gmail.com>
+Date:   Fri, 19 Aug 2022 09:43:53 -0400
 MIME-Version: 1.0
-References: <20220816073952.31619-1-lukas.bulwahn@gmail.com>
-In-Reply-To: <20220816073952.31619-1-lukas.bulwahn@gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 19 Aug 2022 14:34:45 +0200
-Message-ID: <CAMRc=Mehk8gH1yiE7rZF9P7qrjzkAvDg=_hZ_f+R9S-eZabyng@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: rectify entry for XILINX GPIO DRIVER
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH] wifi: rtl8xxxu: tighten bounds checking in
+ rtl8xxxu_read_efuse()
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <Yv8eGLdBslLAk3Ct@kili>
+In-Reply-To: <Yv8eGLdBslLAk3Ct@kili>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, Aug 16, 2022 at 9:40 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
->
-> Commit ba96b2e7974b ("dt-bindings: gpio: gpio-xilinx: Convert Xilinx axi
-> gpio binding to YAML") converts gpio-xilinx.txt to xlnx,gpio-xilinx.yaml,
-> but missed to adjust its reference in MAINTAINERS.
->
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
->
-> Repair this file reference in XILINX GPIO DRIVER.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+On 8/19/22 01:22, Dan Carpenter wrote:
+> There some bounds checking to ensure that "map_addr" is not out of
+> bounds before the start of the loop.  But the checking needs to be
+> done as we iterate through the loop because "map_addr" gets larger as
+> we iterate.
+> 
+> Fixes: 26f1fad29ad9 ("New driver: rtl8xxxu (mac80211)")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f69a1c5212bd..7c20a1c9eb78 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -22344,7 +22344,7 @@ M:      Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
->  R:     Srinivas Neeli <srinivas.neeli@xilinx.com>
->  R:     Michal Simek <michal.simek@xilinx.com>
->  S:     Maintained
-> -F:     Documentation/devicetree/bindings/gpio/gpio-xilinx.txt
-> +F:     Documentation/devicetree/bindings/gpio/xlnx,gpio-xilinx.yaml
->  F:     Documentation/devicetree/bindings/gpio/gpio-zynq.yaml
->  F:     drivers/gpio/gpio-xilinx.c
->  F:     drivers/gpio/gpio-zynq.c
-> --
-> 2.17.1
->
+>  .../net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c  | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
 
-Queued for fixes.
+Looks reasonable to me.
 
-Thanks!
-Bart
+Acked-by: Jes Sorensen <Jes.Sorensen@gmail.com>
+
+
+
+> diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+> index c66f0726b253..f3a107f19cf5 100644
+> --- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+> +++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
+> @@ -1878,13 +1878,6 @@ static int rtl8xxxu_read_efuse(struct rtl8xxxu_priv *priv)
+>  
+>  		/* We have 8 bits to indicate validity */
+>  		map_addr = offset * 8;
+> -		if (map_addr >= EFUSE_MAP_LEN) {
+> -			dev_warn(dev, "%s: Illegal map_addr (%04x), "
+> -				 "efuse corrupt!\n",
+> -				 __func__, map_addr);
+> -			ret = -EINVAL;
+> -			goto exit;
+> -		}
+>  		for (i = 0; i < EFUSE_MAX_WORD_UNIT; i++) {
+>  			/* Check word enable condition in the section */
+>  			if (word_mask & BIT(i)) {
+> @@ -1895,6 +1888,13 @@ static int rtl8xxxu_read_efuse(struct rtl8xxxu_priv *priv)
+>  			ret = rtl8xxxu_read_efuse8(priv, efuse_addr++, &val8);
+>  			if (ret)
+>  				goto exit;
+> +			if (map_addr >= EFUSE_MAP_LEN - 1) {
+> +				dev_warn(dev, "%s: Illegal map_addr (%04x), "
+> +					 "efuse corrupt!\n",
+> +					 __func__, map_addr);
+> +				ret = -EINVAL;
+> +				goto exit;
+> +			}
+>  			priv->efuse_wifi.raw[map_addr++] = val8;
+>  
+>  			ret = rtl8xxxu_read_efuse8(priv, efuse_addr++, &val8);
+
