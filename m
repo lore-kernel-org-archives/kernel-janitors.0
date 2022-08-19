@@ -2,87 +2,84 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7663CC25B0E
-	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Aug 2022 06:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D688C25B0E
+	for <kernel-janitors@archiver.kernel.org>; Fri, 19 Aug 2022 09:19:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344455AbiHSG14 (ORCPT
+        id S1348111AbiHSJTH (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 19 Aug 2022 02:27:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44276 "EHLO
+        Fri, 19 Aug 2022 05:19:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232389AbiHSG1v (ORCPT
+        with ESMTP id S1346010AbiHSJTG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 19 Aug 2022 02:27:51 -0400
-Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40522CD7B2
-        for <kernel-janitors@vger.kernel.org>; Thu, 18 Aug 2022 23:27:50 -0700 (PDT)
-Received: by mail-qv1-xf34.google.com with SMTP id de16so394139qvb.12
-        for <kernel-janitors@vger.kernel.org>; Thu, 18 Aug 2022 23:27:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=u1KqzyDRkxYnMy29Xf5MPFj+6FYZs5Pa7lqmHSKprJI=;
-        b=UJ6UF7fjJhXDPtm+29oVQnbPXtWwfXWAHN06xBCXVJIz2JlGAJaJDfuRvr1EIZvayi
-         /uxsL9bzGgra1rgdUobYvTzzeCBbtg42mDy2AqD1f8BRBx3N/3iX7T28mItcaO6+MC/1
-         KHhVoMyXfQ+rOpxIpiILU+YyAHbjBL2nKGrdUbMzPea4o73yTEilCKXLDx0lzIS5phZS
-         MfxL5Juj5fT+jSQ7H6HyOHLFyBiQ7BVGi7jaBRYWl7N1/5lxQVvRT78bVutR5yrLdvaU
-         fjg7VYcgk5IcU0N+mABZHaS8aea94euGkr0uhWqNNdbY1gKZvXPX3Uij6F7Phr2XDepc
-         IS9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=u1KqzyDRkxYnMy29Xf5MPFj+6FYZs5Pa7lqmHSKprJI=;
-        b=yx9ruw9n6eJGc/fWCl4tsuzK9mfzGlXG4yEQRz1qKkOWgMl4s8u5n8DWu7CUzbfgUX
-         NMl/Po+wCR3Sva1N4mivtFm0g06oSstKztvF0x3S9xKnwaK1VSpOA5oJaqmFrOPc2Lz1
-         b2KMO73mBNvkHfU976iHDXeKaCTfhs9jPAainjYULG/f5Vt2nteKreSMwmCggiU28TkY
-         4FFkEilrLJAMwN2ZkdTg3kSowWNveA8cGYV5q7wjQJNq7oARE4d9TP/asQVBHNrHNBQ6
-         ascR0LjUZmOw437SqnLSZuhDaeHzLXiL1V4L4DgGOkcarKkelECESjJx6waUMhRryBlc
-         UrMg==
-X-Gm-Message-State: ACgBeo2Oj/QtfjS792dY9q/HNFgfTQFYEqEso99ioZ/AFwNHU7VxJWk1
-        v+mHEBGzbYJIWuNTVNPfK9R2kFkIOt1KBzr5vgIyR9flXYX8Ww==
-X-Google-Smtp-Source: AA6agR74TrdSjfocyJ/Cvt/8HWnKOmGRr4x/TIynE/dnpm/pgOS3/1ywVJtVhnS6rnthL1Dbz+ixroMopM/QhnWEs+8=
-X-Received: by 2002:a05:6214:5290:b0:479:5df:e654 with SMTP id
- kj16-20020a056214529000b0047905dfe654mr5093449qvb.97.1660890469227; Thu, 18
- Aug 2022 23:27:49 -0700 (PDT)
+        Fri, 19 Aug 2022 05:19:06 -0400
+Received: from out30-57.freemail.mail.aliyun.com (out30-57.freemail.mail.aliyun.com [115.124.30.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B364A33364;
+        Fri, 19 Aug 2022 02:19:03 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R931e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046056;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0VMfb7tn_1660900738;
+Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VMfb7tn_1660900738)
+          by smtp.aliyun-inc.com;
+          Fri, 19 Aug 2022 17:19:00 +0800
+Date:   Fri, 19 Aug 2022 17:18:58 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     Sun Ke <sunke32@huawei.com>
+Cc:     dhowells@redhat.com, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-cachefs@redhat.com,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [Linux-cachefs] [PATCH v3] cachefiles: fix error return code in
+ cachefiles_ondemand_copen()
+Message-ID: <Yv9VghbiAcEUANSW@B-P7TQMD6M-0146.local>
+Mail-Followup-To: Sun Ke <sunke32@huawei.com>, dhowells@redhat.com,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org
+References: <20220818125038.2247720-1-sunke32@huawei.com>
 MIME-Version: 1.0
-References: <Yv8ezribLQbq5ggv@kili>
-In-Reply-To: <Yv8ezribLQbq5ggv@kili>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 19 Aug 2022 09:27:13 +0300
-Message-ID: <CAHp75VcotcJzqc4iSwNTKcvF3vAYz6VUuMrsj7LF6mi6Xu8D=Q@mail.gmail.com>
-Subject: Re: [PATCH] mfd: mt6370: add bounds checking to regmap_read/write functions
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Lee Jones <lee@kernel.org>, ChiYuan Huang <cy_huang@richtek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        ChiaEn Wu <chiaen_wu@richtek.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220818125038.2247720-1-sunke32@huawei.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Aug 19, 2022 at 8:25 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> It looks like there are a potential out of bounds accesses in the
-> read/write() functions.  Also can "len" be negative?  Let's check for
-> that too.
+On Thu, Aug 18, 2022 at 08:50:38PM +0800, Sun Ke wrote:
+> The cache_size field of copen is specified by the user daemon.
+> If cache_size < 0, then the OPEN request is expected to fail,
+> while copen itself shall succeed. However, returning 0 is indeed
+> unexpected when cache_size is an invalid error code.
+> 
+> Fix this by returning error when cache_size is an invalid error code.
+> 
+> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
+> Signed-off-by: Sun Ke <sunke32@huawei.com>
 
-...
+Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 
-> Fixes: ab9905c5e38e ("mfd: mt6370: Add MediaTek MT6370 support")
+Thanks,
+Gao Xiang
 
-> From static analysis.  This code is obviously harmless however it may
-> not be required.  The regmap range checking is slightly complicated and
-> I haven't remembered where all it's done.
-
-Exactement! I do not think this Fixes anything, I believe you are
-adding a dead code. So, can you do deeper analysis?
-
--- 
-With Best Regards,
-Andy Shevchenko
+> ---
+> v3: update the commit log suggested by Jingbo.
+> 
+>  fs/cachefiles/ondemand.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+> index 1fee702d5529..ea8a1e8317d9 100644
+> --- a/fs/cachefiles/ondemand.c
+> +++ b/fs/cachefiles/ondemand.c
+> @@ -159,7 +159,7 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
+>  	/* fail OPEN request if daemon reports an error */
+>  	if (size < 0) {
+>  		if (!IS_ERR_VALUE(size))
+> -			size = -EINVAL;
+> +			ret = size = -EINVAL;
+>  		req->error = size;
+>  		goto out;
+>  	}
+> -- 
+> 2.31.1
+> 
+> --
+> Linux-cachefs mailing list
+> Linux-cachefs@redhat.com
+> https://listman.redhat.com/mailman/listinfo/linux-cachefs
