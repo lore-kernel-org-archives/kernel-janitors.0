@@ -2,102 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 983BEC32774
-	for <kernel-janitors@archiver.kernel.org>; Sat, 20 Aug 2022 06:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BF2C25B08
+	for <kernel-janitors@archiver.kernel.org>; Sat, 20 Aug 2022 09:22:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244902AbiHTGi5 (ORCPT
+        id S1343731AbiHTJW1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 20 Aug 2022 02:38:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36078 "EHLO
+        Sat, 20 Aug 2022 05:22:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244085AbiHTGiz (ORCPT
+        with ESMTP id S244085AbiHTJW0 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 20 Aug 2022 02:38:55 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A78362B617;
-        Fri, 19 Aug 2022 23:38:54 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4426F60EB0;
-        Sat, 20 Aug 2022 06:38:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F12CBC433C1;
-        Sat, 20 Aug 2022 06:38:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660977533;
-        bh=yWQYGdavX3/YHEW1Xrz4qrpv1wPvBR2SyfskEFLbsBg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SGDH/1f0bwhoeBcZaLnjpPDnZnaC+uy5KZZ3uA+GmIGowsTDptN3vEIce8YnuO27/
-         h7ftfQNwen7pTs66SZIa+rkYgslqkSFZdXY22k0Dgh+I2x10gI7rC712Yu8gujLGhN
-         r4+9CpTgWlnUu61mPapGrCfT2gHBTLMKxgDa66AAJeodAfVRVs3C6EwwricucxXoU/
-         Zoy21mltp//Nc6TPMlSnvTwh+SYckwVkGgyHYggUyE69LxYRNDX9ck0kyXaElDh3Lp
-         m+HbVtxsgT3OOe8ZaFqIgKvzKr8DaTJqDlqK6H6tfin4QD+q+GnwgmvIiwuzQwWo4K
-         cFruW7cyvnciQ==
-Date:   Sat, 20 Aug 2022 08:38:50 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Seth Heasley <seth.heasley@intel.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-Subject: Re: [PATCH] i2c: ismt: Remove useless DMA-32 fallback configuration
-Message-ID: <YwCBevK4Bt/cpOPZ@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Seth Heasley <seth.heasley@intel.com>,
-        Neil Horman <nhorman@tuxdriver.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org
-References: <853d9f9d746864435abf93dfc822fccac5b04f37.1641731339.git.christophe.jaillet@wanadoo.fr>
+        Sat, 20 Aug 2022 05:22:26 -0400
+Received: from out30-44.freemail.mail.aliyun.com (out30-44.freemail.mail.aliyun.com [115.124.30.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D7D1B69C7;
+        Sat, 20 Aug 2022 02:22:23 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046056;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0VMj1MZi_1660987338;
+Received: from 192.168.31.65(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VMj1MZi_1660987338)
+          by smtp.aliyun-inc.com;
+          Sat, 20 Aug 2022 17:22:19 +0800
+Message-ID: <da9573d7-cc79-1a75-da52-480c9aac827e@linux.alibaba.com>
+Date:   Sat, 20 Aug 2022 17:22:19 +0800
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="+u4Lakz/ul3hd2rx"
-Content-Disposition: inline
-In-Reply-To: <853d9f9d746864435abf93dfc822fccac5b04f37.1641731339.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.12.0
+Subject: Re: [PATCH v3] cachefiles: fix error return code in
+ cachefiles_ondemand_copen()
+Content-Language: en-US
+To:     Sun Ke <sunke32@huawei.com>, dhowells@redhat.com
+Cc:     linux-cachefs@redhat.com, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20220818125038.2247720-1-sunke32@huawei.com>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20220818125038.2247720-1-sunke32@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
 
---+u4Lakz/ul3hd2rx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jan 09, 2022 at 01:29:45PM +0100, Christophe JAILLET wrote:
-> As stated in [1], dma_set_mask() with a 64-bit mask never fails if
-> dev->dma_mask is non-NULL.
-> So, if it fails, the 32 bits case will also fail for the same reason.
->=20
->=20
-> Simplify code and remove some dead code accordingly.
->=20
-> [1]: https://lkml.org/lkml/2021/6/7/398
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On 8/18/22 8:50 PM, Sun Ke wrote:
+> The cache_size field of copen is specified by the user daemon.
+> If cache_size < 0, then the OPEN request is expected to fail,
+> while copen itself shall succeed. However, returning 0 is indeed
+> unexpected when cache_size is an invalid error code.
+> 
+> Fix this by returning error when cache_size is an invalid error code.
+> 
+> Fixes: c8383054506c ("cachefiles: notify the user daemon when looking up cookie")
+> Signed-off-by: Sun Ke <sunke32@huawei.com>
 
-Sorry, this fell a bit through the cracks.
+LGTM.
 
-Applied to for-next now, thanks!
+Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
 
+> ---
+> v3: update the commit log suggested by Jingbo.
+> 
+>  fs/cachefiles/ondemand.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+> index 1fee702d5529..ea8a1e8317d9 100644
+> --- a/fs/cachefiles/ondemand.c
+> +++ b/fs/cachefiles/ondemand.c
+> @@ -159,7 +159,7 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
+>  	/* fail OPEN request if daemon reports an error */
+>  	if (size < 0) {
+>  		if (!IS_ERR_VALUE(size))
+> -			size = -EINVAL;
+> +			ret = size = -EINVAL;
+>  		req->error = size;
+>  		goto out;
+>  	}
 
---+u4Lakz/ul3hd2rx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmMAgXoACgkQFA3kzBSg
-KbYzFQ//UddiOSDkM3eYwJ4nRDG7rE4JgMOWLGFMPd3/RhZuZ6Kqinu8HLPQVXmc
-U0223ixlbgtKgfgfkMdsNv6O0AFk/saurWqP/DPhyNIIfbeL2PyUQGhTWQt51etl
-sUKKZHP1XG6UsNv1hEsoApNtje/bJ4JSJA8pbt7BOHzZ7pe63m9o6pwct4kPyRvJ
-rraA1/Us22BEd3rjo/athy4OcKMk4pB5KPRWnSmYAoLKavv8EEXTKE3mcxIhzqIl
-xSnJXtwyPDnz2Uw0+tlkMZMqFmEymiDPOuR/S4EmeyidRSJPBxhkNjKDODQHsA3F
-PytmMgwm4EqQTpNAqZEP2aoY7e604qL2FS1P2cmJOWJ61cUaLYccYvi9zlS+GPgm
-spkvnoQbq0ARcqQnXxxgttbjKfE5vTmxfj0STI6wND2+yR9bZE3850VB1zsZYj8j
-z2RGkg4evSZl0HdH1hR8JaLNteJJi/qBKXm9zLKo4Rspd2kIHaycvS1PymZuDddL
-tCrEXzSw6w02HbW/tKWP57HcyI0MGmRPnQE9SHfoUqL1mtMHVfiI7IMvp6h5vk+x
-faPQg2cORdtHoS2Rff3fGUENhvcNV9Rj93dm9eWS3w0Y12YZ6HzEnt+Ulgp0sJ6d
-DPiW8Z/Rh72+veXNIlH9+InD1jkWNo5Ft6jWT1IbY2hcFM5oTvQ=
-=HhsD
------END PGP SIGNATURE-----
-
---+u4Lakz/ul3hd2rx--
+-- 
+Thanks,
+Jingbo
