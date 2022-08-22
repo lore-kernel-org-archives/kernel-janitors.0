@@ -2,77 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 410C0C32789
-	for <kernel-janitors@archiver.kernel.org>; Sat, 20 Aug 2022 17:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8304BC32789
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Aug 2022 07:00:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232541AbiHTRWm (ORCPT
+        id S231297AbiHVHAU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 20 Aug 2022 13:22:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58280 "EHLO
+        Mon, 22 Aug 2022 03:00:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229605AbiHTRWl (ORCPT
+        with ESMTP id S230379AbiHVHAS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 20 Aug 2022 13:22:41 -0400
-Received: from mail-yw1-x112c.google.com (mail-yw1-x112c.google.com [IPv6:2607:f8b0:4864:20::112c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF12140E3C;
-        Sat, 20 Aug 2022 10:22:40 -0700 (PDT)
-Received: by mail-yw1-x112c.google.com with SMTP id 00721157ae682-324ec5a9e97so195033467b3.7;
-        Sat, 20 Aug 2022 10:22:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=CsaY3CDWeiwKSPR4Rcjp0cpeUs3s2HX5HO3h9taF0tw=;
-        b=MT0HlFwnjDPFvzp+hOYa42GnudTLD7ok2Mu4xn+bz2+Iy2xrK/Pek1o4nXuIS1KLbb
-         CrGAucSQM679EdGBhUuj/To6l/jCjH/VEpW32ZKUp4WqxFOdMRE1oGn4Qv3q4TTrr0I6
-         UQX+JND5SbbdHooAx7wtYaNUXOgIlnM6OfoBB92ttrHfOx98D11UJMYx4cFy8cBYSCrS
-         q5cGSvd05A9MLa1VRh+gzg+P2zBwF3kzYJjZwEe0H7SPTWblv9Xve6rk4TnUWRzp3s9/
-         hXgGfB7Vs/HQ29L2VC74VkP+1DtSjFLM/j2NJqg0BJqfu4THC7KM6Tp6VKKi2LoqJ6ZK
-         SRkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=CsaY3CDWeiwKSPR4Rcjp0cpeUs3s2HX5HO3h9taF0tw=;
-        b=RfUDpUz2nJsSihx9UZlvIiLuNehxZMI7lu3D1gL0zCRawdXe4En7yoCiIm0AmkPCxU
-         lmz2V7z+XJRQqeEM8i8vzk2i6odLEbv8aabFriJpNHh5E2yjhQuTrcKi1C+fnoW8Ktk4
-         GWeGoxpjb02JeVkCTL+zF0Cw96XA91NgZGYrOFh7wvGwHpwW+Zd4Q7Gtz3hcmcr5xVxY
-         JQ4NKaNeByLovu77kE5XSPbJjBZApIYvhoPxY56ssZP51spvnuu068WZRVAD0cVqCtaD
-         77UNaLIXEx7xma6HNzVlmxoeBIZ0JwwaeumZIlrQKaP/a3pM5Nwocmja0SU1TtVsBi+b
-         HFdw==
-X-Gm-Message-State: ACgBeo3ATb+Y7xFVLMLu+HW9Jal/H6oSQFpsLxOCkTTEMwOGNdhpPUhw
-        sczTVAsLhrzheQeBbljAQZJVIB3gs3cU1E+yFKk=
-X-Google-Smtp-Source: AA6agR4LAyg80MpHiV53F5gZNZAmkdSJKWpf5d1cYiA8RAMxAt9xg6AW8EmhIEC+20A7rHMWdL/U2pJ22jTFg3leE3g=
-X-Received: by 2002:a81:a1d6:0:b0:339:c126:e6cf with SMTP id
- y205-20020a81a1d6000000b00339c126e6cfmr2460710ywg.15.1661016159969; Sat, 20
- Aug 2022 10:22:39 -0700 (PDT)
+        Mon, 22 Aug 2022 03:00:18 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6C0E1CFE3
+        for <kernel-janitors@vger.kernel.org>; Mon, 22 Aug 2022 00:00:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8D46EB80E63
+        for <kernel-janitors@vger.kernel.org>; Mon, 22 Aug 2022 07:00:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 389FDC433D7;
+        Mon, 22 Aug 2022 07:00:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661151615;
+        bh=nJ9ezOubMRTIQyKM8IG9wbH6QFaLhz6Uvbi6nRndyBI=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=Y8z/uVGLT3L1S2cNBVTknVclr9Rwv2cLo1ExmfGDeos9LsggRZrIJEkoGZ06Hvb6O
+         ekpMNg52eeHuxwTZ8z9D1NR6BORDs+sfSG5jR54EpY+Be0ZytC4yL5OVHBK+o17aMQ
+         tRqqq++QQajXn6RMJXiyfwJBnDRTItbnDVWS9THno8TU/INU2uBPSl7q2l0TWTnm+P
+         FN/QiG1plhutURoxW4wLsyCqEmVjfFouxeS0O4/yi4cbcaXaefLTFdGwp/f1pnIFxj
+         SJGP/dtgz+WVPJy4shT0WdZafsjlKoNwTYrVJDbccoJNAXawv0hbHd8j++qQPvcFEW
+         gDu9VNRb1Nwgw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1E19CC04E59;
+        Mon, 22 Aug 2022 07:00:15 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <be4b863bacf323521ba3a02efdc4fca9cdedd1a6.1659855351.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <be4b863bacf323521ba3a02efdc4fca9cdedd1a6.1659855351.git.christophe.jaillet@wanadoo.fr>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sat, 20 Aug 2022 19:22:29 +0200
-Message-ID: <CAFBinCB=JR1MtF3VX7qnf_puwB5dQ1u1ppMTpvSd4oAxLkV91w@mail.gmail.com>
-Subject: Re: [PATCH] mmc: meson-gx: Fix an error handling path in meson_mmc_probe()
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] platform/chrome: fix memory corruption in ioctl
+From:   patchwork-bot+chrome-platform@kernel.org
+Message-Id: <166115161511.13978.9867179153698669785.git-patchwork-notify@kernel.org>
+Date:   Mon, 22 Aug 2022 07:00:15 +0000
+References: <Yv8dpCFZJdbUT5ye@kili>
+In-Reply-To: <Yv8dpCFZJdbUT5ye@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     bleung@chromium.org, enric.balletbo@collabora.com,
+        groeck@chromium.org, andriy.shevchenko@linux.intel.com,
+        lee.jones@linaro.org, gwendal@chromium.org,
+        chrome-platform@lists.linux.dev, kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Aug 7, 2022 at 8:56 AM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> The commit in Fixes has introduced a new error handling which should goto
-> the existing error handling path.
-> Otherwise some resources leak.
->
-> Fixes: 19c6beaa064c ("mmc: meson-gx: add device reset")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Hello:
+
+This patch was applied to chrome-platform/linux.git (for-kernelci)
+by Tzung-Bi Shih <tzungbi@kernel.org>:
+
+On Fri, 19 Aug 2022 08:20:36 +0300 you wrote:
+> If "s_mem.bytes" is larger than the buffer size it leads to memory
+> corruption.
+> 
+> Fixes: eda2e30c6684 ("mfd / platform: cros_ec: Miscellaneous character device to talk with the EC")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/platform/chrome/cros_ec_chardev.c | 3 +++
+>  1 file changed, 3 insertions(+)
+
+Here is the summary with links:
+  - platform/chrome: fix memory corruption in ioctl
+    https://git.kernel.org/chrome-platform/c/8a07b45fd3c2
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
