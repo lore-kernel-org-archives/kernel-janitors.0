@@ -2,80 +2,108 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8304BC32789
-	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Aug 2022 07:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B18FC28D13
+	for <kernel-janitors@archiver.kernel.org>; Mon, 22 Aug 2022 08:26:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231297AbiHVHAU (ORCPT
+        id S231326AbiHVI02 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 22 Aug 2022 03:00:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50438 "EHLO
+        Mon, 22 Aug 2022 04:26:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230379AbiHVHAS (ORCPT
+        with ESMTP id S232897AbiHVI0O (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 22 Aug 2022 03:00:18 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6C0E1CFE3
-        for <kernel-janitors@vger.kernel.org>; Mon, 22 Aug 2022 00:00:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8D46EB80E63
-        for <kernel-janitors@vger.kernel.org>; Mon, 22 Aug 2022 07:00:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 389FDC433D7;
-        Mon, 22 Aug 2022 07:00:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661151615;
-        bh=nJ9ezOubMRTIQyKM8IG9wbH6QFaLhz6Uvbi6nRndyBI=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=Y8z/uVGLT3L1S2cNBVTknVclr9Rwv2cLo1ExmfGDeos9LsggRZrIJEkoGZ06Hvb6O
-         ekpMNg52eeHuxwTZ8z9D1NR6BORDs+sfSG5jR54EpY+Be0ZytC4yL5OVHBK+o17aMQ
-         tRqqq++QQajXn6RMJXiyfwJBnDRTItbnDVWS9THno8TU/INU2uBPSl7q2l0TWTnm+P
-         FN/QiG1plhutURoxW4wLsyCqEmVjfFouxeS0O4/yi4cbcaXaefLTFdGwp/f1pnIFxj
-         SJGP/dtgz+WVPJy4shT0WdZafsjlKoNwTYrVJDbccoJNAXawv0hbHd8j++qQPvcFEW
-         gDu9VNRb1Nwgw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1E19CC04E59;
-        Mon, 22 Aug 2022 07:00:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] platform/chrome: fix memory corruption in ioctl
-From:   patchwork-bot+chrome-platform@kernel.org
-Message-Id: <166115161511.13978.9867179153698669785.git-patchwork-notify@kernel.org>
-Date:   Mon, 22 Aug 2022 07:00:15 +0000
-References: <Yv8dpCFZJdbUT5ye@kili>
-In-Reply-To: <Yv8dpCFZJdbUT5ye@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     bleung@chromium.org, enric.balletbo@collabora.com,
-        groeck@chromium.org, andriy.shevchenko@linux.intel.com,
-        lee.jones@linaro.org, gwendal@chromium.org,
-        chrome-platform@lists.linux.dev, kernel-janitors@vger.kernel.org
+        Mon, 22 Aug 2022 04:26:14 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9062F5AC;
+        Mon, 22 Aug 2022 01:25:52 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id r16so12213609wrm.6;
+        Mon, 22 Aug 2022 01:25:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc;
+        bh=ZQMxC8SQcK7D46DZF5jtDRzGw0Z16LiNuM+Bzk2aJSo=;
+        b=OLNL7exAXaIJduiNgoQCsJ6rZMgitXCim/HKlxMgBRRUMCxtAAGNXtBtdJheaqg3pC
+         TliuMGd3pDcTM0WkGacO/UZyKRKECjlG9Ivq6S5pkWzazG/SiSWx1c22mT9jRaFgdULc
+         uKtdOp8YucD7O/pNet+Y6K5EyTp5iQwS1AqbAP1Jmkl4bXT2K8HjhmnI5SUL5R3SjuSV
+         wFYxO3P1vtwx1gJuNwHXyzk0gGnBpf1Wqs4fFBhoAFAonxxG3aOXc7mMbBu4OlCxcg0S
+         PALZyKiXSsboDOgNWyC5yTxYoPEifsTcDhQb6avJ9/RCrwlMmkA/31s2jiE6pkks3ayk
+         gPtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
+        bh=ZQMxC8SQcK7D46DZF5jtDRzGw0Z16LiNuM+Bzk2aJSo=;
+        b=Glvm8QKUGiM7TKktdBRNHxHYf2+XDoOCD3uIr0XU0L4UVB5WrowodhssPRaTrqgz59
+         nTtMBv/gP//2rh1D5GMw3a2LqSXHCGNxri0W7IiFLJHz+fNaMHYirFuUQIpplsn01sUL
+         XuuLbnT/PPzW/aLgno9cB3fZnzknc37rz4VyaaEmOeZObHsII9izn61k9RNOro0Dqbd3
+         Kef4k1vPoLRRt2PVzXWgIHQFqfAYKZUlo36WK+sYrfc2hxRQFyj4nSJPYB2LeIC3vsDQ
+         zNoXH84xi0KMRIQ7s3BGCkjvnYaAIhByj/o0bZQh9AwWRwXmouhKTn6/CD4wURLrD0XP
+         +d2w==
+X-Gm-Message-State: ACgBeo0Zyr/WQuV48BHx/jYuOHb4RMLkP64f36+GlZ2+xM36Wovs2B81
+        SM9llkChCdiDFjwqfNbidvqMVxTS0Wg=
+X-Google-Smtp-Source: AA6agR7sv04KNDMmxFOJpvl9C2FbEVaKWNy3FaYLC+PE0f+To+BYbZRu8vRj6lpsja472y0AXYkGnw==
+X-Received: by 2002:a5d:47c9:0:b0:225:5a4f:8f82 with SMTP id o9-20020a5d47c9000000b002255a4f8f82mr1877881wrc.0.1661156751316;
+        Mon, 22 Aug 2022 01:25:51 -0700 (PDT)
+Received: from felia.fritz.box (200116b826f28600ec06010f612e4c3e.dip.versatel-1u1.de. [2001:16b8:26f2:8600:ec06:10f:612e:4c3e])
+        by smtp.gmail.com with ESMTPSA id m30-20020a05600c3b1e00b003a6077384ecsm17912800wms.31.2022.08.22.01.25.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Aug 2022 01:25:50 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Miaohe Lin <linmiaohe@huawei.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] mm/hugetlb: remove unused local variable dst_entry in copy_hugetlb_page_range()
+Date:   Mon, 22 Aug 2022 10:25:25 +0200
+Message-Id: <20220822082525.26071-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+Commit a0e4f7b82610 ("mm/hugetlb: make detecting shared pte more reliable")
+modifies copy_hugetlb_page_range() such that huge_ptep_get(dst_pte) and the
+local variable dst_entry is not used explicitly in this function.
 
-This patch was applied to chrome-platform/linux.git (for-kernelci)
-by Tzung-Bi Shih <tzungbi@kernel.org>:
+Remove this unused local variable dst_entry in copy_hugetlb_page_range().
+No functional change.
 
-On Fri, 19 Aug 2022 08:20:36 +0300 you wrote:
-> If "s_mem.bytes" is larger than the buffer size it leads to memory
-> corruption.
-> 
-> Fixes: eda2e30c6684 ("mfd / platform: cros_ec: Miscellaneous character device to talk with the EC")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  drivers/platform/chrome/cros_ec_chardev.c | 3 +++
->  1 file changed, 3 insertions(+)
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ mm/hugetlb.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Here is the summary with links:
-  - platform/chrome: fix memory corruption in ioctl
-    https://git.kernel.org/chrome-platform/c/8a07b45fd3c2
-
-You are awesome, thank you!
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 9a72499486c1..6c00ba1dde32 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -4763,7 +4763,7 @@ int copy_hugetlb_page_range(struct mm_struct *dst, struct mm_struct *src,
+ 			    struct vm_area_struct *dst_vma,
+ 			    struct vm_area_struct *src_vma)
+ {
+-	pte_t *src_pte, *dst_pte, entry, dst_entry;
++	pte_t *src_pte, *dst_pte, entry;
+ 	struct page *ptepage;
+ 	unsigned long addr;
+ 	bool cow = is_cow_mapping(src_vma->vm_flags);
+@@ -4823,7 +4823,6 @@ int copy_hugetlb_page_range(struct mm_struct *dst, struct mm_struct *src,
+ 		src_ptl = huge_pte_lockptr(h, src, src_pte);
+ 		spin_lock_nested(src_ptl, SINGLE_DEPTH_NESTING);
+ 		entry = huge_ptep_get(src_pte);
+-		dst_entry = huge_ptep_get(dst_pte);
+ again:
+ 		if (huge_pte_none(entry)) {
+ 			/*
+@@ -4906,7 +4905,7 @@ int copy_hugetlb_page_range(struct mm_struct *dst, struct mm_struct *src,
+ 					restore_reserve_on_error(h, dst_vma, addr,
+ 								new);
+ 					put_page(new);
+-					/* dst_entry won't change as in child */
++					/* huge_ptep of dst_pte won't change as in child */
+ 					goto again;
+ 				}
+ 				hugetlb_install_page(dst_vma, dst_pte, addr, new);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.17.1
 
