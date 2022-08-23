@@ -2,127 +2,99 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C7AC32793
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Aug 2022 07:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B607C32774
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Aug 2022 09:52:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241111AbiHWHmi (ORCPT
+        id S242640AbiHWJwF (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 Aug 2022 03:42:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51462 "EHLO
+        Tue, 23 Aug 2022 05:52:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241165AbiHWHm2 (ORCPT
+        with ESMTP id S1352299AbiHWJva (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 Aug 2022 03:42:28 -0400
-Received: from smtp.smtpout.orange.fr (smtp09.smtpout.orange.fr [80.12.242.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D6346527A
-        for <kernel-janitors@vger.kernel.org>; Tue, 23 Aug 2022 00:42:22 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id QOY9onTPyvd84QOY9oHp0q; Tue, 23 Aug 2022 09:42:20 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 23 Aug 2022 09:42:20 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Tue, 23 Aug 2022 05:51:30 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B596C9F0E7;
+        Tue, 23 Aug 2022 01:45:53 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1DC8DB81C3A;
+        Tue, 23 Aug 2022 08:17:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56D1AC433D6;
+        Tue, 23 Aug 2022 08:17:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1661242654;
+        bh=OiF9Vciiallwzx+M+oH/zhtKHR7aGt/6vvnZGDtF6Fw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=puEF5OblHnDjNgbEYeyoerQyQMQAfozr9ze7RFUOvt82CNvm7nrHNO9ukOSDcTZdz
+         JZejbjQRPQ4CXE0OElFtPViwGRPPTmpXQlTCbpgmo53JBGV6AA2dM0ywOOW+KIh+ok
+         aMH3HPL5p3sXrdOx+UWvo+HE2bjZWPz93sYNC22Y=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev
-Subject: [PATCH v2 2/2] media: sunxi: Fix some error handling path of sun6i_mipi_csi2_probe()
-Date:   Tue, 23 Aug 2022 09:42:11 +0200
-Message-Id: <69f418936bf0060287d237824a677192343b91ab.1661240416.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <28d04b260acff7eb4416a410d5678cbafb5e2784.1661240416.git.christophe.jaillet@wanadoo.fr>
-References: <28d04b260acff7eb4416a410d5678cbafb5e2784.1661240416.git.christophe.jaillet@wanadoo.fr>
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 5.19 155/365] perf probe: Fix an error handling path in parse_perf_probe_command()
+Date:   Tue, 23 Aug 2022 10:00:56 +0200
+Message-Id: <20220823080124.707978080@linuxfoundation.org>
+X-Mailer: git-send-email 2.37.2
+In-Reply-To: <20220823080118.128342613@linuxfoundation.org>
+References: <20220823080118.128342613@linuxfoundation.org>
+User-Agent: quilt/0.67
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Release some resources in the error handling path of the probe and of
-sun6i_mipi_csi2_resources_setup(), as already done in the remove
-function.
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Fixes: af54b4f4c17f ("media: sunxi: Add support for the A31 MIPI CSI-2 controller")
+commit 4bf6dcaa93bcd083a13c278a91418fe10e6d23a0 upstream.
+
+If a memory allocation fail, we should branch to the error handling path
+in order to free some resources allocated a few lines above.
+
+Fixes: 15354d54698648e2 ("perf probe: Generate event name with line number")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: kernel-janitors@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lore.kernel.org/r/b71bcb01fa0c7b9778647235c3ab490f699ba278.1659797452.git.christophe.jaillet@wanadoo.fr
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-Changes in v2:
-  * add some blank line   [Paul Kocialkowski <paul.kocialkowski@bootlin.com>]
-  * rename the new labels   [Paul Kocialkowski <paul.kocialkowski@bootlin.com>]
+ tools/perf/util/probe-event.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-v1:
-  https://lore.kernel.org/all/9999a30560d0ab8201734cbab0483c6f840402da.1659295329.git.christophe.jaillet@wanadoo.fr/
----
- .../sunxi/sun6i-mipi-csi2/sun6i_mipi_csi2.c   | 20 +++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -1775,8 +1775,10 @@ int parse_perf_probe_command(const char
+ 	if (!pev->event && pev->point.function && pev->point.line
+ 			&& !pev->point.lazy_line && !pev->point.offset) {
+ 		if (asprintf(&pev->event, "%s_L%d", pev->point.function,
+-			pev->point.line) < 0)
+-			return -ENOMEM;
++			pev->point.line) < 0) {
++			ret = -ENOMEM;
++			goto out;
++		}
+ 	}
+ 
+ 	/* Copy arguments and ensure return probe has no C argument */
 
-diff --git a/drivers/media/platform/sunxi/sun6i-mipi-csi2/sun6i_mipi_csi2.c b/drivers/media/platform/sunxi/sun6i-mipi-csi2/sun6i_mipi_csi2.c
-index a4e3f9a6b2ff..30d6c0c5161f 100644
---- a/drivers/media/platform/sunxi/sun6i-mipi-csi2/sun6i_mipi_csi2.c
-+++ b/drivers/media/platform/sunxi/sun6i-mipi-csi2/sun6i_mipi_csi2.c
-@@ -661,7 +661,8 @@ sun6i_mipi_csi2_resources_setup(struct sun6i_mipi_csi2_device *csi2_dev,
- 	csi2_dev->reset = devm_reset_control_get_shared(dev, NULL);
- 	if (IS_ERR(csi2_dev->reset)) {
- 		dev_err(dev, "failed to get reset controller\n");
--		return PTR_ERR(csi2_dev->reset);
-+		ret = PTR_ERR(csi2_dev->reset);
-+		goto error_clock_rate_exclusive;
- 	}
- 
- 	/* D-PHY */
-@@ -669,13 +670,14 @@ sun6i_mipi_csi2_resources_setup(struct sun6i_mipi_csi2_device *csi2_dev,
- 	csi2_dev->dphy = devm_phy_get(dev, "dphy");
- 	if (IS_ERR(csi2_dev->dphy)) {
- 		dev_err(dev, "failed to get MIPI D-PHY\n");
--		return PTR_ERR(csi2_dev->dphy);
-+		ret = PTR_ERR(csi2_dev->dphy);
-+		goto error_clock_rate_exclusive;
- 	}
- 
- 	ret = phy_init(csi2_dev->dphy);
- 	if (ret) {
- 		dev_err(dev, "failed to initialize MIPI D-PHY\n");
--		return ret;
-+		goto error_clock_rate_exclusive;
- 	}
- 
- 	/* Runtime PM */
-@@ -683,6 +685,11 @@ sun6i_mipi_csi2_resources_setup(struct sun6i_mipi_csi2_device *csi2_dev,
- 	pm_runtime_enable(dev);
- 
- 	return 0;
-+
-+error_clock_rate_exclusive:
-+	clk_rate_exclusive_put(csi2_dev->clock_mod);
-+
-+	return ret;
- }
- 
- static void
-@@ -712,9 +719,14 @@ static int sun6i_mipi_csi2_probe(struct platform_device *platform_dev)
- 
- 	ret = sun6i_mipi_csi2_bridge_setup(csi2_dev);
- 	if (ret)
--		return ret;
-+		goto error_resources;
- 
- 	return 0;
-+
-+error_resources:
-+	sun6i_mipi_csi2_resources_cleanup(csi2_dev);
-+
-+	return ret;
- }
- 
- static int sun6i_mipi_csi2_remove(struct platform_device *platform_dev)
--- 
-2.34.1
 
