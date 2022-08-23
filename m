@@ -2,81 +2,146 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA65BC32789
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Aug 2022 04:47:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04173C3F6B0
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Aug 2022 07:42:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239724AbiHWErU (ORCPT
+        id S241110AbiHWHm1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 Aug 2022 00:47:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55682 "EHLO
+        Tue, 23 Aug 2022 03:42:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239695AbiHWEp2 (ORCPT
+        with ESMTP id S239292AbiHWHmR (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 Aug 2022 00:45:28 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FF21543C5;
-        Mon, 22 Aug 2022 21:45:28 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id y4so11798243plb.2;
-        Mon, 22 Aug 2022 21:45:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc;
-        bh=QuUUyfryCkVJUorV/A+VZepi1QEMQiXOW99WcMLuHuw=;
-        b=eht+9FyZkpJrM+iwi94qOYJw8P3DfPPCoLj1tuiL7y5OLtgX1Xs6NGkgQ/WbzpocO6
-         3UU35ngOh92eTaPvawOf3b2BqKlELsTys02sS92Sha0CQ4KRxyKDCWyrZWl89cBjGf6A
-         GxSH9BPrRpUR5sKq+h4+wn5N2bx0YE5i0AwegzYbVjrbYDXE/dsxbShXtAQUz+8Ei84m
-         KxNO/TgJul3pXVjqxSlHyDgyYyh/u5o+2ofh+H2pHb9hC/Ra6QKehDEqnp3zPehV8R4S
-         ffi8MIF11pc8ew4QF5aBGmbCjLRb6r/ZnCMcvG7sMzU+5WJkSop7Nd0mKM/xnvsSzwwY
-         VdDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=QuUUyfryCkVJUorV/A+VZepi1QEMQiXOW99WcMLuHuw=;
-        b=aKN4xTxjGe8PveCtfhE/FkRPaqaFRFz7qDJeiRk13HpRTNX2ZzQuIMj0vYyag2KH8Y
-         Nzz/RLOgjA2np4eJBgyCCIvq6/SU6sh+mkaovM/nZeZYajb6S+k2bksNylEnpJgxuHqx
-         pORIZJFUE1Zq21gxk87RmYFoWvVH9CpoCQdkINIz+OvvWSAE3CnAUZif3pgv0iXQyNXt
-         kveVfyW9cLTuwibjSej2xh8rycVJLCs7Kg9Be3HLbxJXhpx9SAG8O1ZDuwuUCkxiPiCE
-         bCHxSKUrgQUgJ2uWGbKNMGaPez8H941EgjUtDQiOUw15JYCY9y+N/kHmHHg2JCdF9abV
-         TO7g==
-X-Gm-Message-State: ACgBeo0TYIpEXnyGCIlIUKAsTWMZpiOAcgAarprJBpEb3LdF13J+RSUj
-        yFPa9XBwXrQDiw7v09ZmaQ0=
-X-Google-Smtp-Source: AA6agR6qk28akKLocpxxgEJ5R9v9M4Vri56QepENWV6Fdk/8QjjamAtfiIVW2jlVKjOubNMdrTeDcA==
-X-Received: by 2002:a17:902:e552:b0:16d:2a83:e751 with SMTP id n18-20020a170902e55200b0016d2a83e751mr21966420plf.39.1661229927399;
-        Mon, 22 Aug 2022 21:45:27 -0700 (PDT)
-Received: from google.com ([2620:15c:202:201:ebe5:ba37:26e1:8072])
-        by smtp.gmail.com with ESMTPSA id s10-20020a17090b070a00b001fb05ec17c1sm5042531pjz.39.2022.08.22.21.45.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Aug 2022 21:45:26 -0700 (PDT)
-Date:   Mon, 22 Aug 2022 21:45:24 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: add include/dt-bindings/input to INPUT
- DRIVERS
-Message-ID: <YwRbZD0/b5xA4hY7@google.com>
-References: <20220613115654.28117-1-lukas.bulwahn@gmail.com>
+        Tue, 23 Aug 2022 03:42:17 -0400
+Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50FAF647D3
+        for <kernel-janitors@vger.kernel.org>; Tue, 23 Aug 2022 00:42:06 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id QOXyo53B7XaJmQOXyoHkvv; Tue, 23 Aug 2022 09:42:04 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 23 Aug 2022 09:42:04 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Maxime Ripard <mripard@kernel.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev
+Subject: [PATCH v2 1/2] media: sunxi: Fix some error handling path of sun8i_a83t_mipi_csi2_probe()
+Date:   Tue, 23 Aug 2022 09:42:01 +0200
+Message-Id: <28d04b260acff7eb4416a410d5678cbafb5e2784.1661240416.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220613115654.28117-1-lukas.bulwahn@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Jun 13, 2022 at 01:56:54PM +0200, Lukas Bulwahn wrote:
-> Maintainers of the directory Documentation/devicetree/bindings/input
-> are also the maintainers of the corresponding directory
-> include/dt-bindings/input.
-> 
-> Add the file entry for include/dt-bindings/input to the appropriate
-> section in MAINTAINERS.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Release some resources in the error handling path of the probe and of
+sun8i_a83t_mipi_csi2_resources_setup(), as already done in the remove
+function.
 
-Applied, thank you.
+Fixes: 576d196c522b ("media: sunxi: Add support for the A83T MIPI CSI-2 controller")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+I'm unsure about the phy_exit() call in
+sun8i_a83t_mipi_csi2_resources_cleanup() because no explicit phy_init()
+call is performed.
 
+The same code is in sun6i-mipi-csi2/sun6i_mipi_csi2.c, but in this driver
+phy_init() IS called.
+
+I leave it as-is because I don't if it is an issue or not.
+My feeling is that it is a copy'n'paste error and that it should be
+removed.
+
+Changes in v2:
+  * add some blank line   [Paul Kocialkowski <paul.kocialkowski@bootlin.com>]
+  * rename the new labels   [Paul Kocialkowski <paul.kocialkowski@bootlin.com>]
+
+v1:
+  https://lore.kernel.org/all/62c0aef8d3b86d8f290bf6787f1b2b41efbb0b55.1659295329.git.christophe.jaillet@wanadoo.fr/
+---
+ .../sun8i_a83t_mipi_csi2.c                    | 23 +++++++++++++++----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_mipi_csi2.c b/drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_mipi_csi2.c
+index d052ee77ef0a..b032ec13a683 100644
+--- a/drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_mipi_csi2.c
++++ b/drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_mipi_csi2.c
+@@ -719,13 +719,15 @@ sun8i_a83t_mipi_csi2_resources_setup(struct sun8i_a83t_mipi_csi2_device *csi2_de
+ 	csi2_dev->clock_mipi = devm_clk_get(dev, "mipi");
+ 	if (IS_ERR(csi2_dev->clock_mipi)) {
+ 		dev_err(dev, "failed to acquire mipi clock\n");
+-		return PTR_ERR(csi2_dev->clock_mipi);
++		ret = PTR_ERR(csi2_dev->clock_mipi);
++		goto error_clock_rate_exclusive;
+ 	}
+ 
+ 	csi2_dev->clock_misc = devm_clk_get(dev, "misc");
+ 	if (IS_ERR(csi2_dev->clock_misc)) {
+ 		dev_err(dev, "failed to acquire misc clock\n");
+-		return PTR_ERR(csi2_dev->clock_misc);
++		ret = PTR_ERR(csi2_dev->clock_misc);
++		goto error_clock_rate_exclusive;
+ 	}
+ 
+ 	/* Reset */
+@@ -733,7 +735,8 @@ sun8i_a83t_mipi_csi2_resources_setup(struct sun8i_a83t_mipi_csi2_device *csi2_de
+ 	csi2_dev->reset = devm_reset_control_get_shared(dev, NULL);
+ 	if (IS_ERR(csi2_dev->reset)) {
+ 		dev_err(dev, "failed to get reset controller\n");
+-		return PTR_ERR(csi2_dev->reset);
++		ret = PTR_ERR(csi2_dev->reset);
++		goto error_clock_rate_exclusive;
+ 	}
+ 
+ 	/* D-PHY */
+@@ -741,7 +744,7 @@ sun8i_a83t_mipi_csi2_resources_setup(struct sun8i_a83t_mipi_csi2_device *csi2_de
+ 	ret = sun8i_a83t_dphy_register(csi2_dev);
+ 	if (ret) {
+ 		dev_err(dev, "failed to initialize MIPI D-PHY\n");
+-		return ret;
++		goto error_clock_rate_exclusive;
+ 	}
+ 
+ 	/* Runtime PM */
+@@ -749,6 +752,11 @@ sun8i_a83t_mipi_csi2_resources_setup(struct sun8i_a83t_mipi_csi2_device *csi2_de
+ 	pm_runtime_enable(dev);
+ 
+ 	return 0;
++
++error_clock_rate_exclusive:
++	clk_rate_exclusive_put(csi2_dev->clock_mod);
++
++	return ret;
+ }
+ 
+ static void
+@@ -778,9 +786,14 @@ static int sun8i_a83t_mipi_csi2_probe(struct platform_device *platform_dev)
+ 
+ 	ret = sun8i_a83t_mipi_csi2_bridge_setup(csi2_dev);
+ 	if (ret)
+-		return ret;
++		goto error_resources;
+ 
+ 	return 0;
++
++error_resources:
++	sun8i_a83t_mipi_csi2_resources_cleanup(csi2_dev);
++
++	return ret;
+ }
+ 
+ static int sun8i_a83t_mipi_csi2_remove(struct platform_device *platform_dev)
 -- 
-Dmitry
+2.34.1
+
