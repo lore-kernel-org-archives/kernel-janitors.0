@@ -2,106 +2,134 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7530C32772
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Aug 2022 17:19:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FD75C32789
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Aug 2022 20:06:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232553AbiHWRTo (ORCPT
+        id S233635AbiHWUGZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 Aug 2022 13:19:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58236 "EHLO
+        Tue, 23 Aug 2022 16:06:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232540AbiHWRTC (ORCPT
+        with ESMTP id S233651AbiHWUGG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 Aug 2022 13:19:02 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84D641156E9
-        for <kernel-janitors@vger.kernel.org>; Tue, 23 Aug 2022 06:46:57 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id n7so9389090ejh.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 23 Aug 2022 06:46:57 -0700 (PDT)
+        Tue, 23 Aug 2022 16:06:06 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D65466167
+        for <kernel-janitors@vger.kernel.org>; Tue, 23 Aug 2022 12:22:50 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id x19so13672943plc.5
+        for <kernel-janitors@vger.kernel.org>; Tue, 23 Aug 2022 12:22:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=7Z8NPr+FyGlQ4LB813IGE67bv/Z2mUYuQ9UU0UTK4jw=;
-        b=HFPWqekEwGzcDtbuB88mnXEN/wljrABTBsHdXIODXvASscpo6LpHc6QQlKtQ8jqOSB
-         XS/7CczorjNGeI9Wg4BLy2YbzCe/wkP6x3OULFEhGBlT+o0aEeXhjXnXdGoB/9glaU7O
-         g+xDSt/s/uulVmf//vVDHWFj4/N0rOqiJJ+T7NVMoXpNq8jXeuk8ta8lAA25ZA3KnOEm
-         4o11nbcdtnjn/enqyKw84eOXCXNtIANRipzOg+6h74rVchDbsb2Z1SZ2OIu2OmhBhvgC
-         Q+r2+TSs/yCR9PeK6jvdFoaWBU8RVi8QBjYGpLSQsIrBONoVxIcYniV/1B6X3zO3W7YO
-         6cGw==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=vluVKO5NRnQyzyhQUGPfMvMjb6neCROySKrkY1xAivk=;
+        b=RFpneXhBxHQqMg0kLtL1zDCS6S1gC3zkpuQU512oHuvBG+thV13/Uz2ISEDeYuBiqM
+         aGvSBuo+ONVzOIxbkx/SWFVmfK1YtaVx7n5yiomDC7o3JODhVP3wWul6vOytOuyuQk3X
+         ov6AqvXv6EJ5D8a04bCGgg4Vn9eBwVzMSXHMwZ0/FCs2R56Zj9JjErTF0QtxdLiJGRHt
+         aSg9MprO91J2uk8MCX64z1mLGpDRIkWe6dEfBTJ9s+qO3qURaRXvsOxeEuq6uYCR+jxC
+         daPdllVVFosoOaM7ewD0uO85ckP+/3r2ZE8f+4Jf1wogjxpfwQPIQu6huaOeaTK2YnG7
+         1gYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=7Z8NPr+FyGlQ4LB813IGE67bv/Z2mUYuQ9UU0UTK4jw=;
-        b=S1LI/9keI2XHyjhGn4Um8V3Wmp/U2CKZVguaia0pvMuL3vd1fqIXqKxXVzyTpo5w8P
-         WFAgbF95orimU0WjAg2L9Qk6KJo3ESI+fPHwNk0LTBWPy+zFzJuuMmKRDXU+r4W0vq++
-         vsqT18WHw7uIie8Vzy97BKY+ir8nGSqzeefiixWg6arYhr6q+Qk3RZFM7ZjtNqyv63+T
-         YGE9h1u42/IhP0M/ilKmLJORHFm8eT8rjT8MIKoIuqMaRaSbNZnvsJfBLKtlJwmUmiiY
-         lwknsZO3xOiqNALbTP5yG/q6D8TgEXRVkOTQ7nt2RvNtLrNT9rdXZ2Ed2vqQuYHm3E5M
-         Jfjw==
-X-Gm-Message-State: ACgBeo3qD+L8C1NjQUxRB3dZacX/2MVEtQ1MpLldXLCWNLopNZQ2M5Tc
-        SjF383qsOZ+iJ13+foYs4pwDCBl8Jc3SjVY5Kf0lLpflUZs+Wg==
-X-Google-Smtp-Source: AA6agR7gRiqRy2NjE1wxEl8SYmLOymoPVZYY50v6SrEJeWc0Q60OQihlMMemLNj2LLKjYS50cf3VOiWYBnj3sysZ44U=
-X-Received: by 2002:a17:907:6d93:b0:73d:8593:9608 with SMTP id
- sb19-20020a1709076d9300b0073d85939608mr6089094ejc.203.1661262416062; Tue, 23
- Aug 2022 06:46:56 -0700 (PDT)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=vluVKO5NRnQyzyhQUGPfMvMjb6neCROySKrkY1xAivk=;
+        b=PeHqqV7KK41tzstppGTkHhsS/U0Wd8AjtgFH08FsschTDFOuecJUpaf0ytg9VokYqr
+         IcHf89+nB3ispwM8pIHFuSY3aV0OVQzGmsqiaP3Q5v7OIRGpVPxy1w3WuRg/sPz+86Q7
+         J+LRX33NlRvjBaAfJCuc1fUYqbz/liTMVz5gLCeu/LGryAkd5Qu4V8CrVetifb/8Wpa2
+         gPxLhuwzQveSifqL/uajQpuUXjnZcJ0FRgMKgSCO231diiIpIt7V6vXIogRXX43NiVRo
+         XCG1hOIMV4vOmKBoRkA+ZjiuhM8PpH9fgHXE3USUuiJQS2qWP1yTitFEu51ZAjQyAkmp
+         TlKw==
+X-Gm-Message-State: ACgBeo14pityL+Y0VBSBQrDeakZM+jQPuOkfntc7/C57OnTi7aGQ6c0L
+        Pz/TB4b0bGbSL/5mr8ZFwhoorA==
+X-Google-Smtp-Source: AA6agR6N2D2LqxwUPxnm1OVswfxuCieBbCam/Vy4PEiUjzbJ649yVF+yAFBnMC+7aRyrmSfb6NDHsw==
+X-Received: by 2002:a17:902:e809:b0:172:eded:e879 with SMTP id u9-20020a170902e80900b00172edede879mr9633105plg.54.1661282570371;
+        Tue, 23 Aug 2022 12:22:50 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id p63-20020a634242000000b004291cb9c047sm9556130pga.87.2022.08.23.12.22.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Aug 2022 12:22:49 -0700 (PDT)
+Date:   Tue, 23 Aug 2022 13:22:47 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirer@linaro.org>,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] remoteproc: imx_rproc: Simplify some error message
+Message-ID: <20220823192247.GA1781852@p14s>
+References: <6b9343c2688117a340661d8ee491c2962c54a09a.1659736936.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-References: <YwNZezPFKq9N1/1u@kili>
-In-Reply-To: <YwNZezPFKq9N1/1u@kili>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 23 Aug 2022 15:46:43 +0200
-Message-ID: <CACRpkdbzGbYq7WW=VL7T1HsEeabhmo6u9YUt2ZMF9=_DfHQRLA@mail.gmail.com>
-Subject: Re: [bug report] regmap: Support accelerated noinc operations
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6b9343c2688117a340661d8ee491c2962c54a09a.1659736936.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Aug 22, 2022 at 12:25 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-
-> drivers/base/regmap/regmap.c
->     2132 static int regmap_noinc_readwrite(struct regmap *map, unsigned int reg,
->     2133                                   void *val, unsigned int val_len, bool write)
->     2134 {
->     2135         size_t val_bytes = map->format.val_bytes;
->     2136         size_t val_count = val_len / val_bytes;
+On Sat, Aug 06, 2022 at 12:02:32AM +0200, Christophe JAILLET wrote:
+> dev_err_probe() already prints the error code in a human readable way, so
+> there is no need to duplicate it as a numerical value at the end of the
+> message.
+> 
+> While at it, remove 'ret' that is mostly useless.
+> 
+> Fixes: 2df7062002d0 ("remoteproc: imx_proc: enable virtio/mailbox")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/remoteproc/imx_rproc.c | 14 +++++---------
+>  1 file changed, 5 insertions(+), 9 deletions(-)
 >
-> val_len is bytes.  val_count is elements.
 
-Correct
+Applied.
 
->     2194         if (!ret && regmap_should_log(map)) {
->     2195                 dev_info(map->dev, "%x %s [", reg, write ? "<=" : "=>");
->     2196                 for (i = 0; i < val_len; i++) {
->                                          ^^^^^^^
-> This should be val_count or it will beyond the end of the arrays.
->
->     2197                         switch (val_bytes) {
->     2198                         case 1:
->     2199                                 pr_cont("%x", u8p[i]);
->     2200                                 break;
->     2201                         case 2:
-> --> 2202                                 pr_cont("%x", u16p[i]);
->     2203                                 break;
->     2204                         case 4:
->     2205                                 pr_cont("%x", u32p[i]);
->     2206                                 break;
->     2207 #ifdef CONFIG_64BIT
->     2208                         case 8:
->     2209                                 pr_cont("%llx", u64p[i]);
->     2210                                 break;
->     2211 #endif
->     2212                         default:
->     2213                                 break;
->     2214                         }
->     2215                         if (i == (val_len - 1))
->                                            ^^^^^^^
-> val_count as well probably?
+Thanks,
+Mathieu
 
-Good catch, I'll send a patch!
-
-Yours,
-Linus Walleij
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 38383e7de3c1..7cc4fd207e2d 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -646,7 +646,6 @@ static int imx_rproc_xtr_mbox_init(struct rproc *rproc)
+>  	struct imx_rproc *priv = rproc->priv;
+>  	struct device *dev = priv->dev;
+>  	struct mbox_client *cl;
+> -	int ret;
+>  
+>  	if (!of_get_property(dev->of_node, "mbox-names", NULL))
+>  		return 0;
+> @@ -659,18 +658,15 @@ static int imx_rproc_xtr_mbox_init(struct rproc *rproc)
+>  	cl->rx_callback = imx_rproc_rx_callback;
+>  
+>  	priv->tx_ch = mbox_request_channel_byname(cl, "tx");
+> -	if (IS_ERR(priv->tx_ch)) {
+> -		ret = PTR_ERR(priv->tx_ch);
+> -		return dev_err_probe(cl->dev, ret,
+> -				     "failed to request tx mailbox channel: %d\n", ret);
+> -	}
+> +	if (IS_ERR(priv->tx_ch))
+> +		return dev_err_probe(cl->dev, PTR_ERR(priv->tx_ch),
+> +				     "failed to request tx mailbox channel\n");
+>  
+>  	priv->rx_ch = mbox_request_channel_byname(cl, "rx");
+>  	if (IS_ERR(priv->rx_ch)) {
+>  		mbox_free_channel(priv->tx_ch);
+> -		ret = PTR_ERR(priv->rx_ch);
+> -		return dev_err_probe(cl->dev, ret,
+> -				     "failed to request rx mailbox channel: %d\n", ret);
+> +		return dev_err_probe(cl->dev, PTR_ERR(priv->rx_ch),
+> +				     "failed to request rx mailbox channel\n");
+>  	}
+>  
+>  	return 0;
+> -- 
+> 2.34.1
+> 
