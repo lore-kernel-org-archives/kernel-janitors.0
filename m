@@ -2,34 +2,34 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C4BAC32792
-	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Aug 2022 10:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54C29C3F6B0
+	for <kernel-janitors@archiver.kernel.org>; Tue, 23 Aug 2022 12:13:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347863AbiHWKAU (ORCPT
+        id S1345291AbiHWMLZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 23 Aug 2022 06:00:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56716 "EHLO
+        Tue, 23 Aug 2022 08:11:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242892AbiHWJ6X (ORCPT
+        with ESMTP id S1359550AbiHWMKb (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 23 Aug 2022 05:58:23 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30FEFA1D4A;
-        Tue, 23 Aug 2022 01:47:58 -0700 (PDT)
+        Tue, 23 Aug 2022 08:10:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 702EF4D4ED;
+        Tue, 23 Aug 2022 02:38:41 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5E3D5B81C3A;
-        Tue, 23 Aug 2022 08:47:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DAE6C433C1;
-        Tue, 23 Aug 2022 08:47:54 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ABB366146C;
+        Tue, 23 Aug 2022 09:38:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86649C433D6;
+        Tue, 23 Aug 2022 09:38:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1661244475;
-        bh=OiF9Vciiallwzx+M+oH/zhtKHR7aGt/6vvnZGDtF6Fw=;
+        s=korg; t=1661247521;
+        bh=XGHTd82AAZ1RrJx/a/IRBgTOgLN+rnCHxw5CMHRf92s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AFQSIxUGVQflSEoQWPU7SDJojrP9HrBpgXxlSbXBPw/siSOIZKOlc2onbkfeQ3k8O
-         ox2FDtdi8EK5ap5ap+rbXNNVCZmLU9qVak2W6Y1o0txNpnC6dpFj7TCESbg+Uh15iE
-         GWC+EjTt4QBL9kLIfy64sAj70ul/V1OjluhlbOtw=
+        b=G4HB4MN8RBE3YDKEeT/O9NBMq7uNt6dHeq+Sp5uBnDRE+H/4X+E4eYyVrsuq9reec
+         9W3mg6X+XBhCrBm0k7e+PDtHmvzHpURJl3hMwGQKfTB4sYknVD/4sb3MZsqClXtrU8
+         2zq/z8TWUt9N1Tsl/S0xrELCk+6ag5baU/DeKyc8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -43,12 +43,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 5.15 099/244] perf probe: Fix an error handling path in parse_perf_probe_command()
-Date:   Tue, 23 Aug 2022 10:24:18 +0200
-Message-Id: <20220823080102.334584924@linuxfoundation.org>
+Subject: [PATCH 5.10 062/158] perf probe: Fix an error handling path in parse_perf_probe_command()
+Date:   Tue, 23 Aug 2022 10:26:34 +0200
+Message-Id: <20220823080048.576950280@linuxfoundation.org>
 X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20220823080059.091088642@linuxfoundation.org>
-References: <20220823080059.091088642@linuxfoundation.org>
+In-Reply-To: <20220823080046.056825146@linuxfoundation.org>
+References: <20220823080046.056825146@linuxfoundation.org>
 User-Agent: quilt/0.67
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -83,7 +83,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/tools/perf/util/probe-event.c
 +++ b/tools/perf/util/probe-event.c
-@@ -1775,8 +1775,10 @@ int parse_perf_probe_command(const char
+@@ -1760,8 +1760,10 @@ int parse_perf_probe_command(const char
  	if (!pev->event && pev->point.function && pev->point.line
  			&& !pev->point.lazy_line && !pev->point.offset) {
  		if (asprintf(&pev->event, "%s_L%d", pev->point.function,
