@@ -2,80 +2,114 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B36AEC32793
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Aug 2022 10:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B255C32796
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Aug 2022 10:27:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231846AbiHXKTk (ORCPT
+        id S236885AbiHXK05 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Aug 2022 06:19:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34194 "EHLO
+        Wed, 24 Aug 2022 06:26:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236712AbiHXKTb (ORCPT
+        with ESMTP id S236867AbiHXK0h (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Aug 2022 06:19:31 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 751F074E19
-        for <kernel-janitors@vger.kernel.org>; Wed, 24 Aug 2022 03:19:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1661336369;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=VPCYtTaUZWpL796MsnlJYTznsS4pYxjYV+Pv2KRlCtI=;
-        b=NtwlRcF8u/BcG5yeP2ErM7DItesoYVOQC+2O+Z6E4700xIXXNxSF2sLtMxIPulnt6ZOaqk
-        ZUWBUX9chlLplfhIZvcovKbn/XJjYEb6g3Yac8QEHkilCVDiU6VF1P/RmGKBhENzF583Q8
-        mohGcFHt9KXCSoY6uLGKmW9/aN3vju4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-363-5WK-AnyhMUS1qtFcUUl9XA-1; Wed, 24 Aug 2022 06:19:25 -0400
-X-MC-Unique: 5WK-AnyhMUS1qtFcUUl9XA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E95E185A599;
-        Wed, 24 Aug 2022 10:19:24 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D2D8418ECC;
-        Wed, 24 Aug 2022 10:19:23 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20220818125038.2247720-1-sunke32@huawei.com>
-References: <20220818125038.2247720-1-sunke32@huawei.com>
-To:     Sun Ke <sunke32@huawei.com>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, jefflexu@linux.alibaba.com
-Subject: Re: [PATCH v3] cachefiles: fix error return code in cachefiles_ondemand_copen()
+        Wed, 24 Aug 2022 06:26:37 -0400
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 913567F12E
+        for <kernel-janitors@vger.kernel.org>; Wed, 24 Aug 2022 03:25:19 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id QnZToXm7hBDYDQnZUoinzN; Wed, 24 Aug 2022 12:25:17 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 24 Aug 2022 12:25:17 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        UNGLinuxDriver@microchip.com
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] hwmon: (sparx5) Use devm_clk_get_enabled() helper
+Date:   Wed, 24 Aug 2022 12:25:13 +0200
+Message-Id: <cfe4c965074b5ecbe03830b05e038b4594c7b970.1661336689.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3700078.1661336363.1@warthog.procyon.org.uk>
-Date:   Wed, 24 Aug 2022 11:19:23 +0100
-Message-ID: <3700079.1661336363@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-	/* fail OPEN request if copen format is invalid */
-	ret = kstrtol(psize, 0, &size);
-	if (ret) {
-		req->error = ret;
-		goto out;
-	}
+The devm_clk_get_enabled() helper:
+   - calls devm_clk_get()
+   - calls clk_prepare_enable() and registers what is needed in order to
+     call clk_disable_unprepare() when needed, as a managed resource.
 
-	/* fail OPEN request if daemon reports an error */
-	if (size < 0) {
-		if (!IS_ERR_VALUE(size))
-			ret = size = -EINVAL;
-		req->error = size;
-		goto out;
-	}
+This simplifies the code, the error handling paths and avoid the need of
+a dedicated function used with devm_add_action_or_reset().
 
-Should ret get set to the error in size?
+Based on my test with allyesconfig, this reduces the .o size from:
+   text	   data	    bss	    dec	    hex	filename
+   2419	   1472	      0	   3891	    f33	drivers/hwmon/sparx5-temp.o
+down to:
+   2155	   1472	      0	   3627	    e2b	drivers/hwmon/sparx5-temp.o
 
-David
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+devm_clk_get_enabled() is new and is part of 6.0-rc1
+---
+ drivers/hwmon/sparx5-temp.c | 19 +------------------
+ 1 file changed, 1 insertion(+), 18 deletions(-)
+
+diff --git a/drivers/hwmon/sparx5-temp.c b/drivers/hwmon/sparx5-temp.c
+index 98be48e3a22a..04fd8505e5d6 100644
+--- a/drivers/hwmon/sparx5-temp.c
++++ b/drivers/hwmon/sparx5-temp.c
+@@ -26,13 +26,6 @@ struct s5_hwmon {
+ 	struct clk *clk;
+ };
+ 
+-static void s5_temp_clk_disable(void *data)
+-{
+-	struct clk *clk = data;
+-
+-	clk_disable_unprepare(clk);
+-}
+-
+ static void s5_temp_enable(struct s5_hwmon *hwmon)
+ {
+ 	u32 val = readl(hwmon->base + TEMP_CFG);
+@@ -113,7 +106,6 @@ static int s5_temp_probe(struct platform_device *pdev)
+ {
+ 	struct device *hwmon_dev;
+ 	struct s5_hwmon *hwmon;
+-	int ret;
+ 
+ 	hwmon = devm_kzalloc(&pdev->dev, sizeof(*hwmon), GFP_KERNEL);
+ 	if (!hwmon)
+@@ -123,19 +115,10 @@ static int s5_temp_probe(struct platform_device *pdev)
+ 	if (IS_ERR(hwmon->base))
+ 		return PTR_ERR(hwmon->base);
+ 
+-	hwmon->clk = devm_clk_get(&pdev->dev, NULL);
++	hwmon->clk = devm_clk_get_enabled(&pdev->dev, NULL);
+ 	if (IS_ERR(hwmon->clk))
+ 		return PTR_ERR(hwmon->clk);
+ 
+-	ret = clk_prepare_enable(hwmon->clk);
+-	if (ret)
+-		return ret;
+-
+-	ret = devm_add_action_or_reset(&pdev->dev, s5_temp_clk_disable,
+-				       hwmon->clk);
+-	if (ret)
+-		return ret;
+-
+ 	s5_temp_enable(hwmon);
+ 
+ 	hwmon_dev = devm_hwmon_device_register_with_info(&pdev->dev,
+-- 
+2.34.1
 
