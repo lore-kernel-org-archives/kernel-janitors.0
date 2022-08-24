@@ -2,41 +2,38 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A60CFC00140
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Aug 2022 08:06:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1553C00140
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Aug 2022 08:18:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235607AbiHXIGb (ORCPT
+        id S235608AbiHXISj (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Aug 2022 04:06:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46754 "EHLO
+        Wed, 24 Aug 2022 04:18:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235458AbiHXIG3 (ORCPT
+        with ESMTP id S235498AbiHXISd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Aug 2022 04:06:29 -0400
+        Wed, 24 Aug 2022 04:18:33 -0400
 Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 084886583D
-        for <kernel-janitors@vger.kernel.org>; Wed, 24 Aug 2022 01:06:28 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 446C8861C8
+        for <kernel-janitors@vger.kernel.org>; Wed, 24 Aug 2022 01:18:31 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id QlP5oD4V0XaejQlP5oyl50; Wed, 24 Aug 2022 10:06:26 +0200
+        id QlamoIOe1ez1rQlamoU0BV; Wed, 24 Aug 2022 10:18:29 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 24 Aug 2022 10:06:26 +0200
+X-ME-Date: Wed, 24 Aug 2022 10:18:29 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     Conor Dooley <conor.dooley@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH] tty: serial: meson: Use devm_clk_get_enabled() helper
-Date:   Wed, 24 Aug 2022 10:06:21 +0200
-Message-Id: <3f18638cb3cf08ed8817addca1402ed5e3bd3602.1661328361.git.christophe.jaillet@wanadoo.fr>
+        linux-riscv@lists.infradead.org, linux-rtc@vger.kernel.org
+Subject: [PATCH] rtc: mpfs: Use devm_clk_get_enabled() helper
+Date:   Wed, 24 Aug 2022 10:18:25 +0200
+Message-Id: <e55c959f2821a2c367a4c5de529a638b1cc6b8cd.1661329086.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -52,80 +49,60 @@ The devm_clk_get_enabled() helper:
 This simplifies the code, the error handling paths and avoid the need of
 a dedicated function used with devm_add_action_or_reset().
 
-That said, meson_uart_probe_clock() is now more or less the same as
-devm_clk_get_enabled(), so use this function directly instead.
+That said, mpfs_rtc_init_clk() is the same as devm_clk_get_enabled(), so
+use this function directly instead.
 
 This also fixes an (unlikely) unchecked devm_add_action_or_reset() error.
 
 Based on my test with allyesconfig, this reduces the .o size from:
    text	   data	    bss	    dec	    hex	filename
-   16350	   5016	    128	  21494	   53f6	drivers/tty/serial/meson_uart.o
+   5330	   2208	      0	   7538	   1d72	drivers/rtc/rtc-mpfs.o
 down to:
-   15415	   4784	    128	  20327	   4f67	drivers/tty/serial/meson_uart.o
+   5074	   2208	      0	   7282	   1c72	drivers/rtc/rtc-mpfs.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 devm_clk_get_enabled() is new and is part of 6.0-rc1
-
-If the message "couldn't enable clk\n" is of any use, it could be added
-in meson_uart_probe_clocks() with a dev_err_probe() call. It wouldn't be
-exactly the same meaning, but at least something would be logged.
 ---
- drivers/tty/serial/meson_uart.c | 29 +++--------------------------
- 1 file changed, 3 insertions(+), 26 deletions(-)
+ drivers/rtc/rtc-mpfs.c | 19 +------------------
+ 1 file changed, 1 insertion(+), 18 deletions(-)
 
-diff --git a/drivers/tty/serial/meson_uart.c b/drivers/tty/serial/meson_uart.c
-index 6c8db19fd572..26de08bf181e 100644
---- a/drivers/tty/serial/meson_uart.c
-+++ b/drivers/tty/serial/meson_uart.c
-@@ -667,29 +667,6 @@ static struct uart_driver meson_uart_driver = {
- 	.cons		= MESON_SERIAL_CONSOLE,
- };
+diff --git a/drivers/rtc/rtc-mpfs.c b/drivers/rtc/rtc-mpfs.c
+index 944ad1036516..2a479d44f198 100644
+--- a/drivers/rtc/rtc-mpfs.c
++++ b/drivers/rtc/rtc-mpfs.c
+@@ -193,23 +193,6 @@ static int mpfs_rtc_alarm_irq_enable(struct device *dev, unsigned int enabled)
+ 	return 0;
+ }
  
--static inline struct clk *meson_uart_probe_clock(struct device *dev,
--						 const char *id)
+-static inline struct clk *mpfs_rtc_init_clk(struct device *dev)
 -{
--	struct clk *clk = NULL;
+-	struct clk *clk;
 -	int ret;
 -
--	clk = devm_clk_get(dev, id);
+-	clk = devm_clk_get(dev, "rtc");
 -	if (IS_ERR(clk))
 -		return clk;
 -
 -	ret = clk_prepare_enable(clk);
--	if (ret) {
--		dev_err(dev, "couldn't enable clk\n");
+-	if (ret)
 -		return ERR_PTR(ret);
--	}
 -
--	devm_add_action_or_reset(dev,
--			(void(*)(void *))clk_disable_unprepare,
--			clk);
--
+-	devm_add_action_or_reset(dev, (void (*) (void *))clk_disable_unprepare, clk);
 -	return clk;
 -}
 -
- static int meson_uart_probe_clocks(struct platform_device *pdev,
- 				   struct uart_port *port)
+ static irqreturn_t mpfs_rtc_wakeup_irq_handler(int irq, void *dev)
  {
-@@ -697,15 +674,15 @@ static int meson_uart_probe_clocks(struct platform_device *pdev,
- 	struct clk *clk_pclk = NULL;
- 	struct clk *clk_baud = NULL;
+ 	struct mpfs_rtc_dev *rtcdev = dev;
+@@ -251,7 +234,7 @@ static int mpfs_rtc_probe(struct platform_device *pdev)
+ 	/* range is capped by alarm max, lower reg is 31:0 & upper is 10:0 */
+ 	rtcdev->rtc->range_max = GENMASK_ULL(42, 0);
  
--	clk_pclk = meson_uart_probe_clock(&pdev->dev, "pclk");
-+	clk_pclk = devm_clk_get_enabled(&pdev->dev, "pclk");
- 	if (IS_ERR(clk_pclk))
- 		return PTR_ERR(clk_pclk);
- 
--	clk_xtal = meson_uart_probe_clock(&pdev->dev, "xtal");
-+	clk_xtal = devm_clk_get_enabled(&pdev->dev, "xtal");
- 	if (IS_ERR(clk_xtal))
- 		return PTR_ERR(clk_xtal);
- 
--	clk_baud = meson_uart_probe_clock(&pdev->dev, "baud");
-+	clk_baud = devm_clk_get_enabled(&pdev->dev, "baud");
- 	if (IS_ERR(clk_baud))
- 		return PTR_ERR(clk_baud);
+-	clk = mpfs_rtc_init_clk(&pdev->dev);
++	clk = devm_clk_get_enabled(&pdev->dev, "rtc");
+ 	if (IS_ERR(clk))
+ 		return PTR_ERR(clk);
  
 -- 
 2.34.1
