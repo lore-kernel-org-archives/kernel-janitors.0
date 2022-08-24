@@ -2,103 +2,117 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F17C32793
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Aug 2022 07:30:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5930BC00140
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Aug 2022 07:55:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235133AbiHXHaV (ORCPT
+        id S234222AbiHXHz5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Aug 2022 03:30:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47802 "EHLO
+        Wed, 24 Aug 2022 03:55:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235506AbiHXHaJ (ORCPT
+        with ESMTP id S234736AbiHXHz4 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Aug 2022 03:30:09 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 105081AF10;
-        Wed, 24 Aug 2022 00:30:08 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id j21so26421308ejs.0;
-        Wed, 24 Aug 2022 00:30:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc;
-        bh=frTSU7CT1BzKyl2InjoRMay3h4xHHePZ35QzJ/J4sjo=;
-        b=BVW7Uv3LPCF4OiITg6jwY/hWzYJm2zmQ3+tyS0uUK0jTEuOsdLdOGe1TR8NzKaf95E
-         ijSAtOYkCSEqkR0itf5RFz68l0RUqnBaIX5mgTS1dHZLej3cTNkC2cgA3b1mFr7nBHGj
-         UE/L2E4IsAYzXC36PC4oZwy1RBnOUytrPgmYnXLSXorLTk1uWbk4SNOYngkr5rISySdi
-         JLMomZZEXZTrMPVttVXbnxBwCMgK6hVUwgrDivOXP8LRYDI/KbO1W+fAO5obJp+LpAGE
-         T7g4Xta3oaTeiteELHw3wOGd/mevPG75LpLC8TnEdW+F6Cay26/OOJNolh4/mxfYckrQ
-         zCnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=frTSU7CT1BzKyl2InjoRMay3h4xHHePZ35QzJ/J4sjo=;
-        b=azKSzew70rz34V5UFcY/fqgs8niAyNHDzm3Ukx2cWZkXejpDYkC0JWbJgeDXHUHdPR
-         UblglhAB2YhaFBj3skSJbkjHNYy40HvbFPh2V5rVZESyVmXRZn3DYMjRckhQyL5iJ+zV
-         9rICFEy8ncnIZLCdIXNjzYfuz0V35dzcis6ItRxklyxbxh62jZMZdpwoiKcumk9JN43x
-         Uv+62wDG9UzWPHyIBuDiLOOcfRIYxPjHoOqpSAFh9fZeA6RfDYDDsDDMIrIay+uGfwKe
-         mWCkTBAj1aMi5i74DjGwZB8kLje+ua34oYtBR8AifP0/ZoLFpQgvI1cHznTmBkyr7wGk
-         j0eQ==
-X-Gm-Message-State: ACgBeo3uWct61CHUgbSXS3a4Yy6d07LyCio9oYpJOGoQZhEI2jzJrcnv
-        X/s7lJIoP1OGGuULdIAjKqY=
-X-Google-Smtp-Source: AA6agR4rttHJ3vF3gaXt7ZgoL4xA3Vm4qmQtJTGKi29tFwmhMMZPk4Ay9kkPe8Mz7gGLfJg1L4dMJA==
-X-Received: by 2002:a17:907:2894:b0:73d:9072:ade5 with SMTP id em20-20020a170907289400b0073d9072ade5mr2081859ejc.2.1661326206434;
-        Wed, 24 Aug 2022 00:30:06 -0700 (PDT)
-Received: from felia.fritz.box (200116b82606de00690367f10e5093c9.dip.versatel-1u1.de. [2001:16b8:2606:de00:6903:67f1:e50:93c9])
-        by smtp.gmail.com with ESMTPSA id i23-20020aa7c9d7000000b004463b99bc09sm2531537edt.88.2022.08.24.00.30.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Aug 2022 00:30:05 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Jonathan Toppins <jtoppins@redhat.com>,
-        Jay Vosburgh <jay.vosburgh@canonical.com>,
-        Jay Vosburgh <j.vosburgh@gmail.com>,
-        Veaceslav Falico <vfalico@gmail.com>,
-        Andy Gospodarek <andy@greyhouse.net>, netdev@vger.kernel.org,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: rectify file entry in BONDING DRIVER
-Date:   Wed, 24 Aug 2022 09:29:45 +0200
-Message-Id: <20220824072945.28606-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 24 Aug 2022 03:55:56 -0400
+Received: from smtp.smtpout.orange.fr (smtp02.smtpout.orange.fr [80.12.242.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 849DA84ECF
+        for <kernel-janitors@vger.kernel.org>; Wed, 24 Aug 2022 00:55:53 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id QlEroa3jzPMmaQlEropAN6; Wed, 24 Aug 2022 09:55:50 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 24 Aug 2022 09:55:50 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-remoteproc@vger.kernel.org
+Subject: [PATCH] hwspinlock: sprd: Use devm_clk_get_enabled() helper
+Date:   Wed, 24 Aug 2022 09:55:47 +0200
+Message-Id: <f962d22bfdbd09133d8923152133eeff9213dcee.1661324434.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit c078290a2b76 ("selftests: include bonding tests into the kselftest
-infra") adds the bonding tests in the directory:
+The devm_clk_get_enabled() helper:
+   - calls devm_clk_get()
+   - calls clk_prepare_enable() and registers what is needed in order to
+     call clk_disable_unprepare() when needed, as a managed resource.
 
-  tools/testing/selftests/drivers/net/bonding/
+This simplifies the code, the error handling paths and avoid the need of
+a dedicated function used with devm_add_action_or_reset().
 
-The file entry in MAINTAINERS for the BONDING DRIVER however refers to:
+Based on my test with allyesconfig, this reduces the .o size from:
+   text	   data	    bss	    dec	    hex	filename
+   3423	   1528	      0	   4951	   1357	drivers/hwspinlock/sprd_hwspinlock.o
+down to:
+   3025	   1392	      0	   4417	   1141	drivers/hwspinlock/sprd_hwspinlock.o
 
-  tools/testing/selftests/net/bonding/
-
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken file pattern.
-
-Repair this file entry in BONDING DRIVER.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Jonathan, please ack.
-Jakub, please pick this on top of the commit above.
+devm_clk_get_enabled() is new and is part of 6.0-rc1
+---
+ drivers/hwspinlock/sprd_hwspinlock.c | 23 ++---------------------
+ 1 file changed, 2 insertions(+), 21 deletions(-)
 
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2ce15257725b..7d2141516758 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3671,7 +3671,7 @@ F:	Documentation/networking/bonding.rst
- F:	drivers/net/bonding/
- F:	include/net/bond*
- F:	include/uapi/linux/if_bonding.h
--F:	tools/testing/selftests/net/bonding/
-+F:	tools/testing/selftests/drivers/net/bonding/
+diff --git a/drivers/hwspinlock/sprd_hwspinlock.c b/drivers/hwspinlock/sprd_hwspinlock.c
+index 22e2ffb91743..cb37706f61be 100644
+--- a/drivers/hwspinlock/sprd_hwspinlock.c
++++ b/drivers/hwspinlock/sprd_hwspinlock.c
+@@ -76,18 +76,11 @@ static const struct hwspinlock_ops sprd_hwspinlock_ops = {
+ 	.relax = sprd_hwspinlock_relax,
+ };
  
- BOSCH SENSORTEC BMA400 ACCELEROMETER IIO DRIVER
- M:	Dan Robertson <dan@dlrobertson.com>
+-static void sprd_hwspinlock_disable(void *data)
+-{
+-	struct sprd_hwspinlock_dev *sprd_hwlock = data;
+-
+-	clk_disable_unprepare(sprd_hwlock->clk);
+-}
+-
+ static int sprd_hwspinlock_probe(struct platform_device *pdev)
+ {
+ 	struct sprd_hwspinlock_dev *sprd_hwlock;
+ 	struct hwspinlock *lock;
+-	int i, ret;
++	int i;
+ 
+ 	if (!pdev->dev.of_node)
+ 		return -ENODEV;
+@@ -102,24 +95,12 @@ static int sprd_hwspinlock_probe(struct platform_device *pdev)
+ 	if (IS_ERR(sprd_hwlock->base))
+ 		return PTR_ERR(sprd_hwlock->base);
+ 
+-	sprd_hwlock->clk = devm_clk_get(&pdev->dev, "enable");
++	sprd_hwlock->clk = devm_clk_get_enabled(&pdev->dev, "enable");
+ 	if (IS_ERR(sprd_hwlock->clk)) {
+ 		dev_err(&pdev->dev, "get hwspinlock clock failed!\n");
+ 		return PTR_ERR(sprd_hwlock->clk);
+ 	}
+ 
+-	ret = clk_prepare_enable(sprd_hwlock->clk);
+-	if (ret)
+-		return ret;
+-
+-	ret = devm_add_action_or_reset(&pdev->dev, sprd_hwspinlock_disable,
+-				       sprd_hwlock);
+-	if (ret) {
+-		dev_err(&pdev->dev,
+-			"Failed to add hwspinlock disable action\n");
+-		return ret;
+-	}
+-
+ 	/* set the hwspinlock to record user id to identify subsystems */
+ 	writel(HWSPINLOCK_USER_BITS, sprd_hwlock->base + HWSPINLOCK_RECCTRL);
+ 
 -- 
-2.17.1
+2.34.1
 
