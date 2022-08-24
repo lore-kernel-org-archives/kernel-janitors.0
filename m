@@ -2,39 +2,41 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5930BC00140
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Aug 2022 07:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A60CFC00140
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Aug 2022 08:06:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234222AbiHXHz5 (ORCPT
+        id S235607AbiHXIGb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Aug 2022 03:55:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38882 "EHLO
+        Wed, 24 Aug 2022 04:06:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234736AbiHXHz4 (ORCPT
+        with ESMTP id S235458AbiHXIG3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Aug 2022 03:55:56 -0400
-Received: from smtp.smtpout.orange.fr (smtp02.smtpout.orange.fr [80.12.242.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 849DA84ECF
-        for <kernel-janitors@vger.kernel.org>; Wed, 24 Aug 2022 00:55:53 -0700 (PDT)
+        Wed, 24 Aug 2022 04:06:29 -0400
+Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 084886583D
+        for <kernel-janitors@vger.kernel.org>; Wed, 24 Aug 2022 01:06:28 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id QlEroa3jzPMmaQlEropAN6; Wed, 24 Aug 2022 09:55:50 +0200
+        id QlP5oD4V0XaejQlP5oyl50; Wed, 24 Aug 2022 10:06:26 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 24 Aug 2022 09:55:50 +0200
+X-ME-Date: Wed, 24 Aug 2022 10:06:26 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-remoteproc@vger.kernel.org
-Subject: [PATCH] hwspinlock: sprd: Use devm_clk_get_enabled() helper
-Date:   Wed, 24 Aug 2022 09:55:47 +0200
-Message-Id: <f962d22bfdbd09133d8923152133eeff9213dcee.1661324434.git.christophe.jaillet@wanadoo.fr>
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH] tty: serial: meson: Use devm_clk_get_enabled() helper
+Date:   Wed, 24 Aug 2022 10:06:21 +0200
+Message-Id: <3f18638cb3cf08ed8817addca1402ed5e3bd3602.1661328361.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -50,68 +52,80 @@ The devm_clk_get_enabled() helper:
 This simplifies the code, the error handling paths and avoid the need of
 a dedicated function used with devm_add_action_or_reset().
 
+That said, meson_uart_probe_clock() is now more or less the same as
+devm_clk_get_enabled(), so use this function directly instead.
+
+This also fixes an (unlikely) unchecked devm_add_action_or_reset() error.
+
 Based on my test with allyesconfig, this reduces the .o size from:
    text	   data	    bss	    dec	    hex	filename
-   3423	   1528	      0	   4951	   1357	drivers/hwspinlock/sprd_hwspinlock.o
+   16350	   5016	    128	  21494	   53f6	drivers/tty/serial/meson_uart.o
 down to:
-   3025	   1392	      0	   4417	   1141	drivers/hwspinlock/sprd_hwspinlock.o
+   15415	   4784	    128	  20327	   4f67	drivers/tty/serial/meson_uart.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 devm_clk_get_enabled() is new and is part of 6.0-rc1
----
- drivers/hwspinlock/sprd_hwspinlock.c | 23 ++---------------------
- 1 file changed, 2 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/hwspinlock/sprd_hwspinlock.c b/drivers/hwspinlock/sprd_hwspinlock.c
-index 22e2ffb91743..cb37706f61be 100644
---- a/drivers/hwspinlock/sprd_hwspinlock.c
-+++ b/drivers/hwspinlock/sprd_hwspinlock.c
-@@ -76,18 +76,11 @@ static const struct hwspinlock_ops sprd_hwspinlock_ops = {
- 	.relax = sprd_hwspinlock_relax,
+If the message "couldn't enable clk\n" is of any use, it could be added
+in meson_uart_probe_clocks() with a dev_err_probe() call. It wouldn't be
+exactly the same meaning, but at least something would be logged.
+---
+ drivers/tty/serial/meson_uart.c | 29 +++--------------------------
+ 1 file changed, 3 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/tty/serial/meson_uart.c b/drivers/tty/serial/meson_uart.c
+index 6c8db19fd572..26de08bf181e 100644
+--- a/drivers/tty/serial/meson_uart.c
++++ b/drivers/tty/serial/meson_uart.c
+@@ -667,29 +667,6 @@ static struct uart_driver meson_uart_driver = {
+ 	.cons		= MESON_SERIAL_CONSOLE,
  };
  
--static void sprd_hwspinlock_disable(void *data)
+-static inline struct clk *meson_uart_probe_clock(struct device *dev,
+-						 const char *id)
 -{
--	struct sprd_hwspinlock_dev *sprd_hwlock = data;
+-	struct clk *clk = NULL;
+-	int ret;
 -
--	clk_disable_unprepare(sprd_hwlock->clk);
--}
+-	clk = devm_clk_get(dev, id);
+-	if (IS_ERR(clk))
+-		return clk;
 -
- static int sprd_hwspinlock_probe(struct platform_device *pdev)
- {
- 	struct sprd_hwspinlock_dev *sprd_hwlock;
- 	struct hwspinlock *lock;
--	int i, ret;
-+	int i;
- 
- 	if (!pdev->dev.of_node)
- 		return -ENODEV;
-@@ -102,24 +95,12 @@ static int sprd_hwspinlock_probe(struct platform_device *pdev)
- 	if (IS_ERR(sprd_hwlock->base))
- 		return PTR_ERR(sprd_hwlock->base);
- 
--	sprd_hwlock->clk = devm_clk_get(&pdev->dev, "enable");
-+	sprd_hwlock->clk = devm_clk_get_enabled(&pdev->dev, "enable");
- 	if (IS_ERR(sprd_hwlock->clk)) {
- 		dev_err(&pdev->dev, "get hwspinlock clock failed!\n");
- 		return PTR_ERR(sprd_hwlock->clk);
- 	}
- 
--	ret = clk_prepare_enable(sprd_hwlock->clk);
--	if (ret)
--		return ret;
--
--	ret = devm_add_action_or_reset(&pdev->dev, sprd_hwspinlock_disable,
--				       sprd_hwlock);
+-	ret = clk_prepare_enable(clk);
 -	if (ret) {
--		dev_err(&pdev->dev,
--			"Failed to add hwspinlock disable action\n");
--		return ret;
+-		dev_err(dev, "couldn't enable clk\n");
+-		return ERR_PTR(ret);
 -	}
 -
- 	/* set the hwspinlock to record user id to identify subsystems */
- 	writel(HWSPINLOCK_USER_BITS, sprd_hwlock->base + HWSPINLOCK_RECCTRL);
+-	devm_add_action_or_reset(dev,
+-			(void(*)(void *))clk_disable_unprepare,
+-			clk);
+-
+-	return clk;
+-}
+-
+ static int meson_uart_probe_clocks(struct platform_device *pdev,
+ 				   struct uart_port *port)
+ {
+@@ -697,15 +674,15 @@ static int meson_uart_probe_clocks(struct platform_device *pdev,
+ 	struct clk *clk_pclk = NULL;
+ 	struct clk *clk_baud = NULL;
+ 
+-	clk_pclk = meson_uart_probe_clock(&pdev->dev, "pclk");
++	clk_pclk = devm_clk_get_enabled(&pdev->dev, "pclk");
+ 	if (IS_ERR(clk_pclk))
+ 		return PTR_ERR(clk_pclk);
+ 
+-	clk_xtal = meson_uart_probe_clock(&pdev->dev, "xtal");
++	clk_xtal = devm_clk_get_enabled(&pdev->dev, "xtal");
+ 	if (IS_ERR(clk_xtal))
+ 		return PTR_ERR(clk_xtal);
+ 
+-	clk_baud = meson_uart_probe_clock(&pdev->dev, "baud");
++	clk_baud = devm_clk_get_enabled(&pdev->dev, "baud");
+ 	if (IS_ERR(clk_baud))
+ 		return PTR_ERR(clk_baud);
  
 -- 
 2.34.1
