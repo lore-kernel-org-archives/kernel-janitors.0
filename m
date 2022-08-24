@@ -2,114 +2,166 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B255C32796
-	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Aug 2022 10:27:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1806FC32796
+	for <kernel-janitors@archiver.kernel.org>; Wed, 24 Aug 2022 10:53:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236885AbiHXK05 (ORCPT
+        id S236248AbiHXKxa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 24 Aug 2022 06:26:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38784 "EHLO
+        Wed, 24 Aug 2022 06:53:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236867AbiHXK0h (ORCPT
+        with ESMTP id S234115AbiHXKx3 (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 24 Aug 2022 06:26:37 -0400
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 913567F12E
-        for <kernel-janitors@vger.kernel.org>; Wed, 24 Aug 2022 03:25:19 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id QnZToXm7hBDYDQnZUoinzN; Wed, 24 Aug 2022 12:25:17 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 24 Aug 2022 12:25:17 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        UNGLinuxDriver@microchip.com
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] hwmon: (sparx5) Use devm_clk_get_enabled() helper
-Date:   Wed, 24 Aug 2022 12:25:13 +0200
-Message-Id: <cfe4c965074b5ecbe03830b05e038b4594c7b970.1661336689.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Wed, 24 Aug 2022 06:53:29 -0400
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::223])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD2123C8E1;
+        Wed, 24 Aug 2022 03:53:27 -0700 (PDT)
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id EF58A60008;
+        Wed, 24 Aug 2022 10:53:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1661338404;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wWhY07SBJoBBrYsQWckDh4HVuRXZ5NEqxZCLw/HYK4o=;
+        b=XC5u1hqmTD48Pjx9ydsP4Lkm6A6OUg420rdBtQOCgaujq4WUkcoADDxGgyOas2RM+pfva6
+        OAIn5ogyolHiDbTykHOAlnZYAochDBuolz4zh3uA928SVz1MxxpskZCYd2rjOv9TEQpGAd
+        lLv9pU2yRmc3I9+Yshytw+fw+VhMmPbK+Qf8Zwt+eiOCboDLg+PQ2pDz1fet61OdKduPt1
+        gXk8j7gp+AAbrov2ww/qWoksgiuS5me0Lb9WWv4XHiizy+Nss1FavcWH9mTp9LWGk1XZ/q
+        KIoPSSfXmc7S5nhVeTUw+rROISaJeHWeCXsvjuWLHbWoLLb5ZIeLaNmBCdlBwQ==
+Date:   Wed, 24 Aug 2022 12:53:23 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Conor.Dooley@microchip.com
+Cc:     christophe.jaillet@wanadoo.fr, Daire.McNamara@microchip.com,
+        a.zummo@towertech.it, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-rtc@vger.kernel.org
+Subject: Re: [PATCH] rtc: mpfs: Use devm_clk_get_enabled() helper
+Message-ID: <YwYDI04TDD0RWn2B@mail.local>
+References: <e55c959f2821a2c367a4c5de529a638b1cc6b8cd.1661329086.git.christophe.jaillet@wanadoo.fr>
+ <f76fb247-5160-61ed-a0a3-037d2f40d2f9@microchip.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f76fb247-5160-61ed-a0a3-037d2f40d2f9@microchip.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The devm_clk_get_enabled() helper:
-   - calls devm_clk_get()
-   - calls clk_prepare_enable() and registers what is needed in order to
-     call clk_disable_unprepare() when needed, as a managed resource.
+On 24/08/2022 09:58:35+0000, Conor.Dooley@microchip.com wrote:
+> Hey Christope,
+> Thanks for your patch.
+> 
+> On 24/08/2022 09:18, Christophe JAILLET wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> > 
+> > The devm_clk_get_enabled() helper:
+> >     - calls devm_clk_get()
+> >     - calls clk_prepare_enable() and registers what is needed in order to
+> >       call clk_disable_unprepare() when needed, as a managed resource.
+> > 
+> > This simplifies the code, the error handling paths and avoid the need of
+> > a dedicated function used with devm_add_action_or_reset().
+> > 
+> > That said, mpfs_rtc_init_clk() is the same as devm_clk_get_enabled(), so
+> > use this function directly instead.
+> 
+> Firstly, I think something is missing from the commit description here.
+> devm_clk_get_enabled() is not just a blanket "use this instead of get(),
+> prepare_enable()" & is only intended for cases where the clock would
+> be kept prepared or enabled for the whole lifetime of the driver. I think
+> it is worth pointing that out to help people who do not keep up with
+> every helper that is added.
+> 
+> I had a bit of a look through the documentation to see if the block would
+> keep track of time without the AHB clock enabled, but it does not seem to.
+> There is no reason to turn off the clock here (in fact it would seem
+> counter productive to disable it..) so it looks like the shoe fits in that
+> regard.
 
-This simplifies the code, the error handling paths and avoid the need of
-a dedicated function used with devm_add_action_or_reset().
+This would be very surprising that it doesn't keep the time with the AHB
+clock disabled, this would mean the RTC loses the time when the SoC is
+not powered. or is the AHB clock also in the always-on domain?
 
-Based on my test with allyesconfig, this reduces the .o size from:
-   text	   data	    bss	    dec	    hex	filename
-   2419	   1472	      0	   3891	    f33	drivers/hwmon/sparx5-temp.o
-down to:
-   2155	   1472	      0	   3627	    e2b	drivers/hwmon/sparx5-temp.o
+> 
+> However...
+> 
+> > 
+> > This also fixes an (unlikely) unchecked devm_add_action_or_reset() error.
+> > 
+> > Based on my test with allyesconfig, this reduces the .o size from:
+> >     text    data     bss     dec     hex filename
+> >     5330    2208       0    7538    1d72 drivers/rtc/rtc-mpfs.o
+> > down to:
+> >     5074    2208       0    7282    1c72 drivers/rtc/rtc-mpfs.o
+> > 
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > ---
+> > devm_clk_get_enabled() is new and is part of 6.0-rc1
+> > ---
+> >   drivers/rtc/rtc-mpfs.c | 19 +------------------
+> >   1 file changed, 1 insertion(+), 18 deletions(-)
+> > 
+> > diff --git a/drivers/rtc/rtc-mpfs.c b/drivers/rtc/rtc-mpfs.c
+> > index 944ad1036516..2a479d44f198 100644
+> > --- a/drivers/rtc/rtc-mpfs.c
+> > +++ b/drivers/rtc/rtc-mpfs.c
+> > @@ -193,23 +193,6 @@ static int mpfs_rtc_alarm_irq_enable(struct device *dev, unsigned int enabled)
+> >          return 0;
+> >   }
+> > 
+> > -static inline struct clk *mpfs_rtc_init_clk(struct device *dev)
+> > -{
+> > -       struct clk *clk;
+> > -       int ret;
+> > -
+> > -       clk = devm_clk_get(dev, "rtc");
+> > -       if (IS_ERR(clk))
+> > -               return clk;
+> > -
+> > -       ret = clk_prepare_enable(clk);
+> > -       if (ret)
+> > -               return ERR_PTR(ret);
+> > -
+> > -       devm_add_action_or_reset(dev, (void (*) (void *))clk_disable_unprepare, clk);
+> 
+> ... this bit here concerns me a little. I don't think we should be
+> registering a callback here at all - if we power down Linux this is
+> going to end up stopping the RTC isn't it?
+> 
+> I think this is left over from the v1 driver submission that reset
+> the block during probe & should be removed.
+> 
+> Thanks,
+> Conor.
+> 
+> > -       return clk;
+> > -}
+> > -
+> >   static irqreturn_t mpfs_rtc_wakeup_irq_handler(int irq, void *dev)
+> >   {
+> >          struct mpfs_rtc_dev *rtcdev = dev;
+> > @@ -251,7 +234,7 @@ static int mpfs_rtc_probe(struct platform_device *pdev)
+> >          /* range is capped by alarm max, lower reg is 31:0 & upper is 10:0 */
+> >          rtcdev->rtc->range_max = GENMASK_ULL(42, 0);
+> > 
+> > -       clk = mpfs_rtc_init_clk(&pdev->dev);
+> > +       clk = devm_clk_get_enabled(&pdev->dev, "rtc");
+> >          if (IS_ERR(clk))
+> >                  return PTR_ERR(clk);
+> > 
+> > --
+> > 2.34.1
+> > 
+> > 
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv
+> 
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-devm_clk_get_enabled() is new and is part of 6.0-rc1
----
- drivers/hwmon/sparx5-temp.c | 19 +------------------
- 1 file changed, 1 insertion(+), 18 deletions(-)
-
-diff --git a/drivers/hwmon/sparx5-temp.c b/drivers/hwmon/sparx5-temp.c
-index 98be48e3a22a..04fd8505e5d6 100644
---- a/drivers/hwmon/sparx5-temp.c
-+++ b/drivers/hwmon/sparx5-temp.c
-@@ -26,13 +26,6 @@ struct s5_hwmon {
- 	struct clk *clk;
- };
- 
--static void s5_temp_clk_disable(void *data)
--{
--	struct clk *clk = data;
--
--	clk_disable_unprepare(clk);
--}
--
- static void s5_temp_enable(struct s5_hwmon *hwmon)
- {
- 	u32 val = readl(hwmon->base + TEMP_CFG);
-@@ -113,7 +106,6 @@ static int s5_temp_probe(struct platform_device *pdev)
- {
- 	struct device *hwmon_dev;
- 	struct s5_hwmon *hwmon;
--	int ret;
- 
- 	hwmon = devm_kzalloc(&pdev->dev, sizeof(*hwmon), GFP_KERNEL);
- 	if (!hwmon)
-@@ -123,19 +115,10 @@ static int s5_temp_probe(struct platform_device *pdev)
- 	if (IS_ERR(hwmon->base))
- 		return PTR_ERR(hwmon->base);
- 
--	hwmon->clk = devm_clk_get(&pdev->dev, NULL);
-+	hwmon->clk = devm_clk_get_enabled(&pdev->dev, NULL);
- 	if (IS_ERR(hwmon->clk))
- 		return PTR_ERR(hwmon->clk);
- 
--	ret = clk_prepare_enable(hwmon->clk);
--	if (ret)
--		return ret;
--
--	ret = devm_add_action_or_reset(&pdev->dev, s5_temp_clk_disable,
--				       hwmon->clk);
--	if (ret)
--		return ret;
--
- 	s5_temp_enable(hwmon);
- 
- 	hwmon_dev = devm_hwmon_device_register_with_info(&pdev->dev,
 -- 
-2.34.1
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
