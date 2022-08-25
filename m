@@ -2,89 +2,141 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65CCAC6498F
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Aug 2022 15:20:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 658D7ECAA25
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Aug 2022 17:20:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236857AbiHYPU4 (ORCPT
+        id S239344AbiHYRUL (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 25 Aug 2022 11:20:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58278 "EHLO
+        Thu, 25 Aug 2022 13:20:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229599AbiHYPUz (ORCPT
+        with ESMTP id S241794AbiHYRUG (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 25 Aug 2022 11:20:55 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 917E65E573;
-        Thu, 25 Aug 2022 08:20:54 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id y3so13839153ejc.1;
-        Thu, 25 Aug 2022 08:20:54 -0700 (PDT)
+        Thu, 25 Aug 2022 13:20:06 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68014B7EA
+        for <kernel-janitors@vger.kernel.org>; Thu, 25 Aug 2022 10:20:03 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id z25so29149732lfr.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 25 Aug 2022 10:20:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc;
-        bh=WZ8MQtJvC/KpySjQ3aROp2zGmulLJPZErMxtsAeIFY8=;
-        b=leK+enpXEtB2wG033uP8ZGyjWLkAvT6bOnLKtKm8FQqsLCEGaMyEdAmDY+RbiC4b2Y
-         7LiDN4/bZSuLYDOWkVIRRlGcgIjeVDx52aCik96/+w2Wb7o9BiD8sOSbcoe1ahmxGrR/
-         oKQZuVDMci+Qm/zXV+8/KjxSe9QRX7gka2oF+Puo2SfvFiJXmmVQe+JH8IXB48BJMnSV
-         0Zehu0CRsEoAYLSBRMNxGZR0fVrUv/Xq5dnDDL7HTd7KeJYBsrDHxjaaxBEbOIVpbUeI
-         e8wUJSjGRWFZaJ1/2Ahr7jePwlaobNoN1dMpLLAHc5XDryTBRKlkgWDSQt/SUPi7msm0
-         Nu/w==
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=3RxVSxGedQ4BVA173MTZ77OwZd2QHzVXFfeNvoFT8hM=;
+        b=NIoZpAJR1O0BB7LoWxrGL/PLQGtbk7Re/ajyAo/TVFdR513UEmFHV2F0/NQHYT4ek1
+         zF4xCY5ATX5lCpaS8SDzhawFNO9Nf/xk5a3KcXEJW8NFyEEFzwkv8QQ3E93vJv1hC7Fw
+         wS3gYaac8w74pHP9zHqb+76JVP7+60qoJhQ6DO4imMQZjkPwewvJ/ioaS9aYZpsZszp2
+         HrHvaQXauZ5clGc3/gQEsA/aA3/2TOoEZpcfRA+pzCxr1DajVeCe5aTIb0uXjqiCmE3J
+         2Dy3RU/mA2141UpS1txR2PsBkba9XpUNwW7yEhAufXwLviJCoA1sQrpqln6V1veVeUkn
+         dIoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
-        bh=WZ8MQtJvC/KpySjQ3aROp2zGmulLJPZErMxtsAeIFY8=;
-        b=cCfWKZjkQvZWXRVbNPvTjiOjjsodH8l4UtVHDPnxvo2SkcRbfWItRLbfj0Ptt9jgOK
-         ATYepuEu1Dh6Sq4D/haUix/yskAI8SZgoUY3GUF0LmaeHvHWbsJ7DnmfPKIAyDfHMNDQ
-         n0INaozOln7C40SLxP0uh2C80RYt0yJpD2nhrnxKgdIBfde65qb+N8wdqiuhFi6JS0yo
-         Px6xdPaBUnLt6NcBR7v9wUSeOwnxUPXFIrm097w+SFLtrDDyBv1i31UtHfnYtO5Z+hm5
-         8uUmkKlLY/h+Pu07Q3hZYvCsM5egAdOwhiJt8VtM5Ww6lO2aUsHHXJEiErYzq0sK+huw
-         uYUA==
-X-Gm-Message-State: ACgBeo0rYddu3WtRCjxmQAfbd/8FpLRHpRBYuVtvaUKIb5CmdTOCuGNy
-        ftbQl0oW/G1Sz0NJw9eoFKRKAa+C45M=
-X-Google-Smtp-Source: AA6agR6i4DjhSEw5Gp1aeR1LlFSo+e1tW7M06AcHbsbz4bR53X/cpd8jeUi0ALEfMH444LQ7sCPKYw==
-X-Received: by 2002:a17:907:6eaa:b0:73d:81db:64d0 with SMTP id sh42-20020a1709076eaa00b0073d81db64d0mr2745039ejc.334.1661440853040;
-        Thu, 25 Aug 2022 08:20:53 -0700 (PDT)
-Received: from felia.fritz.box (200116b8261c3400c04988a24c54b107.dip.versatel-1u1.de. [2001:16b8:261c:3400:c049:88a2:4c54:b107])
-        by smtp.gmail.com with ESMTPSA id a24-20020a170906369800b00730979f568fsm2566580ejc.150.2022.08.25.08.20.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Aug 2022 08:20:52 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-spdx@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: add spdxexclude to LICENSES and SPDX stuff
-Date:   Thu, 25 Aug 2022 17:20:29 +0200
-Message-Id: <20220825152029.12660-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=3RxVSxGedQ4BVA173MTZ77OwZd2QHzVXFfeNvoFT8hM=;
+        b=cRKky09rQ9B6kRGYMI/srWPUOXlQxrbnpq5I9YAMVOXipS6+KmJZa4IxTu8zwEpUA3
+         EX8TJ1cOQC/mK0x0cimjr9tw1g7G4n0ZV9kc7wth55/gu7/fXfoE9POpVX46KwEdDoPS
+         rHRqc2FVXDzT5pK1Rnt2XIn90hR2PSFoKi2qFV4idEi75Cz8WgZXXsVcP3eO5tX1Ki4D
+         I4mCi6nhz6vLv0ngO1T+xzntWmrYIWowX9khVgxKS35AdOn/0AePxEmz98u08R9Dmx/G
+         qosJEJCBCs86wMKS2R+iw40XEMp4ngJm3hadW9BbQjpd2Thkge96fC41jbxjauF0eQV8
+         WT3g==
+X-Gm-Message-State: ACgBeo00RpBTyqIau1ig5XrYd5eKVta5Wb94TaKuc6wTep/7vnlE0QCI
+        uhUdUr88eucig7w+Yg/wz3rTTNGzONDKs3oMRyyeAA==
+X-Google-Smtp-Source: AA6agR67zaeSCHox9rh4ibHqzzyxkXfCRBtY5Nv6Wc5e77Q+sHxQghMJNgEvmuNzTifZrLzcJDcchuX54X2nH6C7oRo=
+X-Received: by 2002:a05:6512:33d6:b0:492:c423:1672 with SMTP id
+ d22-20020a05651233d600b00492c4231672mr1516211lfg.432.1661448001581; Thu, 25
+ Aug 2022 10:20:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220825091517.30842-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220825091517.30842-1-lukas.bulwahn@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 25 Aug 2022 10:19:49 -0700
+Message-ID: <CAKwvOdkY=ye4PKi8KwP-ux73pwZs+J_Oq3wR7ep8S81=aCWtqA@mail.gmail.com>
+Subject: Re: [PATCH] scripts: remove obsolete gcc-ld script
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Jiri Slaby <jirislaby@kernel.org>
+Cc:     Andi Kleen <ak@linux.intel.com>,
+        "H . Peter Anvin" <hpa@linux.intel.com>,
+        linux-kbuild@vger.kernel.org,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit 0509b270a358 ("scripts/spdxcheck: Put excluded files and directories
-into a separate file") moved excluded files to the new file
-scripts/spdxexclude, but did not adjust the MAINTAINERS section. The file
-scripts/spdxexclude clearly belongs to LICENSES and SPDX stuff.
++ Jiri in case this needs to be carried downstream.
 
-Add a corresponding file entry.
+On Thu, Aug 25, 2022 at 2:15 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> Since commit 8564ed2b3888 ("Kbuild, lto: Add a gcc-ld script to let run gcc
+> as ld") in 2014, there was not specific work on this the gcc-ld script
+> other than treewide clean-ups.
+>
+> There are no users within the kernel tree, and probably no out-of-tree
+> users either, and there is no dedicated maintainer in MAINTAINERS.
+>
+> Delete this obsolete gcc-ld script.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+No callers in-tree; happy to bring it back though should there later
+be. Thanks for the patch.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8022a4dd2ef3..b1b6e6ee2a0c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11622,6 +11622,7 @@ F:	Documentation/process/license-rules.rst
- F:	LICENSES/
- F:	scripts/spdxcheck-test.sh
- F:	scripts/spdxcheck.py
-+F:	scripts/spdxexclude
- 
- LINEAR RANGES HELPERS
- M:	Mark Brown <broonie@kernel.org>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+
+> ---
+> If there are no objections, I would like to get this patch included
+> through the kbuild tree.
+>
+> Masahiro-san, please pick this patch.
+>
+>  scripts/gcc-ld | 30 ------------------------------
+>  1 file changed, 30 deletions(-)
+>  delete mode 100755 scripts/gcc-ld
+>
+> diff --git a/scripts/gcc-ld b/scripts/gcc-ld
+> deleted file mode 100755
+> index 997b818c3962..000000000000
+> --- a/scripts/gcc-ld
+> +++ /dev/null
+> @@ -1,30 +0,0 @@
+> -#!/bin/sh
+> -# SPDX-License-Identifier: GPL-2.0
+> -# run gcc with ld options
+> -# used as a wrapper to execute link time optimizations
+> -# yes virginia, this is not pretty
+> -
+> -ARGS="-nostdlib"
+> -
+> -while [ "$1" != "" ] ; do
+> -       case "$1" in
+> -       -save-temps|-m32|-m64) N="$1" ;;
+> -       -r) N="$1" ;;
+> -       -[Wg]*) N="$1" ;;
+> -       -[olv]|-[Ofd]*|-nostdlib) N="$1" ;;
+> -       --end-group|--start-group)
+> -                N="-Wl,$1" ;;
+> -       -[RTFGhIezcbyYu]*|\
+> ---script|--defsym|-init|-Map|--oformat|-rpath|\
+> --rpath-link|--sort-section|--section-start|-Tbss|-Tdata|-Ttext|\
+> ---version-script|--dynamic-list|--version-exports-symbol|--wrap|-m)
+> -               A="$1" ; shift ; N="-Wl,$A,$1" ;;
+> -       -[m]*) N="$1" ;;
+> -       -*) N="-Wl,$1" ;;
+> -       *)  N="$1" ;;
+> -       esac
+> -       ARGS="$ARGS $N"
+> -       shift
+> -done
+> -
+> -exec $CC $ARGS
+> --
+> 2.17.1
+>
+
+
 -- 
-2.17.1
-
+Thanks,
+~Nick Desaulniers
