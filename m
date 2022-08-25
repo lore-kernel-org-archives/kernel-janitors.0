@@ -2,47 +2,49 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F11FAC3F6B0
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Aug 2022 09:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70EE8C04AA5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Aug 2022 09:32:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240140AbiHYJ1K (ORCPT
+        id S240355AbiHYJcy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 25 Aug 2022 05:27:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41232 "EHLO
+        Thu, 25 Aug 2022 05:32:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239950AbiHYJ1A (ORCPT
+        with ESMTP id S240353AbiHYJcw (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 25 Aug 2022 05:27:00 -0400
+        Thu, 25 Aug 2022 05:32:52 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E488A6E2EB;
-        Thu, 25 Aug 2022 02:26:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E1B5979C0;
+        Thu, 25 Aug 2022 02:32:50 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 02777B827CF;
-        Thu, 25 Aug 2022 09:26:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B3D8C433D7;
-        Thu, 25 Aug 2022 09:26:42 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4E3B0B827B0;
+        Thu, 25 Aug 2022 09:32:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A66CC433C1;
+        Thu, 25 Aug 2022 09:32:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661419603;
-        bh=6LFyQ6YlD5on8u6gveMR+kD0JxrBIJfsAknJq3NW5IU=;
+        s=k20201202; t=1661419968;
+        bh=giBw2Ge0kvHTOOLhLqERownbmN1JP1/B1ngNjLMJhdY=;
         h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=l9fek1rf931eJmOQYz/shO6Sb/3dxt0C+PY5gd4hS4f0JHL6z0aI2lLpNgakP+QFd
-         VBBZjj/VGoT/NfzMJJcS+oVU8IzS1KGbTPCIusQpJfqqIlhaQtTlAVOW73P8ZYV5AJ
-         m2oGkcIsen06ASbZIkH74t91iaUbi66XQiQedZO2uNcyQ+XvK4lNCll8ard9D/wiV+
-         +AvKrPMvmaFcvFmW44qh1hXQ9ZVrQ7jvkdURSGv3asOAA8Wm2cB8o9IFDYIBmB4w8r
-         14y4WvI1/pVmohtXt8epdITYeZZZczuyc89/fdp7INUSxqQ0PpI8GjS0qZkDEPswT1
-         AR+f/DJ448eNg==
-Date:   Thu, 25 Aug 2022 11:26:39 +0200 (CEST)
+        b=Ko+J6tJlz7Plt3yat03TlKHnfmjpmm4/iE2BiAqKg2Jzx6xv4rSd90Qtgw6VvHbPM
+         WTHLZyb1TmokNdBd1F6g25IFez9/w09s0pDZ3QyNxwFKM/XlYLMubq2Jt6btYI8Hl4
+         c1xddBZNgiiD9jwe+R837yrPtEnmpRF6aYM/24Q4fOhuSJrkuCXQ6Z3z7k6VYNGCZR
+         md+rCcFhRDm4cfLHPxTrL9hOfUXGGeNHlG+0QNXEcsUc/fI8yKliEaBVTOX2agKNuM
+         vti12jfN+a790e1baFNSRE+dYPmiCLei187HpUqYMZEs0Pz5bscrCG4jXeVCeTaXFI
+         8uySO+cVOgp0g==
+Date:   Thu, 25 Aug 2022 11:32:44 +0200 (CEST)
 From:   Jiri Kosina <jikos@kernel.org>
 To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+cc:     Ping Cheng <ping.cheng@wacom.com>,
+        Jason Gerecke <jason.gerecke@wacom.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
         linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-input@vger.kernel.org
-Subject: Re: [PATCH] HID: cp2112: Remove some dead code
-In-Reply-To: <6ee2132c415db2fc90e7fa2106db427a914cc566.1655563907.git.christophe.jaillet@wanadoo.fr>
-Message-ID: <nycvar.YFH.7.76.2208251126010.19850@cbobk.fhfr.pm>
-References: <6ee2132c415db2fc90e7fa2106db427a914cc566.1655563907.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v2] HID: wacom: Simplify comments
+In-Reply-To: <7eec2e24a231510577647853a32bddb89a762128.1659468931.git.christophe.jaillet@wanadoo.fr>
+Message-ID: <nycvar.YFH.7.76.2208251132330.19850@cbobk.fhfr.pm>
+References: <7eec2e24a231510577647853a32bddb89a762128.1659468931.git.christophe.jaillet@wanadoo.fr>
 User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -50,26 +52,20 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 18 Jun 2022, Christophe JAILLET wrote:
+On Tue, 2 Aug 2022, Christophe JAILLET wrote:
 
-> Commit 13de9cca514e ("HID: cp2112: add IRQ chip handling") has introduced
-> cp2112_allocate_irq() that seems to be unused since 2016.
+> Remove a left-over from commit 2874c5fd2842 ("treewide: Replace GPLv2
+> boilerplate/reference with SPDX - rule 152").
+> An empty comment block can be removed.
 > 
-> Remove it, remove the associated resources and part of the remove()
-> function that frees the resources allocated in cp2112_allocate_irq().
+> While at it remove, also remove what is supposed to be the path/filename of
+> the file.
+> This is really low value... and wrong since commit 471d17148c8b
+> ("Input: wacom - move the USB (now hid) Wacom driver in drivers/hid")
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only.
-> 
-> Maybe the issue is completely elsewhere and the probe() should call
-> cp2112_allocate_irq() in some cases.
 
-Benjamin, could you please take a look? Apparently you were aware of the 
-code being dead due to the __maybe_unused annotation ... :) What was the 
-point?
-
-Thanks,
+Applied, thank you.
 
 -- 
 Jiri Kosina
