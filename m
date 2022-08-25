@@ -2,72 +2,121 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70EE8C04AA5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Aug 2022 09:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87FC3C04AA5
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Aug 2022 10:08:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240355AbiHYJcy (ORCPT
+        id S240780AbiHYKIc (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 25 Aug 2022 05:32:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56424 "EHLO
+        Thu, 25 Aug 2022 06:08:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240353AbiHYJcw (ORCPT
+        with ESMTP id S236657AbiHYKIa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 25 Aug 2022 05:32:52 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E1B5979C0;
-        Thu, 25 Aug 2022 02:32:50 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4E3B0B827B0;
-        Thu, 25 Aug 2022 09:32:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A66CC433C1;
-        Thu, 25 Aug 2022 09:32:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661419968;
-        bh=giBw2Ge0kvHTOOLhLqERownbmN1JP1/B1ngNjLMJhdY=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=Ko+J6tJlz7Plt3yat03TlKHnfmjpmm4/iE2BiAqKg2Jzx6xv4rSd90Qtgw6VvHbPM
-         WTHLZyb1TmokNdBd1F6g25IFez9/w09s0pDZ3QyNxwFKM/XlYLMubq2Jt6btYI8Hl4
-         c1xddBZNgiiD9jwe+R837yrPtEnmpRF6aYM/24Q4fOhuSJrkuCXQ6Z3z7k6VYNGCZR
-         md+rCcFhRDm4cfLHPxTrL9hOfUXGGeNHlG+0QNXEcsUc/fI8yKliEaBVTOX2agKNuM
-         vti12jfN+a790e1baFNSRE+dYPmiCLei187HpUqYMZEs0Pz5bscrCG4jXeVCeTaXFI
-         8uySO+cVOgp0g==
-Date:   Thu, 25 Aug 2022 11:32:44 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-cc:     Ping Cheng <ping.cheng@wacom.com>,
-        Jason Gerecke <jason.gerecke@wacom.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH v2] HID: wacom: Simplify comments
-In-Reply-To: <7eec2e24a231510577647853a32bddb89a762128.1659468931.git.christophe.jaillet@wanadoo.fr>
-Message-ID: <nycvar.YFH.7.76.2208251132330.19850@cbobk.fhfr.pm>
-References: <7eec2e24a231510577647853a32bddb89a762128.1659468931.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Thu, 25 Aug 2022 06:08:30 -0400
+Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8AECAA4FA
+        for <kernel-janitors@vger.kernel.org>; Thu, 25 Aug 2022 03:08:28 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id R9mjo8BOznj75R9mkodWvg; Thu, 25 Aug 2022 12:08:26 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 25 Aug 2022 12:08:26 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mike Turquette <mturquette@linaro.org>,
+        Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
+        Pankaj Dev <pankaj.dev@st.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-clk@vger.kernel.org
+Subject: [PATCH] clk: st: Fix some error handling path in st_of_quadfs_setup()
+Date:   Thu, 25 Aug 2022 12:08:24 +0200
+Message-Id: <dfa8886d700395249851f237ee0b783063168ec7.1661422054.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Tue, 2 Aug 2022, Christophe JAILLET wrote:
+If an error occurs, some resources still need to be released.
 
-> Remove a left-over from commit 2874c5fd2842 ("treewide: Replace GPLv2
-> boilerplate/reference with SPDX - rule 152").
-> An empty comment block can be removed.
-> 
-> While at it remove, also remove what is supposed to be the path/filename of
-> the file.
-> This is really low value... and wrong since commit 471d17148c8b
-> ("Input: wacom - move the USB (now hid) Wacom driver in drivers/hid")
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Add the corresponding error handing path.
 
-Applied, thank you.
+Fixes: 5f7aa9071e93 ("clk: st: Support for QUADFS inside ClockGenB/C/D/E/F")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is NOT compile tested.
+I don't have the needed build tool chain.
+---
+ drivers/clk/st/clkgen-fsyn.c | 28 +++++++++++++++++-----------
+ 1 file changed, 17 insertions(+), 11 deletions(-)
 
+diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
+index d820292a381d..d1b3a4162682 100644
+--- a/drivers/clk/st/clkgen-fsyn.c
++++ b/drivers/clk/st/clkgen-fsyn.c
+@@ -984,7 +984,7 @@ static void __init st_of_quadfs_setup(struct device_node *np,
+ 		struct clkgen_quadfs_data_clks *datac)
+ {
+ 	struct clk *clk;
+-	const char *pll_name, *clk_parent_name;
++	const char *pll_name = NULL, *clk_parent_name;
+ 	void __iomem *reg;
+ 	spinlock_t *lock;
+ 	struct device_node *parent_np;
+@@ -1006,32 +1006,38 @@ static void __init st_of_quadfs_setup(struct device_node *np,
+ 
+ 	clk_parent_name = of_clk_get_parent_name(np, 0);
+ 	if (!clk_parent_name)
+-		return;
++		goto err_unmap;
+ 
+ 	pll_name = kasprintf(GFP_KERNEL, "%pOFn.pll", np);
+ 	if (!pll_name)
+-		return;
++		goto err_unmap;
+ 
+ 	lock = kzalloc(sizeof(*lock), GFP_KERNEL);
+ 	if (!lock)
+-		goto err_exit;
++		goto err_unmap;
+ 
+ 	spin_lock_init(lock);
+ 
+ 	clk = st_clk_register_quadfs_pll(pll_name, clk_parent_name, datac->data,
+ 			reg, lock);
+ 	if (IS_ERR(clk))
+-		goto err_exit;
+-	else
+-		pr_debug("%s: parent %s rate %u\n",
+-			__clk_get_name(clk),
+-			__clk_get_name(clk_get_parent(clk)),
+-			(unsigned int)clk_get_rate(clk));
++		goto err_free_lock;
++
++	pr_debug("%s: parent %s rate %u\n",
++		 __clk_get_name(clk), __clk_get_name(clk_get_parent(clk)),
++		 (unsigned int)clk_get_rate(clk));
+ 
+ 	st_of_create_quadfs_fsynths(np, pll_name, datac, reg, lock);
+ 
+-err_exit:
++out:
+ 	kfree(pll_name); /* No longer need local copy of the PLL name */
++	return;
++
++err_free_lock:
++	kfree(lock);
++err_unmap:
++	iounmap(reg);
++	goto out;
+ }
+ 
+ static void __init st_of_quadfs660C_setup(struct device_node *np)
 -- 
-Jiri Kosina
-SUSE Labs
+2.34.1
 
