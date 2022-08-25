@@ -2,121 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87FC3C04AA5
-	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Aug 2022 10:08:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 774B9C28D13
+	for <kernel-janitors@archiver.kernel.org>; Thu, 25 Aug 2022 12:00:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240780AbiHYKIc (ORCPT
+        id S241220AbiHYMAC (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 25 Aug 2022 06:08:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52170 "EHLO
+        Thu, 25 Aug 2022 08:00:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236657AbiHYKIa (ORCPT
+        with ESMTP id S241363AbiHYL7y (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 25 Aug 2022 06:08:30 -0400
-Received: from smtp.smtpout.orange.fr (smtp06.smtpout.orange.fr [80.12.242.128])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8AECAA4FA
-        for <kernel-janitors@vger.kernel.org>; Thu, 25 Aug 2022 03:08:28 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id R9mjo8BOznj75R9mkodWvg; Thu, 25 Aug 2022 12:08:26 +0200
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 25 Aug 2022 12:08:26 +0200
-X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mike Turquette <mturquette@linaro.org>,
-        Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
-        Pankaj Dev <pankaj.dev@st.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-clk@vger.kernel.org
-Subject: [PATCH] clk: st: Fix some error handling path in st_of_quadfs_setup()
-Date:   Thu, 25 Aug 2022 12:08:24 +0200
-Message-Id: <dfa8886d700395249851f237ee0b783063168ec7.1661422054.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 25 Aug 2022 07:59:54 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37525DEFD;
+        Thu, 25 Aug 2022 04:59:49 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id gb36so39018108ejc.10;
+        Thu, 25 Aug 2022 04:59:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc;
+        bh=3M+Fhxoyg91Vp2aX+QclTk7ormS7D2YMWBC3/wSZRAo=;
+        b=T6VhRxHZKh3ydTDH8eyLIXVHKw5PE+3T+mPiOP/4cMWTVgELocwIa222zg93Iz2iXl
+         KULHrQNnLCCAHlqxWVsWNkIKgcPE4yvcrG4CgxQYx53uEUD1+tYtNEfWaDciFY7mmdAr
+         6OMj7asdMnF0IQqS75aGNIJfWGSemPH59vsma7GzGEsvGngzpCSE16AYTylIn4lNsgUh
+         D7Mgg60B9cdiVptBnAtx+tN6tJyv4OvW9CCZGSPcDt7ELkfIeHUrTA7kOQQz7YVVu48U
+         BD8QbkTV0RucZZFFhbetGm+zMrIzPovthtYnFqhprMBK9ypB2d19EpP6kzCSXqLYBckA
+         NdEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
+        bh=3M+Fhxoyg91Vp2aX+QclTk7ormS7D2YMWBC3/wSZRAo=;
+        b=L04FbN8kGiLLpktYfwTWC+dOyldM3x1PBzDuPMfpFIUJwDIkbZkeOPEDFG4Fydtq0Z
+         bDRpqdCKtZP1w1scMWYDbrNSBDlevIxidS/L1k0xEpLzPrz/0OfAeLeBZZHiq0d3xCoy
+         aKMPFuehS/321POSJSARKKx9nDMZGbBJqk9QaMa3u08RTRk1NdkEGtO6kqv5wW57cVdP
+         lHO5qogz8CuhBuR6y+vqUaolgBRS+YgSWrRwviSOMcGzwVIke73bxzd2cQCNncATVKJA
+         MhasTAJptjZgJFvVPCgH7Pdf0OP5G1rvgjm/bEH/mC3OLGJRoJRviv/94Ux0ahfW1RGp
+         KZdg==
+X-Gm-Message-State: ACgBeo3TMwKPo807kDlLxn9seAMc3OKLv6r7OOa3h3H31xnZHFjDchpS
+        8DKJ8pMbkyGKb/4+vqRoJ7R/eZYxfXQ=
+X-Google-Smtp-Source: AA6agR4rzhafpBqSp4G2j/exoVRiAdAnjsbcwn+e+ZvXAHqYfB9jRqYi9rx2iBF8xM19C8giy5pIbg==
+X-Received: by 2002:a17:907:971d:b0:73d:78c8:77b5 with SMTP id jg29-20020a170907971d00b0073d78c877b5mr2258032ejc.631.1661428788416;
+        Thu, 25 Aug 2022 04:59:48 -0700 (PDT)
+Received: from felia.fritz.box (200116b8261c3400205311ca607dec9d.dip.versatel-1u1.de. [2001:16b8:261c:3400:2053:11ca:607d:ec9d])
+        by smtp.gmail.com with ESMTPSA id bs3-20020a056402304300b00446bf462203sm4751378edb.1.2022.08.25.04.59.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Aug 2022 04:59:47 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: add scripts/tracing/ to TRACING
+Date:   Thu, 25 Aug 2022 13:59:27 +0200
+Message-Id: <20220825115927.20598-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If an error occurs, some resources still need to be released.
+The files in scripts/tracing/ belong to the TRACING subsystem.
 
-Add the corresponding error handing path.
+Add a corresponding file entry for TRACING.
 
-Fixes: 5f7aa9071e93 ("clk: st: Support for QUADFS inside ClockGenB/C/D/E/F")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-This patch is NOT compile tested.
-I don't have the needed build tool chain.
----
- drivers/clk/st/clkgen-fsyn.c | 28 +++++++++++++++++-----------
- 1 file changed, 17 insertions(+), 11 deletions(-)
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
-index d820292a381d..d1b3a4162682 100644
---- a/drivers/clk/st/clkgen-fsyn.c
-+++ b/drivers/clk/st/clkgen-fsyn.c
-@@ -984,7 +984,7 @@ static void __init st_of_quadfs_setup(struct device_node *np,
- 		struct clkgen_quadfs_data_clks *datac)
- {
- 	struct clk *clk;
--	const char *pll_name, *clk_parent_name;
-+	const char *pll_name = NULL, *clk_parent_name;
- 	void __iomem *reg;
- 	spinlock_t *lock;
- 	struct device_node *parent_np;
-@@ -1006,32 +1006,38 @@ static void __init st_of_quadfs_setup(struct device_node *np,
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8fd6a1721e69..8022a4dd2ef3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20643,6 +20643,7 @@ F:	include/*/ftrace.h
+ F:	include/linux/trace*.h
+ F:	include/trace/
+ F:	kernel/trace/
++F:	scripts/tracing/
+ F:	tools/testing/selftests/ftrace/
  
- 	clk_parent_name = of_clk_get_parent_name(np, 0);
- 	if (!clk_parent_name)
--		return;
-+		goto err_unmap;
- 
- 	pll_name = kasprintf(GFP_KERNEL, "%pOFn.pll", np);
- 	if (!pll_name)
--		return;
-+		goto err_unmap;
- 
- 	lock = kzalloc(sizeof(*lock), GFP_KERNEL);
- 	if (!lock)
--		goto err_exit;
-+		goto err_unmap;
- 
- 	spin_lock_init(lock);
- 
- 	clk = st_clk_register_quadfs_pll(pll_name, clk_parent_name, datac->data,
- 			reg, lock);
- 	if (IS_ERR(clk))
--		goto err_exit;
--	else
--		pr_debug("%s: parent %s rate %u\n",
--			__clk_get_name(clk),
--			__clk_get_name(clk_get_parent(clk)),
--			(unsigned int)clk_get_rate(clk));
-+		goto err_free_lock;
-+
-+	pr_debug("%s: parent %s rate %u\n",
-+		 __clk_get_name(clk), __clk_get_name(clk_get_parent(clk)),
-+		 (unsigned int)clk_get_rate(clk));
- 
- 	st_of_create_quadfs_fsynths(np, pll_name, datac, reg, lock);
- 
--err_exit:
-+out:
- 	kfree(pll_name); /* No longer need local copy of the PLL name */
-+	return;
-+
-+err_free_lock:
-+	kfree(lock);
-+err_unmap:
-+	iounmap(reg);
-+	goto out;
- }
- 
- static void __init st_of_quadfs660C_setup(struct device_node *np)
+ TRACING MMIO ACCESSES (MMIOTRACE)
 -- 
-2.34.1
+2.17.1
 
