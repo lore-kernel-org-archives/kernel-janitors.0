@@ -2,95 +2,103 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D40C3ECAAD2
-	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Aug 2022 08:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6561ECAAD6
+	for <kernel-janitors@archiver.kernel.org>; Fri, 26 Aug 2022 09:17:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244686AbiHZILF (ORCPT
+        id S1343514AbiHZJRa (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 Aug 2022 04:11:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36914 "EHLO
+        Fri, 26 Aug 2022 05:17:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241826AbiHZILE (ORCPT
+        with ESMTP id S1343505AbiHZJRY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 Aug 2022 04:11:04 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFE8FD2771;
-        Fri, 26 Aug 2022 01:11:01 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id bq11so855866wrb.12;
-        Fri, 26 Aug 2022 01:11:01 -0700 (PDT)
+        Fri, 26 Aug 2022 05:17:24 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08BD5D7412
+        for <kernel-janitors@vger.kernel.org>; Fri, 26 Aug 2022 02:17:20 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id bx38so982907ljb.10
+        for <kernel-janitors@vger.kernel.org>; Fri, 26 Aug 2022 02:17:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc;
-        bh=v4H+4AvGFUQ4X3fIy7w2GNzFwXOQBQhFujlzuWD9IjY=;
-        b=OuOtNoLcjmkerE26piau/BBAmyQeBWWJkFV58GBry+HSm1QOf12Wf52ETbS/4swFqt
-         RpG0fLp7sf8KvPbnEj9ZB2pTKlL3bUVHjcowxS2N1cnm4WnN+B7kDFFipvgXAOXWgZs0
-         MfLFr6BQKC4USPKszgF7/pPZcr3vHgg+xVpQJn4YMBFKmQ7+wTn8mtWeAoQal3vI3cqv
-         GPzr/Byw7ZiQXZco5ec70eUVMuohUFyEAGDp+RX3hBqzUFdjBJj9S9z4lgVtrMdpRsBi
-         OupQC1G8CwSlHs+JVynTj0+4eT2PAfs7c1p/JFs4WrNbFMdDpaDxiBLyNZQWQGNGL7O/
-         gBJw==
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=yxr0Qd86necJLeODbFUrhjcBFjoAd3uXBhNlcIXoPwA=;
+        b=T7Nuduru6zJHRRXE+O8aAOqpJYu7JZcaH8MVxpYFVbyhndtPkIWJ+PXUeeIWWQ+urc
+         VXnj9BHHuJGwEaDUvuKjwZEDfGlQCL2w7tPSa2NhRK9pY+AyHNtlzjkPe0D/Gwd2lSjg
+         8TS7/EjK9t3tV5j8SHh8FjT2jAoMz9eEqqcNIfNot9ScBM3WzyPBlM8L65FKCodry4qC
+         TghT2eXyYDQsjIYiAP5yg2Phv4/EPNGdGPEaxI1QWM1p5PQgECuCRvevWkGAuQM8uhWb
+         m3cJHKCgtr20++kuCJl8t5ViDAcYBEKBRNMhBCMbucwVq8YMmCclALI7BhxPbUccj/Ru
+         yiJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc;
-        bh=v4H+4AvGFUQ4X3fIy7w2GNzFwXOQBQhFujlzuWD9IjY=;
-        b=GbbiYpseqH4CDESt1zzKrG2ERypZfQSjAwVd2AW4LCzUb2BMn5492KQjDco8dP95fT
-         Au4gOHxzVIki5JDqNZP90ArmDzI0EHAs8TdjeWECvQhB/bPoIW00fcvvZlzehQ1f2Tnd
-         L5Zx9BNvC34tuOLFA03FsfeNEN1BjKVcDrQd5RWkRLiJBEjp9JvD62gnlMpnkJzP6W5U
-         Wk3M+5wcsIIeoravcJx12OqA9O9de3PljFHOsw+dSh4SIpVxVCoqUtE9fUfeVOAEmftD
-         ve3aMwDiNiwgJODbkdwdVY47XfNGcLyLKwTejf4m5DNpnY1pGHlhyw5ZbYInzKNHGBLT
-         RWMA==
-X-Gm-Message-State: ACgBeo3xqust+s/KvHCPp+/Fs+HI/IP5Jsgb8AoFcAA242CevcrOTB7t
-        vPND6omhJyGBpekskha8IzI=
-X-Google-Smtp-Source: AA6agR7ysxe9JNOKfIwiIIgPuKqoR5ZYpJJUcQVOQgPdpzLzxZskEsNeXkzfxokh5KxwZ7dlKEKHTw==
-X-Received: by 2002:adf:d1c1:0:b0:220:5ec3:fb62 with SMTP id b1-20020adfd1c1000000b002205ec3fb62mr4154423wrd.69.1661501459865;
-        Fri, 26 Aug 2022 01:10:59 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id u10-20020adfdd4a000000b00225232c03fdsm1500927wrm.27.2022.08.26.01.10.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Aug 2022 01:10:59 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Rahul Kumar Singh <rahul.kumar.singh@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        John Harrison <John.C.Harrison@Intel.com>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/i915/guc: Fix spelling mistake "heatbeat" -> "heartbeat"
-Date:   Fri, 26 Aug 2022 09:10:58 +0100
-Message-Id: <20220826081058.1605094-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.1
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=yxr0Qd86necJLeODbFUrhjcBFjoAd3uXBhNlcIXoPwA=;
+        b=M7C3XF/NMKNGoaOk1xY4vsWo/LcfgKfFeM72Ev/wBjkXEKYytyYv/GGlVJumonn304
+         TGbLyvODn4TVphDdTvQiHtw61I8AYPo8h3hOsgMKeB9j3SNkhVDgsbCj8xH/lEPFmSCT
+         AW2Ss7m2qdJE2v2y1awC8Gb/tjIYckMzXJMZdCxA+1UMebui/Auuvlvghfh36UMkc93s
+         CDY+YGyvg0OdkfZcDlHj240aqnHlVlb2qx/2Y7PiYbeFQOw4AxztVbNaaWrBQXEqrgZI
+         PZTpb9rjXgjJhH23l0FYsHS9/3sWvtQ8de0VkNiLkuHfOh1z7PC18/34mBsK9StYg4xK
+         LU5g==
+X-Gm-Message-State: ACgBeo1o2Kde4DSR3RRiHECX+FR0OiDKX9N8AA2VvRRmAi1WPRD11olG
+        AOB4kASK8NDYmS0naIXUih6WYWxrUxWGLiVw/9n2EQ==
+X-Google-Smtp-Source: AA6agR4FQXQ7vnpLnj3X7fRAmWQuLdRJrDKoAbK/JRm6muzl7lWnOItItBR6YENWPhKATqMHJ9UhBRsW+dG2laoBPbA=
+X-Received: by 2002:a2e:884c:0:b0:261:ca69:6023 with SMTP id
+ z12-20020a2e884c000000b00261ca696023mr1925180ljj.300.1661505439069; Fri, 26
+ Aug 2022 02:17:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <21d99886d07fa7fcbec74992657dabad98c935c4.1661412818.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <21d99886d07fa7fcbec74992657dabad98c935c4.1661412818.git.christophe.jaillet@wanadoo.fr>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 26 Aug 2022 11:16:42 +0200
+Message-ID: <CAPDyKFqF+gFD8dw7swZ5pu6jf6kt7xkXHs8BHYSQ1Ue2e8eRsw@mail.gmail.com>
+Subject: Re: [PATCH] mmc: au1xmmc: Fix an error handling path in au1xmmc_probe()
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Manuel Lauss <manuel.lauss@gmail.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is a spelling mistake in a drm_err message. Fix it.
+On Thu, 25 Aug 2022 at 09:34, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> If clk_prepare_enable() fails, there is no point in calling
+> clk_disable_unprepare() in the error handling path.
+>
+> Move the out_clk label at the right place.
+>
+> Fixes: b6507596dfd6 ("MIPS: Alchemy: au1xmmc: use clk framework")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/drm/i915/gt/uc/selftest_guc_hangcheck.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied for next, thanks!
 
-diff --git a/drivers/gpu/drm/i915/gt/uc/selftest_guc_hangcheck.c b/drivers/gpu/drm/i915/gt/uc/selftest_guc_hangcheck.c
-index 01f8cd3c3134..d7857cf7c08f 100644
---- a/drivers/gpu/drm/i915/gt/uc/selftest_guc_hangcheck.c
-+++ b/drivers/gpu/drm/i915/gt/uc/selftest_guc_hangcheck.c
-@@ -61,7 +61,7 @@ static int intel_hang_guc(void *arg)
- 	old_beat = engine->props.heartbeat_interval_ms;
- 	ret = intel_engine_set_heartbeat(engine, BEAT_INTERVAL);
- 	if (ret) {
--		drm_err(&gt->i915->drm, "Failed to boost heatbeat interval: %d\n", ret);
-+		drm_err(&gt->i915->drm, "Failed to boost heartbeat interval: %d\n", ret);
- 		goto err;
- 	}
- 
--- 
-2.37.1
+Kind regards
+Uffe
 
+
+> ---
+>  drivers/mmc/host/au1xmmc.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/au1xmmc.c b/drivers/mmc/host/au1xmmc.c
+> index a9a0837153d8..c88b039dc9fb 100644
+> --- a/drivers/mmc/host/au1xmmc.c
+> +++ b/drivers/mmc/host/au1xmmc.c
+> @@ -1097,8 +1097,9 @@ static int au1xmmc_probe(struct platform_device *pdev)
+>         if (host->platdata && host->platdata->cd_setup &&
+>             !(mmc->caps & MMC_CAP_NEEDS_POLL))
+>                 host->platdata->cd_setup(mmc, 0);
+> -out_clk:
+> +
+>         clk_disable_unprepare(host->clk);
+> +out_clk:
+>         clk_put(host->clk);
+>  out_irq:
+>         free_irq(host->irq, host);
+> --
+> 2.34.1
+>
