@@ -2,77 +2,80 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 904E0C0502A
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Aug 2022 02:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73620ECAAD4
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Aug 2022 02:50:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345398AbiH0CNu (ORCPT
+        id S238547AbiH0CuU (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 26 Aug 2022 22:13:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39724 "EHLO
+        Fri, 26 Aug 2022 22:50:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345452AbiH0CNe (ORCPT
+        with ESMTP id S232233AbiH0CuS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 26 Aug 2022 22:13:34 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 393EB1F2D9;
-        Fri, 26 Aug 2022 19:13:33 -0700 (PDT)
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.56])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4MF0X54W3RzkWhB;
-        Sat, 27 Aug 2022 10:09:57 +0800 (CST)
-Received: from kwepemm600010.china.huawei.com (7.193.23.86) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Sat, 27 Aug 2022 10:13:31 +0800
-Received: from huawei.com (10.175.127.227) by kwepemm600010.china.huawei.com
- (7.193.23.86) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Sat, 27 Aug
- 2022 10:13:30 +0800
-From:   Sun Ke <sunke32@huawei.com>
-To:     <johannes@sipsolutions.net>, <davem@davemloft.net>,
-        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>
-CC:     <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <johannes.berg@intel.com>,
-        <sunke32@huawei.com>
-Subject: [PATCH] mac80211: fix potential deadlock in ieee80211_key_link()
-Date:   Sat, 27 Aug 2022 10:24:52 +0800
-Message-ID: <20220827022452.823381-1-sunke32@huawei.com>
-X-Mailer: git-send-email 2.31.1
+        Fri, 26 Aug 2022 22:50:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12D64D34ED;
+        Fri, 26 Aug 2022 19:50:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A06F761DC4;
+        Sat, 27 Aug 2022 02:50:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id F32ABC433C1;
+        Sat, 27 Aug 2022 02:50:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661568616;
+        bh=os270vXfGSIivsAz52bNqKvdrgy0Wc7xuBxU/UvcZSA=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=Ic0SNvHFTiPY5poENWQ5MWemamzJvuRcAQ3L/xZprAvTirlqb/txsXgIBkZYFpT81
+         sXCrUkia+n5CzMX96ED3szZ8HmIlrKs9cvxE6TvFyVWepO6XVQ4/uj9TkfVUcm0aC2
+         lLNRVf0/DbFUDVi/iv9hd1ZzNwokoNxrxlxFwrEdscM2Kw7gh0dZ3ZG7rdaU8yEGQb
+         uY44ZQv3Hc+Bsn8fWwy4JUkCHed/t65N+P6kKL2EXmAnqpWyKr1P7GLFmdO6svmikB
+         GOcuwSUFmnrAHUhhEy4BMlpAF4uBjfqkblIq7o3RzVI6GkSk7HyaQy3IQ3y8mcu2Cn
+         Jn+9vDH6MePJw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D3452E2A042;
+        Sat, 27 Aug 2022 02:50:15 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemm600010.china.huawei.com (7.193.23.86)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net_sched: remove impossible conditions
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <166156861586.29832.8019964906111296555.git-patchwork-notify@kernel.org>
+Date:   Sat, 27 Aug 2022 02:50:15 +0000
+References: <Ywd4NIoS4aiilnMv@kili>
+In-Reply-To: <Ywd4NIoS4aiilnMv@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Add the missing unlock before return in the error handling case.
+Hello:
 
-Fixes: ccdde7c74ffd ("wifi: mac80211: properly implement MLO key handling")
-Signed-off-by: Sun Ke <sunke32@huawei.com>
----
- net/mac80211/key.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+This patch was applied to netdev/net-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
-diff --git a/net/mac80211/key.c b/net/mac80211/key.c
-index 86aac87e0211..d89ec93b243b 100644
---- a/net/mac80211/key.c
-+++ b/net/mac80211/key.c
-@@ -865,8 +865,10 @@ int ieee80211_key_link(struct ieee80211_key *key,
- 		if (link_id >= 0) {
- 			link_sta = rcu_dereference_protected(sta->link[link_id],
- 							     lockdep_is_held(&sta->local->sta_mtx));
--			if (!link_sta)
--				return -ENOLINK;
-+			if (!link_sta) {
-+				ret = -ENOLINK;
-+				goto out;
-+			}
- 		}
- 
- 		old_key = key_mtx_dereference(sdata->local, link_sta->gtk[idx]);
+On Thu, 25 Aug 2022 16:25:08 +0300 you wrote:
+> We no longer allow "handle" to be zero, so there is no need to check
+> for that.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> This obviously is low priority so it could go to net-next instead.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net] net_sched: remove impossible conditions
+    https://git.kernel.org/netdev/net-next/c/53a406803ca5
+
+You are awesome, thank you!
 -- 
-2.31.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
