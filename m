@@ -2,76 +2,102 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEAE3C0502A
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Aug 2022 11:42:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 155F7C0502E
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Aug 2022 12:35:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345293AbiH0Lmt (ORCPT
+        id S232642AbiH0Mfq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 Aug 2022 07:42:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57288 "EHLO
+        Sat, 27 Aug 2022 08:35:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239235AbiH0Lmo (ORCPT
+        with ESMTP id S231727AbiH0Mfo (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 Aug 2022 07:42:44 -0400
-Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E8995D0F3
-        for <kernel-janitors@vger.kernel.org>; Sat, 27 Aug 2022 04:42:44 -0700 (PDT)
-Received: from pop-os.home ([90.11.190.129])
+        Sat, 27 Aug 2022 08:35:44 -0400
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61F53CE00
+        for <kernel-janitors@vger.kernel.org>; Sat, 27 Aug 2022 05:35:43 -0700 (PDT)
+Received: from [192.168.1.18] ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id RuD2oYf3rUoLVRuD3oSO9F; Sat, 27 Aug 2022 13:42:42 +0200
-X-ME-Helo: pop-os.home
+        id Rv2JoJciNXFXxRv2KoYu3k; Sat, 27 Aug 2022 14:35:41 +0200
+X-ME-Helo: [192.168.1.18]
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 27 Aug 2022 13:42:42 +0200
+X-ME-Date: Sat, 27 Aug 2022 14:35:41 +0200
 X-ME-IP: 90.11.190.129
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     broonie@kernel.org, matthias.bgg@gmail.com,
-        gregkh@linuxfoundation.org, neil@brown.name, blogic@openwrt.org
-Cc:     linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 4/4] spi: mt7621: Remove 'clk' from 'struct mt7621_spi'
-Date:   Sat, 27 Aug 2022 13:42:40 +0200
-Message-Id: <76ed0ef91479498b9a2d5ef539f80851cffdb4ea.1661599671.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1661599671.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1661599671.git.christophe.jaillet@wanadoo.fr>
+Message-ID: <06339802-8c3e-2a40-e4fd-6a8a774676fe@wanadoo.fr>
+Date:   Sat, 27 Aug 2022 14:35:39 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] gpio: pxa: use devres for the clock struct
+Content-Language: en-US
+From:   Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>, Yuan Can <yuancan@huawei.com>,
+        Kernel Janitors <kernel-janitors@vger.kernel.org>
+References: <20220815091929.130547-1-brgl@bgdev.pl>
+ <CAHp75Vc3dazcM1MLzjzPUmgMGNACUsOZ8aK4uauAJk0hzj9q-w@mail.gmail.com>
+ <CACRpkdZEcTD1A3tR=d4fDF89ECMDfchVPW921v6X6ARiPXHEMQ@mail.gmail.com>
+ <e9991ab5-cb55-789a-dfa1-de10acb37842@wanadoo.fr>
+In-Reply-To: <e9991ab5-cb55-789a-dfa1-de10acb37842@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The 'clk' field in 'struct mt7621_spi' is useless, remove it.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/spi/spi-mt7621.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/spi/spi-mt7621.c b/drivers/spi/spi-mt7621.c
-index 114f98dcae5e..c4cc8e2f85e2 100644
---- a/drivers/spi/spi-mt7621.c
-+++ b/drivers/spi/spi-mt7621.c
-@@ -55,7 +55,6 @@ struct mt7621_spi {
- 	void __iomem		*base;
- 	unsigned int		sys_freq;
- 	unsigned int		speed;
--	struct clk		*clk;
- 	int			pending_write;
- };
- 
-@@ -361,9 +360,8 @@ static int mt7621_spi_probe(struct platform_device *pdev)
- 
- 	rs = spi_controller_get_devdata(master);
- 	rs->base = base;
--	rs->clk = clk;
- 	rs->master = master;
--	rs->sys_freq = clk_get_rate(rs->clk);
-+	rs->sys_freq = clk_get_rate(clk);
- 	rs->pending_write = 0;
- 	dev_info(&pdev->dev, "sys_freq: %u\n", rs->sys_freq);
- 
--- 
-2.34.1
+Le 26/08/2022 à 14:18, Christophe JAILLET a écrit :
+> Le 26/08/2022 à 10:20, Linus Walleij a écrit :
+>> On Sat, Aug 20, 2022 at 12:15 AM Andy Shevchenko
+>> <andy.shevchenko@gmail.com> wrote:
+>>> On Mon, Aug 15, 2022 at 12:26 PM Bartosz Golaszewski <brgl@bgdev.pl> 
+>>> wrote:
+>>>>
+>>>> The clock is never released after probe(). Use devres to not leak
+>>>> resources.
+>>>
+>>> ...
+>>>
+>>>> -       clk = clk_get(&pdev->dev, NULL);
+>>>> +       clk = devm_clk_get_enabled(&pdev->dev, NULL);
+>>>>          if (IS_ERR(clk)) {
+>>>>                  dev_err(&pdev->dev, "Error %ld to get gpio clock\n",
+>>>>                          PTR_ERR(clk));
+>>>>                  return PTR_ERR(clk);
+>>>
+>>> Shouldn't we fix a potential log saturation issue first (by switching
+>>> to use dev_err_probe() helper)?
+>>
+>> Can be a separate patch, the clock mem leak is a bigger problem
+>> IMO so this should be applied first.
+>>
+>> Hm isn't it possible to toss the task of fixing a gazillion
+>> dev_err_probe() messages on Cocinelle scripts/coccinelle/? I bet it's 
+>> something
+>> the kernel janitors could fix all over the place.
+>>
+>> Yours,
+>> Linus Walleij
+>>
+>
+> // Both rules: 316 files changed, 1321 insertions(+), 1774 deletions(-)
+> 
 
+
+With an updated script, I spot:
+    503 files changed, 1962 insertions(+), 2622 deletions(-)
+
+(and 150-200 still needs some manual check or script adjustment)
+
+
+Does this really make sense to send SO many patches for it?
+
+If yes, should it be done on a per-system basis, or by driver basis?
+
+CJ
