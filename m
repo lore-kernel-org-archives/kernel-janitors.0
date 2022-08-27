@@ -2,71 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4BE1C0502E
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Aug 2022 08:27:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB28C0502E
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Aug 2022 11:41:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233718AbiH0I1h (ORCPT
+        id S233577AbiH0Llu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 Aug 2022 04:27:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50562 "EHLO
+        Sat, 27 Aug 2022 07:41:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233766AbiH0I1f (ORCPT
+        with ESMTP id S233317AbiH0Llt (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 Aug 2022 04:27:35 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16220A6AF4;
-        Sat, 27 Aug 2022 01:27:34 -0700 (PDT)
-Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.56])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4MF8qx3YMwzlVys;
-        Sat, 27 Aug 2022 16:24:13 +0800 (CST)
-Received: from kwepemm600010.china.huawei.com (7.193.23.86) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Sat, 27 Aug 2022 16:27:32 +0800
-Received: from huawei.com (10.175.127.227) by kwepemm600010.china.huawei.com
- (7.193.23.86) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Sat, 27 Aug
- 2022 16:27:31 +0800
-From:   Sun Ke <sunke32@huawei.com>
-To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>
-CC:     <linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <rsilvera@google.com>,
-        <sunke32@huawei.com>
-Subject: [PATCH] perf inject: Fix error return code in cmd_inject()
-Date:   Sat, 27 Aug 2022 16:38:51 +0800
-Message-ID: <20220827083851.1431424-1-sunke32@huawei.com>
-X-Mailer: git-send-email 2.31.1
+        Sat, 27 Aug 2022 07:41:49 -0400
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 921E232B96
+        for <kernel-janitors@vger.kernel.org>; Sat, 27 Aug 2022 04:41:47 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id RuC4oJLK7XFXxRuC4oYr06; Sat, 27 Aug 2022 13:41:45 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 27 Aug 2022 13:41:45 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     broonie@kernel.org, matthias.bgg@gmail.com,
+        gregkh@linuxfoundation.org, neil@brown.name, blogic@openwrt.org
+Cc:     linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/4] spi: mt7621: Fix an erroneous message + clean-ups
+Date:   Sat, 27 Aug 2022 13:41:39 +0200
+Message-Id: <cover.1661599671.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemm600010.china.huawei.com (7.193.23.86)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-If couldn't parse known build ids. cmd_inject should return a negative error code.
+Patch 1 fixes an issue about an error code that is erroneously logged.
 
-Fixes: a59d0164e202 ("perf inject: Add a command line option to specify build ids.")
-Signed-off-by: Sun Ke <sunke32@huawei.com>
----
- tools/perf/builtin-inject.c | 1 +
- 1 file changed, 1 insertion(+)
+Patch 2-4 are just clean-ups spotted while fixing it.
 
-diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
-index 8ec955402488..5bea538e2380 100644
---- a/tools/perf/builtin-inject.c
-+++ b/tools/perf/builtin-inject.c
-@@ -2338,6 +2338,7 @@ int cmd_inject(int argc, const char **argv)
- 
- 			if (inject.known_build_ids == NULL) {
- 				pr_err("Couldn't parse known build ids.\n");
-+				ret = -1;
- 				goto out_delete;
- 			}
- 		}
+Additional comments are added below --- in patches 2 and 3.
+
+Christophe JAILLET (4):
+  spi: mt7621: Fix an error message in mt7621_spi_probe()
+  spi: mt7621: Use the devm_clk_get_enabled() helper to simplify error
+    handling
+  spi: mt7621: Use devm_spi_register_controller()
+  spi: mt7621: Remove 'clk' from 'struct mt7621_spi'
+
+ drivers/spi/spi-mt7621.c | 42 ++++++----------------------------------
+ 1 file changed, 6 insertions(+), 36 deletions(-)
+
 -- 
-2.31.1
+2.34.1
 
