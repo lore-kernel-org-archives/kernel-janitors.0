@@ -2,124 +2,153 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57024ECAAD2
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Aug 2022 13:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81646C0502A
+	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Aug 2022 14:12:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233005AbiH0NTz (ORCPT
+        id S233173AbiH0OMi (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 Aug 2022 09:19:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58342 "EHLO
+        Sat, 27 Aug 2022 10:12:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230024AbiH0NTy (ORCPT
+        with ESMTP id S231708AbiH0OMh (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 Aug 2022 09:19:54 -0400
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1anam02on2040.outbound.protection.outlook.com [40.107.96.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 567A0326E4;
-        Sat, 27 Aug 2022 06:19:53 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Fb7nhkuxHa5q1FQY//2IQXh4AJ5MCvXgQ3bw79R/8MMbjbp71kKH49GRXR3YZk/lLWtU0fK2j0waoqrR8b4LN8GL1nbxBPvBfHCo9Ds6xYWGOB71zkPOWiPjUmILGOYlryhL2UBdExZ+5pgU1+ByqEdURqcPbu5bCZW7dO0xnGG2+kIQrIInxh6SBWnhFACncVyKU8ImsRIqFTj9hGHd31TvSzwWZcySqpTuhpKlgmuuiOQ8eF01NfwpayehOAAmv1x2saLFNWLjvEwjnTwXRkJgxlA8VaaHrifbqGK+BXtFvUd5u7TY12/gF/E7ZnYPDVkY0CXPgeHb4Gp3y7gT2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nZNaIzbG6yMX3Xo6umWpdew8C8ARCYMXdU7Pm325wdc=;
- b=bHLJ1/axGlGDqKCSJxCoydXt9bL86x8BxbVhzUpWv1ztSle44Ui1pZveeLVvNnjJwMOqzLaAlEU5XWl7fbJKkvkFEgehD/95SoU4yRpvwvxOJTIgN3wQfv7Gm0pN+pB9dBAOFyYh2/pgHMpuafv2G/S1tJA3/6GGBo0AsgjvNPivTA7RPjRcDJceZV5WunSFjpv+d8I/kRKQ41YIRSAizUHMep8rUsz1PrheAgBAerw4onfKCjhy6EoZsQ5rVs+aVSU5rdiratIjc27bVpBkarCIp9O7WXz8SzXZne+c1oe2GTprxaDuoToicFdwK9JHFEObbOA6J2DRgE6uQeQTXw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nZNaIzbG6yMX3Xo6umWpdew8C8ARCYMXdU7Pm325wdc=;
- b=fi5qMQSdGJVSIWYrWtwrnLOdw2H8Funq+Nbaol/Oem8gl8LiFNhwfF9zEHSad8fbP9FDoW8xLAwGRaoPn0WroZMiZuqyhg36nhRApn1O9KWE9Q15lWm/f6UcqF6fJH+BamV1ZVD7B9rRZXDJgQiDpH9KFYm2ugJcR8oXFmXNzFDQ4sc5K1N31cnEGZ/aZwLXi/Wv7uaKiOVZCbETXhU2m5dh2PHLuCqYZeKS2cEVL5xnGPP+7pmGvrkunlWlKYnk9u07uyC5Rv68ei5IAbZJ9AdMFhE/b6+PPBcrPEeL2Ff47CN+2pKHddx/EbXTR5qt7NIYkGsnts2ZoZLrS31mzQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7SPRMB0001.namprd12.prod.outlook.com (2603:10b6:510:13c::20)
- by MN2PR12MB4655.namprd12.prod.outlook.com (2603:10b6:208:1b9::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.15; Sat, 27 Aug
- 2022 13:19:51 +0000
-Received: from PH7SPRMB0001.namprd12.prod.outlook.com
- ([fe80::3ca6:ba11:2893:980e]) by PH7SPRMB0001.namprd12.prod.outlook.com
- ([fe80::3ca6:ba11:2893:980e%6]) with mapi id 15.20.5504.025; Sat, 27 Aug 2022
- 13:19:51 +0000
-Date:   Sat, 27 Aug 2022 16:19:45 +0300
-From:   Ido Schimmel <idosch@nvidia.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Vadim Pasternak <vadimp@nvidia.com>,
-        Petr Machata <petrm@nvidia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@nvidia.com>,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] mlxsw: minimal: Return -ENOMEM on allocation
- failure
-Message-ID: <YwoZ8V1Y++bUSLxj@shredder>
-References: <YwjgwoJ3M7Kdq9VK@kili>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YwjgwoJ3M7Kdq9VK@kili>
-X-ClientProxiedBy: VI1PR09CA0047.eurprd09.prod.outlook.com
- (2603:10a6:802:28::15) To PH7SPRMB0001.namprd12.prod.outlook.com
- (2603:10b6:510:13c::20)
+        Sat, 27 Aug 2022 10:12:37 -0400
+X-Greylist: delayed 114 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 27 Aug 2022 07:12:36 PDT
+Received: from condef-08.nifty.com (condef-08.nifty.com [202.248.20.73])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F7DC5070C
+        for <kernel-janitors@vger.kernel.org>; Sat, 27 Aug 2022 07:12:36 -0700 (PDT)
+Received: from conssluserg-03.nifty.com ([10.126.8.82])by condef-08.nifty.com with ESMTP id 27RE8JLK030636
+        for <kernel-janitors@vger.kernel.org>; Sat, 27 Aug 2022 23:08:19 +0900
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id 27RE7wOu030481;
+        Sat, 27 Aug 2022 23:07:58 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com 27RE7wOu030481
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1661609279;
+        bh=rDdXeC6ksXnnkis/qhKihUlu0s9cxqurOTuBcsF8uWk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=kB/lLvLKiWp6aor1SzHSpNb3CXqldiPR5pXqvPcZTIuEgLQ5e/l2a+/i/v3Fb3WVx
+         QrjbRYkJaI3kUefcql6YXxSSZJ6kYOa515r6CPjbuieLMehk343C8VtGMy1G7qKSKA
+         lqH3DjdeX079Zz8Z+sraaDS+SjbjyxfO1r/SHEADAJtozGviDm0PuVznrh7xdo7+ro
+         m3+d28cSwRBLoSd7V0QDEf6wvxoy+kmK6gc9xaGnbPS3LuOWCbX7ZEAwtRouYS8ins
+         wVwecgBppwQsw/V/nGEkZXr+U8qGj5xioqM00LdV35avgRDM/BLf1j7UV/UplO0Zrd
+         Yco6WNrRtHt8w==
+X-Nifty-SrcIP: [209.85.160.46]
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-11c5ee9bf43so5510199fac.5;
+        Sat, 27 Aug 2022 07:07:58 -0700 (PDT)
+X-Gm-Message-State: ACgBeo1eERXUbkOz/jyhlfZo7UV73JqSDofjV6tVkFHsK4IK9/nOecxj
+        +Yi9yVMSNWxMWAKB7A+CRi+9EcHEKElWd0A6RcE=
+X-Google-Smtp-Source: AA6agR5fJD/Xapf90KSFwv8M9XMZ8ikXGsv8r4iY/lMSPUKVUay0NL70sR1gmsF1lexfUYKLBj8R7YAhDoCeUvAY1Xg=
+X-Received: by 2002:a05:6870:f626:b0:10d:a798:f3aa with SMTP id
+ ek38-20020a056870f62600b0010da798f3aamr3979227oab.194.1661609277673; Sat, 27
+ Aug 2022 07:07:57 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9838fa0a-0cc0-4b74-8bfa-08da882ed2e1
-X-MS-TrafficTypeDiagnostic: MN2PR12MB4655:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: bZP4MpP+ed2KgTOhj1p5iMXk/cmXBMSGVi3DZY3nP1eptFassvcQx/X37Russ5JAE7UF0IiTA1VPdTuByiQeX78ClZMTtdBHL4Vgk2mJ82V7lus3KFrAsdP207AXXHYQMuTuOlrSF8VL2sSwM645gkyVER5Hy6VA3yInItBiMWLscipD5FLsE/diFPLcMoTA3ReXBDHTa5dRaFt4eCWBrVZ/hwUxM4Kev9YJcC/vIkvk3Cfork+GEsJXzFZgZ7U65UFpPFrg5zOfNFfhC38yEEDk4mQNS/HpN123duvqigqx3fcfnu+7zaxDH/liCy/t6DSOwZjkM+rVIxmSW+dy2hp5g7yIjTlHhdGmRLxdwoUI37ELrxIocHGG4idkp1fmfgVItOZ0GTX5ars+1cRIZYYx6O/xt3yMIRyuiN4BsnI9bnUsGvgrEhhPXKU3oOw0eDZuOB2Rzrj7hAwWchHMm1Fk4uWqmj/SNfkVSLVuvm/YTdB4q52911v+ZjHGNLhX5mwqOw3EqfRsYjgmPUoxiKpDOl/MZ/J13eOTPgwgbQnFQOjsT/vbOel0gy1hB9aVceE7kHu0d/jMy/xM4UkmLzHQK20PZIOn5hjUiuGtpSug045EAB8n8acYXlJqLjgNVikoiP9UeCHTibBNa/3Hx3VExTS18l2F4A6kIAXBIjLOSDfRd3t0t8MHbbdjF8wLEgTU+A8BQPs1SwNWEEHvEA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7SPRMB0001.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(7916004)(4636009)(366004)(39860400002)(346002)(396003)(136003)(376002)(38100700002)(6916009)(316002)(5660300002)(54906003)(8936002)(4744005)(66556008)(66476007)(66946007)(8676002)(4326008)(2906002)(186003)(478600001)(41300700001)(6486002)(6666004)(6506007)(9686003)(6512007)(26005)(33716001)(86362001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Bt8vQPyWGqnmjHeXxeP9QtZcct39UDC1L9RtSaFIV2rCxCqUGrQFskOnYClI?=
- =?us-ascii?Q?MvC+UIAmd5Try08kf79YB4b90/WR1vPKmlnVzlrKZ88UJu1B0xTgTkFfLaMk?=
- =?us-ascii?Q?p7S3CjIticElcrEU9tq/vZLW69bORnVx9A0B4pVTEGXRZdmZ1nfm5ZXxsEUz?=
- =?us-ascii?Q?qBqsqekFgetwV+lN/8jHtuZxPW2saH75v01i0LImC9V5Ox1OTB+S56A1evhX?=
- =?us-ascii?Q?CkZWidcYqATQ3jjJ7sH9qthU73rfG9J7c2dhRpMBU8qPTFK4ITRhqXYoNhHq?=
- =?us-ascii?Q?mWy40EHAS0iDiUKPW6Q0XDH7z30Fv5F4XlU4DIudWZRZ5OogGEEsV92PZ1BU?=
- =?us-ascii?Q?KZWm03yepX3VwbP2N5EbRfyYkavqZAfBa+CBRFKVBWdNx+vM0eNUqtpfpsA9?=
- =?us-ascii?Q?gfR3h9kzi8mg/MgB5WJseOGc9uFwoHeVeVIZdlOU10VX/z7ZsTINxfVHUxrH?=
- =?us-ascii?Q?6j8iQ2+qj2e6K8f9ejKiwVvnkwfK1fS902UsEuZoHECuSIH5Nq9jqyMLX+G2?=
- =?us-ascii?Q?zl1E84Z1Mm1d4sZenBvblWL8tOGarZZGm0TBEG+/Jvl1r0J0nVg2UCGZgMwL?=
- =?us-ascii?Q?CxUL4x0ulUVvorNCBn47B3OmchVXJ+bN84gKHXQTtUrUOo1caPTYlqg1+7xv?=
- =?us-ascii?Q?wj5KKn4O7evZ7shlcm/mWMv1Z/YSpSjKxzGtD+x/I855ktKQecRehfm4JrzZ?=
- =?us-ascii?Q?cLsXayPsGieisq1FumFcy7a3e+yaSLWZRYta8O6QeMT1grQeK17/cDDuSKup?=
- =?us-ascii?Q?fQ9jjC9AQ5y7nN4xNY17Y5ejTz87eQGKxDzUyVDDdcY98MXLxbq8VbN+A4rO?=
- =?us-ascii?Q?aeTPIehjNJ3/j0xOcCal7LjDB68pI/xdXXVALGlzWnkrbOuAKKeLUD24qHci?=
- =?us-ascii?Q?QjnvtBpu9W620S9hvjXdht/S8asU9Ub60YGCh/K44lN/DTjJxHj5cINa7Yfb?=
- =?us-ascii?Q?tmaJILZx1NiCaX2WKIHrthHuaJCcJsaCO47EdUSG2H7k+rNCEtBVVfckud5T?=
- =?us-ascii?Q?MC37y7Jc/WfzehO2bFL7X64BwpI5vmQ6xq28udv/8fyLkXG53sl2N3hrA6CD?=
- =?us-ascii?Q?yWKMbmuyIDNT1emB352X3dZOsqustZ9Hu8DEqjMl8g5/M0UVGlQe/ob0jdtj?=
- =?us-ascii?Q?oTmwY/WF8otJ/4XyBVMHV0eE7GXWTMjJ0w+9G+MJwHDPBd/wXjV4e7l1S19D?=
- =?us-ascii?Q?Fm4p39nZR/lokfXj9CBIioAaWJ8GM/E5XOhE/JpRxRgTFqpCm0Zpf+DpAJ9D?=
- =?us-ascii?Q?zYEFpbtcpgFhFqcHkmxbLTYLa4U1DvXdgu6pSUwW4fq8ZVxMMdQybe86+omS?=
- =?us-ascii?Q?WKNEqdItKgmgM63JvaRjGsgnpTtIY1Ov2AsB7g8Xnz3XnFPv4NtmjPd85kP7?=
- =?us-ascii?Q?p8HzsAw3GCfiEqvll64kFG+VVOUdYOfYiBcagEQjNs7gVizDj/ixGVZiQKwj?=
- =?us-ascii?Q?lZq5xTp7EfKYCD+E1PqwCfLxM14YcJWBUgUVzseQ4x83qq0vx6dHb4MzCHqX?=
- =?us-ascii?Q?elmVf9rQK0L3rnYIrnnbOzab3im++EInYOG+WOfj6P3Bp1zM7pESMxldx/SI?=
- =?us-ascii?Q?74nWLhgW9xWe5WgfowR5Do8z7RnDSE2pjJuDI3vg?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9838fa0a-0cc0-4b74-8bfa-08da882ed2e1
-X-MS-Exchange-CrossTenant-AuthSource: PH7SPRMB0001.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2022 13:19:51.5779
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1XFNO62OZywjIugqCuYLKlA8/ujebfbJPrRMyoh+2rgElNbb9wo66MzON1/AjYEfpPjxo1LMthWzMnq7PIXObQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4655
+References: <20220825091517.30842-1-lukas.bulwahn@gmail.com> <CAKwvOdkY=ye4PKi8KwP-ux73pwZs+J_Oq3wR7ep8S81=aCWtqA@mail.gmail.com>
+In-Reply-To: <CAKwvOdkY=ye4PKi8KwP-ux73pwZs+J_Oq3wR7ep8S81=aCWtqA@mail.gmail.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Sat, 27 Aug 2022 23:07:06 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT918p5v0Ak8p3a3yQKk7tYUphv=h8p9xkXa411iY_EjA@mail.gmail.com>
+Message-ID: <CAK7LNAT918p5v0Ak8p3a3yQKk7tYUphv=h8p9xkXa411iY_EjA@mail.gmail.com>
+Subject: Re: [PATCH] scripts: remove obsolete gcc-ld script
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        "H . Peter Anvin" <hpa@linux.intel.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Aug 26, 2022 at 06:03:30PM +0300, Dan Carpenter wrote:
-> These error paths return success but they should return -ENOMEM.
-> 
-> Fixes: 01328e23a476 ("mlxsw: minimal: Extend module to port mapping with slot index")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+On Fri, Aug 26, 2022 at 2:20 AM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+>
+> + Jiri in case this needs to be carried downstream.
+>
+> On Thu, Aug 25, 2022 at 2:15 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> >
+> > Since commit 8564ed2b3888 ("Kbuild, lto: Add a gcc-ld script to let run gcc
+> > as ld") in 2014, there was not specific work on this the gcc-ld script
+> > other than treewide clean-ups.
+> >
+> > There are no users within the kernel tree, and probably no out-of-tree
+> > users either, and there is no dedicated maintainer in MAINTAINERS.
+> >
+> > Delete this obsolete gcc-ld script.
+> >
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+>
+> No callers in-tree; happy to bring it back though should there later
+> be. Thanks for the patch.
+>
+> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+>
+> > ---
+> > If there are no objections, I would like to get this patch included
+> > through the kbuild tree.
+> >
+> > Masahiro-san, please pick this patch.
+> >
+> >  scripts/gcc-ld | 30 ------------------------------
+> >  1 file changed, 30 deletions(-)
+> >  delete mode 100755 scripts/gcc-ld
+> >
+> > diff --git a/scripts/gcc-ld b/scripts/gcc-ld
+> > deleted file mode 100755
+> > index 997b818c3962..000000000000
+> > --- a/scripts/gcc-ld
+> > +++ /dev/null
+> > @@ -1,30 +0,0 @@
+> > -#!/bin/sh
+> > -# SPDX-License-Identifier: GPL-2.0
+> > -# run gcc with ld options
+> > -# used as a wrapper to execute link time optimizations
+> > -# yes virginia, this is not pretty
+> > -
+> > -ARGS="-nostdlib"
+> > -
+> > -while [ "$1" != "" ] ; do
+> > -       case "$1" in
+> > -       -save-temps|-m32|-m64) N="$1" ;;
+> > -       -r) N="$1" ;;
+> > -       -[Wg]*) N="$1" ;;
+> > -       -[olv]|-[Ofd]*|-nostdlib) N="$1" ;;
+> > -       --end-group|--start-group)
+> > -                N="-Wl,$1" ;;
+> > -       -[RTFGhIezcbyYu]*|\
+> > ---script|--defsym|-init|-Map|--oformat|-rpath|\
+> > --rpath-link|--sort-section|--section-start|-Tbss|-Tdata|-Ttext|\
+> > ---version-script|--dynamic-list|--version-exports-symbol|--wrap|-m)
+> > -               A="$1" ; shift ; N="-Wl,$A,$1" ;;
+> > -       -[m]*) N="$1" ;;
+> > -       -*) N="-Wl,$1" ;;
+> > -       *)  N="$1" ;;
+> > -       esac
+> > -       ARGS="$ARGS $N"
+> > -       shift
+> > -done
+> > -
+> > -exec $CC $ARGS
+> > --
+> > 2.17.1
+> >
+>
+>
+> --
+> Thanks,
+> ~Nick Desaulniers
 
-Reviewed-by: Ido Schimmel <idosch@nvidia.com>
 
-Thanks!
+
+
+Applied to linux-kbuild.
+Thanks.
+
+
+-- 
+Best Regards
+Masahiro Yamada
