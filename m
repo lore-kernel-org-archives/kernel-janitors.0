@@ -2,153 +2,104 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81646C0502A
-	for <kernel-janitors@archiver.kernel.org>; Sat, 27 Aug 2022 14:12:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 411E2ECAAD5
+	for <kernel-janitors@archiver.kernel.org>; Sun, 28 Aug 2022 18:43:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233173AbiH0OMi (ORCPT
+        id S230073AbiH1Snh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 27 Aug 2022 10:12:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59544 "EHLO
+        Sun, 28 Aug 2022 14:43:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231708AbiH0OMh (ORCPT
+        with ESMTP id S229612AbiH1Sng (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 27 Aug 2022 10:12:37 -0400
-X-Greylist: delayed 114 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 27 Aug 2022 07:12:36 PDT
-Received: from condef-08.nifty.com (condef-08.nifty.com [202.248.20.73])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F7DC5070C
-        for <kernel-janitors@vger.kernel.org>; Sat, 27 Aug 2022 07:12:36 -0700 (PDT)
-Received: from conssluserg-03.nifty.com ([10.126.8.82])by condef-08.nifty.com with ESMTP id 27RE8JLK030636
-        for <kernel-janitors@vger.kernel.org>; Sat, 27 Aug 2022 23:08:19 +0900
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id 27RE7wOu030481;
-        Sat, 27 Aug 2022 23:07:58 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com 27RE7wOu030481
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1661609279;
-        bh=rDdXeC6ksXnnkis/qhKihUlu0s9cxqurOTuBcsF8uWk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=kB/lLvLKiWp6aor1SzHSpNb3CXqldiPR5pXqvPcZTIuEgLQ5e/l2a+/i/v3Fb3WVx
-         QrjbRYkJaI3kUefcql6YXxSSZJ6kYOa515r6CPjbuieLMehk343C8VtGMy1G7qKSKA
-         lqH3DjdeX079Zz8Z+sraaDS+SjbjyxfO1r/SHEADAJtozGviDm0PuVznrh7xdo7+ro
-         m3+d28cSwRBLoSd7V0QDEf6wvxoy+kmK6gc9xaGnbPS3LuOWCbX7ZEAwtRouYS8ins
-         wVwecgBppwQsw/V/nGEkZXr+U8qGj5xioqM00LdV35avgRDM/BLf1j7UV/UplO0Zrd
-         Yco6WNrRtHt8w==
-X-Nifty-SrcIP: [209.85.160.46]
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-11c5ee9bf43so5510199fac.5;
-        Sat, 27 Aug 2022 07:07:58 -0700 (PDT)
-X-Gm-Message-State: ACgBeo1eERXUbkOz/jyhlfZo7UV73JqSDofjV6tVkFHsK4IK9/nOecxj
-        +Yi9yVMSNWxMWAKB7A+CRi+9EcHEKElWd0A6RcE=
-X-Google-Smtp-Source: AA6agR5fJD/Xapf90KSFwv8M9XMZ8ikXGsv8r4iY/lMSPUKVUay0NL70sR1gmsF1lexfUYKLBj8R7YAhDoCeUvAY1Xg=
-X-Received: by 2002:a05:6870:f626:b0:10d:a798:f3aa with SMTP id
- ek38-20020a056870f62600b0010da798f3aamr3979227oab.194.1661609277673; Sat, 27
- Aug 2022 07:07:57 -0700 (PDT)
+        Sun, 28 Aug 2022 14:43:36 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2246E2FFDF;
+        Sun, 28 Aug 2022 11:43:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1661712212; x=1693248212;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3iS5DuytXsVlwE/RRWVK2kpyrBj9GFyLwS42O7Lbs2A=;
+  b=0Dbnw4KuoAHBmR+azh8H0m/q+oWWzMLHiJ+xYa5WqgV/A+8nyIZ0wuR0
+   Cy9Xs5yWb4ITiBUCjw2pjZqqKft52FpuupJmi94p23bR3y3QnCL84v6A+
+   62dd8r1MTtuxPFBEImPsodxWo1ljg4arm1LNzuOQaJPfYWdLRl81tip/R
+   uz039An1xTevOEmYA65cZpzVyeve000Cm0XMZM66HdF9vzESj6Tv7hyHo
+   1g63Bejj2zFRxEwDpMnYik0tpP4xXy+aZcNoMbeRKU94BhNl9/qQasxve
+   e9+09URVpVU3sEsrjIvnFR8b1XUA8G9mnuX7gpcMIXauCVhmkhgjUGnjE
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.93,271,1654585200"; 
+   d="scan'208";a="188396689"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 28 Aug 2022 11:43:32 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.12; Sun, 28 Aug 2022 11:43:31 -0700
+Received: from localhost (10.10.115.15) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.12 via Frontend
+ Transport; Sun, 28 Aug 2022 11:43:31 -0700
+Date:   Sun, 28 Aug 2022 20:47:48 +0200
+From:   Horatiu Vultur <horatiu.vultur@microchip.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+CC:     <UNGLinuxDriver@microchip.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "Paolo Abeni" <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH net] net: lan966x: improve error handle in
+ lan966x_fdma_rx_get_frame()
+Message-ID: <20220828184748.e446pjykjklesxja@soft-dev3-1.localhost>
+References: <YwjgDm/SVd5c1tQU@kili>
 MIME-Version: 1.0
-References: <20220825091517.30842-1-lukas.bulwahn@gmail.com> <CAKwvOdkY=ye4PKi8KwP-ux73pwZs+J_Oq3wR7ep8S81=aCWtqA@mail.gmail.com>
-In-Reply-To: <CAKwvOdkY=ye4PKi8KwP-ux73pwZs+J_Oq3wR7ep8S81=aCWtqA@mail.gmail.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Sat, 27 Aug 2022 23:07:06 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT918p5v0Ak8p3a3yQKk7tYUphv=h8p9xkXa411iY_EjA@mail.gmail.com>
-Message-ID: <CAK7LNAT918p5v0Ak8p3a3yQKk7tYUphv=h8p9xkXa411iY_EjA@mail.gmail.com>
-Subject: Re: [PATCH] scripts: remove obsolete gcc-ld script
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        "H . Peter Anvin" <hpa@linux.intel.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <YwjgDm/SVd5c1tQU@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Fri, Aug 26, 2022 at 2:20 AM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
->
-> + Jiri in case this needs to be carried downstream.
->
-> On Thu, Aug 25, 2022 at 2:15 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> >
-> > Since commit 8564ed2b3888 ("Kbuild, lto: Add a gcc-ld script to let run gcc
-> > as ld") in 2014, there was not specific work on this the gcc-ld script
-> > other than treewide clean-ups.
-> >
-> > There are no users within the kernel tree, and probably no out-of-tree
-> > users either, and there is no dedicated maintainer in MAINTAINERS.
-> >
-> > Delete this obsolete gcc-ld script.
-> >
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
->
-> No callers in-tree; happy to bring it back though should there later
-> be. Thanks for the patch.
->
-> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
->
-> > ---
-> > If there are no objections, I would like to get this patch included
-> > through the kbuild tree.
-> >
-> > Masahiro-san, please pick this patch.
-> >
-> >  scripts/gcc-ld | 30 ------------------------------
-> >  1 file changed, 30 deletions(-)
-> >  delete mode 100755 scripts/gcc-ld
-> >
-> > diff --git a/scripts/gcc-ld b/scripts/gcc-ld
-> > deleted file mode 100755
-> > index 997b818c3962..000000000000
-> > --- a/scripts/gcc-ld
-> > +++ /dev/null
-> > @@ -1,30 +0,0 @@
-> > -#!/bin/sh
-> > -# SPDX-License-Identifier: GPL-2.0
-> > -# run gcc with ld options
-> > -# used as a wrapper to execute link time optimizations
-> > -# yes virginia, this is not pretty
-> > -
-> > -ARGS="-nostdlib"
-> > -
-> > -while [ "$1" != "" ] ; do
-> > -       case "$1" in
-> > -       -save-temps|-m32|-m64) N="$1" ;;
-> > -       -r) N="$1" ;;
-> > -       -[Wg]*) N="$1" ;;
-> > -       -[olv]|-[Ofd]*|-nostdlib) N="$1" ;;
-> > -       --end-group|--start-group)
-> > -                N="-Wl,$1" ;;
-> > -       -[RTFGhIezcbyYu]*|\
-> > ---script|--defsym|-init|-Map|--oformat|-rpath|\
-> > --rpath-link|--sort-section|--section-start|-Tbss|-Tdata|-Ttext|\
-> > ---version-script|--dynamic-list|--version-exports-symbol|--wrap|-m)
-> > -               A="$1" ; shift ; N="-Wl,$A,$1" ;;
-> > -       -[m]*) N="$1" ;;
-> > -       -*) N="-Wl,$1" ;;
-> > -       *)  N="$1" ;;
-> > -       esac
-> > -       ARGS="$ARGS $N"
-> > -       shift
-> > -done
-> > -
-> > -exec $CC $ARGS
-> > --
-> > 2.17.1
-> >
->
->
+The 08/26/2022 18:00, Dan Carpenter wrote:
+> 
+> Don't just print a warning.  Clean up and return an error as well.
+
+Reviewed-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+
+> 
+> Fixes: c8349639324a ("net: lan966x: Add FDMA functionality")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/net/ethernet/microchip/lan966x/lan966x_fdma.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_fdma.c b/drivers/net/ethernet/microchip/lan966x/lan966x_fdma.c
+> index 6dea7f8c1481..51f8a0816377 100644
+> --- a/drivers/net/ethernet/microchip/lan966x/lan966x_fdma.c
+> +++ b/drivers/net/ethernet/microchip/lan966x/lan966x_fdma.c
+> @@ -425,7 +425,8 @@ static struct sk_buff *lan966x_fdma_rx_get_frame(struct lan966x_rx *rx)
+>         lan966x_ifh_get_src_port(skb->data, &src_port);
+>         lan966x_ifh_get_timestamp(skb->data, &timestamp);
+> 
+> -       WARN_ON(src_port >= lan966x->num_phys_ports);
+> +       if (WARN_ON(src_port >= lan966x->num_phys_ports))
+> +               goto free_skb;
+> 
+>         skb->dev = lan966x->ports[src_port]->dev;
+>         skb_pull(skb, IFH_LEN * sizeof(u32));
+> @@ -449,6 +450,8 @@ static struct sk_buff *lan966x_fdma_rx_get_frame(struct lan966x_rx *rx)
+> 
+>         return skb;
+> 
+> +free_skb:
+> +       kfree_skb(skb);
+>  unmap_page:
+>         dma_unmap_page(lan966x->dev, (dma_addr_t)db->dataptr,
+>                        FDMA_DCB_STATUS_BLOCKL(db->status),
 > --
-> Thanks,
-> ~Nick Desaulniers
-
-
-
-
-Applied to linux-kbuild.
-Thanks.
-
+> 2.35.1
+> 
 
 -- 
-Best Regards
-Masahiro Yamada
+/Horatiu
