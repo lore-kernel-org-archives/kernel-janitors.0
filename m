@@ -2,146 +2,79 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D6FDC0502C
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Aug 2022 13:53:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DB1EECAAD2
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Aug 2022 16:03:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229698AbiH2Nxq (ORCPT
+        id S230140AbiH2QDu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 29 Aug 2022 09:53:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60512 "EHLO
+        Mon, 29 Aug 2022 12:03:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229932AbiH2Nxl (ORCPT
+        with ESMTP id S230008AbiH2QDs (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 29 Aug 2022 09:53:41 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CDDF97511;
-        Mon, 29 Aug 2022 06:53:40 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id c24so7734051pgg.11;
-        Mon, 29 Aug 2022 06:53:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc;
-        bh=ENR6zXlzprDZixSeKqPFK+t4TDIeg7JZE6a8SVGK308=;
-        b=AWq+ofH1oIUg8rs4W95LjB2cXM5FY8EUmeMiY0qYklZnsdd07ZYpo8K8WstNc4XzYR
-         9+HdvZbOnuGit7LFpT++pBAMTAj8geXLb50DDLDrI/ajmVZaveD13FT0dKcFb1ZTLdoI
-         mzvfPWrSNePUTV9AcCFs7iODJeTZol49M7xI7BuwTd3QtL7Ui5zyAfwkTl7L4i5l08qF
-         kKGCk1E14eAe2Xqd5zn+nGxU4e9Lec+XvSA4sSqyTvcCIi4y+5wXmpeF2FAfusE01NWL
-         WYwASqFjUaUQU+vjZVdIAYFpEk7yroAtGWPEotsnuR0Yu+8L4zIX7kXaJmlFQ2ZJVB9j
-         e4Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc;
-        bh=ENR6zXlzprDZixSeKqPFK+t4TDIeg7JZE6a8SVGK308=;
-        b=pAg7qlHbubVD+B9LAImf371LLMy04WWnMa2kdVJRrO/NdJl70TkuD2nWlsV9yecrPL
-         yy6G6Fd4TT+hVYYPaAaZppI00s/uELPRiJ5nL++W8RoJ2q2KKA0V0qJAd1pSEW7I+/xq
-         P2y544MGt0U9ko/AFAmTZehrwMddmbpvXU3Nb/iLHMVQ6m8dQCLFgeE7DGglM63VnfS9
-         Mc+c67Q79EW2fk14q0eRF0yjVFaJVaTecR6KE6gm1BJaF67HObfQxCa9cA5RBIjOAst3
-         4NVuq9xwCKwoBmIwDRbTOY9n/GLn9AVnHkUXVAa5rR78WOMvcVKYCTd+uXSZQvbmU2yq
-         /3XQ==
-X-Gm-Message-State: ACgBeo0HwKF483nf0oR4UciqxQuMaiVTFS+j9e20IwM6a/dKvDbgxHl4
-        MfwZzu0y7kCs2mom1+7yQLmADoY5lKukbg==
-X-Google-Smtp-Source: AA6agR75x82sSQ1XzmeJ6rgPwMc/ySBDjGhGNtf9HiwPGJGdolFJkT7h2+H3BNLmp+SYhltmGNeC0Q==
-X-Received: by 2002:a63:4547:0:b0:41d:ba0a:870a with SMTP id u7-20020a634547000000b0041dba0a870amr14272003pgk.216.1661781219647;
-        Mon, 29 Aug 2022 06:53:39 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id k13-20020a170902c40d00b001743ba85d39sm7612123plk.110.2022.08.29.06.53.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Aug 2022 06:53:39 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Mon, 29 Aug 2022 06:53:38 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Jean Delvare <jdelvare@suse.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        UNGLinuxDriver@microchip.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] hwmon: (sparx5) Use devm_clk_get_enabled() helper
-Message-ID: <20220829135338.GA229655@roeck-us.net>
-References: <cfe4c965074b5ecbe03830b05e038b4594c7b970.1661336689.git.christophe.jaillet@wanadoo.fr>
+        Mon, 29 Aug 2022 12:03:48 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE4C37F10F;
+        Mon, 29 Aug 2022 09:03:46 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 66C49B81103;
+        Mon, 29 Aug 2022 16:03:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17BB3C433D6;
+        Mon, 29 Aug 2022 16:03:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661789024;
+        bh=0AOW/zs6zHy61FY4GddWkzH7pYiahcVeqYaXS5onjsY=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=ZsTSWJO+IcoP4tUURggvMAy0hJcILNceeFhiIsbyeNoEEF8AUOHP5YZBo4Tq9gigy
+         f/kl17jX+MArnENqg1xaaGY9aqoFayW1IRIhJmMG/g7jNqPCETQzUApsVvKe0/Sbv5
+         tbWh8ptYKD1/NlOO0+ILXbSDePqH8Fjsa1ue/6aXi0MiT/yNkSxLZ1hbFe1ek0K5tT
+         Fs21iw5WFiXsGEuWnaZUEFgn4ayuQdm4UFqJ1mMIqlaV4r2bjHFCC9eYDJLaDYNbbw
+         TqxBJGfvWCwsLfUj/GOUbC3FSauNXVdHrnBxBniaMaGJLUr8ltd1ojXZYdjoVA5yqu
+         eQnXNxmiOU+jQ==
+From:   Kalle Valo <kvalo@kernel.org>
+To:     =?utf-8?B?SsOpcsO0bWU=?= Pouiller <jerome.pouiller@silabs.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] wfx: prevent underflow in wfx_send_pds()
+References: <Yv8eX7Xv2ubUOvW7@kili> <2729343.a3EqFhE7eK@pc-42>
+Date:   Mon, 29 Aug 2022 19:03:38 +0300
+In-Reply-To: <2729343.a3EqFhE7eK@pc-42> (=?utf-8?B?IkrDqXLDtG1l?=
+ Pouiller"'s message of "Mon,
+        22 Aug 2022 14:20:53 +0200")
+Message-ID: <87a67ndokl.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cfe4c965074b5ecbe03830b05e038b4594c7b970.1661336689.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Aug 24, 2022 at 12:25:13PM +0200, Christophe JAILLET wrote:
-> The devm_clk_get_enabled() helper:
->    - calls devm_clk_get()
->    - calls clk_prepare_enable() and registers what is needed in order to
->      call clk_disable_unprepare() when needed, as a managed resource.
-> 
-> This simplifies the code, the error handling paths and avoid the need of
-> a dedicated function used with devm_add_action_or_reset().
-> 
-> Based on my test with allyesconfig, this reduces the .o size from:
->    text	   data	    bss	    dec	    hex	filename
->    2419	   1472	      0	   3891	    f33	drivers/hwmon/sparx5-temp.o
-> down to:
->    2155	   1472	      0	   3627	    e2b	drivers/hwmon/sparx5-temp.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+J=C3=A9r=C3=B4me Pouiller <jerome.pouiller@silabs.com> writes:
 
-Applied to hwmon-next.
+> On Friday 19 August 2022 07:23:43 CEST Dan Carpenter wrote:
+>> This does a "chunk_len - 4" subtraction later when it calls:
+>>=20
+>>         ret =3D wfx_hif_configuration(wdev, buf + 4, chunk_len - 4);
+>>=20
+>> so check for "chunk_len" is less than 4.
+>
+> This patch also ensures that buf[4] won't overflow during:
+>
+>     if (buf[4] !=3D '{' || buf[chunk_len - 1] !=3D '}')
+>     	dev_warn(wdev->dev, "PDS:%d: unexpected content\n", chunk_num);
+>
+>> Fixes: dcbecb497908 ("staging: wfx: allow new PDS format")
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> Reviewed-by: J=C3=A9r=C3=B4me Pouiller <jerome.pouiller@silabs.com>
 
-Thanks,
-Guenter
+BTW J=C3=A9r=C3=B4me, as you are the driver maintainer you can use Acked-by.
 
-> ---
-> devm_clk_get_enabled() is new and is part of 6.0-rc1
-> ---
->  drivers/hwmon/sparx5-temp.c | 19 +------------------
->  1 file changed, 1 insertion(+), 18 deletions(-)
-> 
-> diff --git a/drivers/hwmon/sparx5-temp.c b/drivers/hwmon/sparx5-temp.c
-> index 98be48e3a22a..04fd8505e5d6 100644
-> --- a/drivers/hwmon/sparx5-temp.c
-> +++ b/drivers/hwmon/sparx5-temp.c
-> @@ -26,13 +26,6 @@ struct s5_hwmon {
->  	struct clk *clk;
->  };
->  
-> -static void s5_temp_clk_disable(void *data)
-> -{
-> -	struct clk *clk = data;
-> -
-> -	clk_disable_unprepare(clk);
-> -}
-> -
->  static void s5_temp_enable(struct s5_hwmon *hwmon)
->  {
->  	u32 val = readl(hwmon->base + TEMP_CFG);
-> @@ -113,7 +106,6 @@ static int s5_temp_probe(struct platform_device *pdev)
->  {
->  	struct device *hwmon_dev;
->  	struct s5_hwmon *hwmon;
-> -	int ret;
->  
->  	hwmon = devm_kzalloc(&pdev->dev, sizeof(*hwmon), GFP_KERNEL);
->  	if (!hwmon)
-> @@ -123,19 +115,10 @@ static int s5_temp_probe(struct platform_device *pdev)
->  	if (IS_ERR(hwmon->base))
->  		return PTR_ERR(hwmon->base);
->  
-> -	hwmon->clk = devm_clk_get(&pdev->dev, NULL);
-> +	hwmon->clk = devm_clk_get_enabled(&pdev->dev, NULL);
->  	if (IS_ERR(hwmon->clk))
->  		return PTR_ERR(hwmon->clk);
->  
-> -	ret = clk_prepare_enable(hwmon->clk);
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = devm_add_action_or_reset(&pdev->dev, s5_temp_clk_disable,
-> -				       hwmon->clk);
-> -	if (ret)
-> -		return ret;
-> -
->  	s5_temp_enable(hwmon);
->  
->  	hwmon_dev = devm_hwmon_device_register_with_info(&pdev->dev,
+--=20
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
+hes
