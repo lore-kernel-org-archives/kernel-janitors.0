@@ -2,153 +2,167 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F81ECAAD5
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Aug 2022 08:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83678ECAAD4
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Aug 2022 11:27:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229874AbiH2Ixn (ORCPT
+        id S232252AbiH2L1t (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 29 Aug 2022 04:53:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38706 "EHLO
+        Mon, 29 Aug 2022 07:27:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229463AbiH2Ixm (ORCPT
+        with ESMTP id S231991AbiH2L0Z (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 29 Aug 2022 04:53:42 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B251059279;
-        Mon, 29 Aug 2022 01:53:41 -0700 (PDT)
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27T72ZhB003801;
-        Mon, 29 Aug 2022 08:53:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : content-type : in-reply-to :
- mime-version; s=corp-2022-7-12;
- bh=3Uv5IpNNrtRsSLlZRkDfBzmFeTpDMq5gvTEsp+NTEQc=;
- b=nNJmFbLqadU9U4q43QpaYTFC1l6jRdXNHZ0xLXfnO0CLIKuk+NRIL2jOGkBsSXZRCtPT
- jWilys/seugbW3X1X1+2LfF3V41K4l0ruJx0Lcwlz6L36tOFbw2FPF8r1CzLSmosOq/c
- 50rT5/NCfI5n2GdwV3aN46yxdsp786342qgEMU22eejsHYZA45lrPU8HQHW2YirF6iKM
- 4EoodCONy5PegggbIcd0PJjzEE03vMI+oeC314/iPFf0qulMrBGtMZi4tk89FBUUJLBq
- VCj5zxK4DggSX01jHXDnwBN11AU/4BWqCBENompVaWLmKXoVCKJ1bskjpQJlfl/D+PlB 5w== 
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3j7btt2rsv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 29 Aug 2022 08:53:38 +0000
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 27T8aJCL034651;
-        Mon, 29 Aug 2022 08:53:36 GMT
-Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04lp2046.outbound.protection.outlook.com [104.47.74.46])
-        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3j79q20drh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 29 Aug 2022 08:53:36 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=A/lOUF96sCHyLKPVCOfyZ+nEFDq/NnGAjez/6KfKYjd5s97JVIM/pmwgDA8Y9s5GXnbjhPOl9udL9DgeNA53HI9cXNG+bx2qrVdeisWtRxi/1gl2WRiM5jK64k558YOXU5U1JI1QLEnrTgMZsRvPZwq8XNqfBG1deRoYYfsm43kY4vH5Xl2GAW/OzKt9JbP5gGcBrHX0+CSLmRKbsJ9PId06Gbpb8oylQCs5GV0HAkzSOLFOvoTWXwK7mOEd4nJVXWgCygu5js/uNduAHqxduw2MJhBe4NLbcmHoS4M/bj4/p+CmxnYlcAMopG4r/4JqF4hzQIM//PZq4lOGwWPSpA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3Uv5IpNNrtRsSLlZRkDfBzmFeTpDMq5gvTEsp+NTEQc=;
- b=OWou9i+C5MYNIiK4BKWsSwD/R+h8ip2u1VRKh8K5ucxr6f/kFt/HuOKc9cLfdPxBT7k3V1ZotKKkhCp8JmlMMIjV+3aK5lERPKl41R7H/+60rNp4NRDgH8gglcmIVq7s00UYZH3qYw6ITPln8uaVsLzgabn6MadV4hlGztxwGT4Lbtli4SJAuGGNkwJUXFnZ09y3DJUEyMW/Y70Z8bmRp6o5IKUOMYeUOwTILu22nSSGj85PXiBDuI+yahpHfDtcE1XZ5TeU8tYfyG3l2fX16PCHF2BIJVCcCXlG8H7reaeiOmaGQcAjxLO78+WMc+Z4U7+6jolsyLqyHcKHBhVEpw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Mon, 29 Aug 2022 07:26:25 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67BE778229;
+        Mon, 29 Aug 2022 04:16:16 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id h204-20020a1c21d5000000b003a5b467c3abso7978421wmh.5;
+        Mon, 29 Aug 2022 04:16:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3Uv5IpNNrtRsSLlZRkDfBzmFeTpDMq5gvTEsp+NTEQc=;
- b=YRs1+6mrpsxCi2kw4TunWMzyW4gCr4HloX6JSamXRanDv98ES+ojL0zeYy36Ikl6ryesZMNm7AdPAT3tZS4u3jnu5AwXZJlvCbTl8fnxxFuPK++7Fzkv2OYb2vePMUcHScmqfPxtgnR9TO1EXu/arbUIjmn7iRgJId+KUk+3BOI=
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28) by IA1PR10MB5946.namprd10.prod.outlook.com
- (2603:10b6:208:3d6::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.19; Mon, 29 Aug
- 2022 08:53:35 +0000
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::209e:de4d:68ea:c026]) by MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::209e:de4d:68ea:c026%3]) with mapi id 15.20.5566.021; Mon, 29 Aug 2022
- 08:53:34 +0000
-Date:   Mon, 29 Aug 2022 11:53:24 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     Ilan Peer <ilan.peer@intel.com>, linux-wireless@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] wifi: mac80211: Unlock on error path in
- ieee80211_key_link()
-Message-ID: <20220829085324.GN2030@kadam>
-References: <Ywx7xR590F6lUA4l@kili>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Ywx7xR590F6lUA4l@kili>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: MR1P264CA0199.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:501:57::10) To MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28)
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=lOhpCObqWHdCARz2NDIqCtnDWiHAAEeM53JGliLfbVs=;
+        b=lPGL8ZYWjAj7lle2UsdjAKp8K4qbyHtSf55Qa20c3HvaGTUBoTNNE3UbgpAQzUSdJ9
+         ScCRoCdu1b/tozGYB49Vrh6y22+ltPQmKoFzXnjAP0eRt9MgOtyhCAd7/zptlTRSuZCi
+         /ri+vo2WEQD3283UxpbIfrcLtUaV/d8oNSdkqRSM/2Ruya08cC9WnnUsE2ji6bI4u17V
+         iN6gRKwKEXi6I/BhxBOFIJpsAtiYkn3Yz/OWGaHZy0sMIzQ56ise+n4dZwylixG3w9bK
+         a8mB3KaYAA6kF4kPDdGk0WG25mg27N4E3Xn0ORxHPpWWRdkD2VR7Cl1HfkI0rrcyBWGb
+         Q4gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=lOhpCObqWHdCARz2NDIqCtnDWiHAAEeM53JGliLfbVs=;
+        b=uVGuddQaLjarwyT0/c2+NLbFIljYVkA9Vt5h/mWF6h78pM689TYO/D/c6Iz2wDJjXS
+         AFkXSMNqn0YSeawmmxBL5mkSp1dkxNcecu7wzXfkUdFhXSYa6hWghWlZxOnjs5FtRfaz
+         i4m48i4fLUAxA5pWQa6z2P1p5ltayL8Yacr9O1WIKuUXsXalwLBtyC3AeYga3RO+Ko+y
+         1WWv2bVlYs6VNxulYQTS97uQsnucBSfbCv+dUiQ6Oawd+zoTMI4E5fx9r20Gg6aOhi+N
+         AqGW97odEw4pCK9R79bXhpyCg3CCSAT/kkScZtFijUpYuT3r34O8UerANV4gJbxM90P6
+         x4hg==
+X-Gm-Message-State: ACgBeo2yndI7IDJfHWMrlY+C4YVT6VYVmXzJSvCbnIU8nJcd4T8VbLUc
+        0x3qn+K5VMqfqO9G76suhUw=
+X-Google-Smtp-Source: AA6agR4qShWVRNC4Kl1p705Z5ez+1h9e3xNpc5r4siUX0qgzgQ1wfjL7bmInQOMaCVIxez4Wdyz4KA==
+X-Received: by 2002:a05:600c:198e:b0:3a5:d4a2:8896 with SMTP id t14-20020a05600c198e00b003a5d4a28896mr6318695wmq.140.1661771694406;
+        Mon, 29 Aug 2022 04:14:54 -0700 (PDT)
+Received: from [192.168.0.30] ([47.62.125.55])
+        by smtp.gmail.com with ESMTPSA id n8-20020adff088000000b002258235bda3sm6624936wro.61.2022.08.29.04.14.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Aug 2022 04:14:53 -0700 (PDT)
+Message-ID: <ae3523f9-6420-9413-30cf-ab6a081c8500@gmail.com>
+Date:   Mon, 29 Aug 2022 13:14:52 +0200
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 1a199bfc-26f3-430c-32c1-08da899bf4be
-X-MS-TrafficTypeDiagnostic: IA1PR10MB5946:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 3FMSazc00iCPxl8JSiygT7e8mm2KIvlhG0luKPqQXSaLFWIFmX8v3+srjIbIMz8hBSBIU8S6P+PBoFfh7auxKM+bYuRxHMoNVyOBqEIYM49+bO7cbTDpvzz/w1tLbQ53iJq+J/11WnPBPijwbla14d37SVHII9oaAHrTvSJvzhNdkywTjOaf6jaJSqlmG8h2LbH3Uiok7hPO57YSvAXMg+o5t6omLmWUt1xF0pu/cxwikCRSCZ28FKum20y8D69gXBYfNSRb1DTwN+p3H3SXyjPmZqoNPIurshePwdV0VpRysDsuNxkS0IaheI4lFnWiuhRlGcO4MavTzrzCLB/YBAuKu4/FkGnMuBYkkvvaJlrd9MWwxEq5Lg0n7mQ36UOItsBiwWqgFTBSUOGg7/d4PB+gPCcnJ8lY3KQAYkhE4glg5O8dXcQUrzAOA08Wun/GQ2pdirligxjgVWemVFcEfGIPwGZQymTligeK4WGSPKRc3Eh4vzVWDQe9/LexjqDs2lukYjzTYuuDxx/ktckNaDf6xUqf/8vHZW/Z3gLcU7d+ijJycwM0akvH+s18ANy1W0Gfv2nc1XGpXxarGftXNXp9omeOo321mY6VEpmyix2K/lRuu+Rs5GZuWWAi0VqwxqtOeOJF7ux21+oM+RXSUORa1P8H3eUIOwpZ64kzrkZ6+fP1dH1vfWHfXf3U31n8GhyVkWXwJb3zU9snQKIyAlLh1OzUE0lHLO2p3FfKQjIvmjaDM5Uv1ZiSJ9kFm4M1XzzJZhW2ye6N/Mrj+7PMcw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(7916004)(366004)(39860400002)(396003)(376002)(136003)(346002)(4326008)(5660300002)(44832011)(6916009)(8676002)(66946007)(316002)(66556008)(66476007)(86362001)(33656002)(558084003)(2906002)(33716001)(8936002)(83380400001)(38100700002)(478600001)(38350700002)(6486002)(41300700001)(186003)(26005)(52116002)(1076003)(9686003)(6506007)(6512007)(6666004);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+1gBs6XS+o06edyyCzh5M/IPOkgfoONwmOIebjjDu+rWX1h6LbNSS7mZy+Zh?=
- =?us-ascii?Q?hWs0HpylAPyP5mGAhUjQGWd3myq8iMgv6fSJaF4Yk4yO2EPloU7Z0UYyr49I?=
- =?us-ascii?Q?n4TE76cR/aidGO31Tu0ehlV+8gH+dY5kHkoLAS+GXf714lxPjuEk4KPUK18g?=
- =?us-ascii?Q?fID6MRmOmlxqZaXlxOgwhp1R5qqG2Kx2BTlZvPuUy3NhbCuTMA8eD1Ot0B1A?=
- =?us-ascii?Q?CBk357xfEPik3YCJ4cVZFVo+VHy61BcQpjL6m4FT/iQO6aC3HSMOElzkU+KF?=
- =?us-ascii?Q?zbXIb1gRuqho1FLOjgYSiH4XSNi/KkjytR/0UC9kPY/co4rV/PWcbU3k8v0U?=
- =?us-ascii?Q?Rl3oCvggF5BXnIUBaaQ+spAISE6sIACqHjbuxcCN/ImcKdX4o3utSp+m+8kt?=
- =?us-ascii?Q?oSnHX8esQRNa1El8HwAFLdw1VMfoDGXR1DBYg3MZX7Mj3zVKnVT3exPiOjNQ?=
- =?us-ascii?Q?emJVVds/SE7+4bkSY5c33BvT/YD93X4maTZVrlqPb0nYzyv9vKlM8fb2JkzJ?=
- =?us-ascii?Q?I0xVRmrT5dln0cG1w9DhEu7C2SNGTuSTq/p2JU2l54tqPqt/mhLFJpWYz1Ju?=
- =?us-ascii?Q?dTxRng+NAAzax/G/ixeVy5OAuPbkxJEOphXNYtRmU4BtzHjallzANGt4tArg?=
- =?us-ascii?Q?GvplRm5Orj70ja3j2TU/jXF/KGSEs84X5KC+1fj4YOkoB7/oIaANpHGhyGae?=
- =?us-ascii?Q?E8HYHM9z8w2rD6GdTo3m7WgJeVq57gE7n7BjPxFZnFjK/qMBhCSfKJ+Fi1Vv?=
- =?us-ascii?Q?eC9vm26aChpsIwi1cyO0+UXezRdsHJAzXqiTV015rwXjrkvEX/kLpkoY0C+x?=
- =?us-ascii?Q?hFMO2LJ2gSNlPopQJra+Jg09Kxq6nwclsLGx2sojzGw1CzSEXVoAq099AvSA?=
- =?us-ascii?Q?+Zp5q+c+/a+weto8eI7d3Os+qswEzRHtM7wK0WKoYsdrDUk3AVRrGRSR2VIm?=
- =?us-ascii?Q?wQAUxNW14Fok1SwTTiwFQawJG60cc7dXRPxwBQIIsF3BKsUKS4ZRc/BHPyhl?=
- =?us-ascii?Q?39WasNc+8geLgX5J/3w4FQwhhPyPvJSLBkwMb9icVylV99POxkiotfd8IMkS?=
- =?us-ascii?Q?2GGiWEDQTeMBaaT8LVg4N3ubHmm0yWchDCLa8EFaSHiocZ5h8sVyezHlnxFj?=
- =?us-ascii?Q?TZ9kcE15cb8MPCCSyp65YVy5EVbR2qw/X0AlQAhygPwL3ducd+Y+D//VEvjm?=
- =?us-ascii?Q?setcWHSwQZ5Q0f8djshg+xBxmGp/8Vzqm1pNFWaRdmEM2lz+oGPX5862kRYZ?=
- =?us-ascii?Q?0TjZdukdmvA2NfhiONH62fjCVcfxzso+L2uVRbz12NcPPDEFA5Q91OGcDxbH?=
- =?us-ascii?Q?ubyMaH36uCk2F2fkiDNnB2nUNn3jef+6rWzCohNys3rNPHiRciJF/y/F2mOX?=
- =?us-ascii?Q?6/hR9fkzo5z6HIeQcXaEFGrqIBhqQe/CWXuIbqRNu99QlmJ6d9ZwirwWz9+p?=
- =?us-ascii?Q?P4cvkbEB9sBMMNwsAYfenqc7+mgSBFGAiv+BJ2sz5hFkcio/xif29hX5lkeB?=
- =?us-ascii?Q?4FlRj7i7DIKWJzHMC3RiNmscXu7/euXC6JKC7mIkXJhkrm0iTkYCapQ8Ttel?=
- =?us-ascii?Q?YiwwRa9izpNGLYtHTP4CyIQ6yyNOjAgfPxlIoFpzqYv919dTtpPmxbJBjhXl?=
- =?us-ascii?Q?Gw=3D=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a199bfc-26f3-430c-32c1-08da899bf4be
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2022 08:53:34.7575
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Uzfp2ckZx9Wb8PKK29JUyN0+3uu4AnAqnpCPgmScQbpkrzM7XFSZWDxWO7bfGXsXOwbwHdyt1EsbitnO8N9B20eIEXWSGq3lxqgjH6E4XUg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB5946
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-08-29_04,2022-08-25_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0 mlxscore=0
- spamscore=0 mlxlogscore=821 phishscore=0 suspectscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2207270000
- definitions=main-2208290044
-X-Proofpoint-ORIG-GUID: hJm3IbTHngEQXUzPqHSzkQ6uzdOrMxWh
-X-Proofpoint-GUID: hJm3IbTHngEQXUzPqHSzkQ6uzdOrMxWh
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [PATCH 2/4] spi: mt7621: Use the devm_clk_get_enabled() helper to
+ simplify error handling
+Content-Language: en-US
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        broonie@kernel.org, gregkh@linuxfoundation.org, neil@brown.name,
+        blogic@openwrt.org
+Cc:     linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <cover.1661599671.git.christophe.jaillet@wanadoo.fr>
+ <05a7fd22719008c8a905d6328aa9548ce40f2a7a.1661599671.git.christophe.jaillet@wanadoo.fr>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+In-Reply-To: <05a7fd22719008c8a905d6328aa9548ce40f2a7a.1661599671.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Mon, Aug 29, 2022 at 11:41:41AM +0300, Dan Carpenter wrote:
-> Unlock before returning on this error path.
+
+
+On 27/08/2022 13:42, Christophe JAILLET wrote:
+> The devm_clk_get_enabled() helper:
+>     - calls devm_clk_get()
+>     - calls clk_prepare_enable() and registers what is needed in order to
+>       call clk_disable_unprepare() when needed, as a managed resource.
 > 
+> This helper is well suited for cases where the clock would be kept
+> prepared or enabled for the whole lifetime of the driver.
+> 
+> This simplifies the error handling a lot.
+> 
+> The order between spi_unregister_controller() (in the remove function) and
+> the clk_disable_unprepare() (now handle by a  managed resource) is kept
+> the same.
+> (see commit 46b5c4fb87ce ("spi: mt7621: Don't leak SPI master in probe
+> error path") to see why it matters)
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Never mind.  I see that Sun Ke already sent this.  I need to make
-checking lore a standard part of my QC process instead of only for
-uninitialized variable bugs...
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 
-regards,
-dan carpenter
-
+> ---
+> The order with  devm_spi_release_controller() (which undoes
+> devm_spi_alloc_master()) is reversed, but I don't think it is an issue.
+> ---
+>   drivers/spi/spi-mt7621.c | 14 +-------------
+>   1 file changed, 1 insertion(+), 13 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-mt7621.c b/drivers/spi/spi-mt7621.c
+> index 351b0ef52bbc..2580b28042be 100644
+> --- a/drivers/spi/spi-mt7621.c
+> +++ b/drivers/spi/spi-mt7621.c
+> @@ -327,7 +327,6 @@ static int mt7621_spi_probe(struct platform_device *pdev)
+>   	struct spi_controller *master;
+>   	struct mt7621_spi *rs;
+>   	void __iomem *base;
+> -	int status = 0;
+>   	struct clk *clk;
+>   	int ret;
+>   
+> @@ -339,19 +338,14 @@ static int mt7621_spi_probe(struct platform_device *pdev)
+>   	if (IS_ERR(base))
+>   		return PTR_ERR(base);
+>   
+> -	clk = devm_clk_get(&pdev->dev, NULL);
+> +	clk = devm_clk_get_enabled(&pdev->dev, NULL);
+>   	if (IS_ERR(clk))
+>   		return dev_err_probe(&pdev->dev, PTR_ERR(clk),
+>   				     "unable to get SYS clock\n");
+>   
+> -	status = clk_prepare_enable(clk);
+> -	if (status)
+> -		return status;
+> -
+>   	master = devm_spi_alloc_master(&pdev->dev, sizeof(*rs));
+>   	if (!master) {
+>   		dev_info(&pdev->dev, "master allocation failed\n");
+> -		clk_disable_unprepare(clk);
+>   		return -ENOMEM;
+>   	}
+>   
+> @@ -376,13 +370,10 @@ static int mt7621_spi_probe(struct platform_device *pdev)
+>   	ret = device_reset(&pdev->dev);
+>   	if (ret) {
+>   		dev_err(&pdev->dev, "SPI reset failed!\n");
+> -		clk_disable_unprepare(clk);
+>   		return ret;
+>   	}
+>   
+>   	ret = spi_register_controller(master);
+> -	if (ret)
+> -		clk_disable_unprepare(clk);
+>   
+>   	return ret;
+>   }
+> @@ -390,13 +381,10 @@ static int mt7621_spi_probe(struct platform_device *pdev)
+>   static int mt7621_spi_remove(struct platform_device *pdev)
+>   {
+>   	struct spi_controller *master;
+> -	struct mt7621_spi *rs;
+>   
+>   	master = dev_get_drvdata(&pdev->dev);
+> -	rs = spi_controller_get_devdata(master);
+>   
+>   	spi_unregister_controller(master);
+> -	clk_disable_unprepare(rs->clk);
+>   
+>   	return 0;
+>   }
