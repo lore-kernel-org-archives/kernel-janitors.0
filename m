@@ -2,79 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DB1EECAAD2
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Aug 2022 16:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB2B6C6FA69
+	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Aug 2022 17:10:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230140AbiH2QDu (ORCPT
+        id S231244AbiH2RKb (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 29 Aug 2022 12:03:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46288 "EHLO
+        Mon, 29 Aug 2022 13:10:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230008AbiH2QDs (ORCPT
+        with ESMTP id S230034AbiH2RKa (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 29 Aug 2022 12:03:48 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE4C37F10F;
-        Mon, 29 Aug 2022 09:03:46 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Mon, 29 Aug 2022 13:10:30 -0400
+Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7433A4F6A4;
+        Mon, 29 Aug 2022 10:10:29 -0700 (PDT)
+Received: from localhost (unknown [IPv6:2601:281:8300:73:8b7:7001:c8aa:b65f])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 66C49B81103;
-        Mon, 29 Aug 2022 16:03:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17BB3C433D6;
-        Mon, 29 Aug 2022 16:03:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661789024;
-        bh=0AOW/zs6zHy61FY4GddWkzH7pYiahcVeqYaXS5onjsY=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=ZsTSWJO+IcoP4tUURggvMAy0hJcILNceeFhiIsbyeNoEEF8AUOHP5YZBo4Tq9gigy
-         f/kl17jX+MArnENqg1xaaGY9aqoFayW1IRIhJmMG/g7jNqPCETQzUApsVvKe0/Sbv5
-         tbWh8ptYKD1/NlOO0+ILXbSDePqH8Fjsa1ue/6aXi0MiT/yNkSxLZ1hbFe1ek0K5tT
-         Fs21iw5WFiXsGEuWnaZUEFgn4ayuQdm4UFqJ1mMIqlaV4r2bjHFCC9eYDJLaDYNbbw
-         TqxBJGfvWCwsLfUj/GOUbC3FSauNXVdHrnBxBniaMaGJLUr8ltd1ojXZYdjoVA5yqu
-         eQnXNxmiOU+jQ==
-From:   Kalle Valo <kvalo@kernel.org>
-To:     =?utf-8?B?SsOpcsO0bWU=?= Pouiller <jerome.pouiller@silabs.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] wfx: prevent underflow in wfx_send_pds()
-References: <Yv8eX7Xv2ubUOvW7@kili> <2729343.a3EqFhE7eK@pc-42>
-Date:   Mon, 29 Aug 2022 19:03:38 +0300
-In-Reply-To: <2729343.a3EqFhE7eK@pc-42> (=?utf-8?B?IkrDqXLDtG1l?=
- Pouiller"'s message of "Mon,
-        22 Aug 2022 14:20:53 +0200")
-Message-ID: <87a67ndokl.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        by ms.lwn.net (Postfix) with ESMTPSA id 78BFD2E0;
+        Mon, 29 Aug 2022 17:10:28 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 78BFD2E0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+        t=1661793028; bh=6RcwsS4OrANagoYHogQySR2/On902/U+jByX/Y83jHM=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=iwwgebhZGE8Y//Z8xiIjQHD2CvwzGZKIc2kfO5RWCTXXLGkcs/9jAKQ0zJ3Q0n1se
+         rT8lY+gjbJ37vPzEJl5JtbE7lSGiR+kCZ71MMpsGEwykvgFUCmYckwC3HjCv/ECFX6
+         IGlIsA8aL7afumMMWJ8RG79PYHKE+B1Z2AOWRBrgm3r5ODMjJqvtyleYkJlggRpzta
+         N10H1mMa1TJMj50R76kb14HL54isbjFgn45N5mappruTUc+C2N48+CGH6e6U4VB/2R
+         DecFAdWM3i69/Smh9GGHI1k0bfcDHcoWUv3uEjXVgzyMavdXKoBuYM+xUpq7TLnB1+
+         cTBt9wGUcOhGA==
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Thorsten Leemhuis <linux@leemhuis.info>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: Re: [RFC PATCH 0/2] Rework the kernel's README.rst
+In-Reply-To: <87czdpb598.fsf@meer.lwn.net>
+References: <20220720041325.15693-1-lukas.bulwahn@gmail.com>
+ <87czdpb598.fsf@meer.lwn.net>
+Date:   Mon, 29 Aug 2022 11:10:27 -0600
+Message-ID: <871qszou0s.fsf@meer.lwn.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-J=C3=A9r=C3=B4me Pouiller <jerome.pouiller@silabs.com> writes:
+Jonathan Corbet <corbet@lwn.net> writes:
 
-> On Friday 19 August 2022 07:23:43 CEST Dan Carpenter wrote:
->> This does a "chunk_len - 4" subtraction later when it calls:
->>=20
->>         ret =3D wfx_hif_configuration(wdev, buf + 4, chunk_len - 4);
->>=20
->> so check for "chunk_len" is less than 4.
+> Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
 >
-> This patch also ensures that buf[4] won't overflow during:
+>> As far as I see, the README.rst file in Documentation/admin-guide/ covers
+>> three rather outdated (or subsumed) aspects:
+>>
+>>   1. mentioning that it is possible to "run a.out user programs with this kernel"
+>>
+>>   2. how to report a kernel bug
+>>
+>>   3. the explanations around the use of LILO as a boot loader
+>>
+>> This patch series addressed the first two aspects; the third one simply
+>> first needs some more experimenting/experience on my side to update
+>> the description of the setup with a GRUB boot loader.
+>>
+>> I am happy if anyone else contributes or helps with this rework task on
+>> the third aspect.
+>>
+>> I am also adding Linus as recipient, as he seems to be the original author,
+>> i.e., in the text, 'me' refers to Linus.
+>>
+>> Please let me know if you are generally fine with this approach, and
+>> if there is something on the other documentation to be done to get this
+>> patch accepted.
 >
->     if (buf[4] !=3D '{' || buf[chunk_len - 1] !=3D '}')
->     	dev_warn(wdev->dev, "PDS:%d: unexpected content\n", chunk_num);
->
->> Fixes: dcbecb497908 ("staging: wfx: allow new PDS format")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> Reviewed-by: J=C3=A9r=C3=B4me Pouiller <jerome.pouiller@silabs.com>
+> The changes seem fine to me; I'll apply them after the merge window if
+> nobody objects.
 
-BTW J=C3=A9r=C3=B4me, as you are the driver maintainer you can use Acked-by.
+I guess I've given people enough time to object :)
 
---=20
-https://patchwork.kernel.org/project/linux-wireless/list/
+Patches are applied, sorry for taking so long.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
-hes
+Thanks,
+
+jon
