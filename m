@@ -2,72 +2,89 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8167CC0502A
-	for <kernel-janitors@archiver.kernel.org>; Tue, 30 Aug 2022 09:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 290F5ECAAA1
+	for <kernel-janitors@archiver.kernel.org>; Tue, 30 Aug 2022 11:36:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229476AbiH3JqU (ORCPT
+        id S230287AbiH3Lgy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 30 Aug 2022 05:46:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49588 "EHLO
+        Tue, 30 Aug 2022 07:36:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229698AbiH3JqS (ORCPT
+        with ESMTP id S231135AbiH3Lgg (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 30 Aug 2022 05:46:18 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7A26A2DA1;
-        Tue, 30 Aug 2022 02:46:16 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        Tue, 30 Aug 2022 07:36:36 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A43771BD;
+        Tue, 30 Aug 2022 04:34:44 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id C5ACD6601BF7;
-        Tue, 30 Aug 2022 10:46:14 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1661852775;
-        bh=yjC89saAgBju8ExXt9nwpmDQQR18E9xc86/sSTGhJEQ=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=AddUnld3tR1MuhWklJh9cxZbTR0S+J3RifWNZeGGGLhVFmcYSHF1zPBERasbYg8uN
-         nxo1Mu92N1gD7OLNFVmCQ0aQV/o/+8bDqhHwHt4boW1gIEhHwQsd/AJmoW2HZZEP1T
-         LI4jeTLXV2F7hvbYf6eGChkbWyi0fTFpivZt42XKQR/K59b7xtQlAofjYQijtWtkvv
-         Jq1HEqkVE4IfUeUTE4TISKWbnoGYlGBJKrmhYkxuds42KygoG3eLOQkOcDGs61UJ41
-         0txWtrYR1/UujPChcQVQSk+xxth56j0rqCPnGGkQqBeqW4A1Mo7BnmVrMyN9umw8hs
-         fDhQkmniXhTTQ==
-Message-ID: <a0396687-f27e-a601-1bb6-daa6fa210ea5@collabora.com>
-Date:   Tue, 30 Aug 2022 11:46:11 +0200
+        by ams.source.kernel.org (Postfix) with ESMTPS id B7396B81625;
+        Tue, 30 Aug 2022 11:33:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDE75C433D6;
+        Tue, 30 Aug 2022 11:33:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1661859210;
+        bh=x37WWGK6ZK1GESVvhlxDTHmfP/06owgD+RlfqNBq3PQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uUruHVqQDrYlogvWcGXb9PTi+PMEhjcSgpjJXizVZmjyz7kfMC1NKGBTVPFgooCxw
+         RroN4Ye87o+CWkh+Rjey96+2mAkgKSsct8dXSVHYZ7aW+BOnHd8LxDgQXEoEOSvQ+I
+         aQYnmoIPYguJQYBvFpL72aKPrO0pPQxMKEK7TPfo=
+Date:   Tue, 30 Aug 2022 13:33:27 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH] serial: icom: Fix some indentation
+Message-ID: <Yw31h38pq9WZNmKM@kroah.com>
+References: <037fc7510ff88945e3f0a5756de4cfd135c59849.1660565015.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH 1/4] spi: mt7621: Fix an error message in
- mt7621_spi_probe()
-Content-Language: en-US
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        broonie@kernel.org, matthias.bgg@gmail.com,
-        gregkh@linuxfoundation.org, neil@brown.name, blogic@openwrt.org
-Cc:     linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <cover.1661599671.git.christophe.jaillet@wanadoo.fr>
- <928f3fb507d53ba0774df27cea0bbba4b055993b.1661599671.git.christophe.jaillet@wanadoo.fr>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <928f3fb507d53ba0774df27cea0bbba4b055993b.1661599671.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <037fc7510ff88945e3f0a5756de4cfd135c59849.1660565015.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Il 27/08/22 13:42, Christophe JAILLET ha scritto:
-> 'status' is known to be 0 at this point. The expected error code is
-> PTR_ERR(clk).
+On Mon, Aug 15, 2022 at 02:05:50PM +0200, Christophe JAILLET wrote:
+> checkpatch and smatch report some code alignment issues.
 > 
-> Switch to dev_err_probe() in order to display the expected error code (in a
-> human readable way).
-> This also filters -EPROBE_DEFER cases, should it happen.
+> So remove some unneeded leading spaces to fix the warnings.
 > 
-> Fixes: 1ab7f2a43558 ("staging: mt7621-spi: add mt7621 support")
+> While at it remove some {} around a single statement and convert some
+> spaces into a tab.
+> 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+> ---
+>  drivers/tty/serial/icom.c | 27 +++++++++++++--------------
+>  1 file changed, 13 insertions(+), 14 deletions(-)
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Hi,
+
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- Your patch did many different things all at once, making it difficult
+  to review.  All Linux kernel patches need to only do one thing at a
+  time.  If you need to do multiple things (such as clean up all coding
+  style issues in a file/driver), do it in a sequence of patches, each
+  one doing only one thing.  This will make it easier to review the
+  patches to ensure that they are correct, and to help alleviate any
+  merge issues that larger patches can cause.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
