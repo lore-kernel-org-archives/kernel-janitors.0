@@ -2,103 +2,78 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 209BDECAAD4
-	for <kernel-janitors@archiver.kernel.org>; Mon, 29 Aug 2022 20:54:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C248CECAAD5
+	for <kernel-janitors@archiver.kernel.org>; Tue, 30 Aug 2022 03:02:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229715AbiH2Uy3 (ORCPT
+        id S229453AbiH3DCy (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 29 Aug 2022 16:54:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52310 "EHLO
+        Mon, 29 Aug 2022 23:02:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229681AbiH2UyZ (ORCPT
+        with ESMTP id S230073AbiH3DCi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 29 Aug 2022 16:54:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D05D09C2D1;
-        Mon, 29 Aug 2022 13:54:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4835A611C1;
-        Mon, 29 Aug 2022 20:54:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 170FAC433D6;
-        Mon, 29 Aug 2022 20:54:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661806463;
-        bh=kQN0K1JdQf+wETbVKAjAg7qcB5LeYW6ExuLEV5ZgUug=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=mLeNaRBVUBII8aBY8A2zCbDN/yXsfnpQolkq1xfmEPimrFjXrjbTbZ8Dr9J8lGdq2
-         ACREAuOoMj0wQyXSELbvaDCgN8WoFEji16ma9bJBWTqTVmkBbXkZgWNBLIsxsclSgm
-         9GPrlwhngaM9vBSZub395LOeJ5Jyfh67awglIyaAWbT8HseyO1AhzIbBWokfGXm8TL
-         gYQO2LheCAApV91RxXY2jpPNsYkGZF1yYzeh+4OpNLv7DMgIBVEJ25dcOzSo5X4vr0
-         u1Mi2dGgCjAGAtghvA0AuBX3+W/EpHx9OKtwzJb1fIeVvwCw4UsgR8WC3aXviHthoC
-         82yzwtgD9pBcQ==
-From:   Mark Brown <broonie@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        neil@brown.name, matthias.bgg@gmail.com,
-        gregkh@linuxfoundation.org, blogic@openwrt.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-In-Reply-To: <cover.1661599671.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1661599671.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH 0/4] spi: mt7621: Fix an erroneous message + clean-ups
-Message-Id: <166180645965.972874.4626638273769561589.b4-ty@kernel.org>
-Date:   Mon, 29 Aug 2022 21:54:19 +0100
+        Mon, 29 Aug 2022 23:02:38 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11287A1D6D;
+        Mon, 29 Aug 2022 20:02:32 -0700 (PDT)
+Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.53])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4MGsSH3HYMzYcnL;
+        Tue, 30 Aug 2022 10:58:07 +0800 (CST)
+Received: from kwepemm600010.china.huawei.com (7.193.23.86) by
+ dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Tue, 30 Aug 2022 11:02:30 +0800
+Received: from huawei.com (10.175.127.227) by kwepemm600010.china.huawei.com
+ (7.193.23.86) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Tue, 30 Aug
+ 2022 11:02:29 +0800
+From:   Sun Ke <sunke32@huawei.com>
+To:     <neal_liu@aspeedtech.com>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <joel@jms.id.au>
+CC:     <linux-aspeed@lists.ozlabs.org>, <linux-crypto@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <kernel-janitors@vger.kernel.org>, <sunke32@huawei.com>
+Subject: [PATCH] crypto: aspeed: fix return value check in aspeed_hace_probe()
+Date:   Tue, 30 Aug 2022 11:13:47 +0800
+Message-ID: <20220830031347.810217-1-sunke32@huawei.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.10.0-dev-65ba7
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemm600010.china.huawei.com (7.193.23.86)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sat, 27 Aug 2022 13:41:39 +0200, Christophe JAILLET wrote:
-> Patch 1 fixes an issue about an error code that is erroneously logged.
-> 
-> Patch 2-4 are just clean-ups spotted while fixing it.
-> 
-> Additional comments are added below --- in patches 2 and 3.
-> 
-> Christophe JAILLET (4):
->   spi: mt7621: Fix an error message in mt7621_spi_probe()
->   spi: mt7621: Use the devm_clk_get_enabled() helper to simplify error
->     handling
->   spi: mt7621: Use devm_spi_register_controller()
->   spi: mt7621: Remove 'clk' from 'struct mt7621_spi'
-> 
-> [...]
+In case of error, the function devm_ioremap_resource() returns
+ERR_PTR() not NULL. The NULL test in the return value check must be
+replaced with IS_ERR().
 
-Applied to
+Fixes: 108713a713c7 ("crypto: aspeed - Add HACE hash driver")
+Signed-off-by: Sun Ke <sunke32@huawei.com>
+---
+ drivers/crypto/aspeed/aspeed-hace.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-   broonie/spi.git for-next
+diff --git a/drivers/crypto/aspeed/aspeed-hace.c b/drivers/crypto/aspeed/aspeed-hace.c
+index 4fefc9e69d72..3f880aafb6a2 100644
+--- a/drivers/crypto/aspeed/aspeed-hace.c
++++ b/drivers/crypto/aspeed/aspeed-hace.c
+@@ -123,9 +123,9 @@ static int aspeed_hace_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, hace_dev);
+ 
+ 	hace_dev->regs = devm_ioremap_resource(&pdev->dev, res);
+-	if (!hace_dev->regs) {
++	if (IS_ERR(hace_dev->regs)) {
+ 		dev_err(&pdev->dev, "Failed to map resources\n");
+-		return -ENOMEM;
++		return PTR_ERR(hace_dev->regs);
+ 	}
+ 
+ 	/* Get irq number and register it */
+-- 
+2.31.1
 
-Thanks!
-
-[1/4] spi: mt7621: Fix an error message in mt7621_spi_probe()
-      commit: 2b2bf6b7faa9010fae10dc7de76627a3fdb525b3
-[2/4] spi: mt7621: Use the devm_clk_get_enabled() helper to simplify error handling
-      commit: 3d6af96814d753f34cf897466e7ddf041d0cdf3b
-[3/4] spi: mt7621: Use devm_spi_register_controller()
-      commit: 30b31b29a866d32fc381b406d4c4f5db2636e5ec
-[4/4] spi: mt7621: Remove 'clk' from 'struct mt7621_spi'
-      commit: 4a5cc683543f5f6ed586944095c65cb4da4b9273
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
