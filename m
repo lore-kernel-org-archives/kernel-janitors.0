@@ -2,95 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 968BBECAAD1
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Sep 2022 10:33:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 488F8ECAAD3
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Sep 2022 11:21:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234213AbiIAKdU (ORCPT
+        id S234434AbiIALVo (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 1 Sep 2022 06:33:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40642 "EHLO
+        Thu, 1 Sep 2022 07:21:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233027AbiIAKdT (ORCPT
+        with ESMTP id S234472AbiIALVd (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 1 Sep 2022 06:33:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C4C412206D;
-        Thu,  1 Sep 2022 03:33:19 -0700 (PDT)
+        Thu, 1 Sep 2022 07:21:33 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A218A12649E;
+        Thu,  1 Sep 2022 04:21:29 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DF31C61CE6;
-        Thu,  1 Sep 2022 10:33:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66689C433C1;
-        Thu,  1 Sep 2022 10:33:17 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3C58861DBA;
+        Thu,  1 Sep 2022 11:21:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5674C433D6;
+        Thu,  1 Sep 2022 11:21:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662028398;
-        bh=BiuK04+CE8YoYewJRijQZYZ40574bNvs7fZjdplgJJI=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=SKHwIPNDOiB0UORbMxLK20HkTEJpVICgTJR7jYCwr+8xIf6qY7tcxGLtUtHBXz/iq
-         0d22GeqWlfXoCsZwgKbbdX/kAzSrAzLSMvjFH1O4tJ/AtIMvocKMwn97Via5a8xk2i
-         HEbz2VlkNzvqATaEOnjNz8Q8GANiA7ilxRRMNMLpjOCijczub97HWarGF7v0GDqnP+
-         jwJQy5cppwJ/Uvn1dVwlkWxi+PZ2qltBOn0iSc6ZiM1R7JeOreXVh2SahOBLiQFsed
-         0vMPtynh2ZUStUJfxZb3e5Iy96FO4DqLjCFaKKvYtjJm5RJ/2JMBjDj6P2da/0MfXJ
-         01PkhG8rtuaVw==
-From:   Kalle Valo <kvalo@kernel.org>
-To:     =?utf-8?B?SsOpcsO0bWU=?= Pouiller <jerome.pouiller@silabs.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] wfx: prevent underflow in wfx_send_pds()
-References: <Yv8eX7Xv2ubUOvW7@kili> <2729343.a3EqFhE7eK@pc-42>
-        <87a67ndokl.fsf@kernel.org> <37769865.10thIPus4b@pc-42>
-Date:   Thu, 01 Sep 2022 13:33:15 +0300
-In-Reply-To: <37769865.10thIPus4b@pc-42> (=?utf-8?B?IkrDqXLDtG1l?=
- Pouiller"'s message of "Mon,
-        29 Aug 2022 19:12:40 +0200")
-Message-ID: <87r10ve650.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+        s=k20201202; t=1662031288;
+        bh=Y1ObXWZoAPO9a3cVwM+9DOIhRMb2NN2/YlncxX1cYIA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=g8HIcvDfJ7+Kvvz7+2WkqooremfBKbH+fzUyNPoCCJ2aYsc9DWatob971V4yk03CO
+         CF6JpCsGQDyY0QDjoCeC8LtYUjVtluTRQnHT+In0odOoTv1u/fhLc26r3d+JtsKvMH
+         5PuERM7bTHJjhKOVQZCMjMVa45wyctq94eCQtHyhw46Akh48FlQ6jSlJYP6T8kKM3x
+         RugJdDoqIJ3L6xxhrT6ZYLyWIG8ao+H+lluQYn4OM88a8h3sfyWsoFA+/06aPUwOym
+         RBlIYrKDULw2WTZ7K3lmhXwcE94QUucjPYFUeWQRUAZXqT0Kxu8vaaotXrYDElSDNc
+         VVGWuzmYv6mxw==
+Message-ID: <5c5d87f8329e44275bda36657be4de2390f065d4.camel@kernel.org>
+Subject: Re: [PATCH v2 1/3] nfsd: Fix a memory leak in an error handling path
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Scott Mayhew <smayhew@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-nfs@vger.kernel.org
+Date:   Thu, 01 Sep 2022 07:21:26 -0400
+In-Reply-To: <14d802144c88da0eb9e201b3acbf4bde376b2473.1662009844.git.christophe.jaillet@wanadoo.fr>
+References: <14d802144c88da0eb9e201b3acbf4bde376b2473.1662009844.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-J=C3=A9r=C3=B4me Pouiller <jerome.pouiller@silabs.com> writes:
+On Thu, 2022-09-01 at 07:27 +0200, Christophe JAILLET wrote:
+> If this memdup_user() call fails, the memory allocated in a previous call
+> a few lines above should be freed. Otherwise it leaks.
+>=20
+> Fixes: 6ee95d1c8991 ("nfsd: add support for upcall version 2")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  fs/nfsd/nfs4recover.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
+> index b29d27eaa8a6..248ff9f4141c 100644
+> --- a/fs/nfsd/nfs4recover.c
+> +++ b/fs/nfsd/nfs4recover.c
+> @@ -815,8 +815,10 @@ __cld_pipe_inprogress_downcall(const struct cld_msg_=
+v2 __user *cmsg,
+>  				princhash.data =3D memdup_user(
+>  						&ci->cc_princhash.cp_data,
+>  						princhashlen);
+> -				if (IS_ERR_OR_NULL(princhash.data))
+> +				if (IS_ERR_OR_NULL(princhash.data)) {
+> +					kfree(name.data);
+>  					return -EFAULT;
+> +				}
+>  				princhash.len =3D princhashlen;
+>  			} else
+>  				princhash.len =3D 0;
 
-> On Monday 29 August 2022 18:03:38 CEST Kalle Valo wrote:
->> J=C3=A9r=C3=B4me Pouiller <jerome.pouiller@silabs.com> writes:
->>=20
->> > On Friday 19 August 2022 07:23:43 CEST Dan Carpenter wrote:
->> >> This does a "chunk_len - 4" subtraction later when it calls:
->> >>
->> >>         ret =3D wfx_hif_configuration(wdev, buf + 4, chunk_len - 4);
->> >>
->> >> so check for "chunk_len" is less than 4.
->> >
->> > This patch also ensures that buf[4] won't overflow during:
->> >
->> >     if (buf[4] !=3D '{' || buf[chunk_len - 1] !=3D '}')
->> >       dev_warn(wdev->dev, "PDS:%d: unexpected content\n", chunk_num);
->> >
->> >> Fixes: dcbecb497908 ("staging: wfx: allow new PDS format")
->> >> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> >
->> > Reviewed-by: J=C3=A9r=C3=B4me Pouiller <jerome.pouiller@silabs.com>
->>=20
->> BTW J=C3=A9r=C3=B4me, as you are the driver maintainer you can use Acked=
--by.
->
-> Reviewed-by does not imply Acked-by?
-
-Acked-by has "stronger" meaning and is meant to use by the maintainer of
-the code in question. So anyone can use Reviewed-by but only the
-maintainer should use Acked-by. My preference is that maintainers use
-Acked-by as then I can easily see from my patchwork script that the
-patch is ready to be applied.
-
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#when=
--to-use-acked-by-cc-and-co-developed-by
-
---=20
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
-hes
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
