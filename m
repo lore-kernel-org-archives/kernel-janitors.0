@@ -2,66 +2,66 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54597ECAAD4
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Sep 2022 01:11:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA80DECAAD2
+	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Sep 2022 04:41:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232112AbiIABL6 (ORCPT
+        id S230148AbiIAElu (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 31 Aug 2022 21:11:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45162 "EHLO
+        Thu, 1 Sep 2022 00:41:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230437AbiIABL5 (ORCPT
+        with ESMTP id S229473AbiIAEls (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 31 Aug 2022 21:11:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0848DC09E;
-        Wed, 31 Aug 2022 18:11:56 -0700 (PDT)
+        Thu, 1 Sep 2022 00:41:48 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09B69E3407;
+        Wed, 31 Aug 2022 21:41:45 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5552961CD5;
-        Thu,  1 Sep 2022 01:11:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A264FC433D6;
-        Thu,  1 Sep 2022 01:11:55 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D7CFF614A0;
+        Thu,  1 Sep 2022 04:41:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CDE1C433D6;
+        Thu,  1 Sep 2022 04:41:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661994715;
-        bh=K0IlwXuix3BvINpGFkVRnlr166FlxhMBm++Ywj0zDcg=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=G34RDrEQDBcZAlf3xZr+fmbay6EBPT7wXw8i/eixWy2rw2QH+3sXm/2Y9zIW/YXuJ
-         kWTwirpkoRZLHAhorbAL5UPGOcHN3M60pr7AwJf30GbHp/hObb79sOKG9jMOI2thHK
-         YXxRYbQVD46K95SfdZS/+6tvb6J1TTK48UyaQxVPfZUV1cH2F7eITXy4vSro7hi+Md
-         qRAtnBWebBdonZWHJ3xHDSfpUQayPp4zT1q1C9gW0RK5D7jtYrX6iyepfDaan/Yv7z
-         fS9rG9zpVtAqW+osYtsvmDdnZuipqWDQwuN7S2bbIgYTJ4NjJZ3jmpT6RS+UzgjNI0
-         Wk5T8FjGKiQ3Q==
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1662007304;
+        bh=k1iJM+v4douG1sTrz3KM2OrUcG3NQP6r/KTcxHrpFc4=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=DHKfHGgfHGTGCJYU8/hQ4E6CJiYS4pSpexAFepjpo0tczp66FyAl0JdqDVLJzzvc3
+         GAYKhjkxMylB94n4X9esy/Z4dHkw4PCYksi//43STh9wMhuaVGMbMvsljMcwqndvIW
+         9ktXIhJ0zBKZ0lN8dWW2m/3iWvGMiYESW8IsiAEGuQhMl1xM+UkLqwxFiGRwWmLZBS
+         COlJsd3O83IxSH5H9gUDE6dbTZFVDeks1w8hv7kawMCCnFRmfgJ9+UI4ckOc7PLai4
+         7uZ4xuClyQsAm/bm+6zLx7P83wfYV134KtCHatob98SnE83OUibht689pRpprH7Xow
+         Jeg+GoHQ8VHHg==
+From:   Kalle Valo <kvalo@kernel.org>
+To:     Sun Ke <sunke32@huawei.com>
+Cc:     <johannes@sipsolutions.net>, <davem@davemloft.net>,
+        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, <johannes.berg@intel.com>
+Subject: Re: [PATCH] mac80211: fix potential deadlock in ieee80211_key_link()
+References: <20220827022452.823381-1-sunke32@huawei.com>
+Date:   Thu, 01 Sep 2022 07:41:38 +0300
+In-Reply-To: <20220827022452.823381-1-sunke32@huawei.com> (Sun Ke's message of
+        "Sat, 27 Aug 2022 10:24:52 +0800")
+Message-ID: <87v8q7emf1.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220720082934.17741-1-lukas.bulwahn@gmail.com>
-References: <20220720082934.17741-1-lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH] clk: davinci: remove PLL and PSC clocks for DaVinci DM644x and DM646x
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     David Lechner <david@lechnology.com>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org
-Date:   Wed, 31 Aug 2022 18:11:53 -0700
-User-Agent: alot/0.10
-Message-Id: <20220901011155.A264FC433D6@smtp.kernel.org>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Quoting Lukas Bulwahn (2022-07-20 01:29:34)
-> Commit 7dd33764486d ("ARM: davinci: Delete DM644x board files") and commit
-> b4aed01de486 ("ARM: davinci: Delete DM646x board files") removes the
-> support for DaVinci DM644x and DM646x boards.
->=20
-> Hence, remove the PLL and PSC clock descriptions for those boards as well.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
+Sun Ke <sunke32@huawei.com> writes:
 
-Applied to clk-next
+> Add the missing unlock before return in the error handling case.
+>
+> Fixes: ccdde7c74ffd ("wifi: mac80211: properly implement MLO key handling")
+> Signed-off-by: Sun Ke <sunke32@huawei.com>
+
+The title is missing "wifi:".
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
