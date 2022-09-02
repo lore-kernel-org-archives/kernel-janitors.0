@@ -2,44 +2,35 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8482ECAAD5
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Sep 2022 16:27:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29F2FC001B5
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Sep 2022 16:49:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235957AbiIBQ1R (ORCPT
+        id S236098AbiIBQtq (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Sep 2022 12:27:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41486 "EHLO
+        Fri, 2 Sep 2022 12:49:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234963AbiIBQ1I (ORCPT
+        with ESMTP id S231889AbiIBQto (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Sep 2022 12:27:08 -0400
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29A13C7433
-        for <kernel-janitors@vger.kernel.org>; Fri,  2 Sep 2022 09:27:07 -0700 (PDT)
+        Fri, 2 Sep 2022 12:49:44 -0400
+Received: from smtp.smtpout.orange.fr (smtp07.smtpout.orange.fr [80.12.242.129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11E1F12A9E
+        for <kernel-janitors@vger.kernel.org>; Fri,  2 Sep 2022 09:39:56 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id U9VRobqH1kifIU9VSoXLOn; Fri, 02 Sep 2022 18:27:03 +0200
+        id U9hwotD6YjJi0U9hxo8ald; Fri, 02 Sep 2022 18:39:54 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 02 Sep 2022 18:27:03 +0200
+X-ME-Date: Fri, 02 Sep 2022 18:39:54 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3] stmmac: intel: Simplify intel_eth_pci_remove()
-Date:   Fri,  2 Sep 2022 18:26:56 +0200
-Message-Id: <35ab3ac5b67716acb3f7073229b02a38fce71fb7.1662135995.git.christophe.jaillet@wanadoo.fr>
+        linux-mm@kvack.org
+Subject: [PATCH v2] mm/mremap_pages: Save a few cycles in get_dev_pagemap()
+Date:   Fri,  2 Sep 2022 18:39:52 +0200
+Message-Id: <9ef1562a1975371360f3e263856e9f1c5749b656.1662136782.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -47,44 +38,40 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There is no point to call pcim_iounmap_regions() in the remove function,
-this frees a managed resource that would be release by the framework
-anyway.
+Use 'percpu_ref_tryget_live_rcu()' instead of 'percpu_ref_tryget_live()' to
+save a few cycles when it is known that the rcu lock is already
+taken/released.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
-Change in v3:
-  * (no code change)
-  * what was patch 1/2 in the serie has been applied
-  * synch with net-next
+Matthew Wilcox <willy@infradead.org> commented on v1 that it is just a slow
+path... but it is also just an easy patch :)
 
-Change in v2:
+If considered as useless, let me know and I'll drop it from my WIP list.
+
+Changes in v2:
   * (no code change)
-  * Remove the text added below the --- in v1 (see link below if
-    needed)
-  * Add Reviewed-by:
-  https://lore.kernel.org/all/2aeb1a03d07c686efd8b3e6fc8ff2d45cd7da1e8.1660659689.git.christophe.jaillet@wanadoo.fr/
+  * synch with latest -next
 
 v1:
-  https://lore.kernel.org/all/9f82d58aa4a6c34ec3c734399a4792d3aa23297f.1659204745.git.christophe.jaillet@wanadoo.fr/
+  https://lore.kernel.org/all/b4a47154877853cc64be3a35dcfd594d40cc2bce.1635975283.git.christophe.jaillet@wanadoo.fr/
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c | 2 --
- 1 file changed, 2 deletions(-)
+ mm/memremap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
-index 7d3c7ca7caf4..0a2afc1a3124 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
-@@ -1135,8 +1135,6 @@ static void intel_eth_pci_remove(struct pci_dev *pdev)
+diff --git a/mm/memremap.c b/mm/memremap.c
+index 58b20c3c300b..25029a474d30 100644
+--- a/mm/memremap.c
++++ b/mm/memremap.c
+@@ -454,7 +454,7 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
+ 	/* fall back to slow path lookup */
+ 	rcu_read_lock();
+ 	pgmap = xa_load(&pgmap_array, PHYS_PFN(phys));
+-	if (pgmap && !percpu_ref_tryget_live(&pgmap->ref))
++	if (pgmap && !percpu_ref_tryget_live_rcu(&pgmap->ref))
+ 		pgmap = NULL;
+ 	rcu_read_unlock();
  
- 	clk_disable_unprepare(priv->plat->stmmac_clk);
- 	clk_unregister_fixed_rate(priv->plat->stmmac_clk);
--
--	pcim_iounmap_regions(pdev, BIT(0));
- }
- 
- static int __maybe_unused intel_eth_pci_suspend(struct device *dev)
 -- 
 2.34.1
 
