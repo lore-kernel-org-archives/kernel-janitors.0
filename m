@@ -2,109 +2,172 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 864A8ECAAD1
-	for <kernel-janitors@archiver.kernel.org>; Thu,  1 Sep 2022 17:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B44C54EE9
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Sep 2022 07:01:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232673AbiIAROg (ORCPT
+        id S234495AbiIBHBw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 1 Sep 2022 13:14:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44278 "EHLO
+        Fri, 2 Sep 2022 03:01:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231843AbiIAROe (ORCPT
+        with ESMTP id S232927AbiIBHBu (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 1 Sep 2022 13:14:34 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CC009A9C8
-        for <kernel-janitors@vger.kernel.org>; Thu,  1 Sep 2022 10:14:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662052474; x=1693588474;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ToBueJ6KJo9UXPq1sRlObbiXpCNJdNlpcCfh6mbCNgA=;
-  b=AFLiWYm68qWUUcdheOEcjUTkI7UvrnFabBgI7od+y0t8SjxYikFgy+lv
-   q4dZ+5xEJntzVk0CFQpwy4q0sN9O0ld4U9zeJhWHIL8jxD+beeYl3DMpq
-   Fd6j47J55+cZcU6iyTRuB70q7vqYjMkhNnnQsMMrvYYeyxZkDA1N7FhmD
-   1y9rkAwFB4+cq1XYmhsnozRowvtsWFaV/p9dSLgTDZiqgL21eW25NxA6i
-   9a5TA+xfBghA/3RqNf3BCFesheJk4fZpcGjTHLPMbwudL0SoIFwzdF9Ct
-   OSMwc14+8Eo9HKYY6gcz3DWDKgwBLHMMGP6xsgHp3B/MJHuSYXJfvh26u
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10457"; a="275523949"
-X-IronPort-AV: E=Sophos;i="5.93,281,1654585200"; 
-   d="scan'208";a="275523949"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2022 10:14:33 -0700
-X-IronPort-AV: E=Sophos;i="5.93,281,1654585200"; 
-   d="scan'208";a="940938718"
-Received: from ahajda-mobl.ger.corp.intel.com (HELO [10.213.20.60]) ([10.213.20.60])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2022 10:14:31 -0700
-Message-ID: <811c976d-1346-64c4-f45b-195654f4a138@intel.com>
-Date:   Thu, 1 Sep 2022 19:14:29 +0200
+        Fri, 2 Sep 2022 03:01:50 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F654BC13A
+        for <kernel-janitors@vger.kernel.org>; Fri,  2 Sep 2022 00:01:49 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id E1AF034017;
+        Fri,  2 Sep 2022 07:01:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1662102107; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sbV+FiqQ4NiOM+U9g9WVXNt3yfp7aQHt2tv8AaKog2o=;
+        b=sXru7CJnp43OSHE+Q3gfs7Reml5Ral30qA5NcMVaeaDo9KZXV++Nmo0PZJlCThWGm5emu/
+        985qf4Cg/8Mt/aNZhD8VxxD3yAYuUs59iovYZZ8XAEpFjUzJtWL65nnFHJQrCUXFKRBL03
+        PP1tYD9pDp/Mr+hBu9UpqHefhePfCTA=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A646A13328;
+        Fri,  2 Sep 2022 07:01:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id Tq4fJ1uqEWMVUwAAMHmgww
+        (envelope-from <jgross@suse.com>); Fri, 02 Sep 2022 07:01:47 +0000
+Message-ID: <5b0a0f39-7016-c447-fc45-9f66146f1cd2@suse.com>
+Date:   Fri, 2 Sep 2022 09:01:47 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Firefox/91.0 Thunderbird/91.13.0
-Subject: Re: [Intel-gfx] [PATCH] drm/i915: prevent integer overflow in
- query_engine_info()
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH] xen/grants: prevent integer overflow in
+ gnttab_dma_alloc_pages()
 Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc:     David Airlie <airlied@linux.ie>, intel-gfx@lists.freedesktop.org,
-        kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-References: <YxDSAj6tIrTZv5Y5@kili>
-From:   Andrzej Hajda <andrzej.hajda@intel.com>
-Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298
- Gdansk - KRS 101882 - NIP 957-07-52-316
-In-Reply-To: <YxDSAj6tIrTZv5Y5@kili>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Stefano Stabellini <sstabellini@kernel.org>,
+        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+        xen-devel@lists.xenproject.org, kernel-janitors@vger.kernel.org
+References: <YxDROJqu/RPvR0bi@kili>
+From:   Juergen Gross <jgross@suse.com>
+In-Reply-To: <YxDROJqu/RPvR0bi@kili>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------cRQo4LafssU0J0xeIuAJyvJO"
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 01.09.2022 17:38, Dan Carpenter wrote:
-> This code uses struct_size() but it stores the result in an int so the
-> integer overflow checks are not effective.  Record the types as size_t
-> to prevent the size from being truncated.
-> 
-> Fixes: bf3c50837506 ("drm/i915/query: Use struct_size() helper")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------cRQo4LafssU0J0xeIuAJyvJO
+Content-Type: multipart/mixed; boundary="------------fkTq3z0VP8wTMXnXLZNXAXX2";
+ protected-headers="v1"
+From: Juergen Gross <jgross@suse.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ xen-devel@lists.xenproject.org, kernel-janitors@vger.kernel.org
+Message-ID: <5b0a0f39-7016-c447-fc45-9f66146f1cd2@suse.com>
+Subject: Re: [PATCH] xen/grants: prevent integer overflow in
+ gnttab_dma_alloc_pages()
+References: <YxDROJqu/RPvR0bi@kili>
+In-Reply-To: <YxDROJqu/RPvR0bi@kili>
 
-Reviewed-by: Andrzej Hajda <andrzej.hajda@intel.com>
+--------------fkTq3z0VP8wTMXnXLZNXAXX2
+Content-Type: multipart/mixed; boundary="------------AajvFlGqY4hdbrcAuSypkoVX"
 
-Regards
-Andrzej
-> ---
-> I do not know if the integer overflow can happen.  This is a hardenning
-> patch just like the conversion to struct_size().
-> 
->   drivers/gpu/drm/i915/i915_query.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/i915_query.c b/drivers/gpu/drm/i915/i915_query.c
-> index 6ec9c9fb7b0d..43a499fbdc8d 100644
-> --- a/drivers/gpu/drm/i915/i915_query.c
-> +++ b/drivers/gpu/drm/i915/i915_query.c
-> @@ -13,7 +13,7 @@
->   #include <uapi/drm/i915_drm.h>
->   
->   static int copy_query_item(void *query_hdr, size_t query_sz,
-> -			   u32 total_length,
-> +			   size_t total_length,
->   			   struct drm_i915_query_item *query_item)
->   {
->   	if (query_item->length == 0)
-> @@ -135,7 +135,8 @@ query_engine_info(struct drm_i915_private *i915,
->   	struct drm_i915_engine_info info = { };
->   	unsigned int num_uabi_engines = 0;
->   	struct intel_engine_cs *engine;
-> -	int len, ret;
-> +	size_t len;
-> +	int ret;
->   
->   	if (query_item->flags)
->   		return -EINVAL;
+--------------AajvFlGqY4hdbrcAuSypkoVX
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
+T24gMDEuMDkuMjIgMTc6MzUsIERhbiBDYXJwZW50ZXIgd3JvdGU6DQo+IFRoZSBjaGFuZ2Ug
+ZnJvbSBrY2FsbG9jKCkgdG8ga3ZtYWxsb2MoKSBtZWFucyB0aGF0IGFyZy0+bnJfcGFnZXMN
+Cj4gbWlnaHQgbm93IGJlIGxhcmdlIGVub3VnaCB0aGF0IHRoZSAiYXJncy0+bnJfcGFnZXMg
+PDwgUEFHRV9TSElGVCIgY2FuDQo+IHJlc3VsdCBpbiBhbiBpbnRlZ2VyIG92ZXJmbG93Lg0K
+PiANCj4gRml4ZXM6IGIzZjc5MzFmNWM2MSAoInhlbi9nbnRkZXY6IHN3aXRjaCBmcm9tIGtj
+YWxsb2MoKSB0byBrdmNhbGxvYygpIikNCj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRl
+ciA8ZGFuLmNhcnBlbnRlckBvcmFjbGUuY29tPg0KDQpSZXZpZXdlZC1ieTogSnVlcmdlbiBH
+cm9zcyA8amdyb3NzQHN1c2UuY29tPg0KDQoNCkp1ZXJnZW4NCg==
+--------------AajvFlGqY4hdbrcAuSypkoVX
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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
+jR/i1DG86lem3iBDXzXsZDn8R38=3D
+=3D2wuH
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------AajvFlGqY4hdbrcAuSypkoVX--
+
+--------------fkTq3z0VP8wTMXnXLZNXAXX2--
+
+--------------cRQo4LafssU0J0xeIuAJyvJO
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmMRqlsFAwAAAAAACgkQsN6d1ii/Ey/Y
+LAf/WuPTgtFX7MUPzC8lcBQxS2xaDfDr2daJDF5ms0Ls/odgnyktNNsgplfNsK4x2ob598B7gvYO
+WFvC7BVywEDmQD2vM6SDcgF0igg2aNxUenSGht+RrJhZuMDa8dT4/noOX+n5WED4cXFQ9IXFeGss
+MsRRkAp2hgU7RZbp5qWpNOxLK7SUlvP4IcQ2F9CFdB12gnbjVr3OtNmdv43Dww38eYr70CIUNgC3
+xOxUiYqe8BwBYd+eDHXiX4vBkygD7AM5BiyBev3+BJ3vXrHRXVLf45j2n8fY1X6E6o9nIbR6J7jJ
+PcmPu9D8m+lSgFlXIXUanZ0O5ZCcAzSjqzKKJxsICg==
+=7Ns1
+-----END PGP SIGNATURE-----
+
+--------------cRQo4LafssU0J0xeIuAJyvJO--
