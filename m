@@ -2,72 +2,86 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E093ECAAD5
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Sep 2022 08:46:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 935BAC6FA83
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Sep 2022 08:47:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235903AbiIBIqY (ORCPT
+        id S236045AbiIBIrt (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Sep 2022 04:46:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57348 "EHLO
+        Fri, 2 Sep 2022 04:47:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235948AbiIBIpz (ORCPT
+        with ESMTP id S236034AbiIBIrO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Sep 2022 04:45:55 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C939A47E;
-        Fri,  2 Sep 2022 01:44:52 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2A15E62129;
-        Fri,  2 Sep 2022 08:44:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A800DC433D6;
-        Fri,  2 Sep 2022 08:44:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662108291;
-        bh=pru3KgiHjYBk/40M6hUqyO6pVQW0ylbsFZNCWGwZ2mA=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=N2+4+n3cQsK2vZ2QCYsgDGpraYd1AmZ4N7tEBP0TC2B/sdTPn9hjO4E/BAhNXxXFm
-         5+MeGEt43JdvlGFMMvXOIAgP9Ouqqn6K49l3ga47XVTLZb2emJIxVI8boYzhXbp+Q7
-         QPMPhusWG2kqfz7TQ5RodVu+oyvY9Xh3m5UyycjuFdbnhdA1SBjfh2Oe9pYx4CAxpA
-         fmQREWUIdCm49oMAYdW4oOZoyJJx6e9vpJjZ3zyVVN3IGTjhJedWcuppkQI+cq0Kb+
-         wV4xCMotL/o8pcefCFo6JU9ywrK0eAk8UQO6KwN9znX45j/9aZfQafhLtRyoYhsd4n
-         r9zu188btrF8w==
-Content-Type: text/plain; charset="utf-8"
+        Fri, 2 Sep 2022 04:47:14 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FF87C2763;
+        Fri,  2 Sep 2022 01:47:13 -0700 (PDT)
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.53])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4MJrzh2ywkzlWjd;
+        Fri,  2 Sep 2022 16:43:44 +0800 (CST)
+Received: from kwepemm600010.china.huawei.com (7.193.23.86) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Fri, 2 Sep 2022 16:47:11 +0800
+Received: from huawei.com (10.175.127.227) by kwepemm600010.china.huawei.com
+ (7.193.23.86) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Fri, 2 Sep
+ 2022 16:47:10 +0800
+From:   Sun Ke <sunke32@huawei.com>
+To:     <mchehab@kernel.org>, <matthias.bgg@gmail.com>,
+        <hverkuil-cisco@xs4all.nl>, <ping-hsun.wu@mediatek.com>,
+        <daoyuan.huang@mediatek.com>, <moudy.ho@mediatek.com>
+CC:     <linux-media@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <kernel-janitors@vger.kernel.org>, <sunke32@huawei.com>
+Subject: [PATCH 1/3] media: platform: mtk-mdp3: use devm_kfree to free memory allocated with devm_kmalloc()
+Date:   Fri, 2 Sep 2022 16:58:18 +0800
+Message-ID: <20220902085820.3777360-2-sunke32@huawei.com>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20220902085820.3777360-1-sunke32@huawei.com>
+References: <20220902085820.3777360-1-sunke32@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: wifi: wfx: prevent underflow in wfx_send_pds()
-From:   Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <Yv8eX7Xv2ubUOvW7@kili>
-References: <Yv8eX7Xv2ubUOvW7@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     =?iso-8859-1?q?J=E9r=F4me?= Pouiller <jerome.pouiller@silabs.com>,
-        linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.7.3
-Message-ID: <166210828663.24345.249472656523771487.kvalo@kernel.org>
-Date:   Fri,  2 Sep 2022 08:44:50 +0000 (UTC)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemm600010.china.huawei.com (7.193.23.86)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+comp is allocated with devm_kmalloc(), use devm_kfree to free it.
 
-> This does a "chunk_len - 4" subtraction later when it calls:
-> 
-> 	ret = wfx_hif_configuration(wdev, buf + 4, chunk_len - 4);
-> 
-> so check for "chunk_len" is less than 4.
-> 
-> Fixes: dcbecb497908 ("staging: wfx: allow new PDS format")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Reviewed-by: Jérôme Pouiller <jerome.pouiller@silabs.com>
+Fixes: 61890ccaefaf ("media: platform: mtk-mdp3: add MediaTek MDP3 driver")
+Signed-off-by: Sun Ke <sunke32@huawei.com>
+---
+ drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Patch applied to wireless-next.git, thanks.
-
-f97c81f5b7f8 wifi: wfx: prevent underflow in wfx_send_pds()
-
+diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.c b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.c
+index e62abf3587bf..9a6ba5851ccb 100644
+--- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.c
++++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-comp.c
+@@ -869,7 +869,7 @@ static struct mdp_comp *mdp_comp_create(struct mdp_dev *mdp,
+ 
+ 	ret = mdp_comp_init(mdp, node, comp, id);
+ 	if (ret) {
+-		kfree(comp);
++		devm_kfree(dev, comp);
+ 		return ERR_PTR(ret);
+ 	}
+ 	mdp->comp[id] = comp;
+@@ -930,7 +930,7 @@ void mdp_comp_destroy(struct mdp_dev *mdp)
+ 		if (mdp->comp[i]) {
+ 			pm_runtime_disable(mdp->comp[i]->comp_dev);
+ 			mdp_comp_deinit(mdp->comp[i]);
+-			kfree(mdp->comp[i]);
++			devm_kfree(mdp->comp[i]->comp_dev, mdp->comp[i]);
+ 			mdp->comp[i] = NULL;
+ 		}
+ 	}
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/Yv8eX7Xv2ubUOvW7@kili/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.31.1
 
