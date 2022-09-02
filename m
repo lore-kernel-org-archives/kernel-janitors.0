@@ -2,109 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50AAEC54EE9
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Sep 2022 10:15:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 338FDC38145
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Sep 2022 11:32:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235270AbiIBKPn (ORCPT
+        id S235552AbiIBLcS (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Sep 2022 06:15:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47444 "EHLO
+        Fri, 2 Sep 2022 07:32:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231344AbiIBKPi (ORCPT
+        with ESMTP id S236008AbiIBLbv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Sep 2022 06:15:38 -0400
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDAF660D6;
-        Fri,  2 Sep 2022 03:15:36 -0700 (PDT)
-Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.56])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4MJtzY44CrzHnYm;
-        Fri,  2 Sep 2022 18:13:45 +0800 (CST)
-Received: from kwepemm600010.china.huawei.com (7.193.23.86) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Fri, 2 Sep 2022 18:15:34 +0800
-Received: from [10.174.178.31] (10.174.178.31) by
- kwepemm600010.china.huawei.com (7.193.23.86) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Fri, 2 Sep 2022 18:15:33 +0800
-Subject: Re: [PATCH 3/3] media: platform: mtk-mdp3: fix error return code in
- mdp_vpu_dev_init()
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, <mchehab@kernel.org>,
-        <matthias.bgg@gmail.com>, <hverkuil-cisco@xs4all.nl>,
-        <ping-hsun.wu@mediatek.com>, <daoyuan.huang@mediatek.com>,
-        <moudy.ho@mediatek.com>
-CC:     <linux-media@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20220902085820.3777360-1-sunke32@huawei.com>
- <20220902085820.3777360-4-sunke32@huawei.com>
- <ee6221e1-8ce6-9fe0-6094-1cd156fdaae3@collabora.com>
-From:   Sun Ke <sunke32@huawei.com>
-Message-ID: <957c9e9a-d729-0109-92e9-4fafe9ef7622@huawei.com>
-Date:   Fri, 2 Sep 2022 18:15:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        Fri, 2 Sep 2022 07:31:51 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C52CE1B796;
+        Fri,  2 Sep 2022 04:30:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 65893B82A6A;
+        Fri,  2 Sep 2022 11:30:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 234C3C433D7;
+        Fri,  2 Sep 2022 11:30:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1662118215;
+        bh=zoti2kKA3bbsMGqfbXuXVT5vouoxM2PrYt0FaDB3J18=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=jkOP2Y/zXyBQZ6leq9LvmqFZ3foUo944n+ww2XzBSPOjY7SarTSE1YTsqq6xygVio
+         lLaOedqufyy5UBldiVY3OdAppXqYgQaYI2TEj+KQOBWT/d2IFKxFNSl/8EivpWLigQ
+         EwcaxY/+MCX49b5uiLfB2H8UyVj60vTRmx2oEe1vcft8caT0ViGAIOoOwEjWAJr5JY
+         Nfls7mcC9OhEE+6R7b3Hk2WJTXoZK6tbm6u2kYPI6Q6raE1DNH1NXvuH7+HJx9yLlh
+         p2X89gNUMqOpbSp/OJhJ7Y34/wDPpObWz+LoX6p3+0LPTW/5ZXXVLQyP4F5t7uEL44
+         M9+p33RKyqCSw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0878CE924E4;
+        Fri,  2 Sep 2022 11:30:15 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <ee6221e1-8ce6-9fe0-6094-1cd156fdaae3@collabora.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.178.31]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm600010.china.huawei.com (7.193.23.86)
-X-CFilter-Loop: Reflected
+Subject: Re: [PATCH net] tipc: fix shift wrapping bug in map_get()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <166211821502.29115.5957721175008629537.git-patchwork-notify@kernel.org>
+Date:   Fri, 02 Sep 2022 11:30:15 +0000
+References: <Yw90nHF82AyG35Mk@kili>
+In-Reply-To: <Yw90nHF82AyG35Mk@kili>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     jmaloy@redhat.com, ying.xue@windriver.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
+        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hello:
+
+This patch was applied to netdev/net.git (master)
+by David S. Miller <davem@davemloft.net>:
+
+On Wed, 31 Aug 2022 17:47:56 +0300 you wrote:
+> There is a shift wrapping bug in this code so anything thing above
+> 31 will return false.
+> 
+> Fixes: 35c55c9877f8 ("tipc: add neighbor monitoring framework")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> I have no idea why I didn't fix this back in 2016 when I fixed map_set().
+> 
+> [...]
+
+Here is the summary with links:
+  - [net] tipc: fix shift wrapping bug in map_get()
+    https://git.kernel.org/netdev/net/c/e2b224abd9bf
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-在 2022/9/2 17:10, AngeloGioacchino Del Regno 写道:
-> Il 02/09/22 10:58, Sun Ke ha scritto:
->> If mdp_vpu_shared_mem_alloc failed, mdp_vpu_dev_init should return 
->> -ENOMEM.
->>
->> Fixes: 61890ccaefaf ("media: platform: mtk-mdp3: add MediaTek MDP3 
->> driver")
->> Signed-off-by: Sun Ke <sunke32@huawei.com>
-> 
-> Hello Sun,
-> thanks for the patch! However, someone else already sent the same fix 
-> and it's
-> in a better shape. Please look at [1].
-> 
-> Thanks,
-> Angelo
-> 
-> [1]: 
-> https://patchwork.kernel.org/project/linux-mediatek/patch/YxDGFMwyeNXFPaig@kili/ 
-
-Oh. I am late.
-
-Thanks,
-Sun Ke
-
-> 
-> 
->> ---
->>   drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c 
->> b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c
->> index 9f5844385c8f..078040b7f65e 100644
->> --- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c
->> +++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c
->> @@ -175,6 +175,7 @@ int mdp_vpu_dev_init(struct mdp_vpu_dev *vpu, 
->> struct mtk_scp *scp,
->>       mem_size = vpu_alloc_size;
->>       if (mdp_vpu_shared_mem_alloc(vpu)) {
->>           dev_err(&mdp->pdev->dev, "VPU memory alloc fail!");
->> +        err = -ENOMEM;
->>           goto err_mem_alloc;
->>       }
->>
-> 
-> 
-> .
