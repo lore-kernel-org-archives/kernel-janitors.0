@@ -2,70 +2,109 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB35ECAAD5
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Sep 2022 09:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50AAEC54EE9
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Sep 2022 10:15:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235514AbiIBJLa (ORCPT
+        id S235270AbiIBKPn (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Sep 2022 05:11:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58256 "EHLO
+        Fri, 2 Sep 2022 06:15:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234836AbiIBJL3 (ORCPT
+        with ESMTP id S231344AbiIBKPi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Sep 2022 05:11:29 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AFDE2ED72;
-        Fri,  2 Sep 2022 02:11:28 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id D900C6601F04;
-        Fri,  2 Sep 2022 10:11:26 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1662109887;
-        bh=EbLnAfL1q9nzyDgYiKgpj5/yjDssEj9usoV+zglURE8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=BjtAHi8p+pCwYDqqOIb1c2oBBuYVhEhBeMbpVvslsKBeMnrMrgQfL9R2+tCX8eYbw
-         CEfOkM+JrfKdmKY+jekkXLfZAQC1YCeEDE7cKxMkqmbGVr6DWJA96QUr12S9t0NMbZ
-         W43NyW0VUw94dcYIxNR4dJdq2EuIPLcqlc2QAFhuZ/VVpAJmY7Xh6j8Yafdcx0UZ70
-         noDkRwm6F4Lrz2WIsz7FjFFbvOfCTkPAzuVW+vFTRBeM7tdYM5IK9L53zRcsAVzT6s
-         a5fKV85IBBOZCTIIiEyR473aYVfvKkr3ors/J6YlElP/+muP9F+F8qBIaruyTMjpt4
-         VDtqaIdcDnsbQ==
-Message-ID: <bd4a91ec-33fa-aa95-1845-8fd5ce70c176@collabora.com>
-Date:   Fri, 2 Sep 2022 11:11:24 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH] media: platform: mtk-mdp3: fix error code in
+        Fri, 2 Sep 2022 06:15:38 -0400
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDAF660D6;
+        Fri,  2 Sep 2022 03:15:36 -0700 (PDT)
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.56])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4MJtzY44CrzHnYm;
+        Fri,  2 Sep 2022 18:13:45 +0800 (CST)
+Received: from kwepemm600010.china.huawei.com (7.193.23.86) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Fri, 2 Sep 2022 18:15:34 +0800
+Received: from [10.174.178.31] (10.174.178.31) by
+ kwepemm600010.china.huawei.com (7.193.23.86) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Fri, 2 Sep 2022 18:15:33 +0800
+Subject: Re: [PATCH 3/3] media: platform: mtk-mdp3: fix error return code in
  mdp_vpu_dev_init()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Moudy Ho <moudy.ho@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        daoyuan huang <daoyuan.huang@mediatek.com>,
-        Ping-Hsun Wu <ping-hsun.wu@mediatek.com>,
-        linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        kernel-janitors@vger.kernel.org
-References: <YxDGFMwyeNXFPaig@kili>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <YxDGFMwyeNXFPaig@kili>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, <mchehab@kernel.org>,
+        <matthias.bgg@gmail.com>, <hverkuil-cisco@xs4all.nl>,
+        <ping-hsun.wu@mediatek.com>, <daoyuan.huang@mediatek.com>,
+        <moudy.ho@mediatek.com>
+CC:     <linux-media@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20220902085820.3777360-1-sunke32@huawei.com>
+ <20220902085820.3777360-4-sunke32@huawei.com>
+ <ee6221e1-8ce6-9fe0-6094-1cd156fdaae3@collabora.com>
+From:   Sun Ke <sunke32@huawei.com>
+Message-ID: <957c9e9a-d729-0109-92e9-4fafe9ef7622@huawei.com>
+Date:   Fri, 2 Sep 2022 18:15:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
+MIME-Version: 1.0
+In-Reply-To: <ee6221e1-8ce6-9fe0-6094-1cd156fdaae3@collabora.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.178.31]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm600010.china.huawei.com (7.193.23.86)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Il 01/09/22 16:47, Dan Carpenter ha scritto:
-> Return a negative error code if mdp_vpu_shared_mem_alloc() fails.
+
+
+在 2022/9/2 17:10, AngeloGioacchino Del Regno 写道:
+> Il 02/09/22 10:58, Sun Ke ha scritto:
+>> If mdp_vpu_shared_mem_alloc failed, mdp_vpu_dev_init should return 
+>> -ENOMEM.
+>>
+>> Fixes: 61890ccaefaf ("media: platform: mtk-mdp3: add MediaTek MDP3 
+>> driver")
+>> Signed-off-by: Sun Ke <sunke32@huawei.com>
 > 
-> Fixes: 61890ccaefaf ("media: platform: mtk-mdp3: add MediaTek MDP3 driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Hello Sun,
+> thanks for the patch! However, someone else already sent the same fix 
+> and it's
+> in a better shape. Please look at [1].
+> 
+> Thanks,
+> Angelo
+> 
+> [1]: 
+> https://patchwork.kernel.org/project/linux-mediatek/patch/YxDGFMwyeNXFPaig@kili/ 
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Oh. I am late.
 
+Thanks,
+Sun Ke
 
+> 
+> 
+>> ---
+>>   drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c 
+>> b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c
+>> index 9f5844385c8f..078040b7f65e 100644
+>> --- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c
+>> +++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c
+>> @@ -175,6 +175,7 @@ int mdp_vpu_dev_init(struct mdp_vpu_dev *vpu, 
+>> struct mtk_scp *scp,
+>>       mem_size = vpu_alloc_size;
+>>       if (mdp_vpu_shared_mem_alloc(vpu)) {
+>>           dev_err(&mdp->pdev->dev, "VPU memory alloc fail!");
+>> +        err = -ENOMEM;
+>>           goto err_mem_alloc;
+>>       }
+>>
+> 
+> 
+> .
