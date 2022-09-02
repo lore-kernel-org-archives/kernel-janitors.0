@@ -2,81 +2,81 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 338FDC38145
-	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Sep 2022 11:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E98C54EE9
+	for <kernel-janitors@archiver.kernel.org>; Fri,  2 Sep 2022 16:12:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235552AbiIBLcS (ORCPT
+        id S236346AbiIBQM2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 2 Sep 2022 07:32:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44332 "EHLO
+        Fri, 2 Sep 2022 12:12:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236008AbiIBLbv (ORCPT
+        with ESMTP id S236233AbiIBQML (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 2 Sep 2022 07:31:51 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C52CE1B796;
-        Fri,  2 Sep 2022 04:30:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 65893B82A6A;
-        Fri,  2 Sep 2022 11:30:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 234C3C433D7;
-        Fri,  2 Sep 2022 11:30:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662118215;
-        bh=zoti2kKA3bbsMGqfbXuXVT5vouoxM2PrYt0FaDB3J18=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=jkOP2Y/zXyBQZ6leq9LvmqFZ3foUo944n+ww2XzBSPOjY7SarTSE1YTsqq6xygVio
-         lLaOedqufyy5UBldiVY3OdAppXqYgQaYI2TEj+KQOBWT/d2IFKxFNSl/8EivpWLigQ
-         EwcaxY/+MCX49b5uiLfB2H8UyVj60vTRmx2oEe1vcft8caT0ViGAIOoOwEjWAJr5JY
-         Nfls7mcC9OhEE+6R7b3Hk2WJTXoZK6tbm6u2kYPI6Q6raE1DNH1NXvuH7+HJx9yLlh
-         p2X89gNUMqOpbSp/OJhJ7Y34/wDPpObWz+LoX6p3+0LPTW/5ZXXVLQyP4F5t7uEL44
-         M9+p33RKyqCSw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0878CE924E4;
-        Fri,  2 Sep 2022 11:30:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 2 Sep 2022 12:12:11 -0400
+Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16C42550B1
+        for <kernel-janitors@vger.kernel.org>; Fri,  2 Sep 2022 09:07:58 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id U9D1oWX719qatU9D1o9omT; Fri, 02 Sep 2022 18:07:56 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 02 Sep 2022 18:07:56 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Diana Craciun <diana.craciun@oss.nxp.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        kvm@vger.kernel.org
+Subject: [PATCH v3] vfio/fsl-mc: Fix a typo in a message
+Date:   Fri,  2 Sep 2022 18:07:54 +0200
+Message-Id: <a7c1394346725b7435792628c8d4c06a0a745e0b.1662134821.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] tipc: fix shift wrapping bug in map_get()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166211821502.29115.5957721175008629537.git-patchwork-notify@kernel.org>
-Date:   Fri, 02 Sep 2022 11:30:15 +0000
-References: <Yw90nHF82AyG35Mk@kili>
-In-Reply-To: <Yw90nHF82AyG35Mk@kili>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     jmaloy@redhat.com, ying.xue@windriver.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
-        kernel-janitors@vger.kernel.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
+L and S are swapped in the message.
+s/VFIO_FLS_MC/VFIO_FSL_MC/
 
-This patch was applied to netdev/net.git (master)
-by David S. Miller <davem@davemloft.net>:
+Also use 'ret' instead of 'WARN_ON(ret)' to avoid a duplicated message.
 
-On Wed, 31 Aug 2022 17:47:56 +0300 you wrote:
-> There is a shift wrapping bug in this code so anything thing above
-> 31 will return false.
-> 
-> Fixes: 35c55c9877f8 ("tipc: add neighbor monitoring framework")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> I have no idea why I didn't fix this back in 2016 when I fixed map_set().
-> 
-> [...]
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Changes in v3:
+  * Remove WARN_ON() and WARN() and only keep dev_warn()   [Diana Madalina Craciun <diana.craciun@oss.nxp.com>]
 
-Here is the summary with links:
-  - [net] tipc: fix shift wrapping bug in map_get()
-    https://git.kernel.org/netdev/net/c/e2b224abd9bf
+Changes in v2:
+  * s/comment/message/ in the subject   [Cornelia Huck <cohuck@redhat.com>]
+  * use WARN instead of WARN_ON+dev_warn   [Jason Gunthorpe <jgg@ziepe.ca>]
+  https://lore.kernel.org/all/3d2aa8434393ee8d2aa23a620e59ce1059c9d7ad.1660663440.git.christophe.jaillet@wanadoo.fr/
 
-You are awesome, thank you!
+v1:
+  https://lore.kernel.org/all/2b65bf8d2b4d940cafbafcede07c23c35f042f5a.1659815764.git.christophe.jaillet@wanadoo
+---
+ drivers/vfio/fsl-mc/vfio_fsl_mc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/vfio/fsl-mc/vfio_fsl_mc.c b/drivers/vfio/fsl-mc/vfio_fsl_mc.c
+index 3feff729f3ce..42b344bd7cd5 100644
+--- a/drivers/vfio/fsl-mc/vfio_fsl_mc.c
++++ b/drivers/vfio/fsl-mc/vfio_fsl_mc.c
+@@ -108,9 +108,9 @@ static void vfio_fsl_mc_close_device(struct vfio_device *core_vdev)
+ 	/* reset the device before cleaning up the interrupts */
+ 	ret = vfio_fsl_mc_reset_device(vdev);
+ 
+-	if (WARN_ON(ret))
++	if (ret)
+ 		dev_warn(&mc_cont->dev,
+-			 "VFIO_FLS_MC: reset device has failed (%d)\n", ret);
++			 "VFIO_FSL_MC: reset device has failed (%d)\n", ret);
+ 
+ 	vfio_fsl_mc_irqs_cleanup(vdev);
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
