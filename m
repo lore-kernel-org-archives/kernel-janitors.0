@@ -2,38 +2,40 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 488A9ECAAD5
-	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Sep 2022 13:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD7DECAAD3
+	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Sep 2022 14:18:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234026AbiIDNt6 (ORCPT
+        id S234126AbiIDOSM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 4 Sep 2022 09:49:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33162 "EHLO
+        Sun, 4 Sep 2022 10:18:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233865AbiIDNt4 (ORCPT
+        with ESMTP id S229997AbiIDOSK (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 4 Sep 2022 09:49:56 -0400
-Received: from smtp.smtpout.orange.fr (smtp04.smtpout.orange.fr [80.12.242.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 744401572B
-        for <kernel-janitors@vger.kernel.org>; Sun,  4 Sep 2022 06:49:51 -0700 (PDT)
+        Sun, 4 Sep 2022 10:18:10 -0400
+Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECB402E696
+        for <kernel-janitors@vger.kernel.org>; Sun,  4 Sep 2022 07:18:08 -0700 (PDT)
 Received: from pop-os.home ([90.11.190.129])
         by smtp.orange.fr with ESMTPA
-        id Uq0Sotkkhez1rUq0So1Snz; Sun, 04 Sep 2022 15:49:49 +0200
+        id UqRoo6N75sfCIUqRooeLOU; Sun, 04 Sep 2022 16:18:07 +0200
 X-ME-Helo: pop-os.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 04 Sep 2022 15:49:49 +0200
+X-ME-Date: Sun, 04 Sep 2022 16:18:07 +0200
 X-ME-IP: 90.11.190.129
 From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Vishal Verma <vishal.l.verma@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>
+To:     Jesse Brandeburg <jesse.brandeburg@intel.com>,
+        Tony Nguyen <anthony.l.nguyen@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        nvdimm@lists.linux.dev
-Subject: [PATCH] nvdimm: Avoid wasting some memory.
-Date:   Sun,  4 Sep 2022 15:49:47 +0200
-Message-Id: <8355cb2b720f8cd0f1315b06d70b541ba38add30.1662299370.git.christophe.jaillet@wanadoo.fr>
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Subject: [PATCH] ice: switch: Simplify memory allocation
+Date:   Sun,  4 Sep 2022 16:18:02 +0200
+Message-Id: <55ff1825aee6e655c41cb6770ca44f0fbdbfec00.1662301068.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -41,59 +43,44 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-sizeof(struct btt_sb) is 4096.
+'rbuf' is locale to the ice_get_initial_sw_cfg() function.
+There is no point in using devm_kzalloc()/devm_kfree().
 
-When using devm_kzalloc(), there is a small memory overhead and, on most
-systems, this leads to 40 bytes of extra memory allocation.
-So 5036 bytes are expected to be allocated.
-
-The memory allocator works with fixed size hunks of memory. In this case,
-it will require 8192 bytes of memory because more than 4096 bytes are
-required.
-
-In order to avoid wasting 4ko of memory, just use kzalloc() and add a
-devm action to free it when needed.
+use kzalloc()/kfree() instead.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/nvdimm/btt_devs.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+As a side effect, it also require less memory. devm_kzalloc() has a small
+memory overhead, and requesting ICE_SW_CFG_MAX_BUF_LEN (i.e. 2048) bytes,
+4096 are really allocated.
+---
+ drivers/net/ethernet/intel/ice/ice_switch.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/nvdimm/btt_devs.c b/drivers/nvdimm/btt_devs.c
-index fabbb31f2c35..7b79fb0b0338 100644
---- a/drivers/nvdimm/btt_devs.c
-+++ b/drivers/nvdimm/btt_devs.c
-@@ -332,6 +332,11 @@ static int __nd_btt_probe(struct nd_btt *nd_btt,
- 	return 0;
+diff --git a/drivers/net/ethernet/intel/ice/ice_switch.c b/drivers/net/ethernet/intel/ice/ice_switch.c
+index 697feb89188c..eb6e19deb70d 100644
+--- a/drivers/net/ethernet/intel/ice/ice_switch.c
++++ b/drivers/net/ethernet/intel/ice/ice_switch.c
+@@ -2274,9 +2274,7 @@ int ice_get_initial_sw_cfg(struct ice_hw *hw)
+ 	int status;
+ 	u16 i;
+ 
+-	rbuf = devm_kzalloc(ice_hw_to_dev(hw), ICE_SW_CFG_MAX_BUF_LEN,
+-			    GFP_KERNEL);
+-
++	rbuf = kzalloc(ICE_SW_CFG_MAX_BUF_LEN, GFP_KERNEL);
+ 	if (!rbuf)
+ 		return -ENOMEM;
+ 
+@@ -2324,7 +2322,7 @@ int ice_get_initial_sw_cfg(struct ice_hw *hw)
+ 		}
+ 	} while (req_desc && !status);
+ 
+-	devm_kfree(ice_hw_to_dev(hw), rbuf);
++	kfree(rbuf);
+ 	return status;
  }
  
-+void nd_btt_free(void *data)
-+{
-+	kfree(data);
-+}
-+
- int nd_btt_probe(struct device *dev, struct nd_namespace_common *ndns)
- {
- 	int rc;
-@@ -356,7 +361,17 @@ int nd_btt_probe(struct device *dev, struct nd_namespace_common *ndns)
- 	nvdimm_bus_unlock(&ndns->dev);
- 	if (!btt_dev)
- 		return -ENOMEM;
--	btt_sb = devm_kzalloc(dev, sizeof(*btt_sb), GFP_KERNEL);
-+
-+	/*
-+	 * 'struct btt_sb' is 4096. Using devm_kzalloc() would waste 4 ko of
-+	 * memory because, because of a small memory over head, 8192 bytes
-+	 * would be allocated. So keep this kzalloc()+devm_add_action_or_reset()
-+	 */
-+	btt_sb = kzalloc(sizeof(*btt_sb), GFP_KERNEL);
-+	rc = devm_add_action_or_reset(dev, nd_btt_free, btt_sb);
-+	if (rc)
-+		return rc;
-+
- 	rc = __nd_btt_probe(to_nd_btt(btt_dev), ndns, btt_sb);
- 	dev_dbg(dev, "btt: %s\n", rc == 0 ? dev_name(btt_dev) : "<none>");
- 	if (rc < 0) {
 -- 
 2.34.1
 
