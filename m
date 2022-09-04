@@ -2,90 +2,123 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15CAAC6FA82
-	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Sep 2022 07:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E3BEECAAD3
+	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Sep 2022 08:39:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230190AbiIDHqw (ORCPT
+        id S231560AbiIDIj5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 4 Sep 2022 03:46:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43662 "EHLO
+        Sun, 4 Sep 2022 04:39:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230013AbiIDHqv (ORCPT
+        with ESMTP id S229537AbiIDIjz (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 4 Sep 2022 03:46:51 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F77341993;
-        Sun,  4 Sep 2022 00:46:50 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id m10-20020a17090a730a00b001fa986fd8eeso9452275pjk.0;
-        Sun, 04 Sep 2022 00:46:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date;
-        bh=MNCodJQdObDjrnT0Izj/sQ+uO9mQ8GTBinVlGbDhzBg=;
-        b=ltndlkcpAl4jmPWsFREMk9p7wATBSb+I5sr1s7EcJOc1fYxYE0FNr+s6CxN3dfcJq+
-         w65m3eIvHbRQgHaEfHsCkQrjbq2pMqoeh9LzPCvwWzBm7lPmECkdv3+Gk38aL5JNml8k
-         IvTFF9+YG9UExawUu+55auCNI870adk8PDDRrgQUx/cqGVbl8kqATXEg77Gx3wc2TqG8
-         nirxyo7o/waKYQabtQlr9gik3sbUZi5jWHBAgyo+SjILRZ4xmDXOdIkSd+n0rNZh1lSN
-         Qb7rbI+9OCZzUeamNn7Js+gmNSSb6Yy4E0lKkh56ONfIJZFrGX7b+wzFnvD1HJn+Mrwb
-         sASw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=MNCodJQdObDjrnT0Izj/sQ+uO9mQ8GTBinVlGbDhzBg=;
-        b=eVE5BAgitLOdzOeur6LhpTBhZmrN+pqCyNhSzxqWu9qFYHqtuHa+RaGoezEFVt4zeB
-         E5Ir7TTIGCHNrLbpm8K8WdZMSfxpsybckigdgdKMYrTAVyJ0dg3xPQOCTdQTIke+9oRI
-         L5ieD5cWlpowLOG6ADtwZJhRuNqADPY1p6Ek5A/F9zmXDP2IW/dTdHhCPigMFWxGAQKe
-         0m+W6/TnUC/dvoYGF+UIxOfSCx0AoXk4atRkuu7gcMGUZPLlkGvZAtE8XatvxrXZLlRo
-         NEXh+C3sG8Zl4a2D+76npCAl729p0A+kjflMkyTYKvND3yv5fbighDCh6Z+nH3/VxMhY
-         5B4g==
-X-Gm-Message-State: ACgBeo3bhiLNfmh7mNEWfWj+2Y2NolJU2KiUErh75kw67VjBgSW5YNOW
-        TgICidnXwYyc0EllIwnOBjTozXWQRRA=
-X-Google-Smtp-Source: AA6agR41XDk23/RDtx6Hla5UHGEscly4WpsCTJEoYwfuGZWi+BSAHQcmeYfRyCp9G9X9B3PNOBVS8w==
-X-Received: by 2002:a17:902:ecc6:b0:174:90c5:613b with SMTP id a6-20020a170902ecc600b0017490c5613bmr33591646plh.28.1662277609493;
-        Sun, 04 Sep 2022 00:46:49 -0700 (PDT)
-Received: from cloud-MacBookPro ([2601:646:8201:c2e0:a34:9c8c:fea7:d064])
-        by smtp.gmail.com with ESMTPSA id x22-20020a170902821600b0016f057b88c9sm4918559pln.26.2022.09.04.00.46.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Sep 2022 00:46:48 -0700 (PDT)
-Date:   Sun, 4 Sep 2022 00:46:47 -0700
-From:   Binyi Han <dantengknight@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] mm: fix dereferencing possible ERR_PTR
-Message-ID: <20220904074647.GA64291@cloud-MacBookPro>
+        Sun, 4 Sep 2022 04:39:55 -0400
+Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6170618360;
+        Sun,  4 Sep 2022 01:39:53 -0700 (PDT)
+Received: from [192.168.230.80] (unknown [182.2.71.200])
+        by gnuweeb.org (Postfix) with ESMTPSA id 2D7AB804D1;
+        Sun,  4 Sep 2022 08:39:49 +0000 (UTC)
+X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+        s=default; t=1662280792;
+        bh=awbFdPWx5OJ12EhTNx9Kf8fsQ9KbanR2HansLBdvSz4=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=lZQdqIM/0i0vUqj7d4xtqKLoB0yIf+/cm23eWgvoF/Wk73YvxJR+TMtgI+oJxImGD
+         W74DTTYJHtp34cn7l5ZJAZJv3cA5UIsEzZxymJbfTDBYe8D6LaMH9EiSioSug9I5qx
+         dibMA/zIefYeTrDkC1eRVhlB1WsMC999tdBqiK1PZ034afqdoh1lgCFOd+ccx21mey
+         Sum6tZzHoVbGfKArrdF8O72Yz1UEt37E9gZrpDLYjEqiu5L1bO4DFyn2N0nN3Yhpzu
+         S/2YyhbK0/b1EWB2XLtUo1sP/CYdz6BKBX9WKX+MpmZbmC3qts5qtIh2ZptP1fGIoE
+         rMQkDzBH6LyXA==
+Message-ID: <cbd29bbc-09d6-efb7-fa3f-88ae5e1796ef@gnuweeb.org>
+Date:   Sun, 4 Sep 2022 15:39:46 +0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Content-Language: en-US
+To:     Binyi Han <dantengknight@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Mike Rapoport <rppt@linux.ibm.com>,
+        Linux Memory Management Mailing List <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Hagen Paul Pfeifer <hagen@jauu.net>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>
+References: <20220904074647.GA64291@cloud-MacBookPro>
+From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Subject: Re: [PATCH] mm: fix dereferencing possible ERR_PTR
+In-Reply-To: <20220904074647.GA64291@cloud-MacBookPro>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Smatch checker complains that 'secretmem_mnt' dereferencing possible
-ERR_PTR().
-Let the function return if 'secretmem_mnt' is ERR_PTR, to avoid
-deferencing it.
+On 9/4/22 2:46 PM, Binyi Han wrote:
+> Smatch checker complains that 'secretmem_mnt' dereferencing possible
+> ERR_PTR().
+> Let the function return if 'secretmem_mnt' is ERR_PTR, to avoid
+> deferencing it.
+> 
+> Signed-off-by: Binyi Han <dantengknight@gmail.com>
+> ---
 
-Signed-off-by: Binyi Han <dantengknight@gmail.com>
----
- mm/secretmem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Fixes: 1507f51255c9ff07d75909a84e7c0d7f3c4b2f49 ("mm: introduce memfd_secret system call to create "secret" memory areas")
+
+>   mm/secretmem.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/secretmem.c b/mm/secretmem.c
+> index e3e9590c6fb3..3f7154099795 100644
+> --- a/mm/secretmem.c
+> +++ b/mm/secretmem.c
+> @@ -285,7 +285,7 @@ static int secretmem_init(void)
+>   
+>   	secretmem_mnt = kern_mount(&secretmem_fs);
+>   	if (IS_ERR(secretmem_mnt))
+> -		ret = PTR_ERR(secretmem_mnt);
+> +		return PTR_ERR(secretmem_mnt);
+>   
+>   	/* prevent secretmem mappings from ever getting PROT_EXEC */
+>   	secretmem_mnt->mnt_flags |= MNT_NOEXEC;
+
+I agree that doing:
+
+    secretmem_mnt->mnt_flags |= MNT_NOEXEC;
+
+when IS_ERR(secretmem_mnt) evaluates to true is wrong. But I have
+a question: what happen if you invoke memfd_secret() syscall when
+@secretmem_mnt is an ERR_PTR?
+
+Shouldn't we also guard the memfd_secret() path?
 
 diff --git a/mm/secretmem.c b/mm/secretmem.c
-index e3e9590c6fb3..3f7154099795 100644
+index e3e9590c6fb3..2d52508d47a9 100644
 --- a/mm/secretmem.c
 +++ b/mm/secretmem.c
-@@ -285,7 +285,7 @@ static int secretmem_init(void)
- 
- 	secretmem_mnt = kern_mount(&secretmem_fs);
- 	if (IS_ERR(secretmem_mnt))
--		ret = PTR_ERR(secretmem_mnt);
+@@ -230,18 +230,21 @@ static struct file *secretmem_file_create(unsigned long flags)
+  
+  SYSCALL_DEFINE1(memfd_secret, unsigned int, flags)
+  {
+  	struct file *file;
+  	int fd, err;
+  
+  	/* make sure local flags do not confict with global fcntl.h */
+  	BUILD_BUG_ON(SECRETMEM_FLAGS_MASK & O_CLOEXEC);
+  
++	if (IS_ERR(secretmem_mnt))
 +		return PTR_ERR(secretmem_mnt);
- 
- 	/* prevent secretmem mappings from ever getting PROT_EXEC */
- 	secretmem_mnt->mnt_flags |= MNT_NOEXEC;
--- 
-2.25.1
++
+  	if (!secretmem_enable)
+  		return -ENOSYS;
+  
+  	if (flags & ~(SECRETMEM_FLAGS_MASK | O_CLOEXEC))
+  		return -EINVAL;
+  	if (atomic_read(&secretmem_users) < 0)
+  		return -ENFILE;
+  
+  	fd = get_unused_fd_flags(flags & O_CLOEXEC);
 
+
+-- 
+Ammar Faizi
