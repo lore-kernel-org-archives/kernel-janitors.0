@@ -2,123 +2,109 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E3BEECAAD3
-	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Sep 2022 08:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4622DECAAD3
+	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Sep 2022 13:35:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231560AbiIDIj5 (ORCPT
+        id S230225AbiIDNf0 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 4 Sep 2022 04:39:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44264 "EHLO
+        Sun, 4 Sep 2022 09:35:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229537AbiIDIjz (ORCPT
+        with ESMTP id S229600AbiIDNfY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 4 Sep 2022 04:39:55 -0400
-Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6170618360;
-        Sun,  4 Sep 2022 01:39:53 -0700 (PDT)
-Received: from [192.168.230.80] (unknown [182.2.71.200])
-        by gnuweeb.org (Postfix) with ESMTPSA id 2D7AB804D1;
-        Sun,  4 Sep 2022 08:39:49 +0000 (UTC)
-X-GW-Data: lPqxHiMPbJw1wb7CM9QUryAGzr0yq5atzVDdxTR0iA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-        s=default; t=1662280792;
-        bh=awbFdPWx5OJ12EhTNx9Kf8fsQ9KbanR2HansLBdvSz4=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=lZQdqIM/0i0vUqj7d4xtqKLoB0yIf+/cm23eWgvoF/Wk73YvxJR+TMtgI+oJxImGD
-         W74DTTYJHtp34cn7l5ZJAZJv3cA5UIsEzZxymJbfTDBYe8D6LaMH9EiSioSug9I5qx
-         dibMA/zIefYeTrDkC1eRVhlB1WsMC999tdBqiK1PZ034afqdoh1lgCFOd+ccx21mey
-         Sum6tZzHoVbGfKArrdF8O72Yz1UEt37E9gZrpDLYjEqiu5L1bO4DFyn2N0nN3Yhpzu
-         S/2YyhbK0/b1EWB2XLtUo1sP/CYdz6BKBX9WKX+MpmZbmC3qts5qtIh2ZptP1fGIoE
-         rMQkDzBH6LyXA==
-Message-ID: <cbd29bbc-09d6-efb7-fa3f-88ae5e1796ef@gnuweeb.org>
-Date:   Sun, 4 Sep 2022 15:39:46 +0700
+        Sun, 4 Sep 2022 09:35:24 -0400
+Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B43CE2E68B
+        for <kernel-janitors@vger.kernel.org>; Sun,  4 Sep 2022 06:35:22 -0700 (PDT)
+Received: from pop-os.home ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id UpmRocfhftUbyUpmRoyoAn; Sun, 04 Sep 2022 15:35:20 +0200
+X-ME-Helo: pop-os.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 04 Sep 2022 15:35:20 +0200
+X-ME-IP: 90.11.190.129
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     Corey Minyard <minyard@acm.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        openipmi-developer@lists.sourceforge.net
+Subject: [PATCH] ipmi: kcs_bmc: Avoid wasting some memory.
+Date:   Sun,  4 Sep 2022 15:35:16 +0200
+Message-Id: <5d69a2d0939ce3917c856b36ef1e41b579081be6.1662298496.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Content-Language: en-US
-To:     Binyi Han <dantengknight@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Mike Rapoport <rppt@linux.ibm.com>,
-        Linux Memory Management Mailing List <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Hagen Paul Pfeifer <hagen@jauu.net>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-References: <20220904074647.GA64291@cloud-MacBookPro>
-From:   Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH] mm: fix dereferencing possible ERR_PTR
-In-Reply-To: <20220904074647.GA64291@cloud-MacBookPro>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 9/4/22 2:46 PM, Binyi Han wrote:
-> Smatch checker complains that 'secretmem_mnt' dereferencing possible
-> ERR_PTR().
-> Let the function return if 'secretmem_mnt' is ERR_PTR, to avoid
-> deferencing it.
-> 
-> Signed-off-by: Binyi Han <dantengknight@gmail.com>
-> ---
+KCS_MSG_BUFSIZ is 1000.
 
-Fixes: 1507f51255c9ff07d75909a84e7c0d7f3c4b2f49 ("mm: introduce memfd_secret system call to create "secret" memory areas")
+When using devm_kmalloc(), there is a small memory overhead and, on most
+systems, this leads to 40 bytes of extra memory allocation.
+So 1040 bytes are expected to be allocated.
 
->   mm/secretmem.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/secretmem.c b/mm/secretmem.c
-> index e3e9590c6fb3..3f7154099795 100644
-> --- a/mm/secretmem.c
-> +++ b/mm/secretmem.c
-> @@ -285,7 +285,7 @@ static int secretmem_init(void)
->   
->   	secretmem_mnt = kern_mount(&secretmem_fs);
->   	if (IS_ERR(secretmem_mnt))
-> -		ret = PTR_ERR(secretmem_mnt);
-> +		return PTR_ERR(secretmem_mnt);
->   
->   	/* prevent secretmem mappings from ever getting PROT_EXEC */
->   	secretmem_mnt->mnt_flags |= MNT_NOEXEC;
+The memory allocator works with fixed size hunks of memory. In this case,
+it will require 2048 bytes of memory because more than 1024 bytes are
+required.
 
-I agree that doing:
+So, when requesting 3 x 1000 bytes, it ends up to 2048 x 3.
 
-    secretmem_mnt->mnt_flags |= MNT_NOEXEC;
+In order to avoid wasting 3ko of memory, allocate buffers all at once.
+3000+40 bytes will be required and 4ko allocated. This still wastes 1ko,
+but it is already better.
 
-when IS_ERR(secretmem_mnt) evaluates to true is wrong. But I have
-a question: what happen if you invoke memfd_secret() syscall when
-@secretmem_mnt is an ERR_PTR?
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Looking at this code, I wonder why priv->miscdev.name is not freed in
+kcs_bmc_ipmi_remove_device()?
 
-Shouldn't we also guard the memfd_secret() path?
+If this make sense, this also mean that KCS_MSG_BUFSIZ can be increased at
+no cost.
+Or it could be slightly reduce to around 1024-40-1 bytes to keep the logic
+which is in place.
 
-diff --git a/mm/secretmem.c b/mm/secretmem.c
-index e3e9590c6fb3..2d52508d47a9 100644
---- a/mm/secretmem.c
-+++ b/mm/secretmem.c
-@@ -230,18 +230,21 @@ static struct file *secretmem_file_create(unsigned long flags)
-  
-  SYSCALL_DEFINE1(memfd_secret, unsigned int, flags)
-  {
-  	struct file *file;
-  	int fd, err;
-  
-  	/* make sure local flags do not confict with global fcntl.h */
-  	BUILD_BUG_ON(SECRETMEM_FLAGS_MASK & O_CLOEXEC);
-  
-+	if (IS_ERR(secretmem_mnt))
-+		return PTR_ERR(secretmem_mnt);
-+
-  	if (!secretmem_enable)
-  		return -ENOSYS;
-  
-  	if (flags & ~(SECRETMEM_FLAGS_MASK | O_CLOEXEC))
-  		return -EINVAL;
-  	if (atomic_read(&secretmem_users) < 0)
-  		return -ENFILE;
-  
-  	fd = get_unused_fd_flags(flags & O_CLOEXEC);
+Another solution would be to use just kmalloc and add a
+devm_add_action_or_reset() call and a function that frees the memory.
+If it make sense, KCS_MSG_BUFSIZ could be increased to 1024 and we would
+allocate just a little above 3x1024 bytes.
+---
+ drivers/char/ipmi/kcs_bmc_cdev_ipmi.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-
+diff --git a/drivers/char/ipmi/kcs_bmc_cdev_ipmi.c b/drivers/char/ipmi/kcs_bmc_cdev_ipmi.c
+index 486834a962c3..15a4a39a6478 100644
+--- a/drivers/char/ipmi/kcs_bmc_cdev_ipmi.c
++++ b/drivers/char/ipmi/kcs_bmc_cdev_ipmi.c
+@@ -485,14 +485,15 @@ static int kcs_bmc_ipmi_add_device(struct kcs_bmc_device *kcs_bmc)
+ 
+ 	priv->client.dev = kcs_bmc;
+ 	priv->client.ops = &kcs_bmc_ipmi_client_ops;
+-	priv->data_in = devm_kmalloc(kcs_bmc->dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
+-	priv->data_out = devm_kmalloc(kcs_bmc->dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
+-	priv->kbuffer = devm_kmalloc(kcs_bmc->dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
++	/* Allocate buffers all at once */
++	priv->data_in = devm_kmalloc(kcs_bmc->dev, KCS_MSG_BUFSIZ * 3, GFP_KERNEL);
++	priv->data_out = priv->data_in + KCS_MSG_BUFSIZ;
++	priv->kbuffer  = priv->data_in + KCS_MSG_BUFSIZ * 2;
+ 
+ 	priv->miscdev.minor = MISC_DYNAMIC_MINOR;
+ 	priv->miscdev.name = devm_kasprintf(kcs_bmc->dev, GFP_KERNEL, "%s%u", DEVICE_NAME,
+ 					   kcs_bmc->channel);
+-	if (!priv->data_in || !priv->data_out || !priv->kbuffer || !priv->miscdev.name)
++	if (!priv->data_in || !priv->miscdev.name)
+ 		return -EINVAL;
+ 
+ 	priv->miscdev.fops = &kcs_bmc_ipmi_fops;
+@@ -531,8 +532,6 @@ static int kcs_bmc_ipmi_remove_device(struct kcs_bmc_device *kcs_bmc)
+ 
+ 	misc_deregister(&priv->miscdev);
+ 	kcs_bmc_disable_device(priv->client.dev, &priv->client);
+-	devm_kfree(kcs_bmc->dev, priv->kbuffer);
+-	devm_kfree(kcs_bmc->dev, priv->data_out);
+ 	devm_kfree(kcs_bmc->dev, priv->data_in);
+ 	devm_kfree(kcs_bmc->dev, priv);
+ 
 -- 
-Ammar Faizi
+2.34.1
+
