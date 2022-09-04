@@ -2,158 +2,88 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF107C6FA82
-	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Sep 2022 16:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05EF5C54EE9
+	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Sep 2022 19:40:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234233AbiIDQ4R (ORCPT
+        id S234657AbiIDTkY (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sun, 4 Sep 2022 12:56:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60906 "EHLO
+        Sun, 4 Sep 2022 15:40:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229748AbiIDQ4P (ORCPT
+        with ESMTP id S230015AbiIDTkW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sun, 4 Sep 2022 12:56:15 -0400
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96EAC30565;
-        Sun,  4 Sep 2022 09:56:11 -0700 (PDT)
-Received: by mail-qk1-x733.google.com with SMTP id b9so5090321qka.2;
-        Sun, 04 Sep 2022 09:56:11 -0700 (PDT)
+        Sun, 4 Sep 2022 15:40:22 -0400
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5026B2C64C
+        for <kernel-janitors@vger.kernel.org>; Sun,  4 Sep 2022 12:40:21 -0700 (PDT)
+Received: by mail-pg1-x536.google.com with SMTP id q9so6393509pgq.6
+        for <kernel-janitors@vger.kernel.org>; Sun, 04 Sep 2022 12:40:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:sender:from:to:cc:subject:date;
-        bh=DweC0xGYEQiKuhEU2wfv4BL8C5hOa+ko8JEuIgGa79M=;
-        b=LRaoVWgJT9RdH4EGC2nrqbah10twpMB/cBIeHGVoBfRxMiT1wWvOtp0qxDtN0MIIuJ
-         zdjvxiXfzblBcqx3wgdHbU1iBqlz+0n6fqIH27IAWlfiCaiwBRw7zISg8nr6y/iAEV1q
-         GjM5n3Vv09/1NMPvHHKsfh4lM9dZL9x5+QKIwgWWrHrXX22M4LFtnbcfQFSMluKpUkv1
-         MFKJcFDYIZv6CtqWtP53fSqyfDWvhY+L33nJnuNw+qUmEY7yxcs3V6mz0E3ciWdDI3Ci
-         voNOS99El6qtL2lqqhT1OGkrMIxDLw9m7gss6fsTRHptHm1U1RYVyQu58DzgALF3Qq9q
-         awdg==
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date;
+        bh=MDcsvJ0GBpuH0g6y8YLh1YQ9EzLOBlW2vMl2goHhuss=;
+        b=pS/G1ueXABNsXUTsPefqPql2U0AHKgLApYCjXSm0/nkYTOmhn/ytR5iUK6JFQ2aCc9
+         xjbFkV3+9yh+CXj/+tv3VfOmoO3Ql7D22cInD9a2o23dTZWHcN9oY4GqAHhm6RKOStte
+         SsfqweEjoxZcwfdb+DMRf8U6BgXhK9PEHyJuqNGgrdgDwGdZVXHWlfB9PSQhvcr5njWJ
+         OXQqnI46ERAcxELkPZruPsxHgTxSQNjzr1pXefuE073qttIHXLuIshLz/YNMhVSDw3FH
+         610MQAoaDHDnZZ8TpBMxbw9VIYYPfVhPxHcPwHCSaVWx/nXvgnGCLvOpytbecld2U021
+         aoCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:sender:x-gm-message-state:from
-         :to:cc:subject:date;
-        bh=DweC0xGYEQiKuhEU2wfv4BL8C5hOa+ko8JEuIgGa79M=;
-        b=ufzbYOfSU/qvRmT7xBsX8+zxP6VDTTWwf+dnEKM48JU9p3EQ94dvzdZaS+z22djhzA
-         ZjYdIBHQvSCsE/oozwgLO+GpouRuFxMBihs2n+YbEi2ZXk8Ve9arqbyqF7mf82QmUMAn
-         5P41Y26SrZTFz8RSUo1v+dJk60Ilda3p+DeTTJsJwdbzvr/qIYQg9n58JLSTD520O0Ad
-         PUnXQF7dpovEdnqotARkfKgYKrRFMUA4K0MB9JmmJtB2k+z2jH13bnDuxwzT6DNozzfR
-         qZtQcpxve9ohbAcq9nNjOOcuAujm3hl3vOlPqk0JRQ5javbgC07AANxK7Gwop8lceCYJ
-         qx2Q==
-X-Gm-Message-State: ACgBeo3kSgxAYsgKazrT3BvhdcLnUCRPSeYciQhZjVWoM2g1lYnLRG33
-        YoIdCmgr1DCjbWmCQ2mCdw==
-X-Google-Smtp-Source: AA6agR7ugl73vbBqSVIq3LKbH4H4rLGSvzd8kxJ/CT2BLQss06uJv73Yx8FnWndMyA3intEFDR1fdg==
-X-Received: by 2002:a05:620a:46a8:b0:6bb:29e6:f315 with SMTP id bq40-20020a05620a46a800b006bb29e6f315mr30165251qkb.714.1662310570611;
-        Sun, 04 Sep 2022 09:56:10 -0700 (PDT)
-Received: from serve.minyard.net (serve.minyard.net. [2001:470:b8f6:1b::1])
-        by smtp.gmail.com with ESMTPSA id 6-20020a370c06000000b006bbbd4ce6e1sm5912645qkm.35.2022.09.04.09.56.09
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=MDcsvJ0GBpuH0g6y8YLh1YQ9EzLOBlW2vMl2goHhuss=;
+        b=K8OGgteV23G3xM9DsuZLgKjeAc0o3KUMVUdmo7oQgEpSI+PKwdipqYBtrW84sgjTu6
+         CCnCOGWQo1/06jTf2pLQ0oaw4c1+T99SEAgRcb93EEVT1+7s8Zc/0fWc0yQZ3anHU8Kd
+         lRXn0y6R4JMfFM7bwkMqjVQSr7R7NFmzYKbBAsuiybbObKcJn77z7CnlV/GRqehs4LcV
+         PmHILRH1AHZYn81DkuBCXoclz7YCsKJyfxvOt3ETQGZIvhr/do5+CrvtH/SjkJvrJNiH
+         IjzNjZ9BDBWn/DP7LgaVF8PCJ9sBfDOFUtXQE0HL5QmTZovUrPyMkMfnHqXL0fKB+tAN
+         dehw==
+X-Gm-Message-State: ACgBeo2HPMP/JMKYuSEI2ql8TP434jdH3VzSzQIM0XjRR4D5K67iTv7q
+        UKZiKqdyCNADuaV7N4KqIQw=
+X-Google-Smtp-Source: AA6agR6BZRydqgnWNmNMfIs6/MEutON17IZdT84YqhNcSkNt3onQqGO/Tb6ZF4iXqVpv7dM3xBhGpA==
+X-Received: by 2002:a05:6a00:21c5:b0:52b:fc9c:295b with SMTP id t5-20020a056a0021c500b0052bfc9c295bmr47283672pfj.56.1662320420687;
+        Sun, 04 Sep 2022 12:40:20 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:400::5:291b])
+        by smtp.gmail.com with ESMTPSA id s9-20020a170902b18900b00174f62a14e5sm5752903plr.153.2022.09.04.12.40.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Sep 2022 09:56:10 -0700 (PDT)
-Sender: Corey Minyard <tcminyard@gmail.com>
-Received: from minyard.net (unknown [IPv6:2001:470:b8f6:1b:e25f:adca:563b:692])
-        by serve.minyard.net (Postfix) with ESMTPSA id E16B01828A0;
-        Sun,  4 Sep 2022 16:56:08 +0000 (UTC)
-Date:   Sun, 4 Sep 2022 11:56:07 -0500
-From:   Corey Minyard <minyard@acm.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Andrew Jeffery <andrew@aj.id.au>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net
-Subject: Re: [PATCH] ipmi: kcs_bmc: Avoid wasting some memory.
-Message-ID: <YxTYp6Hhmqdou3S9@minyard.net>
-Reply-To: minyard@acm.org
-References: <5d69a2d0939ce3917c856b36ef1e41b579081be6.1662298496.git.christophe.jaillet@wanadoo.fr>
+        Sun, 04 Sep 2022 12:40:20 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Sun, 4 Sep 2022 09:40:18 -1000
+From:   Tejun Heo <tj@kernel.org>
+To:     Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [bug report] cgroup: Honor caller's cgroup NS when resolving path
+Message-ID: <YxT/IuyyyEzkJfnO@slm.duckdns.org>
+References: <Yw8I2ef6OvlMaGEF@kili>
+ <20220831090042.GB1845@blackbody.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <5d69a2d0939ce3917c856b36ef1e41b579081be6.1662298496.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220831090042.GB1845@blackbody.suse.cz>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Adding Andrew, the author of this code.
+Hello,
 
-On Sun, Sep 04, 2022 at 03:35:16PM +0200, Christophe JAILLET wrote:
-> KCS_MSG_BUFSIZ is 1000.
-> 
-> When using devm_kmalloc(), there is a small memory overhead and, on most
-> systems, this leads to 40 bytes of extra memory allocation.
-> So 1040 bytes are expected to be allocated.
-> 
-> The memory allocator works with fixed size hunks of memory. In this case,
-> it will require 2048 bytes of memory because more than 1024 bytes are
-> required.
-> 
-> So, when requesting 3 x 1000 bytes, it ends up to 2048 x 3.
-> 
-> In order to avoid wasting 3ko of memory, allocate buffers all at once.
-> 3000+40 bytes will be required and 4ko allocated. This still wastes 1ko,
-> but it is already better.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Looking at this code, I wonder why priv->miscdev.name is not freed in
-> kcs_bmc_ipmi_remove_device()?
+On Wed, Aug 31, 2022 at 11:00:42AM +0200, Michal Koutný wrote:
+> +/*
+> + * Returned cgroup is without refcount but it's valid as long as cset pins it.
+> + */
+>  static inline struct cgroup *__cset_cgroup_from_root(struct css_set *cset,
+>  					    struct cgroup_root *root)
 
-If I understand correctly, none of these need to be freed.  devm
-allocated memory is freed automatically when the device is removed.
+Yeah but what prevents the task from migrating away unpinning the whole
+thing? Can you just get the ref on the cgroup before releasing css_set?
+That's not an expensive operation and a lot more straightforward.
 
-> 
-> If this make sense, this also mean that KCS_MSG_BUFSIZ can be increased at
-> no cost.
-> Or it could be slightly reduce to around 1024-40-1 bytes to keep the logic
-> which is in place.
-> 
-> Another solution would be to use just kmalloc and add a
-> devm_add_action_or_reset() call and a function that frees the memory.
-> If it make sense, KCS_MSG_BUFSIZ could be increased to 1024 and we would
-> allocate just a little above 3x1024 bytes.
-> ---
->  drivers/char/ipmi/kcs_bmc_cdev_ipmi.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/char/ipmi/kcs_bmc_cdev_ipmi.c b/drivers/char/ipmi/kcs_bmc_cdev_ipmi.c
-> index 486834a962c3..15a4a39a6478 100644
-> --- a/drivers/char/ipmi/kcs_bmc_cdev_ipmi.c
-> +++ b/drivers/char/ipmi/kcs_bmc_cdev_ipmi.c
-> @@ -485,14 +485,15 @@ static int kcs_bmc_ipmi_add_device(struct kcs_bmc_device *kcs_bmc)
->  
->  	priv->client.dev = kcs_bmc;
->  	priv->client.ops = &kcs_bmc_ipmi_client_ops;
-> -	priv->data_in = devm_kmalloc(kcs_bmc->dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
-> -	priv->data_out = devm_kmalloc(kcs_bmc->dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
-> -	priv->kbuffer = devm_kmalloc(kcs_bmc->dev, KCS_MSG_BUFSIZ, GFP_KERNEL);
-> +	/* Allocate buffers all at once */
-> +	priv->data_in = devm_kmalloc(kcs_bmc->dev, KCS_MSG_BUFSIZ * 3, GFP_KERNEL);
-> +	priv->data_out = priv->data_in + KCS_MSG_BUFSIZ;
-> +	priv->kbuffer  = priv->data_in + KCS_MSG_BUFSIZ * 2;
+Thanks.
 
-You are doing arithmetic on a possibly NULL pointer.  It's generally ok,
-but kind of frowned upon.
-
-Andew, what do you think?  I guess it saves a little memory.
-
--Corey
-
->  
->  	priv->miscdev.minor = MISC_DYNAMIC_MINOR;
->  	priv->miscdev.name = devm_kasprintf(kcs_bmc->dev, GFP_KERNEL, "%s%u", DEVICE_NAME,
->  					   kcs_bmc->channel);
-> -	if (!priv->data_in || !priv->data_out || !priv->kbuffer || !priv->miscdev.name)
-> +	if (!priv->data_in || !priv->miscdev.name)
->  		return -EINVAL;
->  
->  	priv->miscdev.fops = &kcs_bmc_ipmi_fops;
-> @@ -531,8 +532,6 @@ static int kcs_bmc_ipmi_remove_device(struct kcs_bmc_device *kcs_bmc)
->  
->  	misc_deregister(&priv->miscdev);
->  	kcs_bmc_disable_device(priv->client.dev, &priv->client);
-> -	devm_kfree(kcs_bmc->dev, priv->kbuffer);
-> -	devm_kfree(kcs_bmc->dev, priv->data_out);
->  	devm_kfree(kcs_bmc->dev, priv->data_in);
->  	devm_kfree(kcs_bmc->dev, priv);
->  
-> -- 
-> 2.34.1
-> 
+-- 
+tejun
