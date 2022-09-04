@@ -2,94 +2,90 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A746ECAAD4
-	for <kernel-janitors@archiver.kernel.org>; Sat,  3 Sep 2022 18:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15CAAC6FA82
+	for <kernel-janitors@archiver.kernel.org>; Sun,  4 Sep 2022 07:46:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233056AbiICSCY (ORCPT
+        id S230190AbiIDHqw (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Sat, 3 Sep 2022 14:02:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34694 "EHLO
+        Sun, 4 Sep 2022 03:46:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232594AbiICSCW (ORCPT
+        with ESMTP id S230013AbiIDHqv (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Sat, 3 Sep 2022 14:02:22 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66A274A838;
-        Sat,  3 Sep 2022 11:02:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662228142; x=1693764142;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ww0ObHahV4z/QEThu9YFvc0tiIdhFo/C4S5cz0havSM=;
-  b=KctiyX0FxHBEivMgA9m7x3tUyoIld0u2zTFMrPeazZVdhggZaLFOvcOt
-   MAooR5zVXpvQmBDTF/SbDRYkjlVxFK5zP6fXpHpp9esRcsNb+2TxIrqLu
-   9/7Bv0nysyOksovjBEuIthZ1R00KriKYLpaGOgKMtW6OPDRN4G8fiOPgm
-   bDF+O1Lmzx/S3zJikKAgaYHKzK11Xa5VnRaiJEf4KQeITXtybvwI0ZKaD
-   MpPGNJJTYcVxuPtT9VrguovC7sQ2JRJ+r22cAp/Boz9dJMOkvqkmvfYTT
-   MyCEe3Ubl2XnA+I7Av36WcrkA/li9bVHB1yAtjlwV7HDGdwx4H4f78kIn
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10459"; a="382477247"
-X-IronPort-AV: E=Sophos;i="5.93,287,1654585200"; 
-   d="scan'208";a="382477247"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2022 11:02:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,287,1654585200"; 
-   d="scan'208";a="564299997"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orsmga003.jf.intel.com with ESMTP; 03 Sep 2022 11:02:19 -0700
-Date:   Sun, 4 Sep 2022 01:52:56 +0800
-From:   Xu Yilun <yilun.xu@intel.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
-        Moritz Fischer <mdf@kernel.org>,
-        Luwei Kang <luwei.kang@intel.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        linux-fpga@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fpga: prevent integer overflow in
- dfl_feature_ioctl_set_irq()
-Message-ID: <YxOUeHfaNYk7oQXt@yilunxu-OptiPlex-7050>
-References: <YxBAtYCM38dM7yzI@kili>
+        Sun, 4 Sep 2022 03:46:51 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F77341993;
+        Sun,  4 Sep 2022 00:46:50 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id m10-20020a17090a730a00b001fa986fd8eeso9452275pjk.0;
+        Sun, 04 Sep 2022 00:46:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date;
+        bh=MNCodJQdObDjrnT0Izj/sQ+uO9mQ8GTBinVlGbDhzBg=;
+        b=ltndlkcpAl4jmPWsFREMk9p7wATBSb+I5sr1s7EcJOc1fYxYE0FNr+s6CxN3dfcJq+
+         w65m3eIvHbRQgHaEfHsCkQrjbq2pMqoeh9LzPCvwWzBm7lPmECkdv3+Gk38aL5JNml8k
+         IvTFF9+YG9UExawUu+55auCNI870adk8PDDRrgQUx/cqGVbl8kqATXEg77Gx3wc2TqG8
+         nirxyo7o/waKYQabtQlr9gik3sbUZi5jWHBAgyo+SjILRZ4xmDXOdIkSd+n0rNZh1lSN
+         Qb7rbI+9OCZzUeamNn7Js+gmNSSb6Yy4E0lKkh56ONfIJZFrGX7b+wzFnvD1HJn+Mrwb
+         sASw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=MNCodJQdObDjrnT0Izj/sQ+uO9mQ8GTBinVlGbDhzBg=;
+        b=eVE5BAgitLOdzOeur6LhpTBhZmrN+pqCyNhSzxqWu9qFYHqtuHa+RaGoezEFVt4zeB
+         E5Ir7TTIGCHNrLbpm8K8WdZMSfxpsybckigdgdKMYrTAVyJ0dg3xPQOCTdQTIke+9oRI
+         L5ieD5cWlpowLOG6ADtwZJhRuNqADPY1p6Ek5A/F9zmXDP2IW/dTdHhCPigMFWxGAQKe
+         0m+W6/TnUC/dvoYGF+UIxOfSCx0AoXk4atRkuu7gcMGUZPLlkGvZAtE8XatvxrXZLlRo
+         NEXh+C3sG8Zl4a2D+76npCAl729p0A+kjflMkyTYKvND3yv5fbighDCh6Z+nH3/VxMhY
+         5B4g==
+X-Gm-Message-State: ACgBeo3bhiLNfmh7mNEWfWj+2Y2NolJU2KiUErh75kw67VjBgSW5YNOW
+        TgICidnXwYyc0EllIwnOBjTozXWQRRA=
+X-Google-Smtp-Source: AA6agR41XDk23/RDtx6Hla5UHGEscly4WpsCTJEoYwfuGZWi+BSAHQcmeYfRyCp9G9X9B3PNOBVS8w==
+X-Received: by 2002:a17:902:ecc6:b0:174:90c5:613b with SMTP id a6-20020a170902ecc600b0017490c5613bmr33591646plh.28.1662277609493;
+        Sun, 04 Sep 2022 00:46:49 -0700 (PDT)
+Received: from cloud-MacBookPro ([2601:646:8201:c2e0:a34:9c8c:fea7:d064])
+        by smtp.gmail.com with ESMTPSA id x22-20020a170902821600b0016f057b88c9sm4918559pln.26.2022.09.04.00.46.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 04 Sep 2022 00:46:48 -0700 (PDT)
+Date:   Sun, 4 Sep 2022 00:46:47 -0700
+From:   Binyi Han <dantengknight@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] mm: fix dereferencing possible ERR_PTR
+Message-ID: <20220904074647.GA64291@cloud-MacBookPro>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YxBAtYCM38dM7yzI@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 2022-09-01 at 08:18:45 +0300, Dan Carpenter wrote:
-> The "hdr.count * sizeof(s32)" multiplication can overflow on 32 bit
-> systems leading to memory corruption.  Use array_size() to fix that.
-> 
-> Fixes: 322b598be4d9 ("fpga: dfl: introduce interrupt trigger setting API")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Smatch checker complains that 'secretmem_mnt' dereferencing possible
+ERR_PTR().
+Let the function return if 'secretmem_mnt' is ERR_PTR, to avoid
+deferencing it.
 
-Acked-by: Xu Yilun <yilun.xu@intel.com>
+Signed-off-by: Binyi Han <dantengknight@gmail.com>
+---
+ mm/secretmem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to fpga for-next.
+diff --git a/mm/secretmem.c b/mm/secretmem.c
+index e3e9590c6fb3..3f7154099795 100644
+--- a/mm/secretmem.c
++++ b/mm/secretmem.c
+@@ -285,7 +285,7 @@ static int secretmem_init(void)
+ 
+ 	secretmem_mnt = kern_mount(&secretmem_fs);
+ 	if (IS_ERR(secretmem_mnt))
+-		ret = PTR_ERR(secretmem_mnt);
++		return PTR_ERR(secretmem_mnt);
+ 
+ 	/* prevent secretmem mappings from ever getting PROT_EXEC */
+ 	secretmem_mnt->mnt_flags |= MNT_NOEXEC;
+-- 
+2.25.1
 
-Thanks
-Yilun
-
-> ---
->  drivers/fpga/dfl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
-> index 5498bc337f8b..b9aae85ba930 100644
-> --- a/drivers/fpga/dfl.c
-> +++ b/drivers/fpga/dfl.c
-> @@ -1866,7 +1866,7 @@ long dfl_feature_ioctl_set_irq(struct platform_device *pdev,
->  		return -EINVAL;
->  
->  	fds = memdup_user((void __user *)(arg + sizeof(hdr)),
-> -			  hdr.count * sizeof(s32));
-> +			  array_size(hdr.count, sizeof(s32)));
->  	if (IS_ERR(fds))
->  		return PTR_ERR(fds);
->  
-> -- 
-> 2.35.1
-> 
