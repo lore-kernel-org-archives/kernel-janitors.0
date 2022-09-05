@@ -2,69 +2,96 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1048AC54EE9
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Sep 2022 06:22:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBEFFECAAD3
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Sep 2022 09:36:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236657AbiIEGWu (ORCPT
+        id S236526AbiIEJgZ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 5 Sep 2022 02:22:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58344 "EHLO
+        Mon, 5 Sep 2022 05:36:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236580AbiIEGWp (ORCPT
+        with ESMTP id S234333AbiIEJgY (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 5 Sep 2022 02:22:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CE5F2F037;
-        Sun,  4 Sep 2022 23:22:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 24C17610D5;
-        Mon,  5 Sep 2022 06:22:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E2F3C433D6;
-        Mon,  5 Sep 2022 06:22:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662358962;
-        bh=2xEEEZ6CvZ2nPWQv0CH8VGu41ZEdxLRb0MFZrH6xB9U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XXAY+hPd+TfFiORWRJpzFbPmU6WnRKDF1N6azgqAaGu98WPoaz/pr9QFxDTtFCMWs
-         J7DbZpTQ8qvOKbwHzWxNbbW1Oou9sKL0y5fT7fK/czQb40GsDIV810rGIEJ1KBich3
-         vgdGsRmKxokxvV6+YmhIy6kmuLbMKCov58sITx118tNr23wskb8nlHb5D7/qidk/no
-         BbJ74kkiupfZwMEWes000RhVq4PgaNOTDsSO0pbKUyxc1MPUip3EOBrJa2BJBHK925
-         Awg6jtVGUuapXDRfDkGsiuTlN+31TaA6zlnTonWEN4o8Q9zJT43BfS1F0QfmcAF2s7
-         1i9V5zHp/jqrg==
-Date:   Mon, 5 Sep 2022 11:52:38 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        dmaengine@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] dmaengine: stm32-dmamux: Simplify code and save a few
- bytes of memory
-Message-ID: <YxWVrphgXmqmsCH2@matsya>
-References: <2d8c24359b2daa32ce0597a2949b7b2bebaf23de.1659211633.git.christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2d8c24359b2daa32ce0597a2949b7b2bebaf23de.1659211633.git.christophe.jaillet@wanadoo.fr>
+        Mon, 5 Sep 2022 05:36:24 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22FAE4A809;
+        Mon,  5 Sep 2022 02:36:23 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id u9so15878683ejy.5;
+        Mon, 05 Sep 2022 02:36:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=UVzntTLQu6YKGPoOys5LB9DBMo84EPi0lKU1jOROxRI=;
+        b=MNckiRIE8LkV8gv9kXwA+YdPmsVcMoxg3uHJk/dXUt8ZNStv6zhdchlSrB1QWadX6/
+         PBeovOiegG0xm3eNdOGCj6OMMzkWEMe99O4QXBWSX2xZJVhpWNk0Fa3kIQdQYHiclQSS
+         XKCtrOe0qRsVUlg0xF21PsS3c4sNABJSog/210NQuRbo72KK0scFha2GEsty8nsYXyh7
+         kAHhxa391aREbcDMYY55aLeWdPH13BPViMemJLaPnds5bBY2DHc85OqJvs3PF1dobaK/
+         XFImXigd/07wAYfSKhCEaBHDQJkmfSbP5etNqtQRl0uA107nlxW+vDfmWdkG4vjPR/25
+         y9eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=UVzntTLQu6YKGPoOys5LB9DBMo84EPi0lKU1jOROxRI=;
+        b=cdpETHhBuLuID9oSXFFDbJZAFTkrCA/efTs+quv9Z4V7bxyj29wTyHWQOxivi8MJjI
+         2W2MdYSNu0QA9EtMrvVUy6xDRdKQylYvcB1haG3tKQIw5iiW42jx2OmNCDJFI6toOibi
+         +XgaPvgyrEkADRinCDbOCxz7dKfGj+il8j1NVeblTvQ7Za+A3/CIfpsVSPrd3e2ptdQs
+         EAHgMw8Hi7uqn7j2AiDtc1bv6ZE+nQ6ow0sfSeXoZrunPwRxtPUX6JB7mY3JiEeX0ltp
+         FVpnMNVvaWhrTme9FvWZHEwgSVzDuYumIaLI6EZ2D01LglxrHiUIhk4vXQEUf3TLkYFH
+         xgyw==
+X-Gm-Message-State: ACgBeo24DVcxFa6oEwuq26qJg26mCx9Qu1dGD7/GGdyuTjHDrTEF3WIl
+        mKhXDj1VSIWspaD4foJceCg=
+X-Google-Smtp-Source: AA6agR6HZnPWDhPjGHZKwHYPw6FFTOmXlHR0ZtPemLi6cU5Vl4zAeyWQMj6OLv6xDEXaiPUuwT6I0w==
+X-Received: by 2002:a17:907:6e89:b0:741:a19b:638a with SMTP id sh9-20020a1709076e8900b00741a19b638amr22390703ejc.317.1662370581473;
+        Mon, 05 Sep 2022 02:36:21 -0700 (PDT)
+Received: from felia.fritz.box (200116b8268cc400942297814b5b37b6.dip.versatel-1u1.de. [2001:16b8:268c:c400:9422:9781:4b5b:37b6])
+        by smtp.gmail.com with ESMTPSA id 9-20020a170906300900b00742a4debae1sm4720507ejz.6.2022.09.05.02.36.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Sep 2022 02:36:20 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     =?UTF-8?q?Martin=20Povi=C5=A1er?= <povik+lin@cutebit.org>,
+        Mark Brown <broonie@kernel.org>, asahi@lists.linux.dev,
+        alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: rectify entry in ARM/APPLE MACHINE SOUND DRIVERS
+Date:   Mon,  5 Sep 2022 11:35:46 +0200
+Message-Id: <20220905093546.19735-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On 30-07-22, 22:07, Christophe JAILLET wrote:
-> STM32_DMAMUX_MAX_DMA_REQUESTS is small (i.e. 32) and when the 'dma_inuse'
-> bitmap is allocated, there is already a check that 'dma_req' is <= this
-> limit.
-> 
-> So, there is no good reason to dynamically allocate this bitmap. This
-> just waste some memory and some cycles.
-> 
-> Use DECLARE_BITMAP with the maximum bitmap size instead.
+Commit 3df5d0d97289 ("ASoC: apple: mca: Start new platform driver") adds
+a new sound driver at the location "sound/soc/apple/", but it adds a file
+entry referring to the non-existing location "drivers/sound/apple/*".
 
-Applied, thanks
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
+Repair this file reference in ARM/APPLE MACHINE SOUND DRIVERS.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Martin, please ack.
+Mark, please pick this patch on top of the commit above.
+
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 29443aad5031..c239d7e69158 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1904,7 +1904,7 @@ L:	asahi@lists.linux.dev
+ L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/sound/apple,*
+-F:	drivers/sound/apple/*
++F:	sound/soc/apple/
+ 
+ ARM/ARTPEC MACHINE SUPPORT
+ M:	Jesper Nilsson <jesper.nilsson@axis.com>
 -- 
-~Vinod
+2.17.1
+
