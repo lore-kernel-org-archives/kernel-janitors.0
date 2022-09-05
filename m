@@ -2,83 +2,64 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A361ECAAD3
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Sep 2022 13:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 327E6ECAAD5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Sep 2022 15:11:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237782AbiIENaT (ORCPT
+        id S238786AbiIEPL5 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 5 Sep 2022 09:30:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55486 "EHLO
+        Mon, 5 Sep 2022 11:11:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237743AbiIENaS (ORCPT
+        with ESMTP id S237542AbiIEPLi (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 5 Sep 2022 09:30:18 -0400
+        Mon, 5 Sep 2022 11:11:38 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2310615A10;
-        Mon,  5 Sep 2022 06:30:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E817B5E57A;
+        Mon,  5 Sep 2022 08:10:41 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D3003B8119E;
-        Mon,  5 Sep 2022 13:30:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7FD81C433D7;
-        Mon,  5 Sep 2022 13:30:14 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id DE367B811F5;
+        Mon,  5 Sep 2022 15:10:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 494AAC433D7;
+        Mon,  5 Sep 2022 15:10:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662384614;
-        bh=7XONn9KaUTnR3WKojdkRi/lvfYNW+Pp+4J0HaSGdd2o=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=BvEQK6meER+TAYOo+F4z0cz9x6AQDGGcyxjPrKaHQEP+zhBoprqa1Ah47FFL06+C5
-         0LcayaKEXLql+97ZPM6VRrohXS8lPJ2xcuRvySLtzZ2IWfv0ESPqDb0are/r39UjNb
-         bZ9Qq0v6JFMl1mjEzdG8tyiSmxVFVn3q0PJY4CzKTS5iT3uoKJMDbpX2br+28yBtkd
-         CUsqjph4ciptxSbGzHEnOcHT3LUCT4Z3EGDJh/szDA+PyGKLkycNEtWKJHIb9Uub07
-         FaA4elaa6oRxlBJJlki3YTtzdmC5m21nR4IasNB2yAs21f2beK+yDCJNfgAF/8/vPx
-         AF4jkjZRrHtjw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 66986E1CABF;
-        Mon,  5 Sep 2022 13:30:14 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1662390638;
+        bh=pmChB25I0/xOioQuvfxS4anHlEB/iWlW/oPqp/l37GY=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=exYKUhxTTuUxLlAx8IzrxsRZycm6/RCghmfrKnf2Y+jgggnhvGFRKOfDw938k0eN7
+         Ka4/6j2Tuj9Zt3Y7X48mHrSvXPQT9guosY4ssOdTs8TzsrlYLI3Nv0vyGfXCiff25g
+         oGcKLVvtoTelM/rTwKUu8ympPdTQ2bUDucZKu/lUv0CpFG/t96Bpd0eBgBtqg4gCAO
+         e9FM9ZW6Nw0N97ZcWZGujwsngRoxOZE4XkM26Vr7u4r1qfaD/sKHzGCn3D9ay7+Kck
+         qjp+hPfCYI/J9b5M4VtpggZ4OO68EL+fS0AvERDajOWIHN2BUedv9uXH9fFqY8X3Ty
+         rErhw2shs1pLw==
+Message-ID: <ef807497-6394-8274-71ce-ace51db31398@kernel.org>
+Date:   Mon, 5 Sep 2022 23:10:35 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v3] stmmac: intel: Simplify intel_eth_pci_remove()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <166238461441.27659.12239110868917016619.git-patchwork-notify@kernel.org>
-Date:   Mon, 05 Sep 2022 13:30:14 +0000
-References: <35ab3ac5b67716acb3f7073229b02a38fce71fb7.1662135995.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <35ab3ac5b67716acb3f7073229b02a38fce71fb7.1662135995.git.christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     peppe.cavallaro@st.com, alexandre.torgue@foss.st.com,
-        joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        andriy.shevchenko@linux.intel.com, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: [PATCH] erofs: fix error return code in
+ erofs_fscache_meta_read_folio and erofs_fscache_read_folio
+Content-Language: en-US
+To:     Sun Ke <sunke32@huawei.com>, xiang@kernel.org
+Cc:     linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, yinxin.x@bytedance.com
+References: <20220815034829.3940803-1-sunke32@huawei.com>
+From:   Chao Yu <chao@kernel.org>
+In-Reply-To: <20220815034829.3940803-1-sunke32@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net.git (master)
-by David S. Miller <davem@davemloft.net>:
-
-On Fri,  2 Sep 2022 18:26:56 +0200 you wrote:
-> There is no point to call pcim_iounmap_regions() in the remove function,
-> this frees a managed resource that would be release by the framework
-> anyway.
+On 2022/8/15 11:48, Sun Ke wrote:
+> If erofs_fscache_alloc_request fail and then goto out, it will return 0.
+> it should return a negative error code instead of 0.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> [...]
+> Fixes: d435d53228dd ("erofs: change to use asynchronous io for fscache readpage/readahead")
+> Signed-off-by: Sun Ke <sunke32@huawei.com>
 
-Here is the summary with links:
-  - [v3] stmmac: intel: Simplify intel_eth_pci_remove()
-    https://git.kernel.org/netdev/net/c/1621e70fc79d
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thanks,
