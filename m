@@ -2,71 +2,98 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A153EECAAD5
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Sep 2022 09:52:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E287EECAAD3
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Sep 2022 09:55:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236379AbiIEJwQ (ORCPT
+        id S237258AbiIEJza (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 5 Sep 2022 05:52:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43412 "EHLO
+        Mon, 5 Sep 2022 05:55:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235591AbiIEJwO (ORCPT
+        with ESMTP id S237155AbiIEJzN (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 5 Sep 2022 05:52:14 -0400
-X-Greylist: delayed 442 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 05 Sep 2022 02:52:13 PDT
-Received: from hutie.ust.cz (hutie.ust.cz [185.8.165.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD7E940BCD
-        for <kernel-janitors@vger.kernel.org>; Mon,  5 Sep 2022 02:52:13 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cutebit.org; s=mail;
-        t=1662371079; bh=UuiZBQrk3PkxgO4/DkhLIrDD9ZaCQxTMdt1KEb2j7EM=;
-        h=Subject:From:In-Reply-To:Date:Cc:References:To;
-        b=Bk/TT7cPidOmX6ahdFI2MrqSMRZS+vn/0NY6KUScFZzqAHQfvZvMnMp0l8sNXaJAu
-         Qg/VOM876LH+AftUOPKpvCCFzGDOO2JIPsYLrp/dfuUz4DLtFp0cryr1bPvrDfgdM0
-         yBSN4qQ/USJ7dzvMDKP0Bw1NwkxvFQvnjfTtzwLs=
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.80.82.1.1\))
-Subject: Re: [PATCH] MAINTAINERS: rectify entry in ARM/APPLE MACHINE SOUND
- DRIVERS
-From:   =?utf-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>
-In-Reply-To: <20220905093546.19735-1-lukas.bulwahn@gmail.com>
-Date:   Mon, 5 Sep 2022 11:44:38 +0200
+        Mon, 5 Sep 2022 05:55:13 -0400
+Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55118186C2;
+        Mon,  5 Sep 2022 02:55:12 -0700 (PDT)
+Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-3378303138bso65418257b3.9;
+        Mon, 05 Sep 2022 02:55:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date;
+        bh=kZwowG+rRON5KFSUE0R9YJYWgBrkd2+kJINr3ZwEXZo=;
+        b=Vl1e3lhr4VBYOH0566THbq5E7P+PDrFu12F8dop24wzAOHlXYdtoS44xu2rgMicuvp
+         tA7YB486fFdpf8kVtFpNecJH1s4DXPlxHiW6LQkPh/LWtoRWVE5AHVHmq0SZwgAi87o9
+         wEXwyzgeEiMe9khhpJkOsw2zjnF+351IkAyQj1AQodm19bxNYQTuw2r3ZRJi19DQ8Rtx
+         3Om79/0Ta7Gr6MSxgSucqk93FAlG0v0w89dq18ngW9nbBb1AX7Z+BV6kOoLnB8YYNiK3
+         nKw+MnTtefiAlqU/F83VERFQTnah38RoRnpml3JJpVMCKDt8aMbdYtZDFbs1AYhOw90P
+         JVyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=kZwowG+rRON5KFSUE0R9YJYWgBrkd2+kJINr3ZwEXZo=;
+        b=Aou85Y4pfEUikvVnJTW1U5h5nhblCfNMUsQfwpAQfs9Vuk3JN35ObbK9lWDw9E+x2N
+         7sp7mewleAWPgUCLOkLb2xdoTwCF1koWTuK9eHdL3ZZibsBPRhHWYcGr4kmBe3WL1WXM
+         ywolwrvFjFpqz2Q4aLd3vVTK7lTdTh5IDoVwC3fM9Ye4bdkBU8WLgsApEXJBMPmJNkKF
+         I/CSWGSpQaehDKCrVwNNQ/uJY7xfCo0+RurMQekHR9Or2Tb9dQCr47/y166Db1J+vNO+
+         zzKAoPMd0v2KOMdxLPDPZW9uvZVmhDtFy8nOTLrOqV2n6Pcr4htZFv3zRjYQQwrUnmNw
+         xR/Q==
+X-Gm-Message-State: ACgBeo3aTQxB5+syGmR92iU8hCozY3mqPE0D8zY6ExqOgpdGFBIQQb63
+        YzehHL65uFJ730llXcv8JLA57qPluxtmJ/mvpXo=
+X-Google-Smtp-Source: AA6agR5VnQe4agp3+bventbZ7vQ9gI0u6eIpSo3fWiJh/oMJA6ijI89J9YKmciXOJw3L4bSRSWRikz9lWxdlZfz3zGk=
+X-Received: by 2002:a0d:f701:0:b0:32a:17d3:d189 with SMTP id
+ h1-20020a0df701000000b0032a17d3d189mr38205702ywf.401.1662371711515; Mon, 05
+ Sep 2022 02:55:11 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220905093546.19735-1-lukas.bulwahn@gmail.com> <4DB82E66-0BB9-4B43-917B-55E115994876@cutebit.org>
+In-Reply-To: <4DB82E66-0BB9-4B43-917B-55E115994876@cutebit.org>
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Mon, 5 Sep 2022 11:55:00 +0200
+Message-ID: <CAKXUXMzGJv=Xvbv8VRqFfa=n-0D84Hk2FALqtyqmxD9ovDKCMw@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: rectify entry in ARM/APPLE MACHINE SOUND DRIVERS
+To:     =?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>
 Cc:     Mark Brown <broonie@kernel.org>, asahi@lists.linux.dev,
-        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        alsa-devel@alsa-project.org,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <4DB82E66-0BB9-4B43-917B-55E115994876@cutebit.org>
-References: <20220905093546.19735-1-lukas.bulwahn@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Mon, Sep 5, 2022 at 11:44 AM Martin Povi=C5=A1er <povik+lin@cutebit.org>=
+ wrote:
+>
+>
+> > On 5. 9. 2022, at 11:35, Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> >
+> > Commit 3df5d0d97289 ("ASoC: apple: mca: Start new platform driver") add=
+s
+> > a new sound driver at the location "sound/soc/apple/", but it adds a fi=
+le
+> > entry referring to the non-existing location "drivers/sound/apple/*".
+> >
+> > Hence, ./scripts/get_maintainer.pl --self-test=3Dpatterns complains abo=
+ut a
+> > broken reference.
+> >
+> > Repair this file reference in ARM/APPLE MACHINE SOUND DRIVERS.
+> >
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > ---
+> > Martin, please ack.
+> > Mark, please pick this patch on top of the commit above.
+>
+> Hi Lukas, fixed here already:
+> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/commit/=
+?id=3D55e2bd9c41e800638676dce3f19dcfd16b309a08
+>
 
-> On 5. 9. 2022, at 11:35, Lukas Bulwahn <lukas.bulwahn@gmail.com> =
-wrote:
->=20
-> Commit 3df5d0d97289 ("ASoC: apple: mca: Start new platform driver") =
-adds
-> a new sound driver at the location "sound/soc/apple/", but it adds a =
-file
-> entry referring to the non-existing location "drivers/sound/apple/*".
->=20
-> Hence, ./scripts/get_maintainer.pl --self-test=3Dpatterns complains =
-about a
-> broken reference.
->=20
-> Repair this file reference in ARM/APPLE MACHINE SOUND DRIVERS.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
-> Martin, please ack.
-> Mark, please pick this patch on top of the commit above.
+Great, thanks! Then, there is nothing more to do. Please ignore this patch =
+then.
 
-Hi Lukas, fixed here already:
-=
-https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/commit/?=
-id=3D55e2bd9c41e800638676dce3f19dcfd16b309a08
-
-Best, Martin
-
+Lukas
