@@ -2,105 +2,83 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E99ECAAD5
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Sep 2022 11:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A361ECAAD3
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Sep 2022 13:30:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238220AbiIELoB (ORCPT
+        id S237782AbiIENaT (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 5 Sep 2022 07:44:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57974 "EHLO
+        Mon, 5 Sep 2022 09:30:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238216AbiIELoA (ORCPT
+        with ESMTP id S237743AbiIENaS (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 5 Sep 2022 07:44:00 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62E0F5788A;
-        Mon,  5 Sep 2022 04:43:59 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id fy31so16531115ejc.6;
-        Mon, 05 Sep 2022 04:43:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=FuWCEQrkq67hH5XIbvmOYYp78soeMvCFJK03dgG0hnU=;
-        b=MUFymhzxKYlVlOPNYX8dVu6Mtzpf23C+FsQK5w6ZTavZerG6wjjtpWMrWr5ZK4DAje
-         ozsMSl30+9NId+ecbgjNyYyglP6JoUVi28GIVE4APZ6Z2aaLKIAsLkIRLtmvNNZh34ZW
-         S3RFhmNZja38AjKT5u5ymolzw2NP8XS04pUtt/LdzkAZsjUHQ/kC60yBJ8Zu7HEBAZLh
-         NZX7OYylAlK3a9fnFO8WuoSslFDCXpJb3HsEfQv9FqdfMouhOBK9KqxQN9o+CBce3hWm
-         vSJEk3VFzs8z7HdWi7Udvfo5+Ex4KIgLTZQk0K23Z4rSizF/FFCUZQeXXE36o+tlmRbf
-         V4Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=FuWCEQrkq67hH5XIbvmOYYp78soeMvCFJK03dgG0hnU=;
-        b=02LvQDOy99PrA0L3psOC2uCh2TEiPowQl+EuHxgVsQxfngcUTmju255JOJmzC+hBAb
-         FzQ01kG+TWyavuGaRAQk2N9DwaApbHTiOgHcbwX2VOzfk+XswitH0iOndd5HreGlOjUJ
-         GINWQvVoHKT9l4tixGYU4O1km+rR7GjbPZce4itTWcBSgfRla4mKN7wGrP2+J11p5xJG
-         rr01ntOJIFtV8bWFpNroAYis+Ac3hxqB1QjKUzQkQNCJbu6aHyIA+oYZM5rPh6pBRFPh
-         jSIlNxiGzbu8Znp5iCu5QYo/jLqSYwBQUJaSNc6mCYJjtmqAfA0wNt1ciy2PuPCoBbfM
-         Ielg==
-X-Gm-Message-State: ACgBeo1H8p8wKuj3uKxTE3/mwsUWIV6MUWl40mxfYqcmtu8xj3+yxx2Z
-        SSJYvdOwKLtUX9nG6MdQPXE=
-X-Google-Smtp-Source: AA6agR4crvawfs6ErjZK3rzI+30+3kCDqoQqsAtSzu6Pnnl1xPCDOdlrdZA4EktV07KkEa8Ur/Rj+g==
-X-Received: by 2002:a17:907:2cea:b0:741:6251:3a22 with SMTP id hz10-20020a1709072cea00b0074162513a22mr26754245ejc.6.1662378237788;
-        Mon, 05 Sep 2022 04:43:57 -0700 (PDT)
-Received: from [192.168.2.177] ([207.188.167.132])
-        by smtp.gmail.com with ESMTPSA id kv12-20020a17090778cc00b0073dd0b0ba67sm4856017ejc.200.2022.09.05.04.43.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Sep 2022 04:43:56 -0700 (PDT)
-Message-ID: <7b0ce06b-1e56-0db6-c07b-dd2946af6741@gmail.com>
-Date:   Mon, 5 Sep 2022 13:43:55 +0200
+        Mon, 5 Sep 2022 09:30:18 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2310615A10;
+        Mon,  5 Sep 2022 06:30:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D3003B8119E;
+        Mon,  5 Sep 2022 13:30:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7FD81C433D7;
+        Mon,  5 Sep 2022 13:30:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1662384614;
+        bh=7XONn9KaUTnR3WKojdkRi/lvfYNW+Pp+4J0HaSGdd2o=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=BvEQK6meER+TAYOo+F4z0cz9x6AQDGGcyxjPrKaHQEP+zhBoprqa1Ah47FFL06+C5
+         0LcayaKEXLql+97ZPM6VRrohXS8lPJ2xcuRvySLtzZ2IWfv0ESPqDb0are/r39UjNb
+         bZ9Qq0v6JFMl1mjEzdG8tyiSmxVFVn3q0PJY4CzKTS5iT3uoKJMDbpX2br+28yBtkd
+         CUsqjph4ciptxSbGzHEnOcHT3LUCT4Z3EGDJh/szDA+PyGKLkycNEtWKJHIb9Uub07
+         FaA4elaa6oRxlBJJlki3YTtzdmC5m21nR4IasNB2yAs21f2beK+yDCJNfgAF/8/vPx
+         AF4jkjZRrHtjw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 66986E1CABF;
+        Mon,  5 Sep 2022 13:30:14 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH] media: platform: mtk-mdp3: fix error code in
- mdp_vpu_dev_init()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Moudy Ho <moudy.ho@mediatek.com>
-Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        daoyuan huang <daoyuan.huang@mediatek.com>,
-        Ping-Hsun Wu <ping-hsun.wu@mediatek.com>,
-        linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        kernel-janitors@vger.kernel.org
-References: <YxDGFMwyeNXFPaig@kili>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-In-Reply-To: <YxDGFMwyeNXFPaig@kili>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v3] stmmac: intel: Simplify intel_eth_pci_remove()
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <166238461441.27659.12239110868917016619.git-patchwork-notify@kernel.org>
+Date:   Mon, 05 Sep 2022 13:30:14 +0000
+References: <35ab3ac5b67716acb3f7073229b02a38fce71fb7.1662135995.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <35ab3ac5b67716acb3f7073229b02a38fce71fb7.1662135995.git.christophe.jaillet@wanadoo.fr>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     peppe.cavallaro@st.com, alexandre.torgue@foss.st.com,
+        joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+Hello:
 
+This patch was applied to netdev/net.git (master)
+by David S. Miller <davem@davemloft.net>:
 
-On 01/09/2022 16:47, Dan Carpenter wrote:
-> Return a negative error code if mdp_vpu_shared_mem_alloc() fails.
+On Fri,  2 Sep 2022 18:26:56 +0200 you wrote:
+> There is no point to call pcim_iounmap_regions() in the remove function,
+> this frees a managed resource that would be release by the framework
+> anyway.
 > 
-> Fixes: 61890ccaefaf ("media: platform: mtk-mdp3: add MediaTek MDP3 driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-
-> ---
->   drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > 
-> diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c
-> index 9f5844385c8f..a72bed927bb6 100644
-> --- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c
-> +++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c
-> @@ -173,7 +173,8 @@ int mdp_vpu_dev_init(struct mdp_vpu_dev *vpu, struct mtk_scp *scp,
->   	/* vpu work_size was set in mdp_vpu_ipi_handle_init_ack */
->   
->   	mem_size = vpu_alloc_size;
-> -	if (mdp_vpu_shared_mem_alloc(vpu)) {
-> +	err = mdp_vpu_shared_mem_alloc(vpu);
-> +	if (err) {
->   		dev_err(&mdp->pdev->dev, "VPU memory alloc fail!");
->   		goto err_mem_alloc;
->   	}
+> [...]
+
+Here is the summary with links:
+  - [v3] stmmac: intel: Simplify intel_eth_pci_remove()
+    https://git.kernel.org/netdev/net/c/1621e70fc79d
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
