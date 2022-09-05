@@ -2,97 +2,105 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD21BECAAD3
-	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Sep 2022 10:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E99ECAAD5
+	for <kernel-janitors@archiver.kernel.org>; Mon,  5 Sep 2022 11:44:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237805AbiIEK35 (ORCPT
+        id S238220AbiIELoB (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Mon, 5 Sep 2022 06:29:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53992 "EHLO
+        Mon, 5 Sep 2022 07:44:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237798AbiIEK3y (ORCPT
+        with ESMTP id S238216AbiIELoA (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Mon, 5 Sep 2022 06:29:54 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22760167F7;
-        Mon,  5 Sep 2022 03:29:51 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id az27so10731521wrb.6;
-        Mon, 05 Sep 2022 03:29:51 -0700 (PDT)
+        Mon, 5 Sep 2022 07:44:00 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62E0F5788A;
+        Mon,  5 Sep 2022 04:43:59 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id fy31so16531115ejc.6;
+        Mon, 05 Sep 2022 04:43:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=M1AP6Atmetovg7lAnags9GJU89MAMFpSOvpMrYiFWV0=;
-        b=EkRe7f7iRcc4Rl24NStMSAU/XVqygbgvTjibv4/zcOwWvmwxlsEP6+OAuEYJM5JB5A
-         qaGoZg4MRKZRS3Uys7qZqxUvtb7BM4DXMXh3B8ZpJyezXRo8IkcgGLrKR7UTa5sdJKTv
-         wLrqIm7brKphtGhEG6LCrVMEla5XTrZSyF+bdQuM4FQ1dQjyPLuID4bg9tobo35uWm+p
-         BuF+d5jQFKmMZv4mpZRQLB55WLVAg9kYJIJz1FQSVAm/x4+OtV81nePfw51AvQB2ycpy
-         Q0Ys9S1RzExTKPaO8C/7JgLEgwrm4J77Mf7MmZfnvOlJRECVdUTT+BSCL1md8XSWppOb
-         VGhw==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=FuWCEQrkq67hH5XIbvmOYYp78soeMvCFJK03dgG0hnU=;
+        b=MUFymhzxKYlVlOPNYX8dVu6Mtzpf23C+FsQK5w6ZTavZerG6wjjtpWMrWr5ZK4DAje
+         ozsMSl30+9NId+ecbgjNyYyglP6JoUVi28GIVE4APZ6Z2aaLKIAsLkIRLtmvNNZh34ZW
+         S3RFhmNZja38AjKT5u5ymolzw2NP8XS04pUtt/LdzkAZsjUHQ/kC60yBJ8Zu7HEBAZLh
+         NZX7OYylAlK3a9fnFO8WuoSslFDCXpJb3HsEfQv9FqdfMouhOBK9KqxQN9o+CBce3hWm
+         vSJEk3VFzs8z7HdWi7Udvfo5+Ex4KIgLTZQk0K23Z4rSizF/FFCUZQeXXE36o+tlmRbf
+         V4Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=M1AP6Atmetovg7lAnags9GJU89MAMFpSOvpMrYiFWV0=;
-        b=XpMVm+DHKQ5SEf6Toyd6mgc8BHx3jo0B1yu1kNz2iIYMeX6f6CQ8KcVwS5YbcUdy5W
-         gYvcvgT2UeA+Y6pFeozzxhhizRQgLVPpzj+T80STlcMTRsSp/ZaSpiwR3YtF6GE0iGKU
-         Y51xYPmIA788Jnb4mewLixDSaFy/iS9eCyKNkWFDGdUtAbLlS1B46IQS5ysBjEWY2RYe
-         qgENo3xSTbRYHR72SBScgTyCtL2PBtFxuce5tLjnD97WoDlXsT8LXnHZ8Buzj0QllCoL
-         EJssNaSx8oL8Pi970grt7DUp1wAUtVvB0u2f24HWEndu9x2/kPqmbRmQdy8P4cYYnrLL
-         Qxvg==
-X-Gm-Message-State: ACgBeo3VzhryEF1nHB21PPlHE68XjphyGRt8Foyl7Dch1pRjFioRRkH5
-        Ptkbm4IgGDzy2ksfOSObSCY=
-X-Google-Smtp-Source: AA6agR6hzC/4RA4uscoKQWC5XbeWIsVFwm75CCLd+HhKy8eJjogkni+nvy/NtAPyLPRPsv2RAbiNLg==
-X-Received: by 2002:a05:6000:813:b0:226:da5a:84a9 with SMTP id bt19-20020a056000081300b00226da5a84a9mr20315871wrb.309.1662373790044;
-        Mon, 05 Sep 2022 03:29:50 -0700 (PDT)
-Received: from felia.fritz.box (200116b8268cc400942297814b5b37b6.dip.versatel-1u1.de. [2001:16b8:268c:c400:9422:9781:4b5b:37b6])
-        by smtp.gmail.com with ESMTPSA id az3-20020a05600c600300b003a6a3595edasm10589190wmb.27.2022.09.05.03.29.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Sep 2022 03:29:48 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=FuWCEQrkq67hH5XIbvmOYYp78soeMvCFJK03dgG0hnU=;
+        b=02LvQDOy99PrA0L3psOC2uCh2TEiPowQl+EuHxgVsQxfngcUTmju255JOJmzC+hBAb
+         FzQ01kG+TWyavuGaRAQk2N9DwaApbHTiOgHcbwX2VOzfk+XswitH0iOndd5HreGlOjUJ
+         GINWQvVoHKT9l4tixGYU4O1km+rR7GjbPZce4itTWcBSgfRla4mKN7wGrP2+J11p5xJG
+         rr01ntOJIFtV8bWFpNroAYis+Ac3hxqB1QjKUzQkQNCJbu6aHyIA+oYZM5rPh6pBRFPh
+         jSIlNxiGzbu8Znp5iCu5QYo/jLqSYwBQUJaSNc6mCYJjtmqAfA0wNt1ciy2PuPCoBbfM
+         Ielg==
+X-Gm-Message-State: ACgBeo1H8p8wKuj3uKxTE3/mwsUWIV6MUWl40mxfYqcmtu8xj3+yxx2Z
+        SSJYvdOwKLtUX9nG6MdQPXE=
+X-Google-Smtp-Source: AA6agR4crvawfs6ErjZK3rzI+30+3kCDqoQqsAtSzu6Pnnl1xPCDOdlrdZA4EktV07KkEa8Ur/Rj+g==
+X-Received: by 2002:a17:907:2cea:b0:741:6251:3a22 with SMTP id hz10-20020a1709072cea00b0074162513a22mr26754245ejc.6.1662378237788;
+        Mon, 05 Sep 2022 04:43:57 -0700 (PDT)
+Received: from [192.168.2.177] ([207.188.167.132])
+        by smtp.gmail.com with ESMTPSA id kv12-20020a17090778cc00b0073dd0b0ba67sm4856017ejc.200.2022.09.05.04.43.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Sep 2022 04:43:56 -0700 (PDT)
+Message-ID: <7b0ce06b-1e56-0db6-c07b-dd2946af6741@gmail.com>
+Date:   Mon, 5 Sep 2022 13:43:55 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [PATCH] media: platform: mtk-mdp3: fix error code in
+ mdp_vpu_dev_init()
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] media: MAINTAINERS: rectify entry in SAA7146 VIDEO4LINUX-2 DRIVER
-Date:   Mon,  5 Sep 2022 12:29:39 +0200
-Message-Id: <20220905102939.19766-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Moudy Ho <moudy.ho@mediatek.com>
+Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        daoyuan huang <daoyuan.huang@mediatek.com>,
+        Ping-Hsun Wu <ping-hsun.wu@mediatek.com>,
+        linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        kernel-janitors@vger.kernel.org
+References: <YxDGFMwyeNXFPaig@kili>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+In-Reply-To: <YxDGFMwyeNXFPaig@kili>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit e33fdb5a0249 ("media: saa7146: deprecate hexium_gemini/orion, mxb
-and ttpci") moves some media drivers to the staging subsystem, and
-unfortunately only partially adjusts the entry in MAINTAINERS.
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
 
-As the files matching include/media/drv-intf/saa7146* are moved to
-drivers/staging/media/deprecated/saa7146/common, this directory is already
-covered by the existing file entry
-drivers/staging/media/deprecated/saa7146/.
+On 01/09/2022 16:47, Dan Carpenter wrote:
+> Return a negative error code if mdp_vpu_shared_mem_alloc() fails.
+> 
+> Fixes: 61890ccaefaf ("media: platform: mtk-mdp3: add MediaTek MDP3 driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Repair this file reference in SAA7146 VIDEO4LINUX-2 DRIVER.
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 228d3a9ddc34..72e119158612 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17982,7 +17982,6 @@ L:	linux-media@vger.kernel.org
- S:	Maintained
- T:	git git://linuxtv.org/media_tree.git
- F:	drivers/staging/media/deprecated/saa7146/
--F:	include/media/drv-intf/saa7146*
- 
- SAFESETID SECURITY MODULE
- M:	Micah Morton <mortonm@chromium.org>
--- 
-2.17.1
-
+> ---
+>   drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c
+> index 9f5844385c8f..a72bed927bb6 100644
+> --- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c
+> +++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c
+> @@ -173,7 +173,8 @@ int mdp_vpu_dev_init(struct mdp_vpu_dev *vpu, struct mtk_scp *scp,
+>   	/* vpu work_size was set in mdp_vpu_ipi_handle_init_ack */
+>   
+>   	mem_size = vpu_alloc_size;
+> -	if (mdp_vpu_shared_mem_alloc(vpu)) {
+> +	err = mdp_vpu_shared_mem_alloc(vpu);
+> +	if (err) {
+>   		dev_err(&mdp->pdev->dev, "VPU memory alloc fail!");
+>   		goto err_mem_alloc;
+>   	}
