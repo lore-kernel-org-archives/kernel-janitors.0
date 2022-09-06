@@ -2,63 +2,60 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC3CECAAD5
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Sep 2022 14:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D4FECAAD5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Sep 2022 14:50:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242204AbiIFOpN (ORCPT
+        id S234848AbiIFOu1 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Sep 2022 10:45:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46546 "EHLO
+        Tue, 6 Sep 2022 10:50:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242170AbiIFOor (ORCPT
+        with ESMTP id S234841AbiIFOuB (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Sep 2022 10:44:47 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36664B7D7;
-        Tue,  6 Sep 2022 07:04:30 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id bj14so2354727wrb.12;
-        Tue, 06 Sep 2022 07:04:29 -0700 (PDT)
+        Tue, 6 Sep 2022 10:50:01 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C0F6A1A6C;
+        Tue,  6 Sep 2022 07:07:25 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id bq9so2734231wrb.4;
+        Tue, 06 Sep 2022 07:07:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date;
-        bh=6qmWJOLRR+n4c7sVjdfAUPTsyzenHuuzlHk1wiFMkLo=;
-        b=ZghPrPVGnY0NJr9kyqP6SguuWE16ZeTMQr/gX/w075kNfE2vCSEUsM9wCYOyt4I7x0
-         NT8mmE5xAnh0QMjkIqiMhXx5raZmDL1WAUa79E/CxRWWK/7+X12M7Gj9RlXsY/i/EQwF
-         Z6pMacus3IW/EVkoyRSPivC/U/cJOQ6MBTvT+7CfDR5ojwcw67v/lqlcpbufsn/QY5EZ
-         W+uk5qU57YclFrjQaGpZwU6AUt+EMAGM7V90nsWOxAi4CJAmmmyFfgMiGhhQ7dwVMgrj
-         VXGVmzCXsEE4xHdWuxy7cYGuQvIj+S9Z8ytbQ9RhbKxKIrMw9N26v6roiecJFyrH/ZLy
-         ZF4A==
+        bh=1EGslfwy0MFQFuPxDqa4hdz7FVgxyvnt/2v6+bpojsw=;
+        b=qhf5a0GZV2cBvuh/pYnMi7KLp5gKWtRISzjGRTP5REDM4YmGUL41DR7mVchpFFLMOg
+         opuspTu/eYmzZcnH0LiJXOeX/xR0ZFWFaFzbjZF/xJUYHaaFMnEtcLEsA1wx2GZobVVg
+         /MmDH4u2KEY3lEi7QUQV4xKBXyWOF0viOXrEgg0aoJbU1tPiCRWP3rQsV8WA96hRKpPo
+         Ry4wRbwH301tCwPYYyn/VPrG8KLw/zzJVp56zGhSrGTEtRY6iNmdD6oyBP7ens/XNKcZ
+         4Ew5Ut2v8+0nuCE6SsElrsnkOIsGVcBSS0ptfqtF5AAD09xzNUHjP0HyuznvjEy9DGSw
+         cseQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=6qmWJOLRR+n4c7sVjdfAUPTsyzenHuuzlHk1wiFMkLo=;
-        b=XLevXNRF4r3KZfetSxn/ErmxJmZAHlWB0h8HoIigM1OZ8UgMKMYor6uVf1AGhekx1H
-         k4BGmV8sflNoJ3V81gpyDpHwrqJ9ibrjKmJ2UrhXPkT0osklBeq15nc7Gvy9I9FmesqS
-         CZ967krpAhTZW0OidOP0DndzkSoOVenYYk0SqNljrFlJB7vjFJiVQnNClpJ/clV9m4Be
-         Pu02ABlRLVxST7LwreX3Y0FJ0+ke1scVlfP0v/5HFw1cn05O0S/RA8qWASNSlM8wVfOU
-         Wbiu+QQbmurWgAtHD+KHFctB2CZGyfjrYkdHNxqz4wnDuIUdAuNrtyES0kAUGfEzCig+
-         LzVg==
-X-Gm-Message-State: ACgBeo1fYNkpANOBcb0vVa+FRy5j//p1j9l10Ylnr3PdS0S9R57tfeW2
-        FHsYNSC0qwT6iW5fgRJNiqQ=
-X-Google-Smtp-Source: AA6agR5b6Y7mG/H4/nwWAeRBkvKJP6MTXAPVn9o3Mcv5TE06x6z3xSOGO0zYrMTyGM7YJJ3kVM02iA==
-X-Received: by 2002:a5d:458e:0:b0:228:cd6e:dc56 with SMTP id p14-20020a5d458e000000b00228cd6edc56mr3853162wrq.614.1662472995649;
-        Tue, 06 Sep 2022 07:03:15 -0700 (PDT)
+        bh=1EGslfwy0MFQFuPxDqa4hdz7FVgxyvnt/2v6+bpojsw=;
+        b=KRh25JNuVngJ+EdrLXnPqnNYXlQlhpyXLuc0lVXTV+lafHIF2YChubKKUvkvkV4b3x
+         SDmJVrOF75zjA17UsNmjS3jxEN3AzkCHZkQQ14BBOE8EnspsJvudIL2CUh1RCrTVTyc/
+         ll0SINtQoUGvoa3iER2w118O9bg0XlBmHLCeNAQM09imlLa6tbrGa+YtoBMTKxrttn+O
+         06NexAowJHWho2jvK2Vs8xoxFgOScv/gzcuZDAx66qDeaNfFRjfpX7vZo8yMNKR+EXDz
+         VAgy+VawkHnDLez/65dSyldDK1H6KqNifeSJ/P0xVWLtOxyH4Sktx6t8h3yH73iqBbGb
+         8GvQ==
+X-Gm-Message-State: ACgBeo08qWSMJ0Ja8ubxYMkQldmu0o99/vpYh3W3i8989TeOEgUvYo5H
+        qVyxIAmOaHt7ybHYYmw/2nY=
+X-Google-Smtp-Source: AA6agR6CafI5cXxHZpv1AcnAeYJoO6nsDVSHTnaVBzYG43RBPFf2UPsdO71OQQCfHlpCNpdtAekyEQ==
+X-Received: by 2002:a05:6000:1882:b0:226:ef64:55c8 with SMTP id a2-20020a056000188200b00226ef6455c8mr16134026wri.183.1662473154154;
+        Tue, 06 Sep 2022 07:05:54 -0700 (PDT)
 Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id h23-20020a05600c2cb700b003a2f2bb72d5sm26239598wmc.45.2022.09.06.07.03.15
+        by smtp.gmail.com with ESMTPSA id o28-20020a05600c511c00b003a83ac538a1sm15410239wms.29.2022.09.06.07.05.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Sep 2022 07:03:15 -0700 (PDT)
+        Tue, 06 Sep 2022 07:05:53 -0700 (PDT)
 From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        linux-usb@vger.kernel.org
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] thunderbolt: debugfs: Fix spelling mistakes in seq_puts text
-Date:   Tue,  6 Sep 2022 15:03:14 +0100
-Message-Id: <20220906140314.194565-1-colin.i.king@gmail.com>
+Subject: [PATCH] thunderbolt: Fix spelling mistake "simultaneusly" -> "simultaneously"
+Date:   Tue,  6 Sep 2022 15:05:52 +0100
+Message-Id: <20220906140552.194869-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -67,35 +64,36 @@ Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-There are a handful of spelling mistakes in seq_puts text. Fix them.
+There are spelling mistakes in the thunderbolt sysfs documentation.
+Fix them.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/thunderbolt/debugfs.c | 4 ++--
+ Documentation/ABI/testing/sysfs-bus-thunderbolt | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/thunderbolt/debugfs.c b/drivers/thunderbolt/debugfs.c
-index a1df3a7f159b..834bcad42e9f 100644
---- a/drivers/thunderbolt/debugfs.c
-+++ b/drivers/thunderbolt/debugfs.c
-@@ -351,7 +351,7 @@ static int margining_caps_show(struct seq_file *s, void *not_used)
- 		seq_puts(s, "# hardware margining: no\n");
- 	}
+diff --git a/Documentation/ABI/testing/sysfs-bus-thunderbolt b/Documentation/ABI/testing/sysfs-bus-thunderbolt
+index f7570c240ce8..76ab3e1fe374 100644
+--- a/Documentation/ABI/testing/sysfs-bus-thunderbolt
++++ b/Documentation/ABI/testing/sysfs-bus-thunderbolt
+@@ -153,7 +153,7 @@ Date:		Jan 2020
+ KernelVersion:	5.5
+ Contact:	Mika Westerberg <mika.westerberg@linux.intel.com>
+ Description:	This attribute reports number of RX lanes the device is
+-		using simultaneusly through its upstream port.
++		using simultaneously through its upstream port.
  
--	seq_printf(s, "# both lanes simultaneusly: %s\n",
-+	seq_printf(s, "# both lanes simultaneously: %s\n",
- 		  both_lanes(usb4) ? "yes" : "no");
- 	seq_printf(s, "# voltage margin steps: %u\n",
- 		   usb4->margining->voltage_steps);
-@@ -366,7 +366,7 @@ static int margining_caps_show(struct seq_file *s, void *not_used)
- 		seq_puts(s, "# returns high or low voltage margin\n");
- 		break;
- 	case USB4_MARGIN_CAP_0_VOLTAGE_BOTH:
--		seq_puts(s, "# returns both hight and low margings\n");
-+		seq_puts(s, "# returns both high and low margins\n");
- 		break;
- 	}
+ What:		/sys/bus/thunderbolt/devices/.../tx_speed
+ Date:		Jan 2020
+@@ -167,7 +167,7 @@ Date:		Jan 2020
+ KernelVersion:	5.5
+ Contact:	Mika Westerberg <mika.westerberg@linux.intel.com>
+ Description:	This attribute reports number of TX lanes the device is
+-		using simultaneusly through its upstream port.
++		using simultaneously through its upstream port.
  
+ What:		/sys/bus/thunderbolt/devices/.../vendor
+ Date:		Sep 2017
 -- 
 2.37.1
 
