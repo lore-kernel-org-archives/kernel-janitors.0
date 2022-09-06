@@ -2,111 +2,91 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFDE3C6FA95
-	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Sep 2022 10:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02477ECAAD5
+	for <kernel-janitors@archiver.kernel.org>; Tue,  6 Sep 2022 14:41:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239692AbiIFKr0 (ORCPT
+        id S242120AbiIFOlh (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Sep 2022 06:47:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57964 "EHLO
+        Tue, 6 Sep 2022 10:41:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239833AbiIFKqd (ORCPT
+        with ESMTP id S242412AbiIFOjU (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Sep 2022 06:46:33 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F8F275CCA;
-        Tue,  6 Sep 2022 03:45:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1662461126; x=1693997126;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nAdc8Rr843R6WJOu79NKjIig8n6+aOXK81VmIUMIj3g=;
-  b=M0Vy69RMHMHQN2GsgOb9w/bZh5RFY5aBqudnM0EftW5rHxW2VfFDPDWo
-   QVNCoPMi38tOEu2uTlCGU1Ip23q3FZ5ZyhM03w05No8lyTJwCm9UuTBwX
-   z+TON5R+hmumaEVvvjEmWBkgMk+XBAhe+WBh3LsxuE9J+UJ4clhyhGCfY
-   pIe6KohlRXipDDN8KbTrEEBdI458x//SH8rrgaV7dgLcg/QwZViqaIEjY
-   uBd0qFCYJXnp6xyaYhb+Y5pqHIk4JZBXeL1dXB2dm7L4FYwqi4HP+7bNJ
-   QGoh/eP67X1l+hS/6YGvAoruJBhk9RZI1EQSOtAeew1EtyWm7Beq4XrUZ
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10461"; a="358277620"
-X-IronPort-AV: E=Sophos;i="5.93,294,1654585200"; 
-   d="scan'208";a="358277620"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2022 03:45:12 -0700
-X-IronPort-AV: E=Sophos;i="5.93,294,1654585200"; 
-   d="scan'208";a="644121884"
-Received: from unknown (HELO localhost.localdomain) ([10.237.112.144])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2022 03:45:09 -0700
-Date:   Tue, 6 Sep 2022 12:45:00 +0200
-From:   Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Jesse Brandeburg <jesse.brandeburg@intel.com>,
-        Tony Nguyen <anthony.l.nguyen@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        intel-wired-lan@lists.osuosl.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [Intel-wired-lan] [PATCH] ice: switch: Simplify memory allocation
-Message-ID: <YxckrI4ZWgBybPK5@localhost.localdomain>
-References: <55ff1825aee6e655c41cb6770ca44f0fbdbfec00.1662301068.git.christophe.jaillet@wanadoo.fr>
+        Tue, 6 Sep 2022 10:39:20 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0C109BB4B;
+        Tue,  6 Sep 2022 07:01:28 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id az24-20020a05600c601800b003a842e4983cso7527014wmb.0;
+        Tue, 06 Sep 2022 07:01:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=pkMRy8XuGDtx9NMZA7uZCO5i/b7uDNNrxfsjCrj+Lc4=;
+        b=o4utixdJwalOBX1Q1sHVX2nwdDOJAJs9T+YbOtRt/UYSkeX5u+HMoGm1pJiYHACN31
+         tPj8fkgp7ANeqeE2sj3eT6XkJZtuuNV0koMxFM8zpW9qNBwRfoK8QN5hAzBXGskn6hoe
+         KEWGtDvunl3PCmUD8Diy3P+4Smc3U6xHZ/+xZZyaMLlTlUuny5GFIAMDSURhMJrub87d
+         BtsM6foajqPixys05COHdkj62R+NJG1UleOYFrNHcyakuGCLZDY2ccM5a+yo7lFbZ0WJ
+         a7fJ+elQA2Yf5Lpa9Z0JteOihcRg3zD/EWNHkM2L3pb2jhbLCbZXDaN8E2PCT3AqxOro
+         04Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=pkMRy8XuGDtx9NMZA7uZCO5i/b7uDNNrxfsjCrj+Lc4=;
+        b=OchJ1IDDoSOLUNiFPWGbIqQfrhymPcgGYayp3aCUNw+oGrpTePIrxmU6HscZCClVCE
+         cq/jB24PjE0qwQeEFK66srU8BNP1TIld/Wr2C4E6rqY2PlTqOepASQJaaTKNY1LufpOd
+         8pUbzq3sRCUwKGCVnHQ6YY921amXzXwOuoW8FPs3gB4lFpUSkyK58y4ls6tD8eyr/m0y
+         pz/hgR5QK5Fg1eiLaYN9gvGqcEa64lAt6PllP7zNcC2kdUqTmhzWvHBhUMYaet7VwegY
+         TRXuAgtUViscSq9bJjrtPENbNgWI+OHNkB1h2XvHBXOtK/nWeNK8BK0Vtqz1FxuQ9/MO
+         isgw==
+X-Gm-Message-State: ACgBeo2M3KhkJGdAFikmQrknQ5rHWOI1DBAs9F69KigHu08lYUC+ffHT
+        oCAyJJLBvDlQ6xqLsUFQ/bI=
+X-Google-Smtp-Source: AA6agR6n8ts0/UWy/dounDKDCATDUCcX6IigUCNZspTdYgXsA+nwu6S5DsvfuJhzVBBuGPZzK4bqaQ==
+X-Received: by 2002:a05:600c:4f04:b0:3a5:f380:69dc with SMTP id l4-20020a05600c4f0400b003a5f38069dcmr14246016wmq.103.1662472812136;
+        Tue, 06 Sep 2022 07:00:12 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id e7-20020a05600c4e4700b003a60f0f34b7sm15189468wmq.40.2022.09.06.07.00.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Sep 2022 07:00:11 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Nilesh Javali <njavali@marvell.com>,
+        GR-QLogic-Storage-Upstream@marvell.com,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] scsi: qla2xxx: Fix spelling mistake "definiton" -> "definition"
+Date:   Tue,  6 Sep 2022 15:00:10 +0100
+Message-Id: <20220906140010.194273-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <55ff1825aee6e655c41cb6770ca44f0fbdbfec00.1662301068.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Sun, Sep 04, 2022 at 04:18:02PM +0200, Christophe JAILLET wrote:
-> 'rbuf' is locale to the ice_get_initial_sw_cfg() function.
-> There is no point in using devm_kzalloc()/devm_kfree().
-> 
-> use kzalloc()/kfree() instead.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> As a side effect, it also require less memory. devm_kzalloc() has a small
-> memory overhead, and requesting ICE_SW_CFG_MAX_BUF_LEN (i.e. 2048) bytes,
-> 4096 are really allocated.
-> ---
->  drivers/net/ethernet/intel/ice/ice_switch.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/intel/ice/ice_switch.c b/drivers/net/ethernet/intel/ice/ice_switch.c
-> index 697feb89188c..eb6e19deb70d 100644
-> --- a/drivers/net/ethernet/intel/ice/ice_switch.c
-> +++ b/drivers/net/ethernet/intel/ice/ice_switch.c
-> @@ -2274,9 +2274,7 @@ int ice_get_initial_sw_cfg(struct ice_hw *hw)
->  	int status;
->  	u16 i;
->  
-> -	rbuf = devm_kzalloc(ice_hw_to_dev(hw), ICE_SW_CFG_MAX_BUF_LEN,
-> -			    GFP_KERNEL);
-> -
-> +	rbuf = kzalloc(ICE_SW_CFG_MAX_BUF_LEN, GFP_KERNEL);
->  	if (!rbuf)
->  		return -ENOMEM;
->  
-> @@ -2324,7 +2322,7 @@ int ice_get_initial_sw_cfg(struct ice_hw *hw)
->  		}
->  	} while (req_desc && !status);
->  
-> -	devm_kfree(ice_hw_to_dev(hw), rbuf);
-> +	kfree(rbuf);
->  	return status;
->  }
->  
-> -- 
-> 2.34.1
-> 
+There is a spelling mistake in a MODULE_PARM_DESC description. Fix it.
 
-Thanks for catching that
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/scsi/qla2xxx/qla_os.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> _______________________________________________
-> Intel-wired-lan mailing list
-> Intel-wired-lan@osuosl.org
-> https://lists.osuosl.org/mailman/listinfo/intel-wired-lan
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index 632f4d2956f4..2c85f3cce726 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -124,7 +124,7 @@ MODULE_PARM_DESC(ql2xextended_error_logging,
+ int ql2xextended_error_logging_ktrace = 1;
+ module_param(ql2xextended_error_logging_ktrace, int, S_IRUGO|S_IWUSR);
+ MODULE_PARM_DESC(ql2xextended_error_logging_ktrace,
+-		"Same BIT definiton as ql2xextended_error_logging, but used to control logging to kernel trace buffer (default=1).\n");
++		"Same BIT definition as ql2xextended_error_logging, but used to control logging to kernel trace buffer (default=1).\n");
+ 
+ int ql2xshiftctondsd = 6;
+ module_param(ql2xshiftctondsd, int, S_IRUGO);
+-- 
+2.37.1
+
