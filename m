@@ -2,95 +2,172 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 154BCC6FA86
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Sep 2022 13:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65839C6FA86
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Sep 2022 14:35:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230013AbiIGNvW (ORCPT
+        id S229624AbiIGOfX (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Sep 2022 09:51:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34920 "EHLO
+        Wed, 7 Sep 2022 10:35:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229780AbiIGNvP (ORCPT
+        with ESMTP id S229445AbiIGOfW (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Sep 2022 09:51:15 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 544CDA99C3;
-        Wed,  7 Sep 2022 06:51:00 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id bq9so7592052wrb.4;
-        Wed, 07 Sep 2022 06:51:00 -0700 (PDT)
+        Wed, 7 Sep 2022 10:35:22 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A0284504F;
+        Wed,  7 Sep 2022 07:35:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1662561320; x=1694097320;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=M1NQvBSm5mzUxcz6PIzaWNtfJldro5TAD/kdICaQ3aA=;
+  b=JorUEGBW+hMM5guU12AZOGr4CwPdYMUM4JtTvB6F0yZ3/ozdbYqxzNmD
+   JmrBPadNHyIS74Fh6/HsWjiPhdwPEU/81tPLyMUSKZ7ZF7SYnYiwISYrD
+   22hPQH9QTbEGkqkeLnkV+Qf/HgMtyZxFbGQX2rmCYJa0Kup9ZW9Igf3Oo
+   HdZoyK9DZhndTUP0gWuv8WmBznRtkyc6XhN4qC8j8rTQQDRlkhwclAWnv
+   zmklBSX18ULcvsogTDvW+L5ngzcth5L+BSTOtpp3lGPAwCZhcs1v/vyRs
+   ikQsTpeHsmzVwAG3UYMVvlEz6YPOGFJRiTwQxWGP0S4pCOMZGrUDxVrjn
+   w==;
+X-IronPort-AV: E=Sophos;i="5.93,297,1654585200"; 
+   d="scan'208";a="189812075"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 07 Sep 2022 07:35:18 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.12; Wed, 7 Sep 2022 07:35:18 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.12 via Frontend Transport; Wed, 7 Sep 2022 07:35:18 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lK17+Uun5u6LhjWMgz1cwdLsdkT/M6uGhjutsYiY+G6UvjbG+9B1C7KDCli7Y/czedzkDJQYIG9R3zcNgp1/6ROpA2U/IFiix0Xw5P9EEh1VOlTI1YEeHtMs5McLGKWR+3fUa3wU95oHf9CWhpfCDwBroPE7mhysSJX8/roFOZ4p675x7NkEg70KfzNf0TUkDI7iB9p89Q1NVjE1KrCJPP2ZRCdx4Sm5Npy/KrYRyb00fweTcd35foGVI00zxYkGp5r9AjciJQe6x5C8zWfZdcPlplYK3nZIPQx9/XqryEvKgSCX3JWYuaxqqvzz1SSLp6eaAz91QfmYSPaZxpwQOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=M1NQvBSm5mzUxcz6PIzaWNtfJldro5TAD/kdICaQ3aA=;
+ b=AxJeLTZH0HysLHSqmvOsxM9WrsdYJMFjO6QtryZekDzYfYWbfMIXBFPc8eJVwd2wdqP4IiUGYoUD0c3QoIxaLJma44MMX/tVPwGGqqKpIJP85Pep/w2WVh5SsJ4+w6+kVndxlklVZ6K2svNjwdfqxdQrDwaXG5JdIc4wXjSb7VFNJjTK16+FqJQWgz0pWsl3byVOE7JEsEmhEqHKE3uBFwdWisKr9UCfVn5o2jLyDKJIhewydF33b6RrAIyYpVX+c+B9plQFnYiHq6+XWMYzAxytc96gI48r/LNtoMH+UY2qu2xPw87J40dvcPce0xkxmsOknVAfjkdN5Gni+lJvog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=X0NRHzznEcchSri4bCoSt9nkeOdHiBAQ/5Pmte/Gyz8=;
-        b=ZPGwmIXS/RcexDoa8uMC7Qrips3KiSqFH87cKBNHhTwrJyIbh+Gf46xHCuFlLz+D3r
-         QJzjxWDnL/3wJ7vvsBEY1Rran3hIRJ8T7Apfg60js9xFLWTwZC8gcSHlapGLt6euwmcP
-         wgNbvaxAKs/vl4DLQhzcnhAGxCj/OE1Nk8s5SsnoNQWY6ejjOfEbQcy1ij3+q6g7/rNs
-         TGJ58yWg6fzHraOr7SAeKQyA5u0e1YJddwnU+sTLMYwvUCsuWPWsUM8CsZYsjyyqnDWT
-         yBluKmdQc2i0pGvqpwH6/P1b+GDm9tvhHj33kDMuK8pjZ951VJygmrra4x9ZDpFAx2Dq
-         S92Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=X0NRHzznEcchSri4bCoSt9nkeOdHiBAQ/5Pmte/Gyz8=;
-        b=PAFxZx2/kiiDouWB0+Fx/J82o9DDwoVsXjVpROJ+EFC4IGYFbEI/ar1SRGIcup0JT5
-         5TVeXztfyWH8T1PxMUUy8LH98tau7Qu2Mw5H3WdgI55vMx1ebVGZ5E6HA1EhF4fJESqq
-         7/gff0xzkM94x9Wqahyiu/3S5/JTK2raBmzFwKgCCO8LTfW9LvKx8j3E25h/Fsi56uO6
-         Mx73dOj0Gh/pt0gfpKjvmsNag7zytRtPlKs7wmhd1gnYVpQn0qxc7LcFrS3u8l6K3q06
-         YHE/UDZ8oroGBlhNDHA8Oilj9zKcTYIoygO3mIolSdENlHzkOWuFJO4d+AF4vwXiOGnS
-         j+uA==
-X-Gm-Message-State: ACgBeo0kCfzN0ardTj9uyj8c/lY+9VU54bfZZTsoy+8K/T8gBnvZ+698
-        7vb31h8eGR/wX4eeJD0RVaM=
-X-Google-Smtp-Source: AA6agR4RIMi9kvzI07nLVq88uJNBG/3Xnr/HatQQvRnewBFmASe0IG6eGxKCiJYiFkdZ1OToecCSkg==
-X-Received: by 2002:a05:6000:1867:b0:21f:f2cf:74a8 with SMTP id d7-20020a056000186700b0021ff2cf74a8mr2224870wri.344.1662558657922;
-        Wed, 07 Sep 2022 06:50:57 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id w3-20020a05600018c300b002206203ed3dsm18379698wrq.29.2022.09.07.06.50.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Sep 2022 06:50:57 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Bernie Thompson <bernie@plugable.com>,
-        Helge Deller <deller@gmx.de>, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fbdev: remove redundant initialization to variable identical
-Date:   Wed,  7 Sep 2022 14:50:56 +0100
-Message-Id: <20220907135056.679617-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.37.1
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector2-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M1NQvBSm5mzUxcz6PIzaWNtfJldro5TAD/kdICaQ3aA=;
+ b=AHsUFOHgiy8nWsDFfWrxZIYfTymHR4TrN8X83UP+BH5EBvP5kBOnMPHBuQskAJ2RKwom/W3b7Gh47culznYxPJi7BMQszPMOozel2p3uSvnoJvrgx/Q8dwkQi266lkUfVFQHXaGUFX0d5lrHUd7yAuPiEoSA9eTY/uSA1wOLyDs=
+Received: from BN8PR11MB3668.namprd11.prod.outlook.com (2603:10b6:408:81::24)
+ by BY5PR11MB3925.namprd11.prod.outlook.com (2603:10b6:a03:182::26) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.17; Wed, 7 Sep
+ 2022 14:35:15 +0000
+Received: from BN8PR11MB3668.namprd11.prod.outlook.com
+ ([fe80::3198:2077:56c7:1780]) by BN8PR11MB3668.namprd11.prod.outlook.com
+ ([fe80::3198:2077:56c7:1780%4]) with mapi id 15.20.5612.014; Wed, 7 Sep 2022
+ 14:35:15 +0000
+From:   <Kumaravel.Thiagarajan@microchip.com>
+To:     <weiyongjun@huaweicloud.com>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>
+CC:     <weiyongjun1@huawei.com>, <linux-gpio@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH -next 5/5] misc: microchip: pci1xxxx: use
+ module_auxiliary_driver
+Thread-Topic: [PATCH -next 5/5] misc: microchip: pci1xxxx: use
+ module_auxiliary_driver
+Thread-Index: AQHYwpJFcj8rv3umvUO2Kgd27/1mVq3UB0og
+Date:   Wed, 7 Sep 2022 14:35:14 +0000
+Message-ID: <BN8PR11MB3668C4354AB9D0D1D608F0C6E9419@BN8PR11MB3668.namprd11.prod.outlook.com>
+References: <20220907083435.1745393-1-weiyongjun@huaweicloud.com>
+ <20220907083435.1745393-5-weiyongjun@huaweicloud.com>
+In-Reply-To: <20220907083435.1745393-5-weiyongjun@huaweicloud.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN8PR11MB3668:EE_|BY5PR11MB3925:EE_
+x-ms-office365-filtering-correlation-id: bc419791-fb1d-44ae-9c19-08da90de2db8
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 3s34+64SystP8eCMvLcfItDsCrYy1MD19TsxN4jHI1tL6OkPqwHo84V8QcEZwD8ItOBU6F77Izf+oN3UKSDDf8V/OJAm4APd+FZgj9rQ0vLKSU8B5kmhC1dKNA2XbhIXKRwVx2K9ROWihuU2XYm/jyzKHuchLCTeJe8g/WShvXqbRLbQMTOgZefu+8+K6oMNZqDrBb4E0pKLtVfBiBalWK0smIziHFryM8t5mUfDDI/u2c9lx69WlK38QRvO1R0+LVzFEXj3vb/p/o8Mvr4i+1Fn+sQNRIXcxzX4VmIlS1GozyTFVguIcAczv1Jzi7uru/LWdSb8f1ozz2L6hEnafZVXqet49zeO7Q/gvjFM2pXw3Z6ILu0Xm+dE8g4RCaVDmTObNisJSMDGRHAlL8T995TvUNf8XUBZ7ZoSMPE3qiVuKEdd3wyG76Jo+AGUXR3hEx7rWq0WfR/Xkllm5xUVLHmcNAEJd2EYWS4GSh/G0N8D+h+ZU3IjHeYVYkpy1aWlxwIHwVc4ci90864sfRi4WUAbJ7xuho9rSaafAuJL7ncfdJgTDGsa1TcVLUtO8JQtbk1FvlThaXkzie1BgX9p2LQzeH2IWcDDBq2MW3u1fqVsQ0EDrCCuH7Aho9UEdf5CSJyG5VmAXu2oC5B6+e+I3OhykQ0J65TeiGWTtHgPIGKXPMmWfpGhz8h5c/cqX6ZEs6QMKLLckXulQU3DRX/+GvHFm+as4Fe2z9TdK+rJPMH9RU8fcEEcudlRfSbMzGPX7iqhYCwCuXFyx0WoR/XGkrO9/00Z6Y/Y3XCNiEwrS4LYB/aEFTi96XbdtjcYydYI+RM5ZvRhrBfRRDWbUog1oenM0csN6T61rpzEQKxUcrc=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR11MB3668.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(366004)(39860400002)(396003)(136003)(376002)(346002)(26005)(7696005)(52536014)(478600001)(6506007)(71200400001)(66946007)(55016003)(64756008)(66446008)(66556008)(2906002)(4326008)(4744005)(38070700005)(33656002)(86362001)(316002)(53546011)(54906003)(9686003)(66476007)(76116006)(110136005)(41300700001)(122000001)(38100700002)(186003)(8676002)(5660300002)(83380400001)(8936002)(32563001)(473944003)(414714003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?RFclbeIW+hHQzrRPxQUgsHcEnSW0WXVT+JBG57HzsP6mf0/U/0BumniH+DXK?=
+ =?us-ascii?Q?5nVxPqy5OEC4ZuJc1eTDc9FP3nKqGxfaVoQbj0fqnMTMwzhxkdPXVPD8POwH?=
+ =?us-ascii?Q?22qht4ZPoEphDJ2qPS4qApjCINt14C3zfoDcQT6oQ2pSo+i7GZ/+HX7L9nkS?=
+ =?us-ascii?Q?9WWgsN57gyo4wWlICuNfGDbf7X1YCdJjzSibu7OVZSV9zdLDd8hirZWZoHyr?=
+ =?us-ascii?Q?L1OL1WKoLd8JP4mdQWTSdFa6oZ88mJQrS3CEWFP8wwSKhLAKQsybjl9dCgxb?=
+ =?us-ascii?Q?0H8Rl//YsyhCUfD2hj2K07Al7C8myrWG5jMoFnK+8Kq/bGO19yCoBSaAIw+I?=
+ =?us-ascii?Q?d0G5xGZPyrs7qktAo5+fP6aWlqXdY7thEDd+95yMjYPimnW6oj1djqPZmgPp?=
+ =?us-ascii?Q?Qmj/+wUE+qGnfrxhGAAQyovO0kATc2JZJZ+0nQ03i3YJPVNeJX3b759b7w/N?=
+ =?us-ascii?Q?w5smfPTT3QFQ7JFnV1fctCPl1aUDUXSjchiIuJJLyBQcJedz9FAZW3+YnFBm?=
+ =?us-ascii?Q?pUvH31F4lyvB+U9/l3p05miGxJhTlojKyauUuMcNiWxLtdmXlfhFaG96bXtZ?=
+ =?us-ascii?Q?naTLGLJ3G1Lo7TKwfTh+lSV46CGoqtwJrPhLWVeewbTv9hmW749DJTNC/jzz?=
+ =?us-ascii?Q?9mnJV20/NLzcBqEwZFMJFrW04tuvd28kfI1sO81drZ7GwPs6lKQpqlqOOE4z?=
+ =?us-ascii?Q?7CgJnte305NBHOgytwIkiG0PK5F4DQEV80Vnjf771YqW8e6cYiEYUqcQ6YD7?=
+ =?us-ascii?Q?A5v67Mkg3S1XNs87IeOGywXSBATwviXa3hjtC0oeSjTQWCmmKAoP+liCLsSf?=
+ =?us-ascii?Q?CyS1LBuR/ZChBJrGD9P5GRDKWFlkgwBsNhO07ejEPEmIxqMdPyYP9QC5lEvd?=
+ =?us-ascii?Q?nTvy04qCh6jyj2ih9jIMSTokuUCs3F/uJj+PrT4c8j0ma/9gVJnptM9hrzz4?=
+ =?us-ascii?Q?rGqXNdU4GGSoa2WUNtg2cPIX0wQIH90Au+/r3iLaprqsG3BE/E+2So67axIA?=
+ =?us-ascii?Q?/XCidZrSYHkVKYxw7LrAK3DjZkOKuCRIi0OukD2Pw5LR2WD4dZa950So6JyD?=
+ =?us-ascii?Q?MdmufrPrRGNMv/CxstjMyxsNSStQfkCPRUi4sNkbDthr+Eroamx2VOKUa64G?=
+ =?us-ascii?Q?qiyynLzYGVCW5hgNCU184jb9XqNK7GMvBanynPgTsypqwU178gH+VeCtEooL?=
+ =?us-ascii?Q?1odtl7OnGTSSaHP2Hs8NvoN8e1P5JWwuKV18XPfnASq2G2du8utsV4vA2BDn?=
+ =?us-ascii?Q?PJwAH/yxb5XBlnP8QEULpFqCghLOv+m2+PRuPoTfSkC87m7nbz6pqoJIy0lo?=
+ =?us-ascii?Q?rkocygqyz1ftMHyKkGf/SSWLmb0a05FmngWUQHJKCG3dUBgVhl3nWMkB6XGx?=
+ =?us-ascii?Q?pNiifUBKK11g5dzm526dMVwPfj4XEKrT43pxhSfcvlPIqaRq7isBRYZnsnMY?=
+ =?us-ascii?Q?M85jgKxF6eo2tTufaS+KlWWblX07lLOorPYORQ2hgIgOZCUAUVozv1QYwCuv?=
+ =?us-ascii?Q?6EVne1EVMrZ+93jJZ35arr1/fcF7SBVPHcJLv+xafFq9k5amwrYvcxgE+DBl?=
+ =?us-ascii?Q?Xx4g5bROprpD+VkxX5y1gFHtdvqV6UuK4IXSKjCCQTtrWmhBFPlJQUh1Xt1C?=
+ =?us-ascii?Q?g/kZRo9YtYcZHn1y1oaeUm0=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN8PR11MB3668.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc419791-fb1d-44ae-9c19-08da90de2db8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2022 14:35:14.9934
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: YHeX/etWldiezEBm+edcumlSe0BXnojzTbzvE5YwgmaoJBrJ6Yi8mzjnlyKrt2TCyP4xAi1BsCluarllnMap8uCIThwCmOgn3h4+dePtnPNB+TMW49oPXJy0rqy3Hf+C
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR11MB3925
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-The variable identical is being initialized with a value that is never
-read. The variable is being re-assigned later on. The initialization is
-redundant and can be removed.
+> -----Original Message-----
+> From: Wei Yongjun <weiyongjun@huaweicloud.com>
+> Sent: Wednesday, September 7, 2022 2:05 PM
+> To: Kumaravel Thiagarajan - I21417
+> <Kumaravel.Thiagarajan@microchip.com>; Arnd Bergmann
+> <arnd@arndb.de>; Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Wei Yongjun <weiyongjun1@huawei.com>; linux-gpio@vger.kernel.org;
+> kernel-janitors@vger.kernel.org
+> Subject: [PATCH -next 5/5] misc: microchip: pci1xxxx: use
+> module_auxiliary_driver
+>=20
+>=20
+> Use the module_auxiliary_driver() macro to make the code simpler by
+> eliminating module_init and module_exit calls.
+I needed this during the experimentation stage. But now these functions onl=
+y
+do register and unregister. Hence, can be replaced with module_auxiliary_dr=
+iver.
+Thanks for your patch.
+>=20
+Add this tag -> Fixes: 7d3e4d807df2 ("misc: microchip: pci1xxxx: load gpio =
+driver for the gpio controller auxiliary device enumerated by the auxiliary=
+ bus driver.")?
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
 
-Cleans up clang scan-build warning:
-drivers/video/fbdev/udlfb.c:373:6: warning: Value stored to 'identical'
-during its initialization is never read [deadcode.DeadStores]
+Thank You.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/video/fbdev/udlfb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/video/fbdev/udlfb.c b/drivers/video/fbdev/udlfb.c
-index c863244ef12c..216d49c9d47e 100644
---- a/drivers/video/fbdev/udlfb.c
-+++ b/drivers/video/fbdev/udlfb.c
-@@ -370,7 +370,7 @@ static int dlfb_trim_hline(const u8 *bback, const u8 **bfront, int *width_bytes)
- 	const unsigned long *back = (const unsigned long *) bback;
- 	const unsigned long *front = (const unsigned long *) *bfront;
- 	const int width = *width_bytes / sizeof(unsigned long);
--	int identical = width;
-+	int identical;
- 	int start = width;
- 	int end = width;
- 
--- 
-2.37.1
-
+Regards,
+Kumaravel
