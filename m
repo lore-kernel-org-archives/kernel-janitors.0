@@ -2,86 +2,68 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D694ECAAA1
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Sep 2022 02:32:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29929ECAAD3
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Sep 2022 06:14:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229729AbiIGCcg (ORCPT
+        id S229746AbiIGGO2 (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Tue, 6 Sep 2022 22:32:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50978 "EHLO
+        Wed, 7 Sep 2022 02:14:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229464AbiIGCcf (ORCPT
+        with ESMTP id S229730AbiIGGOO (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Tue, 6 Sep 2022 22:32:35 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C793923DE;
-        Tue,  6 Sep 2022 19:32:34 -0700 (PDT)
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 286LcrYD018858;
-        Wed, 7 Sep 2022 02:32:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : message-id : references : date : in-reply-to : mime-version :
- content-type; s=corp-2022-7-12;
- bh=nVh+abXyaHKmmQ1QQVzma/X54ytI0p+XBKim185wOaU=;
- b=3NOiw3HGH6qYUETlx94kxsjIEKZvFijrpaxeyZfsB0Ti+Y6UNAzgUZlRf+j5oX/PSQj+
- 1PQpcQ1UYszRkuhSM3Qyh244uFq3UHucJ/yDHSSpo2VftzyKnIi5D4lEi2iK2U28HzAx
- 0WMHL2QCR6UjP4xkYqgU4+9eo9OrvTS2H9roFvXXQYmdmmZ+aZzx27xWKCpzQfim++WI
- rPKHrJ2mDu+Ho/I/VrNUr6/1zwL0GB3kklUZB6h6UeJWqoevtnlz/McxXDgS6ihi0Lpw
- cCSFBiXKlOFLQrvO2cGh4TWNi1IZRjqujjcvMHv5d/e/nNaC8Sblt6Vy3mEflL/pVhsz uA== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3jbxhsqjvk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 07 Sep 2022 02:32:31 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 286NRPQr030700;
-        Wed, 7 Sep 2022 02:32:30 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3jbwc3qcq7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 07 Sep 2022 02:32:30 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2872WUiP023166;
-        Wed, 7 Sep 2022 02:32:30 GMT
-Received: from ca-mkp.ca.oracle.com (dhcp-10-39-192-227.vpn.oracle.com [10.39.192.227])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3jbwc3qcps-1;
-        Wed, 07 Sep 2022 02:32:30 +0000
+        Wed, 7 Sep 2022 02:14:14 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 522779DFB3;
+        Tue,  6 Sep 2022 23:14:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1662531243; x=1694067243;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tKD7dcQrTgQ5yRktwcwRD+zn41Oh2clj3ui4dG0kocA=;
+  b=CvNbLaMNMMFv77f/fZyjX2jd4dpRnZPFm6MR9rRcFkVHYOHYfvcLEbnO
+   gF5qElYss/DzHfGZFjiyzPSkc62pxHA50t3X0gI9hd/pImK9dhnj+3V+K
+   viXKNgGZC4vRnzdbMvbmzbQpyd9OLMzLJugQGENCfGH6/jPbOKK+1Ojp4
+   qvr4J6hxIoQTrZRwmv/C1P4WPLVPBRMrPJfNKc9slvw5OnUkOKbSgWdZ+
+   jRVro7tBAyHBxz/HXjr8LsqAlwSm4FYx8d0sGnujAexmdhBVzOWzz0uDT
+   fcE+acLoEuD4Qa1iAPhWUGzj8GLPjzxGKKRMO5qcPSNLUuURgDhu34VjK
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10462"; a="295525532"
+X-IronPort-AV: E=Sophos;i="5.93,295,1654585200"; 
+   d="scan'208";a="295525532"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Sep 2022 23:14:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,295,1654585200"; 
+   d="scan'208";a="676034182"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga008.fm.intel.com with ESMTP; 06 Sep 2022 23:14:01 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id 1524BF7; Wed,  7 Sep 2022 09:14:16 +0300 (EEST)
+Date:   Wed, 7 Sep 2022 09:14:16 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     Colin Ian King <colin.i.king@gmail.com>
-Cc:     Nilesh Javali <njavali@marvell.com>,
-        GR-QLogic-Storage-Upstream@marvell.com,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
+Cc:     Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] scsi: qla2xxx: Fix spelling mistake "definiton"
- -> "definition"
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <yq1edwngbih.fsf@ca-mkp.ca.oracle.com>
-References: <20220906140010.194273-1-colin.i.king@gmail.com>
-Date:   Tue, 06 Sep 2022 22:32:28 -0400
-In-Reply-To: <20220906140010.194273-1-colin.i.king@gmail.com> (Colin Ian
-        King's message of "Tue, 6 Sep 2022 15:00:10 +0100")
+Subject: Re: [PATCH][next] thunderbolt: debugfs: Fix spelling mistakes in
+ seq_puts text
+Message-ID: <Yxg2uHEBdwMkbbBI@black.fi.intel.com>
+References: <20220906140314.194565-1-colin.i.king@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-06_11,2022-09-06_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 malwarescore=0
- mlxscore=0 phishscore=0 mlxlogscore=996 suspectscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2207270000
- definitions=main-2209070009
-X-Proofpoint-GUID: zuKodQH_cxJLZIDqBWZ2ywMAKPRfFfXh
-X-Proofpoint-ORIG-GUID: zuKodQH_cxJLZIDqBWZ2ywMAKPRfFfXh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220906140314.194565-1-colin.i.king@gmail.com>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
+On Tue, Sep 06, 2022 at 03:03:14PM +0100, Colin Ian King wrote:
+> There are a handful of spelling mistakes in seq_puts text. Fix them.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Colin,
-
-> There is a spelling mistake in a MODULE_PARM_DESC description. Fix it.
-
-Applied to 6.1/scsi-staging, thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Applied to thunderbolt.git/next, thanks!
