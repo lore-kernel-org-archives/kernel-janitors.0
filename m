@@ -2,103 +2,92 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C436DC6FA8B
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Sep 2022 07:00:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C8DC38145
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Sep 2022 08:17:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230114AbiIGHA5 (ORCPT
+        id S230152AbiIGIRJ (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Sep 2022 03:00:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40680 "EHLO
+        Wed, 7 Sep 2022 04:17:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229994AbiIGHAz (ORCPT
+        with ESMTP id S229685AbiIGIRE (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Sep 2022 03:00:55 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ED0F73313;
-        Wed,  7 Sep 2022 00:00:46 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id k9so18860191wri.0;
-        Wed, 07 Sep 2022 00:00:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=3AbvUXReTTM4AVHYC5kqdjEokxzgC2ZBAFH06E7ehB4=;
-        b=ZPpmg8pzNU8yYuXM43od2R3D7UP/i+w7igE0ilaWfjoec8donbztt98TfGszzzHHTE
-         63iquvB1JlvDtHVQbLOvvqqytHTeYP/Vdthz6z9V/Ryh4IE+iLk0HjCT9ERWikzkzqrg
-         ntvR5YV5kIZwFt6Cq4KoI/tLeiaTFFlFZjQgoW4yBOThDDR/RVpBHeXwCSffmWIzMwnL
-         t7TrKsg4wJRzWHi+2Yod/R2b3xCE1HgwRlwDR+XOYFFYCmdhiZUkeGyS6ScHYzeb1Xkg
-         pBp3S6iI2sXAdKd5vDyLcmr51GnfPWbZUiUHMk33py4d9kjP1sNPBvNGN/7o3OlQvFDh
-         3RGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=3AbvUXReTTM4AVHYC5kqdjEokxzgC2ZBAFH06E7ehB4=;
-        b=QbQNmcqGd2ohEpeQLlLlCOr8yZswWO84Zy4hyYblqCuHptcr3IPrAvmV8wk+vWTcMb
-         Hu1BmhZXVeK0ZPnMbxTPw0k6BXcIJD6n6o/C4Y+IkyC08zdQNoj+pMaaUHfpPBGU0YB6
-         VTCS8aNVNfi/f7gmzbbf+xnfgCG6v0XEUHhOyoBZ8IOwptHMveSRSOXPSXV/dQFwG8zp
-         dlrRS3hnyPHN+M2Rv7bvJsW/s5dHjTdw3bhNmA4KRaSv+v30Vwongqt1nE8sRBCyZuI3
-         IfydQPtAfOgRd7fUtMisTTVFSCo9jjo38eWWLd0pn1ZJ5pRvVKbAE1+XF5Lf2dDtjTNi
-         708w==
-X-Gm-Message-State: ACgBeo05MW4gHTAVIgmd757Nq4aWJ9MnZVNJxT4+CERtt+j5xr6Hr5Yk
-        UV6aLTVRE4I2TryKj9EjDIc=
-X-Google-Smtp-Source: AA6agR4lbx546dnFZXjh/JPS+dXfFLv+RB2Q2d+U/Cx+nWVHSNR4c6WQDWULzEuim6fgFJbC3a1D8g==
-X-Received: by 2002:a5d:5c08:0:b0:228:e139:43f3 with SMTP id cc8-20020a5d5c08000000b00228e13943f3mr1004599wrb.396.1662534044533;
-        Wed, 07 Sep 2022 00:00:44 -0700 (PDT)
-Received: from felia.fritz.box (200116b826d16800c8aacf399f0c2a06.dip.versatel-1u1.de. [2001:16b8:26d1:6800:c8aa:cf39:9f0c:2a06])
-        by smtp.gmail.com with ESMTPSA id e18-20020a5d5012000000b00226dedf1ab7sm10576303wrt.76.2022.09.07.00.00.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Sep 2022 00:00:43 -0700 (PDT)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Pavel Machek <pavel@ucw.cz>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-leds@vger.kernel.org
-Cc:     William Zhang <william.zhang@broadcom.com>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] leds: bcm63138: refer to ARCH_BCMBCA instead of ARCH_BCM4908
-Date:   Wed,  7 Sep 2022 09:00:01 +0200
-Message-Id: <20220907070001.19867-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 7 Sep 2022 04:17:04 -0400
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 760E9AB403;
+        Wed,  7 Sep 2022 01:17:03 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.30.67.143])
+        by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4MMw6V4rKQz6S35b;
+        Wed,  7 Sep 2022 16:15:14 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.102.38])
+        by APP2 (Coremail) with SMTP id Syh0CgDHGXN7UxhjYTD4AQ--.32342S4;
+        Wed, 07 Sep 2022 16:17:00 +0800 (CST)
+From:   Wei Yongjun <weiyongjun@huaweicloud.com>
+To:     Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH -next 1/5] misc: microchip: pci1xxxx: fix error handling in gp_aux_bus_probe()
+Date:   Wed,  7 Sep 2022 08:34:31 +0000
+Message-Id: <20220907083435.1745393-1-weiyongjun@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: Syh0CgDHGXN7UxhjYTD4AQ--.32342S4
+X-Coremail-Antispam: 1UD129KBjvdXoW7Gw4DXFy3Xw4UWF18JF4Utwb_yoWktrcE9a
+        y7AF13XF4DtFZ5GrW2gw15ZrW2grs2vryrW3Zxtryay342yas7Jws5X3W5Jr48u34DAFyD
+        Grn7ur1Ikr1FyjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbokYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_JrI_JrWl1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+        A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+        67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+        0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Y
+        z7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zV
+        AF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4l
+        IxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s
+        0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsG
+        vfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
+X-CM-SenderInfo: 5zhl50pqjm3046kxt4xhlfz01xgou0bp/
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Commit dd5c672d7ca9 ("arm64: bcmbca: Merge ARCH_BCM4908 to ARCH_BCMBCA")
-removes config ARCH_BCM4908 as config ARCH_BCMBCA has the same intent.
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-Probably due to concurrent development, commit a0ba692072d8 ("leds:
-bcm63138: add support for BCM63138 controller") introduces 'LED Support
-for Broadcom BCM63138 SoC' that depends on ARCH_BCM4908, but this use was
-not visible during the config refactoring from the commit above. Hence,
-these two changes create a reference to a non-existing config symbol.
+In some error handling path, resoures alloced may not released.
+This patch fix them.
 
-Adjust the LEDS_BCM63138 definition to refer to ARCH_BCMBCA instead of
-ARCH_BCM4908 to remove the reference to the non-existing config symbol
-ARCH_BCM4908.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/leds/blink/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gp.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/leds/blink/Kconfig b/drivers/leds/blink/Kconfig
-index 945c84286a4e..bdcb7377cd4e 100644
---- a/drivers/leds/blink/Kconfig
-+++ b/drivers/leds/blink/Kconfig
-@@ -1,10 +1,10 @@
- config LEDS_BCM63138
- 	tristate "LED Support for Broadcom BCM63138 SoC"
- 	depends on LEDS_CLASS
--	depends on ARCH_BCM4908 || ARCH_BCM_5301X || BCM63XX || COMPILE_TEST
-+	depends on ARCH_BCMBCA || ARCH_BCM_5301X || BCM63XX || COMPILE_TEST
- 	depends on HAS_IOMEM
- 	depends on OF
--	default ARCH_BCM4908
-+	default ARCH_BCMBCA
- 	help
- 	  This option enables support for LED controller that is part of
- 	  BCM63138 SoC. The same hardware block is known to be also used
+diff --git a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gp.c b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gp.c
+index bfc03028b34d..11f79f239006 100644
+--- a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gp.c
++++ b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_gp.c
+@@ -87,12 +87,13 @@ static int gp_aux_bus_probe(struct pci_dev *pdev, const struct pci_device_id *id
+ 	retval = pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_ALL_TYPES);
+ 
+ 	if (retval < 0)
+-		return retval;
++		goto err_ida_alloc_1;
+ 
+-	pdev->irq = pci_irq_vector(pdev, 0);
+-	if (pdev->irq < 0)
+-		return retval;
++	retval = pci_irq_vector(pdev, 0);
++	if (retval < 0)
++		goto err_aux_dev_init_1;
+ 
++	pdev->irq = retval;
+ 	aux_bus->aux_device_wrapper[1]->gp_aux_data.irq_num = pdev->irq;
+ 
+ 	retval = auxiliary_device_init(&aux_bus->aux_device_wrapper[1]->aux_dev);
 -- 
-2.17.1
+2.34.1
 
