@@ -2,79 +2,100 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8083C38145
-	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Sep 2022 14:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7EE0C38145
+	for <kernel-janitors@archiver.kernel.org>; Wed,  7 Sep 2022 17:09:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229850AbiIGOr1 (ORCPT
+        id S229834AbiIGRJM (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Wed, 7 Sep 2022 10:47:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50056 "EHLO
+        Wed, 7 Sep 2022 13:09:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229901AbiIGOrV (ORCPT
+        with ESMTP id S229727AbiIGRJH (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Wed, 7 Sep 2022 10:47:21 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F88095E5E;
-        Wed,  7 Sep 2022 07:47:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 36C0AB81D49;
-        Wed,  7 Sep 2022 14:47:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BC5EC433D6;
-        Wed,  7 Sep 2022 14:47:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1662562036;
-        bh=A1icupglvvbyviBH2dgY8WkUbKh2uyGA/ljIqwGckm0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tYZftEDok/LtgdCcVrBFySECzcMsD+ckMFlf3GvPJeTjJmBqEvcDsE4lYswLRyBQC
-         qSE00OA3atvcbH5nAua48VH5m2U5Te1wvW1IgDCEeXh4jMtnFsVsWAk0ru0+4qiUYi
-         kEUW6Vj/z0JoJFPX9SSe/Y9vAgQLrA1FwA4ipGfU=
-Date:   Wed, 7 Sep 2022 16:47:14 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Kumaravel.Thiagarajan@microchip.com
-Cc:     weiyongjun@huaweicloud.com, arnd@arndb.de, weiyongjun1@huawei.com,
-        linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next 5/5] misc: microchip: pci1xxxx: use
- module_auxiliary_driver
-Message-ID: <Yxiu8m+mJg32KdVS@kroah.com>
-References: <20220907083435.1745393-1-weiyongjun@huaweicloud.com>
- <20220907083435.1745393-5-weiyongjun@huaweicloud.com>
- <BN8PR11MB3668C4354AB9D0D1D608F0C6E9419@BN8PR11MB3668.namprd11.prod.outlook.com>
+        Wed, 7 Sep 2022 13:09:07 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D67D9BCCEF;
+        Wed,  7 Sep 2022 10:09:05 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id t7so16452096wrm.10;
+        Wed, 07 Sep 2022 10:09:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=7jFPudVaz4OSN9szXdkTPFTFgzH+9Ixx1ps2IBTuQl0=;
+        b=NtkJVrOeIGJ/HMlhhvFJZW4iepJpTseqtM4kCZie+kh5rj7T1lUPiQPaysY7Uw0KB5
+         9VkBzinlRLMF9+laNSHrUjEd3RpkG5k+bjBLBAOWPp14Zw+q8KUTr45iZipmEA10Qw3M
+         POF5FHUUJjF7GoPrvw32CacbmavrGq8arYq/ojO3rg5BlfAxkX4Ur75y151brzmRPu4M
+         KYhnyAmJGHVKwBWBUT9DDKnyXVmzY5yHAAIoOgCV9ajcZiBAbPipmyDEBx+iEHcRtxUr
+         yXzIdMYk6ucupK9httrNrJBSPL4T/X1X4nZdhXubukKFzXafIs+VRMnkyibjuOn8e7KA
+         RYvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=7jFPudVaz4OSN9szXdkTPFTFgzH+9Ixx1ps2IBTuQl0=;
+        b=E/yrWydoFn+GuyaP5xQ3xKFPeldgYppquywu/CpD3q/HkOtzuzjnyi7lkE9oUEzubQ
+         kvZ4IvX4A2+h/96tq3bOEbYjoGQbeR35JWV6QRDCTt0U4HPRejklc5ttY8LlBW7tdIUV
+         W90CmE4+b2NW2RRDmlzwF2RgiZYpX7Op9RUtlL6nA31Eh8tS/mRx8gqPZOPjCoTMIaOG
+         B8Z/P9Y/wnyxbfPid5g0LSucrnVeNW/cgrw/LznpvWx8qcOUoO1qgmva/KveTDM1R6mB
+         I+jUX442RUCIElD5N8/VUBe+K99oUPsQmnWYtJZqJ8BFAkKI18adCmgEv7Hyg/mJYED7
+         BrKA==
+X-Gm-Message-State: ACgBeo2sBiOK+a1a8GzrbiBQ4QK1DYS2zLaM8SFTA27qxEojTsoBmyAU
+        cZ9aiCfe0QZsRW71HODKPlM=
+X-Google-Smtp-Source: AA6agR7tZxr2jYBm30jItjzzfnofiLHxpHNXoXirnKLa6HJ9SWLryoXydGyezxk8ahZ+KYdS+Msg7w==
+X-Received: by 2002:a5d:6d0b:0:b0:222:955a:8774 with SMTP id e11-20020a5d6d0b000000b00222955a8774mr2618258wrq.129.1662570544170;
+        Wed, 07 Sep 2022 10:09:04 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id p7-20020a05600c358700b003a8418ee646sm29535520wmq.12.2022.09.07.10.09.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Sep 2022 10:09:03 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-kselftest@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] kselftest/arm64: Fix spelling misakes of signal names
+Date:   Wed,  7 Sep 2022 18:09:02 +0100
+Message-Id: <20220907170902.687340-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BN8PR11MB3668C4354AB9D0D1D608F0C6E9419@BN8PR11MB3668.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Wed, Sep 07, 2022 at 02:35:14PM +0000, Kumaravel.Thiagarajan@microchip.com wrote:
-> > -----Original Message-----
-> > From: Wei Yongjun <weiyongjun@huaweicloud.com>
-> > Sent: Wednesday, September 7, 2022 2:05 PM
-> > To: Kumaravel Thiagarajan - I21417
-> > <Kumaravel.Thiagarajan@microchip.com>; Arnd Bergmann
-> > <arnd@arndb.de>; Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Wei Yongjun <weiyongjun1@huawei.com>; linux-gpio@vger.kernel.org;
-> > kernel-janitors@vger.kernel.org
-> > Subject: [PATCH -next 5/5] misc: microchip: pci1xxxx: use
-> > module_auxiliary_driver
-> > 
-> > 
-> > Use the module_auxiliary_driver() macro to make the code simpler by
-> > eliminating module_init and module_exit calls.
-> I needed this during the experimentation stage. But now these functions only
-> do register and unregister. Hence, can be replaced with module_auxiliary_driver.
-> Thanks for your patch.
-> > 
-> Add this tag -> Fixes: 7d3e4d807df2 ("misc: microchip: pci1xxxx: load gpio driver for the gpio controller auxiliary device enumerated by the auxiliary bus driver.")?
+There are a couple of spelling mistakes of signame names. Fix them.
 
-As you are the maintainer of this driver, you can add these markings to
-the patches and sign off on them when you forward them on to me.  No
-need to force the original developer to do this if you are already going
-to do it as well.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/testing/selftests/arm64/fp/fp-stress.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-thanks,
+diff --git a/tools/testing/selftests/arm64/fp/fp-stress.c b/tools/testing/selftests/arm64/fp/fp-stress.c
+index 01cef1962ab5..a5c0ebef2419 100644
+--- a/tools/testing/selftests/arm64/fp/fp-stress.c
++++ b/tools/testing/selftests/arm64/fp/fp-stress.c
+@@ -247,7 +247,7 @@ static void handle_child_signal(int sig, siginfo_t *info, void *context)
+ 	}
+ 
+ 	if (!found)
+-		ksft_print_msg("SIGCHILD for unknown PID %d with status %d\n",
++		ksft_print_msg("SIGCHLD for unknown PID %d with status %d\n",
+ 			       info->si_pid, info->si_status);
+ }
+ 
+@@ -457,7 +457,7 @@ int main(int argc, char **argv)
+ 			       strerror(errno), errno);
+ 	ret = sigaction(SIGTERM, &sa, NULL);
+ 	if (ret < 0)
+-		ksft_print_msg("Failed to install SIGTEM handler: %s (%d)\n",
++		ksft_print_msg("Failed to install SIGTERM handler: %s (%d)\n",
+ 			       strerror(errno), errno);
+ 	sa.sa_sigaction = handle_child_signal;
+ 	ret = sigaction(SIGCHLD, &sa, NULL);
+-- 
+2.37.1
 
-greg k-h
