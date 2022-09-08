@@ -2,66 +2,85 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53226ECAAD5
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Sep 2022 09:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB12ECAAD5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Sep 2022 10:29:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231161AbiIHJnL (ORCPT
+        id S229942AbiIHK3v (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Sep 2022 05:43:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59038 "EHLO
+        Thu, 8 Sep 2022 06:29:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229579AbiIHJnJ (ORCPT
+        with ESMTP id S229546AbiIHK3v (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Sep 2022 05:43:09 -0400
-Received: from fornost.hmeau.com (helcar.hmeau.com [216.24.177.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90D8513B10B;
-        Thu,  8 Sep 2022 02:43:08 -0700 (PDT)
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
-        by fornost.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
-        id 1oWE3j-002Ogk-2M; Thu, 08 Sep 2022 19:42:56 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Thu, 08 Sep 2022 17:42:54 +0800
-Date:   Thu, 8 Sep 2022 17:42:54 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     George Cherian <gcherian@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Daney <david.daney@cavium.com>,
-        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] crypto: cavium - prevent integer overflow loading
- firmware
-Message-ID: <Yxm5HrtXBiz6gKtv@gondor.apana.org.au>
-References: <YxDQpc9IINUuUhQr@kili>
+        Thu, 8 Sep 2022 06:29:51 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EAAF2F393
+        for <kernel-janitors@vger.kernel.org>; Thu,  8 Sep 2022 03:29:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1662632989;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=aGJyUcumRyL68D4wXJ59Cgk5pIgcqtVYT24TVj/aRJU=;
+        b=HR9LMe5iTzXqQPeY6DXVEpW2YRHkXh99oqobzmApH2HEPkgZ1BD661emW8g16RGhdi3pk5
+        bjyoxVfyUKbnGBZXT4C6R3dzM1MZxrdkJPTAHd+R5/LVO37QmCfjxY6Kd/CVYt1K77qTv1
+        3/lplzFgbUu0vBD+U4raIVDoY2kbb2c=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-164-vdxa0sMiOrGMtnDRxoLxTA-1; Thu, 08 Sep 2022 06:29:48 -0400
+X-MC-Unique: vdxa0sMiOrGMtnDRxoLxTA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8461B1C04B48;
+        Thu,  8 Sep 2022 10:29:47 +0000 (UTC)
+Received: from localhost (unknown [10.39.194.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2941140CF8F0;
+        Thu,  8 Sep 2022 10:29:47 +0000 (UTC)
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Diana Craciun <diana.craciun@oss.nxp.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        kvm@vger.kernel.org
+Subject: Re: [PATCH v3] vfio/fsl-mc: Fix a typo in a message
+In-Reply-To: <a7c1394346725b7435792628c8d4c06a0a745e0b.1662134821.git.christophe.jaillet@wanadoo.fr>
+Organization: Red Hat GmbH
+References: <a7c1394346725b7435792628c8d4c06a0a745e0b.1662134821.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Notmuch/0.37 (https://notmuchmail.org)
+Date:   Thu, 08 Sep 2022 12:29:44 +0200
+Message-ID: <87pmg6rwfb.fsf@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YxDQpc9IINUuUhQr@kili>
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, Sep 01, 2022 at 06:32:53PM +0300, Dan Carpenter wrote:
+On Fri, Sep 02 2022, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+
+> L and S are swapped in the message.
+> s/VFIO_FLS_MC/VFIO_FSL_MC/
 >
-> @@ -263,7 +264,13 @@ static int cpt_ucode_load_fw(struct cpt_device *cpt, const u8 *fw, bool is_ae)
->  	ucode = (struct ucode_header *)fw_entry->data;
->  	mcode = &cpt->mcode[cpt->next_mc_idx];
->  	memcpy(mcode->version, (u8 *)fw_entry->data, CPT_UCODE_VERSION_SZ);
-> -	mcode->code_size = ntohl(ucode->code_length) * 2;
-> +
-> +	code_length = ntohl(ucode->code_length);
-> +	if (code_length >= INT_MAX / 2) {
-> +		ret = -EINVAL;
-> +		goto fw_release;
-> +	}
-> +	mcode->code_size = code_length;
+> Also use 'ret' instead of 'WARN_ON(ret)' to avoid a duplicated message.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Changes in v3:
+>   * Remove WARN_ON() and WARN() and only keep dev_warn()   [Diana Madalina Craciun <diana.craciun@oss.nxp.com>]
+>
+> Changes in v2:
+>   * s/comment/message/ in the subject   [Cornelia Huck <cohuck@redhat.com>]
+>   * use WARN instead of WARN_ON+dev_warn   [Jason Gunthorpe <jgg@ziepe.ca>]
+>   https://lore.kernel.org/all/3d2aa8434393ee8d2aa23a620e59ce1059c9d7ad.1660663440.git.christophe.jaillet@wanadoo.fr/
+>
+> v1:
+>   https://lore.kernel.org/all/2b65bf8d2b4d940cafbafcede07c23c35f042f5a.1659815764.git.christophe.jaillet@wanadoo
+> ---
+>  drivers/vfio/fsl-mc/vfio_fsl_mc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Where did the "* 2" go?
+Acked-by: Cornelia Huck <cohuck@redhat.com>
 
-BTW, what is the threat model here? If the firmware metadata can't
-be trusted, shouldn't we be capping the firmware size at a level
-a lot lower than INT_MAX?
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
