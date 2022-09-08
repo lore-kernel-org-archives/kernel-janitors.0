@@ -2,72 +2,73 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C74CC6FA83
-	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Sep 2022 07:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D460BECAAD5
+	for <kernel-janitors@archiver.kernel.org>; Thu,  8 Sep 2022 07:38:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231253AbiIHHCS (ORCPT
+        id S230504AbiIHHid (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Sep 2022 03:02:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57730 "EHLO
+        Thu, 8 Sep 2022 03:38:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231248AbiIHHCK (ORCPT
+        with ESMTP id S230382AbiIHHib (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Sep 2022 03:02:10 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1970F9E88E;
-        Thu,  8 Sep 2022 00:02:05 -0700 (PDT)
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4MNVMQ5JHczmVJ3;
-        Thu,  8 Sep 2022 14:58:26 +0800 (CST)
-Received: from kwepemm600010.china.huawei.com (7.193.23.86) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Thu, 8 Sep 2022 15:02:02 +0800
-Received: from huawei.com (10.175.127.227) by kwepemm600010.china.huawei.com
- (7.193.23.86) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Thu, 8 Sep
- 2022 15:02:02 +0800
-From:   Sun Ke <sunke32@huawei.com>
-To:     <joyce.ooi@intel.com>, <davem@davemloft.net>,
-        <edumazet@google.com>, <kuba@kernel.or>, <pabeni@redhat.com>,
-        <linux@armlinux.org.uk>
-CC:     <netdev@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH] net: ethernet: altera: TSE: fix error return code in altera_tse_probe()
-Date:   Thu, 8 Sep 2022 15:13:06 +0800
-Message-ID: <20220908071306.1015068-1-sunke32@huawei.com>
-X-Mailer: git-send-email 2.31.1
+        Thu, 8 Sep 2022 03:38:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 204ACCAC55;
+        Thu,  8 Sep 2022 00:38:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BA8DD61B53;
+        Thu,  8 Sep 2022 07:38:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE3CCC433C1;
+        Thu,  8 Sep 2022 07:38:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1662622709;
+        bh=i5qqhT/s9Ggk4p3fn8CnlYBsV57UeiidnrYGpDC1bVA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oZUo61+XZEoxCjzVZHFuDXKFMQhDPaPJV4nMVyAsk5Kaa0/sPg2a4MB0fP7JB7T4J
+         WejwW86nj9GMB3lnuAio/ASaS8fr5a4M/Rfsg3cFpSmwKgkNU6W7bLAEWtIXrJnRI7
+         hJPn5yxm49BzwJ0Ofnzo+CRuksh4rpgdhCKWGI4eR3IWU1+j4zUgwv2HALejbGd5hb
+         Qk+akS/oTtpedMgAwJs1r+d1eXS0UruUANBN6axsWG+Cy3jSJ1O97GIzMMn1YcYi+6
+         H8mooIGtSKrlyF6E0Zym+xpNHU4wrX6kMEAb6z44jeBFNTeH9erMsKddkCk08eJzQK
+         B48fmWAtltqxg==
+Date:   Thu, 8 Sep 2022 08:38:23 +0100
+From:   Lee Jones <lee@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Martin Kaiser <martin@kaiser.cx>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mfd: fsl-imx25: fix check for platform_get_irq() errors
+Message-ID: <Yxmb7wTBRnRuasxI@google.com>
+References: <YvTfkbVQWYKMKS/t@kili>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemm600010.china.huawei.com (7.193.23.86)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <YvTfkbVQWYKMKS/t@kili>
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Fix to return a negative error code from the error handling
-case instead of 0, as done elsewhere in this function.
+On Thu, 11 Aug 2022, Dan Carpenter wrote:
 
-Fixes: fef2998203e1 ("net: altera: tse: convert to phylink")
-Signed-off-by: Sun Ke <sunke32@huawei.com>
----
- drivers/net/ethernet/altera/altera_tse_main.c | 1 +
- 1 file changed, 1 insertion(+)
+> The mx25_tsadc_remove() function assumes all non-zero returns are success
+> but the platform_get_irq() function returns negative on error and
+> positive non-zero values on success.  It never returns zero, but if it
+> did then treat that as a success.
+> 
+> Fixes: 18f773937968 ("mfd: fsl-imx25: Clean up irq settings during removal")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>  drivers/mfd/fsl-imx25-tsadc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/altera/altera_tse_main.c b/drivers/net/ethernet/altera/altera_tse_main.c
-index 89ae6d1623aa..3f3f70542279 100644
---- a/drivers/net/ethernet/altera/altera_tse_main.c
-+++ b/drivers/net/ethernet/altera/altera_tse_main.c
-@@ -1411,6 +1411,7 @@ static int altera_tse_probe(struct platform_device *pdev)
- 				       priv->phy_iface, &alt_tse_phylink_ops);
- 	if (IS_ERR(priv->phylink)) {
- 		dev_err(&pdev->dev, "failed to create phylink\n");
-+		ret = ERR_PTR(priv->phylink);
- 		goto err_init_phy;
- 	}
- 
+Applied, thanks.
+
 -- 
-2.31.1
-
+Lee Jones [李琼斯]
