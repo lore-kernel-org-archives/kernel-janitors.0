@@ -2,74 +2,66 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7372FC54EE9
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Sep 2022 02:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 781D3ECAAD3
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Sep 2022 03:29:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229917AbiIICfU (ORCPT
+        id S229891AbiIID3E (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Thu, 8 Sep 2022 22:35:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49028 "EHLO
+        Thu, 8 Sep 2022 23:29:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229852AbiIICfS (ORCPT
+        with ESMTP id S229640AbiIID3D (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Thu, 8 Sep 2022 22:35:18 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFF716B647;
-        Thu,  8 Sep 2022 19:35:16 -0700 (PDT)
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.53])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4MP0Nr1qkfzlVrZ;
-        Fri,  9 Sep 2022 10:31:24 +0800 (CST)
-Received: from kwepemm600010.china.huawei.com (7.193.23.86) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Fri, 9 Sep 2022 10:35:15 +0800
-Received: from huawei.com (10.175.127.227) by kwepemm600010.china.huawei.com
- (7.193.23.86) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Fri, 9 Sep
- 2022 10:35:14 +0800
-From:   Sun Ke <sunke32@huawei.com>
-To:     <joyce.ooi@intel.com>, <davem@davemloft.net>,
-        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        <linux@armlinux.org.uk>
-CC:     <netdev@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <sunke32@huawei.com>
-Subject: [PATCH v2] net: ethernet: altera: TSE: fix error return code in altera_tse_probe()
-Date:   Fri, 9 Sep 2022 10:46:17 +0800
-Message-ID: <20220909024617.2584200-1-sunke32@huawei.com>
-X-Mailer: git-send-email 2.31.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemm600010.china.huawei.com (7.193.23.86)
-X-CFilter-Loop: Reflected
+        Thu, 8 Sep 2022 23:29:03 -0400
+Received: from mail.nfschina.com (mail.nfschina.com [124.16.136.209])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E569411EA45;
+        Thu,  8 Sep 2022 20:29:00 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by mail.nfschina.com (Postfix) with ESMTP id 1EC861E80D78;
+        Fri,  9 Sep 2022 11:27:20 +0800 (CST)
+X-Virus-Scanned: amavisd-new at test.com
+Received: from mail.nfschina.com ([127.0.0.1])
+        by localhost (mail.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id FVM48eWZGjJP; Fri,  9 Sep 2022 11:27:17 +0800 (CST)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        (Authenticated sender: yuzhe@nfschina.com)
+        by mail.nfschina.com (Postfix) with ESMTPA id 0B9671E80D75;
+        Fri,  9 Sep 2022 11:27:17 +0800 (CST)
+From:   Yu Zhe <yuzhe@nfschina.com>
+To:     daniel@zonque.org, haojian.zhuang@gmail.com,
+        robert.jarzmik@free.fr, linux@armlinux.org.uk
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, liqiong@nfschina.com,
+        Yu Zhe <yuzhe@nfschina.com>
+Subject: [PATCH] ARM: pxa: fix platform_get_irq error checking
+Date:   Fri,  9 Sep 2022 11:27:58 +0800
+Message-Id: <20220909032758.29388-1-yuzhe@nfschina.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-Fix to return a negative error code from the error handling
-case instead of 0, as done elsewhere in this function.
+The platform_get_irq() function returns negative error codes on error,
+so change the '<=0' check to '<0' to make code more explicit.
 
-Fixes: fef2998203e1 ("net: altera: tse: convert to phylink")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Sun Ke <sunke32@huawei.com>
+Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
 ---
- drivers/net/ethernet/altera/altera_tse_main.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-pxa/pxa_cplds_irqs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/altera/altera_tse_main.c b/drivers/net/ethernet/altera/altera_tse_main.c
-index 89ae6d1623aa..3cf409bdb283 100644
---- a/drivers/net/ethernet/altera/altera_tse_main.c
-+++ b/drivers/net/ethernet/altera/altera_tse_main.c
-@@ -1411,6 +1411,7 @@ static int altera_tse_probe(struct platform_device *pdev)
- 				       priv->phy_iface, &alt_tse_phylink_ops);
- 	if (IS_ERR(priv->phylink)) {
- 		dev_err(&pdev->dev, "failed to create phylink\n");
-+		ret = PTR_ERR(priv->phylink);
- 		goto err_init_phy;
- 	}
+diff --git a/arch/arm/mach-pxa/pxa_cplds_irqs.c b/arch/arm/mach-pxa/pxa_cplds_irqs.c
+index eda5a47d7fbb..aa284031071d 100644
+--- a/arch/arm/mach-pxa/pxa_cplds_irqs.c
++++ b/arch/arm/mach-pxa/pxa_cplds_irqs.c
+@@ -115,7 +115,7 @@ static int cplds_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
+ 	fpga->irq = platform_get_irq(pdev, 0);
+-	if (fpga->irq <= 0)
++	if (fpga->irq < 0)
+ 		return fpga->irq;
+ 
+ 	base_irq = platform_get_irq(pdev, 1);
 -- 
-2.31.1
+2.11.0
 
