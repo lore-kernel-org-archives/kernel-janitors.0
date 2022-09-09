@@ -2,103 +2,111 @@ Return-Path: <kernel-janitors-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90747C6FA8A
-	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Sep 2022 07:00:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C3AECAAA1
+	for <kernel-janitors@archiver.kernel.org>; Fri,  9 Sep 2022 08:57:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230155AbiIIG77 (ORCPT
+        id S229437AbiIII5C (ORCPT
         <rfc822;kernel-janitors@archiver.kernel.org>);
-        Fri, 9 Sep 2022 02:59:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52780 "EHLO
+        Fri, 9 Sep 2022 04:57:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230481AbiIIG76 (ORCPT
+        with ESMTP id S229867AbiIII4n (ORCPT
         <rfc822;kernel-janitors@vger.kernel.org>);
-        Fri, 9 Sep 2022 02:59:58 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81F5C31EF3
-        for <kernel-janitors@vger.kernel.org>; Thu,  8 Sep 2022 23:59:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 926EBB82350
-        for <kernel-janitors@vger.kernel.org>; Fri,  9 Sep 2022 06:59:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D411C433C1;
-        Fri,  9 Sep 2022 06:59:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662706794;
-        bh=NjnETBEQovFTHW/atuk0epV1j9ubAlRp1T2wsPCQGs0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FzGQZ/+Gnbsqio4Xxee9bwn59GpYnV3pdfpVRBm2cSnqmKIoo7JDr7OOZ6dP2bQmw
-         IPbykM6K+kGdeTnfLY5R8h9H+ZhTSlpjJreTuebeComEykTksfLnTJPdmOrMoZLcQm
-         vvtDtC/NgLjctJJFd4m4J2vx1syQ9LsiU24DqYsnlOyDocLTVndtuE9G2gR9utto5Y
-         t9od9fsfDx6+48lUujj0CmstVeugcv8OVwg19tW3BhJe82iF25pZROd2nRjCQp2I+M
-         O0+jvYqhtEQ8drg+PISf0P2gGdv1LE3f0EwT+R/SzTSAaPKMaGGryiJrObVD8zn2gY
-         f8clRYqE5CJ8g==
-Date:   Fri, 9 Sep 2022 07:59:49 +0100
-From:   Lee Jones <lee@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        ChiYuan Huang <cy_huang@richtek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        ChiaEn Wu <chiaen_wu@richtek.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] mfd: mt6370: add bounds checking to regmap_read/write
- functions
-Message-ID: <YxrkZX36wzVlzq5u@google.com>
-References: <Yv8ezribLQbq5ggv@kili>
- <CAHp75VcotcJzqc4iSwNTKcvF3vAYz6VUuMrsj7LF6mi6Xu8D=Q@mail.gmail.com>
- <20220822125705.GD2695@kadam>
- <YxmSTH5ETSC0D3Rp@google.com>
- <Yxm7eztkQKDPU/Kl@kadam>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Yxm7eztkQKDPU/Kl@kadam>
+        Fri, 9 Sep 2022 04:56:43 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9036113463F;
+        Fri,  9 Sep 2022 01:55:23 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id b5so1593277wrr.5;
+        Fri, 09 Sep 2022 01:55:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=fPvofaEf+BM4TxtIyhxZC/zjNI9R8E3LUT46F136ga4=;
+        b=LNhiywTDLLHnBcl6OCNDZJVmYpUQQBo5Ipo/XFJKAg6DVnp+YKgrbAyDhqMhVredgr
+         pbVU/XS09EffKtsWs1yStnLABtBlZ5Wlyz2RhLmxam/PBYt/Nuc5A2gokC2fC2AK/zyK
+         GJgQQoPnfC8xEXFcZ4UzPAJfx3QnYZ57ZID05n1RakRRuMU9Jz+WokxBI+RNcnTGE8fG
+         fmk+GehVrfLCf7lLWPA0kgxEaupDmAPyvW/I+shS8facJ9KFNgEnws23ygoNAdnWqFfs
+         a4zGMDHcPYVtZjbQtvwCcywmh4+UT6CaUgF5X5P5yOlJ53YYRkcGs+jPMIZvv64lwJOI
+         k1zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=fPvofaEf+BM4TxtIyhxZC/zjNI9R8E3LUT46F136ga4=;
+        b=2uCzGuhtvvdrZUmGYbAB/Phpi1i1XUi2c+ROc+uODdDFIZhUffYeXysMEgO8bPCn9X
+         hNWDFQWjieY3mF/zRyaux5CDAvG9/WQGsCN2nTR+UJwuDMh4m0gEPxku2ur/pV8bOZ7+
+         UsCVDWYW5UI0jKwcBc21/dYYQJkfRS7O6J0W7PCIg+3fzetz29Z1+lAMljEN220JnSAQ
+         8SNY57E1/9LULGnVeB8CFCHpjbQzn4L2JDpMwLSHUE/b/u0j4njyGm+WK3xeIW1OAxbs
+         zfPumk9Y+c5NSTqOijaeKyYeEtDxgRNRDIC0aQoCXT3wTbEmBfNFv1fvShOYR6Ks6z+a
+         673w==
+X-Gm-Message-State: ACgBeo3awYN6PPzSl2jw0s0fezuHw+YcLQSpmT39tN3bch+FXZ4mErng
+        1PGq/zCTEAG3OAnFeYGFy6I=
+X-Google-Smtp-Source: AA6agR5ExbaE+aBChdxYVSD7wVDn3HYcvadDzcUXC1aJvwytLqqWjrNZI76Fxl1SHY9jife9qSYwXA==
+X-Received: by 2002:adf:fb0a:0:b0:225:265d:493 with SMTP id c10-20020adffb0a000000b00225265d0493mr7368942wrr.394.1662713720977;
+        Fri, 09 Sep 2022 01:55:20 -0700 (PDT)
+Received: from felia.fritz.box (200116b8261bf1004cd87416af9987ea.dip.versatel-1u1.de. [2001:16b8:261b:f100:4cd8:7416:af99:87ea])
+        by smtp.gmail.com with ESMTPSA id bt9-20020a056000080900b00228e071baadsm1586493wrb.36.2022.09.09.01.55.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Sep 2022 01:55:20 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-ide@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] ppc: select HAVE_PATA_PLATFORM in PPC instead of creating a PPC dependency
+Date:   Fri,  9 Sep 2022 10:55:05 +0200
+Message-Id: <20220909085505.15536-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <kernel-janitors.vger.kernel.org>
 X-Mailing-List: kernel-janitors@vger.kernel.org
 
-On Thu, 08 Sep 2022, Dan Carpenter wrote:
+Commit cc18e0fea790 ("LIBATA: Add HAVE_PATA_PLATFORM to select
+PATA_PLATFORM driver") introduces config HAVE_PATA_PLATFORM, and expects
+that all architectures simply select this config when the architecture
+supports using the PATA_PLATFORM driver.
 
-> On Thu, Sep 08, 2022 at 07:57:16AM +0100, Lee Jones wrote:
-> > On Mon, 22 Aug 2022, Dan Carpenter wrote:
-> > 
-> > > On Fri, Aug 19, 2022 at 09:27:13AM +0300, Andy Shevchenko wrote:
-> > > > On Fri, Aug 19, 2022 at 8:25 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > > > >
-> > > > > It looks like there are a potential out of bounds accesses in the
-> > > > > read/write() functions.  Also can "len" be negative?  Let's check for
-> > > > > that too.
-> > > > 
-> > > > ...
-> > > > 
-> > > > > Fixes: ab9905c5e38e ("mfd: mt6370: Add MediaTek MT6370 support")
-> > > > 
-> > > > > From static analysis.  This code is obviously harmless however it may
-> > > > > not be required.  The regmap range checking is slightly complicated and
-> > > > > I haven't remembered where all it's done.
-> > > > 
-> > > > Exactement! I do not think this Fixes anything, I believe you are
-> > > > adding a dead code. So, can you do deeper analysis?
-> > > 
-> > > I spent a long time looking at this code before I sent it and I've
-> > > spent a long time looking at it today.
-> > > 
-> > > Smatch said that these values come from the user, but now it seems
-> > > less clear to me and I have rebuilt the DB so I don't have the same
-> > > information I was looking at earlier.
-> > > 
-> > > So I can't see if these come from the user but neither can I find any
-> > > bounds checking.
-> > 
-> > What's the consensus please?
-> 
-> Let's drop it.  I think it's not required.
+This is properly implemented already for all architectures except for the
+powerpc architecture. Implement this for powerpc now.
 
-Dropped.
+Adjust the config of the powerpc architecture to use the config
+HAVE_PATA_PLATFORM and simplify the config PATA_PLATFORM to not mention
+any specific architecture anymore.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ arch/powerpc/Kconfig | 1 +
+ drivers/ata/Kconfig  | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 39d71d7701bd..2575e21b6e6b 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -237,6 +237,7 @@ config PPC
+ 	select HAVE_MOD_ARCH_SPECIFIC
+ 	select HAVE_NMI				if PERF_EVENTS || (PPC64 && PPC_BOOK3S)
+ 	select HAVE_OPTPROBES
++	select HAVE_PATA_PLATFORM
+ 	select HAVE_PERF_EVENTS
+ 	select HAVE_PERF_EVENTS_NMI		if PPC64
+ 	select HAVE_PERF_REGS
+diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
+index 1c9f4fb2595d..ed3547165528 100644
+--- a/drivers/ata/Kconfig
++++ b/drivers/ata/Kconfig
+@@ -1103,7 +1103,7 @@ config PATA_PCMCIA
+ 
+ config PATA_PLATFORM
+ 	tristate "Generic platform device PATA support"
+-	depends on EXPERT || PPC || HAVE_PATA_PLATFORM
++	depends on EXPERT || HAVE_PATA_PLATFORM
+ 	help
+ 	  This option enables support for generic directly connected ATA
+ 	  devices commonly found on embedded systems.
 -- 
-Lee Jones [李琼斯]
+2.17.1
+
